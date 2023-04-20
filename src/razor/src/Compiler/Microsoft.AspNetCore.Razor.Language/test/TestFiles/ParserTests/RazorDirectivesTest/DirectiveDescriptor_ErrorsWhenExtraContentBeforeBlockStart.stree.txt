@@ -26,3 +26,4 @@
             Text;[bar();];
             Whitespace;[ ];
             Text;[}];
+    EndOfFile;[];

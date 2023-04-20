@@ -118,6 +118,8 @@ internal static class ComponentMetadata
         public const string NameMatchKey = "Components.NameMatch";
 
         public const string FullyQualifiedNameMatch = "Components.FullyQualifiedNameMatch";
+
+        public const string InitOnlyProperty = "Components.InitOnlyProperty";
     }
 
     public static class EventHandler

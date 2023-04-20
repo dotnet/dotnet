@@ -50,3 +50,4 @@
                 Semicolon;[;];
                 Whitespace;[ ];
                 RightBrace;[}];
+    EndOfFile;[];

@@ -12,3 +12,4 @@
                             Marker;[];
         MarkupTextLiteral - [1..3)::2 - [LF] - Gen<Markup> - SpanEditHandler;Accepts:Any
             NewLine;[LF];
+    EndOfFile;[];

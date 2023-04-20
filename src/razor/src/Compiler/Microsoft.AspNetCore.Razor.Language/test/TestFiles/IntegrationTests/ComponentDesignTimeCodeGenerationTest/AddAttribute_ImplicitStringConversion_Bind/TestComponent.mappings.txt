@@ -20,34 +20,34 @@ Generated Location: (1549:49,32 [1] )
 
 Source Location: (40:1,4 [13] x:\dir\subdir\Test\TestComponent.cshtml)
 |BoolParameter|
-Generated Location: (1976:59,4 [13] )
+Generated Location: (2014:60,4 [13] )
 |BoolParameter|
 
 Source Location: (66:2,4 [15] x:\dir\subdir\Test\TestComponent.cshtml)
 |StringParameter|
-Generated Location: (2186:68,4 [15] )
+Generated Location: (2228:69,4 [15] )
 |StringParameter|
 
 Source Location: (93:3,4 [17] x:\dir\subdir\Test\TestComponent.cshtml)
 |DelegateParameter|
-Generated Location: (2398:77,4 [17] )
+Generated Location: (2444:78,4 [17] )
 |DelegateParameter|
 
 Source Location: (128:4,4 [15] x:\dir\subdir\Test\TestComponent.cshtml)
 |ObjectParameter|
-Generated Location: (2612:86,4 [15] )
+Generated Location: (2662:87,4 [15] )
 |ObjectParameter|
 
 Source Location: (19:0,19 [11] x:\dir\subdir\Test\TestComponent.cshtml)
 |MyParameter|
-Generated Location: (2839:95,19 [11] )
+Generated Location: (2893:96,19 [11] )
 |MyParameter|
 
 Source Location: (161:6,7 [42] x:\dir\subdir\Test\TestComponent.cshtml)
 |
     private MyClass<string> c = new();
 |
-Generated Location: (3206:112,7 [42] )
+Generated Location: (3314:114,7 [42] )
 |
     private MyClass<string> c = new();
 |

@@ -51,7 +51,8 @@ __o = typeof(global::Test.Passthrough);
 #nullable disable
                 }
                 );
-                __o = __typeInference_CreateAncestor_0.
+                #pragma warning disable BL0005
+                __typeInference_CreateAncestor_0.
 #nullable restore
 #line 1 "x:\dir\subdir\Test\TestComponent.cshtml"
           Items
@@ -59,7 +60,8 @@ __o = typeof(global::Test.Passthrough);
 #line default
 #line hidden
 #nullable disable
-                ;
+                 = default;
+                #pragma warning restore BL0005
             }
 #nullable restore
 #line 1 "x:\dir\subdir\Test\TestComponent.cshtml"

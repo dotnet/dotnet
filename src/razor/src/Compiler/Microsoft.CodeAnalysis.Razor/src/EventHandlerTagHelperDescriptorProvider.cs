@@ -44,7 +44,7 @@ internal class EventHandlerTagHelperDescriptorProvider : ITagHelperDescriptorPro
         }
     }
 
-    private List<EventHandlerData> GetEventHandlerData(TagHelperDescriptorProviderContext context, Compilation compilation, INamedTypeSymbol eventHandlerAttribute)
+    private static List<EventHandlerData> GetEventHandlerData(TagHelperDescriptorProviderContext context, Compilation compilation, INamedTypeSymbol eventHandlerAttribute)
     {
         var types = new List<INamedTypeSymbol>();
         var visitor = new EventHandlerDataVisitor(types);
@@ -106,17 +106,19 @@ internal class EventHandlerTagHelperDescriptorProvider : ITagHelperDescriptorPro
         return results;
     }
 
-    private List<TagHelperDescriptor> CreateEventHandlerTagHelpers(List<EventHandlerData> data)
+    private static List<TagHelperDescriptor> CreateEventHandlerTagHelpers(List<EventHandlerData> data)
     {
         var results = new List<TagHelperDescriptor>();
 
-        for (var i = 0; i < data.Count; i++)
+        foreach (var entry in data)
         {
-            var entry = data[i];
             var attributeName = "@" + entry.Attribute;
             var eventArgType = entry.EventArgsType.ToDisplayString();
 
-            var builder = TagHelperDescriptorBuilder.Create(ComponentMetadata.EventHandler.TagHelperKind, entry.Attribute, ComponentsApi.AssemblyName);
+            using var _ = TagHelperDescriptorBuilder.GetPooledInstance(
+                ComponentMetadata.EventHandler.TagHelperKind, entry.Attribute, ComponentsApi.AssemblyName,
+                out var builder);
+
             builder.CaseSensitive = true;
             builder.Documentation = string.Format(
                 CultureInfo.CurrentCulture,
@@ -233,43 +235,15 @@ internal class EventHandlerTagHelperDescriptorProvider : ITagHelperDescriptorPro
         return results;
     }
 
-    private struct EventHandlerData
-    {
-        public EventHandlerData(
-            string assembly,
-            string typeName,
-            string typeNamespace,
-            string typeNameIdentifier,
-            string element,
-            INamedTypeSymbol eventArgsType,
-            bool enablePreventDefault,
-            bool enableStopPropagation)
-        {
-            Assembly = assembly;
-            TypeName = typeName;
-            TypeNamespace = typeNamespace;
-            TypeNameIdentifier = typeNameIdentifier;
-            Attribute = element;
-            EventArgsType = eventArgsType;
-            EnablePreventDefault = enablePreventDefault;
-            EnableStopPropagation = enableStopPropagation;
-        }
-
-        public string Assembly { get; }
-
-        public string TypeName { get; }
-        public string TypeNamespace { get; }
-
-        public string TypeNameIdentifier { get; }
-
-        public string Attribute { get; }
-
-        public INamedTypeSymbol EventArgsType { get; }
-
-        public bool EnablePreventDefault { get; }
-
-        public bool EnableStopPropagation { get; }
-    }
+    private readonly record struct EventHandlerData(
+        string Assembly,
+        string TypeName,
+        string TypeNamespace,
+        string TypeNameIdentifier,
+        string Attribute,
+        INamedTypeSymbol EventArgsType,
+        bool EnablePreventDefault,
+        bool EnableStopPropagation);
 
     private class EventHandlerDataVisitor : SymbolVisitor
     {

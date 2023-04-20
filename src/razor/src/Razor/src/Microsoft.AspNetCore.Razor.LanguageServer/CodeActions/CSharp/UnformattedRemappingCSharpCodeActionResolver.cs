@@ -9,7 +9,6 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.LanguageServer.CodeActions.Models;
 using Microsoft.AspNetCore.Razor.LanguageServer.Common;
-using Microsoft.AspNetCore.Razor.LanguageServer.Common.Extensions;
 using Microsoft.AspNetCore.Razor.LanguageServer.Extensions;
 using Microsoft.AspNetCore.Razor.LanguageServer.Protocol;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
@@ -19,7 +18,7 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer.CodeActions;
 /// <summary>
 /// Resolves and remaps the code action, without running formatting passes.
 /// </summary>
-internal class UnformattedRemappingCSharpCodeActionResolver : CSharpCodeActionResolver
+internal sealed class UnformattedRemappingCSharpCodeActionResolver : CSharpCodeActionResolver
 {
     private readonly DocumentContextFactory _documentContextFactory;
     private readonly RazorDocumentMappingService _documentMappingService;
@@ -109,12 +108,12 @@ internal class UnformattedRemappingCSharpCodeActionResolver : CSharpCodeActionRe
         resolvedCodeAction.Edit = new WorkspaceEdit()
         {
             DocumentChanges = new[] {
-                        new TextDocumentEdit()
-                        {
-                            TextDocument = codeDocumentIdentifier,
-                            Edits = new[] { textEdit },
-                        }
-                },
+                new TextDocumentEdit()
+                {
+                    TextDocument = codeDocumentIdentifier,
+                    Edits = new[] { textEdit },
+                }
+            },
         };
 
         return resolvedCodeAction;

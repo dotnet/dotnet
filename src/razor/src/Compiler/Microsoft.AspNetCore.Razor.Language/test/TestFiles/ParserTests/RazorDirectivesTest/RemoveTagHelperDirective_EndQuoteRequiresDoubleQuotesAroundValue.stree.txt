@@ -17,3 +17,4 @@
                             StringLiteral;["];RZ1000(20:0,20 [1] )
         MarkupTextLiteral - [21..21)::0 - [] - Gen<Markup> - SpanEditHandler;Accepts:Any
             Marker;[];
+    EndOfFile;[];

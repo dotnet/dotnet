@@ -58,7 +58,11 @@ internal class ViewComponentTagHelperDescriptorFactory
         var tagName = $"vc:{HtmlConventions.ToHtmlCase(shortName)}";
         var typeName = $"__Generated__{shortName}ViewComponentTagHelper";
         var displayName = shortName + "ViewComponentTagHelper";
-        var descriptorBuilder = TagHelperDescriptorBuilder.Create(ViewComponentTagHelperConventions.Kind, typeName, assemblyName);
+
+        using var _ = TagHelperDescriptorBuilder.GetPooledInstance(
+            ViewComponentTagHelperConventions.Kind, typeName, assemblyName,
+            out var descriptorBuilder);
+
         descriptorBuilder.SetTypeName(typeName);
         descriptorBuilder.DisplayName = displayName;
 

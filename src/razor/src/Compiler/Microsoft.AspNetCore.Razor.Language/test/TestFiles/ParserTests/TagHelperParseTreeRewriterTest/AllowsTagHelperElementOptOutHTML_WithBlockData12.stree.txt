@@ -35,3 +35,4 @@
                     Bang;[!];
                     Text;[p];
                     CloseAngle;[>];
+    EndOfFile;[];

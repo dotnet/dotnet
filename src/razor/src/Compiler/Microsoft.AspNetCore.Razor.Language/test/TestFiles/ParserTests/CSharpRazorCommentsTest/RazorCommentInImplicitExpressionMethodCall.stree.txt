@@ -20,3 +20,4 @@
                             RazorCommentTransition;[@];
                         CSharpExpressionLiteral - [11..13)::2 - [LF] - Gen<Expr> - ImplicitExpressionEditHandler;Accepts:Any;ImplicitExpression[RTD];K14
                             NewLine;[LF];
+    EndOfFile;[];

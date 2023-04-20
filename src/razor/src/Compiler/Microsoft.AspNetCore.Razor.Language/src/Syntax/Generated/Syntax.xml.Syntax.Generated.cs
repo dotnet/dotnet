@@ -30,6 +30,7 @@ namespace Microsoft.AspNetCore.Razor.Language.Syntax
   internal sealed partial class RazorDocumentSyntax : RazorSyntaxNode
   {
     private RazorBlockSyntax _document;
+    private SyntaxToken _endOfFile;
 
     internal RazorDocumentSyntax(GreenNode green, SyntaxNode parent, int position)
         : base(green, parent, position)
@@ -44,11 +45,20 @@ namespace Microsoft.AspNetCore.Razor.Language.Syntax
         }
     }
 
+    public SyntaxToken EndOfFile 
+    {
+        get
+        {
+            return GetRed(ref _endOfFile, 1);
+        }
+    }
+
     internal override SyntaxNode GetNodeSlot(int index)
     {
         switch (index)
         {
             case 0: return GetRedAtZero(ref _document);
+            case 1: return GetRed(ref _endOfFile, 1);
             default: return null;
         }
     }
@@ -57,6 +67,7 @@ namespace Microsoft.AspNetCore.Razor.Language.Syntax
         switch (index)
         {
             case 0: return _document;
+            case 1: return _endOfFile;
             default: return null;
         }
     }
@@ -71,11 +82,11 @@ namespace Microsoft.AspNetCore.Razor.Language.Syntax
         visitor.VisitRazorDocument(this);
     }
 
-    public RazorDocumentSyntax Update(RazorBlockSyntax document)
+    public RazorDocumentSyntax Update(RazorBlockSyntax document, SyntaxToken endOfFile)
     {
-        if (document != Document)
+        if (document != Document || endOfFile != EndOfFile)
         {
-            var newNode = SyntaxFactory.RazorDocument(document);
+            var newNode = SyntaxFactory.RazorDocument(document, endOfFile);
             var diagnostics = GetDiagnostics();
             if (diagnostics != null && diagnostics.Length > 0)
                newNode = newNode.WithDiagnostics(diagnostics);
@@ -90,7 +101,12 @@ namespace Microsoft.AspNetCore.Razor.Language.Syntax
 
     public RazorDocumentSyntax WithDocument(RazorBlockSyntax document)
     {
-        return Update(document);
+        return Update(document, EndOfFile);
+    }
+
+    public RazorDocumentSyntax WithEndOfFile(SyntaxToken endOfFile)
+    {
+        return Update(Document, endOfFile);
     }
   }
 

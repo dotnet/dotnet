@@ -13,3 +13,4 @@
         MarkupTextLiteral - [4..11)::7 - [!.(abc)] - Gen<Markup> - SpanEditHandler;Accepts:Any
             Bang;[!];
             Text;[.(abc)];
+    EndOfFile;[];

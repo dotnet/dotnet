@@ -12,7 +12,7 @@ internal sealed class TagMatchingRuleDescriptorComparer : IEqualityComparer<TagM
     /// <summary>
     /// A default instance of the <see cref="TagMatchingRuleDescriptorComparer"/>.
     /// </summary>
-    public static readonly TagMatchingRuleDescriptorComparer Default = new TagMatchingRuleDescriptorComparer();
+    public static readonly TagMatchingRuleDescriptorComparer Default = new();
 
     private TagMatchingRuleDescriptorComparer()
     {
@@ -20,7 +20,7 @@ internal sealed class TagMatchingRuleDescriptorComparer : IEqualityComparer<TagM
 
     public bool Equals(TagMatchingRuleDescriptor? ruleX, TagMatchingRuleDescriptor? ruleY)
     {
-        if (object.ReferenceEquals(ruleX, ruleY))
+        if (ReferenceEquals(ruleX, ruleY))
         {
             return true;
         }
@@ -35,8 +35,8 @@ internal sealed class TagMatchingRuleDescriptorComparer : IEqualityComparer<TagM
         }
 
         return
-            string.Equals(ruleX.TagName, ruleY.TagName, StringComparison.Ordinal) &&
-            string.Equals(ruleX.ParentTag, ruleY.ParentTag, StringComparison.Ordinal) &&
+            ruleX.TagName == ruleY.TagName &&
+            ruleX.ParentTag == ruleY.ParentTag &&
             ruleX.CaseSensitive == ruleY.CaseSensitive &&
             ruleX.TagStructure == ruleY.TagStructure &&
             ComparerUtilities.Equals(ruleX.Attributes, ruleY.Attributes, RequiredAttributeDescriptorComparer.Default);

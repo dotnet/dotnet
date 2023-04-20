@@ -3,34 +3,51 @@
 
 using System;
 using System.Collections.Generic;
-using System.Collections.Immutable;
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Razor.PooledObjects;
+using Microsoft.Extensions.ObjectPool;
+using static Microsoft.AspNetCore.Razor.Language.RequiredAttributeDescriptor;
 
 namespace Microsoft.AspNetCore.Razor.Language;
 
-internal class DefaultRequiredAttributeDescriptorBuilder : RequiredAttributeDescriptorBuilder, IBuilder<RequiredAttributeDescriptor>
+internal partial class DefaultRequiredAttributeDescriptorBuilder : RequiredAttributeDescriptorBuilder, IBuilder<RequiredAttributeDescriptor>
 {
-    private readonly DefaultTagMatchingRuleDescriptorBuilder _parent;
+    private static readonly ObjectPool<DefaultRequiredAttributeDescriptorBuilder> s_pool = DefaultPool.Create(Policy.Instance);
+
+    public static DefaultRequiredAttributeDescriptorBuilder GetInstance(DefaultTagMatchingRuleDescriptorBuilder parent)
+    {
+        var builder = s_pool.Get();
+
+        builder._parent = parent;
+
+        return builder;
+    }
+
+    public static void ReturnInstance(DefaultRequiredAttributeDescriptorBuilder builder)
+        => s_pool.Return(builder);
+
+    [AllowNull]
+    private DefaultTagMatchingRuleDescriptorBuilder _parent;
     private RazorDiagnosticCollection? _diagnostics;
-    private readonly ImmutableDictionary<string, string>.Builder _metadata;
+    private Dictionary<string, string>? _metadata;
+
+    private DefaultRequiredAttributeDescriptorBuilder()
+    {
+    }
 
     public DefaultRequiredAttributeDescriptorBuilder(DefaultTagMatchingRuleDescriptorBuilder parent)
     {
         _parent = parent;
-        _metadata = ImmutableDictionary.CreateBuilder<string, string>();
     }
 
     public override string? Name { get; set; }
-
-    public override RequiredAttributeDescriptor.NameComparisonMode NameComparisonMode { get; set; }
-
+    public override NameComparisonMode NameComparisonMode { get; set; }
     public override string? Value { get; set; }
-
-    public override RequiredAttributeDescriptor.ValueComparisonMode ValueComparisonMode { get; set; }
+    public override ValueComparisonMode ValueComparisonMode { get; set; }
 
     public override RazorDiagnosticCollection Diagnostics => _diagnostics ??= new RazorDiagnosticCollection();
 
-    public override IDictionary<string, string> Metadata => _metadata;
+    public override IDictionary<string, string> Metadata => _metadata ??= new Dictionary<string, string>();
 
     internal bool CaseSensitive => _parent.CaseSensitive;
 
@@ -53,7 +70,7 @@ internal class DefaultRequiredAttributeDescriptorBuilder : RequiredAttributeDesc
                 ValueComparisonMode,
                 displayName,
                 diagnostics.ToArray(),
-                _metadata.ToImmutable());
+                MetadataCollection.CreateOrEmpty(_metadata));
 
             return descriptor;
         }
@@ -65,7 +82,7 @@ internal class DefaultRequiredAttributeDescriptorBuilder : RequiredAttributeDesc
 
     private string GetDisplayName()
     {
-        return (NameComparisonMode == RequiredAttributeDescriptor.NameComparisonMode.PrefixMatch ? string.Concat(Name, "...") : Name) ?? string.Empty;
+        return (NameComparisonMode == NameComparisonMode.PrefixMatch ? string.Concat(Name, "...") : Name) ?? string.Empty;
     }
 
     private void Validate(ref PooledHashSet<RazorDiagnostic> diagnostics)

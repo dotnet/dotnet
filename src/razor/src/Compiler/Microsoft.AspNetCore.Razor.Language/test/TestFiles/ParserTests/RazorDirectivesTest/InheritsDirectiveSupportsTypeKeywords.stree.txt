@@ -16,3 +16,4 @@
                             Keyword;[string];
         MarkupTextLiteral - [16..16)::0 - [] - Gen<Markup> - SpanEditHandler;Accepts:Any
             Marker;[];
+    EndOfFile;[];

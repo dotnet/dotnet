@@ -49,7 +49,8 @@ __o = typeof(global::Test.Column<>);
 #nullable disable
                 }
                 );
-                __o = __typeInference_CreateGrid_0.
+                #pragma warning disable BL0005
+                __typeInference_CreateGrid_0.
 #nullable restore
 #line 1 "x:\dir\subdir\Test\TestComponent.cshtml"
       Items
@@ -57,7 +58,8 @@ __o = typeof(global::Test.Column<>);
 #line default
 #line hidden
 #nullable disable
-                ;
+                 = default;
+                #pragma warning restore BL0005
             }
 #nullable restore
 #line 1 "x:\dir\subdir\Test\TestComponent.cshtml"

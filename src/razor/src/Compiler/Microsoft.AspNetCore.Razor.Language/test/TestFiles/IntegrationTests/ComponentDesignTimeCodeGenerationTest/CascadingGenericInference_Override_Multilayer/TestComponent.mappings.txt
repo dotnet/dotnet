@@ -10,11 +10,11 @@ Generated Location: (1535:37,21 [37] )
 
 Source Location: (47:1,14 [4] x:\dir\subdir\Test\TestComponent.cshtml)
 |Item|
-Generated Location: (3439:73,14 [4] )
+Generated Location: (3489:74,14 [4] )
 |Item|
 
 Source Location: (10:0,10 [4] x:\dir\subdir\Test\TestComponent.cshtml)
 |Item|
-Generated Location: (4459:103,10 [4] )
+Generated Location: (4617:106,10 [4] )
 |Item|
 

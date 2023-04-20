@@ -21,3 +21,4 @@
             RazorCommentTransition;[@];
         MarkupTextLiteral - [32..33)::1 - [>] - Gen<Markup> - SpanEditHandler;Accepts:Any
             CloseAngle;[>];
+    EndOfFile;[];

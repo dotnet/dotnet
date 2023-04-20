@@ -18,3 +18,4 @@
                                 Text;[false];
                                 SingleQuote;['];
                 CloseAngle;[<Missing>];
+    EndOfFile;[];

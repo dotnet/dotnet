@@ -16,3 +16,4 @@
                         RightParenthesis;[)];
         MarkupTextLiteral - [7..7)::0 - [] - Gen<Markup> - SpanEditHandler;Accepts:Any
             Marker;[];
+    EndOfFile;[];

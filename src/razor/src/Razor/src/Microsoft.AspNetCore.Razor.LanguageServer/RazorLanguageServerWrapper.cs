@@ -5,6 +5,7 @@ using System;
 using System.IO;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.LanguageServer.Common.Extensions;
+using Microsoft.AspNetCore.Razor.Telemetry;
 using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CommonLanguageServerProtocol.Framework;
@@ -36,6 +37,7 @@ internal sealed class RazorLanguageServerWrapper : IDisposable
         Stream input,
         Stream output,
         IRazorLogger razorLogger,
+        ITelemetryReporter telemetryReporter,
         ProjectSnapshotManagerDispatcher? projectSnapshotManagerDispatcher = null,
         Action<IServiceCollection>? configure = null,
         LanguageServerFeatureOptions? featureOptions = null,
@@ -49,7 +51,8 @@ internal sealed class RazorLanguageServerWrapper : IDisposable
             projectSnapshotManagerDispatcher,
             featureOptions,
             configure,
-            razorLSPOptions);
+            razorLSPOptions,
+            telemetryReporter);
 
         var razorLanguageServer = new RazorLanguageServerWrapper(server);
         jsonRpc.StartListening();

@@ -100,6 +100,30 @@ internal class DefaultLSPDocumentSynchronizer : LSPDocumentSynchronizer
         return new SynchronizedResult<TVirtualDocumentSnapshot>(onSynchronizedResult, virtualDocumentSnapshot);
     }
 
+    internal SynchronizedResult<TVirtualDocumentSnapshot>? TryReturnPossiblyFutureSnapshot<TVirtualDocumentSnapshot>(
+        int requiredHostDocumentVersion,
+        Uri hostDocumentUri) where TVirtualDocumentSnapshot : VirtualDocumentSnapshot
+    {
+        lock (_documentContextLock)
+        {
+            var preSyncedSnapshot = GetVirtualDocumentSnapshot<TVirtualDocumentSnapshot>(hostDocumentUri);
+            var virtualDocumentUri = preSyncedSnapshot.Uri;
+            if (!_virtualDocumentContexts.TryGetValue(virtualDocumentUri, out var documentContext))
+            {
+                // Document was deleted/removed in mid-synchronization
+                return new SynchronizedResult<TVirtualDocumentSnapshot>(false, preSyncedSnapshot);
+            }
+
+            if (requiredHostDocumentVersion <= documentContext.SeenHostDocumentVersion)
+            {
+                // Already synchronized
+                return new SynchronizedResult<TVirtualDocumentSnapshot>(true, preSyncedSnapshot);
+            }
+        }
+
+        return null;
+    }
+
     [Obsolete]
     public override Task<bool> TrySynchronizeVirtualDocumentAsync(int requiredHostDocumentVersion, VirtualDocumentSnapshot virtualDocument, CancellationToken cancellationToken)
         => TrySynchronizeVirtualDocumentAsync(requiredHostDocumentVersion, virtualDocument, rejectOnNewerParallelRequest: true, cancellationToken);

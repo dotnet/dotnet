@@ -39,3 +39,4 @@
                 Semicolon;[;];
                 Whitespace;[ ];
                 RightBrace;[}];
+    EndOfFile;[];

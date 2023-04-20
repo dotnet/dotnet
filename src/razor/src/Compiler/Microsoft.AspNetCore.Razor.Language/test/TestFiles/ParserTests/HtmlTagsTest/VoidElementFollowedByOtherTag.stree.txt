@@ -385,3 +385,4 @@
                                                                             NewLine;[LF];
                                                                             Text;[}];
                                                                             NewLine;[LF];
+    EndOfFile;[];

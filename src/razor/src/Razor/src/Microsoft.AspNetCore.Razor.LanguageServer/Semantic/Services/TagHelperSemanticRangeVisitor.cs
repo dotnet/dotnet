@@ -14,18 +14,19 @@ using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Semantic;
 
-internal class TagHelperSemanticRangeVisitor : SyntaxWalker
+internal sealed class TagHelperSemanticRangeVisitor : SyntaxWalker
 {
     private readonly List<SemanticRange> _semanticRanges;
     private readonly RazorCodeDocument _razorCodeDocument;
 
-    private TagHelperSemanticRangeVisitor(RazorCodeDocument razorCodeDocument, TextSpan? range) : base(range)
+    private TagHelperSemanticRangeVisitor(RazorCodeDocument razorCodeDocument, TextSpan? range)
+        : base(range)
     {
         _semanticRanges = new List<SemanticRange>();
         _razorCodeDocument = razorCodeDocument;
     }
 
-    public static IReadOnlyList<SemanticRange> VisitAllNodes(RazorCodeDocument razorCodeDocument, Range? range = null)
+    public static List<SemanticRange> VisitAllNodes(RazorCodeDocument razorCodeDocument, Range? range)
     {
         TextSpan? rangeAsTextSpan = null;
         if (range is not null)
@@ -50,6 +51,7 @@ internal class TagHelperSemanticRangeVisitor : SyntaxWalker
     }
 
     #region HTML
+
     public override void VisitMarkupTextLiteral(MarkupTextLiteralSyntax node)
     {
         // Don't return anything for MarkupTextLiterals. It translates to "text" on the VS side, which is the default color anyway
@@ -141,7 +143,7 @@ internal class TagHelperSemanticRangeVisitor : SyntaxWalker
             }
         }
 
-        AddSemanticRange(node.Children[node.Children.Count - 1], RazorSemanticTokensLegend.MarkupCommentPunctuation);
+        AddSemanticRange(node.Children[^1], RazorSemanticTokensLegend.MarkupCommentPunctuation);
     }
 
     public override void VisitMarkupMinimizedAttributeBlock(MarkupMinimizedAttributeBlockSyntax node)
@@ -149,6 +151,7 @@ internal class TagHelperSemanticRangeVisitor : SyntaxWalker
         Visit(node.NamePrefix);
         AddSemanticRange(node.Name, RazorSemanticTokensLegend.MarkupAttribute);
     }
+
     #endregion HTML
 
     #region C#
@@ -166,9 +169,11 @@ internal class TagHelperSemanticRangeVisitor : SyntaxWalker
         Visit(node.CSharpCode);
         AddSemanticRange(node.CloseParen, RazorSemanticTokensLegend.RazorTransition);
     }
+
     #endregion C#
 
     #region Razor
+
     public override void VisitRazorCommentBlock(RazorCommentBlockSyntax node)
     {
         AddSemanticRange(node.StartCommentTransition, RazorSemanticTokensLegend.RazorCommentTransition);
@@ -363,6 +368,7 @@ internal class TagHelperSemanticRangeVisitor : SyntaxWalker
     {
         AddSemanticRange(node, RazorSemanticTokensLegend.RazorTransition);
     }
+
     #endregion Razor
 
     private static int GetElementSemanticKind(SyntaxNode node)

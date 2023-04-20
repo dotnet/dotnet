@@ -25,3 +25,4 @@
                         Whitespace;[ ];
                 ForwardSlash;[/];
                 CloseAngle;[>];
+    EndOfFile;[];

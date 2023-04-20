@@ -5,7 +5,7 @@ Generated Location: (948:25,23 [9] )
 
 Source Location: (13:0,13 [7] x:\dir\subdir\Test\TestComponent.cshtml)
 |OnClick|
-Generated Location: (1327:37,13 [7] )
+Generated Location: (1365:38,13 [7] )
 |OnClick|
 
 Source Location: (46:2,7 [98] x:\dir\subdir\Test\TestComponent.cshtml)
@@ -15,7 +15,7 @@ Source Location: (46:2,7 [98] x:\dir\subdir\Test\TestComponent.cshtml)
         counter++;
     }
 |
-Generated Location: (1688:54,7 [98] )
+Generated Location: (1780:56,7 [98] )
 |
     private int counter;
     private void Increment(EventArgs e) {

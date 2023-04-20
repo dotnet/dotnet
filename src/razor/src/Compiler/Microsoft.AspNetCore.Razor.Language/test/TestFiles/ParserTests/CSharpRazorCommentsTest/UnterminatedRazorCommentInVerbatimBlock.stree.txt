@@ -20,3 +20,4 @@
                             RazorCommentTransition;[<Missing>];
                     RazorMetaCode - [4..4)::0 - Gen<None> - SpanEditHandler;Accepts:Any
                         RightBrace;[<Missing>];
+    EndOfFile;[];

@@ -2,14 +2,35 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Razor.PooledObjects;
+using Microsoft.Extensions.ObjectPool;
 
 namespace Microsoft.AspNetCore.Razor.Language;
 
-internal class DefaultAllowedChildTagDescriptorBuilder : AllowedChildTagDescriptorBuilder, IBuilder<AllowedChildTagDescriptor>
+internal partial class DefaultAllowedChildTagDescriptorBuilder : AllowedChildTagDescriptorBuilder, IBuilder<AllowedChildTagDescriptor>
 {
-    private readonly DefaultTagHelperDescriptorBuilder _parent;
+    private static readonly ObjectPool<DefaultAllowedChildTagDescriptorBuilder> s_pool = DefaultPool.Create(Policy.Instance);
+
+    public static DefaultAllowedChildTagDescriptorBuilder GetInstance(DefaultTagHelperDescriptorBuilder parent)
+    {
+        var builder = s_pool.Get();
+
+        builder._parent = parent;
+
+        return builder;
+    }
+
+    public static void ReturnInstance(DefaultAllowedChildTagDescriptorBuilder builder)
+        => s_pool.Return(builder);
+
+    [AllowNull]
+    private DefaultTagHelperDescriptorBuilder _parent;
     private RazorDiagnosticCollection? _diagnostics;
+
+    private DefaultAllowedChildTagDescriptorBuilder()
+    {
+    }
 
     public DefaultAllowedChildTagDescriptorBuilder(DefaultTagHelperDescriptorBuilder parent)
     {
@@ -17,7 +38,6 @@ internal class DefaultAllowedChildTagDescriptorBuilder : AllowedChildTagDescript
     }
 
     public override string? Name { get; set; }
-
     public override string? DisplayName { get; set; }
 
     public override RazorDiagnosticCollection Diagnostics => _diagnostics ??= new RazorDiagnosticCollection();

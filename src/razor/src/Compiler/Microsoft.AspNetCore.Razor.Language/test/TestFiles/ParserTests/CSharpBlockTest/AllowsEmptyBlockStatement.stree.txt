@@ -14,3 +14,4 @@
                 LeftBrace;[{];
                 Whitespace;[ ];
                 RightBrace;[}];
+    EndOfFile;[];

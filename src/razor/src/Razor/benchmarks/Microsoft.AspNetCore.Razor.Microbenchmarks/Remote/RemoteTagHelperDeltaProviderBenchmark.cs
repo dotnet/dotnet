@@ -5,7 +5,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Collections.Immutable;
 using System.Linq;
 using BenchmarkDotNet.Attributes;
 using Microsoft.AspNetCore.Razor.Language;
@@ -109,7 +108,7 @@ public class RemoteTagHelperDeltaProviderBenchmark : TagHelperBenchmarkBase
                  origin.TagMatchingRules.ToArray(),
                  origin.BoundAttributes.ToArray(),
                  origin.AllowedChildTags.ToArray(),
-                 origin.Metadata.ToImmutableDictionary(kvp => kvp.Key, kvp => kvp.Value),
+                 MetadataCollection.Create(origin.Metadata),
                  origin.Diagnostics.ToArray())
         {
         }

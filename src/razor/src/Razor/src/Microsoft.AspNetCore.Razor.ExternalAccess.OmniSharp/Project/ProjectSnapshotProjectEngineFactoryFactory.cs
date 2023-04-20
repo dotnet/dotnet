@@ -20,6 +20,6 @@ internal class ProjectSnapshotProjectEngineFactoryFactory : IWorkspaceServiceFac
             throw new ArgumentNullException(nameof(workspaceServices));
         }
 
-        return new DefaultProjectSnapshotProjectEngineFactory(new FallbackProjectEngineFactory(), ProjectEngineFactories.Factories);
+        return new DefaultProjectSnapshotProjectEngineFactory(new FallbackProjectEngineFactory(), MefProjectEngineFactories.Factories);
     }
 }

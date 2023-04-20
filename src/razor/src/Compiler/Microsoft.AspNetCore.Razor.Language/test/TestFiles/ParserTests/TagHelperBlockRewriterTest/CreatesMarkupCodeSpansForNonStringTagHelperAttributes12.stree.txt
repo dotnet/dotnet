@@ -45,3 +45,4 @@
                         Whitespace;[ ];
                 ForwardSlash;[/];
                 CloseAngle;[>];
+    EndOfFile;[];

@@ -17,3 +17,4 @@
                             RazorCommentLiteral;[<Missing>];
                             RazorCommentStar;[<Missing>];RZ1028(5:0,5 [2] )
                             RazorCommentTransition;[<Missing>];
+    EndOfFile;[];

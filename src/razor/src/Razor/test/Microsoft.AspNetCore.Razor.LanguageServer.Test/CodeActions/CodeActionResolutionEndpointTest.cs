@@ -26,8 +26,8 @@ public class CodeActionResolutionEndpointTest : LanguageServerTestBase
     public async Task Handle_Valid_RazorCodeAction_WithResolver()
     {
         // Arrange
-        var codeActionEndpoint = new CodeActionResolutionEndpoint(
-            new RazorCodeActionResolver[] {
+        var codeActionEndpoint = new CodeActionResolveEndpoint(
+            new IRazorCodeActionResolver[] {
                 new MockRazorCodeActionResolver("Test"),
             },
             Array.Empty<CSharpCodeActionResolver>(),
@@ -61,8 +61,8 @@ public class CodeActionResolutionEndpointTest : LanguageServerTestBase
     public async Task Handle_Valid_CSharpCodeAction_WithResolver()
     {
         // Arrange
-        var codeActionEndpoint = new CodeActionResolutionEndpoint(
-            Array.Empty<RazorCodeActionResolver>(),
+        var codeActionEndpoint = new CodeActionResolveEndpoint(
+            Array.Empty<IRazorCodeActionResolver>(),
             new CSharpCodeActionResolver[] {
                 new MockCSharpCodeActionResolver("Test"),
             },
@@ -95,8 +95,8 @@ public class CodeActionResolutionEndpointTest : LanguageServerTestBase
     public async Task Handle_Valid_CSharpCodeAction_WithMultipleLanguageResolvers()
     {
         // Arrange
-        var codeActionEndpoint = new CodeActionResolutionEndpoint(
-            new RazorCodeActionResolver[] {
+        var codeActionEndpoint = new CodeActionResolveEndpoint(
+            new IRazorCodeActionResolver[] {
                 new MockRazorCodeActionResolver("TestRazor"),
             },
             new CSharpCodeActionResolver[] {
@@ -131,8 +131,8 @@ public class CodeActionResolutionEndpointTest : LanguageServerTestBase
     public async Task Handle_Valid_RazorCodeAction_WithoutResolver()
     {
         // Arrange
-        var codeActionEndpoint = new CodeActionResolutionEndpoint(
-            Array.Empty<RazorCodeActionResolver>(),
+        var codeActionEndpoint = new CodeActionResolveEndpoint(
+            Array.Empty<IRazorCodeActionResolver>(),
             Array.Empty<CSharpCodeActionResolver>(),
             Array.Empty<HtmlCodeActionResolver>(),
             LoggerFactory);
@@ -169,8 +169,8 @@ public class CodeActionResolutionEndpointTest : LanguageServerTestBase
     public async Task Handle_Valid_CSharpCodeAction_WithoutResolver()
     {
         // Arrange
-        var codeActionEndpoint = new CodeActionResolutionEndpoint(
-            Array.Empty<RazorCodeActionResolver>(),
+        var codeActionEndpoint = new CodeActionResolveEndpoint(
+            Array.Empty<IRazorCodeActionResolver>(),
             Array.Empty<CSharpCodeActionResolver>(),
             Array.Empty<HtmlCodeActionResolver>(),
             LoggerFactory);
@@ -206,8 +206,8 @@ public class CodeActionResolutionEndpointTest : LanguageServerTestBase
     public async Task Handle_Valid_RazorCodeAction_WithCSharpResolver_ResolvesNull()
     {
         // Arrange
-        var codeActionEndpoint = new CodeActionResolutionEndpoint(
-            Array.Empty<RazorCodeActionResolver>(),
+        var codeActionEndpoint = new CodeActionResolveEndpoint(
+            Array.Empty<IRazorCodeActionResolver>(),
             new CSharpCodeActionResolver[] {
                 new MockCSharpCodeActionResolver("Test"),
             },
@@ -246,8 +246,8 @@ public class CodeActionResolutionEndpointTest : LanguageServerTestBase
     public async Task Handle_Valid_CSharpCodeAction_WithRazorResolver_ResolvesNull()
     {
         // Arrange
-        var codeActionEndpoint = new CodeActionResolutionEndpoint(
-            new RazorCodeActionResolver[] {
+        var codeActionEndpoint = new CodeActionResolveEndpoint(
+            new IRazorCodeActionResolver[] {
                 new MockRazorCodeActionResolver("Test"),
             },
             Array.Empty<CSharpCodeActionResolver>(),
@@ -285,8 +285,8 @@ public class CodeActionResolutionEndpointTest : LanguageServerTestBase
     public async Task ResolveRazorCodeAction_ResolveMultipleRazorProviders_FirstMatches()
     {
         // Arrange
-        var codeActionEndpoint = new CodeActionResolutionEndpoint(
-                new RazorCodeActionResolver[] {
+        var codeActionEndpoint = new CodeActionResolveEndpoint(
+                new IRazorCodeActionResolver[] {
                     new MockRazorCodeActionResolver("A"),
                     new MockRazorNullCodeActionResolver("B"),
             },
@@ -316,8 +316,8 @@ public class CodeActionResolutionEndpointTest : LanguageServerTestBase
     public async Task ResolveRazorCodeAction_ResolveMultipleRazorProviders_SecondMatches()
     {
         // Arrange
-        var codeActionEndpoint = new CodeActionResolutionEndpoint(
-            new RazorCodeActionResolver[] {
+        var codeActionEndpoint = new CodeActionResolveEndpoint(
+            new IRazorCodeActionResolver[] {
                 new MockRazorNullCodeActionResolver("A"),
                 new MockRazorCodeActionResolver("B"),
             },
@@ -347,8 +347,8 @@ public class CodeActionResolutionEndpointTest : LanguageServerTestBase
     public async Task ResolveCSharpCodeAction_ResolveMultipleCSharpProviders_FirstMatches()
     {
         // Arrange
-        var codeActionEndpoint = new CodeActionResolutionEndpoint(
-            Array.Empty<RazorCodeActionResolver>(),
+        var codeActionEndpoint = new CodeActionResolveEndpoint(
+            Array.Empty<IRazorCodeActionResolver>(),
             new CSharpCodeActionResolver[] {
                 new MockCSharpCodeActionResolver("A"),
                 new MockCSharpNullCodeActionResolver("B"),
@@ -377,8 +377,8 @@ public class CodeActionResolutionEndpointTest : LanguageServerTestBase
     public async Task ResolveCSharpCodeAction_ResolveMultipleCSharpProviders_SecondMatches()
     {
         // Arrange
-        var codeActionEndpoint = new CodeActionResolutionEndpoint(
-            Array.Empty<RazorCodeActionResolver>(),
+        var codeActionEndpoint = new CodeActionResolveEndpoint(
+            Array.Empty<IRazorCodeActionResolver>(),
             new CSharpCodeActionResolver[] {
                 new MockCSharpNullCodeActionResolver("A"),
                 new MockCSharpCodeActionResolver("B"),
@@ -407,8 +407,8 @@ public class CodeActionResolutionEndpointTest : LanguageServerTestBase
     public async Task ResolveCSharpCodeAction_ResolveMultipleLanguageProviders()
     {
         // Arrange
-        var codeActionEndpoint = new CodeActionResolutionEndpoint(
-            new RazorCodeActionResolver[] {
+        var codeActionEndpoint = new CodeActionResolveEndpoint(
+            new IRazorCodeActionResolver[] {
                 new MockRazorNullCodeActionResolver("A"),
                 new MockRazorCodeActionResolver("B"),
             },
@@ -440,8 +440,8 @@ public class CodeActionResolutionEndpointTest : LanguageServerTestBase
     public async Task Handle_ResolveEditBasedCodeActionCommand()
     {
         // Arrange
-        var codeActionEndpoint = new CodeActionResolutionEndpoint(
-            Array.Empty<RazorCodeActionResolver>(),
+        var codeActionEndpoint = new CodeActionResolveEndpoint(
+            Array.Empty<IRazorCodeActionResolver>(),
             new CSharpCodeActionResolver[] {
                 new MockCSharpCodeActionResolver("Test"),
             },
@@ -468,31 +468,31 @@ public class CodeActionResolutionEndpointTest : LanguageServerTestBase
         Assert.NotNull(razorCodeAction.Edit);
     }
 
-    private class MockRazorCodeActionResolver : RazorCodeActionResolver
+    private class MockRazorCodeActionResolver : IRazorCodeActionResolver
     {
-        public override string Action { get; }
+        public string Action { get; }
 
         internal MockRazorCodeActionResolver(string action)
         {
             Action = action;
         }
 
-        public override Task<WorkspaceEdit?> ResolveAsync(JObject data, CancellationToken cancellationToken)
+        public Task<WorkspaceEdit?> ResolveAsync(JObject data, CancellationToken cancellationToken)
         {
             return Task.FromResult<WorkspaceEdit?>(new WorkspaceEdit());
         }
     }
 
-    private class MockRazorNullCodeActionResolver : RazorCodeActionResolver
+    private class MockRazorNullCodeActionResolver : IRazorCodeActionResolver
     {
-        public override string Action { get; }
+        public  string Action { get; }
 
         internal MockRazorNullCodeActionResolver(string action)
         {
             Action = action;
         }
 
-        public override Task<WorkspaceEdit?> ResolveAsync(JObject data, CancellationToken cancellationToken)
+        public  Task<WorkspaceEdit?> ResolveAsync(JObject data, CancellationToken cancellationToken)
         {
             return Task.FromResult<WorkspaceEdit?>(null);
         }

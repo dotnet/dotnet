@@ -243,3 +243,4 @@
                 Semicolon;[;];
                 NewLine;[LF];
                 RightBrace;[}];
+    EndOfFile;[];

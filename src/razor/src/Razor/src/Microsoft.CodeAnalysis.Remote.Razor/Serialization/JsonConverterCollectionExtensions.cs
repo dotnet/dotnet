@@ -2,7 +2,7 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using System;
-using Microsoft.CodeAnalysis.Razor.Serialization;
+using Microsoft.AspNetCore.Razor.ProjectEngineHost.Serialization;
 using Microsoft.VisualStudio.LanguageServices.Razor.Serialization;
 using Newtonsoft.Json;
 
@@ -17,11 +17,9 @@ internal static class JsonConverterCollectionExtensions
             throw new ArgumentNullException(nameof(collection));
         }
 
-        collection.Add(TagHelperDescriptorJsonConverter.Instance);
-        collection.Add(RazorDiagnosticJsonConverter.Instance);
-        collection.Add(RazorExtensionJsonConverter.Instance);
-        collection.Add(RazorConfigurationJsonConverter.Instance);
         collection.Add(ProjectSnapshotHandleJsonConverter.Instance);
+
+        collection.RegisterProjectSerializerConverters();
 
         return collection;
     }

@@ -10,7 +10,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.LanguageServer.CodeActions.Models;
-using Microsoft.AspNetCore.Razor.LanguageServer.CodeActions.Razor;
 using Microsoft.AspNetCore.Razor.LanguageServer.Common;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -62,7 +61,7 @@ internal static class AddUsingsCodeActionProviderHelper
             // Filter to using directives
             .OfType<UsingDirectiveSyntax>()
             // Select everything after the initial "using " part of the statement. This is slightly lazy, for sure, but has
-            // the advantage of us not caring about chagnes to C# syntax, we just grab whatever Roslyn wanted to put in, so
+            // the advantage of us not caring about changes to C# syntax, we just grab whatever Roslyn wanted to put in, so
             // we should still work in C# v26
             .Select(u => u.ToString()["using ".Length..]);
 
@@ -134,7 +133,7 @@ internal static class AddUsingsCodeActionProviderHelper
         }
 
         @namespace = regexMatchedTextEdit.Groups[1].Value;
-        prefix = csharpAddUsing.Substring(0, regexMatchedTextEdit.Index);
+        prefix = csharpAddUsing[..regexMatchedTextEdit.Index];
         return true;
     }
 

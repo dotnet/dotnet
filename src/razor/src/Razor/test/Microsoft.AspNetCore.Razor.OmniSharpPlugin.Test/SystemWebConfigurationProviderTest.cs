@@ -4,7 +4,7 @@
 #nullable disable
 
 using System;
-using Microsoft.AspNetCore.Razor.LanguageServer.Common;
+using Microsoft.AspNetCore.Razor.ProjectEngineHost;
 using Microsoft.Build.Construction;
 using Microsoft.Build.Execution;
 using Xunit;

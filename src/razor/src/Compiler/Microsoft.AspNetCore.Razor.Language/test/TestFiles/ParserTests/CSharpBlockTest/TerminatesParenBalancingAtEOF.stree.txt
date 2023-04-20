@@ -16,3 +16,4 @@
                             Identifier;[code];
                             LeftParenthesis;[(];
                             RightParenthesis;[)];
+    EndOfFile;[];

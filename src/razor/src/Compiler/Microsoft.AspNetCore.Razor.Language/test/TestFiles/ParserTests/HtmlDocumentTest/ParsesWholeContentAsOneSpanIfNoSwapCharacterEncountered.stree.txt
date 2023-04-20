@@ -4,3 +4,4 @@
             Text;[foo];
             Whitespace;[ ];
             Text;[baz];
+    EndOfFile;[];

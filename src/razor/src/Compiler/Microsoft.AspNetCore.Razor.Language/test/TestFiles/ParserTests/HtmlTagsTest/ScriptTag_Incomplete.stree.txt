@@ -11,3 +11,4 @@
                         Text;[type];
                     Equals;[=];
                 CloseAngle;[<Missing>];
+    EndOfFile;[];

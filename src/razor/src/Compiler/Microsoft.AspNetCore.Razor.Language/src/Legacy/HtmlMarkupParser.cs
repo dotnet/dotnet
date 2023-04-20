@@ -93,7 +93,7 @@ internal class HtmlMarkupParser : TokenizerBackedParser<HtmlTokenizer>
 
             var markup = SyntaxFactory.MarkupBlock(builder.ToList());
 
-            return SyntaxFactory.RazorDocument(markup);
+            return SyntaxFactory.RazorDocument(markup, SyntaxFactory.Token(SyntaxKind.EndOfFile, "", Array.Empty<RazorDiagnostic>()));
         }
     }
 

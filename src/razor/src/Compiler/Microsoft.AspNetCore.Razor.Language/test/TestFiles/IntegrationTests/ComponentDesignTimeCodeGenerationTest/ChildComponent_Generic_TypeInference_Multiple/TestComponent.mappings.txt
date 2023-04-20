@@ -5,26 +5,26 @@ Generated Location: (1027:25,21 [4] )
 
 Source Location: (13:0,13 [4] x:\dir\subdir\Test\TestComponent.cshtml)
 |Item|
-Generated Location: (1238:34,13 [4] )
+Generated Location: (1276:35,13 [4] )
 |Item|
 
 Source Location: (52:1,21 [14] x:\dir\subdir\Test\TestComponent.cshtml)
 |"how are you?"|
-Generated Location: (1708:50,21 [14] )
+Generated Location: (1800:52,21 [14] )
 |"how are you?"|
 
 Source Location: (44:1,13 [4] x:\dir\subdir\Test\TestComponent.cshtml)
 |Item|
-Generated Location: (1929:59,13 [4] )
+Generated Location: (2059:62,13 [4] )
 |Item|
 
 Source Location: (93:2,21 [6] x:\dir\subdir\Test\TestComponent.cshtml)
 |"bye!"|
-Generated Location: (2399:75,21 [6] )
+Generated Location: (2583:79,21 [6] )
 |"bye!"|
 
 Source Location: (85:2,13 [4] x:\dir\subdir\Test\TestComponent.cshtml)
 |Item|
-Generated Location: (2612:84,13 [4] )
+Generated Location: (2834:89,13 [4] )
 |Item|
 

@@ -16,3 +16,4 @@
                             Identifier;[baz];
         MarkupTextLiteral - [12..13)::1 - [;] - Gen<Markup> - SpanEditHandler;Accepts:Any
             Text;[;];
+    EndOfFile;[];

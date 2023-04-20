@@ -28,3 +28,4 @@
                 ForwardSlash;[/];
                 Text;[template];
                 CloseAngle;[>];
+    EndOfFile;[];

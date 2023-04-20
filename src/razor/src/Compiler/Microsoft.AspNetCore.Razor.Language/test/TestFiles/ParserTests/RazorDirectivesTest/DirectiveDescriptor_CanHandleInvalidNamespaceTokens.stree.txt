@@ -22,3 +22,4 @@
                     MarkupTextLiteral - [15..17)::2 - [LF] - Gen<Markup> - SpanEditHandler;Accepts:Any
                         NewLine;[LF];
                 CloseAngle;[<Missing>];
+    EndOfFile;[];

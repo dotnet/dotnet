@@ -3,8 +3,8 @@
 
 using System;
 using Microsoft.AspNetCore.Razor.Language;
+using Microsoft.AspNetCore.Razor.ProjectEngineHost.Serialization;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
-using Microsoft.CodeAnalysis.Razor.Serialization;
 using Newtonsoft.Json;
 
 namespace Microsoft.VisualStudio.LanguageServices.Razor.Serialization;

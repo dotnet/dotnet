@@ -6,7 +6,7 @@
 using System;
 using System.Composition;
 using Microsoft.AspNetCore.Razor.ExternalAccess.OmniSharp.Document;
-using Microsoft.AspNetCore.Razor.LanguageServer.Common;
+using Microsoft.AspNetCore.Razor.ProjectEngineHost;
 
 namespace Microsoft.AspNetCore.Razor.OmniSharpPlugin;
 

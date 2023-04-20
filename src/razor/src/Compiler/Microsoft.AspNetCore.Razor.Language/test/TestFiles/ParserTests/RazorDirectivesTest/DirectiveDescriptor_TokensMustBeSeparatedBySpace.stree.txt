@@ -18,3 +18,4 @@
             DoubleQuote;["];
             Text;[string2];
             DoubleQuote;["];
+    EndOfFile;[];

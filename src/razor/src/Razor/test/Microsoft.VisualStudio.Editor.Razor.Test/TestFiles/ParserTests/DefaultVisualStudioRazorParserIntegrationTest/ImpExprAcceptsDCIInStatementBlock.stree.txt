@@ -28,3 +28,4 @@ RazorDocument - [0..18)::18 - [@{LF    @DateT.LF}]
                         RightBrace;[}];
         MarkupTextLiteral - [18..18)::0 - [] - Gen<Markup> - SpanEditHandler;Accepts:Any
             Marker;[];
+    EndOfFile;[];

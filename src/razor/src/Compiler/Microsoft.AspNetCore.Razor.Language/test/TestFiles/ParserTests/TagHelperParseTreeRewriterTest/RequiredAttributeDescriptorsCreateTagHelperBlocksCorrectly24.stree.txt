@@ -37,3 +37,4 @@
                         Whitespace;[ ];
                 ForwardSlash;[/];
                 CloseAngle;[>];
+    EndOfFile;[];

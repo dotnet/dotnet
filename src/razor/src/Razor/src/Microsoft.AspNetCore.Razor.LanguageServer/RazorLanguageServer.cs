@@ -27,7 +27,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.Editor.Razor;
-using Microsoft.VisualStudio.Telemetry;
 using StreamJsonRpc;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer;
@@ -39,6 +38,7 @@ internal class RazorLanguageServer : AbstractLanguageServer<RazorRequestContext>
     private readonly ProjectSnapshotManagerDispatcher? _projectSnapshotManagerDispatcher;
     private readonly Action<IServiceCollection>? _configureServer;
     private readonly RazorLSPOptions _lspOptions;
+    private readonly ITelemetryReporter _telemetryReporter;
 
     // Cached for testing
     private IHandlerProvider? _handlerProvider;
@@ -49,7 +49,8 @@ internal class RazorLanguageServer : AbstractLanguageServer<RazorRequestContext>
         ProjectSnapshotManagerDispatcher? projectSnapshotManagerDispatcher,
         LanguageServerFeatureOptions? featureOptions,
         Action<IServiceCollection>? configureServer,
-        RazorLSPOptions? lspOptions)
+        RazorLSPOptions? lspOptions,
+        ITelemetryReporter telemetryReporter)
         : base(jsonRpc, logger)
     {
         _jsonRpc = jsonRpc;
@@ -57,6 +58,7 @@ internal class RazorLanguageServer : AbstractLanguageServer<RazorRequestContext>
         _projectSnapshotManagerDispatcher = projectSnapshotManagerDispatcher;
         _configureServer = configureServer;
         _lspOptions = lspOptions ?? RazorLSPOptions.Default;
+        _telemetryReporter = telemetryReporter;
 
         Initialize();
     }
@@ -85,7 +87,7 @@ internal class RazorLanguageServer : AbstractLanguageServer<RazorRequestContext>
         }
         else
         {
-            services.AddSingleton<LoggerAdapter>((provider) =>
+            services.AddSingleton<LoggerAdapter>(static (provider) =>
             {
                 var loggers = provider.GetServices<ILogger>();
                 if (!loggers.Any())
@@ -137,26 +139,19 @@ internal class RazorLanguageServer : AbstractLanguageServer<RazorRequestContext>
         services.AddSingleton<IOnAutoInsertProvider, AutoClosingTagOnAutoInsertProvider>();
 
         // Folding Range Providers
-        services.AddSingleton<RazorFoldingRangeProvider, RazorCodeBlockFoldingProvider>();
+        services.AddSingleton<IRazorFoldingRangeProvider, RazorCodeBlockFoldingProvider>();
 
         // Other
         services.AddSingleton<HtmlFactsService, DefaultHtmlFactsService>();
         services.AddSingleton<WorkspaceDirectoryPathResolver, DefaultWorkspaceDirectoryPathResolver>();
         services.AddSingleton<RazorComponentSearchEngine, DefaultRazorComponentSearchEngine>();
 
-        // Folding Range Providers
-        services.AddSingleton<RazorFoldingRangeProvider, RazorCodeBlockFoldingProvider>();
-
         services.AddSingleton<IFaultExceptionHandler, JsonRPCFaultExceptionHandler>();
 
         // Get the DefaultSession for telemetry. This is set by VS with
         // TelemetryService.SetDefaultSession and provides the correct
         // appinsights keys etc
-        services.AddSingleton<ITelemetryReporter>(provider =>
-            new TelemetryReporter(
-                ImmutableArray.Create(TelemetryService.DefaultSession),
-                provider.GetRequiredService<ILoggerFactory>(),
-                provider.GetServices<IFaultExceptionHandler>()));
+        services.AddSingleton<ITelemetryReporter>(_telemetryReporter);
 
         // Defaults: For when the caller hasn't provided them through the `configure` action.
         services.TryAddSingleton<HostServicesProvider, DefaultHostServicesProvider>();

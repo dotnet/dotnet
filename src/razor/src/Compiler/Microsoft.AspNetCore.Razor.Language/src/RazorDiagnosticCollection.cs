@@ -42,6 +42,12 @@ public sealed class RazorDiagnosticCollection : IList<RazorDiagnostic>
 
     public int Count => _inner.Count;
 
+    internal int Capacity
+    {
+        get => _inner.Capacity;
+        set => _inner.Capacity = value;
+    }
+
     public bool IsReadOnly => _inner != null;
 
     public void Add(RazorDiagnostic item)

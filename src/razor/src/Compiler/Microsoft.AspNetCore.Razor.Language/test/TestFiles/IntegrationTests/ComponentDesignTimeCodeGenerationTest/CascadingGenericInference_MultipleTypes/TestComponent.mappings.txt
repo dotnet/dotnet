@@ -15,16 +15,16 @@ Generated Location: (1987:44,29 [23] )
 
 Source Location: (115:1,11 [14] x:\dir\subdir\Test\TestComponent.cshtml)
 |ChildOnlyItems|
-Generated Location: (2225:53,11 [14] )
+Generated Location: (2271:54,11 [14] )
 |ChildOnlyItems|
 
 Source Location: (8:0,8 [4] x:\dir\subdir\Test\TestComponent.cshtml)
 |Data|
-Generated Location: (2646:71,8 [4] )
+Generated Location: (2796:74,8 [4] )
 |Data|
 
 Source Location: (75:0,75 [5] x:\dir\subdir\Test\TestComponent.cshtml)
 |Other|
-Generated Location: (2921:80,75 [5] )
+Generated Location: (3075:83,75 [5] )
 |Other|
 

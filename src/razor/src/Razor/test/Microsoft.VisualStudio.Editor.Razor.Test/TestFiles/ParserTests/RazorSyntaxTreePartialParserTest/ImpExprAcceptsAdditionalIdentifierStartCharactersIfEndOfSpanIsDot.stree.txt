@@ -28,3 +28,4 @@ RazorDocument - [0..9)::9 - [@{@foo.b}]
                         RightBrace;[}];
         MarkupTextLiteral - [9..9)::0 - [] - Gen<Markup> - SpanEditHandler;Accepts:Any
             Marker;[];
+    EndOfFile;[];

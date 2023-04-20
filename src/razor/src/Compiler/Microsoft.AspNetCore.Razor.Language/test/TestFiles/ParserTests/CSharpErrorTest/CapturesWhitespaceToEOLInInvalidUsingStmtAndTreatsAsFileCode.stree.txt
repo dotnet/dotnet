@@ -11,3 +11,4 @@
                 NewLine;[LF];
         MarkupTextLiteral - [18..20)::2 - [LF] - Gen<Markup> - SpanEditHandler;Accepts:Any
             NewLine;[LF];
+    EndOfFile;[];

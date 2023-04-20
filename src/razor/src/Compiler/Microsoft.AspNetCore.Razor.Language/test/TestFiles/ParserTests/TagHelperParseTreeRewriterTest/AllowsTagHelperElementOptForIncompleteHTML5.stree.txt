@@ -18,3 +18,4 @@
                             MarkupTextLiteral - [11..14)::3 - [btn] - Gen<Markup> - SpanEditHandler;Accepts:Any
                                 Text;[btn];
                 CloseAngle;[<Missing>];
+    EndOfFile;[];

@@ -14,14 +14,13 @@ using Microsoft.AspNetCore.Razor.Language.Legacy;
 using Microsoft.AspNetCore.Razor.Language.Syntax;
 using Microsoft.AspNetCore.Razor.LanguageServer.CodeActions.Models;
 using Microsoft.AspNetCore.Razor.LanguageServer.Common;
-using Microsoft.AspNetCore.Razor.LanguageServer.Common.Extensions;
 using Microsoft.AspNetCore.Razor.LanguageServer.Extensions;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Newtonsoft.Json.Linq;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.CodeActions;
 
-internal class AddUsingsCodeActionResolver : RazorCodeActionResolver
+internal sealed class AddUsingsCodeActionResolver : IRazorCodeActionResolver
 {
     private readonly DocumentContextFactory _documentContextFactory;
 
@@ -30,9 +29,9 @@ internal class AddUsingsCodeActionResolver : RazorCodeActionResolver
         _documentContextFactory = documentContextFactory ?? throw new ArgumentNullException(nameof(documentContextFactory));
     }
 
-    public override string Action => LanguageServerConstants.CodeActions.AddUsing;
+    public string Action => LanguageServerConstants.CodeActions.AddUsing;
 
-    public override async Task<WorkspaceEdit?> ResolveAsync(JObject data, CancellationToken cancellationToken)
+    public async Task<WorkspaceEdit?> ResolveAsync(JObject data, CancellationToken cancellationToken)
     {
         if (data is null)
         {
@@ -79,7 +78,7 @@ internal class AddUsingsCodeActionResolver : RazorCodeActionResolver
          *   alphabetical order.
          * - If @using directives are present and alphabetized with System directives at the top, the statements
          *   will be placed in the correct locations according to that ordering.
-         * - Otherwise it's kinda undefined; it's only geared to insert based on alphabetization.
+         * - Otherwise it's kind of undefined; it's only geared to insert based on alphabetization.
          *
          * This is generally sufficient for our current situation (inserting a single @using statement to include a
          * component), however it has holes if we eventually use it for other purposes. If we want to deal with

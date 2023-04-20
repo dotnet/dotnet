@@ -20,3 +20,4 @@
                 Assign;[=];
                 Whitespace;[ ];
                 StringLiteral;[@"blah LFblah; LF<p>Foo</p>LFblah LFblah];RZ1000(21:0,21 [1] )
+    EndOfFile;[];

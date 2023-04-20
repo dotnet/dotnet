@@ -205,3 +205,4 @@
                     MarkupTextLiteral - [313..314)::1 - [}] - Gen<Markup> - SpanEditHandler;Accepts:Any
                         Text;[}];
                 CloseAngle;[<Missing>];
+    EndOfFile;[];

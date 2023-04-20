@@ -17,3 +17,4 @@ RazorDocument - [0..20)::20 - [foo @await Html. baz]
             Text;[.];
             Whitespace;[ ];
             Text;[baz];
+    EndOfFile;[];

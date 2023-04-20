@@ -9,7 +9,7 @@ using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Newtonsoft.Json;
 using Xunit;
 
-namespace Microsoft.AspNetCore.Razor.LanguageServer.Refactoring.Test;
+namespace Microsoft.AspNetCore.Razor.LanguageServer.Serialization;
 
 public class PlatformAgnosticClientCapabilitiesJsonConverterTest
 {

@@ -13,3 +13,4 @@
                             QuestionMark;[?];
                             LeftBracket;[[];
                             Identifier;[more];
+    EndOfFile;[];

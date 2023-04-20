@@ -13,16 +13,18 @@ using Microsoft.AspNetCore.Razor.LanguageServer.EndpointContracts;
 using Microsoft.AspNetCore.Razor.LanguageServer.Extensions;
 using Microsoft.AspNetCore.Razor.LanguageServer.Protocol;
 using Microsoft.CodeAnalysis.Razor.Workspaces.Extensions;
+using Microsoft.CommonLanguageServerProtocol.Framework;
 using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Folding;
 
-internal class FoldingRangeEndpoint : IVSFoldingRangeEndpoint
+[LanguageServerEndpoint(Methods.TextDocumentFoldingRangeName)]
+internal sealed class FoldingRangeEndpoint : IRazorRequestHandler<FoldingRangeParams, IEnumerable<FoldingRange>?>, IRegistrationExtension
 {
     private readonly RazorDocumentMappingService _documentMappingService;
     private readonly ClientNotifierServiceBase _languageServer;
-    private readonly IEnumerable<RazorFoldingRangeProvider> _foldingRangeProviders;
+    private readonly IEnumerable<IRazorFoldingRangeProvider> _foldingRangeProviders;
     private readonly ILogger _logger;
 
     public bool MutatesSolutionState => false;
@@ -30,7 +32,7 @@ internal class FoldingRangeEndpoint : IVSFoldingRangeEndpoint
     public FoldingRangeEndpoint(
         RazorDocumentMappingService documentMappingService,
         ClientNotifierServiceBase languageServer,
-        IEnumerable<RazorFoldingRangeProvider> foldingRangeProviders,
+        IEnumerable<IRazorFoldingRangeProvider> foldingRangeProviders,
         ILoggerFactory loggerFactory)
     {
         _documentMappingService = documentMappingService ?? throw new ArgumentNullException(nameof(documentMappingService));
@@ -77,7 +79,7 @@ internal class FoldingRangeEndpoint : IVSFoldingRangeEndpoint
         {
             try
             {
-                foldingRanges = await HandleCoreAsync(requestParams, documentContext, cancellationToken);
+                foldingRanges = await HandleCoreAsync(requestParams, documentContext, cancellationToken).ConfigureAwait(false);
 
                 cancellationToken.ThrowIfCancellationRequested();
             }
@@ -124,7 +126,7 @@ internal class FoldingRangeEndpoint : IVSFoldingRangeEndpoint
 
         foreach (var provider in _foldingRangeProviders)
         {
-            var ranges = await provider.GetFoldingRangesAsync(documentContext, cancellationToken);
+            var ranges = await provider.GetFoldingRangesAsync(documentContext, cancellationToken).ConfigureAwait(false);
             mappedRanges.AddRange(ranges);
         }
 

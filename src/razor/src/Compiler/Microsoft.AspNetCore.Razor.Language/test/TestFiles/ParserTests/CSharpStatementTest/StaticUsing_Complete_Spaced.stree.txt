@@ -19,3 +19,4 @@
                         Identifier;[Console];
         MarkupTextLiteral - [40..42)::2 - [  ] - Gen<Markup> - SpanEditHandler;Accepts:Any
             Whitespace;[  ];
+    EndOfFile;[];

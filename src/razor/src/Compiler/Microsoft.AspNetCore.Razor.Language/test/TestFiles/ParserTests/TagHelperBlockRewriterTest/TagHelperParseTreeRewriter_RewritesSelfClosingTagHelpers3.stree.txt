@@ -52,3 +52,4 @@
                 CloseAngle;[>];
         MarkupTextLiteral - [47..52)::5 - [World] - Gen<Markup> - SpanEditHandler;Accepts:Any
             Text;[World];
+    EndOfFile;[];

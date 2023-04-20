@@ -15,3 +15,4 @@
         MarkupTextLiteral - [8..21)::13 - [Serializable]] - Gen<Markup> - SpanEditHandler;Accepts:Any
             Text;[Serializable];
             RightBracket;[]];
+    EndOfFile;[];

@@ -47,3 +47,4 @@
                     MarkupTextLiteral - [37..38)::1 - [ ] - Gen<Markup> - SpanEditHandler;Accepts:Any
                         Whitespace;[ ];
                 CloseAngle;[>];
+    EndOfFile;[];

@@ -5,7 +5,7 @@ Generated Location: (953:25,46 [14] )
 
 Source Location: (29:0,29 [14] x:\dir\subdir\Test\TestComponent.cshtml)
 |NullableAction|
-Generated Location: (1369:37,29 [14] )
+Generated Location: (1407:38,29 [14] )
 |NullableAction|
 
 Source Location: (73:1,7 [61] x:\dir\subdir\Test\TestComponent.cshtml)
@@ -13,7 +13,7 @@ Source Location: (73:1,7 [61] x:\dir\subdir\Test\TestComponent.cshtml)
 	[Parameter]
 	public Action NullableAction { get; set; }
 |
-Generated Location: (1753:54,7 [61] )
+Generated Location: (1845:56,7 [61] )
 |
 	[Parameter]
 	public Action NullableAction { get; set; }

@@ -27,3 +27,4 @@
                 LeftParenthesis;[(];
                 Keyword;[true];
                 RightParenthesis;[)];
+    EndOfFile;[];

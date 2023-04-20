@@ -4,6 +4,7 @@
 using System;
 using System.Linq;
 using System.Reflection;
+using Microsoft.AspNetCore.Razor.Telemetry;
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.CommonLanguageServerProtocol.Framework;
 using Nerdbank.Streams;
@@ -23,7 +24,7 @@ public class RazorLanguageServerTest : TestBase
     public void AllHandlersRegisteredAsync()
     {
         var (clientStream, serverStream) = FullDuplexStream.CreatePair();
-        using var server = RazorLanguageServerWrapper.Create(serverStream, serverStream, Logger);
+        using var server = RazorLanguageServerWrapper.Create(serverStream, serverStream, Logger, NoOpTelemetryReporter.Instance);
 
         var innerServer = server.GetInnerLanguageServerForTesting();
         var handlerProvider = innerServer.GetTestAccessor().GetHandlerProvider();

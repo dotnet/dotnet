@@ -11,3 +11,4 @@
                 ForwardSlash;[/];
                 Text;[input];
                 CloseAngle;[>];
+    EndOfFile;[];

@@ -20,3 +20,4 @@
                 ForwardSlash;[/];
                 Text;[th:myth];
                 CloseAngle;[>];
+    EndOfFile;[];

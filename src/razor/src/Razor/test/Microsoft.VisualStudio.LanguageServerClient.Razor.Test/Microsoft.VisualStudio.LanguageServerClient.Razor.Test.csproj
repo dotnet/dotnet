@@ -9,10 +9,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Include="..\..\src\Microsoft.AspNetCore.Razor.LanguageServer.Common\Extensions\RazorCodeDocumentExtensions.cs" LinkBase="Shared" />
-  </ItemGroup>
-
-  <ItemGroup>
     <None Include="xunit.runner.json" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 

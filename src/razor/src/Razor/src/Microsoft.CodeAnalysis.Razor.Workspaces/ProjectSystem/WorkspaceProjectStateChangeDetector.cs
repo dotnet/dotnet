@@ -13,7 +13,6 @@ using Microsoft.AspNetCore.Razor.Language.Components;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Razor.Workspaces.Extensions;
-using Microsoft.VisualStudio.Threading;
 
 namespace Microsoft.CodeAnalysis.Razor.ProjectSystem;
 
@@ -96,7 +95,7 @@ internal class WorkspaceProjectStateChangeDetector : ProjectSnapshotChangeTrigge
     // Internal for testing, virtual for temporary VSCode workaround
     internal virtual void Workspace_WorkspaceChanged(object? sender, WorkspaceChangeEventArgs e)
     {
-        Workspace_WorkspaceChangedAsync(e, CancellationToken.None).Forget();
+        _ = Workspace_WorkspaceChangedAsync(e, CancellationToken.None);
     }
 
     private async Task Workspace_WorkspaceChangedAsync(WorkspaceChangeEventArgs e, CancellationToken cancellationToken)

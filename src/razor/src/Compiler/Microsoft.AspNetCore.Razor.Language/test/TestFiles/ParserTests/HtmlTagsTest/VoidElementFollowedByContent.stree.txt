@@ -482,3 +482,4 @@
                         RightBrace;[}];
         MarkupEphemeralTextLiteral - [450..452)::2 - [LF] - Gen<None> - SpanEditHandler;Accepts:Any
             NewLine;[LF];
+    EndOfFile;[];

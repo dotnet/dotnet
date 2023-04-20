@@ -18,3 +18,4 @@
                 ForwardSlash;[/];
                 Text;[script];
                 CloseAngle;[>];
+    EndOfFile;[];

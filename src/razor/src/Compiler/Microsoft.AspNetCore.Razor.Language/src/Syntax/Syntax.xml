@@ -11,6 +11,9 @@
   <Node Name="RazorDocumentSyntax" Base="RazorSyntaxNode">
     <Kind Name="RazorDocument" />
     <Field Name="Document" Type="RazorBlockSyntax" />
+    <Field Name="EndOfFile" Type="SyntaxToken">
+      <Kind Name="EndOfFile" />
+    </Field>
   </Node>
   <Node Name="RazorCommentBlockSyntax" Base="RazorSyntaxNode">
     <Kind Name="RazorComment" />

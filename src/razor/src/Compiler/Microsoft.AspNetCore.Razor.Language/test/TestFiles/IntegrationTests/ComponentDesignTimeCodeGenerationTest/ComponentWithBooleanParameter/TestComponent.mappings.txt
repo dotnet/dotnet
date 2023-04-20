@@ -10,7 +10,7 @@ Generated Location: (1152:32,25 [4] )
 
 Source Location: (45:2,15 [8] x:\dir\subdir\Test\TestComponent.cshtml)
 |TestBool|
-Generated Location: (1530:44,15 [8] )
+Generated Location: (1568:45,15 [8] )
 |TestBool|
 
 Source Location: (74:4,7 [59] x:\dir\subdir\Test\TestComponent.cshtml)
@@ -18,7 +18,7 @@ Source Location: (74:4,7 [59] x:\dir\subdir\Test\TestComponent.cshtml)
     [Parameter]
     public bool TestBool { get; set; }
 |
-Generated Location: (1894:61,7 [59] )
+Generated Location: (1986:63,7 [59] )
 |
     [Parameter]
     public bool TestBool { get; set; }

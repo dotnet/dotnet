@@ -12,3 +12,4 @@
                     MarkupTextLiteral - [4..5)::1 - [/] - Gen<Markup> - SpanEditHandler;Accepts:Any
                         ForwardSlash;[/];
                 CloseAngle;[<Missing>];
+    EndOfFile;[];

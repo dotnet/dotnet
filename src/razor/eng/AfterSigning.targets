@@ -1,4 +1,5 @@
 ﻿<Project>
+
   <Target Name="_EnsureVSIXWasGenerated" AfterTargets="GenerateVisualStudioInsertionManifests" Condition="'$(OS)'=='WINDOWS_NT' AND '$(ArcadeBuildFromSource)' != 'true'">
     <PropertyGroup>
       <VSSetupDir>$(ArtifactsDir)VSSetup\</VSSetupDir>
@@ -22,6 +23,8 @@
       <RidsPublishDir>$(ArtifactsDir)LanguageServer\$(Configuration)\</RidsPublishDir>
       <ZipOutputDir>$(RidsPublishDir)</ZipOutputDir>
       <_PackageVersion>@(_ResolvedPackageVersionInfo->'%(PackageVersion)')</_PackageVersion>
+      <_DotNetPath>$(DOTNET_HOST_PATH)</_DotNetPath>
+      <_DotNetPath Condition="'$(_DotNetPath)' == ''">dotnet</_DotNetPath>
     </PropertyGroup>
 
     <ItemGroup>
@@ -36,19 +39,7 @@
     <Delete Files="%(LanguageServiceBinary.ZipFile)" />
 
     <!-- Build a .zip file from each platform's directory and write it to 'artifacts' -->
-
-    <!-- Mac -->
-    <Exec Command="pwsh -NonInteractive -command &quot;&amp;{ Write-Host &quot;Writing %(LanguageServiceBinary.ZipFile)...&quot; ; Add-Type -AssemblyName System.IO.Compression.FileSystem; [System.IO.Compression.ZipFile]::CreateFromDirectory('%(LanguageServiceBinary.SourceDir)', '%(LanguageServiceBinary.ZipFile)') }&quot;"
-          Condition="$([MSBuild]::IsOSPlatform('OSX'))" />
-
-    <!-- Windows -->
-    <Exec Command="powershell.exe -NonInteractive -command &quot;&amp;{ Write-Host &quot;Writing %(LanguageServiceBinary.ZipFile)...&quot; ; Add-Type -AssemblyName System.IO.Compression.FileSystem; [System.IO.Compression.ZipFile]::CreateFromDirectory('%(LanguageServiceBinary.SourceDir)', '%(LanguageServiceBinary.ZipFile)') }&quot;"
-          Condition="$([MSBuild]::IsOSPlatform('Windows'))" />
-
-    <!-- Linux -->
-    <Exec Command="curl https://packages.microsoft.com/config/rhel/8/prod.repo | sudo tee /etc/yum.repos.d/microsoft.repo" Condition="$([MSBuild]::IsOSPlatform('Linux'))" />
-    <Exec Command="sudo yum install -y powershell 2>/dev/null" Condition="$([MSBuild]::IsOSPlatform('Linux'))" />
-    <Exec Command="pwsh -NonInteractive -command &quot;&amp;{ Write-Host &quot;Writing %(LanguageServiceBinary.ZipFile)...&quot; ; Add-Type -AssemblyName System.IO.Compression.FileSystem; [System.IO.Compression.ZipFile]::CreateFromDirectory('%(LanguageServiceBinary.SourceDir)', '%(LanguageServiceBinary.ZipFile)') }&quot;"
-          Condition="$([MSBuild]::IsOSPlatform('Linux'))" />
+    <Exec Command="$(_DotNetPath) pwsh -NonInteractive -command &quot;&amp;{ Write-Host &quot;Writing %(LanguageServiceBinary.ZipFile)...&quot; ; Add-Type -AssemblyName System.IO.Compression.FileSystem; [System.IO.Compression.ZipFile]::CreateFromDirectory('%(LanguageServiceBinary.SourceDir)', '%(LanguageServiceBinary.ZipFile)') }&quot;"
+          WorkingDirectory="$(MSBuildThisFileDirectory)..\" />
   </Target>
 </Project>

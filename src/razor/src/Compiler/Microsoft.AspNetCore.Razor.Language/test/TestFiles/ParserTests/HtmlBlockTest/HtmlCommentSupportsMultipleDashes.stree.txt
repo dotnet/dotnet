@@ -128,3 +128,4 @@
                 CloseAngle;[>];
         MarkupTextLiteral - [163..165)::2 - [LF] - Gen<Markup> - SpanEditHandler;Accepts:Any
             NewLine;[LF];
+    EndOfFile;[];

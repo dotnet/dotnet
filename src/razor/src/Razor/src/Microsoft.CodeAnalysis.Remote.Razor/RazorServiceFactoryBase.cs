@@ -5,6 +5,7 @@ using System;
 using System.IO;
 using System.IO.Pipelines;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Razor.Telemetry;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
 using Microsoft.ServiceHub.Framework;
 using Microsoft.ServiceHub.Framework.Services;
@@ -21,6 +22,7 @@ namespace Microsoft.CodeAnalysis.Remote.Razor;
 internal abstract class RazorServiceFactoryBase<TService> : IServiceHubServiceFactory where TService : class
 {
     private readonly RazorServiceDescriptorsWrapper _razorServiceDescriptors;
+    private ITelemetryReporter? _telemetryReporter;
 
     /// <summary>
     /// </summary>
@@ -43,6 +45,8 @@ internal abstract class RazorServiceFactoryBase<TService> : IServiceHubServiceFa
         // Dispose the AuthorizationServiceClient since we won't be using it
         authorizationServiceClient?.Dispose();
 
+        _telemetryReporter = (ITelemetryReporter)hostProvidedServices.GetService(typeof(ITelemetryReporter));
+
         return Task.FromResult((object)Create(stream.UsePipe(), serviceBroker));
     }
 
@@ -51,7 +55,7 @@ internal abstract class RazorServiceFactoryBase<TService> : IServiceHubServiceFa
         var descriptor = _razorServiceDescriptors.GetDescriptorForServiceFactory(typeof(TService));
         var serverConnection = descriptor.ConstructRpcConnection(pipe);
 
-        var service = CreateService(serviceBroker);
+        var service = CreateService(serviceBroker, _telemetryReporter ?? NoOpTelemetryReporter.Instance);
 
         serverConnection.AddLocalRpcTarget(service);
         serverConnection.StartListening();
@@ -59,5 +63,5 @@ internal abstract class RazorServiceFactoryBase<TService> : IServiceHubServiceFa
         return service;
     }
 
-    protected abstract TService CreateService(IServiceBroker serviceBroker);
+    protected abstract TService CreateService(IServiceBroker serviceBroker, ITelemetryReporter telemetryReporter);
 }

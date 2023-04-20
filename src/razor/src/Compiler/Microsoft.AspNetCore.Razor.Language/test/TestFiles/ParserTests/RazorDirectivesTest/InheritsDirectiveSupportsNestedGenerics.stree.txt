@@ -32,3 +32,4 @@
                             GreaterThan;[>];
         MarkupTextLiteral - [87..87)::0 - [] - Gen<Markup> - SpanEditHandler;Accepts:Any
             Marker;[];
+    EndOfFile;[];

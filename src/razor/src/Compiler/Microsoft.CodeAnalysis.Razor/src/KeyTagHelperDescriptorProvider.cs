@@ -46,9 +46,12 @@ internal class KeyTagHelperDescriptorProvider : ITagHelperDescriptorProvider
         context.Results.Add(CreateKeyTagHelper());
     }
 
-    private TagHelperDescriptor CreateKeyTagHelper()
+    private static TagHelperDescriptor CreateKeyTagHelper()
     {
-        var builder = TagHelperDescriptorBuilder.Create(ComponentMetadata.Key.TagHelperKind, "Key", ComponentsApi.AssemblyName);
+        using var _ = TagHelperDescriptorBuilder.GetPooledInstance(
+            ComponentMetadata.Key.TagHelperKind, "Key", ComponentsApi.AssemblyName,
+            out var builder);
+
         builder.CaseSensitive = true;
         builder.Documentation = ComponentResources.KeyTagHelper_Documentation;
 
@@ -75,9 +78,9 @@ internal class KeyTagHelperDescriptorProvider : ITagHelperDescriptorProvider
             attribute.Documentation = ComponentResources.KeyTagHelper_Documentation;
             attribute.Name = "@key";
 
-                // WTE has a bug 15.7p1 where a Tag Helper without a display-name that looks like
-                // a C# property will crash trying to create the tooltips.
-                attribute.SetPropertyName("Key");
+            // WTE has a bug 15.7p1 where a Tag Helper without a display-name that looks like
+            // a C# property will crash trying to create the tooltips.
+            attribute.SetPropertyName("Key");
             attribute.TypeName = typeof(object).FullName;
             attribute.Metadata[ComponentMetadata.Common.DirectiveAttribute] = bool.TrueString;
         });

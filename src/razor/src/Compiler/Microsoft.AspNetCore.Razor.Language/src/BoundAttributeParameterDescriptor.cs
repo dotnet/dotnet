@@ -11,6 +11,19 @@ namespace Microsoft.AspNetCore.Razor.Language;
 
 public abstract class BoundAttributeParameterDescriptor : IEquatable<BoundAttributeParameterDescriptor>
 {
+    private const int ContainsDiagnosticsBit = 1 << 0;
+    private const int IsEnumBit = 1 << 1;
+    private const int IsStringPropertyBit = 1 << 2;
+    private const int IsBooleanPropertyBit = 1 << 3;
+    private const int CaseSensitiveBit = 1 << 4;
+
+    private int _flags;
+
+    private bool HasFlag(int flag) => (_flags & flag) != 0;
+    private void SetFlag(int toSet) => ThreadSafeFlagOperations.Set(ref _flags, toSet);
+    private void ClearFlag(int toClear) => ThreadSafeFlagOperations.Clear(ref _flags, toClear);
+    private void SetOrClearFlag(int toChange, bool value) => ThreadSafeFlagOperations.SetOrClear(ref _flags, toChange, value);
+
     protected BoundAttributeParameterDescriptor(string kind)
     {
         Kind = kind;
@@ -18,11 +31,23 @@ public abstract class BoundAttributeParameterDescriptor : IEquatable<BoundAttrib
 
     public string Kind { get; }
 
-    public bool IsEnum { get; protected set; }
+    public bool IsEnum
+    {
+        get => HasFlag(IsEnumBit);
+        protected set => SetOrClearFlag(IsEnumBit, value);
+    }
 
-    public bool IsStringProperty { get; protected set; }
+    public bool IsStringProperty
+    {
+        get => HasFlag(IsStringPropertyBit);
+        protected set => SetOrClearFlag(IsStringPropertyBit, value);
+    }
 
-    public bool IsBooleanProperty { get; protected set; }
+    public bool IsBooleanProperty
+    {
+        get => HasFlag(IsBooleanPropertyBit);
+        protected set => SetOrClearFlag(IsBooleanPropertyBit, value);
+    }
 
     public string Name { get; protected set; }
 
@@ -32,9 +57,32 @@ public abstract class BoundAttributeParameterDescriptor : IEquatable<BoundAttrib
 
     public string DisplayName { get; protected set; }
 
-    public bool CaseSensitive { get; protected set; }
+    public bool CaseSensitive
+    {
+        get => HasFlag(CaseSensitiveBit);
+        protected set => SetOrClearFlag(CaseSensitiveBit, value);
+    }
 
-    public IReadOnlyList<RazorDiagnostic> Diagnostics { get; protected set; }
+    public IReadOnlyList<RazorDiagnostic> Diagnostics
+    {
+        get => HasFlag(ContainsDiagnosticsBit)
+            ? TagHelperDiagnostics.GetDiagnostics(this)
+            : Array.Empty<RazorDiagnostic>();
+
+        protected set
+        {
+            if (value?.Count > 0)
+            {
+                TagHelperDiagnostics.AddDiagnostics(this, value);
+                SetFlag(ContainsDiagnosticsBit);
+            }
+            else if (HasFlag(ContainsDiagnosticsBit))
+            {
+                TagHelperDiagnostics.RemoveDiagnostics(this);
+                ClearFlag(ContainsDiagnosticsBit);
+            }
+        }
+    }
 
     public IReadOnlyDictionary<string, string> Metadata { get; protected set; }
 
@@ -42,6 +90,11 @@ public abstract class BoundAttributeParameterDescriptor : IEquatable<BoundAttrib
     {
         get
         {
+            if (!HasFlag(ContainsDiagnosticsBit))
+            {
+                return false;
+            }
+
             var errors = Diagnostics.Any(diagnostic => diagnostic.Severity == RazorDiagnosticSeverity.Error);
 
             return errors;

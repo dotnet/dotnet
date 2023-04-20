@@ -44,3 +44,4 @@
                             Identifier;[UTF8Encoding];
         MarkupTextLiteral - [85..85)::0 - [] - Gen<Markup> - SpanEditHandler;Accepts:Any
             Marker;[];
+    EndOfFile;[];

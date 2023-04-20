@@ -46,9 +46,12 @@ internal class SplatTagHelperDescriptorProvider : ITagHelperDescriptorProvider
         context.Results.Add(CreateSplatTagHelper());
     }
 
-    private TagHelperDescriptor CreateSplatTagHelper()
+    private static TagHelperDescriptor CreateSplatTagHelper()
     {
-        var builder = TagHelperDescriptorBuilder.Create(ComponentMetadata.Splat.TagHelperKind, "Attributes", ComponentsApi.AssemblyName);
+        using var _ = TagHelperDescriptorBuilder.GetPooledInstance(
+            ComponentMetadata.Splat.TagHelperKind, "Attributes", ComponentsApi.AssemblyName,
+            out var builder);
+
         builder.CaseSensitive = true;
         builder.Documentation = ComponentResources.SplatTagHelper_Documentation;
 
@@ -75,9 +78,9 @@ internal class SplatTagHelperDescriptorProvider : ITagHelperDescriptorProvider
             attribute.Documentation = ComponentResources.SplatTagHelper_Documentation;
             attribute.Name = "@attributes";
 
-                // WTE has a bug 15.7p1 where a Tag Helper without a display-name that looks like
-                // a C# property will crash trying to create the tooltips.
-                attribute.SetPropertyName("Attributes");
+            // WTE has a bug 15.7p1 where a Tag Helper without a display-name that looks like
+            // a C# property will crash trying to create the tooltips.
+            attribute.SetPropertyName("Attributes");
             attribute.TypeName = typeof(object).FullName;
             attribute.Metadata[ComponentMetadata.Common.DirectiveAttribute] = bool.TrueString;
         });

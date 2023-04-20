@@ -17,3 +17,4 @@
         MarkupTextLiteral - [17..23)::6 - [LF    ] - Gen<Markup> - SpanEditHandler;Accepts:Any
             NewLine;[LF];
             Whitespace;[    ];
+    EndOfFile;[];

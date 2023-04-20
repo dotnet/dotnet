@@ -18,11 +18,13 @@ using Microsoft.AspNetCore.Razor.LanguageServer.Extensions;
 using Microsoft.AspNetCore.Razor.LanguageServer.Formatting;
 using Microsoft.AspNetCore.Razor.LanguageServer.Protocol;
 using Microsoft.CodeAnalysis.Text;
+using Microsoft.CommonLanguageServerProtocol.Framework;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 
-namespace Microsoft.AspNetCore.Razor.LanguageServer;
+namespace Microsoft.AspNetCore.Razor.LanguageServer.InlineCompletion;
 
-internal class InlineCompletionEndpoint : IVSInlineCompletionEndpoint
+[LanguageServerEndpoint(VSInternalMethods.TextDocumentInlineCompletionName)]
+internal sealed class InlineCompletionEndpoint : IRazorRequestHandler<VSInternalInlineCompletionRequest, VSInternalInlineCompletionList?>, IRegistrationExtension
 {
     private static readonly ImmutableHashSet<string> s_cSharpKeywords = ImmutableHashSet.Create(
         "~", "Attribute", "checked", "class", "ctor", "cw", "do", "else", "enum", "equals", "Exception", "for", "foreach", "forr",
@@ -41,24 +43,9 @@ internal class InlineCompletionEndpoint : IVSInlineCompletionEndpoint
         ClientNotifierServiceBase languageServer,
         AdhocWorkspaceFactory adhocWorkspaceFactory)
     {
-        if (documentMappingService is null)
-        {
-            throw new ArgumentNullException(nameof(documentMappingService));
-        }
-
-        if (languageServer is null)
-        {
-            throw new ArgumentNullException(nameof(languageServer));
-        }
-
-        if (adhocWorkspaceFactory is null)
-        {
-            throw new ArgumentNullException(nameof(adhocWorkspaceFactory));
-        }
-
-        _documentMappingService = documentMappingService;
-        _languageServer = languageServer;
-        _adhocWorkspaceFactory = adhocWorkspaceFactory;
+        _documentMappingService = documentMappingService ?? throw new ArgumentNullException(nameof(documentMappingService));
+        _languageServer = languageServer ?? throw new ArgumentNullException(nameof(languageServer));
+        _adhocWorkspaceFactory = adhocWorkspaceFactory ?? throw new ArgumentNullException(nameof(adhocWorkspaceFactory));
     }
 
     public RegistrationExtensionResult GetRegistration(VSInternalClientCapabilities clientCapabilities)
@@ -93,13 +80,13 @@ internal class InlineCompletionEndpoint : IVSInlineCompletionEndpoint
             return null;
         }
 
-        var codeDocument = await documentContext.GetCodeDocumentAsync(cancellationToken);
+        var codeDocument = await documentContext.GetCodeDocumentAsync(cancellationToken).ConfigureAwait(false);
         if (codeDocument.IsUnsupported())
         {
             return null;
         }
 
-        var sourceText = await documentContext.GetSourceTextAsync(cancellationToken);
+        var sourceText = await documentContext.GetSourceTextAsync(cancellationToken).ConfigureAwait(false);
         var linePosition = new LinePosition(request.Position.Line, request.Position.Character);
         var hostDocumentIndex = sourceText.Lines.GetPosition(linePosition);
 

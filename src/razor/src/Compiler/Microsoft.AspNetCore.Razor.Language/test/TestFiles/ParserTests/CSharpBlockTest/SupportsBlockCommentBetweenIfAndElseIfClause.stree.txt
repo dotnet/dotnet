@@ -34,3 +34,4 @@
             Text;[baz();];
             Whitespace;[ ];
             Text;[}];
+    EndOfFile;[];

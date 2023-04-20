@@ -42,7 +42,7 @@ Microsoft.AspNetCore.Razor.ExternalAccess.OmniSharp.Project.OmniSharpProjectSnap
 Microsoft.AspNetCore.Razor.ExternalAccess.OmniSharp.Project.OmniSharpProjectSnapshot.DocumentFilePaths.get -> System.Collections.Generic.IEnumerable<string!>!
 Microsoft.AspNetCore.Razor.ExternalAccess.OmniSharp.Project.OmniSharpProjectSnapshot.FilePath.get -> string!
 Microsoft.AspNetCore.Razor.ExternalAccess.OmniSharp.Project.OmniSharpProjectSnapshot.GetDocument(string! filePath) -> Microsoft.AspNetCore.Razor.ExternalAccess.OmniSharp.Document.OmniSharpDocumentSnapshot?
-Microsoft.AspNetCore.Razor.ExternalAccess.OmniSharp.Project.OmniSharpProjectSnapshot.ProjectWorkspaceState.get -> Microsoft.CodeAnalysis.Razor.ProjectSystem.ProjectWorkspaceState?
+Microsoft.AspNetCore.Razor.ExternalAccess.OmniSharp.Project.OmniSharpProjectSnapshot.ProjectWorkspaceState.get -> Microsoft.AspNetCore.Razor.ProjectEngineHost.Serialization.ProjectWorkspaceState?
 Microsoft.AspNetCore.Razor.ExternalAccess.OmniSharp.Project.OmniSharpProjectSnapshot.Serialize(string! publishFilePath, Newtonsoft.Json.JsonSerializer! serializer, System.IO.StreamWriter! writer) -> void
 Microsoft.AspNetCore.Razor.ExternalAccess.OmniSharp.Project.OmniSharpProjectSnapshotManager
 Microsoft.AspNetCore.Razor.ExternalAccess.OmniSharp.Project.OmniSharpProjectSnapshotManager.Changed -> System.EventHandler<Microsoft.AspNetCore.Razor.ExternalAccess.OmniSharp.Project.OmniSharpProjectChangeEventArgs!>?

@@ -8,7 +8,6 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Internal;
-using Microsoft.VisualStudio.Threading;
 
 namespace Microsoft.CodeAnalysis.Razor.Workspaces;
 
@@ -120,7 +119,7 @@ internal sealed class BatchingWorkQueue : IDisposable
             state =>
             {
                 Assumes.NotNull(state);
-                ((BatchingWorkQueue)state).Timer_TickAsync().Forget();
+                _ = ((BatchingWorkQueue)state).Timer_TickAsync();
             },
             this,
             _batchingTimeSpan,

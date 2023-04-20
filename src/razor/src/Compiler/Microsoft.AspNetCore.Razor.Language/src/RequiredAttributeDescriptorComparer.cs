@@ -16,8 +16,7 @@ internal sealed class RequiredAttributeDescriptorComparer : IEqualityComparer<Re
     /// <summary>
     /// A default instance of the <see cref="RequiredAttributeDescriptorComparer"/>.
     /// </summary>
-    public static readonly RequiredAttributeDescriptorComparer Default =
-        new RequiredAttributeDescriptorComparer();
+    public static readonly RequiredAttributeDescriptorComparer Default = new();
 
     private RequiredAttributeDescriptorComparer()
     {
@@ -28,7 +27,7 @@ internal sealed class RequiredAttributeDescriptorComparer : IEqualityComparer<Re
         RequiredAttributeDescriptor? descriptorX,
         RequiredAttributeDescriptor? descriptorY)
     {
-        if (object.ReferenceEquals(descriptorX, descriptorY))
+        if (ReferenceEquals(descriptorX, descriptorY))
         {
             return true;
         }
@@ -42,13 +41,12 @@ internal sealed class RequiredAttributeDescriptorComparer : IEqualityComparer<Re
             return false;
         }
 
-        return
-            descriptorX.CaseSensitive == descriptorY.CaseSensitive &&
-            descriptorX.NameComparison == descriptorY.NameComparison &&
-            descriptorX.ValueComparison == descriptorY.ValueComparison &&
-            string.Equals(descriptorX.Name, descriptorY.Name, StringComparison.Ordinal) &&
-            string.Equals(descriptorX.Value, descriptorY.Value, StringComparison.Ordinal) &&
-            string.Equals(descriptorX.DisplayName, descriptorY.DisplayName, StringComparison.Ordinal);
+        return descriptorX.CaseSensitive == descriptorY.CaseSensitive &&
+               descriptorX.NameComparison == descriptorY.NameComparison &&
+               descriptorX.ValueComparison == descriptorY.ValueComparison &&
+               descriptorX.Name == descriptorY.Name &&
+               descriptorX.Value == descriptorY.Value &&
+               descriptorX.DisplayName == descriptorY.DisplayName;
     }
 
     /// <inheritdoc />

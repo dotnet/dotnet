@@ -30,7 +30,7 @@ internal class TestProjectSnapshotManager : DefaultProjectSnapshotManager
         var services = TestServices.Create(
             workspaceServices: new[]
             {
-                new DefaultProjectSnapshotProjectEngineFactory(new FallbackProjectEngineFactory(), ProjectEngineFactories.Factories)
+                new DefaultProjectSnapshotProjectEngineFactory(new FallbackProjectEngineFactory(), MefProjectEngineFactories.Factories)
             },
             razorLanguageServices: Enumerable.Empty<ILanguageService>());
         var workspace = TestWorkspace.Create(services);

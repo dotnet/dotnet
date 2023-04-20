@@ -27,3 +27,4 @@
             MarkupTextLiteral - [20..24)::4 - [ Baz] - Gen<Markup> - SpanEditHandler;Accepts:Any
                 Whitespace;[ ];
                 Text;[Baz];
+    EndOfFile;[];

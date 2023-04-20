@@ -18,3 +18,4 @@
                                 Identifier;[foo];
                         RazorMetaCode - [16..16)::0 - Gen<None> - SpanEditHandler;Accepts:Any
                             RightBrace;[<Missing>];
+    EndOfFile;[];

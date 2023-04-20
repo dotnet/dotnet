@@ -50,7 +50,8 @@ using System.Collections.Generic;
 #line hidden
 #nullable disable
             ));
-            __o = __typeInference_CreateMyComponent_0.
+            #pragma warning disable BL0005
+            __typeInference_CreateMyComponent_0.
 #nullable restore
 #line 3 "x:\dir\subdir\Test\TestComponent.cshtml"
              Item
@@ -58,8 +59,8 @@ using System.Collections.Generic;
 #line default
 #line hidden
 #nullable disable
-            ;
-            __o = __typeInference_CreateMyComponent_0.
+             = default;
+            __typeInference_CreateMyComponent_0.
 #nullable restore
 #line 3 "x:\dir\subdir\Test\TestComponent.cshtml"
                       MyEvent
@@ -67,7 +68,8 @@ using System.Collections.Generic;
 #line default
 #line hidden
 #nullable disable
-            ;
+             = default;
+            #pragma warning restore BL0005
 #nullable restore
 #line 3 "x:\dir\subdir\Test\TestComponent.cshtml"
 __o = typeof(global::Test.MyComponent<>);

@@ -29,3 +29,4 @@
                         CSharpStatementLiteral - [33..33)::0 - [] - Gen<Stmt> - SpanEditHandler;Accepts:Any
                             Marker;[];
                 CloseAngle;[<Missing>];
+    EndOfFile;[];

@@ -12,7 +12,7 @@ internal sealed class BoundAttributeParameterDescriptorComparer : IEqualityCompa
     /// <summary>
     /// A default instance of the <see cref="BoundAttributeParameterDescriptorComparer"/>.
     /// </summary>
-    public static readonly BoundAttributeParameterDescriptorComparer Default = new BoundAttributeParameterDescriptorComparer();
+    public static readonly BoundAttributeParameterDescriptorComparer Default = new();
 
     private BoundAttributeParameterDescriptorComparer()
     {
@@ -34,14 +34,24 @@ internal sealed class BoundAttributeParameterDescriptorComparer : IEqualityCompa
             return false;
         }
 
-        return
-            string.Equals(descriptorX.Kind, descriptorY.Kind, StringComparison.Ordinal) &&
-            descriptorX.IsEnum == descriptorY.IsEnum &&
-            string.Equals(descriptorX.Name, descriptorY.Name, StringComparison.Ordinal) &&
-            string.Equals(descriptorX.TypeName, descriptorY.TypeName, StringComparison.Ordinal) &&
-            string.Equals(descriptorX.Documentation, descriptorY.Documentation, StringComparison.Ordinal) &&
-            string.Equals(descriptorX.DisplayName, descriptorY.DisplayName, StringComparison.Ordinal) &&
-            ComparerUtilities.Equals(descriptorX.Metadata, descriptorY.Metadata, StringComparer.Ordinal);
+        if (descriptorX.Kind != descriptorY.Kind ||
+            descriptorX.IsEnum != descriptorY.IsEnum ||
+            descriptorX.Name != descriptorY.Name ||
+            descriptorX.TypeName != descriptorY.TypeName ||
+            descriptorX.Documentation != descriptorY.Documentation ||
+            descriptorX.DisplayName != descriptorY.DisplayName)
+        {
+            return false;
+        }
+
+        if (descriptorX.Metadata is MetadataCollection metadataX &&
+            descriptorY.Metadata is MetadataCollection metadataY &&
+            !metadataX.Equals(metadataY))
+        {
+            return false;
+        }
+
+        return ComparerUtilities.Equals(descriptorX.Metadata, descriptorY.Metadata, StringComparer.Ordinal);
     }
 
     public int GetHashCode(BoundAttributeParameterDescriptor? descriptor)

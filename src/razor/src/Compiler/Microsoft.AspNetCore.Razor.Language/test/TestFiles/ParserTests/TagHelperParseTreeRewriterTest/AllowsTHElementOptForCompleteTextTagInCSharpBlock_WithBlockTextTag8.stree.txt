@@ -32,3 +32,4 @@
                                     Text;[}];
                     RazorMetaCode - [24..24)::0 - Gen<None> - SpanEditHandler;Accepts:Any
                         RightBrace;[<Missing>];
+    EndOfFile;[];

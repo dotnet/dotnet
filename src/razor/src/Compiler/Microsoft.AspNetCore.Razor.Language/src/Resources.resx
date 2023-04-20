@@ -577,4 +577,10 @@
   <data name="RazorDiagnosticDescriptor_DefaultError" xml:space="preserve">
     <value>Encountered diagnostic '{0}'.</value>
   </data>
+  <data name="An_item_with_the_same_key_has_already_been_added_Key_0" xml:space="preserve">
+    <value>An item with the same key has already been added. Key: {0}</value>
+  </data>
+  <data name="The_given_key_0_was_not_present" xml:space="preserve">
+    <value>The given key '{0}' was not present.</value>
+  </data>
 </root>

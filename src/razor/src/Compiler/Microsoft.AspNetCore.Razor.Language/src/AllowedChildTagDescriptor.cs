@@ -11,16 +11,42 @@ namespace Microsoft.AspNetCore.Razor.Language;
 
 public abstract class AllowedChildTagDescriptor : IEquatable<AllowedChildTagDescriptor>
 {
+    private bool _containsDiagnostics;
+
     public string Name { get; protected set; }
 
     public string DisplayName { get; protected set; }
 
-    public IReadOnlyList<RazorDiagnostic> Diagnostics { get; protected set; }
+    public IReadOnlyList<RazorDiagnostic> Diagnostics
+    {
+        get => _containsDiagnostics
+            ? TagHelperDiagnostics.GetDiagnostics(this)
+            : Array.Empty<RazorDiagnostic>();
+
+        protected set
+        {
+            if (value?.Count > 0)
+            {
+                TagHelperDiagnostics.AddDiagnostics(this, value);
+                _containsDiagnostics = true;
+            }
+            else if (_containsDiagnostics)
+            {
+                TagHelperDiagnostics.RemoveDiagnostics(this);
+                _containsDiagnostics = false;
+            }
+        }
+    }
 
     public bool HasErrors
     {
         get
         {
+            if (!_containsDiagnostics)
+            {
+                return false;
+            }
+
             var errors = Diagnostics.Any(diagnostic => diagnostic.Severity == RazorDiagnosticSeverity.Error);
 
             return errors;

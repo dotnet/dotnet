@@ -67,3 +67,4 @@
                         CloseAngle;[>];
             CSharpStatementLiteral - [59..59)::0 - [] - Gen<Stmt> - SpanEditHandler;Accepts:Any
                 Marker;[];
+    EndOfFile;[];

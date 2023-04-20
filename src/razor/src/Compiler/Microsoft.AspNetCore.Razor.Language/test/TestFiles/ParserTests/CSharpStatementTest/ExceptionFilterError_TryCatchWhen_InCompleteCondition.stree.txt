@@ -25,3 +25,4 @@
                 Keyword;[when];
                 Whitespace;[ ];
                 LeftParenthesis;[(];
+    EndOfFile;[];

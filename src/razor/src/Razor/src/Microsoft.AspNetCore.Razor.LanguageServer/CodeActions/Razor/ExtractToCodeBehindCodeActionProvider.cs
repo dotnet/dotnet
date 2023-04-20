@@ -20,7 +20,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.CodeActions;
 
-internal class ExtractToCodeBehindCodeActionProvider : RazorCodeActionProvider
+internal sealed class ExtractToCodeBehindCodeActionProvider : IRazorCodeActionProvider
 {
     private static readonly Task<IReadOnlyList<RazorVSInternalCodeAction>?> s_emptyResult = Task.FromResult<IReadOnlyList<RazorVSInternalCodeAction>?>(null);
     private readonly ILogger<ExtractToCodeBehindCodeActionProvider> _logger;
@@ -35,7 +35,7 @@ internal class ExtractToCodeBehindCodeActionProvider : RazorCodeActionProvider
         _logger = loggerFactory.CreateLogger<ExtractToCodeBehindCodeActionProvider>();
     }
 
-    public override Task<IReadOnlyList<RazorVSInternalCodeAction>?> ProvideAsync(RazorCodeActionContext context, CancellationToken cancellationToken)
+    public Task<IReadOnlyList<RazorVSInternalCodeAction>?> ProvideAsync(RazorCodeActionContext context, CancellationToken cancellationToken)
     {
         if (context is null)
         {
@@ -70,7 +70,7 @@ internal class ExtractToCodeBehindCodeActionProvider : RazorCodeActionProvider
         {
             // When the caret is '@code$$ {' or '@code$${' then tree is:
             // RazorDirective -> RazorDirectiveBody -> CSharpCodeBlock -> (MetaCode or TextLiteral)
-            CSharpCodeBlockSyntax { Parent: { Parent: RazorDirectiveSyntax d } } => d,
+            CSharpCodeBlockSyntax { Parent.Parent: RazorDirectiveSyntax d } => d,
             // When the caret is '@$$code' or '@c$$ode' or '@co$$de' or '@cod$$e' then tree is:
             // RazorDirective -> RazorDirectiveBody -> MetaCode
             RazorDirectiveBodySyntax { Parent: RazorDirectiveSyntax d } => d,
@@ -139,7 +139,7 @@ internal class ExtractToCodeBehindCodeActionProvider : RazorCodeActionProvider
         return Task.FromResult<IReadOnlyList<RazorVSInternalCodeAction>?>(codeActions);
     }
 
-    private bool TryGetNamespace(RazorCodeDocument codeDocument, [NotNullWhen(returnValue: true)] out string? @namespace)
+    private static bool TryGetNamespace(RazorCodeDocument codeDocument, [NotNullWhen(returnValue: true)] out string? @namespace)
         // If the compiler can't provide a computed namespace it will fallback to "__GeneratedComponent" or
         // similar for the NamespaceNode. This would end up with extracting to a wrong namespace
         // and causing compiler errors. Avoid offering this refactoring if we can't accurately get a

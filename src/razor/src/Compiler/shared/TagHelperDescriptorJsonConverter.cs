@@ -30,7 +30,7 @@ internal class TagHelperDescriptorJsonConverter : JsonConverter
         var descriptorKind = reader.ReadNextStringProperty(nameof(TagHelperDescriptor.Kind));
         var typeName = reader.ReadNextStringProperty(nameof(TagHelperDescriptor.Name));
         var assemblyName = reader.ReadNextStringProperty(nameof(TagHelperDescriptor.AssemblyName));
-        var builder = TagHelperDescriptorBuilder.Create(descriptorKind, typeName, assemblyName);
+        using var _ = TagHelperDescriptorBuilder.GetPooledInstance(descriptorKind, typeName, assemblyName, out var builder);
 
         reader.ReadProperties(propertyName =>
         {

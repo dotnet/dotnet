@@ -6,7 +6,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-
 using Microsoft.AspNetCore.Razor.Language.Components;
 
 namespace Microsoft.AspNetCore.Razor.Language;
@@ -16,6 +15,25 @@ namespace Microsoft.AspNetCore.Razor.Language;
 /// </summary>
 public abstract class BoundAttributeDescriptor : IEquatable<BoundAttributeDescriptor>
 {
+    private const int ContainsDiagnosticsBit = 1 << 0;
+    private const int IsDirectiveAttributeComputedBit = 1 << 1;
+    private const int IsDirectiveAttributeBit = 1 << 2;
+    private const int IsIndexerStringPropertyBit = 1 << 3;
+    private const int IsIndexerBooleanPropertyBit = 1 << 4;
+    private const int IsEnumBit = 1 << 5;
+    private const int IsStringPropertyBit = 1 << 6;
+    private const int IsBooleanPropertyBit = 1 << 7;
+    private const int IsEditorRequiredBit = 1 << 8;
+    private const int HasIndexerBit = 1 << 9;
+    private const int CaseSensitiveBit = 1 << 10;
+
+    private int _flags;
+
+    private bool HasFlag(int flag) => (_flags & flag) != 0;
+    private void SetFlag(int toSet) => ThreadSafeFlagOperations.Set(ref _flags, toSet);
+    private void ClearFlag(int toClear) => ThreadSafeFlagOperations.Clear(ref _flags, toClear);
+    private void SetOrClearFlag(int toChange, bool value) => ThreadSafeFlagOperations.SetOrClear(ref _flags, toChange, value);
+
     protected BoundAttributeDescriptor(string kind)
     {
         Kind = kind;
@@ -23,17 +41,41 @@ public abstract class BoundAttributeDescriptor : IEquatable<BoundAttributeDescri
 
     public string Kind { get; }
 
-    public bool IsIndexerStringProperty { get; protected set; }
+    public bool IsIndexerStringProperty
+    {
+        get => HasFlag(IsIndexerStringPropertyBit);
+        protected set => SetOrClearFlag(IsIndexerStringPropertyBit, value);
+    }
 
-    public bool IsIndexerBooleanProperty { get; protected set; }
+    public bool IsIndexerBooleanProperty
+    {
+        get => HasFlag(IsIndexerBooleanPropertyBit);
+        protected set => SetOrClearFlag(IsIndexerBooleanPropertyBit, value);
+    }
 
-    public bool IsEnum { get; protected set; }
+    public bool IsEnum
+    {
+        get => HasFlag(IsEnumBit);
+        protected set => SetOrClearFlag(IsEnumBit, value);
+    }
 
-    public bool IsStringProperty { get; protected set; }
+    public bool IsStringProperty
+    {
+        get => HasFlag(IsStringPropertyBit);
+        protected set => SetOrClearFlag(IsStringPropertyBit, value);
+    }
 
-    public bool IsBooleanProperty { get; protected set; }
+    public bool IsBooleanProperty
+    {
+        get => HasFlag(IsBooleanPropertyBit);
+        protected set => SetOrClearFlag(IsBooleanPropertyBit, value);
+    }
 
-    internal bool IsEditorRequired { get; set; }
+    internal bool IsEditorRequired
+    {
+        get => HasFlag(IsEditorRequiredBit);
+        private protected set => SetOrClearFlag(IsEditorRequiredBit, value);
+    }
 
     public string Name { get; protected set; }
 
@@ -43,35 +85,65 @@ public abstract class BoundAttributeDescriptor : IEquatable<BoundAttributeDescri
 
     public string IndexerTypeName { get; protected set; }
 
-    public bool HasIndexer { get; protected set; }
+    public bool HasIndexer
+    {
+        get => HasFlag(HasIndexerBit);
+        protected set => SetOrClearFlag(HasIndexerBit, value);
+    }
 
     public string Documentation { get; protected set; }
 
     public string DisplayName { get; protected set; }
 
-    public bool CaseSensitive { get; protected set; }
-
-    // We need this to be atomic so:
-    // 0: Uninitialized
-    // 1: false
-    // 2: true
-    private int _isDirectiveAttribute;
+    public bool CaseSensitive
+    {
+        get => HasFlag(CaseSensitiveBit);
+        protected set => SetOrClearFlag(CaseSensitiveBit, value);
+    }
 
     public bool IsDirectiveAttribute
     {
         get
         {
-            if (_isDirectiveAttribute == 0)
+            if (!HasFlag(IsDirectiveAttributeComputedBit))
             {
-                _isDirectiveAttribute = Metadata.TryGetValue(ComponentMetadata.Common.DirectiveAttribute, out var value) &&
-                        string.Equals(bool.TrueString, value) ? 2 : 1;
+                // If we haven't computed this value yet, compute it by checking the metadata.
+                var isDirectiveAttribute = Metadata.TryGetValue(ComponentMetadata.Common.DirectiveAttribute, out var value) && value == bool.TrueString;
+                if (isDirectiveAttribute)
+                {
+                    SetFlag(IsDirectiveAttributeBit | IsDirectiveAttributeComputedBit);
+                }
+                else
+                {
+                    ClearFlag(IsDirectiveAttributeBit);
+                    SetFlag(IsDirectiveAttributeComputedBit);
+                }
             }
 
-            return _isDirectiveAttribute == 2;
+            return HasFlag(IsDirectiveAttributeBit);
         }
     }
 
-    public IReadOnlyList<RazorDiagnostic> Diagnostics { get; protected set; }
+    public IReadOnlyList<RazorDiagnostic> Diagnostics
+    {
+        get => HasFlag(ContainsDiagnosticsBit)
+            ? TagHelperDiagnostics.GetDiagnostics(this)
+            : Array.Empty<RazorDiagnostic>();
+
+        protected set
+        {
+            if (value?.Count > 0)
+            {
+                TagHelperDiagnostics.AddDiagnostics(this, value);
+                SetFlag(ContainsDiagnosticsBit);
+            }
+            else if (HasFlag(ContainsDiagnosticsBit))
+            {
+                TagHelperDiagnostics.RemoveDiagnostics(this);
+                ClearFlag(ContainsDiagnosticsBit);
+            }
+        }
+    }
 
     public IReadOnlyDictionary<string, string> Metadata { get; protected set; }
 
@@ -81,6 +153,11 @@ public abstract class BoundAttributeDescriptor : IEquatable<BoundAttributeDescri
     {
         get
         {
+            if (!HasFlag(ContainsDiagnosticsBit))
+            {
+                return false;
+            }
+
             var errors = Diagnostics.Any(diagnostic => diagnostic.Severity == RazorDiagnosticSeverity.Error);
 
             return errors;

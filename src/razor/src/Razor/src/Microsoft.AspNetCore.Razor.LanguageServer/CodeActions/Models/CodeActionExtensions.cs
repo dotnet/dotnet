@@ -47,7 +47,8 @@ internal static class CodeActionExtensions
         this RazorVSInternalCodeAction razorCodeAction,
         RazorCodeActionContext context,
         string action = LanguageServerConstants.CodeActions.Default,
-        string language = LanguageServerConstants.CodeActions.Languages.CSharp)
+        string language = LanguageServerConstants.CodeActions.Languages.CSharp,
+        bool isOnAllowList = true)
     {
         if (razorCodeAction is null)
         {
@@ -73,11 +74,16 @@ internal static class CodeActionExtensions
         };
         razorCodeAction.Data = JToken.FromObject(resolutionParams);
 
+        if (!isOnAllowList)
+        {
+            razorCodeAction.Title = "(Exp) " + razorCodeAction.Title;
+        }
+
         if (razorCodeAction.Children != null)
         {
             for (var i = 0; i < razorCodeAction.Children.Length; i++)
             {
-                razorCodeAction.Children[i] = razorCodeAction.Children[i].WrapResolvableCodeAction(context, action, language);
+                razorCodeAction.Children[i] = razorCodeAction.Children[i].WrapResolvableCodeAction(context, action, language, isOnAllowList);
             }
         }
 
@@ -88,7 +94,8 @@ internal static class CodeActionExtensions
         this VSInternalCodeAction razorCodeAction,
         RazorCodeActionContext context,
         string action,
-        string language)
+        string language,
+        bool isOnAllowList)
     {
         var resolveParams = new CodeActionResolveParams()
         {
@@ -104,11 +111,16 @@ internal static class CodeActionExtensions
         };
         razorCodeAction.Data = JToken.FromObject(resolutionParams);
 
+        if (!isOnAllowList)
+        {
+            razorCodeAction.Title = "(Exp) " + razorCodeAction.Title;
+        }
+
         if (razorCodeAction.Children != null)
         {
             for (var i = 0; i < razorCodeAction.Children.Length; i++)
             {
-                razorCodeAction.Children[i] = razorCodeAction.Children[i].WrapResolvableCodeAction(context, action, language);
+                razorCodeAction.Children[i] = razorCodeAction.Children[i].WrapResolvableCodeAction(context, action, language, isOnAllowList);
             }
         }
 

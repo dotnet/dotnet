@@ -12,3 +12,4 @@
                     CSharpCodeBlock - [8..8)::0
         MarkupTextLiteral - [8..10)::2 - [LF] - Gen<Markup> - SpanEditHandler;Accepts:Any
             NewLine;[LF];
+    EndOfFile;[];

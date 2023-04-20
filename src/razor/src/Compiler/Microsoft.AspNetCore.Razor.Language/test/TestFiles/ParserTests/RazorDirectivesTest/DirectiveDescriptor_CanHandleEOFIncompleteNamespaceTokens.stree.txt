@@ -14,3 +14,4 @@
                             Whitespace;[ ];
         MarkupTextLiteral - [8..15)::7 - [System.] - Gen<Markup> - SpanEditHandler;Accepts:Any
             Text;[System.];
+    EndOfFile;[];

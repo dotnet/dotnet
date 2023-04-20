@@ -18,7 +18,7 @@ internal class DefaultTagHelperDescriptor : TagHelperDescriptor
         TagMatchingRuleDescriptor[] tagMatchingRules,
         BoundAttributeDescriptor[] attributeDescriptors,
         AllowedChildTagDescriptor[] allowedChildTags,
-        ImmutableDictionary<string, string> metadata,
+        MetadataCollection metadata,
         RazorDiagnostic[] diagnostics)
         : base(kind)
     {

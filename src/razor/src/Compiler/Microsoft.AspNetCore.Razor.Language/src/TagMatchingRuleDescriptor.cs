@@ -7,12 +7,14 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using Microsoft.AspNetCore.Razor.PooledObjects;
 
 namespace Microsoft.AspNetCore.Razor.Language;
 
 [DebuggerDisplay($"{{{nameof(GetDebuggerDisplay)}(),nq}}")]
 public abstract class TagMatchingRuleDescriptor : IEquatable<TagMatchingRuleDescriptor>
 {
+    private bool _containsDiagnostics;
     private int? _hashCode;
     private IEnumerable<RazorDiagnostic> _allDiagnostics;
 
@@ -26,8 +28,26 @@ public abstract class TagMatchingRuleDescriptor : IEquatable<TagMatchingRuleDesc
 
     public bool CaseSensitive { get; protected set; }
 
-    public IReadOnlyList<RazorDiagnostic> Diagnostics { get; protected set; }
+    public IReadOnlyList<RazorDiagnostic> Diagnostics
+    {
+        get => _containsDiagnostics
+            ? TagHelperDiagnostics.GetDiagnostics(this)
+            : Array.Empty<RazorDiagnostic>();
 
+        protected set
+        {
+            if (value?.Count > 0)
+            {
+                TagHelperDiagnostics.AddDiagnostics(this, value);
+                _containsDiagnostics = true;
+            }
+            else if (_containsDiagnostics)
+            {
+                TagHelperDiagnostics.RemoveDiagnostics(this);
+                _containsDiagnostics = false;
+            }
+        }
+    }
 
     public bool HasErrors
     {
@@ -44,9 +64,16 @@ public abstract class TagMatchingRuleDescriptor : IEquatable<TagMatchingRuleDesc
     {
         if (_allDiagnostics == null)
         {
-            var attributeDiagnostics = Attributes.SelectMany(attribute => attribute.Diagnostics);
-            var combinedDiagnostics = Diagnostics.Concat(attributeDiagnostics);
-            _allDiagnostics = combinedDiagnostics.ToArray();
+            using var diagnostics = new PooledList<RazorDiagnostic>();
+
+            foreach (var attribute in Attributes)
+            {
+                diagnostics.AddRange(attribute.Diagnostics);
+            }
+
+            diagnostics.AddRange(Diagnostics);
+
+            _allDiagnostics = diagnostics.ToArray();
         }
 
         return _allDiagnostics;
@@ -65,7 +92,7 @@ public abstract class TagMatchingRuleDescriptor : IEquatable<TagMatchingRuleDesc
     public override int GetHashCode()
     {
         _hashCode ??= TagMatchingRuleDescriptorComparer.Default.GetHashCode(this);
-        return _hashCode.Value;
+        return _hashCode.GetValueOrDefault();
     }
 
     internal string GetDebuggerDisplay()

@@ -59,3 +59,4 @@
                 RightBrace;[}];
                 Whitespace;[ ];
                 RightBrace;[}];
+    EndOfFile;[];

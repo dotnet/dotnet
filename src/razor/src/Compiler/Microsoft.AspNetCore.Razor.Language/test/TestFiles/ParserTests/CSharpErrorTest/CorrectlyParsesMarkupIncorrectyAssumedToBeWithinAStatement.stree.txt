@@ -51,3 +51,4 @@
                     NewLine;[LF];
             CSharpStatementLiteral - [64..65)::1 - [}] - Gen<Stmt> - SpanEditHandler;Accepts:Any
                 RightBrace;[}];
+    EndOfFile;[];
