@@ -16,7 +16,6 @@ This package was built from the source code at https://github.com/dotnet/aspnetc
     <serviceable>true</serviceable>
     <repository type="git" url="https://github.com/dotnet/aspnetcore" commit="ae1a6cbe225b99c0bf38b7e31bf60cb653b73a52" />
     <dependencies>
-      <group targetFramework=".NETFramework4.6.1" />
       <group targetFramework="net6.0" />
       <group targetFramework=".NETStandard2.0" />
     </dependencies>
