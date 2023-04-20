@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.0;net461</TargetFrameworks>
+    <TargetFrameworks>netstandard2.0</TargetFrameworks>
     <NuspecFile>$(ArtifactsBinDir)microsoft.extensions.objectpool/6.0.0/microsoft.extensions.objectpool.nuspec</NuspecFile>
     <StrongNameKeyId>MicrosoftAspNetCore</StrongNameKeyId>
   </PropertyGroup>
@@ -15,10 +15,6 @@
     <OutputPath>$(ArtifactsBinDir)microsoft.extensions.objectpool/6.0.0/lib/</OutputPath>
   </PropertyGroup>
 
-  <PropertyGroup Condition=" '$(TargetFramework)' == 'net461' ">
-    <OutputPath>$(ArtifactsBinDir)microsoft.extensions.objectpool/6.0.0/lib/</OutputPath>
-  </PropertyGroup>
-
   <ItemGroup>
     <Compile Include="**/ref/$(TargetFramework)/*.cs" />
     <Compile Include="**/lib/$(TargetFramework)/*.cs" />
@@ -26,10 +22,6 @@
 
   <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.0' ">
     <PackageReference Include="NETStandard.Library" Version="$(NETStandardImplicitPackageVersion)" />
-  </ItemGroup>
-
-  <ItemGroup Condition=" '$(TargetFramework)' == 'net461' ">
-    <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies.net461" Version="1.0.2" />
   </ItemGroup>
 
 </Project>
