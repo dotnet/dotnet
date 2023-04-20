@@ -8,11 +8,12 @@ open System.Threading.Tasks
 open Microsoft.CodeAnalysis.Text
 open Microsoft.CodeAnalysis.CodeFixes
 
-[<ExportCodeFixProvider(FSharpConstants.FSharpLanguageName, Name = "ConvertToSingleEqualsEqualityExpression"); Shared>]
+[<ExportCodeFixProvider(FSharpConstants.FSharpLanguageName, Name = CodeFix.ConvertToSingleEqualsEqualityExpression); Shared>]
 type internal FSharpConvertToSingleEqualsEqualityExpressionCodeFixProvider() =
     inherit CodeFixProvider()
 
     let fixableDiagnosticIds = set [ "FS0043" ]
+    static let title = SR.ConvertToSingleEqualsEqualityExpression()
 
     override _.FixableDiagnosticIds = Seq.toImmutableArray fixableDiagnosticIds
 
@@ -24,18 +25,7 @@ type internal FSharpConvertToSingleEqualsEqualityExpressionCodeFixProvider() =
             // We're converting '==' into '=', a common new user mistake.
             // If this is an FS00043 that is anything other than that, bail out
             do! Option.guard (text = "==")
-
-            let title = SR.ConvertToSingleEqualsEqualityExpression()
-
-            let diagnostics =
-                context.Diagnostics
-                |> Seq.filter (fun x -> fixableDiagnosticIds |> Set.contains x.Id)
-                |> Seq.toImmutableArray
-
-            let codeFix =
-                CodeFixHelpers.createTextChangeCodeFix (title, context, (fun () -> asyncMaybe.Return [| TextChange(context.Span, "=") |]))
-
-            context.RegisterCodeFix(codeFix, diagnostics)
+            do context.RegisterFsharpFix(CodeFix.ConvertToSingleEqualsEqualityExpression, title, [| TextChange(context.Span, "=") |])
         }
         |> Async.Ignore
         |> RoslynHelpers.StartAsyncUnitAsTask(context.CancellationToken)

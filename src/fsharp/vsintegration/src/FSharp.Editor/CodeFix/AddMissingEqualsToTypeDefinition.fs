@@ -6,25 +6,19 @@ open System
 open System.Composition
 open System.Threading.Tasks
 
-open Microsoft.VisualStudio.FSharp.Editor.Logging
-
 open Microsoft.CodeAnalysis.Text
 open Microsoft.CodeAnalysis.CodeFixes
 
-[<ExportCodeFixProvider(FSharpConstants.FSharpLanguageName, Name = "AddMissingEqualsToTypeDefinition"); Shared>]
+[<ExportCodeFixProvider(FSharpConstants.FSharpLanguageName, Name = CodeFix.AddMissingEqualsToTypeDefinition); Shared>]
 type internal FSharpAddMissingEqualsToTypeDefinitionCodeFixProvider() =
     inherit CodeFixProvider()
 
     let fixableDiagnosticIds = set [ "FS3360" ]
-
+    static let title = SR.AddMissingEqualsToTypeDefinition()
     override _.FixableDiagnosticIds = Seq.toImmutableArray fixableDiagnosticIds
 
     override _.RegisterCodeFixesAsync context : Task =
         asyncMaybe {
-            let diagnostics =
-                context.Diagnostics
-                |> Seq.filter (fun x -> fixableDiagnosticIds |> Set.contains x.Id)
-                |> Seq.toImmutableArray
 
             let! sourceText = context.Document.GetTextAsync(context.CancellationToken)
 
@@ -39,18 +33,14 @@ type internal FSharpAddMissingEqualsToTypeDefinitionCodeFixProvider() =
                 pos <- pos - 1
                 ch <- sourceText.[pos]
 
-            let title = SR.AddMissingEqualsToTypeDefinition()
-
-            let codeFix =
-                CodeFixHelpers.createTextChangeCodeFix (
+            do
+                context.RegisterFsharpFix(
+                    CodeFix.AddMissingEqualsToTypeDefinition,
                     title,
-                    context,
                     // 'pos + 1' is here because 'pos' is now the position of the first non-whitespace character.
                     // Using just 'pos' will creat uncompilable code.
-                    (fun () -> asyncMaybe.Return [| TextChange(TextSpan(pos + 1, 0), " =") |])
+                    [| TextChange(TextSpan(pos + 1, 0), " =") |]
                 )
-
-            context.RegisterCodeFix(codeFix, diagnostics)
         }
         |> Async.Ignore
         |> RoslynHelpers.StartAsyncUnitAsTask(context.CancellationToken)

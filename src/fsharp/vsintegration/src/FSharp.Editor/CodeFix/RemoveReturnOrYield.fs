@@ -7,7 +7,7 @@ open System.Composition
 open Microsoft.CodeAnalysis.Text
 open Microsoft.CodeAnalysis.CodeFixes
 
-[<ExportCodeFixProvider(FSharpConstants.FSharpLanguageName, Name = "RemoveReturnOrYield"); Shared>]
+[<ExportCodeFixProvider(FSharpConstants.FSharpLanguageName, Name = CodeFix.RemoveReturnOrYield); Shared>]
 type internal FSharpRemoveReturnOrYieldCodeFixProvider [<ImportingConstructor>] () =
     inherit CodeFixProvider()
 
@@ -29,11 +29,6 @@ type internal FSharpRemoveReturnOrYieldCodeFixProvider [<ImportingConstructor>] 
             let! exprRange = parseResults.TryRangeOfExprInYieldOrReturn errorRange.Start
             let! exprSpan = RoslynHelpers.TryFSharpRangeToTextSpan(sourceText, exprRange)
 
-            let diagnostics =
-                context.Diagnostics
-                |> Seq.filter (fun x -> fixableDiagnosticIds |> Set.contains x.Id)
-                |> Seq.toImmutableArray
-
             let title =
                 let text = sourceText.GetSubText(context.Span).ToString()
 
@@ -42,14 +37,12 @@ type internal FSharpRemoveReturnOrYieldCodeFixProvider [<ImportingConstructor>] 
                 elif text.StartsWith("yield!") then SR.RemoveYieldBang()
                 else SR.RemoveYield()
 
-            let codeFix =
-                CodeFixHelpers.createTextChangeCodeFix (
+            do
+                context.RegisterFsharpFix(
+                    CodeFix.RemoveReturnOrYield,
                     title,
-                    context,
-                    (fun () -> asyncMaybe.Return [| TextChange(context.Span, sourceText.GetSubText(exprSpan).ToString()) |])
+                    [| TextChange(context.Span, sourceText.GetSubText(exprSpan).ToString()) |]
                 )
-
-            context.RegisterCodeFix(codeFix, diagnostics)
         }
         |> Async.Ignore
         |> RoslynHelpers.StartAsyncUnitAsTask(context.CancellationToken)
