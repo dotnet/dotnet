@@ -4,8 +4,8 @@
 #nullable disable
 
 using System;
-using System.Collections.Generic;
 using Microsoft.AspNetCore.Razor.Language;
+using Microsoft.AspNetCore.Razor.PooledObjects;
 
 namespace Microsoft.CodeAnalysis.Razor;
 
@@ -34,7 +34,7 @@ public sealed class DefaultTagHelperDescriptorProvider : RazorEngineFeatureBase,
             return;
         }
 
-        var types = new List<INamedTypeSymbol>();
+        using var _ = ListPool<INamedTypeSymbol>.GetPooledObject(out var types);
         var visitor = new TagHelperTypeVisitor(iTagHelper, types);
 
         var targetSymbol = context.Items.GetTargetSymbol();
@@ -45,6 +45,7 @@ public sealed class DefaultTagHelperDescriptorProvider : RazorEngineFeatureBase,
         else
         {
             visitor.Visit(compilation.Assembly.GlobalNamespace);
+
             foreach (var reference in compilation.References)
             {
                 if (compilation.GetAssemblyOrModuleSymbol(reference) is IAssemblySymbol assembly)
@@ -57,11 +58,11 @@ public sealed class DefaultTagHelperDescriptorProvider : RazorEngineFeatureBase,
             }
         }
 
-
         var factory = new DefaultTagHelperDescriptorFactory(compilation, context.IncludeDocumentation, context.ExcludeHidden);
-        for (var i = 0; i < types.Count; i++)
+
+        foreach (var type in types)
         {
-            var descriptor = factory.CreateDescriptor(types[i]);
+            var descriptor = factory.CreateDescriptor(type);
 
             if (descriptor != null)
             {
@@ -70,7 +71,7 @@ public sealed class DefaultTagHelperDescriptorProvider : RazorEngineFeatureBase,
         }
     }
 
-    private bool IsTagHelperAssembly(IAssemblySymbol assembly)
+    private static bool IsTagHelperAssembly(IAssemblySymbol assembly)
     {
         return assembly.Name != null && !assembly.Name.StartsWith("System.", StringComparison.Ordinal);
     }

@@ -1,6 +1,7 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
+using System;
 using System.Collections.Generic;
 using Microsoft.Extensions.ObjectPool;
 
@@ -16,8 +17,8 @@ namespace Microsoft.AspNetCore.Razor.PooledObjects;
 /// </remarks>
 internal static partial class StringDictionaryPool<TValue>
 {
-    public static readonly ObjectPool<Dictionary<string, TValue>> Ordinal = ObjectPool.Create(OrdinalPolicy.Instance);
-    public static readonly ObjectPool<Dictionary<string, TValue>> OrdinalIgnoreCase = ObjectPool.Create(OrdinalIgnoreCasePolicy.Instance);
+    public static readonly ObjectPool<Dictionary<string, TValue>> Ordinal = DictionaryPool<string, TValue>.Create(StringComparer.Ordinal);
+    public static readonly ObjectPool<Dictionary<string, TValue>> OrdinalIgnoreCase = DictionaryPool<string, TValue>.Create(StringComparer.OrdinalIgnoreCase);
 
     public static PooledObject<Dictionary<string, TValue>> GetPooledObject()
         => Ordinal.GetPooledObject();

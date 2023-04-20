@@ -5,9 +5,11 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Globalization;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Language.Components;
+using Microsoft.AspNetCore.Razor.PooledObjects;
 
 namespace Microsoft.CodeAnalysis.Razor;
 
@@ -44,9 +46,9 @@ internal class EventHandlerTagHelperDescriptorProvider : ITagHelperDescriptorPro
         }
     }
 
-    private static List<EventHandlerData> GetEventHandlerData(TagHelperDescriptorProviderContext context, Compilation compilation, INamedTypeSymbol eventHandlerAttribute)
+    private static ImmutableArray<EventHandlerData> GetEventHandlerData(TagHelperDescriptorProviderContext context, Compilation compilation, INamedTypeSymbol eventHandlerAttribute)
     {
-        var types = new List<INamedTypeSymbol>();
+        using var _ = ListPool<INamedTypeSymbol>.GetPooledObject(out var types);
         var visitor = new EventHandlerDataVisitor(types);
 
         var targetSymbol = context.Items.GetTargetSymbol();
@@ -66,20 +68,18 @@ internal class EventHandlerTagHelperDescriptorProvider : ITagHelperDescriptorPro
             }
         }
 
-        var results = new List<EventHandlerData>();
+        using var results = new PooledArrayBuilder<EventHandlerData>();
 
-        for (var i = 0; i < types.Count; i++)
+        foreach (var type in types)
         {
-            var type = types[i];
-            var attributes = type.GetAttributes();
+            // Create helper to delay computing display names for this type when we need them.
+            var displayNames = new DisplayNameHelper(type);
 
             // Not handling duplicates here for now since we're the primary ones extending this.
             // If we see users adding to the set of event handler constructs we will want to add deduplication
             // and potentially diagnostics.
-            for (var j = 0; j < attributes.Length; j++)
+            foreach (var attribute in type.GetAttributes())
             {
-                var attribute = attributes[j];
-
                 if (SymbolEqualityComparer.Default.Equals(attribute.AttributeClass, eventHandlerAttribute))
                 {
                     var enablePreventDefault = false;
@@ -90,25 +90,49 @@ internal class EventHandlerTagHelperDescriptorProvider : ITagHelperDescriptorPro
                         enableStopPropagation = (bool)attribute.ConstructorArguments[3].Value;
                     }
 
+                    var (assemblyName, typeName, namespaceName) = displayNames.GetNames();
+                    var constructorArguments = attribute.ConstructorArguments;
+
                     results.Add(new EventHandlerData(
-                        type.ContainingAssembly.Name,
-                        type.ToDisplayString(),
-                        type.ContainingNamespace.ToDisplayString(),
+                        assemblyName,
+                        typeName,
+                        namespaceName,
                         type.Name,
-                        (string)attribute.ConstructorArguments[0].Value,
-                        (INamedTypeSymbol)attribute.ConstructorArguments[1].Value,
+                        (string)constructorArguments[0].Value,
+                        (INamedTypeSymbol)constructorArguments[1].Value,
                         enablePreventDefault,
                         enableStopPropagation));
                 }
             }
         }
 
-        return results;
+        return results.DrainToImmutable();
     }
 
-    private static List<TagHelperDescriptor> CreateEventHandlerTagHelpers(List<EventHandlerData> data)
+    /// <summary>
+    ///  Helper to avoid computing various type-based names until necessary.
+    /// </summary>
+    private ref struct DisplayNameHelper
     {
-        var results = new List<TagHelperDescriptor>();
+        private readonly INamedTypeSymbol _type;
+        private (string Assembly, string Type, string Namespace)? _names;
+
+        public DisplayNameHelper(INamedTypeSymbol type)
+        {
+            _type = type;
+        }
+
+        public (string Assembly, string Type, string Namespace) GetNames()
+        {
+            _names ??= (_type.ContainingAssembly.Name, _type.ToDisplayString(), _type.ContainingNamespace.ToDisplayString());
+
+            return _names.GetValueOrDefault();
+        }
+    }
+
+    private static ImmutableArray<TagHelperDescriptor> CreateEventHandlerTagHelpers(ImmutableArray<EventHandlerData> data)
+    {
+        using var results = new PooledArrayBuilder<TagHelperDescriptor>();
 
         foreach (var entry in data)
         {
@@ -232,7 +256,7 @@ internal class EventHandlerTagHelperDescriptorProvider : ITagHelperDescriptorPro
             results.Add(builder.Build());
         }
 
-        return results;
+        return results.DrainToImmutable();
     }
 
     private readonly record struct EventHandlerData(

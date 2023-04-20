@@ -5,16 +5,20 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Language.Components;
+using Microsoft.AspNetCore.Razor.PooledObjects;
 
 namespace Microsoft.CodeAnalysis.Razor;
 
 internal class BindTagHelperDescriptorProvider : ITagHelperDescriptorProvider
 {
+    private static TagHelperDescriptor s_fallbackBindTagHelper;
+
     // Run after the component tag helper provider, because we need to see the results.
     public int Order { get; set; } = 1000;
 
@@ -111,7 +115,7 @@ internal class BindTagHelperDescriptorProvider : ITagHelperDescriptorProvider
         }
 
         // Tag Helper definition for case #1. This is the most general case.
-        context.Results.Add(CreateFallbackBindTagHelper());
+        context.Results.Add(GetOrCreateFallbackBindTagHelper());
 
         // For case #2 & #3 we have a whole bunch of attribute entries on BindMethods that we can use
         // to data-drive the definitions of these tag helpers.
@@ -131,112 +135,117 @@ internal class BindTagHelperDescriptorProvider : ITagHelperDescriptorProvider
         }
     }
 
-    private static TagHelperDescriptor CreateFallbackBindTagHelper()
+    private static TagHelperDescriptor GetOrCreateFallbackBindTagHelper()
     {
-        using var _ = TagHelperDescriptorBuilder.GetPooledInstance(
-            ComponentMetadata.Bind.TagHelperKind, "Bind", ComponentsApi.AssemblyName,
-            out var builder);
+        return s_fallbackBindTagHelper ??= CreateFallbackBindTagHelper();
 
-        builder.CaseSensitive = true;
-        builder.Documentation = ComponentResources.BindTagHelper_Fallback_Documentation;
-
-        builder.Metadata.Add(ComponentMetadata.SpecialKindKey, ComponentMetadata.Bind.TagHelperKind);
-        builder.Metadata.Add(TagHelperMetadata.Common.ClassifyAttributesOnly, bool.TrueString);
-        builder.Metadata[TagHelperMetadata.Runtime.Name] = ComponentMetadata.Bind.RuntimeName;
-        builder.Metadata[ComponentMetadata.Bind.FallbackKey] = bool.TrueString;
-
-        // WTE has a bug in 15.7p1 where a Tag Helper without a display-name that looks like
-        // a C# property will crash trying to create the toolips.
-        builder.SetTypeName("Microsoft.AspNetCore.Components.Bind");
-        builder.SetTypeNamespace("Microsoft.AspNetCore.Components");
-        builder.SetTypeNameIdentifier("Bind");
-
-        builder.TagMatchingRule(rule =>
+        static TagHelperDescriptor CreateFallbackBindTagHelper()
         {
-            rule.TagName = "*";
-            rule.Attribute(attribute =>
-            {
-                attribute.Name = "@bind-";
-                attribute.NameComparisonMode = RequiredAttributeDescriptor.NameComparisonMode.PrefixMatch;
-                attribute.Metadata[ComponentMetadata.Common.DirectiveAttribute] = bool.TrueString;
-            });
-        });
+            using var _ = TagHelperDescriptorBuilder.GetPooledInstance(
+                ComponentMetadata.Bind.TagHelperKind, "Bind", ComponentsApi.AssemblyName,
+                out var builder);
 
-        builder.BindAttribute(attribute =>
-        {
-            attribute.Metadata[ComponentMetadata.Common.DirectiveAttribute] = bool.TrueString;
-            attribute.Documentation = ComponentResources.BindTagHelper_Fallback_Documentation;
+            builder.CaseSensitive = true;
+            builder.Documentation = ComponentResources.BindTagHelper_Fallback_Documentation;
 
-            var attributeName = "@bind-...";
-            attribute.Name = attributeName;
-            attribute.AsDictionary("@bind-", typeof(object).FullName);
+            builder.Metadata.Add(ComponentMetadata.SpecialKindKey, ComponentMetadata.Bind.TagHelperKind);
+            builder.Metadata.Add(TagHelperMetadata.Common.ClassifyAttributesOnly, bool.TrueString);
+            builder.Metadata[TagHelperMetadata.Runtime.Name] = ComponentMetadata.Bind.RuntimeName;
+            builder.Metadata[ComponentMetadata.Bind.FallbackKey] = bool.TrueString;
 
-            // WTE has a bug 15.7p1 where a Tag Helper without a display-name that looks like
+            // WTE has a bug in 15.7p1 where a Tag Helper without a display-name that looks like
             // a C# property will crash trying to create the toolips.
-            attribute.SetPropertyName("Bind");
-            attribute.TypeName = "System.Collections.Generic.Dictionary<string, object>";
+            builder.SetTypeName("Microsoft.AspNetCore.Components.Bind");
+            builder.SetTypeNamespace("Microsoft.AspNetCore.Components");
+            builder.SetTypeNameIdentifier("Bind");
 
-            attribute.BindAttributeParameter(parameter =>
+            builder.TagMatchingRule(rule =>
             {
-                parameter.Name = "format";
-                parameter.TypeName = typeof(string).FullName;
-                parameter.Documentation = ComponentResources.BindTagHelper_Fallback_Format_Documentation;
-
-                parameter.SetPropertyName("Format");
+                rule.TagName = "*";
+                rule.Attribute(attribute =>
+                {
+                    attribute.Name = "@bind-";
+                    attribute.NameComparisonMode = RequiredAttributeDescriptor.NameComparisonMode.PrefixMatch;
+                    attribute.Metadata[ComponentMetadata.Common.DirectiveAttribute] = bool.TrueString;
+                });
             });
 
-            attribute.BindAttributeParameter(parameter =>
+            builder.BindAttribute(attribute =>
             {
-                parameter.Name = "event";
-                parameter.TypeName = typeof(string).FullName;
-                parameter.Documentation = string.Format(CultureInfo.CurrentCulture, ComponentResources.BindTagHelper_Fallback_Event_Documentation, attributeName);
+                attribute.Metadata[ComponentMetadata.Common.DirectiveAttribute] = bool.TrueString;
+                attribute.Documentation = ComponentResources.BindTagHelper_Fallback_Documentation;
 
-                parameter.SetPropertyName("Event");
+                var attributeName = "@bind-...";
+                attribute.Name = attributeName;
+                attribute.AsDictionary("@bind-", typeof(object).FullName);
+
+                // WTE has a bug 15.7p1 where a Tag Helper without a display-name that looks like
+                // a C# property will crash trying to create the toolips.
+                attribute.SetPropertyName("Bind");
+                attribute.TypeName = "System.Collections.Generic.Dictionary<string, object>";
+
+                attribute.BindAttributeParameter(parameter =>
+                {
+                    parameter.Name = "format";
+                    parameter.TypeName = typeof(string).FullName;
+                    parameter.Documentation = ComponentResources.BindTagHelper_Fallback_Format_Documentation;
+
+                    parameter.SetPropertyName("Format");
+                });
+
+                attribute.BindAttributeParameter(parameter =>
+                {
+                    parameter.Name = "event";
+                    parameter.TypeName = typeof(string).FullName;
+                    parameter.Documentation = string.Format(CultureInfo.CurrentCulture, ComponentResources.BindTagHelper_Fallback_Event_Documentation, attributeName);
+
+                    parameter.SetPropertyName("Event");
+                });
+
+                attribute.BindAttributeParameter(parameter =>
+                {
+                    parameter.Name = "culture";
+                    parameter.TypeName = typeof(CultureInfo).FullName;
+                    parameter.Documentation = ComponentResources.BindTagHelper_Element_Culture_Documentation;
+
+                    parameter.SetPropertyName("Culture");
+                });
+
+                attribute.BindAttributeParameter(parameter =>
+                {
+                    parameter.Name = "get";
+                    parameter.TypeName = typeof(object).FullName;
+                    parameter.Documentation = ComponentResources.BindTagHelper_Element_Get_Documentation;
+
+                    parameter.SetPropertyName("Get");
+
+                    parameter.SetBindAttributeGetSet();
+                });
+
+                attribute.BindAttributeParameter(parameter =>
+                {
+                    parameter.Name = "set";
+                    parameter.TypeName = typeof(Delegate).FullName;
+                    parameter.Documentation = ComponentResources.BindTagHelper_Element_Set_Documentation;
+
+                    parameter.SetPropertyName("Set");
+                });
+
+                attribute.BindAttributeParameter(parameter =>
+                {
+                    parameter.Name = "after";
+                    parameter.TypeName = typeof(Delegate).FullName;
+                    parameter.Documentation = ComponentResources.BindTagHelper_Element_After_Documentation;
+
+                    parameter.SetPropertyName("After");
+                });
             });
 
-            attribute.BindAttributeParameter(parameter =>
-            {
-                parameter.Name = "culture";
-                parameter.TypeName = typeof(CultureInfo).FullName;
-                parameter.Documentation = ComponentResources.BindTagHelper_Element_Culture_Documentation;
-
-                parameter.SetPropertyName("Culture");
-            });
-
-            attribute.BindAttributeParameter(parameter =>
-            {
-                parameter.Name = "get";
-                parameter.TypeName = typeof(object).FullName;
-                parameter.Documentation = ComponentResources.BindTagHelper_Element_Get_Documentation;
-
-                parameter.SetPropertyName("Get");
-
-                parameter.SetBindAttributeGetSet();
-            });
-
-            attribute.BindAttributeParameter(parameter =>
-            {
-                parameter.Name = "set";
-                parameter.TypeName = typeof(Delegate).FullName;
-                parameter.Documentation = ComponentResources.BindTagHelper_Element_Set_Documentation;
-
-                parameter.SetPropertyName("Set");
-            });
-
-            attribute.BindAttributeParameter(parameter =>
-            {
-                parameter.Name = "after";
-                parameter.TypeName = typeof(Delegate).FullName;
-                parameter.Documentation = ComponentResources.BindTagHelper_Element_After_Documentation;
-
-                parameter.SetPropertyName("After");
-            });
-        });
-
-        return builder.Build();
+            return builder.Build();
+        }
     }
 
-    private List<ElementBindData> GetElementBindData(Compilation compilation)
+    private static ImmutableArray<ElementBindData> GetElementBindData(Compilation compilation)
     {
         var bindElement = compilation.GetTypeByMetadataName(ComponentsApi.BindElementAttribute.FullTypeName);
         var bindInputElement = compilation.GetTypeByMetadataName(ComponentsApi.BindInputElementAttribute.FullTypeName);
@@ -244,14 +253,15 @@ internal class BindTagHelperDescriptorProvider : ITagHelperDescriptorProvider
         if (bindElement == null || bindInputElement == null)
         {
             // This won't likely happen, but just in case.
-            return new List<ElementBindData>();
+            return ImmutableArray<ElementBindData>.Empty;
         }
 
-        var types = new List<INamedTypeSymbol>();
+        using var _ = ListPool<INamedTypeSymbol>.GetPooledObject(out var types);
         var visitor = new BindElementDataVisitor(types);
 
         // Visit the primary output of this compilation, as well as all references.
         visitor.Visit(compilation.Assembly);
+
         foreach (var reference in compilation.References)
         {
             // We ignore .netmodules here - there really isn't a case where they are used by user code
@@ -262,72 +272,99 @@ internal class BindTagHelperDescriptorProvider : ITagHelperDescriptorProvider
             }
         }
 
-        var results = new List<ElementBindData>();
+        using var results = new PooledArrayBuilder<ElementBindData>();
 
-        for (var i = 0; i < types.Count; i++)
+        foreach (var type in types)
         {
-            var type = types[i];
-            var attributes = type.GetAttributes();
+            // Create helper to delay computing display names for this type when we need them.
+            var displayNames = new DisplayNameHelper(type);
 
             // Not handling duplicates here for now since we're the primary ones extending this.
             // If we see users adding to the set of 'bind' constructs we will want to add deduplication
             // and potentially diagnostics.
-            for (var j = 0; j < attributes.Length; j++)
+            foreach (var attribute in type.GetAttributes())
             {
-                var attribute = attributes[j];
+                var constructorArguments = attribute.ConstructorArguments;
 
                 // We need to check the constructor argument length here, because this can show up as 0
                 // if the language service fails to initialize. This is an invalid case, so skip it.
-                if (SymbolEqualityComparer.Default.Equals(attribute.AttributeClass, bindElement) && attribute.ConstructorArguments.Length == 4)
+                if (constructorArguments.Length == 4 && SymbolEqualityComparer.Default.Equals(attribute.AttributeClass, bindElement))
                 {
+                    var (assemblyName, typeName, namespaceName) = displayNames.GetNames();
+
                     results.Add(new ElementBindData(
-                        type.ContainingAssembly.Name,
-                        type.ToDisplayString(),
-                        type.ContainingNamespace.ToDisplayString(),
+                        assemblyName,
+                        typeName,
+                        namespaceName,
                         type.Name,
-                        (string)attribute.ConstructorArguments[0].Value,
+                        (string)constructorArguments[0].Value,
                         null,
-                        (string)attribute.ConstructorArguments[1].Value,
-                        (string)attribute.ConstructorArguments[2].Value,
-                        (string)attribute.ConstructorArguments[3].Value));
+                        (string)constructorArguments[1].Value,
+                        (string)constructorArguments[2].Value,
+                        (string)constructorArguments[3].Value));
                 }
-                else if (SymbolEqualityComparer.Default.Equals(attribute.AttributeClass, bindInputElement) && attribute.ConstructorArguments.Length == 4)
+                else if (constructorArguments.Length == 4 && SymbolEqualityComparer.Default.Equals(attribute.AttributeClass, bindInputElement))
                 {
+                    var (assemblyName, typeName, namespaceName) = displayNames.GetNames();
+
                     results.Add(new ElementBindData(
-                        type.ContainingAssembly.Name,
-                        type.ToDisplayString(),
-                        type.ContainingNamespace.ToDisplayString(),
+                        assemblyName,
+                        typeName,
+                        namespaceName,
                         type.Name,
                         "input",
-                        (string)attribute.ConstructorArguments[0].Value,
-                        (string)attribute.ConstructorArguments[1].Value,
-                        (string)attribute.ConstructorArguments[2].Value,
-                        (string)attribute.ConstructorArguments[3].Value));
+                        (string)constructorArguments[0].Value,
+                        (string)constructorArguments[1].Value,
+                        (string)constructorArguments[2].Value,
+                        (string)constructorArguments[3].Value));
                 }
-                else if (SymbolEqualityComparer.Default.Equals(attribute.AttributeClass, bindInputElement) && attribute.ConstructorArguments.Length == 6)
+                else if (constructorArguments.Length == 6 && SymbolEqualityComparer.Default.Equals(attribute.AttributeClass, bindInputElement))
                 {
+                    var (assemblyName, typeName, namespaceName) = displayNames.GetNames();
+
                     results.Add(new ElementBindData(
-                        type.ContainingAssembly.Name,
-                        type.ToDisplayString(),
-                        type.ContainingNamespace.ToDisplayString(),
+                        assemblyName,
+                        typeName,
+                        namespaceName,
                         type.Name,
                         "input",
-                        (string)attribute.ConstructorArguments[0].Value,
-                        (string)attribute.ConstructorArguments[1].Value,
-                        (string)attribute.ConstructorArguments[2].Value,
-                        (string)attribute.ConstructorArguments[3].Value,
-                        (bool)attribute.ConstructorArguments[4].Value,
-                        (string)attribute.ConstructorArguments[5].Value));
+                        (string)constructorArguments[0].Value,
+                        (string)constructorArguments[1].Value,
+                        (string)constructorArguments[2].Value,
+                        (string)constructorArguments[3].Value,
+                        (bool)constructorArguments[4].Value,
+                        (string)constructorArguments[5].Value));
                 }
             }
         }
 
-        return results;
+        return results.DrainToImmutable();
     }
 
-    private static List<TagHelperDescriptor> CreateElementBindTagHelpers(List<ElementBindData> data)
+    /// <summary>
+    ///  Helper to avoid computing various type-based names until necessary.
+    /// </summary>
+    private ref struct DisplayNameHelper
     {
-        var results = new List<TagHelperDescriptor>();
+        private readonly INamedTypeSymbol _type;
+        private (string Assembly, string Type, string Namespace)? _names;
+
+        public DisplayNameHelper(INamedTypeSymbol type)
+        {
+            _type = type;
+        }
+
+        public (string Assembly, string Type, string Namespace) GetNames()
+        {
+            _names ??= (_type.ContainingAssembly.Name, _type.ToDisplayString(), _type.ContainingNamespace.ToDisplayString());
+
+            return _names.GetValueOrDefault();
+        }
+    }
+
+    private static ImmutableArray<TagHelperDescriptor> CreateElementBindTagHelpers(ImmutableArray<ElementBindData> data)
+    {
+        using var results = new PooledArrayBuilder<TagHelperDescriptor>();
 
         foreach (var entry in data)
         {
@@ -516,12 +553,12 @@ internal class BindTagHelperDescriptorProvider : ITagHelperDescriptorProvider
             results.Add(builder.Build());
         }
 
-        return results;
+        return results.DrainToImmutable();
     }
 
-    private static List<TagHelperDescriptor> CreateComponentBindTagHelpers(ICollection<TagHelperDescriptor> tagHelpers)
+    private static ImmutableArray<TagHelperDescriptor> CreateComponentBindTagHelpers(ICollection<TagHelperDescriptor> tagHelpers)
     {
-        var results = new List<TagHelperDescriptor>();
+        using var results = new PooledArrayBuilder<TagHelperDescriptor>();
 
         foreach (var tagHelper in tagHelpers)
         {
@@ -553,7 +590,7 @@ internal class BindTagHelperDescriptorProvider : ITagHelperDescriptorProvider
 
                 BoundAttributeDescriptor valueAttribute = null;
                 BoundAttributeDescriptor expressionAttribute = null;
-                var valueAttributeName = changeAttribute.Name.Substring(0, changeAttribute.Name.Length - "Changed".Length);
+                var valueAttributeName = changeAttribute.Name[..^"Changed".Length];
                 var expressionAttributeName = valueAttributeName + "Expression";
                 for (var j = 0; j < tagHelper.BoundAttributes.Count; j++)
                 {
@@ -693,50 +730,23 @@ internal class BindTagHelperDescriptorProvider : ITagHelperDescriptorProvider
             }
         }
 
-        return results;
+        return results.DrainToImmutable();
     }
 
     [DebuggerDisplay($"{{{nameof(GetDebuggerDisplay)}(),nq}}")]
-    private struct ElementBindData
+    private readonly record struct ElementBindData(
+        string Assembly,
+        string TypeName,
+        string TypeNamespace,
+        string TypeNameIdentifier,
+        string Element,
+        string TypeAttribute,
+        string Suffix,
+        string ValueAttribute,
+        string ChangeAttribute,
+        bool IsInvariantCulture = false,
+        string Format = null)
     {
-        public ElementBindData(
-            string assembly,
-            string typeName,
-            string typeNamespace,
-            string typeNameIdentifier,
-            string element,
-            string typeAttribute,
-            string suffix,
-            string valueAttribute,
-            string changeAttribute,
-            bool isInvariantCulture = false,
-            string format = null)
-        {
-            Assembly = assembly;
-            TypeName = typeName;
-            TypeNamespace = typeNamespace;
-            TypeNameIdentifier = typeNameIdentifier;
-            Element = element;
-            TypeAttribute = typeAttribute;
-            Suffix = suffix;
-            ValueAttribute = valueAttribute;
-            ChangeAttribute = changeAttribute;
-            IsInvariantCulture = isInvariantCulture;
-            Format = format;
-        }
-
-        public string Assembly { get; }
-        public string TypeName { get; }
-        public string TypeNamespace { get; }
-        public string TypeNameIdentifier { get; }
-        public string Element { get; }
-        public string TypeAttribute { get; }
-        public string Suffix { get; }
-        public string ValueAttribute { get; }
-        public string ChangeAttribute { get; }
-        public bool IsInvariantCulture { get; }
-        public string Format { get; }
-
         private string GetDebuggerDisplay()
         {
             return $"Element: {Element} - Suffix: {Suffix ?? "(none)"} - Type: {TypeAttribute} Value: {ValueAttribute} Change: {ChangeAttribute}";
