@@ -70,3 +70,4 @@
                             RightParenthesis;[)];
         MarkupTextLiteral - [115..115)::0 - [] - Gen<Markup> - SpanEditHandler;Accepts:Any
             Marker;[];
+    EndOfFile;[];

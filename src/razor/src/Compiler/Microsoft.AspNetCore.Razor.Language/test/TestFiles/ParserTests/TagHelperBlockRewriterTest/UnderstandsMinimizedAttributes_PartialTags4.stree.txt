@@ -20,3 +20,4 @@
                     MarkupTextLiteral - [43..64)::21 - [bound-required-string] - Gen<Markup> - SpanEditHandler;Accepts:Any
                         Text;[bound-required-string];
                 CloseAngle;[<Missing>];
+    EndOfFile;[];

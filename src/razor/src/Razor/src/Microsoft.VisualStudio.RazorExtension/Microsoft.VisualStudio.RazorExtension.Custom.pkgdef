@@ -54,3 +54,9 @@
 "Value"=dword:00000001
 "Title"="Enable enhanced Razor LSP server (requires restart)"
 "PreviewPaneChannels"="IntPreview,int.main"
+
+[$RootKey$\FeatureFlags\Razor\LSP\ShowAllCSharpCodeActions]
+"Description"="Show all C# code actions in Razor files. Note: This is experimental, some actions may not apply correctly, or at all!"
+"Value"=dword:00000000
+"Title"="Show all C# code actions in Razor files (requires restart)"
+"PreviewPaneChannels"="IntPreview,int.main"

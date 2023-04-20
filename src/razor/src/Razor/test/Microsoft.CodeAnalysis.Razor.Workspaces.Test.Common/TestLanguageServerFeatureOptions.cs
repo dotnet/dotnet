@@ -28,4 +28,6 @@ internal class TestLanguageServerFeatureOptions : LanguageServerFeatureOptions
     public override bool SupportsDelegatedCodeActions => false;
 
     public override bool ReturnCodeActionAndRenamePathsWithPrefixedSlash => false;
+
+    public override bool ShowAllCSharpCodeActions => false;
 }

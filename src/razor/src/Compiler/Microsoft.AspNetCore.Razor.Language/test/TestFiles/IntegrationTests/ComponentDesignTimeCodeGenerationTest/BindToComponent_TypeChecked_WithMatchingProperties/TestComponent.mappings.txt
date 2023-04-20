@@ -5,14 +5,14 @@ Generated Location: (1011:25,26 [11] )
 
 Source Location: (19:0,19 [5] x:\dir\subdir\Test\TestComponent.cshtml)
 |Value|
-Generated Location: (1506:39,19 [5] )
+Generated Location: (1544:40,19 [5] )
 |Value|
 
 Source Location: (50:1,7 [55] x:\dir\subdir\Test\TestComponent.cshtml)
 |
     public string ParentValue { get; set; } = "42";
 |
-Generated Location: (1865:56,7 [55] )
+Generated Location: (1957:58,7 [55] )
 |
     public string ParentValue { get; set; } = "42";
 |

@@ -45,6 +45,7 @@ internal sealed class SyntaxTokenCache
                 case SyntaxKind.StringLiteral:
                 case SyntaxKind.Transition:
                 case SyntaxKind.Whitespace:
+                case SyntaxKind.EndOfFile:
                     return true;
             }
         }

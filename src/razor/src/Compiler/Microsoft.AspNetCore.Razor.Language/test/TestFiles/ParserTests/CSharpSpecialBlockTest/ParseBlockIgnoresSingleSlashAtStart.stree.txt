@@ -14,3 +14,4 @@
             ForwardSlash;[/];
             Whitespace;[ ];
             Text;[foo];
+    EndOfFile;[];

@@ -8,7 +8,7 @@ open System.Threading.Tasks
 open Microsoft.CodeAnalysis.Text
 open Microsoft.CodeAnalysis.CodeFixes
 
-[<ExportCodeFixProvider(FSharpConstants.FSharpLanguageName, Name = "ChangeToUpcast"); Shared>]
+[<ExportCodeFixProvider(FSharpConstants.FSharpLanguageName, Name = CodeFix.ChangeToUpcast); Shared>]
 type internal FSharpChangeToUpcastCodeFixProvider() =
     inherit CodeFixProvider()
 
@@ -43,19 +43,7 @@ type internal FSharpChangeToUpcastCodeFixProvider() =
                 else
                     SR.UseUpcastKeyword()
 
-            let diagnostics =
-                context.Diagnostics
-                |> Seq.filter (fun x -> fixableDiagnosticIds |> Set.contains x.Id)
-                |> Seq.toImmutableArray
-
-            let codeFix =
-                CodeFixHelpers.createTextChangeCodeFix (
-                    title,
-                    context,
-                    (fun () -> asyncMaybe.Return [| TextChange(context.Span, replacement) |])
-                )
-
-            context.RegisterCodeFix(codeFix, diagnostics)
+            do context.RegisterFsharpFix(CodeFix.ChangeToUpcast, title, [| TextChange(context.Span, replacement) |])
         }
         |> Async.Ignore
         |> RoslynHelpers.StartAsyncUnitAsTask(context.CancellationToken)

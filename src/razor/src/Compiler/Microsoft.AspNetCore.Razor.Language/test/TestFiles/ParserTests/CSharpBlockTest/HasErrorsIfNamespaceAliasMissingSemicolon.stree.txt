@@ -21,3 +21,4 @@
                         Identifier;[FooBarBaz];
         MarkupTextLiteral - [30..30)::0 - [] - Gen<Markup> - SpanEditHandler;Accepts:Any
             Marker;[];
+    EndOfFile;[];

@@ -12,3 +12,4 @@
                     CSharpCodeBlock - [6..6)::0
         MarkupTextLiteral - [6..6)::0 - [] - Gen<Markup> - SpanEditHandler;Accepts:Any
             Marker;[];
+    EndOfFile;[];

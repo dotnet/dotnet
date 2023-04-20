@@ -14,6 +14,6 @@ internal sealed class RemoteTagHelperProviderServiceFactory : RazorServiceFactor
     {
     }
 
-    protected override IRemoteTagHelperProviderService CreateService(IServiceBroker serviceBroker)
-            => new RemoteTagHelperProviderService(serviceBroker, new TelemetryReporter());
+    protected override IRemoteTagHelperProviderService CreateService(IServiceBroker serviceBroker, ITelemetryReporter telemetryReporter)
+            => new RemoteTagHelperProviderService(serviceBroker, telemetryReporter);
 }

@@ -13,3 +13,4 @@
                         Identifier;[Foo];
         MarkupTextLiteral - [10..13)::3 - [   ] - Gen<Markup> - SpanEditHandler;Accepts:Any
             Whitespace;[   ];
+    EndOfFile;[];

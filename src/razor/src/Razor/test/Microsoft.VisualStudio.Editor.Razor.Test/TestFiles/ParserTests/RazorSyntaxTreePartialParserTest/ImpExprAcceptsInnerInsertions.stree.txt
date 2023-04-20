@@ -17,3 +17,4 @@ RazorDocument - [0..22)::22 - [foo @DateTime..Now baz]
         MarkupTextLiteral - [18..22)::4 - [ baz] - Gen<Markup> - SpanEditHandler;Accepts:Any
             Whitespace;[ ];
             Text;[baz];
+    EndOfFile;[];

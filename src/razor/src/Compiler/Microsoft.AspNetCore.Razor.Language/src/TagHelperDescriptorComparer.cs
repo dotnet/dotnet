@@ -12,7 +12,7 @@ internal sealed class TagHelperDescriptorComparer : IEqualityComparer<TagHelperD
     /// <summary>
     /// A default instance of the <see cref="TagHelperDescriptorComparer"/>.
     /// </summary>
-    public static readonly TagHelperDescriptorComparer Default = new TagHelperDescriptorComparer();
+    public static readonly TagHelperDescriptorComparer Default = new();
 
     private TagHelperDescriptorComparer()
     {
@@ -20,7 +20,7 @@ internal sealed class TagHelperDescriptorComparer : IEqualityComparer<TagHelperD
 
     public bool Equals(TagHelperDescriptor? descriptorX, TagHelperDescriptor? descriptorY)
     {
-        if (object.ReferenceEquals(descriptorX, descriptorY))
+        if (ReferenceEquals(descriptorX, descriptorY))
         {
             return true;
         }
@@ -30,76 +30,33 @@ internal sealed class TagHelperDescriptorComparer : IEqualityComparer<TagHelperD
             return false;
         }
 
-        if (!string.Equals(descriptorX.Kind, descriptorY.Kind, StringComparison.Ordinal))
+        if (descriptorX.Kind != descriptorY.Kind ||
+            descriptorX.AssemblyName != descriptorY.AssemblyName ||
+            descriptorX.Name != descriptorY.Name ||
+            descriptorX.CaseSensitive != descriptorY.CaseSensitive ||
+            descriptorX.Documentation != descriptorY.Documentation ||
+            descriptorX.DisplayName != descriptorY.DisplayName ||
+            descriptorX.TagOutputHint != descriptorY.TagOutputHint)
         {
             return false;
         }
 
-        if (!string.Equals(descriptorX.AssemblyName, descriptorY.AssemblyName, StringComparison.Ordinal))
+        if (!ComparerUtilities.Equals(descriptorX.BoundAttributes, descriptorY.BoundAttributes, BoundAttributeDescriptorComparer.Default) ||
+            !ComparerUtilities.Equals(descriptorX.TagMatchingRules, descriptorY.TagMatchingRules, TagMatchingRuleDescriptorComparer.Default) ||
+            !ComparerUtilities.Equals(descriptorX.AllowedChildTags, descriptorY.AllowedChildTags, AllowedChildTagDescriptorComparer.Default) ||
+            !ComparerUtilities.Equals(descriptorX.Diagnostics, descriptorY.Diagnostics, EqualityComparer<RazorDiagnostic>.Default))
         {
             return false;
         }
 
-        if (!string.Equals(descriptorX.Name, descriptorY.Name, StringComparison.Ordinal))
+        if (descriptorX.Metadata is MetadataCollection metadataX &&
+            descriptorY.Metadata is MetadataCollection metadataY &&
+            !metadataX.Equals(metadataY))
         {
             return false;
         }
 
-        if (!ComparerUtilities.Equals(
-            descriptorX.BoundAttributes,
-            descriptorY.BoundAttributes,
-            BoundAttributeDescriptorComparer.Default))
-        {
-            return false;
-        }
-
-        if (!ComparerUtilities.Equals(
-            descriptorX.TagMatchingRules,
-            descriptorY.TagMatchingRules,
-            TagMatchingRuleDescriptorComparer.Default))
-        {
-            return false;
-        }
-
-        if (!ComparerUtilities.Equals(
-            descriptorX.AllowedChildTags,
-            descriptorY.AllowedChildTags,
-            AllowedChildTagDescriptorComparer.Default))
-        {
-            return false;
-        }
-
-        if (descriptorX.CaseSensitive != descriptorY.CaseSensitive)
-        {
-            return false;
-        }
-
-        if (!string.Equals(descriptorX.Documentation, descriptorY.Documentation, StringComparison.Ordinal))
-        {
-            return false;
-        }
-
-        if (!string.Equals(descriptorX.DisplayName, descriptorY.DisplayName, StringComparison.Ordinal))
-        {
-            return false;
-        }
-
-        if (!string.Equals(descriptorX.TagOutputHint, descriptorY.TagOutputHint, StringComparison.Ordinal))
-        {
-            return false;
-        }
-
-        if (!ComparerUtilities.Equals(descriptorX.Diagnostics, descriptorY.Diagnostics, EqualityComparer<RazorDiagnostic>.Default))
-        {
-            return false;
-        }
-
-        if (!ComparerUtilities.Equals(descriptorX.Metadata, descriptorY.Metadata, StringComparer.Ordinal))
-        {
-            return false;
-        }
-
-        return true;
+        return ComparerUtilities.Equals(descriptorX.Metadata, descriptorY.Metadata, StringComparer.Ordinal);
     }
 
     /// <inheritdoc />

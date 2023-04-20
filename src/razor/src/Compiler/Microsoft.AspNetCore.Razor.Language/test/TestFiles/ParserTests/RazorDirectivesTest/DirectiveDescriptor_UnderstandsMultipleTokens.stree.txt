@@ -30,3 +30,4 @@
                             StringLiteral;["AString"];
         MarkupTextLiteral - [64..64)::0 - [] - Gen<Markup> - SpanEditHandler;Accepts:Any
             Marker;[];
+    EndOfFile;[];

@@ -1,8 +1,6 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-using System.Collections.Immutable;
-
 namespace Microsoft.AspNetCore.Razor.Language;
 
 internal sealed class DefaultBoundAttributeDescriptor : BoundAttributeDescriptor
@@ -18,8 +16,9 @@ internal sealed class DefaultBoundAttributeDescriptor : BoundAttributeDescriptor
         string? documentation,
         string? displayName,
         bool caseSensitive,
+        bool isEditorRequired,
         BoundAttributeParameterDescriptor[] parameterDescriptors,
-        ImmutableDictionary<string, string> metadata,
+        MetadataCollection metadata,
         RazorDiagnostic[] diagnostics)
         : base(kind)
     {
@@ -32,6 +31,7 @@ internal sealed class DefaultBoundAttributeDescriptor : BoundAttributeDescriptor
         Documentation = documentation;
         DisplayName = displayName;
         CaseSensitive = caseSensitive;
+        IsEditorRequired = isEditorRequired;
         BoundAttributeParameters = parameterDescriptors;
 
         Metadata = metadata;

@@ -4,7 +4,7 @@
 using System.Collections.Generic;
 using System.IO;
 using Microsoft.AspNetCore.Razor.Language;
-using Microsoft.CodeAnalysis.Razor.Serialization;
+using Microsoft.AspNetCore.Razor.ProjectEngineHost.Serialization;
 using Newtonsoft.Json;
 
 namespace Microsoft.AspNetCore.Razor.Microbenchmarks;

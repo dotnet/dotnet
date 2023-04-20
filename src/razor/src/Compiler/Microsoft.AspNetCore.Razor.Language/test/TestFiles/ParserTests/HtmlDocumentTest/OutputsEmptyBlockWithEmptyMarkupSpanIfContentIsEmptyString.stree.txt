@@ -2,3 +2,4 @@
     MarkupBlock - [0..0)::0
         MarkupTextLiteral - [0..0)::0 - [] - Gen<Markup> - SpanEditHandler;Accepts:Any
             Marker;[];
+    EndOfFile;[];

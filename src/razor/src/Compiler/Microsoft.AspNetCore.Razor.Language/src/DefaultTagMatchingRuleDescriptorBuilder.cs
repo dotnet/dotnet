@@ -9,14 +9,33 @@ using Microsoft.Extensions.ObjectPool;
 
 namespace Microsoft.AspNetCore.Razor.Language;
 
-internal class DefaultTagMatchingRuleDescriptorBuilder : TagMatchingRuleDescriptorBuilder, IBuilder<TagMatchingRuleDescriptor>
+internal partial class DefaultTagMatchingRuleDescriptorBuilder : TagMatchingRuleDescriptorBuilder, IBuilder<TagMatchingRuleDescriptor>
 {
+    private static readonly ObjectPool<DefaultTagMatchingRuleDescriptorBuilder> s_pool = DefaultPool.Create(Policy.Instance);
+
+    public static DefaultTagMatchingRuleDescriptorBuilder GetInstance(DefaultTagHelperDescriptorBuilder parent)
+    {
+        var builder = s_pool.Get();
+
+        builder._parent = parent;
+
+        return builder;
+    }
+
+    public static void ReturnInstance(DefaultTagMatchingRuleDescriptorBuilder builder)
+        => s_pool.Return(builder);
+
     private static readonly ObjectPool<HashSet<RequiredAttributeDescriptor>> s_requiredAttributeSetPool
         = HashSetPool<RequiredAttributeDescriptor>.Create(RequiredAttributeDescriptorComparer.Default);
 
-    private readonly DefaultTagHelperDescriptorBuilder _parent;
+    [AllowNull]
+    private DefaultTagHelperDescriptorBuilder _parent;
     private List<DefaultRequiredAttributeDescriptorBuilder>? _requiredAttributeBuilders;
     private RazorDiagnosticCollection? _diagnostics;
+
+    private DefaultTagMatchingRuleDescriptorBuilder()
+    {
+    }
 
     internal DefaultTagMatchingRuleDescriptorBuilder(DefaultTagHelperDescriptorBuilder parent)
     {
@@ -24,9 +43,7 @@ internal class DefaultTagMatchingRuleDescriptorBuilder : TagMatchingRuleDescript
     }
 
     public override string? TagName { get; set; }
-
     public override string? ParentTag { get; set; }
-
     public override TagStructure TagStructure { get; set; }
 
     internal bool CaseSensitive => _parent.CaseSensitive;
@@ -52,7 +69,7 @@ internal class DefaultTagMatchingRuleDescriptorBuilder : TagMatchingRuleDescript
 
         EnsureRequiredAttributeBuilders();
 
-        var builder = new DefaultRequiredAttributeDescriptorBuilder(this);
+        var builder = DefaultRequiredAttributeDescriptorBuilder.GetInstance(this);
         configure(builder);
         _requiredAttributeBuilders.Add(builder);
     }

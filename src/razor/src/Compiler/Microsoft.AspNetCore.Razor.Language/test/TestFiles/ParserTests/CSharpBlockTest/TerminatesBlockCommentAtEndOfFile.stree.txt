@@ -20,3 +20,4 @@
                 LeftBrace;[{];
                 Whitespace;[ ];
                 CSharpComment;[/* foo bar baz];RZ1001(25:0,25 [1] )
+    EndOfFile;[];

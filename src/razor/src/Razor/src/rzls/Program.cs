@@ -3,33 +3,40 @@
 
 using System;
 using System.Diagnostics;
+using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Razor.Telemetry;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer;
 
 public class Program
 {
-    public static void Main(string[] args)
-    {
-#pragma warning disable VSTHRD002 // Avoid problematic synchronous waits
-        MainAsync(args).Wait();
-#pragma warning restore VSTHRD002 // Avoid problematic synchronous waits
-    }
-
-    public static async Task MainAsync(string[] args)
+    public static async Task Main(string[] args)
     {
         var trace = Trace.Messages;
+
         for (var i = 0; i < args.Length; i++)
         {
             if (args[i].Contains("debug", StringComparison.OrdinalIgnoreCase))
             {
-                while (!Debugger.IsAttached)
+                await Console.Error.WriteLineAsync($"Server started with process ID {Environment.ProcessId}");
+                if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
                 {
-                    Thread.Sleep(1000);
+                    // Debugger.Launch() only works on Windows.
+                    _ = Debugger.Launch();
+                }
+                else
+                {
+                    var timeout = TimeSpan.FromMinutes(1);
+                    await Console.Error.WriteLineAsync($"Waiting {timeout:g} for a debugger to attach");
+                    using var timeoutSource = new CancellationTokenSource(timeout);
+                    while (!Debugger.IsAttached && !timeoutSource.Token.IsCancellationRequested)
+                    {
+                        await Task.Delay(100, CancellationToken.None);
+                    }
                 }
 
-                Debugger.Break();
                 continue;
             }
 
@@ -39,16 +46,20 @@ public class Program
                 if (!Enum.TryParse(traceArg, out trace))
                 {
                     trace = Trace.Messages;
-                    Console.WriteLine($"Invalid Razor trace '{traceArg}'. Defaulting to {trace}.");
+                    await Console.Error.WriteLineAsync($"Invalid Razor trace '{traceArg}'. Defaulting to {trace}.");
                 }
             }
         }
+
+        var languageServerFeatureOptions = new ConfigurableLanguageServerFeatureOptions(args);
 
         var logger = new LspLogger(trace);
         var server = RazorLanguageServerWrapper.Create(
             Console.OpenStandardInput(),
             Console.OpenStandardOutput(),
-            logger);
+            logger,
+            NoOpTelemetryReporter.Instance,
+            featureOptions: languageServerFeatureOptions);
         await server.WaitForExitAsync();
     }
 }

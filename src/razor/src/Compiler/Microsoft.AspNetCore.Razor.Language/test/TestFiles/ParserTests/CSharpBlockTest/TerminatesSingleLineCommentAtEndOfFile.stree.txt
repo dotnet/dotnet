@@ -20,3 +20,4 @@
                 LeftBrace;[{];
                 Whitespace;[ ];
                 CSharpComment;[// foo bar baz];
+    EndOfFile;[];

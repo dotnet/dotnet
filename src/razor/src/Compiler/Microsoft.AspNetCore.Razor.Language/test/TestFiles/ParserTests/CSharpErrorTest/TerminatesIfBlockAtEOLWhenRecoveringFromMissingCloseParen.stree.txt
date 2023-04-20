@@ -14,3 +14,4 @@
                 NewLine;[LF];
         MarkupTextLiteral - [13..16)::3 - [baz] - Gen<Markup> - SpanEditHandler;Accepts:Any
             Text;[baz];
+    EndOfFile;[];

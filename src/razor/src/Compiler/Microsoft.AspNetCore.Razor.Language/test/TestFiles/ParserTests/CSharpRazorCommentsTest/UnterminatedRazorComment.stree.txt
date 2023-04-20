@@ -8,3 +8,4 @@
             RazorCommentLiteral;[<Missing>];
             RazorCommentStar;[<Missing>];RZ1028(0:0,0 [2] )
             RazorCommentTransition;[<Missing>];
+    EndOfFile;[];

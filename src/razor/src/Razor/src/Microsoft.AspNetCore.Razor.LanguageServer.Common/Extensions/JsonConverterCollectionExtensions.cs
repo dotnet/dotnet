@@ -3,7 +3,7 @@
 
 using System;
 using System.Collections.Generic;
-using Microsoft.CodeAnalysis.Razor.Serialization;
+using Microsoft.AspNetCore.Razor.ProjectEngineHost.Serialization;
 using Microsoft.CodeAnalysis.Razor.Workspaces.Serialization;
 using Newtonsoft.Json;
 
@@ -11,26 +11,23 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer.Common.Extensions;
 
 internal static class JsonConverterCollectionExtensions
 {
-    public static readonly IReadOnlyList<JsonConverter> RazorConverters = new List<JsonConverter>()
+    private static readonly IReadOnlyList<JsonConverter> s_razorConverters = new List<JsonConverter>()
     {
-        TagHelperDescriptorJsonConverter.Instance,
-        RazorDiagnosticJsonConverter.Instance,
-        RazorExtensionJsonConverter.Instance,
-        RazorConfigurationJsonConverter.Instance,
-        ProjectRazorJsonJsonConverter.Instance,
         RazorUriJsonConverter.Instance,
     };
 
-    public static void RegisterRazorConverters(this IList<JsonConverter> collection)
+    public static void RegisterRazorConverters(this JsonConverterCollection collection)
     {
         if (collection is null)
         {
             throw new ArgumentNullException(nameof(collection));
         }
 
-        for (var i = 0; i < RazorConverters.Count; i++)
+        for (var i = 0; i < s_razorConverters.Count; i++)
         {
-            collection.Add(RazorConverters[i]);
+            collection.Add(s_razorConverters[i]);
         }
+
+        collection.RegisterProjectSerializerConverters();
     }
 }

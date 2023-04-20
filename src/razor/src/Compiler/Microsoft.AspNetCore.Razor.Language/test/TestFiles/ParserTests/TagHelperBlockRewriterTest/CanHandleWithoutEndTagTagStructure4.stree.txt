@@ -24,3 +24,4 @@
                 OpenAngle;[<];
                 Text;[input];
                 CloseAngle;[>];
+    EndOfFile;[];

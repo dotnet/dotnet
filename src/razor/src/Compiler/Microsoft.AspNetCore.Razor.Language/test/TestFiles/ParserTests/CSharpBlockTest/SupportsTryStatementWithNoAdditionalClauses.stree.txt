@@ -23,3 +23,4 @@
                 RightBrace;[}];
                 Whitespace;[ ];
                 RightBrace;[}];
+    EndOfFile;[];

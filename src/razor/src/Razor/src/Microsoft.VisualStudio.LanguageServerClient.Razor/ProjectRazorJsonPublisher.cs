@@ -7,11 +7,11 @@ using System.ComponentModel.Composition;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Razor.ProjectEngineHost.Serialization;
 using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
-using Microsoft.CodeAnalysis.Razor.Serialization;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
-using Microsoft.CodeAnalysis.Razor.Workspaces.Serialization;
+using Microsoft.CodeAnalysis.Razor.Workspaces.ProjectSystem;
 using Newtonsoft.Json;
 using Shared = System.Composition.SharedAttribute;
 
@@ -284,7 +284,7 @@ internal class ProjectRazorJsonPublisher : ProjectSnapshotChangeTrigger
         // by the time we move the tempfile into its place
         using (var writer = tempFileInfo.CreateText())
         {
-            var projectRazorJson = new ProjectRazorJson(publishFilePath, projectSnapshot);
+            var projectRazorJson = projectSnapshot.ToProjectRazorJson(publishFilePath);
             _serializer.Serialize(writer, projectRazorJson);
         }
 

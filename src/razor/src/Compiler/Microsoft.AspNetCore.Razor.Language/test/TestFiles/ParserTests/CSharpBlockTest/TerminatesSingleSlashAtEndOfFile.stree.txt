@@ -26,3 +26,4 @@
                 Identifier;[bar];
                 Whitespace;[ ];
                 Identifier;[baz];
+    EndOfFile;[];

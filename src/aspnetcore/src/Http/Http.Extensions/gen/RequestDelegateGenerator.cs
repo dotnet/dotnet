@@ -85,6 +85,11 @@ public sealed class RequestDelegateGenerator : IIncrementalGenerator
             codeWriter.StartBlock();
             codeWriter.WriteLine($"var handler = ({endpoint!.EmitHandlerDelegateType(considerOptionality: true)})del;");
             codeWriter.WriteLine("EndpointFilterDelegate? filteredInvocation = null;");
+            if (endpoint!.EmitterContext.RequiresLoggingHelper || endpoint!.EmitterContext.HasJsonBodyOrService || endpoint!.Response?.IsSerializableJsonResponse(out var _) is true)
+            {
+                codeWriter.WriteLine("var serviceProvider = options?.ServiceProvider ?? options?.EndpointBuilder?.ApplicationServices;");
+            }
+            endpoint!.EmitLoggingPreamble(codeWriter);
             endpoint!.EmitRouteOrQueryResolver(codeWriter);
             endpoint!.EmitJsonBodyOrServiceResolver(codeWriter);
             endpoint!.Response?.EmitJsonPreparation(codeWriter);
@@ -160,6 +165,7 @@ public sealed class RequestDelegateGenerator : IIncrementalGenerator
             {
                 var hasJsonBodyOrService = endpoints.Any(endpoint => endpoint!.EmitterContext.HasJsonBodyOrService);
                 var hasJsonBody = endpoints.Any(endpoint => endpoint!.EmitterContext.HasJsonBody);
+                var hasFormBody = endpoints.Any(endpoint => endpoint!.EmitterContext.HasFormBody);
                 var hasRouteOrQuery = endpoints.Any(endpoint => endpoint!.EmitterContext.HasRouteOrQuery);
                 var hasBindAsync = endpoints.Any(endpoint => endpoint!.EmitterContext.HasBindAsync);
                 var hasParsable = endpoints.Any(endpoint => endpoint!.EmitterContext.HasParsable);
@@ -181,6 +187,11 @@ public sealed class RequestDelegateGenerator : IIncrementalGenerator
                 if (hasJsonBody || hasJsonBodyOrService)
                 {
                     codeWriter.WriteLine(RequestDelegateGeneratorSources.TryResolveBodyAsyncMethod);
+                }
+
+                if (hasFormBody)
+                {
+                    codeWriter.WriteLine(RequestDelegateGeneratorSources.TryResolveFormAsyncMethod);
                 }
 
                 if (hasBindAsync)

@@ -36,3 +36,4 @@
                                     CloseAngle;[<Missing>];
                     RazorMetaCode - [18..18)::0 - Gen<None> - SpanEditHandler;Accepts:Any
                         RightBrace;[<Missing>];
+    EndOfFile;[];

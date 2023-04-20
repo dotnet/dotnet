@@ -70,6 +70,7 @@ stages:
       enablePublishBuildArtifacts: false
       enablePublishTestResults: false
       enablePublishUsingPipelines: false
+      enableSourcebuild: true
       jobs:
       # Code check
       - ${{ if or(eq(variables['System.TeamProject'], 'public'), in(variables['Build.Reason'], 'PullRequest')) }}:
@@ -104,14 +105,14 @@ stages:
           - powershell: ./restore.cmd -msbuildEngine dotnet -ci $(_InternalRuntimeDownloadArgs); ./eng/scripts/CodeCheck.ps1 -ci
             displayName: Run eng/scripts/CodeCheck.ps1
 
-
-  # Three jobs for each of the three OSes we want to run on
+  # Windows based jobs. This needs to be separate from Unix based jobs because it generates
+  # TRX files. That can only be toggled at the top level template level, not at the individual
+  # job.
   - template: /eng/common/templates/jobs/jobs.yml
     parameters:
-      enablePublishBuildArtifacts: true
+      enablePublishBuildArtifacts: false
       enablePublishTestResults: true
       enableTelemetry: true
-      enableSourcebuild: true
       helixRepo: dotnet/razor
       helixType: build.product/
       # enableMicrobuild can't be read from a user-defined variable (Azure DevOps limitation)
@@ -200,11 +201,25 @@ stages:
             env:
               Token: $(dn-bot-dnceng-artifact-feeds-rw)
 
+        # Don't create a binary log until we can customize the name
+        # https://github.com/dotnet/arcade/pull/12988
         - script: eng\cibuild.cmd
             -configuration $(_BuildConfig)
             -msbuildEngine vs
             -prepareMachine
             -restore
+            -nobl
+          name: Restore
+          displayName: Restore
+          condition: succeeded()
+
+        - powershell: eng\SetupVSHive.ps1
+          displayName: Setup VS Hive
+
+        - script: eng\cibuild.cmd
+            -configuration $(_BuildConfig)
+            -msbuildEngine vs
+            -prepareMachine
             -build
             -pack
             -publish
@@ -216,85 +231,52 @@ stages:
           displayName: Build and Deploy
           condition: succeeded()
 
-        - task: PublishBuildArtifacts@1
-          displayName: Upload Build BinLog
-          condition: always()
-          continueOnError: true
-          inputs:
-              pathtoPublish: artifacts/log/$(_BuildConfig)/Build.binlog
-              artifactName: $(Agent.Os)_$(Agent.JobName) BuildBinLog
-              artifactType: Container
-              parallel: true
-
-        - powershell: eng\SetupVSHive.ps1
-          displayName: Setup VS Hive
-
         - script: eng\CIBuild.cmd
             -configuration $(_BuildConfig)
             -prepareMachine
             -test
-            -integrationTest
-          name: Run_Tests
-          displayName: Run Unit and Integration tests
+            -nobl
+          name: Run_Unit_Tests
+          displayName: Run Unit Tests
           condition: succeeded()
 
-        - task: PublishBuildArtifacts@1
-          displayName: Upload Run tests BinLog
-          condition: always()
-          continueOnError: true
-          inputs:
-              pathtoPublish: artifacts/log/$(_BuildConfig)/Build.binlog
-              artifactName: $(Agent.Os)_$(Agent.JobName) RunTestsBinLog
-              artifactType: Container
-              parallel: true
+        - script: eng\CIBuild.cmd
+            -configuration $(_BuildConfig)
+            -prepareMachine
+            -integrationTest
+          name: Run_Integration_Tests
+          displayName: Run Integration Tests
+          condition: succeeded()
 
         - powershell: ./eng/scripts/FinishDumpCollectionForHangingBuilds.ps1 artifacts/log/$(_BuildConfig)
           displayName: Finish background dump collection
           continueOnError: true
           condition: always()
 
-        - task: PublishBuildArtifacts@1
-          displayName: Upload Test Results
+        - publish: artifacts/log/$(_BuildConfig)
+          artifact: $(Agent.Os)_$(Agent.JobName) Attempt $(System.JobAttempt) Logs
+          displayName: Publish Build Artifacts
           condition: always()
-          continueOnError: true
-          inputs:
-            pathtoPublish: artifacts/TestResults/$(_BuildConfig)/
-            artifactName: $(Agent.Os)_$(Agent.JobName) TestResults
-            artifactType: Container
-            parallel: true
 
-        # - task: PublishTestResults@2
-        #   displayName: Publish VSCode Test Results
-        #   inputs:
-        #     testResultsFormat: 'JUnit'
-        #     testResultsFiles: '*.xml'
-        #     searchFolder: '$(Build.SourcesDirectory)/artifacts/TestResults/$(_BuildConfig)'
-        #   continueOnError: true
-        #   condition: always()
+        - publish: artifacts/TestResults/$(_BuildConfig)
+          artifact: $(Agent.Os)_$(Agent.JobName) Attempt $(System.JobAttempt) TestResults
+          displayName: Publish Test Artifacts
+          condition: always()
 
         # Publish an artifact that the RoslynInsertionTool is able to find by its name.
-        - task: PublishBuildArtifacts@1
-          displayName: Publish Artifact VSSetup
-          inputs:
-            PathtoPublish: 'artifacts\VSSetup\$(_BuildConfig)'
-            ArtifactName: 'VSSetup'
-          continueOnError: true
+        - publish: artifacts\VSSetup\$(_BuildConfig)
+          artifact: VSSetup
+          displayName: Publish VSSetup
           condition: and(succeeded(), eq(variables['system.pullrequest.isfork'], false), eq(variables['_BuildConfig'], 'Release'))
 
-        - task: PublishBuildArtifacts@1
+        - publish: artifacts\MPack\$(_BuildConfig)
+          artifact: MPack_$(Agent.Os)_$(_BuildConfig)
           displayName: Publish VS for Mac Artifacts
-          inputs:
-            PathtoPublish: 'artifacts\MPack\$(_BuildConfig)'
-            ArtifactName: MPack_$(Agent.Os)_$(_BuildConfig)
-          continueOnError: true
           condition: and(succeeded(), eq(variables['system.pullrequest.isfork'], false), eq(variables['_BuildConfig'], 'Release'))
 
-        - task: PublishBuildArtifacts@1
+        - publish: artifacts\packages\$(_BuildConfig)
+          artifact: Packages_$(Agent.Os)_$(_BuildConfig)
           displayName: Publish package artifacts
-          inputs:
-            PathtoPublish: 'artifacts\packages\$(_BuildConfig)'
-            ArtifactName: Packages_$(Agent.Os)_$(_BuildConfig)
-          continueOnError: true
           condition: and(succeeded(), eq(variables['system.pullrequest.isfork'], false), eq(variables['_BuildConfig'], 'Release'))
 
         - powershell: Write-Host "##vso[task.setvariable variable=VisualStudio.DropName]Products/$(System.TeamProject)/$(Build.Repository.Name)/$(Build.SourceBranchName)/$(Build.BuildNumber)"
@@ -312,25 +294,40 @@ stages:
             continueOnError: true
             condition: and(succeeded(), eq(variables['system.pullrequest.isfork'], false), eq(variables['_BuildConfig'], 'Release'))
 
+  # Unix jobs done as a group since they share the same test results format.
+  - template: /eng/common/templates/jobs/jobs.yml
+    parameters:
+      enablePublishBuildArtifacts: false
+      enablePublishTestResults: true
+      enableTelemetry: true
+      testResultsFormat: xunit
+      helixRepo: dotnet/razor
+      helixType: build.product/
+      jobs:
       - job: macOS
         pool:
           vmImage: macOS-12
         strategy:
-          ${{ if eq(variables['System.TeamProject'], 'public') }}:
-            matrix:
-              debug:
-                _BuildConfig: Debug
-              release:
-                _BuildConfig: Release
-          ${{ if ne(variables['System.TeamProject'], 'public') }}:
             matrix:
               release:
                 _BuildConfig: Release
+              ${{ if eq(variables['System.TeamProject'], 'public') }}:
+                  debug:
+                    _BuildConfig: Debug
+
+        variables:
+        - _BuildArgs: ''
+        # Variables for internal Official builds
+        - ${{ if and(ne(variables['System.TeamProject'], 'public'), notin(variables['Build.Reason'], 'PullRequest')) }}:
+          - _BuildArgs: /p:DotNetPublishUsingPipelines=true
+              /p:OfficialBuildId=$(Build.BuildNumber)
+
         steps:
         - task: NodeTool@0
           displayName: Install Node 10.x
           inputs:
             versionSpec: 10.x
+
         - ${{ if ne(variables['System.TeamProject'], 'public') }}:
           - task: Bash@3
             displayName: Setup Private Feeds Credentials
@@ -339,37 +336,25 @@ stages:
               arguments: $(Build.SourcesDirectory)/NuGet.config $Token
             env:
               Token: $(dn-bot-dnceng-artifact-feeds-rw)
-        - ${{ if ne(variables['System.TeamProject'], 'public') }}:
-          - script: eng/common/cibuild.sh
-              --restore
-              --build
-              --pack
-              --publish
-              --configuration $(_BuildConfig)
-              --prepareMachine
-              /p:DotNetPublishUsingPipelines=true
-              /p:OfficialBuildId=$(Build.BuildNumber)
-              $(_InternalRuntimeDownloadArgs)
-            name: Build
-            displayName: Build
-            condition: succeeded()
-        - ${{ if eq(variables['System.TeamProject'], 'public') }}:
-          - script: eng/common/cibuild.sh
-              --configuration $(_BuildConfig)
-              --prepareMachine
-              $(_InternalRuntimeDownloadArgs)
-            name: Build
-            displayName: Build
-            condition: succeeded()
-        - task: PublishBuildArtifacts@1
-          displayName: Upload TestResults
+
+        - script: eng/cibuild.sh
+            --restore
+            --build
+            --pack
+            --publish
+            --configuration $(_BuildConfig)
+            --prepareMachine
+            --test
+            $(_BuildArgs)
+            $(_InternalRuntimeDownloadArgs)
+          name: Build
+          displayName: Restore, Build and Test
+          condition: succeeded()
+
+        - publish: artifacts/TestResults/$(_BuildConfig)
+          artifact: $(Agent.Os)_$(Agent.JobName) Attempt $(System.JobAttempt) TestResults
+          displayName: Publish Test Results
           condition: always()
-          continueOnError: true
-          inputs:
-            pathtoPublish: artifacts/TestResults/$(_BuildConfig)/
-            artifactName: $(Agent.Os)_$(Agent.JobName) TestResults
-            artifactType: Container
-            parallel: true
 
       - job: Linux
         container:
@@ -382,21 +367,25 @@ stages:
             name: $(DncEngInternalBuildPool)
             demands: ImageOverride -equals Build.Ubuntu.1804.Amd64
 
+        strategy:
+          matrix:
+            release:
+              _BuildConfig: Release
+            ${{ if eq(variables['System.TeamProject'], 'public') }}:
+                debug:
+                  _BuildConfig: Debug
+
         variables:
         - LC_ALL: 'en_US.UTF-8'
         - LANG: 'en_US.UTF-8'
         - LANGUAGE: 'en_US.UTF-8'
-        strategy:
-          ${{ if eq(variables['System.TeamProject'], 'public') }}:
-            matrix:
-              debug:
-                _BuildConfig: Debug
-              release:
-                _BuildConfig: Release
-          ${{ if ne(variables['System.TeamProject'], 'public') }}:
-            matrix:
-              release:
-                _BuildConfig: Release
+        - _BuildArgs: ''
+
+        # Variables for internal Official builds
+        - ${{ if and(ne(variables['System.TeamProject'], 'public'), notin(variables['Build.Reason'], 'PullRequest')) }}:
+          - _BuildArgs: /p:DotNetPublishUsingPipelines=true
+              /p:OfficialBuildId=$(Build.BuildNumber)
+
         steps:
         - task: NodeTool@0
           displayName: Install Node 10.x
@@ -410,37 +399,25 @@ stages:
               arguments: $(Build.SourcesDirectory)/NuGet.config $Token
             env:
               Token: $(dn-bot-dnceng-artifact-feeds-rw)
-        - ${{ if ne(variables['System.TeamProject'], 'public') }}:
-          - script: eng/common/cibuild.sh
-              --restore
-              --build
-              --pack
-              --publish
-              --configuration $(_BuildConfig)
-              --prepareMachine
-              /p:DotNetPublishUsingPipelines=true
-              /p:OfficialBuildId=$(Build.BuildNumber)
-              $(_InternalRuntimeDownloadArgs)
-            name: Build
-            displayName: Build
-            condition: succeeded()
-        - ${{ if eq(variables['System.TeamProject'], 'public') }}:
-          - script: eng/common/cibuild.sh
-              --configuration $(_BuildConfig)
-              --prepareMachine
-              $(_InternalRuntimeDownloadArgs)
-            name: Build
-            displayName: Build
-            condition: succeeded()
-        - task: PublishBuildArtifacts@1
-          displayName: Upload Test Results
+
+        - script: eng/cibuild.sh
+            --restore
+            --build
+            --pack
+            --publish
+            --configuration $(_BuildConfig)
+            --prepareMachine
+            --test
+            $(_BuildArgs)
+            $(_InternalRuntimeDownloadArgs)
+          name: Build
+          displayName: Restore, Build and Test
+          condition: succeeded()
+
+        - publish: artifacts/TestResults/$(_BuildConfig)/
+          artifact: $(Agent.Os)_$(Agent.JobName) Attempt $(System.JobAttempt) TestResults
+          displayName: Publish Test Results
           condition: always()
-          continueOnError: true
-          inputs:
-            pathtoPublish: artifacts/TestResults/$(_BuildConfig)/
-            artifactName: $(Agent.Os)_$(Agent.JobName) TestResults
-            artifactType: Container
-            parallel: true
 
 - ${{ if and(ne(variables['System.TeamProject'], 'public'), notin(variables['Build.Reason'], 'PullRequest')) }}:
   - template: eng\common\templates\post-build\post-build.yml

@@ -259,9 +259,30 @@ type FSharpSymbolUse(denv: DisplayEnv, symbol: FSharpSymbol, inst: TyparInstanti
 
     member _.Range = range
 
+    member this.IsPrivateToFileAndSignatureFile =
+
+        let couldBeParameter, declarationLocation =
+            match this.Symbol with
+            | :? FSharpParameter as p -> true, Some p.DeclarationLocation
+            | :? FSharpMemberOrFunctionOrValue as m when not m.IsModuleValueOrMember -> true, Some m.DeclarationLocation
+            | _ -> false, None
+
+        let thisIsSignature = SourceFileImpl.IsSignatureFile this.Range.FileName
+
+        let signatureLocation = this.Symbol.SignatureLocation
+
+        couldBeParameter
+        && (thisIsSignature
+            || (signatureLocation.IsSome && signatureLocation <> declarationLocation))
+
     member this.IsPrivateToFile =
+
         let isPrivate =
             match this.Symbol with
+            | _ when this.IsPrivateToFileAndSignatureFile -> false
+            | :? FSharpMemberOrFunctionOrValue as m when not m.IsModuleValueOrMember ->
+                // local binding or parameter
+                true
             | :? FSharpMemberOrFunctionOrValue as m ->
                 let fileSignatureLocation =
                     m.DeclaringEntity |> Option.bind (fun e -> e.SignatureLocation)
@@ -271,10 +292,9 @@ type FSharpSymbolUse(denv: DisplayEnv, symbol: FSharpSymbol, inst: TyparInstanti
 
                 let fileHasSignatureFile = fileSignatureLocation <> fileDeclarationLocation
 
-                fileHasSignatureFile && not m.HasSignatureFile
-                || not m.IsModuleValueOrMember
-                || m.Accessibility.IsPrivate
+                fileHasSignatureFile && not m.HasSignatureFile || m.Accessibility.IsPrivate
             | :? FSharpEntity as m -> m.Accessibility.IsPrivate
+            | :? FSharpParameter -> true
             | :? FSharpGenericParameter -> true
             | :? FSharpUnionCase as m -> m.Accessibility.IsPrivate
             | :? FSharpField as m -> m.Accessibility.IsPrivate
@@ -577,7 +597,7 @@ type internal TypeCheckInfo
                 x
                 |> List.choose (fun (ParamData (_isParamArray, _isInArg, _isOutArg, _optArgInfo, _callerInfo, name, _, ty)) ->
                     match name with
-                    | Some id -> Some(Item.ArgName(Some id, ty, Some(ArgumentContainer.Method meth), id.idRange))
+                    | Some id -> Some(Item.OtherName(Some id, ty, None, Some(ArgumentContainer.Method meth), id.idRange))
                     | None -> None)
             | _ -> [])
 
@@ -900,7 +920,7 @@ type internal TypeCheckInfo
             | Item.NewDef _
             | Item.SetterArg _
             | Item.CustomBuilder _
-            | Item.ArgName _
+            | Item.OtherName _
             | Item.ActivePatternCase _ -> CompletionItemKind.Other
 
         let isUnresolved =
@@ -1726,7 +1746,7 @@ type internal TypeCheckInfo
             }
 
         let toolTipElement =
-            FormatStructuredDescriptionOfItem displayFullName infoReader accessorDomain m denv itemWithInst None
+            FormatStructuredDescriptionOfItem displayFullName infoReader accessorDomain m denv itemWithInst (Some symbol) None
 
         ToolTipText [ toolTipElement ]
 
@@ -1757,7 +1777,8 @@ type internal TypeCheckInfo
                         ToolTipText(
                             items
                             |> List.map (fun x ->
-                                FormatStructuredDescriptionOfItem false infoReader tcAccessRights m denv x.ItemWithInst width)
+                                let symbol = Some(FSharpSymbol.Create(cenv, x.Item))
+                                FormatStructuredDescriptionOfItem false infoReader tcAccessRights m denv x.ItemWithInst symbol width)
                         ))
 
                 (fun err ->
@@ -2716,12 +2737,7 @@ type FSharpCheckFileResults
                     | None -> ()
                     | Some kwDescription ->
                         let kwText = kw |> TaggedText.tagKeyword |> wordL |> LayoutRender.toArray
-                        let kwTip = ToolTipElementData.Create(kwText, FSharpXmlDoc.None)
-
-                        let descText = kwDescription |> TaggedText.tagText |> wordL |> LayoutRender.toArray
-                        let descTip = ToolTipElementData.Create(descText, FSharpXmlDoc.None)
-
-                        yield ToolTipElement.Group [ kwTip; descTip ]
+                        yield ToolTipElement.Single(kwText, FSharpXmlDoc.FromXmlText(Xml.XmlDoc([| kwDescription |], range.Zero)))
             ]
 
     /// Resolve the names at the given location to give a data tip

@@ -107,3 +107,4 @@
                         RightBrace;[}];
         MarkupTextLiteral - [130..130)::0 - [] - Gen<Markup> - SpanEditHandler;Accepts:Any
             Marker;[];
+    EndOfFile;[];

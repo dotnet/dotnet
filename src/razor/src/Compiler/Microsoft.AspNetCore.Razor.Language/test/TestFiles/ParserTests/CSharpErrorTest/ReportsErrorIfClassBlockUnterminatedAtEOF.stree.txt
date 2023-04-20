@@ -46,3 +46,4 @@
                                 Whitespace;[ ];
                         RazorMetaCode - [55..55)::0 - Gen<None> - SpanEditHandler;Accepts:Any
                             RightBrace;[<Missing>];
+    EndOfFile;[];

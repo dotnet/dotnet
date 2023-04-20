@@ -502,7 +502,8 @@ namespace Microsoft.AspNetCore.Razor.Language.Syntax
     public override SyntaxNode VisitRazorDocument(RazorDocumentSyntax node)
     {
       var document = (RazorBlockSyntax)Visit(node.Document);
-      return node.Update(document);
+      var endOfFile = (SyntaxToken)VisitToken(node.EndOfFile);
+      return node.Update(document, endOfFile);
     }
 
     public override SyntaxNode VisitRazorCommentBlock(RazorCommentBlockSyntax node)
@@ -810,11 +811,24 @@ namespace Microsoft.AspNetCore.Razor.Language.Syntax
   {
 
     /// <summary>Creates a new RazorDocumentSyntax instance.</summary>
-    public static RazorDocumentSyntax RazorDocument(RazorBlockSyntax document)
+    public static RazorDocumentSyntax RazorDocument(RazorBlockSyntax document, SyntaxToken endOfFile)
     {
       if (document == null)
         throw new ArgumentNullException(nameof(document));
-      return (RazorDocumentSyntax)InternalSyntax.SyntaxFactory.RazorDocument(document == null ? null : (InternalSyntax.RazorBlockSyntax)document.Green).CreateRed();
+      switch (endOfFile.Kind)
+      {
+        case SyntaxKind.EndOfFile:
+          break;
+        default:
+          throw new ArgumentException("endOfFile");
+      }
+      return (RazorDocumentSyntax)InternalSyntax.SyntaxFactory.RazorDocument(document == null ? null : (InternalSyntax.RazorBlockSyntax)document.Green, (Syntax.InternalSyntax.SyntaxToken)endOfFile.Green).CreateRed();
+    }
+
+    /// <summary>Creates a new RazorDocumentSyntax instance.</summary>
+    public static RazorDocumentSyntax RazorDocument(RazorBlockSyntax document)
+    {
+      return SyntaxFactory.RazorDocument(document, SyntaxFactory.Token(SyntaxKind.EndOfFile));
     }
 
     /// <summary>Creates a new RazorCommentBlockSyntax instance.</summary>

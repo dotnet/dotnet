@@ -26,3 +26,4 @@
                 ForwardSlash;[/];
                 Text;[foo];
                 CloseAngle;[>];
+    EndOfFile;[];

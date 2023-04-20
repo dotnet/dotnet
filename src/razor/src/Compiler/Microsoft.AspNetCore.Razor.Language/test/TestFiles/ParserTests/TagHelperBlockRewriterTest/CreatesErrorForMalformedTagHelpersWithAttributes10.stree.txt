@@ -27,3 +27,4 @@
                         Text;[strong];
                         CloseAngle;[>];
                 CloseAngle;[<Missing>];
+    EndOfFile;[];

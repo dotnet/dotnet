@@ -1,3 +1,32 @@
 #nullable enable
+abstract Microsoft.AspNetCore.Razor.Language.CodeGeneration.CodeRenderingContext.AddSourceMappingFor(Microsoft.AspNetCore.Razor.Language.SourceSpan node) -> void
+Microsoft.AspNetCore.Razor.Language.BoundAttributeDescriptor.IsDirectiveAttribute.get -> bool
+Microsoft.AspNetCore.Razor.Language.CodeGeneration.LinePragma.LinePragma() -> void
+Microsoft.AspNetCore.Razor.Language.Intermediate.IntermediateNodeCollection.Enumerator.Enumerator() -> void
+Microsoft.AspNetCore.Razor.Language.Intermediate.IntermediateNodeReference.IntermediateNodeReference() -> void
+Microsoft.AspNetCore.Razor.Language.RazorDiagnosticCollection.Enumerator.Enumerator() -> void
+Microsoft.AspNetCore.Razor.Language.SourceLocation.SourceLocation() -> void
+Microsoft.AspNetCore.Razor.Language.SourceSpan.SourceSpan() -> void
+Microsoft.AspNetCore.Razor.Language.TagHelperDescriptorBuilder.PooledBuilder
+Microsoft.AspNetCore.Razor.Language.TagHelperDescriptorBuilder.PooledBuilder.Dispose() -> void
+Microsoft.AspNetCore.Razor.Language.TagHelperDescriptorBuilder.PooledBuilder.PooledBuilder() -> void
+~abstract Microsoft.AspNetCore.Razor.Language.RazorCSharpDocument.CodeDocument.get -> Microsoft.AspNetCore.Razor.Language.RazorCodeDocument
+~static Microsoft.AspNetCore.Razor.Language.BoundAttributeDescriptorBuilderExtensions.SetBindAttributeGetSet(this Microsoft.AspNetCore.Razor.Language.BoundAttributeParameterDescriptorBuilder builder) -> void
+~static Microsoft.AspNetCore.Razor.Language.BoundAttributeDescriptorBuilderExtensions.SetGloballyQualifiedTypeName(this Microsoft.AspNetCore.Razor.Language.BoundAttributeDescriptorBuilder builder, string globallyQualifiedTypeName) -> void
+~static Microsoft.AspNetCore.Razor.Language.BoundAttributeDescriptorExtensions.GetGloballyQualifiedTypeName(this Microsoft.AspNetCore.Razor.Language.BoundAttributeDescriptor attribute) -> string
+~static Microsoft.AspNetCore.Razor.Language.RazorCodeDocumentExtensions.GetPreTagHelperSyntaxTree(this Microsoft.AspNetCore.Razor.Language.RazorCodeDocument document) -> Microsoft.AspNetCore.Razor.Language.RazorSyntaxTree
+~static Microsoft.AspNetCore.Razor.Language.RazorCodeDocumentExtensions.SetPreTagHelperSyntaxTree(this Microsoft.AspNetCore.Razor.Language.RazorCodeDocument document, Microsoft.AspNetCore.Razor.Language.RazorSyntaxTree syntaxTree) -> void
 ~static Microsoft.AspNetCore.Razor.Language.RazorCSharpDocument.Create(Microsoft.AspNetCore.Razor.Language.RazorCodeDocument codeDocument, string generatedCode, Microsoft.AspNetCore.Razor.Language.RazorCodeGenerationOptions options, System.Collections.Generic.IEnumerable<Microsoft.AspNetCore.Razor.Language.RazorDiagnostic> diagnostics) -> Microsoft.AspNetCore.Razor.Language.RazorCSharpDocument
 ~static Microsoft.AspNetCore.Razor.Language.RazorCSharpDocument.Create(Microsoft.AspNetCore.Razor.Language.RazorCodeDocument codeDocument, string generatedCode, Microsoft.AspNetCore.Razor.Language.RazorCodeGenerationOptions options, System.Collections.Generic.IEnumerable<Microsoft.AspNetCore.Razor.Language.RazorDiagnostic> diagnostics, System.Collections.Generic.IEnumerable<Microsoft.AspNetCore.Razor.Language.SourceMapping> sourceMappings, System.Collections.Generic.IEnumerable<Microsoft.AspNetCore.Razor.Language.CodeGeneration.LinePragma> linePragmas) -> Microsoft.AspNetCore.Razor.Language.RazorCSharpDocument
+~static Microsoft.AspNetCore.Razor.Language.TagHelperDescriptorBuilder.GetPooledInstance(string kind, string name, string assemblyName, out Microsoft.AspNetCore.Razor.Language.TagHelperDescriptorBuilder builder) -> Microsoft.AspNetCore.Razor.Language.TagHelperDescriptorBuilder.PooledBuilder
+~static Microsoft.AspNetCore.Razor.Language.TagHelperDescriptorBuilder.GetPooledInstance(string name, string assemblyName, out Microsoft.AspNetCore.Razor.Language.TagHelperDescriptorBuilder builder) -> Microsoft.AspNetCore.Razor.Language.TagHelperDescriptorBuilder.PooledBuilder
+~static Microsoft.AspNetCore.Razor.Language.TagHelperDescriptorBuilderExtensions.SetTypeNameIdentifier(this Microsoft.AspNetCore.Razor.Language.TagHelperDescriptorBuilder builder, string typeNameIdentifier) -> void
+~static Microsoft.AspNetCore.Razor.Language.TagHelperDescriptorBuilderExtensions.SetTypeNamespace(this Microsoft.AspNetCore.Razor.Language.TagHelperDescriptorBuilder builder, string typeNamespace) -> void
+~static Microsoft.AspNetCore.Razor.Language.TagHelperDescriptorExtensions.GetTypeNameIdentifier(this Microsoft.AspNetCore.Razor.Language.TagHelperDescriptor tagHelper) -> string
+~static Microsoft.AspNetCore.Razor.Language.TagHelperDescriptorExtensions.GetTypeNamespace(this Microsoft.AspNetCore.Razor.Language.TagHelperDescriptor tagHelper) -> string
+~static readonly Microsoft.AspNetCore.Razor.Language.Intermediate.CommonAnnotations.NullableContext -> object
+~static readonly Microsoft.AspNetCore.Razor.Language.RazorLanguageVersion.Version_7_0 -> Microsoft.AspNetCore.Razor.Language.RazorLanguageVersion
+~static readonly Microsoft.AspNetCore.Razor.Language.RazorLanguageVersion.Version_8_0 -> Microsoft.AspNetCore.Razor.Language.RazorLanguageVersion
+~static readonly Microsoft.AspNetCore.Razor.Language.TagHelperMetadata.Common.GloballyQualifiedTypeName -> string
+~static readonly Microsoft.AspNetCore.Razor.Language.TagHelperMetadata.Common.TypeNameIdentifier -> string
+~static readonly Microsoft.AspNetCore.Razor.Language.TagHelperMetadata.Common.TypeNamespace -> string

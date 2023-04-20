@@ -334,4 +334,33 @@ public class GoToDefinitionTests : AbstractRazorEditorTest
         await TestServices.Editor.WaitForActiveWindowAsync("MyComponent.razor", ControlledHangMitigatingCancellationToken);
         await TestServices.Editor.WaitForCurrentLineTextAsync("public string? Value { get; set; }", ControlledHangMitigatingCancellationToken);
     }
+
+    [IdeFact]
+    public async Task GoToDefinition_ComponentAttribute_WriteOnlyProperty()
+    {
+        // Create the file
+        await TestServices.SolutionExplorer.AddFileAsync(RazorProjectConstants.BlazorProjectName,
+            "MyComponent.razor",
+            """
+            <MyComponent MyProperty="123" />
+
+            @code {
+                [Microsoft.AspNetCore.Components.ParameterAttribute]
+                public string? MyProperty { set { } }
+            }
+            """,
+            open: true,
+            cancellationToken: ControlledHangMitigatingCancellationToken);
+
+        await TestServices.Editor.WaitForComponentClassificationAsync(ControlledHangMitigatingCancellationToken);
+
+        await TestServices.Editor.PlaceCaretAsync("MyProperty=", charsOffset: -1, ControlledHangMitigatingCancellationToken);
+
+        // Act
+        await TestServices.Editor.InvokeGoToDefinitionAsync(ControlledHangMitigatingCancellationToken);
+
+        // Assert
+        await TestServices.Editor.WaitForActiveWindowAsync("MyComponent.razor", ControlledHangMitigatingCancellationToken);
+        await TestServices.Editor.WaitForCurrentLineTextAsync("public string? MyProperty { set { } }", ControlledHangMitigatingCancellationToken);
+    }
 }

@@ -18,3 +18,4 @@
         MarkupTextLiteral - [16..18)::2 - [ }] - Gen<Markup> - SpanEditHandler;Accepts:Any
             Whitespace;[ ];
             Text;[}];
+    EndOfFile;[];

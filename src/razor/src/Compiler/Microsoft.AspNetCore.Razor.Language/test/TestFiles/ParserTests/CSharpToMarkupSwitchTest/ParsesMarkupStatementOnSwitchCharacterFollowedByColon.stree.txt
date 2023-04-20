@@ -27,3 +27,4 @@
         MarkupTextLiteral - [19..24)::5 - [ zoop] - Gen<Markup> - SpanEditHandler;Accepts:Any
             Whitespace;[ ];
             Text;[zoop];
+    EndOfFile;[];

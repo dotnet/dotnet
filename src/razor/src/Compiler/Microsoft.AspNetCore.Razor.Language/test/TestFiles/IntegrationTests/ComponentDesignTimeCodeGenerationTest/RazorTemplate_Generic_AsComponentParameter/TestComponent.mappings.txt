@@ -20,6 +20,6 @@ Generated Location: (1587:48,30 [8] )
 
 Source Location: (91:1,13 [14] x:\dir\subdir\Test\TestComponent.cshtml)
 |PersonTemplate|
-Generated Location: (1965:60,13 [14] )
+Generated Location: (2003:61,13 [14] )
 |PersonTemplate|
 

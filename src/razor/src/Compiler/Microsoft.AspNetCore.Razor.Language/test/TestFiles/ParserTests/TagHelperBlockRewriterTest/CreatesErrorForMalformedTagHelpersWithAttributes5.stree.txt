@@ -18,3 +18,4 @@
                     MarkupTextLiteral - [12..13)::1 - ['] - Gen<Markup> - SpanEditHandler;Accepts:Any
                         SingleQuote;['];
                 CloseAngle;[<Missing>];
+    EndOfFile;[];

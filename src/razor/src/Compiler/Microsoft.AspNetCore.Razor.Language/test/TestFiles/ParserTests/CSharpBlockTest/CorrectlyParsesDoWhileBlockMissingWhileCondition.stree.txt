@@ -22,3 +22,4 @@
                 RightBrace;[}];
                 Whitespace;[ ];
                 Keyword;[while];
+    EndOfFile;[];

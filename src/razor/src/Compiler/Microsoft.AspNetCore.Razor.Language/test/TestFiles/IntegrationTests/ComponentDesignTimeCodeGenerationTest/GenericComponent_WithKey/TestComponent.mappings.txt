@@ -15,14 +15,14 @@ Generated Location: (1555:46,38 [8] )
 
 Source Location: (23:0,23 [4] x:\dir\subdir\Test\TestComponent.cshtml)
 |Item|
-Generated Location: (1785:55,23 [4] )
+Generated Location: (1823:56,23 [4] )
 |Item|
 
 Source Location: (61:2,7 [47] x:\dir\subdir\Test\TestComponent.cshtml)
 |
     private object _someKey = new object();
 |
-Generated Location: (2145:72,7 [47] )
+Generated Location: (2237:74,7 [47] )
 |
     private object _someKey = new object();
 |

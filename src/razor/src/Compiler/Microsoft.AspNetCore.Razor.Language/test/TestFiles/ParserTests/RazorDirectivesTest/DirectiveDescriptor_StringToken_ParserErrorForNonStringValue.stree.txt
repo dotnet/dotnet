@@ -16,3 +16,4 @@
             Text;[{foo];
             QuestionMark;[?];
             Text;[}];
+    EndOfFile;[];

@@ -25,3 +25,4 @@
                         RightBrace;[}];
         MarkupEphemeralTextLiteral - [42..44)::2 - [LF] - Gen<None> - SpanEditHandler;Accepts:Any
             NewLine;[LF];
+    EndOfFile;[];

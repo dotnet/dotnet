@@ -188,6 +188,7 @@ internal class RazorLanguageServerClient : ILanguageClient, ILanguageClientCusto
             serverStream,
             serverStream,
             razorLogger,
+            _telemetryReporter,
             _projectSnapshotManagerDispatcher,
             ConfigureLanguageServer,
             _languageServerFeatureOptions,

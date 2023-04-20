@@ -11,11 +11,16 @@ using Microsoft.AspNetCore.Razor.Language.Syntax;
 using Microsoft.AspNetCore.Razor.LanguageServer.CodeActions.Models;
 using Microsoft.AspNetCore.Razor.LanguageServer.Extensions;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
+using Microsoft.CodeAnalysis.Razor.Workspaces;
+using Newtonsoft.Json.Linq;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.CodeActions;
 
-internal class DefaultCSharpCodeActionProvider : CSharpCodeActionProvider
+internal sealed class DefaultCSharpCodeActionProvider : ICSharpCodeActionProvider
 {
+    private static readonly Task<IReadOnlyList<RazorVSInternalCodeAction>?> s_emptyResult =
+        Task.FromResult<IReadOnlyList<RazorVSInternalCodeAction>?>(Array.Empty<RazorVSInternalCodeAction>());
+
     // Internal for testing
     internal static readonly HashSet<string> SupportedDefaultCodeActionNames = new HashSet<string>()
     {
@@ -42,7 +47,14 @@ internal class DefaultCSharpCodeActionProvider : CSharpCodeActionProvider
         // RazorPredefinedCodeFixProviderNames.RemoveUnusedVariable,
     };
 
-    public override Task<IReadOnlyList<RazorVSInternalCodeAction>?> ProvideAsync(
+    private readonly LanguageServerFeatureOptions _languageServerFeatureOptions;
+
+    public DefaultCSharpCodeActionProvider(LanguageServerFeatureOptions languageServerFeatureOptions)
+    {
+        _languageServerFeatureOptions = languageServerFeatureOptions;
+    }
+
+    public Task<IReadOnlyList<RazorVSInternalCodeAction>?> ProvideAsync(
         RazorCodeActionContext context,
         IEnumerable<RazorVSInternalCodeAction> codeActions,
         CancellationToken cancellationToken)
@@ -61,7 +73,7 @@ internal class DefaultCSharpCodeActionProvider : CSharpCodeActionProvider
         // code action resolve.
         if (!context.SupportsCodeActionResolve)
         {
-            return EmptyResult;
+            return s_emptyResult;
         }
 
         var tree = context.CodeDocument.GetSyntaxTree();
@@ -76,9 +88,31 @@ internal class DefaultCSharpCodeActionProvider : CSharpCodeActionProvider
 
         foreach (var codeAction in codeActions)
         {
-            if (codeAction.Name is not null && allowList.Contains(codeAction.Name))
+            var isOnAllowList = codeAction.Name is not null && allowList.Contains(codeAction.Name);
+
+            if (_languageServerFeatureOptions.ShowAllCSharpCodeActions && codeAction.Data is not null)
             {
-                results.Add(codeAction.WrapResolvableCodeAction(context));
+                // If this code action isn't on the allow list, it might have been handled by another provider, which means
+                // it will already have been wrapped, so we have to check not to double-wrap it. Unfortunately there isn't a
+                // good way to do this, but to try and deserialize some Json. Since this only needs to happen if the feature
+                // flag is on, any perf hit here isn't going to affect real users.
+                try
+                {
+                    if (((JToken)codeAction.Data).ToObject<RazorCodeActionResolutionParams>() is not null)
+                    {
+                        // This code action has already been wrapped by something else, so skip it here, or it could
+                        // be marked as experimental when its not, and more importantly would be duplicated in the list.
+                        continue;
+                    }
+                }
+                catch
+                {
+                }
+            }
+
+            if (_languageServerFeatureOptions.ShowAllCSharpCodeActions || isOnAllowList)
+            {
+                results.Add(codeAction.WrapResolvableCodeAction(context, isOnAllowList: isOnAllowList));
             }
         }
 

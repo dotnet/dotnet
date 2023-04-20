@@ -12,8 +12,7 @@ internal sealed class AllowedChildTagDescriptorComparer : IEqualityComparer<Allo
     /// <summary>
     /// A default instance of the <see cref="AllowedChildTagDescriptorComparer"/>.
     /// </summary>
-    public static readonly AllowedChildTagDescriptorComparer Default =
-        new AllowedChildTagDescriptorComparer();
+    public static readonly AllowedChildTagDescriptorComparer Default = new();
 
     private AllowedChildTagDescriptorComparer()
     {
@@ -24,7 +23,7 @@ internal sealed class AllowedChildTagDescriptorComparer : IEqualityComparer<Allo
         AllowedChildTagDescriptor? descriptorX,
         AllowedChildTagDescriptor? descriptorY)
     {
-        if (object.ReferenceEquals(descriptorX, descriptorY))
+        if (ReferenceEquals(descriptorX, descriptorY))
         {
             return true;
         }
@@ -38,9 +37,8 @@ internal sealed class AllowedChildTagDescriptorComparer : IEqualityComparer<Allo
             return false;
         }
 
-        return
-            string.Equals(descriptorX.Name, descriptorY.Name, StringComparison.Ordinal) &&
-            string.Equals(descriptorX.DisplayName, descriptorY.DisplayName, StringComparison.Ordinal);
+        return descriptorX.Name == descriptorY.Name &&
+               descriptorX.DisplayName == descriptorY.DisplayName;
     }
 
     /// <inheritdoc />

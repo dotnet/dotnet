@@ -16,3 +16,4 @@
             SingleQuote;['];
             Text;[AString];
             SingleQuote;['];
+    EndOfFile;[];

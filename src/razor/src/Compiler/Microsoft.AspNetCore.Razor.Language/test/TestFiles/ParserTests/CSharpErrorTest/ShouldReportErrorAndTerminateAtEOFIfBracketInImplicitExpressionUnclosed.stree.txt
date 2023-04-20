@@ -19,3 +19,4 @@
                             Identifier;[Biz];
                             NewLine;[LF];
                             Identifier;[Boz];
+    EndOfFile;[];

@@ -24,3 +24,4 @@
                     NewLine;[LF];
             CSharpStatementLiteral - [24..25)::1 - [}] - Gen<Stmt> - SpanEditHandler;Accepts:Any
                 RightBrace;[}];
+    EndOfFile;[];

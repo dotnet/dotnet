@@ -24,3 +24,4 @@
                             Identifier;[ASCIIEncoding];
         MarkupTextLiteral - [46..46)::0 - [] - Gen<Markup> - SpanEditHandler;Accepts:Any
             Marker;[];
+    EndOfFile;[];

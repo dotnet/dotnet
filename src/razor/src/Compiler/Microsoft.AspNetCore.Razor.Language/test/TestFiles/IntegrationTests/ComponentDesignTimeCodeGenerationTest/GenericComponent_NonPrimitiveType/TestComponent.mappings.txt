@@ -10,6 +10,6 @@ Generated Location: (1208:34,38 [16] )
 
 Source Location: (32:0,32 [4] x:\dir\subdir\Test\TestComponent.cshtml)
 |Item|
-Generated Location: (1625:46,32 [4] )
+Generated Location: (1663:47,32 [4] )
 |Item|
 

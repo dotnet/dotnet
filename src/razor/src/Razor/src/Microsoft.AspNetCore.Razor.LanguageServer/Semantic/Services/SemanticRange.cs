@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Razor.LanguageServer.Extensions;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Semantic;
 
-internal class SemanticRange : IComparable<SemanticRange>
+internal sealed class SemanticRange : IComparable<SemanticRange>
 {
     public SemanticRange(int kind, Range range, int modifier)
     {

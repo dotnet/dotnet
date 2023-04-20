@@ -104,7 +104,8 @@ void __TypeConstraints_TValue<TValue>() where TValue : struct
             __builder.AddAttribute(-1, "ChildContent", (global::Microsoft.AspNetCore.Components.RenderFragment)((__builder2) => {
             }
             ));
-            __o = ((global::Test.TestComponent<decimal, decimal>)default).
+            #pragma warning disable BL0005
+            ((global::Test.TestComponent<decimal, decimal>)default).
 #nullable restore
 #line 4 "x:\dir\subdir\Test\TestComponent.cshtml"
                Data
@@ -112,7 +113,8 @@ void __TypeConstraints_TValue<TValue>() where TValue : struct
 #line default
 #line hidden
 #nullable disable
-            ;
+             = default;
+            #pragma warning restore BL0005
 #nullable restore
 #line 4 "x:\dir\subdir\Test\TestComponent.cshtml"
 __o = typeof(global::Test.TestComponent<,>);

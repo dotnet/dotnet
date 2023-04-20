@@ -14,10 +14,10 @@ using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Language.Components;
 using Microsoft.AspNetCore.Razor.Language.Intermediate;
 using Microsoft.AspNetCore.Razor.LanguageServer.Common;
-using Microsoft.AspNetCore.Razor.LanguageServer.EndpointContracts;
 using Microsoft.AspNetCore.Razor.LanguageServer.Extensions;
 using Microsoft.AspNetCore.Razor.LanguageServer.Protocol;
 using Microsoft.AspNetCore.Razor.LanguageServer.Test;
+using Microsoft.AspNetCore.Razor.ProjectEngineHost.Serialization;
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.AspNetCore.Razor.Test.Common.Mef;
 using Microsoft.CodeAnalysis.CSharp;
@@ -29,7 +29,7 @@ using Moq;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace Microsoft.AspNetCore.Razor.LanguageServer.Refactoring.Test;
+namespace Microsoft.AspNetCore.Razor.LanguageServer.Refactoring;
 
 [UseExportProvider]
 public class RenameEndpointTest : LanguageServerTestBase
@@ -50,7 +50,7 @@ public class RenameEndpointTest : LanguageServerTestBase
         var languageServerFeatureOptions = Mock.Of<LanguageServerFeatureOptions>(options => options.SupportsFileManipulation == false && options.ReturnCodeActionAndRenamePathsWithPrefixedSlash == false, MockBehavior.Strict);
         var endpoint = CreateEndpoint(languageServerFeatureOptions);
         var uri = new Uri("file:///c:/First/Component1.razor");
-        var request = new RenameParamsBridge
+        var request = new RenameParams
         {
             TextDocument = new TextDocumentIdentifier
             {
@@ -74,7 +74,7 @@ public class RenameEndpointTest : LanguageServerTestBase
     {
         // Arrange
         var uri = new Uri("file:///c:/First/Component1.razor");
-        var request = new RenameParamsBridge
+        var request = new RenameParams
         {
             TextDocument = new TextDocumentIdentifier
             {
@@ -125,7 +125,7 @@ public class RenameEndpointTest : LanguageServerTestBase
     {
         // Arrange
         var uri = new Uri("file:///c:/Second/ComponentWithParam.razor");
-        var request = new RenameParamsBridge
+        var request = new RenameParams
         {
             TextDocument = new TextDocumentIdentifier
             {
@@ -149,7 +149,7 @@ public class RenameEndpointTest : LanguageServerTestBase
     {
         // Arrange
         var uri = new Uri("file:///c:/Second/ComponentWithParam.razor");
-        var request = new RenameParamsBridge
+        var request = new RenameParams
         {
             TextDocument = new TextDocumentIdentifier
             {
@@ -173,7 +173,7 @@ public class RenameEndpointTest : LanguageServerTestBase
     {
         // Arrange
         var uri = new Uri("file:///c:/Second/ComponentWithParam.razor");
-        var request = new RenameParamsBridge
+        var request = new RenameParams
         {
             TextDocument = new TextDocumentIdentifier
             {
@@ -197,7 +197,7 @@ public class RenameEndpointTest : LanguageServerTestBase
     {
         // Arrange
         var uri = new Uri("file:///c:/Second/ComponentWithParam.razor");
-        var request = new RenameParamsBridge
+        var request = new RenameParams
         {
             TextDocument = new TextDocumentIdentifier
             {
@@ -221,7 +221,7 @@ public class RenameEndpointTest : LanguageServerTestBase
     {
         // Arrange
         var uri = new Uri("file:///c:/Second/ComponentWithParam.razor");
-        var request = new RenameParamsBridge
+        var request = new RenameParams
         {
             TextDocument = new TextDocumentIdentifier
             {
@@ -245,7 +245,7 @@ public class RenameEndpointTest : LanguageServerTestBase
     {
         // Arrange
         var uri = new Uri("file:///c:/First/Index.razor");
-        var request = new RenameParamsBridge
+        var request = new RenameParams
         {
             TextDocument = new TextDocumentIdentifier
             {
@@ -318,7 +318,7 @@ public class RenameEndpointTest : LanguageServerTestBase
     {
         // Arrange
         var uri = new Uri("file:///c:/Second/Component3.razor");
-        var request = new RenameParamsBridge
+        var request = new RenameParams
         {
             TextDocument = new TextDocumentIdentifier
             {
@@ -372,7 +372,7 @@ public class RenameEndpointTest : LanguageServerTestBase
     {
         // Arrange
         var uri = new Uri("file:///c:/Dir1/Directory1.razor");
-        var request = new RenameParamsBridge
+        var request = new RenameParams
         {
             TextDocument = new TextDocumentIdentifier
             {
@@ -446,7 +446,7 @@ public class RenameEndpointTest : LanguageServerTestBase
         var endpoint = CreateEndpoint(languageServerFeatureOptions, documentMappingServiceMock.Object, languageServerMock.Object);
 
         var uri = new Uri("file:///c:/Second/ComponentWithParam.razor");
-        var request = new RenameParamsBridge
+        var request = new RenameParams
         {
             TextDocument = new TextDocumentIdentifier
             {
@@ -480,7 +480,7 @@ public class RenameEndpointTest : LanguageServerTestBase
 
         var endpoint = CreateEndpoint(languageServerFeatureOptions, documentMappingServiceMock.Object, languageServerMock.Object);
 
-        var request = new RenameParamsBridge
+        var request = new RenameParams
         {
             TextDocument = new TextDocumentIdentifier
             {

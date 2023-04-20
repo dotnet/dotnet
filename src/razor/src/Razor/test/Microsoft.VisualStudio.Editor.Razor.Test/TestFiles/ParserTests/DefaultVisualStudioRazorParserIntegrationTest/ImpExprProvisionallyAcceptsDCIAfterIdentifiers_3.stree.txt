@@ -17,3 +17,4 @@ RazorDocument - [0..22)::22 - [foo @DateTime.Now. baz]
             Text;[.];
             Whitespace;[ ];
             Text;[baz];
+    EndOfFile;[];

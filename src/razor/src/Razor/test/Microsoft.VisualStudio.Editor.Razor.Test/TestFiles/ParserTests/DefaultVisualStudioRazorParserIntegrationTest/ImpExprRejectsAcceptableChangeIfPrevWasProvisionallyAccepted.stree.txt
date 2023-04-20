@@ -24,3 +24,4 @@ RazorDocument - [0..15)::15 - [foo @foo. @barb]
                             Identifier;[barb];
         MarkupTextLiteral - [15..15)::0 - [] - Gen<Markup> - SpanEditHandler;Accepts:Any
             Marker;[];
+    EndOfFile;[];

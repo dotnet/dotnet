@@ -14,3 +14,4 @@
                             Dot;[.];
         MarkupTextLiteral - [6..11)::5 - [(abc)] - Gen<Markup> - SpanEditHandler;Accepts:Any
             Text;[(abc)];
+    EndOfFile;[];

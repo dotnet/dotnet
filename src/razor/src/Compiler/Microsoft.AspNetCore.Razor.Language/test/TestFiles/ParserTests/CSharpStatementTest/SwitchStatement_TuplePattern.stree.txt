@@ -80,3 +80,4 @@
                 NewLine;[LF];
         MarkupTextLiteral - [166..166)::0 - [] - Gen<Markup> - SpanEditHandler;Accepts:Any
             Marker;[];
+    EndOfFile;[];

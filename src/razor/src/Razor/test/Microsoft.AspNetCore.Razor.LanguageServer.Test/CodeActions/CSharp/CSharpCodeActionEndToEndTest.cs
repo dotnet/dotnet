@@ -18,7 +18,7 @@ using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace Microsoft.AspNetCore.Razor.LanguageServer.Test.CodeActions.CSharp;
+namespace Microsoft.AspNetCore.Razor.LanguageServer.CodeActions;
 
 public class CSharpCodeActionEndToEndTest : SingleServerDelegatingEndpointTestBase
 {
@@ -73,12 +73,12 @@ public class CSharpCodeActionEndToEndTest : SingleServerDelegatingEndpointTestBa
         await CreateLanguageServerAsync(codeDocument, razorFilePath);
         var documentContext = CreateDocumentContext(uri, codeDocument);
 
-        var razorCodeActionProviders = Array.Empty<RazorCodeActionProvider>();
-        var csharpCodeActionProviders = new CSharpCodeActionProvider[]
+        var razorCodeActionProviders = Array.Empty<IRazorCodeActionProvider>();
+        var csharpCodeActionProviders = new ICSharpCodeActionProvider[]
         {
-            new DefaultCSharpCodeActionProvider()
+            new DefaultCSharpCodeActionProvider(TestLanguageServerFeatureOptions.Instance)
         };
-        var htmlCodeActionProviders = Array.Empty<HtmlCodeActionProvider>();
+        var htmlCodeActionProviders = Array.Empty<IHtmlCodeActionProvider>();
 
         var endpoint = new CodeActionEndpoint(DocumentMappingService, razorCodeActionProviders, csharpCodeActionProviders, htmlCodeActionProviders, LanguageServer, LanguageServerFeatureOptions);
 
@@ -112,14 +112,14 @@ public class CSharpCodeActionEndToEndTest : SingleServerDelegatingEndpointTestBa
 
         var formattingService = await TestRazorFormattingService.CreateWithFullSupportAsync();
 
-        var razorCodeActionResolvers = Array.Empty<RazorCodeActionResolver>();
+        var razorCodeActionResolvers = Array.Empty<IRazorCodeActionResolver>();
         var csharpCodeActionResolvers = new CSharpCodeActionResolver[]
         {
             new DefaultCSharpCodeActionResolver(DocumentContextFactory, LanguageServer, formattingService)
         };
         var htmlCodeActionResolvers = Array.Empty<HtmlCodeActionResolver>();
 
-        var resolveEndpoint = new CodeActionResolutionEndpoint(razorCodeActionResolvers, csharpCodeActionResolvers, htmlCodeActionResolvers, LoggerFactory);
+        var resolveEndpoint = new CodeActionResolveEndpoint(razorCodeActionResolvers, csharpCodeActionResolvers, htmlCodeActionResolvers, LoggerFactory);
 
         var resolveResult = await resolveEndpoint.HandleRequestAsync(codeActionToRun, requestContext, DisposalToken);
 

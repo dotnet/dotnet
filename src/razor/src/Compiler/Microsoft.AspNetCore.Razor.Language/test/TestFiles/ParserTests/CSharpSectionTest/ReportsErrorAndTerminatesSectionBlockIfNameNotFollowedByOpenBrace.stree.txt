@@ -34,3 +34,4 @@
         MarkupTextLiteral - [29..31)::2 - [ }] - Gen<Markup> - SpanEditHandler;Accepts:Any
             Whitespace;[ ];
             Text;[}];
+    EndOfFile;[];

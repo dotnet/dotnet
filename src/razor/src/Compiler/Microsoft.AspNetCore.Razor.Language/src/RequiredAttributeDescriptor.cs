@@ -11,11 +11,25 @@ namespace Microsoft.AspNetCore.Razor.Language;
 
 public abstract class RequiredAttributeDescriptor : IEquatable<RequiredAttributeDescriptor>
 {
+    private const int ContainsDiagnosticsBit = 0x01;
+    private const int CaseSensitiveBit = 0x02;
+
+    private int _flags;
+
+    private bool HasFlag(int flag) => (_flags & flag) != 0;
+    private void SetFlag(int toSet) => ThreadSafeFlagOperations.Set(ref _flags, toSet);
+    private void ClearFlag(int toClear) => ThreadSafeFlagOperations.Clear(ref _flags, toClear);
+    private void SetOrClearFlag(int toChange, bool value) => ThreadSafeFlagOperations.SetOrClear(ref _flags, toChange, value);
+
     public string Name { get; protected set; }
 
     public NameComparisonMode NameComparison { get; protected set; }
 
-    public bool CaseSensitive { get; protected set; }
+    public bool CaseSensitive
+    {
+        get => HasFlag(CaseSensitiveBit);
+        protected set => SetOrClearFlag(CaseSensitiveBit, value);
+    }
 
     public string Value { get; protected set; }
 
@@ -23,7 +37,26 @@ public abstract class RequiredAttributeDescriptor : IEquatable<RequiredAttribute
 
     public string DisplayName { get; protected set; }
 
-    public IReadOnlyList<RazorDiagnostic> Diagnostics { get; protected set; }
+    public IReadOnlyList<RazorDiagnostic> Diagnostics
+    {
+        get => HasFlag(ContainsDiagnosticsBit)
+            ? TagHelperDiagnostics.GetDiagnostics(this)
+            : Array.Empty<RazorDiagnostic>();
+
+        protected set
+        {
+            if (value?.Count > 0)
+            {
+                TagHelperDiagnostics.AddDiagnostics(this, value);
+                SetFlag(ContainsDiagnosticsBit);
+            }
+            else if (HasFlag(ContainsDiagnosticsBit))
+            {
+                TagHelperDiagnostics.RemoveDiagnostics(this);
+                ClearFlag(ContainsDiagnosticsBit);
+            }
+        }
+    }
 
     public IReadOnlyDictionary<string, string> Metadata { get; protected set; }
 
@@ -31,6 +64,11 @@ public abstract class RequiredAttributeDescriptor : IEquatable<RequiredAttribute
     {
         get
         {
+            if (!HasFlag(ContainsDiagnosticsBit))
+            {
+                return false;
+            }
+
             var errors = Diagnostics.Any(diagnostic => diagnostic.Severity == RazorDiagnosticSeverity.Error);
 
             return errors;

@@ -1,0 +1,61 @@
+﻿// Copyright (c) .NET Foundation. All rights reserved.
+// Licensed under the MIT license. See License.txt in the project root for license information.
+
+using System;
+using System.Diagnostics;
+using System.Threading;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Razor.LanguageServer.EndpointContracts;
+using Microsoft.AspNetCore.Razor.LanguageServer.Semantic.Models;
+using Microsoft.CommonLanguageServerProtocol.Framework;
+using Microsoft.VisualStudio.LanguageServer.Protocol;
+
+namespace Microsoft.AspNetCore.Razor.LanguageServer.Semantic;
+
+[LanguageServerEndpoint(Methods.TextDocumentSemanticTokensRangeName)]
+internal sealed class SemanticTokensRangeEndpoint : IRazorRequestHandler<SemanticTokensRangeParams, SemanticTokens?>, IRegistrationExtension
+{
+    public bool MutatesSolutionState { get; } = false;
+
+    public RegistrationExtensionResult GetRegistration(VSInternalClientCapabilities clientCapabilities)
+    {
+        const string ServerCapability = "semanticTokensProvider";
+
+        return new RegistrationExtensionResult(ServerCapability,
+            new SemanticTokensOptions
+            {
+                Full = false,
+                Legend = RazorSemanticTokensLegend.Instance,
+                Range = true,
+            });
+    }
+
+    public TextDocumentIdentifier GetTextDocumentIdentifier(SemanticTokensRangeParams request)
+    {
+        return request.TextDocument;
+    }
+
+    public async Task<SemanticTokens?> HandleRequestAsync(SemanticTokensRangeParams request, RazorRequestContext requestContext, CancellationToken cancellationToken)
+    {
+        if (request is null)
+        {
+            throw new ArgumentNullException(nameof(request));
+        }
+
+        var documentContext = requestContext.GetRequiredDocumentContext();
+        var semanticTokensInfoService = requestContext.GetRequiredService<IRazorSemanticTokensInfoService>();
+
+        var semanticTokens = await semanticTokensInfoService.GetSemanticTokensAsync(request.TextDocument, request.Range, documentContext, cancellationToken).ConfigureAwait(false);
+        var amount = semanticTokens is null ? "no" : (semanticTokens.Data.Length / 5).ToString(Thread.CurrentThread.CurrentCulture);
+
+        requestContext.Logger.LogInformation("Returned {amount} semantic tokens for range {request.Range} in {request.TextDocument.Uri}.", amount, request.Range, request.TextDocument.Uri);
+
+        if (semanticTokens is not null)
+        {
+            Debug.Assert(semanticTokens.Data.Length % 5 == 0, $"Number of semantic token-ints should be divisible by 5. Actual number: {semanticTokens.Data.Length}");
+            Debug.Assert(semanticTokens.Data.Length == 0 || semanticTokens.Data[0] >= 0, $"Line offset should not be negative.");
+        }
+
+        return semanticTokens;
+    }
+}

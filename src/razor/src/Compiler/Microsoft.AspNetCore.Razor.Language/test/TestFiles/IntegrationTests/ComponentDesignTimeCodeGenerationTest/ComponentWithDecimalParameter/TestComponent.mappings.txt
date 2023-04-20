@@ -10,7 +10,7 @@ Generated Location: (1158:32,28 [1] )
 
 Source Location: (48:2,15 [11] x:\dir\subdir\Test\TestComponent.cshtml)
 |TestDecimal|
-Generated Location: (1533:44,15 [11] )
+Generated Location: (1571:45,15 [11] )
 |TestDecimal|
 
 Source Location: (77:4,7 [65] x:\dir\subdir\Test\TestComponent.cshtml)
@@ -18,7 +18,7 @@ Source Location: (77:4,7 [65] x:\dir\subdir\Test\TestComponent.cshtml)
     [Parameter]
     public decimal TestDecimal { get; set; }
 |
-Generated Location: (1900:61,7 [65] )
+Generated Location: (1992:63,7 [65] )
 |
     [Parameter]
     public decimal TestDecimal { get; set; }

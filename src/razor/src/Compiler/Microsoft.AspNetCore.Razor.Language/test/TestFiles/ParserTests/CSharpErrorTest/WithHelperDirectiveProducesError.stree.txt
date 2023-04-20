@@ -17,3 +17,4 @@
             Text;[{];
             Whitespace;[ ];
             Text;[}];
+    EndOfFile;[];

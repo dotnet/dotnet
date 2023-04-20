@@ -19,3 +19,4 @@
                 OpenAngle;[<];
                 Text;[<Missing>];
                 CloseAngle;[<Missing>];
+    EndOfFile;[];

@@ -17,7 +17,7 @@ open FSharp.Compiler.CodeAnalysis
 open FSharp.Compiler.EditorServices
 open FSharp.Compiler.Text
 
-[<ExportCodeFixProvider(FSharpConstants.FSharpLanguageName, Name = "AddOpen"); Shared>]
+[<ExportCodeFixProvider(FSharpConstants.FSharpLanguageName, Name = CodeFix.AddOpen); Shared>]
 type internal FSharpAddOpenCodeFixProvider [<ImportingConstructor>] (assemblyContentProvider: AssemblyContentProvider) =
     inherit CodeFixProvider()
 
@@ -27,9 +27,10 @@ type internal FSharpAddOpenCodeFixProvider [<ImportingConstructor>] (assemblyCon
 
     let qualifySymbolFix (context: CodeFixContext) (fullName, qualifier) =
         CodeFixHelpers.createTextChangeCodeFix (
+            CodeFix.AddOpen,
             fixUnderscoresInMenuText fullName,
             context,
-            (fun () -> asyncMaybe.Return [| TextChange(context.Span, qualifier) |])
+            [| TextChange(context.Span, qualifier) |]
         )
 
     let openNamespaceFix (context: CodeFixContext) ctx name ns multipleNames =
@@ -76,12 +77,7 @@ type internal FSharpAddOpenCodeFixProvider [<ImportingConstructor>] (assemblyCon
             |> Seq.toList
 
         for codeFix in openNamespaceFixes @ qualifiedSymbolFixes do
-            context.RegisterCodeFix(
-                codeFix,
-                context.Diagnostics
-                |> Seq.filter (fun x -> fixableDiagnosticIds |> List.contains x.Id)
-                |> Seq.toImmutableArray
-            )
+            context.RegisterCodeFix(codeFix, context.Diagnostics)
 
     override _.FixableDiagnosticIds = Seq.toImmutableArray fixableDiagnosticIds
 

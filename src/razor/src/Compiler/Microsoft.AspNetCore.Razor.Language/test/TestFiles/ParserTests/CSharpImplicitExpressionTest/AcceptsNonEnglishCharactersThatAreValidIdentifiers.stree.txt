@@ -12,3 +12,4 @@
                             Identifier;[हळूँजद॔];
         MarkupTextLiteral - [8..9)::1 - [.] - Gen<Markup> - SpanEditHandler;Accepts:Any
             Text;[.];
+    EndOfFile;[];

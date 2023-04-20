@@ -33,3 +33,4 @@
                     MarkupTextLiteral - [30..31)::1 - ["] - Gen<Markup> - SpanEditHandler;Accepts:Any
                         DoubleQuote;["];
                 CloseAngle;[<Missing>];
+    EndOfFile;[];

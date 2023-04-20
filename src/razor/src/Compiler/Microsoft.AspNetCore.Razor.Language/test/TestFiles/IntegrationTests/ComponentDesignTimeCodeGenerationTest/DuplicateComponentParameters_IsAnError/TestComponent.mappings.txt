@@ -1,5 +1,5 @@
 ﻿Source Location: (13:0,13 [7] x:\dir\subdir\Test\TestComponent.cshtml)
 |Message|
-Generated Location: (1139:30,13 [7] )
+Generated Location: (1177:31,13 [7] )
 |Message|
 

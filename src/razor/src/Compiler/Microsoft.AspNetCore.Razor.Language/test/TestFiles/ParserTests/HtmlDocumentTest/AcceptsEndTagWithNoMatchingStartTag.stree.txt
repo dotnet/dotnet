@@ -12,3 +12,4 @@
         MarkupTextLiteral - [10..14)::4 - [ Bar] - Gen<Markup> - SpanEditHandler;Accepts:Any
             Whitespace;[ ];
             Text;[Bar];
+    EndOfFile;[];

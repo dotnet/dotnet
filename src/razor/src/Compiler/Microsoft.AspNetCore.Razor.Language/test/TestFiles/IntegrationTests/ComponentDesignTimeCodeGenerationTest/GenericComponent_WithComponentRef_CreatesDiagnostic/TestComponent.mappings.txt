@@ -15,7 +15,7 @@ Generated Location: (1524:45,38 [3] )
 
 Source Location: (23:0,23 [4] x:\dir\subdir\Test\TestComponent.cshtml)
 |Item|
-Generated Location: (1776:53,23 [4] )
+Generated Location: (1814:54,23 [4] )
 |Item|
 
 Source Location: (56:2,7 [90] x:\dir\subdir\Test\TestComponent.cshtml)
@@ -23,7 +23,7 @@ Source Location: (56:2,7 [90] x:\dir\subdir\Test\TestComponent.cshtml)
     private MyComponent<int> _my;
     public void Foo() { System.GC.KeepAlive(_my); }
 |
-Generated Location: (2136:70,7 [90] )
+Generated Location: (2228:72,7 [90] )
 |
     private MyComponent<int> _my;
     public void Foo() { System.GC.KeepAlive(_my); }

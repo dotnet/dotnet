@@ -14,7 +14,7 @@ using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.CodeActions;
 
-internal class DefaultHtmlCodeActionProvider : HtmlCodeActionProvider
+internal sealed class DefaultHtmlCodeActionProvider : IHtmlCodeActionProvider
 {
     private readonly RazorDocumentMappingService _documentMappingService;
 
@@ -23,7 +23,7 @@ internal class DefaultHtmlCodeActionProvider : HtmlCodeActionProvider
         _documentMappingService = documentMappingService;
     }
 
-    public override async Task<IReadOnlyList<RazorVSInternalCodeAction>?> ProvideAsync(
+    public async Task<IReadOnlyList<RazorVSInternalCodeAction>?> ProvideAsync(
         RazorCodeActionContext context,
         IEnumerable<RazorVSInternalCodeAction> codeActions,
         CancellationToken cancellationToken)
@@ -34,7 +34,7 @@ internal class DefaultHtmlCodeActionProvider : HtmlCodeActionProvider
         {
             if (codeAction.Edit is not null)
             {
-                await RemapeAndFixHtmlCodeActionEditAsync(_documentMappingService, context.CodeDocument, codeAction, cancellationToken).ConfigureAwait(false);
+                await RemapAndFixHtmlCodeActionEditAsync(_documentMappingService, context.CodeDocument, codeAction, cancellationToken).ConfigureAwait(false);
 
                 results.Add(codeAction);
             }
@@ -47,7 +47,7 @@ internal class DefaultHtmlCodeActionProvider : HtmlCodeActionProvider
         return results;
     }
 
-    public static async Task RemapeAndFixHtmlCodeActionEditAsync(RazorDocumentMappingService documentMappingService, RazorCodeDocument codeDocument, CodeAction codeAction, CancellationToken cancellationToken)
+    public static async Task RemapAndFixHtmlCodeActionEditAsync(RazorDocumentMappingService documentMappingService, RazorCodeDocument codeDocument, CodeAction codeAction, CancellationToken cancellationToken)
     {
         Assumes.NotNull(codeAction.Edit);
 

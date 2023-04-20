@@ -14,3 +14,4 @@ RazorDocument - [0..13)::13 - [foo @foob bar]
         MarkupTextLiteral - [9..13)::4 - [ bar] - Gen<Markup> - SpanEditHandler;Accepts:Any
             Whitespace;[ ];
             Text;[bar];
+    EndOfFile;[];

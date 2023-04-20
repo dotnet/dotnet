@@ -24,3 +24,4 @@
                 Semicolon;[;];
         MarkupTextLiteral - [27..27)::0 - [] - Gen<Markup> - SpanEditHandler;Accepts:Any
             Marker;[];
+    EndOfFile;[];

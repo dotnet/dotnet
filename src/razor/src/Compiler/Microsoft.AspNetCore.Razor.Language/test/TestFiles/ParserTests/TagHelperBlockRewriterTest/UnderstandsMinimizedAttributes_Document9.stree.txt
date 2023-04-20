@@ -11,3 +11,4 @@
                         Text;[string-prefix-];
                 ForwardSlash;[/];
                 CloseAngle;[>];
+    EndOfFile;[];

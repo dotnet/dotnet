@@ -7,12 +7,12 @@ open System.Composition
 open Microsoft.CodeAnalysis.Text
 open Microsoft.CodeAnalysis.CodeFixes
 
-[<ExportCodeFixProvider(FSharpConstants.FSharpLanguageName, Name = "ConvertCSharpLambdaToFSharpLambda"); Shared>]
+[<ExportCodeFixProvider(FSharpConstants.FSharpLanguageName, Name = CodeFix.ConvertCSharpLambdaToFSharpLambda); Shared>]
 type internal FSharpConvertCSharpLambdaToFSharpLambdaCodeFixProvider [<ImportingConstructor>] () =
     inherit CodeFixProvider()
 
     let fixableDiagnosticIds = set [ "FS0039"; "FS0043" ]
-
+    static let title = SR.UseFSharpLambda()
     override _.FixableDiagnosticIds = Seq.toImmutableArray fixableDiagnosticIds
 
     override _.RegisterCodeFixesAsync context =
@@ -38,17 +38,7 @@ type internal FSharpConvertCSharpLambdaToFSharpLambdaCodeFixProvider [<Importing
                 let bodyText = sourceText.GetSubText(lambdaBodySpan).ToString()
                 TextChange(fullParenSpan, "fun " + argText + " -> " + bodyText)
 
-            let diagnostics =
-                context.Diagnostics
-                |> Seq.filter (fun x -> fixableDiagnosticIds |> Set.contains x.Id)
-                |> Seq.toImmutableArray
-
-            let title = SR.UseFSharpLambda()
-
-            let codeFix =
-                CodeFixHelpers.createTextChangeCodeFix (title, context, (fun () -> asyncMaybe.Return [| replacement |]))
-
-            context.RegisterCodeFix(codeFix, diagnostics)
+            do context.RegisterFsharpFix(CodeFix.ConvertCSharpLambdaToFSharpLambda, title, [| replacement |])
         }
         |> Async.Ignore
         |> RoslynHelpers.StartAsyncUnitAsTask(context.CancellationToken)

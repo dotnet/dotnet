@@ -19,3 +19,4 @@
                     MarkupTextLiteral - [13..14)::1 - ["] - Gen<Markup> - SpanEditHandler;Accepts:Any
                         DoubleQuote;["];
                 CloseAngle;[<Missing>];
+    EndOfFile;[];

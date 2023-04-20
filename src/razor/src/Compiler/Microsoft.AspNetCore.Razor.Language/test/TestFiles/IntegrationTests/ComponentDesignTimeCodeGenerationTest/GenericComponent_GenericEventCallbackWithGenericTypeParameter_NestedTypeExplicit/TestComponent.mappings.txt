@@ -20,6 +20,6 @@ Generated Location: (1705:51,37 [16] )
 
 Source Location: (60:2,28 [7] x:\dir\subdir\Test\TestComponent.cshtml)
 |MyEvent|
-Generated Location: (2115:63,28 [7] )
+Generated Location: (2153:64,28 [7] )
 |MyEvent|
 

@@ -13,3 +13,4 @@
                             LeftParenthesis;[(];
                             LeftParenthesis;[(];
                             RightParenthesis;[)];
+    EndOfFile;[];

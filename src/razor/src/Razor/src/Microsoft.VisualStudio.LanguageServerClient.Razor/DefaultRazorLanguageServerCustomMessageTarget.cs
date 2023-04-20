@@ -1012,10 +1012,27 @@ internal class DefaultRazorLanguageServerCustomMessageTarget : RazorLanguageServ
         }
         else if (request.OriginatingKind == RazorLanguageKind.CSharp)
         {
-            (synchronized, virtualDocumentSnapshot) = await _documentSynchronizer.TrySynchronizeVirtualDocumentAsync<CSharpVirtualDocumentSnapshot>(
-                request.HostDocument.Version,
-                request.HostDocument.Uri,
-                cancellationToken);
+            // TODO this is a partial workaround to fix prefix completion by avoiding sync (which times out during resolve endpoint) if we are currently at a higher version value
+            // this does not fix postfix completion and should be superceded by eventual synchronization fix
+
+            var futureDataSyncResult =
+                (_documentSynchronizer as DefaultLSPDocumentSynchronizer)?.TryReturnPossiblyFutureSnapshot<CSharpVirtualDocumentSnapshot>(
+                    request.HostDocument.Version,
+                    request.HostDocument.Uri);
+            if (futureDataSyncResult?.Synchronized == true)
+            {
+                (synchronized, virtualDocumentSnapshot) = futureDataSyncResult;
+            }
+            else
+            {
+                (synchronized, virtualDocumentSnapshot) = await _documentSynchronizer
+                        .TrySynchronizeVirtualDocumentAsync<CSharpVirtualDocumentSnapshot>(
+                            request.HostDocument.Version,
+                            request.HostDocument.Uri,
+                            rejectOnNewerParallelRequest: true,
+                            cancellationToken);
+            }
+
             languageServerName = RazorLSPConstants.RazorCSharpLanguageServerName;
         }
         else

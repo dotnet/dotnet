@@ -61,7 +61,8 @@ using Test;
 #nullable disable
             }
             );
-            __o = __typeInference_CreateTestComponent_0.
+            #pragma warning disable BL0005
+            __typeInference_CreateTestComponent_0.
 #nullable restore
 #line 2 "x:\dir\subdir\Test\UseTestComponent.cshtml"
                Item1
@@ -69,8 +70,8 @@ using Test;
 #line default
 #line hidden
 #nullable disable
-            ;
-            __o = __typeInference_CreateTestComponent_0.
+             = default;
+            __typeInference_CreateTestComponent_0.
 #nullable restore
 #line 2 "x:\dir\subdir\Test\UseTestComponent.cshtml"
                             Items2
@@ -78,8 +79,8 @@ using Test;
 #line default
 #line hidden
 #nullable disable
-            ;
-            __o = __typeInference_CreateTestComponent_0.
+             = default;
+            __typeInference_CreateTestComponent_0.
 #nullable restore
 #line 2 "x:\dir\subdir\Test\UseTestComponent.cshtml"
                                           Item3
@@ -87,7 +88,8 @@ using Test;
 #line default
 #line hidden
 #nullable disable
-            ;
+             = default;
+            #pragma warning restore BL0005
 #nullable restore
 #line 2 "x:\dir\subdir\Test\UseTestComponent.cshtml"
 __o = typeof(global::Test.TestComponent<,,>);

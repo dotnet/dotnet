@@ -13,3 +13,4 @@
         MarkupTextLiteral - [3..7)::4 - [ foo] - Gen<Markup> - SpanEditHandler;Accepts:Any
             Whitespace;[ ];
             Text;[foo];
+    EndOfFile;[];

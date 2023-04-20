@@ -31,7 +31,8 @@ namespace Test
             __builder.AddAttribute(-1, "ChildContent", (global::Microsoft.AspNetCore.Components.RenderFragment)((__builder2) => {
             }
             ));
-            __o = ((global::Test.TestComponent)default).
+            #pragma warning disable BL0005
+            ((global::Test.TestComponent)default).
 #nullable restore
 #line 3 "x:\dir\subdir\Test\TestComponent.cshtml"
                TestBool
@@ -39,7 +40,8 @@ namespace Test
 #line default
 #line hidden
 #nullable disable
-            ;
+             = default;
+            #pragma warning restore BL0005
 #nullable restore
 #line 3 "x:\dir\subdir\Test\TestComponent.cshtml"
 __o = typeof(global::Test.TestComponent);

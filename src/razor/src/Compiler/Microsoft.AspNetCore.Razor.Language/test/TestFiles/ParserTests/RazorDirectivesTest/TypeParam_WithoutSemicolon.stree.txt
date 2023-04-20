@@ -49,3 +49,4 @@
             Text;[something];
             NewLine;[LF];
             Text;[}];
+    EndOfFile;[];

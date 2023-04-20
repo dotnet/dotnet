@@ -52,7 +52,8 @@ __o = typeof(global::Test.Child<,>);
 #nullable disable
                         }
                         );
-                        __o = __typeInference_CreateParentTwo_1.
+                        #pragma warning disable BL0005
+                        __typeInference_CreateParentTwo_1.
 #nullable restore
 #line 2 "x:\dir\subdir\Test\TestComponent.cshtml"
                Value
@@ -60,7 +61,8 @@ __o = typeof(global::Test.Child<,>);
 #line default
 #line hidden
 #nullable disable
-                        ;
+                         = default;
+                        #pragma warning restore BL0005
                     }
 #nullable restore
 #line 2 "x:\dir\subdir\Test\TestComponent.cshtml"
@@ -71,7 +73,8 @@ __o = typeof(global::Test.ParentTwo<>);
 #nullable disable
                 }
                 );
-                __o = __typeInference_CreateParentOne_0.
+                #pragma warning disable BL0005
+                __typeInference_CreateParentOne_0.
 #nullable restore
 #line 1 "x:\dir\subdir\Test\TestComponent.cshtml"
            Value
@@ -79,7 +82,8 @@ __o = typeof(global::Test.ParentTwo<>);
 #line default
 #line hidden
 #nullable disable
-                ;
+                 = default;
+                #pragma warning restore BL0005
             }
 #nullable restore
 #line 1 "x:\dir\subdir\Test\TestComponent.cshtml"

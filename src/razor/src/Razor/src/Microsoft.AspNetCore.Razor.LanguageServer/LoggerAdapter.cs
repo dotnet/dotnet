@@ -79,7 +79,7 @@ public class LoggerAdapter : IRazorLogger
             }
 
             props.Add("message", message);
-            _telemetryReporter.ReportEvent("lsperror", VisualStudio.Telemetry.TelemetrySeverity.High, props.ToImmutableDictionary());
+            _telemetryReporter.ReportEvent("lsperror", Severity.High, props.ToImmutableDictionary());
         }
     }
 

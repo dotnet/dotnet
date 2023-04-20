@@ -1,6 +1,49 @@
-﻿# Layers
+﻿# Product Layers
 
-## Product Layers
+## High Level Overview
+
+![Layers](./overview.svg)
+
+<details>
+Created with https://www.sankeymatic.com/build/
+
+Input:
+```
+OmniSharp [1] MS.AspNetCore.Razor.LanguageServer.Common
+RoslynWorkspace [1] ProjectEngineHost
+MS.AspNetCore.Razor.LanguageServer [1] MS.AspNetCore.Razor.LanguageServer.Common
+MS.AspNetCore.Razor.LanguageServer.Common [1] Compiler
+MS.AspNetCore.Razor.LanguageServer.Common [1] Workspaces
+ProjectEngineHost [1] Compiler
+Workspaces [1] Compiler
+Workspaces [1] ProjectEngineHost
+OOP Tag Helper Discovery [1] Workspaces
+MS.VS.Editor.Razor [1] Workspaces
+MS.VS.LanguageServerClient.Razor [1] MS.AspNetCore.Razor.LanguageServer
+MS.VS.LanguageServerClient.Razor [1] MS.AspNetCore.Razor.LanguageServer.Common
+MS.VS.LanguageServerClient.Razor [1] Workspaces
+MS.VS.LanguageServerClient.Razor [1] MS.VS.Editor.Razor
+MS.VS.LanguageServerClient.Razor [1] ContainedLanguage
+LanguageServices.VS [1] MS.VS.Editor.Razor
+LiveShare [1] MS.VS.Editor.Razor
+Mac.LanguageServices [1] MS.VS.Editor.Razor
+VS Mac [1] Compiler
+VS Mac [1] MS.VS.LanguageServerClient.Razor
+VS Mac [1] Mac.LanguageServices
+VS [1] MS.AspNetCore.Razor.LanguageServer
+VS [1] MS.AspNetCore.Razor.LanguageServer.Common
+VS [1] Workspaces
+VS [1] OOP Tag Helper Discovery
+VS [1] MS.VS.Editor.Razor
+VS [1] ContainedLanguage
+VS [1] MS.VS.LanguageServerClient.Razor
+VS [1] LanguageServices.VS
+VS [1] LiveShare
+rzls [1] MS.AspNetCore.Razor.LanguageServer
+```
+</details>
+
+## Details
 
 ### Shared
 
@@ -28,6 +71,7 @@ target the broadest set of frameworks.
 
 - Target Framework: `net8.0;netstandard2.0;net472`
 - Projects:
+  - Microsoft.AspNetCore.Razor.ProjectEngineHost
   - Microsoft.CodeAnalysis.Razor.Workspaces
 
 ### Razor Language Server
@@ -76,6 +120,12 @@ target the broadest set of frameworks.
 - Projects:
   - Microsoft.AspNetCore.Razor.OmniSharpPlugin
   - Microsoft.AspNetCore.Razor.ExternalAccess.OmniSharp
+
+### Miscellaneous / Test hosting
+
+- Target Framework: net7.0
+- Projects:
+  - Microsoft.AspNetCore.Razor.ExternalAccess.RoslynWorkspace
 
 ## Testing Layers
 

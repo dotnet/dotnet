@@ -8,3 +8,4 @@
             CSharpStatementLiteral - [1..26)::25 - [using                    ] - Gen<Stmt> - SpanEditHandler;Accepts:Any
                 Keyword;[using];
                 Whitespace;[                    ];
+    EndOfFile;[];

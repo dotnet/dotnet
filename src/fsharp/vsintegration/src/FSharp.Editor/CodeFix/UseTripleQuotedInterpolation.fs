@@ -7,12 +7,12 @@ open System.Composition
 open Microsoft.CodeAnalysis.Text
 open Microsoft.CodeAnalysis.CodeFixes
 
-[<ExportCodeFixProvider(FSharpConstants.FSharpLanguageName, Name = "UseTripleQuotedInterpolation"); Shared>]
+[<ExportCodeFixProvider(FSharpConstants.FSharpLanguageName, Name = CodeFix.UseTripleQuotedInterpolation); Shared>]
 type internal FSharpUseTripleQuotedInterpolationCodeFixProvider [<ImportingConstructor>] () =
     inherit CodeFixProvider()
 
     let fixableDiagnosticIds = [ "FS3373" ]
-
+    static let title = SR.UseTripleQuotedInterpolation()
     override _.FixableDiagnosticIds = Seq.toImmutableArray fixableDiagnosticIds
 
     override _.RegisterCodeFixesAsync context =
@@ -33,17 +33,7 @@ type internal FSharpUseTripleQuotedInterpolationCodeFixProvider [<ImportingConst
                 let interpolation = sourceText.GetSubText(interpolationSpan).ToString()
                 TextChange(interpolationSpan, "$\"\"" + interpolation.[1..] + "\"\"")
 
-            let diagnostics =
-                context.Diagnostics
-                |> Seq.filter (fun x -> fixableDiagnosticIds |> List.contains x.Id)
-                |> Seq.toImmutableArray
-
-            let title = SR.UseTripleQuotedInterpolation()
-
-            let codeFix =
-                CodeFixHelpers.createTextChangeCodeFix (title, context, (fun () -> asyncMaybe.Return [| replacement |]))
-
-            context.RegisterCodeFix(codeFix, diagnostics)
+            do context.RegisterFsharpFix(CodeFix.UseTripleQuotedInterpolation, title, [| replacement |])
         }
         |> Async.Ignore
         |> RoslynHelpers.StartAsyncUnitAsTask(context.CancellationToken)

@@ -13,3 +13,4 @@
                             Not;[!];
                             LeftBracket;[[];
                             Identifier;[more];
+    EndOfFile;[];

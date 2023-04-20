@@ -58,7 +58,7 @@ public class DefaultCSharpCodeActionProviderTest : LanguageServerTestBase
         var context = CreateRazorCodeActionContext(request, location, documentPath, contents, new SourceSpan(8, 4));
         context.CodeDocument.SetFileKind(FileKinds.Legacy);
 
-        var provider = new DefaultCSharpCodeActionProvider();
+        var provider = new DefaultCSharpCodeActionProvider(TestLanguageServerFeatureOptions.Instance);
 
         // Act
         var providedCodeActions = await provider.ProvideAsync(context, _supportedCodeActions, default);
@@ -90,7 +90,7 @@ public class DefaultCSharpCodeActionProviderTest : LanguageServerTestBase
         var context = CreateRazorCodeActionContext(request, location, documentPath, contents, new SourceSpan(8, 4), supportsCodeActionResolve: false);
         context.CodeDocument.SetFileKind(FileKinds.Legacy);
 
-        var provider = new DefaultCSharpCodeActionProvider();
+        var provider = new DefaultCSharpCodeActionProvider(TestLanguageServerFeatureOptions.Instance);
 
         // Act
         var providedCodeActions = await provider.ProvideAsync(context, _supportedCodeActions, default);
@@ -119,7 +119,7 @@ public class DefaultCSharpCodeActionProviderTest : LanguageServerTestBase
         var context = CreateRazorCodeActionContext(request, location, documentPath, contents, new SourceSpan(13, 4));
         context.CodeDocument.SetFileKind(FileKinds.Legacy);
 
-        var provider = new DefaultCSharpCodeActionProvider();
+        var provider = new DefaultCSharpCodeActionProvider(TestLanguageServerFeatureOptions.Instance);
 
         // Act
         var providedCodeActions = await provider.ProvideAsync(context, _supportedCodeActions, default);
@@ -153,7 +153,7 @@ $$Path;
         var context = CreateRazorCodeActionContext(request, location, documentPath, contents, new SourceSpan(13, 4));
         context.CodeDocument.SetFileKind(FileKinds.Legacy);
 
-        var provider = new DefaultCSharpCodeActionProvider();
+        var provider = new DefaultCSharpCodeActionProvider(TestLanguageServerFeatureOptions.Instance);
 
         // Act
         var providedCodeActions = await provider.ProvideAsync(context, _supportedCodeActions, default);
@@ -188,7 +188,7 @@ $$Path;
         var context = CreateRazorCodeActionContext(request, location, documentPath, contents, new SourceSpan(13, 4));
         context.CodeDocument.SetFileKind(FileKinds.Legacy);
 
-        var provider = new DefaultCSharpCodeActionProvider();
+        var provider = new DefaultCSharpCodeActionProvider(TestLanguageServerFeatureOptions.Instance);
 
         // Act
         var providedCodeActions = await provider.ProvideAsync(context, _supportedCodeActions, default);
@@ -220,7 +220,7 @@ $$Path;
         var context = CreateRazorCodeActionContext(request, location, documentPath, contents, new SourceSpan(8, 4));
         context.CodeDocument.SetFileKind(FileKinds.Legacy);
 
-        var provider = new DefaultCSharpCodeActionProvider();
+        var provider = new DefaultCSharpCodeActionProvider(TestLanguageServerFeatureOptions.Instance);
 
         var codeActions = new RazorVSInternalCodeAction[]
         {
@@ -237,6 +237,45 @@ $$Path;
         // Assert
         Assert.NotNull(providedCodeActions);
         Assert.Empty(providedCodeActions);
+    }
+
+    [Fact]
+    public async Task ProvideAsync_InvalidCodeActions_ShowAllFeatureFlagOn_ReturnsCodeActions()
+    {
+        // Arrange
+        var documentPath = "c:/Test.razor";
+        var contents = "@code { $$Path; }";
+        TestFileMarkupParser.GetPosition(contents, out contents, out var cursorPosition);
+
+        var request = new VSCodeActionParams()
+        {
+            TextDocument = new VSTextDocumentIdentifier { Uri = new Uri(documentPath) },
+            Range = new Range(),
+            Context = new VSInternalCodeActionContext()
+        };
+
+        var location = new SourceLocation(cursorPosition, -1, -1);
+        var context = CreateRazorCodeActionContext(request, location, documentPath, contents, new SourceSpan(8, 4));
+        context.CodeDocument.SetFileKind(FileKinds.Legacy);
+
+        var options = new ConfigurableLanguageServerFeatureOptions(new[] { $"--{nameof(ConfigurableLanguageServerFeatureOptions.ShowAllCSharpCodeActions)}" });
+        var provider = new DefaultCSharpCodeActionProvider(options);
+
+        var codeActions = new RazorVSInternalCodeAction[]
+        {
+           new RazorVSInternalCodeAction()
+           {
+               Title = "Do something not really supported in razor",
+               Name = "Non-existant name"
+           }
+        };
+
+        // Act
+        var providedCodeActions = await provider.ProvideAsync(context, codeActions, default);
+
+        // Assert
+        Assert.NotNull(providedCodeActions);
+        Assert.NotEmpty(providedCodeActions);
     }
 
     [Fact]
@@ -266,7 +305,7 @@ $$Path;
         var context = CreateRazorCodeActionContext(request, location, documentPath, contents, new SourceSpan(8, 4));
         context.CodeDocument.SetFileKind(FileKinds.Legacy);
 
-        var provider = new DefaultCSharpCodeActionProvider();
+        var provider = new DefaultCSharpCodeActionProvider(TestLanguageServerFeatureOptions.Instance);
 
         // Act
         var providedCodeActions = await provider.ProvideAsync(context, _supportedCodeActions, default);

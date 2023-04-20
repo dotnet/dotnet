@@ -4,8 +4,8 @@
 #nullable disable
 
 using System;
+using Microsoft.AspNetCore.Razor.ProjectEngineHost.Serialization;
 using Microsoft.AspNetCore.Razor.Test.Common;
-using Microsoft.CodeAnalysis.Razor.Serialization.Internal;
 using Xunit;
 using Xunit.Abstractions;
 

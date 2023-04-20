@@ -206,3 +206,4 @@
                             NewLine;[LF];
         MarkupTextLiteral - [408..408)::0 - [] - Gen<Markup> - SpanEditHandler;Accepts:Any
             Marker;[];
+    EndOfFile;[];

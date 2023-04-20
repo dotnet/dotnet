@@ -12,8 +12,8 @@ using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Language.Intermediate;
 using Microsoft.AspNetCore.Razor.LanguageServer.CodeActions.Models;
 using Microsoft.AspNetCore.Razor.LanguageServer.Common;
-using Microsoft.AspNetCore.Razor.LanguageServer.Common.Extensions;
 using Microsoft.AspNetCore.Razor.LanguageServer.Extensions;
+using Microsoft.AspNetCore.Razor.ProjectEngineHost.Serialization;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -26,7 +26,7 @@ using CSharpSyntaxKind = Microsoft.CodeAnalysis.CSharp.SyntaxKind;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.CodeActions;
 
-internal class ExtractToCodeBehindCodeActionResolver : RazorCodeActionResolver
+internal sealed class ExtractToCodeBehindCodeActionResolver : IRazorCodeActionResolver
 {
     private readonly DocumentContextFactory _documentContextFactory;
     private readonly LanguageServerFeatureOptions _languageServerFeatureOptions;
@@ -39,9 +39,9 @@ internal class ExtractToCodeBehindCodeActionResolver : RazorCodeActionResolver
         _languageServerFeatureOptions = languageServerFeatureOptions;
     }
 
-    public override string Action => LanguageServerConstants.CodeActions.ExtractToCodeBehindAction;
+    public string Action => LanguageServerConstants.CodeActions.ExtractToCodeBehindAction;
 
-    public override async Task<WorkspaceEdit?> ResolveAsync(JObject data, CancellationToken cancellationToken)
+    public async Task<WorkspaceEdit?> ResolveAsync(JObject data, CancellationToken cancellationToken)
     {
         if (data is null)
         {
@@ -150,7 +150,7 @@ internal class ExtractToCodeBehindCodeActionResolver : RazorCodeActionResolver
     /// </summary>
     /// <param name="path">The origin file path.</param>
     /// <returns>A non-existent file path with the same base name and a codebehind extension.</returns>
-    private string GenerateCodeBehindPath(string path)
+    private static string GenerateCodeBehindPath(string path)
     {
         var n = 0;
         string codeBehindPath;
@@ -190,7 +190,7 @@ internal class ExtractToCodeBehindCodeActionResolver : RazorCodeActionResolver
     /// usings from the existing code document.
     /// </summary>
     /// <param name="className">Name of the resultant partial class.</param>
-    /// <param name="namespaceName">Name of the namespace to put the reusltant class in.</param>
+    /// <param name="namespaceName">Name of the namespace to put the resultant class in.</param>
     /// <param name="contents">Class body contents.</param>
     /// <param name="razorCodeDocument">Existing code document we're extracting from.</param>
     /// <returns></returns>

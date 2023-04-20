@@ -27,4 +27,6 @@ internal class DefaultLanguageServerFeatureOptions : LanguageServerFeatureOption
     // https://github.com/dotnet/razor/issues/8131
     public override bool ReturnCodeActionAndRenamePathsWithPrefixedSlash
         => RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
+
+    public override bool ShowAllCSharpCodeActions => false;
 }

@@ -28,31 +28,38 @@ namespace Microsoft.AspNetCore.Razor.Language.Syntax.InternalSyntax
   internal sealed partial class RazorDocumentSyntax : RazorSyntaxNode
   {
     private readonly RazorBlockSyntax _document;
+    private readonly SyntaxToken _endOfFile;
 
-    internal RazorDocumentSyntax(SyntaxKind kind, RazorBlockSyntax document, RazorDiagnostic[] diagnostics, SyntaxAnnotation[] annotations)
+    internal RazorDocumentSyntax(SyntaxKind kind, RazorBlockSyntax document, SyntaxToken endOfFile, RazorDiagnostic[] diagnostics, SyntaxAnnotation[] annotations)
         : base(kind, diagnostics, annotations)
     {
-        SlotCount = 1;
+        SlotCount = 2;
         AdjustFlagsAndWidth(document);
         _document = document;
+        AdjustFlagsAndWidth(endOfFile);
+        _endOfFile = endOfFile;
     }
 
 
-    internal RazorDocumentSyntax(SyntaxKind kind, RazorBlockSyntax document)
+    internal RazorDocumentSyntax(SyntaxKind kind, RazorBlockSyntax document, SyntaxToken endOfFile)
         : base(kind)
     {
-        SlotCount = 1;
+        SlotCount = 2;
         AdjustFlagsAndWidth(document);
         _document = document;
+        AdjustFlagsAndWidth(endOfFile);
+        _endOfFile = endOfFile;
     }
 
     public RazorBlockSyntax Document { get { return _document; } }
+    public SyntaxToken EndOfFile { get { return _endOfFile; } }
 
     internal override GreenNode GetSlot(int index)
     {
         switch (index)
         {
             case 0: return _document;
+            case 1: return _endOfFile;
             default: return null;
         }
     }
@@ -72,11 +79,11 @@ namespace Microsoft.AspNetCore.Razor.Language.Syntax.InternalSyntax
         visitor.VisitRazorDocument(this);
     }
 
-    public RazorDocumentSyntax Update(RazorBlockSyntax document)
+    public RazorDocumentSyntax Update(RazorBlockSyntax document, SyntaxToken endOfFile)
     {
-        if (document != Document)
+        if (document != Document || endOfFile != EndOfFile)
         {
-            var newNode = SyntaxFactory.RazorDocument(document);
+            var newNode = SyntaxFactory.RazorDocument(document, endOfFile);
             var diags = GetDiagnostics();
             if (diags != null && diags.Length > 0)
                newNode = newNode.WithDiagnosticsGreen(diags);
@@ -91,12 +98,12 @@ namespace Microsoft.AspNetCore.Razor.Language.Syntax.InternalSyntax
 
     internal override GreenNode SetDiagnostics(RazorDiagnostic[] diagnostics)
     {
-         return new RazorDocumentSyntax(Kind, _document, diagnostics, GetAnnotations());
+         return new RazorDocumentSyntax(Kind, _document, _endOfFile, diagnostics, GetAnnotations());
     }
 
     internal override GreenNode SetAnnotations(SyntaxAnnotation[] annotations)
     {
-         return new RazorDocumentSyntax(Kind, _document, GetDiagnostics(), annotations);
+         return new RazorDocumentSyntax(Kind, _document, _endOfFile, GetDiagnostics(), annotations);
     }
   }
 
@@ -4315,7 +4322,8 @@ namespace Microsoft.AspNetCore.Razor.Language.Syntax.InternalSyntax
     public override GreenNode VisitRazorDocument(RazorDocumentSyntax node)
     {
       var document = (RazorBlockSyntax)Visit(node.Document);
-      return node.Update(document);
+      var endOfFile = (SyntaxToken)Visit(node.EndOfFile);
+      return node.Update(document, endOfFile);
     }
 
     public override GreenNode VisitRazorCommentBlock(RazorCommentBlockSyntax node)
@@ -4621,12 +4629,21 @@ namespace Microsoft.AspNetCore.Razor.Language.Syntax.InternalSyntax
 
   internal static partial class SyntaxFactory
   {
-    public static RazorDocumentSyntax RazorDocument(RazorBlockSyntax document)
+    public static RazorDocumentSyntax RazorDocument(RazorBlockSyntax document, SyntaxToken endOfFile)
     {
       if (document == null)
         throw new ArgumentNullException(nameof(document));
+      if (endOfFile == null)
+        throw new ArgumentNullException(nameof(endOfFile));
+      switch (endOfFile.Kind)
+      {
+        case SyntaxKind.EndOfFile:
+          break;
+        default:
+          throw new ArgumentException("endOfFile");
+      }
 
-      var result = new RazorDocumentSyntax(SyntaxKind.RazorDocument, document);
+      var result = new RazorDocumentSyntax(SyntaxKind.RazorDocument, document, endOfFile);
 
       return result;
     }

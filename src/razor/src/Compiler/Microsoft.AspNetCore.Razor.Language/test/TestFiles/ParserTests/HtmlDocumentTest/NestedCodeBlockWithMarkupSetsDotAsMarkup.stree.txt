@@ -56,3 +56,4 @@
             CSharpStatementLiteral - [50..52)::2 - [ }] - Gen<Stmt> - SpanEditHandler;Accepts:Any
                 Whitespace;[ ];
                 RightBrace;[}];
+    EndOfFile;[];

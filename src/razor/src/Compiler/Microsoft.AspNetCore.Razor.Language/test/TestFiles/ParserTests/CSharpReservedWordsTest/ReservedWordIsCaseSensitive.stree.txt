@@ -12,3 +12,4 @@
                             Identifier;[NameSpace];
         MarkupTextLiteral - [10..10)::0 - [] - Gen<Markup> - SpanEditHandler;Accepts:Any
             Marker;[];
+    EndOfFile;[];

@@ -16,6 +16,7 @@
     <Import assembly="Microsoft.AspNetCore.Razor.LanguageServer.dll" />
     <Import assembly="Microsoft.AspNetCore.Razor.LanguageServer.Common.dll" />
     <Import assembly="Microsoft.AspNetCore.Razor.LanguageServer.Protocol.dll" />
+    <Import assembly="Microsoft.AspNetCore.Razor.ProjectEngineHost.dll" />
     <Import assembly="Microsoft.Extensions.Options.dll" />
     <Import assembly="Microsoft.Extensions.Primitives.dll" />
     <Import assembly="Microsoft.Extensions.DependencyInjection.dll" />

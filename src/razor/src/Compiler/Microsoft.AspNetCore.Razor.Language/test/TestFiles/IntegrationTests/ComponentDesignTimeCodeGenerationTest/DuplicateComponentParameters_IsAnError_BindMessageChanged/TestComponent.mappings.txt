@@ -10,19 +10,19 @@ Generated Location: (1502:34,59 [7] )
 
 Source Location: (13:0,13 [14] x:\dir\subdir\Test\TestComponent.cshtml)
 |MessageChanged|
-Generated Location: (2509:49,13 [14] )
+Generated Location: (2547:50,13 [14] )
 |MessageChanged|
 
 Source Location: (49:0,49 [7] x:\dir\subdir\Test\TestComponent.cshtml)
 |Message|
-Generated Location: (2765:58,49 [7] )
+Generated Location: (2807:59,49 [7] )
 |Message|
 
 Source Location: (84:1,12 [30] x:\dir\subdir\Test\TestComponent.cshtml)
 |
     string message = "hi";
 |
-Generated Location: (3131:75,12 [30] )
+Generated Location: (3227:77,12 [30] )
 |
     string message = "hi";
 |

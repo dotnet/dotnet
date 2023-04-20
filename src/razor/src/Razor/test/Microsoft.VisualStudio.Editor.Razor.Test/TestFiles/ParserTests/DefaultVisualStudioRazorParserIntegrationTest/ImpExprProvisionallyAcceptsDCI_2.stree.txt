@@ -15,3 +15,4 @@ RazorDocument - [0..18)::18 - [foo @DateTime. baz]
             Text;[.];
             Whitespace;[ ];
             Text;[baz];
+    EndOfFile;[];

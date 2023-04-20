@@ -17,3 +17,4 @@
                             RightBracket;[]];
         MarkupTextLiteral - [9..10)::1 - [!] - Gen<Markup> - SpanEditHandler;Accepts:Any
             Bang;[!];
+    EndOfFile;[];

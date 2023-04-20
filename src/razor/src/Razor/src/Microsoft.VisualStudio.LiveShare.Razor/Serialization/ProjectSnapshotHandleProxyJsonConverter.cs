@@ -3,7 +3,7 @@
 
 using System;
 using Microsoft.AspNetCore.Razor.Language;
-using Microsoft.CodeAnalysis.Razor.ProjectSystem;
+using Microsoft.AspNetCore.Razor.ProjectEngineHost.Serialization;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 

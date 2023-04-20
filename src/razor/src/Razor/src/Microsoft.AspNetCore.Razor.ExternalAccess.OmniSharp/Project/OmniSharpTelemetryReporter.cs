@@ -3,17 +3,16 @@
 
 using System.Collections.Immutable;
 using Microsoft.AspNetCore.Razor.Telemetry;
-using Microsoft.VisualStudio.Telemetry;
 
 namespace Microsoft.AspNetCore.Razor.ExternalAccess.OmniSharp;
 
 internal class OmniSharpTelemetryReporter : ITelemetryReporter
 {
-    public void ReportEvent(string name, TelemetrySeverity severity)
+    public void ReportEvent(string name, Severity severity)
     {
     }
 
-    public void ReportEvent<T>(string name, TelemetrySeverity severity, ImmutableDictionary<string, T> values)
+    public void ReportEvent<T>(string name, Severity severity, ImmutableDictionary<string, T> values)
     {
     }
 

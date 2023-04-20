@@ -3,15 +3,29 @@
 
 using System;
 using System.Collections.Generic;
-using System.Collections.Immutable;
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.Extensions.ObjectPool;
 
 namespace Microsoft.AspNetCore.Razor.Language;
 
-internal class DefaultBoundAttributeDescriptorBuilder : BoundAttributeDescriptorBuilder, IBuilder<BoundAttributeDescriptor>
+internal partial class DefaultBoundAttributeDescriptorBuilder : BoundAttributeDescriptorBuilder, IBuilder<BoundAttributeDescriptor>
 {
+    private static readonly ObjectPool<DefaultBoundAttributeDescriptorBuilder> s_pool = DefaultPool.Create(Policy.Instance);
+
+    public static DefaultBoundAttributeDescriptorBuilder GetInstance(DefaultTagHelperDescriptorBuilder parent, string kind)
+    {
+        var builder = s_pool.Get();
+
+        builder._parent = parent;
+        builder._kind = kind;
+
+        return builder;
+    }
+
+    public static void ReturnInstance(DefaultBoundAttributeDescriptorBuilder builder)
+        => s_pool.Return(builder);
+
     private static readonly ObjectPool<HashSet<BoundAttributeParameterDescriptor>> s_boundAttributeParameterSetPool
         = HashSetPool<BoundAttributeParameterDescriptor>.Create(BoundAttributeParameterDescriptorComparer.Default);
 
@@ -36,38 +50,34 @@ internal class DefaultBoundAttributeDescriptorBuilder : BoundAttributeDescriptor
         { typeof(decimal).FullName, "decimal" }
     };
 
-    private readonly DefaultTagHelperDescriptorBuilder _parent;
-    private readonly string _kind;
-    private readonly ImmutableDictionary<string, string>.Builder _metadata;
+    [AllowNull]
+    private DefaultTagHelperDescriptorBuilder _parent;
+    [AllowNull]
+    private string _kind;
     private List<DefaultBoundAttributeParameterDescriptorBuilder>? _attributeParameterBuilders;
-
+    private Dictionary<string, string>? _metadata;
     private RazorDiagnosticCollection? _diagnostics;
+
+    private DefaultBoundAttributeDescriptorBuilder()
+    {
+    }
 
     public DefaultBoundAttributeDescriptorBuilder(DefaultTagHelperDescriptorBuilder parent, string kind)
     {
         _parent = parent;
         _kind = kind;
-
-        _metadata = ImmutableDictionary.CreateBuilder<string, string>();
     }
 
     public override string? Name { get; set; }
-
     public override string? TypeName { get; set; }
-
     public override bool IsEnum { get; set; }
-
     public override bool IsDictionary { get; set; }
-
     public override string? IndexerAttributeNamePrefix { get; set; }
-
     public override string? IndexerValueTypeName { get; set; }
-
     public override string? Documentation { get; set; }
-
     public override string? DisplayName { get; set; }
 
-    public override IDictionary<string, string> Metadata => _metadata;
+    public override IDictionary<string, string> Metadata => _metadata ??= new Dictionary<string, string>();
 
     public override RazorDiagnosticCollection Diagnostics => _diagnostics ??= new RazorDiagnosticCollection();
 
@@ -82,7 +92,7 @@ internal class DefaultBoundAttributeDescriptorBuilder : BoundAttributeDescriptor
 
         EnsureAttributeParameterBuilders();
 
-        var builder = new DefaultBoundAttributeParameterDescriptorBuilder(this, _kind);
+        var builder = DefaultBoundAttributeParameterDescriptorBuilder.GetInstance(this, _kind);
         configure(builder);
         _attributeParameterBuilders.Add(builder);
     }
@@ -109,12 +119,10 @@ internal class DefaultBoundAttributeDescriptorBuilder : BoundAttributeDescriptor
                 Documentation,
                 GetDisplayName(),
                 CaseSensitive,
+                IsEditorRequired,
                 parameters,
-                _metadata.ToImmutable(),
-                diagnostics.ToArray())
-            {
-                IsEditorRequired = IsEditorRequired,
-            };
+                MetadataCollection.CreateOrEmpty(_metadata),
+                diagnostics.ToArray());
 
             return descriptor;
         }

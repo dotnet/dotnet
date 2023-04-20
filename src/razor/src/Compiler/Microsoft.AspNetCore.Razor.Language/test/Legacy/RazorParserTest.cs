@@ -41,6 +41,7 @@ public class RazorParserTest
         MarkupTextLiteral - [8..12)::4 - [ baz] - Gen<Markup> - SpanEditHandler;Accepts:Any
             Whitespace;[ ];
             Text;[baz];
+    EndOfFile;[];
 ";
 
         // Act

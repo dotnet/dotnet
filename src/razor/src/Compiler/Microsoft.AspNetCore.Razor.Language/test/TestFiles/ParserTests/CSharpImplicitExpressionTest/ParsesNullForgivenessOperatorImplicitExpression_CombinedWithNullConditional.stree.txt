@@ -13,3 +13,4 @@
                             Not;[!];
         MarkupTextLiteral - [5..6)::1 - [?] - Gen<Markup> - SpanEditHandler;Accepts:Any
             QuestionMark;[?];
+    EndOfFile;[];

@@ -11,7 +11,7 @@ using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.CodeActions;
 
-internal class DefaultHtmlCodeActionResolver : HtmlCodeActionResolver
+internal sealed class DefaultHtmlCodeActionResolver : HtmlCodeActionResolver
 {
     private readonly DocumentContextFactory _documentContextFactory;
     private readonly RazorDocumentMappingService _documentMappingService;
@@ -67,7 +67,7 @@ internal class DefaultHtmlCodeActionResolver : HtmlCodeActionResolver
         }
 
         var codeDocument = await documentContext.GetCodeDocumentAsync(cancellationToken).ConfigureAwait(false);
-        await DefaultHtmlCodeActionProvider.RemapeAndFixHtmlCodeActionEditAsync(_documentMappingService, codeDocument, resolvedCodeAction, cancellationToken).ConfigureAwait(false);
+        await DefaultHtmlCodeActionProvider.RemapAndFixHtmlCodeActionEditAsync(_documentMappingService, codeDocument, resolvedCodeAction, cancellationToken).ConfigureAwait(false);
 
         return resolvedCodeAction;
     }

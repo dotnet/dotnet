@@ -29,3 +29,4 @@ RazorDocument - [0..22)::22 - [@{LF    @DateTime..LF}]
                         RightBrace;[}];
         MarkupTextLiteral - [22..22)::0 - [] - Gen<Markup> - SpanEditHandler;Accepts:Any
             Marker;[];
+    EndOfFile;[];

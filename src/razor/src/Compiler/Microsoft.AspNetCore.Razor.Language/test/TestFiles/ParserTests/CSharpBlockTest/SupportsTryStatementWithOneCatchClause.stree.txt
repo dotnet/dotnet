@@ -48,3 +48,4 @@
                 RightBrace;[}];
                 Whitespace;[ ];
                 RightBrace;[}];
+    EndOfFile;[];

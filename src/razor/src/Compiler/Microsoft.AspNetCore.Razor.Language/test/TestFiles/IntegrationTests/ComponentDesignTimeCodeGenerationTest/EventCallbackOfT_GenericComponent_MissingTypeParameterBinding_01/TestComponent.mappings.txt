@@ -5,14 +5,14 @@ Generated Location: (1105:25,24 [25] )
 
 Source Location: (13:0,13 [7] x:\dir\subdir\Test\TestComponent.cshtml)
 |OnClick|
-Generated Location: (1338:34,13 [7] )
+Generated Location: (1376:35,13 [7] )
 |OnClick|
 
 Source Location: (64:2,7 [28] x:\dir\subdir\Test\TestComponent.cshtml)
 |
     private int counter;
 |
-Generated Location: (1702:51,7 [28] )
+Generated Location: (1794:53,7 [28] )
 |
     private int counter;
 |

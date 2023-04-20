@@ -33,3 +33,4 @@
                     Whitespace;[ ];
             CSharpStatementLiteral - [23..24)::1 - [}] - Gen<Stmt> - SpanEditHandler;Accepts:Any
                 RightBrace;[}];
+    EndOfFile;[];

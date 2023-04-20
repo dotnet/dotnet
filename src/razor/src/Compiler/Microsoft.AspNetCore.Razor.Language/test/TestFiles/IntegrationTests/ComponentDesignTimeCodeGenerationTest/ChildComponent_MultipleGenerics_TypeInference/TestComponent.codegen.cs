@@ -55,7 +55,8 @@ __o = System.Math.Max(0, item.Item);
 #nullable disable
             }
             );
-            __o = __typeInference_CreateMyComponent_0.
+            #pragma warning disable BL0005
+            __typeInference_CreateMyComponent_0.
 #nullable restore
 #line 1 "x:\dir\subdir\Test\TestComponent.cshtml"
              Item
@@ -63,8 +64,8 @@ __o = System.Math.Max(0, item.Item);
 #line default
 #line hidden
 #nullable disable
-            ;
-            __o = __typeInference_CreateMyComponent_0.
+             = default;
+            __typeInference_CreateMyComponent_0.
 #nullable restore
 #line 1 "x:\dir\subdir\Test\TestComponent.cshtml"
                             Items
@@ -72,7 +73,8 @@ __o = System.Math.Max(0, item.Item);
 #line default
 #line hidden
 #nullable disable
-            ;
+             = default;
+            #pragma warning restore BL0005
 #nullable restore
 #line 1 "x:\dir\subdir\Test\TestComponent.cshtml"
 __o = typeof(global::Test.MyComponent<,>);

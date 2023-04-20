@@ -17,3 +17,4 @@
                             Not;[!];
                             LeftBracket;[[];
                             Identifier;[def];
+    EndOfFile;[];

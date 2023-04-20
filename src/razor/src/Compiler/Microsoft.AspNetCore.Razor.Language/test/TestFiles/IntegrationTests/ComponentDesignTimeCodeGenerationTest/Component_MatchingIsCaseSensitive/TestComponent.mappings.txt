@@ -5,6 +5,6 @@ Generated Location: (1377:36,43 [4] )
 
 Source Location: (63:2,29 [12] x:\dir\subdir\Test\TestComponent.cshtml)
 |BoolProperty|
-Generated Location: (1767:48,29 [12] )
+Generated Location: (1805:49,29 [12] )
 |BoolProperty|
 

@@ -12,3 +12,4 @@
                             Marker;[];
         MarkupTextLiteral - [1..2)::1 - ["] - Gen<Markup> - SpanEditHandler;Accepts:Any
             DoubleQuote;["];
+    EndOfFile;[];

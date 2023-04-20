@@ -11,7 +11,6 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.LanguageServer.CodeActions.Models;
 using Microsoft.AspNetCore.Razor.LanguageServer.Common;
-using Microsoft.AspNetCore.Razor.LanguageServer.Common.Extensions;
 using Microsoft.AspNetCore.Razor.LanguageServer.EndpointContracts;
 using Microsoft.AspNetCore.Razor.LanguageServer.Extensions;
 using Microsoft.AspNetCore.Razor.LanguageServer.Protocol;
@@ -20,18 +19,20 @@ using Microsoft.CodeAnalysis.ExternalAccess.Razor;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Text;
+using Microsoft.CommonLanguageServerProtocol.Framework;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Newtonsoft.Json.Linq;
 using StreamJsonRpc;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.CodeActions;
 
-internal class CodeActionEndpoint : IVSCodeActionEndpoint
+[LanguageServerEndpoint(Methods.TextDocumentCodeActionName)]
+internal sealed class CodeActionEndpoint : IRazorRequestHandler<VSCodeActionParams, SumType<Command, CodeAction>[]?>, IRegistrationExtension
 {
     private readonly RazorDocumentMappingService _documentMappingService;
-    private readonly IEnumerable<RazorCodeActionProvider> _razorCodeActionProviders;
-    private readonly IEnumerable<CSharpCodeActionProvider> _csharpCodeActionProviders;
-    private readonly IEnumerable<HtmlCodeActionProvider> _htmlCodeActionProviders;
+    private readonly IEnumerable<IRazorCodeActionProvider> _razorCodeActionProviders;
+    private readonly IEnumerable<ICSharpCodeActionProvider> _csharpCodeActionProviders;
+    private readonly IEnumerable<IHtmlCodeActionProvider> _htmlCodeActionProviders;
     private readonly LanguageServerFeatureOptions _languageServerFeatureOptions;
     private readonly ClientNotifierServiceBase _languageServer;
 
@@ -43,9 +44,9 @@ internal class CodeActionEndpoint : IVSCodeActionEndpoint
 
     public CodeActionEndpoint(
         RazorDocumentMappingService documentMappingService,
-        IEnumerable<RazorCodeActionProvider> razorCodeActionProviders,
-        IEnumerable<CSharpCodeActionProvider> csharpCodeActionProviders,
-        IEnumerable<HtmlCodeActionProvider> htmlCodeActionProviders,
+        IEnumerable<IRazorCodeActionProvider> razorCodeActionProviders,
+        IEnumerable<ICSharpCodeActionProvider> csharpCodeActionProviders,
+        IEnumerable<IHtmlCodeActionProvider> htmlCodeActionProviders,
         ClientNotifierServiceBase languageServer,
         LanguageServerFeatureOptions languageServerFeatureOptions)
     {
@@ -249,7 +250,7 @@ internal class CodeActionEndpoint : IVSCodeActionEndpoint
         return actions.ToArray();
     }
 
-    private async Task<ImmutableArray<RazorVSInternalCodeAction>> FilterCodeActionsAsync(
+    private static async Task<ImmutableArray<RazorVSInternalCodeAction>> FilterCodeActionsAsync(
         RazorCodeActionContext context,
         RazorVSInternalCodeAction[] codeActions,
         IEnumerable<ICodeActionProvider> providers,

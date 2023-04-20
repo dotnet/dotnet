@@ -18,3 +18,4 @@
                             Identifier;[baz];
                     RazorMetaCode - [14..14)::0 - Gen<None> - SpanEditHandler;Accepts:Any
                         RightParenthesis;[<Missing>];
+    EndOfFile;[];

@@ -12,3 +12,4 @@
                 Bang;[!];
                 Text;[th:myth];
                 CloseAngle;[>];
+    EndOfFile;[];

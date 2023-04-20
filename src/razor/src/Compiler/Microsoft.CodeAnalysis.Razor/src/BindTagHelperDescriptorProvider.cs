@@ -131,9 +131,12 @@ internal class BindTagHelperDescriptorProvider : ITagHelperDescriptorProvider
         }
     }
 
-    private TagHelperDescriptor CreateFallbackBindTagHelper()
+    private static TagHelperDescriptor CreateFallbackBindTagHelper()
     {
-        var builder = TagHelperDescriptorBuilder.Create(ComponentMetadata.Bind.TagHelperKind, "Bind", ComponentsApi.AssemblyName);
+        using var _ = TagHelperDescriptorBuilder.GetPooledInstance(
+            ComponentMetadata.Bind.TagHelperKind, "Bind", ComponentsApi.AssemblyName,
+            out var builder);
+
         builder.CaseSensitive = true;
         builder.Documentation = ComponentResources.BindTagHelper_Fallback_Documentation;
 
@@ -168,9 +171,9 @@ internal class BindTagHelperDescriptorProvider : ITagHelperDescriptorProvider
             attribute.Name = attributeName;
             attribute.AsDictionary("@bind-", typeof(object).FullName);
 
-                // WTE has a bug 15.7p1 where a Tag Helper without a display-name that looks like
-                // a C# property will crash trying to create the toolips.
-                attribute.SetPropertyName("Bind");
+            // WTE has a bug 15.7p1 where a Tag Helper without a display-name that looks like
+            // a C# property will crash trying to create the toolips.
+            attribute.SetPropertyName("Bind");
             attribute.TypeName = "System.Collections.Generic.Dictionary<string, object>";
 
             attribute.BindAttributeParameter(parameter =>
@@ -322,14 +325,12 @@ internal class BindTagHelperDescriptorProvider : ITagHelperDescriptorProvider
         return results;
     }
 
-    private List<TagHelperDescriptor> CreateElementBindTagHelpers(List<ElementBindData> data)
+    private static List<TagHelperDescriptor> CreateElementBindTagHelpers(List<ElementBindData> data)
     {
         var results = new List<TagHelperDescriptor>();
 
-        for (var i = 0; i < data.Count; i++)
+        foreach (var entry in data)
         {
-            var entry = data[i];
-
             var name = entry.Suffix == null ? "Bind" : "Bind_" + entry.Suffix;
             var attributeName = entry.Suffix == null ? "@bind" : "@bind-" + entry.Suffix;
 
@@ -338,7 +339,10 @@ internal class BindTagHelperDescriptorProvider : ITagHelperDescriptorProvider
 
             var eventName = entry.Suffix == null ? "Event_" + entry.ValueAttribute : "Event_" + entry.Suffix;
 
-            var builder = TagHelperDescriptorBuilder.Create(ComponentMetadata.Bind.TagHelperKind, name, ComponentsApi.AssemblyName);
+            using var _ = TagHelperDescriptorBuilder.GetPooledInstance(
+                ComponentMetadata.Bind.TagHelperKind, name, ComponentsApi.AssemblyName,
+                out var builder);
+
             builder.CaseSensitive = true;
             builder.Documentation = string.Format(
                 CultureInfo.CurrentCulture,
@@ -437,9 +441,9 @@ internal class BindTagHelperDescriptorProvider : ITagHelperDescriptorProvider
                 a.Name = attributeName;
                 a.TypeName = typeof(object).FullName;
 
-                    // WTE has a bug 15.7p1 where a Tag Helper without a display-name that looks like
-                    // a C# property will crash trying to create the toolips.
-                    a.SetPropertyName(name);
+                // WTE has a bug 15.7p1 where a Tag Helper without a display-name that looks like
+                // a C# property will crash trying to create the toolips.
+                a.SetPropertyName(name);
 
                 a.BindAttributeParameter(parameter =>
                 {
@@ -504,9 +508,9 @@ internal class BindTagHelperDescriptorProvider : ITagHelperDescriptorProvider
                 attribute.TypeName = "System.String";
                 attribute.Documentation = string.Format(CultureInfo.CurrentCulture, ComponentResources.BindTagHelper_Element_Format_Documentation, attributeName);
 
-                    // WTE has a bug 15.7p1 where a Tag Helper without a display-name that looks like
-                    // a C# property will crash trying to create the toolips.
-                    attribute.SetPropertyName(formatName);
+                // WTE has a bug 15.7p1 where a Tag Helper without a display-name that looks like
+                // a C# property will crash trying to create the toolips.
+                attribute.SetPropertyName(formatName);
             });
 
             results.Add(builder.Build());
@@ -515,7 +519,7 @@ internal class BindTagHelperDescriptorProvider : ITagHelperDescriptorProvider
         return results;
     }
 
-    private List<TagHelperDescriptor> CreateComponentBindTagHelpers(ICollection<TagHelperDescriptor> tagHelpers)
+    private static List<TagHelperDescriptor> CreateComponentBindTagHelpers(ICollection<TagHelperDescriptor> tagHelpers)
     {
         var results = new List<TagHelperDescriptor>();
 
@@ -576,7 +580,10 @@ internal class BindTagHelperDescriptorProvider : ITagHelperDescriptorProvider
                     continue;
                 }
 
-                var builder = TagHelperDescriptorBuilder.Create(ComponentMetadata.Bind.TagHelperKind, tagHelper.Name, tagHelper.AssemblyName);
+                using var _ = TagHelperDescriptorBuilder.GetPooledInstance(
+                    ComponentMetadata.Bind.TagHelperKind, tagHelper.Name, tagHelper.AssemblyName,
+                    out var builder);
+
                 builder.DisplayName = tagHelper.DisplayName;
                 builder.CaseSensitive = true;
                 builder.Documentation = string.Format(

@@ -5,14 +5,14 @@ Generated Location: (1010:25,24 [11] )
 
 Source Location: (17:0,17 [5] x:\dir\subdir\Test\TestComponent.cshtml)
 |Value|
-Generated Location: (1502:39,17 [5] )
+Generated Location: (1540:40,17 [5] )
 |Value|
 
 Source Location: (56:3,1 [37] x:\dir\subdir\Test\TestComponent.cshtml)
 |
     Person person = new Person();
 |
-Generated Location: (1853:56,1 [37] )
+Generated Location: (1945:58,1 [37] )
 |
     Person person = new Person();
 |

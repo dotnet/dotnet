@@ -29,3 +29,4 @@
                 RightParenthesis;[)];
                 Whitespace;[ ];
                 LeftBrace;[{];
+    EndOfFile;[];

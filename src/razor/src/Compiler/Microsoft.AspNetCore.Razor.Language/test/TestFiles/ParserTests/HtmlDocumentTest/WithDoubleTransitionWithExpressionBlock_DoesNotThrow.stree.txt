@@ -180,3 +180,4 @@
                 CloseAngle;[>];
         MarkupTextLiteral - [119..120)::1 - [}] - Gen<Markup> - SpanEditHandler;Accepts:Any
             Text;[}];
+    EndOfFile;[];
