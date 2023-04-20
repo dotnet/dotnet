@@ -1471,6 +1471,51 @@ class C { }
             Assert.Equal(e, runResults.Results[0].Exception);
         }
 
+        [Fact, WorkItem("https://github.com/dotnet/roslyn/issues/67386")]
+        public void Incremental_Generators_Exception_In_Comparer()
+        {
+            var source = """
+                class Attr : System.Attribute { }
+                [Attr] class C { }
+                """;
+            var parseOptions = TestOptions.RegularPreview;
+            Compilation compilation = CreateCompilation(source, options: TestOptions.DebugDllThrowing, parseOptions: parseOptions);
+            compilation.VerifyDiagnostics();
+
+            var syntaxTree = compilation.SyntaxTrees.Single();
+
+            var e = new InvalidOperationException("abc");
+            var generator = new PipelineCallbackGenerator((ctx) =>
+            {
+                var name = ctx.ForAttributeWithSimpleName<ClassDeclarationSyntax>("Attr")
+                    .Select((c, _) => c.Identifier.ValueText)
+                    .WithComparer(new LambdaComparer<string>((_, _) => throw e));
+                ctx.RegisterSourceOutput(name, (spc, n) => spc.AddSource(n, "// generated"));
+            });
+
+            GeneratorDriver driver = CSharpGeneratorDriver.Create(new[] { generator.AsSourceGenerator() }, parseOptions: parseOptions);
+            driver = driver.RunGenerators(compilation);
+            var runResults = driver.GetRunResult();
+
+            Assert.Empty(runResults.Diagnostics);
+            Assert.Equal("// generated", runResults.Results.Single().GeneratedSources.Single().SourceText.ToString());
+
+            compilation = compilation.ReplaceSyntaxTree(syntaxTree, CSharpSyntaxTree.ParseText("""
+                class Attr : System.Attribute { }
+                [Attr] class D { }
+                """, parseOptions));
+            compilation.VerifyDiagnostics();
+
+            driver = driver.RunGenerators(compilation);
+            runResults = driver.GetRunResult();
+
+            AssertEx.Equal(
+                "warning CS8785: Generator 'PipelineCallbackGenerator' failed to generate source. It will not contribute to the output and compilation errors may occur as a result. Exception was of type 'InvalidOperationException' with message 'abc'",
+                runResults.Diagnostics.Single().ToString());
+            Assert.Empty(runResults.GeneratedTrees);
+            Assert.Equal(e, runResults.Results.Single().Exception);
+        }
+
         [Fact]
         public void Incremental_Generators_Exception_During_Execution_Doesnt_Produce_AnySource()
         {
@@ -2051,130 +2096,6 @@ class C { }
                             Assert.Equal(IncrementalStepRunReason.Modified, output.Reason);
                         });
                 });
-        }
-
-        [Fact, WorkItem(61162, "https://github.com/dotnet/roslyn/issues/61162")]
-        public void IncrementalGenerator_Collect_SyntaxProvider_01()
-        {
-            var generator = new IncrementalGeneratorWrapper(new PipelineCallbackGenerator(static ctx =>
-            {
-                var invokedMethodsProvider = ctx.SyntaxProvider
-                    .CreateSyntaxProvider(
-                        static (node, _) => node is InvocationExpressionSyntax,
-                        static (ctx, ct) => ctx.SemanticModel.GetSymbolInfo(ctx.Node, ct).Symbol?.Name ?? "(method not found)")
-                    .Collect();
-
-                ctx.RegisterSourceOutput(invokedMethodsProvider, static (spc, invokedMethods) =>
-                {
-                    spc.AddSource("InvokedMethods.g.cs", string.Join(Environment.NewLine,
-                        invokedMethods.Select(m => $"// {m}")));
-                });
-            }));
-
-            var source = """
-                System.Console.WriteLine();
-                System.Console.WriteLine();
-                System.Console.WriteLine();
-                System.Console.WriteLine();
-                """;
-            var parseOptions = TestOptions.RegularPreview;
-            Compilation compilation = CreateCompilation(source, options: TestOptions.DebugExeThrowing, parseOptions: parseOptions);
-
-            GeneratorDriver driver = CSharpGeneratorDriver.Create(new[] { generator }, parseOptions: parseOptions);
-            verify(ref driver, compilation, """
-                // WriteLine
-                // WriteLine
-                // WriteLine
-                // WriteLine
-                """);
-
-            replace(ref compilation, parseOptions, """
-                System.Console.WriteLine();
-                System.Console.WriteLine();
-                """);
-            verify(ref driver, compilation, """
-                // WriteLine
-                // WriteLine
-                """);
-
-            replace(ref compilation, parseOptions, "_ = 0;");
-            verify(ref driver, compilation, "");
-
-            static void verify(ref GeneratorDriver driver, Compilation compilation, string generatedContent)
-            {
-                driver = driver.RunGeneratorsAndUpdateCompilation(compilation, out var outputCompilation, out var generatorDiagnostics);
-                outputCompilation.VerifyDiagnostics();
-                generatorDiagnostics.Verify();
-                var generatedTree = driver.GetRunResult().GeneratedTrees.Single();
-                AssertEx.EqualOrDiff(generatedContent, generatedTree.ToString());
-            }
-
-            static void replace(ref Compilation compilation, CSharpParseOptions parseOptions, string source)
-            {
-                compilation = compilation.ReplaceSyntaxTree(compilation.SyntaxTrees.Single(), CSharpSyntaxTree.ParseText(source, parseOptions));
-            }
-        }
-
-        [Fact, WorkItem(61162, "https://github.com/dotnet/roslyn/issues/61162")]
-        public void IncrementalGenerator_Collect_SyntaxProvider_02()
-        {
-            var generator = new IncrementalGeneratorWrapper(new PipelineCallbackGenerator(static ctx =>
-            {
-                var invokedMethodsProvider = ctx.SyntaxProvider
-                    .CreateSyntaxProvider(
-                        static (node, _) => node is InvocationExpressionSyntax,
-                        static (ctx, ct) => ctx.SemanticModel.GetSymbolInfo(ctx.Node, ct).Symbol?.Name ?? "(method not found)")
-                    .Select((n, _) => n);
-
-                ctx.RegisterSourceOutput(invokedMethodsProvider, static (spc, invokedMethod) =>
-                {
-                    spc.AddSource(invokedMethod, "// " + invokedMethod);
-                });
-            }));
-
-            var source = """
-                System.Console.WriteLine();
-                System.Console.ReadLine();
-                """;
-            var parseOptions = TestOptions.RegularPreview;
-            Compilation compilation = CreateCompilation(source, options: TestOptions.DebugExeThrowing, parseOptions: parseOptions);
-
-            GeneratorDriver driver = CSharpGeneratorDriver.Create(new[] { generator }, parseOptions: parseOptions);
-            verify(ref driver, compilation, new[]
-            {
-                "// WriteLine",
-                "// ReadLine"
-            });
-
-            replace(ref compilation, parseOptions, """
-                System.Console.WriteLine();
-                """);
-
-            verify(ref driver, compilation, new[]
-            {
-                "// WriteLine"
-            });
-
-            replace(ref compilation, parseOptions, "_ = 0;");
-            verify(ref driver, compilation, Array.Empty<string>());
-
-            static void verify(ref GeneratorDriver driver, Compilation compilation, string[] generatedContent)
-            {
-                driver = driver.RunGeneratorsAndUpdateCompilation(compilation, out var outputCompilation, out var generatorDiagnostics);
-                outputCompilation.VerifyDiagnostics();
-                generatorDiagnostics.Verify();
-                var trees = driver.GetRunResult().GeneratedTrees;
-                Assert.Equal(generatedContent.Length, trees.Length);
-                for (int i = 0; i < generatedContent.Length; i++)
-                {
-                    AssertEx.EqualOrDiff(generatedContent[i], trees[i].ToString());
-                }
-            }
-
-            static void replace(ref Compilation compilation, CSharpParseOptions parseOptions, string source)
-            {
-                compilation = compilation.ReplaceSyntaxTree(compilation.SyntaxTrees.Single(), CSharpSyntaxTree.ParseText(source, parseOptions));
-            }
         }
 
         [Fact]

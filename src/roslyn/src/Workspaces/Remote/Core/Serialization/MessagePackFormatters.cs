@@ -146,12 +146,7 @@ namespace Microsoft.CodeAnalysis.Remote
                     }
 
                     var name = reader.ReadString();
-                    if (name != null)
-                    {
-                        return Encoding.GetEncoding(name);
-                    }
-
-                    return null;
+                    return Encoding.GetEncoding(name);
                 }
                 catch (Exception e) when (e is not MessagePackSerializationException)
                 {
