@@ -154,7 +154,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 
 <!-- component list beginning -->
 - `src/arcade`  
-*[dotnet/arcade@dca04a5](https://github.com/dotnet/arcade/commit/dca04a5ec44fe1e75535f51a4e0b9a7aa2318de7)*
+*[dotnet/arcade@d75baf7](https://github.com/dotnet/arcade/commit/d75baf71a09ed067b48f484f29efc4e7f3e3df13)*
 - `src/aspnetcore`  
 *[dotnet/aspnetcore@fca8088](https://github.com/dotnet/aspnetcore/commit/fca80883d95102eeb96e6fe9a68b170d54a4614c)*
     - `src/aspnetcore/src/submodules/googletest`  
@@ -178,7 +178,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/fsharp`  
 *[dotnet/fsharp@b9c0f04](https://github.com/dotnet/fsharp/commit/b9c0f04d0ec3ec292bde52acccbc41c208931f07)*
 - `src/installer`  
-*[dotnet/installer@632f915](https://github.com/dotnet/installer/commit/632f915743bc97dece9290c2c3341a53b05164c5)*
+*[dotnet/installer@58bb98a](https://github.com/dotnet/installer/commit/58bb98a1bc237597e165954c860815f0c5de7a7c)*
 - `src/msbuild`  
 *[dotnet/msbuild@2cbc8b6](https://github.com/dotnet/msbuild/commit/2cbc8b6aef648cf21c6a68a0dab7fe09a614e475)*
 - `src/nuget-client`  
@@ -214,7 +214,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/source-build-reference-packages`  
 *[dotnet/source-build-reference-packages@c73065b](https://github.com/dotnet/source-build-reference-packages/commit/c73065ba502e1982f4ae743ebd0fc6bb8cf06690)*
 - `src/sourcelink`  
-*[dotnet/sourcelink@d4e7ffb](https://github.com/dotnet/sourcelink/commit/d4e7ffb47785c4ff21fcffa0a29aa20fec3a5980)*
+*[dotnet/sourcelink@47c52dd](https://github.com/dotnet/sourcelink/commit/47c52dd2ebf9edfd40abdcff999c13eb461f6ce2)*
 - `src/symreader`  
 *[dotnet/symreader@0c29b71](https://github.com/dotnet/symreader/commit/0c29b7109c054bdc578e917515ae7e8635b9cb9d)*
 - `src/templating`  
@@ -226,7 +226,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/xdt`  
 *[dotnet/xdt@9a1c3e1](https://github.com/dotnet/xdt/commit/9a1c3e1b7f0c8763d4c96e593961a61a72679a7b)*
 - `src/xliff-tasks`  
-*[dotnet/xliff-tasks@2d18d93](https://github.com/dotnet/xliff-tasks/commit/2d18d93582529a08ec2ff6da2d2f5c8e9a6b5e26)*
+*[dotnet/xliff-tasks@f35dcbb](https://github.com/dotnet/xliff-tasks/commit/f35dcbb16190810eb88b103fb1f2cd48a3a76cf0)*
 <!-- component list end -->
 
 The repository also contains a [JSON manifest](https://github.com/dotnet/dotnet/blob/main/src/source-manifest.json) listing all components in a machine-readable format.
