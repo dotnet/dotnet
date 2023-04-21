@@ -25,7 +25,7 @@
     <MicrosoftExtensionsFileSystemGlobbingVersion>2.0.0</MicrosoftExtensionsFileSystemGlobbingVersion>
     <MicrosoftFakesVersion>17.4.0-beta.22478.3</MicrosoftFakesVersion>
     <MicrosoftInternalCodeCoverageVersion>17.7.1-beta.23213.1</MicrosoftInternalCodeCoverageVersion>
-    <MicrosoftVisualStudioDiagnosticsUtilitiesVersion>17.5.0-preview-3-33219-258</MicrosoftVisualStudioDiagnosticsUtilitiesVersion>
+    <MicrosoftVisualStudioDiagnosticsUtilitiesVersion>17.6.33617.297</MicrosoftVisualStudioDiagnosticsUtilitiesVersion>
     <MicrosoftVisualStudioEnterpriseAspNetHelper>$(MicrosoftVisualStudioDiagnosticsUtilitiesVersion)</MicrosoftVisualStudioEnterpriseAspNetHelper>
     <NETStandardLibraryVersion>2.0.3</NETStandardLibraryVersion>
     <NewtonsoftJsonVersion>13.0.1</NewtonsoftJsonVersion>
@@ -36,8 +36,8 @@
     <SystemNetHttpVersion>4.3.4</SystemNetHttpVersion>
     <SystemReflectionMetadataVersion>1.6.0</SystemReflectionMetadataVersion>
     <SystemUriVersion>4.3.2</SystemUriVersion>
-    <TestPlatformMSDiaVersion>17.3.32621.448</TestPlatformMSDiaVersion>
-    <TestPlatformRemoteExternalsVersion>17.3.32621.448</TestPlatformRemoteExternalsVersion>
+    <TestPlatformMSDiaVersion>17.6.33617.297</TestPlatformMSDiaVersion>
+    <TestPlatformRemoteExternalsVersion>17.6.33617.297</TestPlatformRemoteExternalsVersion>
     <VSSdkBuildToolsVersion>17.4.2116</VSSdkBuildToolsVersion>
     <MicrosoftNetCompilersToolsetVersion>4.6.0-1.final</MicrosoftNetCompilersToolsetVersion>
   </PropertyGroup>
@@ -83,6 +83,6 @@
     <ILAsmPackageVersion>5.0.0</ILAsmPackageVersion>
     <JsonNetVersion>13.0.1</JsonNetVersion>
     <!-- We cannot reuse $(msbuildvar) because we need the text value inside build.ps1 -->
-    <TestPlatformExternalsVersion>17.3.32621.448</TestPlatformExternalsVersion>
+    <TestPlatformExternalsVersion>17.6.33617.297</TestPlatformExternalsVersion>
   </PropertyGroup>
 </Project>
