@@ -16,5 +16,68 @@
     <!-- If nothing left to build, exclude it! -->
     <ExcludeFromBuild Condition="'$(_FilteredTargetFrameworks)' == ''">true</ExcludeFromBuild>
   </PropertyGroup>
+  
+  <!-- Opt-in target to verify that a project doesn't bring in the .NET Standard 1.x dependency graph
+       (usually transitively) via old dependencies. -->        
+  <Target Name="FlagNetStandard1xDependencies"
+          Condition="'$(FlagNetStandard1XDependencies)' == 'true'"
+          AfterTargets="ResolvePackageAssets">
+    <ItemGroup>
+      <NetStandard1xPackage Include="
+        Microsoft.Win32.Primitives;
+        System.AppContext;
+        System.Collections;
+        System.Collections.Concurrent;
+        System.Console;
+        System.Diagnostics.Debug;
+        System.Diagnostics.Tools;
+        System.Diagnostics.Tracing;
+        System.Globalization;
+        System.Globalization.Calendars;
+        System.IO;
+        System.IO.Compression;
+        System.IO.Compression.ZipFile;
+        System.IO.FileSystem;
+        System.IO.FileSystem.Primitives;
+        System.Linq;
+        System.Linq.Expressions;
+        System.Net.Http;
+        System.Net.Primitives;
+        System.Net.Sockets;
+        System.ObjectModel;
+        System.Reflection;
+        System.Reflection.Extensions;
+        System.Reflection.Primitives;
+        System.Resources.ResourceManager;
+        System.Runtime;
+        System.Runtime.Extensions;
+        System.Runtime.Handles;
+        System.Runtime.InteropServices;
+        System.Runtime.InteropServices.RuntimeInformation;
+        System.Runtime.Numerics;
+        System.Security.Cryptography.Algorithms;
+        System.Security.Cryptography.Encoding;
+        System.Security.Cryptography.Primitives;
+        System.Security.Cryptography.X509Certificates;
+        System.Text.Encoding;
+        System.Text.Encoding.Extensions;
+        System.Text.RegularExpressions;
+        System.Threading;
+        System.Threading.Tasks;
+        System.Threading.Timer;
+        System.Xml.ReaderWriter;
+        System.Xml.XDocument" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <NonFoundNetStandard1xPackage Include="@(PackageDependencies)"
+                                    Exclude="@(NetStandard1xPackage)" />
+      <FoundNetStandard1xPackage Include="@(PackageDependencies)"
+                                 Exclude="@(NonFoundNetStandard1xPackage)" />
+    </ItemGroup>
+
+    <Error Text="The following .NET Standard 1.x packages are referenced and must be removed: %0D%0A- @(FoundNetStandard1xPackage, '%0D%0A- ')%0D%0AConsult the project.assets.json files to find the parent dependencies."
+           Condition="'@(FoundNetStandard1xPackage)' != ''" />
+  </Target>
 
 </Project>
