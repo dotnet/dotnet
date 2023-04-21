@@ -1,2 +1,8 @@
 #nullable enable
+NuGet.Common.NuGetLogCode.NU1014 = 1014 -> NuGet.Common.NuGetLogCode
+NuGet.Common.NuGetLogCode.NU1900 = 1900 -> NuGet.Common.NuGetLogCode
+NuGet.Common.NuGetLogCode.NU1901 = 1901 -> NuGet.Common.NuGetLogCode
+NuGet.Common.NuGetLogCode.NU1902 = 1902 -> NuGet.Common.NuGetLogCode
+NuGet.Common.NuGetLogCode.NU1903 = 1903 -> NuGet.Common.NuGetLogCode
+NuGet.Common.NuGetLogCode.NU1904 = 1904 -> NuGet.Common.NuGetLogCode
 NuGet.Common.NuGetLogCode.NU3042 = 3042 -> NuGet.Common.NuGetLogCode

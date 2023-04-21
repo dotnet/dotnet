@@ -120,6 +120,8 @@ namespace NuGet.DependencyResolver.Core.Tests
 
             public PackageSource Source => new PackageSource("Test");
 
+            public SourceRepository SourceRepository => throw new NotImplementedException();
+
             public async Task<LibraryIdentity> FindLibraryAsync(
                 LibraryRange libraryRange,
                 NuGetFramework targetFramework,

@@ -1,1 +1,3 @@
 #nullable enable
+~const NuGet.ProjectManagement.ProjectBuildProperties.NuGetAudit = "NuGetAudit" -> string
+~const NuGet.ProjectManagement.ProjectBuildProperties.NuGetAuditLevel = "NuGetAuditLevel" -> string

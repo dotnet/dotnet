@@ -1,1 +1,2 @@
 #nullable enable
+~NuGet.Commands.SourceRepositoryDependencyProvider.SourceRepository.get -> NuGet.Protocol.Core.Types.SourceRepository

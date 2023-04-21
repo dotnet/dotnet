@@ -32,6 +32,12 @@ namespace NuGet.DependencyResolver
         PackageSource Source { get; }
 
         /// <summary>
+        /// Gets the source repository.
+        /// </summary>
+        /// <remarks>Optional. This will be <c>null</c> for project providers.</remarks>
+        SourceRepository SourceRepository { get; }
+
+        /// <summary>
         /// Asynchronously discovers all versions of a package from a source and selects the best match.
         /// </summary>
         /// <remarks>This does not download the package.</remarks>

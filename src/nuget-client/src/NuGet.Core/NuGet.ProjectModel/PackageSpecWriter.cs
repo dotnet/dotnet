@@ -9,9 +9,7 @@ using Newtonsoft.Json;
 using NuGet.Common;
 using NuGet.Frameworks;
 using NuGet.LibraryModel;
-using NuGet.Packaging;
 using NuGet.RuntimeModel;
-using NuGet.Shared;
 using NuGet.Versioning;
 
 namespace NuGet.ProjectModel
@@ -160,8 +158,8 @@ namespace NuGet.ProjectModel
             WriteMetadataTargetFrameworks(writer, msbuildMetadata);
             SetWarningProperties(writer, msbuildMetadata);
 
-            // write NuGet lock file msbuild properties
             WriteNuGetLockFileProperties(writer, msbuildMetadata);
+            WriteNuGetAuditProperties(writer, msbuildMetadata.RestoreAuditProperties);
 
             if (msbuildMetadata is PackagesConfigProjectRestoreMetadata pcMsbuildMetadata)
             {
@@ -198,6 +196,18 @@ namespace NuGet.ProjectModel
 
                 writer.WriteObjectEnd();
             }
+        }
+
+        private static void WriteNuGetAuditProperties(IObjectWriter writer, RestoreAuditProperties auditProperties)
+        {
+            if (auditProperties == null) return;
+
+            writer.WriteObjectStart("restoreAuditProperties");
+
+            SetValueIfNotNull(writer, "enableAudit", auditProperties.EnableAudit);
+            SetValueIfNotNull(writer, "auditLevel", auditProperties.AuditLevel);
+
+            writer.WriteObjectEnd();
         }
 
         private static void WriteMetadataTargetFrameworks(IObjectWriter writer, ProjectRestoreMetadata msbuildMetadata)

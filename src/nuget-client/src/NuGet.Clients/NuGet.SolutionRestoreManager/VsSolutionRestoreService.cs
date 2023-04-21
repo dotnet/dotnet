@@ -350,6 +350,7 @@ namespace NuGet.SolutionRestoreManager
                     CentralPackageVersionsEnabled = cpvmEnabled,
                     CentralPackageVersionOverrideDisabled = VSNominationUtilities.IsCentralPackageVersionOverrideDisabled(TargetFrameworks),
                     CentralPackageTransitivePinningEnabled = VSNominationUtilities.IsCentralPackageTransitivePinningEnabled(TargetFrameworks),
+                    RestoreAuditProperties = VSNominationUtilities.GetRestoreAuditProperties(TargetFrameworks),
                 },
                 RuntimeGraph = VSNominationUtilities.GetRuntimeGraph(TargetFrameworks),
                 RestoreSettings = new ProjectRestoreSettings() { HideWarningsAndErrors = true }

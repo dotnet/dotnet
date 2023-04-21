@@ -799,6 +799,8 @@ namespace NuGet.Build.Tasks.Console
 
             (bool isCentralPackageManagementEnabled, bool isCentralPackageVersionOverrideDisabled, bool isCentralPackageTransitivePinningEnabled) = GetCentralPackageManagementSettings(project, projectStyleOrNull);
 
+            RestoreAuditProperties auditProperties = GetRestoreAuditProperties(project);
+
             List<TargetFrameworkInformation> targetFrameworkInfos = GetTargetFrameworkInfos(projectsByTargetFramework, isCentralPackageManagementEnabled);
 
             (ProjectStyle ProjectStyle, bool IsPackageReferenceCompatibleProjectStyle, string PackagesConfigFilePath) projectStyleResult = BuildTasksUtility.GetProjectRestoreStyle(
@@ -843,6 +845,7 @@ namespace NuGet.Build.Tasks.Console
                     CentralPackageVersionsEnabled = isCentralPackageManagementEnabled && projectStyle == ProjectStyle.PackageReference,
                     CentralPackageVersionOverrideDisabled = isCentralPackageVersionOverrideDisabled,
                     CentralPackageTransitivePinningEnabled = isCentralPackageTransitivePinningEnabled,
+                    RestoreAuditProperties = auditProperties
                 };
             }
 
@@ -865,6 +868,20 @@ namespace NuGet.Build.Tasks.Console
             restoreMetadata.TargetFrameworks = GetProjectRestoreMetadataFrameworkInfos(targetFrameworkInfos, projectsByTargetFramework);
 
             return (restoreMetadata, targetFrameworkInfos);
+        }
+
+        private RestoreAuditProperties GetRestoreAuditProperties(IMSBuildProject project)
+        {
+            string enableAudit = project.GetProperty("NuGetAudit");
+            string auditLevel = project.GetProperty("AuditLevel");
+
+            return !string.IsNullOrEmpty(enableAudit) || !string.IsNullOrEmpty(auditLevel)
+                ? new RestoreAuditProperties()
+                {
+                    EnableAudit = enableAudit,
+                    AuditLevel = auditLevel
+                }
+                : null;
         }
 
         /// <summary>

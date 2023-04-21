@@ -849,6 +849,8 @@ Copyright (c) .NET Foundation. All rights reserved.
         <_CentralPackageVersionsEnabled>$(_CentralPackageVersionsEnabled)</_CentralPackageVersionsEnabled>
         <CentralPackageVersionOverrideEnabled>$(CentralPackageVersionOverrideEnabled)</CentralPackageVersionOverrideEnabled>
         <CentralPackageTransitivePinningEnabled>$(CentralPackageTransitivePinningEnabled)</CentralPackageTransitivePinningEnabled>
+        <NuGetAudit>$(NuGetAudit)</NuGetAudit>
+        <NuGetAuditLevel>$(NuGetAuditLevel)</NuGetAuditLevel>
       </_RestoreGraphEntry>
     </ItemGroup>
 

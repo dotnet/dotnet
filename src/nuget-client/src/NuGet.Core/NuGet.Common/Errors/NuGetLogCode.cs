@@ -122,6 +122,11 @@ namespace NuGet.Common
         NU1013 = 1013,
 
         /// <summary>
+        /// NuGetAuditLevel input errors
+        /// </summary>
+        NU1014 = 1014,
+
+        /// <summary>
         /// Unable to resolve package, generic message for unknown type constraints.
         /// </summary>
         NU1100 = 1100,
@@ -335,6 +340,31 @@ namespace NuGet.Common
         /// HTTP Source specified, but HTTP sources will be deprecated.
         /// </summary>
         NU1803 = 1803,
+
+        /// <summary>
+        /// Unknown package vulnerability issue
+        /// </summary>
+        NU1900 = 1900,
+
+        /// <summary>
+        /// Package with known low severity vulnerability
+        /// </summary>
+        NU1901 = 1901,
+
+        /// <summary>
+        /// Package with known low severity vulnerability
+        /// </summary>
+        NU1902 = 1902,
+
+        /// <summary>
+        /// Package with known low severity vulnerability
+        /// </summary>
+        NU1903 = 1903,
+
+        /// <summary>
+        /// Package with known low severity vulnerability
+        /// </summary>
+        NU1904 = 1904,
 
         /// <summary>
         /// Undefined signature error
