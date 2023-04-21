@@ -11,11 +11,6 @@
     <TargetFramework Condition=" '$(TargetFramework)' != '' ">$(NetCurrent)</TargetFramework>
   </PropertyGroup>
 
-  <!-- Allows build of .NET Framework assemblies on MacOS and Linux https://github.com/dotnet/designs/pull/33#issuecomment-489264196 -->
-  <ItemGroup>
-    <PackageReference Condition=" '$(OS)' != 'Windows_NT' " Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.2" PrivateAssets="All" />
-  </ItemGroup>
-
   <!-- Test project settings -->
   <Choose>
     <When Condition="$(TestProject) == 'true'">
