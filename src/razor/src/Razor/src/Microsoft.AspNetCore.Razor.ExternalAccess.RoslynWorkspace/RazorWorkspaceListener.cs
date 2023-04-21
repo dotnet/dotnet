@@ -10,6 +10,7 @@ public class RazorWorkspaceListener : IDisposable
     private static readonly TimeSpan s_debounceTime = TimeSpan.FromMilliseconds(100);
 
     private string? _projectRazorJsonFileName;
+    private Workspace? _workspace;
     private readonly Dictionary<ProjectId, TaskDelayScheduler> _workQueues;
     private readonly object _gate = new();
 
@@ -27,7 +28,8 @@ public class RazorWorkspaceListener : IDisposable
         }
 
         _projectRazorJsonFileName = projectRazorJsonFileName;
-        workspace.WorkspaceChanged += Workspace_WorkspaceChanged;
+        _workspace = workspace;
+        _workspace.WorkspaceChanged += Workspace_WorkspaceChanged;
     }
 
     private void Workspace_WorkspaceChanged(object? sender, WorkspaceChangeEventArgs e)
@@ -140,13 +142,20 @@ public class RazorWorkspaceListener : IDisposable
             }
         }
 
-        scheduler.ScheduleAsyncTask(ct => SerializeProjectAsync(project, ct), CancellationToken.None);
+        var projectId = project.Id;
+        scheduler.ScheduleAsyncTask(ct => SerializeProjectAsync(projectId, ct), CancellationToken.None);
     }
 
     // Protected for testing
-    protected virtual Task SerializeProjectAsync(Project project, CancellationToken ct)
+    protected virtual Task SerializeProjectAsync(ProjectId projectId, CancellationToken ct)
     {
-        if (_projectRazorJsonFileName is null)
+        if (_projectRazorJsonFileName is null || _workspace is null)
+        {
+            return Task.CompletedTask;
+        }
+
+        var project = _workspace.CurrentSolution.GetProject(projectId);
+        if (project is null)
         {
             return Task.CompletedTask;
         }

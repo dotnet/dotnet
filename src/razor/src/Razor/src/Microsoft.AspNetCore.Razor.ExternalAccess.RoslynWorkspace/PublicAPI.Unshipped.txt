@@ -3,4 +3,4 @@ Microsoft.AspNetCore.Razor.ExternalAccess.RoslynWorkspace.RazorWorkspaceListener
 Microsoft.AspNetCore.Razor.ExternalAccess.RoslynWorkspace.RazorWorkspaceListener.Dispose() -> void
 Microsoft.AspNetCore.Razor.ExternalAccess.RoslynWorkspace.RazorWorkspaceListener.EnsureInitialized(Microsoft.CodeAnalysis.Workspace! workspace, string! projectRazorJsonFileName) -> void
 Microsoft.AspNetCore.Razor.ExternalAccess.RoslynWorkspace.RazorWorkspaceListener.RazorWorkspaceListener() -> void
-virtual Microsoft.AspNetCore.Razor.ExternalAccess.RoslynWorkspace.RazorWorkspaceListener.SerializeProjectAsync(Microsoft.CodeAnalysis.Project! project, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task!
+virtual Microsoft.AspNetCore.Razor.ExternalAccess.RoslynWorkspace.RazorWorkspaceListener.SerializeProjectAsync(Microsoft.CodeAnalysis.ProjectId! projectId, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task!
