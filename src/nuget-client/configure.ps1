@@ -26,7 +26,8 @@ Param (
     [switch]$CleanCache,
     [Alias('f')]
     [switch]$Force,
-    [switch]$RunTest
+    [switch]$RunTest,
+    [switch]$SkipDotnetInfo
 )
 
 $ErrorActionPreference = 'Stop'
@@ -42,7 +43,7 @@ Invoke-BuildStep 'Configuring git repo' {
 } -ev +BuildErrors
 
 Invoke-BuildStep 'Installing .NET CLI' {
-    Install-DotnetCLI -Force:$Force
+    Install-DotnetCLI -Force:$Force -SkipDotnetInfo:$SkipDotnetInfo
 } -ev +BuildErrors
 
 # Restoring tools required for build

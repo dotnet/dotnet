@@ -64,8 +64,6 @@ namespace NuGet.Test.Utility
 
         private static void CopyLatestCliToTestDirectory(string destinationDir)
         {
-            WriteGlobalJson(destinationDir);
-
             var sdkPath = Path.Combine(SdkDirSource, SdkVersion + Path.DirectorySeparatorChar);
             var fallbackFolderPath = Path.Combine(SdkDirSource, "NuGetFallbackFolder");
 
@@ -331,7 +329,12 @@ project TFMs found: {string.Join(", ", compiledTfms.Keys.Select(k => k.ToString(
 
         public static void WriteGlobalJson(string path)
         {
-            string globalJsonText = $"{{\"sdk\": {{\"version\": \"{SdkVersion}\"}}}}";
+            string globalJsonText = $@"{{
+  ""sdk"": {{
+    ""version"": ""{SdkVersion}"",
+    ""allowPrerelease"": true
+  }}
+}}";
             var globalJsonPath = Path.Combine(path, "global.json");
             File.WriteAllText(globalJsonPath, globalJsonText);
         }

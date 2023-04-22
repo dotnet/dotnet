@@ -56,6 +56,7 @@ namespace Dotnet.Integration.Test
             _processEnvVars.Add("MSBuildSDKsPath", MsBuildSdksPath);
             _processEnvVars.Add("UseSharedCompilation", "false");
             _processEnvVars.Add("DOTNET_MULTILEVEL_LOOKUP", "0");
+            _processEnvVars.Add("DOTNET_ROOT", _cliDirectory);
             _processEnvVars.Add("MSBUILDDISABLENODEREUSE ", "true");
         }
 
@@ -255,22 +256,28 @@ namespace Dotnet.Integration.Test
             return result;
         }
 
-        internal CommandRunnerResult PackProject(string workingDirectory, string projectName, string args, string nuspecOutputPath = "obj", bool validateSuccess = true)
+        internal CommandRunnerResult PackProject(string workingDirectory, string projectName, string args, string nuspecOutputPath = "obj", bool validateSuccess = true, string configuration = "Debug")
         {
             // We can't provide empty or spaces as arguments if we used `string.IsNullOrEmpty` or `string.IsNullOrWhiteSpace`.
             if (nuspecOutputPath != null)
             {
                 args = $"{args} /p:NuspecOutputPath={nuspecOutputPath}";
             }
+
+            args = $"{args} /Property:Configuration={configuration}";
+
             return PackProjectOrSolution(workingDirectory, $"{projectName}.csproj", args, validateSuccess);
         }
 
-        internal CommandRunnerResult PackSolution(string workingDirectory, string solutionName, string args, string nuspecOutputPath = "obj", bool validateSuccess = true)
+        internal CommandRunnerResult PackSolution(string workingDirectory, string solutionName, string args, string nuspecOutputPath = "obj", bool validateSuccess = true, string configuration = "Debug")
         {
             if (nuspecOutputPath != null)
             {
                 args = $"{args} /p:NuspecOutputPath={nuspecOutputPath}";
             }
+
+            args = $"{args} /Property:Configuration={configuration}";
+
             return PackProjectOrSolution(workingDirectory, $"{solutionName}.sln", args, validateSuccess);
         }
 
@@ -330,22 +337,25 @@ namespace Dotnet.Integration.Test
             return testDirectory;
         }
 
-        internal SimpleTestPathContext CreateSimpleTestPathContext()
+        internal SimpleTestPathContext CreateSimpleTestPathContext(bool addTemplateFeed = true)
         {
             var simpleTestPathContext = new SimpleTestPathContext();
 
             TestDotnetCLiUtility.WriteGlobalJson(simpleTestPathContext.WorkingDirectory);
 
-            // Some template and TFM combinations need packages, for example NETStandard.Library.
-            // The template cache should have downloaded it already, so use the template cache's
-            // global packages folder as a local source.
-            var addSourceArgs = new AddSourceArgs()
+            if (addTemplateFeed)
             {
-                Configfile = simpleTestPathContext.NuGetConfig,
-                Name = "template",
-                Source = _templateDirectory.UserPackagesFolder
-            };
-            AddSourceRunner.Run(addSourceArgs, () => NullLogger.Instance);
+                // Some template and TFM combinations need packages, for example NETStandard.Library.
+                // The template cache should have downloaded it already, so use the template cache's
+                // global packages folder as a local source.
+                var addSourceArgs = new AddSourceArgs()
+                {
+                    Configfile = simpleTestPathContext.NuGetConfig,
+                    Name = "template",
+                    Source = _templateDirectory.UserPackagesFolder
+                };
+                AddSourceRunner.Run(addSourceArgs, () => NullLogger.Instance);
+            }
 
             return simpleTestPathContext;
         }

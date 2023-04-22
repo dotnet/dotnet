@@ -1,11 +1,4 @@
 steps:
-- task: UseDotNet@2
-  displayName: 'Use .NET Core sdk'
-  inputs:
-    packageType: sdk
-    version: 7.x
-    installationPath: $(Agent.TempDirectory)/dotnet
-
 - task: DownloadBuildArtifacts@0
   displayName: "Download NuGet.CommandLine.Test artifacts"
   inputs:
@@ -38,7 +31,7 @@ steps:
     searchFolder: "$(Build.Repository.LocalPath)/build/TestResults"
     mergeTestResults: "true"
     testRunTitle: "NuGet.Client Tests On Mac"
-  condition: "succeededOrFailed()"
+  condition: "always()"
 
 - task: PublishBuildArtifacts@1
   displayName: "Publish Test Freeze Dump"
@@ -46,7 +39,7 @@ steps:
     PathtoPublish: "$(Build.Repository.LocalPath)/build/TestResults"
     ArtifactName: "$(Agent.JobName)"
     ArtifactType: "Container"
-  condition: "failed()"
+  condition: "or(failed(), canceled())"
 
 - task: PowerShell@2
   displayName: "Initialize Git Commit Status on GitHub"

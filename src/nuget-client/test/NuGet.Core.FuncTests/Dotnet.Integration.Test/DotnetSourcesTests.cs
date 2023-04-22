@@ -24,7 +24,7 @@ namespace Dotnet.Integration.Test
         [PlatformFact(Platform.Windows)]
         public void Sources_WhenAddingSource_GotAdded()
         {
-            using (var pathContext = new SimpleTestPathContext())
+            using (SimpleTestPathContext pathContext = _fixture.CreateSimpleTestPathContext())
             {
                 var workingPath = pathContext.WorkingDirectory;
                 var settings = pathContext.Settings;
@@ -57,7 +57,7 @@ namespace Dotnet.Integration.Test
         [PlatformFact(Platform.Windows)]
         public void Sources_WhenAddingSourceWithCredentials_CredentialsWereAddedAndEncrypted()
         {
-            using (var pathContext = new SimpleTestPathContext())
+            using (SimpleTestPathContext pathContext = _fixture.CreateSimpleTestPathContext())
             {
                 var workingPath = pathContext.WorkingDirectory;
                 var settings = pathContext.Settings;
@@ -108,7 +108,7 @@ namespace Dotnet.Integration.Test
         [InlineData("https://source.test", false)]
         public void Sources_WarnWhenAdding(string source, bool shouldWarn)
         {
-            using (SimpleTestPathContext pathContext = new SimpleTestPathContext())
+            using (SimpleTestPathContext pathContext = _fixture.CreateSimpleTestPathContext())
             {
                 TestDirectory workingPath = pathContext.WorkingDirectory;
                 SimpleTestSettingsContext settings = pathContext.Settings;
@@ -383,7 +383,7 @@ namespace Dotnet.Integration.Test
         [PlatformFact(Platform.Windows)]
         public void Sources_WhenAddingSourceWithCredentialsInClearText_CredentialsWereAddedAndNotEncrypted()
         {
-            using (var pathContext = new SimpleTestPathContext())
+            using (SimpleTestPathContext pathContext = _fixture.CreateSimpleTestPathContext())
             {
                 var workingPath = pathContext.WorkingDirectory;
                 var settings = pathContext.Settings;
@@ -652,7 +652,7 @@ namespace Dotnet.Integration.Test
         [Fact(Skip = "cutting verbosity Quiet for now. #6374 covers fixing it for `dotnet add package` too.")]
         public void TestVerbosityQuiet_DoesNotShowInfoMessages()
         {
-            using (var pathContext = new SimpleTestPathContext())
+            using (SimpleTestPathContext pathContext = _fixture.CreateSimpleTestPathContext())
             {
                 var workingPath = pathContext.WorkingDirectory;
                 var settings = pathContext.Settings;
@@ -690,7 +690,7 @@ namespace Dotnet.Integration.Test
         [PlatformFact(Platform.Windows, Skip = "https://github.com/NuGet/Home/issues/12503")]
         public void List_Sources_LocalizatedPackagesourceKeys_ConsideredDiffererent()
         {
-            using (var pathContext = new SimpleTestPathContext())
+            using (SimpleTestPathContext pathContext = _fixture.CreateSimpleTestPathContext())
             {
                 var workingPath = pathContext.WorkingDirectory;
                 var settings = pathContext.Settings;

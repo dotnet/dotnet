@@ -1,6 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>$(NETCoreTestTargetFramework)</TargetFrameworks>
+    <TargetFrameworks>$(NETCoreTestTargetFrameworks)</TargetFrameworks>
     <Description>Integration tests for NuGet-powered dotnet CLI commands such as pack/restore/list package and dotnet nuget.</Description>
   </PropertyGroup>
 

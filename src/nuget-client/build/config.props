@@ -35,16 +35,6 @@
     <!-- This branches are used for creating insertion PRs -->
     <VsTargetBranch Condition="'$(IsEscrowMode)' == 'true'">rel/d$(VsTargetMajorVersion).$(MinorNuGetVersion)</VsTargetBranch>
     <VsTargetChannel Condition="'$(IsEscrowMode)' == 'true'">int.d$(VsTargetMajorVersion).$(MinorNuGetVersion)</VsTargetChannel>
-    <!-- Specifies the SDK version to download to use for testing. Ideally, this is the same .NET SDK version NuGet inserts into.
-    The first value represents the channel, the second value represents the exact SDK version to be download. If a version is not specified, the latest version from the channel will be downloaded.
-    Note that multiple SDKs can be downloaded by using `;` as a separator.
-    The channel needs to be two-part version in A.B format, or three-part version in A.B.Cxx format.
-    The version needs to be the exact version number if specified.
-    e.g. 5.0;6.0 means install the latest versions from both channel 5.0 and channel 6.0.
-         6.0:6.0.100-preview.7.21379.14 means install the preview version 6.0.100-preview.7.21379.14.
-    Refer to https://docs.microsoft.com/en-us/dotnet/core/tools/dotnet-install-script#options for more details.
-    -->
-    <CliBranchForTesting Condition="'$(CliBranchForTesting)' == ''">7.0</CliBranchForTesting>
   </PropertyGroup>
 
   <!-- Config -->
@@ -89,8 +79,5 @@
   </Target>
   <Target Name="GetVsTargetChannelForTests">
     <Message Text="$(VsTargetChannelForTests)" Importance="High"/>
-  </Target>
-  <Target Name="GetCliBranchForTesting">
-      <Message Text="$(CliBranchForTesting)" Importance="High"/>
   </Target>
 </Project>

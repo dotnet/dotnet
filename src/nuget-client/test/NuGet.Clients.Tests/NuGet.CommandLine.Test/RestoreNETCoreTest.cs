@@ -10029,13 +10029,7 @@ namespace NuGet.CommandLine.Test
                 var project = SimpleTestProjectContext.CreateNETCoreWithSDK(
                     "proj",
                     pathContext.SolutionRoot,
-                    "net5.0-windows");
-
-                // Workaround: Set all the TFM properties ourselves.
-                // We can't rely on the SDK setting them, as only .NET 5 SDK P8 and later applies these correctly.
-                var net50windowsTFM = project.Frameworks.Where(f => f.TargetAlias.Equals("net5.0-windows")).Single();
-                net50windowsTFM.Properties.Add("TargetFrameworkMoniker", ".NETCoreApp, Version=v5.0");
-                net50windowsTFM.Properties.Add("TargetPlatformMoniker", "Windows, Version=7.0");
+                    "net8.0-windows");
 
                 project.AddPackageToAllFrameworks(packageX);
                 solution.Projects.Add(project);
@@ -10054,7 +10048,7 @@ namespace NuGet.CommandLine.Test
 
                 var propsItemGroups = propsXML.Root.Elements().Where(e => e.Name.LocalName == "ItemGroup").ToList();
 
-                Assert.Contains("'$(TargetFramework)' == 'net5.0-windows' AND '$(ExcludeRestorePackageImports)' != 'true'", propsItemGroups[1].Attribute(XName.Get("Condition")).Value.Trim());
+                Assert.Contains("'$(TargetFramework)' == 'net8.0-windows' AND '$(ExcludeRestorePackageImports)' != 'true'", propsItemGroups[1].Attribute(XName.Get("Condition")).Value.Trim());
             }
         }
 

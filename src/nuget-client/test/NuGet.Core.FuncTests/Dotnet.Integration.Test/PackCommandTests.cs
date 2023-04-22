@@ -140,7 +140,7 @@ namespace Dotnet.Integration.Test
         public void PackCommand_NewSolution_OutputInDefaultPaths()
         {
             // Arrange
-            using (var testDirectory = TestDirectory.Create())
+            using (var testDirectory = msbuildFixture.CreateTestDirectory())
             {
                 var solutionName = "Solution1";
                 var projectName = "ClassLibrary1";
@@ -550,7 +550,7 @@ namespace Dotnet.Integration.Test
         public async Task PackCommand_PackProject_PackageReferenceAllStableFloatingVersionRange_UsesRestoredVersionInNuspecAsync()
         {
             // Arrange
-            using (var pathContext = msbuildFixture.CreateSimpleTestPathContext())
+            using (SimpleTestPathContext pathContext = msbuildFixture.CreateSimpleTestPathContext())
             {
                 var projectName = "ClassLibrary1";
                 var availableVersions = "1.0.0;2.0.0";
@@ -634,7 +634,7 @@ namespace Dotnet.Integration.Test
         public void PackCommand_PackProject_SupportMultipleFrameworks()
         {
             // Arrange
-            using (var pathContext = new SimpleTestPathContext())
+            using (SimpleTestPathContext pathContext = msbuildFixture.CreateSimpleTestPathContext())
             {
                 SimpleTestSettingsContext settings = pathContext.Settings;
                 settings.AddNetStandardFeeds();
@@ -725,7 +725,7 @@ namespace Dotnet.Integration.Test
         public void PackProject_DependenciesWithContentFiles_NupkgExcludesContentFilesFromDependencies()
         {
             // Arrange
-            using (var pathContext = new SimpleTestPathContext())
+            using (SimpleTestPathContext pathContext = msbuildFixture.CreateSimpleTestPathContext())
             {
                 string testDirectory = pathContext.WorkingDirectory;
                 // layout
@@ -2151,7 +2151,7 @@ namespace Dotnet.Integration.Test
         [InlineData("netstandard1.4;net451;netcoreapp1.0")]
         public void PackCommand_MultipleFrameworks_GeneratesPackageOnBuild(string frameworks)
         {
-            using (var pathContext = new SimpleTestPathContext())
+            using (SimpleTestPathContext pathContext = msbuildFixture.CreateSimpleTestPathContext())
             {
                 SimpleTestSettingsContext settings = pathContext.Settings;
                 settings.AddNetStandardFeeds();
@@ -3880,7 +3880,7 @@ namespace ClassLibrary
         public void PackCommand_ManualAddPackage_DevelopmentDependency()
         {
             // Arrange
-            using (var pathContext = new SimpleTestPathContext())
+            using (SimpleTestPathContext pathContext = msbuildFixture.CreateSimpleTestPathContext())
             {
                 SimpleTestSettingsContext settings = pathContext.Settings;
                 settings.AddNetStandardFeeds();
@@ -5739,7 +5739,7 @@ namespace ClassLibrary
         public async Task PackCommand_PrereleaseDependency_SucceedAndLogsWarning()
         {
             // Arrange
-            using (var pathContext = msbuildFixture.CreateSimpleTestPathContext())
+            using (SimpleTestPathContext pathContext = msbuildFixture.CreateSimpleTestPathContext())
             {
                 var prereleaseDependencyName = "PreReleasePackageA";
                 var prereleaseDependencyVersion = "6.0.0-preview.3";
@@ -5781,7 +5781,7 @@ namespace ClassLibrary
         [Fact]
         public async Task PackCommand_PrereleaseDependency_WarningSuppressed_Succeed()
         {
-            using (var pathContext = msbuildFixture.CreateSimpleTestPathContext())
+            using (SimpleTestPathContext pathContext = msbuildFixture.CreateSimpleTestPathContext())
             {
                 var prereleaseDependencyName = "PreReleasePackageA";
                 var prereleaseDependencyVersion = "6.0.0-preview.3";
@@ -5844,7 +5844,7 @@ namespace ClassLibrary
         [Fact]
         public async Task PackCommand_PrereleaseDependencies_PartialWarningSuppressed_SucceedAndLogsWarning()
         {
-            using (var pathContext = msbuildFixture.CreateSimpleTestPathContext())
+            using (SimpleTestPathContext pathContext = msbuildFixture.CreateSimpleTestPathContext())
             {
                 var prereleaseDependencyAName = "PreReleasePackageA";
                 var prereleaseDependencyAVersion = "4.8.0-beta00011";
@@ -5896,7 +5896,7 @@ namespace ClassLibrary
         [Fact]
         public async Task PackCommand_PrereleaseDependency_ProjectLevelWarningSuppressed_Succeed()
         {
-            using (var pathContext = msbuildFixture.CreateSimpleTestPathContext())
+            using (SimpleTestPathContext pathContext = msbuildFixture.CreateSimpleTestPathContext())
             {
                 var prereleaseDependencyAName = "PreReleasePackageA";
                 var prereleaseDependencyAVersion = "4.8.0-beta00011";
@@ -5962,7 +5962,7 @@ namespace ClassLibrary
         [Fact]
         public async Task PackCommand_MultiTfm_PrereleaseDependency_TreatWarningsAsErrors_FailsAndLogsWarning()
         {
-            using (var pathContext = new SimpleTestPathContext())
+            using (SimpleTestPathContext pathContext = msbuildFixture.CreateSimpleTestPathContext())
             {
                 SimpleTestSettingsContext settings = pathContext.Settings;
                 settings.AddNetStandardFeeds();
@@ -6022,7 +6022,7 @@ namespace ClassLibrary
         [Fact]
         public async Task PackCommand_MultiTfm_PrereleaseDependency_WarningIsSuppressed_Succeeds()
         {
-            using (var pathContext = new SimpleTestPathContext())
+            using (SimpleTestPathContext pathContext = msbuildFixture.CreateSimpleTestPathContext())
             {
                 SimpleTestSettingsContext settings = pathContext.Settings;
                 settings.AddNetStandardFeeds();
@@ -6105,7 +6105,7 @@ namespace ClassLibrary
         [Fact]
         public async Task PackCommand_MultiTfm_PrereleaseDependency_ProjectLevelWarningSuppressed_Succeed()
         {
-            using (var pathContext = new SimpleTestPathContext())
+            using (SimpleTestPathContext pathContext = msbuildFixture.CreateSimpleTestPathContext())
             {
                 SimpleTestSettingsContext settings = pathContext.Settings;
                 settings.AddNetStandardFeeds();
