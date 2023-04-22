@@ -62,7 +62,21 @@ namespace NuGet.Commands
                 if (symbolPackageUpdateResource != null)
                 {
                     symbolSource = symbolPackageUpdateResource.SourceUri.AbsoluteUri;
-                    symbolApiKey = apiKey;
+                }
+            }
+
+            // Precedence for package API key: -ApiKey param, config
+            apiKey ??= CommandRunnerUtility.GetApiKey(settings, packageUpdateResource.SourceUri.AbsoluteUri, source);
+
+            // Precedence for symbol package API key: -SymbolApiKey param, config, package API key (Only for symbol source from SymbolPackagePublish service)
+            if (!string.IsNullOrEmpty(symbolSource))
+            {
+                symbolApiKey ??= CommandRunnerUtility.GetApiKey(settings, symbolSource, symbolSource);
+
+                // Only allow falling back to API key when the symbol source was obtained from SymbolPackagePublish service
+                if (symbolPackageUpdateResource != null)
+                {
+                    symbolApiKey ??= apiKey;
                 }
             }
 
@@ -71,8 +85,8 @@ namespace NuGet.Commands
                 symbolSource,
                 timeoutSeconds,
                 disableBuffering,
-                endpoint => apiKey ?? CommandRunnerUtility.GetApiKey(settings, endpoint, source),
-                symbolsEndpoint => symbolApiKey ?? CommandRunnerUtility.GetApiKey(settings, symbolsEndpoint, symbolSource),
+                _ => apiKey,
+                _ => symbolApiKey,
                 noServiceEndpoint,
                 skipDuplicate,
                 symbolPackageUpdateResource,

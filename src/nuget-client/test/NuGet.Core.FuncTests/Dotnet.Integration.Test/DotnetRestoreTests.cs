@@ -38,7 +38,7 @@ namespace Dotnet.Integration.Test
         [PlatformFact(Platform.Windows)]
         public void DotnetRestore_SolutionRestoreVerifySolutionDirPassedToProjects()
         {
-            using (var pathContext = _msbuildFixture.CreateSimpleTestPathContext())
+            using (SimpleTestPathContext pathContext = _msbuildFixture.CreateSimpleTestPathContext())
             {
                 _msbuildFixture.CreateDotnetNewProject(pathContext.SolutionRoot, "proj");
 
@@ -93,7 +93,7 @@ EndGlobal";
         [Fact]
         public void DotnetRestore_WithAuthorSignedPackage_Succeeds()
         {
-            using (var pathContext = _msbuildFixture.CreateSimpleTestPathContext())
+            using (SimpleTestPathContext pathContext = _msbuildFixture.CreateSimpleTestPathContext())
             {
                 var packageFile = new FileInfo(Path.Combine(pathContext.PackageSource, "TestPackage.AuthorSigned.1.0.0.nupkg"));
                 var package = SigningTestUtility.GetResourceBytes(packageFile.Name);
@@ -188,7 +188,7 @@ EndGlobal";
         [Fact]
         public async Task DotnetRestore_UpdateLastAccessTime()
         {
-            using (var pathContext = _msbuildFixture.CreateSimpleTestPathContext())
+            using (SimpleTestPathContext pathContext = _msbuildFixture.CreateSimpleTestPathContext())
             {
                 var packageX = new SimpleTestPackageContext()
                 {
@@ -261,7 +261,7 @@ EndGlobal";
         [PlatformFact(Platform.Windows, Platform.Linux)]
         public async Task DotnetRestore_WithUnSignedPackageAndSignatureValidationModeAsRequired_FailsAsync()
         {
-            using (var pathContext = _msbuildFixture.CreateSimpleTestPathContext())
+            using (SimpleTestPathContext pathContext = _msbuildFixture.CreateSimpleTestPathContext())
             {
                 //Setup packages and feed
                 var packageX = new SimpleTestPackageContext()
@@ -333,7 +333,7 @@ EndGlobal";
         [PlatformFact(Platform.Darwin)]
         public async Task DotnetRestore_WithUnSignedPackageAndSignatureValidationModeAsRequired_SucceedAsync()
         {
-            using (var pathContext = _msbuildFixture.CreateSimpleTestPathContext())
+            using (SimpleTestPathContext pathContext = _msbuildFixture.CreateSimpleTestPathContext())
             {
                 //Setup packages and feed
                 var packageX = new SimpleTestPackageContext()
@@ -408,7 +408,7 @@ EndGlobal";
         [InlineData("true")]
         public async Task DotnetRestore_WithUnSignedPackageAndSignatureValidationModeAsRequired_WithEnvVarTrue_Fails(string envVarValue)
         {
-            using (var pathContext = _msbuildFixture.CreateSimpleTestPathContext())
+            using (SimpleTestPathContext pathContext = _msbuildFixture.CreateSimpleTestPathContext())
             {
                 //Arrange
                 var envVarName = SignatureVerificationEnvironmentVariable;
@@ -489,7 +489,7 @@ EndGlobal";
         [PlatformFact(Platform.Darwin, SkipPlatform = Platform.Darwin)]
         public async Task DotnetRestore_WithUnSignedPackageAndSignatureValidationModeAsRequired_WithEnvVarNameCaseSensitive_Succeed()
         {
-            using (var pathContext = _msbuildFixture.CreateSimpleTestPathContext())
+            using (SimpleTestPathContext pathContext = _msbuildFixture.CreateSimpleTestPathContext())
             {
                 //Arrange
                 var envVarName = SignatureVerificationEnvironmentVariableTypo;
@@ -572,7 +572,7 @@ EndGlobal";
         [PlatformFact(Platform.Linux, Platform.Darwin, SkipPlatform = Platform.Darwin)]
         public async Task DotnetRestore_WithUnSignedPackageAndSignatureValidationModeAsRequired_WithEnvVarValueCaseInsensitive_Fails()
         {
-            using (var pathContext = _msbuildFixture.CreateSimpleTestPathContext())
+            using (SimpleTestPathContext pathContext = _msbuildFixture.CreateSimpleTestPathContext())
             {
                 //Arrange
                 var envVarName = SignatureVerificationEnvironmentVariable;
@@ -653,7 +653,7 @@ EndGlobal";
         [PlatformFact(Platform.Windows)]
         public void DotnetRestore_WithAuthorSignedPackageAndSignatureValidationModeAsRequired_Succeeds()
         {
-            using (var pathContext = _msbuildFixture.CreateSimpleTestPathContext())
+            using (SimpleTestPathContext pathContext = _msbuildFixture.CreateSimpleTestPathContext())
             {
                 var packageFile = new FileInfo(Path.Combine(pathContext.PackageSource, "TestPackage.AuthorSigned.1.0.0.nupkg"));
                 var package = SigningTestUtility.GetResourceBytes(packageFile.Name);
@@ -740,7 +740,7 @@ EndGlobal";
         [InlineData(false)]
         public async Task DotnetRestore_OneLinePerRestore(bool useStaticGraphRestore)
         {
-            using (var pathContext = _msbuildFixture.CreateSimpleTestPathContext())
+            using (SimpleTestPathContext pathContext = _msbuildFixture.CreateSimpleTestPathContext())
             {
                 var testDirectory = pathContext.SolutionRoot;
                 var pkgX = new SimpleTestPackageContext("x", "1.0.0");
@@ -819,7 +819,7 @@ EndGlobal";
         [PlatformFact(Platform.Windows)]
         public async Task DotnetRestore_ProjectMovedDoesNotRunRestore()
         {
-            using (var pathContext = _msbuildFixture.CreateSimpleTestPathContext())
+            using (SimpleTestPathContext pathContext = _msbuildFixture.CreateSimpleTestPathContext())
             {
                 var tfm = "net472";
                 var testDirectory = pathContext.SolutionRoot;
@@ -878,7 +878,7 @@ EndGlobal";
         [PlatformFact(Platform.Windows)]
         public void DotnetRestore_PackageDownloadSupported_IsSet()
         {
-            using (var pathContext = _msbuildFixture.CreateSimpleTestPathContext())
+            using (SimpleTestPathContext pathContext = _msbuildFixture.CreateSimpleTestPathContext())
             {
                 _msbuildFixture.CreateDotnetNewProject(pathContext.SolutionRoot, "proj");
 
@@ -905,7 +905,7 @@ EndGlobal";
         [PlatformFact(Platform.Windows)]
         public async Task DotnetRestore_LockedMode_NewProjectOutOfBox()
         {
-            using (var pathContext = _msbuildFixture.CreateSimpleTestPathContext())
+            using (SimpleTestPathContext pathContext = _msbuildFixture.CreateSimpleTestPathContext())
             {
 
                 // Set up solution, and project
@@ -972,7 +972,7 @@ EndGlobal";
         [PlatformFact(Platform.Windows)]
         public void DotnetRestore_LockedMode_Net7WithAndWithoutPlatform()
         {
-            using (var pathContext = _msbuildFixture.CreateSimpleTestPathContext())
+            using (SimpleTestPathContext pathContext = _msbuildFixture.CreateSimpleTestPathContext())
             {
                 // Arrange
                 string tfm = Constants.DefaultTargetFramework.GetShortFolderName();
@@ -1009,7 +1009,7 @@ EndGlobal";
         public async Task DotnetRestore_VerifyPerProjectConfigSourcesAreUsedForChildProjectsWithoutSolutionAsync()
         {
             // Arrange
-            using (var pathContext = _msbuildFixture.CreateSimpleTestPathContext())
+            using (SimpleTestPathContext pathContext = _msbuildFixture.CreateSimpleTestPathContext())
             {
                 var solution = new SimpleTestSolutionContext(pathContext.SolutionRoot);
                 var projects = new Dictionary<string, SimpleTestProjectContext>();
@@ -1109,7 +1109,7 @@ EndGlobal";
         public async Task DotnetRestore_VerifyPerProjectConfigSourcesAreUsedForChildProjectsWithSolutionAsync()
         {
             // Arrange
-            using (var pathContext = _msbuildFixture.CreateSimpleTestPathContext())
+            using (SimpleTestPathContext pathContext = _msbuildFixture.CreateSimpleTestPathContext())
             {
                 var projects = new Dictionary<string, SimpleTestProjectContext>();
                 var sources = new List<string>();
@@ -1208,7 +1208,7 @@ EndGlobal";
         [PlatformFact(Platform.Windows)]
         public async Task DotnetRestore_PackageReferenceWithAliases_ReflectedInTheAssetsFile()
         {
-            using (var pathContext = _msbuildFixture.CreateSimpleTestPathContext())
+            using (SimpleTestPathContext pathContext = _msbuildFixture.CreateSimpleTestPathContext())
             {
                 // Set up solution, and project
                 var solution = new SimpleTestSolutionContext(pathContext.SolutionRoot);
@@ -1256,7 +1256,7 @@ EndGlobal";
         [PlatformFact(Platform.Windows)]
         public async Task DotnetRestore_MultiTargettingWithAliases_Succeeds()
         {
-            using (var pathContext = _msbuildFixture.CreateSimpleTestPathContext())
+            using (SimpleTestPathContext pathContext = _msbuildFixture.CreateSimpleTestPathContext())
             {
                 var testDirectory = pathContext.SolutionRoot;
                 var pkgX = new SimpleTestPackageContext("x", "1.0.0");
@@ -1317,7 +1317,7 @@ EndGlobal";
         [Fact]
         public async Task DotnetRestore_WithTargetFrameworksProperty_StaticGraphAndRegularRestore_AreEquivalent()
         {
-            using (var pathContext = _msbuildFixture.CreateSimpleTestPathContext())
+            using (SimpleTestPathContext pathContext = _msbuildFixture.CreateSimpleTestPathContext())
             {
                 var testDirectory = pathContext.SolutionRoot;
                 var pkgX = new SimpleTestPackageContext("x", "1.0.0");
@@ -1367,7 +1367,7 @@ EndGlobal";
         [Fact]
         public void GenerateRestoreGraphFile_StandardAndStaticGraphRestore_AreEquivalent()
         {
-            using (var pathContext = _msbuildFixture.CreateSimpleTestPathContext())
+            using (SimpleTestPathContext pathContext = _msbuildFixture.CreateSimpleTestPathContext())
             {
                 var testDirectory = pathContext.SolutionRoot;
                 var projectName1 = "ClassLibrary";
@@ -1402,7 +1402,7 @@ EndGlobal";
         [InlineData("netcoreapp2.1;netcoreapp3.0;netcoreapp3.1", false)]
         public async Task DotnetRestore_MultiTargettingProject_WithDifferentPackageReferences_ForceDoesNotRewriteAssetsFile(string targetFrameworks, bool useStaticGraphRestore)
         {
-            using (var pathContext = _msbuildFixture.CreateSimpleTestPathContext())
+            using (SimpleTestPathContext pathContext = _msbuildFixture.CreateSimpleTestPathContext())
             {
                 var projectName = "ClassLibrary1";
                 var testDirectory = pathContext.SolutionRoot;
@@ -1465,7 +1465,7 @@ EndGlobal";
         [InlineData("netcoreapp3.0;netcoreapp2.1;netcoreapp3.1", false)]
         public async Task DotnetRestore_MultiTargettingProject_WithDifferentProjectReferences_ForceDoesNotRewriteAssetsFile(string targetFrameworks, bool useStaticGraphRestore)
         {
-            using (var pathContext = _msbuildFixture.CreateSimpleTestPathContext())
+            using (SimpleTestPathContext pathContext = _msbuildFixture.CreateSimpleTestPathContext())
             {
                 var projectName = "ClassLibrary1";
                 var testDirectory = pathContext.SolutionRoot;
@@ -1544,7 +1544,7 @@ EndGlobal";
         [Fact]
         public void CollectFrameworkReferences_WithTransitiveFrameworkReferences_ExcludesTransitiveFrameworkReferences()
         {
-            using (var pathContext = _msbuildFixture.CreateSimpleTestPathContext())
+            using (SimpleTestPathContext pathContext = _msbuildFixture.CreateSimpleTestPathContext())
             {
                 // Arrange
                 // Library project with Framework Reference
@@ -1623,7 +1623,7 @@ EndGlobal";
         public void Dotnet_New_Template_Restore_Success(string template)
         {
             // Arrange
-            using (var pathContext = new SimpleTestPathContext())
+            using (SimpleTestPathContext pathContext = _msbuildFixture.CreateSimpleTestPathContext())
             {
                 var projectName = new DirectoryInfo(pathContext.SolutionRoot).Name;
                 var solutionDirectory = pathContext.SolutionRoot;
@@ -1643,7 +1643,7 @@ EndGlobal";
         [PlatformFact(Platform.Windows)]
         public async Task DotnetRestore_SameNameSameKeyProjectPackageReferencing_Succeeds()
         {
-            using (var pathContext = _msbuildFixture.CreateSimpleTestPathContext())
+            using (SimpleTestPathContext pathContext = _msbuildFixture.CreateSimpleTestPathContext())
             {
                 // Set up solution, and project
                 var solution = new SimpleTestSolutionContext(pathContext.SolutionRoot);
@@ -1721,7 +1721,7 @@ EndGlobal";
         [InlineData("PackageDownload", "NU1505")]
         public async Task DotnetRestore_WithDuplicateItem_WarnsWithLogCode(string itemName, string logCode)
         {
-            using (var pathContext = _msbuildFixture.CreateSimpleTestPathContext())
+            using (SimpleTestPathContext pathContext = _msbuildFixture.CreateSimpleTestPathContext())
             {
                 var projectName = "ClassLibrary1";
                 var workingDirectory = Path.Combine(pathContext.SolutionRoot, projectName);
@@ -1766,7 +1766,7 @@ EndGlobal";
         [Fact]
         public async Task DotnetRestore_WithDuplicatePackageVersion_WarnsWithNU1506()
         {
-            using (var pathContext = _msbuildFixture.CreateSimpleTestPathContext())
+            using (SimpleTestPathContext pathContext = _msbuildFixture.CreateSimpleTestPathContext())
             {
                 var projectName = "ClassLibrary1";
                 var workingDirectory = Path.Combine(pathContext.SolutionRoot, projectName);
@@ -1818,7 +1818,7 @@ EndGlobal";
         [InlineData("PackageDownload", "NU1505")]
         public async Task DotnetRestore_WithDuplicateItem_WithTreatWarningsAsErrors_ErrorsWithLogCode(string itemName, string logCode)
         {
-            using (var pathContext = _msbuildFixture.CreateSimpleTestPathContext())
+            using (SimpleTestPathContext pathContext = _msbuildFixture.CreateSimpleTestPathContext())
             {
                 var projectName = "ClassLibrary1";
                 var workingDirectory = Path.Combine(pathContext.SolutionRoot, projectName);
@@ -1869,7 +1869,7 @@ EndGlobal";
         [Fact]
         public async Task WhenPackageSourceMappingConfiguredInstallsPackageReferencesAndDownloadsFromExpectedSources_Success()
         {
-            using var pathContext = _msbuildFixture.CreateSimpleTestPathContext();
+            using SimpleTestPathContext pathContext = _msbuildFixture.CreateSimpleTestPathContext();
 
             // Set up solution, and project
             var solution = new SimpleTestSolutionContext(pathContext.SolutionRoot);
@@ -1948,7 +1948,7 @@ EndGlobal";
         [Fact]
         public async Task WhenPackageSourceMappingConfiguredAndNoMatchingSourceFound_Fails()
         {
-            using var pathContext = _msbuildFixture.CreateSimpleTestPathContext();
+            using SimpleTestPathContext pathContext = _msbuildFixture.CreateSimpleTestPathContext();
 
             // Set up solution, and project
             var solution = new SimpleTestSolutionContext(pathContext.SolutionRoot);
@@ -2025,7 +2025,7 @@ EndGlobal";
         [Fact]
         public async Task DotnetRestore_PackageSourceMappingFilter_WithAllSourceOptions_Succeed()
         {
-            using var pathContext = _msbuildFixture.CreateSimpleTestPathContext();
+            using SimpleTestPathContext pathContext = _msbuildFixture.CreateSimpleTestPathContext();
 
             // Set up solution, and project
             var solution = new SimpleTestSolutionContext(pathContext.SolutionRoot);
@@ -2109,7 +2109,7 @@ EndGlobal";
         [Fact]
         public async Task DotnetRestore_PackageSourceMappingFilter_WithNotEnoughSourceOptions_Fails()
         {
-            using var pathContext = _msbuildFixture.CreateSimpleTestPathContext();
+            using SimpleTestPathContext pathContext = _msbuildFixture.CreateSimpleTestPathContext();
 
             // Set up solution, and project
             var solution = new SimpleTestSolutionContext(pathContext.SolutionRoot);
@@ -2179,7 +2179,7 @@ EndGlobal";
         [Fact]
         public async Task WhenPackageSourceMappingIsEnabled_InstallsPackagesFromRestoreSources_Success()
         {
-            using var pathContext = _msbuildFixture.CreateSimpleTestPathContext();
+            using SimpleTestPathContext pathContext = _msbuildFixture.CreateSimpleTestPathContext();
 
             // Set up solution, and project
             var solution = new SimpleTestSolutionContext(pathContext.SolutionRoot);
@@ -2249,7 +2249,7 @@ EndGlobal";
         [Fact]
         public async Task WhenPackageSourceMappingIsEnabled_CannotInstallsPackagesFromRestoreSources_Fails()
         {
-            using var pathContext = _msbuildFixture.CreateSimpleTestPathContext();
+            using SimpleTestPathContext pathContext = _msbuildFixture.CreateSimpleTestPathContext();
 
             // Set up solution, and project
             var solution = new SimpleTestSolutionContext(pathContext.SolutionRoot);
@@ -2321,7 +2321,7 @@ EndGlobal";
 
         public async Task DotnetRestore_WithDuplicatePackageVersion_WithTreatWarningsAsErrors_ErrorsWithNU1506()
         {
-            using (var pathContext = _msbuildFixture.CreateSimpleTestPathContext())
+            using (SimpleTestPathContext pathContext = _msbuildFixture.CreateSimpleTestPathContext())
             {
                 var projectName = "ClassLibrary1";
                 var workingDirectory = Path.Combine(pathContext.SolutionRoot, projectName);
@@ -2376,7 +2376,7 @@ EndGlobal";
         [Fact]
         public async Task DotnetRestore_WithDuplicatePackageReference_RespectsContinueOnError()
         {
-            using (var pathContext = _msbuildFixture.CreateSimpleTestPathContext())
+            using (SimpleTestPathContext pathContext = _msbuildFixture.CreateSimpleTestPathContext())
             {
                 var projectName = "ClassLibrary1";
                 var workingDirectory = Path.Combine(pathContext.SolutionRoot, projectName);
@@ -2422,7 +2422,7 @@ EndGlobal";
         [Fact]
         public async Task WhenPackageReferrenceHasRelatedFiles_RelatedPropertyIsApplied_Success()
         {
-            using var pathContext = _msbuildFixture.CreateSimpleTestPathContext();
+            using SimpleTestPathContext pathContext = _msbuildFixture.CreateSimpleTestPathContext();
 
             // Set up solution, and project
             // projectA -> projectB -> packageX -> packageY
@@ -2519,7 +2519,7 @@ EndGlobal";
         [Fact]
         public async Task DotnetRestore_CentralPackageVersionManagement_NoOps()
         {
-            using (var pathContext = _msbuildFixture.CreateSimpleTestPathContext())
+            using (SimpleTestPathContext pathContext = _msbuildFixture.CreateSimpleTestPathContext())
             {
                 var testDirectory = pathContext.SolutionRoot;
                 var pkgX = new SimpleTestPackageContext("x", "1.0.0");
@@ -2590,7 +2590,7 @@ EndGlobal";
         public async Task DotnetRestore_WithMultiTargetingProject_WhenTargetFrameworkIsSpecifiedOnTheCommandline_RestoresForSingleFramework(bool useStaticGraphEvaluation)
         {
             // Arrange
-            using var pathContext = _msbuildFixture.CreateSimpleTestPathContext();
+            using SimpleTestPathContext pathContext = _msbuildFixture.CreateSimpleTestPathContext();
             await SimpleTestPackageUtility.CreateFolderFeedV3Async(pathContext.PackageSource, new SimpleTestPackageContext("x", "1.0.0"));
             string tfm = Constants.DefaultTargetFramework.GetShortFolderName();
             string projectFileContents =
@@ -2629,7 +2629,7 @@ EndGlobal";
         public async Task DotnetRestore_WithMultiTargetingProject_WhenTargetFrameworkIsSpecifiedOnTheCommandline_AndPerFrameworkProjectReferencesAreUsed_RestoresForSingleFramework(bool useStaticGraphEvaluation)
         {
             // Arrange
-            using var pathContext = _msbuildFixture.CreateSimpleTestPathContext();
+            using SimpleTestPathContext pathContext = _msbuildFixture.CreateSimpleTestPathContext();
             await SimpleTestPackageUtility.CreateFolderFeedV3Async(pathContext.PackageSource, new SimpleTestPackageContext("x", "1.0.0"));
             var projectAWorkingDirectory = Path.Combine(pathContext.SolutionRoot, "a");
             var projectBWorkingDirectory = Path.Combine(pathContext.SolutionRoot, "b");
@@ -2680,7 +2680,7 @@ EndGlobal";
         public async Task DotnetRestore_WithMultiTargettingProject_WhenTargetFrameworkIsSpecifiedOnTheCommandline_PerFrameworkProjectReferencesAreUsed_RestoresForSingleFramework(bool useStaticGraphEvaluation)
         {
             // Arrange
-            using var pathContext = _msbuildFixture.CreateSimpleTestPathContext();
+            using SimpleTestPathContext pathContext = _msbuildFixture.CreateSimpleTestPathContext();
             var additionalSource = Path.Combine(pathContext.SolutionRoot, "additionalSource");
             await SimpleTestPackageUtility.CreateFolderFeedV3Async(additionalSource, new SimpleTestPackageContext("x", "1.0.0"));
             string tfm = Constants.DefaultTargetFramework.GetShortFolderName();

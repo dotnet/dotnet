@@ -159,7 +159,7 @@ namespace Dotnet.Integration.Test
             // Arrange
             IX509StoreCertificate storeCertificate = _signFixture.DefaultCertificate;
 
-            using (var pathContext = new SimpleTestPathContext())
+            using (SimpleTestPathContext pathContext = _msbuildFixture.CreateSimpleTestPathContext())
             {
                 var nupkg = new SimpleTestPackageContext("A", "1.0.0");
                 string testDirectory = pathContext.WorkingDirectory;
@@ -203,7 +203,7 @@ namespace Dotnet.Integration.Test
             // Arrange
             IX509StoreCertificate storeCertificate = _signFixture.DefaultCertificate;
 
-            using (var pathContext = new SimpleTestPathContext())
+            using (SimpleTestPathContext pathContext = _msbuildFixture.CreateSimpleTestPathContext())
             {
                 var nupkg = new SimpleTestPackageContext("A", "1.0.0");
                 string testDirectory = pathContext.WorkingDirectory;
@@ -248,7 +248,7 @@ namespace Dotnet.Integration.Test
             IX509StoreCertificate storeCertificate = _signFixture.UntrustedSelfIssuedCertificateInCertificateStore;
 
             // Arrange
-            using (var pathContext = new SimpleTestPathContext())
+            using (SimpleTestPathContext pathContext = _msbuildFixture.CreateSimpleTestPathContext())
             {
                 var nupkg = new SimpleTestPackageContext("A", "1.0.0");
                 string testDirectory = pathContext.WorkingDirectory;
@@ -302,7 +302,7 @@ namespace Dotnet.Integration.Test
             IX509StoreCertificate storeCertificate = _signFixture.UntrustedSelfIssuedCertificateInCertificateStore;
 
             // Arrange
-            using (var pathContext = new SimpleTestPathContext())
+            using (SimpleTestPathContext pathContext = _msbuildFixture.CreateSimpleTestPathContext())
             {
                 var nupkg = new SimpleTestPackageContext("A", "1.0.0");
                 string testDirectory = pathContext.WorkingDirectory;
@@ -348,7 +348,7 @@ namespace Dotnet.Integration.Test
             IX509StoreCertificate storeCertificate = _signFixture.UntrustedSelfIssuedCertificateInCertificateStore;
 
             // Arrange
-            using (var pathContext = new SimpleTestPathContext())
+            using (SimpleTestPathContext pathContext = _msbuildFixture.CreateSimpleTestPathContext())
             {
                 var nupkg = new SimpleTestPackageContext("A", "1.0.0");
                 string testDirectory = pathContext.WorkingDirectory;
@@ -394,7 +394,7 @@ namespace Dotnet.Integration.Test
             IX509StoreCertificate storeCertificate = _signFixture.UntrustedSelfIssuedCertificateInCertificateStore;
 
             // Arrange
-            using (var pathContext = new SimpleTestPathContext())
+            using (SimpleTestPathContext pathContext = _msbuildFixture.CreateSimpleTestPathContext())
             {
                 var nupkg = new SimpleTestPackageContext("A", "1.0.0");
                 await SimpleTestPackageUtility.CreatePackagesAsync(pathContext.WorkingDirectory, nupkg);
@@ -444,7 +444,7 @@ namespace Dotnet.Integration.Test
             IX509StoreCertificate storeCertificate = _signFixture.UntrustedSelfIssuedCertificateInCertificateStore;
 
             // Arrange
-            using (var pathContext = new SimpleTestPathContext())
+            using (SimpleTestPathContext pathContext = _msbuildFixture.CreateSimpleTestPathContext())
             {
                 var nupkg = new SimpleTestPackageContext("A", "1.0.0");
                 await SimpleTestPackageUtility.CreatePackagesAsync(pathContext.WorkingDirectory, nupkg);
@@ -495,7 +495,7 @@ namespace Dotnet.Integration.Test
             // Arrange
             IX509StoreCertificate storeCertificate = _signFixture.DefaultCertificate;
 
-            using (var pathContext = new SimpleTestPathContext())
+            using (SimpleTestPathContext pathContext = _msbuildFixture.CreateSimpleTestPathContext())
             {
                 var package = new SimpleTestPackageContext();
                 string certFingerprint = SignatureTestUtility.GetFingerprint(storeCertificate.Certificate, HashAlgorithmName.SHA256);
@@ -550,7 +550,7 @@ namespace Dotnet.Integration.Test
             // Arrange
             IX509StoreCertificate storeCertificate = _signFixture.DefaultCertificate;
 
-            using (var pathContext = new SimpleTestPathContext())
+            using (SimpleTestPathContext pathContext = _msbuildFixture.CreateSimpleTestPathContext())
             {
                 var package = new SimpleTestPackageContext();
                 string certFingerprint = SignatureTestUtility.GetFingerprint(storeCertificate.Certificate, HashAlgorithmName.SHA256);
@@ -600,7 +600,7 @@ namespace Dotnet.Integration.Test
             IX509StoreCertificate storeCertificate = _signFixture.UntrustedSelfIssuedCertificateInCertificateStore;
 
             // Arrange
-            using (var pathContext = new SimpleTestPathContext())
+            using (SimpleTestPathContext pathContext = _msbuildFixture.CreateSimpleTestPathContext())
             {
                 var nupkg = new SimpleTestPackageContext("A", "1.0.0");
 
@@ -644,7 +644,7 @@ namespace Dotnet.Integration.Test
             IX509StoreCertificate storeCertificate = _signFixture.UntrustedSelfIssuedCertificateInCertificateStore;
 
             // Arrange
-            using (var pathContext = new SimpleTestPathContext())
+            using (SimpleTestPathContext pathContext = _msbuildFixture.CreateSimpleTestPathContext())
             {
                 var nupkg = new SimpleTestPackageContext("A", "1.0.0");
 

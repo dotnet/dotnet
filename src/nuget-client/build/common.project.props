@@ -15,7 +15,7 @@
     <NETFXTargetFramework>net472</NETFXTargetFramework>
     <NETCoreTargetFramework>netcoreapp3.1</NETCoreTargetFramework>
     <NETCoreTargetFramework Condition="'$(DotNetBuildFromSource)' == 'true'">net7.0</NETCoreTargetFramework>
-    <NETCoreTestTargetFramework>net6.0</NETCoreTestTargetFramework>
+    <NETCoreTestTargetFrameworks>net7.0;net8.0</NETCoreTestTargetFrameworks>
     <NetStandardVersion>netstandard2.0</NetStandardVersion>
     <TargetFrameworksExe>$(NETFXTargetFramework);$(NETCoreTargetFramework)</TargetFrameworksExe>
     <TargetFrameworksExe Condition="'$(IsXPlat)' == 'true'">$(NETCoreTargetFramework)</TargetFrameworksExe>
@@ -29,7 +29,7 @@
     <TargetFrameworksLibrary Condition="'$(DotNetBuildFromSource)' == 'true'">$(NETCoreTargetFramework);$(NetStandardVersion)</TargetFrameworksLibrary>
     <TargetFrameworksLibraryForSigning>$(TargetFrameworksLibrary);netcoreapp5.0</TargetFrameworksLibraryForSigning>
     <TargetFrameworksLibraryForSigning Condition="'$(DotNetBuildFromSource)' == 'true'">$(TargetFrameworksLibrary);net7.0</TargetFrameworksLibraryForSigning>
-    <TargetFrameworksLibraryForCrossVerificationTests>$(NETFXTargetFramework);net7.0</TargetFrameworksLibraryForCrossVerificationTests>
+    <TargetFrameworksLibraryForCrossVerificationTests>$(NETFXTargetFramework);$(NETCoreTestTargetFrameworks)</TargetFrameworksLibraryForCrossVerificationTests>
     <RepositoryRootDirectory>$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildThisFileDirectory), 'README.md'))\</RepositoryRootDirectory>
     <BuildCommonDirectory>$(RepositoryRootDirectory)build\</BuildCommonDirectory>
     <SolutionFile>$(RepositoryRootDirectory)$(RepositoryName).sln</SolutionFile>

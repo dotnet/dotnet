@@ -6,4 +6,7 @@
   // version.  We also don't want to introduce MS.DN.Arcade.SDK into the non-source-build build.
   // eng/source-build/global.json has the entry for the Arcade version we need for
   // Arcade-powered source-build.
+  "sdk": {
+    "allowPrerelease": true
+  }
 }

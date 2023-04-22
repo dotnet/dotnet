@@ -29,7 +29,7 @@ namespace Dotnet.Integration.Test
         [Fact]
         public async Task AddPkg_V3LocalSourceFeed_WithRelativePath_NoVersionSpecified_Success()
         {
-            using (var pathContext = new SimpleTestPathContext())
+            using (SimpleTestPathContext pathContext = _fixture.CreateSimpleTestPathContext())
             {
                 var projectName = "projectA";
                 var targetFrameworks = "net5.0";
@@ -74,7 +74,7 @@ namespace Dotnet.Integration.Test
         [Fact]
         public async Task AddPkg_V3LocalSourceFeed_WithRelativePath_NoVersionSpecified_Fail()
         {
-            using (var pathContext = new SimpleTestPathContext())
+            using (SimpleTestPathContext pathContext = _fixture.CreateSimpleTestPathContext())
             {
                 var projectName = "projectA";
                 var targetFrameworks = "net5.0";
@@ -107,7 +107,7 @@ namespace Dotnet.Integration.Test
         [Fact]
         public async Task AddPkg_V3LocalSourceFeed_WithRelativePath_VersionSpecified_Success()
         {
-            using (var pathContext = new SimpleTestPathContext())
+            using (SimpleTestPathContext pathContext = _fixture.CreateSimpleTestPathContext())
             {
                 var projectName = "projectA";
                 var targetFrameworks = "net5.0";
@@ -152,7 +152,7 @@ namespace Dotnet.Integration.Test
         [Fact]
         public async Task AddPkg_V3LocalSourceFeed_WithRelativePath_VersionSpecified_Fail()
         {
-            using (var pathContext = new SimpleTestPathContext())
+            using (SimpleTestPathContext pathContext = _fixture.CreateSimpleTestPathContext())
             {
                 var projectName = "projectA";
                 var targetFrameworks = "net5.0";
@@ -185,7 +185,7 @@ namespace Dotnet.Integration.Test
         [Fact]
         public async Task AddPkg_V3LocalSourceFeed_WithDefaultSolutiuonSource_NoVersionSpecified_Success()
         {
-            using (var pathContext = new SimpleTestPathContext())
+            using (SimpleTestPathContext pathContext = _fixture.CreateSimpleTestPathContext(addTemplateFeed: false))
             {
                 var projectName = "projectA";
                 var targetFrameworks = "net5.0";
@@ -214,9 +214,9 @@ namespace Dotnet.Integration.Test
 
                 // Make sure source is replaced in generated dgSpec file.
                 PackageSpec packageSpec = projectA.AssetsFile.PackageSpec;
-                string[] sources = packageSpec.RestoreMetadata.Sources.Select(s => s.Name).ToArray();
-                Assert.Equal(sources.Count(), 1);
-                Assert.Equal(sources[0], pathContext.PackageSource);
+                
+                packageSpec.RestoreMetadata.Sources.Select(s => s.Name).Should().ContainSingle()
+                    .Which.Should().Be(pathContext.PackageSource);
 
                 var ridlessTarget = projectA.AssetsFile.Targets.Where(e => string.IsNullOrEmpty(e.RuntimeIdentifier)).Single();
                 // Should resolve to specified package.
@@ -229,7 +229,7 @@ namespace Dotnet.Integration.Test
         [Fact]
         public async Task AddPkg_WhenPackageSourceMappingConfiguredAndNoMatchingSourceFound_Fails()
         {
-            using var pathContext = new SimpleTestPathContext();
+            using SimpleTestPathContext pathContext = _fixture.CreateSimpleTestPathContext();
 
             // Set up solution, and project
             var solution = new SimpleTestSolutionContext(pathContext.SolutionRoot);
@@ -290,7 +290,7 @@ namespace Dotnet.Integration.Test
         [Fact]
         public async Task AddPkg_WhenPackageSourceMappingConfiguredInstallsPackagesFromExpectedSources_Success()
         {
-            using var pathContext = new SimpleTestPathContext();
+            using SimpleTestPathContext pathContext = _fixture.CreateSimpleTestPathContext();
 
             // Set up solution, and project
             var solution = new SimpleTestSolutionContext(pathContext.SolutionRoot);
@@ -354,7 +354,7 @@ namespace Dotnet.Integration.Test
         [Fact]
         public async Task AddPkg_WhenPackageSourceMappingConfiguredInstallsPackagesFromSourcesUriOption_Success()
         {
-            using var pathContext = new SimpleTestPathContext();
+            using SimpleTestPathContext pathContext = _fixture.CreateSimpleTestPathContext();
 
             // Set up solution, and project
             var solution = new SimpleTestSolutionContext(pathContext.SolutionRoot);
@@ -420,7 +420,7 @@ namespace Dotnet.Integration.Test
         [Fact]
         public async Task AddPkg_WhenPackageSourceMappingConfiguredCanotInstallsPackagesFromSourcesUriOption_Fails()
         {
-            using var pathContext = new SimpleTestPathContext();
+            using SimpleTestPathContext pathContext = _fixture.CreateSimpleTestPathContext();
 
             // Set up solution, and project
             var solution = new SimpleTestSolutionContext(pathContext.SolutionRoot);
@@ -485,7 +485,7 @@ namespace Dotnet.Integration.Test
         [Fact]
         public async Task AddPkg_WhenPackageSourceMappingConfiguredInstallsPackagesFromRestoreSources_Success()
         {
-            using var pathContext = new SimpleTestPathContext();
+            using SimpleTestPathContext pathContext = _fixture.CreateSimpleTestPathContext();
 
             // Set up solution, and project
             var solution = new SimpleTestSolutionContext(pathContext.SolutionRoot);
@@ -554,7 +554,7 @@ namespace Dotnet.Integration.Test
         [Fact]
         public async Task AddPkg_WhenPackageSourceMappingConfiguredCanotInstallsPackagesFromRestoreSources_Fails()
         {
-            using var pathContext = new SimpleTestPathContext();
+            using SimpleTestPathContext pathContext = _fixture.CreateSimpleTestPathContext();
 
             // Set up solution, and project
             var solution = new SimpleTestSolutionContext(pathContext.SolutionRoot);
@@ -693,7 +693,7 @@ namespace Dotnet.Integration.Test
         [Fact]
         public async Task AddPkg_WithCPM_WhenPackageVersionDoesNotExistAndVersionCLIArgNotPassed_Success()
         {
-            using var pathContext = new SimpleTestPathContext();
+            using SimpleTestPathContext pathContext = _fixture.CreateSimpleTestPathContext();
 
             // Set up solution, and project
             var solution = new SimpleTestSolutionContext(pathContext.SolutionRoot);
@@ -742,7 +742,7 @@ namespace Dotnet.Integration.Test
         [Fact]
         public async Task AddPkg_WithCPM_WhenPackageVersionDoesNotExistAndVersionCLIArgPassed_Success()
         {
-            using var pathContext = new SimpleTestPathContext();
+            using SimpleTestPathContext pathContext = _fixture.CreateSimpleTestPathContext();
 
             // Set up solution, and project
             var solution = new SimpleTestSolutionContext(pathContext.SolutionRoot);
@@ -791,7 +791,7 @@ namespace Dotnet.Integration.Test
         [Fact]
         public async Task AddPkg_WithCPM_WhenPackageVersionExistsAndVersionCLIArgNotPassed_NoOp()
         {
-            using var pathContext = new SimpleTestPathContext();
+            using SimpleTestPathContext pathContext = _fixture.CreateSimpleTestPathContext();
 
             // Set up solution and project
             var solution = new SimpleTestSolutionContext(pathContext.SolutionRoot);
@@ -843,7 +843,7 @@ namespace Dotnet.Integration.Test
         [Fact]
         public async Task AddPkg_WithCPM_WhenPackageVersionExistsAndVersionCLIArgPassed_Success()
         {
-            using var pathContext = new SimpleTestPathContext();
+            using SimpleTestPathContext pathContext = _fixture.CreateSimpleTestPathContext();
 
             // Set up solution
             var solution = new SimpleTestSolutionContext(pathContext.SolutionRoot);
@@ -894,7 +894,7 @@ namespace Dotnet.Integration.Test
         [Fact]
         public async Task AddPkg_WithCPM_WhenMultipleItemGroupsExist_Success()
         {
-            using var pathContext = new SimpleTestPathContext();
+            using SimpleTestPathContext pathContext = _fixture.CreateSimpleTestPathContext();
 
             // Set up solution
             var solution = new SimpleTestSolutionContext(pathContext.SolutionRoot);
@@ -951,7 +951,7 @@ namespace Dotnet.Integration.Test
         [Fact]
         public async Task AddPkg_WithCPM_WithPackageReference_NoVersionOverride_NoPackageVersion_NoVersionCLI_Errors()
         {
-            using var pathContext = new SimpleTestPathContext();
+            using SimpleTestPathContext pathContext = _fixture.CreateSimpleTestPathContext();
 
             // Set up solution and project
             var solution = new SimpleTestSolutionContext(pathContext.SolutionRoot);
@@ -1014,7 +1014,7 @@ namespace Dotnet.Integration.Test
         [Fact]
         public async Task AddPkg_WithCPM_WithPackageReference_NoVersionOverride_NoPackageVersion_WithVersionCLI_Errors()
         {
-            using var pathContext = new SimpleTestPathContext();
+            using SimpleTestPathContext pathContext = _fixture.CreateSimpleTestPathContext();
 
             // Set up solution and project
             var solution = new SimpleTestSolutionContext(pathContext.SolutionRoot);
@@ -1077,7 +1077,7 @@ namespace Dotnet.Integration.Test
         [Fact]
         public async Task AddPkg_WithCPM_WithPackageReference_NoVersionOverride_WithPackageVersion_NoVersionCLI_NoOps()
         {
-            using var pathContext = new SimpleTestPathContext();
+            using SimpleTestPathContext pathContext = _fixture.CreateSimpleTestPathContext();
 
             // Set up solution and project
             var solution = new SimpleTestSolutionContext(pathContext.SolutionRoot);
@@ -1143,7 +1143,7 @@ namespace Dotnet.Integration.Test
         [Fact]
         public async Task AddPkg_WithCPM_WithPackageReference_NoVersionOverride_WithPackageVersion_WithVersionCLI_Success()
         {
-            using var pathContext = new SimpleTestPathContext();
+            using SimpleTestPathContext pathContext = _fixture.CreateSimpleTestPathContext();
 
             // Set up solution and project
             var solution = new SimpleTestSolutionContext(pathContext.SolutionRoot);
@@ -1205,7 +1205,7 @@ namespace Dotnet.Integration.Test
         [Fact]
         public async Task AddPkg_WithCPM_WithPackageReference_WithVersionOverride_NoPackageVersion_NoVersionCLI_NoOps()
         {
-            using var pathContext = new SimpleTestPathContext();
+            using SimpleTestPathContext pathContext = _fixture.CreateSimpleTestPathContext();
 
             // Set up solution and project
             var solution = new SimpleTestSolutionContext(pathContext.SolutionRoot);
@@ -1268,7 +1268,7 @@ namespace Dotnet.Integration.Test
         [Fact]
         public async Task AddPkg_WithCPM_WithPackageReference_WithVersionOverride_NoPackageVersion_WithVersionCLI_Success()
         {
-            using var pathContext = new SimpleTestPathContext();
+            using SimpleTestPathContext pathContext = _fixture.CreateSimpleTestPathContext();
 
             // Set up solution and project
             var solution = new SimpleTestSolutionContext(pathContext.SolutionRoot);
@@ -1330,7 +1330,7 @@ namespace Dotnet.Integration.Test
         [Fact]
         public async Task AddPkg_WithCPM_WithPackageReference_WithVersionOverride_WithPackageVersion_NoVersionCLI_NoOps()
         {
-            using var pathContext = new SimpleTestPathContext();
+            using SimpleTestPathContext pathContext = _fixture.CreateSimpleTestPathContext();
 
             // Set up solution and project
             var solution = new SimpleTestSolutionContext(pathContext.SolutionRoot);
@@ -1396,7 +1396,7 @@ namespace Dotnet.Integration.Test
         [Fact]
         public async Task AddPkg_WithCPM_WithPackageReference_WithVersionOverride_WithPackageVersion_WithVersionCLI_Success()
         {
-            using var pathContext = new SimpleTestPathContext();
+            using SimpleTestPathContext pathContext = _fixture.CreateSimpleTestPathContext();
 
             // Set up solution and project
             var solution = new SimpleTestSolutionContext(pathContext.SolutionRoot);
@@ -1461,7 +1461,7 @@ namespace Dotnet.Integration.Test
         [Fact]
         public async Task AddPkg_WithCPM_WithPackageReference_EmptyVersionOverride_WithPackageVersion_WithVersionCLI_IgnoreEmptyVersionOverride_Success()
         {
-            using var pathContext = new SimpleTestPathContext();
+            using SimpleTestPathContext pathContext = _fixture.CreateSimpleTestPathContext();
 
             // Set up solution and project
             var solution = new SimpleTestSolutionContext(pathContext.SolutionRoot);
@@ -1528,7 +1528,7 @@ namespace Dotnet.Integration.Test
         [Fact]
         public async Task AddPkg_WithCPM_WrongPackageReference_WithVersionOverride_WithPackageVersion_WithVersionCLI_WrongConfiguration_Error()
         {
-            using var pathContext = new SimpleTestPathContext();
+            using SimpleTestPathContext pathContext = _fixture.CreateSimpleTestPathContext();
 
             // Set up solution and project
             var solution = new SimpleTestSolutionContext(pathContext.SolutionRoot);
@@ -1590,7 +1590,7 @@ namespace Dotnet.Integration.Test
         [Fact]
         public async Task AddPkg_WithCPM_WithPackageReference_WithVersionOverride_WrongPackageVersion_WithVersionCLI_WrongConfiguration_Error()
         {
-            using var pathContext = new SimpleTestPathContext();
+            using SimpleTestPathContext pathContext = _fixture.CreateSimpleTestPathContext();
 
             // Set up solution and project
             var solution = new SimpleTestSolutionContext(pathContext.SolutionRoot);
@@ -1653,7 +1653,7 @@ namespace Dotnet.Integration.Test
         [Fact]
         public async Task AddPkg_WithCPM_WithPackageReference_DisabledVersionOverride_WrongPackageVersion_WithVersionCLI_WrongConfiguration_Error()
         {
-            using var pathContext = new SimpleTestPathContext();
+            using SimpleTestPathContext pathContext = _fixture.CreateSimpleTestPathContext();
 
             // Set up solution and project
             var solution = new SimpleTestSolutionContext(pathContext.SolutionRoot);
