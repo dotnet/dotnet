@@ -10,6 +10,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using NuGet.Commands.Restore.Utility;
 using NuGet.Common;
 using NuGet.DependencyResolver;
 using NuGet.Frameworks;
@@ -81,6 +82,7 @@ namespace NuGet.Commands
         private const string ValidateRestoreGraphsDuration = nameof(ValidateRestoreGraphsDuration);
         private const string CreateRestoreResultDuration = nameof(CreateRestoreResultDuration);
         private const string IsCentralPackageTransitivePinningEnabled = nameof(IsCentralPackageTransitivePinningEnabled);
+        private const string VulnerablePackageCheck = nameof(VulnerablePackageCheck);
 
         // PackageSourceMapping names
         private const string PackageSourceMappingIsMappingEnabled = "PackageSourceMapping.IsMappingEnabled";
@@ -275,14 +277,29 @@ namespace NuGet.Commands
                     });
                 }
 
+                string enableAudit = _request.Project.RestoreMetadata?.RestoreAuditProperties?.EnableAudit;
+                if (string.Equals(enableAudit, "enable", StringComparison.InvariantCultureIgnoreCase)
+                    || string.Equals(enableAudit, bool.TrueString, StringComparison.InvariantCultureIgnoreCase))
+                {
+                    telemetry.StartIntervalMeasure();
+                    AuditUtility audit = new AuditUtility(
+                        _request.Project.RestoreMetadata.RestoreAuditProperties,
+                        _request.Project.FilePath,
+                        graphs,
+                        _request.DependencyProviders.VulnerabilityInfoProviders,
+                        _logger);
+                    await audit.CheckPackageVulnerabilitiesAsync(token);
+                    telemetry.EndIntervalMeasure(VulnerablePackageCheck);
+                }
+
                 telemetry.StartIntervalMeasure();
                 // Create assets file
                 LockFile assetsFile = BuildAssetsFile(
-                _request.ExistingLockFile,
-                _request.Project,
-                graphs,
-                localRepositories,
-                contextForProject);
+                    _request.ExistingLockFile,
+                    _request.Project,
+                    graphs,
+                    localRepositories,
+                    contextForProject);
                 telemetry.EndIntervalMeasure(GenerateAssetsFileDuration);
 
                 IList<CompatibilityCheckResult> checkResults = null;

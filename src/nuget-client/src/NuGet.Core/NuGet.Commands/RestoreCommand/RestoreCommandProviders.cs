@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using NuGet.Common;
 using NuGet.DependencyResolver;
 using NuGet.Protocol;
@@ -24,18 +25,44 @@ namespace NuGet.Commands
         /// <param name="localProviders">This is typically just a provider for the global packages folder.</param>
         /// <param name="remoteProviders">All dependency providers.</param>
         /// <param name="packageFileCache">Nuspec and package file cache.</param>
+        [Obsolete("Create via RestoreCommandProvidersCache")]
         public RestoreCommandProviders(
             NuGetv3LocalRepository globalPackages,
             IReadOnlyList<NuGetv3LocalRepository> fallbackPackageFolders,
             IReadOnlyList<IRemoteDependencyProvider> localProviders,
             IReadOnlyList<IRemoteDependencyProvider> remoteProviders,
             LocalPackageFileCache packageFileCache)
+            : this(globalPackages, fallbackPackageFolders, localProviders, remoteProviders, packageFileCache, CreateVulnerabilityInfoProviders(remoteProviders))
+        {
+        }
+
+        private static IReadOnlyList<IVulnerabilityInformationProvider> CreateVulnerabilityInfoProviders(IReadOnlyList<IRemoteDependencyProvider> remoteProviders)
+        {
+            List<IVulnerabilityInformationProvider> providers = new(remoteProviders.Count);
+            for (int i = 0; i < remoteProviders.Count; i++)
+            {
+                if (remoteProviders[i].SourceRepository != null)
+                {
+                    providers.Add(new VulnerabilityInformationProvider(remoteProviders[i].SourceRepository, NullLogger.Instance));
+                }
+            }
+            return providers;
+        }
+
+        internal RestoreCommandProviders(
+            NuGetv3LocalRepository globalPackages,
+            IReadOnlyList<NuGetv3LocalRepository> fallbackPackageFolders,
+            IReadOnlyList<IRemoteDependencyProvider> localProviders,
+            IReadOnlyList<IRemoteDependencyProvider> remoteProviders,
+            LocalPackageFileCache packageFileCache,
+            IReadOnlyList<IVulnerabilityInformationProvider> vulnerabilityInformationProviders)
         {
             GlobalPackages = globalPackages ?? throw new ArgumentNullException(nameof(globalPackages));
             LocalProviders = localProviders ?? throw new ArgumentNullException(nameof(localProviders));
             RemoteProviders = remoteProviders ?? throw new ArgumentNullException(nameof(remoteProviders));
             FallbackPackageFolders = fallbackPackageFolders ?? throw new ArgumentNullException(nameof(fallbackPackageFolders));
             PackageFileCache = packageFileCache ?? throw new ArgumentNullException(nameof(packageFileCache));
+            VulnerabilityInfoProviders = vulnerabilityInformationProviders;
         }
 
         /// <summary>
@@ -52,6 +79,8 @@ namespace NuGet.Commands
         public IReadOnlyList<IRemoteDependencyProvider> RemoteProviders { get; }
 
         public LocalPackageFileCache PackageFileCache { get; }
+
+        internal IReadOnlyList<IVulnerabilityInformationProvider> VulnerabilityInfoProviders { get; }
 
         public static RestoreCommandProviders Create(
             string globalFolderPath,
@@ -118,12 +147,20 @@ namespace NuGet.Commands
                 remoteProviders.Add(provider);
             }
 
+            var vulnerabilityInfoProviders = new List<IVulnerabilityInformationProvider>(remoteProviders.Count);
+            foreach (SourceRepository source in sources)
+            {
+                var provider = new VulnerabilityInformationProvider(source, log);
+                vulnerabilityInfoProviders.Add(provider);
+            }
+
             return new RestoreCommandProviders(
                 globalPackages,
                 fallbackPackageFolders,
                 localProviders,
                 remoteProviders,
-                packageFileCache);
+                packageFileCache,
+                vulnerabilityInfoProviders);
         }
     }
 }

@@ -55,5 +55,7 @@ namespace NuGet.ProjectManagement
         public const string CentralPackageVersionOverrideEnabled = nameof(CentralPackageVersionOverrideEnabled);
         public const string AssemblyName = nameof(AssemblyName);
         public const string CentralPackageTransitivePinningEnabled = nameof(CentralPackageTransitivePinningEnabled);
+        public const string NuGetAudit = nameof(NuGetAudit);
+        public const string NuGetAuditLevel = nameof(NuGetAuditLevel);
     }
 }

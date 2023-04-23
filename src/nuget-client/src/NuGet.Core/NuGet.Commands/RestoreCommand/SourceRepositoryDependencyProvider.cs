@@ -153,6 +153,8 @@ namespace NuGet.Commands
         /// <remarks>Optional. This will be <c>null</c> for project providers.</remarks>
         public PackageSource Source => _sourceRepository.PackageSource;
 
+        public SourceRepository SourceRepository => _sourceRepository;
+
         /// <summary>
         /// Asynchronously discovers all versions of a package from a source and selects the best match.
         /// </summary>

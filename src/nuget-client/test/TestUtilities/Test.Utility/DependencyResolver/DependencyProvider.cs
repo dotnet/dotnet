@@ -26,6 +26,8 @@ namespace Test.Utility
 
         public PackageSource Source => new PackageSource("Test");
 
+        public SourceRepository SourceRepository => throw new NotImplementedException();
+
         public Task<IPackageDownloader> GetPackageDownloaderAsync(
             PackageIdentity packageIdentity,
             SourceCacheContext cacheContext,

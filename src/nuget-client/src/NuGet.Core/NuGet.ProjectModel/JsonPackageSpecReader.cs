@@ -925,6 +925,7 @@ namespace NuGet.ProjectModel
             List<ProjectRestoreMetadataFrameworkInfo> targetFrameworks = null;
             var validateRuntimeAssets = false;
             WarningProperties warningProperties = null;
+            RestoreAuditProperties auditProperties = null;
 
             jsonReader.ReadObject(propertyName =>
             {
@@ -1039,6 +1040,29 @@ namespace NuGet.ProjectModel
                         restoreLockProperties = new RestoreLockProperties(restorePackagesWithLockFile, nuGetLockFilePath, restoreLockedMode);
                         break;
 
+                    case "restoreAuditProperties":
+                        string enableAudit = null, auditLevel = null;
+                        jsonReader.ReadObject(auditPropertyName =>
+                        {
+
+                            switch (auditPropertyName)
+                            {
+                                case "enableAudit":
+                                    enableAudit = jsonReader.ReadNextTokenAsString();
+                                    break;
+
+                                case "auditLevel":
+                                    auditLevel = jsonReader.ReadNextTokenAsString();
+                                    break;
+                            }
+                        });
+                        auditProperties = new RestoreAuditProperties()
+                        {
+                            EnableAudit = enableAudit,
+                            AuditLevel = auditLevel
+                        };
+                        break;
+
                     case "skipContentFileWrite":
                         skipContentFileWrite = ReadNextTokenAsBoolOrFalse(jsonReader, packageSpec.FilePath);
                         break;
@@ -1104,6 +1128,7 @@ namespace NuGet.ProjectModel
             msbuildMetadata.CentralPackageVersionsEnabled = centralPackageVersionsManagementEnabled;
             msbuildMetadata.CentralPackageVersionOverrideDisabled = centralPackageVersionOverrideDisabled;
             msbuildMetadata.CentralPackageTransitivePinningEnabled = CentralPackageTransitivePinningEnabled;
+            msbuildMetadata.RestoreAuditProperties = auditProperties;
 
             if (configFilePaths != null)
             {

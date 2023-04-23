@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -265,6 +266,9 @@ namespace NuGet.Commands
 
                     // Packages lock file properties
                     result.RestoreMetadata.RestoreLockProperties = GetRestoreLockProperites(specItem);
+
+                    // NuGet audit properties
+                    result.RestoreMetadata.RestoreAuditProperties = GetRestoreAuditProperties(specItem);
                 }
 
                 if (restoreType == ProjectStyle.PackagesConfig)
@@ -889,6 +893,23 @@ namespace NuGet.Commands
                 specItem.GetProperty("RestorePackagesWithLockFile"),
                 specItem.GetProperty("NuGetLockFilePath"),
                 IsPropertyTrue(specItem, "RestoreLockedMode"));
+        }
+
+        private static RestoreAuditProperties GetRestoreAuditProperties(IMSBuildItem specItem)
+        {
+            string enableAudit = specItem.GetProperty("NuGetAudit");
+            string auditLevel = specItem.GetProperty("NuGetAuditLevel");
+
+            if (enableAudit != null || auditLevel != null)
+            {
+                return new RestoreAuditProperties()
+                {
+                    EnableAudit = enableAudit,
+                    AuditLevel = auditLevel
+                };
+            }
+
+            return null;
         }
 
         /// <summary>

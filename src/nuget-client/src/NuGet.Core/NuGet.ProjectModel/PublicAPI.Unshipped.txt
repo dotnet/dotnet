@@ -1,1 +1,14 @@
 #nullable enable
+NuGet.ProjectModel.RestoreAuditProperties
+NuGet.ProjectModel.RestoreAuditProperties.AuditLevel.get -> string?
+NuGet.ProjectModel.RestoreAuditProperties.AuditLevel.set -> void
+NuGet.ProjectModel.RestoreAuditProperties.EnableAudit.get -> string?
+NuGet.ProjectModel.RestoreAuditProperties.EnableAudit.set -> void
+NuGet.ProjectModel.RestoreAuditProperties.Equals(NuGet.ProjectModel.RestoreAuditProperties? other) -> bool
+NuGet.ProjectModel.RestoreAuditProperties.RestoreAuditProperties() -> void
+override NuGet.ProjectModel.RestoreAuditProperties.Equals(object? obj) -> bool
+override NuGet.ProjectModel.RestoreAuditProperties.GetHashCode() -> int
+static NuGet.ProjectModel.RestoreAuditProperties.operator !=(NuGet.ProjectModel.RestoreAuditProperties? x, NuGet.ProjectModel.RestoreAuditProperties? y) -> bool
+static NuGet.ProjectModel.RestoreAuditProperties.operator ==(NuGet.ProjectModel.RestoreAuditProperties? x, NuGet.ProjectModel.RestoreAuditProperties? y) -> bool
+~NuGet.ProjectModel.ProjectRestoreMetadata.RestoreAuditProperties.get -> NuGet.ProjectModel.RestoreAuditProperties
+~NuGet.ProjectModel.ProjectRestoreMetadata.RestoreAuditProperties.set -> void

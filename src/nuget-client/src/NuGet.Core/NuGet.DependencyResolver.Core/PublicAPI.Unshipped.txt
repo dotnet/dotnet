@@ -1,1 +1,3 @@
 #nullable enable
+~NuGet.DependencyResolver.IRemoteDependencyProvider.SourceRepository.get -> NuGet.Protocol.Core.Types.SourceRepository
+~NuGet.DependencyResolver.LocalDependencyProvider.SourceRepository.get -> NuGet.Protocol.Core.Types.SourceRepository

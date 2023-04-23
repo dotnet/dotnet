@@ -475,6 +475,15 @@ namespace NuGet.Commands {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Invalid NuGetAuditLevel value &apos;{0}&apos;. Expected values: {1}.
+        /// </summary>
+        internal static string Error_InvalidNuGetAuditLevelValue {
+            get {
+                return ResourceManager.GetString("Error_InvalidNuGetAuditLevelValue", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Invalid project-package combination for {0} {1}. DotnetToolReference project style can only contain references of the DotnetTool type.
         /// </summary>
         internal static string Error_InvalidProjectPackageCombo {
@@ -876,6 +885,15 @@ namespace NuGet.Commands {
         internal static string Error_UnsupportedTrustTarget {
             get {
                 return ResourceManager.GetString("Error_UnsupportedTrustTarget", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Error occurred while getting package vulnerability data: {0}.
+        /// </summary>
+        internal static string Error_VulnerabilityDataFetch {
+            get {
+                return ResourceManager.GetString("Error_VulnerabilityDataFetch", resourceCulture);
             }
         }
         
@@ -2339,6 +2357,51 @@ namespace NuGet.Commands {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to low.
+        /// </summary>
+        internal static string Vulnerability_Severity_1 {
+            get {
+                return ResourceManager.GetString("Vulnerability_Severity_1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to moderate.
+        /// </summary>
+        internal static string Vulnerability_Severity_2 {
+            get {
+                return ResourceManager.GetString("Vulnerability_Severity_2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to high.
+        /// </summary>
+        internal static string Vulnerability_Severity_3 {
+            get {
+                return ResourceManager.GetString("Vulnerability_Severity_3", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to critical.
+        /// </summary>
+        internal static string Vulnerability_Severity_4 {
+            get {
+                return ResourceManager.GetString("Vulnerability_Severity_4", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to unknown.
+        /// </summary>
+        internal static string Vulnerability_Severity_unknown {
+            get {
+                return ResourceManager.GetString("Vulnerability_Severity_unknown", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to There are {0} package sources defined in your configuration. When using central package management, please map your package sources with package source mapping (https://aka.ms/nuget-package-source-mapping) or specify a single package source. The following sources are defined: {1}.
         /// </summary>
         internal static string Warning_CentralPackageVersions_MultipleSourcesWithoutPackageSourceMapping {
@@ -2399,6 +2462,15 @@ namespace NuGet.Commands {
         internal static string Warning_MinVersionNonInclusive {
             get {
                 return ResourceManager.GetString("Warning_MinVersionNonInclusive", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Package &apos;{0}&apos; {1} has a known {2} severity vulnerability, {3}..
+        /// </summary>
+        internal static string Warning_PackageWithKnownVulnerability {
+            get {
+                return ResourceManager.GetString("Warning_PackageWithKnownVulnerability", resourceCulture);
             }
         }
         

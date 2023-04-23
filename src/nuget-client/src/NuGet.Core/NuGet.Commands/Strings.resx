@@ -1041,4 +1041,41 @@ Non-HTTPS access will be removed in a future version. Consider migrating to 'HTT
     <value>Warning As Error: {0}</value>
     <comment>{0} is a warning message</comment>
   </data>
+  <data name="Vulnerability_Severity_1" xml:space="preserve">
+    <value>low</value>
+    <comment>As in "This package has a low severity vulnerability"</comment>
+  </data>
+  <data name="Vulnerability_Severity_2" xml:space="preserve">
+    <value>moderate</value>
+    <comment>As in "This package has a moderate severity vulnerability"</comment>
+  </data>
+  <data name="Vulnerability_Severity_3" xml:space="preserve">
+    <value>high</value>
+    <comment>As in "This package has a high severity vulnerability"</comment>
+  </data>
+  <data name="Vulnerability_Severity_4" xml:space="preserve">
+    <value>critical</value>
+    <comment>As in "This package has a critical severity vulnerability"</comment>
+  </data>
+  <data name="Vulnerability_Severity_unknown" xml:space="preserve">
+    <value>unknown</value>
+    <comment>As in "This package has a unknown severity vulnerability"</comment>
+  </data>
+  <data name="Warning_PackageWithKnownVulnerability" xml:space="preserve">
+    <value>Package '{0}' {1} has a known {2} severity vulnerability, {3}.</value>
+    <comment>{0} - package id
+{1} - package version
+{2} - severity, for example low, moderate, high, or critical
+{3} - URL for more info on the known vulnerability</comment>
+  </data>
+  <data name="Error_InvalidNuGetAuditLevelValue" xml:space="preserve">
+    <value>Invalid NuGetAuditLevel value '{0}'. Expected values: {1}</value>
+    <comment>Don't translate 'NuGetAuditLevel'
+{0} - is the value from the customer's project file
+{1} is the list of valid values "low, moderate, high, critical" (these should not be translated either)</comment>
+  </data>
+  <data name="Error_VulnerabilityDataFetch" xml:space="preserve">
+    <value>Error occurred while getting package vulnerability data: {0}</value>
+    <comment>{0} is an error message</comment>
+  </data>
 </root>

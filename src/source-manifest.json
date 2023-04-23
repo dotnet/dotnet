@@ -7,10 +7,10 @@
       "commitSha": "19edd2a515c37b90e90ceab9ce842847ce75b460"
     },
     {
-      "packageVersion": "8.0.0-preview.4.23221.3",
+      "packageVersion": "8.0.0-preview.4.23221.9",
       "path": "aspnetcore",
       "remoteUri": "https://github.com/dotnet/aspnetcore",
-      "commitSha": "e795ec77ab3737b54c8ab3e92f87a02d29eaeabb"
+      "commitSha": "d07f377b6c4c72f44a0eb2810c8abf1ae3fabd40"
     },
     {
       "packageVersion": "0.11.4-alpha.23178.1",
@@ -43,10 +43,10 @@
       "commitSha": "2327f6b63d887979222f5bcf15f3322f800b9695"
     },
     {
-      "packageVersion": "8.0.422102",
+      "packageVersion": "8.0.422201",
       "path": "format",
       "remoteUri": "https://github.com/dotnet/format",
-      "commitSha": "a597ee7cbb2d9185a6fc4ea9b18ed13635457508"
+      "commitSha": "549ca5e4e6e2a7f41fa2ceea9452378f3b8a6ba1"
     },
     {
       "packageVersion": "7.0.400-beta.23221.1",
@@ -58,7 +58,7 @@
       "packageVersion": "8.0.100",
       "path": "installer",
       "remoteUri": "https://github.com/dotnet/installer",
-      "commitSha": "2a13403f8574dee3e911b8076a7195899a8107f2"
+      "commitSha": "892410186fced853c8e258571b7d8893c695265c"
     },
     {
       "packageVersion": "17.7.0-preview-23217-02",
@@ -67,10 +67,10 @@
       "commitSha": "2cbc8b6aef648cf21c6a68a0dab7fe09a614e475"
     },
     {
-      "packageVersion": "6.7.0-preview.1.17",
+      "packageVersion": "6.7.0-preview.1.18",
       "path": "nuget-client",
       "remoteUri": "https://github.com/nuget/nuget.client",
-      "commitSha": "28e0a19799b91f03098fc3a9cf5b922b3b0bfa95"
+      "commitSha": "63edda646848553467639abe6bbade5ebc5dec61"
     },
     {
       "packageVersion": "7.0.0-preview.23220.3",
@@ -79,16 +79,16 @@
       "commitSha": "105a50d1a4d64236e8a7a8a1d898fa261914efe7"
     },
     {
-      "packageVersion": "4.7.0-1.23220.5",
+      "packageVersion": "4.7.0-1.23222.1",
       "path": "roslyn",
       "remoteUri": "https://github.com/dotnet/roslyn",
-      "commitSha": "281de15d8e915793688eeac757aa4b3f08596d08"
+      "commitSha": "ef625f3b960594fcb3f902af88ad7c90df656516"
     },
     {
-      "packageVersion": "3.3.5-beta1.23221.1",
+      "packageVersion": "3.3.5-beta1.23222.2",
       "path": "roslyn-analyzers",
       "remoteUri": "https://github.com/dotnet/roslyn-analyzers",
-      "commitSha": "19fb5cab215d2fe5d6c895d5f26c61dc1bdc0543"
+      "commitSha": "c66d173687ba49137cef72fbba2ddc3d51a676db"
     },
     {
       "packageVersion": "8.0.0-preview.4.23221.1",
@@ -97,10 +97,10 @@
       "commitSha": "ab2b80d06dd4d997df5ffa72a3c4a99cb36ccbff"
     },
     {
-      "packageVersion": "8.0.100-preview.4.23221.12",
+      "packageVersion": "8.0.100-preview.4.23223.2",
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "7fdf9a60d6886def2601640e7baca9c3ee62af00"
+      "commitSha": "cef048e2b3c870b82b10c1ee4fd602e7af2744e3"
     },
     {
       "packageVersion": "8.0.0-alpha.1.23214.1",
@@ -127,10 +127,10 @@
       "commitSha": "0c29b7109c054bdc578e917515ae7e8635b9cb9d"
     },
     {
-      "packageVersion": "8.0.100-preview.4.23221.2",
+      "packageVersion": "8.0.100-preview.4.23223.1",
       "path": "templating",
       "remoteUri": "https://github.com/dotnet/templating",
-      "commitSha": "dbabc5ac3ab4d72023facc3728df83233038adb4"
+      "commitSha": "b0262eb09feadee141797a1d922fdc2ab3933550"
     },
     {
       "packageVersion": "1.1.0-rc.23213.1",
@@ -161,7 +161,7 @@
     {
       "path": "aspnetcore/src/submodules/googletest",
       "remoteUri": "https://github.com/google/googletest",
-      "commitSha": "12a5852e451baabc79c63a86c634912c563d57bc"
+      "commitSha": "a5308bb992c049b16b763f8910da70c208c5cede"
     },
     {
       "path": "aspnetcore/src/submodules/MessagePack-CSharp",
@@ -171,7 +171,7 @@
     {
       "path": "aspnetcore/src/submodules/spa-templates",
       "remoteUri": "https://github.com/dotnet/spa-templates.git",
-      "commitSha": "3c41fe26f7c51fc85fbc97b92871765467dd533c"
+      "commitSha": "d42267caa7c3cd48c4212a7fbbf30b0287965701"
     },
     {
       "path": "nuget-client/submodules/NuGet.Build.Localization",
