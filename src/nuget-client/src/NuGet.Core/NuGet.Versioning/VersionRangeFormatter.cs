@@ -48,24 +48,30 @@ namespace NuGet.Versioning
             }
             else
             {
-                var sb = new StringBuilder(format.Length);
-
-                for (var i = 0; i < format.Length; i++)
+                var sb = StringBuilderPool.Shared.Rent(format.Length);
+                try
                 {
-                    var s = Format(format[i], range);
+                    for (var i = 0; i < format.Length; i++)
+                    {
+                        var s = Format(format[i], range);
 
-                    if (s == null)
-                    {
-                        sb.Append(format[i]);
+                        if (s == null)
+                        {
+                            sb.Append(format[i]);
+                        }
+                        else
+                        {
+                            sb.Append(s);
+                        }
                     }
-                    else
-                    {
-                        sb.Append(s);
-                    }
+
+                    string formatted = sb.ToString();
+                    return formatted;
                 }
-
-                string formatted = sb.ToString();
-                return formatted;
+                finally
+                {
+                    StringBuilderPool.Shared.Return(sb);
+                }
             }
         }
 
