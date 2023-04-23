@@ -1,8 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project>
   <PropertyGroup>
-    <arcadeGitCommitHash>fc43dcf6508c135e6743889311d86992da080f30</arcadeGitCommitHash>
-    <arcadeOutputPackageVersion>8.0.0-beta.23221.8</arcadeOutputPackageVersion>
+    <arcadeGitCommitHash>19edd2a515c37b90e90ceab9ce842847ce75b460</arcadeGitCommitHash>
+    <arcadeOutputPackageVersion>8.0.0-beta.23222.1</arcadeOutputPackageVersion>
     <aspnetcoreGitCommitHash>e795ec77ab3737b54c8ab3e92f87a02d29eaeabb</aspnetcoreGitCommitHash>
     <aspnetcoreOutputPackageVersion>8.0.0-preview.4.23221.3</aspnetcoreOutputPackageVersion>
     <cecilGitCommitHash>9a7551fa7ba8218affbc1148eabc4b5c9f4e1151</cecilGitCommitHash>
@@ -19,7 +19,7 @@
     <formatOutputPackageVersion>8.0.422102</formatOutputPackageVersion>
     <fsharpGitCommitHash>858e2df9631a385cbddef62eeb424f9b3071b031</fsharpGitCommitHash>
     <fsharpOutputPackageVersion>7.0.400-beta.23221.1</fsharpOutputPackageVersion>
-    <installerGitCommitHash>3fbdbaeb09fb6645892ab75976ab208199ab3cce</installerGitCommitHash>
+    <installerGitCommitHash>2a13403f8574dee3e911b8076a7195899a8107f2</installerGitCommitHash>
     <installerOutputPackageVersion>8.0.100</installerOutputPackageVersion>
     <msbuildGitCommitHash>2cbc8b6aef648cf21c6a68a0dab7fe09a614e475</msbuildGitCommitHash>
     <msbuildOutputPackageVersion>17.7.0-preview-23217-02</msbuildOutputPackageVersion>
