@@ -99,8 +99,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
                     TargetChannelConfig targetChannelConfig = PublishingConstants.ChannelInfos
                         .Where(ci =>
                             ci.Id == targetChannelId &&
-                            (ci.PublishingInfraVersion == PublishingInfraVersion.All ||
-                             ci.PublishingInfraVersion == PublishingInfraVersion.Next))
+                            ci.PublishingInfraVersion == PublishingInfraVersion.Latest)
                         .FirstOrDefault();
 
                     // Invalid channel ID was supplied

@@ -46,50 +46,9 @@
     <_MicrosoftDotNetBuildTasksFeedTaskDir Condition="'$(MSBuildRuntimeType)' == 'Core'">$(MSBuildThisFileDirectory)../tools/net8.0/</_MicrosoftDotNetBuildTasksFeedTaskDir>
   </PropertyGroup>
 
-  <UsingTask TaskName="PushToBlobFeed" AssemblyFile="$(_MicrosoftDotNetBuildTasksFeedTaskDir)Microsoft.DotNet.Build.Tasks.Feed.dll"/>
   <UsingTask TaskName="PushToAzureDevOpsArtifacts" AssemblyFile="$(_MicrosoftDotNetBuildTasksFeedTaskDir)Microsoft.DotNet.Build.Tasks.Feed.dll"/>
   <UsingTask TaskName="PublishArtifactsInManifest" AssemblyFile="$(_MicrosoftDotNetBuildTasksFeedTaskDir)Microsoft.DotNet.Build.Tasks.Feed.dll"/>
   <UsingTask TaskName="CreateAzureDevOpsFeed" AssemblyFile="$(_MicrosoftDotNetBuildTasksFeedTaskDir)Microsoft.DotNet.Build.Tasks.Feed.dll" />
   <UsingTask TaskName="PublishSignedAssets" AssemblyFile="$(_MicrosoftDotNetBuildTasksFeedTaskDir)Microsoft.DotNet.Build.Tasks.Feed.dll" />
-  
-  <PropertyGroup>
-    <PushToBlobFeed_Overwrite Condition="'$(PushToBlobFeed_Overwrite)' == ''">false</PushToBlobFeed_Overwrite>
-    <PushToBlobFeed_MaxClients Condition="'$(PushToBlobFeed_MaxClients)' == ''">8</PushToBlobFeed_MaxClients>
-    <FileRelativePathBase Condition="'$(FileRelativePathBase)' == ''">assets</FileRelativePathBase>
-    <FileRelativePathBase Condition="!HasTrailingSlash('$(FileRelativePathBase)')">$(FileRelativePathBase)/</FileRelativePathBase>
-    <ManifestName Condition="'$(ManifestName)' == ''">$(GitHubRepositoryName)</ManifestName>
-  </PropertyGroup>
-
-  <Target Name="PublishFilesToBlobFeed">
-    <Error Text="The ExpectedFeedUrl property wasn't supplied."
-          Condition="'$(ExpectedFeedUrl)' == ''" />
-    <Error Text="The AccountKey property wasn't supplied."
-          Condition="'$(AccountKey)' == ''" />
-
-    <ItemGroup>
-      <_ItemsToPush Remove="@(_ItemsToPush)" />
-      <_ItemsToPush Condition="'$(FilesToPublishPattern)' != ''" Include="$(FilesToPublishPattern)" />
-      <_ItemsToPush Include="@(FilesToPublish)" />
-      <_ItemsToPush>
-        <RelativeBlobPath Condition="'%(_ItemsToPush.RelativeBlobPath)' == ''">$(FileRelativePathBase)$([System.String]::Copy('%(RecursiveDir)%(Filename)%(Extension)').Replace('\' ,'/'))</RelativeBlobPath>
-      </_ItemsToPush>
-    </ItemGroup>
-
-    <Error Condition="'@(_ItemsToPush)' == ''" Text="No files to push." />
-
-    <PushToBlobFeed ExpectedFeedUrl="$(ExpectedFeedUrl)"
-                    AccountKey="$(AccountKey)"
-                    ItemsToPush="@(_ItemsToPush)"
-                    PublishFlatContainer="true"
-                    Overwrite="$(PushToBlobFeed_Overwrite)"
-                    MaxClients="$(PushToBlobFeed_MaxClients)"
-                    ManifestBuildId="$(ManifestBuildId)"
-                    ManifestBranch="$(ManifestBranch)"
-                    ManifestCommit="$(ManifestCommit)"
-                    ManifestBuildData="$(ManifestBuildData)"
-                    ManifestRepoUri="$(ManifestRepoUri)"
-                    AssetManifestPath="$(AssetManifestFilePath)" />
-
-  </Target>
 
 </Project>

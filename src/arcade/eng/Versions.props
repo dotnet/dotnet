@@ -20,7 +20,7 @@
     <AzureDataTablesVersion>12.5.0</AzureDataTablesVersion>
     <FluentAssertionsVersion>5.10.3</FluentAssertionsVersion>
     <NETStandardLibraryVersion>1.6.1</NETStandardLibraryVersion>
-    <MicrosoftApplicationInsightsVersion>2.20.0</MicrosoftApplicationInsightsVersion>
+    <MicrosoftApplicationInsightsVersion>2.21.0</MicrosoftApplicationInsightsVersion>
     <MicrosoftAzureServicesAppAuthenticationVersion>1.3.1</MicrosoftAzureServicesAppAuthenticationVersion>
     <MicrosoftDataAnalysisVersion>0.1.0</MicrosoftDataAnalysisVersion>
     <MicrosoftDataODataVersion>5.8.4</MicrosoftDataODataVersion>
@@ -90,6 +90,6 @@
     <MicrosoftSymbolUploaderVersion>2.0.0-preview.1.21526.15</MicrosoftSymbolUploaderVersion>
     <MicrosoftNetSdkWorkloadManifestReaderVersion>8.0.100-preview.3.23178.3</MicrosoftNetSdkWorkloadManifestReaderVersion>
     <MicrosoftDeploymentDotNetReleasesVersion>1.0.0-preview6.1.23159.4</MicrosoftDeploymentDotNetReleasesVersion>
-    <MicrosoftTemplateEngineAuthoringTasksVersion>8.0.100-preview.4.23180.5</MicrosoftTemplateEngineAuthoringTasksVersion>
+    <MicrosoftTemplateEngineAuthoringTasksVersion>8.0.100-preview.4.23218.1</MicrosoftTemplateEngineAuthoringTasksVersion>
   </PropertyGroup>
 </Project>

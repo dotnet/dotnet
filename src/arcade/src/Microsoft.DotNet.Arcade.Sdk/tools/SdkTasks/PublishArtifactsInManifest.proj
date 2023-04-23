@@ -75,9 +75,6 @@
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
     <NETCORE_ENGINEERING_TELEMETRY>Publish</NETCORE_ENGINEERING_TELEMETRY>
-
-    <!-- Default publishing infra target is 3. -->
-    <PublishingInfraVersion Condition="'$(PublishingInfraVersion)' == ''">3</PublishingInfraVersion>
   </PropertyGroup>
 
   <Target Name="Execute">

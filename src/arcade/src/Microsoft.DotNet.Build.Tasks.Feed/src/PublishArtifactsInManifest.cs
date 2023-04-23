@@ -284,16 +284,13 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
 
             BuildModel buildModel = _buildModelFactory.ManifestFileToModel(manifestFullPath);
             
-            if (buildModel.Identity.PublishingVersion == PublishingInfraVersion.Legacy)
+            if (buildModel.Identity.PublishingVersion == PublishingInfraVersion.UnsupportedV1 || 
+                     buildModel.Identity.PublishingVersion == PublishingInfraVersion.UnsupportedV2)
             {
                 Log.LogError("This task is not able to handle legacy manifests.");
                 return null;
             }
             else if (buildModel.Identity.PublishingVersion == PublishingInfraVersion.Latest)
-            {
-                return ConstructPublishingV2Task(buildModel);
-            }
-            else if (buildModel.Identity.PublishingVersion == PublishingInfraVersion.Next)
             {
                 return ConstructPublishingV3Task(buildModel);
             }
@@ -302,12 +299,6 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
                 Log.LogError($"The manifest version '{buildModel.Identity.PublishingVersion}' is not recognized by the publishing task.");
                 return null;
             }
-        }
-
-        internal PublishArtifactsInManifestBase ConstructPublishingV2Task(BuildModel buildModel)
-        {
-            Log.LogError("V2 Publishing is no longer supported.");
-            return null;
         }
 
         internal PublishArtifactsInManifestBase ConstructPublishingV3Task(BuildModel buildModel)
