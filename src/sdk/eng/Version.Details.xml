@@ -65,9 +65,9 @@
       <Sha>858e2df9631a385cbddef62eeb424f9b3071b031</Sha>
       <SourceBuild RepoName="fsharp" ManagedOnly="true" />
     </Dependency>
-    <Dependency Name="dotnet-format" Version="8.0.422201">
+    <Dependency Name="dotnet-format" Version="8.0.422301">
       <Uri>https://github.com/dotnet/format</Uri>
-      <Sha>549ca5e4e6e2a7f41fa2ceea9452378f3b8a6ba1</Sha>
+      <Sha>bd76fb2d9c7d4eebd19831d114b0f6bb47b76ba1</Sha>
       <SourceBuild RepoName="format" ManagedOnly="true" />
     </Dependency>
     <Dependency Name="Microsoft.Net.Compilers.Toolset" Version="4.7.0-1.23222.1">
@@ -107,9 +107,9 @@
       <Uri>https://github.com/dotnet/aspnetcore</Uri>
       <Sha>d07f377b6c4c72f44a0eb2810c8abf1ae3fabd40</Sha>
     </Dependency>
-    <Dependency Name="NuGet.Build.Tasks" Version="6.7.0-preview.1.18">
+    <Dependency Name="NuGet.Build.Tasks" Version="6.7.0-preview.1.19">
       <Uri>https://github.com/nuget/nuget.client</Uri>
-      <Sha>63edda646848553467639abe6bbade5ebc5dec61</Sha>
+      <Sha>87ce6f59e9cf4f5a32d7ba16f537b6b791d9fcc6</Sha>
     </Dependency>
     <Dependency Name="Microsoft.NET.Test.Sdk" Version="17.7.0-preview.23219.2">
       <Uri>https://github.com/microsoft/vstest</Uri>
@@ -140,21 +140,21 @@
       <Uri>https://github.com/dotnet/runtime</Uri>
       <Sha>ab2b80d06dd4d997df5ffa72a3c4a99cb36ccbff</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.WindowsDesktop.App.Runtime.win-x64" Version="8.0.0-preview.4.23222.1">
+    <Dependency Name="Microsoft.WindowsDesktop.App.Runtime.win-x64" Version="8.0.0-preview.4.23223.1">
       <Uri>https://github.com/dotnet/windowsdesktop</Uri>
-      <Sha>a42f62ef364123627d2084b9d1c27b28f373c3b4</Sha>
+      <Sha>ad6fe808b66220e506b66dea6407047efad51828</Sha>
     </Dependency>
-    <Dependency Name="VS.Redist.Common.WindowsDesktop.SharedFramework.x64.8.0" Version="8.0.0-preview.4.23222.1">
+    <Dependency Name="VS.Redist.Common.WindowsDesktop.SharedFramework.x64.8.0" Version="8.0.0-preview.4.23223.1">
       <Uri>https://github.com/dotnet/windowsdesktop</Uri>
-      <Sha>a42f62ef364123627d2084b9d1c27b28f373c3b4</Sha>
+      <Sha>ad6fe808b66220e506b66dea6407047efad51828</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.WindowsDesktop.App.Ref" Version="8.0.0-preview.4.23222.1">
+    <Dependency Name="Microsoft.WindowsDesktop.App.Ref" Version="8.0.0-preview.4.23223.1">
       <Uri>https://github.com/dotnet/windowsdesktop</Uri>
-      <Sha>a42f62ef364123627d2084b9d1c27b28f373c3b4</Sha>
+      <Sha>ad6fe808b66220e506b66dea6407047efad51828</Sha>
     </Dependency>
-    <Dependency Name="VS.Redist.Common.WindowsDesktop.TargetingPack.x64.8.0" Version="8.0.0-preview.4.23222.1">
+    <Dependency Name="VS.Redist.Common.WindowsDesktop.TargetingPack.x64.8.0" Version="8.0.0-preview.4.23223.1">
       <Uri>https://github.com/dotnet/windowsdesktop</Uri>
-      <Sha>a42f62ef364123627d2084b9d1c27b28f373c3b4</Sha>
+      <Sha>ad6fe808b66220e506b66dea6407047efad51828</Sha>
     </Dependency>
     <Dependency Name="Microsoft.NET.Sdk.WindowsDesktop" Version="8.0.0-preview.5.23221.2" CoherentParentDependency="Microsoft.WindowsDesktop.App.Ref">
       <Uri>https://github.com/dotnet/wpf</Uri>
