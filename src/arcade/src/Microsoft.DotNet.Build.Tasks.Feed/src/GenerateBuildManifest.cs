@@ -113,7 +113,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
         {
             try
             {
-                PublishingInfraVersion targetPublishingVersion = PublishingInfraVersion.Legacy;
+                PublishingInfraVersion targetPublishingVersion = PublishingInfraVersion.Latest;
 
                 if (!string.IsNullOrEmpty(PublishingVersion)) 
                 {

@@ -72,7 +72,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Tests
             Action act = () =>
                 _buildModelFactory.CreateModelFromItems(null, null,
                 null, null, null, null, _testAzdoBuildId, null, _testAzdoRepoUri, _testBuildBranch, _testBuildCommit, false,
-                VersionTools.BuildManifest.Model.PublishingInfraVersion.All,
+                VersionTools.BuildManifest.Model.PublishingInfraVersion.Latest,
                 true);
             act.Should().Throw<ArgumentNullException>();
         }
@@ -127,7 +127,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Tests
 
             var model = _buildModelFactory.CreateModelFromItems(artifacts, null,
                 null, null, null, null, _testAzdoBuildId, _defaultManifestBuildData, _testAzdoRepoUri, _testBuildBranch, _testBuildCommit, false,
-                VersionTools.BuildManifest.Model.PublishingInfraVersion.All,
+                VersionTools.BuildManifest.Model.PublishingInfraVersion.Latest,
                 true);
 
             _taskLoggingHelper.HasLoggedErrors.Should().BeFalse();
@@ -190,7 +190,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Tests
 
             var model = _buildModelFactory.CreateModelFromItems(artifacts, null,
                 null, null, null, null, _testAzdoBuildId, _defaultManifestBuildData, _testAzdoRepoUri, _testBuildBranch, _testBuildCommit, false,
-                VersionTools.BuildManifest.Model.PublishingInfraVersion.All,
+                VersionTools.BuildManifest.Model.PublishingInfraVersion.Latest,
                 true);
 
             model.Artifacts.Blobs.Should().BeEmpty();
@@ -229,7 +229,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Tests
 
             _buildModelFactory.CreateModelFromItems(artifacts, null,
                 null, null, null, null, _testAzdoBuildId, _defaultManifestBuildData, _testAzdoRepoUri, _testBuildBranch, _testBuildCommit, false,
-                VersionTools.BuildManifest.Model.PublishingInfraVersion.All,
+                VersionTools.BuildManifest.Model.PublishingInfraVersion.Latest,
                 true);
 
             _taskLoggingHelper.HasLoggedErrors.Should().BeTrue();
@@ -288,7 +288,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Tests
 
             var model = _buildModelFactory.CreateModelFromItems(artifacts, null,
                 null, null, null, null, _testAzdoBuildId, manifestBuildData, _testAzdoRepoUri, _testBuildBranch, _testBuildCommit, false,
-                VersionTools.BuildManifest.Model.PublishingInfraVersion.All,
+                VersionTools.BuildManifest.Model.PublishingInfraVersion.Latest,
                 true);
 
             // Should have logged an error that an initial location was not present.
@@ -410,7 +410,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Tests
                 var modelFromItems = _buildModelFactory.CreateModelFromItems(artifacts, itemsToSign,
                     strongNameSignInfo, fileSignInfo, fileExtensionSignInfo, certificatesSignInfo, _testAzdoBuildId,
                     _defaultManifestBuildData, _testAzdoRepoUri, _testBuildBranch, _testBuildCommit, true,
-                    VersionTools.BuildManifest.Model.PublishingInfraVersion.Next,
+                    VersionTools.BuildManifest.Model.PublishingInfraVersion.Latest,
                     false);
 
                 _buildModelFactory.CreateBuildManifest(
@@ -437,7 +437,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Tests
                 modelFromItems.Identity.Name.Should().Be(_testAzdoRepoUri);
                 modelFromItems.Identity.BuildId.Should().Be(_testAzdoBuildId);
                 modelFromItems.Identity.Commit.Should().Be(_testBuildCommit);
-                modelFromItems.Identity.PublishingVersion.Should().Be(VersionTools.BuildManifest.Model.PublishingInfraVersion.Next);
+                modelFromItems.Identity.PublishingVersion.Should().Be(VersionTools.BuildManifest.Model.PublishingInfraVersion.Latest);
                 modelFromItems.Identity.IsReleaseOnlyPackageVersion.Should().BeFalse();
                 modelFromItems.Identity.IsStable.Should().BeTrue();
                 modelFromFile.Artifacts.Blobs.Should().SatisfyRespectively(
@@ -563,7 +563,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Tests
 
             var model = _buildModelFactory.CreateModelFromItems(artifacts, null,
                 null, null, null, null, _testAzdoBuildId, _defaultManifestBuildData, _testAzdoRepoUri, _testBuildBranch, _testBuildCommit, false,
-                VersionTools.BuildManifest.Model.PublishingInfraVersion.All,
+                VersionTools.BuildManifest.Model.PublishingInfraVersion.Latest,
                 true);
 
             _taskLoggingHelper.HasLoggedErrors.Should().BeFalse();
@@ -639,7 +639,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Tests
             var model = _buildModelFactory.CreateModelFromItems(artifacts, itemsToSign,
                 strongNameSignInfo, fileSignInfo, fileExtensionSignInfo, certificatesSignInfo,
                 _testAzdoBuildId, _defaultManifestBuildData, _testAzdoRepoUri, _testBuildBranch, _testBuildCommit, false,
-                VersionTools.BuildManifest.Model.PublishingInfraVersion.All,
+                VersionTools.BuildManifest.Model.PublishingInfraVersion.Latest,
                 true);
 
             _taskLoggingHelper.HasLoggedErrors.Should().BeFalse();
@@ -714,7 +714,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Tests
             var model = _buildModelFactory.CreateModelFromItems(artifacts, itemsToSign,
                 null, null, null, null,
                 _testAzdoBuildId, _defaultManifestBuildData, _testAzdoRepoUri, _testBuildBranch, _testBuildCommit, false,
-                VersionTools.BuildManifest.Model.PublishingInfraVersion.All,
+                VersionTools.BuildManifest.Model.PublishingInfraVersion.Latest,
                 true);
 
             _taskLoggingHelper.HasLoggedErrors.Should().BeTrue();

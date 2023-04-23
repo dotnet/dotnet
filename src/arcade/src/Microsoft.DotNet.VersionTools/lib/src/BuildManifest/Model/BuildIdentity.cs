@@ -10,14 +10,9 @@ namespace Microsoft.DotNet.VersionTools.BuildManifest.Model
 {
     public enum PublishingInfraVersion
     {
-        /// <summary>
-        ///   This flag is usually used when we are creating a configuration
-        ///   that is applicable to all versions of the infra.
-        /// </summary>
-        All = 0,
-        Legacy = 1,
-        Latest = 2,
-        Next = 3
+        UnsupportedV1 = 1,
+        UnsupportedV2 = 2,
+        Latest = 3
     }
 
     public class BuildIdentity
@@ -126,7 +121,7 @@ namespace Microsoft.DotNet.VersionTools.BuildManifest.Model
                 
                 if (string.IsNullOrEmpty(value))
                 {
-                    return PublishingInfraVersion.Legacy;
+                    return PublishingInfraVersion.UnsupportedV1;
                 }
                 else
                 {
