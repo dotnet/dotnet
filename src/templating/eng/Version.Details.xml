@@ -11,13 +11,13 @@
       <Sha>453ab23d599ac904ded70bd9194959a76b05702f</Sha>
       <SourceBuild RepoName="source-build-reference-packages" ManagedOnly="true" />
     </Dependency>
-    <Dependency Name="Microsoft.NETCore.App.Runtime.win-x64" Version="8.0.0-preview.4.23218.4">
+    <Dependency Name="Microsoft.NETCore.App.Runtime.win-x64" Version="8.0.0-preview.4.23221.1">
       <Uri>https://github.com/dotnet/runtime</Uri>
-      <Sha>90d0d5ce4e4fdf17209d6a4e4a96d62865e2b88f</Sha>
+      <Sha>ab2b80d06dd4d997df5ffa72a3c4a99cb36ccbff</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.NETCore.App.Ref" Version="8.0.0-preview.4.23218.4">
+    <Dependency Name="Microsoft.NETCore.App.Ref" Version="8.0.0-preview.4.23221.1">
       <Uri>https://github.com/dotnet/runtime</Uri>
-      <Sha>90d0d5ce4e4fdf17209d6a4e4a96d62865e2b88f</Sha>
+      <Sha>ab2b80d06dd4d997df5ffa72a3c4a99cb36ccbff</Sha>
     </Dependency>
     <Dependency Name="System.CommandLine" Version="2.0.0-beta4.23165.3">
       <Uri>https://github.com/dotnet/command-line-api</Uri>
@@ -25,9 +25,9 @@
     </Dependency>
   </ProductDependencies>
   <ToolsetDependencies>
-    <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="8.0.0-beta.23221.8">
+    <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="8.0.0-beta.23224.1">
       <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>fc43dcf6508c135e6743889311d86992da080f30</Sha>
+      <Sha>d14c4adbdbb8c7ee060f9e333883fc9890939b66</Sha>
       <SourceBuild RepoName="arcade" ManagedOnly="true" />
     </Dependency>
     <Dependency Name="Microsoft.DotNet.XliffTasks" Version="1.0.0-beta.23218.1" CoherentParentDependency="Microsoft.DotNet.Arcade.Sdk">
