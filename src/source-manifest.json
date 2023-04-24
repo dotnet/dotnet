@@ -13,10 +13,10 @@
       "commitSha": "b8646ba5d46058ac28da434e7f9393c505e85601"
     },
     {
-      "packageVersion": "0.11.4-alpha.23178.1",
+      "packageVersion": "0.11.4-alpha.23218.2",
       "path": "cecil",
       "remoteUri": "https://github.com/dotnet/cecil",
-      "commitSha": "9a7551fa7ba8218affbc1148eabc4b5c9f4e1151"
+      "commitSha": "80d3f38fc59c351fa1942209e66f54a6fc912deb"
     },
     {
       "packageVersion": "0.1.356401",
@@ -37,10 +37,10 @@
       "commitSha": "5ce78f66d89ea529e459abddb129ab36cb5bd936"
     },
     {
-      "packageVersion": "8.0.0-preview.4.23218.1",
+      "packageVersion": "8.0.0-preview.4.23219.1",
       "path": "emsdk",
       "remoteUri": "https://github.com/dotnet/emsdk",
-      "commitSha": "2327f6b63d887979222f5bcf15f3322f800b9695"
+      "commitSha": "31a4a877360713c4345ce48662e5baeeadfda898"
     },
     {
       "packageVersion": "8.0.422401",
@@ -58,7 +58,7 @@
       "packageVersion": "8.0.100",
       "path": "installer",
       "remoteUri": "https://github.com/dotnet/installer",
-      "commitSha": "f876fb51a4fb6bc4b8db13d05e88e846ae1dad21"
+      "commitSha": "c0ccb5cbf0e72edab89e4d08181917446239f33c"
     },
     {
       "packageVersion": "17.7.0-preview-23221-02",
@@ -91,16 +91,16 @@
       "commitSha": "3e168a5398d6220a3d6dd6eff080c5ed4eeee876"
     },
     {
-      "packageVersion": "8.0.0-preview.4.23221.1",
+      "packageVersion": "8.0.0-preview.4.23224.2",
       "path": "runtime",
       "remoteUri": "https://github.com/dotnet/runtime",
-      "commitSha": "ab2b80d06dd4d997df5ffa72a3c4a99cb36ccbff"
+      "commitSha": "a66405f0cb49fec9cbe001fcec8927372cd4a58e"
     },
     {
-      "packageVersion": "8.0.100-preview.4.23224.8",
+      "packageVersion": "8.0.100-preview.4.23224.9",
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "7643e12e6d6a4a4649151f78f9d6919c6e33807e"
+      "commitSha": "fb1ad10c5f42307a9afeaf5dda520c9085d1131b"
     },
     {
       "packageVersion": "8.0.0-alpha.1.23221.1",
