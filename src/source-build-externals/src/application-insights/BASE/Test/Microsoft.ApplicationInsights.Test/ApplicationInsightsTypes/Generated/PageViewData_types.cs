@@ -28,27 +28,27 @@ namespace AI
 {
     using System.Collections.Generic;
 
-    [global::Bond.Attribute("Description", "An instance of PageView represents a generic action on a page like a button click. It is also the base type for PageView.")]
-    [global::Bond.Attribute("Alias", "PageviewData;PageEventData")]
-    [global::Bond.Schema]
+    // [global::Bond.Attribute("Description", "An instance of PageView represents a generic action on a page like a button click. It is also the base type for PageView.")]
+    // [global::Bond.Attribute("Alias", "PageviewData;PageEventData")]
+    // [global::Bond.Schema]
     [System.CodeDom.Compiler.GeneratedCode("gbc", "0.10.1.0")]
     public partial class PageViewData
         : EventData
     {
-        [global::Bond.Attribute("MaxStringLength", "2048")]
-        [global::Bond.Attribute("Description", "Request URL with all query string parameters")]
-        [global::Bond.Id(10)]
+        // [global::Bond.Attribute("MaxStringLength", "2048")]
+        // [global::Bond.Attribute("Description", "Request URL with all query string parameters")]
+        // [global::Bond.Id(10)]
         public string url { get; set; }
 
-        [global::Bond.Attribute("CSType", "TimeSpan")]
-        [global::Bond.Attribute("Description", "Request duration in format: DD.HH:MM:SS.MMMMMM. For a page view (PageViewData), this is the duration. For a page view with performance information (PageViewPerfData), this is the page load time. Must be less than 1000 days.")]
-        [global::Bond.Id(20)]
+        // [global::Bond.Attribute("CSType", "TimeSpan")]
+        // [global::Bond.Attribute("Description", "Request duration in format: DD.HH:MM:SS.MMMMMM. For a page view (PageViewData), this is the duration. For a page view with performance information (PageViewPerfData), this is the page load time. Must be less than 1000 days.")]
+        // [global::Bond.Id(20)]
         public string duration { get; set; }
 
-        [global::Bond.Attribute("MaxStringLength", "128")]
-        [global::Bond.Attribute("ActAsRequired", "Required field for correct correlation.")]
-        [global::Bond.Attribute("Description", "Identifier of a page view instance. Used for correlation between page view and other telemetry items.")]
-        [global::Bond.Id(50), global::Bond.Required]
+        // [global::Bond.Attribute("MaxStringLength", "128")]
+        // [global::Bond.Attribute("ActAsRequired", "Required field for correct correlation.")]
+        // [global::Bond.Attribute("Description", "Identifier of a page view instance. Used for correlation between page view and other telemetry items.")]
+        // [global::Bond.Id(50), global::Bond.Required]
         public string id { get; set; }
 
         public PageViewData()

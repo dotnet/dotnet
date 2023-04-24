@@ -65,9 +65,9 @@
                         telemetry = new DependencyTelemetry { Type = type };
                     }
 
-                    if (type != null && type.EndsWith(RemoteDependencyConstants.AzureEventHubs, StringComparison.Ordinal))
+                    if (IsMessagingDependency(type))
                     {
-                        SetEventHubsProperties(currentActivity, telemetry);
+                        SetMessagingProperties(currentActivity, telemetry);
                     }
 
                     if (this.linksPropertyFetcher.Fetch(evnt.Value) is IEnumerable<Activity> activityLinks)
@@ -225,6 +225,13 @@
                         break;
 
                     case "component":
+                        // old tag populated for back-compat, if az.namespace is set - ignore it.
+                        if (component == null)
+                        {
+                            component = tag.Value;
+                        }
+
+                        break;
                     case "az.namespace":
                         component = tag.Value;
                         break;
@@ -233,9 +240,11 @@
 
             if (component == "eventhubs" || component == "Microsoft.EventHub")
             {
-                return kind == null
-                    ? RemoteDependencyConstants.AzureEventHubs
-                    : string.Concat(kind, " | ", RemoteDependencyConstants.AzureEventHubs);
+                component = RemoteDependencyConstants.AzureEventHubs;
+            } 
+            else if (component == "Microsoft.ServiceBus")
+            {
+                component = RemoteDependencyConstants.AzureServiceBus;
             }
 
             if (component != null)
@@ -310,10 +319,16 @@
             }
         }
 
-        private static void SetEventHubsProperties(Activity activity, OperationTelemetry telemetry)
+        private static bool IsMessagingDependency(string dependencyType)
+        {
+            return dependencyType != null && (dependencyType.EndsWith(RemoteDependencyConstants.AzureEventHubs, StringComparison.Ordinal) ||
+                         dependencyType.EndsWith(RemoteDependencyConstants.AzureServiceBus, StringComparison.Ordinal));
+        }
+
+        private static void SetMessagingProperties(Activity activity, OperationTelemetry telemetry)
         {
             string endpoint = null;
-            string queueName = null;
+            string entityName = null;
 
             foreach (var tag in activity.Tags)
             {
@@ -323,16 +338,16 @@
                 }
                 else if (tag.Key == "message_bus.destination")
                 {
-                    queueName = tag.Value;
+                    entityName = tag.Value;
                 }
             }
 
-            if (endpoint == null || queueName == null)
+            if (endpoint == null || entityName == null)
             {
                 return;
             }
 
-            // Target uniquely identifies the resource, we use both: queueName and endpoint
+            // Target uniquely identifies the resource, we use both: entityName and endpoint
             // with schema used for SQL-dependencies
             string separator = "/";
             if (endpoint.EndsWith(separator, StringComparison.Ordinal))
@@ -340,15 +355,15 @@
                 separator = string.Empty;
             }
 
-            string eventHubInfo = string.Concat(endpoint, separator, queueName);
+            string brokerInfo = string.Concat(endpoint, separator, entityName);
 
             if (telemetry is DependencyTelemetry dependency)
             {
-                dependency.Target = eventHubInfo;
+                dependency.Target = brokerInfo;
             }
             else if (telemetry is RequestTelemetry request)
             {
-                request.Source = eventHubInfo;
+                request.Source = brokerInfo;
             }
         }
 

@@ -35,4 +35,8 @@
     <RunAnalyzers>false</RunAnalyzers>
   </PropertyGroup>
 
+  <PropertyGroup>
+        <NoWarn>$(NoWarn),CS0618</NoWarn> <!-- Instrumentation Key based APIs have been marked Obsolete. No plans to update the tests at this time. -->
+  </PropertyGroup>
+
 </Project>

@@ -477,7 +477,9 @@
             else if (PlatformSingleton.Current.TryGetEnvironmentVariable(InstrumentationKeyEnvironmentVariable, out string instrumentationKeyEnVar))
             {
                 CoreEventSource.Log.TelemetryConfigurationFactoryFoundInstrumentationKeyEnvironmentVariable(variableName: InstrumentationKeyEnvironmentVariable);
+#pragma warning disable CS0618 // Type or member is obsolete
                 configuration.InstrumentationKey = instrumentationKeyEnVar;
+#pragma warning restore CS0618 // Type or member is obsolete
             }
 
             // SANITY CHECK - If Ikey is null, this means that neither the InstrumentationKey nor ConnectionString were set.

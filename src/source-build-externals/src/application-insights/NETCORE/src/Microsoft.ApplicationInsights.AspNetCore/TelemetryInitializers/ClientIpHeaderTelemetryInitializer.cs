@@ -3,7 +3,6 @@
     using System;
     using System.Collections.Generic;
     using System.Net;
-    using System.Net.Sockets;
     using Microsoft.ApplicationInsights.AspNetCore.Extensibility.Implementation.Tracing;
     using Microsoft.ApplicationInsights.Channel;
     using Microsoft.ApplicationInsights.DataContracts;
@@ -99,10 +98,9 @@
                         if (!string.IsNullOrEmpty(headerValue))
                         {
                             var ip = this.GetIpFromHeader(headerValue);
-                            ip = CutPort(ip);
-                            if (IsCorrectIpAddress(ip))
+                            if (TryParseIpWithPort(ip, out var ipAddressString))
                             {
-                                resultIp = ip;
+                                resultIp = ipAddressString;
                                 break;
                             }
                         }
@@ -125,30 +123,17 @@
             telemetry.Context.Location.Ip = requestTelemetry.Context.Location.Ip;
         }
 
-        private static string CutPort(string address)
+        private static bool TryParseIpWithPort(string input, out string ipAddressString)
         {
-            // For Web sites in Azure header contains ip address with port e.g. 50.47.87.223:54464
-            int portSeparatorIndex = address.IndexOf(":", StringComparison.OrdinalIgnoreCase);
+            Uri uri;
+            ipAddressString = null;
 
-            if (portSeparatorIndex > 0)
+            if (Uri.TryCreate($"tcp://{input}", UriKind.Absolute, out uri) ||
+                Uri.TryCreate($"tcp://[{input}]", UriKind.Absolute, out uri))
             {
-                return address.Substring(0, portSeparatorIndex);
-            }
-
-            return address;
-        }
-
-        private static bool IsCorrectIpAddress(string address)
-        {
-            IPAddress outParameter;
-            address = address.Trim();
-
-            // Core SDK does not support setting Location.Ip to malformed ip address
-            if (IPAddress.TryParse(address, out outParameter))
-            {
-                // Also SDK supports only ipv4!
-                if (outParameter.AddressFamily == AddressFamily.InterNetwork)
+                if (IPAddress.TryParse(uri.Host, out var ip))
                 {
+                    ipAddressString = new IPEndPoint(ip, uri.Port < 0 ? 0 : uri.Port).Address.ToString();
                     return true;
                 }
             }

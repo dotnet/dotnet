@@ -3,7 +3,6 @@
     using System;
     using System.Collections.Generic;
     using System.Net;
-    using System.Net.Sockets;
     using System.Web;
     using Microsoft.ApplicationInsights.Channel;
     using Microsoft.ApplicationInsights.DataContracts;
@@ -103,36 +102,19 @@
             }
         }
 
-        private static string CutPort(string address)
+        private static bool TryParseIpWithPort(string input, out string ipAddressString)
         {
-            // For Web sites in Azure header contains ip address with port e.g. 50.47.87.223:54464
-            int portSeparatorIndex = address.LastIndexOf(":", StringComparison.OrdinalIgnoreCase);
+            Uri uri;
+            ipAddressString = null;
 
-            if (portSeparatorIndex > 0)
+            if (Uri.TryCreate($"tcp://{input}", UriKind.Absolute, out uri) ||
+                Uri.TryCreate($"tcp://[{input}]", UriKind.Absolute, out uri))
             {
-                return address.Substring(0, portSeparatorIndex);
-            }
-
-            return address;
-        }
-
-        private static bool IsCorrectIpAddress(string address)
-        {
-            IPAddress outParameter;
-
-            // Base SDK does not support setting Location.Ip to malformed ip address
-            // It also do not have sanitization logic implemented.
-            // In order to minimize behavior changes - keeping this check in place
-            // In future versions we may simply take the content of the header 
-            // and let Base SDK sanitize and reject it
-            if (IPAddress.TryParse(address.Trim(), out outParameter))
-            {
-                // This logic is faulty. IPv6 address may be used in the header without the port number
-                // IPv6 addresses have colons in them and we have existing code that (mistakenly) 
-                // assumes that everything after a colon is a port number. For now, we'll ignore the problem, 
-                // but eventually we'll need to implement support for it.
-                // We also need to support RFC7239 at least as an option.
-                return true;
+                if (IPAddress.TryParse(uri.Host, out var ip))
+                {
+                    ipAddressString = new IPEndPoint(ip, uri.Port < 0 ? 0 : uri.Port).Address.ToString();
+                    return true;
+                }
             }
 
             return false;
@@ -156,10 +138,9 @@
                     WebEventSource.Log.WebLocationIdHeaderFound(clientIpHeaderName);
 
                     string ip = this.GetIpFromHeader(clientIpsFromHeader);
-                    ip = CutPort(ip);
-                    if (IsCorrectIpAddress(ip))
+                    if (TryParseIpWithPort(ip, out var ipAddressString))
                     {
-                        resultIp = ip;
+                        resultIp = ipAddressString;
                         break;
                     }
                 }

@@ -34,7 +34,7 @@
     <ProjectReference Include="..\..\..\LOGGING\src\ILogger\ILogger.csproj" />
     
     <PackageReference Include="Microsoft.AspNetCore.Hosting" Version="2.1.1" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="2.1.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="3.1.0" />
   </ItemGroup>
 
   <ItemGroup>
@@ -57,7 +57,7 @@
     <!-- 
     We must take a temporary dependency on this newer version until Microsoft.AspNetCore.Hosting updates their dependencies.
     -->
-    <PackageReference Include="System.Text.Encodings.Web" Version="4.5.1" />
+    <PackageReference Include="System.Text.Encodings.Web" Version="4.7.2" />
   </ItemGroup>
 
   <ItemGroup>

@@ -18,8 +18,8 @@
         /// </summary>
         /// <param name="builder">Instance of <see cref="TelemetryProcessorChainBuilder"/>.</param>
         /// <param name="samplingPercentage">Sampling Percentage to configure.</param>     
-        /// <param name="excludedTypes">Semicolon separated list of types that should not be sampled.</param>   
-        /// <param name="includedTypes">Semicolon separated list of types that should be sampled. All types are sampled when left empty.</param> 
+        /// <param name="excludedTypes">Semicolon separated list of types that should not be sampled. Allowed type names: Dependency, Event, Exception, PageView, Request, Trace.</param>   
+        /// <param name="includedTypes">Semicolon separated list of types that should be sampled. All types are sampled when left empty. Allowed type names: Dependency, Event, Exception, PageView, Request, Trace.</param> 
         /// <return>Same instance of <see cref="TelemetryProcessorChainBuilder"/>.</return>
         public static TelemetryProcessorChainBuilder UseSampling(this TelemetryProcessorChainBuilder builder, double samplingPercentage, string excludedTypes = null, string includedTypes = null)
         {
@@ -41,8 +41,8 @@
         /// Adds <see cref="AdaptiveSamplingTelemetryProcessor"/> to the <see cref="TelemetryProcessorChainBuilder" />.
         /// </summary>
         /// <param name="builder">Instance of <see cref="TelemetryProcessorChainBuilder"/>.</param>
-        /// <param name="excludedTypes">Semicolon separated list of types that should not be sampled.</param>
-        /// <param name="includedTypes">Semicolon separated list of types that should be sampled. All types are sampled when left empty.</param> 
+        /// <param name="excludedTypes">Semicolon separated list of types that should not be sampled. Allowed type names: Dependency, Event, Exception, PageView, Request, Trace. </param>
+        /// <param name="includedTypes">Semicolon separated list of types that should be sampled. All types are sampled when left empty. Allowed type names: Dependency, Event, Exception, PageView, Request, Trace. </param> 
         /// <return>Same instance of <see cref="TelemetryProcessorChainBuilder"/>.</return>
         public static TelemetryProcessorChainBuilder UseAdaptiveSampling(this TelemetryProcessorChainBuilder builder, string excludedTypes = null, string includedTypes = null)
         {
@@ -63,8 +63,8 @@
         /// </summary>
         /// <param name="builder">Instance of <see cref="TelemetryProcessorChainBuilder"/>.</param>
         /// <param name="maxTelemetryItemsPerSecond">Maximum number of telemetry items to be generated on this application instance.</param>
-        /// <param name="excludedTypes">Semicolon separated list of types that should not be sampled.</param>
-        /// <param name="includedTypes">Semicolon separated list of types that should be sampled. All types are sampled when left empty.</param> 
+        /// <param name="excludedTypes">Semicolon separated list of types that should not be sampled. Allowed type names: Dependency, Event, Exception, PageView, Request, Trace. </param>
+        /// <param name="includedTypes">Semicolon separated list of types that should be sampled. All types are sampled when left empty. Allowed type names: Dependency, Event, Exception, PageView, Request, Trace. </param> 
         /// <return>Same instance of <see cref="TelemetryProcessorChainBuilder"/>.</return>
         public static TelemetryProcessorChainBuilder UseAdaptiveSampling(this TelemetryProcessorChainBuilder builder, double maxTelemetryItemsPerSecond, string excludedTypes = null, string includedTypes = null)
         {

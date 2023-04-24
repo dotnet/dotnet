@@ -5,6 +5,8 @@
     using System.Threading;
     using System.Threading.Tasks;
 
+    using Microsoft.ApplicationInsights.Extensibility.Implementation.Tracing;
+
 #pragma warning disable SA1649 // File name must match first type name
 #pragma warning disable SA1402 // File may only contain a single class
 
@@ -91,12 +93,18 @@
                 while (this.IsInvalidValue(value))
                 {
                     spinWait.SpinOnce();
-                    
+
                     if (spinWait.Count % 100 == 0)
                     {
-                        // In tests (including stress tests) we always finished wating before 100 cycles.
+                        // In tests (including stress tests) we always finished waiting before 100 cycles.
                         // However, this is a protection against en extreme case on a slow machine. 
                         Task.Delay(10).ConfigureAwait(continueOnCapturedContext: false).GetAwaiter().GetResult();
+                    }
+                    else if (spinWait.Count > 10000)
+                    {
+                        // Exceeded maximum spin count. Break out to avoid infinite loop.
+                        CoreEventSource.Log.MetricValueBufferExceededSpinCount();
+                        break;
                     }
 
                     value = this.GetAndResetValueOnce(this.values, index);

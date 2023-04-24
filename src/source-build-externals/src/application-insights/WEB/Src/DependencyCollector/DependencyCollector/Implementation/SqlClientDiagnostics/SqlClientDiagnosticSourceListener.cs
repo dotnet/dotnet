@@ -456,7 +456,7 @@ namespace Microsoft.ApplicationInsights.DependencyCollector.Implementation.SqlCl
                 };
 
                 // Populate the operation details for initializers
-                telemetry.SetOperationDetail(RemoteDependencyConstants.SqlCommandOperationDetailName, command);
+                telemetry.SetOperationDetail(OperationDetailConstants.SqlCommandOperationDetailName, command);
 
                 InitializeTelemetry(telemetry, operationId, timestamp);
 

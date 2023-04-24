@@ -28,15 +28,15 @@ namespace AI
 {
     using System.Collections.Generic;
 
-    [global::Bond.Attribute("Description", "Data struct to contain both B and C sections.")]
-    [global::Bond.Schema]
+    // [global::Bond.Attribute("Description", "Data struct to contain both B and C sections.")]
+    // [global::Bond.Schema]
     [System.CodeDom.Compiler.GeneratedCode("gbc", "0.10.1.0")]
     public partial class Data<TDomain>
         : Base
     {
-        [global::Bond.Attribute("Name", "Item")]
-        [global::Bond.Attribute("Description", "Container for data item (B section).")]
-        [global::Bond.Id(20), global::Bond.Type(typeof(global::Bond.Tag.classT)), global::Bond.Required]
+        // [global::Bond.Attribute("Name", "Item")]
+        // [global::Bond.Attribute("Description", "Container for data item (B section).")]
+        // [global::Bond.Id(20), global::Bond.Type(typeof(global::Bond.Tag.classT)), global::Bond.Required]
         public TDomain baseData { get; set; }
 
         public Data()
@@ -45,7 +45,7 @@ namespace AI
 
         protected Data(string fullName, string name)
         {
-            baseData = global::Bond.GenericFactory.Create<TDomain>();
+            baseData = default; // global::Bond.GenericFactory.Create<TDomain>();
         }
     }
 } // AI

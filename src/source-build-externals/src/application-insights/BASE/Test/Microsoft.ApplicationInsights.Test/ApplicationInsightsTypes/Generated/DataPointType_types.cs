@@ -28,7 +28,7 @@ namespace AI
 {
     using System.Collections.Generic;
 
-    [global::Bond.Attribute("Description", "Type of the metric data measurement.")]
+    // [global::Bond.Attribute("Description", "Type of the metric data measurement.")]
     [System.CodeDom.Compiler.GeneratedCode("gbc", "0.10.1.0")]
     public enum DataPointType
     {

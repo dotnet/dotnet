@@ -1,4 +1,8 @@
 # After every stable release, all PublicApi text files (Shipped & Unshipped) should be merged.
+
+# When running this script locally, you may get an error saying: "is not digitally signed. You cannot run this script on the current system."
+# To fix run this command: "Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope Process"
+
 $path = "..\.publicApi";
 $directory = $PSScriptRoot;
 

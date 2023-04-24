@@ -23,7 +23,6 @@ jobs:
           ./NETCORE/ApplicationInsights.AspNetCore.sln,
           ./Everything.sln,
           ./examples/Examples.sln,
-          ./IntegrationTests.sln,
           ./LOGGING/Logging.sln,
           ./BASE/Microsoft.ApplicationInsights.sln,
           ./WEB/Src/Microsoft.ApplicationInsights.Web.sln]

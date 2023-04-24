@@ -28,24 +28,24 @@ namespace AI
 {
     using System.Collections.Generic;
 
-    [global::Bond.Attribute("Description", "An instance of the Metric item is a list of measurements (single data points) and/or aggregations.")]
-    [global::Bond.Schema]
+    // [global::Bond.Attribute("Description", "An instance of the Metric item is a list of measurements (single data points) and/or aggregations.")]
+    // [global::Bond.Schema]
     [System.CodeDom.Compiler.GeneratedCode("gbc", "0.10.1.0")]
     public partial class MetricData
         : Domain
     {
-        [global::Bond.Attribute("Description", "Schema version")]
-        [global::Bond.Id(10), global::Bond.Required]
+        // [global::Bond.Attribute("Description", "Schema version")]
+        // [global::Bond.Id(10), global::Bond.Required]
         public int ver { get; set; }
 
-        [global::Bond.Attribute("Description", "List of metrics. Only one metric in the list is currently supported by Application Insights storage. If multiple data points were sent only the first one will be used.")]
-        [global::Bond.Id(20), global::Bond.Type(typeof(List<DataPoint>)), global::Bond.Required]
+        // [global::Bond.Attribute("Description", "List of metrics. Only one metric in the list is currently supported by Application Insights storage. If multiple data points were sent only the first one will be used.")]
+        // [global::Bond.Id(20), global::Bond.Type(typeof(List<DataPoint>)), global::Bond.Required]
         public IList<DataPoint> metrics { get; set; }
 
-        [global::Bond.Attribute("Description", "Collection of custom properties.")]
-        [global::Bond.Attribute("MaxKeyLength", "150")]
-        [global::Bond.Attribute("MaxValueLength", "8192")]
-        [global::Bond.Id(100), global::Bond.Type(typeof(Dictionary<string, string>))]
+        // [global::Bond.Attribute("Description", "Collection of custom properties.")]
+        // [global::Bond.Attribute("MaxKeyLength", "150")]
+        // [global::Bond.Attribute("MaxValueLength", "8192")]
+        // [global::Bond.Id(100), global::Bond.Type(typeof(Dictionary<string, string>))]
         public IDictionary<string, string> properties { get; set; }
 
         public MetricData()

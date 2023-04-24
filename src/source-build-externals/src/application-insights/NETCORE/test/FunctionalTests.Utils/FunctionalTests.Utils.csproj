@@ -10,7 +10,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\Microsoft.ApplicationInsights.AspNetCore\Microsoft.ApplicationInsights.AspNetCore.csproj" />
-    <ProjectReference Include="..\ApplicationInsightsTypes\ApplicationInsightsTypes.csproj" />
+    <ProjectReference Include="..\..\..\BASE\Test\Microsoft.ApplicationInsights.Test\ApplicationInsightsTypes\ApplicationInsightsTypes.csproj" />
   </ItemGroup>
 
   <ItemGroup>

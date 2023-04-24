@@ -1,4 +1,8 @@
-﻿namespace Shared.Implementation
+﻿#if AI_ASPNETCORE_WEB
+    namespace Microsoft.ApplicationInsights.AspNetCore
+#else
+    namespace Microsoft.ApplicationInsights.WorkerService
+#endif
 {
     using System.Diagnostics.CodeAnalysis;
     using Microsoft.ApplicationInsights.Extensibility;
