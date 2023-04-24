@@ -160,7 +160,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/arcade`  
 *[dotnet/arcade@d14c4ad](https://github.com/dotnet/arcade/commit/d14c4adbdbb8c7ee060f9e333883fc9890939b66)*
 - `src/aspnetcore`  
-*[dotnet/aspnetcore@d07f377](https://github.com/dotnet/aspnetcore/commit/d07f377b6c4c72f44a0eb2810c8abf1ae3fabd40)*
+*[dotnet/aspnetcore@b8646ba](https://github.com/dotnet/aspnetcore/commit/b8646ba5d46058ac28da434e7f9393c505e85601)*
     - `src/aspnetcore/src/submodules/googletest`  
     *[google/googletest@a5308bb](https://github.com/google/googletest/commit/a5308bb992c049b16b763f8910da70c208c5cede)*
     - `src/aspnetcore/src/submodules/MessagePack-CSharp`  
@@ -182,9 +182,9 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/fsharp`  
 *[dotnet/fsharp@858e2df](https://github.com/dotnet/fsharp/commit/858e2df9631a385cbddef62eeb424f9b3071b031)*
 - `src/installer`  
-*[dotnet/installer@59fe5f8](https://github.com/dotnet/installer/commit/59fe5f82b65b8245524538dd817915b8bf6cc3a9)*
+*[dotnet/installer@8a7aa12](https://github.com/dotnet/installer/commit/8a7aa12ec345153e3cfcf66ce4147d8a70be59aa)*
 - `src/msbuild`  
-*[dotnet/msbuild@2cbc8b6](https://github.com/dotnet/msbuild/commit/2cbc8b6aef648cf21c6a68a0dab7fe09a614e475)*
+*[dotnet/msbuild@ac3f5ad](https://github.com/dotnet/msbuild/commit/ac3f5ad89f3f04d080986607d504a838ed622fb9)*
 - `src/nuget-client`  
 *[nuget/nuget.client@87ce6f5](https://github.com/nuget/nuget.client/commit/87ce6f59e9cf4f5a32d7ba16f537b6b791d9fcc6)*
     - `src/nuget-client/submodules/NuGet.Build.Localization`  
@@ -198,7 +198,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/runtime`  
 *[dotnet/runtime@ab2b80d](https://github.com/dotnet/runtime/commit/ab2b80d06dd4d997df5ffa72a3c4a99cb36ccbff)*
 - `src/sdk`  
-*[dotnet/sdk@6635f95](https://github.com/dotnet/sdk/commit/6635f95e900402c2eccfbc3cab913b85fac88086)*
+*[dotnet/sdk@7643e12](https://github.com/dotnet/sdk/commit/7643e12e6d6a4a4649151f78f9d6919c6e33807e)*
 - `src/source-build-externals`  
 *[dotnet/source-build-externals@834923a](https://github.com/dotnet/source-build-externals/commit/834923aef31d157aec19a2b99d5494cea29dcc9e)*
     - `src/source-build-externals/src/application-insights`  
