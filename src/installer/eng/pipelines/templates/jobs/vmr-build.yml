@@ -183,11 +183,6 @@ jobs:
         echo "##vso[task.setvariable variable=additionalBuildArgs]--with-sdk /vmr/.dotnet"
       fi
 
-      if [[ '${{ parameters.buildFromArchive }}' == 'True' ]]; then
-        customPrepArgs="$customPrepArgs --source-repository https://github.com/dotnet/dotnet"
-        customPrepArgs="$customPrepArgs --source-version $(git -C "${{ parameters.vmrPath }}" rev-parse HEAD)"
-      fi
-
       docker run --rm -v "$(sourcesPath):/vmr" -w /vmr ${{ parameters.container }} ./prep.sh $customPrepArgs
     displayName: Prep the Build
 
@@ -211,6 +206,11 @@ jobs:
 
       if [[ '${{ parameters.enablePoison }}' == 'True' ]]; then
         customBuildArgs="$customBuildArgs --poison"
+      fi
+
+      if [[ '${{ parameters.buildFromArchive }}' == 'True' ]]; then
+        customBuildArgs="$customBuildArgs --source-repository https://github.com/dotnet/dotnet"
+        customBuildArgs="$customBuildArgs --source-version $(git -C "${{ parameters.vmrPath }}" rev-parse HEAD)"
       fi
 
       docker run --rm -v "$(sourcesPath):/vmr" -w /vmr $customRunArgs ${{ parameters.container }} ./build.sh --clean-while-building $(additionalBuildArgs) $customBuildArgs
