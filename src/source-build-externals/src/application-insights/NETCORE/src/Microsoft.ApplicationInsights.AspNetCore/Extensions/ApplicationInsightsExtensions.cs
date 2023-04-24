@@ -15,7 +15,6 @@
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection.Extensions;
     using Microsoft.Extensions.Options;
-    using Shared.Implementation;
 
     /// <summary>
     /// Extension methods for <see cref="IServiceCollection"/> that allow adding Application Insights services to application.
@@ -44,6 +43,7 @@
         /// <param name="services">The <see cref="IServiceCollection"/> instance.</param>
         /// <param name="instrumentationKey">Instrumentation key to use for telemetry.</param>
         /// <returns>The <see cref="IServiceCollection"/>.</returns>
+        [Obsolete("InstrumentationKey based global ingestion is being deprecated. Use the AddApplicationInsightsTelemetry() overload which accepts Action<ApplicationInsightsServiceOptions> and set ApplicationInsightsServiceOptions.ConnectionString. See https://github.com/microsoft/ApplicationInsights-dotnet/issues/2560 for more details.")]
         public static IServiceCollection AddApplicationInsightsTelemetry(
             this IServiceCollection services,
             string instrumentationKey)

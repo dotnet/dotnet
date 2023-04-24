@@ -151,7 +151,7 @@ namespace Microsoft.ApplicationInsights.DependencyCollector.Implementation
                 telemetry.Target = DependencyTargetNameHelper.GetDependencyTargetName(url);
                 telemetry.Type = RemoteDependencyConstants.HTTP;
                 telemetry.Data = url.OriginalString;
-                telemetry.SetOperationDetail(RemoteDependencyConstants.HttpRequestOperationDetailName, webRequest);
+                telemetry.SetOperationDetail(OperationDetailConstants.HttpRequestOperationDetailName, webRequest);
 
                 Activity currentActivity = Activity.Current;
                 // Add the source instrumentation key header if collection is enabled, the request host is not in the excluded list and the same header doesn't already exist
@@ -284,7 +284,7 @@ namespace Microsoft.ApplicationInsights.DependencyCollector.Implementation
                             this.SetTarget(telemetry, responseObj.Headers);
 
                             // Set the operation details for the response
-                            telemetry.SetOperationDetail(RemoteDependencyConstants.HttpResponseOperationDetailName, responseObj);
+                            telemetry.SetOperationDetail(OperationDetailConstants.HttpResponseOperationDetailName, responseObj);
                         }
                         catch (ObjectDisposedException)
                         {
@@ -327,7 +327,7 @@ namespace Microsoft.ApplicationInsights.DependencyCollector.Implementation
                             this.SetTarget(telemetry, responseObj.Headers);
 
                             // Set the operation details for the response
-                            telemetry.SetOperationDetail(RemoteDependencyConstants.HttpResponseOperationDetailName, responseObj);
+                            telemetry.SetOperationDetail(OperationDetailConstants.HttpResponseOperationDetailName, responseObj);
                         }
                         catch (ObjectDisposedException)
                         {
@@ -375,7 +375,7 @@ namespace Microsoft.ApplicationInsights.DependencyCollector.Implementation
 
                     this.SetTarget(telemetry, (WebHeaderCollection)responseHeaders);
 
-                    telemetry.SetOperationDetail(RemoteDependencyConstants.HttpResponseHeadersOperationDetailName, responseHeaders);
+                    telemetry.SetOperationDetail(OperationDetailConstants.HttpResponseHeadersOperationDetailName, responseHeaders);
 
                     ClientServerDependencyTracker.EndTracking(this.telemetryClient, telemetry);
                 }

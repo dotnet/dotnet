@@ -28,8 +28,8 @@ namespace AI
 {
     using System.Collections.Generic;
 
-    [global::Bond.Attribute("Description", "The abstract common base of all domains.")]
-    [global::Bond.Schema]
+    // [global::Bond.Attribute("Description", "The abstract common base of all domains.")]
+    // [global::Bond.Schema]
     [System.CodeDom.Compiler.GeneratedCode("gbc", "0.10.1.0")]
     public partial class Domain
     {

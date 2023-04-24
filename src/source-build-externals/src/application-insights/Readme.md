@@ -35,6 +35,7 @@ Please review our [Contributing guide](.github/CONTRIBUTING.md).
 
 ## Releases
 
+- Refer to our [Milestones](https://github.com/microsoft/ApplicationInsights-dotnet/milestones) for progress on our next releases.
 - [Releases](https://github.com/microsoft/ApplicationInsights-dotnet/releases)
 - [Tags](https://github.com/microsoft/ApplicationInsights-dotnet/tags) all releases have a matching tag.
 
@@ -67,6 +68,11 @@ The following packages are published from this repository:
 | - [Microsoft.ApplicationInsights.EtwCollector](http://www.nuget.org/packages/Microsoft.ApplicationInsights.EtwCollector/) | [![Nightly](https://img.shields.io/myget/applicationinsights-dotnet-nightly/v/Microsoft.ApplicationInsights.EtwCollector?label=)](https://www.myget.org/feed/applicationinsights-dotnet-nightly/package/nuget/Microsoft.ApplicationInsights.EtwCollector) | [![Nuget](https://img.shields.io/nuget/v/Microsoft.ApplicationInsights.EtwCollector.svg)](https://www.nuget.org/packages/Microsoft.ApplicationInsights.EtwCollector/) | [![Nuget](https://img.shields.io/nuget/vpre/Microsoft.ApplicationInsights.EtwCollector.svg)](https://www.nuget.org/packages/Microsoft.ApplicationInsights.EtwCollector/) |
 | - [Microsoft.ApplicationInsights.EventSourceListener](http://www.nuget.org/packages/Microsoft.ApplicationInsights.EventSourceListener/) | [![Nightly](https://img.shields.io/myget/applicationinsights-dotnet-nightly/v/Microsoft.ApplicationInsights.EventSourceListener?label=)](https://www.myget.org/feed/applicationinsights-dotnet-nightly/package/nuget/Microsoft.ApplicationInsights.EventSourceListener) | [![Nuget](https://img.shields.io/nuget/v/Microsoft.ApplicationInsights.EventSourceListener.svg)](https://www.nuget.org/packages/Microsoft.ApplicationInsights.EventSourceListener/) | [![Nuget](https://img.shields.io/nuget/vpre/Microsoft.ApplicationInsights.EventSourceListener.svg)](https://www.nuget.org/packages/Microsoft.ApplicationInsights.EventSourceListener/) |
 
+Customers are encouraged to use the latest stable version as that is the version that will get fixes and updates. 
+Beta packages are not recommended for use in production & support is limited. 
+Upon release of the new stable version, the old Beta packages will be unlisted & the old minor version will be marked as deprecated. 
+Application Insights follows the [Azure SDK Lifecycle & support policy](https://azure.github.io/azure-sdk/policies_support.html). 
+(For example: When 2.20.0 is released, 2.20.0-beta1 will be unlisted and 2.19.0 will be deprecated.)
 
 ### Nightly
 
@@ -74,9 +80,6 @@ Nightly Builds are available on our MyGet feed:
 `https://www.myget.org/F/applicationinsights-dotnet-nightly/api/v3/index.json`
 
 These builds come from the main branch. These are not signed and are not intended for production workloads.
-
-## Releases 
-Refer to our [Milestones](https://github.com/microsoft/ApplicationInsights-dotnet/milestones) for progress on our next releases.
 
 ## Support
 

@@ -149,6 +149,42 @@
             Assert.IsTrue(parsedStackLength <= ExceptionConverter.MaxParsedStackLength);
         }
 
+        [TestMethod]
+        public void SanitizesLineNumberOnParsedStackFrame()
+        {
+            var stackFrame = ExceptionConverter.GetStackFrame(new System.Diagnostics.StackFrame("test", 1000001), 0);
+            
+            Assert.AreEqual(0, stackFrame.line);
+
+            stackFrame = ExceptionConverter.GetStackFrame(new System.Diagnostics.StackFrame("test", -1000001), 0);
+
+            Assert.AreEqual(0, stackFrame.line);
+
+            stackFrame = ExceptionConverter.GetStackFrame(new System.Diagnostics.StackFrame("test", 10), 0);
+
+            Assert.AreEqual(10, stackFrame.line);
+        }
+
+        [TestMethod]
+        public void TrimsExceptionMessagesGreaterThanMaxLength()
+        {
+            var exp = new Exception(new string('x', ExceptionConverter.MaxExceptionMessageLength + 5));
+
+            ExceptionDetails expDetails = ExceptionConverter.ConvertToExceptionDetails(exp, null);
+
+            Assert.AreEqual(ExceptionConverter.MaxExceptionMessageLength, expDetails.message.Length);
+        }
+
+        [TestMethod]
+        public void DoesNotTrimShortExceptionMessages()
+        {
+            var exp = new Exception(new string('x', 5));
+
+            ExceptionDetails expDetails = ExceptionConverter.ConvertToExceptionDetails(exp, null);
+
+            Assert.AreEqual(5, expDetails.message.Length);
+        }
+
         [MethodImplAttribute(MethodImplOptions.NoInlining)]
         private Exception CreateException(int numberOfStackpoints)
         {

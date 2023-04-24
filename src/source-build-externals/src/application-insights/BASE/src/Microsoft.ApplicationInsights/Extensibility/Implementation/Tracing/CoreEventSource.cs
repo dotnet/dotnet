@@ -672,6 +672,9 @@
         [Event(75, Message = "Ingestion Service responded with redirect. {0}", Level = EventLevel.Error)]
         public void IngestionRedirectError(string message, string appDomainName = "Incorrect") => this.WriteEvent(75, message, this.nameProvider.Name);
 
+        [Event(76, Message = "MetricValueBuffer exceeded spin count.", Level = EventLevel.Warning)]
+        public void MetricValueBufferExceededSpinCount(string appDomainName = "Incorrect") => this.WriteEvent(76, this.nameProvider.Name);
+
         [NonEvent]
         public void TransmissionStatusEventFailed(Exception ex)
         {

@@ -28,14 +28,14 @@ namespace AI
 {
     using System.Collections.Generic;
 
-    [global::Bond.Attribute("Description", "Data struct to contain only C section with custom fields.")]
-    [global::Bond.Schema]
+    // [global::Bond.Attribute("Description", "Data struct to contain only C section with custom fields.")]
+    // [global::Bond.Schema]
     [System.CodeDom.Compiler.GeneratedCode("gbc", "0.10.1.0")]
     public partial class Base
     {
-        [global::Bond.Attribute("Name", "ItemTypeName")]
-        [global::Bond.Attribute("Description", "Name of item (B section) if any. If telemetry data is derived straight from this, this should be null.")]
-        [global::Bond.Id(10)]
+        // [global::Bond.Attribute("Name", "ItemTypeName")]
+        // [global::Bond.Attribute("Description", "Name of item (B section) if any. If telemetry data is derived straight from this, this should be null.")]
+        // [global::Bond.Id(10)]
         public string baseType { get; set; }
 
         public Base()

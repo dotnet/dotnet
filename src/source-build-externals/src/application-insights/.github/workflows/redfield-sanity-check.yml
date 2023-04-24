@@ -16,6 +16,10 @@ jobs:
 
     runs-on: ${{ matrix.os }}
 
+    env:
+      SOLUTION: ./BASE/Microsoft.ApplicationInsights.sln
+      TEST_RESULTS_DIRECTORY: ${{ github.workspace }}/TestResults
+
     strategy:
       fail-fast: false
       matrix:
@@ -41,16 +45,16 @@ jobs:
         dotnet-version: '6.0.x'
 
     - name: Restore
-      run: dotnet restore ./BASE/Microsoft.ApplicationInsights.sln
+      run: dotnet restore ${{ env.SOLUTION }}
 
     - name: Build
-      run: dotnet build -p:Redfield=True ./BASE/Microsoft.ApplicationInsights.sln --configuration Release --no-restore
+      run: dotnet build ${{ env.SOLUTION }} --configuration Release --no-restore -p:Redfield=True
 
     - name: Test
       id: test1
       continue-on-error: true
-      run: dotnet test ./BASE/Microsoft.ApplicationInsights.sln --framework ${{ matrix.framework }} --configuration Release --no-build --logger:"console;verbosity=detailed" --logger:"trx;logfilename=${{ github.workspace }}/testResults.trx" ${{ matrix.args }}
+      run: dotnet test ${{ env.SOLUTION }} --framework ${{ matrix.framework }} --configuration Release --no-build --results-directory ${{ env.TEST_RESULTS_DIRECTORY }} --logger:"console;verbosity=detailed" --logger:"trx;logfileprefix=testResults_" ${{ matrix.args }}
 
     - name: Retry tests
       if: steps.test1.outcome=='failure'
-      run: pwsh -f ./.scripts/build_RetryTests.ps1 -TestResultFile ${{ github.workspace }}/testResults.trx -WorkingDirectory ${{ github.workspace }}
+      run: pwsh -f ./.scripts/build_RetryTests.ps1 -TestResultsDirectory ${{ env.TEST_RESULTS_DIRECTORY }} -WorkingDirectory ${{ github.workspace }}

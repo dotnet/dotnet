@@ -244,7 +244,7 @@ namespace Microsoft.ApplicationInsights.DependencyCollector.Implementation
                 telemetry.Type = RemoteDependencyConstants.SQL;
                 telemetry.Target = this.GetDependencyTarget(thisObj);
                 telemetry.Data = commandText;
-                telemetry.SetOperationDetail(RemoteDependencyConstants.SqlCommandOperationDetailName, thisObj);
+                telemetry.SetOperationDetail(OperationDetailConstants.SqlCommandOperationDetailName, thisObj);
 
                 // We use weaktables to store the thisObj for correlating begin with end call.
                 this.TelemetryTable.Store(thisObj, new Tuple<DependencyTelemetry, bool>(telemetry, isCustomCreated));

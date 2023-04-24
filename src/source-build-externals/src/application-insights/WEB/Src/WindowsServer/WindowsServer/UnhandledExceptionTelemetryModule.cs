@@ -62,7 +62,9 @@ namespace Microsoft.ApplicationInsights.WindowsServer
 
         private static void CopyConfiguration(TelemetryConfiguration source, TelemetryConfiguration target)
         {
-            target.InstrumentationKey = source.InstrumentationKey;            
+#pragma warning disable CS0618 // Type or member is obsolete
+            target.InstrumentationKey = source.InstrumentationKey;
+#pragma warning restore CS0618 // Type or member is obsolete
 
             foreach (var telemetryInitializer in source.TelemetryInitializers)
             {

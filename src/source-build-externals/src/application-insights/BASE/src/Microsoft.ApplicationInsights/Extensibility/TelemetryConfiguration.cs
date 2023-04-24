@@ -74,7 +74,9 @@
         /// Initializes a new instance of the TelemetryConfiguration class.
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
+#pragma warning disable CS0618 // Type or member is obsolete
         public TelemetryConfiguration() : this(string.Empty, null)
+#pragma warning restore CS0618 // Type or member is obsolete
         {
         }
 
@@ -82,6 +84,7 @@
         /// Initializes a new instance of the TelemetryConfiguration class.
         /// </summary>
         /// <param name="instrumentationKey">The instrumentation key this configuration instance will provide.</param>
+        [Obsolete("InstrumentationKey based global ingestion is being deprecated. Use the default constructor and manually set TelemetryConfiguration.ConnectionString. See https://github.com/microsoft/ApplicationInsights-dotnet/issues/2560 for more details.")]
         public TelemetryConfiguration(string instrumentationKey) : this(instrumentationKey, null)
         {
         }
@@ -91,6 +94,7 @@
         /// </summary>
         /// <param name="instrumentationKey">The instrumentation key this configuration instance will provide.</param>
         /// <param name="channel">The telemetry channel to provide with this configuration instance.</param>
+        [Obsolete("InstrumentationKey based global ingestion is being deprecated. Use the default constructor and manually set TelemetryConfiguration.ConnectionString. See https://github.com/microsoft/ApplicationInsights-dotnet/issues/2560 for more details.")]
         public TelemetryConfiguration(string instrumentationKey, ITelemetryChannel channel)
         {
             this.instrumentationKey = instrumentationKey ?? throw new ArgumentNullException(nameof(instrumentationKey));
@@ -149,8 +153,9 @@
         /// </remarks>
         public string InstrumentationKey
         {
-            get { return this.instrumentationKey; }
+            get => this.instrumentationKey;
 
+            [Obsolete("InstrumentationKey based global ingestion is being deprecated. Use TelemetryConfiguration.ConnectionString. See https://github.com/microsoft/ApplicationInsights-dotnet/issues/2560 for more details.")]
             set { this.instrumentationKey = value ?? throw new ArgumentNullException(nameof(this.InstrumentationKey)); }
         }
 
@@ -296,7 +301,9 @@
                         ConnectionString = value,
                     };
 
+#pragma warning disable CS0618 // Type or member is obsolete
                     this.InstrumentationKey = endpointProvider.GetInstrumentationKey();
+#pragma warning restore CS0618 // Type or member is obsolete
 
                     this.EndpointContainer = new EndpointContainer(endpointProvider);
 

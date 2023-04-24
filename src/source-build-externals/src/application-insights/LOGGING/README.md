@@ -29,7 +29,7 @@ Read more:
 - [Microsoft Docs: "Diagnose sudden changes in your app telemetry"](https://docs.microsoft.com/azure/application-insights/app-insights-analytics-diagnostics#trace)
 
 ## ILogger
-See [this](https://github.com/Microsoft/ApplicationInsights-dotnet-logging/tree/develop/src/ILogger/Readme.md).
+See [this](src/ILogger/Readme.md).
 
 ## NLog
 

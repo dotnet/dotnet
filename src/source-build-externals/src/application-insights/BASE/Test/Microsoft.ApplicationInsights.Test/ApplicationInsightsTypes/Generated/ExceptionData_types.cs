@@ -28,38 +28,38 @@ namespace AI
 {
     using System.Collections.Generic;
 
-    [global::Bond.Attribute("Description", "An instance of Exception represents a handled or unhandled exception that occurred during execution of the monitored application.")]
-    [global::Bond.Schema]
+    // [global::Bond.Attribute("Description", "An instance of Exception represents a handled or unhandled exception that occurred during execution of the monitored application.")]
+    // [global::Bond.Schema]
     [System.CodeDom.Compiler.GeneratedCode("gbc", "0.10.1.0")]
     public partial class ExceptionData
         : Domain
     {
-        [global::Bond.Attribute("Description", "Schema version")]
-        [global::Bond.Id(10), global::Bond.Required]
+        // [global::Bond.Attribute("Description", "Schema version")]
+        // [global::Bond.Id(10), global::Bond.Required]
         public int ver { get; set; }
 
-        [global::Bond.Attribute("Description", "Exception chain - list of inner exceptions.")]
-        [global::Bond.Id(50), global::Bond.Type(typeof(List<ExceptionDetails>)), global::Bond.Required]
+        // [global::Bond.Attribute("Description", "Exception chain - list of inner exceptions.")]
+        // [global::Bond.Id(50), global::Bond.Type(typeof(List<ExceptionDetails>)), global::Bond.Required]
         public IList<ExceptionDetails> exceptions { get; set; }
 
-        [global::Bond.Attribute("Description", "Severity level. Mostly used to indicate exception severity level when it is reported by logging library.")]
-        [global::Bond.Id(60), global::Bond.Type(typeof(global::Bond.Tag.nullable<SeverityLevel>))]
+        // [global::Bond.Attribute("Description", "Severity level. Mostly used to indicate exception severity level when it is reported by logging library.")]
+        // [global::Bond.Id(60), global::Bond.Type(typeof(global::Bond.Tag.nullable<SeverityLevel>))]
         public SeverityLevel? severityLevel { get; set; }
 
-        [global::Bond.Attribute("Description", "Identifier of where the exception was thrown in code. Used for exceptions grouping. Typically a combination of exception type and a function from the call stack.")]
-        [global::Bond.Attribute("MaxStringLength", "1024")]
-        [global::Bond.Id(80)]
+        // [global::Bond.Attribute("Description", "Identifier of where the exception was thrown in code. Used for exceptions grouping. Typically a combination of exception type and a function from the call stack.")]
+        // [global::Bond.Attribute("MaxStringLength", "1024")]
+        // [global::Bond.Id(80)]
         public string problemId { get; set; }
 
-        [global::Bond.Attribute("Description", "Collection of custom properties.")]
-        [global::Bond.Attribute("MaxKeyLength", "150")]
-        [global::Bond.Attribute("MaxValueLength", "8192")]
-        [global::Bond.Id(100), global::Bond.Type(typeof(Dictionary<string, string>))]
+        // [global::Bond.Attribute("Description", "Collection of custom properties.")]
+        // [global::Bond.Attribute("MaxKeyLength", "150")]
+        // [global::Bond.Attribute("MaxValueLength", "8192")]
+        // [global::Bond.Id(100), global::Bond.Type(typeof(Dictionary<string, string>))]
         public IDictionary<string, string> properties { get; set; }
 
-        [global::Bond.Attribute("Description", "Collection of custom measurements.")]
-        [global::Bond.Attribute("MaxKeyLength", "150")]
-        [global::Bond.Id(200), global::Bond.Type(typeof(Dictionary<string, double>))]
+        // [global::Bond.Attribute("Description", "Collection of custom measurements.")]
+        // [global::Bond.Attribute("MaxKeyLength", "150")]
+        // [global::Bond.Id(200), global::Bond.Type(typeof(Dictionary<string, double>))]
         public IDictionary<string, double> measurements { get; set; }
 
         public ExceptionData()

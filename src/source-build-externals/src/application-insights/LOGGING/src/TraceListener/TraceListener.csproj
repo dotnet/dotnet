@@ -22,10 +22,6 @@
     <ProjectReference Include="..\..\..\BASE\src\Microsoft.ApplicationInsights\Microsoft.ApplicationInsights.csproj" />
   </ItemGroup>
 
-  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
-    <PackageReference Include="System.Diagnostics.TraceSource" Version="4.3.0" />
-  </ItemGroup>
-
   <ItemGroup>
     <Content Include="app.config.install.xdt" />
     <Content Include="app.config.uninstall.xdt" />

@@ -28,7 +28,7 @@ namespace AI
 {
     using System.Collections.Generic;
 
-    [global::Bond.Attribute("Description", "Defines the level of severity for the event.")]
+    // [global::Bond.Attribute("Description", "Defines the level of severity for the event.")]
     [System.CodeDom.Compiler.GeneratedCode("gbc", "0.10.1.0")]
     public enum SeverityLevel
     {

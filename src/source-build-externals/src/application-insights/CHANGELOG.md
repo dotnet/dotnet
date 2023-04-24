@@ -2,6 +2,35 @@
 
 ## VNext
 
+
+## Version 2.21.0
+- no changes since beta.
+
+## Version 2.21.0-beta3
+- [Remove two unnecessary .NET Standard 1.x dependencies.](https://github.com/microsoft/ApplicationInsights-dotnet/pull/2613)
+- Address vulnerability in `Newtonsoft.Json` ([GHSA-5crp-9r3c-p9vr](https://github.com/advisories/GHSA-5crp-9r3c-p9vr)). 
+  Mitigation is to upgrade dependencies in `Microsoft.ApplicationInsights.AspNetCore` ([#2615](https://github.com/microsoft/ApplicationInsights-dotnet/pull/2615))
+  - Upgrade `Microsoft.Extensions.Configuration.Json` from v2.1.0 to v3.1.0. 
+  - Upgrade `System.Text.Encodings.Web` from 4.5.1 to 4.7.2.
+
+## Version 2.21.0-beta2
+- [LOGGING: Make TelemetryConfiguration configurable in ApplicationInsightsLoggingBuilderExtensions](https://github.com/microsoft/ApplicationInsights-dotnet/issues/1944)
+- [Added support for distributed tracing with Azure.Messaging.ServiceBus](https://github.com/microsoft/ApplicationInsights-dotnet/pull/2593)
+- [Move internal type from `Shared` to `Microsoft` namespace](https://github.com/microsoft/ApplicationInsights-dotnet/pull/2442)
+- [Extension methods to retrive specific operation details.](https://github.com/microsoft/ApplicationInsights-dotnet/issues/1350)
+- [Mark Instrumentation Key based APIs as Obsolete](https://github.com/microsoft/ApplicationInsights-dotnet/issues/2560).
+  - See also: https://docs.microsoft.com/azure/azure-monitor/app/migrate-from-instrumentation-keys-to-connection-strings
+- [Fix: Livelock in MetricValuesBuffer.](https://github.com/microsoft/ApplicationInsights-dotnet/pull/2612)
+  Mitigation for TelemetryClient.Flush deadlocks ([#1186](https://github.com/microsoft/ApplicationInsights-dotnet/issues/1186))
+
+## Version 2.21.0-beta1
+- [Support IPv6 in request headers](https://github.com/microsoft/ApplicationInsights-dotnet/issues/2521)
+- [Validate exception stack trace line numbers to comply with endpoint restrictions.](https://github.com/microsoft/ApplicationInsights-dotnet/issues/2482)
+- [Removed redundant memory allocations and processing in PartialSuccessTransmissionPolicy for ingestion sampling cases](https://github.com/microsoft/ApplicationInsights-dotnet/issues/2445)
+- [Validate exception message length to comply with endpoint restrictions.](https://github.com/microsoft/ApplicationInsights-dotnet/issues/2284)
+- Update JavaScript snippet to sv5 which includes the cdn endpoint.
+- [Make operation detail name constants public.](https://github.com/microsoft/ApplicationInsights-dotnet/issues/1326)
+
 ## Version 2.20
 - [Allow Control of Documents sampling for QuickPulse telemetry](https://github.com/microsoft/ApplicationInsights-dotnet/pull/2425)
 

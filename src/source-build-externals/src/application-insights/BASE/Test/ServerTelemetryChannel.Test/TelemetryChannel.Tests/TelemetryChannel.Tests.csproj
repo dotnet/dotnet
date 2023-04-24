@@ -10,7 +10,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\src\Microsoft.ApplicationInsights\Microsoft.ApplicationInsights.csproj" />
-    <ProjectReference Include="..\..\..\Test\Microsoft.ApplicationInsights.Test\ApplicationInsightsTypes\ApplicationInsightsTypes.csproj" />
     <ProjectReference Include="..\..\..\src\ServerTelemetryChannel\TelemetryChannel.csproj" />
 
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.9.4" />

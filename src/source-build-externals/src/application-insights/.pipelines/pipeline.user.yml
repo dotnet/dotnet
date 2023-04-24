@@ -11,7 +11,7 @@ static_analysis_options:
     disable_tool_scan: false
     fail_on_error: true
     files_to_scan:
-      - from: 'src'
+      - from: 'bin'
   policheck_options:
     disable_tool_scan: false
     fail_on_error: true

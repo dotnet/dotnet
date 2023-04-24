@@ -67,7 +67,7 @@
             this.WriteEvent(5, exception ?? string.Empty, response ?? string.Empty, this.ApplicationName);
         }
 
-        [Event(6, Message = "Unexpected backend response. Items # in batch {0} >= Error index in response: {1}.", Level = EventLevel.Warning)]
+        [Event(6, Message = "Unexpected backend response. Items # in batch {0} <= Error index in response: {1}.", Level = EventLevel.Warning)]
         public void UnexpectedBreezeResponseWarning(int size, int index, string appDomainName = "Incorrect")
         {
             this.WriteEvent(6, size, index, this.ApplicationName);
@@ -573,6 +573,12 @@
         public void AuthenticationPolicyCaughtFailedIngestion(string transmissionId, string statusCode, string statusDescription, string appDomainName = "Incorrect")
         {
             this.WriteEvent(78, transmissionId ?? string.Empty, statusCode ?? string.Empty, statusDescription ?? string.Empty, this.ApplicationName);
+        }
+
+        [Event(79, Message = "Unexpected backend response. Invalid Error index in response: {0}.", Level = EventLevel.Warning)]
+        public void UnexpectedBreezeResponseErrorIndexWarning(int index, string appDomainName = "Incorrect")
+        {
+            this.WriteEvent(79, index, this.ApplicationName);
         }
 
         private static string GetApplicationName()

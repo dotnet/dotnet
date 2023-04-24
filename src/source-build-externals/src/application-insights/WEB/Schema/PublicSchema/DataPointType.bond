@@ -1,8 +1,0 @@
-namespace AI
-
-[Description("Type of the metric data measurement.")]
-enum DataPointType
-{
-    Measurement,
-    Aggregation,
-}

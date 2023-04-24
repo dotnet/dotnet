@@ -7,6 +7,7 @@
     internal static class ExceptionConverter
     {
         public const int MaxParsedStackLength = 32768;
+        public const int MaxExceptionMessageLength = 32768;
 
         /// <summary>
         /// Converts a System.Exception to a Microsoft.ApplicationInsights.Extensibility.Implementation.TelemetryTypes.ExceptionDetails.
@@ -18,6 +19,12 @@
             External.ExceptionDetails exceptionDetails = External.ExceptionDetails.CreateWithoutStackInfo(
                                                                                                                 exception,
                                                                                                                 parentExceptionDetails);
+            // The endpoint cannot ingest message lengths longer than a certain length
+            if (exceptionDetails.message != null && exceptionDetails.message.Length > MaxExceptionMessageLength)
+            {
+                exceptionDetails.message = exceptionDetails.message.Substring(0, MaxExceptionMessageLength);
+            }
+
             var stack = new StackTrace(exception, true);
 
             var frames = stack.GetFrames();
@@ -68,7 +75,8 @@
 
             // 0 means it is unavailable
             int line = stackFrame.GetFileLineNumber();
-            if (line != 0)
+            // The endpoint cannot ingest line number below -1000000 or above 1000000
+            if (line != 0 && line > -1000000 && line < 1000000)
             {
                 convertedStackFrame.line = line;
             }

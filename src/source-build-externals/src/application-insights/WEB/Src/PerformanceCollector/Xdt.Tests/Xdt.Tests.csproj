@@ -5,7 +5,7 @@
     <!-- TargetFrameworks are defined in Test.props, but can be overridden here if needed. -->
     <RootNamespace>Xdt.Tests</RootNamespace>
     <AssemblyName>Xdt.Tests</AssemblyName>
-    <TargetFrameworks>net45;net452</TargetFrameworks>
+    <TargetFrameworks>net480</TargetFrameworks>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
   </PropertyGroup>
   

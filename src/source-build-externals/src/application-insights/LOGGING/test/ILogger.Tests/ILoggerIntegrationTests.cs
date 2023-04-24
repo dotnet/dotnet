@@ -315,6 +315,30 @@ namespace Microsoft.ApplicationInsights
         }
 
         /// <summary>
+        /// Test to ensure TelemetryConfiguration is set correctly.
+        /// </summary>
+        [TestMethod]
+        [TestCategory("ILogger")]
+        public void ApplicationInsightsLoggerTelemetryConfigurationIsSetCorrectly()
+        {
+            // Create DI container.
+            IServiceCollection services = new ServiceCollection();
+
+            services.AddLogging(loggingBuilder =>
+            {
+                loggingBuilder.AddApplicationInsights(
+                    telemetryConfiguration => { telemetryConfiguration.ConnectionString = "InstrumentationKey=TestAIKey"; },
+                    applicationInsightsLoggerOptions => { });
+            });
+
+            TelemetryConfiguration actualTelemetryConfiguration = services
+                .BuildServiceProvider()
+                .GetRequiredService<IOptions<TelemetryConfiguration>>().Value;
+
+            Assert.AreEqual("TestAIKey", actualTelemetryConfiguration.InstrumentationKey);
+        }
+
+        /// <summary>
         /// Ensures that the default <see cref="ApplicationInsightsLoggerOptions"/> are as expected.
         /// </summary>
         [TestMethod]

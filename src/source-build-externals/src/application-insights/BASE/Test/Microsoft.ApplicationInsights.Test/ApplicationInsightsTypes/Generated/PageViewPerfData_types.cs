@@ -28,36 +28,36 @@ namespace AI
 {
     using System.Collections.Generic;
 
-    [global::Bond.Attribute("Description", "An instance of PageViewPerf represents: a page view with no performance data, a page view with performance data, or just the performance data of an earlier page request.")]
-    [global::Bond.Attribute("Alias", "PageViewPerformanceData;PageviewPerformanceData")]
-    [global::Bond.Schema]
+    // [global::Bond.Attribute("Description", "An instance of PageViewPerf represents: a page view with no performance data, a page view with performance data, or just the performance data of an earlier page request.")]
+    // [global::Bond.Attribute("Alias", "PageViewPerformanceData;PageviewPerformanceData")]
+    // [global::Bond.Schema]
     [System.CodeDom.Compiler.GeneratedCode("gbc", "0.10.1.0")]
     public partial class PageViewPerfData
         : PageViewData
     {
-        [global::Bond.Attribute("Description", "Performance total in TimeSpan 'G' (general long) format: d:hh:mm:ss.fffffff")]
-        [global::Bond.Attribute("CSType", "TimeSpan")]
-        [global::Bond.Id(10)]
+        // [global::Bond.Attribute("Description", "Performance total in TimeSpan 'G' (general long) format: d:hh:mm:ss.fffffff")]
+        // [global::Bond.Attribute("CSType", "TimeSpan")]
+        // [global::Bond.Id(10)]
         public string perfTotal { get; set; }
 
-        [global::Bond.Attribute("Description", "Network connection time in TimeSpan 'G' (general long) format: d:hh:mm:ss.fffffff")]
-        [global::Bond.Attribute("CSType", "TimeSpan")]
-        [global::Bond.Id(20)]
+        // [global::Bond.Attribute("Description", "Network connection time in TimeSpan 'G' (general long) format: d:hh:mm:ss.fffffff")]
+        // [global::Bond.Attribute("CSType", "TimeSpan")]
+        // [global::Bond.Id(20)]
         public string networkConnect { get; set; }
 
-        [global::Bond.Attribute("Description", "Sent request time in TimeSpan 'G' (general long) format: d:hh:mm:ss.fffffff")]
-        [global::Bond.Attribute("CSType", "TimeSpan")]
-        [global::Bond.Id(30)]
+        // [global::Bond.Attribute("Description", "Sent request time in TimeSpan 'G' (general long) format: d:hh:mm:ss.fffffff")]
+        // [global::Bond.Attribute("CSType", "TimeSpan")]
+        // [global::Bond.Id(30)]
         public string sentRequest { get; set; }
 
-        [global::Bond.Attribute("Description", "Received response time in TimeSpan 'G' (general long) format: d:hh:mm:ss.fffffff")]
-        [global::Bond.Attribute("CSType", "TimeSpan")]
-        [global::Bond.Id(40)]
+        // [global::Bond.Attribute("Description", "Received response time in TimeSpan 'G' (general long) format: d:hh:mm:ss.fffffff")]
+        // [global::Bond.Attribute("CSType", "TimeSpan")]
+        // [global::Bond.Id(40)]
         public string receivedResponse { get; set; }
 
-        [global::Bond.Attribute("Description", "DOM processing time in TimeSpan 'G' (general long) format: d:hh:mm:ss.fffffff")]
-        [global::Bond.Attribute("CSType", "TimeSpan")]
-        [global::Bond.Id(50)]
+        // [global::Bond.Attribute("Description", "DOM processing time in TimeSpan 'G' (general long) format: d:hh:mm:ss.fffffff")]
+        // [global::Bond.Attribute("CSType", "TimeSpan")]
+        // [global::Bond.Id(50)]
         public string domProcessing { get; set; }
 
         public PageViewPerfData()

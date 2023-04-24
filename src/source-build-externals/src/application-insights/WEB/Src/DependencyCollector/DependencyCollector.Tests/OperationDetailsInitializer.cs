@@ -6,7 +6,7 @@
     using System.Net.Http;
     using Microsoft.ApplicationInsights.Channel;
     using Microsoft.ApplicationInsights.DataContracts;
-    using Microsoft.ApplicationInsights.DependencyCollector.Implementation;
+    using Microsoft.ApplicationInsights.DependencyCollector;
     using Microsoft.ApplicationInsights.Extensibility;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -19,9 +19,9 @@
         {
             if (telemetry is DependencyTelemetry dependency)
             {
-                dependency.TryGetOperationDetail(RemoteDependencyConstants.HttpRequestOperationDetailName, out var request);
-                dependency.TryGetOperationDetail(RemoteDependencyConstants.HttpResponseOperationDetailName, out var response);
-                dependency.TryGetOperationDetail(RemoteDependencyConstants.HttpResponseHeadersOperationDetailName, out var responseHeaders);
+                dependency.TryGetOperationDetail(OperationDetailConstants.HttpRequestOperationDetailName, out var request);
+                dependency.TryGetOperationDetail(OperationDetailConstants.HttpResponseOperationDetailName, out var response);
+                dependency.TryGetOperationDetail(OperationDetailConstants.HttpResponseHeadersOperationDetailName, out var responseHeaders);
 
                 var newDetails = new Tuple<object, object, object>(request, response, responseHeaders);
                 this.operationDetails.AddOrUpdate(dependency, newDetails, (d, o) => newDetails);

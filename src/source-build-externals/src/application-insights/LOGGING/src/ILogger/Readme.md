@@ -26,10 +26,12 @@ class Program
         // Add the logging pipelines to use. We are using Application Insights only here.
         services.AddLogging(loggingBuilder =>
         {
-	    // Optional: Apply filters to configure LogLevel Trace or above is sent to ApplicationInsights for all
-	    // categories.
-	    loggingBuilder.AddFilter<ApplicationInsightsLoggerProvider>("", LogLevel.Trace);
-            loggingBuilder.AddApplicationInsights("--YourAIKeyHere--");                
+            // Optional: Apply filters to configure LogLevel Trace or above is sent to ApplicationInsights for all categories.
+            loggingBuilder.AddFilter<ApplicationInsightsLoggerProvider>("", LogLevel.Trace);
+            
+            loggingBuilder.AddApplicationInsights(
+                telemetryConfiguration => { telemetryConfiguration.ConnectionString = "InstrumentationKey=00000000-0000-0000-0000-000000000000"; },
+                applicationInsightsLoggerOptions => { });
         });
 
         // Build ServiceProvider.
@@ -68,15 +70,15 @@ public class Program
         .UseStartup<Startup>()                
         .ConfigureLogging(logging =>
         {                
-	    logging.AddApplicationInsights("ikeyhere");
+            loggingBuilder.AddApplicationInsights(
+                telemetryConfiguration => { telemetryConfiguration.ConnectionString = "InstrumentationKey=00000000-0000-0000-0000-000000000000"; },
+                applicationInsightsLoggerOptions => { });
 				
-	    // Optional: Apply filters to configure LogLevel Trace or above is sent to
-	    // ApplicationInsights for all categories.
+            // Optional: Apply filters to configure LogLevel Trace or above is sent to ApplicationInsights for all categories.
             logging.AddFilter<ApplicationInsightsLoggerProvider>("", LogLevel.Trace);
 				
-            // Additional filtering For category starting in "Microsoft",
-	    // only Warning or above will be sent to Application Insights.
-	    logging.AddFilter<ApplicationInsightsLoggerProvider>("Microsoft", LogLevel.Warning);
+            // Additional filtering For category starting in "Microsoft", only Warning or above will be sent to Application Insights.
+            logging.AddFilter<ApplicationInsightsLoggerProvider>("Microsoft", LogLevel.Warning);
         })
         .Build();
 }
@@ -138,13 +140,12 @@ public class ValuesController : ControllerBase
     [HttpGet]
     public ActionResult<IEnumerable<string>> Get()
     {
-        // All the following logs will be picked upby Application Insights.
-	// and all have ("MyKey", "MyValue") in Properties.
-	using (_logger.BeginScope(new Dictionary<string, object> { { "MyKey", "MyValue" } }))
+        // All the following logs will be picked upby Application Insights and all have ("MyKey", "MyValue") in Properties.
+	    using (_logger.BeginScope(new Dictionary<string, object> { { "MyKey", "MyValue" } }))
         {			
-	    _logger.LogInformation("This is an information trace..");
-	    _logger.LogWarning("This is a warning trace..");
-	    _logger.LogTrace("this is a Trace level message");
+	        _logger.LogInformation("This is an information trace..");
+	        _logger.LogWarning("This is a warning trace..");
+	        _logger.LogTrace("this is a Trace level message");
         }
 
         return new string[] { "value1", "value2" };

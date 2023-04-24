@@ -1123,6 +1123,147 @@
             }
         }
 
+        [DataRow("producer")]
+        [DataRow("client")]
+        [DataTestMethod]
+        public void AzureServiceBusSpansAreCollectedAsDependency(string kind)
+        {
+            using (var listener = new DiagnosticListener("Azure.SomeClient"))
+            using (var module = new DependencyTrackingTelemetryModule())
+            {
+                module.Initialize(this.configuration);
+
+                Activity sendActivity = new Activity("Azure.SomeClient.Method")
+                    .AddTag("kind", kind)
+                    .AddTag("az.namespace", "Microsoft.ServiceBus")
+                    .AddTag("component", "servicebus")
+                    .AddTag("peer.address", "amqps://my.servicebus.windows.net/")
+                    .AddTag("message_bus.destination", "queueName");
+
+                listener.StartActivity(sendActivity, null);
+                listener.StopActivity(sendActivity, null);
+
+                var telemetry = this.sentItems.Last() as DependencyTelemetry;
+
+                Assert.IsNotNull(telemetry);
+                Assert.AreEqual("SomeClient.Method", telemetry.Name);
+                if (kind == "producer")
+                {
+                    Assert.AreEqual("Queue Message | Azure Service Bus", telemetry.Type);
+                }
+                else
+                {
+                    Assert.AreEqual("Azure Service Bus", telemetry.Type);
+                }
+
+                Assert.IsTrue(telemetry.Success.Value);
+                Assert.IsNull(telemetry.Context.Operation.ParentId);
+                Assert.AreEqual(sendActivity.StartTimeUtc, telemetry.Timestamp);
+                Assert.AreEqual(sendActivity.Duration, telemetry.Duration);
+                Assert.AreEqual(sendActivity.TraceId.ToHexString(), telemetry.Context.Operation.Id);
+                Assert.AreEqual(sendActivity.SpanId.ToHexString(), telemetry.Id);
+                Assert.AreEqual("amqps://my.servicebus.windows.net/queueName", telemetry.Target);
+            }
+        }
+
+        [DataRow("server")]
+        [DataRow("consumer")]
+        [DataTestMethod]
+        public void AzureServiceBusSpansAreCollectedAsRequest(string kind)
+        {
+            using (var listener = new DiagnosticListener("Azure.SomeClient"))
+            using (var module = new DependencyTrackingTelemetryModule())
+            {
+                module.Initialize(this.configuration);
+
+                Activity sendActivity = new Activity("Azure.SomeClient.Process")
+                    .AddTag("kind", kind)
+                    .AddTag("az.namespace", "Microsoft.ServiceBus")
+                    .AddTag("component", "servicebus")
+                    .AddTag("peer.address", "amqps://my.servicebus.windows.net")
+                    .AddTag("message_bus.destination", "queueName");
+
+                listener.StartActivity(sendActivity, null);
+                listener.StopActivity(sendActivity, null);
+
+                var telemetry = this.sentItems.Last() as RequestTelemetry;
+
+                Assert.IsNotNull(telemetry);
+                Assert.AreEqual("SomeClient.Process", telemetry.Name);
+                Assert.AreEqual("amqps://my.servicebus.windows.net/queueName", telemetry.Source);
+                Assert.IsTrue(telemetry.Success.Value);
+
+                Assert.IsNull(telemetry.Context.Operation.ParentId);
+                Assert.AreEqual(sendActivity.StartTimeUtc, telemetry.Timestamp);
+                Assert.AreEqual(sendActivity.Duration, telemetry.Duration);
+                Assert.AreEqual(sendActivity.TraceId.ToHexString(), telemetry.Context.Operation.Id);
+                Assert.AreEqual(sendActivity.SpanId.ToHexString(), telemetry.Id);
+                Assert.IsFalse(telemetry.Metrics.Any());
+            }
+        }
+
+        [DataRow("producer")]
+        [DataRow("client")]
+        [DataRow("server")]
+        [DataRow("consumer")]
+        [DataTestMethod]
+        public void AzureServiceBusSpansAreCollectedError(string kind)
+        {
+            using (var listener = new DiagnosticListener("Azure.SomeClient"))
+            using (var module = new DependencyTrackingTelemetryModule())
+            {
+                module.Initialize(this.configuration);
+
+                var exception = new InvalidOperationException();
+                Activity sendActivity = new Activity("Azure.SomeClient.Method")
+                    .AddTag("peer.address", "amqps://my.servicebus.windows.net")
+                    .AddTag("message_bus.destination", "queueName")
+                    .AddTag("kind", kind)
+                    .AddTag("az.namespace", "Microsoft.ServiceBus");
+
+                listener.StartActivity(sendActivity, null);
+                listener.Write("Azure.SomeClient.Send.Exception", exception);
+                listener.StopActivity(sendActivity, null);
+
+                var telemetry = this.sentItems.Last();
+
+                Assert.IsNotNull(telemetry);
+                Assert.IsNull(telemetry.Context.Operation.ParentId);
+                Assert.AreEqual(sendActivity.TraceId.ToHexString(), telemetry.Context.Operation.Id);
+
+                OperationTelemetry operation = telemetry as OperationTelemetry;
+                Assert.IsFalse(operation.Success.Value);
+                Assert.AreEqual(exception.ToInvariantString(), operation.Properties["Error"]);
+                Assert.AreEqual(sendActivity.SpanId.ToHexString(), operation.Id);
+                Assert.AreEqual("SomeClient.Method", operation.Name);
+
+                if (kind == "producer" || kind == "client" || kind == "internal")
+                {
+                    Assert.IsTrue(telemetry is DependencyTelemetry);
+                    DependencyTelemetry dependency = telemetry as DependencyTelemetry;
+                    Assert.AreEqual(string.Empty, dependency.Data);
+                    Assert.AreEqual(string.Empty, dependency.ResultCode);
+                    Assert.AreEqual("amqps://my.servicebus.windows.net/queueName", dependency.Target);
+                    if (kind == "producer")
+                    {
+                        Assert.AreEqual("Queue Message | Azure Service Bus", dependency.Type);
+                    }
+                    else
+                    {
+                        Assert.AreEqual("Azure Service Bus", dependency.Type);
+                    }
+                }
+                else
+                {
+                    Assert.IsTrue(telemetry is RequestTelemetry);
+                    RequestTelemetry request = telemetry as RequestTelemetry;
+                    Assert.AreEqual(string.Empty, request.ResponseCode);
+                    Assert.AreEqual("amqps://my.servicebus.windows.net/queueName", request.Source);
+                }
+            }
+        }
+
+
         private T TrackOperation<T>(
             DiagnosticListener listener,
             string activityName,

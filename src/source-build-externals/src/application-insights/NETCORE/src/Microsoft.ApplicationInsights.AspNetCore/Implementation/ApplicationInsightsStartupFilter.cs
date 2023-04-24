@@ -39,7 +39,10 @@
                 }
                 catch (Exception ex)
                 {
+#pragma warning disable CA1848 // For improved performance, use the LoggerMessage delegates instead of calling 'LoggerExtensions.LogWarning'.
                     this.logger.LogWarning(0, ex, "Failed to resolve TelemetryConfiguration.");
+#pragma warning restore CA1848
+
                     AspNetCoreEventSource.Instance.LogError(ex.ToInvariantString());
                 }
 

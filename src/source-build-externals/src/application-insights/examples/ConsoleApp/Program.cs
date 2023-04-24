@@ -1,9 +1,12 @@
-﻿using Microsoft.ApplicationInsights;
+﻿using Azure.Identity;
+
+using Microsoft.ApplicationInsights;
 using Microsoft.ApplicationInsights.Channel;
 using Microsoft.ApplicationInsights.DataContracts;
 using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.ApplicationInsights.Extensibility.PerfCounterCollector.QuickPulse;
 using Microsoft.ApplicationInsights.WindowsServer.TelemetryChannel;
+using Microsoft.ApplicationInsights.WorkerService;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using System;
@@ -25,9 +28,17 @@ namespace ConsoleAppWithApplicationInsights
             // Add custom TelemetryInitializer
             services.AddSingleton<ITelemetryInitializer, MyCustomTelemetryInitializer>();
 
+            // Configure TelemetryConfiguration
+            services.Configure<TelemetryConfiguration>(config =>
+            {
+                // Optionally configure AAD
+                //var credential = new DefaultAzureCredential();
+                //config.SetAzureTokenCredential(credential);
+            });
+
             // Being a regular console app, there is no appsettings.json or configuration providers enabled by default.
-            // Hence instrumentation key must be specified here.
-            services.AddApplicationInsightsTelemetryWorkerService("put_actual_ikey_here");
+            // Hence connection string must be specified here.
+            services.AddApplicationInsightsTelemetryWorkerService((ApplicationInsightsServiceOptions options) => options.ConnectionString = "InstrumentationKey=00000000-0000-0000-0000-000000000000");
 
             // Add custom TelemetryProcessor
             services.AddApplicationInsightsTelemetryProcessor<MyCustomTelemetryProcessor>();

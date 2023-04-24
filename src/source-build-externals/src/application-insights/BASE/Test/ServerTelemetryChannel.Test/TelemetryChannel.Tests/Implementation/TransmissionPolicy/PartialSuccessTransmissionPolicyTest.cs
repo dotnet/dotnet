@@ -242,6 +242,40 @@
         }
 
         [TestMethod]
+        public void IfIndexNegativeIgnoreError()
+        {
+            IList<Transmission> enqueuedTransmissions = new List<Transmission>();
+            var transmitter = new StubTransmitter
+            {
+                OnEnqueue = t => { enqueuedTransmissions.Add(t); }
+            };
+
+            var policy = new PartialSuccessTransmissionPolicy();
+            policy.Initialize(transmitter);
+
+            var items = new List<ITelemetry> { new EventTelemetry() };
+            Transmission transmission = new Transmission(new Uri("http://uri"), items, "type", "encoding");
+
+            // Index is 0-based
+            string response = BackendResponseHelper.CreateBackendResponse(
+                itemsReceived: 2,
+                itemsAccepted: 1,
+                errorCodes: new[] { "408" },
+                indexStartWith: -1);
+
+            var wrapper = new HttpWebResponseWrapper
+            {
+                StatusCode = 206,
+                Content = response
+            };
+
+            transmitter.OnTransmissionSent(new TransmissionProcessedEventArgs(transmission, null, wrapper));
+
+            Assert.AreEqual(0, transmitter.BackoffLogicManager.ConsecutiveErrors);
+            Assert.AreEqual(0, enqueuedTransmissions.Count);
+        }
+
+        [TestMethod]
         public void DoesNotSendTransmissionForUnsupportedCodes()
         {
             IList<Transmission> enqueuedTransmissions = new List<Transmission>();
@@ -259,7 +293,7 @@
             string response = BackendResponseHelper.CreateBackendResponse(
                 itemsReceived: 50,
                 itemsAccepted: 45,
-                errorCodes: new[] { "400", "402", "502", "409", "417" });
+                errorCodes: new[] { "400", "402", "502", "409", "417", "206" });
 
             var wrapper = new HttpWebResponseWrapper
             {
