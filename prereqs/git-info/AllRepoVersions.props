@@ -21,8 +21,8 @@
     <fsharpOutputPackageVersion>7.0.400-beta.23221.1</fsharpOutputPackageVersion>
     <installerGitCommitHash>8a7aa12ec345153e3cfcf66ce4147d8a70be59aa</installerGitCommitHash>
     <installerOutputPackageVersion>8.0.100</installerOutputPackageVersion>
-    <msbuildGitCommitHash>2cbc8b6aef648cf21c6a68a0dab7fe09a614e475</msbuildGitCommitHash>
-    <msbuildOutputPackageVersion>17.7.0-preview-23217-02</msbuildOutputPackageVersion>
+    <msbuildGitCommitHash>ac3f5ad89f3f04d080986607d504a838ed622fb9</msbuildGitCommitHash>
+    <msbuildOutputPackageVersion>17.7.0-preview-23221-02</msbuildOutputPackageVersion>
     <nugetclientGitCommitHash>87ce6f59e9cf4f5a32d7ba16f537b6b791d9fcc6</nugetclientGitCommitHash>
     <nugetclientOutputPackageVersion>6.7.0-preview.1.19</nugetclientOutputPackageVersion>
     <razorGitCommitHash>105a50d1a4d64236e8a7a8a1d898fa261914efe7</razorGitCommitHash>
