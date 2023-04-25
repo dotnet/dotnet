@@ -13,11 +13,11 @@
     <LibGit2SharpVersion>0.25.2</LibGit2SharpVersion>
     <log4netVersion>2.0.10</log4netVersion>
     <SystemNetHttpVersion>4.3.4</SystemNetHttpVersion>
-    <AzureCoreVersion>1.25.0</AzureCoreVersion>
+    <AzureCoreVersion>1.31.0</AzureCoreVersion>
     <AzureIdentityVersion>1.8.0</AzureIdentityVersion>
     <AzureSecurityKeyVaultSecretsVersion>4.4.0</AzureSecurityKeyVaultSecretsVersion>
     <AzureStorageBlobsVersion>12.13.0</AzureStorageBlobsVersion>
-    <AzureDataTablesVersion>12.5.0</AzureDataTablesVersion>
+    <AzureDataTablesVersion>12.8.0</AzureDataTablesVersion>
     <FluentAssertionsVersion>5.10.3</FluentAssertionsVersion>
     <NETStandardLibraryVersion>1.6.1</NETStandardLibraryVersion>
     <MicrosoftApplicationInsightsVersion>2.21.0</MicrosoftApplicationInsightsVersion>
@@ -90,6 +90,6 @@
     <MicrosoftSymbolUploaderVersion>2.0.0-preview.1.21526.15</MicrosoftSymbolUploaderVersion>
     <MicrosoftNetSdkWorkloadManifestReaderVersion>8.0.100-preview.3.23178.3</MicrosoftNetSdkWorkloadManifestReaderVersion>
     <MicrosoftDeploymentDotNetReleasesVersion>1.0.0-preview6.1.23159.4</MicrosoftDeploymentDotNetReleasesVersion>
-    <MicrosoftTemplateEngineAuthoringTasksVersion>8.0.100-preview.4.23218.1</MicrosoftTemplateEngineAuthoringTasksVersion>
+    <MicrosoftTemplateEngineAuthoringTasksVersion>8.0.100-preview.4.23224.3</MicrosoftTemplateEngineAuthoringTasksVersion>
   </PropertyGroup>
 </Project>
