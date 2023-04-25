@@ -19,6 +19,11 @@ public static class ProjectSetup
         var workspace = MSBuildWorkspace.Create();
         var project = await workspace.OpenProjectAsync("SampleApp/SampleApp.csproj");
 
+        if (workspace.Diagnostics.Count != 0)
+        {
+            throw new InvalidOperationException(string.Join(Environment.NewLine, workspace.Diagnostics));
+        }
+
         // remove any generators from the project as we don't want generated files in our initial compilation
         foreach (var analyzerRef in project.AnalyzerReferences)
         {

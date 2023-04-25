@@ -60,6 +60,42 @@ namespace MyApp.Pages
             Assert.Single(result.GeneratedSources);
         }
 
+        [Fact, WorkItem("https://github.com/dotnet/razor/issues/8610")]
+        public async Task SourceGenerator_RazorFiles_UsingAlias_NestedClass()
+        {
+            // Arrange
+            var project = CreateTestProject(new()
+            {
+                ["Pages/Index.razor"] = """
+                    @code {
+                        public class MyModel { }
+                    }
+                    """,
+                ["Shared/MyComponent.razor"] = """
+                    @using MyAlias = Pages.Index.MyModel;
+
+                    <MyComponent Data="@Data" />
+
+                    @code {
+                        [Parameter]
+                        public MyAlias? Data { get; set; }
+                    }
+                    """,
+            });
+            var compilation = await project.GetCompilationAsync();
+            var driver = await GetDriverAsync(project, options =>
+            {
+                options.TestGlobalOptions["build_property.RazorLangVersion"] = "7.0";
+            });
+
+            // Act
+            var result = RunGenerator(compilation!, ref driver);
+
+            // Assert
+            Assert.Empty(result.Diagnostics);
+            Assert.Equal(2, result.GeneratedSources.Length);
+        }
+
         [Fact]
         public async Task SourceGeneratorEvents_RazorFiles_Works()
         {
@@ -715,6 +751,8 @@ __builder.AddContent(3, count);
                e => e.AssertSingleItem("ParseRazorDocumentStop", "Pages/Counter.razor"),
                e => e.AssertSingleItem("GenerateDeclarationCodeStart", "Pages/Counter.razor"),
                e => e.AssertSingleItem("GenerateDeclarationCodeStop", "Pages/Counter.razor"),
+               e => e.AssertSingleItem("DiscoverTagHelpersFromComponentStart", "Pages/Index.razor"),
+               e => e.AssertSingleItem("DiscoverTagHelpersFromComponentStop", "Pages/Index.razor"),
                e => e.AssertSingleItem("DiscoverTagHelpersFromComponentStart", "Pages/Counter.razor"),
                e => e.AssertSingleItem("DiscoverTagHelpersFromComponentStop", "Pages/Counter.razor"),
                e => e.AssertSingleItem("RewriteTagHelpersStart", "Pages/Counter.razor"),
@@ -877,6 +915,8 @@ __builder.AddContent(3, count);
                 e => e.AssertSingleItem("ParseRazorDocumentStop", "Pages/Counter.razor"),
                e => e.AssertSingleItem("GenerateDeclarationCodeStart", "Pages/Counter.razor"),
                e => e.AssertSingleItem("GenerateDeclarationCodeStop", "Pages/Counter.razor"),
+               e => e.AssertSingleItem("DiscoverTagHelpersFromComponentStart", "Pages/Index.razor"),
+               e => e.AssertSingleItem("DiscoverTagHelpersFromComponentStop", "Pages/Index.razor"),
                e => e.AssertSingleItem("DiscoverTagHelpersFromComponentStart", "Pages/Counter.razor"),
                e => e.AssertSingleItem("DiscoverTagHelpersFromComponentStop", "Pages/Counter.razor"),
                 e => e.AssertSingleItem("RewriteTagHelpersStart", "Pages/Counter.razor"),

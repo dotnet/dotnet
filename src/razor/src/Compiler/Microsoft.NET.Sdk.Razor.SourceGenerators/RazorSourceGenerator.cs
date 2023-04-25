@@ -95,18 +95,19 @@ namespace Microsoft.NET.Sdk.Razor.SourceGenerators
                 });
 
             var tagHelpersFromComponents = generatedDeclarationSyntaxTrees
+                .Combine(generatedDeclarationSyntaxTrees.Collect())
                 .Combine(compilation)
                 .Combine(razorSourceGeneratorOptions)
                 .SelectMany(static (pair, ct) =>
                 {
 
-                    var ((generatedDeclarationSyntaxTree, compilation), razorSourceGeneratorOptions) = pair;
+                    var (((generatedDeclarationSyntaxTree, allGeneratedDeclarationSyntaxTrees), compilation), razorSourceGeneratorOptions) = pair;
                     RazorSourceGeneratorEventSource.Log.DiscoverTagHelpersFromComponentStart(generatedDeclarationSyntaxTree.FilePath);
 
                     var tagHelperFeature = new StaticCompilationTagHelperFeature();
                     var discoveryProjectEngine = GetDiscoveryProjectEngine(compilation.References.ToImmutableArray(), tagHelperFeature);
 
-                    var compilationWithDeclarations = compilation.AddSyntaxTrees(generatedDeclarationSyntaxTree);
+                    var compilationWithDeclarations = compilation.AddSyntaxTrees(allGeneratedDeclarationSyntaxTrees);
 
                     // try and find the specific root class this component is declaring, falling back to the assembly if for any reason the code is not in the shape we expect
                     ISymbol targetSymbol = compilationWithDeclarations.Assembly;

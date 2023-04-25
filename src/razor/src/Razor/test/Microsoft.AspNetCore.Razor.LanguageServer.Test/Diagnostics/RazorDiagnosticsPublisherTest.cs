@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
+using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Text;
 using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
@@ -100,7 +101,7 @@ public class RazorDiagnosticsPublisherTest : LanguageServerTestBase
             .Returns(Task.FromResult(new SumType<FullDocumentDiagnosticReport, UnchangedDocumentDiagnosticReport>?(new FullDocumentDiagnosticReport())))
             .Verifiable();
 
-        using var publisher = new TestRazorDiagnosticsPublisher(LegacyDispatcher, languageServerDocument, LoggerFactory)
+        using var publisher = new TestRazorDiagnosticsPublisher(LegacyDispatcher, languageServerDocument, TestLanguageServerFeatureOptions.Instance, LoggerFactory)
         {
             BlockBackgroundWorkCompleting = new ManualResetEventSlim(initialState: true),
             NotifyBackgroundWorkCompleting = new ManualResetEventSlim(initialState: false),
@@ -176,7 +177,7 @@ public class RazorDiagnosticsPublisherTest : LanguageServerTestBase
             })
             .Returns(Task.CompletedTask);
 
-        using var publisher = new TestRazorDiagnosticsPublisher(LegacyDispatcher, languageServer.Object, LoggerFactory);
+        using var publisher = new TestRazorDiagnosticsPublisher(LegacyDispatcher, languageServer.Object, TestLanguageServerFeatureOptions.Instance, LoggerFactory);
         publisher.Initialize(_projectManager);
 
         // Act
@@ -224,7 +225,7 @@ public class RazorDiagnosticsPublisherTest : LanguageServerTestBase
             })
             .Returns(Task.CompletedTask);
 
-        using var publisher = new TestRazorDiagnosticsPublisher(LegacyDispatcher, languageServer.Object, LoggerFactory);
+        using var publisher = new TestRazorDiagnosticsPublisher(LegacyDispatcher, languageServer.Object, TestLanguageServerFeatureOptions.Instance, LoggerFactory);
         publisher.PublishedRazorDiagnostics[processedOpenDocument.FilePath] = s_emptyRazorDiagnostics;
         publisher.Initialize(_projectManager);
 
@@ -279,7 +280,7 @@ public class RazorDiagnosticsPublisherTest : LanguageServerTestBase
             })
             .Returns(Task.CompletedTask);
 
-        using var publisher = new TestRazorDiagnosticsPublisher(LegacyDispatcher, languageServer.Object, LoggerFactory);
+        using var publisher = new TestRazorDiagnosticsPublisher(LegacyDispatcher, languageServer.Object, TestLanguageServerFeatureOptions.Instance, LoggerFactory);
         publisher.Initialize(_projectManager);
         await publisher.PublishDiagnosticsAsync(processedOpenDocument);
         arranging = false;
@@ -311,7 +312,7 @@ public class RazorDiagnosticsPublisherTest : LanguageServerTestBase
         var codeDocument = CreateCodeDocument(s_singleRazorDiagnostic);
         processedOpenDocument.With(codeDocument);
 
-        using var publisher = new TestRazorDiagnosticsPublisher(LegacyDispatcher, languageServer.Object, LoggerFactory);
+        using var publisher = new TestRazorDiagnosticsPublisher(LegacyDispatcher, languageServer.Object, TestLanguageServerFeatureOptions.Instance, LoggerFactory);
         publisher.PublishedRazorDiagnostics[processedOpenDocument.FilePath] = s_singleRazorDiagnostic;
         publisher.Initialize(_projectManager);
 
@@ -359,7 +360,7 @@ public class RazorDiagnosticsPublisherTest : LanguageServerTestBase
             })
             .Returns(Task.CompletedTask);
 
-        using var publisher = new TestRazorDiagnosticsPublisher(LegacyDispatcher, languageServer.Object, LoggerFactory);
+        using var publisher = new TestRazorDiagnosticsPublisher(LegacyDispatcher, languageServer.Object, TestLanguageServerFeatureOptions.Instance, LoggerFactory);
         publisher.Initialize(_projectManager);
         await publisher.PublishDiagnosticsAsync(processedOpenDocument);
         arranging = false;
@@ -386,7 +387,7 @@ public class RazorDiagnosticsPublisherTest : LanguageServerTestBase
             })
             .Returns(Task.CompletedTask);
 
-        using var publisher = new TestRazorDiagnosticsPublisher(LegacyDispatcher, languageServer.Object, LoggerFactory);
+        using var publisher = new TestRazorDiagnosticsPublisher(LegacyDispatcher, languageServer.Object, TestLanguageServerFeatureOptions.Instance, LoggerFactory);
         Assert.NotNull(_closedDocument.FilePath);
         publisher.PublishedRazorDiagnostics[_closedDocument.FilePath] = s_singleRazorDiagnostic;
         publisher.PublishedCSharpDiagnostics[_closedDocument.FilePath] = s_singleCSharpDiagnostic;
@@ -404,7 +405,7 @@ public class RazorDiagnosticsPublisherTest : LanguageServerTestBase
     {
         // Arrange
         var languageServer = new Mock<ClientNotifierServiceBase>(MockBehavior.Strict);
-        using var publisher = new TestRazorDiagnosticsPublisher(LegacyDispatcher, languageServer.Object, LoggerFactory);
+        using var publisher = new TestRazorDiagnosticsPublisher(LegacyDispatcher, languageServer.Object, TestLanguageServerFeatureOptions.Instance, LoggerFactory);
         Assert.NotNull(_openedDocument.FilePath);
         publisher.PublishedRazorDiagnostics[_openedDocument.FilePath] = s_singleRazorDiagnostic;
         publisher.PublishedCSharpDiagnostics[_openedDocument.FilePath] = s_singleCSharpDiagnostic;
@@ -419,7 +420,7 @@ public class RazorDiagnosticsPublisherTest : LanguageServerTestBase
     {
         // Arrange
         var languageServer = new Mock<ClientNotifierServiceBase>(MockBehavior.Strict);
-        using var publisher = new TestRazorDiagnosticsPublisher(LegacyDispatcher, languageServer.Object, LoggerFactory);
+        using var publisher = new TestRazorDiagnosticsPublisher(LegacyDispatcher, languageServer.Object, TestLanguageServerFeatureOptions.Instance, LoggerFactory);
         Assert.NotNull(_closedDocument.FilePath);
         publisher.PublishedRazorDiagnostics[_closedDocument.FilePath] = s_emptyRazorDiagnostics;
         publisher.PublishedCSharpDiagnostics[_closedDocument.FilePath] = s_emptyCSharpDiagnostics;
@@ -434,7 +435,7 @@ public class RazorDiagnosticsPublisherTest : LanguageServerTestBase
     {
         // Arrange
         var languageServer = new Mock<ClientNotifierServiceBase>(MockBehavior.Strict);
-        using var publisher = new TestRazorDiagnosticsPublisher(LegacyDispatcher, languageServer.Object, LoggerFactory);
+        using var publisher = new TestRazorDiagnosticsPublisher(LegacyDispatcher, languageServer.Object, TestLanguageServerFeatureOptions.Instance, LoggerFactory);
         Assert.NotNull(_closedDocument.FilePath);
         Assert.NotNull(_openedDocument.FilePath);
         publisher.PublishedRazorDiagnostics[_closedDocument.FilePath] = s_emptyRazorDiagnostics;
@@ -464,8 +465,9 @@ public class RazorDiagnosticsPublisherTest : LanguageServerTestBase
         public TestRazorDiagnosticsPublisher(
             ProjectSnapshotManagerDispatcher projectSnapshotManagerDispatcher,
             ClientNotifierServiceBase languageServer,
+            LanguageServerFeatureOptions languageServerFeatureOptions,
             ILoggerFactory loggerFactory)
-            : base(projectSnapshotManagerDispatcher, languageServer, loggerFactory)
+            : base(projectSnapshotManagerDispatcher, languageServer, languageServerFeatureOptions, loggerFactory)
         {
             // The diagnostics publisher by default will wait 2 seconds until publishing diagnostics. For testing purposes we reduce
             // the amount of time we wait for diagnostic publishing because we have more concrete control of the timer and its lifecycle.
