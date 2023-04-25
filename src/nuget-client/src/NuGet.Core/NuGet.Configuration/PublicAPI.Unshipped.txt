@@ -1,1 +1,3 @@
 #nullable enable
+NuGet.Configuration.PackageSourceMappingProvider.ShouldSkipSave.get -> bool
+~NuGet.Configuration.PackageSourceMappingProvider.PackageSourceMappingProvider(NuGet.Configuration.ISettings settings, bool shouldSkipSave) -> void

@@ -1,2 +1,3 @@
 #nullable enable
+~NuGet.Commands.DependencyGraphSpecRequestProvider.DependencyGraphSpecRequestProvider(NuGet.Commands.RestoreCommandProvidersCache providerCache, NuGet.ProjectModel.DependencyGraphSpec dgFile, NuGet.Configuration.ISettings settings) -> void
 ~NuGet.Commands.SourceRepositoryDependencyProvider.SourceRepository.get -> NuGet.Protocol.Core.Types.SourceRepository

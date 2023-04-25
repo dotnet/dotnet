@@ -35,6 +35,8 @@ namespace NuGet.Commands.FuncTest
     [Collection(TestCollection.Name)]
     public class RestoreCommandTests
     {
+        private const string PrimarySourceName = "source";
+
         [Theory]
         [InlineData(NuGetConstants.V2FeedUrl, new Type[0])]
         [InlineData(NuGetConstants.V3FeedUrl, new[] { typeof(RemoteV3FindPackageByIdResourceProvider) })]
@@ -2204,6 +2206,175 @@ namespace NuGet.Commands.FuncTest
                     // Assert
                     Assert.True(result.Success);
                 }
+            }
+        }
+
+        [Fact]
+        public async Task Restore_WhenMappingNewSourceDoesNotExist_FailsWithNU1100()
+        {
+            // Arrange
+            using var pathContext = new SimpleTestPathContext();
+
+            var packageA = new SimpleTestPackageContext("a", "1.0.0");
+            var logger = new TestLogger();
+
+            PackageSpec project1Spec = ProjectTestHelpers.GetPackageSpec(
+                projectName: "Project1",
+                rootPath: pathContext.SolutionRoot,
+                framework: "net5.0",
+                dependencyName: packageA.Id);
+
+            PackageSpec project2Spec = ProjectTestHelpers.GetPackageSpec(
+                projectName: "Project2",
+                rootPath: pathContext.SolutionRoot,
+                framework: "net5.0",
+                dependencyName: packageA.Id);
+
+            await SimpleTestPackageUtility.CreateFolderFeedV3Async(
+                pathContext.PackageSource,
+                PackageSaveMode.Defaultv3,
+                packageA);
+
+            var restoreContext = new RestoreArgs()
+            {
+                Sources = new List<string>() { pathContext.PackageSource },
+                GlobalPackagesFolder = pathContext.UserPackagesFolder,
+                Log = logger,
+                CacheContext = new SourceCacheContext()
+            };
+
+            pathContext.Settings.AddPackageSourceMapping("InvalidSource", packageA.Id);
+            ISettings settings = Settings.LoadSettingsGivenConfigPaths(new string[] { pathContext.Settings.ConfigPath });
+
+            DependencyGraphSpec dgSpec = ProjectTestHelpers.GetDGSpecFromPackageSpecs(project1Spec, project2Spec);
+            var dgProvider = new DependencyGraphSpecRequestProvider(
+                new RestoreCommandProvidersCache(),
+                dgSpec,
+                settings); // Act
+
+            IReadOnlyList<RestoreSummaryRequest> restoreSummaryRequests = await dgProvider.CreateRequests(restoreContext);
+
+            foreach (RestoreSummaryRequest request in restoreSummaryRequests)
+            {
+                var command = new RestoreCommand(request.Request);
+                // Act
+                RestoreResult result = await command.ExecuteAsync();
+
+                // Assert
+                result.Success.Should().BeFalse(because: logger.ShowMessages());
+                result.LogMessages.Should().HaveCount(1);
+                result.LogMessages.Select(e => e.Code).Should().AllBeEquivalentTo(NuGetLogCode.NU1100);
+            }
+        }
+
+        [Fact]
+        public async Task Restore_WhenMappingNewSourceExists_Succeeds()
+        {
+            // Arrange
+            using var pathContext = new SimpleTestPathContext();
+
+            var packageA = new SimpleTestPackageContext("a", "1.0.0");
+            var logger = new TestLogger();
+
+            PackageSpec project1Spec = ProjectTestHelpers.GetPackageSpec(projectName: "Project1",
+                                                                 rootPath: pathContext.SolutionRoot,
+                                                                 framework: "net5.0",
+                                                                 dependencyName: packageA.Id);
+
+            PackageSpec project2Spec = ProjectTestHelpers.GetPackageSpec(projectName: "Project2",
+                                                                 rootPath: pathContext.SolutionRoot,
+                                                                 framework: "net5.0",
+                                                                 dependencyName: packageA.Id);
+            await SimpleTestPackageUtility.CreateFolderFeedV3Async(
+                pathContext.PackageSource,
+                PackageSaveMode.Defaultv3,
+                packageA);
+
+            var restoreContext = new RestoreArgs()
+            {
+                Sources = new List<string>() { pathContext.PackageSource },
+                GlobalPackagesFolder = pathContext.UserPackagesFolder,
+                Log = logger,
+                CacheContext = new SourceCacheContext()
+            };
+
+            pathContext.Settings.AddPackageSourceMapping(PrimarySourceName, packageA.Id);
+            ISettings settings = Settings.LoadSettingsGivenConfigPaths(new string[] { pathContext.Settings.ConfigPath });
+
+            DependencyGraphSpec dgSpec = ProjectTestHelpers.GetDGSpecFromPackageSpecs(project1Spec, project2Spec);
+            var dgProvider = new DependencyGraphSpecRequestProvider(
+                new RestoreCommandProvidersCache(),
+                dgSpec,
+                settings); // Act
+
+            IReadOnlyList<RestoreSummaryRequest> restoreSummaryRequests = await dgProvider.CreateRequests(restoreContext);
+
+            foreach (RestoreSummaryRequest request in restoreSummaryRequests)
+            {
+                var command = new RestoreCommand(request.Request);
+
+                // Act
+                RestoreResult result = await command.ExecuteAsync();
+
+                // Assert
+                result.Success.Should().BeTrue(because: logger.ShowMessages());
+            }
+        }
+
+        [Fact]
+        public async Task RestoreCommand_RestoreWithPreviewSourceMapping_SucceedsAndLogs()
+        {
+            // Arrange
+            using var pathContext = new SimpleTestPathContext();
+
+            var packageA = new SimpleTestPackageContext("a", "1.0.0");
+            var logger = new TestLogger();
+
+            PackageSpec project1Spec = ProjectTestHelpers.GetPackageSpec(projectName: "Project1",
+                                                                 rootPath: pathContext.SolutionRoot,
+                                                                 framework: "net5.0",
+                                                                 dependencyName: packageA.Id);
+
+            PackageSpec project2Spec = ProjectTestHelpers.GetPackageSpec(projectName: "Project2",
+                                                                 rootPath: pathContext.SolutionRoot,
+                                                                 framework: "net5.0",
+                                                                 dependencyName: packageA.Id);
+            project1Spec.RestoreMetadata.Sources.Add(new PackageSource(source: pathContext.PackageSource, name: PrimarySourceName));
+            project2Spec.RestoreMetadata.Sources.Add(new PackageSource(source: pathContext.PackageSource, name: PrimarySourceName));
+            await SimpleTestPackageUtility.CreateFolderFeedV3Async(
+                pathContext.PackageSource,
+                PackageSaveMode.Defaultv3,
+                packageA);
+
+            var restoreContext = new RestoreArgs()
+            {
+                Sources = new List<string>() { pathContext.PackageSource },
+                GlobalPackagesFolder = pathContext.UserPackagesFolder,
+                Log = logger,
+                CacheContext = new SourceCacheContext(),
+            };
+
+            pathContext.Settings.AddPackageSourceMapping(PrimarySourceName, packageA.Id);
+            ISettings settings = Settings.LoadSettingsGivenConfigPaths(new string[] { pathContext.Settings.ConfigPath });
+
+            DependencyGraphSpec dgSpec = ProjectTestHelpers.GetDGSpecFromPackageSpecs(project1Spec, project2Spec);
+            var dgProvider = new DependencyGraphSpecRequestProvider(
+                new RestoreCommandProvidersCache(),
+                dgSpec,
+                settings);
+
+            IReadOnlyList<RestoreSummaryRequest> restoreSummaryRequests = await dgProvider.CreateRequests(restoreContext);
+
+            foreach (RestoreSummaryRequest request in restoreSummaryRequests)
+            {
+                var command = new RestoreCommand(request.Request);
+                // Act
+                RestoreResult result = await command.ExecuteAsync();
+
+                // Assert
+                string loggerMessages = logger.ShowMessages();
+                result.Success.Should().BeTrue(because: loggerMessages);
+                loggerMessages.Should().Contain($"Package source mapping matches found for package ID '{packageA.Id}' are: '{PrimarySourceName}'.");
             }
         }
 

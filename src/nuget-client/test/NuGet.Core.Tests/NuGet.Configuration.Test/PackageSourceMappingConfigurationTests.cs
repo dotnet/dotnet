@@ -13,6 +13,23 @@ namespace NuGet.Configuration.Test
     public class PackageSourceMappingConfigurationTests
     {
         [Fact]
+        public void GetPackageSourceMappingConfiguration_WithNoSourceMappings_IsNotEnabled()
+        {
+            // Arrange
+            using var mockBaseDirectory = TestDirectory.Create();
+            var configPath1 = Path.Combine(mockBaseDirectory, "NuGet.Config");
+            SettingsTestUtils.CreateConfigurationFile(configPath1, @"<?xml version=""1.0"" encoding=""utf-8""?>
+<configuration>
+</configuration>");
+            var settings = Settings.LoadSettingsGivenConfigPaths(new string[] { configPath1 });
+
+            // Act & Assert
+            var packageSourceMapping = PackageSourceMapping.GetPackageSourceMapping(settings);
+            packageSourceMapping.IsEnabled.Should().BeFalse();
+            packageSourceMapping.Patterns.Should().HaveCount(0);
+        }
+
+        [Fact]
         public void GetPackageSourceMappingConfiguration_WithOneSource()
         {
             // Arrange
