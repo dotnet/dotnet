@@ -7,6 +7,7 @@
     <Nullable>enable</Nullable>
     <Configurations>Debug;Release</Configurations>
     <IsTestProject>true</IsTestProject>
+    <IsUnitTestProject>true</IsUnitTestProject>
     <GenerateProgramFile>false</GenerateProgramFile>
   </PropertyGroup>
 
@@ -23,9 +24,6 @@
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" />
     <PackageReference Include="Microsoft.CodeAnalysis.Workspaces.MSBuild" />
     <PackageReference Include="Microsoft.Build.Locator" />
-
-    <!-- TestSDK brings in an earlier nuget frameworks that breaks loading the test project -->
-    <PackageReference Include="NuGet.Frameworks" VersionOverride="6.4.0" />
   </ItemGroup>
 
   <!-- Reference the local source generator when building in regular configurations -->
@@ -37,6 +35,18 @@
   <ItemGroup Condition="'$(Configuration)' == 'Release_Nuget'">
     <PackageReference Include="Microsoft.NET.Sdk.Razor.SourceGenerators.Transport" GeneratePathProperty="true" />
     <Reference Include="$(PkgMicrosoft_NET_Sdk_Razor_SourceGenerators_Transport)\source-generators\*.dll" />
+  </ItemGroup>
+
+  <!-- Work around https://github.com/dotnet/roslyn/issues/61454. -->
+  <ItemGroup>
+    <None Include="$([System.IO.Directory]::GetParent($(BundledRuntimeIdentifierGraphFile)))\NuGet.Frameworks.dll">
+      <Link>NuGet.Frameworks.dll</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="$([System.IO.Directory]::GetParent($(BundledRuntimeIdentifierGraphFile)))\System.CodeDom.dll">
+      <Link>System.CodeDom.dll</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>

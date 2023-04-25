@@ -43,9 +43,9 @@ namespace Microsoft.NET.Sdk.Razor.SourceGenerators;
 [Collection(nameof(RazorSourceGenerator))]
 public abstract class RazorSourceGeneratorTestsBase
 {
-    protected static async ValueTask<GeneratorDriver> GetDriverAsync(Project project)
+    protected static async ValueTask<GeneratorDriver> GetDriverAsync(Project project, Action<TestAnalyzerConfigOptionsProvider>? configureGlobalOptions = null)
     {
-        var (driver, _) = await GetDriverWithAdditionalTextAsync(project);
+        var (driver, _) = await GetDriverWithAdditionalTextAsync(project, configureGlobalOptions);
         return driver;
     }
 

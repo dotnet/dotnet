@@ -1,8 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections.Concurrent;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.Host;
 using Microsoft.CodeAnalysis.Text;
 using Xunit;
 
@@ -122,18 +121,13 @@ public class RazorWorkspaceListenerTest
 
     private class TestRazorWorkspaceListener : RazorWorkspaceListener
     {
-        private Dictionary<ProjectId, int> _serializeCalls = new();
+        private ConcurrentDictionary<ProjectId, int> _serializeCalls = new();
 
-        public Dictionary<ProjectId, int> SerializeCalls => _serializeCalls;
+        public ConcurrentDictionary<ProjectId, int> SerializeCalls => _serializeCalls;
 
         protected override Task SerializeProjectAsync(ProjectId projectId, CancellationToken ct)
         {
-            if (!_serializeCalls.ContainsKey(projectId))
-            {
-                _serializeCalls.Add(projectId, 0);
-            }
-
-            _serializeCalls[projectId]++;
+            _serializeCalls.AddOrUpdate(projectId, 1, (id, curr) => curr + 1);
 
             return Task.CompletedTask;
         }
