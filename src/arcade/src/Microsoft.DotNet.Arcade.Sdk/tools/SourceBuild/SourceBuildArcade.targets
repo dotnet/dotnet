@@ -29,10 +29,15 @@
 
     <EnableDefaultSourceBuildIntermediateItems Condition="'$(EnableDefaultSourceBuildIntermediateItems)' == ''">true</EnableDefaultSourceBuildIntermediateItems>
 
-    <!-- This is fed into the inner source build as an environment variable (DotNetTargetFrameworkFilter) to enable filtering.
-         The default target framework filter includes all recent netcoreapps in SBRP, as well as 8.0 (latest) and 7.0 (working to get rid of it -->
+    <!--
+      This is fed into the inner source build as an environment variable (DotNetTargetFrameworkFilter) to enable filtering.
+      The default target framework filter includes all recent netcoreapps in SBRP, as well as 8.0 (latest) and 7.0 (working to get rid of it.
+
+      TFM filtering is enabled by default and can be disabled, at repo level, by setting NoTargetFrameworkFiltering property to true,
+      in repo's root Directory.Build.props file.
+    -->
     <_DefaultNetFrameworkFilter>netstandard2.0%3bnetstandard2.1%3bnetcoreapp2.1%3bnetcoreapp3.1%3bnet5.0%3bnet6.0%3bnet7.0%3bnet8.0</_DefaultNetFrameworkFilter>
-    <SourceBuildTargetFrameworkFilter Condition="'$(SourceBuildTrimNetFrameworkTargets)' == 'true' and '$(SourceBuildTargetFrameworkFilter)' == ''">$(_DefaultNetFrameworkFilter)</SourceBuildTargetFrameworkFilter>
+    <SourceBuildTargetFrameworkFilter Condition="'$(SourceBuildTargetFrameworkFilter)' == ''">$(_DefaultNetFrameworkFilter)</SourceBuildTargetFrameworkFilter>
   </PropertyGroup>
 
   <Target Name="GetSourceBuildIntermediateNupkgNameConvention">
