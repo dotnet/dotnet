@@ -12,9 +12,9 @@
       <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-runtime</Uri>
       <Sha>3a25a7f1cc446b60678ed25c9d829420d6321eba</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="8.0.0-beta.23217.1">
+    <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="8.0.0-beta.23224.3">
       <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>cb54ca21431ee8d96f91abfbc42237bcb001f9d1</Sha>
+      <Sha>07ee10f0dfbef32742df139f41ddc241a6b7be52</Sha>
     </Dependency>
   </ToolsetDependencies>
 </Dependencies>
