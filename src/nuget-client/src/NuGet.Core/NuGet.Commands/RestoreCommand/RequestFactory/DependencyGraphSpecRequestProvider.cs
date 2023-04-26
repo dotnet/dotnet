@@ -11,7 +11,6 @@ using System.Threading.Tasks;
 using NuGet.Configuration;
 using NuGet.Packaging.Signing;
 using NuGet.ProjectModel;
-using NuGet.Protocol.Core.Types;
 using NuGet.Shared;
 
 namespace NuGet.Commands
@@ -26,6 +25,7 @@ namespace NuGet.Commands
         private readonly DependencyGraphSpec _dgFile;
         private readonly RestoreCommandProvidersCache _providerCache;
         private readonly LockFileBuilderCache _lockFileBuilderCache;
+        private readonly ISettings _settings;
 
         public DependencyGraphSpecRequestProvider(
             RestoreCommandProvidersCache providerCache,
@@ -36,7 +36,17 @@ namespace NuGet.Commands
             _lockFileBuilderCache = new LockFileBuilderCache();
         }
 
-        public Task<IReadOnlyList<RestoreSummaryRequest>> CreateRequests(RestoreArgs restoreContext)
+        public DependencyGraphSpecRequestProvider(
+            RestoreCommandProvidersCache providerCache,
+            DependencyGraphSpec dgFile,
+            ISettings settings)
+            : this(providerCache, dgFile)
+        {
+            _settings = settings ?? throw new ArgumentNullException(nameof(settings));
+        }
+
+        public Task<IReadOnlyList<RestoreSummaryRequest>> CreateRequests(
+            RestoreArgs restoreContext)
         {
             var requests = GetRequestsFromItems(restoreContext, _dgFile);
 
@@ -156,7 +166,7 @@ namespace NuGet.Commands
             //fallback paths, global packages path and sources need to all be passed in the dg spec
             var fallbackPaths = projectPackageSpec.RestoreMetadata.FallbackFolders;
             var globalPath = GetPackagesPath(restoreArgs, projectPackageSpec);
-            var settings = Settings.LoadImmutableSettingsGivenConfigPaths(projectPackageSpec.RestoreMetadata.ConfigFilePaths, settingsLoadingContext);
+            var settings = _settings ?? Settings.LoadImmutableSettingsGivenConfigPaths(projectPackageSpec.RestoreMetadata.ConfigFilePaths, settingsLoadingContext);
             var sources = restoreArgs.GetEffectiveSources(settings, projectPackageSpec.RestoreMetadata.Sources);
             var clientPolicyContext = ClientPolicyContext.GetClientPolicy(settings, restoreArgs.Log);
             var packageSourceMapping = PackageSourceMapping.GetPackageSourceMapping(settings);

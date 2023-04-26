@@ -101,6 +101,7 @@
     </Compile>
     <Compile Include="Utility\IReconnectingNuGetSearchService.cs" />
     <Compile Include="Utility\NuGetSearchServiceReconnector.cs" />
+    <Compile Include="Utility\PackageSourceMappingUtility.cs" />
     <Compile Include="ViewModels\LoadingStatusViewModel.cs" />
     <Compile Include="Models\NuGetProjectUpgradeDependencyItem.cs" />
     <Compile Include="Models\NuGetProjectUpgradeWindowModel.cs" />

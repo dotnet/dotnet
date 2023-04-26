@@ -1,6 +1,8 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+#nullable enable
+
 using System;
 using NuGet.Versioning;
 using ContractsItemFilter = NuGet.VisualStudio.Internal.Contracts.ItemFilter;
@@ -9,7 +11,7 @@ namespace NuGet.PackageManagement.UI
 {
     public class UserAction
     {
-        private UserAction(NuGetProjectActionType action, string packageId, NuGetVersion packageVersion, bool isSolutionLevel, ContractsItemFilter activeTab)
+        private UserAction(NuGetProjectActionType action, string packageId, NuGetVersion? packageVersion, bool isSolutionLevel, ContractsItemFilter activeTab)
         {
             Action = action;
 
@@ -24,20 +26,27 @@ namespace NuGet.PackageManagement.UI
             ActiveTab = activeTab;
         }
 
-        private UserAction(NuGetProjectActionType action, string packageId, NuGetVersion packageVersion, bool isSolutionLevel, ContractsItemFilter activeTab, VersionRange versionRange)
+        private UserAction(NuGetProjectActionType action, string packageId, NuGetVersion? packageVersion, bool isSolutionLevel, ContractsItemFilter activeTab, VersionRange versionRange)
             : this(action, packageId, packageVersion, isSolutionLevel, activeTab)
         {
             VersionRange = versionRange;
+        }
+
+        private UserAction(NuGetProjectActionType action, string packageId, NuGetVersion? packageVersion, bool isSolutionLevel, ContractsItemFilter activeTab, string? sourceMappingSourceName)
+           : this(action, packageId, packageVersion, isSolutionLevel, activeTab)
+        {
+            SourceMappingSourceName = sourceMappingSourceName;
         }
 
         public NuGetProjectActionType Action { get; private set; }
         public bool IsSolutionLevel { get; private set; }
         public ContractsItemFilter ActiveTab { get; private set; }
         public string PackageId { get; }
-        public NuGetVersion Version { get; }
-        public VersionRange VersionRange { get; }
+        public NuGetVersion? Version { get; }
+        public VersionRange? VersionRange { get; }
+        public string? SourceMappingSourceName { get; }
 
-        public static UserAction CreateInstallAction(string packageId, NuGetVersion packageVersion, bool isSolutionLevel, ContractsItemFilter activeTab)
+        public static UserAction CreateInstallAction(string packageId, NuGetVersion? packageVersion, bool isSolutionLevel, ContractsItemFilter activeTab)
         {
             if (packageVersion == null)
             {
@@ -47,7 +56,12 @@ namespace NuGet.PackageManagement.UI
             return new UserAction(NuGetProjectActionType.Install, packageId, packageVersion, isSolutionLevel, activeTab);
         }
 
-        public static UserAction CreateInstallAction(string packageId, NuGetVersion packageVersion, bool isSolutionLevel, ContractsItemFilter activeTab, VersionRange versionRange)
+        public static UserAction CreateInstallAction(string packageId, NuGetVersion? packageVersion, bool isSolutionLevel, ContractsItemFilter activeTab, string? sourceMappingSourceName)
+        {
+            return new UserAction(NuGetProjectActionType.Install, packageId, packageVersion, isSolutionLevel, activeTab, sourceMappingSourceName);
+        }
+
+        public static UserAction CreateInstallAction(string packageId, NuGetVersion? packageVersion, bool isSolutionLevel, ContractsItemFilter activeTab, VersionRange versionRange)
         {
             if (packageVersion == null && versionRange == null)
             {

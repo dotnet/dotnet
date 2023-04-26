@@ -7108,6 +7108,8 @@ namespace NuGet.Test
                         primarySources,
                         nugetProjectContext,
                         versionRange: null,
+                        newMappingID: null,
+                        newMappingSource: null,
                         CancellationToken.None);
                 });
 
@@ -7115,6 +7117,86 @@ namespace NuGet.Test
                 Assert.Contains("Either should have value in", ex.Message);
                 Assert.Contains(buildIntegratedProjectA.MSBuildProjectPath, ex.Message);
             }
+        }
+
+        [Theory]
+        [InlineData(false, false)]
+        [InlineData(false, true)]
+        [InlineData(true, false)]
+        [InlineData(true, true)]
+        public async Task TestPacMan_PreviewInstallPackage_NewSourceMapping_AffectsRestoreSummaryRequest(bool isValidNewMappingSource, bool isValidNewMappingID)
+        {
+            // Arrange
+            var package = _packageWithDependents[0];
+
+            var packages = new List<SourcePackageDependencyInfo>
+            {
+                new SourcePackageDependencyInfo(package.Id, package.Version, new PackageDependency[] { }, listed: true, source: null),
+            };
+            SourceRepositoryProvider sourceRepositoryProvider = CreateSource(packages);
+
+            // Set up NuGetProject
+            var nugetProjectContext = new TestNuGetProjectContext();
+
+            // Create Package Manager
+            using var solutionManager = new TestSolutionManager();
+            using var settingsDir = TestDirectory.Create();
+            var settings = new Settings(settingsDir);
+
+            var nuGetPackageManager = new NuGetPackageManager(
+            sourceRepositoryProvider,
+            settings,
+            solutionManager,
+            new TestDeleteOnRestartManager());
+
+            var buildIntegratedProjectA = solutionManager.AddBuildIntegratedProject("projectA") as BuildIntegratedNuGetProject;
+
+            // Act
+            var primarySources = sourceRepositoryProvider.GetRepositories() as IReadOnlyCollection<SourceRepository>;
+            PackageIdentity target = _packageWithDependents[0];
+            IReadOnlyList<BuildIntegratedNuGetProject> projects = new List<BuildIntegratedNuGetProject>()
+            {
+                buildIntegratedProjectA
+            };
+
+            SourceRepository primarySource = primarySources.First();
+            string newMappingSource = isValidNewMappingSource ? primarySource.PackageSource.Name : "invalidSource";
+            string newMappingID = isValidNewMappingID ? target.Id : "invalidPackage";
+
+            var nugetAction = NuGetProjectAction.CreateInstallProjectAction(target, primarySource, buildIntegratedProjectA);
+            NuGetProjectAction[] actions = new NuGetProjectAction[] { nugetAction };
+
+            Dictionary<string, NuGetProjectAction[]> nugetProjectActionsLookup =
+                new Dictionary<string, NuGetProjectAction[]>(PathUtility.GetStringComparerBasedOnOS())
+            {
+                { primarySource.PackageSource.Name, actions }
+            };
+
+            IEnumerable<ResolvedAction> resolvedActions = await nuGetPackageManager.PreviewBuildIntegratedProjectsActionsAsync(
+                projects,
+                nugetProjectActionsLookup: nugetProjectActionsLookup,
+                packageIdentity: target,
+                primarySources,
+                nugetProjectContext,
+                versionRange: null,
+                newMappingID,
+                newMappingSource,
+                CancellationToken.None);
+
+            // Assert
+
+            Assert.Single(resolvedActions);
+            ResolvedAction resolvedAction = resolvedActions.Single();
+            Assert.IsType(typeof(BuildIntegratedProjectAction), resolvedAction.Action);
+
+            BuildIntegratedProjectAction buildIntegratedProjectAction = resolvedAction.Action as BuildIntegratedProjectAction;
+            RestoreSummaryRequest summaryRequest = buildIntegratedProjectAction.RestoreResultPair.SummaryRequest;
+
+            // Request should have "*" Pattern Mapping for the requested new mapping source.
+            PackageSourceMapping requestedSourceMapping = summaryRequest.Request.PackageSourceMapping;
+            Assert.Equal(true, requestedSourceMapping.IsEnabled);
+            IReadOnlyList<string> mappedSources = requestedSourceMapping.GetConfiguredPackageSources(newMappingID);
+            Assert.Contains(newMappingSource, mappedSources);
         }
 
         /// <summary>

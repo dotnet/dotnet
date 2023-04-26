@@ -77,6 +77,8 @@ namespace NuGet.PackageManagement.UI
                     userAction,
                     uiService.RemoveDependencies,
                     uiService.ForceRemove,
+                    newMappingID: userAction.PackageId,
+                    newMappingSource: userAction.SourceMappingSourceName,
                     cancellationToken),
                 cancellationToken);
         }
@@ -354,6 +356,10 @@ namespace NuGet.PackageManagement.UI
             {
                 // don't teardown the process if we have a telemetry failure
             }
+
+            var sourceMappingProvider = new PackageSourceMappingProvider(uiService.Settings);
+            IReadOnlyList<PackageSourceMappingSourceItem> existingPackageSourceMappingSourceItems = sourceMappingProvider.GetPackageSourceMappingItems();
+
             packageEnumerationTime.Stop();
 
             await _lockService.ExecuteNuGetOperationAsync(async () =>
@@ -459,6 +465,9 @@ namespace NuGet.PackageManagement.UI
 
                     if (!cancellationToken.IsCancellationRequested)
                     {
+                        List<string>? addedPackageIds = addedPackages != null ? addedPackages.Select(pair => pair.Item1).Distinct().ToList() : null;
+                        PackageSourceMappingUtility.ConfigureNewPackageSourceMapping(userAction, addedPackageIds, sourceMappingProvider, existingPackageSourceMappingSourceItems);
+
                         await projectManagerService.ExecuteActionsAsync(
                             actions,
                             cancellationToken);
@@ -519,8 +528,8 @@ namespace NuGet.PackageManagement.UI
                         uiService.Projects,
                         cancellationToken)).ToArray();
 
-                    var packageSourceMapping = PackageSourceMapping.GetPackageSourceMapping(uiService.Settings);
-                    bool isPackageSourceMappingEnabled = packageSourceMapping?.IsEnabled ?? false;
+                    var isPackageSourceMappingEnabled = existingPackageSourceMappingSourceItems.Count > 0;
+
                     var actionTelemetryEvent = new VSActionsTelemetryEvent(
                         uiService.ProjectContext.OperationId.ToString(),
                         projectIds,
@@ -531,7 +540,7 @@ namespace NuGet.PackageManagement.UI
                         packageCount,
                         DateTimeOffset.Now,
                         duration.TotalSeconds,
-                        isPackageSourceMappingEnabled: isPackageSourceMappingEnabled);
+                        isPackageSourceMappingEnabled);
 
                     var nuGetUI = uiService as NuGetUI;
                     AddUiActionEngineTelemetryProperties(
@@ -841,6 +850,8 @@ namespace NuGet.PackageManagement.UI
             UserAction userAction,
             bool removeDependencies,
             bool forceRemove,
+            string? newMappingID,
+            string? newMappingSource,
             CancellationToken token)
         {
             var results = new List<ProjectAction>();
@@ -848,7 +859,7 @@ namespace NuGet.PackageManagement.UI
             // Allow prerelease packages only if the target is prerelease
             bool includePrelease =
                 userAction.Action == NuGetProjectActionType.Uninstall ||
-                userAction.Version.IsPrerelease == true;
+                userAction.Version?.IsPrerelease == true;
 
             IReadOnlyList<string> packageSourceNames = uiService.ActivePackageSourceMoniker.PackageSourceNames;
             string[] projectIds = projects
@@ -868,6 +879,8 @@ namespace NuGet.PackageManagement.UI
                     uiService.DependencyBehavior,
                     packageSourceNames,
                     userAction.VersionRange,
+                    newMappingID,
+                    newMappingSource,
                     token);
 
                 results.AddRange(actions);

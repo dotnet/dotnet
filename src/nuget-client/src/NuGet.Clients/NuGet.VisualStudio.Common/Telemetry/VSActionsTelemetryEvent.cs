@@ -32,6 +32,6 @@ namespace NuGet.VisualStudio
         }
 
         public OperationSource Source => (OperationSource)base[nameof(Source)];
-        internal const string PackageSourceMappingIsMappingEnabled = "PackageSourceMapping.IsMappingEnabled";
+        public const string PackageSourceMappingIsMappingEnabled = "PackageSourceMapping.IsMappingEnabled";
     }
 }

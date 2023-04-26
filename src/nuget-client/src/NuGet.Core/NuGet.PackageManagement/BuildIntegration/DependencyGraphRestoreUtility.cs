@@ -424,7 +424,7 @@ namespace NuGet.PackageManagement
                 caching.AddSourceRepository(source);
             }
 
-            var dgProvider = new DependencyGraphSpecRequestProvider(providerCache, dgFile);
+            var dgProvider = new DependencyGraphSpecRequestProvider(providerCache, dgFile, context.Settings);
 
             var restoreContext = new RestoreArgs()
             {
