@@ -4,11 +4,6 @@
     <UsagePattern IdentityGlob="runtime.linux-x64.Microsoft.NETCore.ILAsm/*" />
     <UsagePattern IdentityGlob="runtime.linux-x64.Microsoft.NETCore.ILDAsm/*" />
 
-    <!-- TODO:  A decision was made to not add this targeting pack because it will no longer be needed
-    once full framework TFMs have been filtered out with https://github.com/dotnet/source-build/issues/3014.
-    In the meantime we are accepting this as a known prebuilt. -->
-    <UsagePattern IdentityGlob="Microsoft.NETFramework.ReferenceAssemblies/1.0.3" />
-
     <UsagePattern IdentityGlob="Microsoft.SourceBuild.Intermediate.*/*" />
 
   </IgnorePatterns>

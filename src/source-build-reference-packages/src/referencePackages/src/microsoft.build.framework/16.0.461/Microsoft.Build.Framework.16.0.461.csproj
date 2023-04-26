@@ -2,14 +2,13 @@
 
   <PropertyGroup>
     <TargetFrameworks>netstandard2.0</TargetFrameworks>
-    <AssemblyName>System.Security.Cryptography.Xml</AssemblyName>
+    <AssemblyName>Microsoft.Build.Framework</AssemblyName>
     <ProjectTemplateVersion>2</ProjectTemplateVersion>
-    <StrongNameKeyId>Open</StrongNameKeyId>
   </PropertyGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
-    <PackageReference Include="System.Security.Cryptography.Pkcs" Version="4.7.0" />
-    <PackageReference Include="System.Security.Permissions" Version="4.7.0" />
+    <PackageReference Include="System.Runtime.Serialization.Primitives" Version="4.1.1" />
+    <PackageReference Include="System.Threading.Thread" Version="4.0.0" />
   </ItemGroup>
 
 </Project>
