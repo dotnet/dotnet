@@ -1,30 +1,29 @@
-<!-- Licensed to the .NET Foundation under one or more agreements. The .NET Foundation licenses this file to you under the MIT license. -->
 <Project Sdk="Microsoft.NET.Sdk">
-  <Import Project="$(MSBuildThisFileDirectory)\ResxWorkaround.props" />
+
+  <Import Project="ResxWorkaround.props" />
+
   <PropertyGroup>
-    <TargetFramework>net472</TargetFramework>
+    <TargetFramework>$(NetFrameworkToolCurrent)</TargetFramework>
     <Platforms>x86</Platforms>
-    <Configurations>Release;Debug</Configurations>
     <SignAssembly>false</SignAssembly>
     <RootNamespace>Microsoft.SignCheck</RootNamespace>
     <!-- This assembly is bundled in the Microsoft.DotNet.SignCheck package and is not mean to be used as a class library package. -->
     <IsPackable>false</IsPackable>
+    <IsTool>true</IsTool>
     <ExcludeFromSourceBuild>true</ExcludeFromSourceBuild>
   </PropertyGroup>
-  <PropertyGroup Label="Nuget Package Settings">
-    <IsTool>true</IsTool>
-  </PropertyGroup>
+
   <ItemGroup>
     <PackageReference Include="LZMA-SDK" Version="19.0.0" />
     <PackageReference Include="Microsoft.VisualStudio.OLE.Interop" Version="7.10.6071" />
-    <PackageReference Include="Newtonsoft.Json" Version="$(NewtonsoftJsonVersion)" />
+    <!-- TODO: Update dependencies to repo defined versions. -->
     <PackageReference Include="NuGet.Common" Version="5.0.2" />
     <PackageReference Include="NuGet.Frameworks" Version="5.0.2" />
     <PackageReference Include="NuGet.Packaging" Version="5.0.2" />
-    <PackageReference Include="NuGet.Versioning" Version="5.0.2" />
     <PackageReference Include="System.IO.Packaging" Version="$(SystemIOPackagingVersion)" />
     <PackageReference Include="Microsoft.Signed.Wix" Version="$(MicrosoftSignedWixVersion)" />
   </ItemGroup>
+
   <ItemGroup>
     <Reference Include="$(WixInstallPath)\Microsoft.Deployment.Resources.dll" />
     <Reference Include="$(WixInstallPath)\Microsoft.Deployment.Compression.dll" />
@@ -33,31 +32,30 @@
     <Reference Include="$(WixInstallPath)\Microsoft.Deployment.WindowsInstaller.Package.dll" />
     <Reference Include="$(WixInstallPath)\wix.dll" />
   </ItemGroup>
+
   <ItemGroup>
-    <Content Include="$(WixInstallPath)\winterop.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
+    <Content Include="$(WixInstallPath)\winterop.dll"
+             CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
+
   <ItemGroup>
-    <Compile Update="SignCheckResources.Designer.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>SignCheckResources.resx</DependentUpon>
-    </Compile>
-    <Compile Update="Verification\Jar\JarResources.Designer.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>JarResources.resx</DependentUpon>
-    </Compile>
+    <Compile Update="SignCheckResources.Designer.cs"
+             DesignTime="True"
+             AutoGen="True"
+             DependentUpon="SignCheckResources.resx" />
+    <Compile Update="Verification\Jar\JarResources.Designer.cs"
+             DesignTime="True"
+             AutoGen="True"
+             DependentUpon="JarResources.resx" />
   </ItemGroup>
+
   <ItemGroup>
-    <EmbeddedResource Update="SignCheckResources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>SignCheckResources.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-    <EmbeddedResource Update="Verification\Jar\JarResources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>JarResources.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
+    <EmbeddedResource Update="SignCheckResources.resx"
+                      Generator="ResXFileCodeGenerator"
+                      LastGenOutput="SignCheckResources.Designer.cs" />
+    <EmbeddedResource Update="Verification\Jar\JarResources.resx"
+                      Generator="ResXFileCodeGenerator"
+                      LastGenOutput="JarResources.Designer.cs" />
   </ItemGroup>
+
 </Project>

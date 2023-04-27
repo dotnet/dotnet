@@ -1,34 +1,27 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net472;$(TargetFrameworkForNETSDK)</TargetFrameworks>
-    <CopyLocalLockFileAssemblies Condition="'$(TargetFramework)' == '$(TargetFrameworkForNETSDK)'">true</CopyLocalLockFileAssemblies>
-    <IncludeBuildOutput>false</IncludeBuildOutput>
+    <TargetFrameworks>$(NetCurrent);$(NetFrameworkToolCurrent)</TargetFrameworks>
     <IsPackable>true</IsPackable>
     <Title>Configuration system for cross-targeting projects.</Title>
     <PackageDescription>This package provides the following MSBuild tasks: ChooseBestTargetFrameworksTask and ChooseBestP2PTargetFrameworkTask.</PackageDescription>
-    <DefaultItemExcludes Condition="'$(TargetFramework)' != 'net472'">**/*.Desktop.*</DefaultItemExcludes>
     <Nullable>enable</Nullable>
   </PropertyGroup>
-
-  <ItemGroup Condition="'$(TargetFramework)' == 'net472'">
-    <Compile Include="..\..\Common\Internal\AssemblyResolver.cs" />
-    <Compile Include="..\..\Common\Internal\BuildTask.Desktop.cs" />
-  </ItemGroup>
 
   <ItemGroup>
     <Compile Include="..\..\Common\Internal\BuildTask.cs" />
   </ItemGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Microsoft.Build" Version="$(MicrosoftBuildVersion)" />
-    <PackageReference Include="Microsoft.Build.Tasks.Core" Version="$(MicrosoftBuildTasksCoreVersion)" />
-    <PackageReference Include="NuGet.Packaging" Version="$(NuGetPackagingVersion)" />
-
-    <!-- This is here so that we agree with the project's transitive references to Newtonsoft.Json -->
-    <PackageReference Include="Newtonsoft.Json" Version="$(NewtonsoftJsonVersion)" />
+  <ItemGroup Condition="'$(TargetFrameworkIdentifier)' == '.NETFramework'">
+    <Compile Include="..\..\Common\Internal\AssemblyResolver.cs" />
+    <Compile Include="..\..\Common\Internal\BuildTask.Desktop.cs" />
   </ItemGroup>
 
-  <Import Project="$(RepoRoot)eng\BuildTask.targets" />
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Build.Tasks.Core" Version="$(MicrosoftBuildTasksCoreVersion)" />
+    <PackageReference Include="NuGet.Packaging" Version="$(NuGetPackagingVersion)" />
+  </ItemGroup>
+
+  <Import Project="$(RepositoryEngineeringDir)BuildTask.targets" />
 
 </Project>

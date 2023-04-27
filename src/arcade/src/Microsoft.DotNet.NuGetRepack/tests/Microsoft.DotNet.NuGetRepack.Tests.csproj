@@ -1,23 +1,15 @@
-<!-- Licensed to the .NET Foundation under one or more agreements. The .NET Foundation licenses this file to you under the MIT license. -->
 <Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
-    <TargetFramework>$(TargetFrameworkForNETSDK)</TargetFramework>
+    <TargetFramework>$(NetCurrent)</TargetFramework>
+    <DefaultExcludesInProjectFolder>$(DefaultExcludesInProjectFolder);Resources\*.cs</DefaultExcludesInProjectFolder>
   </PropertyGroup>
-  <ItemGroup>
-    <Compile Remove="Resources\*.cs" />
-    <None Include="Resources\*.cs" />
-  </ItemGroup>
+
   <ItemGroup>
     <PackageReference Include="NuGet.Versioning" Version="$(NuGetPackagingVersion)" />
-    <PackageReference Include="System.IO.Compression" Version="$(SystemIOCompressionVersion)" />
-    <PackageReference Include="System.IO.Packaging" Version="$(SystemIOPackagingVersion)" />
-    <PackageReference Include="System.Collections.Immutable" Version="$(SystemCollectionsImmutableVersion)" />
-    <PackageReference Include="Microsoft.Build" Version="$(MicrosoftBuildVersion)" />
     <PackageReference Include="Microsoft.Build.Tasks.Core" Version="$(MicrosoftBuildTasksCoreVersion)" />
-
-    <!-- This is here so that we agree with the project's transitive references to NewtonSoft.Json -->
-    <PackageReference Include="Newtonsoft.Json" Version="$(NewtonsoftJsonVersion)" />
   </ItemGroup>
+
   <ItemGroup>
     <EmbeddedResource Include="Resources\TestPackageA.1.0.0-beta-12345-01.nupkg">
       <LogicalName>TestPackageA.1.0.0-beta-12345-01.nupkg</LogicalName>
@@ -80,8 +72,10 @@
       <LogicalName>DotnetTool.1.0.0-beta-12345-01.nupkg</LogicalName>
     </EmbeddedResource>
   </ItemGroup>
+
   <ItemGroup>
     <ProjectReference Include="..\..\Microsoft.DotNet.XUnitExtensions\src\Microsoft.DotNet.XUnitExtensions.csproj" />
     <ProjectReference Include="..\tasks\Microsoft.DotNet.NuGetRepack.Tasks.csproj" />
   </ItemGroup>
+
 </Project>

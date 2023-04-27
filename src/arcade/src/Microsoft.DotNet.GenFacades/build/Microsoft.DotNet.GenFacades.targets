@@ -21,4 +21,5 @@
   <Import Project="Microsoft.DotNet.GenFacades.NotSupported.targets" Condition="'$(GeneratePlatformNotSupportedAssembly)' == 'true' or
                                                                                 '$(GeneratePlatformNotSupportedAssemblyMessage)' != ''" />
   <Import Project="Microsoft.DotNet.GenFacades.PartialFacadeSource.targets" Condition="'$(IsPartialFacadeAssembly)' == 'true'" />
+
 </Project>

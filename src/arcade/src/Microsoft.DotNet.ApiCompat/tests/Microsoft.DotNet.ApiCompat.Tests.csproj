@@ -1,38 +1,23 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>$(TargetFrameworkForNETSDK);net472</TargetFrameworks>
-    <LangVersion>Latest</LangVersion>
+    <TargetFrameworks>$(NetCurrent);$(NetFrameworkToolCurrent)</TargetFrameworks>
     <SignAssembly>false</SignAssembly>
   </PropertyGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\src\Microsoft.DotNet.ApiCompat.csproj" />
 
-    <_testProjectHelper Include="TestProjects\**\*.csproj" />
+    <!-- Required for running the tests -->
+    <PackageReference Include="Microsoft.Build.Tasks.Core" Version="$(MicrosoftBuildTasksCoreVersion)" />
 
+    <_testProjectHelper Include="TestProjects\**\*.csproj" />
     <_testProjectHelper Update="@(_testProjectHelper)">
       <DestinationSubDirectory>Implementation\</DestinationSubDirectory>
       <DestinationSubDirectory Condition="$([System.String]::Copy('%(Filename)').EndsWith('Contract'))">Contract\</DestinationSubDirectory>
     </_testProjectHelper>
 
     <ProjectReference Include="@(_testProjectHelper)" OutputItemType="ReferenceCopyLocalPaths" ReferenceOutputAssembly="false" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <!-- Since Microsoft.DotNet.ApiCompat is packaged as a BuildTask tool, all it's dependencies are marked as private
-         so they don't flow to the tests output directory and we need them there in order to be able to run. -->
-    <ProjectReference Include="..\..\Microsoft.Cci.Extensions\Microsoft.Cci.Extensions.csproj" />
-    <ProjectReference Include="..\src\Microsoft.DotNet.ApiCompat.Core\Microsoft.DotNet.ApiCompat.Core.csproj" />
-    <PackageReference Include="System.Diagnostics.Contracts" Version="4.3.0" />
-    <PackageReference Include="System.Diagnostics.TextWriterTraceListener" Version="4.0.0" />
-    <PackageReference Include="System.Diagnostics.TraceSource" Version="4.0.0" />
-    <PackageReference Include="McMaster.Extensions.CommandLineUtils" Version="$(McMasterExtensionsCommandLineUtils)" />
-    <PackageReference Include="Microsoft.Build" Version="$(MicrosoftBuildVersion)" />
-    <PackageReference Include="Microsoft.Build.Tasks.Core" Version="$(MicrosoftBuildTasksCoreVersion)" />
-
-    <!-- This is here so that we agree with the project's transitive references to NewtonSoft.Json -->
-    <PackageReference Include="Newtonsoft.Json" Version="$(NewtonsoftJsonVersion)" />
   </ItemGroup>
 
   <ItemGroup>

@@ -3,11 +3,7 @@
 
 using System;
 using System.Collections.Generic;
-#if COREFX
 using System.Composition;
-#else
-using System.ComponentModel.Composition;
-#endif
 using System.Linq;
 using Microsoft.Cci.Writers;
 using Microsoft.Cci.Writers.Syntax;

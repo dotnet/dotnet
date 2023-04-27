@@ -1,4 +1,15 @@
-<?xml version="1.0" encoding="utf-8"?>
 <Project>
+
   <Import Project="Sdk.targets" Sdk="Microsoft.DotNet.Arcade.Sdk" />
+
+  <ItemGroup>
+    <!-- Upgrade the NETStandard.Library transitive dependency to avoid transitive 1.x NS dependencies. -->
+    <PackageReference Include="NETStandard.Library"
+                      Version="$(NETStandardLibraryVersion)"
+                      PrivateAssets="all"
+                      ExcludeAssets="runtime"
+                      Condition="'$(TargetFrameworkIdentifier)' != '.NETStandard' and
+                                 $([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'netstandard2.0'))" />
+  </ItemGroup>
+
 </Project>

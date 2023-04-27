@@ -1,39 +1,30 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <OutputType>Exe</OutputType>
-    <TargetFrameworks>net472;$(TargetFrameworkForNETSDK)</TargetFrameworks>
-    <CopyLocalLockFileAssemblies Condition="'$(TargetFramework)' == '$(TargetFrameworkForNETSDK)'">true</CopyLocalLockFileAssemblies>
+    <TargetFrameworks>$(NetCurrent);$(NetFrameworkToolCurrent)</TargetFrameworks>
     <ExcludeFromSourceBuild>true</ExcludeFromSourceBuild>
-    <IncludeBuildOutput>false</IncludeBuildOutput>
-    <PackageType>MSBuildSdk</PackageType>
     <IsPackable>true</IsPackable>
-    <NoWarn>$(NoWarn);0436</NoWarn>
-    <RollForward>Major</RollForward>
-    <!-- Rename to DefaultExcludesInProjectFolder when https://github.com/dotnet/sdk/pull/24063 is merged and consumed. -->
-    <DefaultItemExcludesInProjectFolder>Microsoft.DotNet.ApiCompat.Core\**\*</DefaultItemExcludesInProjectFolder>
+    <DefaultExcludesInProjectFolder>Microsoft.DotNet.ApiCompat.Core\**\*</DefaultExcludesInProjectFolder>
   </PropertyGroup>
-
-  <ItemGroup Condition="'$(TargetFramework)' == 'net472'">
-    <Compile Include="..\..\Common\Internal\AssemblyResolver.cs" />
-    <Compile Include="..\..\Common\Internal\BuildTask.Desktop.cs" />
-  </ItemGroup>
 
   <ItemGroup>
     <Compile Include="..\..\Common\Internal\BuildTask.cs" />
   </ItemGroup>
 
+  <ItemGroup Condition="'$(TargetFrameworkIdentifier)' == '.NETFramework'">
+    <Compile Include="..\..\Common\Internal\AssemblyResolver.cs" />
+    <Compile Include="..\..\Common\Internal\BuildTask.Desktop.cs" />
+  </ItemGroup>
+
   <ItemGroup>
-    <PackageReference Include="Microsoft.Build" Version="$(MicrosoftBuildVersion)" />
     <PackageReference Include="Microsoft.Build.Tasks.Core" Version="$(MicrosoftBuildTasksCoreVersion)" />
     <PackageReference Include="McMaster.Extensions.CommandLineUtils" Version="$(McMasterExtensionsCommandLineUtils)" />
-    <PackageReference Include="System.Collections.Immutable" Version="5.0.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="Microsoft.DotNet.ApiCompat.Core\Microsoft.DotNet.ApiCompat.Core.csproj" />
   </ItemGroup>
 
-  <Import Project="$(RepoRoot)eng\BuildTask.targets" />
+  <Import Project="$(RepositoryEngineeringDir)BuildTask.targets" />
 
 </Project>

@@ -1,4 +1,6 @@
-<Project ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<!-- Licensed to the .NET Foundation under one or more agreements. The .NET Foundation licenses this file to you under the MIT license. -->
+<Project>
+
   <PropertyGroup>
     <MicrosoftDotNetDeploymentTasksLinksTaskAssembly Condition=" '$(MSBuildRuntimeType)' == 'Core' ">$(MSBuildThisFileDirectory)net8.0\Microsoft.DotNet.Deployment.Tasks.Links.dll</MicrosoftDotNetDeploymentTasksLinksTaskAssembly>
     <MicrosoftDotNetDeploymentTasksLinksTaskAssembly Condition=" '$(MSBuildRuntimeType)' != 'Core' ">$(MSBuildThisFileDirectory)net472\Microsoft.DotNet.Deployment.Tasks.Links.dll</MicrosoftDotNetDeploymentTasksLinksTaskAssembly>
@@ -6,4 +8,5 @@
 
   <UsingTask TaskName="CreateAkaMSLinks" AssemblyFile="$(MicrosoftDotNetDeploymentTasksLinksTaskAssembly)" />
   <UsingTask TaskName="DeleteAkaMSLinks" AssemblyFile="$(MicrosoftDotNetDeploymentTasksLinksTaskAssembly)" />
+
 </Project>

@@ -1,23 +1,21 @@
 <Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
+    <TargetFramework>$(NetFrameworkToolCurrent)</TargetFramework>
     <OutputType>Exe</OutputType>
-    <TargetFramework>net472</TargetFramework>
     <SignAssembly>false</SignAssembly>
-    <LangVersion>latest</LangVersion>
     <ExcludeFromSourceBuild>true</ExcludeFromSourceBuild>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="CredentialManagement" Version="$(CredentialManagementVersion)" />
-    <PackageReference Include="LibGit2Sharp" Version="$(LibGit2SharpVersion)" />
-    <PackageReference Include="log4net" Version="$(log4netVersion)" />
     <PackageReference Include="Azure.Data.Tables" Version="$(AzureDataTablesVersion)" />
     <PackageReference Include="Azure.Identity" Version="$(AzureIdentityVersion)" />
     <PackageReference Include="Azure.Security.KeyVault.Secrets" Version="$(AzureSecurityKeyVaultSecretsVersion)" />
-    <PackageReference Include="Octokit" Version="$(OctokitVersion)" />
-    <PackageReference Include="NETStandard.Library" Version="$(NETStandardLibraryVersion)" />
-
-    <!-- This is here so that we agree with the project's transitive references to NewtonSoft.Json -->
+    <PackageReference Include="CredentialManagement" Version="$(CredentialManagementVersion)" />
+    <PackageReference Include="LibGit2Sharp" Version="$(LibGit2SharpVersion)" />
     <PackageReference Include="Newtonsoft.Json" Version="$(NewtonsoftJsonVersion)" />
+    <PackageReference Include="Octokit" Version="$(OctokitVersion)" />
+    <PackageReference Include="log4net" Version="$(log4netVersion)" />
   </ItemGroup>
+
 </Project>

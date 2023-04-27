@@ -1,25 +1,16 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.0</TargetFrameworks>
+    <TargetFramework>netstandard2.0</TargetFramework>
     <IncludeBuildOutput>false</IncludeBuildOutput>
     <IsPackable>true</IsPackable>
     <CodeAnalysisRuleSet>$(MSBuildThisFileDirectory)CodeAnalysis.ruleset</CodeAnalysisRuleSet>
     <SuppressDependenciesWhenPacking>true</SuppressDependenciesWhenPacking>
+    <TargetsForTfmSpecificContentInPackage>$(TargetsForTfmSpecificContentInPackage);_AddAnalyzerToOutput</TargetsForTfmSpecificContentInPackage>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="$(MicrosoftCodeAnalysisCSharpVersion)" ExcludeAssets="analyzers" />
-  </ItemGroup>
-
-  <!--
-    In the source-build tarball build, Microsoft.CodeAnalysis.CSharp has dependencies on old
-    versions of these packages due to repo build order. Override to lift them to the versions passed
-    in via DotNetPackageVersionPropsPath.
-  -->
-  <ItemGroup Condition="'$(DotNetBuildFromSource)' == 'true'">
-    <PackageReference Include="System.Collections.Immutable" Version="$(SystemCollectionsImmutableVersion)" />
-    <PackageReference Include="System.Reflection.Metadata" Version="$(SystemReflectionMetadataVersion)" />
   </ItemGroup>
 
   <ItemGroup>
@@ -27,13 +18,10 @@
     <Content Include="content/*.*" PackagePath="content" />
   </ItemGroup>
 
-  <PropertyGroup>
-    <TargetsForTfmSpecificContentInPackage>$(TargetsForTfmSpecificContentInPackage);_AddAnalyzerToOutput</TargetsForTfmSpecificContentInPackage>
-  </PropertyGroup>
-
   <Target Name="_AddAnalyzerToOutput">
     <ItemGroup>
-      <TfmSpecificPackageFile Include="$(OutputPath)*.dll" PackagePath="analyzers/%(RecursiveDir)%(FileName)%(Extension)" />
+      <TfmSpecificPackageFile Include="$(TargetPath)" PackagePath="analyzers/%(FileName)%(Extension)" />
     </ItemGroup>
   </Target>
+
 </Project>

@@ -44,7 +44,7 @@ namespace Microsoft.DotNet.CodeAnalysis.Analyzers
             if (memberSymbol == null) return;
 
             if (memberSymbol.Name.Equals("Format") &&
-                memberSymbol.ContainingType.Equals(SRSymbol) &&
+                SymbolEqualityComparer.Default.Equals(memberSymbol.ContainingType, SRSymbol) &&
                 memberSymbol.Parameters.Length == 1)
             {
                 // There's no valid reason to call SR.Format(singleArg).  This generally happens accidentally

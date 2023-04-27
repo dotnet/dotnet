@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="utf-8"?>
 <Project>
   <PropertyGroup>
     <ImportPackagingTargets Condition="'$(ImportPackagingTargets)' == '' AND '$(MSBuildProjectExtension)' == '.pkgproj'">true</ImportPackagingTargets>

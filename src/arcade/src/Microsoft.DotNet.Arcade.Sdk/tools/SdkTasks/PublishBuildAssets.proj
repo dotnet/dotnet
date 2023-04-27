@@ -15,7 +15,7 @@
     <SuppressFinalPackageVersion>true</SuppressFinalPackageVersion>
   </PropertyGroup>
   
-  <Import Project="$(RepoRoot)eng\Versions.props" />
+  <Import Project="$(RepositoryEngineeringDir)Versions.props" />
   <Import Project="..\Version.BeforeCommonTargets.targets" />
 
   <PropertyGroup>

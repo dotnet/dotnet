@@ -190,7 +190,6 @@ In order to use the new publishing mechanism, the easiest way to start is by tur
 
    Sample: 
      ```XML
-      <?xml version="1.0" encoding="utf-8"?>
         <Project>
            <PropertyGroup>
               <PublishingVersion>3</PublishingVersion>

@@ -18,7 +18,6 @@ namespace Microsoft.Cci.Differs
         bool OptionalRule { get; }
     }
 
-#if COREFX
     /// <summary>
     /// Metadata views must be concrete types rather than interfaces.
     /// </summary>
@@ -29,5 +28,4 @@ namespace Microsoft.Cci.Differs
 
         public bool OptionalRule { get; set; }
     }
-#endif
 }

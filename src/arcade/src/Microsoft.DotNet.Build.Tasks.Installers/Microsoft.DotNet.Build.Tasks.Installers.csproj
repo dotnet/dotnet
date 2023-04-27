@@ -1,9 +1,8 @@
-<!-- Licensed to the .NET Foundation under one or more agreements. The .NET Foundation licenses this file to you under the MIT license. -->
 <Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
-    <TargetFrameworks>net472;$(TargetFrameworkForNETSDK)</TargetFrameworks>
+    <TargetFrameworks>$(NetCurrent);$(NetFrameworkToolCurrent)</TargetFrameworks>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <LangVersion>Latest</LangVersion>
     <IsPackable>true</IsPackable>
     <Description>Installer task package</Description>
     <PackageTags>Arcade Build Tool Installer</PackageTags>
@@ -13,7 +12,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="System.Reflection.Metadata" Version="$(SystemReflectionMetadataVersion)" />
     <PackageReference Include="Microsoft.Build.Utilities.Core" Version="$(MicrosoftBuildUtilitiesCoreVersion)" />
     <PackageReference Include="Microsoft.Build.Tasks.Core" Version="$(MicrosoftBuildTasksCoreVersion)" />
     <PackageReference Include="Microsoft.Build.Framework" Version="$(MicrosoftBuildFrameworkVersion)" />
@@ -21,15 +19,19 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="build/**/*.*" Pack="true">
-      <PackagePath>build</PackagePath>
-    </None>
-    <None Include="..\Common\wix\dotnethome_x64.wxs" Link="build\wix\product\dotnethome_x64.wxs" PackagePath="%(Link)" Pack="true" />
+    <None Include="build/**/*.*"
+          Pack="true"
+          PackagePath="build" />
+    <None Include="..\Common\wix\dotnethome_x64.wxs"
+          Link="build\wix\product\dotnethome_x64.wxs"
+          PackagePath="%(Link)"
+          Pack="true" />
   </ItemGroup>
 
-  <ItemGroup Condition="'$(TargetFramework)' == 'net472'">
+  <ItemGroup Condition="'$(TargetFrameworkIdentifier)' == '.NETFramework'">
     <Compile Include="..\Common\Internal\AssemblyResolver.cs" />
     <Compile Include="..\Common\Internal\BuildTask.Desktop.cs" />
+    <Reference Include="WindowsBase" />
   </ItemGroup>
 
   <ItemGroup>
@@ -40,10 +42,7 @@
   <ItemGroup>
     <Compile Include="..\Common\Internal\BuildTask.cs" />
   </ItemGroup>
-
-  <ItemGroup Condition="'$(TargetFramework)' == 'net472'">
-    <Reference Include="WindowsBase" />
-  </ItemGroup>
   
-  <Import Project="$(RepoRoot)eng\BuildTask.targets" />
+  <Import Project="$(RepositoryEngineeringDir)BuildTask.targets" />
+
 </Project>
