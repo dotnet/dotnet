@@ -21,6 +21,7 @@
 
     <!-- VS Insertion -->
     <VisualStudioInsertionComponent>Microsoft.VisualStudio.TestTools.TestPlatform.V2.CLI</VisualStudioInsertionComponent>
+    <IsVisualStudioBuildPackage>true</IsVisualStudioBuildPackage>
 
     <!-- Properties for items we include in VSIX -->
     <ExtensionInstallationRelativeToVS>[installDir]\Common7\IDE\Extensions\TestPlatform</ExtensionInstallationRelativeToVS>
