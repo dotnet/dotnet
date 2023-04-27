@@ -70,7 +70,6 @@ public class DifferentTestFrameworkSimpleTests : AcceptanceTestBase
     [TestMethod]
     [TestCategory("Windows-Review")]
     [NetFullTargetFrameworkDataSource]
-    // After the bump due to the new vesion it doesn't fine anymore a correct Microsoft.VisualStudio.Telemetry version, new version are taking newer versions of it and the test if for the legacy platform.
     [Ignore("After the bump of TestPlatformRemoteExternalsVersion to 17.6 it doesn't work anymore, it's a test for the legacy platform and fails for wrong Microsoft.VisualStudio.Telemetry version.")]
     public void WebTestRunAllTestsWithRunSettings(RunnerInfo runnerInfo)
     {
@@ -129,7 +128,7 @@ public class DifferentTestFrameworkSimpleTests : AcceptanceTestBase
     [TestMethod]
     [TestCategory("Windows-Review")]
     [NetFullTargetFrameworkDataSource]
-    [Ignore("Test expected .NETFramework,Version=v4.5.2 support but the minimum one is .NETFramework,Version=v4.6.2")]
+    [Ignore("Test expects .NETFramework,Version=v4.5.2 support but the minimum one is .NETFramework,Version=v4.6.2")]
     public void CodedWebTestRunAllTests(RunnerInfo runnerInfo)
     {
         if (!IsCI)

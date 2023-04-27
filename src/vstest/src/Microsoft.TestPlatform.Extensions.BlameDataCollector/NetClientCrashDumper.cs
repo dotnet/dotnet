@@ -31,7 +31,7 @@ internal class NetClientCrashDumper : ICrashDumper
         // here we might consider renaming the files to have timestamp
     }
 
-    public IEnumerable<string> GetDumpFiles(bool processCrashed)
+    public IEnumerable<string> GetDumpFiles(bool _)
     {
         return _fileHelper.DirectoryExists(_outputDirectory)
             ? _fileHelper.GetFiles(_outputDirectory, "*_crashdump*.dmp", SearchOption.AllDirectories)

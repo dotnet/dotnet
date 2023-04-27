@@ -245,22 +245,21 @@ public class BlameCollector : DataCollector, ITestExecutionEnvironmentSpecifier
 
         if (_collectProcessDumpOnCrash)
         {
-            // Detach procdump from the testhost process to prevent testhost process from crashing
-            // if/when we try to kill the existing proc dump process.
-            // And also prevent collecting dump on exit of the process.
+            // Detach the dumper from the testhost process to prevent crashing testhost process. When the dumper is procdump.exe
+            // it must be detached before we try to dump the process, and simply killing it would take down the testhost process.
+            //
+            // Detaching also prevents creating an extra dump at the exit of the testhost process.
             _processDumpUtility.DetachFromTargetProcess(_testHostProcessId);
         }
 
         // Skip creating the dump if the option is set to none, and just kill the process.
         if ((_hangDumpType ?? HangDumpType.Full) != HangDumpType.None)
         {
-            var hangDumpSuccess = false;
             try
             {
                 Action<string> logWarning = m => _logger.LogWarning(_context.SessionDataCollectionContext, m);
                 var dumpDirectory = GetDumpDirectory();
                 _processDumpUtility.StartHangBasedProcessDump(_testHostProcessId, dumpDirectory, _hangDumpType == HangDumpType.Full, _targetFramework!, logWarning);
-                hangDumpSuccess = true;
             }
             catch (Exception ex)
             {
@@ -271,7 +270,8 @@ public class BlameCollector : DataCollector, ITestExecutionEnvironmentSpecifier
             {
                 try
                 {
-                    var dumpFiles = _processDumpUtility.GetDumpFiles(true, /* if we killed it by hang dumper, we already have our dump, otherwise it might have crashed, and we want all dumps */ !hangDumpSuccess);
+                    var dumpFiles = _processDumpUtility.GetDumpFiles(true,
+                        true /* Get all dumps that there are, if crashdump was created before we hangdumped, get it. It probably has interesting info. */);
                     foreach (var dumpFile in dumpFiles)
                     {
                         try
