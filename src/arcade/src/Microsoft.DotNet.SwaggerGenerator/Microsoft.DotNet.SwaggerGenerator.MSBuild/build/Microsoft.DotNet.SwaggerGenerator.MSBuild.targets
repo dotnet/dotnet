@@ -1,4 +1,6 @@
+<!-- Licensed to the .NET Foundation under one or more agreements. The .NET Foundation licenses this file to you under the MIT license. -->
 <Project>
+
   <UsingTask TaskName="GenerateSwaggerCode" AssemblyFile="$(MicrosoftDotNetSwaggerGeneratorMSBuildTasksAssembly)"/>
 
   <Target Name="GenerateCode">
@@ -14,4 +16,5 @@
     </ItemGroup>
     <Delete Files="@(_StaleSwaggerGeneratedFile)" TreatErrorsAsWarnings="true"/>
   </Target>
+
 </Project>

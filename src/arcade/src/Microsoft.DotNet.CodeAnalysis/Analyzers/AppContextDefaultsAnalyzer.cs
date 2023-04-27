@@ -18,7 +18,7 @@ namespace Microsoft.DotNet.CodeAnalysis.Analyzers
 
         private static string s_title = @"Ensure AppContext defaults are correctly setup";
         private static string s_analyzerName = "AppContextDefaults";
-        private static string s_description = @"Ensures AppContext default values are correctly setup";
+        private static string s_description = @"Ensures AppContext default values are correctly setup.";
         private static string s_defaultValueNotInitializedToTrue = @"AppContext default value expected to be 'true' in the call: '{0}'.";
         private static string s_defaultValueInsideUnexpectedIfCondition = @"AppContext default value is defined inside an if statement that does not use the '<=' pattern.";
         private static string s_defaultValueDefinedOutsideIfCondition = @"AppContext default value should be defined inside an if statement at the root of the switch case.";
@@ -77,7 +77,7 @@ namespace Microsoft.DotNet.CodeAnalysis.Analyzers
             }
 
             // check that we are doing this inside an if statement
-            var containingIfStatement = call.Ancestors().FirstOrDefault(n => n.Kind() == SyntaxKind.IfStatement) as IfStatementSyntax;
+            var containingIfStatement = call.Ancestors().FirstOrDefault(n => n.IsKind(SyntaxKind.IfStatement)) as IfStatementSyntax;
             if (containingIfStatement == null)
             {
                 context.ReportDiagnostic(Diagnostic.Create(s_appContextDefaultValueDefinedOutsideIfConditionDiagnostic, args.GetLocation(), call));
@@ -85,8 +85,8 @@ namespace Microsoft.DotNet.CodeAnalysis.Analyzers
             else
             {
                 // are we inside the switch? either as a block or as a switchcase?
-                if (!(containingIfStatement.Parent.Kind() == SyntaxKind.SwitchSection ||
-                    containingIfStatement.Parent.Parent.Kind() == SyntaxKind.SwitchSection))
+                if (!(containingIfStatement.Parent.IsKind(SyntaxKind.SwitchSection) ||
+                    containingIfStatement.Parent.Parent.IsKind(SyntaxKind.SwitchSection)))
                 {
                     context.ReportDiagnostic(Diagnostic.Create(s_appContextDefaultValueDefinedOutsideIfConditionDiagnostic, args.GetLocation(), call));
                 }

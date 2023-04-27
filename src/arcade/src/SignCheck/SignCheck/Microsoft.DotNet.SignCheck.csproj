@@ -1,12 +1,12 @@
-<!-- Licensed to the .NET Foundation under one or more agreements. The .NET Foundation licenses this file to you under the MIT license. -->
 <Project Sdk="Microsoft.NET.Sdk">
-  <Import Project="$(MSBuildThisFileDirectory)/../Microsoft.SignCheck/ResxWorkaround.props" />
+
+  <Import Project="$(MSBuildThisFileDirectory)..\Microsoft.SignCheck\ResxWorkaround.props" />
+
   <PropertyGroup>
-    <TargetFramework>net472</TargetFramework>
-    <OutputType>EXE</OutputType>
+    <TargetFramework>$(NetFrameworkToolCurrent)</TargetFramework>
+    <OutputType>Exe</OutputType>
     <Platforms>x86</Platforms>
     <IsTool>True</IsTool>
-    <Configurations>Release;Debug</Configurations>
     <SignAssembly>false</SignAssembly>
     <IsPackable>true</IsPackable>
     <!-- Build Tasks should not include any dependencies -->
@@ -17,49 +17,35 @@
     <ExcludeFromSourceBuild>true</ExcludeFromSourceBuild>
   </PropertyGroup>
 
-  <PropertyGroup Label="Nuget Package Settings">
-    <IsTool>true</IsTool>
-  </PropertyGroup>
-
   <ItemGroup>
-    <PackageReference Include="CommandLineParser" Version="2.2.0" PrivateAssets="All" Publish="true" />
-    <PackageReference Include="Microsoft.Build.Utilities.Core" Version="16.4.0" />
+    <PackageReference Include="CommandLineParser" Version="$(CommandLineParserVersion)" Publish="true" />
+    <PackageReference Include="Microsoft.Build.Utilities.Core" Version="$(MicrosoftBuildUtilitiesCoreVersion)" />
+    <ProjectReference Include="..\Microsoft.SignCheck\Microsoft.DotNet.SignCheckLibrary.csproj" Publish="true" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Microsoft.SignCheck\Microsoft.DotNet.SignCheckLibrary.csproj" PrivateAssets="All" Publish="true" />
+    <Compile Include="..\..\Common\Internal\AssemblyResolution.cs"
+             Link="src\AssemblyResolution.cs" />
+    <Compile Update="SignCheckResources.Designer.cs"
+             DesignTime="True"
+             AutoGen="True"
+             DependentUpon="SignCheckResources.resx" />
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Include="..\..\Common\Internal\AssemblyResolution.cs" Link="src\AssemblyResolution.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Reference Include="System.Net" Pack="false" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Compile Update="SignCheckResources.Designer.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>SignCheckResources.resx</DependentUpon>
-    </Compile>
-  </ItemGroup>
-
-  <ItemGroup>
-    <EmbeddedResource Update="SignCheckResources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>SignCheckResources.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
+    <EmbeddedResource Update="SignCheckResources.resx"
+                      Generator="ResXFileCodeGenerator"
+                      LastGenOutput="SignCheckResources.Designer.cs" />
   </ItemGroup>
 
   <!-- This glob must run after the build and before _GetPackageFiles to ensure all dependencies end up in the .nupkg file. -->
   <Target Name="CollectAllBuildOutputForPack" BeforeTargets="_GetPackageFiles" DependsOnTargets="CopyFilesToOutputDirectory">
     <ItemGroup>
       <!-- Exclude TargetPath to avoid NU5118: duplicate files -->
-      <Content Include="$(TargetDir)**\*" Exclude="$(TargetPath)">
-        <PackagePath>tools/</PackagePath>
-      </Content>
+      <Content Include="$(TargetDir)**\*"
+               Exclude="$(TargetPath)"
+               PackagePath="tools/" />
     </ItemGroup>
   </Target>
+
 </Project>

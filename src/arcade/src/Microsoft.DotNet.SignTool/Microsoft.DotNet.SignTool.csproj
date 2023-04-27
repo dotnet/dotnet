@@ -1,14 +1,15 @@
-<!-- Licensed to the .NET Foundation under one or more agreements. The .NET Foundation licenses this file to you under the MIT license. -->
 <Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
-    <TargetFrameworks>net472;$(TargetFrameworkForNETSDK)</TargetFrameworks>
+    <TargetFrameworks>$(NetCurrent);$(NetFrameworkToolCurrent)</TargetFrameworks>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <LangVersion>Latest</LangVersion>
     <IsPackable>true</IsPackable>
     <Description>Build artifact signing tool</Description>
     <PackageTags>Arcade Build Tool Signing</PackageTags>
     <DevelopmentDependency>false</DevelopmentDependency>
     <NoWarn>$(NoWarn);NU5128</NoWarn>
+    <!-- Copy assemblies into lib folder so they can be used as a development dependency -->
+    <BuildTaskTargetFolder>lib</BuildTaskTargetFolder>
   </PropertyGroup>
   
   <ItemGroup>
@@ -21,29 +22,16 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.ApplicationInsights" Version="$(MicrosoftApplicationInsightsVersion)" />
-    <PackageReference Include="System.Collections.Immutable" Version="$(SystemCollectionsImmutableVersion)" />
-    <PackageReference Include="System.IO.Compression" Version="$(SystemIOCompressionVersion)" />
-    <PackageReference Include="System.IO.FileSystem.Primitives" Version="$(SystemIOFileSystemPrimitivesVersion)" />
-    <PackageReference Include="System.Reflection.Metadata" Version="$(SystemReflectionMetadataVersion)" />
-    <PackageReference Include="Microsoft.Build.Utilities.Core" Version="$(MicrosoftBuildUtilitiesCoreVersion)" />
     <PackageReference Include="Microsoft.Build.Framework" Version="$(MicrosoftBuildFrameworkVersion)" />
+    <PackageReference Include="Microsoft.Build.Utilities.Core" Version="$(MicrosoftBuildUtilitiesCoreVersion)" />
     <PackageReference Include="NuGet.Packaging" Version="$(NuGetPackagingVersion)" />
-    <!-- This is here so that we agree with the project's transitive references to NewtonSoft.Json -->
-    <PackageReference Include="Newtonsoft.Json" Version="$(NewtonsoftJsonVersion)" />
   </ItemGroup>
 
-  <ItemGroup Condition="'$(TargetFramework)' == 'net472'">
+  <ItemGroup Condition="'$(TargetFrameworkIdentifier)' == '.NETFramework'">
+    <PackageReference Include="System.Reflection.Metadata" Version="$(SystemReflectionMetadataVersion)" />
     <Reference Include="WindowsBase" />
   </ItemGroup>
 
-  <!-- Copy assemblies into lib folder so they can be used as a development dependency -->
-  <Target Name="PackageAssembliesInLib" BeforeTargets="GenerateNuspec">
-    <ItemGroup>
-      <_PackageFiles Include="@(_PackageFiles)" Condition="$([System.String]::Copy(%(_PackageFiles.PackagePath)).Contains('tools/'))">
-        <PackagePath>$([System.String]::Copy('%(PackagePath)').Replace('tools', 'lib'))</PackagePath>
-      </_PackageFiles>
-    </ItemGroup>
-  </Target>
+  <Import Project="$(RepositoryEngineeringDir)BuildTask.targets" />
 
-  <Import Project="$(RepoRoot)eng\BuildTask.targets" />
 </Project>

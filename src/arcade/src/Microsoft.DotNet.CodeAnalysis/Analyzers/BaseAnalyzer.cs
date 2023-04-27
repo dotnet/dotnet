@@ -3,7 +3,6 @@
 
 using Microsoft.CodeAnalysis.Diagnostics;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 
 namespace Microsoft.DotNet.CodeAnalysis.Analyzers
@@ -14,6 +13,8 @@ namespace Microsoft.DotNet.CodeAnalysis.Analyzers
 
         public sealed override void Initialize(AnalysisContext context)
         {
+            context.EnableConcurrentExecution();
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.Analyze | GeneratedCodeAnalysisFlags.ReportDiagnostics);
             context.RegisterCompilationStartAction(InitializeAnalyzer);
         }
 

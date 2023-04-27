@@ -1,0 +1,9 @@
+<Project>
+  <Import Project="..\..\..\Directory.Build.targets" />
+
+  <!-- This project provides xunit.assert, so we can't bring the package in, as it would conflict. -->
+  <ItemGroup>
+    <PackageReference Remove="xunit" />
+    <PackageReference Include="xunit.core" Version="$(XUnitVersion)" IsImplicitlyDefined="true" PrivateAssets="all" Publish="true"/>
+  </ItemGroup>
+</Project>

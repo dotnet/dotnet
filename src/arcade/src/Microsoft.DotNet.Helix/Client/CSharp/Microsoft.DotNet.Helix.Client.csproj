@@ -1,10 +1,9 @@
 <Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.0;net472</TargetFrameworks>
+    <TargetFrameworks>netstandard2.0;$(NetFrameworkToolCurrent)</TargetFrameworks>
     <IsPackable>true</IsPackable>
     <Description>This package provides access to the Helix Api located at https://helix.dot.net/</Description>
-    <LangVersion>8.0</LangVersion>
-
     <SwaggerDocumentUri>https://helix.dot.net/api/openapi.json</SwaggerDocumentUri>
     <SwaggerClientName>HelixApi</SwaggerClientName>
     <ExcludeFromSourceBuild>true</ExcludeFromSourceBuild>
@@ -22,4 +21,5 @@
   <ItemGroup>
     <None Include="$(RepoRoot)LICENSE.TXT;$(RepoRoot)THIRD-PARTY-NOTICES.TXT" Pack="true" PackagePath="%(Filename)%(Extension)" />
   </ItemGroup>
+
 </Project>

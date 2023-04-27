@@ -1,12 +1,12 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
+    <TargetFramework>$(NetCurrent)</TargetFramework>
     <PackageId>Microsoft.DotNet.XUnitConsoleRunner</PackageId>
     <AssemblyName>xunit.console</AssemblyName>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <OutputType>Exe</OutputType>
     <RootNamespace>Xunit.ConsoleClient</RootNamespace>
-    <TargetFramework>$(TargetFrameworkForNETSDK)</TargetFramework>
     <IsPackable>true</IsPackable>
     <VersionPrefix>2.5.1</VersionPrefix>
     <ExcludeFromSourceBuild>true</ExcludeFromSourceBuild>
@@ -24,10 +24,8 @@
     <PackageReference Include="xunit.runner.reporters" Version="$(XUnitVersion)" />
     <PackageReference Include="xunit.runner.utility" Version="$(XUnitVersion)" />
     <PackageReference Include="xunit.abstractions" Version="$(XUnitAbstractionsVersion)" />
-    <PackageReference Include="System.Net.Http" Version="$(SystemNetHttpVersion)" />
-    <PackageReference Include="NETStandard.Library" Version="$(NETStandardLibraryVersion)" />
   </ItemGroup>
 
-  <Import Project="$(RepoRoot)eng\BuildTask.targets" />
+  <Import Project="$(RepositoryEngineeringDir)BuildTask.targets" />
 
 </Project>

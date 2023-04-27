@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="utf-8"?>
 <Project>
   <PropertyGroup>
     <!-- Helix Queues which do not exist (deprecation, typos, or purposful removal for use reduction) will error by default. 

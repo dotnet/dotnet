@@ -9,21 +9,17 @@
 
   <ItemGroup>
     <PackageReference Include="Handlebars.Net" Version="$(HandlebarsNetVersion)" />
-    <PackageReference Include="JetBrains.Annotations" Version="2018.2.1" PrivateAssets="All" />
-    <PackageReference Include="Microsoft.Extensions.Logging" Version="1.0.2" />
+    <PackageReference Include="JetBrains.Annotations" Version="$(JetBrainsAnnotationsVersion)" PrivateAssets="All" />
+    <PackageReference Include="Microsoft.OpenApi" Version="$(MicrosoftOpenApiVersion)" />
+    <PackageReference Include="Microsoft.OpenApi.Readers" Version="$(MicrosoftOpenApiReadersVersion)" />
     <PackageReference Include="System.Collections.Immutable" Version="$(SystemCollectionsImmutableVersion)" />
     <PackageReference Include="System.Memory" Version="$(SystemMemoryVersion)" />
-
-    <!-- Update this version when https://github.com/Microsoft/OpenAPI.NET publishes a version >1.1.2 -->
-    <PackageReference Include="Microsoft.OpenApi" Version="1.1.3-unofficial1" />
-    <PackageReference Include="Microsoft.OpenApi.Readers" Version="1.1.3-unofficial1" />
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="Languages\**\*.hb">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <Pack>true</Pack>
-    </None>
+    <None Update="Languages\**\*.hb"
+          CopyToOutputDirectory="PreserveNewest"
+          Pack="true" />
   </ItemGroup>
 
 </Project>

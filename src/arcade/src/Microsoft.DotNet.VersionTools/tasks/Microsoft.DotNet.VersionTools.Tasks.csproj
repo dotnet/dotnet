@@ -1,13 +1,13 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net472;$(TargetFrameworkForNETSDK)</TargetFrameworks>
+    <TargetFrameworks>$(NetCurrent);$(NetFrameworkToolCurrent)</TargetFrameworks>
+    <IsPackable>true</IsPackable>
     <PackageType>MSBuildSdk</PackageType>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.Build" Version="$(MicrosoftBuildVersion)" Publish="false" />
-    <PackageReference Include="Microsoft.Build.Tasks.Core" Version="$(MicrosoftBuildTasksCoreVersion)" Publish="false" />
+    <PackageReference Include="Microsoft.Build.Tasks.Core" Version="$(MicrosoftBuildTasksCoreVersion)" />
   </ItemGroup>
 
   <ItemGroup>
@@ -15,6 +15,6 @@
     <ProjectReference Include="..\lib\Microsoft.DotNet.VersionTools.csproj" />
   </ItemGroup>
 
-  <Import Project="$(RepoRoot)eng\BuildTask.targets" />
+  <Import Project="$(RepositoryEngineeringDir)BuildTask.targets" />
 
 </Project>

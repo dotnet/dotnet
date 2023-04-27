@@ -1,29 +1,18 @@
-<!-- Licensed to the .NET Foundation under one or more agreements. The .NET Foundation licenses this file to you under the MIT license. -->
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <Description>Templating task package</Description>
+    <IsPackable>true</IsPackable>
     <PackageTags>Arcade Build Tool Templating</PackageTags>
     <IncludeSymbols>false</IncludeSymbols>
-    <IncludeSource>false</IncludeSource>
-    <IsPackable>true</IsPackable>
-    <BuildOutputTargetFolder>tools\</BuildOutputTargetFolder>
     <DevelopmentDependency>true</DevelopmentDependency>
-    <SuppressDependenciesWhenPacking>true</SuppressDependenciesWhenPacking>
-    <EnableDefaultNoneItems>false</EnableDefaultNoneItems>
   </PropertyGroup>
 
   <ItemGroup>
-    <None Include="build/**/*.*" Pack="true">
-      <PackagePath>build</PackagePath>
-    </None>
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="Microsoft.Build.Framework" Version="$(MicrosoftBuildFrameworkVersion)" />
     <PackageReference Include="Microsoft.Build.Utilities.Core" Version="$(MicrosoftBuildUtilitiesCoreVersion)" />
   </ItemGroup>
 
-  <Import Project="$(RepoRoot)eng\BuildTask.targets" />
+  <Import Project="$(RepositoryEngineeringDir)BuildTask.targets" />
+
 </Project>

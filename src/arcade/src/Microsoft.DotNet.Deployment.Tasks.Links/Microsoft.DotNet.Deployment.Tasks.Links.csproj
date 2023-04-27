@@ -1,9 +1,7 @@
-<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>$(TargetFrameworkForNETSDK);net472</TargetFrameworks>
-
+    <TargetFrameworks>$(NetCurrent);$(NetFrameworkToolCurrent)</TargetFrameworks>
     <IsPackable>true</IsPackable>
     <Description>Aka.ms link manager</Description>
     <PackageTags>Arcade aka.ms</PackageTags>
@@ -13,46 +11,18 @@
 
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="$(NewtonsoftJsonVersion)" />
-    <PackageReference Include="Microsoft.IdentityModel.Clients.ActiveDirectory" Version="$(MicrosoftIdentityModelClientsActiveDirectoryVersion)" />
-    <PackageReference Include="Microsoft.Build.Framework" Version="$(MicrosoftBuildFrameworkVersion)" Publish="false" ExcludeAssets="runtime" />
     <PackageReference Include="Microsoft.Build.Utilities.Core" Version="$(MicrosoftBuildUtilitiesCoreVersion)" Publish="false" ExcludeAssets="runtime" />
-    <PackageReference Include="System.Net.Http" Version="$(SystemNetHttpVersion)" />
-    <PackageReference Include="NETStandard.Library" Version="$(NETStandardLibraryVersion)" />
+    <PackageReference Include="Microsoft.IdentityModel.Clients.ActiveDirectory" Version="$(MicrosoftIdentityModelClientsActiveDirectoryVersion)" />
   </ItemGroup>
 
-  <!-- Just copy the .props and .target to the build folder. -->
-  <ItemGroup>
-    <Content Include="build\*" PackagePath="build\" />
+  <ItemGroup Condition="'$(TargetFrameworkIdentifier)' == '.NETFramework'">
+    <Reference Include="System.Net.Http" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Microsoft.DotNet.VersionTools\lib\Microsoft.DotNet.VersionTools.csproj" />
   </ItemGroup>
 
-  <!--
-    Specify binaries to include in NuGet package
-  -->
-  <PropertyGroup>
-    <IncludeBuildOutput>false</IncludeBuildOutput>
-    <TargetsForTfmSpecificContentInPackage>$(TargetsForTfmSpecificContentInPackage);_PublishCore;_GetFilesToPackage</TargetsForTfmSpecificContentInPackage>
-    <!-- Build Tasks should not include any dependencies -->
-    <SuppressDependenciesWhenPacking>true</SuppressDependenciesWhenPacking>
-  </PropertyGroup>
+  <Import Project="$(RepositoryEngineeringDir)BuildTask.targets" />
 
-  <Target Name="_PublishCore" DependsOnTargets="Publish" Condition="'$(TargetFrameworkIdentifier)' == '.NETCoreApp'" />
-
-  <Target Name="_GetFilesToPackage" Returns="@(TfmSpecificPackageFile)">
-    <PropertyGroup>
-      <_Dir>$(OutDir)</_Dir>
-      <_Dir Condition="'$(TargetFrameworkIdentifier)' == '.NETCoreApp'">$(PublishDir)</_Dir>
-    </PropertyGroup>
-
-    <ItemGroup>
-      <_Files Include="$(_Dir)*" />
-
-      <TfmSpecificPackageFile Include="@(_Files)">
-        <PackagePath>build/$(TargetFramework)/%(_Files.Filename)%(_Files.Extension)</PackagePath>
-      </TfmSpecificPackageFile>
-    </ItemGroup>
-  </Target>
 </Project>

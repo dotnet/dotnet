@@ -28,8 +28,8 @@
     <PublishToSourceBuildStorage>false</PublishToSourceBuildStorage>
     <PublishToSourceBuildStorage Condition="'$(DotNetOutputBlobFeedDir)' != ''">true</PublishToSourceBuildStorage>
 
-    <!-- Default publishing infra target is 3. -->
-    <PublishingInfraVersion Condition="'$(PublishingInfraVersion)' == ''">3</PublishingInfraVersion>
+    <!-- Default publishing target is 3. -->
+    <PublishingVersion Condition="'$(PublishingVersion)' == ''">3</PublishingVersion>
     
     <!-- Globally set property. -->
     <IsStableBuild>false</IsStableBuild>

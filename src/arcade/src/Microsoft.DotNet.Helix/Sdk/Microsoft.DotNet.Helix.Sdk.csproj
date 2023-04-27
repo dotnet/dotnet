@@ -1,10 +1,9 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net472;$(TargetFrameworkForNETSDK)</TargetFrameworks>
+    <TargetFrameworks>$(NetCurrent);$(NetFrameworkToolCurrent)</TargetFrameworks>
     <PackageType>MSBuildSdk</PackageType>
-    <LangVersion>latest</LangVersion>
-    <DefaultItemExcludes Condition="'$(TargetFramework)' != 'net472'">**/*.Desktop.*</DefaultItemExcludes>
+    <DefaultItemExcludes Condition="$([MSBuild]::GetTargetFrameworkIdentifier('$(TargetFramework)')) != '.NETFramework'">**/*.Desktop.*</DefaultItemExcludes>
     <ExcludeFromSourceBuild>true</ExcludeFromSourceBuild>
   </PropertyGroup>
 
@@ -13,8 +12,9 @@
     <PackageReference Include="Microsoft.Build.Utilities.Core" Version="$(MicrosoftBuildUtilitiesCoreVersion)" />
     <PackageReference Include="Microsoft.Data.Services.Client" Version="$(MicrosoftDataServicesClientVersion)" />
     <PackageReference Include="Newtonsoft.Json" Version="$(NewtonsoftJsonVersion)" />
-    <PackageReference Include="NuGet.Versioning" Version="6.0.0-preview.4.230" />
-    <PackageReference Include="System.Net.Http" Version="4.3.4" />
+    <PackageReference Include="NuGet.Versioning" Version="$(NuGetVersioningVersion)" />
+
+
   </ItemGroup>
 
   <ItemGroup>
@@ -22,36 +22,33 @@
     <ProjectReference Include="..\JobSender\Microsoft.DotNet.Helix.JobSender.csproj" />
   </ItemGroup>
 
-  <ItemGroup Condition="'$(TargetFramework)' == 'net472'">
+  <ItemGroup Condition="'$(TargetFrameworkIdentifier)' == '.NETCoreApp'">
+    <!-- Upgrade the transitive dependencies that are brought in by Microsoft.Data.Services.Client. -->
+    <PackageReference Include="System.Net.Http" Version="4.3.4" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFrameworkIdentifier)' == '.NETFramework'">
     <Compile Include="..\..\Common\Internal\AssemblyResolver.cs" />
+    <Reference Include="System.IO.Compression" />
+    <Reference Include="System.Net.Http" />
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="**\*.py;**\*.bat;**\*.sh" Pack="true">
-      <PackagePath>%(RecursiveDir)%(Filename)%(Extension)</PackagePath>
-    </None>
+    <None Include="**\*.py;**\*.bat;**\*.sh"
+          Pack="true"
+          PackagePath="%(RecursiveDir)%(Filename)%(Extension)" />
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="tools\xharness-runner\xharness-event-processor.py">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </EmbeddedResource>
-    <EmbeddedResource Include="tools\xharness-runner\xharness-helix-job.apple.sh">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </EmbeddedResource>
-    <EmbeddedResource Include="tools\xharness-runner\xharness-runner.apple.sh">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </EmbeddedResource>
-    <EmbeddedResource Include="tools\xharness-runner\xharness-runner.android.ps1">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </EmbeddedResource>
-    <EmbeddedResource Include="tools\xharness-runner\xharness-helix-job.android.sh">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </EmbeddedResource>
-    <EmbeddedResource Include="tools\xharness-runner\xharness-helix-job.android.ps1">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </EmbeddedResource>
+    <EmbeddedResource Include="tools\xharness-runner\xharness-event-processor.py;
+                               tools\xharness-runner\xharness-helix-job.apple.sh;
+                               tools\xharness-runner\xharness-runner.apple.sh;
+                               tools\xharness-runner\xharness-runner.android.ps1;
+                               tools\xharness-runner\xharness-helix-job.android.sh;
+                               tools\xharness-runner\xharness-helix-job.android.ps1"
+                      CopyToOutputDirectory="Never" />
   </ItemGroup>
 
-  <Import Project="$(RepoRoot)eng\BuildTask.targets" />
+  <Import Project="$(RepositoryEngineeringDir)BuildTask.targets" />
+
 </Project>

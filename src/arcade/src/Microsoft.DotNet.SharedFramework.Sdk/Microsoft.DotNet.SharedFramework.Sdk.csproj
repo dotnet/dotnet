@@ -1,57 +1,42 @@
-<!-- Licensed to the .NET Foundation under one or more agreements. The .NET Foundation licenses this file to you under the MIT license. -->
 <Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
-    <TargetFrameworks>net472;$(TargetFrameworkForNETSDK)</TargetFrameworks>
-    <LangVersion>preview</LangVersion>
-    <ExcludeFromSourceBuild>false</ExcludeFromSourceBuild>
-
+    <TargetFrameworks>$(NetCurrent);$(NetFrameworkToolCurrent)</TargetFrameworks>
     <IsPackable>true</IsPackable>
-
     <Description>Common toolset for building shared frameworks and framework packs.</Description>
     <PackageType>MSBuildSdk</PackageType>
-
     <EnableDefaultNoneItems>false</EnableDefaultNoneItems>
-    <EnableGeneratedPackageContent>false</EnableGeneratedPackageContent>
     <NoWarn>$(NoWarn);3021;NU5105</NoWarn>
-
-    <DefaultItemExcludes Condition="'$(TargetFramework)' != 'net472'">**/*.Desktop.*</DefaultItemExcludes>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.Build.Utilities.Core" Version="$(MicrosoftBuildUtilitiesCoreVersion)" />
-    <PackageReference Include="Microsoft.Build" Version="$(MicrosoftBuildVersion)" />
     <PackageReference Include="Microsoft.Extensions.DependencyModel" Version="$(MicrosoftExtensionsDependencyModelVersion)" />
     <PackageReference Include="NuGet.Packaging" Version="$(NuGetPackagingVersion)" />
-    <PackageReference Include="NuGet.ProjectModel" Version="$(NuGetPackagingVersion)" />
-    <PackageReference Include="NuGet.Versioning" Version="$(NuGetPackagingVersion)" />
-    <PackageReference Include="System.Reflection.Metadata" Version="$(SystemReflectionMetadataVersion)" />
-
-    <!-- This is here so that we agree with the project's transitive references to NewtonSoft.Json -->
-    <PackageReference Include="Newtonsoft.Json" Version="$(NewtonsoftJsonVersion)" />
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="sdk/**/*.*" Pack="true">
-      <PackagePath>sdk/%(RecursiveDir)%(Filename)%(Extension)</PackagePath>
-    </None>
-    <None Include="targets/**/*.*" Pack="true">
-      <PackagePath>targets</PackagePath>
-    </None>
+    <None Include="sdk/**/*.*"
+          Pack="true"
+          PackagePath="sdk/%(RecursiveDir)%(Filename)%(Extension)" />
+    <None Include="targets/**/*.*"
+          Pack="true"
+          PackagePath="targets" />
   </ItemGroup>
 
   <ItemGroup>
     <Compile Include="..\Common\Internal\BuildTask.cs" Link="src\BuildTask.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
     <Compile Include="..\Microsoft.DotNet.PackageTesting\VerifyClosure.cs" Link="src/Packaging/VerifyClosure.cs" />
     <Compile Include="..\Microsoft.DotNet.PackageTesting\VerifyTypes.cs" Link="src/Packaging/VerifyTypes.cs" />
   </ItemGroup>
   
-  <ItemGroup Condition="'$(TargetFramework)' == 'net472'">
+  <ItemGroup Condition="'$(TargetFrameworkIdentifier)' == '.NETFramework'">
     <Compile Include="..\Common\Internal\AssemblyResolver.cs" />
     <Compile Include="..\Common\Internal\BuildTask.Desktop.cs" />
+
+    <PackageReference Include="System.Reflection.Metadata" Version="$(SystemReflectionMetadataVersion)" />
   </ItemGroup>
   
-  <Import Project="$(RepoRoot)eng\BuildTask.targets" />
+  <Import Project="$(RepositoryEngineeringDir)BuildTask.targets" />
+
 </Project>

@@ -756,11 +756,10 @@ $@"<FilesToSign Include=""{Uri.EscapeDataString(Path.Combine(_tmpDir, "CoreLibCr
             });
         }
 
-        [SkippableFact]
+        [WindowsOnlyFact]
         [Trait("Category", "SkipWhenLiveUnitTesting")]
         public void DoubleNestedContainer()
         {
-            Skip.IfNot(RuntimeInformation.IsOSPlatform(OSPlatform.Windows));
             // List of files to be considered for signing
             var itemsToSign = new ITaskItem[]
             {
@@ -1206,11 +1205,10 @@ $@"
             });
         }
 #endif
-        [SkippableFact]
+        [WindowsOnlyFact]
         [Trait("Category", "SkipWhenLiveUnitTesting")]
         public void SignMsiEngine()
         {
-            Skip.IfNot(RuntimeInformation.IsOSPlatform(OSPlatform.Windows));
             // List of files to be considered for signing
             var itemsToSign = new ITaskItem[]
             {
@@ -1254,11 +1252,10 @@ $@"<FilesToSign Include=""{Uri.EscapeDataString(Path.Combine(_tmpDir, "Container
 
         }
 
-        [SkippableFact]
+        [WindowsOnlyFact]
         [Trait("Category", "SkipWhenLiveUnitTesting")]
         public void MsiWithWixpack()
         {
-            Skip.IfNot(RuntimeInformation.IsOSPlatform(OSPlatform.Windows));
             // List of files to be considered for signing
             var itemsToSign = new ITaskItem[]
             {
@@ -1302,11 +1299,9 @@ $@"<FilesToSign Include=""{Uri.EscapeDataString(Path.Combine(_tmpDir, "Container
         /// <summary>
         /// Validate that an invalid wix toolset path causes an error
         /// </summary>
-        [SkippableFact]
+        [WindowsOnlyFact]
         public void BadWixToolsetPath()
         {
-            Skip.IfNot(RuntimeInformation.IsOSPlatform(OSPlatform.Windows));
-
             var badPath = Path.Combine(GetWixToolPath(), "badpath");
 
             var fakeBuildEngine = new FakeBuildEngine(_output);
@@ -2216,13 +2211,12 @@ $@"
         /// Verify that running the wixpack returns passing result and that the expected output file
         /// is created, or a negative result if the wix tool fails.
         /// </summary>
-        [SkippableTheory]
+        [WindowsOnlyTheory]
         [InlineData(true)]
         [InlineData(false)]
         [Trait("Category", "SkipWhenLiveUnitTesting")]
         public void RunWixToolRunsOrFailsProperly(bool deleteWixobjBeforeRunningTool)
         {
-            Skip.IfNot(RuntimeInformation.IsOSPlatform(OSPlatform.Windows));
             var task = new SignToolTask { BuildEngine = new FakeBuildEngine() };
 
             const string expectedExe = "MsiBootstrapper.exe";

@@ -1,16 +1,10 @@
 <Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
-    <DisableImplicitAssetTargetFallback>true</DisableImplicitAssetTargetFallback>
-    <TargetFrameworks>netstandard2.0</TargetFrameworks>
-    <AssetTargetFallback>$(PackageTargetFallback)portable-net45+win8;</AssetTargetFallback>
+    <TargetFrameworks>$(NetCurrent);netstandard2.0</TargetFrameworks>
     <ExcludeFromSourceBuild>true</ExcludeFromSourceBuild>
     <IsPackable>true</IsPackable>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-  </PropertyGroup>
-
-  <PropertyGroup>
-    <NoWarn>NU1701</NoWarn>
-    <DefineConstants>$(DefineConstants);COREFX</DefineConstants>
   </PropertyGroup>
 
   <ItemGroup>
@@ -18,13 +12,16 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.Cci" Version="4.0.0-rc3-24214-00" />
-    <PackageReference Include="Microsoft.Composition" Version="1.0.30" />
-    <PackageReference Include="System.Diagnostics.Contracts" Version="4.3.0" />
-    <PackageReference Include="System.Diagnostics.TraceSource" Version="4.0.0" />
-    <PackageReference Include="System.Reflection.Metadata" Version="1.6.0" />
+    <!-- Manually reference Microsoft.Cci.dll via a PackageDownload+Reference item instead of
+         using a PackageReference to avoid bringing in the old dependency graph. -->
+    <PackageDownload Include="Microsoft.Cci" Version="[$(MicrosoftCciVersion)]" />
+    <Reference Include="$(NuGetPackageRoot)microsoft.cci\$(MicrosoftCciVersion)\lib\netstandard1.3\Microsoft.Cci.dll" />
+    <PackageReference Include="System.Composition" Version="$(SystemCompositionVersion)" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFrameworkIdentifier)' == '.NETStandard'">
     <PackageReference Include="System.Memory" Version="$(SystemMemoryVersion)" />
-    <PackageReference Include="System.IO.FileSystem" Version="4.3.0" />
+    <PackageReference Include="System.Reflection.Metadata" Version="$(SystemReflectionMetadataVersion)" />
   </ItemGroup>
 
 </Project>

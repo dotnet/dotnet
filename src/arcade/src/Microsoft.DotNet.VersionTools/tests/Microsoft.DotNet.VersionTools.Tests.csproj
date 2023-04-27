@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>$(TargetFrameworkForNETSDK)</TargetFramework>
+    <TargetFramework>$(NetCurrent)</TargetFramework>
   </PropertyGroup>
 
   <ItemGroup>
@@ -14,9 +14,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="BuildManifest\VersionIdentifierTestsAssets.csv">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
+    <None Update="BuildManifest\VersionIdentifierTestsAssets.csv"
+          CopyToOutputDirectory="Always" />
   </ItemGroup>
 
 </Project>

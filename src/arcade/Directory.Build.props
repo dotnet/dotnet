@@ -1,31 +1,22 @@
-<?xml version="1.0" encoding="utf-8"?>
 <Project>
-  <Import Project="Sdk.props" Sdk="Microsoft.DotNet.Arcade.Sdk" />
 
-  
+  <Import Project="Sdk.props" Sdk="Microsoft.DotNet.Arcade.Sdk" />
 
   <PropertyGroup>
     <Copyright>$(CopyrightNetFoundation)</Copyright>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <DebugType>embedded</DebugType>
     <DebugSymbols>true</DebugSymbols>
     <LangVersion>Latest</LangVersion>
-    <TargetFrameworkForNETSDK>net8.0</TargetFrameworkForNETSDK>
+
+    <!-- TODO: Remove when a new Arcade.Sdk is consumed with the changes in TargetFrameworkDefaults.props. -->
+    <NetFrameworkToolCurrent>net472</NetFrameworkToolCurrent>
 
     <!--
       Tools and packages produced by this repository support infrastructure and are not shipping on NuGet or via any other official channel.
     -->
     <IsShipping>false</IsShipping>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(DotNetBuildOffline)' == 'true'">
-    <!--
-      Arcade has a special version prop for CodeAnalysis.CSharp in GenFacades
-      to try to match the version loaded by msbuild.  In the offline build, this
-      is simply the source-built version.
-    -->
-    <MsbuildTaskMicrosoftCodeAnalysisCSharpVersion>$(MicrosoftCodeAnalysisCSharpVersion)</MsbuildTaskMicrosoftCodeAnalysisCSharpVersion>
   </PropertyGroup>
 
 </Project>

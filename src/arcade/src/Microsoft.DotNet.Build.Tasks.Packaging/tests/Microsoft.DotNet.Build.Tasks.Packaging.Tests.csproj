@@ -1,26 +1,25 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
-    <TargetFrameworks>$(TargetFrameworkForNETSDK);net472</TargetFrameworks>
-    <LangVersion>Latest</LangVersion>
+    <TargetFrameworks>$(NetCurrent);$(NetFrameworkToolCurrent)</TargetFrameworks>
     <SignAssembly>false</SignAssembly>
     <NoWarn>xUnit2013</NoWarn>
   </PropertyGroup>
+
   <ItemGroup>
     <Content Include="packageIndex.json" CopyToOutputDirectory="Always"/>
     <Content Include="FrameworkLists\**\*" CopyToOutputDirectory="Always"/>
   </ItemGroup>
+
   <ItemGroup>
     <ProjectReference Include="..\src\Microsoft.DotNet.Build.Tasks.Packaging.csproj" />
   </ItemGroup>
+
   <ItemGroup>
-    <PackageReference Include="Microsoft.Build" Version="$(MicrosoftBuildVersion)"/>
+    <PackageReference Include="FluentAssertions" Version="$(FluentAssertionsVersion)" />
     <PackageReference Include="Microsoft.Build.Tasks.Core" Version="$(MicrosoftBuildTasksCoreVersion)"/>
     <PackageReference Include="Newtonsoft.Json" Version="$(NewtonsoftJsonVersion)" />
-    <PackageReference Include="NuGet.Commands" Version="$(NuGetPackagingVersion)" />
     <PackageReference Include="NuGet.Packaging" Version="$(NuGetPackagingVersion)" />
-    <PackageReference Include="NuGet.ProjectModel" Version="$(NuGetPackagingVersion)" />
-    <PackageReference Include="System.Reflection.Metadata" Version="$(SystemReflectionMetadataVersion)" />
-    <PackageReference Include="FluentAssertions" Version="$(FluentAssertionsVersion)" />
   </ItemGroup>
   
   <!-- test packages - these packages aren't needed for compilation but are copied
@@ -32,35 +31,20 @@
     <TestPackage Include="runtime.any.System.Runtime" Version="4.3.0" />
     <TestPackage Include="runtime.aot.System.Runtime" Version="4.3.0" />
 
-    <PackageReference Include="@(TestPackage)" />
+    <PackageDownload Include="@(TestPackage)" Version="[%(Version)]" />
   </ItemGroup>
-  
-  <ItemGroup>
-    <_candidatPackageFolders Include="$(NuGetPackageFolders)" />
-  </ItemGroup>
-
-  <!-- Find the packages from one of many package folders -->
-  <Target Name="FindTestPackages"
-          Inputs="%(_candidatPackageFolders.Identity)"
-          Outputs="unused">
-    <PropertyGroup>
-      <_candidatePackageFolder>%(_candidatPackageFolders.Identity)</_candidatePackageFolder>
-    </PropertyGroup>
-    <ItemGroup>
-      <TestPackage>
-        <Folder Condition="Exists('$(_candidatePackageFolder)\%(Identity)\%(Version)')">$(_candidatePackageFolder)\%(Identity)\%(Version)</Folder>
-        <!-- NuGet will restore to lower case folder and linux is case sensitive -->
-        <Folder Condition="Exists('$(_candidatePackageFolder)\$([System.String]::new(&quot;%(Identity)\%(Version)&quot;).ToLower())')">$(_candidatePackageFolder)\$([System.String]::new(&quot;%(Identity)\%(Version)&quot;).ToLower())</Folder>
-      </TestPackage>
-    </ItemGroup>
-  </Target>
 
   <!-- Check that we found the test packages and set up content items to copy them -->
-  <Target Name="AddTestPackageContent"
-          DependsOnTargets="FindTestPackages"
-          AfterTargets="ResolveReferences">
-     <Error Condition="'%(TestPackage.Folder)'==''"
-            Text="Could not locate package '%(TestPackage.Identity)\%(TestPackage.Version)' under any of '$(NuGetPackageFolders)'" />
+  <Target Name="AddTestPackageContent" AfterTargets="ResolveReferences">
+    <ItemGroup>
+      <TestPackage>
+        <Folder>$(NuGetPackageRoot)$([System.String]::new('%(Identity)').ToLowerInvariant())\%(Version)</Folder>
+      </TestPackage>
+    </ItemGroup>
+
+     <Error Condition="!Exists('%(TestPackage.Folder)')"
+            Text="Could not locate package '%(TestPackage.Identity)\%(TestPackage.Version)'.'" />
+
      <ItemGroup>
        <TestPackageContent Include="%(TestPackage.Folder)\**\*" LinkBase="packages\%(TestPackage.Identity)\%(TestPackage.Version)\" />
        <Content Include="@(TestPackageContent)" Link="%(TestPackageContent.LinkBase)%(RecursiveDir)%(FileName)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
