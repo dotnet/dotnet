@@ -1,10 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project>
   <PropertyGroup>
-    <GitCommitHash>5868d219346a29b8d89dcd5718642715478bed55</GitCommitHash>
-    <OfficialBuildId>20230425.3</OfficialBuildId>
-    <OutputPackageVersion>8.0.0-preview.4.23225.3</OutputPackageVersion>
-    <PreReleaseVersionLabel>preview.4</PreReleaseVersionLabel>
+    <GitCommitHash>015ceab6aeec700fbfb71cdfe9ff8fb51831d555</GitCommitHash>
+    <OfficialBuildId>20230426.1</OfficialBuildId>
+    <OutputPackageVersion>8.0.0-preview.5.23226.1</OutputPackageVersion>
+    <PreReleaseVersionLabel>preview.5</PreReleaseVersionLabel>
     <IsStable>false</IsStable>
   </PropertyGroup>
 </Project>
