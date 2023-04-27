@@ -5,7 +5,6 @@ This repository is a **Virtual Monolithic Repository (VMR)** which includes all 
 What this means:
 - **Monolithic** - a join of multiple repositories that make up the whole product, such as [dotnet/runtime](https://github.com/dotnet/runtime) or [dotnet/sdk](https://github.com/dotnet/sdk).
 - **Virtual** - a mirror (not replacement) of product repos where sources from those repositories are synchronized into.
-- **Experimental** - not to be depended on as we reserve the right to delete the current instance and create a new, different one in its stead. See [Limitations](#limitations).
 
 In the VMR, you can find:
 - source files of [each product repository](#list-of-components) which are mirrored inside of their respective directories under [`src/`](https://github.com/dotnet/dotnet/tree/main/src),
@@ -32,12 +31,8 @@ See also [dotnet/source-build](https://github.com/dotnet/source-build) for more 
 
 ## Limitations
 
-**This is a work-in-progress and an experiment.**
-There are considerable limitations to what is possible at the moment. For an extensive list of current limitations, please see [Temporary Mechanics](src/arcade/Documentation/UnifiedBuild/VMR-Design-And-Operation.md#temporary-mechanics).
-
-The VMR is expected to become non-experimental by .NET 8 Preview 1 (Februrary, 2023).
-This means it won't be short-lived anymore and we won't be reserving the right to delete and re-create it anymore.
-Other limitations might apply until the .NET 9 timeframe.
+**This is a work-in-progress.**
+There are considerable limitations to what is possible at the moment. For an extensive list of current limitations, please see [Temporary Mechanics](src/arcade/Documentation/UnifiedBuild/VMR-Design-And-Operation.md#temporary-mechanics).  
 See the [Unified Build roadmap](src/arcade/Documentation/UnifiedBuild/Roadmap.md) for more details.
 
 ### Supported platforms
@@ -182,7 +177,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/fsharp`  
 *[dotnet/fsharp@1bbbdb3](https://github.com/dotnet/fsharp/commit/1bbbdb332e8142776ae722f8933464249001ced6)*
 - `src/installer`  
-*[dotnet/installer@2e00ced](https://github.com/dotnet/installer/commit/2e00cedf1e8d4b7b1139c965007e90c60f61e6d6)*
+*[dotnet/installer@f5b37ec](https://github.com/dotnet/installer/commit/f5b37ec92f9e971916aeae1eb256d1c65b0b0ab6)*
 - `src/msbuild`  
 *[dotnet/msbuild@83ce352](https://github.com/dotnet/msbuild/commit/83ce3529b2ab96cf987a856befdea1e93d2ad9fc)*
 - `src/nuget-client`  
