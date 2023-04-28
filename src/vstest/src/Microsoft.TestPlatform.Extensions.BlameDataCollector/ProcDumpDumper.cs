@@ -4,10 +4,11 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 
 using Microsoft.VisualStudio.TestPlatform.CoreUtilities.Helpers;
 using Microsoft.VisualStudio.TestPlatform.Execution;
@@ -32,6 +33,7 @@ public class ProcDumpDumper : ICrashDumper, IHangDumper
     private readonly IFileHelper _fileHelper;
     private readonly IEnvironment _environment;
     private readonly IEnvironmentVariableHelper _environmentVariableHelper;
+    private string? _procDumpPath;
     private Process? _procDumpProcess;
     private string? _tempDirectory;
     private string? _dumpFileName;
@@ -39,6 +41,8 @@ public class ProcDumpDumper : ICrashDumper, IHangDumper
     private string? _outputDirectory;
     private Process? _process;
     private string? _outputFilePrefix;
+    private bool _isCrashDumpInProgress;
+    private readonly int _timeout = EnvironmentHelper.GetConnectionTimeout() * 1000;
     private readonly ProcDumpExecutableHelper _procDumpExecutableHelper;
 
     public ProcDumpDumper()
@@ -63,25 +67,47 @@ public class ProcDumpDumper : ICrashDumper, IHangDumper
         _procDumpExecutableHelper = new ProcDumpExecutableHelper(processHelper, fileHelper, environment, environmentVariableHelper);
     }
 
-    [SuppressMessage("Performance", "CA1822:Mark members as static", Justification = "Part of the public API")]
     protected Action<object?, string?> OutputReceivedCallback => (process, data) =>
-        // useful for visibility when debugging this tool
-        // Console.ForegroundColor = ConsoleColor.Cyan;
-        // Console.WriteLine(data);
-        // Console.ForegroundColor = ConsoleColor.White;
-        // Log all standard output message of procdump in diag files.
-        // Otherwise they end up coming on console in pipleine.
+    {
         EqtTrace.Info($"ProcDumpDumper.OutputReceivedCallback: Output received from procdump process: {data ?? "<null>"}");
+
+        // This is what procdump writes to the output when it is creating a crash dump. When hangdump triggers while we are writing a crash dump
+        // we probably don't want to cancel, because that crashdump probably has the more interesting info.
+        // [16:06:59] Dump 1 initiated: <path>
+        // [16:07:00] Dump 1 writing: Estimated dump file size is 11034 MB.
+        // [16:07:09] Dump 1 complete: 11034 MB written in 10.1 seconds
+        // We also want to know when we completed writing a dump (and not just set _isCrashDumpInProgress once), because dumpcount larger than 1
+        // can be provided externally and then the first dump would prevent hangdump forever from stopping the process, but the not every dump is crashing the process
+        // so we would run forever.
+        //
+        // Yes the two ifs below depend on the content being in english, and containg those words (which is the case for procdump from 2017 till 2023 at least),
+        // if we get different language it should not break us, we will just cancel more aggressively (unfortunately).
+        if (data != null && data.Contains("initiated"))
+        {
+            EqtTrace.Info($"ProcDumpDumper.OutputReceivedCallback: Output received from procdump process contains 'initiated', crashdump is being written. Don't cancel procdump right now.");
+            _isCrashDumpInProgress = true;
+        }
+
+        if (data != null && data.Contains("complete"))
+        {
+            EqtTrace.Info($"ProcDumpDumper.OutputReceivedCallback: Output received from procdump process contains 'complete' dump is finished, you can cancel procdump if you need.");
+            _isCrashDumpInProgress = false;
+        }
+    };
+
+    internal static Action<object?, string?> ErrorReceivedCallback => (process, data) =>
+        EqtTrace.Error($"ProcDumpDumper.ErrorReceivedCallback: Error received from procdump process: {data ?? "<null>"}");
 
     /// <inheritdoc/>
     public void WaitForDumpToFinish()
     {
-        if (_processHelper == null)
+        if (_procDumpProcess == null)
         {
             EqtTrace.Info($"ProcDumpDumper.WaitForDumpToFinish: ProcDump was not previously attached, this might indicate error during setup, look for ProcDumpDumper.AttachToTargetProcess.");
+            return;
         }
 
-        _processHelper?.WaitForProcessExit(_procDumpProcess);
+        _processHelper.WaitForProcessExit(_procDumpProcess);
     }
 
     /// <inheritdoc/>
@@ -118,12 +144,13 @@ public class ProcDumpDumper : ICrashDumper, IHangDumper
             isFullDump: dumpType == DumpTypeOption.Full);
 
         EqtTrace.Info($"ProcDumpDumper.AttachToTargetProcess: Running ProcDump with arguments: '{procDumpArgs}'.");
+        _procDumpPath = procDumpPath;
         _procDumpProcess = (Process)_processHelper.LaunchProcess(
             procDumpPath,
             procDumpArgs,
             _tempDirectory,
             null,
-            null,
+            ErrorReceivedCallback,
             null,
             OutputReceivedCallback);
 
@@ -133,27 +160,78 @@ public class ProcDumpDumper : ICrashDumper, IHangDumper
     /// <inheritdoc/>
     public void DetachFromTargetProcess(int targetProcessId)
     {
-        if (_procDumpProcess == null)
+        if (_procDumpProcess == null || _procDumpPath == null)
         {
             EqtTrace.Info($"ProcDumpDumper.DetachFromTargetProcess: ProcDump was not previously attached, this might indicate error during setup, look for ProcDumpDumper.AttachToTargetProcess.");
             return;
         }
 
+        if (_procDumpProcess.HasExited)
+        {
+            EqtTrace.Info($"ProcDumpDumper.DetachFromTargetProcess: ProcDump already exited, returning.");
+            return;
+        }
+
         try
         {
+            if (_isCrashDumpInProgress)
+            {
+                EqtTrace.Info($"ProcDumpDumper.DetachFromTargetProcess: ProcDump is currently dumping process '{targetProcessId}', wait at most {_timeout} ms for it to finish so we get the crashdump.");
+                var procDumpExit = Task.Run(() => _procDumpProcess.WaitForExit(_timeout));
+                // Could do this better with completion source, but we have nothing better to do in this process anyway,
+                // than wait for the crashdump to finish.
+                while (_isCrashDumpInProgress && !procDumpExit.IsCompleted)
+                {
+                    // The timeout is driven by VSTEST_CONNECTION_TIMEOUT which is specified in seconds so it cannot be less than 1000ms.
+                    // (Technically it can be 0, but that will fail way before we ever reach here.)
+                    Thread.Sleep(500);
+                    EqtTrace.Verbose($"ProcDumpDumper.DetachFromTargetProcess: Waiting for procdump to finish dumping the process.");
+                }
+
+                if (procDumpExit.IsCompleted && procDumpExit.Result == false)
+                {
+                    EqtTrace.Verbose($"ProcDumpDumper.DetachFromTargetProcess: Procdump did not exit after {_timeout} ms.");
+                }
+            }
+
+            if (_procDumpProcess.HasExited)
+            {
+                EqtTrace.Info($"ProcDumpDumper.DetachFromTargetProcess: ProcDump already exited, returning.");
+                return;
+            }
+
             EqtTrace.Info($"ProcDumpDumper.DetachFromTargetProcess: ProcDump detaching from target process '{targetProcessId}'.");
+            // Alternative to sending this event is calling Procdump -cancel <targetProcessId> (the dumped process id, not the existing Procdump.exe process id).
+            // But not all versions of procdump have that parameter (definitely not the one we are getting from the Procdump 0.0.1 nuget package), and it works reliably.
+            // What was not reliable before was that we sent the message and immediately killed procdump, that caused testhost to crash occasionally, because procdump was not detached,
+            // and killing the process when it is not detached takes the observed process with it.
             new Win32NamedEvent($"Procdump-{targetProcessId}").Set();
+            EqtTrace.Info($"ProcDumpDumper.DetachFromTargetProcess: Cancel event was sent to Procdump.");
+
+            var sw = Stopwatch.StartNew();
+            var exited = _procDumpProcess.WaitForExit(_timeout);
+            if (exited)
+            {
+                EqtTrace.Info($"ProcDumpDumper.DetachFromTargetProcess: ProcDump cancelled after {sw.ElapsedMilliseconds} ms.");
+            }
+            else
+            {
+                EqtTrace.Info($"ProcDumpDumper.DetachFromTargetProcess: ProcDump cancellation timed out, after {sw.ElapsedMilliseconds} ms.");
+            }
         }
         finally
         {
             try
             {
-                EqtTrace.Info("ProcDumpDumper.DetachFromTargetProcess: Attempting to kill proc dump process.");
-                _processHelper.TerminateProcess(_procDumpProcess);
+                if (!_procDumpProcess.HasExited)
+                {
+                    EqtTrace.Info("ProcDumpDumper.DetachFromTargetProcess: Procdump process is still running after cancellation, force killing it. This will probably take down the process it is attached to as well.");
+                    _processHelper.TerminateProcess(_procDumpProcess);
+                }
             }
             catch (Exception e)
             {
-                EqtTrace.Warning($"ProcDumpDumper.DetachFromTargetProcess: Failed to kill proc dump process with exception {e}");
+                EqtTrace.Warning($"ProcDumpDumper.DetachFromTargetProcess: Failed to kill procdump process with exception {e}");
             }
         }
     }
@@ -241,7 +319,7 @@ public class ProcDumpDumper : ICrashDumper, IHangDumper
             procDumpArgs,
             tempDirectory,
             null,
-            null,
+            ErrorReceivedCallback,
             null,
             OutputReceivedCallback);
 
