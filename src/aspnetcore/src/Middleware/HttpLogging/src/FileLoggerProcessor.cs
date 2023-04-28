@@ -264,7 +264,7 @@ internal partial class FileLoggerProcessor : IAsyncDisposable
             return;
         }
         await streamWriter.WriteLineAsync(message.AsMemory(), cancellationToken);
-        await streamWriter.FlushAsync(cancellationToken);
+        await streamWriter.FlushAsync();
     }
 
     // Virtual for testing
