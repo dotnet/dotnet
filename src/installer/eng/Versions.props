@@ -122,6 +122,10 @@
     <!-- Dependencies from https://github.com/NuGet/NuGet.Client -->
     <NuGetVersioningPackageVersion>5.8.0</NuGetVersioningPackageVersion>
   </PropertyGroup>
+  <!-- Dependencies from https://github.com/dotnet/deployment-tools -->
+  <PropertyGroup>
+    <MicrosoftDeploymentDotNetReleasesVersion>1.0.0-preview.6.23206.1</MicrosoftDeploymentDotNetReleasesVersion>
+  </PropertyGroup>
   <PropertyGroup>
     <!-- Automated versions for asp.net templates -->
     <!-- Grab just the patch version from MicrosoftNETSdkPackageVersion (7.0.103-servicing becomes 03) -->
@@ -249,13 +253,6 @@
   <PropertyGroup>
     <!-- pinned dependency. This package is not being produced outside of the 2.0 branch of corefx and should not change. -->
     <CLI_NETStandardLibraryNETFrameworkVersion>2.0.1-servicing-26011-01</CLI_NETStandardLibraryNETFrameworkVersion>
-  </PropertyGroup>
-  <PropertyGroup>
-    <!--
-      pinned dependency. This package is not being produced outside of the 2.0 branch of corefx and should not change.
-      If changed, the Microsoft.Deployment.DotNet.Releases dependency in Version.Details.xml must be updated to be kept in sync.
-    -->
-    <DotNetDeploymentReleasesPackageVersion>1.0.0-preview5.1.22263.1</DotNetDeploymentReleasesPackageVersion>
   </PropertyGroup>
   <Import Project="$(RepositoryEngineeringDir)ManualVersions.props" />
 </Project>
