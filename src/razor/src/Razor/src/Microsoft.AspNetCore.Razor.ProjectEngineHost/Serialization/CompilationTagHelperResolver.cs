@@ -53,7 +53,7 @@ internal class CompilationTagHelperResolver
             context.SetCompilation(compilation);
         }
 
-        var timingDictionary = new Dictionary<string, long>();
+        var timingDictionary = new Dictionary<string, object?>();
         for (var i = 0; i < providers.Length; i++)
         {
             var provider = providers[i];

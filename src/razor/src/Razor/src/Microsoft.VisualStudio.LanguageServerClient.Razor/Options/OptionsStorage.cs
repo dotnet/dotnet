@@ -66,10 +66,7 @@ internal class OptionsStorage : IAdvancedSettingsStorage
     public void SetBool(string name, bool value)
     {
         _writableSettingsStore.SetBoolean(Collection, name, value);
-        _telemetryReporter.ReportEvent("OptionChanged", Severity.Normal, new Dictionary<string, bool>()
-        {
-            { name, value }
-        }.ToImmutableDictionary());
+        _telemetryReporter.ReportEvent("OptionChanged", Severity.Normal, ImmutableDictionary<string, object?>.Empty.Add(name, value));
 
         NotifyChange();
     }
