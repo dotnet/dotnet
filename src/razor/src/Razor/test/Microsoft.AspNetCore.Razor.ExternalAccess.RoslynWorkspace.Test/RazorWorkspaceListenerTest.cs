@@ -3,6 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Text;
+using Microsoft.Extensions.Logging.Abstractions;
 using Xunit;
 
 namespace Microsoft.AspNetCore.Razor.ExternalAccess.RoslynWorkspace.Test;
@@ -18,11 +19,31 @@ public class RazorWorkspaceListenerTest
         listener.EnsureInitialized(workspace, "temp.json");
 
         var project = workspace.AddProject("TestProject", LanguageNames.CSharp);
+        listener.NotifyDynamicFile(project.Id);
 
-        // Wait for debounce
-        await Task.Delay(500);
+        await listener.WaitForDebounceAsync();
 
         Assert.Equal(1, listener.SerializeCalls[project.Id]);
+    }
+
+    [Fact]
+    public async Task TwoProjectsAdded_OneWithDynamicFiles_SchedulesOneTask()
+    {
+        using var workspace = new AdhocWorkspace(CodeAnalysis.Host.Mef.MefHostServices.DefaultHost);
+
+        using var listener = new TestRazorWorkspaceListener();
+        listener.EnsureInitialized(workspace, "temp.json");
+
+        var project1 = workspace.AddProject("TestProject1", LanguageNames.CSharp);
+
+        var project2 = workspace.AddProject("TestProject2", LanguageNames.CSharp);
+        listener.NotifyDynamicFile(project2.Id);
+
+        await listener.WaitForDebounceAsync();
+
+        // These are different projects, so should cause two calls
+        Assert.False(listener.SerializeCalls.ContainsKey(project1.Id));
+        Assert.Equal(1, listener.SerializeCalls[project2.Id]);
     }
 
     [Fact]
@@ -34,10 +55,14 @@ public class RazorWorkspaceListenerTest
         listener.EnsureInitialized(workspace, "temp.json");
 
         var project1 = workspace.AddProject("TestProject1", LanguageNames.CSharp);
-        var project2 = workspace.AddProject("TestProject2", LanguageNames.CSharp);
+        listener.NotifyDynamicFile(project1.Id);
 
-        // Wait for debounce
-        await Task.Delay(500);
+        await listener.WaitForDebounceAsync();
+
+        var project2 = workspace.AddProject("TestProject2", LanguageNames.CSharp);
+        listener.NotifyDynamicFile(project2.Id);
+
+        await listener.WaitForDebounceAsync();
 
         // These are different projects, so should cause two calls
         Assert.Equal(1, listener.SerializeCalls[project1.Id]);
@@ -53,17 +78,20 @@ public class RazorWorkspaceListenerTest
         listener.EnsureInitialized(workspace, "temp.json");
 
         var project = workspace.AddProject("TestProject", LanguageNames.CSharp);
+        listener.NotifyDynamicFile(project.Id);
+
         var newSolution = project.Solution.RemoveProject(project.Id);
         Assert.True(workspace.TryApplyChanges(newSolution));
 
-        // Wait for debounce
+        // We can't wait for debounce here, because it won't happen, but if we don't wait for _something_ we won't know
+        // if the test fails, so a delay is annoyingly necessary.
         await Task.Delay(500);
 
         Assert.Empty(listener.SerializeCalls);
     }
 
     [Fact]
-    public async Task TwoProjectChanges_SchedulesOneTasks()
+    public async Task TwoProjectChanges_SchedulesOneTask()
     {
         using var workspace = new AdhocWorkspace(CodeAnalysis.Host.Mef.MefHostServices.DefaultHost);
 
@@ -71,13 +99,33 @@ public class RazorWorkspaceListenerTest
         listener.EnsureInitialized(workspace, "temp.json");
 
         var project = workspace.AddProject("TestProject", LanguageNames.CSharp);
+        listener.NotifyDynamicFile(project.Id);
+
         var newSolution = project.Solution.WithProjectDefaultNamespace(project.Id, "NewDefaultNamespace");
         Assert.True(workspace.TryApplyChanges(newSolution));
 
-        // Wait for debounce
-        await Task.Delay(500);
+        await listener.WaitForDebounceAsync();
 
         Assert.Equal(1, listener.SerializeCalls[project.Id]);
+    }
+
+    [Fact]
+    public async Task DocumentAdded_NoDynamicFiles_NoTasks()
+    {
+        using var workspace = new AdhocWorkspace(CodeAnalysis.Host.Mef.MefHostServices.DefaultHost);
+
+        using var listener = new TestRazorWorkspaceListener();
+        listener.EnsureInitialized(workspace, "temp.json");
+
+        var project = workspace.AddProject("TestProject", LanguageNames.CSharp);
+
+        workspace.AddDocument(project.Id, "Document", SourceText.From("Hi there"));
+
+        // We can't wait for debounce here, because it won't happen, but if we don't wait for _something_ we won't know
+        // if the test fails, so a delay is annoyingly necessary.
+        await Task.Delay(500);
+
+        Assert.Empty(listener.SerializeCalls);
     }
 
     [Fact]
@@ -89,11 +137,11 @@ public class RazorWorkspaceListenerTest
         listener.EnsureInitialized(workspace, "temp.json");
 
         var project = workspace.AddProject("TestProject", LanguageNames.CSharp);
+        listener.NotifyDynamicFile(project.Id);
 
         workspace.AddDocument(project.Id, "Document", SourceText.From("Hi there"));
 
-        // Wait for debounce
-        await Task.Delay(500);
+        await listener.WaitForDebounceAsync();
 
         Assert.Equal(1, listener.SerializeCalls[project.Id]);
     }
@@ -107,14 +155,13 @@ public class RazorWorkspaceListenerTest
         listener.EnsureInitialized(workspace, "temp.json");
 
         var project = workspace.AddProject("TestProject", LanguageNames.CSharp);
+        listener.NotifyDynamicFile(project.Id);
 
-        // Wait for debounce
-        await Task.Delay(500);
+        await listener.WaitForDebounceAsync();
 
         workspace.AddDocument(project.Id, "Document", SourceText.From("Hi there"));
 
-        // Wait for debounce
-        await Task.Delay(500);
+        await listener.WaitForDebounceAsync();
 
         Assert.Equal(2, listener.SerializeCalls[project.Id]);
     }
@@ -122,14 +169,29 @@ public class RazorWorkspaceListenerTest
     private class TestRazorWorkspaceListener : RazorWorkspaceListener
     {
         private ConcurrentDictionary<ProjectId, int> _serializeCalls = new();
+        private TaskCompletionSource _completionSource = new();
 
         public ConcurrentDictionary<ProjectId, int> SerializeCalls => _serializeCalls;
+
+        public TestRazorWorkspaceListener()
+            : base(NullLoggerFactory.Instance)
+        {
+        }
 
         protected override Task SerializeProjectAsync(ProjectId projectId, CancellationToken ct)
         {
             _serializeCalls.AddOrUpdate(projectId, 1, (id, curr) => curr + 1);
 
+            _completionSource.TrySetResult();
+            _completionSource = new();
+
             return Task.CompletedTask;
+        }
+
+        internal async Task WaitForDebounceAsync()
+        {
+            await _completionSource.Task;
+            _completionSource = new();
         }
     }
 }

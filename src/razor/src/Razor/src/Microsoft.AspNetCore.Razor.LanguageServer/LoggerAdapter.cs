@@ -70,7 +70,7 @@ public class LoggerAdapter : IRazorLogger
 
         if (_telemetryReporter is not null)
         {
-            using var _ = DictionaryPool<string, object>.GetPooledObject(out var props);
+            using var _ = DictionaryPool<string, object?>.GetPooledObject(out var props);
 
             var index = 0;
             foreach (var param in @params)

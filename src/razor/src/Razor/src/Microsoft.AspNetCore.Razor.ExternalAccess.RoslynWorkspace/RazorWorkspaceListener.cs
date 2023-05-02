@@ -1,22 +1,25 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
+using System.Collections.Immutable;
 using Microsoft.CodeAnalysis;
+using Microsoft.Extensions.Logging;
 
 namespace Microsoft.AspNetCore.Razor.ExternalAccess.RoslynWorkspace;
 
 public class RazorWorkspaceListener : IDisposable
 {
-    private static readonly TimeSpan s_debounceTime = TimeSpan.FromMilliseconds(100);
+    private static readonly TimeSpan s_debounceTime = TimeSpan.FromMilliseconds(500);
+
+    private readonly ILogger _logger;
 
     private string? _projectRazorJsonFileName;
     private Workspace? _workspace;
-    private readonly Dictionary<ProjectId, TaskDelayScheduler> _workQueues;
-    private readonly object _gate = new();
+    private ImmutableDictionary<ProjectId, TaskDelayScheduler> _workQueues = ImmutableDictionary<ProjectId, TaskDelayScheduler>.Empty;
 
-    public RazorWorkspaceListener()
+    public RazorWorkspaceListener(ILoggerFactory loggerFactory)
     {
-        _workQueues = new Dictionary<ProjectId, TaskDelayScheduler>();
+        _logger = loggerFactory.CreateLogger(nameof(RazorWorkspaceListener));
     }
 
     public void EnsureInitialized(Workspace workspace, string projectRazorJsonFileName)
@@ -30,6 +33,18 @@ public class RazorWorkspaceListener : IDisposable
         _projectRazorJsonFileName = projectRazorJsonFileName;
         _workspace = workspace;
         _workspace.WorkspaceChanged += Workspace_WorkspaceChanged;
+    }
+
+    public void NotifyDynamicFile(ProjectId projectId)
+    {
+        // We expect this to be called multiple times per project so a no-op update operation seems like a better choice
+        // than constructing a new TaskDelayScheduler each time, and using the TryAdd method, which doesn't support a
+        // valueFactory argument.
+        var scheduler = ImmutableInterlocked.AddOrUpdate(ref _workQueues, projectId, static _ => new TaskDelayScheduler(s_debounceTime, CancellationToken.None), static (_, val) => val);
+
+        // Schedule a task, in case adding a dynamic file is the last thing that happens
+        _logger.LogTrace("{projectId} scheduling task due to dynamic file", projectId);
+        scheduler.ScheduleAsyncTask(ct => SerializeProjectAsync(projectId, ct), CancellationToken.None);
     }
 
     private void Workspace_WorkspaceChanged(object? sender, WorkspaceChangeEventArgs e)
@@ -109,16 +124,10 @@ public class RazorWorkspaceListener : IDisposable
             return;
         }
 
-        TaskDelayScheduler? scheduler;
-        lock (_gate)
+        if (ImmutableInterlocked.TryRemove(ref _workQueues, project.Id, out var scheduler))
         {
-            if (_workQueues.TryGetValue(project.Id, out scheduler))
-            {
-                _workQueues.Remove(project.Id);
-            }
+            scheduler.Dispose();
         }
-
-        scheduler?.Dispose();
     }
 
     private void EnqueueUpdate(Project? project)
@@ -132,18 +141,13 @@ public class RazorWorkspaceListener : IDisposable
             return;
         }
 
-        TaskDelayScheduler? scheduler;
-        lock (_gate)
-        {
-            if (!_workQueues.TryGetValue(project.Id, out scheduler))
-            {
-                scheduler = new TaskDelayScheduler(s_debounceTime, CancellationToken.None);
-                _workQueues.Add(project.Id, scheduler);
-            }
-        }
-
         var projectId = project.Id;
-        scheduler.ScheduleAsyncTask(ct => SerializeProjectAsync(projectId, ct), CancellationToken.None);
+        if (_workQueues.TryGetValue(projectId, out var scheduler))
+        {
+            _logger.LogTrace("{projectId} scheduling task due to workspace event", projectId);
+
+            scheduler.ScheduleAsyncTask(ct => SerializeProjectAsync(projectId, ct), CancellationToken.None);
+        }
     }
 
     // Protected for testing
@@ -160,17 +164,21 @@ public class RazorWorkspaceListener : IDisposable
             return Task.CompletedTask;
         }
 
+        _logger.LogTrace("{projectId} writing json file", projectId);
         return RazorProjectJsonSerializer.SerializeAsync(project, _projectRazorJsonFileName, ct);
     }
 
     public void Dispose()
     {
-        lock (_gate)
+        if (_workspace is not null)
         {
-            foreach (var (_, value) in _workQueues)
-            {
-                value.Dispose();
-            }
+            _workspace.WorkspaceChanged -= Workspace_WorkspaceChanged;
+        }
+
+        var queues = Interlocked.Exchange(ref _workQueues, ImmutableDictionary<ProjectId, TaskDelayScheduler>.Empty);
+        foreach (var (_, value) in queues)
+        {
+            value.Dispose();
         }
     }
 }

@@ -354,8 +354,21 @@ internal sealed class DefaultRazorTagHelperContextDiscoveryPhase : RazorEnginePh
 
             static bool IsTypeInNamespace(string typeNamespace, string @namespace)
             {
-                // Either the typeName is not the full type name or this type is at the top level.
-                return string.IsNullOrEmpty(typeNamespace) || typeNamespace.Equals(@namespace, StringComparison.Ordinal);
+                if (string.IsNullOrEmpty(typeNamespace))
+                {
+                    // Either the typeName is not the full type name or this type is at the top level.
+                    return true;
+                }
+
+                // Remove global:: prefix from namespace.
+                const string globalPrefix = "global::";
+                var normalizedNamespace = @namespace.AsSpan();
+                if (@namespace.StartsWith(globalPrefix, StringComparison.Ordinal))
+                {
+                    normalizedNamespace = normalizedNamespace[globalPrefix.Length..];
+                }
+
+                return normalizedNamespace.Equals(typeNamespace.AsSpan(), StringComparison.Ordinal);
             }
         }
 
