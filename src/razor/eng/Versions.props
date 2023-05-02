@@ -94,6 +94,8 @@
     <MicrosoftVisualStudioShellPackagesVersion>17.5.0-preview-2-33117-317</MicrosoftVisualStudioShellPackagesVersion>
     <MicrosoftVisualStudioPackagesVersion>17.5.274-preview</MicrosoftVisualStudioPackagesVersion>
     <VisualStudioLanguageServerProtocolVersion>17.6.4-preview</VisualStudioLanguageServerProtocolVersion>
+    <!-- dotnet/aspnetcore packages -->
+    <MicrosoftExtensionsObjectPoolPackageVersion>6.0.0</MicrosoftExtensionsObjectPoolPackageVersion>
     <!-- dotnet/runtime packages -->
     <MicrosoftExtensionsPackageVersion>6.0.0</MicrosoftExtensionsPackageVersion>
     <SystemCollectionsImmutablePackageVersion>6.0.0</SystemCollectionsImmutablePackageVersion>
