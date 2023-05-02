@@ -53,7 +53,7 @@ internal sealed class LiveLogger : INodeLogger
                 : ResourceUtilities.FormatResourceStringIgnoreCodeAndKeyword("ProjectBuilding_WithTF",
                     Indentation,
                     Project,
-                    TargetFramework,
+                    AnsiCodes.Colorize(TargetFramework, TargetFrameworkColor),
                     Target,
                     duration);
         }
@@ -63,6 +63,8 @@ internal sealed class LiveLogger : INodeLogger
     /// The indentation to use for all build output.
     /// </summary>
     private const string Indentation = "  ";
+
+    private const TerminalColor TargetFrameworkColor = TerminalColor.Cyan;
 
     /// <summary>
     /// Protects access to state shared between the logger callbacks and the rendering thread.
@@ -91,6 +93,11 @@ internal sealed class LiveLogger : INodeLogger
     /// The timestamp of the <see cref="IEventSource.BuildStarted"/> event.
     /// </summary>
     private DateTime _buildStartTime;
+
+    /// <summary>
+    /// The working directory when the build starts, to trim relative output paths.
+    /// </summary>
+    private readonly string _initialWorkingDirectory = Environment.CurrentDirectory;
 
     /// <summary>
     /// True if the build has encountered at least one error.
@@ -358,7 +365,7 @@ internal sealed class LiveLogger : INodeLogger
                         Terminal.Write(ResourceUtilities.FormatResourceStringIgnoreCodeAndKeyword("ProjectFinished_WithTF",
                             Indentation,
                             projectFile,
-                            project.TargetFramework,
+                            AnsiCodes.Colorize(project.TargetFramework, TargetFrameworkColor),
                             buildResult,
                             duration));
                     }
@@ -366,7 +373,8 @@ internal sealed class LiveLogger : INodeLogger
                     // Print the output path as a link if we have it.
                     if (outputPath is not null)
                     {
-                        ReadOnlySpan<char> url = outputPath.Value.Span;
+                        ReadOnlySpan<char> outputPathSpan = outputPath.Value.Span;
+                        ReadOnlySpan<char> url = outputPathSpan;
                         try
                         {
                             // If possible, make the link point to the containing directory of the output.
@@ -377,8 +385,26 @@ internal sealed class LiveLogger : INodeLogger
                             // Ignore any GetDirectoryName exceptions.
                         }
 
+                        // Generates file:// schema url string which is better handled by various Terminal clients than raw folder name.
+                        string urlString = url.ToString();
+                        if (Uri.TryCreate(urlString, UriKind.Absolute, out Uri? uri))
+                        {
+                            urlString = uri.AbsoluteUri;
+                        }
+
+                        // If the output path is under the initial working directory, make the console output relative to that to save space.
+                        if (outputPathSpan.StartsWith(_initialWorkingDirectory.AsSpan(), FileUtilities.PathComparison))
+                        {
+                            if (outputPathSpan.Length > _initialWorkingDirectory.Length
+                                && (outputPathSpan[_initialWorkingDirectory.Length] == Path.DirectorySeparatorChar
+                                    || outputPathSpan[_initialWorkingDirectory.Length] == Path.AltDirectorySeparatorChar))
+                            {
+                                outputPathSpan = outputPathSpan.Slice(_initialWorkingDirectory.Length + 1);
+                            }
+                        }
+
                         Terminal.WriteLine(ResourceUtilities.FormatResourceStringIgnoreCodeAndKeyword("ProjectFinished_OutputPath",
-                            $"{AnsiCodes.LinkPrefix}{url.ToString()}{AnsiCodes.LinkInfix}{outputPath}{AnsiCodes.LinkSuffix}"));
+                            $"{AnsiCodes.LinkPrefix}{urlString}{AnsiCodes.LinkInfix}{outputPathSpan.ToString()}{AnsiCodes.LinkSuffix}"));
                     }
                     else
                     {
