@@ -126,7 +126,7 @@ Further instructions on how to build inside of the Codespace will be available u
 
 Visibility|All legs|
 |:------|:------|
-|Public|[![Status](https://dev.azure.com/dnceng-public/public/_apis/build/status/20)](https://dev.azure.com/dnceng/public/_build?definitionId=20)|
+|Public|[![Status](https://dev.azure.com/dnceng-public/public/_apis/build/status%2Fdotnet%2Finstaller%2Finstaller?branchName=main)](https://dev.azure.com/dnceng-public/public/_build/latest?definitionId=20&branchName=main)|
 |Microsoft Internal|[![Status](https://dev.azure.com/dnceng/internal/_apis/build/status/286)](https://dev.azure.com/dnceng/internal/_build?definitionId=286)|
 
 ## Installers and Binaries
