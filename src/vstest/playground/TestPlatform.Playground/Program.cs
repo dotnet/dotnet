@@ -88,9 +88,9 @@ internal class Program
             """;
 
         var sources = new[] {
-            Path.Combine(playground, "MSTest1", "bin", "Debug", "net472", "MSTest1.dll"),
-            //Path.Combine(playground, "MSTest2", "bin", "Debug", "net472", "MSTest2.dll"),
-            //Path.Combine(playground, "MSTest1", "bin", "Debug", "net5.0", "MSTest1.dll"),
+            Path.Combine(playground, "bin", "MSTest1", "Debug", "net472", "MSTest1.dll"),
+            // Path.Combine(playground, "bin", "MSTest2", "Debug", "net472", "MSTest2.dll"),
+            // Path.Combine(playground, "bin", "MSTest1", "Debug", "net5.0", "MSTest1.dll"),
         };
 
         //// Console mode
