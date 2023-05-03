@@ -16,12 +16,12 @@ using Microsoft.AspNetCore.Razor.LanguageServer.ColorPresentation;
 using Microsoft.AspNetCore.Razor.LanguageServer.Diagnostics;
 using Microsoft.AspNetCore.Razor.LanguageServer.DocumentColor;
 using Microsoft.AspNetCore.Razor.LanguageServer.DocumentPresentation;
-using Microsoft.AspNetCore.Razor.LanguageServer.EndpointContracts;
 using Microsoft.AspNetCore.Razor.LanguageServer.Folding;
 using Microsoft.AspNetCore.Razor.LanguageServer.Formatting;
 using Microsoft.AspNetCore.Razor.LanguageServer.Protocol;
 using Microsoft.AspNetCore.Razor.LanguageServer.Semantic;
 using Microsoft.AspNetCore.Razor.LanguageServer.Semantic.Models;
+using Microsoft.AspNetCore.Razor.Telemetry;
 using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.Editor.Razor;
 using Microsoft.VisualStudio.Editor.Razor.Logging;
@@ -59,6 +59,7 @@ internal class DefaultRazorLanguageServerCustomMessageTarget : RazorLanguageServ
         FormattingOptionsProvider formattingOptionsProvider,
         IClientSettingsManager editorSettingsManager,
         LSPDocumentSynchronizer documentSynchronizer,
+        ITelemetryReporter telemetryReporter,
         [Import(AllowDefault = true)] IOutputWindowLogger? outputWindowLogger)
     {
         if (documentManager is null)
@@ -98,8 +99,14 @@ internal class DefaultRazorLanguageServerCustomMessageTarget : RazorLanguageServ
             throw new ArgumentException("The LSP document manager should be of type " + typeof(TrackingLSPDocumentManager).FullName, nameof(_documentManager));
         }
 
+        if (telemetryReporter is null)
+        {
+            throw new ArgumentNullException(nameof(telemetryReporter));
+        }
+
         _joinableTaskFactory = joinableTaskContext.Factory;
-        _requestInvoker = requestInvoker;
+
+        _requestInvoker = new TelemetryReportingLSPRequestInvoker(requestInvoker, telemetryReporter);
         _formattingOptionsProvider = formattingOptionsProvider;
         _editorSettingsManager = editorSettingsManager;
         _documentSynchronizer = documentSynchronizer;

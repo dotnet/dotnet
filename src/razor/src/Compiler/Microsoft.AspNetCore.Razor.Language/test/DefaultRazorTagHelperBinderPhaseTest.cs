@@ -1297,6 +1297,35 @@ public class DefaultRazorTagHelperContextDiscoveryPhaseTest : RazorProjectEngine
     }
 
     [Fact]
+    public void ComponentDirectiveVisitor_MatchesIfNamespaceInUsing_GlobalPrefix()
+    {
+        // Arrange
+        var currentNamespace = "SomeProject";
+        var componentDescriptor = CreateComponentDescriptor(
+            "Counter",
+            "SomeProject.SomeOtherFolder.Counter",
+            AssemblyA);
+        var descriptors = new[]
+        {
+            componentDescriptor,
+        };
+        var filePath = "C:\\SomeFolder\\SomeProject\\Counter.cshtml";
+        var content = """
+            @using global::SomeProject.SomeOtherFolder
+            """;
+        var sourceDocument = CreateComponentTestSourceDocument(content, filePath);
+        var tree = RazorSyntaxTree.Parse(sourceDocument);
+        var visitor = new DefaultRazorTagHelperContextDiscoveryPhase.ComponentDirectiveVisitor(sourceDocument.FilePath, descriptors, currentNamespace);
+
+        // Act
+        visitor.Visit(tree);
+
+        // Assert
+        var match = Assert.Single(visitor.Matches);
+        Assert.Same(componentDescriptor, match);
+    }
+
+    [Fact]
     public void ComponentDirectiveVisitor_DoesNotMatchForUsingAliasAndStaticUsings()
     {
         // Arrange
@@ -1335,8 +1364,10 @@ public class DefaultRazorTagHelperContextDiscoveryPhaseTest : RazorProjectEngine
     [InlineData("", "", true)]
     [InlineData("Foo", "Project", true)]
     [InlineData("Project.Foo", "Project", true)]
+    [InlineData("Project.Foo", "global::Project", true)]
     [InlineData("Project.Bar.Foo", "Project.Bar", true)]
     [InlineData("Project.Foo", "Project.Bar", false)]
+    [InlineData("Project.Foo", "global::Project.Bar", false)]
     [InlineData("Project.Bar.Foo", "Project", false)]
     [InlineData("Bar.Foo", "Project", false)]
     public void IsTypeInNamespace_WorksAsExpected(string typeName, string @namespace, bool expected)

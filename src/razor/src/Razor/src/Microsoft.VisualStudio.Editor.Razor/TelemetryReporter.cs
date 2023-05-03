@@ -6,9 +6,14 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Composition;
 using System.Diagnostics;
+using System.Diagnostics.Contracts;
 using System.Linq;
+using System.Threading;
+using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.Telemetry;
+using Newtonsoft.Json.Linq;
+using StreamJsonRpc;
 
 namespace Microsoft.AspNetCore.Razor.Telemetry;
 
@@ -39,7 +44,7 @@ internal class TelemetryReporter : ITelemetryReporter
         Report(telemetryEvent);
     }
 
-    public void ReportEvent<T>(string name, Severity severity, ImmutableDictionary<string, T> values)
+    public void ReportEvent(string name, Severity severity, ImmutableDictionary<string, object?> values)
     {
         var telemetryEvent = new TelemetryEvent(GetTelemetryName(name), ToTelemetrySeverity(severity));
         foreach (var (propertyName, propertyValue) in values)
@@ -207,4 +212,49 @@ internal class TelemetryReporter : ITelemetryReporter
             Severity.High => TelemetrySeverity.High,
             _ => throw new InvalidOperationException($"Unknown severity: {severity}")
         };
+
+    public IDisposable BeginBlock(string name, Severity severity)
+    {
+        return BeginBlock(name, severity, ImmutableDictionary<string, object?>.Empty);
+    }
+
+    public IDisposable BeginBlock(string name, Severity severity, ImmutableDictionary<string, object?> values)
+    {
+        return new TelemetryScope(this, name, severity, values.ToImmutableDictionary((tuple) => tuple.Key, (tuple) => (object?)tuple.Value));
+    }
+
+    private class TelemetryScope : IDisposable
+    {
+        private readonly ITelemetryReporter _telemetryReporter;
+        private string _name;
+        private Severity _severity;
+        private ImmutableDictionary<string, object?> _values;
+        private bool _disposed;
+        private Stopwatch _stopwatch;
+
+        public TelemetryScope(ITelemetryReporter telemetryReporter, string name, Severity severity, ImmutableDictionary<string, object?> values)
+        {
+            _telemetryReporter = telemetryReporter;
+            _name = name;
+            _severity = severity;
+            _values = values;
+            _stopwatch = StopwatchPool.Default.Get();
+            _stopwatch.Restart();
+        }
+
+        public void Dispose()
+        {
+            if (_disposed)
+            {
+                return;
+            }
+
+            _disposed = true;
+
+            _stopwatch.Stop();
+            var values = _values.Add("eventscope.ellapsedms", _stopwatch.ElapsedMilliseconds);
+            _telemetryReporter.ReportEvent(_name, _severity, values);
+            StopwatchPool.Default.Return(_stopwatch);
+        }
+    }
 }

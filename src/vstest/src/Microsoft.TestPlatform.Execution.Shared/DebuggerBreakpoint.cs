@@ -108,7 +108,7 @@ internal static class DebuggerBreakpoint
         var parent = Path.GetDirectoryName(Assembly.GetEntryAssembly()!.Location);
         while (parent != null)
         {
-            var path = Path.Combine(parent, @"src\AttachVS\bin\Debug\net472\AttachVS.exe");
+            var path = Path.Combine(parent, @"artifacts\bin\AttachVS\Debug\net472\AttachVS.exe");
             Debug.WriteLine($"Looking for AttachVS in: {path}.");
             if (File.Exists(path))
             {
