@@ -91,7 +91,7 @@ namespace Microsoft.DotNet.Deployment.Tasks.Links
                     string descriptionString = !string.IsNullOrEmpty(link.Description) ? $" ({link.Description})" : "";
                     Log.LogMessage(MessageImportance.High, $"Creating link aka.ms/{link.ShortUrl} -> {link.TargetUrl}{descriptionString}");
                 }
-                AkaMSLinkManager manager = new AkaMSLinkManager(ClientId, ClientSecret, Tenant, Log);
+                AkaMSLinkManager manager = new AkaMSLinkManager(ClientId, ClientSecret, Tenant, Log, UseIdentityClientLibrary);
                 await manager.CreateOrUpdateLinksAsync(linksToCreate, Owners, CreatedBy, GroupOwner, Overwrite);
             }
             catch (Exception e)

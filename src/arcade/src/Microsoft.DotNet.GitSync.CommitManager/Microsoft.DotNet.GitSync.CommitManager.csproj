@@ -7,11 +7,17 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <!-- Upgrade Azure.Data.Table's transitive Azure.Core dependendency. -->
+    <PackageReference Include="Azure.Core" Version="$(AzureCoreVersion)" />
     <PackageReference Include="Azure.Data.Tables" Version="$(AzureDataTablesVersion)" />
     <PackageReference Include="CommandLineParser" Version="$(CommandLineParserVersion)" />
     <PackageReference Include="log4net" Version="$(log4netVersion)" />
-    <PackageReference Include="Microsoft.Data.OData" Version="$(MicrosoftDataODataVersion)" />
-    <PackageReference Include="WindowsAzure.Storage" Version="$(WindowsAzureStorageVersion)" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- Reference WindowsAzure.Storage directly via PackageDownload+Reference to avoid its netstandard1.x dependencies. -->
+    <PackageDownload Include="WindowsAzure.Storage" Version="[$(WindowsAzureStorageVersion)]" />
+    <Reference Include="$(NuGetPackageRoot)windowsazure.storage\$(WindowsAzureStorageVersion)\lib\netstandard1.3\Microsoft.WindowsAzure.Storage.dll" />
   </ItemGroup>
 
 </Project>

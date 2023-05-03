@@ -1,6 +1,6 @@
 name: Report an infrastructure issue
 description: Report an infrastructure issue causing build failures
-labels: ["First Responder"]
+labels: ["First Responder", "Known Build Error"]
 body:
   - type: markdown
     attributes:
@@ -25,16 +25,11 @@ body:
   - type: textarea
     id: error-message
     attributes:
-      label: Action required for the engineering services team
-      description: This information is going to be filled in by the engineering services team. 
+      label: Known issue core information
+      description: Fill in the known issue information to match build breaks across multiple repositories.
       value: |
-        To triage this issue (First Responder / @dotnet/dnceng):
-        - [ ] Open the failing build above and investigate
-        - [ ] Add a comment explaining your findings 
-
-        If this is an issue that is causing build breaks across multiple builds and would get benefit from being listed on the [build analysis check](https://github.com/dotnet/arcade/blob/174acbcafeba3ae339c1935ec48812514ee09837/Documentation/Projects/Build%20Analysis/Introduction.md), follow the next steps:
-        1. Add the label "Known Build Error"
-        2. Edit this issue and add an error string in the Json below that can help us match this issue with future build breaks. You should use the [known issues documentation](https://github.com/dotnet/arcade/blob/main/Documentation/Projects/Build%20Analysis/KnownIssues.md#how-to-fill-out-a-known-issue-error-section)
+        If this is an issue that could be causing build breaks across multiple respositories:
+        1. Edit this issue and add an error string in the JSON. Use the [Known Issues documentation](https://github.com/dotnet/arcade/blob/main/Documentation/Projects/Build%20Analysis/KnownIssues.md#how-to-fill-out-a-known-issue-error-section)
 
          ```json
          {
@@ -44,6 +39,8 @@ body:
             "ExcludeConsoleLog": false
          }
          ```
+
+         @dotnet/dnceng
 
         <!-- DO NOT DELETE -->
         <!-- For internal use only; put release notes here. -->

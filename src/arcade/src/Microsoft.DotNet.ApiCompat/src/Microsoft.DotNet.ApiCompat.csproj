@@ -2,8 +2,11 @@
 
   <PropertyGroup>
     <TargetFrameworks>$(NetCurrent);$(NetFrameworkToolCurrent)</TargetFrameworks>
+    <OutputType>Exe</OutputType>
     <ExcludeFromSourceBuild>true</ExcludeFromSourceBuild>
     <IsPackable>true</IsPackable>
+    <NoWarn>$(NoWarn);0436</NoWarn>
+    <RollForward>Major</RollForward>
     <DefaultExcludesInProjectFolder>Microsoft.DotNet.ApiCompat.Core\**\*</DefaultExcludesInProjectFolder>
   </PropertyGroup>
 

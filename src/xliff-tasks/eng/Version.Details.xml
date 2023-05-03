@@ -3,19 +3,19 @@
   <ProductDependencies>
   </ProductDependencies>
   <ToolsetDependencies>
-    <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="8.0.0-beta.23217.1">
+    <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="8.0.0-beta.23226.4">
       <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>cb54ca21431ee8d96f91abfbc42237bcb001f9d1</Sha>
+      <Sha>469dcc0cbcba5221727c8a5b9eec4a478e24a780</Sha>
       <SourceBuild RepoName="arcade" ManagedOnly="true" />
     </Dependency>
-    <Dependency Name="Microsoft.SourceBuild.Intermediate.source-build-reference-packages" Version="8.0.0-alpha.1.23214.4">
+    <Dependency Name="Microsoft.SourceBuild.Intermediate.source-build-reference-packages" Version="8.0.0-alpha.1.23228.2">
       <Uri>https://github.com/dotnet/source-build-reference-packages</Uri>
-      <Sha>05b4fdac346e01716abda4c92fcf0b7880e73792</Sha>
+      <Sha>d3a063d6462cb2f29a0e82285d6c9b5bf87c1637</Sha>
       <SourceBuild RepoName="source-build-reference-packages" ManagedOnly="true" />
     </Dependency>
-    <Dependency Name="Microsoft.SourceLink.GitHub" Version="8.0.0-beta.23211.2" CoherentParentDependency="Microsoft.DotNet.Arcade.Sdk">
+    <Dependency Name="Microsoft.SourceLink.GitHub" Version="8.0.0-beta.23218.3" CoherentParentDependency="Microsoft.DotNet.Arcade.Sdk">
       <Uri>https://github.com/dotnet/sourcelink</Uri>
-      <Sha>4cf2eb17c295905edeca76a9afe6dda42988359e</Sha>
+      <Sha>47c52dd2ebf9edfd40abdcff999c13eb461f6ce2</Sha>
       <SourceBuild RepoName="sourcelink" ManagedOnly="true" />
     </Dependency>
   </ToolsetDependencies>

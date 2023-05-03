@@ -77,7 +77,7 @@ namespace Microsoft.DotNet.SwaggerGenerator.CmdLine
                 MissingArgument(nameof(output));
             }
 
-            ILogger logger = new LoggerFactory().AddConsole().CreateLogger("dotnet-swaggergen");
+            ILogger logger = LoggerFactory.Create(builder => builder.AddSimpleConsole()).CreateLogger("dotnet-swaggergen");
 
             var (diagnostic, document) = await GetSwaggerDocument(input);
             if (diagnostic.Errors.Any())

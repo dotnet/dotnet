@@ -3,8 +3,13 @@
     <VersionBase>0.2.0</VersionBase>
     <PreReleaseVersionLabel>beta</PreReleaseVersionLabel>
     <UsingToolXliff>false</UsingToolXliff>
-    <!-- MSBuild
-         Only update when there's a source-build package available. -->
+    <!-- Prohibit the usage of .NET Standard 1.x dependencies. -->
+    <FlagNetStandard1XDependencies>true</FlagNetStandard1XDependencies>
+  </PropertyGroup>
+  <PropertyGroup>
+    <!-- msbuild - only update when there's a source-build package available. -->
     <MicrosoftBuildUtilitiesCoreVersion>17.3.2</MicrosoftBuildUtilitiesCoreVersion>
+    <!-- netstandard -->
+    <NETStandardLibraryVersion>2.0.3</NETStandardLibraryVersion>
   </PropertyGroup>
 </Project>

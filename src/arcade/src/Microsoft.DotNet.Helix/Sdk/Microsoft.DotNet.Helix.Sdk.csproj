@@ -10,21 +10,26 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.Build.Framework" Version="$(MicrosoftBuildFrameworkVersion)" />
     <PackageReference Include="Microsoft.Build.Utilities.Core" Version="$(MicrosoftBuildUtilitiesCoreVersion)" />
-    <PackageReference Include="Microsoft.Data.Services.Client" Version="$(MicrosoftDataServicesClientVersion)" />
     <PackageReference Include="Newtonsoft.Json" Version="$(NewtonsoftJsonVersion)" />
     <PackageReference Include="NuGet.Versioning" Version="$(NuGetVersioningVersion)" />
 
+    <!-- Upgrade System.Security.Cryptography.X509Certificates/4.3.0 which is transitively referenced by Azure.Core. -->
+    <PackageReference Include="System.Security.Cryptography.X509Certificates" Version="$(SystemSecurityCryptographyX509CertificatesVersion)" PrivateAssets="all" Condition="'$(TargetFrameworkIdentifier)' == '.NETFramework'" />
+  </ItemGroup>
 
+  <!-- Reference Microsoft.Data.Services.Client directly via PackageDownload+Reference to avoid its netstandard1.x dependencies. -->
+  <ItemGroup>
+    <PackageDownload Include="Microsoft.Data.Services.Client" Version="[$(MicrosoftDataServicesClientVersion)]" />
+    <Reference Include="$(NuGetPackageRoot)microsoft.data.services.client\$(MicrosoftDataServicesClientVersion)\lib\net40\Microsoft.Data.Services.Client.dll"
+               Condition="'$(TargetFrameworkIdentifier)' == '.NETFramework'" />
+    <Reference Include="$(NuGetPackageRoot)microsoft.data.services.client\$(MicrosoftDataServicesClientVersion)\lib\netstandard1.1\Microsoft.Data.Services.Client.dll"
+               Condition="'$(TargetFrameworkIdentifier)' == '.NETCoreApp'" />
+    <PackageReference Include="Microsoft.Data.OData" Version="$(MicrosoftDataODataVersion)" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Client\CSharp\Microsoft.DotNet.Helix.Client.csproj" />
     <ProjectReference Include="..\JobSender\Microsoft.DotNet.Helix.JobSender.csproj" />
-  </ItemGroup>
-
-  <ItemGroup Condition="'$(TargetFrameworkIdentifier)' == '.NETCoreApp'">
-    <!-- Upgrade the transitive dependencies that are brought in by Microsoft.Data.Services.Client. -->
-    <PackageReference Include="System.Net.Http" Version="4.3.4" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFrameworkIdentifier)' == '.NETFramework'">
