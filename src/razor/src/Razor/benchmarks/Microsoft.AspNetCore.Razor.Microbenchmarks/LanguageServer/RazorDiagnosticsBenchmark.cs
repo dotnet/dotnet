@@ -34,6 +34,9 @@ public class RazorDiagnosticsBenchmark : RazorLanguageServerBenchmarkBase
         Large
     }
 
+    [Params(0, 1, 1000)]
+    public int N { get; set; }
+
     [ParamsAllValues]
     public FileTypes FileType { get; set; }
 
@@ -45,12 +48,12 @@ public class RazorDiagnosticsBenchmark : RazorLanguageServerBenchmarkBase
         DocumentPullDiagnosticsEndpoint = new DocumentPullDiagnosticsEndpoint(
             languageServerFeatureOptions: languageServer.GetRequiredService<LanguageServerFeatureOptions>(),
             translateDiagnosticsService: languageServer.GetRequiredService<RazorTranslateDiagnosticsService>(),
-            languageServer: new ClientNotifierService());
+            languageServer: new ClientNotifierService(BuildDiagnostics(N)));
         var projectRoot = Path.Combine(RepoRoot, "src", "Razor", "test", "testapps", "ComponentApp");
         var projectFilePath = Path.Combine(projectRoot, "ComponentApp.csproj");
         _filePath = Path.Combine(projectRoot, "Components", "Pages", $"Generated.razor");
 
-        var content = GetFileContents(this.FileType);
+        var content = GetFileContents(FileType);
         File.WriteAllText(_filePath, content);
 
         var targetPath = "/Components/Pages/Generated.razor";
@@ -73,12 +76,35 @@ public class RazorDiagnosticsBenchmark : RazorLanguageServerBenchmarkBase
 
         var diagnostics = await DocumentPullDiagnosticsEndpoint!.HandleRequestAsync(request, RazorRequestContext, CancellationToken.None);
 
-        if (!diagnostics!.ElementAtOrDefault(0)!.Diagnostics!.ElementAtOrDefault(0)!.Message.Contains("CallOnMe"))
+        if (N > 0 && !diagnostics!.ElementAtOrDefault(0)!.Diagnostics!.ElementAtOrDefault(0)!.Message.Contains("CallOnMe"))
         {
             throw new NotImplementedException("benchmark setup is wrong");
         }
     }
 
+    private static object BuildDiagnostics(int numDiagnostics)
+    {
+        return new RazorPullDiagnosticResponse(
+            new[]
+            {
+                    new VSInternalDiagnosticReport()
+                    {
+                        ResultId = "5",
+                        Diagnostics = Enumerable.Range(1000, numDiagnostics).Select(x => new Diagnostic
+                        {
+                                Range = new Range()
+                                {
+                                    Start = new Position(10, 19),
+                                    End = new Position(10, 23)
+                                },
+                                Code = "CS" + x,
+                                Severity = DiagnosticSeverity.Error,
+                                Source = "DocumentPullDiagnosticHandler",
+                                Message = "The name 'CallOnMe' does not exist in the current context"
+                        }).ToArray()
+                    }
+            }, Array.Empty<VSInternalDiagnosticReport>());
+    }
 
     private protected override LanguageServerFeatureOptions BuildFeatureOptions()
     {
@@ -176,6 +202,13 @@ public class RazorDiagnosticsBenchmark : RazorLanguageServerBenchmarkBase
 
     private class ClientNotifierService : ClientNotifierServiceBase
     {
+        private readonly object _diagnostics;
+
+        public ClientNotifierService(object diagnostics)
+        {
+            _diagnostics = diagnostics;
+        }
+
         public override Task OnInitializedAsync(VSInternalClientCapabilities clientCapabilities, CancellationToken cancellationToken)
         {
             return Task.CompletedTask;
@@ -193,30 +226,7 @@ public class RazorDiagnosticsBenchmark : RazorLanguageServerBenchmarkBase
 
         public override Task<TResponse> SendRequestAsync<TParams, TResponse>(string method, TParams @params, CancellationToken cancellationToken)
         {
-            object result = new RazorPullDiagnosticResponse(
-                new[]
-                {
-                    new VSInternalDiagnosticReport()
-                    {
-                        ResultId = "5",
-                        Diagnostics = new Diagnostic[]
-                        {
-                            new()
-                            {
-                                Range = new Range()
-                                {
-                                    Start = new Position(10, 19),
-                                    End = new Position(10, 23)
-                                },
-                                Code = "CS0103",
-                                Severity = DiagnosticSeverity.Error,
-                                Source = "DocumentPullDiagnosticHandler",
-                                Message = "The name 'CallOnMe' does not exist in the current context"
-                            }
-                        }
-                    }
-                }, Array.Empty<VSInternalDiagnosticReport>());
-            return Task.FromResult((TResponse)result);
+            return Task.FromResult((TResponse)_diagnostics);
         }
     }
 }

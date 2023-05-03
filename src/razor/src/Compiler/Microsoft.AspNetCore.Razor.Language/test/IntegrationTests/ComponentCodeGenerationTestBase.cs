@@ -8868,6 +8868,34 @@ namespace Test
     }
 
     [Fact]
+    public void ComponentImports_GlobalPrefix()
+    {
+        // Arrange
+        AdditionalSyntaxTrees.Add(Parse("""
+            using Microsoft.AspNetCore.Components;
+
+            namespace MyComponents
+            {
+                public class Counter : ComponentBase
+                {
+                }
+            }
+            """));
+
+        // Act
+        var generated = CompileToCSharp("Index.razor", """
+            @using global::MyComponents
+
+            <Counter />
+            """);
+
+        // Assert
+        CompileToAssembly(generated);
+        Assert.DoesNotContain("<Counter", generated.Code);
+        Assert.Contains("global::MyComponents.Counter", generated.Code);
+    }
+
+    [Fact]
     public void Component_NamespaceDirective_InImports()
     {
         // Arrange
