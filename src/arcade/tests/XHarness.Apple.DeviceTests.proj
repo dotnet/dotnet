@@ -10,7 +10,7 @@
   <!-- Test project which builds app bundle to run via XHarness -->
   <ItemGroup>
     <XHarnessAppleProject Include="$(MSBuildThisFileDirectory)XHarness\XHarness.Apple.Device.Archived.proj" />
-    <HelixTargetQueue Include="osx.1100.amd64.appletv.open" />
+    <HelixTargetQueue Include="osx.13.amd64.appletv.open" />
   </ItemGroup>
 
   <Target Name="Pack"/>

@@ -21,9 +21,17 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="xunit.runner.reporters" Version="$(XUnitVersion)" />
-    <PackageReference Include="xunit.runner.utility" Version="$(XUnitVersion)" />
     <PackageReference Include="xunit.abstractions" Version="$(XUnitAbstractionsVersion)" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- Reference xunit.runner.reporters directly via PackageDownload+Reference to avoid its netstandard1.x dependencies. -->
+    <PackageDownload Include="xunit.runner.reporters" Version="[$(XUnitVersion)]" />
+    <Reference Include="$(NuGetPackageRoot)xunit.runner.reporters\$(XUnitVersion)\lib\netcoreapp1.0\xunit.runner.reporters.netcoreapp10.dll" />
+
+    <!-- Reference xunit.runner.utility directly via PackageDownload+Reference to avoid its netstandard1.x dependencies. -->
+    <PackageDownload Include="xunit.runner.utility" Version="[$(XUnitVersion)]" />
+    <Reference Include="$(NuGetPackageRoot)xunit.runner.utility\$(XUnitVersion)\lib\netcoreapp1.0\xunit.runner.utility.netcoreapp10.dll" />
   </ItemGroup>
 
   <Import Project="$(RepositoryEngineeringDir)BuildTask.targets" />

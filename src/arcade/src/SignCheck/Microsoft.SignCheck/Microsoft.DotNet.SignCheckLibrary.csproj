@@ -14,12 +14,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="LZMA-SDK" Version="19.0.0" />
-    <PackageReference Include="Microsoft.VisualStudio.OLE.Interop" Version="7.10.6071" />
-    <!-- TODO: Update dependencies to repo defined versions. -->
-    <PackageReference Include="NuGet.Common" Version="5.0.2" />
-    <PackageReference Include="NuGet.Frameworks" Version="5.0.2" />
-    <PackageReference Include="NuGet.Packaging" Version="5.0.2" />
+    <PackageReference Include="LZMA-SDK" Version="$(LZMA_SDKVersion)" />
+    <PackageReference Include="Microsoft.VisualStudio.OLE.Interop" Version="$(MicrosoftVisualStudioOLEInteropVersion)" />
+    <PackageReference Include="NuGet.Frameworks" Version="$(NuGetFrameworksVersion)" />
+    <PackageReference Include="NuGet.Packaging" Version="$(NuGetPackagingVersion)" />
     <PackageReference Include="System.IO.Packaging" Version="$(SystemIOPackagingVersion)" />
     <PackageReference Include="Microsoft.Signed.Wix" Version="$(MicrosoftSignedWixVersion)" />
   </ItemGroup>

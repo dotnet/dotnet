@@ -192,6 +192,8 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
         /// </summary>
         public int RetryDelayMilliseconds { get; set; } = 5000;
 
+        public bool UseIdentityClientLibrary { get; set; }
+
         public ExponentialRetry RetryHandler = new ExponentialRetry
         {
             MaxAttempts = 5,
@@ -1689,6 +1691,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
                         AkaMSGroupOwner,
                         AkaMSCreatedBy,
                         AkaMsOwners,
+                        UseIdentityClientLibrary,
                         Log);
                 }
 

@@ -27,7 +27,7 @@ namespace Microsoft.DotNet.Deployment.Tasks.Links
         {
             try
             {
-                AkaMSLinkManager manager = new AkaMSLinkManager(ClientId, ClientSecret, Tenant, Log);
+                AkaMSLinkManager manager = new AkaMSLinkManager(ClientId, ClientSecret, Tenant, Log, UseIdentityClientLibrary);
                 await manager.DeleteLinksAsync(new List<string>(ShortUrls));
             }
             catch (Exception e)
