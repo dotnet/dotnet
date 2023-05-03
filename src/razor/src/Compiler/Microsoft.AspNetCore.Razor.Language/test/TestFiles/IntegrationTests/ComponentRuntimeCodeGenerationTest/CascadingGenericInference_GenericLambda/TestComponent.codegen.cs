@@ -58,7 +58,7 @@ namespace __Blazor.Test.TestComponent
         {
             __arg0_out = __arg0;
         }
-        public static void CreateColumn_1<TItem, TOutput>(global::Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder, int seq, System.Collections.Generic.IEnumerable<TItem> __syntheticArg0, int __seq0, global::System.Func<TItem, TOutput> __arg0)
+        public static void CreateColumn_1<TItem, TOutput>(global::Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder, int seq, global::System.Collections.Generic.IEnumerable<TItem> __syntheticArg0, int __seq0, global::System.Func<TItem, TOutput> __arg0)
         {
         __builder.OpenComponent<global::Test.Column<TItem, TOutput>>(seq);
         __builder.AddComponentParameter(__seq0, "SomeLambda", __arg0);

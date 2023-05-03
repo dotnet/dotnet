@@ -146,7 +146,7 @@ internal class ComponentGenericTypePass : ComponentIntermediateNodePassBase, IRa
                     var provideCascadingGenericTypes = new CascadingGenericTypeParameter
                     {
                         GenericTypeNames = typeParameters,
-                        ValueType = attribute.BoundAttribute.TypeName,
+                        ValueType = attribute.GloballyQualifiedTypeName,
                         ValueSourceNode = attribute,
                     };
 

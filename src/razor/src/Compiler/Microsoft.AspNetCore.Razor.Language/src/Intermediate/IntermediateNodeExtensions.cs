@@ -6,6 +6,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.AspNetCore.Razor.Language.Components;
 
 namespace Microsoft.AspNetCore.Razor.Language.Intermediate;
 
@@ -16,6 +17,13 @@ public static class IntermediateNodeExtensions
     public static bool IsImported(this IntermediateNode node)
     {
         return ReferenceEquals(node.Annotations[CommonAnnotations.Imported], CommonAnnotations.Imported);
+    }
+
+    public static bool IsDesignTimePropertyAccessHelper(this IntermediateNode tagHelper)
+    {
+        return tagHelper.Annotations[ComponentMetadata.Common.IsDesignTimePropertyAccessHelper] is string text &&
+            bool.TryParse(text, out var result) &&
+            result;
     }
 
     public static IReadOnlyList<RazorDiagnostic> GetAllDiagnostics(this IntermediateNode node)

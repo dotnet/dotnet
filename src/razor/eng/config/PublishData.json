@@ -33,7 +33,7 @@
         "Shipping",
         "NonShipping"
       ],
-      "vsBranch": "main",
+      "vsBranch": "rel/d17.7",
       "vsMajorVersion": 17,
       "insertionTitlePrefix": "[17.7P1]"
     }
