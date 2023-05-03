@@ -47,7 +47,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="System.Private.Uri" Version="$(SystemPrivateUriPackageVersion)" ExcludeAssets="true" PrivateAssets="true" />
+    <PackageReference Include="Microsoft.DiaSymReader" Version="$(MicrosoftDiaSymReaderVersion)" />
   </ItemGroup>
 
   <Target Name="PublishAllRids">

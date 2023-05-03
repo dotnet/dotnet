@@ -91,7 +91,7 @@ namespace __Blazor.Test.TestComponent
         {
             __arg0_out = __arg0;
         }
-        public static global::Test.Column<TItem> CreateColumn_1<TItem>(global::Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder, int seq, System.Collections.Generic.IEnumerable<TItem> __syntheticArg0, int __seq0, global::Microsoft.AspNetCore.Components.RenderFragment<TItem> __arg0)
+        public static global::Test.Column<TItem> CreateColumn_1<TItem>(global::Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder, int seq, global::System.Collections.Generic.IEnumerable<TItem> __syntheticArg0, int __seq0, global::Microsoft.AspNetCore.Components.RenderFragment<TItem> __arg0)
         {
         __builder.OpenComponent<global::Test.Column<TItem>>(seq);
         __builder.AddComponentParameter(__seq0, "ChildContent", __arg0);
