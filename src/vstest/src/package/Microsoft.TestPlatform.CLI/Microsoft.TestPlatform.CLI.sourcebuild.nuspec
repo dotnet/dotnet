@@ -18,7 +18,6 @@
     <file src="$SourceBuildTfm$\datacollector.deps.json" target="contentFiles\any\$SourceBuildTfm$" />
     <file src="$SourceBuildTfm$\datacollector.runtimeconfig.json" target="contentFiles\any\$SourceBuildTfm$" />
 
-    <file src="$SourceBuildTfm$\Microsoft.CodeCoverage.IO\Microsoft.CodeCoverage.IO.dll" target="contentFiles\any\$SourceBuildTfm$" />
     <file src="$SourceBuildTfm$\Microsoft.Extensions.DependencyModel\Microsoft.Extensions.DependencyModel.dll" target="contentFiles\any\$SourceBuildTfm$" />
     <file src="$SourceBuildTfm$\Microsoft.Extensions.FileSystemGlobbing\Microsoft.Extensions.FileSystemGlobbing.dll" target="contentFiles\any\$SourceBuildTfm$" />
 

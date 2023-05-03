@@ -67,7 +67,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.CodeCoverage.IO" Version="$(MicrosoftInternalCodeCoverageVersion)" GeneratePathProperty="true" />
+    <PackageReference Include="Microsoft.CodeCoverage.IO" Version="$(MicrosoftInternalCodeCoverageVersion)" GeneratePathProperty="true" Condition=" '$(DotNetBuildFromSource)' != 'true' " />
     <PackageReference Include="Microsoft.Extensions.DependencyModel" Version="$(MicrosoftExtensionsDependencyModelPackageVersion)" GeneratePathProperty="true" />
     <PackageReference Include="Microsoft.Extensions.FileSystemGlobbing" Version="$(MicrosoftExtensionsFileSystemGlobbingVersion)" GeneratePathProperty="true" />
     <PackageReference Include="Newtonsoft.Json" Version="$(NewtonsoftJsonVersion)" GeneratePathProperty="true" />
@@ -92,7 +92,7 @@
       <MicrosoftInternalDia Include="$(PkgMicrosoft_Internal_Dia)\tools\net451\**\*"></MicrosoftInternalDia>
     </ItemGroup>
 
-    <Copy SourceFiles="@(MicrosoftCodeCoverageIO)" DestinationFiles="$(OutDir)\Microsoft.CodeCoverage.IO\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Copy SourceFiles="@(MicrosoftCodeCoverageIO)" DestinationFiles="$(OutDir)\Microsoft.CodeCoverage.IO\%(RecursiveDir)%(Filename)%(Extension)" Condition=" '$(DotNetBuildFromSource)' != 'true' " />
     <Copy SourceFiles="@(MicrosoftExtensionsDependencyModel)" DestinationFiles="$(OutDir)\Microsoft.Extensions.DependencyModel\%(RecursiveDir)%(Filename)%(Extension)" />
     <Copy SourceFiles="@(MicrosoftExtensionsFileSystemGlobbing)" DestinationFiles="$(OutDir)\Microsoft.Extensions.FileSystemGlobbing\%(RecursiveDir)%(Filename)%(Extension)" />
     <Copy SourceFiles="@(NewtonsoftJson)" DestinationFiles="$(OutDir)\Newtonsoft.Json\%(RecursiveDir)%(Filename)%(Extension)" />
