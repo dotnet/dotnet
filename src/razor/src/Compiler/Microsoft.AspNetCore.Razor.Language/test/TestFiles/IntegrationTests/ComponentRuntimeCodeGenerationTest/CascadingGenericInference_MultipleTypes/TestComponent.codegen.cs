@@ -69,7 +69,7 @@ namespace __Blazor.Test.TestComponent
             __arg0_out = __arg0;
             __arg1_out = __arg1;
         }
-        public static void CreateChild_1<TOther, TValue, TKey, TChildOnly>(global::Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder, int seq, TOther __syntheticArg0, System.Collections.Generic.Dictionary<TKey, TValue> __syntheticArg1, System.Collections.Generic.Dictionary<TKey, TValue> __syntheticArg2, int __seq0, global::System.Collections.Generic.ICollection<TChildOnly> __arg0)
+        public static void CreateChild_1<TOther, TValue, TKey, TChildOnly>(global::Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder, int seq, TOther __syntheticArg0, global::System.Collections.Generic.Dictionary<TKey, TValue> __syntheticArg1, global::System.Collections.Generic.Dictionary<TKey, TValue> __syntheticArg2, int __seq0, global::System.Collections.Generic.ICollection<TChildOnly> __arg0)
         {
         __builder.OpenComponent<global::Test.Child<TOther, TValue, TKey, TChildOnly>>(seq);
         __builder.AddComponentParameter(__seq0, "ChildOnlyItems", __arg0);

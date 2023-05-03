@@ -26,6 +26,8 @@
                             IntermediateToken -  - CSharp - global::Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.CreateInferredEventCallback(this, 
                             IntermediateToken -  - CSharp - UpdateValue
                             IntermediateToken -  - CSharp - , ParentValue)
+                    ComponentAttribute - (95:1,76 [11] x:\dir\subdir\Test\TestComponent.cshtml) - bind-Value - Value - AttributeStructure.DoubleQuotes
+                        LazyIntermediateToken - (95:1,76 [11] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - UpdateValue
                 HtmlContent - (110:1,91 [2] x:\dir\subdir\Test\TestComponent.cshtml)
                     LazyIntermediateToken - (110:1,91 [2] x:\dir\subdir\Test\TestComponent.cshtml) - Html - \n
             CSharpCode - (119:2,7 [128] x:\dir\subdir\Test\TestComponent.cshtml)

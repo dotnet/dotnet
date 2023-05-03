@@ -84,7 +84,7 @@ public class GoToDefinitionTests : AbstractRazorEditorTest
                 [Microsoft.AspNetCore.Components.ParameterAttribute]
                 public string? MyProperty { get; set; }
             }
-            
+
             """,
             open: true,
             cancellationToken: ControlledHangMitigatingCancellationToken);
@@ -114,7 +114,7 @@ public class GoToDefinitionTests : AbstractRazorEditorTest
                 [Microsoft.AspNetCore.Components.ParameterAttribute]
                 public bool MyProperty { get; set; }
             }
-            
+
             """,
             open: true,
             cancellationToken: ControlledHangMitigatingCancellationToken);
@@ -142,7 +142,7 @@ public class GoToDefinitionTests : AbstractRazorEditorTest
             MyComponentPath,
             """
             using Microsoft.AspNetCore.Components;
-            
+
             namespace BlazorProject;
 
             public class MyComponent : ComponentBase
@@ -198,7 +198,7 @@ public class GoToDefinitionTests : AbstractRazorEditorTest
             "MyComponent.cs",
             """
             using Microsoft.AspNetCore.Components;
-            
+
             namespace BlazorProject
             {
                 public class MyComponent<TItem> : ComponentBase
@@ -237,7 +237,7 @@ public class GoToDefinitionTests : AbstractRazorEditorTest
             "MyComponent.cs",
             """
             using Microsoft.AspNetCore.Components;
-            
+
             namespace BlazorProject
             {
                 [CascadingTypeParameter(nameof(TItem))]
@@ -245,23 +245,23 @@ public class GoToDefinitionTests : AbstractRazorEditorTest
                 {
                     [Parameter] public RenderFragment ColumnsTemplate { get; set; }
                 }
-            
+
                 public abstract partial class BaseColumn<TItem> : ComponentBase where TItem : class
                 {
                     [CascadingParameter]
                     internal Grid<TItem> Grid { get; set; }
                 }
-            
+
                 public class Column<TItem> : BaseColumn<TItem>, IGridFieldColumn<TItem> where TItem : class
                 {
                     [Parameter]
                     public string FieldName { get; set; }
                 }
-            
+
                 internal interface IGridFieldColumn<TItem> where TItem : class
                 {
                 }
-            
+
                 public class WeatherForecast { }
             }
             """,
@@ -362,5 +362,40 @@ public class GoToDefinitionTests : AbstractRazorEditorTest
         // Assert
         await TestServices.Editor.WaitForActiveWindowAsync("MyComponent.razor", ControlledHangMitigatingCancellationToken);
         await TestServices.Editor.WaitForCurrentLineTextAsync("public string? MyProperty { set { } }", ControlledHangMitigatingCancellationToken);
+    }
+
+    [IdeTheory]
+    [InlineData("MyProperty:get")]
+    [InlineData("MyProperty:set")]
+    [InlineData("MyProperty:after")]
+    public async Task GoToDefinition_ComponentAttribute_BindSet(string attribute)
+    {
+        // Create the file
+        await TestServices.SolutionExplorer.AddFileAsync(RazorProjectConstants.BlazorProjectName,
+            "MyComponent.razor",
+            """
+            <MyComponent @bind-MyProperty:get="value" @bind-MyProperty:set="(value) => { text = value; }" @bind-MyProperty:after="After" />
+            @code {
+                private string value = "";
+                [Microsoft.AspNetCore.Components.ParameterAttribute]
+                public string? MyProperty { get; set; }
+                public void After()
+                {
+                }
+            }
+            """,
+            open: true,
+            cancellationToken: ControlledHangMitigatingCancellationToken);
+
+        await TestServices.Editor.WaitForComponentClassificationAsync(ControlledHangMitigatingCancellationToken);
+
+        await TestServices.Editor.PlaceCaretAsync(attribute, charsOffset: -1, ControlledHangMitigatingCancellationToken);
+
+        // Act
+        await TestServices.Editor.InvokeGoToDefinitionAsync(ControlledHangMitigatingCancellationToken);
+
+        // Assert
+        await TestServices.Editor.WaitForActiveWindowAsync("MyComponent.razor", ControlledHangMitigatingCancellationToken);
+        await TestServices.Editor.WaitForCurrentLineTextAsync("public string? MyProperty { get; set; }", ControlledHangMitigatingCancellationToken);
     }
 }
