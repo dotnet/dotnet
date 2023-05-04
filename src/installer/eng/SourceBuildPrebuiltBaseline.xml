@@ -1,5 +1,25 @@
 <UsageData>
   <IgnorePatterns>
-    <UsagePattern IdentityGlob="*/*" />
+    <UsagePattern IdentityGlob="Microsoft.SourceBuild.Intermediate.*/*" />
+
+    <!--
+      Temporary exclusion for NuGet packages, since NuGet is not producing source-build intermediate package,
+      see: https://github.com/NuGet/Home/issues/11059
+
+      Once that's fixed, NuGet package version should be updated to newest, and intermediate product dependency
+      added to Version.Details.xml
+    -->
+    <UsagePattern IdentityGlob="NuGet.Common/*5.8.0*" />
+    <UsagePattern IdentityGlob="NuGet.Configuration/*5.8.0*" />
+    <UsagePattern IdentityGlob="NuGet.Frameworks/*5.8.0*" />
+    <UsagePattern IdentityGlob="NuGet.Packaging/*5.8.0*" />
+    <UsagePattern IdentityGlob="NuGet.Versioning/*5.8.0*" />
+
+    <!-- Referenced by NuGet.Packaging.5.8.0 - could be resolved when version of NuGet packages gets updated. -->
+    <UsagePattern IdentityGlob="System.Security.Cryptography.Cng/5.0.0-preview.3.20214.6" />
+    <UsagePattern IdentityGlob="System.Security.Cryptography.Pkcs/5.0.0-preview.3.20214.6" />
+
+    <!-- These are coming in via runtime but the source-build infra isn't able to automatically pick up the right intermediate. -->
+    <UsagePattern IdentityGlob="Microsoft.NETCore.App.Crossgen2.linux-x64/*8.0.*" />
   </IgnorePatterns>
 </UsageData>
