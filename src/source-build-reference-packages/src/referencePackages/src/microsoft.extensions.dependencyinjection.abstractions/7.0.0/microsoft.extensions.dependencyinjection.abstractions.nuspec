@@ -1,22 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <package xmlns="http://schemas.microsoft.com/packaging/2013/05/nuspec.xsd">
   <metadata>
-    <id>Microsoft.Extensions.Logging.Abstractions</id>
+    <id>Microsoft.Extensions.DependencyInjection.Abstractions</id>
     <version>7.0.0</version>
     <authors>Microsoft</authors>
     <license type="expression">MIT</license>
     <licenseUrl>https://licenses.nuget.org/MIT</licenseUrl>
     <projectUrl>https://dot.net/</projectUrl>
-    <description>Logging abstractions for Microsoft.Extensions.Logging.
+    <description>Abstractions for dependency injection.
 
 Commonly Used Types:
-Microsoft.Extensions.Logging.ILogger
-Microsoft.Extensions.Logging.ILoggerFactory
-Microsoft.Extensions.Logging.ILogger&lt;TCategoryName&gt;
-Microsoft.Extensions.Logging.LogLevel
-Microsoft.Extensions.Logging.Logger&lt;T&gt;
-Microsoft.Extensions.Logging.LoggerMessage
-Microsoft.Extensions.Logging.Abstractions.NullLogger</description>
+Microsoft.Extensions.DependencyInjection.IServiceCollection</description>
     <releaseNotes>https://go.microsoft.com/fwlink/?LinkID=799421</releaseNotes>
     <copyright>© Microsoft Corporation. All rights reserved.</copyright>
     <serviceable>true</serviceable>
@@ -25,9 +19,10 @@ Microsoft.Extensions.Logging.Abstractions.NullLogger</description>
       <group targetFramework="net6.0" />
       <group targetFramework="net7.0" />
       <group targetFramework=".NETStandard2.0">
-        <dependency id="System.Buffers" version="4.5.1" exclude="Build,Analyzers" />
-        <dependency id="System.Memory" version="4.5.5" exclude="Build,Analyzers" />
+        <dependency id="Microsoft.Bcl.AsyncInterfaces" version="7.0.0" exclude="Build,Analyzers" />
+        <dependency id="System.Threading.Tasks.Extensions" version="4.5.4" exclude="Build,Analyzers" />
       </group>
+      <group targetFramework=".NETStandard2.1" />
     </dependencies>
   </metadata>
 </package>
