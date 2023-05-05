@@ -547,6 +547,11 @@ internal class ComponentRuntimeNodeWriter : ComponentNodeWriter
             throw new ArgumentNullException(nameof(node));
         }
 
+        if (node.IsDesignTimePropertyAccessHelper())
+        {
+            return;
+        }
+
         var addAttributeMethod = node.Annotations[ComponentMetadata.Common.AddAttributeMethodName] as string ?? AddComponentParameterMethodName;
 
         // _builder.AddComponentParameter(1, "Foo", 42);

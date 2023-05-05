@@ -25,6 +25,11 @@ public sealed class ComponentAttributeIntermediateNode : IntermediateNode
         AttributeStructure = attributeNode.AttributeStructure;
         Source = attributeNode.Source;
 
+        foreach (var annotation in attributeNode.Annotations)
+        {
+            Annotations[annotation.Key] = annotation.Value;
+        }
+
         for (var i = 0; i < attributeNode.Children.Count; i++)
         {
             Children.Add(attributeNode.Children[i]);
@@ -114,6 +119,11 @@ public sealed class ComponentAttributeIntermediateNode : IntermediateNode
         Source = directiveAttributeParameterNode.Source;
         TagHelper = directiveAttributeParameterNode.TagHelper;
         TypeName = directiveAttributeParameterNode.BoundAttributeParameter.TypeName;
+
+        foreach (var annotation in directiveAttributeParameterNode.Annotations)
+        {
+            Annotations[annotation.Key] = annotation.Value;
+        }
 
         for (var i = 0; i < directiveAttributeParameterNode.Children.Count; i++)
         {

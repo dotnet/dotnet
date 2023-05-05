@@ -23,6 +23,8 @@
                     ComponentAttribute - (43:0,43 [11] x:\dir\subdir\Test\TestComponent.cshtml) - ValueChanged - ValueChanged - AttributeStructure.DoubleQuotes
                         CSharpExpression - 
                             IntermediateToken -  - CSharp - __value => { ParentValue = __value; global::Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.InvokeSynchronousDelegate(Update); }
+                    ComponentAttribute - (75:0,75 [6] x:\dir\subdir\Test\TestComponent.cshtml) - bind-Value - Value - AttributeStructure.DoubleQuotes
+                        LazyIntermediateToken - (75:0,75 [6] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - Update
                 HtmlContent - (85:0,85 [2] x:\dir\subdir\Test\TestComponent.cshtml)
                     LazyIntermediateToken - (85:0,85 [2] x:\dir\subdir\Test\TestComponent.cshtml) - Html - \n
             CSharpCode - (94:1,7 [82] x:\dir\subdir\Test\TestComponent.cshtml)
