@@ -78,9 +78,9 @@
   </PropertyGroup>
   <PropertyGroup>
     <!-- Dependencies from https://github.com/dotnet/sdk -->
-    <MicrosoftDotNetCommonItemTemplatesPackageVersion>8.0.100-preview.4.23253.1</MicrosoftDotNetCommonItemTemplatesPackageVersion>
-    <MicrosoftNETSdkPackageVersion>8.0.100-preview.4.23253.1</MicrosoftNETSdkPackageVersion>
-    <MicrosoftDotNetMSBuildSdkResolverPackageVersion>8.0.100-preview.4.23253.1</MicrosoftDotNetMSBuildSdkResolverPackageVersion>
+    <MicrosoftDotNetCommonItemTemplatesPackageVersion>8.0.100-preview.4.23255.3</MicrosoftDotNetCommonItemTemplatesPackageVersion>
+    <MicrosoftNETSdkPackageVersion>8.0.100-preview.4.23255.3</MicrosoftNETSdkPackageVersion>
+    <MicrosoftDotNetMSBuildSdkResolverPackageVersion>8.0.100-preview.4.23255.3</MicrosoftDotNetMSBuildSdkResolverPackageVersion>
     <MicrosoftNETBuildExtensionsPackageVersion>$(MicrosoftNETSdkPackageVersion)</MicrosoftNETBuildExtensionsPackageVersion>
     <MicrosoftDotnetToolsetInternalPackageVersion>$(MicrosoftNETSdkPackageVersion)</MicrosoftDotnetToolsetInternalPackageVersion>
     <MicrosoftDotnetTemplateLocatorPackageVersion>$(MicrosoftNETSdkPackageVersion)</MicrosoftDotnetTemplateLocatorPackageVersion>
@@ -105,10 +105,10 @@
   </PropertyGroup>
   <PropertyGroup>
     <!-- Dependencies from https://github.com/dotnet/windowsdesktop -->
-    <VSRedistCommonWindowsDesktopSharedFrameworkx6480PackageVersion>8.0.0-preview.4.23252.6</VSRedistCommonWindowsDesktopSharedFrameworkx6480PackageVersion>
-    <VSRedistCommonWindowsDesktopTargetingPackx6480PackageVersion>8.0.0-preview.4.23252.6</VSRedistCommonWindowsDesktopTargetingPackx6480PackageVersion>
-    <MicrosoftWindowsDesktopAppRuntimewinx64PackageVersion>8.0.0-preview.4.23252.6</MicrosoftWindowsDesktopAppRuntimewinx64PackageVersion>
-    <MicrosoftWindowsDesktopAppRefPackageVersion>8.0.0-preview.4.23252.6</MicrosoftWindowsDesktopAppRefPackageVersion>
+    <VSRedistCommonWindowsDesktopSharedFrameworkx6480PackageVersion>8.0.0-preview.4.23254.3</VSRedistCommonWindowsDesktopSharedFrameworkx6480PackageVersion>
+    <VSRedistCommonWindowsDesktopTargetingPackx6480PackageVersion>8.0.0-preview.4.23254.3</VSRedistCommonWindowsDesktopTargetingPackx6480PackageVersion>
+    <MicrosoftWindowsDesktopAppRuntimewinx64PackageVersion>8.0.0-preview.4.23254.3</MicrosoftWindowsDesktopAppRuntimewinx64PackageVersion>
+    <MicrosoftWindowsDesktopAppRefPackageVersion>8.0.0-preview.4.23254.3</MicrosoftWindowsDesktopAppRefPackageVersion>
   </PropertyGroup>
   <PropertyGroup>
     <!-- Runtime and Apphost pack versions are the same for all RIDs. We flow the x64    -->
