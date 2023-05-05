@@ -1768,7 +1768,7 @@ internal class DefaultRazorIntermediateNodeLoweringPhase : RazorEnginePhaseBase,
                             IsIndexerNameMatch = indexerMatch,
                         };
 
-                        setTagHelperProperty.Annotations.Add("OriginalAttributeSpan", BuildSourceSpanFromNode(node.Name));
+                        setTagHelperProperty.Annotations.Add(ComponentMetadata.Common.OriginalAttributeSpan, BuildSourceSpanFromNode(node.Name));
 
                         _builder.Add(setTagHelperProperty);
                     }
@@ -1909,7 +1909,7 @@ internal class DefaultRazorIntermediateNodeLoweringPhase : RazorEnginePhaseBase,
                             IsIndexerNameMatch = indexerMatch,
                         };
 
-                        setTagHelperProperty.Annotations.Add("OriginalAttributeSpan", BuildSourceSpanFromNode(node.Name));
+                        setTagHelperProperty.Annotations.Add(ComponentMetadata.Common.OriginalAttributeSpan, BuildSourceSpanFromNode(node.Name));
 
                         _builder.Push(setTagHelperProperty);
                         VisitAttributeValue(attributeValueNode);
@@ -1988,7 +1988,7 @@ internal class DefaultRazorIntermediateNodeLoweringPhase : RazorEnginePhaseBase,
                             };
                         }
 
-                        attributeNode.Annotations.Add("OriginalAttributeSpan", BuildSourceSpanFromNode(node.Name));
+                        attributeNode.Annotations.Add(ComponentMetadata.Common.OriginalAttributeSpan, BuildSourceSpanFromNode(node.Name));
 
                         _builder.Push(attributeNode);
                         VisitAttributeValue(attributeValueNode);

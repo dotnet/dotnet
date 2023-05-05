@@ -360,7 +360,6 @@ namespace Test
         // Arrange
         AdditionalSyntaxTrees.Add(Parse("""
             using Microsoft.AspNetCore.Components;
-
             namespace Test
             {
                 public class MyComponent : ComponentBase
@@ -389,14 +388,12 @@ namespace Test
         // Arrange
         AdditionalSyntaxTrees.Add(Parse("""
             namespace System.Runtime.CompilerServices;
-
             internal static class IsExternalInit
             {
             }
             """));
         AdditionalSyntaxTrees.Add(Parse("""
             using Microsoft.AspNetCore.Components;
-
             namespace Test
             {
                 public class MyComponent : ComponentBase

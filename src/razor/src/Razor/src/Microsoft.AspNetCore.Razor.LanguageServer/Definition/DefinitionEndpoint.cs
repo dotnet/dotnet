@@ -11,7 +11,11 @@ using Microsoft.AspNetCore.Razor.LanguageServer.Common;
 using Microsoft.AspNetCore.Razor.LanguageServer.EndpointContracts;
 using Microsoft.AspNetCore.Razor.LanguageServer.Extensions;
 using Microsoft.AspNetCore.Razor.LanguageServer.Protocol;
+using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
+using Microsoft.CodeAnalysis.Razor.Workspaces.Extensions;
 using Microsoft.CommonLanguageServerProtocol.Framework;
 using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
@@ -64,7 +68,8 @@ internal sealed class DefinitionEndpoint : AbstractRazorDelegatingEndpoint<TextD
             return default;
         }
 
-        var originTagDescriptor = await GetOriginTagHelperBindingAsync(documentContext, projection.AbsoluteIndex, requestContext.Logger, cancellationToken).ConfigureAwait(false);
+        // If single server support is on, then we ignore attributes, as they are better handled by delegating to Roslyn
+        var (originTagDescriptor, attributeDescriptor) = await GetOriginTagHelperBindingAsync(documentContext, projection.AbsoluteIndex, SingleServerSupport, requestContext.Logger, cancellationToken).ConfigureAwait(false);
         if (originTagDescriptor is null)
         {
             requestContext.Logger.LogInformation("Origin TagHelper descriptor is null.");
@@ -82,6 +87,8 @@ internal sealed class DefinitionEndpoint : AbstractRazorDelegatingEndpoint<TextD
 
         requestContext.Logger.LogInformation("Definition found at file path: {filePath}", originComponentDocumentFilePath);
 
+        var range = await GetNavigateRangeAsync(originComponentDocumentSnapshot, attributeDescriptor, requestContext.Logger, cancellationToken);
+
         var originComponentUri = new UriBuilder
         {
             Path = originComponentDocumentFilePath,
@@ -94,8 +101,7 @@ internal sealed class DefinitionEndpoint : AbstractRazorDelegatingEndpoint<TextD
             new VSInternalLocation
             {
                 Uri = originComponentUri,
-                // When navigating from a start or end tag, we just take the user to the top of the file.
-                Range = new Range { Start = new Position(0, 0), End = new Position(0, 0) }
+                Range = range,
             },
         };
     }
@@ -141,9 +147,10 @@ internal sealed class DefinitionEndpoint : AbstractRazorDelegatingEndpoint<TextD
         return response;
     }
 
-    internal static async Task<TagHelperDescriptor?> GetOriginTagHelperBindingAsync(
+    internal static async Task<(TagHelperDescriptor?, BoundAttributeDescriptor?)> GetOriginTagHelperBindingAsync(
         DocumentContext documentContext,
         int absoluteIndex,
+        bool ignoreAttributes,
         ILogger logger,
         CancellationToken cancellationToken)
     {
@@ -151,7 +158,7 @@ internal sealed class DefinitionEndpoint : AbstractRazorDelegatingEndpoint<TextD
         if (owner is null)
         {
             logger.LogInformation("Could not locate owner.");
-            return null;
+            return (null, null);
         }
 
         var node = owner.Ancestors().FirstOrDefault(n =>
@@ -160,36 +167,59 @@ internal sealed class DefinitionEndpoint : AbstractRazorDelegatingEndpoint<TextD
         if (node is null)
         {
             logger.LogInformation("Could not locate ancestor of type MarkupTagHelperStartTag or MarkupTagHelperEndTag.");
-            return null;
+            return (null, null);
         }
 
         var name = GetStartOrEndTagName(node);
         if (name is null)
         {
             logger.LogInformation("Could not retrieve name of start or end tag.");
-            return null;
+            return (null, null);
+        }
+
+        string? propertyName = null;
+
+        if (!ignoreAttributes)
+        {
+            // If we're on an attribute then just validate against the attribute name
+            if (owner.Parent is MarkupTagHelperAttributeSyntax attribute)
+            {
+                // Normal attribute, ie <Component attribute=value />
+                name = attribute.Name;
+                propertyName = attribute.TagHelperAttributeInfo.Name;
+            }
+            else if (owner.Parent is MarkupMinimizedTagHelperAttributeSyntax minimizedAttribute)
+            {
+                // Minimized attribute, ie <Component attribute />
+                name = minimizedAttribute.Name;
+                propertyName = minimizedAttribute.TagHelperAttributeInfo.Name;
+            }
         }
 
         if (!name.Span.IntersectsWith(absoluteIndex))
         {
-            logger.LogInformation("Tag name's span does not intersect with location's absolute index ({absoluteIndex}).", absoluteIndex);
-            return null;
+            logger.LogInformation("Tag name or attributes' span does not intersect with location's absolute index ({absoluteIndex}).", absoluteIndex);
+            return (null, null);
         }
 
         if (node.Parent is not MarkupTagHelperElementSyntax tagHelperElement)
         {
             logger.LogInformation("Parent of start or end tag is not a MarkupTagHelperElement.");
-            return null;
+            return (null, null);
         }
 
         var originTagDescriptor = tagHelperElement.TagHelperInfo.BindingResult.Descriptors.FirstOrDefault(d => !d.IsAttributeDescriptor());
         if (originTagDescriptor is null)
         {
             logger.LogInformation("Origin TagHelper descriptor is null.");
-            return null;
+            return (null, null);
         }
 
-        return originTagDescriptor;
+        var attributeDescriptor = (propertyName is not null)
+            ? originTagDescriptor.BoundAttributes.FirstOrDefault(a => a.Name?.Equals(propertyName, StringComparison.Ordinal) == true)
+            : null;
+
+        return (originTagDescriptor, attributeDescriptor);
     }
 
     private static SyntaxNode? GetStartOrEndTagName(SyntaxNode node)
@@ -200,5 +230,78 @@ internal sealed class DefinitionEndpoint : AbstractRazorDelegatingEndpoint<TextD
             MarkupTagHelperEndTagSyntax tagHelperEndTag => tagHelperEndTag.Name,
             _ => null
         };
+    }
+
+    private async Task<Range> GetNavigateRangeAsync(IDocumentSnapshot documentSnapshot, BoundAttributeDescriptor? attributeDescriptor, ILogger logger, CancellationToken cancellationToken)
+    {
+        if (attributeDescriptor is not null)
+        {
+            logger.LogInformation("Attempting to get definition from an attribute directly.");
+
+            var originCodeDocument = await documentSnapshot.GetGeneratedOutputAsync().ConfigureAwait(false);
+            var range = await TryGetPropertyRangeAsync(originCodeDocument, attributeDescriptor.GetPropertyName(), _documentMappingService, logger, cancellationToken).ConfigureAwait(false);
+
+            if (range is not null)
+            {
+                return range;
+            }
+        }
+
+        // When navigating from a start or end tag, we just take the user to the top of the file.
+        // If we were trying to navigate to a property, and we couldn't find it, we can at least take
+        // them to the file for the component. If the property was defined in a partial class they can
+        // at least then press F7 to go there.
+        return new Range { Start = new Position(0, 0), End = new Position(0, 0) };
+    }
+
+    internal static async Task<Range?> TryGetPropertyRangeAsync(RazorCodeDocument codeDocument, string propertyName, RazorDocumentMappingService documentMappingService, ILogger logger, CancellationToken cancellationToken)
+    {
+        // Parse the C# file and find the property that matches the name.
+        // We don't worry about parameter attributes here for two main reasons:
+        //   1. We don't have symbolic information, so the best we could do would be checking for any
+        //      attribute named Parameter, regardless of which namespace. It also means we would have
+        //      to do more checks for all of the various ways that the attribute could be specified
+        //      (eg fully qualified, aliased, etc.)
+        //   2. Since C# doesn't allow multiple properties with the same name, and we're doing a case
+        //      sensitive search, we know the property we find is the one the user is trying to encode in a
+        //      tag helper attribute. If they don't have the [Parameter] attribute then the Razor compiler
+        //      will error, but allowing them to Go To Def on that property regardless, actually helps
+        //      them fix the error.
+        var csharpText = codeDocument.GetCSharpSourceText();
+        var syntaxTree = CSharpSyntaxTree.ParseText(csharpText, cancellationToken: cancellationToken);
+        var root = await syntaxTree.GetRootAsync(cancellationToken).ConfigureAwait(false);
+
+        // Since we know how the compiler generates the C# source we can be a little specific here, and avoid
+        // long tree walks. If the compiler ever changes how they generate their code, the tests for this will break
+        // so we'll know about it.
+        if (root is CompilationUnitSyntax compilationUnit &&
+            compilationUnit.Members[0] is NamespaceDeclarationSyntax namespaceDeclaration &&
+            namespaceDeclaration.Members[0] is ClassDeclarationSyntax classDeclaration)
+        {
+            var property = classDeclaration
+                .Members
+                .OfType<PropertyDeclarationSyntax>()
+                .Where(p => p.Identifier.ValueText.Equals(propertyName, StringComparison.Ordinal))
+                .FirstOrDefault();
+
+            if (property is null)
+            {
+                // The property probably exists in a partial class
+                logger.LogInformation("Could not find property in the generated source. Comes from partial?");
+                return null;
+            }
+
+            var range = property.Identifier.Span.AsRange(csharpText);
+            if (documentMappingService.TryMapFromProjectedDocumentRange(codeDocument.GetCSharpDocument(), range, out var originalRange))
+            {
+                return originalRange;
+            }
+
+            logger.LogInformation("Property found but couldn't map its location.");
+        }
+
+        logger.LogInformation("Generated C# was not in expected shape (CompilationUnit -> Namespace -> Class)");
+
+        return null;
     }
 }

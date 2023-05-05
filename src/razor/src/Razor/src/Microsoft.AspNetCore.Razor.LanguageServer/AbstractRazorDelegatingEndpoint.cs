@@ -36,6 +36,8 @@ internal abstract class AbstractRazorDelegatingEndpoint<TRequest, TResponse> : I
         Logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }
 
+    protected bool SingleServerSupport => _languageServerFeatureOptions.SingleServerSupport;
+
     protected virtual bool OnlySingleServer { get; } = true;
 
     /// <summary>

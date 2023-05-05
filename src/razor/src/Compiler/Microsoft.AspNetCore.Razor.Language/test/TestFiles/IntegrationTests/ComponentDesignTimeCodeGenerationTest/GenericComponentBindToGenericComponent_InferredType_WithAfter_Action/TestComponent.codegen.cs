@@ -40,6 +40,26 @@ global::System.Object TParam = null!;
 #nullable disable
             , -1, 
             __value => { ParentValue = __value; global::Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.InvokeSynchronousDelegate(Update); });
+            #pragma warning disable BL0005
+            __typeInference_CreateMyComponent_0.
+#nullable restore
+#line 2 "x:\dir\subdir\Test\TestComponent.cshtml"
+                   Value
+
+#line default
+#line hidden
+#nullable disable
+             = default;
+            __typeInference_CreateMyComponent_0.
+#nullable restore
+#line 2 "x:\dir\subdir\Test\TestComponent.cshtml"
+                                                 Value
+
+#line default
+#line hidden
+#nullable disable
+             = default;
+            #pragma warning restore BL0005
 #nullable restore
 #line 2 "x:\dir\subdir\Test\TestComponent.cshtml"
 __o = typeof(global::Test.MyComponent<>);

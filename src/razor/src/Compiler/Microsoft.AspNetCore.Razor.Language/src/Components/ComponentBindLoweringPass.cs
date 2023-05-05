@@ -5,10 +5,12 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Globalization;
 using System.Linq;
 using Microsoft.AspNetCore.Razor.Language.Extensions;
 using Microsoft.AspNetCore.Razor.Language.Intermediate;
+using Microsoft.AspNetCore.Razor.PooledObjects;
 
 namespace Microsoft.AspNetCore.Razor.Language.Components;
 
@@ -529,11 +531,15 @@ internal class ComponentBindLoweringPass : ComponentIntermediateNodePassBase, IR
         }
         else
         {
+            using var _ = ArrayBuilderPool<IntermediateNode>.GetPooledObject(out var builder);
+
+            var valuePropertyName = valueAttribute?.GetPropertyName();
+
             ComponentAttributeIntermediateNode valueNode = node != null ? new ComponentAttributeIntermediateNode(node) : new ComponentAttributeIntermediateNode(getNode);
             valueNode.Annotations[ComponentMetadata.Common.OriginalAttributeName] = bindEntry.GetOriginalAttributeName();
             valueNode.AttributeName = valueAttributeName;
             valueNode.BoundAttribute = valueAttribute; // Might be null if it doesn't match a component attribute
-            valueNode.PropertyName = valueAttribute?.GetPropertyName();
+            valueNode.PropertyName = valuePropertyName;
             valueNode.TagHelper = valueAttribute == null ? null : bindEntry.GetEffectiveNodeTagHelperDescriptor();
             valueNode.TypeName = valueAttribute?.IsWeaklyTyped() == false ? valueAttribute.TypeName : null;
 
@@ -543,6 +549,8 @@ internal class ComponentBindLoweringPass : ComponentIntermediateNodePassBase, IR
             {
                 valueNode.Children[0].Children.Add(valueExpressionTokens[i]);
             }
+
+            builder.Add(valueNode);
 
             var changeNode = node != null ? new ComponentAttributeIntermediateNode(node) : new ComponentAttributeIntermediateNode(getNode);
             changeNode.Annotations[ComponentMetadata.Common.OriginalAttributeName] = bindEntry.GetOriginalAttributeName();
@@ -559,12 +567,13 @@ internal class ComponentBindLoweringPass : ComponentIntermediateNodePassBase, IR
                 changeNode.Children[0].Children.Add(changeExpressionTokens[i]);
             }
 
+            builder.Add(changeNode);
+
             // Finally, also emit a node for the "Expression" attribute, but only if the target
             // component is defined to accept one
-            ComponentAttributeIntermediateNode expressionNode = null;
             if (expressionAttribute != null)
             {
-                expressionNode = node != null ? new ComponentAttributeIntermediateNode(node) : new ComponentAttributeIntermediateNode(getNode);
+                var expressionNode = node != null ? new ComponentAttributeIntermediateNode(node) : new ComponentAttributeIntermediateNode(getNode);
                 expressionNode.Annotations[ComponentMetadata.Common.OriginalAttributeName] = bindEntry.GetOriginalAttributeName();
                 expressionNode.AttributeName = expressionAttributeName;
                 expressionNode.BoundAttribute = expressionAttribute;
@@ -579,12 +588,34 @@ internal class ComponentBindLoweringPass : ComponentIntermediateNodePassBase, IR
                     Content = $"() => {original.Content}",
                     Kind = TokenKind.CSharp
                 });
+
+                builder.Add(expressionNode);
             }
 
-            return expressionNode == null
-                ? new[] { valueNode, changeNode }
-                : new[] { valueNode, changeNode, expressionNode };
+            // We don't need to generate any runtime code for these attributes normally, as they're handled by the above nodes,
+            // but in order for IDE scenarios around component attributes to work we need to generate a little bit of design
+            // time code, so we create design time specific nodes with minimal information in order to do so.
+            TryAddDesignTimePropertyAccessHelperNode(builder, bindEntry.BindSetNode, valuePropertyName);
+            TryAddDesignTimePropertyAccessHelperNode(builder, bindEntry.BindEventNode, valuePropertyName);
+            TryAddDesignTimePropertyAccessHelperNode(builder, bindEntry.BindAfterNode, valuePropertyName);
+
+            return builder.ToArray();
         }
+    }
+
+    private static void TryAddDesignTimePropertyAccessHelperNode(ImmutableArray<IntermediateNode>.Builder builder, TagHelperDirectiveAttributeParameterIntermediateNode intermediateNode, string propertyName)
+    {
+        if (intermediateNode is null || propertyName is null)
+        {
+            return;
+        }
+
+        var helperNode = new ComponentAttributeIntermediateNode(intermediateNode);
+        helperNode.Annotations[ComponentMetadata.Common.OriginalAttributeName] = intermediateNode.OriginalAttributeName;
+        helperNode.Annotations[ComponentMetadata.Common.IsDesignTimePropertyAccessHelper] = bool.TrueString;
+        helperNode.PropertyName = propertyName;
+
+        builder.Add(helperNode);
     }
 
     private bool TryParseBindAttribute(BindEntry bindEntry, out string valueAttributeName)

@@ -44,6 +44,15 @@ namespace Test
 #line hidden
 #nullable disable
              = default;
+            ((global::Test.MyComponent)default).
+#nullable restore
+#line 1 "x:\dir\subdir\Test\TestComponent.cshtml"
+                                             Value
+
+#line default
+#line hidden
+#nullable disable
+             = default;
             #pragma warning restore BL0005
 #nullable restore
 #line 1 "x:\dir\subdir\Test\TestComponent.cshtml"
