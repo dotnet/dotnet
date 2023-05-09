@@ -176,13 +176,13 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/diagnostics`  
 *[dotnet/diagnostics@5ce78f6](https://github.com/dotnet/diagnostics/commit/5ce78f66d89ea529e459abddb129ab36cb5bd936)*
 - `src/emsdk`  
-*[dotnet/emsdk@dc98fde](https://github.com/dotnet/emsdk/commit/dc98fded25395f86bfddd013652a08d4289ae216)*
+*[dotnet/emsdk@925dc1a](https://github.com/dotnet/emsdk/commit/925dc1a36023a0c704cb3c232d7740a093690c5a)*
 - `src/format`  
 *[dotnet/format@18e261a](https://github.com/dotnet/format/commit/18e261a4045415f11de0349887c7c96d0760e796)*
 - `src/fsharp`  
 *[dotnet/fsharp@8c91d38](https://github.com/dotnet/fsharp/commit/8c91d38f38ece75cac4feb009a11fb42d17fc790)*
 - `src/installer`  
-*[dotnet/installer@958c372](https://github.com/dotnet/installer/commit/958c372f07526451408faf5d50d42793aac2a6a0)*
+*[dotnet/installer@9b8d254](https://github.com/dotnet/installer/commit/9b8d2543d511c547197e9a9cf9487865d546df5a)*
 - `src/msbuild`  
 *[dotnet/msbuild@59879b0](https://github.com/dotnet/msbuild/commit/59879b095e5d93d4d23ac02f3fddc45862345330)*
 - `src/nuget-client`  
@@ -196,9 +196,9 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/roslyn-analyzers`  
 *[dotnet/roslyn-analyzers@429d834](https://github.com/dotnet/roslyn-analyzers/commit/429d834b45bfa439b8ea3692cc8bb3d1805872f5)*
 - `src/runtime`  
-*[dotnet/runtime@c74dc62](https://github.com/dotnet/runtime/commit/c74dc62adf53225772b54612590c548c8268a712)*
+*[dotnet/runtime@9139d44](https://github.com/dotnet/runtime/commit/9139d444406b34b753fa749bcc4d61f77f9cb19b)*
 - `src/sdk`  
-*[dotnet/sdk@8d9de95](https://github.com/dotnet/sdk/commit/8d9de9541dccfb921d87d90bbdda079b4175c853)*
+*[dotnet/sdk@9534d10](https://github.com/dotnet/sdk/commit/9534d106f9f15f0fd43f71dff6e399792c9ee8db)*
 - `src/source-build-externals`  
 *[dotnet/source-build-externals@834923a](https://github.com/dotnet/source-build-externals/commit/834923aef31d157aec19a2b99d5494cea29dcc9e)*
     - `src/source-build-externals/src/application-insights`  
