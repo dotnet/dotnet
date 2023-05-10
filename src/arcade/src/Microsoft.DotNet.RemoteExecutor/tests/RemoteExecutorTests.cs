@@ -73,7 +73,7 @@ namespace Microsoft.DotNet.RemoteExecutor.Tests
         [Fact]
         public void AsyncFunc_InvalidReturnCode()
         {
-            Assert.Throws<TrueException>(() =>
+            Assert.ThrowsAny<RemoteExecutionException>(() =>
                 RemoteExecutor.Invoke(async () =>
                 {
                     await Task.Delay(1);
@@ -96,7 +96,7 @@ namespace Microsoft.DotNet.RemoteExecutor.Tests
         public static void AsyncAction_FatalError_AV()
         {
             // Invocation should report as failing on AV
-            Assert.Throws<TrueException>(() =>
+            Assert.ThrowsAny<RemoteExecutionException>(() =>
                 RemoteExecutor.Invoke(async () =>
                 {
                     await Task.Delay(1);
@@ -112,7 +112,7 @@ namespace Microsoft.DotNet.RemoteExecutor.Tests
         public static void AsyncAction_FatalError_Runtime()
         {
             // Invocation should report as failing on fatal runtime error
-            Assert.Throws<TrueException>(() =>
+            Assert.ThrowsAny<RemoteExecutionException>(() =>
                 RemoteExecutor.Invoke(async () =>
                 {
                     await Task.Delay(1);
@@ -125,7 +125,7 @@ namespace Microsoft.DotNet.RemoteExecutor.Tests
         public static unsafe void FatalError_AV()
         {
             // Invocation should report as failing on AV
-            Assert.Throws<TrueException>(() =>
+            Assert.ThrowsAny<RemoteExecutionException>(() =>
                 RemoteExecutor.Invoke(() =>
                 {
                     *(int*)0x10000 = 0;
@@ -137,7 +137,7 @@ namespace Microsoft.DotNet.RemoteExecutor.Tests
         public static void FatalError_Runtime()
         {
             // Invocation should report as failing on fatal runtime error
-            Assert.Throws<TrueException>(() =>
+            Assert.ThrowsAny<RemoteExecutionException>(() =>
                 RemoteExecutor.Invoke(() =>
                 {
                     System.Runtime.InteropServices.Marshal.StructureToPtr(1, new IntPtr(1), true);

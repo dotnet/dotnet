@@ -14,7 +14,6 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.Diagnostics.Runtime" Version="1.0.5" />
     <PackageReference Include="System.Runtime.InteropServices.RuntimeInformation" Version="$(SystemRuntimeInteropServicesRuntimeInformation)" Condition="'$(TargetFrameworkIdentifier)' == '.NETFramework'" />
-    <PackageReference Include="xunit.assert" Version="$(XUnitVersion)" />
   </ItemGroup>
 
   <ItemGroup>
