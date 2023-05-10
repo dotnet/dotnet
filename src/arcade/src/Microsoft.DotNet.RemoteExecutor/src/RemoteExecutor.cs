@@ -9,7 +9,6 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
-using Xunit;
 using IOPath = System.IO.Path;
 
 namespace Microsoft.DotNet.RemoteExecutor
@@ -411,11 +410,20 @@ namespace Microsoft.DotNet.RemoteExecutor
 
             // Verify the specified method returns an int (the exit code) or nothing,
             // and that if it accepts any arguments, they're all strings.
-            Assert.True(method.ReturnType == typeof(void)
-                || method.ReturnType == typeof(int)
-                || method.ReturnType == typeof(Task)
-                || method.ReturnType == typeof(Task<int>));
-            Assert.All(method.GetParameters(), pi => Assert.Equal(typeof(string), pi.ParameterType));
+            if (method.ReturnType != typeof(void)
+                && method.ReturnType != typeof(int)
+                && method.ReturnType != typeof(Task)
+                && method.ReturnType != typeof(Task<int>))
+            {
+                throw new ArgumentException($"Invalid return type: {method.ReturnType}. Expected void, int, or Task", nameof(method));
+            }
+            foreach (var param in method.GetParameters())
+            {
+                if (param.ParameterType != typeof(string))
+                {
+                    throw new ArgumentException($"Invalid parameter type: {param.ParameterType}. Expected string", nameof(method));
+                }
+            }
 
             // And make sure it's in this assembly.  This isn't critical, but it helps with deployment to know
             // that the method to invoke is available because we're already running in this assembly.
@@ -429,8 +437,8 @@ namespace Microsoft.DotNet.RemoteExecutor
             if (!options.EnableProfiling)
             {
                 // Profilers / code coverage tools doing coverage of the test process set environment
-                // variables to tell the targeted process what profiler to load.  We don't want the child process 
-                // to be profiled / have code coverage, so we remove these environment variables for that process 
+                // variables to tell the targeted process what profiler to load.  We don't want the child process
+                // to be profiled / have code coverage, so we remove these environment variables for that process
                 // before it's started.
                 psi.Environment.Remove("Cor_Profiler");
                 psi.Environment.Remove("Cor_Enable_Profiling");
@@ -478,7 +486,7 @@ namespace Microsoft.DotNet.RemoteExecutor
             }
 
             string args = "exec";
-            
+
             string runtimeConfigPath = GetRuntimeConfigPath(options, out toDispose);
             if (runtimeConfigPath != null)
             {
@@ -581,9 +589,14 @@ namespace Microsoft.DotNet.RemoteExecutor
                 // may need to be revised in the future as the compiler changes, as this relies on the specifics of
                 // actually how the compiler handles lifted fields for lambdas.
                 Type targetType = d.Target.GetType();
-                Assert.All(
-                    targetType.GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly),
-                    fi => Assert.True(fi.Name.IndexOf('<') != -1, $"Field marshaling is not supported by {nameof(Invoke)}: {fi.Name}"));
+                foreach (var fi in targetType.GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly))
+                {
+                    if (fi.Name.IndexOf('<') == -1)
+                    {
+                        throw new ArgumentException($"Field marshaling is not supported by {nameof(Invoke)}: {fi.Name}");
+
+                    }
+                }
             }
 
             return d.GetMethodInfo();

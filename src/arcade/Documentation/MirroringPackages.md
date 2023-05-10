@@ -6,9 +6,9 @@ Microsoft-owned packages that already exist on dotnet-public are automatically u
 
 1. Navigate to https://dev.azure.com/dnceng/internal/_build?definitionId=931&_a=summary
 2. Queue a new build with the following parameters:
-  - Under the Mirror type, select "New or non-Microsoft"
-  - Enter the package name (ID) of the package you wish to mirror
-  - Enter the package version of the package you wish to mirror. Leave as 'latest' to mirror the latest available version.
+    - Under the Mirror type, select "New or non-Microsoft"
+    - Enter the package name (ID) of the package you wish to mirror
+    - Enter the package version of the package you wish to mirror. Leave as 'latest' to mirror the latest available version.
 3. Click Run.
 
 The pipeline will run and mirror the new package, with any transitive dependencies. If the package is owned by Microsoft, new versions (or versions not originally mirrored), will be automatically updated the next time the pipeline runs on its schedule.

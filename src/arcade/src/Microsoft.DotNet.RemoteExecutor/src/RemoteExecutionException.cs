@@ -1,15 +1,23 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-using Xunit.Sdk;
+#nullable enable
+
+using System;
 
 namespace Microsoft.DotNet.RemoteExecutor
 {
-    public sealed class RemoteExecutionException : XunitException
+    /// <summary>
+    /// Exception thrown for a remote execution failure.
+    /// </summary>
+    public sealed class RemoteExecutionException : Exception
     {
-        public RemoteExecutionException(string stackTrace)
-            : base("Remote process failed with an unhandled exception.", stackTrace)
+        private readonly string? _stackTrace;
+        public RemoteExecutionException(string message, string? stackTrace = null)
         {
+            _stackTrace = stackTrace;
         }
+
+        public override string? StackTrace => _stackTrace ?? base.StackTrace;
     }
 }
