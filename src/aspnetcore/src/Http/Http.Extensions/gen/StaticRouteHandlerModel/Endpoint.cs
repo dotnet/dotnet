@@ -28,9 +28,9 @@ internal class Endpoint
             return;
         }
 
-        RoutePattern = routeToken.ValueText;
+        RoutePattern = routeToken;
 
-        if (!operation.TryGetRouteHandlerMethod(semanticModel, out var method) || method == null)
+        if (!operation.TryGetRouteHandlerMethod(semanticModel, out var method))
         {
             Diagnostics.Add(Diagnostic.Create(DiagnosticDescriptors.UnableToResolveMethod, Operation.Syntax.GetLocation()));
             return;
@@ -43,12 +43,13 @@ internal class Endpoint
             return;
         }
 
-        EmitterContext.RequiresMetadataHelperTypes = !(Response.IsIResult || Response.HasNoResponse);
         EmitterContext.HasJsonResponse = Response is not { ResponseType: { IsSealed: true } or { IsValueType: true } };
         IsAwaitable = Response?.IsAwaitable == true;
 
+        EmitterContext.HasResponseMetadata = Response is { } response && !(response.IsIResult || response.HasNoResponse);
+
         // NOTE: We set this twice. It is possible that we don't have any parameters so we
-        //       want this to be true if the reponse type implements IEndpointMetadataProvider.
+        //       want this to be true if the response type implements IEndpointMetadataProvider.
         //       Later on we set this to be true if the parameters or the response type
         //       implement the interface.
         EmitterContext.HasEndpointMetadataProvider = Response!.IsEndpointMetadataProvider;
@@ -163,8 +164,9 @@ internal class Endpoint
 
     private static (string, int) GetLocation(IInvocationOperation operation)
     {
-        var filePath = operation.Syntax.SyntaxTree.FilePath;
-        var span = operation.Syntax.SyntaxTree.GetLineSpan(operation.Syntax.Span);
+        var operationSpan = operation.Syntax.Span;
+        var filePath = operation.Syntax.SyntaxTree.GetDisplayPath(operationSpan, operation.SemanticModel?.Compilation.Options.SourceReferenceResolver);
+        var span = operation.Syntax.SyntaxTree.GetLineSpan(operationSpan);
         var lineNumber = span.StartLinePosition.Line + 1;
         return (filePath, lineNumber);
     }
