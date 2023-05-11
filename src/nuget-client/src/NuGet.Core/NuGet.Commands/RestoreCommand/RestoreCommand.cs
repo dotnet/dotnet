@@ -278,11 +278,11 @@ namespace NuGet.Commands
                 }
 
                 string enableAudit = _request.Project.RestoreMetadata?.RestoreAuditProperties?.EnableAudit;
-                if (string.Equals(enableAudit, "enable", StringComparison.InvariantCultureIgnoreCase)
-                    || string.Equals(enableAudit, bool.TrueString, StringComparison.InvariantCultureIgnoreCase))
+                if (string.Equals(enableAudit, bool.TrueString, StringComparison.InvariantCultureIgnoreCase)
+                    || string.Equals(enableAudit, "enable", StringComparison.InvariantCultureIgnoreCase))
                 {
                     telemetry.StartIntervalMeasure();
-                    AuditUtility audit = new AuditUtility(
+                    var audit = new AuditUtility(
                         _request.Project.RestoreMetadata.RestoreAuditProperties,
                         _request.Project.FilePath,
                         graphs,

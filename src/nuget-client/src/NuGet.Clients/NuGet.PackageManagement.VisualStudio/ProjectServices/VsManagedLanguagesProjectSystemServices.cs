@@ -42,7 +42,8 @@ namespace NuGet.PackageManagement.VisualStudio
 
         #region INuGetProjectServices
 
-        public IProjectBuildProperties BuildProperties => _vsProjectAdapter.BuildProperties;
+        [Obsolete]
+        public IProjectBuildProperties BuildProperties => throw new NotImplementedException();
 
         public IProjectSystemCapabilities Capabilities => this;
 
@@ -105,7 +106,7 @@ namespace NuGet.PackageManagement.VisualStudio
                 return Array.Empty<LibraryDependency>();
             }
 
-            bool isCpvmEnabled = await IsCentralPackageManagementVersionsEnabledAsync();
+            bool isCpvmEnabled = IsCentralPackageManagementVersionsEnabled();
 
             var references = installedPackages
                 .Cast<string>()
@@ -334,9 +335,10 @@ namespace NuGet.PackageManagement.VisualStudio
             _vsProject4.PackageReferences.Remove(packageName);
         }
 
-        private async Task<bool> IsCentralPackageManagementVersionsEnabledAsync()
+        private bool IsCentralPackageManagementVersionsEnabled()
         {
-            return MSBuildStringUtility.IsTrue(await _vsProjectAdapter.BuildProperties.GetPropertyValueAsync(ProjectBuildProperties.ManagePackageVersionsCentrally));
+            ThreadHelper.ThrowIfNotOnUIThread();
+            return MSBuildStringUtility.IsTrue(_vsProjectAdapter.BuildProperties.GetPropertyValueWithDteFallback(ProjectBuildProperties.ManagePackageVersionsCentrally));
         }
 
         private class ProjectReference

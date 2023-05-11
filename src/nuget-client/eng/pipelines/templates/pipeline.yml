@@ -38,6 +38,42 @@ parameters:
   values:
   - Full
   - Pseudo
+- name: RunApexTests
+  displayName: Run Apex tests
+  type: boolean
+  default: true
+- name: RunBuildForPublishing
+  displayName: Build bits for publishing
+  type: boolean
+  default: true
+- name: RunCrossFrameworkTestsOnWindows
+  displayName: Run cross framweork tests on Windows
+  type: boolean
+  default: true
+- name: RunEndToEndTests
+  displayName: Run end-to-end tests
+  type: boolean
+  default: true
+- name: RunFunctionalTestsOnWindows
+  displayName: Run functional tests on Windows
+  type: boolean
+  default: true
+- name: RunSourceBuild
+  displayName: Run source build
+  type: boolean
+  default: true
+- name: RunTestsOnLinux
+  displayName: Run tests on Linux
+  type: boolean
+  default: true
+- name: RunTestsOnMac
+  displayName: Run tests on Mac
+  type: boolean
+  default: true
+- name: RunMonoTestsOnMac
+  displayName: Run Mono tests on Mac
+  type: boolean
+  default: false
 
 resources:
   pipelines:
@@ -54,6 +90,15 @@ variables:
   DOTNET_NOLOGO: 1
   Codeql.Enabled: ${{ parameters.isOfficialBuild }}
   Codeql.TSAEnabled: ${{ parameters.isOfficialBuild }}
+  RunApexTests: ${{ parameters.RunApexTests }}
+  RunBuildForPublishing: ${{ parameters.RunBuildForPublishing }}
+  RunCrossFrameworkTestsOnWindows: ${{ parameters.RunCrossFrameworkTestsOnWindows }}
+  RunEndToEndTests: ${{ parameters.RunEndToEndTests }}
+  RunFunctionalTestsOnWindows: ${{ parameters.RunFunctionalTestsOnWindows }}
+  RunSourceBuild: ${{ parameters.RunSourceBuild }}
+  RunTestsOnLinux: ${{ parameters.RunTestsOnLinux }}
+  RunTestsOnMac: ${{ parameters.RunTestsOnMac }}
+  RunMonoTestsOnMac: ${{ parameters.RunMonoTestsOnMac }}
 
 stages:
 - stage: Initialize
@@ -118,6 +163,7 @@ stages:
   dependsOn: Initialize
   jobs:
   - job: Build_and_UnitTest_RTM
+    condition: "and(succeeded(), ne(variables['RunBuildForPublishing'], 'false'))"
     timeoutInMinutes: 170
     variables:
       BuildNumber: $[stageDependencies.Initialize.Initialize_Build.outputs['updatebuildnumber.BuildNumber']]
@@ -134,6 +180,7 @@ stages:
         BuildRTM: true
         NuGetLocalizationType: Full
   - job: Validate_Publishing_Artifacts
+    condition: "and(succeeded(), ne(variables['RunBuildForPublishing'], 'false'))"
     displayName: 'Validate Publishing build artifacts'
     dependsOn: Build_and_UnitTest_RTM
     timeoutInMinutes: 15
@@ -144,11 +191,11 @@ stages:
       parameters:
         isOfficialBuild: ${{ parameters.isOfficialBuild }}
 
-
 - stage: Source_Build
   dependsOn: Initialize
   jobs:
   - job: Build_Source_Build
+    condition: "and(succeeded(), ne(variables['RunSourceBuild'], 'false'))"
     timeoutInMinutes: 120
     variables:
       BuildNumber: $[stageDependencies.Initialize.Initialize_Build.outputs['updatebuildnumber.BuildNumber']]
@@ -160,17 +207,19 @@ stages:
     steps:
     - template: Source_Build.yml
 
-- stage: CLI_Func_Tests
+- stage: Tests
+  displayName: "Run Unit and Functional Tests"
   dependsOn: Initialize
   jobs:
   - job: Functional_Tests_On_Windows
+    displayName: "Windows FunctionalTests"
     timeoutInMinutes: 120
     variables:
       BuildNumber: $[stageDependencies.Initialize.Initialize_Build.outputs['updatebuildnumber.BuildNumber']]
       FullVstsBuildNumber: $[stageDependencies.Initialize.Initialize_Build.outputs['updatebuildnumber.FullVstsBuildNumber']]
        # Set MSBuildEnableWorkloadResolver to work around https://github.com/dotnet/sdk/issues/17461
       MSBuildEnableWorkloadResolver: false
-    condition: "and(succeeded(),eq(variables['RunFunctionalTestsOnWindows'], 'true')) "
+    condition: "and(succeeded(), ne(variables['RunFunctionalTestsOnWindows'], 'false'))"
     pool:
       name: VSEngSS-MicroBuild2022-1ES
     strategy:
@@ -183,6 +232,7 @@ stages:
     - template: Functional_Tests_On_Windows.yml
 
   - job: Tests_On_Linux
+    displayName: "Linux"
     timeoutInMinutes: 45
     variables:
       FULLVSTSBUILDNUMBER: $[stageDependencies.Initialize.Initialize_Build.outputs['updatebuildnumber.FullVstsBuildNumber']]
@@ -190,35 +240,70 @@ stages:
       # Set MSBuildEnableWorkloadResolver to work around https://github.com/dotnet/sdk/issues/17461
       MSBuildEnableWorkloadResolver: false
       DOTNET_NUGET_SIGNATURE_VERIFICATION: true
-    condition: "and(succeeded(), eq(variables['RunTestsOnLinux'], 'true'))"
+    condition: "and(succeeded(), ne(variables['RunTestsOnLinux'], 'false'))"
     pool:
       vmImage: ubuntu-latest
+    strategy:
+      matrix:
+        UnitTests:
+          TestRunDisplayName: "Unit Tests"
+          TestRunCommandLineArguments: "--unit-tests"
+        FunctionalTests:
+          TestRunDisplayName: "Functional Tests"
+          TestRunCommandLineArguments: "--functional-tests"
     steps:
     - template: Tests_On_Linux.yml
 
+  - job: Tests_On_Mac
+    displayName: "Mac"
+    timeoutInMinutes: 45
+    variables:
+      FULLVSTSBUILDNUMBER: $[stageDependencies.Initialize.Initialize_Build.outputs['updatebuildnumber.FullVstsBuildNumber']]
+      MSBUILDDISABLENODEREUSE: 1
+      # Set MSBuildEnableWorkloadResolver to work around https://github.com/dotnet/sdk/issues/17461
+      MSBuildEnableWorkloadResolver: false
+      BUILD_NET8: 'false'
+    condition: "and(succeeded(), ne(variables['RunTestsOnMac'], 'false'))"
+    pool:
+      vmImage: macos-latest
+    strategy:
+      matrix:
+        UnitTests:
+          TestRunDisplayName: "Unit Tests"
+          TestRunCommandLineArguments: "--unit-tests"
+        FunctionalTests:
+          TestRunDisplayName: "Functional Tests"
+          TestRunCommandLineArguments: "--functional-tests"
+    steps:
+    - template: Tests_On_Mac.yml
+
   - job: CrossFramework_Tests_On_Windows
+    displayName: "Windows CrossFrameworkTests"
+    condition: "and(succeeded(), ne(variables['RunCrossFrameworkTestsOnWindows'], 'false'))"
     timeoutInMinutes: 30
     variables:
       BuildNumber: $[stageDependencies.Initialize.Initialize_Build.outputs['updatebuildnumber.BuildNumber']]
       FullVstsBuildNumber: $[stageDependencies.Initialize.Initialize_Build.outputs['updatebuildnumber.FullVstsBuildNumber']]
-    condition: "and(succeeded(),eq(variables['RunCrossFrameworkTestsOnWindows'], 'true')) "
     pool:
       vmImage: windows-latest
     steps:
     - template: CrossFramework_Tests_On_Windows.yml
 
 - stage: MacTests
+  displayName: "Mac Mono Tests"
   dependsOn:
   - Initialize
   - Build_Insertable
-  condition: "and(succeeded(), eq(variables['RunTestsOnMac'], 'true'))"
   jobs:
-  - job: Tests_On_Mac
+  - job: MonoTests_On_Mac
+    condition: "and(succeeded(), ne(variables['RunMonoTestsOnMac'], 'false'))"
     timeoutInMinutes: 90
     variables:
       FULLVSTSBUILDNUMBER: $[stageDependencies.Initialize.Initialize_Build.outputs['updatebuildnumber.FullVstsBuildNumber']]
       # Set MSBuildEnableWorkloadResolver to work around https://github.com/dotnet/sdk/issues/17461
       MSBuildEnableWorkloadResolver: false
+      TestRunDisplayName: "Mono Tests"
+      TestRunCommandLineArguments: "--mono-tests"
     pool:
       vmImage: macos-latest
     steps:
@@ -229,7 +314,7 @@ stages:
   parameters:
     stageName: VS_EndToEnd_Part1
     stageDisplayName: Part 1
-    condition: "and(succeeded(), eq(variables['RunEndToEndTests'], 'true'))"
+    condition: "and(succeeded(), ne(variables['RunEndToEndTests'], 'false'))"
     dependsOn:
     - Initialize
     - Build_Insertable
@@ -250,7 +335,7 @@ stages:
   parameters:
     stageName: VS_EndToEnd_Part2
     stageDisplayName: Part 2
-    condition: "and(succeeded(), eq(variables['RunEndToEndTests'], 'true'))"
+    condition: "and(succeeded(), ne(variables['RunEndToEndTests'], 'false'))"
     dependsOn:
     - Initialize
     - Build_Insertable
@@ -269,7 +354,7 @@ stages:
 # Dartlab's template defines this in its own stage
 - template: Apex_Tests_On_Windows.yml
   parameters:
-    condition: "and(succeeded(), eq(variables['RunApexTests'], 'true'))"
+    condition: "and(succeeded(), ne(variables['RunApexTests'], 'false'))"
     dependsOn:
       - Initialize
       - Build_Insertable

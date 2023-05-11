@@ -4,6 +4,7 @@
 #nullable disable
 
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.LanguageServer.Extensions;
@@ -11,6 +12,7 @@ using Microsoft.AspNetCore.Razor.LanguageServer.Test;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Workspaces.Extensions;
 using Microsoft.CodeAnalysis.Testing;
+using Microsoft.CodeAnalysis.Text;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Moq;
 using Xunit;
@@ -97,6 +99,65 @@ public class DefinitionEndpointDelegationTest : SingleServerDelegatingEndpointTe
         Assert.Equal(21, location.Range.Start.Line);
     }
 
+    [Fact]
+    public async Task Handle_SingleServer_ComponentAttribute_OtherRazorFile()
+    {
+        var input = """
+                <SurveyPrompt @bind-Ti$$tle="InputValue" @bind-Value:after="BindAfter" />
+
+                @code
+                {
+                    private string? InputValue { get; set; }
+
+                    private void BindAfter()
+                    {
+                    }
+                }
+                """;
+
+        // Need to put this in the right namespace, to match the tag helper defined in our test json
+        var surveyPrompt = """
+                @namespace BlazorServer_31.Shared
+
+                <div></div>
+
+                @code
+                {
+                    [Parameter]
+                    public string [|Title|] { get; set; }
+                }
+                """;
+
+        TestFileMarkupParser.GetSpan(surveyPrompt, out surveyPrompt, out var expectedSpan);
+        var additionalRazorDocuments = new[]
+        {
+            ("SurveyPrompt.razor", surveyPrompt)
+        };
+
+        // Arrange
+        TestFileMarkupParser.GetPosition(input, out var output, out var cursorPosition);
+
+        var codeDocument = CreateCodeDocument(output, filePath: "Test.razor");
+        var razorFilePath = "C:/path/to/file.razor";
+
+        // Act
+        var result = await GetDefinitionResultAsync(codeDocument, razorFilePath, cursorPosition, additionalRazorDocuments);
+
+        // Assert
+        Assert.NotNull(result.Value.Second);
+        var locations = result.Value.Second;
+        var location = Assert.Single(locations);
+
+        // Our tests don't currently support mapping multiple documents, so we just need to verify Roslyn sent back the right info.
+        // Other tests verify mapping behavior
+        Assert.EndsWith("SurveyPrompt.razor.ide.g.cs", location.Uri.ToString());
+
+        // We can still expect the character to be correct, even if the line won't match
+        var surveyPromptSourceText = SourceText.From(surveyPrompt);
+        var range = expectedSpan.AsRange(surveyPromptSourceText);
+        Assert.Equal(range.Start.Character, location.Range.Start.Character);
+    }
+
     private async Task VerifyCSharpGoToDefinitionAsync(string input)
     {
         // Arrange
@@ -118,9 +179,9 @@ public class DefinitionEndpointDelegationTest : SingleServerDelegatingEndpointTe
         Assert.Equal(expectedRange, location.Range);
     }
 
-    private async Task<DefinitionResult?> GetDefinitionResultAsync(RazorCodeDocument codeDocument, string razorFilePath, int cursorPosition)
+    private async Task<DefinitionResult?> GetDefinitionResultAsync(RazorCodeDocument codeDocument, string razorFilePath, int cursorPosition, IEnumerable<(string filePath, string contents)> additionalRazorDocuments = null)
     {
-        await CreateLanguageServerAsync(codeDocument, razorFilePath);
+        await CreateLanguageServerAsync(codeDocument, razorFilePath, additionalRazorDocuments);
 
         var projectSnapshotManager = Mock.Of<ProjectSnapshotManagerBase>(p => p.Projects == new[] { Mock.Of<IProjectSnapshot>(MockBehavior.Strict) }, MockBehavior.Strict);
         var projectSnapshotManagerAccessor = new TestProjectSnapshotManagerAccessor(projectSnapshotManager);

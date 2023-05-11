@@ -17,7 +17,7 @@ namespace NuGet.Frameworks
         {
         }
 
-        public int Compare(NuGetFramework x, NuGetFramework y)
+        public int Compare(NuGetFramework? x, NuGetFramework? y)
         {
             if (ReferenceEquals(x, y))
             {

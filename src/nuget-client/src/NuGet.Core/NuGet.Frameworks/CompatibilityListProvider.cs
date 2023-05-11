@@ -15,13 +15,15 @@ namespace NuGet.Frameworks
 
         public CompatibilityListProvider(IFrameworkNameProvider nameProvider, IFrameworkCompatibilityProvider compatibilityProvider)
         {
-            _nameProvider = nameProvider;
-            _compatibilityProvider = compatibilityProvider;
+            _nameProvider = nameProvider ?? throw new ArgumentNullException(nameof(nameProvider));
+            _compatibilityProvider = compatibilityProvider ?? throw new ArgumentNullException(nameof(compatibilityProvider));
             _reducer = new FrameworkReducer(_nameProvider, _compatibilityProvider);
         }
 
         public IEnumerable<NuGetFramework> GetFrameworksSupporting(NuGetFramework target)
         {
+            if (target == null) throw new ArgumentNullException(nameof(target));
+
             var remaining = _nameProvider
                 .GetCompatibleCandidates()
                 .Where(candidate => _compatibilityProvider.IsCompatible(candidate, target));
@@ -45,7 +47,7 @@ namespace NuGet.Frameworks
                 .Concat(lookup[true]);
         }
 
-        private static IFrameworkCompatibilityListProvider _default;
+        private static IFrameworkCompatibilityListProvider? _default;
 
         public static IFrameworkCompatibilityListProvider Default
         {

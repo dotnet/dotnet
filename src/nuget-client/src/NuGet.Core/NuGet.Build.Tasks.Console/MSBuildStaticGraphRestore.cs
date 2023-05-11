@@ -20,7 +20,6 @@ using Microsoft.Build.Execution;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Graph;
 using Microsoft.Build.Logging;
-using Microsoft.Build.Utilities;
 using NuGet.Commands;
 using NuGet.Common;
 using NuGet.Configuration;
@@ -799,7 +798,7 @@ namespace NuGet.Build.Tasks.Console
 
             (bool isCentralPackageManagementEnabled, bool isCentralPackageVersionOverrideDisabled, bool isCentralPackageTransitivePinningEnabled) = GetCentralPackageManagementSettings(project, projectStyleOrNull);
 
-            RestoreAuditProperties auditProperties = GetRestoreAuditProperties(project);
+            RestoreAuditProperties auditProperties = MSBuildRestoreUtility.GetRestoreAuditProperties(project);
 
             List<TargetFrameworkInformation> targetFrameworkInfos = GetTargetFrameworkInfos(projectsByTargetFramework, isCentralPackageManagementEnabled);
 
@@ -868,20 +867,6 @@ namespace NuGet.Build.Tasks.Console
             restoreMetadata.TargetFrameworks = GetProjectRestoreMetadataFrameworkInfos(targetFrameworkInfos, projectsByTargetFramework);
 
             return (restoreMetadata, targetFrameworkInfos);
-        }
-
-        private RestoreAuditProperties GetRestoreAuditProperties(IMSBuildProject project)
-        {
-            string enableAudit = project.GetProperty("NuGetAudit");
-            string auditLevel = project.GetProperty("AuditLevel");
-
-            return !string.IsNullOrEmpty(enableAudit) || !string.IsNullOrEmpty(auditLevel)
-                ? new RestoreAuditProperties()
-                {
-                    EnableAudit = enableAudit,
-                    AuditLevel = auditLevel
-                }
-                : null;
         }
 
         /// <summary>

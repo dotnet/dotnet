@@ -4,27 +4,27 @@
     <body>
       <trans-unit id="BuildCompleted">
         <source>Build completed.</source>
-        <target state="translated">完成的生成。</target>
+        <target state="new">Build completed.</target>
         <note />
       </trans-unit>
       <trans-unit id="BuildStarted">
         <source>Build started, please wait...</source>
-        <target state="translated">已开始生成，请等待...</target>
+        <target state="new">Build started, please wait...</target>
         <note />
       </trans-unit>
       <trans-unit id="TestRunningSummary">
         <source>Test run for {0} ({1})</source>
-        <target state="translated">{0} ({1})的测试运行</target>
+        <target state="new">Test run for {0} ({1})</target>
         <note />
       </trans-unit>
       <trans-unit id="UpdateTestSdkForCollectingCodeCoverage">
         <source>Warning: Update the Microsoft.NET.Test.Sdk package reference to version 15.8.0 or later to collect code coverage.</source>
-        <target state="translated">警告: 将 Microsoft.NET.Test.Sdk 包引用更新为版本 15.8.0 或更高版本，以便收集代码覆盖率。</target>
+        <target state="new">Warning: Update the Microsoft.NET.Test.Sdk package reference to version 15.8.0 or later to collect code coverage.</target>
         <note />
       </trans-unit>
       <trans-unit id="NoIsTestProjectProperty">
         <source>Skipping running test for project {0}. To run tests with dotnet test add "&lt;IsTestProject&gt;true&lt;/IsTestProject&gt;" property to project file.</source>
-        <target state="translated">正在跳过项目 {0} 的运行测试。若要使用 dotnet test 运行 dotnet 测试，请向项目文件添加 "&lt;IsTestProject&gt;true&lt;/IsTestProject&gt;" 属性。</target>
+        <target state="new">Skipping running test for project {0}. To run tests with dotnet test add "&lt;IsTestProject&gt;true&lt;/IsTestProject&gt;" property to project file.</target>
         <note />
       </trans-unit>
     </body>

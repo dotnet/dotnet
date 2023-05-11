@@ -3,11 +3,11 @@
 namespace Test
 {
     #line hidden
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Threading.Tasks;
-    using Microsoft.AspNetCore.Components;
+    using global::System;
+    using global::System.Collections.Generic;
+    using global::System.Linq;
+    using global::System.Threading.Tasks;
+    using global::Microsoft.AspNetCore.Components;
     public partial class TestComponent : global::Microsoft.AspNetCore.Components.ComponentBase
     {
         #pragma warning disable 1998
@@ -24,8 +24,8 @@ namespace Test
 #nullable disable
             ));
             __builder.AddAttribute(2, "ChildContent", (global::Microsoft.AspNetCore.Components.RenderFragment)((__builder2) => {
-                global::__Blazor.Test.TestComponent.TypeInference.CreateColumn_0(__builder2, 3, default(DateTime));
-                global::__Blazor.Test.TestComponent.TypeInference.CreateColumn_1(__builder2, 4, default(DateTime));
+                global::__Blazor.Test.TestComponent.TypeInference.CreateColumn_0(__builder2, 3, default(DateTime)!);
+                global::__Blazor.Test.TestComponent.TypeInference.CreateColumn_1(__builder2, 4, default(DateTime)!);
             }
             ));
             __builder.CloseComponent();

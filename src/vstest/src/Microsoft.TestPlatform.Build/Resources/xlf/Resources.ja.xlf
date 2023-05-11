@@ -4,27 +4,27 @@
     <body>
       <trans-unit id="BuildCompleted">
         <source>Build completed.</source>
-        <target state="translated">ビルドが完了しました。</target>
+        <target state="new">Build completed.</target>
         <note />
       </trans-unit>
       <trans-unit id="BuildStarted">
         <source>Build started, please wait...</source>
-        <target state="translated">ビルドが開始されました。しばらくお待ちください...</target>
+        <target state="new">Build started, please wait...</target>
         <note />
       </trans-unit>
       <trans-unit id="TestRunningSummary">
         <source>Test run for {0} ({1})</source>
-        <target state="translated">{0} ({1}) のテスト実行</target>
+        <target state="new">Test run for {0} ({1})</target>
         <note />
       </trans-unit>
       <trans-unit id="UpdateTestSdkForCollectingCodeCoverage">
         <source>Warning: Update the Microsoft.NET.Test.Sdk package reference to version 15.8.0 or later to collect code coverage.</source>
-        <target state="translated">警告: コード カバレッジを収集するには、Microsoft.NET.Test.Sdk パッケージ参照をバージョン 15.8.0 以降に更新してください。</target>
+        <target state="new">Warning: Update the Microsoft.NET.Test.Sdk package reference to version 15.8.0 or later to collect code coverage.</target>
         <note />
       </trans-unit>
       <trans-unit id="NoIsTestProjectProperty">
         <source>Skipping running test for project {0}. To run tests with dotnet test add "&lt;IsTestProject&gt;true&lt;/IsTestProject&gt;" property to project file.</source>
-        <target state="translated">プロジェクト {0} へのテストの実行をスキップしています。dotnet テストでテストを実行するには、"&lt;IsTestProject&gt;true&lt;/IsTestProject&gt;" プロパティをプロジェクト ファイルに追加します。</target>
+        <target state="new">Skipping running test for project {0}. To run tests with dotnet test add "&lt;IsTestProject&gt;true&lt;/IsTestProject&gt;" property to project file.</target>
         <note />
       </trans-unit>
     </body>

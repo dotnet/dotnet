@@ -145,14 +145,12 @@ namespace NuGet.VisualStudio.SolutionExplorer.Models
             return true;
         }
 
-        public bool TryGetPackage(string packageId, string version, [NotNullWhen(returnValue: true)] out AssetsFileTargetLibrary? assetsFileLibrary)
+        public bool TryGetPackage(string packageId, [NotNullWhen(returnValue: true)] out AssetsFileTargetLibrary? assetsFileLibrary)
         {
             Requires.NotNull(packageId, nameof(packageId));
-            Requires.NotNull(version, nameof(version));
 
             if (LibraryByName.TryGetValue(packageId, out assetsFileLibrary) &&
-                assetsFileLibrary.Type == AssetsFileLibraryType.Package &&
-                assetsFileLibrary.Version == version)
+                assetsFileLibrary.Type is AssetsFileLibraryType.Package or AssetsFileLibraryType.Unknown)
             {
                 return true;
             }
@@ -166,7 +164,7 @@ namespace NuGet.VisualStudio.SolutionExplorer.Models
             Requires.NotNull(projectId, nameof(projectId));
 
             if (LibraryByName.TryGetValue(projectId, out assetsFileLibrary) &&
-                assetsFileLibrary.Type == AssetsFileLibraryType.Project)
+                assetsFileLibrary.Type is AssetsFileLibraryType.Project or AssetsFileLibraryType.Unknown)
             {
                 return true;
             }

@@ -39,6 +39,33 @@ namespace NuGet.VisualStudio.SolutionExplorer.Models
             return true;
         }
 
+        /// <summary>
+        /// Creates a dummy placeholder for a library in cases where we only know the name of the library.
+        /// </summary>
+        /// <remarks>
+        /// This is useful, for example, when a referenced package does not exist. It will not have an entry in "libraries",
+        /// yet we want to model its presence in our snapshot so that we can display diagnostic nodes to it. For such libraries,
+        /// the version is unknown, which we represent with a <see langword="null"/> value.
+        /// </remarks>
+        public static AssetsFileTargetLibrary CreatePlaceholder(string name)
+        {
+            return new AssetsFileTargetLibrary(name);
+        }
+
+        private AssetsFileTargetLibrary(string name)
+        {
+            Name = name;
+            Version = null;
+            Type = AssetsFileLibraryType.Unknown;
+            Dependencies = ImmutableArray<string>.Empty;
+            FrameworkAssemblies = ImmutableArray<string>.Empty;
+            CompileTimeAssemblies = ImmutableArray<string>.Empty;
+            ContentFiles = ImmutableArray<AssetsFileTargetLibraryContentFile>.Empty;
+            BuildFiles = ImmutableArray<string>.Empty;
+            BuildMultiTargetingFiles = ImmutableArray<string>.Empty;
+            DocumentationFiles = ImmutableArray<string>.Empty;
+        }
+
         private AssetsFileTargetLibrary(LockFileLibrary? library, LockFileTargetLibrary targetLibrary, AssetsFileLibraryType type)
         {
             Name = targetLibrary.Name;
@@ -103,7 +130,15 @@ namespace NuGet.VisualStudio.SolutionExplorer.Models
         }
 
         public string Name { get; }
-        public string Version { get; }
+
+        /// <summary>
+        /// Gets the version of the library, or <see langword="null"/> if it is unknown.
+        /// </summary>
+        /// <remarks>
+        /// The version can be unknown for packages that fail to resolve at all, for example when the package
+        /// name is not found. For resolved packages however, this value will always be present.
+        /// </remarks>
+        public string? Version { get; }
         public AssetsFileLibraryType Type { get; }
         public ImmutableArray<string> Dependencies { get; }
         public ImmutableArray<string> FrameworkAssemblies { get; }
@@ -113,6 +148,6 @@ namespace NuGet.VisualStudio.SolutionExplorer.Models
         public ImmutableArray<string> BuildMultiTargetingFiles { get; }
         public ImmutableArray<string> DocumentationFiles { get; }
 
-        public override string ToString() => $"{Type} {Name} ({Version}) {Dependencies.Length} {(Dependencies.Length == 1 ? "dependency" : "dependencies")}";
+        public override string ToString() => $"{Type} {Name} ({Version ?? "Unknown"}) {Dependencies.Length} {(Dependencies.Length == 1 ? "dependency" : "dependencies")}";
     }
 }

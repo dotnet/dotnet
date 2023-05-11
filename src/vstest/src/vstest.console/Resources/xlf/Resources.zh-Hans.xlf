@@ -4,94 +4,94 @@
     <body>
       <trans-unit id="FileNotFound">
         <source>'{0}' not found.</source>
-        <target state="translated">未找到“{0}”。</target>
+        <target state="new">'{0}' not found.</target>
         <note />
       </trans-unit>
       <trans-unit id="AvailableDiscoverersHeaderMessage">
         <source>The following Test Discovery Add-Ins are available:</source>
-        <target state="translated">以下测试发现外接程序可用:</target>
+        <target state="new">The following Test Discovery Add-Ins are available:</target>
         <note />
       </trans-unit>
       <trans-unit id="AvailableExecutorsHeaderMessage">
         <source>The following Test Execution Add-Ins are available:</source>
-        <target state="translated">以下测试执行外接程序可用:</target>
+        <target state="new">The following Test Execution Add-Ins are available:</target>
         <note />
       </trans-unit>
       <trans-unit id="AvailableExtensionsMetadataFormat">
         <source>        {0}: {1}</source>
-        <target state="translated">        {0}: {1}</target>
+        <target state="new">        {0}: {1}</target>
         <note />
       </trans-unit>
       <trans-unit id="AvailableLoggersHeaderMessage">
         <source>The following Test Logger Add-Ins are available:</source>
-        <target state="translated">以下测试记录器加载项可用:</target>
+        <target state="new">The following Test Logger Add-Ins are available:</target>
         <note />
       </trans-unit>
       <trans-unit id="CommandLineError">
         <source>Error: {0}</source>
-        <target state="translated">错误: {0}</target>
+        <target state="new">Error: {0}</target>
         <note />
       </trans-unit>
       <trans-unit id="CommaSeparatedFormat">
         <source>, {0}</source>
-        <target state="translated">、{0}</target>
+        <target state="new">, {0}</target>
         <note>Format used to comma separate a list of values.</note>
       </trans-unit>
       <trans-unit id="DuplicateArgumentError">
         <source>The parameter "{0}" should be provided only once.</source>
-        <target state="translated">应只提供一次参数“{0}”。</target>
+        <target state="new">The parameter "{0}" should be provided only once.</target>
         <note />
       </trans-unit>
       <trans-unit id="ExceptionFromExtension">
         <source>Exception occurred when instantiating extension '{0}': {1}</source>
-        <target state="translated">实例化扩展“{0}”时出现异常: {1}</target>
+        <target state="new">Exception occurred when instantiating extension '{0}': {1}</target>
         <note />
       </trans-unit>
       <trans-unit id="ListTestsHeaderMessage">
         <source>The following Tests are available:</source>
-        <target state="translated">以下测试可用:</target>
+        <target state="new">The following Tests are available:</target>
         <note />
       </trans-unit>
       <trans-unit id="NoArgumentProcessorFound">
         <source>Unrecognized parameter "{0}".</source>
-        <target state="translated">无法识别的参数“{0}”。</target>
+        <target state="new">Unrecognized parameter "{0}".</target>
         <note />
       </trans-unit>
       <trans-unit id="TestSourceFileNotFound">
         <source>The test source file "{0}" provided was not found.</source>
-        <target state="translated">找不到提供的测试源文件“{0}”。</target>
+        <target state="new">The test source file "{0}" provided was not found.</target>
         <note />
       </trans-unit>
       <trans-unit id="LoggerUriInvalid">
         <source>The Test Logger URI '{0}' is not valid.  The Test Logger will be ignored.</source>
-        <target state="translated">测试记录器 URI“{0}”无效。将忽略该测试记录器。</target>
+        <target state="new">The Test Logger URI '{0}' is not valid.  The Test Logger will be ignored.</target>
         <note />
       </trans-unit>
       <trans-unit id="CommandLineInformational">
         <source>Information: {0}</source>
-        <target state="translated">信息: {0}</target>
+        <target state="new">Information: {0}</target>
         <note />
       </trans-unit>
       <trans-unit id="CommandLineWarning">
         <source>Warning: {0}</source>
-        <target state="translated">警告: {0}</target>
+        <target state="new">Warning: {0}</target>
         <note />
       </trans-unit>
       <trans-unit id="HelpArgumentHelp">
         <source>-?|--Help|/?|/Help
       Display this usage message.</source>
-        <target state="translated">-?|--Help|/?|/Help
-      显示此用法信息。</target>
+        <target state="new">-?|--Help|/?|/Help
+      Display this usage message.</target>
         <note />
       </trans-unit>
       <trans-unit id="CopyrightCommandLineTitle">
         <source>Copyright (c) Microsoft Corporation.  All rights reserved.</source>
-        <target state="translated">版权所有 (C) Microsoft Corporation。保留所有权利。</target>
+        <target state="new">Copyright (c) Microsoft Corporation.  All rights reserved.</target>
         <note />
       </trans-unit>
       <trans-unit id="MicrosoftCommandLineTitle">
         <source>Microsoft (R) Test Execution Command Line Tool Version {0}</source>
-        <target state="translated">Microsoft (R) 测试执行命令行工具版本 {0}</target>
+        <target state="new">Microsoft (R) Test Execution Command Line Tool Version {0}</target>
         <note />
       </trans-unit>
       <trans-unit id="EnableLoggersArgumentHelp">
@@ -107,43 +107,43 @@
       Change the diagnostic level prefix for console logger as shown below
       Example: /logger:console;prefix=&lt;Defaults to "false"&gt;
       More info on Console Logger here : https://aka.ms/console-logger</source>
-        <target state="translated">--logger|/logger:&lt;Logger Uri/FriendlyName&gt;
-      为测试结果指定一个记录器。例如，若要将结果记录到 
-       Visual Studio 测试结果文件(TRX)中，请使用/logger:trx[;LogFileName=&lt;Defaults to unique file name&gt;]
-      使用给定的  LogFileName 在 TestResults 目录中创建文件。
+        <target state="new">--logger|/logger:&lt;Logger Uri/FriendlyName&gt;
+      Specify a logger for test results. For example, to log results into a 
+      Visual Studio Test Results File (TRX) use /logger:trx[;LogFileName=&lt;Defaults to unique file name&gt;]
+      Creates file in TestResults directory with given LogFileName.
 
-     更改控制台记录器的日志消息中的详细程度，如下所示
-      示例: /logger:console;verbosity&lt;Defaults to "normal"&gt;
-      允许的详细程度的值: quiet、minimal、normal 和 detailed。
+      Change the verbosity level in log messages for console logger as shown below
+      Example: /logger:console;verbosity=&lt;Defaults to "normal"&gt;
+      Allowed values for verbosity: quiet, minimal, normal and detailed.
 
-      更改控制台记录器的诊断级别前缀，如下所示
-      示例: /logger:console;prefix=&lt;Defaults to "false"&gt;
-      此处为控制台记录器的详细信息: https://aka.ms/console-logger</target>
+      Change the diagnostic level prefix for console logger as shown below
+      Example: /logger:console;prefix=&lt;Defaults to "false"&gt;
+      More info on Console Logger here : https://aka.ms/console-logger</target>
         <note />
       </trans-unit>
       <trans-unit id="HelpDescriptionText">
         <source>Description: Runs tests from the specified files.</source>
-        <target state="translated">说明: 从指定的文件运行测试。</target>
+        <target state="new">Description: Runs tests from the specified files.</target>
         <note />
       </trans-unit>
       <trans-unit id="HelpOptionsText">
         <source>Options:</source>
-        <target state="translated">选项:</target>
+        <target state="new">Options:</target>
         <note>Section Header for subsequent command help listing</note>
       </trans-unit>
       <trans-unit id="HelpUsageText">
         <source>Usage: vstest.console.exe [Arguments] [Options] [[--] &lt;RunSettings arguments&gt;...]]</source>
-        <target state="translated">用法: vstest.console.exe [Arguments] [Options] [[--] &lt;RunSettings arguments&gt;...]]</target>
+        <target state="new">Usage: vstest.console.exe [Arguments] [Options] [[--] &lt;RunSettings arguments&gt;...]]</target>
         <note />
       </trans-unit>
       <trans-unit id="MissingTestSourceFile">
         <source>No test source files were specified.</source>
-        <target state="translated">未指定测试源文件。</target>
+        <target state="new">No test source files were specified.</target>
         <note />
       </trans-unit>
       <trans-unit id="NoArgumentsProvided">
         <source>No arguments were specified.</source>
-        <target state="translated">未指定参数。</target>
+        <target state="new">No arguments were specified.</target>
         <note />
       </trans-unit>
       <trans-unit id="RunTestsArgumentHelp">
@@ -153,59 +153,59 @@
       Examples: mytestproject.dll
                 mytestproject.dll myothertestproject.exe
                 testproject*.dll my*project.dll</source>
-        <target state="translated">[TestFileNames]
-      从指定的文件或通配符模式运行测试。通过空格将多个测试文件或模式分隔开来。
-      将控制台记录器详细程度设置为“详细”以查看匹配的测试文件。
-      示例: mytestproject.dll
+        <target state="new">[TestFileNames]
+      Run tests from the specified files or wild card pattern. Separate multiple test file names or pattern
+      by spaces. Set console logger verbosity to detailed to view matched test files.
+      Examples: mytestproject.dll
                 mytestproject.dll myothertestproject.exe
                 testproject*.dll my*project.dll</target>
         <note />
       </trans-unit>
       <trans-unit id="AvailableSettingsProvidersHeaderMessage">
         <source>The following Settings Providers Add-Ins are available:</source>
-        <target state="translated">以下设置提供程序外接程序可用:</target>
+        <target state="new">The following Settings Providers Add-Ins are available:</target>
         <note />
       </trans-unit>
       <trans-unit id="RunSettingsArgumentHelp">
         <source>--Settings|/Settings:&lt;Settings File&gt;
       Settings to use when running tests.</source>
-        <target state="translated">--Settings|/Settings:&lt;Settings File&gt;
-   运行测试时要使用的设置。</target>
+        <target state="new">--Settings|/Settings:&lt;Settings File&gt;
+      Settings to use when running tests.</target>
         <note />
       </trans-unit>
       <trans-unit id="RunSettingsRequired">
         <source>The /Settings parameter requires a settings file to be provided.</source>
-        <target state="translated">/Settings 参数要求提供设置文件。</target>
+        <target state="new">The /Settings parameter requires a settings file to be provided.</target>
         <note />
       </trans-unit>
       <trans-unit id="RunSettingsFileNotFound">
         <source>The Settings file '{0}' could not be found.</source>
-        <target state="translated">找不到设置文件“{0}”。</target>
+        <target state="new">The Settings file '{0}' could not be found.</target>
         <note />
       </trans-unit>
       <trans-unit id="TestRunFailed">
         <source>Test Run Failed.</source>
-        <target state="translated">测试运行失败。</target>
+        <target state="new">Test Run Failed.</target>
         <note />
       </trans-unit>
       <trans-unit id="TestRunSuccessful">
         <source>Test Run Successful.</source>
-        <target state="translated">测试运行成功。</target>
+        <target state="new">Test Run Successful.</target>
         <note />
       </trans-unit>
       <trans-unit id="InvalidInIsolationCommand">
         <source>Argument {0} is not expected in the 'InIsolation' command. Specify the command without the argument (Example: vstest.console.exe myTests.dll /InIsolation) and try again.</source>
-        <target state="translated">参数 {0} 不应出现在 "InIsolation" 命令中。指定不带该参数的命令(示例: vstest.console.exe myTests.dll /InIsolation)，然后重试。</target>
+        <target state="new">Argument {0} is not expected in the 'InIsolation' command. Specify the command without the argument (Example: vstest.console.exe myTests.dll /InIsolation) and try again.</target>
         <note />
       </trans-unit>
       <trans-unit id="UseVsixExtensionsValueRequired">
         <source>The /UseVsixExtensions parameter requires a value. If 'true', the installed VSIX extensions (if any) will be used in the test run. If false, they will be ignored.   Example:  /UseVsixExtensions:true</source>
-        <target state="translated">/UseVsixExtensions 参数需要一个值。如果值为 "true"，则安装的 VSIX 扩展(如果有)将用在测试运行中。如果值为 "false"，则将其忽略。示例: /UseVsixExtensions:true</target>
+        <target state="new">The /UseVsixExtensions parameter requires a value. If 'true', the installed VSIX extensions (if any) will be used in the test run. If false, they will be ignored.   Example:  /UseVsixExtensions:true</target>
         <note />
       </trans-unit>
       <trans-unit id="InvalidUseVsixExtensionsCommand">
         <source>Argument {0} is not expected in the 'UseVsixExtensions' command. Specify the command indicating whether the vsix extensions should be used or skipped (Example: vstest.console.exe myTests.dll /UseVsixExtensions:true) and try again.</source>
-        <target state="translated">参数 {0} 不应出现在 "UseVsixExtensions" 命令中.指定指示是否应使用或跳过 vsix 扩展的命令(示例:vstest.console.exe myTests.dll /UseVsixExtensions:true),然后重试.</target>
+        <target state="new">Argument {0} is not expected in the 'UseVsixExtensions' command. Specify the command indicating whether the vsix extensions should be used or skipped (Example: vstest.console.exe myTests.dll /UseVsixExtensions:true) and try again.</target>
         <note />
       </trans-unit>
       <trans-unit id="InIsolationHelp">
@@ -213,10 +213,10 @@
       Runs the tests in an isolated process. This makes vstest.console.exe 
       process less likely to be stopped on an error in the tests, but tests 
       may run slower.</source>
-        <target state="translated">--InIsolation|/InIsolation
-      在独立进程中运行测试。虽然这可使 vstest.console.exe 
-      进程在测试出现错误时停止的可能性较小，但是测试的
-      运行速度会较慢。</target>
+        <target state="new">--InIsolation|/InIsolation
+      Runs the tests in an isolated process. This makes vstest.console.exe 
+      process less likely to be stopped on an error in the tests, but tests 
+      may run slower.</target>
         <note />
       </trans-unit>
       <trans-unit id="UseVsixExtensionsHelp">
@@ -224,20 +224,20 @@
       This makes vstest.console.exe process use or skip the VSIX extensions 
       installed(if any) in the test run. 
       Example  /UseVsixExtensions:true</source>
-        <target state="translated">/ UseVsixExtensions
-      这可使 vstest.console.exe 进程在测试运行中使用或者跳过
-      安装的 VSIX 扩展(如果有)。
-      示例  /UseVsixExtensions:true</target>
+        <target state="new">/UseVsixExtensions
+      This makes vstest.console.exe process use or skip the VSIX extensions 
+      installed(if any) in the test run. 
+      Example  /UseVsixExtensions:true</target>
         <note />
       </trans-unit>
       <trans-unit id="BatchSizeRequired">
         <source>The /BatchSize argument requires the size of the batch.  Example:  /BatchSize:10</source>
-        <target state="translated">/BatchSize 参数要求批的大小。示例: /BatchSize:10</target>
+        <target state="new">The /BatchSize argument requires the size of the batch.  Example:  /BatchSize:10</target>
         <note />
       </trans-unit>
       <trans-unit id="InvalidBatchSize">
         <source>Invalid batch size {0}. The batch size should be greater than zero. Example:  /BatchSize:10</source>
-        <target state="translated">批大小 {0} 无效。批大小应大于零。示例: /BatchSize:10</target>
+        <target state="new">Invalid batch size {0}. The batch size should be greater than zero. Example:  /BatchSize:10</target>
         <note />
       </trans-unit>
       <trans-unit id="Examples">
@@ -245,67 +245,67 @@
     &gt;vstest.console.exe tests.dll 
   To run tests with additional settings such as  data collectors:
     &gt;vstest.console.exe  tests.dll /Settings:Local.RunSettings</source>
-        <target state="translated"> 运行测试:
-  &gt;vstest.console.exe tests.dll 
- 使用其他设置(如数据收集器)运行测试:
-  &gt;vstest.console.exe tests.dll /Settings:Local.RunSettings</target>
+        <target state="new">  To run tests:
+    &gt;vstest.console.exe tests.dll 
+  To run tests with additional settings such as  data collectors:
+    &gt;vstest.console.exe  tests.dll /Settings:Local.RunSettings</target>
         <note />
       </trans-unit>
       <trans-unit id="ListDiscoverersHelp">
         <source>/ListDiscoverers
       Lists installed test discoverers.</source>
-        <target state="translated">/ ListDiscoverers
-      列出已安装的测试发现器。</target>
+        <target state="new">/ListDiscoverers
+      Lists installed test discoverers.</target>
         <note />
       </trans-unit>
       <trans-unit id="ListExecutorsHelp">
         <source>/ListExecutors
       Lists installed test executors.</source>
-        <target state="translated">/ ListExecutors
-      列出已安装的测试执行器。</target>
+        <target state="new">/ListExecutors
+      Lists installed test executors.</target>
         <note />
       </trans-unit>
       <trans-unit id="ListLoggersHelp">
         <source>/ListLoggers
       Lists installed test loggers.</source>
-        <target state="translated">/ ListLoggers
-      列出已安装的测试记录器。</target>
+        <target state="new">/ListLoggers
+      Lists installed test loggers.</target>
         <note />
       </trans-unit>
       <trans-unit id="ListSettingsProvidersHelp">
         <source>/ListSettingsProviders
       Lists installed test settings providers.</source>
-        <target state="translated">/ ListSettingsProviders
-      列出已安装的测试设置提供程序。</target>
+        <target state="new">/ListSettingsProviders
+      Lists installed test settings providers.</target>
         <note />
       </trans-unit>
       <trans-unit id="ListTestsHelp">
         <source>-lt|--ListTests|/lt|/ListTests:&lt;File Name&gt;
       Lists all discovered tests from the given test container.</source>
-        <target state="translated">-lt|--ListTests|/lt|/ListTests:&lt;File Name&gt;
-      从给定测试容器中列出所有已发现的测试。</target>
+        <target state="new">-lt|--ListTests|/lt|/ListTests:&lt;File Name&gt;
+      Lists all discovered tests from the given test container.</target>
         <note />
       </trans-unit>
       <trans-unit id="TimeElapsed">
         <source>Time elapsed :</source>
-        <target state="translated">已用时间:</target>
+        <target state="new">Time elapsed :</target>
         <note />
       </trans-unit>
       <trans-unit id="SpecificTestsRequired">
         <source>The /Tests argument requires one or more specific test names or their substrings.
        Examples: /Tests:TestsMethod1, /Tests:TestMethod1,method2 </source>
-        <target state="translated">/Tests 参数要求一个或多个特定测试名称或其子字符串。
-       示例: /Tests:TestsMethod1、/Tests:TestMethod1、method2</target>
+        <target state="new">The /Tests argument requires one or more specific test names or their substrings.
+       Examples: /Tests:TestsMethod1, /Tests:TestMethod1,method2 </target>
         <note />
       </trans-unit>
       <trans-unit id="NoTestsAvailableAfterFiltering">
         <source>A total of {0} tests were discovered but no test matches the specified selection criteria({1}). Use right value(s) and try again.</source>
-        <target state="translated">共发现 {0} 个测试，但没有与指定选择条件 ({1}) 匹配的测试。使用正确的值，然后重试。</target>
+        <target state="new">A total of {0} tests were discovered but no test matches the specified selection criteria({1}). Use right value(s) and try again.</target>
         <note />
       </trans-unit>
       <trans-unit id="SearchStringDelimiter">
         <source>,</source>
-        <target state="translated">，</target>
+        <target state="new">,</target>
         <note />
       </trans-unit>
       <trans-unit id="RunSpecificTestsHelp">
@@ -314,90 +314,90 @@
       values, separate them by commas.
       Examples: /Tests:TestMethod1
                 /Tests:TestMethod1,testMethod2</source>
-        <target state="translated">--Tests|/Tests:&lt;Test Names&gt;
-      运行其名称与所提供值相匹配的测试。若要提供多个
-   值，请用逗号将这些值分隔开。
-   示例: /Tests:TestMethod1
-        /Tests:TestMethod1,testMethod2</target>
+        <target state="new">--Tests|/Tests:&lt;Test Names&gt;
+      Run tests with names that match the provided values. To provide multiple
+      values, separate them by commas.
+      Examples: /Tests:TestMethod1
+                /Tests:TestMethod1,testMethod2</target>
         <note>Please verify if the console output looks good after modifiaction. </note>
       </trans-unit>
       <trans-unit id="SwitchToNoIsolation">
         <source>Using Isolation mode to run the tests as diagnostic data adapters were enabled in the runsettings. Use the /inIsolation parameter to suppress this warning.</source>
-        <target state="translated">使用隔离模式运行测试，因为已在 runsettings 中启用了诊断数据适配器。使用 /inIsolation 参数取消此警告。</target>
+        <target state="new">Using Isolation mode to run the tests as diagnostic data adapters were enabled in the runsettings. Use the /inIsolation parameter to suppress this warning.</target>
         <note />
       </trans-unit>
       <trans-unit id="SwitchToIsolationInAppContainerMode">
         <source>Using Isolation mode to run unit tests for Windows Store apps. Use the /InIsolation parameter to suppress this warning.</source>
-        <target state="translated">使用隔离模式为 Windows 应用商店应用运行单元测试。使用 /InIsolation 参数取消此警告。</target>
+        <target state="new">Using Isolation mode to run unit tests for Windows Store apps. Use the /InIsolation parameter to suppress this warning.</target>
         <note />
       </trans-unit>
       <trans-unit id="DisablingDataCollectionInAppContainerTestExecution">
         <source>Diagnostic data adapters are not supported when running unit tests for Windows Store apps. Remove diagnostic data adapters settings from settings.</source>
-        <target state="translated">为 Windows 应用商店应用运行单元测试时不支持诊断数据适配器。从设置中删除诊断数据适配器设置。</target>
+        <target state="new">Diagnostic data adapters are not supported when running unit tests for Windows Store apps. Remove diagnostic data adapters settings from settings.</target>
         <note />
       </trans-unit>
       <trans-unit id="LoggerFriendlyNameFormat">
         <source>        FriendlyName: {0}</source>
-        <target state="translated">        FriendlyName: {0}</target>
+        <target state="new">        FriendlyName: {0}</target>
         <note />
       </trans-unit>
       <trans-unit id="ExtensionUriFormat">
         <source>        Uri: {0}</source>
-        <target state="translated">        URI: {0}</target>
+        <target state="new">        Uri: {0}</target>
         <note />
       </trans-unit>
       <trans-unit id="SettingFormat">
         <source>        SettingName: {0}</source>
-        <target state="translated">        SettingName: {0}</target>
+        <target state="new">        SettingName: {0}</target>
         <note />
       </trans-unit>
       <trans-unit id="SupportedFileTypesIndicator">
         <source>        Supported File Types:</source>
-        <target state="translated">        支持的文件类型:</target>
+        <target state="new">        Supported File Types:</target>
         <note />
       </trans-unit>
       <trans-unit id="SupportedFileWithoutSeparator">
         <source> {0}</source>
-        <target state="translated">{0}</target>
+        <target state="new"> {0}</target>
         <note />
       </trans-unit>
       <trans-unit id="SupportedFileWithSeparator">
         <source> {0},</source>
-        <target state="translated">{0}，</target>
+        <target state="new"> {0},</target>
         <note />
       </trans-unit>
       <trans-unit id="UriOfDefaultExecutor">
         <source>        Default Executor Uri: {0}</source>
-        <target state="translated">        默认执行器 URI: {0}</target>
+        <target state="new">        Default Executor Uri: {0}</target>
         <note />
       </trans-unit>
       <trans-unit id="LoggerUriFormat">
         <source>        Uri: {0}</source>
-        <target state="translated">        URI: {0}</target>
+        <target state="new">        Uri: {0}</target>
         <note />
       </trans-unit>
       <trans-unit id="InvalidPlatformType">
         <source>Invalid platform type: {0}. Valid platform types are {1}.</source>
-        <target state="translated">无效的平台类型: {0}。有效的平台类型为 {1}。</target>
+        <target state="new">Invalid platform type: {0}. Valid platform types are {1}.</target>
         <note>0 is the platform type e.g. x86, and 1 is a list of the built in platforms, e.g. x86, x64</note>
       </trans-unit>
       <trans-unit id="PlatformTypeRequired">
         <source>The /Platform argument requires the target platform type for the test run to be provided.   Example:  /Platform:x86</source>
-        <target state="translated">/Platform 参数要求提供用于测试运行的目标平台类型。示例: /Platform:x86</target>
+        <target state="new">The /Platform argument requires the target platform type for the test run to be provided.   Example:  /Platform:x86</target>
         <note />
       </trans-unit>
       <trans-unit id="PlatformArgumentHelp">
         <source>--Platform|/Platform:&lt;Platform type&gt;
       Target platform architecture to be used for test execution. 
       Valid values are x86, x64 and ARM.</source>
-        <target state="translated">--Platform|/Platform:&lt;Platform type&gt;
-      用于执行测试的目标平台体系结构。
-   有效值为 x86、x64 和 ARM。</target>
+        <target state="new">--Platform|/Platform:&lt;Platform type&gt;
+      Target platform architecture to be used for test execution. 
+      Valid values are x86, x64 and ARM.</target>
         <note />
       </trans-unit>
       <trans-unit id="SwitchToIsolationInMultiTargetingMode">
         <source>Using Isolation mode to run tests as required by effective Platform:{0} and .Net Framework:{1} settings for test run. Use the /inIsolation parameter to suppress this warning.</source>
-        <target state="translated">按照针对测试运行有效的 Platform:{0} 和 .Net Framework:{1} 设置要求，使用隔离模式运行测试。使用 /inIsolation 参数取消此警告。</target>
+        <target state="new">Using Isolation mode to run tests as required by effective Platform:{0} and .Net Framework:{1} settings for test run. Use the /inIsolation parameter to suppress this warning.</target>
         <note />
       </trans-unit>
       <trans-unit id="FrameworkArgumentHelp">
@@ -405,25 +405,25 @@
       Target .Net Framework version to be used for test execution. 
       Valid values are ".NETFramework,Version=v4.5.1", ".NETCoreApp,Version=v1.0" etc.
       Other supported values are Framework40, Framework45, FrameworkCore10 and FrameworkUap10.</source>
-        <target state="translated">--Framework|/Framework:&lt;Framework Version&gt;
-      用于执行测试的目标 .Net Framework 版本。
-      有效值为 ".NETFramework,Version=v4.5.1".NETCoreApp,Version=v1.0" 等。
-      其他支持的值为 Framework40、Framework45、FrameworkCore10 和 FrameworkUap10。</target>
+        <target state="new">--Framework|/Framework:&lt;Framework Version&gt;
+      Target .Net Framework version to be used for test execution. 
+      Valid values are ".NETFramework,Version=v4.5.1", ".NETCoreApp,Version=v1.0" etc.
+      Other supported values are Framework40, Framework45, FrameworkCore10 and FrameworkUap10.</target>
         <note />
       </trans-unit>
       <trans-unit id="FrameworkVersionRequired">
         <source>The /Framework argument requires the target .Net Framework version for the test run.   Example:  /Framework:".NETFramework,Version=v4.5.1"</source>
-        <target state="translated">/Framework 参数要求用于测试运行的目标 .Net Framework 版本。示例: /Framework:".NETFramework,Version=v4.5.1"</target>
+        <target state="new">The /Framework argument requires the target .Net Framework version for the test run.   Example:  /Framework:".NETFramework,Version=v4.5.1"</target>
         <note />
       </trans-unit>
       <trans-unit id="InvalidFrameworkVersion">
         <source>Invalid .Net Framework version:{0}. Please give the fullname of the TargetFramework(Example: .NETCoreApp,Version=v2.0). Other supported .Net Framework versions are Framework40, Framework45, FrameworkCore10 and FrameworkUap10.</source>
-        <target state="translated">无效的 .Net Framework 版本: {0}。请提供 TargetFramework 的全名(示例: .NETCoreApp,Version=v2.0)。其他支持的 .Net Framework 版本为 Framework40、Framework45、FrameworkCore10 和 FrameworkUap10。</target>
+        <target state="new">Invalid .Net Framework version:{0}. Please give the fullname of the TargetFramework(Example: .NETCoreApp,Version=v2.0). Other supported .Net Framework versions are Framework40, Framework45, FrameworkCore10 and FrameworkUap10.</target>
         <note />
       </trans-unit>
       <trans-unit id="AppContainerTestPrerequisiteFail">
         <source>Could not start test run for unit tests for Windows Store app: {0}.</source>
-        <target state="translated">无法启动针对 Windows 应用商店应用的单元测试的测试运行: {0}。</target>
+        <target state="new">Could not start test run for unit tests for Windows Store app: {0}.</target>
         <note />
       </trans-unit>
       <trans-unit id="TestCaseFilterArgumentHelp">
@@ -436,81 +436,81 @@
       Examples: /TestCaseFilter:"Priority=1"
                 /TestCaseFilter:"(FullyQualifiedName~Nightly
                                   |Name=MyTestMethod)"</source>
-        <target state="translated">--TestCaseFilter|/TestCaseFilter:&lt;Expression&gt;
-   运行与给定表达式匹配的测试。
-   &lt;Expression&gt; 的格式为 &lt;property&gt;Operator&lt;value&gt;[|&amp;&lt;Expression&gt;]
-     其中，Operator 是 =、!= 或 ~ (Operator ~ 具有 "contains"
-     语义且适用于诸如 DisplayName 之类的字符串属性)。
-     括号()可用于对子表达式进行分组。
-   示例: /TestCaseFilter:"Priority=1"
-         /TestCaseFilter:"(FullyQualifiedName~Nightly
-                 |Name=MyTestMethod)"</target>
+        <target state="new">--TestCaseFilter|/TestCaseFilter:&lt;Expression&gt;
+      Run tests that match the given expression.
+      &lt;Expression&gt; is of the format &lt;property&gt;Operator&lt;value&gt;[|&amp;&lt;Expression&gt;]
+         where Operator is one of =, != or ~  (Operator ~ has 'contains'
+         semantics and is applicable for string properties like DisplayName).
+         Parenthesis () can be used to group sub-expressions.
+      Examples: /TestCaseFilter:"Priority=1"
+                /TestCaseFilter:"(FullyQualifiedName~Nightly
+                                  |Name=MyTestMethod)"</target>
         <note />
       </trans-unit>
       <trans-unit id="TestCaseFilterValueRequired">
         <source>The /TestCaseFilter argument requires the filter value.
         Filter value can be &lt;property&gt;=&lt;value&gt; type.
         Examples: "Priority=1", "TestCategory=Nightly"</source>
-        <target state="translated">/TestCaseFilter 参数需要筛选器值。
-    筛选器值可以是“&lt;属性&gt;=&lt;值&gt;”类型。
-    示例: "Priority=1", "TestCategory=Nightly"</target>
+        <target state="new">The /TestCaseFilter argument requires the filter value.
+        Filter value can be &lt;property&gt;=&lt;value&gt; type.
+        Examples: "Priority=1", "TestCategory=Nightly"</target>
         <note />
       </trans-unit>
       <trans-unit id="InvalidTestCaseFilterValueForSpecificTests">
         <source>The /TestCaseFilter argument cannot be specified with /Tests. Filtering of test cases is not applicable when tests are specified.</source>
-        <target state="translated">不能使用 /Tests 指定 /TestCaseFilter 参数。指定测试时无法筛选测试用例。</target>
+        <target state="new">The /TestCaseFilter argument cannot be specified with /Tests. Filtering of test cases is not applicable when tests are specified.</target>
         <note />
       </trans-unit>
       <trans-unit id="NonDefaultFrameworkAndOrArchDetected">
         <source>{0} is built for {1}/{2}. The test assemblies specified in a run should have a common target .Net framework and platform.</source>
-        <target state="translated">{0} 为 {1}/{2} 而生成。运行中指定的测试程序集应具有共有的目标.Net Framework 和平台。</target>
+        <target state="new">{0} is built for {1}/{2}. The test assemblies specified in a run should have a common target .Net framework and platform.</target>
         <note />
       </trans-unit>
       <trans-unit id="RunSingleAppContainerSource">
         <source>Only one app package (.appx file) can be specified for running tests.</source>
-        <target state="translated">只能为运行测试指定一个应用包(.appx 文件)。</target>
+        <target state="new">Only one app package (.appx file) can be specified for running tests.</target>
         <note />
       </trans-unit>
       <trans-unit id="StartingDiscovery">
         <source>Starting test discovery, please wait...</source>
-        <target state="translated">正在启动测试发现，请稍候...</target>
+        <target state="new">Starting test discovery, please wait...</target>
         <note />
       </trans-unit>
       <trans-unit id="StartingExecution">
         <source>Starting test execution, please wait...</source>
-        <target state="translated">正在启动测试执行，请稍候...</target>
+        <target state="new">Starting test execution, please wait...</target>
         <note />
       </trans-unit>
       <trans-unit id="DisablingDCOnExceptionWhileParsingDCInfo">
         <source>Reading diagnostic data adapter settings threw an running '{0}'. All diagnostic data adapters will be skipped in this run.</source>
-        <target state="translated">读取诊断数据适配器设置引发了“{0}”的运行。将在此运行中跳过所有诊断数据适配器。</target>
+        <target state="new">Reading diagnostic data adapter settings threw an running '{0}'. All diagnostic data adapters will be skipped in this run.</target>
         <note />
       </trans-unit>
       <trans-unit id="EnableCodeCoverageArgumentProcessorHelp">
         <source>/EnableCodeCoverage
       Enables data collector 'CodeCoverage' for the test run.</source>
-        <target state="translated">/EnableCodeCoverage
-      启动数据收集器“CodeCoverage”以运行测试。</target>
+        <target state="new">/EnableCodeCoverage
+      Enables data collector 'CodeCoverage' for the test run.</target>
         <note />
       </trans-unit>
       <trans-unit id="InvalidEnableCodeCoverageCommand">
         <source>Argument {0} is not expected in the 'EnableCodeCoverage' command. Specify the command without the argument (Example: vstest.console.exe myTests.dll /EnableCodeCoverage) and try again.</source>
-        <target state="translated">参数 {0} 不应出现在 "EnableCodeCoverage" 命令中。指定不带参数的命令(示例: vstest.console.exe myTests.dll /EnableCodeCoverage)，然后重试。</target>
+        <target state="new">Argument {0} is not expected in the 'EnableCodeCoverage' command. Specify the command without the argument (Example: vstest.console.exe myTests.dll /EnableCodeCoverage) and try again.</target>
         <note />
       </trans-unit>
       <trans-unit id="NoTestEntryPoint">
         <source>App package '{0}' does not has test executor entry point. For running unit tests for Windows Store apps, create app package using Windows Store app Unit Test Library project.</source>
-        <target state="translated">应用包“{0}”没有测试执行器入口点。为对 Windows 应用商店应用运行单元测试，使用 Windows 应用商店应用单元测试库项目创建应用包。</target>
+        <target state="new">App package '{0}' does not has test executor entry point. For running unit tests for Windows Store apps, create app package using Windows Store app Unit Test Library project.</target>
         <note />
       </trans-unit>
       <trans-unit id="DisablingCodeCoverageInAppContainerTestExecution">
         <source>Code coverage is not available for Windows Store apps. Code coverage analysis skipped for this test run.</source>
-        <target state="translated">代码覆盖率不适用于 Windows 应用商店应用。已对此测试运行跳过代码覆盖率分析。</target>
+        <target state="new">Code coverage is not available for Windows Store apps. Code coverage analysis skipped for this test run.</target>
         <note />
       </trans-unit>
       <trans-unit id="SomeTestsUnavailableAfterFiltering">
         <source>A total of {0} tests were discovered but some tests do not match the specified selection criteria({1}). Use right value(s) and try again.</source>
-        <target state="translated">共发现 {0} 个测试，但一些测试与指定选择条件 ({1}) 不匹配。使用正确的值，然后重试。</target>
+        <target state="new">A total of {0} tests were discovered but some tests do not match the specified selection criteria({1}). Use right value(s) and try again.</target>
         <note />
       </trans-unit>
       <trans-unit id="TestAdapterPathHelp">
@@ -518,65 +518,65 @@
       This makes vstest.console.exe process use custom test adapters
       from a given path (if any) in the test run. 
       Example  /TestAdapterPath:&lt;pathToCustomAdapters&gt;</source>
-        <target state="translated">--TestAdapterPath|/TestAdapterPath
-      这将使 vstest.console.exe 进程在测试运行中使用
-   给定路径(如果有)中的自定义测试适配器。
-   示例 /TestAdapterPath:&lt;pathToCustomAdapters&gt;</target>
+        <target state="new">--TestAdapterPath|/TestAdapterPath
+      This makes vstest.console.exe process use custom test adapters
+      from a given path (if any) in the test run. 
+      Example  /TestAdapterPath:&lt;pathToCustomAdapters&gt;</target>
         <note />
       </trans-unit>
       <trans-unit id="TestAdapterPathValueRequired">
         <source>The /TestAdapterPath parameter requires a value, which is path of a location containing custom test adapters. Example:  /TestAdapterPath:c:\MyCustomAdapters</source>
-        <target state="translated">/TestAdapterPath 参数需要一个值，该值是自定义测试适配器所在位置的路径。示例: /TestAdapterPath:c:\MyCustomAdapters</target>
+        <target state="new">The /TestAdapterPath parameter requires a value, which is path of a location containing custom test adapters. Example:  /TestAdapterPath:c:\MyCustomAdapters</target>
         <note />
       </trans-unit>
       <trans-unit id="InvalidTestAdapterPathCommand">
         <source>The path '{0}' specified in the 'TestAdapterPath' is invalid. Error: {1}</source>
-        <target state="translated">"TestAdapterPath" 中指定的路径“{0}”无效。错误: {1}</target>
+        <target state="new">The path '{0}' specified in the 'TestAdapterPath' is invalid. Error: {1}</target>
         <note />
       </trans-unit>
       <trans-unit id="TestAdapterPathDoesNotExist">
         <source>The custom test adapter search path provided was not found, provide a valid path and try again.</source>
-        <target state="translated">找不到提供的自定义测试适配器搜索路径，请提供一个有效路径，然后重试。</target>
+        <target state="new">The custom test adapter search path provided was not found, provide a valid path and try again.</target>
         <note />
       </trans-unit>
       <trans-unit id="NoAdaptersFoundInTestAdapterPath">
         <source>The path '{0}' specified in the 'TestAdapterPath' does not contain any test adapters, provide a valid path and try again.</source>
-        <target state="translated">"TestAdapterPath" 中指定的路径“{0}”不包含任何测试适配器，请提供有效路径，然后重试。</target>
+        <target state="new">The path '{0}' specified in the 'TestAdapterPath' does not contain any test adapters, provide a valid path and try again.</target>
         <note />
       </trans-unit>
       <trans-unit id="PhoneAppContainerTestPrerequisiteFail">
         <source>Could not start test run for the tests for Windows Phone app: {0}.</source>
-        <target state="translated">无法启动针对 Windows Phone 应用的测试的测试运行: {0}。</target>
+        <target state="new">Could not start test run for the tests for Windows Phone app: {0}.</target>
         <note />
       </trans-unit>
       <trans-unit id="SwitchToIsolationInPhoneAppContainerMode">
         <source>Using Isolation mode to run unit tests for Windows Phone apps. Use the /InIsolation parameter to suppress this warning.</source>
-        <target state="translated">使用隔离模式为 Windows Phone 应用运行单元测试。使用 /InIsolation 参数取消此警告。</target>
+        <target state="new">Using Isolation mode to run unit tests for Windows Phone apps. Use the /InIsolation parameter to suppress this warning.</target>
         <note />
       </trans-unit>
       <trans-unit id="DisablingCodeCoverageInPhoneAppContainerTestExecution">
         <source>Code coverage is not available for Windows Phone apps. Code coverage analysis skipped for this test run.</source>
-        <target state="translated">代码覆盖率不适用于 Windows Phone 应用。已为此测试运行跳过代码覆盖率分析。</target>
+        <target state="new">Code coverage is not available for Windows Phone apps. Code coverage analysis skipped for this test run.</target>
         <note />
       </trans-unit>
       <trans-unit id="DisablingDataCollectionInPhoneAppContainerTestExecution">
         <source>Diagnostic data adapters are not supported when running unit tests for Windows Phone apps. Remove diagnostic data adapters settings from settings.</source>
-        <target state="translated">为 Windows Phone 应用运行单元测试时不支持诊断数据适配器。从设置中删除诊断数据适配器设置。</target>
+        <target state="new">Diagnostic data adapters are not supported when running unit tests for Windows Phone apps. Remove diagnostic data adapters settings from settings.</target>
         <note />
       </trans-unit>
       <trans-unit id="PhoneNoTestEntryPoint">
         <source>App package '{0}' does not has test executor entry point. For running unit tests for Windows Phone apps, create app package using Windows Phone Unit Test App project.</source>
-        <target state="translated">应用包“{0}”没有测试执行器入口点。为对 Windows Phone 应用运行单元测试，使用 Windows Phone 应用单元测试应用项目创建应用包。</target>
+        <target state="new">App package '{0}' does not has test executor entry point. For running unit tests for Windows Phone apps, create app package using Windows Phone Unit Test App project.</target>
         <note />
       </trans-unit>
       <trans-unit id="TestSettingsFrameworkMismatch">
         <source>Using framework {0} to run the tests. Specify /Framework:{1} to suppress this warning.</source>
-        <target state="translated">使用框架 {0} 运行测试。指定 /Framework:{1} 取消此警告。</target>
+        <target state="new">Using framework {0} to run the tests. Specify /Framework:{1} to suppress this warning.</target>
         <note />
       </trans-unit>
       <trans-unit id="AppxBundleSourceWarning">
         <source>No test found in the specified test containers. Additionally, Microsoft Windows Store Unit test adapter does not support .appxbundle files. Create an appx (set Generate App bundle option to Never) when creating App Package and try again.</source>
-        <target state="translated">在指定测试容器中找不到任何测试。此外，Microsoft Windows 应用商店单元测试适配器不支持 .appxbundle 文件。在创建应用包时创建一个 appx (将“生成应用程序包”选项设置为“从不”)并重试。</target>
+        <target state="new">No test found in the specified test containers. Additionally, Microsoft Windows Store Unit test adapter does not support .appxbundle files. Create an appx (set Generate App bundle option to Never) when creating App Package and try again.</target>
         <note />
       </trans-unit>
       <trans-unit id="ParallelArgumentProcessorHelp">
@@ -584,185 +584,185 @@
       Specifies that the tests be executed in parallel. By default up
       to all available cores on the machine may be used.
       The number of cores to use may be configured using a settings file.</source>
-        <target state="translated">--Parallel|/Parallel
-      指定并行执行测试。默认情况下，最多
-      可能会使用计算机上所有可用的内核。
-      可使用设置文件配置要使用的内核数。</target>
+        <target state="new">--Parallel|/Parallel
+      Specifies that the tests be executed in parallel. By default up
+      to all available cores on the machine may be used.
+      The number of cores to use may be configured using a settings file.</target>
         <note />
       </trans-unit>
       <trans-unit id="InvalidParallelCommand">
         <source>Argument {0} is not expected in the 'Parallel' command. Specify the command without the argument (Example: vstest.console.exe myTests.dll /Parallel) and try again.</source>
-        <target state="translated">参数 {0} 不应出现在 "Parallel" 命令中。指定不带参数的命令(示例: vstest.console.exe myTests.dll /Parallel)，然后重试。</target>
+        <target state="new">Argument {0} is not expected in the 'Parallel' command. Specify the command without the argument (Example: vstest.console.exe myTests.dll /Parallel) and try again.</target>
         <note />
       </trans-unit>
       <trans-unit id="CannotBeNullOrEmpty">
         <source>Cannot be null or empty</source>
-        <target state="translated">不能为 NULL 或为空</target>
+        <target state="new">Cannot be null or empty</target>
         <note />
       </trans-unit>
       <trans-unit id="PortArgumentHelp">
         <source>--Port|/Port:&lt;Port&gt;
       The Port for socket connection and receiving the event messages.</source>
-        <target state="translated">--Port|/Port:&lt;Port&gt;
-      套接字连接和接收事件消息的端口。</target>
+        <target state="new">--Port|/Port:&lt;Port&gt;
+      The Port for socket connection and receiving the event messages.</target>
         <note />
       </trans-unit>
       <trans-unit id="InvalidPortArgument">
         <source>The --Port|/Port argument requires the port number which is an integer. Specify the port for socket connection and receiving the event messages.</source>
-        <target state="translated">--Port|/Port 参数需要为整数的端口号。指定用于套接字连接以及接收事件消息的端口。</target>
+        <target state="new">The --Port|/Port argument requires the port number which is an integer. Specify the port for socket connection and receiving the event messages.</target>
         <note />
       </trans-unit>
       <trans-unit id="AssemblyPathInvalid">
         <source>Unable to find the assembly under test. Please make sure that the project is built.</source>
-        <target state="translated">测试下找不到程序集。请确保已生成该项目。</target>
+        <target state="new">Unable to find the assembly under test. Please make sure that the project is built.</target>
         <note />
       </trans-unit>
       <trans-unit id="ProjectPathNotFound">
         <source>The Path {0} does not exist.</source>
-        <target state="translated">路径 {0} 不存在。</target>
+        <target state="new">The Path {0} does not exist.</target>
         <note />
       </trans-unit>
       <trans-unit id="BuildBasePathArgumentHelp">
         <source>--BuildBasePath|/BuildBasePath:&lt;BuildBasePath&gt;
       The directory containing the temporary outputs.</source>
-        <target state="translated">--BuildBasePath|/BuildBasePath:&lt;BuildBasePath&gt;
-      包含临时输出的目录。</target>
+        <target state="new">--BuildBasePath|/BuildBasePath:&lt;BuildBasePath&gt;
+      The directory containing the temporary outputs.</target>
         <note />
       </trans-unit>
       <trans-unit id="ConfigurationArgumentHelp">
         <source>-c|--Configuration|/c|/Configuration:&lt;Configuration&gt;
       The configuration the project is built for i.e. Debug/Release</source>
-        <target state="translated">-c|--Configuration|/c|/Configuration:&lt;Configuration&gt;
-      项目为调试/发布等生成的配置</target>
+        <target state="new">-c|--Configuration|/c|/Configuration:&lt;Configuration&gt;
+      The configuration the project is built for i.e. Debug/Release</target>
         <note />
       </trans-unit>
       <trans-unit id="InvalidConfiguration">
         <source>The given configuration is invalid.</source>
-        <target state="translated">给定的配置无效。</target>
+        <target state="new">The given configuration is invalid.</target>
         <note />
       </trans-unit>
       <trans-unit id="OutputArgumentHelp">
         <source>-o|--Output|/o|/Output:&lt;Output&gt;
       The directory containing the binaries to run.</source>
-        <target state="translated">-o|--Output|/o|/Output:&lt;Output&gt;
-      包含要运行的二进制文件的目录。</target>
+        <target state="new">-o|--Output|/o|/Output:&lt;Output&gt;
+      The directory containing the binaries to run.</target>
         <note />
       </trans-unit>
       <trans-unit id="BuildBasePathNotFound">
         <source>The BuildBasePath was not found, provide a valid path and try again.</source>
-        <target state="translated">找不到 BuildBasePath，请提供有效的路径，然后重试。</target>
+        <target state="new">The BuildBasePath was not found, provide a valid path and try again.</target>
         <note />
       </trans-unit>
       <trans-unit id="OutputPathNotFound">
         <source>The Output path was not found, provide a valid path and try again.</source>
-        <target state="translated">找不到 Output 路径，请提供有效的路径，然后重试。</target>
+        <target state="new">The Output path was not found, provide a valid path and try again.</target>
         <note />
       </trans-unit>
       <trans-unit id="AddnlInfoMessagesBanner">
         <source>Additional Information Messages:</source>
-        <target state="translated">其他信息性消息:</target>
+        <target state="new">Additional Information Messages:</target>
         <note />
       </trans-unit>
       <trans-unit id="Days">
         <source>Days</source>
-        <target state="translated">天</target>
+        <target state="new">Days</target>
         <note />
       </trans-unit>
       <trans-unit id="ErrorMessageBanner">
         <source>Error Message:</source>
-        <target state="translated">错误消息:</target>
+        <target state="new">Error Message:</target>
         <note />
       </trans-unit>
       <trans-unit id="ExecutionTimeFormatString">
         <source> Total time: {0:0.0000} {1}</source>
-        <target state="translated">总时间: {0:0.0000} {1}</target>
+        <target state="new"> Total time: {0:0.0000} {1}</target>
         <note />
       </trans-unit>
       <trans-unit id="Hours">
         <source>Hours</source>
-        <target state="translated">小时</target>
+        <target state="new">Hours</target>
         <note />
       </trans-unit>
       <trans-unit id="LoggerNotFound">
         <source>Could not find a test logger with URI or FriendlyName '{0}'.</source>
-        <target state="translated">找不到 URI 或 FriendlyName 为“{0}”的测试记录器。</target>
+        <target state="new">Could not find a test logger with URI or FriendlyName '{0}'.</target>
         <note />
       </trans-unit>
       <trans-unit id="Minutes">
         <source>Minutes</source>
-        <target state="translated">分钟</target>
+        <target state="new">Minutes</target>
         <note />
       </trans-unit>
       <trans-unit id="Seconds">
         <source>Seconds</source>
-        <target state="translated">秒</target>
+        <target state="new">Seconds</target>
         <note />
       </trans-unit>
       <trans-unit id="StacktraceBanner">
         <source>Stack Trace:</source>
-        <target state="translated">堆栈跟踪:</target>
+        <target state="new">Stack Trace:</target>
         <note />
       </trans-unit>
       <trans-unit id="StdErrMessagesBanner">
         <source>Standard Error Messages:</source>
-        <target state="translated">标准错误消息:</target>
+        <target state="new">Standard Error Messages:</target>
         <note />
       </trans-unit>
       <trans-unit id="StdOutMessagesBanner">
         <source>Standard Output Messages:</source>
-        <target state="translated">标准输出消息:</target>
+        <target state="new">Standard Output Messages:</target>
         <note />
       </trans-unit>
       <trans-unit id="AttachmentsBanner">
         <source>Attachments:</source>
-        <target state="translated">附件:</target>
+        <target state="new">Attachments:</target>
         <note />
       </trans-unit>
       <trans-unit id="AttachmentOutputFormat">
         <source>  {0}</source>
-        <target state="translated">  {0}</target>
+        <target state="new">  {0}</target>
         <note />
       </trans-unit>
       <trans-unit id="NoTestsAvailableInSources">
         <source>No test is available in {0}. Make sure that installed test discoverers &amp; executors, platform &amp; framework version settings are appropriate and try again.</source>
-        <target state="translated">{0} 中没有可用测试。请确保安装了适当的测试发现器和执行器且平台和框架版本设置合适，然后重试。</target>
+        <target state="new">No test is available in {0}. Make sure that installed test discoverers &amp; executors, platform &amp; framework version settings are appropriate and try again.</target>
         <note />
       </trans-unit>
       <trans-unit id="FailedTestIndicator">
         <source>Failed</source>
-        <target state="translated">失败</target>
+        <target state="new">Failed</target>
         <note>Message which is written to the console when a test fails.</note>
       </trans-unit>
       <trans-unit id="PassedTestIndicator">
         <source>Passed</source>
-        <target state="translated">已通过</target>
+        <target state="new">Passed</target>
         <note>Message which is written to the console when a test passes.</note>
       </trans-unit>
       <trans-unit id="SkippedTestIndicator">
         <source>Skipped</source>
-        <target state="translated">已跳过</target>
+        <target state="new">Skipped</target>
         <note />
       </trans-unit>
       <trans-unit id="DiscoveryFailed">
         <source>Discovery failed for given sources. Exception : {0}</source>
-        <target state="translated">针对给定源的发现失败。异常: {0}</target>
+        <target state="new">Discovery failed for given sources. Exception : {0}</target>
         <note />
       </trans-unit>
       <trans-unit id="ParentProcessIdArgumentHelp">
         <source>--ParentProcessId|/ParentProcessId:&lt;ParentProcessId&gt;
       Process Id of the Parent Process responsible for launching current process.</source>
-        <target state="translated">--ParentProcessId|/ParentProcessId:&lt;ParentProcessId&gt;
-      父进程的进程 ID 负责启动当前进程。</target>
+        <target state="new">--ParentProcessId|/ParentProcessId:&lt;ParentProcessId&gt;
+      Process Id of the Parent Process responsible for launching current process.</target>
         <note />
       </trans-unit>
       <trans-unit id="InvalidParentProcessIdArgument">
         <source>The --ParentProcessId|/ParentProcessId argument requires the process id which is an integer. Specify the process id of the parent process that launched this process.</source>
-        <target state="translated">--ParentProcessId|/ParentProcessId 参数要求整数形式的进程 ID。指定启动此进程的父进程的进程 ID。</target>
+        <target state="new">The --ParentProcessId|/ParentProcessId argument requires the process id which is an integer. Specify the process id of the parent process that launched this process.</target>
         <note />
       </trans-unit>
       <trans-unit id="HelpArgumentsText">
         <source>Arguments:</source>
-        <target state="translated">参数:</target>
+        <target state="new">Arguments:</target>
         <note />
       </trans-unit>
       <trans-unit id="EnableDiagUsage">
@@ -773,28 +773,28 @@
       Change the trace level for logs as shown below
       Example: /Diag:&lt;Path to log file&gt;;tracelevel=&lt;Defaults to "verbose"&gt;
       Allowed values for tracelevel: off, error, warning, info and verbose.</source>
-        <target state="translated">--Diag|/Diag:&lt;Path to log file&gt;
-      启用测试平台的日志。
-      日志将写入所提供的文件。
+        <target state="new">--Diag|/Diag:&lt;Path to log file&gt;
+      Enable logs for test platform.
+      Logs are written to the provided file.
 
-      更改日志的跟踪级别，如下所示
-      示例: /Diag:&lt;Path to log file&gt;;tracelevel=&lt;Defaults to "verbose"&gt;
-      允许的 tracelevel 的值: off、error、 warning、info 和 verbose。</target>
+      Change the trace level for logs as shown below
+      Example: /Diag:&lt;Path to log file&gt;;tracelevel=&lt;Defaults to "verbose"&gt;
+      Allowed values for tracelevel: off, error, warning, info and verbose.</target>
         <note />
       </trans-unit>
       <trans-unit id="LoggerFileIsReadOnly">
         <source>The file {0} provided is read only</source>
-        <target state="translated">提供的文件 {0} 是只读文件</target>
+        <target state="new">The file {0} provided is read only</target>
         <note />
       </trans-unit>
       <trans-unit id="DesignModeClientTimeoutError">
         <source>Timeout to connect or process request for DesignModeClient on port: {0}</source>
-        <target state="translated">连接或处理端口 {0} 上 DesignModeClient 的请求超时</target>
+        <target state="new">Timeout to connect or process request for DesignModeClient on port: {0}</target>
         <note />
       </trans-unit>
       <trans-unit id="NotRunTestIndicator">
         <source>Not Run</source>
-        <target state="translated">未运行</target>
+        <target state="new">Not Run</target>
         <note />
       </trans-unit>
       <trans-unit id="CLIRunSettingsArgumentHelp">
@@ -802,61 +802,61 @@
       Arguments to pass runsettings configurations through commandline. Arguments may be specified as name-value pair of the form [name]=[value] after "-- ". Note the space after --. 
       Use a space to separate multiple [name]=[value].
       More info on RunSettings arguments support: https://aka.ms/vstest-runsettings-arguments</source>
-        <target state="translated">RunSettings 参数:
-      通过命令行传递 runsettings 配置的参数。参数可以指定为名称-值对，其形式为“-- ”后跟 [名称]=[值]。请注意 -- 后的空格。
-      使用空格分隔多个 [名称]=[值].
-      有关 RunSettings 参数支持的详细信息，请访问: https://aka.ms/vstest-runsettings-arguments</target>
+        <target state="new">RunSettings arguments:
+      Arguments to pass runsettings configurations through commandline. Arguments may be specified as name-value pair of the form [name]=[value] after "-- ". Note the space after --. 
+      Use a space to separate multiple [name]=[value].
+      More info on RunSettings arguments support: https://aka.ms/vstest-runsettings-arguments</target>
         <note />
       </trans-unit>
       <trans-unit id="MalformedRunSettingsKey">
         <source>One or more runsettings provided contain invalid token</source>
-        <target state="translated">所提供的一个或多个 runsettings 包含无效令牌</target>
+        <target state="new">One or more runsettings provided contain invalid token</target>
         <note />
       </trans-unit>
       <trans-unit id="ResultsDirectoryArgumentHelp">
         <source>--ResultsDirectory|/ResultsDirectory
       Test results directory will be created in specified path if not exists.
       Example  /ResultsDirectory:&lt;pathToResultsDirectory&gt;</source>
-        <target state="translated">-ResultsDirectory | / ResultsDirectory
-      如果不存在测试结果目录，则将在指定路径中创建。
-      示例 /ResultsDirectory:&lt;pathToResultsDirectory&gt;</target>
+        <target state="new">--ResultsDirectory|/ResultsDirectory
+      Test results directory will be created in specified path if not exists.
+      Example  /ResultsDirectory:&lt;pathToResultsDirectory&gt;</target>
         <note />
       </trans-unit>
       <trans-unit id="ResultsDirectoryValueRequired">
         <source>The /ResultsDirectory parameter requires a value, where the test results should be saved. Example:  /ResultsDirectory:c:\MyTestResultsDirectory</source>
-        <target state="translated">/ResultsDirectory 参数需要一个值，应在其中保存测试结果。例如: /ResultsDirectory:c:\MyTestResultsDirectory</target>
+        <target state="new">The /ResultsDirectory parameter requires a value, where the test results should be saved. Example:  /ResultsDirectory:c:\MyTestResultsDirectory</target>
         <note />
       </trans-unit>
       <trans-unit id="InvalidResultsDirectoryPathCommand">
         <source>The path '{0}' specified in the 'ResultsDirectory' is invalid. Error: {1}</source>
-        <target state="translated">“ResultsDirectory”中指定的路径“{0}”无效。错误: {1}</target>
+        <target state="new">The path '{0}' specified in the 'ResultsDirectory' is invalid. Error: {1}</target>
         <note />
       </trans-unit>
       <trans-unit id="InIsolationDeprecated">
         <source>The /InIsolation flag is deprecated. The tests are always run in a separate process</source>
-        <target state="translated">/InIsolation 标志已弃用。测试始终在单独的进程中运行</target>
+        <target state="new">The /InIsolation flag is deprecated. The tests are always run in a separate process</target>
         <note />
       </trans-unit>
       <trans-unit id="VstestDiagLogOutputPath">
         <source>Logging Vstest Diagnostics in file: {0}</source>
-        <target state="translated">在文件 {0} 中记录 Vstest 诊断</target>
+        <target state="new">Logging Vstest Diagnostics in file: {0}</target>
         <note />
       </trans-unit>
       <trans-unit id="CollectArgumentHelp">
         <source>--Collect|/Collect:&lt;DataCollector FriendlyName&gt;
       Enables data collector for the test run. More info here : https://aka.ms/vstest-collect</source>
-        <target state="translated">--Collect|/Collect:&lt;DataCollector FriendlyName&gt;
-      启用数据收集器以运行测试。可在此处获取详细信息: https://aka.ms/vstest-collect</target>
+        <target state="new">--Collect|/Collect:&lt;DataCollector FriendlyName&gt;
+      Enables data collector for the test run. More info here : https://aka.ms/vstest-collect</target>
         <note />
       </trans-unit>
       <trans-unit id="DataCollectorFriendlyNameInvalid">
         <source>The Data Collector friendly name '{0}' is not valid.  The Data Collector will be ignored.</source>
-        <target state="translated">数据收集器友好名称“{0}”无效。将忽略数据收集器。</target>
+        <target state="new">The Data Collector friendly name '{0}' is not valid.  The Data Collector will be ignored.</target>
         <note />
       </trans-unit>
       <trans-unit id="DbgTrcMessagesBanner">
         <source>Debug Traces Messages:</source>
-        <target state="translated">调试跟踪消息:</target>
+        <target state="new">Debug Traces Messages:</target>
         <note />
       </trans-unit>
       <trans-unit id="EnableBlameUsage">
@@ -872,15 +872,15 @@
       Example: /Blame
                /Blame:CollectDump
                /Blame:CollectDump;CollectAlways=true;DumpType=full</source>
-        <target state="translated">--Blame|/Blame:[CollectDump];[CollectAlways]=[Value];[DumpType]=[Value]
-      在追责模式下运行测试。此选项有助于隔离导致测试主机崩溃的问题测试。
-      它会在当前目录中创建一个输出文件 "Sequence.xml"，
-      用于在崩溃之前捕获测试的执行顺序。
-      可以根据需要选择收集测试主机的进程转储。
-      选择收集转储时，默认情况下，将在崩溃时收集小型转储。
-      还可选择通过一些可选参数覆盖此默认行为:
-      CollectAlways - 若无崩溃则在退出时收集转储(true/false)
-      DumpType - 指定转储类型(小型/完整)。
+        <target state="new">--Blame|/Blame:[CollectDump];[CollectAlways]=[Value];[DumpType]=[Value]
+      Runs the test in blame mode. This option is helpful in isolating the problematic test causing test host crash.
+      It creates an output file in the current directory as "Sequence.xml",
+      that captures the order of execution of test before the crash.
+      You may optionally choose to collect process dump for the test host.
+      When you choose to collect dump, by default, a mini dump will be collected on a crash.
+      You may also choose to override this default behaviour by some optional parameters:
+      CollectAlways - To collect dump on exit even if there is no crash (true/false) 
+      DumpType - To specify dump type (mini/full).
       Example: /Blame
                /Blame:CollectDump
                /Blame:CollectDump;CollectAlways=true;DumpType=full</target>
@@ -888,61 +888,61 @@
       </trans-unit>
       <trans-unit id="TestRunAborted">
         <source>Test Run Aborted.</source>
-        <target state="translated">测试运行已中止。</target>
+        <target state="new">Test Run Aborted.</target>
         <note />
       </trans-unit>
       <trans-unit id="TestRunCanceled">
         <source>Test Run Canceled.</source>
-        <target state="translated">测试运行已取消。</target>
+        <target state="new">Test Run Canceled.</target>
         <note />
       </trans-unit>
       <trans-unit id="OpenResponseFileError">
         <source>Error opening response file '{0}'</source>
-        <target state="translated">打开响应文件“{0}”时出错</target>
+        <target state="new">Error opening response file '{0}'</target>
         <note />
       </trans-unit>
       <trans-unit id="ResponseFileArgumentHelp">
         <source>@&lt;file&gt;
       Read response file for more options.</source>
-        <target state="translated">@&lt;file&gt;
-      有关更多选项，请阅读响应文件。</target>
+        <target state="new">@&lt;file&gt;
+      Read response file for more options.</target>
         <note />
       </trans-unit>
       <trans-unit id="TestRunSummaryForCanceledOrAbortedRun">
         <source>Total tests: Unknown</source>
-        <target state="translated">测试总数: 未知</target>
+        <target state="new">Total tests: Unknown</target>
         <note />
       </trans-unit>
       <trans-unit id="StringFormatToJoinTwoStrings">
         <source>{0} {1}</source>
-        <target state="translated">{0} {1}</target>
+        <target state="new">{0} {1}</target>
         <note />
       </trans-unit>
       <trans-unit id="SuggestTestAdapterPathIfNoTestsIsFound">
         <source>Additionally, path to test adapters can be specified using /TestAdapterPath command. Example  /TestAdapterPath:&lt;pathToCustomAdapters&gt;.</source>
-        <target state="translated">此外，还可以使用 /TestAdapterPath 命令指定测试适配器的路径。示例 /TestAdapterPath:&lt;pathToCustomAdapters&gt;。</target>
+        <target state="new">Additionally, path to test adapters can be specified using /TestAdapterPath command. Example  /TestAdapterPath:&lt;pathToCustomAdapters&gt;.</target>
         <note />
       </trans-unit>
       <trans-unit id="UseVsixExtensionsDeprecation">
         <source>/UseVsixExtensions is getting deprecated. Please use /TestAdapterPath instead.</source>
-        <target state="translated">/UseVsixExtensions 即将被弃用。请改为使用 /TestAdapterPath。</target>
+        <target state="new">/UseVsixExtensions is getting deprecated. Please use /TestAdapterPath instead.</target>
         <note />
       </trans-unit>
       <trans-unit id="DisableAutoFakesUsage">
         <source>--DisableAutoFakes|/DisableAutoFakes:&lt;true/false&gt;
      Example: /DisableAutoFakes:true</source>
-        <target state="translated">--DisableAutoFakes|/DisableAutoFakes:&lt;true/false&gt;
-     示例: /DisableAutoFakes:true</target>
+        <target state="new">--DisableAutoFakes|/DisableAutoFakes:&lt;true/false&gt;
+     Example: /DisableAutoFakes:true</target>
         <note />
       </trans-unit>
       <trans-unit id="CollectWithTestSettingErrorMessage">
         <source>--Collect|/Collect:"{0}" is not supported if test run is configured using testsettings.</source>
-        <target state="translated">--Collect|/如果使用测试设置配置了测试运行，则不支持收集:“{0}”。</target>
+        <target state="new">--Collect|/Collect:"{0}" is not supported if test run is configured using testsettings.</target>
         <note />
       </trans-unit>
       <trans-unit id="RunsettingsWithDCErrorMessage">
         <source>Data collectors other than Code Coverage and Microsoft Fakes configured via run settings are not supported with embedded test settings. Please see https://aka.ms/vstest-configure-datacollector for more information. Run settings: {0}.</source>
-        <target state="translated">除通过运行设置配置的代码覆盖率和 Microsoft Fakes 之外，嵌入测试设置不支持其他数据收集器。请参阅 https://aka.ms/vstest-configure-datacollector 了解详细信息。运行测试: {0}。</target>
+        <target state="new">Data collectors other than Code Coverage and Microsoft Fakes configured via run settings are not supported with embedded test settings. Please see https://aka.ms/vstest-configure-datacollector for more information. Run settings: {0}.</target>
         <note />
       </trans-unit>
       <trans-unit id="EnableLoggerArgumentsInNetCore">
@@ -958,115 +958,115 @@
       Change the diagnostic level prefix for console logger as shown below
       Example: /logger:console;prefix=&lt;Defaults to "false"&gt;
       More info on Console Logger here : https://aka.ms/console-logger</source>
-        <target state="translated">--logger|/logger:&lt;Logger Uri/FriendlyName&gt;
-      为测试结果指定一个记录器。例如，若要将结果记录到
-      Visual Studio 测试结果文件(TRX)中，请使用 /logger:trx[;LogFileName=&lt;Defaults to unique file name&gt;]
-      使用给定的  LogFileName 在 TestResults 目录中创建文件。
+        <target state="new">--logger|/logger:&lt;Logger Uri/FriendlyName&gt;
+      Specify a logger for test results. For example, to log results into a 
+      Visual Studio Test Results File (TRX) use /logger:trx[;LogFileName=&lt;Defaults to unique file name&gt;]
+      Creates file in TestResults directory with given LogFileName.
 
-     更改控制台记录器的日志消息中的详细程度，如下所示
-      示例: /logger:console;verbosity=&lt;Defaults to "minimal"&gt;
-      允许的详细程度的值: quiet、minimal、normal 和 detailed。
+      Change the verbosity level in log messages for console logger as shown below
+      Example: /logger:console;verbosity=&lt;Defaults to "minimal"&gt;
+      Allowed values for verbosity: quiet, minimal, normal and detailed.
 
-      更改控制台记录器的诊断级别前缀，如下所示
-      示例: /logger:console;prefix=&lt;Defaults to "false"&gt;
-      此处为控制台记录器的详细信息: https://aka.ms/console-logger</target>
+      Change the diagnostic level prefix for console logger as shown below
+      Example: /logger:console;prefix=&lt;Defaults to "false"&gt;
+      More info on Console Logger here : https://aka.ms/console-logger</target>
         <note />
       </trans-unit>
       <trans-unit id="BlameCollectDumpNotSupportedForPlatform">
         <source>Collecting crash dumps by option CollectDump for Blame is not supported for this platform.</source>
-        <target state="translated">此平台不支持通过 CollectDump for Blame 选项收集故障转储。</target>
+        <target state="new">Collecting crash dumps by option CollectDump for Blame is not supported for this platform.</target>
         <note />
       </trans-unit>
       <trans-unit id="BlameIncorrectOption">
         <source>The blame parameter specified with blame, {0} is invalid. Ignoring this parameter.</source>
-        <target state="translated">追责时指定的追责参数 {0} 无效。忽略此参数。</target>
+        <target state="new">The blame parameter specified with blame, {0} is invalid. Ignoring this parameter.</target>
         <note />
       </trans-unit>
       <trans-unit id="InvalidDiagFilePath">
         <source>Diag file path '{0}' is not valid.</source>
-        <target state="translated">诊断文件路径“{0}”无效。</target>
+        <target state="new">Diag file path '{0}' is not valid.</target>
         <note />
       </trans-unit>
       <trans-unit id="InvalidBlameArgument">
         <source>Blame argument '{0}' is not valid.</source>
-        <target state="translated">追责参数“{0}”无效。</target>
+        <target state="new">Blame argument '{0}' is not valid.</target>
         <note />
       </trans-unit>
       <trans-unit id="InvalidDiagArgument">
         <source>Diag argument '{0}' is not valid.</source>
-        <target state="translated">诊断参数“{0}”无效。</target>
+        <target state="new">Diag argument '{0}' is not valid.</target>
         <note />
       </trans-unit>
       <trans-unit id="InvalidLoggerArgument">
         <source>Logger argument '{0}' is not valid.</source>
-        <target state="translated">记录器参数“{0}”无效。</target>
+        <target state="new">Logger argument '{0}' is not valid.</target>
         <note />
       </trans-unit>
       <trans-unit id="Framework35NotSupported">
         <source>Framework35 is not supported. For projects targeting .Net Framework 3.5, test will run in CLR 4.0 "compatibility mode".</source>
-        <target state="translated">不支持 Framework35。对于面向 .Net Framework 3.5 的项目，将在 CLR 4.0“兼容性模式”中运行测试。</target>
+        <target state="new">Framework35 is not supported. For projects targeting .Net Framework 3.5, test will run in CLR 4.0 "compatibility mode".</target>
         <note />
       </trans-unit>
       <trans-unit id="ProgressIndicatorString">
         <source>Test run in progress</source>
-        <target state="translated">正在运行测试</target>
+        <target state="new">Test run in progress</target>
         <note />
       </trans-unit>
       <trans-unit id="TestRunSummaryTotalTests">
         <source>Total tests: {0}</source>
-        <target state="translated">测试总数: {0}</target>
+        <target state="new">Total tests: {0}</target>
         <note />
       </trans-unit>
       <trans-unit id="TestRunSummaryFailedTests">
         <source>     Failed: {0}</source>
-        <target state="translated">     失败数: {0}</target>
+        <target state="new">     Failed: {0}</target>
         <note />
       </trans-unit>
       <trans-unit id="TestRunSummaryPassedTests">
         <source>     Passed: {0}</source>
-        <target state="translated">     通过数: {0}</target>
+        <target state="new">     Passed: {0}</target>
         <note />
       </trans-unit>
       <trans-unit id="TestRunSummarySkippedTests">
         <source>    Skipped: {0}</source>
-        <target state="translated">    跳过数: {0}</target>
+        <target state="new">    Skipped: {0}</target>
         <note />
       </trans-unit>
       <trans-unit id="InvalidArgument">
         <source>The argument {0} is invalid. Please use the /help option to check the list of valid arguments.</source>
-        <target state="translated">参数 {0} 无效。请使用 /help 选项检查有效参数的列表。</target>
+        <target state="new">The argument {0} is invalid. Please use the /help option to check the list of valid arguments.</target>
         <note />
       </trans-unit>
       <trans-unit id="TestSourcesDiscovered">
         <source>A total of {0} test files matched the specified pattern.</source>
-        <target state="translated">总共 {0} 个测试文件与指定模式相匹配。</target>
+        <target state="new">A total of {0} test files matched the specified pattern.</target>
         <note />
       </trans-unit>
       <trans-unit id="InvalidTestRunParameterArgument">
         <source>The test run parameter argument '{0}' is invalid. Please use the format below.
      Format: TestRunParameters.Parameter(name=\"&lt;name&gt;\", value=\"&lt;value&gt;\")</source>
-        <target state="translated">测试运行参数自变量“{0}”无效。请使用以下格式。
-     格式: TestRunParameters.Parameter(name=\"&lt;name&gt;\", value=\"&lt;value&gt;\")</target>
+        <target state="new">The test run parameter argument '{0}' is invalid. Please use the format below.
+     Format: TestRunParameters.Parameter(name=\"&lt;name&gt;\", value=\"&lt;value&gt;\")</target>
         <note />
       </trans-unit>
       <trans-unit id="BlameCollectDumpTestTimeoutNotSupportedForPlatform">
         <source>Collecting hang dumps by option CollectDump with TestTimeout for Blame is not supported for this platform.</source>
-        <target state="translated">此平台不支持通过 CollectDump with TestTimeout for Blame 选项收集挂起转储。</target>
+        <target state="new">Collecting hang dumps by option CollectDump with TestTimeout for Blame is not supported for this platform.</target>
         <note />
       </trans-unit>
       <trans-unit id="TestRunSummary">
         <source>{0} - Failed: {1}, Passed: {2}, Skipped: {3}, Total: {4}, Duration: {5}</source>
-        <target state="translated">{0} - 失败: {1}，通过: {2}，已跳过: {3}，总计: {4}，持续时间: {5}</target>
+        <target state="new">{0} - Failed: {1}, Passed: {2}, Skipped: {3}, Total: {4}, Duration: {5}</target>
         <note />
       </trans-unit>
       <trans-unit id="None">
         <source>None</source>
-        <target state="translated">无</target>
+        <target state="new">None</target>
         <note />
       </trans-unit>
       <trans-unit id="TestRunSummaryAssemblyAndFramework">
         <source> - {0} {1}</source>
-        <target state="translated"> - {0} {1}</target>
+        <target state="new"> - {0} {1}</target>
         <note />
       </trans-unit>
       <trans-unit id="EnvironmentArgumentHelp">
@@ -1078,29 +1078,29 @@
       Example: -e:VARIABLE1=VALUE1
                -e:ANOTHER_VARIABLE="VALUE WITH SPACES"
                -e:ANOTHER_VARIABLE="VALUE;seperated with;semicolons"</source>
-        <target state="translated">-e|--Environment|/e|/环境:&lt;NAME&gt;=&lt;VALUE&gt;
-      设置环境变量的值。如果该变量不存在，则创建它；如果它已存在，则替代它。这将表示 /InIsolation 开关并强制在隔离的进程中运行测试。
+        <target state="new">-e|--Environment|/e|/Environment:&lt;NAME&gt;=&lt;VALUE&gt;
+      Sets the value of an environment variable. Creates the variable if it does not exist, overrides if it does. This will imply /InIsolation switch and force the tests to be run in an isolated process.
       
-      可多次指定此参数来提供多个变量。
+      This argument can be specified multiple times to provide multiple variables.
 
-      示例: -e:VARIABLE1=VALUE1
+      Example: -e:VARIABLE1=VALUE1
                -e:ANOTHER_VARIABLE="VALUE WITH SPACES"
                -e:ANOTHER_VARIABLE="VALUE;seperated with;semicolons"</target>
         <note />
       </trans-unit>
       <trans-unit id="EnvironmentVariableXIsOverriden">
         <source>Environment variable '{0}' was already defined, but it's overridden by -Environment argument.</source>
-        <target state="translated">环境变量“{0}”已定义，但它被 -Environment 参数替代。</target>
+        <target state="new">Environment variable '{0}' was already defined, but it's overridden by -Environment argument.</target>
         <note />
       </trans-unit>
       <trans-unit id="TestRunAbortedWithError">
         <source>Test Run Aborted with error {0}.</source>
-        <target state="translated">测试运行已中止，出现错误 {0}。</target>
+        <target state="new">Test Run Aborted with error {0}.</target>
         <note />
       </trans-unit>
       <trans-unit id="InvalidTestSessionCorrelationId">
         <source>Invalid testSessionCorrelationId</source>
-        <target state="translated">testSessionCorrelationId 无效</target>
+        <target state="new">Invalid testSessionCorrelationId</target>
         <note />
       </trans-unit>
       <trans-unit id="TestAdapterLoadingStrategyHelp">
@@ -1124,36 +1124,36 @@
         - NextToSource: Load adapters next to source. 
 
         - Recursive: Recursively search folders when loading adapters. This requires "Explicit" or "NextToSource" to be specified too.</source>
-        <target state="translated">--TestAdapterLoadingStrategy|/TestAdapterLoadingStrategy:&lt;strategy&gt;
-      这会影响适配器加载行为。
+        <target state="new">--TestAdapterLoadingStrategy|/TestAdapterLoadingStrategy:&lt;strategy&gt;
+      This affects adapter loading behavior.
 
-      当前支持的行为:
-        - Explicit: 测试平台将仅加载 /TestAdapterPath (或 RunConfiguration.TestAdaptersPaths 节点) 指定的适配器。
-                    如果提供了特定适配器路径，则会加载适配器；如果提供了目录路径，则将直接加载该文件夹中的适配器，除非还指定了 Recursive 选项。
-                    如果未指定适配器路径，则测试运行将失败。
-                    这将暗示 /InIsolation 开关并强制测试在隔离进程中运行。
+      Currently supported behaviors:
+        - Explicit: Test Platform will only load adapters specified by /TestAdapterPath (or RunConfiguration.TestAdaptersPaths node). 
+                    If a specific adapter path is provided, adapter will be loaded; if a directory path is provided adapters directly in that folder will be loaded, unless Recursive option is also specified.
+                    If no adapter path is specified, test run will fail.
+                    This will imply /InIsolation switch and force the tests to be run in an isolated process.
         
-        - 默认: 如果未指定此参数，则测试平台将加载适配器。
-                   它将从源旁边、提供的附加适配器路径和默认目录中选取扩展。
+        - Default: Test Platform will load adapters is if this argument has not been specified. 
+                   It will pick up extensions from next to source, provided additional adapter paths and from the default directory.
 
-        - DefaultRuntimeProviders: 加载随测试平台一起提供的默认运行时提供程序。
-                                   如果在设置“Explicit”选项时未指定，则需要显式指定测试主机提供程序。
+        - DefaultRuntimeProviders: Load default runtime providers shipped with Test Platform. 
+                                   If this is not specified when "Explicit" option is set, a test host provider need to be specified explicitly.
 
-        - ExtensionsDirectory: 在 Extensions 文件夹内加载适配器。
+        - ExtensionsDirectory: Load adapters inside Extensions folder.
 
-        - NextToSource: 在源旁边加载适配器。
+        - NextToSource: Load adapters next to source. 
 
-        - Recursive: 加载适配器时以递归方式搜索文件夹。这也需要指定“Explicit”或“NextToSource”。</target>
+        - Recursive: Recursively search folders when loading adapters. This requires "Explicit" or "NextToSource" to be specified too.</target>
         <note>Do not translate "Default", "DefaultRuntimeProviders", "ExtensionsDirectory", "NextToSource" or "Recursive".</note>
       </trans-unit>
       <trans-unit id="TestAdapterLoadingStrategyValueInvalid">
         <source>Specified value ({0}) for /TestAdapterLoadingStrategy is invalid!</source>
-        <target state="translated">为 /TestAdapterLoadingStrategy 指定的值({0})无效!</target>
+        <target state="new">Specified value ({0}) for /TestAdapterLoadingStrategy is invalid!</target>
         <note />
       </trans-unit>
       <trans-unit id="TestAdapterLoadingStrategyValueInvalidRecursive">
         <source>Recursive adapter loading strategy is cannot be used by itself. Please combine with one or more of: {0}</source>
-        <target state="translated">递归适配器加载策略不能由自身使用。请与以下一项或多项结合使用: {0}</target>
+        <target state="new">Recursive adapter loading strategy is cannot be used by itself. Please combine with one or more of: {0}</target>
         <note>
         - Do not translate "Recursive",
         - {0} is the strategy names, seperated by comma: for example "Explicit, NextToSource"
@@ -1161,67 +1161,67 @@
       </trans-unit>
       <trans-unit id="TestAdapterPathValueRequiredWhenStrategyXIsUsed">
         <source>The /TestAdapterPath parameter needs to be provided when "{0}" test adapter loading strategy is specified!</source>
-        <target state="translated">指定“{0}”测试适配器加载策略时，需要提供 /TestAdapterPath 参数!</target>
+        <target state="new">The /TestAdapterPath parameter needs to be provided when "{0}" test adapter loading strategy is specified!</target>
         <note>{0} is the strategy name, "Explicit" for example.</note>
       </trans-unit>
       <trans-unit id="WarningEmulatedOnArm64">
         <source>vstest.console.exe is running in emulated mode as {0}. For better performance, please consider using the native runner vstest.console.arm64.exe.</source>
-        <target state="translated">vstest.console.exe 正在模拟模式下运行，因为 {0}。为了获得更好的性能，请考虑使用本机运行程序 vstest.console.arm64.exe。</target>
+        <target state="new">vstest.console.exe is running in emulated mode as {0}. For better performance, please consider using the native runner vstest.console.arm64.exe.</target>
         <note />
       </trans-unit>
       <trans-unit id="RequestHandlerConnectionTimedOut">
         <source>Waiting for request handler connection timed out after {0} seconds.</source>
-        <target state="translated">等待请求处理程序连接在 {0} 秒后超时。</target>
+        <target state="new">Waiting for request handler connection timed out after {0} seconds.</target>
         <note />
       </trans-unit>
       <trans-unit id="StartTestSessionTimedOut">
         <source>Waiting for start test session timed out after {0} seconds.</source>
-        <target state="translated">等待启动测试会话在 {0} 秒后超时。</target>
+        <target state="new">Waiting for start test session timed out after {0} seconds.</target>
         <note />
       </trans-unit>
       <trans-unit id="StopTestSessionTimedOut">
         <source>Waiting for stop test session timed out after {0} seconds.</source>
-        <target state="translated">等待停止测试会话在 {0} 秒后超时。</target>
+        <target state="new">Waiting for stop test session timed out after {0} seconds.</target>
         <note />
       </trans-unit>
       <trans-unit id="ErrorHostingCommunicationChannel">
         <source>Error hosting communication channel.</source>
-        <target state="translated">托管信道时出错。</target>
+        <target state="new">Error hosting communication channel.</target>
         <note />
       </trans-unit>
       <trans-unit id="ProcDumpToolDirectoryPathArgumenNotFound">
         <source>ProcDumpToolDirectoryPath should be specified to install or unistall the post mortem debugger.</source>
-        <target state="translated">应指定 ProcDumpToolDirectoryPath 以安装或卸载事后分析调试程序。</target>
+        <target state="new">ProcDumpToolDirectoryPath should be specified to install or unistall the post mortem debugger.</target>
         <note />
       </trans-unit>
       <trans-unit id="PostmortemDebuggerNotSupportedForCurrentOS">
         <source>Postmortem debugger is not supported in the current OS.</source>
-        <target state="translated">当前操作系统不支持事后分析调试程序。</target>
+        <target state="new">Postmortem debugger is not supported in the current OS.</target>
         <note />
       </trans-unit>
       <trans-unit id="InvalidProcDumpToolDirectoryPath">
         <source>The directory specified for the procdump executable is not valid and the tool was not found inside environment variables (PROCDUMP_PATH, PATH)</source>
-        <target state="translated">为 procdump 可执行文件指定的目录无效，并且在环境变量(PROCDUMP_PATH、PATH)中找不到该工具</target>
+        <target state="new">The directory specified for the procdump executable is not valid and the tool was not found inside environment variables (PROCDUMP_PATH, PATH)</target>
         <note />
       </trans-unit>
       <trans-unit id="ProcDumpFileNameNotFound">
         <source>Procdump file name not found: '{0}'</source>
-        <target state="translated">找不到 Procdump 文件名:“{0}”</target>
+        <target state="new">Procdump file name not found: '{0}'</target>
         <note />
       </trans-unit>
       <trans-unit id="ProcDumpDirectoryPathArgumenNotFound">
         <source>DumpDirectoryPath should be specified to install the post mortem debugger.</source>
-        <target state="translated">应指定 DumpDirectoryPath 以安装事后分析调试程序。</target>
+        <target state="new">DumpDirectoryPath should be specified to install the post mortem debugger.</target>
         <note />
       </trans-unit>
       <trans-unit id="InvalidProcDumpDirectoryPath">
         <source>The directory specified is not valid: '{0}'</source>
-        <target state="translated">指定的目录无效:“{0}”</target>
+        <target state="new">The directory specified is not valid: '{0}'</target>
         <note />
       </trans-unit>
       <trans-unit id="InvalidAeDebuggerArgument">
         <source>AeDebugger argument '{0}' is not valid.</source>
-        <target state="translated">AeDebugger 参数“{0}”无效。</target>
+        <target state="new">AeDebugger argument '{0}' is not valid.</target>
         <note />
       </trans-unit>
       <trans-unit id="VSTestDeprecationMessage">

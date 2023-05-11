@@ -4,57 +4,57 @@
     <body>
       <trans-unit id="AbortedTestRun">
         <source>The active test run was aborted. Reason: {0}</source>
-        <target state="translated">Etkin test çalıştırması iptal edildi. Nedeni: {0}</target>
+        <target state="new">The active test run was aborted. Reason: {0}</target>
         <note />
       </trans-unit>
       <trans-unit id="ConnectionClosed">
         <source>An existing connection was forcibly closed by the remote host.</source>
-        <target state="translated">Mevcut bir bağlantı uzak konak tarafından zorla kapatıldı.</target>
+        <target state="new">An existing connection was forcibly closed by the remote host.</target>
         <note />
       </trans-unit>
       <trans-unit id="AbortedTestDiscovery">
         <source>The active test discovery was aborted.</source>
-        <target state="translated">Etkin test bulma durduruldu.</target>
+        <target state="new">The active test discovery was aborted.</target>
         <note />
       </trans-unit>
       <trans-unit id="AbortedTestDiscoveryWithReason">
         <source>The active test discovery was aborted. Reason: {0}</source>
-        <target state="translated">Etkin test bulma iptal edildi. Nedeni: {0}</target>
+        <target state="new">The active test discovery was aborted. Reason: {0}</target>
         <note />
       </trans-unit>
       <trans-unit id="UnableToCommunicateToTestHost">
         <source>Unable to communicate with test host process.</source>
-        <target state="translated">Test ana bilgisayarı işlemi ile iletişim kurulamıyor.</target>
+        <target state="new">Unable to communicate with test host process.</target>
         <note />
       </trans-unit>
       <trans-unit id="UnexpectedMessage">
         <source>Unexpected message received. Expected MessageType : {0} Actual MessageType: {1}</source>
-        <target state="translated">Beklenmeyen ileti alındı. Beklenen MessageType: {0} Gerçek MessageType: {1}</target>
+        <target state="new">Unexpected message received. Expected MessageType : {0} Actual MessageType: {1}</target>
         <note />
       </trans-unit>
       <trans-unit id="VersionCheckFailed">
         <source>Protocol version check failed. Make sure test runner and host are compatible.</source>
-        <target state="translated">Protokol sürümü denetlenemedi. Test çalıştırıcısı ve ana bilgisayarının uyumlu olduğundan emin olun.</target>
+        <target state="new">Protocol version check failed. Make sure test runner and host are compatible.</target>
         <note />
       </trans-unit>
       <trans-unit id="VersionCheckTimedout">
         <source>Failed to negotiate protocol, waiting for response timed out after {0} seconds. This may occur due to machine slowness, please set environment variable {1} to increase timeout.</source>
-        <target state="translated">Protokol üzerinde anlaşmaya varılamadı, yanıt bekleme süresi {0} saniyenin ardından zaman aşımına uğradı. Bu durum makinenin yavaşlığından kaynaklanıyor olabilir, zaman aşımı süresini artırmak için lütfen ortam değişkenini {1} olarak ayarlayın.</target>
+        <target state="new">Failed to negotiate protocol, waiting for response timed out after {0} seconds. This may occur due to machine slowness, please set environment variable {1} to increase timeout.</target>
         <note />
       </trans-unit>
       <trans-unit id="ConnectionTimeoutErrorMessage">
         <source>{0} process failed to connect to {1} process after {2} seconds. This may occur due to machine slowness, please set environment variable {3} to increase timeout.</source>
-        <target state="translated">{0} işlemi, {2} saniye sonra {1} işlemine bağlanamadı. Bu durum makinenin yavaşlığından kaynaklanıyor olabilir, zaman aşımı süresini artırmak için lütfen ortam değişkenini {3} olarak ayarlayın.</target>
+        <target state="new">{0} process failed to connect to {1} process after {2} seconds. This may occur due to machine slowness, please set environment variable {3} to increase timeout.</target>
         <note />
       </trans-unit>
       <trans-unit id="TestHostProcessCrashed">
         <source>Test host process crashed</source>
-        <target state="translated">Test ana işlemi kilitlendi</target>
+        <target state="new">Test host process crashed</target>
         <note />
       </trans-unit>
       <trans-unit id="AttachDebuggerToDefaultTestHostFailure">
         <source>Cannot attach the debugger to the default test host.</source>
-        <target state="translated">Hata ayıklayıcı, varsayılan test ana bilgisayarına eklenemiyor.</target>
+        <target state="new">Cannot attach the debugger to the default test host.</target>
         <note />
       </trans-unit>
     </body>

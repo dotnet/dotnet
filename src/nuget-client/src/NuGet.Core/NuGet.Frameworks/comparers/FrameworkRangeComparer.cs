@@ -13,7 +13,7 @@ namespace NuGet.Frameworks
         {
         }
 
-        public bool Equals(FrameworkRange x, FrameworkRange y)
+        public bool Equals(FrameworkRange? x, FrameworkRange? y)
         {
             if (ReferenceEquals(x, y))
             {

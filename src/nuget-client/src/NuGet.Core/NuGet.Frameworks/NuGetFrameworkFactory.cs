@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
 
@@ -39,28 +40,14 @@ namespace NuGet.Frameworks
         /// </summary>
         public static NuGetFramework Parse(string folderName, IFrameworkNameProvider mappings)
         {
-            if (folderName == null)
-            {
-                throw new ArgumentNullException(nameof(folderName));
-            }
-
-            if (mappings == null)
-            {
-                throw new ArgumentNullException(nameof(mappings));
-            }
+            if (folderName == null) throw new ArgumentNullException(nameof(folderName));
+            if (mappings == null) throw new ArgumentNullException(nameof(mappings));
 
             Debug.Assert(folderName.IndexOf(";", StringComparison.Ordinal) < 0, "invalid folder name, this appears to contain multiple frameworks");
 
-            var framework = UnsupportedFramework;
-
-            if (folderName.IndexOf(',') > -1)
-            {
-                framework = ParseFrameworkName(folderName, mappings);
-            }
-            else
-            {
-                framework = ParseFolder(folderName, mappings);
-            }
+            NuGetFramework framework = folderName.IndexOf(',') > -1
+                ? ParseFrameworkName(folderName, mappings)
+                : ParseFolder(folderName, mappings);
 
             return framework;
         }
@@ -68,7 +55,7 @@ namespace NuGet.Frameworks
         /// <summary>
         /// Creates a NuGetFramework from individual components
         /// </summary>
-        public static NuGetFramework ParseComponents(string targetFrameworkMoniker, string targetPlatformMoniker)
+        public static NuGetFramework ParseComponents(string targetFrameworkMoniker, string? targetPlatformMoniker)
         {
             return ParseComponents(targetFrameworkMoniker, targetPlatformMoniker, DefaultFrameworkNameProvider.Instance);
         }
@@ -83,19 +70,12 @@ namespace NuGet.Frameworks
         /// Target Platforms are ignored for any frameworks not supporting them.
         /// This allows to handle the old project scenarios where the TargetPlatformIdentifier and TargetPlatformVersion may be set to Windows and v7.0 respectively.
         /// </remarks>
-        internal static NuGetFramework ParseComponents(string targetFrameworkMoniker, string targetPlatformMoniker, IFrameworkNameProvider mappings)
+        internal static NuGetFramework ParseComponents(string targetFrameworkMoniker, string? targetPlatformMoniker, IFrameworkNameProvider mappings)
         {
-            if (string.IsNullOrEmpty(targetFrameworkMoniker))
-            {
-                throw new ArgumentException(Strings.ArgumentCannotBeNullOrEmpty, nameof(targetFrameworkMoniker));
-            }
+            if (string.IsNullOrEmpty(targetFrameworkMoniker)) throw new ArgumentException(Strings.ArgumentCannotBeNullOrEmpty, nameof(targetFrameworkMoniker));
+            if (mappings == null) throw new ArgumentNullException(nameof(mappings));
 
-            if (mappings == null)
-            {
-                throw new ArgumentNullException(nameof(mappings));
-            }
-
-            NuGetFramework result;
+            NuGetFramework? result;
             string targetFrameworkIdentifier;
             Version targetFrameworkVersion;
             var parts = GetParts(targetFrameworkMoniker);
@@ -106,8 +86,8 @@ namespace NuGet.Frameworks
                 return result;
             }
 
-            string profile;
-            string targetFrameworkProfile;
+            string? profile;
+            string? targetFrameworkProfile;
             ParseFrameworkNameParts(mappings, parts, out targetFrameworkIdentifier, out targetFrameworkVersion, out targetFrameworkProfile);
             if (!mappings.TryGetProfile(targetFrameworkIdentifier, targetFrameworkProfile ?? string.Empty, out profile))
             {
@@ -116,11 +96,9 @@ namespace NuGet.Frameworks
 
             if (StringComparer.OrdinalIgnoreCase.Equals(FrameworkConstants.FrameworkIdentifiers.Portable, targetFrameworkIdentifier))
             {
-                IEnumerable<NuGetFramework> clientFrameworks;
-                if (mappings.TryGetPortableFrameworks(profile, out clientFrameworks))
+                if (profile != null && mappings.TryGetPortableFrameworks(profile, out IEnumerable<NuGetFramework>? clientFrameworks))
                 {
-                    var profileNumber = -1;
-                    if (mappings.TryGetPortableProfile(clientFrameworks, out profileNumber))
+                    if (mappings.TryGetPortableProfile(clientFrameworks, out int profileNumber))
                     {
                         profile = FrameworkNameHelpers.GetPortableProfileNumberString(profileNumber);
                     }
@@ -147,7 +125,7 @@ namespace NuGet.Frameworks
             {
                 string targetPlatformIdentifier;
                 Version platformVersion;
-                ParsePlatformParts(GetParts(targetPlatformMoniker), out targetPlatformIdentifier, out platformVersion);
+                ParsePlatformParts(GetParts(targetPlatformMoniker!), out targetPlatformIdentifier, out platformVersion);
                 result = new NuGetFramework(targetFrameworkIdentifier, targetFrameworkVersion, targetPlatformIdentifier ?? string.Empty, platformVersion);
             }
             else
@@ -158,9 +136,11 @@ namespace NuGet.Frameworks
             return result;
         }
 
+        private static readonly char[] CommaSeparator = new char[] { ',' };
+
         private static string[] GetParts(string targetPlatformMoniker)
         {
-            return targetPlatformMoniker.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries).Select(s => s.Trim()).ToArray();
+            return targetPlatformMoniker.Split(CommaSeparator, StringSplitOptions.RemoveEmptyEntries).Select(s => s.Trim()).ToArray();
         }
 
         /// <summary>
@@ -168,26 +148,15 @@ namespace NuGet.Frameworks
         /// </summary>
         public static NuGetFramework ParseFrameworkName(string frameworkName, IFrameworkNameProvider mappings)
         {
-            if (frameworkName == null)
-            {
-                throw new ArgumentNullException(nameof(frameworkName));
-            }
+            if (frameworkName == null) throw new ArgumentNullException(nameof(frameworkName));
+            if (mappings == null) throw new ArgumentNullException(nameof(mappings));
 
-            if (mappings == null)
-            {
-                throw new ArgumentNullException(nameof(mappings));
-            }
-
-            var parts = frameworkName.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries).Select(s => s.Trim()).ToArray();
-
-            NuGetFramework result = null;
+            string[] parts = frameworkName.Split(CommaSeparator, StringSplitOptions.RemoveEmptyEntries).Select(s => s.Trim()).ToArray();
 
             // if the first part is a special framework, ignore the rest
-            if (!TryParseSpecialFramework(parts[0], out result))
+            if (!TryParseSpecialFramework(parts[0], out NuGetFramework? result))
             {
-                string framework, profile;
-                Version version;
-                ParseFrameworkNameParts(mappings, parts, out framework, out version, out profile);
+                ParseFrameworkNameParts(mappings, parts, out string? framework, out Version version, out string? profile);
 
                 if (version.Major >= 5
                     && StringComparer.OrdinalIgnoreCase.Equals(FrameworkConstants.FrameworkIdentifiers.NetCoreApp, framework))
@@ -203,13 +172,11 @@ namespace NuGet.Frameworks
             return result;
         }
 
-        private static void ParseFrameworkNameParts(IFrameworkNameProvider mappings, string[] parts, out string framework, out Version version, out string profile)
+        private static void ParseFrameworkNameParts(IFrameworkNameProvider mappings, string[] parts, out string framework, out Version version, out string? profile)
         {
-            framework = null;
-            if (!mappings.TryGetIdentifier(parts[0], out framework))
-            {
-                framework = parts[0];
-            }
+            framework = mappings.TryGetIdentifier(parts[0], out string? mappedFramework)
+                ? mappedFramework
+                : parts[0];
 
             version = new Version(0, 0);
             profile = null;
@@ -217,30 +184,29 @@ namespace NuGet.Frameworks
             var profilePart = SingleOrDefaultSafe(parts.Where(s => s.IndexOf("Profile=", StringComparison.OrdinalIgnoreCase) == 0));
             if (!string.IsNullOrEmpty(versionPart))
             {
-                var versionString = versionPart.Split('=')[1].TrimStart('v');
+                var versionString = versionPart!.Split('=')[1].TrimStart('v');
 
                 if (versionString.IndexOf('.') < 0)
                 {
                     versionString += ".0";
                 }
 
-                if (!Version.TryParse(versionString, out version))
-                {
-                    throw new ArgumentException(string.Format(
+                version = Version.TryParse(versionString, out Version? parsedVersion)
+                    ? parsedVersion
+                    : throw new ArgumentException(string.Format(
                         CultureInfo.CurrentCulture,
                         Strings.InvalidFrameworkVersion,
                         versionString));
-                }
             }
 
             if (!string.IsNullOrEmpty(profilePart))
             {
-                profile = profilePart.Split('=')[1];
+                profile = profilePart!.Split('=')[1];
             }
 
             if (StringComparer.OrdinalIgnoreCase.Equals(FrameworkConstants.FrameworkIdentifiers.Portable, framework)
                 && !string.IsNullOrEmpty(profile)
-                && profile.Contains("-"))
+                && profile!.Contains("-"))
             {
                 // Frameworks within the portable profile are not allowed
                 // to have profiles themselves #1869
@@ -258,20 +224,19 @@ namespace NuGet.Frameworks
             var versionPart = SingleOrDefaultSafe(parts.Where(s => s.IndexOf("Version=", StringComparison.OrdinalIgnoreCase) == 0));
             if (!string.IsNullOrEmpty(versionPart))
             {
-                var versionString = versionPart.Split('=')[1].TrimStart('v');
+                var versionString = versionPart!.Split('=')[1].TrimStart('v');
 
                 if (versionString.IndexOf('.') < 0)
                 {
                     versionString += ".0";
                 }
 
-                if (!Version.TryParse(versionString, out platformVersion))
-                {
-                    throw new ArgumentException(string.Format(
+                platformVersion = Version.TryParse(versionString, out Version? parsedVersion)
+                    ? parsedVersion
+                    : throw new ArgumentException(string.Format(
                         CultureInfo.CurrentCulture,
                         Strings.InvalidPlatformVersion,
                         versionString));
-                }
             }
         }
 
@@ -303,8 +268,7 @@ namespace NuGet.Frameworks
                 folderName = Uri.UnescapeDataString(folderName);
             }
 
-            NuGetFramework result = null;
-
+            NuGetFramework? result;
             // first check if we have a special or common framework
             if (!TryParseSpecialFramework(folderName, out result)
                 && !TryParseCommonFramework(folderName, out result))
@@ -316,16 +280,14 @@ namespace NuGet.Frameworks
 
                 if (parts != null)
                 {
-                    string framework = null;
-
-                    if (mappings.TryGetIdentifier(parts.Item1, out framework))
+                    if (mappings.TryGetIdentifier(parts.Item1, out string? framework))
                     {
                         var version = FrameworkConstants.EmptyVersion;
 
                         if (parts.Item2 == null
                             || mappings.TryGetVersion(parts.Item2, out version))
                         {
-                            var profileShort = parts.Item3;
+                            string profileShort = parts.Item3;
 
                             if (version.Major >= 5
                                 && (StringComparer.OrdinalIgnoreCase.Equals(FrameworkConstants.FrameworkIdentifiers.Net, framework)
@@ -346,11 +308,11 @@ namespace NuGet.Frameworks
                                         versionStart++;
                                     }
                                     string platform = versionStart > 0 ? profileShort.Substring(0, versionStart) : profileShort;
-                                    string platformVersionString = versionStart > 0 ? profileShort.Substring(versionStart, profileShort.Length - versionStart) : null;
+                                    string? platformVersionString = versionStart > 0 ? profileShort.Substring(versionStart, profileShort.Length - versionStart) : null;
 
                                     // Parse the version if it's there.
-                                    Version platformVersion = FrameworkConstants.EmptyVersion;
-                                    if ((string.IsNullOrEmpty(platformVersionString) || mappings.TryGetPlatformVersion(platformVersionString, out platformVersion)))
+                                    Version? platformVersion = FrameworkConstants.EmptyVersion;
+                                    if ((string.IsNullOrEmpty(platformVersionString) || mappings.TryGetPlatformVersion(platformVersionString!, out platformVersion)))
                                     {
                                         result = new NuGetFramework(framework, version, platform ?? string.Empty, platformVersion ?? FrameworkConstants.EmptyVersion);
                                     }
@@ -366,16 +328,14 @@ namespace NuGet.Frameworks
                             }
                             else
                             {
-                                string profile = null;
-                                if (!mappings.TryGetProfile(framework, profileShort, out profile))
+                                if (!mappings.TryGetProfile(framework, profileShort, out string? profile))
                                 {
                                     profile = profileShort ?? string.Empty;
                                 }
 
                                 if (StringComparer.OrdinalIgnoreCase.Equals(FrameworkConstants.FrameworkIdentifiers.Portable, framework))
                                 {
-                                    IEnumerable<NuGetFramework> clientFrameworks = null;
-                                    if (!mappings.TryGetPortableFrameworks(profileShort, out clientFrameworks))
+                                    if (!mappings.TryGetPortableFrameworks(profileShort!, out IEnumerable<NuGetFramework>? clientFrameworks))
                                     {
                                         result = UnsupportedFramework;
                                     }
@@ -404,9 +364,7 @@ namespace NuGet.Frameworks
                 else
                 {
                     // If the framework was not recognized check if it is a deprecated framework
-                    NuGetFramework deprecated = null;
-
-                    if (TryParseDeprecatedFramework(folderName, out deprecated))
+                    if (TryParseDeprecatedFramework(folderName, out NuGetFramework? deprecated))
                     {
                         result = deprecated;
                     }
@@ -420,7 +378,7 @@ namespace NuGet.Frameworks
         /// Attempt to parse a common but deprecated framework using an exact string match
         /// Support for these should be dropped as soon as possible.
         /// </summary>
-        private static bool TryParseDeprecatedFramework(string s, out NuGetFramework framework)
+        private static bool TryParseDeprecatedFramework(string s, [NotNullWhen(true)] out NuGetFramework? framework)
         {
             framework = null;
 
@@ -449,11 +407,11 @@ namespace NuGet.Frameworks
             return framework != null;
         }
 
-        private static Tuple<string, string, string> RawParse(string s)
+        private static Tuple<string, string?, string>? RawParse(string s)
         {
-            var identifier = string.Empty;
+            string identifier;
             var profile = string.Empty;
-            string version = null;
+            string? version = null;
 
             var chars = s.ToCharArray();
 
@@ -520,7 +478,7 @@ namespace NuGet.Frameworks
                 }
             }
 
-            return new Tuple<string, string, string>(identifier, version, profile);
+            return new Tuple<string, string?, string>(identifier, version, profile);
         }
 
         private static bool IsLetterOrDot(char c)
@@ -547,7 +505,7 @@ namespace NuGet.Frameworks
             return (x >= 48 && x <= 57) || (x >= 65 && x <= 90) || (x >= 97 && x <= 122) || x == 46 || x == 43 || x == 45;
         }
 
-        private static bool TryParseSpecialFramework(string frameworkString, out NuGetFramework framework)
+        private static bool TryParseSpecialFramework(string frameworkString, [NotNullWhen(true)] out NuGetFramework? framework)
         {
             framework = null;
 
@@ -572,7 +530,7 @@ namespace NuGet.Frameworks
         /// Using the interned frameworks here optimizes comparisons since they can be checked by reference.
         /// This is designed to optimize
         /// </summary>
-        private static bool TryParseCommonFramework(string frameworkString, out NuGetFramework framework)
+        private static bool TryParseCommonFramework(string frameworkString, [NotNullWhen(true)] out NuGetFramework? framework)
         {
             framework = null;
 
@@ -697,7 +655,7 @@ namespace NuGet.Frameworks
             return framework != null;
         }
 
-        private static string SingleOrDefaultSafe(IEnumerable<string> items)
+        private static string? SingleOrDefaultSafe(IEnumerable<string> items)
         {
             if (items.Count() == 1)
             {

@@ -34,6 +34,42 @@ parameters:
   values:
   - Full
   - Pseudo
+- name: RunApexTests
+  displayName: Run Apex tests
+  type: boolean
+  default: true
+- name: RunBuildForPublishing
+  displayName: Build bits for publishing
+  type: boolean
+  default: true
+- name: RunCrossFrameworkTestsOnWindows
+  displayName: Run cross framweork tests on Windows
+  type: boolean
+  default: true
+- name: RunEndToEndTests
+  displayName: Run end-to-end tests
+  type: boolean
+  default: true
+- name: RunFunctionalTestsOnWindows
+  displayName: Run functional tests on Windows
+  type: boolean
+  default: true
+- name: RunSourceBuild
+  displayName: Run source build
+  type: boolean
+  default: true
+- name: RunTestsOnLinux
+  displayName: Run tests on Linux
+  type: boolean
+  default: true
+- name: RunTestsOnMac
+  displayName: Run tests on Mac
+  type: boolean
+  default: true
+- name: RunMonoTestsOnMac
+  displayName: Run Mono tests on Mac
+  type: boolean
+  default: true
 
 extends:
   template: templates/pipeline.yml
@@ -43,3 +79,12 @@ extends:
     E2EPart2AgentCleanup: ${{parameters.E2EPart2AgentCleanup}}
     ApexAgentCleanup: ${{parameters.ApexAgentCleanup}}
     NuGetLocalizationType: ${{parameters.NuGetLocalizationType}}
+    RunApexTests: ${{parameters.RunApexTests}}
+    RunBuildForPublishing: ${{parameters.RunBuildForPublishing}}
+    RunCrossFrameworkTestsOnWindows: ${{parameters.RunCrossFrameworkTestsOnWindows}}
+    RunEndToEndTests: ${{parameters.RunEndToEndTests}}
+    RunFunctionalTestsOnWindows: ${{parameters.RunFunctionalTestsOnWindows}}
+    RunSourceBuild: ${{parameters.RunSourceBuild}}
+    RunTestsOnLinux: ${{parameters.RunTestsOnLinux}}
+    RunTestsOnMac: ${{parameters.RunTestsOnMac}}
+    RunMonoTestsOnMac: ${{parameters.RunMonoTestsOnMac}}

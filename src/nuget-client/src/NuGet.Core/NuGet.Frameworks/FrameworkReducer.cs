@@ -4,7 +4,6 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Globalization;
 using System.Linq;
 
 namespace NuGet.Frameworks
@@ -32,8 +31,8 @@ namespace NuGet.Frameworks
         /// </summary>
         public FrameworkReducer(IFrameworkNameProvider mappings, IFrameworkCompatibilityProvider compat)
         {
-            _mappings = mappings;
-            _compat = compat;
+            _mappings = mappings ?? throw new ArgumentNullException(nameof(mappings));
+            _compat = compat ?? throw new ArgumentNullException(nameof(compat));
             _fullComparer = new NuGetFrameworkFullComparer();
             _fwNameComparer = new NuGetFrameworkNameComparer();
         }
@@ -44,8 +43,11 @@ namespace NuGet.Frameworks
         /// <param name="framework">Project target framework</param>
         /// <param name="possibleFrameworks">Possible frameworks to narrow down</param>
         /// <returns>Nearest compatible framework. If no frameworks are compatible null is returned.</returns>
-        public NuGetFramework GetNearest(NuGetFramework framework, IEnumerable<NuGetFramework> possibleFrameworks)
+        public NuGetFramework? GetNearest(NuGetFramework framework, IEnumerable<NuGetFramework> possibleFrameworks)
         {
+            if (framework == null) throw new ArgumentNullException(nameof(framework));
+            if (possibleFrameworks == null) throw new ArgumentNullException(nameof(possibleFrameworks));
+
             var nearest = GetNearestInternal(framework, possibleFrameworks);
 
             var fallbackFramework = framework as FallbackFramework;
@@ -68,9 +70,9 @@ namespace NuGet.Frameworks
             return nearest;
         }
 
-        private NuGetFramework GetNearestInternal(NuGetFramework framework, IEnumerable<NuGetFramework> possibleFrameworks)
+        private NuGetFramework? GetNearestInternal(NuGetFramework framework, IEnumerable<NuGetFramework> possibleFrameworks)
         {
-            NuGetFramework nearest = null;
+            NuGetFramework? nearest = null;
 
             // Unsupported frameworks always lose, throw them out unless it's all we were given
             if (possibleFrameworks.Any(e => e != NuGetFramework.UnsupportedFramework))
@@ -135,7 +137,7 @@ namespace NuGet.Frameworks
                         {
                             // For scenarios where we are unable to decide between PCLs, choose the PCL with the
                             // least frameworks. Less frameworks means less compatibility which means it is nearer to the target.
-                            reduced = new NuGetFramework[] { GetBestPCL(reduced) };
+                            reduced = new NuGetFramework[] { GetBestPCL(reduced)! };
                         }
                     }
                 }
@@ -232,6 +234,8 @@ namespace NuGet.Frameworks
         /// </summary>
         public IEnumerable<NuGetFramework> ReduceEquivalent(IEnumerable<NuGetFramework> frameworks)
         {
+            if (frameworks == null) throw new ArgumentNullException(nameof(frameworks));
+
             // order first so we get consistent results for equivalent frameworks
             var input = frameworks
                 .OrderBy(f => f, new FrameworkPrecedenceSorter(_mappings, true))
@@ -250,8 +254,7 @@ namespace NuGet.Frameworks
 
                 duplicates.Add(framework);
 
-                IEnumerable<NuGetFramework> eqFrameworks;
-                if (_mappings.TryGetEquivalentFrameworks(framework, out eqFrameworks))
+                if (_mappings.TryGetEquivalentFrameworks(framework, out IEnumerable<NuGetFramework>? eqFrameworks))
                 {
                     foreach (var eqFramework in eqFrameworks)
                     {
@@ -267,6 +270,8 @@ namespace NuGet.Frameworks
         /// </summary>
         public IEnumerable<NuGetFramework> ReduceUpwards(IEnumerable<NuGetFramework> frameworks)
         {
+            if (frameworks is null) throw new ArgumentNullException(nameof(frameworks));
+
             // NuGetFramework.AnyFramework is a special case
             if (frameworks.Any(e => e != NuGetFramework.AnyFramework))
             {
@@ -285,6 +290,8 @@ namespace NuGet.Frameworks
         /// </summary>
         public IEnumerable<NuGetFramework> ReduceDownwards(IEnumerable<NuGetFramework> frameworks)
         {
+            if (frameworks is null) throw new ArgumentNullException(nameof(frameworks));
+
             // NuGetFramework.AnyFramework is a special case
             if (frameworks.Any(e => e == NuGetFramework.AnyFramework))
             {
@@ -389,18 +396,21 @@ namespace NuGet.Frameworks
                 // from all possible frameworks, find the best match
                 var nearestForSub = GetNearest(sub, allPclFrameworks);
 
-                // +1 each framework containing the best match
-                foreach (var pair in pclToFrameworks)
+                if (nearestForSub != null)
                 {
-                    if (pair.Value.Contains(nearestForSub, _fullComparer))
+                    // +1 each framework containing the best match
+                    foreach (KeyValuePair<NuGetFramework, IEnumerable<NuGetFramework>> pair in pclToFrameworks)
                     {
-                        if (!scores.ContainsKey(pair.Key))
+                        if (pair.Value.Contains(nearestForSub, _fullComparer))
                         {
-                            scores.Add(pair.Key, 1);
-                        }
-                        else
-                        {
-                            scores[pair.Key]++;
+                            if (!scores.ContainsKey(pair.Key))
+                            {
+                                scores.Add(pair.Key, 1);
+                            }
+                            else
+                            {
+                                scores[pair.Key]++;
+                            }
                         }
                     }
                 }
@@ -433,8 +443,7 @@ namespace NuGet.Frameworks
         /// </summary>
         private IEnumerable<NuGetFramework> ExplodePortableFramework(NuGetFramework pcl, bool includeOptional = true)
         {
-            IEnumerable<NuGetFramework> frameworks = null;
-            if (!_mappings.TryGetPortableFrameworks(pcl.Profile, includeOptional, out frameworks))
+            if (!_mappings.TryGetPortableFrameworks(pcl.Profile, includeOptional, out IEnumerable<NuGetFramework>? frameworks))
             {
                 Debug.Fail("Unable to get portable frameworks from: " + pcl.ToString());
                 frameworks = Enumerable.Empty<NuGetFramework>();
@@ -446,9 +455,9 @@ namespace NuGet.Frameworks
         /// <summary>
         /// Order PCLs when there is no other way to decide.
         /// </summary>
-        private NuGetFramework GetBestPCL(IEnumerable<NuGetFramework> reduced)
+        private NuGetFramework? GetBestPCL(IEnumerable<NuGetFramework> reduced)
         {
-            NuGetFramework current = null;
+            NuGetFramework? current = null;
 
             foreach (var considering in reduced)
             {

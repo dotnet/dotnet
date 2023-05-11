@@ -11,7 +11,7 @@ namespace NuGet.Frameworks
     /// </summary>
     public class NuGetFrameworkNameComparer : IEqualityComparer<NuGetFramework>
     {
-        public bool Equals(NuGetFramework x, NuGetFramework y)
+        public bool Equals(NuGetFramework? x, NuGetFramework? y)
         {
             if (ReferenceEquals(x, y))
             {

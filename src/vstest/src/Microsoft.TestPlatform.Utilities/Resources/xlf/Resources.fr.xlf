@@ -4,32 +4,32 @@
     <body>
       <trans-unit id="InvalidRunSettingsXml">
         <source>Run settings XML does not contain "RunSettings" node.</source>
-        <target state="translated">Le fichier XML des paramètres d'exécution ne contient pas le nœud "RunSettings".</target>
+        <target state="new">Run settings XML does not contain "RunSettings" node.</target>
         <note />
       </trans-unit>
       <trans-unit id="InvalidSettingsIncorrectValue">
         <source>Invalid setting '{0}'. Invalid value '{1}' specified for '{2}'.</source>
-        <target state="translated">Paramètre non valide '{0}'. Valeur non valide '{1}' spécifiée pour '{2}'.</target>
+        <target state="new">Invalid setting '{0}'. Invalid value '{1}' specified for '{2}'.</target>
         <note />
       </trans-unit>
       <trans-unit id="MissingRunSettingsNode">
         <source>Could not find 'RunSettings' node.</source>
-        <target state="translated">Nœud 'RunSettings' introuvable.</target>
+        <target state="new">Could not find 'RunSettings' node.</target>
         <note />
       </trans-unit>
       <trans-unit id="NoRunSettingsNodeFound">
         <source>Could not find 'RunSettings' node.</source>
-        <target state="translated">Nœud 'RunSettings' introuvable.</target>
+        <target state="new">Could not find 'RunSettings' node.</target>
         <note />
       </trans-unit>
       <trans-unit id="RunSettingsParseError">
         <source>An error occurred while loading the settings.  Error: {0}.</source>
-        <target state="translated">Une erreur s'est produite durant le chargement des paramètres. Erreur : {0}.</target>
+        <target state="new">An error occurred while loading the settings.  Error: {0}.</target>
         <note />
       </trans-unit>
       <trans-unit id="UnExpectedSettingsFile">
         <source>Unexpected settings file specified.</source>
-        <target state="translated">Un fichier de paramètres inattendu a été spécifié.</target>
+        <target state="new">Unexpected settings file specified.</target>
         <note />
       </trans-unit>
     </body>

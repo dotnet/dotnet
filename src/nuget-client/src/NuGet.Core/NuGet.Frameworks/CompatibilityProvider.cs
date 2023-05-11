@@ -17,7 +17,7 @@ namespace NuGet.Frameworks
 
         public CompatibilityProvider(IFrameworkNameProvider mappings)
         {
-            _mappings = mappings;
+            _mappings = mappings ?? throw new ArgumentNullException(nameof(mappings));
             _expander = new FrameworkExpander(mappings);
             _cache = new ConcurrentDictionary<CompatibilityCacheKey, bool>();
         }
@@ -30,15 +30,8 @@ namespace NuGet.Frameworks
         /// <returns>True if framework supports other</returns>
         public bool IsCompatible(NuGetFramework target, NuGetFramework candidate)
         {
-            if (target == null)
-            {
-                throw new ArgumentNullException(nameof(target));
-            }
-
-            if (candidate == null)
-            {
-                throw new ArgumentNullException(nameof(candidate));
-            }
+            if (target == null) throw new ArgumentNullException(nameof(target));
+            if (candidate == null) throw new ArgumentNullException(nameof(candidate));
 
             // check the cache for a solution
             var cacheKey = new CompatibilityCacheKey(target, candidate);
@@ -123,13 +116,16 @@ namespace NuGet.Frameworks
                 return IsCompatibleWithTarget(target, candidate);
             }
 
-            IEnumerable<NuGetFramework> targetFrameworks;
-            IEnumerable<NuGetFramework> candidateFrameworks;
+            IEnumerable<NuGetFramework>? targetFrameworks;
+            IEnumerable<NuGetFramework>? candidateFrameworks;
 
             if (target.IsPCL)
             {
                 // do not include optional frameworks here since we might be unable to tell what is optional on the other framework
-                _mappings.TryGetPortableFrameworks(target.Profile, false, out targetFrameworks);
+                if (!_mappings.TryGetPortableFrameworks(target.Profile, includeOptional: false, out targetFrameworks))
+                {
+                    targetFrameworks = Array.Empty<NuGetFramework>();
+                }
             }
             else
             {
@@ -139,7 +135,10 @@ namespace NuGet.Frameworks
             if (candidate.IsPCL)
             {
                 // include optional frameworks here, the larger the list the more compatible it is
-                _mappings.TryGetPortableFrameworks(candidate.Profile, true, out candidateFrameworks);
+                if (!_mappings.TryGetPortableFrameworks(candidate.Profile, includeOptional: true, out candidateFrameworks))
+                {
+                    candidateFrameworks = Array.Empty<NuGetFramework>();
+                }
             }
             else
             {
@@ -241,9 +240,7 @@ namespace NuGet.Frameworks
             {
                 var frameworkToExpand = toExpand.Pop();
 
-                IEnumerable<NuGetFramework> compatibleFrameworks = null;
-
-                if (_mappings.TryGetEquivalentFrameworks(frameworkToExpand, out compatibleFrameworks))
+                if (_mappings.TryGetEquivalentFrameworks(frameworkToExpand, out IEnumerable<NuGetFramework>? compatibleFrameworks))
                 {
                     foreach (var curFramework in compatibleFrameworks)
                     {

@@ -1,0 +1,90 @@
+parameters:
+- name: DartLabEnvironment
+  displayName: DartLab Environment
+  type: string
+  default: Production
+  values:
+  - Production
+  - Staging
+- name: E2EPart1AgentCleanup
+  displayName: Delete or keep E2E Part 1 machine for debugging
+  type: string
+  default: delete
+  values:
+  - delete
+  - stop
+- name: E2EPart2AgentCleanup
+  displayName: Delete or keep E2E Part 2 machine for debugging
+  type: string
+  default: delete
+  values:
+  - delete
+  - stop
+- name: ApexAgentCleanup
+  displayName: Delete or keep VS Apex test machine for debugging
+  type: string
+  default: delete
+  values:
+  - delete
+  - stop
+- name: NuGetLocalizationType
+  displayName: Whether to do production-ready localization (Full), or pseudo-localization, aka PLOC, (Pseudo) for testing.
+  type: string
+  default: Full
+  values:
+  - Full
+  - Pseudo
+- name: RunApexTests
+  displayName: Run Apex tests
+  type: boolean
+  default: true
+- name: RunBuildForPublishing
+  displayName: Build bits for publishing
+  type: boolean
+  default: false
+- name: RunCrossFrameworkTestsOnWindows
+  displayName: Run cross framweork tests on Windows
+  type: boolean
+  default: false
+- name: RunEndToEndTests
+  displayName: Run end-to-end tests
+  type: boolean
+  default: false
+- name: RunFunctionalTestsOnWindows
+  displayName: Run functional tests on Windows
+  type: boolean
+  default: false
+- name: RunSourceBuild
+  displayName: Run source build
+  type: boolean
+  default: false
+- name: RunTestsOnLinux
+  displayName: Run tests on Linux
+  type: boolean
+  default: false
+- name: RunTestsOnMac
+  displayName: Run tests on Mac
+  type: boolean
+  default: false
+- name: RunMonoTestsOnMac
+  displayName: Run Mono tests on Mac
+  type: boolean
+  default: true
+
+extends:
+  template: templates/pipeline.yml
+  parameters:
+    ApexAgentCleanup: ${{parameters.ApexAgentCleanup}}
+    DartLabEnvironment: ${{parameters.DartLabEnvironment}}
+    E2EPart1AgentCleanup: ${{parameters.E2EPart1AgentCleanup}}
+    E2EPart2AgentCleanup: ${{parameters.E2EPart2AgentCleanup}}
+    NuGetLocalizationType: ${{parameters.NuGetLocalizationType}}
+    RunApexTests: ${{parameters.RunApexTests}}
+    RunBuildForPublishing: ${{parameters.RunBuildForPublishing}}
+    RunCrossFrameworkTestsOnWindows: ${{parameters.RunCrossFrameworkTestsOnWindows}}
+    RunEndToEndTests: ${{parameters.RunEndToEndTests}}
+    RunFunctionalTestsOnWindows: ${{parameters.RunFunctionalTestsOnWindows}}
+    RunSourceBuild: ${{parameters.RunSourceBuild}}
+    RunTestsOnLinux: ${{parameters.RunTestsOnLinux}}
+    RunTestsOnMac: ${{parameters.RunTestsOnMac}}
+    RunMonoTestsOnMac: ${{parameters.RunMonoTestsOnMac}}

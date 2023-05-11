@@ -18,25 +18,23 @@ namespace NuGet.VisualStudio.SolutionExplorer
     [Export(typeof(IAttachedCollectionSourceProvider))]
     [Name(nameof(PackageReferenceAttachedCollectionSourceProvider))]
     [Order(Before = HierarchyItemsProviderNames.Contains)]
-    internal sealed class PackageReferenceAttachedCollectionSourceProvider : AssetsFileTopLevelDependenciesCollectionSourceProvider<(string Name, string Version), PackageReferenceItem>
+    internal sealed class PackageReferenceAttachedCollectionSourceProvider : AssetsFileTopLevelDependenciesCollectionSourceProvider<PackageReferenceItem>
     {
         public PackageReferenceAttachedCollectionSourceProvider()
             : base(DependencyTreeFlags.PackageDependency)
         {
         }
 
-        protected override bool TryGetIdentity(Properties properties, out (string Name, string Version) identity)
+        protected override bool TryGetLibraryName(Properties properties, [NotNullWhen(returnValue: true)] out string? libraryName)
         {
             ThreadHelper.ThrowIfNotOnUIThread();
 
             try
             {
                 if (properties.Item("Name")?.Value is string name &&
-                    properties.Item("Version")?.Value is string version &&
-                    !string.IsNullOrEmpty(name) &&
-                    !string.IsNullOrEmpty(version))
+                    !string.IsNullOrEmpty(name))
                 {
-                    identity = (name, version);
+                    libraryName = name;
                     return true;
                 }
             }
@@ -46,13 +44,13 @@ namespace NuGet.VisualStudio.SolutionExplorer
                 // "Could not find project item with item type 'PackageReference' and include value '...'.
             }
 
-            identity = default;
+            libraryName = null;
             return false;
         }
 
-        protected override bool TryGetLibrary(AssetsFileTarget target, (string Name, string Version) identity, [NotNullWhen(returnValue: true)] out AssetsFileTargetLibrary? library)
+        protected override bool TryGetLibrary(AssetsFileTarget target, string libraryName, [NotNullWhen(returnValue: true)] out AssetsFileTargetLibrary? library)
         {
-            return target.TryGetPackage(identity.Name, identity.Version, out library);
+            return target.TryGetPackage(libraryName, out library);
         }
 
         protected override PackageReferenceItem CreateItem(AssetsFileTarget targetData, AssetsFileTargetLibrary library)

@@ -17,8 +17,8 @@ namespace NuGet.Frameworks
         private readonly string _frameworkIdentifier;
         private readonly Version _frameworkVersion;
         private readonly string _frameworkProfile;
-        private string _targetFrameworkMoniker;
-        private string _targetPlatformMoniker;
+        private string? _targetFrameworkMoniker;
+        private string? _targetPlatformMoniker;
         private int? _hashCode;
 
         public NuGetFramework(NuGetFramework framework)
@@ -41,14 +41,9 @@ namespace NuGet.Frameworks
         /// <summary>
         /// Creates a new NuGetFramework instance, with an optional profile (only available for netframework)
         /// </summary>
-        public NuGetFramework(string frameworkIdentifier, Version frameworkVersion, string frameworkProfile)
-            : this(frameworkIdentifier, frameworkVersion, profile: ProcessProfile(frameworkProfile), platform: string.Empty, platformVersion: FrameworkConstants.EmptyVersion)
+        public NuGetFramework(string frameworkIdentifier, Version frameworkVersion, string? frameworkProfile)
+            : this(frameworkIdentifier, frameworkVersion, profile: frameworkProfile ?? string.Empty, platform: string.Empty, platformVersion: FrameworkConstants.EmptyVersion)
         {
-        }
-
-        private static string ProcessProfile(string profile)
-        {
-            return profile ?? string.Empty;
         }
 
         /// <summary>
@@ -61,25 +56,10 @@ namespace NuGet.Frameworks
 
         internal NuGetFramework(string frameworkIdentifier, Version frameworkVersion, string profile, string platform, Version platformVersion)
         {
-            if (frameworkIdentifier == null)
-            {
-                throw new ArgumentNullException(nameof(frameworkIdentifier));
-            }
-
-            if (frameworkVersion == null)
-            {
-                throw new ArgumentNullException(nameof(frameworkVersion));
-            }
-
-            if (platform == null)
-            {
-                throw new ArgumentNullException(nameof(platform));
-            }
-
-            if (platformVersion == null)
-            {
-                throw new ArgumentNullException(nameof(platformVersion));
-            }
+            if (frameworkIdentifier == null) throw new ArgumentNullException(nameof(frameworkIdentifier));
+            if (frameworkVersion == null) throw new ArgumentNullException(nameof(frameworkVersion));
+            if (platform == null) throw new ArgumentNullException(nameof(platform));
+            if (platformVersion == null) throw new ArgumentNullException(nameof(platformVersion));
 
             _frameworkIdentifier = frameworkIdentifier;
             _frameworkVersion = NormalizeVersion(frameworkVersion);
@@ -93,36 +73,22 @@ namespace NuGet.Frameworks
         /// <summary>
         /// Target framework
         /// </summary>
-        public string Framework
-        {
-            get { return _frameworkIdentifier; }
-        }
+        public string Framework => _frameworkIdentifier;
 
         /// <summary>
         /// Target framework version
         /// </summary>
-        public Version Version
-        {
-            get { return _frameworkVersion; }
-        }
+        public Version Version => _frameworkVersion;
 
         /// <summary>
         /// Framework Platform (net5.0+)
         /// </summary>
-        public string Platform
-        {
-            get;
-            private set;
-        }
+        public string Platform { get; }
 
         /// <summary>
         /// Framework Platform Version (net5.0+)
         /// </summary>
-        public Version PlatformVersion
-        {
-            get;
-            private set;
-        }
+        public Version PlatformVersion { get; }
 
         /// <summary>
         /// True if the platform is non-empty
@@ -143,10 +109,7 @@ namespace NuGet.Frameworks
         /// <summary>
         /// Target framework profile
         /// </summary>
-        public string Profile
-        {
-            get { return _frameworkProfile; }
-        }
+        public string Profile => _frameworkProfile;
 
         /// <summary>The TargetFrameworkMoniker identifier of the current NuGetFramework.</summary>
         /// <remarks>Formatted to a System.Versioning.FrameworkName</remarks>
@@ -270,15 +233,14 @@ namespace NuGet.Frameworks
                 {
                     sb.Append("-");
 
-                    IEnumerable<NuGetFramework> frameworks = null;
                     if (framework.HasProfile
-                        && mappings.TryGetPortableFrameworks(framework.Profile, false, out frameworks)
+                        && mappings.TryGetPortableFrameworks(framework.Profile, includeOptional: false, out IEnumerable<NuGetFramework>? frameworks)
                         && frameworks.Any())
                     {
                         var required = new HashSet<NuGetFramework>(frameworks, Comparer);
 
                         // Normalize by removing all optional frameworks
-                        mappings.TryGetPortableFrameworks(framework.Profile, false, out frameworks);
+                        mappings.TryGetPortableFrameworks(framework.Profile, includeOptional: false, out frameworks);
 
                         // sort the PCL frameworks by alphabetical order
                         var sortedFrameworks = required.Select(e => e.GetShortFolderName(mappings)).OrderBy(e => e, StringComparer.OrdinalIgnoreCase);
@@ -457,17 +419,23 @@ namespace NuGet.Frameworks
                 : DotNetFrameworkName;
         }
 
-        public bool Equals(NuGetFramework other)
+        public bool Equals(NuGetFramework? other)
         {
+#pragma warning disable CS8604 // Possible null reference argument.
+            // Nullable annotations were added to the BCL for IEqualityComparer in .NET 5
             return Comparer.Equals(this, other);
+#pragma warning restore CS8604 // Possible null reference argument.
         }
 
-        public static bool operator ==(NuGetFramework left, NuGetFramework right)
+        public static bool operator ==(NuGetFramework? left, NuGetFramework? right)
         {
+#pragma warning disable CS8604 // Possible null reference argument.
+            // Nullable annotations were added to the BCL for IEqualityComparer in .NET 5
             return Comparer.Equals(left, right);
+#pragma warning restore CS8604 // Possible null reference argument.
         }
 
-        public static bool operator !=(NuGetFramework left, NuGetFramework right)
+        public static bool operator !=(NuGetFramework? left, NuGetFramework? right)
         {
             return !(left == right);
         }
@@ -482,7 +450,7 @@ namespace NuGet.Frameworks
             return _hashCode.Value;
         }
 
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             var other = obj as NuGetFramework;
 

@@ -15,5 +15,6 @@ namespace NuGet.VisualStudio.Internal.Contracts
         bool IsAutoReferenced { get; }
         bool IsUserInstalled { get; }
         bool IsDevelopmentDependency { get; }
+        VersionRange? VersionOverride { get; }
     }
 }

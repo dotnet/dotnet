@@ -47,7 +47,10 @@ namespace Microsoft.AspNetCore.Razor.Language.IntegrationTests.TestFiles
 #line hidden
 #nullable disable
             WriteLiteral("        ");
-            __tagHelperExecutionContext = __tagHelperScopeManager.Begin("div", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.StartTagAndEndTag, "test", async() => {
+            __tagHelperExecutionContext = __tagHelperScopeManager.Begin("div", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.StartTagAndEndTag, "test", 
+            #pragma warning disable 1998
+            async() => {
+                #pragma warning restore 1998
 #nullable restore
 #line (10,15)-(10,26) 6 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Markup_InCodeBlocksWithTagHelper.cshtml"
 Write(person.Name);
@@ -103,7 +106,10 @@ Write(person.Name);
 #line hidden
 #nullable disable
         WriteLiteral("        ");
-        __tagHelperExecutionContext = __tagHelperScopeManager.Begin("div", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.StartTagAndEndTag, "test", async() => {
+        __tagHelperExecutionContext = __tagHelperScopeManager.Begin("div", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.StartTagAndEndTag, "test", 
+        #pragma warning disable 1998
+        async() => {
+            #pragma warning restore 1998
             WriteLiteral("\r\n            <h3>Happy birthday ");
 #nullable restore
 #line (22,34)-(22,43) 6 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Markup_InCodeBlocksWithTagHelper.cshtml"

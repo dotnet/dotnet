@@ -1,6 +1,7 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+using System;
 using System.Collections.Generic;
 
 namespace NuGet.Frameworks
@@ -15,11 +16,11 @@ namespace NuGet.Frameworks
 
         public FrameworkPrecedenceSorter(IFrameworkNameProvider mappings, bool allEquivalent)
         {
-            _mappings = mappings;
+            _mappings = mappings ?? throw new ArgumentNullException(nameof(mappings));
             _allEquivalent = allEquivalent;
         }
 
-        public int Compare(NuGetFramework x, NuGetFramework y)
+        public int Compare(NuGetFramework? x, NuGetFramework? y)
         {
             return _allEquivalent ? _mappings.CompareEquivalentFrameworks(x, y) : _mappings.CompareFrameworks(x, y);
         }

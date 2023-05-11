@@ -24,7 +24,7 @@ namespace NuGet.Frameworks
         public NuGetFramework SecondaryFramework { get; }
 
         private int? _hashCode;
-        private FallbackFramework _fallbackFramework;
+        private FallbackFramework? _fallbackFramework;
 
         /// <summary>
         /// Multiple compatbility 
@@ -66,12 +66,12 @@ namespace NuGet.Frameworks
             return framework;
         }
 
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             return Equals(obj as DualCompatibilityFramework);
         }
 
-        public bool Equals(DualCompatibilityFramework other)
+        public bool Equals(DualCompatibilityFramework? other)
         {
             if (other == null)
             {

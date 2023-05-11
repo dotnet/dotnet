@@ -4,6 +4,7 @@
     <UseParallelXunit>true</UseParallelXunit>
     <Description>Unit tests for NuGet.Frameworks.</Description>
     <UserSecretsId>f889ae50-c1f1-4c63-beae-292414bb3939</UserSecretsId>
+    <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <ItemGroup>

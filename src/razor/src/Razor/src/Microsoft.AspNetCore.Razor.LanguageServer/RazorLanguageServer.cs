@@ -140,6 +140,7 @@ internal class RazorLanguageServer : AbstractLanguageServer<RazorRequestContext>
 
         // Folding Range Providers
         services.AddSingleton<IRazorFoldingRangeProvider, RazorCodeBlockFoldingProvider>();
+        services.AddSingleton<IRazorFoldingRangeProvider, UsingsFoldingRangeProvider>();
 
         // Other
         services.AddSingleton<HtmlFactsService, DefaultHtmlFactsService>();

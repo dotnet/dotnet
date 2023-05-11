@@ -90,13 +90,15 @@ namespace NuGet.VisualStudio.SolutionExplorer.Models
 
                 previous.DataByTarget.TryGetValue(lockFileTarget.Name, out AssetsFileTarget? previousTarget);
 
+                ImmutableArray<AssetsFileLogMessage> logMessages = ParseLogMessages(lockFile, previousTarget, lockFileTarget.Name);
+
                 dataByTarget.Add(
                     lockFileTarget.Name,
                     new AssetsFileTarget(
                         this,
                         lockFileTarget.Name,
-                        ParseLogMessages(lockFile, previousTarget, lockFileTarget.Name),
-                        ParseLibraries(lockFile, lockFileTarget)));
+                        logMessages,
+                        ParseLibraries(lockFile, lockFileTarget, logMessages)));
             }
 
             DataByTarget = dataByTarget.ToImmutable();
@@ -123,14 +125,14 @@ namespace NuGet.VisualStudio.SolutionExplorer.Models
 
                     j++;
 
-                    if (j < previousLogs.Length && previousLogs[j].Equals(logMessage))
+                    if (j < previousLogs.Length && previousLogs[j].Equals(logMessage, lockFile.PackageSpec.FilePath))
                     {
                         // Unchanged, so use previous value
                         builder.Add(previousLogs[j]);
                     }
                     else
                     {
-                        builder.Add(new AssetsFileLogMessage(logMessage));
+                        builder.Add(new AssetsFileLogMessage(lockFile.PackageSpec.FilePath, logMessage));
                     }
                 }
 
@@ -138,7 +140,7 @@ namespace NuGet.VisualStudio.SolutionExplorer.Models
             }
         }
 
-        internal static ImmutableDictionary<string, AssetsFileTargetLibrary> ParseLibraries(LockFile lockFile, LockFileTarget lockFileTarget)
+        internal static ImmutableDictionary<string, AssetsFileTargetLibrary> ParseLibraries(LockFile lockFile, LockFileTarget lockFileTarget, ImmutableArray<AssetsFileLogMessage> logMessages)
         {
             ImmutableDictionary<string, AssetsFileTargetLibrary>.Builder builder = ImmutableDictionary.CreateBuilder<string, AssetsFileTargetLibrary>(StringComparer.OrdinalIgnoreCase);
 
@@ -147,6 +149,19 @@ namespace NuGet.VisualStudio.SolutionExplorer.Models
                 if (AssetsFileTargetLibrary.TryCreate(lockFile, lockFileLibrary, out AssetsFileTargetLibrary? library))
                 {
                     builder.Add(library.Name, library);
+                }
+            }
+
+            // If a non-existent library is referenced, it will have an error log message, but no entry in "libraries".
+            // We want to show a diagnostic node beneath such nodes in the tree, so need to create a dummy library entry,
+            // otherwise there's nothing to attach that diagnostic to.
+            foreach (AssetsFileLogMessage message in logMessages)
+            {
+                string libraryName = message.LibraryName;
+
+                if (!builder.ContainsKey(libraryName))
+                {
+                    builder.Add(libraryName, AssetsFileTargetLibrary.CreatePlaceholder(libraryName));
                 }
             }
 

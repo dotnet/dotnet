@@ -58,7 +58,7 @@ namespace NuGet.Commands.Restore.Utility
         {
             foreach (Exception exception in exceptions.InnerExceptions)
             {
-                string messageText = string.Format(Strings.Error_VulnerabilityDataFetch, exception.Message);
+                var messageText = string.Format(Strings.Error_VulnerabilityDataFetch, exception.Message);
                 RestoreLogMessage logMessage = RestoreLogMessage.CreateError(NuGetLogCode.NU1900, messageText);
                 _logger.Log(logMessage);
             }

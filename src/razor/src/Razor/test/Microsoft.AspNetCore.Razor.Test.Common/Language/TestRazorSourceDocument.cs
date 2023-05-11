@@ -81,13 +81,16 @@ public static class TestRazorSourceDocument
         string content = "Hello, world!",
         Encoding encoding = null,
         bool normalizeNewLines = false,
-        string filePath = "test.cshtml",
-        string relativePath = "test.cshtml")
+        string filePath = null,
+        string relativePath = null)
     {
         if (normalizeNewLines)
         {
             content = NormalizeNewLines(content);
         }
+
+        filePath ??= "test.cshtml";
+        relativePath ??= filePath ?? "test.cshtml";
 
         var properties = new RazorSourceDocumentProperties(filePath, relativePath);
         return new StringSourceDocument(content, encoding ?? Encoding.UTF8, properties);

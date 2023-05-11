@@ -7,7 +7,6 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace NuGet.Test.Utility
 {
@@ -74,7 +73,7 @@ namespace NuGet.Test.Utility
 
                 if (waitForExit)
                 {
-#if DEBUG                   
+#if DEBUG
                     p.WaitForExit();
                     var processExited = true;
 #else
@@ -95,9 +94,6 @@ namespace NuGet.Test.Utility
                         throw new TimeoutException($"{processName} timed out: {psi.Arguments}{Environment.NewLine}Output:{output}{Environment.NewLine}Error:{errors}");
                     }
                 }
-
-                p.CancelOutputRead();
-                p.CancelErrorRead();
             }
 
             void OutputHandler(object sendingProcess, DataReceivedEventArgs e)

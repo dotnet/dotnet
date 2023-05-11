@@ -78,5 +78,7 @@ namespace NuGet.VisualStudio.Internal.Contracts
         public bool IsUserInstalled { get; internal set; }
 
         public bool IsDevelopmentDependency { get; internal set; }
+
+        public VersionRange? VersionOverride { get; internal set; }
     }
 }

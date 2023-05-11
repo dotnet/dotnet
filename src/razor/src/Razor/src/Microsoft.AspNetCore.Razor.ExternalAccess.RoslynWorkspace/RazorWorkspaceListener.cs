@@ -37,6 +37,14 @@ public class RazorWorkspaceListener : IDisposable
 
     public void NotifyDynamicFile(ProjectId projectId)
     {
+        // Since there is no "un-notify" API to indicate that callers no longer care about a project, it's entirely
+        // possible that by the time we get notified, a project might have been removed from the workspace. Whilst
+        // that wouldn't cause any issues we may as well avoid creating a task scheduler.
+        if (_workspace is null || !_workspace.CurrentSolution.ContainsProject(projectId))
+        {
+            return;
+        }
+
         // We expect this to be called multiple times per project so a no-op update operation seems like a better choice
         // than constructing a new TaskDelayScheduler each time, and using the TryAdd method, which doesn't support a
         // valueFactory argument.

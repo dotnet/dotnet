@@ -43,9 +43,15 @@ namespace AspNetCoreGeneratedDocument
         public async override global::System.Threading.Tasks.Task ExecuteAsync()
         {
             WriteLiteral("\r\n");
-            __tagHelperExecutionContext = __tagHelperScopeManager.Begin("email", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.StartTagAndEndTag, "c7a5bfe3b24fca2a512de60cbc0070e782f08b7a2540", async() => {
+            __tagHelperExecutionContext = __tagHelperScopeManager.Begin("email", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.StartTagAndEndTag, "c7a5bfe3b24fca2a512de60cbc0070e782f08b7a2540", 
+            #pragma warning disable 1998
+            async() => {
+                #pragma warning restore 1998
                 WriteLiteral("\r\n    custom tag helper\r\n    ");
-                __tagHelperExecutionContext = __tagHelperScopeManager.Begin("email", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.StartTagAndEndTag, "c7a5bfe3b24fca2a512de60cbc0070e782f08b7a2828", async() => {
+                __tagHelperExecutionContext = __tagHelperScopeManager.Begin("email", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.StartTagAndEndTag, "c7a5bfe3b24fca2a512de60cbc0070e782f08b7a2930", 
+                #pragma warning disable 1998
+                async() => {
+                    #pragma warning restore 1998
                     WriteLiteral("nested tag helper");
                 }
                 );

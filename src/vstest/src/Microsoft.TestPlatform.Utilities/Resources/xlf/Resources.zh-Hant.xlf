@@ -4,32 +4,32 @@
     <body>
       <trans-unit id="InvalidRunSettingsXml">
         <source>Run settings XML does not contain "RunSettings" node.</source>
-        <target state="translated">回合設定 XML 不包含 " RunSettings" 節點。</target>
+        <target state="new">Run settings XML does not contain "RunSettings" node.</target>
         <note />
       </trans-unit>
       <trans-unit id="InvalidSettingsIncorrectValue">
         <source>Invalid setting '{0}'. Invalid value '{1}' specified for '{2}'.</source>
-        <target state="translated">設定 '{0}' 無效。為 '{2}' 指定的值 '{1}' 無效。</target>
+        <target state="new">Invalid setting '{0}'. Invalid value '{1}' specified for '{2}'.</target>
         <note />
       </trans-unit>
       <trans-unit id="MissingRunSettingsNode">
         <source>Could not find 'RunSettings' node.</source>
-        <target state="translated">找不到 'RunSettings' 節點。</target>
+        <target state="new">Could not find 'RunSettings' node.</target>
         <note />
       </trans-unit>
       <trans-unit id="NoRunSettingsNodeFound">
         <source>Could not find 'RunSettings' node.</source>
-        <target state="translated">找不到 'RunSettings' 節點。</target>
+        <target state="new">Could not find 'RunSettings' node.</target>
         <note />
       </trans-unit>
       <trans-unit id="RunSettingsParseError">
         <source>An error occurred while loading the settings.  Error: {0}.</source>
-        <target state="translated">載入設定時發生錯誤。錯誤: {0}。</target>
+        <target state="new">An error occurred while loading the settings.  Error: {0}.</target>
         <note />
       </trans-unit>
       <trans-unit id="UnExpectedSettingsFile">
         <source>Unexpected settings file specified.</source>
-        <target state="translated">指定了非預期的設定檔案。</target>
+        <target state="new">Unexpected settings file specified.</target>
         <note />
       </trans-unit>
     </body>

@@ -1,9 +1,9 @@
 ﻿Document - 
     NamespaceDeclaration -  - Test
-        UsingDirective - (3:1,1 [12] ) - System
-        UsingDirective - (18:2,1 [32] ) - System.Collections.Generic
-        UsingDirective - (53:3,1 [17] ) - System.Linq
-        UsingDirective - (73:4,1 [28] ) - System.Threading.Tasks
+        UsingDirective - (3:1,1 [20] ) - global::System
+        UsingDirective - (26:2,1 [40] ) - global::System.Collections.Generic
+        UsingDirective - (69:3,1 [25] ) - global::System.Linq
+        UsingDirective - (97:4,1 [36] ) - global::System.Threading.Tasks
         UsingDirective - (1:0,1 [38] x:\dir\subdir\Test\TestComponent.cshtml) - Microsoft.AspNetCore.Components
         ClassDeclaration -  - public partial - TestComponent - global::Microsoft.AspNetCore.Components.ComponentBase -  - TItem
             DesignTimeDirective - 

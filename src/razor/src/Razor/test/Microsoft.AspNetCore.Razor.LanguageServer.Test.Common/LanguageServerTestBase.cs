@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -14,6 +15,7 @@ using Microsoft.AspNetCore.Razor.LanguageServer.Common.Extensions;
 using Microsoft.AspNetCore.Razor.LanguageServer.EndpointContracts;
 using Microsoft.AspNetCore.Razor.LanguageServer.Serialization;
 using Microsoft.AspNetCore.Razor.LanguageServer.Test.Common;
+using Microsoft.AspNetCore.Razor.ProjectEngineHost.Serialization;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
 using Microsoft.CodeAnalysis.Razor;
@@ -68,20 +70,35 @@ public abstract class LanguageServerTestBase : TestBase
         return requestContext;
     }
 
-    protected static RazorCodeDocument CreateCodeDocument(string text, IReadOnlyList<TagHelperDescriptor>? tagHelpers = null)
+    protected static RazorCodeDocument CreateCodeDocument(string text, IReadOnlyList<TagHelperDescriptor>? tagHelpers = null, string? filePath = null)
     {
+        var fileKind = FileKinds.GetFileKindFromFilePath(filePath ?? "test.cshtml");
         tagHelpers ??= Array.Empty<TagHelperDescriptor>();
-        var sourceDocument = TestRazorSourceDocument.Create(text);
-        var projectEngine = RazorProjectEngine.Create(RazorConfiguration.Default, RazorProjectFileSystem.Create("C:/"), builder =>
+        if (fileKind == FileKinds.Component)
+        {
+            tagHelpers = tagHelpers.Concat(GetDefaultRuntimeComponents()).ToArray();
+        }
+
+        var sourceDocument = TestRazorSourceDocument.Create(text, filePath: filePath);
+        var projectEngine = RazorProjectEngine.Create(builder =>
         {
             RazorExtensions.Register(builder);
         });
+        var importDocumentName = fileKind == FileKinds.Legacy ? "_ViewImports.cshtml" : "_Imports.razor";
+        // Yes I know "BlazorServer_31 is weird, but thats what is in the taghelpers.json file
         var defaultImportDocument = TestRazorSourceDocument.Create(
             """
+                @using BlazorServer_31
+                @using BlazorServer_31.Pages
+                @using BlazorServer_31.Shared
                 @using System;
+                @using Microsoft.AspNetCore.Components
+                @using Microsoft.AspNetCore.Components.Authorization
+                @using Microsoft.AspNetCore.Components.Routing
+                @using Microsoft.AspNetCore.Components.Web
                 """,
-            new RazorSourceDocumentProperties("_ViewImports.cshtml", "_ViewImports.cshtml"));
-        var codeDocument = projectEngine.ProcessDesignTime(sourceDocument, "mvc", new[] { defaultImportDocument }, tagHelpers);
+            new RazorSourceDocumentProperties(importDocumentName, importDocumentName));
+        var codeDocument = projectEngine.ProcessDesignTime(sourceDocument, fileKind, new[] { defaultImportDocument }, tagHelpers);
         return codeDocument;
     }
 
@@ -126,6 +143,27 @@ public abstract class LanguageServerTestBase : TestBase
         var monitor = new Mock<IOptionsMonitor<RazorLSPOptions>>(MockBehavior.Strict);
         monitor.SetupGet(m => m.CurrentValue).Returns(new RazorLSPOptions(default, enableFormatting, true, InsertSpaces: true, TabSize: 4, formatOnType));
         return monitor.Object;
+    }
+
+    private static IReadOnlyList<TagHelperDescriptor> GetDefaultRuntimeComponents()
+    {
+        var testFileName = "test.taghelpers.json";
+        var current = new DirectoryInfo(AppContext.BaseDirectory);
+        while (current != null && !File.Exists(Path.Combine(current.FullName, testFileName)))
+        {
+            current = current.Parent;
+        }
+
+        var tagHelperFilePath = Path.Combine(current!.FullName, testFileName);
+        var buffer = File.ReadAllBytes(tagHelperFilePath);
+        var serializer = new JsonSerializer();
+        serializer.Converters.Add(TagHelperDescriptorJsonConverter.Instance);
+
+        using var stream = new MemoryStream(buffer);
+        using var streamReader = new StreamReader(stream);
+        using var reader = new JsonTextReader(streamReader);
+
+        return serializer.Deserialize<IReadOnlyList<TagHelperDescriptor>>(reader)!;
     }
 
     [Obsolete("Use " + nameof(LSPProjectSnapshotManagerDispatcher))]

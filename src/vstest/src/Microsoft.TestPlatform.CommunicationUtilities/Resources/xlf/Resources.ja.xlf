@@ -4,57 +4,57 @@
     <body>
       <trans-unit id="AbortedTestRun">
         <source>The active test run was aborted. Reason: {0}</source>
-        <target state="translated">アクティブなテストの実行が中止されました。理由: {0}</target>
+        <target state="new">The active test run was aborted. Reason: {0}</target>
         <note />
       </trans-unit>
       <trans-unit id="ConnectionClosed">
         <source>An existing connection was forcibly closed by the remote host.</source>
-        <target state="translated">既存の接続はリモート ホストに強制的に切断されました。</target>
+        <target state="new">An existing connection was forcibly closed by the remote host.</target>
         <note />
       </trans-unit>
       <trans-unit id="AbortedTestDiscovery">
         <source>The active test discovery was aborted.</source>
-        <target state="translated">アクティブなテスト探索が中止されました。</target>
+        <target state="new">The active test discovery was aborted.</target>
         <note />
       </trans-unit>
       <trans-unit id="AbortedTestDiscoveryWithReason">
         <source>The active test discovery was aborted. Reason: {0}</source>
-        <target state="translated">アクティブなテスト探索が中止されました。理由: {0}</target>
+        <target state="new">The active test discovery was aborted. Reason: {0}</target>
         <note />
       </trans-unit>
       <trans-unit id="UnableToCommunicateToTestHost">
         <source>Unable to communicate with test host process.</source>
-        <target state="translated">テスト ホスト プロセスと通信できません。</target>
+        <target state="new">Unable to communicate with test host process.</target>
         <note />
       </trans-unit>
       <trans-unit id="UnexpectedMessage">
         <source>Unexpected message received. Expected MessageType : {0} Actual MessageType: {1}</source>
-        <target state="translated">予期しないメッセージを受信しました。予想されたメッセージの種類: {0} 実際のメッセージの種類: {1}</target>
+        <target state="new">Unexpected message received. Expected MessageType : {0} Actual MessageType: {1}</target>
         <note />
       </trans-unit>
       <trans-unit id="VersionCheckFailed">
         <source>Protocol version check failed. Make sure test runner and host are compatible.</source>
-        <target state="translated">プロトコルのバージョンを確認できませんでした。テスト ランナーとホストに互換性があることをご確認ください。</target>
+        <target state="new">Protocol version check failed. Make sure test runner and host are compatible.</target>
         <note />
       </trans-unit>
       <trans-unit id="VersionCheckTimedout">
         <source>Failed to negotiate protocol, waiting for response timed out after {0} seconds. This may occur due to machine slowness, please set environment variable {1} to increase timeout.</source>
-        <target state="translated">プロトコルをネゴシエートできませんでした。応答への待機が {0} 秒後にタイムアウトしました。これはマシンの遅さが原因で発生する可能性があるため、環境変数 {1} を設定してタイムアウト時間を増やしてください。</target>
+        <target state="new">Failed to negotiate protocol, waiting for response timed out after {0} seconds. This may occur due to machine slowness, please set environment variable {1} to increase timeout.</target>
         <note />
       </trans-unit>
       <trans-unit id="ConnectionTimeoutErrorMessage">
         <source>{0} process failed to connect to {1} process after {2} seconds. This may occur due to machine slowness, please set environment variable {3} to increase timeout.</source>
-        <target state="translated">{0} プロセスでは、{2} 秒後に {1} プロセスへ接続できませんでした。これは、マシンの遅さが原因で発生する可能性があるため、環境変数 {3} を設定してタイムアウト時間を増やしてください。</target>
+        <target state="new">{0} process failed to connect to {1} process after {2} seconds. This may occur due to machine slowness, please set environment variable {3} to increase timeout.</target>
         <note />
       </trans-unit>
       <trans-unit id="TestHostProcessCrashed">
         <source>Test host process crashed</source>
-        <target state="translated">テストのホスト プロセスがクラッシュしました</target>
+        <target state="new">Test host process crashed</target>
         <note />
       </trans-unit>
       <trans-unit id="AttachDebuggerToDefaultTestHostFailure">
         <source>Cannot attach the debugger to the default test host.</source>
-        <target state="translated">デバッガーを既定のテスト ホストにアタッチできません。</target>
+        <target state="new">Cannot attach the debugger to the default test host.</target>
         <note />
       </trans-unit>
     </body>

@@ -1,19 +1,20 @@
 steps:
 - task: ShellScript@2
-  displayName: "Run Tests (continue on error)"
+  displayName: "Run $(TestRunDisplayName) (continue on error)"
   continueOnError: "true"
   inputs:
     scriptPath: "scripts/funcTests/runFuncTests.sh"
+    args: $(TestRunCommandLineArguments)
     disableAutoCwd: "true"
     cwd: "$(Build.Repository.LocalPath)"
   condition: "and(succeeded(), eq(variables['IsOfficialBuild'], 'true'))"
 
 - task: ShellScript@2
-  displayName: "Run Tests (stop on error)"
+  displayName: "Run $(TestRunDisplayName) (stop on error)"
   continueOnError: "false"
   inputs:
     scriptPath: "scripts/funcTests/runFuncTests.sh"
-    disableAutoCwd: "true"
+    args: $(TestRunCommandLineArguments)
     cwd: "$(Build.Repository.LocalPath)"
   condition: "and(succeeded(), not(eq(variables['IsOfficialBuild'], 'true')))"
 
@@ -22,9 +23,8 @@ steps:
   inputs:
     testRunner: "VSTest"
     testResultsFiles: "*.trx"
-    testRunTitle: "NuGet.Client Tests On Linux"
+    testRunTitle: "NuGet.Client $(TestRunDisplayName) On Linux"
     searchFolder: "$(Build.Repository.LocalPath)/build/TestResults"
-    mergeTestResults: "true"
   condition: "succeededOrFailed()"
 
 - task: PublishBuildArtifacts@1
@@ -41,14 +41,14 @@ steps:
     targetType: "inline"
     script: |
       . $(Build.Repository.LocalPath)/scripts/utils/PostGitCommitStatus.ps1
-      SetCommitStatusForTestResult -PersonalAccessToken $(NuGetLurkerPersonalAccessToken) -VstsPersonalAccessToken $(System.AccessToken) -CommitSha $(Build.SourceVersion) -TestName "Tests On Linux"
+      SetCommitStatusForTestResult -PersonalAccessToken $(NuGetLurkerPersonalAccessToken) -VstsPersonalAccessToken $(System.AccessToken) -CommitSha $(Build.SourceVersion) -TestName "$(TestRunDisplayName) On Linux"
     failOnStderr: "true"
   condition: "not(eq(variables['ManualGitHubChecks'], 'false'))"
 
 - task: PublishPipelineArtifact@1
   displayName: "Publish binlogs"
   inputs:
-    artifactName: binlog - $(System.JobDisplayName) - Attempt $(System.JobAttempt)
+    artifactName: binlog - $(TestRunDisplayName) On Linux - Attempt $(System.JobAttempt)
     targetPath: $(Build.StagingDirectory)/binlog
   condition: " or(failed(), eq(variables['System.debug'], 'true')) "
 

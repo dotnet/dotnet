@@ -7,7 +7,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Language.CodeGeneration;
-using Microsoft.AspNetCore.Razor.LanguageServer.Common.Extensions;
 using Microsoft.AspNetCore.Razor.LanguageServer.Extensions;
 using Microsoft.AspNetCore.Razor.LanguageServer.Protocol;
 using Microsoft.AspNetCore.Razor.LanguageServer.Test.Common;
@@ -1053,7 +1052,7 @@ public class RazorTranslateDiagnosticsEndpointTest : LanguageServerTestBase
     {
         // Arrange
         var documentPath = new Uri("C:/path/to/document.razor");
-        var codeDocument = CreateCodeDocument("<p>@DateTime.Now", kind: FileKinds.Component);
+        var codeDocument = CreateCodeDocument("<p>@DateTime.Now", filePath: "Document.razor");
         var documentContext = CreateDocumentContext(documentPath, codeDocument);
         var diagnosticsService = new RazorTranslateDiagnosticsService(_mappingService, LoggerFactory);
         var diagnosticsEndpoint = new RazorTranslateDiagnosticsEndpoint(diagnosticsService, LoggerFactory);
@@ -1085,7 +1084,7 @@ public class RazorTranslateDiagnosticsEndpointTest : LanguageServerTestBase
     {
         // Arrange
         var documentPath = new Uri("C:/path/to/document.razor");
-        var codeDocument = CreateCodeDocument("<!body></body>", kind: FileKinds.Component);
+        var codeDocument = CreateCodeDocument("<!body></body>", filePath: "Document.razor");
         var documentContext = CreateDocumentContext(documentPath, codeDocument);
         var diagnosticsService = new RazorTranslateDiagnosticsService(_mappingService, LoggerFactory);
         var diagnosticsEndpoint = new RazorTranslateDiagnosticsEndpoint(diagnosticsService, LoggerFactory);
@@ -1120,7 +1119,7 @@ public class RazorTranslateDiagnosticsEndpointTest : LanguageServerTestBase
     {
         // Arrange
         var documentPath = new Uri("C:/path/to/document.razor");
-        var codeDocument = CreateCodeDocument("<html><!body><div></div></!body></html>", kind: FileKinds.Component);
+        var codeDocument = CreateCodeDocument("<html><!body><div></div></!body></html>", filePath: "Document.razor");
         var documentContext = CreateDocumentContext(documentPath, codeDocument);
         var diagnosticsService = new RazorTranslateDiagnosticsService(_mappingService, LoggerFactory);
         var diagnosticsEndpoint = new RazorTranslateDiagnosticsEndpoint(diagnosticsService, LoggerFactory);
@@ -1163,7 +1162,7 @@ public class RazorTranslateDiagnosticsEndpointTest : LanguageServerTestBase
     {
         // Arrange
         var documentPath = new Uri("C:/path/to/document.razor");
-        var codeDocument = CreateCodeDocument("<!body></!body>", kind: FileKinds.Component);
+        var codeDocument = CreateCodeDocument("<!body></!body>", filePath: "Document.razor");
         var documentContext = CreateDocumentContext(documentPath, codeDocument);
         var diagnosticsService = new RazorTranslateDiagnosticsService(_mappingService, LoggerFactory);
         var diagnosticsEndpoint = new RazorTranslateDiagnosticsEndpoint(diagnosticsService, LoggerFactory);
@@ -1201,15 +1200,6 @@ public class RazorTranslateDiagnosticsEndpointTest : LanguageServerTestBase
                 .PropertyName("onactivate")
                 .TypeName(typeof(string).FullName));
         return descriptor;
-    }
-
-    private static RazorCodeDocument CreateCodeDocument(string text, IReadOnlyList<TagHelperDescriptor>? tagHelpers = null, string? kind = null)
-    {
-        tagHelpers ??= Array.Empty<TagHelperDescriptor>();
-        var sourceDocument = TestRazorSourceDocument.Create(text);
-        var projectEngine = RazorProjectEngine.Create(builder => { });
-        var codeDocument = projectEngine.ProcessDesignTime(sourceDocument, kind ?? FileKinds.Legacy, Array.Empty<RazorSourceDocument>(), tagHelpers);
-        return codeDocument;
     }
 
     private static RazorCodeDocument CreateCodeDocumentWithCSharpProjection(

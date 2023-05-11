@@ -79,11 +79,11 @@ namespace NuGet.PackageManagement.VisualStudio.Test
 
         internal static IVsProjectAdapter CreateProjectAdapter(string fullPath)
         {
-            var projectBuildProperties = new Mock<IProjectBuildProperties>();
+            var projectBuildProperties = new Mock<IVsProjectBuildProperties>();
             return CreateProjectAdapter(fullPath, projectBuildProperties);
         }
 
-        internal static IVsProjectAdapter CreateProjectAdapter(string fullPath, Mock<IProjectBuildProperties> projectBuildProperties)
+        internal static IVsProjectAdapter CreateProjectAdapter(string fullPath, Mock<IVsProjectBuildProperties> projectBuildProperties)
         {
             var projectAdapter = CreateProjectAdapter(projectBuildProperties);
 
@@ -97,13 +97,13 @@ namespace NuGet.PackageManagement.VisualStudio.Test
             var testMSBuildProjectExtensionsPath = Path.Combine(fullPath, "obj");
             Directory.CreateDirectory(testMSBuildProjectExtensionsPath);
             projectAdapter
-                .Setup(x => x.GetMSBuildProjectExtensionsPathAsync())
-                .Returns(Task.FromResult(testMSBuildProjectExtensionsPath));
+                .Setup(x => x.GetMSBuildProjectExtensionsPath())
+                .Returns(testMSBuildProjectExtensionsPath);
 
             return projectAdapter.Object;
         }
 
-        internal static Mock<IVsProjectAdapter> CreateProjectAdapter(Mock<IProjectBuildProperties> projectBuildProperties)
+        internal static Mock<IVsProjectAdapter> CreateProjectAdapter(Mock<IVsProjectBuildProperties> projectBuildProperties)
         {
             var projectAdapter = new Mock<IVsProjectAdapter>();
 

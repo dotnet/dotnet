@@ -146,10 +146,9 @@ namespace NuGet.Test
             var provider = DefaultFrameworkNameProvider.Instance;
 
             NuGetFramework input = new NuGetFramework("Windows", new Version(8, 0));
-            IEnumerable<NuGetFramework> frameworks = null;
-            provider.TryGetEquivalentFrameworks(input, out frameworks);
+            provider.TryGetEquivalentFrameworks(input, out IEnumerable<NuGetFramework>? frameworks);
 
-            var set = new HashSet<NuGetFramework>(frameworks, NuGetFramework.Comparer);
+            var set = new HashSet<NuGetFramework>(frameworks!, NuGetFramework.Comparer);
 
             Assert.False(set.Contains(input));
         }
@@ -160,8 +159,7 @@ namespace NuGet.Test
             var provider = DefaultFrameworkNameProvider.Instance;
 
             NuGetFramework input = new NuGetFramework("Windows", new Version(8, 0));
-            IEnumerable<NuGetFramework> frameworks = null;
-            provider.TryGetEquivalentFrameworks(input, out frameworks);
+            provider.TryGetEquivalentFrameworks(input, out IEnumerable<NuGetFramework>? frameworks);
 
             var results = frameworks
                 .OrderBy(f => f, new NuGetFrameworkSorter())
@@ -182,8 +180,7 @@ namespace NuGet.Test
             var provider = DefaultFrameworkNameProvider.Instance;
 
             NuGetFramework input = new NuGetFramework("MyFramework", new Version(9, 0));
-            IEnumerable<NuGetFramework> frameworks = null;
-            bool found = provider.TryGetEquivalentFrameworks(input, out frameworks);
+            bool found = provider.TryGetEquivalentFrameworks(input, out _);
 
             Assert.False(found);
         }
@@ -195,8 +192,7 @@ namespace NuGet.Test
         {
             var provider = DefaultFrameworkNameProvider.Instance;
 
-            string identifier = null;
-            bool found = provider.TryGetIdentifier(input, out identifier);
+            bool found = provider.TryGetIdentifier(input, out _);
 
             Assert.False(found);
         }
@@ -209,8 +205,7 @@ namespace NuGet.Test
         {
             var provider = DefaultFrameworkNameProvider.Instance;
 
-            string identifier = null;
-            provider.TryGetIdentifier(input, out identifier);
+            provider.TryGetIdentifier(input, out string? identifier);
 
             Assert.Equal(expected, identifier);
         }
@@ -221,7 +216,7 @@ namespace NuGet.Test
             // Arrange
             var target = DefaultFrameworkNameProvider.Instance;
             var input = "net45+win8+net-cf+net46";
-            IEnumerable<NuGetFramework> frameworks;
+            IEnumerable<NuGetFramework>? frameworks;
 
             // Act & Assert
             var actual = Assert.Throws<ArgumentException>(
@@ -251,10 +246,9 @@ namespace NuGet.Test
         {
             var provider = DefaultFrameworkNameProvider.Instance;
 
-            Version version = null;
-            provider.TryGetVersion(versionString, out version);
+            provider.TryGetVersion(versionString, out Version? version);
 
-            string actual = provider.GetVersionString("Windows", version);
+            string actual = provider.GetVersionString("Windows", version!);
 
             Assert.Equal(expected, actual);
         }

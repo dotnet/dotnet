@@ -1952,6 +1952,7 @@ namespace NuGet.Test
 
             public bool IsCacheEnabled { get; set; }
 
+            [Obsolete]
             public IProjectBuildProperties BuildProperties => throw new NotImplementedException();
 
             public IProjectSystemCapabilities Capabilities => throw new NotImplementedException();

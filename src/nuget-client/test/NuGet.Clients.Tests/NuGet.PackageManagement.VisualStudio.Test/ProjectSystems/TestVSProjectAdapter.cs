@@ -52,36 +52,36 @@ namespace NuGet.PackageManagement.VisualStudio.Test
             _CentralPackageTransitivePinningEnabled = CentralPackageTransitivePinningEnabled;
 
             Mock.Get(BuildProperties)
-                .Setup(x => x.GetPropertyValue(It.Is<string>(x => x.Equals(ProjectBuildProperties.ManagePackageVersionsCentrally))))
+                .Setup(x => x.GetPropertyValueWithDteFallback(It.Is<string>(x => x.Equals(ProjectBuildProperties.ManagePackageVersionsCentrally))))
                 .Returns(_isCPVMEnabled.ToString());
 
             Mock.Get(BuildProperties)
-                .Setup(x => x.GetPropertyValue(It.Is<string>(x => x.Equals(ProjectBuildProperties.CentralPackageVersionOverrideEnabled))))
+                .Setup(x => x.GetPropertyValueWithDteFallback(It.Is<string>(x => x.Equals(ProjectBuildProperties.CentralPackageVersionOverrideEnabled))))
                 .Returns(_isCentralPackageVersionOverrideEnabled ?? string.Empty);
 
             Mock.Get(BuildProperties)
-                .Setup(x => x.GetPropertyValue(It.Is<string>(x => x.Equals(ProjectBuildProperties.CentralPackageTransitivePinningEnabled))))
+                .Setup(x => x.GetPropertyValueWithDteFallback(It.Is<string>(x => x.Equals(ProjectBuildProperties.CentralPackageTransitivePinningEnabled))))
                 .Returns(_CentralPackageTransitivePinningEnabled ?? string.Empty);
 
             Mock.Get(BuildProperties)
-                .Setup(x => x.GetPropertyValue(It.Is<string>(x => x.Equals(ProjectBuildProperties.NuGetLockFilePath))))
+                .Setup(x => x.GetPropertyValueWithDteFallback(It.Is<string>(x => x.Equals(ProjectBuildProperties.NuGetLockFilePath))))
                 .Returns(_nuGetLockFilePath);
 
             Mock.Get(BuildProperties)
-                .Setup(x => x.GetPropertyValue(It.Is<string>(x => x.Equals(ProjectBuildProperties.RestorePackagesWithLockFile))))
+                .Setup(x => x.GetPropertyValueWithDteFallback(It.Is<string>(x => x.Equals(ProjectBuildProperties.RestorePackagesWithLockFile))))
                 .Returns(_restorePackagesWithLockFile);
 
             Mock.Get(BuildProperties)
-                .Setup(x => x.GetPropertyValue(It.Is<string>(x => x.Equals(ProjectBuildProperties.RestoreLockedMode))))
+                .Setup(x => x.GetPropertyValueWithDteFallback(It.Is<string>(x => x.Equals(ProjectBuildProperties.RestoreLockedMode))))
                 .Returns(_restoreLockedMode.ToString());
         }
 
-        public Task<string> GetMSBuildProjectExtensionsPathAsync()
+        public string GetMSBuildProjectExtensionsPath()
         {
-            return Task.FromResult(Path.Combine(ProjectDirectory, "obj"));
+            return Path.Combine(ProjectDirectory, "obj");
         }
 
-        public IProjectBuildProperties BuildProperties { get; } = Mock.Of<IProjectBuildProperties>();
+        public IVsProjectBuildProperties BuildProperties { get; } = Mock.Of<IVsProjectBuildProperties>();
 
         public string CustomUniqueName => ProjectNames.CustomUniqueName;
 

@@ -11,8 +11,6 @@ namespace NuGet.Frameworks
     /// </summary>
     public class FrameworkRange : IEquatable<FrameworkRange>
     {
-        private readonly NuGetFramework _minFramework;
-        private readonly NuGetFramework _maxFramework;
         private readonly bool _includeMin;
         private readonly bool _includeMax;
 
@@ -24,23 +22,16 @@ namespace NuGet.Frameworks
 
         public FrameworkRange(NuGetFramework min, NuGetFramework max, bool includeMin, bool includeMax)
         {
-            if (min == null)
-            {
-                throw new ArgumentNullException(nameof(min));
-            }
-
-            if (max == null)
-            {
-                throw new ArgumentNullException(nameof(max));
-            }
+            if (min == null) throw new ArgumentNullException(nameof(min));
+            if (max == null) throw new ArgumentNullException(nameof(max));
 
             if (!SameExceptForVersion(min, max))
             {
                 throw new FrameworkException(Strings.FrameworkMismatch);
             }
 
-            _minFramework = min;
-            _maxFramework = max;
+            Min = min;
+            Max = max;
             _includeMin = includeMin;
             _includeMax = includeMax;
         }
@@ -48,18 +39,12 @@ namespace NuGet.Frameworks
         /// <summary>
         /// Minimum Framework
         /// </summary>
-        public NuGetFramework Min
-        {
-            get { return _minFramework; }
-        }
+        public NuGetFramework Min { get; }
 
         /// <summary>
         /// Maximum Framework
         /// </summary>
-        public NuGetFramework Max
-        {
-            get { return _maxFramework; }
-        }
+        public NuGetFramework Max { get; }
 
         /// <summary>
         /// Minimum version inclusiveness.
@@ -86,19 +71,16 @@ namespace NuGet.Frameworks
         /// <summary>
         /// Framework Identifier of both the Min and Max
         /// </summary>
-        public string FrameworkIdentifier
-        {
-            get { return Min.Framework; }
-        }
+        public string FrameworkIdentifier => Min.Framework;
 
         /// <summary>
         /// True if the framework version falls between the min and max
         /// </summary>
         public bool Satisfies(NuGetFramework framework)
         {
-            return SameExceptForVersion(_minFramework, framework)
-                && (_includeMin ? _minFramework.Version <= framework.Version : _minFramework.Version < framework.Version)
-                && (_includeMax ? _maxFramework.Version >= framework.Version : _maxFramework.Version > framework.Version);
+            return SameExceptForVersion(Min, framework)
+                && (_includeMin ? Min.Version <= framework.Version : Min.Version < framework.Version)
+                && (_includeMax ? Max.Version >= framework.Version : Max.Version > framework.Version);
         }
 
         private static bool SameExceptForVersion(NuGetFramework x, NuGetFramework y)
@@ -109,16 +91,16 @@ namespace NuGet.Frameworks
 
         public override string ToString()
         {
-            return String.Format(CultureInfo.InvariantCulture, "[{0}, {1}]", Min.ToString(), Max.ToString());
+            return string.Format(CultureInfo.InvariantCulture, "[{0}, {1}]", Min.ToString(), Max.ToString());
         }
 
-        public bool Equals(FrameworkRange other)
+        public bool Equals(FrameworkRange? other)
         {
             var comparer = new FrameworkRangeComparer();
             return comparer.Equals(this, other);
         }
 
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             var other = obj as FrameworkRange;
 

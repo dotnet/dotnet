@@ -3,7 +3,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -265,7 +264,7 @@ namespace NuGet.Commands
                     result.RestoreMetadata.ProjectWideWarningProperties = GetWarningProperties(specItem);
 
                     // Packages lock file properties
-                    result.RestoreMetadata.RestoreLockProperties = GetRestoreLockProperites(specItem);
+                    result.RestoreMetadata.RestoreLockProperties = GetRestoreLockProperties(specItem);
 
                     // NuGet audit properties
                     result.RestoreMetadata.RestoreAuditProperties = GetRestoreAuditProperties(specItem);
@@ -285,7 +284,7 @@ namespace NuGet.Commands
                             "packages"
                         );
                     }
-                    pcRestoreMetadata.RestoreLockProperties = GetRestoreLockProperites(specItem);
+                    pcRestoreMetadata.RestoreLockProperties = GetRestoreLockProperties(specItem);
 
                 }
 
@@ -887,7 +886,7 @@ namespace NuGet.Commands
                 warningsNotAsErrors: specItem.GetProperty("WarningsNotAsErrors"));
         }
 
-        private static RestoreLockProperties GetRestoreLockProperites(IMSBuildItem specItem)
+        private static RestoreLockProperties GetRestoreLockProperties(IMSBuildItem specItem)
         {
             return new RestoreLockProperties(
                 specItem.GetProperty("RestorePackagesWithLockFile"),
@@ -895,7 +894,7 @@ namespace NuGet.Commands
                 IsPropertyTrue(specItem, "RestoreLockedMode"));
         }
 
-        private static RestoreAuditProperties GetRestoreAuditProperties(IMSBuildItem specItem)
+        public static RestoreAuditProperties GetRestoreAuditProperties(IMSBuildItem specItem)
         {
             string enableAudit = specItem.GetProperty("NuGetAudit");
             string auditLevel = specItem.GetProperty("NuGetAuditLevel");

@@ -411,6 +411,11 @@ internal abstract class ComponentNodeWriter : IntermediateNodeWriter, ITemplateT
         parameter.ReplaceSourceWithCapturedVariable(variableName);
     }
 
+    protected static bool IsDefaultExpression(string expression)
+    {
+        return expression == "default" || expression.StartsWith("default(", StringComparison.Ordinal);
+    }
+
     protected class TypeInferenceMethodParameter
     {
         public string SeqName { get; private set; }

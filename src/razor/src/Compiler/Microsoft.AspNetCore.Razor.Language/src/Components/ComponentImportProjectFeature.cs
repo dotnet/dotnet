@@ -16,11 +16,11 @@ internal class ComponentImportProjectFeature : IImportProjectFeature
     // Using explicit newlines here to avoid fooling our baseline tests
     private const string DefaultUsingImportContent =
         "\r\n" +
-        "@using System\r\n" +
-        "@using System.Collections.Generic\r\n" +
-        "@using System.Linq\r\n" +
-        "@using System.Threading.Tasks\r\n" +
-        "@using " + ComponentsApi.RenderFragment.Namespace + "\r\n"; // Microsoft.AspNetCore.Components
+        "@using global::System\r\n" +
+        "@using global::System.Collections.Generic\r\n" +
+        "@using global::System.Linq\r\n" +
+        "@using global::System.Threading.Tasks\r\n" +
+        "@using global::" + ComponentsApi.RenderFragment.Namespace + "\r\n"; // Microsoft.AspNetCore.Components
 
     public RazorProjectEngine ProjectEngine { get; set; }
 

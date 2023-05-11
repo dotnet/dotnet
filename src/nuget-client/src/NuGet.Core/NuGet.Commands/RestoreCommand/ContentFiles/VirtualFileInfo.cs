@@ -59,11 +59,24 @@ namespace NuGet.Commands
             }
         }
 
+        private string _name;
         public string Name
         {
             get
             {
-                return PhysicalPath.Split('/').LastOrDefault();
+                if (_name == null)
+                {
+                    int lastSlashIndex = PhysicalPath.LastIndexOf('/');
+                    if (lastSlashIndex >= 0)
+                    {
+                        _name = PhysicalPath.Substring(lastSlashIndex + 1);
+                    }
+                    else
+                    {
+                        _name = PhysicalPath;
+                    }
+                }
+                return _name;
             }
         }
 

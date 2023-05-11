@@ -11,3 +11,4 @@
 [NuGet.PackageManagement.VisualStudio.EnvDTEProjectUtility]::TryGetFolder
 [NuGet.PackageManagement.VisualStudio.EnvDTEProjectUtility]::TryGetNestedFile
 [NuGet.ProjectManagement.IProjectBuildProperties]::GetPropertyValue
+[NuGet.VisualStudio.IVsProjectBuildProperties]::GetPropertyValue

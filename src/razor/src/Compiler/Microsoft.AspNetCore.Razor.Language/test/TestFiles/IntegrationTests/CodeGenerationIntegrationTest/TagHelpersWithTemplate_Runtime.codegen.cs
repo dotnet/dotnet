@@ -38,7 +38,10 @@ namespace Microsoft.AspNetCore.Razor.Language.IntegrationTests.TestFiles
         {
             WriteLiteral("\r\n");
             WriteLiteral("\r\n");
-            __tagHelperExecutionContext = __tagHelperScopeManager.Begin("div", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.StartTagAndEndTag, "test", async() => {
+            __tagHelperExecutionContext = __tagHelperScopeManager.Begin("div", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.StartTagAndEndTag, "test", 
+            #pragma warning disable 1998
+            async() => {
+                #pragma warning restore 1998
                 WriteLiteral("\r\n");
 #nullable restore
 #line 13 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/TagHelpersWithTemplate.cshtml"
@@ -52,7 +55,10 @@ namespace Microsoft.AspNetCore.Razor.Language.IntegrationTests.TestFiles
 #nullable disable
                 item => new Template(async(__razor_template_writer) => {
                     PushWriter(__razor_template_writer);
-                    __tagHelperExecutionContext = __tagHelperScopeManager.Begin("div", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.StartTagAndEndTag, "test", async() => {
+                    __tagHelperExecutionContext = __tagHelperScopeManager.Begin("div", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.StartTagAndEndTag, "test", 
+                    #pragma warning disable 1998
+                    async() => {
+                        #pragma warning restore 1998
                         WriteLiteral("<h3>");
 #nullable restore
 #line (16,41)-(16,45) 6 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/TagHelpersWithTemplate.cshtml"
@@ -62,7 +68,10 @@ Write(item);
 #line hidden
 #nullable disable
                         WriteLiteral("</h3>");
-                        __tagHelperExecutionContext = __tagHelperScopeManager.Begin("input", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.SelfClosing, "test", async() => {
+                        __tagHelperExecutionContext = __tagHelperScopeManager.Begin("input", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.SelfClosing, "test", 
+                        #pragma warning disable 1998
+                        async() => {
+                            #pragma warning restore 1998
                         }
                         );
                         __InputTagHelper = CreateTagHelper<global::InputTagHelper>();
