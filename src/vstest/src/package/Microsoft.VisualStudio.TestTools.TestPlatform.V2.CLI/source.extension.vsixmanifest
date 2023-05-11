@@ -5,6 +5,7 @@
     <DisplayName>Microsoft Visual Studio Test Platform</DisplayName>
     <Description xml:space="preserve">Extensible Test Platform that allows developers to discover, execute and analyze automated tests.</Description>
     <License>License.rtf</License>
+    <PackageId>Microsoft.VisualStudio.TestTools.TestPlatform.V2.CLI</PackageId>
   </Metadata>
   <Installation AllUsers="true" Experimental="true">
     <InstallationTarget Version="[16.0,17.0)" Id="Microsoft.VisualStudio.Community" />

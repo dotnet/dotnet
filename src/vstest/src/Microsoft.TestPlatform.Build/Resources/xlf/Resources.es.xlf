@@ -4,27 +4,27 @@
     <body>
       <trans-unit id="BuildCompleted">
         <source>Build completed.</source>
-        <target state="translated">Se completó la compilación.</target>
+        <target state="new">Build completed.</target>
         <note />
       </trans-unit>
       <trans-unit id="BuildStarted">
         <source>Build started, please wait...</source>
-        <target state="translated">Compilación iniciada, espere...</target>
+        <target state="new">Build started, please wait...</target>
         <note />
       </trans-unit>
       <trans-unit id="TestRunningSummary">
         <source>Test run for {0} ({1})</source>
-        <target state="translated">Serie de pruebas para {0} ({1})</target>
+        <target state="new">Test run for {0} ({1})</target>
         <note />
       </trans-unit>
       <trans-unit id="UpdateTestSdkForCollectingCodeCoverage">
         <source>Warning: Update the Microsoft.NET.Test.Sdk package reference to version 15.8.0 or later to collect code coverage.</source>
-        <target state="translated">Advertencia: Actualice la referencia del paquete Microsoft.NET.Test.Sdk a la versión 15.8.0 o posterior para recopilar la cobertura de código.</target>
+        <target state="new">Warning: Update the Microsoft.NET.Test.Sdk package reference to version 15.8.0 or later to collect code coverage.</target>
         <note />
       </trans-unit>
       <trans-unit id="NoIsTestProjectProperty">
         <source>Skipping running test for project {0}. To run tests with dotnet test add "&lt;IsTestProject&gt;true&lt;/IsTestProject&gt;" property to project file.</source>
-        <target state="translated">Omitiendo la ejecución de la prueba para el proyecto {0}. Para ejecutar pruebas con dotnet test, agregue la propiedad "&lt;IsTestProject&gt;true&lt;/IsTestProject&gt;" al archivo del proyecto.</target>
+        <target state="new">Skipping running test for project {0}. To run tests with dotnet test add "&lt;IsTestProject&gt;true&lt;/IsTestProject&gt;" property to project file.</target>
         <note />
       </trans-unit>
     </body>

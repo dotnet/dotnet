@@ -1,5 +1,9 @@
 <UsageData>
   <IgnorePatterns>
-    <UsagePattern IdentityGlob="*/*" />
+    <UsagePattern IdentityGlob="Microsoft.SourceBuild.Intermediate.*/*" />
+
+    <!-- Tracked with https://github.com/microsoft/vstest/issues/4403 -->
+    <UsagePattern IdentityGlob="Microsoft.Internal.TestPlatform.Remote/17.6.33617.297" />
+    <UsagePattern IdentityGlob="Microsoft.Extensions.DependencyModel/3.0.0-preview4-27615-11" />
   </IgnorePatterns>
 </UsageData>

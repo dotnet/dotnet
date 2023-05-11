@@ -4,22 +4,22 @@
     <body>
       <trans-unit id="InvalidStateForExecution">
         <source>The test run could not be executed because the initial state was invalid.</source>
-        <target state="translated">İlk durum geçersiz olduğundan test çalıştırması yürütülemedi.</target>
+        <target state="new">The test run could not be executed because the initial state was invalid.</target>
         <note />
       </trans-unit>
       <trans-unit id="WaitForCompletionOperationIsNotAllowedWhenNoTestRunIsActive">
         <source>Wait for completion operation is not allowed when there is no active test run. </source>
-        <target state="translated">Etkin bir test çalıştırması olmadığında tamamlanmasını bekleme işlemine izin verilmez. </target>
+        <target state="new">Wait for completion operation is not allowed when there is no active test run. </target>
         <note />
       </trans-unit>
       <trans-unit id="TestSessionTimeoutMessage">
         <source>Aborting test run: test run timeout of {0} milliseconds exceeded.</source>
-        <target state="translated">Test çalıştırması durduruluyor: Test çalıştırması için {0} milisaniyelik zaman aşımına ulaşıldı.</target>
+        <target state="new">Aborting test run: test run timeout of {0} milliseconds exceeded.</target>
         <note />
       </trans-unit>
       <trans-unit id="NoTestHostProviderFound">
         <source>No suitable test runtime provider found for this run.</source>
-        <target state="translated">Bu çalıştırma için uygun bir test çalışma zamanı sağlayıcısı yok.</target>
+        <target state="new">No suitable test runtime provider found for this run.</target>
         <note />
       </trans-unit>
     </body>

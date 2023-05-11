@@ -11,5 +11,8 @@ public class InvalidManagedNameException : Exception, ISerializable
 {
     public InvalidManagedNameException(string? message) : base(message) { }
 
+#if NET8_0_OR_GREATER
+    [Obsolete("Serialization constructors are deprecated in .NET8+", DiagnosticId = "SYSLIB0051")]
+#endif
     protected InvalidManagedNameException(SerializationInfo info, StreamingContext context) : base(info, context) { }
 }

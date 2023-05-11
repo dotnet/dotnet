@@ -62,7 +62,7 @@ variables:
   # under some circumstances, but we don't respect that in our code and try to find them
   # in .packages. Force the location of packages to that folder.
   - name: NUGET_PACKAGES
-    value: '$(Build.SourcesDirectory)/.packages'
+    value: '$(Build.SourcesDirectory)/.packages/'
 
   # Produce real signed binaries for Internal builds
   - ${{ if eq(variables._RunAsInternal, True) }}:
@@ -88,6 +88,7 @@ variables:
         /p:DotNetSymbolServerTokenSymWeb=$(symweb-symbol-server-pat)
         /p:OfficialBuildId=$(BUILD.BUILDNUMBER)
         /p:VisualStudioDropName=$(VisualStudioDropName)
+        /p:GenerateSbom=true
 
   - ${{ if eq(parameters.isRTM, True) }}:
     - name: _InternalBuildArgs
@@ -134,6 +135,10 @@ stages:
           inputs:
             command: custom
             custom: '--info'
+
+        # Restore internal tools required for SBOM generation
+        - ${{ if eq(variables._RunAsInternal, True) }}:
+          - template: /eng/restore-internal-tools.yml
 
         - powershell: eng\common\CIBuild.cmd
             -configuration $(_BuildConfig)

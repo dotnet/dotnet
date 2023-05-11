@@ -93,7 +93,7 @@ internal class XmlUtilities
 
     internal static void RemoveChildNode(XPathNavigator? parentNavigator, string nodeXPath, string childName)
     {
-        if (parentNavigator?.SelectSingleNode(nodeXPath) is { } childNodeNavigator)
+        if (parentNavigator?.SelectSingleNode(nodeXPath) is { })
         {
             parentNavigator.MoveToChild(childName, string.Empty);
             parentNavigator.DeleteSelf();

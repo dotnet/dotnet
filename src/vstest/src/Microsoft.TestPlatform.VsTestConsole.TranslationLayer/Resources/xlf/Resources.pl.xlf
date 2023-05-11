@@ -4,42 +4,42 @@
     <body>
       <trans-unit id="AbortedTestsRun">
         <source>The active Tests Run was aborted.</source>
-        <target state="translated">Aktywny przebieg testów został przerwany.</target>
+        <target state="new">The active Tests Run was aborted.</target>
         <note />
       </trans-unit>
       <trans-unit id="AbortedTestsDiscovery">
         <source>The active Tests Discovery was aborted.</source>
-        <target state="translated">Aktywny proces wykrywania testów został przerwany.</target>
+        <target state="new">The active Tests Discovery was aborted.</target>
         <note />
       </trans-unit>
       <trans-unit id="FailedToReceiveMessage">
         <source>Failed to receive message from vstest.console process</source>
-        <target state="translated">Nie można odebrać komunikatu z procesu vstest.console</target>
+        <target state="new">Failed to receive message from vstest.console process</target>
         <note />
       </trans-unit>
       <trans-unit id="VsTestProcessExitedAbnormally">
         <source>vstest.console process exited abnormally</source>
-        <target state="translated">Proces vstest.console zakończył się nieprawidłowo</target>
+        <target state="new">vstest.console process exited abnormally</target>
         <note />
       </trans-unit>
       <trans-unit id="InvalidFilePath">
         <source>File {0} does not exists</source>
-        <target state="translated">Plik {0} nie istnieje</target>
+        <target state="new">File {0} does not exists</target>
         <note />
       </trans-unit>
       <trans-unit id="AbortedTestRunAttachmentsProcessing">
         <source>The active Test Run Attachments Processing was aborted.</source>
-        <target state="translated">Aktywne przetwarzanie załączników przebiegu testu zostało przerwane.</target>
+        <target state="new">The active Test Run Attachments Processing was aborted.</target>
         <note />
       </trans-unit>
       <trans-unit id="AbortedStartTestSession">
         <source>The Start Test Session operation was aborted.</source>
-        <target state="translated">Operacja uruchamiania sesji testowania została przerwana.</target>
+        <target state="new">The Start Test Session operation was aborted.</target>
         <note />
       </trans-unit>
       <trans-unit id="AbortedStopTestSession">
         <source>The Stop Test Session operation was aborted.</source>
-        <target state="translated">Operacja zatrzymywania sesji testowania została przerwana.</target>
+        <target state="new">The Stop Test Session operation was aborted.</target>
         <note />
       </trans-unit>
     </body>

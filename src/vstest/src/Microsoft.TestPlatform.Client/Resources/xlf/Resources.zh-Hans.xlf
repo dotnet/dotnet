@@ -4,22 +4,22 @@
     <body>
       <trans-unit id="InvalidStateForExecution">
         <source>The test run could not be executed because the initial state was invalid.</source>
-        <target state="translated">由于初始状态无效，无法执行测试运行。</target>
+        <target state="new">The test run could not be executed because the initial state was invalid.</target>
         <note />
       </trans-unit>
       <trans-unit id="WaitForCompletionOperationIsNotAllowedWhenNoTestRunIsActive">
         <source>Wait for completion operation is not allowed when there is no active test run. </source>
-        <target state="translated">没有活动的测试运行时不允许等待完成操作。</target>
+        <target state="new">Wait for completion operation is not allowed when there is no active test run. </target>
         <note />
       </trans-unit>
       <trans-unit id="TestSessionTimeoutMessage">
         <source>Aborting test run: test run timeout of {0} milliseconds exceeded.</source>
-        <target state="translated">中止测试运行: 测试运行超时时间超出 {0} 毫秒。</target>
+        <target state="new">Aborting test run: test run timeout of {0} milliseconds exceeded.</target>
         <note />
       </trans-unit>
       <trans-unit id="NoTestHostProviderFound">
         <source>No suitable test runtime provider found for this run.</source>
-        <target state="translated">对于此运行，未找到适合的测试运行时提供程序。</target>
+        <target state="new">No suitable test runtime provider found for this run.</target>
         <note />
       </trans-unit>
     </body>

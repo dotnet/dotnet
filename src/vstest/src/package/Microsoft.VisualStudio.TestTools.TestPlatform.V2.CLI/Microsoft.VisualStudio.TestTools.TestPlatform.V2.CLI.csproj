@@ -19,6 +19,9 @@
     <IncludeDebugSymbolsInLocalVSIXDeployment>false</IncludeDebugSymbolsInLocalVSIXDeployment>
     <ExtensionInstallationFolder>TestPlatform</ExtensionInstallationFolder>
 
+    <!-- Arcade SDK marks all the assemblies included in the packages for NGEN by default. -->
+    <Ngen>false</Ngen>
+
     <!-- VS Insertion -->
     <VisualStudioInsertionComponent>Microsoft.VisualStudio.TestTools.TestPlatform.V2.CLI</VisualStudioInsertionComponent>
     <IsVisualStudioBuildPackage>true</IsVisualStudioBuildPackage>
@@ -82,219 +85,208 @@
     </VsixSourceItem>
   </ItemGroup>
 
-  <!-- Test host dependencies -->
-  <ItemGroup>
-    <!-- We still need to manually include artifacts from the other tfms -->
-    <VsixSourceItem Include="$(ArtifactsBinDir)\testhost\$(Configuration)\net4*\win*\*.*" />
-    <!-- Update state of some included items to ensure ngen -->
-    <VsixSourceItem Update="$(ArtifactsBinDir)\testhost\$(Configuration)\$(NetFrameworkMinimum)\testhost.exe" Ngen="true" NgenArchitecture="X64" NgenPriority="2" NgenApplication="$(ExtensionInstallationRelativeToVS)\testhost.exe" />
-    <VsixSourceItem Update="$(ArtifactsBinDir)\testhost\$(Configuration)\net47\testhost.net47.exe" Ngen="true" NgenArchitecture="X64" NgenPriority="2" NgenApplication="$(ExtensionInstallationRelativeToVS)\testhost.net47.exe" />
-    <VsixSourceItem Update="$(ArtifactsBinDir)\testhost\$(Configuration)\net471\testhost.net471.exe" Ngen="true" NgenArchitecture="X64" NgenPriority="2" NgenApplication="$(ExtensionInstallationRelativeToVS)\testhost.net471.exe" />
-    <VsixSourceItem Update="$(ArtifactsBinDir)\testhost\$(Configuration)\net472\testhost.net472.exe" Ngen="true" NgenArchitecture="X64" NgenPriority="2" NgenApplication="$(ExtensionInstallationRelativeToVS)\testhost.net472.exe" />
-    <VsixSourceItem Update="$(ArtifactsBinDir)\testhost\$(Configuration)\net48\testhost.net48.exe" Ngen="true" NgenArchitecture="X64" NgenPriority="2" NgenApplication="$(ExtensionInstallationRelativeToVS)\testhost.net48.exe" />
+  <!--
+    We cannot use the VSIXSourceItems for wildcard as the evaluation is not done at the correct time. This is causing wildcard items to be missed.
+    Instead use a target that runs before 'GenerateFileManifest' since that's when the VSIX files are collected.
+  -->
+  <Target Name="AddDependencyItems" BeforeTargets="GenerateFileManifest">
 
-    <!-- We still need to manually include dlls artifacts the other tfms -->
-    <VsixSourceItem Include="$(ArtifactsBinDir)\testhost.x86\$(Configuration)\net4*\win*\*.*" />
-    <!-- Update state of some included items to ensure ngen -->
-    <VsixSourceItem Update="$(ArtifactsBinDir)\testhost.x86\$(Configuration)\$(NetFrameworkMinimum)\testhost.x86.exe" Ngen="true" NgenArchitecture="X86" NgenPriority="2" NgenApplication="$(ExtensionInstallationRelativeToVS)\testhost.x86.exe" />
-    <VsixSourceItem Update="$(ArtifactsBinDir)\testhost.x86\$(Configuration)\net47\testhost.net47.x86.exe" Ngen="true" NgenArchitecture="X86" NgenPriority="2" NgenApplication="$(ExtensionInstallationRelativeToVS)\testhost.net47.x86.exe" />
-    <VsixSourceItem Update="$(ArtifactsBinDir)\testhost.x86\$(Configuration)\net471\testhost.net471.x86.exe" Ngen="true" NgenArchitecture="X86" NgenPriority="2" NgenApplication="$(ExtensionInstallationRelativeToVS)\testhost.net471.x86.exe" />
-    <VsixSourceItem Update="$(ArtifactsBinDir)\testhost.x86\$(Configuration)\net472\testhost.net472.x86.exe" Ngen="true" NgenArchitecture="X86" NgenPriority="2" NgenApplication="$(ExtensionInstallationRelativeToVS)\testhost.net472.x86.exe" />
-    <VsixSourceItem Update="$(ArtifactsBinDir)\testhost.x86\$(Configuration)\net48\testhost.net48.x86.exe" Ngen="true" NgenArchitecture="X86" NgenPriority="2" NgenApplication="$(ExtensionInstallationRelativeToVS)\testhost.net48.x86.exe" />
+    <!-- Test host dependencies -->
+    <ItemGroup>
+      <!-- We still need to manually include artifacts from the other tfms -->
+      <VsixSourceItem Include="$(ArtifactsBinDir)\testhost\$(Configuration)\net4*\win*\*.*" />
 
-    <!-- We still need to manually include dlls artifacts the other tfms -->
-    <VsixSourceItem Include="$(ArtifactsBinDir)\testhost.arm64\$(Configuration)\net4*\win*\*.*" />
-    <!-- Update state of some included items to ensure ngen -->
-    <VsixSourceItem Update="$(ArtifactsBinDir)\testhost.arm64\$(Configuration)\$(NetFrameworkMinimum)\testhost.arm64.exe" Ngen="true" NgenArchitecture="Arm64" NgenPriority="2" NgenApplication="$(ExtensionInstallationRelativeToVS)\testhost.arm64.exe" />
-    <VsixSourceItem Update="$(ArtifactsBinDir)\testhost.arm64\$(Configuration)\net47\testhost.net47.arm64.exe" Ngen="true" NgenArchitecture="Arm64" NgenPriority="2" NgenApplication="$(ExtensionInstallationRelativeToVS)\testhost.net47.arm64.exe" />
-    <VsixSourceItem Update="$(ArtifactsBinDir)\testhost.arm64\$(Configuration)\net471\testhost.net471.arm64.exe" Ngen="true" NgenArchitecture="Arm64" NgenPriority="2" NgenApplication="$(ExtensionInstallationRelativeToVS)\testhost.net471.arm64.exe" />
-    <VsixSourceItem Update="$(ArtifactsBinDir)\testhost.arm64\$(Configuration)\net472\testhost.net472.arm64.exe" Ngen="true" NgenArchitecture="Arm64" NgenPriority="2" NgenApplication="$(ExtensionInstallationRelativeToVS)\testhost.net472.arm64.exe" />
-    <VsixSourceItem Update="$(ArtifactsBinDir)\testhost.arm64\$(Configuration)\net48\testhost.net48.arm64.exe" Ngen="true" NgenArchitecture="Arm64" NgenPriority="2" NgenApplication="$(ExtensionInstallationRelativeToVS)\testhost.net48.arm64.exe" />
-  </ItemGroup>
+      <!-- We still need to manually include dlls artifacts the other tfms -->
+      <VsixSourceItem Include="$(ArtifactsBinDir)\testhost.x86\$(Configuration)\net4*\win*\*.*" />
 
-  <!-- Cpp Extensions -->
-  <ItemGroup>
-    <VsixSourceItem Include="$(InternalTestPlatformRemoteFolder)*" Exclude="$(InternalTestPlatformRemoteFolder)*.pdb;$(InternalTestPlatformRemoteFolder)Microsoft.VisualStudio.TestTools.CppUnitTestFramework.ComInterfaces.dll;$(InternalTestPlatformRemoteFolder)Microsoft.VisualStudio.TestTools.CppUnitTestFramework.CppUnitTestExtension.dll;$(InternalTestPlatformRemoteFolder)System.ComponentModel.Composition.dll">
-      <VSIXSubPath>Extensions\Cpp</VSIXSubPath>
-    </VsixSourceItem>
-    <VsixSourceItem Include="$(InternalTestPlatformRemoteFolder)arm64\*" Exclude="$(InternalTestPlatformRemoteFolder)arm64\*.pdb">
-      <VSIXSubPath>Extensions\Cpp\arm64</VSIXSubPath>
-    </VsixSourceItem>
-    <VsixSourceItem Include="$(InternalTestPlatformRemoteFolder)x64\*" Exclude="$(InternalTestPlatformRemoteFolder)x64\*.pdb">
-      <VSIXSubPath>Extensions\Cpp\x64</VSIXSubPath>
-    </VsixSourceItem>
-  </ItemGroup>
+      <!-- We still need to manually include dlls artifacts the other tfms -->
+      <VsixSourceItem Include="$(ArtifactsBinDir)\testhost.arm64\$(Configuration)\net4*\win*\*.*" />
+    </ItemGroup>
 
-  <!-- msdia -->
-  <ItemGroup>
-    <VsixSourceItem Include="$(MsDiaFolder)x64\*">
-      <VSIXSubPath>x64</VSIXSubPath>
-    </VsixSourceItem>
-    <VsixSourceItem Include="$(MsDiaFolder)x86\*">
-      <VSIXSubPath>x86</VSIXSubPath>
-    </VsixSourceItem>
-  </ItemGroup>
+    <!-- Cpp Extensions -->
+    <ItemGroup>
+      <VsixSourceItem Include="$(InternalTestPlatformRemoteFolder)*" Exclude="$(InternalTestPlatformRemoteFolder)*.pdb;$(InternalTestPlatformRemoteFolder)Microsoft.VisualStudio.TestTools.CppUnitTestFramework.ComInterfaces.dll;$(InternalTestPlatformRemoteFolder)Microsoft.VisualStudio.TestTools.CppUnitTestFramework.CppUnitTestExtension.dll;$(InternalTestPlatformRemoteFolder)System.ComponentModel.Composition.dll">
+        <VSIXSubPath>Extensions\Cpp</VSIXSubPath>
+      </VsixSourceItem>
+      <VsixSourceItem Include="$(InternalTestPlatformRemoteFolder)arm64\*" Exclude="$(InternalTestPlatformRemoteFolder)arm64\*.pdb">
+        <VSIXSubPath>Extensions\Cpp\arm64</VSIXSubPath>
+      </VsixSourceItem>
+      <VsixSourceItem Include="$(InternalTestPlatformRemoteFolder)x64\*" Exclude="$(InternalTestPlatformRemoteFolder)x64\*.pdb">
+        <VSIXSubPath>Extensions\Cpp\x64</VSIXSubPath>
+      </VsixSourceItem>
+    </ItemGroup>
 
-  <!-- CUIT -->
-  <ItemGroup>
-    <VsixSourceItem Include="$(CUITFolder)Microsoft.VisualStudio.TestTools.UITest.Extension.*.dll" Exclude="$(CUITFolder)Microsoft.VisualStudio.TestTools.UITest.Extension.MSAA.dll">
-      <VSIXSubPath>CUITPlugins</VSIXSubPath>
-    </VsixSourceItem>
-    <VsixSourceItem Include="$(CUITFolder)IEPropertyConfiguration.*">
-      <VSIXSubPath>CUITPlugins</VSIXSubPath>
-    </VsixSourceItem>
-    <VsixSourceItem Include="$(CUITFolder)Microsoft.VisualStudio.TestTools.UITest.*.dll" Exclude="$(CUITFolder)Microsoft.VisualStudio.TestTools.UITest.Extension.CrossBrowser.dll;$(CUITFolder)Microsoft.VisualStudio.TestTools.UITest.Extension.IE*;$(CUITFolder)Microsoft.VisualStudio.TestTools.UITest.Extension.Uia*;" />
-    <VsixSourceItem Include="$(CUITFolder)Microsoft.VisualStudio.TestTools.UITest.Extension.IE.Communication.dll" />
-    <VsixSourceItem Include="$(CUITFolder)Microsoft.VisualStudio.TestTools.UITest.Extension.IE.Communication.Interop.dll" />
-    <VsixSourceItem Include="$(CUITFolder)Microsoft.VisualStudio.QualityTools.*.dll" />
-    <VsixSourceItem Include="$(CUITFolder)Interop.UIAutomationClient.dll" />
-    <VsixSourceItem Include="$(CUITFolder)Microsoft.ShDocVw.dll" />
-    <VsixSourceItem Include="$(CUITFolder)Microsoft.VisualStudio.Diagnostics.Measurement.dll" />
-    <VsixSourceItem Include="$(CUITFolder)Microsoft.VisualStudio.TestTools.UITesting.dll" />
-    <VsixSourceItem Include="$(CUITFolder)UIAComWrapper.dll" />
-  </ItemGroup>
+    <!-- msdia -->
+    <ItemGroup>
+      <VsixSourceItem Include="$(MsDiaFolder)x64\*">
+        <VSIXSubPath>x64</VSIXSubPath>
+      </VsixSourceItem>
+      <VsixSourceItem Include="$(MsDiaFolder)x86\*">
+        <VSIXSubPath>x86</VSIXSubPath>
+      </VsixSourceItem>
+    </ItemGroup>
 
-  <!-- Code Coverage -->
-  <ItemGroup>
-    <VsixSourceItem Include="$(CodeCoverageIOFolder)Microsoft.CodeCoverage.IO.dll" />
-    <VsixSourceItem Include="$(CodeCoverageIOFolder)\cs\Microsoft.CodeCoverage.IO.resources.dll">
-      <VSIXSubPath>cs</VSIXSubPath>
-    </VsixSourceItem>
-    <VsixSourceItem Include="$(CodeCoverageIOFolder)\de\Microsoft.CodeCoverage.IO.resources.dll">
-      <VSIXSubPath>de</VSIXSubPath>
-    </VsixSourceItem>
-    <VsixSourceItem Include="$(CodeCoverageIOFolder)\es\Microsoft.CodeCoverage.IO.resources.dll">
-      <VSIXSubPath>es</VSIXSubPath>
-    </VsixSourceItem>
-    <VsixSourceItem Include="$(CodeCoverageIOFolder)\fr\Microsoft.CodeCoverage.IO.resources.dll">
-      <VSIXSubPath>fr</VSIXSubPath>
-    </VsixSourceItem>
-    <VsixSourceItem Include="$(CodeCoverageIOFolder)\it\Microsoft.CodeCoverage.IO.resources.dll">
-      <VSIXSubPath>it</VSIXSubPath>
-    </VsixSourceItem>
-    <VsixSourceItem Include="$(CodeCoverageIOFolder)\ja\Microsoft.CodeCoverage.IO.resources.dll">
-      <VSIXSubPath>ja</VSIXSubPath>
-    </VsixSourceItem>
-    <VsixSourceItem Include="$(CodeCoverageIOFolder)\ko\Microsoft.CodeCoverage.IO.resources.dll">
-      <VSIXSubPath>ko</VSIXSubPath>
-    </VsixSourceItem>
-    <VsixSourceItem Include="$(CodeCoverageIOFolder)\pl\Microsoft.CodeCoverage.IO.resources.dll">
-      <VSIXSubPath>pl</VSIXSubPath>
-    </VsixSourceItem>
-    <VsixSourceItem Include="$(CodeCoverageIOFolder)\pt-BR\Microsoft.CodeCoverage.IO.resources.dll">
-      <VSIXSubPath>pt-BR</VSIXSubPath>
-    </VsixSourceItem>
-    <VsixSourceItem Include="$(CodeCoverageIOFolder)\ru\Microsoft.CodeCoverage.IO.resources.dll">
-      <VSIXSubPath>ru</VSIXSubPath>
-    </VsixSourceItem>
-    <VsixSourceItem Include="$(CodeCoverageIOFolder)\tr\Microsoft.CodeCoverage.IO.resources.dll">
-      <VSIXSubPath>tr</VSIXSubPath>
-    </VsixSourceItem>
-    <VsixSourceItem Include="$(CodeCoverageIOFolder)\zh-Hans\Microsoft.CodeCoverage.IO.resources.dll">
-      <VSIXSubPath>zh-Hans</VSIXSubPath>
-    </VsixSourceItem>
-    <VsixSourceItem Include="$(CodeCoverageIOFolder)\zh-Hant\Microsoft.CodeCoverage.IO.resources.dll">
-      <VSIXSubPath>zh-Hant</VSIXSubPath>
-    </VsixSourceItem>
-  </ItemGroup>
+    <!-- CUIT -->
+    <ItemGroup>
+      <VsixSourceItem Include="$(CUITFolder)Microsoft.VisualStudio.TestTools.UITest.Extension.*.dll" Exclude="$(CUITFolder)Microsoft.VisualStudio.TestTools.UITest.Extension.MSAA.dll">
+        <VSIXSubPath>CUITPlugins</VSIXSubPath>
+      </VsixSourceItem>
+      <VsixSourceItem Include="$(CUITFolder)IEPropertyConfiguration.*">
+        <VSIXSubPath>CUITPlugins</VSIXSubPath>
+      </VsixSourceItem>
+      <VsixSourceItem Include="$(CUITFolder)Microsoft.VisualStudio.TestTools.UITest.*.dll" Exclude="$(CUITFolder)Microsoft.VisualStudio.TestTools.UITest.Extension.CrossBrowser.dll;$(CUITFolder)Microsoft.VisualStudio.TestTools.UITest.Extension.IE*;$(CUITFolder)Microsoft.VisualStudio.TestTools.UITest.Extension.Uia*;" />
+      <VsixSourceItem Include="$(CUITFolder)Microsoft.VisualStudio.TestTools.UITest.Extension.IE.Communication.dll" />
+      <VsixSourceItem Include="$(CUITFolder)Microsoft.VisualStudio.TestTools.UITest.Extension.IE.Communication.Interop.dll" />
+      <VsixSourceItem Include="$(CUITFolder)Microsoft.VisualStudio.QualityTools.*.dll" />
+      <VsixSourceItem Include="$(CUITFolder)Interop.UIAutomationClient.dll" />
+      <VsixSourceItem Include="$(CUITFolder)Microsoft.ShDocVw.dll" />
+      <VsixSourceItem Include="$(CUITFolder)Microsoft.VisualStudio.Diagnostics.Measurement.dll" />
+      <VsixSourceItem Include="$(CUITFolder)Microsoft.VisualStudio.TestTools.UITesting.dll" />
+      <VsixSourceItem Include="$(CUITFolder)UIAComWrapper.dll" />
+    </ItemGroup>
 
-  <!-- Microsoft.Internal.TestPlatform.Extensions -->
-  <ItemGroup>
-    <VsixSourceItem Include="$(InternalTestPlatformExtensionsFolder)Microsoft.DiaSymReader.dll" />
-    <VsixSourceItem Include="$(InternalTestPlatformExtensionsFolder)Microsoft.IntelliTrace.Core.dll" />
-    <VsixSourceItem Include="$(InternalTestPlatformExtensionsFolder)Extensions\VideoRecorder\*">
-      <VSIXSubPath>Extensions\VideoRecorder</VSIXSubPath>
-    </VsixSourceItem>
-    <VsixSourceItem Include="$(InternalTestPlatformExtensionsFolder)Extensions\Microsoft.VisualStudio.TestTools.DataCollection.*.dll">
-      <VSIXSubPath>Extensions</VSIXSubPath>
-    </VsixSourceItem>
-    <VsixSourceItem Include="$(InternalTestPlatformExtensionsFolder)Extensions\Microsoft.VisualStudio.TestTools.CppUnitTestFramework.*.dll">
-      <VSIXSubPath>Extensions</VSIXSubPath>
-    </VsixSourceItem>
-    <VsixSourceItem Include="$(InternalTestPlatformExtensionsFolder)Extensions\Microsoft.VisualStudio.TestPlatform.Extensions.*.dll">
-      <VSIXSubPath>Extensions</VSIXSubPath>
-    </VsixSourceItem>
-  </ItemGroup>
+    <!-- Code Coverage -->
+    <ItemGroup>
+      <VsixSourceItem Include="$(CodeCoverageIOFolder)Microsoft.CodeCoverage.IO.dll" />
+      <VsixSourceItem Include="$(CodeCoverageIOFolder)\cs\Microsoft.CodeCoverage.IO.resources.dll">
+        <VSIXSubPath>cs</VSIXSubPath>
+      </VsixSourceItem>
+      <VsixSourceItem Include="$(CodeCoverageIOFolder)\de\Microsoft.CodeCoverage.IO.resources.dll">
+        <VSIXSubPath>de</VSIXSubPath>
+      </VsixSourceItem>
+      <VsixSourceItem Include="$(CodeCoverageIOFolder)\es\Microsoft.CodeCoverage.IO.resources.dll">
+        <VSIXSubPath>es</VSIXSubPath>
+      </VsixSourceItem>
+      <VsixSourceItem Include="$(CodeCoverageIOFolder)\fr\Microsoft.CodeCoverage.IO.resources.dll">
+        <VSIXSubPath>fr</VSIXSubPath>
+      </VsixSourceItem>
+      <VsixSourceItem Include="$(CodeCoverageIOFolder)\it\Microsoft.CodeCoverage.IO.resources.dll">
+        <VSIXSubPath>it</VSIXSubPath>
+      </VsixSourceItem>
+      <VsixSourceItem Include="$(CodeCoverageIOFolder)\ja\Microsoft.CodeCoverage.IO.resources.dll">
+        <VSIXSubPath>ja</VSIXSubPath>
+      </VsixSourceItem>
+      <VsixSourceItem Include="$(CodeCoverageIOFolder)\ko\Microsoft.CodeCoverage.IO.resources.dll">
+        <VSIXSubPath>ko</VSIXSubPath>
+      </VsixSourceItem>
+      <VsixSourceItem Include="$(CodeCoverageIOFolder)\pl\Microsoft.CodeCoverage.IO.resources.dll">
+        <VSIXSubPath>pl</VSIXSubPath>
+      </VsixSourceItem>
+      <VsixSourceItem Include="$(CodeCoverageIOFolder)\pt-BR\Microsoft.CodeCoverage.IO.resources.dll">
+        <VSIXSubPath>pt-BR</VSIXSubPath>
+      </VsixSourceItem>
+      <VsixSourceItem Include="$(CodeCoverageIOFolder)\ru\Microsoft.CodeCoverage.IO.resources.dll">
+        <VSIXSubPath>ru</VSIXSubPath>
+      </VsixSourceItem>
+      <VsixSourceItem Include="$(CodeCoverageIOFolder)\tr\Microsoft.CodeCoverage.IO.resources.dll">
+        <VSIXSubPath>tr</VSIXSubPath>
+      </VsixSourceItem>
+      <VsixSourceItem Include="$(CodeCoverageIOFolder)\zh-Hans\Microsoft.CodeCoverage.IO.resources.dll">
+        <VSIXSubPath>zh-Hans</VSIXSubPath>
+      </VsixSourceItem>
+      <VsixSourceItem Include="$(CodeCoverageIOFolder)\zh-Hant\Microsoft.CodeCoverage.IO.resources.dll">
+        <VSIXSubPath>zh-Hant</VSIXSubPath>
+      </VsixSourceItem>
+    </ItemGroup>
 
-  <!-- Microsoft.TestPlatform -->
-  <ItemGroup>
-    <VsixSourceItem Include="$(TestPlatformBinFolder)Microsoft.VisualStudio.ArchitectureTools.PEReader.dll" />
-    <VsixSourceItem Include="$(TestPlatformBinFolder)Microsoft.VisualStudio.ArchitectureTools.PEReader.dll">
-      <VSIXSubPath>Extensions</VSIXSubPath>
-    </VsixSourceItem>
-    <VsixSourceItem Include="$(TestPlatformBinFolder)Microsoft.VisualStudio.Diagnostics.Utilities.dll" />
-    <VsixSourceItem Include="$(TestPlatformBinFolder)Microsoft.VisualStudio.Enterprise.AspNetHelper.dll" />
-    <VsixSourceItem Include="$(TestPlatformBinFolder)Microsoft*.TestPlatform.Extensions.*.dll;$(TestPlatformBinFolder)Microsoft.TestPlatform.TestHostRuntimeProvider.dll">
-      <VSIXSubPath>Extensions</VSIXSubPath>
-    </VsixSourceItem>
-    <VsixSourceItem Include="$(TestPlatformBinFolder)cs\Microsoft*.TestPlatform.Extensions.*.dll;$(TestPlatformBinFolder)cs\Microsoft.TestPlatform.TestHostRuntimeProvider.resources.dll">
-      <VSIXSubPath>Extensions\cs</VSIXSubPath>
-    </VsixSourceItem>
-    <VsixSourceItem Include="$(TestPlatformBinFolder)de\Microsoft*.TestPlatform.Extensions.*.dll;$(TestPlatformBinFolder)de\Microsoft.TestPlatform.TestHostRuntimeProvider.resources.dll">
-      <VSIXSubPath>Extensions\de</VSIXSubPath>
-    </VsixSourceItem>
-    <VsixSourceItem Include="$(TestPlatformBinFolder)es\Microsoft*.TestPlatform.Extensions.*.dll;$(TestPlatformBinFolder)es\Microsoft.TestPlatform.TestHostRuntimeProvider.resources.dll">
-      <VSIXSubPath>Extensions\es</VSIXSubPath>
-    </VsixSourceItem>
-    <VsixSourceItem Include="$(TestPlatformBinFolder)fr\Microsoft*.TestPlatform.Extensions.*.dll;$(TestPlatformBinFolder)fr\Microsoft.TestPlatform.TestHostRuntimeProvider.resources.dll">
-      <VSIXSubPath>Extensions\fr</VSIXSubPath>
-    </VsixSourceItem>
-    <VsixSourceItem Include="$(TestPlatformBinFolder)it\Microsoft*.TestPlatform.Extensions.*.dll;$(TestPlatformBinFolder)it\Microsoft.TestPlatform.TestHostRuntimeProvider.resources.dll">
-      <VSIXSubPath>Extensions\it</VSIXSubPath>
-    </VsixSourceItem>
-    <VsixSourceItem Include="$(TestPlatformBinFolder)ja\Microsoft*.TestPlatform.Extensions.*.dll;$(TestPlatformBinFolder)ja\Microsoft.TestPlatform.TestHostRuntimeProvider.resources.dll">
-      <VSIXSubPath>Extensions\ja</VSIXSubPath>
-    </VsixSourceItem>
-    <VsixSourceItem Include="$(TestPlatformBinFolder)ko\Microsoft*.TestPlatform.Extensions.*.dll;$(TestPlatformBinFolder)ko\Microsoft.TestPlatform.TestHostRuntimeProvider.resources.dll">
-      <VSIXSubPath>Extensions\ko</VSIXSubPath>
-    </VsixSourceItem>
-    <VsixSourceItem Include="$(TestPlatformBinFolder)pl\Microsoft*.TestPlatform.Extensions.*.dll;$(TestPlatformBinFolder)pl\Microsoft.TestPlatform.TestHostRuntimeProvider.resources.dll">
-      <VSIXSubPath>Extensions\pl</VSIXSubPath>
-    </VsixSourceItem>
-    <VsixSourceItem Include="$(TestPlatformBinFolder)pt-BR\Microsoft*.TestPlatform.Extensions.*.dll;$(TestPlatformBinFolder)pt-BR\Microsoft.TestPlatform.TestHostRuntimeProvider.resources.dll">
-      <VSIXSubPath>Extensions\pt-BR</VSIXSubPath>
-    </VsixSourceItem>
-    <VsixSourceItem Include="$(TestPlatformBinFolder)ru\Microsoft*.TestPlatform.Extensions.*.dll;$(TestPlatformBinFolder)ru\Microsoft.TestPlatform.TestHostRuntimeProvider.resources.dll">
-      <VSIXSubPath>Extensions\ru</VSIXSubPath>
-    </VsixSourceItem>
-    <VsixSourceItem Include="$(TestPlatformBinFolder)tr\Microsoft*.TestPlatform.Extensions.*.dll;$(TestPlatformBinFolder)tr\Microsoft.TestPlatform.TestHostRuntimeProvider.resources.dll">
-      <VSIXSubPath>Extensions\tr</VSIXSubPath>
-    </VsixSourceItem>
-    <VsixSourceItem Include="$(TestPlatformBinFolder)zh-Hans\Microsoft*.TestPlatform.Extensions.*.dll;$(TestPlatformBinFolder)zh-Hans\Microsoft.TestPlatform.TestHostRuntimeProvider.resources.dll">
-      <VSIXSubPath>Extensions\zh-Hans</VSIXSubPath>
-    </VsixSourceItem>
-    <VsixSourceItem Include="$(TestPlatformBinFolder)zh-Hant\Microsoft*.TestPlatform.Extensions.*.dll;$(TestPlatformBinFolder)zh-Hant\Microsoft.TestPlatform.TestHostRuntimeProvider.resources.dll">
-      <VSIXSubPath>Extensions\zh-Hant</VSIXSubPath>
-    </VsixSourceItem>
-  </ItemGroup>
+    <!-- Microsoft.Internal.TestPlatform.Extensions -->
+    <ItemGroup>
+      <VsixSourceItem Include="$(InternalTestPlatformExtensionsFolder)Microsoft.DiaSymReader.dll" />
+      <VsixSourceItem Include="$(InternalTestPlatformExtensionsFolder)Microsoft.IntelliTrace.Core.dll" />
+      <VsixSourceItem Include="$(InternalTestPlatformExtensionsFolder)Extensions\VideoRecorder\*">
+        <VSIXSubPath>Extensions\VideoRecorder</VSIXSubPath>
+      </VsixSourceItem>
+      <VsixSourceItem Include="$(InternalTestPlatformExtensionsFolder)Extensions\Microsoft.VisualStudio.TestTools.DataCollection.*.dll">
+        <VSIXSubPath>Extensions</VSIXSubPath>
+      </VsixSourceItem>
+      <VsixSourceItem Include="$(InternalTestPlatformExtensionsFolder)Extensions\Microsoft.VisualStudio.TestTools.CppUnitTestFramework.*.dll">
+        <VSIXSubPath>Extensions</VSIXSubPath>
+      </VsixSourceItem>
+      <VsixSourceItem Include="$(InternalTestPlatformExtensionsFolder)Extensions\Microsoft.VisualStudio.TestPlatform.Extensions.*.dll">
+        <VSIXSubPath>Extensions</VSIXSubPath>
+      </VsixSourceItem>
+    </ItemGroup>
 
-  <!-- Microsoft.VisualStudio.QualityTools.DataCollectors -->
-  <ItemGroup>
-    <VsixSourceItem Include="$(QualityToolsDataCollectorsFolder)Microsoft.VisualStudio.QualityTools.DataCollectionAgentObject.dll" />
-    <VsixSourceItem Include="$(QualityToolsDataCollectorsFolder)Extensions\V1\x64\*">
-      <VSIXSubPath>Extensions\V1\x64</VSIXSubPath>
-    </VsixSourceItem>
-    <VsixSourceItem Include="$(QualityToolsDataCollectorsFolder)Extensions\V1\x86\*">
-      <VSIXSubPath>Extensions\V1\x86</VSIXSubPath>
-    </VsixSourceItem>
-    <VsixSourceItem Include="$(QualityToolsDataCollectorsFolder)Extensions\V1\*" Exclude="$(QualityToolsDataCollectorsFolder)Extensions\V1\*.pdb">
-      <VSIXSubPath>Extensions\V1</VSIXSubPath>
-    </VsixSourceItem>
-  </ItemGroup>
+    <!-- Microsoft.TestPlatform -->
+    <ItemGroup>
+      <VsixSourceItem Include="$(TestPlatformBinFolder)Microsoft.VisualStudio.ArchitectureTools.PEReader.dll" />
+      <VsixSourceItem Include="$(TestPlatformBinFolder)Microsoft.VisualStudio.ArchitectureTools.PEReader.dll">
+        <VSIXSubPath>Extensions</VSIXSubPath>
+      </VsixSourceItem>
+      <VsixSourceItem Include="$(TestPlatformBinFolder)Microsoft.VisualStudio.Diagnostics.Utilities.dll" />
+      <VsixSourceItem Include="$(TestPlatformBinFolder)Microsoft.VisualStudio.Enterprise.AspNetHelper.dll" />
+      <VsixSourceItem Include="$(TestPlatformBinFolder)Microsoft*.TestPlatform.Extensions.*.dll;$(TestPlatformBinFolder)Microsoft.TestPlatform.TestHostRuntimeProvider.dll">
+        <VSIXSubPath>Extensions</VSIXSubPath>
+      </VsixSourceItem>
+      <VsixSourceItem Include="$(TestPlatformBinFolder)cs\Microsoft*.TestPlatform.Extensions.*.dll;$(TestPlatformBinFolder)cs\Microsoft.TestPlatform.TestHostRuntimeProvider.resources.dll">
+        <VSIXSubPath>Extensions\cs</VSIXSubPath>
+      </VsixSourceItem>
+      <VsixSourceItem Include="$(TestPlatformBinFolder)de\Microsoft*.TestPlatform.Extensions.*.dll;$(TestPlatformBinFolder)de\Microsoft.TestPlatform.TestHostRuntimeProvider.resources.dll">
+        <VSIXSubPath>Extensions\de</VSIXSubPath>
+      </VsixSourceItem>
+      <VsixSourceItem Include="$(TestPlatformBinFolder)es\Microsoft*.TestPlatform.Extensions.*.dll;$(TestPlatformBinFolder)es\Microsoft.TestPlatform.TestHostRuntimeProvider.resources.dll">
+        <VSIXSubPath>Extensions\es</VSIXSubPath>
+      </VsixSourceItem>
+      <VsixSourceItem Include="$(TestPlatformBinFolder)fr\Microsoft*.TestPlatform.Extensions.*.dll;$(TestPlatformBinFolder)fr\Microsoft.TestPlatform.TestHostRuntimeProvider.resources.dll">
+        <VSIXSubPath>Extensions\fr</VSIXSubPath>
+      </VsixSourceItem>
+      <VsixSourceItem Include="$(TestPlatformBinFolder)it\Microsoft*.TestPlatform.Extensions.*.dll;$(TestPlatformBinFolder)it\Microsoft.TestPlatform.TestHostRuntimeProvider.resources.dll">
+        <VSIXSubPath>Extensions\it</VSIXSubPath>
+      </VsixSourceItem>
+      <VsixSourceItem Include="$(TestPlatformBinFolder)ja\Microsoft*.TestPlatform.Extensions.*.dll;$(TestPlatformBinFolder)ja\Microsoft.TestPlatform.TestHostRuntimeProvider.resources.dll">
+        <VSIXSubPath>Extensions\ja</VSIXSubPath>
+      </VsixSourceItem>
+      <VsixSourceItem Include="$(TestPlatformBinFolder)ko\Microsoft*.TestPlatform.Extensions.*.dll;$(TestPlatformBinFolder)ko\Microsoft.TestPlatform.TestHostRuntimeProvider.resources.dll">
+        <VSIXSubPath>Extensions\ko</VSIXSubPath>
+      </VsixSourceItem>
+      <VsixSourceItem Include="$(TestPlatformBinFolder)pl\Microsoft*.TestPlatform.Extensions.*.dll;$(TestPlatformBinFolder)pl\Microsoft.TestPlatform.TestHostRuntimeProvider.resources.dll">
+        <VSIXSubPath>Extensions\pl</VSIXSubPath>
+      </VsixSourceItem>
+      <VsixSourceItem Include="$(TestPlatformBinFolder)pt-BR\Microsoft*.TestPlatform.Extensions.*.dll;$(TestPlatformBinFolder)pt-BR\Microsoft.TestPlatform.TestHostRuntimeProvider.resources.dll">
+        <VSIXSubPath>Extensions\pt-BR</VSIXSubPath>
+      </VsixSourceItem>
+      <VsixSourceItem Include="$(TestPlatformBinFolder)ru\Microsoft*.TestPlatform.Extensions.*.dll;$(TestPlatformBinFolder)ru\Microsoft.TestPlatform.TestHostRuntimeProvider.resources.dll">
+        <VSIXSubPath>Extensions\ru</VSIXSubPath>
+      </VsixSourceItem>
+      <VsixSourceItem Include="$(TestPlatformBinFolder)tr\Microsoft*.TestPlatform.Extensions.*.dll;$(TestPlatformBinFolder)tr\Microsoft.TestPlatform.TestHostRuntimeProvider.resources.dll">
+        <VSIXSubPath>Extensions\tr</VSIXSubPath>
+      </VsixSourceItem>
+      <VsixSourceItem Include="$(TestPlatformBinFolder)zh-Hans\Microsoft*.TestPlatform.Extensions.*.dll;$(TestPlatformBinFolder)zh-Hans\Microsoft.TestPlatform.TestHostRuntimeProvider.resources.dll">
+        <VSIXSubPath>Extensions\zh-Hans</VSIXSubPath>
+      </VsixSourceItem>
+      <VsixSourceItem Include="$(TestPlatformBinFolder)zh-Hant\Microsoft*.TestPlatform.Extensions.*.dll;$(TestPlatformBinFolder)zh-Hant\Microsoft.TestPlatform.TestHostRuntimeProvider.resources.dll">
+        <VSIXSubPath>Extensions\zh-Hant</VSIXSubPath>
+      </VsixSourceItem>
+    </ItemGroup>
 
-  <ItemGroup>
-    <VsixSourceItem Include="$(DependencyModelFolder)Microsoft.Extensions.DependencyModel.dll" />
-    <VsixSourceItem Include="$(FileSystemGlobbingFolder)Microsoft.Extensions.FileSystemGlobbing.dll" />
-    <VsixSourceItem Include="$(VSSDKBuildToolsFolder)Microsoft.VisualStudio.Interop.dll" />
-    <VsixSourceItem Include="$(VSSDKBuildToolsFolder)System.Diagnostics.DiagnosticSource.dll" />
-    <VsixSourceItem Include="$(VSSDKBuildToolsFolder)System.Runtime.CompilerServices.Unsafe.dll" />
-    <VsixSourceItem Include="$(VSQualityToolsFolder)*" Exclude="$(VSQualityToolsFolder)*.pdb" />
-  </ItemGroup>
+    <!-- Microsoft.VisualStudio.QualityTools.DataCollectors -->
+    <ItemGroup>
+      <VsixSourceItem Include="$(QualityToolsDataCollectorsFolder)Microsoft.VisualStudio.QualityTools.DataCollectionAgentObject.dll" />
+      <VsixSourceItem Include="$(QualityToolsDataCollectorsFolder)Extensions\V1\x64\*">
+        <VSIXSubPath>Extensions\V1\x64</VSIXSubPath>
+      </VsixSourceItem>
+      <VsixSourceItem Include="$(QualityToolsDataCollectorsFolder)Extensions\V1\x86\*">
+        <VSIXSubPath>Extensions\V1\x86</VSIXSubPath>
+      </VsixSourceItem>
+      <VsixSourceItem Include="$(QualityToolsDataCollectorsFolder)Extensions\V1\*" Exclude="$(QualityToolsDataCollectorsFolder)Extensions\V1\*.pdb">
+        <VSIXSubPath>Extensions\V1</VSIXSubPath>
+      </VsixSourceItem>
+    </ItemGroup>
 
-  <ItemGroup>
-    <!-- For some reason, this is not included through the project reference so manually force adding it -->
-    <VsixSourceItem Include="$(OutputPath)SettingsMigrator.exe.config" />
-  </ItemGroup>
+    <ItemGroup>
+      <VsixSourceItem Include="$(DependencyModelFolder)Microsoft.Extensions.DependencyModel.dll" />
+      <VsixSourceItem Include="$(FileSystemGlobbingFolder)Microsoft.Extensions.FileSystemGlobbing.dll" />
+      <VsixSourceItem Include="$(VSSDKBuildToolsFolder)Microsoft.VisualStudio.Interop.dll" />
+      <VsixSourceItem Include="$(VSSDKBuildToolsFolder)System.Diagnostics.DiagnosticSource.dll" />
+      <VsixSourceItem Include="$(VSSDKBuildToolsFolder)System.Runtime.CompilerServices.Unsafe.dll" />
+      <VsixSourceItem Include="$(VSQualityToolsFolder)*" Exclude="$(VSQualityToolsFolder)*.pdb" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <!-- For some reason, this is not included through the project reference so manually force adding it -->
+      <VsixSourceItem Include="$(OutputPath)SettingsMigrator.exe.config" />
+    </ItemGroup>
+  </Target>
 
   <ItemGroup>
     <Content Include="License.rtf">
@@ -315,20 +307,39 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\datacollector.arm64\datacollector.arm64.csproj" />
-    <ProjectReference Include="..\..\datacollector\datacollector.csproj" />
-    <ProjectReference Include="..\..\Microsoft.TestPlatform.AdapterUtilities\Microsoft.TestPlatform.AdapterUtilities.csproj" />
-    <ProjectReference Include="..\..\SettingsMigrator\SettingsMigrator.csproj" />
-    <ProjectReference Include="..\..\testhost\testhost.csproj" />
-    <ProjectReference Include="..\..\testhost.arm64\testhost.arm64.csproj" />
-    <ProjectReference Include="..\..\testhost.x86\testhost.x86.csproj" />
-    <ProjectReference Include="..\..\vstest.console.arm64\vstest.console.arm64.csproj" />
-    <ProjectReference Include="..\..\vstest.console\vstest.console.csproj" />
+    <ProjectReference Include="..\..\datacollector.arm64\datacollector.arm64.csproj">
+      <Ngen>false</Ngen>
+    </ProjectReference>
+    <ProjectReference Include="..\..\datacollector\datacollector.csproj">
+      <Ngen>false</Ngen>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Microsoft.TestPlatform.AdapterUtilities\Microsoft.TestPlatform.AdapterUtilities.csproj">
+      <Ngen>false</Ngen>
+    </ProjectReference>
+    <ProjectReference Include="..\..\SettingsMigrator\SettingsMigrator.csproj">
+      <Ngen>false</Ngen>
+    </ProjectReference>
+    <ProjectReference Include="..\..\testhost\testhost.csproj">
+      <Ngen>false</Ngen>
+    </ProjectReference>
+    <ProjectReference Include="..\..\testhost.arm64\testhost.arm64.csproj">
+      <Ngen>false</Ngen>
+    </ProjectReference>
+    <ProjectReference Include="..\..\testhost.x86\testhost.x86.csproj">
+      <Ngen>false</Ngen>
+    </ProjectReference>
+    <ProjectReference Include="..\..\vstest.console.arm64\vstest.console.arm64.csproj">
+      <Ngen>false</Ngen>
+    </ProjectReference>
+    <ProjectReference Include="..\..\vstest.console\vstest.console.csproj">
+      <Ngen>false</Ngen>
+    </ProjectReference>
     <ProjectReference Include="..\Microsoft.TestPlatform\Microsoft.TestPlatform.csproj">
       <ReferenceOutputAssembly>False</ReferenceOutputAssembly>
       <ExcludeAssets>all</ExcludeAssets>
       <Private>False</Private>
       <PrivateAssets>all</PrivateAssets>
+      <Ngen>false</Ngen>
     </ProjectReference>
   </ItemGroup>
 
