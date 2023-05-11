@@ -20,7 +20,7 @@ namespace NuGet.Frameworks
 
         public FrameworkExpander(IFrameworkNameProvider mappings)
         {
-            _mappings = mappings;
+            _mappings = mappings ?? throw new ArgumentNullException(nameof(mappings));
         }
 
         /// <summary>
@@ -28,6 +28,8 @@ namespace NuGet.Frameworks
         /// </summary>
         public IEnumerable<NuGetFramework> Expand(NuGetFramework framework)
         {
+            if (framework == null) throw new ArgumentNullException(nameof(framework));
+
             var seen = new HashSet<NuGetFramework>() { framework };
             var toExpand = new Stack<NuGetFramework>();
             toExpand.Push(framework);
@@ -52,10 +54,8 @@ namespace NuGet.Frameworks
             // but NOT to dotnet (which is deprecated).
             if (framework.IsPCL)
             {
-                int profileNumber;
-                IEnumerable<FrameworkRange> ranges;
-                if (_mappings.TryGetPortableProfileNumber(framework.Profile, out profileNumber)
-                    && _mappings.TryGetPortableCompatibilityMappings(profileNumber, out ranges))
+                if (_mappings.TryGetPortableProfileNumber(framework.Profile, out int profileNumber)
+                    && _mappings.TryGetPortableCompatibilityMappings(profileNumber, out IEnumerable<FrameworkRange>? ranges))
                 {
                     foreach (var range in ranges)
                     {
@@ -76,8 +76,7 @@ namespace NuGet.Frameworks
         private IEnumerable<NuGetFramework> ExpandInternal(NuGetFramework framework)
         {
             // check the framework directly, this includes profiles which the range doesn't return
-            IEnumerable<NuGetFramework> directlyEquivalent = null;
-            if (_mappings.TryGetEquivalentFrameworks(framework, out directlyEquivalent))
+            if (_mappings.TryGetEquivalentFrameworks(framework, out IEnumerable<NuGetFramework>? directlyEquivalent))
             {
                 foreach (var eqFw in directlyEquivalent)
                 {
@@ -90,8 +89,7 @@ namespace NuGet.Frameworks
                 new NuGetFramework(framework.Framework, new Version(0, 0), framework.Profile),
                 framework);
 
-            IEnumerable<NuGetFramework> equivalent = null;
-            if (_mappings.TryGetEquivalentFrameworks(frameworkRange, out equivalent))
+            if (_mappings.TryGetEquivalentFrameworks(frameworkRange, out IEnumerable<NuGetFramework>? equivalent))
             {
                 foreach (var eqFw in equivalent)
                 {
@@ -102,8 +100,7 @@ namespace NuGet.Frameworks
             // find all possible sub set frameworks if no profile is used
             if (!framework.HasProfile)
             {
-                IEnumerable<string> subSetFrameworks = null;
-                if (_mappings.TryGetSubSetFrameworks(framework.Framework, out subSetFrameworks))
+                if (_mappings.TryGetSubSetFrameworks(framework.Framework, out IEnumerable<string>? subSetFrameworks))
                 {
                     foreach (var subFramework in subSetFrameworks)
                     {
@@ -114,8 +111,7 @@ namespace NuGet.Frameworks
             }
 
             // explicit compatiblity mappings
-            IEnumerable<FrameworkRange> ranges = null;
-            if (_mappings.TryGetCompatibilityMappings(framework, out ranges))
+            if (_mappings.TryGetCompatibilityMappings(framework, out IEnumerable<FrameworkRange>? ranges))
             {
                 foreach (var range in ranges)
                 {

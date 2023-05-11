@@ -8,7 +8,7 @@ namespace NuGet.Frameworks
 {
     public class CompatibilityMappingComparer : IEqualityComparer<OneWayCompatibilityMappingEntry>
     {
-        public bool Equals(OneWayCompatibilityMappingEntry x, OneWayCompatibilityMappingEntry y)
+        public bool Equals(OneWayCompatibilityMappingEntry? x, OneWayCompatibilityMappingEntry? y)
         {
             if (ReferenceEquals(x, y))
             {

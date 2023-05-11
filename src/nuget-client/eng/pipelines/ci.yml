@@ -41,31 +41,31 @@ parameters:
 - name: RunBuildForPublishing
   displayName: Build bits for publishing
   type: boolean
-  default: true
+  default: false
 - name: RunCrossFrameworkTestsOnWindows
   displayName: Run cross framweork tests on Windows
   type: boolean
-  default: true
+  default: false
 - name: RunEndToEndTests
   displayName: Run end-to-end tests
   type: boolean
-  default: true
+  default: false
 - name: RunFunctionalTestsOnWindows
   displayName: Run functional tests on Windows
   type: boolean
-  default: true
+  default: false
 - name: RunSourceBuild
   displayName: Run source build
   type: boolean
-  default: true
+  default: false
 - name: RunTestsOnLinux
   displayName: Run tests on Linux
   type: boolean
-  default: true
+  default: false
 - name: RunTestsOnMac
   displayName: Run tests on Mac
   type: boolean
-  default: true
+  default: false
 - name: RunMonoTestsOnMac
   displayName: Run Mono tests on Mac
   type: boolean
@@ -74,10 +74,10 @@ parameters:
 extends:
   template: templates/pipeline.yml
   parameters:
+    ApexAgentCleanup: ${{parameters.ApexAgentCleanup}}
     DartLabEnvironment: ${{parameters.DartLabEnvironment}}
     E2EPart1AgentCleanup: ${{parameters.E2EPart1AgentCleanup}}
     E2EPart2AgentCleanup: ${{parameters.E2EPart2AgentCleanup}}
-    ApexAgentCleanup: ${{parameters.ApexAgentCleanup}}
     NuGetLocalizationType: ${{parameters.NuGetLocalizationType}}
     RunApexTests: ${{parameters.RunApexTests}}
     RunBuildForPublishing: ${{parameters.RunBuildForPublishing}}

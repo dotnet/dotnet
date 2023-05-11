@@ -65,7 +65,6 @@ steps:
     testRunner: "VSTest"
     testResultsFiles: "*.trx"
     searchFolder: "$(Build.Repository.LocalPath)\\build\\TestResults"
-    mergeTestResults: "true"
     testRunTitle: "NuGet.Client Functional Tests On Windows"
   condition: "succeededOrFailed()"
 

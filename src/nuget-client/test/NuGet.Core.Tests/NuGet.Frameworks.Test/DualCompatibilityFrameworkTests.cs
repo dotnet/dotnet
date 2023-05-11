@@ -14,13 +14,13 @@ namespace NuGet.Frameworks.Test
         [Fact]
         public void Constructor_WithNullFramework_Throws()
         {
-            Assert.Throws<ArgumentNullException>(() => new DualCompatibilityFramework(framework: null, secondaryFramework: NuGetFramework.AnyFramework));
+            Assert.Throws<ArgumentNullException>(() => new DualCompatibilityFramework(framework: null!, secondaryFramework: NuGetFramework.AnyFramework));
         }
 
         [Fact]
         public void Constructor_WithNullSecondary_Throws()
         {
-            Assert.Throws<ArgumentNullException>(() => new DualCompatibilityFramework(framework: NuGetFramework.AnyFramework, secondaryFramework: null));
+            Assert.Throws<ArgumentNullException>(() => new DualCompatibilityFramework(framework: NuGetFramework.AnyFramework, secondaryFramework: null!));
         }
 
         [Theory]

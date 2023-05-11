@@ -21,7 +21,7 @@ namespace NuGet.Frameworks
         /// <summary>
         /// Return the item with the target framework nearest the project framework
         /// </summary>
-        public static T GetNearest<T>(this IEnumerable<T> items, NuGetFramework projectFramework) where T : class, IFrameworkSpecific
+        public static T? GetNearest<T>(this IEnumerable<T> items, NuGetFramework projectFramework) where T : class, IFrameworkSpecific
         {
             return NuGetFrameworkUtility.GetNearest(items, projectFramework, e => e.TargetFramework);
         }

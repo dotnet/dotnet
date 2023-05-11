@@ -261,16 +261,23 @@ namespace NuGet.PackageManagement.UI
             foreach (PackageSearchMetadataContextInfo metadata in _state.Results.PackageSearchItems)
             {
                 VersionRange allowedVersions = VersionRange.All;
+                VersionRange versionOverride = null;
 
                 // get the allowed version range and pass it to package item view model to choose the latest version based on that
                 if (_packageReferences != null)
                 {
                     IEnumerable<IPackageReferenceContextInfo> matchedPackageReferences = _packageReferences.Where(r => StringComparer.OrdinalIgnoreCase.Equals(r.Identity.Id, metadata.Identity.Id));
                     VersionRange[] allowedVersionsRange = matchedPackageReferences.Select(r => r.AllowedVersions).Where(v => v != null).ToArray();
+                    VersionRange[] versionOverrides = matchedPackageReferences.Select(r => r.VersionOverride).Where(v => v != null).ToArray();
 
                     if (allowedVersionsRange.Length > 0)
                     {
                         allowedVersions = allowedVersionsRange[0];
+                    }
+
+                    if (versionOverrides.Length > 0)
+                    {
+                        versionOverride = versionOverrides[0];
                     }
                 }
 
@@ -291,6 +298,7 @@ namespace NuGet.PackageManagement.UI
                     DownloadCount = metadata.DownloadCount,
                     Summary = metadata.Summary,
                     AllowedVersions = allowedVersions,
+                    VersionOverride = versionOverride,
                     PrefixReserved = metadata.PrefixReserved && !IsMultiSource,
                     Recommended = metadata.IsRecommended,
                     RecommenderVersion = metadata.RecommenderVersion,

@@ -361,7 +361,7 @@ namespace NuGet.PackageManagement.VisualStudio.Test
                     Assert.True(File.Exists(projectLockFilePath));
 
                     // delete existing restore output files
-                    string msBuildProjectExtensionsPath = await vsProjectAdapter.GetMSBuildProjectExtensionsPathAsync();
+                    string msBuildProjectExtensionsPath = vsProjectAdapter.GetMSBuildProjectExtensionsPath();
                     File.Delete(Path.Combine(msBuildProjectExtensionsPath, "project.assets.json"));
                     File.Delete(Path.Combine(msBuildProjectExtensionsPath, NoOpRestoreUtilities.NoOpCacheFileName));
 
@@ -491,7 +491,7 @@ namespace NuGet.PackageManagement.VisualStudio.Test
                         Assert.False(restoreSummary.NoOpRestore);
                     }
 
-                    string msBuildProjectExtensionsPath = await vsProjectAdapter.GetMSBuildProjectExtensionsPathAsync();
+                    string msBuildProjectExtensionsPath = vsProjectAdapter.GetMSBuildProjectExtensionsPath();
 
                     // Initial asserts
                     Assert.True(File.Exists(projectLockFilePath));
@@ -870,7 +870,7 @@ namespace NuGet.PackageManagement.VisualStudio.Test
                     Assert.True(File.Exists(projectLockFilePath));
 
                     // delete existing restore output files
-                    string msBuildProjectExtensionsPath = await vsProjectAdapter.GetMSBuildProjectExtensionsPathAsync();
+                    string msBuildProjectExtensionsPath = vsProjectAdapter.GetMSBuildProjectExtensionsPath();
                     File.Delete(Path.Combine(msBuildProjectExtensionsPath, "project.assets.json"));
                     File.Delete(Path.Combine(msBuildProjectExtensionsPath, NoOpRestoreUtilities.NoOpCacheFileName));
 
@@ -1005,7 +1005,7 @@ namespace NuGet.PackageManagement.VisualStudio.Test
                     Assert.True(File.Exists(projectLockFilePath));
 
                     // delete existing restore output files
-                    File.Delete(Path.Combine(await vsProjectAdapter.GetMSBuildProjectExtensionsPathAsync(), "project.assets.json"));
+                    File.Delete(Path.Combine(vsProjectAdapter.GetMSBuildProjectExtensionsPath(), "project.assets.json"));
 
                     // clean packages folder
                     Directory.Delete(testSolutionManager.GlobalPackagesFolder, true);
@@ -1157,7 +1157,7 @@ namespace NuGet.PackageManagement.VisualStudio.Test
                             sourceRepositoryProvider.GetRepositories(), sourceRepositoryProvider.GetRepositories(), CancellationToken.None);
 
                     // Assert
-                    var lockFilePath = Path.Combine(await vsProjectAdapterA.GetMSBuildProjectExtensionsPathAsync(), "project.assets.json");
+                    var lockFilePath = Path.Combine(vsProjectAdapterA.GetMSBuildProjectExtensionsPath(), "project.assets.json");
                     Assert.True(File.Exists(lockFilePath));
 
                 }
@@ -1229,7 +1229,7 @@ namespace NuGet.PackageManagement.VisualStudio.Test
                             sourceRepositoryProvider.GetRepositories(), sourceRepositoryProvider.GetRepositories(), CancellationToken.None);
 
                     // Assert
-                    var assetsFilePath = Path.Combine(await vsProjectAdapterA.GetMSBuildProjectExtensionsPathAsync(), "project.assets.json");
+                    var assetsFilePath = Path.Combine(vsProjectAdapterA.GetMSBuildProjectExtensionsPath(), "project.assets.json");
                     Assert.True(File.Exists(assetsFilePath));
 
                     var assetsFile = new LockFileFormat().Read(assetsFilePath);
@@ -1350,7 +1350,7 @@ namespace NuGet.PackageManagement.VisualStudio.Test
                         CancellationToken.None);
 
                     // Assert
-                    var assetsFilePath = Path.Combine(await vsProjectAdapterA.GetMSBuildProjectExtensionsPathAsync(), "project.assets.json");
+                    var assetsFilePath = Path.Combine(vsProjectAdapterA.GetMSBuildProjectExtensionsPath(), "project.assets.json");
                     Assert.True(File.Exists(assetsFilePath));
 
                     var assetsFile = new LockFileFormat().Read(assetsFilePath);
@@ -1831,7 +1831,7 @@ namespace NuGet.PackageManagement.VisualStudio.Test
 
                     Assert.True(File.Exists(projectLockFilePath));
 
-                    string msBuildProjectExtensionsPathA = await vsProjectAdapterA.GetMSBuildProjectExtensionsPathAsync();
+                    string msBuildProjectExtensionsPathA = vsProjectAdapterA.GetMSBuildProjectExtensionsPath();
 
                     var lockFilePath = Path.Combine(msBuildProjectExtensionsPathA, "project.assets.json");
                     Assert.True(File.Exists(lockFilePath));
@@ -2014,8 +2014,8 @@ namespace NuGet.PackageManagement.VisualStudio.Test
                     Assert.Equal(PackageDependencyType.Project, lockFile.Targets[0].Dependencies[1].Type);
 
                     // Act
-                    File.Delete(Path.Combine(await vsProjectAdapterA.GetMSBuildProjectExtensionsPathAsync(), NoOpRestoreUtilities.NoOpCacheFileName));
-                    File.Delete(Path.Combine(await vsProjectAdapterB.GetMSBuildProjectExtensionsPathAsync(), NoOpRestoreUtilities.NoOpCacheFileName));
+                    File.Delete(Path.Combine(vsProjectAdapterA.GetMSBuildProjectExtensionsPath(), NoOpRestoreUtilities.NoOpCacheFileName));
+                    File.Delete(Path.Combine(vsProjectAdapterB.GetMSBuildProjectExtensionsPath(), NoOpRestoreUtilities.NoOpCacheFileName));
 
                     restoreSummaries = await DependencyGraphRestoreUtility.RestoreAsync(
                         testSolutionManager,
@@ -2162,7 +2162,7 @@ namespace NuGet.PackageManagement.VisualStudio.Test
                         Assert.False(restoreSummary.NoOpRestore);
                     }
 
-                    var assetsFilePath = Path.Combine(await vsProjectAdapterA.GetMSBuildProjectExtensionsPathAsync(), "project.assets.json");
+                    var assetsFilePath = Path.Combine(vsProjectAdapterA.GetMSBuildProjectExtensionsPath(), "project.assets.json");
                     Assert.True(File.Exists(assetsFilePath));
 
                     var assetsFile = new LockFileFormat().Read(assetsFilePath);
@@ -2282,7 +2282,7 @@ namespace NuGet.PackageManagement.VisualStudio.Test
                         Assert.False(restoreSummary.NoOpRestore);
                     }
 
-                    var assetsFilePath = Path.Combine(await vsProjectAdapter.GetMSBuildProjectExtensionsPathAsync(), "project.assets.json");
+                    var assetsFilePath = Path.Combine(vsProjectAdapter.GetMSBuildProjectExtensionsPath(), "project.assets.json");
                     Assert.True(File.Exists(assetsFilePath));
 
                     var assetsFile = new LockFileFormat().Read(assetsFilePath);

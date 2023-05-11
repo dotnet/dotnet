@@ -1,194 +1,194 @@
 #nullable enable
 NuGet.Frameworks.AssetTargetFallbackFramework
-~NuGet.Frameworks.AssetTargetFallbackFramework.AsFallbackFramework() -> NuGet.Frameworks.FallbackFramework
-~NuGet.Frameworks.AssetTargetFallbackFramework.AssetTargetFallbackFramework(NuGet.Frameworks.NuGetFramework framework, System.Collections.Generic.IReadOnlyList<NuGet.Frameworks.NuGetFramework> fallbackFrameworks) -> void
-~NuGet.Frameworks.AssetTargetFallbackFramework.Equals(NuGet.Frameworks.AssetTargetFallbackFramework other) -> bool
-~NuGet.Frameworks.AssetTargetFallbackFramework.Fallback.get -> System.Collections.Generic.IReadOnlyList<NuGet.Frameworks.NuGetFramework>
-~NuGet.Frameworks.AssetTargetFallbackFramework.RootFramework.get -> NuGet.Frameworks.NuGetFramework
+NuGet.Frameworks.AssetTargetFallbackFramework.AsFallbackFramework() -> NuGet.Frameworks.FallbackFramework!
+NuGet.Frameworks.AssetTargetFallbackFramework.AssetTargetFallbackFramework(NuGet.Frameworks.NuGetFramework! framework, System.Collections.Generic.IReadOnlyList<NuGet.Frameworks.NuGetFramework!>! fallbackFrameworks) -> void
+NuGet.Frameworks.AssetTargetFallbackFramework.Equals(NuGet.Frameworks.AssetTargetFallbackFramework? other) -> bool
+NuGet.Frameworks.AssetTargetFallbackFramework.Fallback.get -> System.Collections.Generic.IReadOnlyList<NuGet.Frameworks.NuGetFramework!>!
+NuGet.Frameworks.AssetTargetFallbackFramework.RootFramework.get -> NuGet.Frameworks.NuGetFramework!
 NuGet.Frameworks.CompatibilityListProvider
-~NuGet.Frameworks.CompatibilityListProvider.CompatibilityListProvider(NuGet.Frameworks.IFrameworkNameProvider nameProvider, NuGet.Frameworks.IFrameworkCompatibilityProvider compatibilityProvider) -> void
-~NuGet.Frameworks.CompatibilityListProvider.GetFrameworksSupporting(NuGet.Frameworks.NuGetFramework target) -> System.Collections.Generic.IEnumerable<NuGet.Frameworks.NuGetFramework>
+NuGet.Frameworks.CompatibilityListProvider.CompatibilityListProvider(NuGet.Frameworks.IFrameworkNameProvider! nameProvider, NuGet.Frameworks.IFrameworkCompatibilityProvider! compatibilityProvider) -> void
+NuGet.Frameworks.CompatibilityListProvider.GetFrameworksSupporting(NuGet.Frameworks.NuGetFramework! target) -> System.Collections.Generic.IEnumerable<NuGet.Frameworks.NuGetFramework!>!
 NuGet.Frameworks.CompatibilityMappingComparer
 NuGet.Frameworks.CompatibilityMappingComparer.CompatibilityMappingComparer() -> void
-~NuGet.Frameworks.CompatibilityMappingComparer.Equals(NuGet.Frameworks.OneWayCompatibilityMappingEntry x, NuGet.Frameworks.OneWayCompatibilityMappingEntry y) -> bool
-~NuGet.Frameworks.CompatibilityMappingComparer.GetHashCode(NuGet.Frameworks.OneWayCompatibilityMappingEntry obj) -> int
+NuGet.Frameworks.CompatibilityMappingComparer.Equals(NuGet.Frameworks.OneWayCompatibilityMappingEntry? x, NuGet.Frameworks.OneWayCompatibilityMappingEntry? y) -> bool
+NuGet.Frameworks.CompatibilityMappingComparer.GetHashCode(NuGet.Frameworks.OneWayCompatibilityMappingEntry! obj) -> int
 NuGet.Frameworks.CompatibilityProvider
-~NuGet.Frameworks.CompatibilityProvider.CompatibilityProvider(NuGet.Frameworks.IFrameworkNameProvider mappings) -> void
-~NuGet.Frameworks.CompatibilityProvider.IsCompatible(NuGet.Frameworks.NuGetFramework target, NuGet.Frameworks.NuGetFramework candidate) -> bool
+NuGet.Frameworks.CompatibilityProvider.CompatibilityProvider(NuGet.Frameworks.IFrameworkNameProvider! mappings) -> void
+NuGet.Frameworks.CompatibilityProvider.IsCompatible(NuGet.Frameworks.NuGetFramework! target, NuGet.Frameworks.NuGetFramework! candidate) -> bool
 NuGet.Frameworks.CompatibilityTable
-~NuGet.Frameworks.CompatibilityTable.CompatibilityTable(System.Collections.Generic.IEnumerable<NuGet.Frameworks.NuGetFramework> frameworks) -> void
-~NuGet.Frameworks.CompatibilityTable.CompatibilityTable(System.Collections.Generic.IEnumerable<NuGet.Frameworks.NuGetFramework> frameworks, NuGet.Frameworks.IFrameworkNameProvider mappings, NuGet.Frameworks.IFrameworkCompatibilityProvider compat) -> void
-~NuGet.Frameworks.CompatibilityTable.GetNearest(NuGet.Frameworks.NuGetFramework framework) -> System.Collections.Generic.IEnumerable<NuGet.Frameworks.NuGetFramework>
-~NuGet.Frameworks.CompatibilityTable.HasFramework(NuGet.Frameworks.NuGetFramework framework) -> bool
-~NuGet.Frameworks.CompatibilityTable.TryGetCompatible(NuGet.Frameworks.NuGetFramework framework, out System.Collections.Generic.IEnumerable<NuGet.Frameworks.NuGetFramework> compatible) -> bool
+NuGet.Frameworks.CompatibilityTable.CompatibilityTable(System.Collections.Generic.IEnumerable<NuGet.Frameworks.NuGetFramework!>! frameworks) -> void
+NuGet.Frameworks.CompatibilityTable.CompatibilityTable(System.Collections.Generic.IEnumerable<NuGet.Frameworks.NuGetFramework!>! frameworks, NuGet.Frameworks.IFrameworkNameProvider! mappings, NuGet.Frameworks.IFrameworkCompatibilityProvider! compat) -> void
+NuGet.Frameworks.CompatibilityTable.GetNearest(NuGet.Frameworks.NuGetFramework! framework) -> System.Collections.Generic.IEnumerable<NuGet.Frameworks.NuGetFramework!>!
+NuGet.Frameworks.CompatibilityTable.HasFramework(NuGet.Frameworks.NuGetFramework! framework) -> bool
+NuGet.Frameworks.CompatibilityTable.TryGetCompatible(NuGet.Frameworks.NuGetFramework! framework, out System.Collections.Generic.IEnumerable<NuGet.Frameworks.NuGetFramework!>? compatible) -> bool
 NuGet.Frameworks.DefaultCompatibilityProvider
 NuGet.Frameworks.DefaultCompatibilityProvider.DefaultCompatibilityProvider() -> void
 NuGet.Frameworks.DefaultFrameworkMappings
-~NuGet.Frameworks.DefaultFrameworkMappings.CompatibilityMappings.get -> System.Collections.Generic.IEnumerable<NuGet.Frameworks.OneWayCompatibilityMappingEntry>
+NuGet.Frameworks.DefaultFrameworkMappings.CompatibilityMappings.get -> System.Collections.Generic.IEnumerable<NuGet.Frameworks.OneWayCompatibilityMappingEntry!>!
 NuGet.Frameworks.DefaultFrameworkMappings.DefaultFrameworkMappings() -> void
-~NuGet.Frameworks.DefaultFrameworkMappings.EquivalentFrameworkPrecedence.get -> System.Collections.Generic.IEnumerable<string>
-~NuGet.Frameworks.DefaultFrameworkMappings.EquivalentFrameworks.get -> System.Collections.Generic.IEnumerable<System.Collections.Generic.KeyValuePair<NuGet.Frameworks.NuGetFramework, NuGet.Frameworks.NuGetFramework>>
-~NuGet.Frameworks.DefaultFrameworkMappings.EquivalentProfiles.get -> System.Collections.Generic.IEnumerable<NuGet.Frameworks.FrameworkSpecificMapping>
-~NuGet.Frameworks.DefaultFrameworkMappings.FullNameReplacements.get -> System.Collections.Generic.IEnumerable<System.Collections.Generic.KeyValuePair<NuGet.Frameworks.NuGetFramework, NuGet.Frameworks.NuGetFramework>>
-~NuGet.Frameworks.DefaultFrameworkMappings.IdentifierShortNames.get -> System.Collections.Generic.IEnumerable<System.Collections.Generic.KeyValuePair<string, string>>
-~NuGet.Frameworks.DefaultFrameworkMappings.IdentifierSynonyms.get -> System.Collections.Generic.IEnumerable<System.Collections.Generic.KeyValuePair<string, string>>
-~NuGet.Frameworks.DefaultFrameworkMappings.NonPackageBasedFrameworkPrecedence.get -> System.Collections.Generic.IEnumerable<string>
-~NuGet.Frameworks.DefaultFrameworkMappings.PackageBasedFrameworkPrecedence.get -> System.Collections.Generic.IEnumerable<string>
-~NuGet.Frameworks.DefaultFrameworkMappings.ProfileShortNames.get -> System.Collections.Generic.IEnumerable<NuGet.Frameworks.FrameworkSpecificMapping>
-~NuGet.Frameworks.DefaultFrameworkMappings.ShortNameReplacements.get -> System.Collections.Generic.IEnumerable<System.Collections.Generic.KeyValuePair<NuGet.Frameworks.NuGetFramework, NuGet.Frameworks.NuGetFramework>>
-~NuGet.Frameworks.DefaultFrameworkMappings.SubSetFrameworks.get -> System.Collections.Generic.IEnumerable<System.Collections.Generic.KeyValuePair<string, string>>
+NuGet.Frameworks.DefaultFrameworkMappings.EquivalentFrameworkPrecedence.get -> System.Collections.Generic.IEnumerable<string!>!
+NuGet.Frameworks.DefaultFrameworkMappings.EquivalentFrameworks.get -> System.Collections.Generic.IEnumerable<System.Collections.Generic.KeyValuePair<NuGet.Frameworks.NuGetFramework!, NuGet.Frameworks.NuGetFramework!>>!
+NuGet.Frameworks.DefaultFrameworkMappings.EquivalentProfiles.get -> System.Collections.Generic.IEnumerable<NuGet.Frameworks.FrameworkSpecificMapping!>!
+NuGet.Frameworks.DefaultFrameworkMappings.FullNameReplacements.get -> System.Collections.Generic.IEnumerable<System.Collections.Generic.KeyValuePair<NuGet.Frameworks.NuGetFramework!, NuGet.Frameworks.NuGetFramework!>>!
+NuGet.Frameworks.DefaultFrameworkMappings.IdentifierShortNames.get -> System.Collections.Generic.IEnumerable<System.Collections.Generic.KeyValuePair<string!, string!>>!
+NuGet.Frameworks.DefaultFrameworkMappings.IdentifierSynonyms.get -> System.Collections.Generic.IEnumerable<System.Collections.Generic.KeyValuePair<string!, string!>>!
+NuGet.Frameworks.DefaultFrameworkMappings.NonPackageBasedFrameworkPrecedence.get -> System.Collections.Generic.IEnumerable<string!>!
+NuGet.Frameworks.DefaultFrameworkMappings.PackageBasedFrameworkPrecedence.get -> System.Collections.Generic.IEnumerable<string!>!
+NuGet.Frameworks.DefaultFrameworkMappings.ProfileShortNames.get -> System.Collections.Generic.IEnumerable<NuGet.Frameworks.FrameworkSpecificMapping!>!
+NuGet.Frameworks.DefaultFrameworkMappings.ShortNameReplacements.get -> System.Collections.Generic.IEnumerable<System.Collections.Generic.KeyValuePair<NuGet.Frameworks.NuGetFramework!, NuGet.Frameworks.NuGetFramework!>>!
+NuGet.Frameworks.DefaultFrameworkMappings.SubSetFrameworks.get -> System.Collections.Generic.IEnumerable<System.Collections.Generic.KeyValuePair<string!, string!>>!
 NuGet.Frameworks.DefaultFrameworkNameProvider
 NuGet.Frameworks.DefaultFrameworkNameProvider.DefaultFrameworkNameProvider() -> void
 NuGet.Frameworks.DefaultPortableFrameworkMappings
-~NuGet.Frameworks.DefaultPortableFrameworkMappings.CompatibilityMappings.get -> System.Collections.Generic.IEnumerable<System.Collections.Generic.KeyValuePair<int, NuGet.Frameworks.FrameworkRange>>
+NuGet.Frameworks.DefaultPortableFrameworkMappings.CompatibilityMappings.get -> System.Collections.Generic.IEnumerable<System.Collections.Generic.KeyValuePair<int, NuGet.Frameworks.FrameworkRange!>>!
 NuGet.Frameworks.DefaultPortableFrameworkMappings.DefaultPortableFrameworkMappings() -> void
-~NuGet.Frameworks.DefaultPortableFrameworkMappings.ProfileFrameworks.get -> System.Collections.Generic.IEnumerable<System.Collections.Generic.KeyValuePair<int, NuGet.Frameworks.NuGetFramework[]>>
-~NuGet.Frameworks.DefaultPortableFrameworkMappings.ProfileOptionalFrameworks.get -> System.Collections.Generic.IEnumerable<System.Collections.Generic.KeyValuePair<int, NuGet.Frameworks.NuGetFramework[]>>
+NuGet.Frameworks.DefaultPortableFrameworkMappings.ProfileFrameworks.get -> System.Collections.Generic.IEnumerable<System.Collections.Generic.KeyValuePair<int, NuGet.Frameworks.NuGetFramework![]!>>!
+NuGet.Frameworks.DefaultPortableFrameworkMappings.ProfileOptionalFrameworks.get -> System.Collections.Generic.IEnumerable<System.Collections.Generic.KeyValuePair<int, NuGet.Frameworks.NuGetFramework![]!>>!
 NuGet.Frameworks.DualCompatibilityFramework
-~NuGet.Frameworks.DualCompatibilityFramework.AsFallbackFramework() -> NuGet.Frameworks.FallbackFramework
-~NuGet.Frameworks.DualCompatibilityFramework.DualCompatibilityFramework(NuGet.Frameworks.NuGetFramework framework, NuGet.Frameworks.NuGetFramework secondaryFramework) -> void
-~NuGet.Frameworks.DualCompatibilityFramework.Equals(NuGet.Frameworks.DualCompatibilityFramework other) -> bool
-~NuGet.Frameworks.DualCompatibilityFramework.RootFramework.get -> NuGet.Frameworks.NuGetFramework
-~NuGet.Frameworks.DualCompatibilityFramework.SecondaryFramework.get -> NuGet.Frameworks.NuGetFramework
+NuGet.Frameworks.DualCompatibilityFramework.AsFallbackFramework() -> NuGet.Frameworks.FallbackFramework!
+NuGet.Frameworks.DualCompatibilityFramework.DualCompatibilityFramework(NuGet.Frameworks.NuGetFramework! framework, NuGet.Frameworks.NuGetFramework! secondaryFramework) -> void
+NuGet.Frameworks.DualCompatibilityFramework.Equals(NuGet.Frameworks.DualCompatibilityFramework? other) -> bool
+NuGet.Frameworks.DualCompatibilityFramework.RootFramework.get -> NuGet.Frameworks.NuGetFramework!
+NuGet.Frameworks.DualCompatibilityFramework.SecondaryFramework.get -> NuGet.Frameworks.NuGetFramework!
 NuGet.Frameworks.FallbackFramework
-~NuGet.Frameworks.FallbackFramework.Equals(NuGet.Frameworks.FallbackFramework other) -> bool
-~NuGet.Frameworks.FallbackFramework.Fallback.get -> System.Collections.Generic.IReadOnlyList<NuGet.Frameworks.NuGetFramework>
-~NuGet.Frameworks.FallbackFramework.FallbackFramework(NuGet.Frameworks.NuGetFramework framework, System.Collections.Generic.IReadOnlyList<NuGet.Frameworks.NuGetFramework> fallbackFrameworks) -> void
+NuGet.Frameworks.FallbackFramework.Equals(NuGet.Frameworks.FallbackFramework? other) -> bool
+NuGet.Frameworks.FallbackFramework.Fallback.get -> System.Collections.Generic.IReadOnlyList<NuGet.Frameworks.NuGetFramework!>!
+NuGet.Frameworks.FallbackFramework.FallbackFramework(NuGet.Frameworks.NuGetFramework! framework, System.Collections.Generic.IReadOnlyList<NuGet.Frameworks.NuGetFramework!>! fallbackFrameworks) -> void
 NuGet.Frameworks.FrameworkConstants
 NuGet.Frameworks.FrameworkConstants.CommonFrameworks
 NuGet.Frameworks.FrameworkConstants.FrameworkIdentifiers
 NuGet.Frameworks.FrameworkConstants.PlatformIdentifiers
 NuGet.Frameworks.FrameworkConstants.SpecialIdentifiers
 NuGet.Frameworks.FrameworkException
-~NuGet.Frameworks.FrameworkException.FrameworkException(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context) -> void
-~NuGet.Frameworks.FrameworkException.FrameworkException(string message) -> void
+NuGet.Frameworks.FrameworkException.FrameworkException(System.Runtime.Serialization.SerializationInfo! info, System.Runtime.Serialization.StreamingContext context) -> void
+NuGet.Frameworks.FrameworkException.FrameworkException(string! message) -> void
 NuGet.Frameworks.FrameworkExpander
-~NuGet.Frameworks.FrameworkExpander.Expand(NuGet.Frameworks.NuGetFramework framework) -> System.Collections.Generic.IEnumerable<NuGet.Frameworks.NuGetFramework>
+NuGet.Frameworks.FrameworkExpander.Expand(NuGet.Frameworks.NuGetFramework! framework) -> System.Collections.Generic.IEnumerable<NuGet.Frameworks.NuGetFramework!>!
 NuGet.Frameworks.FrameworkExpander.FrameworkExpander() -> void
-~NuGet.Frameworks.FrameworkExpander.FrameworkExpander(NuGet.Frameworks.IFrameworkNameProvider mappings) -> void
+NuGet.Frameworks.FrameworkExpander.FrameworkExpander(NuGet.Frameworks.IFrameworkNameProvider! mappings) -> void
 NuGet.Frameworks.FrameworkNameHelpers
 NuGet.Frameworks.FrameworkNameProvider
-~NuGet.Frameworks.FrameworkNameProvider.AddFrameworkPrecedenceMappings(System.Collections.Generic.IDictionary<string, int> destination, System.Collections.Generic.IEnumerable<string> mappings) -> void
-~NuGet.Frameworks.FrameworkNameProvider.CompareEquivalentFrameworks(NuGet.Frameworks.NuGetFramework x, NuGet.Frameworks.NuGetFramework y) -> int
-~NuGet.Frameworks.FrameworkNameProvider.CompareFrameworks(NuGet.Frameworks.NuGetFramework x, NuGet.Frameworks.NuGetFramework y) -> int
-~NuGet.Frameworks.FrameworkNameProvider.FrameworkNameProvider(System.Collections.Generic.IEnumerable<NuGet.Frameworks.IFrameworkMappings> mappings, System.Collections.Generic.IEnumerable<NuGet.Frameworks.IPortableFrameworkMappings> portableMappings) -> void
-~NuGet.Frameworks.FrameworkNameProvider.GetCompatibleCandidates() -> System.Collections.Generic.IEnumerable<NuGet.Frameworks.NuGetFramework>
-~NuGet.Frameworks.FrameworkNameProvider.GetFullNameReplacement(NuGet.Frameworks.NuGetFramework framework) -> NuGet.Frameworks.NuGetFramework
-~NuGet.Frameworks.FrameworkNameProvider.GetNetStandardVersions() -> System.Collections.Generic.IEnumerable<NuGet.Frameworks.NuGetFramework>
-~NuGet.Frameworks.FrameworkNameProvider.GetShortNameReplacement(NuGet.Frameworks.NuGetFramework framework) -> NuGet.Frameworks.NuGetFramework
-~NuGet.Frameworks.FrameworkNameProvider.GetVersionString(string framework, System.Version version) -> string
-~NuGet.Frameworks.FrameworkNameProvider.TryGetCompatibilityMappings(NuGet.Frameworks.NuGetFramework framework, out System.Collections.Generic.IEnumerable<NuGet.Frameworks.FrameworkRange> supportedFrameworkRanges) -> bool
-~NuGet.Frameworks.FrameworkNameProvider.TryGetEquivalentFrameworks(NuGet.Frameworks.FrameworkRange range, out System.Collections.Generic.IEnumerable<NuGet.Frameworks.NuGetFramework> frameworks) -> bool
-~NuGet.Frameworks.FrameworkNameProvider.TryGetEquivalentFrameworks(NuGet.Frameworks.NuGetFramework framework, out System.Collections.Generic.IEnumerable<NuGet.Frameworks.NuGetFramework> frameworks) -> bool
-~NuGet.Frameworks.FrameworkNameProvider.TryGetIdentifier(string framework, out string identifier) -> bool
-~NuGet.Frameworks.FrameworkNameProvider.TryGetPlatformVersion(string versionString, out System.Version version) -> bool
-~NuGet.Frameworks.FrameworkNameProvider.TryGetPortableCompatibilityMappings(int profile, out System.Collections.Generic.IEnumerable<NuGet.Frameworks.FrameworkRange> supportedFrameworkRanges) -> bool
-~NuGet.Frameworks.FrameworkNameProvider.TryGetPortableFrameworks(int profile, bool includeOptional, out System.Collections.Generic.IEnumerable<NuGet.Frameworks.NuGetFramework> frameworks) -> bool
-~NuGet.Frameworks.FrameworkNameProvider.TryGetPortableFrameworks(int profile, out System.Collections.Generic.IEnumerable<NuGet.Frameworks.NuGetFramework> frameworks) -> bool
-~NuGet.Frameworks.FrameworkNameProvider.TryGetPortableFrameworks(string profile, bool includeOptional, out System.Collections.Generic.IEnumerable<NuGet.Frameworks.NuGetFramework> frameworks) -> bool
-~NuGet.Frameworks.FrameworkNameProvider.TryGetPortableFrameworks(string shortPortableProfiles, out System.Collections.Generic.IEnumerable<NuGet.Frameworks.NuGetFramework> frameworks) -> bool
-~NuGet.Frameworks.FrameworkNameProvider.TryGetPortableProfile(System.Collections.Generic.IEnumerable<NuGet.Frameworks.NuGetFramework> supportedFrameworks, out int profileNumber) -> bool
-~NuGet.Frameworks.FrameworkNameProvider.TryGetPortableProfileNumber(string profile, out int profileNumber) -> bool
-~NuGet.Frameworks.FrameworkNameProvider.TryGetProfile(string frameworkIdentifier, string profileShortName, out string profile) -> bool
-~NuGet.Frameworks.FrameworkNameProvider.TryGetShortIdentifier(string identifier, out string identifierShortName) -> bool
-~NuGet.Frameworks.FrameworkNameProvider.TryGetShortProfile(string frameworkIdentifier, string profile, out string profileShortName) -> bool
-~NuGet.Frameworks.FrameworkNameProvider.TryGetSubSetFrameworks(string frameworkIdentifier, out System.Collections.Generic.IEnumerable<string> subSetFrameworks) -> bool
-~NuGet.Frameworks.FrameworkNameProvider.TryGetVersion(string versionString, out System.Version version) -> bool
+NuGet.Frameworks.FrameworkNameProvider.AddFrameworkPrecedenceMappings(System.Collections.Generic.IDictionary<string!, int>! destination, System.Collections.Generic.IEnumerable<string!>! mappings) -> void
+NuGet.Frameworks.FrameworkNameProvider.CompareEquivalentFrameworks(NuGet.Frameworks.NuGetFramework? x, NuGet.Frameworks.NuGetFramework? y) -> int
+NuGet.Frameworks.FrameworkNameProvider.CompareFrameworks(NuGet.Frameworks.NuGetFramework? x, NuGet.Frameworks.NuGetFramework? y) -> int
+NuGet.Frameworks.FrameworkNameProvider.FrameworkNameProvider(System.Collections.Generic.IEnumerable<NuGet.Frameworks.IFrameworkMappings!>? mappings, System.Collections.Generic.IEnumerable<NuGet.Frameworks.IPortableFrameworkMappings!>? portableMappings) -> void
+NuGet.Frameworks.FrameworkNameProvider.GetCompatibleCandidates() -> System.Collections.Generic.IEnumerable<NuGet.Frameworks.NuGetFramework!>!
+NuGet.Frameworks.FrameworkNameProvider.GetFullNameReplacement(NuGet.Frameworks.NuGetFramework! framework) -> NuGet.Frameworks.NuGetFramework!
+NuGet.Frameworks.FrameworkNameProvider.GetNetStandardVersions() -> System.Collections.Generic.IEnumerable<NuGet.Frameworks.NuGetFramework!>!
+NuGet.Frameworks.FrameworkNameProvider.GetShortNameReplacement(NuGet.Frameworks.NuGetFramework! framework) -> NuGet.Frameworks.NuGetFramework!
+NuGet.Frameworks.FrameworkNameProvider.GetVersionString(string! framework, System.Version! version) -> string!
+NuGet.Frameworks.FrameworkNameProvider.TryGetCompatibilityMappings(NuGet.Frameworks.NuGetFramework! framework, out System.Collections.Generic.IEnumerable<NuGet.Frameworks.FrameworkRange!>? supportedFrameworkRanges) -> bool
+NuGet.Frameworks.FrameworkNameProvider.TryGetEquivalentFrameworks(NuGet.Frameworks.FrameworkRange! range, out System.Collections.Generic.IEnumerable<NuGet.Frameworks.NuGetFramework!>? frameworks) -> bool
+NuGet.Frameworks.FrameworkNameProvider.TryGetEquivalentFrameworks(NuGet.Frameworks.NuGetFramework! framework, out System.Collections.Generic.IEnumerable<NuGet.Frameworks.NuGetFramework!>? frameworks) -> bool
+NuGet.Frameworks.FrameworkNameProvider.TryGetIdentifier(string! framework, out string? identifier) -> bool
+NuGet.Frameworks.FrameworkNameProvider.TryGetPlatformVersion(string! versionString, out System.Version? version) -> bool
+NuGet.Frameworks.FrameworkNameProvider.TryGetPortableCompatibilityMappings(int profile, out System.Collections.Generic.IEnumerable<NuGet.Frameworks.FrameworkRange!>? supportedFrameworkRanges) -> bool
+NuGet.Frameworks.FrameworkNameProvider.TryGetPortableFrameworks(int profile, bool includeOptional, out System.Collections.Generic.IEnumerable<NuGet.Frameworks.NuGetFramework!>? frameworks) -> bool
+NuGet.Frameworks.FrameworkNameProvider.TryGetPortableFrameworks(int profile, out System.Collections.Generic.IEnumerable<NuGet.Frameworks.NuGetFramework!>? frameworks) -> bool
+NuGet.Frameworks.FrameworkNameProvider.TryGetPortableFrameworks(string! profile, bool includeOptional, out System.Collections.Generic.IEnumerable<NuGet.Frameworks.NuGetFramework!>? frameworks) -> bool
+NuGet.Frameworks.FrameworkNameProvider.TryGetPortableFrameworks(string! shortPortableProfiles, out System.Collections.Generic.IEnumerable<NuGet.Frameworks.NuGetFramework!>? frameworks) -> bool
+NuGet.Frameworks.FrameworkNameProvider.TryGetPortableProfile(System.Collections.Generic.IEnumerable<NuGet.Frameworks.NuGetFramework!>! supportedFrameworks, out int profileNumber) -> bool
+NuGet.Frameworks.FrameworkNameProvider.TryGetPortableProfileNumber(string! profile, out int profileNumber) -> bool
+NuGet.Frameworks.FrameworkNameProvider.TryGetProfile(string! frameworkIdentifier, string! profileShortName, out string? profile) -> bool
+NuGet.Frameworks.FrameworkNameProvider.TryGetShortIdentifier(string! identifier, out string? identifierShortName) -> bool
+NuGet.Frameworks.FrameworkNameProvider.TryGetShortProfile(string! frameworkIdentifier, string! profile, out string? profileShortName) -> bool
+NuGet.Frameworks.FrameworkNameProvider.TryGetSubSetFrameworks(string! frameworkIdentifier, out System.Collections.Generic.IEnumerable<string!>? subSetFrameworks) -> bool
+NuGet.Frameworks.FrameworkNameProvider.TryGetVersion(string! versionString, out System.Version? version) -> bool
 NuGet.Frameworks.FrameworkPrecedenceSorter
-~NuGet.Frameworks.FrameworkPrecedenceSorter.Compare(NuGet.Frameworks.NuGetFramework x, NuGet.Frameworks.NuGetFramework y) -> int
-~NuGet.Frameworks.FrameworkPrecedenceSorter.FrameworkPrecedenceSorter(NuGet.Frameworks.IFrameworkNameProvider mappings, bool allEquivalent) -> void
+NuGet.Frameworks.FrameworkPrecedenceSorter.Compare(NuGet.Frameworks.NuGetFramework? x, NuGet.Frameworks.NuGetFramework? y) -> int
+NuGet.Frameworks.FrameworkPrecedenceSorter.FrameworkPrecedenceSorter(NuGet.Frameworks.IFrameworkNameProvider! mappings, bool allEquivalent) -> void
 NuGet.Frameworks.FrameworkRange
-~NuGet.Frameworks.FrameworkRange.Equals(NuGet.Frameworks.FrameworkRange other) -> bool
-~NuGet.Frameworks.FrameworkRange.FrameworkIdentifier.get -> string
-~NuGet.Frameworks.FrameworkRange.FrameworkRange(NuGet.Frameworks.NuGetFramework min, NuGet.Frameworks.NuGetFramework max) -> void
-~NuGet.Frameworks.FrameworkRange.FrameworkRange(NuGet.Frameworks.NuGetFramework min, NuGet.Frameworks.NuGetFramework max, bool includeMin, bool includeMax) -> void
+NuGet.Frameworks.FrameworkRange.Equals(NuGet.Frameworks.FrameworkRange? other) -> bool
+NuGet.Frameworks.FrameworkRange.FrameworkIdentifier.get -> string!
+NuGet.Frameworks.FrameworkRange.FrameworkRange(NuGet.Frameworks.NuGetFramework! min, NuGet.Frameworks.NuGetFramework! max) -> void
+NuGet.Frameworks.FrameworkRange.FrameworkRange(NuGet.Frameworks.NuGetFramework! min, NuGet.Frameworks.NuGetFramework! max, bool includeMin, bool includeMax) -> void
 NuGet.Frameworks.FrameworkRange.IncludeMax.get -> bool
 NuGet.Frameworks.FrameworkRange.IncludeMin.get -> bool
-~NuGet.Frameworks.FrameworkRange.Max.get -> NuGet.Frameworks.NuGetFramework
-~NuGet.Frameworks.FrameworkRange.Min.get -> NuGet.Frameworks.NuGetFramework
-~NuGet.Frameworks.FrameworkRange.Satisfies(NuGet.Frameworks.NuGetFramework framework) -> bool
+NuGet.Frameworks.FrameworkRange.Max.get -> NuGet.Frameworks.NuGetFramework!
+NuGet.Frameworks.FrameworkRange.Min.get -> NuGet.Frameworks.NuGetFramework!
+NuGet.Frameworks.FrameworkRange.Satisfies(NuGet.Frameworks.NuGetFramework! framework) -> bool
 NuGet.Frameworks.FrameworkRangeComparer
-~NuGet.Frameworks.FrameworkRangeComparer.Equals(NuGet.Frameworks.FrameworkRange x, NuGet.Frameworks.FrameworkRange y) -> bool
+NuGet.Frameworks.FrameworkRangeComparer.Equals(NuGet.Frameworks.FrameworkRange? x, NuGet.Frameworks.FrameworkRange? y) -> bool
 NuGet.Frameworks.FrameworkRangeComparer.FrameworkRangeComparer() -> void
-~NuGet.Frameworks.FrameworkRangeComparer.GetHashCode(NuGet.Frameworks.FrameworkRange obj) -> int
+NuGet.Frameworks.FrameworkRangeComparer.GetHashCode(NuGet.Frameworks.FrameworkRange! obj) -> int
 NuGet.Frameworks.FrameworkReducer
 NuGet.Frameworks.FrameworkReducer.FrameworkReducer() -> void
-~NuGet.Frameworks.FrameworkReducer.FrameworkReducer(NuGet.Frameworks.IFrameworkNameProvider mappings, NuGet.Frameworks.IFrameworkCompatibilityProvider compat) -> void
-~NuGet.Frameworks.FrameworkReducer.GetNearest(NuGet.Frameworks.NuGetFramework framework, System.Collections.Generic.IEnumerable<NuGet.Frameworks.NuGetFramework> possibleFrameworks) -> NuGet.Frameworks.NuGetFramework
-~NuGet.Frameworks.FrameworkReducer.ReduceDownwards(System.Collections.Generic.IEnumerable<NuGet.Frameworks.NuGetFramework> frameworks) -> System.Collections.Generic.IEnumerable<NuGet.Frameworks.NuGetFramework>
-~NuGet.Frameworks.FrameworkReducer.ReduceEquivalent(System.Collections.Generic.IEnumerable<NuGet.Frameworks.NuGetFramework> frameworks) -> System.Collections.Generic.IEnumerable<NuGet.Frameworks.NuGetFramework>
-~NuGet.Frameworks.FrameworkReducer.ReduceUpwards(System.Collections.Generic.IEnumerable<NuGet.Frameworks.NuGetFramework> frameworks) -> System.Collections.Generic.IEnumerable<NuGet.Frameworks.NuGetFramework>
+NuGet.Frameworks.FrameworkReducer.FrameworkReducer(NuGet.Frameworks.IFrameworkNameProvider! mappings, NuGet.Frameworks.IFrameworkCompatibilityProvider! compat) -> void
+NuGet.Frameworks.FrameworkReducer.GetNearest(NuGet.Frameworks.NuGetFramework! framework, System.Collections.Generic.IEnumerable<NuGet.Frameworks.NuGetFramework!>! possibleFrameworks) -> NuGet.Frameworks.NuGetFramework?
+NuGet.Frameworks.FrameworkReducer.ReduceDownwards(System.Collections.Generic.IEnumerable<NuGet.Frameworks.NuGetFramework!>! frameworks) -> System.Collections.Generic.IEnumerable<NuGet.Frameworks.NuGetFramework!>!
+NuGet.Frameworks.FrameworkReducer.ReduceEquivalent(System.Collections.Generic.IEnumerable<NuGet.Frameworks.NuGetFramework!>! frameworks) -> System.Collections.Generic.IEnumerable<NuGet.Frameworks.NuGetFramework!>!
+NuGet.Frameworks.FrameworkReducer.ReduceUpwards(System.Collections.Generic.IEnumerable<NuGet.Frameworks.NuGetFramework!>! frameworks) -> System.Collections.Generic.IEnumerable<NuGet.Frameworks.NuGetFramework!>!
 NuGet.Frameworks.FrameworkRuntimePair
-~NuGet.Frameworks.FrameworkRuntimePair.Clone() -> NuGet.Frameworks.FrameworkRuntimePair
-~NuGet.Frameworks.FrameworkRuntimePair.CompareTo(NuGet.Frameworks.FrameworkRuntimePair other) -> int
-~NuGet.Frameworks.FrameworkRuntimePair.Equals(NuGet.Frameworks.FrameworkRuntimePair other) -> bool
-~NuGet.Frameworks.FrameworkRuntimePair.Framework.get -> NuGet.Frameworks.NuGetFramework
-~NuGet.Frameworks.FrameworkRuntimePair.FrameworkRuntimePair(NuGet.Frameworks.NuGetFramework framework, string runtimeIdentifier) -> void
-~NuGet.Frameworks.FrameworkRuntimePair.Name.get -> string
-~NuGet.Frameworks.FrameworkRuntimePair.RuntimeIdentifier.get -> string
+NuGet.Frameworks.FrameworkRuntimePair.Clone() -> NuGet.Frameworks.FrameworkRuntimePair!
+NuGet.Frameworks.FrameworkRuntimePair.CompareTo(NuGet.Frameworks.FrameworkRuntimePair? other) -> int
+NuGet.Frameworks.FrameworkRuntimePair.Equals(NuGet.Frameworks.FrameworkRuntimePair? other) -> bool
+NuGet.Frameworks.FrameworkRuntimePair.Framework.get -> NuGet.Frameworks.NuGetFramework!
+NuGet.Frameworks.FrameworkRuntimePair.FrameworkRuntimePair(NuGet.Frameworks.NuGetFramework! framework, string? runtimeIdentifier) -> void
+NuGet.Frameworks.FrameworkRuntimePair.Name.get -> string!
+NuGet.Frameworks.FrameworkRuntimePair.RuntimeIdentifier.get -> string!
 NuGet.Frameworks.FrameworkSpecificMapping
-~NuGet.Frameworks.FrameworkSpecificMapping.FrameworkIdentifier.get -> string
-~NuGet.Frameworks.FrameworkSpecificMapping.FrameworkSpecificMapping(string frameworkIdentifier, System.Collections.Generic.KeyValuePair<string, string> mapping) -> void
-~NuGet.Frameworks.FrameworkSpecificMapping.FrameworkSpecificMapping(string frameworkIdentifier, string key, string value) -> void
-~NuGet.Frameworks.FrameworkSpecificMapping.Mapping.get -> System.Collections.Generic.KeyValuePair<string, string>
+NuGet.Frameworks.FrameworkSpecificMapping.FrameworkIdentifier.get -> string!
+NuGet.Frameworks.FrameworkSpecificMapping.FrameworkSpecificMapping(string! frameworkIdentifier, System.Collections.Generic.KeyValuePair<string!, string!> mapping) -> void
+NuGet.Frameworks.FrameworkSpecificMapping.FrameworkSpecificMapping(string! frameworkIdentifier, string! key, string! value) -> void
+NuGet.Frameworks.FrameworkSpecificMapping.Mapping.get -> System.Collections.Generic.KeyValuePair<string!, string!>
 NuGet.Frameworks.IFrameworkCompatibilityListProvider
-~NuGet.Frameworks.IFrameworkCompatibilityListProvider.GetFrameworksSupporting(NuGet.Frameworks.NuGetFramework target) -> System.Collections.Generic.IEnumerable<NuGet.Frameworks.NuGetFramework>
+NuGet.Frameworks.IFrameworkCompatibilityListProvider.GetFrameworksSupporting(NuGet.Frameworks.NuGetFramework! target) -> System.Collections.Generic.IEnumerable<NuGet.Frameworks.NuGetFramework!>!
 NuGet.Frameworks.IFrameworkCompatibilityProvider
-~NuGet.Frameworks.IFrameworkCompatibilityProvider.IsCompatible(NuGet.Frameworks.NuGetFramework framework, NuGet.Frameworks.NuGetFramework other) -> bool
+NuGet.Frameworks.IFrameworkCompatibilityProvider.IsCompatible(NuGet.Frameworks.NuGetFramework! framework, NuGet.Frameworks.NuGetFramework! other) -> bool
 NuGet.Frameworks.IFrameworkMappings
-~NuGet.Frameworks.IFrameworkMappings.CompatibilityMappings.get -> System.Collections.Generic.IEnumerable<NuGet.Frameworks.OneWayCompatibilityMappingEntry>
-~NuGet.Frameworks.IFrameworkMappings.EquivalentFrameworkPrecedence.get -> System.Collections.Generic.IEnumerable<string>
-~NuGet.Frameworks.IFrameworkMappings.EquivalentFrameworks.get -> System.Collections.Generic.IEnumerable<System.Collections.Generic.KeyValuePair<NuGet.Frameworks.NuGetFramework, NuGet.Frameworks.NuGetFramework>>
-~NuGet.Frameworks.IFrameworkMappings.EquivalentProfiles.get -> System.Collections.Generic.IEnumerable<NuGet.Frameworks.FrameworkSpecificMapping>
-~NuGet.Frameworks.IFrameworkMappings.FullNameReplacements.get -> System.Collections.Generic.IEnumerable<System.Collections.Generic.KeyValuePair<NuGet.Frameworks.NuGetFramework, NuGet.Frameworks.NuGetFramework>>
-~NuGet.Frameworks.IFrameworkMappings.IdentifierShortNames.get -> System.Collections.Generic.IEnumerable<System.Collections.Generic.KeyValuePair<string, string>>
-~NuGet.Frameworks.IFrameworkMappings.IdentifierSynonyms.get -> System.Collections.Generic.IEnumerable<System.Collections.Generic.KeyValuePair<string, string>>
-~NuGet.Frameworks.IFrameworkMappings.NonPackageBasedFrameworkPrecedence.get -> System.Collections.Generic.IEnumerable<string>
-~NuGet.Frameworks.IFrameworkMappings.PackageBasedFrameworkPrecedence.get -> System.Collections.Generic.IEnumerable<string>
-~NuGet.Frameworks.IFrameworkMappings.ProfileShortNames.get -> System.Collections.Generic.IEnumerable<NuGet.Frameworks.FrameworkSpecificMapping>
-~NuGet.Frameworks.IFrameworkMappings.ShortNameReplacements.get -> System.Collections.Generic.IEnumerable<System.Collections.Generic.KeyValuePair<NuGet.Frameworks.NuGetFramework, NuGet.Frameworks.NuGetFramework>>
-~NuGet.Frameworks.IFrameworkMappings.SubSetFrameworks.get -> System.Collections.Generic.IEnumerable<System.Collections.Generic.KeyValuePair<string, string>>
+NuGet.Frameworks.IFrameworkMappings.CompatibilityMappings.get -> System.Collections.Generic.IEnumerable<NuGet.Frameworks.OneWayCompatibilityMappingEntry!>!
+NuGet.Frameworks.IFrameworkMappings.EquivalentFrameworkPrecedence.get -> System.Collections.Generic.IEnumerable<string!>!
+NuGet.Frameworks.IFrameworkMappings.EquivalentFrameworks.get -> System.Collections.Generic.IEnumerable<System.Collections.Generic.KeyValuePair<NuGet.Frameworks.NuGetFramework!, NuGet.Frameworks.NuGetFramework!>>!
+NuGet.Frameworks.IFrameworkMappings.EquivalentProfiles.get -> System.Collections.Generic.IEnumerable<NuGet.Frameworks.FrameworkSpecificMapping!>!
+NuGet.Frameworks.IFrameworkMappings.FullNameReplacements.get -> System.Collections.Generic.IEnumerable<System.Collections.Generic.KeyValuePair<NuGet.Frameworks.NuGetFramework!, NuGet.Frameworks.NuGetFramework!>>!
+NuGet.Frameworks.IFrameworkMappings.IdentifierShortNames.get -> System.Collections.Generic.IEnumerable<System.Collections.Generic.KeyValuePair<string!, string!>>!
+NuGet.Frameworks.IFrameworkMappings.IdentifierSynonyms.get -> System.Collections.Generic.IEnumerable<System.Collections.Generic.KeyValuePair<string!, string!>>!
+NuGet.Frameworks.IFrameworkMappings.NonPackageBasedFrameworkPrecedence.get -> System.Collections.Generic.IEnumerable<string!>!
+NuGet.Frameworks.IFrameworkMappings.PackageBasedFrameworkPrecedence.get -> System.Collections.Generic.IEnumerable<string!>!
+NuGet.Frameworks.IFrameworkMappings.ProfileShortNames.get -> System.Collections.Generic.IEnumerable<NuGet.Frameworks.FrameworkSpecificMapping!>!
+NuGet.Frameworks.IFrameworkMappings.ShortNameReplacements.get -> System.Collections.Generic.IEnumerable<System.Collections.Generic.KeyValuePair<NuGet.Frameworks.NuGetFramework!, NuGet.Frameworks.NuGetFramework!>>!
+NuGet.Frameworks.IFrameworkMappings.SubSetFrameworks.get -> System.Collections.Generic.IEnumerable<System.Collections.Generic.KeyValuePair<string!, string!>>!
 NuGet.Frameworks.IFrameworkNameProvider
-~NuGet.Frameworks.IFrameworkNameProvider.CompareEquivalentFrameworks(NuGet.Frameworks.NuGetFramework x, NuGet.Frameworks.NuGetFramework y) -> int
-~NuGet.Frameworks.IFrameworkNameProvider.CompareFrameworks(NuGet.Frameworks.NuGetFramework x, NuGet.Frameworks.NuGetFramework y) -> int
-~NuGet.Frameworks.IFrameworkNameProvider.GetCompatibleCandidates() -> System.Collections.Generic.IEnumerable<NuGet.Frameworks.NuGetFramework>
-~NuGet.Frameworks.IFrameworkNameProvider.GetFullNameReplacement(NuGet.Frameworks.NuGetFramework framework) -> NuGet.Frameworks.NuGetFramework
-~NuGet.Frameworks.IFrameworkNameProvider.GetNetStandardVersions() -> System.Collections.Generic.IEnumerable<NuGet.Frameworks.NuGetFramework>
-~NuGet.Frameworks.IFrameworkNameProvider.GetShortNameReplacement(NuGet.Frameworks.NuGetFramework framework) -> NuGet.Frameworks.NuGetFramework
-~NuGet.Frameworks.IFrameworkNameProvider.GetVersionString(string framework, System.Version version) -> string
-~NuGet.Frameworks.IFrameworkNameProvider.TryGetCompatibilityMappings(NuGet.Frameworks.NuGetFramework framework, out System.Collections.Generic.IEnumerable<NuGet.Frameworks.FrameworkRange> supportedFrameworkRanges) -> bool
-~NuGet.Frameworks.IFrameworkNameProvider.TryGetEquivalentFrameworks(NuGet.Frameworks.FrameworkRange range, out System.Collections.Generic.IEnumerable<NuGet.Frameworks.NuGetFramework> frameworks) -> bool
-~NuGet.Frameworks.IFrameworkNameProvider.TryGetEquivalentFrameworks(NuGet.Frameworks.NuGetFramework framework, out System.Collections.Generic.IEnumerable<NuGet.Frameworks.NuGetFramework> frameworks) -> bool
-~NuGet.Frameworks.IFrameworkNameProvider.TryGetIdentifier(string identifierShortName, out string identifier) -> bool
-~NuGet.Frameworks.IFrameworkNameProvider.TryGetPlatformVersion(string versionString, out System.Version version) -> bool
-~NuGet.Frameworks.IFrameworkNameProvider.TryGetPortableCompatibilityMappings(int profile, out System.Collections.Generic.IEnumerable<NuGet.Frameworks.FrameworkRange> supportedFrameworkRanges) -> bool
-~NuGet.Frameworks.IFrameworkNameProvider.TryGetPortableFrameworks(int profile, bool includeOptional, out System.Collections.Generic.IEnumerable<NuGet.Frameworks.NuGetFramework> frameworks) -> bool
-~NuGet.Frameworks.IFrameworkNameProvider.TryGetPortableFrameworks(int profile, out System.Collections.Generic.IEnumerable<NuGet.Frameworks.NuGetFramework> frameworks) -> bool
-~NuGet.Frameworks.IFrameworkNameProvider.TryGetPortableFrameworks(string profile, bool includeOptional, out System.Collections.Generic.IEnumerable<NuGet.Frameworks.NuGetFramework> frameworks) -> bool
-~NuGet.Frameworks.IFrameworkNameProvider.TryGetPortableFrameworks(string shortPortableProfiles, out System.Collections.Generic.IEnumerable<NuGet.Frameworks.NuGetFramework> frameworks) -> bool
-~NuGet.Frameworks.IFrameworkNameProvider.TryGetPortableProfile(System.Collections.Generic.IEnumerable<NuGet.Frameworks.NuGetFramework> supportedFrameworks, out int profileNumber) -> bool
-~NuGet.Frameworks.IFrameworkNameProvider.TryGetPortableProfileNumber(string profile, out int profileNumber) -> bool
-~NuGet.Frameworks.IFrameworkNameProvider.TryGetProfile(string frameworkIdentifier, string profileShortName, out string profile) -> bool
-~NuGet.Frameworks.IFrameworkNameProvider.TryGetShortIdentifier(string identifier, out string identifierShortName) -> bool
-~NuGet.Frameworks.IFrameworkNameProvider.TryGetShortProfile(string frameworkIdentifier, string profile, out string profileShortName) -> bool
-~NuGet.Frameworks.IFrameworkNameProvider.TryGetSubSetFrameworks(string frameworkIdentifier, out System.Collections.Generic.IEnumerable<string> subSetFrameworkIdentifiers) -> bool
-~NuGet.Frameworks.IFrameworkNameProvider.TryGetVersion(string versionString, out System.Version version) -> bool
+NuGet.Frameworks.IFrameworkNameProvider.CompareEquivalentFrameworks(NuGet.Frameworks.NuGetFramework? x, NuGet.Frameworks.NuGetFramework? y) -> int
+NuGet.Frameworks.IFrameworkNameProvider.CompareFrameworks(NuGet.Frameworks.NuGetFramework? x, NuGet.Frameworks.NuGetFramework? y) -> int
+NuGet.Frameworks.IFrameworkNameProvider.GetCompatibleCandidates() -> System.Collections.Generic.IEnumerable<NuGet.Frameworks.NuGetFramework!>!
+NuGet.Frameworks.IFrameworkNameProvider.GetFullNameReplacement(NuGet.Frameworks.NuGetFramework! framework) -> NuGet.Frameworks.NuGetFramework!
+NuGet.Frameworks.IFrameworkNameProvider.GetNetStandardVersions() -> System.Collections.Generic.IEnumerable<NuGet.Frameworks.NuGetFramework!>!
+NuGet.Frameworks.IFrameworkNameProvider.GetShortNameReplacement(NuGet.Frameworks.NuGetFramework! framework) -> NuGet.Frameworks.NuGetFramework!
+NuGet.Frameworks.IFrameworkNameProvider.GetVersionString(string! framework, System.Version! version) -> string!
+NuGet.Frameworks.IFrameworkNameProvider.TryGetCompatibilityMappings(NuGet.Frameworks.NuGetFramework! framework, out System.Collections.Generic.IEnumerable<NuGet.Frameworks.FrameworkRange!>? supportedFrameworkRanges) -> bool
+NuGet.Frameworks.IFrameworkNameProvider.TryGetEquivalentFrameworks(NuGet.Frameworks.FrameworkRange! range, out System.Collections.Generic.IEnumerable<NuGet.Frameworks.NuGetFramework!>? frameworks) -> bool
+NuGet.Frameworks.IFrameworkNameProvider.TryGetEquivalentFrameworks(NuGet.Frameworks.NuGetFramework! framework, out System.Collections.Generic.IEnumerable<NuGet.Frameworks.NuGetFramework!>? frameworks) -> bool
+NuGet.Frameworks.IFrameworkNameProvider.TryGetIdentifier(string! identifierShortName, out string? identifier) -> bool
+NuGet.Frameworks.IFrameworkNameProvider.TryGetPlatformVersion(string! versionString, out System.Version? version) -> bool
+NuGet.Frameworks.IFrameworkNameProvider.TryGetPortableCompatibilityMappings(int profile, out System.Collections.Generic.IEnumerable<NuGet.Frameworks.FrameworkRange!>? supportedFrameworkRanges) -> bool
+NuGet.Frameworks.IFrameworkNameProvider.TryGetPortableFrameworks(int profile, bool includeOptional, out System.Collections.Generic.IEnumerable<NuGet.Frameworks.NuGetFramework!>? frameworks) -> bool
+NuGet.Frameworks.IFrameworkNameProvider.TryGetPortableFrameworks(int profile, out System.Collections.Generic.IEnumerable<NuGet.Frameworks.NuGetFramework!>? frameworks) -> bool
+NuGet.Frameworks.IFrameworkNameProvider.TryGetPortableFrameworks(string! profile, bool includeOptional, out System.Collections.Generic.IEnumerable<NuGet.Frameworks.NuGetFramework!>? frameworks) -> bool
+NuGet.Frameworks.IFrameworkNameProvider.TryGetPortableFrameworks(string! shortPortableProfiles, out System.Collections.Generic.IEnumerable<NuGet.Frameworks.NuGetFramework!>? frameworks) -> bool
+NuGet.Frameworks.IFrameworkNameProvider.TryGetPortableProfile(System.Collections.Generic.IEnumerable<NuGet.Frameworks.NuGetFramework!>! supportedFrameworks, out int profileNumber) -> bool
+NuGet.Frameworks.IFrameworkNameProvider.TryGetPortableProfileNumber(string! profile, out int profileNumber) -> bool
+NuGet.Frameworks.IFrameworkNameProvider.TryGetProfile(string! frameworkIdentifier, string! profileShortName, out string? profile) -> bool
+NuGet.Frameworks.IFrameworkNameProvider.TryGetShortIdentifier(string! identifier, out string? identifierShortName) -> bool
+NuGet.Frameworks.IFrameworkNameProvider.TryGetShortProfile(string! frameworkIdentifier, string! profile, out string? profileShortName) -> bool
+NuGet.Frameworks.IFrameworkNameProvider.TryGetSubSetFrameworks(string! frameworkIdentifier, out System.Collections.Generic.IEnumerable<string!>? subSetFrameworkIdentifiers) -> bool
+NuGet.Frameworks.IFrameworkNameProvider.TryGetVersion(string! versionString, out System.Version? version) -> bool
 NuGet.Frameworks.IFrameworkSpecific
-~NuGet.Frameworks.IFrameworkSpecific.TargetFramework.get -> NuGet.Frameworks.NuGetFramework
+NuGet.Frameworks.IFrameworkSpecific.TargetFramework.get -> NuGet.Frameworks.NuGetFramework!
 NuGet.Frameworks.IFrameworkTargetable
-~NuGet.Frameworks.IFrameworkTargetable.SupportedFrameworks.get -> System.Collections.Generic.IEnumerable<NuGet.Frameworks.NuGetFramework>
+NuGet.Frameworks.IFrameworkTargetable.SupportedFrameworks.get -> System.Collections.Generic.IEnumerable<NuGet.Frameworks.NuGetFramework!>!
 NuGet.Frameworks.IPortableFrameworkMappings
-~NuGet.Frameworks.IPortableFrameworkMappings.CompatibilityMappings.get -> System.Collections.Generic.IEnumerable<System.Collections.Generic.KeyValuePair<int, NuGet.Frameworks.FrameworkRange>>
-~NuGet.Frameworks.IPortableFrameworkMappings.ProfileFrameworks.get -> System.Collections.Generic.IEnumerable<System.Collections.Generic.KeyValuePair<int, NuGet.Frameworks.NuGetFramework[]>>
-~NuGet.Frameworks.IPortableFrameworkMappings.ProfileOptionalFrameworks.get -> System.Collections.Generic.IEnumerable<System.Collections.Generic.KeyValuePair<int, NuGet.Frameworks.NuGetFramework[]>>
+NuGet.Frameworks.IPortableFrameworkMappings.CompatibilityMappings.get -> System.Collections.Generic.IEnumerable<System.Collections.Generic.KeyValuePair<int, NuGet.Frameworks.FrameworkRange!>>!
+NuGet.Frameworks.IPortableFrameworkMappings.ProfileFrameworks.get -> System.Collections.Generic.IEnumerable<System.Collections.Generic.KeyValuePair<int, NuGet.Frameworks.NuGetFramework![]!>>!
+NuGet.Frameworks.IPortableFrameworkMappings.ProfileOptionalFrameworks.get -> System.Collections.Generic.IEnumerable<System.Collections.Generic.KeyValuePair<int, NuGet.Frameworks.NuGetFramework![]!>>!
 NuGet.Frameworks.NuGetFramework
 NuGet.Frameworks.NuGetFramework.AllFrameworkVersions.get -> bool
-~NuGet.Frameworks.NuGetFramework.DotNetFrameworkName.get -> string
-~NuGet.Frameworks.NuGetFramework.DotNetPlatformName.get -> string
-~NuGet.Frameworks.NuGetFramework.Equals(NuGet.Frameworks.NuGetFramework other) -> bool
-~NuGet.Frameworks.NuGetFramework.Framework.get -> string
-~NuGet.Frameworks.NuGetFramework.GetDotNetFrameworkName(NuGet.Frameworks.IFrameworkNameProvider mappings) -> string
-~NuGet.Frameworks.NuGetFramework.GetShortFolderName() -> string
+NuGet.Frameworks.NuGetFramework.DotNetFrameworkName.get -> string!
+NuGet.Frameworks.NuGetFramework.DotNetPlatformName.get -> string!
+NuGet.Frameworks.NuGetFramework.Equals(NuGet.Frameworks.NuGetFramework? other) -> bool
+NuGet.Frameworks.NuGetFramework.Framework.get -> string!
+NuGet.Frameworks.NuGetFramework.GetDotNetFrameworkName(NuGet.Frameworks.IFrameworkNameProvider! mappings) -> string!
+NuGet.Frameworks.NuGetFramework.GetShortFolderName() -> string!
 NuGet.Frameworks.NuGetFramework.HasPlatform.get -> bool
 NuGet.Frameworks.NuGetFramework.HasProfile.get -> bool
 NuGet.Frameworks.NuGetFramework.IsAgnostic.get -> bool
@@ -197,199 +197,199 @@ NuGet.Frameworks.NuGetFramework.IsPCL.get -> bool
 NuGet.Frameworks.NuGetFramework.IsPackageBased.get -> bool
 NuGet.Frameworks.NuGetFramework.IsSpecificFramework.get -> bool
 NuGet.Frameworks.NuGetFramework.IsUnsupported.get -> bool
-~NuGet.Frameworks.NuGetFramework.NuGetFramework(NuGet.Frameworks.NuGetFramework framework) -> void
-~NuGet.Frameworks.NuGetFramework.NuGetFramework(string framework) -> void
-~NuGet.Frameworks.NuGetFramework.NuGetFramework(string framework, System.Version version) -> void
-~NuGet.Frameworks.NuGetFramework.NuGetFramework(string frameworkIdentifier, System.Version frameworkVersion, string frameworkProfile) -> void
-~NuGet.Frameworks.NuGetFramework.NuGetFramework(string frameworkIdentifier, System.Version frameworkVersion, string platform, System.Version platformVersion) -> void
-~NuGet.Frameworks.NuGetFramework.Platform.get -> string
-~NuGet.Frameworks.NuGetFramework.PlatformVersion.get -> System.Version
-~NuGet.Frameworks.NuGetFramework.Profile.get -> string
-~NuGet.Frameworks.NuGetFramework.Version.get -> System.Version
+NuGet.Frameworks.NuGetFramework.NuGetFramework(NuGet.Frameworks.NuGetFramework! framework) -> void
+NuGet.Frameworks.NuGetFramework.NuGetFramework(string! framework) -> void
+NuGet.Frameworks.NuGetFramework.NuGetFramework(string! framework, System.Version! version) -> void
+NuGet.Frameworks.NuGetFramework.NuGetFramework(string! frameworkIdentifier, System.Version! frameworkVersion, string? frameworkProfile) -> void
+NuGet.Frameworks.NuGetFramework.NuGetFramework(string! frameworkIdentifier, System.Version! frameworkVersion, string! platform, System.Version! platformVersion) -> void
+NuGet.Frameworks.NuGetFramework.Platform.get -> string!
+NuGet.Frameworks.NuGetFramework.PlatformVersion.get -> System.Version!
+NuGet.Frameworks.NuGetFramework.Profile.get -> string!
+NuGet.Frameworks.NuGetFramework.Version.get -> System.Version!
 NuGet.Frameworks.NuGetFrameworkExtensions
 NuGet.Frameworks.NuGetFrameworkFullComparer
-~NuGet.Frameworks.NuGetFrameworkFullComparer.Equals(NuGet.Frameworks.NuGetFramework x, NuGet.Frameworks.NuGetFramework y) -> bool
-~NuGet.Frameworks.NuGetFrameworkFullComparer.GetHashCode(NuGet.Frameworks.NuGetFramework obj) -> int
+NuGet.Frameworks.NuGetFrameworkFullComparer.Equals(NuGet.Frameworks.NuGetFramework? x, NuGet.Frameworks.NuGetFramework? y) -> bool
+NuGet.Frameworks.NuGetFrameworkFullComparer.GetHashCode(NuGet.Frameworks.NuGetFramework! obj) -> int
 NuGet.Frameworks.NuGetFrameworkFullComparer.NuGetFrameworkFullComparer() -> void
 NuGet.Frameworks.NuGetFrameworkNameComparer
-~NuGet.Frameworks.NuGetFrameworkNameComparer.Equals(NuGet.Frameworks.NuGetFramework x, NuGet.Frameworks.NuGetFramework y) -> bool
-~NuGet.Frameworks.NuGetFrameworkNameComparer.GetHashCode(NuGet.Frameworks.NuGetFramework obj) -> int
+NuGet.Frameworks.NuGetFrameworkNameComparer.Equals(NuGet.Frameworks.NuGetFramework? x, NuGet.Frameworks.NuGetFramework? y) -> bool
+NuGet.Frameworks.NuGetFrameworkNameComparer.GetHashCode(NuGet.Frameworks.NuGetFramework! obj) -> int
 NuGet.Frameworks.NuGetFrameworkNameComparer.NuGetFrameworkNameComparer() -> void
 NuGet.Frameworks.NuGetFrameworkSorter
-~NuGet.Frameworks.NuGetFrameworkSorter.Compare(NuGet.Frameworks.NuGetFramework x, NuGet.Frameworks.NuGetFramework y) -> int
+NuGet.Frameworks.NuGetFrameworkSorter.Compare(NuGet.Frameworks.NuGetFramework? x, NuGet.Frameworks.NuGetFramework? y) -> int
 NuGet.Frameworks.NuGetFrameworkSorter.NuGetFrameworkSorter() -> void
 NuGet.Frameworks.NuGetFrameworkUtility
 NuGet.Frameworks.OneWayCompatibilityMappingEntry
-~NuGet.Frameworks.OneWayCompatibilityMappingEntry.Equals(NuGet.Frameworks.OneWayCompatibilityMappingEntry other) -> bool
-~NuGet.Frameworks.OneWayCompatibilityMappingEntry.OneWayCompatibilityMappingEntry(NuGet.Frameworks.FrameworkRange targetFramework, NuGet.Frameworks.FrameworkRange supportedFramework) -> void
-~NuGet.Frameworks.OneWayCompatibilityMappingEntry.SupportedFrameworkRange.get -> NuGet.Frameworks.FrameworkRange
-~NuGet.Frameworks.OneWayCompatibilityMappingEntry.TargetFrameworkRange.get -> NuGet.Frameworks.FrameworkRange
-~const NuGet.Frameworks.FrameworkConstants.FrameworkIdentifiers.AspNet = "ASP.NET" -> string
-~const NuGet.Frameworks.FrameworkConstants.FrameworkIdentifiers.AspNetCore = "ASP.NETCore" -> string
-~const NuGet.Frameworks.FrameworkConstants.FrameworkIdentifiers.Dnx = "DNX" -> string
-~const NuGet.Frameworks.FrameworkConstants.FrameworkIdentifiers.DnxCore = "DNXCore" -> string
-~const NuGet.Frameworks.FrameworkConstants.FrameworkIdentifiers.DotNet = "dotnet" -> string
-~const NuGet.Frameworks.FrameworkConstants.FrameworkIdentifiers.MonoAndroid = "MonoAndroid" -> string
-~const NuGet.Frameworks.FrameworkConstants.FrameworkIdentifiers.MonoMac = "MonoMac" -> string
-~const NuGet.Frameworks.FrameworkConstants.FrameworkIdentifiers.MonoTouch = "MonoTouch" -> string
-~const NuGet.Frameworks.FrameworkConstants.FrameworkIdentifiers.NanoFramework = ".NETnanoFramework" -> string
-~const NuGet.Frameworks.FrameworkConstants.FrameworkIdentifiers.Native = "native" -> string
-~const NuGet.Frameworks.FrameworkConstants.FrameworkIdentifiers.Net = ".NETFramework" -> string
-~const NuGet.Frameworks.FrameworkConstants.FrameworkIdentifiers.NetCore = ".NETCore" -> string
-~const NuGet.Frameworks.FrameworkConstants.FrameworkIdentifiers.NetCoreApp = ".NETCoreApp" -> string
-~const NuGet.Frameworks.FrameworkConstants.FrameworkIdentifiers.NetMicro = ".NETMicroFramework" -> string
-~const NuGet.Frameworks.FrameworkConstants.FrameworkIdentifiers.NetPlatform = ".NETPlatform" -> string
-~const NuGet.Frameworks.FrameworkConstants.FrameworkIdentifiers.NetStandard = ".NETStandard" -> string
-~const NuGet.Frameworks.FrameworkConstants.FrameworkIdentifiers.NetStandardApp = ".NETStandardApp" -> string
-~const NuGet.Frameworks.FrameworkConstants.FrameworkIdentifiers.Portable = ".NETPortable" -> string
-~const NuGet.Frameworks.FrameworkConstants.FrameworkIdentifiers.Silverlight = "Silverlight" -> string
-~const NuGet.Frameworks.FrameworkConstants.FrameworkIdentifiers.Tizen = "Tizen" -> string
-~const NuGet.Frameworks.FrameworkConstants.FrameworkIdentifiers.UAP = "UAP" -> string
-~const NuGet.Frameworks.FrameworkConstants.FrameworkIdentifiers.WinRT = "WinRT" -> string
-~const NuGet.Frameworks.FrameworkConstants.FrameworkIdentifiers.Windows = "Windows" -> string
-~const NuGet.Frameworks.FrameworkConstants.FrameworkIdentifiers.WindowsPhone = "WindowsPhone" -> string
-~const NuGet.Frameworks.FrameworkConstants.FrameworkIdentifiers.WindowsPhoneApp = "WindowsPhoneApp" -> string
-~const NuGet.Frameworks.FrameworkConstants.FrameworkIdentifiers.XamarinIOs = "Xamarin.iOS" -> string
-~const NuGet.Frameworks.FrameworkConstants.FrameworkIdentifiers.XamarinMac = "Xamarin.Mac" -> string
-~const NuGet.Frameworks.FrameworkConstants.FrameworkIdentifiers.XamarinPlayStation3 = "Xamarin.PlayStation3" -> string
-~const NuGet.Frameworks.FrameworkConstants.FrameworkIdentifiers.XamarinPlayStation4 = "Xamarin.PlayStation4" -> string
-~const NuGet.Frameworks.FrameworkConstants.FrameworkIdentifiers.XamarinPlayStationVita = "Xamarin.PlayStationVita" -> string
-~const NuGet.Frameworks.FrameworkConstants.FrameworkIdentifiers.XamarinTVOS = "Xamarin.TVOS" -> string
-~const NuGet.Frameworks.FrameworkConstants.FrameworkIdentifiers.XamarinWatchOS = "Xamarin.WatchOS" -> string
-~const NuGet.Frameworks.FrameworkConstants.FrameworkIdentifiers.XamarinXbox360 = "Xamarin.Xbox360" -> string
-~const NuGet.Frameworks.FrameworkConstants.FrameworkIdentifiers.XamarinXboxOne = "Xamarin.XboxOne" -> string
-~const NuGet.Frameworks.FrameworkConstants.PlatformIdentifiers.Windows = "Windows" -> string
-~const NuGet.Frameworks.FrameworkConstants.PlatformIdentifiers.WindowsPhone = "WindowsPhone" -> string
-~const NuGet.Frameworks.FrameworkConstants.SpecialIdentifiers.Agnostic = "Agnostic" -> string
-~const NuGet.Frameworks.FrameworkConstants.SpecialIdentifiers.Any = "Any" -> string
-~const NuGet.Frameworks.FrameworkConstants.SpecialIdentifiers.Unsupported = "Unsupported" -> string
-~override NuGet.Frameworks.AssetTargetFallbackFramework.Equals(object obj) -> bool
+NuGet.Frameworks.OneWayCompatibilityMappingEntry.Equals(NuGet.Frameworks.OneWayCompatibilityMappingEntry? other) -> bool
+NuGet.Frameworks.OneWayCompatibilityMappingEntry.OneWayCompatibilityMappingEntry(NuGet.Frameworks.FrameworkRange! targetFramework, NuGet.Frameworks.FrameworkRange! supportedFramework) -> void
+NuGet.Frameworks.OneWayCompatibilityMappingEntry.SupportedFrameworkRange.get -> NuGet.Frameworks.FrameworkRange!
+NuGet.Frameworks.OneWayCompatibilityMappingEntry.TargetFrameworkRange.get -> NuGet.Frameworks.FrameworkRange!
+const NuGet.Frameworks.FrameworkConstants.FrameworkIdentifiers.AspNet = "ASP.NET" -> string!
+const NuGet.Frameworks.FrameworkConstants.FrameworkIdentifiers.AspNetCore = "ASP.NETCore" -> string!
+const NuGet.Frameworks.FrameworkConstants.FrameworkIdentifiers.Dnx = "DNX" -> string!
+const NuGet.Frameworks.FrameworkConstants.FrameworkIdentifiers.DnxCore = "DNXCore" -> string!
+const NuGet.Frameworks.FrameworkConstants.FrameworkIdentifiers.DotNet = "dotnet" -> string!
+const NuGet.Frameworks.FrameworkConstants.FrameworkIdentifiers.MonoAndroid = "MonoAndroid" -> string!
+const NuGet.Frameworks.FrameworkConstants.FrameworkIdentifiers.MonoMac = "MonoMac" -> string!
+const NuGet.Frameworks.FrameworkConstants.FrameworkIdentifiers.MonoTouch = "MonoTouch" -> string!
+const NuGet.Frameworks.FrameworkConstants.FrameworkIdentifiers.NanoFramework = ".NETnanoFramework" -> string!
+const NuGet.Frameworks.FrameworkConstants.FrameworkIdentifiers.Native = "native" -> string!
+const NuGet.Frameworks.FrameworkConstants.FrameworkIdentifiers.Net = ".NETFramework" -> string!
+const NuGet.Frameworks.FrameworkConstants.FrameworkIdentifiers.NetCore = ".NETCore" -> string!
+const NuGet.Frameworks.FrameworkConstants.FrameworkIdentifiers.NetCoreApp = ".NETCoreApp" -> string!
+const NuGet.Frameworks.FrameworkConstants.FrameworkIdentifiers.NetMicro = ".NETMicroFramework" -> string!
+const NuGet.Frameworks.FrameworkConstants.FrameworkIdentifiers.NetPlatform = ".NETPlatform" -> string!
+const NuGet.Frameworks.FrameworkConstants.FrameworkIdentifiers.NetStandard = ".NETStandard" -> string!
+const NuGet.Frameworks.FrameworkConstants.FrameworkIdentifiers.NetStandardApp = ".NETStandardApp" -> string!
+const NuGet.Frameworks.FrameworkConstants.FrameworkIdentifiers.Portable = ".NETPortable" -> string!
+const NuGet.Frameworks.FrameworkConstants.FrameworkIdentifiers.Silverlight = "Silverlight" -> string!
+const NuGet.Frameworks.FrameworkConstants.FrameworkIdentifiers.Tizen = "Tizen" -> string!
+const NuGet.Frameworks.FrameworkConstants.FrameworkIdentifiers.UAP = "UAP" -> string!
+const NuGet.Frameworks.FrameworkConstants.FrameworkIdentifiers.WinRT = "WinRT" -> string!
+const NuGet.Frameworks.FrameworkConstants.FrameworkIdentifiers.Windows = "Windows" -> string!
+const NuGet.Frameworks.FrameworkConstants.FrameworkIdentifiers.WindowsPhone = "WindowsPhone" -> string!
+const NuGet.Frameworks.FrameworkConstants.FrameworkIdentifiers.WindowsPhoneApp = "WindowsPhoneApp" -> string!
+const NuGet.Frameworks.FrameworkConstants.FrameworkIdentifiers.XamarinIOs = "Xamarin.iOS" -> string!
+const NuGet.Frameworks.FrameworkConstants.FrameworkIdentifiers.XamarinMac = "Xamarin.Mac" -> string!
+const NuGet.Frameworks.FrameworkConstants.FrameworkIdentifiers.XamarinPlayStation3 = "Xamarin.PlayStation3" -> string!
+const NuGet.Frameworks.FrameworkConstants.FrameworkIdentifiers.XamarinPlayStation4 = "Xamarin.PlayStation4" -> string!
+const NuGet.Frameworks.FrameworkConstants.FrameworkIdentifiers.XamarinPlayStationVita = "Xamarin.PlayStationVita" -> string!
+const NuGet.Frameworks.FrameworkConstants.FrameworkIdentifiers.XamarinTVOS = "Xamarin.TVOS" -> string!
+const NuGet.Frameworks.FrameworkConstants.FrameworkIdentifiers.XamarinWatchOS = "Xamarin.WatchOS" -> string!
+const NuGet.Frameworks.FrameworkConstants.FrameworkIdentifiers.XamarinXbox360 = "Xamarin.Xbox360" -> string!
+const NuGet.Frameworks.FrameworkConstants.FrameworkIdentifiers.XamarinXboxOne = "Xamarin.XboxOne" -> string!
+const NuGet.Frameworks.FrameworkConstants.PlatformIdentifiers.Windows = "Windows" -> string!
+const NuGet.Frameworks.FrameworkConstants.PlatformIdentifiers.WindowsPhone = "WindowsPhone" -> string!
+const NuGet.Frameworks.FrameworkConstants.SpecialIdentifiers.Agnostic = "Agnostic" -> string!
+const NuGet.Frameworks.FrameworkConstants.SpecialIdentifiers.Any = "Any" -> string!
+const NuGet.Frameworks.FrameworkConstants.SpecialIdentifiers.Unsupported = "Unsupported" -> string!
+override NuGet.Frameworks.AssetTargetFallbackFramework.Equals(object? obj) -> bool
 override NuGet.Frameworks.AssetTargetFallbackFramework.GetHashCode() -> int
-~override NuGet.Frameworks.DualCompatibilityFramework.Equals(object obj) -> bool
+override NuGet.Frameworks.DualCompatibilityFramework.Equals(object? obj) -> bool
 override NuGet.Frameworks.DualCompatibilityFramework.GetHashCode() -> int
-~override NuGet.Frameworks.FallbackFramework.Equals(object obj) -> bool
+override NuGet.Frameworks.FallbackFramework.Equals(object? obj) -> bool
 override NuGet.Frameworks.FallbackFramework.GetHashCode() -> int
-~override NuGet.Frameworks.FrameworkRange.Equals(object obj) -> bool
+override NuGet.Frameworks.FrameworkRange.Equals(object? obj) -> bool
 override NuGet.Frameworks.FrameworkRange.GetHashCode() -> int
-~override NuGet.Frameworks.FrameworkRange.ToString() -> string
-~override NuGet.Frameworks.FrameworkRuntimePair.Equals(object obj) -> bool
+override NuGet.Frameworks.FrameworkRange.ToString() -> string!
+override NuGet.Frameworks.FrameworkRuntimePair.Equals(object? obj) -> bool
 override NuGet.Frameworks.FrameworkRuntimePair.GetHashCode() -> int
-~override NuGet.Frameworks.FrameworkRuntimePair.ToString() -> string
-~override NuGet.Frameworks.NuGetFramework.Equals(object obj) -> bool
+override NuGet.Frameworks.FrameworkRuntimePair.ToString() -> string!
+override NuGet.Frameworks.NuGetFramework.Equals(object? obj) -> bool
 override NuGet.Frameworks.NuGetFramework.GetHashCode() -> int
-~override NuGet.Frameworks.NuGetFramework.ToString() -> string
-~override NuGet.Frameworks.OneWayCompatibilityMappingEntry.ToString() -> string
-~static NuGet.Frameworks.CompatibilityListProvider.Default.get -> NuGet.Frameworks.IFrameworkCompatibilityListProvider
-~static NuGet.Frameworks.DefaultCompatibilityProvider.Instance.get -> NuGet.Frameworks.IFrameworkCompatibilityProvider
-~static NuGet.Frameworks.DefaultFrameworkMappings.Instance.get -> NuGet.Frameworks.IFrameworkMappings
-~static NuGet.Frameworks.DefaultFrameworkNameProvider.Instance.get -> NuGet.Frameworks.IFrameworkNameProvider
-~static NuGet.Frameworks.DefaultPortableFrameworkMappings.Instance.get -> NuGet.Frameworks.IPortableFrameworkMappings
-~static NuGet.Frameworks.FrameworkNameHelpers.GetFolderName(string identifierShortName, string versionString, string profileShortName) -> string
-~static NuGet.Frameworks.FrameworkNameHelpers.GetPortableProfileNumberString(int profileNumber) -> string
-~static NuGet.Frameworks.FrameworkNameHelpers.GetVersion(string versionString) -> System.Version
-~static NuGet.Frameworks.FrameworkNameHelpers.GetVersionString(System.Version version) -> string
-~static NuGet.Frameworks.FrameworkRuntimePair.GetName(NuGet.Frameworks.NuGetFramework framework, string runtimeIdentifier) -> string
-~static NuGet.Frameworks.FrameworkRuntimePair.GetTargetGraphName(NuGet.Frameworks.NuGetFramework framework, string runtimeIdentifier) -> string
-~static NuGet.Frameworks.NuGetFramework.Parse(string folderName) -> NuGet.Frameworks.NuGetFramework
-~static NuGet.Frameworks.NuGetFramework.Parse(string folderName, NuGet.Frameworks.IFrameworkNameProvider mappings) -> NuGet.Frameworks.NuGetFramework
-~static NuGet.Frameworks.NuGetFramework.ParseComponents(string targetFrameworkMoniker, string targetPlatformMoniker) -> NuGet.Frameworks.NuGetFramework
-~static NuGet.Frameworks.NuGetFramework.ParseFolder(string folderName) -> NuGet.Frameworks.NuGetFramework
-~static NuGet.Frameworks.NuGetFramework.ParseFolder(string folderName, NuGet.Frameworks.IFrameworkNameProvider mappings) -> NuGet.Frameworks.NuGetFramework
-~static NuGet.Frameworks.NuGetFramework.ParseFrameworkName(string frameworkName, NuGet.Frameworks.IFrameworkNameProvider mappings) -> NuGet.Frameworks.NuGetFramework
-~static NuGet.Frameworks.NuGetFramework.operator !=(NuGet.Frameworks.NuGetFramework left, NuGet.Frameworks.NuGetFramework right) -> bool
-~static NuGet.Frameworks.NuGetFramework.operator ==(NuGet.Frameworks.NuGetFramework left, NuGet.Frameworks.NuGetFramework right) -> bool
-~static NuGet.Frameworks.NuGetFrameworkExtensions.GetNearest<T>(this System.Collections.Generic.IEnumerable<T> items, NuGet.Frameworks.NuGetFramework projectFramework) -> T
-~static NuGet.Frameworks.NuGetFrameworkExtensions.IsDesktop(this NuGet.Frameworks.NuGetFramework framework) -> bool
-~static NuGet.Frameworks.NuGetFrameworkUtility.GetNearest<T>(System.Collections.Generic.IEnumerable<T> items, NuGet.Frameworks.NuGetFramework framework) -> T
-~static NuGet.Frameworks.NuGetFrameworkUtility.GetNearest<T>(System.Collections.Generic.IEnumerable<T> items, NuGet.Frameworks.NuGetFramework framework, NuGet.Frameworks.IFrameworkNameProvider frameworkMappings, NuGet.Frameworks.IFrameworkCompatibilityProvider compatibilityProvider) -> T
-~static NuGet.Frameworks.NuGetFrameworkUtility.GetNearest<T>(System.Collections.Generic.IEnumerable<T> items, NuGet.Frameworks.NuGetFramework framework, NuGet.Frameworks.IFrameworkNameProvider frameworkMappings, NuGet.Frameworks.IFrameworkCompatibilityProvider compatibilityProvider, System.Func<T, NuGet.Frameworks.NuGetFramework> selector) -> T
-~static NuGet.Frameworks.NuGetFrameworkUtility.GetNearest<T>(System.Collections.Generic.IEnumerable<T> items, NuGet.Frameworks.NuGetFramework framework, System.Func<T, NuGet.Frameworks.NuGetFramework> selector) -> T
-~static NuGet.Frameworks.NuGetFrameworkUtility.IsCompatibleWithFallbackCheck(NuGet.Frameworks.NuGetFramework projectFramework, NuGet.Frameworks.NuGetFramework candidate) -> bool
-~static NuGet.Frameworks.NuGetFrameworkUtility.IsNetCore50AndUp(NuGet.Frameworks.NuGetFramework framework) -> bool
-~static NuGet.Frameworks.OneWayCompatibilityMappingEntry.Comparer.get -> NuGet.Frameworks.CompatibilityMappingComparer
-~static readonly NuGet.Frameworks.FrameworkConstants.CommonFrameworks.AspNet -> NuGet.Frameworks.NuGetFramework
-~static readonly NuGet.Frameworks.FrameworkConstants.CommonFrameworks.AspNet50 -> NuGet.Frameworks.NuGetFramework
-~static readonly NuGet.Frameworks.FrameworkConstants.CommonFrameworks.AspNetCore -> NuGet.Frameworks.NuGetFramework
-~static readonly NuGet.Frameworks.FrameworkConstants.CommonFrameworks.AspNetCore50 -> NuGet.Frameworks.NuGetFramework
-~static readonly NuGet.Frameworks.FrameworkConstants.CommonFrameworks.Dnx -> NuGet.Frameworks.NuGetFramework
-~static readonly NuGet.Frameworks.FrameworkConstants.CommonFrameworks.Dnx45 -> NuGet.Frameworks.NuGetFramework
-~static readonly NuGet.Frameworks.FrameworkConstants.CommonFrameworks.Dnx451 -> NuGet.Frameworks.NuGetFramework
-~static readonly NuGet.Frameworks.FrameworkConstants.CommonFrameworks.Dnx452 -> NuGet.Frameworks.NuGetFramework
-~static readonly NuGet.Frameworks.FrameworkConstants.CommonFrameworks.DnxCore -> NuGet.Frameworks.NuGetFramework
-~static readonly NuGet.Frameworks.FrameworkConstants.CommonFrameworks.DnxCore50 -> NuGet.Frameworks.NuGetFramework
-~static readonly NuGet.Frameworks.FrameworkConstants.CommonFrameworks.DotNet -> NuGet.Frameworks.NuGetFramework
-~static readonly NuGet.Frameworks.FrameworkConstants.CommonFrameworks.DotNet50 -> NuGet.Frameworks.NuGetFramework
-~static readonly NuGet.Frameworks.FrameworkConstants.CommonFrameworks.DotNet51 -> NuGet.Frameworks.NuGetFramework
-~static readonly NuGet.Frameworks.FrameworkConstants.CommonFrameworks.DotNet52 -> NuGet.Frameworks.NuGetFramework
-~static readonly NuGet.Frameworks.FrameworkConstants.CommonFrameworks.DotNet53 -> NuGet.Frameworks.NuGetFramework
-~static readonly NuGet.Frameworks.FrameworkConstants.CommonFrameworks.DotNet54 -> NuGet.Frameworks.NuGetFramework
-~static readonly NuGet.Frameworks.FrameworkConstants.CommonFrameworks.DotNet55 -> NuGet.Frameworks.NuGetFramework
-~static readonly NuGet.Frameworks.FrameworkConstants.CommonFrameworks.DotNet56 -> NuGet.Frameworks.NuGetFramework
-~static readonly NuGet.Frameworks.FrameworkConstants.CommonFrameworks.Native -> NuGet.Frameworks.NuGetFramework
-~static readonly NuGet.Frameworks.FrameworkConstants.CommonFrameworks.Net11 -> NuGet.Frameworks.NuGetFramework
-~static readonly NuGet.Frameworks.FrameworkConstants.CommonFrameworks.Net2 -> NuGet.Frameworks.NuGetFramework
-~static readonly NuGet.Frameworks.FrameworkConstants.CommonFrameworks.Net35 -> NuGet.Frameworks.NuGetFramework
-~static readonly NuGet.Frameworks.FrameworkConstants.CommonFrameworks.Net4 -> NuGet.Frameworks.NuGetFramework
-~static readonly NuGet.Frameworks.FrameworkConstants.CommonFrameworks.Net403 -> NuGet.Frameworks.NuGetFramework
-~static readonly NuGet.Frameworks.FrameworkConstants.CommonFrameworks.Net45 -> NuGet.Frameworks.NuGetFramework
-~static readonly NuGet.Frameworks.FrameworkConstants.CommonFrameworks.Net451 -> NuGet.Frameworks.NuGetFramework
-~static readonly NuGet.Frameworks.FrameworkConstants.CommonFrameworks.Net452 -> NuGet.Frameworks.NuGetFramework
-~static readonly NuGet.Frameworks.FrameworkConstants.CommonFrameworks.Net46 -> NuGet.Frameworks.NuGetFramework
-~static readonly NuGet.Frameworks.FrameworkConstants.CommonFrameworks.Net461 -> NuGet.Frameworks.NuGetFramework
-~static readonly NuGet.Frameworks.FrameworkConstants.CommonFrameworks.Net462 -> NuGet.Frameworks.NuGetFramework
-~static readonly NuGet.Frameworks.FrameworkConstants.CommonFrameworks.Net463 -> NuGet.Frameworks.NuGetFramework
-~static readonly NuGet.Frameworks.FrameworkConstants.CommonFrameworks.Net47 -> NuGet.Frameworks.NuGetFramework
-~static readonly NuGet.Frameworks.FrameworkConstants.CommonFrameworks.Net471 -> NuGet.Frameworks.NuGetFramework
-~static readonly NuGet.Frameworks.FrameworkConstants.CommonFrameworks.Net472 -> NuGet.Frameworks.NuGetFramework
-~static readonly NuGet.Frameworks.FrameworkConstants.CommonFrameworks.Net50 -> NuGet.Frameworks.NuGetFramework
-~static readonly NuGet.Frameworks.FrameworkConstants.CommonFrameworks.Net60 -> NuGet.Frameworks.NuGetFramework
-~static readonly NuGet.Frameworks.FrameworkConstants.CommonFrameworks.Net70 -> NuGet.Frameworks.NuGetFramework
-~static readonly NuGet.Frameworks.FrameworkConstants.CommonFrameworks.NetCore45 -> NuGet.Frameworks.NuGetFramework
-~static readonly NuGet.Frameworks.FrameworkConstants.CommonFrameworks.NetCore451 -> NuGet.Frameworks.NuGetFramework
-~static readonly NuGet.Frameworks.FrameworkConstants.CommonFrameworks.NetCore50 -> NuGet.Frameworks.NuGetFramework
-~static readonly NuGet.Frameworks.FrameworkConstants.CommonFrameworks.NetCoreApp10 -> NuGet.Frameworks.NuGetFramework
-~static readonly NuGet.Frameworks.FrameworkConstants.CommonFrameworks.NetCoreApp11 -> NuGet.Frameworks.NuGetFramework
-~static readonly NuGet.Frameworks.FrameworkConstants.CommonFrameworks.NetCoreApp20 -> NuGet.Frameworks.NuGetFramework
-~static readonly NuGet.Frameworks.FrameworkConstants.CommonFrameworks.NetCoreApp21 -> NuGet.Frameworks.NuGetFramework
-~static readonly NuGet.Frameworks.FrameworkConstants.CommonFrameworks.NetCoreApp22 -> NuGet.Frameworks.NuGetFramework
-~static readonly NuGet.Frameworks.FrameworkConstants.CommonFrameworks.NetCoreApp30 -> NuGet.Frameworks.NuGetFramework
-~static readonly NuGet.Frameworks.FrameworkConstants.CommonFrameworks.NetCoreApp31 -> NuGet.Frameworks.NuGetFramework
-~static readonly NuGet.Frameworks.FrameworkConstants.CommonFrameworks.NetStandard -> NuGet.Frameworks.NuGetFramework
-~static readonly NuGet.Frameworks.FrameworkConstants.CommonFrameworks.NetStandard10 -> NuGet.Frameworks.NuGetFramework
-~static readonly NuGet.Frameworks.FrameworkConstants.CommonFrameworks.NetStandard11 -> NuGet.Frameworks.NuGetFramework
-~static readonly NuGet.Frameworks.FrameworkConstants.CommonFrameworks.NetStandard12 -> NuGet.Frameworks.NuGetFramework
-~static readonly NuGet.Frameworks.FrameworkConstants.CommonFrameworks.NetStandard13 -> NuGet.Frameworks.NuGetFramework
-~static readonly NuGet.Frameworks.FrameworkConstants.CommonFrameworks.NetStandard14 -> NuGet.Frameworks.NuGetFramework
-~static readonly NuGet.Frameworks.FrameworkConstants.CommonFrameworks.NetStandard15 -> NuGet.Frameworks.NuGetFramework
-~static readonly NuGet.Frameworks.FrameworkConstants.CommonFrameworks.NetStandard16 -> NuGet.Frameworks.NuGetFramework
-~static readonly NuGet.Frameworks.FrameworkConstants.CommonFrameworks.NetStandard17 -> NuGet.Frameworks.NuGetFramework
-~static readonly NuGet.Frameworks.FrameworkConstants.CommonFrameworks.NetStandard20 -> NuGet.Frameworks.NuGetFramework
-~static readonly NuGet.Frameworks.FrameworkConstants.CommonFrameworks.NetStandard21 -> NuGet.Frameworks.NuGetFramework
-~static readonly NuGet.Frameworks.FrameworkConstants.CommonFrameworks.NetStandardApp15 -> NuGet.Frameworks.NuGetFramework
-~static readonly NuGet.Frameworks.FrameworkConstants.CommonFrameworks.SL4 -> NuGet.Frameworks.NuGetFramework
-~static readonly NuGet.Frameworks.FrameworkConstants.CommonFrameworks.SL5 -> NuGet.Frameworks.NuGetFramework
-~static readonly NuGet.Frameworks.FrameworkConstants.CommonFrameworks.Tizen3 -> NuGet.Frameworks.NuGetFramework
-~static readonly NuGet.Frameworks.FrameworkConstants.CommonFrameworks.Tizen4 -> NuGet.Frameworks.NuGetFramework
-~static readonly NuGet.Frameworks.FrameworkConstants.CommonFrameworks.Tizen6 -> NuGet.Frameworks.NuGetFramework
-~static readonly NuGet.Frameworks.FrameworkConstants.CommonFrameworks.UAP10 -> NuGet.Frameworks.NuGetFramework
-~static readonly NuGet.Frameworks.FrameworkConstants.CommonFrameworks.WP7 -> NuGet.Frameworks.NuGetFramework
-~static readonly NuGet.Frameworks.FrameworkConstants.CommonFrameworks.WP75 -> NuGet.Frameworks.NuGetFramework
-~static readonly NuGet.Frameworks.FrameworkConstants.CommonFrameworks.WP8 -> NuGet.Frameworks.NuGetFramework
-~static readonly NuGet.Frameworks.FrameworkConstants.CommonFrameworks.WP81 -> NuGet.Frameworks.NuGetFramework
-~static readonly NuGet.Frameworks.FrameworkConstants.CommonFrameworks.WPA81 -> NuGet.Frameworks.NuGetFramework
-~static readonly NuGet.Frameworks.FrameworkConstants.CommonFrameworks.Win10 -> NuGet.Frameworks.NuGetFramework
-~static readonly NuGet.Frameworks.FrameworkConstants.CommonFrameworks.Win8 -> NuGet.Frameworks.NuGetFramework
-~static readonly NuGet.Frameworks.FrameworkConstants.CommonFrameworks.Win81 -> NuGet.Frameworks.NuGetFramework
-~static readonly NuGet.Frameworks.FrameworkConstants.DotNetAll -> NuGet.Frameworks.FrameworkRange
-~static readonly NuGet.Frameworks.FrameworkConstants.EmptyVersion -> System.Version
-~static readonly NuGet.Frameworks.FrameworkConstants.MaxVersion -> System.Version
-~static readonly NuGet.Frameworks.FrameworkConstants.Version10 -> System.Version
-~static readonly NuGet.Frameworks.FrameworkConstants.Version5 -> System.Version
-~static readonly NuGet.Frameworks.FrameworkConstants.Version6 -> System.Version
-~static readonly NuGet.Frameworks.FrameworkConstants.Version7 -> System.Version
-~static readonly NuGet.Frameworks.NuGetFramework.AgnosticFramework -> NuGet.Frameworks.NuGetFramework
-~static readonly NuGet.Frameworks.NuGetFramework.AnyFramework -> NuGet.Frameworks.NuGetFramework
-~static readonly NuGet.Frameworks.NuGetFramework.Comparer -> System.Collections.Generic.IEqualityComparer<NuGet.Frameworks.NuGetFramework>
-~static readonly NuGet.Frameworks.NuGetFramework.FrameworkNameComparer -> System.Collections.Generic.IEqualityComparer<NuGet.Frameworks.NuGetFramework>
-~static readonly NuGet.Frameworks.NuGetFramework.UnsupportedFramework -> NuGet.Frameworks.NuGetFramework
-~virtual NuGet.Frameworks.NuGetFramework.GetShortFolderName(NuGet.Frameworks.IFrameworkNameProvider mappings) -> string
+override NuGet.Frameworks.NuGetFramework.ToString() -> string!
+override NuGet.Frameworks.OneWayCompatibilityMappingEntry.ToString() -> string!
+static NuGet.Frameworks.CompatibilityListProvider.Default.get -> NuGet.Frameworks.IFrameworkCompatibilityListProvider!
+static NuGet.Frameworks.DefaultCompatibilityProvider.Instance.get -> NuGet.Frameworks.IFrameworkCompatibilityProvider!
+static NuGet.Frameworks.DefaultFrameworkMappings.Instance.get -> NuGet.Frameworks.IFrameworkMappings!
+static NuGet.Frameworks.DefaultFrameworkNameProvider.Instance.get -> NuGet.Frameworks.IFrameworkNameProvider!
+static NuGet.Frameworks.DefaultPortableFrameworkMappings.Instance.get -> NuGet.Frameworks.IPortableFrameworkMappings!
+static NuGet.Frameworks.FrameworkNameHelpers.GetFolderName(string! identifierShortName, string! versionString, string? profileShortName) -> string!
+static NuGet.Frameworks.FrameworkNameHelpers.GetPortableProfileNumberString(int profileNumber) -> string!
+static NuGet.Frameworks.FrameworkNameHelpers.GetVersion(string? versionString) -> System.Version!
+static NuGet.Frameworks.FrameworkNameHelpers.GetVersionString(System.Version! version) -> string!
+static NuGet.Frameworks.FrameworkRuntimePair.GetName(NuGet.Frameworks.NuGetFramework! framework, string? runtimeIdentifier) -> string!
+static NuGet.Frameworks.FrameworkRuntimePair.GetTargetGraphName(NuGet.Frameworks.NuGetFramework! framework, string? runtimeIdentifier) -> string!
+static NuGet.Frameworks.NuGetFramework.Parse(string! folderName) -> NuGet.Frameworks.NuGetFramework!
+static NuGet.Frameworks.NuGetFramework.Parse(string! folderName, NuGet.Frameworks.IFrameworkNameProvider! mappings) -> NuGet.Frameworks.NuGetFramework!
+static NuGet.Frameworks.NuGetFramework.ParseComponents(string! targetFrameworkMoniker, string? targetPlatformMoniker) -> NuGet.Frameworks.NuGetFramework!
+static NuGet.Frameworks.NuGetFramework.ParseFolder(string! folderName) -> NuGet.Frameworks.NuGetFramework!
+static NuGet.Frameworks.NuGetFramework.ParseFolder(string! folderName, NuGet.Frameworks.IFrameworkNameProvider! mappings) -> NuGet.Frameworks.NuGetFramework!
+static NuGet.Frameworks.NuGetFramework.ParseFrameworkName(string! frameworkName, NuGet.Frameworks.IFrameworkNameProvider! mappings) -> NuGet.Frameworks.NuGetFramework!
+static NuGet.Frameworks.NuGetFramework.operator !=(NuGet.Frameworks.NuGetFramework? left, NuGet.Frameworks.NuGetFramework? right) -> bool
+static NuGet.Frameworks.NuGetFramework.operator ==(NuGet.Frameworks.NuGetFramework? left, NuGet.Frameworks.NuGetFramework? right) -> bool
+static NuGet.Frameworks.NuGetFrameworkExtensions.GetNearest<T>(this System.Collections.Generic.IEnumerable<T!>! items, NuGet.Frameworks.NuGetFramework! projectFramework) -> T?
+static NuGet.Frameworks.NuGetFrameworkExtensions.IsDesktop(this NuGet.Frameworks.NuGetFramework! framework) -> bool
+static NuGet.Frameworks.NuGetFrameworkUtility.GetNearest<T>(System.Collections.Generic.IEnumerable<T>! items, NuGet.Frameworks.NuGetFramework! framework) -> T?
+static NuGet.Frameworks.NuGetFrameworkUtility.GetNearest<T>(System.Collections.Generic.IEnumerable<T>! items, NuGet.Frameworks.NuGetFramework! framework, NuGet.Frameworks.IFrameworkNameProvider! frameworkMappings, NuGet.Frameworks.IFrameworkCompatibilityProvider! compatibilityProvider) -> T?
+static NuGet.Frameworks.NuGetFrameworkUtility.GetNearest<T>(System.Collections.Generic.IEnumerable<T!>! items, NuGet.Frameworks.NuGetFramework! framework, NuGet.Frameworks.IFrameworkNameProvider! frameworkMappings, NuGet.Frameworks.IFrameworkCompatibilityProvider! compatibilityProvider, System.Func<T!, NuGet.Frameworks.NuGetFramework!>! selector) -> T?
+static NuGet.Frameworks.NuGetFrameworkUtility.GetNearest<T>(System.Collections.Generic.IEnumerable<T!>! items, NuGet.Frameworks.NuGetFramework! framework, System.Func<T!, NuGet.Frameworks.NuGetFramework!>! selector) -> T?
+static NuGet.Frameworks.NuGetFrameworkUtility.IsCompatibleWithFallbackCheck(NuGet.Frameworks.NuGetFramework! projectFramework, NuGet.Frameworks.NuGetFramework! candidate) -> bool
+static NuGet.Frameworks.NuGetFrameworkUtility.IsNetCore50AndUp(NuGet.Frameworks.NuGetFramework! framework) -> bool
+static NuGet.Frameworks.OneWayCompatibilityMappingEntry.Comparer.get -> NuGet.Frameworks.CompatibilityMappingComparer!
+static readonly NuGet.Frameworks.FrameworkConstants.CommonFrameworks.AspNet -> NuGet.Frameworks.NuGetFramework!
+static readonly NuGet.Frameworks.FrameworkConstants.CommonFrameworks.AspNet50 -> NuGet.Frameworks.NuGetFramework!
+static readonly NuGet.Frameworks.FrameworkConstants.CommonFrameworks.AspNetCore -> NuGet.Frameworks.NuGetFramework!
+static readonly NuGet.Frameworks.FrameworkConstants.CommonFrameworks.AspNetCore50 -> NuGet.Frameworks.NuGetFramework!
+static readonly NuGet.Frameworks.FrameworkConstants.CommonFrameworks.Dnx -> NuGet.Frameworks.NuGetFramework!
+static readonly NuGet.Frameworks.FrameworkConstants.CommonFrameworks.Dnx45 -> NuGet.Frameworks.NuGetFramework!
+static readonly NuGet.Frameworks.FrameworkConstants.CommonFrameworks.Dnx451 -> NuGet.Frameworks.NuGetFramework!
+static readonly NuGet.Frameworks.FrameworkConstants.CommonFrameworks.Dnx452 -> NuGet.Frameworks.NuGetFramework!
+static readonly NuGet.Frameworks.FrameworkConstants.CommonFrameworks.DnxCore -> NuGet.Frameworks.NuGetFramework!
+static readonly NuGet.Frameworks.FrameworkConstants.CommonFrameworks.DnxCore50 -> NuGet.Frameworks.NuGetFramework!
+static readonly NuGet.Frameworks.FrameworkConstants.CommonFrameworks.DotNet -> NuGet.Frameworks.NuGetFramework!
+static readonly NuGet.Frameworks.FrameworkConstants.CommonFrameworks.DotNet50 -> NuGet.Frameworks.NuGetFramework!
+static readonly NuGet.Frameworks.FrameworkConstants.CommonFrameworks.DotNet51 -> NuGet.Frameworks.NuGetFramework!
+static readonly NuGet.Frameworks.FrameworkConstants.CommonFrameworks.DotNet52 -> NuGet.Frameworks.NuGetFramework!
+static readonly NuGet.Frameworks.FrameworkConstants.CommonFrameworks.DotNet53 -> NuGet.Frameworks.NuGetFramework!
+static readonly NuGet.Frameworks.FrameworkConstants.CommonFrameworks.DotNet54 -> NuGet.Frameworks.NuGetFramework!
+static readonly NuGet.Frameworks.FrameworkConstants.CommonFrameworks.DotNet55 -> NuGet.Frameworks.NuGetFramework!
+static readonly NuGet.Frameworks.FrameworkConstants.CommonFrameworks.DotNet56 -> NuGet.Frameworks.NuGetFramework!
+static readonly NuGet.Frameworks.FrameworkConstants.CommonFrameworks.Native -> NuGet.Frameworks.NuGetFramework!
+static readonly NuGet.Frameworks.FrameworkConstants.CommonFrameworks.Net11 -> NuGet.Frameworks.NuGetFramework!
+static readonly NuGet.Frameworks.FrameworkConstants.CommonFrameworks.Net2 -> NuGet.Frameworks.NuGetFramework!
+static readonly NuGet.Frameworks.FrameworkConstants.CommonFrameworks.Net35 -> NuGet.Frameworks.NuGetFramework!
+static readonly NuGet.Frameworks.FrameworkConstants.CommonFrameworks.Net4 -> NuGet.Frameworks.NuGetFramework!
+static readonly NuGet.Frameworks.FrameworkConstants.CommonFrameworks.Net403 -> NuGet.Frameworks.NuGetFramework!
+static readonly NuGet.Frameworks.FrameworkConstants.CommonFrameworks.Net45 -> NuGet.Frameworks.NuGetFramework!
+static readonly NuGet.Frameworks.FrameworkConstants.CommonFrameworks.Net451 -> NuGet.Frameworks.NuGetFramework!
+static readonly NuGet.Frameworks.FrameworkConstants.CommonFrameworks.Net452 -> NuGet.Frameworks.NuGetFramework!
+static readonly NuGet.Frameworks.FrameworkConstants.CommonFrameworks.Net46 -> NuGet.Frameworks.NuGetFramework!
+static readonly NuGet.Frameworks.FrameworkConstants.CommonFrameworks.Net461 -> NuGet.Frameworks.NuGetFramework!
+static readonly NuGet.Frameworks.FrameworkConstants.CommonFrameworks.Net462 -> NuGet.Frameworks.NuGetFramework!
+static readonly NuGet.Frameworks.FrameworkConstants.CommonFrameworks.Net463 -> NuGet.Frameworks.NuGetFramework!
+static readonly NuGet.Frameworks.FrameworkConstants.CommonFrameworks.Net47 -> NuGet.Frameworks.NuGetFramework!
+static readonly NuGet.Frameworks.FrameworkConstants.CommonFrameworks.Net471 -> NuGet.Frameworks.NuGetFramework!
+static readonly NuGet.Frameworks.FrameworkConstants.CommonFrameworks.Net472 -> NuGet.Frameworks.NuGetFramework!
+static readonly NuGet.Frameworks.FrameworkConstants.CommonFrameworks.Net50 -> NuGet.Frameworks.NuGetFramework!
+static readonly NuGet.Frameworks.FrameworkConstants.CommonFrameworks.Net60 -> NuGet.Frameworks.NuGetFramework!
+static readonly NuGet.Frameworks.FrameworkConstants.CommonFrameworks.Net70 -> NuGet.Frameworks.NuGetFramework!
+static readonly NuGet.Frameworks.FrameworkConstants.CommonFrameworks.NetCore45 -> NuGet.Frameworks.NuGetFramework!
+static readonly NuGet.Frameworks.FrameworkConstants.CommonFrameworks.NetCore451 -> NuGet.Frameworks.NuGetFramework!
+static readonly NuGet.Frameworks.FrameworkConstants.CommonFrameworks.NetCore50 -> NuGet.Frameworks.NuGetFramework!
+static readonly NuGet.Frameworks.FrameworkConstants.CommonFrameworks.NetCoreApp10 -> NuGet.Frameworks.NuGetFramework!
+static readonly NuGet.Frameworks.FrameworkConstants.CommonFrameworks.NetCoreApp11 -> NuGet.Frameworks.NuGetFramework!
+static readonly NuGet.Frameworks.FrameworkConstants.CommonFrameworks.NetCoreApp20 -> NuGet.Frameworks.NuGetFramework!
+static readonly NuGet.Frameworks.FrameworkConstants.CommonFrameworks.NetCoreApp21 -> NuGet.Frameworks.NuGetFramework!
+static readonly NuGet.Frameworks.FrameworkConstants.CommonFrameworks.NetCoreApp22 -> NuGet.Frameworks.NuGetFramework!
+static readonly NuGet.Frameworks.FrameworkConstants.CommonFrameworks.NetCoreApp30 -> NuGet.Frameworks.NuGetFramework!
+static readonly NuGet.Frameworks.FrameworkConstants.CommonFrameworks.NetCoreApp31 -> NuGet.Frameworks.NuGetFramework!
+static readonly NuGet.Frameworks.FrameworkConstants.CommonFrameworks.NetStandard -> NuGet.Frameworks.NuGetFramework!
+static readonly NuGet.Frameworks.FrameworkConstants.CommonFrameworks.NetStandard10 -> NuGet.Frameworks.NuGetFramework!
+static readonly NuGet.Frameworks.FrameworkConstants.CommonFrameworks.NetStandard11 -> NuGet.Frameworks.NuGetFramework!
+static readonly NuGet.Frameworks.FrameworkConstants.CommonFrameworks.NetStandard12 -> NuGet.Frameworks.NuGetFramework!
+static readonly NuGet.Frameworks.FrameworkConstants.CommonFrameworks.NetStandard13 -> NuGet.Frameworks.NuGetFramework!
+static readonly NuGet.Frameworks.FrameworkConstants.CommonFrameworks.NetStandard14 -> NuGet.Frameworks.NuGetFramework!
+static readonly NuGet.Frameworks.FrameworkConstants.CommonFrameworks.NetStandard15 -> NuGet.Frameworks.NuGetFramework!
+static readonly NuGet.Frameworks.FrameworkConstants.CommonFrameworks.NetStandard16 -> NuGet.Frameworks.NuGetFramework!
+static readonly NuGet.Frameworks.FrameworkConstants.CommonFrameworks.NetStandard17 -> NuGet.Frameworks.NuGetFramework!
+static readonly NuGet.Frameworks.FrameworkConstants.CommonFrameworks.NetStandard20 -> NuGet.Frameworks.NuGetFramework!
+static readonly NuGet.Frameworks.FrameworkConstants.CommonFrameworks.NetStandard21 -> NuGet.Frameworks.NuGetFramework!
+static readonly NuGet.Frameworks.FrameworkConstants.CommonFrameworks.NetStandardApp15 -> NuGet.Frameworks.NuGetFramework!
+static readonly NuGet.Frameworks.FrameworkConstants.CommonFrameworks.SL4 -> NuGet.Frameworks.NuGetFramework!
+static readonly NuGet.Frameworks.FrameworkConstants.CommonFrameworks.SL5 -> NuGet.Frameworks.NuGetFramework!
+static readonly NuGet.Frameworks.FrameworkConstants.CommonFrameworks.Tizen3 -> NuGet.Frameworks.NuGetFramework!
+static readonly NuGet.Frameworks.FrameworkConstants.CommonFrameworks.Tizen4 -> NuGet.Frameworks.NuGetFramework!
+static readonly NuGet.Frameworks.FrameworkConstants.CommonFrameworks.Tizen6 -> NuGet.Frameworks.NuGetFramework!
+static readonly NuGet.Frameworks.FrameworkConstants.CommonFrameworks.UAP10 -> NuGet.Frameworks.NuGetFramework!
+static readonly NuGet.Frameworks.FrameworkConstants.CommonFrameworks.WP7 -> NuGet.Frameworks.NuGetFramework!
+static readonly NuGet.Frameworks.FrameworkConstants.CommonFrameworks.WP75 -> NuGet.Frameworks.NuGetFramework!
+static readonly NuGet.Frameworks.FrameworkConstants.CommonFrameworks.WP8 -> NuGet.Frameworks.NuGetFramework!
+static readonly NuGet.Frameworks.FrameworkConstants.CommonFrameworks.WP81 -> NuGet.Frameworks.NuGetFramework!
+static readonly NuGet.Frameworks.FrameworkConstants.CommonFrameworks.WPA81 -> NuGet.Frameworks.NuGetFramework!
+static readonly NuGet.Frameworks.FrameworkConstants.CommonFrameworks.Win10 -> NuGet.Frameworks.NuGetFramework!
+static readonly NuGet.Frameworks.FrameworkConstants.CommonFrameworks.Win8 -> NuGet.Frameworks.NuGetFramework!
+static readonly NuGet.Frameworks.FrameworkConstants.CommonFrameworks.Win81 -> NuGet.Frameworks.NuGetFramework!
+static readonly NuGet.Frameworks.FrameworkConstants.DotNetAll -> NuGet.Frameworks.FrameworkRange!
+static readonly NuGet.Frameworks.FrameworkConstants.EmptyVersion -> System.Version!
+static readonly NuGet.Frameworks.FrameworkConstants.MaxVersion -> System.Version!
+static readonly NuGet.Frameworks.FrameworkConstants.Version10 -> System.Version!
+static readonly NuGet.Frameworks.FrameworkConstants.Version5 -> System.Version!
+static readonly NuGet.Frameworks.FrameworkConstants.Version6 -> System.Version!
+static readonly NuGet.Frameworks.FrameworkConstants.Version7 -> System.Version!
+static readonly NuGet.Frameworks.NuGetFramework.AgnosticFramework -> NuGet.Frameworks.NuGetFramework!
+static readonly NuGet.Frameworks.NuGetFramework.AnyFramework -> NuGet.Frameworks.NuGetFramework!
+static readonly NuGet.Frameworks.NuGetFramework.Comparer -> System.Collections.Generic.IEqualityComparer<NuGet.Frameworks.NuGetFramework!>!
+static readonly NuGet.Frameworks.NuGetFramework.FrameworkNameComparer -> System.Collections.Generic.IEqualityComparer<NuGet.Frameworks.NuGetFramework!>!
+static readonly NuGet.Frameworks.NuGetFramework.UnsupportedFramework -> NuGet.Frameworks.NuGetFramework!
+virtual NuGet.Frameworks.NuGetFramework.GetShortFolderName(NuGet.Frameworks.IFrameworkNameProvider! mappings) -> string!

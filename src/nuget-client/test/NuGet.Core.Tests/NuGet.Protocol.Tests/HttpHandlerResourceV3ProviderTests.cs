@@ -1,8 +1,15 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Net;
+using System.Net.Http;
+using System.Threading;
 using System.Threading.Tasks;
+using FluentAssertions;
+using Moq;
 using NuGet.Configuration;
 using NuGet.Protocol.Core.Types;
 using NuGet.Test.Utility;
@@ -81,5 +88,41 @@ namespace NuGet.Protocol.Tests
             Assert.NotEqual(maxHttpRequestsPerSource, httpHandlerResource.ClientHandler.MaxConnectionsPerServer);
         }
 #endif
+
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        public async Task TryCreate_HandlerContainsServerWarningMiddleware(bool hasProxy)
+        {
+            // Arrange
+            Mock<IProxyCache> proxyCache = new();
+            IWebProxy webProxy = hasProxy ? new Mock<IWebProxy>().Object : null;
+            proxyCache.Setup(pc => pc.GetProxy(It.IsAny<Uri>())).Returns(webProxy);
+
+            PackageSource packageSource = new("https://nuget.test/v2/api", "source");
+            SourceRepository sourceRepository = new(packageSource, Array.Empty<INuGetResourceProvider>());
+
+            HttpHandlerResourceV3Provider target = new(proxyCache.Object);
+
+            // Act
+            var result = await target.TryCreate(sourceRepository, CancellationToken.None);
+
+            // Assert
+            result.Item1.Should().BeTrue();
+            HttpHandlerResourceV3 resource = (HttpHandlerResourceV3)result.Item2;
+            resource.Should().NotBeNull();
+            IEnumerable<DelegatingHandler> delegatingHandlers = GetDelegatingHandlers(resource.MessageHandler);
+            delegatingHandlers.Any(h => h is ServerWarningLogHandler).Should().BeTrue();
+
+            static IEnumerable<DelegatingHandler> GetDelegatingHandlers(HttpMessageHandler handler)
+            {
+                DelegatingHandler delegatingHandler = handler as DelegatingHandler;
+                while (delegatingHandler != null)
+                {
+                    yield return delegatingHandler;
+                    delegatingHandler = delegatingHandler.InnerHandler as DelegatingHandler;
+                }
+            }
+        }
     }
 }

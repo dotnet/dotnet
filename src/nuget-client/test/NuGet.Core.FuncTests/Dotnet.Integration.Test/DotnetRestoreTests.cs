@@ -40,7 +40,7 @@ namespace Dotnet.Integration.Test
         {
             using (SimpleTestPathContext pathContext = _msbuildFixture.CreateSimpleTestPathContext())
             {
-                _msbuildFixture.CreateDotnetNewProject(pathContext.SolutionRoot, "proj");
+                _msbuildFixture.CreateDotnetNewProject(pathContext.SolutionRoot, "proj", args: "classlib");
 
                 var slnContents = @"
 Microsoft Visual Studio Solution File, Format Version 12.00
@@ -880,7 +880,7 @@ EndGlobal";
         {
             using (SimpleTestPathContext pathContext = _msbuildFixture.CreateSimpleTestPathContext())
             {
-                _msbuildFixture.CreateDotnetNewProject(pathContext.SolutionRoot, "proj");
+                _msbuildFixture.CreateDotnetNewProject(pathContext.SolutionRoot, "proj", args: "classlib");
 
                 var projPath = Path.Combine(pathContext.SolutionRoot, "proj", "proj.csproj");
                 var doc = XDocument.Parse(File.ReadAllText(projPath));
@@ -1396,9 +1396,9 @@ EndGlobal";
 #endif
 
         [Theory]
-        [InlineData("netcoreapp3.0;net5.0;net472", true)]
+        [InlineData("netcoreapp3.0;net7.0;net472", true)]
         [InlineData("netcoreapp2.1;netcoreapp3.0;netcoreapp3.1", true)]
-        [InlineData("netcoreapp3.0;net5.0;net472", false)]
+        [InlineData("netcoreapp3.0;net7.0;net472", false)]
         [InlineData("netcoreapp2.1;netcoreapp3.0;netcoreapp3.1", false)]
         public async Task DotnetRestore_MultiTargettingProject_WithDifferentPackageReferences_ForceDoesNotRewriteAssetsFile(string targetFrameworks, bool useStaticGraphRestore)
         {
@@ -1459,9 +1459,9 @@ EndGlobal";
         }
 
         [Theory]
-        [InlineData("net5.0;netcoreapp3.0;net472", true)]
+        [InlineData("net7.0;netcoreapp3.0;net472", true)]
         [InlineData("netcoreapp3.0;netcoreapp2.1;netcoreapp3.1", true)]
-        [InlineData("net5.0;netcoreapp3.0;net472", false)]
+        [InlineData("net7.0;netcoreapp3.0;net472", false)]
         [InlineData("netcoreapp3.0;netcoreapp2.1;netcoreapp3.1", false)]
         public async Task DotnetRestore_MultiTargettingProject_WithDifferentProjectReferences_ForceDoesNotRewriteAssetsFile(string targetFrameworks, bool useStaticGraphRestore)
         {
@@ -1873,7 +1873,7 @@ EndGlobal";
 
             // Set up solution, and project
             var solution = new SimpleTestSolutionContext(pathContext.SolutionRoot);
-            var projFramework = FrameworkConstants.CommonFrameworks.Net50;
+            var projFramework = FrameworkConstants.CommonFrameworks.Net70;
             var projectPackageName = "projectA";
             var projectA = SimpleTestProjectContext.CreateNETCore(
                projectPackageName,
@@ -1952,7 +1952,7 @@ EndGlobal";
 
             // Set up solution, and project
             var solution = new SimpleTestSolutionContext(pathContext.SolutionRoot);
-            var projFramework = FrameworkConstants.CommonFrameworks.Net50;
+            var projFramework = FrameworkConstants.CommonFrameworks.Net70;
             var projectPackageName = "projectA";
             var projectA = SimpleTestProjectContext.CreateNETCore(
                projectPackageName,
@@ -2029,7 +2029,7 @@ EndGlobal";
 
             // Set up solution, and project
             var solution = new SimpleTestSolutionContext(pathContext.SolutionRoot);
-            var projFramework = FrameworkConstants.CommonFrameworks.Net50;
+            var projFramework = FrameworkConstants.CommonFrameworks.Net70;
             var projectPackageName = "projectA";
             var projectA = SimpleTestProjectContext.CreateNETCore(
                projectPackageName,
@@ -2113,7 +2113,7 @@ EndGlobal";
 
             // Set up solution, and project
             var solution = new SimpleTestSolutionContext(pathContext.SolutionRoot);
-            var projFramework = FrameworkConstants.CommonFrameworks.Net50;
+            var projFramework = FrameworkConstants.CommonFrameworks.Net70;
             var projectPackageName = "projectA";
             var projectA = SimpleTestProjectContext.CreateNETCore(
                projectPackageName,
@@ -2183,7 +2183,7 @@ EndGlobal";
 
             // Set up solution, and project
             var solution = new SimpleTestSolutionContext(pathContext.SolutionRoot);
-            var projFramework = CommonFrameworks.Net50;
+            var projFramework = CommonFrameworks.Net70;
             var projectPackageName = "projectA";
             var projectA = SimpleTestProjectContext.CreateNETCore(
                projectPackageName,
@@ -2253,7 +2253,7 @@ EndGlobal";
 
             // Set up solution, and project
             var solution = new SimpleTestSolutionContext(pathContext.SolutionRoot);
-            var projFramework = CommonFrameworks.Net50;
+            var projFramework = CommonFrameworks.Net70;
             var projectPackageName = "projectA";
             var projectA = SimpleTestProjectContext.CreateNETCore(
                projectPackageName,
@@ -2427,7 +2427,7 @@ EndGlobal";
             // Set up solution, and project
             // projectA -> projectB -> packageX -> packageY
             var solution = new SimpleTestSolutionContext(pathContext.SolutionRoot);
-            var framework = "net5.0";
+            var framework = "net7.0";
             var projectA = SimpleTestProjectContext.CreateNETCore(
                "projectA",
                pathContext.SolutionRoot,
@@ -2444,21 +2444,21 @@ EndGlobal";
 
             var packageX = new SimpleTestPackageContext("packageX", "1.0.0");
             packageX.Files.Clear();
-            packageX.AddFile($"lib/net5.0/X.dll");
-            packageX.AddFile($"lib/net5.0/X.xml");
+            packageX.AddFile($"lib/net7.0/X.dll");
+            packageX.AddFile($"lib/net7.0/X.xml");
 
             var packageY = new SimpleTestPackageContext("packageY", "1.0.0");
             packageY.Files.Clear();
             // Compile
-            packageY.AddFile("ref/net5.0/Y.dll");
-            packageY.AddFile("ref/net5.0/Y.xml");
+            packageY.AddFile("ref/net7.0/Y.dll");
+            packageY.AddFile("ref/net7.0/Y.xml");
             // Runtime
-            packageY.AddFile("lib/net5.0/Y.dll");
-            packageY.AddFile("lib/net5.0/Y.pdb");
-            packageY.AddFile("lib/net5.0/Y.xml");
+            packageY.AddFile("lib/net7.0/Y.dll");
+            packageY.AddFile("lib/net7.0/Y.pdb");
+            packageY.AddFile("lib/net7.0/Y.xml");
             // Embed
-            packageY.AddFile("embed/net5.0/Y.dll");
-            packageY.AddFile("embed/net5.0/Y.pdb");
+            packageY.AddFile("embed/net7.0/Y.dll");
+            packageY.AddFile("embed/net7.0/Y.pdb");
 
             packageX.Dependencies.Add(packageY);
             await SimpleTestPackageUtility.CreatePackagesAsync(pathContext.PackageSource, packageX, packageY);
@@ -2487,18 +2487,18 @@ EndGlobal";
             // packageX (top-level package reference): "related" property is applied correctly for Compile & Runtime
             var packageXLib = targets.Libraries.Single(x => x.Name.Equals("packageX"));
             var packageXCompile = packageXLib.CompileTimeAssemblies;
-            AssertRelatedProperty(packageXCompile, $"lib/net5.0/X.dll", ".xml");
+            AssertRelatedProperty(packageXCompile, $"lib/net7.0/X.dll", ".xml");
             var packageXRuntime = packageXLib.RuntimeAssemblies;
-            AssertRelatedProperty(packageXRuntime, $"lib/net5.0/X.dll", ".xml");
+            AssertRelatedProperty(packageXRuntime, $"lib/net7.0/X.dll", ".xml");
 
             // packageY (transitive package reference): "related" property is applied for Compile, Runtime and Embeded.
             var packageYLib = targets.Libraries.Single(x => x.Name.Equals("packageY"));
             var packageYCompile = packageYLib.CompileTimeAssemblies;
-            AssertRelatedProperty(packageYCompile, $"ref/net5.0/Y.dll", ".xml");
+            AssertRelatedProperty(packageYCompile, $"ref/net7.0/Y.dll", ".xml");
             var packageYRuntime = packageYLib.RuntimeAssemblies;
-            AssertRelatedProperty(packageYRuntime, $"lib/net5.0/Y.dll", ".pdb;.xml");
+            AssertRelatedProperty(packageYRuntime, $"lib/net7.0/Y.dll", ".pdb;.xml");
             var packageYEmbed = packageYLib.EmbedAssemblies;
-            AssertRelatedProperty(packageYEmbed, $"embed/net5.0/Y.dll", ".pdb");
+            AssertRelatedProperty(packageYEmbed, $"embed/net7.0/Y.dll", ".pdb");
 
             // projectB (project reference): "related" property is NOT applied for Compile or Runtime.
             var projectBLib = targets.Libraries.Single(x => x.Name.Equals("projectB"));

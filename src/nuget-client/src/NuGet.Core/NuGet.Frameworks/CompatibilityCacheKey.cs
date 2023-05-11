@@ -53,7 +53,7 @@ namespace NuGet.Frameworks
             return _hashCode;
         }
 
-        public bool Equals(CompatibilityCacheKey other)
+        public bool Equals(CompatibilityCacheKey? other)
         {
             if (other == null)
             {
@@ -69,7 +69,7 @@ namespace NuGet.Frameworks
                 && Candidate.Equals(other.Candidate);
         }
 
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             return Equals(obj as CompatibilityCacheKey);
         }

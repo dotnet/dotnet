@@ -40,7 +40,7 @@ namespace NuGet.VisualStudio.SolutionExplorer
             _fileOpener = fileOpener;
         }
 
-        public string? FullPath => Target.TryResolvePackagePath(Library.Name, Library.Version, out string? fullPath)
+        public string? FullPath => Library.Version is not null && Target.TryResolvePackagePath(Library.Name, Library.Version, out string? fullPath)
             ? System.IO.Path.GetFullPath(System.IO.Path.Combine(fullPath, Path))
             : null;
 

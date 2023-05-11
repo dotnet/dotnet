@@ -57,6 +57,8 @@ namespace NuGet.PackageManagement.UI
 
         public VersionRange AllowedVersions { get; set; }
 
+        public VersionRange VersionOverride { get; set; }
+
         public IReadOnlyCollection<PackageSourceContextInfo> Sources { get; set; }
 
         public bool IncludePrerelease { get; set; }

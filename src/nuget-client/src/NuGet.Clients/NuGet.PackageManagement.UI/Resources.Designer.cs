@@ -2187,6 +2187,15 @@ namespace NuGet.PackageManagement.UI {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Dependency version defined by VersionOverride, modify project file to change package version..
+        /// </summary>
+        public static string UpdateButton_VersionOverride_Tooltip {
+            get {
+                return ResourceManager.GetString("UpdateButton_VersionOverride_Tooltip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to NuGet migrate failed to install packages as PackageReference. Changed files are backed up at {0}.
         /// </summary>
         public static string Upgrade_InstallFailed {

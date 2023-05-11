@@ -1,6 +1,7 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+using System;
 using System.Threading.Tasks;
 
 namespace NuGet.ProjectManagement
@@ -9,6 +10,7 @@ namespace NuGet.ProjectManagement
     /// Represents an API providing read-only access to 
     /// project's build properties.
     /// </summary>
+    [Obsolete("This was only used by NuGet's VS extension, so has been moved there")]
     public interface IProjectBuildProperties
     {
         /// <summary>

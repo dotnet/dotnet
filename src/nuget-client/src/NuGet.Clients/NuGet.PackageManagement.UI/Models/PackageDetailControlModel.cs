@@ -39,6 +39,7 @@ namespace NuGet.PackageManagement.UI
         {
             // Set InstalledVersion before fetching versions list.
             PackageLevel = searchResultPackage.PackageLevel;
+            VersionOverride = searchResultPackage.VersionOverride;
             InstalledVersion = searchResultPackage.InstalledVersion;
             InstalledVersionRange = searchResultPackage.AllowedVersions;
 
@@ -303,10 +304,23 @@ namespace NuGet.PackageManagement.UI
             }
         }
 
+        private VersionRange _versionOverride;
+
+        public VersionRange VersionOverride
+        {
+            get => _versionOverride;
+            private set
+            {
+                _versionOverride = value;
+                OnPropertyChanged(nameof(VersionOverride));
+            }
+        }
+
         public override void OnSelectedVersionChanged()
         {
             base.OnSelectedVersionChanged();
             OnPropertyChanged(nameof(IsInstallorUpdateButtonEnabled));
+            OnPropertyChanged(nameof(ShowVersionOverrideTooltip));
             OnPropertyChanged(nameof(IsSelectedVersionInstalled));
             OnPropertyChanged(nameof(IsInstalledVersionTopLevel));
         }
@@ -327,7 +341,15 @@ namespace NuGet.PackageManagement.UI
         {
             get
             {
-                return SelectedVersion != null && !IsSelectedVersionInstalled && !InstalledVersionIsAutoReferenced;
+                return SelectedVersion != null && !IsSelectedVersionInstalled && !InstalledVersionIsAutoReferenced && VersionOverride == null;
+            }
+        }
+
+        public bool ShowVersionOverrideTooltip
+        {
+            get
+            {
+                return !IsInstallorUpdateButtonEnabled && VersionOverride != null;
             }
         }
 

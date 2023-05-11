@@ -31,11 +31,11 @@ namespace NuGet.Frameworks.Test
         {
             // Arrange
             var project = NuGetFramework.Parse("net45");
-            List<FrameworkSpecificGroup> items = null;
+            List<FrameworkSpecificGroup>? items = null;
 
             // Act
-            var nearestWithSelector = NuGetFrameworkUtility.GetNearest<FrameworkSpecificGroup>(items, project, (item) => item.TargetFramework);
-            var nearest = NuGetFrameworkUtility.GetNearest<FrameworkSpecificGroup>(items, project);
+            var nearestWithSelector = NuGetFrameworkUtility.GetNearest<FrameworkSpecificGroup>(items!, project, (item) => item.TargetFramework);
+            var nearest = NuGetFrameworkUtility.GetNearest<FrameworkSpecificGroup>(items!, project);
 
             // Assert
             Assert.Null(nearest);
@@ -58,8 +58,8 @@ namespace NuGet.Frameworks.Test
             var nearest = NuGetFrameworkUtility.GetNearest<FrameworkSpecificGroup>(items, project);
 
             // Assert
-            Assert.Equal("net45", nearestWithSelector.TargetFramework.GetShortFolderName());
-            Assert.Equal("net45", nearest.TargetFramework.GetShortFolderName());
+            Assert.Equal("net45", nearestWithSelector!.TargetFramework.GetShortFolderName());
+            Assert.Equal("net45", nearest!.TargetFramework.GetShortFolderName());
         }
 
 
@@ -77,8 +77,8 @@ namespace NuGet.Frameworks.Test
             var nearest = NuGetFrameworkUtility.GetNearest<FrameworkSpecificGroup>(items, project);
 
             // Assert
-            Assert.Equal("any", nearestWithSelector.TargetFramework.GetShortFolderName());
-            Assert.Equal("any", nearest.TargetFramework.GetShortFolderName());
+            Assert.Equal("any", nearestWithSelector!.TargetFramework.GetShortFolderName());
+            Assert.Equal("any", nearest!.TargetFramework.GetShortFolderName());
         }
 
         [Fact]

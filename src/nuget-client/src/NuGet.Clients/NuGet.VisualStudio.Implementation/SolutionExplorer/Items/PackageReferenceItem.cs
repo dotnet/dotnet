@@ -44,7 +44,7 @@ namespace NuGet.VisualStudio.SolutionExplorer
             return true;
         }
 
-        private static string GetCaption(AssetsFileTargetLibrary library) => $"{library.Name} ({library.Version})";
+        private static string GetCaption(AssetsFileTargetLibrary library) => library.Version is not null ? $"{library.Name} ({library.Version})" : library.Name;
 
         public override object Identity => Library.Name;
 
@@ -71,7 +71,7 @@ namespace NuGet.VisualStudio.SolutionExplorer
 
             public BrowseObject(PackageReferenceItem item) => _item = item;
 
-            public override string GetComponentName() => $"{_item.Library.Name} ({_item.Library.Version})";
+            public override string GetComponentName() => _item.Library.Version is not null ? $"{_item.Library.Name} ({_item.Library.Version})" : _item.Library.Name;
 
             public override string GetClassName() => VsResources.PackageReferenceBrowseObjectClassName;
 
@@ -81,11 +81,11 @@ namespace NuGet.VisualStudio.SolutionExplorer
 
             [BrowseObjectDisplayName(nameof(VsResources.PackageReferenceVersionDisplayName))]
             [BrowseObjectDescription(nameof(VsResources.PackageReferenceVersionDescription))]
-            public string Version => _item.Library.Version;
+            public string? Version => _item.Library.Version;
 
             [BrowseObjectDisplayName(nameof(VsResources.PackageReferencePathDisplayName))]
             [BrowseObjectDescription(nameof(VsResources.PackageReferencePathDescription))]
-            public string? Path => _item.Target.TryResolvePackagePath(_item.Library.Name, _item.Library.Version, out string? fullPath) ? fullPath : null;
+            public string? Path => _item.Library.Version is not null && _item.Target.TryResolvePackagePath(_item.Library.Name, _item.Library.Version, out string? fullPath) ? fullPath : null;
         }
     }
 }

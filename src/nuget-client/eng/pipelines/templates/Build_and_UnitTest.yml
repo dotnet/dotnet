@@ -180,7 +180,6 @@ steps:
     testResultsFiles: "*.trx"
     testRunTitle: "NuGet.Client Unit Tests On Windows"
     searchFolder: "$(Build.Repository.LocalPath)\\build\\TestResults"
-    mergeTestResults: "true"
     publishRunAttachments: "false"
   condition: "and(succeededOrFailed(),eq(variables['BuildRTM'], 'true'))"
 

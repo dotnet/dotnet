@@ -73,7 +73,7 @@ namespace NuGet.PackageManagement.VisualStudio
 
             var buildStorageProperty = vsHierarchyItem.VsHierarchy as IVsBuildPropertyStorage;
             var vsBuildProperties = new VsProjectBuildProperties(
-                dteProject, buildStorageProperty, _threadingService, _buildPropertiesTelemetry, projectTypeGuids);
+                dteProject, buildStorageProperty, _buildPropertiesTelemetry, projectTypeGuids);
 
             var projectNames = await ProjectNames.FromDTEProjectAsync(dteProject, vsSolution);
             var fullProjectPath = dteProject.GetFullProjectPath();
@@ -111,13 +111,13 @@ namespace NuGet.PackageManagement.VisualStudio
             await _threadingService.JoinableTaskFactory.SwitchToMainThreadAsync();
 
             var vsHierarchyItem = VsHierarchyItem.FromVsHierarchy(hierarchy);
-            Func<IVsHierarchy, EnvDTE.Project> loadDteProject = hierarchy => VsHierarchyUtility.GetProjectFromHierarchy(hierarchy);
+            Func<IVsHierarchy, EnvDTE.Project> loadDteProject = VsHierarchyUtility.GetProjectFromHierarchy;
 
             var projectTypeGuids = VsHierarchyUtility.GetProjectTypeGuidsFromHierarchy(hierarchy);
 
             var buildStorageProperty = vsHierarchyItem.VsHierarchy as IVsBuildPropertyStorage;
             var vsBuildProperties = new VsProjectBuildProperties(
-                new Lazy<EnvDTE.Project>(() => loadDteProject(hierarchy)), buildStorageProperty, _threadingService, _buildPropertiesTelemetry, projectTypeGuids);
+                new Lazy<EnvDTE.Project>(() => loadDteProject(hierarchy)), buildStorageProperty, _buildPropertiesTelemetry, projectTypeGuids);
 
             var fullProjectPath = projectTypeGuids.Contains(VsProjectTypes.WebSiteProjectTypeGuid) ?
                 VsHierarchyUtility.GetProjectPathForWebsiteProject(hierarchy)

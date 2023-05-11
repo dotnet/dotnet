@@ -44,7 +44,7 @@ namespace NuGet.Frameworks
             get { return new CompatibilityMappingComparer(); }
         }
 
-        public bool Equals(OneWayCompatibilityMappingEntry other)
+        public bool Equals(OneWayCompatibilityMappingEntry? other)
         {
             return Comparer.Equals(this, other);
         }

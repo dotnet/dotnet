@@ -14,7 +14,6 @@ using Microsoft.VisualStudio.Shell.Interop;
 using NuGet.Commands;
 using NuGet.Frameworks;
 using NuGet.ProjectManagement;
-using NuGet.RuntimeModel;
 using NuGet.VisualStudio;
 
 namespace NuGet.PackageManagement.VisualStudio
@@ -32,9 +31,10 @@ namespace NuGet.PackageManagement.VisualStudio
 
         #region Properties
 
-        public async Task<string> GetMSBuildProjectExtensionsPathAsync()
+        public string GetMSBuildProjectExtensionsPath()
         {
-            var msbuildProjectExtensionsPath = await BuildProperties.GetPropertyValueAsync(ProjectBuildProperties.MSBuildProjectExtensionsPath);
+            ThreadHelper.ThrowIfNotOnUIThread();
+            var msbuildProjectExtensionsPath = BuildProperties.GetPropertyValueWithDteFallback(ProjectBuildProperties.MSBuildProjectExtensionsPath);
 
             if (string.IsNullOrEmpty(msbuildProjectExtensionsPath))
             {
@@ -44,7 +44,7 @@ namespace NuGet.PackageManagement.VisualStudio
             return Path.Combine(ProjectDirectory, msbuildProjectExtensionsPath);
         }
 
-        public IProjectBuildProperties BuildProperties { get; private set; }
+        public IVsProjectBuildProperties BuildProperties { get; }
 
         public string CustomUniqueName => ProjectNames.CustomUniqueName;
 
@@ -88,11 +88,11 @@ namespace NuGet.PackageManagement.VisualStudio
             {
                 ThreadHelper.ThrowIfNotOnUIThread();
 
-                var packageVersion = BuildProperties.GetPropertyValue(ProjectBuildProperties.PackageVersion);
+                var packageVersion = BuildProperties.GetPropertyValueWithDteFallback(ProjectBuildProperties.PackageVersion);
 
                 if (string.IsNullOrEmpty(packageVersion))
                 {
-                    packageVersion = BuildProperties.GetPropertyValue(ProjectBuildProperties.Version);
+                    packageVersion = BuildProperties.GetPropertyValueWithDteFallback(ProjectBuildProperties.Version);
 
                     if (string.IsNullOrEmpty(packageVersion))
                     {
@@ -116,7 +116,7 @@ namespace NuGet.PackageManagement.VisualStudio
             string fullProjectPath,
             string projectDirectory,
             Func<IVsHierarchy, EnvDTE.Project> loadDteProject,
-            IProjectBuildProperties buildProperties,
+            IVsProjectBuildProperties buildProperties,
             IVsProjectThreadingService threadingService)
         {
             Assumes.Present(vsHierarchyItem);
@@ -135,7 +135,7 @@ namespace NuGet.PackageManagement.VisualStudio
             ProjectNames projectNames,
             string fullProjectPath,
             Func<IVsHierarchy, EnvDTE.Project> loadDteProject,
-            IProjectBuildProperties buildProperties,
+            IVsProjectBuildProperties buildProperties,
             IVsProjectThreadingService threadingService)
             : this(
                   vsHierarchyItem,
@@ -230,13 +230,13 @@ namespace NuGet.PackageManagement.VisualStudio
             await _threadingService.JoinableTaskFactory.SwitchToMainThreadAsync();
 
             var projectPath = FullName;
-            var platformIdentifier = BuildProperties.GetPropertyValue(
+            var platformIdentifier = BuildProperties.GetPropertyValueWithDteFallback(
                 ProjectBuildProperties.TargetPlatformIdentifier);
-            var platformVersion = BuildProperties.GetPropertyValue(
+            var platformVersion = BuildProperties.GetPropertyValueWithDteFallback(
                 ProjectBuildProperties.TargetPlatformVersion);
-            var platformMinVersion = BuildProperties.GetPropertyValue(
+            var platformMinVersion = BuildProperties.GetPropertyValueWithDteFallback(
                 ProjectBuildProperties.TargetPlatformMinVersion);
-            var targetFrameworkMoniker = BuildProperties.GetPropertyValue(
+            var targetFrameworkMoniker = BuildProperties.GetPropertyValueWithDteFallback(
                 ProjectBuildProperties.TargetFrameworkMoniker);
 
             // Projects supporting TargetFramework and TargetFrameworks are detected before

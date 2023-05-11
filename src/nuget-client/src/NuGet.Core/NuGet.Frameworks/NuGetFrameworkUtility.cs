@@ -15,7 +15,7 @@ namespace NuGet.Frameworks
         /// <param name="items">framework specific groups or items</param>
         /// <param name="framework">project target framework</param>
         /// <param name="selector">retrieves the framework from the group</param>
-        public static T GetNearest<T>(IEnumerable<T> items, NuGetFramework framework, Func<T, NuGetFramework> selector) where T : class
+        public static T? GetNearest<T>(IEnumerable<T> items, NuGetFramework framework, Func<T, NuGetFramework> selector) where T : class
         {
             return GetNearest<T>(items, framework, DefaultFrameworkNameProvider.Instance, DefaultCompatibilityProvider.Instance, selector);
         }
@@ -27,26 +27,15 @@ namespace NuGet.Frameworks
         /// <param name="framework">project target framework</param>
         /// <param name="selector">retrieves the framework from the group</param>
         /// <param name="frameworkMappings">framework mappings</param>
-        public static T GetNearest<T>(IEnumerable<T> items,
+        public static T? GetNearest<T>(IEnumerable<T> items,
             NuGetFramework framework,
             IFrameworkNameProvider frameworkMappings,
             IFrameworkCompatibilityProvider compatibilityProvider,
             Func<T, NuGetFramework> selector) where T : class
         {
-            if (framework == null)
-            {
-                throw new ArgumentNullException(nameof(framework));
-            }
-
-            if (frameworkMappings == null)
-            {
-                throw new ArgumentNullException(nameof(frameworkMappings));
-            }
-
-            if (compatibilityProvider == null)
-            {
-                throw new ArgumentNullException(nameof(compatibilityProvider));
-            }
+            if (framework == null) throw new ArgumentNullException(nameof(framework));
+            if (frameworkMappings == null) throw new ArgumentNullException(nameof(frameworkMappings));
+            if (compatibilityProvider == null) throw new ArgumentNullException(nameof(compatibilityProvider));
 
             if (items != null)
             {
@@ -67,7 +56,7 @@ namespace NuGet.Frameworks
         /// </summary>
         /// <param name="items">framework specific groups or items</param>
         /// <param name="framework">project target framework</param>
-        public static T GetNearest<T>(IEnumerable<T> items, NuGetFramework framework) where T : IFrameworkSpecific
+        public static T? GetNearest<T>(IEnumerable<T> items, NuGetFramework framework) where T : IFrameworkSpecific
         {
             return GetNearest<T>(items, framework, DefaultFrameworkNameProvider.Instance, DefaultCompatibilityProvider.Instance);
         }
@@ -77,25 +66,14 @@ namespace NuGet.Frameworks
         /// </summary>
         /// <param name="items">framework specific groups or items</param>
         /// <param name="framework">project target framework</param>
-        public static T GetNearest<T>(IEnumerable<T> items,
+        public static T? GetNearest<T>(IEnumerable<T> items,
                                         NuGetFramework framework,
                                         IFrameworkNameProvider frameworkMappings,
                                         IFrameworkCompatibilityProvider compatibilityProvider) where T : IFrameworkSpecific
         {
-            if (framework == null)
-            {
-                throw new ArgumentNullException(nameof(framework));
-            }
-
-            if (frameworkMappings == null)
-            {
-                throw new ArgumentNullException(nameof(frameworkMappings));
-            }
-
-            if (compatibilityProvider == null)
-            {
-                throw new ArgumentNullException(nameof(compatibilityProvider));
-            }
+            if (framework == null) throw new ArgumentNullException(nameof(framework));
+            if (frameworkMappings == null) throw new ArgumentNullException(nameof(frameworkMappings));
+            if (compatibilityProvider == null) throw new ArgumentNullException(nameof(compatibilityProvider));
 
             if (items != null)
             {
@@ -116,6 +94,9 @@ namespace NuGet.Frameworks
         /// </summary>
         public static bool IsCompatibleWithFallbackCheck(NuGetFramework projectFramework, NuGetFramework candidate)
         {
+            if (projectFramework is null) throw new ArgumentNullException(nameof(projectFramework));
+            if (candidate is null) throw new ArgumentNullException(nameof(candidate));
+
             var compatible = DefaultCompatibilityProvider.Instance.IsCompatible(projectFramework, candidate);
 
             if (!compatible)

@@ -3,7 +3,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using NuGet.Frameworks;
 using Xunit;
@@ -214,7 +213,7 @@ namespace NuGet.Test
             var result = reducer.GetNearest(project, frameworks);
 
             // Assert
-            Assert.Equal(expectedFramework, result.GetShortFolderName());
+            Assert.Equal(expectedFramework, result!.GetShortFolderName());
         }
 
         [Fact]
@@ -373,7 +372,7 @@ namespace NuGet.Test
             var result = reducer.GetNearest(project, frameworks);
 
             // Assert
-            Assert.Equal(expectedFramework, result.GetShortFolderName());
+            Assert.Equal(expectedFramework, result!.GetShortFolderName());
         }
 
         [Fact]
@@ -1067,7 +1066,7 @@ namespace NuGet.Test
 
             var result = reducer.GetNearest(projectFramework, frameworks);
 
-            Assert.Equal("net40", result.GetShortFolderName());
+            Assert.Equal("net40", result!.GetShortFolderName());
         }
 
         [Theory]

@@ -43,7 +43,7 @@ namespace NuGet.VisualStudio.Internal.Contracts
                 }
             }
 
-            return NuGetFramework.ParseComponents(frameworkName, platformName);
+            return NuGetFramework.ParseComponents(frameworkName!, platformName);
         }
 
         protected override void SerializeCore(ref MessagePackWriter writer, NuGetFramework value, MessagePackSerializerOptions options)

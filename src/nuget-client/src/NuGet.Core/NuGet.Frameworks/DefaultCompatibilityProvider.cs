@@ -10,7 +10,7 @@ namespace NuGet.Frameworks
         {
         }
 
-        private static IFrameworkCompatibilityProvider _instance;
+        private static IFrameworkCompatibilityProvider? _instance;
 
         public static IFrameworkCompatibilityProvider Instance
         {

@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
 
@@ -61,7 +62,7 @@ namespace NuGet.Frameworks
         private readonly List<NuGetFramework> _netStandardVersions;
         private readonly List<NuGetFramework> _compatibleCandidates;
 
-        public FrameworkNameProvider(IEnumerable<IFrameworkMappings> mappings, IEnumerable<IPortableFrameworkMappings> portableMappings)
+        public FrameworkNameProvider(IEnumerable<IFrameworkMappings>? mappings, IEnumerable<IPortableFrameworkMappings>? portableMappings)
         {
             _identifierSynonyms = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
             _identifierToShortName = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
@@ -93,7 +94,7 @@ namespace NuGet.Frameworks
         /// <summary>
         /// Converts a key using the mappings, or if the key is already converted, finds the normalized form.
         /// </summary>
-        private static bool TryConvertOrNormalize(string key, IDictionary<string, string> mappings, IDictionary<string, string> reverse, out string value)
+        private static bool TryConvertOrNormalize(string key, IDictionary<string, string> mappings, IDictionary<string, string> reverse, [NotNullWhen(true)] out string? value)
         {
             if (mappings.TryGetValue(key, out value))
             {
@@ -109,27 +110,27 @@ namespace NuGet.Frameworks
             return false;
         }
 
-        public bool TryGetIdentifier(string framework, out string identifier)
+        public bool TryGetIdentifier(string framework, [NotNullWhen(true)] out string? identifier)
         {
             return TryConvertOrNormalize(framework, _identifierSynonyms, _identifierToShortName, out identifier);
         }
 
-        public bool TryGetProfile(string frameworkIdentifier, string profileShortName, out string profile)
+        public bool TryGetProfile(string frameworkIdentifier, string profileShortName, [NotNullWhen(true)] out string? profile)
         {
             return TryConvertOrNormalize(profileShortName, _profileShortToLong, _profilesToShortName, out profile);
         }
 
-        public bool TryGetShortIdentifier(string identifier, out string identifierShortName)
+        public bool TryGetShortIdentifier(string identifier, [NotNullWhen(true)] out string? identifierShortName)
         {
             return TryConvertOrNormalize(identifier, _identifierToShortName, _identifierShortToLong, out identifierShortName);
         }
 
-        public bool TryGetShortProfile(string frameworkIdentifier, string profile, out string profileShortName)
+        public bool TryGetShortProfile(string frameworkIdentifier, string profile, [NotNullWhen(true)] out string? profileShortName)
         {
             return TryConvertOrNormalize(profile, _profilesToShortName, _profileShortToLong, out profileShortName);
         }
 
-        public bool TryGetVersion(string versionString, out Version version)
+        public bool TryGetVersion(string versionString, [NotNullWhen(true)] out Version? version)
         {
             version = null;
 
@@ -162,7 +163,7 @@ namespace NuGet.Frameworks
             return false;
         }
 
-        public bool TryGetPlatformVersion(string versionString, out Version version)
+        public bool TryGetPlatformVersion(string versionString, [NotNullWhen(true)] out Version? version)
         {
             version = null;
 
@@ -347,8 +348,7 @@ namespace NuGet.Frameworks
             {
                 var current = toProcess.Pop();
 
-                HashSet<NuGetFramework> currentEquivalent = null;
-                if (_equivalentFrameworks.TryGetValue(current, out currentEquivalent))
+                if (_equivalentFrameworks.TryGetValue(current, out HashSet<NuGetFramework>? currentEquivalent))
                 {
                     foreach (var equalFramework in currentEquivalent)
                     {
@@ -369,7 +369,7 @@ namespace NuGet.Frameworks
         {
             if (frameworks.Count > 0)
             {
-                NuGetFramework current = null;
+                NuGetFramework? current = null;
                 var remaining = frameworks.Count == 1 ? null : new HashSet<NuGetFramework>();
 
                 var isFirst = true;
@@ -382,16 +382,15 @@ namespace NuGet.Frameworks
                         continue;
                     }
 
-                    remaining.Add(fw);
+                    remaining!.Add(fw);
                 }
 
                 var equalFrameworks = new HashSet<NuGetFramework>();
                 // include ourselves
-                equalFrameworks.Add(current);
+                equalFrameworks.Add(current!);
 
                 // find all equivalent frameworks for the current one
-                HashSet<NuGetFramework> curFrameworks = null;
-                if (_equivalentFrameworks.TryGetValue(current, out curFrameworks))
+                if (_equivalentFrameworks.TryGetValue(current!, out HashSet<NuGetFramework>? curFrameworks))
                 {
                     UnionWith(equalFrameworks, curFrameworks);
                 }
@@ -421,9 +420,7 @@ namespace NuGet.Frameworks
 
         private HashSet<NuGetFramework> GetOptionalFrameworks(int profile)
         {
-            HashSet<NuGetFramework> frameworks = null;
-
-            if (_portableOptionalFrameworks.TryGetValue(profile, out frameworks))
+            if (_portableOptionalFrameworks.TryGetValue(profile, out HashSet<NuGetFramework>? frameworks))
             {
                 return frameworks;
             }
@@ -431,16 +428,15 @@ namespace NuGet.Frameworks
             return EmptyFrameworkSet;
         }
 
-        public bool TryGetPortableFrameworks(int profile, out IEnumerable<NuGetFramework> frameworks)
+        public bool TryGetPortableFrameworks(int profile, [NotNullWhen(true)] out IEnumerable<NuGetFramework>? frameworks)
         {
             return TryGetPortableFrameworks(profile, true, out frameworks);
         }
 
-        public bool TryGetPortableFrameworks(int profile, bool includeOptional, out IEnumerable<NuGetFramework> frameworks)
+        public bool TryGetPortableFrameworks(int profile, bool includeOptional, [NotNullWhen(true)] out IEnumerable<NuGetFramework>? frameworks)
         {
             var result = new HashSet<NuGetFramework>();
-            HashSet<NuGetFramework> tmpFrameworks = null;
-            if (_portableFrameworks.TryGetValue(profile, out tmpFrameworks))
+            if (_portableFrameworks.TryGetValue(profile, out HashSet<NuGetFramework>? tmpFrameworks))
             {
                 foreach (var fw in tmpFrameworks)
                 {
@@ -450,8 +446,7 @@ namespace NuGet.Frameworks
 
             if (includeOptional)
             {
-                HashSet<NuGetFramework> optional = null;
-                if (_portableOptionalFrameworks.TryGetValue(profile, out optional))
+                if (_portableOptionalFrameworks.TryGetValue(profile, out HashSet<NuGetFramework>? optional))
                 {
                     foreach (var fw in optional)
                     {
@@ -464,7 +459,7 @@ namespace NuGet.Frameworks
             return result.Count > 0;
         }
 
-        public bool TryGetPortableFrameworks(string shortPortableProfiles, out IEnumerable<NuGetFramework> frameworks)
+        public bool TryGetPortableFrameworks(string shortPortableProfiles, [NotNullWhen(true)] out IEnumerable<NuGetFramework>? frameworks)
         {
             if (shortPortableProfiles == null)
             {
@@ -494,10 +489,9 @@ namespace NuGet.Frameworks
             return result.Count > 0;
         }
 
-        public bool TryGetPortableCompatibilityMappings(int profile, out IEnumerable<FrameworkRange> supportedFrameworkRanges)
+        public bool TryGetPortableCompatibilityMappings(int profile, [NotNullWhen(true)] out IEnumerable<FrameworkRange>? supportedFrameworkRanges)
         {
-            HashSet<FrameworkRange> entries;
-            if (_portableCompatibilityMappings.TryGetValue(profile, out entries))
+            if (_portableCompatibilityMappings.TryGetValue(profile, out HashSet<FrameworkRange>? entries))
             {
                 supportedFrameworkRanges = entries;
                 return supportedFrameworkRanges.Any();
@@ -520,7 +514,7 @@ namespace NuGet.Frameworks
             return false;
         }
 
-        public bool TryGetPortableFrameworks(string profile, bool includeOptional, out IEnumerable<NuGetFramework> frameworks)
+        public bool TryGetPortableFrameworks(string profile, bool includeOptional, [NotNullWhen(true)] out IEnumerable<NuGetFramework>? frameworks)
         {
             // attempt to parse the profile for a number
             int profileNum;
@@ -539,13 +533,12 @@ namespace NuGet.Frameworks
             return TryGetPortableFrameworks(profile, out frameworks);
         }
 
-        public bool TryGetEquivalentFrameworks(NuGetFramework framework, out IEnumerable<NuGetFramework> frameworks)
+        public bool TryGetEquivalentFrameworks(NuGetFramework framework, [NotNullWhen(true)] out IEnumerable<NuGetFramework>? frameworks)
         {
             var result = new HashSet<NuGetFramework>();
 
             // add in all framework aliases
-            HashSet<NuGetFramework> eqFrameworks = null;
-            if (_equivalentFrameworks.TryGetValue(framework, out eqFrameworks))
+            if (_equivalentFrameworks.TryGetValue(framework, out HashSet<NuGetFramework>? eqFrameworks))
             {
                 foreach (var eqFw in eqFrameworks)
                 {
@@ -559,11 +552,9 @@ namespace NuGet.Frameworks
             // add in all profile aliases
             foreach (var fw in baseFrameworks)
             {
-                Dictionary<string, HashSet<string>> eqProfiles = null;
-                if (_equivalentProfiles.TryGetValue(fw.Framework, out eqProfiles))
+                if (_equivalentProfiles.TryGetValue(fw.Framework, out Dictionary<string, HashSet<string>>? eqProfiles))
                 {
-                    HashSet<string> matchingProfiles = null;
-                    if (eqProfiles.TryGetValue(fw.Profile, out matchingProfiles))
+                    if (eqProfiles.TryGetValue(fw.Profile, out HashSet<string>? matchingProfiles))
                     {
                         foreach (var eqProfile in matchingProfiles)
                         {
@@ -580,7 +571,7 @@ namespace NuGet.Frameworks
             return result.Count > 0;
         }
 
-        public bool TryGetEquivalentFrameworks(FrameworkRange range, out IEnumerable<NuGetFramework> frameworks)
+        public bool TryGetEquivalentFrameworks(FrameworkRange range, [NotNullWhen(true)] out IEnumerable<NuGetFramework>? frameworks)
         {
             if (range == null)
             {
@@ -598,8 +589,7 @@ namespace NuGet.Frameworks
 
             foreach (var framework in relevant)
             {
-                IEnumerable<NuGetFramework> values = null;
-                if (TryGetEquivalentFrameworks(framework, out values))
+                if (TryGetEquivalentFrameworks(framework, out IEnumerable<NuGetFramework>? values))
                 {
                     foreach (var val in values)
                     {
@@ -612,7 +602,7 @@ namespace NuGet.Frameworks
             return results.Count > 0;
         }
 
-        private void InitMappings(IEnumerable<IFrameworkMappings> mappings)
+        private void InitMappings(IEnumerable<IFrameworkMappings>? mappings)
         {
             if (mappings != null)
             {
@@ -651,7 +641,7 @@ namespace NuGet.Frameworks
             }
         }
 
-        private void InitPortableMappings(IEnumerable<IPortableFrameworkMappings> portableMappings)
+        private void InitPortableMappings(IEnumerable<IPortableFrameworkMappings>? portableMappings)
         {
             if (portableMappings != null)
             {
@@ -712,8 +702,7 @@ namespace NuGet.Frameworks
             {
                 foreach (var mapping in mappings)
                 {
-                    HashSet<OneWayCompatibilityMappingEntry> entries;
-                    if (!_compatibilityMappings.TryGetValue(mapping.TargetFrameworkRange.Min.Framework, out entries))
+                    if (!_compatibilityMappings.TryGetValue(mapping.TargetFrameworkRange.Min.Framework, out HashSet<OneWayCompatibilityMappingEntry>? entries))
                     {
                         entries = new HashSet<OneWayCompatibilityMappingEntry>(OneWayCompatibilityMappingEntry.Comparer);
                         _compatibilityMappings.Add(mapping.TargetFrameworkRange.Min.Framework, entries);
@@ -730,8 +719,7 @@ namespace NuGet.Frameworks
             {
                 foreach (var mapping in mappings)
                 {
-                    HashSet<string> subSets = null;
-                    if (!_subSetFrameworks.TryGetValue(mapping.Value, out subSets))
+                    if (!_subSetFrameworks.TryGetValue(mapping.Value, out HashSet<string>? subSets))
                     {
                         subSets = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
                         _subSetFrameworks.Add(mapping.Value, subSets);
@@ -756,24 +744,19 @@ namespace NuGet.Frameworks
                     var profile1 = profileMapping.Mapping.Key;
                     var profile2 = profileMapping.Mapping.Value;
 
-                    Dictionary<string, HashSet<string>> profileMappings = null;
-
-                    if (!_equivalentProfiles.TryGetValue(frameworkIdentifier, out profileMappings))
+                    if (!_equivalentProfiles.TryGetValue(frameworkIdentifier, out Dictionary<string, HashSet<string>>? profileMappings))
                     {
                         profileMappings = new Dictionary<string, HashSet<string>>(StringComparer.OrdinalIgnoreCase);
                         _equivalentProfiles.Add(frameworkIdentifier, profileMappings);
                     }
 
-                    HashSet<string> innerMappings1 = null;
-                    HashSet<string> innerMappings2 = null;
-
-                    if (!profileMappings.TryGetValue(profile1, out innerMappings1))
+                    if (!profileMappings.TryGetValue(profile1, out HashSet<string>? innerMappings1))
                     {
                         innerMappings1 = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
                         profileMappings.Add(profile1, innerMappings1);
                     }
 
-                    if (!profileMappings.TryGetValue(profile2, out innerMappings2))
+                    if (!profileMappings.TryGetValue(profile2, out HashSet<string>? innerMappings2))
                     {
                         innerMappings2 = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
                         profileMappings.Add(profile2, innerMappings2);
@@ -808,8 +791,7 @@ namespace NuGet.Frameworks
                             continue;
                         }
 
-                        HashSet<NuGetFramework> eqFrameworks;
-                        if (!_equivalentFrameworks.TryGetValue(next, out eqFrameworks))
+                        if (!_equivalentFrameworks.TryGetValue(next, out HashSet<NuGetFramework>? eqFrameworks))
                         {
                             // initialize set
                             eqFrameworks = new HashSet<NuGetFramework>();
@@ -895,9 +877,7 @@ namespace NuGet.Frameworks
             {
                 foreach (var pair in mappings)
                 {
-                    HashSet<NuGetFramework> frameworks = null;
-
-                    if (!_portableFrameworks.TryGetValue(pair.Key, out frameworks))
+                    if (!_portableFrameworks.TryGetValue(pair.Key, out HashSet<NuGetFramework>? frameworks))
                     {
                         frameworks = new HashSet<NuGetFramework>();
                         _portableFrameworks.Add(pair.Key, frameworks);
@@ -918,9 +898,7 @@ namespace NuGet.Frameworks
             {
                 foreach (var pair in mappings)
                 {
-                    HashSet<NuGetFramework> frameworks = null;
-
-                    if (!_portableOptionalFrameworks.TryGetValue(pair.Key, out frameworks))
+                    if (!_portableOptionalFrameworks.TryGetValue(pair.Key, out HashSet<NuGetFramework>? frameworks))
                     {
                         frameworks = new HashSet<NuGetFramework>();
                         _portableOptionalFrameworks.Add(pair.Key, frameworks);
@@ -940,8 +918,7 @@ namespace NuGet.Frameworks
             {
                 foreach (var mapping in mappings)
                 {
-                    HashSet<FrameworkRange> entries;
-                    if (!_portableCompatibilityMappings.TryGetValue(mapping.Key, out entries))
+                    if (!_portableCompatibilityMappings.TryGetValue(mapping.Key, out HashSet<FrameworkRange>? entries))
                     {
                         entries = new HashSet<FrameworkRange>(new FrameworkRangeComparer());
                         _portableCompatibilityMappings.Add(mapping.Key, entries);
@@ -967,10 +944,9 @@ namespace NuGet.Frameworks
             }
         }
 
-        public bool TryGetCompatibilityMappings(NuGetFramework framework, out IEnumerable<FrameworkRange> supportedFrameworkRanges)
+        public bool TryGetCompatibilityMappings(NuGetFramework framework, [NotNullWhen(true)] out IEnumerable<FrameworkRange>? supportedFrameworkRanges)
         {
-            HashSet<OneWayCompatibilityMappingEntry> entries;
-            if (_compatibilityMappings.TryGetValue(framework.Framework, out entries))
+            if (_compatibilityMappings.TryGetValue(framework.Framework, out HashSet<OneWayCompatibilityMappingEntry>? entries))
             {
                 supportedFrameworkRanges = entries.Where(m => m.TargetFrameworkRange.Satisfies(framework)).Select(m => m.SupportedFrameworkRange);
                 return supportedFrameworkRanges.Any();
@@ -980,10 +956,9 @@ namespace NuGet.Frameworks
             return false;
         }
 
-        public bool TryGetSubSetFrameworks(string frameworkIdentifier, out IEnumerable<string> subSetFrameworks)
+        public bool TryGetSubSetFrameworks(string frameworkIdentifier, [NotNullWhen(true)] out IEnumerable<string>? subSetFrameworks)
         {
-            HashSet<string> values = null;
-            if (_subSetFrameworks.TryGetValue(frameworkIdentifier, out values))
+            if (_subSetFrameworks.TryGetValue(frameworkIdentifier, out HashSet<string>? values))
             {
                 subSetFrameworks = values;
                 return true;
@@ -993,8 +968,12 @@ namespace NuGet.Frameworks
             return false;
         }
 
-        public int CompareFrameworks(NuGetFramework x, NuGetFramework y)
+        public int CompareFrameworks(NuGetFramework? x, NuGetFramework? y)
         {
+            if (x is null && y is null) return 0;
+            if (x is null) return -1;
+            if (y is null) return 1;
+
             // For the purposes of this compare do not treat netcore50 as packages based
             var xPackagesBased = x.IsPackageBased && !NuGetFrameworkUtility.IsNetCore50AndUp(x);
             var yPackagesBased = y.IsPackageBased && !NuGetFrameworkUtility.IsNetCore50AndUp(y);
@@ -1010,13 +989,17 @@ namespace NuGet.Frameworks
             return CompareUsingPrecedence(x, y, precedence);
         }
 
-        public int CompareEquivalentFrameworks(NuGetFramework x, NuGetFramework y)
+        public int CompareEquivalentFrameworks(NuGetFramework? x, NuGetFramework? y)
         {
             return CompareUsingPrecedence(x, y, _equivalentFrameworkPrecedence);
         }
 
-        private static int CompareUsingPrecedence(NuGetFramework x, NuGetFramework y, Dictionary<string, int> precedence)
+        private static int CompareUsingPrecedence(NuGetFramework? x, NuGetFramework? y, Dictionary<string, int> precedence)
         {
+            if (x is null && y is null) return 0;
+            if (x is null) return -1;
+            if (y is null) return 1;
+
             if (StringComparer.OrdinalIgnoreCase.Equals(x.Framework, y.Framework))
             {
                 return 0;
@@ -1040,10 +1023,8 @@ namespace NuGet.Frameworks
 
         public NuGetFramework GetShortNameReplacement(NuGetFramework framework)
         {
-            NuGetFramework result;
-
             // Replace the framework name if a rewrite exists
-            if (!_shortNameRewrites.TryGetValue(framework, out result))
+            if (!_shortNameRewrites.TryGetValue(framework, out NuGetFramework? result))
             {
                 result = framework;
             }
@@ -1053,10 +1034,8 @@ namespace NuGet.Frameworks
 
         public NuGetFramework GetFullNameReplacement(NuGetFramework framework)
         {
-            NuGetFramework result;
-
             // Replace the framework name if a rewrite exists
-            if (!_fullNameRewrites.TryGetValue(framework, out result))
+            if (!_fullNameRewrites.TryGetValue(framework, out NuGetFramework? result))
             {
                 result = framework;
             }
@@ -1135,8 +1114,7 @@ namespace NuGet.Frameworks
                     continue;
                 }
 
-                HashSet<string> subset;
-                if (_subSetFrameworks.TryGetValue(framework.Framework, out subset))
+                if (_subSetFrameworks.TryGetValue(framework.Framework, out HashSet<string>? subset))
                 {
                     foreach (var subFramework in subset)
                     {
@@ -1144,8 +1122,7 @@ namespace NuGet.Frameworks
                     }
                 }
 
-                HashSet<string> superset;
-                if (superSetFrameworks.TryGetValue(framework.Framework, out superset))
+                if (superSetFrameworks.TryGetValue(framework.Framework, out HashSet<string>? superset))
                 {
                     foreach (var superFramework in superset)
                     {

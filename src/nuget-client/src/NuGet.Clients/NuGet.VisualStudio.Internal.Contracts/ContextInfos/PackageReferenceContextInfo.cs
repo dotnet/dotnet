@@ -36,7 +36,8 @@ namespace NuGet.VisualStudio.Internal.Contracts
                 IsAutoReferenced = (packageReference as BuildIntegratedPackageReference)?.Dependency?.AutoReferenced == true,
                 AllowedVersions = packageReference.AllowedVersions,
                 IsUserInstalled = packageReference.IsUserInstalled,
-                IsDevelopmentDependency = packageReference.IsDevelopmentDependency
+                IsDevelopmentDependency = packageReference.IsDevelopmentDependency,
+                VersionOverride = (packageReference as BuildIntegratedPackageReference)?.Dependency?.VersionOverride
             };
 
             return packageReferenceContextInfo;
@@ -48,5 +49,6 @@ namespace NuGet.VisualStudio.Internal.Contracts
         public bool IsAutoReferenced { get; internal set; }
         public bool IsUserInstalled { get; internal set; }
         public bool IsDevelopmentDependency { get; internal set; }
+        public VersionRange? VersionOverride { get; internal set; }
     }
 }

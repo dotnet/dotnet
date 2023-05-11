@@ -59,8 +59,8 @@ namespace NuGet.PackageManagement.VisualStudio.Test
                 Directory.CreateDirectory(testMSBuildProjectExtensionsPath);
                 var projectAdapter = Mock.Of<IVsProjectAdapter>();
                 Mock.Get(projectAdapter)
-                    .Setup(x => x.GetMSBuildProjectExtensionsPathAsync())
-                    .Returns(Task.FromResult(testMSBuildProjectExtensionsPath));
+                    .Setup(x => x.GetMSBuildProjectExtensionsPath())
+                    .Returns(testMSBuildProjectExtensionsPath);
 
                 var testProject = new LegacyPackageReferenceProject(
                     projectAdapter,
@@ -76,7 +76,7 @@ namespace NuGet.PackageManagement.VisualStudio.Test
 
                 // Verify
                 Mock.Get(projectAdapter)
-                    .Verify(x => x.GetMSBuildProjectExtensionsPathAsync(), Times.AtLeastOnce);
+                    .Verify(x => x.GetMSBuildProjectExtensionsPath(), Times.AtLeastOnce);
             }
         }
 
@@ -113,8 +113,8 @@ namespace NuGet.PackageManagement.VisualStudio.Test
                 Directory.CreateDirectory(testMSBuildProjectExtensionsPath);
                 var projectAdapter = Mock.Of<IVsProjectAdapter>();
                 Mock.Get(projectAdapter)
-                    .Setup(x => x.GetMSBuildProjectExtensionsPathAsync())
-                    .Returns(Task.FromResult(testMSBuildProjectExtensionsPath));
+                    .Setup(x => x.GetMSBuildProjectExtensionsPath())
+                    .Returns(testMSBuildProjectExtensionsPath);
 
                 Mock.Get(projectAdapter)
                     .SetupGet(x => x.FullProjectPath)
@@ -134,7 +134,7 @@ namespace NuGet.PackageManagement.VisualStudio.Test
 
                 // Verify
                 Mock.Get(projectAdapter)
-                    .Verify(x => x.GetMSBuildProjectExtensionsPathAsync(), Times.AtLeastOnce);
+                    .Verify(x => x.GetMSBuildProjectExtensionsPath(), Times.AtLeastOnce);
             }
         }
 
@@ -169,8 +169,8 @@ namespace NuGet.PackageManagement.VisualStudio.Test
                 Directory.CreateDirectory(testMSBuildProjectExtensionsPath);
                 var projectAdapter = Mock.Of<IVsProjectAdapter>();
                 Mock.Get(projectAdapter)
-                    .Setup(x => x.GetMSBuildProjectExtensionsPathAsync())
-                    .Returns(Task.FromResult(testMSBuildProjectExtensionsPath));
+                    .Setup(x => x.GetMSBuildProjectExtensionsPath())
+                    .Returns(testMSBuildProjectExtensionsPath);
 
                 Mock.Get(projectAdapter)
                     .SetupGet(x => x.FullProjectPath)
@@ -190,7 +190,7 @@ namespace NuGet.PackageManagement.VisualStudio.Test
 
                 // Verify
                 Mock.Get(projectAdapter)
-                    .Verify(x => x.GetMSBuildProjectExtensionsPathAsync(), Times.AtLeastOnce);
+                    .Verify(x => x.GetMSBuildProjectExtensionsPath(), Times.AtLeastOnce);
             }
         }
 
@@ -288,19 +288,19 @@ namespace NuGet.PackageManagement.VisualStudio.Test
             // Arrange
             using (var testDirectory = TestDirectory.Create())
             {
-                var projectBuildProperties = new Mock<IProjectBuildProperties>();
+                var projectBuildProperties = new Mock<IVsProjectBuildProperties>();
                 var projectAdapter = CreateProjectAdapter(testDirectory, projectBuildProperties);
 
                 projectBuildProperties
-                    .Setup(x => x.GetPropertyValue(It.Is<string>(x => x.Equals(ProjectBuildProperties.RestorePackagesPath))))
+                    .Setup(x => x.GetPropertyValueWithDteFallback(It.Is<string>(x => x.Equals(ProjectBuildProperties.RestorePackagesPath))))
                     .Returns(restorePackagesPath);
 
                 projectBuildProperties
-                    .Setup(x => x.GetPropertyValue(It.Is<string>(x => x.Equals(ProjectBuildProperties.RestoreSources))))
+                    .Setup(x => x.GetPropertyValueWithDteFallback(It.Is<string>(x => x.Equals(ProjectBuildProperties.RestoreSources))))
                     .Returns(sources);
 
                 projectBuildProperties
-                    .Setup(x => x.GetPropertyValue(It.Is<string>(x => x.Equals(ProjectBuildProperties.RestoreFallbackFolders))))
+                    .Setup(x => x.GetPropertyValueWithDteFallback(It.Is<string>(x => x.Equals(ProjectBuildProperties.RestoreFallbackFolders))))
                     .Returns(fallbackFolders);
 
                 var projectServices = new TestProjectSystemServices();
@@ -352,19 +352,19 @@ namespace NuGet.PackageManagement.VisualStudio.Test
             // Arrange
             using (var testDirectory = TestDirectory.Create())
             {
-                var projectBuildProperties = new Mock<IProjectBuildProperties>();
+                var projectBuildProperties = new Mock<IVsProjectBuildProperties>();
                 var projectAdapter = CreateProjectAdapter(testDirectory, projectBuildProperties);
 
                 projectBuildProperties
-                    .Setup(x => x.GetPropertyValue(It.Is<string>(x => x.Equals(ProjectBuildProperties.RestorePackagesPath))))
+                    .Setup(x => x.GetPropertyValueWithDteFallback(It.Is<string>(x => x.Equals(ProjectBuildProperties.RestorePackagesPath))))
                     .Returns(restorePackagesPath);
 
                 projectBuildProperties
-                    .Setup(x => x.GetPropertyValue(It.Is<string>(x => x.Equals(ProjectBuildProperties.RestoreSources))))
+                    .Setup(x => x.GetPropertyValueWithDteFallback(It.Is<string>(x => x.Equals(ProjectBuildProperties.RestoreSources))))
                     .Returns(sources);
 
                 projectBuildProperties
-                    .Setup(x => x.GetPropertyValue(It.Is<string>(x => x.Equals(ProjectBuildProperties.RestoreFallbackFolders))))
+                    .Setup(x => x.GetPropertyValueWithDteFallback(It.Is<string>(x => x.Equals(ProjectBuildProperties.RestoreFallbackFolders))))
                     .Returns(fallbackFolders);
 
                 var projectServices = new TestProjectSystemServices();
@@ -412,11 +412,11 @@ namespace NuGet.PackageManagement.VisualStudio.Test
             // Arrange
             using (var testDirectory = TestDirectory.Create())
             {
-                var projectBuildProperties = new Mock<IProjectBuildProperties>();
+                var projectBuildProperties = new Mock<IVsProjectBuildProperties>();
                 var projectAdapter = CreateProjectAdapter(testDirectory, projectBuildProperties);
 
                 projectBuildProperties
-                    .Setup(x => x.GetPropertyValue(It.Is<string>(x => x.Equals(ProjectBuildProperties.PackageTargetFallback))))
+                    .Setup(x => x.GetPropertyValueWithDteFallback(It.Is<string>(x => x.Equals(ProjectBuildProperties.PackageTargetFallback))))
                     .Returns("portable-net45+win8;dnxcore50");
 
                 var testProject = new LegacyPackageReferenceProject(
@@ -758,19 +758,19 @@ namespace NuGet.PackageManagement.VisualStudio.Test
             // Arrange
             using (var testDirectory = TestDirectory.Create())
             {
-                var projectBuildProperties = new Mock<IProjectBuildProperties>();
+                var projectBuildProperties = new Mock<IVsProjectBuildProperties>();
                 var projectAdapter = CreateProjectAdapter(testDirectory, projectBuildProperties);
 
                 projectBuildProperties
-                    .Setup(x => x.GetPropertyValue(It.Is<string>(x => x.Equals(ProjectBuildProperties.RestorePackagesWithLockFile))))
+                    .Setup(x => x.GetPropertyValueWithDteFallback(It.Is<string>(x => x.Equals(ProjectBuildProperties.RestorePackagesWithLockFile))))
                     .Returns(restorePackagesWithLockFile);
 
                 projectBuildProperties
-                    .Setup(x => x.GetPropertyValue(It.Is<string>(x => x.Equals(ProjectBuildProperties.NuGetLockFilePath))))
+                    .Setup(x => x.GetPropertyValueWithDteFallback(It.Is<string>(x => x.Equals(ProjectBuildProperties.NuGetLockFilePath))))
                     .Returns(lockFilePath);
 
                 projectBuildProperties
-                    .Setup(x => x.GetPropertyValue(It.Is<string>(x => x.Equals(ProjectBuildProperties.RestoreLockedMode))))
+                    .Setup(x => x.GetPropertyValueWithDteFallback(It.Is<string>(x => x.Equals(ProjectBuildProperties.RestoreLockedMode))))
                     .Returns(restoreLockedMode.ToString());
 
                 var projectServices = new TestProjectSystemServices();
@@ -1452,19 +1452,19 @@ namespace NuGet.PackageManagement.VisualStudio.Test
             // Arrange
             using (var testDirectory = TestDirectory.Create())
             {
-                var projectBuildProperties = new Mock<IProjectBuildProperties>();
+                var projectBuildProperties = new Mock<IVsProjectBuildProperties>();
                 var projectAdapter = CreateProjectAdapter(testDirectory, projectBuildProperties);
 
                 projectBuildProperties
-                    .Setup(x => x.GetPropertyValue(It.Is<string>(x => x.Equals(ProjectBuildProperties.RuntimeIdentifier))))
+                    .Setup(x => x.GetPropertyValueWithDteFallback(It.Is<string>(x => x.Equals(ProjectBuildProperties.RuntimeIdentifier))))
                     .Returns(runtimeIdentifier);
 
                 projectBuildProperties
-                    .Setup(x => x.GetPropertyValue(It.Is<string>(x => x.Equals(ProjectBuildProperties.RuntimeIdentifiers))))
+                    .Setup(x => x.GetPropertyValueWithDteFallback(It.Is<string>(x => x.Equals(ProjectBuildProperties.RuntimeIdentifiers))))
                     .Returns(runtimeIdentifiers);
 
                 projectBuildProperties
-                    .Setup(x => x.GetPropertyValue(It.Is<string>(x => x.Equals(ProjectBuildProperties.RuntimeSupports))))
+                    .Setup(x => x.GetPropertyValueWithDteFallback(It.Is<string>(x => x.Equals(ProjectBuildProperties.RuntimeSupports))))
                     .Returns(runtimeSupports);
 
                 var projectServices = new TestProjectSystemServices();
@@ -1524,20 +1524,20 @@ namespace NuGet.PackageManagement.VisualStudio.Test
             // Arrange
             using var testDirectory = TestDirectory.Create();
 
-            var projectBuildProperties = new Mock<IProjectBuildProperties>();
+            var projectBuildProperties = new Mock<IVsProjectBuildProperties>();
             var projectAdapter = CreateProjectAdapter(testDirectory, projectBuildProperties);
 
             projectBuildProperties
-                .Setup(x => x.GetPropertyValue(It.Is<string>(x => x.Equals(ProjectBuildProperties.NoWarn))))
+                .Setup(x => x.GetPropertyValueWithDteFallback(It.Is<string>(x => x.Equals(ProjectBuildProperties.NoWarn))))
                 .Returns("NU1504");
             projectBuildProperties
-               .Setup(x => x.GetPropertyValue(It.Is<string>(x => x.Equals(ProjectBuildProperties.TreatWarningsAsErrors))))
+               .Setup(x => x.GetPropertyValueWithDteFallback(It.Is<string>(x => x.Equals(ProjectBuildProperties.TreatWarningsAsErrors))))
                .Returns("true");
             projectBuildProperties
-                .Setup(x => x.GetPropertyValue(It.Is<string>(x => x.Equals(ProjectBuildProperties.WarningsNotAsErrors))))
+                .Setup(x => x.GetPropertyValueWithDteFallback(It.Is<string>(x => x.Equals(ProjectBuildProperties.WarningsNotAsErrors))))
                 .Returns("NU1801");
             projectBuildProperties
-                .Setup(x => x.GetPropertyValue(It.Is<string>(x => x.Equals(ProjectBuildProperties.WarningsAsErrors))))
+                .Setup(x => x.GetPropertyValueWithDteFallback(It.Is<string>(x => x.Equals(ProjectBuildProperties.WarningsAsErrors))))
                 .Returns("NU1803");
 
             var projectServices = new TestProjectSystemServices();

@@ -117,6 +117,7 @@ NuGet members may contribute directly to the main remote.
 
 - [Workflow](docs/workflow.md)
 - [Coding Guidelines](docs/coding-guidelines.md)
+- [UI Guidelines](docs/ui-guidelines.md)
 - [Project Overview](docs/project-overview.md)
 - [Debugging](docs/debugging.md)
 - [New Feature Guide](docs/feature-guide.md)

@@ -3,6 +3,7 @@
 
 #nullable enable
 
+using System.IO;
 using NuGet.Common;
 using NuGet.ProjectModel;
 
@@ -13,13 +14,13 @@ namespace NuGet.VisualStudio.SolutionExplorer.Models
     /// </summary>
     internal readonly struct AssetsFileLogMessage
     {
-        public AssetsFileLogMessage(IAssetsLogMessage logMessage)
+        public AssetsFileLogMessage(string projectFilePath, IAssetsLogMessage logMessage)
         {
             Code = logMessage.Code;
             Level = logMessage.Level;
             WarningLevel = logMessage.WarningLevel;
             Message = logMessage.Message;
-            LibraryName = logMessage.LibraryId;
+            LibraryName = NormalizeLibraryName(logMessage.LibraryId, projectFilePath);
         }
 
         public NuGetLogCode Code { get; }
@@ -28,13 +29,27 @@ namespace NuGet.VisualStudio.SolutionExplorer.Models
         public string Message { get; }
         public string LibraryName { get; }
 
-        public bool Equals(IAssetsLogMessage other)
+        public bool Equals(IAssetsLogMessage other, string projectFilePath)
         {
             return other.Code == Code
                 && other.Level == Level
                 && other.WarningLevel == WarningLevel
                 && other.Message == Message
-                && other.LibraryId == LibraryName;
+                && NormalizeLibraryName(other.LibraryId, projectFilePath) == LibraryName;
+        }
+
+        private static string NormalizeLibraryName(string libraryName, string projectFilePath)
+        {
+            // If we have a rooted path for the library in the messages, it is an unresolved project reference.
+            // Other identifiers for this item will be a relative path with respect to the project.
+            // So, we compute that relative path here such that it will match correctly. This enables us to
+            // display diagnostic items beneath unresolved project references in Solution Explorer.
+            if (Path.IsPathRooted(libraryName))
+            {
+                return PathUtility.GetRelativePath(projectFilePath, libraryName);
+            }
+
+            return libraryName;
         }
 
         public override string ToString() => $"{Level} {Code} ({LibraryName}) {Message}";

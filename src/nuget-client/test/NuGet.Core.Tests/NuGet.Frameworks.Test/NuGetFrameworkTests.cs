@@ -134,8 +134,8 @@ namespace NuGet.Test
         public void EqualityOperator_ReturnTrueIfBothFrameworksAreNull()
         {
             // Arrange
-            NuGetFramework framework1 = null;
-            NuGetFramework framework2 = null;
+            NuGetFramework? framework1 = null;
+            NuGetFramework? framework2 = null;
 
             // Act and Assert
             Assert.True(framework1 == framework2);
@@ -159,8 +159,8 @@ namespace NuGet.Test
         public void InequalityOperator_ReturnFalseIfBothFrameworksAreNull()
         {
             // Arrange
-            NuGetFramework framework1 = null;
-            NuGetFramework framework2 = null;
+            NuGetFramework? framework1 = null;
+            NuGetFramework? framework2 = null;
 
             // Act and Assert
             Assert.False(framework1 != framework2);
@@ -217,7 +217,7 @@ namespace NuGet.Test
         {
             // Arrange
             var framework1 = NuGetFramework.Parse(frameworkName);
-            NuGetFramework framework2 = null;
+            NuGetFramework? framework2 = null;
 
             // Act and Assert
             Assert.False(framework1 == framework2);
@@ -243,7 +243,7 @@ namespace NuGet.Test
         {
             // Arrange
             var framework1 = NuGetFramework.Parse(frameworkName);
-            NuGetFramework framework2 = null;
+            NuGetFramework? framework2 = null;
 
             // Act and Assert
             Assert.True(framework1 != framework2);
