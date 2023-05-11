@@ -1,8 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project>
   <PropertyGroup>
-    <arcadeGitCommitHash>08f0d9daf5c5a422b5a22db601ee9fde7068c7ff</arcadeGitCommitHash>
-    <arcadeOutputPackageVersion>8.0.0-beta.23259.5</arcadeOutputPackageVersion>
+    <arcadeGitCommitHash>1f8ffd35f5f4af2fd1c309c36f4dfcf7cffda4f6</arcadeGitCommitHash>
+    <arcadeOutputPackageVersion>8.0.0-beta.23260.3</arcadeOutputPackageVersion>
     <aspnetcoreGitCommitHash>220b05497fc1deffb3480e59e361a5fffa25db78</aspnetcoreGitCommitHash>
     <aspnetcoreOutputPackageVersion>8.0.0-preview.5.23260.10</aspnetcoreOutputPackageVersion>
     <cecilGitCommitHash>c32f0be86d4e72dfc0967ef08913889cfdbc8dc4</cecilGitCommitHash>
@@ -19,7 +19,7 @@
     <formatOutputPackageVersion>8.0.426001</formatOutputPackageVersion>
     <fsharpGitCommitHash>dd9c7d9c3987ad625fdc47977a838cf98621c034</fsharpGitCommitHash>
     <fsharpOutputPackageVersion>7.0.400-beta.23260.1</fsharpOutputPackageVersion>
-    <installerGitCommitHash>c64ec64fbaa076b8a4b153ed67353405739dbc20</installerGitCommitHash>
+    <installerGitCommitHash>d4c1ee276e4a92746b003ff706e6b6bba477bc0d</installerGitCommitHash>
     <installerOutputPackageVersion>8.0.100</installerOutputPackageVersion>
     <msbuildGitCommitHash>7f4bef8b46b3ebc275219ec936837ebf9f32c148</msbuildGitCommitHash>
     <msbuildOutputPackageVersion>17.7.0-preview-23260-01</msbuildOutputPackageVersion>
@@ -51,7 +51,7 @@
     <vstestOutputPackageVersion>17.7.0-preview.23260.2</vstestOutputPackageVersion>
     <xdtGitCommitHash>9a1c3e1b7f0c8763d4c96e593961a61a72679a7b</xdtGitCommitHash>
     <xdtOutputPackageVersion>7.0.0-preview.22423.2</xdtOutputPackageVersion>
-    <xlifftasksGitCommitHash>40d8321047961765c1f4ff62070e4fc72e7b48c4</xlifftasksGitCommitHash>
-    <xlifftasksOutputPackageVersion>1.0.0-beta.23256.1</xlifftasksOutputPackageVersion>
+    <xlifftasksGitCommitHash>d1dd46c475ca2599bcbb1637548b0be2513b83c3</xlifftasksGitCommitHash>
+    <xlifftasksOutputPackageVersion>1.0.0-beta.23259.1</xlifftasksOutputPackageVersion>
   </PropertyGroup>
 </Project>
