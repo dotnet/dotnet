@@ -42,7 +42,8 @@
     <!-- Don't warn on CS0618 - Type is obsolete. -->
     <!-- Don't warn on CS0649 - The field is never assigned to. -->
     <!-- Don't warn on CS3001, CS3002, CS3003, CS3008, CS3009 - Type is not CLS-compliant. -->
-    <NoWarn>$(NoWarn);NU1603,NU1605,NU5125,CS0109,CS0169,CS0618,CS0649,CS3001,CS3002,CS3003,CS3008,CS3009</NoWarn>
+    <!-- Don't warn on CS0659 - Type overrides Object.Equals(object o) but does not override Object.GetHashCode(). -->
+    <NoWarn>$(NoWarn);NU1603,NU1605,NU5125,CS0109,CS0169,CS0618,CS0649,CS3001,CS3002,CS3003,CS3008,CS3009;CS0659</NoWarn>
 
     <!--
       Disable CS0108: generated source code is missing "new" when hiding inherited member.
