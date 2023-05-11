@@ -3,11 +3,11 @@
 namespace __GeneratedComponent
 {
     #line hidden
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Threading.Tasks;
-    using Microsoft.AspNetCore.Components;
+    using global::System;
+    using global::System.Collections.Generic;
+    using global::System.Linq;
+    using global::System.Threading.Tasks;
+    using global::Microsoft.AspNetCore.Components;
     public partial class AspNetCore_d3c3d6059615673cb46fc4974164d61eabadb890 : global::Microsoft.AspNetCore.Components.ComponentBase, IDisposable
     {
         #pragma warning disable 219

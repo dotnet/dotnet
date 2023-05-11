@@ -56,7 +56,10 @@ namespace AspNetCore
 #line hidden
 #nullable disable
             WriteLiteral("<div TestCssScope class=\"text-center\">\r\n    <h1 TestCssScope class=\"display-4\">Welcome</h1>\r\n    <p TestCssScope>Learn about<a TestCssScope href= \"https://docs.microsoft.com/aspnet/core\" > building Web apps with ASP.NET Core</a>.</p>\r\n</div>\r\n");
-            __tagHelperExecutionContext = __tagHelperScopeManager.Begin("all", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.StartTagAndEndTag, "test", async() => {
+            __tagHelperExecutionContext = __tagHelperScopeManager.Begin("all", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.StartTagAndEndTag, "test", 
+            #pragma warning disable 1998
+            async() => {
+                #pragma warning restore 1998
             }
             );
             __AllTagHelper = CreateTagHelper<global::AllTagHelper>();
@@ -71,7 +74,10 @@ namespace AspNetCore
             Write(__tagHelperExecutionContext.Output);
             __tagHelperExecutionContext = __tagHelperScopeManager.End();
             WriteLiteral("\r\n");
-            __tagHelperExecutionContext = __tagHelperScopeManager.Begin("form", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.StartTagAndEndTag, "test", async() => {
+            __tagHelperExecutionContext = __tagHelperScopeManager.Begin("form", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.StartTagAndEndTag, "test", 
+            #pragma warning disable 1998
+            async() => {
+                #pragma warning restore 1998
                 WriteLiteral("\r\n  <input TestCssScope name=\"regular input\" />\r\n");
             }
             );

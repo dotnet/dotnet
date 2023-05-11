@@ -12,6 +12,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.LanguageServer.Test.Common.Extensions;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
 using Microsoft.CodeAnalysis.Host.Mef;
@@ -33,7 +34,7 @@ internal class CSharpTestLspServerHelpers
         CancellationToken cancellationToken) =>
         CreateCSharpLspServerAsync(csharpSourceText, csharpDocumentUri, serverCapabilities, new EmptyMappingService(), cancellationToken);
 
-    public static async Task<CSharpTestLspServer> CreateCSharpLspServerAsync(
+    public static Task<CSharpTestLspServer> CreateCSharpLspServerAsync(
         SourceText csharpSourceText,
         Uri csharpDocumentUri,
         ServerCapabilities serverCapabilities,
@@ -42,12 +43,19 @@ internal class CSharpTestLspServerHelpers
     {
         var files = new[]
         {
-            new CSharpFile(csharpDocumentUri, csharpSourceText)
+            (csharpDocumentUri, csharpSourceText)
         };
+
+        return CreateCSharpLspServerAsync(files, serverCapabilities, razorSpanMappingService, cancellationToken);
+    }
+
+    public static async Task<CSharpTestLspServer> CreateCSharpLspServerAsync(IEnumerable<(Uri Uri, SourceText SourceText)> files, ServerCapabilities serverCapabilities, IRazorSpanMappingService razorSpanMappingService, CancellationToken cancellationToken)
+    {
+        var cSharpFiles = files.Select(f => new CSharpFile(f.Uri, f.SourceText));
 
         var exportProvider = RoslynTestCompositions.Roslyn.ExportProviderFactory.CreateExportProvider();
         var metadataReferences = await ReferenceAssemblies.Default.ResolveAsync(language: LanguageNames.CSharp, cancellationToken);
-        var workspace = CreateCSharpTestWorkspace(files, exportProvider, metadataReferences, razorSpanMappingService);
+        var workspace = CreateCSharpTestWorkspace(cSharpFiles, exportProvider, metadataReferences, razorSpanMappingService);
         var clientCapabilities = new VSInternalClientCapabilities
         {
             SupportsVisualStudioExtensions = true,

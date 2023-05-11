@@ -1138,6 +1138,37 @@ namespace Test
         Assert.Empty(generated.Diagnostics);
     }
 
+    [Fact, WorkItem("https://github.com/dotnet/razor/issues/7395")]
+    public void Component_WithEditorRequiredParameter_ValueSpecifiedUsingBind()
+    {
+        AdditionalSyntaxTrees.Add(Parse("""
+            using System;
+            using Microsoft.AspNetCore.Components;
+
+            namespace Test;
+
+            public class ComponentWithEditorRequiredParameters : ComponentBase
+            {
+                [Parameter]
+                [EditorRequired]
+                public string Property1 { get; set; }
+            }
+            """));
+
+        var generated = CompileToCSharp("""
+            <ComponentWithEditorRequiredParameters @bind-Property1="myField" />
+
+            @code {
+                private string myField = "Some Value";
+            }
+            """);
+
+        AssertDocumentNodeMatchesBaseline(generated.CodeDocument);
+        AssertCSharpDocumentMatchesBaseline(generated.CodeDocument);
+        CompileToAssembly(generated);
+        Assert.Empty(generated.Diagnostics);
+    }
+
     [Fact]
     public void Component_WithEditorRequiredChildContent_NoValueSpecified()
     {
@@ -6723,7 +6754,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact] // https://github.com/dotnet/razor/issues/7103
+    [Fact, WorkItem("https://github.com/dotnet/razor/issues/7103")]
     public void CascadingGenericInference_ParameterInNamespace()
     {
         // Arrange
@@ -6791,6 +6822,40 @@ namespace Test
         // Assert
         AssertDocumentNodeMatchesBaseline(generated.CodeDocument);
         AssertCSharpDocumentMatchesBaseline(generated.CodeDocument);
+        CompileToAssembly(generated);
+    }
+
+    [Fact, WorkItem("https://github.com/dotnet/razor/issues/7428")]
+    public void CascadingGenericInference_NullableEnabled()
+    {
+        // Arrange
+        AdditionalSyntaxTrees.Add(Parse("""
+            using Microsoft.AspNetCore.Components;
+
+            namespace Test;
+
+            [CascadingTypeParameter(nameof(TRow))]
+            public class Parent<TRow>: ComponentBase
+            {
+                [Parameter]
+                public RenderFragment<TRow>? ChildContent { get; set; }
+            }
+
+            public class Child<TRow> : ComponentBase
+            {
+                [Parameter]
+                public RenderFragment<TRow>? ChildContent { get; set; }
+            }
+            """));
+
+        // Act
+        var generated = CompileToCSharp("""
+            <Parent TRow="string">
+                <Child Context="childContext">@childContext.Length</Child>
+            </Parent>
+            """, nullableEnable: true);
+
+        // Assert
         CompileToAssembly(generated);
     }
 
@@ -9029,6 +9094,18 @@ namespace New.Test
         // Assert
         AssertDocumentNodeMatchesBaseline(generated.CodeDocument);
         AssertCSharpDocumentMatchesBaseline(generated.CodeDocument);
+        CompileToAssembly(generated);
+    }
+
+    [Fact, WorkItem("https://github.com/dotnet/razor/issues/7091")]
+    public void Component_NamespaceDirective_ContainsSystem()
+    {
+        // Act
+        var generated = CompileToCSharp("""
+            @namespace X.System.Y
+            """);
+
+        // Assert
         CompileToAssembly(generated);
     }
 

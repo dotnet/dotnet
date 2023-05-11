@@ -100,7 +100,7 @@ public class DefaultDocumentSnapshotTest : WorkspaceTestBase
         var codeDocument = await _componentCshtmlDocument.GetGeneratedOutputAsync();
 
         // Assert
-        Assert.Contains("using Microsoft.AspNetCore.Components", codeDocument.GetCSharpSourceText().ToString(), StringComparison.Ordinal);
+        Assert.Contains("using global::Microsoft.AspNetCore.Components", codeDocument.GetCSharpSourceText().ToString(), StringComparison.Ordinal);
     }
 
     [Fact]

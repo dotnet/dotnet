@@ -196,7 +196,14 @@ internal class ComponentLoweringPass : ComponentIntermediateNodePassBase, IRazor
                 {
                     return true;
                 }
-                else if (child is ComponentChildContentIntermediateNode childContent && attributeName == childContent.AttributeName)
+                if (child is ComponentChildContentIntermediateNode childContent && attributeName == childContent.AttributeName)
+                {
+                    return true;
+                }
+                const string bindPrefix = "@bind-";
+                if (child is TagHelperDirectiveAttributeIntermediateNode { OriginalAttributeName: { } originalAttributeName } &&
+                    originalAttributeName.StartsWith(bindPrefix, StringComparison.Ordinal) &&
+                    originalAttributeName.AsSpan()[bindPrefix.Length..].Equals(attributeName.AsSpan(), StringComparison.Ordinal))
                 {
                     return true;
                 }

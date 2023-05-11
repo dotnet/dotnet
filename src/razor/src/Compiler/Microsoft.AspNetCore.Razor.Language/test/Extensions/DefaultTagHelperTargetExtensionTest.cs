@@ -111,7 +111,10 @@ public class DefaultTagHelperTargetExtensionTest : RazorProjectEngineTestBase
         // Assert
         var csharp = context.CodeWriter.GenerateCode();
         Assert.Equal(
-@"__tagHelperExecutionContext = __tagHelperScopeManager.Begin(""p"", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.SelfClosing, ""test"", async() => {
+@"__tagHelperExecutionContext = __tagHelperScopeManager.Begin(""p"", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.SelfClosing, ""test"", 
+#pragma warning disable 1998
+async() => {
+    #pragma warning restore 1998
     Render Children
 }
 );

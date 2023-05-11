@@ -7,6 +7,7 @@ import * as vscode from 'vscode';
 import { SerializableTextDocumentIdentifier } from './../RPC/SerializableTextDocumentIdentifier';
 
 export interface SerializableFormattingParams {
+    hostDocumentVersion: number;
     textDocument: SerializableTextDocumentIdentifier;
     options: vscode.FormattingOptions;
 }

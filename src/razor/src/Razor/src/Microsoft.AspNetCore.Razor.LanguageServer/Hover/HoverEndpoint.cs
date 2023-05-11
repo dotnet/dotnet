@@ -70,9 +70,11 @@ internal sealed class HoverEndpoint : AbstractRazorDelegatingEndpoint<TextDocume
             return null;
         }
 
-        // Sometimes what looks like a html attribute can actually map to C#, in which case its better to let Roslyn try to handle this.
         var codeDocument = await documentContext.GetCodeDocumentAsync(cancellationToken).ConfigureAwait(false);
-        if (_documentMappingService.TryMapToProjectedDocumentPosition(codeDocument.GetCSharpDocument(), projection.AbsoluteIndex, out _, out _))
+
+        // Sometimes what looks like a html attribute can actually map to C#, in which case its better to let Roslyn try to handle this.
+        // We can only do this if we're in single server mode though, otherwise we won't be delegating to Roslyn at all
+        if (SingleServerSupport && _documentMappingService.TryMapToProjectedDocumentPosition(codeDocument.GetCSharpDocument(), projection.AbsoluteIndex, out _, out _))
         {
             return null;
         }

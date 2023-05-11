@@ -6,7 +6,7 @@
     [Parameter]
     public RenderFragment<(MyClass I1, MyStruct I2, TParam P)> Template { get; set; }
 |
-Generated Location: (1551:52,7 [169] )
+Generated Location: (1591:52,7 [169] )
 |
     [Parameter]
     public TParam InferParam { get; set; }

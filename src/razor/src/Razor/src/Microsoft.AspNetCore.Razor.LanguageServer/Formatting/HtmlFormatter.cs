@@ -41,7 +41,7 @@ internal class HtmlFormatter
             return Array.Empty<TextEdit>();
         }
 
-        var @params = new VersionedDocumentFormattingParams()
+        var @params = new RazorDocumentFormattingParams()
         {
             TextDocument = new TextDocumentIdentifier
             {
@@ -52,7 +52,7 @@ internal class HtmlFormatter
         };
 
         var result = await _server.SendRequestAsync<DocumentFormattingParams, RazorDocumentFormattingResponse?>(
-            LanguageServerConstants.RazorDocumentFormattingEndpoint,
+            RazorLanguageServerCustomMessageTargets.RazorHtmlFormattingEndpoint,
             @params,
             cancellationToken);
 
@@ -80,7 +80,7 @@ internal class HtmlFormatter
         };
 
         var result = await _server.SendRequestAsync<RazorDocumentOnTypeFormattingParams, RazorDocumentFormattingResponse?>(
-            LanguageServerConstants.RazorDocumentOnTypeFormattingEndpoint,
+            RazorLanguageServerCustomMessageTargets.RazorHtmlOnTypeFormattingEndpoint,
             @params,
             cancellationToken);
 

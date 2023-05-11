@@ -166,6 +166,30 @@ public class RazorWorkspaceListenerTest
         Assert.Equal(2, listener.SerializeCalls[project.Id]);
     }
 
+    [Fact]
+    public async Task ProjectAddedAndRemoved_DeferredInitialization_NoTasks()
+    {
+        using var workspace = new AdhocWorkspace(CodeAnalysis.Host.Mef.MefHostServices.DefaultHost);
+
+        using var listener = new TestRazorWorkspaceListener();
+
+        var project = workspace.AddProject("TestProject", LanguageNames.CSharp);
+
+        var newSolution = project.Solution.RemoveProject(project.Id);
+        Assert.True(workspace.TryApplyChanges(newSolution));
+
+        // Initialize everything now, in a deferred manner
+        listener.EnsureInitialized(workspace, "temp.json");
+        listener.NotifyDynamicFile(project.Id);
+
+        // We can't wait for debounce here, because it won't happen, but if we don't wait for _something_ we won't know
+        // if the test fails, so a delay is annoyingly necessary.
+        await Task.Delay(500);
+
+        Assert.Empty(listener.SerializeCalls);
+    }
+
+
     private class TestRazorWorkspaceListener : RazorWorkspaceListener
     {
         private ConcurrentDictionary<ProjectId, int> _serializeCalls = new();

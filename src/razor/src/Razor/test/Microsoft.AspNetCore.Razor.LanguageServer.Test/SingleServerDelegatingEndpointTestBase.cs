@@ -4,6 +4,8 @@
 #nullable disable
 
 using System;
+using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
@@ -12,12 +14,14 @@ using Microsoft.AspNetCore.Razor.LanguageServer.CodeActions.Models;
 using Microsoft.AspNetCore.Razor.LanguageServer.Common;
 using Microsoft.AspNetCore.Razor.LanguageServer.Diagnostics;
 using Microsoft.AspNetCore.Razor.LanguageServer.EndpointContracts;
+using Microsoft.AspNetCore.Razor.LanguageServer.Folding;
 using Microsoft.AspNetCore.Razor.LanguageServer.Protocol;
 using Microsoft.AspNetCore.Razor.LanguageServer.Test.Common;
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.AspNetCore.Razor.Test.Common.Mef;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Razor.Workspaces.Extensions;
+using Microsoft.CodeAnalysis.Text;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Moq;
 using Xunit;
@@ -45,15 +49,29 @@ public abstract class SingleServerDelegatingEndpointTestBase : LanguageServerTes
     {
     }
 
-    protected async Task CreateLanguageServerAsync(RazorCodeDocument codeDocument, string razorFilePath)
+    protected async Task CreateLanguageServerAsync(RazorCodeDocument codeDocument, string razorFilePath, IEnumerable<(string, string)> additionalRazorDocuments = null)
     {
         var realLanguageServerFeatureOptions = new DefaultLanguageServerFeatureOptions();
 
         var csharpSourceText = codeDocument.GetCSharpSourceText();
         var csharpDocumentUri = new Uri(realLanguageServerFeatureOptions.GetRazorCSharpFilePath(razorFilePath));
+
+        var csharpFiles = new List<(Uri, SourceText)>();
+        csharpFiles.Add((csharpDocumentUri, csharpSourceText));
+        if (additionalRazorDocuments is not null)
+        {
+            foreach ((var filePath, var contents) in additionalRazorDocuments)
+            {
+                var additionalDocument = CreateCodeDocument(contents, filePath: filePath);
+                var additionalDocumentSourceText = additionalDocument.GetCSharpSourceText();
+                var additionalDocumentUri = new Uri(realLanguageServerFeatureOptions.GetRazorCSharpFilePath("C:/path/to/" + filePath));
+
+                csharpFiles.Add((additionalDocumentUri, additionalDocumentSourceText));
+            }
+        }
+
         var csharpServer = await CSharpTestLspServerHelpers.CreateCSharpLspServerAsync(
-            csharpSourceText,
-            csharpDocumentUri,
+            csharpFiles,
             new VSInternalServerCapabilities
             {
                 SupportsDiagnosticRequests = true,
@@ -115,6 +133,7 @@ public abstract class SingleServerDelegatingEndpointTestBase : LanguageServerTes
                 RazorLanguageServerCustomMessageTargets.RazorProvideCodeActionsEndpoint => await HandleProvideCodeActionsAsync(@params),
                 RazorLanguageServerCustomMessageTargets.RazorResolveCodeActionsEndpoint => await HandleResolveCodeActionsAsync(@params),
                 RazorLanguageServerCustomMessageTargets.RazorPullDiagnosticEndpointName => await HandlePullDiagnosticsAsync(@params),
+                RazorLanguageServerCustomMessageTargets.RazorFoldingRangeEndpoint => await HandleFoldingRangeAsync(@params),
                 _ => throw new NotImplementedException($"I don't know how to handle the '{method}' method.")
             };
 
@@ -139,6 +158,11 @@ public abstract class SingleServerDelegatingEndpointTestBase : LanguageServerTes
                 _cancellationToken);
 
             return new RazorPullDiagnosticResponse(result, Array.Empty<VSInternalDiagnosticReport>());
+        }
+
+        private Task<RazorFoldingRangeResponse> HandleFoldingRangeAsync<TParams>(TParams @params)
+        {
+            return Task.FromResult(new RazorFoldingRangeResponse(ImmutableArray<FoldingRange>.Empty, ImmutableArray<FoldingRange>.Empty));
         }
 
         private async Task<VSInternalCodeAction> HandleResolveCodeActionsAsync<TParams>(TParams @params)

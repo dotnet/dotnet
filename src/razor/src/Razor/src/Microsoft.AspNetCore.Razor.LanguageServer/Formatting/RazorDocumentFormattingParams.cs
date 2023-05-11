@@ -7,8 +7,8 @@ using Microsoft.VisualStudio.LanguageServer.Protocol;
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Formatting;
 
 [DataContract]
-internal class VersionedDocumentFormattingParams : DocumentFormattingParams
+internal class RazorDocumentFormattingParams : DocumentFormattingParams
 {
-    [DataMember(Name = "_vs_hostDocumentVersion")]
+    [DataMember(Name = "hostDocumentVersion")]
     public int HostDocumentVersion { get; set; }
 }

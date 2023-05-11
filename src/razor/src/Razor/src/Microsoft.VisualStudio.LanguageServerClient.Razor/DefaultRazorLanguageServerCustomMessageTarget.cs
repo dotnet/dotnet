@@ -179,9 +179,9 @@ internal class DefaultRazorLanguageServerCustomMessageTarget : RazorLanguageServ
             state: null);
     }
 
-    public override async Task<RazorDocumentRangeFormattingResponse> RazorDocumentFormattingAsync(VersionedDocumentFormattingParams request, CancellationToken cancellationToken)
+    public override async Task<RazorDocumentFormattingResponse> HtmlFormattingAsync(RazorDocumentFormattingParams request, CancellationToken cancellationToken)
     {
-        var response = new RazorDocumentRangeFormattingResponse() { Edits = Array.Empty<TextEdit>() };
+        var response = new RazorDocumentFormattingResponse() { Edits = Array.Empty<TextEdit>() };
 
         await _joinableTaskFactory.SwitchToMainThreadAsync(cancellationToken);
 
@@ -218,9 +218,9 @@ internal class DefaultRazorLanguageServerCustomMessageTarget : RazorLanguageServ
         return response;
     }
 
-    public override async Task<RazorDocumentRangeFormattingResponse> HtmlOnTypeFormattingAsync(RazorDocumentOnTypeFormattingParams request, CancellationToken cancellationToken)
+    public override async Task<RazorDocumentFormattingResponse> HtmlOnTypeFormattingAsync(RazorDocumentOnTypeFormattingParams request, CancellationToken cancellationToken)
     {
-        var response = new RazorDocumentRangeFormattingResponse() { Edits = Array.Empty<TextEdit>() };
+        var response = new RazorDocumentFormattingResponse() { Edits = Array.Empty<TextEdit>() };
 
         var hostDocumentUri = request.TextDocument.Uri;
 
@@ -245,63 +245,6 @@ internal class DefaultRazorLanguageServerCustomMessageTarget : RazorLanguageServ
         var edits = await _requestInvoker.ReinvokeRequestOnServerAsync<DocumentOnTypeFormattingParams, TextEdit[]>(
             textBuffer,
             Methods.TextDocumentOnTypeFormattingName,
-            languageServerName,
-            formattingParams,
-            cancellationToken).ConfigureAwait(false);
-
-        response.Edits = edits?.Response ?? Array.Empty<TextEdit>();
-
-        return response;
-    }
-
-    public override async Task<RazorDocumentRangeFormattingResponse> RazorRangeFormattingAsync(RazorDocumentRangeFormattingParams request, CancellationToken cancellationToken)
-    {
-        var response = new RazorDocumentRangeFormattingResponse() { Edits = Array.Empty<TextEdit>() };
-
-        if (request.Kind == RazorLanguageKind.Razor)
-        {
-            return response;
-        }
-
-        await _joinableTaskFactory.SwitchToMainThreadAsync(cancellationToken);
-
-        var hostDocumentUri = new Uri(request.HostDocumentFilePath);
-        var (synchronized, csharpDocument) = await _documentSynchronizer.TrySynchronizeVirtualDocumentAsync<CSharpVirtualDocumentSnapshot>(
-            request.HostDocumentVersion,
-            hostDocumentUri,
-            cancellationToken);
-
-        string languageServerName;
-        Uri projectedUri;
-
-        if (!synchronized)
-        {
-            // Document could not be synchronized
-            return response;
-        }
-
-        if (request.Kind == RazorLanguageKind.CSharp)
-        {
-            languageServerName = RazorLSPConstants.RazorCSharpLanguageServerName;
-            projectedUri = csharpDocument.Uri;
-        }
-        else
-        {
-            Debug.Fail("Unexpected RazorLanguageKind. This can't really happen in a real scenario.");
-            return response;
-        }
-
-        var formattingParams = new DocumentRangeFormattingParams()
-        {
-            TextDocument = new TextDocumentIdentifier() { Uri = projectedUri },
-            Range = request.ProjectedRange,
-            Options = request.Options
-        };
-
-        var textBuffer = csharpDocument.Snapshot.TextBuffer;
-        var edits = await _requestInvoker.ReinvokeRequestOnServerAsync<DocumentRangeFormattingParams, TextEdit[]>(
-            textBuffer,
-            Methods.TextDocumentRangeFormattingName,
             languageServerName,
             formattingParams,
             cancellationToken).ConfigureAwait(false);
