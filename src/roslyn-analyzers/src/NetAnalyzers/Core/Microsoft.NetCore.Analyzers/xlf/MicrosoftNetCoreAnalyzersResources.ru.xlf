@@ -47,6 +47,26 @@
         <target state="translated">Синтаксический анализ строковых литералов атрибута должен осуществляться правильно</target>
         <note />
       </trans-unit>
+      <trans-unit id="AvoidConstArraysCodeFixTitle">
+        <source>Extract to static readonly field</source>
+        <target state="translated">Извлечь в поле "static readonly"</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AvoidConstArraysDescription">
+        <source>Constant arrays passed as arguments are not reused which implies a performance overhead. Consider extracting them to 'static readonly' fields to improve performance.</source>
+        <target state="translated">Константные массивы, переданные в качестве аргументов, не используются повторно, что приводит к снижению производительности. Рассмотрите возможность извлечения их в статические поля "static readonly", чтобы повысить производительность.</target>
+        <note>{Locked="static readonly"}</note>
+      </trans-unit>
+      <trans-unit id="AvoidConstArraysMessage">
+        <source>Prefer 'static readonly' fields over local constant array arguments</source>
+        <target state="translated">Отдавайте предпочтение полям "static readonly", а не аргументам локального константного массива</target>
+        <note>{Locked="static readonly"}</note>
+      </trans-unit>
+      <trans-unit id="AvoidConstArraysTitle">
+        <source>Avoid constant arrays as arguments</source>
+        <target state="translated">Избегайте использования константных массивов в качестве аргументов</target>
+        <note />
+      </trans-unit>
       <trans-unit id="AvoidStringBuilderPInvokeParametersDescription">
         <source>Marshalling of 'StringBuilder' always creates a native buffer copy, resulting in multiple allocations for one marshalling operation.</source>
         <target state="translated">При маршалировании "StringBuilder" всегда создается собственная копия буфера, что приводит к множественным выделениям для одной операции маршалирования.</target>

@@ -47,6 +47,26 @@
         <target state="translated">Literais de cadeias de caracteres de atributos devem ser analisados corretamente</target>
         <note />
       </trans-unit>
+      <trans-unit id="AvoidConstArraysCodeFixTitle">
+        <source>Extract to static readonly field</source>
+        <target state="translated">Extrair para o campo somente leitura estático</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AvoidConstArraysDescription">
+        <source>Constant arrays passed as arguments are not reused which implies a performance overhead. Consider extracting them to 'static readonly' fields to improve performance.</source>
+        <target state="translated">Matrizes constantes passadas como argumentos não são reutilizadas, o que implica em uma sobrecarga de desempenho. Considere extraí-los para campos 'static readonly' para melhorar o desempenho.</target>
+        <note>{Locked="static readonly"}</note>
+      </trans-unit>
+      <trans-unit id="AvoidConstArraysMessage">
+        <source>Prefer 'static readonly' fields over local constant array arguments</source>
+        <target state="translated">Prefira campos 'static readonly' em vez de argumentos de matriz de constante local</target>
+        <note>{Locked="static readonly"}</note>
+      </trans-unit>
+      <trans-unit id="AvoidConstArraysTitle">
+        <source>Avoid constant arrays as arguments</source>
+        <target state="translated">Evite matrizes constantes como argumentos</target>
+        <note />
+      </trans-unit>
       <trans-unit id="AvoidStringBuilderPInvokeParametersDescription">
         <source>Marshalling of 'StringBuilder' always creates a native buffer copy, resulting in multiple allocations for one marshalling operation.</source>
         <target state="translated">O marshaling de 'StringBuilder' sempre cria uma cópia de buffer nativo, resultando em várias alocações para uma operação de marshalling.</target>
