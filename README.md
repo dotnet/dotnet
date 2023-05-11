@@ -173,11 +173,11 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/emsdk`  
 *[dotnet/emsdk@ab09b0b](https://github.com/dotnet/emsdk/commit/ab09b0b8d6768d58e09c033beea1570d4ca74c1f)*
 - `src/format`  
-*[dotnet/format@e0b29ac](https://github.com/dotnet/format/commit/e0b29ac3a8798c511bc98d1bdd479b8e32ee99f9)*
+*[dotnet/format@1eac0a6](https://github.com/dotnet/format/commit/1eac0a692f691cb4b2080e5d62921a1b41feea39)*
 - `src/fsharp`  
 *[dotnet/fsharp@dd9c7d9](https://github.com/dotnet/fsharp/commit/dd9c7d9c3987ad625fdc47977a838cf98621c034)*
 - `src/installer`  
-*[dotnet/installer@d4c1ee2](https://github.com/dotnet/installer/commit/d4c1ee276e4a92746b003ff706e6b6bba477bc0d)*
+*[dotnet/installer@681f0aa](https://github.com/dotnet/installer/commit/681f0aab20a3964eec8df02d24bd0f1589743a8a)*
 - `src/msbuild`  
 *[dotnet/msbuild@7f4bef8](https://github.com/dotnet/msbuild/commit/7f4bef8b46b3ebc275219ec936837ebf9f32c148)*
 - `src/nuget-client`  
@@ -193,7 +193,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/runtime`  
 *[dotnet/runtime@888bac3](https://github.com/dotnet/runtime/commit/888bac304442e1a6883cfb922d21a74df910112d)*
 - `src/sdk`  
-*[dotnet/sdk@a663257](https://github.com/dotnet/sdk/commit/a663257e795a69f53dec6c0e2437492afb4567c2)*
+*[dotnet/sdk@77f9aae](https://github.com/dotnet/sdk/commit/77f9aaec2c4ea6dd392c72a28cd610bbf6fdfb30)*
 - `src/source-build-externals`  
 *[dotnet/source-build-externals@89d4778](https://github.com/dotnet/source-build-externals/commit/89d4778cc9ed6063be7a2f92266bfc2952d95fdc)*
     - `src/source-build-externals/src/application-insights`  
@@ -215,7 +215,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/sourcelink`  
 *[dotnet/sourcelink@47c52dd](https://github.com/dotnet/sourcelink/commit/47c52dd2ebf9edfd40abdcff999c13eb461f6ce2)*
 - `src/symreader`  
-*[dotnet/symreader@0c29b71](https://github.com/dotnet/symreader/commit/0c29b7109c054bdc578e917515ae7e8635b9cb9d)*
+*[dotnet/symreader@2c8079e](https://github.com/dotnet/symreader/commit/2c8079e2e8e78c0cd11ac75a32014756136ecdb9)*
 - `src/templating`  
 *[dotnet/templating@e0edbb1](https://github.com/dotnet/templating/commit/e0edbb12c30897999b6b658b4c542b9ee933b448)*
 - `src/test-templates`  
