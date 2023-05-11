@@ -40,13 +40,13 @@
 [assembly: System.Reflection.AssemblyCompany("Microsoft Corporation")]
 [assembly: System.Reflection.AssemblyConfiguration("Release")]
 [assembly: System.Reflection.AssemblyCopyright("© Microsoft Corporation. All rights reserved.")]
-[assembly: System.Reflection.AssemblyFileVersion("4.400.22.56111")]
-[assembly: System.Reflection.AssemblyInformationalVersion("4.4.0-6.22561.11+1ce8866c9de4c2d67351ef6863699dee03b0804a")]
+[assembly: System.Reflection.AssemblyFileVersion("4.500.23.10905")]
+[assembly: System.Reflection.AssemblyInformationalVersion("4.5.0-6.23109.5+6a5a63bbc9f4449d9bd1e95a8f9624939c3ccdc3")]
 [assembly: System.Reflection.AssemblyProduct("Microsoft.CodeAnalysis.CSharp")]
 [assembly: System.Reflection.AssemblyTitle("Microsoft.CodeAnalysis.CSharp")]
 [assembly: System.Reflection.AssemblyMetadata("RepositoryUrl", "https://github.com/dotnet/roslyn")]
 [assembly: System.Resources.NeutralResourcesLanguage("en-US")]
-[assembly: System.Reflection.AssemblyVersionAttribute("4.4.0.0")]
+[assembly: System.Reflection.AssemblyVersionAttribute("4.5.0.0")]
 [assembly: System.Runtime.CompilerServices.ReferenceAssembly]
 [assembly: System.Reflection.AssemblyFlagsAttribute((System.Reflection.AssemblyNameFlags)0x70)]
 namespace Microsoft.CodeAnalysis
@@ -62,6 +62,8 @@ namespace Microsoft.CodeAnalysis
 
         public static bool Any<TNode>(this SyntaxList<TNode> list, CSharp.SyntaxKind kind)
             where TNode : SyntaxNode { throw null; }
+
+        public static bool ContainsDirective(this SyntaxNode node, CSharp.SyntaxKind kind) { throw null; }
 
         public static int IndexOf(this SyntaxTokenList list, CSharp.SyntaxKind kind) { throw null; }
 
@@ -185,6 +187,8 @@ namespace Microsoft.CodeAnalysis.CSharp
 
     public sealed partial class CSharpCommandLineArguments : CommandLineArguments
     {
+        internal CSharpCommandLineArguments() { }
+
         public new CSharpCompilationOptions CompilationOptions { get { throw null; } }
 
         protected override CompilationOptions CompilationOptionsCore { get { throw null; } }
@@ -196,6 +200,8 @@ namespace Microsoft.CodeAnalysis.CSharp
 
     public partial class CSharpCommandLineParser : CommandLineParser
     {
+        internal CSharpCommandLineParser() { }
+
         public static CSharpCommandLineParser Default { get { throw null; } }
 
         protected override string RegularFileExtension { get { throw null; } }
@@ -211,6 +217,8 @@ namespace Microsoft.CodeAnalysis.CSharp
 
     public sealed partial class CSharpCompilation : Compilation
     {
+        internal CSharpCompilation() { }
+
         protected override IAssemblySymbol CommonAssembly { get { throw null; } }
 
         protected override ITypeSymbol CommonDynamicType { get { throw null; } }
@@ -518,6 +526,8 @@ namespace Microsoft.CodeAnalysis.CSharp
 
     public partial class CSharpDiagnosticFormatter : DiagnosticFormatter
     {
+        internal CSharpDiagnosticFormatter() { }
+
         public static CSharpDiagnosticFormatter Instance { get { throw null; } }
     }
 
@@ -737,6 +747,8 @@ namespace Microsoft.CodeAnalysis.CSharp
 
     public sealed partial class CSharpGeneratorDriver : GeneratorDriver
     {
+        internal CSharpGeneratorDriver() { }
+
         public static CSharpGeneratorDriver Create(params IIncrementalGenerator[] incrementalGenerators) { throw null; }
 
         public static CSharpGeneratorDriver Create(params ISourceGenerator[] generators) { throw null; }
@@ -791,6 +803,8 @@ namespace Microsoft.CodeAnalysis.CSharp
 
     public sealed partial class CSharpScriptCompilationInfo : ScriptCompilationInfo
     {
+        internal CSharpScriptCompilationInfo() { }
+
         public new CSharpCompilation? PreviousScriptCompilation { get { throw null; } }
 
         public CSharpScriptCompilationInfo WithPreviousScriptCompilation(CSharpCompilation? compilation) { throw null; }
@@ -798,6 +812,8 @@ namespace Microsoft.CodeAnalysis.CSharp
 
     public abstract partial class CSharpSyntaxNode : SyntaxNode, System.IFormattable
     {
+        internal CSharpSyntaxNode() { }
+
         public override string Language { get { throw null; } }
 
         protected override SyntaxTree SyntaxTreeCore { get { throw null; } }
@@ -1441,8 +1457,6 @@ namespace Microsoft.CodeAnalysis.CSharp
 
     public abstract partial class CSharpSyntaxVisitor
     {
-        protected CSharpSyntaxVisitor() { }
-
         public virtual void DefaultVisit(SyntaxNode node) { }
 
         public virtual void Visit(SyntaxNode? node) { }
@@ -1926,8 +1940,6 @@ namespace Microsoft.CodeAnalysis.CSharp
 
     public abstract partial class CSharpSyntaxVisitor<TResult>
     {
-        protected CSharpSyntaxVisitor() { }
-
         public virtual TResult? DefaultVisit(SyntaxNode node) { throw null; }
 
         public virtual TResult? Visit(SyntaxNode? node) { throw null; }
@@ -3615,7 +3627,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         public static Syntax.ArgumentListSyntax ParseArgumentList(string text, int offset = 0, ParseOptions? options = null, bool consumeFullText = true) { throw null; }
 
-        public static Syntax.AttributeArgumentListSyntax ParseAttributeArgumentList(string text, int offset = 0, ParseOptions? options = null, bool consumeFullText = true) { throw null; }
+        public static Syntax.AttributeArgumentListSyntax? ParseAttributeArgumentList(string text, int offset = 0, ParseOptions? options = null, bool consumeFullText = true) { throw null; }
 
         public static Syntax.BracketedArgumentListSyntax ParseBracketedArgumentList(string text, int offset = 0, ParseOptions? options = null, bool consumeFullText = true) { throw null; }
 
@@ -5008,6 +5020,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 {
     public sealed partial class AccessorDeclarationSyntax : CSharpSyntaxNode
     {
+        internal AccessorDeclarationSyntax() { }
+
         public SyntaxList<AttributeListSyntax> AttributeLists { get { throw null; } }
 
         public BlockSyntax? Body { get { throw null; } }
@@ -5052,6 +5066,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class AccessorListSyntax : CSharpSyntaxNode
     {
+        internal AccessorListSyntax() { }
+
         public SyntaxList<AccessorDeclarationSyntax> Accessors { get { throw null; } }
 
         public SyntaxToken CloseBraceToken { get { throw null; } }
@@ -5076,6 +5092,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class AliasQualifiedNameSyntax : NameSyntax
     {
+        internal AliasQualifiedNameSyntax() { }
+
         public IdentifierNameSyntax Alias { get { throw null; } }
 
         public SyntaxToken ColonColonToken { get { throw null; } }
@@ -5098,6 +5116,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public abstract partial class AnonymousFunctionExpressionSyntax : ExpressionSyntax
     {
+        internal AnonymousFunctionExpressionSyntax() { }
+
         public abstract SyntaxToken AsyncKeyword { get; }
         public abstract BlockSyntax? Block { get; }
 
@@ -5125,6 +5145,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class AnonymousMethodExpressionSyntax : AnonymousFunctionExpressionSyntax
     {
+        internal AnonymousMethodExpressionSyntax() { }
+
         public override SyntaxToken AsyncKeyword { get { throw null; } }
 
         public override BlockSyntax Block { get { throw null; } }
@@ -5173,6 +5195,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class AnonymousObjectCreationExpressionSyntax : ExpressionSyntax
     {
+        internal AnonymousObjectCreationExpressionSyntax() { }
+
         public SyntaxToken CloseBraceToken { get { throw null; } }
 
         public SeparatedSyntaxList<AnonymousObjectMemberDeclaratorSyntax> Initializers { get { throw null; } }
@@ -5201,6 +5225,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class AnonymousObjectMemberDeclaratorSyntax : CSharpSyntaxNode
     {
+        internal AnonymousObjectMemberDeclaratorSyntax() { }
+
         public ExpressionSyntax Expression { get { throw null; } }
 
         public NameEqualsSyntax? NameEquals { get { throw null; } }
@@ -5219,6 +5245,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class ArgumentListSyntax : BaseArgumentListSyntax
     {
+        internal ArgumentListSyntax() { }
+
         public override SeparatedSyntaxList<ArgumentSyntax> Arguments { get { throw null; } }
 
         public SyntaxToken CloseParenToken { get { throw null; } }
@@ -5243,6 +5271,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class ArgumentSyntax : CSharpSyntaxNode
     {
+        internal ArgumentSyntax() { }
+
         public ExpressionSyntax Expression { get { throw null; } }
 
         public NameColonSyntax? NameColon { get { throw null; } }
@@ -5269,6 +5299,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class ArrayCreationExpressionSyntax : ExpressionSyntax
     {
+        internal ArrayCreationExpressionSyntax() { }
+
         public InitializerExpressionSyntax? Initializer { get { throw null; } }
 
         public SyntaxToken NewKeyword { get { throw null; } }
@@ -5293,6 +5325,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class ArrayRankSpecifierSyntax : CSharpSyntaxNode
     {
+        internal ArrayRankSpecifierSyntax() { }
+
         public SyntaxToken CloseBracketToken { get { throw null; } }
 
         public SyntaxToken OpenBracketToken { get { throw null; } }
@@ -5319,6 +5353,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class ArrayTypeSyntax : TypeSyntax
     {
+        internal ArrayTypeSyntax() { }
+
         public TypeSyntax ElementType { get { throw null; } }
 
         public SyntaxList<ArrayRankSpecifierSyntax> RankSpecifiers { get { throw null; } }
@@ -5339,6 +5375,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class ArrowExpressionClauseSyntax : CSharpSyntaxNode
     {
+        internal ArrowExpressionClauseSyntax() { }
+
         public SyntaxToken ArrowToken { get { throw null; } }
 
         public ExpressionSyntax Expression { get { throw null; } }
@@ -5357,6 +5395,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class AssignmentExpressionSyntax : ExpressionSyntax
     {
+        internal AssignmentExpressionSyntax() { }
+
         public ExpressionSyntax Left { get { throw null; } }
 
         public SyntaxToken OperatorToken { get { throw null; } }
@@ -5379,6 +5419,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class AttributeArgumentListSyntax : CSharpSyntaxNode
     {
+        internal AttributeArgumentListSyntax() { }
+
         public SeparatedSyntaxList<AttributeArgumentSyntax> Arguments { get { throw null; } }
 
         public SyntaxToken CloseParenToken { get { throw null; } }
@@ -5403,6 +5445,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class AttributeArgumentSyntax : CSharpSyntaxNode
     {
+        internal AttributeArgumentSyntax() { }
+
         public ExpressionSyntax Expression { get { throw null; } }
 
         public NameColonSyntax? NameColon { get { throw null; } }
@@ -5425,6 +5469,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class AttributeListSyntax : CSharpSyntaxNode
     {
+        internal AttributeListSyntax() { }
+
         public SeparatedSyntaxList<AttributeSyntax> Attributes { get { throw null; } }
 
         public SyntaxToken CloseBracketToken { get { throw null; } }
@@ -5453,6 +5499,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class AttributeSyntax : CSharpSyntaxNode
     {
+        internal AttributeSyntax() { }
+
         public AttributeArgumentListSyntax? ArgumentList { get { throw null; } }
 
         public NameSyntax Name { get { throw null; } }
@@ -5473,6 +5521,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class AttributeTargetSpecifierSyntax : CSharpSyntaxNode
     {
+        internal AttributeTargetSpecifierSyntax() { }
+
         public SyntaxToken ColonToken { get { throw null; } }
 
         public SyntaxToken Identifier { get { throw null; } }
@@ -5491,6 +5541,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class AwaitExpressionSyntax : ExpressionSyntax
     {
+        internal AwaitExpressionSyntax() { }
+
         public SyntaxToken AwaitKeyword { get { throw null; } }
 
         public ExpressionSyntax Expression { get { throw null; } }
@@ -5509,6 +5561,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class BadDirectiveTriviaSyntax : DirectiveTriviaSyntax
     {
+        internal BadDirectiveTriviaSyntax() { }
+
         public override SyntaxToken EndOfDirectiveToken { get { throw null; } }
 
         public override SyntaxToken HashToken { get { throw null; } }
@@ -5535,6 +5589,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public abstract partial class BaseArgumentListSyntax : CSharpSyntaxNode
     {
+        internal BaseArgumentListSyntax() { }
+
         public abstract SeparatedSyntaxList<ArgumentSyntax> Arguments { get; }
 
         public BaseArgumentListSyntax AddArguments(params ArgumentSyntax[] items) { throw null; }
@@ -5544,6 +5600,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public abstract partial class BaseCrefParameterListSyntax : CSharpSyntaxNode
     {
+        internal BaseCrefParameterListSyntax() { }
+
         public abstract SeparatedSyntaxList<CrefParameterSyntax> Parameters { get; }
 
         public BaseCrefParameterListSyntax AddParameters(params CrefParameterSyntax[] items) { throw null; }
@@ -5553,6 +5611,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public abstract partial class BaseExpressionColonSyntax : CSharpSyntaxNode
     {
+        internal BaseExpressionColonSyntax() { }
+
         public abstract SyntaxToken ColonToken { get; }
         public abstract ExpressionSyntax Expression { get; }
 
@@ -5563,6 +5623,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class BaseExpressionSyntax : InstanceExpressionSyntax
     {
+        internal BaseExpressionSyntax() { }
+
         public SyntaxToken Token { get { throw null; } }
 
         public override void Accept(CSharpSyntaxVisitor visitor) { }
@@ -5577,6 +5639,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public abstract partial class BaseFieldDeclarationSyntax : MemberDeclarationSyntax
     {
+        internal BaseFieldDeclarationSyntax() { }
+
         public abstract override SyntaxList<AttributeListSyntax> AttributeLists { get; }
         public abstract VariableDeclarationSyntax Declaration { get; }
         public abstract override SyntaxTokenList Modifiers { get; }
@@ -5599,6 +5663,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class BaseListSyntax : CSharpSyntaxNode
     {
+        internal BaseListSyntax() { }
+
         public SyntaxToken ColonToken { get { throw null; } }
 
         public SeparatedSyntaxList<BaseTypeSyntax> Types { get { throw null; } }
@@ -5619,6 +5685,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public abstract partial class BaseMethodDeclarationSyntax : MemberDeclarationSyntax
     {
+        internal BaseMethodDeclarationSyntax() { }
+
         public abstract override SyntaxList<AttributeListSyntax> AttributeLists { get; }
         public abstract BlockSyntax? Body { get; }
         public abstract ArrowExpressionClauseSyntax? ExpressionBody { get; }
@@ -5651,6 +5719,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public abstract partial class BaseNamespaceDeclarationSyntax : MemberDeclarationSyntax
     {
+        internal BaseNamespaceDeclarationSyntax() { }
+
         public abstract SyntaxList<ExternAliasDirectiveSyntax> Externs { get; }
         public abstract SyntaxList<MemberDeclarationSyntax> Members { get; }
         public abstract NameSyntax Name { get; }
@@ -5684,6 +5754,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public abstract partial class BaseObjectCreationExpressionSyntax : ExpressionSyntax
     {
+        internal BaseObjectCreationExpressionSyntax() { }
+
         public abstract ArgumentListSyntax? ArgumentList { get; }
         public abstract InitializerExpressionSyntax? Initializer { get; }
         public abstract SyntaxToken NewKeyword { get; }
@@ -5699,6 +5771,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public abstract partial class BaseParameterListSyntax : CSharpSyntaxNode
     {
+        internal BaseParameterListSyntax() { }
+
         public abstract SeparatedSyntaxList<ParameterSyntax> Parameters { get; }
 
         public BaseParameterListSyntax AddParameters(params ParameterSyntax[] items) { throw null; }
@@ -5708,6 +5782,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public abstract partial class BaseParameterSyntax : CSharpSyntaxNode
     {
+        internal BaseParameterSyntax() { }
+
         public abstract SyntaxList<AttributeListSyntax> AttributeLists { get; }
         public abstract SyntaxTokenList Modifiers { get; }
         public abstract TypeSyntax? Type { get; }
@@ -5725,6 +5801,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public abstract partial class BasePropertyDeclarationSyntax : MemberDeclarationSyntax
     {
+        internal BasePropertyDeclarationSyntax() { }
+
         public abstract AccessorListSyntax? AccessorList { get; }
         public abstract override SyntaxList<AttributeListSyntax> AttributeLists { get; }
         public abstract ExplicitInterfaceSpecifierSyntax? ExplicitInterfaceSpecifier { get; }
@@ -5750,6 +5828,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public abstract partial class BaseTypeDeclarationSyntax : MemberDeclarationSyntax
     {
+        internal BaseTypeDeclarationSyntax() { }
+
         public abstract BaseListSyntax? BaseList { get; }
         public abstract SyntaxToken CloseBraceToken { get; }
         public abstract SyntaxToken Identifier { get; }
@@ -5779,6 +5859,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public abstract partial class BaseTypeSyntax : CSharpSyntaxNode
     {
+        internal BaseTypeSyntax() { }
+
         public abstract TypeSyntax Type { get; }
 
         public BaseTypeSyntax WithType(TypeSyntax type) { throw null; }
@@ -5786,6 +5868,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class BinaryExpressionSyntax : ExpressionSyntax
     {
+        internal BinaryExpressionSyntax() { }
+
         public ExpressionSyntax Left { get { throw null; } }
 
         public SyntaxToken OperatorToken { get { throw null; } }
@@ -5808,6 +5892,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class BinaryPatternSyntax : PatternSyntax
     {
+        internal BinaryPatternSyntax() { }
+
         public PatternSyntax Left { get { throw null; } }
 
         public SyntaxToken OperatorToken { get { throw null; } }
@@ -5830,6 +5916,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class BlockSyntax : StatementSyntax
     {
+        internal BlockSyntax() { }
+
         public override SyntaxList<AttributeListSyntax> AttributeLists { get { throw null; } }
 
         public SyntaxToken CloseBraceToken { get { throw null; } }
@@ -5862,6 +5950,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class BracketedArgumentListSyntax : BaseArgumentListSyntax
     {
+        internal BracketedArgumentListSyntax() { }
+
         public override SeparatedSyntaxList<ArgumentSyntax> Arguments { get { throw null; } }
 
         public SyntaxToken CloseBracketToken { get { throw null; } }
@@ -5886,6 +5976,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class BracketedParameterListSyntax : BaseParameterListSyntax
     {
+        internal BracketedParameterListSyntax() { }
+
         public SyntaxToken CloseBracketToken { get { throw null; } }
 
         public SyntaxToken OpenBracketToken { get { throw null; } }
@@ -5910,6 +6002,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public abstract partial class BranchingDirectiveTriviaSyntax : DirectiveTriviaSyntax
     {
+        internal BranchingDirectiveTriviaSyntax() { }
+
         public abstract bool BranchTaken { get; }
 
         public new BranchingDirectiveTriviaSyntax WithEndOfDirectiveToken(SyntaxToken endOfDirectiveToken) { throw null; }
@@ -5919,6 +6013,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class BreakStatementSyntax : StatementSyntax
     {
+        internal BreakStatementSyntax() { }
+
         public override SyntaxList<AttributeListSyntax> AttributeLists { get { throw null; } }
 
         public SyntaxToken BreakKeyword { get { throw null; } }
@@ -5945,6 +6041,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class CasePatternSwitchLabelSyntax : SwitchLabelSyntax
     {
+        internal CasePatternSwitchLabelSyntax() { }
+
         public override SyntaxToken ColonToken { get { throw null; } }
 
         public override SyntaxToken Keyword { get { throw null; } }
@@ -5971,6 +6069,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class CaseSwitchLabelSyntax : SwitchLabelSyntax
     {
+        internal CaseSwitchLabelSyntax() { }
+
         public override SyntaxToken ColonToken { get { throw null; } }
 
         public override SyntaxToken Keyword { get { throw null; } }
@@ -5993,6 +6093,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class CastExpressionSyntax : ExpressionSyntax
     {
+        internal CastExpressionSyntax() { }
+
         public SyntaxToken CloseParenToken { get { throw null; } }
 
         public ExpressionSyntax Expression { get { throw null; } }
@@ -6019,6 +6121,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class CatchClauseSyntax : CSharpSyntaxNode
     {
+        internal CatchClauseSyntax() { }
+
         public BlockSyntax Block { get { throw null; } }
 
         public SyntaxToken CatchKeyword { get { throw null; } }
@@ -6049,6 +6153,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class CatchDeclarationSyntax : CSharpSyntaxNode
     {
+        internal CatchDeclarationSyntax() { }
+
         public SyntaxToken CloseParenToken { get { throw null; } }
 
         public SyntaxToken Identifier { get { throw null; } }
@@ -6075,6 +6181,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class CatchFilterClauseSyntax : CSharpSyntaxNode
     {
+        internal CatchFilterClauseSyntax() { }
+
         public SyntaxToken CloseParenToken { get { throw null; } }
 
         public ExpressionSyntax FilterExpression { get { throw null; } }
@@ -6101,6 +6209,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class CheckedExpressionSyntax : ExpressionSyntax
     {
+        internal CheckedExpressionSyntax() { }
+
         public SyntaxToken CloseParenToken { get { throw null; } }
 
         public ExpressionSyntax Expression { get { throw null; } }
@@ -6127,6 +6237,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class CheckedStatementSyntax : StatementSyntax
     {
+        internal CheckedStatementSyntax() { }
+
         public override SyntaxList<AttributeListSyntax> AttributeLists { get { throw null; } }
 
         public BlockSyntax Block { get { throw null; } }
@@ -6157,6 +6269,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class ClassDeclarationSyntax : TypeDeclarationSyntax
     {
+        internal ClassDeclarationSyntax() { }
+
         public override SyntaxList<AttributeListSyntax> AttributeLists { get { throw null; } }
 
         public override BaseListSyntax? BaseList { get { throw null; } }
@@ -6223,6 +6337,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class ClassOrStructConstraintSyntax : TypeParameterConstraintSyntax
     {
+        internal ClassOrStructConstraintSyntax() { }
+
         public SyntaxToken ClassOrStructKeyword { get { throw null; } }
 
         public SyntaxToken QuestionToken { get { throw null; } }
@@ -6243,6 +6359,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public abstract partial class CommonForEachStatementSyntax : StatementSyntax
     {
+        internal CommonForEachStatementSyntax() { }
+
         public abstract SyntaxToken AwaitKeyword { get; }
         public abstract SyntaxToken CloseParenToken { get; }
         public abstract ExpressionSyntax Expression { get; }
@@ -6272,6 +6390,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class CompilationUnitSyntax : CSharpSyntaxNode, ICompilationUnitSyntax
     {
+        internal CompilationUnitSyntax() { }
+
         public SyntaxList<AttributeListSyntax> AttributeLists { get { throw null; } }
 
         public SyntaxToken EndOfFileToken { get { throw null; } }
@@ -6314,6 +6434,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class ConditionalAccessExpressionSyntax : ExpressionSyntax
     {
+        internal ConditionalAccessExpressionSyntax() { }
+
         public ExpressionSyntax Expression { get { throw null; } }
 
         public SyntaxToken OperatorToken { get { throw null; } }
@@ -6336,6 +6458,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public abstract partial class ConditionalDirectiveTriviaSyntax : BranchingDirectiveTriviaSyntax
     {
+        internal ConditionalDirectiveTriviaSyntax() { }
+
         public abstract ExpressionSyntax Condition { get; }
         public abstract bool ConditionValue { get; }
 
@@ -6344,6 +6468,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class ConditionalExpressionSyntax : ExpressionSyntax
     {
+        internal ConditionalExpressionSyntax() { }
+
         public SyntaxToken ColonToken { get { throw null; } }
 
         public ExpressionSyntax Condition { get { throw null; } }
@@ -6374,6 +6500,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class ConstantPatternSyntax : PatternSyntax
     {
+        internal ConstantPatternSyntax() { }
+
         public ExpressionSyntax Expression { get { throw null; } }
 
         public override void Accept(CSharpSyntaxVisitor visitor) { }
@@ -6388,6 +6516,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class ConstructorConstraintSyntax : TypeParameterConstraintSyntax
     {
+        internal ConstructorConstraintSyntax() { }
+
         public SyntaxToken CloseParenToken { get { throw null; } }
 
         public SyntaxToken NewKeyword { get { throw null; } }
@@ -6410,6 +6540,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class ConstructorDeclarationSyntax : BaseMethodDeclarationSyntax
     {
+        internal ConstructorDeclarationSyntax() { }
+
         public override SyntaxList<AttributeListSyntax> AttributeLists { get { throw null; } }
 
         public override BlockSyntax? Body { get { throw null; } }
@@ -6464,6 +6596,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class ConstructorInitializerSyntax : CSharpSyntaxNode
     {
+        internal ConstructorInitializerSyntax() { }
+
         public ArgumentListSyntax ArgumentList { get { throw null; } }
 
         public SyntaxToken ColonToken { get { throw null; } }
@@ -6488,6 +6622,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class ContinueStatementSyntax : StatementSyntax
     {
+        internal ContinueStatementSyntax() { }
+
         public override SyntaxList<AttributeListSyntax> AttributeLists { get { throw null; } }
 
         public SyntaxToken ContinueKeyword { get { throw null; } }
@@ -6514,6 +6650,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class ConversionOperatorDeclarationSyntax : BaseMethodDeclarationSyntax
     {
+        internal ConversionOperatorDeclarationSyntax() { }
+
         public override SyntaxList<AttributeListSyntax> AttributeLists { get { throw null; } }
 
         public override BlockSyntax? Body { get { throw null; } }
@@ -6582,6 +6720,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class ConversionOperatorMemberCrefSyntax : MemberCrefSyntax
     {
+        internal ConversionOperatorMemberCrefSyntax() { }
+
         public SyntaxToken CheckedKeyword { get { throw null; } }
 
         public SyntaxToken ImplicitOrExplicitKeyword { get { throw null; } }
@@ -6616,6 +6756,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class CrefBracketedParameterListSyntax : BaseCrefParameterListSyntax
     {
+        internal CrefBracketedParameterListSyntax() { }
+
         public SyntaxToken CloseBracketToken { get { throw null; } }
 
         public SyntaxToken OpenBracketToken { get { throw null; } }
@@ -6640,6 +6782,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class CrefParameterListSyntax : BaseCrefParameterListSyntax
     {
+        internal CrefParameterListSyntax() { }
+
         public SyntaxToken CloseParenToken { get { throw null; } }
 
         public SyntaxToken OpenParenToken { get { throw null; } }
@@ -6664,6 +6808,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class CrefParameterSyntax : CSharpSyntaxNode
     {
+        internal CrefParameterSyntax() { }
+
         public SyntaxToken RefKindKeyword { get { throw null; } }
 
         public SyntaxToken RefOrOutKeyword { get { throw null; } }
@@ -6686,10 +6832,13 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public abstract partial class CrefSyntax : CSharpSyntaxNode
     {
+        internal CrefSyntax() { }
     }
 
     public sealed partial class DeclarationExpressionSyntax : ExpressionSyntax
     {
+        internal DeclarationExpressionSyntax() { }
+
         public VariableDesignationSyntax Designation { get { throw null; } }
 
         public TypeSyntax Type { get { throw null; } }
@@ -6708,6 +6857,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class DeclarationPatternSyntax : PatternSyntax
     {
+        internal DeclarationPatternSyntax() { }
+
         public VariableDesignationSyntax Designation { get { throw null; } }
 
         public TypeSyntax Type { get { throw null; } }
@@ -6726,6 +6877,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class DefaultConstraintSyntax : TypeParameterConstraintSyntax
     {
+        internal DefaultConstraintSyntax() { }
+
         public SyntaxToken DefaultKeyword { get { throw null; } }
 
         public override void Accept(CSharpSyntaxVisitor visitor) { }
@@ -6740,6 +6893,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class DefaultExpressionSyntax : ExpressionSyntax
     {
+        internal DefaultExpressionSyntax() { }
+
         public SyntaxToken CloseParenToken { get { throw null; } }
 
         public SyntaxToken Keyword { get { throw null; } }
@@ -6766,6 +6921,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class DefaultSwitchLabelSyntax : SwitchLabelSyntax
     {
+        internal DefaultSwitchLabelSyntax() { }
+
         public override SyntaxToken ColonToken { get { throw null; } }
 
         public override SyntaxToken Keyword { get { throw null; } }
@@ -6784,6 +6941,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class DefineDirectiveTriviaSyntax : DirectiveTriviaSyntax
     {
+        internal DefineDirectiveTriviaSyntax() { }
+
         public SyntaxToken DefineKeyword { get { throw null; } }
 
         public override SyntaxToken EndOfDirectiveToken { get { throw null; } }
@@ -6814,6 +6973,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class DelegateDeclarationSyntax : MemberDeclarationSyntax
     {
+        internal DelegateDeclarationSyntax() { }
+
         public int Arity { get { throw null; } }
 
         public override SyntaxList<AttributeListSyntax> AttributeLists { get { throw null; } }
@@ -6872,6 +7033,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class DestructorDeclarationSyntax : BaseMethodDeclarationSyntax
     {
+        internal DestructorDeclarationSyntax() { }
+
         public override SyntaxList<AttributeListSyntax> AttributeLists { get { throw null; } }
 
         public override BlockSyntax? Body { get { throw null; } }
@@ -6926,6 +7089,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public abstract partial class DirectiveTriviaSyntax : StructuredTriviaSyntax
     {
+        internal DirectiveTriviaSyntax() { }
+
         public SyntaxToken DirectiveNameToken { get { throw null; } }
 
         public abstract SyntaxToken EndOfDirectiveToken { get; }
@@ -6945,6 +7110,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class DiscardDesignationSyntax : VariableDesignationSyntax
     {
+        internal DiscardDesignationSyntax() { }
+
         public SyntaxToken UnderscoreToken { get { throw null; } }
 
         public override void Accept(CSharpSyntaxVisitor visitor) { }
@@ -6959,6 +7126,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class DiscardPatternSyntax : PatternSyntax
     {
+        internal DiscardPatternSyntax() { }
+
         public SyntaxToken UnderscoreToken { get { throw null; } }
 
         public override void Accept(CSharpSyntaxVisitor visitor) { }
@@ -6973,6 +7142,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class DocumentationCommentTriviaSyntax : StructuredTriviaSyntax
     {
+        internal DocumentationCommentTriviaSyntax() { }
+
         public SyntaxList<XmlNodeSyntax> Content { get { throw null; } }
 
         public SyntaxToken EndOfComment { get { throw null; } }
@@ -6993,6 +7164,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class DoStatementSyntax : StatementSyntax
     {
+        internal DoStatementSyntax() { }
+
         public override SyntaxList<AttributeListSyntax> AttributeLists { get { throw null; } }
 
         public SyntaxToken CloseParenToken { get { throw null; } }
@@ -7039,6 +7212,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class ElementAccessExpressionSyntax : ExpressionSyntax
     {
+        internal ElementAccessExpressionSyntax() { }
+
         public BracketedArgumentListSyntax ArgumentList { get { throw null; } }
 
         public ExpressionSyntax Expression { get { throw null; } }
@@ -7059,6 +7234,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class ElementBindingExpressionSyntax : ExpressionSyntax
     {
+        internal ElementBindingExpressionSyntax() { }
+
         public BracketedArgumentListSyntax ArgumentList { get { throw null; } }
 
         public override void Accept(CSharpSyntaxVisitor visitor) { }
@@ -7075,6 +7252,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class ElifDirectiveTriviaSyntax : ConditionalDirectiveTriviaSyntax
     {
+        internal ElifDirectiveTriviaSyntax() { }
+
         public override bool BranchTaken { get { throw null; } }
 
         public override ExpressionSyntax Condition { get { throw null; } }
@@ -7113,6 +7292,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class ElseClauseSyntax : CSharpSyntaxNode
     {
+        internal ElseClauseSyntax() { }
+
         public SyntaxToken ElseKeyword { get { throw null; } }
 
         public StatementSyntax Statement { get { throw null; } }
@@ -7131,6 +7312,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class ElseDirectiveTriviaSyntax : BranchingDirectiveTriviaSyntax
     {
+        internal ElseDirectiveTriviaSyntax() { }
+
         public override bool BranchTaken { get { throw null; } }
 
         public SyntaxToken ElseKeyword { get { throw null; } }
@@ -7161,6 +7344,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class EmptyStatementSyntax : StatementSyntax
     {
+        internal EmptyStatementSyntax() { }
+
         public override SyntaxList<AttributeListSyntax> AttributeLists { get { throw null; } }
 
         public SyntaxToken SemicolonToken { get { throw null; } }
@@ -7183,6 +7368,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class EndIfDirectiveTriviaSyntax : DirectiveTriviaSyntax
     {
+        internal EndIfDirectiveTriviaSyntax() { }
+
         public SyntaxToken EndIfKeyword { get { throw null; } }
 
         public override SyntaxToken EndOfDirectiveToken { get { throw null; } }
@@ -7209,6 +7396,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class EndRegionDirectiveTriviaSyntax : DirectiveTriviaSyntax
     {
+        internal EndRegionDirectiveTriviaSyntax() { }
+
         public override SyntaxToken EndOfDirectiveToken { get { throw null; } }
 
         public SyntaxToken EndRegionKeyword { get { throw null; } }
@@ -7235,6 +7424,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class EnumDeclarationSyntax : BaseTypeDeclarationSyntax
     {
+        internal EnumDeclarationSyntax() { }
+
         public override SyntaxList<AttributeListSyntax> AttributeLists { get { throw null; } }
 
         public override BaseListSyntax? BaseList { get { throw null; } }
@@ -7289,6 +7480,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class EnumMemberDeclarationSyntax : MemberDeclarationSyntax
     {
+        internal EnumMemberDeclarationSyntax() { }
+
         public override SyntaxList<AttributeListSyntax> AttributeLists { get { throw null; } }
 
         public EqualsValueClauseSyntax? EqualsValue { get { throw null; } }
@@ -7321,6 +7514,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class EqualsValueClauseSyntax : CSharpSyntaxNode
     {
+        internal EqualsValueClauseSyntax() { }
+
         public SyntaxToken EqualsToken { get { throw null; } }
 
         public ExpressionSyntax Value { get { throw null; } }
@@ -7339,6 +7534,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class ErrorDirectiveTriviaSyntax : DirectiveTriviaSyntax
     {
+        internal ErrorDirectiveTriviaSyntax() { }
+
         public override SyntaxToken EndOfDirectiveToken { get { throw null; } }
 
         public SyntaxToken ErrorKeyword { get { throw null; } }
@@ -7365,6 +7562,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class EventDeclarationSyntax : BasePropertyDeclarationSyntax
     {
+        internal EventDeclarationSyntax() { }
+
         public override AccessorListSyntax? AccessorList { get { throw null; } }
 
         public override SyntaxList<AttributeListSyntax> AttributeLists { get { throw null; } }
@@ -7417,6 +7616,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class EventFieldDeclarationSyntax : BaseFieldDeclarationSyntax
     {
+        internal EventFieldDeclarationSyntax() { }
+
         public override SyntaxList<AttributeListSyntax> AttributeLists { get { throw null; } }
 
         public override VariableDeclarationSyntax Declaration { get { throw null; } }
@@ -7453,6 +7654,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class ExplicitInterfaceSpecifierSyntax : CSharpSyntaxNode
     {
+        internal ExplicitInterfaceSpecifierSyntax() { }
+
         public SyntaxToken DotToken { get { throw null; } }
 
         public NameSyntax Name { get { throw null; } }
@@ -7471,6 +7674,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class ExpressionColonSyntax : BaseExpressionColonSyntax
     {
+        internal ExpressionColonSyntax() { }
+
         public override SyntaxToken ColonToken { get { throw null; } }
 
         public override ExpressionSyntax Expression { get { throw null; } }
@@ -7489,10 +7694,13 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public abstract partial class ExpressionOrPatternSyntax : CSharpSyntaxNode
     {
+        internal ExpressionOrPatternSyntax() { }
     }
 
     public sealed partial class ExpressionStatementSyntax : StatementSyntax
     {
+        internal ExpressionStatementSyntax() { }
+
         public bool AllowsAnyExpression { get { throw null; } }
 
         public override SyntaxList<AttributeListSyntax> AttributeLists { get { throw null; } }
@@ -7521,10 +7729,13 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public abstract partial class ExpressionSyntax : ExpressionOrPatternSyntax
     {
+        internal ExpressionSyntax() { }
     }
 
     public sealed partial class ExternAliasDirectiveSyntax : CSharpSyntaxNode
     {
+        internal ExternAliasDirectiveSyntax() { }
+
         public SyntaxToken AliasKeyword { get { throw null; } }
 
         public SyntaxToken ExternKeyword { get { throw null; } }
@@ -7551,6 +7762,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class FieldDeclarationSyntax : BaseFieldDeclarationSyntax
     {
+        internal FieldDeclarationSyntax() { }
+
         public override SyntaxList<AttributeListSyntax> AttributeLists { get { throw null; } }
 
         public override VariableDeclarationSyntax Declaration { get { throw null; } }
@@ -7583,6 +7796,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class FileScopedNamespaceDeclarationSyntax : BaseNamespaceDeclarationSyntax
     {
+        internal FileScopedNamespaceDeclarationSyntax() { }
+
         public override SyntaxList<AttributeListSyntax> AttributeLists { get { throw null; } }
 
         public override SyntaxList<ExternAliasDirectiveSyntax> Externs { get { throw null; } }
@@ -7635,6 +7850,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class FinallyClauseSyntax : CSharpSyntaxNode
     {
+        internal FinallyClauseSyntax() { }
+
         public BlockSyntax Block { get { throw null; } }
 
         public SyntaxToken FinallyKeyword { get { throw null; } }
@@ -7657,6 +7874,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class FixedStatementSyntax : StatementSyntax
     {
+        internal FixedStatementSyntax() { }
+
         public override SyntaxList<AttributeListSyntax> AttributeLists { get { throw null; } }
 
         public SyntaxToken CloseParenToken { get { throw null; } }
@@ -7697,6 +7916,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class ForEachStatementSyntax : CommonForEachStatementSyntax
     {
+        internal ForEachStatementSyntax() { }
+
         public override SyntaxList<AttributeListSyntax> AttributeLists { get { throw null; } }
 
         public override SyntaxToken AwaitKeyword { get { throw null; } }
@@ -7753,6 +7974,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class ForEachVariableStatementSyntax : CommonForEachStatementSyntax
     {
+        internal ForEachVariableStatementSyntax() { }
+
         public override SyntaxList<AttributeListSyntax> AttributeLists { get { throw null; } }
 
         public override SyntaxToken AwaitKeyword { get { throw null; } }
@@ -7805,6 +8028,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class ForStatementSyntax : StatementSyntax
     {
+        internal ForStatementSyntax() { }
+
         public override SyntaxList<AttributeListSyntax> AttributeLists { get { throw null; } }
 
         public SyntaxToken CloseParenToken { get { throw null; } }
@@ -7867,6 +8092,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class FromClauseSyntax : QueryClauseSyntax
     {
+        internal FromClauseSyntax() { }
+
         public ExpressionSyntax Expression { get { throw null; } }
 
         public SyntaxToken FromKeyword { get { throw null; } }
@@ -7897,6 +8124,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class FunctionPointerCallingConventionSyntax : CSharpSyntaxNode
     {
+        internal FunctionPointerCallingConventionSyntax() { }
+
         public SyntaxToken ManagedOrUnmanagedKeyword { get { throw null; } }
 
         public FunctionPointerUnmanagedCallingConventionListSyntax? UnmanagedCallingConventionList { get { throw null; } }
@@ -7917,6 +8146,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class FunctionPointerParameterListSyntax : CSharpSyntaxNode
     {
+        internal FunctionPointerParameterListSyntax() { }
+
         public SyntaxToken GreaterThanToken { get { throw null; } }
 
         public SyntaxToken LessThanToken { get { throw null; } }
@@ -7941,6 +8172,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class FunctionPointerParameterSyntax : BaseParameterSyntax
     {
+        internal FunctionPointerParameterSyntax() { }
+
         public override SyntaxList<AttributeListSyntax> AttributeLists { get { throw null; } }
 
         public override SyntaxTokenList Modifiers { get { throw null; } }
@@ -7967,6 +8200,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class FunctionPointerTypeSyntax : TypeSyntax
     {
+        internal FunctionPointerTypeSyntax() { }
+
         public SyntaxToken AsteriskToken { get { throw null; } }
 
         public FunctionPointerCallingConventionSyntax? CallingConvention { get { throw null; } }
@@ -7995,6 +8230,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class FunctionPointerUnmanagedCallingConventionListSyntax : CSharpSyntaxNode
     {
+        internal FunctionPointerUnmanagedCallingConventionListSyntax() { }
+
         public SeparatedSyntaxList<FunctionPointerUnmanagedCallingConventionSyntax> CallingConventions { get { throw null; } }
 
         public SyntaxToken CloseBracketToken { get { throw null; } }
@@ -8019,6 +8256,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class FunctionPointerUnmanagedCallingConventionSyntax : CSharpSyntaxNode
     {
+        internal FunctionPointerUnmanagedCallingConventionSyntax() { }
+
         public SyntaxToken Name { get { throw null; } }
 
         public override void Accept(CSharpSyntaxVisitor visitor) { }
@@ -8033,6 +8272,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class GenericNameSyntax : SimpleNameSyntax
     {
+        internal GenericNameSyntax() { }
+
         public override SyntaxToken Identifier { get { throw null; } }
 
         public bool IsUnboundGenericName { get { throw null; } }
@@ -8055,6 +8296,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class GlobalStatementSyntax : MemberDeclarationSyntax
     {
+        internal GlobalStatementSyntax() { }
+
         public override SyntaxList<AttributeListSyntax> AttributeLists { get { throw null; } }
 
         public override SyntaxTokenList Modifiers { get { throw null; } }
@@ -8083,6 +8326,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class GotoStatementSyntax : StatementSyntax
     {
+        internal GotoStatementSyntax() { }
+
         public override SyntaxList<AttributeListSyntax> AttributeLists { get { throw null; } }
 
         public SyntaxToken CaseOrDefaultKeyword { get { throw null; } }
@@ -8117,6 +8362,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class GroupClauseSyntax : SelectOrGroupClauseSyntax
     {
+        internal GroupClauseSyntax() { }
+
         public ExpressionSyntax ByExpression { get { throw null; } }
 
         public SyntaxToken ByKeyword { get { throw null; } }
@@ -8143,6 +8390,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class IdentifierNameSyntax : SimpleNameSyntax
     {
+        internal IdentifierNameSyntax() { }
+
         public override SyntaxToken Identifier { get { throw null; } }
 
         public override void Accept(CSharpSyntaxVisitor visitor) { }
@@ -8157,6 +8406,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class IfDirectiveTriviaSyntax : ConditionalDirectiveTriviaSyntax
     {
+        internal IfDirectiveTriviaSyntax() { }
+
         public override bool BranchTaken { get { throw null; } }
 
         public override ExpressionSyntax Condition { get { throw null; } }
@@ -8195,6 +8446,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class IfStatementSyntax : StatementSyntax
     {
+        internal IfStatementSyntax() { }
+
         public override SyntaxList<AttributeListSyntax> AttributeLists { get { throw null; } }
 
         public SyntaxToken CloseParenToken { get { throw null; } }
@@ -8237,6 +8490,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class ImplicitArrayCreationExpressionSyntax : ExpressionSyntax
     {
+        internal ImplicitArrayCreationExpressionSyntax() { }
+
         public SyntaxToken CloseBracketToken { get { throw null; } }
 
         public SyntaxTokenList Commas { get { throw null; } }
@@ -8271,6 +8526,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class ImplicitElementAccessSyntax : ExpressionSyntax
     {
+        internal ImplicitElementAccessSyntax() { }
+
         public BracketedArgumentListSyntax ArgumentList { get { throw null; } }
 
         public override void Accept(CSharpSyntaxVisitor visitor) { }
@@ -8287,6 +8544,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class ImplicitObjectCreationExpressionSyntax : BaseObjectCreationExpressionSyntax
     {
+        internal ImplicitObjectCreationExpressionSyntax() { }
+
         public override ArgumentListSyntax ArgumentList { get { throw null; } }
 
         public override InitializerExpressionSyntax? Initializer { get { throw null; } }
@@ -8311,6 +8570,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class ImplicitStackAllocArrayCreationExpressionSyntax : ExpressionSyntax
     {
+        internal ImplicitStackAllocArrayCreationExpressionSyntax() { }
+
         public SyntaxToken CloseBracketToken { get { throw null; } }
 
         public InitializerExpressionSyntax Initializer { get { throw null; } }
@@ -8339,6 +8600,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class IncompleteMemberSyntax : MemberDeclarationSyntax
     {
+        internal IncompleteMemberSyntax() { }
+
         public override SyntaxList<AttributeListSyntax> AttributeLists { get { throw null; } }
 
         public override SyntaxTokenList Modifiers { get { throw null; } }
@@ -8365,6 +8628,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class IndexerDeclarationSyntax : BasePropertyDeclarationSyntax
     {
+        internal IndexerDeclarationSyntax() { }
+
         public override AccessorListSyntax? AccessorList { get { throw null; } }
 
         public override SyntaxList<AttributeListSyntax> AttributeLists { get { throw null; } }
@@ -8425,6 +8690,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class IndexerMemberCrefSyntax : MemberCrefSyntax
     {
+        internal IndexerMemberCrefSyntax() { }
+
         public CrefBracketedParameterListSyntax? Parameters { get { throw null; } }
 
         public SyntaxToken ThisKeyword { get { throw null; } }
@@ -8445,6 +8712,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class InitializerExpressionSyntax : ExpressionSyntax
     {
+        internal InitializerExpressionSyntax() { }
+
         public SyntaxToken CloseBraceToken { get { throw null; } }
 
         public SeparatedSyntaxList<ExpressionSyntax> Expressions { get { throw null; } }
@@ -8469,10 +8738,13 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public abstract partial class InstanceExpressionSyntax : ExpressionSyntax
     {
+        internal InstanceExpressionSyntax() { }
     }
 
     public sealed partial class InterfaceDeclarationSyntax : TypeDeclarationSyntax
     {
+        internal InterfaceDeclarationSyntax() { }
+
         public override SyntaxList<AttributeListSyntax> AttributeLists { get { throw null; } }
 
         public override BaseListSyntax? BaseList { get { throw null; } }
@@ -8539,10 +8811,13 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public abstract partial class InterpolatedStringContentSyntax : CSharpSyntaxNode
     {
+        internal InterpolatedStringContentSyntax() { }
     }
 
     public sealed partial class InterpolatedStringExpressionSyntax : ExpressionSyntax
     {
+        internal InterpolatedStringExpressionSyntax() { }
+
         public SyntaxList<InterpolatedStringContentSyntax> Contents { get { throw null; } }
 
         public SyntaxToken StringEndToken { get { throw null; } }
@@ -8567,6 +8842,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class InterpolatedStringTextSyntax : InterpolatedStringContentSyntax
     {
+        internal InterpolatedStringTextSyntax() { }
+
         public SyntaxToken TextToken { get { throw null; } }
 
         public override void Accept(CSharpSyntaxVisitor visitor) { }
@@ -8581,6 +8858,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class InterpolationAlignmentClauseSyntax : CSharpSyntaxNode
     {
+        internal InterpolationAlignmentClauseSyntax() { }
+
         public SyntaxToken CommaToken { get { throw null; } }
 
         public ExpressionSyntax Value { get { throw null; } }
@@ -8599,6 +8878,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class InterpolationFormatClauseSyntax : CSharpSyntaxNode
     {
+        internal InterpolationFormatClauseSyntax() { }
+
         public SyntaxToken ColonToken { get { throw null; } }
 
         public SyntaxToken FormatStringToken { get { throw null; } }
@@ -8617,6 +8898,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class InterpolationSyntax : InterpolatedStringContentSyntax
     {
+        internal InterpolationSyntax() { }
+
         public InterpolationAlignmentClauseSyntax? AlignmentClause { get { throw null; } }
 
         public SyntaxToken CloseBraceToken { get { throw null; } }
@@ -8647,6 +8930,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class InvocationExpressionSyntax : ExpressionSyntax
     {
+        internal InvocationExpressionSyntax() { }
+
         public ArgumentListSyntax ArgumentList { get { throw null; } }
 
         public ExpressionSyntax Expression { get { throw null; } }
@@ -8667,6 +8952,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class IsPatternExpressionSyntax : ExpressionSyntax
     {
+        internal IsPatternExpressionSyntax() { }
+
         public ExpressionSyntax Expression { get { throw null; } }
 
         public SyntaxToken IsKeyword { get { throw null; } }
@@ -8689,6 +8976,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class JoinClauseSyntax : QueryClauseSyntax
     {
+        internal JoinClauseSyntax() { }
+
         public SyntaxToken EqualsKeyword { get { throw null; } }
 
         public SyntaxToken Identifier { get { throw null; } }
@@ -8739,6 +9028,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class JoinIntoClauseSyntax : CSharpSyntaxNode
     {
+        internal JoinIntoClauseSyntax() { }
+
         public SyntaxToken Identifier { get { throw null; } }
 
         public SyntaxToken IntoKeyword { get { throw null; } }
@@ -8757,6 +9048,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class LabeledStatementSyntax : StatementSyntax
     {
+        internal LabeledStatementSyntax() { }
+
         public override SyntaxList<AttributeListSyntax> AttributeLists { get { throw null; } }
 
         public SyntaxToken ColonToken { get { throw null; } }
@@ -8787,6 +9080,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public abstract partial class LambdaExpressionSyntax : AnonymousFunctionExpressionSyntax
     {
+        internal LambdaExpressionSyntax() { }
+
         public abstract SyntaxToken ArrowToken { get; }
         public abstract SyntaxList<AttributeListSyntax> AttributeLists { get; }
 
@@ -8815,6 +9110,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class LetClauseSyntax : QueryClauseSyntax
     {
+        internal LetClauseSyntax() { }
+
         public SyntaxToken EqualsToken { get { throw null; } }
 
         public ExpressionSyntax Expression { get { throw null; } }
@@ -8841,6 +9138,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class LineDirectivePositionSyntax : CSharpSyntaxNode
     {
+        internal LineDirectivePositionSyntax() { }
+
         public SyntaxToken Character { get { throw null; } }
 
         public SyntaxToken CloseParenToken { get { throw null; } }
@@ -8871,6 +9170,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class LineDirectiveTriviaSyntax : LineOrSpanDirectiveTriviaSyntax
     {
+        internal LineDirectiveTriviaSyntax() { }
+
         public override SyntaxToken EndOfDirectiveToken { get { throw null; } }
 
         public override SyntaxToken File { get { throw null; } }
@@ -8905,6 +9206,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public abstract partial class LineOrSpanDirectiveTriviaSyntax : DirectiveTriviaSyntax
     {
+        internal LineOrSpanDirectiveTriviaSyntax() { }
+
         public abstract SyntaxToken File { get; }
         public abstract SyntaxToken LineKeyword { get; }
 
@@ -8919,6 +9222,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class LineSpanDirectiveTriviaSyntax : LineOrSpanDirectiveTriviaSyntax
     {
+        internal LineSpanDirectiveTriviaSyntax() { }
+
         public SyntaxToken CharacterOffset { get { throw null; } }
 
         public LineDirectivePositionSyntax End { get { throw null; } }
@@ -8965,6 +9270,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class ListPatternSyntax : PatternSyntax
     {
+        internal ListPatternSyntax() { }
+
         public SyntaxToken CloseBracketToken { get { throw null; } }
 
         public VariableDesignationSyntax? Designation { get { throw null; } }
@@ -8993,6 +9300,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class LiteralExpressionSyntax : ExpressionSyntax
     {
+        internal LiteralExpressionSyntax() { }
+
         public SyntaxToken Token { get { throw null; } }
 
         public override void Accept(CSharpSyntaxVisitor visitor) { }
@@ -9007,6 +9316,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class LoadDirectiveTriviaSyntax : DirectiveTriviaSyntax
     {
+        internal LoadDirectiveTriviaSyntax() { }
+
         public override SyntaxToken EndOfDirectiveToken { get { throw null; } }
 
         public SyntaxToken File { get { throw null; } }
@@ -9037,6 +9348,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class LocalDeclarationStatementSyntax : StatementSyntax
     {
+        internal LocalDeclarationStatementSyntax() { }
+
         public override SyntaxList<AttributeListSyntax> AttributeLists { get { throw null; } }
 
         public SyntaxToken AwaitKeyword { get { throw null; } }
@@ -9083,6 +9396,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class LocalFunctionStatementSyntax : StatementSyntax
     {
+        internal LocalFunctionStatementSyntax() { }
+
         public override SyntaxList<AttributeListSyntax> AttributeLists { get { throw null; } }
 
         public BlockSyntax? Body { get { throw null; } }
@@ -9149,6 +9464,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class LockStatementSyntax : StatementSyntax
     {
+        internal LockStatementSyntax() { }
+
         public override SyntaxList<AttributeListSyntax> AttributeLists { get { throw null; } }
 
         public SyntaxToken CloseParenToken { get { throw null; } }
@@ -9187,6 +9504,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class MakeRefExpressionSyntax : ExpressionSyntax
     {
+        internal MakeRefExpressionSyntax() { }
+
         public SyntaxToken CloseParenToken { get { throw null; } }
 
         public ExpressionSyntax Expression { get { throw null; } }
@@ -9213,6 +9532,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class MemberAccessExpressionSyntax : ExpressionSyntax
     {
+        internal MemberAccessExpressionSyntax() { }
+
         public ExpressionSyntax Expression { get { throw null; } }
 
         public SimpleNameSyntax Name { get { throw null; } }
@@ -9235,6 +9556,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class MemberBindingExpressionSyntax : ExpressionSyntax
     {
+        internal MemberBindingExpressionSyntax() { }
+
         public SimpleNameSyntax Name { get { throw null; } }
 
         public SyntaxToken OperatorToken { get { throw null; } }
@@ -9253,10 +9576,13 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public abstract partial class MemberCrefSyntax : CrefSyntax
     {
+        internal MemberCrefSyntax() { }
     }
 
     public abstract partial class MemberDeclarationSyntax : CSharpSyntaxNode
     {
+        internal MemberDeclarationSyntax() { }
+
         public abstract SyntaxList<AttributeListSyntax> AttributeLists { get; }
         public abstract SyntaxTokenList Modifiers { get; }
 
@@ -9271,6 +9597,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class MethodDeclarationSyntax : BaseMethodDeclarationSyntax
     {
+        internal MethodDeclarationSyntax() { }
+
         public int Arity { get { throw null; } }
 
         public override SyntaxList<AttributeListSyntax> AttributeLists { get { throw null; } }
@@ -9341,6 +9669,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class NameColonSyntax : BaseExpressionColonSyntax
     {
+        internal NameColonSyntax() { }
+
         public override SyntaxToken ColonToken { get { throw null; } }
 
         public override ExpressionSyntax Expression { get { throw null; } }
@@ -9361,6 +9691,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class NameEqualsSyntax : CSharpSyntaxNode
     {
+        internal NameEqualsSyntax() { }
+
         public SyntaxToken EqualsToken { get { throw null; } }
 
         public IdentifierNameSyntax Name { get { throw null; } }
@@ -9379,6 +9711,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class NameMemberCrefSyntax : MemberCrefSyntax
     {
+        internal NameMemberCrefSyntax() { }
+
         public TypeSyntax Name { get { throw null; } }
 
         public CrefParameterListSyntax? Parameters { get { throw null; } }
@@ -9399,6 +9733,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class NamespaceDeclarationSyntax : BaseNamespaceDeclarationSyntax
     {
+        internal NamespaceDeclarationSyntax() { }
+
         public override SyntaxList<AttributeListSyntax> AttributeLists { get { throw null; } }
 
         public SyntaxToken CloseBraceToken { get { throw null; } }
@@ -9461,11 +9797,15 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public abstract partial class NameSyntax : TypeSyntax
     {
+        internal NameSyntax() { }
+
         public int Arity { get { throw null; } }
     }
 
     public sealed partial class NullableDirectiveTriviaSyntax : DirectiveTriviaSyntax
     {
+        internal NullableDirectiveTriviaSyntax() { }
+
         public override SyntaxToken EndOfDirectiveToken { get { throw null; } }
 
         public override SyntaxToken HashToken { get { throw null; } }
@@ -9500,6 +9840,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class NullableTypeSyntax : TypeSyntax
     {
+        internal NullableTypeSyntax() { }
+
         public TypeSyntax ElementType { get { throw null; } }
 
         public SyntaxToken QuestionToken { get { throw null; } }
@@ -9518,6 +9860,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class ObjectCreationExpressionSyntax : BaseObjectCreationExpressionSyntax
     {
+        internal ObjectCreationExpressionSyntax() { }
+
         public override ArgumentListSyntax? ArgumentList { get { throw null; } }
 
         public override InitializerExpressionSyntax? Initializer { get { throw null; } }
@@ -9546,6 +9890,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class OmittedArraySizeExpressionSyntax : ExpressionSyntax
     {
+        internal OmittedArraySizeExpressionSyntax() { }
+
         public SyntaxToken OmittedArraySizeExpressionToken { get { throw null; } }
 
         public override void Accept(CSharpSyntaxVisitor visitor) { }
@@ -9560,6 +9906,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class OmittedTypeArgumentSyntax : TypeSyntax
     {
+        internal OmittedTypeArgumentSyntax() { }
+
         public SyntaxToken OmittedTypeArgumentToken { get { throw null; } }
 
         public override void Accept(CSharpSyntaxVisitor visitor) { }
@@ -9574,6 +9922,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class OperatorDeclarationSyntax : BaseMethodDeclarationSyntax
     {
+        internal OperatorDeclarationSyntax() { }
+
         public override SyntaxList<AttributeListSyntax> AttributeLists { get { throw null; } }
 
         public override BlockSyntax? Body { get { throw null; } }
@@ -9642,6 +9992,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class OperatorMemberCrefSyntax : MemberCrefSyntax
     {
+        internal OperatorMemberCrefSyntax() { }
+
         public SyntaxToken CheckedKeyword { get { throw null; } }
 
         public SyntaxToken OperatorKeyword { get { throw null; } }
@@ -9672,6 +10024,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class OrderByClauseSyntax : QueryClauseSyntax
     {
+        internal OrderByClauseSyntax() { }
+
         public SyntaxToken OrderByKeyword { get { throw null; } }
 
         public SeparatedSyntaxList<OrderingSyntax> Orderings { get { throw null; } }
@@ -9692,6 +10046,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class OrderingSyntax : CSharpSyntaxNode
     {
+        internal OrderingSyntax() { }
+
         public SyntaxToken AscendingOrDescendingKeyword { get { throw null; } }
 
         public ExpressionSyntax Expression { get { throw null; } }
@@ -9710,6 +10066,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class ParameterListSyntax : BaseParameterListSyntax
     {
+        internal ParameterListSyntax() { }
+
         public SyntaxToken CloseParenToken { get { throw null; } }
 
         public SyntaxToken OpenParenToken { get { throw null; } }
@@ -9734,6 +10092,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class ParameterSyntax : BaseParameterSyntax
     {
+        internal ParameterSyntax() { }
+
         public override SyntaxList<AttributeListSyntax> AttributeLists { get { throw null; } }
 
         public EqualsValueClauseSyntax? Default { get { throw null; } }
@@ -9768,6 +10128,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class ParenthesizedExpressionSyntax : ExpressionSyntax
     {
+        internal ParenthesizedExpressionSyntax() { }
+
         public SyntaxToken CloseParenToken { get { throw null; } }
 
         public ExpressionSyntax Expression { get { throw null; } }
@@ -9790,6 +10152,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class ParenthesizedLambdaExpressionSyntax : LambdaExpressionSyntax
     {
+        internal ParenthesizedLambdaExpressionSyntax() { }
+
         public override SyntaxToken ArrowToken { get { throw null; } }
 
         public override SyntaxToken AsyncKeyword { get { throw null; } }
@@ -9852,6 +10216,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class ParenthesizedPatternSyntax : PatternSyntax
     {
+        internal ParenthesizedPatternSyntax() { }
+
         public SyntaxToken CloseParenToken { get { throw null; } }
 
         public SyntaxToken OpenParenToken { get { throw null; } }
@@ -9874,6 +10240,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class ParenthesizedVariableDesignationSyntax : VariableDesignationSyntax
     {
+        internal ParenthesizedVariableDesignationSyntax() { }
+
         public SyntaxToken CloseParenToken { get { throw null; } }
 
         public SyntaxToken OpenParenToken { get { throw null; } }
@@ -9898,10 +10266,13 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public abstract partial class PatternSyntax : ExpressionOrPatternSyntax
     {
+        internal PatternSyntax() { }
     }
 
     public sealed partial class PointerTypeSyntax : TypeSyntax
     {
+        internal PointerTypeSyntax() { }
+
         public SyntaxToken AsteriskToken { get { throw null; } }
 
         public TypeSyntax ElementType { get { throw null; } }
@@ -9920,6 +10291,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class PositionalPatternClauseSyntax : CSharpSyntaxNode
     {
+        internal PositionalPatternClauseSyntax() { }
+
         public SyntaxToken CloseParenToken { get { throw null; } }
 
         public SyntaxToken OpenParenToken { get { throw null; } }
@@ -9944,6 +10317,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class PostfixUnaryExpressionSyntax : ExpressionSyntax
     {
+        internal PostfixUnaryExpressionSyntax() { }
+
         public ExpressionSyntax Operand { get { throw null; } }
 
         public SyntaxToken OperatorToken { get { throw null; } }
@@ -9962,6 +10337,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class PragmaChecksumDirectiveTriviaSyntax : DirectiveTriviaSyntax
     {
+        internal PragmaChecksumDirectiveTriviaSyntax() { }
+
         public SyntaxToken Bytes { get { throw null; } }
 
         public SyntaxToken ChecksumKeyword { get { throw null; } }
@@ -10004,6 +10381,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class PragmaWarningDirectiveTriviaSyntax : DirectiveTriviaSyntax
     {
+        internal PragmaWarningDirectiveTriviaSyntax() { }
+
         public SyntaxToken DisableOrRestoreKeyword { get { throw null; } }
 
         public override SyntaxToken EndOfDirectiveToken { get { throw null; } }
@@ -10044,6 +10423,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class PredefinedTypeSyntax : TypeSyntax
     {
+        internal PredefinedTypeSyntax() { }
+
         public SyntaxToken Keyword { get { throw null; } }
 
         public override void Accept(CSharpSyntaxVisitor visitor) { }
@@ -10058,6 +10439,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class PrefixUnaryExpressionSyntax : ExpressionSyntax
     {
+        internal PrefixUnaryExpressionSyntax() { }
+
         public ExpressionSyntax Operand { get { throw null; } }
 
         public SyntaxToken OperatorToken { get { throw null; } }
@@ -10076,6 +10459,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class PrimaryConstructorBaseTypeSyntax : BaseTypeSyntax
     {
+        internal PrimaryConstructorBaseTypeSyntax() { }
+
         public ArgumentListSyntax ArgumentList { get { throw null; } }
 
         public override TypeSyntax Type { get { throw null; } }
@@ -10096,6 +10481,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class PropertyDeclarationSyntax : BasePropertyDeclarationSyntax
     {
+        internal PropertyDeclarationSyntax() { }
+
         public override AccessorListSyntax? AccessorList { get { throw null; } }
 
         public override SyntaxList<AttributeListSyntax> AttributeLists { get { throw null; } }
@@ -10154,6 +10541,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class PropertyPatternClauseSyntax : CSharpSyntaxNode
     {
+        internal PropertyPatternClauseSyntax() { }
+
         public SyntaxToken CloseBraceToken { get { throw null; } }
 
         public SyntaxToken OpenBraceToken { get { throw null; } }
@@ -10178,6 +10567,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class QualifiedCrefSyntax : CrefSyntax
     {
+        internal QualifiedCrefSyntax() { }
+
         public TypeSyntax Container { get { throw null; } }
 
         public SyntaxToken DotToken { get { throw null; } }
@@ -10200,6 +10591,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class QualifiedNameSyntax : NameSyntax
     {
+        internal QualifiedNameSyntax() { }
+
         public SyntaxToken DotToken { get { throw null; } }
 
         public NameSyntax Left { get { throw null; } }
@@ -10222,6 +10615,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class QueryBodySyntax : CSharpSyntaxNode
     {
+        internal QueryBodySyntax() { }
+
         public SyntaxList<QueryClauseSyntax> Clauses { get { throw null; } }
 
         public QueryContinuationSyntax? Continuation { get { throw null; } }
@@ -10246,10 +10641,13 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public abstract partial class QueryClauseSyntax : CSharpSyntaxNode
     {
+        internal QueryClauseSyntax() { }
     }
 
     public sealed partial class QueryContinuationSyntax : CSharpSyntaxNode
     {
+        internal QueryContinuationSyntax() { }
+
         public QueryBodySyntax Body { get { throw null; } }
 
         public SyntaxToken Identifier { get { throw null; } }
@@ -10274,6 +10672,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class QueryExpressionSyntax : ExpressionSyntax
     {
+        internal QueryExpressionSyntax() { }
+
         public QueryBodySyntax Body { get { throw null; } }
 
         public FromClauseSyntax FromClause { get { throw null; } }
@@ -10294,6 +10694,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class RangeExpressionSyntax : ExpressionSyntax
     {
+        internal RangeExpressionSyntax() { }
+
         public ExpressionSyntax? LeftOperand { get { throw null; } }
 
         public SyntaxToken OperatorToken { get { throw null; } }
@@ -10316,6 +10718,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class RecordDeclarationSyntax : TypeDeclarationSyntax
     {
+        internal RecordDeclarationSyntax() { }
+
         public override SyntaxList<AttributeListSyntax> AttributeLists { get { throw null; } }
 
         public override BaseListSyntax? BaseList { get { throw null; } }
@@ -10394,6 +10798,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class RecursivePatternSyntax : PatternSyntax
     {
+        internal RecursivePatternSyntax() { }
+
         public VariableDesignationSyntax? Designation { get { throw null; } }
 
         public PositionalPatternClauseSyntax? PositionalPatternClause { get { throw null; } }
@@ -10424,6 +10830,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class ReferenceDirectiveTriviaSyntax : DirectiveTriviaSyntax
     {
+        internal ReferenceDirectiveTriviaSyntax() { }
+
         public override SyntaxToken EndOfDirectiveToken { get { throw null; } }
 
         public SyntaxToken File { get { throw null; } }
@@ -10454,6 +10862,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class RefExpressionSyntax : ExpressionSyntax
     {
+        internal RefExpressionSyntax() { }
+
         public ExpressionSyntax Expression { get { throw null; } }
 
         public SyntaxToken RefKeyword { get { throw null; } }
@@ -10472,6 +10882,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class RefTypeExpressionSyntax : ExpressionSyntax
     {
+        internal RefTypeExpressionSyntax() { }
+
         public SyntaxToken CloseParenToken { get { throw null; } }
 
         public ExpressionSyntax Expression { get { throw null; } }
@@ -10498,6 +10910,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class RefTypeSyntax : TypeSyntax
     {
+        internal RefTypeSyntax() { }
+
         public SyntaxToken ReadOnlyKeyword { get { throw null; } }
 
         public SyntaxToken RefKeyword { get { throw null; } }
@@ -10522,6 +10936,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class RefValueExpressionSyntax : ExpressionSyntax
     {
+        internal RefValueExpressionSyntax() { }
+
         public SyntaxToken CloseParenToken { get { throw null; } }
 
         public SyntaxToken Comma { get { throw null; } }
@@ -10556,6 +10972,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class RegionDirectiveTriviaSyntax : DirectiveTriviaSyntax
     {
+        internal RegionDirectiveTriviaSyntax() { }
+
         public override SyntaxToken EndOfDirectiveToken { get { throw null; } }
 
         public override SyntaxToken HashToken { get { throw null; } }
@@ -10582,6 +11000,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class RelationalPatternSyntax : PatternSyntax
     {
+        internal RelationalPatternSyntax() { }
+
         public ExpressionSyntax Expression { get { throw null; } }
 
         public SyntaxToken OperatorToken { get { throw null; } }
@@ -10600,6 +11020,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class ReturnStatementSyntax : StatementSyntax
     {
+        internal ReturnStatementSyntax() { }
+
         public override SyntaxList<AttributeListSyntax> AttributeLists { get { throw null; } }
 
         public ExpressionSyntax? Expression { get { throw null; } }
@@ -10630,6 +11052,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class ScopedTypeSyntax : TypeSyntax
     {
+        internal ScopedTypeSyntax() { }
+
         public SyntaxToken ScopedKeyword { get { throw null; } }
 
         public TypeSyntax Type { get { throw null; } }
@@ -10648,6 +11072,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class SelectClauseSyntax : SelectOrGroupClauseSyntax
     {
+        internal SelectClauseSyntax() { }
+
         public ExpressionSyntax Expression { get { throw null; } }
 
         public SyntaxToken SelectKeyword { get { throw null; } }
@@ -10666,10 +11092,13 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public abstract partial class SelectOrGroupClauseSyntax : CSharpSyntaxNode
     {
+        internal SelectOrGroupClauseSyntax() { }
     }
 
     public sealed partial class ShebangDirectiveTriviaSyntax : DirectiveTriviaSyntax
     {
+        internal ShebangDirectiveTriviaSyntax() { }
+
         public override SyntaxToken EndOfDirectiveToken { get { throw null; } }
 
         public SyntaxToken ExclamationToken { get { throw null; } }
@@ -10696,6 +11125,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class SimpleBaseTypeSyntax : BaseTypeSyntax
     {
+        internal SimpleBaseTypeSyntax() { }
+
         public override TypeSyntax Type { get { throw null; } }
 
         public override void Accept(CSharpSyntaxVisitor visitor) { }
@@ -10710,6 +11141,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class SimpleLambdaExpressionSyntax : LambdaExpressionSyntax
     {
+        internal SimpleLambdaExpressionSyntax() { }
+
         public override SyntaxToken ArrowToken { get { throw null; } }
 
         public override SyntaxToken AsyncKeyword { get { throw null; } }
@@ -10768,6 +11201,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public abstract partial class SimpleNameSyntax : NameSyntax
     {
+        internal SimpleNameSyntax() { }
+
         public abstract SyntaxToken Identifier { get; }
 
         public SimpleNameSyntax WithIdentifier(SyntaxToken identifier) { throw null; }
@@ -10775,6 +11210,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class SingleVariableDesignationSyntax : VariableDesignationSyntax
     {
+        internal SingleVariableDesignationSyntax() { }
+
         public SyntaxToken Identifier { get { throw null; } }
 
         public override void Accept(CSharpSyntaxVisitor visitor) { }
@@ -10789,6 +11226,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class SizeOfExpressionSyntax : ExpressionSyntax
     {
+        internal SizeOfExpressionSyntax() { }
+
         public SyntaxToken CloseParenToken { get { throw null; } }
 
         public SyntaxToken Keyword { get { throw null; } }
@@ -10815,6 +11254,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class SkippedTokensTriviaSyntax : StructuredTriviaSyntax, ISkippedTokensTriviaSyntax
     {
+        internal SkippedTokensTriviaSyntax() { }
+
         public SyntaxTokenList Tokens { get { throw null; } }
 
         public override void Accept(CSharpSyntaxVisitor visitor) { }
@@ -10831,6 +11272,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class SlicePatternSyntax : PatternSyntax
     {
+        internal SlicePatternSyntax() { }
+
         public SyntaxToken DotDotToken { get { throw null; } }
 
         public PatternSyntax? Pattern { get { throw null; } }
@@ -10849,6 +11292,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class StackAllocArrayCreationExpressionSyntax : ExpressionSyntax
     {
+        internal StackAllocArrayCreationExpressionSyntax() { }
+
         public InitializerExpressionSyntax? Initializer { get { throw null; } }
 
         public SyntaxToken StackAllocKeyword { get { throw null; } }
@@ -10873,6 +11318,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public abstract partial class StatementSyntax : CSharpSyntaxNode
     {
+        internal StatementSyntax() { }
+
         public abstract SyntaxList<AttributeListSyntax> AttributeLists { get; }
 
         public StatementSyntax AddAttributeLists(params AttributeListSyntax[] items) { throw null; }
@@ -10882,6 +11329,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class StructDeclarationSyntax : TypeDeclarationSyntax
     {
+        internal StructDeclarationSyntax() { }
+
         public override SyntaxList<AttributeListSyntax> AttributeLists { get { throw null; } }
 
         public override BaseListSyntax? BaseList { get { throw null; } }
@@ -10948,11 +11397,15 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public abstract partial class StructuredTriviaSyntax : CSharpSyntaxNode, IStructuredTriviaSyntax
     {
+        internal StructuredTriviaSyntax() { }
+
         public override SyntaxTrivia ParentTrivia { get { throw null; } }
     }
 
     public sealed partial class SubpatternSyntax : CSharpSyntaxNode
     {
+        internal SubpatternSyntax() { }
+
         public BaseExpressionColonSyntax? ExpressionColon { get { throw null; } }
 
         public NameColonSyntax? NameColon { get { throw null; } }
@@ -10977,6 +11430,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class SwitchExpressionArmSyntax : CSharpSyntaxNode
     {
+        internal SwitchExpressionArmSyntax() { }
+
         public SyntaxToken EqualsGreaterThanToken { get { throw null; } }
 
         public ExpressionSyntax Expression { get { throw null; } }
@@ -11003,6 +11458,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class SwitchExpressionSyntax : ExpressionSyntax
     {
+        internal SwitchExpressionSyntax() { }
+
         public SeparatedSyntaxList<SwitchExpressionArmSyntax> Arms { get { throw null; } }
 
         public SyntaxToken CloseBraceToken { get { throw null; } }
@@ -11035,6 +11492,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public abstract partial class SwitchLabelSyntax : CSharpSyntaxNode
     {
+        internal SwitchLabelSyntax() { }
+
         public abstract SyntaxToken ColonToken { get; }
         public abstract SyntaxToken Keyword { get; }
 
@@ -11045,6 +11504,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class SwitchSectionSyntax : CSharpSyntaxNode
     {
+        internal SwitchSectionSyntax() { }
+
         public SyntaxList<SwitchLabelSyntax> Labels { get { throw null; } }
 
         public SyntaxList<StatementSyntax> Statements { get { throw null; } }
@@ -11067,6 +11528,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class SwitchStatementSyntax : StatementSyntax
     {
+        internal SwitchStatementSyntax() { }
+
         public override SyntaxList<AttributeListSyntax> AttributeLists { get { throw null; } }
 
         public SyntaxToken CloseBraceToken { get { throw null; } }
@@ -11115,6 +11578,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class ThisExpressionSyntax : InstanceExpressionSyntax
     {
+        internal ThisExpressionSyntax() { }
+
         public SyntaxToken Token { get { throw null; } }
 
         public override void Accept(CSharpSyntaxVisitor visitor) { }
@@ -11129,6 +11594,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class ThrowExpressionSyntax : ExpressionSyntax
     {
+        internal ThrowExpressionSyntax() { }
+
         public ExpressionSyntax Expression { get { throw null; } }
 
         public SyntaxToken ThrowKeyword { get { throw null; } }
@@ -11147,6 +11614,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class ThrowStatementSyntax : StatementSyntax
     {
+        internal ThrowStatementSyntax() { }
+
         public override SyntaxList<AttributeListSyntax> AttributeLists { get { throw null; } }
 
         public ExpressionSyntax? Expression { get { throw null; } }
@@ -11177,6 +11646,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class TryStatementSyntax : StatementSyntax
     {
+        internal TryStatementSyntax() { }
+
         public override SyntaxList<AttributeListSyntax> AttributeLists { get { throw null; } }
 
         public BlockSyntax Block { get { throw null; } }
@@ -11217,6 +11688,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class TupleElementSyntax : CSharpSyntaxNode
     {
+        internal TupleElementSyntax() { }
+
         public SyntaxToken Identifier { get { throw null; } }
 
         public TypeSyntax Type { get { throw null; } }
@@ -11235,6 +11708,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class TupleExpressionSyntax : ExpressionSyntax
     {
+        internal TupleExpressionSyntax() { }
+
         public SeparatedSyntaxList<ArgumentSyntax> Arguments { get { throw null; } }
 
         public SyntaxToken CloseParenToken { get { throw null; } }
@@ -11259,6 +11734,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class TupleTypeSyntax : TypeSyntax
     {
+        internal TupleTypeSyntax() { }
+
         public SyntaxToken CloseParenToken { get { throw null; } }
 
         public SeparatedSyntaxList<TupleElementSyntax> Elements { get { throw null; } }
@@ -11283,6 +11760,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class TypeArgumentListSyntax : CSharpSyntaxNode
     {
+        internal TypeArgumentListSyntax() { }
+
         public SeparatedSyntaxList<TypeSyntax> Arguments { get { throw null; } }
 
         public SyntaxToken GreaterThanToken { get { throw null; } }
@@ -11307,6 +11786,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class TypeConstraintSyntax : TypeParameterConstraintSyntax
     {
+        internal TypeConstraintSyntax() { }
+
         public TypeSyntax Type { get { throw null; } }
 
         public override void Accept(CSharpSyntaxVisitor visitor) { }
@@ -11321,6 +11802,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class TypeCrefSyntax : CrefSyntax
     {
+        internal TypeCrefSyntax() { }
+
         public TypeSyntax Type { get { throw null; } }
 
         public override void Accept(CSharpSyntaxVisitor visitor) { }
@@ -11335,6 +11818,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public abstract partial class TypeDeclarationSyntax : BaseTypeDeclarationSyntax
     {
+        internal TypeDeclarationSyntax() { }
+
         public int Arity { get { throw null; } }
 
         public abstract SyntaxList<TypeParameterConstraintClauseSyntax> ConstraintClauses { get; }
@@ -11379,6 +11864,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class TypeOfExpressionSyntax : ExpressionSyntax
     {
+        internal TypeOfExpressionSyntax() { }
+
         public SyntaxToken CloseParenToken { get { throw null; } }
 
         public SyntaxToken Keyword { get { throw null; } }
@@ -11405,6 +11892,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class TypeParameterConstraintClauseSyntax : CSharpSyntaxNode
     {
+        internal TypeParameterConstraintClauseSyntax() { }
+
         public SyntaxToken ColonToken { get { throw null; } }
 
         public SeparatedSyntaxList<TypeParameterConstraintSyntax> Constraints { get { throw null; } }
@@ -11433,10 +11922,13 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public abstract partial class TypeParameterConstraintSyntax : CSharpSyntaxNode
     {
+        internal TypeParameterConstraintSyntax() { }
     }
 
     public sealed partial class TypeParameterListSyntax : CSharpSyntaxNode
     {
+        internal TypeParameterListSyntax() { }
+
         public SyntaxToken GreaterThanToken { get { throw null; } }
 
         public SyntaxToken LessThanToken { get { throw null; } }
@@ -11461,6 +11953,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class TypeParameterSyntax : CSharpSyntaxNode
     {
+        internal TypeParameterSyntax() { }
+
         public SyntaxList<AttributeListSyntax> AttributeLists { get { throw null; } }
 
         public SyntaxToken Identifier { get { throw null; } }
@@ -11485,6 +11979,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class TypePatternSyntax : PatternSyntax
     {
+        internal TypePatternSyntax() { }
+
         public TypeSyntax Type { get { throw null; } }
 
         public override void Accept(CSharpSyntaxVisitor visitor) { }
@@ -11499,6 +11995,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public abstract partial class TypeSyntax : ExpressionSyntax
     {
+        internal TypeSyntax() { }
+
         public bool IsNint { get { throw null; } }
 
         public bool IsNotNull { get { throw null; } }
@@ -11512,6 +12010,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class UnaryPatternSyntax : PatternSyntax
     {
+        internal UnaryPatternSyntax() { }
+
         public SyntaxToken OperatorToken { get { throw null; } }
 
         public PatternSyntax Pattern { get { throw null; } }
@@ -11530,6 +12030,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class UndefDirectiveTriviaSyntax : DirectiveTriviaSyntax
     {
+        internal UndefDirectiveTriviaSyntax() { }
+
         public override SyntaxToken EndOfDirectiveToken { get { throw null; } }
 
         public override SyntaxToken HashToken { get { throw null; } }
@@ -11560,6 +12062,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class UnsafeStatementSyntax : StatementSyntax
     {
+        internal UnsafeStatementSyntax() { }
+
         public override SyntaxList<AttributeListSyntax> AttributeLists { get { throw null; } }
 
         public BlockSyntax Block { get { throw null; } }
@@ -11590,6 +12094,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class UsingDirectiveSyntax : CSharpSyntaxNode
     {
+        internal UsingDirectiveSyntax() { }
+
         public NameEqualsSyntax? Alias { get { throw null; } }
 
         public SyntaxToken GlobalKeyword { get { throw null; } }
@@ -11626,6 +12132,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class UsingStatementSyntax : StatementSyntax
     {
+        internal UsingStatementSyntax() { }
+
         public override SyntaxList<AttributeListSyntax> AttributeLists { get { throw null; } }
 
         public SyntaxToken AwaitKeyword { get { throw null; } }
@@ -11674,6 +12182,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class VariableDeclarationSyntax : CSharpSyntaxNode
     {
+        internal VariableDeclarationSyntax() { }
+
         public TypeSyntax Type { get { throw null; } }
 
         public SeparatedSyntaxList<VariableDeclaratorSyntax> Variables { get { throw null; } }
@@ -11694,6 +12204,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class VariableDeclaratorSyntax : CSharpSyntaxNode
     {
+        internal VariableDeclaratorSyntax() { }
+
         public BracketedArgumentListSyntax? ArgumentList { get { throw null; } }
 
         public SyntaxToken Identifier { get { throw null; } }
@@ -11718,10 +12230,13 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public abstract partial class VariableDesignationSyntax : CSharpSyntaxNode
     {
+        internal VariableDesignationSyntax() { }
     }
 
     public sealed partial class VarPatternSyntax : PatternSyntax
     {
+        internal VarPatternSyntax() { }
+
         public VariableDesignationSyntax Designation { get { throw null; } }
 
         public SyntaxToken VarKeyword { get { throw null; } }
@@ -11740,6 +12255,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class WarningDirectiveTriviaSyntax : DirectiveTriviaSyntax
     {
+        internal WarningDirectiveTriviaSyntax() { }
+
         public override SyntaxToken EndOfDirectiveToken { get { throw null; } }
 
         public override SyntaxToken HashToken { get { throw null; } }
@@ -11766,6 +12283,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class WhenClauseSyntax : CSharpSyntaxNode
     {
+        internal WhenClauseSyntax() { }
+
         public ExpressionSyntax Condition { get { throw null; } }
 
         public SyntaxToken WhenKeyword { get { throw null; } }
@@ -11784,6 +12303,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class WhereClauseSyntax : QueryClauseSyntax
     {
+        internal WhereClauseSyntax() { }
+
         public ExpressionSyntax Condition { get { throw null; } }
 
         public SyntaxToken WhereKeyword { get { throw null; } }
@@ -11802,6 +12323,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class WhileStatementSyntax : StatementSyntax
     {
+        internal WhileStatementSyntax() { }
+
         public override SyntaxList<AttributeListSyntax> AttributeLists { get { throw null; } }
 
         public SyntaxToken CloseParenToken { get { throw null; } }
@@ -11840,6 +12363,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class WithExpressionSyntax : ExpressionSyntax
     {
+        internal WithExpressionSyntax() { }
+
         public ExpressionSyntax Expression { get { throw null; } }
 
         public InitializerExpressionSyntax Initializer { get { throw null; } }
@@ -11864,6 +12389,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public abstract partial class XmlAttributeSyntax : CSharpSyntaxNode
     {
+        internal XmlAttributeSyntax() { }
+
         public abstract SyntaxToken EndQuoteToken { get; }
         public abstract SyntaxToken EqualsToken { get; }
         public abstract XmlNameSyntax Name { get; }
@@ -11880,6 +12407,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class XmlCDataSectionSyntax : XmlNodeSyntax
     {
+        internal XmlCDataSectionSyntax() { }
+
         public SyntaxToken EndCDataToken { get { throw null; } }
 
         public SyntaxToken StartCDataToken { get { throw null; } }
@@ -11904,6 +12433,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class XmlCommentSyntax : XmlNodeSyntax
     {
+        internal XmlCommentSyntax() { }
+
         public SyntaxToken LessThanExclamationMinusMinusToken { get { throw null; } }
 
         public SyntaxToken MinusMinusGreaterThanToken { get { throw null; } }
@@ -11928,6 +12459,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class XmlCrefAttributeSyntax : XmlAttributeSyntax
     {
+        internal XmlCrefAttributeSyntax() { }
+
         public CrefSyntax Cref { get { throw null; } }
 
         public override SyntaxToken EndQuoteToken { get { throw null; } }
@@ -11958,6 +12491,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class XmlElementEndTagSyntax : CSharpSyntaxNode
     {
+        internal XmlElementEndTagSyntax() { }
+
         public SyntaxToken GreaterThanToken { get { throw null; } }
 
         public SyntaxToken LessThanSlashToken { get { throw null; } }
@@ -11980,6 +12515,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class XmlElementStartTagSyntax : CSharpSyntaxNode
     {
+        internal XmlElementStartTagSyntax() { }
+
         public SyntaxList<XmlAttributeSyntax> Attributes { get { throw null; } }
 
         public SyntaxToken GreaterThanToken { get { throw null; } }
@@ -12008,6 +12545,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class XmlElementSyntax : XmlNodeSyntax
     {
+        internal XmlElementSyntax() { }
+
         public SyntaxList<XmlNodeSyntax> Content { get { throw null; } }
 
         public XmlElementEndTagSyntax EndTag { get { throw null; } }
@@ -12034,6 +12573,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class XmlEmptyElementSyntax : XmlNodeSyntax
     {
+        internal XmlEmptyElementSyntax() { }
+
         public SyntaxList<XmlAttributeSyntax> Attributes { get { throw null; } }
 
         public SyntaxToken LessThanToken { get { throw null; } }
@@ -12070,6 +12611,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class XmlNameAttributeSyntax : XmlAttributeSyntax
     {
+        internal XmlNameAttributeSyntax() { }
+
         public override SyntaxToken EndQuoteToken { get { throw null; } }
 
         public override SyntaxToken EqualsToken { get { throw null; } }
@@ -12100,6 +12643,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class XmlNameSyntax : CSharpSyntaxNode
     {
+        internal XmlNameSyntax() { }
+
         public SyntaxToken LocalName { get { throw null; } }
 
         public XmlPrefixSyntax? Prefix { get { throw null; } }
@@ -12118,10 +12663,13 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public abstract partial class XmlNodeSyntax : CSharpSyntaxNode
     {
+        internal XmlNodeSyntax() { }
     }
 
     public sealed partial class XmlPrefixSyntax : CSharpSyntaxNode
     {
+        internal XmlPrefixSyntax() { }
+
         public SyntaxToken ColonToken { get { throw null; } }
 
         public SyntaxToken Prefix { get { throw null; } }
@@ -12140,6 +12688,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class XmlProcessingInstructionSyntax : XmlNodeSyntax
     {
+        internal XmlProcessingInstructionSyntax() { }
+
         public SyntaxToken EndProcessingInstructionToken { get { throw null; } }
 
         public XmlNameSyntax Name { get { throw null; } }
@@ -12168,6 +12718,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class XmlTextAttributeSyntax : XmlAttributeSyntax
     {
+        internal XmlTextAttributeSyntax() { }
+
         public override SyntaxToken EndQuoteToken { get { throw null; } }
 
         public override SyntaxToken EqualsToken { get { throw null; } }
@@ -12200,6 +12752,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class XmlTextSyntax : XmlNodeSyntax
     {
+        internal XmlTextSyntax() { }
+
         public SyntaxTokenList TextTokens { get { throw null; } }
 
         public override void Accept(CSharpSyntaxVisitor visitor) { }
@@ -12216,6 +12770,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
     public sealed partial class YieldStatementSyntax : StatementSyntax
     {
+        internal YieldStatementSyntax() { }
+
         public override SyntaxList<AttributeListSyntax> AttributeLists { get { throw null; } }
 
         public ExpressionSyntax? Expression { get { throw null; } }

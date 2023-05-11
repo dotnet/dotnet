@@ -3698,9 +3698,7 @@ namespace Microsoft.CodeAnalysis.VisualBasic
 
         public new VisualBasicCompilation WithReferences(System.Collections.Generic.IEnumerable<MetadataReference> newReferences) { throw null; }
     }
-#pragma warning disable CS0659 // Type overrides Object.Equals(object o) but does not override Object.GetHashCode()
     public sealed partial class VisualBasicCompilationOptions : CompilationOptions, System.IEquatable<VisualBasicCompilationOptions>
-#pragma warning restore CS0659 // Type overrides Object.Equals(object o) but does not override Object.GetHashCode()
     {
         public VisualBasicCompilationOptions(OutputKind outputKind, bool reportSuppressedDiagnostics, string moduleName = null, string mainTypeName = null, string scriptClassName = "Script", System.Collections.Generic.IEnumerable<GlobalImport> globalImports = null, string rootNamespace = null, OptionStrict optionStrict = OptionStrict.Off, bool optionInfer = true, bool optionExplicit = true, bool optionCompareText = false, VisualBasicParseOptions parseOptions = null, bool embedVbCoreRuntime = false, OptimizationLevel optimizationLevel = OptimizationLevel.Debug, bool checkOverflow = true, string cryptoKeyContainer = null, string cryptoKeyFile = null, System.Collections.Immutable.ImmutableArray<byte> cryptoPublicKey = default, bool? delaySign = null, Platform platform = Platform.AnyCpu, ReportDiagnostic generalDiagnosticOption = ReportDiagnostic.Default, System.Collections.Generic.IEnumerable<System.Collections.Generic.KeyValuePair<string, ReportDiagnostic>> specificDiagnosticOptions = null, bool concurrentBuild = true, bool deterministic = false, XmlReferenceResolver xmlReferenceResolver = null, SourceReferenceResolver sourceReferenceResolver = null, MetadataReferenceResolver metadataReferenceResolver = null, AssemblyIdentityComparer assemblyIdentityComparer = null, StrongNameProvider strongNameProvider = null) { }
 
