@@ -102,22 +102,22 @@
       <Uri>https://github.com/dotnet/test-templates</Uri>
       <Sha>45a41b353d078e4d1e5918246fddbacb452eb210</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.Common.ItemTemplates" Version="8.0.100-preview.5.23262.1">
+    <Dependency Name="Microsoft.DotNet.Common.ItemTemplates" Version="8.0.100-preview.5.23262.2">
       <Uri>https://github.com/dotnet/sdk</Uri>
-      <Sha>add7df9e61cf196cd08363cb2ab007293b1b9242</Sha>
+      <Sha>7fea8aa3c8dc96e0ecd542e2117b7ee973c1fc78</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.TemplateEngine.Cli" Version="8.0.100-preview.5.23262.1">
+    <Dependency Name="Microsoft.TemplateEngine.Cli" Version="8.0.100-preview.5.23262.2">
       <Uri>https://github.com/dotnet/sdk</Uri>
-      <Sha>add7df9e61cf196cd08363cb2ab007293b1b9242</Sha>
+      <Sha>7fea8aa3c8dc96e0ecd542e2117b7ee973c1fc78</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.NET.Sdk" Version="8.0.100-preview.5.23262.1">
+    <Dependency Name="Microsoft.NET.Sdk" Version="8.0.100-preview.5.23262.2">
       <Uri>https://github.com/dotnet/sdk</Uri>
-      <Sha>add7df9e61cf196cd08363cb2ab007293b1b9242</Sha>
+      <Sha>7fea8aa3c8dc96e0ecd542e2117b7ee973c1fc78</Sha>
       <SourceBuild RepoName="sdk" ManagedOnly="true" />
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.MSBuildSdkResolver" Version="8.0.100-preview.5.23262.1">
+    <Dependency Name="Microsoft.DotNet.MSBuildSdkResolver" Version="8.0.100-preview.5.23262.2">
       <Uri>https://github.com/dotnet/sdk</Uri>
-      <Sha>add7df9e61cf196cd08363cb2ab007293b1b9242</Sha>
+      <Sha>7fea8aa3c8dc96e0ecd542e2117b7ee973c1fc78</Sha>
     </Dependency>
     <!-- For coherency purposes, these versions should be gated by the versions of winforms and wpf routed via windowsdesktop -->
     <Dependency Name="Microsoft.Dotnet.WinForms.ProjectTemplates" Version="8.0.0-preview.5.23260.4" CoherentParentDependency="Microsoft.WindowsDesktop.App.Runtime.win-x64">
@@ -193,18 +193,18 @@
     </Dependency>
   </ProductDependencies>
   <ToolsetDependencies>
-    <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="8.0.0-beta.23260.3">
+    <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="8.0.0-beta.23262.1">
       <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>1f8ffd35f5f4af2fd1c309c36f4dfcf7cffda4f6</Sha>
+      <Sha>933cf300e376f398e3fa3b3563a6ad5fe32a511e</Sha>
       <SourceBuild RepoName="arcade" ManagedOnly="true" />
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.CMake.Sdk" Version="8.0.0-beta.23260.3">
+    <Dependency Name="Microsoft.DotNet.CMake.Sdk" Version="8.0.0-beta.23262.1">
       <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>1f8ffd35f5f4af2fd1c309c36f4dfcf7cffda4f6</Sha>
+      <Sha>933cf300e376f398e3fa3b3563a6ad5fe32a511e</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.Build.Tasks.Installers" Version="8.0.0-beta.23260.3">
+    <Dependency Name="Microsoft.DotNet.Build.Tasks.Installers" Version="8.0.0-beta.23262.1">
       <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>1f8ffd35f5f4af2fd1c309c36f4dfcf7cffda4f6</Sha>
+      <Sha>933cf300e376f398e3fa3b3563a6ad5fe32a511e</Sha>
     </Dependency>
     <Dependency Name="Microsoft.DotNet.Darc" Version="1.1.0-beta.23226.1">
       <Uri>https://github.com/dotnet/arcade-services</Uri>
