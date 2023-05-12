@@ -82,5 +82,7 @@
     <Asset Type="Microsoft.VisualStudio.Analyzer" Path="Microsoft.CodeAnalysis.Razor.dll" />
     <Asset Type="Microsoft.VisualStudio.Analyzer" Path="Microsoft.AspNetCore.Mvc.Razor.Extensions.dll" />
     <Asset Type="Microsoft.VisualStudio.Analyzer" Path="Microsoft.AspNetCore.Razor.Language.dll" />
+    <Asset Type="Microsoft.VisualStudio.Analyzer" Path="Microsoft.Extensions.ObjectPool.dll" />
+    <Asset Type="Microsoft.VisualStudio.Analyzer" Path="Microsoft.AspNetCore.Razor.Utilities.Shared.dll" />
   </Assets>
 </PackageManifest>

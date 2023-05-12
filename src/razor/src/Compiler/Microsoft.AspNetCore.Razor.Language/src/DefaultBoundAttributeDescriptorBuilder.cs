@@ -55,7 +55,7 @@ internal partial class DefaultBoundAttributeDescriptorBuilder : BoundAttributeDe
     [AllowNull]
     private string _kind;
     private List<DefaultBoundAttributeParameterDescriptorBuilder>? _attributeParameterBuilders;
-    private Dictionary<string, string>? _metadata;
+    private Dictionary<string, string?>? _metadata;
     private RazorDiagnosticCollection? _diagnostics;
 
     private DefaultBoundAttributeDescriptorBuilder()
@@ -77,7 +77,7 @@ internal partial class DefaultBoundAttributeDescriptorBuilder : BoundAttributeDe
     public override string? Documentation { get; set; }
     public override string? DisplayName { get; set; }
 
-    public override IDictionary<string, string> Metadata => _metadata ??= new Dictionary<string, string>();
+    public override IDictionary<string, string?> Metadata => _metadata ??= new Dictionary<string, string?>();
 
     public override RazorDiagnosticCollection Diagnostics => _diagnostics ??= new RazorDiagnosticCollection();
 
