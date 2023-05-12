@@ -84,7 +84,6 @@ internal class ProjectRazorJsonPublisher : ProjectSnapshotChangeTrigger
         _logger = logger;
 
         _serializer.Converters.Add(TagHelperDescriptorJsonConverter.Instance);
-        _serializer.Converters.Add(RazorConfigurationJsonConverter.Instance);
         _serializer.Converters.Add(ProjectRazorJsonJsonConverter.Instance);
     }
 

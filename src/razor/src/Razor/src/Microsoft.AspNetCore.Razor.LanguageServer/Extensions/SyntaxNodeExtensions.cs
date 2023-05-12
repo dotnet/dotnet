@@ -14,7 +14,7 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer.Extensions;
 
 internal static class SyntaxNodeExtensions
 {
-    internal static bool IsUsingDirective(SyntaxNode node, [NotNullWhen(true)] out SyntaxList<SyntaxNode>? children)
+    internal static bool IsUsingDirective(this SyntaxNode node, [NotNullWhen(true)] out SyntaxList<SyntaxNode>? children)
     {
         // Using directives are weird, because the directive keyword ("using") is part of the C# statement it represents
         if (node is RazorDirectiveSyntax razorDirective &&

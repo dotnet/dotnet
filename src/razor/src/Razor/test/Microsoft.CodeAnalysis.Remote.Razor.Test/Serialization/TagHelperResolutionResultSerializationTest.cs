@@ -23,7 +23,6 @@ public class TagHelperResolutionResultSerializationTest : TestBase
     private static readonly JsonConverter[] s_converters = new JsonConverter[]
     {
         TagHelperDescriptorJsonConverter.Instance,
-        RazorDiagnosticJsonConverter.Instance,
         TagHelperResolutionResultJsonConverter.Instance
     };
 

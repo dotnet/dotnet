@@ -9,12 +9,10 @@ namespace Microsoft.AspNetCore.Razor.ProjectEngineHost.Serialization;
 
 internal static class JsonConverterCollectionExtensions
 {
-    private static readonly List<JsonConverter> s_projectSerializerConverters = new List<JsonConverter>(5)
+    private static readonly List<JsonConverter> s_projectSerializerConverters = new List<JsonConverter>(4)
     {
         TagHelperDescriptorJsonConverter.Instance,
-        RazorDiagnosticJsonConverter.Instance,
-        RazorExtensionJsonConverter.Instance,
-        RazorConfigurationJsonConverter.Instance,
+        TagHelperResolutionResultJsonConverter.Instance,
         ProjectRazorJsonJsonConverter.Instance,
     };
 
@@ -27,9 +25,7 @@ internal static class JsonConverterCollectionExtensions
 
         foreach (var converter in s_projectSerializerConverters)
         {
-            {
-                collection.Add(converter);
-            }
+            collection.Add(converter);
         }
     }
 }

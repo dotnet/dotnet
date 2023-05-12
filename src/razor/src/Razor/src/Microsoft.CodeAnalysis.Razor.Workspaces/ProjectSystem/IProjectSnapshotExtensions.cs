@@ -2,7 +2,6 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using System.Collections.Generic;
-using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.ProjectEngineHost.Serialization;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 
@@ -17,17 +16,14 @@ internal static class IProjectSnapshotExtensions
         {
             if (project.GetDocument(documentFilePath) is { } document)
             {
-                var documentHandle = new DocumentSnapshotHandle(
-                    document.FilePath.AssumeNotNull(),
-                    document.TargetPath.AssumeNotNull(),
-                    document.FileKind.AssumeNotNull());
+                var documentHandle = document.ToHandle();
 
                 documents.Add(documentHandle);
             }
         }
 
         return new ProjectRazorJson(
-            serializedOriginFilePath: serializedFilePath,
+            serializedFilePath: serializedFilePath,
             filePath: project.FilePath,
             configuration: project.Configuration,
             rootNamespace: project.RootNamespace,

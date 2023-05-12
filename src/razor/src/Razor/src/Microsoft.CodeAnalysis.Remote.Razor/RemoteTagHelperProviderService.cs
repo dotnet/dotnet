@@ -65,7 +65,7 @@ internal sealed class RemoteTagHelperProviderService : RazorServiceBase, IRemote
     public async ValueTask<TagHelperDeltaResult> GetTagHelpersDeltaCoreAsync(RazorPinnedSolutionInfoWrapper solutionInfo, ProjectSnapshotHandle projectHandle, string? factoryTypeName, int lastResultId, CancellationToken cancellationToken)
     {
         var tagHelperResolutionResult = await GetTagHelpersCoreAsync(solutionInfo, projectHandle, factoryTypeName, cancellationToken).ConfigureAwait(false);
-        var currentTagHelpers = tagHelperResolutionResult.Descriptors ?? Array.Empty<TagHelperDescriptor>();
+        var currentTagHelpers = tagHelperResolutionResult.Descriptors;
         var deltaResult = _tagHelperDeltaProvider.GetTagHelpersDelta(projectHandle.FilePath, lastResultId, currentTagHelpers);
         return deltaResult;
     }

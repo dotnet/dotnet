@@ -256,8 +256,7 @@ internal class RazorFormattingPass : FormattingPassBase
         // @attribute [Obsolete("old")]
         //
         // The CSharpCodeBlockSyntax covers everything from the end of "attribute" to the end of the line
-        if (IsSingleLineDirective(node, out var children) ||
-            SyntaxNodeExtensions.IsUsingDirective(node, out children))
+        if (IsSingleLineDirective(node, out var children) || node.IsUsingDirective(out children))
         {
             // Shrink any block of C# that only has whitespace down to a single space.
             // In the @attribute case above this would only be the whitespace between the directive and code

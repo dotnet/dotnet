@@ -111,13 +111,12 @@ public class TagHelperDescriptorSerializationTest : TestBase
             Converters = new List<JsonConverter>
             {
                 TagHelperDescriptorJsonConverter.Instance,
-                RazorDiagnosticJsonConverter.Instance,
             },
         };
         var serializedDescriptor = JsonConvert.SerializeObject(expectedDescriptor, serializerSettings);
 
         // Act
-        var descriptor = JsonConvert.DeserializeObject<TagHelperDescriptor>(serializedDescriptor, TagHelperDescriptorJsonConverter.Instance, RazorDiagnosticJsonConverter.Instance);
+        var descriptor = JsonConvert.DeserializeObject<TagHelperDescriptor>(serializedDescriptor, TagHelperDescriptorJsonConverter.Instance);
 
         // Assert
         Assert.Equal(expectedDescriptor, descriptor, TagHelperDescriptorComparer.Default);
@@ -160,8 +159,8 @@ public class TagHelperDescriptorSerializationTest : TestBase
             });
 
         // Act
-        var serializedDescriptor = JsonConvert.SerializeObject(expectedDescriptor, TagHelperDescriptorJsonConverter.Instance, RazorDiagnosticJsonConverter.Instance);
-        var descriptor = JsonConvert.DeserializeObject<TagHelperDescriptor>(serializedDescriptor, TagHelperDescriptorJsonConverter.Instance, RazorDiagnosticJsonConverter.Instance);
+        var serializedDescriptor = JsonConvert.SerializeObject(expectedDescriptor, TagHelperDescriptorJsonConverter.Instance);
+        var descriptor = JsonConvert.DeserializeObject<TagHelperDescriptor>(serializedDescriptor, TagHelperDescriptorJsonConverter.Instance);
 
         // Assert
         Assert.Equal(expectedDescriptor, descriptor, TagHelperDescriptorComparer.Default);
@@ -204,8 +203,8 @@ public class TagHelperDescriptorSerializationTest : TestBase
             });
 
         // Act
-        var serializedDescriptor = JsonConvert.SerializeObject(expectedDescriptor, TagHelperDescriptorJsonConverter.Instance, RazorDiagnosticJsonConverter.Instance);
-        var descriptor = JsonConvert.DeserializeObject<TagHelperDescriptor>(serializedDescriptor, TagHelperDescriptorJsonConverter.Instance, RazorDiagnosticJsonConverter.Instance);
+        var serializedDescriptor = JsonConvert.SerializeObject(expectedDescriptor, TagHelperDescriptorJsonConverter.Instance);
+        var descriptor = JsonConvert.DeserializeObject<TagHelperDescriptor>(serializedDescriptor, TagHelperDescriptorJsonConverter.Instance);
 
         // Assert
         Assert.Equal(expectedDescriptor, descriptor, TagHelperDescriptorComparer.Default);
@@ -246,8 +245,8 @@ public class TagHelperDescriptorSerializationTest : TestBase
                         new RazorDiagnosticDescriptor("id", () => "Test Message", RazorDiagnosticSeverity.Error), new SourceSpan(null, 10, 20, 30, 40))));
 
         // Act
-        var serializedDescriptor = JsonConvert.SerializeObject(expectedDescriptor, TagHelperDescriptorJsonConverter.Instance, RazorDiagnosticJsonConverter.Instance);
-        var descriptor = JsonConvert.DeserializeObject<TagHelperDescriptor>(serializedDescriptor, TagHelperDescriptorJsonConverter.Instance, RazorDiagnosticJsonConverter.Instance);
+        var serializedDescriptor = JsonConvert.SerializeObject(expectedDescriptor, TagHelperDescriptorJsonConverter.Instance);
+        var descriptor = JsonConvert.DeserializeObject<TagHelperDescriptor>(serializedDescriptor, TagHelperDescriptorJsonConverter.Instance);
 
         // Assert
         Assert.Equal(expectedDescriptor, descriptor, TagHelperDescriptorComparer.Default);
@@ -289,8 +288,8 @@ public class TagHelperDescriptorSerializationTest : TestBase
                     .TagOutputHint("Hint"));
 
         // Act
-        var serializedDescriptor = JsonConvert.SerializeObject(expectedDescriptor, TagHelperDescriptorJsonConverter.Instance, RazorDiagnosticJsonConverter.Instance);
-        var descriptor = JsonConvert.DeserializeObject<TagHelperDescriptor>(serializedDescriptor, TagHelperDescriptorJsonConverter.Instance, RazorDiagnosticJsonConverter.Instance);
+        var serializedDescriptor = JsonConvert.SerializeObject(expectedDescriptor, TagHelperDescriptorJsonConverter.Instance);
+        var descriptor = JsonConvert.DeserializeObject<TagHelperDescriptor>(serializedDescriptor, TagHelperDescriptorJsonConverter.Instance);
 
         // Assert
         Assert.Equal(expectedDescriptor, descriptor, TagHelperDescriptorComparer.Default);
@@ -317,8 +316,8 @@ public class TagHelperDescriptorSerializationTest : TestBase
             });
 
         // Act
-        var serializedDescriptor = JsonConvert.SerializeObject(expectedDescriptor, TagHelperDescriptorJsonConverter.Instance, RazorDiagnosticJsonConverter.Instance);
-        var descriptor = JsonConvert.DeserializeObject<TagHelperDescriptor>(serializedDescriptor, TagHelperDescriptorJsonConverter.Instance, RazorDiagnosticJsonConverter.Instance);
+        var serializedDescriptor = JsonConvert.SerializeObject(expectedDescriptor, TagHelperDescriptorJsonConverter.Instance);
+        var descriptor = JsonConvert.DeserializeObject<TagHelperDescriptor>(serializedDescriptor, TagHelperDescriptorJsonConverter.Instance);
 
         // Assert
         Assert.Equal(expectedDescriptor, descriptor, TagHelperDescriptorComparer.Default);
@@ -349,8 +348,8 @@ public class TagHelperDescriptorSerializationTest : TestBase
             });
 
         // Act
-        var serializedDescriptor = JsonConvert.SerializeObject(expectedDescriptor, TagHelperDescriptorJsonConverter.Instance, RazorDiagnosticJsonConverter.Instance);
-        var descriptor = JsonConvert.DeserializeObject<TagHelperDescriptor>(serializedDescriptor, TagHelperDescriptorJsonConverter.Instance, RazorDiagnosticJsonConverter.Instance);
+        var serializedDescriptor = JsonConvert.SerializeObject(expectedDescriptor, TagHelperDescriptorJsonConverter.Instance);
+        var descriptor = JsonConvert.DeserializeObject<TagHelperDescriptor>(serializedDescriptor, TagHelperDescriptorJsonConverter.Instance);
 
         // Assert
         Assert.Equal(expectedDescriptor, descriptor, TagHelperDescriptorComparer.Default);

@@ -3,38 +3,18 @@
 
 using System;
 
-namespace Microsoft.AspNetCore.Razor.ProjectEngineHost.Serialization;
+namespace Microsoft.CodeAnalysis.Razor.ProjectSystem;
 
 internal sealed class DocumentSnapshotHandle
 {
-    public DocumentSnapshotHandle(
-        string filePath,
-        string targetPath,
-        string fileKind)
-    {
-        if (filePath is null)
-        {
-            throw new ArgumentNullException(nameof(filePath));
-        }
-
-        if (targetPath is null)
-        {
-            throw new ArgumentNullException(nameof(targetPath));
-        }
-
-        if (fileKind is null)
-        {
-            throw new ArgumentNullException(nameof(fileKind));
-        }
-
-        FilePath = filePath;
-        TargetPath = targetPath;
-        FileKind = fileKind;
-    }
-
     public string FilePath { get; }
-
     public string TargetPath { get; }
-
     public string FileKind { get; }
+
+    public DocumentSnapshotHandle(string filePath, string targetPath, string fileKind)
+    {
+        FilePath = filePath ?? throw new ArgumentNullException(nameof(filePath));
+        TargetPath = targetPath ?? throw new ArgumentNullException(nameof(targetPath));
+        FileKind = fileKind ?? throw new ArgumentNullException(nameof(fileKind));
+    }
 }

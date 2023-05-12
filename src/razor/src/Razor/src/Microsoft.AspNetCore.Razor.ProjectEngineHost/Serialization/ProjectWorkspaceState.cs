@@ -7,13 +7,15 @@ using System.Linq;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.Extensions.Internal;
-using Newtonsoft.Json;
 
 namespace Microsoft.AspNetCore.Razor.ProjectEngineHost.Serialization;
 
 public sealed class ProjectWorkspaceState : IEquatable<ProjectWorkspaceState>
 {
     public static readonly ProjectWorkspaceState Default = new(Array.Empty<TagHelperDescriptor>(), LanguageVersion.Default);
+
+    public IReadOnlyList<TagHelperDescriptor> TagHelpers { get; }
+    public LanguageVersion CSharpLanguageVersion { get; }
 
     public ProjectWorkspaceState(
         IReadOnlyCollection<TagHelperDescriptor> tagHelpers,
@@ -22,23 +24,13 @@ public sealed class ProjectWorkspaceState : IEquatable<ProjectWorkspaceState>
     {
     }
 
-    [JsonConstructor]
     public ProjectWorkspaceState(
         IReadOnlyList<TagHelperDescriptor> tagHelpers,
         LanguageVersion csharpLanguageVersion)
     {
-        if (tagHelpers is null)
-        {
-            throw new ArgumentNullException(nameof(tagHelpers));
-        }
-
-        TagHelpers = tagHelpers;
+        TagHelpers = tagHelpers ?? throw new ArgumentNullException(nameof(tagHelpers));
         CSharpLanguageVersion = csharpLanguageVersion;
     }
-
-    public IReadOnlyList<TagHelperDescriptor> TagHelpers { get; }
-
-    public LanguageVersion CSharpLanguageVersion { get; }
 
     public override bool Equals(object? obj)
         => Equals(obj as ProjectWorkspaceState);
@@ -50,7 +42,7 @@ public sealed class ProjectWorkspaceState : IEquatable<ProjectWorkspaceState>
 
     public override int GetHashCode()
     {
-        var hash = new HashCodeCombiner();
+        var hash = HashCodeCombiner.Start();
 
         foreach (var tagHelper in TagHelpers)
         {
