@@ -24,28 +24,22 @@ internal sealed class TagHelperResolutionResultComparer : IEqualityComparer<TagH
             return false;
         }
 
-        return x.Descriptors.AssumeNotNull().SequenceEqual(y.Descriptors.AssumeNotNull(), TagHelperDescriptorComparer.Default) &&
-               x.Diagnostics.AssumeNotNull().SequenceEqual(y.Diagnostics.AssumeNotNull());
+        return x.Descriptors.SequenceEqual(y.Descriptors, TagHelperDescriptorComparer.Default) &&
+               x.Diagnostics.SequenceEqual(y.Diagnostics);
     }
 
     public int GetHashCode(TagHelperResolutionResult obj)
     {
-        var hash = new HashCodeCombiner();
+        var hash = HashCodeCombiner.Start();
 
-        if (obj.Descriptors is not null)
+        foreach (var descriptor in obj.Descriptors)
         {
-            foreach (var descriptor in obj.Descriptors)
-            {
-                hash.Add(descriptor);
-            }
+            hash.Add(descriptor);
         }
 
-        if (obj.Diagnostics is not null)
+        for (var i = 0; i < obj.Diagnostics.Count; i++)
         {
-            for (var i = 0; i < obj.Diagnostics.Count; i++)
-            {
-                hash.Add(obj.Diagnostics[i]);
-            }
+            hash.Add(obj.Diagnostics[i]);
         }
 
         return hash.CombinedHash;

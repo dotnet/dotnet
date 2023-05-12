@@ -15,6 +15,10 @@ internal class RazorUriJsonConverter : DocumentUriConverter
 {
     public static readonly RazorUriJsonConverter Instance = new RazorUriJsonConverter();
 
+    private RazorUriJsonConverter()
+    {
+    }
+
     public override bool CanConvert(Type objectType)
     {
         return typeof(Uri).IsAssignableFrom(objectType);

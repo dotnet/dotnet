@@ -96,7 +96,6 @@ public class TagHelperDescriptorCacheTest : TestBase
     private IReadOnlyList<TagHelperDescriptor> ReadTagHelpers(Stream stream)
     {
         var serializer = new JsonSerializer();
-        serializer.Converters.Add(RazorDiagnosticJsonConverter.Instance);
         serializer.Converters.Add(TagHelperDescriptorJsonConverter.Instance);
 
         IReadOnlyList<TagHelperDescriptor> result;

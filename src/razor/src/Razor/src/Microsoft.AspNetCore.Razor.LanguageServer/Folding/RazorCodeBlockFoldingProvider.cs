@@ -11,7 +11,7 @@ using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Folding;
 
-internal sealed partial class RazorCodeBlockFoldingProvider : IRazorFoldingRangeProvider
+internal sealed class RazorCodeBlockFoldingProvider : IRazorFoldingRangeProvider
 {
     public async Task<ImmutableArray<FoldingRange>> GetFoldingRangesAsync(DocumentContext documentContext, CancellationToken cancellationToken)
     {

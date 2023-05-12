@@ -1,74 +1,27 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
-#nullable disable
-
-using System;
-using Microsoft.AspNetCore.Razor.Language;
-using Newtonsoft.Json;
-
 namespace Microsoft.AspNetCore.Razor.ProjectEngineHost.Serialization;
 
-internal class TagHelperResolutionResultJsonConverter : JsonConverter
+internal partial class TagHelperResolutionResultJsonConverter : ObjectJsonConverter<TagHelperResolutionResult>
 {
-    private readonly JsonSerializer _serializer;
-    public static readonly TagHelperResolutionResultJsonConverter Instance = new TagHelperResolutionResultJsonConverter();
+    public static readonly TagHelperResolutionResultJsonConverter Instance = new();
 
     public TagHelperResolutionResultJsonConverter()
     {
-        _serializer = new JsonSerializer();
-        _serializer.Converters.Add(TagHelperDescriptorJsonConverter.Instance);
-        _serializer.Converters.Add(RazorDiagnosticJsonConverter.Instance);
     }
 
-    public override bool CanConvert(Type objectType) => objectType == typeof(TagHelperResolutionResult);
-
-    public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
+    protected override TagHelperResolutionResult ReadFromProperties(JsonDataReader reader)
     {
-        // Verify expected object structure based on `WriteJson`
-        if (reader.TokenType != JsonToken.StartObject)
-        {
-            return null;
-        }
+        Data data = default;
+        reader.ReadProperties(ref data, Data.PropertyMap);
 
-        var (_, _, descriptors, diagnostics) = reader.ReadProperties(static (propertyName, arg) =>
-        {
-            var (reader, serializer, descriptors, diagnostics) = (arg.reader, arg.serializer, arg.descriptors, arg.diagnostics);
-            switch (propertyName)
-            {
-                case nameof(TagHelperResolutionResult.Descriptors):
-                    if (reader.Read())
-                    {
-                        descriptors = serializer.Deserialize<TagHelperDescriptor[]>(reader);
-                    }
-
-                    break;
-                case nameof(TagHelperResolutionResult.Diagnostics):
-                    if (reader.Read())
-                    {
-                        diagnostics = serializer.Deserialize<RazorDiagnostic[]>(reader);
-                    }
-
-                    break;
-            }
-
-            return (reader, serializer, descriptors, diagnostics);
-        }, (reader, serializer: _serializer, descriptors: Array.Empty<TagHelperDescriptor>(), diagnostics: Array.Empty<RazorDiagnostic>()));
-
-        reader.ReadTokenAndAdvance(JsonToken.EndObject, out _);
-
-        return new TagHelperResolutionResult(descriptors, diagnostics);
+        return new(data.Descriptors, data.Diagnostics);
     }
 
-    public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
+    protected override void WriteProperties(JsonDataWriter writer, TagHelperResolutionResult value)
     {
-        var result = (TagHelperResolutionResult)value;
-
-        writer.WriteStartObject();
-
-        writer.WritePropertyArray(nameof(TagHelperResolutionResult.Descriptors), result.Descriptors, _serializer);
-        writer.WritePropertyArray(nameof(TagHelperResolutionResult.Diagnostics), result.Diagnostics, _serializer);
-
-        writer.WriteEndObject();
+        writer.WriteArray(nameof(value.Descriptors), value.Descriptors, ObjectWriters.Write);
+        writer.WriteArray(nameof(value.Diagnostics), value.Diagnostics, ObjectWriters.Write);
     }
 }

@@ -1,15 +1,12 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
-using System.Linq;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.ProjectEngineHost.Serialization;
 using Microsoft.AspNetCore.Razor.Test.Common;
+using Microsoft.AspNetCore.Razor.Test.Common.Serialization;
 using Microsoft.VisualStudio.LiveShare.Razor.Serialization;
-using Newtonsoft.Json;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -31,17 +28,18 @@ public class SerializationTest : TestBase
             TagHelperDescriptorBuilder.Create("TestTagHelper", "TestAssembly").Build(),
             TagHelperDescriptorBuilder.Create("TestTagHelper2", "TestAssembly2").Build(),
         };
+
         var projectWorkspaceState = new ProjectWorkspaceState(tagHelpers, default);
         var expectedConfiguration = RazorConfiguration.Default;
         var expectedRootNamespace = "project";
         var handle = new ProjectSnapshotHandleProxy(new Uri("vsls://some/path/project.csproj"), RazorConfiguration.Default, expectedRootNamespace, projectWorkspaceState);
-        var converterCollection = new JsonConverterCollection();
-        converterCollection.RegisterRazorLiveShareConverters();
-        var converters = converterCollection.ToArray();
-        var serializedHandle = JsonConvert.SerializeObject(handle, converters);
+
+        var serializedHandle = JsonConvertUtility.SerializeObject(handle, ProjectSnapshotHandleProxyJsonConverter.Instance);
+        Assert.NotNull(serializedHandle);
 
         // Act
-        var deserializedHandle = JsonConvert.DeserializeObject<ProjectSnapshotHandleProxy>(serializedHandle, converters);
+        var deserializedHandle = JsonConvertUtility.DeserializeObject<ProjectSnapshotHandleProxy>(serializedHandle, ProjectSnapshotHandleProxyJsonConverter.Instance);
+        Assert.NotNull(deserializedHandle);
 
         // Assert
         Assert.Equal("vsls://some/path/project.csproj", deserializedHandle.FilePath.ToString());

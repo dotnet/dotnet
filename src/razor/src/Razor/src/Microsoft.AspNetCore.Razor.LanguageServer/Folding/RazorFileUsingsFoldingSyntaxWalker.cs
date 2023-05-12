@@ -26,7 +26,7 @@ internal sealed class RazorFileUsingsFoldingSyntaxWalker : SyntaxWalker
         // first rule: we can fold consecutive usings
         // if we have an existing range that ends the line *before* this current using directive or begins the line *after*,
         // we extend the range one line
-        if (SyntaxNodeExtensions.IsUsingDirective(node, out _))
+        if (node.IsUsingDirective(out _))
         {
             var linePosition = node.GetLinePositionSpan(_source);
 
