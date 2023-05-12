@@ -15,7 +15,7 @@ namespace Microsoft.AspNetCore.Razor.Language;
 ///  objects. Often, it's just one or two items. To improve memory usage, MetadataCollection provides
 ///  multiple implementations to avoid creating a hash table.
 /// </summary>
-internal abstract class MetadataCollection : IReadOnlyDictionary<string, string>, IEquatable<MetadataCollection>
+internal abstract partial class MetadataCollection : IReadOnlyDictionary<string, string?>, IEquatable<MetadataCollection>
 {
     public static readonly MetadataCollection Empty = NoItems.Instance;
 
@@ -25,17 +25,21 @@ internal abstract class MetadataCollection : IReadOnlyDictionary<string, string>
     {
     }
 
-    public abstract string this[string key] { get; }
+    public abstract string? this[string key] { get; }
 
     public abstract IEnumerable<string> Keys { get; }
-    public abstract IEnumerable<string> Values { get; }
+    public abstract IEnumerable<string?> Values { get; }
     public abstract int Count { get; }
 
     public abstract bool ContainsKey(string key);
-    public abstract IEnumerator<KeyValuePair<string, string>> GetEnumerator();
-    public abstract bool TryGetValue(string key, out string value);
+    public abstract bool TryGetValue(string key, out string? value);
+
+    protected abstract KeyValuePair<string, string?> GetEntry(int index);
+
+    public Enumerator GetEnumerator() => new(this);
 
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+    IEnumerator<KeyValuePair<string, string?>> IEnumerable<KeyValuePair<string, string?>>.GetEnumerator() => GetEnumerator();
 
     public sealed override bool Equals(object obj)
         => obj is MetadataCollection other && Equals(other);
@@ -46,16 +50,16 @@ internal abstract class MetadataCollection : IReadOnlyDictionary<string, string>
 
     public sealed override int GetHashCode() => _hashCode ??= ComputeHashCode();
 
-    public static MetadataCollection Create(KeyValuePair<string, string> pair)
+    public static MetadataCollection Create(KeyValuePair<string, string?> pair)
         => new OneToThreeItems(pair.Key, pair.Value);
 
-    public static MetadataCollection Create(KeyValuePair<string, string> pair1, KeyValuePair<string, string> pair2)
+    public static MetadataCollection Create(KeyValuePair<string, string?> pair1, KeyValuePair<string, string?> pair2)
         => new OneToThreeItems(pair1.Key, pair1.Value, pair2.Key, pair2.Value);
 
-    public static MetadataCollection Create(KeyValuePair<string, string> pair1, KeyValuePair<string, string> pair2, KeyValuePair<string, string> pair3)
+    public static MetadataCollection Create(KeyValuePair<string, string?> pair1, KeyValuePair<string, string?> pair2, KeyValuePair<string, string?> pair3)
         => new OneToThreeItems(pair1.Key, pair1.Value, pair2.Key, pair2.Value, pair3.Key, pair3.Value);
 
-    public static MetadataCollection Create(params KeyValuePair<string, string>[] pairs)
+    public static MetadataCollection Create(params KeyValuePair<string, string?>[] pairs)
         => pairs switch
         {
             [] => Empty,
@@ -65,7 +69,17 @@ internal abstract class MetadataCollection : IReadOnlyDictionary<string, string>
             _ => new FourOrMoreItems(pairs),
         };
 
-    public static MetadataCollection Create(IReadOnlyDictionary<string, string> map)
+    public static MetadataCollection Create(IReadOnlyList<KeyValuePair<string, string?>> pairs)
+        => pairs switch
+        {
+            [] => Empty,
+            [var pair] => new OneToThreeItems(pair.Key, pair.Value),
+            [var pair1, var pair2] => new OneToThreeItems(pair1.Key, pair1.Value, pair2.Key, pair2.Value),
+            [var pair1, var pair2, var pair3] => new OneToThreeItems(pair1.Key, pair1.Value, pair2.Key, pair2.Value, pair3.Key, pair3.Value),
+            _ => new FourOrMoreItems(pairs),
+        };
+
+    public static MetadataCollection Create(IReadOnlyDictionary<string, string?> map)
     {
         switch (map.Count)
         {
@@ -139,17 +153,17 @@ internal abstract class MetadataCollection : IReadOnlyDictionary<string, string>
             default:
                 return new FourOrMoreItems(map);
         }
-
     }
 
-    public static MetadataCollection CreateOrEmpty(IReadOnlyDictionary<string, string>? map)
+    public static MetadataCollection CreateOrEmpty(IReadOnlyList<KeyValuePair<string, string?>>? pairs)
+        => pairs is not null ? Create(pairs) : Empty;
+
+    public static MetadataCollection CreateOrEmpty(IReadOnlyDictionary<string, string?>? map)
         => map is not null ? Create(map) : Empty;
 
     private class NoItems : MetadataCollection
     {
         public static readonly NoItems Instance = new();
-
-        private static readonly IEnumerable<KeyValuePair<string, string>> s_pairs = Array.Empty<KeyValuePair<string, string>>();
 
         private NoItems()
         {
@@ -163,8 +177,8 @@ internal abstract class MetadataCollection : IReadOnlyDictionary<string, string>
 
         public override bool ContainsKey(string key) => false;
 
-        public override IEnumerator<KeyValuePair<string, string>> GetEnumerator()
-            => s_pairs.GetEnumerator();
+        protected override KeyValuePair<string, string?> GetEntry(int index)
+            => throw new InvalidOperationException();
 
         public override bool TryGetValue(string key, out string value)
         {
@@ -179,25 +193,22 @@ internal abstract class MetadataCollection : IReadOnlyDictionary<string, string>
     private class OneToThreeItems : MetadataCollection
     {
         private readonly string _key1;
-        private readonly string _value1;
+        private readonly string? _value1;
 
         [AllowNull]
         private readonly string _key2;
-        [AllowNull]
-        private readonly string _value2;
+        private readonly string? _value2;
 
         [AllowNull]
         private readonly string _key3;
-        [AllowNull]
-        private readonly string _value3;
+        private readonly string? _value3;
 
         private readonly int _count;
 
         private string[]? _keys;
-        private string[]? _values;
-        private IEnumerable<KeyValuePair<string, string>>? _pairs;
+        private string?[]? _values;
 
-        public OneToThreeItems(string key1, string value1, string key2, string value2, string key3, string value3)
+        public OneToThreeItems(string key1, string? value1, string key2, string? value2, string key3, string? value3)
         {
             _key1 = key1 ?? throw new ArgumentNullException(nameof(key1));
             _value1 = value1;
@@ -227,7 +238,7 @@ internal abstract class MetadataCollection : IReadOnlyDictionary<string, string>
             _count = 3;
         }
 
-        public OneToThreeItems(string key1, string value1, string key2, string value2)
+        public OneToThreeItems(string key1, string? value1, string key2, string? value2)
         {
             _key1 = key1 ?? throw new ArgumentNullException(nameof(key1));
             _value1 = value1;
@@ -243,7 +254,7 @@ internal abstract class MetadataCollection : IReadOnlyDictionary<string, string>
             _count = 2;
         }
 
-        public OneToThreeItems(string key, string value)
+        public OneToThreeItems(string key, string? value)
         {
             _key1 = key ?? throw new ArgumentNullException(nameof(key));
             _value1 = value;
@@ -251,7 +262,7 @@ internal abstract class MetadataCollection : IReadOnlyDictionary<string, string>
             _count = 1;
         }
 
-        public override string this[string key]
+        public override string? this[string key]
         {
             get
             {
@@ -294,13 +305,13 @@ internal abstract class MetadataCollection : IReadOnlyDictionary<string, string>
             }
         }
 
-        public override IEnumerable<string> Values
+        public override IEnumerable<string?> Values
         {
             get
             {
                 return _values ??= CreateValues();
 
-                string[] CreateValues()
+                string?[] CreateValues()
                 {
                     return _count switch
                     {
@@ -318,25 +329,15 @@ internal abstract class MetadataCollection : IReadOnlyDictionary<string, string>
         public override bool ContainsKey(string key)
             => key == _key1 || (_count > 1 && key == _key2) || (_count > 2 && key == _key3);
 
-        public override IEnumerator<KeyValuePair<string, string>> GetEnumerator()
-        {
-            _pairs ??= CreatePairs();
-
-            return _pairs.GetEnumerator();
-
-            KeyValuePair<string, string>[] CreatePairs()
+        protected override KeyValuePair<string, string?> GetEntry(int index)
+            => index switch
             {
-                return _count switch
-                {
-                    1 => new[] { new KeyValuePair<string, string>(_key1, _value1) },
-                    2 => new[] { new KeyValuePair<string, string>(_key1, _value1), new KeyValuePair<string, string>(_key2, _value2) },
-                    3 => new[] { new KeyValuePair<string, string>(_key1, _value1), new KeyValuePair<string, string>(_key2, _value2), new KeyValuePair<string, string>(_key3, _value3) },
-                    _ => throw new InvalidOperationException()
-                };
-            }
-        }
+                0 => new(_key1, _value1),
+                1 => new(_key2, _value2),
+                _ => new(_key3, _value3)
+            };
 
-        public override bool TryGetValue(string key, out string value)
+        public override bool TryGetValue(string key, out string? value)
         {
             if (key == _key1)
             {
@@ -356,7 +357,7 @@ internal abstract class MetadataCollection : IReadOnlyDictionary<string, string>
                 return true;
             }
 
-            value = null!;
+            value = null;
             return false;
         }
 
@@ -537,13 +538,11 @@ internal abstract class MetadataCollection : IReadOnlyDictionary<string, string>
     private class FourOrMoreItems : MetadataCollection
     {
         private readonly string[] _keys;
-        private readonly string[] _values;
+        private readonly string?[] _values;
 
         private readonly int _count;
 
-        private IEnumerable<KeyValuePair<string, string>>? _pairs;
-
-        public FourOrMoreItems(IReadOnlyDictionary<string, string> map)
+        public FourOrMoreItems(IReadOnlyDictionary<string, string?> map)
         {
             if (map is null)
             {
@@ -551,7 +550,7 @@ internal abstract class MetadataCollection : IReadOnlyDictionary<string, string>
             }
 
             using var _1 = ListPool<string>.GetPooledObject(out var keys);
-            using var _2 = ListPool<string>.GetPooledObject(out var values);
+            using var _2 = ListPool<string?>.GetPooledObject(out var values);
 
             var count = map.Count;
             keys.SetCapacityIfLarger(count);
@@ -574,7 +573,7 @@ internal abstract class MetadataCollection : IReadOnlyDictionary<string, string>
             _count = count;
         }
 
-        public FourOrMoreItems(KeyValuePair<string, string>[] pairs)
+        public FourOrMoreItems(IReadOnlyList<KeyValuePair<string, string?>> pairs)
         {
             if (pairs is null)
             {
@@ -582,9 +581,9 @@ internal abstract class MetadataCollection : IReadOnlyDictionary<string, string>
             }
 
             using var _1 = ListPool<string>.GetPooledObject(out var keys);
-            using var _2 = ListPool<string>.GetPooledObject(out var values);
+            using var _2 = ListPool<string?>.GetPooledObject(out var values);
 
-            var count = pairs.Length;
+            var count = pairs.Count;
             keys.SetCapacityIfLarger(count);
             values.SetCapacityIfLarger(count);
 
@@ -609,7 +608,7 @@ internal abstract class MetadataCollection : IReadOnlyDictionary<string, string>
             _count = count;
         }
 
-        public override string this[string key]
+        public override string? this[string key]
         {
             get
             {
@@ -622,7 +621,7 @@ internal abstract class MetadataCollection : IReadOnlyDictionary<string, string>
         }
 
         public override IEnumerable<string> Keys => _keys;
-        public override IEnumerable<string> Values => _values;
+        public override IEnumerable<string?> Values => _values;
 
         public override int Count => _count;
 
@@ -633,22 +632,10 @@ internal abstract class MetadataCollection : IReadOnlyDictionary<string, string>
             return index >= 0;
         }
 
-        public override IEnumerator<KeyValuePair<string, string>> GetEnumerator()
-        {
-            _pairs ??= CreatePairs(_keys, _values);
+        protected override KeyValuePair<string, string?> GetEntry(int index)
+            => new(_keys[index], _values[index]);
 
-            return _pairs.GetEnumerator();
-
-            static IEnumerable<KeyValuePair<string, string>> CreatePairs(string[] keys, string[] values)
-            {
-                for (var i = 0; i < keys.Length; i++)
-                {
-                    yield return new KeyValuePair<string, string>(keys[i], values[i]);
-                }
-            }
-        }
-
-        public override bool TryGetValue(string key, out string value)
+        public override bool TryGetValue(string key, out string? value)
         {
             var index = Array.BinarySearch(_keys, key);
 
@@ -658,7 +645,7 @@ internal abstract class MetadataCollection : IReadOnlyDictionary<string, string>
                 return true;
             }
 
-            value = null!;
+            value = null;
             return false;
         }
 
@@ -703,13 +690,13 @@ internal abstract class MetadataCollection : IReadOnlyDictionary<string, string>
             var values = _values;
             var count = keys.Length;
 
-            using var _ = ListPool<KeyValuePair<string, string>>.GetPooledObject(out var list);
+            using var _ = ListPool<KeyValuePair<string, string?>>.GetPooledObject(out var list);
 
             list.SetCapacityIfLarger(count);
 
             for (var i = 0; i < count; i++)
             {
-                list.Add(new KeyValuePair<string, string>(keys[i], values[i]));
+                list.Add(new(keys[i], values[i]));
             }
 
             list.Sort((kvp1, kvp2) => string.CompareOrdinal(kvp1.Key, kvp2.Key));

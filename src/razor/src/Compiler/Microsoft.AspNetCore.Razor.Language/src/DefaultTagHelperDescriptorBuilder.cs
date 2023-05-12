@@ -49,11 +49,11 @@ internal partial class DefaultTagHelperDescriptorBuilder : TagHelperDescriptorBu
     private List<DefaultBoundAttributeDescriptorBuilder>? _attributeBuilders;
     private List<DefaultTagMatchingRuleDescriptorBuilder>? _tagMatchingRuleBuilders;
     private RazorDiagnosticCollection? _diagnostics;
-    private readonly Dictionary<string, string> _metadata;
+    private readonly Dictionary<string, string?> _metadata;
 
     private DefaultTagHelperDescriptorBuilder()
     {
-        _metadata = new Dictionary<string, string>(StringComparer.Ordinal);
+        _metadata = new Dictionary<string, string?>(StringComparer.Ordinal);
     }
 
     public DefaultTagHelperDescriptorBuilder(string kind, string name, string assemblyName)
@@ -74,7 +74,7 @@ internal partial class DefaultTagHelperDescriptorBuilder : TagHelperDescriptorBu
     public override bool CaseSensitive { get; set; }
     public override string? Documentation { get; set; }
 
-    public override IDictionary<string, string> Metadata => _metadata;
+    public override IDictionary<string, string?> Metadata => _metadata;
     public override RazorDiagnosticCollection Diagnostics => _diagnostics ??= new RazorDiagnosticCollection();
 
     public override IReadOnlyList<AllowedChildTagDescriptorBuilder> AllowedChildTags

@@ -29,7 +29,7 @@ internal partial class DefaultRequiredAttributeDescriptorBuilder : RequiredAttri
     [AllowNull]
     private DefaultTagMatchingRuleDescriptorBuilder _parent;
     private RazorDiagnosticCollection? _diagnostics;
-    private Dictionary<string, string>? _metadata;
+    private Dictionary<string, string?>? _metadata;
 
     private DefaultRequiredAttributeDescriptorBuilder()
     {
@@ -47,7 +47,7 @@ internal partial class DefaultRequiredAttributeDescriptorBuilder : RequiredAttri
 
     public override RazorDiagnosticCollection Diagnostics => _diagnostics ??= new RazorDiagnosticCollection();
 
-    public override IDictionary<string, string> Metadata => _metadata ??= new Dictionary<string, string>();
+    public override IDictionary<string, string?> Metadata => _metadata ??= new Dictionary<string, string?>();
 
     internal bool CaseSensitive => _parent.CaseSensitive;
 
