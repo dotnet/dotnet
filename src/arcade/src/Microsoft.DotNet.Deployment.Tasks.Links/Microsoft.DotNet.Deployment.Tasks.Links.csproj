@@ -10,18 +10,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.Identity.Client" Version="4.53.0" />
+    <PackageReference Include="Microsoft.Identity.Client" Version="$(MicrosoftIdentityClientVersion)" />
     <PackageReference Include="Microsoft.Build.Utilities.Core" Version="$(MicrosoftBuildUtilitiesCoreVersion)" Publish="false" ExcludeAssets="runtime" />
     <PackageReference Include="Newtonsoft.Json" Version="$(NewtonsoftJsonVersion)" />
-  </ItemGroup>
-
-  <!-- Reference Microsoft.IdentityModel.Clients.ActiveDirectory on .NETCoreApp directly via PackageDownload+Reference to avoid its netstandard1.x dependencies. -->
-  <ItemGroup>
-    <PackageDownload Include="Microsoft.IdentityModel.Clients.ActiveDirectory" Version="[$(MicrosoftIdentityModelClientsActiveDirectoryVersion)]" />
-    <Reference Include="$(NuGetPackageRoot)microsoft.identitymodel.clients.activedirectory\$(MicrosoftIdentityModelClientsActiveDirectoryVersion)\lib\netstandard1.3\*.dll"
-               Condition="'$(TargetFrameworkIdentifier)' == '.NETCoreApp'" />
-    <Reference Include="$(NuGetPackageRoot)microsoft.identitymodel.clients.activedirectory\$(MicrosoftIdentityModelClientsActiveDirectoryVersion)\lib\net45\*.dll"
-               Condition="'$(TargetFrameworkIdentifier)' == '.NETFramework'" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFrameworkIdentifier)' == '.NETFramework'">

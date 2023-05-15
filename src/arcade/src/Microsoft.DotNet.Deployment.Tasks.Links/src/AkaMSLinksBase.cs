@@ -5,7 +5,6 @@ using System;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.Build.Framework;
-using Microsoft.IdentityModel.Clients.ActiveDirectory;
 
 namespace Microsoft.DotNet.Deployment.Tasks.Links
 {
@@ -19,7 +18,5 @@ namespace Microsoft.DotNet.Deployment.Tasks.Links
         public string ClientSecret { get; set; }
         [Required]
         public string Tenant { get; set; }
-
-        public bool UseIdentityClientLibrary { get; set; } = false;
     }
 }

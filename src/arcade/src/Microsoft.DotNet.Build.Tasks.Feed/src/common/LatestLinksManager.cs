@@ -25,8 +25,6 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
         private string AkaMSCreatedBy { get; }
         private string AkaMSGroupOwner { get; }
 
-        private bool UseIdentityClientLibrary { get; }
-
         private static HashSet<string> AccountsWithCdns { get; } = new()
         {
             "dotnetcli.blob.core.windows.net", "dotnetbuilds.blob.core.windows.net",
@@ -39,7 +37,6 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
             string akaMSGroupOwner,
             string akaMSCreatedBy,
             string akaMsOwners,
-            bool useIdentityClientLibrary,
             TaskLoggingHelper logger)
         {
             Logger = logger;
@@ -49,8 +46,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
             AkaMSGroupOwner = akaMSGroupOwner;
             AkaMSCreatedBy = akaMSCreatedBy;
             AkaMsOwners = akaMsOwners;
-            UseIdentityClientLibrary = useIdentityClientLibrary;
-            LinkManager = new AkaMSLinkManager(AkaMSClientId, AkaMSClientSecret, AkaMSTenant, Logger, UseIdentityClientLibrary);
+            LinkManager = new AkaMSLinkManager(AkaMSClientId, AkaMSClientSecret, AkaMSTenant, Logger);
         }
 
         public async System.Threading.Tasks.Task CreateOrUpdateLatestLinksAsync(

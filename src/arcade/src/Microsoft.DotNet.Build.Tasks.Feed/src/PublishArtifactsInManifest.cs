@@ -185,12 +185,6 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
         public int NonStreamingPublishingMaxClients {get; set;}
 
         /// <summary>
-        /// Feature flag for switching to the Microsoft.Identity.Client library
-        /// TODO (https://github.com/dotnet/arcade/issues/13318): Remove the switch and use the new library
-        /// </summary>
-        public bool UseIdentityClientLibrary { get; set; } = false;
-
-        /// <summary>
         /// Just an internal flag to keep track whether we published assets via a V3 manifest or not.
         /// </summary>
         private static bool PublishedV3Manifest { get; set; }
@@ -348,8 +342,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
                 AzureDevOpsOrg = this.AzureDevOpsOrg,
                 UseStreamingPublishing = this.UseStreamingPublishing,
                 StreamingPublishingMaxClients = this.StreamingPublishingMaxClients,
-                NonStreamingPublishingMaxClients = this.NonStreamingPublishingMaxClients,
-                UseIdentityClientLibrary = this.UseIdentityClientLibrary,
+                NonStreamingPublishingMaxClients = this.NonStreamingPublishingMaxClients
             };
         }
     }
