@@ -8,9 +8,9 @@
   </PropertyGroup>
   <PropertyGroup>
     <!-- arcade -->
-    <MicrosoftDotNetBuildTasksFeedVersion>8.0.0-beta.23261.4</MicrosoftDotNetBuildTasksFeedVersion>
-    <MicrosoftDotNetSignToolVersion>8.0.0-beta.23261.4</MicrosoftDotNetSignToolVersion>
-    <MicrosoftDotNetSwaggerGeneratorMSBuildVersion>8.0.0-beta.23261.4</MicrosoftDotNetSwaggerGeneratorMSBuildVersion>
+    <MicrosoftDotNetBuildTasksFeedVersion>8.0.0-beta.23262.5</MicrosoftDotNetBuildTasksFeedVersion>
+    <MicrosoftDotNetSignToolVersion>8.0.0-beta.23262.5</MicrosoftDotNetSignToolVersion>
+    <MicrosoftDotNetSwaggerGeneratorMSBuildVersion>8.0.0-beta.23262.5</MicrosoftDotNetSwaggerGeneratorMSBuildVersion>
     <!-- arcade-services -->
     <MicrosoftDotNetMaestroClientVersion>1.1.0-beta.21553.1</MicrosoftDotNetMaestroClientVersion>
     <MicrosoftDotNetMaestroTasksVersion>1.1.0-beta.22076.4</MicrosoftDotNetMaestroTasksVersion>
@@ -70,9 +70,9 @@
     <!-- vstest -->
     <MicrosoftNetTestSdkVersion>17.5.0</MicrosoftNetTestSdkVersion>
     <!-- xharness -->
-    <MicrosoftDotNetXHarnessCLIVersion>8.0.0-prerelease.23253.1</MicrosoftDotNetXHarnessCLIVersion>
+    <MicrosoftDotNetXHarnessCLIVersion>8.0.0-prerelease.23259.1</MicrosoftDotNetXHarnessCLIVersion>
     <!-- xliff-tasks -->
-    <MicrosoftDotNetXliffTasksVersion>1.0.0-beta.23261.1</MicrosoftDotNetXliffTasksVersion>
+    <MicrosoftDotNetXliffTasksVersion>1.0.0-beta.23263.1</MicrosoftDotNetXliffTasksVersion>
     <!-- external -->
     <AzureCoreVersion>1.31.0</AzureCoreVersion>
     <AzureDataTablesVersion>12.8.0</AzureDataTablesVersion>
