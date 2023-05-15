@@ -1,8 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project>
   <PropertyGroup>
-    <arcadeGitCommitHash>933cf300e376f398e3fa3b3563a6ad5fe32a511e</arcadeGitCommitHash>
-    <arcadeOutputPackageVersion>8.0.0-beta.23262.1</arcadeOutputPackageVersion>
+    <arcadeGitCommitHash>1aff4eb33aa7cbf26ccd9fc43c17cb609a14dad4</arcadeGitCommitHash>
+    <arcadeOutputPackageVersion>8.0.0-beta.23262.5</arcadeOutputPackageVersion>
     <aspnetcoreGitCommitHash>059939bda419646cb5e826df887f55b198963f6f</aspnetcoreGitCommitHash>
     <aspnetcoreOutputPackageVersion>8.0.0-preview.5.23262.1</aspnetcoreOutputPackageVersion>
     <cecilGitCommitHash>c32f0be86d4e72dfc0967ef08913889cfdbc8dc4</cecilGitCommitHash>
@@ -19,7 +19,7 @@
     <formatOutputPackageVersion>8.0.426101</formatOutputPackageVersion>
     <fsharpGitCommitHash>f2505da65c673b663aec584a8606e9b9334a1d17</fsharpGitCommitHash>
     <fsharpOutputPackageVersion>7.0.400-beta.23260.3</fsharpOutputPackageVersion>
-    <installerGitCommitHash>b45effa18fc2eb65b8e852adc0c6e1faad5450d3</installerGitCommitHash>
+    <installerGitCommitHash>8488614afec7497b9e74b47c976af2a97506bb96</installerGitCommitHash>
     <installerOutputPackageVersion>8.0.100</installerOutputPackageVersion>
     <msbuildGitCommitHash>7f4bef8b46b3ebc275219ec936837ebf9f32c148</msbuildGitCommitHash>
     <msbuildOutputPackageVersion>17.7.0-preview-23260-01</msbuildOutputPackageVersion>
@@ -35,8 +35,8 @@
     <runtimeOutputPackageVersion>8.0.0-preview.5.23260.3</runtimeOutputPackageVersion>
     <sdkGitCommitHash>e7eb036b0ae8070c662257709678d2a5bfe72c9e</sdkGitCommitHash>
     <sdkOutputPackageVersion>8.0.100-preview.5.23262.3</sdkOutputPackageVersion>
-    <sourcebuildexternalsGitCommitHash>5661eb3d593b2150fb7e153ee31282722098690a</sourcebuildexternalsGitCommitHash>
-    <sourcebuildexternalsOutputPackageVersion>8.0.0-alpha.1.23260.1</sourcebuildexternalsOutputPackageVersion>
+    <sourcebuildexternalsGitCommitHash>a1460948fd0a4ab66b885c1575b085af70139e9a</sourcebuildexternalsGitCommitHash>
+    <sourcebuildexternalsOutputPackageVersion>8.0.0-alpha.1.23262.1</sourcebuildexternalsOutputPackageVersion>
     <sourcebuildreferencepackagesGitCommitHash>d76c30028584fb1d02d9b27dc48e65ad87f4ecfe</sourcebuildreferencepackagesGitCommitHash>
     <sourcebuildreferencepackagesOutputPackageVersion>8.0.0-alpha.1.23262.1</sourcebuildreferencepackagesOutputPackageVersion>
     <sourcelinkGitCommitHash>47c52dd2ebf9edfd40abdcff999c13eb461f6ce2</sourcelinkGitCommitHash>
@@ -51,7 +51,7 @@
     <vstestOutputPackageVersion>17.7.0-preview.23261.1</vstestOutputPackageVersion>
     <xdtGitCommitHash>9a1c3e1b7f0c8763d4c96e593961a61a72679a7b</xdtGitCommitHash>
     <xdtOutputPackageVersion>7.0.0-preview.22423.2</xdtOutputPackageVersion>
-    <xlifftasksGitCommitHash>d1dd46c475ca2599bcbb1637548b0be2513b83c3</xlifftasksGitCommitHash>
-    <xlifftasksOutputPackageVersion>1.0.0-beta.23259.1</xlifftasksOutputPackageVersion>
+    <xlifftasksGitCommitHash>a0391b3beff0696561189b5881f8af3b651d64ac</xlifftasksGitCommitHash>
+    <xlifftasksOutputPackageVersion>1.0.0-beta.23261.1</xlifftasksOutputPackageVersion>
   </PropertyGroup>
 </Project>

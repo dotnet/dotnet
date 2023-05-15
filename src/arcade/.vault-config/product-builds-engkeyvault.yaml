@@ -135,7 +135,7 @@ secrets:
           location: helixkv
           name: dn-bot-account-redmond
       name: dn-bot-all-orgs-artifact-feeds
-      organizations: dnceng devdiv microsoft
+      organizations: dnceng devdiv microsoft dotnet-security-partners
       scopes: packaging_write 
 
   #DotNet-Symbol-Server-Pats

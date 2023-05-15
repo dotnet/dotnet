@@ -100,7 +100,6 @@
       <ArtifactsBasePath Condition="'$(ArtifactsBasePath)' == ''">$(BlobBasePath)</ArtifactsBasePath>
       <NonStreamingPublishingMaxClients Condition="'$(NonStreamingPublishingMaxClients)' == ''">12</NonStreamingPublishingMaxClients>
       <StreamingPublishingMaxClients Condition="'$(UseStreamingPublishing)' == 'true' and '$(StreamingPublishingMaxClients)' == ''">16</StreamingPublishingMaxClients>
-      <UseIdentityClientLibrary Condition="'$(UseIdentityClientLibrary)' == ''">false</UseIdentityClientLibrary>
     </PropertyGroup>
 
     <ItemGroup>
@@ -169,7 +168,6 @@
       FeedKeys="@(FeedKey)"
       FeedSasUris="@(FeedSasUri)"
       FeedOverrides="@(FeedOverride)"
-      UseIdentityClientLibrary="$(UseIdentityClientLibrary)"
       />
   </Target>
 
