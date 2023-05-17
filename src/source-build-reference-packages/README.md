@@ -42,7 +42,7 @@ When generating a package(s), the tooling will detect and generate all dependent
 ```
 
 After generating new reference packages, all new projects must be referenced as a
-[DependencyPackageProjects](https://github.com/dotnet/source-build-reference-packages/blob/main/eng/Build.props#L10).
+[DependencyPackageProjects](https://github.com/dotnet/source-build-reference-packages/blob/main/eng/Build.props#L9).
 These must be defined in dependency order. There is a [tracking issue](https://github.com/dotnet/source-build/issues/1690)
 to address this manual step.
 
@@ -58,9 +58,12 @@ when it was originally generated.
 
 * Generate reference package and its depencencies running the `./generate.sh --package <package>,<version>` script.
 * Revert changes for packages that were already existed in the repository.
+* Add `DependencyPackageProjects` for all new projects in the [eng/Build.props](https://github.com/dotnet/source-build-reference-packages/blob/main/eng/Build.props#L9)
+in the correct dependency order.
 * Run build with the `./build.sh -sb` command.
 * If the compilation produces numerous compilation issue - run the `./build.sh --projects <path to .csproj file>` command for each
-generated reference package separately. It may be necessary to manually tweak the code to address compilation issues. When this occurs, please ensure there is an [tracking issue](#filing-issues) to address the underlying problem with the generator.
+generated reference package separately. It may be necessary to manually tweak the code to address compilation issues. When this occurs,
+please ensure there is an [tracking issue](#filing-issues) to address the underlying problem with the generator.
 
 You can search for known issues in the [Known Generator Issues Markdown file](docs/known_generator_issues.md).
 
