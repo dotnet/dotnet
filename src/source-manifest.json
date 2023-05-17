@@ -1,10 +1,10 @@
 {
   "repositories": [
     {
-      "packageVersion": "8.0.0-beta.23262.5",
+      "packageVersion": "8.0.0-beta.23265.1",
       "path": "arcade",
       "remoteUri": "https://github.com/dotnet/arcade",
-      "commitSha": "1aff4eb33aa7cbf26ccd9fc43c17cb609a14dad4"
+      "commitSha": "2d8d59065b5e090584a8e90c4371fc06ed60bdc5"
     },
     {
       "packageVersion": "8.0.0-preview.5.23262.1",
@@ -58,7 +58,7 @@
       "packageVersion": "8.0.100",
       "path": "installer",
       "remoteUri": "https://github.com/dotnet/installer",
-      "commitSha": "6ce5d9354875c4c10d9a2fd39a24c0980dfd3730"
+      "commitSha": "b4964147f52f6f3c9a8924fcef9f3b9cde1eaa25"
     },
     {
       "packageVersion": "17.7.0-preview-23260-01",
@@ -103,16 +103,16 @@
       "commitSha": "e7eb036b0ae8070c662257709678d2a5bfe72c9e"
     },
     {
-      "packageVersion": "8.0.0-alpha.1.23262.1",
+      "packageVersion": "8.0.0-alpha.1.23265.1",
       "path": "source-build-externals",
       "remoteUri": "https://github.com/dotnet/source-build-externals",
-      "commitSha": "a1460948fd0a4ab66b885c1575b085af70139e9a"
+      "commitSha": "7100a017296d5d0ba6bdb9c163c246579e75aa6a"
     },
     {
-      "packageVersion": "8.0.0-alpha.1.23265.3",
+      "packageVersion": "8.0.0-alpha.1.23266.4",
       "path": "source-build-reference-packages",
       "remoteUri": "https://github.com/dotnet/source-build-reference-packages",
-      "commitSha": "e2e64d25662c00a35726d3c52f969a50edaa4f48"
+      "commitSha": "fd98754b692a1a8da2aaadd28ce3952578d9d9ad"
     },
     {
       "packageVersion": "8.0.0-beta.23218.3",
@@ -151,10 +151,10 @@
       "commitSha": "9a1c3e1b7f0c8763d4c96e593961a61a72679a7b"
     },
     {
-      "packageVersion": "1.0.0-beta.23261.1",
+      "packageVersion": "1.0.0-beta.23263.1",
       "path": "xliff-tasks",
       "remoteUri": "https://github.com/dotnet/xliff-tasks",
-      "commitSha": "a0391b3beff0696561189b5881f8af3b651d64ac"
+      "commitSha": "3f7d6c7e742012d9437fcb0d04cac63202d37621"
     }
   ],
   "submodules": [
