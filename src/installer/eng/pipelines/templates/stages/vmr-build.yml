@@ -80,6 +80,7 @@ stages:
       excludeOmniSharpTests: true        # ✅
       overrideDistroDisablingSha1: false # 🚫
       runOnline: true                    # ✅
+      useMonoRuntime: false              # 🚫
       withPreviousSDK: false             # 🚫
 
   - ${{ if ne(variables['Build.Reason'], 'PullRequest') }}:
@@ -98,6 +99,7 @@ stages:
         excludeOmniSharpTests: true        # ✅
         overrideDistroDisablingSha1: false # 🚫
         runOnline: true                    # ✅
+        useMonoRuntime: false              # 🚫
         withPreviousSDK: true              # ✅
 
     - template: ../jobs/vmr-build.yml
@@ -115,6 +117,25 @@ stages:
         excludeOmniSharpTests: true        # ✅
         overrideDistroDisablingSha1: false # 🚫
         runOnline: false                   # 🚫
+        useMonoRuntime: false              # 🚫
+        withPreviousSDK: false             # 🚫
+
+    - template: ../jobs/vmr-build.yml
+      parameters:
+        buildName: CentOSStream8_Mono_Offline_MsftSdk
+        isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
+        vmrBranch: ${{ variables.VmrBranch }}
+        architecture: x64
+        pool:
+          name: ${{ variables.defaultPoolName }}
+          demands: ${{ variables.defaultPoolDemands }}
+        container: ${{ parameters.centOSStream8Container }}
+        buildFromArchive: true             # ✅
+        enablePoison: false                # 🚫
+        excludeOmniSharpTests: true        # ✅
+        overrideDistroDisablingSha1: false # 🚫
+        runOnline: false                   # 🚫
+        useMonoRuntime: true               # ✅
         withPreviousSDK: false             # 🚫
 
     - template: ../jobs/vmr-build.yml
@@ -127,12 +148,13 @@ stages:
           name: ${{ variables.defaultPoolName }}
           demands: ${{ variables.defaultPoolDemands }}
         container: ${{ parameters.centOSStream9Container }}
-        buildFromArchive: true            # ✅
-        enablePoison: false               # 🚫
-        excludeOmniSharpTests: false      # 🚫
-        overrideDistroDisablingSha1: true # ✅
-        runOnline: false                  # 🚫
-        withPreviousSDK: false            # 🚫
+        buildFromArchive: true             # ✅
+        enablePoison: false                # 🚫
+        excludeOmniSharpTests: false       # 🚫
+        overrideDistroDisablingSha1: true  # ✅
+        runOnline: false                   # 🚫
+        useMonoRuntime: false              # 🚫
+        withPreviousSDK: false             # 🚫
 
     - template: ../jobs/vmr-build.yml
       parameters:
@@ -149,6 +171,7 @@ stages:
         excludeOmniSharpTests: false       # 🚫
         overrideDistroDisablingSha1: false # 🚫
         runOnline: false                   # 🚫
+        useMonoRuntime: false              # 🚫
         withPreviousSDK: false             # 🚫
 
     - template: ../jobs/vmr-build.yml
@@ -166,6 +189,7 @@ stages:
         excludeOmniSharpTests: false       # 🚫
         overrideDistroDisablingSha1: false # 🚫
         runOnline: false                   # 🚫
+        useMonoRuntime: false              # 🚫
         withPreviousSDK: false             # 🚫
 
     - template: ../jobs/vmr-build.yml
@@ -181,6 +205,7 @@ stages:
         excludeOmniSharpTests: false       # 🚫
         overrideDistroDisablingSha1: false # 🚫
         runOnline: false                   # 🚫
+        useMonoRuntime: false              # 🚫
         withPreviousSDK: false             # 🚫
 
     - template: ../jobs/vmr-build.yml
@@ -198,5 +223,6 @@ stages:
         excludeOmniSharpTests: false       # 🚫
         overrideDistroDisablingSha1: false # 🚫
         runOnline: false                   # 🚫
+        useMonoRuntime: false              # 🚫
         withPreviousSDK: false             # 🚫
         reuseBuildArtifactsFrom: Fedora36_Offline_MsftSdk

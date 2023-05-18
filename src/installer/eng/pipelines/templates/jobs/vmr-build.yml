@@ -58,6 +58,11 @@ parameters:
   type: boolean
   default: false
 
+- name: useMonoRuntime
+  displayName: True when build output uses the mono runtime
+  type: boolean
+  default: false
+
 jobs:
 - job: ${{ parameters.buildName }}_${{ parameters.architecture }}
   timeoutInMinutes: 150
@@ -211,6 +216,10 @@ jobs:
       if [[ '${{ parameters.buildFromArchive }}' == 'True' ]]; then
         customBuildArgs="$customBuildArgs --source-repository https://github.com/dotnet/dotnet"
         customBuildArgs="$customBuildArgs --source-version $(git -C "${{ parameters.vmrPath }}" rev-parse HEAD)"
+      fi
+
+      if [[ '${{ parameters.useMonoRuntime }}' == 'True' ]]; then
+        customBuildArgs="--use-mono-runtime"
       fi
 
       docker run --rm -v "$(sourcesPath):/vmr" -w /vmr $customRunArgs ${{ parameters.container }} ./build.sh --clean-while-building $(additionalBuildArgs) $customBuildArgs
