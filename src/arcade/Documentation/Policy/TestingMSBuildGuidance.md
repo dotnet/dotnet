@@ -26,8 +26,13 @@ If you want to also validate your private build of Arcade using a repository oth
 
 1. Provided you have done at least steps 1 and 2 above to create your private build of Arcade and have it published to the "General Testing" channel...
 2. Create a branch in the repository you wish to validate your private build of Arcade with. 
-3. Using darc, run `update-dependencies` ([update-dependencies documentation](../Darc.md#updating-dependencies-in-your-local-repository)) on your branch to use the build of Arcade you just created in the previous steps. 
-4. Build your project and run the project's unit tests locally, and/or build your branch with your project's Azure DevOps pipeline. Ensure that the build pipeline excutes any tests (unit, integration, scenario, et cetera). 
+3. Add the `general-testing` feed to your `NuGet.config`:   
+    ```xml
+    <add key="general-testing" value="https://pkgs.dev.azure.com/dnceng/public/_packaging/general-testing/nuget/v3/index.json" />
+    ```
+    Your private build of Arcade will be pushed to that feed when you publish it to the `General Testing` channel.
+4. Using darc, run `update-dependencies` ([update-dependencies documentation](../Darc.md#updating-dependencies-in-your-local-repository)) on your branch to use the build of Arcade you just created in the previous steps. 
+5. Build your project and run the project's unit tests locally, and/or build your branch with your project's Azure DevOps pipeline. Ensure that the build pipeline excutes any tests (unit, integration, scenario, et cetera). 
 
 <!-- Begin Generated Content: Doc Feedback -->
 <sub>Was this helpful? [![Yes](https://helix.dot.net/f/ip/5?p=Documentation%5CPolicy%5CTestingMSBuildGuidance.md)](https://helix.dot.net/f/p/5?p=Documentation%5CPolicy%5CTestingMSBuildGuidance.md) [![No](https://helix.dot.net/f/in)](https://helix.dot.net/f/n/5?p=Documentation%5CPolicy%5CTestingMSBuildGuidance.md)</sub>

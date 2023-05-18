@@ -7,7 +7,7 @@
     <PackTasks Condition="'$(PackTasks)' == ''">true</PackTasks>
     <!-- Build Tasks should have this set per https://github.com/dotnet/arcade/blob/master/Documentation/CorePackages/Versioning.md#recommended-settings -->
     <AutoGenerateAssemblyVersion>true</AutoGenerateAssemblyVersion>
-    <BuildTaskTargetFolder>tools</BuildTaskTargetFolder>
+    <BuildTaskTargetFolder Condition="'$(BuildTaskTargetFolder)' == ''">tools</BuildTaskTargetFolder>
   </PropertyGroup>
 
   <!--
