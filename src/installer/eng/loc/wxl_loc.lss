@@ -1,0 +1,42 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<LS_SETTINGS_FILE xmlns="">
+	<LS_SETTINGS_DESCRIPTION>
+		<![CDATA[]]>
+	</LS_SETTINGS_DESCRIPTION>
+	<optionSet id="LSOptions">
+		<optionSet id="Defaults" displayName="Option Defaults">
+			<optionSet id="Espresso" displayName="Espresso" />
+			<optionSet id="Parsers" displayName="Parsers" />
+		</optionSet>
+		<optionSet id="User" displayName="User Overrides">
+			<optionSet id="Espresso" displayName="Espresso" />
+			<optionSet id="Parsers" displayName="Parsers" />
+		</optionSet>
+		<optionSet id="Project" displayName="Project Overrides">
+			<optionSet id="Espresso" displayName="Espresso">
+				<optionSet id="TranslationPlatform" displayName="Translation Platform" helpText="Settings for the Translation Platform">
+					<optionSet id="Pseudo Translation Settings" displayName="Pseudo Translation Settings" helpText="Use these settings to control the pseudo localization process.">
+						<optionSet id="Delimiter and String Extension Settings" displayName="Delimiter and String Extension Settings" helpText="Use these settings to specify delimiters and extensions.">
+							<option id="\PseudoTranslation\Delimiters and Extensions\Extension String" displayName="String to add to extend pseudo localized strings" helpText="Enter the string to use to extend the pseudo localized strings.">
+								<string defaultValue=" !!!" currentValue=" 表昌良字" />
+							</option>
+						</optionSet>
+					</optionSet>
+				</optionSet>
+			</optionSet>
+			<optionSet id="Parsers" displayName="Parsers">
+				<optionSet id="Parser 210" displayName="POMXML Parser options" helpText="View file locXML.xml for details.">
+					<option id="IncTermNoResId" displayName="Include Terms that have no Resource Identifier" helpText="With this option turned off, only those terms with user defined resource id will be exposed.">
+						<boolean defaultValue="1" currentValue="0" />
+					</option>
+					<option id="settingFile" displayName="Loc Setting File" helpText="With this option, users specify their own loc setting file.">
+						<string defaultValue="locxml.xml" currentValue="locxml_wxl.xml" />
+					</option>
+					<option id="POMXMLUpdateLocCommentsOnly" displayName="Update Loc Instructions (_locComment) only" helpText="With this option turned ON and the Update Instructions option turned ON only Loc Instructions (_locComment) will be imported into the instruction field. If a localizable item does not have an explicit _locComment then the instruction field will be left blank.">
+						<boolean defaultValue="0" currentValue="1" />
+					</option>
+				</optionSet>
+		      </optionSet>
+		</optionSet>
+	</optionSet>
+</LS_SETTINGS_FILE>
