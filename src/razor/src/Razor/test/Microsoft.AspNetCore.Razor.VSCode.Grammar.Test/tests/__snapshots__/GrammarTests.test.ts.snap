@@ -241,6 +241,136 @@ Line: }
 "
 `;
 
+exports[`Grammar tests @code directive Multi line no whitespace 1`] = `
+"Line: @code{
+ - token from 0 to 1 (@) with scopes text.aspnetcorerazor, keyword.control.cshtml.transition
+ - token from 1 to 5 (code) with scopes text.aspnetcorerazor, keyword.control.razor.directive.code
+ - token from 5 to 6 ({) with scopes text.aspnetcorerazor, meta.structure.razor.directive.codeblock, keyword.control.razor.directive.codeblock.open
+
+Line:     private int currentCount = 0;
+ - token from 0 to 4 (    ) with scopes text.aspnetcorerazor, meta.structure.razor.directive.codeblock, source.cs
+ - token from 4 to 11 (private) with scopes text.aspnetcorerazor, meta.structure.razor.directive.codeblock, source.cs, storage.modifier.cs
+ - token from 11 to 12 ( ) with scopes text.aspnetcorerazor, meta.structure.razor.directive.codeblock, source.cs
+ - token from 12 to 15 (int) with scopes text.aspnetcorerazor, meta.structure.razor.directive.codeblock, source.cs, keyword.type.cs
+ - token from 15 to 16 ( ) with scopes text.aspnetcorerazor, meta.structure.razor.directive.codeblock, source.cs
+ - token from 16 to 28 (currentCount) with scopes text.aspnetcorerazor, meta.structure.razor.directive.codeblock, source.cs, entity.name.variable.field.cs
+ - token from 28 to 29 ( ) with scopes text.aspnetcorerazor, meta.structure.razor.directive.codeblock, source.cs
+ - token from 29 to 30 (=) with scopes text.aspnetcorerazor, meta.structure.razor.directive.codeblock, source.cs, keyword.operator.assignment.cs
+ - token from 30 to 31 ( ) with scopes text.aspnetcorerazor, meta.structure.razor.directive.codeblock, source.cs
+ - token from 31 to 32 (0) with scopes text.aspnetcorerazor, meta.structure.razor.directive.codeblock, source.cs, constant.numeric.decimal.cs
+ - token from 32 to 33 (;) with scopes text.aspnetcorerazor, meta.structure.razor.directive.codeblock, source.cs, punctuation.terminator.statement.cs
+
+Line: 
+ - token from 0 to 1 () with scopes text.aspnetcorerazor, meta.structure.razor.directive.codeblock, source.cs
+
+Line:     private void IncrementCount()
+ - token from 0 to 4 (    ) with scopes text.aspnetcorerazor, meta.structure.razor.directive.codeblock, source.cs
+ - token from 4 to 11 (private) with scopes text.aspnetcorerazor, meta.structure.razor.directive.codeblock, source.cs, storage.modifier.cs
+ - token from 11 to 12 ( ) with scopes text.aspnetcorerazor, meta.structure.razor.directive.codeblock, source.cs
+ - token from 12 to 16 (void) with scopes text.aspnetcorerazor, meta.structure.razor.directive.codeblock, source.cs, keyword.type.cs
+ - token from 16 to 17 ( ) with scopes text.aspnetcorerazor, meta.structure.razor.directive.codeblock, source.cs
+ - token from 17 to 31 (IncrementCount) with scopes text.aspnetcorerazor, meta.structure.razor.directive.codeblock, source.cs, entity.name.function.cs
+ - token from 31 to 32 (() with scopes text.aspnetcorerazor, meta.structure.razor.directive.codeblock, source.cs, punctuation.parenthesis.open.cs
+ - token from 32 to 33 ()) with scopes text.aspnetcorerazor, meta.structure.razor.directive.codeblock, source.cs, punctuation.parenthesis.close.cs
+
+Line:     {
+ - token from 0 to 4 (    ) with scopes text.aspnetcorerazor, meta.structure.razor.directive.codeblock, source.cs
+ - token from 4 to 5 ({) with scopes text.aspnetcorerazor, meta.structure.razor.directive.codeblock, source.cs, punctuation.curlybrace.open.cs
+
+Line:         var someString = \\"{ var ThisShouldNotBeCSharp = true; }\\";
+ - token from 0 to 8 (        ) with scopes text.aspnetcorerazor, meta.structure.razor.directive.codeblock, source.cs
+ - token from 8 to 11 (var) with scopes text.aspnetcorerazor, meta.structure.razor.directive.codeblock, source.cs, keyword.other.var.cs
+ - token from 11 to 12 ( ) with scopes text.aspnetcorerazor, meta.structure.razor.directive.codeblock, source.cs
+ - token from 12 to 22 (someString) with scopes text.aspnetcorerazor, meta.structure.razor.directive.codeblock, source.cs, entity.name.variable.local.cs
+ - token from 22 to 23 ( ) with scopes text.aspnetcorerazor, meta.structure.razor.directive.codeblock, source.cs
+ - token from 23 to 24 (=) with scopes text.aspnetcorerazor, meta.structure.razor.directive.codeblock, source.cs, keyword.operator.assignment.cs
+ - token from 24 to 25 ( ) with scopes text.aspnetcorerazor, meta.structure.razor.directive.codeblock, source.cs
+ - token from 25 to 26 (\\") with scopes text.aspnetcorerazor, meta.structure.razor.directive.codeblock, source.cs, string.quoted.double.cs, punctuation.definition.string.begin.cs
+ - token from 26 to 63 ({ var ThisShouldNotBeCSharp = true; }) with scopes text.aspnetcorerazor, meta.structure.razor.directive.codeblock, source.cs, string.quoted.double.cs
+ - token from 63 to 64 (\\") with scopes text.aspnetcorerazor, meta.structure.razor.directive.codeblock, source.cs, string.quoted.double.cs, punctuation.definition.string.end.cs
+ - token from 64 to 65 (;) with scopes text.aspnetcorerazor, meta.structure.razor.directive.codeblock, source.cs, punctuation.terminator.statement.cs
+
+Line:         currentCount++;
+ - token from 0 to 8 (        ) with scopes text.aspnetcorerazor, meta.structure.razor.directive.codeblock, source.cs
+ - token from 8 to 20 (currentCount) with scopes text.aspnetcorerazor, meta.structure.razor.directive.codeblock, source.cs, variable.other.readwrite.cs
+ - token from 20 to 22 (++) with scopes text.aspnetcorerazor, meta.structure.razor.directive.codeblock, source.cs, keyword.operator.increment.cs
+ - token from 22 to 23 (;) with scopes text.aspnetcorerazor, meta.structure.razor.directive.codeblock, source.cs, punctuation.terminator.statement.cs
+
+Line:     }
+ - token from 0 to 4 (    ) with scopes text.aspnetcorerazor, meta.structure.razor.directive.codeblock, source.cs
+ - token from 4 to 5 (}) with scopes text.aspnetcorerazor, meta.structure.razor.directive.codeblock, source.cs, punctuation.curlybrace.close.cs
+
+Line: }
+ - token from 0 to 1 (}) with scopes text.aspnetcorerazor, meta.structure.razor.directive.codeblock, keyword.control.razor.directive.codeblock.close
+"
+`;
+
+exports[`Grammar tests @code directive Multi line then newline 1`] = `
+"Line: @code
+ - token from 0 to 1 (@) with scopes text.aspnetcorerazor, keyword.control.cshtml.transition
+ - token from 1 to 5 (code) with scopes text.aspnetcorerazor, keyword.control.razor.directive.code
+
+Line: {
+ - token from 0 to 1 ({) with scopes text.aspnetcorerazor, meta.structure.razor.directive.codeblock, keyword.control.razor.directive.codeblock.open
+
+Line:     private int currentCount = 0;
+ - token from 0 to 4 (    ) with scopes text.aspnetcorerazor, meta.structure.razor.directive.codeblock, source.cs
+ - token from 4 to 11 (private) with scopes text.aspnetcorerazor, meta.structure.razor.directive.codeblock, source.cs, storage.modifier.cs
+ - token from 11 to 12 ( ) with scopes text.aspnetcorerazor, meta.structure.razor.directive.codeblock, source.cs
+ - token from 12 to 15 (int) with scopes text.aspnetcorerazor, meta.structure.razor.directive.codeblock, source.cs, keyword.type.cs
+ - token from 15 to 16 ( ) with scopes text.aspnetcorerazor, meta.structure.razor.directive.codeblock, source.cs
+ - token from 16 to 28 (currentCount) with scopes text.aspnetcorerazor, meta.structure.razor.directive.codeblock, source.cs, entity.name.variable.field.cs
+ - token from 28 to 29 ( ) with scopes text.aspnetcorerazor, meta.structure.razor.directive.codeblock, source.cs
+ - token from 29 to 30 (=) with scopes text.aspnetcorerazor, meta.structure.razor.directive.codeblock, source.cs, keyword.operator.assignment.cs
+ - token from 30 to 31 ( ) with scopes text.aspnetcorerazor, meta.structure.razor.directive.codeblock, source.cs
+ - token from 31 to 32 (0) with scopes text.aspnetcorerazor, meta.structure.razor.directive.codeblock, source.cs, constant.numeric.decimal.cs
+ - token from 32 to 33 (;) with scopes text.aspnetcorerazor, meta.structure.razor.directive.codeblock, source.cs, punctuation.terminator.statement.cs
+
+Line: 
+ - token from 0 to 1 () with scopes text.aspnetcorerazor, meta.structure.razor.directive.codeblock, source.cs
+
+Line:     private void IncrementCount()
+ - token from 0 to 4 (    ) with scopes text.aspnetcorerazor, meta.structure.razor.directive.codeblock, source.cs
+ - token from 4 to 11 (private) with scopes text.aspnetcorerazor, meta.structure.razor.directive.codeblock, source.cs, storage.modifier.cs
+ - token from 11 to 12 ( ) with scopes text.aspnetcorerazor, meta.structure.razor.directive.codeblock, source.cs
+ - token from 12 to 16 (void) with scopes text.aspnetcorerazor, meta.structure.razor.directive.codeblock, source.cs, keyword.type.cs
+ - token from 16 to 17 ( ) with scopes text.aspnetcorerazor, meta.structure.razor.directive.codeblock, source.cs
+ - token from 17 to 31 (IncrementCount) with scopes text.aspnetcorerazor, meta.structure.razor.directive.codeblock, source.cs, entity.name.function.cs
+ - token from 31 to 32 (() with scopes text.aspnetcorerazor, meta.structure.razor.directive.codeblock, source.cs, punctuation.parenthesis.open.cs
+ - token from 32 to 33 ()) with scopes text.aspnetcorerazor, meta.structure.razor.directive.codeblock, source.cs, punctuation.parenthesis.close.cs
+
+Line:     {
+ - token from 0 to 4 (    ) with scopes text.aspnetcorerazor, meta.structure.razor.directive.codeblock, source.cs
+ - token from 4 to 5 ({) with scopes text.aspnetcorerazor, meta.structure.razor.directive.codeblock, source.cs, punctuation.curlybrace.open.cs
+
+Line:         var someString = \\"{ var ThisShouldNotBeCSharp = true; }\\";
+ - token from 0 to 8 (        ) with scopes text.aspnetcorerazor, meta.structure.razor.directive.codeblock, source.cs
+ - token from 8 to 11 (var) with scopes text.aspnetcorerazor, meta.structure.razor.directive.codeblock, source.cs, keyword.other.var.cs
+ - token from 11 to 12 ( ) with scopes text.aspnetcorerazor, meta.structure.razor.directive.codeblock, source.cs
+ - token from 12 to 22 (someString) with scopes text.aspnetcorerazor, meta.structure.razor.directive.codeblock, source.cs, entity.name.variable.local.cs
+ - token from 22 to 23 ( ) with scopes text.aspnetcorerazor, meta.structure.razor.directive.codeblock, source.cs
+ - token from 23 to 24 (=) with scopes text.aspnetcorerazor, meta.structure.razor.directive.codeblock, source.cs, keyword.operator.assignment.cs
+ - token from 24 to 25 ( ) with scopes text.aspnetcorerazor, meta.structure.razor.directive.codeblock, source.cs
+ - token from 25 to 26 (\\") with scopes text.aspnetcorerazor, meta.structure.razor.directive.codeblock, source.cs, string.quoted.double.cs, punctuation.definition.string.begin.cs
+ - token from 26 to 63 ({ var ThisShouldNotBeCSharp = true; }) with scopes text.aspnetcorerazor, meta.structure.razor.directive.codeblock, source.cs, string.quoted.double.cs
+ - token from 63 to 64 (\\") with scopes text.aspnetcorerazor, meta.structure.razor.directive.codeblock, source.cs, string.quoted.double.cs, punctuation.definition.string.end.cs
+ - token from 64 to 65 (;) with scopes text.aspnetcorerazor, meta.structure.razor.directive.codeblock, source.cs, punctuation.terminator.statement.cs
+
+Line:         currentCount++;
+ - token from 0 to 8 (        ) with scopes text.aspnetcorerazor, meta.structure.razor.directive.codeblock, source.cs
+ - token from 8 to 20 (currentCount) with scopes text.aspnetcorerazor, meta.structure.razor.directive.codeblock, source.cs, variable.other.readwrite.cs
+ - token from 20 to 22 (++) with scopes text.aspnetcorerazor, meta.structure.razor.directive.codeblock, source.cs, keyword.operator.increment.cs
+ - token from 22 to 23 (;) with scopes text.aspnetcorerazor, meta.structure.razor.directive.codeblock, source.cs, punctuation.terminator.statement.cs
+
+Line:     }
+ - token from 0 to 4 (    ) with scopes text.aspnetcorerazor, meta.structure.razor.directive.codeblock, source.cs
+ - token from 4 to 5 (}) with scopes text.aspnetcorerazor, meta.structure.razor.directive.codeblock, source.cs, punctuation.curlybrace.close.cs
+
+Line: }
+ - token from 0 to 1 (}) with scopes text.aspnetcorerazor, meta.structure.razor.directive.codeblock, keyword.control.razor.directive.codeblock.close
+"
+`;
+
 exports[`Grammar tests @code directive Multi line with nullable property 1`] = `
 "Line: @code {
  - token from 0 to 1 (@) with scopes text.aspnetcorerazor, keyword.control.cshtml.transition
@@ -458,6 +588,27 @@ exports[`Grammar tests @code directive Single line 1`] = `
 "
 `;
 
+exports[`Grammar tests @code directive Single line no whitespace 1`] = `
+"Line: @code{ public void Foo() {} }
+ - token from 0 to 1 (@) with scopes text.aspnetcorerazor, keyword.control.cshtml.transition
+ - token from 1 to 5 (code) with scopes text.aspnetcorerazor, keyword.control.razor.directive.code
+ - token from 5 to 6 ({) with scopes text.aspnetcorerazor, meta.structure.razor.directive.codeblock, keyword.control.razor.directive.codeblock.open
+ - token from 6 to 7 ( ) with scopes text.aspnetcorerazor, meta.structure.razor.directive.codeblock, source.cs
+ - token from 7 to 13 (public) with scopes text.aspnetcorerazor, meta.structure.razor.directive.codeblock, source.cs, storage.modifier.cs
+ - token from 13 to 14 ( ) with scopes text.aspnetcorerazor, meta.structure.razor.directive.codeblock, source.cs
+ - token from 14 to 18 (void) with scopes text.aspnetcorerazor, meta.structure.razor.directive.codeblock, source.cs, keyword.type.cs
+ - token from 18 to 19 ( ) with scopes text.aspnetcorerazor, meta.structure.razor.directive.codeblock, source.cs
+ - token from 19 to 22 (Foo) with scopes text.aspnetcorerazor, meta.structure.razor.directive.codeblock, source.cs, entity.name.function.cs
+ - token from 22 to 23 (() with scopes text.aspnetcorerazor, meta.structure.razor.directive.codeblock, source.cs, punctuation.parenthesis.open.cs
+ - token from 23 to 24 ()) with scopes text.aspnetcorerazor, meta.structure.razor.directive.codeblock, source.cs, punctuation.parenthesis.close.cs
+ - token from 24 to 25 ( ) with scopes text.aspnetcorerazor, meta.structure.razor.directive.codeblock, source.cs
+ - token from 25 to 26 ({) with scopes text.aspnetcorerazor, meta.structure.razor.directive.codeblock, source.cs, punctuation.curlybrace.open.cs
+ - token from 26 to 27 (}) with scopes text.aspnetcorerazor, meta.structure.razor.directive.codeblock, source.cs, punctuation.curlybrace.close.cs
+ - token from 27 to 28 ( ) with scopes text.aspnetcorerazor, meta.structure.razor.directive.codeblock, source.cs
+ - token from 28 to 29 (}) with scopes text.aspnetcorerazor, meta.structure.razor.directive.codeblock, keyword.control.razor.directive.codeblock.close
+"
+`;
+
 exports[`Grammar tests @code directive Single-line comment with curly braces 1`] = `
 "Line: 
  - token from 0 to 1 () with scopes text.aspnetcorerazor
@@ -475,6 +626,14 @@ Line:     // { var ThisShouldNotBeCSharp = true; }
 
 Line: }
  - token from 0 to 1 (}) with scopes text.aspnetcorerazor, meta.structure.razor.directive.codeblock, keyword.control.razor.directive.codeblock.close
+"
+`;
+
+exports[`Grammar tests @code directive Variable starting with code 1`] = `
+"Line: @codeTest then words
+ - token from 0 to 1 (@) with scopes text.aspnetcorerazor, meta.expression.implicit.cshtml, keyword.control.cshtml.transition
+ - token from 1 to 9 (codeTest) with scopes text.aspnetcorerazor, meta.expression.implicit.cshtml, source.cs, variable.other.object.cs
+ - token from 9 to 21 ( then words) with scopes text.aspnetcorerazor
 "
 `;
 
