@@ -7,10 +7,10 @@
       "commitSha": "f4269875971171c278c2cd695e9ef94b6516e4be"
     },
     {
-      "packageVersion": "8.0.0-preview.5.23268.11",
+      "packageVersion": "8.0.0-preview.5.23268.14",
       "path": "aspnetcore",
       "remoteUri": "https://github.com/dotnet/aspnetcore",
-      "commitSha": "c084d4bd349c319ce86c13119ca4f062f85e4c04"
+      "commitSha": "7bad400567d1e74922301225d278ead765b8bb74"
     },
     {
       "packageVersion": "0.11.4-alpha.23252.1",
@@ -58,7 +58,7 @@
       "packageVersion": "8.0.100",
       "path": "installer",
       "remoteUri": "https://github.com/dotnet/installer",
-      "commitSha": "7172bcb398e55deb5fb1754fdc211d18dd41e10d"
+      "commitSha": "d986335ed0e9059e96982ed70c6cdccacebbcb94"
     },
     {
       "packageVersion": "17.7.0-preview-23267-02",
@@ -79,10 +79,10 @@
       "commitSha": "c9b52e3a8d96978211f73aa7afae55eb763ce3da"
     },
     {
-      "packageVersion": "4.7.0-2.23268.5",
+      "packageVersion": "4.7.0-2.23268.13",
       "path": "roslyn",
       "remoteUri": "https://github.com/dotnet/roslyn",
-      "commitSha": "ac162b77f218ac99c1f1266cdf4375be43984047"
+      "commitSha": "fb7ecaa1840ed71862119ce69bbd9c67261112c6"
     },
     {
       "packageVersion": "3.3.5-beta1.23268.1",
@@ -91,16 +91,16 @@
       "commitSha": "114ed7b80e68f6d830fff399f7b2c8f3367d58d5"
     },
     {
-      "packageVersion": "8.0.0-preview.5.23268.8",
+      "packageVersion": "8.0.0-preview.5.23268.12",
       "path": "runtime",
       "remoteUri": "https://github.com/dotnet/runtime",
-      "commitSha": "0f8afd209a401836a8fe116936ff9428992d15ef"
+      "commitSha": "40ba49a103c7d6a9d0789b6584e7485b49f722a7"
     },
     {
-      "packageVersion": "8.0.100-preview.5.23268.44",
+      "packageVersion": "8.0.100-preview.5.23268.49",
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "6d869d6393cbce399d40161d40c2b7cb01c39cc4"
+      "commitSha": "3a9348f3b14c1b072cebd4e13718cb68536fc14b"
     },
     {
       "packageVersion": "8.0.0-alpha.1.23266.1",
