@@ -173,7 +173,7 @@ public class OpenDocumentGeneratorTest : LanguageServerTestBase
             ProjectSnapshotManagerDispatcher dispatcher,
             IErrorReporter errorReporter,
             params DocumentProcessedListener[] listeners)
-            : base(listeners, dispatcher, errorReporter)
+            : base(listeners, dispatcher, TestLanguageServerFeatureOptions.Instance, errorReporter)
         {
         }
     }

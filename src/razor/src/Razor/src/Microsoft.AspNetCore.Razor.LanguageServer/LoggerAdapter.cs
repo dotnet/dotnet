@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Diagnostics;
 using System.Linq;
 using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.AspNetCore.Razor.Telemetry;
@@ -17,11 +18,13 @@ public class LoggerAdapter : IRazorLogger
 {
     private readonly IEnumerable<ILogger> _loggers;
     private readonly ITelemetryReporter? _telemetryReporter;
+    private readonly TraceSource? _traceSource;
 
-    public LoggerAdapter(IEnumerable<ILogger> loggers, ITelemetryReporter? telemetryReporter)
+    public LoggerAdapter(IEnumerable<ILogger> loggers, ITelemetryReporter? telemetryReporter, TraceSource? traceSource = null)
     {
         _loggers = loggers;
         _telemetryReporter = telemetryReporter;
+        _traceSource = traceSource;
     }
 
     public IDisposable BeginScope<TState>(TState state)
@@ -52,9 +55,26 @@ public class LoggerAdapter : IRazorLogger
         }
     }
 
+    public void LogStartContext(string message, params object[] @params)
+    {
+        if (_traceSource != null)
+        {
+            // This should provide for a better activity name when looking at traces, rather than the
+            // random number we normally get.
+            _traceSource.TraceEvent(TraceEventType.Start, id: 0, message);
+        }
+
+        LogInformation("Start: {message}", message);
+    }
+
     public void LogEndContext(string message, params object[] @params)
     {
-        LogInformation("Exiting: {}", message);
+        LogInformation("Stop: {message}", message);
+
+        if (_traceSource != null)
+        {
+            _traceSource.TraceEvent(TraceEventType.Stop, id: 0, message);
+        }
     }
 
     public void LogError(string message, params object[] @params)
@@ -116,11 +136,6 @@ public class LoggerAdapter : IRazorLogger
                 logger.LogDebug(message, @params);
             }
         }
-    }
-
-    public void LogStartContext(string message, params object[] @params)
-    {
-        LogInformation("Entering: {}", message);
     }
 
     public void LogWarning(string message, params object[] @params)

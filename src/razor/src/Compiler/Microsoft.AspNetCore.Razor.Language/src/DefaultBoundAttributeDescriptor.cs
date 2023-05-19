@@ -13,7 +13,7 @@ internal sealed class DefaultBoundAttributeDescriptor : BoundAttributeDescriptor
         bool hasIndexer,
         string? indexerNamePrefix,
         string? indexerTypeName,
-        string? documentation,
+        DocumentationObject documentationObject,
         string? displayName,
         bool caseSensitive,
         bool isEditorRequired,
@@ -28,7 +28,7 @@ internal sealed class DefaultBoundAttributeDescriptor : BoundAttributeDescriptor
         HasIndexer = hasIndexer;
         IndexerNamePrefix = indexerNamePrefix;
         IndexerTypeName = indexerTypeName;
-        Documentation = documentation;
+        DocumentationObject = documentationObject;
         DisplayName = displayName;
         CaseSensitive = caseSensitive;
         IsEditorRequired = isEditorRequired;

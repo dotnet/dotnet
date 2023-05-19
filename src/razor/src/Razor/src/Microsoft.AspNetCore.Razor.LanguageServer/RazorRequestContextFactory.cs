@@ -49,7 +49,6 @@ internal class RazorRequestContextFactory : IRequestContextFactory<RazorRequestC
         }
 
         var loggerAdapter = _lspServices.GetRequiredService<LoggerAdapter>();
-        loggerAdapter.LogDebug("Entering method {methodName}.", queueItem.MethodName);
 
         var requestContext = new RazorRequestContext(documentContext, loggerAdapter, _lspServices);
 

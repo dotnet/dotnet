@@ -55,6 +55,7 @@ internal partial class DefaultBoundAttributeDescriptorBuilder : BoundAttributeDe
     [AllowNull]
     private string _kind;
     private List<DefaultBoundAttributeParameterDescriptorBuilder>? _attributeParameterBuilders;
+    private DocumentationObject _documentationObject;
     private Dictionary<string, string?>? _metadata;
     private RazorDiagnosticCollection? _diagnostics;
 
@@ -74,7 +75,13 @@ internal partial class DefaultBoundAttributeDescriptorBuilder : BoundAttributeDe
     public override bool IsDictionary { get; set; }
     public override string? IndexerAttributeNamePrefix { get; set; }
     public override string? IndexerValueTypeName { get; set; }
-    public override string? Documentation { get; set; }
+
+    public override string? Documentation
+    {
+        get => _documentationObject.GetText();
+        set => _documentationObject = new(value);
+    }
+
     public override string? DisplayName { get; set; }
 
     public override IDictionary<string, string?> Metadata => _metadata ??= new Dictionary<string, string?>();
@@ -97,6 +104,16 @@ internal partial class DefaultBoundAttributeDescriptorBuilder : BoundAttributeDe
         _attributeParameterBuilders.Add(builder);
     }
 
+    internal override void SetDocumentation(string text)
+    {
+        _documentationObject = new(text);
+    }
+
+    internal override void SetDocumentation(DocumentationDescriptor documentation)
+    {
+        _documentationObject = new(documentation);
+    }
+
     public BoundAttributeDescriptor Build()
     {
         var diagnostics = new PooledHashSet<RazorDiagnostic>();
@@ -116,7 +133,7 @@ internal partial class DefaultBoundAttributeDescriptorBuilder : BoundAttributeDe
                 IsDictionary,
                 IndexerAttributeNamePrefix,
                 IndexerValueTypeName,
-                Documentation,
+                _documentationObject,
                 GetDisplayName(),
                 CaseSensitive,
                 IsEditorRequired,

@@ -34,8 +34,8 @@ internal sealed class TagHelperDescriptorComparer : IEqualityComparer<TagHelperD
             descriptorX.AssemblyName != descriptorY.AssemblyName ||
             descriptorX.Name != descriptorY.Name ||
             descriptorX.CaseSensitive != descriptorY.CaseSensitive ||
-            descriptorX.Documentation != descriptorY.Documentation ||
             descriptorX.DisplayName != descriptorY.DisplayName ||
+            descriptorX.DocumentationObject != descriptorY.DocumentationObject ||
             descriptorX.TagOutputHint != descriptorY.TagOutputHint)
         {
             return false;

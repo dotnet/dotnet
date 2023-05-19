@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Razor.LanguageServer.Common;
 using Microsoft.AspNetCore.Razor.TextDifferencing;
 using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
+using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Text;
 using Microsoft.Extensions.Logging;
 
@@ -19,6 +20,7 @@ internal class DefaultGeneratedDocumentPublisher : GeneratedDocumentPublisher
     private readonly Dictionary<string, PublishData> _publishedCSharpData;
     private readonly Dictionary<string, PublishData> _publishedHtmlData;
     private readonly ClientNotifierServiceBase _server;
+    private readonly LanguageServerFeatureOptions _languageServerFeatureOptions;
     private readonly ILogger _logger;
     private readonly ProjectSnapshotManagerDispatcher _projectSnapshotManagerDispatcher;
     private ProjectSnapshotManagerBase? _projectSnapshotManager;
@@ -26,6 +28,7 @@ internal class DefaultGeneratedDocumentPublisher : GeneratedDocumentPublisher
     public DefaultGeneratedDocumentPublisher(
         ProjectSnapshotManagerDispatcher projectSnapshotManagerDispatcher,
         ClientNotifierServiceBase server,
+        LanguageServerFeatureOptions languageServerFeatureOptions,
         ILoggerFactory loggerFactory)
     {
         if (projectSnapshotManagerDispatcher is null)
@@ -38,6 +41,11 @@ internal class DefaultGeneratedDocumentPublisher : GeneratedDocumentPublisher
             throw new ArgumentNullException(nameof(server));
         }
 
+        if (languageServerFeatureOptions is null)
+        {
+            throw new ArgumentNullException(nameof(languageServerFeatureOptions));
+        }
+
         if (loggerFactory is null)
         {
             throw new ArgumentNullException(nameof(loggerFactory));
@@ -45,6 +53,7 @@ internal class DefaultGeneratedDocumentPublisher : GeneratedDocumentPublisher
 
         _projectSnapshotManagerDispatcher = projectSnapshotManagerDispatcher;
         _server = server;
+        _languageServerFeatureOptions = languageServerFeatureOptions;
         _logger = loggerFactory.CreateLogger<DefaultGeneratedDocumentPublisher>();
         _publishedCSharpData = new Dictionary<string, PublishData>(FilePathComparer.Instance);
         _publishedHtmlData = new Dictionary<string, PublishData>(FilePathComparer.Instance);
@@ -185,7 +194,14 @@ internal class DefaultGeneratedDocumentPublisher : GeneratedDocumentPublisher
                 Assumes.NotNull(args.DocumentFilePath);
                 if (!_projectSnapshotManager.IsDocumentOpen(args.DocumentFilePath))
                 {
-                    // Document closed, evict published source text.
+                    // Document closed, evict published source text, unless the server doesn't want us to.
+                    if (_languageServerFeatureOptions.UpdateBuffersForClosedDocuments)
+                    {
+                        // Some clients want us to keep generating code even if the document is closed, so if we evict our data,
+                        // even though we don't send a didChange for it, the next didChange will be wrong.
+                        return;
+                    }
+
                     if (_publishedCSharpData.ContainsKey(args.DocumentFilePath))
                     {
                         var removed = _publishedCSharpData.Remove(args.DocumentFilePath);

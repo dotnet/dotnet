@@ -59,7 +59,7 @@ internal class KeyTagHelperDescriptorProvider : ITagHelperDescriptorProvider
                 out var builder);
 
             builder.CaseSensitive = true;
-            builder.Documentation = ComponentResources.KeyTagHelper_Documentation;
+            builder.SetDocumentation(DocumentationDescriptor.KeyTagHelper);
 
             builder.Metadata.Add(ComponentMetadata.SpecialKindKey, ComponentMetadata.Key.TagHelperKind);
             builder.Metadata.Add(TagHelperMetadata.Common.ClassifyAttributesOnly, bool.TrueString);
@@ -81,7 +81,7 @@ internal class KeyTagHelperDescriptorProvider : ITagHelperDescriptorProvider
 
             builder.BindAttribute(attribute =>
             {
-                attribute.Documentation = ComponentResources.KeyTagHelper_Documentation;
+                attribute.SetDocumentation(DocumentationDescriptor.KeyTagHelper);
                 attribute.Name = "@key";
 
                 // WTE has a bug 15.7p1 where a Tag Helper without a display-name that looks like

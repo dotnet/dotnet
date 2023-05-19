@@ -76,7 +76,7 @@ public static class TestTagHelperDescriptorBuilderExtensions
             throw new ArgumentNullException(nameof(builder));
         }
 
-        builder.Documentation = documentation;
+        builder.SetDocumentation(documentation);
 
         return builder;
     }

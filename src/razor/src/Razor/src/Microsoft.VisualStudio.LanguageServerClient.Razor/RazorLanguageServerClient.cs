@@ -179,10 +179,10 @@ internal class RazorLanguageServerClient : ILanguageClient, ILanguageClientCusto
 
         // Initialize Logging Infrastructure
         _loggerProvider = (LogHubLoggerProvider)await _logHubLoggerProviderFactory.GetOrCreateAsync(LogFileIdentifier, token).ConfigureAwait(false);
-
+        var traceSource = _loggerProvider.GetTraceSource();
         var logHubLogger = _loggerProvider.CreateLogger("Razor");
         var loggers = _outputWindowLogger == null ? new ILogger[] { logHubLogger } : new ILogger[] { logHubLogger, _outputWindowLogger };
-        var razorLogger = new LoggerAdapter(loggers, _telemetryReporter);
+        var razorLogger = new LoggerAdapter(loggers, _telemetryReporter, traceSource);
         var lspOptions = RazorLSPOptions.From(_clientSettingsManager.GetClientSettings());
         _server = RazorLanguageServerWrapper.Create(
             serverStream,
@@ -192,7 +192,8 @@ internal class RazorLanguageServerClient : ILanguageClient, ILanguageClientCusto
             _projectSnapshotManagerDispatcher,
             ConfigureLanguageServer,
             _languageServerFeatureOptions,
-            lspOptions);
+            lspOptions,
+            traceSource);
 
         // This must not happen on an RPC endpoint due to UIThread concerns, so ActivateAsync was chosen.
         await EnsureContainedLanguageServersInitializedAsync();

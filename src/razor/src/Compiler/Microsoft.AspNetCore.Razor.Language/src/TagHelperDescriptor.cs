@@ -23,6 +23,7 @@ public abstract class TagHelperDescriptor : IEquatable<TagHelperDescriptor>
 
     private int _flags;
     private int? _hashCode;
+    private DocumentationObject _documentationObject;
 
     private IEnumerable<RazorDiagnostic> _allDiagnostics;
     private BoundAttributeDescriptor[] _editorRequiredAttributes;
@@ -49,7 +50,17 @@ public abstract class TagHelperDescriptor : IEquatable<TagHelperDescriptor>
 
     public IReadOnlyList<AllowedChildTagDescriptor> AllowedChildTags { get; protected set; }
 
-    public string Documentation { get; protected set; }
+    public string Documentation
+    {
+        get => _documentationObject.GetText();
+        protected set => _documentationObject = new(value);
+    }
+
+    internal DocumentationObject DocumentationObject
+    {
+        get => _documentationObject;
+        set => _documentationObject = value;
+    }
 
     public string DisplayName { get; protected set; }
 

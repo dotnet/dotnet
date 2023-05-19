@@ -35,7 +35,18 @@ internal static partial class ObjectReaders
             => arg.Builder.TypeName = Cached(reader.ReadString());
 
         private static void ReadDocumentation(JsonDataReader reader, ref BoundAttributeReader arg)
-                => arg.Builder.Documentation = Cached(reader.ReadString());
+        {
+            var documentationObject = ReadDocumentationObject(reader);
+
+            if (documentationObject is string text)
+            {
+                arg.Builder.SetDocumentation(Cached(text));
+            }
+            else
+            {
+                arg.Builder.SetDocumentation(documentationObject as DocumentationDescriptor);
+            }
+        }
 
         private static void ReadIndexerNamePrefix(JsonDataReader reader, ref BoundAttributeReader arg)
         {

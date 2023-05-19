@@ -38,7 +38,7 @@ internal sealed class BoundAttributeParameterDescriptorComparer : IEqualityCompa
             descriptorX.IsEnum != descriptorY.IsEnum ||
             descriptorX.Name != descriptorY.Name ||
             descriptorX.TypeName != descriptorY.TypeName ||
-            descriptorX.Documentation != descriptorY.Documentation ||
+            descriptorX.DocumentationObject != descriptorY.DocumentationObject ||
             descriptorX.DisplayName != descriptorY.DisplayName)
         {
             return false;

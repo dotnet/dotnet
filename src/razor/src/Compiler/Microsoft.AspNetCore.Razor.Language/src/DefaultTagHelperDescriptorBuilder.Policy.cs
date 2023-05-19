@@ -16,11 +16,11 @@ internal partial class DefaultTagHelperDescriptorBuilder
             builder._kind = null;
             builder._name = null;
             builder._assemblyName = null;
+            builder._documentationObject = default;
 
             builder.DisplayName = null;
             builder.TagOutputHint = null;
             builder.CaseSensitive = false;
-            builder.Documentation = null;
 
             if (builder._allowedChildTags is { } allowedChildTagBuilders)
             {

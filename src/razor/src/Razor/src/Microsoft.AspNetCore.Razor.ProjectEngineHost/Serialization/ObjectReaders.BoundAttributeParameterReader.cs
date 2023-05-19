@@ -34,7 +34,18 @@ internal static partial class ObjectReaders
             => arg.Builder.IsEnum = reader.ReadBoolean();
 
         private static void ReadDocumentation(JsonDataReader reader, ref BoundAttributeParameterReader arg)
-            => arg.Builder.Documentation = Cached(reader.ReadString());
+        {
+            var documentationObject = ReadDocumentationObject(reader);
+
+            if (documentationObject is string text)
+            {
+                arg.Builder.SetDocumentation(Cached(text));
+            }
+            else
+            {
+                arg.Builder.SetDocumentation(documentationObject as DocumentationDescriptor);
+            }
+        }
 
         private static void ReadMetadata(JsonDataReader reader, ref BoundAttributeParameterReader arg)
             => reader.ProcessObject(arg.Builder.Metadata, ProcessMetadata);

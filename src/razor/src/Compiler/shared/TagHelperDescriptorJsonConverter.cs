@@ -40,7 +40,7 @@ internal class TagHelperDescriptorJsonConverter : JsonConverter
                     if (reader.Read())
                     {
                         var documentation = (string)reader.Value;
-                        builder.Documentation = documentation;
+                        builder.SetDocumentation(documentation);
                     }
                     break;
                 case nameof(TagHelperDescriptor.TagOutputHint):
@@ -410,7 +410,7 @@ internal class TagHelperDescriptorJsonConverter : JsonConverter
                         if (reader.Read())
                         {
                             var documentation = (string)reader.Value;
-                            attribute.Documentation = documentation;
+                            attribute.SetDocumentation(documentation);
                         }
                         break;
                     case nameof(BoundAttributeDescriptor.IndexerNamePrefix):
@@ -524,7 +524,7 @@ internal class TagHelperDescriptorJsonConverter : JsonConverter
                         if (reader.Read())
                         {
                             var documentation = (string)reader.Value;
-                            parameter.Documentation = documentation;
+                            parameter.SetDocumentation(documentation);
                         }
                         break;
                     case nameof(BoundAttributeParameterDescriptor.Metadata):

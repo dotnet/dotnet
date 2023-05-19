@@ -120,4 +120,7 @@
   <data name="Non_negative_number_required" xml:space="preserve">
     <value>Non-negative number required.</value>
   </data>
+  <data name="This_program_location_is_throught_to_be_unreachable_File_0_Line_1" xml:space="preserve">
+    <value>This program location is thought to be unreachable. File='{0}', Line={1}</value>
+  </data>
 </root>

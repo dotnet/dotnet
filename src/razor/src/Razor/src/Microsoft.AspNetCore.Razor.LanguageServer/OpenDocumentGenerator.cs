@@ -26,6 +26,7 @@ internal class OpenDocumentGenerator : ProjectSnapshotChangeTrigger, IDisposable
     private static readonly TimeSpan s_batchingTimeSpan = TimeSpan.FromMilliseconds(10);
 
     private readonly ProjectSnapshotManagerDispatcher _projectSnapshotManagerDispatcher;
+    private readonly LanguageServerFeatureOptions _languageServerFeatureOptions;
     private readonly IReadOnlyList<DocumentProcessedListener> _documentProcessedListeners;
     private readonly BatchingWorkQueue _workQueue;
     private ProjectSnapshotManagerBase? _projectManager;
@@ -33,6 +34,7 @@ internal class OpenDocumentGenerator : ProjectSnapshotChangeTrigger, IDisposable
     public OpenDocumentGenerator(
         IEnumerable<DocumentProcessedListener> documentProcessedListeners,
         ProjectSnapshotManagerDispatcher projectSnapshotManagerDispatcher,
+        LanguageServerFeatureOptions languageServerFeatureOptions,
         IErrorReporter errorReporter)
     {
         if (documentProcessedListeners is null)
@@ -45,8 +47,14 @@ internal class OpenDocumentGenerator : ProjectSnapshotChangeTrigger, IDisposable
             throw new ArgumentNullException(nameof(projectSnapshotManagerDispatcher));
         }
 
+        if (languageServerFeatureOptions is null)
+        {
+            throw new ArgumentNullException(nameof(languageServerFeatureOptions));
+        }
+
         _documentProcessedListeners = documentProcessedListeners.ToArray();
         _projectSnapshotManagerDispatcher = projectSnapshotManagerDispatcher;
+        _languageServerFeatureOptions = languageServerFeatureOptions;
         _workQueue = new BatchingWorkQueue(s_batchingTimeSpan, FilePathComparer.Instance, errorReporter);
     }
 
@@ -163,7 +171,7 @@ internal class OpenDocumentGenerator : ProjectSnapshotChangeTrigger, IDisposable
                 {
                     var filePath = document.FilePath.AssumeNotNull();
 
-                    if (!ProjectManager.IsDocumentOpen(filePath))
+                    if (!ProjectManager.IsDocumentOpen(filePath) && !_languageServerFeatureOptions.UpdateBuffersForClosedDocuments)
                     {
                         return;
                     }

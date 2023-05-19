@@ -20,7 +20,18 @@ internal static partial class ObjectReaders
             (nameof(TagHelperDescriptor.Metadata), ReadMetadata));
 
         private static void ReadDocumentation(JsonDataReader reader, ref TagHelperReader arg)
-            => arg.Builder.Documentation = Cached(reader.ReadString());
+        {
+            var documentationObject = ReadDocumentationObject(reader);
+
+            if (documentationObject is string text)
+            {
+                arg.Builder.SetDocumentation(Cached(text));
+            }
+            else
+            {
+                arg.Builder.SetDocumentation(documentationObject as DocumentationDescriptor);
+            }
+        }
 
         private static void ReadTagOutputHint(JsonDataReader reader, ref TagHelperReader arg)
             => arg.Builder.TagOutputHint = Cached(reader.ReadString());

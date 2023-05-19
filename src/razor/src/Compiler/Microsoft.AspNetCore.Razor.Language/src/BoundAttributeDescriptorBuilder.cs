@@ -37,4 +37,14 @@ public abstract class BoundAttributeDescriptorBuilder
     public virtual void BindAttributeParameter(Action<BoundAttributeParameterDescriptorBuilder> configure)
     {
     }
+
+    internal virtual void SetDocumentation(string text)
+    {
+        throw new NotImplementedException();
+    }
+
+    internal virtual void SetDocumentation(DocumentationDescriptor documentation)
+    {
+        throw new NotImplementedException();
+    }
 }

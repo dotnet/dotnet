@@ -73,6 +73,8 @@ internal class VisualStudioWindowsLanguageServerFeatureOptions : LanguageServerF
 
     public override bool ReturnCodeActionAndRenamePathsWithPrefixedSlash => false;
 
+    public override bool UpdateBuffersForClosedDocuments => false;
+
     private bool IsCodespacesOrLiveshare => _lspEditorFeatureDetector.IsRemoteClient() || _lspEditorFeatureDetector.IsLiveShareHost();
 
     public override bool ShowAllCSharpCodeActions => _showAllCSharpCodeActions.Value;

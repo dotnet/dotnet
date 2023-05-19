@@ -122,6 +122,27 @@ internal static partial class ObjectReaders
         return descriptor;
     }
 
+    private static object? ReadDocumentationObject(JsonDataReader reader)
+    {
+        if (reader.IsObjectStart)
+        {
+            return reader.ReadNonNullObject(static reader =>
+            {
+                var id = (DocumentationId)reader.ReadInt32(nameof(DocumentationDescriptor.Id));
+                // Check to see if the Args property was actually written before trying to read it;
+                // otherwise, assume the args are null.
+                var args = reader.TryReadPropertyName(nameof(DocumentationDescriptor.Args))
+                    ? reader.ReadArray(static r => r.ReadValue())
+                    : null;
+                return DocumentationDescriptor.From(id, args);
+            });
+        }
+        else
+        {
+            return reader.ReadString();
+        }
+    }
+
     private static void ProcessDiagnostic(JsonDataReader reader, RazorDiagnosticCollection collection)
     {
         DiagnosticData data = default;

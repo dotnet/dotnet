@@ -3,6 +3,7 @@
 
 #nullable disable
 
+using System;
 using System.Collections.Generic;
 
 namespace Microsoft.AspNetCore.Razor.Language;
@@ -22,4 +23,14 @@ public abstract class BoundAttributeParameterDescriptorBuilder
     public abstract IDictionary<string, string> Metadata { get; }
 
     public abstract RazorDiagnosticCollection Diagnostics { get; }
+
+    internal virtual void SetDocumentation(string text)
+    {
+        throw new NotImplementedException();
+    }
+
+    internal virtual void SetDocumentation(DocumentationDescriptor documentation)
+    {
+        throw new NotImplementedException();
+    }
 }
