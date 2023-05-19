@@ -219,7 +219,7 @@ jobs:
       fi
 
       if [[ '${{ parameters.useMonoRuntime }}' == 'True' ]]; then
-        customBuildArgs="--use-mono-runtime"
+        customBuildArgs="$customBuildArgs --use-mono-runtime"
       fi
 
       docker run --rm -v "$(sourcesPath):/vmr" -w /vmr $customRunArgs ${{ parameters.container }} ./build.sh --clean-while-building $(additionalBuildArgs) $customBuildArgs
