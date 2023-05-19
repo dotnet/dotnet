@@ -127,7 +127,8 @@ namespace NuGet.PackageManagement.UI.Test.Models
             _testInstance = new PackageDetailControlModel(
                 mockServiceBroker.Object,
                 solutionManager: solMgr.Object,
-                Array.Empty<IProjectContextInfo>());
+                Array.Empty<IProjectContextInfo>(),
+                uiController: Mock.Of<INuGetUI>());
             _testInstance.SetCurrentPackageAsync(
                 _testViewModel,
                 ItemFilter.All,
@@ -535,7 +536,8 @@ namespace NuGet.PackageManagement.UI.Test.Models
             PackageDetailControlModel model = new PackageDetailControlModel(
                 mockServiceBroker.Object,
                 solutionManager: new Mock<INuGetSolutionManagerService>().Object,
-                projects: new[] { project.Object });
+                projects: new[] { project.Object },
+                uiController: Mock.Of<INuGetUI>());
 
             // Arrange
             List<VersionInfoContextInfo> testVersions = includePrerelease ? ExpectedVersionsList_IncludePrerelease() : ExpectedVersionsList();
@@ -642,7 +644,8 @@ namespace NuGet.PackageManagement.UI.Test.Models
             PackageDetailControlModel model = new PackageDetailControlModel(
                 mockServiceBroker.Object,
                 solutionManager: new Mock<INuGetSolutionManagerService>().Object,
-                projects: new[] { project.Object });
+                projects: new[] { project.Object },
+                uiController: Mock.Of<INuGetUI>());
 
             // Arrange
             List<VersionInfoContextInfo> testVersions = includePrerelease ? ExpectedVersionsList_IncludePrerelease() : ExpectedVersionsList();
@@ -761,7 +764,8 @@ namespace NuGet.PackageManagement.UI.Test.Models
             PackageDetailControlModel model = new PackageDetailControlModel(
                 mockServiceBroker.Object,
                 solutionManager: new Mock<INuGetSolutionManagerService>().Object,
-                projects: new[] { project.Object });
+                projects: new[] { project.Object },
+                uiController: Mock.Of<INuGetUI>());
 
             // Arrange
             List<VersionInfoContextInfo> testVersions = includePrerelease ? ExpectedVersionsList_IncludePrerelease() : ExpectedVersionsList();
@@ -968,7 +972,8 @@ namespace NuGet.PackageManagement.UI.Test.Models
             PackageDetailControlModel model = new PackageDetailControlModel(
                 mockServiceBroker.Object,
                 solutionManager: new Mock<INuGetSolutionManagerService>().Object,
-                projects: new[] { project.Object });
+                projects: new[] { project.Object },
+                uiController: Mock.Of<INuGetUI>());
 
             // Arrange
             List<VersionInfoContextInfo> testVersions = includePrerelease ? ExpectedVersionsList_IncludePrerelease() : ExpectedVersionsList();
@@ -1069,7 +1074,8 @@ namespace NuGet.PackageManagement.UI.Test.Models
             PackageDetailControlModel model = new PackageDetailControlModel(
                 mockServiceBroker.Object,
                 solutionManager: new Mock<INuGetSolutionManagerService>().Object,
-                projects: new[] { project.Object });
+                projects: new[] { project.Object },
+                uiController: Mock.Of<INuGetUI>());
 
             // Arrange
             List<VersionInfoContextInfo> testVersions = includePrerelease ? ExpectedVersionsList_IncludePrerelease() : ExpectedVersionsList();
@@ -1170,7 +1176,8 @@ namespace NuGet.PackageManagement.UI.Test.Models
             PackageDetailControlModel model = new PackageDetailControlModel(
                 mockServiceBroker.Object,
                 solutionManager: new Mock<INuGetSolutionManagerService>().Object,
-                projects: new[] { project.Object });
+                projects: new[] { project.Object },
+                uiController: Mock.Of<INuGetUI>());
 
             // Arrange
             List<VersionInfoContextInfo> testVersions = includePrerelease ? ExpectedVersionsList_IncludePrerelease() : ExpectedVersionsList();
@@ -1307,6 +1314,7 @@ namespace NuGet.PackageManagement.UI.Test.Models
                     solutionManager: solMgr.Object,
                     projects: new List<IProjectContextInfo>(),
                     serviceBroker: serviceBroker.Object,
+                    uiController: Mock.Of<INuGetUI>(),
                     CancellationToken.None);
 
                 await _testInstance.SetCurrentPackageAsync(

@@ -1,8 +1,8 @@
-<Project DefaultTargets="AfterBuild">
-  <Import Project="$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildThisFileDirectory), 'README.md'))\build\common.props" />
+<Project Sdk="Microsoft.Build.NoTargets" DefaultTargets="AfterBuild">
 
   <!-- Configuration/global properties -->
   <PropertyGroup>
+    <TargetFramework>net472</TargetFramework>
     <CommonMSBuildProperties>
       Configuration=$(Configuration);
       ReleaseLabel=$(ReleaseLabel);
@@ -12,22 +12,27 @@
     <OutDir>$(ArtifactsDirectory)</OutDir>
     <IntermediateOutputPath>$(ArtifactsDirectory)</IntermediateOutputPath>
   </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Web.Xdt" GeneratePathProperty="true" />
+  </ItemGroup>
 
   <Target Name="LocalizeNonProjectFiles">
     <ItemGroup>
-      <NonProjectFilesToMove Include="$(SolutionPackagesFolder)microsoft.web.xdt\3.0.0\lib\netstandard2.0\Microsoft.Web.XmlTransform.dll">
-        <DestinationDir>$(ArtifactsDirectory)microsoft.web.xdt\3.0.0\lib\netstandard2.0\Microsoft.Web.XmlTransform.dll</DestinationDir>
+      <NonProjectFilesToMove Include="$(PkgMicrosoft_Web_Xdt)\lib\netstandard2.0\Microsoft.Web.XmlTransform.dll">
+        <DestinationDir>$(ArtifactsDirectory)microsoft.web.xdt\lib\netstandard2.0\</DestinationDir>
       </NonProjectFilesToMove>
-      <NonProjectFilesToMove Include="$(SolutionPackagesFolder)microsoft.web.xdt\3.0.0\lib\net40\Microsoft.Web.XmlTransform.dll">
-        <DestinationDir>$(ArtifactsDirectory)microsoft.web.xdt\3.0.0\lib\net40\Microsoft.Web.XmlTransform.dll</DestinationDir>
+      <NonProjectFilesToMove Include="$(PkgMicrosoft_Web_Xdt)\lib\net40\Microsoft.Web.XmlTransform.dll">
+        <DestinationDir>$(ArtifactsDirectory)microsoft.web.xdt\lib\net40\</DestinationDir>
       </NonProjectFilesToMove>
       <NonProjectFilesToMove Include="..\src\NuGet.Clients\NuGet.VisualStudio.Client\extension.vsixlangpack">
-        <DestinationDir>$(ArtifactsDirectory)vsixlangpack\extension.vsixlangpack</DestinationDir>
+        <DestinationDir>$(ArtifactsDirectory)vsixlangpack\</DestinationDir>
       </NonProjectFilesToMove>
     </ItemGroup>
-    <Copy SourceFiles="@(NonProjectFilesToMove)" DestinationFiles="@(NonProjectFilesToMove->'%(DestinationDir)')"/>
+    <Copy SourceFiles="@(NonProjectFilesToMove)" DestinationFiles="@(NonProjectFilesToMove->'%(DestinationDir)%(Filename)%(Extension)')">
+      <Output TaskParameter="CopiedFiles" ItemName="FilesToLocalize"/>
+    </Copy>
     <ItemGroup>
-      <FilesToLocalize Include="@(NonProjectFilesToMove->'%(DestinationDir)')">
+      <FilesToLocalize Update="@(FilesToLocalize)">
         <TranslationFile>$(LocalizationWorkDirectory)\{Lang}\15\%(Filename)%(Extension).lcl</TranslationFile>    <!--Required: translation file-->
         <LciCommentFile>$(LocalizationWorkDirectory)\comments\15\%(Filename)%(Extension).lci</LciCommentFile>
         <Parser Condition="'%(Extension)' == '.vsixlangpack'">210</Parser>
@@ -37,7 +42,9 @@
     </ItemGroup>
   </Target>
 
-  <Target Name="BatchLocalize">
+  <Target Name="BatchLocalize"
+          BeforeTargets="AfterBuild"
+          DependsOnTargets="LocalizeNonProjectFiles">
     <ItemGroup>
       <_SubmoduleRepo Include="$(LocalizationRootDirectory)\**\*" />
       <_SubmoduleFiles Include="@(_SubmoduleRepo)">
@@ -99,7 +106,4 @@
     <Copy SourceFiles="@(_EnglishBinaries)" DestinationFiles="@(_EnglishBinaries->'%(DestinationPath)')" />
     <Copy SourceFiles="@(_LocalizeFiles)" DestinationFiles="@(_LocalizeFiles->'%(DestinationPath)')" />
   </Target>
-
-  <Target Name="AfterBuild" DependsOnTargets="LocalizeNonProjectFiles;BatchLocalize"/>
-  <Import Project="$(MicroBuildDirectory)Microsoft.VisualStudioEng.MicroBuild.Core.targets" />
 </Project>

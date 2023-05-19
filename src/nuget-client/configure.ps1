@@ -46,11 +46,6 @@ Invoke-BuildStep 'Installing .NET CLI' {
     Install-DotnetCLI -Force:$Force -SkipDotnetInfo:$SkipDotnetInfo
 } -ev +BuildErrors
 
-# Restoring tools required for build
-Invoke-BuildStep 'Restoring solution packages' {
-    Restore-SolutionPackages
-} -ev +BuildErrors
-
 Invoke-BuildStep 'Cleaning package cache' {
     Clear-PackageCache
 } -skip:(-not $CleanCache) -ev +BuildErrors

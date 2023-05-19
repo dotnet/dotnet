@@ -333,6 +333,7 @@
         <RowDefinition Height="auto" />
         <RowDefinition Height="10" />
         <RowDefinition Height="auto" />
+        <RowDefinition Height="auto"/>
       </Grid.RowDefinitions>
       <Grid.ColumnDefinitions>
         <ColumnDefinition Width="auto" />
@@ -431,6 +432,14 @@
         Click="InstallButton_Clicked"
         IsEnabled="{Binding CanInstall}"
         Content="{x:Static local:Resources.Button_Install}" />
+
+      <local:PackageSourceMappingActionControl
+        Grid.Row="3"
+        Grid.ColumnSpan="5"
+        HorizontalContentAlignment="Left"
+        VerticalContentAlignment="Top"
+        x:Name="_packageSourceMappingActionControl"
+        DataContext="{Binding PackageSourceMappingViewModel}" />
     </Grid>
   </Grid>
 </UserControl>

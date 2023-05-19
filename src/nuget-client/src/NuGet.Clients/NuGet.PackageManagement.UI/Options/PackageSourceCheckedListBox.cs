@@ -11,11 +11,10 @@ using Microsoft.VisualStudio.Imaging.Interop;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 using NuGet.Configuration;
-using NuGet.PackageManagement.UI;
 using NuGet.VisualStudio.Internal.Contracts;
 using GelUtilities = Microsoft.Internal.VisualStudio.PlatformUI.Utilities;
 
-namespace NuGet.Options
+namespace NuGet.PackageManagement.UI.Options
 {
     internal class PackageSourceCheckedListBox : CheckedListBox
     {

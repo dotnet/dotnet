@@ -817,6 +817,15 @@ namespace NuGet.PackageManagement.UI {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Configure.
+        /// </summary>
+        public static string Hyperlink_PackageSourceMappingSettings {
+            get {
+                return ResourceManager.GetString("Hyperlink_PackageSourceMappingSettings", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Project URL.
         /// </summary>
         public static string Hyperlink_ProjectUrl {
@@ -1922,6 +1931,33 @@ namespace NuGet.PackageManagement.UI {
         public static string Text_PackageFormatApply {
             get {
                 return ResourceManager.GetString("Text_PackageFormatApply", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Package source mapping is off..
+        /// </summary>
+        public static string Text_PackageMappingsDisabled {
+            get {
+                return ResourceManager.GetString("Text_PackageMappingsDisabled", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Package source mapping found..
+        /// </summary>
+        public static string Text_PackageMappingsFound {
+            get {
+                return ResourceManager.GetString("Text_PackageMappingsFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Requires a package source mapping..
+        /// </summary>
+        public static string Text_PackageMappingsNotFound {
+            get {
+                return ResourceManager.GetString("Text_PackageMappingsNotFound", resourceCulture);
             }
         }
         

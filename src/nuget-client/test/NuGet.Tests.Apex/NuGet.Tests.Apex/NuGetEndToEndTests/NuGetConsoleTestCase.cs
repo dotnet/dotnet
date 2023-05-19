@@ -870,6 +870,47 @@ namespace NuGet.Tests.Apex
             }
         }
 
+        [NuGetWpfTheory]
+        [InlineData(ProjectTemplate.WCFServiceApplication)]
+        [InlineData(ProjectTemplate.NetStandardClassLib)]
+
+        public async Task InstallLatestPackageInPMC(ProjectTemplate projectTemplate)
+        {
+            EnsureVisualStudioHost();
+            using (var simpleTestPathContext = new SimpleTestPathContext())
+            {
+                // Arrange
+                var packageName = "InstallLatestInPMC";
+                var v100 = "1.0.0";
+                var v200 = "2.0.0";
+                await CommonUtility.CreatePackageInSourceAsync(simpleTestPathContext.PackageSource, packageName, v100);
+                await CommonUtility.CreatePackageInSourceAsync(simpleTestPathContext.PackageSource, packageName, v200);
+
+                using (var testContext = new ApexTestContext(VisualStudio, projectTemplate, XunitLogger, addNetStandardFeeds: true, simpleTestPathContext: simpleTestPathContext))
+                {
+                    var solutionService = VisualStudio.Get<SolutionService>();
+                    var nugetConsole = GetConsole(testContext.Project);
+
+                    // Act
+                    nugetConsole.Execute("install-package InstallLatestInPMC");
+                    testContext.SolutionService.Build();
+                    testContext.NuGetApexTestService.WaitForAutoRestore();
+
+                    // Assert
+                    if (projectTemplate.ToString().Equals("WCFServiceApplication"))
+                    {
+                        CommonUtility.AssertPackageInPackagesConfig(VisualStudio, testContext.Project, packageName, v200, XunitLogger);
+                    }
+                    else
+                    {
+                        CommonUtility.AssertPackageReferenceExists(VisualStudio, testContext.Project, packageName, v200, XunitLogger);
+                    }
+                    VisualStudio.AssertNuGetOutputDoesNotHaveErrors();
+                    Assert.True(VisualStudio.HasNoErrorsInOutputWindows());
+                }
+            }
+        }
+
         // There  is a bug with VS or Apex where NetCoreConsoleApp creates a netcore 2.1 project that is not supported by the sdk
         // Commenting out any NetCoreConsoleApp template and swapping it for NetStandardClassLib as both are package ref.
         public static IEnumerable<object[]> GetNetCoreTemplates()

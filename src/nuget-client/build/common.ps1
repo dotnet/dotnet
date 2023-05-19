@@ -7,10 +7,8 @@ $ConfigureJson = Join-Path $Artifacts configure.json
 $BuiltInVsWhereExe = "${Env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vswhere.exe"
 $VSVersion = $env:VisualStudioVersion
 $DotNetExe = Join-Path $CLIRoot 'dotnet.exe'
-$ILMerge = Join-Path $NuGetClientRoot 'packages\ilmerge\2.14.1208\tools\ILMerge.exe'
 
 Set-Alias dotnet $DotNetExe
-Set-Alias ilmerge $ILMerge
 
 Function Read-PackageSources {
     param($NuGetConfig)
@@ -307,20 +305,5 @@ Function Clear-Nupkgs {
     if (Test-Path $Nupkgs) {
         Trace-Log 'Cleaning nupkgs folder'
         Remove-Item $Nupkgs\*.nupkg -Force
-    }
-}
-
-Function Restore-SolutionPackages {
-    [CmdletBinding()]
-    param(
-    )
-    $opts = 'msbuild', '-t:restore'
-    $opts += "${NuGetClientRoot}\build\bootstrap.proj"
-
-    Trace-Log "Restoring packages @""$NuGetClientRoot"""
-    Trace-Log "dotnet $opts"
-    & dotnet $opts
-    if (-not $?) {
-        Error-Log "Restore failed @""$NuGetClientRoot"". Code: ${LASTEXITCODE}"
     }
 }

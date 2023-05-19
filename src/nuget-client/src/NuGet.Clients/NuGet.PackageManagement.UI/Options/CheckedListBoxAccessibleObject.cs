@@ -3,11 +3,10 @@
 
 using System.Windows.Forms;
 using NuGet.Configuration;
-using NuGet.PackageManagement.UI;
 using NuGet.VisualStudio.Internal.Contracts;
 using static System.Windows.Forms.Control;
 
-namespace NuGet.Options
+namespace NuGet.PackageManagement.UI.Options
 {
     internal class CheckedListBoxAccessibleObject : ControlAccessibleObject
     {

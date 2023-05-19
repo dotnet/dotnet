@@ -3,7 +3,7 @@
 
 using System.Windows;
 
-namespace NuGet.Options
+namespace NuGet.PackageManagement.UI.Options
 {
     internal partial class SharedResources : ResourceDictionary
     {

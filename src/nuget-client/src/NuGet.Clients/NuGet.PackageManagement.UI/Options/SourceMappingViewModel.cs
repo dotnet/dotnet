@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using NuGet.VisualStudio.Internal.Contracts;
 
-namespace NuGet.Options
+namespace NuGet.PackageManagement.UI.Options
 {
     public class SourceMappingViewModel
     {

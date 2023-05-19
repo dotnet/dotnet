@@ -160,9 +160,9 @@
   <Target Name="BuildNoVSIX" AfterTargets="BuildVS" Condition=" '$(IsXPlat)' != 'true' ">
     <Message Text="Building" Importance="high" />
 
-    <MSBuild Projects="@(SolutionProjectsWithoutVSIX)"
+    <MSBuild Projects="@(SolutionProjects)"
              Targets="Build"
-             Properties="$(CommonMSBuildProperties)" />
+             Properties="$(CommonMSBuildProperties);CreateVsixContainer=false" />
   </Target>
 
   <!--

@@ -1,0 +1,11 @@
+<Project>
+  <Import Project="$([MSBuild]::GetPathOfFileAbove('Directory.Build.targets', '$(MSBuildThisFileDirectory)../'))" />
+  <PropertyGroup>
+    <PackageOutputPath>$(OutputPath)$(OutputName)</PackageOutputPath>
+    <CompileDependsOn Condition="'$(MSBuildProjectExtension)' == '.vsmanproj'">$(CompileDependsOn);GenerateSetupManifest</CompileDependsOn>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(MSBuildProjectExtension)' == '.vsmanproj'">
+    <TargetFileName>$(TargetName)$(TargetExt)</TargetFileName>
+    <TargetPath>$(TargetDir)$(TargetFileName)</TargetPath>
+  </PropertyGroup>
+</Project>

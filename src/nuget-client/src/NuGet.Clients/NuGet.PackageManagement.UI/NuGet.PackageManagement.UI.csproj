@@ -1,562 +1,94 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="14.0" DefaultTargets="Build">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+<Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
     <Shipping>true</Shipping>
     <IncludeInVSIX>true</IncludeInVSIX>
     <AutoUnifyAssemblyReferences>true</AutoUnifyAssemblyReferences>
     <Description>Package Management UI elements for Visual Studio, Package Manager UI, Migrator, Options dialog.</Description>
-    <RestoreNuGetPackages>true</RestoreNuGetPackages>
     <AssemblyOriginatorKeyFile>$(MS_PFX_PATH)</AssemblyOriginatorKeyFile>
     <StrongNameCert>MsSharedLib72</StrongNameCert>
-  </PropertyGroup>
-  <PropertyGroup>
+    <UseWpf>true</UseWpf>
+    <UseWinForms>true</UseWinForms>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <ProjectGuid>{538ADEFD-2170-40A9-A2C5-EC8369CFE490}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>NuGet.PackageManagement.UI</RootNamespace>
-    <AssemblyName>NuGet.PackageManagement.UI</AssemblyName>
-    <FileAlignment>512</FileAlignment>
-    <NuGetPackageImportStamp>3b445626</NuGetPackageImportStamp>
-    <TargetFrameworkVersion>$(NETFXTargetFrameworkVersion)</TargetFrameworkVersion>
-    <AlwaysCompileMarkupFilesInSeparateDomain>false</AlwaysCompileMarkupFilesInSeparateDomain>
+    <TargetFramework>$(NETFXTargetFramework)</TargetFramework>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)' == 'Debug'">
-    <DefineConstants>TRACE;DEBUG;VS15</DefineConstants>
-  </PropertyGroup>
+
   <ItemGroup>
-    <Reference Include="Accessibility" />
-    <Reference Include="PresentationCore" />
-    <Reference Include="PresentationFramework" />
-    <Reference Include="System" />
-    <Reference Include="System.ComponentModel.Composition" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.IO.Compression" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Drawing" />
     <Reference Include="System.Runtime.Caching" />
-    <Reference Include="System.Runtime.Serialization" />
-    <Reference Include="System.Windows.Forms" />
-    <Reference Include="System.Xaml" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Xml" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="UIAutomationProvider" />
-    <Reference Include="UIAutomationTypes" />
-    <Reference Include="WindowsBase" />
   </ItemGroup>
+
   <ItemGroup>
-    <Compile Include="Actions\AccessiblePackageIdentity.cs" />
-    <Compile Include="Actions\PackagesConfigToPackageReferenceMigrator.cs" />
-    <Compile Include="Actions\UIActionEngine.cs" />
-    <Compile Include="Actions\UpdatePreviewResult.cs" />
-    <Compile Include="Actions\UpgradeLogger.cs" />
-    <Compile Include="Automation\ISelectableItem.cs" />
-    <Compile Include="Automation\ISelectableItemsControl.cs" />
-    <Compile Include="Automation\ListBoxToggleableItemsAutomationPeer.cs" />
-    <Compile Include="Automation\ListViewToggleableItemsAutomationPeer.cs" />
-    <Compile Include="Automation\ToggleableItemAutomationPeer.cs" />
-    <Compile Include="Common\ErrorFloodGate.cs" />
-    <Compile Include="Converters\AdditionConverter.cs" />
-    <Compile Include="Converters\BooleanToGridRowHeightConverter.cs" />
-    <Compile Include="Converters\DeprecationToDeprecationLabelStateConverter.cs" />
-    <Compile Include="Converters\AccessibleConverter.cs" />
-    <Compile Include="Converters\DateTimeConverter.cs" />
-    <Compile Include="Converters\IntToVulnerabilitySeverityConverter.cs" />
-    <Compile Include="Converters\InverseBooleanConverter.cs" />
-    <Compile Include="Converters\PackageLevelToGroupNameConverter.cs" />
-    <Compile Include="Converters\ParametersToHyperlinkTupleConverter.cs" />
-    <Compile Include="Converters\SubstractionConverter.cs" />
-    <Compile Include="Converters\RadioBoolToIntConverter.cs" />
-    <Compile Include="Converters\TooltipConverter.cs" />
-    <Compile Include="Converters\BooleanToFontWeightConverter.cs" />
-    <Compile Include="Converters\CollectionToStringConverter.cs" />
-    <Compile Include="Converters\EnumDescriptionValueConverter.cs" />
-    <Compile Include="Converters\NotNullOrTrueToBooleanConverter.cs" />
-    <Compile Include="DisplayVersion.cs" />
-    <Compile Include="GlobalSuppressions.cs" />
-    <Compile Include="IPackageItemLoader.cs" />
-    <Compile Include="Models\FreeText.cs" />
-    <Compile Include="Models\IconBitmapStatus.cs" />
-    <Compile Include="Models\ItemsChangeObservableCollectionBase.cs" />
-    <Compile Include="Models\IText.cs" />
-    <Compile Include="Models\LicenseText.cs" />
-    <Compile Include="Models\LicenseFileText.cs" />
-    <Compile Include="Models\PackageItemDeprecationLabelState.cs" />
-    <Compile Include="OptionsViewModel.cs" />
-    <Compile Include="Options\AddMappingDialog.xaml.cs">
-      <DependentUpon>AddMappingDialog.xaml</DependentUpon>
+    <Resource Include="Resources\packageicon.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\NuGet.Core\NuGet.Commands\NuGet.Commands.csproj" />
+    <ProjectReference Include="..\..\NuGet.Core\NuGet.Common\NuGet.Common.csproj" />
+    <ProjectReference Include="..\..\NuGet.Core\NuGet.Configuration\NuGet.Configuration.csproj" />
+    <ProjectReference Include="..\..\NuGet.Core\NuGet.Frameworks\NuGet.Frameworks.csproj" />
+    <ProjectReference Include="..\NuGet.Indexing\NuGet.Indexing.csproj" />
+    <ProjectReference Include="..\..\NuGet.Core\NuGet.LibraryModel\NuGet.LibraryModel.csproj" />
+    <ProjectReference Include="..\..\NuGet.Core\NuGet.PackageManagement\NuGet.PackageManagement.csproj" />
+    <ProjectReference Include="..\..\NuGet.Core\NuGet.Packaging\NuGet.Packaging.csproj" />
+    <ProjectReference Include="..\..\NuGet.Core\NuGet.ProjectModel\NuGet.ProjectModel.csproj" />
+    <ProjectReference Include="..\..\NuGet.Core\NuGet.Protocol\NuGet.Protocol.csproj" />
+    <ProjectReference Include="..\..\NuGet.Core\NuGet.Resolver\NuGet.Resolver.csproj" />
+    <ProjectReference Include="..\..\NuGet.Core\NuGet.Versioning\NuGet.Versioning.csproj" />
+    <ProjectReference Include="..\NuGet.PackageManagement.VisualStudio\NuGet.PackageManagement.VisualStudio.csproj" />
+    <ProjectReference Include="..\NuGet.VisualStudio.Common\NuGet.VisualStudio.Common.csproj" />
+    <ProjectReference Include="..\NuGet.VisualStudio.Internal.Contracts\NuGet.VisualStudio.Internal.Contracts.csproj" />
+    <ProjectReference Include="..\NuGet.VisualStudio\NuGet.VisualStudio.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.VisualStudio.Sdk" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Options\GeneralOptionControl.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>GeneralOptionControl.resx</DependentUpon>
     </Compile>
-    <Compile Include="Options\Resources.xaml.cs">
-      <DependentUpon>Resources.xaml</DependentUpon>
+    <Compile Update="Options\PackageSourcesOptionsControl.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>PackageSourcesOptionsControl.resx</DependentUpon>
     </Compile>
-    <Compile Include="Options\SourceMappingViewModel.cs" />
-    <Compile Include="Options\PackageSourceViewModel.cs" />
-    <Compile Include="Options\PackageSourceMappingOptionsControl.xaml.cs">
-      <DependentUpon>PackageSourceMappingOptionsControl.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Options\PackageSourceMappingOptionsPage.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Utility\IReconnectingNuGetSearchService.cs" />
-    <Compile Include="Utility\NuGetSearchServiceReconnector.cs" />
-    <Compile Include="Utility\PackageSourceMappingUtility.cs" />
-    <Compile Include="ViewModels\LoadingStatusViewModel.cs" />
-    <Compile Include="Models\NuGetProjectUpgradeDependencyItem.cs" />
-    <Compile Include="Models\NuGetProjectUpgradeWindowModel.cs" />
-    <Compile Include="Models\PackageSearchStatus.cs" />
-    <Compile Include="Models\ProjectVersionConstraint.cs" />
-    <Compile Include="Models\PackageIconMonikers.cs" />
-    <Compile Include="Models\WarningText.cs" />
-    <Compile Include="NativeMethods.cs" />
-    <Compile Include="NuGetPackageManagerControlSearchTask.cs" />
-    <Compile Include="Options\CheckedListBoxAccessibleObject.cs" />
-    <Compile Include="Options\CheckedListBoxItemAccessibleObject.cs" />
-    <Compile Include="Options\GeneralOptionControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Options\GeneralOptionControl.Designer.cs">
-      <DependentUpon>GeneralOptionControl.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Options\GeneralOptionPage.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Options\OptionsPageBase.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Options\PackageSourceCheckedListBox.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Options\PackageSourceOptionsPage.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Options\PackageSourcesOptionsControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Options\PackageSourcesOptionsControl.Designer.cs">
-      <DependentUpon>PackageSourcesOptionsControl.cs</DependentUpon>
-    </Compile>
-    <Compile Include="PackageLicenseUtilities.cs" />
-    <Compile Include="PackageManagerToolWindowPane.cs" />
-    <Compile Include="PackageManagerWindowPane.cs" />
-    <Compile Include="Resources\Resources.xaml.cs">
-      <DependentUpon>Resources.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="ShowUpdatePackageOptions.cs" />
-    <Compile Include="Telemetry\UpgradeInformationTelemetryEvent.cs" />
-    <Compile Include="UserInterfaceService\DataStreamFromComStream.cs" />
-    <Compile Include="UserInterfaceService\IModalProgressDialogSession.cs" />
-    <Compile Include="UserInterfaceService\IUserSettingsManager.cs" />
-    <Compile Include="Constants.cs" />
-    <Compile Include="UserInterfaceService\NuGetSettings.cs" />
-    <Compile Include="UserInterfaceService\NuGetSettingsSerializer.cs" />
-    <Compile Include="UserInterfaceService\NuGetSolutionManagerServiceWrapper.cs" />
-    <Compile Include="UserInterfaceService\NuGetSourcesServiceWrapper.cs" />
-    <Compile Include="UserInterfaceService\NuGetUIFactory.cs" />
-    <Compile Include="UserInterfaceService\SolutionUserOptions.cs" />
-    <Compile Include="UserInterfaceService\VisualStudioProgress.cs" />
-    <Compile Include="UserInterfaceService\VisualStudioProgressDialogSession.cs" />
-    <Compile Include="Utility\IconBitmapStatusUtility.cs" />
-    <Compile Include="Utility\ProjectUtility.cs" />
-    <Compile Include="Utility\VsUtility.cs" />
-    <Compile Include="UserInterfaceService\ProgressDialogData.cs" />
-    <Compile Include="Xamls\DeprecatedFrameworkWindow.xaml.cs">
-      <DependentUpon>DeprecatedFrameworkWindow.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Xamls\DeprecationControl.xaml.cs">
-      <DependentUpon>DeprecationControl.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Xamls\InfiniteScrollListBox.cs" />
-    <Compile Include="Models\LicenseFileData.cs" />
-    <Compile Include="Xamls\LicenseFileWindow.xaml.cs">
-      <DependentUpon>LicenseFileWindow.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Xamls\NuGetProjectUpgradeWindow.xaml.cs">
-      <DependentUpon>NuGetProjectUpgradeWindow.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Xamls\PackageItemDeprecationLabel.xaml.cs">
-      <DependentUpon>PackageItemDeprecationLabel.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Xamls\PackageManagementFormatWindow.xaml.cs">
-      <DependentUpon>PackageManagementFormatWindow.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Xamls\PRMigratorBar.xaml.cs">
-      <DependentUpon>PRMigratorBar.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Xamls\ToggleableListView.cs" />
-    <Compile Include="Xamls\RestartRequestBar.xaml.cs">
-      <DependentUpon>RestartRequestBar.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Xamls\PackageRestoreBar.xaml.cs">
-      <DependentUpon>PackageRestoreBar.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Xamls\ProductUpdateBar.xaml.cs">
-      <DependentUpon>ProductUpdateBar.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Converters\FormattedStringPartConverter.cs" />
-    <Compile Include="Converters\NotEqualConverter.cs" />
-    <Compile Include="Converters\DownloadCountToVisibilityConverter.cs" />
-    <Compile Include="Converters\EnumerableToVisibilityConverter.cs" />
-    <Compile Include="Converters\FontSizeConverter.cs" />
-    <Compile Include="Converters\InstalledVersionsCountConverter.cs" />
-    <Compile Include="Converters\InverseNullToVisibilityConverter.cs" />
-    <Compile Include="Converters\NuGetFrameworkToStringConverter.cs" />
-    <Compile Include="Converters\NuGetFrameworkToVisibilityConverter.cs" />
-    <Compile Include="Converters\NullToBooleanConverter.cs" />
-    <Compile Include="Converters\ProjectAndSolutionViewHeightConverter.cs" />
-    <Compile Include="Converters\ProjectAndSolutionViewMinHeightConverter.cs" />
-    <Compile Include="Converters\StringFormatConverter.cs" />
-    <Compile Include="Converters\StyleKeyConverter.cs" />
-    <Compile Include="Converters\SummaryToFontStyleConverter.cs" />
-    <Compile Include="Converters\SummaryToStringConverter.cs" />
-    <Compile Include="Converters\VersionToStringConverter.cs" />
-    <Compile Include="Models\DependencyBehaviorItem.cs" />
-    <Compile Include="Models\DetailControlModel.cs" />
-    <Compile Include="Models\FileConflictActionOptionItem.cs" />
-    <Compile Include="Models\ItemFilter.cs" />
-    <Compile Include="Models\FilterItem.cs" />
-    <Compile Include="IItemLoader.cs" />
-    <Compile Include="InfiniteScrollListItemStyleSelector.cs" />
-    <Compile Include="LoadingStatusIndicator.cs" />
-    <Compile Include="ViewModels\PackageItemViewModel.cs" />
-    <Compile Include="Models\PackageStatus.cs" />
-    <Compile Include="Converters\NotNullToBooleanConverter.cs" />
-    <Compile Include="PackageInstallationInfo.cs" />
-    <Compile Include="PackageLoadContext.cs" />
-    <Compile Include="PackageItemLoader.cs" />
-    <Compile Include="Models\PackageSolutionDetailControlModel.cs" />
-    <Compile Include="Resources.Designer.cs">
+    <Compile Update="Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="Resources\Images.cs" />
-    <Compile Include="UserInterfaceService\INuGetUI.cs" />
-    <Compile Include="Models\PackageLicenseInfo.cs" />
-    <Compile Include="Models\DetailedPackageMetadata.cs" />
-    <Compile Include="Models\PackageDependencyMetadata.cs" />
-    <Compile Include="Models\PackageDetailControlModel.cs" />
-    <Compile Include="PackageManagerControlCommands.cs" />
-    <Compile Include="Models\PackageManagerModel.cs" />
-    <Compile Include="Actions\PreviewResult.cs" />
-    <Compile Include="Models\PreviewWindowModel.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Models\PackageDependencySetMetadata.cs" />
-    <Compile Include="Resources\Brushes.cs" />
-    <Compile Include="Resources\Commands.cs" />
-    <Compile Include="UserAction.cs" />
-    <Compile Include="UserInterfaceService\INuGetUIContext.cs" />
-    <Compile Include="UserInterfaceService\INuGetUIFactory.cs" />
-    <Compile Include="UserInterfaceService\NuGetUI.cs" />
-    <Compile Include="UserInterfaceService\NuGetUIContext.cs" />
-    <Compile Include="UserInterfaceService\NuGetUIProjectContext.cs" />
-    <Compile Include="UserSettings.cs" />
-    <Compile Include="Utility\UIUtility.cs" />
-    <Compile Include="Xamls\ActionsAndVersions.xaml.cs">
-      <DependentUpon>ActionsAndVersions.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Xamls\AuthorAndDownloadCount.xaml.cs">
-      <DependentUpon>AuthorAndDownloadCount.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Xamls\LoadingStatusBar.xaml.cs">
-      <DependentUpon>LoadingStatusBar.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Xamls\ProjectView.xaml.cs">
-      <DependentUpon>ProjectView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Xamls\SolutionView.xaml.cs">
-      <DependentUpon>SolutionView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Xamls\SortableColumnHeaderAttachedProperties.cs" />
-    <Compile Include="Xamls\ArrowGlyphAdorner.cs" />
-    <Compile Include="Xamls\Spinner.xaml.cs">
-      <DependentUpon>Spinner.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Xamls\FileConflictDialog.xaml.cs">
-      <DependentUpon>FileConflictDialog.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Xamls\InfiniteScrollList.xaml.cs">
-      <DependentUpon>InfiniteScrollList.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Converters\NullToVisibilityConverter.cs" />
-    <Compile Include="Xamls\OptionsControl.xaml.cs">
-      <DependentUpon>OptionsControl.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Xamls\PackageItemControl.xaml.cs">
-      <DependentUpon>PackageItemControl.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Xamls\PackageManagerControl.xaml.cs">
-      <DependentUpon>PackageManagerControl.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Xamls\PackageManagerTopPanel.xaml.cs">
-      <DependentUpon>PackageManagerTopPanel.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Xamls\PackageMetadataControl.xaml.cs">
-      <DependentUpon>PackageMetadataControl.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Xamls\DetailControl.xaml.cs">
-      <DependentUpon>DetailControl.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Xamls\PreviewWindow.xaml.cs">
-      <DependentUpon>PreviewWindow.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Xamls\LicenseAcceptanceWindow.xaml.cs">
-      <DependentUpon>LicenseAcceptanceWindow.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Xamls\VulnerabilitiesControl.xaml.cs">
-      <DependentUpon>VulnerabilitiesControl.xaml</DependentUpon>
-    </Compile>
   </ItemGroup>
+
   <ItemGroup>
-    <DesignDataWithDesignTimeCreatableTypes Include="Design\LoadingStatusViewModelSampleData.xaml">
-      <SubType>Designer</SubType>
-    </DesignDataWithDesignTimeCreatableTypes>
-    <DesignDataWithDesignTimeCreatableTypes Include="Design\PackageItemListViewSampleData.xaml">
-      <SubType>Designer</SubType>
-    </DesignDataWithDesignTimeCreatableTypes>
-    <Page Include="Options\AddMappingDialog.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Options\PackageSourceMappingOptionsControl.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Options\Resources.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Themes\generic.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Xamls\DeprecatedFrameworkWindow.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Xamls\DeprecationControl.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Xamls\DownloadIndicator.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Xamls\LicenseFileWindow.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Xamls\NuGetProjectUpgradeWindow.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Xamls\PackageItemDeprecationLabel.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Xamls\PackageManagementFormatWindow.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Xamls\PrefixReservedIndicator.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Xamls\PRMigratorBar.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Xamls\RestartRequestBar.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Xamls\PackageRestoreBar.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Xamls\ProductUpdateBar.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Xamls\ActionsAndVersions.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Xamls\AuthorAndDownloadCount.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Xamls\LoadingStatusBar.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Xamls\ProjectView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Xamls\SolutionView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Xamls\Spinner.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Xamls\FileConflictDialog.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Xamls\InfiniteScrollList.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Xamls\OptionsControl.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Xamls\PackageItemControl.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Xamls\PackageManagerControl.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Xamls\PackageManagerTopPanel.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Xamls\PackageMetadataControl.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Xamls\DetailControl.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Xamls\PreviewWindow.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Resources\Resources.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Xamls\LicenseAcceptanceWindow.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Xamls\UninstallIndicator.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Xamls\UpdateAvailableIndicator.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Xamls\VulnerabilitiesControl.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\packageicon.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Options\GeneralOptionControl.resx">
+    <EmbeddedResource Update="Options\GeneralOptionControl.resx">
       <DependentUpon>GeneralOptionControl.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Options\PackageSourcesOptionsControl.resx">
+    <EmbeddedResource Update="Options\PackageSourcesOptionsControl.resx">
       <DependentUpon>PackageSourcesOptionsControl.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Resources.resx">
+    <EmbeddedResource Update="Resources.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
       <SubType>Designer</SubType>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\NuGet.Core\NuGet.Commands\NuGet.Commands.csproj">
-      <Project>{567E8582-0E73-4A34-A7D3-ED9486415523}</Project>
-      <Name>NuGet.Commands</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\NuGet.Core\NuGet.Common\NuGet.Common.csproj">
-      <Project>{98BEE375-A5A0-4FC2-9B7A-25DB41C8045D}</Project>
-      <Name>NuGet.Common</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\NuGet.Core\NuGet.Configuration\NuGet.Configuration.csproj">
-      <Project>{E3EF26E1-80A7-4573-B3A4-1D4B0042616E}</Project>
-      <Name>NuGet.Configuration</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\NuGet.Core\NuGet.Frameworks\NuGet.Frameworks.csproj">
-      <Project>{9A9A9F26-597A-4FA6-A4F1-415063484D9C}</Project>
-      <Name>NuGet.Frameworks</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\NuGet.Indexing\NuGet.Indexing.csproj">
-      <Project>{a2b06fa8-bdbc-4459-a92a-161862b2aa97}</Project>
-      <Name>NuGet.Indexing</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\NuGet.Core\NuGet.LibraryModel\NuGet.LibraryModel.csproj">
-      <Project>{13883E8E-7DE1-4EDD-8E4A-C5357BA8CD81}</Project>
-      <Name>NuGet.LibraryModel</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\NuGet.Core\NuGet.PackageManagement\NuGet.PackageManagement.csproj">
-      <Project>{394aeb96-493c-4839-a5ac-8d93cd2fad40}</Project>
-      <Name>NuGet.PackageManagement</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\NuGet.Core\NuGet.Packaging\NuGet.Packaging.csproj">
-      <Project>{BD6BBC90-60BE-4E7D-8458-91E9CDA66ABE}</Project>
-      <Name>NuGet.Packaging</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\NuGet.Core\NuGet.ProjectModel\NuGet.ProjectModel.csproj">
-      <Project>{F013E43F-B6D5-4F59-ACF0-EECEC2C794F5}</Project>
-      <Name>NuGet.ProjectModel</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\NuGet.Core\NuGet.Protocol\NuGet.Protocol.csproj">
-      <Project>{020f4c88-3a5c-4b89-9868-089e867cc223}</Project>
-      <Name>NuGet.Protocol</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\NuGet.Core\NuGet.Resolver\NuGet.Resolver.csproj">
-      <Project>{51AA27A9-B8B4-458F-9211-E6889B441573}</Project>
-      <Name>NuGet.Resolver</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\NuGet.Core\NuGet.Versioning\NuGet.Versioning.csproj">
-      <Project>{24E62AB7-64E4-4975-9417-883559D1BC19}</Project>
-      <Name>NuGet.Versioning</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\NuGet.PackageManagement.VisualStudio\NuGet.PackageManagement.VisualStudio.csproj">
-      <Project>{306cddfa-ff0b-4299-930c-9ec6c9308160}</Project>
-      <Name>NuGet.PackageManagement.VisualStudio</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\NuGet.VisualStudio.Common\NuGet.VisualStudio.Common.csproj">
-      <Project>{eea49a74-6efc-410e-9745-bad367ac151d}</Project>
-      <Name>NuGet.VisualStudio.Common</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\NuGet.VisualStudio.Internal.Contracts\NuGet.VisualStudio.Internal.Contracts.csproj">
-      <Project>{deebf1a1-1c21-4e9e-8ce3-1eb21381ff1e}</Project>
-      <Name>NuGet.VisualStudio.Internal.Contracts</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\NuGet.VisualStudio\NuGet.VisualStudio.csproj">
-      <Project>{e5556bc6-a7fd-4d8e-8a7d-7648df1d7471}</Project>
-      <Name>NuGet.VisualStudio</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="Microsoft.VisualStudio.Sdk" />
-  </ItemGroup>
-  <ItemGroup>
     <EmbeddedResource Include="Resources\UpgradeReport.xslt">
       <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
+
   <PropertyGroup>
     <TransformOnBuild>true</TransformOnBuild>
     <OverwriteReadOnlyOutputFiles>true</OverwriteReadOnlyOutputFiles>
   </PropertyGroup>
+
   <PropertyGroup>
     <PMUIAssemblyVersion>$(SemanticVersion).$(PreReleaseVersion)</PMUIAssemblyVersion>
   </PropertyGroup>
+
   <ItemGroup>
     <T4ParameterValues Include="PMUIAssemblyVersion">
       <Value>$(PMUIAssemblyVersion)</Value>
@@ -567,9 +99,11 @@
       <LastGenOutput>PackageIconMonikers.imagemanifest</LastGenOutput>
     </Content>
   </ItemGroup>
+
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
+
   <ItemGroup>
     <None Include="Resources\PackageIconMonikers.imagemanifest">
       <AutoGen>True</AutoGen>
@@ -577,6 +111,6 @@
       <DependentUpon>PackageIconMonikers.tt</DependentUpon>
     </None>
   </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v$(VisualStudioVersion)\TextTemplating\Microsoft.TextTemplating.targets" Condition=" '$(MSBuildRuntimeType)' == 'Full' " />
 </Project>

@@ -12,12 +12,11 @@ using Microsoft.VisualStudio.Threading;
 using NuGet.Commands;
 using NuGet.Common;
 using NuGet.Configuration;
-using NuGet.PackageManagement.UI;
 using NuGet.PackageManagement.VisualStudio;
 using NuGet.VisualStudio;
 using NuGet.VisualStudio.Telemetry;
 
-namespace NuGet.Options
+namespace NuGet.PackageManagement.UI.Options
 {
     public partial class GeneralOptionControl : UserControl
     {

@@ -29,9 +29,6 @@ if [ "$CLEAR_CACHE" == "1" ]; then
 fi
 
 # restore packages
-echo "dotnet msbuild build/bootstrap.proj /t:Restore"
-dotnet msbuild build/bootstrap.proj /t:Restore
-
 echo "dotnet msbuild build/build.proj /t:Restore /p:Configuration=Release /p:BuildNumber=1 /p:ReleaseLabel=beta"
 dotnet msbuild build/build.proj /t:Restore /p:Configuration=Release /p:BuildNumber=1 /p:ReleaseLabel=beta
 

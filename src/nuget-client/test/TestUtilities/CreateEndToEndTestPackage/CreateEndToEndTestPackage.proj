@@ -1,0 +1,69 @@
+<Project Sdk="Microsoft.Build.NoTargets">
+  <PropertyGroup>
+    <TargetFramework>net472</TargetFramework>
+    <WorkingDirectory>$([MSBuild]::NormalizeDirectory($(IntermediateOutputPath), 'temp'))</WorkingDirectory>
+    <EndToEndPackageOutputPath Condition="'$(EndToEndPackageOutputPath)' == ''">$([MSBuild]::NormalizeDirectory($(EnlistmentRoot), 'artifacts', 'VS15'))</EndToEndPackageOutputPath>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="NuGet.Client.EndToEnd.TestData" GeneratePathProperty="true" />
+    <PackageReference Include="Microsoft.Build.Artifacts" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\TestExtensions\API.Test\API.Test.csproj"
+                      OutputItemType="APITestOutput" />
+    <ProjectReference Include="..\..\TestExtensions\GenerateTestPackages\GenerateTestPackages.csproj"
+                      OutputItemType="GenerateTestPackagesOutput" />
+  </ItemGroup>
+
+  <Target Name="CreateEndToEndTestPackage"
+          AfterTargets="PrepareForRun">
+    <PropertyGroup>
+      <ScriptsDirectory>$([MSBuild]::NormalizeDirectory($(WorkingDirectory), 'scripts'))</ScriptsDirectory>
+      <EndToEndPackageFullPath>$([MSBuild]::NormalizePath($(EndToEndPackageOutputPath), 'EndToEnd.zip'))</EndToEndPackageFullPath>
+    </PropertyGroup>
+
+    <RemoveDir Directories="$(WorkingDir)" />
+
+    <ItemGroup>
+      <Artifact Remove="@(Artifact)" />
+      
+      <Artifact Include="$([MSBuild]::NormalizeDirectory($(EnlistmentRoot), 'test', 'EndToEnd'))"
+                FileMatch="*"
+                DirExclude="Packages"
+                DestinationFolder="$(WorkingDirectory)" />
+      
+      <Artifact Include="$([MSBuild]::NormalizeDirectory($(PkgNuGet_Client_EndToEnd_TestData), 'content', 'Packages'))"
+                FileMatch="*"
+                DestinationFolder="$([MSBuild]::NormalizeDirectory($(WorkingDirectory), 'Packages'))" />
+      
+      <Artifact Include="$([MSBuild]::NormalizeDirectory(%(APITestOutput.RootDir), %(APITestOutput.Directory)))"
+                FileMatch="API.Test.*"
+                DestinationFolder="$(WorkingDirectory)" />
+
+      <Artifact Include="$([MSBuild]::NormalizeDirectory(%(GenerateTestPackagesOutput.RootDir), %(GenerateTestPackagesOutput.Directory)))"
+                FileMatch="*.exe;*.dll;*.pdb;*.config"
+                DestinationFolder="$(WorkingDirectory)" />
+
+      <Artifact Include="$([MSBuild]::NormalizeDirectory($(EnlistmentRoot), 'scripts', 'e2etests'))"
+                FileMatch="*.ps1"
+                DestinationFolder="$(ScriptsDirectory)" />
+      
+      <Artifact Include="$([MSBuild]::NormalizeDirectory($(EnlistmentRoot), 'scripts', 'utils'))"
+                FileMatch="PostGitCommitStatus.ps1"
+                DestinationFolder="$(ScriptsDirectory)" />
+    </ItemGroup>
+
+    <Message Text="Copying files '%(Artifact.FileMatch)' from '%(Artifact.Identity)' to '%(Artifact.DestinationFolder)'" Importance="High" />
+
+    <Robocopy Sources="@(Artifact)"
+              RetryCount="$(CopyRetryCount)"
+              RetryWait="$(CopyRetryDelayMilliseconds)" />
+    
+    <Message Text="Creating test package '$(EndToEndPackageFullPath)'" Importance="High" />
+    
+    <ZipDirectory SourceDirectory="$(WorkingDirectory)"
+                  DestinationFile="$(EndToEndPackageFullPath)"
+                  Overwrite="true" />
+  </Target>
+  
+</Project>

@@ -19,7 +19,6 @@ using Microsoft.VisualStudio.Imaging.Interop;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 using NuGet.Configuration;
-using NuGet.PackageManagement.UI;
 using NuGet.PackageManagement.VisualStudio;
 using NuGet.VisualStudio;
 using NuGet.VisualStudio.Common;
@@ -31,7 +30,7 @@ using GelUtilities = Microsoft.Internal.VisualStudio.PlatformUI.Utilities;
 using IAsyncServiceProvider = Microsoft.VisualStudio.Shell.IAsyncServiceProvider;
 using Task = System.Threading.Tasks.Task;
 
-namespace NuGet.Options
+namespace NuGet.PackageManagement.UI.Options
 {
     /// <summary>
     /// Represents the Tools - Options - Package Manager dialog

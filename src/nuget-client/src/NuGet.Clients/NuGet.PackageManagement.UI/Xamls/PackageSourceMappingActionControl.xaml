@@ -1,0 +1,29 @@
+<UserControl x:Class="NuGet.PackageManagement.UI.PackageSourceMappingActionControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:nuget="clr-namespace:NuGet.PackageManagement.UI"
+             mc:Ignorable="d"
+             Margin="0,9,0,0"
+             x:Name="_self"
+             d:DesignHeight="450" d:DesignWidth="800">
+  <UserControl.Resources>
+    <ResourceDictionary>
+      <ResourceDictionary.MergedDictionaries>
+        <nuget:SharedResources />
+      </ResourceDictionary.MergedDictionaries>
+    </ResourceDictionary>
+  </UserControl.Resources>
+  <Grid>
+    <TextBlock Margin="0,0,9,0" TextWrapping="Wrap">
+      <Run Text="{Binding MappingStatus, Mode=OneWay}" />
+      <Control Margin="6,0,0,0" IsTabStop="False" />
+      <Hyperlink Click="SettingsButtonClicked"
+                 Style="{StaticResource HyperlinkStyleNoUri}"
+                 AutomationProperties.Name="{x:Static nuget:Resources.Hyperlink_PackageSourceMappingSettings}">
+        <TextBlock TextWrapping="Wrap" Text="{x:Static nuget:Resources.Hyperlink_PackageSourceMappingSettings}" />
+      </Hyperlink>
+    </TextBlock>
+  </Grid>
+</UserControl>

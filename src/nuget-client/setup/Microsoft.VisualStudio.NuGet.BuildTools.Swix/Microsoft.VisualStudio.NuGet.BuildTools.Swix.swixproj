@@ -1,11 +1,11 @@
-<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildThisFileDirectory), 'README.md'))\build\common.props" />
-
+<Project>
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
+    <TargetFramework>net472</TargetFramework>
     <OutputArchitecture>neutral</OutputArchitecture>
     <OutputLocalized>false</OutputLocalized>
-    <OutputName>$(MSBuildProjectName)</OutputName>
+    <TargetName>Microsoft.VisualStudio.NuGet.BuildTools</TargetName>
+    <OutputName>$(TargetName)</OutputName>
     <OutputType>vsix</OutputType>
     <IsPackage>true</IsPackage>
     <MajorVSVersion>$([MSBuild]::Add($(MajorNuGetVersion), 11))</MajorVSVersion>
@@ -14,8 +14,8 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <ReferenceOutputPath>$(ArtifactsDirectory)NuGet.VisualStudio.Client\bin\$(Configuration)\</ReferenceOutputPath>
-    <XmlTransformPath>$(ArtifactsDirectory)microsoft.web.xdt\3.0.0\lib\net40\</XmlTransformPath>
+    <ReferenceOutputPath>$(ArtifactsDirectory)NuGet.VisualStudio.Client\bin\$(Configuration)\net472\</ReferenceOutputPath>
+    <XmlTransformPath>$(ArtifactsDirectory)microsoft.web.xdt\lib\net40\</XmlTransformPath>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -30,11 +30,9 @@
   </ItemGroup>
 
   <Target Name="CopyToDropFolder" AfterTargets="Build">
-    <Copy SourceFiles="$(OutputPath)$(MSBuildProjectName).vsix" DestinationFolder="$(VsixPublishDestination)" />
-    <Copy SourceFiles="$(OutputPath)$(MSBuildProjectName).json" DestinationFolder="$(VsixPublishDestination)" />
+    <Copy SourceFiles="$(OutputPath)$(TargetName).vsix" DestinationFolder="$(VsixPublishDestination)" />
+    <Copy SourceFiles="$(OutputPath)$(TargetName).json" DestinationFolder="$(VsixPublishDestination)" />
   </Target>
-
-  <!-- MicroBuild plugin fails if GetNativeManifest is not found for some reason -->
-  <Target Name="GetNativeManifest" />
-  <Import Project="$(MicroBuildDirectory)Microsoft.VisualStudioEng.MicroBuild.Core.targets" />
+  
+  <Import Project="$(MSBuildToolsPath)\Microsoft.Common.targets" />
 </Project>

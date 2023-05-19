@@ -1,9 +1,7 @@
-<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="15.0" DefaultTargets="AfterBuild" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildThisFileDirectory), 'README.md'))\build\common.props" />
-
+<Project Sdk="Microsoft.Build.NoTargets">
   <!-- Configuration/global properties -->
   <PropertyGroup>
+    <TargetFramework>net472</TargetFramework>
     <CommonMSBuildProperties>
       Configuration=$(Configuration);
       ReleaseLabel=$(ReleaseLabel);
@@ -16,29 +14,37 @@
     <SignTargetsDependOn Condition="'$(SignPackages)' == 'true' AND '$(BuildRTM)' != 'true'">GetOutputNupkgs;GetOutputVsix</SignTargetsDependOn>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
+  
+  <ItemGroup>
+    <FilesToSign Include="$(ArtifactsDirectory)microsoft.web.xdt\lib\net40\**\Microsoft.Web.XmlTransform.resources.dll">
+      <Authenticode>Microsoft400</Authenticode>
+      <StrongName>67</StrongName>
+    </FilesToSign>
+  </ItemGroup>
+
+  <Target Name="Sign"
+          BeforeTargets="AfterBuild"
+          DependsOnTargets="$(SignTargetsDependOn)" />
 
   <Target Name="BatchSign">
-    <ItemGroup>
-      <FilesToSign Include="$(SolutionPackagesFolder)lucene.net\3.0.3\lib\NET40\Lucene.Net.dll">
-        <Authenticode>3PartySHA2</Authenticode>
-      </FilesToSign>
-      <FilesToSign Include="$(SolutionPackagesFolder)newtonsoft.json\13.0.1\lib\net45\Newtonsoft.Json.dll">
-        <Authenticode>3PartySHA2</Authenticode>
-      </FilesToSign>
-      <FilesToSign Include="$(ArtifactsDirectory)microsoft.web.xdt\3.0.0\lib\net40\**\Microsoft.Web.XmlTransform.resources.dll">
-        <Authenticode>Microsoft400</Authenticode>
-        <StrongName>67</StrongName>
-      </FilesToSign>
-    </ItemGroup>
-    <MSBuild
-      Projects="@(SolutionProjectsWithoutVSIX)"
-      Targets="GetSigningInputs">
-
-      <Output
-          TaskParameter="TargetOutputs"
-          ItemName="FilesToSign" />
+    <MSBuild Projects="@(SolutionProjectsWithoutVSIX)"
+             Targets="GetSigningInputs"
+             BuildInParallel="true">
+      <Output TaskParameter="TargetOutputs" ItemName="FilesToSign" />
     </MSBuild>
-    <Message Text="Files to sign: @(FilesToSign, '%0a')" Importance="High"/>
+    
+    <MSBuild Projects="$(VSIXProject)"
+             Targets="GetThirdPartyAssemblies"
+             BuildInParallel="true">
+      <Output TaskParameter="TargetOutputs" ItemName="ThirdPartyAssembly" />
+    </MSBuild>
+    
+    <ItemGroup>
+      <FilesToSign Include="%(ThirdPartyAssembly.TargetPath)" Authenticode="3PartySHA2" />
+    </ItemGroup>
+
+    <Message Text="Files to sign:" Importance="High" />
+    <Message Text="  %(FilesToSign.Identity), Authenticode='%(FilesToSign.Authenticode)', StrongName='%(FilesToSign.StrongName)'" Importance="High" />
   </Target>
 
   <Target Name="GetOutputVsix">
@@ -56,7 +62,4 @@
       </FilesToSign>
     </ItemGroup>
   </Target>
-
-  <Target Name="AfterBuild" DependsOnTargets="$(SignTargetsDependOn)"/>
-  <Import Project="$(MicroBuildDirectory)Microsoft.VisualStudioEng.MicroBuild.Core.targets" />
 </Project>

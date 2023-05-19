@@ -978,4 +978,16 @@ Please see https://aka.ms/troubleshoot_nuget_cache for more help.</value>
   <data name="UpdateButton_VersionOverride_Tooltip" xml:space="preserve">
     <value>Dependency version defined by VersionOverride, modify project file to change package version.</value>
   </data>
+  <data name="Hyperlink_PackageSourceMappingSettings" xml:space="preserve">
+    <value>Configure</value>
+  </data>
+  <data name="Text_PackageMappingsFound" xml:space="preserve">
+    <value>Package source mapping found.</value>
+  </data>
+  <data name="Text_PackageMappingsNotFound" xml:space="preserve">
+    <value>Requires a package source mapping.</value>
+  </data>
+  <data name="Text_PackageMappingsDisabled" xml:space="preserve">
+    <value>Package source mapping is off.</value>
+  </data>
 </root>

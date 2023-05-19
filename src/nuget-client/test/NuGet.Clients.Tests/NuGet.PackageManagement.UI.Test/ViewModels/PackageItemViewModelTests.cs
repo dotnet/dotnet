@@ -24,7 +24,7 @@ using Test.Utility.Threading;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace NuGet.PackageManagement.UI.Test
+namespace NuGet.PackageManagement.UI.Test.ViewModels
 {
     [Collection(MockedVS.Collection)]
     public class PackageItemViewModelTests : IClassFixture<LocalPackageSearchMetadataFixture>, IClassFixture<DispatcherThreadFixture>
@@ -284,7 +284,7 @@ namespace NuGet.PackageManagement.UI.Test
 
         public static IEnumerable<object[]> EmbeddedTestData()
         {
-            Uri baseUri = new Uri(@"C:\path\to\package");
+            var baseUri = new Uri(@"C:\path\to\package");
             var builder1 = new UriBuilder(baseUri)
             {
                 Fragment = "    " // UriBuilder trims the string
@@ -340,7 +340,7 @@ namespace NuGet.PackageManagement.UI.Test
             }
 
             BitmapSource result = packageItemViewModel.IconBitmap;
-            int millisecondsToWait = 200000;
+            var millisecondsToWait = 200000;
             while (!IconBitmapStatusUtility.GetIsCompleted(packageItemViewModel.BitmapStatus) && millisecondsToWait >= 0)
             {
                 await Task.Delay(250);
@@ -373,7 +373,7 @@ namespace NuGet.PackageManagement.UI.Test
                     isRealImage: false);
 
                 // prepare test
-                UriBuilder builder = new UriBuilder(new Uri(zipPath, UriKind.Absolute))
+                var builder = new UriBuilder(new Uri(zipPath, UriKind.Absolute))
                 {
                     Fragment = iconElement
                 };
@@ -397,7 +397,7 @@ namespace NuGet.PackageManagement.UI.Test
                 VerifyImageResult(result, packageItemViewModel.BitmapStatus);
 
                 _output.WriteLine($"result {result}");
-                string resultFormat = result != null ? result.Format.ToString() : "";
+                var resultFormat = result != null ? result.Format.ToString() : "";
                 _output.WriteLine($"Pixel format: {resultFormat}");
 
                 // Assert
@@ -481,14 +481,14 @@ namespace NuGet.PackageManagement.UI.Test
             var fmt = PixelFormats.Bgr32;
 
             // a row of pixels
-            int stride = (w * fmt.BitsPerPixel);
+            var stride = w * fmt.BitsPerPixel;
             var data = new byte[stride * h];
 
             // Random pixels
-            Random rnd = new Random();
+            var rnd = new Random();
             rnd.NextBytes(data);
 
-            BitmapSource bitmap = BitmapSource.Create(w, h,
+            var bitmap = BitmapSource.Create(w, h,
                 dpiX, dpiY,
                 fmt,
                 null, data, stride);
@@ -523,7 +523,7 @@ namespace NuGet.PackageManagement.UI.Test
                     bytes = memoryStream.ToArray();
                 }
 
-                string imageFilePath = Path.Combine(testDir, imageFile);
+                var imageFilePath = Path.Combine(testDir, imageFile);
                 File.WriteAllBytes(imageFilePath, bytes);
 
                 var packageItemViewModel = new PackageItemViewModel(_searchService.Object)
