@@ -6,10 +6,6 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using Microsoft.VisualStudio.Shell;
 
-[assembly: AssemblyTitle("NuGet.Tools")]
-[assembly: AssemblyDescription("Visual Studio Extensibility Package (vsix)")]
-[assembly: ComVisible(false)]
-
 [assembly: ProvideCodeBase(CodeBase = @"$PackageFolder$\Lucene.Net.dll")]
 [assembly: ProvideCodeBase(CodeBase = @"$PackageFolder$\Microsoft.Web.XmlTransform.dll")]
 [assembly: ProvideCodeBase(CodeBase = @"$PackageFolder$\Newtonsoft.Json.dll")]

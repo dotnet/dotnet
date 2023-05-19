@@ -59,7 +59,7 @@ internal class RefTagHelperDescriptorProvider : ITagHelperDescriptorProvider
                 out var builder);
 
             builder.CaseSensitive = true;
-            builder.Documentation = ComponentResources.RefTagHelper_Documentation;
+            builder.SetDocumentation(DocumentationDescriptor.RefTagHelper);
 
             builder.Metadata.Add(ComponentMetadata.SpecialKindKey, ComponentMetadata.Ref.TagHelperKind);
             builder.Metadata.Add(TagHelperMetadata.Common.ClassifyAttributesOnly, bool.TrueString);
@@ -81,7 +81,7 @@ internal class RefTagHelperDescriptorProvider : ITagHelperDescriptorProvider
 
             builder.BindAttribute(attribute =>
             {
-                attribute.Documentation = ComponentResources.RefTagHelper_Documentation;
+                attribute.SetDocumentation(DocumentationDescriptor.RefTagHelper);
                 attribute.Name = "@ref";
 
                 // WTE has a bug 15.7p1 where a Tag Helper without a display-name that looks like

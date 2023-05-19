@@ -1,4 +1,4 @@
-namespace NuGet.Options
+namespace NuGet.PackageManagement.UI.Options
 {
     partial class GeneralOptionControl
     {

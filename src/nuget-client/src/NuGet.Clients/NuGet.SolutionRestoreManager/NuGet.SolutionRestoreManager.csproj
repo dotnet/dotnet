@@ -1,21 +1,8 @@
-<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="15.0" DefaultTargets="Build">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+<Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
-    <MinimumVisualStudioVersion>$(VisualStudioVersion)</MinimumVisualStudioVersion>
-    <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
-  </PropertyGroup>
-  <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{06662133-1292-4918-90F3-36C930C0B16F}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>NuGet.SolutionRestoreManager</RootNamespace>
-    <AssemblyName>NuGet.SolutionRestoreManager</AssemblyName>
-    <TargetFrameworkVersion>$(NETFXTargetFrameworkVersion)</TargetFrameworkVersion>
+    <TargetFramework>$(NETFXTargetFramework)</TargetFramework>
     <Description>NuGet's Visual Studio Solution Restore Manager.</Description>
-    <FileAlignment>512</FileAlignment>
     <GeneratePkgDefFile>true</GeneratePkgDefFile>
     <ImportVSSDKTargets>true</ImportVSSDKTargets>
     <CreateVsixContainer>false</CreateVsixContainer>
@@ -23,123 +10,45 @@
     <IncludeInVSIX>true</IncludeInVSIX>
     <Shipping>true</Shipping>
     <PackProject>false</PackProject>
-    <IncludeNuGetSharedFiles>true</IncludeNuGetSharedFiles>
   </PropertyGroup>
-  <!-- The following property groups prevent VS from treating this as a x86 project -->
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' " />
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' " />
+
   <ItemGroup>
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System" />
-    <Reference Include="System.ComponentModel.Composition" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Xml.Linq" />
+    <ProjectReference Include="..\..\NuGet.Core\NuGet.Commands\NuGet.Commands.csproj" />
+    <ProjectReference Include="..\..\NuGet.Core\NuGet.Common\NuGet.Common.csproj" />
+    <ProjectReference Include="..\..\NuGet.Core\NuGet.Configuration\NuGet.Configuration.csproj" />
+    <ProjectReference Include="..\..\NuGet.Core\NuGet.Frameworks\NuGet.Frameworks.csproj" />
+    <ProjectReference Include="..\..\NuGet.Core\NuGet.LibraryModel\NuGet.LibraryModel.csproj" />
+    <ProjectReference Include="..\..\NuGet.Core\NuGet.PackageManagement\NuGet.PackageManagement.csproj" />
+    <ProjectReference Include="..\..\NuGet.Core\NuGet.Packaging\NuGet.Packaging.csproj" />
+    <ProjectReference Include="..\..\NuGet.Core\NuGet.ProjectModel\NuGet.ProjectModel.csproj" />
+    <ProjectReference Include="..\..\NuGet.Core\NuGet.Protocol\NuGet.Protocol.csproj" />
+    <ProjectReference Include="..\..\NuGet.Core\NuGet.Versioning\NuGet.Versioning.csproj" />
+    <ProjectReference Include="..\NuGet.PackageManagement.VisualStudio\NuGet.PackageManagement.VisualStudio.csproj" />
+    <ProjectReference Include="..\NuGet.VisualStudio.Common\NuGet.VisualStudio.Common.csproj" />
+    <ProjectReference Include="..\NuGet.VisualStudio.Internal.Contracts\NuGet.VisualStudio.Internal.Contracts.csproj" />
+    <ProjectReference Include="..\NuGet.VisualStudio\NuGet.VisualStudio.csproj" />
   </ItemGroup>
-  <ItemGroup>
-    <Compile Include="BrokeredServicesUtility.cs" />
-    <Compile Include="GlobalSuppressions.cs" />
-    <Compile Include="Guids.cs" />
-    <Compile Include="ISolutionRestoreChecker.cs" />
-    <Compile Include="ISolutionRestoreJob.cs" />
-    <Compile Include="IVsNuGetProgressReporter.cs" />
-    <Compile Include="Logger\NuGetFileLogger.cs" />
-    <Compile Include="NuGetSolutionService.cs" />
-    <Compile Include="PkgCmdID.cs" />
-    <Compile Include="RestoreEventPublisher.cs" />
-    <Compile Include="RestoreManagerPackage.cs" />
-    <Compile Include="RestoreOperationLogger.cs" />
-    <Compile Include="RestoreOperationProgressUI.cs" />
-    <Compile Include="SolutionRestoreBuildHandler.cs" />
-    <Compile Include="SolutionRestoreCommand.cs" />
-    <Compile Include="Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Resources.resx</DependentUpon>
-    </Compile>
-    <Compile Include="SolutionRestoreJob.cs" />
-    <Compile Include="SolutionRestoreJobContext.cs" />
-    <Compile Include="SolutionRestoreWorker.cs" />
-    <Compile Include="SolutionUpToDateChecker.cs" />
-    <Compile Include="VerbosityLevel.cs" />
-    <Compile Include="VSNominationUtilities.cs" />
-    <Compile Include="ProjectRestoreReferenceComparer.cs" />
-    <Compile Include="VsRestoreProgressEvents.cs" />
-    <Compile Include="VsSolutionRestoreService.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="VsSolutionRestoreStatusProvider.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\NuGet.PackageManagement.VisualStudio\NuGet.PackageManagement.VisualStudio.csproj">
-      <Project>{306cddfa-ff0b-4299-930c-9ec6c9308160}</Project>
-      <Name>NuGet.PackageManagement.VisualStudio</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\NuGet.VisualStudio\NuGet.VisualStudio.csproj">
-      <Project>{E5556BC6-A7FD-4D8E-8A7D-7648DF1D7471}</Project>
-      <Name>NuGet.VisualStudio</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\NuGet.VisualStudio.Common\NuGet.VisualStudio.Common.csproj">
-      <Project>{eea49a74-6efc-410e-9745-bad367ac151d}</Project>
-      <Name>NuGet.VisualStudio.Common</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\NuGet.VisualStudio.Internal.Contracts\NuGet.VisualStudio.Internal.Contracts.csproj">
-      <Project>{DEEBF1A1-1C21-4E9E-8CE3-1EB21381FF1E}</Project>
-      <Name>NuGet.VisualStudio.Internal.Contracts</Name>
-    </ProjectReference>
-  </ItemGroup>
+
   <ItemGroup>
     <PackageReference Include="Microsoft.VisualStudio.Sdk" />
     <PackageReference Include="Microsoft.VSSDK.BuildTools" PrivateAssets="All" GeneratePathProperty="true" />
   </ItemGroup>
+
   <ItemGroup>
-    <EmbeddedResource Include="Resources.resx">
+    <Compile Update="Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
       <MergeWithCTO>true</MergeWithCTO>
     </EmbeddedResource>
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\NuGet.Core\NuGet.Commands\NuGet.Commands.csproj">
-      <Project>{567e8582-0e73-4a34-a7d3-ed9486415523}</Project>
-      <Name>NuGet.Commands</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\NuGet.Core\NuGet.Common\NuGet.Common.csproj">
-      <Project>{98bee375-a5a0-4fc2-9b7a-25db41c8045d}</Project>
-      <Name>NuGet.Common</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\NuGet.Core\NuGet.Configuration\NuGet.Configuration.csproj">
-      <Project>{e3ef26e1-80a7-4573-b3a4-1d4b0042616e}</Project>
-      <Name>NuGet.Configuration</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\NuGet.Core\NuGet.Frameworks\NuGet.Frameworks.csproj">
-      <Project>{9a9a9f26-597a-4fa6-a4f1-415063484d9c}</Project>
-      <Name>NuGet.Frameworks</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\NuGet.Core\NuGet.LibraryModel\NuGet.LibraryModel.csproj">
-      <Project>{13883e8e-7de1-4edd-8e4a-c5357ba8cd81}</Project>
-      <Name>NuGet.LibraryModel</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\NuGet.Core\NuGet.PackageManagement\NuGet.PackageManagement.csproj">
-      <Project>{394aeb96-493c-4839-a5ac-8d93cd2fad40}</Project>
-      <Name>NuGet.PackageManagement</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\NuGet.Core\NuGet.Packaging\NuGet.Packaging.csproj">
-      <Project>{bd6bbc90-60be-4e7d-8458-91e9cda66abe}</Project>
-      <Name>NuGet.Packaging</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\NuGet.Core\NuGet.ProjectModel\NuGet.ProjectModel.csproj">
-      <Project>{f013e43f-b6d5-4f59-acf0-eecec2c794f5}</Project>
-      <Name>NuGet.ProjectModel</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\NuGet.Core\NuGet.Protocol\NuGet.Protocol.csproj">
-      <Project>{020f4c88-3a5c-4b89-9868-089e867cc223}</Project>
-      <Name>NuGet.Protocol</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\NuGet.Core\NuGet.Versioning\NuGet.Versioning.csproj">
-      <Project>{24e62ab7-64e4-4975-9417-883559d1bc19}</Project>
-      <Name>NuGet.Versioning</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <Import Project="$(VSToolsPath)\VSSDK\Microsoft.VsSDK.targets" Condition="'$(VSToolsPath)' != '' and '$(DotNetBuildFromSource)' != 'true'" />
+
 </Project>

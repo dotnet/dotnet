@@ -305,7 +305,6 @@ namespace NuGet.Tests.Apex
                     uiwindow.InstallPackageFromUI(packageName, packageVersion1);
                     testContext.SolutionService.Build();
                     testContext.NuGetApexTestService.WaitForAutoRestore();
-                    uiwindow.SwitchTabToUpdate();
 
                     uiwindow.UpdatePackageFromUI(packageName, packageVersion2);
                     testContext.SolutionService.Build();
@@ -343,7 +342,6 @@ namespace NuGet.Tests.Apex
                     uiwindow.InstallPackageFromUI(packageName, packageVersion);
                     testContext.SolutionService.Build();
                     testContext.NuGetApexTestService.WaitForAutoRestore();
-                    uiwindow.SwitchTabToInstalled();
 
                     uiwindow.UninstallPackageFromUI(packageName);
                     testContext.SolutionService.Build();

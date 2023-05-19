@@ -36,6 +36,10 @@
     <Reference Include="Microsoft.Build.Framework" Pack="false" />
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Include="ILMerge" PrivateAssets="All" />
+  </ItemGroup>
+
   <ItemGroup Condition=" '$(IsCore)' == 'true' ">
     <PackageReference Include="Microsoft.Build.Framework" ExcludeAssets="runtime" GeneratePathProperty="true" />
     <PackageReference Include="Microsoft.Build.Tasks.Core" ExcludeAssets="runtime" GeneratePathProperty="true" />
@@ -107,7 +111,7 @@
     <MakeDir Directories="$(ILMergeResultDir)" />
 
     <PropertyGroup>
-      <IlmergeCommand>$(ILMergeExePath) ^
+      <IlmergeCommand>$(ILMergeConsolePath) ^
         /out:$(PathToMergedNuGetPack) ^
         $(ILMergePlatformArg) ^
         /allowDup ^
@@ -154,7 +158,7 @@
     <MakeDir Directories="$(ILMergeResultDir)" />
 
     <PropertyGroup>
-      <IlmergeCommand>$(ILMergeExePath) ^
+      <IlmergeCommand>$(ILMergeConsolePath) ^
         /out:$(PathToMergedNuGetPackResource) ^
         $(ILMergePlatformArg) ^
         /allowDup ^

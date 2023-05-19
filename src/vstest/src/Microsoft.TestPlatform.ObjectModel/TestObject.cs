@@ -2,6 +2,7 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
@@ -26,7 +27,7 @@ public abstract class TestObject
     /// <summary>
     /// The store for all the properties registered.
     /// </summary>
-    private readonly Dictionary<TestProperty, object?> _store;
+    private readonly ConcurrentDictionary<TestProperty, object?> _store = new();
 
     /// <summary>
     /// Property used for Json (de)serialization of store dictionary. Serialization of dictionaries
@@ -66,11 +67,6 @@ public abstract class TestObject
         return _store;
     }
 
-    protected TestObject()
-    {
-        _store = new Dictionary<TestProperty, object?>();
-    }
-
     [OnSerializing]
 #if FullCLR
         private void CacheLazyValuesOnSerializing(StreamingContext context)
@@ -84,11 +80,11 @@ public abstract class TestObject
         {
             var lazyValue = (ILazyPropertyValue?)kvp.Value;
             var value = lazyValue?.Value;
-            _store.Remove(kvp.Key);
+            _store.TryRemove(kvp.Key, out _);
 
             if (value != null)
             {
-                _store.Add(kvp.Key, value);
+                _store.TryAdd(kvp.Key, value);
             }
         }
     }
@@ -172,10 +168,7 @@ public abstract class TestObject
     public void RemovePropertyValue(TestProperty property)
     {
         ValidateArg.NotNull(property, nameof(property));
-        if (_store.TryGetValue(property, out _))
-        {
-            _store.Remove(property);
-        }
+        _store.TryRemove(property, out _);
     }
 
     /// <summary>

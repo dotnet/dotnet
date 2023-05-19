@@ -67,13 +67,6 @@ echo "Initializing submodules..."
 git submodule init
 git submodule update
 
-echo "Restoring bootstrap packages..."
-dotnet msbuild build/bootstrap.proj /Target:Restore
-if [ $? -ne 0 ]; then
-    echo "Bootstrap failed!!"
-    return 1
-fi
-
 echo "Restoring NuGet packages..."
 dotnet msbuild build/build.proj /Target:Restore "/ConsoleLoggerParameters:Verbosity=Minimal;Summary;ForceNoAlign" /MaxCPUCount /NodeReuse:false
 if [ $? -ne 0 ]; then

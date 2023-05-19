@@ -15,11 +15,11 @@ internal partial class DefaultBoundAttributeParameterDescriptorBuilder
         {
             builder._parent = null;
             builder._kind = null;
+            builder._documentationObject = default;
 
             builder.Name = null;
             builder.TypeName = null;
             builder.IsEnum = false;
-            builder.Documentation = null;
             builder.DisplayName = null;
 
             ClearDiagnostics(builder._diagnostics);

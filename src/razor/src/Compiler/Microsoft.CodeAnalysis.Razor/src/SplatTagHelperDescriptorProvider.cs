@@ -59,7 +59,7 @@ internal class SplatTagHelperDescriptorProvider : ITagHelperDescriptorProvider
                 out var builder);
 
             builder.CaseSensitive = true;
-            builder.Documentation = ComponentResources.SplatTagHelper_Documentation;
+            builder.SetDocumentation(DocumentationDescriptor.SplatTagHelper);
 
             builder.Metadata.Add(ComponentMetadata.SpecialKindKey, ComponentMetadata.Splat.TagHelperKind);
             builder.Metadata.Add(TagHelperMetadata.Common.ClassifyAttributesOnly, bool.TrueString);
@@ -81,7 +81,7 @@ internal class SplatTagHelperDescriptorProvider : ITagHelperDescriptorProvider
 
             builder.BindAttribute(attribute =>
             {
-                attribute.Documentation = ComponentResources.SplatTagHelper_Documentation;
+                attribute.SetDocumentation(DocumentationDescriptor.SplatTagHelper);
                 attribute.Name = "@attributes";
 
                 // WTE has a bug 15.7p1 where a Tag Helper without a display-name that looks like

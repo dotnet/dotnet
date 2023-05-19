@@ -162,7 +162,7 @@ internal class DefaultTagHelperDescriptorFactory
 
         if (!string.IsNullOrEmpty(xml))
         {
-            builder.Documentation = xml;
+            builder.SetDocumentation(xml);
         }
     }
 
@@ -221,7 +221,7 @@ internal class DefaultTagHelperDescriptorFactory
 
                 if (!string.IsNullOrEmpty(xml))
                 {
-                    builder.Documentation = xml;
+                    builder.SetDocumentation(xml);
                 }
             }
         }

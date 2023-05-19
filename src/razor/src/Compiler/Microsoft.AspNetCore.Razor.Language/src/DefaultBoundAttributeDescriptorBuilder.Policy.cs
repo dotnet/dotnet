@@ -15,6 +15,7 @@ internal partial class DefaultBoundAttributeDescriptorBuilder
         {
             builder._parent = null;
             builder._kind = null;
+            builder._documentationObject = default;
 
             builder.Name = null;
             builder.TypeName = null;
@@ -23,7 +24,6 @@ internal partial class DefaultBoundAttributeDescriptorBuilder
             builder.IsEditorRequired = false;
             builder.IndexerAttributeNamePrefix = null;
             builder.IndexerValueTypeName = null;
-            builder.Documentation = null;
             builder.DisplayName = null;
 
             if (builder._attributeParameterBuilders is { } attributeParameterBuilders)

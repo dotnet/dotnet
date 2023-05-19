@@ -184,7 +184,8 @@ namespace NuGet.PackageManagement.UI.Test
                 Mock.Of<IPackageRestoreManager>(),
                 Mock.Of<IOptionsPageActivator>(),
                 Mock.Of<IUserSettingsManager>(),
-                new NuGetSourcesServiceWrapper());
+                new NuGetSourcesServiceWrapper(),
+                Mock.Of<ISettings>());
         }
     }
 }

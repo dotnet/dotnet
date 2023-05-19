@@ -3,19 +3,16 @@
 
 using System;
 using System.ComponentModel;
-using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Windows.Forms;
 using Microsoft.VisualStudio.Shell;
-using NuGet.PackageManagement.UI;
 using NuGet.VisualStudio;
 using Task = System.Threading.Tasks.Task;
 
-namespace NuGet.Options
+namespace NuGet.PackageManagement.UI.Options
 {
-    [SuppressMessage("Microsoft.Interoperability", "CA1408:DoNotUseAutoDualClassInterfaceType")]
     [Guid("2819C3B6-FC75-4CD5-8C77-877903DE864C")]
     [ComVisible(true)]
     [ClassInterface(ClassInterfaceType.AutoDual)]

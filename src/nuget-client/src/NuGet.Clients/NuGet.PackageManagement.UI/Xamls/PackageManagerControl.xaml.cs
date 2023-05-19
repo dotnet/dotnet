@@ -101,6 +101,7 @@ namespace NuGet.PackageManagement.UI
                     Model.Context.ServiceBroker,
                     Model.Context.SolutionManagerService,
                     Model.Context.Projects,
+                    Model.UIController,
                     CancellationToken.None);
             }
             else
@@ -108,7 +109,8 @@ namespace NuGet.PackageManagement.UI
                 _detailModel = new PackageDetailControlModel(
                     Model.Context.ServiceBroker,
                     Model.Context.SolutionManagerService,
-                    Model.Context.Projects);
+                    Model.Context.Projects,
+                    Model.UIController);
             }
 
             if (_windowSearchHostFactory != null)
@@ -177,6 +179,13 @@ namespace NuGet.PackageManagement.UI
             }
 
             _missingPackageStatus = false;
+
+            Settings.SettingsChanged += Settings_SettingsChanged;
+        }
+
+        private void Settings_SettingsChanged(object sender, EventArgs e)
+        {
+            _detailModel.PackageSourceMappingViewModel.SettingsChanged();
         }
 
         public PackageRestoreBar RestoreBar { get; private set; }
@@ -1487,6 +1496,8 @@ namespace NuGet.PackageManagement.UI
             Model.Context.ProjectActionsExecuted -= OnProjectActionsExecuted;
 
             Model.Context.SourceService.PackageSourcesChanged -= PackageSourcesChanged;
+
+            Settings.SettingsChanged -= Settings_SettingsChanged;
 
             Model.Dispose();
 

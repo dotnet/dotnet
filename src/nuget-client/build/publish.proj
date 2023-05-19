@@ -1,17 +1,20 @@
-<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildThisFileDirectory), 'README.md'))\build\common.props" />
-
+<Project Sdk="Microsoft.Build.NoTargets" DefaultTargets="PublishToBuildAssetRegistry">
   <!--
     =================================================================
     Publish NuGet builds to the .NET Core build asset registry (BAR).
     =================================================================
   -->
+  <PropertyGroup>
+    <TargetFramework>net472</TargetFramework>
+    <ArtifactsLogDir Condition="'$(ArtifactsLogDir)' == ''">$(MSBuildThisFileDirectory)PublishToBuildAssetRegistryLogs</ArtifactsLogDir>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.DotNet.Maestro.Tasks" />
+    <PackageReference Include="Microsoft.DotNet.Build.Tasks.Feed" />
+  </ItemGroup>
 
-  <Import Project="$(BuildCommonDirectory)common.targets" />
-
-  <UsingTask TaskName="Microsoft.DotNet.Build.Tasks.Feed.PushToAzureDevOpsArtifacts" AssemblyFile="$(MicrosoftDotNetBuildTasksFeedFilePath)" />
-  <UsingTask TaskName="Microsoft.DotNet.Maestro.Tasks.PushMetadataToBuildAssetRegistry" AssemblyFile="$(MicrosoftDotNetMaestroTasksFilePath)" />
+  <UsingTask TaskName="Microsoft.DotNet.Build.Tasks.Feed.PushToAzureDevOpsArtifacts" AssemblyFile="$(PkgMicrosoft_DotNet_Build_Tasks_Feed)\tools\netcoreapp2.1\Microsoft.DotNet.Build.Tasks.Feed.dll" />
+  <UsingTask TaskName="Microsoft.DotNet.Maestro.Tasks.PushMetadataToBuildAssetRegistry" AssemblyFile="$(PkgMicrosoft_DotNet_Maestro_Tasks)\tools\netcoreapp3.1\Microsoft.DotNet.Maestro.Tasks.dll" />
 
 
   <Target Name="PublishToBuildAssetRegistry">
@@ -20,15 +23,15 @@
       <AssetManifestPath>$(ArtifactsLogDir)AssetManifest\$(AssetManifestFileName)</AssetManifestPath>
     </PropertyGroup>
 
+    <Error Condition="'$(NuGetClientNupkgsDirectoryPath)' == ''" Text="The property '$(NuGetClientNupkgsDirectoryPath)' is required.  Set it at the command-line with /property:&lt;NuGetClientNupkgsDirectoryPath&gt;" />
     <Error Condition="!Exists($(NuGetClientNupkgsDirectoryPath))" Text="The package directory path '$(NuGetClientNupkgsDirectoryPath)' does not exist." />
     <Error Condition="Exists($(AssetManifestPath))" Text="The manifest file '$(AssetManifestPath)' already exists." />
 
-    <CreateItem Include="$([System.IO.Path]::Combine($(NuGetClientNupkgsDirectoryPath), '*.nupkg'))">
-      <Output TaskParameter="Include" ItemName="ItemsToPush" />
-    </CreateItem>
+    <ItemGroup>
+      <ItemsToPush Include="$(NuGetClientNupkgsDirectoryPath)/*.nupkg" />
+    </ItemGroup>
 
-    <Error Condition="'@(ItemsToPush)' == ''" Text="No packages to push." />
-
+    <Error Condition="@(ItemsToPush->Count()) == 0" Text="There were no packages found at '$(NuGetClientNupkgsDirectoryPath)'." />
     <Error Condition="'$(BUILD_BUILDNUMBER)' == ''" Text="The BUILD_BUILDNUMBER property is required." />
     <Error Condition="'$(ArtifactsLogDir)' == ''" Text="The ArtifactsLogDir property is required." />
     <Error Condition="'$(BUILD_SOURCEBRANCH)' == ''" Text="The BUILD_SOURCEBRANCH property is required." />
@@ -69,5 +72,4 @@
       ManifestsPath="$(ArtifactsLogDir)AssetManifest\"
       AssetVersion="$(Version)" />
   </Target>
-
 </Project>

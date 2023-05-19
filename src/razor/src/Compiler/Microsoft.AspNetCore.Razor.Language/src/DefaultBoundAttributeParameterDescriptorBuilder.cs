@@ -30,6 +30,7 @@ internal partial class DefaultBoundAttributeParameterDescriptorBuilder : BoundAt
     private DefaultBoundAttributeDescriptorBuilder _parent;
     [AllowNull]
     private string _kind;
+    private DocumentationObject _documentationObject;
     private Dictionary<string, string?>? _metadata;
 
     private RazorDiagnosticCollection? _diagnostics;
@@ -47,7 +48,13 @@ internal partial class DefaultBoundAttributeParameterDescriptorBuilder : BoundAt
     public override string? Name { get; set; }
     public override string? TypeName { get; set; }
     public override bool IsEnum { get; set; }
-    public override string? Documentation { get; set; }
+
+    public override string? Documentation
+    {
+        get => _documentationObject.GetText();
+        set => _documentationObject = new(value);
+    }
+
     public override string? DisplayName { get; set; }
 
     public override IDictionary<string, string?> Metadata => _metadata ??= new Dictionary<string, string?>();
@@ -55,6 +62,16 @@ internal partial class DefaultBoundAttributeParameterDescriptorBuilder : BoundAt
     public override RazorDiagnosticCollection Diagnostics => _diagnostics ??= new RazorDiagnosticCollection();
 
     internal bool CaseSensitive => _parent.CaseSensitive;
+
+    internal override void SetDocumentation(string text)
+    {
+        _documentationObject = new(text);
+    }
+
+    internal override void SetDocumentation(DocumentationDescriptor documentation)
+    {
+        _documentationObject = new(documentation);
+    }
 
     public BoundAttributeParameterDescriptor Build()
     {
@@ -70,7 +87,7 @@ internal partial class DefaultBoundAttributeParameterDescriptorBuilder : BoundAt
                 Name,
                 TypeName,
                 IsEnum,
-                Documentation,
+                _documentationObject,
                 GetDisplayName(),
                 CaseSensitive,
                 MetadataCollection.CreateOrEmpty(_metadata),

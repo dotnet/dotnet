@@ -1,5 +1,6 @@
 using System.Windows.Forms;
-namespace NuGet.Options
+
+namespace NuGet.PackageManagement.UI.Options
 {
     partial class PackageSourcesOptionsControl
     {
@@ -46,9 +47,9 @@ namespace NuGet.Options
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
             this.addButton = new System.Windows.Forms.Button();
-            this.PackageSourcesListBox = new NuGet.Options.PackageSourceCheckedListBox();
+            this.PackageSourcesListBox = new NuGet.PackageManagement.UI.Options.PackageSourceCheckedListBox();
             this.MachineWideSourcesLabel = new System.Windows.Forms.Label();
-            this.MachineWidePackageSourcesListBox = new NuGet.Options.PackageSourceCheckedListBox();
+            this.MachineWidePackageSourcesListBox = new NuGet.PackageManagement.UI.Options.PackageSourceCheckedListBox();
             this.tableLayoutPanel3 = new System.Windows.Forms.TableLayoutPanel();
             this.tableLayoutPanel4 = new System.Windows.Forms.TableLayoutPanel();
             this.HttpWarning = new System.Windows.Forms.Label();

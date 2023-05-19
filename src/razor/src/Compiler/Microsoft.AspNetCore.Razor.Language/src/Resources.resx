@@ -583,4 +583,10 @@
   <data name="The_given_key_0_was_not_present" xml:space="preserve">
     <value>The given key '{0}' was not present.</value>
   </data>
+  <data name="Unknown_documentation_id_0" xml:space="preserve">
+    <value>Unknown documentation id: '{0}'.</value>
+  </data>
+  <data name="A_documentation_object_can_only_be_a_0_instance_string_or_null" xml:space="preserve">
+    <value>A documentation object can only be a '{0}' instance, string, or null.</value>
+  </data>
 </root>

@@ -165,7 +165,7 @@ internal class ComponentTagHelperDescriptorProvider : RazorEngineFeatureBase, IT
         var xml = type.GetDocumentationCommentXml();
         if (!string.IsNullOrEmpty(xml))
         {
-            builder.Documentation = xml;
+            builder.SetDocumentation(xml);
         }
 
         foreach (var (property, kind) in properties)
@@ -233,7 +233,7 @@ internal class ComponentTagHelperDescriptorProvider : RazorEngineFeatureBase, IT
             var xml = property.GetDocumentationCommentXml();
             if (!string.IsNullOrEmpty(xml))
             {
-                pb.Documentation = xml;
+                pb.SetDocumentation(xml);
             }
         });
 
@@ -440,7 +440,11 @@ internal class ComponentTagHelperDescriptorProvider : RazorEngineFeatureBase, IT
                 pb.Metadata[ComponentMetadata.Component.TypeParameterConstraintsKey] = whereClauseText;
             }
 
-            pb.Documentation = string.Format(CultureInfo.InvariantCulture, ComponentResources.ComponentTypeParameter_Documentation, typeParameter.Name, builder.Name);
+            pb.SetDocumentation(
+                DocumentationDescriptor.From(
+                    DocumentationId.ComponentTypeParameter,
+                    typeParameter.Name,
+                    builder.Name));
         });
 
         static bool TryGetWhereClauseText(ITypeParameterSymbol typeParameter, PooledList<string> constraints, [NotNullWhen(true)] out string constraintsText)
@@ -502,7 +506,7 @@ internal class ComponentTagHelperDescriptorProvider : RazorEngineFeatureBase, IT
         var xml = attribute.Documentation;
         if (!string.IsNullOrEmpty(xml))
         {
-            builder.Documentation = xml;
+            builder.SetDocumentation(xml);
         }
 
         // Child content matches the property name, but only as a direct child of the component.
@@ -538,9 +542,11 @@ internal class ComponentTagHelperDescriptorProvider : RazorEngineFeatureBase, IT
             b.Metadata.Add(ComponentMetadata.Component.ChildContentParameterNameKey, bool.TrueString);
             b.Metadata.Add(TagHelperMetadata.Common.PropertyName, b.Name);
 
-            b.Documentation = childContentName == null
-                ? ComponentResources.ChildContentParameterName_TopLevelDocumentation
-                : string.Format(CultureInfo.InvariantCulture, ComponentResources.ChildContentParameterName_Documentation, childContentName);
+            var documentation = childContentName == null
+                ? DocumentationDescriptor.ChildContentParameterName_TopLevel
+                : DocumentationDescriptor.From(DocumentationId.ChildContentParameterName, childContentName);
+
+            b.SetDocumentation(documentation);
         });
     }
 

@@ -1,0 +1,38 @@
+<Project>
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <TargetFramework>net472</TargetFramework>
+    <OutputArchitecture>neutral</OutputArchitecture>
+    <OutputLocalized>false</OutputLocalized>
+    <TargetName>Microsoft.VisualStudio.NuGet.BuildTools</TargetName>
+    <OutputName>$(TargetName)</OutputName>
+    <OutputType>vsix</OutputType>
+    <IsPackage>true</IsPackage>
+    <MajorVSVersion>$([MSBuild]::Add($(MajorNuGetVersion), 11))</MajorVSVersion>
+    <!-- We set this to false here so we can batch sign the vsix later -->
+    <MicroBuild_SigningEnabled>false</MicroBuild_SigningEnabled>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <ReferenceOutputPath>$(ArtifactsDirectory)NuGet.VisualStudio.Client\bin\$(Configuration)\net472\</ReferenceOutputPath>
+    <XmlTransformPath>$(ArtifactsDirectory)microsoft.web.xdt\lib\net40\</XmlTransformPath>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <!-- Variables added here will be usable in the swr file.  This is a semi colon delimited
+          list of name=value items.  Use $(name) in the swr file to reference the variable.
+    -->
+    <PackagePreprocessorDefinitions>$(PackagePreprocessorDefinitions);ReferenceOutputPath=$(ReferenceOutputPath);XmlTransformPath=$(XmlTransformPath);BuildNumber=$(BuildNumber);MajorNuGetVersion=$(MajorNuGetVersion);MinorNuGetVersion=$(MinorNuGetVersion);PatchNuGetVersion=$(PatchNuGetVersion);MajorVSVersion=$(MajorVSVersion)</PackagePreprocessorDefinitions>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Package Include="Microsoft.VisualStudio.NuGet.BuildTools.swr" />
+  </ItemGroup>
+
+  <Target Name="CopyToDropFolder" AfterTargets="Build">
+    <Copy SourceFiles="$(OutputPath)$(TargetName).vsix" DestinationFolder="$(VsixPublishDestination)" />
+    <Copy SourceFiles="$(OutputPath)$(TargetName).json" DestinationFolder="$(VsixPublishDestination)" />
+  </Target>
+  
+  <Import Project="$(MSBuildToolsPath)\Microsoft.Common.targets" />
+</Project>

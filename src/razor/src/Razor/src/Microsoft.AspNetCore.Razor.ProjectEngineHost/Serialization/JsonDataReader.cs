@@ -230,6 +230,25 @@ internal partial class JsonDataReader
         return ReadNonNullString();
     }
 
+    public object? ReadValue()
+    {
+        return _reader.TokenType switch
+        {
+            JsonToken.String => ReadString(),
+            JsonToken.Integer => ReadInt32(),
+            JsonToken.Boolean => ReadBoolean(),
+
+            var token => ThrowNotSupported(token)
+        };
+
+        [DoesNotReturn]
+        static object? ThrowNotSupported(JsonToken token)
+        {
+            throw new NotSupportedException(
+                SR.FormatCould_not_read_value_JSON_token_was_0(token));
+        }
+    }
+
     public Uri? ReadUri(string propertyName)
     {
         ReadPropertyName(propertyName);

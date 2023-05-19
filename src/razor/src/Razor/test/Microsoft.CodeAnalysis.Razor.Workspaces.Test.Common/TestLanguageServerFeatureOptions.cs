@@ -32,4 +32,6 @@ internal class TestLanguageServerFeatureOptions : LanguageServerFeatureOptions
     public override bool ReturnCodeActionAndRenamePathsWithPrefixedSlash => false;
 
     public override bool ShowAllCSharpCodeActions => false;
+
+    public override bool UpdateBuffersForClosedDocuments => false;
 }

@@ -1,157 +1,45 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="14.0" DefaultTargets="Build">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+<Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
     <Shipping>true</Shipping>
     <IncludeInVSIX>true</IncludeInVSIX>
-    <OutputType>Library</OutputType>
     <RootNamespace>NuGetConsole</RootNamespace>
     <AssemblyName>NuGet.Console</AssemblyName>
-    <ProjectGuid>{50E33DA2-AF14-486D-81B8-BD8409744A38}</ProjectGuid>
-    <CreateVsixContainer>False</CreateVsixContainer>
-    <DeployExtension>False</DeployExtension>
     <Description>Package Manager PowerShell Console implementation.</Description>
-    <TargetFrameworkProfile />
-    <TargetFrameworkVersion>$(NETFXTargetFrameworkVersion)</TargetFrameworkVersion>
-    <AlwaysCompileMarkupFilesInSeparateDomain>false</AlwaysCompileMarkupFilesInSeparateDomain>
+    <TargetFramework>$(NETFXTargetFramework)</TargetFramework>
+    <UseWpf>true</UseWpf>
   </PropertyGroup>
+
   <ItemGroup>
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="PresentationCore">
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="PresentationFramework">
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="System" />
-    <Reference Include="System.ComponentModel.Composition" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Design" />
-    <Reference Include="System.Management.Automation, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
-    <Reference Include="System.Runtime.Serialization" />
-    <Reference Include="System.Windows.Forms" />
-    <Reference Include="System.Xaml" />
-    <Reference Include="WindowsBase" />
+    <ProjectReference Include="..\..\NuGet.Core\NuGet.Common\NuGet.Common.csproj" />
+    <ProjectReference Include="..\..\NuGet.Core\NuGet.Configuration\NuGet.Configuration.csproj" />
+    <ProjectReference Include="..\..\NuGet.Core\NuGet.PackageManagement\NuGet.PackageManagement.csproj" />
+    <ProjectReference Include="..\..\NuGet.Core\NuGet.Packaging\NuGet.Packaging.csproj" />
+    <ProjectReference Include="..\..\NuGet.Core\NuGet.Versioning\NuGet.Versioning.csproj" />
+    <ProjectReference Include="..\NuGet.PackageManagement.UI\NuGet.PackageManagement.UI.csproj" />
+    <ProjectReference Include="..\NuGet.PackageManagement.VisualStudio\NuGet.PackageManagement.VisualStudio.csproj" />
+    <ProjectReference Include="..\NuGet.VisualStudio.Common\NuGet.VisualStudio.Common.csproj" />
+    <ProjectReference Include="..\NuGet.VisualStudio.Internal.Contracts\NuGet.VisualStudio.Internal.Contracts.csproj" />
   </ItemGroup>
-  <ItemGroup>
-    <Compile Include="ConsoleInitializer.cs" />
-    <Compile Include="DisplayNameAttribute.cs" />
-    <Compile Include="HostNameAttribute.cs" />
-    <Compile Include="ICommandExpansion.cs" />
-    <Compile Include="ICommandExpansionProvider.cs" />
-    <Compile Include="ICommandTokenizer.cs" />
-    <Compile Include="ICommandTokenizerProvider.cs" />
-    <Compile Include="IConsoleInitializer.cs" />
-    <Compile Include="IHostMetadata.cs" />
-    <Compile Include="IHostProvider.cs" />
-    <Compile Include="IPathExpansion.cs" />
-    <Compile Include="IPowerConsoleWindow.cs" />
-    <Compile Include="IPSNuGetProjectContext.cs" />
-    <Compile Include="ITabExpansion.cs" />
-    <Compile Include="IWpfConsole.cs" />
-    <Compile Include="IWpfConsoleService.cs" />
-    <Compile Include="OutputConsole\ChannelOutputConsole.cs" />
-    <Compile Include="OutputConsole\BuildOutputConsole.cs" />
-    <Compile Include="OutputConsole\OutputConsole.cs" />
-    <Compile Include="OutputConsole\OutputConsoleProvider.cs" />
-    <Compile Include="OutputConsole\BaseOutputConsole.cs" />
-    <Compile Include="OutputConsole\SharedOutputConsole.cs" />
-    <Compile Include="ScriptExecutor.cs" />
-    <Compile Include="SimpleExpansion.cs" />
-    <Compile Include="Token.cs" />
-    <Compile Include="TokenType.cs" />
-    <Compile Include="Utils\CommandUiUtilities.cs" />
-    <Compile Include="Xamls\ConsoleContainer.xaml.cs">
-      <DependentUpon>ConsoleContainer.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Console\IPrivateConsoleStatus.cs" />
-    <Compile Include="Guids.cs" />
-    <Compile Include="IHostInitializer.cs" />
-    <Compile Include="IPowerConsoleService.cs" />
-    <Compile Include="NativeMethods.cs" />
-    <Compile Include="PkgCmdID.cs" />
-    <Compile Include="Utils\CommonExtensionMethods.cs" />
-    <Compile Include="Utils\ExtensionMethods.cs" />
-    <Compile Include="Utils\Marshaler.cs" />
-    <Compile Include="Utils\ObjectWithFactory.cs" />
-    <Compile Include="Utils\UtilityMethods.cs" />
-    <Compile Include="Console\ConsoleDispatcher.cs" />
-    <Compile Include="Console\IHostNameMetadata.cs" />
-    <Compile Include="Console\InputHistory.cs" />
-    <Compile Include="Console\OleCommandFilter.cs" />
-    <Compile Include="Console\OrderedSpans.cs" />
-    <Compile Include="Console\TextFormatClassifier.cs" />
-    <Compile Include="WpfConsole\WpfConsole.cs" />
-    <Compile Include="WpfConsole\WpfConsoleClassifier.cs" />
-    <Compile Include="WpfConsole\WpfConsoleService.cs" />
-    <Compile Include="WpfConsole\WpfConsoleCompletionSource.cs" />
-    <Compile Include="WpfConsole\WpfConsoleKeyProcessor.cs" />
-    <Compile Include="PowerConsoleToolWindow.cs" />
-    <Compile Include="PowerConsole\ClassifierProvider.cs" />
-    <Compile Include="PowerConsole\CompletionSourceProvider.cs" />
-    <Compile Include="PowerConsole\HostInfo.cs" />
-    <Compile Include="PowerConsole\PowerConsoleWindow.cs" />
-    <Compile Include="Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Resources.resx</DependentUpon>
-    </Compile>
-    <Compile Include="GlobalSuppressions.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Resources.resx">
-      <Generator>PublicResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\NuGet.Core\NuGet.Common\NuGet.Common.csproj">
-      <Project>{98bee375-a5a0-4fc2-9b7a-25db41c8045d}</Project>
-      <Name>NuGet.Common</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\NuGet.Core\NuGet.Configuration\NuGet.Configuration.csproj">
-      <Project>{e3ef26e1-80a7-4573-b3a4-1d4b0042616e}</Project>
-      <Name>NuGet.Configuration</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\NuGet.Core\NuGet.PackageManagement\NuGet.PackageManagement.csproj">
-      <Project>{394aeb96-493c-4839-a5ac-8d93cd2fad40}</Project>
-      <Name>NuGet.PackageManagement</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\NuGet.Core\NuGet.Packaging\NuGet.Packaging.csproj">
-      <Project>{bd6bbc90-60be-4e7d-8458-91e9cda66abe}</Project>
-      <Name>NuGet.Packaging</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\NuGet.Core\NuGet.Versioning\NuGet.Versioning.csproj">
-      <Project>{24e62ab7-64e4-4975-9417-883559d1bc19}</Project>
-      <Name>NuGet.Versioning</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\NuGet.PackageManagement.UI\NuGet.PackageManagement.UI.csproj">
-      <Project>{538adefd-2170-40a9-a2c5-ec8369cfe490}</Project>
-      <Name>NuGet.PackageManagement.UI</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\NuGet.PackageManagement.VisualStudio\NuGet.PackageManagement.VisualStudio.csproj">
-      <Project>{306cddfa-ff0b-4299-930c-9ec6c9308160}</Project>
-      <Name>NuGet.PackageManagement.VisualStudio</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\NuGet.VisualStudio.Common\NuGet.VisualStudio.Common.csproj">
-      <Project>{eea49a74-6efc-410e-9745-bad367ac151d}</Project>
-      <Name>NuGet.VisualStudio.Common</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\NuGet.VisualStudio.Internal.Contracts\NuGet.VisualStudio.Internal.Contracts.csproj">
-      <Project>{deebf1a1-1c21-4e9e-8ce3-1eb21381ff1e}</Project>
-      <Name>NuGet.VisualStudio.Internal.Contracts</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Page Include="Xamls\ConsoleContainer.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-  </ItemGroup>
+
   <ItemGroup>
     <PackageReference Include="Microsoft.VisualStudio.Sdk" />
+    <PackageReference Include="Microsoft.PowerShell.3.ReferenceAssemblies" />
   </ItemGroup>
-  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+
+  <ItemGroup>
+    <Compile Update="Resources.Designer.cs">
+      <DesignTime>true</DesignTime>
+      <AutoGen>true</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="Resources.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+
 </Project>

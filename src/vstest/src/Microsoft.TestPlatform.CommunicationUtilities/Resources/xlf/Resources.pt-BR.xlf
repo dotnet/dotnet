@@ -4,57 +4,57 @@
     <body>
       <trans-unit id="AbortedTestRun">
         <source>The active test run was aborted. Reason: {0}</source>
-        <target state="new">The active test run was aborted. Reason: {0}</target>
+        <target state="translated">A execução de teste ativa foi anulada. Motivo: {0}</target>
         <note />
       </trans-unit>
       <trans-unit id="ConnectionClosed">
         <source>An existing connection was forcibly closed by the remote host.</source>
-        <target state="new">An existing connection was forcibly closed by the remote host.</target>
+        <target state="translated">Uma conexão existente foi fechada à força pelo host remoto.</target>
         <note />
       </trans-unit>
       <trans-unit id="AbortedTestDiscovery">
         <source>The active test discovery was aborted.</source>
-        <target state="new">The active test discovery was aborted.</target>
+        <target state="translated">A detecção de testes ativa foi anulada.</target>
         <note />
       </trans-unit>
       <trans-unit id="AbortedTestDiscoveryWithReason">
         <source>The active test discovery was aborted. Reason: {0}</source>
-        <target state="new">The active test discovery was aborted. Reason: {0}</target>
+        <target state="translated">A descoberta de teste ativa foi anulada. Motivo: {0}</target>
         <note />
       </trans-unit>
       <trans-unit id="UnableToCommunicateToTestHost">
         <source>Unable to communicate with test host process.</source>
-        <target state="new">Unable to communicate with test host process.</target>
+        <target state="translated">Não é possível se comunicar com o processo de host de teste.</target>
         <note />
       </trans-unit>
       <trans-unit id="UnexpectedMessage">
         <source>Unexpected message received. Expected MessageType : {0} Actual MessageType: {1}</source>
-        <target state="new">Unexpected message received. Expected MessageType : {0} Actual MessageType: {1}</target>
+        <target state="translated">Mensagem inesperada recebida. MessageType esperada: {0} MessageType real: {1}</target>
         <note />
       </trans-unit>
       <trans-unit id="VersionCheckFailed">
         <source>Protocol version check failed. Make sure test runner and host are compatible.</source>
-        <target state="new">Protocol version check failed. Make sure test runner and host are compatible.</target>
+        <target state="translated">Falha na verificação da versão do protocolo. Verifique se o executor de testes e o host são compatíveis.</target>
         <note />
       </trans-unit>
       <trans-unit id="VersionCheckTimedout">
         <source>Failed to negotiate protocol, waiting for response timed out after {0} seconds. This may occur due to machine slowness, please set environment variable {1} to increase timeout.</source>
-        <target state="new">Failed to negotiate protocol, waiting for response timed out after {0} seconds. This may occur due to machine slowness, please set environment variable {1} to increase timeout.</target>
+        <target state="translated">Falha ao negociar o protocolo, aguardando pelo tempo limite de resposta após {0} segundos. Isso pode ocorrer devido à lentidão do computador. Defina a variável de ambiente {1} para aumentar o tempo limite.</target>
         <note />
       </trans-unit>
       <trans-unit id="ConnectionTimeoutErrorMessage">
         <source>{0} process failed to connect to {1} process after {2} seconds. This may occur due to machine slowness, please set environment variable {3} to increase timeout.</source>
-        <target state="new">{0} process failed to connect to {1} process after {2} seconds. This may occur due to machine slowness, please set environment variable {3} to increase timeout.</target>
+        <target state="translated">O processo {0} falha ao se conectar ao processo {1} após {2} segundos. Isso pode ocorrer devido à lentidão do computador. Defina a variável de ambiente {3} para aumentar o tempo limite.</target>
         <note />
       </trans-unit>
       <trans-unit id="TestHostProcessCrashed">
         <source>Test host process crashed</source>
-        <target state="new">Test host process crashed</target>
+        <target state="translated">Falha no processo do host de teste</target>
         <note />
       </trans-unit>
       <trans-unit id="AttachDebuggerToDefaultTestHostFailure">
         <source>Cannot attach the debugger to the default test host.</source>
-        <target state="new">Cannot attach the debugger to the default test host.</target>
+        <target state="translated">Não é possível anexar o depurador ao host de teste padrão.</target>
         <note />
       </trans-unit>
     </body>

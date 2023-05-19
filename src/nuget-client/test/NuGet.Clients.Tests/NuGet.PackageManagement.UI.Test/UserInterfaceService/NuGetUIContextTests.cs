@@ -133,13 +133,31 @@ namespace NuGet.PackageManagement.UI.Test.UserInterfaceService
             Assert.True(wasEventRaised);
         }
 
+        [Fact]
+        public void PackageSourceMapping_OnSettingsChanged_ReferencesNewObject()
+        {
+            // Arrange
+            var settings = new Mock<ISettings>();
+            NuGetUIContext nuGetUIContext = CreateNuGetUIContext(settings.Object);
+            PackageSourceMapping targetBefore = nuGetUIContext.PackageSourceMapping;
+
+            // Act
+            settings.Raise(s => s.SettingsChanged += null, (EventArgs)null);
+
+            PackageSourceMapping targetAfter = nuGetUIContext.PackageSourceMapping;
+
+            // Assert
+            Assert.NotEqual(targetBefore, targetAfter);
+        }
+
         public void Dispose()
         {
             _testDirectory.Dispose();
         }
 
-        private NuGetUIContext CreateNuGetUIContext()
+        private NuGetUIContext CreateNuGetUIContext(ISettings settings = null)
         {
+            settings = settings ?? Mock.Of<ISettings>();
             var sourceRepositoryProvider = Mock.Of<ISourceRepositoryProvider>();
             var packageManager = new NuGetPackageManager(
                 sourceRepositoryProvider,
@@ -159,7 +177,8 @@ namespace NuGet.PackageManagement.UI.Test.UserInterfaceService
                 Mock.Of<IPackageRestoreManager>(),
                 Mock.Of<IOptionsPageActivator>(),
                 Mock.Of<IUserSettingsManager>(),
-                new NuGetSourcesServiceWrapper());
+                new NuGetSourcesServiceWrapper(),
+                settings);
         }
 
         private sealed class TestNuGetProject : NuGetProject

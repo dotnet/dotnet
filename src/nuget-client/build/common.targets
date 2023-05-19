@@ -199,7 +199,7 @@
   <Target Name="GetSigningInputsDefault" DependsOnTargets="GetTargetFrameworkSet" Returns="@(DllsToSign)" Condition=" '$(Shipping)' == 'true' ">
     <MSBuild
       Projects="$(MSBuildProjectFullPath)"
-      Targets="$(SignTargetsForRealSigning)"
+      Targets="$(SignTargetsForRealSigning);$(AdditionalSignTargetsForRealSigning)"
       Properties="TargetFramework=%(ProjectTargetFrameworkEntries.Identity);
                   BuildProjectReferences=false;">
 
@@ -393,7 +393,4 @@ Condition=" ('%(Extension)' == '.dll' OR '%(Filename)' == 'NuGet.CommandLine.XPl
       Text="Newtonsoft.Json must be version $(NewtonsoftJsonPackageVersion) but resolved %(Reference.NuGetPackageVersion)"
       Condition=" %(Reference.NuGetPackageId) == 'Newtonsoft.Json' AND %(Reference.NuGetPackageVersion) != '$(NewtonsoftJsonPackageVersion)' " />
   </Target>
-
-  <Import Project="$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildThisFileDirectory), 'README.md'))\packages\Microsoft.VisualStudioEng.MicroBuild.Core\1.0.0\build\Microsoft.VisualStudioEng.MicroBuild.Core.targets" Condition="Exists('$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildThisFileDirectory), &quot;README.md&quot;))\packages\Microsoft.VisualStudioEng.MicroBuild.Core\1.0.0\build\Microsoft.VisualStudioEng.MicroBuild.Core.targets')" />
-
 </Project>

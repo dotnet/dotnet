@@ -9,7 +9,7 @@ using Microsoft.VisualStudio.Shell;
 using NuGet.PackageManagement.VisualStudio;
 using NuGet.VisualStudio;
 
-namespace NuGet.Options
+namespace NuGet.PackageManagement.UI.Options
 {
     [ComVisible(true)]
     public abstract class OptionsPageBase : DialogPage

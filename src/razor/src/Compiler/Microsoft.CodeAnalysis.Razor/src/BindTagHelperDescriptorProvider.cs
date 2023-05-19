@@ -146,7 +146,7 @@ internal class BindTagHelperDescriptorProvider : ITagHelperDescriptorProvider
                 out var builder);
 
             builder.CaseSensitive = true;
-            builder.Documentation = ComponentResources.BindTagHelper_Fallback_Documentation;
+            builder.SetDocumentation(DocumentationDescriptor.BindTagHelper_Fallback);
 
             builder.Metadata.Add(ComponentMetadata.SpecialKindKey, ComponentMetadata.Bind.TagHelperKind);
             builder.Metadata.Add(TagHelperMetadata.Common.ClassifyAttributesOnly, bool.TrueString);
@@ -173,7 +173,7 @@ internal class BindTagHelperDescriptorProvider : ITagHelperDescriptorProvider
             builder.BindAttribute(attribute =>
             {
                 attribute.Metadata[ComponentMetadata.Common.DirectiveAttribute] = bool.TrueString;
-                attribute.Documentation = ComponentResources.BindTagHelper_Fallback_Documentation;
+                attribute.SetDocumentation(DocumentationDescriptor.BindTagHelper_Fallback);
 
                 var attributeName = "@bind-...";
                 attribute.Name = attributeName;
@@ -188,7 +188,7 @@ internal class BindTagHelperDescriptorProvider : ITagHelperDescriptorProvider
                 {
                     parameter.Name = "format";
                     parameter.TypeName = typeof(string).FullName;
-                    parameter.Documentation = ComponentResources.BindTagHelper_Fallback_Format_Documentation;
+                    parameter.SetDocumentation(DocumentationDescriptor.BindTagHelper_Fallback_Format);
 
                     parameter.SetPropertyName("Format");
                 });
@@ -197,7 +197,9 @@ internal class BindTagHelperDescriptorProvider : ITagHelperDescriptorProvider
                 {
                     parameter.Name = "event";
                     parameter.TypeName = typeof(string).FullName;
-                    parameter.Documentation = string.Format(CultureInfo.CurrentCulture, ComponentResources.BindTagHelper_Fallback_Event_Documentation, attributeName);
+                    parameter.SetDocumentation(
+                        DocumentationDescriptor.From(
+                            DocumentationId.BindTagHelper_Fallback_Event, attributeName));
 
                     parameter.SetPropertyName("Event");
                 });
@@ -206,7 +208,7 @@ internal class BindTagHelperDescriptorProvider : ITagHelperDescriptorProvider
                 {
                     parameter.Name = "culture";
                     parameter.TypeName = typeof(CultureInfo).FullName;
-                    parameter.Documentation = ComponentResources.BindTagHelper_Element_Culture_Documentation;
+                    parameter.SetDocumentation(DocumentationDescriptor.BindTagHelper_Element_Culture);
 
                     parameter.SetPropertyName("Culture");
                 });
@@ -215,7 +217,7 @@ internal class BindTagHelperDescriptorProvider : ITagHelperDescriptorProvider
                 {
                     parameter.Name = "get";
                     parameter.TypeName = typeof(object).FullName;
-                    parameter.Documentation = ComponentResources.BindTagHelper_Element_Get_Documentation;
+                    parameter.SetDocumentation(DocumentationDescriptor.BindTagHelper_Element_Get);
 
                     parameter.SetPropertyName("Get");
 
@@ -226,7 +228,7 @@ internal class BindTagHelperDescriptorProvider : ITagHelperDescriptorProvider
                 {
                     parameter.Name = "set";
                     parameter.TypeName = typeof(Delegate).FullName;
-                    parameter.Documentation = ComponentResources.BindTagHelper_Element_Set_Documentation;
+                    parameter.SetDocumentation(DocumentationDescriptor.BindTagHelper_Element_Set);
 
                     parameter.SetPropertyName("Set");
                 });
@@ -235,7 +237,7 @@ internal class BindTagHelperDescriptorProvider : ITagHelperDescriptorProvider
                 {
                     parameter.Name = "after";
                     parameter.TypeName = typeof(Delegate).FullName;
-                    parameter.Documentation = ComponentResources.BindTagHelper_Element_After_Documentation;
+                    parameter.SetDocumentation(DocumentationDescriptor.BindTagHelper_Element_After);
 
                     parameter.SetPropertyName("After");
                 });
@@ -381,11 +383,11 @@ internal class BindTagHelperDescriptorProvider : ITagHelperDescriptorProvider
                 out var builder);
 
             builder.CaseSensitive = true;
-            builder.Documentation = string.Format(
-                CultureInfo.CurrentCulture,
-                ComponentResources.BindTagHelper_Element_Documentation,
-                entry.ValueAttribute,
-                entry.ChangeAttribute);
+            builder.SetDocumentation(
+                DocumentationDescriptor.From(
+                    DocumentationId.BindTagHelper_Element,
+                    entry.ValueAttribute,
+                    entry.ChangeAttribute));
 
             builder.Metadata.Add(ComponentMetadata.SpecialKindKey, ComponentMetadata.Bind.TagHelperKind);
             builder.Metadata.Add(TagHelperMetadata.Common.ClassifyAttributesOnly, bool.TrueString);
@@ -469,11 +471,11 @@ internal class BindTagHelperDescriptorProvider : ITagHelperDescriptorProvider
             builder.BindAttribute(a =>
             {
                 a.Metadata[ComponentMetadata.Common.DirectiveAttribute] = bool.TrueString;
-                a.Documentation = string.Format(
-                    CultureInfo.CurrentCulture,
-                    ComponentResources.BindTagHelper_Element_Documentation,
-                    entry.ValueAttribute,
-                    entry.ChangeAttribute);
+                a.SetDocumentation(
+                    DocumentationDescriptor.From(
+                        DocumentationId.BindTagHelper_Element,
+                        entry.ValueAttribute,
+                        entry.ChangeAttribute));
 
                 a.Name = attributeName;
                 a.TypeName = typeof(object).FullName;
@@ -486,7 +488,10 @@ internal class BindTagHelperDescriptorProvider : ITagHelperDescriptorProvider
                 {
                     parameter.Name = "format";
                     parameter.TypeName = typeof(string).FullName;
-                    parameter.Documentation = string.Format(CultureInfo.CurrentCulture, ComponentResources.BindTagHelper_Element_Format_Documentation, attributeName);
+                    parameter.SetDocumentation(
+                        DocumentationDescriptor.From(
+                            DocumentationId.BindTagHelper_Element_Format,
+                            attributeName));
 
                     parameter.SetPropertyName(formatName);
                 });
@@ -495,7 +500,10 @@ internal class BindTagHelperDescriptorProvider : ITagHelperDescriptorProvider
                 {
                     parameter.Name = "event";
                     parameter.TypeName = typeof(string).FullName;
-                    parameter.Documentation = string.Format(CultureInfo.CurrentCulture, ComponentResources.BindTagHelper_Element_Event_Documentation, attributeName);
+                    parameter.SetDocumentation(
+                        DocumentationDescriptor.From(
+                            DocumentationId.BindTagHelper_Element_Event,
+                            attributeName));
 
                     parameter.SetPropertyName(eventName);
                 });
@@ -504,7 +512,7 @@ internal class BindTagHelperDescriptorProvider : ITagHelperDescriptorProvider
                 {
                     parameter.Name = "culture";
                     parameter.TypeName = typeof(CultureInfo).FullName;
-                    parameter.Documentation = ComponentResources.BindTagHelper_Element_Culture_Documentation;
+                    parameter.SetDocumentation(DocumentationDescriptor.BindTagHelper_Element_Culture);
 
                     parameter.SetPropertyName("Culture");
                 });
@@ -513,7 +521,7 @@ internal class BindTagHelperDescriptorProvider : ITagHelperDescriptorProvider
                 {
                     parameter.Name = "get";
                     parameter.TypeName = typeof(object).FullName;
-                    parameter.Documentation = ComponentResources.BindTagHelper_Element_Get_Documentation;
+                    parameter.SetDocumentation(DocumentationDescriptor.BindTagHelper_Element_Get);
 
                     parameter.SetPropertyName("Get");
                     parameter.SetBindAttributeGetSet();
@@ -523,7 +531,7 @@ internal class BindTagHelperDescriptorProvider : ITagHelperDescriptorProvider
                 {
                     parameter.Name = "set";
                     parameter.TypeName = typeof(Delegate).FullName;
-                    parameter.Documentation = ComponentResources.BindTagHelper_Element_Set_Documentation;
+                    parameter.SetDocumentation(DocumentationDescriptor.BindTagHelper_Element_Set);
 
                     parameter.SetPropertyName("Set");
                 });
@@ -532,7 +540,7 @@ internal class BindTagHelperDescriptorProvider : ITagHelperDescriptorProvider
                 {
                     parameter.Name = "after";
                     parameter.TypeName = typeof(Delegate).FullName;
-                    parameter.Documentation = ComponentResources.BindTagHelper_Element_After_Documentation;
+                    parameter.SetDocumentation(DocumentationDescriptor.BindTagHelper_Element_After);
 
                     parameter.SetPropertyName("After");
                 });
@@ -543,7 +551,10 @@ internal class BindTagHelperDescriptorProvider : ITagHelperDescriptorProvider
             {
                 attribute.Name = formatAttributeName;
                 attribute.TypeName = "System.String";
-                attribute.Documentation = string.Format(CultureInfo.CurrentCulture, ComponentResources.BindTagHelper_Element_Format_Documentation, attributeName);
+                attribute.SetDocumentation(
+                    DocumentationDescriptor.From(
+                        DocumentationId.BindTagHelper_Element_Format,
+                        attributeName));
 
                 // WTE has a bug 15.7p1 where a Tag Helper without a display-name that looks like
                 // a C# property will crash trying to create the toolips.
@@ -623,11 +634,11 @@ internal class BindTagHelperDescriptorProvider : ITagHelperDescriptorProvider
 
                 builder.DisplayName = tagHelper.DisplayName;
                 builder.CaseSensitive = true;
-                builder.Documentation = string.Format(
-                    CultureInfo.CurrentCulture,
-                    ComponentResources.BindTagHelper_Component_Documentation,
-                    valueAttribute.Name,
-                    changeAttribute.Name);
+                builder.SetDocumentation(
+                    DocumentationDescriptor.From(
+                        DocumentationId.BindTagHelper_Component,
+                        valueAttribute.Name,
+                        changeAttribute.Name));
 
                 builder.Metadata.Add(ComponentMetadata.SpecialKindKey, ComponentMetadata.Bind.TagHelperKind);
                 builder.Metadata[TagHelperMetadata.Runtime.Name] = ComponentMetadata.Bind.RuntimeName;
@@ -677,11 +688,11 @@ internal class BindTagHelperDescriptorProvider : ITagHelperDescriptorProvider
                 builder.BindAttribute(attribute =>
                 {
                     attribute.Metadata[ComponentMetadata.Common.DirectiveAttribute] = bool.TrueString;
-                    attribute.Documentation = string.Format(
-                        CultureInfo.CurrentCulture,
-                        ComponentResources.BindTagHelper_Component_Documentation,
-                        valueAttribute.Name,
-                        changeAttribute.Name);
+                    attribute.SetDocumentation(
+                        DocumentationDescriptor.From(
+                            DocumentationId.BindTagHelper_Component,
+                            valueAttribute.Name,
+                            changeAttribute.Name));
 
                     attribute.Name = "@bind-" + valueAttribute.Name;
                     attribute.TypeName = changeAttribute.TypeName;
@@ -695,7 +706,7 @@ internal class BindTagHelperDescriptorProvider : ITagHelperDescriptorProvider
                     {
                         parameter.Name = "get";
                         parameter.TypeName = typeof(object).FullName;
-                        parameter.Documentation = ComponentResources.BindTagHelper_Element_Get_Documentation;
+                        parameter.SetDocumentation(DocumentationDescriptor.BindTagHelper_Element_Get);
 
                         parameter.SetPropertyName("Get");
                         parameter.SetBindAttributeGetSet();
@@ -705,7 +716,7 @@ internal class BindTagHelperDescriptorProvider : ITagHelperDescriptorProvider
                     {
                         parameter.Name = "set";
                         parameter.TypeName = typeof(Delegate).FullName;
-                        parameter.Documentation = ComponentResources.BindTagHelper_Element_Set_Documentation;
+                        parameter.SetDocumentation(DocumentationDescriptor.BindTagHelper_Element_Set);
 
                         parameter.SetPropertyName("Set");
                     });
@@ -714,7 +725,7 @@ internal class BindTagHelperDescriptorProvider : ITagHelperDescriptorProvider
                     {
                         parameter.Name = "after";
                         parameter.TypeName = typeof(Delegate).FullName;
-                        parameter.Documentation = ComponentResources.BindTagHelper_Element_After_Documentation;
+                        parameter.SetDocumentation(DocumentationDescriptor.BindTagHelper_Element_After);
 
                         parameter.SetPropertyName("After");
                     });

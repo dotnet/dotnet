@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="15.0">
-  <Import Project="$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildThisFileDirectory), 'README.md'))\packages\Microsoft.VisualStudioEng.MicroBuild.Core\1.0.0\build\Microsoft.VisualStudioEng.MicroBuild.Core.props" Condition="Exists('$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildThisFileDirectory), &quot;README.md&quot;))\packages\Microsoft.VisualStudioEng.MicroBuild.Core\1.0.0\build\Microsoft.VisualStudioEng.MicroBuild.Core.props')" />
-
   <!-- Helper properties -->
   <PropertyGroup>
     <IsXPlat>false</IsXPlat>
@@ -40,7 +38,6 @@
     <SharedDirectory>$(BuildCommonDirectory)Shared</SharedDirectory>
     <NupkgOutputDirectory>$(ArtifactsDirectory)nupkgs\</NupkgOutputDirectory>
     <SolutionPackagesFolder>$(RepositoryRootDirectory)packages\</SolutionPackagesFolder>
-    <ILMergeExePath>$(SolutionPackagesFolder)ilmerge\3.0.21\tools\net452\ILMerge.exe</ILMergeExePath>
     <EnlistmentRoot>$(RepositoryRootDirectory)</EnlistmentRoot>
     <EnlistmentRootSrc>$(RepositoryRootDirectory)src</EnlistmentRootSrc>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">$(RepositoryRootDirectory)</SolutionDir>
@@ -48,9 +45,6 @@
     <NuGetBuildLocalizationRepository>$(RepositoryRootDirectory)submodules\NuGet.Build.Localization\</NuGetBuildLocalizationRepository>
     <LocalizationRootDirectory>$(NuGetBuildLocalizationRepository)localize</LocalizationRootDirectory>
     <LocalizationWorkDirectory>$(RepositoryRootDirectory)localize</LocalizationWorkDirectory>
-    <MicroBuildDirectory>$(SolutionPackagesFolder)microsoft.visualstudioeng.microbuild.core\1.0.0\build\</MicroBuildDirectory>
-    <MicrosoftDotNetBuildTasksFeedFilePath>$(SolutionPackagesFolder)microsoft.dotnet.build.tasks.feed\6.0.0-beta.20528.5\tools\netcoreapp2.1\Microsoft.DotNet.Build.Tasks.Feed.dll</MicrosoftDotNetBuildTasksFeedFilePath>
-    <MicrosoftDotNetMaestroTasksFilePath>$(SolutionPackagesFolder)microsoft.dotnet.maestro.tasks\1.1.0-beta.21378.2\tools\netcoreapp3.1\Microsoft.DotNet.Maestro.Tasks.dll</MicrosoftDotNetMaestroTasksFilePath>
     <NoWarn>$(NoWarn);NU5105;MSB3277;NETSDK1138</NoWarn>
     <!-- additional warnings new in .NET 6 that we need to disable when building with source-build -->
     <NoWarn Condition="'$(DotNetBuildFromSource)' == 'true'">$(NoWarn);CS1998;CA1416;CS0618;CS1574</NoWarn>

@@ -93,7 +93,7 @@
             <ColumnDefinition
               x:Name="_rightSideGridColumn"
               Width="35*"
-              MinWidth="330" />
+              MinWidth="382" />
           </Grid.ColumnDefinitions>
 
           <!-- left side -->

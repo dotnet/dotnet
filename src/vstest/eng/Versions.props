@@ -24,7 +24,7 @@
     <MicrosoftExtensionsDependencyModelPackageVersion>3.0.0-preview4-27615-11</MicrosoftExtensionsDependencyModelPackageVersion>
     <MicrosoftExtensionsFileSystemGlobbingVersion>2.0.0</MicrosoftExtensionsFileSystemGlobbingVersion>
     <MicrosoftFakesVersion>17.4.0-beta.22478.3</MicrosoftFakesVersion>
-    <MicrosoftInternalCodeCoverageVersion>17.7.1-beta.23260.3</MicrosoftInternalCodeCoverageVersion>
+    <MicrosoftInternalCodeCoverageVersion>17.7.2-beta.23267.1</MicrosoftInternalCodeCoverageVersion>
     <MicrosoftCodeCoverageIOVersion>17.7.0</MicrosoftCodeCoverageIOVersion>
     <MicrosoftVisualStudioDiagnosticsUtilitiesVersion>17.6.33617.297</MicrosoftVisualStudioDiagnosticsUtilitiesVersion>
     <MicrosoftVisualStudioEnterpriseAspNetHelper>$(MicrosoftVisualStudioDiagnosticsUtilitiesVersion)</MicrosoftVisualStudioEnterpriseAspNetHelper>
@@ -33,18 +33,20 @@
     <RoslynBannedApiAnalyzersVersion>3.3.3</RoslynBannedApiAnalyzersVersion>
     <RoslynPublicApiAnalyzersVersion>3.3.4-beta1.21554.2</RoslynPublicApiAnalyzersVersion>
     <SystemCollectionsImmutableVersion>1.5.0</SystemCollectionsImmutableVersion>
+    <SystemComponentModelCompositionVersion>4.5.0</SystemComponentModelCompositionVersion>
+    <SystemComponentModelCompositionForSourceBuildVersion>7.0.0</SystemComponentModelCompositionForSourceBuildVersion>
     <SystemMemoryVersion>4.5.5</SystemMemoryVersion>
     <SystemNetHttpVersion>4.3.4</SystemNetHttpVersion>
     <SystemReflectionMetadataVersion>1.6.0</SystemReflectionMetadataVersion>
     <SystemUriVersion>4.3.2</SystemUriVersion>
+    <TestPlatformExternalsVersion>17.6.33617.297</TestPlatformExternalsVersion>
     <TestPlatformMSDiaVersion>17.6.33617.297</TestPlatformMSDiaVersion>
-    <TestPlatformRemoteExternalsVersion>17.6.33617.297</TestPlatformRemoteExternalsVersion>
     <MicrosoftVSSDKBuildToolsVersion>17.4.2116</MicrosoftVSSDKBuildToolsVersion>
     <MicrosoftNetCompilersToolsetVersion>4.6.0-1.23107.10</MicrosoftNetCompilersToolsetVersion>
   </PropertyGroup>
   <PropertyGroup Label="VSTest test settings">
     <!-- Name of the elements must be in sync with test\Microsoft.TestPlatform.TestUtilities\IntegrationTestBase.cs -->
-    <FluentAssertionsVersion>6.7.0</FluentAssertionsVersion>
+    <FluentAssertionsVersion>6.11.0</FluentAssertionsVersion>
     <MoqVersion>4.16.1</MoqVersion>
     <!-- For coverage use our own package on latest stable -->
     <MicrosoftCodeCoverageVersion>17.4.1</MicrosoftCodeCoverageVersion>
@@ -59,9 +61,11 @@
     <NUnit3FrameworkVersion>3.10.1</NUnit3FrameworkVersion>
     <NUnit3AdapterVersion>3.11.0</NUnit3AdapterVersion>
     <NUnitConsoleRunnerVersion>3.8.0</NUnitConsoleRunnerVersion>
-    <!-- Versions that are used when building projects from TestAssets.sln for compatibility tests. See Invoke-TestAssetsBuild in scripts/build.ps1.
-    Exact versions are used to avoid Nuget substituting them by closest match, if we make a typo.
-    These versions need to be "statically" readable because we read this file as xml in our build and tests. -->
+    <!--
+      Versions that are used when building projects from TestAssets.sln for compatibility tests. See Invoke-TestAssetsBuild in scripts/build.ps1.
+      Exact versions are used to avoid Nuget substituting them by closest match, if we make a typo.
+      These versions need to be "statically" readable because we read this file as xml in our build and tests.
+    -->
     <!-- <MSTestFrameworkLatestVersion></MSTestFrameworkLatestVersion> is not here, because we don't build MSTest locally, so we don't have access to the latest version. -->
     <MSTestFrameworkLatestPreviewVersion>[2.3.0-preview-20220613-02]</MSTestFrameworkLatestPreviewVersion>
     <MSTestFrameworkLatestStableVersion>[2.2.10]</MSTestFrameworkLatestStableVersion>
@@ -83,7 +87,5 @@
     <NuGetFrameworksVersion>5.11.0</NuGetFrameworksVersion>
     <ILAsmPackageVersion>5.0.0</ILAsmPackageVersion>
     <JsonNetVersion>13.0.1</JsonNetVersion>
-    <!-- We cannot reuse $(msbuildvar) because we need the text value inside build.ps1 -->
-    <TestPlatformExternalsVersion>17.6.33617.297</TestPlatformExternalsVersion>
   </PropertyGroup>
 </Project>

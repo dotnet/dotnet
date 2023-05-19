@@ -4,57 +4,57 @@
     <body>
       <trans-unit id="AbortedTestRun">
         <source>The active test run was aborted. Reason: {0}</source>
-        <target state="new">The active test run was aborted. Reason: {0}</target>
+        <target state="translated">Der aktive Testlauf wurde abgebrochen. Grund: {0}</target>
         <note />
       </trans-unit>
       <trans-unit id="ConnectionClosed">
         <source>An existing connection was forcibly closed by the remote host.</source>
-        <target state="new">An existing connection was forcibly closed by the remote host.</target>
+        <target state="translated">Das Schließen einer vorhandenen Verbindung wurde vom Remotehost erzwungen.</target>
         <note />
       </trans-unit>
       <trans-unit id="AbortedTestDiscovery">
         <source>The active test discovery was aborted.</source>
-        <target state="new">The active test discovery was aborted.</target>
+        <target state="translated">Die aktive Testerkennung wurde abgebrochen.</target>
         <note />
       </trans-unit>
       <trans-unit id="AbortedTestDiscoveryWithReason">
         <source>The active test discovery was aborted. Reason: {0}</source>
-        <target state="new">The active test discovery was aborted. Reason: {0}</target>
+        <target state="translated">Die aktive Testermittlung wurde abgebrochen. Grund: {0}</target>
         <note />
       </trans-unit>
       <trans-unit id="UnableToCommunicateToTestHost">
         <source>Unable to communicate with test host process.</source>
-        <target state="new">Unable to communicate with test host process.</target>
+        <target state="translated">Die Kommunikation mit dem Testhostprozess ist nicht möglich.</target>
         <note />
       </trans-unit>
       <trans-unit id="UnexpectedMessage">
         <source>Unexpected message received. Expected MessageType : {0} Actual MessageType: {1}</source>
-        <target state="new">Unexpected message received. Expected MessageType : {0} Actual MessageType: {1}</target>
+        <target state="translated">Unerwartete Meldung empfangen. Erwarteter MessageType: {0}. Tatsächlicher MessageType: {1}</target>
         <note />
       </trans-unit>
       <trans-unit id="VersionCheckFailed">
         <source>Protocol version check failed. Make sure test runner and host are compatible.</source>
-        <target state="new">Protocol version check failed. Make sure test runner and host are compatible.</target>
+        <target state="translated">Fehler beim Überprüfen der Protokollversion. Der Test Runner und der Host müssen kompatibel sein.</target>
         <note />
       </trans-unit>
       <trans-unit id="VersionCheckTimedout">
         <source>Failed to negotiate protocol, waiting for response timed out after {0} seconds. This may occur due to machine slowness, please set environment variable {1} to increase timeout.</source>
-        <target state="new">Failed to negotiate protocol, waiting for response timed out after {0} seconds. This may occur due to machine slowness, please set environment variable {1} to increase timeout.</target>
+        <target state="translated">Fehler beim Verhandeln des Protokolls. Timeout beim Warten auf Antwort nach {0} Sekunden. Möglicherweise ist der Computer langsam. Legen Sie die Umgebungsvariable "{1}" fest, um den Timeoutwert zu erhöhen.</target>
         <note />
       </trans-unit>
       <trans-unit id="ConnectionTimeoutErrorMessage">
         <source>{0} process failed to connect to {1} process after {2} seconds. This may occur due to machine slowness, please set environment variable {3} to increase timeout.</source>
-        <target state="new">{0} process failed to connect to {1} process after {2} seconds. This may occur due to machine slowness, please set environment variable {3} to increase timeout.</target>
+        <target state="translated">Fehler beim Herstellen einer Verbindung des Prozesses "{0}" mit dem Prozess "{1}" nach {2} Sekunden. Möglicherweise ist der Computer langsam. Legen Sie die Umgebungsvariable "{3}" fest, um den Timeoutwert zu erhöhen.</target>
         <note />
       </trans-unit>
       <trans-unit id="TestHostProcessCrashed">
         <source>Test host process crashed</source>
-        <target state="new">Test host process crashed</target>
+        <target state="translated">Der Testhostprozess ist abgestürzt.</target>
         <note />
       </trans-unit>
       <trans-unit id="AttachDebuggerToDefaultTestHostFailure">
         <source>Cannot attach the debugger to the default test host.</source>
-        <target state="new">Cannot attach the debugger to the default test host.</target>
+        <target state="translated">Der Debugger kann nicht an den Standardtesthost angefügt werden.</target>
         <note />
       </trans-unit>
     </body>

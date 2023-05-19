@@ -4,12 +4,12 @@
     <body>
       <trans-unit id="CannotFindConsoleRunner">
         <source>Cannot find the console runner {0}.</source>
-        <target state="new">Cannot find the console runner {0}.</target>
+        <target state="translated">Konsol çalıştırıcısı {0} bulunamıyor.</target>
         <note>{0}: the console runner path</note>
       </trans-unit>
       <trans-unit id="ProcessStartWin32Failure">
         <source>An error occurred when opening the file {0} with arguments {1}.</source>
-        <target state="new">An error occurred when opening the file {0} with arguments {1}.</target>
+        <target state="translated">{1} bağımsız değişkenleriyle {0} dosyası açılırken bir hata oluştu.</target>
         <note>{0}: process path
 {1}: arguments passed to the process invocation</note>
       </trans-unit>

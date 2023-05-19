@@ -6,9 +6,8 @@ using System.Globalization;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using Microsoft;
-using NuGet.PackageManagement.UI;
 
-namespace NuGet.Options
+namespace NuGet.PackageManagement.UI.Options
 {
     internal class CheckedListBoxItemAccessibleObject : AccessibleObject
     {

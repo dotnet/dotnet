@@ -1,0 +1,63 @@
+<Project Sdk="Microsoft.Build.NoTargets">
+  <PropertyGroup>
+    <TargetFramework>net472</TargetFramework>
+    <NuGetValidatorToolPath>$(PkgNuGetValidator)\tools\NuGetValidator.exe</NuGetValidatorToolPath>
+    <RepoRoot Condition="'$(RepoRoot)' == ''">$([MSBuild]::GetDirectoryNameOfFileAbove('$(MSBuildThisFileDirectory)', '.git\index'))</RepoRoot>
+    <LocalizationRepository>$(RepoRoot)\submodules\NuGet.Build.Localization\localize\comments\15</LocalizationRepository>
+    <TempDirectory Condition="'$(TempDirectory)' == ''">$(Temp)</TempDirectory>
+    <LogsBasePath Condition="'$(LogsBasePath)' == ''">$(MSBuildThisFileDirectory)BuildValidatorLogs</LogsBasePath>
+  </PropertyGroup>
+  
+  <ItemGroup>
+    <PackageReference Include="NuGetValidator" />
+  </ItemGroup>
+  
+  <Target Name="ValidateConfiguration">
+    <Error Text="NuGet validator tool not found at '$(NuGetValidatorToolPath)'." Condition="!Exists('$(NuGetValidatorToolPath)')" />
+    <Error Text="Unable to determine the repository root, specify the path with the command-line argument /property:RepoRoot=&lt;path&gt;" Condition="'$(RepoRoot)' == ''" />
+    <Error Text="The localization repository was not found at '$(LocalizationRepository)'" Condition="!Exists('$(LocalizationRepository)')" />
+  </Target>
+  
+  <Target Name="ValidateVsix"
+          DependsOnTargets="ValidateConfiguration"
+          Condition="'$(BuildRTM)' != 'true'">
+    <PropertyGroup>
+      <VsixLocation>$(RepoRoot)\artifacts\VS15\NuGet.Tools.vsix</VsixLocation>
+      <VsixExtractLocation>$(TempDirectory)\extractedVsix</VsixExtractLocation>
+      <LogsPath>$(LogsBasePath)\vsix</LogsPath>
+    </PropertyGroup>
+    
+    <Delete Files="$(LogsPath)\**" />
+    
+    <Message Text="Validating NuGet.Tools.Vsix localization..." Importance="High" />
+    
+    <Exec Command="&quot;$(NuGetValidatorToolPath)&quot; localization --vsix --vsix-path &quot;$(VsixLocation)&quot; --vsix-extract-path &quot;$(VsixExtractLocation)&quot; --output-path &quot;$(LogsPath)&quot; --comments-path &quot;$(LocalizationRepository)&quot;" IgnoreStandardErrorWarningFormat="true" LogStandardErrorAsError="true" />
+  
+    <OnError ExecuteTargets="IncludeValidatorLogsInBinLog"/>
+  </Target>
+
+  <Target Name="ValidateArtifacts"
+          DependsOnTargets="ValidateConfiguration"
+          Condition="'$(BuildRTM)' != 'true'">
+    <PropertyGroup>
+      <ArtifactsLocation>$(RepoRoot)\artifacts</ArtifactsLocation>
+      <VsixExtractLocation>$(TempDirectory)\extractedVsix</VsixExtractLocation>
+      <LogsPath>$(LogsBasePath)\artifacts</LogsPath>
+    </PropertyGroup>
+    
+    <Delete Files="$(LogsPath)\**" />
+    
+    <Message Text="Validating NuGet.Tools.Vsix localization..." Importance="High" />
+  
+    <Exec Command="&quot;$(NuGetValidatorToolPath)&quot; localization --artifacts-path &quot;$(ArtifactsLocation)&quot; --output-path &quot;$(LogsPath)&quot; --comments-path &quot;$(LocalizationRepository)&quot; --filter-paths-containing net45" IgnoreStandardErrorWarningFormat="true" LogStandardErrorAsError="true" />
+  
+    <OnError ExecuteTargets="IncludeValidatorLogsInBinLog"/>
+  </Target>
+
+  <Target Name="IncludeValidatorLogsInBinLog"
+          Condition="'$(LogsPath)' != ''">
+    <ItemGroup>
+      <EmbedInBinlog Include="$(LogsPath)\**" />
+    </ItemGroup>
+  </Target>
+</Project>

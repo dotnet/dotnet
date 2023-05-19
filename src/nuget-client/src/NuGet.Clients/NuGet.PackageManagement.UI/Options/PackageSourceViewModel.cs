@@ -3,10 +3,9 @@
 
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
-using NuGet.PackageManagement.UI;
 using NuGet.VisualStudio.Internal.Contracts;
 
-namespace NuGet.Options
+namespace NuGet.PackageManagement.UI.Options
 {
     public class PackageSourceViewModel : INotifyPropertyChanged, ISelectableItem
     {

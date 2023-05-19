@@ -10,13 +10,12 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using Microsoft.ServiceHub.Framework;
 using Microsoft.VisualStudio.PlatformUI;
-using NuGet.PackageManagement.UI;
 using NuGet.VisualStudio;
 using NuGet.VisualStudio.Common;
 using NuGet.VisualStudio.Internal.Contracts;
 using Task = System.Threading.Tasks.Task;
 
-namespace NuGet.Options
+namespace NuGet.PackageManagement.UI.Options
 {
     public partial class AddMappingDialog : DialogWindow
     {

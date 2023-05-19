@@ -1,5 +1,5 @@
 <ResourceDictionary
-  x:Class="NuGet.Options.SharedResources"
+  x:Class="NuGet.PackageManagement.UI.Options.SharedResources"
   x:ClassModifier="internal"
   xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">

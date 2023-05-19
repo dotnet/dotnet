@@ -45,6 +45,8 @@ internal class VisualStudioMacLanguageServerFeatureOptions : LanguageServerFeatu
 
     public override bool ReturnCodeActionAndRenamePathsWithPrefixedSlash => false;
 
+    public override bool UpdateBuffersForClosedDocuments => false;
+
     private bool IsCodespacesOrLiveshare => _lspEditorFeatureDetector.IsRemoteClient() || _lspEditorFeatureDetector.IsLiveShareHost();
 
 }

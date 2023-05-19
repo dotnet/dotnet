@@ -41,6 +41,11 @@ internal partial class JsonDataWriter
     {
     }
 
+    public void Write(bool value)
+    {
+        _writer.WriteValue(value);
+    }
+
     public void Write(string propertyName, bool value)
     {
         _writer.WritePropertyName(propertyName);
@@ -63,6 +68,11 @@ internal partial class JsonDataWriter
         }
     }
 
+    public void Write(int value)
+    {
+        _writer.WriteValue(value);
+    }
+
     public void Write(string propertyName, int value)
     {
         _writer.WritePropertyName(propertyName);
@@ -75,6 +85,11 @@ internal partial class JsonDataWriter
         {
             Write(propertyName, value);
         }
+    }
+
+    public void Write(string? value)
+    {
+        _writer.WriteValue(value);
     }
 
     public void Write(string propertyName, string? value)
@@ -96,6 +111,31 @@ internal partial class JsonDataWriter
         if (value is not null)
         {
             Write(propertyName, value);
+        }
+    }
+
+    public void WriteValue(object? value)
+    {
+        switch (value)
+        {
+            case string s:
+                Write(s);
+                break;
+
+            case int i:
+                Write(i);
+                break;
+
+            case bool b:
+                Write(b);
+                break;
+
+            case null:
+                Write((string?)null);
+                break;
+
+            default:
+                throw new NotSupportedException();
         }
     }
 

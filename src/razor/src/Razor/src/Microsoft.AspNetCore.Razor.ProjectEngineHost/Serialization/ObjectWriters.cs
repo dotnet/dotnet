@@ -2,6 +2,7 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
@@ -83,7 +84,7 @@ internal static class ObjectWriters
         writer.Write(nameof(value.Kind), value.Kind);
         writer.Write(nameof(value.Name), value.Name);
         writer.Write(nameof(value.AssemblyName), value.AssemblyName);
-        writer.WriteIfNotNull(nameof(value.Documentation), value.Documentation);
+        WriteDocumentationObject(writer, nameof(value.Documentation), value.DocumentationObject);
         writer.WriteIfNotNull(nameof(value.TagOutputHint), value.TagOutputHint);
         writer.Write(nameof(value.CaseSensitive), value.CaseSensitive);
         writer.WriteArray(nameof(value.TagMatchingRules), value.TagMatchingRules, WriteTagMatchingRule);
@@ -91,6 +92,36 @@ internal static class ObjectWriters
         writer.WriteArrayIfNotNullOrEmpty(nameof(value.AllowedChildTags), value.AllowedChildTags, WriteAllowedChildTag);
         writer.WriteArrayIfNotNullOrEmpty(nameof(value.Diagnostics), value.Diagnostics, Write);
         writer.WriteObject(nameof(value.Metadata), value.Metadata, WriteMetadata);
+
+        static void WriteDocumentationObject(JsonDataWriter writer, string propertyName, DocumentationObject documentationObject)
+        {
+            switch (documentationObject.Object)
+            {
+                case DocumentationDescriptor descriptor:
+                    writer.WriteObject(propertyName, descriptor, static (writer, value) =>
+                    {
+                        writer.Write(nameof(value.Id), (int)value.Id);
+                        if (value.Args is { Length: > 0 })
+                        {
+                            writer.WriteArray(nameof(value.Args), value.Args, static (w, v) => w.WriteValue(v));
+                        }
+                    });
+
+                    break;
+
+                case string text:
+                    writer.Write(propertyName, text);
+                    break;
+
+                case null:
+                    // Don't write a property if there isn't any documentation.
+                    break;
+
+                default:
+                    Debug.Fail($"Documentation objects should only be of type {nameof(DocumentationDescriptor)}, string, or null.");
+                    break;
+            }
+        }
 
         static void WriteTagMatchingRule(JsonDataWriter writer, TagMatchingRuleDescriptor value)
         {
@@ -132,7 +163,7 @@ internal static class ObjectWriters
                 writer.WriteIfNotTrue(nameof(value.IsEditorRequired), value.IsEditorRequired);
                 writer.WriteIfNotNull(nameof(value.IndexerNamePrefix), value.IndexerNamePrefix);
                 writer.WriteIfNotNull(nameof(value.IndexerTypeName), value.IndexerTypeName);
-                writer.WriteIfNotNull(nameof(value.Documentation), value.Documentation);
+                WriteDocumentationObject(writer, nameof(value.Documentation), value.DocumentationObject);
                 writer.WriteArrayIfNotNullOrEmpty(nameof(value.Diagnostics), value.Diagnostics, Write);
                 writer.WriteObject(nameof(value.Metadata), value.Metadata, WriteMetadata);
                 writer.WriteArrayIfNotNullOrEmpty(nameof(value.BoundAttributeParameters), value.BoundAttributeParameters, WriteBoundAttributeParameter);
@@ -146,7 +177,7 @@ internal static class ObjectWriters
                 writer.Write(nameof(value.Name), value.Name);
                 writer.Write(nameof(value.TypeName), value.TypeName);
                 writer.WriteIfNotTrue(nameof(value.IsEnum), value.IsEnum);
-                writer.WriteIfNotNull(nameof(value.Documentation), value.Documentation);
+                WriteDocumentationObject(writer, nameof(value.Documentation), value.DocumentationObject);
                 writer.WriteArrayIfNotNullOrEmpty(nameof(value.Diagnostics), value.Diagnostics, Write);
                 writer.WriteObject(nameof(value.Metadata), value.Metadata, WriteMetadata);
             });

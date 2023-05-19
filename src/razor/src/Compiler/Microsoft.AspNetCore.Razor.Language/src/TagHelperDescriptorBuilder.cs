@@ -124,4 +124,14 @@ public abstract partial class TagHelperDescriptorBuilder
     public abstract TagHelperDescriptor Build();
 
     public abstract void Reset();
+
+    internal virtual void SetDocumentation(string text)
+    {
+        throw new NotImplementedException();
+    }
+
+    internal virtual void SetDocumentation(DocumentationDescriptor documentation)
+    {
+        throw new NotImplementedException();
+    }
 }

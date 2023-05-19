@@ -8,5 +8,8 @@
   // Arcade-powered source-build.
   "sdk": {
     "allowPrerelease": true
+  },
+  "msbuild-sdks": {
+    "Microsoft.Build.NoTargets": "3.7.0"
   }
 }

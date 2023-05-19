@@ -44,7 +44,7 @@ internal sealed class BoundAttributeDescriptorComparer : IEqualityComparer<Bound
             descriptorX.IndexerNamePrefix != descriptorY.IndexerNamePrefix ||
             descriptorX.TypeName != descriptorY.TypeName ||
             descriptorX.IndexerTypeName != descriptorY.IndexerTypeName ||
-            descriptorX.Documentation != descriptorY.Documentation ||
+            descriptorX.DocumentationObject != descriptorY.DocumentationObject ||
             descriptorX.DisplayName != descriptorY.DisplayName)
         {
             return false;

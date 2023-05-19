@@ -34,7 +34,7 @@
 
     <file src="netcoreapp3.1\Newtonsoft.Json\Newtonsoft.Json.dll" target="contentFiles\any\netcoreapp3.1" />
     <file src="netcoreapp3.1\NuGet.Frameworks\NuGet.Frameworks.dll" target="contentFiles\any\netcoreapp3.1" />
-    <file src="netcoreapp3.1\Microsoft.Internal.TestPlatform.Remote\Extensions\System.ComponentModel.Composition.dll" target="contentFiles\any\netcoreapp3.1" />
+    <file src="netcoreapp3.1\System.ComponentModel.Composition.dll" target="contentFiles\any\netcoreapp3.1" />
 
     <file src="$TesthostRuntimeconfig$\testhost-1.0.runtimeconfig.json" target="contentFiles\any\netcoreapp3.1" />
     <file src="$TesthostRuntimeconfig$\testhost-1.1.runtimeconfig.json" target="contentFiles\any\netcoreapp3.1" />
@@ -125,7 +125,7 @@
     <file src="net472\NuGet.Frameworks\NuGet.Frameworks.dll" target="contentFiles\any\netcoreapp3.1\TestHostNetFramework" />
 
     <file src="net472\NETStandard.Library\**\*.dll" exclude="**\mscorlib.dll;**\*.xml" target="contentFiles\any\netcoreapp3.1\TestHostNetFramework" />
-    <file src="net472\System*.dll" target="contentFiles\any\netcoreapp3.1\TestHostNetFramework" />
+    <file src="net472\System*.dll" exclude="net472\System.ComponentModel.Composition.dll" target="contentFiles\any\netcoreapp3.1\TestHostNetFramework" />
 
     <!-- Resources -->
     <file src="netcoreapp3.1\Microsoft.CodeCoverage.IO\cs\Microsoft.CodeCoverage.IO.resources.dll" target="contentFiles\any\netcoreapp3.1\cs" />

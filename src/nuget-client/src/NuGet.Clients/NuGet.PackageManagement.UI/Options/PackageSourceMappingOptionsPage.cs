@@ -5,13 +5,10 @@ using System;
 using System.ComponentModel;
 using System.Runtime.InteropServices;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Windows;
 using Microsoft.VisualStudio.Shell;
-using NuGet.PackageManagement.UI;
-using NuGet.VisualStudio;
 
-namespace NuGet.Options
+namespace NuGet.PackageManagement.UI.Options
 {
     /// <summary>
     /// The Tools>Options page for "Package Source Mapping".
