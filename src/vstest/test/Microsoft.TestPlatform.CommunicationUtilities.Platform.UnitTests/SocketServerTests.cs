@@ -140,7 +140,7 @@ public class SocketServerTests : SocketTestsBase, IDisposable
     [TestMethod]
     public async Task SocketEndpointShouldInitializeChannelOnServerConnection()
     {
-        var channel = SetupChannel(out ConnectedEventArgs _);
+        var channel = SetupChannel(out ConnectedEventArgs? _);
 
         await channel!.Send(Dummydata);
 

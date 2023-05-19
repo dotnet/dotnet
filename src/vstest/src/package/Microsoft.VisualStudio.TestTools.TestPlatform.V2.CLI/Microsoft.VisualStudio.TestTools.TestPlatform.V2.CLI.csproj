@@ -29,7 +29,6 @@
     <!-- Properties for items we include in VSIX -->
     <ExtensionInstallationRelativeToVS>[installDir]\Common7\IDE\Extensions\TestPlatform</ExtensionInstallationRelativeToVS>
     <TestPlatformCliBinFolder>$(ArtifactsBinDir)Microsoft.TestPlatform.CLI\$(Configuration)\$(NetFrameworkMinimum)\</TestPlatformCliBinFolder>
-    <InternalTestPlatformRemoteFolder>$(TestPlatformCliBinFolder)Microsoft.Internal.TestPlatform.Remote\Extensions\</InternalTestPlatformRemoteFolder>
     <TestPlatformBinFolder>$(ArtifactsBinDir)Microsoft.TestPlatform\$(Configuration)\net472\</TestPlatformBinFolder>
     <MsDiaFolder>$(TestPlatformBinFolder)Microsoft.Internal.Dia\</MsDiaFolder>
     <CUITFolder>$(TestPlatformBinFolder)Microsoft.VisualStudio.CUIT\</CUITFolder>
@@ -118,13 +117,13 @@
 
     <!-- Cpp Extensions -->
     <ItemGroup>
-      <VsixSourceItem Include="$(InternalTestPlatformRemoteFolder)*" Exclude="$(InternalTestPlatformRemoteFolder)*.pdb;$(InternalTestPlatformRemoteFolder)Microsoft.VisualStudio.TestTools.CppUnitTestFramework.ComInterfaces.dll;$(InternalTestPlatformRemoteFolder)Microsoft.VisualStudio.TestTools.CppUnitTestFramework.CppUnitTestExtension.dll;$(InternalTestPlatformRemoteFolder)System.ComponentModel.Composition.dll">
+      <VsixSourceItem Include="$(InternalTestPlatformExtensionsFolder)\Extensions\Cpp\*" Exclude="$(InternalTestPlatformExtensionsFolder)\Extensions\Cpp\*.pdb">
         <VSIXSubPath>Extensions\Cpp</VSIXSubPath>
       </VsixSourceItem>
-      <VsixSourceItem Include="$(InternalTestPlatformRemoteFolder)arm64\*" Exclude="$(InternalTestPlatformRemoteFolder)arm64\*.pdb">
+      <VsixSourceItem Include="$(InternalTestPlatformExtensionsFolder)\Extensions\Cpp\arm64\dbghelp.dll">
         <VSIXSubPath>Extensions\Cpp\arm64</VSIXSubPath>
       </VsixSourceItem>
-      <VsixSourceItem Include="$(InternalTestPlatformRemoteFolder)x64\*" Exclude="$(InternalTestPlatformRemoteFolder)x64\*.pdb">
+      <VsixSourceItem Include="$(InternalTestPlatformExtensionsFolder)\Extensions\Cpp\x64\dbghelp.dll">
         <VSIXSubPath>Extensions\Cpp\x64</VSIXSubPath>
       </VsixSourceItem>
     </ItemGroup>

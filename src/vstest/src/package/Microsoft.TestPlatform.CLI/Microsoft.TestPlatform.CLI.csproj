@@ -7,6 +7,7 @@
     <When Condition=" '$(DotNetBuildFromSource)' == 'true' ">
       <PropertyGroup>
         <NuspecFile>Microsoft.TestPlatform.CLI.sourcebuild.nuspec</NuspecFile>
+        <SystemComponentModelCompositionVersion>$(SystemComponentModelCompositionForSourceBuildVersion)</SystemComponentModelCompositionVersion>
       </PropertyGroup>
     </When>
     <Otherwise>
@@ -67,12 +68,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="System.ComponentModel.Composition" Version="$(SystemComponentModelCompositionVersion)" GeneratePathProperty="true" />
     <PackageReference Include="Microsoft.CodeCoverage.IO" Version="$(MicrosoftCodeCoverageIOVersion)" GeneratePathProperty="true" Condition=" '$(DotNetBuildFromSource)' != 'true' " />
     <PackageReference Include="Microsoft.Extensions.DependencyModel" Version="$(MicrosoftExtensionsDependencyModelPackageVersion)" GeneratePathProperty="true" />
     <PackageReference Include="Microsoft.Extensions.FileSystemGlobbing" Version="$(MicrosoftExtensionsFileSystemGlobbingVersion)" GeneratePathProperty="true" />
     <PackageReference Include="Newtonsoft.Json" Version="$(NewtonsoftJsonVersion)" GeneratePathProperty="true" />
     <PackageReference Include="NuGet.Frameworks" Version="$(NuGetFrameworksVersion)" GeneratePathProperty="true" />
-    <PackageReference Include="Microsoft.Internal.TestPlatform.Remote" Version="$(TestPlatformRemoteExternalsVersion)" PrivateAssets="All" GeneratePathProperty="true" />
     <PackageReference Include="Microsoft.Diagnostics.NETCore.Client" Version="$(MicrosoftDiagnosticsNETCoreClientVersion)" PrivateAssets="All" GeneratePathProperty="true" />
     <PackageReference Include="NETStandard.Library" Version="$(NETStandardLibraryVersion)" PrivateAssets="All" GeneratePathProperty="true" Condition="'$(TargetFramework)'=='net472'" />
     <PackageReference Include="Microsoft.Internal.Dia" Version="$(TestPlatformMSDiaVersion)" PrivateAssets="All" GeneratePathProperty="true" Condition="'$(TargetFramework)'=='net472'" />
@@ -86,7 +87,7 @@
       <NewtonsoftJson Include="$(PkgNewtonsoft_Json)\lib\netstandard2.0\*"></NewtonsoftJson>
       <NuGetFrameworks Include="$(PkgNuGet_Frameworks)\lib\netstandard2.0\*"></NuGetFrameworks>
       <MicrosoftInternalDia Include="$(PkgMicrosoft_Internal_Dia)\tools\netstandard\**\*"></MicrosoftInternalDia>
-      <MicrosoftInternalTestPlatformRemote Include="$(PkgMicrosoft_Internal_TestPlatform_Remote)\tools\netstandard\**\*"></MicrosoftInternalTestPlatformRemote>
+      <SystemComponentModelComposition Include="$(PkgSystem_ComponentModel_Composition)\lib\netstandard2.0\**\*"></SystemComponentModelComposition>
       <MicrosoftDiagnosticsNETCoreClient Include="$(PkgMicrosoft_Diagnostics_NETCore_Client)\lib\netstandard2.0\**\*"></MicrosoftDiagnosticsNETCoreClient>
       <NETStandardLibrary Include="$(PkgNETStandard_Library)\build\netstandard2.0\ref\**\*"></NETStandardLibrary>
       <MicrosoftInternalDia Include="$(PkgMicrosoft_Internal_Dia)\tools\net451\**\*"></MicrosoftInternalDia>
@@ -97,7 +98,7 @@
     <Copy SourceFiles="@(MicrosoftExtensionsFileSystemGlobbing)" DestinationFiles="$(OutDir)\Microsoft.Extensions.FileSystemGlobbing\%(RecursiveDir)%(Filename)%(Extension)" />
     <Copy SourceFiles="@(NewtonsoftJson)" DestinationFiles="$(OutDir)\Newtonsoft.Json\%(RecursiveDir)%(Filename)%(Extension)" />
     <Copy SourceFiles="@(NuGetFrameworks)" DestinationFiles="$(OutDir)\NuGet.Frameworks\%(RecursiveDir)%(Filename)%(Extension)" />
-    <Copy SourceFiles="@(MicrosoftInternalTestPlatformRemote)" DestinationFiles="$(OutDir)\Microsoft.Internal.TestPlatform.Remote\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Copy SourceFiles="@(SystemComponentModelComposition)" DestinationFiles="$(OutDir)\%(RecursiveDir)%(Filename)%(Extension)" />
     <Copy SourceFiles="@(MicrosoftDiagnosticsNETCoreClient)" DestinationFiles="$(OutDir)\Microsoft.Diagnostics.NETCore.Client\%(RecursiveDir)%(Filename)%(Extension)" />
     <Copy SourceFiles="@(NETStandardLibrary)" DestinationFiles="$(OutDir)\NETStandard.Library\%(RecursiveDir)%(Filename)%(Extension)" />
     <Copy SourceFiles="@(MicrosoftInternalDia)" DestinationFiles="$(OutDir)\Microsoft.Internal.Dia\%(RecursiveDir)%(Filename)%(Extension)" />

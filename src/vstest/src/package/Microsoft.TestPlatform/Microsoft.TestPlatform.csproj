@@ -61,6 +61,7 @@
   </ItemGroup>
 
   <ItemGroup Condition=" '$(TargetFramework)' == 'net472' ">
+    <PackageReference Include="System.ComponentModel.Composition" Version="$(SystemComponentModelCompositionVersion)" GeneratePathProperty="true" />
     <PackageReference Include="System.Memory" Version="$(SystemMemoryVersion)" />
     <PackageReference Include="Microsoft.CodeCoverage.Instrumentation" Version="$(MicrosoftInternalCodeCoverageVersion)" PrivateAssets="All" GeneratePathProperty="true" />
     <PackageReference Include="Microsoft.CodeCoverage.IO" Version="$(MicrosoftCodeCoverageIOVersion)" GeneratePathProperty="true" />
@@ -83,7 +84,6 @@
     <PackageReference Include="Microsoft.VisualStudio.CUIT" Version="$(TestPlatformExternalsVersion)" PrivateAssets="All" GeneratePathProperty="true" />
     <PackageReference Include="Microsoft.VSSDK.BuildTools" Version="$(MicrosoftVSSDKBuildToolsVersion)" PrivateAssets="All" GeneratePathProperty="true" />
     <PackageReference Include="Microsoft.QualityTools.Testing.Fakes.TestRunnerHarness" Version="$(MicrosoftFakesVersion)" PrivateAssets="All" GeneratePathProperty="true" />
-    <PackageReference Include="Microsoft.Internal.TestPlatform.Remote" Version="$(TestPlatformRemoteExternalsVersion)" PrivateAssets="All" GeneratePathProperty="true" />
   </ItemGroup>
 
   <Target Name="CopyFiles" AfterTargets="Build" Condition=" '$(TargetFramework)' == 'net472' ">
@@ -97,6 +97,7 @@
       <NewtonsoftJsonFiles Include="$(PkgNewtonsoft_Json)\lib\netstandard2.0\*"></NewtonsoftJsonFiles>
       <NuGetFrameworksFiles Include="$(PkgNuGet_Frameworks)\lib\netstandard2.0\*"></NuGetFrameworksFiles>
       <SystemCollectionsImmutableFiles Include="$(PkgSystem_Collections_Immutable)\lib\netstandard2.0\*"></SystemCollectionsImmutableFiles>
+      <SystemComponentModelComposition Include="$(PkgSystem_ComponentModel_Composition)\lib\netstandard2.0\**\*"></SystemComponentModelComposition>
       <SystemReflectionMetadataFiles Include="$(PkgSystem_Reflection_Metadata)\lib\netstandard2.0\*"></SystemReflectionMetadataFiles>
       <MicrosoftInternalDiaFiles Include="$(PkgMicrosoft_Internal_Dia)\tools\net451\**\*"></MicrosoftInternalDiaFiles>
       <MicrosoftInternalIntellitraceFiles Include="$(PkgMicrosoft_Internal_Intellitrace)\tools\net451\**\*"></MicrosoftInternalIntellitraceFiles>
@@ -119,6 +120,7 @@
     <Copy SourceFiles="@(NewtonsoftJsonFiles)" DestinationFiles="$(OutDir)\%(RecursiveDir)%(Filename)%(Extension)" />
     <Copy SourceFiles="@(NuGetFrameworksFiles)" DestinationFiles="$(OutDir)\%(RecursiveDir)%(Filename)%(Extension)" />
     <Copy SourceFiles="@(SystemCollectionsImmutableFiles)" DestinationFiles="$(OutDir)\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Copy SourceFiles="@(SystemComponentModelComposition)" DestinationFiles="$(OutDir)\%(RecursiveDir)%(Filename)%(Extension)" />
     <Copy SourceFiles="@(SystemReflectionMetadataFiles)" DestinationFiles="$(OutDir)\%(RecursiveDir)%(Filename)%(Extension)" />
     <Copy SourceFiles="@(MicrosoftInternalDiaFiles)" DestinationFiles="$(OutDir)\Microsoft.Internal.Dia\%(RecursiveDir)%(Filename)%(Extension)" />
     <Copy SourceFiles="@(MicrosoftInternalIntellitraceFiles)" DestinationFiles="$(OutDir)\Microsoft.Internal.Intellitrace\%(RecursiveDir)%(Filename)%(Extension)" />
@@ -130,6 +132,5 @@
     <Copy SourceFiles="@(MicrosoftVisualStudioCUITFiles)" DestinationFolder="$(OutDir)\Microsoft.VisualStudio.CUIT" />
     <Copy SourceFiles="@(MicrosoftVSSDKBuildToolsFiles)" DestinationFolder="$(OutDir)\Microsoft.VSSDK.BuildTools" />
     <Copy SourceFiles="@(MicrosoftQualityToolsTestingFakesTestRunnerHarnessFiles)" DestinationFiles="$(OutDir)\Microsoft.QualityTools.Testing.Fakes.TestRunnerHarness\%(RecursiveDir)%(Filename)%(Extension)" />
-    <Copy SourceFiles="@(MicrosoftInternalTestPlatformRemoteFiles)" DestinationFiles="$(OutDir)\Microsoft.Internal.TestPlatform.Remote\%(RecursiveDir)%(Filename)%(Extension)" />
   </Target>
 </Project>

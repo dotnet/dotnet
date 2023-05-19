@@ -4,27 +4,27 @@
     <body>
       <trans-unit id="BuildCompleted">
         <source>Build completed.</source>
-        <target state="new">Build completed.</target>
+        <target state="translated">Sestavení bylo dokončeno.</target>
         <note />
       </trans-unit>
       <trans-unit id="BuildStarted">
         <source>Build started, please wait...</source>
-        <target state="new">Build started, please wait...</target>
+        <target state="translated">Začalo sestavování. Počkejte prosím...</target>
         <note />
       </trans-unit>
       <trans-unit id="TestRunningSummary">
         <source>Test run for {0} ({1})</source>
-        <target state="new">Test run for {0} ({1})</target>
+        <target state="translated">Testovací běh pro {0} ({1})</target>
         <note />
       </trans-unit>
       <trans-unit id="UpdateTestSdkForCollectingCodeCoverage">
         <source>Warning: Update the Microsoft.NET.Test.Sdk package reference to version 15.8.0 or later to collect code coverage.</source>
-        <target state="new">Warning: Update the Microsoft.NET.Test.Sdk package reference to version 15.8.0 or later to collect code coverage.</target>
+        <target state="translated">Upozornění: Aktualizujte odkaz na balíček Microsoft.NET.Test.Sdk na verzi 15.8.0 nebo novější, aby se získalo pokrytí kódu.</target>
         <note />
       </trans-unit>
       <trans-unit id="NoIsTestProjectProperty">
         <source>Skipping running test for project {0}. To run tests with dotnet test add "&lt;IsTestProject&gt;true&lt;/IsTestProject&gt;" property to project file.</source>
-        <target state="new">Skipping running test for project {0}. To run tests with dotnet test add "&lt;IsTestProject&gt;true&lt;/IsTestProject&gt;" property to project file.</target>
+        <target state="translated">Přeskakuje se spuštění testu pro projekt {0}. Pokud chcete spustit testy pomocí příkazu dotnet test, přidejte do souboru projektu vlastnost &lt;IsTestProject&gt;true&lt;/IsTestProject&gt;.</target>
         <note />
       </trans-unit>
     </body>

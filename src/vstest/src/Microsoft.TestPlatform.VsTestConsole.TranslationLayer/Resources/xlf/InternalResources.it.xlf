@@ -4,12 +4,12 @@
     <body>
       <trans-unit id="CannotFindConsoleRunner">
         <source>Cannot find the console runner {0}.</source>
-        <target state="new">Cannot find the console runner {0}.</target>
+        <target state="translated">Impossibile trovare lo strumento di esecuzione della console {0}..</target>
         <note>{0}: the console runner path</note>
       </trans-unit>
       <trans-unit id="ProcessStartWin32Failure">
         <source>An error occurred when opening the file {0} with arguments {1}.</source>
-        <target state="new">An error occurred when opening the file {0} with arguments {1}.</target>
+        <target state="translated">Errore durante l'apertura del file {0} con argomenti {1}.</target>
         <note>{0}: process path
 {1}: arguments passed to the process invocation</note>
       </trans-unit>

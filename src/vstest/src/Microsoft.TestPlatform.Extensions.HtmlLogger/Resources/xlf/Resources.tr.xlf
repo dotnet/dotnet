@@ -4,22 +4,22 @@
     <body>
       <trans-unit id="HtmlFilePath">
         <source>Html test results file : {0}</source>
-        <target state="new">Html test results file : {0}</target>
+        <target state="translated">HTML test sonuçları dosyası: {0}</target>
         <note />
       </trans-unit>
       <trans-unit id="HtmlLoggerError">
         <source>Html Logger Error : {0}</source>
-        <target state="new">Html Logger Error : {0}</target>
+        <target state="translated">HTML Günlükçü Hatası: {0}</target>
         <note />
       </trans-unit>
       <trans-unit id="PrefixAndNameProvidedError">
         <source>The parameters LogFileName and LogFilePrefix cannot be given together.</source>
-        <target state="new">The parameters LogFileName and LogFilePrefix cannot be given together.</target>
+        <target state="translated">LogFileName ve LogFilePrefix parametreleri birlikte kullanılamaz. </target>
         <note />
       </trans-unit>
       <trans-unit id="CannotGenerateUniqueFilePath">
         <source>Cannot generate a unique file name for name '{0}' on path '{1}'.</source>
-        <target state="new">Cannot generate a unique file name for name '{0}' on path '{1}'.</target>
+        <target state="translated">'{1}' yolunda '{0}' adı için benzersiz bir dosya adı oluşturulamıyor.</target>
         <note />
       </trans-unit>
     </body>

@@ -4,32 +4,32 @@
     <body>
       <trans-unit id="InvalidRunSettingsXml">
         <source>Run settings XML does not contain "RunSettings" node.</source>
-        <target state="new">Run settings XML does not contain "RunSettings" node.</target>
+        <target state="translated">El archivo XML de parámetros de ejecución no contiene el nodo "RunSettings".</target>
         <note />
       </trans-unit>
       <trans-unit id="InvalidSettingsIncorrectValue">
         <source>Invalid setting '{0}'. Invalid value '{1}' specified for '{2}'.</source>
-        <target state="new">Invalid setting '{0}'. Invalid value '{1}' specified for '{2}'.</target>
+        <target state="translated">Parámetro '{0}' no válido. Se ha especificado un valor no válido ({1}) para '{2}'.</target>
         <note />
       </trans-unit>
       <trans-unit id="MissingRunSettingsNode">
         <source>Could not find 'RunSettings' node.</source>
-        <target state="new">Could not find 'RunSettings' node.</target>
+        <target state="translated">No se encuentra el nodo 'RunSettings'.</target>
         <note />
       </trans-unit>
       <trans-unit id="NoRunSettingsNodeFound">
         <source>Could not find 'RunSettings' node.</source>
-        <target state="new">Could not find 'RunSettings' node.</target>
+        <target state="translated">No se encuentra el nodo 'RunSettings'.</target>
         <note />
       </trans-unit>
       <trans-unit id="RunSettingsParseError">
         <source>An error occurred while loading the settings.  Error: {0}.</source>
-        <target state="new">An error occurred while loading the settings.  Error: {0}.</target>
+        <target state="translated">Error al cargar la configuración. Error: {0}.</target>
         <note />
       </trans-unit>
       <trans-unit id="UnExpectedSettingsFile">
         <source>Unexpected settings file specified.</source>
-        <target state="new">Unexpected settings file specified.</target>
+        <target state="translated">Se ha especificado un archivo de configuración no esperado.</target>
         <note />
       </trans-unit>
     </body>

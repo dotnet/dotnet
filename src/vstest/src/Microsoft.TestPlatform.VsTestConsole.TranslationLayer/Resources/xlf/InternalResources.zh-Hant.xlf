@@ -4,12 +4,12 @@
     <body>
       <trans-unit id="CannotFindConsoleRunner">
         <source>Cannot find the console runner {0}.</source>
-        <target state="new">Cannot find the console runner {0}.</target>
+        <target state="translated">找不到主控台執行器 {0}。</target>
         <note>{0}: the console runner path</note>
       </trans-unit>
       <trans-unit id="ProcessStartWin32Failure">
         <source>An error occurred when opening the file {0} with arguments {1}.</source>
-        <target state="new">An error occurred when opening the file {0} with arguments {1}.</target>
+        <target state="translated">開啟具有引數 {1} 的檔案 {0} 時發生錯誤。</target>
         <note>{0}: process path
 {1}: arguments passed to the process invocation</note>
       </trans-unit>

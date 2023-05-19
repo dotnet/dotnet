@@ -4,94 +4,94 @@
     <body>
       <trans-unit id="FileNotFound">
         <source>'{0}' not found.</source>
-        <target state="new">'{0}' not found.</target>
+        <target state="translated">'{0}' bulunamadı.</target>
         <note />
       </trans-unit>
       <trans-unit id="AvailableDiscoverersHeaderMessage">
         <source>The following Test Discovery Add-Ins are available:</source>
-        <target state="new">The following Test Discovery Add-Ins are available:</target>
+        <target state="translated">Şu Test Bulma Eklentileri kullanılabilir:</target>
         <note />
       </trans-unit>
       <trans-unit id="AvailableExecutorsHeaderMessage">
         <source>The following Test Execution Add-Ins are available:</source>
-        <target state="new">The following Test Execution Add-Ins are available:</target>
+        <target state="translated">Şu Test Yürütmesi eklentileri kullanılabilir:</target>
         <note />
       </trans-unit>
       <trans-unit id="AvailableExtensionsMetadataFormat">
         <source>        {0}: {1}</source>
-        <target state="new">        {0}: {1}</target>
+        <target state="translated">        {0}: {1}</target>
         <note />
       </trans-unit>
       <trans-unit id="AvailableLoggersHeaderMessage">
         <source>The following Test Logger Add-Ins are available:</source>
-        <target state="new">The following Test Logger Add-Ins are available:</target>
+        <target state="translated">Şu Test Günlükçüsü Eklentileri kullanılabilir:</target>
         <note />
       </trans-unit>
       <trans-unit id="CommandLineError">
         <source>Error: {0}</source>
-        <target state="new">Error: {0}</target>
+        <target state="translated">Hata: {0}</target>
         <note />
       </trans-unit>
       <trans-unit id="CommaSeparatedFormat">
         <source>, {0}</source>
-        <target state="new">, {0}</target>
+        <target state="translated">, {0}</target>
         <note>Format used to comma separate a list of values.</note>
       </trans-unit>
       <trans-unit id="DuplicateArgumentError">
         <source>The parameter "{0}" should be provided only once.</source>
-        <target state="new">The parameter "{0}" should be provided only once.</target>
+        <target state="translated">"{0}" parametresi yalnızca bir kez belirtilmelidir.</target>
         <note />
       </trans-unit>
       <trans-unit id="ExceptionFromExtension">
         <source>Exception occurred when instantiating extension '{0}': {1}</source>
-        <target state="new">Exception occurred when instantiating extension '{0}': {1}</target>
+        <target state="translated">'{0}' uzantısının örneği oluşturulurken özel durum oluştu: {1}</target>
         <note />
       </trans-unit>
       <trans-unit id="ListTestsHeaderMessage">
         <source>The following Tests are available:</source>
-        <target state="new">The following Tests are available:</target>
+        <target state="translated">Şu Testler kullanılabilir:</target>
         <note />
       </trans-unit>
       <trans-unit id="NoArgumentProcessorFound">
         <source>Unrecognized parameter "{0}".</source>
-        <target state="new">Unrecognized parameter "{0}".</target>
+        <target state="translated">"{0}" parametresi tanınmıyor.</target>
         <note />
       </trans-unit>
       <trans-unit id="TestSourceFileNotFound">
         <source>The test source file "{0}" provided was not found.</source>
-        <target state="new">The test source file "{0}" provided was not found.</target>
+        <target state="translated">Belirtilen "{0}" test kaynak dosyası bulunamadı.</target>
         <note />
       </trans-unit>
       <trans-unit id="LoggerUriInvalid">
         <source>The Test Logger URI '{0}' is not valid.  The Test Logger will be ignored.</source>
-        <target state="new">The Test Logger URI '{0}' is not valid.  The Test Logger will be ignored.</target>
+        <target state="translated">Test Günlükçüsünün '{0}' URI’si geçerli değil. Test Günlükçüsü yoksayılacak.</target>
         <note />
       </trans-unit>
       <trans-unit id="CommandLineInformational">
         <source>Information: {0}</source>
-        <target state="new">Information: {0}</target>
+        <target state="translated">Bilgi: {0}</target>
         <note />
       </trans-unit>
       <trans-unit id="CommandLineWarning">
         <source>Warning: {0}</source>
-        <target state="new">Warning: {0}</target>
+        <target state="translated">Uyarı: {0}</target>
         <note />
       </trans-unit>
       <trans-unit id="HelpArgumentHelp">
         <source>-?|--Help|/?|/Help
       Display this usage message.</source>
-        <target state="new">-?|--Help|/?|/Help
-      Display this usage message.</target>
+        <target state="translated">-?|--Help|/?|/Help
+      Bu kullanım iletisini görüntüler.</target>
         <note />
       </trans-unit>
       <trans-unit id="CopyrightCommandLineTitle">
         <source>Copyright (c) Microsoft Corporation.  All rights reserved.</source>
-        <target state="new">Copyright (c) Microsoft Corporation.  All rights reserved.</target>
+        <target state="translated">Telif Hakkı (c) Microsoft Corporation. Tüm hakları saklıdır.</target>
         <note />
       </trans-unit>
       <trans-unit id="MicrosoftCommandLineTitle">
         <source>Microsoft (R) Test Execution Command Line Tool Version {0}</source>
-        <target state="new">Microsoft (R) Test Execution Command Line Tool Version {0}</target>
+        <target state="translated">Microsoft (R) Test Yürütmesi Komut Satırı Aracı Sürüm {0}</target>
         <note />
       </trans-unit>
       <trans-unit id="EnableLoggersArgumentHelp">
@@ -107,43 +107,43 @@
       Change the diagnostic level prefix for console logger as shown below
       Example: /logger:console;prefix=&lt;Defaults to "false"&gt;
       More info on Console Logger here : https://aka.ms/console-logger</source>
-        <target state="new">--logger|/logger:&lt;Logger Uri/FriendlyName&gt;
-      Specify a logger for test results. For example, to log results into a 
-      Visual Studio Test Results File (TRX) use /logger:trx[;LogFileName=&lt;Defaults to unique file name&gt;]
-      Creates file in TestResults directory with given LogFileName.
+        <target state="translated">--logger|/logger:&lt;Günlükçü URI/FriendlyName&gt;
+      Test sonuçları için bir günlükçü belirtin. Örneğin, sonuçları bir 
+      Visual Studio Test Sonuçları Dosyası'na (TRX) kaydetmek için şunu kullanın: /logger:trx[;LogFileName=&lt;Varsayılan olarak benzersiz dosya adını alır&gt;]
+      İlgili LogFileName ile TestResults dizininde dosya oluşturur.
 
-      Change the verbosity level in log messages for console logger as shown below
-      Example: /logger:console;verbosity=&lt;Defaults to "normal"&gt;
-      Allowed values for verbosity: quiet, minimal, normal and detailed.
+      Konsol günlükçüsü için ayrıntı düzeyini günlük iletilerinde aşağıda gösterildiği gibi değiştirin
+      Örnek: /logger:console;verbosity=&lt;Varsayılan olarak "normal" değerini alır&gt;
+      Ayrıntı için izin verilen değerler: quiet, minimal, normal ve detailed.
 
-      Change the diagnostic level prefix for console logger as shown below
-      Example: /logger:console;prefix=&lt;Defaults to "false"&gt;
-      More info on Console Logger here : https://aka.ms/console-logger</target>
+      Konsol günlükçüsü için tanılama düzeyi ön ekini aşağıda gösterildiği gibi değiştirin
+      Örnek: /logger:console;prefix=&lt;Varsayılan olarak "false" değerini alır&gt;
+      Konsol Günlükçüsü hakkında daha fazla bilgi: https://aka.ms/console-logger</target>
         <note />
       </trans-unit>
       <trans-unit id="HelpDescriptionText">
         <source>Description: Runs tests from the specified files.</source>
-        <target state="new">Description: Runs tests from the specified files.</target>
+        <target state="translated">Açıklama: Belirtilen dosyalardan testleri çalıştırır.</target>
         <note />
       </trans-unit>
       <trans-unit id="HelpOptionsText">
         <source>Options:</source>
-        <target state="new">Options:</target>
+        <target state="translated">Seçenekler:</target>
         <note>Section Header for subsequent command help listing</note>
       </trans-unit>
       <trans-unit id="HelpUsageText">
         <source>Usage: vstest.console.exe [Arguments] [Options] [[--] &lt;RunSettings arguments&gt;...]]</source>
-        <target state="new">Usage: vstest.console.exe [Arguments] [Options] [[--] &lt;RunSettings arguments&gt;...]]</target>
+        <target state="translated">Kullanım: vstest.console.exe [Bağımsız Değişkenler] [Seçenekler] [[--] &lt;RunSettings bağımsız değişkenleri&gt;...]]</target>
         <note />
       </trans-unit>
       <trans-unit id="MissingTestSourceFile">
         <source>No test source files were specified.</source>
-        <target state="new">No test source files were specified.</target>
+        <target state="translated">Test kaynak dosyası belirtilmedi.</target>
         <note />
       </trans-unit>
       <trans-unit id="NoArgumentsProvided">
         <source>No arguments were specified.</source>
-        <target state="new">No arguments were specified.</target>
+        <target state="translated">Bağımsız değişken belirtilmedi.</target>
         <note />
       </trans-unit>
       <trans-unit id="RunTestsArgumentHelp">
@@ -153,59 +153,59 @@
       Examples: mytestproject.dll
                 mytestproject.dll myothertestproject.exe
                 testproject*.dll my*project.dll</source>
-        <target state="new">[TestFileNames]
-      Run tests from the specified files or wild card pattern. Separate multiple test file names or pattern
-      by spaces. Set console logger verbosity to detailed to view matched test files.
-      Examples: mytestproject.dll
-                mytestproject.dll myothertestproject.exe
-                testproject*.dll my*project.dll</target>
+        <target state="translated">[TestFileNames]
+      Belirtilen dosyalardaki veya joker karakter desenindeki testleri çalıştırın. Birden çok test dosyası adını veya desenini
+      boşluklarla ayırın. Eşleşen test dosyalarını görüntülemek için konsol günlükçüsü ayrıntı düzeyini ayrıntılı olarak ayarlayın.
+      Örnekler: testprojem.dll
+                testprojem.dll diğertestprojem.exe
+                testprojem*.dll diğer*projem.dll</target>
         <note />
       </trans-unit>
       <trans-unit id="AvailableSettingsProvidersHeaderMessage">
         <source>The following Settings Providers Add-Ins are available:</source>
-        <target state="new">The following Settings Providers Add-Ins are available:</target>
+        <target state="translated">Şu Ayar Sağlayıcısı Eklentileri kullanılabilir:</target>
         <note />
       </trans-unit>
       <trans-unit id="RunSettingsArgumentHelp">
         <source>--Settings|/Settings:&lt;Settings File&gt;
       Settings to use when running tests.</source>
-        <target state="new">--Settings|/Settings:&lt;Settings File&gt;
-      Settings to use when running tests.</target>
+        <target state="translated">--Settings|/Settings:&lt;Ayarlar Dosyası&gt;
+      Testleri çalıştırırken kullanılacak ayarlar.</target>
         <note />
       </trans-unit>
       <trans-unit id="RunSettingsRequired">
         <source>The /Settings parameter requires a settings file to be provided.</source>
-        <target state="new">The /Settings parameter requires a settings file to be provided.</target>
+        <target state="translated">/Settings parametresi bir ayarlar dosyasının belirtilmesini gerektirir.</target>
         <note />
       </trans-unit>
       <trans-unit id="RunSettingsFileNotFound">
         <source>The Settings file '{0}' could not be found.</source>
-        <target state="new">The Settings file '{0}' could not be found.</target>
+        <target state="translated">'{0}' Ayarlar dosyası bulunamadı.</target>
         <note />
       </trans-unit>
       <trans-unit id="TestRunFailed">
         <source>Test Run Failed.</source>
-        <target state="new">Test Run Failed.</target>
+        <target state="translated">Test Çalıştırması Başarısız.</target>
         <note />
       </trans-unit>
       <trans-unit id="TestRunSuccessful">
         <source>Test Run Successful.</source>
-        <target state="new">Test Run Successful.</target>
+        <target state="translated">Test Çalıştırması Başarılı.</target>
         <note />
       </trans-unit>
       <trans-unit id="InvalidInIsolationCommand">
         <source>Argument {0} is not expected in the 'InIsolation' command. Specify the command without the argument (Example: vstest.console.exe myTests.dll /InIsolation) and try again.</source>
-        <target state="new">Argument {0} is not expected in the 'InIsolation' command. Specify the command without the argument (Example: vstest.console.exe myTests.dll /InIsolation) and try again.</target>
+        <target state="translated">{0} bağımsız değişkeni 'InIsolation' komutunda beklenmiyor. Komutu bağımsız değişken olmadan belirtin (Örnek: vstest.console.exe myTests.dll /InIsolation) ve yeniden deneyin.</target>
         <note />
       </trans-unit>
       <trans-unit id="UseVsixExtensionsValueRequired">
         <source>The /UseVsixExtensions parameter requires a value. If 'true', the installed VSIX extensions (if any) will be used in the test run. If false, they will be ignored.   Example:  /UseVsixExtensions:true</source>
-        <target state="new">The /UseVsixExtensions parameter requires a value. If 'true', the installed VSIX extensions (if any) will be used in the test run. If false, they will be ignored.   Example:  /UseVsixExtensions:true</target>
+        <target state="translated">/UseVsixExtensions parametresi bir değer gerektiriyor. Değer 'true' ise test çalıştırmasında yüklü VSIX uzantıları (varsa) kullanılır. Değer false ise uzantılar yoksayılır. Örnek: /UseVsixExtensions:true</target>
         <note />
       </trans-unit>
       <trans-unit id="InvalidUseVsixExtensionsCommand">
         <source>Argument {0} is not expected in the 'UseVsixExtensions' command. Specify the command indicating whether the vsix extensions should be used or skipped (Example: vstest.console.exe myTests.dll /UseVsixExtensions:true) and try again.</source>
-        <target state="new">Argument {0} is not expected in the 'UseVsixExtensions' command. Specify the command indicating whether the vsix extensions should be used or skipped (Example: vstest.console.exe myTests.dll /UseVsixExtensions:true) and try again.</target>
+        <target state="translated">{0} bağımsız değişkeni 'UseVsixExtensions' komutunda beklenmiyor. Komutta vsix uzantılarının kullanılacağını veya atlanacağını belirtin (Örnek: vstest.console.exe myTests.dll /UseVsixExtensions:true) ve yeniden deneyin.</target>
         <note />
       </trans-unit>
       <trans-unit id="InIsolationHelp">
@@ -213,10 +213,10 @@
       Runs the tests in an isolated process. This makes vstest.console.exe 
       process less likely to be stopped on an error in the tests, but tests 
       may run slower.</source>
-        <target state="new">--InIsolation|/InIsolation
-      Runs the tests in an isolated process. This makes vstest.console.exe 
-      process less likely to be stopped on an error in the tests, but tests 
-      may run slower.</target>
+        <target state="translated">--InIsolation|/InIsolation
+      Testleri yalıtılmış bir işlemde çalıştırır. Bu, vstest.console.exe 
+      işleminin testlerdeki bir hata nedeniyle durdurulması olasılığını azaltır, 
+      ancak testler daha yavaş çalışabilir.</target>
         <note />
       </trans-unit>
       <trans-unit id="UseVsixExtensionsHelp">
@@ -224,20 +224,20 @@
       This makes vstest.console.exe process use or skip the VSIX extensions 
       installed(if any) in the test run. 
       Example  /UseVsixExtensions:true</source>
-        <target state="new">/UseVsixExtensions
-      This makes vstest.console.exe process use or skip the VSIX extensions 
-      installed(if any) in the test run. 
-      Example  /UseVsixExtensions:true</target>
+        <target state="translated">/UseVsixExtensions
+      Bu işlem vstest.console.exe işleminin test çalıştırmasında yüklü VSIX 
+      uzantılarını (varsa) kullanmasını veya atlamasını sağlar. 
+      Örnek /UseVsixExtensions:true</target>
         <note />
       </trans-unit>
       <trans-unit id="BatchSizeRequired">
         <source>The /BatchSize argument requires the size of the batch.  Example:  /BatchSize:10</source>
-        <target state="new">The /BatchSize argument requires the size of the batch.  Example:  /BatchSize:10</target>
+        <target state="translated">/BatchSize bağımsız değişkeni toplu iş boyutunu gerektirir. Örnek: /BatchSize:10</target>
         <note />
       </trans-unit>
       <trans-unit id="InvalidBatchSize">
         <source>Invalid batch size {0}. The batch size should be greater than zero. Example:  /BatchSize:10</source>
-        <target state="new">Invalid batch size {0}. The batch size should be greater than zero. Example:  /BatchSize:10</target>
+        <target state="translated">{0} toplu iş boyutu geçersiz. Toplu iş boyutu sıfırdan büyük olmalıdır. Örnek: /BatchSize:10</target>
         <note />
       </trans-unit>
       <trans-unit id="Examples">
@@ -245,67 +245,67 @@
     &gt;vstest.console.exe tests.dll 
   To run tests with additional settings such as  data collectors:
     &gt;vstest.console.exe  tests.dll /Settings:Local.RunSettings</source>
-        <target state="new">  To run tests:
+        <target state="translated">  Testleri çalıştırmak için:
     &gt;vstest.console.exe tests.dll 
-  To run tests with additional settings such as  data collectors:
+  Testleri veri toplayıcılar gibi ek ayarlarla çalıştırmak için:
     &gt;vstest.console.exe  tests.dll /Settings:Local.RunSettings</target>
         <note />
       </trans-unit>
       <trans-unit id="ListDiscoverersHelp">
         <source>/ListDiscoverers
       Lists installed test discoverers.</source>
-        <target state="new">/ListDiscoverers
-      Lists installed test discoverers.</target>
+        <target state="translated">/ListDiscoverers
+      Yüklü test bulucuları listeler.</target>
         <note />
       </trans-unit>
       <trans-unit id="ListExecutorsHelp">
         <source>/ListExecutors
       Lists installed test executors.</source>
-        <target state="new">/ListExecutors
-      Lists installed test executors.</target>
+        <target state="translated">/ListExecutors
+      Yüklü test yürütücülerini listeler.</target>
         <note />
       </trans-unit>
       <trans-unit id="ListLoggersHelp">
         <source>/ListLoggers
       Lists installed test loggers.</source>
-        <target state="new">/ListLoggers
-      Lists installed test loggers.</target>
+        <target state="translated">/ListLoggers
+      Yüklü test günlükçülerini listeler.</target>
         <note />
       </trans-unit>
       <trans-unit id="ListSettingsProvidersHelp">
         <source>/ListSettingsProviders
       Lists installed test settings providers.</source>
-        <target state="new">/ListSettingsProviders
-      Lists installed test settings providers.</target>
+        <target state="translated">/ListSettingsProviders
+      Yüklü test ayarları sağlayıcılarını listeler.</target>
         <note />
       </trans-unit>
       <trans-unit id="ListTestsHelp">
         <source>-lt|--ListTests|/lt|/ListTests:&lt;File Name&gt;
       Lists all discovered tests from the given test container.</source>
-        <target state="new">-lt|--ListTests|/lt|/ListTests:&lt;File Name&gt;
-      Lists all discovered tests from the given test container.</target>
+        <target state="translated">-lt|--ListTests|/lt|/ListTests:&lt;Dosya Adı&gt;
+      Verilen test kapsayıcısında bulunan tüm testleri listeler.</target>
         <note />
       </trans-unit>
       <trans-unit id="TimeElapsed">
         <source>Time elapsed :</source>
-        <target state="new">Time elapsed :</target>
+        <target state="translated">Geçen süre:</target>
         <note />
       </trans-unit>
       <trans-unit id="SpecificTestsRequired">
         <source>The /Tests argument requires one or more specific test names or their substrings.
        Examples: /Tests:TestsMethod1, /Tests:TestMethod1,method2 </source>
-        <target state="new">The /Tests argument requires one or more specific test names or their substrings.
-       Examples: /Tests:TestsMethod1, /Tests:TestMethod1,method2 </target>
+        <target state="translated">/Tests bağımsız değişkeni, alt dizelerinde bir veya daha fazla belirli test adının olmasını gerektirir.
+       Örnekler: /Tests:TestsMethod1, /Tests:TestMethod1,method2 </target>
         <note />
       </trans-unit>
       <trans-unit id="NoTestsAvailableAfterFiltering">
         <source>A total of {0} tests were discovered but no test matches the specified selection criteria({1}). Use right value(s) and try again.</source>
-        <target state="new">A total of {0} tests were discovered but no test matches the specified selection criteria({1}). Use right value(s) and try again.</target>
+        <target state="translated">Toplam {0} test bulundu, ancak belirtilen ölçütlerle eşleşen test yok({1}). Doğru değerleri kullanın ve yeniden deneyin.</target>
         <note />
       </trans-unit>
       <trans-unit id="SearchStringDelimiter">
         <source>,</source>
-        <target state="new">,</target>
+        <target state="translated">,</target>
         <note />
       </trans-unit>
       <trans-unit id="RunSpecificTestsHelp">
@@ -314,90 +314,90 @@
       values, separate them by commas.
       Examples: /Tests:TestMethod1
                 /Tests:TestMethod1,testMethod2</source>
-        <target state="new">--Tests|/Tests:&lt;Test Names&gt;
-      Run tests with names that match the provided values. To provide multiple
-      values, separate them by commas.
-      Examples: /Tests:TestMethod1
-                /Tests:TestMethod1,testMethod2</target>
+        <target state="translated">--Tests|/Tests:&lt;Test Adları&gt;
+      Sağlanan değerlerle eşleşen adlara sahip testleri çalıştırır. Birden çok
+      değer sağlamak için, değerleri virgülle ayırın.
+      Örnekler: /Tests:TestYöntemi1
+                /Tests:TestYöntemi1,testYöntemi2</target>
         <note>Please verify if the console output looks good after modifiaction. </note>
       </trans-unit>
       <trans-unit id="SwitchToNoIsolation">
         <source>Using Isolation mode to run the tests as diagnostic data adapters were enabled in the runsettings. Use the /inIsolation parameter to suppress this warning.</source>
-        <target state="new">Using Isolation mode to run the tests as diagnostic data adapters were enabled in the runsettings. Use the /inIsolation parameter to suppress this warning.</target>
+        <target state="translated">runsettings içinde tanılama veri bağdaştırıcıları etkinleştirildiğinden testleri çalıştırmak üzere Yalıtım modu kullanılıyor. Bu uyarıyı kapatmak için /inIsolation parametresini kullanın.</target>
         <note />
       </trans-unit>
       <trans-unit id="SwitchToIsolationInAppContainerMode">
         <source>Using Isolation mode to run unit tests for Windows Store apps. Use the /InIsolation parameter to suppress this warning.</source>
-        <target state="new">Using Isolation mode to run unit tests for Windows Store apps. Use the /InIsolation parameter to suppress this warning.</target>
+        <target state="translated">Windows Mağazası uygulamaları için birim testlerini çalıştırmak üzere Yalıtım modu kullanılıyor. Bu uyarıyı kapatmak için /InIsolation parametresini kullanın.</target>
         <note />
       </trans-unit>
       <trans-unit id="DisablingDataCollectionInAppContainerTestExecution">
         <source>Diagnostic data adapters are not supported when running unit tests for Windows Store apps. Remove diagnostic data adapters settings from settings.</source>
-        <target state="new">Diagnostic data adapters are not supported when running unit tests for Windows Store apps. Remove diagnostic data adapters settings from settings.</target>
+        <target state="translated">Windows Mağazası uygulamaları için birim testleri çalıştırılırken tanılama veri bağdaştırıcıları desteklenmiyor. Ayarlardan tanılama veri bağdaştırıcısı ayarlarını kaldırın.</target>
         <note />
       </trans-unit>
       <trans-unit id="LoggerFriendlyNameFormat">
         <source>        FriendlyName: {0}</source>
-        <target state="new">        FriendlyName: {0}</target>
+        <target state="translated">        FriendlyName: {0}</target>
         <note />
       </trans-unit>
       <trans-unit id="ExtensionUriFormat">
         <source>        Uri: {0}</source>
-        <target state="new">        Uri: {0}</target>
+        <target state="translated">        URI: {0}</target>
         <note />
       </trans-unit>
       <trans-unit id="SettingFormat">
         <source>        SettingName: {0}</source>
-        <target state="new">        SettingName: {0}</target>
+        <target state="translated">        SettingName: {0}</target>
         <note />
       </trans-unit>
       <trans-unit id="SupportedFileTypesIndicator">
         <source>        Supported File Types:</source>
-        <target state="new">        Supported File Types:</target>
+        <target state="translated">        Desteklenen Dosya Türleri:</target>
         <note />
       </trans-unit>
       <trans-unit id="SupportedFileWithoutSeparator">
         <source> {0}</source>
-        <target state="new"> {0}</target>
+        <target state="translated"> {0}</target>
         <note />
       </trans-unit>
       <trans-unit id="SupportedFileWithSeparator">
         <source> {0},</source>
-        <target state="new"> {0},</target>
+        <target state="translated"> {0},</target>
         <note />
       </trans-unit>
       <trans-unit id="UriOfDefaultExecutor">
         <source>        Default Executor Uri: {0}</source>
-        <target state="new">        Default Executor Uri: {0}</target>
+        <target state="translated">        Varsayılan Yürütücü URI’si: {0}</target>
         <note />
       </trans-unit>
       <trans-unit id="LoggerUriFormat">
         <source>        Uri: {0}</source>
-        <target state="new">        Uri: {0}</target>
+        <target state="translated">        URI: {0}</target>
         <note />
       </trans-unit>
       <trans-unit id="InvalidPlatformType">
         <source>Invalid platform type: {0}. Valid platform types are {1}.</source>
-        <target state="new">Invalid platform type: {0}. Valid platform types are {1}.</target>
+        <target state="translated">Geçersiz platform türü: {0}. Geçerli platform türleri şunlardır: {1}.</target>
         <note>0 is the platform type e.g. x86, and 1 is a list of the built in platforms, e.g. x86, x64</note>
       </trans-unit>
       <trans-unit id="PlatformTypeRequired">
         <source>The /Platform argument requires the target platform type for the test run to be provided.   Example:  /Platform:x86</source>
-        <target state="new">The /Platform argument requires the target platform type for the test run to be provided.   Example:  /Platform:x86</target>
+        <target state="translated">/Platform bağımsız değişkeni, test çalıştırması için hedef platform türünün belirtilmesini gerektirir. Örnek: /Platform:x86</target>
         <note />
       </trans-unit>
       <trans-unit id="PlatformArgumentHelp">
         <source>--Platform|/Platform:&lt;Platform type&gt;
       Target platform architecture to be used for test execution. 
       Valid values are x86, x64 and ARM.</source>
-        <target state="new">--Platform|/Platform:&lt;Platform type&gt;
-      Target platform architecture to be used for test execution. 
-      Valid values are x86, x64 and ARM.</target>
+        <target state="translated">--Platform|/Platform:&lt;Platform türü&gt;
+      Test yürütmesi için kullanılacak hedef platform mimarisi. 
+      Geçerli değerler x86, x64 ve ARM'dir.</target>
         <note />
       </trans-unit>
       <trans-unit id="SwitchToIsolationInMultiTargetingMode">
         <source>Using Isolation mode to run tests as required by effective Platform:{0} and .Net Framework:{1} settings for test run. Use the /inIsolation parameter to suppress this warning.</source>
-        <target state="new">Using Isolation mode to run tests as required by effective Platform:{0} and .Net Framework:{1} settings for test run. Use the /inIsolation parameter to suppress this warning.</target>
+        <target state="translated">Testleri test çalıştırması için etkili Platformun:{0} ve .NET Framework:{1} ayarlarının gerektirdiği şekilde çalıştırmak için Yalıtım modu kullanılıyor. Bu uyarıyı kapatmak için /inIsolation parametresini kullanın.</target>
         <note />
       </trans-unit>
       <trans-unit id="FrameworkArgumentHelp">
@@ -405,25 +405,25 @@
       Target .Net Framework version to be used for test execution. 
       Valid values are ".NETFramework,Version=v4.5.1", ".NETCoreApp,Version=v1.0" etc.
       Other supported values are Framework40, Framework45, FrameworkCore10 and FrameworkUap10.</source>
-        <target state="new">--Framework|/Framework:&lt;Framework Version&gt;
-      Target .Net Framework version to be used for test execution. 
-      Valid values are ".NETFramework,Version=v4.5.1", ".NETCoreApp,Version=v1.0" etc.
-      Other supported values are Framework40, Framework45, FrameworkCore10 and FrameworkUap10.</target>
+        <target state="translated">--Framework|/Framework:&lt;Framework Sürümü&gt;
+      Test yürütme için kullanılacak hedef .Net Framework sürümü. 
+      Geçerli değerler: ".NETFramework,Version=v4.5.1", ".NETCoreApp,Version=v1.0" vb.
+      Diğer desteklenen değerler: Framework40, Framework45, FrameworkCore10 ve FrameworkUap10.</target>
         <note />
       </trans-unit>
       <trans-unit id="FrameworkVersionRequired">
         <source>The /Framework argument requires the target .Net Framework version for the test run.   Example:  /Framework:".NETFramework,Version=v4.5.1"</source>
-        <target state="new">The /Framework argument requires the target .Net Framework version for the test run.   Example:  /Framework:".NETFramework,Version=v4.5.1"</target>
+        <target state="translated">/Framework bağımsız değişkeni test çalıştırması için hedef .NET Framework sürümünü gerektirir. Örnek: /Framework:".NETFramework,Version=v4.5.1"</target>
         <note />
       </trans-unit>
       <trans-unit id="InvalidFrameworkVersion">
         <source>Invalid .Net Framework version:{0}. Please give the fullname of the TargetFramework(Example: .NETCoreApp,Version=v2.0). Other supported .Net Framework versions are Framework40, Framework45, FrameworkCore10 and FrameworkUap10.</source>
-        <target state="new">Invalid .Net Framework version:{0}. Please give the fullname of the TargetFramework(Example: .NETCoreApp,Version=v2.0). Other supported .Net Framework versions are Framework40, Framework45, FrameworkCore10 and FrameworkUap10.</target>
+        <target state="translated">Geçersiz .NET Framework sürümü:{0}. Lütfen TargetFramework tam adını (Örnek: .NETCoreApp,Sürüm=v2.0) belirtin. Desteklenen diğer .NET Framework sürümleri Framework40, Framework45, FrameworkCore10 and FrameworkUap10’dur.</target>
         <note />
       </trans-unit>
       <trans-unit id="AppContainerTestPrerequisiteFail">
         <source>Could not start test run for unit tests for Windows Store app: {0}.</source>
-        <target state="new">Could not start test run for unit tests for Windows Store app: {0}.</target>
+        <target state="translated">Windows Mağazası uygulamalarına yönelik birim testleri için test çalıştırması başlatılamadı: {0}.</target>
         <note />
       </trans-unit>
       <trans-unit id="TestCaseFilterArgumentHelp">
@@ -436,81 +436,81 @@
       Examples: /TestCaseFilter:"Priority=1"
                 /TestCaseFilter:"(FullyQualifiedName~Nightly
                                   |Name=MyTestMethod)"</source>
-        <target state="new">--TestCaseFilter|/TestCaseFilter:&lt;Expression&gt;
-      Run tests that match the given expression.
-      &lt;Expression&gt; is of the format &lt;property&gt;Operator&lt;value&gt;[|&amp;&lt;Expression&gt;]
-         where Operator is one of =, != or ~  (Operator ~ has 'contains'
-         semantics and is applicable for string properties like DisplayName).
-         Parenthesis () can be used to group sub-expressions.
-      Examples: /TestCaseFilter:"Priority=1"
-                /TestCaseFilter:"(FullyQualifiedName~Nightly
-                                  |Name=MyTestMethod)"</target>
+        <target state="translated">--TestCaseFilter|/TestCaseFilter:&lt;İfade&gt;
+      Verilen ifadeyle eşleşen testleri çalıştırır.
+      &lt;İfade&gt;, &lt;özellik&gt;İşleç&lt;değer&gt;[|&amp;&lt;İfade&gt;] biçimindedir;
+         burada İşleç =, != veya ~ simgelerinden biridir (~ İşleci 'içerir'
+         anlamına gelir ve DisplayName gibi dize özelliklerine uygulanabilir).
+         Alt ifadeleri gruplandırmak için ayraç () kullanılabilir.
+      Örnekler: /TestCaseFilter:"Priority=1"
+                /TestCaseFilter:"(TamAd~Gece
+                                  |Name=TestYöntemim)"</target>
         <note />
       </trans-unit>
       <trans-unit id="TestCaseFilterValueRequired">
         <source>The /TestCaseFilter argument requires the filter value.
         Filter value can be &lt;property&gt;=&lt;value&gt; type.
         Examples: "Priority=1", "TestCategory=Nightly"</source>
-        <target state="new">The /TestCaseFilter argument requires the filter value.
-        Filter value can be &lt;property&gt;=&lt;value&gt; type.
-        Examples: "Priority=1", "TestCategory=Nightly"</target>
+        <target state="translated">/TestCaseFilter bağımsız değişkeni filtre değeri gerektirir.
+        Filtre değeri &lt;özellik&gt;=&lt;değer&gt; türünde olabilir.
+        Örnekler: "Priority=1", "TestCategory=Gece"</target>
         <note />
       </trans-unit>
       <trans-unit id="InvalidTestCaseFilterValueForSpecificTests">
         <source>The /TestCaseFilter argument cannot be specified with /Tests. Filtering of test cases is not applicable when tests are specified.</source>
-        <target state="new">The /TestCaseFilter argument cannot be specified with /Tests. Filtering of test cases is not applicable when tests are specified.</target>
+        <target state="translated">/TestCaseFilter bağımsız değişkeni /Tests ile belirtilemez. Testler belirtildiğinde test örneklerinin filtrelemesi geçerli değildir.</target>
         <note />
       </trans-unit>
       <trans-unit id="NonDefaultFrameworkAndOrArchDetected">
         <source>{0} is built for {1}/{2}. The test assemblies specified in a run should have a common target .Net framework and platform.</source>
-        <target state="new">{0} is built for {1}/{2}. The test assemblies specified in a run should have a common target .Net framework and platform.</target>
+        <target state="translated">{0}, {1}/{2} için derlendi. Bir çalıştırmada belirtilen test bütünleştirilmiş kodu ortak bir hedef .NET framework ve platforma sahip olmalıdır.</target>
         <note />
       </trans-unit>
       <trans-unit id="RunSingleAppContainerSource">
         <source>Only one app package (.appx file) can be specified for running tests.</source>
-        <target state="new">Only one app package (.appx file) can be specified for running tests.</target>
+        <target state="translated">Testleri çalıştırmak için yalnızca bir uygulama paketi (.appx dosyası) belirtilebilir.</target>
         <note />
       </trans-unit>
       <trans-unit id="StartingDiscovery">
         <source>Starting test discovery, please wait...</source>
-        <target state="new">Starting test discovery, please wait...</target>
+        <target state="translated">Test bulma başlatılıyor, lütfen bekleyin...</target>
         <note />
       </trans-unit>
       <trans-unit id="StartingExecution">
         <source>Starting test execution, please wait...</source>
-        <target state="new">Starting test execution, please wait...</target>
+        <target state="translated">Test yürütmesi başlatılıyor, lütfen bekleyin...</target>
         <note />
       </trans-unit>
       <trans-unit id="DisablingDCOnExceptionWhileParsingDCInfo">
         <source>Reading diagnostic data adapter settings threw an running '{0}'. All diagnostic data adapters will be skipped in this run.</source>
-        <target state="new">Reading diagnostic data adapter settings threw an running '{0}'. All diagnostic data adapters will be skipped in this run.</target>
+        <target state="translated">Tanılama veri bağdaştırıcısı ayarlarının okunması çalışan bir '{0}' oluşturdu. Tüm tanılama veri bağdaştırıcıları bu çalıştırmada atlanacak.</target>
         <note />
       </trans-unit>
       <trans-unit id="EnableCodeCoverageArgumentProcessorHelp">
         <source>/EnableCodeCoverage
       Enables data collector 'CodeCoverage' for the test run.</source>
-        <target state="new">/EnableCodeCoverage
-      Enables data collector 'CodeCoverage' for the test run.</target>
+        <target state="translated">/EnableCodeCoverage
+      Test çalıştırması için 'CodeCoverage' veri toplayıcısını etkinleştirir.</target>
         <note />
       </trans-unit>
       <trans-unit id="InvalidEnableCodeCoverageCommand">
         <source>Argument {0} is not expected in the 'EnableCodeCoverage' command. Specify the command without the argument (Example: vstest.console.exe myTests.dll /EnableCodeCoverage) and try again.</source>
-        <target state="new">Argument {0} is not expected in the 'EnableCodeCoverage' command. Specify the command without the argument (Example: vstest.console.exe myTests.dll /EnableCodeCoverage) and try again.</target>
+        <target state="translated">{0} bağımsız değişkeni 'EnableCodeCoverage' komutunda beklenmiyor. Komutu bağımsız değişken olmadan belirtin (Örnek: vstest.console.exe myTests.dll /EnableCodeCoverage) ve yeniden deneyin.</target>
         <note />
       </trans-unit>
       <trans-unit id="NoTestEntryPoint">
         <source>App package '{0}' does not has test executor entry point. For running unit tests for Windows Store apps, create app package using Windows Store app Unit Test Library project.</source>
-        <target state="new">App package '{0}' does not has test executor entry point. For running unit tests for Windows Store apps, create app package using Windows Store app Unit Test Library project.</target>
+        <target state="translated">'{0}' uygulama paketi, test yürütücüsü giriş noktasına sahip değil. Windows Mağazası uygulamalarına yönelik birim testlerini çalıştırmak için Windows Mağazası uygulaması Birim Testi Kitaplığı projesini kullanarak uygulama paketini oluşturun.</target>
         <note />
       </trans-unit>
       <trans-unit id="DisablingCodeCoverageInAppContainerTestExecution">
         <source>Code coverage is not available for Windows Store apps. Code coverage analysis skipped for this test run.</source>
-        <target state="new">Code coverage is not available for Windows Store apps. Code coverage analysis skipped for this test run.</target>
+        <target state="translated">Kod kapsamı Windows Mağazası uygulamaları için kullanılamaz. Bu test çalıştırması için kod kapsamı analizi atlandı.</target>
         <note />
       </trans-unit>
       <trans-unit id="SomeTestsUnavailableAfterFiltering">
         <source>A total of {0} tests were discovered but some tests do not match the specified selection criteria({1}). Use right value(s) and try again.</source>
-        <target state="new">A total of {0} tests were discovered but some tests do not match the specified selection criteria({1}). Use right value(s) and try again.</target>
+        <target state="translated">Toplam {0} test bulundu, ancak bazı testler belirtilen ölçütlerle eşleşmiyor({1}). Doğru değerleri kullanın ve yeniden deneyin.</target>
         <note />
       </trans-unit>
       <trans-unit id="TestAdapterPathHelp">
@@ -518,65 +518,65 @@
       This makes vstest.console.exe process use custom test adapters
       from a given path (if any) in the test run. 
       Example  /TestAdapterPath:&lt;pathToCustomAdapters&gt;</source>
-        <target state="new">--TestAdapterPath|/TestAdapterPath
-      This makes vstest.console.exe process use custom test adapters
-      from a given path (if any) in the test run. 
-      Example  /TestAdapterPath:&lt;pathToCustomAdapters&gt;</target>
+        <target state="translated">--TestAdapterPath|/TestAdapterPath
+      Bu, vstest.console.exe işleminin test çalıştırmasında verilen yoldan
+      (varsa) özel test bağdaştırıcılarını kullanmasını sağlar. 
+      Örnek  /TestAdapterPath:&lt;pathToCustomAdapters&gt;</target>
         <note />
       </trans-unit>
       <trans-unit id="TestAdapterPathValueRequired">
         <source>The /TestAdapterPath parameter requires a value, which is path of a location containing custom test adapters. Example:  /TestAdapterPath:c:\MyCustomAdapters</source>
-        <target state="new">The /TestAdapterPath parameter requires a value, which is path of a location containing custom test adapters. Example:  /TestAdapterPath:c:\MyCustomAdapters</target>
+        <target state="translated">/TestAdapterPath parametresi, özel test bağdaştırıcıları içeren bir konumun yolu olan değeri gerektirir. Örnek:  /TestAdapterPath:c:\MyCustomAdapters</target>
         <note />
       </trans-unit>
       <trans-unit id="InvalidTestAdapterPathCommand">
         <source>The path '{0}' specified in the 'TestAdapterPath' is invalid. Error: {1}</source>
-        <target state="new">The path '{0}' specified in the 'TestAdapterPath' is invalid. Error: {1}</target>
+        <target state="translated">'TestAdapterPath' içinde belirtilen '{0}' yolu geçersiz. Hata: {1}</target>
         <note />
       </trans-unit>
       <trans-unit id="TestAdapterPathDoesNotExist">
         <source>The custom test adapter search path provided was not found, provide a valid path and try again.</source>
-        <target state="new">The custom test adapter search path provided was not found, provide a valid path and try again.</target>
+        <target state="translated">Belirtilen özel test bağdaştırıcısı arama yolu bulunamadı; geçerli bir yol belirtin ve yeniden deneyin.</target>
         <note />
       </trans-unit>
       <trans-unit id="NoAdaptersFoundInTestAdapterPath">
         <source>The path '{0}' specified in the 'TestAdapterPath' does not contain any test adapters, provide a valid path and try again.</source>
-        <target state="new">The path '{0}' specified in the 'TestAdapterPath' does not contain any test adapters, provide a valid path and try again.</target>
+        <target state="translated">'TestAdapterPath' içinde belirtilen '{0}' yolu hiçbir test bağdaştırıcısı içermiyor; geçerli bir yol belirtin ve yeniden deneyin.</target>
         <note />
       </trans-unit>
       <trans-unit id="PhoneAppContainerTestPrerequisiteFail">
         <source>Could not start test run for the tests for Windows Phone app: {0}.</source>
-        <target state="new">Could not start test run for the tests for Windows Phone app: {0}.</target>
+        <target state="translated">Windows Phone uygulamasına yönelik testler için test çalıştırması başlatılamadı: {0}.</target>
         <note />
       </trans-unit>
       <trans-unit id="SwitchToIsolationInPhoneAppContainerMode">
         <source>Using Isolation mode to run unit tests for Windows Phone apps. Use the /InIsolation parameter to suppress this warning.</source>
-        <target state="new">Using Isolation mode to run unit tests for Windows Phone apps. Use the /InIsolation parameter to suppress this warning.</target>
+        <target state="translated">Windows Phone uygulamaları için birim testlerini çalıştırmak üzere Yalıtım modu kullanılıyor. Bu uyarıyı kapatmak için /InIsolation parametresini kullanın.</target>
         <note />
       </trans-unit>
       <trans-unit id="DisablingCodeCoverageInPhoneAppContainerTestExecution">
         <source>Code coverage is not available for Windows Phone apps. Code coverage analysis skipped for this test run.</source>
-        <target state="new">Code coverage is not available for Windows Phone apps. Code coverage analysis skipped for this test run.</target>
+        <target state="translated">Kod kapsamı Windows Phone uygulamaları için kullanılamaz. Bu test çalıştırması için kod kapsamı analizi atlandı.</target>
         <note />
       </trans-unit>
       <trans-unit id="DisablingDataCollectionInPhoneAppContainerTestExecution">
         <source>Diagnostic data adapters are not supported when running unit tests for Windows Phone apps. Remove diagnostic data adapters settings from settings.</source>
-        <target state="new">Diagnostic data adapters are not supported when running unit tests for Windows Phone apps. Remove diagnostic data adapters settings from settings.</target>
+        <target state="translated">Windows Phone uygulamaları için birim testleri çalıştırılırken tanılama veri bağdaştırıcıları desteklenmiyor. Ayarlardan tanılama veri bağdaştırıcısı ayarlarını kaldırın.</target>
         <note />
       </trans-unit>
       <trans-unit id="PhoneNoTestEntryPoint">
         <source>App package '{0}' does not has test executor entry point. For running unit tests for Windows Phone apps, create app package using Windows Phone Unit Test App project.</source>
-        <target state="new">App package '{0}' does not has test executor entry point. For running unit tests for Windows Phone apps, create app package using Windows Phone Unit Test App project.</target>
+        <target state="translated">'{0}' uygulama paketi, test yürütücüsü giriş noktasına sahip değil. Windows Phone uygulamalarına yönelik birim testlerini çalıştırmak için Windows Phone Birim Testi Uygulaması projesini kullanarak uygulama paketini oluşturun.</target>
         <note />
       </trans-unit>
       <trans-unit id="TestSettingsFrameworkMismatch">
         <source>Using framework {0} to run the tests. Specify /Framework:{1} to suppress this warning.</source>
-        <target state="new">Using framework {0} to run the tests. Specify /Framework:{1} to suppress this warning.</target>
+        <target state="translated">Testleri çalıştırmak için {0} çerçevesi kullanılıyor. Bu uyarıyı kapatmak için /Framework:{1} değerini belirtin.</target>
         <note />
       </trans-unit>
       <trans-unit id="AppxBundleSourceWarning">
         <source>No test found in the specified test containers. Additionally, Microsoft Windows Store Unit test adapter does not support .appxbundle files. Create an appx (set Generate App bundle option to Never) when creating App Package and try again.</source>
-        <target state="new">No test found in the specified test containers. Additionally, Microsoft Windows Store Unit test adapter does not support .appxbundle files. Create an appx (set Generate App bundle option to Never) when creating App Package and try again.</target>
+        <target state="translated">Belirtilen test kapsayıcılarında test bulunamadı. Ayrıca, Microsoft Windows Mağazası Birim testi bağdaştırıcısı .appxbundle dosyalarını desteklemiyor. Uygulama Paketi oluştururken bir appx oluşturun (Uygulama paketi grubu oluştur seçeneğini Hiçbir Zaman olarak ayarlayın) ve yeniden deneyin.</target>
         <note />
       </trans-unit>
       <trans-unit id="ParallelArgumentProcessorHelp">
@@ -584,185 +584,185 @@
       Specifies that the tests be executed in parallel. By default up
       to all available cores on the machine may be used.
       The number of cores to use may be configured using a settings file.</source>
-        <target state="new">--Parallel|/Parallel
-      Specifies that the tests be executed in parallel. By default up
-      to all available cores on the machine may be used.
-      The number of cores to use may be configured using a settings file.</target>
+        <target state="translated">--Parallel|/Parallel
+      Testlerin paralel olarak yürütülmesini belirtir. Varsayılan olarak
+      makine üzerindeki tüm mevcut çekirdekler kullanılabilir.
+      Kullanılacak çekirdek sayısı bir ayarlar dosyası kullanılarak yapılandırılabilir.</target>
         <note />
       </trans-unit>
       <trans-unit id="InvalidParallelCommand">
         <source>Argument {0} is not expected in the 'Parallel' command. Specify the command without the argument (Example: vstest.console.exe myTests.dll /Parallel) and try again.</source>
-        <target state="new">Argument {0} is not expected in the 'Parallel' command. Specify the command without the argument (Example: vstest.console.exe myTests.dll /Parallel) and try again.</target>
+        <target state="translated">{0} bağımsız değişkeni 'Parallel' komutunda beklenmiyor. Komutu bağımsız değişken olmadan belirtin (Örnek: vstest.console.exe myTests.dll /Parallel) ve yeniden deneyin.</target>
         <note />
       </trans-unit>
       <trans-unit id="CannotBeNullOrEmpty">
         <source>Cannot be null or empty</source>
-        <target state="new">Cannot be null or empty</target>
+        <target state="translated">Null veya boş olamaz</target>
         <note />
       </trans-unit>
       <trans-unit id="PortArgumentHelp">
         <source>--Port|/Port:&lt;Port&gt;
       The Port for socket connection and receiving the event messages.</source>
-        <target state="new">--Port|/Port:&lt;Port&gt;
-      The Port for socket connection and receiving the event messages.</target>
+        <target state="translated">--Port|/Port:&lt;Bağlantı Noktası&gt;
+      Yuva bağlantısı ve olay iletilerini almaya yönelik Bağlantı Noktası.</target>
         <note />
       </trans-unit>
       <trans-unit id="InvalidPortArgument">
         <source>The --Port|/Port argument requires the port number which is an integer. Specify the port for socket connection and receiving the event messages.</source>
-        <target state="new">The --Port|/Port argument requires the port number which is an integer. Specify the port for socket connection and receiving the event messages.</target>
+        <target state="translated">--Port|/Port bağımsız değişkeni tamsayı olan bir bağlantı noktası numarası gerektirir. Yuva bağlantısına ve olay iletilerini almaya yönelik bağlantı noktasını belirtin.</target>
         <note />
       </trans-unit>
       <trans-unit id="AssemblyPathInvalid">
         <source>Unable to find the assembly under test. Please make sure that the project is built.</source>
-        <target state="new">Unable to find the assembly under test. Please make sure that the project is built.</target>
+        <target state="translated">Test kapsamındaki bütünleştirilmiş kod bulunamıyor. Lütfen projenin oluşturulduğundan emin olun.</target>
         <note />
       </trans-unit>
       <trans-unit id="ProjectPathNotFound">
         <source>The Path {0} does not exist.</source>
-        <target state="new">The Path {0} does not exist.</target>
+        <target state="translated">{0} Yolu yok.</target>
         <note />
       </trans-unit>
       <trans-unit id="BuildBasePathArgumentHelp">
         <source>--BuildBasePath|/BuildBasePath:&lt;BuildBasePath&gt;
       The directory containing the temporary outputs.</source>
-        <target state="new">--BuildBasePath|/BuildBasePath:&lt;BuildBasePath&gt;
-      The directory containing the temporary outputs.</target>
+        <target state="translated">--BuildBasePath|/BuildBasePath:&lt;BuildBasePath&gt;
+      Geçici çıkışları içeren dizin.</target>
         <note />
       </trans-unit>
       <trans-unit id="ConfigurationArgumentHelp">
         <source>-c|--Configuration|/c|/Configuration:&lt;Configuration&gt;
       The configuration the project is built for i.e. Debug/Release</source>
-        <target state="new">-c|--Configuration|/c|/Configuration:&lt;Configuration&gt;
-      The configuration the project is built for i.e. Debug/Release</target>
+        <target state="translated">-c|--Configuration|/c|/Configuration:&lt;Configuration&gt;
+      Projenin derleme nedeni olan yapılandırma (Debug/Release)</target>
         <note />
       </trans-unit>
       <trans-unit id="InvalidConfiguration">
         <source>The given configuration is invalid.</source>
-        <target state="new">The given configuration is invalid.</target>
+        <target state="translated">Belirtilen yapılandırma geçersiz.</target>
         <note />
       </trans-unit>
       <trans-unit id="OutputArgumentHelp">
         <source>-o|--Output|/o|/Output:&lt;Output&gt;
       The directory containing the binaries to run.</source>
-        <target state="new">-o|--Output|/o|/Output:&lt;Output&gt;
-      The directory containing the binaries to run.</target>
+        <target state="translated">-o|--Output|/o|/Output:&lt;Çıkış&gt;
+      Çalıştırılacak ikili dosyaları içeren dizin.</target>
         <note />
       </trans-unit>
       <trans-unit id="BuildBasePathNotFound">
         <source>The BuildBasePath was not found, provide a valid path and try again.</source>
-        <target state="new">The BuildBasePath was not found, provide a valid path and try again.</target>
+        <target state="translated">BuildBasePath bulunamadı, geçerli bir yol belirtin ve yeniden deneyin.</target>
         <note />
       </trans-unit>
       <trans-unit id="OutputPathNotFound">
         <source>The Output path was not found, provide a valid path and try again.</source>
-        <target state="new">The Output path was not found, provide a valid path and try again.</target>
+        <target state="translated">Çıkış yolu bulunamadı, geçerli bir yol belirtin ve yeniden deneyin.</target>
         <note />
       </trans-unit>
       <trans-unit id="AddnlInfoMessagesBanner">
         <source>Additional Information Messages:</source>
-        <target state="new">Additional Information Messages:</target>
+        <target state="translated">Ek Bilgi İletileri:</target>
         <note />
       </trans-unit>
       <trans-unit id="Days">
         <source>Days</source>
-        <target state="new">Days</target>
+        <target state="translated">Gün</target>
         <note />
       </trans-unit>
       <trans-unit id="ErrorMessageBanner">
         <source>Error Message:</source>
-        <target state="new">Error Message:</target>
+        <target state="translated">Hata İletisi:</target>
         <note />
       </trans-unit>
       <trans-unit id="ExecutionTimeFormatString">
         <source> Total time: {0:0.0000} {1}</source>
-        <target state="new"> Total time: {0:0.0000} {1}</target>
+        <target state="translated"> Toplam süre: {0:0.0000} {1}</target>
         <note />
       </trans-unit>
       <trans-unit id="Hours">
         <source>Hours</source>
-        <target state="new">Hours</target>
+        <target state="translated">Saat</target>
         <note />
       </trans-unit>
       <trans-unit id="LoggerNotFound">
         <source>Could not find a test logger with URI or FriendlyName '{0}'.</source>
-        <target state="new">Could not find a test logger with URI or FriendlyName '{0}'.</target>
+        <target state="translated">URI veya FriendlyName değeri '{0}' olan bir test günlükçüsü bulunamadı.</target>
         <note />
       </trans-unit>
       <trans-unit id="Minutes">
         <source>Minutes</source>
-        <target state="new">Minutes</target>
+        <target state="translated">Dakika</target>
         <note />
       </trans-unit>
       <trans-unit id="Seconds">
         <source>Seconds</source>
-        <target state="new">Seconds</target>
+        <target state="translated">Saniye</target>
         <note />
       </trans-unit>
       <trans-unit id="StacktraceBanner">
         <source>Stack Trace:</source>
-        <target state="new">Stack Trace:</target>
+        <target state="translated">Yığın İzleme:</target>
         <note />
       </trans-unit>
       <trans-unit id="StdErrMessagesBanner">
         <source>Standard Error Messages:</source>
-        <target state="new">Standard Error Messages:</target>
+        <target state="translated">Standart Hata İletileri:</target>
         <note />
       </trans-unit>
       <trans-unit id="StdOutMessagesBanner">
         <source>Standard Output Messages:</source>
-        <target state="new">Standard Output Messages:</target>
+        <target state="translated">Standart Çıkış İletileri:</target>
         <note />
       </trans-unit>
       <trans-unit id="AttachmentsBanner">
         <source>Attachments:</source>
-        <target state="new">Attachments:</target>
+        <target state="translated">Ekler:</target>
         <note />
       </trans-unit>
       <trans-unit id="AttachmentOutputFormat">
         <source>  {0}</source>
-        <target state="new">  {0}</target>
+        <target state="translated">  {0}</target>
         <note />
       </trans-unit>
       <trans-unit id="NoTestsAvailableInSources">
         <source>No test is available in {0}. Make sure that installed test discoverers &amp; executors, platform &amp; framework version settings are appropriate and try again.</source>
-        <target state="new">No test is available in {0}. Make sure that installed test discoverers &amp; executors, platform &amp; framework version settings are appropriate and try again.</target>
+        <target state="translated">{0} içinde hiç test yok. Yüklü test bulucuları ve yükleyicileri, platform ve çerçeve sürümü ayarlarının uygun olmasına dikkat edin ve yeniden deneyin.</target>
         <note />
       </trans-unit>
       <trans-unit id="FailedTestIndicator">
         <source>Failed</source>
-        <target state="new">Failed</target>
+        <target state="translated">Başarısız</target>
         <note>Message which is written to the console when a test fails.</note>
       </trans-unit>
       <trans-unit id="PassedTestIndicator">
         <source>Passed</source>
-        <target state="new">Passed</target>
+        <target state="translated">Başarılı</target>
         <note>Message which is written to the console when a test passes.</note>
       </trans-unit>
       <trans-unit id="SkippedTestIndicator">
         <source>Skipped</source>
-        <target state="new">Skipped</target>
+        <target state="translated">Atlandı</target>
         <note />
       </trans-unit>
       <trans-unit id="DiscoveryFailed">
         <source>Discovery failed for given sources. Exception : {0}</source>
-        <target state="new">Discovery failed for given sources. Exception : {0}</target>
+        <target state="translated">Belirtilen kaynaklar için bulma başarısız oldu. Özel durum: {0}</target>
         <note />
       </trans-unit>
       <trans-unit id="ParentProcessIdArgumentHelp">
         <source>--ParentProcessId|/ParentProcessId:&lt;ParentProcessId&gt;
       Process Id of the Parent Process responsible for launching current process.</source>
-        <target state="new">--ParentProcessId|/ParentProcessId:&lt;ParentProcessId&gt;
-      Process Id of the Parent Process responsible for launching current process.</target>
+        <target state="translated">--ParentProcessId|/ParentProcessId:&lt;ParentProcessId&gt;
+      Geçerli işlemi başlatmadan sorumlu Üst İşlemin işlem kimliği.</target>
         <note />
       </trans-unit>
       <trans-unit id="InvalidParentProcessIdArgument">
         <source>The --ParentProcessId|/ParentProcessId argument requires the process id which is an integer. Specify the process id of the parent process that launched this process.</source>
-        <target state="new">The --ParentProcessId|/ParentProcessId argument requires the process id which is an integer. Specify the process id of the parent process that launched this process.</target>
+        <target state="translated">--ParentProcessId|/ParentProcessId bağımsız değişkeni, işlem kimliğinin tamsayı olmasını gerektirir. Bu işlemi başlatan üst işlemin işlem kimliğini belirtin.</target>
         <note />
       </trans-unit>
       <trans-unit id="HelpArgumentsText">
         <source>Arguments:</source>
-        <target state="new">Arguments:</target>
+        <target state="translated">Bağımsız değişkenler:</target>
         <note />
       </trans-unit>
       <trans-unit id="EnableDiagUsage">
@@ -773,28 +773,28 @@
       Change the trace level for logs as shown below
       Example: /Diag:&lt;Path to log file&gt;;tracelevel=&lt;Defaults to "verbose"&gt;
       Allowed values for tracelevel: off, error, warning, info and verbose.</source>
-        <target state="new">--Diag|/Diag:&lt;Path to log file&gt;
-      Enable logs for test platform.
-      Logs are written to the provided file.
+        <target state="translated">--Diag|/Diag:&lt;Günlük dosyası yolu&gt;
+      Test platformu için günlükleri sağlayın.
+      Günlükler sağlanan dosyaya yazılır.
 
-      Change the trace level for logs as shown below
-      Example: /Diag:&lt;Path to log file&gt;;tracelevel=&lt;Defaults to "verbose"&gt;
-      Allowed values for tracelevel: off, error, warning, info and verbose.</target>
+Günlükler için izleme düzeyini aşağıda gösterildiği gibi değiştirin
+      Örnek: /Diag:&lt;Günlük dosyası yolu&gt;; tracelevel=&lt;Varsayılan olarak "ayrıntılı" değerini alır&gt;
+      tracelevel için izin verilen değerler: kapalı, hata, uyarı, bilgiler ve ayrıntılı.</target>
         <note />
       </trans-unit>
       <trans-unit id="LoggerFileIsReadOnly">
         <source>The file {0} provided is read only</source>
-        <target state="new">The file {0} provided is read only</target>
+        <target state="translated">Belirtilen {0} dosyası salt okunur</target>
         <note />
       </trans-unit>
       <trans-unit id="DesignModeClientTimeoutError">
         <source>Timeout to connect or process request for DesignModeClient on port: {0}</source>
-        <target state="new">Timeout to connect or process request for DesignModeClient on port: {0}</target>
+        <target state="translated">Şu bağlantı noktası üzerinde DesignModeClient için bağlantı veya işleme isteği zaman aşımı: {0}</target>
         <note />
       </trans-unit>
       <trans-unit id="NotRunTestIndicator">
         <source>Not Run</source>
-        <target state="new">Not Run</target>
+        <target state="translated">Çalıştırılmadı</target>
         <note />
       </trans-unit>
       <trans-unit id="CLIRunSettingsArgumentHelp">
@@ -802,61 +802,61 @@
       Arguments to pass runsettings configurations through commandline. Arguments may be specified as name-value pair of the form [name]=[value] after "-- ". Note the space after --. 
       Use a space to separate multiple [name]=[value].
       More info on RunSettings arguments support: https://aka.ms/vstest-runsettings-arguments</source>
-        <target state="new">RunSettings arguments:
-      Arguments to pass runsettings configurations through commandline. Arguments may be specified as name-value pair of the form [name]=[value] after "-- ". Note the space after --. 
-      Use a space to separate multiple [name]=[value].
-      More info on RunSettings arguments support: https://aka.ms/vstest-runsettings-arguments</target>
+        <target state="translated">RunSettings bağımsız değişkenleri:
+      Komut satırı aracılığıyla runsettings yapılandırmalarını geçirmek için kullanılan bağımsız değişkenler. Bağımsız değişkenler "-- " karakterlerinden sonra [ad]=[değer] biçiminde ad-değer çifti olarak belirtilebilir. -- karakterlerinden sonra boşluk olduğuna dikkat edin. 
+      Birden fazla [ad]=[değer] çiftini ayırmak için bir boşluk kullanın.
+      RunSettings bağımsız değişkenleri desteği hakkında daha fazla bilgi: https://aka.ms/vstest-runsettings-arguments</target>
         <note />
       </trans-unit>
       <trans-unit id="MalformedRunSettingsKey">
         <source>One or more runsettings provided contain invalid token</source>
-        <target state="new">One or more runsettings provided contain invalid token</target>
+        <target state="translated">Sağlanan bir veya daha fazla runsettings geçersiz belirteç içeriyor</target>
         <note />
       </trans-unit>
       <trans-unit id="ResultsDirectoryArgumentHelp">
         <source>--ResultsDirectory|/ResultsDirectory
       Test results directory will be created in specified path if not exists.
       Example  /ResultsDirectory:&lt;pathToResultsDirectory&gt;</source>
-        <target state="new">--ResultsDirectory|/ResultsDirectory
-      Test results directory will be created in specified path if not exists.
-      Example  /ResultsDirectory:&lt;pathToResultsDirectory&gt;</target>
+        <target state="translated">--ResultsDirectory|/ResultsDirectory
+      Mevcut değilse test sonuçları dizini belirtilen yolda oluşturulacak.
+      Örnek /ResultsDirectory:&lt;pathToResultsDirectory&gt;</target>
         <note />
       </trans-unit>
       <trans-unit id="ResultsDirectoryValueRequired">
         <source>The /ResultsDirectory parameter requires a value, where the test results should be saved. Example:  /ResultsDirectory:c:\MyTestResultsDirectory</source>
-        <target state="new">The /ResultsDirectory parameter requires a value, where the test results should be saved. Example:  /ResultsDirectory:c:\MyTestResultsDirectory</target>
+        <target state="translated">/ResultsDirectory parametresi test sonuçlarının kaydedileceği bir değer gerektirir. Örnek:  /ResultsDirectory:c:\TestSonuçlarıDizinim</target>
         <note />
       </trans-unit>
       <trans-unit id="InvalidResultsDirectoryPathCommand">
         <source>The path '{0}' specified in the 'ResultsDirectory' is invalid. Error: {1}</source>
-        <target state="new">The path '{0}' specified in the 'ResultsDirectory' is invalid. Error: {1}</target>
+        <target state="translated">'ResultsDirectory' içinde belirtilen '{0}' yolu geçersiz. Hata: {1}</target>
         <note />
       </trans-unit>
       <trans-unit id="InIsolationDeprecated">
         <source>The /InIsolation flag is deprecated. The tests are always run in a separate process</source>
-        <target state="new">The /InIsolation flag is deprecated. The tests are always run in a separate process</target>
+        <target state="translated">/InIsolation bayrağı kullanım dışı bırakıldı. Testler her zaman ayrı bir işlem içinde çalıştırılır</target>
         <note />
       </trans-unit>
       <trans-unit id="VstestDiagLogOutputPath">
         <source>Logging Vstest Diagnostics in file: {0}</source>
-        <target state="new">Logging Vstest Diagnostics in file: {0}</target>
+        <target state="translated">Vstest Tanılamaları şu dosyadaki günlüğe kaydediliyor: {0}</target>
         <note />
       </trans-unit>
       <trans-unit id="CollectArgumentHelp">
         <source>--Collect|/Collect:&lt;DataCollector FriendlyName&gt;
       Enables data collector for the test run. More info here : https://aka.ms/vstest-collect</source>
-        <target state="new">--Collect|/Collect:&lt;DataCollector FriendlyName&gt;
-      Enables data collector for the test run. More info here : https://aka.ms/vstest-collect</target>
+        <target state="translated">--Collect|/Collect:&lt;DataCollector FriendlyName&gt;
+      Test çalıştırması için veri toplayıcıyı etkinleştirir. Daha fazla bilgi: https://aka.ms/vstest-collect</target>
         <note />
       </trans-unit>
       <trans-unit id="DataCollectorFriendlyNameInvalid">
         <source>The Data Collector friendly name '{0}' is not valid.  The Data Collector will be ignored.</source>
-        <target state="new">The Data Collector friendly name '{0}' is not valid.  The Data Collector will be ignored.</target>
+        <target state="translated">Veri Toplayıcı kolay adı '{0}' geçerli değil. Veri Toplayıcı yoksayılacak.</target>
         <note />
       </trans-unit>
       <trans-unit id="DbgTrcMessagesBanner">
         <source>Debug Traces Messages:</source>
-        <target state="new">Debug Traces Messages:</target>
+        <target state="translated">Hata Ayıklama İzleme İletileri:</target>
         <note />
       </trans-unit>
       <trans-unit id="EnableBlameUsage">
@@ -872,77 +872,77 @@
       Example: /Blame
                /Blame:CollectDump
                /Blame:CollectDump;CollectAlways=true;DumpType=full</source>
-        <target state="new">--Blame|/Blame:[CollectDump];[CollectAlways]=[Value];[DumpType]=[Value]
-      Runs the test in blame mode. This option is helpful in isolating the problematic test causing test host crash.
-      It creates an output file in the current directory as "Sequence.xml",
-      that captures the order of execution of test before the crash.
-      You may optionally choose to collect process dump for the test host.
-      When you choose to collect dump, by default, a mini dump will be collected on a crash.
-      You may also choose to override this default behaviour by some optional parameters:
-      CollectAlways - To collect dump on exit even if there is no crash (true/false) 
-      DumpType - To specify dump type (mini/full).
-      Example: /Blame
+        <target state="translated">--Blame|/Blame:[CollectDump];[CollectAlways]=[Value];[DumpType]=[Value]
+      Testi blame modunda çalıştırır. Bu seçenek, test ana bilgisayarının kilitlenmesine neden olan sorunlu testin ayrı tutulmasını sağlar.
+      Geçerli dizinde, kilitlenmeden önce testin yürütülme düzenini yakalayan,
+      “Sequence.xml” adlı bir çıkış dosyası oluşturur. 
+      İsteğe bağlı olarak test ana bilgisayarının işlem dökümünü çıkarmayı seçebilirsiniz.
+      Dökümü çıkarmayı seçtiğinizde, kilitlenme durumunda varsayılan olarak bir mini döküm çıkarılır.
+      Dilerseniz bazı isteğe bağlı parametrelerle bu varsayılan davranışı geçersiz kılabilirsiniz:
+      CollectAlways - Kilitlenme olmasa da her çıkışta döküm çıkarma (true/false) 
+      DumpType - Döküm türünü belirtme (mini/full).
+      Örnek: /Blame
                /Blame:CollectDump
                /Blame:CollectDump;CollectAlways=true;DumpType=full</target>
         <note />
       </trans-unit>
       <trans-unit id="TestRunAborted">
         <source>Test Run Aborted.</source>
-        <target state="new">Test Run Aborted.</target>
+        <target state="translated">Test Çalıştırması Durduruldu.</target>
         <note />
       </trans-unit>
       <trans-unit id="TestRunCanceled">
         <source>Test Run Canceled.</source>
-        <target state="new">Test Run Canceled.</target>
+        <target state="translated">Test Çalıştırması İptal Edildi.</target>
         <note />
       </trans-unit>
       <trans-unit id="OpenResponseFileError">
         <source>Error opening response file '{0}'</source>
-        <target state="new">Error opening response file '{0}'</target>
+        <target state="translated">'{0}' yanıt dosyası açılırken hata oluştu</target>
         <note />
       </trans-unit>
       <trans-unit id="ResponseFileArgumentHelp">
         <source>@&lt;file&gt;
       Read response file for more options.</source>
-        <target state="new">@&lt;file&gt;
-      Read response file for more options.</target>
+        <target state="translated">@&lt;dosya&gt;
+      Daha fazla seçenek için yanıt dosyasını okuyun.</target>
         <note />
       </trans-unit>
       <trans-unit id="TestRunSummaryForCanceledOrAbortedRun">
         <source>Total tests: Unknown</source>
-        <target state="new">Total tests: Unknown</target>
+        <target state="translated">Toplam test sayısı: Bilinmiyor</target>
         <note />
       </trans-unit>
       <trans-unit id="StringFormatToJoinTwoStrings">
         <source>{0} {1}</source>
-        <target state="new">{0} {1}</target>
+        <target state="translated">{0} {1}</target>
         <note />
       </trans-unit>
       <trans-unit id="SuggestTestAdapterPathIfNoTestsIsFound">
         <source>Additionally, path to test adapters can be specified using /TestAdapterPath command. Example  /TestAdapterPath:&lt;pathToCustomAdapters&gt;.</source>
-        <target state="new">Additionally, path to test adapters can be specified using /TestAdapterPath command. Example  /TestAdapterPath:&lt;pathToCustomAdapters&gt;.</target>
+        <target state="translated">Buna ek olarak, test bağdaştırıcıları yolu /TestAdapterPath komutu kullanılarak belirtilebilir. Örnek /TestAdapterPath:&lt;pathToCustomAdapters&gt;.</target>
         <note />
       </trans-unit>
       <trans-unit id="UseVsixExtensionsDeprecation">
         <source>/UseVsixExtensions is getting deprecated. Please use /TestAdapterPath instead.</source>
-        <target state="new">/UseVsixExtensions is getting deprecated. Please use /TestAdapterPath instead.</target>
+        <target state="translated">/UseVsixExtensions kullanımdan kaldırılıyor. Lütfen bunun yerine /TestAdapterPath kullanın.</target>
         <note />
       </trans-unit>
       <trans-unit id="DisableAutoFakesUsage">
         <source>--DisableAutoFakes|/DisableAutoFakes:&lt;true/false&gt;
      Example: /DisableAutoFakes:true</source>
-        <target state="new">--DisableAutoFakes|/DisableAutoFakes:&lt;true/false&gt;
-     Example: /DisableAutoFakes:true</target>
+        <target state="translated">--DisableAutoFakes|/DisableAutoFakes:&lt;true/false&gt;
+     Örnek: /DisableAutoFakes:true</target>
         <note />
       </trans-unit>
       <trans-unit id="CollectWithTestSettingErrorMessage">
         <source>--Collect|/Collect:"{0}" is not supported if test run is configured using testsettings.</source>
-        <target state="new">--Collect|/Collect:"{0}" is not supported if test run is configured using testsettings.</target>
+        <target state="translated">--Collect|/Collect: Test çalıştırmasını yapılandırmak için test ayarları kullanıldığında "{0}" desteklenmez.</target>
         <note />
       </trans-unit>
       <trans-unit id="RunsettingsWithDCErrorMessage">
         <source>Data collectors other than Code Coverage and Microsoft Fakes configured via run settings are not supported with embedded test settings. Please see https://aka.ms/vstest-configure-datacollector for more information. Run settings: {0}.</source>
-        <target state="new">Data collectors other than Code Coverage and Microsoft Fakes configured via run settings are not supported with embedded test settings. Please see https://aka.ms/vstest-configure-datacollector for more information. Run settings: {0}.</target>
+        <target state="translated">Çalıştırma ayarları aracılığıyla yapılandırılan Kod Kapsamı ve Microsoft Fakes dışındaki veri toplayıcılar, ekli test ayarlarında desteklenmiyor. Daha fazla bilgi için bkz. https://aka.ms/vstest-configure-datacollector. Çalıştırma ayarları: {0}.</target>
         <note />
       </trans-unit>
       <trans-unit id="EnableLoggerArgumentsInNetCore">
@@ -958,115 +958,115 @@
       Change the diagnostic level prefix for console logger as shown below
       Example: /logger:console;prefix=&lt;Defaults to "false"&gt;
       More info on Console Logger here : https://aka.ms/console-logger</source>
-        <target state="new">--logger|/logger:&lt;Logger Uri/FriendlyName&gt;
-      Specify a logger for test results. For example, to log results into a 
-      Visual Studio Test Results File (TRX) use /logger:trx[;LogFileName=&lt;Defaults to unique file name&gt;]
-      Creates file in TestResults directory with given LogFileName.
+        <target state="translated">--logger|/logger:&lt;Günlükçü URI/FriendlyName&gt;
+      Test sonuçları için bir günlükçü belirtin. Örneğin, sonuçları bir 
+      Visual Studio Test Sonuçları Dosyası'na (TRX) kaydetmek için şunu kullanın: /logger:trx[;LogFileName=&lt;Varsayılan olarak benzersiz dosya adını alır&gt;]
+      İlgili LogFileName ile TestResults dizininde dosya oluşturur.
 
-      Change the verbosity level in log messages for console logger as shown below
-      Example: /logger:console;verbosity=&lt;Defaults to "minimal"&gt;
-      Allowed values for verbosity: quiet, minimal, normal and detailed.
+      Konsol günlükçüsü için ayrıntı düzeyini günlük iletilerinde aşağıda gösterildiği gibi değiştirin
+      Örnek: /logger:console;verbosity=&lt;Varsayılan olarak "minimal" değerini alır&gt;
+      Ayrıntı için izin verilen değerler: quiet, minimal, normal ve detailed.
 
-      Change the diagnostic level prefix for console logger as shown below
-      Example: /logger:console;prefix=&lt;Defaults to "false"&gt;
-      More info on Console Logger here : https://aka.ms/console-logger</target>
+      Konsol günlükçüsü için tanılama düzeyi ön ekini aşağıda gösterildiği gibi değiştirin
+      Örnek: /logger:console;prefix=&lt;Varsayılan olarak "false" değerini alır&gt;
+      Konsol Günlükçüsü hakkında daha fazla bilgi: https://aka.ms/console-logger</target>
         <note />
       </trans-unit>
       <trans-unit id="BlameCollectDumpNotSupportedForPlatform">
         <source>Collecting crash dumps by option CollectDump for Blame is not supported for this platform.</source>
-        <target state="new">Collecting crash dumps by option CollectDump for Blame is not supported for this platform.</target>
+        <target state="translated">Blame için CollectDump seçeneğine göre kilitlenme bilgi dökümlerinin toplanması bu platform için desteklenmiyor.</target>
         <note />
       </trans-unit>
       <trans-unit id="BlameIncorrectOption">
         <source>The blame parameter specified with blame, {0} is invalid. Ignoring this parameter.</source>
-        <target state="new">The blame parameter specified with blame, {0} is invalid. Ignoring this parameter.</target>
+        <target state="translated">Blame ile belirtilen blame parametresi {0} geçerli değil. Bu parametre yoksayılıyor.</target>
         <note />
       </trans-unit>
       <trans-unit id="InvalidDiagFilePath">
         <source>Diag file path '{0}' is not valid.</source>
-        <target state="new">Diag file path '{0}' is not valid.</target>
+        <target state="translated">Diag dosya yolu '{0}' geçerli değil.</target>
         <note />
       </trans-unit>
       <trans-unit id="InvalidBlameArgument">
         <source>Blame argument '{0}' is not valid.</source>
-        <target state="new">Blame argument '{0}' is not valid.</target>
+        <target state="translated">Blame bağımsız değişkeni '{0}' geçerli değil.</target>
         <note />
       </trans-unit>
       <trans-unit id="InvalidDiagArgument">
         <source>Diag argument '{0}' is not valid.</source>
-        <target state="new">Diag argument '{0}' is not valid.</target>
+        <target state="translated">Diag bağımsız değişkeni '{0}' geçerli değil.</target>
         <note />
       </trans-unit>
       <trans-unit id="InvalidLoggerArgument">
         <source>Logger argument '{0}' is not valid.</source>
-        <target state="new">Logger argument '{0}' is not valid.</target>
+        <target state="translated">Logger bağımsız değişkeni '{0}' geçerli değil.</target>
         <note />
       </trans-unit>
       <trans-unit id="Framework35NotSupported">
         <source>Framework35 is not supported. For projects targeting .Net Framework 3.5, test will run in CLR 4.0 "compatibility mode".</source>
-        <target state="new">Framework35 is not supported. For projects targeting .Net Framework 3.5, test will run in CLR 4.0 "compatibility mode".</target>
+        <target state="translated">Framework35 desteklenmiyor. İçin hedefleme .net Framework 3.5, test CLR 4.0 "uyumluluk moduna" çalışacak.</target>
         <note />
       </trans-unit>
       <trans-unit id="ProgressIndicatorString">
         <source>Test run in progress</source>
-        <target state="new">Test run in progress</target>
+        <target state="translated">Test çalıştırması devam ediyor</target>
         <note />
       </trans-unit>
       <trans-unit id="TestRunSummaryTotalTests">
         <source>Total tests: {0}</source>
-        <target state="new">Total tests: {0}</target>
+        <target state="translated">Toplam test sayısı: {0}</target>
         <note />
       </trans-unit>
       <trans-unit id="TestRunSummaryFailedTests">
         <source>     Failed: {0}</source>
-        <target state="new">     Failed: {0}</target>
+        <target state="translated">     Başarısız: {0}</target>
         <note />
       </trans-unit>
       <trans-unit id="TestRunSummaryPassedTests">
         <source>     Passed: {0}</source>
-        <target state="new">     Passed: {0}</target>
+        <target state="translated">     Geçti: {0}</target>
         <note />
       </trans-unit>
       <trans-unit id="TestRunSummarySkippedTests">
         <source>    Skipped: {0}</source>
-        <target state="new">    Skipped: {0}</target>
+        <target state="translated">    Atlandı: {0}</target>
         <note />
       </trans-unit>
       <trans-unit id="InvalidArgument">
         <source>The argument {0} is invalid. Please use the /help option to check the list of valid arguments.</source>
-        <target state="new">The argument {0} is invalid. Please use the /help option to check the list of valid arguments.</target>
+        <target state="translated">{0} bağımsız değişkeni geçersiz. Lütfen geçerli bağımsız değişkenlerin listesini denetlemek için /help seçeneğini kullanın.</target>
         <note />
       </trans-unit>
       <trans-unit id="TestSourcesDiscovered">
         <source>A total of {0} test files matched the specified pattern.</source>
-        <target state="new">A total of {0} test files matched the specified pattern.</target>
+        <target state="translated">Toplam {0} test dosyası belirtilen desenle eşleşti.</target>
         <note />
       </trans-unit>
       <trans-unit id="InvalidTestRunParameterArgument">
         <source>The test run parameter argument '{0}' is invalid. Please use the format below.
      Format: TestRunParameters.Parameter(name=\"&lt;name&gt;\", value=\"&lt;value&gt;\")</source>
-        <target state="new">The test run parameter argument '{0}' is invalid. Please use the format below.
-     Format: TestRunParameters.Parameter(name=\"&lt;name&gt;\", value=\"&lt;value&gt;\")</target>
+        <target state="translated">'{0}' test çalıştırması parametre bağımsız değişkeni geçersiz. Lütfen aşağıdaki biçimi kullanın.
+     Biçim: TestRunParameters.Parameter(name=\"&lt;name&gt;\", value=\"&lt;value&gt;\")</target>
         <note />
       </trans-unit>
       <trans-unit id="BlameCollectDumpTestTimeoutNotSupportedForPlatform">
         <source>Collecting hang dumps by option CollectDump with TestTimeout for Blame is not supported for this platform.</source>
-        <target state="new">Collecting hang dumps by option CollectDump with TestTimeout for Blame is not supported for this platform.</target>
+        <target state="translated">Blame için TestTimeout ile CollectDump seçeneğine göre asılı kalma bilgi dökümlerinin toplanması bu platform için desteklenmiyor.</target>
         <note />
       </trans-unit>
       <trans-unit id="TestRunSummary">
         <source>{0} - Failed: {1}, Passed: {2}, Skipped: {3}, Total: {4}, Duration: {5}</source>
-        <target state="new">{0} - Failed: {1}, Passed: {2}, Skipped: {3}, Total: {4}, Duration: {5}</target>
+        <target state="translated">{0} - Başarısız: {1}, Başarılı: {2}, Atlanan: {3}, Toplam: {4}, Süre: {5}</target>
         <note />
       </trans-unit>
       <trans-unit id="None">
         <source>None</source>
-        <target state="new">None</target>
+        <target state="translated">Hiçbiri</target>
         <note />
       </trans-unit>
       <trans-unit id="TestRunSummaryAssemblyAndFramework">
         <source> - {0} {1}</source>
-        <target state="new"> - {0} {1}</target>
+        <target state="translated"> - {0} {1}</target>
         <note />
       </trans-unit>
       <trans-unit id="EnvironmentArgumentHelp">
@@ -1078,29 +1078,29 @@
       Example: -e:VARIABLE1=VALUE1
                -e:ANOTHER_VARIABLE="VALUE WITH SPACES"
                -e:ANOTHER_VARIABLE="VALUE;seperated with;semicolons"</source>
-        <target state="new">-e|--Environment|/e|/Environment:&lt;NAME&gt;=&lt;VALUE&gt;
-      Sets the value of an environment variable. Creates the variable if it does not exist, overrides if it does. This will imply /InIsolation switch and force the tests to be run in an isolated process.
+        <target state="translated">-e|--Environment|/e|/Environment:&lt;NAME&gt;=&lt;VALUE&gt;
+      Bir ortam değişkeninin değerini ayarlar. Değişken mevcut değilse oluşturur, varsa geçersiz kılar. Bu, /InIsolation anahtarını kapsar ve testleri yalıtılmış bir işlemde çalıştırılmaya zorlar.
       
-      This argument can be specified multiple times to provide multiple variables.
+      Birden çok değişken sağlamak için bu bağımsız değişken birden çok kez belirtilebilir.
 
-      Example: -e:VARIABLE1=VALUE1
+      Örnek: -e:VARIABLE1=VALUE1
                -e:ANOTHER_VARIABLE="VALUE WITH SPACES"
                -e:ANOTHER_VARIABLE="VALUE;seperated with;semicolons"</target>
         <note />
       </trans-unit>
       <trans-unit id="EnvironmentVariableXIsOverriden">
         <source>Environment variable '{0}' was already defined, but it's overridden by -Environment argument.</source>
-        <target state="new">Environment variable '{0}' was already defined, but it's overridden by -Environment argument.</target>
+        <target state="translated">'{0}' ortam değişkeni zaten tanımlandı, ancak -Environment bağımsız değişkeni tarafından geçersiz kılındı.</target>
         <note />
       </trans-unit>
       <trans-unit id="TestRunAbortedWithError">
         <source>Test Run Aborted with error {0}.</source>
-        <target state="new">Test Run Aborted with error {0}.</target>
+        <target state="translated">Test Çalıştırması {0} hatasıyla durduruldu.</target>
         <note />
       </trans-unit>
       <trans-unit id="InvalidTestSessionCorrelationId">
         <source>Invalid testSessionCorrelationId</source>
-        <target state="new">Invalid testSessionCorrelationId</target>
+        <target state="translated">testSessionCorrelationId geçersiz</target>
         <note />
       </trans-unit>
       <trans-unit id="TestAdapterLoadingStrategyHelp">
@@ -1124,36 +1124,36 @@
         - NextToSource: Load adapters next to source. 
 
         - Recursive: Recursively search folders when loading adapters. This requires "Explicit" or "NextToSource" to be specified too.</source>
-        <target state="new">--TestAdapterLoadingStrategy|/TestAdapterLoadingStrategy:&lt;strategy&gt;
-      This affects adapter loading behavior.
+        <target state="translated">--TestAdapterLoadingStrategy|/TestAdapterLoadingStrategy:&lt;strategy&gt;
+      Bu, bağdaştırıcı yükleme davranışını etkiliyor.
 
-      Currently supported behaviors:
-        - Explicit: Test Platform will only load adapters specified by /TestAdapterPath (or RunConfiguration.TestAdaptersPaths node). 
-                    If a specific adapter path is provided, adapter will be loaded; if a directory path is provided adapters directly in that folder will be loaded, unless Recursive option is also specified.
-                    If no adapter path is specified, test run will fail.
-                    This will imply /InIsolation switch and force the tests to be run in an isolated process.
+      Şu anda desteklenen davranışlar:
+        - Açık: Test Platformu yalnızca /TestAdapterPath (veya RunConfiguration.TestAdaptersPaths düğümü) tarafından belirtilen bağdaştırıcıları yükler. 
+                    Belirli bir bağdaştırıcı yolu sağlanırsa, bağdaştırıcı yüklenir; bir dizin yolu sağlanırsa Özyinelemeli seçeneği de belirtilmediği sürece bağdaştırıcılar doğrudan bu klasörde yüklenir.
+                    Bağdaştırıcı yolu belirtilmezse test çalıştırması başarısız olur.
+                    Bu, /InIsolation geçiş işlemini belirtir ve testleri yalıtılmış bir işlemde çalıştırılmaya zorlar.
         
-        - Default: Test Platform will load adapters is if this argument has not been specified. 
-                   It will pick up extensions from next to source, provided additional adapter paths and from the default directory.
+        - Varsayılan: Bu bağımsız değişken belirtilmemişse, Test Platformu bağdaştırıcıları yükler. 
+                   Kaynağın yanında, sağlanan ek bağdaştırıcı yolları ve varsayılan dizinden uzantılar alır.
 
-        - DefaultRuntimeProviders: Load default runtime providers shipped with Test Platform. 
-                                   If this is not specified when "Explicit" option is set, a test host provider need to be specified explicitly.
+        - DefaultRuntimeProviders: Test Platformu ile gönderilen varsayılan çalışma zamanı sağlayıcılarını yükleyin. 
+                                   "Explicit" seçeneği ayarlandığında bu belirtilmezse, bir test ana bilgisayar sağlayıcısının açıkça belirtilmesi gerekir.
 
-        - ExtensionsDirectory: Load adapters inside Extensions folder.
+- ExtensionsDirectory: Bağdaştırıcıları Uzantılar klasörünün içine yükleyin.
 
-        - NextToSource: Load adapters next to source. 
+        - NextToSource: Bağdaştırıcıları kaynağın yanında yükle. 
 
-        - Recursive: Recursively search folders when loading adapters. This requires "Explicit" or "NextToSource" to be specified too.</target>
+        - Özyinelemeli: Bağdaştırıcılar yüklenirken klasörleri özyinelemeli olarak arayın. Bu, "Explicit" veya "NextToSource" öğesinin de belirtilmesini gerektirir.</target>
         <note>Do not translate "Default", "DefaultRuntimeProviders", "ExtensionsDirectory", "NextToSource" or "Recursive".</note>
       </trans-unit>
       <trans-unit id="TestAdapterLoadingStrategyValueInvalid">
         <source>Specified value ({0}) for /TestAdapterLoadingStrategy is invalid!</source>
-        <target state="new">Specified value ({0}) for /TestAdapterLoadingStrategy is invalid!</target>
+        <target state="translated">/TestAdapterLoadingStrategy için belirtilen değer ({0}) geçersiz!</target>
         <note />
       </trans-unit>
       <trans-unit id="TestAdapterLoadingStrategyValueInvalidRecursive">
         <source>Recursive adapter loading strategy is cannot be used by itself. Please combine with one or more of: {0}</source>
-        <target state="new">Recursive adapter loading strategy is cannot be used by itself. Please combine with one or more of: {0}</target>
+        <target state="translated">Özyinelemeli bağdaştırıcı yükleme stratejisi kendisi tarafından kullanılamaz. Lütfen bir veya daha fazla öğeyle birleştirin: {0}</target>
         <note>
         - Do not translate "Recursive",
         - {0} is the strategy names, seperated by comma: for example "Explicit, NextToSource"
@@ -1161,72 +1161,72 @@
       </trans-unit>
       <trans-unit id="TestAdapterPathValueRequiredWhenStrategyXIsUsed">
         <source>The /TestAdapterPath parameter needs to be provided when "{0}" test adapter loading strategy is specified!</source>
-        <target state="new">The /TestAdapterPath parameter needs to be provided when "{0}" test adapter loading strategy is specified!</target>
+        <target state="translated">Test bağdaştırıcısı yükleme stratejisi "{0}" belirtilirken /TestAdapterPath parametresi belirtilmelidir!</target>
         <note>{0} is the strategy name, "Explicit" for example.</note>
       </trans-unit>
       <trans-unit id="WarningEmulatedOnArm64">
         <source>vstest.console.exe is running in emulated mode as {0}. For better performance, please consider using the native runner vstest.console.arm64.exe.</source>
-        <target state="new">vstest.console.exe is running in emulated mode as {0}. For better performance, please consider using the native runner vstest.console.arm64.exe.</target>
+        <target state="translated">vstest.console.exe, öykünülen modda {0} olarak çalışıyor. Daha iyi performans için vstest.console.arm64.exe yerel çalıştırıcısını kullanmayı deneyin.</target>
         <note />
       </trans-unit>
       <trans-unit id="RequestHandlerConnectionTimedOut">
         <source>Waiting for request handler connection timed out after {0} seconds.</source>
-        <target state="new">Waiting for request handler connection timed out after {0} seconds.</target>
+        <target state="translated">İstek işleyicisi bağlantısını bekleme süresi {0} saniye sonra zaman aşımına uğradı.</target>
         <note />
       </trans-unit>
       <trans-unit id="StartTestSessionTimedOut">
         <source>Waiting for start test session timed out after {0} seconds.</source>
-        <target state="new">Waiting for start test session timed out after {0} seconds.</target>
+        <target state="translated">Test oturumunun başlamasını bekleme süresi {0} saniye sonra zaman aşımına uğradı.</target>
         <note />
       </trans-unit>
       <trans-unit id="StopTestSessionTimedOut">
         <source>Waiting for stop test session timed out after {0} seconds.</source>
-        <target state="new">Waiting for stop test session timed out after {0} seconds.</target>
+        <target state="translated">Test oturumunun durdurulmasını bekleme süresi {0} saniye sonra zaman aşımına uğradı.</target>
         <note />
       </trans-unit>
       <trans-unit id="ErrorHostingCommunicationChannel">
         <source>Error hosting communication channel.</source>
-        <target state="new">Error hosting communication channel.</target>
+        <target state="translated">İletişim kanalını barındırma hatası.</target>
         <note />
       </trans-unit>
       <trans-unit id="ProcDumpToolDirectoryPathArgumenNotFound">
         <source>ProcDumpToolDirectoryPath should be specified to install or unistall the post mortem debugger.</source>
-        <target state="new">ProcDumpToolDirectoryPath should be specified to install or unistall the post mortem debugger.</target>
+        <target state="translated">İşlem sonrası hata ayıklayıcısını yüklemek veya kaldırmak için ProcDumpToolDirectoryPath belirtilmelidir.</target>
         <note />
       </trans-unit>
       <trans-unit id="PostmortemDebuggerNotSupportedForCurrentOS">
         <source>Postmortem debugger is not supported in the current OS.</source>
-        <target state="new">Postmortem debugger is not supported in the current OS.</target>
+        <target state="translated">Postmortem hata ayıklayıcısı mevcut işletim sisteminde desteklenmiyor.</target>
         <note />
       </trans-unit>
       <trans-unit id="InvalidProcDumpToolDirectoryPath">
         <source>The directory specified for the procdump executable is not valid and the tool was not found inside environment variables (PROCDUMP_PATH, PATH)</source>
-        <target state="new">The directory specified for the procdump executable is not valid and the tool was not found inside environment variables (PROCDUMP_PATH, PATH)</target>
+        <target state="translated">Procdump yürütülebilir dosyası için belirtilen dizin geçerli değil ve araç ortam değişkenleri içinde bulunamadı (PROCDUMP_PATH, PATH)</target>
         <note />
       </trans-unit>
       <trans-unit id="ProcDumpFileNameNotFound">
         <source>Procdump file name not found: '{0}'</source>
-        <target state="new">Procdump file name not found: '{0}'</target>
+        <target state="translated">Procdump dosya adı bulunamadı: '{0}'</target>
         <note />
       </trans-unit>
       <trans-unit id="ProcDumpDirectoryPathArgumenNotFound">
         <source>DumpDirectoryPath should be specified to install the post mortem debugger.</source>
-        <target state="new">DumpDirectoryPath should be specified to install the post mortem debugger.</target>
+        <target state="translated">Son mortem hata ayıklayıcısını yüklemek için DumpDirectoryPath belirtilmelidir.</target>
         <note />
       </trans-unit>
       <trans-unit id="InvalidProcDumpDirectoryPath">
         <source>The directory specified is not valid: '{0}'</source>
-        <target state="new">The directory specified is not valid: '{0}'</target>
+        <target state="translated">Belirtilen dizin geçerli değil: '{0}'</target>
         <note />
       </trans-unit>
       <trans-unit id="InvalidAeDebuggerArgument">
         <source>AeDebugger argument '{0}' is not valid.</source>
-        <target state="new">AeDebugger argument '{0}' is not valid.</target>
+        <target state="translated">'{0}' AeDebugger bağımsız değişkeni geçerli değil.</target>
         <note />
       </trans-unit>
       <trans-unit id="VSTestDeprecationMessage">
         <source>The dotnet vstest command is superseded by dotnet test, which can now be used to run assemblies. See https://aka.ms/dotnet-test.</source>
-        <target state="new">The dotnet vstest command is superseded by dotnet test, which can now be used to run assemblies. See https://aka.ms/dotnet-test.</target>
+        <target state="translated">dotnet vstest komutunun yerine, artık derlemeleri çalıştırmak için kullanılabilecek dotnet test komutu kullanılıyor. Bununla ilgili https://aka.ms/dotnet-test adresini ziyaret edin.</target>
         <note />
       </trans-unit>
     </body>

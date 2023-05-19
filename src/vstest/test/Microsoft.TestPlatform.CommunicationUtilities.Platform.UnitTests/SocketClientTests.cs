@@ -83,7 +83,7 @@ public class SocketClientTests : SocketTestsBase, IDisposable
     [TestMethod]
     public void SocketClientStopShouldRaiseClientDisconnectedEventOnClientDisconnection()
     {
-        var waitEvent = SetupClientDisconnect(out ICommunicationChannel _);
+        var waitEvent = SetupClientDisconnect(out ICommunicationChannel? _);
 
         // Close the communication from client side
         _socketClient.Stop();
@@ -94,7 +94,7 @@ public class SocketClientTests : SocketTestsBase, IDisposable
     [TestMethod]
     public void SocketClientShouldRaiseClientDisconnectedEventIfConnectionIsBroken()
     {
-        var waitEvent = SetupClientDisconnect(out ICommunicationChannel _);
+        var waitEvent = SetupClientDisconnect(out ICommunicationChannel? _);
 
         // Close the communication from server side
         _tcpClient?.GetStream().Dispose();
@@ -106,7 +106,7 @@ public class SocketClientTests : SocketTestsBase, IDisposable
     [TestMethod]
     public void SocketClientStopShouldStopCommunication()
     {
-        var waitEvent = SetupClientDisconnect(out ICommunicationChannel _);
+        var waitEvent = SetupClientDisconnect(out ICommunicationChannel? _);
 
         // Close the communication from socket client side
         _socketClient.Stop();
@@ -157,7 +157,7 @@ public class SocketClientTests : SocketTestsBase, IDisposable
     {
         var waitEvent = new ManualResetEvent(false);
         _socketClient.Disconnected += (s, e) => waitEvent.Set();
-        channel = SetupChannel(out ConnectedEventArgs _);
+        channel = SetupChannel(out ConnectedEventArgs? _);
         channel!.MessageReceived += (sender, args) =>
         {
         };
