@@ -16,7 +16,7 @@ const PROXY_CONFIG = [
       "/_framework"
 //#endif
    ],
-    proxyTimeout: 3000,
+    proxyTimeout: 10000,
     target: target,
     secure: false,
     headers: {
