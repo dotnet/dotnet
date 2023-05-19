@@ -285,7 +285,7 @@ repository:
   #>>>>> @code and @functions <<<<<
 
   code-directive:
-    begin: '(@)(code)\s*'
+    begin: '(@)(code)((?=\{)|\s+)'
     beginCaptures:
       1: { patterns: [ include: '#transition' ] }
       2: { name: 'keyword.control.razor.directive.code'}
@@ -294,7 +294,7 @@ repository:
     end: '(?<=})|\s'
 
   functions-directive:
-    begin: '(@)(functions)\s*'
+    begin: '(@)(functions)((?=\{)|\s+)'
     beginCaptures:
       1: { patterns: [ include: '#transition' ] }
       2: { name: 'keyword.control.razor.directive.functions'}

@@ -56,10 +56,7 @@ namespace AspNetCore
             WriteLiteral("\r\n<div>Some body</div>\r\n\r\n");
             DefineSection("Section1", async() => {
                 WriteLiteral("\r\n    <div>This is in Section 1</div>\r\n    ");
-                __tagHelperExecutionContext = __tagHelperScopeManager.Begin("input-test", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.SelfClosing, "test", 
-                #pragma warning disable 1998
-                async() => {
-                    #pragma warning restore 1998
+                __tagHelperExecutionContext = __tagHelperScopeManager.Begin("input-test", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.SelfClosing, "test", async() => {
                 }
                 );
                 __InputTestTagHelper = CreateTagHelper<global::InputTestTagHelper>();

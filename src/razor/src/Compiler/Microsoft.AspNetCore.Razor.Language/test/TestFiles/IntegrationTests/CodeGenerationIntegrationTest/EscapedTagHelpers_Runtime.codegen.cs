@@ -47,10 +47,7 @@ Write(DateTime.Now);
             WriteLiteral("input type=\"text\" />\r\n        <");
             WriteLiteral("em>Not a TagHelper: </");
             WriteLiteral("em> ");
-            __tagHelperExecutionContext = __tagHelperScopeManager.Begin("input", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.SelfClosing, "test", 
-            #pragma warning disable 1998
-            async() => {
-                #pragma warning restore 1998
+            __tagHelperExecutionContext = __tagHelperScopeManager.Begin("input", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.SelfClosing, "test", async() => {
             }
             );
             __TestNamespace_InputTagHelper = CreateTagHelper<global::TestNamespace.InputTagHelper>();

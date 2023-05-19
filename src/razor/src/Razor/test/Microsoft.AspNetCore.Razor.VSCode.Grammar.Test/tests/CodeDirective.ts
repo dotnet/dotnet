@@ -17,8 +17,16 @@ export function RunCodeDirectiveSuite() {
             await assertMatchesSnapshot('@code {');
         });
 
+        it('Variable starting with code', async () => {
+            await assertMatchesSnapshot('@codeTest then words');
+        });
+
         it('Single line', async () => {
             await assertMatchesSnapshot('@code { public void Foo() {} }');
+        });
+
+        it('Single line no whitespace', async () => {
+            await assertMatchesSnapshot('@code{ public void Foo() {} }');
         });
 
         it('Single-line comment with curly braces', async () => {
@@ -35,6 +43,33 @@ export function RunCodeDirectiveSuite() {
         it('Multi line', async () => {
             await assertMatchesSnapshot(
                 `@code {
+    private int currentCount = 0;
+
+    private void IncrementCount()
+    {
+        var someString = "{ var ThisShouldNotBeCSharp = true; }";
+        currentCount++;
+    }
+}`);
+        });
+
+        it('Multi line no whitespace', async () => {
+            await assertMatchesSnapshot(
+                `@code{
+    private int currentCount = 0;
+
+    private void IncrementCount()
+    {
+        var someString = "{ var ThisShouldNotBeCSharp = true; }";
+        currentCount++;
+    }
+}`);
+        });
+
+        it('Multi line then newline', async () => {
+            await assertMatchesSnapshot(
+                `@code
+{
     private int currentCount = 0;
 
     private void IncrementCount()

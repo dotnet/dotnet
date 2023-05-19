@@ -65,10 +65,7 @@ Write("Hello");
             EndContext();
             BeginContext(71, 87, false);
             BeginContext(71, 87, false);
-            __tagHelperExecutionContext = __tagHelperScopeManager.Begin("form", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.StartTagAndEndTag, "test", 
-            #pragma warning disable 1998
-            async() => {
-                #pragma warning restore 1998
+            __tagHelperExecutionContext = __tagHelperScopeManager.Begin("form", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.StartTagAndEndTag, "test", async() => {
                 BeginContext(91, 6, true);
                 BeginContext(91, 6, true);
                 WriteLiteral("\r\n    ");
@@ -76,10 +73,7 @@ Write("Hello");
                 EndContext();
                 BeginContext(97, 52, false);
                 BeginContext(97, 52, false);
-                __tagHelperExecutionContext = __tagHelperScopeManager.Begin("input", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.SelfClosing, "test", 
-                #pragma warning disable 1998
-                async() => {
-                    #pragma warning restore 1998
+                __tagHelperExecutionContext = __tagHelperScopeManager.Begin("input", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.SelfClosing, "test", async() => {
                 }
                 );
                 __InputTagHelper = CreateTagHelper<global::InputTagHelper>();

@@ -114,15 +114,10 @@ internal sealed class DefaultTagHelperTargetExtension : IDefaultTagHelperTargetE
                 .Write(node.TagMode.ToString())
                 .WriteParameterSeparator()
                 .WriteStringLiteral(uniqueId)
-                .WriteParameterSeparator()
-                .WriteLine()
-                // We generate async lambda but the body might not contain awaits.
-                .WriteLine("#pragma warning disable 1998");
+                .WriteParameterSeparator();
 
             using (context.CodeWriter.BuildAsyncLambda())
             {
-                context.CodeWriter.WriteLine("#pragma warning restore 1998");
-
                 // We remove and redirect writers so TagHelper authors can retrieve content.
                 context.RenderChildren(node, new RuntimeNodeWriter());
             }
