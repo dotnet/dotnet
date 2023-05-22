@@ -67,7 +67,8 @@ namespace NuGet.CommandLine.FuncTest.Commands
                 Assert.True(File.Exists(projectA.NuGetLockFileOutputPath));
 
                 var lockFile = PackagesLockFileFormat.Read(projectA.NuGetLockFileOutputPath);
-                Assert.Equal(4, lockFile.Targets.Count);
+                // There will be a "ridless" target, then one target per whichever RIDs the project system enables by default
+                lockFile.Targets.All(t => t.Name.StartsWith(".NETFramework,Version=v4.6.1")).Should().BeTrue();
 
                 var targets = lockFile.Targets.Where(t => t.Dependencies.Count > 0).ToList();
                 Assert.Equal(1, targets.Count);
@@ -140,7 +141,8 @@ namespace NuGet.CommandLine.FuncTest.Commands
                 Assert.Equal(packagesLockFilePath, projectA.NuGetLockFileOutputPath);
 
                 var lockFile = PackagesLockFileFormat.Read(projectA.NuGetLockFileOutputPath);
-                Assert.Equal(4, lockFile.Targets.Count);
+                // There will be a "ridless" target, then one target per whichever RIDs the project system enables by default
+                lockFile.Targets.All(t => t.Name.StartsWith(".NETFramework,Version=v4.6.1")).Should().BeTrue();
 
                 var targets = lockFile.Targets.Where(t => t.Dependencies.Count > 0).ToList();
                 Assert.Equal(1, targets.Count);

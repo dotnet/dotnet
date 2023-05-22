@@ -1627,6 +1627,7 @@ static NuGet.Packaging.PackageExtraction.PackageExtractionBehavior.XmlDocFileSav
 ~static NuGet.Packaging.Rules.AnalysisResources.Migrator_XdtTransformInPackage.get -> string
 ~static NuGet.Packaging.Rules.AnalysisResources.MisplacedInitScriptWarning.get -> string
 ~static NuGet.Packaging.Rules.AnalysisResources.MisplacedTransformFileWarning.get -> string
+~static NuGet.Packaging.Rules.AnalysisResources.MissingReadmeInformation.get -> string
 ~static NuGet.Packaging.Rules.AnalysisResources.NoRefOrLibFolderInPackage.get -> string
 ~static NuGet.Packaging.Rules.AnalysisResources.PlaceholderFileInPackageWarning.get -> string
 ~static NuGet.Packaging.Rules.AnalysisResources.ReferencesInNuspecAndRefFilesDontMatchWarning.get -> string

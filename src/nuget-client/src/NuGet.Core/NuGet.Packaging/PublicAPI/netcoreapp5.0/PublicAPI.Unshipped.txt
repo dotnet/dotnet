@@ -1,2 +1,1 @@
 #nullable enable
-~static NuGet.Packaging.Rules.AnalysisResources.MissingReadmeInformation.get -> string
