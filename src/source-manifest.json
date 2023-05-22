@@ -13,10 +13,10 @@
       "commitSha": "c760054e1fbc8749bc0c6f2116b22532424ff60f"
     },
     {
-      "packageVersion": "0.11.4-alpha.23252.1",
+      "packageVersion": "0.11.4-alpha.23265.2",
       "path": "cecil",
       "remoteUri": "https://github.com/dotnet/cecil",
-      "commitSha": "c32f0be86d4e72dfc0967ef08913889cfdbc8dc4"
+      "commitSha": "f283c6229347f2dc3a25b04f6611014d8871d0b0"
     },
     {
       "packageVersion": "0.1.356401",
