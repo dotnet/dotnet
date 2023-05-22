@@ -39,7 +39,7 @@ internal class DefaultRazorConfigurationService : IConfigurationSyncService
         {
             var request = GenerateConfigParams();
 
-            var result = await _server.SendRequestAsync<ConfigurationParams, JObject[]>(Methods.WorkspaceConfigurationName, request, cancellationToken);
+            var result = await _server.SendRequestAsync<ConfigurationParams, JObject[]>(Methods.WorkspaceConfigurationName, request, cancellationToken).ConfigureAwait(false);
 
             // LSP spec indicates result should be the same length as the number of ConfigurationItems we pass in.
             if (result?.Length != request.Items.Length || result[0] is null)

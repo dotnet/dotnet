@@ -122,7 +122,7 @@ internal class CSharpOnTypeFormattingPass : CSharpFormattingPassBase
             //
             // If there aren't any edits that are likely to contain using statement changes, this call will no-op.
 
-            filteredEdits = await AddUsingStatementEditsIfNecessaryAsync(context, codeDocument, csharpText, textEdits, originalTextWithChanges, filteredEdits, cancellationToken);
+            filteredEdits = await AddUsingStatementEditsIfNecessaryAsync(context, codeDocument, csharpText, textEdits, originalTextWithChanges, filteredEdits, cancellationToken).ConfigureAwait(false);
 
             return new FormattingResult(filteredEdits);
         }
@@ -133,7 +133,7 @@ internal class CSharpOnTypeFormattingPass : CSharpFormattingPassBase
 
         // Apply the format on type edits sent over by the client.
         var formattedText = ApplyChangesAndTrackChange(originalText, changes, out _, out var spanAfterFormatting);
-        var changedContext = await context.WithTextAsync(formattedText);
+        var changedContext = await context.WithTextAsync(formattedText).ConfigureAwait(false);
         var rangeAfterFormatting = spanAfterFormatting.AsRange(formattedText);
 
         cancellationToken.ThrowIfCancellationRequested();
@@ -141,7 +141,7 @@ internal class CSharpOnTypeFormattingPass : CSharpFormattingPassBase
         // We make an optimistic attempt at fixing corner cases.
         var cleanupChanges = CleanupDocument(changedContext, rangeAfterFormatting);
         var cleanedText = formattedText.WithChanges(cleanupChanges);
-        changedContext = await changedContext.WithTextAsync(cleanedText);
+        changedContext = await changedContext.WithTextAsync(cleanedText).ConfigureAwait(false);
 
         cancellationToken.ThrowIfCancellationRequested();
 
@@ -168,7 +168,7 @@ internal class CSharpOnTypeFormattingPass : CSharpFormattingPassBase
         //
         // We'll happy format lines 1 and 2, and ignore the closing brace altogether. So, by looking one line further
         // we won't have that problem.
-        if (rangeAfterFormatting.End.Line + lineDelta < cleanedText.Lines.Count)
+        if (rangeAfterFormatting.End.Line + lineDelta < cleanedText.Lines.Count - 1)
         {
             lineDelta++;
         }
@@ -203,7 +203,7 @@ internal class CSharpOnTypeFormattingPass : CSharpFormattingPassBase
 
         Debug.Assert(rangeToAdjust.End.IsValid(cleanedText), "Invalid range. This is unexpected.");
 
-        var indentationChanges = await AdjustIndentationAsync(changedContext, cancellationToken, rangeToAdjust);
+        var indentationChanges = await AdjustIndentationAsync(changedContext, cancellationToken, rangeToAdjust).ConfigureAwait(false);
         if (indentationChanges.Count > 0)
         {
             // Apply the edits that modify indentation.
@@ -214,7 +214,7 @@ internal class CSharpOnTypeFormattingPass : CSharpFormattingPassBase
         var finalChanges = cleanedText.GetTextChanges(originalText);
         var finalEdits = finalChanges.Select(f => f.AsTextEdit(originalText)).ToArray();
 
-        finalEdits = await AddUsingStatementEditsIfNecessaryAsync(context, codeDocument, csharpText, textEdits, originalTextWithChanges, finalEdits, cancellationToken);
+        finalEdits = await AddUsingStatementEditsIfNecessaryAsync(context, codeDocument, csharpText, textEdits, originalTextWithChanges, finalEdits, cancellationToken).ConfigureAwait(false);
 
         return new FormattingResult(finalEdits);
     }
@@ -226,7 +226,7 @@ internal class CSharpOnTypeFormattingPass : CSharpFormattingPassBase
             // Because we need to parse the C# code twice for this operation, lets do a quick check to see if its even necessary
             if (textEdits.Any(e => e.NewText.IndexOf("using") != -1))
             {
-                var usingStatementEdits = await AddUsingsCodeActionProviderHelper.GetUsingStatementEditsAsync(codeDocument, csharpText, originalTextWithChanges, cancellationToken);
+                var usingStatementEdits = await AddUsingsCodeActionProviderHelper.GetUsingStatementEditsAsync(codeDocument, csharpText, originalTextWithChanges, cancellationToken).ConfigureAwait(false);
                 finalEdits = usingStatementEdits.Concat(finalEdits).ToArray();
             }
         }

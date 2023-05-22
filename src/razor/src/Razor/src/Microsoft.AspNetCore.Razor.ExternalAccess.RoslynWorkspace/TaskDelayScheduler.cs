@@ -38,7 +38,7 @@ internal sealed class TaskDelayScheduler
 
             try
             {
-                await Task.Delay(_taskDelayTime, nextToken);
+                await Task.Delay(_taskDelayTime, nextToken).ConfigureAwait(false);
             }
             catch (OperationCanceledException)
             {
@@ -50,7 +50,7 @@ internal sealed class TaskDelayScheduler
                 return;
             }
 
-            await operation(nextToken);
+            await operation(nextToken).ConfigureAwait(false);
         });
     }
 

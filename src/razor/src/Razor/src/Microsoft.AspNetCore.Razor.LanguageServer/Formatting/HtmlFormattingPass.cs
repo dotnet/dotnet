@@ -80,7 +80,7 @@ internal class HtmlFormattingPass : FormattingPassBase
             var changes = htmlEdits.Select(e => e.AsTextChange(originalText));
             changedText = originalText.WithChanges(changes);
             // Create a new formatting context for the changed razor document.
-            changedContext = await context.WithTextAsync(changedText);
+            changedContext = await context.WithTextAsync(changedText).ConfigureAwait(false);
 
             _logger.LogTestOnly("After normalizedEdits:\r\n{changedText}", changedText);
         }

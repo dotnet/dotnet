@@ -35,8 +35,8 @@ internal static class AddUsingsCodeActionProviderHelper
         // So because of the above, we look for a difference in C# using directive nodes directly from the C# syntax tree, and apply them manually
         // to the Razor document.
 
-        var oldUsings = await FindUsingDirectiveStringsAsync(originalCSharpText, cancellationToken);
-        var newUsings = await FindUsingDirectiveStringsAsync(changedCSharpText, cancellationToken);
+        var oldUsings = await FindUsingDirectiveStringsAsync(originalCSharpText, cancellationToken).ConfigureAwait(false);
+        var newUsings = await FindUsingDirectiveStringsAsync(changedCSharpText, cancellationToken).ConfigureAwait(false);
 
         var edits = new List<TextEdit>();
         foreach (var usingStatement in newUsings.Except(oldUsings))
@@ -53,7 +53,7 @@ internal static class AddUsingsCodeActionProviderHelper
     private static async Task<IEnumerable<string>> FindUsingDirectiveStringsAsync(SourceText originalCSharpText, CancellationToken cancellationToken)
     {
         var syntaxTree = CSharpSyntaxTree.ParseText(originalCSharpText, cancellationToken: cancellationToken);
-        var syntaxRoot = await syntaxTree.GetRootAsync(cancellationToken);
+        var syntaxRoot = await syntaxTree.GetRootAsync(cancellationToken).ConfigureAwait(false);
 
         // We descend any compilation unit (ie, the file) or and namespaces because the compiler puts all usings inside
         // the namespace node.

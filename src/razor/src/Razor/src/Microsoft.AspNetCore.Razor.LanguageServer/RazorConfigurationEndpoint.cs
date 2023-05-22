@@ -29,6 +29,6 @@ internal class RazorConfigurationEndpoint : IDidChangeConfigurationEndpoint
     {
         requestContext.Logger.LogInformation("Settings changed. Updating the server.");
 
-        await _optionsMonitor.UpdateAsync(cancellationToken);
+        await _optionsMonitor.UpdateAsync(cancellationToken).ConfigureAwait(false);
     }
 }

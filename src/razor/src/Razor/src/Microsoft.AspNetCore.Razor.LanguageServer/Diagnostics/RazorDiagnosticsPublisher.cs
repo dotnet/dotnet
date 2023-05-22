@@ -191,7 +191,7 @@ internal class RazorDiagnosticsPublisher : DocumentProcessedListener
     // Internal for testing
     internal async Task PublishDiagnosticsAsync(IDocumentSnapshot document)
     {
-        var result = await document.GetGeneratedOutputAsync();
+        var result = await document.GetGeneratedOutputAsync().ConfigureAwait(false);
 
         SumType<FullDocumentDiagnosticReport, UnchangedDocumentDiagnosticReport>? delegatedResponse = null;
         if (_languageServerFeatureOptions.SupportsDelegatedDiagnostics)
@@ -276,7 +276,7 @@ internal class RazorDiagnosticsPublisher : DocumentProcessedListener
             for (var i = 0; i < documents.Length; i++)
             {
                 var document = documents[i];
-                await PublishDiagnosticsAsync(document);
+                await PublishDiagnosticsAsync(document).ConfigureAwait(false);
             }
 
             OnCompletingBackgroundWork();

@@ -130,7 +130,7 @@ internal class MonitorProjectConfigurationFilePathEndpoint : IMonitorProjectConf
         }
 
         _logger.LogInformation("Starting new configuration monitor for project '{0}' for directory '{1}'.", request.ProjectFilePath, configurationDirectory);
-        await entry.Detector.StartAsync(configurationDirectory, cancellationToken);
+        await entry.Detector.StartAsync(configurationDirectory, cancellationToken).ConfigureAwait(false);
 
         if (cancellationToken.IsCancellationRequested)
         {

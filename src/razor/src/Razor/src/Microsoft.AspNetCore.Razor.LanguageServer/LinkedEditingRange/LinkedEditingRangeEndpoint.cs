@@ -66,14 +66,14 @@ internal class LinkedEditingRangeEndpoint : IRazorRequestHandler<LinkedEditingRa
             return null;
         }
 
-        var codeDocument = await documentContext.GetCodeDocumentAsync(cancellationToken);
+        var codeDocument = await documentContext.GetCodeDocumentAsync(cancellationToken).ConfigureAwait(false);
         if (codeDocument.IsUnsupported())
         {
             _logger.LogWarning("FileKind {FileKind} is unsupported", codeDocument.GetFileKind());
             return null;
         }
 
-        var syntaxTree = await documentContext.GetSyntaxTreeAsync(cancellationToken);
+        var syntaxTree = await documentContext.GetSyntaxTreeAsync(cancellationToken).ConfigureAwait(false);
 
         var location = await GetSourceLocation(request, documentContext, cancellationToken).ConfigureAwait(false);
 

@@ -25,7 +25,7 @@ internal class DocumentSnapshotTextLoader : TextLoader
 
     public override async Task<TextAndVersion> LoadTextAndVersionAsync(LoadTextOptions options, CancellationToken cancellationToken)
     {
-        var sourceText = await _documentSnapshot.GetTextAsync();
+        var sourceText = await _documentSnapshot.GetTextAsync().ConfigureAwait(false);
         var textAndVersion = TextAndVersion.Create(sourceText, VersionStamp.Default);
 
         return textAndVersion;

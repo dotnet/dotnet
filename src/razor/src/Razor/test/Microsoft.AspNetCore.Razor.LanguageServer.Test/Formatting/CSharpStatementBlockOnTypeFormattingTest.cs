@@ -122,4 +122,19 @@ public class CSharpStatementBlockOnTypeFormattingTest : FormattingTestBase
                     """,
             triggerCharacter: ';');
     }
+
+    [Fact]
+    public async Task Semicolon_AddsLineAtEndOfDocument()
+    {
+        await RunOnTypeFormattingTestAsync(
+            input: """
+                    @{ var x = new HtmlString("sdf");$$ }
+                    """,
+            expected: """
+                    @{
+                        var x = new HtmlString("sdf"); 
+                    }
+                    """,
+            triggerCharacter: ';');
+    }
 }

@@ -89,7 +89,7 @@ internal class DocumentOnTypeFormattingEndpoint : IRazorRequestHandler<DocumentO
 
         cancellationToken.ThrowIfCancellationRequested();
 
-        var codeDocument = await documentContext.GetCodeDocumentAsync(cancellationToken);
+        var codeDocument = await documentContext.GetCodeDocumentAsync(cancellationToken).ConfigureAwait(false);
         if (codeDocument.IsUnsupported())
         {
             requestContext.Logger.LogWarning("Failed to retrieve generated output for document {requestTextDocumentUri}.", request.TextDocument.Uri);

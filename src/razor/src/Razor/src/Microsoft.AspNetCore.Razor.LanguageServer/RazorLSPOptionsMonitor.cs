@@ -49,7 +49,7 @@ internal class RazorLSPOptionsMonitor : IOptionsMonitor<RazorLSPOptions>
 
     public virtual async Task UpdateAsync(CancellationToken cancellationToken = default)
     {
-        var latestOptions = await _configurationService.GetLatestOptionsAsync(cancellationToken);
+        var latestOptions = await _configurationService.GetLatestOptionsAsync(cancellationToken).ConfigureAwait(false);
         if (latestOptions != null)
         {
             _currentValue = latestOptions;

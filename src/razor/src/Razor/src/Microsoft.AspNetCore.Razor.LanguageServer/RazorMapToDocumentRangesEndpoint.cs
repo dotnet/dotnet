@@ -47,7 +47,7 @@ internal class RazorMapToDocumentRangesEndpoint : IRazorMapToDocumentRangesHandl
             };
         }
 
-        var codeDocument = await documentContext.GetCodeDocumentAsync(cancellationToken);
+        var codeDocument = await documentContext.GetCodeDocumentAsync(cancellationToken).ConfigureAwait(false);
         var ranges = new Range[request.ProjectedRanges.Length];
         for (var i = 0; i < request.ProjectedRanges.Length; i++)
         {

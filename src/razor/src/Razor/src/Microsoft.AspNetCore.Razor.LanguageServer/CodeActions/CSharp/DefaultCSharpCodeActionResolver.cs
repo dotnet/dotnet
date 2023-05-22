@@ -111,7 +111,7 @@ internal sealed class DefaultCSharpCodeActionResolver : CSharpCodeActionResolver
             RazorLanguageKind.CSharp,
             csharpTextEdits,
             s_defaultFormattingOptions,
-            cancellationToken);
+            cancellationToken).ConfigureAwait(false);
 
         cancellationToken.ThrowIfCancellationRequested();
 

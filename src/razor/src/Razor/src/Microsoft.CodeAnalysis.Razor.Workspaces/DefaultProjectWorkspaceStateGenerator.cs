@@ -138,7 +138,7 @@ internal class DefaultProjectWorkspaceStateGenerator : ProjectWorkspaceStateGene
             // Only allow a single TagHelper resolver request to process at a time in order to reduce Visual Studio memory pressure. Typically a TagHelper resolution result can be upwards of 10mb+.
             // So if we now do multiple requests to resolve TagHelpers simultaneously it results in only a single one executing at a time so that we don't have N number of requests in flight with these
             // 10mb payloads waiting to be processed.
-            await _semaphore.WaitAsync(cancellationToken);
+            await _semaphore.WaitAsync(cancellationToken).ConfigureAwait(false);
         }
         catch (Exception)
         {
@@ -172,7 +172,7 @@ internal class DefaultProjectWorkspaceStateGenerator : ProjectWorkspaceStateGene
                         csharpLanguageVersion = csharpParseOptions.LanguageVersion;
                     }
 
-                    var tagHelperResolutionResult = await _tagHelperResolver.GetTagHelpersAsync(workspaceProject, projectSnapshot, cancellationToken);
+                    var tagHelperResolutionResult = await _tagHelperResolver.GetTagHelpersAsync(workspaceProject, projectSnapshot, cancellationToken).ConfigureAwait(false);
                     workspaceState = new ProjectWorkspaceState(tagHelperResolutionResult.Descriptors, csharpLanguageVersion);
                 }
             }

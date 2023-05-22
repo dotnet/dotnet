@@ -65,7 +65,7 @@ internal class RazorTranslateDiagnosticsService
             return Array.Empty<Diagnostic>();
         }
 
-        var sourceText = await documentContext.GetSourceTextAsync(cancellationToken);
+        var sourceText = await documentContext.GetSourceTextAsync(cancellationToken).ConfigureAwait(false);
 
         var filteredDiagnostics = diagnosticKind == RazorLanguageKind.CSharp
         ? FilterCSharpDiagnostics(diagnostics, codeDocument, sourceText)

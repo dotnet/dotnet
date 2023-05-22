@@ -59,7 +59,7 @@ internal class RazorTranslateDiagnosticsEndpoint : IRazorRequestHandler<RazorDia
             };
         }
 
-        var mappedDiagnostics = await _translateDiagnosticsService.TranslateAsync(request.Kind, request.Diagnostics, documentContext, cancellationToken);
+        var mappedDiagnostics = await _translateDiagnosticsService.TranslateAsync(request.Kind, request.Diagnostics, documentContext, cancellationToken).ConfigureAwait(false);
 
         _logger.LogInformation("Returning {mappedDiagnosticsLength} mapped diagnostics.", mappedDiagnostics.Length);
 

@@ -62,7 +62,7 @@ internal class CSharpFormatter
             return Array.Empty<TextEdit>();
         }
 
-        var edits = await GetFormattingEditsAsync(context, projectedRange, cancellationToken);
+        var edits = await GetFormattingEditsAsync(context, projectedRange, cancellationToken).ConfigureAwait(false);
         var mappedEdits = MapEditsToHostDocument(context.CodeDocument, edits);
         return mappedEdits;
     }
@@ -86,7 +86,7 @@ internal class CSharpFormatter
         // We also want to ensure there are no duplicates to avoid duplicate markers.
         var filteredLocations = projectedDocumentLocations.Distinct().OrderBy(l => l).ToList();
 
-        var indentations = await GetCSharpIndentationCoreAsync(context, filteredLocations, cancellationToken);
+        var indentations = await GetCSharpIndentationCoreAsync(context, filteredLocations, cancellationToken).ConfigureAwait(false);
         return indentations;
     }
 
@@ -101,7 +101,7 @@ internal class CSharpFormatter
     {
         var csharpSourceText = context.CodeDocument.GetCSharpSourceText();
         var spanToFormat = projectedRange.AsTextSpan(csharpSourceText);
-        var root = await context.CSharpWorkspaceDocument.GetSyntaxRootAsync(cancellationToken);
+        var root = await context.CSharpWorkspaceDocument.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
         Assumes.NotNull(root);
 
         var workspace = context.CSharpWorkspace;
@@ -123,7 +123,7 @@ internal class CSharpFormatter
 
         var (indentationMap, syntaxTree) = InitializeIndentationData(context, projectedDocumentLocations, cancellationToken);
 
-        var root = await syntaxTree.GetRootAsync(cancellationToken);
+        var root = await syntaxTree.GetRootAsync(cancellationToken).ConfigureAwait(false);
 
         root = AttachAnnotations(indentationMap, projectedDocumentLocations, root);
 
