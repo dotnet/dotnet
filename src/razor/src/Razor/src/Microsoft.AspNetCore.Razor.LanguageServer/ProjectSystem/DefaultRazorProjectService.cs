@@ -511,8 +511,8 @@ internal class DefaultRazorProjectService : RazorProjectService
            LoadTextOptions options,
            CancellationToken cancellationToken)
         {
-            var sourceText = await _fromDocument.GetTextAsync();
-            var version = await _fromDocument.GetTextVersionAsync();
+            var sourceText = await _fromDocument.GetTextAsync().ConfigureAwait(false);
+            var version = await _fromDocument.GetTextVersionAsync().ConfigureAwait(false);
             var textAndVersion = TextAndVersion.Create(sourceText, version.GetNewerVersion());
             return textAndVersion;
         }

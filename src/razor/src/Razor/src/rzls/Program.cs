@@ -20,7 +20,7 @@ public class Program
         {
             if (args[i].Contains("debug", StringComparison.OrdinalIgnoreCase))
             {
-                await Console.Error.WriteLineAsync($"Server started with process ID {Environment.ProcessId}");
+                await Console.Error.WriteLineAsync($"Server started with process ID {Environment.ProcessId}").ConfigureAwait(true);
                 if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
                 {
                     // Debugger.Launch() only works on Windows.
@@ -29,11 +29,11 @@ public class Program
                 else
                 {
                     var timeout = TimeSpan.FromMinutes(1);
-                    await Console.Error.WriteLineAsync($"Waiting {timeout:g} for a debugger to attach");
+                    await Console.Error.WriteLineAsync($"Waiting {timeout:g} for a debugger to attach").ConfigureAwait(true);
                     using var timeoutSource = new CancellationTokenSource(timeout);
                     while (!Debugger.IsAttached && !timeoutSource.Token.IsCancellationRequested)
                     {
-                        await Task.Delay(100, CancellationToken.None);
+                        await Task.Delay(100, CancellationToken.None).ConfigureAwait(true);
                     }
                 }
 
@@ -46,7 +46,7 @@ public class Program
                 if (!Enum.TryParse(traceArg, out trace))
                 {
                     trace = Trace.Messages;
-                    await Console.Error.WriteLineAsync($"Invalid Razor trace '{traceArg}'. Defaulting to {trace}.");
+                    await Console.Error.WriteLineAsync($"Invalid Razor trace '{traceArg}'. Defaulting to {trace}.").ConfigureAwait(true);
                 }
             }
         }
@@ -60,6 +60,6 @@ public class Program
             logger,
             NoOpTelemetryReporter.Instance,
             featureOptions: languageServerFeatureOptions);
-        await server.WaitForExitAsync();
+        await server.WaitForExitAsync().ConfigureAwait(true);
     }
 }

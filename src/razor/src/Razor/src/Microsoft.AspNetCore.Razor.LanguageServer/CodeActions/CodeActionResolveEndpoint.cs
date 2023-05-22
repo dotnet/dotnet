@@ -104,7 +104,7 @@ internal sealed class CodeActionResolveEndpoint : IRazorDocumentlessRequestHandl
                 return await ResolveCSharpCodeActionAsync(
                     request,
                     resolutionParams,
-                    cancellationToken);
+                    cancellationToken).ConfigureAwait(false);
             case LanguageServerConstants.CodeActions.Languages.Html:
                 return await ResolveHtmlCodeActionAsync(
                     request,
@@ -173,7 +173,7 @@ internal sealed class CodeActionResolveEndpoint : IRazorDocumentlessRequestHandl
             return codeAction;
         }
 
-        var resolvedCodeAction = await resolver.ResolveAsync(csharpParams, codeAction, cancellationToken);
+        var resolvedCodeAction = await resolver.ResolveAsync(csharpParams, codeAction, cancellationToken).ConfigureAwait(false);
         return resolvedCodeAction;
     }
 

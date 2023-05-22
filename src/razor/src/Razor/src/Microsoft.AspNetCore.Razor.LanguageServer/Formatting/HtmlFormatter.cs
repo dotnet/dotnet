@@ -54,7 +54,7 @@ internal class HtmlFormatter
         var result = await _server.SendRequestAsync<DocumentFormattingParams, RazorDocumentFormattingResponse?>(
             RazorLanguageServerCustomMessageTargets.RazorHtmlFormattingEndpoint,
             @params,
-            cancellationToken);
+            cancellationToken).ConfigureAwait(false);
 
         return result?.Edits ?? Array.Empty<TextEdit>();
     }
@@ -82,7 +82,7 @@ internal class HtmlFormatter
         var result = await _server.SendRequestAsync<RazorDocumentOnTypeFormattingParams, RazorDocumentFormattingResponse?>(
             RazorLanguageServerCustomMessageTargets.RazorHtmlOnTypeFormattingEndpoint,
             @params,
-            cancellationToken);
+            cancellationToken).ConfigureAwait(false);
 
         return result?.Edits ?? Array.Empty<TextEdit>();
     }

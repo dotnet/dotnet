@@ -53,13 +53,13 @@ internal class DocumentFormattingEndpoint : IRazorRequestHandler<DocumentFormatt
             return null;
         }
 
-        var codeDocument = await documentContext.GetCodeDocumentAsync(cancellationToken);
+        var codeDocument = await documentContext.GetCodeDocumentAsync(cancellationToken).ConfigureAwait(false);
         if (codeDocument.IsUnsupported())
         {
             return null;
         }
 
-        var edits = await _razorFormattingService.FormatAsync(documentContext, range: null, request.Options, cancellationToken);
+        var edits = await _razorFormattingService.FormatAsync(documentContext, range: null, request.Options, cancellationToken).ConfigureAwait(false);
         return edits;
     }
 }

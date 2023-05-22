@@ -52,25 +52,25 @@ internal class CSharpFormattingPass : CSharpFormattingPassBase
         {
             var changes = result.Edits.Select(e => e.AsTextChange(originalText)).ToArray();
             changedText = changedText.WithChanges(changes);
-            changedContext = await context.WithTextAsync(changedText);
+            changedContext = await context.WithTextAsync(changedText).ConfigureAwait(false);
         }
 
         cancellationToken.ThrowIfCancellationRequested();
 
         // Apply original C# edits
-        var csharpEdits = await FormatCSharpAsync(changedContext, cancellationToken);
+        var csharpEdits = await FormatCSharpAsync(changedContext, cancellationToken).ConfigureAwait(false);
         if (csharpEdits.Count > 0)
         {
             var csharpChanges = csharpEdits.Select(c => c.AsTextChange(changedText));
             changedText = changedText.WithChanges(csharpChanges);
-            changedContext = await changedContext.WithTextAsync(changedText);
+            changedContext = await changedContext.WithTextAsync(changedText).ConfigureAwait(false);
 
             _logger.LogTestOnly("After FormatCSharpAsync:\r\n{changedText}", changedText);
         }
 
         cancellationToken.ThrowIfCancellationRequested();
 
-        var indentationChanges = await AdjustIndentationAsync(changedContext, cancellationToken);
+        var indentationChanges = await AdjustIndentationAsync(changedContext, cancellationToken).ConfigureAwait(false);
         if (indentationChanges.Count > 0)
         {
             // Apply the edits that modify indentation.
@@ -102,7 +102,7 @@ internal class CSharpFormattingPass : CSharpFormattingPassBase
 
             // These should already be remapped.
             var range = span.AsRange(sourceText);
-            var edits = await CSharpFormatter.FormatAsync(context, range, cancellationToken);
+            var edits = await CSharpFormatter.FormatAsync(context, range, cancellationToken).ConfigureAwait(false);
             csharpEdits.AddRange(edits.Where(e => range.Contains(e.Range)));
         }
 

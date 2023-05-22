@@ -38,8 +38,8 @@ internal class RazorLanguageQueryEndpoint : IRazorLanguageQueryHandler
         var documentSnapshot = documentContext.Snapshot;
         var documentVersion = documentContext.Version;
 
-        var codeDocument = await documentSnapshot.GetGeneratedOutputAsync();
-        var sourceText = await documentSnapshot.GetTextAsync();
+        var codeDocument = await documentSnapshot.GetGeneratedOutputAsync().ConfigureAwait(false);
+        var sourceText = await documentSnapshot.GetTextAsync().ConfigureAwait(false);
         var linePosition = new LinePosition(request.Position.Line, request.Position.Character);
         var hostDocumentIndex = sourceText.Lines.GetPosition(linePosition);
         var responsePosition = request.Position;

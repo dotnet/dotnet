@@ -328,7 +328,7 @@ internal class DocumentState
                 return (cachedCodeDocument, cachedInputVersion);
             }
 
-            var (codeDocument, inputVersion) = await GetMemoizedGeneratedOutputAndVersionAsync(project, document);
+            var (codeDocument, inputVersion) = await GetMemoizedGeneratedOutputAndVersionAsync(project, document).ConfigureAwait(false);
 
             _computedOutput = new ComputedOutput(codeDocument, inputVersion);
             return (codeDocument, inputVersion);
@@ -504,7 +504,7 @@ internal class DocumentState
 
         private static async Task<RazorSourceDocument> GetRazorSourceDocumentAsync(IDocumentSnapshot document, RazorProjectItem? projectItem)
         {
-            var sourceText = await document.GetTextAsync();
+            var sourceText = await document.GetTextAsync().ConfigureAwait(false);
             return sourceText.GetRazorSourceDocument(document.FilePath, projectItem?.RelativePhysicalPath);
         }
 
@@ -513,7 +513,7 @@ internal class DocumentState
             var imports = new List<ImportItem>();
             foreach (var snapshot in document.GetImports())
             {
-                var versionStamp = await snapshot.GetTextVersionAsync();
+                var versionStamp = await snapshot.GetTextVersionAsync().ConfigureAwait(false);
                 imports.Add(new ImportItem(snapshot.FilePath, versionStamp, snapshot));
             }
 

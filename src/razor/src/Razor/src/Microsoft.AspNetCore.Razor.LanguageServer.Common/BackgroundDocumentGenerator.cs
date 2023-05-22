@@ -184,7 +184,7 @@ internal class BackgroundDocumentGenerator : ProjectSnapshotChangeTrigger
                 var document = work[i].Value;
                 try
                 {
-                    var codeDocument = await document.GetGeneratedOutputAsync();
+                    var codeDocument = await document.GetGeneratedOutputAsync().ConfigureAwait(false);
                     results.Add(new WorkResult(codeDocument, document));
                 }
                 catch (Exception ex)

@@ -50,8 +50,8 @@ internal class RazorBreakpointSpanEndpoint : IRazorDocumentlessRequestHandler<Ra
     {
         var documentContext = requestContext.GetRequiredDocumentContext();
 
-        var codeDocument = await documentContext.GetCodeDocumentAsync(cancellationToken);
-        var sourceText = await documentContext.GetSourceTextAsync(cancellationToken);
+        var codeDocument = await documentContext.GetCodeDocumentAsync(cancellationToken).ConfigureAwait(false);
+        var sourceText = await documentContext.GetSourceTextAsync(cancellationToken).ConfigureAwait(false);
         var linePosition = new LinePosition(request.Position.Line, request.Position.Character);
         var hostDocumentIndex = sourceText.Lines.GetPosition(linePosition);
 

@@ -138,7 +138,7 @@ internal class RazorDocumentExcerptService : DocumentExcerptServiceBase
                 generatedDocument,
                 secondarySpan,
                 options,
-                cancellationToken);
+                cancellationToken).ConfigureAwait(false);
 
             // NOTE: The Classifier will only returns spans for things that it understands. That means
             // that whitespace is not classified. The preview expects us to provide contiguous spans,

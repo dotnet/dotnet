@@ -30,24 +30,24 @@ internal class DefaultClientNotifierService : ClientNotifierServiceBase
 
     public override async Task<TResponse> SendRequestAsync<TParams, TResponse>(string method, TParams @params, CancellationToken cancellationToken)
     {
-        await _initializedCompletionSource.Task;
-        var result = await _jsonRpc.InvokeAsync<TResponse>(method, @params);
+        await _initializedCompletionSource.Task.ConfigureAwait(false);
+        var result = await _jsonRpc.InvokeAsync<TResponse>(method, @params).ConfigureAwait(false);
 
         return result;
     }
 
     public override async Task SendNotificationAsync<TParams>(string method, TParams @params, CancellationToken cancellationToken)
     {
-        await _initializedCompletionSource.Task;
+        await _initializedCompletionSource.Task.ConfigureAwait(false);
 
-        await _jsonRpc.NotifyWithParameterObjectAsync(method, @params);
+        await _jsonRpc.NotifyWithParameterObjectAsync(method, @params).ConfigureAwait(false);
     }
 
     public override async Task SendNotificationAsync(string method, CancellationToken cancellationToken)
     {
-        await _initializedCompletionSource.Task;
+        await _initializedCompletionSource.Task.ConfigureAwait(false);
 
-        await _jsonRpc.NotifyAsync(method);
+        await _jsonRpc.NotifyAsync(method).ConfigureAwait(false);
     }
 
     /// <summary>

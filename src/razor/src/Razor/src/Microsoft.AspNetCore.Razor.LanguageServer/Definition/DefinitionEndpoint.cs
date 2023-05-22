@@ -87,7 +87,7 @@ internal sealed class DefinitionEndpoint : AbstractRazorDelegatingEndpoint<TextD
 
         requestContext.Logger.LogInformation("Definition found at file path: {filePath}", originComponentDocumentFilePath);
 
-        var range = await GetNavigateRangeAsync(originComponentDocumentSnapshot, attributeDescriptor, requestContext.Logger, cancellationToken);
+        var range = await GetNavigateRangeAsync(originComponentDocumentSnapshot, attributeDescriptor, requestContext.Logger, cancellationToken).ConfigureAwait(false);
 
         var originComponentUri = new UriBuilder
         {

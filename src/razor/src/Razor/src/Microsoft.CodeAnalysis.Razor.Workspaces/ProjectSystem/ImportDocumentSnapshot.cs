@@ -44,7 +44,7 @@ internal class ImportDocumentSnapshot : IDocumentSnapshot
         using (var stream = _importItem.Read())
         using (var reader = new StreamReader(stream))
         {
-            var content = await reader.ReadToEndAsync();
+            var content = await reader.ReadToEndAsync().ConfigureAwait(false);
             _sourceText = SourceText.From(content);
         }
 

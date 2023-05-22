@@ -105,7 +105,7 @@ internal class DocumentContext
     public async Task<SyntaxNode?> GetSyntaxNodeAsync(int absoluteIndex, CancellationToken cancellationToken)
     {
         var change = new SourceChange(absoluteIndex, length: 0, newText: string.Empty);
-        var syntaxTree = await GetSyntaxTreeAsync(cancellationToken);
+        var syntaxTree = await GetSyntaxTreeAsync(cancellationToken).ConfigureAwait(false);
         if (syntaxTree.Root is null)
         {
             return null;

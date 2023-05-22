@@ -44,7 +44,7 @@ internal class RazorFileChangeDetectorManager : IDisposable
         {
             // We create a dummy cancellation token for now. Have an issue to pass through the cancellation token in the O# lib: https://github.com/OmniSharp/csharp-language-server-protocol/issues/200
             var cancellationToken = CancellationToken.None;
-            await fileChangeDetector.StartAsync(workspaceDirectoryPath, cancellationToken);
+            await fileChangeDetector.StartAsync(workspaceDirectoryPath, cancellationToken).ConfigureAwait(false);
         }
 
         lock (_disposeLock)

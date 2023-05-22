@@ -21,12 +21,12 @@ internal class RazorInitializedEndpoint : INotificationHandler<InitializedParams
         var capabilitiesManager = requestContext.GetRequiredService<IInitializeManager<InitializeParams, InitializeResult>>();
 
         var fileChangeDetectorManager = requestContext.LspServices.GetRequiredService<RazorFileChangeDetectorManager>();
-        await fileChangeDetectorManager.InitializedAsync();
+        await fileChangeDetectorManager.InitializedAsync().ConfigureAwait(false);
         var clientCapabilities = capabilitiesManager.GetInitializeParams().Capabilities.ToVSInternalClientCapabilities();
 
         foreach (var onStartedItem in onStartedItems)
         {
-            await onStartedItem.OnInitializedAsync(clientCapabilities, cancellationToken);
+            await onStartedItem.OnInitializedAsync(clientCapabilities, cancellationToken).ConfigureAwait(false);
         }
     }
 }

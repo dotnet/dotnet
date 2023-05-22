@@ -60,7 +60,7 @@ internal class DocumentDidChangeEndpoint : IRazorNotificationHandler<DidChangeTe
     {
         var documentContext = requestContext.GetRequiredDocumentContext();
 
-        var sourceText = await documentContext.GetSourceTextAsync(cancellationToken);
+        var sourceText = await documentContext.GetSourceTextAsync(cancellationToken).ConfigureAwait(false);
         sourceText = ApplyContentChanges(request.ContentChanges, sourceText, requestContext.Logger);
 
         await _projectSnapshotManagerDispatcher.RunOnDispatcherThreadAsync(
