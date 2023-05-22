@@ -1,13 +1,14 @@
 {
   "tools": {
-    "vs": {
-      "version": "15.9"
-    },
     "runtimes": {
       "dotnet/x64": [
         "5.0.12",
         "7.0.2"
       ]
+    },
+    "vs": {
+      "version": "17.0",
+      "allowPrerelease": false
     },
     "dotnet": "8.0.100-preview.3.23178.7"
   },

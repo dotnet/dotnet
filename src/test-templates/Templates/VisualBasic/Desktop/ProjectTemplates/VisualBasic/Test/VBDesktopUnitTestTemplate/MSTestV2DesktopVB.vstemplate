@@ -31,8 +31,8 @@
   </WizardExtension>
   <WizardData>
     <packages repository="extension" repositoryId="MSTestDesktopVB.Microsoft.c6c7fff6-20cb-405d-9ad4-a60a6d0c55d9" isPreunzipped="false" >
-      <package id="MSTest.TestAdapter" version="2.2.10" skipAssemblyReferences="false"  />
-      <package id="MSTest.TestFramework" version="2.2.10" skipAssemblyReferences="false" />
+      <package id="MSTest.TestAdapter" version="3.0.2" skipAssemblyReferences="false"  />
+      <package id="MSTest.TestFramework" version="3.0.2" skipAssemblyReferences="false" />
     </packages>
   </WizardData>
 </VSTemplate>
