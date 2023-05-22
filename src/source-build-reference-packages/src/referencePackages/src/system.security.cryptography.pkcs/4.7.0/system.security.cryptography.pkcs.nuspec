@@ -23,9 +23,6 @@ When using NuGet 3.x this package requires at least version 3.4.</description>
     <dependencies>
       <group targetFramework="MonoAndroid1.0" />
       <group targetFramework="MonoTouch1.0" />
-      <group targetFramework=".NETCoreApp2.1">
-        <dependency id="System.Security.Cryptography.Cng" version="4.7.0" exclude="Compile" />
-      </group>
       <group targetFramework=".NETCoreApp3.0">
         <dependency id="System.Security.Cryptography.Cng" version="4.7.0" exclude="Compile" />
       </group>

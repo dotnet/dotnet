@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard1.3;netstandard1.4;netstandard1.6;netstandard2.0;netstandard2.1;netcoreapp2.1;netcoreapp3.0</TargetFrameworks>
+    <TargetFrameworks>netstandard1.3;netstandard1.4;netstandard1.6;netstandard2.0;netstandard2.1;netcoreapp3.0</TargetFrameworks>
     <NuspecFile>$(ArtifactsBinDir)system.security.cryptography.cng/5.0.0/system.security.cryptography.cng.nuspec</NuspecFile>
     <DisableImplicitFrameworkReferences>false</DisableImplicitFrameworkReferences>
   </PropertyGroup>

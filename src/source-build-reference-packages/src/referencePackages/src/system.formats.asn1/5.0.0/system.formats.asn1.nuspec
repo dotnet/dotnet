@@ -29,7 +29,6 @@ When using NuGet 3.x this package requires at least version 3.4.</description>
       <group targetFramework="MonoTouch1.0">
         <dependency id="System.Buffers" version="4.5.1" />
       </group>
-      <group targetFramework=".NETCoreApp2.1" />
       <group targetFramework=".NETStandard2.0">
         <dependency id="System.Buffers" version="4.5.1" />
         <dependency id="System.Memory" version="4.5.4" />

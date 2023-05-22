@@ -24,7 +24,6 @@ When using NuGet 3.x this package requires at least version 3.4.</description>
     <dependencies>
       <group targetFramework="MonoAndroid1.0" />
       <group targetFramework="MonoTouch1.0" />
-      <group targetFramework=".NETCoreApp2.1" />
       <group targetFramework=".NETStandard1.1">
         <dependency id="System.Collections" version="4.3.0" />
         <dependency id="System.Collections.Concurrent" version="4.3.0" />

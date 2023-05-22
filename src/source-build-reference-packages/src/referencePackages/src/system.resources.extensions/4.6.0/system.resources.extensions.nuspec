@@ -23,7 +23,6 @@ When using NuGet 3.x this package requires at least version 3.4.</description>
     <dependencies>
       <group targetFramework="MonoAndroid1.0" />
       <group targetFramework="MonoTouch1.0" />
-      <group targetFramework=".NETCoreApp2.1" />
       <group targetFramework=".NETStandard2.0">
         <dependency id="System.Memory" version="4.5.3" exclude="Compile" />
       </group>

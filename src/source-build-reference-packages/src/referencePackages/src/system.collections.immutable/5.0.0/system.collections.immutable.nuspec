@@ -41,7 +41,6 @@ System.Collections.Immutable.ImmutableStack&lt;T&gt;</description>
         <dependency id="NETStandard.Library" version="1.6.1" />
         <dependency id="System.Memory" version="4.5.4" />
       </group>
-      <group targetFramework=".NETCoreApp2.1" />
       <group targetFramework=".NETStandard1.0">
         <dependency id="NETStandard.Library" version="1.6.1" />
       </group>

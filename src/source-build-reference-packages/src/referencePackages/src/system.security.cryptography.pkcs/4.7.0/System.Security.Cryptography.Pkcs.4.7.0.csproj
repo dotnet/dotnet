@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard1.3;netstandard2.0;netstandard2.1;netcoreapp2.1;netcoreapp3.0</TargetFrameworks>
+    <TargetFrameworks>netstandard1.3;netstandard2.0;netstandard2.1;netcoreapp3.0</TargetFrameworks>
     <NuspecFile>$(ArtifactsBinDir)system.security.cryptography.pkcs/4.7.0/system.security.cryptography.pkcs.nuspec</NuspecFile>
     <DisableImplicitFrameworkReferences>false</DisableImplicitFrameworkReferences>
   </PropertyGroup>
@@ -36,10 +36,6 @@
   </ItemGroup>
 
   <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.1' ">
-    <PackageReference Include="System.Security.Cryptography.Cng" Version="4.7.0" />
-  </ItemGroup>
-
-  <ItemGroup Condition=" '$(TargetFramework)' == 'netcoreapp2.1' ">
     <PackageReference Include="System.Security.Cryptography.Cng" Version="4.7.0" />
   </ItemGroup>
 
