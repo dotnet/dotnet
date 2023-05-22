@@ -1,11 +1,3 @@
-variables:
-- name: _TeamName
-  value: UnitTesting
-- name: _PublishUsingPipelines
-  value: true
-- name: _DotNetArtifactsCategory
-  value: .NETCore
-
 # CI and PR triggers
 trigger:
 - main
@@ -15,101 +7,126 @@ pr:
 - main
 - rel/*
 
+variables:
+# Cannot use key:value syntax in root defined variables
+- name: _TeamName
+  value: UnitTesting
+- name: CodeQL.Enabled
+  value: false
+- name: _RunAsInternal
+  value: ${{ and(ne(variables['System.TeamProject'], 'public'), notin(variables['Build.Reason'], 'PullRequest')) }}
+- name: _RunAsPublic
+  value: ${{ eq(variables._RunAsInternal, False) }}
+- name: _SignType
+  value: test
+- name: _SignArgs
+  value: ''
+- name: _Sign
+  value: False
+- name: _InternalBuildArgs
+  value: ' '
+
+# Produce real signed binaries for Internal builds
+- ${{ if eq(variables._RunAsInternal, True) }}:
+  # DotNet-Blob-Feed provides: dotnetfeed-storage-access-key-1
+  - group: DotNet-Blob-Feed
+  # Group gives access to $microsoft-symbol-server-pat and $symweb-symbol-server-pat
+  - group: DotNet-Symbol-Server-Pats
+  # Publish-Build-Assets provides: MaestroAccessToken, BotAccount-dotnet-maestro-bot-PAT
+  - group: Publish-Build-Assets
+  # Group gives access to $dn-bot-devdiv-drop-rw-code-rw and dn-bot-dnceng-build-rw-code-rw
+  - group: DotNet-VSTS-Infra-Access
+  - group: DotNet-DevDiv-Insertion-Workflow-Variables
+  - name: _SignType
+    value: real
+  - name: _SignArgs
+    value: /p:DotNetSignType=$(_SignType) /p:TeamName=$(_TeamName) /p:Sign=$(_Sign)
+  - name: _Sign
+    value: True
+  - name: _VisualStudioDropName
+    value: Products/$(System.TeamProject)/$(Build.Repository.Name)/$(Build.SourceBranchName)/$(Build.BuildNumber)
+  - name: _InternalBuildArgs
+    value: /p:DotNetSignType=$(_SignType)
+      /p:TeamName=$(_TeamName)
+      /p:VisualStudioDropName=$(_VisualStudioDropName)
+      /p:DotNetSymbolServerTokenMsdl=$(microsoft-symbol-server-pat)
+      /p:DotNetSymbolServerTokenSymWeb=$(symweb-symbol-server-pat)
+      /p:DotNetPublishBlobFeedKey=$(dotnetfeed-storage-access-key-1)
+      /p:DotNetPublishBlobFeedUrl=https://dotnetfeed.blob.core.windows.net/dotnet-core/index.json
+      /p:DotNetPublishToBlobFeed=true
+      /p:DotNetPublishUsingPipelines=true
+      /p:DotNetArtifactsCategory=.NETCore
+      /p:OfficialBuildId=$(BUILD.BUILDNUMBER)
+
 stages:
 - stage: build
   displayName: Build
   jobs:
+
   - template: /eng/common/templates/jobs/jobs.yml
     parameters:
       enableMicrobuild: true
       enablePublishBuildArtifacts: true
-      enablePublishTestResults: true
       enablePublishBuildAssets: true
-      enablePublishUsingPipelines: $(_PublishUsingPipelines)
-      enableSourceBuild: true
+      enablePublishUsingPipelines: true
+      enablePublishTestResults: true
       enableTelemetry: true
+      enableSourceBuild: true
+      testResultsFormat: 'vstest'
       helixRepo: dotnet/test-templates
       jobs:
       - job: Windows
         pool:
           # For public or PR jobs, use the hosted pool.  For internal jobs use the internal pool.
           # Will eventually change this to two BYOC pools.
-          ${{ if or(eq(variables['System.TeamProject'], 'public'), in(variables['Build.Reason'], 'PullRequest')) }}:
+          ${{ if eq(variables._RunAsPublic, True) }}:
             name: NetCore-Public
             demands: ImageOverride -equals windows.vs2022.amd64.open
-          ${{ if and(ne(variables['System.TeamProject'], 'public'), notin(variables['Build.Reason'], 'PullRequest')) }}:
+          ${{ if eq(variables._RunAsInternal, True) }}:
             name: NetCore1ESPool-Internal
             demands: ImageOverride -equals windows.vs2022.amd64
-        variables:
-        - _OfficialBuildArgs: ''
-        # Only enable publishing in official builds.
-        - ${{ if and(ne(variables['System.TeamProject'], 'public'), notin(variables['Build.Reason'], 'PullRequest')) }}:
-          # DotNet-Blob-Feed provides: dotnetfeed-storage-access-key-1
-          # Publish-Build-Assets provides: MaestroAccessToken, BotAccount-dotnet-maestro-bot-PAT
-          - group: DotNet-Blob-Feed
-          - group: DotNet-Symbol-Server-Pats
-          - group: Publish-Build-Assets
-          - group: DotNet-VSTS-Infra-Access
-          - group: DotNet-DevDiv-Insertion-Workflow-Variables
-          - _VisualStudioDropName: Products/$(System.TeamProject)/$(Build.Repository.Name)/$(Build.SourceBranchName)/$(Build.BuildNumber)
-          - _OfficialBuildArgs: /p:DotNetSignType=$(_SignType)
-                  /p:TeamName=$(_TeamName)
-                  /p:VisualStudioDropName=$(_VisualStudioDropName)
-                  /p:DotNetSymbolServerTokenMsdl=$(microsoft-symbol-server-pat)
-                  /p:DotNetSymbolServerTokenSymWeb=$(symweb-symbol-server-pat)
-                  /p:DotNetPublishBlobFeedKey=$(dotnetfeed-storage-access-key-1)
-                  /p:DotNetPublishBlobFeedUrl=https://dotnetfeed.blob.core.windows.net/dotnet-core/index.json
-                  /p:DotNetPublishToBlobFeed=$(_DotNetPublishToBlobFeed)
-                  /p:DotNetPublishUsingPipelines=$(_PublishUsingPipelines)
-                  /p:DotNetArtifactsCategory=$(_DotNetArtifactsCategory)
-                  /p:OfficialBuildId=$(BUILD.BUILDNUMBER)
-          - name: CodeQL.Enabled
-            value: false
         strategy:
           matrix:
-            Debug:
-              _BuildConfig: Debug
-              _SignType: test
-              _DotNetPublishToBlobFeed: false
-              _BuildArgs: ''
             Release:
               _BuildConfig: Release
-              # PRs or external builds are not signed.
-              ${{ if or(eq(variables['System.TeamProject'], 'public'), in(variables['Build.Reason'], 'PullRequest')) }}:
-                _SignType: test
-                _DotNetPublishToBlobFeed: false
-                _BuildArgs: ''
-              ${{ if and(ne(variables['System.TeamProject'], 'public'), notin(variables['Build.Reason'], 'PullRequest')) }}:
-                _SignType: real
-                _DotNetPublishToBlobFeed: true
-                publishUsingPipelines: $(_PublishUsingPipelines)
-                _BuildArgs: $(_OfficialBuildArgs)
+            ${{ if eq(variables._RunAsPublic, True) }}:
+              Debug:
+                _BuildConfig: Debug
         steps:
         - checkout: self
           clean: true
+
         - script: eng\common\cibuild.cmd
             -configuration $(_BuildConfig)
             -prepareMachine
-            $(_BuildArgs)
-          displayName: Build and Publish
+            $(_InternalBuildArgs)
+          displayName: Build
+
+        - task: PublishBuildArtifacts@1
+          displayName: 'Publish VSSetup'
+          inputs:
+            PathtoPublish: '$(Build.SourcesDirectory)/artifacts/VSSetup/$(_BuildConfig)'
+            ArtifactName: VSSetupArtifacts
 
         - task: DotNetCoreCLI@2
-          displayName: 'dotnet test'
+          displayName: 'Acceptance tests'
           inputs:
             command: test
             projects: 'test\Microsoft.TestTemplates.Acceptance.Tests.sln'
 
-        - ${{ if and(ne(variables['System.TeamProject'], 'public'), notin(variables['Build.Reason'], 'PullRequest')) }}:
+        - ${{ if eq(variables._RunAsInternal, True) }}:
           - script: dir /S artifacts\VSSetup\$(_BuildConfig)\Insertion
+            displayName: 'List Insertion files to upload'
+
           - task: ms-vseng.MicroBuildTasks.4305a8de-ba66-4d8b-b2d1-0dc4ecbbf5e8.MicroBuildUploadVstsDropFolder@1
             displayName: Upload Azure DevOps Drop
             inputs:
               DropName: $(_VisualStudioDropName)
               DropFolder: 'artifacts\VSSetup\$(_BuildConfig)\Insertion'
-              AccessToken: $(dn-bot-devdiv-build-rw-code-rw-release-rw)
-            condition: and(succeeded(), eq(variables['_DotNetPublishToBlobFeed'], 'true'))
+              AccessToken: $(dn-bot-devdiv-drop-rw-code-rw)
+            condition: succeeded()
 
-- ${{ if and(ne(variables['System.TeamProject'], 'public'), notin(variables['Build.Reason'], 'PullRequest')) }}:
+- ${{ if eq(variables._RunAsInternal, True) }}:
   - template: \eng\common\templates\post-build\post-build.yml
     parameters:
       enableSourceLinkValidation: false
