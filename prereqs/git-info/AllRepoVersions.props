@@ -3,8 +3,8 @@
   <PropertyGroup>
     <arcadeGitCommitHash>792c346a52b2388152c2fad6f626b88ed8736d6f</arcadeGitCommitHash>
     <arcadeOutputPackageVersion>8.0.0-beta.23269.2</arcadeOutputPackageVersion>
-    <aspnetcoreGitCommitHash>c760054e1fbc8749bc0c6f2116b22532424ff60f</aspnetcoreGitCommitHash>
-    <aspnetcoreOutputPackageVersion>8.0.0-preview.5.23271.1</aspnetcoreOutputPackageVersion>
+    <aspnetcoreGitCommitHash>3639b9b53af970c897fe1ea01d7b959662391a69</aspnetcoreGitCommitHash>
+    <aspnetcoreOutputPackageVersion>8.0.0-preview.5.23272.6</aspnetcoreOutputPackageVersion>
     <cecilGitCommitHash>f283c6229347f2dc3a25b04f6611014d8871d0b0</cecilGitCommitHash>
     <cecilOutputPackageVersion>0.11.4-alpha.23265.2</cecilOutputPackageVersion>
     <commandlineapiGitCommitHash>8374d5fca634a93458c84414b1604c12f765d1ab</commandlineapiGitCommitHash>
@@ -19,10 +19,10 @@
     <formatOutputPackageVersion>8.0.427001</formatOutputPackageVersion>
     <fsharpGitCommitHash>2341436410420aedb0e234df50756db1b7327241</fsharpGitCommitHash>
     <fsharpOutputPackageVersion>7.0.400-beta.23271.1</fsharpOutputPackageVersion>
-    <installerGitCommitHash>f5b2b8267da4cba5ddf1b2f2097482e6100cfcf5</installerGitCommitHash>
+    <installerGitCommitHash>26b86e0295b3e7e697bb06b951890d56a34962f4</installerGitCommitHash>
     <installerOutputPackageVersion>8.0.100</installerOutputPackageVersion>
-    <msbuildGitCommitHash>fe79798bdb36571368176a6b9f8fdd15a5646500</msbuildGitCommitHash>
-    <msbuildOutputPackageVersion>17.7.0-preview-23267-02</msbuildOutputPackageVersion>
+    <msbuildGitCommitHash>d077d294fa30f3ce8a8eda70f4630234a8f6c4c9</msbuildGitCommitHash>
+    <msbuildOutputPackageVersion>17.7.0-preview-23272-02</msbuildOutputPackageVersion>
     <nugetclientGitCommitHash>f94647a815e924c0665a2a55cfaa8856a29949c9</nugetclientGitCommitHash>
     <nugetclientOutputPackageVersion>6.7.0-preview.2.47</nugetclientOutputPackageVersion>
     <razorGitCommitHash>69a87847a50299d3d98c5f70018afec9e49b4162</razorGitCommitHash>
@@ -31,10 +31,10 @@
     <roslynanalyzersOutputPackageVersion>3.3.5-beta1.23270.2</roslynanalyzersOutputPackageVersion>
     <roslynGitCommitHash>687921ffae8ad91a5464473cb1759fd463c345f2</roslynGitCommitHash>
     <roslynOutputPackageVersion>4.7.0-2.23271.1</roslynOutputPackageVersion>
-    <runtimeGitCommitHash>9e49620aeee78c0d37dd741f88aff89850a6f5fb</runtimeGitCommitHash>
-    <runtimeOutputPackageVersion>8.0.0-preview.5.23272.1</runtimeOutputPackageVersion>
-    <sdkGitCommitHash>846338911ef8f8d18f0bc745b8108a812ca4c7a1</sdkGitCommitHash>
-    <sdkOutputPackageVersion>8.0.100-preview.5.23272.5</sdkOutputPackageVersion>
+    <runtimeGitCommitHash>dd390e1dc53e2dbba917b03e3edbec28d0a1a2ee</runtimeGitCommitHash>
+    <runtimeOutputPackageVersion>8.0.0-preview.5.23272.3</runtimeOutputPackageVersion>
+    <sdkGitCommitHash>30329e522e3d2228945fd426693131d70385626e</sdkGitCommitHash>
+    <sdkOutputPackageVersion>8.0.100-preview.5.23272.28</sdkOutputPackageVersion>
     <sourcebuildexternalsGitCommitHash>21d564f9e16f7986d8af0692258afb91a52dda80</sourcebuildexternalsGitCommitHash>
     <sourcebuildexternalsOutputPackageVersion>8.0.0-alpha.1.23268.1</sourcebuildexternalsOutputPackageVersion>
     <sourcebuildreferencepackagesGitCommitHash>32291c2835d9ffcba7288a01a715c21512946c75</sourcebuildreferencepackagesGitCommitHash>
