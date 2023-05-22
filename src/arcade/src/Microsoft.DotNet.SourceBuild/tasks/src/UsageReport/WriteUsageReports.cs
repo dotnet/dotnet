@@ -149,20 +149,10 @@ namespace Microsoft.DotNet.SourceBuild.Tasks.UsageReport
 
                         ProdConPackageIdCreator = prodConCreator,
 
-                        TestProjectByHeuristic = IsTestUsageByHeuristic(usage),
-
                         EndsUpInOutput = poisonNupkgFilenames.Contains($"{id}.{version}")
                     };
                 })
                 .ToArray();
-
-            foreach (var onlyTestProjectUsage in annotatedUsages
-                .GroupBy(u => u.Usage.PackageIdentity)
-                .Where(g => g.All(u => u.TestProjectByHeuristic))
-                .SelectMany(g => g))
-            {
-                onlyTestProjectUsage.TestProjectOnlyByHeuristic = true;
-            }
 
             report.Add(annotatedUsages.Select(u => u.ToXml()));
 
@@ -241,29 +231,6 @@ namespace Microsoft.DotNet.SourceBuild.Tasks.UsageReport
             {
                 packageOrigin[id] = origin;
             }
-        }
-
-        public static bool IsTestUsageByHeuristic(Usage usage)
-        {
-            string[] assetsFileParts = usage.AssetsFile?.Split('/', '\\');
-
-            // If the dir name ends in Test(s), it's probably a test project.
-            // Ignore the first two segments to avoid classifying everything in "src/vstest".
-            // This also catches "test" dirs that contain many test projects.
-            if (assetsFileParts?.Skip(2).Any(p =>
-                p.EndsWith("Tests", StringComparison.OrdinalIgnoreCase) ||
-                p.EndsWith("Test", StringComparison.OrdinalIgnoreCase)) == true)
-            {
-                return true;
-            }
-
-            // CoreFX restores test dependencies during this sync project.
-            if (assetsFileParts?.Contains("XUnit.Runtime") == true)
-            {
-                return true;
-            }
-
-            return false;
         }
 
         private class RepoOutput
