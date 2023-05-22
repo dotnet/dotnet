@@ -210,6 +210,25 @@ stages:
 
     - template: ../jobs/vmr-build.yml
       parameters:
+        buildName: CentOSStream8_Online_CurrentSourceBuiltSdk
+        isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
+        vmrBranch: ${{ variables.VmrBranch }}
+        architecture: x64
+        pool:
+          name: ${{ variables.defaultPoolName }}
+          demands: ${{ variables.defaultPoolDemands }}
+        container: ${{ parameters.centOSStream8Container }}
+        buildFromArchive: false            # 🚫
+        enablePoison: false                # 🚫
+        excludeOmniSharpTests: true        # ✅
+        overrideDistroDisablingSha1: false # 🚫
+        runOnline: false                   # 🚫
+        useMonoRuntime: false              # 🚫
+        withPreviousSDK: false             # 🚫
+        reuseBuildArtifactsFrom: CentOSStream8_Online_MsftSdk
+
+    - template: ../jobs/vmr-build.yml
+      parameters:
         buildName: Fedora36_Offline_CurrentSourceBuiltSdk
         isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
         vmrBranch: ${{ variables.VmrBranch }}
