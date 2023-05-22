@@ -29,12 +29,6 @@ When using NuGet 3.x this package requires at least version 3.4.</description>
     <copyright>© Microsoft Corporation. All rights reserved.</copyright>
     <serviceable>true</serviceable>
     <dependencies>
-      <group targetFramework=".NETCoreApp2.1">
-        <dependency id="Microsoft.Win32.Registry" version="4.7.0" exclude="Compile" />
-        <dependency id="System.Diagnostics.DiagnosticSource" version="4.7.0" exclude="Compile" />
-        <dependency id="System.Security.Principal.Windows" version="4.7.0" exclude="Compile" />
-        <dependency id="System.Text.Encoding.CodePages" version="4.7.0" exclude="Compile" />
-      </group>
       <group targetFramework=".NETCoreApp6.0" />
     </dependencies>
     <frameworkAssemblies>

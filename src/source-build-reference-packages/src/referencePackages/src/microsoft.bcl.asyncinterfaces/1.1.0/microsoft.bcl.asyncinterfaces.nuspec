@@ -23,7 +23,6 @@ When using NuGet 3.x this package requires at least version 3.4.</description>
     <copyright>© Microsoft Corporation. All rights reserved.</copyright>
     <serviceable>true</serviceable>
     <dependencies>
-      <group targetFramework=".NETCoreApp2.1" />
       <group targetFramework=".NETStandard2.0">
         <dependency id="System.Threading.Tasks.Extensions" version="4.5.2" />
       </group>

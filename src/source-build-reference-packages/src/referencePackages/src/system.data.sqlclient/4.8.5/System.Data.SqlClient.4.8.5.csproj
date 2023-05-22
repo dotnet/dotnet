@@ -2,17 +2,9 @@
 
   <PropertyGroup>
     <!-- Upgraded TFM from netcoreapp2.1 to net6.0 to minimize dependencies and avoid a dependency on netcoreapp2.1. -->
-    <!-- TODO: Remove netcoreapp2.1 TFM after the change is consumed by runtime. -->
-    <TargetFrameworks>net6.0;netcoreapp2.1</TargetFrameworks>
+    <TargetFrameworks>net6.0</TargetFrameworks>
     <AssemblyName>System.Data.SqlClient</AssemblyName>
     <ProjectTemplateVersion>2</ProjectTemplateVersion>
   </PropertyGroup>
-
-  <ItemGroup Condition="'$(TargetFramework)' == 'netcoreapp2.1'">
-    <PackageReference Include="Microsoft.Win32.Registry" Version="4.7.0" />
-    <PackageReference Include="System.Diagnostics.DiagnosticSource" Version="4.7.0" />
-    <PackageReference Include="System.Security.Principal.Windows" Version="4.7.0" />
-    <PackageReference Include="System.Text.Encoding.CodePages" Version="4.7.0" />
-  </ItemGroup>
 
 </Project>

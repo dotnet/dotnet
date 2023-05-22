@@ -26,7 +26,6 @@ When using NuGet 3.x this package requires at least version 3.4.</description>
     <dependencies>
       <group targetFramework="MonoAndroid1.0" />
       <group targetFramework="MonoTouch1.0" />
-      <group targetFramework=".NETCoreApp2.1" />
       <group targetFramework=".NETCoreApp3.0">
         <dependency id="System.Formats.Asn1" version="5.0.0" exclude="Compile" />
       </group>
