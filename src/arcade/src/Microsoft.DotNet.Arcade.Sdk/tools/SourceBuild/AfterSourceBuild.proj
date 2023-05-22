@@ -71,7 +71,6 @@
       BaselineDataUpdateHintFile="$(PrebuiltBaselineDataFileDefault)"
       OutputBaselineFile="$(SourceBuildSelfPrebuiltReportDir)generated-new-baseline.xml"
       OutputReportFile="$(SourceBuildSelfPrebuiltReportDir)baseline-comparison.xml"
-      AllowTestProjectUsage="$(AllowTestProjectUsage)"
       ContinueOnError="$(ContinueOnPrebuiltBaselineError)"
       Condition="'$(DotNetBuildFromSourceFlavor)' != 'Product'" />
   </Target>

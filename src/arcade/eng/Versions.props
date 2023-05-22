@@ -8,9 +8,9 @@
   </PropertyGroup>
   <PropertyGroup>
     <!-- arcade -->
-    <MicrosoftDotNetBuildTasksFeedVersion>8.0.0-beta.23265.1</MicrosoftDotNetBuildTasksFeedVersion>
-    <MicrosoftDotNetSignToolVersion>8.0.0-beta.23265.1</MicrosoftDotNetSignToolVersion>
-    <MicrosoftDotNetSwaggerGeneratorMSBuildVersion>8.0.0-beta.23265.1</MicrosoftDotNetSwaggerGeneratorMSBuildVersion>
+    <MicrosoftDotNetBuildTasksFeedVersion>8.0.0-beta.23268.1</MicrosoftDotNetBuildTasksFeedVersion>
+    <MicrosoftDotNetSignToolVersion>8.0.0-beta.23268.1</MicrosoftDotNetSignToolVersion>
+    <MicrosoftDotNetSwaggerGeneratorMSBuildVersion>8.0.0-beta.23268.1</MicrosoftDotNetSwaggerGeneratorMSBuildVersion>
     <!-- arcade-services -->
     <MicrosoftDotNetMaestroClientVersion>1.1.0-beta.21553.1</MicrosoftDotNetMaestroClientVersion>
     <MicrosoftDotNetMaestroTasksVersion>1.1.0-beta.22076.4</MicrosoftDotNetMaestroTasksVersion>
@@ -33,8 +33,10 @@
     <!-- netstandard -->
     <NETStandardLibraryVersion>2.0.3</NETStandardLibraryVersion>
     <!-- nuget -->
+    <NuGetCommandsVersion>6.2.2</NuGetCommandsVersion>
     <NuGetFrameworksVersion>6.2.2</NuGetFrameworksVersion>
     <NuGetPackagingVersion>6.2.2</NuGetPackagingVersion>
+    <NuGetProjectModelVersion>6.2.2</NuGetProjectModelVersion>
     <NuGetVersioningVersion>6.2.2</NuGetVersioningVersion>
     <!-- roslyn -->
     <MicrosoftCodeAnalysisCSharpVersion>4.4.0</MicrosoftCodeAnalysisCSharpVersion>
@@ -94,6 +96,7 @@
     <MicrosoftIdentityClientVersion>4.53.0</MicrosoftIdentityClientVersion>
     <!-- Keep Microsoft.Data.Services.Client package version in sync with Microsoft.Data.OData -->
     <MicrosoftDataServicesClientVersion>5.8.4</MicrosoftDataServicesClientVersion>
+    <MicrosoftDiagnosticsRuntimeVersion>1.0.5</MicrosoftDiagnosticsRuntimeVersion>
     <MicrosoftOpenApiReadersVersion>1.3.2</MicrosoftOpenApiReadersVersion>
     <MicrosoftOpenApiVersion>1.3.2</MicrosoftOpenApiVersion>
     <MicrosoftSignedWixVersion>1.0.0-v3.14.0.5722</MicrosoftSignedWixVersion>
@@ -107,6 +110,7 @@
     <WindowsAzureStorageVersion>9.3.3</WindowsAzureStorageVersion>
     <XUnitAbstractionsVersion>2.0.3</XUnitAbstractionsVersion>
     <XUnitVersion>2.4.2</XUnitVersion>
+    <XUnitAnalyzersVersion>1.0.0</XUnitAnalyzersVersion>
     <log4netVersion>2.0.15</log4netVersion>
   </PropertyGroup>
 </Project>

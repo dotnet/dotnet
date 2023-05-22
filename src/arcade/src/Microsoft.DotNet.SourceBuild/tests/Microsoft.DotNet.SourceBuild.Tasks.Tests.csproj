@@ -13,7 +13,7 @@
     <PackageReference Include="Microsoft.Build.Tasks.Core" Version="$(MicrosoftBuildTasksCoreVersion)" />
     <PackageReference Include="Moq" Version="$(MoqVersion)" />
     <PackageReference Include="NuGet.Packaging" Version="$(NuGetPackagingVersion)" />
-    <PackageReference Include="NuGet.Versioning" Version="$(NuGetPackagingVersion)" />
+    <PackageReference Include="NuGet.Versioning" Version="$(NuGetVersioningVersion)" />
   </ItemGroup>
 
 </Project>

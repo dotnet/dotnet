@@ -193,18 +193,18 @@
     </Dependency>
   </ProductDependencies>
   <ToolsetDependencies>
-    <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="8.0.0-beta.23268.1">
+    <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="8.0.0-beta.23269.2">
       <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>f4269875971171c278c2cd695e9ef94b6516e4be</Sha>
+      <Sha>792c346a52b2388152c2fad6f626b88ed8736d6f</Sha>
       <SourceBuild RepoName="arcade" ManagedOnly="true" />
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.CMake.Sdk" Version="8.0.0-beta.23268.1">
+    <Dependency Name="Microsoft.DotNet.CMake.Sdk" Version="8.0.0-beta.23269.2">
       <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>f4269875971171c278c2cd695e9ef94b6516e4be</Sha>
+      <Sha>792c346a52b2388152c2fad6f626b88ed8736d6f</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.Build.Tasks.Installers" Version="8.0.0-beta.23268.1">
+    <Dependency Name="Microsoft.DotNet.Build.Tasks.Installers" Version="8.0.0-beta.23269.2">
       <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>f4269875971171c278c2cd695e9ef94b6516e4be</Sha>
+      <Sha>792c346a52b2388152c2fad6f626b88ed8736d6f</Sha>
     </Dependency>
     <Dependency Name="Microsoft.DotNet.Darc" Version="1.1.0-beta.23226.1">
       <Uri>https://github.com/dotnet/arcade-services</Uri>
@@ -218,9 +218,9 @@
       <Uri>https://github.com/dotnet/runtime</Uri>
       <Sha>af841c8b33cecc92d74222298f1e45bf7bf3d90a</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.SourceBuild.Intermediate.source-build-reference-packages" Version="8.0.0-alpha.1.23269.1">
+    <Dependency Name="Microsoft.SourceBuild.Intermediate.source-build-reference-packages" Version="8.0.0-alpha.1.23272.1">
       <Uri>https://github.com/dotnet/source-build-reference-packages</Uri>
-      <Sha>ee8aa57dda469f3fa25131bab56484ad2a216181</Sha>
+      <Sha>32291c2835d9ffcba7288a01a715c21512946c75</Sha>
       <SourceBuild RepoName="source-build-reference-packages" ManagedOnly="true" />
     </Dependency>
     <Dependency Name="Microsoft.SourceLink.GitHub" Version="8.0.0-beta.23252.2" CoherentParentDependency="Microsoft.DotNet.Arcade.Sdk">

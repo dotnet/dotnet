@@ -19,14 +19,14 @@
     <RestoreSources/>
   </PropertyGroup>
 
-  <!-- 
-    Prevent NuGet from using cached packages 
+  <!--
+    Prevent NuGet from using cached packages
     Workaround for https://github.com/NuGet/Home/issues/3116
   -->
   <PropertyGroup>
     <RestoreNoCache Condition="'$(ContinuousIntegrationBuild)' == 'true'">true</RestoreNoCache>
   </PropertyGroup>
-  
+
   <!--
     Arcade SDK features.
   -->
@@ -87,6 +87,7 @@
     <MicrosoftDotNetSignToolVersion Condition="'$(MicrosoftDotNetSignToolVersion)' == ''">$(ArcadeSdkVersion)</MicrosoftDotNetSignToolVersion>
     <MicrosoftTestPlatformVersion Condition="'$(MicrosoftTestPlatformVersion)' == ''">16.5.0</MicrosoftTestPlatformVersion>
     <XUnitVersion Condition="'$(XUnitVersion)' == ''">2.4.2</XUnitVersion>
+    <XUnitAnalyzersVersion Condition="'$(XUnitAnalyzersVersion)' == ''">1.0.0</XUnitAnalyzersVersion>
     <XUnitRunnerConsoleVersion Condition="'$(XUnitRunnerConsoleVersion)' == ''">$(XUnitVersion)</XUnitRunnerConsoleVersion>
     <!-- Version 2.4.3 of xunit.runner.visualstudio was released to fix testing of net5 projects without updating any other xunit packages -->
     <XUnitRunnerVisualStudioVersion Condition="'$(XUnitRunnerVisualStudioVersion)' == ''">2.4.3</XUnitRunnerVisualStudioVersion>
@@ -110,7 +111,7 @@
 
   <!-- RestoreSources overrides - defines DotNetRestoreSources variable if available -->
   <Import Project="$(DotNetPackageVersionPropsPath)" Condition="'$(DotNetPackageVersionPropsPath)' != ''"/>
-  <!-- 
+  <!--
     Defaults for properties that need to be available to all CI build steps and are dependent on settings specified in eng/Versions.props.
   -->
   <PropertyGroup>

@@ -1,4 +1,4 @@
-﻿// Licensed to the .NET Foundation under one or more agreements.
+// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System.Xml.Linq;
@@ -13,8 +13,6 @@ namespace Microsoft.DotNet.SourceBuild.Tasks.UsageReport
         public string SourceBuildPackageIdCreator { get; set; }
         public string ProdConPackageIdCreator { get; set; }
         public bool EndsUpInOutput { get; set; }
-        public bool TestProjectByHeuristic { get; set; }
-        public bool TestProjectOnlyByHeuristic { get; set; }
         public bool IsDirectDependency { get; set; }
         public bool IsAutoReferenced { get; set; }
 
@@ -24,8 +22,6 @@ namespace Microsoft.DotNet.SourceBuild.Tasks.UsageReport
             Project.ToXAttributeIfNotNull(nameof(Project)),
             SourceBuildPackageIdCreator.ToXAttributeIfNotNull(nameof(SourceBuildPackageIdCreator)),
             ProdConPackageIdCreator.ToXAttributeIfNotNull(nameof(ProdConPackageIdCreator)),
-            TestProjectByHeuristic.ToXAttributeIfTrue(nameof(TestProjectByHeuristic)),
-            TestProjectOnlyByHeuristic.ToXAttributeIfTrue(nameof(TestProjectOnlyByHeuristic)),
             IsDirectDependency.ToXAttributeIfTrue(nameof(IsDirectDependency)),
             IsAutoReferenced.ToXAttributeIfTrue(nameof(IsAutoReferenced)),
             EndsUpInOutput.ToXAttributeIfTrue(nameof(EndsUpInOutput)));
