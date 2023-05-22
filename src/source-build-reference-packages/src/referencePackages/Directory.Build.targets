@@ -38,8 +38,6 @@
 
     <KnownFrameworkReference Update="@(KnownFrameworkReference->WithMetadataValue('Identity', 'Microsoft.AspNetCore.App'))">
       <TargetingPackVersion Condition="'%(TargetFramework)' == 'netcoreapp3.1'">3.1.10</TargetingPackVersion>
-      <TargetingPackVersion Condition="'%(TargetFramework)' == 'net6.0'">6.0.0</TargetingPackVersion>
-      <TargetingPackVersion Condition="'%(TargetFramework)' == 'net7.0'">7.0.0</TargetingPackVersion>
     </KnownFrameworkReference>
 
     <KnownFrameworkReference Update="@(KnownFrameworkReference->WithMetadataValue('Identity', 'NETStandard.Library'))">
