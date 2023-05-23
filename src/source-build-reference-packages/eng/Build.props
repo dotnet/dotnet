@@ -51,6 +51,14 @@
     <DependencyPackageProjects Include="$(RepoRoot)src\textOnlyPackages\src\**\Microsoft.CodeAnalysis.4.5.0.csproj" />
 
     <DependencyPackageProjects Include="$(RepoRoot)src\textOnlyPackages\src\**\System.ComponentModel.Composition.7.0.0.csproj" />
+
+    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\NuGet.Frameworks.6.6.0.csproj" />
+    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\NuGet.Common.6.6.0.csproj" />
+    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\NuGet.Configuration.6.6.0.csproj" />
+    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\NuGet.Versioning.6.6.0.csproj" />
+    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\NuGet.Packaging.6.6.0.csproj" />
+    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\NuGet.Protocol.6.6.0.csproj" />
+    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\NuGet.Credentials.6.6.0.csproj" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(BuildDependencyPackageProjects)' == 'true'">
