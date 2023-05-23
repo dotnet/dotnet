@@ -80,6 +80,9 @@
 
     <EnvironmentVariables Include="DeterministicSourcePaths=false" />
     <EnvironmentVariables Include="SourceRoot=$(ProjectDirectory)" />
+    
+    <!-- Disable restoring transitive aspnetcore and windowsdesktop targeting packs to avoid unnecessary dependencies. -->
+    <EnvironmentVariables Include="DisableTransitiveFrameworkReferenceDownloads=true" />
   </ItemGroup>
 
 </Project>
