@@ -181,9 +181,9 @@
       <Uri>https://github.com/dotnet/runtime</Uri>
       <Sha>ba775cd50984e0a0fa06526f74feb2c95ace237e</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.SourceBuild.Intermediate.source-build-externals" Version="8.0.0-alpha.1.23262.1">
+    <Dependency Name="Microsoft.SourceBuild.Intermediate.source-build-externals" Version="8.0.0-alpha.1.23268.1">
       <Uri>https://github.com/dotnet/source-build-externals</Uri>
-      <Sha>a1460948fd0a4ab66b885c1575b085af70139e9a</Sha>
+      <Sha>21d564f9e16f7986d8af0692258afb91a52dda80</Sha>
       <SourceBuild RepoName="source-build-externals" ManagedOnly="true" />
     </Dependency>
     <Dependency Name="System.Configuration.ConfigurationManager" Version="8.0.0-preview.5.23271.5">
@@ -300,9 +300,9 @@
       <Sha>9a1c3e1b7f0c8763d4c96e593961a61a72679a7b</Sha>
       <SourceBuild RepoName="xdt" ManagedOnly="true" />
     </Dependency>
-    <Dependency Name="Microsoft.SourceBuild.Intermediate.source-build-reference-packages" Version="8.0.0-alpha.1.23266.4">
+    <Dependency Name="Microsoft.SourceBuild.Intermediate.source-build-reference-packages" Version="8.0.0-alpha.1.23272.1">
       <Uri>https://github.com/dotnet/source-build-reference-packages</Uri>
-      <Sha>fd98754b692a1a8da2aaadd28ce3952578d9d9ad</Sha>
+      <Sha>32291c2835d9ffcba7288a01a715c21512946c75</Sha>
       <SourceBuild RepoName="source-build-reference-packages" ManagedOnly="true" />
     </Dependency>
     <!-- Not updated automatically -->
