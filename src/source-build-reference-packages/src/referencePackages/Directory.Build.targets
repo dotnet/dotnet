@@ -23,7 +23,6 @@
 
   <PropertyGroup>
     <DisableTransitiveFrameworkReferenceDownloads>true</DisableTransitiveFrameworkReferenceDownloads>
-    <MicrosoftNETFrameworkReferenceAssembliesLatestPackageVersion>1.0.2</MicrosoftNETFrameworkReferenceAssembliesLatestPackageVersion>
     <!-- The SDK already sets the NETStandardImplicitPackageVersion and we don't expect it to change anymore. Hence, we don't encode it here. -->
   </PropertyGroup>
 
