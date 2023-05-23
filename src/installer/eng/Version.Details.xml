@@ -181,9 +181,9 @@
       <Sha>9e870996b8bf0b91a791edd1039bfd23bdd01af8</Sha>
       <SourceBuild RepoName="deployment-tools" ManagedOnly="true" />
     </Dependency>
-    <Dependency Name="Microsoft.SourceBuild.Intermediate.source-build-externals" Version="8.0.0-alpha.1.23268.1">
+    <Dependency Name="Microsoft.SourceBuild.Intermediate.source-build-externals" Version="8.0.0-alpha.1.23272.2">
       <Uri>https://github.com/dotnet/source-build-externals</Uri>
-      <Sha>21d564f9e16f7986d8af0692258afb91a52dda80</Sha>
+      <Sha>da0af7cba6d260422f6545e7d422e112d9cc9cfa</Sha>
       <SourceBuild RepoName="source-build-externals" ManagedOnly="true" />
     </Dependency>
     <Dependency Name="Microsoft.SourceBuild.Intermediate.symreader" Version="2.1.0-beta.23253.1">
@@ -218,9 +218,9 @@
       <Uri>https://github.com/dotnet/runtime</Uri>
       <Sha>af841c8b33cecc92d74222298f1e45bf7bf3d90a</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.SourceBuild.Intermediate.source-build-reference-packages" Version="8.0.0-alpha.1.23273.1">
+    <Dependency Name="Microsoft.SourceBuild.Intermediate.source-build-reference-packages" Version="8.0.0-alpha.1.23273.2">
       <Uri>https://github.com/dotnet/source-build-reference-packages</Uri>
-      <Sha>43c337012443bb42d4baf97b4232dd04b443b5ef</Sha>
+      <Sha>ccf417a0ac5eb10eae069f9a75a836fcd46af453</Sha>
       <SourceBuild RepoName="source-build-reference-packages" ManagedOnly="true" />
     </Dependency>
     <Dependency Name="Microsoft.SourceLink.GitHub" Version="8.0.0-beta.23252.2" CoherentParentDependency="Microsoft.DotNet.Arcade.Sdk">
