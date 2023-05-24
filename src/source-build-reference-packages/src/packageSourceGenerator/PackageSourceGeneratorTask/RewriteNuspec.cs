@@ -34,6 +34,7 @@ namespace Microsoft.DotNet.SourceBuild.Tasks
             NuspecReader nuspecReader = new(NuspecPath!);
             TargetFrameworkRegexFilter targetFrameworkRegexFilter = new(IncludeTargetFrameworks,
                 ExcludeTargetFrameworks);
+            string pattern;
 
             IEnumerable<FrameworkSpecificGroup> frameworkAssemblyGroups = nuspecReader.GetFrameworkAssemblyGroups();
             foreach (FrameworkSpecificGroup frameworkSpecificGroup in frameworkAssemblyGroups)
@@ -43,9 +44,13 @@ namespace Microsoft.DotNet.SourceBuild.Tasks
                     continue;
 
                 string framework = frameworkSpecificGroup.TargetFramework.GetFrameworkString();
-                string pattern = $@" *<frameworkAssembly.*?targetFramework=""{framework}"" />\r?\n";
+                pattern = $@" *<frameworkAssembly.*?targetFramework=""{framework}"" />\r?\n";
                 nuspecContent = Regex.Replace(nuspecContent, pattern, string.Empty);
             }
+
+            // If all frameworkAssemblyGroups have been removed, remove the empty frameworkAssemblies element
+            pattern = @" *<frameworkAssemblies>\r?\n *</frameworkAssemblies>\r?\n";
+            nuspecContent = Regex.Replace(nuspecContent, pattern, string.Empty);
 
             IEnumerable<PackageDependencyGroup> dependencyGroups = nuspecReader.GetDependencyGroups();
             foreach (PackageDependencyGroup dependencyGroup in dependencyGroups)
@@ -55,7 +60,7 @@ namespace Microsoft.DotNet.SourceBuild.Tasks
                     continue;
 
                 string framework = dependencyGroup.TargetFramework.GetFrameworkString();
-                string pattern = @$" *<group targetFramework=""{framework}""(?:>.+?</group>| />)\r?\n";
+                pattern = @$" *<group targetFramework=""{framework}""(?:>.+?</group>| />)\r?\n";
                 nuspecContent = Regex.Replace(nuspecContent, pattern, string.Empty, RegexOptions.Singleline);
             }
 
