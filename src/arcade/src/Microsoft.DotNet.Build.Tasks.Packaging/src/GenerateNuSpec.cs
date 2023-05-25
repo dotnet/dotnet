@@ -133,12 +133,15 @@ namespace Microsoft.DotNet.Build.Tasks.Packaging
             if (!File.Exists(OutputFileName))
                 return true;
 
-            var oldSource = File.ReadAllText(OutputFileName);
+            // Note: don't use ReadAllText here, because it gets rid of the BOM
+            // that is present at the beginning of the file.
+            var oldSource = Encoding.UTF8.GetString(File.ReadAllBytes(OutputFileName));
             var newSource = "";
             using (var stream = new MemoryStream())
             {
                 Save(newManifest, stream);
                 stream.Seek(0, SeekOrigin.Begin);
+                // UTF8.GetString preserves BOM.
                 newSource = Encoding.UTF8.GetString(stream.ToArray());
             }
 
