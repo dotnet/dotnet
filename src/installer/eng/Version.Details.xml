@@ -181,9 +181,9 @@
       <Sha>9e870996b8bf0b91a791edd1039bfd23bdd01af8</Sha>
       <SourceBuild RepoName="deployment-tools" ManagedOnly="true" />
     </Dependency>
-    <Dependency Name="Microsoft.SourceBuild.Intermediate.source-build-externals" Version="8.0.0-alpha.1.23273.1">
+    <Dependency Name="Microsoft.SourceBuild.Intermediate.source-build-externals" Version="8.0.0-alpha.1.23274.1">
       <Uri>https://github.com/dotnet/source-build-externals</Uri>
-      <Sha>82669352b123bccd3ec3e5ad0b0ec4ffd7ea1481</Sha>
+      <Sha>9439becb24301b70f92ce2534e2cb8a1ca9b7a99</Sha>
       <SourceBuild RepoName="source-build-externals" ManagedOnly="true" />
     </Dependency>
     <Dependency Name="Microsoft.SourceBuild.Intermediate.symreader" Version="2.1.0-beta.23253.1">
@@ -193,18 +193,18 @@
     </Dependency>
   </ProductDependencies>
   <ToolsetDependencies>
-    <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="8.0.0-beta.23269.2">
+    <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="8.0.0-beta.23274.6">
       <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>792c346a52b2388152c2fad6f626b88ed8736d6f</Sha>
+      <Sha>ab7df8826d2978b5660d75b33059e25666f4def3</Sha>
       <SourceBuild RepoName="arcade" ManagedOnly="true" />
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.CMake.Sdk" Version="8.0.0-beta.23269.2">
+    <Dependency Name="Microsoft.DotNet.CMake.Sdk" Version="8.0.0-beta.23274.6">
       <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>792c346a52b2388152c2fad6f626b88ed8736d6f</Sha>
+      <Sha>ab7df8826d2978b5660d75b33059e25666f4def3</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.Build.Tasks.Installers" Version="8.0.0-beta.23269.2">
+    <Dependency Name="Microsoft.DotNet.Build.Tasks.Installers" Version="8.0.0-beta.23274.6">
       <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>792c346a52b2388152c2fad6f626b88ed8736d6f</Sha>
+      <Sha>ab7df8826d2978b5660d75b33059e25666f4def3</Sha>
     </Dependency>
     <Dependency Name="Microsoft.DotNet.Darc" Version="1.1.0-beta.23226.1">
       <Uri>https://github.com/dotnet/arcade-services</Uri>
