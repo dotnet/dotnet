@@ -1,3 +1,4 @@
 <Project>
   <Import Project="build\common.targets" Condition="'$(IsCrossTargetingBuild)' == 'true' And '$(_WasCommonPropsImported)' != 'true'" />
+  <Import Project="eng\source-build\ExcludeFromSourceBuild.AfterCommonTargets.targets" Condition="'$(DotNetBuildFromSource)' == 'true'" />
 </Project>
