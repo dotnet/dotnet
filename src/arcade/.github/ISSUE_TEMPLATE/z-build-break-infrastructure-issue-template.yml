@@ -1,5 +1,5 @@
-name: Report an infrastructure issue
-description: Report an infrastructure issue causing build failures
+name: Report an infrastructure known issue
+description: Report an infrastructure known issue causing build failures across multiple repositories
 labels: ["First Responder", "Known Build Error"]
 body:
   - type: markdown
@@ -26,12 +26,13 @@ body:
     id: error-message
     attributes:
       label: Known issue core information
-      description: Fill in the known issue information to match build breaks across multiple repositories.
+      description: |
+       Fill in the known issue information to match build breaks across multiple repositories.
+       Use ErrorMessage for String.Contains matches. Use ErrorPattern for regex matches (single line/no backtracking). Set BuildRetry to `true` to retry builds with this error. Set ExcludeConsoleLog to `true` to skip helix logs analysis.
       value: |
-        If this is an issue that could be causing build breaks across multiple respositories:
-        1. Edit this issue and add an error string in the JSON. Use the [Known Issues documentation](https://github.com/dotnet/arcade/blob/main/Documentation/Projects/Build%20Analysis/KnownIssues.md#how-to-fill-out-a-known-issue-error-section)
+        Fill out the known issue JSON section by following the [step by step documentation on how to create a known issue](https://github.com/dotnet/arcade/blob/main/Documentation/Projects/Build%20Analysis/KnownIssueJsonStepByStep.md#how-to-create-a-known-issue-step-by-step)
 
-         ```json
+        ```json
          {
             "ErrorMessage" : "",
             "BuildRetry": false,
