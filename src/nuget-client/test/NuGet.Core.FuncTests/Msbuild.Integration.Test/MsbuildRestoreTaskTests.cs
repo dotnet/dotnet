@@ -1060,6 +1060,38 @@ $@"<?xml version=""1.0"" encoding=""utf-8""?>
         }
 
         [PlatformFact(Platform.Windows)]
+        public void MsbuildRestore_WithCPPCliVcxproj_WithProjectReferenceAndWindowsWindowsTargetPlatformMinVersion_Succeeds()
+        {
+            // Arrange
+            using (var pathContext = new SimpleTestPathContext())
+            {
+                // Set up project
+                var solution = new SimpleTestSolutionContext(pathContext.SolutionRoot);
+                var cppCliProject = SimpleTestProjectContext.CreateNETCore("projectName", pathContext.SolutionRoot, NuGetFramework.Parse("net5.0-windows7.0"));
+                cppCliProject.Properties.Add("CLRSupport", "NetCore");
+                cppCliProject.Properties.Add("WindowsTargetPlatformMinVersion", "10.0");
+                cppCliProject.ProjectPath = Path.Combine(Path.GetDirectoryName(cppCliProject.ProjectPath), cppCliProject.ProjectName + ".vcxproj");
+                var managedProject = SimpleTestProjectContext.CreateNETCore("managedProject", pathContext.SolutionRoot, NuGetFramework.Parse("net5.0-windows10.0"));
+                cppCliProject.AddProjectToAllFrameworks(managedProject);
+                solution.Projects.Add(cppCliProject);
+                solution.Projects.Add(managedProject);
+                solution.Create(pathContext.SolutionRoot);
+
+                // Act
+                var result = _msbuildFixture.RunMsBuild(pathContext.WorkingDirectory, $"/t:restore {pathContext.SolutionRoot}");
+
+                // Assert
+                result.Success.Should().BeTrue(because: result.AllOutput);
+                File.Exists(cppCliProject.AssetsFileOutputPath).Should().BeTrue(because: result.AllOutput);
+                File.Exists(cppCliProject.TargetsOutput).Should().BeTrue(because: result.AllOutput);
+                File.Exists(cppCliProject.PropsOutput).Should().BeTrue(because: result.AllOutput);
+
+                var targetsSection = cppCliProject.AssetsFile.Targets.First(e => string.IsNullOrEmpty(e.RuntimeIdentifier));
+                targetsSection.Libraries.Should().Contain(e => e.Name.Equals("managedProject"), because: string.Join(",", targetsSection.Libraries));
+            }
+        }
+
+        [PlatformFact(Platform.Windows)]
         public async Task MsbuildRestore_PackagesConfigDependency_WithHttpSource_Warns()
         {
             // Arrange

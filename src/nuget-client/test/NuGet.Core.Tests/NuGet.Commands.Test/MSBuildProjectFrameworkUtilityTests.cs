@@ -269,19 +269,21 @@ namespace NuGet.Commands.Test
         }
 
         [Theory]
-        [InlineData(@"C:\project.vcxproj", ".NETFramework,Version=v4.5", "Windows,Version=7.0", "", "", "native", null)]
-        [InlineData(@"C:\project.vcxproj", ".NETFramework,Version=v4.5", "", "", "false", "native", null)]
-        [InlineData(@"C:\project.vcxproj", ".NETFramework,Version=v4.5", "", "", "NetFx", "native", null)]
-        [InlineData(@"C:\project.vcxproj", ".NETCoreApp,Version=v5.0", "", "", "NetCore", "net5.0", "native")]
-        [InlineData(@"C:\project.vcxproj", ".NETCoreApp,Version=v5.0", "Windows,Version=7.0", "", "NetCore", "net5.0", "native")]
-        [InlineData(@"C:\project.csproj", ".NETCoreApp,Version=v5.0", "", "", "NetCore", "net5.0", null)]
-        [InlineData(@"C:\project.csproj", ".NETFramework,Version=v4.5", "", "", "NetFramework", "net45", null)]
+        [InlineData(@"C:\project.vcxproj", ".NETFramework,Version=v4.5", "Windows,Version=7.0", "", "", null, "native", null)]
+        [InlineData(@"C:\project.vcxproj", ".NETFramework,Version=v4.5", "", "", "false", null, "native", null)]
+        [InlineData(@"C:\project.vcxproj", ".NETFramework,Version=v4.5", "", "", "NetFx", null, "native", null)]
+        [InlineData(@"C:\project.vcxproj", ".NETCoreApp,Version=v5.0", "", "", "NetCore", null, "net5.0", "native")]
+        [InlineData(@"C:\project.vcxproj", ".NETCoreApp,Version=v5.0", "Windows,Version=7.0", "", "NetCore", null, "net5.0-windows7.0", "native")]
+        [InlineData(@"C:\project.vcxproj", ".NETCoreApp,Version=v5.0", "Windows,Version=7.0", "", "NetCore", "10.0.1234.1", "net5.0-windows10.0.1234.1", "native")]
+        [InlineData(@"C:\project.csproj", ".NETCoreApp,Version=v5.0", "", "", "NetCore", null, "net5.0", null)]
+        [InlineData(@"C:\project.csproj", ".NETFramework,Version=v4.5", "", "", "NetFramework", null, "net45", null)]
         public void GetProjectFramework_WithCLRSupport_VariousInputs(
                string projectFilePath,
                string targetFrameworkMoniker,
                string targetPlatformMoniker,
                string targetPlatformMinVersion,
                string clrSupport,
+               string windowsTargetPlatformMinVersion,
                string expectedPrimaryShortName,
                string expectedSecondaryShortName)
         {
@@ -290,7 +292,8 @@ namespace NuGet.Commands.Test
                 targetFrameworkMoniker,
                 targetPlatformMoniker,
                 targetPlatformMinVersion,
-                clrSupport);
+                clrSupport,
+                windowsTargetPlatformMinVersion);
 
             Assert.Equal(expectedPrimaryShortName, nugetFramework.GetShortFolderName());
             if (expectedSecondaryShortName != null)

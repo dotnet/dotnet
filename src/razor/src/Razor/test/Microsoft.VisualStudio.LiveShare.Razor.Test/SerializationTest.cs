@@ -5,8 +5,8 @@ using System;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.ProjectEngineHost.Serialization;
 using Microsoft.AspNetCore.Razor.Test.Common;
-using Microsoft.AspNetCore.Razor.Test.Common.Serialization;
 using Microsoft.VisualStudio.LiveShare.Razor.Serialization;
+using Newtonsoft.Json;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -34,11 +34,11 @@ public class SerializationTest : TestBase
         var expectedRootNamespace = "project";
         var handle = new ProjectSnapshotHandleProxy(new Uri("vsls://some/path/project.csproj"), RazorConfiguration.Default, expectedRootNamespace, projectWorkspaceState);
 
-        var serializedHandle = JsonConvertUtility.SerializeObject(handle, ProjectSnapshotHandleProxyJsonConverter.Instance);
+        var serializedHandle = JsonConvert.SerializeObject(handle, ProjectSnapshotHandleProxyJsonConverter.Instance);
         Assert.NotNull(serializedHandle);
 
         // Act
-        var deserializedHandle = JsonConvertUtility.DeserializeObject<ProjectSnapshotHandleProxy>(serializedHandle, ProjectSnapshotHandleProxyJsonConverter.Instance);
+        var deserializedHandle = JsonConvert.DeserializeObject<ProjectSnapshotHandleProxy>(serializedHandle, ProjectSnapshotHandleProxyJsonConverter.Instance);
         Assert.NotNull(deserializedHandle);
 
         // Assert

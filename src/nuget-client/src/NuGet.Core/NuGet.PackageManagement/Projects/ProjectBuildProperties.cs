@@ -27,6 +27,7 @@ namespace NuGet.ProjectManagement
         public const string TargetPlatformMoniker = nameof(TargetPlatformMoniker);
         public const string TargetPlatformMinVersion = nameof(TargetPlatformMinVersion);
         public const string CLRSupport = nameof(CLRSupport);
+        public const string WindowsTargetPlatformMinVersion = nameof(WindowsTargetPlatformMinVersion);
         public const string TargetPlatformVersion = nameof(TargetPlatformVersion);
         public const string Version = nameof(Version);
         public const string RestorePackagesPath = nameof(RestorePackagesPath);

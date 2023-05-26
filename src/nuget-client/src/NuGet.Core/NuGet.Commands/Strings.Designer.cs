@@ -511,6 +511,15 @@ namespace NuGet.Commands {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Invalid value for WindowsTargetPlatformMinVersion: {0}.
+        /// </summary>
+        internal static string Error_InvalidWindowsTargetPlatformMinVersion {
+            get {
+                return ResourceManager.GetString("Error_InvalidWindowsTargetPlatformMinVersion", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Source parameter was not specified..
         /// </summary>
         internal static string Error_MissingSourceParameter {

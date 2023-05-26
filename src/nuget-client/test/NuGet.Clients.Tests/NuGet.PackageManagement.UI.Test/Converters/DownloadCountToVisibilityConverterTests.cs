@@ -10,9 +10,9 @@ namespace NuGet.PackageManagement.UI.Test.Converters
     public class DownloadCountToVisibilityConverterTests
     {
         [Theory]
-        [InlineData(0)]
-        [InlineData(1)]
-        [InlineData(2147483657)]
+        [InlineData(0L)]
+        [InlineData(1L)]
+        [InlineData(2147483657L)]
         public void Convert_ValidLongValue_Return_VisibilityVisible(long? downloadCount)
         {
             var converter = new DownloadCountToVisibilityConverter();
@@ -28,7 +28,7 @@ namespace NuGet.PackageManagement.UI.Test.Converters
 
         [Theory]
         [InlineData(null)]
-        [InlineData(-1)]
+        [InlineData(-1L)]
         public void Convert_ValidLongValue_Return_VisibilityCollapsed(long? downloadCount)
         {
             var converter = new DownloadCountToVisibilityConverter();

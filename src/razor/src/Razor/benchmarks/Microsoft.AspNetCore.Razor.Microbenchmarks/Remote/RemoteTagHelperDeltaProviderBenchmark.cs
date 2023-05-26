@@ -1,10 +1,9 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using BenchmarkDotNet.Attributes;
 using Microsoft.AspNetCore.Razor.Language;
@@ -12,11 +11,11 @@ using Microsoft.CodeAnalysis.Remote.Razor;
 
 namespace Microsoft.AspNetCore.Razor.Microbenchmarks;
 
-public class RemoteTagHelperDeltaProviderBenchmark : TagHelperBenchmarkBase
+public class RemoteTagHelperDeltaProviderBenchmark
 {
     public RemoteTagHelperDeltaProviderBenchmark()
     {
-        DefaultTagHelperSet = DefaultTagHelpers.ToHashSet();
+        DefaultTagHelperSet = CommonResources.LegacyTagHelpers.ToHashSet();
 
         Added50PercentMoreDefaultTagHelpers = DefaultTagHelperSet
             .Take(DefaultTagHelperSet.Count / 2)
@@ -25,7 +24,7 @@ public class RemoteTagHelperDeltaProviderBenchmark : TagHelperBenchmarkBase
             .ToHashSet();
 
         RemovedHalfOfDefaultTagHelpers = DefaultTagHelperSet
-            .Take(DefaultTagHelpers.Count / 2)
+            .Take(CommonResources.LegacyTagHelpers.Count / 2)
             .ToHashSet();
 
         var tagHelpersToMutate = DefaultTagHelperSet
@@ -47,6 +46,7 @@ public class RemoteTagHelperDeltaProviderBenchmark : TagHelperBenchmarkBase
 
     private string ProjectFilePath { get; } = "C:/path/to/project.csproj";
 
+    [AllowNull]
     private RemoteTagHelperDeltaProvider Provider { get; set; }
 
     private int LastResultId { get; set; }

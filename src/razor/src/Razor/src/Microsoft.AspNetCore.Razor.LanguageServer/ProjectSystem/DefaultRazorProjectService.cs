@@ -188,8 +188,21 @@ internal class DefaultRazorProjectService : RazorProjectService
         }
 
         var defaultProject = (ProjectSnapshot)projectSnapshot;
-        _logger.LogInformation("Removing document '{textDocumentPath}' from project '{projectSnapshotFilePath}'.", textDocumentPath, projectSnapshot.FilePath);
-        _projectSnapshotManagerAccessor.Instance.DocumentRemoved(defaultProject.HostProject, documentSnapshot.State.HostDocument);
+
+        // If the document is open, we can't remove it, because we could still get a request for it, and that
+        // request would fail. Instead we move it to the miscellaneous project, just like if we got notified of
+        // a remove via the project.razor.json
+        if (_projectSnapshotManagerAccessor.Instance.IsDocumentOpen(textDocumentPath))
+        {
+            _logger.LogInformation("Moving document '{textDocumentPath}' from project '{projectSnapshotFilePath}' to misc files because it is open.", textDocumentPath, projectSnapshot.FilePath);
+            var miscellaneousProject = (ProjectSnapshot)_projectResolver.GetMiscellaneousProject();
+            MoveDocument(textDocumentPath, defaultProject, miscellaneousProject);
+        }
+        else
+        {
+            _logger.LogInformation("Removing document '{textDocumentPath}' from project '{projectSnapshotFilePath}'.", textDocumentPath, projectSnapshot.FilePath);
+            _projectSnapshotManagerAccessor.Instance.DocumentRemoved(defaultProject.HostProject, documentSnapshot.State.HostDocument);
+        }
     }
 
     public override void UpdateDocument(string filePath, SourceText sourceText, int version)

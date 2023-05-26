@@ -14,6 +14,16 @@ namespace Microsoft.AspNetCore.Razor.Microbenchmarks.Serialization;
 
 public class TagHelperResolutionResultSerializationBenchmark
 {
+    [ParamsAllValues]
+    public ResourceSet ResourceSet { get; set; }
+
+    private IReadOnlyList<TagHelperDescriptor> TagHelpers
+        => ResourceSet switch
+        {
+            ResourceSet.Telerik => CommonResources.TelerikTagHelpers,
+            _ => CommonResources.LegacyTagHelpers
+        };
+
     private JsonSerializer? _serializer;
     private TagHelperResolutionResult? _tagHelperResolutionResult;
 
@@ -21,38 +31,38 @@ public class TagHelperResolutionResultSerializationBenchmark
     private TagHelperResolutionResult TagHelperResolutionResult => _tagHelperResolutionResult.AssumeNotNull();
 
     [GlobalSetup]
-    public void Setup()
+    public void GlobalSetup()
     {
-        var tagHelperBuffer = Resources.GetResourceBytes("taghelpers.json");
-
-        // Deserialize from json file.
         _serializer = new JsonSerializer();
-        _serializer.Converters.Add(TagHelperDescriptorJsonConverter.Instance);
         _serializer.Converters.Add(TagHelperResolutionResultJsonConverter.Instance);
-
-        using var stream = new MemoryStream(tagHelperBuffer);
-        using var reader = new JsonTextReader(new StreamReader(stream));
-
-        var tagHelpers = Serializer.Deserialize<IReadOnlyList<TagHelperDescriptor>>(reader);
-        _tagHelperResolutionResult = new TagHelperResolutionResult(tagHelpers, Array.Empty<RazorDiagnostic>());
     }
 
-    [Benchmark(Description = "Razor TagHelperResolutionResult Roundtrip JsonConverter Serialization")]
-    public void TagHelper_JsonConvert_Serialization_RoundTrip()
+    [IterationSetup]
+    public void IterationSetup()
     {
-        MemoryStream originalStream;
-        using (originalStream = new MemoryStream())
-        using (var writer = new StreamWriter(originalStream, Encoding.UTF8, bufferSize: 4096))
+        _tagHelperResolutionResult = new TagHelperResolutionResult(TagHelpers, Array.Empty<RazorDiagnostic>());
+    }
+
+    [Benchmark(Description = "RoundTrip TagHelperDescriptorResult")]
+    public void RoundTrip()
+    {
+        using var stream = new MemoryStream();
+        using (var writer = new StreamWriter(stream, Encoding.UTF8, bufferSize: 4096, leaveOpen: true))
         {
             Serializer.Serialize(writer, TagHelperResolutionResult);
         }
 
-        TagHelperResolutionResult deserializedResult;
-        var stream = new MemoryStream(originalStream.GetBuffer());
-        using (stream)
-        using (var reader = new JsonTextReader(new StreamReader(stream)))
+        stream.Seek(0, SeekOrigin.Begin);
+
+        using var reader = new StreamReader(stream);
+        using var jsonReader = new JsonTextReader(reader);
+
+        var result = Serializer.Deserialize<TagHelperResolutionResult>(jsonReader);
+
+        if (result is null ||
+            result.Descriptors.Count != TagHelpers.Count)
         {
-            deserializedResult = Serializer.Deserialize<TagHelperResolutionResult>(reader).AssumeNotNull();
+            throw new InvalidDataException();
         }
     }
 }

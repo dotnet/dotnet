@@ -37,10 +37,12 @@
               >Fetch data</a
             >
           </li>
+          <!--#if (IndividualLocalAuth) -->
+          <li class="nav-item">
+              <a class="nav-link text-dark" href="/Identity/Account/Manage">Account</a>
+          </li>
+          <!--#endif -->
         </ul>
-        <!--#if (IndividualLocalAuth) -->
-        <app-login-menu></app-login-menu>
-        <!--#endif -->
       </div>
     </div>
   </nav>

@@ -1,8 +1,6 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -117,7 +115,7 @@ public class DefinitionEndpointDelegationTest : SingleServerDelegatingEndpointTe
 
         // Need to put this in the right namespace, to match the tag helper defined in our test json
         var surveyPrompt = """
-                @namespace BlazorServer_31.Shared
+                @namespace BlazorApp1.Shared
 
                 <div></div>
 
@@ -179,7 +177,7 @@ public class DefinitionEndpointDelegationTest : SingleServerDelegatingEndpointTe
         Assert.Equal(expectedRange, location.Range);
     }
 
-    private async Task<DefinitionResult?> GetDefinitionResultAsync(RazorCodeDocument codeDocument, string razorFilePath, int cursorPosition, IEnumerable<(string filePath, string contents)> additionalRazorDocuments = null)
+    private async Task<DefinitionResult?> GetDefinitionResultAsync(RazorCodeDocument codeDocument, string razorFilePath, int cursorPosition, IEnumerable<(string filePath, string contents)>? additionalRazorDocuments = null)
     {
         await CreateLanguageServerAsync(codeDocument, razorFilePath, additionalRazorDocuments);
 
