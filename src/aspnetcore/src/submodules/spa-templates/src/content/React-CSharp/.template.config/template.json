@@ -51,9 +51,7 @@
             "Pages/Shared/_LoginPartial.cshtml",
             "Data/**",
             "Models/**",
-            "ClientApp/src/components/api-authorization/**",
-            "ClientApp/src/setupTests.js",
-            "Controllers/OidcConfigurationController.cs"
+            "ClientApp/src/components/api-authorization/**"
           ]
         },
         {
