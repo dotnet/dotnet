@@ -15,26 +15,26 @@
       <Uri>https://github.com/dotnet/templating</Uri>
       <Sha>0ba927aa5b68987f5109310433f4017c35d47e0b</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="8.0.0-beta.23268.1">
+    <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="8.0.0-beta.23275.1">
       <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>f4269875971171c278c2cd695e9ef94b6516e4be</Sha>
+      <Sha>cb9f68889453c9e17cc56a3670a8f2aa77669a88</Sha>
       <SourceBuild RepoName="arcade" ManagedOnly="true" />
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.Build.Tasks.Feed" Version="8.0.0-beta.23268.1">
+    <Dependency Name="Microsoft.DotNet.Build.Tasks.Feed" Version="8.0.0-beta.23275.1">
       <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>f4269875971171c278c2cd695e9ef94b6516e4be</Sha>
+      <Sha>cb9f68889453c9e17cc56a3670a8f2aa77669a88</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.SignTool" Version="8.0.0-beta.23268.1">
+    <Dependency Name="Microsoft.DotNet.SignTool" Version="8.0.0-beta.23275.1">
       <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>f4269875971171c278c2cd695e9ef94b6516e4be</Sha>
+      <Sha>cb9f68889453c9e17cc56a3670a8f2aa77669a88</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.Helix.Sdk" Version="8.0.0-beta.23268.1">
+    <Dependency Name="Microsoft.DotNet.Helix.Sdk" Version="8.0.0-beta.23275.1">
       <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>f4269875971171c278c2cd695e9ef94b6516e4be</Sha>
+      <Sha>cb9f68889453c9e17cc56a3670a8f2aa77669a88</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.SwaggerGenerator.MSBuild" Version="8.0.0-beta.23268.1">
+    <Dependency Name="Microsoft.DotNet.SwaggerGenerator.MSBuild" Version="8.0.0-beta.23275.1">
       <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>f4269875971171c278c2cd695e9ef94b6516e4be</Sha>
+      <Sha>cb9f68889453c9e17cc56a3670a8f2aa77669a88</Sha>
     </Dependency>
     <Dependency Name="Microsoft.DotNet.Maestro.Client" Version="1.1.0-beta.21553.1">
       <Uri>https://github.com/dotnet/arcade-services</Uri>
@@ -73,9 +73,9 @@
       <Uri>https://github.com/dotnet/symreader-converter</Uri>
       <Sha>c5ba7c88f92e2dde156c324a8c8edc04d9fa4fe0</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.XliffTasks" Version="1.0.0-beta.23266.1">
+    <Dependency Name="Microsoft.DotNet.XliffTasks" Version="1.0.0-beta.23272.1">
       <Uri>https://github.com/dotnet/xliff-tasks</Uri>
-      <Sha>9e7fbcab4e5275f63c0cd37553ba426de9194309</Sha>
+      <Sha>a8431741d7de7531e4268a8eeb6871fb48b62a43</Sha>
     </Dependency>
     <Dependency Name="NuGet.Packaging" Version="6.2.2">
       <Uri>https://github.com/NuGet/NuGet.Client</Uri>
@@ -88,14 +88,14 @@
       <Sha>547c506abe05e510bd43330fc8f6d4c5961e9223</Sha>
       <SourceBuild RepoName="runtime" ManagedOnly="false" />
     </Dependency>
-    <Dependency Name="Microsoft.SourceBuild.Intermediate.source-build-reference-packages" Version="8.0.0-alpha.1.23266.4">
+    <Dependency Name="Microsoft.SourceBuild.Intermediate.source-build-reference-packages" Version="8.0.0-alpha.1.23274.2">
       <Uri>https://github.com/dotnet/source-build-reference-packages</Uri>
-      <Sha>fd98754b692a1a8da2aaadd28ce3952578d9d9ad</Sha>
+      <Sha>db0cbe78748b71b00df05aff15cac2c8ce870cfd</Sha>
       <SourceBuild RepoName="source-build-reference-packages" ManagedOnly="true" />
     </Dependency>
-    <Dependency Name="Microsoft.SourceBuild.Intermediate.source-build-externals" Version="8.0.0-alpha.1.23266.1">
+    <Dependency Name="Microsoft.SourceBuild.Intermediate.source-build-externals" Version="8.0.0-alpha.1.23274.1">
       <Uri>https://github.com/dotnet/source-build-externals</Uri>
-      <Sha>83daca78a3f4348999a3e4d81cb0bcc00e956d79</Sha>
+      <Sha>9439becb24301b70f92ce2534e2cb8a1ca9b7a99</Sha>
       <SourceBuild RepoName="source-build-externals" ManagedOnly="true" />
     </Dependency>
     <Dependency Name="Microsoft.Deployment.DotNet.Releases" Version="1.0.0-preview6.1.23159.4" CoherentParentDependency="Microsoft.NET.Sdk.WorkloadManifestReader">
