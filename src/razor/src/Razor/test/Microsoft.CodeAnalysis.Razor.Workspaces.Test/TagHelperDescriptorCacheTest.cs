@@ -1,15 +1,12 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.ProjectEngineHost.Serialization;
 using Microsoft.AspNetCore.Razor.Test.Common;
-using Newtonsoft.Json;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -17,8 +14,6 @@ namespace Microsoft.CodeAnalysis.Razor.Workspaces.Test;
 
 public class TagHelperDescriptorCacheTest : TestBase
 {
-    private static readonly TestFile s_tagHelpersTestFile = TestFile.Create("taghelpers.json", typeof(TagHelperDescriptorCacheTest));
-
     public TagHelperDescriptorCacheTest(ITestOutputHelper testOutput)
         : base(testOutput)
     {
@@ -67,13 +62,13 @@ public class TagHelperDescriptorCacheTest : TestBase
         // Reads 5 copies of the TagHelpers (with 5x references)
         for (var i = 0; i < 5; ++i)
         {
-            var tagHelpersBatch = ReadTagHelpers(s_tagHelpersTestFile.OpenRead());
+            var tagHelpersBatch = ReadTagHelpers();
             tagHelpers.AddRange(tagHelpersBatch);
             tagHelpersPerBatch = tagHelpersBatch.Count;
         }
 
         // Act
-        var hashes = new HashSet<int>(tagHelpers.Select(t => TagHelperDescriptorCache.GetTagHelperDescriptorCacheId(t)));
+        var hashes = new HashSet<int>(tagHelpers.Select(TagHelperDescriptorCache.GetTagHelperDescriptorCacheId));
 
         // Assert
         // Only 1 batch of taghelpers should remain after we filter by cache id
@@ -84,30 +79,24 @@ public class TagHelperDescriptorCacheTest : TestBase
     public void GetHashCode_AllTagHelpers_NoCacheIdCollisions()
     {
         // Arrange
-        var tagHelpers = ReadTagHelpers(s_tagHelpersTestFile.OpenRead());
+        var tagHelpers = ReadTagHelpers();
 
         // Act
-        var hashes = new HashSet<int>(tagHelpers.Select(t => TagHelperDescriptorCache.GetTagHelperDescriptorCacheId(t)));
+        var hashes = new HashSet<int>(tagHelpers.Select(TagHelperDescriptorCache.GetTagHelperDescriptorCacheId));
 
         // Assert
         Assert.Equal(hashes.Count, tagHelpers.Count);
     }
 
-    private IReadOnlyList<TagHelperDescriptor> ReadTagHelpers(Stream stream)
+    private static IReadOnlyList<TagHelperDescriptor> ReadTagHelpers()
     {
-        var serializer = new JsonSerializer();
-        serializer.Converters.Add(TagHelperDescriptorJsonConverter.Instance);
+        var bytes = TestResources.GetResourceBytes(TestResources.BlazorServerAppTagHelpersJson);
 
-        IReadOnlyList<TagHelperDescriptor> result;
+        using var stream = new MemoryStream(bytes);
+        using var reader = new StreamReader(stream);
 
-        using var streamReader = new StreamReader(stream);
-        using (var reader = new JsonTextReader(streamReader))
-        {
-            result = serializer.Deserialize<IReadOnlyList<TagHelperDescriptor>>(reader);
-        }
-
-        stream.Dispose();
-
-        return result;
+        return JsonDataConvert.DeserializeData(reader,
+            static r => r.ReadArrayOrEmpty(
+                static r => ObjectReaders.ReadTagHelper(r, useCache: false)));
     }
 }

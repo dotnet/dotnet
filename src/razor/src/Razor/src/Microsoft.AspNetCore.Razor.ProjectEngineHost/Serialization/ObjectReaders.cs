@@ -79,6 +79,9 @@ internal static partial class ObjectReaders
         return new ProjectWorkspaceState(data.TagHelpers, data.CSharpLanguageVersion);
     }
 
+    public static TagHelperDescriptor ReadTagHelper(JsonDataReader reader, bool useCache)
+        => reader.ReadNonNullObject(r => ReadTagHelperFromProperties(r, useCache));
+
     public static TagHelperDescriptor ReadTagHelperFromProperties(JsonDataReader reader, bool useCache)
     {
         // Try reading the optional hashcode

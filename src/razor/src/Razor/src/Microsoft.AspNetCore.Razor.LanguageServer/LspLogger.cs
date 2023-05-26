@@ -58,6 +58,10 @@ internal class LspLogger : IRazorLogger
             _ => throw new NotImplementedException(),
         };
         var message = formatter(state, exception);
+        if (message == "[null]" && exception is not null)
+        {
+            message = exception.ToString();
+        }
 
         var @params = new LogMessageParams
         {
