@@ -433,6 +433,7 @@ namespace NuGet.Commands
                 var targetPlatforMoniker = item.GetProperty("TargetPlatformMoniker");
                 var targetPlatformMinVersion = item.GetProperty("TargetPlatformMinVersion");
                 var clrSupport = item.GetProperty("CLRSupport");
+                var windowsTargetPlatformMinVersion = item.GetProperty("WindowsTargetPlatformMinVersion");
                 var targetAlias = string.IsNullOrEmpty(frameworkString) ? string.Empty : frameworkString;
                 if (uniqueIds.Contains(targetAlias))
                 {
@@ -445,7 +446,8 @@ namespace NuGet.Commands
                     targetFrameworkMoniker: targetFrameworkMoniker,
                     targetPlatformMoniker: targetPlatforMoniker,
                     targetPlatformMinVersion: targetPlatformMinVersion,
-                    clrSupport: clrSupport);
+                    clrSupport: clrSupport,
+                    windowsTargetPlatformMinVersion: windowsTargetPlatformMinVersion);
 
                 var targetFrameworkInfo = new TargetFrameworkInformation()
                 {

@@ -598,7 +598,8 @@ namespace NuGet.Build.Tasks.Console
                     targetFrameworkMoniker: msBuildProjectInstance.GetProperty("TargetFrameworkMoniker"),
                     targetPlatformMoniker: msBuildProjectInstance.GetProperty("TargetPlatformMoniker"),
                     targetPlatformMinVersion: msBuildProjectInstance.GetProperty("TargetPlatformMinVersion"),
-                    clrSupport: msBuildProjectInstance.GetProperty("CLRSupport"));
+                    clrSupport: msBuildProjectInstance.GetProperty("CLRSupport"),
+                    windowsTargetPlatformMinVersion: msBuildProjectInstance.GetProperty("WindowsTargetPlatformMinVersion"));
 
                 var targetFrameworkInformation = new TargetFrameworkInformation()
                 {

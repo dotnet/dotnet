@@ -2311,7 +2311,7 @@ namespace NuGet.SolutionRestoreManager.Test
             ProjectNames projectName = new ProjectNames(@"f:\project\project.vcxproj", "project", "project.csproj", "project", Guid.NewGuid().ToString());
             var emptyReferenceItems = Array.Empty<VsReferenceItem>();
             var packageReferenceProperties = new VsReferenceProperties();
-            var managedFramework = CommonFrameworks.Net50;
+            var managedFramework = NuGetFramework.Parse("net5.0-windows10.0");
             var nativeFramework = CommonFrameworks.Native;
             var targetFrameworks = new VsTargetFrameworkInfo2[]
             {

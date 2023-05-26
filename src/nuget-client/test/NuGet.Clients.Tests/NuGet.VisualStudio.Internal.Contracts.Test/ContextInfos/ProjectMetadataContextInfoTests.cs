@@ -114,7 +114,7 @@ namespace NuGet.VisualStudio.Internal.Contracts.Test
             Assert.Equal(expectedResults[NuGetProjectMetadataKeys.FullPath] as string, actualResult.FullPath);
             Assert.Equal(expectedResults[NuGetProjectMetadataKeys.Name] as string, actualResult.Name);
             Assert.Equal(expectedResults[NuGetProjectMetadataKeys.ProjectId] as string, actualResult.ProjectId);
-            Assert.Equal(expectedResults[NuGetProjectMetadataKeys.SupportedFrameworks] as IEnumerable<NuGetFramework>, actualResult.SupportedFrameworks);
+            Assert.Equal((expectedResults[NuGetProjectMetadataKeys.SupportedFrameworks] as IEnumerable<NuGetFramework>)!, actualResult.SupportedFrameworks!);
             Assert.Equal(expectedResults[NuGetProjectMetadataKeys.TargetFramework] as NuGetFramework, actualResult.TargetFramework);
             Assert.Equal(expectedResults[NuGetProjectMetadataKeys.UniqueName] as string, actualResult.UniqueName);
         }
