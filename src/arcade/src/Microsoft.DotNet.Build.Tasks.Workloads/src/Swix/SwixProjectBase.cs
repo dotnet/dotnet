@@ -29,6 +29,15 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Swix
         }
 
         /// <summary>
+        /// Determines whether the package is marked as out-of-support.
+        /// </summary>
+        public bool OutOfSupport
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
         /// The version of the SWIX package.
         /// </summary>
         public Version Version
@@ -47,11 +56,12 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Swix
         /// </summary>
         /// <param name="id">The SWIX package ID.</param>
         /// <param name="version">The package version.</param>
-        public SwixProjectBase(string id, Version version, string baseIntermediateOutputPath, string baseOutputPath) :
+        public SwixProjectBase(string id, Version version, string baseIntermediateOutputPath, string baseOutputPath, bool outOfSupport = false) :
             base(baseIntermediateOutputPath, baseOutputPath)
         {
             Id = id;
             Version = version;
+            OutOfSupport = outOfSupport;
 
             ReplacementTokens[SwixTokens.__VS_PACKAGE_NAME__] = Id;
             ReplacementTokens[SwixTokens.__VS_PACKAGE_VERSION__] = $"{Version}";

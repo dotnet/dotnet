@@ -72,6 +72,16 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads
         }
 
         /// <summary>
+        /// Determines whether the component (and related packs) should be flagged as
+        /// out-of-support in Visual Studio.
+        /// </summary>
+        public bool IsOutOfSupportInVisualStudio
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
         /// The version to assign to workload manifest installers.
         /// </summary>
         public string ManifestMsiVersion
@@ -263,7 +273,6 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads
                                 packGroupJsonList.Add(packGroupJson);
                             }
 
-
                             foreach (WorkloadPackId packId in wd.Packs)
                             {
                                 WorkloadPack pack = manifest.Packs[packId];
@@ -407,8 +416,8 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads
                             if (_supportsMachineArch[sdkFeatureBand] || !string.Equals(msiOutputItem.GetMetadata(Metadata.Platform), DefaultValues.arm64))
                             {
                                 MsiSwixProject swixProject = _supportsMachineArch[sdkFeatureBand] ?
-                                    new(msiOutputItem, BaseIntermediateOutputPath, BaseOutputPath, sdkFeatureBand, chip: null, machineArch: msiOutputItem.GetMetadata(Metadata.Platform)) :
-                                    new(msiOutputItem, BaseIntermediateOutputPath, BaseOutputPath, sdkFeatureBand, chip: msiOutputItem.GetMetadata(Metadata.Platform));
+                                    new(msiOutputItem, BaseIntermediateOutputPath, BaseOutputPath, sdkFeatureBand, chip: null, machineArch: msiOutputItem.GetMetadata(Metadata.Platform), outOfSupport: IsOutOfSupportInVisualStudio) :
+                                    new(msiOutputItem, BaseIntermediateOutputPath, BaseOutputPath, sdkFeatureBand, chip: msiOutputItem.GetMetadata(Metadata.Platform), outOfSupport: IsOutOfSupportInVisualStudio);
                                 string swixProj = swixProject.Create();
 
                                 ITaskItem swixProjectItem = new TaskItem(swixProj);
@@ -456,8 +465,8 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads
                                 if (_supportsMachineArch[manifestPackage.SdkFeatureBand] || !string.Equals(msiOutputItem.GetMetadata(Metadata.Platform), DefaultValues.arm64))
                                 {
                                     MsiSwixProject swixProject = _supportsMachineArch[manifestPackage.SdkFeatureBand] ?
-                                        new(msiOutputItem, BaseIntermediateOutputPath, BaseOutputPath, manifestPackage.SdkFeatureBand, chip: null, machineArch: msiOutputItem.GetMetadata(Metadata.Platform)) :
-                                        new(msiOutputItem, BaseIntermediateOutputPath, BaseOutputPath, manifestPackage.SdkFeatureBand, chip: msiOutputItem.GetMetadata(Metadata.Platform));
+                                        new(msiOutputItem, BaseIntermediateOutputPath, BaseOutputPath, manifestPackage.SdkFeatureBand, chip: null, machineArch: msiOutputItem.GetMetadata(Metadata.Platform), outOfSupport: IsOutOfSupportInVisualStudio) :
+                                        new(msiOutputItem, BaseIntermediateOutputPath, BaseOutputPath, manifestPackage.SdkFeatureBand, chip: msiOutputItem.GetMetadata(Metadata.Platform), outOfSupport: IsOutOfSupportInVisualStudio);
                                     string swixProj = swixProject.Create();
 
                                     ITaskItem swixProjectItem = new TaskItem(swixProj);
@@ -484,7 +493,8 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads
                     // Don't generate a SWIX package if the MSI targets arm64 and VS doesn't support machineArch
                     if (_supportsMachineArch[msi.Package.SdkFeatureBand] || !string.Equals(msiOutputItem.GetMetadata(Metadata.Platform), DefaultValues.arm64))
                     {
-                        // Generate SWIX authoring for the MSI package.
+                        // Generate SWIX authoring for the MSI package. Do not flag manifest MSI packages for out-of-support.
+                        // These are typically pulled in through .NET SDK components.
                         MsiSwixProject swixProject = _supportsMachineArch[msi.Package.SdkFeatureBand] ?
                             new(msiOutputItem, BaseIntermediateOutputPath, BaseOutputPath, msi.Package.SdkFeatureBand, chip: null, machineArch: msiOutputItem.GetMetadata(Metadata.Platform)) :
                             new(msiOutputItem, BaseIntermediateOutputPath, BaseOutputPath, msi.Package.SdkFeatureBand, chip: msiOutputItem.GetMetadata(Metadata.Platform));
@@ -514,7 +524,7 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads
                 // artifacts.                
                 _ = Parallel.ForEach(swixComponents, swixComponent =>
                 {
-                    ComponentSwixProject swixComponentProject = new(swixComponent, BaseIntermediateOutputPath, BaseOutputPath);
+                    ComponentSwixProject swixComponentProject = new(swixComponent, BaseIntermediateOutputPath, BaseOutputPath, IsOutOfSupportInVisualStudio);
                     ITaskItem swixProjectItem = new TaskItem(swixComponentProject.Create());
                     swixProjectItem.SetMetadata(Metadata.SdkFeatureBand, $"{swixComponent.SdkFeatureBand}");
                     swixProjectItem.SetMetadata(Metadata.PackageType, DefaultValues.PackageTypeComponent);

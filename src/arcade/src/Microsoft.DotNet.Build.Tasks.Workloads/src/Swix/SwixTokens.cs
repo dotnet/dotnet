@@ -1,4 +1,4 @@
-﻿// Licensed to the .NET Foundation under one or more agreements.
+// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
 namespace Microsoft.DotNet.Build.Tasks.Workloads.Swix
@@ -15,6 +15,7 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Swix
         public static readonly string __VS_PACKAGE_CHIP__ = nameof(__VS_PACKAGE_CHIP__);
         public static readonly string __VS_PACKAGE_INSTALL_SIZE_SYSTEM_DRIVE__ = nameof(__VS_PACKAGE_INSTALL_SIZE_SYSTEM_DRIVE__);
         public static readonly string __VS_PACKAGE_NAME__ = nameof(__VS_PACKAGE_NAME__);
+        public static readonly string __VS_PACKAGE_OUT_OF_SUPPORT__ = nameof(__VS_PACKAGE_OUT_OF_SUPPORT__);
         public static readonly string __VS_PACKAGE_PRODUCT_ARCH__ = nameof(__VS_PACKAGE_PRODUCT_ARCH__);
         public static readonly string __VS_PAYLOAD_SIZE__ = nameof(__VS_PAYLOAD_SIZE__);
         public static readonly string __VS_PAYLOAD_SOURCE__ = nameof(__VS_PAYLOAD_SOURCE__);

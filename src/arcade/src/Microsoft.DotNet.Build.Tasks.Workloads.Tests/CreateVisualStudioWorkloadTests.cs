@@ -66,6 +66,7 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Tests
                 ShortNames = shortNames,
                 WixToolsetPath = TestBase.WixToolsetPath,
                 WorkloadManifestPackageFiles = manifestsPackages,
+                IsOutOfSupportInVisualStudio = true
             };
 
             bool result = createWorkloadTask.Execute();
@@ -96,6 +97,7 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Tests
 
             // Emscripten is an abstract workload so it should be a component group.
             Assert.Contains("vs.package.type=component", componentSwr);
+            Assert.Contains("vs.package.outOfSupport=yes", componentSwr);
             Assert.Contains("isUiGroup=yes", componentSwr);
             Assert.Contains("version=5.6.7.8", componentSwr);
 
@@ -121,6 +123,7 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Tests
             Assert.Contains("vs.package.type=msi", manifestMsiSwr);
             Assert.Contains("vs.package.chip=x64", manifestMsiSwr);
             Assert.DoesNotContain("vs.package.machineArch", manifestMsiSwr);
+            Assert.DoesNotContain("vs.package.outOfSupport", manifestMsiSwr);
 
             // Verify that no arm64 MSI authoring for VS. EMSDK doesn't define RIDs for arm64, but manifests always generate
             // arm64 MSIs for the CLI based installs so we should not see that.
@@ -134,6 +137,7 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Tests
             string packMsiSwr = File.ReadAllText(Path.Combine(Path.GetDirectoryName(pythonPackSwixItem.ItemSpec), "msi.swr"));
             Assert.Contains("package name=Microsoft.Emscripten.Python.6.0.4", packMsiSwr);
             Assert.Contains("vs.package.chip=x64", packMsiSwr);
+            Assert.Contains("vs.package.outOfSupport=yes", packMsiSwr);
             Assert.DoesNotContain("vs.package.machineArch", packMsiSwr);
 
             // Verify the swix project items for components. The project files names always contain the major.minor suffix, so we'll end up
@@ -222,6 +226,8 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Tests
             Assert.Contains("vs.package.type=component", componentSwr);
             Assert.Contains("isUiGroup=yes", componentSwr);
             Assert.Contains("version=5.6.7.8", componentSwr);
+            // Default setting should be off
+            Assert.Contains("vs.package.outOfSupport=no", componentSwr);
 
             // Verify pack dependencies. These should map to MSI packages. The VS package IDs should be the non-aliased
             // pack IDs and version from the workload manifest. The actual VS packages will point to the MSIs generated from the
