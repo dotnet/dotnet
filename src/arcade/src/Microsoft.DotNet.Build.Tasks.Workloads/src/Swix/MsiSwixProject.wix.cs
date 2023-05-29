@@ -64,7 +64,7 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Swix
 
         public MsiSwixProject(ITaskItem msi, string baseIntermediateOutputPath, string baseOutputPath,
             ReleaseVersion sdkFeatureBand,
-            string chip = null, string machineArch = null, string productArch = null) : base(msi.GetMetadata(Metadata.SwixPackageId), new Version(msi.GetMetadata(Metadata.Version)), baseIntermediateOutputPath, baseOutputPath)
+            string chip = null, string machineArch = null, string productArch = null, bool outOfSupport = false) : base(msi.GetMetadata(Metadata.SwixPackageId), new Version(msi.GetMetadata(Metadata.Version)), baseIntermediateOutputPath, baseOutputPath, outOfSupport)
         {
             _msi = msi;
             Chip = chip;
@@ -133,6 +133,11 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Swix
             if (!string.IsNullOrEmpty(MachineArch))
             {
                 msiWriter.WriteLine($"        vs.package.machineArch={MachineArch}");
+            }
+
+            if (OutOfSupport)
+            {
+                msiWriter.WriteLine($"        vs.package.outOfSupport=yes");
             }
 
             msiWriter.WriteLine($"        vs.package.type=msi");
