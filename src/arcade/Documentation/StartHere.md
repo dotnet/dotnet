@@ -73,7 +73,6 @@ some highlights
   - [The Arcade Build SDK](ArcadeSdk.md)
   - GitHub and Azure Repos
     - [Mirroring public projects](AzureDevOps/internal-mirror.md)
-    - [Git Sync Tools](GitSyncTools.md)
     - Bots and connectors
   - [Dependency Description Format](DependencyDescriptionFormat.md)
   - [How to See What's the Latest Version of an Arcade Package](SeePackagesLatestVersion.md)
