@@ -198,17 +198,33 @@ namespace NuGet.SolutionRestoreManager.Test
 
         public static IEnumerable<IVsProjectProperty> GetTargetFrameworkProperties(NuGetFramework framework, string originalString = null, string clrSupport = null)
         {
+            string platformVersion = framework.PlatformVersion.ToString();
+            string platformMoniker = GetTargetPlatformMoniker(framework);
+            string windowsTargetPlatformMinVersion = string.Empty;
+            if (!string.IsNullOrEmpty(clrSupport))
+            {
+                windowsTargetPlatformMinVersion = framework.PlatformVersion.ToString();
+                var lowerPlatformVersionFramework = new NuGetFramework(
+                    framework.Framework,
+                    framework.Version,
+                    framework.Platform,
+                    new Version(framework.PlatformVersion.Major - 1, 0, 0));
+                platformMoniker = lowerPlatformVersionFramework.DotNetPlatformName;
+                platformVersion = lowerPlatformVersionFramework.PlatformVersion.ToString();
+            }
+
             return new IVsProjectProperty[]
             {
                 new VsProjectProperty(ProjectBuildProperties.TargetFrameworkMoniker, GetTargetFrameworkMoniker(framework)),
-                new VsProjectProperty(ProjectBuildProperties.TargetPlatformMoniker, GetTargetPlatformMoniker(framework)),
+                new VsProjectProperty(ProjectBuildProperties.TargetPlatformMoniker, platformMoniker),
                 new VsProjectProperty(ProjectBuildProperties.TargetFrameworkIdentifier, framework.Framework),
                 new VsProjectProperty(ProjectBuildProperties.TargetFrameworkVersion, "v" + framework.Version),
                 new VsProjectProperty(ProjectBuildProperties.TargetFrameworkProfile, framework.Profile),
                 new VsProjectProperty(ProjectBuildProperties.TargetPlatformIdentifier, framework.Platform),
-                new VsProjectProperty(ProjectBuildProperties.TargetPlatformVersion, framework.PlatformVersion.ToString()),
+                new VsProjectProperty(ProjectBuildProperties.TargetPlatformVersion, platformVersion),
                 new VsProjectProperty(ProjectBuildProperties.TargetFramework, originalString ?? framework.GetShortFolderName()),
-                new VsProjectProperty(ProjectBuildProperties.CLRSupport, clrSupport ?? string.Empty)
+                new VsProjectProperty(ProjectBuildProperties.CLRSupport, clrSupport ?? string.Empty),
+                new VsProjectProperty(ProjectBuildProperties.WindowsTargetPlatformMinVersion, windowsTargetPlatformMinVersion)
             };
         }
 

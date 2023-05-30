@@ -37,7 +37,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="ILMerge" PrivateAssets="All" />
+    <PackageReference Include="ILMerge" PrivateAssets="All" Condition=" '$(DotNetBuildFromSource)' != 'true' " />
   </ItemGroup>
 
   <ItemGroup Condition=" '$(IsCore)' == 'true' ">

@@ -1,7 +1,7 @@
 <Project>
   <PropertyGroup>
     <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
-    
+
     <CryptographyPackagesVersion Condition="'$(CryptographyPackagesVersion)' == ''">5.0.0</CryptographyPackagesVersion>
     <MicrosoftCodeAnalysisPublicApiAnalyzersVersion Condition="'$(MicrosoftCodeAnalysisPublicApiAnalyzersVersion)' == ''">3.0.0</MicrosoftCodeAnalysisPublicApiAnalyzersVersion>
     <NewtonsoftJsonPackageVersion Condition="'$(NewtonsoftJsonPackageVersion)' == ''">13.0.1</NewtonsoftJsonPackageVersion>
@@ -14,7 +14,7 @@
     <MicrosoftBuildVersion Condition="'$(TargetFramework)' == 'netcoreapp3.1' Or '$(TargetFramework)' == 'netstandard2.0'">16.8.0</MicrosoftBuildVersion>
     <!-- The last package version of MSBuild that works with net5.0 is 16.11.0.  Our assemblies are still compiled against MSBuild assembly version 15.1.0.0 which will work with all versions -->
     <MicrosoftBuildVersion Condition="'$(TargetFramework)' == 'netcoreapp5.0'">16.11.0</MicrosoftBuildVersion>
-    
+
     <!-- Overridden by source build to ensure the same version is used across products, do not remove these properties -->
     <MicrosoftExtensionsFileProvidersAbstractionsPackageVersion Condition="'$(MicrosoftExtensionsFileProvidersAbstractionsPackageVersion)' == ''">6.0.0</MicrosoftExtensionsFileProvidersAbstractionsPackageVersion>
     <MicrosoftExtensionsFileSystemGlobbingPackageVersion Condition="'$(MicrosoftExtensionsFileSystemGlobbingPackageVersion)' == ''">6.0.0</MicrosoftExtensionsFileSystemGlobbingPackageVersion>
@@ -101,9 +101,9 @@
     -->
     <PackageVersion Include="System.Threading.Tasks.Dataflow" Version="4.9.0" />
     <PackageVersion Include="VsWebSite.Interop" Version="$(VSFrameworkVersion)" />
-    <PackageVersion Include="xunit" Version="2.4.1" />
+    <PackageVersion Include="xunit" Version="2.4.2" />
     <PackageVersion Include="xunit.runner.visualstudio" Version="2.4.5" />
-    <PackageVersion Include="Xunit.StaFact" Version="1.0.37" />
+    <PackageVersion Include="Xunit.StaFact" Version="1.1.11" />
   </ItemGroup>
 
   <!--
@@ -126,7 +126,7 @@
 
   <ItemGroup>
     <GlobalPackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" Condition="'$(Shipping)' == 'true' AND '$(IsXPlat)' != 'true'" />
-    <GlobalPackageReference Include="Microsoft.VisualStudioEng.MicroBuild.Core" version="1.0.0" />
+    <GlobalPackageReference Include="Microsoft.VisualStudioEng.MicroBuild.Core" version="1.0.0" Condition=" '$(DotNetBuildFromSource)' != 'true' " />
   </ItemGroup>
 
   <ItemGroup Condition=" '$(UsePublicApiAnalyzer)' == 'true' ">
@@ -153,4 +153,36 @@
     <GlobalPackageReference Include="Microsoft.CodeAnalysis.BannedApiAnalyzers" Version="3.3.3" />
     <AdditionalFiles Include="$(MSBuildThisFileDirectory)build\BannedSymbols.txt" Condition="'$(TestProject)' != 'true'" />
   </ItemGroup>
+
+  <!-- DotNetBuildFromSource can only use packages that are open source -->
+  <Target Name="CheckSourceBuildPackageReferences" AfterTargets="CollectPackageReferences" Condition=" '$(DotNetBuildFromSource)' == 'true' ">
+    <ItemGroup>
+      <_allowBuildFromSourcePackage Remove="@(_allowBuildFromSourcePackage)" />
+      <_sourceBuildUnexpectedPackage Remove="@(_sourceBuildUnexpectedPackage)" />
+
+      <_allowBuildFromSourcePackage Include="@(PackageReference)" Condition=" '%(PackageReference.IsImplicitlyDefined)' == 'true' " />
+
+      <_allowBuildFromSourcePackage Include="Microsoft.Build.Framework" />
+      <_allowBuildFromSourcePackage Include="Microsoft.Build.Tasks.Core" />
+      <_allowBuildFromSourcePackage Include="Microsoft.Build.Utilities.Core" />
+      <_allowBuildFromSourcePackage Include="Microsoft.Build" />
+      <_allowBuildFromSourcePackage Include="Microsoft.CSharp" />
+      <_allowBuildFromSourcePackage Include="Microsoft.Extensions.CommandLineUtils.Sources" />
+      <_allowBuildFromSourcePackage Include="Microsoft.Extensions.FileProviders.Abstractions" />
+      <_allowBuildFromSourcePackage Include="Microsoft.Extensions.FileSystemGlobbing" />
+      <_allowBuildFromSourcePackage Include="Microsoft.SourceLink.AzureRepos.Git" />
+      <_allowBuildFromSourcePackage Include="Microsoft.SourceLink.GitHub" />
+      <_allowBuildFromSourcePackage Include="Microsoft.Web.Xdt" />
+      <_allowBuildFromSourcePackage Include="Newtonsoft.Json" />
+      <_allowBuildFromSourcePackage Include="System.ComponentModel.Composition" />
+      <_allowBuildFromSourcePackage Include="System.Diagnostics.Debug" />
+      <_allowBuildFromSourcePackage Include="System.Security.Cryptography.Cng" />
+      <_allowBuildFromSourcePackage Include="System.Security.Cryptography.Pkcs" />
+      <_allowBuildFromSourcePackage Include="System.Security.Cryptography.ProtectedData" />
+
+      <_sourceBuildUnexpectedPackage Include="@(PackageReference)" Exclude="@(_allowBuildFromSourcePackage)" />
+    </ItemGroup>
+    <Error Text="Found @(_sourceBuildUnexpectedPackage-&gt;Count()) PackageReferences not on DotNetBuildFromSource allow list: '@(_sourceBuildUnexpectedPackage)'" Condition=" '@(_sourceBuildUnexpectedPackage)' != '' " />
+  </Target>
+
 </Project>
