@@ -9,11 +9,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Microsoft.DotNet.Helix", "M
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.DotNet.Helix.Sdk", "src\Microsoft.DotNet.Helix\Sdk\Microsoft.DotNet.Helix.Sdk.csproj", "{86DC4DC7-DCEE-44AC-A7E3-B6D5A909422C}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.DotNet.GitSync.CommitManager", "src\Microsoft.DotNet.GitSync.CommitManager\Microsoft.DotNet.GitSync.CommitManager.csproj", "{ABCA58DD-8F77-457D-AC9A-D22227F51756}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.DotNet.SignTool", "src\Microsoft.DotNet.SignTool\Microsoft.DotNet.SignTool.csproj", "{FE2D1224-2C69-48E2-AEE6-F524AEACF567}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.DotNet.GitSync", "src\Microsoft.DotNet.GitSync\Microsoft.DotNet.GitSync.csproj", "{F7E1C1EF-C234-41BA-A24F-FAD5F357562C}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.DotNet.Arcade.Sdk", "src\Microsoft.DotNet.Arcade.Sdk\Microsoft.DotNet.Arcade.Sdk.csproj", "{747A5C75-6069-4C45-8049-AEAA1D864105}"
 EndProject
@@ -187,18 +183,6 @@ Global
 		{86DC4DC7-DCEE-44AC-A7E3-B6D5A909422C}.Release|x64.Build.0 = Release|Any CPU
 		{86DC4DC7-DCEE-44AC-A7E3-B6D5A909422C}.Release|x86.ActiveCfg = Release|Any CPU
 		{86DC4DC7-DCEE-44AC-A7E3-B6D5A909422C}.Release|x86.Build.0 = Release|Any CPU
-		{ABCA58DD-8F77-457D-AC9A-D22227F51756}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{ABCA58DD-8F77-457D-AC9A-D22227F51756}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{ABCA58DD-8F77-457D-AC9A-D22227F51756}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{ABCA58DD-8F77-457D-AC9A-D22227F51756}.Debug|x64.Build.0 = Debug|Any CPU
-		{ABCA58DD-8F77-457D-AC9A-D22227F51756}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{ABCA58DD-8F77-457D-AC9A-D22227F51756}.Debug|x86.Build.0 = Debug|Any CPU
-		{ABCA58DD-8F77-457D-AC9A-D22227F51756}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{ABCA58DD-8F77-457D-AC9A-D22227F51756}.Release|Any CPU.Build.0 = Release|Any CPU
-		{ABCA58DD-8F77-457D-AC9A-D22227F51756}.Release|x64.ActiveCfg = Release|Any CPU
-		{ABCA58DD-8F77-457D-AC9A-D22227F51756}.Release|x64.Build.0 = Release|Any CPU
-		{ABCA58DD-8F77-457D-AC9A-D22227F51756}.Release|x86.ActiveCfg = Release|Any CPU
-		{ABCA58DD-8F77-457D-AC9A-D22227F51756}.Release|x86.Build.0 = Release|Any CPU
 		{FE2D1224-2C69-48E2-AEE6-F524AEACF567}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{FE2D1224-2C69-48E2-AEE6-F524AEACF567}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FE2D1224-2C69-48E2-AEE6-F524AEACF567}.Debug|x64.ActiveCfg = Debug|Any CPU
@@ -211,18 +195,6 @@ Global
 		{FE2D1224-2C69-48E2-AEE6-F524AEACF567}.Release|x64.Build.0 = Release|Any CPU
 		{FE2D1224-2C69-48E2-AEE6-F524AEACF567}.Release|x86.ActiveCfg = Release|Any CPU
 		{FE2D1224-2C69-48E2-AEE6-F524AEACF567}.Release|x86.Build.0 = Release|Any CPU
-		{F7E1C1EF-C234-41BA-A24F-FAD5F357562C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{F7E1C1EF-C234-41BA-A24F-FAD5F357562C}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{F7E1C1EF-C234-41BA-A24F-FAD5F357562C}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{F7E1C1EF-C234-41BA-A24F-FAD5F357562C}.Debug|x64.Build.0 = Debug|Any CPU
-		{F7E1C1EF-C234-41BA-A24F-FAD5F357562C}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{F7E1C1EF-C234-41BA-A24F-FAD5F357562C}.Debug|x86.Build.0 = Debug|Any CPU
-		{F7E1C1EF-C234-41BA-A24F-FAD5F357562C}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{F7E1C1EF-C234-41BA-A24F-FAD5F357562C}.Release|Any CPU.Build.0 = Release|Any CPU
-		{F7E1C1EF-C234-41BA-A24F-FAD5F357562C}.Release|x64.ActiveCfg = Release|Any CPU
-		{F7E1C1EF-C234-41BA-A24F-FAD5F357562C}.Release|x64.Build.0 = Release|Any CPU
-		{F7E1C1EF-C234-41BA-A24F-FAD5F357562C}.Release|x86.ActiveCfg = Release|Any CPU
-		{F7E1C1EF-C234-41BA-A24F-FAD5F357562C}.Release|x86.Build.0 = Release|Any CPU
 		{747A5C75-6069-4C45-8049-AEAA1D864105}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{747A5C75-6069-4C45-8049-AEAA1D864105}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{747A5C75-6069-4C45-8049-AEAA1D864105}.Debug|x64.ActiveCfg = Debug|Any CPU

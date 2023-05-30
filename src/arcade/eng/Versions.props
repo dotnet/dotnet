@@ -8,9 +8,9 @@
   </PropertyGroup>
   <PropertyGroup>
     <!-- arcade -->
-    <MicrosoftDotNetBuildTasksFeedVersion>8.0.0-beta.23277.1</MicrosoftDotNetBuildTasksFeedVersion>
-    <MicrosoftDotNetSignToolVersion>8.0.0-beta.23277.1</MicrosoftDotNetSignToolVersion>
-    <MicrosoftDotNetSwaggerGeneratorMSBuildVersion>8.0.0-beta.23277.1</MicrosoftDotNetSwaggerGeneratorMSBuildVersion>
+    <MicrosoftDotNetBuildTasksFeedVersion>8.0.0-beta.23279.1</MicrosoftDotNetBuildTasksFeedVersion>
+    <MicrosoftDotNetSignToolVersion>8.0.0-beta.23279.1</MicrosoftDotNetSignToolVersion>
+    <MicrosoftDotNetSwaggerGeneratorMSBuildVersion>8.0.0-beta.23279.1</MicrosoftDotNetSwaggerGeneratorMSBuildVersion>
     <!-- arcade-services -->
     <MicrosoftDotNetMaestroClientVersion>1.1.0-beta.21553.1</MicrosoftDotNetMaestroClientVersion>
     <MicrosoftDotNetMaestroTasksVersion>1.1.0-beta.22076.4</MicrosoftDotNetMaestroTasksVersion>
@@ -40,7 +40,7 @@
     <NuGetVersioningVersion>6.2.2</NuGetVersioningVersion>
     <!-- roslyn -->
     <MicrosoftCodeAnalysisCSharpVersion>4.4.0</MicrosoftCodeAnalysisCSharpVersion>
-    <MicrosoftNetCompilersToolsetVersion>4.5.2-3.23261.3</MicrosoftNetCompilersToolsetVersion>
+    <MicrosoftNetCompilersToolsetVersion>4.5.2-3.23266.1</MicrosoftNetCompilersToolsetVersion>
     <!-- runtime -->
     <MicrosoftExtensionsDependencyInjectionAbstractionsVersion>6.0.0</MicrosoftExtensionsDependencyInjectionAbstractionsVersion>
     <MicrosoftExtensionsDependencyInjectionVersion>6.0.0</MicrosoftExtensionsDependencyInjectionVersion>
@@ -68,26 +68,21 @@
     <!-- symreader-converter -->
     <MicrosoftDiaSymReaderPdb2PdbVersion>1.1.0-beta2-19575-01</MicrosoftDiaSymReaderPdb2PdbVersion>
     <!-- templating -->
-    <MicrosoftTemplateEngineAuthoringTasksVersion>8.0.100-preview.5.23265.1</MicrosoftTemplateEngineAuthoringTasksVersion>
+    <MicrosoftTemplateEngineAuthoringTasksVersion>8.0.100-preview.6.23278.1</MicrosoftTemplateEngineAuthoringTasksVersion>
     <!-- vstest -->
     <MicrosoftNetTestSdkVersion>17.5.0</MicrosoftNetTestSdkVersion>
     <!-- xharness -->
-    <MicrosoftDotNetXHarnessCLIVersion>8.0.0-prerelease.23259.1</MicrosoftDotNetXHarnessCLIVersion>
+    <MicrosoftDotNetXHarnessCLIVersion>8.0.0-prerelease.23272.1</MicrosoftDotNetXHarnessCLIVersion>
     <!-- xliff-tasks -->
     <MicrosoftDotNetXliffTasksVersion>1.0.0-beta.23272.1</MicrosoftDotNetXliffTasksVersion>
     <!-- external -->
     <AzureCoreVersion>1.31.0</AzureCoreVersion>
-    <AzureDataTablesVersion>12.8.0</AzureDataTablesVersion>
-    <AzureIdentityVersion>1.9.0-beta.3</AzureIdentityVersion>
-    <AzureSecurityKeyVaultSecretsVersion>4.4.0</AzureSecurityKeyVaultSecretsVersion>
     <AzureStorageBlobsVersion>12.16.0</AzureStorageBlobsVersion>
     <CommandLineParserVersion>2.5.0</CommandLineParserVersion>
     <CoverletCollectorVersion>1.0.1</CoverletCollectorVersion>
-    <CredentialManagementVersion>1.0.2</CredentialManagementVersion>
     <FluentAssertionsVersion>5.10.3</FluentAssertionsVersion>
     <HandlebarsNetVersion>1.11.5</HandlebarsNetVersion>
     <JetBrainsAnnotationsVersion>2018.2.1</JetBrainsAnnotationsVersion>
-    <LibGit2SharpVersion>0.25.2</LibGit2SharpVersion>
     <LZMA_SDKVersion>19.0.0</LZMA_SDKVersion>
     <McMasterExtensionsCommandLineUtils>2.3.0</McMasterExtensionsCommandLineUtils>
     <MicrosoftApplicationInsightsVersion>2.21.0</MicrosoftApplicationInsightsVersion>
@@ -105,12 +100,8 @@
     <MoqVersion>4.18.4</MoqVersion>
     <NewtonsoftJsonVersion>13.0.1</NewtonsoftJsonVersion>
     <OctokitVersion>0.41.0</OctokitVersion>
-    <!-- TODO: This library is deprecated, brings in the entire .NET Standard 1.3 dependency graph (including vulnerable libraries)
-         and should be replaced with Azure.Storage.Common. -->
-    <WindowsAzureStorageVersion>9.3.3</WindowsAzureStorageVersion>
     <XUnitAbstractionsVersion>2.0.3</XUnitAbstractionsVersion>
     <XUnitVersion>2.4.2</XUnitVersion>
     <XUnitAnalyzersVersion>1.0.0</XUnitAnalyzersVersion>
-    <log4netVersion>2.0.15</log4netVersion>
   </PropertyGroup>
 </Project>
