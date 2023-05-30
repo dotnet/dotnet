@@ -2,8 +2,8 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using Microsoft.AspNetCore.Razor.Language;
+using Microsoft.AspNetCore.Razor.ProjectEngineHost.Serialization;
 using Microsoft.AspNetCore.Razor.Test.Common;
-using Microsoft.AspNetCore.Razor.Test.Common.Serialization;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Xunit;
 using Xunit.Abstractions;
@@ -31,10 +31,10 @@ public class RazorConfigurationSerializationTest : TestBase
             });
 
         // Act
-        var json = JsonConvertUtility.Serialize(configuration);
+        var json = JsonDataConvert.SerializeObject(configuration, ObjectWriters.WriteProperties);
         Assert.NotNull(json);
 
-        var obj = JsonConvertUtility.DeserializeConfiguration(json);
+        var obj = JsonDataConvert.DeserializeObject(json, ObjectReaders.ReadConfigurationFromProperties);
         Assert.NotNull(obj);
 
         // Assert
@@ -63,7 +63,7 @@ public class RazorConfigurationSerializationTest : TestBase
             """;
 
         // Act
-        var obj = JsonConvertUtility.DeserializeConfiguration(configurationJson);
+        var obj = JsonDataConvert.DeserializeObject(configurationJson, ObjectReaders.ReadConfigurationFromProperties);
         Assert.NotNull(obj);
 
         // Assert
@@ -90,7 +90,7 @@ public class RazorConfigurationSerializationTest : TestBase
             """;
 
         // Act
-        var obj = JsonConvertUtility.DeserializeConfiguration(configurationJson);
+        var obj = JsonDataConvert.DeserializeObject(configurationJson, ObjectReaders.ReadConfigurationFromProperties);
         Assert.NotNull(obj);
 
         // Assert
@@ -120,7 +120,7 @@ public class RazorConfigurationSerializationTest : TestBase
             """;
 
         // Act
-        var obj = JsonConvertUtility.DeserializeConfiguration(configurationJson);
+        var obj = JsonDataConvert.DeserializeObject(configurationJson, ObjectReaders.ReadConfigurationFromProperties);
         Assert.NotNull(obj);
 
         // Assert

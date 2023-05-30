@@ -15,6 +15,7 @@ using Microsoft.AspNetCore.Razor.LanguageServer.Extensions;
 using Microsoft.AspNetCore.Razor.LanguageServer.Protocol;
 using Microsoft.AspNetCore.Razor.LanguageServer.Test.Common;
 using Microsoft.AspNetCore.Razor.ProjectEngineHost.Serialization;
+using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
@@ -24,7 +25,6 @@ using Microsoft.CodeAnalysis.Testing.Verifiers;
 using Microsoft.CodeAnalysis.Text;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Moq;
-using Newtonsoft.Json;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -244,11 +244,10 @@ public class FormattingTestBase : RazorIntegrationTestBase
 
         var sourceDocument = text.GetRazorSourceDocument(path, path);
 
-        // Yes I know "BlazorServer_31 is weird, but thats what is in the taghelpers.json file
         const string DefaultImports = """
-                @using BlazorServer_31
-                @using BlazorServer_31.Pages
-                @using BlazorServer_31.Shared
+                @using BlazorApp1
+                @using BlazorApp1.Pages
+                @using BlazorApp1.Shared
                 @using Microsoft.AspNetCore.Components
                 @using Microsoft.AspNetCore.Components.Authorization
                 @using Microsoft.AspNetCore.Components.Routing
@@ -338,22 +337,13 @@ public class FormattingTestBase : RazorIntegrationTestBase
 
     private static IReadOnlyList<TagHelperDescriptor> GetDefaultRuntimeComponents()
     {
-        var testFileName = "test.taghelpers.json";
-        var current = new DirectoryInfo(AppContext.BaseDirectory);
-        while (current != null && !File.Exists(Path.Combine(current.FullName, testFileName)))
-        {
-            current = current.Parent;
-        }
+        var bytes = TestResources.GetResourceBytes(TestResources.BlazorServerAppTagHelpersJson);
 
-        var tagHelperFilePath = Path.Combine(current!.FullName, testFileName);
-        var buffer = File.ReadAllBytes(tagHelperFilePath);
-        var serializer = new JsonSerializer();
-        serializer.Converters.Add(TagHelperDescriptorJsonConverter.Instance);
+        using var stream = new MemoryStream(bytes);
+        using var reader = new StreamReader(stream);
 
-        using var stream = new MemoryStream(buffer);
-        using var streamReader = new StreamReader(stream);
-        using var reader = new JsonTextReader(streamReader);
-
-        return serializer.Deserialize<IReadOnlyList<TagHelperDescriptor>>(reader)!;
+        return JsonDataConvert.DeserializeData(reader,
+            static r => r.ReadArrayOrEmpty(
+                static r => ObjectReaders.ReadTagHelper(r, useCache: false)));
     }
 }
