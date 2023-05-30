@@ -115,7 +115,7 @@ internal sealed class ParallelProxyExecutionManager : IParallelProxyExecutionMan
             // _currentRunDataAggregator.MarkAsAborted();
         }
 
-        _parallelOperationManager.StartWork(workloads, eventHandler, GetParallelEventHandler, PrepareTestRunOnConcurrentManager, StartTestRunOnConcurrentManager);
+        _parallelOperationManager.StartWork(runnableWorkloads, eventHandler, GetParallelEventHandler, PrepareTestRunOnConcurrentManager, StartTestRunOnConcurrentManager);
 
         // Why 1? Because this is supposed to be a processId, and that is just the default that was chosen by someone before me,
         // and maybe is checked somewhere, but I don't see it checked in our codebase.

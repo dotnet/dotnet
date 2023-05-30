@@ -1,8 +1,6 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -12,7 +10,6 @@ using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.ProjectEngineHost.Serialization;
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -20,12 +17,6 @@ namespace Microsoft.CodeAnalysis.Remote.Razor.Test;
 
 public class TagHelperResolutionResultSerializationTest : TestBase
 {
-    private static readonly JsonConverter[] s_converters = new JsonConverter[]
-    {
-        TagHelperDescriptorJsonConverter.Instance,
-        TagHelperResolutionResultJsonConverter.Instance
-    };
-
     public TagHelperResolutionResultSerializationTest(ITestOutputHelper testOutput)
         : base(testOutput)
     {
@@ -35,99 +26,44 @@ public class TagHelperResolutionResultSerializationTest : TestBase
     public void TagHelperResolutionResult_DefaultBlazorServerProject_RoundTrips()
     {
         // Arrange
-        var testFileName = "test.taghelpers.json";
-        var current = new DirectoryInfo(AppContext.BaseDirectory);
-        while (current != null && !File.Exists(Path.Combine(current.FullName, testFileName)))
+        var bytes = TestResources.GetResourceBytes(TestResources.BlazorServerAppTagHelpersJson);
+
+        IReadOnlyList<TagHelperDescriptor> tagHelpers;
+        using (var stream = new MemoryStream(bytes))
+        using (var reader = new StreamReader(stream))
         {
-            current = current.Parent;
+            tagHelpers = JsonDataConvert.DeserializeData(reader,
+                static r => r.ReadArrayOrEmpty(
+                    static r => ObjectReaders.ReadTagHelper(r, useCache: false)));
         }
 
-        var tagHelperFilePath = Path.Combine(current.FullName, testFileName);
-        var buffer = File.ReadAllBytes(tagHelperFilePath);
-        var serializer = new JsonSerializer();
-        serializer.Converters.Add(TagHelperDescriptorJsonConverter.Instance);
-        serializer.Converters.Add(TagHelperResolutionResultJsonConverter.Instance);
+        var expectedResult = new TagHelperResolutionResult(tagHelpers, Array.Empty<RazorDiagnostic>());
 
-        IReadOnlyList<TagHelperDescriptor> deserializedTagHelpers;
-        using (var stream = new MemoryStream(buffer))
-        using (var reader = new JsonTextReader(new StreamReader(stream)))
-        {
-            deserializedTagHelpers = serializer.Deserialize<IReadOnlyList<TagHelperDescriptor>>(reader);
-        }
-
-        var expectedResult = new TagHelperResolutionResult(deserializedTagHelpers, Array.Empty<RazorDiagnostic>());
+        var serializer = new JsonSerializer { Converters = { TagHelperResolutionResultJsonConverter.Instance } };
 
         // Act
-        MemoryStream serializedStream;
-        using (serializedStream = new MemoryStream())
-        using (var writer = new StreamWriter(serializedStream, Encoding.UTF8, bufferSize: 4096))
+        using var writeStream = new MemoryStream();
+
+        // Serialize the result to a stream
+        using (var writer = new StreamWriter(writeStream, Encoding.UTF8, bufferSize: 4096, leaveOpen: true))
         {
             serializer.Serialize(writer, expectedResult);
         }
 
-        TagHelperResolutionResult deserializedResult;
-        var reserializedStream = new MemoryStream(serializedStream.GetBuffer());
-        using (reserializedStream)
-        using (var reader = new JsonTextReader(new StreamReader(reserializedStream)))
+        // Deserialize the result from the stream we just serialized to.
+        writeStream.Seek(0, SeekOrigin.Begin);
+
+        TagHelperResolutionResult? actualResult;
+
+        using (var reader = new StreamReader(writeStream, Encoding.UTF8, detectEncodingFromByteOrderMarks: true, bufferSize: 4096, leaveOpen: true))
+        using (var jsonReader = new JsonTextReader(reader) { CloseInput = false })
         {
-            deserializedResult = serializer.Deserialize<TagHelperResolutionResult>(reader);
+            actualResult = serializer.Deserialize<TagHelperResolutionResult>(jsonReader);
         }
 
         // Assert
-        Assert.Equal(expectedResult, deserializedResult, TagHelperResolutionResultComparer.Default);
-    }
-
-    [Fact]
-    public void TagHelperDescriptor_CanReadCamelCasedData()
-    {
-        // Arrange
-        var descriptor = CreateTagHelperDescriptor(
-            kind: TagHelperConventions.DefaultKind,
-            tagName: "tag-name",
-            typeName: "type name",
-            assemblyName: "assembly name",
-            attributes: new Action<BoundAttributeDescriptorBuilder>[]
-            {
-                builder => builder
-                    .Name("test-attribute")
-                    .PropertyName("TestAttribute")
-                    .TypeName("string"),
-            },
-            ruleBuilders: new Action<TagMatchingRuleDescriptorBuilder>[]
-            {
-                builder => builder
-                    .RequireAttributeDescriptor(attribute => attribute
-                        .Name("required-attribute-one")
-                        .NameComparisonMode(RequiredAttributeDescriptor.NameComparisonMode.PrefixMatch))
-                    .RequireAttributeDescriptor(attribute => attribute
-                        .Name("required-attribute-two")
-                        .NameComparisonMode(RequiredAttributeDescriptor.NameComparisonMode.FullMatch)
-                        .Value("something")
-                        .ValueComparisonMode(RequiredAttributeDescriptor.ValueComparisonMode.PrefixMatch))
-                    .RequireParentTag("parent-name")
-                    .RequireTagStructure(TagStructure.WithoutEndTag),
-            },
-            configureAction: builder =>
-            {
-                builder.AllowChildTag("allowed-child-one");
-                builder.AddMetadata("foo", "bar");
-                builder.AddDiagnostic(RazorDiagnostic.Create(
-                    RazorDiagnosticFactory.TagHelper_InvalidTargetedTagNameNullOrWhitespace,
-                    new SourceSpan("Test.razor", 5, 17, 18, 22)));
-            });
-        var serializerSettings = new JsonSerializerSettings()
-        {
-            ContractResolver = new CamelCasePropertyNamesContractResolver(),
-            Converters = s_converters,
-        };
-        var expectedResult = new TagHelperResolutionResult(new[] { descriptor }, Array.Empty<RazorDiagnostic>());
-
-        // Act
-        var serialized = JsonConvert.SerializeObject(expectedResult, serializerSettings);
-        var result = JsonConvert.DeserializeObject<TagHelperResolutionResult>(serialized, s_converters);
-
-        // Assert
-        Assert.Equal(expectedResult, result, TagHelperResolutionResultComparer.Default);
+        Assert.NotNull(actualResult);
+        Assert.Equal(expectedResult, actualResult, TagHelperResolutionResultComparer.Default);
     }
 
     [Fact]
@@ -169,11 +105,11 @@ public class TagHelperResolutionResultSerializationTest : TestBase
         var expectedResult = new TagHelperResolutionResult(new[] { descriptor }, Array.Empty<RazorDiagnostic>());
 
         // Act
-        var serialized = JsonConvert.SerializeObject(expectedResult, s_converters);
-        var deserializedResult = JsonConvert.DeserializeObject<TagHelperResolutionResult>(serialized, s_converters);
+        var json = JsonConvert.SerializeObject(expectedResult, TagHelperResolutionResultJsonConverter.Instance);
+        var actualResult = JsonConvert.DeserializeObject<TagHelperResolutionResult>(json, TagHelperResolutionResultJsonConverter.Instance);
 
         // Assert
-        Assert.Equal(expectedResult, deserializedResult, TagHelperResolutionResultComparer.Default);
+        Assert.Equal(expectedResult, actualResult, TagHelperResolutionResultComparer.Default);
     }
 
     [Fact]
@@ -215,11 +151,11 @@ public class TagHelperResolutionResultSerializationTest : TestBase
         var expectedResult = new TagHelperResolutionResult(new[] { descriptor }, Array.Empty<RazorDiagnostic>());
 
         // Act
-        var serialized = JsonConvert.SerializeObject(expectedResult, s_converters);
-        var deserializedResult = JsonConvert.DeserializeObject<TagHelperResolutionResult>(serialized, s_converters);
+        var json = JsonConvert.SerializeObject(expectedResult, TagHelperResolutionResultJsonConverter.Instance);
+        var actualResult = JsonConvert.DeserializeObject<TagHelperResolutionResult>(json, TagHelperResolutionResultJsonConverter.Instance);
 
         // Assert
-        Assert.Equal(expectedResult, deserializedResult, TagHelperResolutionResultComparer.Default);
+        Assert.Equal(expectedResult, actualResult, TagHelperResolutionResultComparer.Default);
     }
 
     [Fact]
@@ -259,11 +195,11 @@ public class TagHelperResolutionResultSerializationTest : TestBase
         var expectedResult = new TagHelperResolutionResult(new[] { descriptor }, Array.Empty<RazorDiagnostic>());
 
         // Act
-        var serialized = JsonConvert.SerializeObject(expectedResult, s_converters);
-        var deserializedResult = JsonConvert.DeserializeObject<TagHelperResolutionResult>(serialized, s_converters);
+        var json = JsonConvert.SerializeObject(expectedResult, TagHelperResolutionResultJsonConverter.Instance);
+        var actualResult = JsonConvert.DeserializeObject<TagHelperResolutionResult>(json, TagHelperResolutionResultJsonConverter.Instance);
 
         // Assert
-        Assert.Equal(expectedResult, deserializedResult, TagHelperResolutionResultComparer.Default);
+        Assert.Equal(expectedResult, actualResult, TagHelperResolutionResultComparer.Default);
     }
 
     [Fact]
@@ -304,11 +240,11 @@ public class TagHelperResolutionResultSerializationTest : TestBase
         var expectedResult = new TagHelperResolutionResult(new[] { descriptor }, Array.Empty<RazorDiagnostic>());
 
         // Act
-        var serialized = JsonConvert.SerializeObject(expectedResult, s_converters);
-        var deserializedResult = JsonConvert.DeserializeObject<TagHelperResolutionResult>(serialized, s_converters);
+        var json = JsonConvert.SerializeObject(expectedResult, TagHelperResolutionResultJsonConverter.Instance);
+        var actualResult = JsonConvert.DeserializeObject<TagHelperResolutionResult>(json, TagHelperResolutionResultJsonConverter.Instance);
 
         // Assert
-        Assert.Equal(expectedResult, deserializedResult, TagHelperResolutionResultComparer.Default);
+        Assert.Equal(expectedResult, actualResult, TagHelperResolutionResultComparer.Default);
     }
 
     private static TagHelperDescriptor CreateTagHelperDescriptor(
@@ -316,9 +252,9 @@ public class TagHelperResolutionResultSerializationTest : TestBase
         string tagName,
         string typeName,
         string assemblyName,
-        IEnumerable<Action<BoundAttributeDescriptorBuilder>> attributes = null,
-        IEnumerable<Action<TagMatchingRuleDescriptorBuilder>> ruleBuilders = null,
-        Action<TagHelperDescriptorBuilder> configureAction = null)
+        IEnumerable<Action<BoundAttributeDescriptorBuilder>>? attributes = null,
+        IEnumerable<Action<TagMatchingRuleDescriptorBuilder>>? ruleBuilders = null,
+        Action<TagHelperDescriptorBuilder>? configureAction = null)
     {
         var builder = TagHelperDescriptorBuilder.Create(kind, typeName, assemblyName);
         builder.SetTypeName(typeName);

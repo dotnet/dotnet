@@ -6,56 +6,92 @@ using System.IO;
 using System.Text;
 using BenchmarkDotNet.Attributes;
 using Microsoft.AspNetCore.Razor.Language;
-using Newtonsoft.Json;
+using Microsoft.AspNetCore.Razor.ProjectEngineHost.Serialization;
 
 namespace Microsoft.AspNetCore.Razor.Microbenchmarks.Serialization;
 
-public class TagHelperSerializationBenchmark : TagHelperBenchmarkBase
+public class TagHelperSerializationBenchmark
 {
-    [Benchmark(Description = "Razor TagHelper Roundtrip Serialization")]
-    public void TagHelper_Serialization_RoundTrip()
-    {
-        // Serialize back to json.
-        MemoryStream originalStream;
-        using (originalStream = new MemoryStream())
-        using (var writer = new StreamWriter(originalStream, Encoding.UTF8, bufferSize: 4096))
-        {
-            DefaultSerializer.Serialize(writer, DefaultTagHelpers);
-        }
+    [ParamsAllValues]
+    public ResourceSet ResourceSet { get; set; }
 
-        IReadOnlyList<TagHelperDescriptor> reDeserializedTagHelpers;
-        var stream = new MemoryStream(originalStream.GetBuffer());
-        using (stream)
-        using (var reader = new JsonTextReader(new StreamReader(stream)))
+    private IReadOnlyList<TagHelperDescriptor> TagHelpers
+        => ResourceSet switch
         {
-            reDeserializedTagHelpers = DefaultSerializer.Deserialize<IReadOnlyList<TagHelperDescriptor>>(reader).AssumeNotNull();
-        }
+            ResourceSet.Telerik => CommonResources.TelerikTagHelpers,
+            _ => CommonResources.LegacyTagHelpers
+        };
+
+    private byte[] TagHelperBytes
+        => ResourceSet switch
+        {
+            ResourceSet.Telerik => CommonResources.TelerikTagHelperBytes,
+            _ => CommonResources.LegacyTagHelperBytes
+        };
+
+    private static IReadOnlyList<TagHelperDescriptor> DeserializeTagHelpers(TextReader reader)
+    {
+        return JsonDataConvert.DeserializeData(reader,
+            static r => r.ReadArrayOrEmpty(
+                static r => ObjectReaders.ReadTagHelper(r, useCache: false)));
     }
 
-    [Benchmark(Description = "Razor TagHelper Serialization")]
-    public void TagHelper_Serialization()
+    private static void SerializeTagHelpers(TextWriter writer, IReadOnlyList<TagHelperDescriptor> tagHelpers)
+    {
+        JsonDataConvert.SerializeData(writer,
+            w => w.WriteArray(tagHelpers, ObjectWriters.Write));
+    }
+
+    [Benchmark(Description = "Serialize Tag Helpers")]
+    public void Serialize()
     {
         using var stream = new MemoryStream();
         using var writer = new StreamWriter(stream, Encoding.UTF8, bufferSize: 4096);
-        DefaultSerializer.Serialize(writer, DefaultTagHelpers);
+
+        SerializeTagHelpers(writer, TagHelpers);
     }
 
-    [Benchmark(Description = "Razor TagHelper Deserialization")]
-    public void TagHelper_Deserialization()
+    [Benchmark(Description = "Deserialize Tag Helpers")]
+    public void Deserialize()
     {
-        // Deserialize from json file.
-        IReadOnlyList<TagHelperDescriptor> tagHelpers;
-        using var stream = new MemoryStream(TagHelperBuffer);
-        using var reader = new JsonTextReader(new StreamReader(stream));
-        tagHelpers = DefaultSerializer.Deserialize<IReadOnlyList<TagHelperDescriptor>>(reader).AssumeNotNull();
-    }
+        using var stream = new MemoryStream(TagHelperBytes);
+        using var reader = new StreamReader(stream);
 
-    [Benchmark(Description = "TagHelpers GetHashCode")]
-    public void Benchmark_TagHelpersGetHashCode()
-    {
-        for (var i = 0; i < DefaultTagHelpers.Count; i++)
+        var tagHelpers = DeserializeTagHelpers(reader);
+
+        if (tagHelpers.Count != TagHelpers.Count)
         {
-            _ = DefaultTagHelpers[i].GetHashCode();
+            throw new InvalidDataException();
+        }
+    }
+
+    [Benchmark(Description = "RoundTrip Tag Helpers")]
+    public void RoundTrip()
+    {
+        using var stream = new MemoryStream();
+        using (var writer = new StreamWriter(stream, Encoding.UTF8, bufferSize: 4096, leaveOpen: true))
+        {
+            SerializeTagHelpers(writer, TagHelpers);
+        }
+
+        stream.Seek(0, SeekOrigin.Begin);
+
+        using var reader = new StreamReader(stream);
+
+        var tagHelpers = DeserializeTagHelpers(reader);
+
+        if (tagHelpers.Count != TagHelpers.Count)
+        {
+            throw new InvalidDataException();
+        }
+    }
+
+    [Benchmark(Description = "TagHelperDescriptor.GetHashCode()")]
+    public void TagHelperDescriptor_GetHashCode()
+    {
+        foreach (var tagHelper in TagHelpers)
+        {
+            _ = tagHelper.GetHashCode();
         }
     }
 }

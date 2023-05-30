@@ -9,6 +9,9 @@
     <UseAppHost>false</UseAppHost>
     <RollForward>Major</RollForward>
     <IsTestProject>false</IsTestProject>
+    <RuntimeIdentifier Condition="'$(TargetFramework)' == '$(NetFrameworkMinimum)'">win10-arm64</RuntimeIdentifier>
+    <!-- Setting both RuntimeIdentifier and PlatformTarget ends up building as AnyCPU and selecting the default x86 architecture, irregardles of RuntimeIdentifier,
+    so order here matters. -->
     <PlatformTarget Condition="'$(TargetFramework)' == '$(NetFrameworkMinimum)' AND '$(RuntimeIdentifier)' == '' ">AnyCPU</PlatformTarget>
     <ApplicationManifest>..\vstest.console\app.manifest</ApplicationManifest>
     <RootNamespace>Microsoft.VisualStudio.TestPlatform.CommandLine</RootNamespace>
@@ -25,9 +28,6 @@
     <MSBuildWarningsAsMessages>
       $(MSBuildWarningsAsMessages);MSB3276;
     </MSBuildWarningsAsMessages>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(TargetFramework)' == '$(NetFrameworkMinimum)'">
-    <RuntimeIdentifier>win10-arm64</RuntimeIdentifier>
   </PropertyGroup>
   <ItemGroup Condition=" '$(TargetFramework)' == '$(NetFrameworkMinimum)' ">
     <Reference Include="System" />

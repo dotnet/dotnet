@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 ////#if (IndividualLocalAuth)
-import authService from './api-authorization/AuthorizeService'
+import followIfLoginRedirect from './api-authorization/followIfLoginRedirect';
 ////#endif
 
 export class FetchData extends Component {
@@ -55,17 +55,11 @@ export class FetchData extends Component {
   }
 
   async populateWeatherData() {
-    ////#if (IndividualLocalAuth)
-    const token = await authService.getAccessToken();
-    const response = await fetch('weatherforecast', {
-      headers: !token ? {} : { 'Authorization': `Bearer ${token}` }
-    });
-    const data = await response.json();
-    this.setState({ forecasts: data, loading: false });
-    ////#else
     const response = await fetch('weatherforecast');
+    ////#if (IndividualLocalAuth)
+    followIfLoginRedirect(response);
+    ////#endif
     const data = await response.json();
     this.setState({ forecasts: data, loading: false });
-    ////#endif
   }
 }

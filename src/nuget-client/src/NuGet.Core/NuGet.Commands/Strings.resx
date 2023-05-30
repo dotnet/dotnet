@@ -1078,4 +1078,8 @@ Non-HTTPS access will be removed in a future version. Consider migrating to 'HTT
     <value>Error occurred while getting package vulnerability data: {0}</value>
     <comment>{0} is an error message</comment>
   </data>
+  <data name="Error_InvalidWindowsTargetPlatformMinVersion" xml:space="preserve">
+    <value>Invalid value for WindowsTargetPlatformMinVersion: {0}</value>
+    <comment>{0} is the value supplied </comment>
+  </data>
 </root>

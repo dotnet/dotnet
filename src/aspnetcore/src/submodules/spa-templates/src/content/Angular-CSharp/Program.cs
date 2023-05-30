@@ -1,7 +1,4 @@
 #if (IndividualLocalAuth)
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.UI;
 using Microsoft.EntityFrameworkCore;
 using Company.WebApplication1.Data;
 using Company.WebApplication1.Models;
@@ -22,12 +19,6 @@ builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
     .AddEntityFrameworkStores<ApplicationDbContext>();
-
-builder.Services.AddIdentityServer()
-    .AddApiAuthorization<ApplicationUser, ApplicationDbContext>();
-
-builder.Services.AddAuthentication()
-    .AddIdentityServerJwt();
 #endif
 
 builder.Services.AddControllersWithViews();
@@ -59,15 +50,6 @@ app.UseHttpsRedirection();
 
 #endif
 app.UseStaticFiles();
-app.UseRouting();
-
-#if (IndividualLocalAuth)
-app.UseAuthentication();
-app.UseIdentityServer();
-#endif
-#if (!NoAuth)
-app.UseAuthorization();
-#endif
 
 app.MapControllerRoute(
     name: "default",

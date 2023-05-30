@@ -99,7 +99,17 @@ internal sealed class ParallelProxyDiscoveryManager : IParallelProxyDiscoveryMan
         // marked as NotDiscovered.
         _dataAggregator.MarkSourcesWithStatus(discoveryCriteria.Sources, DiscoveryStatus.NotDiscovered);
 
-        _parallelOperationManager.StartWork(workloads, eventHandler, GetParallelEventHandler, InitializeDiscoverTestsOnConcurrentManager, DiscoverTestsOnConcurrentManager);
+        if (nonRunnableWorkloads.Count > 0)
+        {
+            // We found some sources that don't associate to any runtime provider and so they cannot run.
+            // Mark the sources as skipped.
+
+            _dataAggregator.MarkSourcesWithStatus(nonRunnableWorkloads.SelectMany(w => w.Work.Sources), DiscoveryStatus.SkippedDiscovery);
+            // TODO: in strict mode keep them as non-discovered, and mark the run as aborted.
+            // _dataAggregator.MarkAsAborted();
+        }
+
+        _parallelOperationManager.StartWork(runnableWorkloads, eventHandler, GetParallelEventHandler, InitializeDiscoverTestsOnConcurrentManager, DiscoverTestsOnConcurrentManager);
     }
 
     private ITestDiscoveryEventsHandler2 GetParallelEventHandler(ITestDiscoveryEventsHandler2 eventHandler, IProxyDiscoveryManager concurrentManager)

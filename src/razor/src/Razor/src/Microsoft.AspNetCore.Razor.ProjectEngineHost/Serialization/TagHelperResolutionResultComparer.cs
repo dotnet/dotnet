@@ -9,7 +9,7 @@ using Microsoft.Extensions.Internal;
 
 namespace Microsoft.AspNetCore.Razor.ProjectEngineHost.Serialization;
 
-internal sealed class TagHelperResolutionResultComparer : IEqualityComparer<TagHelperResolutionResult>
+internal sealed class TagHelperResolutionResultComparer : IEqualityComparer<TagHelperResolutionResult?>
 {
     internal static readonly TagHelperResolutionResultComparer Default = new();
 
@@ -28,8 +28,13 @@ internal sealed class TagHelperResolutionResultComparer : IEqualityComparer<TagH
                x.Diagnostics.SequenceEqual(y.Diagnostics);
     }
 
-    public int GetHashCode(TagHelperResolutionResult obj)
+    public int GetHashCode(TagHelperResolutionResult? obj)
     {
+        if (obj is null)
+        {
+            return 0;
+        }
+
         var hash = HashCodeCombiner.Start();
 
         foreach (var descriptor in obj.Descriptors)

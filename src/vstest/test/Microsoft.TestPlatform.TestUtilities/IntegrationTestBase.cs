@@ -843,6 +843,7 @@ public class IntegrationTestBase
         {
             // Ensure async buffers are flushed
             process.WaitForExit();
+            process.WaitForExit(1000);
         }
 
         stopwatch.Stop();
