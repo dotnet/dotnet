@@ -990,4 +990,7 @@ Please see https://aka.ms/troubleshoot_nuget_cache for more help.</value>
   <data name="Text_PackageMappingsDisabled" xml:space="preserve">
     <value>Package source mapping is off.</value>
   </data>
+  <data name="Label_Vulnerable" xml:space="preserve">
+    <value>Vulnerable</value>
+  </data>
 </root>

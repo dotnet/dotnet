@@ -3,13 +3,11 @@
 
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
-using Microsoft.TeamFoundation.Common;
 using NuGet.Versioning;
 
 namespace NuGet.PackageManagement.UI
@@ -170,7 +168,7 @@ namespace NuGet.PackageManagement.UI
                                 bool isBestOption = rangeBestVersion.ToString() == _versions.Items[_versions.SelectedIndex].ToString();
                                 if (isBestOption)
                                 {
-                                    PackageDetailControlModel.SelectedVersion = new DisplayVersion(userRequestedVersionRange, rangeBestVersion, additionalInfo: null);
+                                    PackageDetailControlModel.SelectedVersion = new DisplayVersion(userRequestedVersionRange, rangeBestVersion, additionalInfo: null, isVulnerable: false);
                                     _versions.Text = comboboxText;
                                 }
                                 else
@@ -253,7 +251,7 @@ namespace NuGet.PackageManagement.UI
                 if (currentItem != null && (comboboxText == _versions.Items[i].ToString() || _versions.Items[i].ToString() == matchVersion?.ToString()))
                 {
                     _versions.SelectedIndex = i; // This is the "select" effect in the dropdown
-                    PackageDetailControlModel.SelectedVersion = new DisplayVersion(userRange, matchVersion, additionalInfo: null);
+                    PackageDetailControlModel.SelectedVersion = new DisplayVersion(userRange, matchVersion, additionalInfo: null, isVulnerable: currentItem.IsVulnerable);
                 }
             }
         }

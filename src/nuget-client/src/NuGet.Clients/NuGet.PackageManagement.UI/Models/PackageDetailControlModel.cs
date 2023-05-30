@@ -141,14 +141,14 @@ namespace NuGet.PackageManagement.UI
             // installVersion is null if the package is not installed
             var installedVersion = installedDependency?.VersionRange;
 
-            List<(NuGetVersion version, bool isDeprecated)> allVersions = _allPackageVersions?.OrderByDescending(v => v.version).ToList();
+            List<(NuGetVersion version, bool isDeprecated, bool isVulnerable)> allVersions = _allPackageVersions?.OrderByDescending(v => v.version).ToList();
 
             // null, if no version constraint defined in package.config
             VersionRange allowedVersions = _projectVersionConstraints.Select(e => e.VersionRange).FirstOrDefault();
             // null, if all versions are allowed to be install or update
             var blockedVersions = new List<NuGetVersion>(allVersions.Count);
 
-            List<(NuGetVersion version, bool isDeprecated)> allVersionsAllowed;
+            List<(NuGetVersion version, bool isDeprecated, bool isVulnerable)> allVersionsAllowed;
             if (allowedVersions == null)
             {
                 allowedVersions = VersionRange.All;
@@ -157,7 +157,7 @@ namespace NuGet.PackageManagement.UI
             else
             {
                 allVersionsAllowed = allVersions.Where(v => allowedVersions.Satisfies(v.version)).ToList();
-                foreach ((NuGetVersion version, bool isDeprecated) in allVersions)
+                foreach ((NuGetVersion version, bool isDeprecated, bool isVulnerable) in allVersions)
                 {
                     if (!allVersionsAllowed.Any(a => a.version.Version.Equals(version.Version)))
                     {
@@ -175,7 +175,8 @@ namespace NuGet.PackageManagement.UI
                 VersionRange installedVersionRange = VersionRange.Parse(installedDependency.VersionRange.OriginalString, true);
                 NuGetVersion bestVersion = installedVersionRange.FindBestMatch(allVersionsAllowed.Select(v => v.version));
                 var deprecationInfo = allVersionsAllowed.FirstOrDefault(v => v.version == bestVersion).isDeprecated;
-                DisplayVersion displayVersion = new DisplayVersion(installedVersionRange, bestVersion, additionalInfo: string.Empty, isDeprecated: deprecationInfo);
+                var vulnerableInfo = allVersionsAllowed.FirstOrDefault(v => v.version == bestVersion).isVulnerable;
+                DisplayVersion displayVersion = new DisplayVersion(installedVersionRange, bestVersion, additionalInfo: string.Empty, isDeprecated: deprecationInfo, isVulnerable: vulnerableInfo);
 
                 _versions.Add(displayVersion);
             }
@@ -188,7 +189,7 @@ namespace NuGet.PackageManagement.UI
                 (isInstalledFloatingOrRange || !latestPrerelease.version.Equals(installedVersion?.MinVersion)))
             {
                 VersionRange latestPrereleaseVersionRange = VersionRange.Parse(latestPrerelease.version.ToString(), allowFloating: false);
-                _versions.Add(new DisplayVersion(latestPrereleaseVersionRange, latestPrerelease.version, Resources.Version_LatestPrerelease, isDeprecated: latestPrerelease.isDeprecated));
+                _versions.Add(new DisplayVersion(latestPrereleaseVersionRange, latestPrerelease.version, Resources.Version_LatestPrerelease, isDeprecated: latestPrerelease.isDeprecated, isVulnerable: latestPrerelease.isVulnerable));
             }
 
             // Add latest stable if needed
@@ -196,7 +197,7 @@ namespace NuGet.PackageManagement.UI
                 (isInstalledFloatingOrRange || !latestStableVersion.version.Equals(InstalledVersion)))
             {
                 VersionRange latestStableVersionRange = VersionRange.Parse(latestStableVersion.version.ToString(), allowFloating: false);
-                _versions.Add(new DisplayVersion(latestStableVersionRange, latestStableVersion.version, Resources.Version_LatestStable, isDeprecated: latestStableVersion.isDeprecated));
+                _versions.Add(new DisplayVersion(latestStableVersionRange, latestStableVersion.version, Resources.Version_LatestStable, isDeprecated: latestStableVersion.isDeprecated, isVulnerable: latestStableVersion.isVulnerable));
             }
 
             // add a separator
@@ -218,7 +219,7 @@ namespace NuGet.PackageManagement.UI
                 }
 
                 VersionRange versionRange = VersionRange.Parse(version.version.ToString(), allowFloating: false);
-                _versions.Add(new DisplayVersion(versionRange, version.version, additionalInfo: null, isCurrentInstalled: installed, autoReferenced: autoReferenced, isDeprecated: version.isDeprecated));
+                _versions.Add(new DisplayVersion(versionRange, version.version, additionalInfo: null, isCurrentInstalled: installed, autoReferenced: autoReferenced, isDeprecated: version.isDeprecated, isVulnerable: version.isVulnerable));
             }
 
             // Disable controls if this is an auto referenced package.
