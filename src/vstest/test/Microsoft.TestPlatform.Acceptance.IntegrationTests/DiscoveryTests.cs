@@ -9,6 +9,7 @@ using System.Reflection;
 
 using Microsoft.TestPlatform.TestUtilities;
 using Microsoft.VisualStudio.TestPlatform.Common.Utilities;
+using Microsoft.VisualStudio.TestPlatform.CoreUtilities.Extensions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Microsoft.TestPlatform.AcceptanceTests;
@@ -113,5 +114,29 @@ public class DiscoveryTests : AcceptanceTestBase
 
             CollectionAssert.AreEquivalent(expected, actual, $"Specified types using TypesToLoadAttribute in \"{extension}\" assembly doesn't match the expected.");
         }
+    }
+
+    [TestMethod]
+    [TestCategory("Windows-Review")]
+    [NetFullTargetFrameworkDataSource(inIsolation: true, inProcess: true)]
+    public void DiscoverTestsShouldSucceedWhenAtLeastOneDllFindsRuntimeProvider(RunnerInfo runnerInfo)
+    {
+        SetTestEnvironment(_testEnvironment, runnerInfo);
+
+        var firstAssetDirectory = Path.GetDirectoryName(GetAssetFullPath("MSTestProject1.dll"))!;
+
+        // Include all dlls from the assembly dir, as the default AzDO filter *test*.dll does.
+        var dlls = Directory.EnumerateFiles(firstAssetDirectory, "*test*.dll").ToArray();
+        var quotedDlls = string.Join(" ", dlls.Select(a => a.AddDoubleQuote()));
+
+        var arguments = PrepareArguments(quotedDlls, GetTestAdapterPath(), string.Empty, framework: string.Empty, _testEnvironment.InIsolationValue, resultsDirectory: TempDirectory.Path);
+        arguments = string.Concat(arguments, " /listtests");
+        arguments = string.Concat(arguments, " /logger:\"console;prefix=true\"");
+        InvokeVsTest(arguments);
+
+        var portableAssembly = dlls.Single(a => a.EndsWith("Microsoft.VisualStudio.TestPlatform.MSTestAdapter.PlatformServices.Interface.dll"));
+        StringAssert.Contains(StdOut, $"Skipping source: {portableAssembly} (.NETPortable,Version=v4.5,Profile=Profile259,");
+
+        ExitCodeEquals(0);
     }
 }

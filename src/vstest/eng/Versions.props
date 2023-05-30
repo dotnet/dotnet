@@ -24,7 +24,7 @@
     <MicrosoftExtensionsDependencyModelPackageVersion>3.0.0-preview4-27615-11</MicrosoftExtensionsDependencyModelPackageVersion>
     <MicrosoftExtensionsFileSystemGlobbingVersion>2.0.0</MicrosoftExtensionsFileSystemGlobbingVersion>
     <MicrosoftFakesVersion>17.4.0-beta.22478.3</MicrosoftFakesVersion>
-    <MicrosoftInternalCodeCoverageVersion>17.7.2-beta.23268.3</MicrosoftInternalCodeCoverageVersion>
+    <MicrosoftInternalCodeCoverageVersion>17.7.2-beta.23276.1</MicrosoftInternalCodeCoverageVersion>
     <MicrosoftCodeCoverageIOVersion>17.7.0</MicrosoftCodeCoverageIOVersion>
     <MicrosoftVisualStudioDiagnosticsUtilitiesVersion>17.6.33617.297</MicrosoftVisualStudioDiagnosticsUtilitiesVersion>
     <MicrosoftVisualStudioEnterpriseAspNetHelper>$(MicrosoftVisualStudioDiagnosticsUtilitiesVersion)</MicrosoftVisualStudioEnterpriseAspNetHelper>
@@ -39,8 +39,8 @@
     <SystemNetHttpVersion>4.3.4</SystemNetHttpVersion>
     <SystemReflectionMetadataVersion>1.6.0</SystemReflectionMetadataVersion>
     <SystemUriVersion>4.3.2</SystemUriVersion>
-    <TestPlatformExternalsVersion>17.6.33617.297</TestPlatformExternalsVersion>
-    <TestPlatformMSDiaVersion>17.6.33617.297</TestPlatformMSDiaVersion>
+    <TestPlatformExternalsVersion>17.7.0-preview-2-33725-504</TestPlatformExternalsVersion>
+    <TestPlatformMSDiaVersion>17.7.0-preview-2-33725-504</TestPlatformMSDiaVersion>
     <MicrosoftVSSDKBuildToolsVersion>17.4.2116</MicrosoftVSSDKBuildToolsVersion>
     <MicrosoftNetCompilersToolsetVersion>4.6.0-1.23107.10</MicrosoftNetCompilersToolsetVersion>
   </PropertyGroup>
