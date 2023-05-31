@@ -1294,6 +1294,15 @@ namespace NuGet.PackageManagement.UI {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Vulnerable.
+        /// </summary>
+        public static string Label_Vulnerable {
+            get {
+                return ResourceManager.GetString("Label_Vulnerable", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Loading license file....
         /// </summary>
         public static string LicenseFile_Loading {

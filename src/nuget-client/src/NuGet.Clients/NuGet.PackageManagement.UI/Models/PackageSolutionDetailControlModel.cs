@@ -205,14 +205,14 @@ namespace NuGet.PackageManagement.UI
             }
 
             _versions.Clear();
-            List<(NuGetVersion version, bool isDeprecated)> allVersions = _allPackageVersions?.Where(v => v.version != null).OrderByDescending(v => v.version).ToList();
+            List<(NuGetVersion version, bool isDeprecated, bool isVulnerable)> allVersions = _allPackageVersions?.Where(v => v.version != null).OrderByDescending(v => v.version).ToList();
 
             // null, if no version constraint defined in package.config
             VersionRange allowedVersions = await GetAllowedVersionsAsync(cancellationToken);
             var allVersionsAllowed = allVersions.Where(v => allowedVersions.Satisfies(v.version)).ToArray();
 
             var blockedVersions = new List<NuGetVersion>(allVersions.Count);
-            foreach ((NuGetVersion version, bool isDeprecated) in allVersions)
+            foreach ((NuGetVersion version, bool isDeprecated, bool isVulnerable) in allVersions)
             {
                 if (!allVersionsAllowed.Any(a => a.version.Version.Equals(version.Version)))
                 {

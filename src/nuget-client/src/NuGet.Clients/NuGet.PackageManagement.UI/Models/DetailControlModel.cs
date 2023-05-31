@@ -36,7 +36,7 @@ namespace NuGet.PackageManagement.UI
 
         // all versions of the _searchResultPackage
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1051:DoNotDeclareVisibleInstanceFields")]
-        protected List<(NuGetVersion version, bool isDeprecated)> _allPackageVersions;
+        protected List<(NuGetVersion version, bool isDeprecated, bool isVulnerable)> _allPackageVersions;
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1051:DoNotDeclareVisibleInstanceFields")]
         protected PackageItemViewModel _searchResultPackage;
@@ -219,9 +219,9 @@ namespace NuGet.PackageManagement.UI
             }
 
             // Show the current package version as the only package in the list at first just in case fetching the versions takes a while.
-            _allPackageVersions = new List<(NuGetVersion version, bool isDeprecated)>()
+            _allPackageVersions = new List<(NuGetVersion version, bool isDeprecated, bool isVulnerable)>()
             {
-                (searchResultPackage.Version, false)
+                (searchResultPackage.Version, false, false)
             };
 
             await CreateVersionsAsync(CancellationToken.None);
@@ -269,15 +269,17 @@ namespace NuGet.PackageManagement.UI
             }
         }
 
-        private (NuGetVersion version, bool isDeprecated) GetVersion(VersionInfoContextInfo versionInfo)
+        private (NuGetVersion version, bool isDeprecated, bool isVulnerable) GetVersion(VersionInfoContextInfo versionInfo)
         {
             var isDeprecated = false;
+            var isVulnerable = false;
             if (versionInfo.PackageSearchMetadata != null)
             {
                 isDeprecated = versionInfo.PackageDeprecationMetadata != null;
+                isVulnerable = versionInfo.PackageSearchMetadata.Vulnerabilities != null;
             }
 
-            return (versionInfo.Version, isDeprecated);
+            return (versionInfo.Version, isDeprecated, isVulnerable);
         }
 
         protected virtual void DependencyBehavior_SelectedChanged(object sender, EventArgs e)
