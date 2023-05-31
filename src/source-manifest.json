@@ -58,7 +58,7 @@
       "packageVersion": "8.0.100",
       "path": "installer",
       "remoteUri": "https://github.com/dotnet/installer",
-      "commitSha": "1d183fb8365bda59b79fe95d578907214bf1d92c"
+      "commitSha": "7c1cf55f3bea0d3454e0bbe28b7f4d154cc70dc5"
     },
     {
       "packageVersion": "17.7.0-preview-23279-01",
@@ -97,10 +97,10 @@
       "commitSha": "73cb995cff35b053d5b0d3daf319ac33769657d0"
     },
     {
-      "packageVersion": "8.0.100-preview.6.23280.11",
+      "packageVersion": "8.0.100-preview.6.23280.13",
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "78bf135f80e95b0503f0bac934ff2115a40710f1"
+      "commitSha": "f3e289289bc872912aa6a0608aedf913bef25128"
     },
     {
       "packageVersion": "8.0.0-alpha.1.23274.1",
@@ -127,10 +127,10 @@
       "commitSha": "2c8079e2e8e78c0cd11ac75a32014756136ecdb9"
     },
     {
-      "packageVersion": "8.0.100-preview.6.23280.1",
+      "packageVersion": "8.0.100-preview.6.23280.5",
       "path": "templating",
       "remoteUri": "https://github.com/dotnet/templating",
-      "commitSha": "f94883478fcfe5db5eefde37e9314a74e2b6c8ff"
+      "commitSha": "61d91c06863390673b41a64482cb6c5412feed67"
     },
     {
       "packageVersion": "1.1.0-rc.23273.1",
