@@ -23,7 +23,7 @@ namespace Microsoft.DotNet.CodeAnalysis.Analyzers
         private HashSet<string> _apisToEnsureExist = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
         private static readonly DiagnosticDescriptor s_memberMustExistDiagnostic =
-            new DiagnosticDescriptor(DiagnosticIds.BCL0001.ToString(), s_title, s_messageFormat, s_analyzerName, DiagnosticSeverity.Error, isEnabledByDefault: true, description: s_description);
+            new DiagnosticDescriptor(DiagnosticIds.BCL0001.ToString(), s_title, s_messageFormat, s_analyzerName, DiagnosticSeverity.Error, isEnabledByDefault: true, description: s_description, customTags: WellKnownDiagnosticTags.CompilationEnd);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get { return ImmutableArray.Create(s_memberMustExistDiagnostic); } }
 
