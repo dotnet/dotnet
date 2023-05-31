@@ -5,5 +5,14 @@
     <!-- TODO: Ignore needed until https://github.com/NuGet/Home/issues/11059 is addressed. -->
     <UsagePattern IdentityGlob="Nuget.*/*" />
 
+    <!-- GenFacades needs to load this in during the build, restricting SBRP usage. Moreover,
+      latest version cannot be referenced as this dependency sets the minimum version that is
+      required to be present inbox in the SDK and Roslyn VS. For more information see
+      https://github.com/dotnet/arcade/pull/13699#discussion_r1205752883. 
+        
+      In the product build a version from previosly-source-build artifacts is utilized thanks
+      to the corresponding entry in Version.Details.xml -->
+    <UsagePattern IdentityGlob="Microsoft.CodeAnalysis.*/*" />
+
   </IgnorePatterns>
 </UsageData>

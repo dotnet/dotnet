@@ -3,6 +3,10 @@
   <ProductDependencies>
   </ProductDependencies>
   <ToolsetDependencies>
+    <Dependency Name="Microsoft.CodeAnalysis.CSharp" Version="4.6.0">
+      <Uri>https://github.com/dotnet/roslyn</Uri>
+      <Sha>c3cc1d0ceeab1a65da0217e403851a1e8a30086a</Sha>
+    </Dependency>
     <Dependency Name="Microsoft.SymbolUploader.Build.Task" Version="2.0.0-preview.1.21526.15">
       <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-symuploader</Uri>
       <Sha>62ceb439e80bf0814d0ffa17f022d4624ea4aa6c</Sha>
@@ -15,26 +19,26 @@
       <Uri>https://github.com/dotnet/templating</Uri>
       <Sha>38c5d772825ee580cd646e32936cba82c3095bb3</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="8.0.0-beta.23279.1">
+    <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="8.0.0-beta.23279.4">
       <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>174c08a43b26fc26ba98975065f1125f910f5c37</Sha>
+      <Sha>998d84a61e745ac6e0268d37baef10fa0043d06f</Sha>
       <SourceBuild RepoName="arcade" ManagedOnly="true" />
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.Build.Tasks.Feed" Version="8.0.0-beta.23279.1">
+    <Dependency Name="Microsoft.DotNet.Build.Tasks.Feed" Version="8.0.0-beta.23279.4">
       <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>174c08a43b26fc26ba98975065f1125f910f5c37</Sha>
+      <Sha>998d84a61e745ac6e0268d37baef10fa0043d06f</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.SignTool" Version="8.0.0-beta.23279.1">
+    <Dependency Name="Microsoft.DotNet.SignTool" Version="8.0.0-beta.23279.4">
       <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>174c08a43b26fc26ba98975065f1125f910f5c37</Sha>
+      <Sha>998d84a61e745ac6e0268d37baef10fa0043d06f</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.Helix.Sdk" Version="8.0.0-beta.23279.1">
+    <Dependency Name="Microsoft.DotNet.Helix.Sdk" Version="8.0.0-beta.23279.4">
       <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>174c08a43b26fc26ba98975065f1125f910f5c37</Sha>
+      <Sha>998d84a61e745ac6e0268d37baef10fa0043d06f</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.SwaggerGenerator.MSBuild" Version="8.0.0-beta.23279.1">
+    <Dependency Name="Microsoft.DotNet.SwaggerGenerator.MSBuild" Version="8.0.0-beta.23279.4">
       <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>174c08a43b26fc26ba98975065f1125f910f5c37</Sha>
+      <Sha>998d84a61e745ac6e0268d37baef10fa0043d06f</Sha>
     </Dependency>
     <Dependency Name="Microsoft.DotNet.Maestro.Client" Version="1.1.0-beta.21553.1">
       <Uri>https://github.com/dotnet/arcade-services</Uri>
@@ -73,9 +77,9 @@
       <Uri>https://github.com/dotnet/symreader-converter</Uri>
       <Sha>c5ba7c88f92e2dde156c324a8c8edc04d9fa4fe0</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.XliffTasks" Version="1.0.0-beta.23272.1">
+    <Dependency Name="Microsoft.DotNet.XliffTasks" Version="1.0.0-beta.23279.1">
       <Uri>https://github.com/dotnet/xliff-tasks</Uri>
-      <Sha>a8431741d7de7531e4268a8eeb6871fb48b62a43</Sha>
+      <Sha>8fd12314c3e648c03a4189ba0bd1c3b09f5d6a01</Sha>
     </Dependency>
     <Dependency Name="NuGet.Packaging" Version="6.2.2">
       <Uri>https://github.com/NuGet/NuGet.Client</Uri>
@@ -88,9 +92,9 @@
       <Sha>547c506abe05e510bd43330fc8f6d4c5961e9223</Sha>
       <SourceBuild RepoName="runtime" ManagedOnly="false" />
     </Dependency>
-    <Dependency Name="Microsoft.SourceBuild.Intermediate.source-build-reference-packages" Version="8.0.0-alpha.1.23274.2">
+    <Dependency Name="Microsoft.SourceBuild.Intermediate.source-build-reference-packages" Version="8.0.0-alpha.1.23279.2">
       <Uri>https://github.com/dotnet/source-build-reference-packages</Uri>
-      <Sha>db0cbe78748b71b00df05aff15cac2c8ce870cfd</Sha>
+      <Sha>1c8ee93e7a8cc4d32e3ac1306c2d7956c3f9f1c1</Sha>
       <SourceBuild RepoName="source-build-reference-packages" ManagedOnly="true" />
     </Dependency>
     <Dependency Name="Microsoft.SourceBuild.Intermediate.source-build-externals" Version="8.0.0-alpha.1.23274.1">

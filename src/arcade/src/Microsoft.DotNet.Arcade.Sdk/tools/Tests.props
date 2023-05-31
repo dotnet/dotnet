@@ -27,7 +27,9 @@
   <ItemGroup Condition="'$(IsTestProject)' == 'true'">
     <!-- VS TestExplorer uses this to identify a test project -->
     <Service Include="{82a7f48d-3b50-4b1e-b82e-3ada8210c358}" />
+  </ItemGroup>
 
+  <ItemGroup Condition="'$(IsTestProject)' == 'true' and '$(ExcludeMicrosoftNetTestSdk)' != 'true'">
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="$(MicrosoftNETTestSdkVersion)" IsImplicitlyDefined="true" />
   </ItemGroup>
 
