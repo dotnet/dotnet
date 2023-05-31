@@ -1,0 +1,21 @@
+<Project>
+  <!--
+    If a project specifies ExcludeFromSourceBuild=true during a source build suppress all targets and emulate a no-op
+    (empty common targets like Restore, Build, Pack, etc.).
+    Inspired by https://github.com/dotnet/arcade/blob/d9275ca3f692b5f97702bb6717a3bf78afedbf38/src/Microsoft.DotNet.Arcade.Sdk/tools/ExcludeFromBuild.BeforeCommonTargets.targets
+  -->
+  <PropertyGroup>
+    <_SuppressAllTargets>false</_SuppressAllTargets>
+    <_SuppressAllTargets Condition="'$(DotNetBuildFromSource)' == 'true' and '$(ExcludeFromSourceBuild)' == 'true'">true</_SuppressAllTargets>
+    <!-- If excluding, then disable a restore warning, which will fire on newer SDKs, as well as set the NuGetRestoreTargets property to empty,
+         which will avoid importing the restore targets inside the .NET SDK. If the restore targets exist, then static graph restore will attempt tpo
+         execute. -->
+    <DisableWarnForInvalidRestoreProjects Condition="'$(_SuppressAllTargets)' == 'true'">true</DisableWarnForInvalidRestoreProjects>
+    <NuGetRestoreTargets Condition="'$(_SuppressAllTargets)' == 'true'">$(MSBuildThisFileDirectory)NoRestore.targets</NuGetRestoreTargets>
+    <!-- When a project is using the .NET SDK, but with the "UseWpf" property, there will be an attempt to import the windows desktop SDK targets.
+         These are not available in certain circumstances, like linux source build. -->
+    <ImportWindowsDesktopTargets Condition="'$(_SuppressAllTargets)' == 'true'">false</ImportWindowsDesktopTargets>
+  </PropertyGroup>
+
+  <Import Project="Noop.proj" Condition="'$(_SuppressAllTargets)' == 'true'" />
+</Project>

@@ -11,6 +11,7 @@
     <UseWinForms>true</UseWinForms>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <TargetFramework>$(NETFXTargetFramework)</TargetFramework>
+    <ExcludeFromSourceBuild>true</ExcludeFromSourceBuild>
   </PropertyGroup>
 
   <ItemGroup>
