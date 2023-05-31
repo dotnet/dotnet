@@ -31,7 +31,7 @@ public class ParallelProxyExecutionManagerTests
     private static readonly int Timeout3Seconds = 3 * 1000; // In milliseconds
 
     private readonly List<Mock<IProxyExecutionManager>> _usedMockManagers;
-    private readonly Func<TestRuntimeProviderInfo, IProxyExecutionManager> _createMockManager;
+    private readonly Func<TestRuntimeProviderInfo, TestRunCriteria, IProxyExecutionManager> _createMockManager;
     private readonly Mock<IInternalTestRunEventsHandler> _mockEventHandler;
 
     private readonly List<string> _sources;
@@ -59,7 +59,7 @@ public class ParallelProxyExecutionManagerTests
                 new Mock<IProxyExecutionManager>(),
             });
         _usedMockManagers = new List<Mock<IProxyExecutionManager>>();
-        _createMockManager = _ =>
+        _createMockManager = (_, _2) =>
         {
             _createMockManagerCalled++;
             var manager = _preCreatedMockManagers.Dequeue();
@@ -245,7 +245,7 @@ public class ParallelProxyExecutionManagerTests
     public void StartTestRunShouldNotProcessAllSourcesOnExecutionCancelsForAnySource()
     {
         var executionManagerMock = new Mock<IProxyExecutionManager>();
-        var parallelExecutionManager = new ParallelProxyExecutionManager(_mockRequestData.Object, _ => executionManagerMock.Object, 1, _runtimeProviders);
+        var parallelExecutionManager = new ParallelProxyExecutionManager(_mockRequestData.Object, (_, _2) => executionManagerMock.Object, 1, _runtimeProviders);
         _preCreatedMockManagers.Enqueue(executionManagerMock);
         SetupMockManagers(_processedSources, isCanceled: true, isAborted: false);
         SetupHandleTestRunComplete(_executionCompleted);
@@ -260,7 +260,7 @@ public class ParallelProxyExecutionManagerTests
     public void StartTestRunShouldNotProcessAllSourcesOnExecutionAborted()
     {
         var executionManagerMock = new Mock<IProxyExecutionManager>();
-        var parallelExecutionManager = new ParallelProxyExecutionManager(_mockRequestData.Object, _ => executionManagerMock.Object, 1, _runtimeProviders);
+        var parallelExecutionManager = new ParallelProxyExecutionManager(_mockRequestData.Object, (_, _2) => executionManagerMock.Object, 1, _runtimeProviders);
         _preCreatedMockManagers.Enqueue(executionManagerMock);
         SetupMockManagers(_processedSources, isCanceled: false, isAborted: false);
         SetupHandleTestRunComplete(_executionCompleted);
@@ -276,7 +276,7 @@ public class ParallelProxyExecutionManagerTests
     public void StartTestRunShouldProcessAllSourcesOnExecutionAbortsForAnySource()
     {
         var executionManagerMock = new Mock<IProxyExecutionManager>();
-        var parallelExecutionManager = new ParallelProxyExecutionManager(_mockRequestData.Object, _ => executionManagerMock.Object, 1, _runtimeProviders);
+        var parallelExecutionManager = new ParallelProxyExecutionManager(_mockRequestData.Object, (_, _2) => executionManagerMock.Object, 1, _runtimeProviders);
         _preCreatedMockManagers.Enqueue(executionManagerMock);
         SetupMockManagers(_processedSources, isCanceled: false, isAborted: true);
         SetupHandleTestRunComplete(_executionCompleted);
@@ -432,12 +432,12 @@ public class ParallelProxyExecutionManagerTests
         AssertMissingAndDuplicateSources(_processedSources);
     }
 
-    private ParallelProxyExecutionManager SetupExecutionManager(Func<TestRuntimeProviderInfo, IProxyExecutionManager> proxyManagerFunc, int parallelLevel)
+    private ParallelProxyExecutionManager SetupExecutionManager(Func<TestRuntimeProviderInfo, TestRunCriteria, IProxyExecutionManager> proxyManagerFunc, int parallelLevel)
     {
         return SetupExecutionManager(proxyManagerFunc, parallelLevel, false);
     }
 
-    private ParallelProxyExecutionManager SetupExecutionManager(Func<TestRuntimeProviderInfo, IProxyExecutionManager> proxyManagerFunc, int parallelLevel, bool setupTestCases)
+    private ParallelProxyExecutionManager SetupExecutionManager(Func<TestRuntimeProviderInfo, TestRunCriteria, IProxyExecutionManager> proxyManagerFunc, int parallelLevel, bool setupTestCases)
     {
         var parallelExecutionManager = new ParallelProxyExecutionManager(_mockRequestData.Object, proxyManagerFunc, parallelLevel, _runtimeProviders);
 

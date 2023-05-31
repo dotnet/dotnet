@@ -227,6 +227,7 @@
       </VsixSourceItem>
       <VsixSourceItem Include="$(TestPlatformBinFolder)Microsoft.VisualStudio.Diagnostics.Utilities.dll" />
       <VsixSourceItem Include="$(TestPlatformBinFolder)Microsoft.VisualStudio.Enterprise.AspNetHelper.dll" />
+      <VsixSourceItem Include="$(TestPlatformBinFolder)Microsoft.VisualStudio.Interop.dll" />
       <VsixSourceItem Include="$(TestPlatformBinFolder)Microsoft*.TestPlatform.Extensions.*.dll;$(TestPlatformBinFolder)Microsoft.TestPlatform.TestHostRuntimeProvider.dll">
         <VSIXSubPath>Extensions</VSIXSubPath>
       </VsixSourceItem>
@@ -288,7 +289,6 @@
     <ItemGroup>
       <VsixSourceItem Include="$(DependencyModelFolder)Microsoft.Extensions.DependencyModel.dll" />
       <VsixSourceItem Include="$(FileSystemGlobbingFolder)Microsoft.Extensions.FileSystemGlobbing.dll" />
-      <VsixSourceItem Include="$(VSSDKBuildToolsFolder)Microsoft.VisualStudio.Interop.dll" />
       <VsixSourceItem Include="$(VSSDKBuildToolsFolder)System.Diagnostics.DiagnosticSource.dll" />
       <VsixSourceItem Include="$(VSSDKBuildToolsFolder)System.Runtime.CompilerServices.Unsafe.dll" />
       <VsixSourceItem Include="$(VSQualityToolsFolder)*" Exclude="$(VSQualityToolsFolder)*.pdb" />

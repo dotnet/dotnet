@@ -20,7 +20,7 @@ public class ParallelOperationManagerTests
     public void OperationManagerShouldRunOnlyMaximumParallelLevelOfWorkInParallelEvenWhenThereAreMoreWorkloads()
     {
         // Arrange
-        Func<TestRuntimeProviderInfo, SampleManager> createNewManager = _ => new SampleManager();
+        Func<TestRuntimeProviderInfo, SampleWorkload, SampleManager> createNewManager = (_, _2) => new SampleManager();
         var maxParallelLevel = 3;
         var parallelOperationManager = new ParallelOperationManager<SampleManager, SampleHandler, SampleWorkload>(createNewManager, maxParallelLevel);
 
@@ -72,7 +72,7 @@ public class ParallelOperationManagerTests
     public void OperationManagerShouldCreateOnlyAsManyParallelWorkersAsThereAreWorkloadsWhenTheAmountOfWorkloadsIsSmallerThanMaxParallelLevel()
     {
         // Arrange
-        Func<TestRuntimeProviderInfo, SampleManager> createNewManager = _ => new SampleManager();
+        Func<TestRuntimeProviderInfo, SampleWorkload, SampleManager> createNewManager = (_, _2) => new SampleManager();
         var maxParallelLevel = 10;
         var parallelOperationManager = new ParallelOperationManager<SampleManager, SampleHandler, SampleWorkload>(createNewManager, maxParallelLevel);
 
@@ -108,7 +108,7 @@ public class ParallelOperationManagerTests
     public void OperationManagerShouldCreateAsManyMaxParallelLevel()
     {
         // Arrange
-        Func<TestRuntimeProviderInfo, SampleManager> createNewManager = _ => new SampleManager();
+        Func<TestRuntimeProviderInfo, SampleWorkload, SampleManager> createNewManager = (_, _2) => new SampleManager();
         var maxParallelLevel = 10;
         var parallelOperationManager = new ParallelOperationManager<SampleManager, SampleHandler, SampleWorkload>(createNewManager, maxParallelLevel);
 
@@ -148,7 +148,7 @@ public class ParallelOperationManagerTests
     public void OperationManagerMovesToTheNextWorkloadOnlyWhenRunNextWorkIsCalled()
     {
         // Arrange
-        Func<TestRuntimeProviderInfo, SampleManager> createNewManager = _ => new SampleManager();
+        Func<TestRuntimeProviderInfo, SampleWorkload, SampleManager> createNewManager = (_, _2) => new SampleManager();
         var maxParallelLevel = 2;
         var parallelOperationManager = new ParallelOperationManager<SampleManager, SampleHandler, SampleWorkload>(createNewManager, maxParallelLevel);
 
@@ -195,7 +195,7 @@ public class ParallelOperationManagerTests
         // Arrange
         var createdManagers = new List<SampleManager>();
         // Store the managers we created so we can inspect them later and see if Abort was called on them.
-        Func<TestRuntimeProviderInfo, SampleManager> createNewManager = _ =>
+        Func<TestRuntimeProviderInfo, SampleWorkload, SampleManager> createNewManager = (_, _2) =>
         {
             var manager = new SampleManager();
             createdManagers.Add(manager);

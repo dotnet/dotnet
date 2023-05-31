@@ -71,7 +71,11 @@ internal static class TcpClientExtensions
                         ioException,
                         remoteEndPoint,
                         localEndPoint);
-                    error = ioException;
+                    // Do not pass the error to the caller, the transport was torn down because testhost
+                    // disconnected, in 99% of the cases. This error ends up confusing developers
+                    // even though it just means "testhost crashed", look at testhost to see what happened.
+                    // https://github.com/microsoft/vstest/issues/4461
+                    // error = ioException;
                     break;
                 }
             }

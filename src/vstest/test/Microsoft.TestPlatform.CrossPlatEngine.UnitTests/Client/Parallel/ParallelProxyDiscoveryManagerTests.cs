@@ -28,7 +28,7 @@ public class ParallelProxyDiscoveryManagerTests
     private const int Timeout3Seconds = 3 * 1000;
     private readonly Queue<Mock<IProxyDiscoveryManager>> _preCreatedMockManagers;
     private readonly List<Mock<IProxyDiscoveryManager>> _usedMockManagers;
-    private readonly Func<TestRuntimeProviderInfo, IProxyDiscoveryManager> _createMockManager;
+    private readonly Func<TestRuntimeProviderInfo, DiscoveryCriteria, IProxyDiscoveryManager> _createMockManager;
     private readonly Mock<ITestDiscoveryEventsHandler2> _mockEventHandler;
     private readonly List<string> _sources = new() { "1.dll", "2.dll" };
     private readonly DiscoveryCriteria _discoveryCriteriaWith2Sources;
@@ -55,7 +55,7 @@ public class ParallelProxyDiscoveryManagerTests
                 new Mock<IProxyDiscoveryManager>(),
             });
         _usedMockManagers = new List<Mock<IProxyDiscoveryManager>>();
-        _createMockManager = _ =>
+        _createMockManager = (_, _2) =>
         {
             // We create the manager at the last possible
             // moment now, not when we create the parallel proxy manager class
@@ -163,7 +163,7 @@ public class ParallelProxyDiscoveryManagerTests
     {
         var discoveryManagerMock = new Mock<IProxyDiscoveryManager>();
         _preCreatedMockManagers.Enqueue(discoveryManagerMock);
-        var parallelDiscoveryManager = SetupDiscoveryManager(_ => discoveryManagerMock.Object, 1, true);
+        var parallelDiscoveryManager = SetupDiscoveryManager((_, _2) => discoveryManagerMock.Object, 1, true);
         var proxyDiscovermanager = new ProxyDiscoveryManager(_mockRequestData.Object, new Mock<ITestRequestSender>().Object, new Mock<ITestRuntimeProvider>().Object);
 
         parallelDiscoveryManager.DiscoverTests(_discoveryCriteriaWith2Sources, _mockEventHandler.Object);
@@ -190,7 +190,7 @@ public class ParallelProxyDiscoveryManagerTests
     {
         var discoveryManagerMock = new Mock<IProxyDiscoveryManager>();
         _preCreatedMockManagers.Enqueue(discoveryManagerMock);
-        var parallelDiscoveryManager = SetupDiscoveryManager(_ => discoveryManagerMock.Object, 1, true);
+        var parallelDiscoveryManager = SetupDiscoveryManager((_, _2) => discoveryManagerMock.Object, 1, true);
         var proxyDiscovermanager = new ProxyDiscoveryManager(_mockRequestData.Object, new Mock<ITestRequestSender>().Object, new Mock<ITestRuntimeProvider>().Object);
 
         parallelDiscoveryManager.DiscoverTests(_discoveryCriteriaWith2Sources, _mockEventHandler.Object);
@@ -206,7 +206,7 @@ public class ParallelProxyDiscoveryManagerTests
         // Since the hosts are aborted, total aggregated tests sent across will be -1
         var discoveryManagerMock = new Mock<IProxyDiscoveryManager>();
         _preCreatedMockManagers.Enqueue(discoveryManagerMock);
-        var parallelDiscoveryManager = SetupDiscoveryManager(_ => discoveryManagerMock.Object, 1, true);
+        var parallelDiscoveryManager = SetupDiscoveryManager((_, _2) => discoveryManagerMock.Object, 1, true);
 
         Task.Run(() =>
         {
@@ -224,7 +224,7 @@ public class ParallelProxyDiscoveryManagerTests
         // Since the hosts are aborted, total aggregated tests sent across will be -1
         var discoveryManagerMock = new Mock<IProxyDiscoveryManager>();
         _preCreatedMockManagers.Enqueue(discoveryManagerMock);
-        var parallelDiscoveryManager = SetupDiscoveryManager(_ => discoveryManagerMock.Object, 1, true);
+        var parallelDiscoveryManager = SetupDiscoveryManager((_, _2) => discoveryManagerMock.Object, 1, true);
 
         Task.Run(() =>
         {
@@ -331,7 +331,7 @@ public class ParallelProxyDiscoveryManagerTests
         Assert.AreEqual(0, _dataAggregator.GetSourcesWithStatus(DiscoveryStatus.NotDiscovered).Count);
     }
 
-    private ParallelProxyDiscoveryManager SetupDiscoveryManager(Func<TestRuntimeProviderInfo, IProxyDiscoveryManager> getProxyManager, int parallelLevel, bool abortDiscovery)
+    private ParallelProxyDiscoveryManager SetupDiscoveryManager(Func<TestRuntimeProviderInfo, DiscoveryCriteria, IProxyDiscoveryManager> getProxyManager, int parallelLevel, bool abortDiscovery)
     {
         var parallelDiscoveryManager = new ParallelProxyDiscoveryManager(_mockRequestData.Object, getProxyManager, dataAggregator: new(), parallelLevel, _runtimeProviders);
         SetupDiscoveryTests(_processedSources, abortDiscovery);

@@ -118,9 +118,9 @@ public class TestEngine : ITestEngine
         // discovery manager to publish its current state. But doing so we are losing the collected state of all the
         // other managers.
         var discoveryDataAggregator = new DiscoveryDataAggregator();
-        Func<TestRuntimeProviderInfo, IProxyDiscoveryManager> proxyDiscoveryManagerCreator = runtimeProviderInfo =>
+        Func<TestRuntimeProviderInfo, DiscoveryCriteria, IProxyDiscoveryManager> proxyDiscoveryManagerCreator = (runtimeProviderInfo, discoveryCriteria) =>
         {
-            var sources = runtimeProviderInfo.SourceDetails.Select(r => r.Source!).ToList();
+            var sources = discoveryCriteria.Sources.ToList();
             var hostManager = _testHostProviderManager.GetTestHostManagerByRunConfiguration(runtimeProviderInfo.RunSettings, sources);
             hostManager?.Initialize(TestSessionMessageLogger.Instance, runtimeProviderInfo.RunSettings!);
 
@@ -241,15 +241,16 @@ public class TestEngine : ITestEngine
         }
 
         // This creates a single non-parallel execution manager, based requestData, isDataCollectorEnabled and the
-        // overall testRunCriteria. The overall testRunCriteria are split to smaller pieces (e.g. each source from the overall
-        // testRunCriteria) so we can run them in parallel, and those are then passed to those non-parallel execution managers.
+        // split testRunCriteria. The overall testRunCriteria are split to smaller pieces (e.g. each source from the overall
+        // testRunCriteria) so we can run them in parallel.
         //
         // The function below grabs most of the parameter via closure from the local context,
-        // but gets the runtime provider later, because that is specific info to the source (or sources) it will be running.
+        // but gets the runtime provider later, as well as the discovery request, because that is specific info to the source (or sources)
+        // it will be running.
         // This creator does not get those smaller pieces of testRunCriteria, those come later when we call a method on
         // the non-parallel execution manager we create here. E.g. StartTests(<single piece of testRunCriteria>).
-        Func<TestRuntimeProviderInfo, IProxyExecutionManager> proxyExecutionManagerCreator = runtimeProviderInfo =>
-            CreateNonParallelExecutionManager(requestData, testRunCriteria, isDataCollectorEnabled, runtimeProviderInfo);
+        Func<TestRuntimeProviderInfo, TestRunCriteria, IProxyExecutionManager> proxyExecutionManagerCreator = (runtimeProviderInfo, runCriteria) =>
+            CreateNonParallelExecutionManager(requestData, runCriteria, isDataCollectorEnabled, runtimeProviderInfo);
 
         var executionManager = new ParallelProxyExecutionManager(requestData, proxyExecutionManagerCreator, parallelLevel, testHostProviders);
 
