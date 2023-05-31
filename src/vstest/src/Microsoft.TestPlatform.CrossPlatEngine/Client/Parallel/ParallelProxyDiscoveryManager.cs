@@ -43,7 +43,7 @@ internal sealed class ParallelProxyDiscoveryManager : IParallelProxyDiscoveryMan
 
     public ParallelProxyDiscoveryManager(
         IRequestData requestData,
-        Func<TestRuntimeProviderInfo, IProxyDiscoveryManager> actualProxyManagerCreator,
+        Func<TestRuntimeProviderInfo, DiscoveryCriteria, IProxyDiscoveryManager> actualProxyManagerCreator,
         DiscoveryDataAggregator dataAggregator,
         int parallelLevel,
         List<TestRuntimeProviderInfo> testHostProviders)
@@ -53,7 +53,7 @@ internal sealed class ParallelProxyDiscoveryManager : IParallelProxyDiscoveryMan
 
     internal ParallelProxyDiscoveryManager(
         IRequestData requestData,
-        Func<TestRuntimeProviderInfo, IProxyDiscoveryManager> actualProxyManagerCreator,
+        Func<TestRuntimeProviderInfo, DiscoveryCriteria, IProxyDiscoveryManager> actualProxyManagerCreator,
         DiscoveryDataAggregator dataAggregator,
         IDataSerializer dataSerializer,
         int parallelLevel,

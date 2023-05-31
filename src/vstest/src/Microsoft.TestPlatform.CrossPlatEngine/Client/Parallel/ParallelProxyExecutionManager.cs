@@ -64,7 +64,7 @@ internal sealed class ParallelProxyExecutionManager : IParallelProxyExecutionMan
 
     public ParallelProxyExecutionManager(
         IRequestData requestData,
-        Func<TestRuntimeProviderInfo, IProxyExecutionManager> actualProxyManagerCreator,
+        Func<TestRuntimeProviderInfo, TestRunCriteria, IProxyExecutionManager> actualProxyManagerCreator,
         int parallelLevel,
          List<TestRuntimeProviderInfo> testHostProviders)
         : this(requestData, actualProxyManagerCreator, JsonDataSerializer.Instance, parallelLevel, testHostProviders)
@@ -73,7 +73,7 @@ internal sealed class ParallelProxyExecutionManager : IParallelProxyExecutionMan
 
     internal ParallelProxyExecutionManager(
         IRequestData requestData,
-        Func<TestRuntimeProviderInfo, IProxyExecutionManager> actualProxyManagerCreator,
+        Func<TestRuntimeProviderInfo, TestRunCriteria, IProxyExecutionManager> actualProxyManagerCreator,
         IDataSerializer dataSerializer,
         int parallelLevel,
         List<TestRuntimeProviderInfo> testHostProviders)

@@ -24,7 +24,7 @@ internal sealed class ParallelOperationManager<TManager, TEventHandler, TWorkloa
                 out int num)
         ? num
         : PreStart;
-    private readonly Func<TestRuntimeProviderInfo, TManager> _createNewManager;
+    private readonly Func<TestRuntimeProviderInfo, TWorkload, TManager> _createNewManager;
 
     /// <summary>
     /// Default number of Processes
@@ -50,7 +50,7 @@ internal sealed class ParallelOperationManager<TManager, TEventHandler, TWorkloa
     /// <param name="createNewManager">Creates a new manager that is responsible for running a single part of the overall workload.
     /// A manager is typically a testhost, and the part of workload is discovering or running a single test dll.</param>
     /// <param name="parallelLevel">Determines the maximum amount of parallel managers that can be active at the same time.</param>
-    public ParallelOperationManager(Func<TestRuntimeProviderInfo, TManager> createNewManager, int parallelLevel)
+    public ParallelOperationManager(Func<TestRuntimeProviderInfo, TWorkload, TManager> createNewManager, int parallelLevel)
     {
         _createNewManager = createNewManager;
         MaxParallelLevel = parallelLevel;
@@ -144,7 +144,7 @@ internal sealed class ParallelOperationManager<TManager, TEventHandler, TWorkloa
                 var workload = workloadsToAdd[i];
                 slot.ShouldPreStart = occupiedSlots + i + 1 > MaxParallelLevel;
 
-                var manager = _createNewManager(workload.Provider);
+                var manager = _createNewManager(workload.Provider, workload.Work);
                 var eventHandler = _getEventHandler(_eventHandler, manager);
                 slot.EventHandler = eventHandler;
                 slot.Manager = manager;

@@ -468,7 +468,7 @@
     <file src="net472\Microsoft.VisualStudio.CUIT\Interop.UIAutomationClient.dll" target="tools\net462\Common7\IDE\Extensions\TestPlatform\Interop.UIAutomationClient.dll" />
     <file src="net472\Microsoft.VisualStudio.CUIT\Microsoft.ShDocVw.dll" target="tools\net462\Common7\IDE\Extensions\TestPlatform\Microsoft.ShDocVw.dll" />
     <file src="net472\Microsoft.VisualStudio.CUIT\Microsoft.VisualStudio.Diagnostics.Measurement.dll" target="tools\net462\Common7\IDE\Extensions\TestPlatform\Microsoft.VisualStudio.Diagnostics.Measurement.dll" />
-    <file src="net472\Microsoft.VSSDK.BuildTools\Microsoft.VisualStudio.Interop.dll" target="tools\net462\Common7\IDE\Extensions\TestPlatform\Microsoft.VisualStudio.Interop.dll" />
+    <file src="net472\Microsoft.VisualStudio.Interop.dll" target="tools\net462\Common7\IDE\Extensions\TestPlatform\Microsoft.VisualStudio.Interop.dll" />
     <file src="net472\Microsoft.VisualStudio.CUIT\Microsoft.VisualStudio.QualityTools.CodedUITestFramework.dll" target="tools\net462\Common7\IDE\Extensions\TestPlatform\Microsoft.VisualStudio.QualityTools.CodedUITestFramework.dll" />
     <file src="net472\Microsoft.VisualStudio.CUIT\Microsoft.VisualStudio.QualityTools.Sqm.dll" target="tools\net462\Common7\IDE\Extensions\TestPlatform\Microsoft.VisualStudio.QualityTools.Sqm.dll" />
     <file src="net472\Microsoft.VisualStudio.CUIT\Microsoft.VisualStudio.TestTools.UITest.Common.dll" target="tools\net462\Common7\IDE\Extensions\TestPlatform\Microsoft.VisualStudio.TestTools.UITest.Common.dll" />
