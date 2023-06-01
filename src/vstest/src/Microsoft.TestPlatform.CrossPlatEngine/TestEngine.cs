@@ -664,7 +664,7 @@ public class TestEngine : ITestEngine
             throw new ArgumentException(null, nameof(testRuntimeProviders));
 
         // Throw when we did not find any runtime provider for any of the provided sources.
-        var shouldThrow = testRuntimeProviders.All(runtimeProvider => runtimeProvider == null);
+        var shouldThrow = testRuntimeProviders.All(runtimeProvider => runtimeProvider.Type == null);
 
         var missingRuntimeProviders = testRuntimeProviders.Where(p => p.Type == null);
         if (missingRuntimeProviders.Any())

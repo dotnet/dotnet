@@ -116,9 +116,9 @@
       <Uri>https://github.com/nuget/nuget.client</Uri>
       <Sha>f3bb337e310ce44abda4ad73cdb0755ed940809d</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.NET.Test.Sdk" Version="17.7.0-preview.23279.10">
+    <Dependency Name="Microsoft.NET.Test.Sdk" Version="17.7.0-preview.23280.1">
       <Uri>https://github.com/microsoft/vstest</Uri>
-      <Sha>ee162969e164d54cb3347dbac07c3cb33b8b112b</Sha>
+      <Sha>94103c3f3198fe6f1405e1cb8fe486d6cd7132fd</Sha>
       <SourceBuild RepoName="vstest" ManagedOnly="true" />
     </Dependency>
     <Dependency Name="Microsoft.NET.ILLink.Tasks" Version="8.0.0-preview.6.23280.5">
@@ -141,21 +141,21 @@
       <Uri>https://github.com/dotnet/runtime</Uri>
       <Sha>bf7fb2ecbf69deb6a73bb8bbca1e56e7beec8d8a</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.WindowsDesktop.App.Runtime.win-x64" Version="8.0.0-preview.6.23281.3">
+    <Dependency Name="Microsoft.WindowsDesktop.App.Runtime.win-x64" Version="8.0.0-preview.6.23281.4">
       <Uri>https://github.com/dotnet/windowsdesktop</Uri>
-      <Sha>4e586a39981fc2628648f290a73e6ded88552f9a</Sha>
+      <Sha>bddd2aaaa7efbb26538b2ca6dcdb32bec2a424cb</Sha>
     </Dependency>
-    <Dependency Name="VS.Redist.Common.WindowsDesktop.SharedFramework.x64.8.0" Version="8.0.0-preview.6.23281.3">
+    <Dependency Name="VS.Redist.Common.WindowsDesktop.SharedFramework.x64.8.0" Version="8.0.0-preview.6.23281.4">
       <Uri>https://github.com/dotnet/windowsdesktop</Uri>
-      <Sha>4e586a39981fc2628648f290a73e6ded88552f9a</Sha>
+      <Sha>bddd2aaaa7efbb26538b2ca6dcdb32bec2a424cb</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.WindowsDesktop.App.Ref" Version="8.0.0-preview.6.23281.3">
+    <Dependency Name="Microsoft.WindowsDesktop.App.Ref" Version="8.0.0-preview.6.23281.4">
       <Uri>https://github.com/dotnet/windowsdesktop</Uri>
-      <Sha>4e586a39981fc2628648f290a73e6ded88552f9a</Sha>
+      <Sha>bddd2aaaa7efbb26538b2ca6dcdb32bec2a424cb</Sha>
     </Dependency>
-    <Dependency Name="VS.Redist.Common.WindowsDesktop.TargetingPack.x64.8.0" Version="8.0.0-preview.6.23281.3">
+    <Dependency Name="VS.Redist.Common.WindowsDesktop.TargetingPack.x64.8.0" Version="8.0.0-preview.6.23281.4">
       <Uri>https://github.com/dotnet/windowsdesktop</Uri>
-      <Sha>4e586a39981fc2628648f290a73e6ded88552f9a</Sha>
+      <Sha>bddd2aaaa7efbb26538b2ca6dcdb32bec2a424cb</Sha>
     </Dependency>
     <Dependency Name="Microsoft.NET.Sdk.WindowsDesktop" Version="8.0.0-preview.6.23280.3" CoherentParentDependency="Microsoft.WindowsDesktop.App.Ref">
       <Uri>https://github.com/dotnet/wpf</Uri>
