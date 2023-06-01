@@ -4,6 +4,7 @@
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
 using NuGet.Packaging.Core;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -40,9 +41,15 @@ namespace Microsoft.DotNet.SourceBuild.Tasks.UsageReport
         private readonly string _preBuiltDocMessage = "See aka.ms/dotnet/prebuilts " +
             "for guidance on what pre-builts are and how to eliminate them.";
 
+        private readonly string _reviewRequestMessage = "Whenever altering this " +
+            "or other Source Build files, please make sure to include @dotnet/source-build-internal " +
+            "as a reviewer.";
+
         public override bool Execute()
         {
-            string PreBuiltDocXmlComment = $"<!-- {_preBuiltDocMessage} -->\n";
+            string ReviewRequestComment = $"<!-- {_reviewRequestMessage} -->{Environment.NewLine}";
+            string PreBuiltDocXmlComment = $"<!-- {_preBuiltDocMessage} -->{Environment.NewLine}";
+            
             var used = UsageData.Parse(XElement.Parse(File.ReadAllText(DataFile)));
 
             string baselineText = string.IsNullOrEmpty(BaselineDataFile)
@@ -54,7 +61,7 @@ namespace Microsoft.DotNet.SourceBuild.Tasks.UsageReport
             UsageValidationData data = GetUsageValidationData(baseline, used);
 
             Directory.CreateDirectory(Path.GetDirectoryName(OutputBaselineFile));
-            File.WriteAllText(OutputBaselineFile, PreBuiltDocXmlComment + data.ActualUsageData.ToXml().ToString());
+            File.WriteAllText(OutputBaselineFile, ReviewRequestComment + PreBuiltDocXmlComment + data.ActualUsageData.ToXml().ToString());
 
             Directory.CreateDirectory(Path.GetDirectoryName(OutputReportFile));
             File.WriteAllText(OutputReportFile, PreBuiltDocXmlComment + data.Report.ToString());
@@ -83,8 +90,8 @@ namespace Microsoft.DotNet.SourceBuild.Tasks.UsageReport
                 tellUserToUpdateBaseline = true;
                 Log.LogError(
                     $"{diff.Added.Length} new pre-builts discovered! Detailed usage " +
-                    $"report can be found at {OutputReportFile}.\n{_preBuiltDocMessage}\n" +
-                    $"Package IDs are:\n" + string.Join("\n", diff.Added.Select(u => u.ToString())));
+                    $"report can be found at {OutputReportFile}.{Environment.NewLine}{_preBuiltDocMessage}{Environment.NewLine}" +
+                    $"Package IDs are:{Environment.NewLine}" + string.Join(Environment.NewLine, diff.Added.Select(u => u.ToString())));
 
                 // In the report, list full usage info, not only identity.
                 report.Add(
