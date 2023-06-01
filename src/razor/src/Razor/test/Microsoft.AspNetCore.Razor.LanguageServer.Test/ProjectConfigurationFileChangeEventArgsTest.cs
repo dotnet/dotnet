@@ -1,14 +1,12 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
-#nullable disable
-
-using System;
+using System.Collections.Immutable;
 using Microsoft.AspNetCore.Razor.LanguageServer.Common;
 using Microsoft.AspNetCore.Razor.LanguageServer.Serialization;
-using Microsoft.AspNetCore.Razor.ProjectEngineHost.Serialization;
+using Microsoft.AspNetCore.Razor.ProjectSystem;
+using Microsoft.AspNetCore.Razor.Serialization;
 using Microsoft.AspNetCore.Razor.Test.Common;
-using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Moq;
 using Xunit;
 using Xunit.Abstractions;
@@ -34,7 +32,7 @@ public class ProjectConfigurationFileChangeEventArgsTest : TestBase
                 configuration: null,
                 rootNamespace: null,
                 projectWorkspaceState: null,
-                documents: Array.Empty<DocumentSnapshotHandle>()));
+                documents: ImmutableArray<DocumentSnapshotHandle>.Empty));
         var args = new ProjectConfigurationFileChangeEventArgs("/path/to/obj/project.razor.json", RazorFileChangeKind.Removed, jsonFileDeserializer.Object);
 
         // Act
@@ -57,7 +55,7 @@ public class ProjectConfigurationFileChangeEventArgsTest : TestBase
             configuration: null,
             rootNamespace: null,
             projectWorkspaceState: null,
-            documents: Array.Empty<DocumentSnapshotHandle>());
+            documents: ImmutableArray<DocumentSnapshotHandle>.Empty);
         jsonFileDeserializer.Setup(deserializer => deserializer.Deserialize<ProjectRazorJson>(It.IsAny<string>()))
             .Returns(projectRazorJson);
         var args = new ProjectConfigurationFileChangeEventArgs("/path/to/DIFFERENT/obj/project.razor.json", RazorFileChangeKind.Added, jsonFileDeserializer.Object);
@@ -81,7 +79,7 @@ public class ProjectConfigurationFileChangeEventArgsTest : TestBase
             configuration: null,
             rootNamespace: null,
             projectWorkspaceState: null,
-            documents: Array.Empty<DocumentSnapshotHandle>());
+            documents: ImmutableArray<DocumentSnapshotHandle>.Empty);
         jsonFileDeserializer.Setup(deserializer => deserializer.Deserialize<ProjectRazorJson>(It.IsAny<string>()))
             .Returns(projectRazorJson);
         var args = new ProjectConfigurationFileChangeEventArgs("/path/to/obj/project.razor.json", RazorFileChangeKind.Added, jsonFileDeserializer.Object);

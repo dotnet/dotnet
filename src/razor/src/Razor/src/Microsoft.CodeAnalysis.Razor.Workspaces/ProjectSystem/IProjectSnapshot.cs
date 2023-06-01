@@ -4,7 +4,7 @@
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using Microsoft.AspNetCore.Razor.Language;
-using Microsoft.AspNetCore.Razor.ProjectEngineHost.Serialization;
+using Microsoft.AspNetCore.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.CSharp;
 
 namespace Microsoft.CodeAnalysis.Razor.ProjectSystem;
@@ -17,7 +17,7 @@ internal interface IProjectSnapshot
     string? RootNamespace { get; }
     VersionStamp Version { get; }
     LanguageVersion CSharpLanguageVersion { get; }
-    IReadOnlyList<TagHelperDescriptor> TagHelpers { get; }
+    ImmutableArray<TagHelperDescriptor> TagHelpers { get; }
     ProjectWorkspaceState? ProjectWorkspaceState { get; }
 
     RazorProjectEngine GetProjectEngine();

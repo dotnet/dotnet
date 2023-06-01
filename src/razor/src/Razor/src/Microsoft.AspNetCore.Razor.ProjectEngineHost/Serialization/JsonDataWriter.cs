@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.Extensions.ObjectPool;
 using Newtonsoft.Json;
 
-namespace Microsoft.AspNetCore.Razor.ProjectEngineHost.Serialization;
+namespace Microsoft.AspNetCore.Razor.Serialization;
 
 internal delegate void WriteProperties<T>(JsonDataWriter writer, T value);
 internal delegate void WriteValue<T>(JsonDataWriter writer, T value);
@@ -54,7 +54,7 @@ internal partial class JsonDataWriter
 
     public void WriteIfNotTrue(string propertyName, bool value)
     {
-        if (value)
+        if (!value)
         {
             Write(propertyName, value);
         }
@@ -62,7 +62,7 @@ internal partial class JsonDataWriter
 
     public void WriteIfNotFalse(string propertyName, bool value)
     {
-        if (!value)
+        if (value)
         {
             Write(propertyName, value);
         }
@@ -79,7 +79,12 @@ internal partial class JsonDataWriter
         _writer.WriteValue(value);
     }
 
-    public void WriteIfNotDefault(string propertyName, int value, int defaultValue = default)
+    public void WriteIfNotZero(string propertyName, int value)
+    {
+        WriteIfNotDefault(propertyName, value, defaultValue: 0);
+    }
+
+    public void WriteIfNotDefault(string propertyName, int value, int defaultValue)
     {
         if (value != defaultValue)
         {
@@ -174,6 +179,22 @@ internal partial class JsonDataWriter
         _writer.WriteStartObject();
         writeProperties(this, value);
         _writer.WriteEndObject();
+    }
+
+    public void WriteObjectIfNotDefault<T>(string propertyName, T? value, T? defaultValue, WriteProperties<T> writeProperties)
+    {
+        if (!EqualityComparer<T?>.Default.Equals(value, defaultValue))
+        {
+            WriteObject(propertyName, value, writeProperties);
+        }
+    }
+
+    public void WriteObjectIfNotNull<T>(string propertyName, T? value, WriteProperties<T> writeProperties)
+    {
+        if (value is not null)
+        {
+            WriteObject(propertyName, value, writeProperties);
+        }
     }
 
     public void WriteArray<T>(IEnumerable<T>? elements, WriteValue<T> writeElement)

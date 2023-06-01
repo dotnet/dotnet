@@ -33,7 +33,7 @@ internal class CSharpOnTypeFormattingPass : CSharpFormattingPassBase
     private readonly IOptionsMonitor<RazorLSPOptions> _optionsMonitor;
 
     public CSharpOnTypeFormattingPass(
-        RazorDocumentMappingService documentMappingService,
+        IRazorDocumentMappingService documentMappingService,
         ClientNotifierServiceBase server,
         IOptionsMonitor<RazorLSPOptions> optionsMonitor,
         ILoggerFactory loggerFactory)
@@ -63,7 +63,7 @@ internal class CSharpOnTypeFormattingPass : CSharpFormattingPassBase
         var textEdits = result.Edits;
         if (textEdits.Length == 0)
         {
-            if (!DocumentMappingService.TryMapToProjectedDocumentPosition(codeDocument.GetCSharpDocument(), context.HostDocumentIndex, out _, out var projectedIndex))
+            if (!DocumentMappingService.TryMapToGeneratedDocumentPosition(codeDocument.GetCSharpDocument(), context.HostDocumentIndex, out _, out var projectedIndex))
             {
                 _logger.LogWarning("Failed to map to projected position for document {context.Uri}.", context.Uri);
                 return result;

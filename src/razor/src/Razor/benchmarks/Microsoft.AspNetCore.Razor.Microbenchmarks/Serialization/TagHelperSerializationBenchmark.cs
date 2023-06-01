@@ -1,12 +1,13 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using BenchmarkDotNet.Attributes;
 using Microsoft.AspNetCore.Razor.Language;
-using Microsoft.AspNetCore.Razor.ProjectEngineHost.Serialization;
+using Microsoft.AspNetCore.Razor.Serialization;
 
 namespace Microsoft.AspNetCore.Razor.Microbenchmarks.Serialization;
 
@@ -32,8 +33,9 @@ public class TagHelperSerializationBenchmark
     private static IReadOnlyList<TagHelperDescriptor> DeserializeTagHelpers(TextReader reader)
     {
         return JsonDataConvert.DeserializeData(reader,
-            static r => r.ReadArrayOrEmpty(
-                static r => ObjectReaders.ReadTagHelper(r, useCache: false)));
+            static r => r.ReadArray(
+                static r => ObjectReaders.ReadTagHelper(r, useCache: false)))
+            ?? Array.Empty<TagHelperDescriptor>();
     }
 
     private static void SerializeTagHelpers(TextWriter writer, IReadOnlyList<TagHelperDescriptor> tagHelpers)

@@ -6,9 +6,10 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.LanguageServer.Common;
 using Microsoft.AspNetCore.Razor.LanguageServer.ProjectSystem;
-using Microsoft.AspNetCore.Razor.ProjectEngineHost.Serialization;
+using Microsoft.AspNetCore.Razor.ProjectSystem;
+using Microsoft.AspNetCore.Razor.Serialization;
+using Microsoft.AspNetCore.Razor.Utilities;
 using Microsoft.CodeAnalysis.Razor;
-using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.Extensions.Logging;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer;
@@ -128,7 +129,7 @@ internal class ProjectConfigurationStateSynchronizer : IProjectConfigurationFile
             }
 
             var projectWorkspaceState = projectRazorJson.ProjectWorkspaceState ?? ProjectWorkspaceState.Default;
-            var documents = projectRazorJson.Documents ?? Array.Empty<DocumentSnapshotHandle>();
+            var documents = projectRazorJson.Documents;
             _projectService.UpdateProject(
                 projectRazorJson.FilePath,
                 projectRazorJson.Configuration,

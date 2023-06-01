@@ -24,11 +24,11 @@ internal class CSharpFormatter
 {
     private const string MarkerId = "RazorMarker";
 
-    private readonly RazorDocumentMappingService _documentMappingService;
+    private readonly IRazorDocumentMappingService _documentMappingService;
     private readonly ClientNotifierServiceBase _server;
 
     public CSharpFormatter(
-        RazorDocumentMappingService documentMappingService,
+        IRazorDocumentMappingService documentMappingService,
         ClientNotifierServiceBase languageServer)
     {
         if (documentMappingService is null)
@@ -57,7 +57,7 @@ internal class CSharpFormatter
             throw new ArgumentNullException(nameof(rangeToFormat));
         }
 
-        if (!_documentMappingService.TryMapToProjectedDocumentRange(context.CodeDocument.GetCSharpDocument(), rangeToFormat, out var projectedRange))
+        if (!_documentMappingService.TryMapToGeneratedDocumentRange(context.CodeDocument.GetCSharpDocument(), rangeToFormat, out var projectedRange))
         {
             return Array.Empty<TextEdit>();
         }
@@ -92,7 +92,7 @@ internal class CSharpFormatter
 
     private TextEdit[] MapEditsToHostDocument(RazorCodeDocument codeDocument, TextEdit[] csharpEdits)
     {
-        var actualEdits = _documentMappingService.GetProjectedDocumentEdits(codeDocument.GetCSharpDocument(), csharpEdits);
+        var actualEdits = _documentMappingService.GetHostDocumentEdits(codeDocument.GetCSharpDocument(), csharpEdits);
 
         return actualEdits;
     }

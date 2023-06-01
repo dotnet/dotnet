@@ -4,7 +4,7 @@
 using Microsoft.AspNetCore.Razor.Language;
 using static Microsoft.AspNetCore.Razor.Language.RequiredAttributeDescriptor;
 
-namespace Microsoft.AspNetCore.Razor.ProjectEngineHost.Serialization;
+namespace Microsoft.AspNetCore.Razor.Serialization;
 
 internal static partial class ObjectReaders
 {

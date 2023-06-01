@@ -21,7 +21,7 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer.Formatting;
 internal class DocumentOnTypeFormattingEndpoint : IRazorRequestHandler<DocumentOnTypeFormattingParams, TextEdit[]?>, IRegistrationExtension
 {
     private readonly IRazorFormattingService _razorFormattingService;
-    private readonly RazorDocumentMappingService _razorDocumentMappingService;
+    private readonly IRazorDocumentMappingService _razorDocumentMappingService;
     private readonly IOptionsMonitor<RazorLSPOptions> _optionsMonitor;
 
     private static readonly IReadOnlyList<string> s_csharpTriggerCharacters = new[] { "}", ";" };
@@ -32,7 +32,7 @@ internal class DocumentOnTypeFormattingEndpoint : IRazorRequestHandler<DocumentO
 
     public DocumentOnTypeFormattingEndpoint(
         IRazorFormattingService razorFormattingService,
-        RazorDocumentMappingService razorDocumentMappingService,
+        IRazorDocumentMappingService razorDocumentMappingService,
         IOptionsMonitor<RazorLSPOptions> optionsMonitor)
     {
         _razorFormattingService = razorFormattingService ?? throw new ArgumentNullException(nameof(razorFormattingService));

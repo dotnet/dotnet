@@ -20,12 +20,12 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer.Diagnostics;
 
 public class RazorTranslateDiagnosticsEndpointTest : LanguageServerTestBase
 {
-    private readonly RazorDocumentMappingService _mappingService;
+    private readonly IRazorDocumentMappingService _mappingService;
 
     public RazorTranslateDiagnosticsEndpointTest(ITestOutputHelper testOutput)
         : base(testOutput)
     {
-        _mappingService = new DefaultRazorDocumentMappingService(
+        _mappingService = new RazorDocumentMappingService(
             TestLanguageServerFeatureOptions.Instance, new TestDocumentContextFactory(), LoggerFactory);
     }
 
@@ -1223,7 +1223,7 @@ public class RazorTranslateDiagnosticsEndpointTest : LanguageServerTestBase
     class TestRazorDiagnosticsServiceWithRazorDiagnostic : RazorTranslateDiagnosticsService
     {
         public TestRazorDiagnosticsServiceWithRazorDiagnostic(
-            RazorDocumentMappingService documentMappingService,
+            IRazorDocumentMappingService documentMappingService,
             ILoggerFactory loggerFactory)
             : base(documentMappingService, loggerFactory)
         {
@@ -1238,7 +1238,7 @@ public class RazorTranslateDiagnosticsEndpointTest : LanguageServerTestBase
     class TestRazorDiagnosticsServiceWithoutRazorDiagnostic : RazorTranslateDiagnosticsService
     {
         public TestRazorDiagnosticsServiceWithoutRazorDiagnostic(
-            RazorDocumentMappingService documentMappingService,
+            IRazorDocumentMappingService documentMappingService,
             ILoggerFactory loggerFactory)
             : base(documentMappingService, loggerFactory)
         {

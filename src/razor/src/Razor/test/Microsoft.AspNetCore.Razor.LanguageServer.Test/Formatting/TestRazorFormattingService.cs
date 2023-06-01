@@ -26,7 +26,7 @@ internal static class TestRazorFormattingService
         codeDocument ??= TestRazorCodeDocument.CreateEmpty();
         loggerFactory ??= NullLoggerFactory.Instance;
 
-        var mappingService = new DefaultRazorDocumentMappingService(TestLanguageServerFeatureOptions.Instance, new TestDocumentContextFactory(), loggerFactory);
+        var mappingService = new RazorDocumentMappingService(TestLanguageServerFeatureOptions.Instance, new TestDocumentContextFactory(), loggerFactory);
 
         var dispatcher = new LSPProjectSnapshotManagerDispatcher(loggerFactory);
         var versionCache = new DefaultDocumentVersionCache(dispatcher);

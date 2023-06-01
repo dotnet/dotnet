@@ -37,7 +37,7 @@ public class RazorCompletionBenchmark : RazorLanguageServerBenchmarkBase
         var razorCompletionListProvider = languageServer.GetRequiredService<RazorCompletionListProvider>();
         var lspServices = languageServer.GetLspServices();
         var responseRewriters = lspServices.GetRequiredServices<DelegatedCompletionResponseRewriter>();
-        var documentMappingService = lspServices.GetRequiredService<RazorDocumentMappingService>();
+        var documentMappingService = lspServices.GetRequiredService<IRazorDocumentMappingService>();
         var clientNotifierServiceBase = lspServices.GetRequiredService<ClientNotifierServiceBase>();
         var completionListCache = lspServices.GetRequiredService<CompletionListCache>();
 
@@ -142,7 +142,7 @@ public class RazorCompletionBenchmark : RazorLanguageServerBenchmarkBase
 
     private class TestDelegatedCompletionListProvider : DelegatedCompletionListProvider
     {
-        public TestDelegatedCompletionListProvider(IEnumerable<DelegatedCompletionResponseRewriter> responseRewriters, RazorDocumentMappingService documentMappingService, ClientNotifierServiceBase languageServer, CompletionListCache completionListCache)
+        public TestDelegatedCompletionListProvider(IEnumerable<DelegatedCompletionResponseRewriter> responseRewriters, IRazorDocumentMappingService documentMappingService, ClientNotifierServiceBase languageServer, CompletionListCache completionListCache)
             : base(responseRewriters, documentMappingService, languageServer, completionListCache)
         {
         }

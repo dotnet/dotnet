@@ -1,10 +1,11 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
+using System.Collections.Immutable;
 using Microsoft.AspNetCore.Razor.Language;
-using Microsoft.CodeAnalysis.Razor.ProjectSystem;
+using Microsoft.AspNetCore.Razor.ProjectSystem;
 
-namespace Microsoft.AspNetCore.Razor.ProjectEngineHost.Serialization;
+namespace Microsoft.AspNetCore.Razor.Serialization;
 
 internal static partial class ObjectReaders
 {
@@ -14,7 +15,7 @@ internal static partial class ObjectReaders
         RazorConfiguration? Configuration,
         string? RootNamespace,
         ProjectWorkspaceState? ProjectWorkspaceState,
-        DocumentSnapshotHandle[] Documents,
+        ImmutableArray<DocumentSnapshotHandle> Documents,
         string? SerializationFormat)
     {
         public static readonly PropertyMap<ProjectRazorJsonData> PropertyMap = new(
@@ -33,16 +34,16 @@ internal static partial class ObjectReaders
             => data.FilePath = reader.ReadNonNullString();
 
         private static void ReadConfiguration(JsonDataReader reader, ref ProjectRazorJsonData data)
-            => data.Configuration = reader.ReadObject(ObjectReaders.ReadConfigurationFromProperties);
+            => data.Configuration = reader.ReadObject(ReadConfigurationFromProperties);
 
         private static void ReadRootNamespace(JsonDataReader reader, ref ProjectRazorJsonData data)
             => data.RootNamespace = reader.ReadString();
 
         private static void ReadProjectWorkspaceState(JsonDataReader reader, ref ProjectRazorJsonData data)
-            => data.ProjectWorkspaceState = reader.ReadObject(ObjectReaders.ReadProjectWorkspaceStateFromProperties);
+            => data.ProjectWorkspaceState = reader.ReadObject(ReadProjectWorkspaceStateFromProperties);
 
         private static void ReadDocuments(JsonDataReader reader, ref ProjectRazorJsonData data)
-            => data.Documents = reader.ReadArrayOrEmpty(static r => r.ReadNonNullObject(ObjectReaders.ReadDocumentSnapshotHandleFromProperties));
+            => data.Documents = reader.ReadImmutableArray(static r => r.ReadNonNullObject(ReadDocumentSnapshotHandleFromProperties));
 
         private static void ReadSerializationFormat(JsonDataReader reader, ref ProjectRazorJsonData data)
             => data.SerializationFormat = reader.ReadString();

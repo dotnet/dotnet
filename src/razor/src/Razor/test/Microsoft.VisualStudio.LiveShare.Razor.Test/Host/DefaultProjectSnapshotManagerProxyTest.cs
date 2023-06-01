@@ -5,9 +5,10 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
-using Microsoft.AspNetCore.Razor.ProjectEngineHost.Serialization;
+using Microsoft.AspNetCore.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.VisualStudio.LiveShare.Razor.Test;
@@ -29,21 +30,20 @@ public class DefaultProjectSnapshotManagerProxyTest : ProjectSnapshotManagerDisp
         _workspace = TestWorkspace.Create();
         AddDisposable(_workspace);
 
-        var projectWorkspaceState1 = new ProjectWorkspaceState(new[]
-        {
-            TagHelperDescriptorBuilder.Create("test1", "TestAssembly1").Build(),
-        },
-        default);
+        var projectWorkspaceState1 = new ProjectWorkspaceState(ImmutableArray.Create(
+            TagHelperDescriptorBuilder.Create("test1", "TestAssembly1").Build()),
+            csharpLanguageVersion: default);
+
         _projectSnapshot1 = new ProjectSnapshot(
             ProjectState.Create(
                 _workspace.Services,
                 new HostProject("/host/path/to/project1.csproj", RazorConfiguration.Default, "project1"),
                 projectWorkspaceState1));
-        var projectWorkspaceState2 = new ProjectWorkspaceState(new[]
-        {
-            TagHelperDescriptorBuilder.Create("test2", "TestAssembly2").Build(),
-        },
-        default);
+
+        var projectWorkspaceState2 = new ProjectWorkspaceState(ImmutableArray.Create(
+            TagHelperDescriptorBuilder.Create("test2", "TestAssembly2").Build()),
+            csharpLanguageVersion: default);
+
         _projectSnapshot2 = new ProjectSnapshot(
             ProjectState.Create(
                 _workspace.Services,
@@ -71,12 +71,12 @@ public class DefaultProjectSnapshotManagerProxyTest : ProjectSnapshotManagerDisp
             handle =>
             {
                 Assert.Equal("vsls:/path/to/project1.csproj", handle.FilePath.ToString());
-                Assert.Equal(_projectSnapshot1.TagHelpers, handle.ProjectWorkspaceState.TagHelpers);
+                Assert.Equal(_projectSnapshot1.TagHelpers, handle.ProjectWorkspaceState.TagHelpers, TagHelperDescriptorComparer.Default);
             },
             handle =>
             {
                 Assert.Equal("vsls:/path/to/project2.csproj", handle.FilePath.ToString());
-                Assert.Equal(_projectSnapshot2.TagHelpers, handle.ProjectWorkspaceState.TagHelpers);
+                Assert.Equal(_projectSnapshot2.TagHelpers, handle.ProjectWorkspaceState.TagHelpers, TagHelperDescriptorComparer.Default);
             });
     }
 
@@ -168,12 +168,12 @@ public class DefaultProjectSnapshotManagerProxyTest : ProjectSnapshotManagerDisp
             handle =>
             {
                 Assert.Equal("vsls:/path/to/project1.csproj", handle.FilePath.ToString());
-                Assert.Equal(_projectSnapshot1.TagHelpers, handle.ProjectWorkspaceState.TagHelpers);
+                Assert.Equal(_projectSnapshot1.TagHelpers, handle.ProjectWorkspaceState.TagHelpers, TagHelperDescriptorComparer.Default);
             },
             handle =>
             {
                 Assert.Equal("vsls:/path/to/project2.csproj", handle.FilePath.ToString());
-                Assert.Equal(_projectSnapshot2.TagHelpers, handle.ProjectWorkspaceState.TagHelpers);
+                Assert.Equal(_projectSnapshot2.TagHelpers, handle.ProjectWorkspaceState.TagHelpers, TagHelperDescriptorComparer.Default);
             });
     }
 

@@ -5,11 +5,12 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
-using Microsoft.AspNetCore.Razor.ProjectEngineHost.Serialization;
+using Microsoft.AspNetCore.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Host;
 using Microsoft.CodeAnalysis.Text;
 using Moq;
@@ -31,10 +32,8 @@ public class DefaultProjectSnapshotManagerTest : ProjectSnapshotManagerDispatche
     public DefaultProjectSnapshotManagerTest(ITestOutputHelper testOutput)
         : base(testOutput)
     {
-        var someTagHelpers = new List<TagHelperDescriptor>
-        {
-            TagHelperDescriptorBuilder.Create("Test1", "TestAssembly").Build()
-        };
+        var someTagHelpers = ImmutableArray.Create(
+            TagHelperDescriptorBuilder.Create("Test1", "TestAssembly").Build());
 
         _tagHelperResolver = new TestTagHelperResolver()
         {
@@ -238,7 +237,12 @@ public class DefaultProjectSnapshotManagerTest : ProjectSnapshotManagerDispatche
 
         // Assert
         var newTagHelpers = _projectManager.GetSnapshot(_hostProject).TagHelpers;
-        Assert.Same(originalTagHelpers, newTagHelpers);
+
+        Assert.Equal(originalTagHelpers.Length, newTagHelpers.Length);
+        for (var i = 0; i < originalTagHelpers.Length; i++)
+        {
+            Assert.Same(originalTagHelpers[i], newTagHelpers[i]);
+        }
     }
 
     [UIFact]
@@ -330,7 +334,12 @@ public class DefaultProjectSnapshotManagerTest : ProjectSnapshotManagerDispatche
 
         // Assert
         var newTagHelpers = _projectManager.GetSnapshot(_hostProject).TagHelpers;
-        Assert.Same(originalTagHelpers, newTagHelpers);
+
+        Assert.Equal(originalTagHelpers.Length, newTagHelpers.Length);
+        for (var i = 0; i < originalTagHelpers.Length; i++)
+        {
+            Assert.Same(originalTagHelpers[i], newTagHelpers[i]);
+        }
     }
 
     [UIFact]

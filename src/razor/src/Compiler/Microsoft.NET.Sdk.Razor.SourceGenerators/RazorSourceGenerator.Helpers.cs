@@ -83,7 +83,8 @@ namespace Microsoft.NET.Sdk.Razor.SourceGenerators
             return discoveryProjectEngine;
         }
 
-        private static SourceGeneratorProjectEngine GetGenerationProjectEngine(
+        private static RazorProjectEngine GetGenerationProjectEngine(
+            IReadOnlyList<TagHelperDescriptor> tagHelpers,
             SourceGeneratorProjectItem item,
             IEnumerable<SourceGeneratorProjectItem> imports,
             RazorSourceGenerationOptions razorSourceGeneratorOptions)
@@ -95,7 +96,7 @@ namespace Microsoft.NET.Sdk.Razor.SourceGenerators
                 fileSystem.Add(import);
             }
 
-            var projectEngine = (DefaultRazorProjectEngine)RazorProjectEngine.Create(razorSourceGeneratorOptions.Configuration, fileSystem, b =>
+            var projectEngine = RazorProjectEngine.Create(razorSourceGeneratorOptions.Configuration, fileSystem, b =>
             {
                 b.Features.Add(new DefaultTypeNameFeature());
                 b.SetRootNamespace(razorSourceGeneratorOptions.RootNamespace);
@@ -106,13 +107,16 @@ namespace Microsoft.NET.Sdk.Razor.SourceGenerators
                     options.SupportLocalizedComponentNames = razorSourceGeneratorOptions.SupportLocalizedComponentNames;
                 }));
 
+                b.Features.Add(new StaticTagHelperFeature { TagHelpers = tagHelpers });
+                b.Features.Add(new DefaultTagHelperDescriptorProvider());
+
                 CompilerFeatures.Register(b);
                 RazorExtensions.Register(b);
 
                 b.SetCSharpLanguageVersion(razorSourceGeneratorOptions.CSharpLanguageVersion);
             });
 
-            return new SourceGeneratorProjectEngine(projectEngine);
+            return projectEngine;
         }
     }
 }

@@ -2,13 +2,12 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using System;
-using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
-using Microsoft.AspNetCore.Razor.ProjectEngineHost.Serialization;
+using Microsoft.AspNetCore.Razor.Serialization;
 using Microsoft.AspNetCore.Razor.Telemetry;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
 using Microsoft.CodeAnalysis.Razor;
@@ -135,12 +134,12 @@ internal class OOPTagHelperResolver : TagHelperResolver
 
         var tagHelpers = ProduceTagHelpersFromDelta(projectSnapshot.FilePath, lastResultId, result.Value);
 
-        var resolutionResult = new TagHelperResolutionResult(tagHelpers, diagnostics: Array.Empty<RazorDiagnostic>());
-        return resolutionResult;
+        return new TagHelperResolutionResult(tagHelpers);
     }
 
     // Protected virtual for testing
-    protected virtual IReadOnlyCollection<TagHelperDescriptor>? ProduceTagHelpersFromDelta(string projectFilePath, int lastResultId, TagHelperDeltaResult deltaResult)
+    protected virtual ImmutableArray<TagHelperDescriptor> ProduceTagHelpersFromDelta(
+        string projectFilePath, int lastResultId, TagHelperDeltaResult deltaResult)
     {
         var fromCache = true;
         var stopWatch = Stopwatch.StartNew();
@@ -148,7 +147,7 @@ internal class OOPTagHelperResolver : TagHelperResolver
         if (!_resultCache.TryGet(projectFilePath, lastResultId, out var tagHelpers))
         {
             // We most likely haven't made a request to the server yet so there's no delta to apply
-            tagHelpers = Array.Empty<TagHelperDescriptor>();
+            tagHelpers = ImmutableArray<TagHelperDescriptor>.Empty;
             fromCache = false;
 
             if (deltaResult.Delta)
@@ -161,7 +160,7 @@ internal class OOPTagHelperResolver : TagHelperResolver
         else if (!deltaResult.Delta)
         {
             // Not a delta based response, we should treat it as a "refresh"
-            tagHelpers = Array.Empty<TagHelperDescriptor>();
+            tagHelpers = ImmutableArray<TagHelperDescriptor>.Empty;
             fromCache = false;
         }
 

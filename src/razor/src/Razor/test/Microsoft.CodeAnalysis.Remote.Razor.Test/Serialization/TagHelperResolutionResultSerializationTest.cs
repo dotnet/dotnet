@@ -3,11 +3,13 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.IO;
 using System.Text;
 using Microsoft.AspNetCore.Mvc.Razor.Extensions;
 using Microsoft.AspNetCore.Razor.Language;
-using Microsoft.AspNetCore.Razor.ProjectEngineHost.Serialization;
+using Microsoft.AspNetCore.Razor.Serialization;
+using Microsoft.AspNetCore.Razor.Serialization.Converters;
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Newtonsoft.Json;
 using Xunit;
@@ -28,16 +30,16 @@ public class TagHelperResolutionResultSerializationTest : TestBase
         // Arrange
         var bytes = TestResources.GetResourceBytes(TestResources.BlazorServerAppTagHelpersJson);
 
-        IReadOnlyList<TagHelperDescriptor> tagHelpers;
+        ImmutableArray<TagHelperDescriptor> tagHelpers;
         using (var stream = new MemoryStream(bytes))
         using (var reader = new StreamReader(stream))
         {
             tagHelpers = JsonDataConvert.DeserializeData(reader,
-                static r => r.ReadArrayOrEmpty(
+                static r => r.ReadImmutableArray(
                     static r => ObjectReaders.ReadTagHelper(r, useCache: false)));
         }
 
-        var expectedResult = new TagHelperResolutionResult(tagHelpers, Array.Empty<RazorDiagnostic>());
+        var expectedResult = new TagHelperResolutionResult(tagHelpers);
 
         var serializer = new JsonSerializer { Converters = { TagHelperResolutionResultJsonConverter.Instance } };
 
@@ -102,7 +104,7 @@ public class TagHelperResolutionResultSerializationTest : TestBase
                 builder.AddMetadata("foo", "bar");
             });
 
-        var expectedResult = new TagHelperResolutionResult(new[] { descriptor }, Array.Empty<RazorDiagnostic>());
+        var expectedResult = new TagHelperResolutionResult(ImmutableArray.Create(descriptor));
 
         // Act
         var json = JsonConvert.SerializeObject(expectedResult, TagHelperResolutionResultJsonConverter.Instance);
@@ -148,7 +150,7 @@ public class TagHelperResolutionResultSerializationTest : TestBase
                 builder.AddMetadata("foo", "bar");
             });
 
-        var expectedResult = new TagHelperResolutionResult(new[] { descriptor }, Array.Empty<RazorDiagnostic>());
+        var expectedResult = new TagHelperResolutionResult(ImmutableArray.Create(descriptor));
 
         // Act
         var json = JsonConvert.SerializeObject(expectedResult, TagHelperResolutionResultJsonConverter.Instance);
@@ -192,7 +194,7 @@ public class TagHelperResolutionResultSerializationTest : TestBase
                     .AddDiagnostic(RazorDiagnostic.Create(
                         new RazorDiagnosticDescriptor("id", () => "Test Message", RazorDiagnosticSeverity.Error), new SourceSpan(null, 10, 20, 30, 40))));
 
-        var expectedResult = new TagHelperResolutionResult(new[] { descriptor }, Array.Empty<RazorDiagnostic>());
+        var expectedResult = new TagHelperResolutionResult(ImmutableArray.Create(descriptor));
 
         // Act
         var json = JsonConvert.SerializeObject(expectedResult, TagHelperResolutionResultJsonConverter.Instance);
@@ -237,7 +239,7 @@ public class TagHelperResolutionResultSerializationTest : TestBase
                     .AddMetadata("foo", "bar")
                     .TagOutputHint("Hint"));
 
-        var expectedResult = new TagHelperResolutionResult(new[] { descriptor }, Array.Empty<RazorDiagnostic>());
+        var expectedResult = new TagHelperResolutionResult(ImmutableArray.Create(descriptor));
 
         // Act
         var json = JsonConvert.SerializeObject(expectedResult, TagHelperResolutionResultJsonConverter.Instance);

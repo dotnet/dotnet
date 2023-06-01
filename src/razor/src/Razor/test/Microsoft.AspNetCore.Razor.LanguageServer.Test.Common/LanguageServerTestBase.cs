@@ -11,11 +11,11 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc.Razor.Extensions;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.LanguageServer;
-using Microsoft.AspNetCore.Razor.LanguageServer.Common.Extensions;
 using Microsoft.AspNetCore.Razor.LanguageServer.EndpointContracts;
 using Microsoft.AspNetCore.Razor.LanguageServer.Serialization;
 using Microsoft.AspNetCore.Razor.LanguageServer.Test.Common;
-using Microsoft.AspNetCore.Razor.ProjectEngineHost.Serialization;
+using Microsoft.AspNetCore.Razor.Serialization;
+using Microsoft.AspNetCore.Razor.Serialization.Converters;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
 using Microsoft.CodeAnalysis.Razor;
@@ -149,8 +149,9 @@ public abstract class LanguageServerTestBase : TestBase
         using var reader = new StreamReader(stream);
 
         return JsonDataConvert.DeserializeData(reader,
-            static r => r.ReadArrayOrEmpty(
-                static r => ObjectReaders.ReadTagHelper(r, useCache: false)));
+            static r => r.ReadArray(
+                static r => ObjectReaders.ReadTagHelper(r, useCache: false)))
+            ?? Array.Empty<TagHelperDescriptor>();
     }
 
     [Obsolete("Use " + nameof(LSPProjectSnapshotManagerDispatcher))]

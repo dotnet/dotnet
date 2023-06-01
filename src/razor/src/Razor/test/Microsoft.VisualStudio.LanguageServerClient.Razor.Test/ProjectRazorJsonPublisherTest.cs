@@ -7,7 +7,7 @@ using System;
 using System.Collections.Immutable;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
-using Microsoft.AspNetCore.Razor.ProjectEngineHost.Serialization;
+using Microsoft.AspNetCore.Razor.ProjectSystem;
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
@@ -37,10 +37,10 @@ public class ProjectRazorJsonPublisherTest : LanguageServerTestBase
     {
         // Arrange
         var serializationSuccessful = false;
-        var tagHelpers = new TagHelperDescriptor[] {
+        var tagHelpers = ImmutableArray.Create<TagHelperDescriptor>(
             new DefaultTagHelperDescriptor(FileKinds.Component, "Namespace.FileNameOther", "Assembly", "FileName", "FileName document", "FileName hint",
-                caseSensitive: false,tagMatchingRules: null, attributeDescriptors: null,  allowedChildTags: null, metadata: null, diagnostics: null)
-        };
+                caseSensitive: false,tagMatchingRules: null, attributeDescriptors: null,  allowedChildTags: null, metadata: null, diagnostics: null));
+
         var initialProjectSnapshot = CreateProjectSnapshot(@"C:\path\to\project.csproj", new ProjectWorkspaceState(tagHelpers, CodeAnalysis.CSharp.LanguageVersion.Preview));
         var expectedProjectSnapshot = CreateProjectSnapshot(@"C:\path\to\project.csproj", new ProjectWorkspaceState(ImmutableArray<TagHelperDescriptor>.Empty, CodeAnalysis.CSharp.LanguageVersion.Preview));
         var expectedConfigurationFilePath = @"C:\path\to\obj\bin\Debug\project.razor.json";
@@ -336,10 +336,10 @@ public class ProjectRazorJsonPublisherTest : LanguageServerTestBase
         // Arrange
         var serializationSuccessful = false;
         var firstSnapshot = CreateProjectSnapshot(@"C:\path\to\project.csproj");
-        var tagHelpers = new TagHelperDescriptor[] {
+        var tagHelpers = ImmutableArray.Create<TagHelperDescriptor>(
             new DefaultTagHelperDescriptor(FileKinds.Component, "Namespace.FileNameOther", "Assembly", "FileName", "FileName document", "FileName hint",
-                caseSensitive: false,tagMatchingRules: null, attributeDescriptors: null,  allowedChildTags: null, metadata: null, diagnostics: null)
-        };
+                caseSensitive: false, tagMatchingRules: null, attributeDescriptors: null, allowedChildTags: null, metadata: null, diagnostics: null));
+
         var secondSnapshot = CreateProjectSnapshot(@"C:\path\to\project.csproj", new ProjectWorkspaceState(tagHelpers, CodeAnalysis.CSharp.LanguageVersion.CSharp8), new string[]{
             "FileName.razor"
         });
@@ -434,7 +434,7 @@ public class ProjectRazorJsonPublisherTest : LanguageServerTestBase
         var projectFilePath = @"C:\path\to\project.csproj";
         var hostProject = new HostProject(projectFilePath, RazorConfiguration.Default, "TestRootNamespace");
         _projectConfigurationFilePathStore.Set(hostProject.FilePath, expectedConfigurationFilePath);
-        var projectWorkspaceState = new ProjectWorkspaceState(Array.Empty<TagHelperDescriptor>(), CodeAnalysis.CSharp.LanguageVersion.Default);
+        var projectWorkspaceState = new ProjectWorkspaceState(ImmutableArray<TagHelperDescriptor>.Empty, CodeAnalysis.CSharp.LanguageVersion.Default);
 
         // Act
         await RunOnDispatcherThreadAsync(() =>
@@ -518,7 +518,7 @@ public class ProjectRazorJsonPublisherTest : LanguageServerTestBase
         var projectFilePath = @"C:\path\to\project.csproj";
         var hostProject = new HostProject(projectFilePath, RazorConfiguration.Default, "TestRootNamespace");
         _projectConfigurationFilePathStore.Set(hostProject.FilePath, expectedConfigurationFilePath);
-        var projectWorkspaceState = new ProjectWorkspaceState(Array.Empty<TagHelperDescriptor>(), CodeAnalysis.CSharp.LanguageVersion.Default);
+        var projectWorkspaceState = new ProjectWorkspaceState(ImmutableArray<TagHelperDescriptor>.Empty, CodeAnalysis.CSharp.LanguageVersion.Default);
 
         // Act
         await RunOnDispatcherThreadAsync(() =>

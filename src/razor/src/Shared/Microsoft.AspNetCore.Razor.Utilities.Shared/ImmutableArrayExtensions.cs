@@ -15,4 +15,12 @@ internal static class ImmutableArrayExtensions
     {
         return array.IsDefault ? ImmutableArray<T>.Empty : array;
     }
+
+    public static void SetCapacityIfNeeded<T>(this ImmutableArray<T>.Builder builder, int newCapacity)
+    {
+        if (builder.Capacity < newCapacity)
+        {
+            builder.Capacity = newCapacity;
+        }
+    }
 }

@@ -1,12 +1,11 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
-using System;
-using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
-using Microsoft.AspNetCore.Razor.ProjectEngineHost.Serialization;
+using Microsoft.AspNetCore.Razor.Serialization;
 using Microsoft.AspNetCore.Razor.Telemetry;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Razor;
@@ -18,9 +17,9 @@ public abstract partial class ProjectSnapshotManagerBenchmarkBase
 {
     private class StaticTagHelperResolver : TagHelperResolver
     {
-        private readonly IReadOnlyList<TagHelperDescriptor> _tagHelpers;
+        private readonly ImmutableArray<TagHelperDescriptor> _tagHelpers;
 
-        public StaticTagHelperResolver(IReadOnlyList<TagHelperDescriptor> tagHelpers, ITelemetryReporter telemetryReporter)
+        public StaticTagHelperResolver(ImmutableArray<TagHelperDescriptor> tagHelpers, ITelemetryReporter telemetryReporter)
             : base(telemetryReporter)
         {
             _tagHelpers = tagHelpers;
@@ -30,6 +29,6 @@ public abstract partial class ProjectSnapshotManagerBenchmarkBase
             Project project,
             IProjectSnapshot projectSnapshot,
             CancellationToken cancellationToken = default)
-            => Task.FromResult(new TagHelperResolutionResult(_tagHelpers, Array.Empty<RazorDiagnostic>()));
+            => Task.FromResult(new TagHelperResolutionResult(_tagHelpers));
     }
 }

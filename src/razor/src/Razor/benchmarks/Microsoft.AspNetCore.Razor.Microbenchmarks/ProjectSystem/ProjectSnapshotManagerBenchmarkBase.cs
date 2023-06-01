@@ -2,19 +2,16 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using System;
-using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.IO;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.PooledObjects;
-using Microsoft.AspNetCore.Razor.ProjectEngineHost.Serialization;
 using Microsoft.AspNetCore.Razor.Telemetry;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Host;
 using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Text;
-using Newtonsoft.Json;
 
 namespace Microsoft.AspNetCore.Razor.Microbenchmarks;
 
@@ -63,19 +60,8 @@ public abstract partial class ProjectSnapshotManagerBenchmarkBase
 
         Documents = documents.ToImmutable();
 
-        TagHelperResolver = new StaticTagHelperResolver(GetTagHelperDescriptors(), NoOpTelemetryReporter.Instance);
-    }
-
-    internal IReadOnlyList<TagHelperDescriptor> GetTagHelperDescriptors()
-    {
-        var tagHelperBuffer = Resources.GetResourceBytes("taghelpers.json");
-
-        var serializer = new JsonSerializer();
-        serializer.Converters.Add(TagHelperDescriptorJsonConverter.Instance);
-        using var stream = new MemoryStream(tagHelperBuffer);
-        using var reader = new JsonTextReader(new StreamReader(stream));
-
-        return serializer.Deserialize<IReadOnlyList<TagHelperDescriptor>>(reader) ?? Array.Empty<TagHelperDescriptor>();
+        var tagHelpers = CommonResources.LegacyTagHelpers;
+        TagHelperResolver = new StaticTagHelperResolver(tagHelpers, NoOpTelemetryReporter.Instance);
     }
 
     internal DefaultProjectSnapshotManager CreateProjectSnapshotManager()

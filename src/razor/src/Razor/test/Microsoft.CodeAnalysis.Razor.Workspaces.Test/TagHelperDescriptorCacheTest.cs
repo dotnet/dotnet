@@ -2,11 +2,13 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.IO;
 using System.Linq;
 using Microsoft.AspNetCore.Razor.Language;
-using Microsoft.AspNetCore.Razor.ProjectEngineHost.Serialization;
+using Microsoft.AspNetCore.Razor.Serialization;
 using Microsoft.AspNetCore.Razor.Test.Common;
+using Microsoft.AspNetCore.Razor.Utilities;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -64,7 +66,7 @@ public class TagHelperDescriptorCacheTest : TestBase
         {
             var tagHelpersBatch = ReadTagHelpers();
             tagHelpers.AddRange(tagHelpersBatch);
-            tagHelpersPerBatch = tagHelpersBatch.Count;
+            tagHelpersPerBatch = tagHelpersBatch.Length;
         }
 
         // Act
@@ -85,10 +87,10 @@ public class TagHelperDescriptorCacheTest : TestBase
         var hashes = new HashSet<int>(tagHelpers.Select(TagHelperDescriptorCache.GetTagHelperDescriptorCacheId));
 
         // Assert
-        Assert.Equal(hashes.Count, tagHelpers.Count);
+        Assert.Equal(hashes.Count, tagHelpers.Length);
     }
 
-    private static IReadOnlyList<TagHelperDescriptor> ReadTagHelpers()
+    private static ImmutableArray<TagHelperDescriptor> ReadTagHelpers()
     {
         var bytes = TestResources.GetResourceBytes(TestResources.BlazorServerAppTagHelpersJson);
 
@@ -96,7 +98,7 @@ public class TagHelperDescriptorCacheTest : TestBase
         using var reader = new StreamReader(stream);
 
         return JsonDataConvert.DeserializeData(reader,
-            static r => r.ReadArrayOrEmpty(
+            static r => r.ReadImmutableArray(
                 static r => ObjectReaders.ReadTagHelper(r, useCache: false)));
     }
 }

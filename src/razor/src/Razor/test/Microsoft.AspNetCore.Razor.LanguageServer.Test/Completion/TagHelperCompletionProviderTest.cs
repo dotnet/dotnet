@@ -4,6 +4,7 @@
 #nullable disable
 
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Language.Legacy;
 using Microsoft.AspNetCore.Razor.Language.Syntax;
@@ -390,7 +391,7 @@ public class TagHelperCompletionProviderTest : TagHelperServiceTestBase
                 <test $$/>
                 """,
             isRazorFile: false,
-            tagHelpers: tagHelper.Build());
+            tagHelpers: ImmutableArray.Create(tagHelper.Build()));
 
         // Act
         var completions = service.GetCompletionItems(context);
@@ -433,7 +434,7 @@ public class TagHelperCompletionProviderTest : TagHelperServiceTestBase
                 <test $$/>
                 """,
             isRazorFile: false,
-            tagHelpers: tagHelper.Build());
+            tagHelpers: ImmutableArray.Create(tagHelper.Build()));
 
         // Act
         var completions = service.GetCompletionItems(context);
@@ -760,8 +761,10 @@ public class TagHelperCompletionProviderTest : TagHelperServiceTestBase
         );
     }
 
-    private static RazorCompletionContext CreateRazorCompletionContext(string markup, bool isRazorFile, RazorCompletionOptions options = default, params TagHelperDescriptor[] tagHelpers)
+    private static RazorCompletionContext CreateRazorCompletionContext(string markup, bool isRazorFile, RazorCompletionOptions options = default, ImmutableArray<TagHelperDescriptor> tagHelpers = default)
     {
+        tagHelpers = tagHelpers.NullToEmpty();
+
         TestFileMarkupParser.GetPosition(markup, out var documentContent, out var position);
         var codeDocument = CreateCodeDocument(documentContent, isRazorFile, tagHelpers);
         var syntaxTree = codeDocument.GetSyntaxTree();

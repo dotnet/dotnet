@@ -19,7 +19,7 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer.Formatting;
 
 internal abstract class CSharpFormattingPassBase : FormattingPassBase
 {
-    protected CSharpFormattingPassBase(RazorDocumentMappingService documentMappingService, ClientNotifierServiceBase server)
+    protected CSharpFormattingPassBase(IRazorDocumentMappingService documentMappingService, ClientNotifierServiceBase server)
         : base(documentMappingService, server)
     {
         CSharpFormatter = new CSharpFormatter(documentMappingService, server);
@@ -95,7 +95,7 @@ internal abstract class CSharpFormattingPassBase : FormattingPassBase
                 continue;
             }
 
-            if (DocumentMappingService.TryMapToProjectedDocumentPosition(context.CodeDocument.GetCSharpDocument(), lineStart, out _, out var projectedLineStart))
+            if (DocumentMappingService.TryMapToGeneratedDocumentPosition(context.CodeDocument.GetCSharpDocument(), lineStart, out _, out var projectedLineStart))
             {
                 lineStartMap[lineStart] = projectedLineStart;
                 significantLocations.Add(projectedLineStart);

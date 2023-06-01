@@ -193,7 +193,7 @@ internal static class IServiceCollectionExtensions
         services.AddSingleton<DocumentResolver, DefaultDocumentResolver>();
         services.AddSingleton<RazorProjectService, DefaultRazorProjectService>();
         services.AddSingleton<ProjectSnapshotChangeTrigger, OpenDocumentGenerator>();
-        services.AddSingleton<RazorDocumentMappingService, DefaultRazorDocumentMappingService>();
+        services.AddSingleton<IRazorDocumentMappingService, RazorDocumentMappingService>();
         services.AddSingleton<RazorFileChangeDetectorManager>();
 
         // File change listeners

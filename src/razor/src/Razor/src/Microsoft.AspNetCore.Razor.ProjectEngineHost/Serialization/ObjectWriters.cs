@@ -5,9 +5,10 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using Microsoft.AspNetCore.Razor.Language;
-using Microsoft.CodeAnalysis.Razor.ProjectSystem;
+using Microsoft.AspNetCore.Razor.ProjectSystem;
+using Microsoft.AspNetCore.Razor.Utilities;
 
-namespace Microsoft.AspNetCore.Razor.ProjectEngineHost.Serialization;
+namespace Microsoft.AspNetCore.Razor.Serialization;
 
 internal static class ObjectWriters
 {
@@ -54,6 +55,16 @@ internal static class ObjectWriters
             writer.Write(nameof(value.CharacterIndex), value.CharacterIndex);
             writer.Write(nameof(value.Length), value.Length);
         });
+    }
+
+    public static void Write(JsonDataWriter writer, ProjectSnapshotHandle? value)
+        => writer.WriteObject(value, WriteProperties);
+
+    public static void WriteProperties(JsonDataWriter writer, ProjectSnapshotHandle value)
+    {
+        writer.Write(nameof(value.FilePath), value.FilePath);
+        writer.WriteObjectIfNotNull(nameof(value.Configuration), value.Configuration, WriteProperties);
+        writer.WriteIfNotNull(nameof(value.RootNamespace), value.RootNamespace);
     }
 
     public static void Write(JsonDataWriter writer, DocumentSnapshotHandle? value)
@@ -129,7 +140,7 @@ internal static class ObjectWriters
             {
                 writer.Write(nameof(value.TagName), value.TagName);
                 writer.WriteIfNotNull(nameof(value.ParentTag), value.ParentTag);
-                writer.WriteIfNotDefault(nameof(value.TagStructure), (int)value.TagStructure);
+                writer.WriteIfNotZero(nameof(value.TagStructure), (int)value.TagStructure);
                 writer.WriteArrayIfNotNullOrEmpty(nameof(value.Attributes), value.Attributes, WriteRequiredAttribute);
                 writer.WriteArrayIfNotNullOrEmpty(nameof(value.Diagnostics), value.Diagnostics, Write);
             });
@@ -140,9 +151,9 @@ internal static class ObjectWriters
             writer.WriteObject(value, static (writer, value) =>
             {
                 writer.Write(nameof(value.Name), value.Name);
-                writer.WriteIfNotDefault(nameof(value.NameComparison), (int)value.NameComparison);
+                writer.WriteIfNotZero(nameof(value.NameComparison), (int)value.NameComparison);
                 writer.WriteIfNotNull(nameof(value.Value), value.Value);
-                writer.WriteIfNotDefault(nameof(value.ValueComparison), (int)value.ValueComparison);
+                writer.WriteIfNotZero(nameof(value.ValueComparison), (int)value.ValueComparison);
                 writer.WriteArrayIfNotNullOrEmpty(nameof(value.Diagnostics), value.Diagnostics, Write);
 
                 if (value.Metadata is { Count: > 0 })
@@ -159,8 +170,8 @@ internal static class ObjectWriters
                 writer.Write(nameof(value.Kind), value.Kind);
                 writer.Write(nameof(value.Name), value.Name);
                 writer.Write(nameof(value.TypeName), value.TypeName);
-                writer.WriteIfNotTrue(nameof(value.IsEnum), value.IsEnum);
-                writer.WriteIfNotTrue(nameof(value.IsEditorRequired), value.IsEditorRequired);
+                writer.WriteIfNotFalse(nameof(value.IsEnum), value.IsEnum);
+                writer.WriteIfNotFalse(nameof(value.IsEditorRequired), value.IsEditorRequired);
                 writer.WriteIfNotNull(nameof(value.IndexerNamePrefix), value.IndexerNamePrefix);
                 writer.WriteIfNotNull(nameof(value.IndexerTypeName), value.IndexerTypeName);
                 WriteDocumentationObject(writer, nameof(value.Documentation), value.DocumentationObject);
@@ -176,7 +187,7 @@ internal static class ObjectWriters
             {
                 writer.Write(nameof(value.Name), value.Name);
                 writer.Write(nameof(value.TypeName), value.TypeName);
-                writer.WriteIfNotTrue(nameof(value.IsEnum), value.IsEnum);
+                writer.WriteIfNotFalse(nameof(value.IsEnum), value.IsEnum);
                 WriteDocumentationObject(writer, nameof(value.Documentation), value.DocumentationObject);
                 writer.WriteArrayIfNotNullOrEmpty(nameof(value.Diagnostics), value.Diagnostics, Write);
                 writer.WriteObject(nameof(value.Metadata), value.Metadata, WriteMetadata);

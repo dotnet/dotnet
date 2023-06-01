@@ -1,17 +1,21 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
+using System.Collections.Immutable;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 using Microsoft.AspNetCore.Razor.Language;
+using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.AspNetCore.Razor.ProjectEngineHost;
-using Microsoft.AspNetCore.Razor.ProjectEngineHost.Serialization;
+using Microsoft.AspNetCore.Razor.ProjectSystem;
+using Microsoft.AspNetCore.Razor.Serialization;
+using Microsoft.AspNetCore.Razor.Serialization.Converters;
 using Microsoft.AspNetCore.Razor.Telemetry;
+using Microsoft.AspNetCore.Razor.Utilities;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Razor;
-using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Newtonsoft.Json;
 
 namespace Microsoft.AspNetCore.Razor.ExternalAccess.RoslynWorkspace;
@@ -30,7 +34,7 @@ internal static class RazorProjectJsonSerializer
             Formatting = Formatting.Indented
         };
 
-        s_serializer.Converters.RegisterProjectSerializerConverters();
+        s_serializer.Converters.RegisterRazorConverters();
 
         s_fallbackProjectEngineFactory = new EmptyProjectEngineFactory();
         s_stringComparison = RuntimeInformation.IsOSPlatform(OSPlatform.Linux)
@@ -58,7 +62,7 @@ internal static class RazorProjectJsonSerializer
         var documents = GetDocuments(project, projectPath);
 
         // Not a razor project
-        if (documents.Count == 0)
+        if (documents.Length == 0)
         {
             return;
         }
@@ -162,9 +166,9 @@ internal static class RazorProjectJsonSerializer
         File.Move(tempFileInfo.FullName, publishFilePath);
     }
 
-    private static IReadOnlyList<DocumentSnapshotHandle> GetDocuments(Project project, string projectPath)
+    private static ImmutableArray<DocumentSnapshotHandle> GetDocuments(Project project, string projectPath)
     {
-        var documents = new List<DocumentSnapshotHandle>(project.DocumentIds.Count);
+        using var documents = new PooledArrayBuilder<DocumentSnapshotHandle>();
 
         var normalizedProjectPath = FilePathNormalizer.NormalizeDirectory(projectPath);
 
@@ -180,7 +184,7 @@ internal static class RazorProjectJsonSerializer
             }
         }
 
-        return documents;
+        return documents.DrainToImmutable();
     }
 
     private static string GetTargetPath(string documentFilePath, string normalizedProjectPath)
@@ -189,7 +193,7 @@ internal static class RazorProjectJsonSerializer
         if (targetFilePath.StartsWith(normalizedProjectPath, s_stringComparison))
         {
             // Make relative
-            targetFilePath = documentFilePath.Substring(normalizedProjectPath.Length);
+            targetFilePath = documentFilePath[normalizedProjectPath.Length..];
         }
 
         // Representing all of our host documents with a re-normalized target path to workaround GetRelatedDocument limitations.
