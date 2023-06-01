@@ -7,10 +7,10 @@
       "commitSha": "4b21797cb317811358903666286e8d1873cc2c24"
     },
     {
-      "packageVersion": "8.0.0-preview.6.23281.5",
+      "packageVersion": "8.0.0-preview.6.23301.1",
       "path": "aspnetcore",
       "remoteUri": "https://github.com/dotnet/aspnetcore",
-      "commitSha": "be14dda052a54373e542a9978f172d1900f15486"
+      "commitSha": "6fb64657b6d316e2825353e8795e18374e55d7cf"
     },
     {
       "packageVersion": "0.11.4-alpha.23265.2",
@@ -58,13 +58,13 @@
       "packageVersion": "8.0.100",
       "path": "installer",
       "remoteUri": "https://github.com/dotnet/installer",
-      "commitSha": "8f01b7d3f7cc939d7161cf3a2a0247a7dc24f3ad"
+      "commitSha": "5f79260ef873abf38206cb1c4472ca1e21aa57bd"
     },
     {
-      "packageVersion": "17.7.0-preview-23281-03",
+      "packageVersion": "17.7.0-preview-23281-05",
       "path": "msbuild",
       "remoteUri": "https://github.com/dotnet/msbuild",
-      "commitSha": "4ce2ff1f81107a7ecafc1164ac567518185ac4d5"
+      "commitSha": "310891fbe20859c29ff59506062ecd79e2ab987e"
     },
     {
       "packageVersion": "6.7.0-preview.2.51",
@@ -79,10 +79,10 @@
       "commitSha": "79ee154b46fe180257c31ece91ee54ad8957920f"
     },
     {
-      "packageVersion": "4.7.0-3.23280.5",
+      "packageVersion": "4.7.0-3.23301.1",
       "path": "roslyn",
       "remoteUri": "https://github.com/dotnet/roslyn",
-      "commitSha": "aff92b576780d0752e37e4121e52d0640f0cb891"
+      "commitSha": "0507771409894a1dcc4d0417fc8a5de4d0f0576e"
     },
     {
       "packageVersion": "3.3.5-beta1.23275.7",
@@ -97,10 +97,10 @@
       "commitSha": "bf7fb2ecbf69deb6a73bb8bbca1e56e7beec8d8a"
     },
     {
-      "packageVersion": "8.0.100-preview.6.23301.2",
+      "packageVersion": "8.0.100-preview.6.23301.5",
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "86db944afd9699903751a860de819a01c77b176c"
+      "commitSha": "3615bb7330c9843f36b2799e39472c84d87890ff"
     },
     {
       "packageVersion": "8.0.0-alpha.1.23280.1",
