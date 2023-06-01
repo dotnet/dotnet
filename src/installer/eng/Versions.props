@@ -24,6 +24,9 @@
     <VersionFeature50>17</VersionFeature50>
     <VersionFeature60>16</VersionFeature60>
     <VersionFeature70>5</VersionFeature70>
+    <!-- Should be kept in sync with VersionFeature70. It should match the version of Microsoft.NET.ILLink.Tasks
+         referenced by the same 7.0 SDK that references the 7.0.VersionFeature70 runtime pack. -->
+    <_NET70ILLinkPackVersion>7.0.100-1.23211.1</_NET70ILLinkPackVersion>
   </PropertyGroup>
   <!-- Restore feeds -->
   <PropertyGroup Label="Restore feeds">
