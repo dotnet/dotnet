@@ -13,7 +13,7 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer.DocumentPresentation;
 internal class TextDocumentTextPresentationEndpoint : AbstractTextDocumentPresentationEndpointBase<TextPresentationParams>, ITextDocumentTextPresentationHandler
 {
     public TextDocumentTextPresentationEndpoint(
-        RazorDocumentMappingService razorDocumentMappingService,
+        IRazorDocumentMappingService razorDocumentMappingService,
         ClientNotifierServiceBase languageServer,
         LanguageServerFeatureOptions languageServerFeatureOptions)
         : base(razorDocumentMappingService,

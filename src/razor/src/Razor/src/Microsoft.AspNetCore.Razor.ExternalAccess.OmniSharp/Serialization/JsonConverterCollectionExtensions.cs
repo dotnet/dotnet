@@ -2,7 +2,7 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using Microsoft.AspNetCore.Razor.ExternalAccess.OmniSharp.Project;
-using Microsoft.AspNetCore.Razor.LanguageServer.Common.Extensions;
+using Microsoft.AspNetCore.Razor.Serialization.Converters;
 using Newtonsoft.Json;
 
 namespace Microsoft.AspNetCore.Razor.ExternalAccess.OmniSharp.Serialization;

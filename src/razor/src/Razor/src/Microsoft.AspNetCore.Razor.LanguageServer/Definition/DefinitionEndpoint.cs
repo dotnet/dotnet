@@ -31,11 +31,11 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer.Definition;
 internal sealed class DefinitionEndpoint : AbstractRazorDelegatingEndpoint<TextDocumentPositionParams, DefinitionResult?>, IRegistrationExtension
 {
     private readonly RazorComponentSearchEngine _componentSearchEngine;
-    private readonly RazorDocumentMappingService _documentMappingService;
+    private readonly IRazorDocumentMappingService _documentMappingService;
 
     public DefinitionEndpoint(
         RazorComponentSearchEngine componentSearchEngine,
-        RazorDocumentMappingService documentMappingService,
+        IRazorDocumentMappingService documentMappingService,
         LanguageServerFeatureOptions languageServerFeatureOptions,
         ClientNotifierServiceBase languageServer,
         ILoggerFactory loggerFactory)
@@ -47,6 +47,8 @@ internal sealed class DefinitionEndpoint : AbstractRazorDelegatingEndpoint<TextD
 
     protected override bool PreferCSharpOverHtmlIfPossible => true;
 
+    protected override IDocumentPositionInfoStrategy DocumentPositionInfoStrategy => PreferAttributeNameDocumentPositionInfoStrategy.Instance;
+
     protected override string CustomMessageTarget => RazorLanguageServerCustomMessageTargets.RazorDefinitionEndpointName;
 
     public RegistrationExtensionResult GetRegistration(VSInternalClientCapabilities clientCapabilities)
@@ -57,7 +59,7 @@ internal sealed class DefinitionEndpoint : AbstractRazorDelegatingEndpoint<TextD
         return new RegistrationExtensionResult(ServerCapability, option);
     }
 
-    protected async override Task<DefinitionResult?> TryHandleAsync(TextDocumentPositionParams request, RazorRequestContext requestContext, Projection projection, CancellationToken cancellationToken)
+    protected async override Task<DefinitionResult?> TryHandleAsync(TextDocumentPositionParams request, RazorRequestContext requestContext, DocumentPositionInfo positionInfo, CancellationToken cancellationToken)
     {
         requestContext.Logger.LogInformation("Starting go-to-def endpoint request.");
         var documentContext = requestContext.GetRequiredDocumentContext();
@@ -69,7 +71,7 @@ internal sealed class DefinitionEndpoint : AbstractRazorDelegatingEndpoint<TextD
         }
 
         // If single server support is on, then we ignore attributes, as they are better handled by delegating to Roslyn
-        var (originTagDescriptor, attributeDescriptor) = await GetOriginTagHelperBindingAsync(documentContext, projection.AbsoluteIndex, SingleServerSupport, requestContext.Logger, cancellationToken).ConfigureAwait(false);
+        var (originTagDescriptor, attributeDescriptor) = await GetOriginTagHelperBindingAsync(documentContext, positionInfo.HostDocumentIndex, SingleServerSupport, requestContext.Logger, cancellationToken).ConfigureAwait(false);
         if (originTagDescriptor is null)
         {
             requestContext.Logger.LogInformation("Origin TagHelper descriptor is null.");
@@ -106,16 +108,16 @@ internal sealed class DefinitionEndpoint : AbstractRazorDelegatingEndpoint<TextD
         };
     }
 
-    protected override Task<IDelegatedParams?> CreateDelegatedParamsAsync(TextDocumentPositionParams request, RazorRequestContext requestContext, Projection projection, CancellationToken cancellationToken)
+    protected override Task<IDelegatedParams?> CreateDelegatedParamsAsync(TextDocumentPositionParams request, RazorRequestContext requestContext, DocumentPositionInfo positionInfo, CancellationToken cancellationToken)
     {
         var documentContext = requestContext.GetRequiredDocumentContext();
         return Task.FromResult<IDelegatedParams?>(new DelegatedPositionParams(
                 documentContext.Identifier,
-                projection.Position,
-                projection.LanguageKind));
+                positionInfo.Position,
+                positionInfo.LanguageKind));
     }
 
-    protected async override Task<DefinitionResult?> HandleDelegatedResponseAsync(DefinitionResult? response, TextDocumentPositionParams originalRequest, RazorRequestContext requestContext, Projection projection, CancellationToken cancellationToken)
+    protected async override Task<DefinitionResult?> HandleDelegatedResponseAsync(DefinitionResult? response, TextDocumentPositionParams originalRequest, RazorRequestContext requestContext, DocumentPositionInfo positionInfo, CancellationToken cancellationToken)
     {
         if (response is null)
         {
@@ -124,13 +126,13 @@ internal sealed class DefinitionEndpoint : AbstractRazorDelegatingEndpoint<TextD
 
         if (response.Value.TryGetFirst(out var location))
         {
-            (location.Uri, location.Range) = await _documentMappingService.MapFromProjectedDocumentRangeAsync(location.Uri, location.Range, cancellationToken).ConfigureAwait(false);
+            (location.Uri, location.Range) = await _documentMappingService.MapToHostDocumentUriAndRangeAsync(location.Uri, location.Range, cancellationToken).ConfigureAwait(false);
         }
         else if (response.Value.TryGetSecond(out var locations))
         {
             foreach (var loc in locations)
             {
-                (loc.Uri, loc.Range) = await _documentMappingService.MapFromProjectedDocumentRangeAsync(loc.Uri, loc.Range, cancellationToken).ConfigureAwait(false);
+                (loc.Uri, loc.Range) = await _documentMappingService.MapToHostDocumentUriAndRangeAsync(loc.Uri, loc.Range, cancellationToken).ConfigureAwait(false);
             }
         }
         else if (response.Value.TryGetThird(out var links))
@@ -139,7 +141,7 @@ internal sealed class DefinitionEndpoint : AbstractRazorDelegatingEndpoint<TextD
             {
                 if (link.Target is not null)
                 {
-                    (link.Target, link.Range) = await _documentMappingService.MapFromProjectedDocumentRangeAsync(link.Target, link.Range, cancellationToken).ConfigureAwait(false);
+                    (link.Target, link.Range) = await _documentMappingService.MapToHostDocumentUriAndRangeAsync(link.Target, link.Range, cancellationToken).ConfigureAwait(false);
                 }
             }
         }
@@ -254,7 +256,7 @@ internal sealed class DefinitionEndpoint : AbstractRazorDelegatingEndpoint<TextD
         return new Range { Start = new Position(0, 0), End = new Position(0, 0) };
     }
 
-    internal static async Task<Range?> TryGetPropertyRangeAsync(RazorCodeDocument codeDocument, string propertyName, RazorDocumentMappingService documentMappingService, ILogger logger, CancellationToken cancellationToken)
+    internal static async Task<Range?> TryGetPropertyRangeAsync(RazorCodeDocument codeDocument, string propertyName, IRazorDocumentMappingService documentMappingService, ILogger logger, CancellationToken cancellationToken)
     {
         // Parse the C# file and find the property that matches the name.
         // We don't worry about parameter attributes here for two main reasons:
@@ -292,7 +294,7 @@ internal sealed class DefinitionEndpoint : AbstractRazorDelegatingEndpoint<TextD
             }
 
             var range = property.Identifier.Span.AsRange(csharpText);
-            if (documentMappingService.TryMapFromProjectedDocumentRange(codeDocument.GetCSharpDocument(), range, out var originalRange))
+            if (documentMappingService.TryMapToHostDocumentRange(codeDocument.GetCSharpDocument(), range, out var originalRange))
             {
                 return originalRange;
             }

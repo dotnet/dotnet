@@ -3,8 +3,8 @@
 
 #nullable disable
 
-using Microsoft.AspNetCore.Razor.ProjectEngineHost.Serialization;
 using Microsoft.AspNetCore.Razor.Test.Common;
+using Microsoft.AspNetCore.Razor.Utilities;
 using Xunit;
 using Xunit.Abstractions;
 

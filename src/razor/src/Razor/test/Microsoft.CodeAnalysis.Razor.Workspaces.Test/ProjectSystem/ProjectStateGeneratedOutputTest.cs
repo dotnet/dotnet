@@ -3,11 +3,11 @@
 
 #nullable disable
 
-using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
-using Microsoft.AspNetCore.Razor.ProjectEngineHost.Serialization;
+using Microsoft.AspNetCore.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Host;
 using Microsoft.CodeAnalysis.Text;
@@ -22,8 +22,7 @@ public class ProjectStateGeneratedOutputTest : WorkspaceTestBase
     private readonly HostProject _hostProject;
     private readonly HostProject _hostProjectWithConfigurationChange;
     private readonly TestTagHelperResolver _tagHelperResolver;
-    private readonly List<TagHelperDescriptor> _someTagHelpers;
-    private readonly Func<Task<TextAndVersion>> _textLoader;
+    private readonly ImmutableArray<TagHelperDescriptor> _someTagHelpers;
     private readonly SourceText _text;
 
     public ProjectStateGeneratedOutputTest(ITestOutputHelper testOutput)
@@ -34,15 +33,12 @@ public class ProjectStateGeneratedOutputTest : WorkspaceTestBase
 
         _tagHelperResolver = new TestTagHelperResolver();
 
-        _someTagHelpers = new List<TagHelperDescriptor>
-        {
-            TagHelperDescriptorBuilder.Create("Test1", "TestAssembly").Build()
-        };
+        _someTagHelpers = ImmutableArray.Create(
+            TagHelperDescriptorBuilder.Create("Test1", "TestAssembly").Build());
 
         _hostDocument = TestProjectData.SomeProjectFile1;
 
         _text = SourceText.From("Hello, world!");
-        _textLoader = () => Task.FromResult(TextAndVersion.Create(_text, VersionStamp.Create()));
     }
 
     protected override void ConfigureWorkspaceServices(List<IWorkspaceService> services)
@@ -169,7 +165,7 @@ public class ProjectStateGeneratedOutputTest : WorkspaceTestBase
             .WithProjectWorkspaceState(ProjectWorkspaceState.Default);
 
         var (originalOutput, originalInputVersion) = await GetOutputAsync(original, _hostDocument);
-        var changed = new ProjectWorkspaceState(Array.Empty<TagHelperDescriptor>(), default);
+        var changed = new ProjectWorkspaceState(ImmutableArray<TagHelperDescriptor>.Empty, csharpLanguageVersion: default);
 
         // Act
         var state = original.WithProjectWorkspaceState(changed);

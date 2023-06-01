@@ -42,7 +42,7 @@ public abstract class SingleServerDelegatingEndpointTestBase : LanguageServerTes
     internal DocumentContextFactory DocumentContextFactory { get; private set; }
     internal LanguageServerFeatureOptions LanguageServerFeatureOptions { get; private set; }
     internal TestLanguageServer LanguageServer { get; private set; }
-    internal RazorDocumentMappingService DocumentMappingService { get; private set; }
+    internal IRazorDocumentMappingService DocumentMappingService { get; private set; }
 
     protected SingleServerDelegatingEndpointTestBase(ITestOutputHelper testOutput)
         : base(testOutput)
@@ -92,7 +92,7 @@ public abstract class SingleServerDelegatingEndpointTestBase : LanguageServerTes
             options.HtmlVirtualDocumentSuffix == realLanguageServerFeatureOptions.HtmlVirtualDocumentSuffix,
             MockBehavior.Strict);
         LanguageServer = new TestLanguageServer(csharpServer, csharpDocumentUri, DisposalToken);
-        DocumentMappingService = new DefaultRazorDocumentMappingService(LanguageServerFeatureOptions, DocumentContextFactory, LoggerFactory);
+        DocumentMappingService = new RazorDocumentMappingService(LanguageServerFeatureOptions, DocumentContextFactory, LoggerFactory);
     }
 
     internal class TestLanguageServer : ClientNotifierServiceBase

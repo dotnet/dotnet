@@ -26,7 +26,7 @@ internal class TextDocumentUriPresentationEndpoint : AbstractTextDocumentPresent
     private readonly ILogger _logger;
 
     public TextDocumentUriPresentationEndpoint(
-        RazorDocumentMappingService razorDocumentMappingService,
+        IRazorDocumentMappingService razorDocumentMappingService,
         RazorComponentSearchEngine razorComponentSearchEngine,
         ClientNotifierServiceBase languageServer,
         LanguageServerFeatureOptions languageServerFeatureOptions,

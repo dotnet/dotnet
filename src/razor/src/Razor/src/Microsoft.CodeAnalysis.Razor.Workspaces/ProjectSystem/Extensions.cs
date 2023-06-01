@@ -2,6 +2,7 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using Microsoft.AspNetCore.Razor;
+using Microsoft.AspNetCore.Razor.Serialization;
 
 namespace Microsoft.CodeAnalysis.Razor.ProjectSystem;
 

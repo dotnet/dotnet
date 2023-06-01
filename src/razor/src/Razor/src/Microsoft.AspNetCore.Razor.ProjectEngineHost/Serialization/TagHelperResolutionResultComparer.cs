@@ -7,7 +7,7 @@ using System.Linq;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.Extensions.Internal;
 
-namespace Microsoft.AspNetCore.Razor.ProjectEngineHost.Serialization;
+namespace Microsoft.AspNetCore.Razor.Serialization;
 
 internal sealed class TagHelperResolutionResultComparer : IEqualityComparer<TagHelperResolutionResult?>
 {
@@ -24,8 +24,7 @@ internal sealed class TagHelperResolutionResultComparer : IEqualityComparer<TagH
             return false;
         }
 
-        return x.Descriptors.SequenceEqual(y.Descriptors, TagHelperDescriptorComparer.Default) &&
-               x.Diagnostics.SequenceEqual(y.Diagnostics);
+        return x.Descriptors.SequenceEqual(y.Descriptors, TagHelperDescriptorComparer.Default);
     }
 
     public int GetHashCode(TagHelperResolutionResult? obj)
@@ -40,11 +39,6 @@ internal sealed class TagHelperResolutionResultComparer : IEqualityComparer<TagH
         foreach (var descriptor in obj.Descriptors)
         {
             hash.Add(descriptor);
-        }
-
-        for (var i = 0; i < obj.Diagnostics.Count; i++)
-        {
-            hash.Add(obj.Diagnostics[i]);
         }
 
         return hash.CombinedHash;

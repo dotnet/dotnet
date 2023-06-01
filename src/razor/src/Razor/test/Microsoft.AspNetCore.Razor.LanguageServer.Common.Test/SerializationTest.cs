@@ -1,13 +1,14 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
-using System;
+using System.Collections.Immutable;
 using System.Linq;
 using Microsoft.AspNetCore.Razor.Language;
-using Microsoft.AspNetCore.Razor.ProjectEngineHost.Serialization;
+using Microsoft.AspNetCore.Razor.ProjectSystem;
+using Microsoft.AspNetCore.Razor.Serialization;
+using Microsoft.AspNetCore.Razor.Serialization.Converters;
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.CodeAnalysis.CSharp;
-using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Xunit;
@@ -26,11 +27,9 @@ public class SerializationTest : TestBase
             new SerializedRazorExtension("TestExtension"),
         };
         Configuration = RazorConfiguration.Create(languageVersion, "Custom", extensions);
-        ProjectWorkspaceState = new ProjectWorkspaceState(new[]
-        {
-            TagHelperDescriptorBuilder.Create("Test", "TestAssembly").Build(),
-        },
-        LanguageVersion.LatestMajor);
+        ProjectWorkspaceState = new ProjectWorkspaceState(ImmutableArray.Create(
+            TagHelperDescriptorBuilder.Create("Test", "TestAssembly").Build()),
+            csharpLanguageVersion: LanguageVersion.LatestMajor);
     }
 
     private RazorConfiguration Configuration { get; }
@@ -46,7 +45,7 @@ public class SerializationTest : TestBase
             Configuration,
             rootNamespace: "TestProject",
             ProjectWorkspaceState,
-            Array.Empty<DocumentSnapshotHandle>());
+            ImmutableArray<DocumentSnapshotHandle>.Empty);
 
         var serializedHandle = JsonConvert.SerializeObject(projectRazorJson, ProjectRazorJsonJsonConverter.Instance);
         Assert.NotNull(serializedHandle);
@@ -73,7 +72,7 @@ public class SerializationTest : TestBase
             Configuration,
             rootNamespace: "TestProject",
             ProjectWorkspaceState,
-            Array.Empty<DocumentSnapshotHandle>());
+            ImmutableArray<DocumentSnapshotHandle>.Empty);
 
         var serializedHandle = JsonConvert.SerializeObject(projectRazorJson, ProjectRazorJsonJsonConverter.Instance);
         Assert.NotNull(serializedHandle);
@@ -103,7 +102,7 @@ public class SerializationTest : TestBase
             Configuration,
             rootNamespace: "TestProject",
             ProjectWorkspaceState,
-            new[] { legacyDocument, componentDocument });
+            ImmutableArray.Create(legacyDocument, componentDocument));
 
         var serializedHandle = JsonConvert.SerializeObject(projectRazorJson, ProjectRazorJsonJsonConverter.Instance);
         Assert.NotNull(serializedHandle);

@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 using System.Threading;
 using Microsoft.AspNetCore.Razor.Language;
@@ -24,7 +25,7 @@ public abstract class TagHelperServiceTestBase : LanguageServerTestBase
     protected const string CSHtmlFile = "test.cshtml";
     protected const string RazorFile = "test.razor";
 
-    protected TagHelperDescriptor[] DefaultTagHelpers { get; }
+    protected ImmutableArray<TagHelperDescriptor> DefaultTagHelpers { get; }
     protected RazorTagHelperCompletionService RazorTagHelperCompletionService { get; }
     internal HtmlFactsService HtmlFactsService { get; }
     protected TagHelperFactsService TagHelperFactsService { get; }
@@ -182,20 +183,23 @@ public abstract class TagHelperServiceTestBase : LanguageServerTestBase
             attribute.TypeName = typeof(bool).FullName;
         });
 
-        DefaultTagHelpers = new[]
-        {
+        DefaultTagHelpers = ImmutableArray.Create(
             builder1.Build(),
             builder1WithRequiredParent.Build(),
             builder2.Build(),
             builder3.Build(),
             directiveAttribute1.Build(),
             directiveAttribute2.Build(),
-            htmlTagMutator.Build()
-        };
+            htmlTagMutator.Build());
 
         HtmlFactsService = new DefaultHtmlFactsService();
         TagHelperFactsService = new DefaultTagHelperFactsService();
         RazorTagHelperCompletionService = new DefaultRazorTagHelperCompletionService(TagHelperFactsService);
+    }
+
+    internal static RazorCodeDocument CreateCodeDocument(string text, bool isRazorFile, ImmutableArray<TagHelperDescriptor> tagHelpers)
+    {
+        return CreateCodeDocument(text, isRazorFile ? RazorFile : CSHtmlFile, tagHelpers);
     }
 
     internal static RazorCodeDocument CreateCodeDocument(string text, bool isRazorFile, params TagHelperDescriptor[] tagHelpers)
@@ -215,7 +219,7 @@ public abstract class TagHelperServiceTestBase : LanguageServerTestBase
     internal static (Queue<VersionedDocumentContext>, Queue<TextDocumentIdentifier>) CreateDocumentContext(
         DocumentContentVersion[] textArray,
         bool[] isRazorArray,
-        TagHelperDescriptor[] tagHelpers,
+        ImmutableArray<TagHelperDescriptor> tagHelpers,
         VersionStamp projectVersion = default,
         int? documentVersion = null)
     {
@@ -249,15 +253,23 @@ public abstract class TagHelperServiceTestBase : LanguageServerTestBase
         return (documentContexts, identifiers);
     }
 
-    internal static RazorCodeDocument CreateCodeDocument(string text, string filePath, params TagHelperDescriptor[] tagHelpers)
+    internal static RazorCodeDocument CreateCodeDocument(string text, string filePath, ImmutableArray<TagHelperDescriptor> tagHelpers)
     {
-        tagHelpers ??= Array.Empty<TagHelperDescriptor>();
+        tagHelpers = tagHelpers.NullToEmpty();
+
         var sourceDocument = TestRazorSourceDocument.Create(text, filePath: filePath, relativePath: filePath);
         var projectEngine = RazorProjectEngine.Create(builder => { });
         var fileKind = filePath.EndsWith(".razor", StringComparison.Ordinal) ? FileKinds.Component : FileKinds.Legacy;
         var codeDocument = projectEngine.ProcessDesignTime(sourceDocument, fileKind, Array.Empty<RazorSourceDocument>(), tagHelpers);
 
         return codeDocument;
+    }
+
+    internal static RazorCodeDocument CreateCodeDocument(string text, string filePath, params TagHelperDescriptor[] tagHelpers)
+    {
+        tagHelpers ??= Array.Empty<TagHelperDescriptor>();
+
+        return CreateCodeDocument(text, filePath, tagHelpers.ToImmutableArray());
     }
 
     internal record DocumentContentVersion(string Content, int Version = 0);

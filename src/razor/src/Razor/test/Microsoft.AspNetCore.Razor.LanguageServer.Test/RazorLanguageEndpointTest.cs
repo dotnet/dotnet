@@ -7,7 +7,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Language.CodeGeneration;
-using Microsoft.AspNetCore.Razor.LanguageServer.Common.Extensions;
 using Microsoft.AspNetCore.Razor.LanguageServer.EndpointContracts;
 using Microsoft.AspNetCore.Razor.LanguageServer.Extensions;
 using Microsoft.AspNetCore.Razor.LanguageServer.Protocol;
@@ -21,12 +20,12 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer;
 
 public class RazorLanguageEndpointTest : LanguageServerTestBase
 {
-    private readonly RazorDocumentMappingService _mappingService;
+    private readonly IRazorDocumentMappingService _mappingService;
 
     public RazorLanguageEndpointTest(ITestOutputHelper testOutput)
         : base(testOutput)
     {
-        _mappingService = new DefaultRazorDocumentMappingService(
+        _mappingService = new RazorDocumentMappingService(
             TestLanguageServerFeatureOptions.Instance,
             new TestDocumentContextFactory(),
             LoggerFactory);

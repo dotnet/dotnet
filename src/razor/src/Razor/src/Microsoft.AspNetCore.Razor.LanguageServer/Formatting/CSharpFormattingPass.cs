@@ -20,7 +20,7 @@ internal class CSharpFormattingPass : CSharpFormattingPassBase
     private readonly ILogger _logger;
 
     public CSharpFormattingPass(
-        RazorDocumentMappingService documentMappingService,
+        IRazorDocumentMappingService documentMappingService,
         ClientNotifierServiceBase server,
         ILoggerFactory loggerFactory)
         : base(documentMappingService, server)

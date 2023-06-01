@@ -18,7 +18,7 @@ internal class FormattingContentValidationPass : FormattingPassBase
     private readonly ILogger _logger;
 
     public FormattingContentValidationPass(
-        RazorDocumentMappingService documentMappingService,
+        IRazorDocumentMappingService documentMappingService,
         ClientNotifierServiceBase server,
         ILoggerFactory loggerFactory)
         : base(documentMappingService, server)

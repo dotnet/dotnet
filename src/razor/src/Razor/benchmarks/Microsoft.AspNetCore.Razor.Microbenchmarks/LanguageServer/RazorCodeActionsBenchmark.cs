@@ -47,7 +47,7 @@ public class RazorCodeActionsBenchmark : RazorLanguageServerBenchmarkBase
         var languageServer = RazorLanguageServer.GetInnerLanguageServerForTesting();
 
         CodeActionEndpoint = new CodeActionEndpoint(
-            documentMappingService: languageServer.GetRequiredService<RazorDocumentMappingService>(),
+            documentMappingService: languageServer.GetRequiredService<IRazorDocumentMappingService>(),
             razorCodeActionProviders: languageServer.GetRequiredService<IEnumerable<IRazorCodeActionProvider>>(),
             csharpCodeActionProviders: languageServer.GetRequiredService<IEnumerable<ICSharpCodeActionProvider>>(),
             htmlCodeActionProviders: languageServer.GetRequiredService<IEnumerable<IHtmlCodeActionProvider>>(),

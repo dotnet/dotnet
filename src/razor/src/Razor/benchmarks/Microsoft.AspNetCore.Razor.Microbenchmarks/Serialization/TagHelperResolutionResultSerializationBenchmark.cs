@@ -1,13 +1,13 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
-using System;
-using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.IO;
 using System.Text;
 using BenchmarkDotNet.Attributes;
 using Microsoft.AspNetCore.Razor.Language;
-using Microsoft.AspNetCore.Razor.ProjectEngineHost.Serialization;
+using Microsoft.AspNetCore.Razor.Serialization;
+using Microsoft.AspNetCore.Razor.Serialization.Converters;
 using Newtonsoft.Json;
 
 namespace Microsoft.AspNetCore.Razor.Microbenchmarks.Serialization;
@@ -17,7 +17,7 @@ public class TagHelperResolutionResultSerializationBenchmark
     [ParamsAllValues]
     public ResourceSet ResourceSet { get; set; }
 
-    private IReadOnlyList<TagHelperDescriptor> TagHelpers
+    private ImmutableArray<TagHelperDescriptor> TagHelpers
         => ResourceSet switch
         {
             ResourceSet.Telerik => CommonResources.TelerikTagHelpers,
@@ -40,7 +40,7 @@ public class TagHelperResolutionResultSerializationBenchmark
     [IterationSetup]
     public void IterationSetup()
     {
-        _tagHelperResolutionResult = new TagHelperResolutionResult(TagHelpers, Array.Empty<RazorDiagnostic>());
+        _tagHelperResolutionResult = new TagHelperResolutionResult(TagHelpers);
     }
 
     [Benchmark(Description = "RoundTrip TagHelperDescriptorResult")]
@@ -60,7 +60,7 @@ public class TagHelperResolutionResultSerializationBenchmark
         var result = Serializer.Deserialize<TagHelperResolutionResult>(jsonReader);
 
         if (result is null ||
-            result.Descriptors.Count != TagHelpers.Count)
+            result.Descriptors.Length != TagHelpers.Length)
         {
             throw new InvalidDataException();
         }

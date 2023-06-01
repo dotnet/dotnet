@@ -20,7 +20,7 @@ internal class FormattingDiagnosticValidationPass : FormattingPassBase
     private readonly ILogger _logger;
 
     public FormattingDiagnosticValidationPass(
-        RazorDocumentMappingService documentMappingService,
+        IRazorDocumentMappingService documentMappingService,
         ClientNotifierServiceBase server,
         ILoggerFactory loggerFactory)
         : base(documentMappingService, server)

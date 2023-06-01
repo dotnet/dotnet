@@ -4,10 +4,11 @@
 #nullable disable
 
 using System;
+using System.Collections.Immutable;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
-using Microsoft.AspNetCore.Razor.ProjectEngineHost.Serialization;
+using Microsoft.AspNetCore.Razor.ProjectSystem;
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Razor;
@@ -132,7 +133,8 @@ public class OpenDocumentGeneratorTest : LanguageServerTestBase
             queue.Initialize(projectManager);
 
             // Act
-            projectManager.ProjectWorkspaceStateChanged(_hostProject1.FilePath, new ProjectWorkspaceState(Array.Empty<TagHelperDescriptor>(), LanguageVersion.CSharp8));
+            projectManager.ProjectWorkspaceStateChanged(_hostProject1.FilePath,
+                new ProjectWorkspaceState(ImmutableArray<TagHelperDescriptor>.Empty, LanguageVersion.CSharp8));
         }, DisposalToken);
 
         // Assert
@@ -158,7 +160,8 @@ public class OpenDocumentGeneratorTest : LanguageServerTestBase
             queue.Initialize(projectManager);
 
             // Act
-            projectManager.ProjectWorkspaceStateChanged(_hostProject1.FilePath, new ProjectWorkspaceState(Array.Empty<TagHelperDescriptor>(), LanguageVersion.CSharp8));
+            projectManager.ProjectWorkspaceStateChanged(_hostProject1.FilePath,
+                new ProjectWorkspaceState(ImmutableArray<TagHelperDescriptor>.Empty, LanguageVersion.CSharp8));
         }, DisposalToken);
 
         // Assert

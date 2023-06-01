@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
@@ -107,7 +108,7 @@ internal class DefaultVisualStudioDocumentTracker : VisualStudioDocumentTracker
 
     public override ClientSpaceSettings EditorSettings => _workspaceEditorSettings.Current.ClientSpaceSettings;
 
-    public override IReadOnlyList<TagHelperDescriptor>? TagHelpers => ProjectSnapshot?.TagHelpers;
+    public override ImmutableArray<TagHelperDescriptor> TagHelpers => ProjectSnapshot?.TagHelpers ?? ImmutableArray<TagHelperDescriptor>.Empty;
 
     public override bool IsSupportedProject => _isSupportedProject;
 
@@ -250,7 +251,7 @@ internal class DefaultVisualStudioDocumentTracker : VisualStudioDocumentTracker
                     _ = OnContextChangedAsync(ContextChangeKind.ProjectChanged);
 
                     if (e.Older is null ||
-                        !Enumerable.SequenceEqual(e.Older.TagHelpers, e.Newer!.TagHelpers))
+                        !e.Older.TagHelpers.SequenceEqual(e.Newer!.TagHelpers))
                     {
                         _ = OnContextChangedAsync(ContextChangeKind.TagHelpersChanged);
                     }

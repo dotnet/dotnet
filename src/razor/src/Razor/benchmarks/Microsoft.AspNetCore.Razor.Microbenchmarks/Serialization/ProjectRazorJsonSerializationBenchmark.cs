@@ -4,7 +4,8 @@
 using System.IO;
 using System.Text;
 using BenchmarkDotNet.Attributes;
-using Microsoft.AspNetCore.Razor.ProjectEngineHost.Serialization;
+using Microsoft.AspNetCore.Razor.ProjectSystem;
+using Microsoft.AspNetCore.Razor.Serialization;
 
 namespace Microsoft.AspNetCore.Razor.Microbenchmarks.Serialization;
 
@@ -56,7 +57,7 @@ public class ProjectRazorJsonSerializationBenchmark
         var projectRazorJson = DeserializeProjectRazorJson(reader);
 
         if (projectRazorJson.ProjectWorkspaceState is null ||
-            projectRazorJson.ProjectWorkspaceState.TagHelpers.Count != ProjectRazorJson.ProjectWorkspaceState?.TagHelpers.Count)
+            projectRazorJson.ProjectWorkspaceState.TagHelpers.Length != ProjectRazorJson.ProjectWorkspaceState?.TagHelpers.Length)
         {
             throw new InvalidDataException();
         }
@@ -78,7 +79,7 @@ public class ProjectRazorJsonSerializationBenchmark
         var projectRazorJson = DeserializeProjectRazorJson(reader);
 
         if (projectRazorJson.ProjectWorkspaceState is null ||
-            projectRazorJson.ProjectWorkspaceState.TagHelpers.Count != ProjectRazorJson.ProjectWorkspaceState?.TagHelpers.Count)
+            projectRazorJson.ProjectWorkspaceState.TagHelpers.Length != ProjectRazorJson.ProjectWorkspaceState?.TagHelpers.Length)
         {
             throw new InvalidDataException();
         }

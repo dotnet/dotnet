@@ -32,7 +32,7 @@ internal class OnAutoInsertEndpoint : AbstractRazorDelegatingEndpoint<VSInternal
 
     public OnAutoInsertEndpoint(
         LanguageServerFeatureOptions languageServerFeatureOptions,
-        RazorDocumentMappingService documentMappingService,
+        IRazorDocumentMappingService documentMappingService,
         ClientNotifierServiceBase languageServer,
         IEnumerable<IOnAutoInsertProvider> onAutoInsertProvider,
         IOptionsMonitor<RazorLSPOptions> optionsMonitor,
@@ -65,7 +65,7 @@ internal class OnAutoInsertEndpoint : AbstractRazorDelegatingEndpoint<VSInternal
         return new RegistrationExtensionResult(AssociatedServerCapability, registrationOptions);
     }
 
-    protected override async Task<VSInternalDocumentOnAutoInsertResponseItem?> TryHandleAsync(VSInternalDocumentOnAutoInsertParams request, RazorRequestContext requestContext, Projection projection, CancellationToken cancellationToken)
+    protected override async Task<VSInternalDocumentOnAutoInsertResponseItem?> TryHandleAsync(VSInternalDocumentOnAutoInsertParams request, RazorRequestContext requestContext, DocumentPositionInfo positionInfo, CancellationToken cancellationToken)
     {
         var documentContext = requestContext.GetRequiredDocumentContext();
         var codeDocument = await documentContext.GetCodeDocumentAsync(cancellationToken).ConfigureAwait(false);
@@ -118,16 +118,16 @@ internal class OnAutoInsertEndpoint : AbstractRazorDelegatingEndpoint<VSInternal
         return null;
     }
 
-    protected override Task<IDelegatedParams?> CreateDelegatedParamsAsync(VSInternalDocumentOnAutoInsertParams request, RazorRequestContext requestContext, Projection projection, CancellationToken cancellationToken)
+    protected override Task<IDelegatedParams?> CreateDelegatedParamsAsync(VSInternalDocumentOnAutoInsertParams request, RazorRequestContext requestContext, DocumentPositionInfo positionInfo, CancellationToken cancellationToken)
     {
         var documentContext = requestContext.GetRequiredDocumentContext();
-        if (projection.LanguageKind == RazorLanguageKind.Html &&
+        if (positionInfo.LanguageKind == RazorLanguageKind.Html &&
            !s_htmlAllowedTriggerCharacters.Contains(request.Character))
         {
             Logger.LogInformation("Inapplicable HTML trigger char {request.Character}.", request.Character);
             return Task.FromResult<IDelegatedParams?>(null);
         }
-        else if (projection.LanguageKind == RazorLanguageKind.CSharp)
+        else if (positionInfo.LanguageKind == RazorLanguageKind.CSharp)
         {
             if (!s_cSharpAllowedTriggerCharacters.Contains(request.Character))
             {
@@ -155,8 +155,8 @@ internal class OnAutoInsertEndpoint : AbstractRazorDelegatingEndpoint<VSInternal
 
         return Task.FromResult<IDelegatedParams?>(new DelegatedOnAutoInsertParams(
             documentContext.Identifier,
-            projection.Position,
-            projection.LanguageKind,
+            positionInfo.Position,
+            positionInfo.LanguageKind,
             request.Character,
             request.Options));
     }
@@ -165,7 +165,7 @@ internal class OnAutoInsertEndpoint : AbstractRazorDelegatingEndpoint<VSInternal
         VSInternalDocumentOnAutoInsertResponseItem? delegatedResponse,
         VSInternalDocumentOnAutoInsertParams originalRequest,
         RazorRequestContext requestContext,
-        Projection projection,
+        DocumentPositionInfo positionInfo,
         CancellationToken cancellationToken)
     {
         if (delegatedResponse is null)
@@ -176,7 +176,7 @@ internal class OnAutoInsertEndpoint : AbstractRazorDelegatingEndpoint<VSInternal
         var documentContext = requestContext.GetRequiredDocumentContext();
 
         // For Html we just return the edit as is
-        if (projection.LanguageKind == RazorLanguageKind.Html)
+        if (positionInfo.LanguageKind == RazorLanguageKind.Html)
         {
             return delegatedResponse;
         }
@@ -188,11 +188,11 @@ internal class OnAutoInsertEndpoint : AbstractRazorDelegatingEndpoint<VSInternal
         TextEdit[] mappedEdits;
         if (delegatedResponse.TextEditFormat == InsertTextFormat.Snippet)
         {
-            mappedEdits = await razorFormattingService.FormatSnippetAsync(documentContext, projection.LanguageKind, edits, originalRequest.Options, cancellationToken).ConfigureAwait(false);
+            mappedEdits = await razorFormattingService.FormatSnippetAsync(documentContext, positionInfo.LanguageKind, edits, originalRequest.Options, cancellationToken).ConfigureAwait(false);
         }
         else
         {
-            mappedEdits = await razorFormattingService.FormatOnTypeAsync(documentContext, projection.LanguageKind, edits, originalRequest.Options, hostDocumentIndex: 0, triggerCharacter: '\0', cancellationToken).ConfigureAwait(false);
+            mappedEdits = await razorFormattingService.FormatOnTypeAsync(documentContext, positionInfo.LanguageKind, edits, originalRequest.Options, hostDocumentIndex: 0, triggerCharacter: '\0', cancellationToken).ConfigureAwait(false);
         }
 
         if (mappedEdits.Length != 1)

@@ -18,10 +18,10 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer.Debugging;
 [LanguageServerEndpoint(VSInternalMethods.TextDocumentValidateBreakableRangeName)]
 internal class ValidateBreakpointRangeEndpoint : AbstractRazorDelegatingEndpoint<ValidateBreakpointRangeParams, Range?>, IRegistrationExtension
 {
-    private readonly RazorDocumentMappingService _documentMappingService;
+    private readonly IRazorDocumentMappingService _documentMappingService;
 
     public ValidateBreakpointRangeEndpoint(
-        RazorDocumentMappingService documentMappingService,
+        IRazorDocumentMappingService documentMappingService,
         LanguageServerFeatureOptions languageServerFeatureOptions,
         ClientNotifierServiceBase languageServer,
         ILoggerFactory loggerFactory)
@@ -41,16 +41,16 @@ internal class ValidateBreakpointRangeEndpoint : AbstractRazorDelegatingEndpoint
         return new RegistrationExtensionResult(ServerCapability, true);
     }
 
-    protected override Task<Range?> TryHandleAsync(ValidateBreakpointRangeParams request, RazorRequestContext requestContext, Projection projection, CancellationToken cancellationToken)
+    protected override Task<Range?> TryHandleAsync(ValidateBreakpointRangeParams request, RazorRequestContext requestContext, DocumentPositionInfo positionInfo, CancellationToken cancellationToken)
     {
         // no such thing as Razor breakpoints (yet?!)
         return Task.FromResult<Range?>(null);
     }
 
-    protected async override Task<IDelegatedParams?> CreateDelegatedParamsAsync(ValidateBreakpointRangeParams request, RazorRequestContext requestContext, Projection projection, CancellationToken cancellationToken)
+    protected async override Task<IDelegatedParams?> CreateDelegatedParamsAsync(ValidateBreakpointRangeParams request, RazorRequestContext requestContext, DocumentPositionInfo positionInfo, CancellationToken cancellationToken)
     {
         // only C# supports breakpoints
-        if (projection.LanguageKind != RazorLanguageKind.CSharp)
+        if (positionInfo.LanguageKind != RazorLanguageKind.CSharp)
         {
             return null;
         }
@@ -59,7 +59,7 @@ internal class ValidateBreakpointRangeEndpoint : AbstractRazorDelegatingEndpoint
         var codeDocument = await documentContext.GetCodeDocumentAsync(cancellationToken).ConfigureAwait(false);
 
         // We've already mapped the position, but sadly we need a range for breakpoints, so we have to do it again
-        if (!_documentMappingService.TryMapToProjectedDocumentRange(codeDocument.GetCSharpDocument(), request.Range, out var projectedRange))
+        if (!_documentMappingService.TryMapToGeneratedDocumentRange(codeDocument.GetCSharpDocument(), request.Range, out var projectedRange))
         {
             return null;
         }
@@ -67,10 +67,10 @@ internal class ValidateBreakpointRangeEndpoint : AbstractRazorDelegatingEndpoint
         return new DelegatedValidateBreakpointRangeParams(
             documentContext.Identifier,
             projectedRange,
-            projection.LanguageKind);
+            positionInfo.LanguageKind);
     }
 
-    protected async override Task<Range?> HandleDelegatedResponseAsync(Range? delegatedResponse, ValidateBreakpointRangeParams originalRequest, RazorRequestContext requestContext, Projection projection, CancellationToken cancellationToken)
+    protected async override Task<Range?> HandleDelegatedResponseAsync(Range? delegatedResponse, ValidateBreakpointRangeParams originalRequest, RazorRequestContext requestContext, DocumentPositionInfo positionInfo, CancellationToken cancellationToken)
     {
         if (delegatedResponse is null)
         {
@@ -80,7 +80,7 @@ internal class ValidateBreakpointRangeEndpoint : AbstractRazorDelegatingEndpoint
         var documentContext = requestContext.GetRequiredDocumentContext();
         var codeDocument = await documentContext.GetCodeDocumentAsync(cancellationToken).ConfigureAwait(false);
 
-        if (_documentMappingService.TryMapFromProjectedDocumentRange(codeDocument.GetCSharpDocument(), delegatedResponse, out var projectedRange))
+        if (_documentMappingService.TryMapToHostDocumentRange(codeDocument.GetCSharpDocument(), delegatedResponse, out var projectedRange))
         {
             return projectedRange;
         }

@@ -21,7 +21,7 @@ internal class RazorFormattingPass : FormattingPassBase
     private readonly ILogger _logger;
 
     public RazorFormattingPass(
-        RazorDocumentMappingService documentMappingService,
+        IRazorDocumentMappingService documentMappingService,
         ClientNotifierServiceBase server,
         ILoggerFactory loggerFactory)
         : base(documentMappingService, server)

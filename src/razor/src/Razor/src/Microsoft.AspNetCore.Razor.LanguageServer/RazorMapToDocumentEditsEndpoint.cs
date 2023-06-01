@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
-using Microsoft.AspNetCore.Razor.LanguageServer.Common.Extensions;
 using Microsoft.AspNetCore.Razor.LanguageServer.EndpointContracts;
 using Microsoft.AspNetCore.Razor.LanguageServer.Formatting;
 using Microsoft.AspNetCore.Razor.LanguageServer.Protocol;
@@ -87,12 +86,12 @@ internal class RazorMapToDocumentEditsEndpoint : IRazorMapToDocumentEditsHandler
             };
         }
 
-        var documentMappingService = requestContext.GetRequiredService<RazorDocumentMappingService>();
+        var documentMappingService = requestContext.GetRequiredService<IRazorDocumentMappingService>();
         var edits = new List<TextEdit>();
         for (var i = 0; i < request.ProjectedTextEdits.Length; i++)
         {
             var projectedRange = request.ProjectedTextEdits[i].Range;
-            if (!documentMappingService.TryMapFromProjectedDocumentRange(codeDocument.GetCSharpDocument(), projectedRange, out var originalRange))
+            if (!documentMappingService.TryMapToHostDocumentRange(codeDocument.GetCSharpDocument(), projectedRange, out var originalRange))
             {
                 // Can't map range. Discard this edit.
                 continue;

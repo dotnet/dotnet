@@ -5,9 +5,10 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Razor.Language;
-using Microsoft.CodeAnalysis.Razor.ProjectSystem;
+using Microsoft.AspNetCore.Razor.ProjectSystem;
+using Microsoft.AspNetCore.Razor.Utilities;
 
-namespace Microsoft.AspNetCore.Razor.ProjectEngineHost.Serialization;
+namespace Microsoft.AspNetCore.Razor.Serialization;
 
 internal static partial class ObjectReaders
 {
@@ -48,6 +49,9 @@ internal static partial class ObjectReaders
         return RazorConfiguration.Create(data.LanguageVersion, data.ConfigurationName, data.Extensions);
     }
 
+    public static RazorDiagnostic ReadDiagnostic(JsonDataReader reader)
+        => reader.ReadNonNullObject(ReadDiagnosticFromProperties);
+
     public static RazorDiagnostic ReadDiagnosticFromProperties(JsonDataReader reader)
     {
         DiagnosticData data = default;
@@ -61,6 +65,15 @@ internal static partial class ObjectReaders
         {
             return () => message;
         }
+    }
+
+    public static ProjectSnapshotHandle ReadProjectSnapshotHandleFromProperties(JsonDataReader reader)
+    {
+        var filePath = reader.ReadNonNullString(nameof(ProjectSnapshotHandle.FilePath));
+        var configuration = reader.ReadObjectOrNull(nameof(ProjectSnapshotHandle.Configuration), ReadConfigurationFromProperties);
+        var rootNamespace = reader.ReadStringOrNull(nameof(ProjectSnapshotHandle.RootNamespace));
+
+        return new(filePath, configuration, rootNamespace);
     }
 
     public static DocumentSnapshotHandle ReadDocumentSnapshotHandleFromProperties(JsonDataReader reader)

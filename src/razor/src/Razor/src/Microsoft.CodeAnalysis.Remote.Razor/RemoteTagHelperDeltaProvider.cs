@@ -1,10 +1,10 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
+using System.Collections.Immutable;
 using Microsoft.AspNetCore.Razor.Language;
+using Microsoft.AspNetCore.Razor.PooledObjects;
+using Microsoft.AspNetCore.Razor.Serialization;
 
 namespace Microsoft.CodeAnalysis.Remote.Razor;
 
@@ -22,12 +22,12 @@ internal class RemoteTagHelperDeltaProvider
     public TagHelperDeltaResult GetTagHelpersDelta(
         string projectFilePath,
         int lastResultId,
-        IReadOnlyCollection<TagHelperDescriptor> currentTagHelpers)
+        ImmutableArray<TagHelperDescriptor> currentTagHelpers)
     {
         var cacheHit = _resultCache.TryGet(projectFilePath, lastResultId, out var cachedTagHelpers);
         if (!cacheHit)
         {
-            cachedTagHelpers = Array.Empty<TagHelperDescriptor>();
+            cachedTagHelpers = ImmutableArray<TagHelperDescriptor>.Empty;
         }
 
         var added = GetAddedTagHelpers(currentTagHelpers, cachedTagHelpers!);
@@ -36,7 +36,7 @@ internal class RemoteTagHelperDeltaProvider
         lock (_resultIdLock)
         {
             var resultId = _currentResultId;
-            if (added.Count > 0 || removed.Count > 0)
+            if (added.Length > 0 || removed.Length > 0)
             {
                 // The result actually changed, lets generate & cache a new result
                 resultId = ++_currentResultId;
@@ -53,21 +53,21 @@ internal class RemoteTagHelperDeltaProvider
         }
     }
 
-    private static IReadOnlyCollection<TagHelperDescriptor> GetAddedTagHelpers(IReadOnlyCollection<TagHelperDescriptor> current, IReadOnlyCollection<TagHelperDescriptor> old)
+    private static ImmutableArray<TagHelperDescriptor> GetAddedTagHelpers(ImmutableArray<TagHelperDescriptor> current, ImmutableArray<TagHelperDescriptor> old)
     {
-        if (old.Count == 0)
+        if (old.Length == 0)
         {
-            // Everythign is considered added when there is no collection to compare to.
+            // Everything is considered added when there is no collection to compare to.
             return current;
         }
 
-        if (current.Count == 0)
+        if (current.Length == 0)
         {
             // No new descriptors so can't possibly add any
-            return Array.Empty<TagHelperDescriptor>();
+            return ImmutableArray<TagHelperDescriptor>.Empty;
         }
 
-        var added = new List<TagHelperDescriptor>();
+        using var _ = ArrayBuilderPool<TagHelperDescriptor>.GetPooledObject(out var added);
 
         foreach (var tagHelper in current)
         {
@@ -77,24 +77,24 @@ internal class RemoteTagHelperDeltaProvider
             }
         }
 
-        return added;
+        return added.ToImmutable();
     }
 
-    private static IReadOnlyCollection<TagHelperDescriptor> GetRemovedTagHelpers(IReadOnlyCollection<TagHelperDescriptor> current, IReadOnlyCollection<TagHelperDescriptor> old)
+    private static ImmutableArray<TagHelperDescriptor> GetRemovedTagHelpers(ImmutableArray<TagHelperDescriptor> current, ImmutableArray<TagHelperDescriptor> old)
     {
-        if (old.Count == 0)
+        if (old.Length == 0)
         {
-            // Can't have anything removed if there's nothign to compare to
-            return Array.Empty<TagHelperDescriptor>();
+            // Can't have anything removed if there's nothing to compare to
+            return ImmutableArray<TagHelperDescriptor>.Empty;
         }
 
-        if (current.Count == 0)
+        if (current.Length == 0)
         {
             // Current collection has nothing so anything in "old" must have been removed
             return old;
         }
 
-        var removed = new List<TagHelperDescriptor>();
+        using var _ = ArrayBuilderPool<TagHelperDescriptor>.GetPooledObject(out var removed);
 
         foreach (var tagHelper in old)
         {
@@ -104,6 +104,6 @@ internal class RemoteTagHelperDeltaProvider
             }
         }
 
-        return removed;
+        return removed.ToImmutable();
     }
 }

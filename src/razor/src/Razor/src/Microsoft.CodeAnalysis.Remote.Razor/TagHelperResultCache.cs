@@ -1,33 +1,34 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
-using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
+using System.Collections.Immutable;
 using Microsoft.AspNetCore.Razor.Language;
-using Microsoft.AspNetCore.Razor.ProjectEngineHost.Serialization;
+using Microsoft.AspNetCore.Razor.Utilities;
 
 namespace Microsoft.CodeAnalysis.Remote.Razor;
 
 internal class TagHelperResultCache
 {
-    private readonly MemoryCache<string, ProjectResultCacheEntry> _projectResultCache;
+    private record Entry(int ResultId, ImmutableArray<TagHelperDescriptor> Descriptors);
+
+    private readonly MemoryCache<string, Entry> _projectResultCache;
 
     public TagHelperResultCache()
     {
-        _projectResultCache = new MemoryCache<string, ProjectResultCacheEntry>(sizeLimit: 50);
+        _projectResultCache = new MemoryCache<string, Entry>(sizeLimit: 50);
     }
 
-    public bool TryGet(string projectFilePath, int resultId, [NotNullWhen(returnValue: true)] out IReadOnlyCollection<TagHelperDescriptor>? cachedTagHelpers)
+    public bool TryGet(string projectFilePath, int resultId, out ImmutableArray<TagHelperDescriptor> cachedTagHelpers)
     {
         if (!_projectResultCache.TryGetValue(projectFilePath, out var cachedResult))
         {
-            cachedTagHelpers = null;
+            cachedTagHelpers = default;
             return false;
         }
         else if (cachedResult.ResultId != resultId)
         {
             // We don't know about the result that's being requested. Fallback to uncached behavior.
-            cachedTagHelpers = null;
+            cachedTagHelpers = default;
             return false;
         }
 
@@ -47,11 +48,9 @@ internal class TagHelperResultCache
         return true;
     }
 
-    public void Set(string projectFilePath, int resultId, IReadOnlyCollection<TagHelperDescriptor> tagHelpers)
+    public void Set(string projectFilePath, int resultId, ImmutableArray<TagHelperDescriptor> tagHelpers)
     {
-        var cacheEntry = new ProjectResultCacheEntry(resultId, tagHelpers);
+        var cacheEntry = new Entry(resultId, tagHelpers);
         _projectResultCache.Set(projectFilePath, cacheEntry);
     }
-
-    private record ProjectResultCacheEntry(int ResultId, IReadOnlyCollection<TagHelperDescriptor> Descriptors);
 }

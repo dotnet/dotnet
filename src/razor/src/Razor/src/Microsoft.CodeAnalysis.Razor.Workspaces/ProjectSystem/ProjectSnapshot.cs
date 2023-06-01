@@ -7,7 +7,7 @@ using System.Collections.Immutable;
 using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.PooledObjects;
-using Microsoft.AspNetCore.Razor.ProjectEngineHost.Serialization;
+using Microsoft.AspNetCore.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.CSharp;
 
 namespace Microsoft.CodeAnalysis.Razor.ProjectSystem;
@@ -42,7 +42,7 @@ internal class ProjectSnapshot : IProjectSnapshot
 
     public virtual VersionStamp Version => State.Version;
 
-    public IReadOnlyList<TagHelperDescriptor> TagHelpers => State.TagHelpers;
+    public ImmutableArray<TagHelperDescriptor> TagHelpers => State.TagHelpers;
 
     public ProjectWorkspaceState? ProjectWorkspaceState => State.ProjectWorkspaceState;
 

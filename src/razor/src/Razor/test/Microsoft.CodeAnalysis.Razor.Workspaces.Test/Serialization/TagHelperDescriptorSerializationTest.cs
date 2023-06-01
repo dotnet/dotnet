@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using Microsoft.AspNetCore.Razor.Language;
-using Microsoft.AspNetCore.Razor.ProjectEngineHost.Serialization;
+using Microsoft.AspNetCore.Razor.Serialization;
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Xunit;
 using Xunit.Abstractions;
@@ -35,8 +35,9 @@ public class TagHelperDescriptorSerializationTest : TestBase
         using (var reader = new StreamReader(stream))
         {
             expectedTagHelpers = JsonDataConvert.DeserializeData(reader,
-                static r => r.ReadArrayOrEmpty(
-                    static r => ObjectReaders.ReadTagHelper(r, useCache: false)));
+                static r => r.ReadArray(
+                    static r => ObjectReaders.ReadTagHelper(r, useCache: false)))
+                ?? Array.Empty<TagHelperDescriptor>();
         }
 
         using var writeStream = new MemoryStream();
@@ -56,8 +57,9 @@ public class TagHelperDescriptorSerializationTest : TestBase
         using (var reader = new StreamReader(writeStream, Encoding.UTF8, detectEncodingFromByteOrderMarks: true, bufferSize: 4096, leaveOpen: true))
         {
             actualTagHelpers = JsonDataConvert.DeserializeData(reader,
-                static r => r.ReadArrayOrEmpty(
-                    static r => ObjectReaders.ReadTagHelper(r, useCache: false)));
+                static r => r.ReadArray(
+                    static r => ObjectReaders.ReadTagHelper(r, useCache: false)))
+                ?? Array.Empty<TagHelperDescriptor>();
         }
 
         // Assert

@@ -4,7 +4,6 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
-using Microsoft.AspNetCore.Razor.LanguageServer.Common.Extensions;
 using Microsoft.AspNetCore.Razor.LanguageServer.EndpointContracts;
 using Microsoft.AspNetCore.Razor.LanguageServer.Protocol;
 using Microsoft.CodeAnalysis.Text;
@@ -16,9 +15,9 @@ internal class RazorLanguageQueryEndpoint : IRazorLanguageQueryHandler
 {
     public bool MutatesSolutionState { get; } = false;
 
-    private readonly RazorDocumentMappingService _documentMappingService;
+    private readonly IRazorDocumentMappingService _documentMappingService;
 
-    public RazorLanguageQueryEndpoint(RazorDocumentMappingService documentMappingService)
+    public RazorLanguageQueryEndpoint(IRazorDocumentMappingService documentMappingService)
     {
         _documentMappingService = documentMappingService;
     }
@@ -61,7 +60,7 @@ internal class RazorLanguageQueryEndpoint : IRazorLanguageQueryHandler
         var languageKind = _documentMappingService.GetLanguageKind(codeDocument, hostDocumentIndex, rightAssociative: false);
         if (languageKind == RazorLanguageKind.CSharp)
         {
-            if (_documentMappingService.TryMapToProjectedDocumentPosition(codeDocument.GetCSharpDocument(), hostDocumentIndex, out var projectedPosition, out var projectedIndex))
+            if (_documentMappingService.TryMapToGeneratedDocumentPosition(codeDocument.GetCSharpDocument(), hostDocumentIndex, out var projectedPosition, out var projectedIndex))
             {
                 // For C# locations, we attempt to return the corresponding position
                 // within the projected document

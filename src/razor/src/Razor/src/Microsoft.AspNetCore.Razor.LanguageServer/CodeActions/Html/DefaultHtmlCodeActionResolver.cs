@@ -14,12 +14,12 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer.CodeActions;
 internal sealed class DefaultHtmlCodeActionResolver : HtmlCodeActionResolver
 {
     private readonly DocumentContextFactory _documentContextFactory;
-    private readonly RazorDocumentMappingService _documentMappingService;
+    private readonly IRazorDocumentMappingService _documentMappingService;
 
     public DefaultHtmlCodeActionResolver(
         DocumentContextFactory documentContextFactory,
         ClientNotifierServiceBase languageServer,
-        RazorDocumentMappingService documentMappingService)
+        IRazorDocumentMappingService documentMappingService)
         : base(languageServer)
     {
         if (documentContextFactory is null)

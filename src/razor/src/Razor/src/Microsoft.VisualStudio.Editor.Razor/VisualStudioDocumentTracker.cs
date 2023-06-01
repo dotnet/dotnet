@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Razor.Editor;
@@ -20,7 +21,7 @@ public abstract class VisualStudioDocumentTracker
 
     public abstract ClientSpaceSettings EditorSettings { get; }
 
-    public abstract IReadOnlyList<TagHelperDescriptor>? TagHelpers { get; }
+    public abstract ImmutableArray<TagHelperDescriptor> TagHelpers { get; }
 
     public abstract bool IsSupportedProject { get; }
 

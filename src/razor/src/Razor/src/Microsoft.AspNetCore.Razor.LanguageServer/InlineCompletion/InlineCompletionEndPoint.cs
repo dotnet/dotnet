@@ -12,7 +12,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.LanguageServer.Common;
-using Microsoft.AspNetCore.Razor.LanguageServer.Common.Extensions;
 using Microsoft.AspNetCore.Razor.LanguageServer.EndpointContracts;
 using Microsoft.AspNetCore.Razor.LanguageServer.Extensions;
 using Microsoft.AspNetCore.Razor.LanguageServer.Formatting;
@@ -31,7 +30,7 @@ internal sealed class InlineCompletionEndpoint : IRazorRequestHandler<VSInternal
         "if", "indexer", "interface", "invoke", "iterator", "iterindex", "lock", "mbox", "namespace", "#if", "#region", "prop",
         "propfull", "propg", "sim", "struct", "svm", "switch", "try", "tryf", "unchecked", "unsafe", "using", "while");
 
-    private readonly RazorDocumentMappingService _documentMappingService;
+    private readonly IRazorDocumentMappingService _documentMappingService;
     private readonly ClientNotifierServiceBase _languageServer;
     private readonly AdhocWorkspaceFactory _adhocWorkspaceFactory;
 
@@ -39,7 +38,7 @@ internal sealed class InlineCompletionEndpoint : IRazorRequestHandler<VSInternal
 
     [ImportingConstructor]
     public InlineCompletionEndpoint(
-        RazorDocumentMappingService documentMappingService,
+        IRazorDocumentMappingService documentMappingService,
         ClientNotifierServiceBase languageServer,
         AdhocWorkspaceFactory adhocWorkspaceFactory)
     {
@@ -94,7 +93,7 @@ internal sealed class InlineCompletionEndpoint : IRazorRequestHandler<VSInternal
 
         // Map to the location in the C# document.
         if (languageKind != RazorLanguageKind.CSharp ||
-            !_documentMappingService.TryMapToProjectedDocumentPosition(codeDocument.GetCSharpDocument(), hostDocumentIndex, out var projectedPosition, out _))
+            !_documentMappingService.TryMapToGeneratedDocumentPosition(codeDocument.GetCSharpDocument(), hostDocumentIndex, out var projectedPosition, out _))
         {
             requestContext.Logger.LogInformation("Unsupported location for {textDocumentUri}.", request.TextDocument.Uri);
             return null;
@@ -126,7 +125,7 @@ internal sealed class InlineCompletionEndpoint : IRazorRequestHandler<VSInternal
             var containsSnippet = item.TextFormat == InsertTextFormat.Snippet;
             var range = item.Range ?? new Range { Start = projectedPosition, End = projectedPosition };
 
-            if (!_documentMappingService.TryMapFromProjectedDocumentRange(codeDocument.GetCSharpDocument(), range, out var rangeInRazorDoc))
+            if (!_documentMappingService.TryMapToHostDocumentRange(codeDocument.GetCSharpDocument(), range, out var rangeInRazorDoc))
             {
                 requestContext.Logger.LogWarning("Could not remap projected range {range} to razor document", range);
                 continue;

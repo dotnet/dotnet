@@ -2,12 +2,10 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using BenchmarkDotNet.Attributes;
 using Microsoft.AspNetCore.Razor.Language;
-using Microsoft.AspNetCore.Razor.ProjectEngineHost.Serialization;
-using Newtonsoft.Json;
+using Microsoft.AspNetCore.Razor.Utilities;
 
 namespace Microsoft.AspNetCore.Razor.Microbenchmarks.Serialization;
 
@@ -24,16 +22,8 @@ public class MemoryCacheBenchmark
     [GlobalSetup]
     public void Setup()
     {
-        var tagHelperBuffer = Resources.GetResourceBytes("taghelpers.json");
-
-        // Deserialize from json file.
-        var serializer = new JsonSerializer();
-        serializer.Converters.Add(TagHelperDescriptorJsonConverter.Instance);
-        using var stream = new MemoryStream(tagHelperBuffer);
-        using var reader = new JsonTextReader(new StreamReader(stream));
-
-        _tagHelpers = serializer.Deserialize<IReadOnlyList<TagHelperDescriptor>>(reader).AssumeNotNull();
-        _tagHelperHashes = TagHelpers.Select(th => th.GetHashCode()).ToList();
+        _tagHelpers = CommonResources.LegacyTagHelpers;
+        _tagHelperHashes = TagHelpers.Select(th => th.GetHashCode()).ToArray();
 
         // Set cache size to 400 so anything more then that will force compacts
         _cache = new MemoryCache<int, TagHelperDescriptor>(400);

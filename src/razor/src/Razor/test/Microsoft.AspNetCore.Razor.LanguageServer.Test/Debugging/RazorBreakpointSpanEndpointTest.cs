@@ -4,8 +4,6 @@
 using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
-using Microsoft.AspNetCore.Razor.LanguageServer.Common.Extensions;
-using Microsoft.AspNetCore.Razor.LanguageServer.Debugging;
 using Microsoft.AspNetCore.Razor.LanguageServer.Protocol;
 using Microsoft.AspNetCore.Razor.LanguageServer.Test.Common;
 using Microsoft.AspNetCore.Razor.Test.Common;
@@ -17,12 +15,12 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer.Debugging;
 
 public class RazorBreakpointSpanEndpointTest : LanguageServerTestBase
 {
-    private readonly RazorDocumentMappingService _mappingService;
+    private readonly IRazorDocumentMappingService _mappingService;
 
     public RazorBreakpointSpanEndpointTest(ITestOutputHelper testOutput)
         : base(testOutput)
     {
-        _mappingService = new DefaultRazorDocumentMappingService(
+        _mappingService = new RazorDocumentMappingService(
             TestLanguageServerFeatureOptions.Instance,
             new TestDocumentContextFactory(),
             LoggerFactory);

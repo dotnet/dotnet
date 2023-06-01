@@ -132,7 +132,7 @@ public class Foo { }
 
     private FormattingDiagnosticValidationPass GetPass()
     {
-        var mappingService = new DefaultRazorDocumentMappingService(TestLanguageServerFeatureOptions.Instance, new TestDocumentContextFactory(), LoggerFactory);
+        var mappingService = new RazorDocumentMappingService(TestLanguageServerFeatureOptions.Instance, new TestDocumentContextFactory(), LoggerFactory);
 
         var client = Mock.Of<ClientNotifierServiceBase>(MockBehavior.Strict);
         var pass = new FormattingDiagnosticValidationPass(mappingService, client, LoggerFactory)
@@ -158,10 +158,10 @@ public class Foo { }
         return context;
     }
 
-    private static (RazorCodeDocument, IDocumentSnapshot) CreateCodeDocumentAndSnapshot(SourceText text, string path, IReadOnlyList<TagHelperDescriptor>? tagHelpers = null, string? fileKind = default)
+    private static (RazorCodeDocument, IDocumentSnapshot) CreateCodeDocumentAndSnapshot(SourceText text, string path, ImmutableArray<TagHelperDescriptor> tagHelpers = default, string? fileKind = default)
     {
         fileKind ??= FileKinds.Component;
-        tagHelpers ??= Array.Empty<TagHelperDescriptor>();
+        tagHelpers = tagHelpers.NullToEmpty();
         var sourceDocument = text.GetRazorSourceDocument(path, path);
         var projectEngine = RazorProjectEngine.Create(builder => builder.SetRootNamespace("Test"));
         var codeDocument = projectEngine.ProcessDesignTime(sourceDocument, fileKind, Array.Empty<RazorSourceDocument>(), tagHelpers);

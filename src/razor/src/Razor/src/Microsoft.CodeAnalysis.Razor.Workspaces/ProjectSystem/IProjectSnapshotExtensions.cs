@@ -1,8 +1,9 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
-using System.Collections.Generic;
-using Microsoft.AspNetCore.Razor.ProjectEngineHost.Serialization;
+using Microsoft.AspNetCore.Razor.PooledObjects;
+using Microsoft.AspNetCore.Razor.ProjectSystem;
+using Microsoft.AspNetCore.Razor.Serialization;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 
 namespace Microsoft.CodeAnalysis.Razor.Workspaces.ProjectSystem;
@@ -11,7 +12,8 @@ internal static class IProjectSnapshotExtensions
 {
     public static ProjectRazorJson ToProjectRazorJson(this IProjectSnapshot project, string serializedFilePath)
     {
-        var documents = new List<DocumentSnapshotHandle>();
+        using var documents = new PooledArrayBuilder<DocumentSnapshotHandle>();
+
         foreach (var documentFilePath in project.DocumentFilePaths)
         {
             if (project.GetDocument(documentFilePath) is { } document)
@@ -28,6 +30,6 @@ internal static class IProjectSnapshotExtensions
             configuration: project.Configuration,
             rootNamespace: project.RootNamespace,
             projectWorkspaceState: project.ProjectWorkspaceState,
-            documents: documents);
+            documents: documents.DrainToImmutable());
     }
 }

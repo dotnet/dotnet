@@ -2,8 +2,8 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using System;
-using Microsoft.CodeAnalysis.Razor;
 using Newtonsoft.Json;
+using Microsoft.AspNetCore.Razor.Serialization.Converters;
 
 namespace Microsoft.VisualStudio.LiveShare.Razor.Serialization;
 

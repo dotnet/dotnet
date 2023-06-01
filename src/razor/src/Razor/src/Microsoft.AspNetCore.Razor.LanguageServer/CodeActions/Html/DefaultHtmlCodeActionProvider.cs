@@ -16,9 +16,9 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer.CodeActions;
 
 internal sealed class DefaultHtmlCodeActionProvider : IHtmlCodeActionProvider
 {
-    private readonly RazorDocumentMappingService _documentMappingService;
+    private readonly IRazorDocumentMappingService _documentMappingService;
 
-    public DefaultHtmlCodeActionProvider(RazorDocumentMappingService documentMappingService)
+    public DefaultHtmlCodeActionProvider(IRazorDocumentMappingService documentMappingService)
     {
         _documentMappingService = documentMappingService;
     }
@@ -47,7 +47,7 @@ internal sealed class DefaultHtmlCodeActionProvider : IHtmlCodeActionProvider
         return results;
     }
 
-    public static async Task RemapAndFixHtmlCodeActionEditAsync(RazorDocumentMappingService documentMappingService, RazorCodeDocument codeDocument, CodeAction codeAction, CancellationToken cancellationToken)
+    public static async Task RemapAndFixHtmlCodeActionEditAsync(IRazorDocumentMappingService documentMappingService, RazorCodeDocument codeDocument, CodeAction codeAction, CancellationToken cancellationToken)
     {
         Assumes.NotNull(codeAction.Edit);
 

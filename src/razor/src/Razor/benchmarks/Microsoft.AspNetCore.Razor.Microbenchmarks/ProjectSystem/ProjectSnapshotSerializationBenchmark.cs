@@ -7,7 +7,8 @@ using System.Diagnostics;
 using System.IO;
 using System.Text;
 using BenchmarkDotNet.Attributes;
-using Microsoft.CodeAnalysis.Razor;
+using Microsoft.AspNetCore.Razor.Serialization;
+using Microsoft.AspNetCore.Razor.Serialization.Converters;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Newtonsoft.Json;
 

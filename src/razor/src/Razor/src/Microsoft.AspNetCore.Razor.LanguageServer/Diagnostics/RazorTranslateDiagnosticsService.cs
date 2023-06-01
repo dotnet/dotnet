@@ -9,7 +9,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Language.Syntax;
-using Microsoft.AspNetCore.Razor.LanguageServer.Common.Extensions;
 using Microsoft.AspNetCore.Razor.LanguageServer.Extensions;
 using Microsoft.AspNetCore.Razor.LanguageServer.Protocol;
 using Microsoft.CodeAnalysis;
@@ -27,7 +26,7 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer.Diagnostics;
 internal class RazorTranslateDiagnosticsService
 {
     private readonly ILogger _logger;
-    private readonly RazorDocumentMappingService _documentMappingService;
+    private readonly IRazorDocumentMappingService _documentMappingService;
 
     // Internal for testing
     internal static readonly IReadOnlyCollection<string> CSharpDiagnosticsToIgnore = new HashSet<string>()
@@ -36,7 +35,7 @@ internal class RazorTranslateDiagnosticsService
         "IDE0005_gen", // Using directive is unnecessary
     };
 
-    public RazorTranslateDiagnosticsService(RazorDocumentMappingService documentMappingService, ILoggerFactory loggerFactory)
+    public RazorTranslateDiagnosticsService(IRazorDocumentMappingService documentMappingService, ILoggerFactory loggerFactory)
     {
         if (documentMappingService is null)
         {
@@ -447,7 +446,7 @@ internal class RazorTranslateDiagnosticsService
             return false;
         }
 
-        if (!_documentMappingService.TryMapFromProjectedDocumentRange(
+        if (!_documentMappingService.TryMapToHostDocumentRange(
             codeDocument.GetCSharpDocument(),
             diagnostic.Range,
             MappingBehavior.Inferred,

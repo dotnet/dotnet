@@ -3,6 +3,7 @@
   <PropertyGroup>
     <TargetFrameworks>$(DefaultNetCoreTargetFrameworks);netstandard2.0;$(DefaultNetFxTargetFramework)</TargetFrameworks>
     <Description>Razor is a markup syntax for adding server-side logic to web pages. This package contains common assets that are used in the Razor language server and other assemblies.</Description>
+    <RootNamespace>Microsoft.AspNetCore.Razor</RootNamespace>
     <EnableApiCheck>false</EnableApiCheck>
     <IsShippingPackage>false</IsShippingPackage>
     <ExcludeFromSourceBuild>true</ExcludeFromSourceBuild>

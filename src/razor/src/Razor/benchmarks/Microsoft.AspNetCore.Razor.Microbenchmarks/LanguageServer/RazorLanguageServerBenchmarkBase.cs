@@ -9,7 +9,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.LanguageServer;
-using Microsoft.AspNetCore.Razor.ProjectEngineHost.Serialization;
+using Microsoft.AspNetCore.Razor.ProjectSystem;
 using Microsoft.AspNetCore.Razor.Telemetry;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
@@ -59,7 +59,7 @@ public class RazorLanguageServerBenchmarkBase : ProjectSnapshotManagerBenchmarkB
 
         var projectSnapshotManager = CreateProjectSnapshotManager();
         projectSnapshotManager.ProjectAdded(hostProject);
-        var tagHelpers = GetTagHelperDescriptors();
+        var tagHelpers = CommonResources.LegacyTagHelpers;
         var projectWorkspaceState = new ProjectWorkspaceState(tagHelpers, CodeAnalysis.CSharp.LanguageVersion.CSharp11);
         projectSnapshotManager.ProjectWorkspaceStateChanged(projectFilePath, projectWorkspaceState);
         projectSnapshotManager.DocumentAdded(hostProject, hostDocument, textLoader);
@@ -92,7 +92,7 @@ public class RazorLanguageServerBenchmarkBase : ProjectSnapshotManagerBenchmarkB
         }
     }
 
-    private class NoopLogger : IRazorLogger
+    internal class NoopLogger : IRazorLogger
     {
         public IDisposable BeginScope<TState>(TState state)
         {

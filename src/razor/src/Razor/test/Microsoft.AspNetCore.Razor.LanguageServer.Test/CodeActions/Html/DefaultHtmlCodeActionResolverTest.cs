@@ -57,7 +57,7 @@ public class DefaultHtmlCodeActionResolverTest : LanguageServerTestBase
             Edit = remappedEdit
         };
 
-        var documentMappingServiceMock = new Mock<RazorDocumentMappingService>(MockBehavior.Strict);
+        var documentMappingServiceMock = new Mock<IRazorDocumentMappingService>(MockBehavior.Strict);
         documentMappingServiceMock
             .Setup(c => c.RemapWorkspaceEditAsync(It.IsAny<WorkspaceEdit>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(remappedEdit);

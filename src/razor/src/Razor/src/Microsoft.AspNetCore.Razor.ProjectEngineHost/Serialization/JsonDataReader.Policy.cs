@@ -3,7 +3,7 @@
 
 using Microsoft.Extensions.ObjectPool;
 
-namespace Microsoft.AspNetCore.Razor.ProjectEngineHost.Serialization;
+namespace Microsoft.AspNetCore.Razor.Serialization;
 
 internal partial class JsonDataReader
 {

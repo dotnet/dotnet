@@ -1,9 +1,7 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
-#nullable disable
-
-using System.Collections.Generic;
+using System.Collections.Immutable;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.CodeAnalysis.Remote.Razor.Test;
 using Xunit;
@@ -53,10 +51,7 @@ public class RemoteTagHelperDeltaProviderTest : TagHelperDescriptorTestBase
     public void GetTagHelpersDelta_TagHelperRemovedFromProjectOne_InvalidResultId()
     {
         // Arrange
-        var tagHelpersWithOneRemoved = new[]
-        {
-            TagHelper1_Project1
-        };
+        var tagHelpersWithOneRemoved = ImmutableArray.Create(TagHelper1_Project1);
         _provider.GetTagHelpersDelta(Project1FilePath, lastResultId: -1, Project1TagHelpers);
         _provider.GetTagHelpersDelta(Project2FilePath, lastResultId: -1, Project2TagHelpers);
 
@@ -73,10 +68,7 @@ public class RemoteTagHelperDeltaProviderTest : TagHelperDescriptorTestBase
     public void GetTagHelpersDelta_TagHelperRemovedFromProjectOne()
     {
         // Arrange
-        var tagHelpersWithOneRemoved = new[]
-        {
-            TagHelper1_Project1
-        };
+        var tagHelpersWithOneRemoved = ImmutableArray.Create(TagHelper1_Project1);
         var initialDelta = _provider.GetTagHelpersDelta(Project1FilePath, lastResultId: -1, Project1TagHelpers);
         _provider.GetTagHelpersDelta(Project2FilePath, lastResultId: -1, Project2TagHelpers);
 
@@ -94,18 +86,18 @@ public class RemoteTagHelperDeltaProviderTest : TagHelperDescriptorTestBase
     public void GetTagHelpersDelta_TagHelpersCopiedToProjectOne()
     {
         // Arrange
-        var tagHelpers = new List<TagHelperDescriptor>();
+        var tagHelpers = ImmutableArray.CreateBuilder<TagHelperDescriptor>();
         tagHelpers.AddRange(Project1TagHelpers);
         tagHelpers.AddRange(Project2TagHelpers);
         var initialDelta = _provider.GetTagHelpersDelta(Project1FilePath, lastResultId: -1, Project1TagHelpers);
         _provider.GetTagHelpersDelta(Project2FilePath, lastResultId: -1, Project2TagHelpers);
 
         // Act
-        var delta = _provider.GetTagHelpersDelta(Project1FilePath, initialDelta.ResultId, tagHelpers);
+        var delta = _provider.GetTagHelpersDelta(Project1FilePath, initialDelta.ResultId, tagHelpers.ToImmutableArray());
 
         // Assert
         Assert.True(delta.Delta);
-        Assert.Equal(Project2TagHelpers, delta.Added);
+        Assert.Equal(Project2TagHelpers, delta.Added, TagHelperDescriptorComparer.Default);
         Assert.Empty(delta.Removed);
     }
 
@@ -152,16 +144,9 @@ public class RemoteTagHelperDeltaProviderTest : TagHelperDescriptorTestBase
     public void GetTagHelpersDelta_EndToEnd()
     {
         // Arrange
-        var mixedTagHelpers1 = new[]
-        {
-            TagHelper1_Project1,
-            TagHelper1_Project2,
-        };
-        var mixedTagHelpers2 = new[]
-        {
-            TagHelper2_Project1,
-            TagHelper2_Project2,
-        };
+        var mixedTagHelpers1 = ImmutableArray.Create(TagHelper1_Project1, TagHelper1_Project2);
+        var mixedTagHelpers2 = ImmutableArray.Create(TagHelper2_Project1, TagHelper2_Project2);
+
         var initialDelta1 = _provider.GetTagHelpersDelta(Project1FilePath, lastResultId: -1, Project1TagHelpers);
         var initialDelta2 = _provider.GetTagHelpersDelta(Project2FilePath, lastResultId: -1, Project2TagHelpers);
 

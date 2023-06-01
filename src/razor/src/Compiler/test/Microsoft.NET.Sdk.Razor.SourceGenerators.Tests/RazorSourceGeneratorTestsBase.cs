@@ -17,6 +17,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Abstractions;
 using Microsoft.AspNetCore.Mvc.ApplicationParts;
@@ -154,6 +155,14 @@ public abstract class RazorSourceGeneratorTestsBase
         {
             RequestServices = app.Services
         };
+        var requestFeature = new HttpRequestFeature
+        {
+            Method = HttpMethods.Get,
+            Protocol = HttpProtocol.Http2,
+            Scheme = "http"
+        };
+        requestFeature.Headers.Host = "localhost";
+        httpContext.Features.Set<IHttpRequestFeature>(requestFeature);
         var actionContext = new ActionContext(
             httpContext,
             new AspNetCore.Routing.RouteData(),
@@ -508,7 +517,7 @@ internal static class Extensions
             }
             else
             {
-                Assert.Equal(TrimChecksum(diff), TrimChecksum(actual.GeneratedSources[i].SourceText.ToString()));
+                AssertEx.EqualOrDiff(TrimChecksum(diff), TrimChecksum(actual.GeneratedSources[i].SourceText.ToString()));
             }
         }
 
@@ -522,12 +531,5 @@ internal static class Extensions
             .Replace("\\r\\n", "\\n");                                     // embedded new-lines
         Assert.StartsWith("#pragma", trimmed);
         return trimmed.Substring(trimmed.IndexOf('\n') + 1);
-    }
-
-    public static void AssertSingleItem(this RazorEventListener.RazorEvent e, string expectedEventName, string expectedFileName)
-    {
-        Assert.Equal(expectedEventName, e.EventName);
-        var file = Assert.Single(e.Payload);
-        Assert.Equal(expectedFileName, file);
     }
 }

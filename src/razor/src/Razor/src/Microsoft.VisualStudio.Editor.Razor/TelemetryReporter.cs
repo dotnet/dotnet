@@ -6,14 +6,10 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Composition;
 using System.Diagnostics;
-using System.Diagnostics.Contracts;
 using System.Linq;
-using System.Threading;
 using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.Telemetry;
-using Newtonsoft.Json.Linq;
-using StreamJsonRpc;
 
 namespace Microsoft.AspNetCore.Razor.Telemetry;
 
@@ -145,6 +141,8 @@ internal class TelemetryReporter : ITelemetryReporter
             var name = telemetryEvent.Name;
             var propertyString = string.Join(",", telemetryEvent.Properties.Select(kvp => $"[ {kvp.Key}:{kvp.Value} ]"));
             _logger?.LogTrace("Telemetry Event: {name} \n Properties: {propertyString}\n", name, propertyString);
+
+            Debug.Assert(telemetryEvent is not FaultEvent, $"Fault Event: {name} \n Properties: {propertyString}");
 #endif
         }
         catch (Exception e)
