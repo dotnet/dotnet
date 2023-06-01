@@ -27,6 +27,7 @@
     <DefaultNetFxTargetFramework>net472</DefaultNetFxTargetFramework>
     <DefaultNetCoreTargetFramework>net8.0</DefaultNetCoreTargetFramework>
     <DefaultNetCoreTargetFrameworks>$(DefaultNetCoreTargetFramework);net7.0</DefaultNetCoreTargetFrameworks>
+    <DefaultNetCoreTargetFrameworks Condition="'$(DotNetBuildFromSource)' == 'true'">$(DefaultNetCoreTargetFramework)</DefaultNetCoreTargetFrameworks>
     <DefaultNetCoreWindowsTargetFrameworks>net8.0-windows;net7.0-windows</DefaultNetCoreWindowsTargetFrameworks>
   </PropertyGroup>
   <!--
