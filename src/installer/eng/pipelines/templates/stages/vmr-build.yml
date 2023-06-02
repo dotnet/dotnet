@@ -13,6 +13,7 @@ parameters:
 
   # The following parameters aren't expected to be passed in rather they are used for encapsulation
   # -----------------------------------------------------------------------------------------------
+  alpine317Container: mcr.microsoft.com/dotnet-buildtools/prereqs:alpine-3.17
   centOSStream8Container: mcr.microsoft.com/dotnet-buildtools/prereqs:centos-stream8
   centOSStream9Container: mcr.microsoft.com/dotnet-buildtools/prereqs:centos-stream9
   debian11Arm64Container: mcr.microsoft.com/dotnet-buildtools/prereqs:debian-11-arm64v8
@@ -65,6 +66,9 @@ stages:
       value: ${{ replace(replace(variables['Build.SourceBranch'], 'refs/heads/', ''), 'refs/pull/', '') }}
 
   jobs:
+
+  # PR and CI legs ------------------------------------
+
   - template: ../jobs/vmr-build.yml
     parameters:
       buildName: CentOSStream8_Online_MsftSdk
@@ -84,6 +88,27 @@ stages:
       withPreviousSDK: false             # 🚫
 
   - ${{ if ne(variables['Build.Reason'], 'PullRequest') }}:
+
+    # CI - Stage 1 x64 legs ------------------------------------
+
+    - template: ../jobs/vmr-build.yml
+      parameters:
+        buildName: Alpine317_Offline_MsftSdk
+        isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
+        vmrBranch: ${{ variables.VmrBranch }}
+        architecture: x64
+        pool:
+          name: ${{ variables.defaultPoolName }}
+          demands: ${{ variables.defaultPoolDemands }}
+        container: ${{ parameters.alpine317Container }}
+        buildFromArchive: false            # ✅
+        enablePoison: false                # 🚫
+        excludeOmniSharpTests: true        # ✅
+        overrideDistroDisablingSha1: false # 🚫
+        runOnline: false                   # 🚫
+        useMonoRuntime: false              # 🚫
+        withPreviousSDK: false             # 🚫
+
     - template: ../jobs/vmr-build.yml
       parameters:
         buildName: CentOSStream8_Online_PreviousSourceBuiltSdk
@@ -192,6 +217,8 @@ stages:
         useMonoRuntime: false              # 🚫
         withPreviousSDK: false             # 🚫
 
+    # CI - Stage 1 arm64 Legs ------------------------------------
+
     - template: ../jobs/vmr-build.yml
       parameters:
         buildName: Debian11_Offline_MsftSdk
@@ -207,6 +234,8 @@ stages:
         runOnline: false                   # 🚫
         useMonoRuntime: false              # 🚫
         withPreviousSDK: false             # 🚫
+
+    # CI - Stage 2 x64 Legs ------------------------------------
 
     - template: ../jobs/vmr-build.yml
       parameters:
