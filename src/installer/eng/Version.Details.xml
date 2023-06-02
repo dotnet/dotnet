@@ -17,30 +17,30 @@
       <Uri>https://github.com/dotnet/windowsdesktop</Uri>
       <Sha>f6b08691a0bae28f9eacbf0abb94959e0171940e</Sha>
     </Dependency>
-    <Dependency Name="VS.Redist.Common.NetCore.SharedFramework.x64.8.0" Version="8.0.0-preview.6.23301.8" CoherentParentDependency="Microsoft.NET.Sdk">
+    <Dependency Name="VS.Redist.Common.NetCore.SharedFramework.x64.8.0" Version="8.0.0-preview.6.23302.1" CoherentParentDependency="Microsoft.NET.Sdk">
       <Uri>https://github.com/dotnet/runtime</Uri>
-      <Sha>4a2f9d3015a2a5217cdd1c1d3c91e5798c273d31</Sha>
+      <Sha>7febca6802545d8c96e386187d536bc100d40337</Sha>
       <SourceBuild RepoName="runtime" ManagedOnly="false" />
     </Dependency>
-    <Dependency Name="Microsoft.NETCore.App.Ref" Version="8.0.0-preview.6.23301.8" CoherentParentDependency="Microsoft.NET.Sdk">
+    <Dependency Name="Microsoft.NETCore.App.Ref" Version="8.0.0-preview.6.23302.1" CoherentParentDependency="Microsoft.NET.Sdk">
       <Uri>https://github.com/dotnet/runtime</Uri>
-      <Sha>4a2f9d3015a2a5217cdd1c1d3c91e5798c273d31</Sha>
+      <Sha>7febca6802545d8c96e386187d536bc100d40337</Sha>
     </Dependency>
-    <Dependency Name="VS.Redist.Common.NetCore.TargetingPack.x64.8.0" Version="8.0.0-preview.6.23301.8" CoherentParentDependency="Microsoft.NET.Sdk">
+    <Dependency Name="VS.Redist.Common.NetCore.TargetingPack.x64.8.0" Version="8.0.0-preview.6.23302.1" CoherentParentDependency="Microsoft.NET.Sdk">
       <Uri>https://github.com/dotnet/runtime</Uri>
-      <Sha>4a2f9d3015a2a5217cdd1c1d3c91e5798c273d31</Sha>
+      <Sha>7febca6802545d8c96e386187d536bc100d40337</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.NETCore.App.Runtime.win-x64" Version="8.0.0-preview.6.23301.8" CoherentParentDependency="Microsoft.NET.Sdk">
+    <Dependency Name="Microsoft.NETCore.App.Runtime.win-x64" Version="8.0.0-preview.6.23302.1" CoherentParentDependency="Microsoft.NET.Sdk">
       <Uri>https://github.com/dotnet/runtime</Uri>
-      <Sha>4a2f9d3015a2a5217cdd1c1d3c91e5798c273d31</Sha>
+      <Sha>7febca6802545d8c96e386187d536bc100d40337</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.NETCore.App.Host.win-x64" Version="8.0.0-preview.6.23301.8" CoherentParentDependency="Microsoft.NET.Sdk">
+    <Dependency Name="Microsoft.NETCore.App.Host.win-x64" Version="8.0.0-preview.6.23302.1" CoherentParentDependency="Microsoft.NET.Sdk">
       <Uri>https://github.com/dotnet/runtime</Uri>
-      <Sha>4a2f9d3015a2a5217cdd1c1d3c91e5798c273d31</Sha>
+      <Sha>7febca6802545d8c96e386187d536bc100d40337</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.NETCore.DotNetHostResolver" Version="8.0.0-preview.6.23301.8" CoherentParentDependency="Microsoft.NET.Sdk">
+    <Dependency Name="Microsoft.NETCore.DotNetHostResolver" Version="8.0.0-preview.6.23302.1" CoherentParentDependency="Microsoft.NET.Sdk">
       <Uri>https://github.com/dotnet/runtime</Uri>
-      <Sha>4a2f9d3015a2a5217cdd1c1d3c91e5798c273d31</Sha>
+      <Sha>7febca6802545d8c96e386187d536bc100d40337</Sha>
     </Dependency>
     <!-- Change blob version in GenerateLayout.targets if this is unpinned to service targeting pack -->
     <!-- No new netstandard.library planned for 3.1 timeframe at this time. -->
@@ -48,9 +48,9 @@
       <Uri>https://github.com/dotnet/core-setup</Uri>
       <Sha>7d57652f33493fa022125b7f63aad0d70c52d810</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.NETCore.Platforms" Version="8.0.0-preview.6.23301.8" CoherentParentDependency="Microsoft.NET.Sdk">
+    <Dependency Name="Microsoft.NETCore.Platforms" Version="8.0.0-preview.6.23302.1" CoherentParentDependency="Microsoft.NET.Sdk">
       <Uri>https://github.com/dotnet/runtime</Uri>
-      <Sha>4a2f9d3015a2a5217cdd1c1d3c91e5798c273d31</Sha>
+      <Sha>7febca6802545d8c96e386187d536bc100d40337</Sha>
     </Dependency>
     <Dependency Name="Microsoft.AspNetCore.App.Ref" Version="8.0.0-preview.6.23301.3" CoherentParentDependency="Microsoft.NET.Sdk">
       <Uri>https://github.com/dotnet/aspnetcore</Uri>
@@ -102,22 +102,22 @@
       <Uri>https://github.com/dotnet/test-templates</Uri>
       <Sha>0cf6d495f4ce78f7de953f4ac1d6244a93eb2982</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.Common.ItemTemplates" Version="8.0.100-preview.6.23301.18">
+    <Dependency Name="Microsoft.DotNet.Common.ItemTemplates" Version="8.0.100-preview.6.23302.2">
       <Uri>https://github.com/dotnet/sdk</Uri>
-      <Sha>46b88e570832cbb40fb3be4490ea318a1ec786e9</Sha>
+      <Sha>b27a021917bd4ff6adde7a5c47c8b8a9dba25440</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.TemplateEngine.Cli" Version="8.0.100-preview.6.23301.18">
+    <Dependency Name="Microsoft.TemplateEngine.Cli" Version="8.0.100-preview.6.23302.2">
       <Uri>https://github.com/dotnet/sdk</Uri>
-      <Sha>46b88e570832cbb40fb3be4490ea318a1ec786e9</Sha>
+      <Sha>b27a021917bd4ff6adde7a5c47c8b8a9dba25440</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.NET.Sdk" Version="8.0.100-preview.6.23301.18">
+    <Dependency Name="Microsoft.NET.Sdk" Version="8.0.100-preview.6.23302.2">
       <Uri>https://github.com/dotnet/sdk</Uri>
-      <Sha>46b88e570832cbb40fb3be4490ea318a1ec786e9</Sha>
+      <Sha>b27a021917bd4ff6adde7a5c47c8b8a9dba25440</Sha>
       <SourceBuild RepoName="sdk" ManagedOnly="true" />
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.MSBuildSdkResolver" Version="8.0.100-preview.6.23301.18">
+    <Dependency Name="Microsoft.DotNet.MSBuildSdkResolver" Version="8.0.100-preview.6.23302.2">
       <Uri>https://github.com/dotnet/sdk</Uri>
-      <Sha>46b88e570832cbb40fb3be4490ea318a1ec786e9</Sha>
+      <Sha>b27a021917bd4ff6adde7a5c47c8b8a9dba25440</Sha>
     </Dependency>
     <!-- For coherency purposes, these versions should be gated by the versions of winforms and wpf routed via windowsdesktop -->
     <Dependency Name="Microsoft.Dotnet.WinForms.ProjectTemplates" Version="8.0.0-preview.6.23281.6" CoherentParentDependency="Microsoft.WindowsDesktop.App.Runtime.win-x64">
@@ -142,9 +142,9 @@
       <Sha>94103c3f3198fe6f1405e1cb8fe486d6cd7132fd</Sha>
       <SourceBuildTarball RepoName="vstest" ManagedOnly="true" />
     </Dependency>
-    <Dependency Name="Microsoft.NET.ILLink.Tasks" Version="8.0.0-preview.6.23301.8" CoherentParentDependency="Microsoft.NET.Sdk">
+    <Dependency Name="Microsoft.NET.ILLink.Tasks" Version="8.0.0-preview.6.23302.1" CoherentParentDependency="Microsoft.NET.Sdk">
       <Uri>https://github.com/dotnet/runtime</Uri>
-      <Sha>4a2f9d3015a2a5217cdd1c1d3c91e5798c273d31</Sha>
+      <Sha>7febca6802545d8c96e386187d536bc100d40337</Sha>
     </Dependency>
     <Dependency Name="Microsoft.Net.Compilers.Toolset" Version="4.7.0-3.23301.8" CoherentParentDependency="Microsoft.NET.Sdk">
       <Uri>https://github.com/dotnet/roslyn</Uri>
