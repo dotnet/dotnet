@@ -1,5 +1,9 @@
 # Release Notes
 
+## 17.6.1 and newer
+
+Please see release notes directly in the release page: https://github.com/microsoft/vstest/releases
+
 ## 17.6.0
 
 ### Issues Fixed

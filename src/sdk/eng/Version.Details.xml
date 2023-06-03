@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Dependencies>
   <ProductDependencies>
-    <Dependency Name="Microsoft.TemplateEngine.Abstractions" Version="8.0.100-preview.6.23302.1">
+    <Dependency Name="Microsoft.TemplateEngine.Abstractions" Version="8.0.100-preview.6.23302.3">
       <Uri>https://github.com/dotnet/templating</Uri>
-      <Sha>129b20d9742098e93ed97bd7e22f3c0c3ff943a4</Sha>
+      <Sha>0e3831b509a216d5e6c5632c1e56128946f784c0</Sha>
       <SourceBuild RepoName="templating" ManagedOnly="true" />
     </Dependency>
     <Dependency Name="Microsoft.NETCore.App.Ref" Version="8.0.0-preview.6.23302.2">
@@ -116,9 +116,9 @@
       <Uri>https://github.com/nuget/nuget.client</Uri>
       <Sha>f3bb337e310ce44abda4ad73cdb0755ed940809d</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.NET.Test.Sdk" Version="17.7.0-preview.23280.1">
+    <Dependency Name="Microsoft.NET.Test.Sdk" Version="17.7.0-preview.23302.1">
       <Uri>https://github.com/microsoft/vstest</Uri>
-      <Sha>94103c3f3198fe6f1405e1cb8fe486d6cd7132fd</Sha>
+      <Sha>1fe03b9451e6605b0846fc544cc0effd2b39a85c</Sha>
       <SourceBuild RepoName="vstest" ManagedOnly="true" />
     </Dependency>
     <Dependency Name="Microsoft.NET.ILLink.Tasks" Version="8.0.0-preview.6.23302.2">
@@ -141,25 +141,25 @@
       <Uri>https://github.com/dotnet/runtime</Uri>
       <Sha>15583461b96ff1d17947abe5806750bf69c10db3</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.WindowsDesktop.App.Runtime.win-x64" Version="8.0.0-preview.6.23301.2">
+    <Dependency Name="Microsoft.WindowsDesktop.App.Runtime.win-x64" Version="8.0.0-preview.6.23302.1">
       <Uri>https://github.com/dotnet/windowsdesktop</Uri>
-      <Sha>f6b08691a0bae28f9eacbf0abb94959e0171940e</Sha>
+      <Sha>1c63ea391b622753dff0655478d0c494dd6eb3a4</Sha>
     </Dependency>
-    <Dependency Name="VS.Redist.Common.WindowsDesktop.SharedFramework.x64.8.0" Version="8.0.0-preview.6.23301.2">
+    <Dependency Name="VS.Redist.Common.WindowsDesktop.SharedFramework.x64.8.0" Version="8.0.0-preview.6.23302.1">
       <Uri>https://github.com/dotnet/windowsdesktop</Uri>
-      <Sha>f6b08691a0bae28f9eacbf0abb94959e0171940e</Sha>
+      <Sha>1c63ea391b622753dff0655478d0c494dd6eb3a4</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.WindowsDesktop.App.Ref" Version="8.0.0-preview.6.23301.2">
+    <Dependency Name="Microsoft.WindowsDesktop.App.Ref" Version="8.0.0-preview.6.23302.1">
       <Uri>https://github.com/dotnet/windowsdesktop</Uri>
-      <Sha>f6b08691a0bae28f9eacbf0abb94959e0171940e</Sha>
+      <Sha>1c63ea391b622753dff0655478d0c494dd6eb3a4</Sha>
     </Dependency>
-    <Dependency Name="VS.Redist.Common.WindowsDesktop.TargetingPack.x64.8.0" Version="8.0.0-preview.6.23301.2">
+    <Dependency Name="VS.Redist.Common.WindowsDesktop.TargetingPack.x64.8.0" Version="8.0.0-preview.6.23302.1">
       <Uri>https://github.com/dotnet/windowsdesktop</Uri>
-      <Sha>f6b08691a0bae28f9eacbf0abb94959e0171940e</Sha>
+      <Sha>1c63ea391b622753dff0655478d0c494dd6eb3a4</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.NET.Sdk.WindowsDesktop" Version="8.0.0-preview.6.23301.1" CoherentParentDependency="Microsoft.WindowsDesktop.App.Ref">
+    <Dependency Name="Microsoft.NET.Sdk.WindowsDesktop" Version="8.0.0-preview.6.23301.2" CoherentParentDependency="Microsoft.WindowsDesktop.App.Ref">
       <Uri>https://github.com/dotnet/wpf</Uri>
-      <Sha>9c59cb263e5b7fa892f268ffe22d3b6d43bc6bc6</Sha>
+      <Sha>0aca160dd04da87d775611b16d0cab7d9059be8e</Sha>
     </Dependency>
     <Dependency Name="Microsoft.AspNetCore.App.Ref" Version="8.0.0-preview.6.23301.3">
       <Uri>https://github.com/dotnet/aspnetcore</Uri>
@@ -267,9 +267,9 @@
       <Sha>ba29ae9c6bce46310453f930cfb5575cea89b67d</Sha>
       <SourceBuild RepoName="source-build-externals" ManagedOnly="true" />
     </Dependency>
-    <Dependency Name="Microsoft.SourceBuild.Intermediate.source-build-reference-packages" Version="8.0.0-alpha.1.23281.1">
+    <Dependency Name="Microsoft.SourceBuild.Intermediate.source-build-reference-packages" Version="8.0.0-alpha.1.23301.1">
       <Uri>https://github.com/dotnet/source-build-reference-packages</Uri>
-      <Sha>5bc298ffcdf49cea125e418972930d4cd524452d</Sha>
+      <Sha>e19d5e6d3d294d9d9360aa0c5a40dc7658439b63</Sha>
       <SourceBuild RepoName="source-build-reference-packages" ManagedOnly="true" />
     </Dependency>
     <Dependency Name="Microsoft.Deployment.DotNet.Releases" Version="1.0.0-preview.6.23206.1">
