@@ -9,6 +9,6 @@ PublicAPI.Unshipped.txt @nohwnd @MarcoRossignoli
 TelemetryDataConstants.cs @cvpoienaru @nohwnd
 
 # Changes here might break our contracts with other adapters, and possibly
-# Visual Studio. 
-/src/Microsoft.TestPlatform.AdapterUtilities/ @haplois @Evangelink 
-/test/Microsoft.TestPlatform.AdapterUtilities.UnitTests/  @haplois @Evangelink
+# Visual Studio.
+/src/Microsoft.TestPlatform.AdapterUtilities/ @nohwnd @Evangelink
+/test/Microsoft.TestPlatform.AdapterUtilities.UnitTests/ @nohwnd @Evangelink
