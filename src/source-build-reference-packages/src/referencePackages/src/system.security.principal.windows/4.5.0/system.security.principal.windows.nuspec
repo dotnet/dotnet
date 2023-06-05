@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2013/05/nuspec.xsd">
+  <metadata minClientVersion="2.12">
+    <id>System.Security.Principal.Windows</id>
+    <version>4.5.0</version>
+    <title>System.Security.Principal.Windows</title>
+    <authors>Microsoft</authors>
+    <owners>microsoft,dotnetframework</owners>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <licenseUrl>https://github.com/dotnet/corefx/blob/master/LICENSE.TXT</licenseUrl>
+    <projectUrl>https://dot.net/</projectUrl>
+    <iconUrl>http://go.microsoft.com/fwlink/?LinkID=288859</iconUrl>
+    <description>Provides classes for retrieving the current Windows user and for interacting with Windows users and groups.
+
+Commonly Used Types:
+System.Security.Principal.WindowsIdentity
+System.Security.Principal.SecurityIdentifier
+System.Security.Principal.NTAccount
+System.Security.Principal.WindowsPrincipal
+System.Security.Principal.IdentityReference
+System.Security.Principal.IdentityNotMappedException
+System.Security.Principal.WindowsBuiltInRole
+System.Security.Principal.WellKnownSidType
+ 
+30ab651fcb4354552bd4891619a0bdd81e0ebdbf 
+When using NuGet 3.x this package requires at least version 3.4.</description>
+    <releaseNotes>https://go.microsoft.com/fwlink/?LinkID=799421</releaseNotes>
+    <copyright>© Microsoft Corporation.  All rights reserved.</copyright>
+    <serviceable>true</serviceable>
+    <dependencies>
+      <group targetFramework=".NETStandard2.0" />
+    </dependencies>
+  </metadata>
+</package>
