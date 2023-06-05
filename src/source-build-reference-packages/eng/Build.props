@@ -65,6 +65,21 @@
     <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\System.Text.Encodings.Web.4.6.0.csproj" />
     <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\System.Text.Json.4.6.0.csproj" />
     <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\Microsoft.Extensions.DependencyModel.3.0.0.csproj" />
+
+    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\NuGet.Frameworks.6.2.2.csproj" />
+    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\NuGet.Common.6.2.2.csproj" />
+    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\NuGet.Versioning.6.2.2.csproj" />
+    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\NuGet.Configuration.6.2.2.csproj" />
+    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\NuGet.Packaging.6.2.2.csproj" />
+    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\NuGet.LibraryModel.6.2.2.csproj" />
+    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\NuGet.Protocol.6.2.2.csproj" />
+    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\NuGet.DependencyResolver.Core.6.2.2.csproj" />
+    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\NuGet.ProjectModel.6.2.2.csproj" />
+
+    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\System.Security.Principal.Windows.4.5.0.csproj" />
+    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\System.Security.AccessControl.4.5.0.csproj" />
+    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\System.Security.Permissions.4.5.0.csproj" />
+    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\System.ComponentModel.Composition.4.5.0.csproj" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(BuildDependencyPackageProjects)' == 'true'">

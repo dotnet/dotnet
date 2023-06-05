@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2013/05/nuspec.xsd">
+  <metadata minClientVersion="2.12">
+    <id>System.ComponentModel.Composition</id>
+    <version>4.5.0</version>
+    <title>System.ComponentModel.Composition</title>
+    <authors>Microsoft</authors>
+    <owners>microsoft,dotnetframework</owners>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <licenseUrl>https://github.com/dotnet/corefx/blob/master/LICENSE.TXT</licenseUrl>
+    <projectUrl>https://dot.net/</projectUrl>
+    <iconUrl>http://go.microsoft.com/fwlink/?LinkID=288859</iconUrl>
+    <description>This namespace provides classes that constitute the core of the Managed Extensibility Framework, or MEF.
+
+Commonly Used Types:
+System.ComponentModel.Composition.ChangeRejectedException
+System.ComponentModel.Composition.CompositionContractMismatchException
+System.ComponentModel.Composition.CompositionError
+System.ComponentModel.Composition.CompositionException
+System.ComponentModel.Composition.ExportAttribute
+System.ComponentModel.Composition.ImportAttribute
+System.ComponentModel.Composition.ImportCardinalityMismatchException
+System.ComponentModel.Composition.Hosting.AggregateCatalog
+System.ComponentModel.Composition.Hosting.ApplicationCatalog
+System.ComponentModel.Composition.Hosting.AssemblyCatalog
+System.ComponentModel.Composition.Hosting.CompositionContainer
+System.ComponentModel.Composition.Primitives.ComposablePartException
+System.ComponentModel.Composition.Primitives.ExportDefinition
+System.ComponentModel.Composition.Primitives.ImportDefinition
+System.ComponentModel.Composition.ReflectionModel.ReflectionModelServices
+ 
+30ab651fcb4354552bd4891619a0bdd81e0ebdbf 
+When using NuGet 3.x this package requires at least version 3.4.</description>
+    <releaseNotes>https://go.microsoft.com/fwlink/?LinkID=799421</releaseNotes>
+    <copyright>© Microsoft Corporation.  All rights reserved.</copyright>
+    <serviceable>true</serviceable>
+    <dependencies>
+      <group targetFramework=".NETStandard2.0" />
+    </dependencies>
+  </metadata>
+</package>

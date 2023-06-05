@@ -1,0 +1,10 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>netstandard2.0</TargetFrameworks>
+    <AssemblyName>System.ComponentModel.Composition</AssemblyName>
+    <ProjectTemplateVersion>2</ProjectTemplateVersion>
+    <StrongNameKeyId>ECMA</StrongNameKeyId>
+  </PropertyGroup>
+
+</Project>
