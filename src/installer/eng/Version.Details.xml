@@ -85,22 +85,22 @@
       <Uri>https://github.com/dotnet/test-templates</Uri>
       <Sha>0385265f4d0b6413d64aea0223172366a9b9858c</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.Test.ProjectTemplates.5.0" Version="1.1.0-rc.23273.1">
+    <Dependency Name="Microsoft.DotNet.Test.ProjectTemplates.5.0" Version="1.1.0-rc.23305.1">
       <Uri>https://github.com/dotnet/test-templates</Uri>
-      <Sha>0cf6d495f4ce78f7de953f4ac1d6244a93eb2982</Sha>
+      <Sha>b80f8f8f760cc040829cef89336e8a20ed4684b5</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.Test.ProjectTemplates.6.0" Version="1.1.0-rc.23273.1">
+    <Dependency Name="Microsoft.DotNet.Test.ProjectTemplates.6.0" Version="1.1.0-rc.23305.1">
       <Uri>https://github.com/dotnet/test-templates</Uri>
-      <Sha>0cf6d495f4ce78f7de953f4ac1d6244a93eb2982</Sha>
+      <Sha>b80f8f8f760cc040829cef89336e8a20ed4684b5</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.Test.ProjectTemplates.7.0" Version="1.1.0-rc.23273.1">
+    <Dependency Name="Microsoft.DotNet.Test.ProjectTemplates.7.0" Version="1.1.0-rc.23305.1">
       <Uri>https://github.com/dotnet/test-templates</Uri>
-      <Sha>0cf6d495f4ce78f7de953f4ac1d6244a93eb2982</Sha>
+      <Sha>b80f8f8f760cc040829cef89336e8a20ed4684b5</Sha>
       <SourceBuild RepoName="test-templates" ManagedOnly="true" />
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.Test.ProjectTemplates.8.0" Version="1.1.0-rc.23273.1">
+    <Dependency Name="Microsoft.DotNet.Test.ProjectTemplates.8.0" Version="1.1.0-rc.23305.1">
       <Uri>https://github.com/dotnet/test-templates</Uri>
-      <Sha>0cf6d495f4ce78f7de953f4ac1d6244a93eb2982</Sha>
+      <Sha>b80f8f8f760cc040829cef89336e8a20ed4684b5</Sha>
     </Dependency>
     <Dependency Name="Microsoft.DotNet.Common.ItemTemplates" Version="8.0.100-preview.6.23303.2">
       <Uri>https://github.com/dotnet/sdk</Uri>
