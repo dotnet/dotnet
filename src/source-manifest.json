@@ -13,10 +13,10 @@
       "commitSha": "c2488eead6ead7208f543d0a57104b5d167b93f9"
     },
     {
-      "packageVersion": "0.11.4-alpha.23265.2",
+      "packageVersion": "0.11.4-alpha.23301.1",
       "path": "cecil",
       "remoteUri": "https://github.com/dotnet/cecil",
-      "commitSha": "f283c6229347f2dc3a25b04f6611014d8871d0b0"
+      "commitSha": "ea84c8236c45ebace0073dbc01e0e75ffba65a65"
     },
     {
       "packageVersion": "0.1.356401",
@@ -37,10 +37,10 @@
       "commitSha": "5ce78f66d89ea529e459abddb129ab36cb5bd936"
     },
     {
-      "packageVersion": "8.0.0-preview.6.23277.2",
+      "packageVersion": "8.0.0-preview.6.23301.1",
       "path": "emsdk",
       "remoteUri": "https://github.com/dotnet/emsdk",
-      "commitSha": "fb9e15863c4a8b4fa209096f29406cc6dbb8ef32"
+      "commitSha": "63af043d58bd8d471da0e236e6255611e061cc4e"
     },
     {
       "packageVersion": "8.0.427204",
@@ -58,7 +58,7 @@
       "packageVersion": "8.0.100",
       "path": "installer",
       "remoteUri": "https://github.com/dotnet/installer",
-      "commitSha": "18dc2cf11a2daaaa1633afd0c4225e188ce6c239"
+      "commitSha": "d092ea07f86081226519edbc6d71e0af657a09d4"
     },
     {
       "packageVersion": "17.7.0-preview-23302-06",
@@ -91,16 +91,16 @@
       "commitSha": "2b6ab8d727ce73a78bcbf026ac75ea8a7c804daf"
     },
     {
-      "packageVersion": "8.0.0-preview.6.23302.2",
+      "packageVersion": "8.0.0-preview.6.23304.2",
       "path": "runtime",
       "remoteUri": "https://github.com/dotnet/runtime",
-      "commitSha": "15583461b96ff1d17947abe5806750bf69c10db3"
+      "commitSha": "2bf8f1aa83e192a307d5846424880cd61bec1a4f"
     },
     {
-      "packageVersion": "8.0.100-preview.6.23303.2",
+      "packageVersion": "8.0.100-preview.6.23305.4",
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "dfdec2edb38ee24c5551125e1cdf12cf6117b6a7"
+      "commitSha": "77f5be14af1b1d0e440e297d82b091ca854e3988"
     },
     {
       "packageVersion": "8.0.0-alpha.1.23301.1",
@@ -127,10 +127,10 @@
       "commitSha": "2c8079e2e8e78c0cd11ac75a32014756136ecdb9"
     },
     {
-      "packageVersion": "8.0.100-preview.6.23302.3",
+      "packageVersion": "8.0.100-preview.6.23304.2",
       "path": "templating",
       "remoteUri": "https://github.com/dotnet/templating",
-      "commitSha": "0e3831b509a216d5e6c5632c1e56128946f784c0"
+      "commitSha": "da92fde34fe680461ebf5e71b701a729feeaf631"
     },
     {
       "packageVersion": "1.1.0-rc.23305.1",
