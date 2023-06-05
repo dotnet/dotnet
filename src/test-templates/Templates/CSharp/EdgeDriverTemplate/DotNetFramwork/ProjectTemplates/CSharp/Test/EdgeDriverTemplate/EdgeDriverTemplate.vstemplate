@@ -25,8 +25,8 @@
   </WizardExtension>
   <WizardData>
     <packages repository="extension" repositoryId="EdgeDriverTest.0b43ac6b-e6ff-4afc-a5f6-286d41c046a6" isPreunzipped="false">
-      <package id="MSTest.TestAdapter" version="3.0.2" skipAssemblyReferences="false"/>
-      <package id="MSTest.TestFramework" version="3.0.2" skipAssemblyReferences="false"/>
+      <package id="MSTest.TestAdapter" version="3.0.4" skipAssemblyReferences="false"/>
+      <package id="MSTest.TestFramework" version="3.0.4" skipAssemblyReferences="false"/>
     </packages>
   </WizardData>
 </VSTemplate>
