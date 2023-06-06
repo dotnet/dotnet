@@ -100,6 +100,9 @@
     <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\Microsoft.CodeAnalysis.VisualBasic.3.7.0.csproj" />
     <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\Microsoft.CodeAnalysis.VisualBasic.Workspaces.3.7.0.csproj" />
     <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\Microsoft.CodeAnalysis.VisualBasic.4.0.1.csproj" />
+
+    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\NuGet.Credentials.6.2.2.csproj" />
+    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\NuGet.Commands.6.2.2.csproj" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(BuildDependencyPackageProjects)' == 'true'">
