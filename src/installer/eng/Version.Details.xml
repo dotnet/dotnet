@@ -85,22 +85,22 @@
       <Uri>https://github.com/dotnet/test-templates</Uri>
       <Sha>0385265f4d0b6413d64aea0223172366a9b9858c</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.Test.ProjectTemplates.5.0" Version="1.1.0-rc.23305.1">
+    <Dependency Name="Microsoft.DotNet.Test.ProjectTemplates.5.0" Version="1.1.0-rc.23305.2">
       <Uri>https://github.com/dotnet/test-templates</Uri>
-      <Sha>b80f8f8f760cc040829cef89336e8a20ed4684b5</Sha>
+      <Sha>98b55256c6cdfc0ed98c52d7d39127fa55971330</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.Test.ProjectTemplates.6.0" Version="1.1.0-rc.23305.1">
+    <Dependency Name="Microsoft.DotNet.Test.ProjectTemplates.6.0" Version="1.1.0-rc.23305.2">
       <Uri>https://github.com/dotnet/test-templates</Uri>
-      <Sha>b80f8f8f760cc040829cef89336e8a20ed4684b5</Sha>
+      <Sha>98b55256c6cdfc0ed98c52d7d39127fa55971330</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.Test.ProjectTemplates.7.0" Version="1.1.0-rc.23305.1">
+    <Dependency Name="Microsoft.DotNet.Test.ProjectTemplates.7.0" Version="1.1.0-rc.23305.2">
       <Uri>https://github.com/dotnet/test-templates</Uri>
-      <Sha>b80f8f8f760cc040829cef89336e8a20ed4684b5</Sha>
+      <Sha>98b55256c6cdfc0ed98c52d7d39127fa55971330</Sha>
       <SourceBuild RepoName="test-templates" ManagedOnly="true" />
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.Test.ProjectTemplates.8.0" Version="1.1.0-rc.23305.1">
+    <Dependency Name="Microsoft.DotNet.Test.ProjectTemplates.8.0" Version="1.1.0-rc.23305.2">
       <Uri>https://github.com/dotnet/test-templates</Uri>
-      <Sha>b80f8f8f760cc040829cef89336e8a20ed4684b5</Sha>
+      <Sha>98b55256c6cdfc0ed98c52d7d39127fa55971330</Sha>
     </Dependency>
     <Dependency Name="Microsoft.DotNet.Common.ItemTemplates" Version="8.0.100-preview.6.23305.4">
       <Uri>https://github.com/dotnet/sdk</Uri>
@@ -218,9 +218,9 @@
       <Uri>https://github.com/dotnet/runtime</Uri>
       <Sha>af841c8b33cecc92d74222298f1e45bf7bf3d90a</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.SourceBuild.Intermediate.source-build-reference-packages" Version="8.0.0-alpha.1.23305.3">
+    <Dependency Name="Microsoft.SourceBuild.Intermediate.source-build-reference-packages" Version="8.0.0-alpha.1.23305.4">
       <Uri>https://github.com/dotnet/source-build-reference-packages</Uri>
-      <Sha>658250387023abc09df27acf7d67ed1a07421dca</Sha>
+      <Sha>540ccf1a6831993d8ac8bf10bdfd3fde93ecee2e</Sha>
       <SourceBuild RepoName="source-build-reference-packages" ManagedOnly="true" />
     </Dependency>
     <Dependency Name="Microsoft.SourceLink.GitHub" Version="8.0.0-beta.23252.2" CoherentParentDependency="Microsoft.DotNet.Arcade.Sdk">
