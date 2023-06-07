@@ -83,4 +83,9 @@ fi
 
 ReadGlobalVersion Microsoft.DotNet.Arcade.Sdk
 export ARCADE_VERSION=$_ReadGlobalVersion
+
+if [ -z "$DotNetBuildFromSourceFlavor" ] || [ "$DotNetBuildFromSourceFlavor" != "Product" ]; then
+  export NUGET_PACKAGES=$scriptroot/../../artifacts/source-build/self/package-cache/
+fi
+
 "$DOTNET" msbuild "$scriptroot/source-build.proj" /p:Configuration=$configuration /p:DotNetBuildFromSource=true /p:ArcadeBuildFromSource=true "/p:RepoRoot=$scriptroot/../../" "/bl:$scriptroot/../../artifacts/source-build/self/log/source-build.binlog" $args

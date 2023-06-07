@@ -2,6 +2,8 @@
 NuGet.ProjectModel.RestoreAuditProperties
 NuGet.ProjectModel.RestoreAuditProperties.AuditLevel.get -> string?
 NuGet.ProjectModel.RestoreAuditProperties.AuditLevel.set -> void
+NuGet.ProjectModel.RestoreAuditProperties.AuditMode.get -> string?
+NuGet.ProjectModel.RestoreAuditProperties.AuditMode.set -> void
 NuGet.ProjectModel.RestoreAuditProperties.EnableAudit.get -> string?
 NuGet.ProjectModel.RestoreAuditProperties.EnableAudit.set -> void
 NuGet.ProjectModel.RestoreAuditProperties.Equals(NuGet.ProjectModel.RestoreAuditProperties? other) -> bool

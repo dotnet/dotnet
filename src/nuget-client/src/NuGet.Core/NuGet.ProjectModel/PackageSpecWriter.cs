@@ -206,6 +206,7 @@ namespace NuGet.ProjectModel
 
             SetValueIfNotNull(writer, "enableAudit", auditProperties.EnableAudit);
             SetValueIfNotNull(writer, "auditLevel", auditProperties.AuditLevel);
+            SetValueIfNotNull(writer, "auditMode", auditProperties.AuditMode);
 
             writer.WriteObjectEnd();
         }

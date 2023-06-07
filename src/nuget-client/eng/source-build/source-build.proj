@@ -20,15 +20,28 @@
   <Target Name="SourceBuildPostBuild" DependsOnTargets="SourceBuildInnerBuild">
     <Message Text="Running source-build PostBuild target" Importance="High" />
 
+    <ItemGroup>
+      <_CommonProperties Include="_NETCORE_ENGINEERING_TELEMETRY=AfterSourceBuild" />
+      <_CommonProperties Include="ArcadeBuildFromSource=true"/>
+    </ItemGroup>
+
     <MSbuild Projects="$(ArcadeDir)/Build.proj"
-             Properties="_NETCORE_ENGINEERING_TELEMETRY=AfterSourceBuild;ArcadeBuildFromSource=true;Restore=true;Build=false;Pack=false;Publish=false;Rebuild=false;Test=false;IntegrationTest=false;PerformanceTest=false;PreventPrebuiltBuild=false;BaseInnerSourceBuildCommand=echo skipping internal build with args: "
+             Properties="@(_CommonProperties);Restore=true;Build=false;Pack=false;Publish=false;Rebuild=false;Test=false;IntegrationTest=false;PerformanceTest=false;PreventPrebuiltBuild=false;BaseInnerSourceBuildCommand=echo skipping internal build with args: "
              Targets="Execute"
             />
 
     <Message Text="Finished restoring Arcade" Importance="High" />
 
+    <ItemGroup>
+      <_AfterSourceBuildProperties Include="CurrentRepoSourceBuildArtifactsPackagesDir=$(ProjectRoot)artifacts/nupkgs/" />
+    </ItemGroup>
+
+    <ItemGroup Condition="'$(DotNetBuildFromSourceFlavor)' != 'Product'">
+      <_AfterSourceBuildProperties Include="FailOnPrebuiltBaselineError=true" />
+    </ItemGroup>
+
     <MSbuild Projects="$(ArcadeDir)/SourceBuild/AfterSourceBuild.proj"
-             Properties="_NETCORE_ENGINEERING_TELEMETRY=AfterSourceBuild;ArcadeBuildFromSource=true;CurrentRepoSourceBuildArtifactsPackagesDir=$(ProjectRoot)artifacts/nupkgs/"
+             Properties="@(_CommonProperties);@(_AfterSourceBuildProperties)"
             />
 
   </Target>
