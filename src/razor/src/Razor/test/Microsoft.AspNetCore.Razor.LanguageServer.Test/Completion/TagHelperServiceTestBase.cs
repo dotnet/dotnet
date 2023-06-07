@@ -15,6 +15,7 @@ using Microsoft.VisualStudio.Editor.Razor;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Moq;
 using Xunit.Abstractions;
+using static Microsoft.AspNetCore.Razor.Language.CommonMetadata;
 using DefaultRazorTagHelperCompletionService = Microsoft.VisualStudio.Editor.Razor.LanguageServerTagHelperCompletionService;
 using RazorTagHelperCompletionService = Microsoft.VisualStudio.Editor.Razor.TagHelperCompletionService;
 
@@ -35,17 +36,17 @@ public abstract class TagHelperServiceTestBase : LanguageServerTestBase
     {
         var builder1 = TagHelperDescriptorBuilder.Create("Test1TagHelper", "TestAssembly");
         builder1.TagMatchingRule(rule => rule.TagName = "test1");
-        builder1.SetTypeName("Test1TagHelper");
+        builder1.SetMetadata(TypeName("Test1TagHelper"));
         builder1.BindAttribute(attribute =>
         {
             attribute.Name = "bool-val";
-            attribute.SetPropertyName("BoolVal");
+            attribute.SetMetadata(PropertyName("BoolVal"));
             attribute.TypeName = typeof(bool).FullName;
         });
         builder1.BindAttribute(attribute =>
         {
             attribute.Name = "int-val";
-            attribute.SetPropertyName("IntVal");
+            attribute.SetMetadata(PropertyName("IntVal"));
             attribute.TypeName = typeof(int).FullName;
         });
 
@@ -55,38 +56,39 @@ public abstract class TagHelperServiceTestBase : LanguageServerTestBase
             rule.TagName = "SomeChild";
             rule.ParentTag = "test1";
         });
-        builder1WithRequiredParent.SetTypeName("Test1TagHelper.SomeChild");
+        builder1WithRequiredParent.SetMetadata(TypeName("Test1TagHelper.SomeChild"));
 
         var builder2 = TagHelperDescriptorBuilder.Create("Test2TagHelper", "TestAssembly");
         builder2.TagMatchingRule(rule => rule.TagName = "test2");
-        builder2.SetTypeName("Test2TagHelper");
+        builder2.SetMetadata(TypeName("Test2TagHelper"));
         builder2.BindAttribute(attribute =>
         {
             attribute.Name = "bool-val";
-            attribute.SetPropertyName("BoolVal");
+            attribute.SetMetadata(PropertyName("BoolVal"));
             attribute.TypeName = typeof(bool).FullName;
         });
         builder2.BindAttribute(attribute =>
         {
             attribute.Name = "int-val";
-            attribute.SetPropertyName("IntVal");
+            attribute.SetMetadata(PropertyName("IntVal"));
             attribute.TypeName = typeof(int).FullName;
         });
 
         var builder3 = TagHelperDescriptorBuilder.Create(ComponentMetadata.Component.TagHelperKind, "Component1TagHelper", "TestAssembly");
         builder3.TagMatchingRule(rule => rule.TagName = "Component1");
-        builder3.SetTypeName("Component1");
-        builder3.Metadata[ComponentMetadata.Component.NameMatchKey] = ComponentMetadata.Component.FullyQualifiedNameMatch;
+        builder3.SetMetadata(
+            TypeName("Component1"),
+            new(ComponentMetadata.Component.NameMatchKey, ComponentMetadata.Component.FullyQualifiedNameMatch));
         builder3.BindAttribute(attribute =>
         {
             attribute.Name = "bool-val";
-            attribute.SetPropertyName("BoolVal");
+            attribute.SetMetadata(PropertyName("BoolVal"));
             attribute.TypeName = typeof(bool).FullName;
         });
         builder3.BindAttribute(attribute =>
         {
             attribute.Name = "int-val";
-            attribute.SetPropertyName("IntVal");
+            attribute.SetMetadata(PropertyName("IntVal"));
             attribute.TypeName = typeof(int).FullName;
         });
 
@@ -111,9 +113,8 @@ public abstract class TagHelperServiceTestBase : LanguageServerTestBase
         });
         directiveAttribute1.BindAttribute(attribute =>
         {
-            attribute.Metadata[ComponentMetadata.Common.DirectiveAttribute] = bool.TrueString;
             attribute.Name = "@test";
-            attribute.SetPropertyName("Test");
+            attribute.SetMetadata(PropertyName("Test"), IsDirectiveAttribute);
             attribute.TypeName = typeof(string).FullName;
 
             attribute.BindAttributeParameter(parameter =>
@@ -121,12 +122,13 @@ public abstract class TagHelperServiceTestBase : LanguageServerTestBase
                 parameter.Name = "something";
                 parameter.TypeName = typeof(string).FullName;
 
-                parameter.SetPropertyName("Something");
+                parameter.SetMetadata(PropertyName("Something"));
             });
         });
-        directiveAttribute1.Metadata[TagHelperMetadata.Common.ClassifyAttributesOnly] = bool.TrueString;
-        directiveAttribute1.Metadata[ComponentMetadata.Component.NameMatchKey] = ComponentMetadata.Component.FullyQualifiedNameMatch;
-        directiveAttribute1.SetTypeName("TestDirectiveAttribute");
+        directiveAttribute1.SetMetadata(
+            MakeTrue(TagHelperMetadata.Common.ClassifyAttributesOnly),
+            new(ComponentMetadata.Component.NameMatchKey, ComponentMetadata.Component.FullyQualifiedNameMatch),
+            TypeName("TestDirectiveAttribute"));
 
         var directiveAttribute2 = TagHelperDescriptorBuilder.Create(ComponentMetadata.Component.TagHelperKind, "MinimizedDirectiveAttribute", "TestAssembly");
         directiveAttribute2.TagMatchingRule(rule =>
@@ -149,9 +151,8 @@ public abstract class TagHelperServiceTestBase : LanguageServerTestBase
         });
         directiveAttribute2.BindAttribute(attribute =>
         {
-            attribute.Metadata[ComponentMetadata.Common.DirectiveAttribute] = bool.TrueString;
             attribute.Name = "@minimized";
-            attribute.SetPropertyName("Minimized");
+            attribute.SetMetadata(PropertyName("Minimized"), IsDirectiveAttribute);
             attribute.TypeName = typeof(bool).FullName;
 
             attribute.BindAttributeParameter(parameter =>
@@ -159,12 +160,13 @@ public abstract class TagHelperServiceTestBase : LanguageServerTestBase
                 parameter.Name = "something";
                 parameter.TypeName = typeof(string).FullName;
 
-                parameter.SetPropertyName("Something");
+                parameter.SetMetadata(PropertyName("Something"));
             });
         });
-        directiveAttribute2.Metadata[TagHelperMetadata.Common.ClassifyAttributesOnly] = bool.TrueString;
-        directiveAttribute2.Metadata[ComponentMetadata.Component.NameMatchKey] = ComponentMetadata.Component.FullyQualifiedNameMatch;
-        directiveAttribute2.SetTypeName("TestDirectiveAttribute");
+        directiveAttribute2.SetMetadata(
+            MakeTrue(TagHelperMetadata.Common.ClassifyAttributesOnly),
+            new(ComponentMetadata.Component.NameMatchKey, ComponentMetadata.Component.FullyQualifiedNameMatch),
+            TypeName("TestDirectiveAttribute"));
 
         var htmlTagMutator = TagHelperDescriptorBuilder.Create("HtmlMutator", "TestAssembly");
         htmlTagMutator.TagMatchingRule(rule =>
@@ -175,11 +177,11 @@ public abstract class TagHelperServiceTestBase : LanguageServerTestBase
                 attributeRule.Name = "mutator";
             });
         });
-        htmlTagMutator.SetTypeName("HtmlMutator");
+        htmlTagMutator.SetMetadata(TypeName("HtmlMutator"));
         htmlTagMutator.BindAttribute(attribute =>
         {
             attribute.Name = "Extra";
-            attribute.SetPropertyName("Extra");
+            attribute.SetMetadata(PropertyName("Extra"));
             attribute.TypeName = typeof(bool).FullName;
         });
 

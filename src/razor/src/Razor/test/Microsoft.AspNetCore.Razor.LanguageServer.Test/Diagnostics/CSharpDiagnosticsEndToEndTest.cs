@@ -56,7 +56,7 @@ public class CSharpDiagnosticsEndToEndTest : SingleServerDelegatingEndpointTestB
         var requestContext = new RazorRequestContext(documentContext, Logger, null!);
 
         var translateDiagnosticsService = new RazorTranslateDiagnosticsService(DocumentMappingService, LoggerFactory);
-        var diagnosticsEndPoint = new DocumentPullDiagnosticsEndpoint(LanguageServerFeatureOptions, translateDiagnosticsService, LanguageServer);
+        var diagnosticsEndPoint = new DocumentPullDiagnosticsEndpoint(LanguageServerFeatureOptions, translateDiagnosticsService, LanguageServer, telemetryReporter: null);
 
         var diagnosticsRequest = new VSInternalDocumentDiagnosticsParams
         {

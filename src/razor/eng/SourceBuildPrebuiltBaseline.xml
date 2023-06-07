@@ -1,5 +1,12 @@
 ﻿<UsageData>
   <IgnorePatterns>
     <UsagePattern IdentityGlob="Microsoft.SourceBuild.Intermediate.*/*" />
+
+    <!-- 
+      Ignoring the following prebuilts. NetPrevious targeting is needed in repo legs
+      because the intermediate is used by multiple versions of dependent repos.
+    -->
+    <UsagePattern IdentityGlob="Microsoft.AspNetCore.App.Ref/7.0.*" />
+    <UsagePattern IdentityGlob="Microsoft.NETCore.App.Ref/7.0.*" />
   </IgnorePatterns>
 </UsageData>

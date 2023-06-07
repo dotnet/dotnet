@@ -6,6 +6,7 @@
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Language.CodeGeneration;
 using Xunit;
+using static Microsoft.AspNetCore.Razor.Language.CommonMetadata;
 
 namespace Microsoft.AspNetCore.Mvc.Razor.Extensions;
 
@@ -17,13 +18,14 @@ public class ViewComponentTagHelperTargetExtensionTest
         // Arrange
         var tagHelper = TagHelperDescriptorBuilder
             .Create(ViewComponentTagHelperConventions.Kind, "TestTagHelper", "TestAssembly")
-            .TypeName("__Generated__TagCloudViewComponentTagHelper")
+            .Metadata(
+                TypeName("__Generated__TagCloudViewComponentTagHelper"),
+                new(ViewComponentTagHelperMetadata.Name, "TagCloud"))
             .BoundAttributeDescriptor(attribute => attribute
                 .Name("Foo")
                 .TypeName("System.Int32")
-                .PropertyName("Foo"))
+                .Metadata(PropertyName("Foo")))
             .TagMatchingRuleDescriptor(rule => rule.RequireTagName("tagcloud"))
-            .AddMetadata(ViewComponentTagHelperMetadata.Name, "TagCloud")
             .Build();
 
         var extension = new ViewComponentTagHelperTargetExtension();
@@ -79,14 +81,15 @@ public class __Generated__TagCloudViewComponentTagHelper : Microsoft.AspNetCore.
         // Arrange
         var tagHelper = TagHelperDescriptorBuilder
             .Create(ViewComponentTagHelperConventions.Kind, "TestTagHelper", "TestAssembly")
-            .TypeName("__Generated__TagCloudViewComponentTagHelper")
+            .Metadata(
+                TypeName("__Generated__TagCloudViewComponentTagHelper"),
+                new(ViewComponentTagHelperMetadata.Name, "TagCloud"))
             .BoundAttributeDescriptor(attribute => attribute
                 .Name("Foo")
                 .TypeName("System.Collections.Generic.Dictionary<System.String, System.Int32>")
-                .PropertyName("Tags")
+                .Metadata(PropertyName("Tags"))
                 .AsDictionaryAttribute("foo-", "System.Int32"))
             .TagMatchingRuleDescriptor(rule => rule.RequireTagName("tagcloud"))
-            .AddMetadata(ViewComponentTagHelperMetadata.Name, "TagCloud")
             .Build();
 
         var extension = new ViewComponentTagHelperTargetExtension();

@@ -6,6 +6,7 @@
 using System.Linq;
 using Microsoft.AspNetCore.Razor.Language.Intermediate;
 using Xunit;
+using static Microsoft.AspNetCore.Razor.Language.CommonMetadata;
 
 namespace Microsoft.AspNetCore.Razor.Language.Extensions;
 
@@ -21,15 +22,15 @@ public class DefaultTagHelperOptimizationPassTest
 
         var tagHelpers = new[]
         {
-                TagHelperDescriptorBuilder.Create("TestTagHelper", "TestAssembly")
-                    .TypeName("TestTagHelper")
-                    .BoundAttributeDescriptor(attribute => attribute
-                        .Name("Foo")
-                        .TypeName("System.Int32")
-                        .PropertyName("FooProp"))
-                    .TagMatchingRuleDescriptor(rule => rule.RequireTagName("p"))
-                    .Build()
-            };
+            TagHelperDescriptorBuilder.Create("TestTagHelper", "TestAssembly")
+                .Metadata(TypeName("TestTagHelper"))
+                .BoundAttributeDescriptor(attribute => attribute
+                    .Name("Foo")
+                    .TypeName("System.Int32")
+                    .Metadata(PropertyName("FooProp")))
+                .TagMatchingRuleDescriptor(rule => rule.RequireTagName("p"))
+                .Build()
+        };
 
         var engine = CreateEngine(tagHelpers);
         var pass = new DefaultTagHelperOptimizationPass()

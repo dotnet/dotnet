@@ -11,8 +11,6 @@ namespace Microsoft.AspNetCore.Razor.Language.CodeGeneration;
 
 public sealed class CodeWriter
 {
-    private static readonly char[] NewLineCharacters = { '\r', '\n' };
-
     private readonly StringBuilder _builder;
 
     private string _newLine;
@@ -60,7 +58,7 @@ public sealed class CodeWriter
 
     public int TabSize { get; }
 
-    public SourceLocation Location => new SourceLocation(_absoluteIndex, _currentLineIndex, _currentLineCharacterIndex);
+    public SourceLocation Location => new(_absoluteIndex, _currentLineIndex, _currentLineCharacterIndex);
 
     public char this[int index]
     {
@@ -148,7 +146,7 @@ public sealed class CodeWriter
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    internal CodeWriter WriteCore(string value, int startIndex, int count)
+    private CodeWriter WriteCore(string value, int startIndex, int count)
     {
         if (count == 0)
         {
@@ -185,25 +183,31 @@ public sealed class CodeWriter
 
         // Iterate the string, stopping at each occurrence of a newline character. This lets us count the
         // newline occurrences and keep the index of the last one.
-        while ((i = value.IndexOfAny(NewLineCharacters, i)) >= 0)
+        var endIndex = startIndex + count;
+        while (i < endIndex)
         {
-            // Newline found.
-            _currentLineIndex++;
-            _currentLineCharacterIndex = 0;
+            var ch = value[i];
 
             i++;
 
-            // We might have stopped at a \r, so check if it's followed by \n and then advance the index to
-            // start the next search after it.
-            if (count > i &&
-                value[i - 1] == '\r' &&
-                value[i] == '\n')
+            if (ch is '\r' or '\n')
             {
-                i++;
-            }
+                // Newline found.
+                _currentLineIndex++;
+                _currentLineCharacterIndex = 0;
 
-            // The 'suffix' of the current line starts after this newline token.
-            trailingPartStart = i;
+                // We might have stopped at a \r, so check if it's followed by \n and then advance the index.
+                // Otherwise, we'll count this line break twice.
+                if (ch == '\r' &&
+                    i < endIndex &&
+                    value[i] == '\n')
+                {
+                    i++;
+                }
+
+                // The 'suffix' of the current line starts after this newline token.
+                trailingPartStart = i;
+            }
         }
 
         if (trailingPartStart == null)
@@ -214,7 +218,7 @@ public sealed class CodeWriter
         else
         {
             // Newlines found, add the trailing part of 'data'
-            _currentLineCharacterIndex += (count - trailingPartStart.Value);
+            _currentLineCharacterIndex += endIndex - trailingPartStart.Value;
         }
 
         return this;

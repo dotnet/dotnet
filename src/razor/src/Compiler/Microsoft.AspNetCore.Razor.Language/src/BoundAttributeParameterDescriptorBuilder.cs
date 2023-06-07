@@ -5,6 +5,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Microsoft.AspNetCore.Razor.Language;
 
@@ -24,12 +25,24 @@ public abstract class BoundAttributeParameterDescriptorBuilder
 
     public abstract RazorDiagnosticCollection Diagnostics { get; }
 
-    internal virtual void SetDocumentation(string text)
+#nullable enable
+
+    internal virtual void SetDocumentation(string? text)
     {
         throw new NotImplementedException();
     }
 
-    internal virtual void SetDocumentation(DocumentationDescriptor documentation)
+    internal virtual void SetDocumentation(DocumentationDescriptor? documentation)
+    {
+        throw new NotImplementedException();
+    }
+
+    public virtual void SetMetadata(MetadataCollection metadata)
+    {
+        throw new NotImplementedException();
+    }
+
+    public virtual bool TryGetMetadataValue(string key, [NotNullWhen(true)] out string? value)
     {
         throw new NotImplementedException();
     }

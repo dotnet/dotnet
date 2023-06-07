@@ -17,7 +17,7 @@ public class TagHelperRewritingTestBase : ParserTestBase
         EvaluateData(descriptors, documentContent);
     }
 
-    internal IEnumerable<TagHelperDescriptor> BuildDescriptors(params string[] tagNames)
+    internal IReadOnlyList<TagHelperDescriptor> BuildDescriptors(params string[] tagNames)
     {
         var descriptors = new List<TagHelperDescriptor>();
 
@@ -29,11 +29,11 @@ public class TagHelperRewritingTestBase : ParserTestBase
             descriptors.Add(descriptor);
         }
 
-        return descriptors;
+        return descriptors.AsReadOnly();
     }
 
     internal void EvaluateData(
-        IEnumerable<TagHelperDescriptor> descriptors,
+        IReadOnlyList<TagHelperDescriptor> descriptors,
         string documentContent,
         string tagHelperPrefix = null,
         RazorParserFeatureFlags featureFlags = null)

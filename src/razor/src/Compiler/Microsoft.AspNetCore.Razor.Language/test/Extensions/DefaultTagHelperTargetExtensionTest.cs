@@ -9,6 +9,7 @@ using System.Linq;
 using Microsoft.AspNetCore.Razor.Language.CodeGeneration;
 using Microsoft.AspNetCore.Razor.Language.Intermediate;
 using Xunit;
+using static Microsoft.AspNetCore.Razor.Language.CommonMetadata;
 
 namespace Microsoft.AspNetCore.Razor.Language.Extensions;
 
@@ -22,10 +23,10 @@ public class DefaultTagHelperTargetExtensionTest : RazorProjectEngineTestBase
         assemblyName: "TestAssembly",
         attributes: new Action<BoundAttributeDescriptorBuilder>[]
         {
-                builder => builder
-                    .Name("bound")
-                    .PropertyName("StringProp")
-                    .TypeName("System.String"),
+            builder => builder
+                .Name("bound")
+                .Metadata(PropertyName("StringProp"))
+                .TypeName("System.String"),
         });
 
     private static readonly TagHelperDescriptor IntPropertyTagHelper = CreateTagHelperDescriptor(
@@ -34,10 +35,10 @@ public class DefaultTagHelperTargetExtensionTest : RazorProjectEngineTestBase
         assemblyName: "TestAssembly",
         attributes: new Action<BoundAttributeDescriptorBuilder>[]
         {
-                builder => builder
-                    .Name("bound")
-                    .PropertyName("IntProp")
-                    .TypeName("System.Int32"),
+            builder => builder
+                .Name("bound")
+                .Metadata(PropertyName("IntProp"))
+                .TypeName("System.Int32"),
         });
 
     private static readonly TagHelperDescriptor IntIndexerTagHelper = CreateTagHelperDescriptor(
@@ -46,11 +47,11 @@ public class DefaultTagHelperTargetExtensionTest : RazorProjectEngineTestBase
         assemblyName: "TestAssembly",
         attributes: new Action<BoundAttributeDescriptorBuilder>[]
         {
-                builder => builder
-                    .Name("bound")
-                    .PropertyName("IntIndexer")
-                    .TypeName("System.Collections.Generic.Dictionary<System.String, System.Int32>")
-                    .AsDictionary("foo-", "System.Int32"),
+            builder => builder
+                .Name("bound")
+                .Metadata(PropertyName("IntIndexer"))
+                .TypeName("System.Collections.Generic.Dictionary<System.String, System.Int32>")
+                .AsDictionary("foo-", "System.Int32"),
         });
 
     private static readonly SourceSpan Span = new SourceSpan("test.cshtml", 15, 2, 5, 2);
@@ -1192,7 +1193,7 @@ private global::Microsoft.AspNetCore.Razor.Runtime.TagHelpers.TagHelperScopeMana
         IEnumerable<Action<BoundAttributeDescriptorBuilder>> attributes = null)
     {
         var builder = TagHelperDescriptorBuilder.Create(typeName, assemblyName);
-        builder.TypeName(typeName);
+        builder.Metadata(TypeName(typeName));
 
         if (attributes != null)
         {

@@ -19,6 +19,8 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer.Common;
 
         public const string RazorProximityExpressionsEndpoint = "razor/proximityExpressions";
 
+        public const string RazorLanguageServerName = "Razor Language Server Client";
+
         public const string RazorMonitorProjectConfigurationFilePathEndpoint = "razor/monitorProjectConfigurationFilePath";
 
         public const string RazorMapToDocumentRangesEndpoint = "razor/mapToDocumentRanges";

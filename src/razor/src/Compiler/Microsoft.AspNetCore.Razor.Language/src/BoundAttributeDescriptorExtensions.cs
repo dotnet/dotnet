@@ -4,7 +4,6 @@
 #nullable disable
 
 using System;
-using Microsoft.AspNetCore.Razor.Language.Components;
 
 namespace Microsoft.AspNetCore.Razor.Language;
 
@@ -39,7 +38,7 @@ public static class BoundAttributeDescriptorExtensions
             throw new ArgumentNullException(nameof(attribute));
         }
 
-        return string.Equals(attribute.Kind, TagHelperConventions.DefaultKind, StringComparison.Ordinal);
+        return attribute.Kind == TagHelperConventions.DefaultKind;
     }
 
     internal static bool ExpectsStringValue(this BoundAttributeDescriptor attribute, string name)
@@ -81,7 +80,7 @@ public static class BoundAttributeDescriptorExtensions
             throw new ArgumentNullException(nameof(parameter));
         }
 
-        return string.Equals(parameter.Kind, TagHelperConventions.DefaultKind, StringComparison.Ordinal);
+        return parameter.Kind == TagHelperConventions.DefaultKind;
     }
 
     public static string GetPropertyName(this BoundAttributeParameterDescriptor parameter)

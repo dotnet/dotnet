@@ -14,7 +14,7 @@ namespace Microsoft.AspNetCore.Razor.Language.Legacy;
 
 internal static class TagHelperParseTreeRewriter
 {
-    public static RazorSyntaxTree Rewrite(RazorSyntaxTree syntaxTree, string tagHelperPrefix, IEnumerable<TagHelperDescriptor> descriptors, out ISet<TagHelperDescriptor> usedDescriptors)
+    public static RazorSyntaxTree Rewrite(RazorSyntaxTree syntaxTree, string tagHelperPrefix, IReadOnlyList<TagHelperDescriptor> descriptors, out ISet<TagHelperDescriptor> usedDescriptors)
     {
         var errorSink = new ErrorSink();
 
@@ -68,7 +68,7 @@ internal static class TagHelperParseTreeRewriter
         public Rewriter(
             RazorSourceDocument source,
             string tagHelperPrefix,
-            IEnumerable<TagHelperDescriptor> descriptors,
+            IReadOnlyList<TagHelperDescriptor> descriptors,
             RazorParserFeatureFlags featureFlags,
             ErrorSink errorSink)
         {

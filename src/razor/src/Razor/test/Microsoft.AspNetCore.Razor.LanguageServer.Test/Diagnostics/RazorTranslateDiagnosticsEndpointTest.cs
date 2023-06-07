@@ -15,6 +15,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Xunit;
 using Xunit.Abstractions;
+using static Microsoft.AspNetCore.Razor.Language.CommonMetadata;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Diagnostics;
 
@@ -1192,12 +1193,12 @@ public class RazorTranslateDiagnosticsEndpointTest : LanguageServerTestBase
     private static TagHelperDescriptorBuilder GetButtonTagHelperDescriptor()
     {
         var descriptor = TagHelperDescriptorBuilder.Create("ButtonTagHelper", "TestAssembly");
-        descriptor.SetTypeName("TestNamespace.ButtonTagHelper");
+        descriptor.SetMetadata(TypeName("TestNamespace.ButtonTagHelper"));
         descriptor.TagMatchingRule(builder => builder.RequireTagName("button"));
         descriptor.BindAttribute(builder =>
             builder
                 .Name("onactivate")
-                .PropertyName("onactivate")
+                .Metadata(PropertyName("onactivate"))
                 .TypeName(typeof(string).FullName));
         return descriptor;
     }

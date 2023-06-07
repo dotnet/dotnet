@@ -89,6 +89,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build", "build", "{4CAC99E0-6ECE-4264-96C3-AF4EEE7BC9D1}"
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
+		SpellingExclusions.dic = SpellingExclusions.dic
 		eng\Versions.props = eng\Versions.props
 	EndProjectSection
 EndProject

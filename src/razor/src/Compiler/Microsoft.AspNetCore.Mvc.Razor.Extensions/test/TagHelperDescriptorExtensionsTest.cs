@@ -75,7 +75,7 @@ public class TagHelperDescriptorExtensionsTest
     {
         var tagHelper = TagHelperDescriptorBuilder.Create(ViewComponentTagHelperConventions.Kind, "TypeName", "AssemblyName")
             .TagMatchingRuleDescriptor(rule => rule.RequireTagName("tag-name"))
-            .AddMetadata(ViewComponentTagHelperMetadata.Name, name)
+            .Metadata(ViewComponentTagHelperMetadata.Name, name)
             .Build();
 
         return tagHelper;

@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Xunit;
 using Xunit.Abstractions;
+using static Microsoft.AspNetCore.Razor.Language.CommonMetadata;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer;
 
@@ -769,7 +770,7 @@ public class RazorDocumentMappingServiceTest : TestBase
         // Arrange
         var descriptor = TagHelperDescriptorBuilder.Create("TestTagHelper", "TestAssembly");
         descriptor.TagMatchingRule(rule => rule.TagName = "test");
-        descriptor.SetTypeName("TestTagHelper");
+        descriptor.SetMetadata(TypeName("TestTagHelper"));
         var text = $"@addTagHelper *, TestAssembly{Environment.NewLine}<test>@Name</test>";
         var (classifiedSpans, tagHelperSpans) = GetClassifiedSpans(text, new[] { descriptor.Build() });
 
@@ -786,7 +787,7 @@ public class RazorDocumentMappingServiceTest : TestBase
         // Arrange
         var descriptor = TagHelperDescriptorBuilder.Create("TestTagHelper", "TestAssembly");
         descriptor.TagMatchingRule(rule => rule.TagName = "test");
-        descriptor.SetTypeName("TestTagHelper");
+        descriptor.SetMetadata(TypeName("TestTagHelper"));
         var text = $"@addTagHelper *, TestAssembly{Environment.NewLine}<test></test>@DateTime.Now";
         var (classifiedSpans, tagHelperSpans) = GetClassifiedSpans(text, new[] { descriptor.Build() });
 
@@ -807,9 +808,9 @@ public class RazorDocumentMappingServiceTest : TestBase
         {
             builder.Name = "asp-int";
             builder.TypeName = typeof(int).FullName;
-            builder.SetPropertyName("AspInt");
+            builder.SetMetadata(PropertyName("AspInt"));
         });
-        descriptor.SetTypeName("TestTagHelper");
+        descriptor.SetMetadata(TypeName("TestTagHelper"));
         var text = $"@addTagHelper *, TestAssembly{Environment.NewLine}<test asp-int='123'></test>";
         var (classifiedSpans, tagHelperSpans) = GetClassifiedSpans(text, new[] { descriptor.Build() });
 
@@ -1051,7 +1052,7 @@ public class RazorDocumentMappingServiceTest : TestBase
         // Arrange
         var descriptor = TagHelperDescriptorBuilder.Create("TestTagHelper", "TestAssembly");
         descriptor.TagMatchingRule(rule => rule.TagName = "test");
-        descriptor.SetTypeName("TestTagHelper");
+        descriptor.SetMetadata(TypeName("TestTagHelper"));
         var text = """
                        @addTagHelper *, TestAssembly
                        @if {

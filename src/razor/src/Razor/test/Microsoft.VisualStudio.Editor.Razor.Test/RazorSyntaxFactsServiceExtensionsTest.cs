@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Xunit;
 using Xunit.Abstractions;
+using static Microsoft.AspNetCore.Razor.Language.CommonMetadata;
 
 namespace Microsoft.VisualStudio.Editor.Razor;
 
@@ -75,7 +76,7 @@ public class RazorSyntaxFactsServiceExtensionsTest : TestBase
     {
         var taghelper = TagHelperDescriptorBuilder.Create("TestTagHelper", "TestAssembly")
             .TagMatchingRuleDescriptor(rule => rule.RequireTagName("taghelper"))
-            .TypeName("TestTagHelper")
+            .Metadata(TypeName("TestTagHelper"))
             .Build();
         var projectEngine = RazorProjectEngine.Create(builder =>
         {

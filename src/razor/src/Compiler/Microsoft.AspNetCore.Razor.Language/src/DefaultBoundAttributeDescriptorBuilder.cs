@@ -56,7 +56,7 @@ internal partial class DefaultBoundAttributeDescriptorBuilder : BoundAttributeDe
     private string _kind;
     private List<DefaultBoundAttributeParameterDescriptorBuilder>? _attributeParameterBuilders;
     private DocumentationObject _documentationObject;
-    private Dictionary<string, string?>? _metadata;
+    private MetadataHolder _metadata;
     private RazorDiagnosticCollection? _diagnostics;
 
     private DefaultBoundAttributeDescriptorBuilder()
@@ -84,7 +84,12 @@ internal partial class DefaultBoundAttributeDescriptorBuilder : BoundAttributeDe
 
     public override string? DisplayName { get; set; }
 
-    public override IDictionary<string, string?> Metadata => _metadata ??= new Dictionary<string, string?>();
+    public override IDictionary<string, string?> Metadata => _metadata.MetadataDictionary;
+
+    public override void SetMetadata(MetadataCollection metadata) => _metadata.SetMetadataCollection(metadata);
+
+    public override bool TryGetMetadataValue(string key, [NotNullWhen(true)] out string? value)
+        => _metadata.TryGetMetadataValue(key, out value);
 
     public override RazorDiagnosticCollection Diagnostics => _diagnostics ??= new RazorDiagnosticCollection();
 
@@ -104,12 +109,12 @@ internal partial class DefaultBoundAttributeDescriptorBuilder : BoundAttributeDe
         _attributeParameterBuilders.Add(builder);
     }
 
-    internal override void SetDocumentation(string text)
+    internal override void SetDocumentation(string? text)
     {
         _documentationObject = new(text);
     }
 
-    internal override void SetDocumentation(DocumentationDescriptor documentation)
+    internal override void SetDocumentation(DocumentationDescriptor? documentation)
     {
         _documentationObject = new(documentation);
     }
@@ -125,6 +130,8 @@ internal partial class DefaultBoundAttributeDescriptorBuilder : BoundAttributeDe
 
             var parameters = _attributeParameterBuilders.BuildAllOrEmpty(s_boundAttributeParameterSetPool);
 
+            var metadata = _metadata.GetMetadataCollection();
+
             var descriptor = new DefaultBoundAttributeDescriptor(
                 _kind,
                 Name,
@@ -138,7 +145,7 @@ internal partial class DefaultBoundAttributeDescriptorBuilder : BoundAttributeDe
                 CaseSensitive,
                 IsEditorRequired,
                 parameters,
-                MetadataCollection.CreateOrEmpty(_metadata),
+                metadata,
                 diagnostics.ToArray());
 
             return descriptor;
@@ -156,8 +163,15 @@ internal partial class DefaultBoundAttributeDescriptorBuilder : BoundAttributeDe
             return DisplayName;
         }
 
-        var parentTypeName = _parent.GetTypeName();
-        var propertyName = this.GetPropertyName();
+        if (!_parent.TryGetMetadataValue(TagHelperMetadata.Common.TypeName, out var parentTypeName))
+        {
+            parentTypeName = null;
+        }
+
+        if (!TryGetMetadataValue(TagHelperMetadata.Common.PropertyName, out var propertyName))
+        {
+            propertyName = null;
+        }
 
         if (TypeName != null &&
             propertyName != null &&

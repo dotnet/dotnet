@@ -6,6 +6,7 @@
 using System;
 using System.Collections.Generic;
 using Xunit;
+using static Microsoft.AspNetCore.Razor.Language.CommonMetadata;
 
 namespace Microsoft.AspNetCore.Razor.Language;
 
@@ -21,10 +22,10 @@ public class TagHelperDescriptorComparerTest
                 assemblyName: "TestAssembly",
                 attributes: new Action<BoundAttributeDescriptorBuilder>[]
                 {
-                        builder => builder
-                            .Name("value")
-                            .PropertyName("FooProp")
-                            .TypeName("System.String"),
+                    builder => builder
+                        .Name("value")
+                        .Metadata(PropertyName("FooProp"))
+                        .TypeName("System.String"),
                 });
         var descriptor2 = CreateTagHelperDescriptor(
                 tagName: "input",
@@ -32,10 +33,10 @@ public class TagHelperDescriptorComparerTest
                 assemblyName: "TestAssembly",
                 attributes: new Action<BoundAttributeDescriptorBuilder>[]
                 {
-                        builder => builder
-                            .Name("value")
-                            .PropertyName("FooProp")
-                            .TypeName("System.String"),
+                    builder => builder
+                        .Name("value")
+                        .Metadata(PropertyName("FooProp"))
+                        .TypeName("System.String"),
                 });
 
         // Act
@@ -51,29 +52,30 @@ public class TagHelperDescriptorComparerTest
     {
         // Arrange
         var descriptorName = CreateTagHelperDescriptor(
-                tagName: "input",
-                typeName: "InputTagHelper",
-                assemblyName: "TestAssembly",
-                tagMatchingRuleName: "Input",
-                attributes: new Action<BoundAttributeDescriptorBuilder>[]
-                {
-                        builder => builder
-                            .Name("value")
-                            .PropertyName("FooProp")
-                            .TypeName("System.String"),
-                });
+            tagName: "input",
+            typeName: "InputTagHelper",
+            assemblyName: "TestAssembly",
+            tagMatchingRuleName: "Input",
+            attributes: new Action<BoundAttributeDescriptorBuilder>[]
+            {
+                builder => builder
+                    .Name("value")
+                    .Metadata(PropertyName("FooProp"))
+                    .TypeName("System.String"),
+            });
+
         var descriptorFQN = CreateTagHelperDescriptor(
-                tagName: "input",
-                typeName: "InputTagHelper",
-                assemblyName: "TestAssembly",
-                tagMatchingRuleName: "Microsoft.AspNetCore.Components.Forms.Input",
-                attributes: new Action<BoundAttributeDescriptorBuilder>[]
-                {
-                        builder => builder
-                            .Name("value")
-                            .PropertyName("FooProp")
-                            .TypeName("System.String"),
-                });
+            tagName: "input",
+            typeName: "InputTagHelper",
+            assemblyName: "TestAssembly",
+            tagMatchingRuleName: "Microsoft.AspNetCore.Components.Forms.Input",
+            attributes: new Action<BoundAttributeDescriptorBuilder>[]
+            {
+                builder => builder
+                    .Name("value")
+                    .Metadata(PropertyName("FooProp"))
+                    .TypeName("System.String"),
+            });
 
         // Act
         var hashCodeName = descriptorName.GetHashCode();
@@ -88,29 +90,30 @@ public class TagHelperDescriptorComparerTest
     {
         // Arrange
         var counterTagHelper = CreateTagHelperDescriptor(
-                tagName: "Counter",
-                typeName: "CounterTagHelper",
-                assemblyName: "Components.Component",
-                tagMatchingRuleName: "Input",
-                attributes: new Action<BoundAttributeDescriptorBuilder>[]
-                {
-                        builder => builder
-                            .Name("IncrementBy")
-                            .PropertyName("IncrementBy")
-                            .TypeName("System.Int32"),
-                });
+            tagName: "Counter",
+            typeName: "CounterTagHelper",
+            assemblyName: "Components.Component",
+            tagMatchingRuleName: "Input",
+            attributes: new Action<BoundAttributeDescriptorBuilder>[]
+            {
+                builder => builder
+                    .Name("IncrementBy")
+                    .Metadata(PropertyName("IncrementBy"))
+                    .TypeName("System.Int32"),
+            });
+
         var inputTagHelper = CreateTagHelperDescriptor(
-                tagName: "input",
-                typeName: "InputTagHelper",
-                assemblyName: "TestAssembly",
-                tagMatchingRuleName: "Microsoft.AspNetCore.Components.Forms.Input",
-                attributes: new Action<BoundAttributeDescriptorBuilder>[]
-                {
-                        builder => builder
-                            .Name("value")
-                            .PropertyName("FooProp")
-                            .TypeName("System.String"),
-                });
+            tagName: "input",
+            typeName: "InputTagHelper",
+            assemblyName: "TestAssembly",
+            tagMatchingRuleName: "Microsoft.AspNetCore.Components.Forms.Input",
+            attributes: new Action<BoundAttributeDescriptorBuilder>[]
+            {
+                builder => builder
+                    .Name("value")
+                    .Metadata(PropertyName("FooProp"))
+                    .TypeName("System.String"),
+            });
 
         // Act
         var hashCodeCounter = counterTagHelper.GetHashCode();
@@ -128,7 +131,7 @@ public class TagHelperDescriptorComparerTest
         IEnumerable<Action<BoundAttributeDescriptorBuilder>> attributes = null)
     {
         var builder = TagHelperDescriptorBuilder.Create(typeName, assemblyName) as DefaultTagHelperDescriptorBuilder;
-        builder.TypeName(typeName);
+        builder.Metadata(TypeName(typeName));
 
         if (attributes != null)
         {

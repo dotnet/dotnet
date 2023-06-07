@@ -30,6 +30,11 @@ internal class OmniSharpTelemetryReporter : ITelemetryReporter
         return NullScope.Instance;
     }
 
+    public IDisposable TrackLspRequest(string name, string lspMethodName, string lspServerName, Guid correlationId)
+    {
+        return NullScope.Instance;
+    }
+
     private class NullScope : IDisposable
     {
         public static NullScope Instance { get; } = new NullScope();

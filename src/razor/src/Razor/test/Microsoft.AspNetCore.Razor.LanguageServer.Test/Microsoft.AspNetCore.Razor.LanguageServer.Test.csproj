@@ -39,6 +39,7 @@
         packages dependencies. We reference them here directly in order to do so, and set ExcludeAssets and PrivateAssets so
         the references have no other affect on build etc.
     -->
+    <PackageReference Include="Microsoft.IO.Redist" Version="$(MicrosoftIORedistPackageVersion)" PrivateAssets="all" ExcludeAssets="all" NoWarn="NU1701" />
     <PackageReference Include="Microsoft.VisualStudio.Imaging" Version="$(MicrosoftVisualStudioShellPackagesVersion)" PrivateAssets="all" ExcludeAssets="all" NoWarn="NU1701" />
     <PackageReference Include="Microsoft.VisualStudio.GraphModel" Version="$(MicrosoftVisualStudioShellPackagesVersion)" PrivateAssets="all" ExcludeAssets="all" NoWarn="NU1701" />
     <PackageReference Include="Microsoft.VisualStudio.Language.Intellisense" Version="$(MicrosoftVisualStudioPackagesVersion)" PrivateAssets="all" ExcludeAssets="all" NoWarn="NU1701" />

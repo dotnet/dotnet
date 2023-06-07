@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Razor.Language.Intermediate;
 using Microsoft.AspNetCore.Razor.Language.Legacy;
 using Moq;
 using Xunit;
+using static Microsoft.AspNetCore.Razor.Language.CommonMetadata;
 using static Microsoft.AspNetCore.Razor.Language.Intermediate.IntermediateNodeAssert;
 
 namespace Microsoft.AspNetCore.Razor.Language;
@@ -320,7 +321,7 @@ public class DefaultRazorIntermediateNodeLoweringPhaseIntegrationTest
                     {
                         builder => builder
                             .Name("bound")
-                            .PropertyName("FooProp")
+                            .Metadata(PropertyName("FooProp"))
                             .TypeName("System.String"),
                             })
             };
@@ -455,13 +456,13 @@ public class DefaultRazorIntermediateNodeLoweringPhaseIntegrationTest
             n => Html("<p>Hi!</p>", n));
     }
 
-    private DocumentIntermediateNode Lower(
+    private static DocumentIntermediateNode Lower(
         RazorCodeDocument codeDocument,
         Action<RazorProjectEngineBuilder> builder = null,
         IEnumerable<TagHelperDescriptor> tagHelpers = null,
         bool designTime = false)
     {
-        tagHelpers = tagHelpers ?? new TagHelperDescriptor[0];
+        tagHelpers ??= Array.Empty<TagHelperDescriptor>();
 
         Action<RazorProjectEngineBuilder> configureEngine = b =>
         {
@@ -499,7 +500,7 @@ public class DefaultRazorIntermediateNodeLoweringPhaseIntegrationTest
         IEnumerable<Action<BoundAttributeDescriptorBuilder>> attributes = null)
     {
         var builder = TagHelperDescriptorBuilder.Create(typeName, assemblyName);
-        builder.TypeName(typeName);
+        builder.Metadata(TypeName(typeName));
 
         if (attributes != null)
         {

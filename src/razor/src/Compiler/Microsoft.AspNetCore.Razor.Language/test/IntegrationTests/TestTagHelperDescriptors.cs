@@ -6,6 +6,7 @@
 using System;
 using System.Collections.Generic;
 using System.Reflection;
+using static Microsoft.AspNetCore.Razor.Language.CommonMetadata;
 
 namespace Microsoft.AspNetCore.Razor.Language.IntegrationTests;
 
@@ -33,15 +34,15 @@ public class TestTagHelperDescriptors
                         {
                             builder => builder
                                 .Name("value")
-                                .PropertyName("FooProp")
+                                .Metadata(PropertyName("FooProp"))
                                 .TypeName("System.String"),
                             builder => builder
                                 .Name("bound")
-                                .PropertyName("BoundProp")
+                                .Metadata(PropertyName("BoundProp"))
                                 .TypeName("System.String"),
                             builder => builder
                                 .Name("age")
-                                .PropertyName("AgeProp")
+                                .Metadata(PropertyName("AgeProp"))
                                 .TypeName("System.Int32"),
                         })
                 };
@@ -70,15 +71,15 @@ public class TestTagHelperDescriptors
                         {
                             builder => builder
                                 .Name("value")
-                                .PropertyName("FooProp")
+                                .Metadata(PropertyName("FooProp"))
                                 .TypeName("System.String"),
                             builder => builder
                                 .Name("bound")
-                                .PropertyName("BoundProp")
+                                .Metadata(PropertyName("BoundProp"))
                                 .TypeName("System.Boolean"),
                             builder => builder
                                 .Name("age")
-                                .PropertyName("AgeProp")
+                                .Metadata(PropertyName("AgeProp"))
                                 .TypeName("System.Int32"),
                         })
                 };
@@ -191,31 +192,31 @@ public class TestTagHelperDescriptors
         {
             return new[]
             {
-                    CreateTagHelperDescriptor(
-                        tagName: "*",
-                        typeName: "TestNamespace.CatchAllTagHelper",
-                        assemblyName: "TestAssembly",
-                        attributes: new Action<BoundAttributeDescriptorBuilder>[]
-                        {
-                            builder => builder
-                                .Name("catch-all")
-                                .PropertyName("CatchAll")
-                                .AsEnum()
-                                .TypeName($"{typeof(TestTagHelperDescriptors).FullName}.{nameof(MyEnum)}"),
-                        }),
-                    CreateTagHelperDescriptor(
-                        tagName: "input",
-                        typeName: "TestNamespace.InputTagHelper",
-                        assemblyName: "TestAssembly",
-                        attributes: new Action<BoundAttributeDescriptorBuilder>[]
-                        {
-                            builder => builder
-                                .Name("value")
-                                .PropertyName("Value")
-                                .AsEnum()
-                                .TypeName($"{typeof(TestTagHelperDescriptors).FullName}.{nameof(MyEnum)}"),
-                        }),
-                };
+                CreateTagHelperDescriptor(
+                    tagName: "*",
+                    typeName: "TestNamespace.CatchAllTagHelper",
+                    assemblyName: "TestAssembly",
+                    attributes: new Action<BoundAttributeDescriptorBuilder>[]
+                    {
+                        builder => builder
+                            .Name("catch-all")
+                            .Metadata(PropertyName("CatchAll"))
+                            .AsEnum()
+                            .TypeName($"{typeof(TestTagHelperDescriptors).FullName}.{nameof(MyEnum)}"),
+                    }),
+                CreateTagHelperDescriptor(
+                    tagName: "input",
+                    typeName: "TestNamespace.InputTagHelper",
+                    assemblyName: "TestAssembly",
+                    attributes: new Action<BoundAttributeDescriptorBuilder>[]
+                    {
+                        builder => builder
+                            .Name("value")
+                            .Metadata(PropertyName("Value"))
+                            .AsEnum()
+                            .TypeName($"{typeof(TestTagHelperDescriptors).FullName}.{nameof(MyEnum)}"),
+                    }),
+            };
         }
     }
 
@@ -233,27 +234,27 @@ public class TestTagHelperDescriptors
                         {
                             builder => builder
                                 .Name("[item]")
-                                .PropertyName("ListItems")
+                                .Metadata(PropertyName("ListItems"))
                                 .TypeName("System.Collections.Generic.List<string>"),
                             builder => builder
                                 .Name("[(item)]")
-                                .PropertyName("ArrayItems")
+                                .Metadata(PropertyName("ArrayItems"))
                                 .TypeName(typeof(string[]).FullName),
                             builder => builder
                                 .Name("(click)")
-                                .PropertyName("Event1")
+                                .Metadata(PropertyName("Event1"))
                                 .TypeName(typeof(Action).FullName),
                             builder => builder
                                 .Name("(^click)")
-                                .PropertyName("Event2")
+                                .Metadata(PropertyName("Event2"))
                                 .TypeName(typeof(Action).FullName),
                             builder => builder
                                 .Name("*something")
-                                .PropertyName("StringProperty1")
+                                .Metadata(PropertyName("StringProperty1"))
                                 .TypeName(typeof(string).FullName),
                             builder => builder
                                 .Name("#local")
-                                .PropertyName("StringProperty2")
+                                .Metadata(PropertyName("StringProperty2"))
                                 .TypeName(typeof(string).FullName),
                         },
                         ruleBuilders: new Action<TagMatchingRuleDescriptorBuilder>[]
@@ -278,7 +279,7 @@ public class TestTagHelperDescriptors
                         {
                             builder => builder
                                 .Name("catchall-bound-string")
-                                .PropertyName("BoundRequiredString")
+                                .Metadata(PropertyName("BoundRequiredString"))
                                 .TypeName(typeof(string).FullName),
                         },
                         ruleBuilders: new Action<TagMatchingRuleDescriptorBuilder>[]
@@ -293,11 +294,11 @@ public class TestTagHelperDescriptors
                         {
                             builder => builder
                                 .Name("input-bound-required-string")
-                                .PropertyName("BoundRequiredString")
+                                .Metadata(PropertyName("BoundRequiredString"))
                                 .TypeName(typeof(string).FullName),
                             builder => builder
                                 .Name("input-bound-string")
-                                .PropertyName("BoundString")
+                                .Metadata(PropertyName("BoundString"))
                                 .TypeName(typeof(string).FullName),
                         },
                         ruleBuilders: new Action<TagMatchingRuleDescriptorBuilder>[]
@@ -314,11 +315,11 @@ public class TestTagHelperDescriptors
                         {
                             builder => builder
                                 .Name("boundbool")
-                                .PropertyName("BoundBoolProp")
+                                .Metadata(PropertyName("BoundBoolProp"))
                                 .TypeName(typeof(bool).FullName),
                             builder => builder
                                 .Name("booldict")
-                                .PropertyName("BoolDictProp")
+                                .Metadata(PropertyName("BoolDictProp"))
                                 .TypeName("System.Collections.Generic.IDictionary<string, bool>")
                                 .AsDictionaryAttribute("booldict-prefix-", typeof(bool).FullName),
                         }),
@@ -332,17 +333,17 @@ public class TestTagHelperDescriptors
         {
             return new[]
             {
-                    CreateTagHelperDescriptor(
-                        tagName: "input",
-                        typeName: "TestNamespace.InputTagHelper",
-                        assemblyName: "TestAssembly",
-                        attributes: new Action<BoundAttributeDescriptorBuilder>[]
-                        {
-                            builder => builder
-                                .Name("bound")
-                                .PropertyName("Bound")
-                                .TypeName(typeof(string).FullName)
-                        }),
+                CreateTagHelperDescriptor(
+                    tagName: "input",
+                    typeName: "TestNamespace.InputTagHelper",
+                    assemblyName: "TestAssembly",
+                    attributes: new Action<BoundAttributeDescriptorBuilder>[]
+                    {
+                        builder => builder
+                            .Name("bound")
+                            .Metadata(PropertyName("Bound"))
+                            .TypeName(typeof(string).FullName)
+                    }),
                 };
         }
     }
@@ -448,49 +449,49 @@ public class TestTagHelperDescriptors
         {
             return new[]
             {
-                    CreateTagHelperDescriptor(
-                        tagName: "input",
-                        typeName: "TestNamespace.InputTagHelper1",
-                        assemblyName: "TestAssembly",
-                        attributes: new Action<BoundAttributeDescriptorBuilder>[]
-                        {
-                            builder => builder
-                                .Name("int-prefix-grabber")
-                                .PropertyName("IntProperty")
-                                .TypeName(typeof(int).FullName),
-                            builder => builder
-                                .Name("int-dictionary")
-                                .PropertyName("IntDictionaryProperty")
-                                .TypeName("System.Collections.Generic.IDictionary<string, int>")
-                                .AsDictionaryAttribute("int-prefix-", typeof(int).FullName),
-                            builder => builder
-                                .Name("string-prefix-grabber")
-                                .PropertyName("StringProperty")
-                                .TypeName(typeof(string).FullName),
-                            builder => builder
-                                .Name("string-dictionary")
-                                .PropertyName("StringDictionaryProperty")
-                                .TypeName("Namespace.DictionaryWithoutParameterlessConstructor<string, string>")
-                                .AsDictionaryAttribute("string-prefix-", typeof(string).FullName),
-                        }),
-                    CreateTagHelperDescriptor(
-                        tagName: "input",
-                        typeName: "TestNamespace.InputTagHelper2",
-                        assemblyName: "TestAssembly",
-                        attributes: new Action<BoundAttributeDescriptorBuilder>[]
-                        {
-                            builder => builder
-                                .Name("int-dictionary")
-                                .PropertyName("IntDictionaryProperty")
-                                .TypeName(typeof(int).FullName)
-                                .AsDictionaryAttribute("int-prefix-", typeof(int).FullName),
-                            builder => builder
-                                .Name("string-dictionary")
-                                .PropertyName("StringDictionaryProperty")
-                                .TypeName("Namespace.DictionaryWithoutParameterlessConstructor<string, string>")
-                                .AsDictionaryAttribute("string-prefix-", typeof(string).FullName),
-                        }),
-                };
+                CreateTagHelperDescriptor(
+                    tagName: "input",
+                    typeName: "TestNamespace.InputTagHelper1",
+                    assemblyName: "TestAssembly",
+                    attributes: new Action<BoundAttributeDescriptorBuilder>[]
+                    {
+                        builder => builder
+                            .Name("int-prefix-grabber")
+                            .Metadata(PropertyName("IntProperty"))
+                            .TypeName(typeof(int).FullName),
+                        builder => builder
+                            .Name("int-dictionary")
+                            .Metadata(PropertyName("IntDictionaryProperty"))
+                            .TypeName("System.Collections.Generic.IDictionary<string, int>")
+                            .AsDictionaryAttribute("int-prefix-", typeof(int).FullName),
+                        builder => builder
+                            .Name("string-prefix-grabber")
+                            .Metadata(PropertyName("StringProperty"))
+                            .TypeName(typeof(string).FullName),
+                        builder => builder
+                            .Name("string-dictionary")
+                            .Metadata(PropertyName("StringDictionaryProperty"))
+                            .TypeName("Namespace.DictionaryWithoutParameterlessConstructor<string, string>")
+                            .AsDictionaryAttribute("string-prefix-", typeof(string).FullName),
+                    }),
+                CreateTagHelperDescriptor(
+                    tagName: "input",
+                    typeName: "TestNamespace.InputTagHelper2",
+                    assemblyName: "TestAssembly",
+                    attributes: new Action<BoundAttributeDescriptorBuilder>[]
+                    {
+                        builder => builder
+                            .Name("int-dictionary")
+                            .Metadata(PropertyName("IntDictionaryProperty"))
+                            .TypeName(typeof(int).FullName)
+                            .AsDictionaryAttribute("int-prefix-", typeof(int).FullName),
+                        builder => builder
+                            .Name("string-dictionary")
+                            .Metadata(PropertyName("StringDictionaryProperty"))
+                            .TypeName("Namespace.DictionaryWithoutParameterlessConstructor<string, string>")
+                            .AsDictionaryAttribute("string-prefix-", typeof(string).FullName),
+                    }),
+            };
         }
     }
 
@@ -572,7 +573,7 @@ public class TestTagHelperDescriptors
         IEnumerable<Action<TagMatchingRuleDescriptorBuilder>> ruleBuilders = null)
     {
         var builder = TagHelperDescriptorBuilder.Create(typeName, assemblyName);
-        builder.TypeName(typeName);
+        builder.Metadata(TypeName(typeName));
 
         if (attributes != null)
         {
@@ -610,7 +611,7 @@ public class TestTagHelperDescriptors
     {
         builder
             .Name(name)
-            .PropertyName(propertyInfo.Name)
+            .Metadata(PropertyName(propertyInfo.Name))
             .TypeName(propertyInfo.PropertyType.FullName);
 
         if (propertyInfo.PropertyType.GetTypeInfo().IsEnum)

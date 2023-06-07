@@ -29,6 +29,7 @@ using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Moq;
 using Xunit;
 using Xunit.Abstractions;
+using static Microsoft.AspNetCore.Razor.Language.CommonMetadata;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Refactoring;
 
@@ -511,17 +512,21 @@ public class RenameEndpointTest : LanguageServerTestBase
         var fullyQualifiedName = $"{namespaceName}.{tagName}";
         var builder = TagHelperDescriptorBuilder.Create(ComponentMetadata.Component.TagHelperKind, fullyQualifiedName, assemblyName);
         builder.TagMatchingRule(rule => rule.TagName = tagName);
-        builder.SetTypeName(fullyQualifiedName);
-        builder.SetTypeNameIdentifier(tagName);
-        builder.SetTypeNamespace(namespaceName);
+        builder.SetMetadata(
+            TypeName(fullyQualifiedName),
+            TypeNameIdentifier(tagName),
+            TypeNamespace(namespaceName));
+
         yield return builder.Build();
 
         var fullyQualifiedBuilder = TagHelperDescriptorBuilder.Create(ComponentMetadata.Component.TagHelperKind, fullyQualifiedName, assemblyName);
         fullyQualifiedBuilder.TagMatchingRule(rule => rule.TagName = fullyQualifiedName);
-        fullyQualifiedBuilder.SetTypeName(fullyQualifiedName);
-        fullyQualifiedBuilder.SetTypeNameIdentifier(tagName);
-        fullyQualifiedBuilder.SetTypeNamespace(namespaceName);
-        fullyQualifiedBuilder.AddMetadata(ComponentMetadata.Component.NameMatchKey, ComponentMetadata.Component.FullyQualifiedNameMatch);
+        fullyQualifiedBuilder.SetMetadata(
+            TypeName(fullyQualifiedName),
+            TypeNameIdentifier(tagName),
+            TypeNamespace(namespaceName),
+            new(ComponentMetadata.Component.NameMatchKey, ComponentMetadata.Component.FullyQualifiedNameMatch));
+
         yield return fullyQualifiedBuilder.Build();
     }
 

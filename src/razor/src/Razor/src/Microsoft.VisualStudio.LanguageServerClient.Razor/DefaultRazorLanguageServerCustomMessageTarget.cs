@@ -46,6 +46,7 @@ internal class DefaultRazorLanguageServerCustomMessageTarget : RazorLanguageServ
     private readonly TrackingLSPDocumentManager _documentManager;
     private readonly JoinableTaskFactory _joinableTaskFactory;
     private readonly LSPRequestInvoker _requestInvoker;
+    private readonly ITelemetryReporter _telemetryReporter;
     private readonly FormattingOptionsProvider _formattingOptionsProvider;
     private readonly IClientSettingsManager _editorSettingsManager;
     private readonly LSPDocumentSynchronizer _documentSynchronizer;
@@ -106,10 +107,11 @@ internal class DefaultRazorLanguageServerCustomMessageTarget : RazorLanguageServ
 
         _joinableTaskFactory = joinableTaskContext.Factory;
 
-        _requestInvoker = new TelemetryReportingLSPRequestInvoker(requestInvoker, telemetryReporter);
+        _requestInvoker = requestInvoker;
         _formattingOptionsProvider = formattingOptionsProvider;
         _editorSettingsManager = editorSettingsManager;
         _documentSynchronizer = documentSynchronizer;
+        _telemetryReporter = telemetryReporter;
         _outputWindowLogger = outputWindowLogger;
     }
 
@@ -1117,8 +1119,8 @@ internal class DefaultRazorLanguageServerCustomMessageTarget : RazorLanguageServ
 
     public override async Task<RazorPullDiagnosticResponse?> DiagnosticsAsync(DelegatedDiagnosticParams request, CancellationToken cancellationToken)
     {
-        var csharpTask = Task.Run(() => GetVirtualDocumentPullDiagnosticsAsync<CSharpVirtualDocumentSnapshot>(request.HostDocument, RazorLSPConstants.RazorCSharpLanguageServerName, cancellationToken), cancellationToken);
-        var htmlTask = Task.Run(() => GetVirtualDocumentPullDiagnosticsAsync<HtmlVirtualDocumentSnapshot>(request.HostDocument, RazorLSPConstants.HtmlLanguageServerName, cancellationToken), cancellationToken);
+        var csharpTask = Task.Run(() => GetVirtualDocumentPullDiagnosticsAsync<CSharpVirtualDocumentSnapshot>(request.HostDocument, request.CorrelationId, RazorLSPConstants.RazorCSharpLanguageServerName, cancellationToken), cancellationToken);
+        var htmlTask = Task.Run(() => GetVirtualDocumentPullDiagnosticsAsync<HtmlVirtualDocumentSnapshot>(request.HostDocument, request.CorrelationId, RazorLSPConstants.HtmlLanguageServerName, cancellationToken), cancellationToken);
 
         try
         {
@@ -1143,7 +1145,7 @@ internal class DefaultRazorLanguageServerCustomMessageTarget : RazorLanguageServ
         return new RazorPullDiagnosticResponse(csharpDiagnostics, htmlDiagnostics);
     }
 
-    private async Task<VSInternalDiagnosticReport[]?> GetVirtualDocumentPullDiagnosticsAsync<TVirtualDocumentSnapshot>(VersionedTextDocumentIdentifier hostDocument, string delegatedLanguageServerName, CancellationToken cancellationToken)
+    private async Task<VSInternalDiagnosticReport[]?> GetVirtualDocumentPullDiagnosticsAsync<TVirtualDocumentSnapshot>(VersionedTextDocumentIdentifier hostDocument, Guid correlationId, string delegatedLanguageServerName, CancellationToken cancellationToken)
         where TVirtualDocumentSnapshot : VirtualDocumentSnapshot
     {
         var (synchronized, virtualDocument) = await _documentSynchronizer.TrySynchronizeVirtualDocumentAsync<TVirtualDocumentSnapshot>(
@@ -1162,6 +1164,8 @@ internal class DefaultRazorLanguageServerCustomMessageTarget : RazorLanguageServ
                 Uri = virtualDocument.Uri,
             },
         };
+
+        using var _ = _telemetryReporter.TrackLspRequest(nameof(_requestInvoker.ReinvokeRequestOnServerAsync), VSInternalMethods.DocumentPullDiagnosticName, delegatedLanguageServerName, correlationId);
         var response = await _requestInvoker.ReinvokeRequestOnServerAsync<VSInternalDocumentDiagnosticsParams, VSInternalDiagnosticReport[]?>(
             virtualDocument.Snapshot.TextBuffer,
             VSInternalMethods.DocumentPullDiagnosticName,

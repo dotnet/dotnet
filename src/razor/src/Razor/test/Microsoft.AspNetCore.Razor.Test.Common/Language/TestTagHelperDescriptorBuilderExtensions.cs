@@ -4,19 +4,32 @@
 #nullable disable
 
 using System;
+using System.Collections.Generic;
 
 namespace Microsoft.AspNetCore.Razor.Language;
 
 public static class TestTagHelperDescriptorBuilderExtensions
 {
-    public static TagHelperDescriptorBuilder TypeName(this TagHelperDescriptorBuilder builder, string typeName)
+    public static TagHelperDescriptorBuilder Metadata(this TagHelperDescriptorBuilder builder, string key, string value)
     {
         if (builder is null)
         {
             throw new ArgumentNullException(nameof(builder));
         }
 
-        builder.SetTypeName(typeName);
+        builder.SetMetadata(new KeyValuePair<string, string>(key, value));
+
+        return builder;
+    }
+
+    public static TagHelperDescriptorBuilder Metadata(this TagHelperDescriptorBuilder builder, params KeyValuePair<string, string>[] pairs)
+    {
+        if (builder is null)
+        {
+            throw new ArgumentNullException(nameof(builder));
+        }
+
+        builder.SetMetadata(pairs);
 
         return builder;
     }
@@ -77,18 +90,6 @@ public static class TestTagHelperDescriptorBuilderExtensions
         }
 
         builder.Documentation = documentation;
-
-        return builder;
-    }
-
-    public static TagHelperDescriptorBuilder AddMetadata(this TagHelperDescriptorBuilder builder, string key, string value)
-    {
-        if (builder is null)
-        {
-            throw new ArgumentNullException(nameof(builder));
-        }
-
-        builder.Metadata[key] = value;
 
         return builder;
     }

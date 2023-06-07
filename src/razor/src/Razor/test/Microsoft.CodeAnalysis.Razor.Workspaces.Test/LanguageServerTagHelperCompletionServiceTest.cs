@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Razor.Language.Components;
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Xunit;
 using Xunit.Abstractions;
+using static Microsoft.AspNetCore.Razor.Language.CommonMetadata;
 
 namespace Microsoft.VisualStudio.Editor.Razor;
 
@@ -33,7 +34,8 @@ public class LanguageServerTagHelperCompletionServiceTest : TestBase
                     .RequireTagName("form"))
                 .BoundAttributeDescriptor(attribute => attribute
                     .TypeName("System.Collections.Generic.IDictionary<System.String, System.String>")
-                    .PropertyName("RouteValues").AsDictionary("asp-route-", typeof(string).FullName))
+                    .Metadata(PropertyName("RouteValues"))
+                    .AsDictionary("asp-route-", typeof(string).FullName))
                 .Build(),
         };
         var expectedCompletions = AttributeCompletionResult.Create(new Dictionary<string, HashSet<BoundAttributeDescriptor>>()
@@ -70,7 +72,8 @@ public class LanguageServerTagHelperCompletionServiceTest : TestBase
                 .BoundAttributeDescriptor(attribute => attribute
                     .Name("asp-all-route-data")
                     .TypeName("System.Collections.Generic.IDictionary<System.String, System.String>")
-                    .PropertyName("RouteValues").AsDictionary("asp-route-", typeof(string).FullName))
+                    .Metadata(PropertyName("RouteValues"))
+                    .AsDictionary("asp-route-", typeof(string).FullName))
                 .Build(),
         };
         var expectedCompletions = AttributeCompletionResult.Create(new Dictionary<string, HashSet<BoundAttributeDescriptor>>()
@@ -119,7 +122,8 @@ public class LanguageServerTagHelperCompletionServiceTest : TestBase
                 .BoundAttributeDescriptor(attribute => attribute
                     .Name("asp-all-route-data")
                     .TypeName("System.Collections.Generic.IDictionary<System.String, System.String>")
-                    .PropertyName("RouteValues").AsDictionary("asp-route-", typeof(string).FullName))
+                    .Metadata(PropertyName("RouteValues"))
+                    .AsDictionary("asp-route-", typeof(string).FullName))
                 .Build(),
         };
         var expectedCompletions = AttributeCompletionResult.Create(new Dictionary<string, HashSet<BoundAttributeDescriptor>>()
@@ -161,14 +165,14 @@ public class LanguageServerTagHelperCompletionServiceTest : TestBase
                 .BoundAttributeDescriptor(attribute => attribute
                     .Name("visible")
                     .TypeName(typeof(bool).FullName)
-                    .PropertyName("Visible"))
+                    .Metadata(PropertyName("Visible")))
                 .Build(),
             TagHelperDescriptorBuilder.Create("StyleTagHelper", "TestAssembly")
                 .TagMatchingRuleDescriptor(rule => rule.RequireTagName("*"))
                 .BoundAttributeDescriptor(attribute => attribute
                     .Name("class")
                     .TypeName(typeof(string).FullName)
-                    .PropertyName("Class"))
+                    .Metadata(PropertyName("Class")))
                 .Build(),
         };
         var expectedCompletions = AttributeCompletionResult.Create(new Dictionary<string, HashSet<BoundAttributeDescriptor>>()
@@ -212,14 +216,14 @@ public class LanguageServerTagHelperCompletionServiceTest : TestBase
                 .BoundAttributeDescriptor(attribute => attribute
                     .Name("visible")
                     .TypeName(typeof(bool).FullName)
-                    .PropertyName("Visible"))
+                    .Metadata(PropertyName("Visible")))
                 .Build(),
             TagHelperDescriptorBuilder.Create("StyleTagHelper", "TestAssembly")
                 .TagMatchingRuleDescriptor(rule => rule.RequireTagName("*"))
                 .BoundAttributeDescriptor(attribute => attribute
                     .Name("class")
                     .TypeName(typeof(string).FullName)
-                    .PropertyName("Class"))
+                    .Metadata(PropertyName("Class")))
                 .Build(),
         };
         var expectedCompletions = AttributeCompletionResult.Create(new Dictionary<string, HashSet<BoundAttributeDescriptor>>()
@@ -265,14 +269,14 @@ public class LanguageServerTagHelperCompletionServiceTest : TestBase
                 .BoundAttributeDescriptor(attribute => attribute
                     .Name("visible")
                     .TypeName(typeof(bool).FullName)
-                    .PropertyName("Visible"))
+                    .Metadata(PropertyName("Visible")))
                 .Build(),
             TagHelperDescriptorBuilder.Create("StyleTagHelper", "TestAssembly")
                 .TagMatchingRuleDescriptor(rule => rule.RequireTagName("*"))
                 .BoundAttributeDescriptor(attribute => attribute
                     .Name("class")
                     .TypeName(typeof(string).FullName)
-                    .PropertyName("Class"))
+                    .Metadata(PropertyName("Class")))
                 .Build(),
         };
         var expectedCompletions = AttributeCompletionResult.Create(new Dictionary<string, HashSet<BoundAttributeDescriptor>>()
@@ -352,11 +356,11 @@ public class LanguageServerTagHelperCompletionServiceTest : TestBase
                 .BoundAttributeDescriptor(attribute => attribute
                     .Name("repeat")
                     .TypeName(typeof(bool).FullName)
-                    .PropertyName("Repeat"))
+                    .Metadata(PropertyName("Repeat")))
                 .BoundAttributeDescriptor(attribute => attribute
                     .Name("visible")
                     .TypeName(typeof(bool).FullName)
-                    .PropertyName("Visible"))
+                    .Metadata(PropertyName("Visible")))
                 .Build(),
             TagHelperDescriptorBuilder.Create("StyleTagHelper", "TestAssembly")
                 .TagMatchingRuleDescriptor(rule => rule
@@ -365,7 +369,7 @@ public class LanguageServerTagHelperCompletionServiceTest : TestBase
                 .BoundAttributeDescriptor(attribute => attribute
                     .Name("class")
                     .TypeName(typeof(string).FullName)
-                    .PropertyName("Class"))
+                    .Metadata(PropertyName("Class")))
                 .Build(),
         };
         var expectedCompletions = AttributeCompletionResult.Create(new Dictionary<string, HashSet<BoundAttributeDescriptor>>()
@@ -403,11 +407,11 @@ public class LanguageServerTagHelperCompletionServiceTest : TestBase
                 .BoundAttributeDescriptor(attribute => attribute
                     .Name("repeat")
                     .TypeName(typeof(bool).FullName)
-                    .PropertyName("Repeat"))
+                    .Metadata(PropertyName("Repeat")))
                 .BoundAttributeDescriptor(attribute => attribute
                     .Name("visible")
                     .TypeName(typeof(bool).FullName)
-                    .PropertyName("Visible"))
+                    .Metadata(PropertyName("Visible")))
                 .Build(),
             TagHelperDescriptorBuilder.Create("StyleTagHelper", "TestAssembly")
                 .TagMatchingRuleDescriptor(rule => rule
@@ -416,14 +420,14 @@ public class LanguageServerTagHelperCompletionServiceTest : TestBase
                 .BoundAttributeDescriptor(attribute => attribute
                     .Name("class")
                     .TypeName(typeof(string).FullName)
-                    .PropertyName("Class"))
+                    .Metadata(PropertyName("Class")))
                 .Build(),
             TagHelperDescriptorBuilder.Create("StyleTagHelper", "TestAssembly")
                 .TagMatchingRuleDescriptor(rule => rule.RequireTagName("*"))
                 .BoundAttributeDescriptor(attribute => attribute
                     .Name("visible")
                     .TypeName(typeof(bool).FullName)
-                    .PropertyName("Visible"))
+                    .Metadata(PropertyName("Visible")))
                 .Build(),
         };
         var expectedCompletions = AttributeCompletionResult.Create(new Dictionary<string, HashSet<BoundAttributeDescriptor>>()
@@ -466,7 +470,7 @@ public class LanguageServerTagHelperCompletionServiceTest : TestBase
                 .BoundAttributeDescriptor(attribute => attribute
                     .Name("repeat")
                     .TypeName(typeof(bool).FullName)
-                    .PropertyName("Repeat"))
+                    .Metadata(PropertyName("Repeat")))
                 .TagOutputHint("div")
                 .Build(),
         };
@@ -501,7 +505,7 @@ public class LanguageServerTagHelperCompletionServiceTest : TestBase
                 .BoundAttributeDescriptor(attribute => attribute
                     .Name("repeat")
                     .TypeName(typeof(bool).FullName)
-                    .PropertyName("Repeat"))
+                    .Metadata(PropertyName("Repeat")))
                 .Build(),
         };
         var expectedCompletions = AttributeCompletionResult.Create(new Dictionary<string, HashSet<BoundAttributeDescriptor>>()
@@ -534,7 +538,7 @@ public class LanguageServerTagHelperCompletionServiceTest : TestBase
                 .BoundAttributeDescriptor(attribute => attribute
                     .Name("repeat")
                     .TypeName(typeof(bool).FullName)
-                    .PropertyName("Repeat"))
+                    .Metadata(PropertyName("Repeat")))
                 .Build(),
         };
         var expectedCompletions = AttributeCompletionResult.Create(new Dictionary<string, HashSet<BoundAttributeDescriptor>>()
@@ -654,7 +658,7 @@ public class LanguageServerTagHelperCompletionServiceTest : TestBase
                 .BoundAttributeDescriptor(builder =>
                 {
                     builder.Name = "@bind";
-                    builder.AddMetadata(ComponentMetadata.Common.DirectiveAttribute, bool.TrueString);
+                    builder.Metadata(IsDirectiveAttribute);
                 })
                 .TagOutputHint("table")
                 .Build(),
@@ -687,11 +691,11 @@ public class LanguageServerTagHelperCompletionServiceTest : TestBase
                 .Build(),
             TagHelperDescriptorBuilder.Create("TestTagHelper", "TestAssembly")
                 .TagMatchingRuleDescriptor(rule => rule.RequireTagName("TestAssembly.Test"))
-                .AddMetadata(ComponentMetadata.Component.NameMatchKey, ComponentMetadata.Component.FullyQualifiedNameMatch)
+                .Metadata(ComponentMetadata.Component.NameMatchKey, ComponentMetadata.Component.FullyQualifiedNameMatch)
                 .Build(),
             TagHelperDescriptorBuilder.Create("Test2TagHelper", "TestAssembly")
                 .TagMatchingRuleDescriptor(rule => rule.RequireTagName("Test2Assembly.Test"))
-                .AddMetadata(ComponentMetadata.Component.NameMatchKey, ComponentMetadata.Component.FullyQualifiedNameMatch)
+                .Metadata(ComponentMetadata.Component.NameMatchKey, ComponentMetadata.Component.FullyQualifiedNameMatch)
                 .Build(),
         };
         var expectedCompletions = ElementCompletionResult.Create(new Dictionary<string, HashSet<TagHelperDescriptor>>()

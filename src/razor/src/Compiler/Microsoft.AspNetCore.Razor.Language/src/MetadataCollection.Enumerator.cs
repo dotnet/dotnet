@@ -6,7 +6,7 @@ using System.Collections.Generic;
 
 namespace Microsoft.AspNetCore.Razor.Language;
 
-internal abstract partial class MetadataCollection
+public abstract partial class MetadataCollection
 {
     public struct Enumerator : IEnumerator<KeyValuePair<string, string?>>
     {
@@ -44,7 +44,7 @@ internal abstract partial class MetadataCollection
             _current = default;
         }
 
-        public void Dispose()
+        public readonly void Dispose()
         {
         }
     }

@@ -15,7 +15,7 @@ namespace Microsoft.AspNetCore.Razor.Language;
 ///  objects. Often, it's just one or two items. To improve memory usage, MetadataCollection provides
 ///  multiple implementations to avoid creating a hash table.
 /// </summary>
-internal abstract partial class MetadataCollection : IReadOnlyDictionary<string, string?>, IEquatable<MetadataCollection>
+public abstract partial class MetadataCollection : IReadOnlyDictionary<string, string?>, IEquatable<MetadataCollection>
 {
     public static readonly MetadataCollection Empty = NoItems.Instance;
 
