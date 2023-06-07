@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
 
@@ -387,7 +388,7 @@ internal class DataCollectionManager : IDataCollectionManager
     /// <param name="friendlyName">The friendly Name.</param>
     /// <param name="dataCollectorUri">The data collector Uri.</param>
     /// <returns><see cref="bool"/></returns>
-    protected virtual bool TryGetUriFromFriendlyName(string? friendlyName, out string? dataCollectorUri)
+    protected virtual bool TryGetUriFromFriendlyName(string? friendlyName, [NotNullWhen(true)] out string? dataCollectorUri)
     {
         TPDebug.Assert(_dataCollectorExtensionManager is not null, "_dataCollectorExtensionManager is null");
         foreach (var extension in _dataCollectorExtensionManager.TestExtensions)

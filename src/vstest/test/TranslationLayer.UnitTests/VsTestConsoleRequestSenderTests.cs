@@ -1558,14 +1558,14 @@ public class VsTestConsoleRequestSenderTests
             null);
         var testsRunStatsPayload = CreateMessage(MessageType.TestRunStatsChange, testsChangedArgs);
 
-        var testRunCompletepayload = new TestRunCompletePayload()
+        var testRunCompletePayload = new TestRunCompletePayload
         {
             ExecutorUris = null,
             LastRunTests = dummyLastRunArgs,
             RunAttachments = null,
             TestRunCompleteArgs = dummyCompleteArgs
         };
-        var runComplete = CreateMessage(MessageType.ExecutionComplete, testRunCompletepayload);
+        var runComplete = CreateMessage(MessageType.ExecutionComplete, testRunCompletePayload);
 
         _mockCommunicationManager.Setup(cm => cm.ReceiveMessageAsync(It.IsAny<CancellationToken>())).Returns(Task.FromResult<Message?>(testsRunStatsPayload));
 
@@ -1615,14 +1615,14 @@ public class VsTestConsoleRequestSenderTests
             null);
         var testsRunStatsPayload = CreateMessage(MessageType.TestRunStatsChange, testsChangedArgs);
 
-        var testRunCompletepayload = new TestRunCompletePayload()
+        var testRunCompletePayload = new TestRunCompletePayload()
         {
             ExecutorUris = null,
             LastRunTests = dummyLastRunArgs,
             RunAttachments = null,
             TestRunCompleteArgs = dummyCompleteArgs
         };
-        var runComplete = CreateMessage(MessageType.ExecutionComplete, testRunCompletepayload);
+        var runComplete = CreateMessage(MessageType.ExecutionComplete, testRunCompletePayload);
 
         _mockCommunicationManager.Setup(cm => cm.ReceiveMessageAsync(It.IsAny<CancellationToken>())).Returns(Task.FromResult<Message?>(testsRunStatsPayload));
 
@@ -1776,14 +1776,14 @@ public class VsTestConsoleRequestSenderTests
         var message1 = CreateMessage(MessageType.CustomTestHostLaunch, p1);
         var message2 = CreateMessage(MessageType.CustomTestHostLaunch, p2);
         var dummyCompleteArgs = new TestRunCompleteEventArgs(null, false, false, null, null, null, TimeSpan.FromMilliseconds(1));
-        var completepayload = new TestRunCompletePayload()
+        var completePayload = new TestRunCompletePayload()
         {
             ExecutorUris = null,
             LastRunTests = null,
             RunAttachments = null,
             TestRunCompleteArgs = dummyCompleteArgs
         };
-        var runComplete = CreateMessage(MessageType.ExecutionComplete, completepayload);
+        var runComplete = CreateMessage(MessageType.ExecutionComplete, completePayload);
 
         _mockCommunicationManager.Setup(cm => cm.ReceiveMessageAsync(It.IsAny<CancellationToken>())).Returns(Task.FromResult<Message?>(message1));
         mockLauncher.Setup(ml => ml.LaunchTestHost(It.IsAny<TestProcessStartInfo>()))
@@ -1815,14 +1815,14 @@ public class VsTestConsoleRequestSenderTests
         var message1 = CreateMessage(MessageType.CustomTestHostLaunch, p1);
         var message2 = CreateMessage(MessageType.CustomTestHostLaunch, p2);
         var dummyCompleteArgs = new TestRunCompleteEventArgs(null, false, false, null, null, null, TimeSpan.FromMilliseconds(1));
-        var completepayload = new TestRunCompletePayload()
+        var completePayload = new TestRunCompletePayload()
         {
             ExecutorUris = null,
             LastRunTests = null,
             RunAttachments = null,
             TestRunCompleteArgs = dummyCompleteArgs
         };
-        var runComplete = CreateMessage(MessageType.ExecutionComplete, completepayload);
+        var runComplete = CreateMessage(MessageType.ExecutionComplete, completePayload);
 
         _mockCommunicationManager.Setup(cm => cm.ReceiveMessageAsync(It.IsAny<CancellationToken>())).Returns(Task.FromResult<Message?>(message1));
         mockLauncher.Setup(ml => ml.LaunchTestHost(It.IsAny<TestProcessStartInfo>()))

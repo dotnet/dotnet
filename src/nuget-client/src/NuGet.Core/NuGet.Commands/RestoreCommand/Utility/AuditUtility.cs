@@ -5,6 +5,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -152,18 +153,20 @@ namespace NuGet.Commands.Restore.Utility
             Dictionary<PackageIdentity, Dictionary<PackageVulnerabilityInfo, List<string>>>? result = null;
 
             int minSeverity = ParseAuditLevel();
+            NuGetAuditMode auditMode = ParseAuditMode();
 
-            foreach (var graph in _targetGraphs)
+            foreach (RestoreTargetGraph graph in _targetGraphs)
             {
-                foreach (LibraryIdentity package in graph.Flattened.Select(i => i.Key).Where(p => p.Type == LibraryType.Package))
+                foreach (ResolvedDependencyKey resolvedDependency in GetDependenciesToAudit(graph, auditMode))
                 {
-                    List<PackageVulnerabilityInfo>? fromFile = GetKnownVulnerabilities(package.Name, package.Version, knownVulnerabilities);
+                    LibraryIdentity package = resolvedDependency.Child;
+                    List<PackageVulnerabilityInfo>? knownVulerabilitiesForPackage = GetKnownVulnerabilities(package.Name, package.Version, knownVulnerabilities);
 
-                    if (fromFile?.Count() > 0)
+                    if (knownVulerabilitiesForPackage?.Count() > 0)
                     {
                         PackageIdentity packageIdentity = new(package.Name, package.Version);
 
-                        foreach (PackageVulnerabilityInfo knownVulnerability in fromFile)
+                        foreach (PackageVulnerabilityInfo knownVulnerability in knownVulerabilitiesForPackage)
                         {
                             if (knownVulnerability.Severity < minSeverity)
                             {
@@ -280,6 +283,51 @@ namespace NuGet.Commands.Restore.Utility
             message.ProjectPath = _projectFullPath;
             _logger.Log(message);
             return 1;
+        }
+
+        private enum NuGetAuditMode { Unknown, Direct, All }
+
+        private NuGetAuditMode ParseAuditMode()
+        {
+            string? auditMode = _restoreAuditProperties.AuditMode?.Trim();
+
+            if (auditMode == null)
+            {
+                return NuGetAuditMode.Unknown;
+            }
+            else if (string.Equals("direct", auditMode, StringComparison.OrdinalIgnoreCase))
+            {
+                return NuGetAuditMode.Direct;
+            }
+            else if (string.Equals("all", auditMode, StringComparison.OrdinalIgnoreCase))
+            {
+                return NuGetAuditMode.All;
+            }
+
+            string messageText = string.Format(Strings.Error_InvalidNuGetAuditModeValue, auditMode, "direct, all");
+            RestoreLogMessage message = RestoreLogMessage.CreateError(NuGetLogCode.NU1014, messageText);
+            message.ProjectPath = _projectFullPath;
+            _logger.Log(message);
+            return NuGetAuditMode.Unknown;
+        }
+
+        IEnumerable<ResolvedDependencyKey> GetDependenciesToAudit(RestoreTargetGraph graph, NuGetAuditMode auditMode)
+        {
+            if (auditMode == NuGetAuditMode.All)
+            {
+                return graph.ResolvedDependencies.Where(dep => dep.Child.Type == LibraryType.Package);
+            }
+
+            Debug.Assert(graph.Graphs.Count() <= 1);
+            LibraryIdentity? thisProject = graph.Graphs.FirstOrDefault()?.Item.Key;
+
+            if (thisProject == null)
+            {
+                return Enumerable.Empty<ResolvedDependencyKey>();
+            }
+
+            Debug.Assert(thisProject.Type == LibraryType.Project);
+            return graph.ResolvedDependencies.Where(dep => dep.Parent == thisProject && dep.Child.Type == LibraryType.Package);
         }
     }
 }

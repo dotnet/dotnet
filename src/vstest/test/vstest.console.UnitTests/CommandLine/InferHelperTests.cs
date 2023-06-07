@@ -124,7 +124,7 @@ public class InferHelperTests
     }
 
     [TestMethod]
-    public void AutoDetectArchitectureShouldPoulateSourceArchitectureDictionary()
+    public void AutoDetectArchitectureShouldPopulateSourceArchitectureDictionary()
     {
         _mockAssemblyHelper.SetupSequence(ah => ah.GetArchitecture(It.IsAny<string>()))
             .Returns(Architecture.AnyCPU).Returns(Architecture.X64).Returns(Architecture.X86);

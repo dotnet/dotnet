@@ -166,7 +166,7 @@ public class CodeCoverageDataAttachmentsHandler : IDataCollectorAttachmentProces
             return;
         }
 
-        var dataAttachmentAssemblyLocation = typeof(CodeCoverageDataAttachmentsHandler).GetTypeInfo().Assembly.GetAssemblyLocation()!;
+        var dataAttachmentAssemblyLocation = typeof(CodeCoverageDataAttachmentsHandler).Assembly.GetAssemblyLocation()!;
         var assemblyPath = Path.Combine(Path.GetDirectoryName(dataAttachmentAssemblyLocation)!, CodeCoverageIoAssemblyName + ".dll");
         s_codeCoverageAssembly = new PlatformAssemblyLoadContext().LoadAssemblyFromPath(assemblyPath);
 

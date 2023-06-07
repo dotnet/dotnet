@@ -6,7 +6,6 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
-using System.Reflection;
 using System.Runtime.Serialization;
 
 using Microsoft.VisualStudio.TestPlatform.Utilities;
@@ -62,7 +61,7 @@ public class TestProperty : IEquatable<TestProperty>
             // Note that this doesn't handle generic types. Such types will fail during serialization.
             ValueType = valueType.FullName!;
         }
-        else if (valueType.GetTypeInfo().IsValueType)
+        else if (valueType.IsValueType)
         {
             // In case of custom types, let the assembly qualified name be available to help
             // deserialization on the client.

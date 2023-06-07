@@ -3,7 +3,6 @@
 
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 
 using Microsoft.TestPlatform.TestUtilities;
 using Microsoft.VisualStudio.TestPlatform.Common.ExtensionFramework;
@@ -49,7 +48,7 @@ public class TestDiscoveryExtensionManagerTests
     {
         var extensionManager =
             TestDiscoveryExtensionManager.GetDiscoveryExtensionManager(
-                typeof(TestDiscoveryExtensionManagerTests).GetTypeInfo().Assembly.Location);
+                typeof(TestDiscoveryExtensionManagerTests).Assembly.Location);
 
         Assert.IsNotNull(extensionManager.Discoverers);
         Assert.IsTrue(extensionManager.Discoverers.Any());

@@ -457,10 +457,14 @@ namespace NuGet.Versioning.Test
             Assert.Equal(NuGetVersionFloatBehavior.PrereleaseMajor, range?.FloatBehavior);
         }
 
-        [Fact]
-        public void FloatingRange_FloatAbsoluteLatest()
+        [Theory]
+        [InlineData(true)]
+        [InlineData(false)]
+        public void FloatingRange_FloatAbsoluteLatest(bool parse)
         {
-            var range = FloatRange.Parse("*-*");
+            var range = parse
+                ? FloatRange.Parse("*-*")
+                : new FloatRange(NuGetVersionFloatBehavior.AbsoluteLatest);
 
             Assert.Equal("0.0.0-0", range?.MinVersion.ToNormalizedString());
             Assert.Equal(NuGetVersionFloatBehavior.AbsoluteLatest, range?.FloatBehavior);

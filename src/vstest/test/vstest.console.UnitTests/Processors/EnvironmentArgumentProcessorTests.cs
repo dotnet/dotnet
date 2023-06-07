@@ -147,7 +147,7 @@ public class EnvironmentArgumentProcessorTests
     }
 
     [TestMethod]
-    public void ShoudWarnWhenAValueIsOverriden()
+    public void ShouldWarnWhenAValueIsOverriden()
     {
         // Arrange
         _settingsProvider.UpdateRunSettingsNode("RunConfiguration.EnvironmentVariables.VARIABLE",

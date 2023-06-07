@@ -90,7 +90,7 @@ internal class TestDiscovererPluginInformation : TestPluginInformation
     {
         var fileExtensions = new List<string>();
 
-        var attributes = testDiscovererType.GetTypeInfo().GetCustomAttributes(typeof(FileExtensionAttribute), inherit: false).ToArray();
+        var attributes = testDiscovererType.GetCustomAttributes(typeof(FileExtensionAttribute), inherit: false).ToArray();
         if (attributes != null && attributes.Length > 0)
         {
             foreach (var attribute in attributes)
@@ -115,7 +115,7 @@ internal class TestDiscovererPluginInformation : TestPluginInformation
     {
         var result = string.Empty;
 
-        var attributes = testDiscovererType.GetTypeInfo().GetCustomAttributes(typeof(DefaultExecutorUriAttribute), inherit: false).ToArray();
+        var attributes = testDiscovererType.GetCustomAttributes(typeof(DefaultExecutorUriAttribute), inherit: false).ToArray();
         if (attributes != null && attributes.Length > 0)
         {
             DefaultExecutorUriAttribute executorUriAttribute = (DefaultExecutorUriAttribute)attributes[0];
@@ -138,7 +138,7 @@ internal class TestDiscovererPluginInformation : TestPluginInformation
     {
 
         // Get Category
-        var attribute = testDiscovererType.GetTypeInfo().GetCustomAttribute(typeof(CategoryAttribute));
+        var attribute = testDiscovererType.GetCustomAttribute(typeof(CategoryAttribute));
         var category = (attribute as CategoryAttribute)?.Category;
 
         // Get assembly type from category.
@@ -153,7 +153,7 @@ internal class TestDiscovererPluginInformation : TestPluginInformation
     /// <param name="testDiscovererType">Data type of the test discoverer</param>
     private static bool GetIsDirectoryBased(Type testDiscovererType)
     {
-        var attribute = testDiscovererType.GetTypeInfo().GetCustomAttribute(typeof(DirectoryBasedTestDiscovererAttribute), inherit: false);
+        var attribute = testDiscovererType.GetCustomAttribute(typeof(DirectoryBasedTestDiscovererAttribute), inherit: false);
         return attribute is DirectoryBasedTestDiscovererAttribute;
     }
 }

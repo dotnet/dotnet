@@ -4,7 +4,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 
 using Microsoft.TestPlatform.TestUtilities;
 using Microsoft.VisualStudio.TestPlatform.Common.Telemetry;
@@ -32,7 +31,7 @@ public class TestEngineTests
 
     public TestEngineTests()
     {
-        TestPluginCacheHelper.SetupMockExtensions(new[] { typeof(TestEngineTests).GetTypeInfo().Assembly.Location }, () => { });
+        TestPluginCacheHelper.SetupMockExtensions(new[] { typeof(TestEngineTests).Assembly.Location }, () => { });
         _mockProcessHelper = new Mock<IProcessHelper>();
         _mockRequestData = new Mock<IRequestData>();
         _mockMetricsCollection = new Mock<IMetricsCollection>();

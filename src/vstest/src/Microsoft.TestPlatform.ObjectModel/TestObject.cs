@@ -8,7 +8,6 @@ using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
-using System.Reflection;
 using System.Runtime.Serialization;
 
 using Microsoft.VisualStudio.TestPlatform.CoreUtilities;
@@ -108,7 +107,7 @@ public abstract class TestObject
         object? defaultValue = null;
         var valueType = property.GetValueType();
 
-        if (valueType != null && valueType.GetTypeInfo().IsValueType)
+        if (valueType != null && valueType.IsValueType)
         {
             defaultValue = Activator.CreateInstance(valueType);
         }
@@ -249,7 +248,7 @@ public abstract class TestObject
         // Do not try conversion if the object is already of the type we're trying to convert.
         // Note that typeof(T) may be object in case the value is getting deserialized via the StoreKvpList, however
         // the de-serializer could have converted it already, hence the runtime type check.
-        if (valueType != null && (valueType.GetTypeInfo().IsAssignableFrom(typeof(T).GetTypeInfo()) || valueType.GetTypeInfo().IsAssignableFrom(value?.GetType().GetTypeInfo())))
+        if (valueType != null && (valueType.IsAssignableFrom(typeof(T)) || valueType.IsAssignableFrom(value?.GetType())))
         {
             return value;
         }

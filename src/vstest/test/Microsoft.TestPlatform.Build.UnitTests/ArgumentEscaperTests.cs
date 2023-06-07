@@ -110,7 +110,7 @@ public class ArgumentEscaperTests
     }
 
     [TestMethod]
-    public void IsSurroundedWithQuotesShouldReturnTrueIfStringIsSurrondedByQuotes()
+    public void IsSurroundedWithQuotesShouldReturnTrueIfStringIsSurroundedByQuotes()
     {
         string stringSurroundWithQuotes = "\"some string\"";
 
@@ -118,7 +118,7 @@ public class ArgumentEscaperTests
     }
 
     [TestMethod]
-    public void IsSurroundedWithQuotesShouldReturnFalseIfStringIsNotSurrondedByQuotes()
+    public void IsSurroundedWithQuotesShouldReturnFalseIfStringIsNotSurroundedByQuotes()
     {
         string stringNotSurroundWithQuotes = "some string";
 

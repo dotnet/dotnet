@@ -18,16 +18,6 @@ namespace Microsoft.VisualStudio.TestPlatform.CommandLine.Processors;
 internal class ArgumentProcessorFactory
 {
     /// <summary>
-    /// The command starter.
-    /// </summary>
-    internal const string CommandStarter = "/";
-
-    /// <summary>
-    /// The xplat command starter.
-    /// </summary>
-    internal const string XplatCommandStarter = "-";
-
-    /// <summary>
     /// Available argument processors.
     /// </summary>
     private Dictionary<string, IArgumentProcessor>? _commandToProcessorMap;
@@ -276,7 +266,7 @@ internal class ArgumentProcessorFactory
         var processorExecutor = processor.Executor;
         var lazyArgumentProcessor = new Lazy<IArgumentExecutor>(() =>
         {
-            IArgumentExecutor? instance = null;
+            IArgumentExecutor? instance;
             try
             {
                 instance = processorExecutor!.Value;
@@ -317,7 +307,7 @@ internal class ArgumentProcessorFactory
         var processorExecutor = processor.Executor;
         var lazyArgumentProcessor = new Lazy<IArgumentExecutor>(() =>
         {
-            IArgumentsExecutor? instance = null;
+            IArgumentsExecutor? instance;
             try
             {
                 instance = (IArgumentsExecutor)processorExecutor!.Value;

@@ -3,7 +3,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Reflection;
 using System.Xml;
 
 using Microsoft.TestPlatform.TestUtilities;
@@ -76,7 +75,7 @@ public class ExecutionManagerTests
     [TestMethod]
     public void InitializeShouldLoadAndInitializeAllExtensions()
     {
-        var commonAssemblyLocation = typeof(ExecutionManagerTests).GetTypeInfo().Assembly.Location;
+        var commonAssemblyLocation = typeof(ExecutionManagerTests).Assembly.Location;
         var mockTestMessageEventHandler = new Mock<ITestMessageEventHandler>();
         TestPluginCacheHelper.SetupMockExtensions(
             new string[] { commonAssemblyLocation },
@@ -141,7 +140,7 @@ public class ExecutionManagerTests
     [TestMethod]
     public void StartTestRunShouldRunTestsInTheProvidedSources()
     {
-        var assemblyLocation = typeof(ExecutionManagerTests).GetTypeInfo().Assembly.Location;
+        var assemblyLocation = typeof(ExecutionManagerTests).Assembly.Location;
         TestPluginCacheHelper.SetupMockExtensions(
             new string[] { assemblyLocation },
             () => { });
@@ -185,7 +184,7 @@ public class ExecutionManagerTests
     [TestMethod]
     public void StartTestRunShouldRunTestsForTheProvidedTests()
     {
-        var assemblyLocation = typeof(ExecutionManagerTests).GetTypeInfo().Assembly.Location;
+        var assemblyLocation = typeof(ExecutionManagerTests).Assembly.Location;
 
         var tests = new List<TestCase>
         {
@@ -251,7 +250,7 @@ public class ExecutionManagerTests
     //[TestMethod]
     //public void InitializeShouldVerifyWarningMessageIfAdapterFailedToLoad()
     //{
-    //    var assemblyLocation = typeof(ExecutionManagerTests).GetTypeInfo().Assembly.Location;
+    //    var assemblyLocation = typeof(ExecutionManagerTests).Assembly.Location;
     //    var mockLogger = new Mock<ITestMessageEventHandler>();
     //    TestPluginCacheHelper.SetupMockExtensions(
     //       new string[] { assemblyLocation },

@@ -227,7 +227,7 @@ public class CodeCoverageRunSettingsProcessorTests
     private static XmlElement GetDefaultConfiguration()
     {
         var document = new XmlDocument();
-        Assembly assembly = typeof(CodeCoverageRunSettingsProcessorTests).GetTypeInfo().Assembly;
+        Assembly assembly = typeof(CodeCoverageRunSettingsProcessorTests).Assembly;
         using (Stream stream = assembly.GetManifestResourceStream("Microsoft.TestPlatform.Utilities.UnitTests.DefaultCodeCoverageConfig.xml")!)
         {
             document.Load(stream);

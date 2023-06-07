@@ -58,5 +58,6 @@ namespace NuGet.ProjectManagement
         public const string CentralPackageTransitivePinningEnabled = nameof(CentralPackageTransitivePinningEnabled);
         public const string NuGetAudit = nameof(NuGetAudit);
         public const string NuGetAuditLevel = nameof(NuGetAuditLevel);
+        public const string NuGetAuditMode = nameof(NuGetAuditMode);
     }
 }

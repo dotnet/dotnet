@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Xml;
 
 using Microsoft.VisualStudio.TestPlatform.Common.DataCollection;
@@ -348,7 +347,7 @@ internal class ProxyDataCollectionManager : IProxyDataCollectionManager
             return settingsXml;
         }
 
-        var extensionsFolder = Path.Combine(Path.GetDirectoryName(typeof(ITestPlatform).GetTypeInfo().Assembly.GetAssemblyLocation())!, "Extensions");
+        var extensionsFolder = Path.Combine(Path.GetDirectoryName(typeof(ITestPlatform).Assembly.GetAssemblyLocation())!, "Extensions");
 
         using var stream = new StringReader(settingsXml);
         using var reader = XmlReader.Create(stream, XmlRunSettingsUtilities.ReaderSettings);

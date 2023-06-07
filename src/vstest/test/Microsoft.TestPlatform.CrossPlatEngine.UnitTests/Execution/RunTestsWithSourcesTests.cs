@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
-using System.Reflection;
 
 using Microsoft.TestPlatform.TestUtilities;
 using Microsoft.VisualStudio.TestPlatform.Common;
@@ -57,7 +56,7 @@ public class RunTestsWithSourcesTests
         _mockRequestData.Setup(rd => rd.MetricsCollection).Returns(_mockMetricsCollection.Object);
 
         TestPluginCacheHelper.SetupMockExtensions(
-            new string[] { typeof(RunTestsWithSourcesTests).GetTypeInfo().Assembly.Location },
+            new string[] { typeof(RunTestsWithSourcesTests).Assembly.Location },
             () => { });
 
         TestPluginCache.Instance.DiscoverTestExtensions<TestExecutorPluginInformation, ITestExecutor>(TestPlatformConstants.TestAdapterEndsWithPattern);
@@ -128,7 +127,7 @@ public class RunTestsWithSourcesTests
     [TestMethod]
     public void GetExecutorUriExtensionMapShouldReturnDefaultExecutorUrisForTheDiscoverersDefined()
     {
-        var assemblyLocation = typeof(RunTestsWithSourcesTests).GetTypeInfo().Assembly.Location;
+        var assemblyLocation = typeof(RunTestsWithSourcesTests).Assembly.Location;
 
         var adapterSourceMap = new Dictionary<string, IEnumerable<string>>
         {
@@ -188,7 +187,7 @@ public class RunTestsWithSourcesTests
     [TestMethod]
     public void RunTestsShouldRunTestsForTheSourcesSpecified()
     {
-        var assemblyLocation = typeof(RunTestsWithSourcesTests).GetTypeInfo().Assembly.Location;
+        var assemblyLocation = typeof(RunTestsWithSourcesTests).Assembly.Location;
 
         var adapterSourceMap = new Dictionary<string, IEnumerable<string>>
         {
@@ -312,9 +311,9 @@ public class RunTestsWithSourcesTests
     [MemberNotNull(nameof(_runTestsInstance))]
     private void SetupForNoTestsAvailable(string? testCaseFilter, out string sourcesString)
     {
-        var testAssemblyLocation = typeof(TestCase).GetTypeInfo().Assembly.Location;
+        var testAssemblyLocation = typeof(TestCase).Assembly.Location;
 
-        var adapterAssemblyLocation = typeof(RunTestsWithSourcesTests).GetTypeInfo().Assembly.Location;
+        var adapterAssemblyLocation = typeof(RunTestsWithSourcesTests).Assembly.Location;
 
         var adapterSourceMap = new Dictionary<string, IEnumerable<string>>();
 

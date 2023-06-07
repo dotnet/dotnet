@@ -100,7 +100,6 @@ internal class DefaultEngineInvoker :
         if (EqtTrace.IsVerboseEnabled)
         {
             var version = typeof(DefaultEngineInvoker)
-                .GetTypeInfo()
                 .Assembly
                 .GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion;
             EqtTrace.Verbose($"Version: {version} Current process architecture: {_processHelper.GetCurrentProcessArchitecture()}");

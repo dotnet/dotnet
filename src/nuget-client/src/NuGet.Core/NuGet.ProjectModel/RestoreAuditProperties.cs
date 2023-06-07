@@ -4,7 +4,6 @@
 #nullable enable
 
 using System;
-using System.Diagnostics;
 using NuGet.Shared;
 
 namespace NuGet.ProjectModel
@@ -22,12 +21,19 @@ namespace NuGet.ProjectModel
         /// <value>low, moderate, high, critical</value>
         public string? AuditLevel { get; set; }
 
+        /// <summary>
+        /// Gets or sets a value indicating which audit mode to use.
+        /// </summary>
+        /// <value>direct, all</value>
+        public string? AuditMode { get; set; }
+
         public bool Equals(RestoreAuditProperties? other)
         {
             if (other is null) return false;
 
             return EnableAudit == other.EnableAudit &&
-                AuditLevel == other.AuditLevel;
+                AuditLevel == other.AuditLevel &&
+                AuditMode == other.AuditMode;
         }
 
         public override bool Equals(object? obj)
@@ -53,6 +59,7 @@ namespace NuGet.ProjectModel
             var hashCodeCombiner = new HashCodeCombiner();
             hashCodeCombiner.AddObject(EnableAudit);
             hashCodeCombiner.AddObject(AuditLevel);
+            hashCodeCombiner.AddObject(AuditMode);
             return hashCodeCombiner.CombinedHash;
         }
 
@@ -61,7 +68,8 @@ namespace NuGet.ProjectModel
             var clone = new RestoreAuditProperties()
             {
                 EnableAudit = EnableAudit,
-                AuditLevel = AuditLevel
+                AuditLevel = AuditLevel,
+                AuditMode = AuditMode,
             };
             return clone;
         }

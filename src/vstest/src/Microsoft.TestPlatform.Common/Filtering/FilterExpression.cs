@@ -130,8 +130,7 @@ internal class FilterExpression
             // Only the leaves have a condition value.
             if (current._condition != null)
             {
-                bool valid = false;
-                valid = current._condition.ValidForProperties(properties, propertyProvider);
+                var valid = current._condition.ValidForProperties(properties, propertyProvider);
                 // If it's not valid will add it to the function's return array.
                 return !valid ? new string[1] { current._condition.Name } : null;
             }

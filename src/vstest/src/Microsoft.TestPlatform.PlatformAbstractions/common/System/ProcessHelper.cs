@@ -8,7 +8,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
-using System.Reflection;
 using System.Threading;
 #if !NET5_0_OR_GREATER
 using System.Threading.Tasks;
@@ -67,7 +66,6 @@ public partial class ProcessHelper : IProcessHelper
         catch (Exception)
         {
             process.Dispose();
-            process = null;
 
             //EqtTrace.Error("TestHost Object {0} failed to launch with the following exception: {1}", processPath, exception.Message);
             throw;
@@ -235,7 +233,7 @@ public partial class ProcessHelper : IProcessHelper
     /// <inheritdoc/>
     public string? GetTestEngineDirectory()
     {
-        return Path.GetDirectoryName(typeof(ProcessHelper).GetTypeInfo().Assembly.Location);
+        return Path.GetDirectoryName(typeof(ProcessHelper).Assembly.Location);
     }
 
     /// <inheritdoc/>

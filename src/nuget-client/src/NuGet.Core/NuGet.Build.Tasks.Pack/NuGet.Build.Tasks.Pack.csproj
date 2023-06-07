@@ -38,6 +38,7 @@
 
   <ItemGroup>
     <PackageReference Include="ILMerge" PrivateAssets="All" Condition=" '$(DotNetBuildFromSource)' != 'true' " />
+    <None Include="$(BuildCommonDirectory)NOTICES.txt" Pack="true" PackagePath="\" />
   </ItemGroup>
 
   <ItemGroup Condition=" '$(IsCore)' == 'true' ">

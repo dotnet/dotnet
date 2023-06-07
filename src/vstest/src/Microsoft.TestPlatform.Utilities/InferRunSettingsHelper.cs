@@ -665,10 +665,9 @@ public class InferRunSettingsHelper
             bool isSettingIncompatible = IsSettingIncompatible(actualPlatform, chosenPlatform, actualFramework, chosenFramework);
             if (isSettingIncompatible)
             {
-                string incompatiblityMessage;
                 var onlyFileName = Path.GetFileName(source);
                 // Add message for incompatible sources.
-                incompatiblityMessage = string.Format(CultureInfo.CurrentCulture, OMResources.SourceIncompatible, onlyFileName, actualFramework.Name, actualPlatform);
+                var incompatiblityMessage = string.Format(CultureInfo.CurrentCulture, OMResources.SourceIncompatible, onlyFileName, actualFramework.Name, actualPlatform);
 
                 warnings.AppendLine(incompatiblityMessage);
                 incompatiblityFound = true;

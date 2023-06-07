@@ -22,7 +22,9 @@ namespace NuGet.Versioning
         /// </summary>
         /// <param name="floatBehavior">Section to float.</param>
         public FloatRange(NuGetVersionFloatBehavior floatBehavior)
-            : this(floatBehavior, new NuGetVersion(0, 0, 0), null)
+            : this(floatBehavior,
+                  minVersion: floatBehavior == NuGetVersionFloatBehavior.None ? new NuGetVersion(0, 0, 0) : new NuGetVersion(0, 0, 0, releaseLabel: "0"),
+                  releasePrefix: null)
         {
         }
 
@@ -54,6 +56,11 @@ namespace NuGet.Versioning
             {
                 // use the actual label if one was not given
                 _releasePrefix = minVersion.Release;
+            }
+
+            if (_floatBehavior == NuGetVersionFloatBehavior.AbsoluteLatest && _releasePrefix is null)
+            {
+                _releasePrefix = string.Empty;
             }
 
             if (IncludePrerelease && _releasePrefix == null)

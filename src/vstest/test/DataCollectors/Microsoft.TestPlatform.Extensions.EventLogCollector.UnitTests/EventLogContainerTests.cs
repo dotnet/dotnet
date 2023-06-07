@@ -74,7 +74,7 @@ public class EventLogContainerTests
 
     [TestMethod]
     [Ignore] // "TODO: gets stuck"
-    public void OnEventLogEntryWrittenShoulFilterLogsBasedOnEventTypeAndEventSource()
+    public void OnEventLogEntryWrittenShouldFilterLogsBasedOnEventTypeAndEventSource()
     {
         _entryTypes.Add(EventLogEntryType.Warning);
         _eventSources.Add("Application");
@@ -87,7 +87,7 @@ public class EventLogContainerTests
     }
 
     [TestMethod]
-    public void OnEventLogEntryWrittenShoulNotAddLogsIfEventSourceIsDifferent()
+    public void OnEventLogEntryWrittenShouldNotAddLogsIfEventSourceIsDifferent()
     {
         _eventSources.Clear();
         _eventSources.Add("Application1");
@@ -106,7 +106,7 @@ public class EventLogContainerTests
     }
 
     [TestMethod]
-    public void OnEventLogEntryWrittenShoulNotAddLogsIfEventTypeIsDifferent()
+    public void OnEventLogEntryWrittenShouldNotAddLogsIfEventTypeIsDifferent()
     {
         _entryTypes.Clear();
         _entryTypes.Add(EventLogEntryType.FailureAudit);

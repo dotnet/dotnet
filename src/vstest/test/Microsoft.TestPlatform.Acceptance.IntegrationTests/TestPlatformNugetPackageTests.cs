@@ -76,12 +76,4 @@ public class TestPlatformNugetPackageTests : CodeCoverageAcceptanceTestBase
 
         return arguments;
     }
-
-    private static void TryMoveDirectory(string sourceDirName, string destDirName)
-    {
-        if (Directory.Exists(sourceDirName))
-        {
-            Directory.Move(sourceDirName, destDirName);
-        }
-    }
 }

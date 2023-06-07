@@ -484,6 +484,15 @@ namespace NuGet.Commands {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Invalid NuGetAuditMode value &apos;{0}&apos;. Expected values: {1}.
+        /// </summary>
+        internal static string Error_InvalidNuGetAuditModeValue {
+            get {
+                return ResourceManager.GetString("Error_InvalidNuGetAuditModeValue", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Invalid project-package combination for {0} {1}. DotnetToolReference project style can only contain references of the DotnetTool type.
         /// </summary>
         internal static string Error_InvalidProjectPackageCombo {

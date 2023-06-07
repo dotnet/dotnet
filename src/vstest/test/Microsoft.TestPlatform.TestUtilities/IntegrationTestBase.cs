@@ -692,8 +692,6 @@ public class IntegrationTestBase
 
         Console.WriteLine($"Console runner path: {consoleRunnerPath}");
 
-        VsTestConsoleWrapper vstestConsoleWrapper;
-
         // Providing any environment variable to vstest.console will clear all existing environment variables,
         // this works around it by copying all existing variables, and adding debug. But we only want to do that
         // when we are setting any debug variables.
@@ -717,7 +715,7 @@ public class IntegrationTestBase
             consoleParameters.EnvironmentVariables = environmentVariables;
         }
 
-        vstestConsoleWrapper = new VsTestConsoleWrapper(consoleRunnerPath, dotnetPath, consoleParameters);
+        var vstestConsoleWrapper = new VsTestConsoleWrapper(consoleRunnerPath, dotnetPath, consoleParameters);
         vstestConsoleWrapper.StartSession();
 
         return vstestConsoleWrapper;

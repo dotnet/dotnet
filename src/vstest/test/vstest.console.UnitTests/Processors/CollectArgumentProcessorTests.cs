@@ -84,7 +84,7 @@ public class CollectArgumentProcessorTests
     #region CollectArgumentExecutor tests
 
     [TestMethod]
-    public void InitializeShouldThrowIfArguemntIsNull()
+    public void InitializeShouldThrowIfArgumentIsNull()
     {
         Assert.ThrowsException<CommandLineException>(() => _executor.Initialize(null));
     }
@@ -291,7 +291,7 @@ public class CollectArgumentProcessorTests
     }
 
     [TestMethod]
-    public void UpdageXPlatCodeCoverageCodebaseWithFullPathFromTestAdaptersPaths_Found()
+    public void UpdateXPlatCodeCoverageCodebaseWithFullPathFromTestAdaptersPaths_Found()
     {
         var runsettingsString = string.Format(CultureInfo.CurrentCulture, _defaultRunSettings, string.Empty);
         var runsettings = new RunSettings();

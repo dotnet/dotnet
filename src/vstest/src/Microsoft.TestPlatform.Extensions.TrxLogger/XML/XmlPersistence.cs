@@ -528,7 +528,7 @@ internal class XmlPersistence
 
         foreach (
             FieldInfo reflectedFieldInfo in
-            type.GetTypeInfo().GetFields(
+            type.GetFields(
                 BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.DeclaredOnly))
         {
             FieldPersistenceInfo info = new(reflectedFieldInfo);
@@ -599,7 +599,7 @@ internal class XmlPersistence
 
     private static bool ImplementsIXmlTestStore(Type type)
     {
-        return type.GetTypeInfo().GetInterface(typeof(IXmlTestStore).Name) != null;
+        return type.GetInterface(typeof(IXmlTestStore).Name) != null;
     }
 
     private static T? GetAttribute<T>(FieldInfo fieldInfo) where T : Attribute

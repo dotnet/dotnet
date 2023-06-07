@@ -276,12 +276,11 @@ internal class Executor
         processors.Sort((p1, p2) => Comparer<ArgumentProcessorPriority>.Default.Compare(p1.Metadata.Value.Priority, p2.Metadata.Value.Priority));
         foreach (var processor in processors)
         {
-            IArgumentExecutor? executorInstance;
             try
             {
                 // Ensure the instance is created.  Note that the Lazy not only instantiates
                 // the argument processor, but also initializes it.
-                executorInstance = processor.Executor?.Value;
+                var executorInstance = processor.Executor?.Value;
             }
             catch (Exception ex)
             {

@@ -96,14 +96,13 @@ public class DotnetHostHelper : IDotnetHostHelper
         return monoPath;
     }
 
-    private bool TryGetExecutablePath(string executableBaseName, out string executablePath)
+    private bool TryGetExecutablePath(string executableBaseName, [NotNullWhen(true)] out string? executablePath)
     {
         if (_environment.OperatingSystem.Equals(PlatformOperatingSystem.Windows))
         {
             executableBaseName += ".exe";
         }
 
-        executablePath = string.Empty;
         var pathString = Environment.GetEnvironmentVariable("PATH")!;
         foreach (string path in pathString.Split(Path.PathSeparator))
         {
@@ -115,6 +114,7 @@ public class DotnetHostHelper : IDotnetHostHelper
             }
         }
 
+        executablePath = null;
         return false;
     }
 

@@ -306,12 +306,14 @@ namespace NuGet.SolutionRestoreManager
         {
             string enableAudit = GetSingleNonEvaluatedPropertyOrNull(tfms, ProjectBuildProperties.NuGetAudit, s => s);
             string auditLevel = GetSingleNonEvaluatedPropertyOrNull(tfms, ProjectBuildProperties.NuGetAuditLevel, s => s);
+            string auditMode = GetSingleNonEvaluatedPropertyOrNull(tfms, ProjectBuildProperties.NuGetAuditMode, s => s);
 
-            return !string.IsNullOrEmpty(enableAudit) || !string.IsNullOrEmpty(auditLevel)
+            return !string.IsNullOrEmpty(enableAudit) || !string.IsNullOrEmpty(auditLevel) || !string.IsNullOrEmpty(auditMode)
                 ? new RestoreAuditProperties()
                 {
                     EnableAudit = enableAudit,
-                    AuditLevel = auditLevel
+                    AuditLevel = auditLevel,
+                    AuditMode = auditMode,
                 }
                 : null;
         }

@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
 using System.Reflection;
@@ -387,7 +388,7 @@ internal class TestLoggerManager : ITestLoggerManager
     /// <param name="friendlyName">The friendly Name.</param>
     /// <param name="loggerUri">The logger Uri.</param>
     /// <returns><see cref="bool"/></returns>
-    internal bool TryGetUriFromFriendlyName(string? friendlyName, out Uri? loggerUri)
+    internal bool TryGetUriFromFriendlyName(string? friendlyName, [NotNullWhen(true)] out Uri? loggerUri)
     {
         var extensionManager = TestLoggerExtensionManager;
         foreach (var extension in extensionManager.TestExtensions)

@@ -4,7 +4,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 
 using Microsoft.VisualStudio.TestPlatform.Common.ExtensionFramework.Utilities;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection;
@@ -155,6 +154,6 @@ internal class DataCollectorConfig : TestExtensionPluginInformation
 
         // If any attribute constructor on the type throws, the exception will bubble up through
         // the "GetCustomAttributes" method.
-        return dataCollectorType.GetTypeInfo().GetCustomAttributes(attributeType, true).ToArray();
+        return dataCollectorType.GetCustomAttributes(attributeType, true).ToArray();
     }
 }

@@ -4,7 +4,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 
 using Microsoft.VisualStudio.TestPlatform.ObjectModel;
 
@@ -54,7 +53,7 @@ internal class TestRuntimePluginInformation : TestExtensionPluginInformation
     {
         string friendlyName = string.Empty;
 
-        object[]? attributes = testHostType?.GetTypeInfo().GetCustomAttributes(typeof(FriendlyNameAttribute), false).ToArray();
+        object[]? attributes = testHostType?.GetCustomAttributes(typeof(FriendlyNameAttribute), false).ToArray();
         if (attributes != null && attributes.Length > 0)
         {
             FriendlyNameAttribute friendlyNameAttribute = (FriendlyNameAttribute)attributes[0];

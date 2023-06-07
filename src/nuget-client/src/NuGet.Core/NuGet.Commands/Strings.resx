@@ -1082,4 +1082,10 @@ Non-HTTPS access will be removed in a future version. Consider migrating to 'HTT
     <value>Invalid value for WindowsTargetPlatformMinVersion: {0}</value>
     <comment>{0} is the value supplied </comment>
   </data>
+  <data name="Error_InvalidNuGetAuditModeValue" xml:space="preserve">
+    <value>Invalid NuGetAuditMode value '{0}'. Expected values: {1}</value>
+    <comment>Don't translate 'NuGetAuditMode'
+{0} - is the value from the customer's project file
+{1} is the list of valid values "direct, all"</comment>
+  </data>
 </root>

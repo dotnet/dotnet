@@ -267,7 +267,7 @@ public class DataCollectionAttachmentManagerTests
     }
 
     [TestMethod]
-    public void GetAttachmentsShouldReturnAllAttachmets()
+    public void GetAttachmentsShouldReturnAllAttachments()
     {
         var filename = "filename1.txt";
         File.WriteAllText(Path.Combine(TempDirectoryPath, filename), string.Empty);
@@ -293,7 +293,7 @@ public class DataCollectionAttachmentManagerTests
     }
 
     [TestMethod]
-    public void GetAttachmentsShouldNotReutrnAnyDataWhenActiveFileTransferAreNotPresent()
+    public void GetAttachmentsShouldNotReturnAnyDataWhenActiveFileTransferAreNotPresent()
     {
         _attachmentManager.Initialize(_sessionId, TempDirectoryPath, _messageSink.Object);
 

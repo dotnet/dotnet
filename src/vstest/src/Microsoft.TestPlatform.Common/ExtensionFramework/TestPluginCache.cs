@@ -128,7 +128,7 @@ public class TestPluginCache
             return TestExtensions.GetTestExtensionCache<TPluginInfo>();
         }
 
-        Dictionary<string, TPluginInfo>? pluginInfos = null;
+        Dictionary<string, TPluginInfo>? pluginInfos;
         SetupAssemblyResolver(null);
 
         // Some times TestPlatform.core.dll assembly fails to load in the current appdomain (from devenv.exe).
@@ -177,6 +177,7 @@ public class TestPluginCache
             // Nothing to do here, we just do not want to do an EqtTrace.Fail for this thread
             // being aborted as it is a legitimate exception to receive.
             EqtTrace.Verbose("TestPluginCache.DiscoverTestExtensions: Data extension discovery is being aborted due to a thread abort.");
+            return null;
         }
 #endif
         catch (Exception e)
@@ -349,7 +350,7 @@ public class TestPluginCache
         var extensionDirectory = Path.GetDirectoryName(Path.GetFullPath(extensionAssembly))!;
         resolutionPaths.Add(extensionDirectory);
 
-        var currentDirectory = Path.GetDirectoryName(typeof(TestPluginCache).GetTypeInfo().Assembly.GetAssemblyLocation())!;
+        var currentDirectory = Path.GetDirectoryName(typeof(TestPluginCache).Assembly.GetAssemblyLocation())!;
         if (!resolutionPaths.Contains(currentDirectory))
         {
             resolutionPaths.Add(currentDirectory);
@@ -374,7 +375,7 @@ public class TestPluginCache
         }
 
         // Keep current directory for resolution
-        var currentDirectory = Path.GetDirectoryName(typeof(TestPluginCache).GetTypeInfo().Assembly.GetAssemblyLocation())!;
+        var currentDirectory = Path.GetDirectoryName(typeof(TestPluginCache).Assembly.GetAssemblyLocation())!;
         if (!resolutionPaths.Contains(currentDirectory))
         {
             resolutionPaths.Add(currentDirectory);

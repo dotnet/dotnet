@@ -105,7 +105,6 @@ public class DataCollectorMain
         if (EqtTrace.IsVerboseEnabled)
         {
             var version = typeof(DataCollectorMain)
-                .GetTypeInfo()
                 .Assembly
                 .GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion;
             EqtTrace.Verbose($"Version: {version}");

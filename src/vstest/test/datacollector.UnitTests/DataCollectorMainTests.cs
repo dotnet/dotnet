@@ -24,7 +24,7 @@ public class DataCollectorMainTests
     private readonly string[] _argsWithEmptyDiagArg = { "--port", "1025", "--parentprocessid", "100", "--diag", "", "--tracelevel", "3" };
     private readonly string[] _argsWithInvalidTraceLevel = { "--port", "1025", "--parentprocessid", "100", "--diag", "abc.txt", "--tracelevel", "5" };
 
-    private static readonly string TimoutErrorMessage =
+    private static readonly string TimeoutErrorMessage =
         "datacollector process failed to connect to vstest.console process after 90 seconds. This may occur due to machine slowness, please set environment variable VSTEST_CONNECTION_TIMEOUT to increase timeout.";
     private readonly Mock<IProcessHelper> _mockProcessHelper;
     private readonly Mock<IEnvironment> _mockEnvironment;
@@ -55,7 +55,7 @@ public class DataCollectorMainTests
     }
 
     [TestMethod]
-    public void RunShouldTimeoutBasedDefaulValueIfEnvVariableNotSet()
+    public void RunShouldTimeoutBasedDefaultValueIfEnvVariableNotSet()
     {
         _dataCollectorMain.Run(_args);
 
@@ -115,7 +115,7 @@ public class DataCollectorMainTests
     {
         _mockDataCollectionRequestHandler.Setup(rh => rh.WaitForRequestSenderConnection(It.IsAny<int>())).Returns(false);
         var message = Assert.ThrowsException<TestPlatformException>(() => _dataCollectorMain.Run(_args)).Message;
-        Assert.AreEqual(TimoutErrorMessage, message);
+        Assert.AreEqual(TimeoutErrorMessage, message);
     }
 
     [TestMethod]

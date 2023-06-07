@@ -5,7 +5,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Xml;
 
 using Microsoft.TestPlatform.TestUtilities;
@@ -301,7 +300,7 @@ public class InProcDataCollectionExtensionManagerTests
         {
         }
 
-        protected override IInProcDataCollector CreateDataCollector(string assemblyQualifiedName, string codebase, XmlElement configuration, TypeInfo interfaceTypeInfo)
+        protected override IInProcDataCollector CreateDataCollector(string assemblyQualifiedName, string codebase, XmlElement configuration, Type interfaceType)
         {
             return new MockDataCollector(assemblyQualifiedName, codebase, configuration);
         }

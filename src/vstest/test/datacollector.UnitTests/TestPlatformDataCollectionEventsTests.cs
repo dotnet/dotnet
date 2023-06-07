@@ -44,7 +44,7 @@ public class TestPlatformDataCollectionEventsTests
     }
 
     [TestMethod]
-    public void RaiseEventsShouldNotRaiseEventsIfEventIsNotRegisterd()
+    public void RaiseEventsShouldNotRaiseEventsIfEventIsNotRegistered()
     {
         _isEventRaised = false;
         var testCase = new TestCase();
@@ -57,7 +57,7 @@ public class TestPlatformDataCollectionEventsTests
     }
 
     [TestMethod]
-    public void RaiseEventsShouldNotRaiseEventsIfEventIsUnRegisterd()
+    public void RaiseEventsShouldNotRaiseEventsIfEventIsUnRegistered()
     {
         _isEventRaised = false;
         var testCase = new TestCase();

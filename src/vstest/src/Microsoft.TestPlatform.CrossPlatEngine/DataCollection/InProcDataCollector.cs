@@ -44,9 +44,9 @@ internal class InProcDataCollector : IInProcDataCollector
     public InProcDataCollector(
         string codeBase,
         string assemblyQualifiedName,
-        TypeInfo interfaceTypeInfo,
+        Type interfaceType,
         string? configXml)
-        : this(codeBase, assemblyQualifiedName, interfaceTypeInfo, configXml, new PlatformAssemblyLoadContext(), TestPluginCache.Instance)
+        : this(codeBase, assemblyQualifiedName, interfaceType, configXml, new PlatformAssemblyLoadContext(), TestPluginCache.Instance)
     {
     }
 
@@ -63,7 +63,7 @@ internal class InProcDataCollector : IInProcDataCollector
     /// </param>
     /// <param name="assemblyLoadContext">
     /// </param>
-    internal InProcDataCollector(string codeBase, string assemblyQualifiedName, TypeInfo interfaceTypeInfo, string? configXml, IAssemblyLoadContext assemblyLoadContext, TestPluginCache testPluginCache)
+    internal InProcDataCollector(string codeBase, string assemblyQualifiedName, Type interfaceType, string? configXml, IAssemblyLoadContext assemblyLoadContext, TestPluginCache testPluginCache)
     {
         _configXml = configXml;
         _assemblyLoadContext = assemblyLoadContext;
@@ -75,7 +75,7 @@ internal class InProcDataCollector : IInProcDataCollector
         {
             // If we're loading coverlet collector we skip to check the version of assembly
             // to allow upgrade through nuget package
-            filterPredicate = x => Constants.CoverletDataCollectorTypeName.Equals(x.FullName) && interfaceTypeInfo.IsAssignableFrom(x.GetTypeInfo());
+            filterPredicate = x => Constants.CoverletDataCollectorTypeName.Equals(x.FullName) && interfaceType.IsAssignableFrom(x);
 
             // Coverlet collector is consumed as nuget package we need to add assemblies directory to resolver to correctly load references.
             TPDebug.Assert(Path.IsPathRooted(codeBase), "Absolute path expected");
@@ -83,7 +83,7 @@ internal class InProcDataCollector : IInProcDataCollector
         }
         else
         {
-            filterPredicate = x => string.Equals(x.AssemblyQualifiedName, assemblyQualifiedName) && interfaceTypeInfo.IsAssignableFrom(x.GetTypeInfo());
+            filterPredicate = x => string.Equals(x.AssemblyQualifiedName, assemblyQualifiedName) && interfaceType.IsAssignableFrom(x);
         }
 
         _dataCollectorType = assembly?.GetTypes().FirstOrDefault(filterPredicate);
