@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 
 using Microsoft.TestPlatform.TestUtilities;
 using Microsoft.VisualStudio.TestPlatform.Common.ExtensionFramework;
@@ -60,7 +59,7 @@ public class DiscoveryManagerTests
         TestPluginCache.Instance = new TestableTestPluginCache();
 
         _discoveryManager.Initialize(
-            new string[] { typeof(DiscoveryManagerTests).GetTypeInfo().Assembly.Location }, mockLogger.Object);
+            new string[] { typeof(DiscoveryManagerTests).Assembly.Location }, mockLogger.Object);
 
         var allDiscoverers = TestDiscoveryExtensionManager.Create().Discoverers;
 
@@ -122,7 +121,7 @@ public class DiscoveryManagerTests
 
         var packageName = "recipe.AppxRecipe";
 
-        var fakeDirectory = Directory.GetDirectoryRoot(typeof(DiscoveryManagerTests).GetTypeInfo().Assembly.Location);
+        var fakeDirectory = Directory.GetDirectoryRoot(typeof(DiscoveryManagerTests).Assembly.Location);
 
         criteria.Package = Path.Combine(fakeDirectory, Path.Combine(packageName));
         var mockLogger = new Mock<ITestDiscoveryEventsHandler2>();
@@ -161,13 +160,13 @@ public class DiscoveryManagerTests
     public void DiscoverTestsShouldLogIfTheSameSourceIsSpecifiedTwice()
     {
         TestPluginCacheHelper.SetupMockExtensions(
-            new string[] { typeof(DiscovererEnumeratorTests).GetTypeInfo().Assembly.Location },
+            new string[] { typeof(DiscovererEnumeratorTests).Assembly.Location },
             () => { });
 
         var sources = new List<string>
         {
-            typeof(DiscoveryManagerTests).GetTypeInfo().Assembly.Location,
-            typeof(DiscoveryManagerTests).GetTypeInfo().Assembly.Location
+            typeof(DiscoveryManagerTests).Assembly.Location,
+            typeof(DiscoveryManagerTests).Assembly.Location
         };
 
         var criteria = new DiscoveryCriteria(sources, 100, null);
@@ -188,12 +187,12 @@ public class DiscoveryManagerTests
     public void DiscoverTestsShouldDiscoverTestsInTheSpecifiedSource()
     {
         TestPluginCacheHelper.SetupMockExtensions(
-            new string[] { typeof(DiscovererEnumeratorTests).GetTypeInfo().Assembly.Location },
+            new string[] { typeof(DiscovererEnumeratorTests).Assembly.Location },
             () => { });
 
         var sources = new List<string>
         {
-            typeof(DiscoveryManagerTests).GetTypeInfo().Assembly.Location
+            typeof(DiscoveryManagerTests).Assembly.Location
         };
 
         var criteria = new DiscoveryCriteria(sources, 1, null);
@@ -216,12 +215,12 @@ public class DiscoveryManagerTests
         DiscoveryCompleteEventArgs? receivedDiscoveryCompleteEventArgs = null;
 
         TestPluginCacheHelper.SetupMockExtensions(
-            new string[] { typeof(DiscovererEnumeratorTests).GetTypeInfo().Assembly.Location },
+            new string[] { typeof(DiscovererEnumeratorTests).Assembly.Location },
             () => { });
 
         var sources = new List<string>
         {
-            typeof(DiscoveryManagerTests).GetTypeInfo().Assembly.Location
+            typeof(DiscoveryManagerTests).Assembly.Location
         };
 
         var mockLogger = new Mock<ITestDiscoveryEventsHandler2>();
@@ -254,12 +253,12 @@ public class DiscoveryManagerTests
         _mockRequestData.Setup(rd => rd.MetricsCollection).Returns(mockMetricsCollector.Object);
 
         TestPluginCacheHelper.SetupMockExtensions(
-            new string[] { typeof(DiscovererEnumeratorTests).GetTypeInfo().Assembly.Location },
+            new string[] { typeof(DiscovererEnumeratorTests).Assembly.Location },
             () => { });
 
         var sources = new List<string>
         {
-            typeof(DiscoveryManagerTests).GetTypeInfo().Assembly.Location
+            typeof(DiscoveryManagerTests).Assembly.Location
         };
 
         var mockLogger = new Mock<ITestDiscoveryEventsHandler2>();
@@ -276,7 +275,7 @@ public class DiscoveryManagerTests
     [TestMethod]
     public void DiscoveryInitializeShouldVerifyWarningMessageIfAdapterFailedToLoad()
     {
-        var assemblyLocation = typeof(DiscoveryManagerTests).GetTypeInfo().Assembly.Location;
+        var assemblyLocation = typeof(DiscoveryManagerTests).Assembly.Location;
         var mockLogger = new Mock<ITestDiscoveryEventsHandler2>();
         TestPluginCacheHelper.SetupMockExtensions(
             new string[] { assemblyLocation },
@@ -296,7 +295,7 @@ public class DiscoveryManagerTests
     public void DiscoveryTestsShouldSendAbortValuesCorrectlyIfAbortionHappened()
     {
         // Arrange
-        var sources = new List<string> { typeof(DiscoveryManagerTests).GetTypeInfo().Assembly.Location };
+        var sources = new List<string> { typeof(DiscoveryManagerTests).Assembly.Location };
 
         var criteria = new DiscoveryCriteria(sources, 100, null);
         var mockHandler = new Mock<ITestDiscoveryEventsHandler2>();

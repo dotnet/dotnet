@@ -69,49 +69,49 @@ public class InProcDataCollectorTests
     [TestMethod]
     public void InProcDataCollectorShouldInitializeIfAssemblyContainsAnyInProcDataCollector()
     {
-        var typeInfo = typeof(TestableInProcDataCollector).GetTypeInfo();
+        var type = typeof(TestableInProcDataCollector);
 
         _assemblyLoadContext.Setup(alc => alc.LoadAssemblyFromPath(It.IsAny<string>()))
-            .Returns(typeInfo.Assembly);
+            .Returns(type.Assembly);
 
         _inProcDataCollector = new InProcDataCollector(
             string.Empty,
-            typeInfo.AssemblyQualifiedName!,
-            typeInfo,
+            type.AssemblyQualifiedName!,
+            type,
             string.Empty,
             _assemblyLoadContext.Object,
             TestPluginCache.Instance);
 
         Assert.IsNotNull(_inProcDataCollector.AssemblyQualifiedName);
-        Assert.AreEqual(_inProcDataCollector.AssemblyQualifiedName, typeInfo.AssemblyQualifiedName);
+        Assert.AreEqual(_inProcDataCollector.AssemblyQualifiedName, type.AssemblyQualifiedName);
     }
 
     [TestMethod]
     public void InProcDataCollectorLoadCoverlet()
     {
-        var typeInfo = typeof(CoverletInProcDataCollector).GetTypeInfo();
+        var type = typeof(CoverletInProcDataCollector);
 
-        Assert.AreEqual("9.9.9.9", typeInfo.Assembly.GetName().Version!.ToString());
+        Assert.AreEqual("9.9.9.9", type.Assembly.GetName().Version!.ToString());
 
         _assemblyLoadContext.Setup(alc => alc.LoadAssemblyFromPath(It.IsAny<string>()))
-            .Returns(typeInfo.Assembly);
+            .Returns(type.Assembly);
 
         // We need to mock TestPluginCache because we have to create assembly resolver instance
         // using SetupAssemblyResolver method, we don't use any other method of class(like DiscoverTestExtensions etc...)
         // that fire creation
         TestableTestPluginCache testablePlugin = new();
-        testablePlugin.SetupAssemblyResolver(typeInfo.Assembly.Location);
+        testablePlugin.SetupAssemblyResolver(type.Assembly.Location);
 
         _inProcDataCollector = new InProcDataCollector(
-            typeInfo.Assembly.Location,
+            type.Assembly.Location,
             "Coverlet.Collector.DataCollection.CoverletInProcDataCollector, coverlet.collector, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
-            typeof(InProcDataCollection).GetTypeInfo(),
+            typeof(InProcDataCollection),
             string.Empty,
             _assemblyLoadContext.Object,
             testablePlugin);
 
         Assert.IsNotNull(_inProcDataCollector.AssemblyQualifiedName);
-        Assert.AreEqual(_inProcDataCollector.AssemblyQualifiedName, typeInfo.AssemblyQualifiedName);
+        Assert.AreEqual(_inProcDataCollector.AssemblyQualifiedName, type.AssemblyQualifiedName);
     }
 
     private class TestableInProcDataCollector : InProcDataCollection

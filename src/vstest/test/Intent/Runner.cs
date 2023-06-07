@@ -33,7 +33,7 @@ public class Runner
         var methods = types.SelectMany(type => type.GetMethods().SkipExcluded()).ToList();
         var methodsWithOnly = methods.Where(m => m.GetCustomAttribute<OnlyAttribute>() != null).ToList();
 
-        var methodsToRun = new List<MethodInfo>();
+        List<MethodInfo> methodsToRun;
         if (typesWithOnly.Count > 0 || methodsWithOnly.Count > 0)
         {
             // Some types or methods are decorated with Only. Putting Only on a type should run all methods in

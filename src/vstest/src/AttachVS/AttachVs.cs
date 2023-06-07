@@ -307,9 +307,6 @@ internal class DebuggerUtility
         int processInformationLength,
         out int returnLength);
 
-    [DllImport("Kernel32")]
-    private static extern uint GetTickCount();
-
     [DllImport("ole32.dll")]
     private static extern int CreateBindCtx(uint reserved, out IBindCtx ppbc);
 }

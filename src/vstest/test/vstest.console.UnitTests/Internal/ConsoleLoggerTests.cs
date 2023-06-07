@@ -642,7 +642,7 @@ public class ConsoleLoggerTests
     [TestMethod]
     [DataRow("normal")]
     [DataRow("detailed")]
-    public void TestResultHandlerShouldNotShowformattedFailedTestsAndPassedTestsForOtherThanQuietVebosity(string verbosityLevel)
+    public void TestResultHandlerShouldNotShowformattedFailedTestsAndPassedTestsForOtherThanQuietVerbosity(string verbosityLevel)
     {
         var loggerEvents = new InternalTestLoggerEvents(TestSessionMessageLogger.Instance);
         loggerEvents.EnableEvents();

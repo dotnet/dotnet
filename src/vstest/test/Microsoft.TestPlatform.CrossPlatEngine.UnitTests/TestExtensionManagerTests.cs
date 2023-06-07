@@ -2,7 +2,6 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System.Collections.Generic;
-using System.Reflection;
 
 using Microsoft.VisualStudio.TestPlatform.Common.ExtensionFramework;
 using Microsoft.VisualStudio.TestPlatform.CrossPlatEngine;
@@ -33,7 +32,7 @@ public class TestExtensionManagerTests
     [TestMethod]
     public void UseAdditionalExtensionsShouldUpdateAdditionalExtensionsInCache()
     {
-        var extensions = new List<string> { typeof(TestExtensionManagerTests).GetTypeInfo().Assembly.Location };
+        var extensions = new List<string> { typeof(TestExtensionManagerTests).Assembly.Location };
 
         _testExtensionManager.UseAdditionalExtensions(extensions, true);
 

@@ -4,7 +4,6 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
-using System.Reflection;
 
 using Microsoft.VisualStudio.TestPlatform.Common.Logging;
 using Microsoft.VisualStudio.TestPlatform.CoreUtilities.Extensions;
@@ -62,7 +61,7 @@ internal class DotnetDataCollectionLauncher : DataCollectionLauncher
     /// <returns>ProcessId of launched Process. 0 means not launched.</returns>
     public override int LaunchDataCollector(IDictionary<string, string?>? environmentVariables, IList<string> commandLineArguments)
     {
-        var dataCollectorDirectory = Path.GetDirectoryName(typeof(DefaultDataCollectionLauncher).GetTypeInfo().Assembly.GetAssemblyLocation());
+        var dataCollectorDirectory = Path.GetDirectoryName(typeof(DefaultDataCollectionLauncher).Assembly.GetAssemblyLocation());
         TPDebug.Assert(dataCollectorDirectory is not null, "dataCollectorDirectory is null");
 
         var dataCollectorAssemblyPath = Path.Combine(dataCollectorDirectory, DataCollectorProcessName);

@@ -41,7 +41,7 @@ public class ExecutorUnitTests
     {
         var mockOutput = new MockOutput();
         var exitCode = new Executor(mockOutput, _mockTestPlatformEventSource.Object, new ProcessHelper(), new PlatformEnvironment()).Execute("/badArgument");
-        var assemblyVersion = typeof(Executor).GetTypeInfo().Assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()!.InformationalVersion;
+        var assemblyVersion = typeof(Executor).Assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()!.InformationalVersion;
 
         Assert.AreEqual(1, exitCode, "Exit code must be One for bad arguments");
 
@@ -331,7 +331,7 @@ public class ExecutorUnitTests
         environment.Setup(x => x.Architecture).Returns(PlatformArchitecture.ARM64);
 
         var exitCode = new Executor(mockOutput, _mockTestPlatformEventSource.Object, processHelper.Object, environment.Object).Execute();
-        var assemblyVersion = typeof(Executor).GetTypeInfo().Assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()!.InformationalVersion;
+        var assemblyVersion = typeof(Executor).Assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()!.InformationalVersion;
 
         Assert.AreEqual(5, mockOutput.Messages.Count);
         Assert.AreEqual("vstest.console.exe is running in emulated mode as x64. For better performance, please consider using the native runner vstest.console.arm64.exe.",
@@ -351,7 +351,7 @@ public class ExecutorUnitTests
         environment.Setup(x => x.Architecture).Returns(PlatformArchitecture.X64);
 
         var exitCode = new Executor(mockOutput, _mockTestPlatformEventSource.Object, processHelper.Object, environment.Object).Execute();
-        var assemblyVersion = typeof(Executor).GetTypeInfo().Assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()!.InformationalVersion;
+        var assemblyVersion = typeof(Executor).Assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()!.InformationalVersion;
 
         Assert.AreEqual(4, mockOutput.Messages.Count);
         Assert.IsTrue(Regex.IsMatch(mockOutput.Messages[0].Message!, @"Microsoft \(R\) Test Execution Command Line Tool Version .* \(x64\)"));

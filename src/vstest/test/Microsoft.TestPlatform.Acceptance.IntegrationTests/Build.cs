@@ -103,7 +103,7 @@ public class Build : IntegrationTestBase
         // We use the same version properties for NET.Test.Sdk as for VSTestConsole, for now.
         foreach (var sdkPropertyName in vstestConsoleVersionProperties)
         {
-            string? netTestSdkVersion = null;
+            string? netTestSdkVersion;
             if (sdkPropertyName == "VSTestConsoleLatestVersion")
             {
                 netTestSdkVersion = IntegrationTestEnvironment.LatestLocallyBuiltNugetVersion;

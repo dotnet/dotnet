@@ -4,7 +4,6 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Reflection;
 
 using Microsoft.VisualStudio.TestPlatform.CommandLine.Processors;
 using Microsoft.VisualStudio.TestPlatform.Common;
@@ -134,7 +133,7 @@ public class TestAdapterPathArgumentProcessorTests
         var mockOutput = new Mock<IOutput>();
         var executor = new TestAdapterPathArgumentExecutor(CommandLineOptions.Instance, RunSettingsManager.Instance, mockOutput.Object, new FileHelper());
 
-        var currentAssemblyPath = typeof(TestAdapterPathArgumentExecutor).GetTypeInfo().Assembly.Location;
+        var currentAssemblyPath = typeof(TestAdapterPathArgumentExecutor).Assembly.Location;
         var currentFolder = Path.GetDirectoryName(currentAssemblyPath);
 
         executor.Initialize(currentFolder);

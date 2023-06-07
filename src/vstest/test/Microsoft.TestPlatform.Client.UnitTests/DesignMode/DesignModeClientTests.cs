@@ -68,7 +68,7 @@ public class DesignModeClientTests
     }
 
     [TestMethod]
-    public void TestRunMessageHandlerShouldCallCommmunicationManagerIfMessageisError()
+    public void TestRunMessageHandlerShouldCallCommunicationManagerIfMessageIsError()
     {
         _mockCommunicationManager.Setup(cm => cm.SendMessage(It.IsAny<string>()));
 
@@ -78,7 +78,7 @@ public class DesignModeClientTests
     }
 
     [TestMethod]
-    public void TestRunMessageHandlerShouldCallCommmunicationManagerIfMessageisWarning()
+    public void TestRunMessageHandlerShouldCallCommunicationManagerIfMessageIsWarning()
     {
         _mockCommunicationManager.Setup(cm => cm.SendMessage(It.IsAny<string>()));
 

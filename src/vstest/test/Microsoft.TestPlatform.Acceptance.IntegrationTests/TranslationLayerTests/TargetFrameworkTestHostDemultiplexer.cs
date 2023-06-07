@@ -83,7 +83,7 @@ public class TargetFrameworkTestHostDemultiplexer : AcceptanceTestBase
         Assert.AreEqual(expectedHost == -1 ? 1 : expectedHost > 10 ? 10 : expectedHost, hosts.Length);
 
         List<string> tests = new();
-        int testsRunInsideHost = 0;
+        int testsRunInsideHost;
         foreach (var file in hosts)
         {
             testsRunInsideHost = 0;

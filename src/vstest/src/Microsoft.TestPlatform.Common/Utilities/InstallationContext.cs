@@ -3,7 +3,6 @@
 
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
-using System.Reflection;
 
 using Microsoft.VisualStudio.TestPlatform.PlatformAbstractions;
 using Microsoft.VisualStudio.TestPlatform.Utilities.Helpers.Interfaces;
@@ -25,7 +24,7 @@ public class InstallationContext
 
     public bool TryGetVisualStudioDirectory(out string visualStudioDirectory)
     {
-        var vsInstallPath = new DirectoryInfo(typeof(InstallationContext).GetTypeInfo().Assembly.GetAssemblyLocation()).Parent?.Parent?.Parent?.FullName;
+        var vsInstallPath = new DirectoryInfo(typeof(InstallationContext).Assembly.GetAssemblyLocation()).Parent?.Parent?.Parent?.FullName;
         if (!vsInstallPath.IsNullOrEmpty())
         {
             var pathToDevenv = Path.Combine(vsInstallPath, DevenvExe);

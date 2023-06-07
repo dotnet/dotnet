@@ -2,7 +2,6 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System.Collections.Generic;
-using System.Reflection;
 
 using Microsoft.VisualStudio.TestPlatform.Common.ExtensionFramework.Utilities;
 using Microsoft.VisualStudio.TestPlatform.Common.Telemetry;
@@ -114,7 +113,7 @@ public class TestExtensionsTests
     [TestMethod]
     public void GetExtensionsDiscoveredFromAssemblyShouldReturnNullIfNoExtensionsPresent()
     {
-        var assemblyLocation = typeof(TestExtensionsTests).GetTypeInfo().Assembly.Location;
+        var assemblyLocation = typeof(TestExtensionsTests).Assembly.Location;
 
         Assert.IsNull(_testExtensions.GetExtensionsDiscoveredFromAssembly(assemblyLocation));
     }
@@ -133,7 +132,7 @@ public class TestExtensionsTests
     [TestMethod]
     public void GetExtensionsDiscoveredFromAssemblyShouldReturnTestDiscoverers()
     {
-        var assemblyLocation = typeof(TestExtensionsTests).GetTypeInfo().Assembly.Location;
+        var assemblyLocation = typeof(TestExtensionsTests).Assembly.Location;
 
         _testExtensions.TestDiscoverers = new Dictionary<string, TestDiscovererPluginInformation>
         {
@@ -153,7 +152,7 @@ public class TestExtensionsTests
     [TestMethod]
     public void GetExtensionsDiscoveredFromAssemblyShouldReturnTestExecutors()
     {
-        var assemblyLocation = typeof(TestExtensionsTests).GetTypeInfo().Assembly.Location;
+        var assemblyLocation = typeof(TestExtensionsTests).Assembly.Location;
 
         _testExtensions.TestExecutors = new Dictionary<string, TestExecutorPluginInformation>
         {
@@ -173,7 +172,7 @@ public class TestExtensionsTests
     [TestMethod]
     public void GetExtensionsDiscoveredFromAssemblyShouldReturnTestSettingsProviders()
     {
-        var assemblyLocation = typeof(TestExtensionsTests).GetTypeInfo().Assembly.Location;
+        var assemblyLocation = typeof(TestExtensionsTests).Assembly.Location;
 
         _testExtensions.TestSettingsProviders = new Dictionary<string, TestSettingsProviderPluginInformation>
         {
@@ -193,7 +192,7 @@ public class TestExtensionsTests
     [TestMethod]
     public void GetExtensionsDiscoveredFromAssemblyShouldReturnTestLoggers()
     {
-        var assemblyLocation = typeof(TestExtensionsTests).GetTypeInfo().Assembly.Location;
+        var assemblyLocation = typeof(TestExtensionsTests).Assembly.Location;
 
         _testExtensions.TestLoggers = new Dictionary<string, TestLoggerPluginInformation>
         {
@@ -213,7 +212,7 @@ public class TestExtensionsTests
     [TestMethod]
     public void GetExtensionsDiscoveredFromAssemblyShouldReturnTestDiscoveresAndLoggers()
     {
-        var assemblyLocation = typeof(TestExtensionsTests).GetTypeInfo().Assembly.Location;
+        var assemblyLocation = typeof(TestExtensionsTests).Assembly.Location;
 
         _testExtensions.TestDiscoverers = new Dictionary<string, TestDiscovererPluginInformation>
         {

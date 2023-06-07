@@ -37,7 +37,7 @@ public class ShowDeprecateDotnetVStestMessageArgumentProcessorTests
 
 
     [TestMethod]
-    public void ShowDeprecateDotnetVStestMessageProcessorExecutor_Succeded()
+    public void ShowDeprecateDotnetVStestMessageProcessorExecutor_Succeeded()
     {
         ShowDeprecateDotnetVStestMessageProcessorExecutor showDeprecateDotnetVStestMessageProcessorExecutor = new();
         showDeprecateDotnetVStestMessageProcessorExecutor.Initialize("we will ignore the param");

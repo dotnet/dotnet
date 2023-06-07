@@ -3,10 +3,8 @@
 
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 
 using Microsoft.VisualStudio.TestPlatform.Client.Discovery;
 using Microsoft.VisualStudio.TestPlatform.Client.Execution;
@@ -18,13 +16,10 @@ using Microsoft.VisualStudio.TestPlatform.CrossPlatEngine;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel.Client;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel.Engine;
-using Microsoft.VisualStudio.TestPlatform.ObjectModel.Host;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel.Utilities;
 using Microsoft.VisualStudio.TestPlatform.PlatformAbstractions;
 using Microsoft.VisualStudio.TestPlatform.Utilities.Helpers;
 using Microsoft.VisualStudio.TestPlatform.Utilities.Helpers.Interfaces;
-
-using ClientResources = Microsoft.VisualStudio.TestPlatform.Client.Resources.Resources;
 
 namespace Microsoft.VisualStudio.TestPlatform.Client;
 
@@ -191,18 +186,6 @@ internal class TestPlatform : ITestPlatform
         _testEngine.GetExtensionManager().ClearExtensions();
     }
 
-    private static void ThrowExceptionIfTestHostManagerIsNull(
-        ITestRuntimeProvider? testHostManager,
-        string settingsXml)
-    {
-        if (testHostManager == null)
-        {
-            EqtTrace.Error($"{nameof(TestPlatform)}.{nameof(ThrowExceptionIfTestHostManagerIsNull)}: No suitable testHostProvider found for runsettings: {settingsXml}");
-            throw new TestPlatformException(string.Format(CultureInfo.CurrentCulture, ClientResources.NoTestHostProviderFound));
-        }
-    }
-
-
     private void AddExtensionAssemblies(string? runSettings, TestAdapterLoadingStrategy adapterLoadingStrategy)
     {
         IEnumerable<string> customTestAdaptersPaths = RunSettingsUtilities.GetTestAdaptersPaths(runSettings);
@@ -292,7 +275,7 @@ internal class TestPlatform : ITestPlatform
         }
 
         string extensionsFolder = Path.Combine(
-            Path.GetDirectoryName(typeof(TestPlatform).GetTypeInfo().Assembly.GetAssemblyLocation())!,
+            Path.GetDirectoryName(typeof(TestPlatform).Assembly.GetAssemblyLocation())!,
             "Extensions");
         if (!fileHelper.DirectoryExists(extensionsFolder))
         {

@@ -127,8 +127,6 @@ internal class TestAdapterPathArgumentExecutor : IArgumentExecutor
                 string.Format(CultureInfo.CurrentCulture, CommandLineResources.TestAdapterPathValueRequired));
         }
 
-        string[] customAdaptersPath;
-
         var testAdapterPaths = new List<string>();
 
         // VSTS task add double quotes around TestAdapterpath. For example if user has given TestAdapter path C:\temp,
@@ -145,7 +143,7 @@ internal class TestAdapterPathArgumentExecutor : IArgumentExecutor
         }
 
         testAdapterPaths.AddRange(SplitPaths(argument));
-        customAdaptersPath = testAdapterPaths.Distinct().ToArray();
+        var customAdaptersPath = testAdapterPaths.Distinct().ToArray();
 
         _runSettingsManager.UpdateRunSettingsNode(RunSettingsPath, string.Join(";", customAdaptersPath));
         _commandLineOptions.TestAdapterPath = customAdaptersPath;

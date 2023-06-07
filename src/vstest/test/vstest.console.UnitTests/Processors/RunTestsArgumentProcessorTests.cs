@@ -4,7 +4,6 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Reflection;
 using System.Runtime.Versioning;
 using System.Threading.Tasks;
 
@@ -288,7 +287,7 @@ public class RunTestsArgumentProcessorTests
         mockFileHelper.Setup(fh => fh.DirectoryExists(It.IsAny<string>())).Returns(true);
         mockFileHelper.Setup(fh => fh.EnumerateFiles(It.IsAny<string>(), SearchOption.TopDirectoryOnly, new[] { ".dll" }))
             .Callback(() => { })
-            .Returns(new string[] { typeof(RunTestsArgumentProcessorTests).GetTypeInfo().Assembly.Location, typeof(ConsoleLogger).GetTypeInfo().Assembly.Location });
+            .Returns(new string[] { typeof(RunTestsArgumentProcessorTests).Assembly.Location, typeof(ConsoleLogger).Assembly.Location });
 
         var testableTestPluginCache = new TestableTestPluginCache();
 

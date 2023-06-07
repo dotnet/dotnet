@@ -5,13 +5,11 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Reflection;
 using System.Runtime.CompilerServices;
 
 using Microsoft.ApplicationInsights;
 using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.TestPlatform.AcceptanceTests.Performance.PerfInstrumentation;
-using Microsoft.VisualStudio.TestPlatform.PlatformAbstractions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Microsoft.TestPlatform.AcceptanceTests.Performance.TranslationLayer;
@@ -22,7 +20,6 @@ public class TelemetryPerfTestBase : PerformanceTestBase
 {
     private const string TelemetryInstrumentationKey = "08de1ac5-2db8-4c30-97c6-2e12695fa610";
     private readonly TelemetryClient _client;
-    private readonly string _rootDirectory = new DirectoryInfo(typeof(DiscoveryPerfTests).GetTypeInfo().Assembly.GetAssemblyLocation()).Parent.Parent.Parent.Parent.Parent.Parent.FullName;
 
     public TelemetryPerfTestBase()
     {

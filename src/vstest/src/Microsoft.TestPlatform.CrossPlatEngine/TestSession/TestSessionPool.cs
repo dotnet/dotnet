@@ -96,7 +96,7 @@ public class TestSessionPool
     {
         // TODO (copoiena): What happens if some request is running for the current session ?
         // Should we stop the request as well ? Probably yes.
-        IProxyTestSessionManager? proxyManager = null;
+        IProxyTestSessionManager? proxyManager;
 
         lock (_lockObject)
         {
@@ -133,7 +133,7 @@ public class TestSessionPool
     {
         ValidateArg.NotNull(requestData, nameof(requestData));
 
-        ProxyTestSessionManager? sessionManager = null;
+        ProxyTestSessionManager? sessionManager;
         lock (_lockObject)
         {
             if (!_sessionPool.ContainsKey(testSessionInfo))
@@ -181,7 +181,7 @@ public class TestSessionPool
     /// <returns>True if the operation succeeded, false otherwise.</returns>
     public virtual bool ReturnProxy(TestSessionInfo testSessionInfo, int proxyId)
     {
-        ProxyTestSessionManager? sessionManager = null;
+        ProxyTestSessionManager? sessionManager;
         lock (_lockObject)
         {
             if (!_sessionPool.ContainsKey(testSessionInfo))

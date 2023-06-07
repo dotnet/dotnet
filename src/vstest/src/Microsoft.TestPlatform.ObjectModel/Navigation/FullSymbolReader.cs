@@ -309,7 +309,7 @@ internal class FullSymbolReader : ISymbolReader
         ValidateArg.NotNullOrEmpty(typeName, nameof(typeName));
 
         IDiaEnumSymbols? enumSymbols = null;
-        IDiaSymbol? typeSymbol = null;
+        IDiaSymbol? typeSymbol;
         IDiaSymbol? global = null;
 
         try
@@ -378,7 +378,7 @@ internal class FullSymbolReader : ISymbolReader
         ValidateArg.NotNullOrEmpty(methodName, nameof(methodName));
 
         IDiaEnumSymbols? enumSymbols = null;
-        IDiaSymbol? methodSymbol = null;
+        IDiaSymbol? methodSymbol;
         Dictionary<string, IDiaSymbol> methodSymbolsForType;
 
         try

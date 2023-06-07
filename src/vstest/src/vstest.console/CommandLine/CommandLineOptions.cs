@@ -39,11 +39,6 @@ internal class CommandLineOptions
     public const string UseVsixExtensionsKey = "UseVsixExtensions";
 
     /// <summary>
-    /// The default use vsix extensions value.
-    /// </summary>
-    public const bool DefaultUseVsixExtensionsValue = false;
-
-    /// <summary>
     /// The default retrieval timeout for fetching of test results or test cases
     /// </summary>
     private readonly TimeSpan _defaultRetrievalTimeout = new(0, 0, 0, 1, 500);

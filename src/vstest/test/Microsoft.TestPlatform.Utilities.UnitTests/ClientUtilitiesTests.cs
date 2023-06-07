@@ -3,7 +3,6 @@
 
 using System;
 using System.IO;
-using System.Reflection;
 using System.Xml;
 
 using Microsoft.VisualStudio.TestPlatform.Utilities;
@@ -36,7 +35,7 @@ public class ClientUtilitiesTests
         var doc = new XmlDocument();
         doc.LoadXml(runSettingsXml);
 
-        var currentAssemblyLocation = typeof(ClientUtilitiesTests).GetTypeInfo().Assembly.Location;
+        var currentAssemblyLocation = typeof(ClientUtilitiesTests).Assembly.Location;
 
         ClientUtilities.FixRelativePathsInRunSettings(doc, currentAssemblyLocation);
 
@@ -57,7 +56,7 @@ public class ClientUtilitiesTests
         var doc = new XmlDocument();
         doc.LoadXml(runSettingsXml);
 
-        var currentAssemblyLocation = typeof(ClientUtilitiesTests).GetTypeInfo().Assembly.Location;
+        var currentAssemblyLocation = typeof(ClientUtilitiesTests).Assembly.Location;
 
         ClientUtilities.FixRelativePathsInRunSettings(doc, currentAssemblyLocation);
 
@@ -84,7 +83,7 @@ public class ClientUtilitiesTests
         var doc = new XmlDocument();
         doc.LoadXml(runSettingsXml);
 
-        var currentAssemblyLocation = typeof(ClientUtilitiesTests).GetTypeInfo().Assembly.Location;
+        var currentAssemblyLocation = typeof(ClientUtilitiesTests).Assembly.Location;
 
         ClientUtilities.FixRelativePathsInRunSettings(doc, currentAssemblyLocation);
 
@@ -105,7 +104,7 @@ public class ClientUtilitiesTests
         var doc = new XmlDocument();
         doc.LoadXml(runSettingsXml);
 
-        var currentAssemblyLocation = typeof(ClientUtilitiesTests).GetTypeInfo().Assembly.Location;
+        var currentAssemblyLocation = typeof(ClientUtilitiesTests).Assembly.Location;
 
         ClientUtilities.FixRelativePathsInRunSettings(doc, currentAssemblyLocation);
 
@@ -126,7 +125,7 @@ public class ClientUtilitiesTests
         var doc = new XmlDocument();
         doc.LoadXml(runSettingsXml);
 
-        var currentAssemblyLocation = typeof(ClientUtilitiesTests).GetTypeInfo().Assembly.Location;
+        var currentAssemblyLocation = typeof(ClientUtilitiesTests).Assembly.Location;
 
         ClientUtilities.FixRelativePathsInRunSettings(doc, currentAssemblyLocation);
 
@@ -153,7 +152,7 @@ public class ClientUtilitiesTests
         var doc = new XmlDocument();
         doc.LoadXml(runSettingsXml);
 
-        var currentAssemblyLocation = typeof(ClientUtilitiesTests).GetTypeInfo().Assembly.Location;
+        var currentAssemblyLocation = typeof(ClientUtilitiesTests).Assembly.Location;
 
         ClientUtilities.FixRelativePathsInRunSettings(doc, currentAssemblyLocation);
 
@@ -174,7 +173,7 @@ public class ClientUtilitiesTests
         var doc = new XmlDocument();
         doc.LoadXml(runSettingsXml);
 
-        var currentAssemblyLocation = typeof(ClientUtilitiesTests).GetTypeInfo().Assembly.Location;
+        var currentAssemblyLocation = typeof(ClientUtilitiesTests).Assembly.Location;
 
         ClientUtilities.FixRelativePathsInRunSettings(doc, currentAssemblyLocation);
 
@@ -200,7 +199,7 @@ public class ClientUtilitiesTests
             var doc = new XmlDocument();
             doc.LoadXml(runSettingsXml);
 
-            var currentAssemblyLocation = typeof(ClientUtilitiesTests).GetTypeInfo().Assembly.Location;
+            var currentAssemblyLocation = typeof(ClientUtilitiesTests).Assembly.Location;
 
             ClientUtilities.FixRelativePathsInRunSettings(doc, currentAssemblyLocation);
 

@@ -97,7 +97,7 @@ public class AeDebuggerArgumentProcessorTest
     [DataRow("Install;{0};ProcDumpToolDirectoryPath=c:\\ProcDumpToolDirectoryPath", null)]
     [DataRow("Install;{0};ProcDumpToolDirectoryPath=c:\\ProcDumpToolDirectoryPath", "DumpDirectoryPath=c:\\DumpDirectoryPat")]
 
-    public void AeDebuggerArgumentExecutor_WrongDirectoryPaths(string command, string directoryPath)
+    public void AeDebuggerArgumentExecutor_WrongDirectoryPaths(string command, string? directoryPath)
     {
         _fileHelper.Setup(x => x.DirectoryExists(It.IsAny<string>()))
             .Returns((string path) => directoryPath is null || !directoryPath.EndsWith(path));

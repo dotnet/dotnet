@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Dependencies>
   <ProductDependencies>
-    <Dependency Name="Microsoft.Internal.CodeCoverage" Version="17.7.2-beta.23301.3">
+    <Dependency Name="Microsoft.Internal.CodeCoverage" Version="17.7.2-beta.23305.3">
       <Uri>https://dev.azure.com/devdiv/DevDiv/_git/vs-code-coverage</Uri>
-      <Sha>b3c85769662d5cf219b157ec3f2660f8cb6332bb</Sha>
+      <Sha>bd46960ff2705994f75e08e840870773d368fd3c</Sha>
     </Dependency>
     <Dependency Name="Microsoft.Diagnostics.NETCore.Client" Version="0.2.0-preview.23211.1">
       <Uri>https://github.com/dotnet/diagnostics</Uri>
@@ -14,15 +14,19 @@
       <Sha>5ce78f66d89ea529e459abddb129ab36cb5bd936</Sha>
       <SourceBuild RepoName="diagnostics" ManagedOnly="true" />
     </Dependency>
-    <Dependency Name="Microsoft.SourceBuild.Intermediate.source-build-externals" Version="8.0.0-alpha.1.23274.1">
+    <Dependency Name="Microsoft.SourceBuild.Intermediate.source-build-externals" Version="8.0.0-alpha.1.23301.1">
       <Uri>https://github.com/dotnet/source-build-externals</Uri>
-      <Sha>9439becb24301b70f92ce2534e2cb8a1ca9b7a99</Sha>
+      <Sha>7a43ba8792da756726edd85e5e81e79ae174398f</Sha>
       <SourceBuild RepoName="source-build-externals" ManagedOnly="true" />
     </Dependency>
-    <Dependency Name="Microsoft.SourceBuild.Intermediate.source-build-reference-packages" Version="8.0.0-alpha.1.23281.1">
+    <Dependency Name="Microsoft.SourceBuild.Intermediate.source-build-reference-packages" Version="8.0.0-alpha.1.23302.3">
       <Uri>https://github.com/dotnet/source-build-reference-packages</Uri>
-      <Sha>5bc298ffcdf49cea125e418972930d4cd524452d</Sha>
+      <Sha>4a3b4b6b37bdafe501477bf2e564380e1962ce61</Sha>
       <SourceBuild RepoName="source-build-reference-packages" ManagedOnly="true" />
+    </Dependency>
+    <Dependency Name="NuGet.Frameworks" Version="5.5.0">
+      <Uri>https://github.com/nuget/nuget.client</Uri>
+      <Sha>4ba7bfa82f894ec32a554ca8d2df143675c85735</Sha>
     </Dependency>
   </ProductDependencies>
   <ToolsetDependencies>

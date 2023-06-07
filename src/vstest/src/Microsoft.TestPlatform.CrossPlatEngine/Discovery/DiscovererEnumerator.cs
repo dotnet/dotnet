@@ -7,7 +7,6 @@ using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Threading;
 
 using Microsoft.VisualStudio.TestPlatform.Common.ExtensionFramework;
@@ -296,7 +295,7 @@ internal class DiscovererEnumerator
             return false;
         }
 
-        var discovererLocation = discoverer.Value.GetType().GetTypeInfo().Assembly.GetAssemblyLocation();
+        var discovererLocation = discoverer.Value.GetType().Assembly.GetAssemblyLocation();
 
         return Path.GetDirectoryName(discovererLocation)!
             .Equals(Constants.DefaultAdapterLocation, StringComparison.OrdinalIgnoreCase);

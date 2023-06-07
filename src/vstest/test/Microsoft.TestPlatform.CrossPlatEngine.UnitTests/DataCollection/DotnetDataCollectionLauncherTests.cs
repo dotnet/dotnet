@@ -5,7 +5,6 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
-using System.Reflection;
 
 using Microsoft.VisualStudio.TestPlatform.CrossPlatEngine.DataCollection;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel.Logging;
@@ -48,7 +47,7 @@ public class DotnetDataCollectionLauncherTests
     [TestMethod]
     public void LaunchDataCollectorShouldAppendDoubleQuoteForDataCollectorDllPath()
     {
-        var currentWorkingDirectory = Path.GetDirectoryName(typeof(DefaultDataCollectionLauncher).GetTypeInfo().Assembly.GetAssemblyLocation())!;
+        var currentWorkingDirectory = Path.GetDirectoryName(typeof(DefaultDataCollectionLauncher).Assembly.GetAssemblyLocation())!;
         var dataCollectorAssemblyPath = Path.Combine(currentWorkingDirectory, "datacollector.dll");
 
         List<string> arguments = new();

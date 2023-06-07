@@ -9,7 +9,6 @@ using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Xml;
@@ -1110,7 +1109,7 @@ internal class TestRequestManager : ITestRequestManager
             FriendlyName = ConsoleLogger.FriendlyName,
             Uri = new Uri(ConsoleLogger.ExtensionUri),
             AssemblyQualifiedName = typeof(ConsoleLogger).AssemblyQualifiedName,
-            CodeBase = typeof(ConsoleLogger).GetTypeInfo().Assembly.Location,
+            CodeBase = typeof(ConsoleLogger).Assembly.Location,
             IsEnabled = true
         };
 
@@ -1144,7 +1143,7 @@ internal class TestRequestManager : ITestRequestManager
         {
             var consoleLogger = loggerRunSettings.LoggerSettingsList[existingLoggerIndex];
             consoleLogger.AssemblyQualifiedName = typeof(ConsoleLogger).AssemblyQualifiedName;
-            consoleLogger.CodeBase = typeof(ConsoleLogger).GetTypeInfo().Assembly.Location;
+            consoleLogger.CodeBase = typeof(ConsoleLogger).Assembly.Location;
             RunSettingsProviderExtensions.UpdateRunSettingsXmlDocumentInnerXml(
                 document,
                 ObjectModel.Constants.LoggerRunSettingsName,

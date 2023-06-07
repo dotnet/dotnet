@@ -12,7 +12,6 @@ public class Product
     private static string? GetProductVersion()
     {
         var attr = typeof(Product)
-            .GetTypeInfo()
             .Assembly
             .GetCustomAttribute<AssemblyInformationalVersionAttribute>();
         return attr?.InformationalVersion;

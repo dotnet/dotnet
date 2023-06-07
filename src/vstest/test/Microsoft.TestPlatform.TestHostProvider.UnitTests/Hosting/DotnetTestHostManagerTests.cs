@@ -554,7 +554,7 @@ public class DotnetTestHostManagerTests
     }
 
     [TestMethod]
-    public void GetTestPlatformExtensionsShouldReturnLibariesFromSourceDirectory()
+    public void GetTestPlatformExtensionsShouldReturnLibrariesFromSourceDirectory()
     {
         _mockFileHelper.Setup(fh => fh.DirectoryExists(It.IsAny<string>())).Returns(true);
         _mockFileHelper.Setup(fh => fh.EnumerateFiles(It.IsAny<string>(), SearchOption.TopDirectoryOnly, It.IsAny<string[]>())).Returns(new[] { "foo.TestAdapter.dll" });

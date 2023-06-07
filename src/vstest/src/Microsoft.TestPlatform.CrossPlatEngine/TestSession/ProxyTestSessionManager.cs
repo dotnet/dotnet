@@ -209,7 +209,7 @@ public class ProxyTestSessionManager : IProxyTestSessionManager
     /// <inheritdoc/>
     public virtual bool StopSession(IRequestData requestData)
     {
-        var testSessionId = string.Empty;
+        string testSessionId;
         lock (_lockObject)
         {
             if (_testSessionInfo == null)
@@ -251,7 +251,7 @@ public class ProxyTestSessionManager : IProxyTestSessionManager
     /// <returns>The dequeued proxy.</returns>
     public virtual ProxyOperationManager DequeueProxy(string source, string? runSettings)
     {
-        ProxyOperationManagerContainer? proxyContainer = null;
+        ProxyOperationManagerContainer? proxyContainer;
 
         lock (_proxyOperationLockObject)
         {

@@ -4,7 +4,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Xml;
@@ -38,7 +37,7 @@ public class TestPluginDiscovererTests
     [TestMethod]
     public void GetTestExtensionsInformationShouldNotConsiderAbstractClasses()
     {
-        var pathToExtensions = new List<string> { typeof(TestPluginDiscovererTests).GetTypeInfo().Assembly.Location };
+        var pathToExtensions = new List<string> { typeof(TestPluginDiscovererTests).Assembly.Location };
 
         // The below should not throw an exception.
         var testExtensions = TestPluginDiscoverer.GetTestExtensionsInformation<TestDiscovererPluginInformation, ITestDiscoverer>(pathToExtensions);
@@ -49,7 +48,7 @@ public class TestPluginDiscovererTests
     [TestMethod]
     public void GetTestExtensionsInformationShouldReturnDiscovererExtensions()
     {
-        var pathToExtensions = new List<string> { typeof(TestPluginDiscovererTests).GetTypeInfo().Assembly.Location };
+        var pathToExtensions = new List<string> { typeof(TestPluginDiscovererTests).Assembly.Location };
 
         // The below should not throw an exception.
         var testExtensions = TestPluginDiscoverer.GetTestExtensionsInformation<TestDiscovererPluginInformation, ITestDiscoverer>(pathToExtensions);
@@ -64,7 +63,7 @@ public class TestPluginDiscovererTests
     [TestMethod]
     public void GetTestExtensionsInformationShouldReturnExecutorExtensions()
     {
-        var pathToExtensions = new List<string> { typeof(TestPluginDiscovererTests).GetTypeInfo().Assembly.Location };
+        var pathToExtensions = new List<string> { typeof(TestPluginDiscovererTests).Assembly.Location };
 
         // The below should not throw an exception.
         var testExtensions = TestPluginDiscoverer.GetTestExtensionsInformation<TestExecutorPluginInformation, ITestExecutor>(pathToExtensions);
@@ -80,7 +79,7 @@ public class TestPluginDiscovererTests
     [TestMethod]
     public void GetTestExtensionsInformationShouldReturnLoggerExtensions()
     {
-        var pathToExtensions = new List<string> { typeof(TestPluginDiscovererTests).GetTypeInfo().Assembly.Location };
+        var pathToExtensions = new List<string> { typeof(TestPluginDiscovererTests).Assembly.Location };
 
         // The below should not throw an exception.
         var testExtensions = TestPluginDiscoverer.GetTestExtensionsInformation<TestLoggerPluginInformation, ITestLogger>(pathToExtensions);
@@ -95,7 +94,7 @@ public class TestPluginDiscovererTests
     [TestMethod]
     public void GetTestExtensionsInformationShouldReturnDataCollectorExtensionsAndIgnoresInvalidDataCollectors()
     {
-        var pathToExtensions = new List<string> { typeof(TestPluginDiscovererTests).GetTypeInfo().Assembly.Location };
+        var pathToExtensions = new List<string> { typeof(TestPluginDiscovererTests).Assembly.Location };
 
         // The below should not throw an exception.
         var testExtensions = TestPluginDiscoverer.GetTestExtensionsInformation<DataCollectorConfig, DataCollector>(pathToExtensions);
@@ -110,7 +109,7 @@ public class TestPluginDiscovererTests
     [TestMethod]
     public void GetTestExtensionsInformationShouldReturnSettingsProviderExtensions()
     {
-        var pathToExtensions = new List<string> { typeof(TestPluginDiscovererTests).GetTypeInfo().Assembly.Location };
+        var pathToExtensions = new List<string> { typeof(TestPluginDiscovererTests).Assembly.Location };
 
         // The below should not throw an exception.
         var testExtensions = TestPluginDiscoverer.GetTestExtensionsInformation<TestSettingsProviderPluginInformation, ISettingsProvider>(pathToExtensions);
@@ -128,7 +127,7 @@ public class TestPluginDiscovererTests
     {
         var pathToExtensions = new List<string>
         {
-            typeof(TestPluginDiscovererTests).GetTypeInfo().Assembly.Location,
+            typeof(TestPluginDiscovererTests).Assembly.Location,
         };
 
         var testExtensions = TestPluginDiscoverer.GetTestExtensionsInformation<FaultyTestExecutorPluginInformation, ITestExecutor>(pathToExtensions);

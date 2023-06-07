@@ -28,8 +28,7 @@ internal class MiniDumpWriteDump
         using var stream = new FileStream(outputFile, FileMode.Create, FileAccess.ReadWrite, FileShare.None);
         NativeMethods.MinidumpExceptionInformation exceptionInfo = default;
 
-        NativeMethods.MinidumpType dumpType = NativeMethods.MinidumpType.MiniDumpNormal;
-        dumpType = type switch
+        var dumpType = type switch
         {
             MiniDumpTypeOption.Full => NativeMethods.MinidumpType.MiniDumpWithFullMemory |
                                        NativeMethods.MinidumpType.MiniDumpWithDataSegs |
@@ -39,12 +38,12 @@ internal class MiniDumpWriteDump
                                        NativeMethods.MinidumpType.MiniDumpWithThreadInfo |
                                        NativeMethods.MinidumpType.MiniDumpWithTokenInformation,
             MiniDumpTypeOption.WithHeap => NativeMethods.MinidumpType.MiniDumpWithPrivateReadWriteMemory |
-                                       NativeMethods.MinidumpType.MiniDumpWithDataSegs |
-                                       NativeMethods.MinidumpType.MiniDumpWithHandleData |
-                                       NativeMethods.MinidumpType.MiniDumpWithUnloadedModules |
-                                       NativeMethods.MinidumpType.MiniDumpWithFullMemoryInfo |
-                                       NativeMethods.MinidumpType.MiniDumpWithThreadInfo |
-                                       NativeMethods.MinidumpType.MiniDumpWithTokenInformation,
+                                           NativeMethods.MinidumpType.MiniDumpWithDataSegs |
+                                           NativeMethods.MinidumpType.MiniDumpWithHandleData |
+                                           NativeMethods.MinidumpType.MiniDumpWithUnloadedModules |
+                                           NativeMethods.MinidumpType.MiniDumpWithFullMemoryInfo |
+                                           NativeMethods.MinidumpType.MiniDumpWithThreadInfo |
+                                           NativeMethods.MinidumpType.MiniDumpWithTokenInformation,
             MiniDumpTypeOption.Mini => NativeMethods.MinidumpType.MiniDumpWithThreadInfo,
             _ => NativeMethods.MinidumpType.MiniDumpNormal,
         };

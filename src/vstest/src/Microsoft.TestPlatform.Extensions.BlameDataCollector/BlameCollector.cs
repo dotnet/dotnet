@@ -537,8 +537,8 @@ public class BlameCollector : DataCollector, ITestExecutionEnvironmentSpecifier
                         {
                             try
                             {
-                                var fileTranferInformation = new FileTransferInformation(_context.SessionDataCollectionContext, dumpFile, true);
-                                _dataCollectionSink.SendFileAsync(fileTranferInformation);
+                                var fileTransferInformation = new FileTransferInformation(_context.SessionDataCollectionContext, dumpFile, true);
+                                _dataCollectionSink.SendFileAsync(fileTransferInformation);
                             }
                             catch (FileNotFoundException ex)
                             {

@@ -139,10 +139,10 @@
       "commitSha": "98b55256c6cdfc0ed98c52d7d39127fa55971330"
     },
     {
-      "packageVersion": "17.7.0-preview.23302.1",
+      "packageVersion": "17.7.0-preview.23307.1",
       "path": "vstest",
       "remoteUri": "https://github.com/microsoft/vstest",
-      "commitSha": "1fe03b9451e6605b0846fc544cc0effd2b39a85c"
+      "commitSha": "8381658bfb847e67b4f41a997411e8a804e1ecb4"
     },
     {
       "packageVersion": "7.0.0-preview.22423.2",

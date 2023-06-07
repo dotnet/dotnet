@@ -328,7 +328,7 @@ public class RunSettingsArgumentProcessorTests
     }
 
     [TestMethod]
-    public void InitializeShouldSetInIsolataionToTrueIfEnvironmentVariablesSpecified()
+    public void InitializeShouldSetInIsolationToTrueIfEnvironmentVariablesSpecified()
     {
         var settingsXml = @"<RunSettings><RunConfiguration><EnvironmentVariables><RANDOM_PATH>C:\temp</RANDOM_PATH></EnvironmentVariables></RunConfiguration></RunSettings>";
 
@@ -354,7 +354,7 @@ public class RunSettingsArgumentProcessorTests
     }
 
     [TestMethod]
-    public void InitializeShouldNotSetInIsolataionToTrueIfEnvironmentVariablesNotSpecified()
+    public void InitializeShouldNotSetInIsolationToTrueIfEnvironmentVariablesNotSpecified()
     {
         var settingsXml = @"<RunSettings><RunConfiguration></RunConfiguration></RunSettings>";
 

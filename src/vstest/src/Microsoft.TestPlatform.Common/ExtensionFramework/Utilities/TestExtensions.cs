@@ -4,7 +4,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 
 using Microsoft.VisualStudio.TestPlatform.Common.DataCollector;
 using Microsoft.VisualStudio.TestPlatform.Common.Telemetry;
@@ -430,7 +429,7 @@ public class TestExtensions
                 var testPluginInformation = extension.Value as TestPluginInformation;
                 // TODO: Avoid ArgumentNullException here
                 var extensionType = Type.GetType(testPluginInformation?.AssemblyQualifiedName!);
-                if (string.Equals(extensionType?.GetTypeInfo().Assembly.GetAssemblyLocation(), extensionAssembly))
+                if (string.Equals(extensionType?.Assembly.GetAssemblyLocation(), extensionAssembly))
                 {
                     extensions.Add(extension.Key, extension.Value);
                 }

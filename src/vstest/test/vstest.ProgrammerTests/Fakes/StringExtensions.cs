@@ -5,11 +5,6 @@ namespace vstest.ProgrammerTests.Fakes;
 
 internal static class EnumerableExtensions
 {
-    public static string JoinBySpace<T>(this IEnumerable<T> value)
-    {
-        return value.JoinBy(" ");
-    }
-
     public static string JoinByComma<T>(this IEnumerable<T> value)
     {
         return value.JoinBy(", ");

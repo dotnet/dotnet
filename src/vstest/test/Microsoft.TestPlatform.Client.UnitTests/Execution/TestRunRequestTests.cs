@@ -484,7 +484,7 @@ public class TestRunRequestTests
         _mockRequestData.Setup(rd => rd.MetricsCollection).Returns(mockMetricsCollector.Object);
 
         _testRunRequest.ExecuteAsync();
-        var testRunCompeleteEventsArgs = new TestRunCompleteEventArgs(
+        var testRunCompleteEventsArgs = new TestRunCompleteEventArgs(
             new TestRunStatistics(1, null),
             false,
             false,
@@ -492,10 +492,10 @@ public class TestRunRequestTests
             null,
             null,
             TimeSpan.FromSeconds(0));
-        testRunCompeleteEventsArgs.Metrics = dict;
+        testRunCompleteEventsArgs.Metrics = dict;
 
         // Act
-        _testRunRequest.HandleTestRunComplete(testRunCompeleteEventsArgs, null, null, null);
+        _testRunRequest.HandleTestRunComplete(testRunCompleteEventsArgs, null, null, null);
 
         // Verify.
         mockMetricsCollector.Verify(rd => rd.Add(TelemetryDataConstants.TimeTakenInSecForRun, It.IsAny<double>()), Times.Once);
@@ -511,7 +511,7 @@ public class TestRunRequestTests
         List<AttachmentSet> attachmentSets = new() { new AttachmentSet(new Uri("datacollector://attachment"), "datacollectorAttachment") };
 
         _testRunRequest.ExecuteAsync();
-        var testRunCompeleteEventsArgs = new TestRunCompleteEventArgs(
+        var testRunCompleteEventsArgs = new TestRunCompleteEventArgs(
             new TestRunStatistics(1, null),
             false,
             false,
@@ -521,7 +521,7 @@ public class TestRunRequestTests
             TimeSpan.FromSeconds(0));
 
         // Act
-        _testRunRequest.HandleTestRunComplete(testRunCompeleteEventsArgs, null, attachmentSets, null);
+        _testRunRequest.HandleTestRunComplete(testRunCompleteEventsArgs, null, attachmentSets, null);
 
         // Verify.
         Assert.IsTrue(attachmentsFound);
@@ -536,7 +536,7 @@ public class TestRunRequestTests
         Collection<AttachmentSet> attachmentSets = new(new List<AttachmentSet> { new AttachmentSet(new Uri("datacollector://attachment"), "datacollectorAttachment") });
 
         _testRunRequest.ExecuteAsync();
-        var testRunCompeleteEventsArgs = new TestRunCompleteEventArgs(
+        var testRunCompleteEventsArgs = new TestRunCompleteEventArgs(
             new TestRunStatistics(1, null),
             false,
             false,
@@ -546,7 +546,7 @@ public class TestRunRequestTests
             TimeSpan.FromSeconds(0));
 
         // Act
-        _testRunRequest.HandleTestRunComplete(testRunCompeleteEventsArgs, null, attachmentSets, null);
+        _testRunRequest.HandleTestRunComplete(testRunCompleteEventsArgs, null, attachmentSets, null);
 
         // Verify.
         Assert.IsTrue(attachmentsFound);
@@ -559,7 +559,7 @@ public class TestRunRequestTests
         _testRunRequest.OnRunCompletion += (s, e) => attachmentsFound = (e.AttachmentSets.Count == 0);
 
         _testRunRequest.ExecuteAsync();
-        var testRunCompeleteEventsArgs = new TestRunCompleteEventArgs(
+        var testRunCompleteEventsArgs = new TestRunCompleteEventArgs(
             new TestRunStatistics(1, null),
             false,
             false,
@@ -569,7 +569,7 @@ public class TestRunRequestTests
             TimeSpan.FromSeconds(0));
 
         // Act
-        _testRunRequest.HandleTestRunComplete(testRunCompeleteEventsArgs, null, null, null);
+        _testRunRequest.HandleTestRunComplete(testRunCompleteEventsArgs, null, null, null);
 
         // Verify.
         Assert.IsTrue(attachmentsFound);
