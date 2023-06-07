@@ -7,10 +7,10 @@
       "commitSha": "234e0726c7384ee84bf08550f2d16a1ff2d5c543"
     },
     {
-      "packageVersion": "8.0.0-preview.6.23302.1",
+      "packageVersion": "8.0.0-preview.6.23307.1",
       "path": "aspnetcore",
       "remoteUri": "https://github.com/dotnet/aspnetcore",
-      "commitSha": "c2488eead6ead7208f543d0a57104b5d167b93f9"
+      "commitSha": "3863fdbb7747db80c829f22a7369d8efd295c9ff"
     },
     {
       "packageVersion": "0.11.4-alpha.23301.1",
@@ -161,7 +161,7 @@
     {
       "path": "aspnetcore/src/submodules/googletest",
       "remoteUri": "https://github.com/google/googletest",
-      "commitSha": "45804691223635953f311cf31a10c632553bbfc3"
+      "commitSha": "06f44bc951046150f1348598854b211afdcf37fc"
     },
     {
       "path": "aspnetcore/src/submodules/MessagePack-CSharp",
@@ -171,7 +171,7 @@
     {
       "path": "aspnetcore/src/submodules/spa-templates",
       "remoteUri": "https://github.com/dotnet/spa-templates.git",
-      "commitSha": "45228c8cc6545ffc90865e8acea7de08fc40fbaf"
+      "commitSha": "d60cf22dc709aae6e651fd490a78e4b5f60a5168"
     },
     {
       "path": "nuget-client/submodules/NuGet.Build.Localization",
