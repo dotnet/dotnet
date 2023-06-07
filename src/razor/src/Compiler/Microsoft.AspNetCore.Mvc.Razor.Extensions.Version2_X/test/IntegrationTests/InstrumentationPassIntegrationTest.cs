@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Razor.Language.Extensions;
 using Microsoft.AspNetCore.Razor.Language.IntegrationTests;
 using Microsoft.CodeAnalysis.CSharp;
 using Xunit;
+using static Microsoft.AspNetCore.Razor.Language.CommonMetadata;
 
 namespace Microsoft.AspNetCore.Mvc.Razor.Extensions.Version2_X.IntegrationTests;
 
@@ -52,11 +53,11 @@ public class InstrumentationPassIntegrationTest : IntegrationTestBase
                     {
                         builder => builder
                             .Name("value")
-                            .PropertyName("FooProp")
+                            .Metadata(PropertyName("FooProp"))
                             .TypeName("System.String"),      // Gets preallocated
                         builder => builder
                             .Name("date")
-                            .PropertyName("BarProp")
+                            .Metadata(PropertyName("BarProp"))
                             .TypeName("System.DateTime"),    // Doesn't get preallocated
                     })
             };
@@ -90,7 +91,7 @@ public class InstrumentationPassIntegrationTest : IntegrationTestBase
         IEnumerable<Action<BoundAttributeDescriptorBuilder>> attributes = null)
     {
         var builder = TagHelperDescriptorBuilder.Create(typeName, assemblyName);
-        builder.TypeName(typeName);
+        builder.Metadata(TypeName(typeName));
 
         if (attributes != null)
         {

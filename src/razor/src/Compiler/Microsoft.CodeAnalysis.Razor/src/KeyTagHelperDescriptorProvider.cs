@@ -6,6 +6,7 @@
 using System;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Language.Components;
+using static Microsoft.AspNetCore.Razor.Language.CommonMetadata;
 
 namespace Microsoft.CodeAnalysis.Razor;
 
@@ -61,13 +62,11 @@ internal class KeyTagHelperDescriptorProvider : ITagHelperDescriptorProvider
             builder.CaseSensitive = true;
             builder.SetDocumentation(DocumentationDescriptor.KeyTagHelper);
 
-            builder.Metadata.Add(ComponentMetadata.SpecialKindKey, ComponentMetadata.Key.TagHelperKind);
-            builder.Metadata.Add(TagHelperMetadata.Common.ClassifyAttributesOnly, bool.TrueString);
-            builder.Metadata[TagHelperMetadata.Runtime.Name] = ComponentMetadata.Key.RuntimeName;
-
-            // WTE has a bug in 15.7p1 where a Tag Helper without a display-name that looks like
-            // a C# property will crash trying to create the tooltips.
-            builder.SetTypeName("Microsoft.AspNetCore.Components.Key");
+            builder.SetMetadata(
+                SpecialKind(ComponentMetadata.Key.TagHelperKind),
+                MakeTrue(TagHelperMetadata.Common.ClassifyAttributesOnly),
+                RuntimeName(ComponentMetadata.Key.RuntimeName),
+                TypeName("Microsoft.AspNetCore.Components.Key"));
 
             builder.TagMatchingRule(rule =>
             {
@@ -75,7 +74,7 @@ internal class KeyTagHelperDescriptorProvider : ITagHelperDescriptorProvider
                 rule.Attribute(attribute =>
                 {
                     attribute.Name = "@key";
-                    attribute.Metadata[ComponentMetadata.Common.DirectiveAttribute] = bool.TrueString;
+                    attribute.SetMetadata(Attributes.IsDirectiveAttribute);
                 });
             });
 
@@ -84,11 +83,10 @@ internal class KeyTagHelperDescriptorProvider : ITagHelperDescriptorProvider
                 attribute.SetDocumentation(DocumentationDescriptor.KeyTagHelper);
                 attribute.Name = "@key";
 
-                // WTE has a bug 15.7p1 where a Tag Helper without a display-name that looks like
-                // a C# property will crash trying to create the tooltips.
-                attribute.SetPropertyName("Key");
                 attribute.TypeName = typeof(object).FullName;
-                attribute.Metadata[ComponentMetadata.Common.DirectiveAttribute] = bool.TrueString;
+                attribute.SetMetadata(
+                    PropertyName("Key"),
+                    IsDirectiveAttribute);
             });
 
             return builder.Build();

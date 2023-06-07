@@ -69,7 +69,9 @@ internal class RazorSemanticTokensLegend
     {
         var builder = ImmutableArray.CreateBuilder<string>();
 
+#pragma warning disable CS0618 // RoslynTokenTypes is obsolete
         builder.AddRange(RazorSemanticTokensAccessor.RoslynTokenTypes);
+#pragma warning restore CS0618
 
         foreach (var field in typeof(RazorSemanticTokensLegend).GetFields(BindingFlags.NonPublic | BindingFlags.Static))
         {

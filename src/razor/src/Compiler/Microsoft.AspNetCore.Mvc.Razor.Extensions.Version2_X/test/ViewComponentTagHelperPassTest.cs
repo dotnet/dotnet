@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Language.Extensions;
 using Microsoft.AspNetCore.Razor.Language.Intermediate;
 using Xunit;
+using static Microsoft.AspNetCore.Razor.Language.CommonMetadata;
 
 namespace Microsoft.AspNetCore.Mvc.Razor.Extensions.Version2_X;
 
@@ -23,14 +24,14 @@ public class ViewComponentTagHelperPassTest
 
         var tagHelpers = new[]
         {
-                TagHelperDescriptorBuilder.Create("TestTagHelper", "TestAssembly")
-                    .TypeName("TestTagHelper")
-                    .BoundAttributeDescriptor(attribute => attribute
-                        .Name("Foo")
-                        .TypeName("System.Int32"))
-                    .TagMatchingRuleDescriptor(rule => rule.RequireTagName("p"))
-                    .Build()
-            };
+            TagHelperDescriptorBuilder.Create("TestTagHelper", "TestAssembly")
+                .Metadata(TypeName("TestTagHelper"))
+                .BoundAttributeDescriptor(attribute => attribute
+                    .Name("Foo")
+                    .TypeName("System.Int32"))
+                .TagMatchingRuleDescriptor(rule => rule.RequireTagName("p"))
+                .Build()
+        };
 
         var projectEngine = CreateProjectEngine(tagHelpers);
         var pass = new ViewComponentTagHelperPass()
@@ -62,16 +63,17 @@ public class ViewComponentTagHelperPassTest
 
         var tagHelpers = new[]
         {
-                TagHelperDescriptorBuilder.Create(ViewComponentTagHelperConventions.Kind, "TestTagHelper", "TestAssembly")
-                    .TypeName("__Generated__TagCloudViewComponentTagHelper")
-                    .BoundAttributeDescriptor(attribute => attribute
-                        .Name("Foo")
-                        .TypeName("System.Int32")
-                        .PropertyName("Foo"))
-                    .TagMatchingRuleDescriptor(rule => rule.RequireTagName("tagcloud"))
-                    .AddMetadata(ViewComponentTagHelperMetadata.Name, "TagCloud")
-                    .Build()
-            };
+            TagHelperDescriptorBuilder.Create(ViewComponentTagHelperConventions.Kind, "TestTagHelper", "TestAssembly")
+                .Metadata(
+                    TypeName("__Generated__TagCloudViewComponentTagHelper"),
+                    new(ViewComponentTagHelperMetadata.Name, "TagCloud"))
+                .BoundAttributeDescriptor(attribute => attribute
+                    .Name("Foo")
+                    .TypeName("System.Int32")
+                    .Metadata(PropertyName("Foo")))
+                .TagMatchingRuleDescriptor(rule => rule.RequireTagName("tagcloud"))
+                .Build()
+        };
 
         var projectEngine = CreateProjectEngine(tagHelpers);
         var pass = new ViewComponentTagHelperPass()
@@ -108,17 +110,18 @@ public class ViewComponentTagHelperPassTest
 
         var tagHelpers = new[]
         {
-                TagHelperDescriptorBuilder.Create(ViewComponentTagHelperConventions.Kind, "TestTagHelper", "TestAssembly")
-                    .TypeName("__Generated__TagCloudViewComponentTagHelper")
-                    .BoundAttributeDescriptor(attribute => attribute
-                        .Name("Foo")
-                        .TypeName("System.Collections.Generic.Dictionary<System.String, System.Int32>")
-                        .PropertyName("Tags")
-                        .AsDictionaryAttribute("foo-", "System.Int32"))
-                    .TagMatchingRuleDescriptor(rule => rule.RequireTagName("tagcloud"))
-                    .AddMetadata(ViewComponentTagHelperMetadata.Name, "TagCloud")
-                    .Build()
-            };
+            TagHelperDescriptorBuilder.Create(ViewComponentTagHelperConventions.Kind, "TestTagHelper", "TestAssembly")
+                .Metadata(
+                    TypeName("__Generated__TagCloudViewComponentTagHelper"),
+                    new(ViewComponentTagHelperMetadata.Name, "TagCloud"))
+                .BoundAttributeDescriptor(attribute => attribute
+                    .Name("Foo")
+                    .TypeName("System.Collections.Generic.Dictionary<System.String, System.Int32>")
+                    .Metadata(PropertyName("Tags"))
+                    .AsDictionaryAttribute("foo-", "System.Int32"))
+                .TagMatchingRuleDescriptor(rule => rule.RequireTagName("tagcloud"))
+                .Build()
+        };
 
         var projectEngine = CreateProjectEngine(tagHelpers);
         var pass = new ViewComponentTagHelperPass()
@@ -154,24 +157,25 @@ public class ViewComponentTagHelperPassTest
 
         var tagHelpers = new[]
         {
-                TagHelperDescriptorBuilder.Create("PTestTagHelper", "TestAssembly")
-                    .TypeName("PTestTagHelper")
-                    .BoundAttributeDescriptor(attribute => attribute
-                        .PropertyName("Foo")
-                        .Name("Foo")
-                        .TypeName("System.Int32"))
-                    .TagMatchingRuleDescriptor(rule => rule.RequireTagName("p"))
-                    .Build(),
-                TagHelperDescriptorBuilder.Create(ViewComponentTagHelperConventions.Kind, "TestTagHelper", "TestAssembly")
-                    .TypeName("__Generated__TagCloudViewComponentTagHelper")
-                    .BoundAttributeDescriptor(attribute => attribute
-                        .PropertyName("Foo")
-                        .Name("Foo")
-                        .TypeName("System.Int32"))
-                    .TagMatchingRuleDescriptor(rule => rule.RequireTagName("tagcloud"))
-                    .AddMetadata(ViewComponentTagHelperMetadata.Name, "TagCloud")
-                    .Build()
-            };
+            TagHelperDescriptorBuilder.Create("PTestTagHelper", "TestAssembly")
+                .Metadata(TypeName("PTestTagHelper"))
+                .BoundAttributeDescriptor(attribute => attribute
+                    .Metadata(PropertyName("Foo"))
+                    .Name("Foo")
+                    .TypeName("System.Int32"))
+                .TagMatchingRuleDescriptor(rule => rule.RequireTagName("p"))
+                .Build(),
+            TagHelperDescriptorBuilder.Create(ViewComponentTagHelperConventions.Kind, "TestTagHelper", "TestAssembly")
+                .Metadata(
+                    TypeName("__Generated__TagCloudViewComponentTagHelper"),
+                    new(ViewComponentTagHelperMetadata.Name, "TagCloud"))
+                .BoundAttributeDescriptor(attribute => attribute
+                    .Metadata(PropertyName("Foo"))
+                    .Name("Foo")
+                    .TypeName("System.Int32"))
+                .TagMatchingRuleDescriptor(rule => rule.RequireTagName("tagcloud"))
+                .Build()
+        };
 
         var projectEngine = CreateProjectEngine(tagHelpers);
         var pass = new ViewComponentTagHelperPass()
@@ -202,13 +206,13 @@ public class ViewComponentTagHelperPassTest
         Assert.IsType<ViewComponentTagHelperIntermediateNode>(@class.Children.Last());
     }
 
-    private RazorCodeDocument CreateDocument(string content)
+    private static RazorCodeDocument CreateDocument(string content)
     {
         var source = RazorSourceDocument.Create(content, "test.cshtml");
         return RazorCodeDocument.Create(source);
     }
 
-    private RazorProjectEngine CreateProjectEngine(params TagHelperDescriptor[] tagHelpers)
+    private static RazorProjectEngine CreateProjectEngine(params TagHelperDescriptor[] tagHelpers)
     {
         return RazorProjectEngine.Create(b =>
         {
@@ -218,7 +222,7 @@ public class ViewComponentTagHelperPassTest
         });
     }
 
-    private DocumentIntermediateNode CreateIRDocument(RazorProjectEngine projectEngine, RazorCodeDocument codeDocument)
+    private static DocumentIntermediateNode CreateIRDocument(RazorProjectEngine projectEngine, RazorCodeDocument codeDocument)
     {
         for (var i = 0; i < projectEngine.Phases.Count; i++)
         {
@@ -240,14 +244,14 @@ public class ViewComponentTagHelperPassTest
         return codeDocument.GetDocumentIntermediateNode();
     }
 
-    private ClassDeclarationIntermediateNode FindClassNode(IntermediateNode node)
+    private static ClassDeclarationIntermediateNode FindClassNode(IntermediateNode node)
     {
         var visitor = new ClassDeclarationNodeVisitor();
         visitor.Visit(node);
         return visitor.Node;
     }
 
-    private TagHelperIntermediateNode FindTagHelperNode(IntermediateNode node)
+    private static TagHelperIntermediateNode FindTagHelperNode(IntermediateNode node)
     {
         var visitor = new TagHelperNodeVisitor();
         visitor.Visit(node);

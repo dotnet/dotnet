@@ -39,7 +39,7 @@ internal partial class DefaultBoundAttributeDescriptorBuilder
 
             ClearDiagnostics(builder._diagnostics);
 
-            builder._metadata?.Clear();
+            builder._metadata.Clear();
 
             return true;
         }

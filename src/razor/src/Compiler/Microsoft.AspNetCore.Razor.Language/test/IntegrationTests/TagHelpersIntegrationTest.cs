@@ -6,6 +6,7 @@
 using System;
 using System.Collections.Generic;
 using Xunit;
+using static Microsoft.AspNetCore.Razor.Language.CommonMetadata;
 
 namespace Microsoft.AspNetCore.Razor.Language.IntegrationTests;
 
@@ -47,7 +48,7 @@ public class TagHelpersIntegrationTest : IntegrationTestBase
                     {
                         builder => builder
                             .Name("bound")
-                            .PropertyName("FooProp")
+                            .Metadata(PropertyName("FooProp"))
                             .TypeName("System.String"),
                     })
             };
@@ -84,7 +85,7 @@ public class TagHelpersIntegrationTest : IntegrationTestBase
                     {
                         builder => builder
                             .Name("value")
-                            .PropertyName("FooProp")
+                            .Metadata(PropertyName("FooProp"))
                             .TypeName("System.String"),
                     })
             };
@@ -108,7 +109,7 @@ public class TagHelpersIntegrationTest : IntegrationTestBase
         IEnumerable<Action<BoundAttributeDescriptorBuilder>> attributes = null)
     {
         var builder = TagHelperDescriptorBuilder.Create(typeName, assemblyName);
-        builder.TypeName(typeName);
+        builder.Metadata(TypeName(typeName));
 
         if (attributes != null)
         {

@@ -6,6 +6,7 @@
 using Microsoft.AspNetCore.Razor.Language;
 using Xunit;
 using Xunit.Abstractions;
+using static Microsoft.AspNetCore.Razor.Language.CommonMetadata;
 
 namespace Microsoft.VisualStudio.Editor.Razor;
 
@@ -96,7 +97,7 @@ public class DefaultRazorSyntaxFactsServiceTest : RazorProjectEngineTestBase
             .BoundAttributeDescriptor(attr => attr.Name("show").TypeName("System.Boolean"))
             .BoundAttributeDescriptor(attr => attr.Name("id").TypeName("System.Int32"))
             .TagMatchingRuleDescriptor(rule => rule.RequireTagName("taghelper"))
-            .TypeName("TestTagHelper")
+            .Metadata(TypeName("TestTagHelper"))
             .Build();
         var engine = CreateProjectEngine();
 

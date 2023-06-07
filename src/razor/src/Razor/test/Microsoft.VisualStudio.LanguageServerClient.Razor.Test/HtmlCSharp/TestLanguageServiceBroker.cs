@@ -186,4 +186,9 @@ internal class TestLanguageServiceBroker : ILanguageServiceBroker2
     {
         throw new NotImplementedException();
     }
+
+    public Task NotifyAsync(ILanguageClient languageClient, string method, JToken parameters, CancellationToken cancellationToken)
+    {
+        throw new NotImplementedException();
+    }
 }

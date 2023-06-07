@@ -4,19 +4,43 @@
 #nullable disable
 
 using System;
+using System.Collections.Generic;
+using static Microsoft.AspNetCore.Razor.Language.CommonMetadata;
 
 namespace Microsoft.AspNetCore.Razor.Language;
 
 public static class TestTagHelperDescriptorBuilderExtensions
 {
-    public static TagHelperDescriptorBuilder TypeName(this TagHelperDescriptorBuilder builder, string typeName)
+    public static TagHelperDescriptorBuilder Metadata(this TagHelperDescriptorBuilder builder, string key, string value)
     {
-        if (builder == null)
+        if (builder is null)
         {
             throw new ArgumentNullException(nameof(builder));
         }
 
-        builder.SetTypeName(typeName);
+        return builder.Metadata(new KeyValuePair<string, string>(key, value));
+    }
+
+    public static TagHelperDescriptorBuilder Metadata(this TagHelperDescriptorBuilder builder, params KeyValuePair<string, string>[] pairs)
+    {
+        if (builder is null)
+        {
+            throw new ArgumentNullException(nameof(builder));
+        }
+
+        // We need to be sure to add TagHelperMetadata.Runtime.Name if it doesn't already exist.
+        if (Array.Exists(pairs, static pair => pair.Key == TagHelperMetadata.Runtime.Name))
+        {
+            builder.SetMetadata(pairs);
+        }
+        else
+        {
+            var newPairs = new KeyValuePair<string, string>[pairs.Length + 1];
+            newPairs[0] = RuntimeName(TagHelperConventions.DefaultKind);
+            Array.Copy(pairs, 0, newPairs, 1, pairs.Length);
+
+            builder.SetMetadata(newPairs);
+        }
 
         return builder;
     }
@@ -77,18 +101,6 @@ public static class TestTagHelperDescriptorBuilderExtensions
         }
 
         builder.SetDocumentation(documentation);
-
-        return builder;
-    }
-
-    public static TagHelperDescriptorBuilder AddMetadata(this TagHelperDescriptorBuilder builder, string key, string value)
-    {
-        if (builder == null)
-        {
-            throw new ArgumentNullException(nameof(builder));
-        }
-
-        builder.Metadata[key] = value;
 
         return builder;
     }

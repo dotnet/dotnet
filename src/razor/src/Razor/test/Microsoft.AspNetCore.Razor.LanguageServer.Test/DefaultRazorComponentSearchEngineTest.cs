@@ -15,6 +15,7 @@ using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Moq;
 using Xunit;
 using Xunit.Abstractions;
+using static Microsoft.AspNetCore.Razor.Language.CommonMetadata;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Test;
 
@@ -137,8 +138,10 @@ public class DefaultRazorComponentSearchEngineTest : LanguageServerTestBase
         var fullyQualifiedName = $"{namespaceName}.{typeName}";
         var builder1 = TagHelperDescriptorBuilder.Create(ComponentMetadata.Component.TagHelperKind, fullyQualifiedName, assemblyName);
         builder1.TagMatchingRule(rule => rule.TagName = tagName);
-        builder1.SetTypeNameIdentifier(typeName);
-        builder1.SetTypeNamespace(namespaceName);
+        builder1.SetMetadata(
+            TypeNameIdentifier(typeName),
+            TypeNamespace(namespaceName));
+
         return builder1.Build();
     }
 

@@ -279,7 +279,7 @@ public static class ExportProviderCache
         public Assembly LoadAssembly(AssemblyName assemblyName)
             => Assembly.Load(assemblyName);
 
-        public Assembly LoadAssembly(string assemblyFullName, string codeBasePath)
+        public Assembly LoadAssembly(string assemblyFullName, string? codeBasePath)
         {
             var assemblyName = new AssemblyName(assemblyFullName);
             if (!string.IsNullOrEmpty(codeBasePath))

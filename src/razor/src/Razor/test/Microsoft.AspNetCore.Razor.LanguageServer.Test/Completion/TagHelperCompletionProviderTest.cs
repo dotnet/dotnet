@@ -14,6 +14,7 @@ using Microsoft.CodeAnalysis.Testing;
 using Microsoft.VisualStudio.Editor.Razor;
 using Xunit;
 using Xunit.Abstractions;
+using static Microsoft.AspNetCore.Razor.Language.CommonMetadata;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Completion;
 
@@ -376,11 +377,11 @@ public class TagHelperCompletionProviderTest : TagHelperServiceTestBase
         // Arrange
         var tagHelper = TagHelperDescriptorBuilder.Create("TestTagHelper", "TestAssembly");
         tagHelper.TagMatchingRule(rule => rule.TagName = "test");
-        tagHelper.SetTypeName("TestTagHelper");
+        tagHelper.SetMetadata(TypeName("TestTagHelper"));
         tagHelper.BindAttribute(attribute =>
         {
             attribute.Name = "bool-val";
-            attribute.SetPropertyName("BoolVal");
+            attribute.SetMetadata(PropertyName("BoolVal"));
             attribute.TypeName = "System.Collections.Generic.IDictionary<System.String, System.Boolean>";
             attribute.AsDictionary("bool-val-", typeof(bool).FullName);
         });
@@ -419,11 +420,11 @@ public class TagHelperCompletionProviderTest : TagHelperServiceTestBase
         // Arrange
         var tagHelper = TagHelperDescriptorBuilder.Create("TestTagHelper", "TestAssembly");
         tagHelper.TagMatchingRule(rule => rule.TagName = "test");
-        tagHelper.SetTypeName("TestTagHelper");
+        tagHelper.SetMetadata(TypeName("TestTagHelper"));
         tagHelper.BindAttribute(attribute =>
         {
             attribute.Name = "int-val";
-            attribute.SetPropertyName("IntVal");
+            attribute.SetMetadata(PropertyName("IntVal"));
             attribute.TypeName = "System.Collections.Generic.IDictionary<System.String, System.Int32>";
             attribute.AsDictionary("int-val-", typeof(int).FullName);
         });

@@ -24,8 +24,6 @@ internal partial class DefaultTagHelperDescriptorBuilder : TagHelperDescriptorBu
         builder._name = name;
         builder._assemblyName = assemblyName;
 
-        builder.InitializeMetadata();
-
         return builder;
     }
 
@@ -51,11 +49,10 @@ internal partial class DefaultTagHelperDescriptorBuilder : TagHelperDescriptorBu
     private List<DefaultBoundAttributeDescriptorBuilder>? _attributeBuilders;
     private List<DefaultTagMatchingRuleDescriptorBuilder>? _tagMatchingRuleBuilders;
     private RazorDiagnosticCollection? _diagnostics;
-    private readonly Dictionary<string, string?> _metadata;
+    private MetadataHolder _metadata;
 
     private DefaultTagHelperDescriptorBuilder()
     {
-        _metadata = new Dictionary<string, string?>(StringComparer.Ordinal);
     }
 
     public DefaultTagHelperDescriptorBuilder(string kind, string name, string assemblyName)
@@ -64,8 +61,6 @@ internal partial class DefaultTagHelperDescriptorBuilder : TagHelperDescriptorBu
         _kind = kind;
         _name = name;
         _assemblyName = assemblyName;
-
-        InitializeMetadata();
     }
 
     public override string Kind => _kind.AssumeNotNull();
@@ -81,7 +76,13 @@ internal partial class DefaultTagHelperDescriptorBuilder : TagHelperDescriptorBu
         set => _documentationObject = new(value);
     }
 
-    public override IDictionary<string, string?> Metadata => _metadata;
+    public override IDictionary<string, string?> Metadata => _metadata.MetadataDictionary;
+
+    public override void SetMetadata(MetadataCollection metadata) => _metadata.SetMetadataCollection(metadata);
+
+    public override bool TryGetMetadataValue(string key, [NotNullWhen(true)] out string? value)
+        => _metadata.TryGetMetadataValue(key, out value);
+
     public override RazorDiagnosticCollection Diagnostics => _diagnostics ??= new RazorDiagnosticCollection();
 
     public override IReadOnlyList<AllowedChildTagDescriptorBuilder> AllowedChildTags
@@ -156,12 +157,12 @@ internal partial class DefaultTagHelperDescriptorBuilder : TagHelperDescriptorBu
         _tagMatchingRuleBuilders.Add(builder);
     }
 
-    internal override void SetDocumentation(string text)
+    internal override void SetDocumentation(string? text)
     {
         _documentationObject = new(text);
     }
 
-    internal override void SetDocumentation(DocumentationDescriptor documentation)
+    internal override void SetDocumentation(DocumentationDescriptor? documentation)
     {
         _documentationObject = new(documentation);
     }
@@ -176,6 +177,9 @@ internal partial class DefaultTagHelperDescriptorBuilder : TagHelperDescriptorBu
         var tagMatchingRules = _tagMatchingRuleBuilders.BuildAllOrEmpty(s_tagMatchingRuleSetPool);
         var attributes = _attributeBuilders.BuildAllOrEmpty(s_boundAttributeSetPool);
 
+        _metadata.AddIfMissing(TagHelperMetadata.Runtime.Name, TagHelperConventions.DefaultKind);
+        var metadata = _metadata.GetMetadataCollection();
+
         var descriptor = new DefaultTagHelperDescriptor(
             Kind,
             Name,
@@ -187,7 +191,7 @@ internal partial class DefaultTagHelperDescriptorBuilder : TagHelperDescriptorBu
             tagMatchingRules,
             attributes,
             allowedChildTags,
-            MetadataCollection.Create(_metadata),
+            metadata,
             diagnostics.ToArray());
 
         return descriptor;
@@ -204,7 +208,17 @@ internal partial class DefaultTagHelperDescriptorBuilder : TagHelperDescriptorBu
         _diagnostics?.Clear();
     }
 
-    public string GetDisplayName() => DisplayName ?? this.GetTypeName() ?? Name;
+    public string GetDisplayName()
+    {
+        return DisplayName ?? GetTypeName() ?? Name;
+
+        string? GetTypeName()
+        {
+            return TryGetMetadataValue(TagHelperMetadata.Common.TypeName, out var value)
+                ? value
+                : null;
+        }
+    }
 
     [MemberNotNull(nameof(_allowedChildTags))]
     private void EnsureAllowedChildTags()
@@ -224,10 +238,12 @@ internal partial class DefaultTagHelperDescriptorBuilder : TagHelperDescriptorBu
         _tagMatchingRuleBuilders ??= new List<DefaultTagMatchingRuleDescriptorBuilder>();
     }
 
-    private void InitializeMetadata()
+    internal override MetadataBuilder GetMetadataBuilder(string? runtimeName = null)
     {
-        // Tells code generation that these tag helpers are compatible with ITagHelper.
-        // For now that's all we support.
-        _metadata.Add(TagHelperMetadata.Runtime.Name, TagHelperConventions.DefaultKind);
+        var metadataBuilder = new MetadataBuilder();
+
+        metadataBuilder.Add(TagHelperMetadata.Runtime.Name, runtimeName ?? TagHelperConventions.DefaultKind);
+
+        return metadataBuilder;
     }
 }

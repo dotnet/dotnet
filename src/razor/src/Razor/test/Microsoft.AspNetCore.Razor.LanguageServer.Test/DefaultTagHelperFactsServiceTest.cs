@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Razor.LanguageServer.Completion;
 using Microsoft.VisualStudio.Editor.Razor;
 using Xunit;
 using Xunit.Abstractions;
+using static Microsoft.AspNetCore.Razor.Language.CommonMetadata;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Test;
 
@@ -123,10 +124,10 @@ public class DefaultTagHelperFactsServiceTest : TagHelperServiceTestBase
         tagHelper.BindAttribute(attribute =>
         {
             attribute.Name = "bound";
-            attribute.SetPropertyName("Bound");
+            attribute.SetMetadata(PropertyName("Bound"));
             attribute.TypeName = typeof(bool).FullName;
         });
-        tagHelper.SetTypeName("WithBoundAttribute");
+        tagHelper.SetMetadata(TypeName("WithBoundAttribute"));
         var codeDocument = CreateCodeDocument($"@addTagHelper *, TestAssembly{Environment.NewLine}<test bound='true' />", isRazorFile: false, tagHelper.Build());
         var syntaxTree = codeDocument.GetSyntaxTree();
         var sourceSpan = new SourceSpan(30 + Environment.NewLine.Length, 0);
@@ -155,10 +156,10 @@ public class DefaultTagHelperFactsServiceTest : TagHelperServiceTestBase
         tagHelper.BindAttribute(attribute =>
         {
             attribute.Name = "bound";
-            attribute.SetPropertyName("Bound");
+            attribute.SetMetadata(PropertyName("Bound"));
             attribute.TypeName = typeof(bool).FullName;
         });
-        tagHelper.SetTypeName("WithBoundAttribute");
+        tagHelper.SetMetadata(TypeName("WithBoundAttribute"));
         var codeDocument = CreateCodeDocument($"@addTagHelper *, TestAssembly{Environment.NewLine}<test bound />", isRazorFile: false, tagHelper.Build());
         var syntaxTree = codeDocument.GetSyntaxTree();
         var sourceSpan = new SourceSpan(30 + Environment.NewLine.Length, 0);

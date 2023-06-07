@@ -21,9 +21,9 @@ public class CSharpCodeWriterTest
         {
             return new object[][]
             {
-                    new object[] { "\r" },
-                    new object[] { "\n" },
-                    new object[] { "\r\n" },
+                new object[] { "\r" },
+                new object[] { "\n" },
+                new object[] { "\r\n" },
             };
         }
     }
@@ -263,6 +263,21 @@ public class CSharpCodeWriterTest
 
         var expected2 = new SourceLocation(absoluteIndex: 2, lineIndex: 1, characterIndex: 0);
         Assert.Equal(expected2, location2);
+    }
+
+    [Fact]
+    public void CSharpCodeWriter_LinesBreaksOutsideOfContentAreNotCounted()
+    {
+        // Arrange
+        var writer = new CodeWriter();
+
+        // Act
+        writer.Write("\r\nHello\r\nWorld\r\n", startIndex: 2, count: 12);
+        var location = writer.Location;
+
+        // Assert
+        var expected = new SourceLocation(absoluteIndex: 12, lineIndex: 1, characterIndex: 5);
+        Assert.Equal(expected, location);
     }
 
     [Fact]

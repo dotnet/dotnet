@@ -2,10 +2,11 @@
   <IgnorePatterns>
     <UsagePattern IdentityGlob="Microsoft.SourceBuild.Intermediate.*/*" />
 
-    <!-- Ignoring the following prebuilts. net7.0 targeting is still needed
-         due to https://github.com/dotnet/razor/issues/8293#issuecomment-1454042002
-         net7.0 targeting removal is tracked in https://github.com/dotnet/razor/issues/8531 -->
-    <UsagePattern IdentityGlob="Microsoft.AspNetCore.App.Ref/7.0.2" />
-    <UsagePattern IdentityGlob="Microsoft.NETCore.App.Ref/7.0.2" />
+    <!-- 
+      Ignoring the following prebuilts. NetPrevious targeting is needed in repo legs
+      because the intermediate is used by multiple versions of dependent repos.
+    -->
+    <UsagePattern IdentityGlob="Microsoft.AspNetCore.App.Ref/7.0.*" />
+    <UsagePattern IdentityGlob="Microsoft.NETCore.App.Ref/7.0.*" />
   </IgnorePatterns>
 </UsageData>

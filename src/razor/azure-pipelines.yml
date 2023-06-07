@@ -79,10 +79,10 @@ stages:
           pool:
             ${{ if eq(variables['System.TeamProject'], 'public') }}:
               name: $(DncEngPublicBuildPool)
-              demands: ImageOverride -equals windows.vs2022preview.amd64.open
+              demands: ImageOverride -equals windows.vs2022preview.scout.amd64.open
             ${{ if ne(variables['System.TeamProject'], 'public') }}:
               name: $(DncEngInternalBuildPool)
-              demands: ImageOverride -equals windows.vs2022preview.amd64
+              demands: ImageOverride -equals windows.vs2022preview.scout.amd64
           steps:
           - task: NodeTool@0
             displayName: Install Node 10.x
@@ -127,10 +127,10 @@ stages:
         pool:
           ${{ if eq(variables['System.TeamProject'], 'public') }}:
             name: $(DncEngPublicBuildPool)
-            demands: ImageOverride -equals windows.vs2022preview.amd64.open
+            demands: ImageOverride -equals windows.vs2022preview.scout.amd64.open
           ${{ if ne(variables['System.TeamProject'], 'public') }}:
             name: $(DncEngInternalBuildPool)
-            demands: ImageOverride -equals windows.vs2022preview.amd64
+            demands: ImageOverride -equals windows.vs2022preview.scout.amd64
         strategy:
           matrix:
             ${{ if eq(variables['System.TeamProject'], 'public') }}:
@@ -238,7 +238,7 @@ stages:
             -nobl
           name: Run_Unit_Tests
           displayName: Run Unit Tests
-          condition: succeeded()
+          condition: and(succeeded(), in(variables['Build.Reason'], 'PullRequest'))
 
         - script: eng\CIBuild.cmd
             -configuration $(_BuildConfig)
@@ -246,7 +246,7 @@ stages:
             -integrationTest
           name: Run_Integration_Tests
           displayName: Run Integration Tests
-          condition: succeeded()
+          condition: and(succeeded(), in(variables['Build.Reason'], 'PullRequest'))
 
         - powershell: ./eng/scripts/FinishDumpCollectionForHangingBuilds.ps1 artifacts/log/$(_BuildConfig)
           displayName: Finish background dump collection
@@ -261,7 +261,7 @@ stages:
         - publish: artifacts/TestResults/$(_BuildConfig)
           artifact: $(Agent.Os)_$(Agent.JobName) Attempt $(System.JobAttempt) TestResults
           displayName: Publish Test Artifacts
-          condition: always()
+          condition: in(variables['Build.Reason'], 'PullRequest')
 
         # Publish an artifact that the RoslynInsertionTool is able to find by its name.
         - publish: artifacts\VSSetup\$(_BuildConfig)

@@ -589,4 +589,10 @@
   <data name="A_documentation_object_can_only_be_a_0_instance_string_or_null" xml:space="preserve">
     <value>A documentation object can only be a '{0}' instance, string, or null.</value>
   </data>
+  <data name="0_and_1_cannot_both_be_used_for_a_single_builder" xml:space="preserve">
+    <value>'{0}' and '{1}' cannot both be used for a single builder.</value>
+  </data>
+  <data name="Cannot_add_item_with_key_0_to_an_existing_1" xml:space="preserve">
+    <value>Cannot add item with key '{0}' to an existing '{1}'.</value>
+  </data>
 </root>

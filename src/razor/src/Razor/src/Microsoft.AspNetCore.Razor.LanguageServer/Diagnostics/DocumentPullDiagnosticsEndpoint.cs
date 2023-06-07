@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Razor.LanguageServer.Common;
 using Microsoft.AspNetCore.Razor.LanguageServer.EndpointContracts;
 using Microsoft.AspNetCore.Razor.LanguageServer.Protocol;
 using Microsoft.AspNetCore.Razor.PooledObjects;
+using Microsoft.AspNetCore.Razor.Telemetry;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CommonLanguageServerProtocol.Framework;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
@@ -22,15 +23,18 @@ internal class DocumentPullDiagnosticsEndpoint : IRazorRequestHandler<VSInternal
     private readonly LanguageServerFeatureOptions _languageServerFeatureOptions;
     private readonly ClientNotifierServiceBase _languageServer;
     private readonly RazorTranslateDiagnosticsService _translateDiagnosticsService;
+    private readonly ITelemetryReporter? _telemetryReporter;
 
     public DocumentPullDiagnosticsEndpoint(
         LanguageServerFeatureOptions languageServerFeatureOptions,
         RazorTranslateDiagnosticsService translateDiagnosticsService,
-        ClientNotifierServiceBase languageServer)
+        ClientNotifierServiceBase languageServer,
+        ITelemetryReporter? telemetryReporter)
     {
         _languageServerFeatureOptions = languageServerFeatureOptions ?? throw new ArgumentNullException(nameof(languageServerFeatureOptions));
         _translateDiagnosticsService = translateDiagnosticsService ?? throw new ArgumentNullException(nameof(translateDiagnosticsService));
         _languageServer = languageServer ?? throw new ArgumentNullException(nameof(languageServer));
+        _telemetryReporter = telemetryReporter;
     }
 
     public bool MutatesSolutionState => false;
@@ -57,11 +61,13 @@ internal class DocumentPullDiagnosticsEndpoint : IRazorRequestHandler<VSInternal
             return default;
         }
 
+        var correlationId = Guid.NewGuid();
+        using var __ = _telemetryReporter?.TrackLspRequest("diagnostics", VSInternalMethods.DocumentPullDiagnosticName, LanguageServerConstants.RazorLanguageServerName, correlationId);
         var documentContext = context.GetRequiredDocumentContext();
 
         var razorDiagnostics = await GetRazorDiagnosticsAsync(documentContext, cancellationToken).ConfigureAwait(false);
 
-        var (csharpDiagnostics, htmlDiagnostics) = await GetHtmlCSharpDiagnosticsAsync(documentContext, cancellationToken).ConfigureAwait(false);
+        var (csharpDiagnostics, htmlDiagnostics) = await GetHtmlCSharpDiagnosticsAsync(documentContext, correlationId, cancellationToken).ConfigureAwait(false);
 
         using var _ = ListPool<VSInternalDiagnosticReport>.GetPooledObject(out var allDiagnostics);
         allDiagnostics.SetCapacityIfLarger(
@@ -131,9 +137,9 @@ internal class DocumentPullDiagnosticsEndpoint : IRazorRequestHandler<VSInternal
         return razorDiagnostics;
     }
 
-    private async Task<(VSInternalDiagnosticReport[]? CSharpDiagnostics, VSInternalDiagnosticReport[]? HtmlDiagnostics)> GetHtmlCSharpDiagnosticsAsync(VersionedDocumentContext documentContext, CancellationToken cancellationToken)
+    private async Task<(VSInternalDiagnosticReport[]? CSharpDiagnostics, VSInternalDiagnosticReport[]? HtmlDiagnostics)> GetHtmlCSharpDiagnosticsAsync(VersionedDocumentContext documentContext, Guid correlationId, CancellationToken cancellationToken)
     {
-        var delegatedParams = new DelegatedDiagnosticParams(documentContext.Identifier);
+        var delegatedParams = new DelegatedDiagnosticParams(documentContext.Identifier, correlationId);
         var delegatedResponse = await _languageServer.SendRequestAsync<DelegatedDiagnosticParams, RazorPullDiagnosticResponse?>(
             RazorLanguageServerCustomMessageTargets.RazorPullDiagnosticEndpointName,
             delegatedParams,

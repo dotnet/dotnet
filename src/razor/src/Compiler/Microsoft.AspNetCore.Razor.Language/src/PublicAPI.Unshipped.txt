@@ -1,18 +1,60 @@
 #nullable enable
+*REMOVED*Microsoft.AspNetCore.Razor.Language.RequiredAttributeDescriptorBuilderExtensions
 abstract Microsoft.AspNetCore.Razor.Language.CodeGeneration.CodeRenderingContext.AddSourceMappingFor(Microsoft.AspNetCore.Razor.Language.SourceSpan node) -> void
+abstract Microsoft.AspNetCore.Razor.Language.MetadataCollection.ComputeHashCode() -> int
+abstract Microsoft.AspNetCore.Razor.Language.MetadataCollection.ContainsKey(string! key) -> bool
+abstract Microsoft.AspNetCore.Razor.Language.MetadataCollection.Count.get -> int
+abstract Microsoft.AspNetCore.Razor.Language.MetadataCollection.Equals(Microsoft.AspNetCore.Razor.Language.MetadataCollection! other) -> bool
+abstract Microsoft.AspNetCore.Razor.Language.MetadataCollection.GetEntry(int index) -> System.Collections.Generic.KeyValuePair<string!, string?>
+abstract Microsoft.AspNetCore.Razor.Language.MetadataCollection.Keys.get -> System.Collections.Generic.IEnumerable<string!>!
+abstract Microsoft.AspNetCore.Razor.Language.MetadataCollection.this[string! key].get -> string?
+abstract Microsoft.AspNetCore.Razor.Language.MetadataCollection.TryGetValue(string! key, out string? value) -> bool
+abstract Microsoft.AspNetCore.Razor.Language.MetadataCollection.Values.get -> System.Collections.Generic.IEnumerable<string?>!
 Microsoft.AspNetCore.Razor.Language.BoundAttributeDescriptor.IsDirectiveAttribute.get -> bool
 Microsoft.AspNetCore.Razor.Language.CodeGeneration.LinePragma.LinePragma() -> void
+Microsoft.AspNetCore.Razor.Language.CommonMetadata
 Microsoft.AspNetCore.Razor.Language.Intermediate.IntermediateNodeCollection.Enumerator.Enumerator() -> void
 Microsoft.AspNetCore.Razor.Language.Intermediate.IntermediateNodeReference.IntermediateNodeReference() -> void
+Microsoft.AspNetCore.Razor.Language.MetadataCollection
+Microsoft.AspNetCore.Razor.Language.MetadataCollection.Enumerator
+Microsoft.AspNetCore.Razor.Language.MetadataCollection.Enumerator.Current.get -> System.Collections.Generic.KeyValuePair<string!, string?>
+Microsoft.AspNetCore.Razor.Language.MetadataCollection.Enumerator.Dispose() -> void
+Microsoft.AspNetCore.Razor.Language.MetadataCollection.Enumerator.Enumerator() -> void
+Microsoft.AspNetCore.Razor.Language.MetadataCollection.Enumerator.MoveNext() -> bool
+Microsoft.AspNetCore.Razor.Language.MetadataCollection.Enumerator.Reset() -> void
+Microsoft.AspNetCore.Razor.Language.MetadataCollection.GetEnumerator() -> Microsoft.AspNetCore.Razor.Language.MetadataCollection.Enumerator
+Microsoft.AspNetCore.Razor.Language.MetadataCollection.MetadataCollection() -> void
 Microsoft.AspNetCore.Razor.Language.RazorDiagnosticCollection.Enumerator.Enumerator() -> void
 Microsoft.AspNetCore.Razor.Language.SourceLocation.SourceLocation() -> void
 Microsoft.AspNetCore.Razor.Language.SourceSpan.SourceSpan() -> void
 Microsoft.AspNetCore.Razor.Language.TagHelperDescriptorBuilder.PooledBuilder
 Microsoft.AspNetCore.Razor.Language.TagHelperDescriptorBuilder.PooledBuilder.Dispose() -> void
 Microsoft.AspNetCore.Razor.Language.TagHelperDescriptorBuilder.PooledBuilder.PooledBuilder() -> void
+override sealed Microsoft.AspNetCore.Razor.Language.MetadataCollection.Equals(object! obj) -> bool
+override sealed Microsoft.AspNetCore.Razor.Language.MetadataCollection.GetHashCode() -> int
+static Microsoft.AspNetCore.Razor.Language.CommonMetadata.PropertyName(string! value) -> System.Collections.Generic.KeyValuePair<string!, string?>
+static Microsoft.AspNetCore.Razor.Language.CommonMetadata.TypeName(string! value) -> System.Collections.Generic.KeyValuePair<string!, string?>
+static Microsoft.AspNetCore.Razor.Language.MetadataCollection.Create(params System.Collections.Generic.KeyValuePair<string!, string?>[]! pairs) -> Microsoft.AspNetCore.Razor.Language.MetadataCollection!
+static Microsoft.AspNetCore.Razor.Language.MetadataCollection.Create(System.Collections.Generic.IReadOnlyDictionary<string!, string?>! map) -> Microsoft.AspNetCore.Razor.Language.MetadataCollection!
+static Microsoft.AspNetCore.Razor.Language.MetadataCollection.Create(System.Collections.Generic.IReadOnlyList<System.Collections.Generic.KeyValuePair<string!, string?>>! pairs) -> Microsoft.AspNetCore.Razor.Language.MetadataCollection!
+static Microsoft.AspNetCore.Razor.Language.MetadataCollection.Create(System.Collections.Generic.KeyValuePair<string!, string?> pair) -> Microsoft.AspNetCore.Razor.Language.MetadataCollection!
+static Microsoft.AspNetCore.Razor.Language.MetadataCollection.Create(System.Collections.Generic.KeyValuePair<string!, string?> pair1, System.Collections.Generic.KeyValuePair<string!, string?> pair2) -> Microsoft.AspNetCore.Razor.Language.MetadataCollection!
+static Microsoft.AspNetCore.Razor.Language.MetadataCollection.Create(System.Collections.Generic.KeyValuePair<string!, string?> pair1, System.Collections.Generic.KeyValuePair<string!, string?> pair2, System.Collections.Generic.KeyValuePair<string!, string?> pair3) -> Microsoft.AspNetCore.Razor.Language.MetadataCollection!
+static Microsoft.AspNetCore.Razor.Language.MetadataCollection.CreateOrEmpty(System.Collections.Generic.IReadOnlyDictionary<string!, string?>? map) -> Microsoft.AspNetCore.Razor.Language.MetadataCollection!
+static Microsoft.AspNetCore.Razor.Language.MetadataCollection.CreateOrEmpty(System.Collections.Generic.IReadOnlyList<System.Collections.Generic.KeyValuePair<string!, string?>>? pairs) -> Microsoft.AspNetCore.Razor.Language.MetadataCollection!
+static readonly Microsoft.AspNetCore.Razor.Language.MetadataCollection.Empty -> Microsoft.AspNetCore.Razor.Language.MetadataCollection!
+virtual Microsoft.AspNetCore.Razor.Language.BoundAttributeDescriptorBuilder.SetMetadata(Microsoft.AspNetCore.Razor.Language.MetadataCollection! metadata) -> void
+virtual Microsoft.AspNetCore.Razor.Language.BoundAttributeDescriptorBuilder.TryGetMetadataValue(string! key, out string? value) -> bool
+virtual Microsoft.AspNetCore.Razor.Language.BoundAttributeParameterDescriptorBuilder.SetMetadata(Microsoft.AspNetCore.Razor.Language.MetadataCollection! metadata) -> void
+virtual Microsoft.AspNetCore.Razor.Language.BoundAttributeParameterDescriptorBuilder.TryGetMetadataValue(string! key, out string? value) -> bool
+virtual Microsoft.AspNetCore.Razor.Language.RequiredAttributeDescriptorBuilder.SetMetadata(Microsoft.AspNetCore.Razor.Language.MetadataCollection! metadata) -> void
+virtual Microsoft.AspNetCore.Razor.Language.RequiredAttributeDescriptorBuilder.TryGetMetadataValue(string! key, out string? value) -> bool
+virtual Microsoft.AspNetCore.Razor.Language.TagHelperDescriptorBuilder.SetMetadata(Microsoft.AspNetCore.Razor.Language.MetadataCollection! metadata) -> void
+virtual Microsoft.AspNetCore.Razor.Language.TagHelperDescriptorBuilder.TryGetMetadataValue(string! key, out string? value) -> bool
 ~abstract Microsoft.AspNetCore.Razor.Language.RazorCSharpDocument.CodeDocument.get -> Microsoft.AspNetCore.Razor.Language.RazorCodeDocument
 ~static Microsoft.AspNetCore.Razor.Language.BoundAttributeDescriptorBuilderExtensions.SetBindAttributeGetSet(this Microsoft.AspNetCore.Razor.Language.BoundAttributeParameterDescriptorBuilder builder) -> void
 ~static Microsoft.AspNetCore.Razor.Language.BoundAttributeDescriptorBuilderExtensions.SetGloballyQualifiedTypeName(this Microsoft.AspNetCore.Razor.Language.BoundAttributeDescriptorBuilder builder, string globallyQualifiedTypeName) -> void
+~static Microsoft.AspNetCore.Razor.Language.BoundAttributeDescriptorBuilderExtensions.SetMetadata(this Microsoft.AspNetCore.Razor.Language.BoundAttributeDescriptorBuilder builder, System.Collections.Generic.KeyValuePair<string, string> pair) -> void
 ~static Microsoft.AspNetCore.Razor.Language.BoundAttributeDescriptorExtensions.GetGloballyQualifiedTypeName(this Microsoft.AspNetCore.Razor.Language.BoundAttributeDescriptor attribute) -> string
 ~static Microsoft.AspNetCore.Razor.Language.Intermediate.IntermediateNodeExtensions.IsDesignTimePropertyAccessHelper(this Microsoft.AspNetCore.Razor.Language.Intermediate.IntermediateNode tagHelper) -> bool
 ~static Microsoft.AspNetCore.Razor.Language.RazorCodeDocumentExtensions.GetPreTagHelperSyntaxTree(this Microsoft.AspNetCore.Razor.Language.RazorCodeDocument document) -> Microsoft.AspNetCore.Razor.Language.RazorSyntaxTree
@@ -21,6 +63,8 @@ Microsoft.AspNetCore.Razor.Language.TagHelperDescriptorBuilder.PooledBuilder.Poo
 ~static Microsoft.AspNetCore.Razor.Language.RazorCSharpDocument.Create(Microsoft.AspNetCore.Razor.Language.RazorCodeDocument codeDocument, string generatedCode, Microsoft.AspNetCore.Razor.Language.RazorCodeGenerationOptions options, System.Collections.Generic.IEnumerable<Microsoft.AspNetCore.Razor.Language.RazorDiagnostic> diagnostics, System.Collections.Generic.IEnumerable<Microsoft.AspNetCore.Razor.Language.SourceMapping> sourceMappings, System.Collections.Generic.IEnumerable<Microsoft.AspNetCore.Razor.Language.CodeGeneration.LinePragma> linePragmas) -> Microsoft.AspNetCore.Razor.Language.RazorCSharpDocument
 ~static Microsoft.AspNetCore.Razor.Language.TagHelperDescriptorBuilder.GetPooledInstance(string kind, string name, string assemblyName, out Microsoft.AspNetCore.Razor.Language.TagHelperDescriptorBuilder builder) -> Microsoft.AspNetCore.Razor.Language.TagHelperDescriptorBuilder.PooledBuilder
 ~static Microsoft.AspNetCore.Razor.Language.TagHelperDescriptorBuilder.GetPooledInstance(string name, string assemblyName, out Microsoft.AspNetCore.Razor.Language.TagHelperDescriptorBuilder builder) -> Microsoft.AspNetCore.Razor.Language.TagHelperDescriptorBuilder.PooledBuilder
+~static Microsoft.AspNetCore.Razor.Language.TagHelperDescriptorBuilderExtensions.SetMetadata(this Microsoft.AspNetCore.Razor.Language.TagHelperDescriptorBuilder builder, System.Collections.Generic.KeyValuePair<string, string> pair) -> void
+~static Microsoft.AspNetCore.Razor.Language.TagHelperDescriptorBuilderExtensions.SetMetadata(this Microsoft.AspNetCore.Razor.Language.TagHelperDescriptorBuilder builder, System.Collections.Generic.KeyValuePair<string, string> pair1, System.Collections.Generic.KeyValuePair<string, string> pair2) -> void
 ~static Microsoft.AspNetCore.Razor.Language.TagHelperDescriptorBuilderExtensions.SetTypeNameIdentifier(this Microsoft.AspNetCore.Razor.Language.TagHelperDescriptorBuilder builder, string typeNameIdentifier) -> void
 ~static Microsoft.AspNetCore.Razor.Language.TagHelperDescriptorBuilderExtensions.SetTypeNamespace(this Microsoft.AspNetCore.Razor.Language.TagHelperDescriptorBuilder builder, string typeNamespace) -> void
 ~static Microsoft.AspNetCore.Razor.Language.TagHelperDescriptorExtensions.GetTypeNameIdentifier(this Microsoft.AspNetCore.Razor.Language.TagHelperDescriptor tagHelper) -> string

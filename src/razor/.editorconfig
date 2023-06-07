@@ -8,6 +8,7 @@ root = true
 indent_style = space
 # (Please don't specify an indent_size here; that has too many unintended consequences.)
 trim_trailing_whitespace = true
+spelling_exclusion_path = SpellingExclusions.dic
 
 # Code files
 [*.{cs,csx,vb,vbx}]

@@ -8,6 +8,7 @@ using Microsoft.Extensions.Options;
 using Moq;
 using Xunit;
 using Xunit.Abstractions;
+using static Microsoft.AspNetCore.Razor.Language.CommonMetadata;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.AutoInsert;
 
@@ -25,7 +26,7 @@ public class AutoClosingTagOnAutoInsertProviderTest : RazorOnAutoInsertProviderT
         get
         {
             var descriptor = TagHelperDescriptorBuilder.Create("CatchAllTagHelper", "TestAssembly");
-            descriptor.SetTypeName("TestNamespace.CatchAllTagHelper");
+            descriptor.SetMetadata(TypeName("TestNamespace.CatchAllTagHelper"));
             descriptor.TagMatchingRule(builder => builder.RequireTagName("*").RequireTagStructure(TagStructure.Unspecified));
 
             return descriptor.Build();
@@ -37,7 +38,7 @@ public class AutoClosingTagOnAutoInsertProviderTest : RazorOnAutoInsertProviderT
         get
         {
             var descriptor = TagHelperDescriptorBuilder.Create("TestTagHelper", "TestAssembly");
-            descriptor.SetTypeName("TestNamespace.TestTagHelper");
+            descriptor.SetMetadata(TypeName("TestNamespace.TestTagHelper"));
             descriptor.TagMatchingRule(builder => builder.RequireTagName("Input").RequireTagStructure(TagStructure.Unspecified));
 
             return descriptor.Build();
@@ -49,7 +50,7 @@ public class AutoClosingTagOnAutoInsertProviderTest : RazorOnAutoInsertProviderT
         get
         {
             var descriptor = TagHelperDescriptorBuilder.Create("TestTagHelper", "TestAssembly");
-            descriptor.SetTypeName("TestNamespace.TestTagHelper");
+            descriptor.SetMetadata(TypeName("TestNamespace.TestTagHelper"));
             descriptor.TagMatchingRule(builder => builder.RequireTagName("test").RequireTagStructure(TagStructure.Unspecified));
 
             return descriptor.Build();
@@ -61,7 +62,7 @@ public class AutoClosingTagOnAutoInsertProviderTest : RazorOnAutoInsertProviderT
         get
         {
             var descriptor = TagHelperDescriptorBuilder.Create("TestInputTagHelper", "TestAssembly");
-            descriptor.SetTypeName("TestNamespace.TestInputTagHelper");
+            descriptor.SetMetadata(TypeName("TestNamespace.TestInputTagHelper"));
             descriptor.TagMatchingRule(builder => builder.RequireTagName("input").RequireTagStructure(TagStructure.Unspecified));
 
             return descriptor.Build();
@@ -73,7 +74,7 @@ public class AutoClosingTagOnAutoInsertProviderTest : RazorOnAutoInsertProviderT
         get
         {
             var descriptor = TagHelperDescriptorBuilder.Create("TestInputTagHelper", "TestAssembly");
-            descriptor.SetTypeName("TestNamespace.TestInputTagHelper");
+            descriptor.SetMetadata(TypeName("TestNamespace.TestInputTagHelper"));
             descriptor.TagMatchingRule(builder => builder.RequireTagName("input").RequireTagStructure(TagStructure.NormalOrSelfClosing));
 
             return descriptor.Build();
@@ -85,7 +86,7 @@ public class AutoClosingTagOnAutoInsertProviderTest : RazorOnAutoInsertProviderT
         get
         {
             var descriptor = TagHelperDescriptorBuilder.Create("TestTagHelper2", "TestAssembly");
-            descriptor.SetTypeName("TestNamespace.TestTagHelper2");
+            descriptor.SetMetadata(TypeName("TestNamespace.TestTagHelper2"));
             descriptor.TagMatchingRule(builder => builder.RequireTagName("test").RequireTagStructure(TagStructure.NormalOrSelfClosing));
 
             return descriptor.Build();
@@ -97,7 +98,7 @@ public class AutoClosingTagOnAutoInsertProviderTest : RazorOnAutoInsertProviderT
         get
         {
             var descriptor = TagHelperDescriptorBuilder.Create("TestTagHelper3", "TestAssembly");
-            descriptor.SetTypeName("TestNamespace.TestTagHelper3");
+            descriptor.SetMetadata(TypeName("TestNamespace.TestTagHelper3"));
             descriptor.TagMatchingRule(builder => builder.RequireTagName("test").RequireTagStructure(TagStructure.WithoutEndTag));
 
             return descriptor.Build();

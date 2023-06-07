@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.AspNetCore.Razor.Utilities;
 using Xunit;
 using Xunit.Abstractions;
+using static Microsoft.AspNetCore.Razor.Language.CommonMetadata;
 
 namespace Microsoft.CodeAnalysis.Razor.Workspaces.Test;
 
@@ -28,21 +29,21 @@ public class TagHelperDescriptorCacheTest : TestBase
         var expectedPropertyName = "PropertyName";
 
         var intTagHelperBuilder = new DefaultTagHelperDescriptorBuilder(TagHelperConventions.DefaultKind, "TestTagHelper", "Test");
-        _ = intTagHelperBuilder.TypeName("TestTagHelper");
+        _ = intTagHelperBuilder.Metadata(TypeName("TestTagHelper"));
         intTagHelperBuilder.BoundAttributeDescriptor(intBuilder =>
             intBuilder
                 .Name("test")
-                .PropertyName(expectedPropertyName)
+                .Metadata(PropertyName(expectedPropertyName))
                 .TypeName(typeof(int).FullName)
         );
         var intTagHelper = intTagHelperBuilder.Build();
 
         var stringTagHelperBuilder = new DefaultTagHelperDescriptorBuilder(TagHelperConventions.DefaultKind, "TestTagHelper", "Test");
-        _ = stringTagHelperBuilder.TypeName("TestTagHelper");
+        _ = stringTagHelperBuilder.Metadata(TypeName("TestTagHelper"));
         stringTagHelperBuilder.BoundAttributeDescriptor(stringBuilder =>
             stringBuilder
                 .Name("test")
-                .PropertyName(expectedPropertyName)
+                .Metadata(PropertyName(expectedPropertyName))
                 .TypeName(typeof(string).FullName)
         );
         var stringTagHelper = stringTagHelperBuilder.Build();

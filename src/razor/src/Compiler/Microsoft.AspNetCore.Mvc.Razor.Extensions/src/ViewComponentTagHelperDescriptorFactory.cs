@@ -63,7 +63,10 @@ internal class ViewComponentTagHelperDescriptorFactory
             ViewComponentTagHelperConventions.Kind, typeName, assemblyName,
             out var descriptorBuilder);
 
-        descriptorBuilder.SetTypeName(typeName);
+        descriptorBuilder.SetMetadata(
+            CommonMetadata.TypeName(typeName),
+            new(ViewComponentTagHelperMetadata.Name, shortName));
+
         descriptorBuilder.DisplayName = displayName;
 
         if (TryFindInvokeMethod(type, out var method, out var diagnostic))
@@ -81,8 +84,6 @@ internal class ViewComponentTagHelperDescriptorFactory
         {
             descriptorBuilder.Diagnostics.Add(diagnostic);
         }
-
-        descriptorBuilder.Metadata[ViewComponentTagHelperMetadata.Name] = shortName;
 
         var descriptor = descriptorBuilder.Build();
         return descriptor;
@@ -211,7 +212,7 @@ internal class ViewComponentTagHelperDescriptorFactory
                 attributeBuilder.Name = lowerKebabName;
                 attributeBuilder.TypeName = typeName;
                 attributeBuilder.DisplayName = $"{simpleName} {containingDisplayName}.{parameter.Name}";
-                attributeBuilder.SetPropertyName(parameter.Name);
+                attributeBuilder.SetMetadata(CommonMetadata.PropertyName(parameter.Name));
 
                 if (parameter.Type.TypeKind == TypeKind.Enum)
                 {

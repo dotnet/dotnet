@@ -8,6 +8,7 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Razor;
 using Xunit;
+using static Microsoft.AspNetCore.Razor.Language.CommonMetadata;
 
 namespace Microsoft.AspNetCore.Mvc.Razor.Extensions;
 
@@ -39,7 +40,9 @@ public class ViewComponentTagHelperDescriptorProviderTest
             ViewComponentTagHelperConventions.Kind,
             "__Generated__StringParameterViewComponentTagHelper",
             TestCompilation.AssemblyName)
-            .TypeName("__Generated__StringParameterViewComponentTagHelper")
+            .Metadata(
+                TypeName("__Generated__StringParameterViewComponentTagHelper"),
+                new(ViewComponentTagHelperMetadata.Name, "StringParameter"))
             .DisplayName("StringParameterViewComponentTagHelper")
             .TagMatchingRuleDescriptor(rule =>
                 rule
@@ -49,16 +52,15 @@ public class ViewComponentTagHelperDescriptorProviderTest
             .BoundAttributeDescriptor(attribute =>
                 attribute
                 .Name("foo")
-                .PropertyName("foo")
+                .Metadata(PropertyName("foo"))
                 .TypeName(typeof(string).FullName)
                 .DisplayName("string StringParameterViewComponentTagHelper.foo"))
             .BoundAttributeDescriptor(attribute =>
                 attribute
                 .Name("bar")
-                .PropertyName("bar")
+                .Metadata(PropertyName("bar"))
                 .TypeName(typeof(string).FullName)
                 .DisplayName("string StringParameterViewComponentTagHelper.bar"))
-            .AddMetadata(ViewComponentTagHelperMetadata.Name, "StringParameter")
             .Build();
 
         // Act

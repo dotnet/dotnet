@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Xunit;
+using static Microsoft.AspNetCore.Razor.Language.CommonMetadata;
 
 namespace Microsoft.AspNetCore.Razor.Language;
 
@@ -22,8 +23,8 @@ public class TagHelperBinderTest
         var expectedDescriptors = new[] { divTagHelper };
         var expectedAttributes = new[]
         {
-                new KeyValuePair<string, string>("class", "something")
-            };
+            new KeyValuePair<string, string>("class", "something")
+        };
         var tagHelperBinder = new TagHelperBinder("th:", expectedDescriptors);
 
         // Act
@@ -167,8 +168,8 @@ public class TagHelperBinderTest
             return new TheoryData<
                 string, // tagName
                 string, // parentTagName
-                IEnumerable<TagHelperDescriptor>, // availableDescriptors
-                IEnumerable<TagHelperDescriptor>> // expectedDescriptors
+                IReadOnlyList<TagHelperDescriptor>, // availableDescriptors
+                IReadOnlyList<TagHelperDescriptor>> // expectedDescriptors
                 {
                     {
                         "strong",
@@ -207,7 +208,7 @@ public class TagHelperBinderTest
         object expectedDescriptors)
     {
         // Arrange
-        var tagHelperBinder = new TagHelperBinder(null, (IEnumerable<TagHelperDescriptor>)availableDescriptors);
+        var tagHelperBinder = new TagHelperBinder(null, (IReadOnlyList<TagHelperDescriptor>)availableDescriptors);
 
         // Act
         var bindingResult = tagHelperBinder.GetBinding(
@@ -630,7 +631,7 @@ public class TagHelperBinderTest
         // Arrange
         var divDescriptor = TagHelperDescriptorBuilder.Create("foo1", "SomeAssembly")
             .TagMatchingRuleDescriptor(rule => rule.RequireTagName("div"))
-            .AddMetadata(TagHelperMetadata.Common.ClassifyAttributesOnly, bool.TrueString)
+            .Metadata(MakeTrue(TagHelperMetadata.Common.ClassifyAttributesOnly))
             .Build();
 
         var descriptors = new[] { divDescriptor, };
@@ -653,12 +654,12 @@ public class TagHelperBinderTest
         // Arrange
         var divDescriptor1 = TagHelperDescriptorBuilder.Create("foo1", "SomeAssembly")
             .TagMatchingRuleDescriptor(rule => rule.RequireTagName("div"))
-            .AddMetadata(TagHelperMetadata.Common.ClassifyAttributesOnly, bool.TrueString)
+            .Metadata(MakeTrue(TagHelperMetadata.Common.ClassifyAttributesOnly))
             .Build();
 
         var divDescriptor2 = TagHelperDescriptorBuilder.Create("foo1", "SomeAssembly")
             .TagMatchingRuleDescriptor(rule => rule.RequireTagName("div"))
-            .AddMetadata(TagHelperMetadata.Common.ClassifyAttributesOnly, bool.TrueString)
+            .Metadata(MakeTrue(TagHelperMetadata.Common.ClassifyAttributesOnly))
             .Build();
 
         var descriptors = new[] { divDescriptor1, divDescriptor2, };
@@ -681,7 +682,7 @@ public class TagHelperBinderTest
         // Arrange
         var divDescriptor1 = TagHelperDescriptorBuilder.Create("foo1", "SomeAssembly")
             .TagMatchingRuleDescriptor(rule => rule.RequireTagName("div"))
-            .AddMetadata(TagHelperMetadata.Common.ClassifyAttributesOnly, bool.TrueString)
+            .Metadata(MakeTrue(TagHelperMetadata.Common.ClassifyAttributesOnly))
             .Build();
 
         var divDescriptor2 = TagHelperDescriptorBuilder.Create("foo1", "SomeAssembly")

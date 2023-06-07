@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.Razor.Test.Common;
 using Newtonsoft.Json;
 using Xunit;
 using Xunit.Abstractions;
+using static Microsoft.AspNetCore.Razor.Language.CommonMetadata;
 
 namespace Microsoft.CodeAnalysis.Remote.Razor.Test;
 
@@ -81,7 +82,7 @@ public class TagHelperResolutionResultSerializationTest : TestBase
             {
                 builder => builder
                     .Name("test-attribute")
-                    .PropertyName("TestAttribute")
+                    .Metadata(PropertyName("TestAttribute"))
                     .TypeName("string"),
             },
             ruleBuilders: new Action<TagMatchingRuleDescriptorBuilder>[]
@@ -101,7 +102,7 @@ public class TagHelperResolutionResultSerializationTest : TestBase
             configureAction: builder =>
             {
                 builder.AllowChildTag("allowed-child-one");
-                builder.AddMetadata("foo", "bar");
+                builder.Metadata("foo", "bar");
             });
 
         var expectedResult = new TagHelperResolutionResult(ImmutableArray.Create(descriptor));
@@ -127,7 +128,7 @@ public class TagHelperResolutionResultSerializationTest : TestBase
             {
                 builder => builder
                     .Name("test-attribute")
-                    .PropertyName("TestAttribute")
+                    .Metadata(PropertyName("TestAttribute"))
                     .TypeName("string"),
             },
             ruleBuilders: new Action<TagMatchingRuleDescriptorBuilder>[]
@@ -147,7 +148,7 @@ public class TagHelperResolutionResultSerializationTest : TestBase
             configureAction: builder =>
             {
                 builder.AllowChildTag("allowed-child-one");
-                builder.AddMetadata("foo", "bar");
+                builder.Metadata("foo", "bar");
             });
 
         var expectedResult = new TagHelperResolutionResult(ImmutableArray.Create(descriptor));
@@ -173,7 +174,7 @@ public class TagHelperResolutionResultSerializationTest : TestBase
             {
                 builder => builder
                     .Name("test-attribute")
-                    .PropertyName("TestAttribute")
+                    .Metadata(PropertyName("TestAttribute"))
                     .TypeName("string"),
             },
             ruleBuilders: new Action<TagMatchingRuleDescriptorBuilder>[]
@@ -190,9 +191,9 @@ public class TagHelperResolutionResultSerializationTest : TestBase
                     .RequireParentTag("parent-name"),
             },
             configureAction: builder => builder.AllowChildTag("allowed-child-one")
-                    .AddMetadata("foo", "bar")
-                    .AddDiagnostic(RazorDiagnostic.Create(
-                        new RazorDiagnosticDescriptor("id", () => "Test Message", RazorDiagnosticSeverity.Error), new SourceSpan(null, 10, 20, 30, 40))));
+                .Metadata("foo", "bar")
+                .AddDiagnostic(RazorDiagnostic.Create(
+                    new RazorDiagnosticDescriptor("id", () => "Test Message", RazorDiagnosticSeverity.Error), new SourceSpan(null, 10, 20, 30, 40))));
 
         var expectedResult = new TagHelperResolutionResult(ImmutableArray.Create(descriptor));
 
@@ -217,13 +218,13 @@ public class TagHelperResolutionResultSerializationTest : TestBase
             {
                 builder => builder
                     .Name("test-attribute")
-                    .PropertyName("TestAttribute")
+                    .Metadata(PropertyName("TestAttribute"))
                     .TypeName("SomeEnum")
                     .AsEnum()
                     .Documentation("Summary"),
                 builder => builder
                     .Name("test-attribute2")
-                    .PropertyName("TestAttribute2")
+                    .Metadata(PropertyName("TestAttribute2"))
                     .TypeName("SomeDictionary")
                     .AsDictionaryAttribute("dict-prefix-", "string"),
             },
@@ -235,9 +236,9 @@ public class TagHelperResolutionResultSerializationTest : TestBase
                         .NameComparisonMode(RequiredAttributeDescriptor.NameComparisonMode.PrefixMatch))
             },
             configureAction: builder => builder
-                    .AllowChildTag("allowed-child-one")
-                    .AddMetadata("foo", "bar")
-                    .TagOutputHint("Hint"));
+                .AllowChildTag("allowed-child-one")
+                .Metadata("foo", "bar")
+                .TagOutputHint("Hint"));
 
         var expectedResult = new TagHelperResolutionResult(ImmutableArray.Create(descriptor));
 
@@ -259,7 +260,7 @@ public class TagHelperResolutionResultSerializationTest : TestBase
         Action<TagHelperDescriptorBuilder>? configureAction = null)
     {
         var builder = TagHelperDescriptorBuilder.Create(kind, typeName, assemblyName);
-        builder.SetTypeName(typeName);
+        builder.Metadata(TypeName(typeName));
 
         if (attributes != null)
         {

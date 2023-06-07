@@ -221,6 +221,28 @@ internal class TelemetryReporter : ITelemetryReporter
         return new TelemetryScope(this, name, severity, values.ToImmutableDictionary((tuple) => tuple.Key, (tuple) => (object?)tuple.Value));
     }
 
+    public IDisposable TrackLspRequest(string name, string lspMethodName, string languageServerName, Guid correlationId)
+    {
+        if (correlationId == Guid.Empty)
+        {
+            return NullTelemetryScope.Instance;
+        }
+
+        return BeginBlock(name, Severity.Normal, ImmutableDictionary.CreateRange(new KeyValuePair<string, object?>[]
+        {
+            new("eventscope.method", lspMethodName),
+            new("eventscope.languageservername", languageServerName),
+            new("eventscope.correlationid", correlationId),
+        }));
+    }
+
+    private class NullTelemetryScope : IDisposable
+    {
+        public static NullTelemetryScope Instance { get; } = new NullTelemetryScope();
+        private NullTelemetryScope() { }
+        public void Dispose() { }
+    }
+
     private class TelemetryScope : IDisposable
     {
         private readonly ITelemetryReporter _telemetryReporter;
