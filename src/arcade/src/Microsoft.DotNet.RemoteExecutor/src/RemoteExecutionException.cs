@@ -14,6 +14,7 @@ namespace Microsoft.DotNet.RemoteExecutor
     {
         private readonly string? _stackTrace;
         public RemoteExecutionException(string message, string? stackTrace = null)
+            : base(message)
         {
             _stackTrace = stackTrace;
         }

@@ -71,18 +71,17 @@ def generate_rules(config_data, template_dir):
 
     if ignored_dependency_packages != None or ignored_libraries != None:
         override_text = "override_dh_shlibdeps:\n\tdh_shlibdeps"
+        override_text += " --dpkg-shlibdeps-params=\""
 
         if ignored_dependency_packages != None:
-            override_text += " --dpkg-shlibdeps-params=\""
             for package in ignored_dependency_packages:
                 override_text += "-x{0} ".format(package)
-
-            override_text += "\""
         
         if ignored_libraries != None:
             for library in ignored_libraries:
                 override_text += "-X{0} ".format(library)
 
+        override_text += "\""
     return template.format(overrides=override_text)
 
 def generate_changelog(config_data, template_dir, package_version=None, package_name=None):
