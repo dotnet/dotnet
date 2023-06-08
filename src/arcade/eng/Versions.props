@@ -8,9 +8,9 @@
   </PropertyGroup>
   <PropertyGroup>
     <!-- arcade -->
-    <MicrosoftDotNetBuildTasksFeedVersion>8.0.0-beta.23281.3</MicrosoftDotNetBuildTasksFeedVersion>
-    <MicrosoftDotNetSignToolVersion>8.0.0-beta.23281.3</MicrosoftDotNetSignToolVersion>
-    <MicrosoftDotNetSwaggerGeneratorMSBuildVersion>8.0.0-beta.23281.3</MicrosoftDotNetSwaggerGeneratorMSBuildVersion>
+    <MicrosoftDotNetBuildTasksFeedVersion>8.0.0-beta.23302.3</MicrosoftDotNetBuildTasksFeedVersion>
+    <MicrosoftDotNetSignToolVersion>8.0.0-beta.23302.3</MicrosoftDotNetSignToolVersion>
+    <MicrosoftDotNetSwaggerGeneratorMSBuildVersion>8.0.0-beta.23302.3</MicrosoftDotNetSwaggerGeneratorMSBuildVersion>
     <!-- arcade-services -->
     <MicrosoftDotNetMaestroClientVersion>1.1.0-beta.21553.1</MicrosoftDotNetMaestroClientVersion>
     <MicrosoftDotNetMaestroTasksVersion>1.1.0-beta.22076.4</MicrosoftDotNetMaestroTasksVersion>
@@ -44,7 +44,7 @@
     <!-- runtime -->
     <MicrosoftExtensionsDependencyInjectionAbstractionsVersion>6.0.0</MicrosoftExtensionsDependencyInjectionAbstractionsVersion>
     <MicrosoftExtensionsDependencyInjectionVersion>6.0.0</MicrosoftExtensionsDependencyInjectionVersion>
-    <MicrosoftExtensionsDependencyModelVersion>8.0.0-preview.5.23259.1</MicrosoftExtensionsDependencyModelVersion>
+    <MicrosoftExtensionsDependencyModelVersion>8.0.0-preview.4.23259.5</MicrosoftExtensionsDependencyModelVersion>
     <MicrosoftExtensionsLoggingConsoleVersion>6.0.0</MicrosoftExtensionsLoggingConsoleVersion>
     <MicrosoftNETCorePlatformsVersion>5.0.0</MicrosoftNETCorePlatformsVersion>
     <MicrosoftNETRuntimeEmscripten2023Nodewin_x64>6.0.4</MicrosoftNETRuntimeEmscripten2023Nodewin_x64>
@@ -68,13 +68,13 @@
     <!-- symreader-converter -->
     <MicrosoftDiaSymReaderPdb2PdbVersion>1.1.0-beta2-19575-01</MicrosoftDiaSymReaderPdb2PdbVersion>
     <!-- templating -->
-    <MicrosoftTemplateEngineAuthoringTasksVersion>8.0.100-preview.6.23278.1</MicrosoftTemplateEngineAuthoringTasksVersion>
+    <MicrosoftTemplateEngineAuthoringTasksVersion>8.0.100-preview.6.23305.5</MicrosoftTemplateEngineAuthoringTasksVersion>
     <!-- vstest -->
     <MicrosoftNetTestSdkVersion>17.5.0</MicrosoftNetTestSdkVersion>
     <!-- xharness -->
-    <MicrosoftDotNetXHarnessCLIVersion>8.0.0-prerelease.23272.1</MicrosoftDotNetXHarnessCLIVersion>
+    <MicrosoftDotNetXHarnessCLIVersion>8.0.0-prerelease.23279.1</MicrosoftDotNetXHarnessCLIVersion>
     <!-- xliff-tasks -->
-    <MicrosoftDotNetXliffTasksVersion>1.0.0-beta.23279.1</MicrosoftDotNetXliffTasksVersion>
+    <MicrosoftDotNetXliffTasksVersion>1.0.0-beta.23305.1</MicrosoftDotNetXliffTasksVersion>
     <!-- external -->
     <AzureCoreVersion>1.31.0</AzureCoreVersion>
     <AzureStorageBlobsVersion>12.16.0</AzureStorageBlobsVersion>
