@@ -5,4 +5,31 @@
     See https://github.com/dotnet/arcade/issues/2396 for details.
     See https://github.com/dotnet/arcade/blob/master/Documentation/DependencyDescriptionFormat.md#details-file for schema.
   -->
+
+  <!--
+    Following dependencies are required for PVP flow.
+    PVP flow infra will automatically bump the version to the latest live one.
+  -->
+  <ProductDependencies>
+    <Dependency Name="Microsoft.Build" Version="17.3.1">
+      <Uri>https://github.com/dotnet/msbuild</Uri>
+      <Sha>80f618ad45d38475773fd1a6eaa059f118a0ad5a</Sha>
+    </Dependency>
+    <Dependency Name="Microsoft.Extensions.FileProviders.Abstractions" Version="6.0.0">
+      <Uri>https://github.com/dotnet/runtime</Uri>
+      <Sha>8470979eb44c2218025515234d3e01138bd74afb</Sha>
+    </Dependency>
+    <Dependency Name="Microsoft.Extensions.FileSystemGlobbing" Version="6.0.0">
+      <Uri>https://github.com/dotnet/runtime</Uri>
+      <Sha>8470979eb44c2218025515234d3e01138bd74afb</Sha>
+    </Dependency>
+    <Dependency Name="Microsoft.Web.Xdt" Version="3.0.0">
+      <Uri>https://github.com/aspnet/xdt</Uri>
+      <Sha>d4d088b6a9c793525b1a27a119cb66ba4587bb39</Sha>
+    </Dependency>
+    <Dependency Name="System.ComponentModel.Composition" Version="4.5.0">
+      <Uri>https://github.com/dotnet/corefx</Uri>
+      <Sha>30ab651fcb4354552bd4891619a0bdd81e0ebdbf</Sha>
+    </Dependency>
+  </ProductDependencies>
 </Dependencies>
