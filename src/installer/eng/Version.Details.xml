@@ -191,6 +191,15 @@
       <Sha>2c8079e2e8e78c0cd11ac75a32014756136ecdb9</Sha>
       <SourceBuild RepoName="symreader" ManagedOnly="true" />
     </Dependency>
+    <Dependency Name="System.CommandLine" Version="2.0.0-beta4.22564.1" CoherentParentDependency="Microsoft.NET.Sdk">
+      <Uri>https://github.com/dotnet/command-line-api</Uri>
+      <Sha>8374d5fca634a93458c84414b1604c12f765d1ab</Sha>
+    </Dependency>
+    <Dependency Name="Microsoft.SourceBuild.Intermediate.command-line-api" Version="0.1.356401" CoherentParentDependency="Microsoft.NET.Sdk">
+      <Uri>https://github.com/dotnet/command-line-api</Uri>
+      <Sha>8374d5fca634a93458c84414b1604c12f765d1ab</Sha>
+      <SourceBuild RepoName="command-line-api" ManagedOnly="true" />
+    </Dependency>
   </ProductDependencies>
   <ToolsetDependencies>
     <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="8.0.0-beta.23307.2">
