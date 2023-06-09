@@ -237,7 +237,7 @@ stages:
       parameters:
         agentOs: Linux
         jobName: Build_Linux_Portable_Deb_Release_x64
-        container: 'mcr.microsoft.com/dotnet-buildtools/prereqs:ubuntu-18.04-debpkg'
+        container: 'mcr.microsoft.com/dotnet-buildtools/prereqs:ubuntu-22.04-debpkg'
         buildConfiguration: Release
         buildArchitecture: x64
         # Do not publish zips and tarballs. The linux-x64 binaries are
