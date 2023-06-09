@@ -140,7 +140,7 @@
     <Dependency Name="Microsoft.NET.Test.Sdk" Version="17.7.0-preview.23307.1" CoherentParentDependency="Microsoft.NET.Sdk">
       <Uri>https://github.com/microsoft/vstest</Uri>
       <Sha>8381658bfb847e67b4f41a997411e8a804e1ecb4</Sha>
-      <SourceBuildTarball RepoName="vstest" ManagedOnly="true" />
+      <SourceBuild RepoName="vstest" ManagedOnly="true" />
     </Dependency>
     <Dependency Name="Microsoft.NET.ILLink.Tasks" Version="8.0.0-preview.6.23307.4" CoherentParentDependency="Microsoft.NET.Sdk">
       <Uri>https://github.com/dotnet/runtime</Uri>
