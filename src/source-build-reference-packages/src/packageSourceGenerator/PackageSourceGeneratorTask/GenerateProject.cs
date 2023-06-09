@@ -78,7 +78,7 @@ namespace Microsoft.DotNet.SourceBuild.Tasks
                     if (packageDependency.ItemSpec == "NETStandard.Library")
                         continue;
 
-                    references += $"    <PackageReference Include=\"{packageDependency.ItemSpec}\" Version=\"{packageDependency.GetMetadata("Version")}\" />\n";
+                    references += $"    <PackageReference Include=\"{packageDependency.ItemSpec}\" Version=\"{packageDependency.GetMetadata("Version")}\" />{Environment.NewLine}";
                 }
 
                 // Add framework references
@@ -86,15 +86,15 @@ namespace Microsoft.DotNet.SourceBuild.Tasks
                 {
                     if (frameworkReference.ItemSpec != "mscorlib")
                     {
-                        references += $"    <Reference Include=\"{frameworkReference.ItemSpec}\" />\n";
+                        references += $"    <Reference Include=\"{frameworkReference.ItemSpec}\" />{Environment.NewLine}";
                     }
                 }
 
                 if (references != string.Empty)
                 {
-                    referenceIncludes += $"  <ItemGroup Condition=\"'$(TargetFramework)' == '{targetFramework}'\">\n";
+                    referenceIncludes += $"  <ItemGroup Condition=\"'$(TargetFramework)' == '{targetFramework}'\">{Environment.NewLine}";
                     referenceIncludes += references;
-                    referenceIncludes += $"  </ItemGroup>\n\n";
+                    referenceIncludes += $"  </ItemGroup>{Environment.NewLine}{Environment.NewLine}";
                 }
 
                 // Retrieve the target framework's strong name data. For historical reasons,
@@ -123,7 +123,7 @@ namespace Microsoft.DotNet.SourceBuild.Tasks
 
             // If necessary, write the strong name key into the project file. Don't generate StrongNameKeyId for MSFT key.
             string keyFileTag = (strongNameData != default && strongNameData.Filename != "MSFT") ?
-                $"\n    <StrongNameKeyId>{strongNameData.Id}</StrongNameKeyId>" :
+                $"{Environment.NewLine}    <StrongNameKeyId>{strongNameData.Id}</StrongNameKeyId>" :
                 string.Empty;
             projectContent = projectContent.Replace("$$KeyFileTag$$", keyFileTag);
 

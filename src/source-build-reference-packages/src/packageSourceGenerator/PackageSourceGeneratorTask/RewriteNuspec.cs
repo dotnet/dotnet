@@ -79,6 +79,9 @@ namespace Microsoft.DotNet.SourceBuild.Tasks
                 nuspecContent = GetRuntimeSpecificDependenciesRegex().Replace(nuspecContent, string.Empty);
             }
 
+            // Ensure that the nuspec's line endings match the current environment
+            nuspecContent = nuspecContent.ReplaceLineEndings();
+
             File.WriteAllText(TargetPath!, nuspecContent);
             return true;
         }
