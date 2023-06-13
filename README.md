@@ -177,7 +177,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/fsharp`  
 *[dotnet/fsharp@b265c68](https://github.com/dotnet/fsharp/commit/b265c68604681242d3a83db3f0f7b1bb97db4b93)*
 - `src/installer`  
-*[dotnet/installer@b4459e0](https://github.com/dotnet/installer/commit/b4459e0da9083aa33fab64009e809403dd12c433)*
+*[dotnet/installer@222f3cb](https://github.com/dotnet/installer/commit/222f3cbfc90a4b42cabd9bc7c84d2524a07b8680)*
 - `src/msbuild`  
 *[dotnet/msbuild@a6a0ee1](https://github.com/dotnet/msbuild/commit/a6a0ee16b7d202186a6c44f1c5aebe30ddc63ab2)*
 - `src/nuget-client`  
@@ -195,7 +195,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/sdk`  
 *[dotnet/sdk@6ce52a3](https://github.com/dotnet/sdk/commit/6ce52a339247f9a848ff97fa418070b65de92b4d)*
 - `src/source-build-externals`  
-*[dotnet/source-build-externals@7f9ae67](https://github.com/dotnet/source-build-externals/commit/7f9ae67f86a5adc1d9bf2f22f4bf3ec05b6d7b68)*
+*[dotnet/source-build-externals@50600f7](https://github.com/dotnet/source-build-externals/commit/50600f7fcd6e56a496233a859ed7d4d90c173b0d)*
     - `src/source-build-externals/src/application-insights`  
     *[Microsoft/ApplicationInsights-dotnet@5e2e7dd](https://github.com/Microsoft/ApplicationInsights-dotnet/commit/5e2e7ddda961ec0e16a75b1ae0a37f6a13c777f5)*
     - `src/source-build-externals/src/azure-activedirectory-identitymodel-extensions-for-dotnet`  
