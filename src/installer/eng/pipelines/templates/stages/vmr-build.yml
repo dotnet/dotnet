@@ -17,7 +17,7 @@ parameters:
   centOSStream8Container: mcr.microsoft.com/dotnet-buildtools/prereqs:centos-stream8
   centOSStream9Container: mcr.microsoft.com/dotnet-buildtools/prereqs:centos-stream9
   debian11Arm64Container: mcr.microsoft.com/dotnet-buildtools/prereqs:debian-11-arm64v8
-  fedora36Container: mcr.microsoft.com/dotnet-buildtools/prereqs:fedora-36
+  fedora38Container: mcr.microsoft.com/dotnet-buildtools/prereqs:fedora-38
   ubuntu2004Container: mcr.microsoft.com/dotnet-buildtools/prereqs:ubuntu-20.04
 
   # Internal builds
@@ -183,14 +183,14 @@ stages:
 
     - template: ../jobs/vmr-build.yml
       parameters:
-        buildName: Fedora36_Offline_MsftSdk
+        buildName: Fedora38_Offline_MsftSdk
         isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
         vmrBranch: ${{ variables.VmrBranch }}
         architecture: x64
         pool:
           name: ${{ variables.defaultPoolName }}
           demands: ${{ variables.defaultPoolDemands }}
-        container: ${{ parameters.fedora36Container }}
+        container: ${{ parameters.fedora38Container }}
         buildFromArchive: true             # ✅
         enablePoison: true                 # ✅
         excludeOmniSharpTests: false       # 🚫
@@ -258,14 +258,14 @@ stages:
 
     - template: ../jobs/vmr-build.yml
       parameters:
-        buildName: Fedora36_Offline_CurrentSourceBuiltSdk
+        buildName: Fedora38_Offline_CurrentSourceBuiltSdk
         isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
         vmrBranch: ${{ variables.VmrBranch }}
         architecture: x64
         pool:
           name: ${{ variables.defaultPoolName }}
           demands: ${{ variables.defaultPoolDemands }}
-        container: ${{ parameters.fedora36Container }}
+        container: ${{ parameters.fedora38Container }}
         buildFromArchive: false            # 🚫
         enablePoison: false                # 🚫
         excludeOmniSharpTests: false       # 🚫
@@ -273,4 +273,4 @@ stages:
         runOnline: false                   # 🚫
         useMonoRuntime: false              # 🚫
         withPreviousSDK: false             # 🚫
-        reuseBuildArtifactsFrom: Fedora36_Offline_MsftSdk
+        reuseBuildArtifactsFrom: Fedora38_Offline_MsftSdk
