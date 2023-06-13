@@ -20,46 +20,6 @@
       Format:
       <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\Microsoft.Extensions.Options.5.0.0.csproj" />
     -->
-    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\System.IO.Packaging.7.0.0.csproj" />
-
-    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\System.Memory.4.5.2.csproj" />
-
-    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\Microsoft.Extensions.DependencyInjection.Abstractions.7.0.0.csproj" />
-    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\Microsoft.Extensions.DependencyInjection.7.0.0.csproj" />
-    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\Microsoft.Extensions.FileSystemGlobbing.7.0.0.csproj" />
-    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\Microsoft.Extensions.Logging.Abstractions.7.0.0.csproj" />
-    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\Microsoft.Extensions.Primitives.7.0.0.csproj" />
-    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\Microsoft.Extensions.Options.7.0.0.csproj" />
-    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\System.Diagnostics.DiagnosticSource.7.0.0.csproj" />
-    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\Microsoft.Extensions.Logging.7.0.0.csproj" />
-
-    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\Microsoft.NET.StringTools.17.5.0.csproj" />
-    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\Microsoft.Build.Framework.17.5.0.csproj" />
-    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\Microsoft.Build.Utilities.Core.17.5.0.csproj" />
-    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\Microsoft.Build.Tasks.Core.17.5.0.csproj" />
-
-    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\System.Reflection.Metadata.6.0.1.csproj" />
-    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\Microsoft.CodeAnalysis.Common.4.5.0.csproj" />
-    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\Microsoft.CodeAnalysis.CSharp.4.5.0.csproj" />
-
-    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\System.Diagnostics.DiagnosticSource.7.0.2.csproj" />
-
-    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\Microsoft.CodeAnalysis.VisualBasic.4.5.0.csproj" />
-    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\Microsoft.CodeAnalysis.Workspaces.Common.4.5.0.csproj" />
-    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\Microsoft.CodeAnalysis.CSharp.Workspaces.4.5.0.csproj" />
-    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\Microsoft.CodeAnalysis.VisualBasic.Workspaces.4.5.0.csproj" />
-    <DependencyPackageProjects Include="$(RepoRoot)src\textOnlyPackages\src\**\Microsoft.CodeAnalysis.4.5.0.csproj" />
-
-    <DependencyPackageProjects Include="$(RepoRoot)src\textOnlyPackages\src\**\System.ComponentModel.Composition.7.0.0.csproj" />
-
-    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\NuGet.Frameworks.6.6.0.csproj" />
-    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\NuGet.Common.6.6.0.csproj" />
-    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\NuGet.Configuration.6.6.0.csproj" />
-    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\NuGet.Versioning.6.6.0.csproj" />
-    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\NuGet.Packaging.6.6.0.csproj" />
-    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\NuGet.Protocol.6.6.0.csproj" />
-    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\NuGet.Credentials.6.6.0.csproj" />
-
     <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\Microsoft.Bcl.AsyncInterfaces.1.0.0.csproj" />
     <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\System.Runtime.CompilerServices.Unsafe.4.6.0.csproj" />
     <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\System.Text.Encodings.Web.4.6.0.csproj" />
