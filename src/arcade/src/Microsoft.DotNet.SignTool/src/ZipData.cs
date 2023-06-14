@@ -113,7 +113,8 @@ namespace Microsoft.DotNet.SignTool
         /// </summary>
         private void RepackRawZip(TaskLoggingHelper log)
         {
-            using (var archive = new ZipArchive(File.Open(FileSignInfo.FullPath, FileMode.Open), ZipArchiveMode.Update))
+            using (var zipStream = File.Open(FileSignInfo.FullPath, FileMode.Open))
+            using (var archive = new ZipArchive(zipStream, ZipArchiveMode.Update))
             {
                 foreach (ZipArchiveEntry entry in archive.Entries)
                 {
