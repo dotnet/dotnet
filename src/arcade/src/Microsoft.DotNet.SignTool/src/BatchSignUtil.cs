@@ -214,32 +214,76 @@ namespace Microsoft.DotNet.SignTool
                 var repackList = files.Where(w => toRepackSet.Contains(w.FullPath)).ToList();
 
                 repackCount = repackList.Count();
-                if(repackCount == 0)
+
+                if (repackCount == 0)
                 {
                     return;
                 }
                 _log.LogMessage(MessageImportance.High, $"Repacking {repackCount} containers.");
 
+                const int repackParallelism = 16;
                 ParallelOptions parallelOptions = new ParallelOptions();
-                parallelOptions.MaxDegreeOfParallelism = 16;
-                Parallel.ForEach(repackList, parallelOptions, file =>
+                parallelOptions.MaxDegreeOfParallelism = repackParallelism;
+
+                // It's possible that there are large containers within this set that, if
+                // repacked in parallel, could cause OOMs. To avoid this, we set a limit on the size of containers
+                // that we will repack in parallel based on the parallelism degree and a 2GB limit.
+                // Repack these in serial later.
+                var largeRepackList = new List<FileSignInfo>();
+                var smallRepackList = new List<FileSignInfo>();
+                const long parallelRepackLimitInBytes = (2 * 1024 / repackParallelism) * 1024 * 1024;
+
+                foreach (var file in repackList)
                 {
-                    if (file.IsZipContainer())
+                    FileInfo fileInfo = new FileInfo(file.FullPath);
+                    if (fileInfo.Length > parallelRepackLimitInBytes)
                     {
-                        _log.LogMessage($"Repacking container: '{file.FileName}'");
-                        _batchData.ZipDataMap[file.FileContentKey].Repack(_log);
-                    }
-                    else if (file.IsWixContainer())
-                    {
-                        _log.LogMessage($"Packing wix container: '{file.FileName}'");
-                        _batchData.ZipDataMap[file.FileContentKey].Repack(_log, _signTool.TempDir, _signTool.WixToolsPath);
+                        largeRepackList.Add(file);
                     }
                     else
                     {
-                        _log.LogError($"Don't know how to repack file '{file.FullPath}'");
+                        smallRepackList.Add(file);
                     }
+                }
+
+                _log.LogMessage(MessageImportance.High, $"Repacking {smallRepackList.Count} containers in parallel.");
+
+                Parallel.ForEach(smallRepackList, parallelOptions, file =>
+                {
+                    repackContainer(file);
                     toRepackSet.Remove(file.FullPath);
                 });
+
+                if (largeRepackList.Count == 0)
+                {
+                    return;
+                }
+
+                _log.LogMessage(MessageImportance.High, $"Repacking {largeRepackList.Count} large containers in serial.");
+
+                foreach (var file in largeRepackList)
+                {
+                    repackContainer(file);
+                    toRepackSet.Remove(file.FullPath);
+                }
+            }
+
+            void repackContainer(FileSignInfo file)
+            {
+                if (file.IsZipContainer())
+                {
+                    _log.LogMessage($"Repacking container: '{file.FileName}'");
+                    _batchData.ZipDataMap[file.FileContentKey].Repack(_log);
+                }
+                else if (file.IsWixContainer())
+                {
+                    _log.LogMessage($"Packing wix container: '{file.FileName}'");
+                    _batchData.ZipDataMap[file.FileContentKey].Repack(_log, _signTool.TempDir, _signTool.WixToolsPath);
+                }
+                else
+                {
+                    _log.LogError($"Don't know how to repack file '{file.FullPath}'");
+                }
             }
 
             // Is this file ready to be signed or repackaged? That is are all of the items that it depends on already
