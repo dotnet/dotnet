@@ -166,7 +166,7 @@ internal class TestRequestManager : ITestRequestManager
         EqtTrace.Info("TestRequestManager.DiscoverTests: Discovery tests started.");
 
         // TODO: Normalize rest of the data on the request as well
-        discoveryPayload.Sources = discoveryPayload.Sources?.Distinct().ToList() ?? new List<string>();
+        discoveryPayload.Sources = KnownPlatformSourceFilter.FilterKnownPlatformSources(discoveryPayload.Sources?.Distinct().ToList());
         discoveryPayload.RunSettings ??= "<RunSettings></RunSettings>";
 
         var runsettings = discoveryPayload.RunSettings;
@@ -274,6 +274,11 @@ internal class TestRequestManager : ITestRequestManager
     {
         EqtTrace.Info("TestRequestManager.RunTests: run tests started.");
         testRunRequestPayload.RunSettings ??= "<RunSettings></RunSettings>";
+        if (testRunRequestPayload.Sources != null)
+        {
+            testRunRequestPayload.Sources = KnownPlatformSourceFilter.FilterKnownPlatformSources(testRunRequestPayload.Sources);
+        }
+
         var runsettings = testRunRequestPayload.RunSettings;
 
         if (testRunRequestPayload.TestPlatformOptions != null)
@@ -1462,5 +1467,75 @@ internal class TestRequestManager : ITestRequestManager
             sources = sourcesSet.ToList();
         }
         return sources;
+    }
+}
+
+internal static class KnownPlatformSourceFilter
+{
+    // Running tests on AzureDevops, many projects use the default filter
+    // which includes all *test*.dll, this includes many of the TestPlatform dlls,
+    // which we cannot run, and don't want to attempt to run.
+    // The default filter also filters out !*TestAdapter*.dll but it is easy to forget
+    // so we skip the most used adapters here as well.
+    private static readonly HashSet<string> KnownPlatformSources = new(new string[]
+    {
+        "Microsoft.TestPlatform.AdapterUtilities.dll",
+        "Microsoft.TestPlatform.AdapterUtilities.resources.dll",
+        "Microsoft.TestPlatform.CommunicationUtilities.dll",
+        "Microsoft.TestPlatform.CommunicationUtilities.resources.dll",
+        "Microsoft.TestPlatform.CoreUtilities.dll",
+        "Microsoft.TestPlatform.CoreUtilities.resources.dll",
+        "Microsoft.TestPlatform.CrossPlatEngine.dll",
+        "Microsoft.TestPlatform.CrossPlatEngine.resources.dll",
+        "Microsoft.TestPlatform.PlatformAbstractions.dll",
+        "Microsoft.TestPlatform.Utilities.dll",
+        "Microsoft.TestPlatform.Utilities.resources.dll",
+        "Microsoft.VisualStudio.TestPlatform.Common.dll",
+        "Microsoft.VisualStudio.TestPlatform.Common.resources.dll",
+        "Microsoft.VisualStudio.TestPlatform.ObjectModel.dll",
+        "Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll",
+        "testhost.dll",
+
+        // NUnit
+        "NUnit3.TestAdapter.dll",
+
+        // XUnit
+        "xunit.runner.visualstudio.testadapter.dll",
+        "xunit.runner.visualstudio.dotnetcore.testadapter.dll",
+
+        // MSTest
+        "Microsoft.VisualStudio.TestPlatform.TestFramework.Extensions.dll",
+        "Microsoft.VisualStudio.TestPlatform.TestFramework.dll",
+        "Microsoft.VisualStudio.TestPlatform.TestFramework.resources.dll",
+        // For MSTest up to v3
+        "Microsoft.VisualStudio.TestPlatform.MSTest.TestAdapter.dll",
+        "Microsoft.VisualStudio.TestPlatform.MSTest.TestAdapter.resources.dll",
+        "Microsoft.VisualStudio.TestPlatform.MSTestAdapter.PlatformServices.dll",
+        "Microsoft.VisualStudio.TestPlatform.MSTestAdapter.PlatformServices.Interface.dll",
+        "Microsoft.VisualStudio.TestPlatform.MSTestAdapter.PlatformServices.resources.dll",
+    }, StringComparer.OrdinalIgnoreCase);
+
+
+    internal static List<string> FilterKnownPlatformSources(List<string>? sources)
+    {
+        if (sources == null)
+        {
+            return new List<string>();
+        }
+
+        var filteredSources = new List<string>();
+        foreach (string source in sources)
+        {
+            if (KnownPlatformSources.Contains(Path.GetFileName(source)))
+            {
+                EqtTrace.Info($"TestRequestManager.FilterKnownPlatformSources: Known platform dll was provided in sources, removing it '{source}'");
+            }
+            else
+            {
+                filteredSources.Add(source);
+            }
+        }
+
+        return filteredSources;
     }
 }

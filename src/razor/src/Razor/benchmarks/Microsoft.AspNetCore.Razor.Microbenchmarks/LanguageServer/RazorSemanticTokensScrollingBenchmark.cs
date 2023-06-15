@@ -34,6 +34,8 @@ public class RazorSemanticTokensScrollingBenchmark : RazorLanguageServerBenchmar
 
     private ProjectSnapshotManagerDispatcher ProjectSnapshotManagerDispatcher { get; set; }
 
+    private RazorSemanticTokensLegend SemanticTokensLegend { get; set; }
+
     private string PagesDirectory { get; set; }
 
     private string ProjectFilePath { get; set; }
@@ -54,6 +56,8 @@ public class RazorSemanticTokensScrollingBenchmark : RazorLanguageServerBenchmar
         var documentUri = new Uri(filePath);
         var documentSnapshot = GetDocumentSnapshot(ProjectFilePath, filePath, TargetPath);
         DocumentContext = new VersionedDocumentContext(documentUri, documentSnapshot, version: 1);
+
+        SemanticTokensLegend = new RazorSemanticTokensLegend(new VSInternalClientCapabilities() { SupportsVisualStudioExtensions = true });
 
         var text = await DocumentSnapshot.GetTextAsync().ConfigureAwait(false);
         Range = new Range
@@ -100,6 +104,7 @@ public class RazorSemanticTokensScrollingBenchmark : RazorLanguageServerBenchmar
                 textDocumentIdentifier,
                 range,
                 DocumentContext,
+                SemanticTokensLegend,
                 cancellationToken);
 
             lineCount = newLineCount;

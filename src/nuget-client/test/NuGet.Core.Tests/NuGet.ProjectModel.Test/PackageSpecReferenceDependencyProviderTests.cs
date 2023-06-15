@@ -87,7 +87,7 @@ namespace NuGet.ProjectModel.Test
             var packageSpec = ProjectTestHelpers.GetPackageSpec(rootPath: "C:\\", projectName: "A", framework: net472Framework.GetShortFolderName(), dependencyName: "x");
 
             var envVarWrapper = new TestEnvironmentVariableReader(new Dictionary<string, string> { { "NUGET_USE_LEGACY_ASSET_TARGET_FALLBACK_DEPENDENCY_RESOLUTION", assetTargetFallbackEnvironmentVariableValue } });
-            var dependencyProvider = new PackageSpecReferenceDependencyProvider(new List<ExternalProjectReference>(), NullLogger.Instance, envVarWrapper);
+            var dependencyProvider = new PackageSpecReferenceDependencyProvider(new List<ExternalProjectReference>(), envVarWrapper);
             var assetTargetFallback = new AssetTargetFallbackFramework(net60Framework, new List<NuGetFramework> { net472Framework });
             // Act
 

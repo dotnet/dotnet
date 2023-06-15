@@ -7,7 +7,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.LanguageServer.Common;
 using Microsoft.AspNetCore.Razor.LanguageServer.Formatting;
-using Microsoft.AspNetCore.Razor.LanguageServer.Semantic;
 using Microsoft.AspNetCore.Razor.Test.Common.Mef;
 using Microsoft.CommonLanguageServerProtocol.Framework;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
@@ -677,7 +676,7 @@ public class RazorSemanticTokenInfoServiceTest : SemanticTokenTestBase
         var documentContext = documentContexts.Peek();
 
         // Act
-        var tokens = await service.GetSemanticTokensAsync(textDocumentIdentifier, range, documentContext, DisposalToken);
+        var tokens = await service.GetSemanticTokensAsync(textDocumentIdentifier, range, documentContext, TestRazorSemanticTokensLegend.Instance, DisposalToken);
 
         // Assert
         AssertSemanticTokensMatchesBaseline(tokens?.Data);
@@ -697,11 +696,6 @@ public class RazorSemanticTokenInfoServiceTest : SemanticTokenTestBase
 
         var documentContextFactory = new TestDocumentContextFactory(documentSnapshots);
         var documentMappingService = new RazorDocumentMappingService(TestLanguageServerFeatureOptions.Instance, documentContextFactory, LoggerFactory);
-
-        var testClient = new TestClient();
-        var errorReporter = new LanguageServerErrorReporter(LoggerFactory);
-        var settingsManager = new TestInitializeManager();
-        var semanticTokensRefreshPublisher = new DefaultWorkspaceSemanticTokensRefreshPublisher(settingsManager, testClient, errorReporter);
 
         return new RazorSemanticTokensInfoService(
             languageServer.Object,

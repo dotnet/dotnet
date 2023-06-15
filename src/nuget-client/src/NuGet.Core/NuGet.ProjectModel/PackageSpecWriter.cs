@@ -431,18 +431,18 @@ namespace NuGet.ProjectModel
 
                     if (dependency.IncludeType != LibraryIncludeFlags.All)
                     {
-                        SetValue(writer, "include", dependency.IncludeType.ToString());
+                        SetValue(writer, "include", dependency.IncludeType.AsString());
                     }
 
                     if (dependency.SuppressParent != LibraryIncludeFlagUtils.DefaultSuppressParent)
                     {
-                        SetValue(writer, "suppressParent", dependency.SuppressParent.ToString());
+                        SetValue(writer, "suppressParent", dependency.SuppressParent.AsString());
                     }
 
                     if (dependency.LibraryRange.TypeConstraint != LibraryDependencyTarget.Reference
                         && dependency.LibraryRange.TypeConstraint != (LibraryDependencyTarget.All & ~LibraryDependencyTarget.Reference))
                     {
-                        SetValue(writer, "target", dependency.LibraryRange.TypeConstraint.ToString());
+                        SetValue(writer, "target", dependency.LibraryRange.TypeConstraint.AsString());
                     }
 
                     if (VersionRange.All.Equals(versionRange)

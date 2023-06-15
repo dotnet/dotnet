@@ -9,7 +9,6 @@ using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Threading.Tasks;
 using NuGet.Common;
 using NuGet.Credentials;
@@ -164,8 +163,8 @@ namespace NuGet.CommandLine
         {
             if (ShouldOutputNuGetVersion)
             {
-                var assemblyName = Assembly.GetExecutingAssembly().GetName();
-                var assemblyLocation = Assembly.GetExecutingAssembly().Location;
+                var assemblyName = typeof(Command).Assembly.GetName();
+                var assemblyLocation = typeof(Command).Assembly.Location;
                 var version = System.Diagnostics.FileVersionInfo.GetVersionInfo(assemblyLocation).FileVersion;
                 var message = string.Format(
                     CultureInfo.CurrentCulture,

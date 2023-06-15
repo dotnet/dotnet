@@ -6,7 +6,6 @@ using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
-using System.Reflection;
 using System.Resources;
 using System.Runtime.CompilerServices;
 
@@ -33,7 +32,7 @@ namespace NuGet.VisualStudio
                 if (ReferenceEquals(resourceMan, null))
                 {
                     // Find the CommonResources.resources file's full resource name in this assembly
-                    string commonResourcesName = Assembly.GetExecutingAssembly().GetManifestResourceNames().First(s => s.EndsWith("CommonResources.resources", StringComparison.OrdinalIgnoreCase));
+                    string commonResourcesName = typeof(CommonResources).Assembly.GetManifestResourceNames().First(s => s.EndsWith("CommonResources.resources", StringComparison.OrdinalIgnoreCase));
 
                     // Trim off the ".resources"
                     commonResourcesName = commonResourcesName.Substring(0, commonResourcesName.Length - 10);

@@ -5,7 +5,6 @@ using System;
 using System.IO;
 using System.Management.Automation;
 using System.Reflection;
-using LocalResources = NuGet.PackageManagement.PowerShellCmdlets.Resources;
 
 namespace NuGetConsole.Host.PowerShell.Implementation
 {
@@ -46,7 +45,7 @@ namespace NuGetConsole.Host.PowerShell.Implementation
             {
                 if (_addWrapperMembersScript == null)
                 {
-                    string extensionRoot = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+                    string extensionRoot = Path.GetDirectoryName(typeof(PSTypeWrapper).Assembly.Location);
                     string scriptPath = Path.Combine(extensionRoot, "Modules", "NuGet", "Add-WrapperMembers.ps1");
                     string scriptContents = File.ReadAllText(scriptPath);
                     _addWrapperMembersScript = ScriptBlock.Create(scriptContents);

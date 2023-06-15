@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using Microsoft.VisualStudio.Imaging;
 using Moq;
 using NuGet.Configuration;
 using NuGet.PackageManagement.UI.ViewModels;
@@ -32,6 +33,7 @@ namespace NuGet.PackageManagement.UI.Test.ViewModels
             Assert.Equal(false, target.IsPackageSourceMappingEnabled);
             Assert.Equal(false, target.IsPackageMapped);
             Assert.Equal(Resources.Text_PackageMappingsDisabled, target.MappingStatus);
+            Assert.Equal(KnownMonikers.StatusInformation, target.MappingStatusIcon);
             Assert.Null(target.PackageId);
         }
 
@@ -57,6 +59,7 @@ namespace NuGet.PackageManagement.UI.Test.ViewModels
             Assert.Equal(true, target.IsPackageSourceMappingEnabled);
             Assert.Equal(false, target.IsPackageMapped);
             Assert.Equal(Resources.Text_PackageMappingsNotFound, target.MappingStatus);
+            Assert.Equal(KnownMonikers.StatusError, target.MappingStatusIcon);
             Assert.Null(target.PackageId);
         }
 
@@ -83,6 +86,7 @@ namespace NuGet.PackageManagement.UI.Test.ViewModels
             Assert.Equal(true, target.IsPackageSourceMappingEnabled);
             Assert.Equal(true, target.IsPackageMapped);
             Assert.Equal(Resources.Text_PackageMappingsFound, target.MappingStatus);
+            Assert.Equal(KnownMonikers.StatusOK, target.MappingStatusIcon);
             Assert.Equal(packageId, target.PackageId);
         }
     }

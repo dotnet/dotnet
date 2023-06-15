@@ -23,7 +23,7 @@ namespace NuGet.CommandLine
 
         private static T CreateInstance<T>(AppDomain domain)
         {
-            string assemblyLocation = Assembly.GetExecutingAssembly().Location;
+            string assemblyLocation = typeof(AssemblyMetadataExtractor).Assembly.Location;
 
             try
             {

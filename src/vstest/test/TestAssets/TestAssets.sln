@@ -130,7 +130,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SerializeTestRunTestProject
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MultiHostTestExecutionProject", "MultiHostTestExecutionProject\MultiHostTestExecutionProject.csproj", "{CE6673DA-B50F-46DF-99A3-8A7C54DE9B61}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NonDll.TestAdapter", "NonDll.TestAdapter\NonDll.TestAdapter.csproj", "{429552A4-4C18-4355-94C5-80DC88C48405}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NonDll.TestAdapter", "NonDll.TestAdapter\NonDll.TestAdapter.csproj", "{429552A4-4C18-4355-94C5-80DC88C48405}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetStandard2Library", "NetStandard2Library\NetStandard2Library.csproj", "{080F0AD2-E7AE-42C8-B867-56D78576735D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -378,6 +380,10 @@ Global
 		{429552A4-4C18-4355-94C5-80DC88C48405}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{429552A4-4C18-4355-94C5-80DC88C48405}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{429552A4-4C18-4355-94C5-80DC88C48405}.Release|Any CPU.Build.0 = Release|Any CPU
+		{080F0AD2-E7AE-42C8-B867-56D78576735D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{080F0AD2-E7AE-42C8-B867-56D78576735D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{080F0AD2-E7AE-42C8-B867-56D78576735D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{080F0AD2-E7AE-42C8-B867-56D78576735D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

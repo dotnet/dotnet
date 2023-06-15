@@ -9,6 +9,9 @@
   <!--
     Following dependencies are required for PVP flow.
     PVP flow infra will automatically bump the version to the latest live one.
+
+    Versions specified here were initially mirrored from repo dependencies, but there is no
+    Arcade flow and versions do not necessarily match what is currently consumed by repo build.
   -->
   <ProductDependencies>
     <Dependency Name="Microsoft.Build" Version="17.3.1">
@@ -30,6 +33,10 @@
     <Dependency Name="System.ComponentModel.Composition" Version="4.5.0">
       <Uri>https://github.com/dotnet/corefx</Uri>
       <Sha>30ab651fcb4354552bd4891619a0bdd81e0ebdbf</Sha>
+    </Dependency>
+    <Dependency Name="System.Security.Cryptography.Xml" Version="6.0.1">
+      <Uri>https://github.com/dotnet/runtime</Uri>
+      <Sha>55fb7ef977e7d120dc12f0960edcff0739d7ee0e</Sha>
     </Dependency>
   </ProductDependencies>
 </Dependencies>

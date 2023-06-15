@@ -1,1 +1,3 @@
 #nullable enable
+~static NuGet.LibraryModel.LibraryDependencyTargetUtils.AsString(this NuGet.LibraryModel.LibraryDependencyTarget includeFlags) -> string
+~static NuGet.LibraryModel.LibraryIncludeFlagUtils.AsString(this NuGet.LibraryModel.LibraryIncludeFlags includeFlags) -> string

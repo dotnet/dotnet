@@ -20,6 +20,43 @@ namespace NuGet.Common
 
         private static readonly Lazy<string> _getHome = new Lazy<string>(() => GetHome());
 
+        private static string _nuGetTempDirectory = null;
+        internal static string NuGetTempDirectory
+        {
+            get { return _nuGetTempDirectory ??= GetNuGetTempDirectory(); }
+        }
+
+        private static string GetNuGetTempDirectory()
+        {
+            var nuGetScratch = Environment.GetEnvironmentVariable("NUGET_SCRATCH");
+            if (string.IsNullOrEmpty(nuGetScratch))
+            {
+#pragma warning disable RS0030 // Do not used banned APIs
+                // This is the only place in the product code we can use GetTempPath().
+                var tempPath = Path.GetTempPath();
+#pragma warning restore RS0030 // Do not used banned APIs
+
+                // On Windows and Mac the temp directories are per-user, but on Linux it's /tmp for everyone, so append the username on Linux.
+                nuGetScratch = Path.Combine(tempPath,
+                    RuntimeEnvironmentHelper.IsLinux ? "NuGetScratch" + Environment.UserName : "NuGetScratch");
+
+                if (RuntimeEnvironmentHelper.IsLinux)
+                {
+                    Directory.CreateDirectory(nuGetScratch);
+                    if (chmod(nuGetScratch, 0b111_000_000) != 0)   //0b111_000_000 = 700 permissions
+                    {
+                        // Another user created a folder pretending to be us! 
+                        var errno = Marshal.GetLastWin32Error(); // fetch the errno before running any other operation
+                        throw new InvalidOperationException(string.Format(CultureInfo.CurrentCulture,
+                            Strings.UnableToSetNuGetTempFolderPermission,
+                            nuGetScratch,
+                            errno));
+                    }
+                }
+            }
+            return nuGetScratch;
+        }
+
         public static string GetFolderPath(NuGetFolderPath folder)
         {
             switch (folder)
@@ -101,39 +138,7 @@ namespace NuGet.Common
 
                 case NuGetFolderPath.Temp:
                     {
-                        var nuGetScratch = Environment.GetEnvironmentVariable("NUGET_SCRATCH");
-                        if (string.IsNullOrEmpty(nuGetScratch))
-                        {
-#pragma warning disable RS0030 // Do not used banned APIs
-                            // This is the only place in the product code we can use GetTempPath().
-                            var tempPath = Path.GetTempPath();
-#pragma warning restore RS0030 // Do not used banned APIs
-                            nuGetScratch = Path.Combine(tempPath, "NuGetScratch");
-
-                            // On Windows and Mac the temp directories are per-user, but on Linux it's /tmp for everyone
-                            if (RuntimeEnvironmentHelper.IsLinux)
-                            {
-                                // ConcurrencyUtility uses the lock subdirectory, so make sure it exists, and create with world write
-                                string lockPath = Path.Combine(nuGetScratch, "lock");
-                                if (!Directory.Exists(lockPath))
-                                {
-                                    void CreateSharedDirectory(string path)
-                                    {
-                                        Directory.CreateDirectory(path);
-                                        if (chmod(path, 0x1ff) == -1) // 0x1ff == 777 permissions
-                                        {
-                                            // it's very unlikely we can't set the permissions of a directory we just created
-                                            var errno = Marshal.GetLastWin32Error(); // fetch the errno before running any other operation
-                                            throw new InvalidOperationException($"Unable to set permission while creating {path}, errno={errno}.");
-                                        }
-                                    }
-
-                                    CreateSharedDirectory(nuGetScratch);
-                                    CreateSharedDirectory(lockPath);
-                                }
-                            }
-                        }
-                        return nuGetScratch;
+                        return NuGetTempDirectory;
                     }
 
                 default:
@@ -141,9 +146,10 @@ namespace NuGet.Common
             }
         }
 
-        /// <summary>Only to be used for creating directories under /tmp on Linux. Do not use elsewhere.</summary>
+        /// <summary>Only to be used for setting permissions of directories under /tmp on Linux. Do not use elsewhere.</summary>
         [DllImport("libc", SetLastError = true, CharSet = CharSet.Ansi)]
         private static extern int chmod(string pathname, int mode);
+
 
 #if IS_CORECLR
 

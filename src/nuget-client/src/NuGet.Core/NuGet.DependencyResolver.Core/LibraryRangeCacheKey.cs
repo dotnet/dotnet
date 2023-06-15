@@ -10,9 +10,9 @@ using NuGet.Shared;
 namespace NuGet.DependencyResolver
 {
     /// <summary>
-    /// Helper class to hold a library range and framework.
+    /// Helper type to hold a library range and framework.
     /// </summary>
-    public class LibraryRangeCacheKey : IEquatable<LibraryRangeCacheKey>
+    public readonly struct LibraryRangeCacheKey : IEquatable<LibraryRangeCacheKey>
     {
         public LibraryRangeCacheKey(LibraryRange range, NuGetFramework framework)
         {
@@ -32,7 +32,7 @@ namespace NuGet.DependencyResolver
 
         public override bool Equals(object obj)
         {
-            return Equals(obj as LibraryRangeCacheKey);
+            return obj is LibraryRangeCacheKey key && Equals(key);
         }
 
         public override int GetHashCode()
@@ -42,16 +42,6 @@ namespace NuGet.DependencyResolver
 
         public bool Equals(LibraryRangeCacheKey other)
         {
-            if (Object.ReferenceEquals(this, other))
-            {
-                return true;
-            }
-
-            if (Object.ReferenceEquals(null, other))
-            {
-                return false;
-            }
-
             return LibraryRange.Equals(other.LibraryRange)
                 && Framework.Equals(other.Framework);
         }
@@ -59,6 +49,16 @@ namespace NuGet.DependencyResolver
         public override string ToString()
         {
             return string.Format(CultureInfo.InvariantCulture, "{0} {1}", LibraryRange, Framework);
+        }
+
+        public static bool operator ==(LibraryRangeCacheKey left, LibraryRangeCacheKey right)
+        {
+            return left.Equals(right);
+        }
+
+        public static bool operator !=(LibraryRangeCacheKey left, LibraryRangeCacheKey right)
+        {
+            return !(left == right);
         }
     }
 }

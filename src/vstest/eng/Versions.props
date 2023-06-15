@@ -2,6 +2,12 @@
 <Project>
   <PropertyGroup Label="Version settings">
     <!-- This repo version -->
+    <!-- 
+        Workaround for https://github.com/microsoft/vstest/issues/4544 
+        Use semantic versioning V1 because V2 will produce version like 17.7.0-preview.23280.1+94103c3f and DTAExecutionHost 
+        is trying to parse that version and will consider any version with more than 4 `.` in it as invalid. 
+    -->
+    <SemanticVersioningV1>true</SemanticVersioningV1>
     <VersionPrefix>17.7.0</VersionPrefix>
     <PreReleaseVersionLabel>preview</PreReleaseVersionLabel>
   </PropertyGroup>
@@ -24,7 +30,7 @@
     <MicrosoftExtensionsDependencyModelPackageVersion>3.0.0</MicrosoftExtensionsDependencyModelPackageVersion>
     <MicrosoftExtensionsFileSystemGlobbingVersion>2.0.0</MicrosoftExtensionsFileSystemGlobbingVersion>
     <MicrosoftFakesVersion>17.4.0-beta.22478.3</MicrosoftFakesVersion>
-    <MicrosoftInternalCodeCoverageVersion>17.7.2-beta.23305.3</MicrosoftInternalCodeCoverageVersion>
+    <MicrosoftInternalCodeCoverageVersion>17.7.2-beta.23312.2</MicrosoftInternalCodeCoverageVersion>
     <MicrosoftNetCompilersToolsetVersion>4.6.0-1.23107.10</MicrosoftNetCompilersToolsetVersion>
     <MicrosoftVisualStudioDiagnosticsUtilitiesVersion>17.6.33617.297</MicrosoftVisualStudioDiagnosticsUtilitiesVersion>
     <MicrosoftVisualStudioEnterpriseAspNetHelper>$(MicrosoftVisualStudioDiagnosticsUtilitiesVersion)</MicrosoftVisualStudioEnterpriseAspNetHelper>
@@ -41,8 +47,8 @@
     <SystemNetHttpVersion>4.3.4</SystemNetHttpVersion>
     <SystemReflectionMetadataVersion>1.6.0</SystemReflectionMetadataVersion>
     <SystemUriVersion>4.3.2</SystemUriVersion>
-    <TestPlatformExternalsVersion>17.7.0-preview-2-33725-504</TestPlatformExternalsVersion>
-    <TestPlatformMSDiaVersion>17.7.0-preview-2-33725-504</TestPlatformMSDiaVersion>
+    <TestPlatformExternalsVersion>17.7.0-preview-3-33808-347</TestPlatformExternalsVersion>
+    <TestPlatformMSDiaVersion>17.7.0-preview-3-33808-347</TestPlatformMSDiaVersion>
   </PropertyGroup>
   <PropertyGroup Label="VSTest test settings">
     <!-- Name of the elements must be in sync with test\Microsoft.TestPlatform.TestUtilities\IntegrationTestBase.cs -->
@@ -83,8 +89,10 @@
     <VSTestConsoleMostDownloadedVersion>[16.6.1]</VSTestConsoleMostDownloadedVersion>
     <VSTestConsolePreviousStableVersion>[16.11.0]</VSTestConsolePreviousStableVersion>
     <VSTestConsoleLegacyStableVersion>[15.9.2]</VSTestConsoleLegacyStableVersion>
-    <!-- This version also needs to be updated in src\package\nuspec\TestPlatform.ObjectModel.nuspec -->
-    <NuGetFrameworksVersion>5.11.0</NuGetFrameworksVersion>
+    <!-- This version also needs to be updated in src\Microsoft.TestPlatform.ObjectModel\Microsoft.TestPlatform.ObjectModel.nuspec -->
+    <!-- This version needs to be the same or lower than <NuGetFrameworksPackageVersion> https://github.com/dotnet/sdk/blob/release/main/eng/Versions.props
+    (or the respective branch. It also needs to be on nuget.org. -->
+    <NuGetFrameworksVersion>6.5.0</NuGetFrameworksVersion>
     <ILAsmPackageVersion>5.0.0</ILAsmPackageVersion>
     <JsonNetVersion>13.0.1</JsonNetVersion>
   </PropertyGroup>

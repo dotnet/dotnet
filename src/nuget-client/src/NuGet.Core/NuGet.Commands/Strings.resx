@@ -1062,7 +1062,7 @@ Non-HTTPS access will be removed in a future version. Consider migrating to 'HTT
     <comment>As in "This package has a unknown severity vulnerability"</comment>
   </data>
   <data name="Warning_PackageWithKnownVulnerability" xml:space="preserve">
-    <value>Package '{0}' {1} has a known {2} severity vulnerability, {3}.</value>
+    <value>Package '{0}' {1} has a known {2} severity vulnerability, {3}</value>
     <comment>{0} - package id
 {1} - package version
 {2} - severity, for example low, moderate, high, or critical
@@ -1087,5 +1087,9 @@ Non-HTTPS access will be removed in a future version. Consider migrating to 'HTT
     <comment>Don't translate 'NuGetAuditMode'
 {0} - is the value from the customer's project file
 {1} is the list of valid values "direct, all"</comment>
+  </data>
+  <data name="Warning_NoVulnerabilityData" xml:space="preserve">
+    <value>NuGetAudit is enabled, but no package sources contain known vulnerability data.</value>
+    <comment>Do not translate NuGetAudit</comment>
   </data>
 </root>

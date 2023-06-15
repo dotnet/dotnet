@@ -6,17 +6,17 @@
     <dependencies>
       <group targetFramework="net462">
         <dependency id="System.Reflection.Metadata" version="[1.6.0, )" />
-        <dependency id="NuGet.Frameworks" version="[5.11.0, )" />
+        <dependency id="NuGet.Frameworks" version="[6.5.0, )" />
       </group>
 
       <group targetFramework="netcoreapp3.1">
         <dependency id="System.Reflection.Metadata" version="[1.6.0, )" />
-        <dependency id="NuGet.Frameworks" version="[5.11.0, )" />
+        <dependency id="NuGet.Frameworks" version="[6.5.0, )" />
       </group>
 
       <group targetFramework="netstandard2.0">
         <dependency id="System.Reflection.Metadata" version="[1.6.0, )" />
-        <dependency id="NuGet.Frameworks" version="[5.11.0, )" />
+        <dependency id="NuGet.Frameworks" version="[6.5.0, )" />
       </group>
     </dependencies>
 
