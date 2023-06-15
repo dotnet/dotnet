@@ -112,67 +112,7 @@
       <Uri>https://github.com/dotnet/aspnetcore</Uri>
       <Sha>8dea0b8d3bf5852fe61b2d98b94ae190f68b9768</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.Build.NuGetSdkResolver" Version="6.7.0-preview.3.57">
-      <Uri>https://github.com/nuget/nuget.client</Uri>
-      <Sha>1f85d874ef0bc82affad2c2175fdd47c5b4bb387</Sha>
-    </Dependency>
     <Dependency Name="NuGet.Build.Tasks" Version="6.7.0-preview.3.57">
-      <Uri>https://github.com/nuget/nuget.client</Uri>
-      <Sha>1f85d874ef0bc82affad2c2175fdd47c5b4bb387</Sha>
-    </Dependency>
-    <Dependency Name="NuGet.Build.Tasks.Console" Version="6.7.0-preview.3.57">
-      <Uri>https://github.com/nuget/nuget.client</Uri>
-      <Sha>1f85d874ef0bc82affad2c2175fdd47c5b4bb387</Sha>
-    </Dependency>
-    <Dependency Name="NuGet.Build.Tasks.Pack" Version="6.7.0-preview.3.57">
-      <Uri>https://github.com/nuget/nuget.client</Uri>
-      <Sha>1f85d874ef0bc82affad2c2175fdd47c5b4bb387</Sha>
-    </Dependency>
-    <Dependency Name="NuGet.Commands" Version="6.7.0-preview.3.57">
-      <Uri>https://github.com/nuget/nuget.client</Uri>
-      <Sha>1f85d874ef0bc82affad2c2175fdd47c5b4bb387</Sha>
-    </Dependency>
-    <Dependency Name="NuGet.CommandLine.XPlat" Version="6.7.0-preview.3.57">
-      <Uri>https://github.com/nuget/nuget.client</Uri>
-      <Sha>1f85d874ef0bc82affad2c2175fdd47c5b4bb387</Sha>
-    </Dependency>
-    <Dependency Name="NuGet.Common" Version="6.7.0-preview.3.57">
-      <Uri>https://github.com/nuget/nuget.client</Uri>
-      <Sha>1f85d874ef0bc82affad2c2175fdd47c5b4bb387</Sha>
-    </Dependency>
-    <Dependency Name="NuGet.Configuration" Version="6.7.0-preview.3.57">
-      <Uri>https://github.com/nuget/nuget.client</Uri>
-      <Sha>1f85d874ef0bc82affad2c2175fdd47c5b4bb387</Sha>
-    </Dependency>
-    <Dependency Name="NuGet.Credentials" Version="6.7.0-preview.3.57">
-      <Uri>https://github.com/nuget/nuget.client</Uri>
-      <Sha>1f85d874ef0bc82affad2c2175fdd47c5b4bb387</Sha>
-    </Dependency>
-    <Dependency Name="NuGet.DependencyResolver.Core" Version="6.7.0-preview.3.57">
-      <Uri>https://github.com/nuget/nuget.client</Uri>
-      <Sha>1f85d874ef0bc82affad2c2175fdd47c5b4bb387</Sha>
-    </Dependency>
-    <Dependency Name="NuGet.Frameworks" Version="6.7.0-preview.3.57">
-      <Uri>https://github.com/nuget/nuget.client</Uri>
-      <Sha>1f85d874ef0bc82affad2c2175fdd47c5b4bb387</Sha>
-    </Dependency>
-    <Dependency Name="NuGet.LibraryModel" Version="6.7.0-preview.3.57">
-      <Uri>https://github.com/nuget/nuget.client</Uri>
-      <Sha>1f85d874ef0bc82affad2c2175fdd47c5b4bb387</Sha>
-    </Dependency>
-    <Dependency Name="NuGet.ProjectModel" Version="6.7.0-preview.3.57">
-      <Uri>https://github.com/nuget/nuget.client</Uri>
-      <Sha>1f85d874ef0bc82affad2c2175fdd47c5b4bb387</Sha>
-    </Dependency>
-    <Dependency Name="NuGet.Protocol" Version="6.7.0-preview.3.57">
-      <Uri>https://github.com/nuget/nuget.client</Uri>
-      <Sha>1f85d874ef0bc82affad2c2175fdd47c5b4bb387</Sha>
-    </Dependency>
-    <Dependency Name="NuGet.Packaging" Version="6.7.0-preview.3.57">
-      <Uri>https://github.com/nuget/nuget.client</Uri>
-      <Sha>1f85d874ef0bc82affad2c2175fdd47c5b4bb387</Sha>
-    </Dependency>
-    <Dependency Name="NuGet.Versioning" Version="6.7.0-preview.3.57">
       <Uri>https://github.com/nuget/nuget.client</Uri>
       <Sha>1f85d874ef0bc82affad2c2175fdd47c5b4bb387</Sha>
     </Dependency>
@@ -180,14 +120,6 @@
       <Uri>https://github.com/microsoft/vstest</Uri>
       <Sha>8381658bfb847e67b4f41a997411e8a804e1ecb4</Sha>
       <SourceBuild RepoName="vstest" ManagedOnly="true" />
-    </Dependency>
-    <Dependency Name="Microsoft.TestPlatform.CLI" Version="17.7.0-preview.23307.1">
-      <Uri>https://github.com/microsoft/vstest</Uri>
-      <Sha>8381658bfb847e67b4f41a997411e8a804e1ecb4</Sha>
-    </Dependency>
-    <Dependency Name="Microsoft.TestPlatform.Build" Version="17.7.0-preview.23307.1">
-      <Uri>https://github.com/microsoft/vstest</Uri>
-      <Sha>8381658bfb847e67b4f41a997411e8a804e1ecb4</Sha>
     </Dependency>
     <Dependency Name="Microsoft.NET.ILLink.Tasks" Version="8.0.0-preview.6.23307.4">
       <Uri>https://github.com/dotnet/runtime</Uri>
@@ -380,21 +312,6 @@
       <Uri>https://github.com/dotnet/symreader</Uri>
       <Sha>27e584661980ee6d82c419a2a471ae505b7d122e</Sha>
       <SourceBuild RepoName="symreader" ManagedOnly="true" />
-    </Dependency>
-    <!-- Dependency required for flowing correct package version in source-build, using PVP flow. -->
-    <Dependency Name="Microsoft.Extensions.Logging.Console" Version="6.0.0">
-      <Uri>https://github.com/dotnet/runtime</Uri>
-      <Sha>4822e3c3aa77eb82b2fb33c9321f923cf11ddde6</Sha>
-    </Dependency>
-    <!-- Dependency required for flowing correct package version in source-build, using PVP flow. -->
-    <Dependency Name="Microsoft.Extensions.FileSystemGlobbing" Version="6.0.0">
-      <Uri>https://github.com/dotnet/runtime</Uri>
-      <Sha>4822e3c3aa77eb82b2fb33c9321f923cf11ddde6</Sha>
-    </Dependency>
-    <!-- Dependency required for flowing correct package version in source-build, using PVP flow. -->
-    <Dependency Name="System.ServiceProcess.ServiceController" Version="7.0.0">
-      <Uri>https://github.com/dotnet/runtime</Uri>
-      <Sha>d099f075e45d2aa6007a22b71b45a08758559f80</Sha>
     </Dependency>
   </ProductDependencies>
   <ToolsetDependencies>
