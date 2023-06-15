@@ -40,7 +40,7 @@ namespace NuGet.CommandLine
         public HelpCommand(ICommandManager commandManager)
         {
             _commandManager = commandManager;
-            _commandExe = Assembly.GetExecutingAssembly().GetName().Name;
+            _commandExe = typeof(HelpCommand).Assembly.GetName().Name;
         }
 
         public override void ExecuteCommand()

@@ -2,6 +2,7 @@
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -117,6 +118,24 @@ namespace NuGet.LibraryModel
             }
 
             return result;
+        }
+
+        private static readonly ConcurrentDictionary<LibraryIncludeFlags, string> LibraryIncludeFlagsCache = new();
+
+        /// <summary>
+        /// Efficiently converts <see cref="LibraryIncludeFlags"/> to it's <see cref="string"/> representation.
+        /// </summary>
+        /// <param name="includeFlags">The <see cref="LibraryIncludeFlags"/> instance to get the <see cref="string"/> representation for.</param>
+        /// <returns>The <see cref="string"/> representation of <paramref name="includeFlags"/>.</returns>
+        public static string AsString(this LibraryIncludeFlags includeFlags)
+        {
+            if (!LibraryIncludeFlagsCache.TryGetValue(includeFlags, out string enumAsString))
+            {
+                enumAsString = includeFlags.ToString();
+                LibraryIncludeFlagsCache.TryAdd(includeFlags, enumAsString);
+            }
+
+            return enumAsString;
         }
     }
 }

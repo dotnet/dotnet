@@ -63,7 +63,7 @@ namespace NuGet.Build.Tasks.Console
                     // It also can be different per instance of Visual Studio so when running unit tests it always needs to match that instance of MSBuild
                     // The code below runs this EXE in an AppDomain as if its MSBuild.exe so the assembly search location is next to MSBuild.exe and all binding redirects are used
                     // allowing this process to evaluate MSBuild projects as if it is MSBuild.exe
-                    var thisAssembly = Assembly.GetExecutingAssembly();
+                    Assembly thisAssembly = typeof(Program).Assembly;
 
                     AppDomain appDomain = AppDomain.CreateDomain(
                         thisAssembly.FullName,

@@ -14,7 +14,7 @@ namespace NuGet.VisualStudio.Telemetry
         {
             if (VsEtwLogging.IsProviderEnabled(VsEtwKeywords.Ide, VsEtwLevel.Information))
             {
-                var fullName = (VSTelemetrySession.VSEventNamePrefix + activityName).ToLowerInvariant().Replace('/', '_');
+                var fullName = (VSTelemetrySession.VSEventNamePrefix + activityName).ToLowerInvariant();
                 _activity = VsEtwLogging.CreateActivity(fullName, VsEtwKeywords.Ide, VsEtwLevel.Information);
             }
         }

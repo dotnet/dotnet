@@ -19,6 +19,8 @@
     <PackageReference Include="Microsoft.Build.Framework" PrivateAssets="All" />
     <PackageReference Include="Microsoft.Build.Tasks.Core" PrivateAssets="All" />
     <PackageReference Include="Microsoft.Build.Utilities.Core" PrivateAssets="All" />
+    <!-- System.Security.Cryptography.Xml is a dependency of Microsoft.Build.Tasks.Core. Therefore, we have assigned the same PrivateAssets value. -->
+    <PackageReference Include="System.Security.Cryptography.Xml" PrivateAssets="All" />
   </ItemGroup>
 
   <ItemGroup Condition=" '$(TargetFramework)' == '$(NETFXTargetFramework)' ">

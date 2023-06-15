@@ -29,7 +29,9 @@ namespace NuGet.SolutionRestoreManager
         private readonly Lazy<IOutputConsoleProvider> _outputConsoleProvider;
 
         // Queue of (bool reportProgress, bool showAsOutputMessage, ILogMessage logMessage)
-        private readonly ConcurrentQueue<Tuple<bool, bool, ILogMessage>> _loggedMessages = new ConcurrentQueue<Tuple<bool, bool, ILogMessage>>();
+        private readonly ConcurrentQueue<(bool reportProgress, bool showAsOutputMessage, ILogMessage logMessage)> _loggedMessages = new();
+        private readonly object _lock = new();
+        private bool _currentlyWritingMessages = false;
 
         private Lazy<INuGetErrorList> _errorList;
         private RestoreOperationSource _operationSource;
@@ -148,22 +150,71 @@ namespace NuGet.SolutionRestoreManager
                 // Avoid moving to the UI thread unless there is work to do
                 if (reportProgress || showAsOutputMessage)
                 {
-                    // Make sure the message is queued in order of calls to LogAsync, but don't wait for the UI thread
-                    // to actually show it.
-                    _loggedMessages.Enqueue(Tuple.Create(reportProgress, showAsOutputMessage, logMessage));
+                    // Take a lock here so that we can accurately determine if we need to spawn a new task after enqueuing a message.
+                    // The task will continue to run until _loggedMessages.Count == 0 inside the lock.
+                    lock (_lock)
+                    {
+                        // Make sure the message is queued in order of calls to LogAsync, but don't wait for the UI thread
+                        // to actually show it.
+                        _loggedMessages.Enqueue((reportProgress, showAsOutputMessage, logMessage));
 
-                    var _ = _taskFactory.RunAsync(async () =>
+                        // avoid creating a duplicate log task while one is currently running
+                        if (!_currentlyWritingMessages)
+                        {
+                            _currentlyWritingMessages = true;
+                            _ = _taskFactory.RunAsync(ProcessMessageQueue);
+                        }
+                    }
+
+                    // we received a message and the logging task isn't currently running. Start a new task to process the queue.
+                    async Task ProcessMessageQueue()
                     {
                         // capture current progress from the current execution context
                         var progress = RestoreOperationProgressUI.Current;
 
                         // This might be a different message than the one enqueued above, but overall the printing order
                         // will match the order of calls to LogAsync.
-                        if (_loggedMessages.TryDequeue(out var message))
+                        while (true)
                         {
-                            await LogToVSAsync(reportProgress: message.Item1, showAsOutputMessage: message.Item2, logMessage: message.Item3, progress: progress);
+                            ILogMessage logMessage = null;
+                            while (_loggedMessages.TryDequeue(out var message))
+                            {
+                                var verbosityLevel = GetMSBuildLevel(message.logMessage.Level);
+
+                                // capture most recent progress message
+                                if (message.reportProgress)
+                                {
+                                    logMessage = message.logMessage;
+                                }
+
+                                // Output console
+                                if (message.showAsOutputMessage)
+                                {
+                                    await WriteLineAsync(verbosityLevel, message.logMessage.FormatWithCode());
+                                }
+                            }
+
+                            // only show the most recent message on the status bar
+                            if (logMessage is not null && progress is not null)
+                            {
+                                await progress.ReportProgressAsync(logMessage.Message);
+                            }
+
+                            lock (_lock)
+                            {
+                                // Messages could be added after we exit the while loop that's calling TryDequeue.
+                                // If we get here and still have messages in the queue, we should continue processing.
+                                // Since messages are only Enqueued inside the lock above, we have either handled all the messages or
+                                // the next message will be Enqueued and immediately spawn another processing task.
+                                // If we're at zero messages, we can stop this task.
+                                if (_loggedMessages.Count == 0)
+                                {
+                                    _currentlyWritingMessages = false;
+                                    break;
+                                }
+                            }
                         }
-                    });
+                    }
                 }
             }
         }
@@ -177,23 +228,6 @@ namespace NuGet.SolutionRestoreManager
         {
             Log(logMessage);
             return Task.CompletedTask;
-        }
-
-        private async Task LogToVSAsync(bool reportProgress, bool showAsOutputMessage, ILogMessage logMessage, RestoreOperationProgressUI progress)
-        {
-            var verbosityLevel = GetMSBuildLevel(logMessage.Level);
-
-            // Progress dialog
-            if (reportProgress)
-            {
-                await progress?.ReportProgressAsync(logMessage.Message);
-            }
-
-            // Output console
-            if (showAsOutputMessage)
-            {
-                await WriteLineAsync(verbosityLevel, logMessage.FormatWithCode());
-            }
         }
 
         private void HandleErrorsAndWarnings(ILogMessage logMessage)

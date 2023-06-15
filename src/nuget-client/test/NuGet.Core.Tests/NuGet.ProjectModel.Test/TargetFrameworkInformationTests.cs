@@ -623,6 +623,8 @@ namespace NuGet.ProjectModel.Test
             {
                 leftSide.Should().NotBe(rightSide);
             }
+
+            AssertClone(expected, leftSide, rightSide);
         }
 
         private static void AssertHashCode(bool expected, TargetFrameworkInformation leftSide, TargetFrameworkInformation rightSide)
@@ -634,6 +636,25 @@ namespace NuGet.ProjectModel.Test
             else
             {
                 leftSide.GetHashCode().Should().NotBe(rightSide.GetHashCode());
+            }
+
+            AssertClone(expected, leftSide, rightSide);
+        }
+
+        private static void AssertClone(bool expected, TargetFrameworkInformation leftSide, TargetFrameworkInformation rightSide)
+        {
+            var leftClone = leftSide.Clone();
+            var rightClone = rightSide.Clone();
+
+            if (expected)
+            {
+                leftClone.GetHashCode().Should().Be(rightClone.GetHashCode());
+                leftClone.Should().Be(rightClone);
+            }
+            else
+            {
+                leftClone.GetHashCode().Should().NotBe(rightClone.GetHashCode());
+                leftClone.Should().NotBe(rightClone);
             }
         }
     }

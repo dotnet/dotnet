@@ -23,12 +23,41 @@ namespace NuGet.ProjectModel
         public static readonly NuGetVersion DefaultVersion = new NuGetVersion(1, 0, 0);
 
         public PackageSpec(IList<TargetFrameworkInformation> frameworks)
+            : this(frameworks, dependencies: null, runtimeGraph: null, restoreSettings: null)
         {
-            TargetFrameworks = frameworks;
         }
 
         public PackageSpec() : this(new List<TargetFrameworkInformation>())
         {
+        }
+
+        internal PackageSpec(
+            IList<TargetFrameworkInformation> frameworks,
+            IList<LibraryDependency> dependencies,
+            RuntimeGraph runtimeGraph,
+            ProjectRestoreSettings restoreSettings,
+            string[] authors = null,
+            string[] owners = null,
+            string[] tags = null,
+            IList<string> contentFiles = null,
+            IDictionary<string, IEnumerable<string>> scripts = null,
+            IDictionary<string, string> packInclude = null,
+            PackOptions packOptions = null
+            )
+        {
+            TargetFrameworks = frameworks;
+            Dependencies = dependencies ?? new List<LibraryDependency>();
+            RuntimeGraph = runtimeGraph ?? RuntimeGraph.Empty;
+            RestoreSettings = restoreSettings ?? new ProjectRestoreSettings();
+#pragma warning disable CS0612 // Type or member is obsolete
+            Authors = authors ?? Array.Empty<string>();
+            Owners = owners ?? Array.Empty<string>();
+            Tags = tags ?? Array.Empty<string>();
+            ContentFiles = contentFiles ?? new List<string>();
+            Scripts = scripts ?? new Dictionary<string, IEnumerable<string>>(StringComparer.OrdinalIgnoreCase);
+            PackInclude = packInclude ?? new Dictionary<string, string>();
+            PackOptions = packOptions ?? new PackOptions();
+#pragma warning restore CS0612 // Type or member is obsolete
         }
 
         public string FilePath { get; set; }
@@ -68,10 +97,10 @@ namespace NuGet.ProjectModel
         public string ReleaseNotes { get; set; }
 
         [Obsolete]
-        public string[] Authors { get; set; } = Array.Empty<string>();
+        public string[] Authors { get; set; }
 
         [Obsolete]
-        public string[] Owners { get; set; } = Array.Empty<string>();
+        public string[] Owners { get; set; }
 
         [Obsolete]
         public string ProjectUrl { get; set; }
@@ -95,25 +124,25 @@ namespace NuGet.ProjectModel
         public BuildOptions BuildOptions { get; set; }
 
         [Obsolete]
-        public string[] Tags { get; set; } = Array.Empty<string>();
+        public string[] Tags { get; set; }
 
         [Obsolete]
-        public IList<string> ContentFiles { get; set; } = new List<string>();
+        public IList<string> ContentFiles { get; set; }
 
         [Obsolete]
-        public IDictionary<string, IEnumerable<string>> Scripts { get; private set; } = new Dictionary<string, IEnumerable<string>>(StringComparer.OrdinalIgnoreCase);
+        public IDictionary<string, IEnumerable<string>> Scripts { get; private set; }
 
         [Obsolete]
-        public IDictionary<string, string> PackInclude { get; private set; } = new Dictionary<string, string>();
+        public IDictionary<string, string> PackInclude { get; private set; }
 
         [Obsolete]
-        public PackOptions PackOptions { get; set; } = new PackOptions();
+        public PackOptions PackOptions { get; set; }
 
-        public IList<LibraryDependency> Dependencies { get; set; } = new List<LibraryDependency>();
+        public IList<LibraryDependency> Dependencies { get; set; }
 
         public IList<TargetFrameworkInformation> TargetFrameworks { get; private set; }
 
-        public RuntimeGraph RuntimeGraph { get; set; } = new RuntimeGraph();
+        public RuntimeGraph RuntimeGraph { get; set; }
 
         /// <summary>
         /// Project Settings is used to pass settings like HideWarningsAndErrors down to lower levels.
@@ -121,7 +150,7 @@ namespace NuGet.ProjectModel
         /// This should not be part of the Equals and GetHashCode.
         /// Don't write this to the package spec
         /// </summary>
-        public ProjectRestoreSettings RestoreSettings { get; set; } = new ProjectRestoreSettings();
+        public ProjectRestoreSettings RestoreSettings { get; set; }
 
         /// <summary>
         /// Additional MSBuild properties.
@@ -217,45 +246,60 @@ namespace NuGet.ProjectModel
         /// </summary>
         public PackageSpec Clone()
         {
-            var spec = new PackageSpec();
-            spec.Name = Name;
-            spec.FilePath = FilePath;
-            spec.Title = Title;
+            List<TargetFrameworkInformation> targetFrameworks;
+            if (TargetFrameworks is null)
+            {
+                targetFrameworks = null;
+            }
+            else
+            {
+                targetFrameworks = new List<TargetFrameworkInformation>(TargetFrameworks.Count);
+                targetFrameworks.AddRange(TargetFrameworks.Select(item => item.Clone()));
+            }
+
+            return new PackageSpec(
+                targetFrameworks,
+                Dependencies?.Select(item => item.Clone()).ToList(),
+                RuntimeGraph?.Clone(),
+                RestoreSettings?.Clone(),
 #pragma warning disable CS0612 // Type or member is obsolete
-            spec.HasVersionSnapshot = HasVersionSnapshot;
-            spec.Description = Description;
-            spec.Summary = Summary;
-            spec.ReleaseNotes = ReleaseNotes;
-            spec.Authors = (string[])Authors?.Clone();
-            spec.Owners = (string[])Owners?.Clone();
-            spec.ProjectUrl = ProjectUrl;
-            spec.IconUrl = IconUrl;
-            spec.LicenseUrl = LicenseUrl;
-            spec.RequireLicenseAcceptance = RequireLicenseAcceptance;
-            spec.Language = Language;
-            spec.Copyright = Copyright;
-            spec.Version = Version;
-            spec.IsDefaultVersion = IsDefaultVersion;
-            spec.BuildOptions = BuildOptions?.Clone();
-            spec.Tags = (string[])Tags?.Clone();
-            spec.ContentFiles = ContentFiles != null ? new List<string>(ContentFiles) : null;
-            spec.Scripts = CloneScripts(Scripts);
-            spec.PackInclude = PackInclude != null ? new Dictionary<string, string>(PackInclude) : null;
-            spec.PackOptions = PackOptions?.Clone();
+                (string[])Authors?.Clone(),
+                (string[])Owners?.Clone(),
+                (string[])Tags?.Clone(),
+                ContentFiles != null ? new List<string>(ContentFiles) : null,
+                CloneScripts(Scripts),
+                PackInclude != null ? new Dictionary<string, string>(PackInclude) : null,
+                PackOptions?.Clone()
 #pragma warning restore CS0612 // Type or member is obsolete
-            spec.Dependencies = Dependencies?.Select(item => item.Clone()).ToList();
-            spec.TargetFrameworks = TargetFrameworks?.Select(item => item.Clone()).ToList();
-            spec.RuntimeGraph = RuntimeGraph?.Clone();
-            spec.RestoreSettings = RestoreSettings?.Clone();
-            spec.RestoreMetadata = RestoreMetadata?.Clone();
-            return spec;
+                )
+            {
+                Name = Name,
+                FilePath = FilePath,
+                Title = Title,
+#pragma warning disable CS0612 // Type or member is obsolete
+                HasVersionSnapshot = HasVersionSnapshot,
+                Description = Description,
+                Summary = Summary,
+                ReleaseNotes = ReleaseNotes,
+                ProjectUrl = ProjectUrl,
+                IconUrl = IconUrl,
+                LicenseUrl = LicenseUrl,
+                RequireLicenseAcceptance = RequireLicenseAcceptance,
+                Language = Language,
+                Copyright = Copyright,
+                Version = Version,
+                IsDefaultVersion = IsDefaultVersion,
+                BuildOptions = BuildOptions?.Clone(),
+#pragma warning restore CS0612 // Type or member is obsolete
+                RestoreMetadata = RestoreMetadata?.Clone()
+            };
         }
 
         private IDictionary<string, IEnumerable<string>> CloneScripts(IDictionary<string, IEnumerable<string>> toBeCloned)
         {
             if (toBeCloned != null)
             {
-                var clone = new Dictionary<string, IEnumerable<string>>();
+                var clone = new Dictionary<string, IEnumerable<string>>(toBeCloned.Count);
                 foreach (var kvp in toBeCloned)
                 {
                     clone.Add(kvp.Key, new List<string>(kvp.Value));

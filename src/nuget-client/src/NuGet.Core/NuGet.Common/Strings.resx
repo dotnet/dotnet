@@ -148,6 +148,10 @@
   <data name="UnableToDetemineClientVersion" xml:space="preserve">
     <value>Unable to determine the current NuGet client version.</value>
   </data>
+  <data name="UnableToSetNuGetTempFolderPermission" xml:space="preserve">
+    <value>User is unable to set permission to 700 while creating {0}, errno={1}.</value>
+    <comment>{0} is a file path; {1} is an error code.</comment>
+  </data>
   <data name="UnauthorizedLockFail" xml:space="preserve">
     <value>Unable to obtain lock file access on '{0}' for operations on '{1}'. This may mean that a different user or administrator is holding this lock and that this process does not have permission to access it. If no other process is currently performing an operation on this file it may mean that an earlier NuGet process crashed and left an inaccessible lock file, in this case removing the file '{0}' will allow NuGet to continue.</value>
     <comment>{0} and {1} are both file paths.</comment>

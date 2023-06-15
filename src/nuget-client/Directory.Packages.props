@@ -14,12 +14,19 @@
     <MicrosoftBuildVersion Condition="'$(TargetFramework)' == 'netcoreapp3.1' Or '$(TargetFramework)' == 'netstandard2.0'">16.8.0</MicrosoftBuildVersion>
     <!-- The last package version of MSBuild that works with net5.0 is 16.11.0.  Our assemblies are still compiled against MSBuild assembly version 15.1.0.0 which will work with all versions -->
     <MicrosoftBuildVersion Condition="'$(TargetFramework)' == 'netcoreapp5.0'">16.11.0</MicrosoftBuildVersion>
+  </PropertyGroup>
 
     <!-- Overridden by source build to ensure the same version is used across products, do not remove these properties -->
+    <!-- For each property in this group, there is an appropriate package dependency in eng/Version.Details.xml -->
+    <!-- All .NET package dependencies have to use proper version property names -->
+  <PropertyGroup>
     <MicrosoftExtensionsFileProvidersAbstractionsPackageVersion Condition="'$(MicrosoftExtensionsFileProvidersAbstractionsPackageVersion)' == ''">6.0.0</MicrosoftExtensionsFileProvidersAbstractionsPackageVersion>
     <MicrosoftExtensionsFileSystemGlobbingPackageVersion Condition="'$(MicrosoftExtensionsFileSystemGlobbingPackageVersion)' == ''">6.0.0</MicrosoftExtensionsFileSystemGlobbingPackageVersion>
     <MicrosoftWebXdtPackageVersion Condition="'$(MicrosoftWebXdtPackageVersion)' == ''">3.0.0</MicrosoftWebXdtPackageVersion>
     <SystemComponentModelCompositionPackageVersion Condition="'$(SystemComponentModelCompositionPackageVersion)' == ''">4.5.0</SystemComponentModelCompositionPackageVersion>
+    <!-- System.Security.Cryptography.Xml is a dependency of Microsoft.Build.Tasks.Core. This property can be probably removed when MSBuild is updated to a newer version. -->
+    <SystemSecurityCryptographyXmlVersion Condition="'$(SystemSecurityCryptographyXmlVersion)' == ''">6.0.1</SystemSecurityCryptographyXmlVersion>
+    <SystemSecurityCryptographyXmlVersion Condition="'$(MicrosoftBuildVersion)' == '16.8.0' Or '$(MicrosoftBuildVersion)' == '16.11.0'">4.7.1</SystemSecurityCryptographyXmlVersion>
   </PropertyGroup>
 
   <ItemGroup>
@@ -91,6 +98,7 @@
     <PackageVersion Include="System.Security.Cryptography.Cng" Version="$(CryptographyPackagesVersion)" />
     <PackageVersion Include="System.Security.Cryptography.Pkcs" Version="$(CryptographyPackagesVersion)" />
     <PackageVersion Include="System.Security.Cryptography.ProtectedData" Version="4.4.0" />
+    <PackageVersion Include="System.Security.Cryptography.Xml" Version="$(SystemSecurityCryptographyXmlVersion)" />
     <PackageVersion Include="System.Text.Encoding.Extensions" Version="$(SystemPackagesVersion)" />
     <PackageVersion Include="System.Threading" Version="$(SystemPackagesVersion)" />
     <PackageVersion Include="System.Threading.Tasks" Version="$(SystemPackagesVersion)" />
@@ -179,6 +187,7 @@
       <_allowBuildFromSourcePackage Include="System.Security.Cryptography.Cng" />
       <_allowBuildFromSourcePackage Include="System.Security.Cryptography.Pkcs" />
       <_allowBuildFromSourcePackage Include="System.Security.Cryptography.ProtectedData" />
+      <_allowBuildFromSourcePackage Include="System.Security.Cryptography.Xml" />
 
       <_sourceBuildUnexpectedPackage Include="@(PackageReference)" Exclude="@(_allowBuildFromSourcePackage)" />
     </ItemGroup>

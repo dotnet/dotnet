@@ -42,7 +42,14 @@ namespace NuGet.Commands.Restore.Utility
         public async Task CheckPackageVulnerabilitiesAsync(CancellationToken cancellationToken)
         {
             GetVulnerabilityInfoResult? allVulnerabilityData = await GetAllVulnerabilityDataAsync(cancellationToken);
-            if (allVulnerabilityData == null) return;
+            if (allVulnerabilityData is null || !AnyVulnerabilityDataFound(allVulnerabilityData.KnownVulnerabilities))
+            {
+                RestoreLogMessage restoreLogMessage = RestoreLogMessage.CreateWarning(NuGetLogCode.NU1905, Strings.Warning_NoVulnerabilityData);
+                restoreLogMessage.ProjectPath = _projectFullPath;
+                _logger.Log(restoreLogMessage);
+
+                return;
+            }
 
             if (allVulnerabilityData.Exceptions != null)
             {
@@ -52,6 +59,25 @@ namespace NuGet.Commands.Restore.Utility
             if (allVulnerabilityData.KnownVulnerabilities != null)
             {
                 CheckPackageVulnerabilities(allVulnerabilityData.KnownVulnerabilities);
+            }
+
+            bool AnyVulnerabilityDataFound(IReadOnlyList<IReadOnlyDictionary<string, IReadOnlyList<PackageVulnerabilityInfo>>>? knownVulnerabilities)
+            {
+                if (knownVulnerabilities is null)
+                {
+                    return false;
+                }
+                if (knownVulnerabilities.Count == 0)
+                {
+                    return false;
+                }
+
+                for (int i = 0; i < knownVulnerabilities.Count; i++)
+                {
+                    if (knownVulnerabilities[i].Count > 0) { return true; }
+                }
+
+                return false;
             }
         }
 

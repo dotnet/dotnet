@@ -6,6 +6,7 @@ using System.IO;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Test.Apex.VisualStudio.Solution;
+using NuGet.Configuration;
 using NuGet.StaFact;
 using NuGet.Test.Utility;
 using Xunit;
@@ -908,6 +909,41 @@ namespace NuGet.Tests.Apex
                     VisualStudio.AssertNuGetOutputDoesNotHaveErrors();
                     Assert.True(VisualStudio.HasNoErrorsInOutputWindows());
                 }
+            }
+        }
+
+        [NuGetWpfTheory]
+        [MemberData(nameof(GetPackagesConfigTemplates))]
+        public void VerifyInitScriptsExecution(ProjectTemplate projectTemplate)
+        {
+            EnsureVisualStudioHost();
+            using (var testContext = new ApexTestContext(VisualStudio, projectTemplate, XunitLogger))
+            {
+                // Arrange
+                SolutionService solutionService = VisualStudio.Get<SolutionService>();
+                var nugetConsole = GetConsole(testContext.Project);                           
+                var source = NuGetConstants.V3FeedUrl;
+
+                // Act
+                nugetConsole.Execute($"install-package EntityFramework -source {source} -Verbose");
+
+                // Assert
+                Assert.True(nugetConsole.IsMessageFoundInPMC("init.ps1"), "The init.ps1 script in TestProject was not executed when the EntityFramework package was installed");
+
+                // Act
+                nugetConsole.Clear();
+                nugetConsole.Execute($"install-package jquery -source {source} -Verbose");
+
+                // Assert
+                Assert.True(nugetConsole.IsMessageFoundInPMC("install.ps1"), "The install.ps1 script in TestProject was not executed when the jquery package was installed.");
+
+                // Act
+                nugetConsole.Clear();                
+                nugetConsole.Execute($"install-package entityframework.sqlservercompact -source {source} -Verbose");
+
+                // Assert
+                // nugetConsole.IsMessageFoundInPMC is case sensitive.
+                Assert.True(nugetConsole.IsMessageFoundInPMC("Install.ps1"), "The Install.ps1 script in TestProject was not executed when the Entityframework.sqlservercompact package was installed.");
             }
         }
 

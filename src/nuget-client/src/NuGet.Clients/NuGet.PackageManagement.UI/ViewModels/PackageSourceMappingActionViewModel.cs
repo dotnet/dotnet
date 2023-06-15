@@ -5,6 +5,8 @@
 
 using System;
 using System.Linq;
+using Microsoft.VisualStudio.Imaging;
+using Microsoft.VisualStudio.Imaging.Interop;
 
 namespace NuGet.PackageManagement.UI.ViewModels
 {
@@ -35,6 +37,7 @@ namespace NuGet.PackageManagement.UI.ViewModels
 
                 RaisePropertyChanged(nameof(IsPackageMapped));
                 RaisePropertyChanged(nameof(MappingStatus));
+                RaisePropertyChanged(nameof(MappingStatusIcon));
             }
         }
 
@@ -71,11 +74,31 @@ namespace NuGet.PackageManagement.UI.ViewModels
             }
         }
 
+        public ImageMoniker MappingStatusIcon
+        {
+            get
+            {
+                if (!IsPackageSourceMappingEnabled)
+                {
+                    return KnownMonikers.StatusInformation;
+                }
+                if (IsPackageMapped)
+                {
+                    return KnownMonikers.StatusOK;
+                }
+                else
+                {
+                    return KnownMonikers.StatusError;
+                }
+            }
+        }
+
         public void SettingsChanged()
         {
             RaisePropertyChanged(nameof(IsPackageSourceMappingEnabled));
             RaisePropertyChanged(nameof(IsPackageMapped));
             RaisePropertyChanged(nameof(MappingStatus));
+            RaisePropertyChanged(nameof(MappingStatusIcon));
         }
 
         public static PackageSourceMappingActionViewModel Create(INuGetUI uiController)

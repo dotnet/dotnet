@@ -88,6 +88,8 @@
     <PackageReference Include="Microsoft.Build.Utilities.Core" ExcludeAssets="runtime" />
     <PackageReference Include="Microsoft.VisualStudio.ProjectSystem" PrivateAssets="All" />
     <PackageReference Include="Microsoft.VisualStudio.Sdk" />
+    <!-- System.Security.Cryptography.Xml is a dependency of Microsoft.Build.Tasks.Core. Therefore, we have assigned the same ExcludeAssets value. -->
+    <PackageReference Include="System.Security.Cryptography.Xml" ExcludeAssets="runtime" />
   </ItemGroup>
 
   <ItemGroup Condition=" '$(TargetFramework)' == '$(NETFXTargetFramework)' ">

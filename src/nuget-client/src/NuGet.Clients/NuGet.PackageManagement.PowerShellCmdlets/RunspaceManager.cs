@@ -7,7 +7,6 @@ using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Management.Automation;
 using System.Management.Automation.Runspaces;
-using System.Reflection;
 using EnvDTE;
 using EnvDTE80;
 using Microsoft.PowerShell;
@@ -109,7 +108,7 @@ namespace NuGetConsole.Host.PowerShell.Implementation
         private static void LoadModules(RunspaceDispatcher runspace)
         {
             // We store our PS module file at <extension root>\Modules\NuGet\NuGet.psd1
-            string extensionRoot = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+            string extensionRoot = Path.GetDirectoryName(typeof(RunspaceManager).Assembly.Location);
             string modulePath = Path.Combine(extensionRoot, "Modules", "NuGet", "NuGet.psd1");
             runspace.ImportModule(modulePath);
 
