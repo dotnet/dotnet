@@ -165,7 +165,7 @@ public abstract class SemanticTokenTestBase : TagHelperServiceTestBase
         {
             var actualArray = actual.ToArray();
             builder.AppendLine("//line,characterPos,length,tokenType,modifier");
-            var legendArray = RazorSemanticTokensLegend.TokenTypes.ToArray();
+            var legendArray = TestRazorSemanticTokensLegend.Instance.Legend.TokenTypes;
             for (var i = 0; i < actualArray.Length; i += 5)
             {
                 var typeString = legendArray[actualArray[i + 3]];
@@ -189,7 +189,7 @@ public abstract class SemanticTokenTestBase : TagHelperServiceTestBase
             return null;
         }
 
-        var tokenTypesList = RazorSemanticTokensLegend.TokenTypes.ToList();
+        var tokenTypesList = TestRazorSemanticTokensLegend.Instance.Legend.TokenTypes.ToList();
         var strArr = semanticIntStr.Split(new string[] { " ", Environment.NewLine }, StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
         var results = new List<int>();
         for (var i = 0; i < strArr.Length; i++)

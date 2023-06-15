@@ -46,12 +46,13 @@ internal class RazorSemanticTokensInfoService : IRazorSemanticTokensInfoService
         TextDocumentIdentifier textDocumentIdentifier,
         Range range,
         VersionedDocumentContext documentContext,
+        RazorSemanticTokensLegend razorSemanticTokensLegend,
         CancellationToken cancellationToken)
     {
         var codeDocument = await documentContext.GetCodeDocumentAsync(cancellationToken).ConfigureAwait(false);
 
         cancellationToken.ThrowIfCancellationRequested();
-        var razorSemanticRanges = TagHelperSemanticRangeVisitor.VisitAllNodes(codeDocument, range);
+        var razorSemanticRanges = TagHelperSemanticRangeVisitor.VisitAllNodes(codeDocument, range, razorSemanticTokensLegend);
         List<SemanticRange>? csharpSemanticRanges = null;
 
         try

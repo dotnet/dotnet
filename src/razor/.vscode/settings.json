@@ -12,5 +12,6 @@
   "[json]": {
     "editor.tabSize": 2
   },
+  "dotnet.defaultSolution": "Razor.sln",
   "omnisharp.defaultLaunchSolution": "Razor.sln"
 }

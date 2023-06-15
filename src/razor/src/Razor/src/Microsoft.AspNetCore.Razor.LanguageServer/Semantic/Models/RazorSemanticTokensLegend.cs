@@ -3,15 +3,16 @@
 
 using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.Linq;
 using System.Reflection;
+using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 
-namespace Microsoft.AspNetCore.Razor.LanguageServer.Semantic.Models;
+namespace Microsoft.AspNetCore.Razor.LanguageServer.Semantic;
 
 internal class RazorSemanticTokensLegend
 {
+#pragma warning disable IDE1006 // Naming Styles - These names are queried with reflection below
     private static readonly string MarkupAttributeQuoteType = "markupAttributeQuote";
     private static readonly string MarkupAttributeType = "markupAttribute";
     private static readonly string MarkupAttributeValueType = "markupAttributeValue";
@@ -33,45 +34,58 @@ internal class RazorSemanticTokensLegend
     private static readonly string RazorTagHelperAttributeType = "razorTagHelperAttribute";
     private static readonly string RazorTagHelperElementType = "razorTagHelperElement";
     private static readonly string RazorTransitionType = "razorTransition";
+#pragma warning restore IDE1006 // Naming Styles
 
-    public static int MarkupAttribute => TokenTypesLegend[MarkupAttributeType];
-    public static int MarkupAttributeQuote => TokenTypesLegend[MarkupAttributeQuoteType];
-    public static int MarkupAttributeValue => TokenTypesLegend[MarkupAttributeValueType];
-    public static int MarkupComment => TokenTypesLegend[MarkupCommentType];
-    public static int MarkupCommentPunctuation => TokenTypesLegend[MarkupCommentPunctuationType];
-    public static int MarkupElement => TokenTypesLegend[MarkupElementType];
-    public static int MarkupOperator => TokenTypesLegend[MarkupOperatorType];
-    public static int MarkupTagDelimiter => TokenTypesLegend[MarkupTagDelimiterType];
-    public static int MarkupTextLiteral => TokenTypesLegend[MarkupTextLiteralType];
+    public int MarkupAttribute => _razorTokenTypeMap[MarkupAttributeType];
+    public int MarkupAttributeQuote => _razorTokenTypeMap[MarkupAttributeQuoteType];
+    public int MarkupAttributeValue => _razorTokenTypeMap[MarkupAttributeValueType];
+    public int MarkupComment => _razorTokenTypeMap[MarkupCommentType];
+    public int MarkupCommentPunctuation => _razorTokenTypeMap[MarkupCommentPunctuationType];
+    public int MarkupElement => _razorTokenTypeMap[MarkupElementType];
+    public int MarkupOperator => _razorTokenTypeMap[MarkupOperatorType];
+    public int MarkupTagDelimiter => _razorTokenTypeMap[MarkupTagDelimiterType];
+    public int MarkupTextLiteral => _razorTokenTypeMap[MarkupTextLiteralType];
 
-    public static int RazorComment => TokenTypesLegend[RazorCommentType];
-    public static int RazorCommentStar => TokenTypesLegend[RazorCommentStarType];
-    public static int RazorCommentTransition => TokenTypesLegend[RazorCommentTransitionType];
-    public static int RazorComponentAttribute => TokenTypesLegend[RazorComponentAttributeType];
-    public static int RazorComponentElement => TokenTypesLegend[RazorComponentElementType];
-    public static int RazorDirective => TokenTypesLegend[RazorDirectiveType];
-    public static int RazorDirectiveAttribute => TokenTypesLegend[RazorDirectiveAttributeType];
-    public static int RazorDirectiveColon => TokenTypesLegend[RazorDirectiveColonType];
-    public static int RazorTagHelperAttribute => TokenTypesLegend[RazorTagHelperAttributeType];
-    public static int RazorTagHelperElement => TokenTypesLegend[RazorTagHelperElementType];
-    public static int RazorTransition => TokenTypesLegend[RazorTransitionType];
+    public int RazorComment => _razorTokenTypeMap[RazorCommentType];
+    public int RazorCommentStar => _razorTokenTypeMap[RazorCommentStarType];
+    public int RazorCommentTransition => _razorTokenTypeMap[RazorCommentTransitionType];
+    public int RazorComponentAttribute => _razorTokenTypeMap[RazorComponentAttributeType];
+    public int RazorComponentElement => _razorTokenTypeMap[RazorComponentElementType];
+    public int RazorDirective => _razorTokenTypeMap[RazorDirectiveType];
+    public int RazorDirectiveAttribute => _razorTokenTypeMap[RazorDirectiveAttributeType];
+    public int RazorDirectiveColon => _razorTokenTypeMap[RazorDirectiveColonType];
+    public int RazorTagHelperAttribute => _razorTokenTypeMap[RazorTagHelperAttributeType];
+    public int RazorTagHelperElement => _razorTokenTypeMap[RazorTagHelperElementType];
+    public int RazorTransition => _razorTokenTypeMap[RazorTransitionType];
 
-    public static int CSharpKeyword => TokenTypesLegend["keyword"];
-    public static int CSharpOperator => TokenTypesLegend["operator"];
-    public static int CSharpPunctuation => TokenTypesLegend["punctuation"];
-    public static int CSharpString => TokenTypesLegend["string"];
-    public static int CSharpVariable => TokenTypesLegend["variable"];
+    public SemanticTokensLegend Legend => _legend;
 
-    // C# types + Razor types
-    public static readonly ImmutableArray<string> TokenTypes = GetTokenTypes();
+    private readonly SemanticTokensLegend _legend;
+    private readonly Dictionary<string, int> _razorTokenTypeMap;
 
-    private static ImmutableArray<string> GetTokenTypes()
+    public RazorSemanticTokensLegend(ClientCapabilities clientCapabilities)
     {
-        var builder = ImmutableArray.CreateBuilder<string>();
+        var _ = ArrayBuilderPool<string>.GetPooledObject(out var builder);
 
-#pragma warning disable CS0618 // RoslynTokenTypes is obsolete
-        builder.AddRange(RazorSemanticTokensAccessor.RoslynTokenTypes);
-#pragma warning restore CS0618
+        builder.AddRange(RazorSemanticTokensAccessor.GetTokenTypes(clientCapabilities));
+
+        _razorTokenTypeMap = new Dictionary<string, int>();
+        foreach (var razorTokenType in GetRazorSemanticTokenTypes())
+        {
+            _razorTokenTypeMap.Add(razorTokenType, builder.Count);
+            builder.Add(razorTokenType);
+        }
+
+        _legend = new()
+        {
+            TokenModifiers = s_tokenModifiers,
+            TokenTypes = builder.ToArray()
+        };
+    }
+
+    private static ImmutableArray<string> GetRazorSemanticTokenTypes()
+    {
+        var _ = ArrayBuilderPool<string>.GetPooledObject(out var builder);
 
         foreach (var field in typeof(RazorSemanticTokensLegend).GetFields(BindingFlags.NonPublic | BindingFlags.Static))
         {
@@ -90,23 +104,4 @@ internal class RazorSemanticTokensLegend
         // C# Modifiers
         "static",
     };
-
-    public static readonly IReadOnlyDictionary<string, int> TokenTypesLegend = GetMap(TokenTypes);
-
-    public static readonly SemanticTokensLegend Instance = new()
-    {
-        TokenModifiers = s_tokenModifiers,
-        TokenTypes = TokenTypes.ToArray(),
-    };
-
-    private static IReadOnlyDictionary<string, int> GetMap(IReadOnlyList<string> tokens)
-    {
-        var result = new Dictionary<string, int>();
-        for (var i = 0; i < tokens.Count; i++)
-        {
-            result[tokens[i]] = i;
-        }
-
-        return result;
-    }
 }
