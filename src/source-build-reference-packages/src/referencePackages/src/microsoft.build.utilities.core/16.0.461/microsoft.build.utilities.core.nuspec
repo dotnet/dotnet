@@ -6,7 +6,7 @@
     <authors>Microsoft</authors>
     <owners>Microsoft</owners>
     <requireLicenseAcceptance>true</requireLicenseAcceptance>
-    <licenseUrl>http://go.microsoft.com/fwlink/?LinkId=329770</licenseUrl>
+    <licenseUrl>https://microsoft.mit-license.org/</licenseUrl>
     <projectUrl>http://go.microsoft.com/fwlink/?LinkId=624683</projectUrl>
     <iconUrl>https://go.microsoft.com/fwlink/?linkid=825694</iconUrl>
     <description>This package contains the Microsoft.Build.Utilities assembly which is used to implement custom MSBuild tasks.</description>
