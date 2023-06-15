@@ -12,6 +12,7 @@ using System.Text;
 using Microsoft.AspNetCore.Razor.Language.CodeGeneration;
 using Microsoft.AspNetCore.Razor.Language.Extensions;
 using Microsoft.AspNetCore.Razor.Language.Intermediate;
+using Microsoft.AspNetCore.Razor.PooledObjects;
 
 namespace Microsoft.AspNetCore.Razor.Language.Components;
 
@@ -649,7 +650,7 @@ internal class ComponentRuntimeNodeWriter : ComponentNodeWriter
                 context.CodeWriter.Write(".");
                 context.CodeWriter.Write(ComponentsApi.EventCallbackFactory.CreateMethod);
 
-                if (isInferred != true && node.TryParseEventCallbackTypeArgument(out StringSegment argument))
+                if (isInferred != true && node.TryParseEventCallbackTypeArgument(out ReadOnlyMemory<char> argument))
                 {
                     context.CodeWriter.Write("<");
                     if (explicitType == true)
@@ -712,7 +713,7 @@ internal class ComponentRuntimeNodeWriter : ComponentNodeWriter
 
             static void QualifyEventCallback(CodeWriter codeWriter, string typeName, bool? explicitType)
             {
-                if (ComponentAttributeIntermediateNode.TryGetEventCallbackArgument(typeName, out var argument))
+                if (ComponentAttributeIntermediateNode.TryGetEventCallbackArgument(typeName.AsMemory(), out var argument))
                 {
                     codeWriter.Write("global::");
                     codeWriter.Write(ComponentsApi.EventCallback.FullTypeName);
@@ -1003,12 +1004,14 @@ internal class ComponentRuntimeNodeWriter : ComponentNodeWriter
 
     private static string GetHtmlContent(HtmlContentIntermediateNode node)
     {
-        var builder = new StringBuilder();
+        using var _ = StringBuilderPool.GetPooledObject(out var builder);
+
         var htmlTokens = node.Children.OfType<IntermediateToken>().Where(t => t.IsHtml);
         foreach (var htmlToken in htmlTokens)
         {
             builder.Append(htmlToken.Content);
         }
+
         return builder.ToString();
     }
 

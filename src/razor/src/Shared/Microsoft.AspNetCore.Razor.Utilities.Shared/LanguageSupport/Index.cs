@@ -1,7 +1,7 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
-// Copied from https://github/dotnet/runtime
+// Copied from https://github.com/dotnet/runtime
 
 #if !NETCOREAPP3_0_OR_GREATER
 

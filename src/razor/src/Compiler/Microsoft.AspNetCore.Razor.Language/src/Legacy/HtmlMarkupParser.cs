@@ -2036,8 +2036,8 @@ internal class HtmlMarkupParser : TokenizerBackedParser<HtmlTokenizer>
             CurrentToken.Content[position] == sequence[0] &&
             position + sequence.Length <= CurrentToken.Content.Length)
         {
-            var possibleStart = new StringSegment(CurrentToken.Content, position, sequence.Length);
-            if (possibleStart.Equals(sequence, Comparison))
+            var possibleStart = CurrentToken.Content.AsSpan(position, sequence.Length);
+            if (possibleStart.Equals(sequence.AsSpan(), Comparison))
             {
                 // Capture the current token and "put it back" (really we just want to clear CurrentToken)
                 var bookmark = CurrentStart;
@@ -2045,13 +2045,10 @@ internal class HtmlMarkupParser : TokenizerBackedParser<HtmlTokenizer>
                 PutCurrentBack();
 
                 // Carve up the token
-                var pair = Language.SplitToken(token, position, SyntaxKind.Text);
-                var preSequence = pair.Item1;
-                Debug.Assert(pair.Item2 != null);
-                pair = Language.SplitToken(pair.Item2, sequence.Length, SyntaxKind.Text);
-                var sequenceToken = pair.Item1;
-                var postSequence = pair.Item2;
-                var postSequenceBookmark = bookmark.AbsoluteIndex + preSequence.Content.Length + pair.Item1.Content.Length;
+                var (preSequence, right) = Language.SplitToken(token, position, SyntaxKind.Text);
+                Debug.Assert(right != null);
+                var (sequenceToken, _) = Language.SplitToken(right, sequence.Length, SyntaxKind.Text);
+                var postSequenceBookmark = bookmark.AbsoluteIndex + preSequence.Content.Length + sequenceToken.Content.Length;
 
                 // Accept the first chunk (up to the nesting sequence we just saw)
                 if (!string.IsNullOrEmpty(preSequence.Content))

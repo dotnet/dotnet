@@ -85,7 +85,7 @@ internal abstract class LanguageCharacteristics<TTokenizer>
         return token != null && (token.Kind == GetKnownTokenType(type));
     }
 
-    public virtual Tuple<SyntaxToken, SyntaxToken> SplitToken(SyntaxToken token, int splitAt, SyntaxKind leftType)
+    public virtual (SyntaxToken left, SyntaxToken right) SplitToken(SyntaxToken token, int splitAt, SyntaxKind leftType)
     {
         var left = CreateToken(token.Content.Substring(0, splitAt), leftType, RazorDiagnostic.EmptyArray);
 
@@ -95,7 +95,7 @@ internal abstract class LanguageCharacteristics<TTokenizer>
             right = CreateToken(token.Content.Substring(splitAt), token.Kind, token.GetDiagnostics());
         }
 
-        return Tuple.Create(left, right);
+        return (left, right);
     }
 
     public abstract SyntaxKind GetKnownTokenType(KnownTokenType type);

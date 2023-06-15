@@ -246,9 +246,9 @@ internal class ImplicitExpressionEditHandler : SpanEditHandler
         }
 
         var relativePosition = changeStart - target.Position;
-        var deletionContent = new StringSegment(target.GetContent(), relativePosition, changeLength);
+        var deletionContent = target.GetContent().AsSpan(relativePosition, changeLength);
 
-        if (deletionContent.IndexOfAny(new[] { '(', ')' }) >= 0)
+        if (deletionContent.IndexOfAny('(', ')') >= 0)
         {
             // Change deleted some parenthesis
             return false;

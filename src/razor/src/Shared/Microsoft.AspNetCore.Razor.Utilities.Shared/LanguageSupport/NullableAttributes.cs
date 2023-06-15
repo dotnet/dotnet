@@ -3,7 +3,7 @@
 
 namespace System.Diagnostics.CodeAnalysis;
 
-// Copied from https://github/dotnet/runtime
+// Copied from https://github.com/dotnet/runtime
 
 // Note: These attributes were introduced in .NET Core 3.0 and .NET 5.
 

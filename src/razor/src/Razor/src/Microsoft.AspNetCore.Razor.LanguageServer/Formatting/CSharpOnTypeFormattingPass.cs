@@ -346,7 +346,7 @@ internal class CSharpOnTypeFormattingPass : CSharpFormattingPassBase
         }
 
         if (owner is CSharpStatementLiteralSyntax &&
-            owner.PreviousSpan() is { } prevNode &&
+            owner.TryGetPreviousSibling(out var prevNode) &&
             prevNode.AncestorsAndSelf().FirstOrDefault(a => a is CSharpTemplateBlockSyntax) is { } template &&
             owner.SpanStart == template.Span.End &&
             IsOnSingleLine(template, text))

@@ -991,7 +991,7 @@ internal class DefaultRazorIntermediateNodeLoweringPhase : RazorEnginePhaseBase,
                         TagHelper = associatedDescriptor,
                         AttributeStructure = node.TagHelperAttributeInfo.AttributeStructure,
                         Source = null,
-                        IsIndexerNameMatch = TagHelperMatchingConventions.SatisfiesBoundAttributeIndexer(attributeName, associatedAttributeDescriptor),
+                        IsIndexerNameMatch = TagHelperMatchingConventions.SatisfiesBoundAttributeIndexer(attributeName.AsSpan(), associatedAttributeDescriptor),
                     };
 
                     _builder.Add(setTagHelperProperty);
@@ -1034,7 +1034,7 @@ internal class DefaultRazorIntermediateNodeLoweringPhase : RazorEnginePhaseBase,
                         TagHelper = associatedDescriptor,
                         AttributeStructure = node.TagHelperAttributeInfo.AttributeStructure,
                         Source = BuildSourceSpanFromNode(attributeValueNode),
-                        IsIndexerNameMatch = TagHelperMatchingConventions.SatisfiesBoundAttributeIndexer(attributeName, associatedAttributeDescriptor),
+                        IsIndexerNameMatch = TagHelperMatchingConventions.SatisfiesBoundAttributeIndexer(attributeName.AsSpan(), associatedAttributeDescriptor),
                     };
 
                     _builder.Push(setTagHelperProperty);
@@ -1866,7 +1866,7 @@ internal class DefaultRazorIntermediateNodeLoweringPhase : RazorEnginePhaseBase,
                             attributeNode = new TagHelperDirectiveAttributeParameterIntermediateNode()
                             {
                                 AttributeName = actualAttributeName,
-                                AttributeNameWithoutParameter = attributeNameWithoutParameter.Value,
+                                AttributeNameWithoutParameter = attributeNameWithoutParameter.ToString(),
                                 OriginalAttributeName = attributeName,
                                 BoundAttributeParameter = associatedAttributeParameterDescriptor,
                                 BoundAttribute = associatedAttributeDescriptor,
@@ -1999,7 +1999,7 @@ internal class DefaultRazorIntermediateNodeLoweringPhase : RazorEnginePhaseBase,
                             attributeNode = new TagHelperDirectiveAttributeParameterIntermediateNode()
                             {
                                 AttributeName = actualAttributeName,
-                                AttributeNameWithoutParameter = attributeNameWithoutParameter.Value,
+                                AttributeNameWithoutParameter = attributeNameWithoutParameter.ToString(),
                                 OriginalAttributeName = attributeName,
                                 BoundAttributeParameter = associatedAttributeParameterDescriptor,
                                 BoundAttribute = associatedAttributeDescriptor,

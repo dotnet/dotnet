@@ -13,13 +13,17 @@ namespace Test
         #pragma warning disable 1998
         protected override void BuildRenderTree(global::Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder)
         {
-            __builder.OpenElement(0, "div");
-            __builder.OpenElement(1, "script");
-            __builder.AddAttribute(2, "src", "some/url.js");
-            __builder.AddAttribute(3, "anotherattribute");
-            __builder.AddMarkupContent(4, "\r\n        some text\r\n        some more text\r\n    ");
-            __builder.CloseElement();
-            __builder.CloseElement();
+            __builder.OpenComponent<global::Test.C<string>>(0);
+            __builder.AddComponentParameter(1, "Item", global::Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.TypeCheck<global::System.Int32>(
+#nullable restore
+#line 1 "x:\dir\subdir\Test\TestComponent.cshtml"
+                     1
+
+#line default
+#line hidden
+#nullable disable
+            ));
+            __builder.CloseComponent();
         }
         #pragma warning restore 1998
     }

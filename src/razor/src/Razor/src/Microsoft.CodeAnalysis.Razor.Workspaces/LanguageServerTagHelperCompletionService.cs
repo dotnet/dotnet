@@ -189,7 +189,7 @@ internal class LanguageServerTagHelperCompletionService : TagHelperCompletionSer
 
             foreach (var rule in possibleDescriptor.TagMatchingRules)
             {
-                if (!TagHelperMatchingConventions.SatisfiesParentTag(completionContext.ContainingParentTagName, rule))
+                if (!TagHelperMatchingConventions.SatisfiesParentTag(completionContext.ContainingParentTagName.AsSpanOrDefault(), rule))
                 {
                     continue;
                 }

@@ -443,7 +443,7 @@ internal class ComponentGenericTypePass : ComponentIntermediateNodePassBase, IRa
 
                 // Method name is generated and guaranteed not to collide, since it's unique for each
                 // component call site.
-                MethodName = $"Create{CSharpIdentifier.SanitizeIdentifier(node.TagName)}_{_id++}",
+                MethodName = $"Create{CSharpIdentifier.SanitizeIdentifier(node.TagName.AsSpanOrDefault())}_{_id++}",
                 FullTypeName = @namespace + ".TypeInference",
 
                 ReceivesCascadingGenericTypes = receivesCascadingGenericTypes,

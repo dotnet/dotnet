@@ -3,6 +3,7 @@
 
 using System;
 using System.Threading;
+using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.VisualStudio.Extensibility.Testing;
 using Xunit;
 using Xunit.Sdk;
@@ -38,6 +39,8 @@ public abstract class AbstractIntegrationTest : AbstractIdeIntegrationTest
 
     public override async Task InitializeAsync()
     {
+        ThrowingTraceListener.AddToListeners();
+
         await base.InitializeAsync();
     }
 }

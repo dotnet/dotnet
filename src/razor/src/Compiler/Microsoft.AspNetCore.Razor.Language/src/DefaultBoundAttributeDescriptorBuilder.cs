@@ -219,10 +219,10 @@ internal partial class DefaultBoundAttributeDescriptorBuilder : BoundAttributeDe
                 diagnostics.Add(diagnostic);
             }
 
-            StringSegment name = Name;
-            if (isDirectiveAttribute && name.StartsWith("@", StringComparison.Ordinal))
+            var name = Name.AsSpan();
+            if (isDirectiveAttribute && name[0] == '@')
             {
-                name = name.Subsegment(1);
+                name = name[1..];
             }
             else if (isDirectiveAttribute)
             {
@@ -234,16 +234,15 @@ internal partial class DefaultBoundAttributeDescriptorBuilder : BoundAttributeDe
                 diagnostics.Add(diagnostic);
             }
 
-            for (var i = 0; i < name.Length; i++)
+            foreach (var ch in name)
             {
-                var character = name[i];
-                if (char.IsWhiteSpace(character) || HtmlConventions.IsInvalidNonWhitespaceHtmlCharacters(character))
+                if (char.IsWhiteSpace(ch) || HtmlConventions.IsInvalidNonWhitespaceHtmlCharacters(ch))
                 {
                     var diagnostic = RazorDiagnosticFactory.CreateTagHelper_InvalidBoundAttributeName(
                         _parent.GetDisplayName(),
                         GetDisplayName(),
-                        name.Value,
-                        character);
+                        name.ToString(),
+                        ch);
 
                     diagnostics.Add(diagnostic);
                 }
@@ -271,31 +270,30 @@ internal partial class DefaultBoundAttributeDescriptorBuilder : BoundAttributeDe
             }
             else
             {
-                StringSegment indexerPrefix = IndexerAttributeNamePrefix;
-                if (isDirectiveAttribute && indexerPrefix.StartsWith("@", StringComparison.Ordinal))
+                var indexerPrefix = IndexerAttributeNamePrefix.AsSpan();
+                if (isDirectiveAttribute && indexerPrefix[0] == '@')
                 {
-                    indexerPrefix = indexerPrefix.Subsegment(1);
+                    indexerPrefix = indexerPrefix[1..];
                 }
                 else if (isDirectiveAttribute)
                 {
                     var diagnostic = RazorDiagnosticFactory.CreateTagHelper_InvalidBoundDirectiveAttributePrefix(
                         _parent.GetDisplayName(),
                         GetDisplayName(),
-                        indexerPrefix.Value);
+                        indexerPrefix.ToString());
 
                     diagnostics.Add(diagnostic);
                 }
 
-                for (var i = 0; i < indexerPrefix.Length; i++)
+                foreach (var ch in indexerPrefix)
                 {
-                    var character = indexerPrefix[i];
-                    if (char.IsWhiteSpace(character) || HtmlConventions.IsInvalidNonWhitespaceHtmlCharacters(character))
+                    if (char.IsWhiteSpace(ch) || HtmlConventions.IsInvalidNonWhitespaceHtmlCharacters(ch))
                     {
                         var diagnostic = RazorDiagnosticFactory.CreateTagHelper_InvalidBoundAttributePrefix(
                             _parent.GetDisplayName(),
                             GetDisplayName(),
-                            indexerPrefix.Value,
-                            character);
+                            indexerPrefix.ToString(),
+                            ch);
 
                         diagnostics.Add(diagnostic);
                     }

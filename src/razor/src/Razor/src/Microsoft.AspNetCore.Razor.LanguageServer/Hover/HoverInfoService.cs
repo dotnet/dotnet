@@ -187,7 +187,7 @@ internal sealed class HoverInfoService : IHoverInfoService
     {
         var descriptionInfos = descriptors.Select(boundAttribute =>
         {
-            var indexer = TagHelperMatchingConventions.SatisfiesBoundAttributeIndexer(attributeName, boundAttribute);
+            var indexer = TagHelperMatchingConventions.SatisfiesBoundAttributeIndexer(attributeName.AsSpan(), boundAttribute);
             var descriptionInfo = BoundAttributeDescriptionInfo.From(boundAttribute, indexer);
             return descriptionInfo;
         }).ToList().AsReadOnly();

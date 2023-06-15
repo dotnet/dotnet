@@ -34,6 +34,31 @@ internal static class SyntaxNodeExtensions
         return false;
     }
 
+    /// <summary>
+    /// Walks up the tree through the <paramref name="owner"/>'s parents to find the outermost node that starts at the same position.
+    /// </summary>
+    internal static SyntaxNode? GetOutermostNode(this SyntaxNode owner)
+    {
+        var node = owner.Parent;
+        if (node is null)
+        {
+            return owner;
+        }
+
+        var lastNode = node;
+        while (node.SpanStart == owner.SpanStart)
+        {
+            lastNode = node;
+            node = node.Parent;
+            if (node is null)
+            {
+                break;
+            }
+        }
+
+        return lastNode;
+    }
+
     internal static bool TryGetPreviousSibling(this SyntaxNode syntaxNode, [NotNullWhen(true)] out SyntaxNode? previousSibling)
     {
         var syntaxNodeParent = syntaxNode.Parent;

@@ -42,11 +42,11 @@ namespace Microsoft.NET.Sdk.Razor.SourceGenerators
 
         private const int RazorCodeGenerateStartId = 10;
         [Event(RazorCodeGenerateStartId, Level = EventLevel.Informational)]
-        public void RazorCodeGenerateStart(string file) => WriteEvent(RazorCodeGenerateStartId, file);
+        public void RazorCodeGenerateStart(string file, string kind) => WriteEvent(RazorCodeGenerateStartId, file, kind);
 
         private const int RazorCodeGenerateStopId = 11;
         [Event(RazorCodeGenerateStopId, Level = EventLevel.Informational)]
-        public void RazorCodeGenerateStop(string file) => WriteEvent(RazorCodeGenerateStopId, file);
+        public void RazorCodeGenerateStop(string file, string kind) => WriteEvent(RazorCodeGenerateStopId, file, kind);
 
         private const int AddSyntaxTreesId = 12;
         [Event(AddSyntaxTreesId, Level = EventLevel.Informational)]

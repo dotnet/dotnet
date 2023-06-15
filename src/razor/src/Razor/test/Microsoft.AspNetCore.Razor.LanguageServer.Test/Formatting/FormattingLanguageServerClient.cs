@@ -180,21 +180,6 @@ internal class FormattingLanguageServerClient : ClientNotifierServiceBase
         }
     }
 
-    private static Document GetCSharpDocument(RazorCodeDocument codeDocument, FormattingOptions options)
-    {
-        var adhocWorkspace = new AdhocWorkspace();
-        var csharpOptions = adhocWorkspace.Options
-            .WithChangedOption(CodeAnalysis.Formatting.FormattingOptions.TabSize, LanguageNames.CSharp, (int)options.TabSize)
-            .WithChangedOption(CodeAnalysis.Formatting.FormattingOptions.IndentationSize, LanguageNames.CSharp, (int)options.TabSize)
-            .WithChangedOption(CodeAnalysis.Formatting.FormattingOptions.UseTabs, LanguageNames.CSharp, !options.InsertSpaces);
-        adhocWorkspace.TryApplyChanges(adhocWorkspace.CurrentSolution.WithOptions(csharpOptions));
-
-        var project = adhocWorkspace.AddProject("TestProject", LanguageNames.CSharp);
-        var csharpSourceText = codeDocument.GetCSharpSourceText();
-        var csharpDocument = adhocWorkspace.AddDocument(project.Id, "TestDocument", csharpSourceText);
-        return csharpDocument;
-    }
-
     public override Task<TResponse> SendRequestAsync<TParams, TResponse>(string method, TParams @params, CancellationToken cancellationToken)
     {
         if (@params is DocumentFormattingParams formattingParams &&

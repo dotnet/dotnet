@@ -6,6 +6,7 @@
       "src\\Compiler\\Microsoft.AspNetCore.Mvc.Razor.Extensions\\src\\Microsoft.AspNetCore.Mvc.Razor.Extensions.csproj",
       "src\\Compiler\\Microsoft.AspNetCore.Razor.Language\\src\\Microsoft.AspNetCore.Razor.Language.csproj",
       "src\\Compiler\\Microsoft.CodeAnalysis.Razor\\src\\Microsoft.CodeAnalysis.Razor.csproj",
+      "src\\Compiler\\Microsoft.Net.Compilers.Razor.Toolset\\Microsoft.Net.Compilers.Razor.Toolset.csproj",
       "src\\Compiler\\Microsoft.NET.Sdk.Razor.SourceGenerators.Transport\\Microsoft.NET.Sdk.Razor.SourceGenerators.Transport.csproj",
       "src\\Compiler\\tools\\Microsoft.AspNetCore.Mvc.Razor.Extensions.Tooling.Internal\\Microsoft.AspNetCore.Mvc.Razor.Extensions.Tooling.Internal.csproj",
       "src\\Compiler\\tools\\Microsoft.CodeAnalysis.Razor.Tooling.Internal\\Microsoft.CodeAnalysis.Razor.Tooling.Internal.csproj",

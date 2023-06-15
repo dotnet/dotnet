@@ -106,11 +106,11 @@ internal partial class DefaultRequiredAttributeDescriptorBuilder : RequiredAttri
         }
         else
         {
-            var name = new StringSegment(Name);
+            var name = Name.AsSpan();
             var isDirectiveAttribute = IsDirectiveAttribute();
-            if (isDirectiveAttribute && name.StartsWith("@", StringComparison.Ordinal))
+            if (isDirectiveAttribute && name[0] == '@')
             {
-                name = name.Subsegment(1);
+                name = name[1..];
             }
             else if (isDirectiveAttribute)
             {
@@ -119,12 +119,11 @@ internal partial class DefaultRequiredAttributeDescriptorBuilder : RequiredAttri
                 diagnostics.Add(diagnostic);
             }
 
-            for (var i = 0; i < name.Length; i++)
+            foreach (var ch in name)
             {
-                var character = name[i];
-                if (char.IsWhiteSpace(character) || HtmlConventions.IsInvalidNonWhitespaceHtmlCharacters(character))
+                if (char.IsWhiteSpace(ch) || HtmlConventions.IsInvalidNonWhitespaceHtmlCharacters(ch))
                 {
-                    var diagnostic = RazorDiagnosticFactory.CreateTagHelper_InvalidTargetedAttributeName(Name, character);
+                    var diagnostic = RazorDiagnosticFactory.CreateTagHelper_InvalidTargetedAttributeName(Name, ch);
 
                     diagnostics.Add(diagnostic);
                 }

@@ -564,8 +564,8 @@ internal static class TagHelperParseTreeRewriter
                     var content = child.GetContent();
                     if (!string.IsNullOrWhiteSpace(content))
                     {
-                        var trimmedStart = content.TrimStart();
-                        var whitespace = new StringSegment(content, 0, content.Length - trimmedStart.Length);
+                        var trimmedStart = content.AsSpan().TrimStart();
+                        var whitespace = content[..^trimmedStart.Length];
                         var errorStart = SourceLocationTracker.Advance(child.GetSourceLocation(_source), whitespace);
                         var length = trimmedStart.TrimEnd().Length;
                         var allowedChildren = CurrentTagHelperTracker.AllowedChildren;

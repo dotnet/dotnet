@@ -1,8 +1,6 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-#nullable disable
-
 using System;
 
 namespace Microsoft.AspNetCore.Razor.Language.Legacy;
@@ -10,9 +8,9 @@ namespace Microsoft.AspNetCore.Razor.Language.Legacy;
 internal static class SourceLocationTracker
 {
     public static SourceLocation Advance(SourceLocation location, string text) =>
-        Advance(location, new StringSegment(text));
+        Advance(location, text.AsSpan());
 
-    public static SourceLocation Advance(SourceLocation location, StringSegment text)
+    public static SourceLocation Advance(SourceLocation location, ReadOnlySpan<char> text)
     {
         var absoluteIndex = location.AbsoluteIndex;
         var lineIndex = location.LineIndex;
@@ -24,6 +22,7 @@ internal static class SourceLocationTracker
             {
                 nextCharacter = text[i + 1];
             }
+
             UpdateCharacterCore(text[i], nextCharacter, ref absoluteIndex, ref lineIndex, ref characterIndex);
         }
 
@@ -34,8 +33,8 @@ internal static class SourceLocationTracker
     {
         absoluteIndex++;
 
-        if (Environment.NewLine.Length == 1 && characterRead == Environment.NewLine[0] ||
-            ParserHelpers.IsNewLine(characterRead) && (characterRead != '\r' || nextCharacter != '\n'))
+        if ((Environment.NewLine.Length == 1 && characterRead == Environment.NewLine[0]) ||
+            (ParserHelpers.IsNewLine(characterRead) && (characterRead != '\r' || nextCharacter != '\n')))
         {
             lineIndex++;
             characterIndex = 0;
