@@ -117,7 +117,7 @@ public static class NamespaceDirective
         for (var i = 0; i < segments.Length - 1; i++)
         {
             builder.Append('.');
-            builder.Append(CSharpIdentifier.SanitizeClassName(segments[i]));
+            builder.Append(CSharpIdentifier.SanitizeIdentifier(segments[i].AsSpan()));
         }
 
         return builder.ToString();

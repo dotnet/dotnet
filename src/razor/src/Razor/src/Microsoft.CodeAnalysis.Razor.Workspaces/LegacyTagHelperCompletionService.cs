@@ -196,7 +196,7 @@ internal class LegacyTagHelperCompletionService : TagHelperCompletionService
 
             foreach (var rule in possibleDescriptor.TagMatchingRules)
             {
-                if (!TagHelperMatchingConventions.SatisfiesParentTag(completionContext.ContainingTagName, rule))
+                if (!TagHelperMatchingConventions.SatisfiesParentTag(completionContext.ContainingTagName.AsSpanOrDefault(), rule))
                 {
                     continue;
                 }

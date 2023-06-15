@@ -11,6 +11,27 @@ abstract Microsoft.AspNetCore.Razor.Language.MetadataCollection.this[string! key
 abstract Microsoft.AspNetCore.Razor.Language.MetadataCollection.TryGetValue(string! key, out string? value) -> bool
 abstract Microsoft.AspNetCore.Razor.Language.MetadataCollection.Values.get -> System.Collections.Generic.IEnumerable<string?>!
 Microsoft.AspNetCore.Razor.Language.BoundAttributeDescriptor.IsDirectiveAttribute.get -> bool
+Microsoft.AspNetCore.Razor.Language.CodeGeneration.CodeWriter.CodeWriter(string! newLine, Microsoft.AspNetCore.Razor.Language.RazorCodeGenerationOptions! options) -> void
+Microsoft.AspNetCore.Razor.Language.CodeGeneration.CodeWriter.GenerateCode() -> string!
+Microsoft.AspNetCore.Razor.Language.CodeGeneration.CodeWriter.Indent(int size) -> Microsoft.AspNetCore.Razor.Language.CodeGeneration.CodeWriter!
+Microsoft.AspNetCore.Razor.Language.CodeGeneration.CodeWriter.LastChar.get -> char?
+Microsoft.AspNetCore.Razor.Language.CodeGeneration.CodeWriter.NewLine.get -> string!
+Microsoft.AspNetCore.Razor.Language.CodeGeneration.CodeWriter.NewLine.set -> void
+Microsoft.AspNetCore.Razor.Language.CodeGeneration.CodeWriter.Write(ref Microsoft.AspNetCore.Razor.Language.CodeGeneration.CodeWriter.WriteInterpolatedStringHandler handler) -> Microsoft.AspNetCore.Razor.Language.CodeGeneration.CodeWriter!
+Microsoft.AspNetCore.Razor.Language.CodeGeneration.CodeWriter.Write(string! value) -> Microsoft.AspNetCore.Razor.Language.CodeGeneration.CodeWriter!
+Microsoft.AspNetCore.Razor.Language.CodeGeneration.CodeWriter.Write(string! value, int startIndex, int count) -> Microsoft.AspNetCore.Razor.Language.CodeGeneration.CodeWriter!
+Microsoft.AspNetCore.Razor.Language.CodeGeneration.CodeWriter.Write(System.ReadOnlyMemory<char> value) -> Microsoft.AspNetCore.Razor.Language.CodeGeneration.CodeWriter!
+Microsoft.AspNetCore.Razor.Language.CodeGeneration.CodeWriter.WriteInterpolatedStringHandler
+Microsoft.AspNetCore.Razor.Language.CodeGeneration.CodeWriter.WriteInterpolatedStringHandler.AppendFormatted(string? value) -> void
+Microsoft.AspNetCore.Razor.Language.CodeGeneration.CodeWriter.WriteInterpolatedStringHandler.AppendFormatted(System.ReadOnlyMemory<char> value) -> void
+Microsoft.AspNetCore.Razor.Language.CodeGeneration.CodeWriter.WriteInterpolatedStringHandler.AppendFormatted<T>(T value) -> void
+Microsoft.AspNetCore.Razor.Language.CodeGeneration.CodeWriter.WriteInterpolatedStringHandler.AppendLiteral(string! value) -> void
+Microsoft.AspNetCore.Razor.Language.CodeGeneration.CodeWriter.WriteInterpolatedStringHandler.WriteInterpolatedStringHandler() -> void
+Microsoft.AspNetCore.Razor.Language.CodeGeneration.CodeWriter.WriteInterpolatedStringHandler.WriteInterpolatedStringHandler(int literalLength, int formattedCount, Microsoft.AspNetCore.Razor.Language.CodeGeneration.CodeWriter! writer) -> void
+Microsoft.AspNetCore.Razor.Language.CodeGeneration.CodeWriter.WriteLine() -> Microsoft.AspNetCore.Razor.Language.CodeGeneration.CodeWriter!
+Microsoft.AspNetCore.Razor.Language.CodeGeneration.CodeWriter.WriteLine(ref Microsoft.AspNetCore.Razor.Language.CodeGeneration.CodeWriter.WriteInterpolatedStringHandler handler) -> Microsoft.AspNetCore.Razor.Language.CodeGeneration.CodeWriter!
+Microsoft.AspNetCore.Razor.Language.CodeGeneration.CodeWriter.WriteLine(string! value) -> Microsoft.AspNetCore.Razor.Language.CodeGeneration.CodeWriter!
+Microsoft.AspNetCore.Razor.Language.CodeGeneration.CodeWriter.WriteLine(System.ReadOnlyMemory<char> value) -> Microsoft.AspNetCore.Razor.Language.CodeGeneration.CodeWriter!
 Microsoft.AspNetCore.Razor.Language.CodeGeneration.LinePragma.LinePragma() -> void
 Microsoft.AspNetCore.Razor.Language.CommonMetadata
 Microsoft.AspNetCore.Razor.Language.Intermediate.IntermediateNodeCollection.Enumerator.Enumerator() -> void
@@ -42,6 +63,7 @@ static Microsoft.AspNetCore.Razor.Language.MetadataCollection.Create(System.Coll
 static Microsoft.AspNetCore.Razor.Language.MetadataCollection.Create(System.Collections.Generic.KeyValuePair<string!, string?> pair1, System.Collections.Generic.KeyValuePair<string!, string?> pair2, System.Collections.Generic.KeyValuePair<string!, string?> pair3) -> Microsoft.AspNetCore.Razor.Language.MetadataCollection!
 static Microsoft.AspNetCore.Razor.Language.MetadataCollection.CreateOrEmpty(System.Collections.Generic.IReadOnlyDictionary<string!, string?>? map) -> Microsoft.AspNetCore.Razor.Language.MetadataCollection!
 static Microsoft.AspNetCore.Razor.Language.MetadataCollection.CreateOrEmpty(System.Collections.Generic.IReadOnlyList<System.Collections.Generic.KeyValuePair<string!, string?>>? pairs) -> Microsoft.AspNetCore.Razor.Language.MetadataCollection!
+static Microsoft.AspNetCore.Razor.Language.RazorCodeDocumentExtensions.TryComputeClassName(this Microsoft.AspNetCore.Razor.Language.RazorCodeDocument! codeDocument, out string? className) -> bool
 static readonly Microsoft.AspNetCore.Razor.Language.MetadataCollection.Empty -> Microsoft.AspNetCore.Razor.Language.MetadataCollection!
 virtual Microsoft.AspNetCore.Razor.Language.BoundAttributeDescriptorBuilder.SetMetadata(Microsoft.AspNetCore.Razor.Language.MetadataCollection! metadata) -> void
 virtual Microsoft.AspNetCore.Razor.Language.BoundAttributeDescriptorBuilder.TryGetMetadataValue(string! key, out string? value) -> bool

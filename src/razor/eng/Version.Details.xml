@@ -5,9 +5,9 @@
       <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-runtime</Uri>
       <Sha>839cdfb0ecca5e0be3dbccd926e7651ef50fdf10</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.SourceBuild.Intermediate.source-build-reference-packages" Version="8.0.0-alpha.1.23272.1">
+    <Dependency Name="Microsoft.SourceBuild.Intermediate.source-build-reference-packages" Version="8.0.0-alpha.1.23309.1">
       <Uri>https://github.com/dotnet/source-build-reference-packages</Uri>
-      <Sha>32291c2835d9ffcba7288a01a715c21512946c75</Sha>
+      <Sha>b0f656e394f8e98f48f11612ac997750bb85ff6c</Sha>
       <SourceBuild RepoName="source-build-reference-packages" ManagedOnly="true" />
     </Dependency>
     <Dependency Name="Microsoft.Net.Compilers.Toolset" Version="4.7.0-2.23301.2">
@@ -20,6 +20,10 @@
       <Sha>f6725f6f04ce03574fcf89faa4b20b72ef83e4dd</Sha>
     </Dependency>
     <Dependency Name="Microsoft.CodeAnalysis.ExternalAccess.Razor" Version="4.7.0-2.23301.2">
+      <Uri>https://github.com/dotnet/roslyn</Uri>
+      <Sha>f6725f6f04ce03574fcf89faa4b20b72ef83e4dd</Sha>
+    </Dependency>
+    <Dependency Name="Microsoft.CodeAnalysis.ExternalAccess.RazorCompiler" Version="4.7.0-2.23301.2">
       <Uri>https://github.com/dotnet/roslyn</Uri>
       <Sha>f6725f6f04ce03574fcf89faa4b20b72ef83e4dd</Sha>
     </Dependency>

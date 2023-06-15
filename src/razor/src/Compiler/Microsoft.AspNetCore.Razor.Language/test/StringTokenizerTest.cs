@@ -82,7 +82,7 @@ public class StringTokenizerTest
         var items = new List<string>();
         foreach (var token in tokenizer)
         {
-            items.Add(token.Value);
+            items.Add(token.ToString());
         }
 
         return items.ToArray();

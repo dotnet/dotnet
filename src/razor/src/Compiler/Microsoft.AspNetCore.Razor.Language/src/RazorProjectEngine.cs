@@ -250,7 +250,6 @@ public abstract class RazorProjectEngine
         // Optimization
         builder.Features.Add(new ComponentComplexAttributeContentPass());
         builder.Features.Add(new ComponentLoweringPass());
-        builder.Features.Add(new ComponentScriptTagPass());
         builder.Features.Add(new ComponentEventHandlerLoweringPass());
         builder.Features.Add(new ComponentKeyLoweringPass());
         builder.Features.Add(new ComponentReferenceCaptureLoweringPass());

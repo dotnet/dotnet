@@ -368,7 +368,7 @@ internal abstract class CSharpFormattingPassBase : FormattingPassBase
             if (owner.SpanStart == mappingSpan.Start &&
                 owner is CSharpStatementLiteralSyntax &&
                 owner.Parent is CSharpCodeBlockSyntax &&
-                owner.PreviousSpan() is CSharpTransitionSyntax)
+                owner.TryGetPreviousSibling(out var transition) && transition is CSharpTransitionSyntax)
             {
                 return true;
             }
@@ -487,12 +487,16 @@ internal abstract class CSharpFormattingPassBase : FormattingPassBase
         // Workaround for https://github.com/dotnet/aspnetcore/issues/36689
         // A tags owner comes back as itself if it is preceeded by a HTML comment,
         // because the whitespace between the comment and the tag is reported as not editable
-        if (owner is MarkupTextLiteralSyntax &&
-            owner.PreviousSpan() is MarkupTextLiteralSyntax literal &&
-            literal.ContainsOnlyWhitespace() &&
-            literal.PreviousSpan()?.Parent is MarkupCommentBlockSyntax)
+
+        // Get to the outermost node first. eg in "<span" we might be on the node for the "<", which is parented
+        // by some other intermediate node, which is parented by the actual start tag node. We need to get out to
+        // the start tag node, in order to reason about its siblings. The siblings of the "<" are not helpful :)
+        var outerNode = owner.GetOutermostNode();
+        if (outerNode is not null &&
+            outerNode.TryGetPreviousSibling(out var whiteSpace) && whiteSpace.ContainsOnlyWhitespace() &&
+            whiteSpace.TryGetPreviousSibling(out var comment) && comment is MarkupCommentBlockSyntax)
         {
-            owner = literal;
+            return whiteSpace;
         }
 
         return owner;

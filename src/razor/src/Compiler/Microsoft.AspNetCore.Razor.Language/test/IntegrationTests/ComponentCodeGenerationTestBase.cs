@@ -5886,6 +5886,27 @@ namespace Test
         CompileToAssembly(generated);
     }
 
+    [Fact, WorkItem("https://github.com/dotnet/razor/issues/8467")]
+    public void ChildComponent_AtSpecifiedInRazorFileForTypeParameter()
+    {
+        AdditionalSyntaxTrees.Add(Parse("""
+            using Microsoft.AspNetCore.Components;
+            namespace Test
+            {
+                public class C<T> : ComponentBase
+                {
+                    [Parameter] public int Item { get; set; }
+                }
+            }
+            """));
+
+        var generated = CompileToCSharp("""<C T="@string" Item="1" />""");
+
+        AssertDocumentNodeMatchesBaseline(generated.CodeDocument);
+        AssertCSharpDocumentMatchesBaseline(generated.CodeDocument);
+        CompileToAssembly(generated);
+    }
+
     [Fact]
     public void GenericComponent_NonPrimitiveType()
     {
@@ -9569,25 +9590,6 @@ namespace Test
 
         var diagnostic = Assert.Single(generated.Diagnostics);
         Assert.Same(ComponentDiagnosticFactory.DuplicateComponentParameterDirective.Id, diagnostic.Id);
-    }
-
-    [Fact]
-    public void ScriptTag_WithErrorSuppressed()
-    {
-        // Arrange/Act
-        var generated = CompileToCSharp(@"
-<div>
-    <script src='some/url.js' anotherattribute suppress-error='BL9992'>
-        some text
-        some more text
-    </script>
-</div>
-");
-
-        // Assert
-        AssertDocumentNodeMatchesBaseline(generated.CodeDocument);
-        AssertCSharpDocumentMatchesBaseline(generated.CodeDocument);
-        CompileToAssembly(generated);
     }
 
     [Fact, WorkItem("https://github.com/dotnet/blazor/issues/597")]

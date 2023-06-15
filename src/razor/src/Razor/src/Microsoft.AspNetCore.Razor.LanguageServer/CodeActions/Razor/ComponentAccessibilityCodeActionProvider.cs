@@ -140,7 +140,7 @@ internal sealed class ComponentAccessibilityCodeActionProvider : IRazorCodeActio
 
             // if fqn contains a generic typeparam, we should strip it out. Otherwise, replacing tag name will leave generic parameters in razor code, which are illegal
             // e.g. <Component /> -> <Component<T> />
-            var fullyQualifiedName = DefaultRazorComponentSearchEngine.RemoveGenericContent(tagHelperPair._short.Name).ToString();
+            var fullyQualifiedName = DefaultRazorComponentSearchEngine.RemoveGenericContent(tagHelperPair._short.Name.AsMemory()).ToString();
 
             // Insert @using
             if (AddUsingsCodeActionProviderHelper.TryCreateAddUsingResolutionParams(fullyQualifiedName, context.Request.TextDocument.Uri, out var @namespace, out var resolutionParams))
@@ -177,7 +177,7 @@ internal sealed class ComponentAccessibilityCodeActionProvider : IRazorCodeActio
 
         foreach (var tagHelper in context.DocumentSnapshot.Project.TagHelpers)
         {
-            if (tagHelper.TagMatchingRules.All(rule => TagHelperMatchingConventions.SatisfiesRule(tagName, parentTagName, attributes, rule)))
+            if (tagHelper.TagMatchingRules.All(rule => TagHelperMatchingConventions.SatisfiesRule(tagName.AsSpan(), parentTagName.AsSpan(), attributes, rule)))
             {
                 matching.Add(tagHelper.Name, new TagHelperPair(@short: tagHelper));
             }

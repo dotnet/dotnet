@@ -98,6 +98,16 @@ internal class IntermediateNodeFormatterBase : IntermediateNodeFormatter
             Writer.Write(" ");
             Writer.Write(node.Source?.ToString() ?? "(n/a)");
         }
+
+        static string GetShortName(IntermediateNode node)
+        {
+            var typeName = node.GetType().Name;
+            var suffix = nameof(IntermediateNode);
+
+            return typeName.EndsWith(suffix, StringComparison.Ordinal)
+                ? typeName[..^suffix.Length].ToString()
+                : typeName;
+        }
     }
 
     private void EndNode(IntermediateNode node)
@@ -120,15 +130,6 @@ internal class IntermediateNodeFormatterBase : IntermediateNodeFormatter
 
         _content = null;
         _properties.Clear();
-    }
-
-    private StringSegment GetShortName(IntermediateNode node)
-    {
-        var typeName = node.GetType().Name;
-        return
-            typeName.EndsWith(nameof(IntermediateNode), StringComparison.Ordinal) ?
-            new StringSegment(typeName, 0, typeName.Length - nameof(IntermediateNode).Length) :
-            typeName;
     }
 
     private string EscapeNewlines(string content)

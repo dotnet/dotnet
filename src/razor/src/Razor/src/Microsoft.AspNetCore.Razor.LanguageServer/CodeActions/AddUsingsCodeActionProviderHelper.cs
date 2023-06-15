@@ -73,12 +73,12 @@ internal static class AddUsingsCodeActionProviderHelper
     // Internal for testing
     internal static string GetNamespaceFromFQN(string fullyQualifiedName)
     {
-        if (!TrySplitNamespaceAndType(fullyQualifiedName, out var namespaceName, out _))
+        if (!TrySplitNamespaceAndType(fullyQualifiedName.AsSpan(), out var namespaceName, out _))
         {
             return string.Empty;
         }
 
-        return namespaceName.Value;
+        return namespaceName.ToString();
     }
 
     internal static bool TryCreateAddUsingResolutionParams(string fullyQualifiedName, Uri uri, [NotNullWhen(true)] out string? @namespace, [NotNullWhen(true)] out RazorCodeActionResolutionParams? resolutionParams)
@@ -137,12 +137,12 @@ internal static class AddUsingsCodeActionProviderHelper
         return true;
     }
 
-    internal static bool TrySplitNamespaceAndType(StringSegment fullTypeName, out StringSegment @namespace, out StringSegment typeName)
+    internal static bool TrySplitNamespaceAndType(ReadOnlySpan<char> fullTypeName, out ReadOnlySpan<char> @namespace, out ReadOnlySpan<char> typeName)
     {
-        @namespace = StringSegment.Empty;
-        typeName = StringSegment.Empty;
+        @namespace = default;
+        typeName = default;
 
-        if (fullTypeName.IsEmpty || string.IsNullOrEmpty(fullTypeName.Buffer))
+        if (fullTypeName.IsEmpty)
         {
             return false;
         }
@@ -173,12 +173,12 @@ internal static class AddUsingsCodeActionProviderHelper
             return true;
         }
 
-        @namespace = fullTypeName.Subsegment(0, splitLocation);
+        @namespace = fullTypeName[..splitLocation];
 
         var typeNameStartLocation = splitLocation + 1;
         if (typeNameStartLocation < fullTypeName.Length)
         {
-            typeName = fullTypeName.Subsegment(typeNameStartLocation, fullTypeName.Length - typeNameStartLocation);
+            typeName = fullTypeName[typeNameStartLocation..];
         }
 
         return true;

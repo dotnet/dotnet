@@ -116,14 +116,14 @@ internal class DefaultTagHelperFactsService : TagHelperFactsService
             return matchingDescriptors;
         }
 
-        var tagNameWithoutPrefix = tagName[prefix.Length..];
+        var tagNameWithoutPrefix = tagName.AsSpan()[prefix.Length..];
         for (var i = 0; i < descriptors.Count; i++)
         {
             var descriptor = descriptors[i];
             foreach (var rule in descriptor.TagMatchingRules)
             {
                 if (TagHelperMatchingConventions.SatisfiesTagName(tagNameWithoutPrefix, rule) &&
-                    TagHelperMatchingConventions.SatisfiesParentTag(parentTag, rule))
+                    TagHelperMatchingConventions.SatisfiesParentTag(parentTag.AsSpanOrDefault(), rule))
                 {
                     matchingDescriptors.Add(descriptor);
                     break;
@@ -153,7 +153,7 @@ internal class DefaultTagHelperFactsService : TagHelperFactsService
             var descriptor = descriptors[i];
             foreach (var rule in descriptor.TagMatchingRules)
             {
-                if (TagHelperMatchingConventions.SatisfiesParentTag(parentTag, rule))
+                if (TagHelperMatchingConventions.SatisfiesParentTag(parentTag.AsSpanOrDefault(), rule))
                 {
                     matchingDescriptors.Add(descriptor);
                     break;

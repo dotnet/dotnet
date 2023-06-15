@@ -51,10 +51,11 @@
   <PropertyGroup Label="Automated">
     <MicrosoftNETCoreBrowserDebugHostTransportPackageVersion>6.0.2-servicing.22064.6</MicrosoftNETCoreBrowserDebugHostTransportPackageVersion>
     <MicrosoftNETCorePlatformsPackageVersion>6.0.1</MicrosoftNETCorePlatformsPackageVersion>
-    <MicrosoftSourceBuildIntermediatesourcebuildreferencepackagesPackageVersion>8.0.0-alpha.1.23272.1</MicrosoftSourceBuildIntermediatesourcebuildreferencepackagesPackageVersion>
+    <MicrosoftSourceBuildIntermediatesourcebuildreferencepackagesPackageVersion>8.0.0-alpha.1.23309.1</MicrosoftSourceBuildIntermediatesourcebuildreferencepackagesPackageVersion>
     <MicrosoftNetCompilersToolsetPackageVersion>4.7.0-2.23301.2</MicrosoftNetCompilersToolsetPackageVersion>
     <MicrosoftCommonLanguageServerProtocolFrameworkPackageVersion>4.7.0-2.23301.2</MicrosoftCommonLanguageServerProtocolFrameworkPackageVersion>
     <MicrosoftCodeAnalysisExternalAccessRazorPackageVersion>4.7.0-2.23301.2</MicrosoftCodeAnalysisExternalAccessRazorPackageVersion>
+    <MicrosoftCodeAnalysisExternalAccessRazorCompilerPackageVersion>4.7.0-2.23301.2</MicrosoftCodeAnalysisExternalAccessRazorCompilerPackageVersion>
     <MicrosoftCodeAnalysisExternalAccessOmniSharpCSharpPackageVersion>4.7.0-2.23301.2</MicrosoftCodeAnalysisExternalAccessOmniSharpCSharpPackageVersion>
     <MicrosoftCodeAnalysisCommonPackageVersion>4.7.0-2.23301.2</MicrosoftCodeAnalysisCommonPackageVersion>
     <MicrosoftCodeAnalysisCSharpPackageVersion>4.7.0-2.23301.2</MicrosoftCodeAnalysisCSharpPackageVersion>
@@ -72,9 +73,12 @@
     <MicrosoftVisualStudioLanguageServicesPackageVersion>4.7.0-2.23301.2</MicrosoftVisualStudioLanguageServicesPackageVersion>
     <MicrosoftSourceLinkGitHubPackageVersion>8.0.0-beta.23252.2</MicrosoftSourceLinkGitHubPackageVersion>
     <MicrosoftDotNetXliffTasksPackageVersion>1.0.0-beta.23266.1</MicrosoftDotNetXliffTasksPackageVersion>
-    <!-- Exception - this version is not updated by automation, but is in Version.Details due to source-build.
-        See its entry in Version.Details for more information. -->
+    <!--
+      Exception - Microsoft.Extensions.ObjectPool and System.Collections.Immutable packages are not updated by automation,
+      but are present in Version.Details.xml for source-build PVP flow. See the comment in Version.Details.xml for more information.
+    -->
     <MicrosoftExtensionsObjectPoolPackageVersion>6.0.0</MicrosoftExtensionsObjectPoolPackageVersion>
+    <SystemCollectionsImmutablePackageVersion>6.0.0</SystemCollectionsImmutablePackageVersion>
   </PropertyGroup>
   <!--
 
@@ -95,7 +99,6 @@
     <VisualStudioLanguageServerProtocolVersion>17.6.22</VisualStudioLanguageServerProtocolVersion>
     <!-- dotnet/runtime packages -->
     <MicrosoftExtensionsPackageVersion>6.0.0</MicrosoftExtensionsPackageVersion>
-    <SystemCollectionsImmutablePackageVersion>6.0.0</SystemCollectionsImmutablePackageVersion>
     <SystemCompositionPackageVersion>7.0.0</SystemCompositionPackageVersion>
     <SystemDiagnosticsDiagnosticSourcePackageVersion>6.0.0</SystemDiagnosticsDiagnosticSourcePackageVersion>
     <SystemResourcesExtensionsPackageVersion>6.0.0</SystemResourcesExtensionsPackageVersion>

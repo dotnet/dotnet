@@ -5,7 +5,6 @@
 
 using System;
 using System.Diagnostics;
-using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Language.Extensions;
 using Microsoft.AspNetCore.Razor.Language.Intermediate;
@@ -69,7 +68,7 @@ public class RazorPageDocumentClassifierPass : DocumentClassifierPassBase
             @namespace.Content = namespaceName;
         }
 
-        if (!TryComputeClassName(codeDocument, out var className))
+        if (!codeDocument.TryComputeClassName(out var className))
         {
             // It's possible for a Razor document to not have a file path.
             // Eg. When we try to generate code for an in memory document like default imports.
@@ -168,36 +167,5 @@ public class RazorPageDocumentClassifierPass : DocumentClassifierPassBase
         {
             options.ParseLeadingDirectives = true;
         }
-    }
-
-    private bool TryComputeClassName(RazorCodeDocument codeDocument, out string className)
-    {
-        var filePath = codeDocument.Source.RelativePath ?? codeDocument.Source.FilePath;
-        if (string.IsNullOrEmpty(filePath))
-        {
-            className = null;
-            return false;
-        }
-
-        className = GetClassNameFromPath(filePath);
-        return true;
-    }
-
-    private static string GetClassNameFromPath(string path)
-    {
-        const string cshtmlExtension = ".cshtml";
-
-        if (string.IsNullOrEmpty(path))
-        {
-            return path;
-        }
-
-        var pathSegment = new StringSegment(path);
-        if (path.EndsWith(cshtmlExtension, StringComparison.OrdinalIgnoreCase))
-        {
-            pathSegment = pathSegment.Subsegment(0, path.Length - cshtmlExtension.Length);
-        }
-
-        return CSharpIdentifier.SanitizeIdentifier(pathSegment);
     }
 }

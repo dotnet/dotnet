@@ -133,7 +133,7 @@ public abstract class SingleServerDelegatingEndpointTestBase : LanguageServerTes
                 RazorLanguageServerCustomMessageTargets.RazorProvideCodeActionsEndpoint => await HandleProvideCodeActionsAsync(@params),
                 RazorLanguageServerCustomMessageTargets.RazorResolveCodeActionsEndpoint => await HandleResolveCodeActionsAsync(@params),
                 RazorLanguageServerCustomMessageTargets.RazorPullDiagnosticEndpointName => await HandlePullDiagnosticsAsync(@params),
-                RazorLanguageServerCustomMessageTargets.RazorFoldingRangeEndpoint => await HandleFoldingRangeAsync(@params),
+                RazorLanguageServerCustomMessageTargets.RazorFoldingRangeEndpoint => await HandleFoldingRangeAsync(),
                 _ => throw new NotImplementedException($"I don't know how to handle the '{method}' method.")
             };
 
@@ -160,7 +160,7 @@ public abstract class SingleServerDelegatingEndpointTestBase : LanguageServerTes
             return new RazorPullDiagnosticResponse(result, Array.Empty<VSInternalDiagnosticReport>());
         }
 
-        private Task<RazorFoldingRangeResponse> HandleFoldingRangeAsync<TParams>(TParams @params)
+        private Task<RazorFoldingRangeResponse> HandleFoldingRangeAsync()
         {
             return Task.FromResult(new RazorFoldingRangeResponse(ImmutableArray<FoldingRange>.Empty, ImmutableArray<FoldingRange>.Empty));
         }

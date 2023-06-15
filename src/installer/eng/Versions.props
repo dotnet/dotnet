@@ -68,22 +68,22 @@
   </PropertyGroup>
   <PropertyGroup>
     <!-- Dependencies from https://github.com/aspnet/AspNetCore -->
-    <MicrosoftAspNetCoreAppRuntimewinx64PackageVersion>8.0.0-preview.6.23313.26</MicrosoftAspNetCoreAppRuntimewinx64PackageVersion>
-    <MicrosoftAspNetCoreAppRefPackageVersion>8.0.0-preview.6.23313.26</MicrosoftAspNetCoreAppRefPackageVersion>
-    <MicrosoftAspNetCoreAppRefInternalPackageVersion>8.0.0-preview.6.23313.26</MicrosoftAspNetCoreAppRefInternalPackageVersion>
-    <VSRedistCommonAspNetCoreSharedFrameworkx6480PackageVersion>8.0.0-preview.6.23313.26</VSRedistCommonAspNetCoreSharedFrameworkx6480PackageVersion>
-    <dotnetdevcertsPackageVersion>8.0.0-preview.6.23313.26</dotnetdevcertsPackageVersion>
-    <dotnetuserjwtsPackageVersion>8.0.0-preview.6.23313.26</dotnetuserjwtsPackageVersion>
-    <dotnetusersecretsPackageVersion>8.0.0-preview.6.23313.26</dotnetusersecretsPackageVersion>
+    <MicrosoftAspNetCoreAppRuntimewinx64PackageVersion>8.0.0-preview.6.23315.3</MicrosoftAspNetCoreAppRuntimewinx64PackageVersion>
+    <MicrosoftAspNetCoreAppRefPackageVersion>8.0.0-preview.6.23315.3</MicrosoftAspNetCoreAppRefPackageVersion>
+    <MicrosoftAspNetCoreAppRefInternalPackageVersion>8.0.0-preview.6.23315.3</MicrosoftAspNetCoreAppRefInternalPackageVersion>
+    <VSRedistCommonAspNetCoreSharedFrameworkx6480PackageVersion>8.0.0-preview.6.23315.3</VSRedistCommonAspNetCoreSharedFrameworkx6480PackageVersion>
+    <dotnetdevcertsPackageVersion>8.0.0-preview.6.23315.3</dotnetdevcertsPackageVersion>
+    <dotnetuserjwtsPackageVersion>8.0.0-preview.6.23315.3</dotnetuserjwtsPackageVersion>
+    <dotnetusersecretsPackageVersion>8.0.0-preview.6.23315.3</dotnetusersecretsPackageVersion>
   </PropertyGroup>
   <PropertyGroup>
     <MicroBuildCorePackageVersion>0.2.0</MicroBuildCorePackageVersion>
   </PropertyGroup>
   <PropertyGroup>
     <!-- Dependencies from https://github.com/dotnet/sdk -->
-    <MicrosoftDotNetCommonItemTemplatesPackageVersion>8.0.100-preview.6.23315.17</MicrosoftDotNetCommonItemTemplatesPackageVersion>
-    <MicrosoftNETSdkPackageVersion>8.0.100-preview.6.23315.17</MicrosoftNETSdkPackageVersion>
-    <MicrosoftDotNetMSBuildSdkResolverPackageVersion>8.0.100-preview.6.23315.17</MicrosoftDotNetMSBuildSdkResolverPackageVersion>
+    <MicrosoftDotNetCommonItemTemplatesPackageVersion>8.0.100-preview.6.23315.25</MicrosoftDotNetCommonItemTemplatesPackageVersion>
+    <MicrosoftNETSdkPackageVersion>8.0.100-preview.6.23315.25</MicrosoftNETSdkPackageVersion>
+    <MicrosoftDotNetMSBuildSdkResolverPackageVersion>8.0.100-preview.6.23315.25</MicrosoftDotNetMSBuildSdkResolverPackageVersion>
     <MicrosoftNETBuildExtensionsPackageVersion>$(MicrosoftNETSdkPackageVersion)</MicrosoftNETBuildExtensionsPackageVersion>
     <MicrosoftDotnetToolsetInternalPackageVersion>$(MicrosoftNETSdkPackageVersion)</MicrosoftDotnetToolsetInternalPackageVersion>
     <MicrosoftDotnetTemplateLocatorPackageVersion>$(MicrosoftNETSdkPackageVersion)</MicrosoftDotnetTemplateLocatorPackageVersion>
@@ -94,24 +94,24 @@
   </PropertyGroup>
   <PropertyGroup>
     <!-- Dependencies from https://github.com/dotnet/corefx -->
-    <MicrosoftNETCorePlatformsPackageVersion>8.0.0-preview.6.23315.1</MicrosoftNETCorePlatformsPackageVersion>
+    <MicrosoftNETCorePlatformsPackageVersion>8.0.0-preview.6.23315.2</MicrosoftNETCorePlatformsPackageVersion>
   </PropertyGroup>
   <PropertyGroup>
     <!-- Dependencies from https://github.com/dotnet/core-setup -->
-    <VSRedistCommonNetCoreSharedFrameworkx6480PackageVersion>8.0.0-preview.6.23315.1</VSRedistCommonNetCoreSharedFrameworkx6480PackageVersion>
-    <VSRedistCommonNetCoreTargetingPackx6480PackageVersion>8.0.0-preview.6.23315.1</VSRedistCommonNetCoreTargetingPackx6480PackageVersion>
-    <MicrosoftNETCoreAppRuntimewinx64PackageVersion>8.0.0-preview.6.23315.1</MicrosoftNETCoreAppRuntimewinx64PackageVersion>
-    <MicrosoftNETCoreAppHostwinx64PackageVersion>8.0.0-preview.6.23315.1</MicrosoftNETCoreAppHostwinx64PackageVersion>
-    <MicrosoftNETCoreAppRefPackageVersion>8.0.0-preview.6.23315.1</MicrosoftNETCoreAppRefPackageVersion>
-    <MicrosoftNETCoreDotNetHostResolverPackageVersion>8.0.0-preview.6.23315.1</MicrosoftNETCoreDotNetHostResolverPackageVersion>
+    <VSRedistCommonNetCoreSharedFrameworkx6480PackageVersion>8.0.0-preview.6.23315.2</VSRedistCommonNetCoreSharedFrameworkx6480PackageVersion>
+    <VSRedistCommonNetCoreTargetingPackx6480PackageVersion>8.0.0-preview.6.23315.2</VSRedistCommonNetCoreTargetingPackx6480PackageVersion>
+    <MicrosoftNETCoreAppRuntimewinx64PackageVersion>8.0.0-preview.6.23315.2</MicrosoftNETCoreAppRuntimewinx64PackageVersion>
+    <MicrosoftNETCoreAppHostwinx64PackageVersion>8.0.0-preview.6.23315.2</MicrosoftNETCoreAppHostwinx64PackageVersion>
+    <MicrosoftNETCoreAppRefPackageVersion>8.0.0-preview.6.23315.2</MicrosoftNETCoreAppRefPackageVersion>
+    <MicrosoftNETCoreDotNetHostResolverPackageVersion>8.0.0-preview.6.23315.2</MicrosoftNETCoreDotNetHostResolverPackageVersion>
     <NETStandardLibraryRefPackageVersion>2.1.0</NETStandardLibraryRefPackageVersion>
   </PropertyGroup>
   <PropertyGroup>
     <!-- Dependencies from https://github.com/dotnet/windowsdesktop -->
-    <VSRedistCommonWindowsDesktopSharedFrameworkx6480PackageVersion>8.0.0-preview.6.23314.9</VSRedistCommonWindowsDesktopSharedFrameworkx6480PackageVersion>
-    <VSRedistCommonWindowsDesktopTargetingPackx6480PackageVersion>8.0.0-preview.6.23314.9</VSRedistCommonWindowsDesktopTargetingPackx6480PackageVersion>
-    <MicrosoftWindowsDesktopAppRuntimewinx64PackageVersion>8.0.0-preview.6.23314.9</MicrosoftWindowsDesktopAppRuntimewinx64PackageVersion>
-    <MicrosoftWindowsDesktopAppRefPackageVersion>8.0.0-preview.6.23314.9</MicrosoftWindowsDesktopAppRefPackageVersion>
+    <VSRedistCommonWindowsDesktopSharedFrameworkx6480PackageVersion>8.0.0-preview.6.23315.3</VSRedistCommonWindowsDesktopSharedFrameworkx6480PackageVersion>
+    <VSRedistCommonWindowsDesktopTargetingPackx6480PackageVersion>8.0.0-preview.6.23315.3</VSRedistCommonWindowsDesktopTargetingPackx6480PackageVersion>
+    <MicrosoftWindowsDesktopAppRuntimewinx64PackageVersion>8.0.0-preview.6.23315.3</MicrosoftWindowsDesktopAppRuntimewinx64PackageVersion>
+    <MicrosoftWindowsDesktopAppRefPackageVersion>8.0.0-preview.6.23315.3</MicrosoftWindowsDesktopAppRefPackageVersion>
   </PropertyGroup>
   <PropertyGroup>
     <!-- Runtime and Apphost pack versions are the same for all RIDs. We flow the x64    -->
@@ -225,7 +225,7 @@
   <PropertyGroup>
     <VersionToolsVersion>2.2.0-beta.19072.10</VersionToolsVersion>
     <DotnetDebToolVersion>2.0.0</DotnetDebToolVersion>
-    <MicrosoftNETTestSdkVersion>17.7.0-preview-23313-04</MicrosoftNETTestSdkVersion>
+    <MicrosoftNETTestSdkVersion>17.7.0-preview-23315-01</MicrosoftNETTestSdkVersion>
     <MicrosoftExtensionsLoggingConsoleVersion>8.0.0-alpha.1.22557.12</MicrosoftExtensionsLoggingConsoleVersion>
   </PropertyGroup>
   <!-- Workload manifest package versions -->

@@ -1,8 +1,6 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-#nullable disable
-
 using System;
 using System.Linq;
 using Microsoft.AspNetCore.Razor.Language.Intermediate;
@@ -42,7 +40,7 @@ internal class ComponentPageDirectivePass : IntermediateNodePassBase, IRazorDire
             var directive = directives[i];
             if (FileKinds.IsComponentImport(codeDocument.GetFileKind()) || directive.Node.IsImported())
             {
-                directive.Node.Diagnostics.Add(ComponentDiagnosticFactory.CreatePageDirective_CannotBeImported(directive.Node.Source.Value));
+                directive.Node.Diagnostics.Add(ComponentDiagnosticFactory.CreatePageDirective_CannotBeImported(directive.Node.Source.GetValueOrDefault()));
             }
         }
 
@@ -63,13 +61,9 @@ internal class ComponentPageDirectivePass : IntermediateNodePassBase, IRazorDire
             // The parser also adds errors for invalid syntax, we just need to not crash.
             var routeToken = pageDirective.Tokens.FirstOrDefault();
 
-            if (routeToken != null &&
-                routeToken.Content.Length >= 3 &&
-                routeToken.Content[0] == '\"' &&
-                routeToken.Content[1] == '/' &&
-                routeToken.Content[routeToken.Content.Length - 1] == '\"')
+            if (routeToken is { Content: ['"', '/', .., '"'] content })
             {
-                var template = new StringSegment(routeToken.Content, 1, routeToken.Content.Length - 2);
+                var template = content.AsMemory(1, content.Length - 2);
                 @namespace.Children.Insert(index++, new RouteAttributeExtensionNode(template));
             }
             else

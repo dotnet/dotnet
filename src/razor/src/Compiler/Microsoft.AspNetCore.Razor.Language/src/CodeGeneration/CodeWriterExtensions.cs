@@ -16,22 +16,25 @@ internal static class CodeWriterExtensions
 {
     private const string InstanceMethodFormat = "{0}.{1}";
 
+    private static readonly ReadOnlyMemory<char> s_true = "true".AsMemory();
+    private static readonly ReadOnlyMemory<char> s_false = "false".AsMemory();
+
     private static readonly char[] CStyleStringLiteralEscapeChars =
     {
-            '\r',
-            '\t',
-            '\"',
-            '\'',
-            '\\',
-            '\0',
-            '\n',
-            '\u2028',
-            '\u2029',
-        };
+        '\r',
+        '\t',
+        '\"',
+        '\'',
+        '\\',
+        '\0',
+        '\n',
+        '\u2028',
+        '\u2029',
+    };
 
     public static bool IsAtBeginningOfLine(this CodeWriter writer)
     {
-        return writer.Length == 0 || writer[writer.Length - 1] == '\n';
+        return writer.LastChar is '\n';
     }
 
     public static CodeWriter WritePadding(this CodeWriter writer, int offset, SourceSpan? span, CodeRenderingContext context)
@@ -98,7 +101,7 @@ internal static class CodeWriterExtensions
 
     public static CodeWriter WriteBooleanLiteral(this CodeWriter writer, bool value)
     {
-        return writer.Write(value.ToString().ToLowerInvariant());
+        return writer.Write(value ? s_true : s_false);
     }
 
     public static CodeWriter WriteStartAssignment(this CodeWriter writer, string name)
@@ -117,8 +120,11 @@ internal static class CodeWriterExtensions
     }
 
     public static CodeWriter WriteStringLiteral(this CodeWriter writer, string literal)
+        => writer.WriteStringLiteral(literal.AsMemory());
+
+    public static CodeWriter WriteStringLiteral(this CodeWriter writer, ReadOnlyMemory<char> literal)
     {
-        if (literal.Length >= 256 && literal.Length <= 1500 && literal.IndexOf('\0') == -1)
+        if (literal.Length >= 256 && literal.Length <= 1500 && literal.Span.IndexOf('\0') == -1)
         {
             WriteVerbatimStringLiteral(writer, literal);
         }
@@ -511,50 +517,47 @@ internal static class CodeWriterExtensions
         return new LinePragmaWriter(writer, span.Value, context, characterOffset, useEnhancedLinePragma: true);
     }
 
-    private static void WriteVerbatimStringLiteral(CodeWriter writer, string literal)
+    private static void WriteVerbatimStringLiteral(CodeWriter writer, ReadOnlyMemory<char> literal)
     {
         writer.Write("@\"");
 
         // We need to suppress indenting during the writing of the string's content. A
         // verbatim string literal could contain newlines that don't get escaped.
-        var indent = writer.CurrentIndent;
+        var oldIndent = writer.CurrentIndent;
         writer.CurrentIndent = 0;
 
         // We need to find the index of each '"' (double-quote) to escape it.
-        var start = 0;
-        int end;
-        while ((end = literal.IndexOf('\"', start)) > -1)
+        int index;
+        while ((index = literal.Span.IndexOf('"')) >= 0)
         {
-            writer.Write(literal, start, end - start);
-
+            writer.Write(literal[..index]);
             writer.Write("\"\"");
 
-            start = end + 1;
+            literal = literal[(index + 1)..];
         }
 
-        Debug.Assert(end == -1); // We've hit all of the double-quotes.
+        Debug.Assert(index == -1); // We've hit all of the double-quotes.
 
         // Write the remainder after the last double-quote.
-        writer.Write(literal, start, literal.Length - start);
+        writer.Write(literal);
 
         writer.Write("\"");
 
-        writer.CurrentIndent = indent;
+        writer.CurrentIndent = oldIndent;
     }
 
-    private static void WriteCStyleStringLiteral(CodeWriter writer, string literal)
+    private static void WriteCStyleStringLiteral(CodeWriter writer, ReadOnlyMemory<char> literal)
     {
         // From CSharpCodeGenerator.QuoteSnippetStringCStyle in CodeDOM
         writer.Write("\"");
 
         // We need to find the index of each escapable character to escape it.
-        var start = 0;
-        int end;
-        while ((end = literal.IndexOfAny(CStyleStringLiteralEscapeChars, start)) > -1)
+        int index;
+        while ((index = literal.Span.IndexOfAny(CStyleStringLiteralEscapeChars)) >= 0)
         {
-            writer.Write(literal, start, end - start);
+            writer.Write(literal[..index]);
 
-            switch (literal[end])
+            switch (literal.Span[index])
             {
                 case '\r':
                     writer.Write("\\r");
@@ -578,22 +581,23 @@ internal static class CodeWriterExtensions
                     writer.Write("\\n");
                     break;
                 case '\u2028':
+                    writer.Write("\\u2028");
+                    break;
                 case '\u2029':
-                    writer.Write("\\u");
-                    writer.Write(((int)literal[end]).ToString("X4", CultureInfo.InvariantCulture));
+                    writer.Write("\\u2029");
                     break;
                 default:
                     Debug.Assert(false, "Unknown escape character.");
                     break;
             }
 
-            start = end + 1;
+            literal = literal[(index + 1)..];
         }
 
-        Debug.Assert(end == -1); // We've hit all of chars that need escaping.
+        Debug.Assert(index == -1); // We've hit all of chars that need escaping.
 
         // Write the remainder after the last escaped char.
-        writer.Write(literal, start, literal.Length - start);
+        writer.Write(literal);
 
         writer.Write("\"");
     }
@@ -645,8 +649,8 @@ internal static class CodeWriterExtensions
         private void TryAutoSpace(string spaceCharacter)
         {
             if (_autoSpace &&
-                _writer.Length > 0 &&
-                !char.IsWhiteSpace(_writer[_writer.Length - 1]))
+                _writer.LastChar is char ch &&
+                !char.IsWhiteSpace(ch))
             {
                 _writer.Write(spaceCharacter);
             }
@@ -683,7 +687,7 @@ internal static class CodeWriterExtensions
 
             if (!_context.Options.SuppressNullabilityEnforcement)
             {
-                var endsWithNewline = _writer.Length > 0 && _writer[_writer.Length - 1] == '\n';
+                var endsWithNewline = _writer.LastChar is '\n';
                 if (!endsWithNewline)
                 {
                     _writer.WriteLine();
@@ -709,7 +713,7 @@ internal static class CodeWriterExtensions
         {
             // Need to add an additional line at the end IF there wasn't one already written.
             // This is needed to work with the C# editor's handling of #line ...
-            var endsWithNewline = _writer.Length > 0 && _writer[_writer.Length - 1] == '\n';
+            var endsWithNewline = _writer.LastChar is '\n';
 
             // Always write at least 1 empty line to potentially separate code from pragmas.
             _writer.WriteLine();

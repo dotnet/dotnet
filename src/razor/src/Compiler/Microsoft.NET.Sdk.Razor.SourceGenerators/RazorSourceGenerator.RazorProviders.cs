@@ -28,6 +28,12 @@ namespace Microsoft.NET.Sdk.Razor.SourceGenerators
                 && suppressRazorSourceGenerator == "true";
         }
 
+        private static bool GetHostOutputsEnabledStatus(AnalyzerConfigOptionsProvider optionsProvider, CancellationToken _)
+        {
+            return optionsProvider.GlobalOptions.TryGetValue("build_property.EnableRazorHostOutputs", out var enableRazorHostOutputs)
+                && enableRazorHostOutputs == "true";
+        }
+
         private static (RazorSourceGenerationOptions?, Diagnostic?) ComputeRazorSourceGeneratorOptions((AnalyzerConfigOptionsProvider, ParseOptions) pair, CancellationToken ct)
         {
             Log.ComputeRazorSourceGeneratorOptions();

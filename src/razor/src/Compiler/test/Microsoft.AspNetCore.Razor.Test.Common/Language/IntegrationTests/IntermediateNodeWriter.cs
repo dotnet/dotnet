@@ -188,7 +188,7 @@ public class IntermediateNodeWriter :
 
     void IExtensionIntermediateNodeVisitor<RouteAttributeExtensionNode>.VisitExtension(RouteAttributeExtensionNode node)
     {
-        WriteContentNode(node, node.Template.Value);
+        WriteContentNode(node, node.Template.ToString());
     }
 
     public override void VisitExtension(ExtensionIntermediateNode node)

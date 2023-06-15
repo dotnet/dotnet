@@ -154,7 +154,7 @@ internal class ComponentDocumentClassifierPass : DocumentClassifierPassBase
         }
 
         var relativePath = NormalizePath(codeDocument.Source.RelativePath);
-        className = CSharpIdentifier.SanitizeIdentifier(Path.GetFileNameWithoutExtension(relativePath));
+        className = CSharpIdentifier.SanitizeIdentifier(Path.GetFileNameWithoutExtension(relativePath).AsSpanOrDefault());
         return true;
     }
 

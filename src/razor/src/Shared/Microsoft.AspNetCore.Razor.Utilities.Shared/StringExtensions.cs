@@ -12,4 +12,10 @@ internal static class StringExtensions
 
     public static bool IsNullOrWhiteSpace([NotNullWhen(false)] this string? s)
         => string.IsNullOrWhiteSpace(s);
+
+    public static ReadOnlySpan<char> AsSpanOrDefault(this string? s)
+        => s is not null ? s.AsSpan() : default;
+
+    public static ReadOnlyMemory<char> AsMemoryOrDefault(this string? s)
+        => s is not null ? s.AsMemory() : default;
 }

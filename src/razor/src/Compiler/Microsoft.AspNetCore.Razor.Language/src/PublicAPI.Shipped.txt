@@ -1,4 +1,4 @@
-﻿#nullable enable
+#nullable enable
 ~abstract Microsoft.AspNetCore.Razor.Language.AllowedChildTagDescriptorBuilder.Diagnostics.get -> Microsoft.AspNetCore.Razor.Language.RazorDiagnosticCollection
 ~abstract Microsoft.AspNetCore.Razor.Language.AllowedChildTagDescriptorBuilder.DisplayName.get -> string
 ~abstract Microsoft.AspNetCore.Razor.Language.AllowedChildTagDescriptorBuilder.DisplayName.set -> void
@@ -200,15 +200,6 @@
 ~Microsoft.AspNetCore.Razor.Language.BoundAttributeParameterDescriptor.Name.set -> void
 ~Microsoft.AspNetCore.Razor.Language.BoundAttributeParameterDescriptor.TypeName.get -> string
 ~Microsoft.AspNetCore.Razor.Language.BoundAttributeParameterDescriptor.TypeName.set -> void
-~Microsoft.AspNetCore.Razor.Language.CodeGeneration.CodeWriter.CodeWriter(string newLine, Microsoft.AspNetCore.Razor.Language.RazorCodeGenerationOptions options) -> void
-~Microsoft.AspNetCore.Razor.Language.CodeGeneration.CodeWriter.GenerateCode() -> string
-~Microsoft.AspNetCore.Razor.Language.CodeGeneration.CodeWriter.Indent(int size) -> Microsoft.AspNetCore.Razor.Language.CodeGeneration.CodeWriter
-~Microsoft.AspNetCore.Razor.Language.CodeGeneration.CodeWriter.NewLine.get -> string
-~Microsoft.AspNetCore.Razor.Language.CodeGeneration.CodeWriter.NewLine.set -> void
-~Microsoft.AspNetCore.Razor.Language.CodeGeneration.CodeWriter.Write(string value) -> Microsoft.AspNetCore.Razor.Language.CodeGeneration.CodeWriter
-~Microsoft.AspNetCore.Razor.Language.CodeGeneration.CodeWriter.Write(string value, int startIndex, int count) -> Microsoft.AspNetCore.Razor.Language.CodeGeneration.CodeWriter
-~Microsoft.AspNetCore.Razor.Language.CodeGeneration.CodeWriter.WriteLine() -> Microsoft.AspNetCore.Razor.Language.CodeGeneration.CodeWriter
-~Microsoft.AspNetCore.Razor.Language.CodeGeneration.CodeWriter.WriteLine(string value) -> Microsoft.AspNetCore.Razor.Language.CodeGeneration.CodeWriter
 ~Microsoft.AspNetCore.Razor.Language.CodeGeneration.LinePragma.FilePath.get -> string
 ~Microsoft.AspNetCore.Razor.Language.CodeGeneration.LinePragma.LinePragma(int startLineIndex, int lineCount, string filePath) -> void
 ~Microsoft.AspNetCore.Razor.Language.CodeGeneration.LinePragma.LinePragma(int startLineIndex, int lineCount, string filePath, int? startCharacterIndex, int? endCharacterIndex, int? characterOffset) -> void
