@@ -737,20 +737,20 @@ public partial class UsePrimaryConstructorTests
         }.RunAsync();
     }
 
-    [Fact(Skip = "Currently broken due to nested type IOp callbacks not running")]
-    public async Task TestDoNotRemoveMembersUsedInNestedTypes()
+    [Fact]
+    public async Task DoNotRemoveMembersUsedInNestedTypes()
     {
         await new VerifyCS.Test
         {
             TestCode = """
                 using System;
 
-                class C
+                class OuterType
                 {
                     private int _i;
                     private int _j;
 
-                    public [|C|](int i, int j)
+                    public [|OuterType|](int i, int j)
                     {
                         _i = i;
                         _j = j;
@@ -760,7 +760,7 @@ public partial class UsePrimaryConstructorTests
                     {
                         private int _i;
 
-                        public Enumerator(C c)
+                        public Enumerator(OuterType c)
                         {
                             _i = c._i;
                             Console.WriteLine(c);
@@ -771,17 +771,17 @@ public partial class UsePrimaryConstructorTests
             FixedCode = """
                 using System;
 
-                class C(int i, int j)
+                class OuterType(int i, int j)
                 {
-                    private int I { get; } = i;
+                    private int _i = i;
 
                     public struct Enumerator
                     {
                         private int _i;
                 
-                        public Enumerator(C c)
+                        public Enumerator(OuterType c)
                         {
-                            _i = c.I;
+                            _i = c._i;
                             Console.WriteLine(c);
                         }
                     }
@@ -2603,6 +2603,272 @@ public partial class UsePrimaryConstructorTests
                 }
                 """,
             CodeActionIndex = 1,
+            LanguageVersion = LanguageVersion.Preview,
+        }.RunAsync();
+    }
+
+    [Fact]
+    public async Task TestNotWithPreprocessorRegion1()
+    {
+        await new VerifyCS.Test
+        {
+            TestCode = """
+                using System;
+
+                class C
+                {
+                    public C(int i)
+                    {
+                #if NET6
+                        Console.WriteLine();
+                #endif
+                    }
+                }
+                """,
+            LanguageVersion = LanguageVersion.Preview,
+        }.RunAsync();
+    }
+
+    [Fact]
+    public async Task TestNotWithPreprocessorRegion2()
+    {
+        await new VerifyCS.Test
+        {
+            TestCode = """
+                using System;
+
+                class C
+                {
+                    public C(int i)
+                    {
+                #if false
+                        Console.WriteLine();
+                #endif
+                    }
+                }
+                """,
+            LanguageVersion = LanguageVersion.Preview,
+        }.RunAsync();
+    }
+
+    [Fact]
+    public async Task TestNotWithPreprocessorRegion3()
+    {
+        await new VerifyCS.Test
+        {
+            TestCode = """
+                using System;
+
+                class C
+                {
+                    private int _i;
+
+                    public C(int i)
+                #if NET6
+                        => _i = i;
+                #else
+                        => this._i = i;
+                #endif
+                }
+                """,
+            LanguageVersion = LanguageVersion.Preview,
+        }.RunAsync();
+    }
+
+    [Fact]
+    public async Task TestNotWithPreprocessorRegion4()
+    {
+        await new VerifyCS.Test
+        {
+            TestCode = """
+                using System;
+
+                class C
+                {
+                    private int _i;
+
+                    public C(int i)
+                #if true
+                        => _i = i;
+                #else
+                        => this._i = i;
+                #endif
+                }
+                """,
+            LanguageVersion = LanguageVersion.Preview,
+        }.RunAsync();
+    }
+
+    [Fact]
+    public async Task TestNotWithPreprocessorRegion5()
+    {
+        await new VerifyCS.Test
+        {
+            TestCode = """
+                using System;
+
+                class C
+                {
+                    private int _i;
+
+                    public C(int i)
+                #if false
+                        => _i = i;
+                #else
+                        => this._i = i;
+                #endif
+                }
+                """,
+            LanguageVersion = LanguageVersion.Preview,
+        }.RunAsync();
+    }
+
+    [Fact]
+    public async Task TestNotWithPreprocessorRegion6()
+    {
+        await new VerifyCS.Test
+        {
+            TestCode = """
+                using System;
+
+                class C
+                {
+                    private int _i;
+
+                    public C(int i)
+                    {
+                #if true
+                        _i = i;
+                #endif
+                    }
+                }
+                """,
+            LanguageVersion = LanguageVersion.Preview,
+        }.RunAsync();
+    }
+
+    [Fact]
+    public async Task TestNotWithPreprocessorRegion7()
+    {
+        await new VerifyCS.Test
+        {
+            TestCode = """
+                using System;
+
+                class C
+                {
+                    private int _i;
+
+                    public C(int i)
+                    {
+                #if true
+                        _i = i;
+                #else
+                        this._i = i;
+                #endif
+                    }
+                }
+                """,
+            LanguageVersion = LanguageVersion.Preview,
+        }.RunAsync();
+    }
+
+    [Fact]
+    public async Task TestNotWithPreprocessorRegion8()
+    {
+        await new VerifyCS.Test
+        {
+            TestCode = """
+                using System;
+
+                class C
+                {
+                    private int _i;
+
+                    public C(int i)
+                    {
+                #if false
+                        _i = i;
+                #else
+                        this._i = i;
+                #endif
+                    }
+                }
+                """,
+            LanguageVersion = LanguageVersion.Preview,
+        }.RunAsync();
+    }
+
+    [Fact]
+    public async Task TestWithRegionDirective1()
+    {
+        await new VerifyCS.Test
+        {
+            TestCode = """
+                class C
+                {
+
+                    #region constructors
+
+                    public [|C|](int i)
+                    {
+                    }
+
+                    #endregion
+
+                }
+                """,
+            FixedCode = """
+                class C(int i)
+                {
+                
+                    #region constructors
+
+                    #endregion
+
+                }
+                """,
+            LanguageVersion = LanguageVersion.Preview,
+        }.RunAsync();
+    }
+
+    [Fact]
+    public async Task TestWithRegionDirective2()
+    {
+        await new VerifyCS.Test
+        {
+            TestCode = """
+                class C
+                {
+
+                    #region constructors
+
+                    public [|C|](int i)
+                    {
+                    }
+
+                    public C(string s) : this(s.Length)
+                    {
+                    }
+
+                    #endregion
+
+                }
+                """,
+            FixedCode = """
+                class C(int i)
+                {
+
+                    #region constructors
+
+                    public C(string s) : this(s.Length)
+                    {
+                    }
+
+                    #endregion
+
+                }
+                """,
             LanguageVersion = LanguageVersion.Preview,
         }.RunAsync();
     }
