@@ -2,4 +2,112 @@
 
   <Import Project="Sdk.targets" Sdk="Microsoft.DotNet.Arcade.Sdk" />
 
+  <PropertyGroup>
+    <TFMPackTempOutputDir>$([MSBuild]::NormalizeDirectory('$(BaseOutputPath)', 'pack'))</TFMPackTempOutputDir>
+  </PropertyGroup>
+
+  <!--
+    Disable Arcade util that populates PackTask properties. For these projects, the nuspec already
+    contains everything. It's generated when the package is initially deconstructed and tends to be
+    unique per package, so there's no benefit to this Arcade util.
+  -->
+  <Target Name="InitializeStandardNuspecProperties" />
+
+  <Target Name="GetProjectSrc">
+    <ItemGroup>
+      <!--
+        Files that may need the 'constraint' token fixed before they can be assembled. They were
+        decompiled with a 3.1 ildasm not compatible with 5.0 ilasm. In some cases the fix is not
+        necessary for a given IL filename in a certain TFM, but is necessary for a file with the
+        same name in a different TFM. The patch doesn't take a particularly long time, so prefer
+        keeping this list simple.
+      -->
+      <TargetingPackSrcRequiringConstraintPatch
+        Include="
+          $(MSBuildProjectDirectory)\**\Microsoft.AspNetCore.Components.il;
+          $(MSBuildProjectDirectory)\**\Microsoft.AspNetCore.Mvc.Cors.il;
+          $(MSBuildProjectDirectory)\**\Microsoft.AspNetCore.Routing.il;
+          $(MSBuildProjectDirectory)\**\netstandard.il;
+          $(MSBuildProjectDirectory)\**\presentationframework.*.il;
+          $(MSBuildProjectDirectory)\**\PresentationFramework.*.il;
+          $(MSBuildProjectDirectory)\**\PresentationFramework.il;
+          $(MSBuildProjectDirectory)\**\System.Activities.Presentation.il;
+          $(MSBuildProjectDirectory)\**\System.ComponentModel.Composition.il;
+          $(MSBuildProjectDirectory)\**\System.Data.Common.il;
+          $(MSBuildProjectDirectory)\**\System.Data.Entity.il;
+          $(MSBuildProjectDirectory)\**\System.Data.il;
+          $(MSBuildProjectDirectory)\**\System.Design.il;
+          $(MSBuildProjectDirectory)\**\System.Reflection.Metadata.il;
+          $(MSBuildProjectDirectory)\**\System.Web.il;
+          $(MSBuildProjectDirectory)\**\System.Xml.il;
+          $(MSBuildProjectDirectory)\**\System.XML.il;
+          $(MSBuildProjectDirectory)\**\WindowsFormsIntegration.il" />
+
+      <!-- Find all IL. Leave out IL that needs to be patched before being built. -->
+      <TargetingPackSrc
+        Include="$(MSBuildProjectDirectory)\**\*.il"
+        Exclude="@(TargetingPackSrcRequiringConstraintPatch)" />
+      <TargetingPackSrc
+        RelativeOutputAssemblyFile="%(RecursiveDir)%(Filename).dll" />
+
+      <PotentialCompileSrc Include="**\*.cs" />
+
+      <NuGetGeneratedMetadataFile Include="
+        .signature.p7s;
+        _rels\**;
+        [Content_Types].xml;
+        " />
+
+      <StructureFile
+        Include="**\*.*"
+        Exclude="
+          @(TargetingPackSrc);
+          @(TargetingPackSrcRequiringConstraintPatch);
+          @(PotentialCompileSrc);
+          **\*.csproj;
+          @(NuGetGeneratedMetadataFile);
+          "
+        Condition="'$(TextOnlyPackage)' != 'true'" />
+      <StructureFile
+        Include="**\*"
+        Exclude="$(MSBuildProjectFullPath)"
+        Condition="'$(TextOnlyPackage)' == 'true'"/>
+
+      <StaticAssetFile
+        Include="@(StructureFile)"
+        Destination="$(TFMPackTempOutputDir)%(RecursiveDir)%(Filename)%(Extension)" />
+    </ItemGroup>
+  </Target>
+
+  <Target Name="CopyStaticAssetsToOutput"
+          BeforeTargets="GenerateNuspec"
+          DependsOnTargets="GetProjectSrc">
+    <!-- Ensure TFMPackTempOutputDir defined, to avoid globbing entire machine... -->
+    <Error Condition="'$(TFMPackTempOutputDir)' == ''" Text="TFMPackTempOutputDir not defined" />
+
+    <Copy
+      SourceFiles="@(StaticAssetFile)"
+      DestinationFiles="@(StaticAssetFile -> '%(Destination)')" />
+  </Target>
+
+  <!--
+    Instead of using the nuspec specified by a static property, use one that we find dynamically. In
+    this case, the project file has already statically set the nuspec property to some other value,
+    which takes priority over Directory.Build.props, so we override it dynamically in this target.
+
+    This target is also a nice place to enforce that we do actually have a nuspec.
+  -->
+  <Target Name="SetManualPackTaskInputs"
+          BeforeTargets="_CalculateInputsOutputsForPack;GenerateNuspec">
+    <ItemGroup>
+      <NuspecFile Include="*.nuspec" />
+    </ItemGroup>
+
+    <Error Condition="@(NuspecFile->Count()) != 1" Text="Expected exactly one nuspec file." />
+
+    <PropertyGroup>
+      <NuspecFile>$(TFMPackTempOutputDir)@(NuspecFile)</NuspecFile>
+    </PropertyGroup>
+  </Target>
+
 </Project>

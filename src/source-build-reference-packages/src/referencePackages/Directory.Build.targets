@@ -1,12 +1,62 @@
 <Project>
 
-  <Import Project="..\Directory.Build.targets" />
+  <Import Project="..\..\Directory.Build.targets" />
+
+  <PropertyGroup>
+    <NetStandard1xPackage>
+      Microsoft.NETCore.Platforms;
+      Microsoft.Win32.Primitives;
+      System.AppContext;
+      System.Collections;
+      System.Collections.Concurrent;
+      System.Console;
+      System.Diagnostics.Debug;
+      System.Diagnostics.Tools;
+      System.Diagnostics.Tracing;
+      System.Globalization;
+      System.Globalization.Calendars;
+      System.IO;
+      System.IO.Compression;
+      System.IO.Compression.ZipFile;
+      System.IO.FileSystem;
+      System.IO.FileSystem.Primitives;
+      System.Linq;
+      System.Linq.Expressions;
+      System.Net.Http;
+      System.Net.Primitives;
+      System.Net.Sockets;
+      System.ObjectModel;
+      System.Reflection;
+      System.Reflection.Extensions;
+      System.Reflection.Primitives;
+      System.Resources.ResourceManager;
+      System.Runtime;
+      System.Runtime.Extensions;
+      System.Runtime.Handles;
+      System.Runtime.InteropServices;
+      System.Runtime.InteropServices.RuntimeInformation;
+      System.Runtime.Numerics;
+      System.Security.Cryptography.Algorithms;
+      System.Security.Cryptography.Encoding;
+      System.Security.Cryptography.Primitives;
+      System.Security.Cryptography.X509Certificates;
+      System.Text.Encoding;
+      System.Text.Encoding.Extensions;
+      System.Text.RegularExpressions;
+      System.Threading;
+      System.Threading.Tasks;
+      System.Threading.Timer;
+      System.Xml.ReaderWriter;
+      System.Xml.XDocument;
+    </NetStandard1xPackage>
+  </PropertyGroup>
 
   <!-- Setting that are dependent on the project template version. -->
   <Choose>
     <When Condition="'$(ProjectTemplateVersion)' == '2'">
       <PropertyGroup>
-        <DisableImplicitFrameworkReferences>false</DisableImplicitFrameworkReferences>
+        <!-- When the library targets netstandard1.x and is part of the .NET Standard 1.x dependency graph, disable the implicit framework references to avoid cyclic dependencies. -->
+        <DisableImplicitFrameworkReferences Condition="'$(DisableImplicitFrameworkReferences)' == '' and $(TargetFramework.StartsWith('netstandard1')) and $(NetStandard1xPackage.Contains('$(AssemblyName);'))">true</DisableImplicitFrameworkReferences>
       </PropertyGroup>
 
       <ItemGroup>
@@ -14,6 +64,11 @@
         <Compile Include="lib/$(TargetFramework)/*$(DefaultLanguageSourceExtension)" />
       </ItemGroup>
     </When>
+    <Otherwise>
+      <PropertyGroup>
+        <DisableImplicitFrameworkReferences Condition="'$(DisableImplicitFrameworkReferences)' == ''">true</DisableImplicitFrameworkReferences>
+      </PropertyGroup>
+    </Otherwise>
   </Choose>
 
   <!--
@@ -58,6 +113,25 @@
                                                       Exclude="@(_targetingPackIncludedReferenceWithProjectName)" />
       <Reference Remove="@(_targetingPackExcludedReferenceWithProjectName->Metadata('OriginalIdentity'))" />
     </ItemGroup>
+  </Target>
+
+  <Target Name="CopyBuildOutputToTempOutput"
+          AfterTargets="CopyFilesToOutputDirectory">
+    <Error
+      Condition="@(Compile->Count()) != 1"
+      Text="Number of Compile items != 1. We need just one, to determine the path of the resulting DLL in the package including ref/lib and TFM." />
+
+    <ItemGroup>
+      <FullCompileDir Include="$([System.IO.Directory]::GetParent('%(Compile.Identity)'))" />
+      <RelativeCompileDir Include="$([MSBuild]::MakeRelative('$(MSBuildProjectDirectory)\', '%(FullCompileDir.Identity)'))" />
+    </ItemGroup>
+
+    <Copy
+      SourceFiles="$(TargetPath)"
+      DestinationFiles="$([MSBuild]::NormalizePath(
+        '$(TFMPackTempOutputDir)',
+        '%(RelativeCompileDir.Identity)',
+        '$(TargetFileName)'))" />
   </Target>
 
 </Project>

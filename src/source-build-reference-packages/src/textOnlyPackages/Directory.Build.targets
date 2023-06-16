@@ -1,6 +1,6 @@
 <Project>
 
-  <Import Project="$([MSBuild]::GetPathOfFileAbove(Directory.Build.targets, $(MSBuildThisFileDirectory)..))" />
+  <Import Project="..\..\Directory.Build.targets" />
 
   <!-- No Build. Only Pack. -->
   <Target Name="Build" />

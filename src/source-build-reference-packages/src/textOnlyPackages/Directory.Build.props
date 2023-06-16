@@ -1,12 +1,12 @@
 <Project>
-  <Import Project="$([MSBuild]::GetPathOfFileAbove(Directory.Build.props, $(MSBuildThisFileDirectory)..))" />
+  <Import Project="..\..\Directory.Build.props" />
 
   <PropertyGroup>
     <TextOnlyPackage>true</TextOnlyPackage>
-
     <TargetFramework>netstandard2.0</TargetFramework>
     <IncludeBuildOutput>false</IncludeBuildOutput>
     <NoDefaultExcludes>true</NoDefaultExcludes>
+    <DisableImplicitFrameworkReferences>true</DisableImplicitFrameworkReferences>
 
     <!-- Don't warn on NU5125 - The 'licenseUrl' element will be deprecated. -->
     <NoWarn>$(NoWarn);NU5125</NoWarn>
