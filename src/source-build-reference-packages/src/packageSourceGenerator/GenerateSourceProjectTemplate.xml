@@ -15,13 +15,6 @@
 
 <Project>
 
-  <!-- Make the generated projects use the reference package source generator msbuild infrastructure. -->
-  <PropertyGroup>
-    <ReferencePackageSourceGeneratorDirectory>$$ReferencePackageSourceGeneratorDirectory$$</ReferencePackageSourceGeneratorDirectory>
-    <DirectoryBuildPropsPath>$(ReferencePackageSourceGeneratorDirectory)Directory.Build.props</DirectoryBuildPropsPath>
-    <DirectoryBuildTargetsPath>$(ReferencePackageSourceGeneratorDirectory)Directory.Build.targets</DirectoryBuildTargetsPath>
-  </PropertyGroup>
-
   <!-- Make the generated projects use custom output and intermediate paths. -->
   <PropertyGroup>
     <BaseOutputPath>$$BaseOutputPath$$</BaseOutputPath>
@@ -42,6 +35,7 @@
     <!-- Turn off end of life target framework checks as we intentionally build older TFMs. -->
     <CheckEolTargetFramework>false</CheckEolTargetFramework>
     <!-- GenAPI settings -->
+    <ReferencePackageSourceGeneratorDirectory>$$ReferencePackageSourceGeneratorDirectory$$</ReferencePackageSourceGeneratorDirectory>
     <GenAPIGenerateReferenceAssemblySource>true</GenAPIGenerateReferenceAssemblySource>
     <GenAPIHeaderFile>$(ReferencePackageSourceGeneratorDirectory)LicenseHeader.txt</GenAPIHeaderFile>
     <GenAPIIncludeAssemblyAttributes>true</GenAPIIncludeAssemblyAttributes>

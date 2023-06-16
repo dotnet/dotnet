@@ -7,4 +7,16 @@
          Once all old netstandard TFMs are cleanup, this could be removed. -->
     <NoTargetFrameworkFiltering>true</NoTargetFrameworkFiltering>
   </PropertyGroup>
+
+  <PropertyGroup>
+    <Copyright>$(CopyrightNetFoundation)</Copyright>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <IsPackable>true</IsPackable>
+    <!--
+      Arcade defaults Serviceable to 'true'. Reset it, to use the value in the nuspec. Improves
+      equality with real packages.
+    -->
+    <Serviceable />
+  </PropertyGroup>
+
 </Project>
