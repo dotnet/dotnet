@@ -76,7 +76,7 @@ internal static class CodeActionExtensions
 
         if (!isOnAllowList)
         {
-            razorCodeAction.Title = "(Exp) " + razorCodeAction.Title;
+            razorCodeAction.Title = $"(Exp) {razorCodeAction.Title} ({razorCodeAction.Name})";
         }
 
         if (razorCodeAction.Children != null)
