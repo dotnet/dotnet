@@ -7,3 +7,4 @@ NuGet.Common.NuGetLogCode.NU1903 = 1903 -> NuGet.Common.NuGetLogCode
 NuGet.Common.NuGetLogCode.NU1904 = 1904 -> NuGet.Common.NuGetLogCode
 NuGet.Common.NuGetLogCode.NU1905 = 1905 -> NuGet.Common.NuGetLogCode
 NuGet.Common.NuGetLogCode.NU3042 = 3042 -> NuGet.Common.NuGetLogCode
+NuGet.Common.PathResolver.SearchPathResult.SearchPathResult() -> void

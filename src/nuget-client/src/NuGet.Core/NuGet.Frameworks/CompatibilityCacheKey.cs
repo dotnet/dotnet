@@ -10,20 +10,12 @@ namespace NuGet.Frameworks
     /// <summary>
     /// Internal cache key used to store framework compatibility.
     /// </summary>
-    internal class CompatibilityCacheKey : IEquatable<CompatibilityCacheKey>
+    internal readonly struct CompatibilityCacheKey : IEquatable<CompatibilityCacheKey>
     {
-        public NuGetFramework Target
-        {
-            get { return _target; }
-        }
+        public NuGetFramework Target { get; }
 
-        public NuGetFramework Candidate
-        {
-            get { return _candidate; }
-        }
+        public NuGetFramework Candidate { get; }
 
-        private readonly NuGetFramework _target;
-        private readonly NuGetFramework _candidate;
         private readonly int _hashCode;
 
         public CompatibilityCacheKey(NuGetFramework target, NuGetFramework candidate)
@@ -38,8 +30,8 @@ namespace NuGet.Frameworks
                 throw new ArgumentNullException(nameof(candidate));
             }
 
-            _target = target;
-            _candidate = candidate;
+            Target = target;
+            Candidate = candidate;
 
             // This is designed to be cached, just get the hash up front
             var combiner = new HashCodeCombiner();
@@ -53,25 +45,15 @@ namespace NuGet.Frameworks
             return _hashCode;
         }
 
-        public bool Equals(CompatibilityCacheKey? other)
+        public bool Equals(CompatibilityCacheKey other)
         {
-            if (other == null)
-            {
-                return false;
-            }
-
-            if (ReferenceEquals(this, other))
-            {
-                return true;
-            }
-
             return Target.Equals(other.Target)
                 && Candidate.Equals(other.Candidate);
         }
 
         public override bool Equals(object? obj)
         {
-            return Equals(obj as CompatibilityCacheKey);
+            return obj is CompatibilityCacheKey other && Equals(other);
         }
 
         public override string ToString()

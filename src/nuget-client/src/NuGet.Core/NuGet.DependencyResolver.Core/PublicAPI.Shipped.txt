@@ -59,7 +59,7 @@ NuGet.DependencyResolver.IRemoteDependencyProvider
 NuGet.DependencyResolver.IRemoteDependencyProvider.IsHttp.get -> bool
 ~NuGet.DependencyResolver.IRemoteDependencyProvider.Source.get -> NuGet.Configuration.PackageSource
 NuGet.DependencyResolver.LibraryRangeCacheKey
-~NuGet.DependencyResolver.LibraryRangeCacheKey.Equals(NuGet.DependencyResolver.LibraryRangeCacheKey other) -> bool
+NuGet.DependencyResolver.LibraryRangeCacheKey.Equals(NuGet.DependencyResolver.LibraryRangeCacheKey other) -> bool
 ~NuGet.DependencyResolver.LibraryRangeCacheKey.Framework.get -> NuGet.Frameworks.NuGetFramework
 ~NuGet.DependencyResolver.LibraryRangeCacheKey.LibraryRange.get -> NuGet.LibraryModel.LibraryRange
 ~NuGet.DependencyResolver.LibraryRangeCacheKey.LibraryRangeCacheKey(NuGet.LibraryModel.LibraryRange range, NuGet.Frameworks.NuGetFramework framework) -> void

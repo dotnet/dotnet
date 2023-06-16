@@ -10,6 +10,8 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using Microsoft.ServiceHub.Framework;
 using Microsoft.VisualStudio.PlatformUI;
+using NuGet.Common;
+using NuGet.PackageManagement.Telemetry;
 using NuGet.VisualStudio;
 using NuGet.VisualStudio.Common;
 using NuGet.VisualStudio.Internal.Contracts;
@@ -93,6 +95,13 @@ namespace NuGet.PackageManagement.UI.Options
             (_parent.ShowAddDialogCommand as DelegateCommand).RaiseCanExecuteChanged();
             (_parent.RemoveMappingCommand as DelegateCommand).RaiseCanExecuteChanged();
             (_parent.RemoveAllMappingsCommand as DelegateCommand).RaiseCanExecuteChanged();
+
+            bool isGlobbing = packageId.Contains("*");
+            var evt = NavigatedTelemetryEvent.CreateWithAddPackageSourceMapping(
+                sourcesCount: packageSources.Count,
+                isGlobbing);
+            TelemetryActivity.EmitTelemetryEvent(evt);
+
             Close();
         }
 

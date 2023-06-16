@@ -1,4 +1,5 @@
 #nullable enable
+NuGet.ProjectModel.BuildAction.BuildAction() -> void
 NuGet.ProjectModel.RestoreAuditProperties
 NuGet.ProjectModel.RestoreAuditProperties.AuditLevel.get -> string?
 NuGet.ProjectModel.RestoreAuditProperties.AuditLevel.set -> void

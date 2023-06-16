@@ -49,7 +49,10 @@ namespace NuGet.PackageManagement.UI.Test.ViewModels
             };
             var patterns = new ReadOnlyDictionary<string, IReadOnlyList<string>>(dictionary);
             var mockPackageSourceMapping = new Mock<PackageSourceMapping>(patterns);
-            mockUiController.Setup(_ => _.UIContext.PackageSourceMapping).Returns(mockPackageSourceMapping.Object);
+
+            var mockUIContext = new Mock<INuGetUIContext>();
+            mockUIContext.Setup(_ => _.PackageSourceMapping).Returns(mockPackageSourceMapping.Object);
+            mockUiController.Setup(_ => _.UIContext).Returns(mockUIContext.Object);
 
             // Act
             var target = PackageSourceMappingActionViewModel.Create(mockUiController.Object);
@@ -75,7 +78,10 @@ namespace NuGet.PackageManagement.UI.Test.ViewModels
             };
             var patterns = new ReadOnlyDictionary<string, IReadOnlyList<string>>(dictionary);
             var mockPackageSourceMapping = new Mock<PackageSourceMapping>(patterns);
-            mockUiController.Setup(_ => _.UIContext.PackageSourceMapping).Returns(mockPackageSourceMapping.Object);
+
+            var mockUIContext = new Mock<INuGetUIContext>();
+            mockUIContext.Setup(_ => _.PackageSourceMapping).Returns(mockPackageSourceMapping.Object);
+            mockUiController.Setup(_ => _.UIContext).Returns(mockUIContext.Object);
 
             // Act
             var target = PackageSourceMappingActionViewModel.Create(mockUiController.Object);

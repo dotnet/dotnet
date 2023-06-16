@@ -736,8 +736,8 @@ NuGet.Commands.TrustedSignerActionsProvider
 ~NuGet.Commands.TrustedSignerActionsProvider.SyncTrustedRepositoryAsync(string name, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task
 ~NuGet.Commands.TrustedSignerActionsProvider.TrustedSignerActionsProvider(NuGet.Packaging.Signing.ITrustedSignersProvider trustedSignersProvider, NuGet.Common.ILogger logger) -> void
 NuGet.Commands.TrustedSignersArgs
-~NuGet.Commands.TrustedSignersArgs.Action.get -> NuGet.Commands.TrustedSignersArgs.TrustedSignersAction
-~NuGet.Commands.TrustedSignersArgs.Action.set -> void
+NuGet.Commands.TrustedSignersArgs.Action.get -> NuGet.Commands.TrustedSignersArgs.TrustedSignersAction
+NuGet.Commands.TrustedSignersArgs.Action.set -> void
 NuGet.Commands.TrustedSignersArgs.AllowUntrustedRoot.get -> bool
 NuGet.Commands.TrustedSignersArgs.AllowUntrustedRoot.set -> void
 NuGet.Commands.TrustedSignersArgs.Author.get -> bool
@@ -759,10 +759,10 @@ NuGet.Commands.TrustedSignersArgs.Repository.set -> void
 ~NuGet.Commands.TrustedSignersArgs.ServiceIndex.get -> string
 ~NuGet.Commands.TrustedSignersArgs.ServiceIndex.set -> void
 NuGet.Commands.TrustedSignersArgs.TrustedSignersAction
-~NuGet.Commands.TrustedSignersArgs.TrustedSignersAction.Add = 0 -> NuGet.Commands.TrustedSignersArgs.TrustedSignersAction
-~NuGet.Commands.TrustedSignersArgs.TrustedSignersAction.List = 1 -> NuGet.Commands.TrustedSignersArgs.TrustedSignersAction
-~NuGet.Commands.TrustedSignersArgs.TrustedSignersAction.Remove = 2 -> NuGet.Commands.TrustedSignersArgs.TrustedSignersAction
-~NuGet.Commands.TrustedSignersArgs.TrustedSignersAction.Sync = 3 -> NuGet.Commands.TrustedSignersArgs.TrustedSignersAction
+NuGet.Commands.TrustedSignersArgs.TrustedSignersAction.Add = 0 -> NuGet.Commands.TrustedSignersArgs.TrustedSignersAction
+NuGet.Commands.TrustedSignersArgs.TrustedSignersAction.List = 1 -> NuGet.Commands.TrustedSignersArgs.TrustedSignersAction
+NuGet.Commands.TrustedSignersArgs.TrustedSignersAction.Remove = 2 -> NuGet.Commands.TrustedSignersArgs.TrustedSignersAction
+NuGet.Commands.TrustedSignersArgs.TrustedSignersAction.Sync = 3 -> NuGet.Commands.TrustedSignersArgs.TrustedSignersAction
 NuGet.Commands.TrustedSignersArgs.TrustedSignersArgs() -> void
 NuGet.Commands.TrustedSignersCommandRunner
 ~NuGet.Commands.TrustedSignersCommandRunner.ExecuteCommandAsync(NuGet.Commands.TrustedSignersArgs trustedSignersArgs) -> System.Threading.Tasks.Task<int>
@@ -822,9 +822,9 @@ NuGet.Commands.VerifyArgs.LogLevel.set -> void
 ~NuGet.Commands.VerifyArgs.Settings.get -> NuGet.Configuration.ISettings
 ~NuGet.Commands.VerifyArgs.Settings.set -> void
 NuGet.Commands.VerifyArgs.Verification
-~NuGet.Commands.VerifyArgs.Verification.All = 1 -> NuGet.Commands.VerifyArgs.Verification
-~NuGet.Commands.VerifyArgs.Verification.Signatures = 2 -> NuGet.Commands.VerifyArgs.Verification
-~NuGet.Commands.VerifyArgs.Verification.Unknown = 0 -> NuGet.Commands.VerifyArgs.Verification
+NuGet.Commands.VerifyArgs.Verification.All = 1 -> NuGet.Commands.VerifyArgs.Verification
+NuGet.Commands.VerifyArgs.Verification.Signatures = 2 -> NuGet.Commands.VerifyArgs.Verification
+NuGet.Commands.VerifyArgs.Verification.Unknown = 0 -> NuGet.Commands.VerifyArgs.Verification
 ~NuGet.Commands.VerifyArgs.Verifications.get -> System.Collections.Generic.IList<NuGet.Commands.VerifyArgs.Verification>
 ~NuGet.Commands.VerifyArgs.Verifications.set -> void
 NuGet.Commands.VerifyArgs.VerifyArgs() -> void

@@ -87,6 +87,7 @@ namespace NuGet.Versioning.Test
         }
 
         [Theory]
+        [InlineData("         ")]
         [InlineData("1beta")]
         [InlineData("1.2Av^c")]
         [InlineData("1.2..")]
@@ -103,6 +104,59 @@ namespace NuGet.Versioning.Test
         [InlineData("1.4.7-AA.0A^")]
         [InlineData("1.4.7-A^A")]
         [InlineData("1.4.7+AA.01^")]
+        [InlineData("1.2147483648")]
+        [InlineData("1.1.2147483648")]
+        [InlineData("1.1.1.2147483648")]
+        [InlineData("1.1.1.1.2147483648")]
+        [InlineData("10000000000000000000")]
+        [InlineData("1.10000000000000000000")]
+        [InlineData("1.1.10000000000000000000")]
+        [InlineData("1.1.1.1.10000000000000000000")]
+        [InlineData("1..2")]
+        [InlineData("....")]
+        [InlineData("..1")]
+        [InlineData("-1.1.1.1")]
+        [InlineData("1.-1.1.1")]
+        [InlineData("1.1.-1.1")]
+        [InlineData("1.1.1.-1")]
+        [InlineData("1.")]
+        [InlineData("1.1.")]
+        [InlineData("1.1.1.")]
+        [InlineData("1.1.1.1.")]
+        [InlineData("1.1.1.1.1.")]
+        [InlineData("1     1.1.1.1")]
+        [InlineData("1.1     1.1.1")]
+        [InlineData("1.1.1     1.1")]
+        [InlineData("1.1.1.1     1")]
+        [InlineData(" .1.1.1")]
+        [InlineData("1. .1.1")]
+        [InlineData("1.1. .1")]
+        [InlineData("1.1.1. ")]
+        [InlineData("1 .")]
+        [InlineData("1.1 .")]
+        [InlineData("1.1.1 .")]
+        [InlineData("1.1.1.1 .")]
+        [InlineData("2147483648.2.3.4")]
+        [InlineData("1.2147483648.3.4")]
+        [InlineData("1.2.2147483648.4")]
+        [InlineData("1.2.3.2147483648")]
+        [InlineData("..1.2")]
+        [InlineData("-1.2.3.4")]
+        [InlineData("1.-2.3.4")]
+        [InlineData("1.2.-3.4")]
+        [InlineData("1.2.3.-4")]
+        [InlineData("   1 9")]
+        [InlineData("   19.   1 9")]
+        [InlineData("   19.   19.   1 9")]
+        [InlineData("   19.   19.   19.   1 9")]
+        [InlineData("1 9   ")]
+        [InlineData("19   .1 9   ")]
+        [InlineData("19   .19   .1 9   ")]
+        [InlineData("19   .19   .19   .1 9   ")]
+        [InlineData("   1 9   ")]
+        [InlineData("   19   .   1 9   ")]
+        [InlineData("   19   .   19   .   1 9   ")]
+        [InlineData("   19   .   19   .   19   .   1 9   ")]
         public void ParseThrowsIfStringIsNotAValidSemVer(string versionString)
         {
             ExceptionAssert.ThrowsArgumentException(() => NuGetVersion.Parse(versionString),
@@ -362,6 +416,37 @@ namespace NuGet.Versioning.Test
             // Assert
             Assert.False(result);
             Assert.Null(version);
+        }
+
+        [Theory]
+        [InlineData("   19", 19, 0, 0, 0)]
+        [InlineData("   19.   19", 19, 19, 0, 0)]
+        [InlineData("   19.   19.   19", 19, 19, 19, 0)]
+        [InlineData("   19.   19.   19.   19", 19, 19, 19, 19)]
+        [InlineData("19   ", 19, 0, 0, 0)]
+        [InlineData("19   .19   ", 19, 19, 0, 0)]
+        [InlineData("19   .19   .19   ", 19, 19, 19, 0)]
+        [InlineData("19   .19   .19   .19   ", 19, 19, 19, 19)]
+        [InlineData("   19   ", 19, 0, 0, 0)]
+        [InlineData("   19   .   19   ", 19, 19, 0, 0)]
+        [InlineData("   19   .   19   .   19   ", 19, 19, 19, 0)]
+        [InlineData("   19   .   19   .   19   .   19   ", 19, 19, 19, 19)]
+        [InlineData("01.1.1.1", 1, 1, 1, 1)]
+        [InlineData("1.01.1.1", 1, 1, 1, 1)]
+        [InlineData("1.1.01.1", 1, 1, 1, 1)]
+        [InlineData("1.1.1.01", 1, 1, 1, 1)]
+        [InlineData("2147483647.1.1.1", 2147483647, 1, 1, 1)]
+        [InlineData("1.2147483647.1.1", 1, 2147483647, 1, 1)]
+        [InlineData("1.1.2147483647.1", 1, 1, 2147483647, 1)]
+        [InlineData("1.1.1.2147483647", 1, 1, 1, 2147483647)]
+        public void TryParseHandlesValidVersionPatterns(string versionString, int major = 0, int minor = 0, int patch = 0, int revision = 0)
+        {
+            Assert.True(NuGetVersion.TryParse(versionString, out var version));
+            Assert.NotNull(version);
+            Assert.Equal(major, version.Major);
+            Assert.Equal(minor, version.Minor);
+            Assert.Equal(patch, version.Patch);
+            Assert.Equal(revision, version.Revision);
         }
     }
 }

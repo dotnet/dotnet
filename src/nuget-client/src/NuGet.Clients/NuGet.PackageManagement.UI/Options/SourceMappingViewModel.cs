@@ -22,7 +22,6 @@ namespace NuGet.PackageManagement.UI.Options
 
         public SourceMappingViewModel(string packageId, List<PackageSourceContextInfo> packageSources)
         {
-
             ID = packageId ?? throw new ArgumentNullException(nameof(packageId));
             Sources = packageSources ?? throw new ArgumentNullException(nameof(packageSources));
         }
