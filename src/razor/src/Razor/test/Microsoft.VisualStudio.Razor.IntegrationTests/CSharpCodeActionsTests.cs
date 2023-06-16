@@ -131,4 +131,112 @@ public class CSharpCodeActionsTests : AbstractRazorEditorTest
 
             """, ControlledHangMitigatingCancellationToken);
     }
+
+    [IdeFact]
+    public async Task CSharpCodeActionsTests_IntroduceLocal()
+    {
+        // Open the file
+        await TestServices.SolutionExplorer.OpenFileAsync(RazorProjectConstants.BlazorProjectName, RazorProjectConstants.CounterRazorFile, ControlledHangMitigatingCancellationToken);
+        await TestServices.Editor.SetTextAsync("""
+            @code {
+                void M(string[] args)
+                {
+                    if (args.First().Length == 0)
+                    {
+                    }
+
+                    if (args.First().Length == 0)
+                    {
+                    }
+                }
+            }
+            """, ControlledHangMitigatingCancellationToken);
+
+        await TestServices.Editor.PlaceCaretAsync("args.First()", charsOffset: 0, occurrence: 1, extendSelection: false, selectBlock: false, ControlledHangMitigatingCancellationToken);
+
+        // Act
+        var codeActions = await TestServices.Editor.InvokeCodeActionListAsync(ControlledHangMitigatingCancellationToken);
+
+        // Assert
+        var introduceLocal = codeActions.FirstOrDefault(a => a.Actions.Single().DisplayText.Equals("Introduce local"));
+        Assert.NotNull(introduceLocal);
+
+        var codeAction = introduceLocal.Actions.First();
+
+        Assert.True(codeAction.HasActionSets);
+
+        codeAction = (await codeAction.GetActionSetsAsync(ControlledHangMitigatingCancellationToken)).First().Actions.First();
+
+        await TestServices.Editor.InvokeCodeActionAsync(codeAction, ControlledHangMitigatingCancellationToken);
+
+        await TestServices.Editor.WaitForTextChangeAsync("""
+                @code {
+                    void M(string[] args)
+                    {
+                        string v = args.First();
+                        if (v.Length == 0)
+                        {
+                        }
+
+                        if (args.First().Length == 0)
+                        {
+                        }
+                    }
+                }
+                """, ControlledHangMitigatingCancellationToken);
+    }
+
+    [IdeFact]
+    public async Task CSharpCodeActionsTests_IntroduceLocal_All()
+    {
+        // Open the file
+        await TestServices.SolutionExplorer.OpenFileAsync(RazorProjectConstants.BlazorProjectName, RazorProjectConstants.CounterRazorFile, ControlledHangMitigatingCancellationToken);
+        await TestServices.Editor.SetTextAsync("""
+            @code {
+                void M(string[] args)
+                {
+                    if (args.First().Length == 0)
+                    {
+                    }
+
+                    if (args.First().Length == 0)
+                    {
+                    }
+                }
+            }
+            """, ControlledHangMitigatingCancellationToken);
+
+        await TestServices.Editor.PlaceCaretAsync("args.First()", charsOffset: 0, occurrence: 1, extendSelection: false, selectBlock: false, ControlledHangMitigatingCancellationToken);
+
+        // Act
+        var codeActions = await TestServices.Editor.InvokeCodeActionListAsync(ControlledHangMitigatingCancellationToken);
+
+        // Assert
+        var introduceLocal = codeActions.FirstOrDefault(a => a.Actions.Single().DisplayText.Equals("Introduce local"));
+        Assert.NotNull(introduceLocal);
+
+        var codeAction = introduceLocal.Actions.First();
+
+        Assert.True(codeAction.HasActionSets);
+
+        codeAction = (await codeAction.GetActionSetsAsync(ControlledHangMitigatingCancellationToken)).First().Actions.Skip(1).First();
+
+        await TestServices.Editor.InvokeCodeActionAsync(codeAction, ControlledHangMitigatingCancellationToken);
+
+        await TestServices.Editor.WaitForTextChangeAsync("""
+                @code {
+                    void M(string[] args)
+                    {
+                        string v = args.First();
+                        if (v.Length == 0)
+                        {
+                        }
+
+                        if (v.Length == 0)
+                        {
+                        }
+                    }
+                }
+                """, ControlledHangMitigatingCancellationToken);
+    }
 }

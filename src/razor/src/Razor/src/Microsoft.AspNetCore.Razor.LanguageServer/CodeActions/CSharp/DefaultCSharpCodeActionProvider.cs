@@ -33,6 +33,7 @@ internal sealed class DefaultCSharpCodeActionProvider : ICSharpCodeActionProvide
         RazorPredefinedCodeRefactoringProviderNames.GenerateDefaultConstructors,
         RazorPredefinedCodeRefactoringProviderNames.GenerateConstructorFromMembers,
         RazorPredefinedCodeRefactoringProviderNames.UseExpressionBody,
+        RazorPredefinedCodeRefactoringProviderNames.IntroduceVariable,
         RazorPredefinedCodeFixProviderNames.ImplementAbstractClass,
         RazorPredefinedCodeFixProviderNames.ImplementInterface,
         RazorPredefinedCodeFixProviderNames.RemoveUnusedVariable,

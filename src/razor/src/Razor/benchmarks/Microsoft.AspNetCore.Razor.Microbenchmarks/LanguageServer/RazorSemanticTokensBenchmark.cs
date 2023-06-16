@@ -45,6 +45,9 @@ public class RazorSemanticTokensBenchmark : RazorLanguageServerBenchmarkBase
 
     private string TargetPath { get; set; }
 
+    [ParamsAllValues]
+    public bool WithMultiLineComment { get; set; }
+
     [GlobalSetup(Target = nameof(RazorSemanticTokensRangeAsync))]
     public async Task InitializeRazorSemanticAsync()
     {
@@ -53,8 +56,10 @@ public class RazorSemanticTokensBenchmark : RazorLanguageServerBenchmarkBase
         var projectRoot = Path.Combine(RepoRoot, "src", "Razor", "test", "testapps", "ComponentApp");
         ProjectFilePath = Path.Combine(projectRoot, "ComponentApp.csproj");
         PagesDirectory = Path.Combine(projectRoot, "Components", "Pages");
-        var filePath = Path.Combine(PagesDirectory, $"SemanticTokens.razor");
-        TargetPath = "/Components/Pages/SemanticTokens.razor";
+
+        var fileName = WithMultiLineComment ? "SemanticTokens_LargeMultiLineComment" : "SemanticTokens";
+        var filePath = Path.Combine(PagesDirectory, $"{fileName}.razor");
+        TargetPath = $"/Components/Pages/{fileName}.razor";
 
         var documentUri = new Uri(filePath);
         var documentSnapshot = GetDocumentSnapshot(ProjectFilePath, filePath, TargetPath);
@@ -92,11 +97,6 @@ public class RazorSemanticTokensBenchmark : RazorLanguageServerBenchmarkBase
         await UpdateDocumentAsync(documentVersion, DocumentSnapshot, cancellationToken).ConfigureAwait(false);
         await RazorSemanticTokenService.GetSemanticTokensAsync(
             textDocumentIdentifier, Range, DocumentContext, SemanticTokensLegend, cancellationToken).ConfigureAwait(false);
-    }
-
-    private static LspServices GetLspServices()
-    {
-        throw new NotImplementedException();
     }
 
     private async Task UpdateDocumentAsync(int newVersion, IDocumentSnapshot documentSnapshot, CancellationToken cancellationToken)
