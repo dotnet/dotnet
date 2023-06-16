@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using NuGet.PackageManagement.UI.ViewModels;
 using NuGet.PackageManagement.VisualStudio;
 using NuGet.Packaging.Core;
 using NuGet.ProjectManagement;
@@ -33,6 +34,7 @@ namespace NuGet.PackageManagement.UI
         void LaunchExternalLink(Uri url);
 
         void LaunchNuGetOptionsDialog(OptionsPage optionsPageToOpen);
+        void LaunchNuGetOptionsDialog(PackageSourceMappingActionViewModel packageSourceMappingActionViewModel);
 
         /// <summary>
         /// Displays the preview window with options to accept or cancel

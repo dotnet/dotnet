@@ -19,6 +19,7 @@ namespace NuGet.Commands.Restore.Utility
 {
     internal struct AuditUtility
     {
+        private readonly EnabledValue _auditEnabled;
         private readonly ProjectModel.RestoreAuditProperties _restoreAuditProperties;
         private readonly string _projectFullPath;
         private readonly IEnumerable<RestoreTargetGraph> _targetGraphs;
@@ -26,12 +27,14 @@ namespace NuGet.Commands.Restore.Utility
         private readonly ILogger _logger;
 
         public AuditUtility(
+            EnabledValue auditEnabled,
             ProjectModel.RestoreAuditProperties restoreAuditProperties,
             string projectFullPath,
             IEnumerable<RestoreTargetGraph> graphs,
             IReadOnlyList<IVulnerabilityInformationProvider> vulnerabilityInformationProviders,
             ILogger logger)
         {
+            _auditEnabled = auditEnabled;
             _restoreAuditProperties = restoreAuditProperties;
             _projectFullPath = projectFullPath;
             _targetGraphs = graphs;
@@ -44,9 +47,12 @@ namespace NuGet.Commands.Restore.Utility
             GetVulnerabilityInfoResult? allVulnerabilityData = await GetAllVulnerabilityDataAsync(cancellationToken);
             if (allVulnerabilityData is null || !AnyVulnerabilityDataFound(allVulnerabilityData.KnownVulnerabilities))
             {
-                RestoreLogMessage restoreLogMessage = RestoreLogMessage.CreateWarning(NuGetLogCode.NU1905, Strings.Warning_NoVulnerabilityData);
-                restoreLogMessage.ProjectPath = _projectFullPath;
-                _logger.Log(restoreLogMessage);
+                if (_auditEnabled == EnabledValue.ExplicitOptIn)
+                {
+                    RestoreLogMessage restoreLogMessage = RestoreLogMessage.CreateWarning(NuGetLogCode.NU1905, Strings.Warning_NoVulnerabilityData);
+                    restoreLogMessage.ProjectPath = _projectFullPath;
+                    _logger.Log(restoreLogMessage);
+                }
 
                 return;
             }
@@ -354,6 +360,33 @@ namespace NuGet.Commands.Restore.Utility
 
             Debug.Assert(thisProject.Type == LibraryType.Project);
             return graph.ResolvedDependencies.Where(dep => dep.Parent == thisProject && dep.Child.Type == LibraryType.Package);
+        }
+
+        internal enum EnabledValue
+        {
+            Undefined,
+            ImplicitOptIn,
+            ExplicitOptIn,
+            ExplicitOptOut
+        }
+
+        public static EnabledValue ParseEnableValue(string value)
+        {
+            if (string.Equals(value, "default", StringComparison.OrdinalIgnoreCase))
+            {
+                return EnabledValue.ImplicitOptIn;
+            }
+            if (string.Equals(value, bool.TrueString, StringComparison.OrdinalIgnoreCase)
+                || string.Equals(value, "enable", StringComparison.OrdinalIgnoreCase))
+            {
+                return EnabledValue.ExplicitOptIn;
+            }
+            if (string.Equals(value, bool.FalseString, StringComparison.OrdinalIgnoreCase)
+                || string.Equals(value, "disable", StringComparison.OrdinalIgnoreCase))
+            {
+                return EnabledValue.ExplicitOptOut;
+            }
+            return EnabledValue.Undefined;
         }
     }
 }

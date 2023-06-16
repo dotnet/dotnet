@@ -19,6 +19,7 @@ using Microsoft.VisualStudio.Threading;
 using NuGet.Common;
 using NuGet.Configuration;
 using NuGet.PackageManagement.Telemetry;
+using NuGet.PackageManagement.UI.ViewModels;
 using NuGet.PackageManagement.VisualStudio;
 using NuGet.Packaging.Core;
 using NuGet.ProjectManagement;
@@ -35,7 +36,7 @@ namespace NuGet.PackageManagement.UI
     /// <summary>
     /// Interaction logic for PackageManagerControl.xaml
     /// </summary>
-    public partial class PackageManagerControl : UserControl, IVsWindowSearch, IDisposable
+    public partial class PackageManagerControl : UserControl, IVsWindowSearch, IDisposable, IPackageManagerControlViewModel
     {
         internal event EventHandler _actionCompleted;
         internal DetailControlModel _detailModel;
@@ -194,6 +195,8 @@ namespace NuGet.PackageManagement.UI
         public ISettings Settings { get; private set; }
 
         public ItemFilter ActiveFilter { get => _topPanel.Filter; set => _topPanel.SelectFilter(value); }
+
+        public bool IsSolution => Model.IsSolution;
 
         internal InfiniteScrollList PackageList => _packageList;
 
@@ -1660,7 +1663,7 @@ namespace NuGet.PackageManagement.UI
                         Search(searchQuery);
 
                         var hyperlinkType = tupleParam.Item2;
-                        var evt = new HyperlinkClickedTelemetryEvent(hyperlinkType, currentTab, Model.IsSolution, alternatePackageId);
+                        var evt = NavigatedTelemetryEvent.CreateWithAlternatePackageNavigation(hyperlinkType, currentTab, Model.IsSolution, alternatePackageId);
                         TelemetryActivity.EmitTelemetryEvent(evt);
                     }
                 }

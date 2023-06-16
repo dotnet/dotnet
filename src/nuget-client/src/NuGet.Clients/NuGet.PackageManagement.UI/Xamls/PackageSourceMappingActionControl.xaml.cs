@@ -4,7 +4,6 @@
 using System;
 using System.Windows.Controls;
 using NuGet.PackageManagement.UI.ViewModels;
-using NuGet.PackageManagement.VisualStudio;
 
 namespace NuGet.PackageManagement.UI
 {
@@ -21,7 +20,7 @@ namespace NuGet.PackageManagement.UI
         private void SettingsButtonClicked(object sender, EventArgs e)
         {
             var viewModel = (PackageSourceMappingActionViewModel)DataContext;
-            viewModel.UIController.LaunchNuGetOptionsDialog(OptionsPage.PackageSourceMapping);
+            viewModel.UIController.LaunchNuGetOptionsDialog(viewModel);
         }
     }
 }

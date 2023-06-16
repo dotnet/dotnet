@@ -1,5 +1,5 @@
 #nullable enable
-NuGet.DependencyResolver.LibraryRangeCacheKey.Equals(NuGet.DependencyResolver.LibraryRangeCacheKey other) -> bool
+NuGet.DependencyResolver.LibraryRangeCacheKey.LibraryRangeCacheKey() -> void
 static NuGet.DependencyResolver.LibraryRangeCacheKey.operator !=(NuGet.DependencyResolver.LibraryRangeCacheKey left, NuGet.DependencyResolver.LibraryRangeCacheKey right) -> bool
 static NuGet.DependencyResolver.LibraryRangeCacheKey.operator ==(NuGet.DependencyResolver.LibraryRangeCacheKey left, NuGet.DependencyResolver.LibraryRangeCacheKey right) -> bool
 ~NuGet.DependencyResolver.IRemoteDependencyProvider.SourceRepository.get -> NuGet.Protocol.Core.Types.SourceRepository

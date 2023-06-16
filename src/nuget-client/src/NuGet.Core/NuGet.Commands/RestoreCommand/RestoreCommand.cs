@@ -277,12 +277,12 @@ namespace NuGet.Commands
                     });
                 }
 
-                string enableAudit = _request.Project.RestoreMetadata?.RestoreAuditProperties?.EnableAudit;
-                if (string.Equals(enableAudit, bool.TrueString, StringComparison.InvariantCultureIgnoreCase)
-                    || string.Equals(enableAudit, "enable", StringComparison.InvariantCultureIgnoreCase))
+                AuditUtility.EnabledValue enableAudit = AuditUtility.ParseEnableValue(_request.Project.RestoreMetadata?.RestoreAuditProperties?.EnableAudit);
+                if (enableAudit == AuditUtility.EnabledValue.ImplicitOptIn || enableAudit == AuditUtility.EnabledValue.ExplicitOptIn)
                 {
                     telemetry.StartIntervalMeasure();
                     var audit = new AuditUtility(
+                        enableAudit,
                         _request.Project.RestoreMetadata.RestoreAuditProperties,
                         _request.Project.FilePath,
                         graphs,

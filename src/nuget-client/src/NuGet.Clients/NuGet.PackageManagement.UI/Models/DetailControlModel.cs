@@ -261,7 +261,7 @@ namespace NuGet.PackageManagement.UI
                 var detailedPackageMetadata = new DetailedPackageMetadata(
                     packageSearchMetadata,
                     packageDeprecationMetadata,
-                    packageSearchMetadata.DownloadCount);
+                    searchResultPackage.DownloadCount);
 
                 _metadataDict[detailedPackageMetadata.Version] = detailedPackageMetadata;
 
