@@ -211,7 +211,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
     - `src/source-build-externals/src/newtonsoft-json`  
     *[JamesNK/Newtonsoft.Json@ae9fe44](https://github.com/JamesNK/Newtonsoft.Json/commit/ae9fe44e1323e91bcbd185ca1a14099fba7c021f)*
 - `src/source-build-reference-packages`  
-*[dotnet/source-build-reference-packages@3e92e7c](https://github.com/dotnet/source-build-reference-packages/commit/3e92e7cead1e08476973f637007bb22cde7843ca)*
+*[dotnet/source-build-reference-packages@9cee0e5](https://github.com/dotnet/source-build-reference-packages/commit/9cee0e5f54df0b2f2f5161aec2102b82ad6043df)*
 - `src/sourcelink`  
 *[dotnet/sourcelink@4d2c8bf](https://github.com/dotnet/sourcelink/commit/4d2c8bf58e8cb7900ec2d9077c155572e2d3cd88)*
 - `src/symreader`  
