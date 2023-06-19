@@ -153,7 +153,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 
 <!-- component list beginning -->
 - `src/arcade`  
-*[dotnet/arcade@c279376](https://github.com/dotnet/arcade/commit/c27937680063bcf06804c9fd0466d26a0f9ea4e6)*
+*[dotnet/arcade@e2334b2](https://github.com/dotnet/arcade/commit/e2334b2be36919347923d0ec872a46acddb1e385)*
 - `src/aspnetcore`  
 *[dotnet/aspnetcore@974d15e](https://github.com/dotnet/aspnetcore/commit/974d15e3b021101ad702d898f15e63a17b9a7160)*
     - `src/aspnetcore/src/submodules/googletest`  
@@ -177,7 +177,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/fsharp`  
 *[dotnet/fsharp@2976333](https://github.com/dotnet/fsharp/commit/2976333d29f3f6940ee9d5ea55866264f003409f)*
 - `src/installer`  
-*[dotnet/installer@02277c3](https://github.com/dotnet/installer/commit/02277c3f037f73657269fe5b98aaf13750f28069)*
+*[dotnet/installer@8d98e5a](https://github.com/dotnet/installer/commit/8d98e5a6ba7f7fbc157ebea6317d8e7418472920)*
 - `src/msbuild`  
 *[dotnet/msbuild@0fdab8f](https://github.com/dotnet/msbuild/commit/0fdab8fb802dbd4d75065a282a9cf8bd4f665af2)*
 - `src/nuget-client`  
@@ -211,9 +211,9 @@ To enable full offline source-building of the VMR, we have no other choice than 
     - `src/source-build-externals/src/newtonsoft-json`  
     *[JamesNK/Newtonsoft.Json@ae9fe44](https://github.com/JamesNK/Newtonsoft.Json/commit/ae9fe44e1323e91bcbd185ca1a14099fba7c021f)*
 - `src/source-build-reference-packages`  
-*[dotnet/source-build-reference-packages@e5e8761](https://github.com/dotnet/source-build-reference-packages/commit/e5e8761172f338331f5df83eaea9abdf9a2dc1aa)*
+*[dotnet/source-build-reference-packages@3e92e7c](https://github.com/dotnet/source-build-reference-packages/commit/3e92e7cead1e08476973f637007bb22cde7843ca)*
 - `src/sourcelink`  
-*[dotnet/sourcelink@23bda65](https://github.com/dotnet/sourcelink/commit/23bda65700e70b6697390dcc4e0f87e2dfbce63a)*
+*[dotnet/sourcelink@4d2c8bf](https://github.com/dotnet/sourcelink/commit/4d2c8bf58e8cb7900ec2d9077c155572e2d3cd88)*
 - `src/symreader`  
 *[dotnet/symreader@2c8079e](https://github.com/dotnet/symreader/commit/2c8079e2e8e78c0cd11ac75a32014756136ecdb9)*
 - `src/templating`  
