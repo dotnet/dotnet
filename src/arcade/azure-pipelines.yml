@@ -94,6 +94,7 @@ stages:
               _BuildConfig: Release
         preSteps:
         - checkout: self
+          fetchDepth: 0
           clean: true
         steps:
         - script: eng\common\cibuild.cmd
@@ -102,6 +103,32 @@ stages:
             $(_InternalBuildArgs)
             /p:Test=false
           displayName: Windows Build / Publish
+
+        - ${{ if and(eq(variables._RunAsPublic, True), eq(variables['Build.Reason'], 'PullRequest')) }}:
+          - powershell: |
+              # Detects if current change contains change for which we need to run XHarness E2E tests
+              git fetch --all
+              $diff=$(git diff HEAD HEAD~ --name-only -- src/Microsoft.DotNet.Helix/Sdk 'tests/XHarness*')
+
+              if ($diff) {
+                Write-Host "Detected changes that will require running XHarness E2E tests. Changed files:"
+                Write-Host $diff
+                Write-Host "##vso[task.setvariable variable=RunXHarnessTests;isOutput=true]True"
+                exit 0
+              }
+
+              # Detects if Version.Details.xml or Versions.props changed (a version bump)
+              $fullDiff=$(git diff HEAD HEAD~ -- eng/Version.Details.xml eng/Versions.props)
+              if ($fullDiff -match 'Microsoft.DotNet.XHarness.CLI')
+              {
+                Write-Host "Detected a version bump of Microsoft.DotNet.XHarness.CLI, will run XHarness E2E tests"
+                Write-Host "##vso[task.setvariable variable=RunXHarnessTests;isOutput=true]True"
+                exit 0
+              }
+
+              Write-Host "No changes detected that will require running XHarness E2E tests"
+            name: XHarnessChangeDetection
+            displayName: Detect XHarness changes
 
       - ${{ if eq(variables._RunAsPublic, True) }}:
         - job: Linux
@@ -210,6 +237,7 @@ stages:
   - stage: Test_XHarness
     displayName: Test XHarness SDK
     dependsOn: build
+    condition: and(succeeded(), eq(dependencies.build.outputs['Windows_NT.Build_Release.XHarnessChangeDetection.RunXHarnessTests'], 'True'))
     jobs:
     - template: /eng/common/templates/jobs/jobs.yml
       parameters:
@@ -221,6 +249,66 @@ stages:
         workspace:
           clean: all
         jobs:
+        - job: Apple_Simulators
+          timeoutInMinutes: 90
+          container: LinuxContainer
+          pool:
+            vmimage: ubuntu-latest
+          strategy:
+            matrix:
+              Build_Debug:
+                _BuildConfig: Debug
+          variables:
+          - _Testing: XHarness_Apple_Simulator_Tests
+          preSteps:
+          - checkout: self
+            clean: true
+          steps:
+          - script: eng/common/build.sh
+              -configuration $(_BuildConfig)
+              -prepareMachine
+              -ci
+              -restore
+              -test
+              -warnAsError false
+              -projects $(Build.SourcesDirectory)/tests/XHarness.Apple.SimulatorTests.proj
+              /bl:$(Build.SourcesDirectory)/artifacts/log/$(_BuildConfig)/XHarness.Apple.Simulator.Tests.binlog
+              /p:RestoreUsingNuGetTargets=false
+            displayName: XHarness Apple Simulator Helix Testing
+            env:
+              SYSTEM_ACCESSTOKEN: $(System.AccessToken)
+              HelixAccessToken: ''
+
+        - job: Apple_Devices
+          timeoutInMinutes: 90
+          container: LinuxContainer
+          pool:
+            vmimage: ubuntu-latest
+          strategy:
+            matrix:
+              Build_Debug:
+                _BuildConfig: Debug
+          variables:
+          - _Testing: XHarness_Apple_Device_Tests
+          preSteps:
+          - checkout: self
+            clean: true
+          steps:
+          - script: eng/common/build.sh
+              -configuration $(_BuildConfig)
+              -prepareMachine
+              -ci
+              -restore
+              -test
+              -warnAsError false
+              -projects $(Build.SourcesDirectory)/tests/XHarness.Apple.DeviceTests.proj
+              /bl:$(Build.SourcesDirectory)/artifacts/log/$(_BuildConfig)/Helix.XHarness.Apple.Device.Tests.binlog
+              /p:RestoreUsingNuGetTargets=false
+            displayName: XHarness Apple Device Helix Testing
+            env:
+              SYSTEM_ACCESSTOKEN: $(System.AccessToken)
+              HelixAccessToken: ''
+
         - job: Android_Simulators
           timeoutInMinutes: 90
           container: LinuxContainer
@@ -237,7 +325,7 @@ stages:
             clean: true
           steps:
           - script: eng/common/build.sh
-              -configuration $(_BuildConfig) 
+              -configuration $(_BuildConfig)
               -prepareMachine
               -ci
               -restore

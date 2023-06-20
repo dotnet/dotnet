@@ -23,6 +23,11 @@ secrets:
     parameters:
       Name: dotnet-maestro-bot
 
+  BotAccount-dotnet-bot:
+    type: github-account
+    parameters:
+      Name: dotnet-bot
+
   #DotNet-Blob-Feed
   dotnetfeed-storage-access-key-1:
     type: azure-storage-key
@@ -41,6 +46,12 @@ secrets:
     parameters:
       gitHubBotAccountSecret: BotAccount-dotnet-maestro-bot
       gitHubBotAccountName: dotnet-maestro-bot
+
+  BotAccount-dotnet-bot-repo-PAT:
+    type: github-access-token
+    parameters:
+      gitHubBotAccountSecret: BotAccount-dotnet-bot
+      gitHubBotAccountName: dotnet-bot
 
   dn-bot-dnceng-build-rw-code-rw:
     type: azure-devops-access-token
