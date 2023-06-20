@@ -177,7 +177,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/fsharp`  
 *[dotnet/fsharp@2976333](https://github.com/dotnet/fsharp/commit/2976333d29f3f6940ee9d5ea55866264f003409f)*
 - `src/installer`  
-*[dotnet/installer@fb2c758](https://github.com/dotnet/installer/commit/fb2c758af9cf9052a3a714f91802303f07312b27)*
+*[dotnet/installer@a597bdf](https://github.com/dotnet/installer/commit/a597bdf43934aed1a4a8d72cecf07ed8237bf937)*
 - `src/msbuild`  
 *[dotnet/msbuild@0fdab8f](https://github.com/dotnet/msbuild/commit/0fdab8fb802dbd4d75065a282a9cf8bd4f665af2)*
 - `src/nuget-client`  
@@ -195,7 +195,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/sdk`  
 *[dotnet/sdk@284a328](https://github.com/dotnet/sdk/commit/284a328a657695f610f223e363a143f6afd75014)*
 - `src/source-build-externals`  
-*[dotnet/source-build-externals@06913fc](https://github.com/dotnet/source-build-externals/commit/06913fc4c3fcb0065ee390d135fb766870d2c38a)*
+*[dotnet/source-build-externals@0d04efd](https://github.com/dotnet/source-build-externals/commit/0d04efdab9f26bad07edc881dc7fa088337b8562)*
     - `src/source-build-externals/src/application-insights`  
     *[Microsoft/ApplicationInsights-dotnet@5e2e7dd](https://github.com/Microsoft/ApplicationInsights-dotnet/commit/5e2e7ddda961ec0e16a75b1ae0a37f6a13c777f5)*
     - `src/source-build-externals/src/azure-activedirectory-identitymodel-extensions-for-dotnet`  
@@ -219,7 +219,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/templating`  
 *[dotnet/templating@5f23bbf](https://github.com/dotnet/templating/commit/5f23bbf178e30d3e2801377c55e0a52e51a33055)*
 - `src/test-templates`  
-*[dotnet/test-templates@5a409b3](https://github.com/dotnet/test-templates/commit/5a409b3d4230e127fe0a0cff816ec82000cc03cf)*
+*[dotnet/test-templates@e713da5](https://github.com/dotnet/test-templates/commit/e713da5f1f9a4b5918810af40d1a2867d46c8b85)*
 - `src/vstest`  
 *[microsoft/vstest@74cbc39](https://github.com/microsoft/vstest/commit/74cbc39c9cf836dea821686d65013e399075948e)*
 - `src/xdt`  
