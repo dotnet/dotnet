@@ -35,7 +35,7 @@ public class TextEditResponseRewriterTest : ResponseRewriterTestBase
             getCompletionsAt, documentContent, delegatedCompletionList);
 
         // Assert
-        Assert.Equal(textEditRange, rewrittenCompletionList.Items[0].TextEdit.Range);
+        Assert.Equal(textEditRange, rewrittenCompletionList.Items[0].TextEdit.Value.First.Range);
     }
 
     [Fact]
@@ -62,7 +62,7 @@ public class TextEditResponseRewriterTest : ResponseRewriterTestBase
             getCompletionsAt, documentContent, delegatedCompletionList);
 
         // Assert
-        Assert.Equal(expectedRange, rewrittenCompletionList.Items[0].TextEdit.Range);
+        Assert.Equal(expectedRange, rewrittenCompletionList.Items[0].TextEdit.Value.First.Range);
     }
 
     [Fact]

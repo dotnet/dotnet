@@ -28,7 +28,5 @@ using Microsoft.VisualStudio.Shell;
 [assembly: ProvideBindingRedirection(AssemblyName = "Microsoft.VisualStudio.LanguageServices.Implementation", GenerateCodeBase = true, OldVersionLowerBound = "4.4.0.0", OldVersionUpperBound = "Current")]
 [assembly: ProvideBindingRedirection(AssemblyName = "Microsoft.VisualStudio.LanguageServices.CSharp", GenerateCodeBase = true, OldVersionLowerBound = "4.4.0.0", OldVersionUpperBound = "Current")]
 
-[assembly: ProvideBindingRedirection(AssemblyName = "Microsoft.VisualStudio.Threading", GenerateCodeBase = true, OldVersionLowerBound = "17.4.0.0", OldVersionUpperBound = "Current")]
-
 [assembly: ProvideCodeBase(CodeBase = @"$PackageFolder$\Microsoft.CodeAnalysis.Workspaces.dll")]
 #endif

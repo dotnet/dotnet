@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Composition;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
@@ -233,7 +234,16 @@ internal class CompletionHandler : IRequestHandler<CompletionParams, SumType<Com
 
             if (completionList.ItemDefaults?.EditRange != null)
             {
-                completionList.ItemDefaults.EditRange = TranslateRange(request.Position, projectedPosition, completionList.ItemDefaults.EditRange);
+                if (completionList.ItemDefaults.EditRange.Value.TryGetFirst(out var range))
+                {
+                    completionList.ItemDefaults.EditRange = TranslateRange(request.Position, projectedPosition, range);
+                }
+                else
+                {
+                    // TO-DO: Handle InsertReplaceEdit type
+                    // https://github.com/dotnet/razor/issues/8829
+                    Debug.Fail("Unsupported edit type.");
+                }
             }
 
             var requestContext = new CompletionRequestContext(documentSnapshot.Uri, projectedDocumentUri, serverKind);
@@ -689,12 +699,21 @@ internal class CompletionHandler : IRequestHandler<CompletionParams, SumType<Com
         {
             if (item.TextEdit != null)
             {
-                var translatedRange = TranslateRange(hostDocumentPosition, projectedPosition, item.TextEdit.Range);
-                item.TextEdit = new TextEdit
+                if (item.TextEdit.Value.TryGetFirst(out var textEdit))
                 {
-                    NewText = item.TextEdit.NewText,
-                    Range = translatedRange,
-                };
+                    var translatedRange = TranslateRange(hostDocumentPosition, projectedPosition, textEdit.Range);
+                    item.TextEdit = new TextEdit
+                    {
+                        NewText = textEdit.NewText,
+                        Range = translatedRange,
+                    };
+                }
+                else
+                {
+                    // TO-DO: Handle InsertReplaceEdit type
+                    // https://github.com/dotnet/razor/issues/8829
+                    Debug.Fail("Unsupported edit type.");
+                }
             }
             else if (item.AdditionalTextEdits != null)
             {
