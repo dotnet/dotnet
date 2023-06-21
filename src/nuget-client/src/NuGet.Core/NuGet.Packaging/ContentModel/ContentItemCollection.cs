@@ -6,7 +6,6 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using NuGet.Packaging;
 
 namespace NuGet.ContentModel
 {
@@ -63,7 +62,8 @@ namespace NuGet.ContentModel
             {
                 var groupPatterns = definition.GroupExpressions;
 
-                List<Tuple<ContentItem, Asset>> groupAssets = null;
+                List<(ContentItem Item, Asset Asset)> groupAssets = null;
+
                 foreach (var asset in _assets)
                 {
                     foreach (var groupPattern in groupPatterns)
@@ -71,33 +71,19 @@ namespace NuGet.ContentModel
                         var item = groupPattern.Match(asset.Path, definition.PropertyDefinitions);
                         if (item != null)
                         {
-                            if (groupAssets == null)
-                            {
-                                groupAssets = new List<Tuple<ContentItem, Asset>>(1);
-                            }
-
-                            groupAssets.Add(Tuple.Create(item, asset));
+                            groupAssets ??= new List<(ContentItem Item, Asset Asset)>(capacity: 1);
+                            groupAssets.Add((item, asset));
                         }
                     }
                 }
 
                 if (groupAssets?.Count > 0)
                 {
-                    foreach (var grouping in groupAssets.GroupBy(key => key.Item1, GroupComparer.DefaultComparer))
+                    foreach (var grouping in groupAssets.GroupBy(key => key.Item, GroupComparer.DefaultComparer))
                     {
-                        var group = new ContentItemGroup();
-
-                        foreach (var property in grouping.Key.Properties)
-                        {
-                            group.Properties.Add(property.Key, property.Value);
-                        }
-
-                        foreach (var item in FindItemsImplementation(definition, grouping.Select(match => match.Item2)))
-                        {
-                            group.Items.Add(item);
-                        }
-
-                        yield return group;
+                        yield return new ContentItemGroup(
+                            properties: new Dictionary<string, object>(grouping.Key.Properties),
+                            items: FindItemsImplementation(definition, grouping.Select(match => match.Asset)));
                     }
                 }
             }
@@ -114,7 +100,8 @@ namespace NuGet.ContentModel
             {
                 var groupPatterns = definition.GroupExpressions;
 
-                List<Tuple<ContentItem, Asset>> groupAssets = null;
+                List<(ContentItem Item, Asset Asset)> groupAssets = null;
+
                 foreach (var asset in _assets)
                 {
                     foreach (var groupPattern in groupPatterns)
@@ -122,31 +109,19 @@ namespace NuGet.ContentModel
                         var item = groupPattern.Match(asset.Path, definition.PropertyDefinitions);
                         if (item != null)
                         {
-                            if (groupAssets == null)
-                            {
-                                groupAssets = new List<Tuple<ContentItem, Asset>>(1);
-                            }
-
-                            groupAssets.Add(Tuple.Create(item, asset));
+                            groupAssets ??= new List<(ContentItem Item, Asset Asset)>(capacity: 1);
+                            groupAssets.Add((item, asset));
                         }
                     }
                 }
 
-                IList<ContentItem> groupItems = new List<ContentItem>();
                 if (groupAssets?.Count > 0)
                 {
-                    foreach (var grouping in groupAssets.GroupBy(key => key.Item1, GroupComparer.DefaultComparer))
+                    foreach (var grouping in groupAssets.GroupBy(key => key.Item, GroupComparer.DefaultComparer))
                     {
-                        var group = new ContentItemGroup();
-
-                        foreach (var property in grouping.Key.Properties)
-                        {
-                            group.Properties.Add(property.Key, property.Value);
-                        }
-
-                        groupItems = FindItemsImplementation(definition, grouping.Select(match => match.Item2));
-                        group.Items.AddRange(groupItems);
-                        contentItemGroupList.Add(group);
+                        contentItemGroupList.Add(new ContentItemGroup(
+                            properties: new Dictionary<string, object>(grouping.Key.Properties),
+                            items: FindItemsImplementation(definition, grouping.Select(match => match.Asset))));
                     }
                 }
             }
@@ -260,10 +235,11 @@ namespace NuGet.ContentModel
             return null;
         }
 
-        private IList<ContentItem> FindItemsImplementation(PatternSet definition, IEnumerable<Asset> assets)
+        private List<ContentItem> FindItemsImplementation(PatternSet definition, IEnumerable<Asset> assets)
         {
             var pathPatterns = definition.PathExpressions;
-            IList<ContentItem> itemsList = new List<ContentItem>();
+
+            List<ContentItem> items = new();
 
             foreach (var asset in assets)
             {
@@ -274,7 +250,7 @@ namespace NuGet.ContentModel
                     var contentItem = pathPattern.Match(path, definition.PropertyDefinitions);
                     if (contentItem != null)
                     {
-                        //If the item is assembly, populate the "related files extentions property".
+                        //If the item is assembly, populate the "related files extensions property".
                         if (contentItem.Properties.ContainsKey("assembly"))
                         {
                             string relatedFileExtensionsProperty = GetRelatedFileExtensionProperty(contentItem.Path, assets);
@@ -283,13 +259,13 @@ namespace NuGet.ContentModel
                                 contentItem.Properties.Add("related", relatedFileExtensionsProperty);
                             }
                         }
-                        itemsList.Add(contentItem);
+                        items.Add(contentItem);
                         break;
                     }
                 }
             }
 
-            return itemsList;
+            return items;
         }
 
         internal string GetRelatedFileExtensionProperty(string assemblyPath, IEnumerable<Asset> assets)

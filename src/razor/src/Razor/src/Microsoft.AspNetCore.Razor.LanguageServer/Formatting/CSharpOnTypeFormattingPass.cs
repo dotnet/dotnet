@@ -355,6 +355,15 @@ internal class CSharpOnTypeFormattingPass : CSharpFormattingPassBase
             return;
         }
 
+        // Parent.Parent.Parent is because the tree is
+        //  ExplicitExpression -> ExplicitExpressionBody -> CSharpCodeBlock -> CSharpExpressionLiteral
+        if (owner is CSharpExpressionLiteralSyntax { Parent.Parent.Parent: CSharpExplicitExpressionSyntax explicitExpression } &&
+            IsOnSingleLine(explicitExpression, text))
+        {
+            // Special case, we don't want to add line breaks inside a single line explicit expression (ie @( ... ))
+            return;
+        }
+
         if (sourceMappingRange.Start.Character == 0)
         {
             // It already starts on a fresh new line which doesn't need cleanup.

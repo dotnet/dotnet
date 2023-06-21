@@ -121,6 +121,8 @@ namespace NuGet.PackageManagement.UI
             RecommenderVersion = recommenderVersion;
         }
 
+        public abstract void SetInstalledOrUpdateButtonIsEnabled();
+
         /// <summary>
         /// Sets the package to be displayed in the detail control.
         /// </summary>
@@ -597,7 +599,7 @@ namespace NuGet.PackageManagement.UI
                     // Clear detailed view
                     PackageMetadata = null;
 
-                    if (_selectedVersion != null)
+                    if (_selectedVersion != null && _searchResultPackage != null)
                     {
                         var loadCts = new CancellationTokenSource();
                         var oldCts = Interlocked.Exchange(ref _selectedVersionCancellationTokenSource, loadCts);
@@ -822,6 +824,8 @@ namespace NuGet.PackageManagement.UI
         }
 
         public PackageSourceMappingActionViewModel PackageSourceMappingViewModel { get; }
+
+        public bool CanInstallWithPackageSourceMapping => !PackageSourceMappingViewModel.IsPackageSourceMappingEnabled || PackageSourceMappingViewModel.IsPackageMapped;
 
         public IEnumerable<IProjectContextInfo> NuGetProjects => _nugetProjects;
 

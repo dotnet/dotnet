@@ -178,7 +178,7 @@ public class DelegatedCompletionItemResolverTest : LanguageServerTestBase
         var resolvedItem = await ResolveCompletionItemAsync(input, itemToResolve: "await", DisposalToken);
 
         // Assert
-        var textChange = resolvedItem.TextEdit.AsTextChange(originalSourceText);
+        var textChange = resolvedItem.TextEdit.Value.First.AsTextChange(originalSourceText);
         var actualSourceText = originalSourceText.WithChanges(textChange);
         Assert.True(expectedSourceText.ContentEquals(actualSourceText));
     }

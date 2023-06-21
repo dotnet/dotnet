@@ -2,6 +2,7 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using System;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -102,14 +103,23 @@ internal class DelegatedCompletionItemResolver : CompletionItemResolver
 
         if (resolvedCompletionItem.TextEdit is not null)
         {
-            var formattedTextEdit = await _formattingService.FormatSnippetAsync(
-                documentContext,
-                RazorLanguageKind.CSharp,
-                new[] { resolvedCompletionItem.TextEdit },
-                formattingOptions,
-                cancellationToken).ConfigureAwait(false);
+            if (resolvedCompletionItem.TextEdit.Value.TryGetFirst(out var textEdit))
+            {
+                var formattedTextEdit = await _formattingService.FormatSnippetAsync(
+                    documentContext,
+                    RazorLanguageKind.CSharp,
+                    new[] { textEdit },
+                    formattingOptions,
+                    cancellationToken).ConfigureAwait(false);
 
-            resolvedCompletionItem.TextEdit = formattedTextEdit.FirstOrDefault();
+                resolvedCompletionItem.TextEdit = formattedTextEdit.FirstOrDefault();
+            }
+            else
+            {
+                // TO-DO: Handle InsertReplaceEdit type
+                // https://github.com/dotnet/razor/issues/8829
+                Debug.Fail("Unsupported edit type.");
+            }
         }
 
         if (resolvedCompletionItem.AdditionalTextEdits is not null)

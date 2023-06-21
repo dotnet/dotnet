@@ -15,6 +15,12 @@ namespace NuGet.ContentModel
             Items = new List<ContentItem>();
         }
 
+        internal ContentItemGroup(IDictionary<string, object> properties, IList<ContentItem> items)
+        {
+            Properties = properties;
+            Items = items;
+        }
+
         public IDictionary<string, object> Properties { get; }
 
         public IList<ContentItem> Items { get; }

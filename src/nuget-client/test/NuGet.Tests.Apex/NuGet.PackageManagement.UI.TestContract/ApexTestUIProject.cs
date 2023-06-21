@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using NuGet.Packaging.Core;
 using NuGet.Versioning;
@@ -55,6 +54,19 @@ namespace NuGet.PackageManagement.UI.TestContract
         public void Search(string searchText)
         {
             UIInvoke(() => _packageManagerControl.Search(searchText));
+        }
+
+        public bool VerifyFirstPackageOnTab(string tabName, string packageId, string packageVersion = null)
+        {
+            var result = _packageManagerControl.PackageList.PackageItems.FirstOrDefault();
+            if (tabName == "Browse")
+            {
+                return result.Id == packageId;
+            }
+            else
+            {
+                return result.Id == packageId && result.Version == NuGetVersion.Parse(packageVersion);
+            }
         }
 
         public void InstallPackage(string packageId, string version)

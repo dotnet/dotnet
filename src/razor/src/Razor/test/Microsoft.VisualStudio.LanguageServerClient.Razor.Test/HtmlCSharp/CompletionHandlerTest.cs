@@ -218,8 +218,8 @@ public class CompletionHandlerTest : HandlerTestBase
 
         // Assert
         var vsCompletionList = Assert.IsType<OptimizedVSCompletionList>(result.Value.Value);
-        var item = vsCompletionList.Items.First();
-        Assert.Equal("DateTime", item.Label);
+        var item = vsCompletionList.Items.Where(item => item.Label == "DateTime");
+        Assert.Single(item);
     }
 
     [Fact]
@@ -1178,7 +1178,7 @@ public class CompletionHandlerTest : HandlerTestBase
         };
 
         var result = CompletionHandler.TranslateTextEdits(razorDocPosition, cSharpDocPosition, wordRange.Span.AsRange(), completionList);
-        var actualRange = result.Items.First().TextEdit.Range;
+        var actualRange = result.Items.First().TextEdit.Value.First.Range;
         Assert.Equal(expectedRange, actualRange);
     }
 

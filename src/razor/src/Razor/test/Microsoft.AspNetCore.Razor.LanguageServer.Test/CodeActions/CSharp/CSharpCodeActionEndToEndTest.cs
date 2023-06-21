@@ -157,6 +157,178 @@ public class CSharpCodeActionEndToEndTest : SingleServerDelegatingEndpointTestBa
         await ValidateCodeActionAsync(input, expected, RazorPredefinedCodeRefactoringProviderNames.IntroduceVariable, childActionIndex: 1);
     }
 
+    [Fact]
+    public async Task Handle_ConvertConcatenationToInterpolatedString_CSharpStatement()
+    {
+        var input = """
+            @{
+                var x = "he[||]l" + "lo" + Environment.NewLine + "world";
+            }
+            """;
+
+        var expected = """
+            @{
+                var x = $"hello{Environment.NewLine}world";
+            }
+            """;
+
+        await ValidateCodeActionAsync(input, expected, RazorPredefinedCodeRefactoringProviderNames.ConvertConcatenationToInterpolatedString);
+    }
+
+    [Fact]
+    public async Task Handle_ConvertConcatenationToInterpolatedString_ExplicitExpression()
+    {
+        var input = """
+            @("he[||]l" + "lo" + Environment.NewLine + "world")
+            """;
+
+        var expected = """
+            @($"hello{Environment.NewLine}world")
+            """;
+
+        await ValidateCodeActionAsync(input, expected, RazorPredefinedCodeRefactoringProviderNames.ConvertConcatenationToInterpolatedString);
+    }
+
+    [Fact]
+    public async Task Handle_ConvertConcatenationToInterpolatedString_CodeBlock()
+    {
+        var input = """
+            @functions
+            {
+                private string _x = "he[||]l" + "lo" + Environment.NewLine + "world";
+            }
+            """;
+
+        var expected = """
+            @functions
+            {
+                private string _x = $"hello{Environment.NewLine}world";
+            }
+            """;
+
+        await ValidateCodeActionAsync(input, expected, RazorPredefinedCodeRefactoringProviderNames.ConvertConcatenationToInterpolatedString);
+    }
+
+    [Fact]
+    public async Task Handle_ConvertBetweenRegularAndVerbatimInterpolatedString_CodeBlock()
+    {
+        var input = """
+            @functions
+            {
+                private string _x = $@"h[||]ello world";
+            }
+            """;
+
+        var expected = """
+            @functions
+            {
+                private string _x = $"hello world";
+            }
+            """;
+
+        await ValidateCodeActionAsync(input, expected, RazorPredefinedCodeRefactoringProviderNames.ConvertBetweenRegularAndVerbatimInterpolatedString);
+    }
+
+    [Fact]
+    public async Task Handle_ConvertBetweenRegularAndVerbatimInterpolatedString_CodeBlock2()
+    {
+        var input = """
+            @functions
+            {
+                private string _x = $"h[||]ello\\nworld";
+            }
+            """;
+
+        var expected = """
+            @functions
+            {
+                private string _x = $@"hello\nworld";
+            }
+            """;
+
+        await ValidateCodeActionAsync(input, expected, RazorPredefinedCodeRefactoringProviderNames.ConvertBetweenRegularAndVerbatimInterpolatedString);
+    }
+
+    [Fact]
+    public async Task Handle_ConvertBetweenRegularAndVerbatimString_CodeBlock()
+    {
+        var input = """
+            @functions
+            {
+                private string _x = @"h[||]ello world";
+            }
+            """;
+
+        var expected = """
+            @functions
+            {
+                private string _x = "hello world";
+            }
+            """;
+
+        await ValidateCodeActionAsync(input, expected, RazorPredefinedCodeRefactoringProviderNames.ConvertBetweenRegularAndVerbatimString);
+    }
+
+    [Fact]
+    public async Task Handle_ConvertBetweenRegularAndVerbatimString_CodeBlock2()
+    {
+        var input = """
+            @functions
+            {
+                private string _x = "h[||]ello\\nworld";
+            }
+            """;
+
+        var expected = """
+            @functions
+            {
+                private string _x = @"hello\nworld";
+            }
+            """;
+
+        await ValidateCodeActionAsync(input, expected, RazorPredefinedCodeRefactoringProviderNames.ConvertBetweenRegularAndVerbatimString);
+    }
+
+    [Fact]
+    public async Task Handle_ConvertPlaceholderToInterpolatedString_CodeBlock()
+    {
+        var input = """
+            @functions
+            {
+                private string _x = [|string.Format("hello{0}world", Environment.NewLine)|];
+            }
+            """;
+
+        var expected = """
+            @functions
+            {
+                private string _x = $"hello{Environment.NewLine}world";
+            }
+            """;
+
+        await ValidateCodeActionAsync(input, expected, RazorPredefinedCodeRefactoringProviderNames.ConvertPlaceholderToInterpolatedString);
+    }
+
+    [Fact]
+    public async Task Handle_ConvertToInterpolatedString_CodeBlock()
+    {
+        var input = """
+            @functions
+            {
+                private string _x = [||]"hello {";
+            }
+            """;
+
+        var expected = """
+            @functions
+            {
+                private string _x = $"hello {{";
+            }
+            """;
+
+        await ValidateCodeActionAsync(input, expected, RazorPredefinedCodeRefactoringProviderNames.ConvertToInterpolatedString);
+    }
+
     private async Task ValidateCodeActionAsync(string input, string expected, string codeAction, int childActionIndex = 0)
     {
         TestFileMarkupParser.GetSpan(input, out input, out var textSpan);

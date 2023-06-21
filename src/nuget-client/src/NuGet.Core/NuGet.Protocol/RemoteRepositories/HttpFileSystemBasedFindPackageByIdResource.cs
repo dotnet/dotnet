@@ -582,9 +582,8 @@ namespace NuGet.Protocol
             builder.Append('.');
             builder.Append(normalizedVersionString);
             builder.Append(".nupkg");
-            string contentUri = builder.ToString();
 
-            StringBuilderPool.Shared.Return(builder);
+            string contentUri = StringBuilderPool.Shared.ToStringAndReturn(builder);
 
             return new PackageInfo
             {

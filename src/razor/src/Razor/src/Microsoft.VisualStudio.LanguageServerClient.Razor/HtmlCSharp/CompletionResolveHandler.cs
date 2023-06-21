@@ -3,6 +3,7 @@
 
 using System;
 using System.Composition;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -156,19 +157,28 @@ internal class CompletionResolveHandler : IRequestHandler<CompletionItem, Comple
 
         if (resolvedCompletionItem.TextEdit != null)
         {
-            var containsSnippet = resolvedCompletionItem.InsertTextFormat == InsertTextFormat.Snippet;
-            var remappedEdits = await _documentMappingProvider.RemapFormattedTextEditsAsync(
-                requestContext.ProjectedDocumentUri,
-                new[] { resolvedCompletionItem.TextEdit },
-                formattingOptions,
-                containsSnippet,
-                cancellationToken).ConfigureAwait(false);
+            if (resolvedCompletionItem.TextEdit.Value.TryGetFirst(out var textEdit))
+            {
+                var containsSnippet = resolvedCompletionItem.InsertTextFormat == InsertTextFormat.Snippet;
+                var remappedEdits = await _documentMappingProvider.RemapFormattedTextEditsAsync(
+                    requestContext.ProjectedDocumentUri,
+                    new[] { textEdit },
+                    formattingOptions,
+                    containsSnippet,
+                    cancellationToken).ConfigureAwait(false);
 
-            // We only passed in a single edit to be remapped
-            var remappedEdit = remappedEdits.Single();
-            resolvedCompletionItem.TextEdit = remappedEdit;
+                // We only passed in a single edit to be remapped
+                var remappedEdit = remappedEdits.Single();
+                resolvedCompletionItem.TextEdit = remappedEdit;
 
-            _logger.LogInformation("Formatted text edit.");
+                _logger.LogInformation("Formatted text edit.");
+            }
+            else
+            {
+                // TO-DO: Handle InsertReplaceEdit type
+                // https://github.com/dotnet/razor/issues/8829
+                Debug.Fail("Unsupported edit type.");
+            }
         }
 
         if (resolvedCompletionItem.AdditionalTextEdits != null)

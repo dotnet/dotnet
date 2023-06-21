@@ -48,12 +48,7 @@ namespace NuGet.Versioning
                 Format(builder, c, version);
             }
 
-            string formattedString = builder.ToString();
-
-            StringBuilderPool.Shared.Return(builder);
-
-            return formattedString;
-
+            return StringBuilderPool.Shared.ToStringAndReturn(builder);
         }
 
         /// <summary>

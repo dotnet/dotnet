@@ -834,7 +834,7 @@ namespace NuGet.Tests.Apex
 
         [NuGetWpfTheory]
         [MemberData(nameof(GetIOSTemplates))]
-        public async Task UninstallPackagForIOSProjectInPMC(ProjectTemplate projectTemplate)
+        public async Task UninstallPackageForIOSProjectInPMC(ProjectTemplate projectTemplate)
         {
             EnsureVisualStudioHost();
             using (var simpleTestPathContext = new SimpleTestPathContext())

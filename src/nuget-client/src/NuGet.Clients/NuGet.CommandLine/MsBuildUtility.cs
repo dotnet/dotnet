@@ -173,7 +173,7 @@ namespace NuGet.CommandLine
 
                     if (process.ExitCode != 0 || !finished)
                     {
-                        // If a problem occurred log all msbuild output as an error 
+                        // If a problem occurred log all msbuild output as an error
                         // so that the user can see it.
                         // By default this runs with /v:q which means that only
                         // errors and warnings will be in the output.
@@ -182,7 +182,7 @@ namespace NuGet.CommandLine
 
                     // MSBuild writes errors to the output stream, parsing the console output to find
                     // the errors would be error prone so here we log all output combined with any
-                    // errors on the error stream (haven't seen the error stream used to date) 
+                    // errors on the error stream (haven't seen the error stream used to date)
                     // to give the user the complete info.
                     await console.LogAsync(logLevel, output.ToString() + errors.ToString());
 
@@ -437,9 +437,8 @@ namespace NuGet.CommandLine
             try
             {
                 var solution = new Solution(solutionFile, msbuildPath);
-                var solutionDirectory = Path.GetDirectoryName(solutionFile);
                 return solution.Projects.Where(project => !project.IsSolutionFolder)
-                    .Select(project => CombinePathWithVerboseError(solutionDirectory, project.RelativePath));
+                    .Select(project => project.AbsolutePath);
             }
             catch (Exception ex)
             {

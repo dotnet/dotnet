@@ -954,6 +954,9 @@ EndProject");
         public static string CreateBasicTwoProjectSolutionWithSolutionFilters(TestDirectory workingPath, string proj1ConfigFileName, string proj2ConfigFileName, bool redirectGlobalPackagesFolder = true)
         {
             var repositoryPath = CreateBasicTwoProjectSolution(workingPath, proj1ConfigFileName, proj2ConfigFileName, redirectGlobalPackagesFolder);
+            var filterInSubfolderPath = Path.Combine(workingPath, "filter");
+
+            Directory.CreateDirectory(filterInSubfolderPath);
 
             CreateFile(workingPath, "a.proj1.slnf", @"{
   ""solution"": {
@@ -972,6 +975,18 @@ EndProject");
     ]
   }
 }");
+
+
+            CreateFile(filterInSubfolderPath, "filterinsubfolder.slnf",  @"{
+  ""solution"": {
+    ""path"": ""..\\a.sln"",
+    ""projects"": [
+      ""proj1\\proj1.csproj"",
+      ""proj2\\proj2.csproj"",
+    ]
+  }
+}");
+
 
             return repositoryPath;
         }

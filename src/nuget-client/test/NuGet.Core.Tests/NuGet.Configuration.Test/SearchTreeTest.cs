@@ -35,7 +35,7 @@ namespace NuGet.Configuration.Test
         public void SearchTree_WithOneSource_Match(string packagePatterns, string term)
         {
             // Arrange
-            var configuration = PackageSourceMappingUtility.GetpackageSourceMapping(packagePatterns);
+            var configuration = PackageSourceMappingUtility.GetPackageSourceMapping(packagePatterns);
             SearchTree searchTree = new SearchTree(configuration);
 
             // Act & Assert
@@ -68,7 +68,7 @@ namespace NuGet.Configuration.Test
         public void SearchTree_WithMultipleSources_Match(string packagePatterns, string term)
         {
             // Arrange
-            var configuration = PackageSourceMappingUtility.GetpackageSourceMapping(packagePatterns);
+            var configuration = PackageSourceMappingUtility.GetPackageSourceMapping(packagePatterns);
             SearchTree searchTree = new SearchTree(configuration);
 
             // Act & Assert
@@ -84,7 +84,7 @@ namespace NuGet.Configuration.Test
         public void SearchTree_InternationalSources_MatchesWithOne(string packagePatterns, string term)
         {
             // Arrange
-            var configuration = PackageSourceMappingUtility.GetpackageSourceMapping(packagePatterns);
+            var configuration = PackageSourceMappingUtility.GetPackageSourceMapping(packagePatterns);
             SearchTree searchTree = new SearchTree(configuration);
 
             // Act & Assert
@@ -205,7 +205,7 @@ namespace NuGet.Configuration.Test
         public void SearchTree_InvalidSearchInput_Throws(string packagePatterns, string term)
         {
             // Arrange
-            var configuration = PackageSourceMappingUtility.GetpackageSourceMapping(packagePatterns);
+            var configuration = PackageSourceMappingUtility.GetPackageSourceMapping(packagePatterns);
 
             // Act & Assert
             configuration.IsEnabled.Should().BeTrue();
@@ -222,9 +222,52 @@ namespace NuGet.Configuration.Test
             Assert.Equal(expectedLine, exception.Message);
         }
 
+        /// <summary>
+        /// SearchPatternByTerm
+        /// </summary>
+        /// <param name="packagePatterns"></param>
+        /// <returns></returns>
+        [Theory]
+        [InlineData("public,Nuget", "Nuget", "nuget")]
+        [InlineData("public,nuget", "Nuget", "nuget")]
+        [InlineData("public,Nuget", "nuget", "nuget")]
+        [InlineData("public,nuget", "nuget", "nuget")]
+        [InlineData("public,nuget", " nuget", "nuget")]
+        [InlineData("public,nuget", "nuget ", "nuget")]
+        [InlineData("public,nuget", " nuget ", "nuget")]
+        [InlineData("public, nuget", "nuget", "nuget")]
+        [InlineData("public,nuget ", "nuget", "nuget")]
+        [InlineData("public, nuget ", "nuget", "nuget")]
+        [InlineData("public, nuget ", " nuget ", "nuget")]
+        [InlineData(" public , nuget ", " nuget ", "nuget")]
+        [InlineData("   public    ,    nuget    ", "   nuget   ", "nuget")]
+        [InlineData("public,*", "Microsoft.Build", "*")]
+        [InlineData("public,Contoso.Opensource.*,*", "Microsoft.Build", "*")]
+        [InlineData("public,Contoso.Opensource.*", "Contoso.Opensource.", "contoso.opensource.*")]
+        [InlineData("public,Contoso.Opensource.*", "Contoso.Opensource.MVC", "contoso.opensource.*")]
+        [InlineData("public,Contoso.Opensource.*", "Contoso.Opensource.MVC.ASP", "contoso.opensource.*")]
+        [InlineData("public,Contoso.Opensource.* ", "Contoso.Opensource.MVC.ASP", "contoso.opensource.*")]
+        [InlineData(" public,Contoso.Opensource.*", "Contoso.Opensource.MVC.ASP", "contoso.opensource.*")]
+        [InlineData(" public,Contoso.Opensource.* ", " Contoso.Opensource.MVC.ASP ", "contoso.opensource.*")]
+        [InlineData("public,Contoso.Opensource.MVC.ASP ", "Contoso.Opensource.Abstractions", null)]
+        [InlineData("public,Contoso.Opensource.MVC.*", "Contoso.Opensource.Abstractions", null)]
+        public void SearchPatternByTerm_ExistingTerm_PatternFound(string packagePatterns, string term, string expectedPatternMatch)
+        {
+            // Arrange
+            var configuration = PackageSourceMappingUtility.GetPackageSourceMapping(packagePatterns);
+            SearchTree searchTree = new SearchTree(configuration);
+
+            // Act
+            string foundPattern = searchTree.SearchForPattern(term);
+
+            // Assert
+            configuration.IsEnabled.Should().BeTrue();
+            Assert.Equal(expectedPatternMatch, foundPattern);
+        }
+
         private SearchTree GetSearchTree(string packagePatterns)
         {
-            return new SearchTree(PackageSourceMappingUtility.GetpackageSourceMapping(packagePatterns));
+            return new SearchTree(PackageSourceMappingUtility.GetPackageSourceMapping(packagePatterns));
         }
     }
 }

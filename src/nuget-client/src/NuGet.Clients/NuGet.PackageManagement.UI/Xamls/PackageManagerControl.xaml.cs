@@ -187,6 +187,7 @@ namespace NuGet.PackageManagement.UI
         private void Settings_SettingsChanged(object sender, EventArgs e)
         {
             _detailModel.PackageSourceMappingViewModel.SettingsChanged();
+            _detailModel.SetInstalledOrUpdateButtonIsEnabled();
         }
 
         public PackageRestoreBar RestoreBar { get; private set; }
@@ -1097,6 +1098,7 @@ namespace NuGet.PackageManagement.UI
                 EmitSearchSelectionTelemetry(selectedItem);
 
                 await _detailModel.SetCurrentPackageAsync(selectedItem, _topPanel.Filter, () => _packageList.SelectedItem);
+                Model.UIController.SelectedPackageId = selectedItem.Id;
                 _detailModel.SetCurrentSelectionInfo(selectedIndex, recommendedCount, _recommendPackages, selectedItem.RecommenderVersion);
 
                 _packageDetail.ScrollToHome();

@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using Microsoft;
 using Microsoft.ServiceHub.Framework;
+using Microsoft.VisualStudio.ComponentModelHost;
 using Microsoft.VisualStudio.Shell;
 using NuGet.Commands;
 using NuGet.Common;
@@ -25,6 +26,7 @@ using NuGet.Protocol.Core.Types;
 using NuGet.Resolver;
 using NuGet.VisualStudio;
 using NuGet.VisualStudio.Internal.Contracts;
+using NuGet.VisualStudio.Telemetry;
 using StreamJsonRpc;
 using Task = System.Threading.Tasks.Task;
 
@@ -36,6 +38,7 @@ namespace NuGet.PackageManagement.UI
 
         private readonly NuGetUIProjectContext _projectContext;
         private PackageManagerControl _packageManagerControl;
+        private string _selectedPackageId;
 
         private NuGetUI(
             ICommonOperations commonOperations,
@@ -107,21 +110,20 @@ namespace NuGet.PackageManagement.UI
             var nuGetUi = new NuGetUI(
                 commonOperations,
                 projectContext,
-                logger)
-            {
-                UIContext = await NuGetUIContext.CreateAsync(
-                    serviceBroker,
-                    sourceRepositoryProvider,
-                    settings,
-                    solutionManager,
-                    packageRestoreManager,
-                    optionsPageActivator,
-                    solutionUserOptions,
-                    deleteOnRestartManager,
-                    lockService,
-                    restoreProgressReporter,
-                    cancellationToken)
-            };
+                logger);
+
+            nuGetUi.UIContext = await NuGetUIContext.CreateAsync(
+                serviceBroker,
+                sourceRepositoryProvider,
+                settings,
+                solutionManager,
+                packageRestoreManager,
+                optionsPageActivator,
+                solutionUserOptions,
+                deleteOnRestartManager,
+                lockService,
+                restoreProgressReporter,
+                cancellationToken);
 
             nuGetUi.UIContext.Projects = projects;
 
@@ -276,12 +278,32 @@ namespace NuGet.PackageManagement.UI
         {
             if (UIContext?.OptionsPageActivator != null)
             {
-                InvokeOnUIThread(() => { UIContext.OptionsPageActivator.ActivatePage(optionsPageToOpen, null); });
+                InvokeOnUIThread(() =>
+                {
+                    if (optionsPageToOpen == OptionsPage.PackageSourceMapping)
+                    {
+                        SetSelectedPackageInNuGetUIOptionsContextService();
+                    }
+
+                    UIContext.OptionsPageActivator.ActivatePage(optionsPageToOpen, null);
+                });
             }
             else
             {
                 MessageBox.Show("Options dialog is not available in the standalone UI");
             }
+        }
+
+        private void SetSelectedPackageInNuGetUIOptionsContextService()
+        {
+            NuGetUIThreadHelper.JoinableTaskFactory.RunAsync(async delegate
+            {
+#pragma warning disable ISB001 // Dispose of proxies
+                IComponentModel componentModelMapping = await ServiceLocator.GetComponentModelAsync();
+                var nuGetUIOptionsContext = componentModelMapping.GetService<INuGetUIOptionsContext>();
+                nuGetUIOptionsContext.SelectedPackageId = SelectedPackageId;
+#pragma warning restore ISB001 // Dispose of proxies, disposed in disposing event or in ClearSettings
+            }).PostOnFailure(nameof(NuGetUI), nameof(LaunchNuGetOptionsDialog));
         }
 
         public bool PromptForPreviewAcceptance(IEnumerable<PreviewResult> actions)
@@ -339,7 +361,14 @@ namespace NuGet.PackageManagement.UI
 
         public bool ForceRemove { get; set; }
 
-        public PackageIdentity SelectedPackage { get; set; }
+        public string SelectedPackageId
+        {
+            get => _selectedPackageId;
+            set
+            {
+                _selectedPackageId = value;
+            }
+        }
 
         public int SelectedIndex { get; set; }
 

@@ -265,11 +265,7 @@ namespace NuGet.Common
                 path.Append(path2Segments[len2 - 1]);
             }
 
-            var relativePath = path.ToString();
-
-            StringBuilderPool.Shared.Return(path);
-
-            return relativePath;
+            return StringBuilderPool.Shared.ToStringAndReturn(path);
         }
 
         public static string GetAbsolutePath(string basePath, string relativePath)

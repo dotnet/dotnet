@@ -1,6 +1,7 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
+using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.LanguageServer.Extensions;
@@ -33,7 +34,16 @@ internal class TextEditResponseRewriter : DelegatedCompletionResponseRewriter
 
         if (completionList.ItemDefaults?.EditRange is { } editRange)
         {
-            completionList.ItemDefaults.EditRange = TranslateRange(hostDocumentPosition, delegatedParameters.ProjectedPosition, editRange);
+            if (editRange.TryGetFirst(out var range))
+            {
+                completionList.ItemDefaults.EditRange = TranslateRange(hostDocumentPosition, delegatedParameters.ProjectedPosition, range);
+            }
+            else
+            {
+                // TO-DO: Handle InsertReplaceEdit type
+                // https://github.com/dotnet/razor/issues/8829
+                Debug.Fail("Unsupported edit type.");
+            }
         }
 
         return completionList;
@@ -53,10 +63,19 @@ internal class TextEditResponseRewriter : DelegatedCompletionResponseRewriter
 
         foreach (var item in completionList.Items)
         {
-            if (item.TextEdit is { } textEdit)
+            if (item.TextEdit is { } edit)
             {
-                var translatedRange = TranslateRange(hostDocumentPosition, projectedPosition, textEdit.Range);
-                textEdit.Range = translatedRange;
+                if (edit.TryGetFirst(out var textEdit))
+                {
+                    var translatedRange = TranslateRange(hostDocumentPosition, projectedPosition, textEdit.Range);
+                    textEdit.Range = translatedRange;
+                }
+                else
+                {
+                    // TO-DO: Handle InsertReplaceEdit type
+                    // https://github.com/dotnet/razor/issues/8829
+                    Debug.Fail("Unsupported edit type.");
+                }
             }
             else if (item.AdditionalTextEdits is not null)
             {

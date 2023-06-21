@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Text;
 
 namespace NuGet.Configuration
 {
@@ -75,6 +76,17 @@ namespace NuGet.Configuration
         }
 
         /// <summary>
+        /// Finds the pattern in <see cref="PackageSourceMapping.Patterns"/> which satisfies the <paramref name="term"/>.
+        /// Patterns are all lowercase and include glob (`*`) characters.
+        /// </summary>
+        /// <param name="term">Term to search for in <see cref="PackageSourceMapping.Patterns"/>.</param>
+        /// <returns>Found <see cref="PackageSourceMapping.Patterns"/> which satisfies the <paramref name="term"/>, or `null`.</returns>
+        public string SearchForPattern(string term)
+        {
+            return SearchPatternByTerm(term);
+        }
+
+        /// <summary>
         /// Get package source names with matching prefix "term" from package source mapping section.
         /// </summary>
         /// <param name="term">Search term. Cannot be null, empty, or whitespace only. </param>
@@ -82,12 +94,18 @@ namespace NuGet.Configuration
         /// <exception cref="ArgumentException"> if <paramref name="term"/> is null, empty, or whitespace only.</exception>
         public IReadOnlyList<string> GetConfiguredPackageSources(string term)
         {
+            return SearchNodeByTerm(term)?.PackageSources;
+        }
+
+        private SearchNode SearchNodeByTerm(string term)
+        {
             if (string.IsNullOrWhiteSpace(term))
             {
                 throw new ArgumentException(Resources.Argument_Cannot_Be_Null_Empty_Or_WhiteSpaceOnly, nameof(term));
             }
 
             term = term.ToLower(CultureInfo.CurrentCulture).Trim();
+
             SearchNode currentNode = _root;
             SearchNode longestMatchingPrefixNode = null;
 
@@ -117,10 +135,54 @@ namespace NuGet.Configuration
 
             if (i == term.Length && currentNode.PackageSources != null)
             {
-                return currentNode.PackageSources;
+                return currentNode;
             }
 
-            return longestMatchingPrefixNode?.PackageSources;
+            return longestMatchingPrefixNode;
+        }
+
+        private string SearchPatternByTerm(string term)
+        {
+            if (string.IsNullOrWhiteSpace(term))
+            {
+                throw new ArgumentException(Resources.Argument_Cannot_Be_Null_Empty_Or_WhiteSpaceOnly, nameof(term));
+            }
+
+            term = term.ToLower(CultureInfo.CurrentCulture).Trim();
+
+            StringBuilder sb = new StringBuilder();
+            SearchNode currentNode = _root;
+
+            if (currentNode.IsGlobbing)
+            {
+                return "*";
+            }
+
+            int i = 0;
+
+            for (; i < term.Length; i++)
+            {
+                char c = term[i];
+
+                if (!currentNode.Children.ContainsKey(c))
+                {
+                    if (!currentNode.IsGlobbing)
+                    {
+                        return null;
+                    }
+                    break;
+                }
+
+                currentNode = currentNode.Children[c];
+
+                sb.Append(c);
+            }
+            if (currentNode.IsGlobbing)
+            {
+                sb.Append('*');
+            }
+
+            return sb.ToString();
         }
     }
 }

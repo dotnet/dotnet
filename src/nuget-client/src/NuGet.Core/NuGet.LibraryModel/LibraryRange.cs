@@ -67,44 +67,43 @@ namespace NuGet.LibraryModel
 
         public string ToLockFileDependencyGroupString()
         {
-            var sb = new StringBuilder();
+            if (VersionRange is null)
+            {
+                return null;
+            }
+
+            StringBuilder sb = StringBuilderPool.Shared.Rent(256);
+
             sb.Append(Name);
 
-            if (VersionRange != null)
+            if (VersionRange.HasLowerBound)
             {
-                if (VersionRange.HasLowerBound)
+                if (VersionRange.IsMinInclusive)
                 {
-                    sb.Append(" ");
-
-                    if (VersionRange.IsMinInclusive)
-                    {
-                        sb.Append(">= ");
-                    }
-                    else
-                    {
-                        sb.Append("> ");
-                    }
-
-                    if (VersionRange.IsFloating)
-                    {
-                        sb.Append(VersionRange.Float.ToString());
-                    }
-                    else
-                    {
-                        sb.Append(VersionRange.MinVersion.ToNormalizedString());
-                    }
+                    sb.Append(" >= ");
+                }
+                else
+                {
+                    sb.Append(" > ");
                 }
 
-                if (VersionRange.HasUpperBound)
+                if (VersionRange.IsFloating)
                 {
-                    sb.Append(" ");
-
-                    sb.Append(VersionRange.IsMaxInclusive ? "<= " : "< ");
-                    sb.Append(VersionRange.MaxVersion.ToNormalizedString());
+                    VersionRange.Float.ToString(sb);
+                }
+                else
+                {
+                    sb.Append(VersionRange.MinVersion.ToNormalizedString());
                 }
             }
 
-            return sb.ToString();
+            if (VersionRange.HasUpperBound)
+            {
+                sb.Append(VersionRange.IsMaxInclusive ? " <= " : " < ");
+                sb.Append(VersionRange.MaxVersion.ToNormalizedString());
+            }
+
+            return StringBuilderPool.Shared.ToStringAndReturn(sb);
         }
 
         /// <summary>

@@ -247,7 +247,7 @@ namespace NuGet.VisualStudio.Common.Test.Telemetry
             data.NupkgCount = 0;
             data.Resources.Clear();
             data.Http.Requests = 0;
-            var configuration = string.IsNullOrEmpty(packageSourceMapping) ? null : PackageSourceMappingUtility.GetpackageSourceMapping(packageSourceMapping);
+            var configuration = string.IsNullOrEmpty(packageSourceMapping) ? null : PackageSourceMappingUtility.GetPackageSourceMapping(packageSourceMapping);
 
             var sourceRepository = new SourceRepository(new PackageSource("source"), Repository.Provider.GetCoreV3());
 
@@ -285,7 +285,7 @@ namespace NuGet.VisualStudio.Common.Test.Telemetry
             httpData.Failed = 1;
             httpData.StatusCodes.Add(200, 7);
             httpData.StatusCodes.Add(404, 3);
-            var configuration = string.IsNullOrEmpty(packageSourceMapping) ? null : PackageSourceMappingUtility.GetpackageSourceMapping(packageSourceMapping);
+            var configuration = string.IsNullOrEmpty(packageSourceMapping) ? null : PackageSourceMappingUtility.GetPackageSourceMapping(packageSourceMapping);
 
             var source = new SourceRepository(new PackageSource(NuGetConstants.V3FeedUrl), Repository.Provider.GetCoreV3());
 
