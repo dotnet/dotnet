@@ -1,7 +1,6 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
-using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
@@ -40,6 +39,36 @@ public class CodeDirectiveFormattingTest : FormattingTestBase
                         {
                         }
                     }
+                    """);
+    }
+
+    [Fact]
+    public async Task FormatCSharpInsideHtmlTag()
+    {
+        await RunFormattingTestAsync(
+            input: """
+                    <html>
+                    <body>
+                    <div>
+                    @{
+                    <span>foo</span>
+                    <span>foo</span>
+                    }
+                    </div>
+                    </body>
+                    </html>
+                    """,
+            expected: """
+                    <html>
+                    <body>
+                        <div>
+                            @{
+                                <span>foo</span>
+                                <span>foo</span>
+                            }
+                        </div>
+                    </body>
+                    </html>
                     """);
     }
 
@@ -433,6 +462,50 @@ public class CodeDirectiveFormattingTest : FormattingTestBase
                     }
 
                     <p></p>
+                    """,
+            fileKind: FileKinds.Legacy);
+    }
+
+    [Fact]
+    public async Task Format_SectionDirectiveBlock6()
+    {
+        await RunFormattingTestAsync(
+            input: """
+                    @functions {
+                     public class Foo{
+                    void Method() {  }
+                        }
+                    }
+
+                    @section Scripts {
+                    <meta property="a" content="b">
+                    <meta property="a" content="b"/>
+                    <meta property="a" content="b">
+
+                    @if(true)
+                    {
+                    <p>this is a paragraph</p>
+                    }
+                    }
+                    """,
+            expected: """
+                    @functions {
+                        public class Foo
+                        {
+                            void Method() { }
+                        }
+                    }
+
+                    @section Scripts {
+                        <meta property="a" content="b">
+                        <meta property="a" content="b" />
+                        <meta property="a" content="b">
+
+                        @if (true)
+                        {
+                            <p>this is a paragraph</p>
+                        }
+                    }
                     """,
             fileKind: FileKinds.Legacy);
     }
