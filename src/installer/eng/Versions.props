@@ -22,8 +22,8 @@
     <VersionFeature21>30</VersionFeature21>
     <VersionFeature31>32</VersionFeature31>
     <VersionFeature50>17</VersionFeature50>
-    <VersionFeature60>16</VersionFeature60>
-    <VersionFeature70>5</VersionFeature70>
+    <VersionFeature60>18</VersionFeature60>
+    <VersionFeature70>7</VersionFeature70>
     <!-- Should be kept in sync with VersionFeature70. It should match the version of Microsoft.NET.ILLink.Tasks
          referenced by the same 7.0 SDK that references the 7.0.VersionFeature70 runtime pack. -->
     <_NET70ILLinkPackVersion>7.0.100-1.23211.1</_NET70ILLinkPackVersion>
@@ -141,11 +141,14 @@
       Therefore we stay at last month's version.
       We also need to special case the 1st patch release, because the incoming SDK version will never be 2 versions behind us in that case.
       Instead the indicator is that the incoming SDK version is not RTM or greater yet.
+      Preview releases already use -1 versionining so don't subtract one for that version
     -->
     <SubtractOneFromTemplateVersions Condition="$([MSBuild]::Subtract($(VersionFeature), $(MicrosoftNETSdkPatchVersion))) &gt;= 2">true</SubtractOneFromTemplateVersions>
     <SubtractOneFromTemplateVersions Condition="$(VersionFeature) &gt;= 1 AND ! $(MicrosoftNETSdkPackageVersion.Contains('rtm')) AND ! $(MicrosoftNETSdkPackageVersion.Contains('servicing'))">true</SubtractOneFromTemplateVersions>
     <AspNetCoreTemplateFeature60>$([MSBuild]::Subtract($(VersionFeature60), 1))</AspNetCoreTemplateFeature60>
     <AspNetCoreTemplateFeature70>$([MSBuild]::Subtract($(VersionFeature70), 1))</AspNetCoreTemplateFeature70>
+    <AspNetCoreTemplateFeature60 Condition="$(MicrosoftNETSdkPackageVersion.Contains('preview'))">$(VersionFeature60)</AspNetCoreTemplateFeature60>
+    <AspNetCoreTemplateFeature70 Condition="$(MicrosoftNETSdkPackageVersion.Contains('preview'))">$(VersionFeature70)</AspNetCoreTemplateFeature70>
     <AspNetCoreTemplateFeature60 Condition="'$(SubtractOneFromTemplateVersions)' == 'true'">$([MSBuild]::Subtract($(AspNetCoreTemplateFeature60), 1))</AspNetCoreTemplateFeature60>
     <AspNetCoreTemplateFeature70 Condition="'$(SubtractOneFromTemplateVersions)' == 'true'">$([MSBuild]::Subtract($(AspNetCoreTemplateFeature70), 1))</AspNetCoreTemplateFeature70>
   </PropertyGroup>
