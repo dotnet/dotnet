@@ -1,12 +1,13 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+#nullable enable
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Windows.Controls;
-using System.Windows.Input;
 using Microsoft.Internal.VisualStudio.PlatformUI;
 using Microsoft.VisualStudio.ComponentModelHost;
 using Microsoft.VisualStudio.PlatformUI;
@@ -22,8 +23,7 @@ namespace NuGet.PackageManagement.UI.Options
 {
     public partial class PackageSourceMappingOptionsControl : UserControl
     {
-        private IReadOnlyList<PackageSourceMappingSourceItem> _originalPackageSourceMappings;
-        private AddMappingDialog _addMappingDialog;
+        private IReadOnlyList<PackageSourceMappingSourceItem>? _originalPackageSourceMappings;
 
         public PackageSourceMappingOptionsControl()
         {
@@ -39,35 +39,81 @@ namespace NuGet.PackageManagement.UI.Options
         }
 
         public ItemsChangeObservableCollection<SourceMappingViewModel> SourceMappingsCollection { get; private set; }
-        public ICommand ShowAddDialogCommand { get; set; }
-        public ICommand RemoveMappingCommand { get; set; }
-        public ICommand RemoveAllMappingsCommand { get; set; }
+        public DelegateCommand ShowAddDialogCommand { get; set; }
+        public DelegateCommand RemoveMappingCommand { get; set; }
+        public DelegateCommand RemoveAllMappingsCommand { get; set; }
 
         internal void InitializeOnActivated(CancellationToken cancellationToken)
         {
             // Show package source mappings on open.
             IComponentModel componentModelMapping = NuGetUIThreadHelper.JoinableTaskFactory.Run(ServiceLocator.GetComponentModelAsync);
             var settings = componentModelMapping.GetService<ISettings>();
+            var nuGetUIOptionsContext = componentModelMapping.GetService<INuGetUIOptionsContext>();
+
             var packageSourceMappingProvider = new PackageSourceMappingProvider(settings);
+
             _originalPackageSourceMappings = packageSourceMappingProvider.GetPackageSourceMappingItems();
 
             SourceMappingsCollection.Clear();
             SourceMappingsCollection.AddRange(CreateViewModels(_originalPackageSourceMappings));
 
+            if (nuGetUIOptionsContext?.SelectedPackageId != null)
+            {
+                SelectPackageId(nuGetUIOptionsContext.SelectedPackageId, settings);
+                nuGetUIOptionsContext.SelectedPackageId = null;
+            }
+            else
+            {
+                ScrollToHome();
+            }
+
             // Make sure all buttons show on open if there are already source mappings.
-            (RemoveAllMappingsCommand as DelegateCommand).RaiseCanExecuteChanged();
-            (RemoveMappingCommand as DelegateCommand).RaiseCanExecuteChanged();
+            RemoveAllMappingsCommand.RaiseCanExecuteChanged();
+            RemoveMappingCommand.RaiseCanExecuteChanged();
         }
+
+        private void ScrollToHome()
+        {
+            if (_mappingList.Items.Count > 0)
+            {
+                _mappingList.ScrollIntoView(_mappingList.Items[0]);
+            }
+        }
+
+        private void SelectPackageId(string selectedPackageId, ISettings settings)
+        {
+            SourceMappingViewModel? foundSourceMappingViewModel = SourceMappingsCollection.FirstOrDefault(viewModel => string.Equals(viewModel.ID, selectedPackageId, StringComparison.OrdinalIgnoreCase));
+            if (foundSourceMappingViewModel == null)
+            {
+                PackageSourceMapping packageSourceMapping = PackageSourceMapping.GetPackageSourceMapping(settings);
+                var foundPattern = packageSourceMapping.SearchForPattern(selectedPackageId);
+                if (foundPattern != null)
+                {
+                    foundSourceMappingViewModel = SourceMappingsCollection.FirstOrDefault(viewModel => string.Equals(viewModel.ID, foundPattern, StringComparison.OrdinalIgnoreCase));
+                }
+            }
+
+            _mappingList.SelectedItem = foundSourceMappingViewModel;
+            if (foundSourceMappingViewModel != null)
+            {
+                _mappingList.ScrollIntoView(foundSourceMappingViewModel);
+            }
+            else
+            {
+                ScrollToHome();
+            }
+        }
+
         private void ExecuteShowAddDialog(object parameter)
         {
-            _addMappingDialog = new AddMappingDialog(this);
+            var addMappingDialog = new AddMappingDialog(this);
             IntPtr parent = WindowHelper.GetDialogOwnerHandle();
-            WindowHelper.ShowModal(_addMappingDialog, parent);
+            WindowHelper.ShowModal(addMappingDialog, parent);
         }
         private void ExecuteRemoveMapping(object parameter)
         {
             SourceMappingsCollection.Remove((SourceMappingViewModel)_mappingList.SelectedItem);
-            (RemoveAllMappingsCommand as DelegateCommand).RaiseCanExecuteChanged();
+            RemoveAllMappingsCommand.RaiseCanExecuteChanged();
             var evt = new NavigatedTelemetryEvent(NavigationType.Button, NavigationOrigin.Options_PackageSourceMapping_Remove);
             TelemetryActivity.EmitTelemetryEvent(evt);
         }
@@ -80,7 +126,7 @@ namespace NuGet.PackageManagement.UI.Options
         private void ExecuteClearMappings(object parameter)
         {
             SourceMappingsCollection.Clear();
-            (RemoveMappingCommand as DelegateCommand).RaiseCanExecuteChanged();
+            RemoveMappingCommand.RaiseCanExecuteChanged();
             var evt = new NavigatedTelemetryEvent(NavigationType.Button, NavigationOrigin.Options_PackageSourceMapping_RemoveAll);
             TelemetryActivity.EmitTelemetryEvent(evt);
         }
@@ -133,9 +179,9 @@ namespace NuGet.PackageManagement.UI.Options
         }
 
         // Returns true if there are changes between existingSourceMappings and packageSourceMappings.
-        private static bool SourceMappingsChanged(IReadOnlyList<PackageSourceMappingSourceItem> existingSourceMappings, IReadOnlyList<PackageSourceMappingSourceItem> packageSourceMappings)
+        private static bool SourceMappingsChanged(IReadOnlyList<PackageSourceMappingSourceItem>? existingSourceMappings, IReadOnlyList<PackageSourceMappingSourceItem> packageSourceMappings)
         {
-            if (existingSourceMappings.Count != packageSourceMappings.Count)
+            if (existingSourceMappings == null || existingSourceMappings.Count != packageSourceMappings.Count)
             {
                 return true;
             }

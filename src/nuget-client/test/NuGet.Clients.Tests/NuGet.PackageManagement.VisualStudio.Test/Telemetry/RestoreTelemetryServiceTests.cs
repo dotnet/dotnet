@@ -109,7 +109,7 @@ namespace NuGet.PackageManagement.VisualStudio.Test
             }
 
             var operationId = Guid.NewGuid().ToString();
-            var packageSourceMapping = string.IsNullOrEmpty(_packageSourceMapping) ? null : PackageSourceMappingUtility.GetpackageSourceMapping(_packageSourceMapping);
+            var packageSourceMapping = string.IsNullOrEmpty(_packageSourceMapping) ? null : PackageSourceMappingUtility.GetPackageSourceMapping(_packageSourceMapping);
             bool isPackageSourceMappingEnabled = packageSourceMapping?.IsEnabled ?? false;
 
             var restoreTelemetryData = new RestoreTelemetryEvent(

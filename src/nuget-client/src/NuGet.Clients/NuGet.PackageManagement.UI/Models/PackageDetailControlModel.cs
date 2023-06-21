@@ -8,7 +8,6 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Windows.Data;
 using Microsoft.ServiceHub.Framework;
-using NuGet.PackageManagement.UI.ViewModels;
 using NuGet.Packaging.Core;
 using NuGet.Versioning;
 using NuGet.VisualStudio;
@@ -344,7 +343,11 @@ namespace NuGet.PackageManagement.UI
         {
             get
             {
-                return SelectedVersion != null && !IsSelectedVersionInstalled && !InstalledVersionIsAutoReferenced && VersionOverride == null;
+                return SelectedVersion != null
+                    && !IsSelectedVersionInstalled
+                    && !InstalledVersionIsAutoReferenced
+                    && VersionOverride == null
+                    && CanInstallWithPackageSourceMapping;
             }
         }
 
@@ -377,6 +380,11 @@ namespace NuGet.PackageManagement.UI
         public override IEnumerable<IProjectContextInfo> GetSelectedProjects(UserAction action)
         {
             return _nugetProjects;
+        }
+
+        public override void SetInstalledOrUpdateButtonIsEnabled()
+        {
+            OnPropertyChanged(nameof(IsInstallorUpdateButtonEnabled));
         }
     }
 }

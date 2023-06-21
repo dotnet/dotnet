@@ -509,11 +509,17 @@ namespace NuGet.ProjectModel
         {
             var library = new LockFileTargetLibrary();
 
-            var parts = property.Split(new[] { '/' }, 2);
-            library.Name = parts[0];
-            if (parts.Length == 2)
+#pragma warning disable CA1307 // Specify StringComparison
+            int slashIndex = property.IndexOf('/');
+#pragma warning restore CA1307 // Specify StringComparison
+            if (slashIndex == -1)
             {
-                library.Version = NuGetVersion.Parse(parts[1]);
+                library.Name = property;
+            }
+            else
+            {
+                library.Name = property.Substring(0, slashIndex);
+                library.Version = NuGetVersion.Parse(property.Substring(slashIndex + 1));
             }
 
             var jObject = json as JObject;

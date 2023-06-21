@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using FluentAssertions;
 using Microsoft.Test.Apex.Services;
 using NuGet.PackageManagement.UI;
 using NuGet.PackageManagement.UI.TestContract;
@@ -29,6 +30,12 @@ namespace NuGet.Tests.Apex
         public bool SearchPackageFromUI(string searchText)
         {
             return _uiproject.WaitForSearchComplete(() => _uiproject.Search(searchText), _timeout);
+        }
+
+        public void AssertSearchedPackageItem(string tabName, string packageId, string packageVersion = null)
+        {
+            var searchPackageResult = _uiproject.VerifyFirstPackageOnTab(tabName, packageId, packageVersion);
+            searchPackageResult.Should().BeTrue($"searching for the package {packageId} in the {tabName} tab failed");
         }
 
         public bool InstallPackageFromUI(string packageId, string version)

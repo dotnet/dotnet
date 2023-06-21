@@ -15,14 +15,20 @@ namespace NuGet.Common
         public string RelativePath { get; private set; }
 
         /// <summary>
+        /// The absolute path to the project.
+        /// </summary>
+        public string AbsolutePath { get; private set; }
+
+        /// <summary>
         /// Indicates if the project is a solution folder.
         /// </summary>
         public bool IsSolutionFolder { get; private set; }
 
-        public ProjectInSolution(string relativePath, bool isSolutionFolder)
+        public ProjectInSolution(string relativePath, string absolutePath, bool isSolutionFolder)
         {
             RelativePath = relativePath;
             IsSolutionFolder = isSolutionFolder;
+            AbsolutePath = absolutePath;
         }
     }
 }

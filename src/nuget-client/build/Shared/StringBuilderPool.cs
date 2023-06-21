@@ -3,8 +3,6 @@
 
 #nullable enable
 
-using System;
-using System.Collections.Generic;
 using System.Text;
 
 namespace NuGet
@@ -45,7 +43,7 @@ namespace NuGet
         /// </returns>
         /// <remarks>
         /// This buffer is loaned to the caller and should be returned to the same pool via
-        /// <see cref="Return"/> so that it may be reused in subsequent usage of <see cref="Rent"/>.
+        /// <see cref="ToStringAndReturn"/> so that it may be reused in subsequent usage of <see cref="Rent"/>.
         /// It is not a fatal error to not return a rented string builder, but failure to do so may lead to
         /// decreased application performance, as the pool may need to create a new instance to replace
         /// the one lost.
@@ -62,7 +60,7 @@ namespace NuGet
 
         /// <summary>
         /// Returns to the pool an array that was previously obtained via <see cref="Rent"/> on the same
-        /// <see cref="StringBuilderPool"/> instance.
+        /// <see cref="StringBuilderPool"/> instance, returning the built string.
         /// </summary>
         /// <param name="builder">
         /// The <see cref="StringBuilder"/> previously obtained from <see cref="Rent"/> to return to the pool.
@@ -70,17 +68,22 @@ namespace NuGet
         /// <remarks>
         /// Once a <see cref="StringBuilder"/> has been returned to the pool, the caller gives up all ownership
         /// of the instance and must not use it. The reference returned from a given call to <see cref="Rent"/>
-        /// must only be returned via <see cref="Return"/> once.  The default <see cref="StringBuilderPool"/>
+        /// must only be returned via <see cref="ToStringAndReturn"/> once.  The default <see cref="StringBuilderPool"/>
         /// may hold onto the returned instance in order to rent it again, or it may release the returned instance
         /// if it's determined that the pool already has enough instances stored.
         /// </remarks>
-        public void Return(StringBuilder builder)
+        /// <returns>The string, built from <paramref name="builder"/>.</returns>
+        public string ToStringAndReturn(StringBuilder builder)
         {
+            string result = builder.ToString();
+
             if (builder.Capacity <= MaxPoolSize)
             {
                 builder.Clear();
                 _pool.Free(builder);
             }
+
+            return result;
         }
     }
 }

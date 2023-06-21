@@ -155,7 +155,7 @@ stages:
       displayName: "Install Signing Plugin"
     - task: MicroBuildSwixPlugin@4
       displayName: "Install Swix Plugin"
-    - task: MicroBuildBuildVSBootstrapper@2
+    - task: MicroBuildBuildVSBootstrapper@3
       displayName: 'Build a Visual Studio bootstrapper'
       inputs:
         channelName: "$(VsTargetChannel)"

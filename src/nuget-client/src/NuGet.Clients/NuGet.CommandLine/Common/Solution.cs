@@ -87,6 +87,8 @@ namespace NuGet.Common
                 }
             }
 
+            var solutionDirectory = Path.GetDirectoryName(solutionFileName);
+
             // load projects
             var projectInSolutionType = msbuildAssembly.GetType(
                 "Microsoft.Build.Construction.ProjectInSolution",
@@ -103,7 +105,8 @@ namespace NuGet.Common
                 var projectType = projectTypeProperty.GetValue(proj, index: null).ToString();
                 var isSolutionFolder = projectType.Equals("SolutionFolder", StringComparison.OrdinalIgnoreCase);
                 var relativePath = (string)relativePathProperty.GetValue(proj, index: null);
-                projects.Add(new ProjectInSolution(relativePath, isSolutionFolder));
+                var absolutePath = Path.Combine(solutionDirectory, relativePath);
+                projects.Add(new ProjectInSolution(relativePath, absolutePath, isSolutionFolder));
             }
             Projects = projects;
         }
@@ -136,7 +139,9 @@ namespace NuGet.Common
                     if (projectShouldBuild)
                     {
                         var relativePath = project.RelativePath.Replace('\\', Path.DirectorySeparatorChar);
-                        projects.Add(new ProjectInSolution(relativePath, isSolutionFolder));
+                        var absolutePath = project.AbsolutePath;
+
+                        projects.Add(new ProjectInSolution(relativePath, absolutePath, isSolutionFolder));
                     }
                 }
                 catch (TargetInvocationException ex)

@@ -84,7 +84,7 @@ namespace NuGet.PackageManagement.UI
         /// <summary>
         /// Package currently selected in the UI
         /// </summary>
-        PackageIdentity SelectedPackage { get; }
+        string SelectedPackageId { get; set; }
 
         /// <summary>
         /// Reports that an error has occurred.

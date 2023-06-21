@@ -37,5 +37,10 @@ namespace NuGet.PackageManagement.UI.Test
         {
             throw new NotImplementedException();
         }
+
+        public override void SetInstalledOrUpdateButtonIsEnabled()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

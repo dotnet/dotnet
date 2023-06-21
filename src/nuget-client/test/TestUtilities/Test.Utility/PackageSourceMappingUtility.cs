@@ -8,7 +8,7 @@ namespace Test.Utility
 {
     public class PackageSourceMappingUtility
     {
-        public static PackageSourceMapping GetpackageSourceMapping(string packagePatterns)
+        public static PackageSourceMapping GetPackageSourceMapping(string packagePatterns)
         {
             string[] sections = packagePatterns.Split('|');
             var patterns = new Dictionary<string, IReadOnlyList<string>>();

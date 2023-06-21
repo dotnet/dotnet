@@ -448,5 +448,92 @@ namespace NuGet.Tests.Apex
             // Assert
             CommonUtility.AssertPackageNotInPackagesConfig(VisualStudio, project, "log4net", XunitLogger);
         }
+
+        [StaFact]
+        public async Task SearchPackageInBrowseTabFromUI()
+        {
+            // Arrange
+            var tabName = "Browse";
+            await CommonUtility.CreatePackageInSourceAsync(_pathContext.PackageSource, TestPackageName, TestPackageVersionV1);
+
+            NuGetApexTestService nugetTestService = GetNuGetTestService();
+
+            SolutionService solutionService = VisualStudio.Get<SolutionService>();
+            solutionService.CreateEmptySolution("TestSolution", _pathContext.SolutionRoot);
+            ProjectTestExtension project = solutionService.AddProject(ProjectLanguage.CSharp, ProjectTemplate.ClassLibrary, ProjectTargetFramework.V48, "TestProject");
+            VisualStudio.ClearOutputWindow();
+            solutionService.SaveAll();
+
+            // Act
+            CommonUtility.OpenNuGetPackageManagerWithDte(VisualStudio, XunitLogger);
+
+            NuGetUIProjectTestExtension uiwindow = nugetTestService.GetUIWindowfromProject(project);
+            uiwindow.SwitchTabToBrowse();
+            uiwindow.SearchPackageFromUI(TestPackageName);
+
+            // Assert
+            VisualStudio.AssertNoErrors();
+            uiwindow.AssertSearchedPackageItem(tabName, TestPackageName);
+        }
+
+        [StaFact]
+        public async Task SearchPackageInInstalledTabFromUI()
+        {
+            // Arrange
+            var TestPackageName2 = "Contoso.B";
+            var tabName = "Installed";
+            await CommonUtility.CreatePackageInSourceAsync(_pathContext.PackageSource, TestPackageName, TestPackageVersionV1);
+            await CommonUtility.CreatePackageInSourceAsync(_pathContext.PackageSource, TestPackageName2, TestPackageVersionV1);
+            CommonUtility.CreatePackage(TestPackageName2, TestPackageVersionV1);
+
+            NuGetApexTestService nugetTestService = GetNuGetTestService();
+
+            SolutionService solutionService = VisualStudio.Get<SolutionService>();
+            solutionService.CreateEmptySolution("TestSolution", _pathContext.SolutionRoot);
+            ProjectTestExtension project = solutionService.AddProject(ProjectLanguage.CSharp, ProjectTemplate.ClassLibrary, ProjectTargetFramework.V48, "TestProject");
+            VisualStudio.ClearOutputWindow();
+            solutionService.SaveAll();
+
+            // Act
+            CommonUtility.OpenNuGetPackageManagerWithDte(VisualStudio, XunitLogger);
+
+            NuGetUIProjectTestExtension uiwindow = nugetTestService.GetUIWindowfromProject(project);
+            uiwindow.InstallPackageFromUI(TestPackageName, TestPackageVersionV1);
+            uiwindow.InstallPackageFromUI(TestPackageName2, TestPackageVersionV1);
+            uiwindow.SearchPackageFromUI(TestPackageName);
+
+            // Assert
+            VisualStudio.AssertNoErrors();
+            uiwindow.AssertSearchedPackageItem(tabName, TestPackageName, TestPackageVersionV1);
+        }
+
+        [StaFact]
+        public async Task SearchPackageInUpdatesTabFromUI()
+        {
+            //Arrange
+            var tabName = "Updates";
+            await CommonUtility.CreatePackageInSourceAsync(_pathContext.PackageSource, TestPackageName, TestPackageVersionV1);
+            await CommonUtility.CreatePackageInSourceAsync(_pathContext.PackageSource, TestPackageName, TestPackageVersionV2);
+
+            NuGetApexTestService nugetTestService = GetNuGetTestService();
+
+            SolutionService solutionService = VisualStudio.Get<SolutionService>();
+            solutionService.CreateEmptySolution("TestSolution", _pathContext.SolutionRoot);
+            ProjectTestExtension project = solutionService.AddProject(ProjectLanguage.CSharp, ProjectTemplate.ClassLibrary, ProjectTargetFramework.V48, "TestProject");
+            VisualStudio.ClearOutputWindow();
+            solutionService.SaveAll();
+
+            // Act
+            CommonUtility.OpenNuGetPackageManagerWithDte(VisualStudio, XunitLogger);
+
+            NuGetUIProjectTestExtension uiwindow = nugetTestService.GetUIWindowfromProject(project);
+            uiwindow.InstallPackageFromUI(TestPackageName, TestPackageVersionV1);
+            uiwindow.SwitchTabToUpdate();
+            uiwindow.SearchPackageFromUI(TestPackageName);
+            
+            // Assert
+            VisualStudio.AssertNoErrors();
+            uiwindow.AssertSearchedPackageItem(tabName, TestPackageName, TestPackageVersionV2);
+        }
     }
 }

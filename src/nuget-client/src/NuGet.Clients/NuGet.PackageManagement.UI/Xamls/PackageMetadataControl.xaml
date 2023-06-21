@@ -368,16 +368,6 @@
         <DataTemplate DataType="{x:Type nuget:PackageDependencyMetadata}">
           <TextBlock Text="{Binding}" ToolTip="{Binding}" />
         </DataTemplate>
-        <!--
-          Override the background and foreground brushes that TreeViewItems use for highlighting the item
-          when in the selected state and point to VS themed colors instead of using the defaults.
-        -->
-        <SolidColorBrush
-          x:Key="{x:Static SystemColors.HighlightBrushKey}"
-          Color="{DynamicResource {x:Static nuget:Brushes.ListItemBackgroundSelectedColorKey}}" />
-        <SolidColorBrush
-          x:Key="{x:Static SystemColors.HighlightTextBrushKey}"
-          Color="{DynamicResource {x:Static nuget:Brushes.ListItemTextSelectedColorKey}}" />
       </TreeView.Resources>
       <TreeViewItem Header="{x:Static nuget:Resources.Label_Dependencies}"
                     ItemsSource="{Binding Path=DependencySets}"

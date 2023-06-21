@@ -14,6 +14,7 @@ using Microsoft.VisualStudio.Sdk.TestFramework;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.ServiceBroker;
 using Moq;
+using NuGet.Configuration;
 using NuGet.Frameworks;
 using NuGet.PackageManagement.UI.Utility;
 using NuGet.Packaging;
@@ -31,6 +32,10 @@ namespace NuGet.PackageManagement.UI.Test.Models
     {
         protected readonly V3PackageSearchMetadataFixture _testData;
         protected readonly PackageItemViewModel _testViewModel;
+        protected readonly Mock<IServiceBroker> _mockServiceBroker;
+        protected Mock<INuGetUI> _mockNuGetUI;
+        protected Mock<INuGetUIContext> _mockNuGetUIContext;
+        protected Mock<PackageSourceMapping> _mockPackageSourceMapping;
 
         public V3DetailControlModelTestBase(GlobalServiceProvider sp, V3PackageSearchMetadataFixture testData)
         {
@@ -41,6 +46,15 @@ namespace NuGet.PackageManagement.UI.Test.Models
             // which fails (null) in a V3 scenario--they need to be extracted using a metadata provider (below)
             var testVersion = new NuGetVersion(0, 0, 1);
 
+            var packageSearchMetadata = new List<PackageSearchMetadataContextInfo>()
+            {
+                PackageSearchMetadataContextInfo.Create(_testData.TestData)
+            };
+
+            _mockNuGetUI = new Mock<INuGetUI>();
+            _mockNuGetUIContext = new Mock<INuGetUIContext>();
+            _mockNuGetUI.Setup(_ => _.UIContext).Returns(_mockNuGetUIContext.Object);
+
             var searchService = new Mock<IReconnectingNuGetSearchService>();
             _testViewModel = new PackageItemViewModel(searchService.Object)
             {
@@ -49,6 +63,50 @@ namespace NuGet.PackageManagement.UI.Test.Models
                 InstalledVersion = testVersion,
                 Sources = new List<PackageSourceContextInfo> { new PackageSourceContextInfo("nuget.psm.test") },
             };
+
+            var mockSearchService = new Mock<INuGetSearchService>();
+            mockSearchService.Setup(x =>
+                x.GetPackageMetadataListAsync(
+                    It.IsAny<string>(),
+                    It.IsAny<IReadOnlyCollection<PackageSourceContextInfo>>(),
+                    It.IsAny<bool>(),
+                    It.IsAny<bool>(),
+                    It.IsAny<CancellationToken>()))
+                .Returns(new ValueTask<IReadOnlyCollection<PackageSearchMetadataContextInfo>>(packageSearchMetadata));
+
+            mockSearchService.Setup(x =>
+                x.GetDeprecationMetadataAsync(
+                    It.IsAny<PackageIdentity>(),
+                    It.IsAny<IReadOnlyCollection<PackageSourceContextInfo>>(),
+                    It.IsAny<bool>(),
+                    It.IsAny<CancellationToken>()))
+                .Returns(null);
+
+            mockSearchService.Setup(x => x.GetPackageMetadataAsync(
+                    It.IsAny<PackageIdentity>(),
+                    It.IsAny<IReadOnlyCollection<PackageSourceContextInfo>>(),
+                    It.IsAny<bool>(),
+                    It.IsAny<CancellationToken>()))
+                .Returns(new ValueTask<(PackageSearchMetadataContextInfo, PackageDeprecationMetadataContextInfo)>((packageSearchMetadata[0], null)));
+
+            _mockServiceBroker = new Mock<IServiceBroker>();
+#pragma warning disable ISB001 // Dispose of proxies
+            _mockServiceBroker.Setup(
+                x => x.GetProxyAsync<INuGetSearchService>(
+                    NuGetServices.SearchService,
+                    It.IsAny<ServiceActivationOptions>(),
+                    It.IsAny<CancellationToken>()))
+                .Returns(new ValueTask<INuGetSearchService>(mockSearchService.Object));
+#pragma warning restore ISB001 // Dispose of proxies
+        }
+
+        protected void ConfigureNuGetUIWithPackageSourceMapping(ReadOnlyDictionary<string, IReadOnlyList<string>> packageSourceMappingPatterns)
+        {
+            if (packageSourceMappingPatterns != null)
+            {
+                _mockPackageSourceMapping = new Mock<PackageSourceMapping>(packageSourceMappingPatterns);
+                _mockNuGetUIContext.Setup(_ => _.PackageSourceMapping).Returns(_mockPackageSourceMapping.Object);
+            }
         }
 
         /// <summary>
@@ -79,6 +137,7 @@ namespace NuGet.PackageManagement.UI.Test.Models
     {
         private readonly Dictionary<Type, Task<object>> _services = new Dictionary<Type, Task<object>>(TypeEquivalenceComparer.Instance);
         private readonly PackageDetailControlModel _testInstance;
+
         public V3PackageDetailControlModelTests(GlobalServiceProvider sp, V3PackageSearchMetadataFixture testData)
                 : base(sp, testData)
         {
@@ -114,21 +173,11 @@ namespace NuGet.PackageManagement.UI.Test.Models
                     It.IsAny<CancellationToken>()))
                 .Returns(new ValueTask<(PackageSearchMetadataContextInfo, PackageDeprecationMetadataContextInfo)>((packageSearchMetadata[0], null)));
 
-            var mockServiceBroker = new Mock<IServiceBroker>();
-#pragma warning disable ISB001 // Dispose of proxies
-            mockServiceBroker.Setup(
-                x => x.GetProxyAsync<INuGetSearchService>(
-                    NuGetServices.SearchService,
-                    It.IsAny<ServiceActivationOptions>(),
-                    It.IsAny<CancellationToken>()))
-                .Returns(new ValueTask<INuGetSearchService>(mockSearchService.Object));
-#pragma warning restore ISB001 // Dispose of proxies
-
             _testInstance = new PackageDetailControlModel(
-                mockServiceBroker.Object,
+                _mockServiceBroker.Object,
                 solutionManager: solMgr.Object,
                 Array.Empty<IProjectContextInfo>(),
-                uiController: Mock.Of<INuGetUI>());
+                uiController: _mockNuGetUI.Object);
             _testInstance.SetCurrentPackageAsync(
                 _testViewModel,
                 ItemFilter.All,
@@ -151,6 +200,74 @@ namespace NuGet.PackageManagement.UI.Test.Models
         public void VulnerabilityCountWhenMetadataHasVulnerability_Calculated()
         {
             Assert.Equal(_testInstance.PackageVulnerabilityCount, _testData.TestData.Vulnerabilities.Count());
+        }
+
+        [Fact]
+        public void SetInstalledOrUpdateButtonIsEnabled_AfterPackageSourceMappingChanges_CanInstallWithPackageSourceMapping()
+        {
+            var packageIDWithSourceMapping = "a";
+            var patterns = new Dictionary<string, IReadOnlyList<string>>
+            {
+                { "sourceA", new List<string>() { packageIDWithSourceMapping } }
+            };
+            var packageSourceMappingPatterns = new ReadOnlyDictionary<string, IReadOnlyList<string>>(patterns);
+
+            _testInstance.SelectedVersion = new DisplayVersion(NuGetVersion.Parse("1.1.1"), additionalInfo: null);
+
+            bool setInstalledOrUpdateButtonIsEnabled_RaisedPropertyChange_IsInstallOrUpdateButtonEnabled = false;
+            var mockPropertyChangedEventHandler = new Mock<IPropertyChangedEventHandler>();
+            mockPropertyChangedEventHandler.Setup(x => x.PropertyChanged(
+                It.IsAny<object>(),
+                It.IsAny<PropertyChangedEventArgs>()
+            ))
+            .Callback<object, PropertyChangedEventArgs>((d, p) =>
+            {
+                var detail = d as PackageDetailControlModel;
+                if (detail != null
+                    && p.PropertyName == nameof(PackageDetailControlModel.IsInstallorUpdateButtonEnabled))
+                {
+                    setInstalledOrUpdateButtonIsEnabled_RaisedPropertyChange_IsInstallOrUpdateButtonEnabled = detail.IsInstallorUpdateButtonEnabled;
+                }
+            });
+
+            _testInstance.PropertyChanged += mockPropertyChangedEventHandler.Object.PropertyChanged;
+
+            var beforeEnablingPackageSourceMapping_CanInstallWithPackageSourceMapping = _testInstance.CanInstallWithPackageSourceMapping;
+            var beforeEnablingPackageSourceMapping_IsInstallOrUpdateButtonEnabled = _testInstance.IsInstallorUpdateButtonEnabled;
+
+            // Act
+
+            // Enable package source mapping.
+            ConfigureNuGetUIWithPackageSourceMapping(packageSourceMappingPatterns);
+            var beforeSelectingPackageWithPackageSourceMapping_CanInstallWithPackageSourceMapping = _testInstance.CanInstallWithPackageSourceMapping;
+            var beforeSelectingPackageWithPackageSourceMapping_IsInstallorUpdateButtonEnabled = _testInstance.IsInstallorUpdateButtonEnabled;
+
+            // Select a package which has a configured Package Source Mapping.
+            _testInstance.PackageSourceMappingViewModel.PackageId = packageIDWithSourceMapping;
+
+            var afterSelectingPackageWithPackageSourceMapping_CanInstallWithPackageSourceMapping = _testInstance.CanInstallWithPackageSourceMapping;
+            var afterSelectingPackageWithPackageSourceMapping_IsInstallorUpdateButtonEnabled = _testInstance.IsInstallorUpdateButtonEnabled;
+            _testInstance.SetInstalledOrUpdateButtonIsEnabled();
+            var afterSetInstalledOrUpdateButtonIsEnabled_CanInstallWithPackageSourceMapping = _testInstance.CanInstallWithPackageSourceMapping;
+
+            // Assert
+            Assert.True(beforeEnablingPackageSourceMapping_CanInstallWithPackageSourceMapping, "Package Source Mapping is disabled.");
+            Assert.True(beforeEnablingPackageSourceMapping_IsInstallOrUpdateButtonEnabled, "Package Source Mapping is disabled.");
+
+            Assert.False(beforeSelectingPackageWithPackageSourceMapping_CanInstallWithPackageSourceMapping,
+                "Package Source Mapping is enabled but the Selected Package ID has no mapping.");
+            Assert.False(beforeSelectingPackageWithPackageSourceMapping_IsInstallorUpdateButtonEnabled,
+                "Package Source Mapping is enabled but the Selected Package ID has no mapping.");
+
+            Assert.True(afterSelectingPackageWithPackageSourceMapping_CanInstallWithPackageSourceMapping,
+                "Selected Package ID has a package source mapping.");
+            Assert.True(afterSelectingPackageWithPackageSourceMapping_IsInstallorUpdateButtonEnabled,
+                "Selected Package ID has a package source mapping, but the " + nameof(PackageDetailControlModel.IsInstallorUpdateButtonEnabled) + " hasn't been updated, yet.");
+
+            Assert.True(afterSetInstalledOrUpdateButtonIsEnabled_CanInstallWithPackageSourceMapping, "Package Source Mapping is enabled and the Package ID is mapped.");
+            Assert.True(setInstalledOrUpdateButtonIsEnabled_RaisedPropertyChange_IsInstallOrUpdateButtonEnabled,
+                nameof(PackageDetailControlModel.IsInstallorUpdateButtonEnabled) + " should have raised a PropertyChanged when calling "
+                + nameof(DetailControlModel.SetInstalledOrUpdateButtonIsEnabled) + " and the value should become true.");
         }
 
         [Fact]
@@ -537,7 +654,7 @@ namespace NuGet.PackageManagement.UI.Test.Models
                 mockServiceBroker.Object,
                 solutionManager: new Mock<INuGetSolutionManagerService>().Object,
                 projects: new[] { project.Object },
-                uiController: Mock.Of<INuGetUI>());
+                uiController: _mockNuGetUI.Object);
 
             // Arrange
             List<VersionInfoContextInfo> testVersions = includePrerelease ? ExpectedVersionsList_IncludePrerelease() : ExpectedVersionsList();
@@ -594,6 +711,7 @@ namespace NuGet.PackageManagement.UI.Test.Models
             Assert.Equal(model.Versions.FirstOrDefault(), displayVersion);
             Assert.Equal(model.SelectedVersion, displayVersion);
             Assert.Equal(model.Versions, assertVersions);
+            Assert.True(model.CanInstallWithPackageSourceMapping);
             Assert.Equal(model.IsInstallorUpdateButtonEnabled, false);
         }
 
@@ -645,7 +763,7 @@ namespace NuGet.PackageManagement.UI.Test.Models
                 mockServiceBroker.Object,
                 solutionManager: new Mock<INuGetSolutionManagerService>().Object,
                 projects: new[] { project.Object },
-                uiController: Mock.Of<INuGetUI>());
+                uiController: _mockNuGetUI.Object);
 
             // Arrange
             List<VersionInfoContextInfo> testVersions = includePrerelease ? ExpectedVersionsList_IncludePrerelease() : ExpectedVersionsList();
@@ -714,6 +832,7 @@ namespace NuGet.PackageManagement.UI.Test.Models
             Assert.Equal(model.SelectedVersion.AdditionalInfo, expectedAditionalInfo);
             Assert.Equal(model.Versions.FirstOrDefault(), displayVersion);
             Assert.Equal(model.Versions, assertVersions);
+            Assert.True(model.CanInstallWithPackageSourceMapping);
             Assert.Equal(model.IsInstallorUpdateButtonEnabled, true);
         }
 
@@ -733,6 +852,7 @@ namespace NuGet.PackageManagement.UI.Test.Models
             PackageIdentity packageIdentity = new PackageIdentity("Contoso.A", NuGetVersion.Parse(installedVersion));
 
             PackageReferenceContextInfo[] installedPackages = new PackageReferenceContextInfo[]
+
             {
                 PackageReferenceContextInfo.Create(
                     new PackageReference(
@@ -765,7 +885,7 @@ namespace NuGet.PackageManagement.UI.Test.Models
                 mockServiceBroker.Object,
                 solutionManager: new Mock<INuGetSolutionManagerService>().Object,
                 projects: new[] { project.Object },
-                uiController: Mock.Of<INuGetUI>());
+                uiController: _mockNuGetUI.Object);
 
             // Arrange
             List<VersionInfoContextInfo> testVersions = includePrerelease ? ExpectedVersionsList_IncludePrerelease() : ExpectedVersionsList();
@@ -837,6 +957,7 @@ namespace NuGet.PackageManagement.UI.Test.Models
             Assert.Equal(model.SelectedVersion.AdditionalInfo, expectedAditionalInfo);
             Assert.Equal(model.Versions.FirstOrDefault(), displayVersion);
             Assert.Equal(model.Versions, assertVersions);
+            Assert.True(model.CanInstallWithPackageSourceMapping);
             Assert.Equal(model.IsInstallorUpdateButtonEnabled, shouldButtonBeEnabled);
         }
 
@@ -973,7 +1094,7 @@ namespace NuGet.PackageManagement.UI.Test.Models
                 mockServiceBroker.Object,
                 solutionManager: new Mock<INuGetSolutionManagerService>().Object,
                 projects: new[] { project.Object },
-                uiController: Mock.Of<INuGetUI>());
+                uiController: _mockNuGetUI.Object);
 
             // Arrange
             List<VersionInfoContextInfo> testVersions = includePrerelease ? ExpectedVersionsList_IncludePrerelease() : ExpectedVersionsList();
@@ -1025,6 +1146,7 @@ namespace NuGet.PackageManagement.UI.Test.Models
             Assert.Equal(model.SelectedVersion.Version, NuGetVersion.Parse(installedVersion));
             Assert.Equal(model.SelectedVersion.AdditionalInfo, null); // Always show the installed version
             Assert.Equal(model.Versions, assertVersions);
+            Assert.True(model.CanInstallWithPackageSourceMapping);
             Assert.Equal(model.IsInstallorUpdateButtonEnabled, false);
         }
 
@@ -1075,7 +1197,7 @@ namespace NuGet.PackageManagement.UI.Test.Models
                 mockServiceBroker.Object,
                 solutionManager: new Mock<INuGetSolutionManagerService>().Object,
                 projects: new[] { project.Object },
-                uiController: Mock.Of<INuGetUI>());
+                uiController: _mockNuGetUI.Object);
 
             // Arrange
             List<VersionInfoContextInfo> testVersions = includePrerelease ? ExpectedVersionsList_IncludePrerelease() : ExpectedVersionsList();
@@ -1131,6 +1253,7 @@ namespace NuGet.PackageManagement.UI.Test.Models
             Assert.Equal(model.SelectedVersion.AdditionalInfo, expectedAditionalInfo);
             Assert.Equal(model.SelectedVersion.Version.ToString(), includePrerelease ? "3.0.1-beta" : "3.0.0");
             Assert.Equal(model.Versions, assertVersions);
+            Assert.True(model.CanInstallWithPackageSourceMapping);
             Assert.Equal(model.IsInstallorUpdateButtonEnabled, !isLatest);
         }
 
@@ -1177,7 +1300,7 @@ namespace NuGet.PackageManagement.UI.Test.Models
                 mockServiceBroker.Object,
                 solutionManager: new Mock<INuGetSolutionManagerService>().Object,
                 projects: new[] { project.Object },
-                uiController: Mock.Of<INuGetUI>());
+                uiController: _mockNuGetUI.Object);
 
             // Arrange
             List<VersionInfoContextInfo> testVersions = includePrerelease ? ExpectedVersionsList_IncludePrerelease() : ExpectedVersionsList();
@@ -1233,6 +1356,7 @@ namespace NuGet.PackageManagement.UI.Test.Models
             Assert.Equal(model.SelectedVersion.AdditionalInfo, expectedAditionalInfo);
             Assert.Equal(model.SelectedVersion.Version.ToString(), includePrerelease ? "3.0.1-beta" : "3.0.0");
             Assert.Equal(model.Versions, assertVersions);
+            Assert.True(model.CanInstallWithPackageSourceMapping);
             Assert.Equal(model.IsInstallorUpdateButtonEnabled, !isLatest);
         }
 
@@ -1262,50 +1386,31 @@ namespace NuGet.PackageManagement.UI.Test.Models
         public V3PackageSolutionDetailControlModelTests(GlobalServiceProvider sp, V3PackageSearchMetadataFixture testData)
             : base(sp, testData)
         {
-            var packageSearchMetadata = new List<PackageSearchMetadataContextInfo>()
-            {
-                PackageSearchMetadataContextInfo.Create(_testData.TestData)
-            };
-
-            var mockSearchService = new Mock<INuGetSearchService>();
-            mockSearchService.Setup(x =>
-                x.GetPackageMetadataListAsync(
-                    It.IsAny<string>(),
-                    It.IsAny<IReadOnlyCollection<PackageSourceContextInfo>>(),
-                    It.IsAny<bool>(),
-                    It.IsAny<bool>(),
-                    It.IsAny<CancellationToken>()))
-                .Returns(new ValueTask<IReadOnlyCollection<PackageSearchMetadataContextInfo>>(packageSearchMetadata));
-
-            mockSearchService.Setup(x =>
-                x.GetDeprecationMetadataAsync(
-                    It.IsAny<PackageIdentity>(),
-                    It.IsAny<IReadOnlyCollection<PackageSourceContextInfo>>(),
-                    It.IsAny<bool>(),
-                    It.IsAny<CancellationToken>()))
-                .Returns(null);
-
-            mockSearchService.Setup(x => x.GetPackageMetadataAsync(
-                    It.IsAny<PackageIdentity>(),
-                    It.IsAny<IReadOnlyCollection<PackageSourceContextInfo>>(),
-                    It.IsAny<bool>(),
-                    It.IsAny<CancellationToken>()))
-                .Returns(new ValueTask<(PackageSearchMetadataContextInfo, PackageDeprecationMetadataContextInfo)>((packageSearchMetadata[0], null)));
-
             var solMgr = new Mock<INuGetSolutionManagerService>();
-            var serviceBroker = new Mock<IServiceBroker>();
-            var projectManagerService = new Mock<INuGetProjectManagerService>();
-            projectManagerService.Setup(x => x.GetProjectsAsync(It.IsAny<CancellationToken>())).ReturnsAsync(new List<IProjectContextInfo>());
 
+            Mock<INuGetProjectManagerService> projectManagerService = new Mock<INuGetProjectManagerService>();
+            Mock<IProjectContextInfo> project = new Mock<IProjectContextInfo>();
+            project.SetupGet(p => p.ProjectKind).Returns(NuGetProjectKind.PackageReference);
+            project.SetupGet(p => p.ProjectStyle).Returns(ProjectModel.ProjectStyle.PackageReference);
+            project.SetupGet(p => p.ProjectId).Returns("ProjectId1");
+
+            Mock<IProjectContextInfo> project2 = new Mock<IProjectContextInfo>();
+            project.SetupGet(p => p.ProjectKind).Returns(NuGetProjectKind.PackageReference);
+            project.SetupGet(p => p.ProjectStyle).Returns(ProjectModel.ProjectStyle.PackageReference);
+            project.SetupGet(p => p.ProjectId).Returns("ProjectId2");
+
+            ReadOnlyCollection<IProjectContextInfo> projects = new ReadOnlyCollection<IProjectContextInfo>(
+                new List<IProjectContextInfo>()
+                {
+                    project.Object,
+                    project2.Object
+                });
+
+            projectManagerService.Setup(x => x.GetProjectsAsync(It.IsAny<CancellationToken>())).ReturnsAsync(projects);
+            projectManagerService.Setup(x => x.GetMetadataAsync(It.IsAny<string>(), It.IsAny<CancellationToken>())).ReturnsAsync(Mock.Of<IProjectMetadataContextInfo>());
 #pragma warning disable ISB001 // Dispose of proxies
-            serviceBroker.Setup(x => x.GetProxyAsync<INuGetProjectManagerService>(It.Is<ServiceJsonRpcDescriptor>(d => d.Moniker == NuGetServices.ProjectManagerService.Moniker), It.IsAny<ServiceActivationOptions>(), It.IsAny<CancellationToken>()))
+            _mockServiceBroker.Setup(x => x.GetProxyAsync<INuGetProjectManagerService>(It.Is<ServiceJsonRpcDescriptor>(d => d.Moniker == NuGetServices.ProjectManagerService.Moniker), It.IsAny<ServiceActivationOptions>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(projectManagerService.Object);
-            serviceBroker.Setup(
-                x => x.GetProxyAsync<INuGetSearchService>(
-                    NuGetServices.SearchService,
-                    It.IsAny<ServiceActivationOptions>(),
-                    It.IsAny<CancellationToken>()))
-                .Returns(new ValueTask<INuGetSearchService>(mockSearchService.Object));
 #pragma warning restore ISB001 // Dispose of proxies
 
             NuGetUIThreadHelper.JoinableTaskFactory.Run(async () =>
@@ -1313,8 +1418,8 @@ namespace NuGet.PackageManagement.UI.Test.Models
                 _testInstance = await PackageSolutionDetailControlModel.CreateAsync(
                     solutionManager: solMgr.Object,
                     projects: new List<IProjectContextInfo>(),
-                    serviceBroker: serviceBroker.Object,
-                    uiController: Mock.Of<INuGetUI>(),
+                    serviceBroker: _mockServiceBroker.Object,
+                    uiController: _mockNuGetUI.Object,
                     CancellationToken.None);
 
                 await _testInstance.SetCurrentPackageAsync(
@@ -1483,6 +1588,95 @@ namespace NuGet.PackageManagement.UI.Test.Models
 
             Assert.True(previousVersionListCount > 0, "Test setup did not pre-populate versions list.");
             Assert.True(wasVersionsListCleared, "Versions list was not cleared.");
+        }
+
+        [Fact]
+        public void SetInstalledOrUpdateButtonIsEnabled_AfterPackageSourceMappingChanges_CanInstallWithPackageSourceMapping()
+        {
+            var packageIDWithSourceMapping = "a";
+            var patterns = new Dictionary<string, IReadOnlyList<string>>
+            {
+                { "sourceA", new List<string>() { packageIDWithSourceMapping } }
+            };
+            var packageSourceMappingPatterns = new ReadOnlyDictionary<string, IReadOnlyList<string>>(patterns);
+
+            _testInstance.SelectedVersion = new DisplayVersion(NuGetVersion.Parse("1.1.1"), additionalInfo: null);
+
+            bool afterSetInstalledOrUpdateButtonIsEnabled_CanInstall_RaisedPropertyChanged = false;
+            bool afterSetInstalledOrUpdateButtonIsEnabled_CanUninstall_RaisedPropertyChanged = false;
+            var mockPropertyChangedEventHandler = new Mock<IPropertyChangedEventHandler>();
+            mockPropertyChangedEventHandler.Setup(x => x.PropertyChanged(
+                It.IsAny<object>(),
+                It.IsAny<PropertyChangedEventArgs>()
+            ))
+            .Callback<object, PropertyChangedEventArgs>((d, p) =>
+            {
+                var detail = d as PackageSolutionDetailControlModel;
+                if (detail != null)
+                {
+                    if (p.PropertyName == nameof(PackageSolutionDetailControlModel.CanInstall))
+                    {
+                        afterSetInstalledOrUpdateButtonIsEnabled_CanInstall_RaisedPropertyChanged = true;
+                    }
+                    if (p.PropertyName == nameof(PackageSolutionDetailControlModel.CanUninstall))
+                    {
+                        afterSetInstalledOrUpdateButtonIsEnabled_CanUninstall_RaisedPropertyChanged = true;
+                    }
+                }
+            });
+
+            _testInstance.PropertyChanged += mockPropertyChangedEventHandler.Object.PropertyChanged;
+
+            var beforeEnablingPackageSourceMapping_CanInstallWithPackageSourceMapping = _testInstance.CanInstallWithPackageSourceMapping;
+            var beforeEnablingPackageSourceMapping_CanInstall = _testInstance.CanInstall;
+            var beforeEnablingPackageSourceMapping_CanUninstall = _testInstance.CanUninstall;
+
+            // Act
+
+            // Enable package source mapping.
+            ConfigureNuGetUIWithPackageSourceMapping(packageSourceMappingPatterns);
+            var beforeSelectingPackageWithPackageSourceMapping_CanInstallWithPackageSourceMapping = _testInstance.CanInstallWithPackageSourceMapping;
+            var beforeSelectingPackageWithPackageSourceMapping_CanInstall = _testInstance.CanInstall;
+            var beforeSelectingPackageWithPackageSourceMapping_CanUninstall = _testInstance.CanUninstall;
+
+            // Select a package which has a configured Package Source Mapping.
+            _testInstance.PackageSourceMappingViewModel.PackageId = packageIDWithSourceMapping;
+
+            var afterSelectingPackageWithPackageSourceMapping_CanInstallWithPackageSourceMapping = _testInstance.CanInstallWithPackageSourceMapping;
+            var afterSelectingPackageWithPackageSourceMapping_CanInstall = _testInstance.CanInstall;
+            var afterSelectingPackageWithPackageSourceMapping_CanUninstall = _testInstance.CanUninstall;
+            _testInstance.SetInstalledOrUpdateButtonIsEnabled();
+            var afterSetInstalledOrUpdateButtonIsEnabled_CanInstallWithPackageSourceMapping = _testInstance.CanInstallWithPackageSourceMapping;
+
+            // Assert
+            Assert.True(beforeEnablingPackageSourceMapping_CanInstallWithPackageSourceMapping, "Package Source Mapping is disabled.");
+            Assert.False(beforeEnablingPackageSourceMapping_CanInstall,
+                nameof(PackageSolutionDetailControlModel.CanInstall) + " won't become true due to state of Mocked objects.");
+            Assert.False(beforeEnablingPackageSourceMapping_CanUninstall,
+                nameof(PackageSolutionDetailControlModel.CanUninstall) + " won't become true due to state of Mocked objects.");
+
+            Assert.False(beforeSelectingPackageWithPackageSourceMapping_CanInstallWithPackageSourceMapping,
+                "Package Source Mapping is enabled but the Selected Package ID has no mapping.");
+            Assert.False(beforeSelectingPackageWithPackageSourceMapping_CanInstall,
+                nameof(PackageSolutionDetailControlModel.CanInstall) + " won't become true due to state of Mocked objects.");
+            Assert.False(beforeSelectingPackageWithPackageSourceMapping_CanUninstall,
+                nameof(PackageSolutionDetailControlModel.CanUninstall) + " won't become true due to state of Mocked objects.");
+
+            Assert.True(afterSelectingPackageWithPackageSourceMapping_CanInstallWithPackageSourceMapping,
+                "Selected Package ID has a package source mapping.");
+            Assert.False(afterSelectingPackageWithPackageSourceMapping_CanInstall,
+                nameof(PackageSolutionDetailControlModel.CanInstall) + " won't become true due to state of Mocked objects.");
+            Assert.False(afterSelectingPackageWithPackageSourceMapping_CanUninstall,
+                nameof(PackageSolutionDetailControlModel.CanUninstall) + " won't become true due to state of Mocked objects.");
+
+            Assert.True(afterSetInstalledOrUpdateButtonIsEnabled_CanInstallWithPackageSourceMapping, "Package Source Mapping is enabled and the Package ID is mapped.");
+
+            Assert.True(afterSetInstalledOrUpdateButtonIsEnabled_CanInstall_RaisedPropertyChanged,
+                nameof(PackageSolutionDetailControlModel.CanInstall) + " should have raised a PropertyChanged when calling "
+                + nameof(DetailControlModel.SetInstalledOrUpdateButtonIsEnabled) + " and the value should become true.");
+            Assert.True(afterSetInstalledOrUpdateButtonIsEnabled_CanUninstall_RaisedPropertyChanged,
+                nameof(PackageSolutionDetailControlModel.CanUninstall) + " should have raised a PropertyChanged when calling "
+                + nameof(DetailControlModel.SetInstalledOrUpdateButtonIsEnabled) + " and the value should become true.");
         }
     }
 

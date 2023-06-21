@@ -38,6 +38,11 @@ namespace NuGet.Configuration
             return SearchTree.Value?.GetConfiguredPackageSources(packageId);
         }
 
+        public string SearchForPattern(string packageId)
+        {
+            return SearchTree.Value?.SearchForPattern(packageId);
+        }
+
         public PackageSourceMapping(IReadOnlyDictionary<string, IReadOnlyList<string>> patterns)
         {
             Patterns = patterns ?? throw new ArgumentNullException(nameof(patterns));

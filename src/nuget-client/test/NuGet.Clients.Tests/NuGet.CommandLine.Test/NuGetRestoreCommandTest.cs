@@ -373,6 +373,24 @@ namespace NuGet.CommandLine.Test
                 Assert.False(File.Exists(packageFileA));
                 Assert.True(File.Exists(packageFileB));
             }
+
+            using (var pathContext = new SimpleTestPathContext())
+            {
+                var workingPath = pathContext.WorkingDirectory;
+                var repositoryPath = Util.CreateBasicTwoProjectSolutionWithSolutionFilters(workingPath, "packages.config", "packages.config");
+
+                // Act
+                var r = CommandRunner.Run(nugetexe,
+                    workingPath, "restore " + Path.Combine(workingPath, "filter", "filterinsubfolder.slnf") + " -Source " + repositoryPath,
+                    waitForExit: true);
+
+                // Assert
+                Assert.True(_successCode == r.ExitCode, r.Output + " " + r.Errors);
+                var packageFileA = Path.Combine(pathContext.PackagesV2, "packageA.1.1.0", "packageA.1.1.0.nupkg");
+                var packageFileB = Path.Combine(pathContext.PackagesV2, "packageB.2.2.0", "packageB.2.2.0.nupkg");
+                Assert.True(File.Exists(packageFileA));
+                Assert.True(File.Exists(packageFileB));
+            }
         }
 
         [Fact]
