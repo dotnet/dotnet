@@ -120,15 +120,13 @@ namespace NuGet.PackageManagement
             {
                 var nuGetPackageManager = GetNuGetPackageManager(solutionDirectory);
 
-                foreach (var packageReference in packageReferencesDict.Keys)
+                foreach ((var packageReference, var projectNames) in packageReferencesDict)
                 {
                     var isMissing = false;
                     if (!nuGetPackageManager.PackageExistsInPackagesFolder(packageReference.PackageIdentity))
                     {
                         isMissing = true;
                     }
-
-                    var projectNames = packageReferencesDict[packageReference];
 
                     Debug.Assert(projectNames != null);
                     packages.Add(new PackageRestoreData(packageReference, projectNames, isMissing));

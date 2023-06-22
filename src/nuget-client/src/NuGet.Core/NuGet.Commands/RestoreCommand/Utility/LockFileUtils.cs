@@ -689,7 +689,7 @@ namespace NuGet.Commands
 
                 if (group != null)
                 {
-                    foreach (var item in group.Items)
+                    foreach (var item in group.Items.NoAllocEnumerate())
                     {
                         var newItem = new LockFileItem(item.Path);
                         object locale;
@@ -975,7 +975,7 @@ namespace NuGet.Commands
                 var rid = (string)group.Properties[ManagedCodeConventions.PropertyNames.RuntimeIdentifier];
 
                 // Create lock file entries for each assembly.
-                foreach (var item in group.Items)
+                foreach (var item in group.Items.NoAllocEnumerate())
                 {
                     results.Add(new LockFileRuntimeTarget(item.Path)
                     {

@@ -224,9 +224,9 @@ namespace NuGet.PackageManagement.UI.Options
                 }
             }
             var mappingsCollection = new List<SourceMappingViewModel>();
-            foreach (string packageID in uiSourceMappings.Keys)
+            foreach ((string packageID, var packageSources) in uiSourceMappings)
             {
-                var viewModel = new SourceMappingViewModel(packageID, uiSourceMappings[packageID]);
+                var viewModel = new SourceMappingViewModel(packageID, packageSources);
                 mappingsCollection.Add(viewModel);
             }
             mappingsCollection.Sort((a, b) => StringComparer.OrdinalIgnoreCase.Compare(a.ID, b.ID));
@@ -253,9 +253,9 @@ namespace NuGet.PackageManagement.UI.Options
             }
 
             var packageSourceMappingsSourceItems = new List<PackageSourceMappingSourceItem>();
-            foreach (string source in sourceNamesToPackagePatterns.Keys)
+            foreach ((string source, var packagePatternItems) in sourceNamesToPackagePatterns)
             {
-                packageSourceMappingsSourceItems.Add(new PackageSourceMappingSourceItem(source, sourceNamesToPackagePatterns[source]));
+                packageSourceMappingsSourceItems.Add(new PackageSourceMappingSourceItem(source, packagePatternItems));
             }
             return packageSourceMappingsSourceItems.AsReadOnly();
         }

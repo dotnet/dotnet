@@ -19,7 +19,7 @@ namespace NuGet.VisualStudio
         Explicit = 1,
 
         /// <summary>
-        /// Auto restore with nuget restore manager.
+        /// Auto restore with NuGet restore manager.
         /// </summary>
         Implicit = 2,
     }

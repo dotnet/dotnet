@@ -19,7 +19,7 @@ namespace NuGet.SolutionRestoreManager
         /// An entry point which allows non-NETCore SDK based projects to indicate given project needs to be restored.
         /// </summary>
         /// <param name="projectUniqueName">
-        /// Unique identificator of the project. Should be a full path to project file.
+        /// Unique identifier of the project. Should be a full path to project file.
         /// </param>
         /// <param name="token">Cancellation token.</param>
         /// <returns>
