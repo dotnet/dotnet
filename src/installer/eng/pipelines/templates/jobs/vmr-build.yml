@@ -47,12 +47,6 @@ parameters:
 - name: buildFromArchive
   type: boolean
 
-# Some distros like CentOS Stream 9 use OpenSSL 3.0 which disables SHA1 signing.
-# This option overrides that default configuration and enables it. See https://github.com/dotnet/installer/pull/15289
-- name: overrideDistroDisablingSha1
-  type: boolean
-  default: false
-
 # Use the previous version's SDK to build the current one
 - name: withPreviousSDK
   type: boolean
@@ -202,11 +196,6 @@ jobs:
         customBuildArgs='--online'
       else
         customRunArgs="$customRunArgs --network none"
-      fi
-
-      # See https://github.com/dotnet/source-build/issues/3202
-      if [[ '${{ parameters.overrideDistroDisablingSha1 }}' == 'True' ]]; then
-        customRunArgs="$customRunArgs -e OPENSSL_ENABLE_SHA1_SIGNATURES=1"
       fi
 
       if [[ '${{ parameters.enablePoison }}' == 'True' ]]; then
