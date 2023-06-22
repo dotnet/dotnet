@@ -8,40 +8,32 @@ schedules:
     - main
   always: true
 
-variables:
-- template: eng/common/templates/variables/pool-providers.yml
-
 name: $(Date:yyyMMdd)$(Rev:rr)
 stages:
-- stage: SynchronizeSecrets
-  displayName: Synchronize secrets
-  jobs:
-  - job: SynchronizeSecrets
-    displayName: Synchronize secrets
-    pool:
-      name: $(DncEngInternalBuildPool)
-      demands: ImageOverride -equals 1es-windows-2022
+  - stage: SynchronizeSecrets
+    jobs:
+    - job: Synchronize
+      pool:
+        vmImage: windows-latest
 
-    steps:
-    - task: UseDotNet@2
-      displayName: Install .NET
-      inputs:
-        useGlobalJson: true
+      steps:
+      - task: UseDotNet@2
+        displayName: Install Correct .NET Version
+        inputs:
+          useGlobalJson: true
 
-    - task: UseDotNet@2
-      displayName: Install .NET 3.1 runtime
-      inputs:
-        packageType: runtime
-        version: 3.1.x
+      - task: UseDotNet@2
+        displayName: Install .NET 3.1 runtime
+        inputs:
+          packageType: runtime
+          version: 3.1.x
 
-    - script: dotnet tool restore
-      displayName: Install .NET tools
+      - script: dotnet tool restore
 
-    - task: AzureCLI@2
-      displayName: Synchronize secrets
-      inputs:
-        azureSubscription: DotNet Eng Services Secret Manager
-        scriptType: ps
-        scriptLocation: inlineScript
-        inlineScript: |
-          Get-ChildItem .vault-config/*.yaml |% { dotnet secret-manager synchronize $_}
+      - task: AzureCLI@2
+        inputs:
+          azureSubscription: DotNet Eng Services Secret Manager
+          scriptType: ps
+          scriptLocation: inlineScript
+          inlineScript: |
+            Get-ChildItem .vault-config/*.yaml |% { dotnet secret-manager synchronize $_}
