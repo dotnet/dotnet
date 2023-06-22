@@ -291,7 +291,7 @@ namespace NuGet.ContentModel
                         !extension.Equals(".winmd", StringComparison.OrdinalIgnoreCase) &&
                         !asset.Path.Equals(assemblyPath, StringComparison.OrdinalIgnoreCase) &&
                         //The prefix should match exactly (case sensitive), as file names are case sensitive on certain OSes.
-                        //E.g. for lib/net472/A.B.C.dll and lib/net472/a.b.c.xml, if we generate related property '.xml', the related file path is not predicatble on case sensitive OSes.
+                        //E.g. for lib/net472/A.B.C.dll and lib/net472/a.b.c.xml, if we generate related property '.xml', the related file path is not predictable on case sensitive OSes.
                         asset.Path.StartsWith(assemblyPrefix, StringComparison.Ordinal))
                     {
                         if (relatedFileExtensionList is null)

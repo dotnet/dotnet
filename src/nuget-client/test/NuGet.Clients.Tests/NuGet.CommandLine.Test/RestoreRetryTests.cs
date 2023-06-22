@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Net;
@@ -249,9 +250,9 @@ namespace NuGet.CommandLine.Test
                     Assert.True(File.Exists(Path.Combine(workingDirectory, "project.lock.json")));
 
                     // Everything should be hit 3 times
-                    foreach (var url in hitsByUrl.Keys)
+                    foreach ((var url, var hits) in hitsByUrl)
                     {
-                        Assert.True(hitsByUrl[url] == 3, url);
+                        Assert.True(hits == 3, url);
                     }
                 }
             }
@@ -389,9 +390,9 @@ namespace NuGet.CommandLine.Test
                     Assert.True(File.Exists(Path.Combine(workingDirectory, "project.lock.json")));
 
                     // Everything should be hit 3 times
-                    foreach (var url in hitsByUrl.Keys)
+                    foreach ((var url, var hits) in hitsByUrl)
                     {
-                        Assert.True(hitsByUrl[url] == 3, url);
+                        Assert.True(hits == 3, url);
                     }
 
                     Assert.True(timer.Elapsed > minTime);
@@ -569,9 +570,9 @@ namespace NuGet.CommandLine.Test
                                 "testpackage1.1.1.0", "testpackage1.1.1.0.nupkg")));
 
                     // Everything should be hit 3 times
-                    foreach (var url in hitsByUrl.Keys)
+                    foreach ((var url, var hits) in hitsByUrl)
                     {
-                        Assert.True(hitsByUrl[url] == 3, url);
+                        Assert.True(hits == 3, url);
                     }
 
                     Assert.True(timer.Elapsed > minTime);

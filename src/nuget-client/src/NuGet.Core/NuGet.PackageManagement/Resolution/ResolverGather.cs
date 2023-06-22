@@ -233,10 +233,10 @@ namespace NuGet.PackageManagement
             _context.Log.LogMinimal(
                 string.Format(CultureInfo.CurrentCulture, Strings.GatherTotalTime, DatetimeUtility.ToReadableTimeFormat(stopWatch.Elapsed)));
             _context.Log.LogDebug("Summary of time taken to gather dependencies per source :");
-            foreach (var key in _timeTaken.Keys)
+            foreach ((var key, var time) in _timeTaken)
             {
                 _context.Log.LogDebug(
-                    string.Format(CultureInfo.CurrentCulture, "{0}\t-\t{1}", key, DatetimeUtility.ToReadableTimeFormat(_timeTaken[key])));
+                    string.Format(CultureInfo.CurrentCulture, "{0}\t-\t{1}", key, DatetimeUtility.ToReadableTimeFormat(time)));
             }
             return combinedResults;
         }

@@ -55,7 +55,7 @@ namespace NuGet.VisualStudio.Telemetry
             }
 
             var data = new Dictionary<string, Data>(_sources.Count);
-            foreach (var source in _sources.Keys)
+            foreach ((var source, _) in _sources)
             {
                 data[source] = new Data();
             }

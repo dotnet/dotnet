@@ -85,10 +85,8 @@ namespace NuGet.Resolver
                 childrenOfLastId.Clear();
 
                 // Remove the id from the parent list now that we have found a place for it
-                foreach (var childId in parents.Keys)
+                foreach ((var childId, var parentIds) in parents)
                 {
-                    var parentIds = parents[childId];
-
                     if (parentIds.Remove(nextId))
                     {
                         childrenOfLastId.Add(childId);

@@ -12,7 +12,7 @@ namespace NuGet.VisualStudio
     /// <summary>
     /// Restore request flags and parameters.
     /// These parameters are used to alter UI, logging, and scheduling aspects of the operation.
-    /// The restore functionsl behavior and result should be the same regardless actual values of
+    /// The restore function's behavior and result should be the same regardless actual values of
     /// the request.
     /// </summary>
     public sealed class SolutionRestoreRequest

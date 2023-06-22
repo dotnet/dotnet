@@ -244,10 +244,10 @@ namespace NuGet.CommandLine.Test
                 r.Success.Should().BeTrue();
                 projects.Should().NotBeEmpty();
 
-                foreach (var number in projects.Keys)
+                foreach ((var number, var context) in projects)
                 {
-                    projects[number].AssetsFile.Libraries.Select(e => e.Name).Should().Contain(packageId);
-                    projects[number].AssetsFile.Libraries.Single(e => e.Name.Equals(packageId)).Version.ToString().Should().Be(packageVersion);
+                    context.AssetsFile.Libraries.Select(e => e.Name).Should().Contain(packageId);
+                    context.AssetsFile.Libraries.Single(e => e.Name.Equals(packageId)).Version.ToString().Should().Be(packageVersion);
                 }
             }
         }

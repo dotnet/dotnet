@@ -182,9 +182,8 @@ namespace NuGet.Commands
 
         private void AddContentFiles(PackageBuilder builder)
         {
-            foreach (var sourcePath in PackTargetArgs.ContentFiles.Keys)
+            foreach ((var sourcePath, var listOfContentMetadata) in PackTargetArgs.ContentFiles)
             {
-                var listOfContentMetadata = PackTargetArgs.ContentFiles[sourcePath];
                 foreach (var contentMetadata in listOfContentMetadata)
                 {
                     var target = contentMetadata.Target;
@@ -225,9 +224,8 @@ namespace NuGet.Commands
 
         private void AddSourceFiles()
         {
-            foreach (var sourcePath in PackTargetArgs.SourceFiles.Keys)
+            foreach ((var sourcePath, var projectDirectory) in PackTargetArgs.SourceFiles)
             {
-                var projectDirectory = PackTargetArgs.SourceFiles[sourcePath];
                 var finalTargetPath = GetTargetPathForSourceFile(sourcePath, projectDirectory);
 
                 var packageFile = new ManifestFile()
