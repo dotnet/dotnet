@@ -179,7 +179,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.AspNetCore.Razor.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.AspNetCore.Razor.ExternalAccess.RoslynWorkspace.Test", "src\Razor\test\Microsoft.AspNetCore.Razor.ExternalAccess.RoslynWorkspace.Test\Microsoft.AspNetCore.Razor.ExternalAccess.RoslynWorkspace.Test.csproj", "{70C6EAF1-202B-481B-ADD4-D30DF1396BDE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.Net.Compilers.Razor.Toolset", "src\Compiler\Microsoft.Net.Compilers.Razor.Toolset\Microsoft.Net.Compilers.Razor.Toolset.csproj", "{6117D32B-DDAE-4654-8260-783B27153E0B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.Net.Compilers.Razor.Toolset", "src\Compiler\Microsoft.Net.Compilers.Razor.Toolset\Microsoft.Net.Compilers.Razor.Toolset.csproj", "{6117D32B-DDAE-4654-8260-783B27153E0B}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor", "src\Razor\src\Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor\Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.csproj", "{53977089-1A87-4521-8368-0D50DFDA1279}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.Test", "src\Razor\test\Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.Test\Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.Test.csproj", "{C0C2AD17-5F5B-4B11-956D-203D91C377FB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -757,6 +761,22 @@ Global
 		{6117D32B-DDAE-4654-8260-783B27153E0B}.Release|Any CPU.Build.0 = Release|Any CPU
 		{6117D32B-DDAE-4654-8260-783B27153E0B}.ReleaseNoVSIX|Any CPU.ActiveCfg = Debug|Any CPU
 		{6117D32B-DDAE-4654-8260-783B27153E0B}.ReleaseNoVSIX|Any CPU.Build.0 = Debug|Any CPU
+		{53977089-1A87-4521-8368-0D50DFDA1279}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{53977089-1A87-4521-8368-0D50DFDA1279}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{53977089-1A87-4521-8368-0D50DFDA1279}.DebugNoVSIX|Any CPU.ActiveCfg = Debug|Any CPU
+		{53977089-1A87-4521-8368-0D50DFDA1279}.DebugNoVSIX|Any CPU.Build.0 = Debug|Any CPU
+		{53977089-1A87-4521-8368-0D50DFDA1279}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{53977089-1A87-4521-8368-0D50DFDA1279}.Release|Any CPU.Build.0 = Release|Any CPU
+		{53977089-1A87-4521-8368-0D50DFDA1279}.ReleaseNoVSIX|Any CPU.ActiveCfg = Release|Any CPU
+		{53977089-1A87-4521-8368-0D50DFDA1279}.ReleaseNoVSIX|Any CPU.Build.0 = Release|Any CPU
+		{C0C2AD17-5F5B-4B11-956D-203D91C377FB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C0C2AD17-5F5B-4B11-956D-203D91C377FB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C0C2AD17-5F5B-4B11-956D-203D91C377FB}.DebugNoVSIX|Any CPU.ActiveCfg = Debug|Any CPU
+		{C0C2AD17-5F5B-4B11-956D-203D91C377FB}.DebugNoVSIX|Any CPU.Build.0 = Debug|Any CPU
+		{C0C2AD17-5F5B-4B11-956D-203D91C377FB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C0C2AD17-5F5B-4B11-956D-203D91C377FB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C0C2AD17-5F5B-4B11-956D-203D91C377FB}.ReleaseNoVSIX|Any CPU.ActiveCfg = Release|Any CPU
+		{C0C2AD17-5F5B-4B11-956D-203D91C377FB}.ReleaseNoVSIX|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -840,6 +860,8 @@ Global
 		{2FB4801C-A083-4F08-A4FB-C4910985DE31} = {3C0D6505-79B3-49D0-B4C3-176F0F1836ED}
 		{70C6EAF1-202B-481B-ADD4-D30DF1396BDE} = {92463391-81BE-462B-AC3C-78C6C760741F}
 		{6117D32B-DDAE-4654-8260-783B27153E0B} = {AA4EE974-E765-4B97-AF35-F734BF9830F6}
+		{53977089-1A87-4521-8368-0D50DFDA1279} = {3C0D6505-79B3-49D0-B4C3-176F0F1836ED}
+		{C0C2AD17-5F5B-4B11-956D-203D91C377FB} = {92463391-81BE-462B-AC3C-78C6C760741F}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {0035341D-175A-4D05-95E6-F1C2785A1E26}
