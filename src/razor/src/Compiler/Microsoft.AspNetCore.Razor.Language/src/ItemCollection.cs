@@ -7,6 +7,7 @@ using System;
 using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Microsoft.AspNetCore.Razor.Language;
 
@@ -127,5 +128,18 @@ public sealed class ItemCollection : ICollection<KeyValuePair<object, object>>, 
     void ICollection.CopyTo(Array array, int index)
     {
         ((ICollection)_inner).CopyTo(array, index);
+    }
+
+    internal bool TryGetValue<TKey, TValue>(TKey key, [MaybeNullWhen(false)] out TValue value)
+        where TKey : notnull
+    {
+        if (!_inner.TryGetValue(key, out var objValue))
+        {
+            value = default;
+            return false;
+        }
+
+        value = (TValue)objValue;
+        return true;
     }
 }

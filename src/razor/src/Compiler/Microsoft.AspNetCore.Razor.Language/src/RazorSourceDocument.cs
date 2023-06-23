@@ -5,7 +5,6 @@
 
 using System;
 using System.IO;
-using System.Security.Cryptography;
 using System.Text;
 
 namespace Microsoft.AspNetCore.Razor.Language;
@@ -85,11 +84,11 @@ public abstract class RazorSourceDocument
     /// This member did not exist in the 2.0 release, so it is possible for an implementation to return
     /// the wrong value (or <c>null</c>). Implementations of <see cref="RazorSourceDocument"/> should
     /// override this member and specify their choice of hash algorithm even if it is the same as the
-    /// default (<c>SHA1</c>).
+    /// default (<c>SHA256</c>).
     /// </remarks>
     public virtual string GetChecksumAlgorithm()
     {
-        return HashAlgorithmName.SHA1.Name;
+        return HashAlgorithmOperations.GetAlgorithmName();
     }
 
     /// <summary>

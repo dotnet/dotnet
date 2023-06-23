@@ -6,7 +6,6 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Security.Cryptography;
 using System.Text;
 
 namespace Microsoft.AspNetCore.Razor.Language;
@@ -125,7 +124,7 @@ internal class LargeTextSourceDocument : RazorSourceDocument
             var bytes = new byte[byteCount];
             encoder.GetBytes(charBuffer, 0, charBuffer.Length, bytes, 0, flush: true);
 
-            using (var hashAlgorithm = SHA1.Create())
+            using (var hashAlgorithm = HashAlgorithmOperations.Create())
             {
                 _checksum = hashAlgorithm.ComputeHash(bytes);
             }

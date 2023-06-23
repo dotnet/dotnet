@@ -51,7 +51,7 @@ public class MetadataAttributeTargetExtensionTest
 
         var node = new RazorSourceChecksumAttributeIntermediateNode()
         {
-            ChecksumAlgorithm = "SHA1",
+            ChecksumAlgorithm = "SHA256",
             Checksum = new byte[] { (byte)'t', (byte)'e', (byte)'s', (byte)'t', },
             Identifier = "Foo/Bar",
         };
@@ -62,7 +62,7 @@ public class MetadataAttributeTargetExtensionTest
         // Assert
         var csharp = context.CodeWriter.GenerateCode();
         Assert.Equal(
-@"[global::TestChecksum(@""SHA1"", @""74657374"", @""Foo/Bar"")]
+@"[global::TestChecksum(@""SHA256"", @""74657374"", @""Foo/Bar"")]
 ",
             csharp,
             ignoreLineEndingDifferences: true);
