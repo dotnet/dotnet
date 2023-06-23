@@ -16,9 +16,9 @@ parameters:
   alpine317Container: mcr.microsoft.com/dotnet-buildtools/prereqs:alpine-3.17
   centOSStream8Container: mcr.microsoft.com/dotnet-buildtools/prereqs:centos-stream8
   centOSStream9Container: mcr.microsoft.com/dotnet-buildtools/prereqs:centos-stream9
-  debian11Arm64Container: mcr.microsoft.com/dotnet-buildtools/prereqs:debian-11-arm64v8
   fedora38Container: mcr.microsoft.com/dotnet-buildtools/prereqs:fedora-38
   ubuntu2004Container: mcr.microsoft.com/dotnet-buildtools/prereqs:ubuntu-20.04
+  ubuntu2204ArmContainer: mcr.microsoft.com/dotnet-buildtools/prereqs:ubuntu-22.04-arm64
 
   # Internal builds
   poolInternalAmd64:
@@ -213,12 +213,12 @@ stages:
 
     - template: ../jobs/vmr-build.yml
       parameters:
-        buildName: Debian11_Offline_MsftSdk
+        buildName: Ubuntu2204Arm64_Offline_MsftSdk
         isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
         vmrBranch: ${{ variables.VmrBranch }}
         architecture: arm64
         pool: ${{ parameters.poolInternalArm64 }}
-        container: ${{ parameters.debian11Arm64Container }}
+        container: ${{ parameters.ubuntu2204ArmContainer }}
         buildFromArchive: false            # 🚫
         enablePoison: false                # 🚫
         excludeOmniSharpTests: false       # 🚫
