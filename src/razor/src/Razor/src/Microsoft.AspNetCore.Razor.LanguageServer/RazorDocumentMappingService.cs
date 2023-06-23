@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
@@ -12,6 +13,7 @@ using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Language.Legacy;
 using Microsoft.AspNetCore.Razor.LanguageServer.Extensions;
 using Microsoft.AspNetCore.Razor.LanguageServer.Protocol;
+using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Razor.Workspaces.Extensions;
 using Microsoft.CodeAnalysis.Text;
@@ -491,13 +493,14 @@ internal sealed class RazorDocumentMappingService : IRazorDocumentMappingService
 
     // Internal for testing
     internal static RazorLanguageKind GetLanguageKindCore(
-        IReadOnlyList<ClassifiedSpanInternal> classifiedSpans,
-        IReadOnlyList<TagHelperSpanInternal> tagHelperSpans,
+        ImmutableArray<ClassifiedSpanInternal> classifiedSpans,
+        ImmutableArray<TagHelperSpanInternal> tagHelperSpans,
         int hostDocumentIndex,
         int hostDocumentLength,
         bool rightAssociative)
     {
-        for (var i = 0; i < classifiedSpans.Count; i++)
+        var length = classifiedSpans.Length;
+        for (var i = 0; i < length; i++)
         {
             var classifiedSpan = classifiedSpans[i];
             var span = classifiedSpan.Span;
@@ -522,7 +525,7 @@ internal sealed class RazorDocumentMappingService : IRazorDocumentMappingService
                         // of, if we're also at the start of the next one
                         if (rightAssociative)
                         {
-                            if (i < classifiedSpans.Count - 1 && classifiedSpans[i + 1].Span.AbsoluteIndex == hostDocumentIndex)
+                            if (i < classifiedSpans.Length - 1 && classifiedSpans[i + 1].Span.AbsoluteIndex == hostDocumentIndex)
                             {
                                 // If we're at the start of the next span, then use that span
                                 return GetLanguageFromClassifiedSpan(classifiedSpans[i + 1]);
@@ -538,9 +541,8 @@ internal sealed class RazorDocumentMappingService : IRazorDocumentMappingService
             }
         }
 
-        for (var i = 0; i < tagHelperSpans.Count; i++)
+        foreach (var tagHelperSpan in tagHelperSpans)
         {
-            var tagHelperSpan = tagHelperSpans[i];
             var span = tagHelperSpan.Span;
 
             if (span.AbsoluteIndex <= hostDocumentIndex)
@@ -562,7 +564,7 @@ internal sealed class RazorDocumentMappingService : IRazorDocumentMappingService
 
         // Use the language of the last classified span if we're at the end
         // of the document.
-        if (classifiedSpans.Count != 0 && hostDocumentIndex == hostDocumentLength)
+        if (classifiedSpans.Length != 0 && hostDocumentIndex == hostDocumentLength)
         {
             var lastClassifiedSpan = classifiedSpans.Last();
             return GetLanguageFromClassifiedSpan(lastClassifiedSpan);
@@ -952,19 +954,15 @@ internal sealed class RazorDocumentMappingService : IRazorDocumentMappingService
         return codeDocument.GetGeneratedSourceText(generatedDocument);
     }
 
-    private static IReadOnlyList<ClassifiedSpanInternal> GetClassifiedSpans(RazorCodeDocument document)
+    private static ImmutableArray<ClassifiedSpanInternal> GetClassifiedSpans(RazorCodeDocument document)
     {
         // Since this service is called so often, we get a good performance improvement by caching these values
         // for this code document. If the document changes, as the user types, then the document instance will be
         // different, so we don't need to worry about invalidating the cache.
-        var classifiedSpans = (IReadOnlyList<ClassifiedSpanInternal>)document.Items[typeof(ClassifiedSpanInternal)];
-        if (classifiedSpans is null)
+        if (!document.Items.TryGetValue(typeof(ClassifiedSpanInternal), out ImmutableArray<ClassifiedSpanInternal> classifiedSpans))
         {
             var syntaxTree = document.GetSyntaxTree();
-
-            var visitor = new ClassifiedSpanVisitor(syntaxTree.Source);
-            visitor.Visit(syntaxTree.Root);
-            classifiedSpans = visitor.ClassifiedSpans;
+            classifiedSpans = ClassifiedSpanVisitor.VisitRoot(syntaxTree);
 
             document.Items[typeof(ClassifiedSpanInternal)] = classifiedSpans;
         }
@@ -972,19 +970,15 @@ internal sealed class RazorDocumentMappingService : IRazorDocumentMappingService
         return classifiedSpans;
     }
 
-    private static IReadOnlyList<TagHelperSpanInternal> GetTagHelperSpans(RazorCodeDocument document)
+    private static ImmutableArray<TagHelperSpanInternal> GetTagHelperSpans(RazorCodeDocument document)
     {
         // Since this service is called so often, we get a good performance improvement by caching these values
         // for this code document. If the document changes, as the user types, then the document instance will be
         // different, so we don't need to worry about invalidating the cache.
-        var tagHelperSpans = (IReadOnlyList<TagHelperSpanInternal>)document.Items[typeof(TagHelperSpanInternal)];
-        if (tagHelperSpans is null)
+        if (!document.Items.TryGetValue(typeof(TagHelperSpanInternal), out ImmutableArray<TagHelperSpanInternal> tagHelperSpans))
         {
             var syntaxTree = document.GetSyntaxTree();
-
-            var visitor = new TagHelperSpanVisitor(syntaxTree.Source);
-            visitor.Visit(syntaxTree.Root);
-            tagHelperSpans = visitor.TagHelperSpans;
+            tagHelperSpans = TagHelperSpanVisitor.VisitRoot(syntaxTree);
 
             document.Items[typeof(TagHelperSpanInternal)] = tagHelperSpans;
         }

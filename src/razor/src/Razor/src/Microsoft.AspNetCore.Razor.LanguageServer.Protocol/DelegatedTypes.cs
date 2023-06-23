@@ -11,6 +11,9 @@ using Range = Microsoft.VisualStudio.LanguageServer.Protocol.Range;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Protocol;
 
+internal record DelegatedSpellCheckParams(
+    VersionedTextDocumentIdentifier HostDocument);
+
 internal record DelegatedDiagnosticParams(
     VersionedTextDocumentIdentifier HostDocument,
     Guid CorrelationId);

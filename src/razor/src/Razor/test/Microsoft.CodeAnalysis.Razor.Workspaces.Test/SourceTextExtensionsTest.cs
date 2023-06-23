@@ -29,7 +29,7 @@ public class SourceTextExtensionsTest : TestBase
     {
         return DateTime.Now;
     }
-}");
+}", checksumAlgorithm: SourceHashAlgorithm.Sha256);
     }
 
     [Fact]
