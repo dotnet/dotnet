@@ -60,21 +60,21 @@ internal class MvcImportProjectFeature : RazorProjectEngineFeatureBase, IImportP
         {
             var preamble = Encoding.UTF8.GetPreamble();
             var content = @"
-@using System
-@using System.Collections.Generic
-@using System.Linq
-@using System.Threading.Tasks
-@using Microsoft.AspNetCore.Mvc
-@using Microsoft.AspNetCore.Mvc.Rendering
-@using Microsoft.AspNetCore.Mvc.ViewFeatures
+@using global::System
+@using global::System.Collections.Generic
+@using global::System.Linq
+@using global::System.Threading.Tasks
+@using global::Microsoft.AspNetCore.Mvc
+@using global::Microsoft.AspNetCore.Mvc.Rendering
+@using global::Microsoft.AspNetCore.Mvc.ViewFeatures
 @inject global::Microsoft.AspNetCore.Mvc.Rendering.IHtmlHelper<TModel> Html
 @inject global::Microsoft.AspNetCore.Mvc.Rendering.IJsonHelper Json
 @inject global::Microsoft.AspNetCore.Mvc.IViewComponentHelper Component
 @inject global::Microsoft.AspNetCore.Mvc.IUrlHelper Url
 @inject global::Microsoft.AspNetCore.Mvc.ViewFeatures.IModelExpressionProvider ModelExpressionProvider
-@addTagHelper Microsoft.AspNetCore.Mvc.Razor.TagHelpers.UrlResolutionTagHelper, Microsoft.AspNetCore.Mvc.Razor
-@addTagHelper Microsoft.AspNetCore.Mvc.Razor.TagHelpers.HeadTagHelper, Microsoft.AspNetCore.Mvc.Razor
-@addTagHelper Microsoft.AspNetCore.Mvc.Razor.TagHelpers.BodyTagHelper, Microsoft.AspNetCore.Mvc.Razor
+@addTagHelper global::Microsoft.AspNetCore.Mvc.Razor.TagHelpers.UrlResolutionTagHelper, Microsoft.AspNetCore.Mvc.Razor
+@addTagHelper global::Microsoft.AspNetCore.Mvc.Razor.TagHelpers.HeadTagHelper, Microsoft.AspNetCore.Mvc.Razor
+@addTagHelper global::Microsoft.AspNetCore.Mvc.Razor.TagHelpers.BodyTagHelper, Microsoft.AspNetCore.Mvc.Razor
 ";
             var contentBytes = Encoding.UTF8.GetBytes(content);
 

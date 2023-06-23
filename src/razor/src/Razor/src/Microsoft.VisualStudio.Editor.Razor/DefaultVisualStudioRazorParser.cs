@@ -8,6 +8,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Language.Legacy;
 using Microsoft.CodeAnalysis.Razor;
@@ -326,7 +327,7 @@ internal class DefaultVisualStudioRazorParser : VisualStudioRazorParser, IDispos
         var change = new SourceChange(changeInformation.firstChange.OldPosition, changeInformation.oldText.Length, changeInformation.newText);
         var result = PartialParseResultInternal.Rejected;
         RazorSyntaxTree? partialParseSyntaxTree = null;
-        using (_parser!.SynchronizeMainThreadState())
+        using (_parser.AssumeNotNull().SynchronizeMainThreadState())
         {
             // Check if we can partial-parse
             if (_partialParser is not null && _parser.IsIdle)

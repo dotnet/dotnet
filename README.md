@@ -175,9 +175,9 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/format`  
 *[dotnet/format@9f25b1f](https://github.com/dotnet/format/commit/9f25b1fa22a5a6246ef1c68225d51e9ce219b27a)*
 - `src/fsharp`  
-*[dotnet/fsharp@528d287](https://github.com/dotnet/fsharp/commit/528d287e3464af3c47fc54ba8e92d3c3d023ef3c)*
+*[dotnet/fsharp@5d0a22d](https://github.com/dotnet/fsharp/commit/5d0a22dcacb3ce1d81fd60c66a6260d0473e9891)*
 - `src/installer`  
-*[dotnet/installer@04cb828](https://github.com/dotnet/installer/commit/04cb8281a14275b85d8cce7e0d99d7d21f9d11d1)*
+*[dotnet/installer@b47b76d](https://github.com/dotnet/installer/commit/b47b76d0234cb2a4cc6fc93fc374db35885b5f96)*
 - `src/msbuild`  
 *[dotnet/msbuild@b58ecd2](https://github.com/dotnet/msbuild/commit/b58ecd263b4ae464412fde58aff2d7498370ce4f)*
 - `src/nuget-client`  
@@ -185,7 +185,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
     - `src/nuget-client/submodules/NuGet.Build.Localization`  
     *[NuGet/NuGet.Build.Localization@f15db7b](https://github.com/NuGet/NuGet.Build.Localization/commit/f15db7b7c6f5affbea268632ef8333d2687c8031)*
 - `src/razor`  
-*[dotnet/razor@e204f30](https://github.com/dotnet/razor/commit/e204f30c93079ae112ceb4bcd536d7852396a8e3)*
+*[dotnet/razor@0250104](https://github.com/dotnet/razor/commit/0250104edec8936a8e9c93ea93cfdcf8cb80f99c)*
 - `src/roslyn`  
 *[dotnet/roslyn@17dcec1](https://github.com/dotnet/roslyn/commit/17dcec138afd78a265be020ef8ca0e22a254aa88)*
 - `src/roslyn-analyzers`  
@@ -193,7 +193,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/runtime`  
 *[dotnet/runtime@f644e5b](https://github.com/dotnet/runtime/commit/f644e5be3268064485fb74c3c9cb5735e446df4a)*
 - `src/sdk`  
-*[dotnet/sdk@2ccebd0](https://github.com/dotnet/sdk/commit/2ccebd0fd9760527f9d203072fc594a526ad3893)*
+*[dotnet/sdk@832293d](https://github.com/dotnet/sdk/commit/832293de19699123f6eb658b55482cca80653bb9)*
 - `src/source-build-externals`  
 *[dotnet/source-build-externals@0d04efd](https://github.com/dotnet/source-build-externals/commit/0d04efdab9f26bad07edc881dc7fa088337b8562)*
     - `src/source-build-externals/src/application-insights`  
