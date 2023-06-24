@@ -626,17 +626,17 @@ internal abstract class TokenizerBackedParser<TTokenizer> : ParserBase
         return (TNode)node.SetAnnotations(new[] { annotation });
     }
 
-    protected IDisposable PushSpanContextConfig()
+    protected DisposableAction PushSpanContextConfig()
     {
         return PushSpanContextConfig(newConfig: (SpanContextConfigActionWithPreviousConfig)null);
     }
 
-    protected IDisposable PushSpanContextConfig(SpanContextConfigAction newConfig)
+    protected DisposableAction PushSpanContextConfig(SpanContextConfigAction newConfig)
     {
         return PushSpanContextConfig(newConfig == null ? null : (SpanEditHandlerBuilder span, ref ISpanChunkGenerator chunkGenerator, SpanContextConfigAction _) => newConfig(span, ref chunkGenerator));
     }
 
-    protected IDisposable PushSpanContextConfig(SpanContextConfigActionWithPreviousConfig  newConfig)
+    protected DisposableAction PushSpanContextConfig(SpanContextConfigActionWithPreviousConfig  newConfig)
     {
         var old = SpanContextConfig;
         ConfigureSpanContext(newConfig);

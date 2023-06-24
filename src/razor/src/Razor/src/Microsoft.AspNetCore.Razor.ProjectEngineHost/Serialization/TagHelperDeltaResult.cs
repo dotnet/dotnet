@@ -26,7 +26,7 @@ internal record TagHelperDeltaResult(
         // 1. This TagHelperDeltaResult.Apply where we don't iterate / Contains check the "base" collection.
         // 2. The rest of the Razor project system. Everything there is always indexed / iterated as a list.
         using var _ = ArrayBuilderPool<TagHelperDescriptor>.GetPooledObject(out var newTagHelpers);
-        newTagHelpers.SetCapacityIfNeeded(baseTagHelpers.Length + Added.Length - Removed.Length);
+        newTagHelpers.SetCapacityIfLarger(baseTagHelpers.Length + Added.Length - Removed.Length);
         newTagHelpers.AddRange(Added);
 
         foreach (var existingTagHelper in baseTagHelpers)

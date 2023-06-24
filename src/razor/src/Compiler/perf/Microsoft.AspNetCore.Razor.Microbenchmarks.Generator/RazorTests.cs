@@ -7,7 +7,7 @@ namespace Microsoft.AspNetCore.Razor.Microbenchmarks.Generator;
 
 public class RazorTests
 {
-    [Fact]
+    [Fact(Skip = "https://github.com/dotnet/razor/issues/7982")]
     public void Project_Load_Cold()
     {
         // arrange
@@ -31,7 +31,7 @@ public class RazorTests
         Assert.Throws<NullReferenceException>(() => project.GeneratorDriver.GetRunResult());
     }
 
-    [Fact]
+    [Fact(Skip = "https://github.com/dotnet/razor/issues/7982")]
     public void Project_Load_Warm()
     {
         // arrange
@@ -49,7 +49,7 @@ public class RazorTests
         Assert.Equal(110, results.GeneratedTrees.Length);
     }
 
-    [Fact]
+    [Fact(Skip = "https://github.com/dotnet/razor/issues/7982")]
     public void Razor_Add_Independent()
     {
         // arrange
@@ -66,7 +66,7 @@ public class RazorTests
         Assert.Equal("Independent_razor.g.cs", results.Results[0].GeneratedSources.Last().HintName);
     }
 
-    [Fact]
+    [Fact(Skip = "https://github.com/dotnet/razor/issues/7982")]
     public void Razor_Edit_Independent()
     {
         // arrange
@@ -86,7 +86,7 @@ public class RazorTests
         Assert.Contains("<h1>Independent file</h1>", results.Results[0].GeneratedSources.Single(r => r.HintName == "Pages_Generated_0_razor.g.cs").SourceText.ToString());
     }
 
-    [Fact]
+    [Fact(Skip = "https://github.com/dotnet/razor/issues/7982")]
     public void Razor_Remove_Independent()
     {
         // arrange
@@ -102,7 +102,7 @@ public class RazorTests
         Assert.Equal(109, results.GeneratedTrees.Length);
     }
 
-    [Fact]
+    [Fact(Skip = "https://github.com/dotnet/razor/issues/7982")]
     public void Razor_Edit_DependentIgnorable()
     {
         // arrange
@@ -122,7 +122,7 @@ public class RazorTests
         Assert.Contains("<h1>Counter edited</h1>", results.Results[0].GeneratedSources.Single(r => r.HintName == "Pages_Counter_razor.g.cs").SourceText.ToString());
     }
 
-    [Fact]
+    [Fact(Skip = "https://github.com/dotnet/razor/issues/7982")]
     public void Razor_Edit_Dependent()
     {
         // arrange
@@ -144,7 +144,7 @@ public class RazorTests
         Assert.Contains("__builder.AddAttribute(6, \"IncrementAmount\", (object)(\"5\"));", results.Results[0].GeneratedSources.Single(r => r.HintName == "Pages_Index_razor.g.cs").SourceText.ToString());
     }
 
-    [Fact]
+    [Fact(Skip = "https://github.com/dotnet/razor/issues/7982")]
     public void Razor_Remove_Dependent()
     {
         // arrange

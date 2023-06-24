@@ -39,7 +39,7 @@ public class LargeTextSourceDocumentTest
         var stream = TestRazorSourceDocument.CreateStreamContent(contentString);
         var reader = new StreamReader(stream, detectEncodingFromByteOrderMarks: true);
         var document = new LargeTextSourceDocument(reader, 5, Encoding.UTF8, RazorSourceDocumentProperties.Default);
-        var expectedChecksum = new byte[] { 10, 77, 85, 168, 215, 120, 229, 2, 47, 171, 112, 25, 119, 197, 216, 64, 187, 196, 134, 208 };
+        var expectedChecksum = new byte[] { 165, 145, 166, 212, 11, 244, 32, 64, 74, 1, 23, 51, 207, 183, 177, 144, 214, 44, 101, 191, 11, 205, 163, 43, 87, 178, 119, 217, 173, 159, 20, 110 };
 
         // Act
         var checksum = document.GetChecksum();
@@ -56,7 +56,7 @@ public class LargeTextSourceDocumentTest
         var stream = TestRazorSourceDocument.CreateStreamContent(contentString, Encoding.UTF32);
         var reader = new StreamReader(stream, detectEncodingFromByteOrderMarks: true);
         var document = new LargeTextSourceDocument(reader, 5, Encoding.UTF32, RazorSourceDocumentProperties.Default);
-        var expectedChecksum = new byte[] { 108, 172, 130, 171, 42, 19, 155, 176, 211, 80, 224, 121, 169, 133, 25, 134, 48, 228, 199, 141 };
+        var expectedChecksum = new byte[] { 134, 159, 251, 113, 179, 206, 70, 108, 200, 176, 144, 115, 32, 13, 156, 240, 9, 70, 72, 123, 192, 59, 36, 123, 249, 84, 214, 120, 51, 34, 41, 237 };
 
         // Act
         var checksum = document.GetChecksum();

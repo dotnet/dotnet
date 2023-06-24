@@ -75,7 +75,7 @@ internal ref struct PooledArrayBuilder<T>
         var result = _pool.Get();
         if (_capacity is int capacity)
         {
-            result.SetCapacityIfNeeded(capacity);
+            result.SetCapacityIfLarger(capacity);
         }
 
         return result;
@@ -89,34 +89,11 @@ internal ref struct PooledArrayBuilder<T>
     ///  If <see cref="ImmutableArray{T}.Builder.Capacity"/> equals <see cref="Count"/>, the
     ///  internal array will be extracted as an <see cref="ImmutableArray{T}"/> without copying
     ///  the contents. Otherwise, the contents will be copied into a new array. The collection
-    ///  will then be set to a zero length array.
+    ///  will then be set to a zero-length array.
     /// </remarks>
     /// <returns>An immutable array.</returns>
     public readonly ImmutableArray<T> DrainToImmutable()
-    {
-#if NET8_0_OR_GREATER
-        return _builder?.DrainToImmutable() ?? ImmutableArray<T>.Empty;
-#else
-        if (_builder is not { } builder)
-        {
-            return ImmutableArray<T>.Empty;
-        }
-
-        if (builder.Count == 0)
-        {
-            return ImmutableArray<T>.Empty;
-        }
-
-        if (builder.Count == builder.Capacity)
-        {
-            return builder.MoveToImmutable();
-        }
-
-        var result = builder.ToImmutable();
-        builder.Clear();
-        return result;
-#endif
-    }
+        => _builder?.DrainToImmutable() ?? ImmutableArray<T>.Empty;
 
     public readonly ImmutableArray<T> ToImmutable()
         => _builder?.ToImmutable() ?? ImmutableArray<T>.Empty;

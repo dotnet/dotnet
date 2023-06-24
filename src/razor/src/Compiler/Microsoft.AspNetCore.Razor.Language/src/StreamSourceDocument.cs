@@ -5,7 +5,6 @@
 
 using System;
 using System.IO;
-using System.Security.Cryptography;
 using System.Text;
 
 namespace Microsoft.AspNetCore.Razor.Language;
@@ -59,7 +58,7 @@ internal sealed class StreamSourceDocument : RazorSourceDocument
 
     private static byte[] ComputeChecksum(Stream stream)
     {
-        using (var hashAlgorithm = SHA1.Create())
+        using (var hashAlgorithm = HashAlgorithmOperations.Create())
         {
             var checksum = hashAlgorithm.ComputeHash(stream);
             stream.Position = 0;

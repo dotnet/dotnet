@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Language.CodeGeneration;
@@ -868,22 +869,18 @@ public class RazorDocumentMappingServiceTest : TestBase
     {
         // Arrange
         var text = $"<strong>Something</strong>{Environment.NewLine}<App>";
-        var classifiedSpans = new List<ClassifiedSpanInternal>()
-        {
-           new ClassifiedSpanInternal(
-               new SourceSpan(0, 0),
+        var classifiedSpans = ImmutableArray.Create<ClassifiedSpanInternal>(
+           new(new SourceSpan(0, 0),
                blockSpan: new SourceSpan(absoluteIndex: 0, lineIndex: 0, characterIndex: 0, length: text.Length),
                SpanKindInternal.Transition,
                blockKind: default,
                acceptedCharacters: default),
-           new ClassifiedSpanInternal(
-               new SourceSpan(0, 26),
+           new(new SourceSpan(0, 26),
                blockSpan: default,
                SpanKindInternal.Markup,
                blockKind: default,
-               acceptedCharacters: default)
-        };
-        var tagHelperSpans = Array.Empty<TagHelperSpanInternal>();
+               acceptedCharacters: default));
+        var tagHelperSpans = ImmutableArray<TagHelperSpanInternal>.Empty;
 
         // Act
         var languageKind = RazorDocumentMappingService.GetLanguageKindCore(classifiedSpans, tagHelperSpans, text.Length, text.Length, rightAssociative: false);
@@ -1068,7 +1065,7 @@ public class RazorDocumentMappingServiceTest : TestBase
         Assert.Equal(RazorLanguageKind.Html, languageKind);
     }
 
-    private static (IReadOnlyList<ClassifiedSpanInternal> classifiedSpans, IReadOnlyList<TagHelperSpanInternal> tagHelperSpans) GetClassifiedSpans(string text, IReadOnlyList<TagHelperDescriptor>? tagHelpers = null)
+    private static (ImmutableArray<ClassifiedSpanInternal> classifiedSpans, ImmutableArray<TagHelperSpanInternal> tagHelperSpans) GetClassifiedSpans(string text, IReadOnlyList<TagHelperDescriptor>? tagHelpers = null)
     {
         var codeDocument = CreateCodeDocument(text, tagHelpers);
         var syntaxTree = codeDocument.GetSyntaxTree();

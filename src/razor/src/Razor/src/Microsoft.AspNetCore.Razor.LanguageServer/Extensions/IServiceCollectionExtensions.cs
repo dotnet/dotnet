@@ -3,7 +3,6 @@
 
 using System;
 using Microsoft.AspNetCore.Razor.LanguageServer.CodeActions;
-using Microsoft.AspNetCore.Razor.LanguageServer.CodeActions.Razor;
 using Microsoft.AspNetCore.Razor.LanguageServer.Common;
 using Microsoft.AspNetCore.Razor.LanguageServer.Completion;
 using Microsoft.AspNetCore.Razor.LanguageServer.Completion.Delegation;
@@ -16,6 +15,7 @@ using Microsoft.AspNetCore.Razor.LanguageServer.Hover;
 using Microsoft.AspNetCore.Razor.LanguageServer.InlineCompletion;
 using Microsoft.AspNetCore.Razor.LanguageServer.ProjectSystem;
 using Microsoft.AspNetCore.Razor.LanguageServer.Semantic;
+using Microsoft.AspNetCore.Razor.LanguageServer.SpellCheck;
 using Microsoft.AspNetCore.Razor.LanguageServer.Tooltip;
 using Microsoft.CodeAnalysis.Razor.Completion;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
@@ -154,6 +154,9 @@ internal static class IServiceCollectionExtensions
     {
         services.AddRegisteringHandler<TextDocumentTextPresentationEndpoint>();
         services.AddRegisteringHandler<TextDocumentUriPresentationEndpoint>();
+
+        services.AddRegisteringHandler<DocumentSpellCheckEndpoint>();
+        services.AddHandler<WorkspaceSpellCheckEndpoint>();
 
         services.AddRegisteringHandler<DocumentDidChangeEndpoint>();
         services.AddHandler<DocumentDidCloseEndpoint>();

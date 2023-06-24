@@ -58,7 +58,7 @@ internal class BackgroundParser : IDisposable
         _main.Dispose();
     }
 
-    public IDisposable SynchronizeMainThreadState()
+    public DisposableAction SynchronizeMainThreadState()
     {
         return _main.Lock();
     }
@@ -147,7 +147,7 @@ internal class BackgroundParser : IDisposable
             _cancelSource.Cancel();
         }
 
-        public IDisposable Lock()
+        public DisposableAction Lock()
         {
             Monitor.Enter(_stateLock);
             return new DisposableAction(() => Monitor.Exit(_stateLock));

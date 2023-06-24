@@ -1,23 +1,23 @@
 ﻿Source Location: (12:0,12 [11] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/BasicComponent.cshtml)
 |IDisposable|
-Generated Location: (705:17,0 [11] )
+Generated Location: (729:17,0 [11] )
 |IDisposable|
 
 Source Location: (38:1,13 [15] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/BasicComponent.cshtml)
 |this.ToString()|
-Generated Location: (1305:35,13 [15] )
+Generated Location: (1329:35,13 [15] )
 |this.ToString()|
 
 Source Location: (79:3,5 [29] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/BasicComponent.cshtml)
 |string.Format("{0}", "Hello")|
-Generated Location: (1502:43,6 [29] )
+Generated Location: (1526:43,6 [29] )
 |string.Format("{0}", "Hello")|
 
 Source Location: (132:6,12 [37] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/BasicComponent.cshtml)
 |
     void IDisposable.Dispose(){ }
 |
-Generated Location: (1754:52,12 [37] )
+Generated Location: (1778:52,12 [37] )
 |
     void IDisposable.Dispose(){ }
 |
