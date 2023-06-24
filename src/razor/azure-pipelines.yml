@@ -358,11 +358,12 @@ stages:
 
       - job: Linux
         container:
-          image: mcr.microsoft.com/dotnet-buildtools/prereqs:centos-7
+          image: mcr.microsoft.com/dotnet-buildtools/prereqs:centos-stream8
           options: --init # This ensures all the stray defunct processes are reaped.
         pool:
           ${{ if eq(variables['System.TeamProject'], 'public') }}:
-            vmImage: ubuntu-latest
+            name: NetCore-Public
+            demands: ImageOverride -equals Build.Ubuntu.1804.Amd64.Open
           ${{ if eq(variables['System.TeamProject'], 'internal') }}:
             name: $(DncEngInternalBuildPool)
             demands: ImageOverride -equals Build.Ubuntu.1804.Amd64

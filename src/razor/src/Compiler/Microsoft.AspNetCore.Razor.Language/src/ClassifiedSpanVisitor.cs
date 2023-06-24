@@ -3,16 +3,18 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 using Microsoft.AspNetCore.Razor.Language.Legacy;
 using Microsoft.AspNetCore.Razor.Language.Syntax;
+using Microsoft.AspNetCore.Razor.PooledObjects;
 
 namespace Microsoft.AspNetCore.Razor.Language;
 
 internal class ClassifiedSpanVisitor : SyntaxWalker
 {
     private readonly RazorSourceDocument _source;
-    private readonly List<ClassifiedSpanInternal> _spans;
+    private readonly ImmutableArray<ClassifiedSpanInternal>.Builder _spans;
 
     private readonly Action<CSharpCodeBlockSyntax> _baseVisitCSharpCodeBlock;
     private readonly Action<CSharpStatementSyntax> _baseVisitCSharpStatement;
@@ -29,15 +31,10 @@ internal class ClassifiedSpanVisitor : SyntaxWalker
     private BlockKindInternal _currentBlockKind;
     private SyntaxNode? _currentBlock;
 
-    public ClassifiedSpanVisitor(RazorSourceDocument source)
+    private ClassifiedSpanVisitor(RazorSourceDocument source, ImmutableArray<ClassifiedSpanInternal>.Builder spans)
     {
-        if (source is null)
-        {
-            throw new ArgumentNullException(nameof(source));
-        }
-
         _source = source;
-        _spans = new List<ClassifiedSpanInternal>();
+        _spans = spans;
 
         _baseVisitCSharpCodeBlock = base.VisitCSharpCodeBlock;
         _baseVisitCSharpStatement = base.VisitCSharpStatement;
@@ -54,7 +51,15 @@ internal class ClassifiedSpanVisitor : SyntaxWalker
         _currentBlockKind = BlockKindInternal.Markup;
     }
 
-    public IReadOnlyList<ClassifiedSpanInternal> ClassifiedSpans => _spans;
+    public static ImmutableArray<ClassifiedSpanInternal> VisitRoot(RazorSyntaxTree syntaxTree)
+    {
+        using var _ = ArrayBuilderPool<ClassifiedSpanInternal>.GetPooledObject(out var builder);
+
+        var visitor = new ClassifiedSpanVisitor(syntaxTree.Source, builder);
+        visitor.Visit(syntaxTree.Root);
+
+        return builder.DrainToImmutable();
+    }
 
     public override void VisitRazorCommentBlock(RazorCommentBlockSyntax node)
     {

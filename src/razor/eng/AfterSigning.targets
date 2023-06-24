@@ -39,7 +39,6 @@
     <Delete Files="%(LanguageServiceBinary.ZipFile)" />
 
     <!-- Build a .zip file from each platform's directory and write it to 'artifacts' -->
-    <Exec Command="$(_DotNetPath) pwsh -NonInteractive -command &quot;&amp;{ Write-Host &quot;Writing %(LanguageServiceBinary.ZipFile)...&quot; ; Add-Type -AssemblyName System.IO.Compression.FileSystem; [System.IO.Compression.ZipFile]::CreateFromDirectory('%(LanguageServiceBinary.SourceDir)', '%(LanguageServiceBinary.ZipFile)') }&quot;"
-          WorkingDirectory="$(MSBuildThisFileDirectory)..\" />
+    <ZipDirectory SourceDirectory="%(LanguageServiceBinary.SourceDir)" DestinationFile="%(LanguageServiceBinary.ZipFile)" />
   </Target>
 </Project>

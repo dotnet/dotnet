@@ -237,7 +237,7 @@ public class RazorPageDocumentClassifierPassTest : RazorProjectEngineTestBase
         // Assert
         Assert.Equal("global::Microsoft.AspNetCore.Mvc.RazorPages.Page", visitor.Class.BaseType);
         Assert.Equal(new[] { "public" }, visitor.Class.Modifiers);
-        Assert.Equal("AspNetCore_74fbaab062bb228ed1ab09c5ff8d6ed2417320e2", visitor.Class.ClassName);
+        Assert.Equal("AspNetCore_d73aeb762894dcfb9bbaa0e591f8a46be56f978ed801b6f93caf3dfa797acf4e", visitor.Class.ClassName);
     }
 
     [Theory]

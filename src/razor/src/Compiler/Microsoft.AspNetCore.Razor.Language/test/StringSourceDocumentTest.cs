@@ -32,7 +32,7 @@ public class StringSourceDocumentTest
         // Arrange
         var content = "Hello World!";
         var document = new StringSourceDocument(content, Encoding.UTF8, RazorSourceDocumentProperties.Default);
-        var expectedChecksum = new byte[] { 46, 247, 189, 230, 8, 206, 84, 4, 233, 125, 95, 4, 47, 149, 248, 159, 28, 35, 40, 113 };
+        var expectedChecksum = new byte[] { 127, 131, 177, 101, 127, 241, 252, 83, 185, 45, 193, 129, 72, 161, 214, 93, 252, 45, 75, 31, 163, 214, 119, 40, 74, 221, 210, 0, 18, 109, 144, 105 };
 
         // Act
         var checksum = document.GetChecksum();
@@ -47,7 +47,7 @@ public class StringSourceDocumentTest
         // Arrange
         var content = "Hello World!";
         var document = new StringSourceDocument(content, Encoding.UTF32, RazorSourceDocumentProperties.Default);
-        var expectedChecksum = new byte[] { 8, 149, 159, 15, 242, 255, 115, 227, 219, 78, 61, 53, 127, 239, 77, 239, 215, 140, 248, 44 };
+        var expectedChecksum = new byte[] { 17, 39, 90, 232, 140, 167, 119, 110, 248, 100, 41, 138, 21, 99, 30, 139, 142, 222, 11, 71, 31, 71, 131, 204, 204, 49, 75, 48, 247, 19, 108, 131 };
 
         // Act
         var checksum = document.GetChecksum();

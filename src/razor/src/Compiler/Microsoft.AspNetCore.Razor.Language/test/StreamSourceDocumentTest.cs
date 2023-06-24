@@ -92,7 +92,7 @@ public class StreamSourceDocumentTest
         var content = "Hello World!";
         var stream = CreateBOMStream(content, Encoding.UTF8);
         var document = new StreamSourceDocument(stream, Encoding.UTF8, RazorSourceDocumentProperties.Default);
-        var expectedChecksum = new byte[] { 70, 180, 84, 105, 70, 79, 152, 31, 71, 157, 46, 159, 50, 83, 1, 243, 222, 48, 90, 18 };
+        var expectedChecksum = new byte[] { 59, 11, 228, 16, 192, 16, 42, 217, 137, 254, 79, 100, 97, 12, 34, 40, 242, 244, 47, 6, 192, 129, 57, 81, 112, 55, 144, 13, 41, 6, 235, 157 };
 
         // Act
         var checksum = document.GetChecksum();
@@ -108,7 +108,7 @@ public class StreamSourceDocumentTest
         var content = "Hello World!";
         var stream = CreateBOMStream(content, Encoding.UTF32);
         var document = new StreamSourceDocument(stream, null, RazorSourceDocumentProperties.Default);
-        var expectedChecksum = new byte[] { 159, 154, 109, 89, 250, 163, 165, 108, 2, 112, 34, 4, 247, 161, 82, 168, 77, 213, 107, 71 };
+        var expectedChecksum = new byte[] { 11, 12, 62, 196, 4, 182, 157, 136, 59, 24, 52, 47, 255, 37, 213, 148, 116, 228, 122, 200, 250, 197, 38, 178, 101, 98, 75, 216, 148, 134, 190, 58 };
 
         // Act
         var checksum = document.GetChecksum();

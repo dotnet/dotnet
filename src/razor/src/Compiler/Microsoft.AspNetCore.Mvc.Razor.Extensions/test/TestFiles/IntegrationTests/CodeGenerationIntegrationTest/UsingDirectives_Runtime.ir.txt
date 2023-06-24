@@ -1,12 +1,12 @@
 ﻿Document - 
     RazorCompiledItemAttribute - 
     NamespaceDeclaration -  - AspNetCore
-        UsingDirective - (16:1,1 [34] ) - System.Collections.Generic
-        UsingDirective - (51:2,1 [19] ) - System.Linq
-        UsingDirective - (71:3,1 [30] ) - System.Threading.Tasks
-        UsingDirective - (102:4,1 [32] ) - Microsoft.AspNetCore.Mvc
-        UsingDirective - (135:5,1 [42] ) - Microsoft.AspNetCore.Mvc.Rendering
-        UsingDirective - (178:6,1 [45] ) - Microsoft.AspNetCore.Mvc.ViewFeatures
+        UsingDirective - (24:1,1 [42] ) - global::System.Collections.Generic
+        UsingDirective - (67:2,1 [27] ) - global::System.Linq
+        UsingDirective - (95:3,1 [38] ) - global::System.Threading.Tasks
+        UsingDirective - (134:4,1 [40] ) - global::Microsoft.AspNetCore.Mvc
+        UsingDirective - (175:5,1 [50] ) - global::Microsoft.AspNetCore.Mvc.Rendering
+        UsingDirective - (226:6,1 [53] ) - global::Microsoft.AspNetCore.Mvc.ViewFeatures
         UsingDirective - (1:0,1 [29] UsingDirectives.cshtml) - System.ComponentModel
         UsingDirective - (31:1,1 [26] UsingDirectives.cshtml) - System.Collections
         UsingDirective - (58:2,1 [14] UsingDirectives.cshtml) - System

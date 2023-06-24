@@ -1187,6 +1187,44 @@ internal class DefaultRazorLanguageServerCustomMessageTarget : RazorLanguageServ
         return response.Response;
     }
 
+    public override async Task<VSInternalSpellCheckableRangeReport[]> SpellCheckAsync(DelegatedSpellCheckParams request, CancellationToken cancellationToken)
+    {
+        var hostDocument = request.HostDocument;
+        var (synchronized, virtualDocument) = await _documentSynchronizer.TrySynchronizeVirtualDocumentAsync<CSharpVirtualDocumentSnapshot>(
+            hostDocument.Version,
+            hostDocument.Uri,
+            cancellationToken).ConfigureAwait(false);
+        if (!synchronized)
+        {
+            return Array.Empty<VSInternalSpellCheckableRangeReport>();
+        }
+
+        var spellCheckParams = new VSInternalDocumentSpellCheckableParams
+        {
+            TextDocument = new TextDocumentIdentifier
+            {
+                Uri = virtualDocument.Uri,
+            },
+        };
+
+        var response = await _requestInvoker.ReinvokeRequestOnServerAsync<VSInternalDocumentSpellCheckableParams, VSInternalSpellCheckableRangeReport[]>(
+            virtualDocument.Snapshot.TextBuffer,
+            VSInternalMethods.TextDocumentSpellCheckableRangesName,
+            RazorLSPConstants.RazorCSharpLanguageServerName,
+            SupportsSpellCheck,
+            spellCheckParams,
+            cancellationToken).ConfigureAwait(false);
+
+        return response?.Response ?? Array.Empty<VSInternalSpellCheckableRangeReport>();
+    }
+
+    private static bool SupportsSpellCheck(JToken token)
+    {
+        var serverCapabilities = token.ToObject<VSInternalServerCapabilities>();
+
+        return serverCapabilities?.SpellCheckingProvider ?? false;
+    }
+
     private async Task<TResult?> DelegateTextDocumentPositionRequestAsync<TResult>(DelegatedPositionParams request, string methodName, CancellationToken cancellationToken)
     {
         var delegationDetails = await GetProjectedRequestDetailsAsync(request, cancellationToken).ConfigureAwait(false);

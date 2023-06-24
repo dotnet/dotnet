@@ -317,7 +317,7 @@ public class MetadataAttributePassTest
         Assert.Equal(2, @namespace.Children.Count);
         var checksum = Assert.IsType<RazorSourceChecksumAttributeIntermediateNode>(@namespace.Children[0]);
         Assert.NotNull(checksum.Checksum); // Not verifying the checksum here
-        Assert.Equal("SHA1", checksum.ChecksumAlgorithm);
+        Assert.Equal("SHA256", checksum.ChecksumAlgorithm);
         Assert.Equal("/Foo/Bar.cshtml", checksum.Identifier);
     }
 
@@ -374,12 +374,12 @@ public class MetadataAttributePassTest
         Assert.Equal(3, @namespace.Children.Count);
         var checksum = Assert.IsType<RazorSourceChecksumAttributeIntermediateNode>(@namespace.Children[0]);
         Assert.NotNull(checksum.Checksum); // Not verifying the checksum here
-        Assert.Equal("SHA1", checksum.ChecksumAlgorithm);
+        Assert.Equal("SHA256", checksum.ChecksumAlgorithm);
         Assert.Equal("/Foo/Bar.cshtml", checksum.Identifier);
 
         checksum = Assert.IsType<RazorSourceChecksumAttributeIntermediateNode>(@namespace.Children[1]);
         Assert.NotNull(checksum.Checksum); // Not verifying the checksum here
-        Assert.Equal("SHA1", checksum.ChecksumAlgorithm);
+        Assert.Equal("SHA256", checksum.ChecksumAlgorithm);
         Assert.Equal("/Foo/Import.cshtml", checksum.Identifier);
     }
 
