@@ -80,7 +80,7 @@ namespace NuGet.PackageManagement.PowerShellCmdlets
                     WaitAndLogPackageActions();
                     UnsubscribeFromProgressEvents();
 
-                    return Task.FromResult(true);
+                    return TaskResult.True;
                 }, Token);
             });
 

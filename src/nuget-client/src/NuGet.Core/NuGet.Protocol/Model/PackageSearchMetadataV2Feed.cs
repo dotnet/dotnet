@@ -132,7 +132,7 @@ namespace NuGet.Protocol
         public NuGetVersion Version { get; private set; }
 
         /// <inheritdoc cref="IPackageSearchMetadata.GetVersionsAsync" />
-        public Task<IEnumerable<VersionInfo>> GetVersionsAsync() => Task.FromResult(Enumerable.Empty<VersionInfo>());
+        public Task<IEnumerable<VersionInfo>> GetVersionsAsync() => TaskResult.EmptyEnumerable<VersionInfo>();
 
         private static Uri GetUriSafe(string url)
         {
@@ -142,7 +142,7 @@ namespace NuGet.Protocol
         }
 
         /// <inheritdoc cref="IPackageSearchMetadata.GetDeprecationMetadataAsync" />
-        public Task<PackageDeprecationMetadata> GetDeprecationMetadataAsync() => Task.FromResult<PackageDeprecationMetadata>(null);
+        public Task<PackageDeprecationMetadata> GetDeprecationMetadataAsync() => TaskResult.Null<PackageDeprecationMetadata>();
 
         /// <inheritdoc cref="IPackageSearchMetadata.Vulnerabilities" />
         public IEnumerable<PackageVulnerabilityMetadata> Vulnerabilities { get; } = null; // Vulnerability metadata is not added to nuget.org's v2 feed.

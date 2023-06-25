@@ -85,7 +85,7 @@ namespace NuGet.Protocol.Plugins.Tests
                         {
                             sentEvent.Set();
                         })
-                    .Returns(Task.FromResult(0));
+                    .Returns(Task.CompletedTask);
 
                 dispatcher.SetConnection(connection.Object);
 
@@ -131,7 +131,7 @@ namespace NuGet.Protocol.Plugins.Tests
 
                         blockingEvent.Set();
 
-                        return Task.FromResult(0);
+                        return Task.CompletedTask;
                     };
 
                 connection.Raise(x => x.MessageReceived += null, new MessageEventArgs(request));
@@ -174,7 +174,7 @@ namespace NuGet.Protocol.Plugins.Tests
 
                     blockingEvent.Set();
 
-                    return Task.FromResult(0);
+                    return Task.CompletedTask;
                 };
 
                 connection.Raise(x => x.MessageReceived += null, new MessageEventArgs(request));
@@ -836,7 +836,7 @@ namespace NuGet.Protocol.Plugins.Tests
                         {
                             sentEvent.Set();
                         })
-                    .Returns(Task.FromResult(0));
+                    .Returns(Task.CompletedTask);
 
                 dispatcher.SetConnection(connection.Object);
 
@@ -883,7 +883,7 @@ namespace NuGet.Protocol.Plugins.Tests
                         {
                             sentEvent.Set();
                         })
-                    .Returns(Task.FromResult(0));
+                    .Returns(Task.CompletedTask);
 
                 dispatcher.SetConnection(connection.Object);
 
@@ -929,7 +929,7 @@ namespace NuGet.Protocol.Plugins.Tests
                         {
                             sentEvent.Set();
                         })
-                    .Returns(Task.FromResult(0));
+                    .Returns(Task.CompletedTask);
 
                 dispatcher.SetConnection(connection.Object);
 
@@ -1001,7 +1001,7 @@ namespace NuGet.Protocol.Plugins.Tests
 
                         respondingEvent.Wait(cancellationToken);
 
-                        return Task.FromResult(0);
+                        return Task.CompletedTask;
                     }
                 };
 
@@ -1033,7 +1033,7 @@ namespace NuGet.Protocol.Plugins.Tests
                         {
                             sentEvent.Set();
                         })
-                    .Returns(Task.FromResult(0));
+                    .Returns(Task.CompletedTask);
 
                 dispatcher.SetConnection(connection.Object);
 
@@ -1078,7 +1078,7 @@ namespace NuGet.Protocol.Plugins.Tests
                 {
                     responseReceived = true;
                     blockingEvent.Set();
-                    return Task.FromResult(0);
+                    return Task.CompletedTask;
                 };
 
                 connection.Raise(x => x.MessageReceived += null, new MessageEventArgs(request));
@@ -1161,7 +1161,7 @@ namespace NuGet.Protocol.Plugins.Tests
                         break;
                 }
 
-                return Task.FromResult(0);
+                return Task.CompletedTask;
             }
 
             public Task<TInbound> SendRequestAndReceiveResponseAsync<TOutbound, TInbound>(MessageMethod method, TOutbound payload, CancellationToken cancellationToken)

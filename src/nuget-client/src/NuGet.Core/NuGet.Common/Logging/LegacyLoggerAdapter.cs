@@ -58,7 +58,7 @@ namespace NuGet.Common
         {
             Log(level, data);
 
-            return Task.FromResult(0);
+            return Task.CompletedTask;
         }
 
         public virtual void Log(ILogMessage message)

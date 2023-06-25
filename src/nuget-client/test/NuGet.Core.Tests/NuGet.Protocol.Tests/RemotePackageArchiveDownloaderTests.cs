@@ -257,7 +257,7 @@ namespace NuGet.Protocol.Tests
 
                 var destinationFilePath = Path.Combine(test.TestDirectory.Path, "a");
 
-                test.Downloader.SetExceptionHandler(exception => Task.FromResult(true));
+                test.Downloader.SetExceptionHandler(exception => TaskResult.True);
 
                 var wasCopied = await test.Downloader.CopyNupkgFileToAsync(
                     destinationFilePath,

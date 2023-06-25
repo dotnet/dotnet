@@ -190,7 +190,7 @@ namespace NuGet.PackageManagement.VisualStudio
 
         public override Task BeginProcessingAsync()
         {
-            return Task.FromResult(0);
+            return Task.CompletedTask;
         }
 
         public override void RegisterProcessedFiles(IEnumerable<string> files)
@@ -222,7 +222,7 @@ namespace NuGet.PackageManagement.VisualStudio
         {
             _excludedCodeFiles.Clear();
 
-            return Task.FromResult(0);
+            return Task.CompletedTask;
         }
     }
 }

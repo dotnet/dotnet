@@ -42,7 +42,7 @@ namespace NuGet.PackageManagement.UI
             DialogResult = false;
         }
 
-        private void OkButtonClicked(object sender, RoutedEventArgs e)
+        private void ApplyButtonClicked(object sender, RoutedEventArgs e)
         {
             DialogResult = true;
         }

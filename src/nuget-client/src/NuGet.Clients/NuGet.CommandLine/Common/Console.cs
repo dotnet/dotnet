@@ -440,7 +440,7 @@ namespace NuGet.CommandLine
         {
             Log(message);
 
-            return Task.FromResult(0);
+            return Task.CompletedTask;
         }
 
         private static LogLevel GetVerbosityLevel(Verbosity level)

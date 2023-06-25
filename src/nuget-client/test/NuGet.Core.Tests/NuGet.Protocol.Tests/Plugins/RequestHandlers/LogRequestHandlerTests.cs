@@ -189,7 +189,7 @@ namespace NuGet.Protocol.Plugins.Tests
                     It.IsNotNull<Message>(),
                     It.IsNotNull<LogResponse>(),
                     It.IsAny<CancellationToken>()))
-                .Returns(Task.FromResult(0));
+                .Returns(Task.CompletedTask);
 
             await test.Handler.HandleResponseAsync(
                 Mock.Of<IConnection>(),
@@ -250,7 +250,7 @@ namespace NuGet.Protocol.Plugins.Tests
                     It.Is<Message>(message => message == request),
                     It.Is<LogResponse>(response => response.ResponseCode == responseCode),
                     It.IsAny<CancellationToken>()))
-                .Returns(Task.FromResult(0));
+                .Returns(Task.CompletedTask);
 
             if (expectLog)
             {

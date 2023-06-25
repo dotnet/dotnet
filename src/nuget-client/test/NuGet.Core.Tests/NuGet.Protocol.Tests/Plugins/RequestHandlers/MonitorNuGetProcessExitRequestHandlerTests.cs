@@ -111,7 +111,7 @@ namespace NuGet.Protocol.Plugins.Tests
                     It.Is<Message>(r => r == request),
                     It.Is<MonitorNuGetProcessExitResponse>(r => r.ResponseCode == MessageResponseCode.NotFound),
                     It.IsAny<CancellationToken>()))
-                .Returns(Task.FromResult(0));
+                .Returns(Task.CompletedTask);
 
             await _handler.HandleResponseAsync(
                 Mock.Of<IConnection>(),
@@ -130,7 +130,7 @@ namespace NuGet.Protocol.Plugins.Tests
                     It.Is<Message>(r => r == request),
                     It.Is<MonitorNuGetProcessExitResponse>(r => r.ResponseCode == MessageResponseCode.Success),
                     It.IsAny<CancellationToken>()))
-                .Returns(Task.FromResult(0));
+                .Returns(Task.CompletedTask);
 
             await _handler.HandleResponseAsync(
                 Mock.Of<IConnection>(),

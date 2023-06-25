@@ -89,7 +89,7 @@ namespace NuGet.Protocol.Tests
             Func<CancellationToken, Task> actionAsync = token =>
             {
                 timeoutToken = token;
-                return Task.FromResult(0);
+                return Task.CompletedTask;
             };
 
             // Act

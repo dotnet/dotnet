@@ -32,7 +32,7 @@ namespace NuGet.PackageManagement
                 _projectContext.Log(message);
             }
 
-            return Task.FromResult(0);
+            return Task.CompletedTask;
         }
     }
 }

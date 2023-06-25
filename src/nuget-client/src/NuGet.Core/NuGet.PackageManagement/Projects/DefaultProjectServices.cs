@@ -59,7 +59,7 @@ namespace NuGet.ProjectManagement
             Common.ILogger _,
             CancellationToken __)
         {
-            return Task.FromResult(Enumerable.Empty<ProjectRestoreReference>());
+            return TaskResult.EmptyEnumerable<ProjectRestoreReference>();
         }
 
         public string GetPropertyValue(string propertyName)
@@ -69,7 +69,7 @@ namespace NuGet.ProjectManagement
 
         public Task<string> GetPropertyValueAsync(string propertyName)
         {
-            return Task.FromResult<string>(null);
+            return TaskResult.Null<string>();
         }
 
         public T GetGlobalService<T>() where T : class
@@ -85,7 +85,7 @@ namespace NuGet.ProjectManagement
         public Task SaveProjectAsync(CancellationToken _)
         {
             // do nothing
-            return Task.FromResult(0);
+            return Task.CompletedTask;
         }
 
         public Task ExecutePackageScriptAsync(
@@ -97,7 +97,7 @@ namespace NuGet.ProjectManagement
             CancellationToken _)
         {
             // No-op
-            return Task.FromResult(0);
+            return Task.CompletedTask;
         }
 
         public Task<bool> ExecutePackageInitScriptAsync(
@@ -108,7 +108,7 @@ namespace NuGet.ProjectManagement
             CancellationToken _)
         {
             // No-op
-            return Task.FromResult(false);
+            return TaskResult.False;
         }
     }
 }

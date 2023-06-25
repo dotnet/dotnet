@@ -233,7 +233,7 @@ namespace NuGet.CommandLine
         public virtual Task ExecuteCommandAsync()
         {
             ExecuteCommand();
-            return Task.FromResult(0);
+            return Task.CompletedTask;
         }
 
         public virtual void ExecuteCommand()

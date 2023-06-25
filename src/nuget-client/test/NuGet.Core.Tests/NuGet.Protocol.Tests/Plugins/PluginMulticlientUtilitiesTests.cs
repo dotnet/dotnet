@@ -25,7 +25,7 @@ namespace NuGet.Protocol.Plugins.Tests
             var exception = await Assert.ThrowsAsync<ArgumentException>(
                 () => _utilities.DoOncePerPluginLifetimeAsync(
                     key,
-                    () => Task.FromResult(0),
+                    () => Task.CompletedTask,
                     CancellationToken.None));
 
             Assert.Equal("key", exception.ParamName);
@@ -49,7 +49,7 @@ namespace NuGet.Protocol.Plugins.Tests
             await Assert.ThrowsAsync<OperationCanceledException>(
                 () => _utilities.DoOncePerPluginLifetimeAsync(
                     key: "a",
-                    taskFunc: () => Task.FromResult(0),
+                    taskFunc: () => Task.CompletedTask,
                     cancellationToken: new CancellationToken(canceled: true)));
         }
 
@@ -63,7 +63,7 @@ namespace NuGet.Protocol.Plugins.Tests
                     taskFunc: () =>
                     {
                         wasExecuted = true;
-                        return Task.FromResult(0);
+                        return Task.CompletedTask;
                     },
                     cancellationToken: CancellationToken.None);
 
@@ -76,7 +76,7 @@ namespace NuGet.Protocol.Plugins.Tests
                 taskFunc: () =>
                 {
                     wasExecuted = true;
-                    return Task.FromResult(0);
+                    return Task.CompletedTask;
                 },
                 cancellationToken: CancellationToken.None);
 

@@ -136,7 +136,7 @@ namespace NuGet.Protocol.Plugins.Tests
                     It.IsNotNull<string>(),
                     It.IsNotNull<Func<Task>>(),
                     It.IsAny<CancellationToken>()))
-                .Returns(Task.FromResult(0));
+                .Returns(Task.CompletedTask);
 
             var pluginCreationResults = new List<PluginCreationResult>()
                 {
@@ -205,7 +205,7 @@ namespace NuGet.Protocol.Plugins.Tests
                     It.IsNotNull<string>(),
                     It.IsNotNull<Func<Task>>(),
                     It.IsAny<CancellationToken>()))
-                .Returns(Task.FromResult(0));
+                .Returns(Task.CompletedTask);
 
             var pluginCreationResults = new List<PluginCreationResult>()
                 {

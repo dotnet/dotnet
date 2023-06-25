@@ -41,7 +41,7 @@ namespace NuGet.Protocol.Tests
                 // Act
                 await tc.HttpSource.GetAsync(
                     new HttpSourceCachedRequest(tc.Url, tc.CacheKey, tc.CacheContext),
-                    result => Task.FromResult(true),
+                    result => TaskResult.True,
                     tc.Logger,
                     token: CancellationToken.None);
 
@@ -87,7 +87,7 @@ namespace NuGet.Protocol.Tests
                 // Act
                 await tc.HttpSource.ProcessStreamAsync(
                     new HttpSourceRequest(tc.Url, tc.Logger),
-                    stream => Task.FromResult(true),
+                    stream => TaskResult.True,
                     tc.Logger,
                     token: CancellationToken.None);
 
@@ -108,7 +108,7 @@ namespace NuGet.Protocol.Tests
                 // Act
                 await tc.HttpSource.ProcessResponseAsync(
                     new HttpSourceRequest(tc.Url, tc.Logger),
-                    stream => Task.FromResult(true),
+                    stream => TaskResult.True,
                     tc.Logger,
                     token: CancellationToken.None);
 
@@ -372,7 +372,7 @@ namespace NuGet.Protocol.Tests
                     {
                         EnsureValidContents = tc.GetStreamValidator(validCache: true, validNetwork: false)
                     },
-                    result => Task.FromResult(true),
+                    result => TaskResult.True,
                     tc.Logger,
                     CancellationToken.None));
 
@@ -469,7 +469,7 @@ namespace NuGet.Protocol.Tests
                     {
                         return tc.HttpSource.ProcessStreamAsync(
                             new HttpSourceRequest(tc.Url, tc.Logger),
-                            stream => Task.FromResult(true),
+                            stream => TaskResult.True,
                             tc.Logger,
                             token: CancellationToken.None);
                     }));

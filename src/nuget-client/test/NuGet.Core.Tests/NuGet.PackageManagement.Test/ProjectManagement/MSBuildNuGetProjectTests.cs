@@ -2067,7 +2067,7 @@ namespace ProjectManagement.Test
                 }
 
                 ScriptsExecuted[scriptRelativePath]++;
-                return Task.FromResult(0);
+                return Task.CompletedTask;
             }
 
             public Task<bool> ExecutePackageInitScriptAsync(PackageIdentity packageIdentity, string packageInstallPath, INuGetProjectContext projectContext, bool throwOnFailure, CancellationToken token)

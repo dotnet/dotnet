@@ -82,7 +82,7 @@ namespace NuGet.Protocol.Plugins
 
             _plugin.Close();
 
-            return Task.FromResult(0);
+            return Task.CompletedTask;
         }
     }
 }
