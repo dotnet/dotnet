@@ -3662,27 +3662,22 @@ namespace ClassLibrary
                 // Act
                 msbuildFixture.CreateDotnetNewProject(testDirectory.Path, projectName, " classlib");
 
-                using (var stream = new FileStream(projectFile, FileMode.Open, FileAccess.ReadWrite))
-                {
-                    var xml = XDocument.Load(stream);
-                    var ns = xml.Root.Name.Namespace;
-
-                    ProjectFileUtils.AddProperty(xml, "RepositoryType", "git");
-
-                    // mock implementation of InitializeSourceControlInformation common targets:
-                    xml.Root.Add(
-                        new XElement(ns + "Target",
-                            new XAttribute("Name", "InitializeSourceControlInformation"),
-                            new XElement(ns + "PropertyGroup",
-                                new XElement("SourceRevisionId", "e1c65e4524cd70ee6e22abe33e6cb6ec73938cb1"),
-                                new XElement("PrivateRepositoryUrl", "https://github.com/NuGet/NuGet.Client.git"))));
-
-                    xml.Root.Add(
-                        new XElement(ns + "PropertyGroup",
-                            new XElement("SourceControlInformationFeatureSupported", "false")));
-
-                    ProjectFileUtils.WriteXmlToFile(xml, stream);
-                }
+                File.WriteAllText(
+                    Path.Combine(workingDirectory, "Directory.Build.targets"),
+                    @"
+<Project>
+    <PropertyGroup>
+        <SourceControlInformationFeatureSupported>false</SourceControlInformationFeatureSupported>
+        <EnableSourceControlManagerQueries>false</EnableSourceControlManagerQueries>
+        <RepositoryType>git</RepositoryType>
+    </PropertyGroup>
+    <Target Name=""InitializeSourceControlInformation1"">
+        <PropertyGroup>
+            <SourceRevisionId>e1c65e4524cd70ee6e22abe33e6cb6ec73938cb1</SourceRevisionId>
+            <PrivateRepositoryUrl>https://github.com/NuGet/NuGet.Client.git</PrivateRepositoryUrl>
+        </PropertyGroup>
+    </Target>
+</Project>");
 
                 msbuildFixture.RestoreProject(workingDirectory, projectName, string.Empty);
                 msbuildFixture.PackProject(workingDirectory, projectName, $"-o {workingDirectory}");

@@ -38,7 +38,7 @@ namespace NuGet.Packaging.Test
         }
 
 #if IS_SIGNING_SUPPORTED
-        [Fact]
+        [Fact(Skip="https://github.com/NuGet/Home/issues/12687")]
         public void Read_WithValidInput_ReturnsEssCertId()
         {
             using (var certificate = _fixture.GetDefaultCertificate())

@@ -143,7 +143,7 @@ namespace NuGet.Protocol.Plugins
                 }
             }
 
-            return Task.FromResult(0);
+            return Task.CompletedTask;
         }
 
         private void ThrowIfDisposed()

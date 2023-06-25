@@ -13,7 +13,7 @@
   Title="{Binding Title}"
   Height="500"
   Width="500"
-  MinWidth="{Binding WindowMinwidth}"
+  MinWidth="386"
   FocusManager.FocusedElement="{Binding ElementName=_okButton}">
   <Window.Resources>
     <ResourceDictionary>
@@ -29,44 +29,39 @@
   </vs:DialogWindow.CommandBindings>
   <Grid>
     <Grid.RowDefinitions>
-      <RowDefinition
-        Height="auto" />
+      <RowDefinition Height="auto" />
       <RowDefinition />
-      <RowDefinition
-        Height="auto" />
+      <RowDefinition Height="auto" />
     </Grid.RowDefinitions>
-    <Grid
-      Grid.Row="0">
+    <Grid Grid.Row="0">
       <Grid.ColumnDefinitions>
         <ColumnDefinition Width="*" />
         <ColumnDefinition Width="auto" />
-        <ColumnDefinition Width="auto" />
       </Grid.ColumnDefinitions>
       <TextBlock
-      Grid.Row="0"
-      Grid.Column="0"
-      Margin="12,12,12,0"
-      TextWrapping="Wrap"
-      x:Name="_changesText"
-      Text="{x:Static nuget:Resources.Text_Changes}" />
+        Grid.Column="0"
+        Margin="12,12,12,0"
+        TextWrapping="Wrap"
+        x:Name="_changesText"
+        Text="{x:Static nuget:Resources.Text_Changes}" />
       <Button
         Grid.Column="1"
-        MinWidth="{Binding ButtonMinWidth}"
+        MinWidth="86"
         MinHeight="24"
-        Margin="12"
+        Margin="12,12,12,9"
         AutomationProperties.AutomationId="Copy"
         Content="{x:Static nuget:Resources.Button_Copy}"
         Click="CopyButtonClicked" />
     </Grid>
     <Border
       Grid.Row="1"
-      Margin="12,12"
+      Margin="12,0,12,0"
       BorderBrush="{DynamicResource {x:Static nuget:Brushes.BorderBrush}}"
       BorderThickness="1">
       <ScrollViewer
         HorizontalScrollBarVisibility="Auto"
         IsTabStop="True"
-        AutomationProperties.Name="{x:Static nuget:Resources.Accessibility_PackageChanges}">
+        AutomationProperties.LabeledBy="{Binding ElementName=_changesText, Mode=OneWay}">
         <ItemsControl
           x:Name="_changesItems"
           ItemsSource="{Binding Path=PreviewResults}"
@@ -153,7 +148,7 @@
     <Grid
       Grid.Row="2">
       <Grid.ColumnDefinitions>
-        <ColumnDefinition Width="*" />
+        <ColumnDefinition Width="*" MinWidth="180" />
         <ColumnDefinition Width="auto" />
         <ColumnDefinition Width="auto" />
       </Grid.ColumnDefinitions>
@@ -161,7 +156,6 @@
         x:Name="_doNotShowCheckBox"
         Grid.Column="0"
         Margin="12"
-        MinWidth="{Binding DoNotShowAgainMinWidth}"
         VerticalAlignment="Center"
         Foreground="{DynamicResource {x:Static nuget:Brushes.UIText}}"
         Content="{x:Static nuget:Resources.DoNotShowThisAgain}"
@@ -170,16 +164,16 @@
       <Button
         Name="_okButton"
         Grid.Column="1"
-        MinWidth="{Binding ButtonMinWidth}"
+        MinWidth="86"
         MinHeight="24"
         Margin="0,12"
         AutomationProperties.AutomationId="OK"
-        Content="{x:Static nuget:Resources.Button_OK}"
-        Click="OkButtonClicked"
+        Content="{x:Static nuget:Resources.Button_Apply}"
+        Click="ApplyButtonClicked"
         AutomationProperties.LabeledBy="{Binding Text, ElementName=_changesText}"/>
       <Button
         Grid.Column="2"
-        MinWidth="{Binding ButtonMinWidth}"
+        MinWidth="86"
         MinHeight="24"
         Margin="6,12,12,12"
         AutomationProperties.AutomationId="Cancel"

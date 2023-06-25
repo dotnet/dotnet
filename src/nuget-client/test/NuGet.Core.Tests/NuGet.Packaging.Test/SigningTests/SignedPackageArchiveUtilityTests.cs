@@ -309,7 +309,7 @@ namespace NuGet.Packaging.Test
             }
         }
 
-        [Fact]
+        [Fact(Skip="https://github.com/NuGet/Home/issues/12687")]
         public async Task RemoveRepositorySignaturesAsync_WithAuthorPrimarySignature_DoesNotChangePackage()
         {
             using (var test = new RemoveTest(_fixture))

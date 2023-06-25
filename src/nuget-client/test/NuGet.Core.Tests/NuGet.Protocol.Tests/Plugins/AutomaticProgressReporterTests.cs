@@ -182,7 +182,7 @@ namespace NuGet.Protocol.Plugins.Tests
                             SentEvent.Set();
                         }
                     })
-                    .Returns(Task.FromResult(0));
+                    .Returns(Task.CompletedTask);
 
                 Request = MessageUtilities.Create(
                     requestId: "a",

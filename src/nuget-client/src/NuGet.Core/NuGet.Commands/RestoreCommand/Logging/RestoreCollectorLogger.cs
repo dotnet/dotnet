@@ -175,7 +175,7 @@ namespace NuGet.Commands
                 }
             }
 
-            return Task.FromResult(0);
+            return Task.CompletedTask;
         }
 
         public override void Log(ILogMessage message)

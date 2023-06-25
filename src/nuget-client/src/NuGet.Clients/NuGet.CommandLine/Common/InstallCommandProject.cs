@@ -83,7 +83,7 @@ namespace NuGet.CommandLine
             }
 
             // For SxS scenarios PackageManagement should not read these references, this would cause uninstalls.
-            return Task.FromResult(Enumerable.Empty<PackageReference>());
+            return TaskResult.EmptyEnumerable<PackageReference>();
         }
 
         /// <summary>

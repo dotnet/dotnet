@@ -11,7 +11,6 @@ namespace NuGet.Protocol
     /// </summary>
     public class NullThrottle : IThrottle
     {
-        private static readonly Task _completedTask = Task.FromResult(true);
         private static readonly NullThrottle _instance = new NullThrottle();
 
         public static NullThrottle Instance
@@ -24,7 +23,7 @@ namespace NuGet.Protocol
 
         public Task WaitAsync()
         {
-            return _completedTask;
+            return Task.CompletedTask;
         }
 
         public void Release()

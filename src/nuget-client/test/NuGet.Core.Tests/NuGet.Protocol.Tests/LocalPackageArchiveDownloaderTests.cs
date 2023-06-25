@@ -162,7 +162,7 @@ namespace NuGet.Protocol.Tests
                     FileAccess.Write,
                     FileShare.None))
                 {
-                    test.Downloader.SetExceptionHandler(exception => Task.FromResult(true));
+                    test.Downloader.SetExceptionHandler(exception => TaskResult.True);
 
                     var wasCopied = await test.Downloader.CopyNupkgFileToAsync(
                         destinationFilePath,

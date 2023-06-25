@@ -157,7 +157,7 @@ namespace NuGet.Protocol.Plugins.Tests
                         It.Is<Message>(r => r == request),
                         It.Is<GetServiceIndexResponse>(r => r.ResponseCode == MessageResponseCode.NotFound),
                         It.IsAny<CancellationToken>()))
-                    .Returns(Task.FromResult(0));
+                    .Returns(Task.CompletedTask);
 
                 await provider.HandleResponseAsync(
                     Mock.Of<IConnection>(),
@@ -183,7 +183,7 @@ namespace NuGet.Protocol.Plugins.Tests
                         It.Is<Message>(r => r == request),
                         It.Is<GetServiceIndexResponse>(r => r.ResponseCode == MessageResponseCode.NotFound),
                         It.IsAny<CancellationToken>()))
-                    .Returns(Task.FromResult(0));
+                    .Returns(Task.CompletedTask);
 
                 await provider.HandleResponseAsync(
                     Mock.Of<IConnection>(),
@@ -214,7 +214,7 @@ namespace NuGet.Protocol.Plugins.Tests
                         It.Is<Message>(r => r == request),
                         It.Is<GetServiceIndexResponse>(r => r.ResponseCode == MessageResponseCode.NotFound),
                         It.IsAny<CancellationToken>()))
-                    .Returns(Task.FromResult(0));
+                    .Returns(Task.CompletedTask);
 
                 await provider.HandleResponseAsync(
                     Mock.Of<IConnection>(),
@@ -263,7 +263,7 @@ namespace NuGet.Protocol.Plugins.Tests
                         It.Is<GetServiceIndexResponse>(r => r.ResponseCode == MessageResponseCode.Success
                             && r.ServiceIndex.ToString(Formatting.None) == serviceIndex.ToString(Formatting.None)),
                         It.IsAny<CancellationToken>()))
-                    .Returns(Task.FromResult(0));
+                    .Returns(Task.CompletedTask);
 
                 await provider.HandleResponseAsync(
                     Mock.Of<IConnection>(),

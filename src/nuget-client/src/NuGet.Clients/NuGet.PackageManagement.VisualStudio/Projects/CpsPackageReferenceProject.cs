@@ -90,7 +90,7 @@ namespace NuGet.PackageManagement.VisualStudio
                 }
                 else
                 {
-                    return Task.FromResult<string>(null);
+                    return TaskResult.Null<string>();
                 }
             }
 

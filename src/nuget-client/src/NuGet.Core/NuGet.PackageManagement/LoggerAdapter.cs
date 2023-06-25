@@ -62,7 +62,7 @@ namespace NuGet.ProjectManagement
         public override Task LogAsync(ILogMessage message)
         {
             ProjectLogger.Log(message);
-            return Task.FromResult(0);
+            return TaskResult.Zero;
         }
     }
 }

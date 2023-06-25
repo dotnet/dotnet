@@ -107,7 +107,7 @@ namespace NuGet.Protocol.Plugins
             _packageIdentity = packageIdentity;
             _packageReader = packageReader;
             _packageSourceRepository = packageSourceRepository;
-            _handleExceptionAsync = exception => Task.FromResult(false);
+            _handleExceptionAsync = exception => TaskResult.False;
         }
 
         /// <summary>

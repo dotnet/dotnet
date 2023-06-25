@@ -108,7 +108,7 @@ namespace NuGet.Packaging
             _logger = logger;
             _packageReader = new Lazy<PackageArchiveReader>(GetPackageReader);
             _sourceStream = new Lazy<FileStream>(GetSourceStream);
-            _handleExceptionAsync = exception => Task.FromResult(false);
+            _handleExceptionAsync = exception => TaskResult.False;
             Source = source;
         }
 
