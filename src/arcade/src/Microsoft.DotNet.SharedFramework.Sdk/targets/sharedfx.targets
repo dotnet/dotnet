@@ -215,6 +215,12 @@
       <ProjectRuntimeConfigFilePath>$(IntermediateOutputPath)$(SharedFrameworkName).runtimeconfig.json</ProjectRuntimeConfigFilePath>
       <ProjectRuntimeConfigFilePath Condition="'$(SharedFrameworkHostFileNameOverride)' != ''">$(IntermediateOutputPath)$(SharedFrameworkHostFileNameOverride).runtimeconfig.json</ProjectRuntimeConfigFilePath>
     </PropertyGroup>
+
+    <!-- Remove all runtime config options. SDK sets some of these by default, but those defaults are meant
+         for applications. We don't want any of these to be part of the framework. -->
+    <ItemGroup>
+      <RuntimeHostConfigurationOption Remove="@(RuntimeHostConfigurationOption)" />
+    </ItemGroup>
   </Target>
 
   <Target Name="_GenerateSharedFrameworkRuntimeConfigFile"
