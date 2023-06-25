@@ -167,7 +167,19 @@
 
       <_GitSubmoduleCloneArgs />
       <_GitSubmoduleCloneArgs>$(_GitSubmoduleCloneArgs) --source .</_GitSubmoduleCloneArgs>
-      <_GitSubmoduleCloneArgs>$(_GitSubmoduleCloneArgs) --dest &quot;$(InnerSourceBuildRepoRoot)$sm_path&quot;</_GitSubmoduleCloneArgs>
+      <!-- The destination is set using a bit of bash and msbuild logic that takes the root directory of innermost repository
+           containing the submodule (root of repo, or parent submodule), then replaces that root path with the inner source build root
+           location using sed, and then adds on the subpath of the submodule.
+
+           There are various escaped special characters here:
+           - %24 ensures that msbuild does not attempt to evaluate the whole bash statement as a variable
+           - &quot; ensures that the whole path is quoted.
+
+           We also use an atypical sed replacement delimiter (+), because the typical '/' would occur within paths
+
+           It is expected that when the inner clone goes away, this code goes away (see https://github.com/dotnet/source-build/issues/3072).
+      -->
+      <_GitSubmoduleCloneArgs>$(_GitSubmoduleCloneArgs) --dest &quot;%24(echo &quot;${toplevel}/&quot; | sed s+$(RepoRoot)+$(InnerSourceBuildRepoRoot)+)${sm_path}&quot;</_GitSubmoduleCloneArgs>
       <_GitSubmoduleCloneArgs Condition="'$(CopyWipIntoInnerSourceBuildRepo)' == 'true'">$(_GitSubmoduleCloneArgs) --copy-wip</_GitSubmoduleCloneArgs>
       <_GitSubmoduleCloneArgs Condition="'$(CleanInnerSourceBuildRepoRoot)' == 'true'">$(_GitSubmoduleCloneArgs) --clean</_GitSubmoduleCloneArgs>
     </PropertyGroup>
