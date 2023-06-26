@@ -71,8 +71,8 @@
     <MicrosoftCodeAnalysisWorkspacesCommonPackageVersion>4.7.0-3.23314.5</MicrosoftCodeAnalysisWorkspacesCommonPackageVersion>
     <MicrosoftCodeAnalysisWorkspacesMSBuildPackageVersion>4.7.0-3.23314.5</MicrosoftCodeAnalysisWorkspacesMSBuildPackageVersion>
     <MicrosoftVisualStudioLanguageServicesPackageVersion>4.7.0-3.23314.5</MicrosoftVisualStudioLanguageServicesPackageVersion>
-    <MicrosoftSourceLinkGitHubPackageVersion>8.0.0-beta.23252.2</MicrosoftSourceLinkGitHubPackageVersion>
-    <MicrosoftDotNetXliffTasksPackageVersion>1.0.0-beta.23266.1</MicrosoftDotNetXliffTasksPackageVersion>
+    <MicrosoftSourceLinkGitHubPackageVersion>8.0.0-beta.23314.2</MicrosoftSourceLinkGitHubPackageVersion>
+    <MicrosoftDotNetXliffTasksPackageVersion>1.0.0-beta.23312.2</MicrosoftDotNetXliffTasksPackageVersion>
     <!--
       Exception - Microsoft.Extensions.ObjectPool and System.Collections.Immutable packages are not updated by automation,
       but are present in Version.Details.xml for source-build PVP flow. See the comment in Version.Details.xml for more information.
