@@ -444,9 +444,9 @@ namespace NuGet.Packaging
             }
 
             // Sort the groups by framework, and the items by ordinal string compare to keep things deterministic
-            foreach (var framework in groups.Keys.OrderBy(e => e, new NuGetFrameworkSorter()))
+            foreach ((var framework, var items) in groups.OrderBy(e => e.Key, new NuGetFrameworkSorter()))
             {
-                yield return new FrameworkSpecificGroup(framework, groups[framework].OrderBy(e => e, StringComparer.OrdinalIgnoreCase));
+                yield return new FrameworkSpecificGroup(framework, items.OrderBy(e => e, StringComparer.OrdinalIgnoreCase));
             }
         }
 

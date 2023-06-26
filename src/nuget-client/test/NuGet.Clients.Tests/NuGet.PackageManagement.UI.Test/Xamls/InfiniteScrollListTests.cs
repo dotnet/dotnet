@@ -179,7 +179,7 @@ namespace NuGet.PackageManagement.UI.Test
                     It.IsNotNull<SearchResultContextInfo>(),
                     It.IsNotNull<IProgress<IItemLoaderState>>(),
                     It.IsAny<CancellationToken>()))
-                .Returns(Task.FromResult(0));
+                .Returns(Task.CompletedTask);
 
             var loadingStatus = LoadingStatus.Loading;
             var loadingStatusCallCount = 0;
@@ -216,7 +216,7 @@ namespace NuGet.PackageManagement.UI.Test
             loader.Setup(x => x.UpdateStateAsync(
                     It.IsNotNull<IProgress<IItemLoaderState>>(),
                     It.IsAny<CancellationToken>()))
-                .Returns(() => Task.FromResult(0));
+                .Returns(() => Task.CompletedTask);
 
             var logger = new Mock<INuGetUILogger>();
             var searchResultTask = Task.FromResult(new SearchResultContextInfo());
@@ -291,7 +291,7 @@ namespace NuGet.PackageManagement.UI.Test
                     It.IsNotNull<SearchResultContextInfo>(),
                     It.IsNotNull<IProgress<IItemLoaderState>>(),
                     It.IsAny<CancellationToken>()))
-                .Returns(Task.FromResult(0))
+                .Returns(Task.CompletedTask)
                 .Callback(() =>
                 {
                     currentStatus = searchItems.Length > 0 ? LoadingStatus.Ready : LoadingStatus.NoItemsFound;
@@ -299,7 +299,7 @@ namespace NuGet.PackageManagement.UI.Test
             loaderMock.Setup(x => x.UpdateStateAsync(
                     It.IsNotNull<IProgress<IItemLoaderState>>(),
                     It.IsAny<CancellationToken>()))
-                .Returns(() => Task.FromResult(0));
+                .Returns(() => Task.CompletedTask);
             loaderMock.Setup(x => x.GetCurrent())
                 .Returns(() => searchItems.Select(x => new PackageItemViewModel(searchService.Object)));
 

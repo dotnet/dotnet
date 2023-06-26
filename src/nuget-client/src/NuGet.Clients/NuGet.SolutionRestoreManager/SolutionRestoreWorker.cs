@@ -272,7 +272,7 @@ namespace NuGet.SolutionRestoreManager
                     () => new BlockingCollection<SolutionRestoreRequest>(RequestQueueLimit));
 
                 _pendingRestore = new BackgroundRestoreOperation();
-                _activeRestoreTask = Task.FromResult(true);
+                _activeRestoreTask = TaskResult.True;
                 _restoreJobContext = new SolutionRestoreJobContext();
 
                 // Set to signaled, restore is no longer busy

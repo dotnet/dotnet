@@ -144,13 +144,13 @@ namespace NuGet.Core.FuncTest
             {
                 action1HitSem.Set();
                 action1Sem.Wait();
-                return Task.FromResult(true);
+                return TaskResult.True;
             };
 
             Func<CancellationToken, Task<bool>> action2 = (ct) =>
             {
                 action2Sem.Set();
-                return Task.FromResult(true);
+                return TaskResult.True;
             };
 
             // Act
@@ -196,13 +196,13 @@ namespace NuGet.Core.FuncTest
             {
                 action1HitSem.Set();
                 action1Sem.Wait();
-                return Task.FromResult(true);
+                return TaskResult.True;
             };
 
             Func<CancellationToken, Task<bool>> action2 = (ct) =>
             {
                 action2Sem.Set();
-                return Task.FromResult(true);
+                return TaskResult.True;
             };
 
             // Act

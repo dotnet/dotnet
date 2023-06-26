@@ -413,7 +413,7 @@ namespace NuGet.Protocol.Core.Types
                                     bool logOccurred = DetectAndLogSkippedErrorOccurrence(responseStatusCode, source, pathToPackage, response.ReasonPhrase, logger);
                                     showPushCommandPackagePushed = !logOccurred;
 
-                                    return Task.FromResult(0);
+                                    return TaskResult.Zero;
                                 },
                                 logger,
                                 token);
@@ -455,7 +455,7 @@ namespace NuGet.Protocol.Core.Types
                         bool logOccurred = DetectAndLogSkippedErrorOccurrence(responseStatusCode, source, pathToPackage, response.ReasonPhrase, logger);
                         showPushCommandPackagePushed = !logOccurred;
 
-                        return Task.FromResult(0);
+                        return TaskResult.Zero;
                     },
                     logger,
                     token);
@@ -724,7 +724,7 @@ namespace NuGet.Protocol.Core.Types
                 {
                     response.EnsureSuccessStatusCode();
 
-                    return Task.FromResult(0);
+                    return TaskResult.Zero;
                 },
                 logger,
                 token);

@@ -1093,10 +1093,10 @@ EndGlobal";
                 // Assert
                 projects.Should().NotBeEmpty();
 
-                foreach (var letter in projects.Keys)
+                foreach ((var letter, var context) in projects)
                 {
-                    projects[letter].AssetsFile.Should().NotBeNull(because: result.AllOutput);
-                    projects[letter].AssetsFile.Libraries.Select(e => e.Name).Should().Contain($"package{letter}", because: result.AllOutput);
+                    context.AssetsFile.Should().NotBeNull(because: result.AllOutput);
+                    context.AssetsFile.Libraries.Select(e => e.Name).Should().Contain($"package{letter}", because: result.AllOutput);
                 }
             }
         }

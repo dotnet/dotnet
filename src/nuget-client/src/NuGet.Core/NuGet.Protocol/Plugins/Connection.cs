@@ -279,7 +279,7 @@ namespace NuGet.Protocol.Plugins
             if (State == ConnectionState.Closing ||
                 State == ConnectionState.Closed)
             {
-                return Task.FromResult<TInbound>(null);
+                return TaskResult.Null<TInbound>();
             }
 
             if (_state < (int)ConnectionState.Connecting)

@@ -1,0 +1,12 @@
+anycpu
+csproj
+entityframework
+globalpackages
+globbing
+netcore
+netcoreapp
+netstandard
+netstandardapp
+winmd
+winrt
+Xunit

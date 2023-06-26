@@ -114,7 +114,7 @@ namespace Test.Utility
         public override Task OpenFile(string fullPath)
         {
             FilesOpened.Add(fullPath);
-            return Task.FromResult(0);
+            return Task.CompletedTask;
         }
     }
 }

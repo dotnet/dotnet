@@ -125,7 +125,7 @@ namespace NuGet.CommandLine.XPlat
         {
             Log(message);
 
-            return Task.FromResult(0);
+            return Task.CompletedTask;
         }
     }
 }

@@ -19,7 +19,7 @@
 
     <!-- ** Change for each new preview/rc -->
     <!-- Check the VS schedule and manually enter a preview number here that makes sense. -->
-    <ReleaseLabel Condition=" '$(ReleaseLabel)' == '' ">preview.3</ReleaseLabel>
+    <ReleaseLabel Condition=" '$(ReleaseLabel)' == '' ">rc</ReleaseLabel>
 
     <IsEscrowMode>false</IsEscrowMode>
 

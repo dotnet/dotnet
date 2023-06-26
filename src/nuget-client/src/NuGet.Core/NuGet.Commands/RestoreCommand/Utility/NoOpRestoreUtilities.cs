@@ -288,7 +288,7 @@ namespace NuGet.Commands
             return packageFiles;
         }
 
-        private static IEnumerable<string> GetPackageFiles(LocalPackageFileCache packageFileCache, string packageId, NuGetVersion version, IEnumerable<VersionFolderPathResolver> resolvers)
+        private static IEnumerable<string> GetPackageFiles(LocalPackageFileCache packageFileCache, string packageId, NuGetVersion version, List<VersionFolderPathResolver> resolvers)
         {
             foreach (var resolver in resolvers)
             {

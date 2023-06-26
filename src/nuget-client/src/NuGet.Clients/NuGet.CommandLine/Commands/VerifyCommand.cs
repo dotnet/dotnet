@@ -67,7 +67,7 @@ namespace NuGet.CommandLine
             {
                 throw new ExitCodeException(1);
             }
-            return Task.FromResult(result);
+            return Task.CompletedTask;
         }
 
         private IList<Verification> GetVerificationTypes()

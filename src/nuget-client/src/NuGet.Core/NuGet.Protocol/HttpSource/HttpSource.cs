@@ -300,7 +300,7 @@ namespace NuGet.Protocol
                 {
                     if (stream == null)
                     {
-                        return Task.FromResult<JObject>(null);
+                        return TaskResult.Null<JObject>();
                     }
 
                     return stream.AsJObjectAsync(token);

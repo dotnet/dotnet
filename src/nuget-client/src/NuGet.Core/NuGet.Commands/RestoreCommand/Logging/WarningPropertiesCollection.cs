@@ -53,7 +53,7 @@ namespace NuGet.Commands
         /// </summary>
         /// <param name="message">Message that should be suppressed or upgraded to an error.</param>
         /// <returns>Bool indicating is the warning should be suppressed or not. 
-        /// If not then the param message sould have been mutated to an error</returns>
+        /// If not then the param message should have been mutated to an error</returns>
         public bool ApplyWarningProperties(IRestoreLogMessage message)
         {
             if (ApplyProjectWideNoWarnProperties(message, ProjectWideWarningProperties) || ApplyPackageSpecificNoWarnProperties(message))

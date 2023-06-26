@@ -55,33 +55,30 @@ namespace NuGet.Commands.PackCommand
         /// <param name="framework">Target graph for which no warning should be thrown.</param>
         internal void Add(NuGetLogCode code, string libraryId, NuGetFramework framework)
         {
-            if (Properties == null)
+            Properties ??= new Dictionary<NuGetLogCode, IDictionary<string, ISet<NuGetFramework>>>();
+
+            if (!Properties.TryGetValue(code, out IDictionary<string, ISet<NuGetFramework>> frameworksByLibraryId))
             {
-                Properties = new Dictionary<NuGetLogCode, IDictionary<string, ISet<NuGetFramework>>>();
+                frameworksByLibraryId = new Dictionary<string, ISet<NuGetFramework>>(StringComparer.OrdinalIgnoreCase);
+                Properties.Add(code, frameworksByLibraryId);
             }
 
-            if (!Properties.ContainsKey(code))
+            if (!frameworksByLibraryId.TryGetValue(libraryId, out ISet<NuGetFramework> frameworks))
             {
-                Properties.Add(code, new Dictionary<string, ISet<NuGetFramework>>(StringComparer.OrdinalIgnoreCase));
+                frameworks = new HashSet<NuGetFramework>(new NuGetFrameworkFullComparer());
+                frameworksByLibraryId.Add(libraryId, frameworks);
             }
 
-            if (Properties[code].ContainsKey(libraryId))
-            {
-                Properties[code][libraryId].Add(framework);
-            }
-            else
-            {
-                Properties[code].Add(libraryId, new HashSet<NuGetFramework>(new NuGetFrameworkFullComparer()) { framework });
-            }
+            frameworks.Add(framework);
         }
 
         /// <summary>
-        /// Checks if a NugetLogCode is part of the NoWarn list for the specified library Id and target graph.
+        /// Checks if a NuGetLogCode is part of the NoWarn list for the specified library Id and target graph.
         /// </summary>
-        /// <param name="code">NugetLogCode to be checked.</param>
+        /// <param name="code">NuGetLogCode to be checked.</param>
         /// <param name="libraryId">library Id to be checked.</param>
         /// <param name="framework">target graph to be checked.</param>
-        /// <returns>True if the NugetLogCode is part of the NoWarn list for the specified libraryId and Target Graph.</returns>
+        /// <returns>True if the NuGetLogCode is part of the NoWarn list for the specified libraryId and Target Graph.</returns>
         internal bool Contains(NuGetLogCode code, string libraryId, NuGetFramework framework)
         {
             return Properties != null &&

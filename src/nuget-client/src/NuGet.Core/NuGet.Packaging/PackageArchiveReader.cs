@@ -437,7 +437,7 @@ namespace NuGet.Packaging
 
             return Task.FromResult(_isSigned.Value);
 #else
-            return Task.FromResult(false);
+            return TaskResult.False;
 #endif
         }
 

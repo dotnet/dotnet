@@ -838,7 +838,7 @@ namespace NuGet.Packaging
                 ContentExtractor.GetContentForPattern(collection, pattern, targetedItemGroups);
                 foreach (ContentItemGroup group in targetedItemGroups)
                 {
-                    foreach (ContentItem item in group.Items)
+                    foreach (ContentItem item in group.Items.NoAllocEnumerate())
                     {
                         var framework = (NuGetFramework)item.Properties["tfm"];
                         if (framework == null)

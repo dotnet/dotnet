@@ -294,12 +294,12 @@ namespace NuGet.CommandLine
             // Only override properties from assembly extracted metadata if they haven't
             // been specified also at construction time for the factory (that is,
             // console properties always take precedence.
-            foreach (var key in builder.Properties.Keys)
+            foreach ((var key, var value) in builder.Properties)
             {
                 if (!_properties.ContainsKey(key) &&
                     !ProjectProperties.ContainsKey(key))
                 {
-                    _properties.Add(key, builder.Properties[key]);
+                    _properties.Add(key, value);
                 }
             }
 

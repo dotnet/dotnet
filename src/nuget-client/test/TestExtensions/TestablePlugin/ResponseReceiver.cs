@@ -49,7 +49,7 @@ namespace NuGet.Test.TestExtensions.TestablePlugin
                 }
             }
 
-            return Task.FromResult(0);
+            return Task.CompletedTask;
         }
     }
 }

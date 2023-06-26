@@ -97,7 +97,7 @@ namespace NuGet.Protocol.Plugins.Tests
                         {
                             cancelEvent.Set();
                         })
-                    .Returns(Task.FromResult(0));
+                    .Returns(Task.CompletedTask);
 
                 test.CancellationTokenSource.Cancel();
 

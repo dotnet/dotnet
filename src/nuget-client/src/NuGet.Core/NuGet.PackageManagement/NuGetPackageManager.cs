@@ -3545,7 +3545,7 @@ namespace NuGet.PackageManagement
                 }
             }
 
-            return Task.FromResult(false);
+            return TaskResult.False;
         }
 
         /// <summary>

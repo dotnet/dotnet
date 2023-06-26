@@ -168,7 +168,7 @@ namespace NuGet.Protocol.Plugins.Tests
                         It.Is<GetCredentialsResponse>(r => r.ResponseCode == MessageResponseCode.NotFound
                             && r.Username == null && r.Password == null),
                         It.IsAny<CancellationToken>()))
-                    .Returns(Task.FromResult(0));
+                    .Returns(Task.CompletedTask);
 
                 await provider.HandleResponseAsync(
                     Mock.Of<IConnection>(),
@@ -210,7 +210,7 @@ namespace NuGet.Protocol.Plugins.Tests
                         It.Is<GetCredentialsResponse>(r => r.ResponseCode == MessageResponseCode.NotFound
                             && r.Username == null && r.Password == null),
                         It.IsAny<CancellationToken>()))
-                    .Returns(Task.FromResult(0));
+                    .Returns(Task.CompletedTask);
 
                 await provider.HandleResponseAsync(
                     Mock.Of<IConnection>(),
@@ -248,7 +248,7 @@ namespace NuGet.Protocol.Plugins.Tests
                         It.Is<GetCredentialsResponse>(r => r.ResponseCode == MessageResponseCode.Success
                             && r.Username == "a" && r.Password == "b"),
                         It.IsAny<CancellationToken>()))
-                    .Returns(Task.FromResult(0));
+                    .Returns(Task.CompletedTask);
 
                 await provider.HandleResponseAsync(
                     Mock.Of<IConnection>(),
@@ -295,7 +295,7 @@ namespace NuGet.Protocol.Plugins.Tests
                         It.Is<GetCredentialsResponse>(r => r.ResponseCode == MessageResponseCode.Success
                             && r.Username == "a" && r.Password == "b"),
                         It.IsAny<CancellationToken>()))
-                    .Returns(Task.FromResult(0));
+                    .Returns(Task.CompletedTask);
 
                 await provider.HandleResponseAsync(
                     Mock.Of<IConnection>(),
@@ -327,7 +327,7 @@ namespace NuGet.Protocol.Plugins.Tests
                         It.Is<GetCredentialsResponse>(r => r.ResponseCode == MessageResponseCode.NotFound
                             && r.Username == null && r.Password == null),
                         It.IsAny<CancellationToken>()))
-                    .Returns(Task.FromResult(0));
+                    .Returns(Task.CompletedTask);
 
                 await provider.HandleResponseAsync(
                     Mock.Of<IConnection>(),
@@ -373,7 +373,7 @@ namespace NuGet.Protocol.Plugins.Tests
                         It.Is<GetCredentialsResponse>(r => r.ResponseCode == MessageResponseCode.NotFound
                             && r.Username == null && r.Password == null),
                         It.IsAny<CancellationToken>()))
-                    .Returns(Task.FromResult(0));
+                    .Returns(Task.CompletedTask);
 
                 await provider.HandleResponseAsync(
                     Mock.Of<IConnection>(),
@@ -424,7 +424,7 @@ namespace NuGet.Protocol.Plugins.Tests
                         It.Is<GetCredentialsResponse>(r => r.ResponseCode == MessageResponseCode.Success
                             && r.Username == "a" && r.Password == "b"),
                         It.IsAny<CancellationToken>()))
-                    .Returns(Task.FromResult(0));
+                    .Returns(Task.CompletedTask);
 
                 await provider.HandleResponseAsync(
                     Mock.Of<IConnection>(),
@@ -456,7 +456,7 @@ namespace NuGet.Protocol.Plugins.Tests
                         It.Is<GetCredentialsResponse>(r => r.ResponseCode == MessageResponseCode.NotFound
                             && r.Username == null && r.Password == null),
                         It.IsAny<CancellationToken>()))
-                    .Returns(Task.FromResult(0));
+                    .Returns(Task.CompletedTask);
 
                 await provider.HandleResponseAsync(
                     Mock.Of<IConnection>(),
@@ -502,7 +502,7 @@ namespace NuGet.Protocol.Plugins.Tests
                         It.Is<GetCredentialsResponse>(r => r.ResponseCode == MessageResponseCode.NotFound
                             && r.Username == null && r.Password == null),
                         It.IsAny<CancellationToken>()))
-                    .Returns(Task.FromResult(0));
+                    .Returns(Task.CompletedTask);
 
                 await provider.HandleResponseAsync(
                     Mock.Of<IConnection>(),
@@ -534,7 +534,7 @@ namespace NuGet.Protocol.Plugins.Tests
                         It.Is<GetCredentialsResponse>(r => r.ResponseCode == MessageResponseCode.NotFound
                             && r.Username == null && r.Password == null),
                         It.IsAny<CancellationToken>()))
-                    .Returns(Task.FromResult(0));
+                    .Returns(Task.CompletedTask);
 
                 await provider.HandleResponseAsync(
                     Mock.Of<IConnection>(),

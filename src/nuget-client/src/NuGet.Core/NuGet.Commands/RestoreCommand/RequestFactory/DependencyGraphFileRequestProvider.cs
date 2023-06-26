@@ -41,7 +41,7 @@ namespace NuGet.Commands
             // True if .dg file
             var result = (File.Exists(path) && path.EndsWith(".dg", StringComparison.OrdinalIgnoreCase));
 
-            return Task.FromResult(result);
+            return TaskResult.Boolean(result);
         }
     }
 }

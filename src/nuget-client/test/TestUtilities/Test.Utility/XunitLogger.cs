@@ -35,6 +35,7 @@ namespace Test.Utility
         public override Task LogAsync(ILogMessage message)
         {
             Log(message);
+
             return Task.FromResult(true);
         }
     }

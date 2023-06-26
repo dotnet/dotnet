@@ -220,7 +220,7 @@ namespace NuGet.Protocol.Plugins.Tests
                 test.Plugin.SetupGet(x => x.Connection)
                     .Returns(connection.Object);
 
-                test.Downloader.SetExceptionHandler(exception => Task.FromResult(true));
+                test.Downloader.SetExceptionHandler(exception => TaskResult.True);
 
                 var wasCopied = await test.Downloader.CopyNupkgFileToAsync(
                     destinationFilePath,

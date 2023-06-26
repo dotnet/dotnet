@@ -162,7 +162,7 @@ namespace Test.Utility.Signing
             reader.BaseStream.Seek(offset: metadata.EndOfCentralDirectory, origin: SeekOrigin.Begin);
             SignedPackageArchiveIOUtility.ReadAndWriteUntilPosition(reader, writer, reader.BaseStream.Length);
 
-            return Task.FromResult(0);
+            return Task.CompletedTask;
         }
 
         private static List<CentralDirectoryHeaderMetadata> ShiftMetadata(
