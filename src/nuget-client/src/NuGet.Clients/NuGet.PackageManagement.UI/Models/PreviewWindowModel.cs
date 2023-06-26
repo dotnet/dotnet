@@ -57,10 +57,6 @@ namespace NuGet.PackageManagement.UI
             return sb.ToString();
         }
 
-        public int ButtonMinWidth => 86;
-        public int DoNotShowAgainMinWidth => 180;
-        public int WindowMinwidth => 2 * ButtonMinWidth + DoNotShowAgainMinWidth;
-
         public PreviewWindowModel(IEnumerable<PreviewResult> results)
         {
             PreviewResults = results;

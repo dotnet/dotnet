@@ -89,7 +89,7 @@ namespace NuGet.ProjectManagement
         /// <see cref="IEnumerable{PackageReference}" />.</returns>
         public override Task<IEnumerable<PackageReference>> GetInstalledPackagesAsync(CancellationToken token)
         {
-            return Task.FromResult(Enumerable.Empty<PackageReference>());
+            return TaskResult.EmptyEnumerable<PackageReference>();
         }
 
         /// <summary>
@@ -241,7 +241,7 @@ namespace NuGet.ProjectManagement
             CancellationToken token)
         {
             // Do nothing. Return true
-            return Task.FromResult(true);
+            return TaskResult.True;
         }
 
         /// <summary>

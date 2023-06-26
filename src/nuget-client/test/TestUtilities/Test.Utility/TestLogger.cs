@@ -166,7 +166,7 @@ namespace NuGet.Test.Utility
         {
             Log(level, data);
 
-            return Task.FromResult(0);
+            return Task.CompletedTask;
         }
 
         public void Log(ILogMessage message)

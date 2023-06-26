@@ -89,7 +89,7 @@ namespace NuGet.DependencyResolver
 
             if (library == null)
             {
-                return Task.FromResult<LibraryIdentity>(null);
+                return TaskResult.Null<LibraryIdentity>();
             }
 
             return Task.FromResult(library.Identity);

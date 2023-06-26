@@ -244,7 +244,7 @@ namespace NuGet.Protocol.Plugins
                                     {
                                         await cacheEntry.UpdateCacheFileAsync();
 
-                                        return Task.FromResult<object>(null);
+                                        return TaskResult.Null<object>();
                                     },
                                     token: cancellationToken),
                                 cancellationToken);

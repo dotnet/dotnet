@@ -42,7 +42,7 @@ namespace NuGet.Common
                 {
                     Delete(filePath);
 
-                    return Task.FromResult(0);
+                    return TaskResult.Zero;
                 },
                 // Do not allow this to be cancelled
                 CancellationToken.None);
@@ -70,7 +70,7 @@ namespace NuGet.Common
                 {
                     Replace(writeSourceFile, destFilePath);
 
-                    return Task.FromResult(0);
+                    return TaskResult.Zero;
                 },
                 // Do not allow this to be cancelled
                 CancellationToken.None);

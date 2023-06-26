@@ -37,7 +37,7 @@ namespace NuGet.Common
                 return LogAsync(new LogMessage(level, data));
             }
 
-            return Task.FromResult(true);
+            return TaskResult.True;
         }
 
         public virtual void LogDebug(string data)

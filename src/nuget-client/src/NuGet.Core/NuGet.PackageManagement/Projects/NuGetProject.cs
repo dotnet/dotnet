@@ -58,13 +58,13 @@ namespace NuGet.ProjectManagement
         public virtual Task PreProcessAsync(INuGetProjectContext nuGetProjectContext, CancellationToken token)
         {
             // Do Nothing by default
-            return Task.FromResult(0);
+            return Task.CompletedTask;
         }
 
         public virtual Task PostProcessAsync(INuGetProjectContext nuGetProjectContext, CancellationToken token)
         {
             // Do Nothing by default
-            return Task.FromResult(0);
+            return Task.CompletedTask;
         }
 
         public T GetMetadata<T>(string key)

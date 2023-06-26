@@ -615,7 +615,7 @@ namespace NuGet.Frameworks
                     AddEquivalentFrameworks(mapping.EquivalentFrameworks);
 
                     // add synonyms
-                    AddFrameworkSynoyms(mapping.IdentifierSynonyms);
+                    AddFrameworkSynonyms(mapping.IdentifierSynonyms);
 
                     // populate short <-> long
                     AddIdentifierShortNames(mapping.IdentifierShortNames);
@@ -623,7 +623,7 @@ namespace NuGet.Frameworks
                     // official profile short names
                     AddProfileShortNames(mapping.ProfileShortNames);
 
-                    // add compatiblity mappings
+                    // add compatibility mappings
                     AddCompatibilityMappings(mapping.CompatibilityMappings);
 
                     // add subset frameworks
@@ -823,7 +823,7 @@ namespace NuGet.Frameworks
             }
         }
 
-        private void AddFrameworkSynoyms(IEnumerable<KeyValuePair<string, string>> mappings)
+        private void AddFrameworkSynonyms(IEnumerable<KeyValuePair<string, string>> mappings)
         {
             if (mappings != null)
             {

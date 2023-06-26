@@ -126,7 +126,7 @@ namespace NuGet.Protocol.Plugins.Tests
                         x => x.SendAsync(
                             It.Is<Message>(m => m.Type == MessageType.Cancel),
                             It.IsAny<CancellationToken>()))
-                    .Returns(Task.FromResult(0));
+                    .Returns(Task.CompletedTask);
 
                 var requestHandler = new Mock<IRequestHandler>(MockBehavior.Strict);
 
@@ -140,7 +140,7 @@ namespace NuGet.Protocol.Plugins.Tests
                         {
                             handledEvent.Set();
                         })
-                    .Returns(Task.FromResult(0));
+                    .Returns(Task.CompletedTask);
 
                 var request = MessageUtilities.Create(
                     test.RequestId,
@@ -221,7 +221,7 @@ namespace NuGet.Protocol.Plugins.Tests
 
                             sentEvent.Set();
                         })
-                    .Returns(Task.FromResult(0));
+                    .Returns(Task.CompletedTask);
 
                 test.Context.BeginFaultAsync(
                     new Message(
@@ -319,7 +319,7 @@ namespace NuGet.Protocol.Plugins.Tests
                         {
                             handledEvent.Set();
                         })
-                    .Returns(Task.FromResult(0));
+                    .Returns(Task.CompletedTask);
 
                 test.Context.BeginResponseAsync(
                     new Message(
@@ -365,7 +365,7 @@ namespace NuGet.Protocol.Plugins.Tests
 
                             sentEvent.Set();
                         })
-                    .Returns(Task.FromResult(0));
+                    .Returns(Task.CompletedTask);
 
                 test.Context.BeginResponseAsync(
                     new Message(

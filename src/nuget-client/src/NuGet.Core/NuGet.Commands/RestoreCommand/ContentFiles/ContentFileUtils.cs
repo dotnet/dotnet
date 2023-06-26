@@ -88,7 +88,7 @@ namespace NuGet.Commands
             {
                 var codeLanguage = group.Properties[ManagedCodeConventions.PropertyNames.CodeLanguage] as string;
 
-                foreach (var item in group.Items)
+                foreach (var item in group.Items.NoAllocEnumerate())
                 {
                     if (!entryMappings.ContainsKey(item.Path))
                     {
@@ -117,7 +117,7 @@ namespace NuGet.Commands
                 }
 
                 // Check each file against the patterns
-                foreach (var file in entryMappings.Keys)
+                foreach ((var file, var entries) in entryMappings)
                 {
                     // Remove contentFiles/ from the string
                     Debug.Assert(file.StartsWith(ContentFilesFolderName, StringComparison.OrdinalIgnoreCase),
@@ -141,14 +141,14 @@ namespace NuGet.Commands
 
                         if (matchResults.Files.Any())
                         {
-                            entryMappings[file].Add(filesEntry);
+                            entries.Add(filesEntry);
                         }
                     }
                 }
             }
 
             // Create lock file entries for each item in the contentFiles folder
-            foreach (var file in entryMappings.Keys)
+            foreach ((var file, var entries) in entryMappings)
             {
                 // defaults
                 var action = BuildAction.Parse(PackagingConstants.ContentFilesDefaultBuildAction);
@@ -165,7 +165,7 @@ namespace NuGet.Commands
                     // apply each entry
                     // entries may not have all the attributes, if a value is null
                     // ignore it and continue using the previous value.
-                    foreach (var filesEntry in entryMappings[file])
+                    foreach (var filesEntry in entries)
                     {
                         if (!string.IsNullOrEmpty(filesEntry.BuildAction))
                         {

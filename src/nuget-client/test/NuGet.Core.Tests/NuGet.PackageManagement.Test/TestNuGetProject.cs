@@ -54,7 +54,7 @@ namespace NuGet.Test
             INuGetProjectContext nuGetProjectContext,
             CancellationToken token)
         {
-            return Task.FromResult(true);
+            return TaskResult.True;
         }
 
         public override Task<bool> UninstallPackageAsync(PackageIdentity packageIdentity, INuGetProjectContext nuGetProjectContext, CancellationToken token)

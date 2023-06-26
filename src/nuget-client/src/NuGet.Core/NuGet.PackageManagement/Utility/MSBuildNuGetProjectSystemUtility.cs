@@ -556,7 +556,7 @@ namespace NuGet.ProjectManagement
             string effectivePath,
             out string truncatedPath)
         {
-            foreach (var transformExtensions in fileTransformers.Keys)
+            foreach ((var transformExtensions, var fileTransformer) in fileTransformers)
             {
                 var extension = extensionSelector(transformExtensions);
                 if (effectivePath.EndsWith(extension, StringComparison.OrdinalIgnoreCase))
@@ -568,7 +568,7 @@ namespace NuGet.ProjectManagement
                     var fileName = Path.GetFileName(truncatedPath);
                     if (!Constants.PackageReferenceFile.Equals(fileName, StringComparison.OrdinalIgnoreCase))
                     {
-                        return fileTransformers[transformExtensions];
+                        return fileTransformer;
                     }
                 }
             }

@@ -201,9 +201,9 @@
   <data name="Label_PackageManager" xml:space="preserve">
     <value>NuGet Package Manager: {0}</value>
   </data>
-  <data name="Button_OK" xml:space="preserve">
-    <value>_OK</value>
-    <comment>DoNotShowThisAgain, Button_Cancel, Button_Copy and Button_OK must have underscore in different letters. See https://docs.microsoft.com/windows/apps/design/input/access-keys#choose-access-keys</comment>
+  <data name="Button_Apply" xml:space="preserve">
+    <value>_Apply</value>
+    <comment>DoNotShowThisAgain, Button_Cancel, Button_Copy and Button_Apply must have underscore in different letters. See https://docs.microsoft.com/windows/apps/design/input/access-keys#choose-access-keys</comment>
   </data>
   <data name="Label_InstalledPackages" xml:space="preserve">
     <value>Installing:</value>
@@ -270,11 +270,11 @@
   </data>
   <data name="Button_Cancel" xml:space="preserve">
     <value>_Cancel</value>
-    <comment>DoNotShowThisAgain, Button_Cancel, Button_Copy and Button_OK must have underscore in different letters. See https://docs.microsoft.com/windows/apps/design/input/access-keys#choose-access-keys</comment>
+    <comment>DoNotShowThisAgain, Button_Cancel, Button_Copy and Button_Apply must have underscore in different letters. See https://docs.microsoft.com/windows/apps/design/input/access-keys#choose-access-keys</comment>
   </data>
   <data name="Button_Copy" xml:space="preserve">
     <value>Co_py</value>
-    <comment>DoNotShowThisAgain, Button_Cancel, Button_Copy and Button_OK must have underscore in different letters. See https://docs.microsoft.com/windows/apps/design/input/access-keys#choose-access-keys</comment>
+    <comment>DoNotShowThisAgain, Button_Cancel, Button_Copy and Button_Apply must have underscore in different letters. See https://docs.microsoft.com/windows/apps/design/input/access-keys#choose-access-keys</comment>
   </data>
   <data name="Text_Loading" xml:space="preserve">
     <value>Loading...</value>
@@ -319,7 +319,7 @@
     <value>Show preview window</value>
   </data>
   <data name="Text_Changes" xml:space="preserve">
-    <value>Visual Studio is about to make changes to this solution. Click OK to proceed with the changes listed below.</value>
+    <value>Visual Studio is about to make changes to this solution:</value>
   </data>
   <data name="Checkbox_ForceRemove" xml:space="preserve">
     <value>Force uninstall, even if there are dependencies on it</value>
@@ -365,8 +365,8 @@
     <value>Report Abuse:</value>
   </data>
   <data name="DoNotShowThisAgain" xml:space="preserve">
-    <value>_Do not show this again</value>
-    <comment>DoNotShowThisAgain, Button_Cancel, Button_Copy and Button_OK must have underscore in different letters. See https://docs.microsoft.com/windows/apps/design/input/access-keys#choose-access-keys</comment>
+    <value>_Don't show this again</value>
+    <comment>DoNotShowThisAgain, Button_Cancel, Button_Copy and Button_Apply must have underscore in different letters. See https://docs.microsoft.com/windows/apps/design/input/access-keys#choose-access-keys</comment>
   </data>
   <data name="Version_LatestPrerelease" xml:space="preserve">
     <value>Latest prerelease</value>
@@ -767,9 +767,6 @@ Please see https://aka.ms/troubleshoot_nuget_cache for more help.</value>
   <data name="Label_DeprecationReasons" xml:space="preserve">
     <value>Deprecation reason</value>
   </data>
-  <data name="Accessibility_PackageChanges" xml:space="preserve">
-    <value>Package changes</value>
-  </data>
   <data name="Accessibility_PackageIdentity" xml:space="preserve">
     <value>{0} version {1}</value>
     <comment>{1} = Package ID, {2} = Package version</comment>
@@ -992,5 +989,9 @@ Please see https://aka.ms/troubleshoot_nuget_cache for more help.</value>
   </data>
   <data name="Label_Vulnerable" xml:space="preserve">
     <value>Vulnerable</value>
+  </data>
+  <data name="Button_OK" xml:space="preserve">
+    <value>_OK</value>
+    <comment>Button_Cancel and Button_OK must have underscore in different letters. See https://docs.microsoft.com/windows/apps/design/input/access-keys#choose-access-keys</comment>
   </data>
 </root>

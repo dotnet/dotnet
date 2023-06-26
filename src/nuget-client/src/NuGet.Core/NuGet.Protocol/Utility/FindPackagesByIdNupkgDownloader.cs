@@ -77,7 +77,7 @@ namespace NuGet.Protocol
                 {
                     reader = PackageUtilities.OpenNuspecFromNupkg(identity.Id, stream, logger);
 
-                    return Task.FromResult(true);
+                    return TaskResult.True;
                 },
                 cacheContext,
                 logger,

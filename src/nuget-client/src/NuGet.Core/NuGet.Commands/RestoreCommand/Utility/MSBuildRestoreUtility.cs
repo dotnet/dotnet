@@ -1060,10 +1060,10 @@ namespace NuGet.Commands
         private static void AddCentralPackageVersions(PackageSpec spec, IEnumerable<IMSBuildItem> items)
         {
             var centralVersionsDependencies = CreateCentralVersionDependencies(items, spec.TargetFrameworks);
-            foreach (var targetAlias in centralVersionsDependencies.Keys)
+            foreach ((var targetAlias, var versions) in centralVersionsDependencies)
             {
                 var frameworkInfo = spec.TargetFrameworks.FirstOrDefault(f => targetAlias.Equals(f.TargetAlias, StringComparison.OrdinalIgnoreCase));
-                frameworkInfo.CentralPackageVersions.AddRange(centralVersionsDependencies[targetAlias]);
+                frameworkInfo.CentralPackageVersions.AddRange(versions);
                 LibraryDependency.ApplyCentralVersionInformation(frameworkInfo.Dependencies, frameworkInfo.CentralPackageVersions);
             }
         }

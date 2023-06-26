@@ -241,9 +241,9 @@ namespace NuGetConsole.Host.PowerShell
                 // Process each framework/id/version once to avoid duplicate work
                 // Packages may have different dependency orders depending on the framework, but there is 
                 // no way to fully solve this across an entire solution so we make a best effort here.
-                foreach (var framework in packagesConfigInstalled.Keys.OrderByDescending(fw => fw, new NuGetFrameworkSorter()))
+                foreach ((var framework, var packageIdentities) in packagesConfigInstalled.OrderByDescending(fw => fw.Key, new NuGetFrameworkSorter()))
                 {
-                    foreach (var package in packagesConfigInstalled[framework])
+                    foreach (var package in packageIdentities)
                     {
                         if (resolvedPackages.Add(package))
                         {

@@ -194,7 +194,7 @@ namespace NuGet.Build
         {
             Log(message);
 
-            return System.Threading.Tasks.Task.FromResult(0);
+            return System.Threading.Tasks.Task.CompletedTask;
         }
     }
 }

@@ -72,7 +72,7 @@ namespace NuGet.Commands
                 }
             }
 
-            return Task.FromResult(0);
+            return Task.CompletedTask;
         }
 
         private bool IsWarningSuppressed(ILogMessage message)

@@ -60,7 +60,7 @@ namespace NuGet.Protocol.FuncTest
                 }
             }
 
-            return Task.FromResult(0);
+            return Task.CompletedTask;
         }
 
         internal Task SendAsync<TPayload>(MessageType type, MessageMethod method, TPayload payload)
@@ -75,7 +75,7 @@ namespace NuGet.Protocol.FuncTest
 
             _responses.Add(response);
 
-            return Task.FromResult(0);
+            return Task.CompletedTask;
         }
 
         private static string Serialize(object value)

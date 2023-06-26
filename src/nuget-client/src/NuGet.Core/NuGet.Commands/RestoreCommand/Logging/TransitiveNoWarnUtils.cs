@@ -34,7 +34,7 @@ namespace NuGet.Commands
                     PackageSpecificWarningProperties.CreatePackageSpecificWarningProperties(parentProjectSpec),
                     parentProjectSpec.TargetFrameworks.Select(f => f.FrameworkName).AsList().AsReadOnly());
 
-            var parentPackageSpecifcNoWarn = ExtractPackageSpecificNoWarnPerFramework(
+            var parentPackageSpecificNoWarn = ExtractPackageSpecificNoWarnPerFramework(
                 parentWarningProperties.PackageSpecificWarningProperties);
 
             var warningPropertiesCache = new Dictionary<string, Dictionary<NuGetFramework, WarningPropertiesCollection>>(
@@ -44,8 +44,8 @@ namespace NuGet.Commands
             {
                 if (string.IsNullOrEmpty(targetGraph.RuntimeIdentifier))
                 {
-                    if (parentPackageSpecifcNoWarn == null ||
-                        !parentPackageSpecifcNoWarn.TryGetValue(targetGraph.Framework, out var parentPackageSpecificNoWarnForFramework))
+                    if (parentPackageSpecificNoWarn == null ||
+                        !parentPackageSpecificNoWarn.TryGetValue(targetGraph.Framework, out var parentPackageSpecificNoWarnForFramework))
                     {
                         parentPackageSpecificNoWarnForFramework = null;
                     }
@@ -221,9 +221,9 @@ namespace NuGet.Commands
             }
 
             // At the end of the graph traversal add the remaining package no warn lists into the result
-            foreach (var packageId in packageNoWarn.Keys)
+            foreach ((var packageId, var codes) in packageNoWarn)
             {
-                resultWarningProperties.AddRangeOfCodes(packageNoWarn[packageId], packageId, parentTargetFramework);
+                resultWarningProperties.AddRangeOfCodes(codes, packageId, parentTargetFramework);
             }
 
             return resultWarningProperties;

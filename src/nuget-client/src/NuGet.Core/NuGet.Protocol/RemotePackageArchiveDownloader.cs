@@ -114,7 +114,7 @@ namespace NuGet.Protocol
             _cacheContext = cacheContext;
             _logger = logger;
             _packageReader = new Lazy<PackageArchiveReader>(GetPackageReader);
-            _handleExceptionAsync = exception => Task.FromResult(false);
+            _handleExceptionAsync = exception => TaskResult.False;
             Source = source;
         }
 

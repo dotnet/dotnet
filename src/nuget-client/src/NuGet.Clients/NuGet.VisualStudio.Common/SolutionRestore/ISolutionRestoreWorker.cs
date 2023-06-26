@@ -33,7 +33,7 @@ namespace NuGet.VisualStudio
         JoinableTaskFactory JoinableTaskFactory { get; }
 
         /// <summary>
-        /// Schedules backgroud restore operation.
+        /// Schedules background restore operation.
         /// </summary>
         /// <param name="request">Restore request.</param>
         /// <param name="token">A cancellation token.</param>
