@@ -195,7 +195,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/sdk`  
 *[dotnet/sdk@a50d987](https://github.com/dotnet/sdk/commit/a50d98711ed023567118d526609e2972b8a1dca8)*
 - `src/source-build-externals`  
-*[dotnet/source-build-externals@0d04efd](https://github.com/dotnet/source-build-externals/commit/0d04efdab9f26bad07edc881dc7fa088337b8562)*
+*[dotnet/source-build-externals@a608dc3](https://github.com/dotnet/source-build-externals/commit/a608dc3aee366dce94fc4e819e5ea35d849152d2)*
     - `src/source-build-externals/src/application-insights`  
     *[Microsoft/ApplicationInsights-dotnet@5e2e7dd](https://github.com/Microsoft/ApplicationInsights-dotnet/commit/5e2e7ddda961ec0e16a75b1ae0a37f6a13c777f5)*
     - `src/source-build-externals/src/azure-activedirectory-identitymodel-extensions-for-dotnet`  
@@ -203,7 +203,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
     - `src/source-build-externals/src/cssparser`  
     *[dotnet/cssparser@0d59611](https://github.com/dotnet/cssparser/commit/0d59611784841735a7778a67aa6e9d8d000c861f)*
     - `src/source-build-externals/src/docker-creds-provider`  
-    *[mthalman/docker-creds-provider@e92e354](https://github.com/mthalman/docker-creds-provider/commit/e92e354c78d6d5c60e9d0f679712c871bef97ebe)*
+    *[mthalman/docker-creds-provider@5701f66](https://github.com/mthalman/docker-creds-provider/commit/5701f6667c1fbd805684857baaa860383bbdfed7)*
     - `src/source-build-externals/src/humanizer`  
     *[Humanizr/Humanizer@3ebc38d](https://github.com/Humanizr/Humanizer/commit/3ebc38de585fc641a04b0e78ed69468453b0f8a1)*
     - `src/source-build-externals/src/MSBuildLocator`  

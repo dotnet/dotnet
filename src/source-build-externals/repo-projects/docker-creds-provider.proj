@@ -3,7 +3,7 @@
 
   <PropertyGroup>
     <PackagesOutput>$(ProjectDirectory)/src/Valleysoft.DockerCredsProvider/bin/$(Configuration)/</PackagesOutput>
-    <DockerCredsProviderPackageVersion>2.1.0</DockerCredsProviderPackageVersion>
+    <DockerCredsProviderPackageVersion>2.2.0</DockerCredsProviderPackageVersion>
   </PropertyGroup>
 
   <Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk" />
