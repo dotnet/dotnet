@@ -17,7 +17,7 @@ public static class MockExtensions {
         mock.WithFile(fileThatExists);
         mock
             .Setup(m => m.FileOpenRead(fileThatExists))
-            .Returns(new MemoryStream(System.Text.Encoding.UTF8.GetBytes(fileContent)));
+            .Returns(() => new MemoryStream(System.Text.Encoding.UTF8.GetBytes(fileContent)));
         return mock;
     }
 

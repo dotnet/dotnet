@@ -417,6 +417,7 @@ public class CredsProviderTests
         var dockerConfigPath = Path.Combine(tempPath, "config.json");
 
         Mock<IEnvironment> envMock = new();
+        envMock.WithSystemProfileFolder();
         envMock.Setup(e => e.GetEnvironmentVariable("DOCKER_CONFIG")).Returns(tempPath);
 
         string username = "foo";
@@ -586,5 +587,74 @@ public class CredsProviderTests
         Assert.Equal(username, creds.Username);
         Assert.Equal(token, creds.IdentityToken);
         Assert.Null(creds.Password);
+    }
+
+    [Fact]
+    public async Task UsesAllConfigPaths()
+    {
+        Mock<IFileSystem> fileSystemMock = new();
+        string[] configFilePaths = new[]
+        {
+            Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".docker", "config.json"),
+            Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".config", "containers", "auth.json"),
+        };
+        for (int idx = 0; idx < configFilePaths.Length; idx++)
+        {
+            string dockerConfigPath = configFilePaths[idx];
+            string registry = $"testregistry{idx}";
+            string encodedCreds = Convert.ToBase64String(Encoding.UTF8.GetBytes($"testuser{idx}:testpass{idx}"));
+            string dockerConfigContent =
+            "{" +
+                "\"auths\": {" +
+                    $"\"{registry}\": {{" +
+                        $"\"auth\": \"{encodedCreds}\"" +
+                    "}" +
+                "}" +
+            "}";
+
+            fileSystemMock.WithFile(dockerConfigPath, dockerConfigContent);
+        }
+
+        for (int idx = 0; idx < configFilePaths.Length; idx++)
+        {
+            string registry = $"testregistry{idx}";
+            DockerCredentials creds = await CredsProvider.GetCredentialsAsync(registry, fileSystemMock.Object, Mock.Of<IProcessService>(), DefaultEnvironmentMock);
+
+            Assert.Equal($"testuser{idx}", creds.Username);
+            Assert.Equal($"testpass{idx}", creds.Password);
+            Assert.Null(creds.IdentityToken);
+        }
+    }
+
+    [Theory]
+    // REGISTRY_AUTH_FILE replaces all
+    [InlineData("registryauthfile", "xdgruntimedir", "xdgconfigdir", "dockerconfigdir", new[] { "registryauthfile" } )]
+    // Order of different paths.
+    [InlineData("",                 "xdgruntimedir", "xdgconfigdir", "dockerconfigdir", new[] { "xdgruntimedir/containers/auth.json",
+                                                                                                "xdgconfigdir/containers/auth.json",
+                                                                                                "dockerconfigdir/config.json" } )]
+    // XDG_CONFIG_DIR defaults to $HOME/.config
+    [InlineData("",                 "",              "",             "dockerconfigdir", new[] { "userprofile/.config/containers/auth.json",
+                                                                                                "dockerconfigdir/config.json" } )]
+    // DOCKER_CONFIG defaults to $HOME/.docker
+    [InlineData("",                 "",              "",             "",                new[] { "userprofile/.config/containers/auth.json",
+                                                                                                "userprofile/.docker/config.json" } )]
+    public void ConfigFilePaths(string? registryAuthFile, string? xdgRuntimeDir, string? xdgConfigDir, string? dockerConfig, string[] expectedConfigFilePaths)
+    {
+        for (int i = 0; i < expectedConfigFilePaths.Length; i++)
+        {
+            // Windows: use backslash path separators.
+            expectedConfigFilePaths[i] = expectedConfigFilePaths[i].Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar);
+        }
+
+        Mock<IEnvironment> envMock = new();
+        envMock.Setup(o => o.GetEnvironmentVariable("REGISTRY_AUTH_FILE")).Returns(registryAuthFile);
+        envMock.Setup(o => o.GetEnvironmentVariable("XDG_RUNTIME_DIR")).Returns(xdgRuntimeDir);
+        envMock.Setup(o => o.GetEnvironmentVariable("XDG_CONFIG_DIR")).Returns(xdgConfigDir);
+        envMock.Setup(o => o.GetEnvironmentVariable("DOCKER_CONFIG")).Returns(dockerConfig);
+        envMock.Setup(e => e.GetFolderPath(Environment.SpecialFolder.UserProfile)).Returns("userprofile");
+
+        string[] configFilePath = CredsProvider.GetConfigFilePaths(envMock.Object);
+        Assert.Equal(expectedConfigFilePaths, configFilePath);
     }
 }

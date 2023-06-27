@@ -22,65 +22,98 @@ public static class CredsProvider
         return await credStore.GetCredentialsAsync(registry);
     }
 
-    private static string GetConfigFilePath(IEnvironment env) {
-        if (env.GetEnvironmentVariable("DOCKER_CONFIG") is string configDirectory
-            && !System.String.IsNullOrEmpty(configDirectory)) {
-                return Path.Combine(configDirectory, "config.json");
-            } else {
-                return Path.Combine(
-                    env.GetFolderPath(Environment.SpecialFolder.UserProfile),
-                    ".docker",
-                    "config.json");
-            }
+    /// <summary>
+    /// Returns a set of candidate file paths for the config file that should be checked in the order listed (i.e. they are listed in priority order).
+    /// </summary>
+    internal static string[] GetConfigFilePaths(IEnvironment env)
+    {
+        if (env.GetEnvironmentVariable("REGISTRY_AUTH_FILE") is { Length: > 0 } configFile)
+        {
+            return new[] { configFile };
+        }
+
+        List<string> paths = new();
+
+        if (env.GetEnvironmentVariable("XDG_RUNTIME_DIR") is { Length: > 0 } xdgRuntimeDir)
+        {
+            paths.Add(Path.Combine(xdgRuntimeDir, "containers", "auth.json"));
+        }
+
+        string? xdgConfigDir = env.GetEnvironmentVariable("XDG_CONFIG_DIR");
+        if (string.IsNullOrEmpty(xdgConfigDir))
+        {
+            xdgConfigDir = Path.Combine(env.GetFolderPath(Environment.SpecialFolder.UserProfile), ".config");
+        }
+        paths.Add(Path.Combine(xdgConfigDir, "containers", "auth.json"));
+
+        string? dockerConfigDir = env.GetEnvironmentVariable("DOCKER_CONFIG");
+        if (string.IsNullOrEmpty(dockerConfigDir))
+        {
+            dockerConfigDir = Path.Combine(env.GetFolderPath(Environment.SpecialFolder.UserProfile), ".docker");
+        }
+        paths.Add(Path.Combine(dockerConfigDir, "config.json"));
+
+        return paths.ToArray();
     }
 
     private static async Task<ICredStore> GetCredStoreAsync(string registry, IFileSystem fileSystem, IProcessService processService, IEnvironment environment)
     {
-        string dockerConfigPath = GetConfigFilePath(environment);
+        string[] configFilePaths = GetConfigFilePaths(environment);
 
-        if (!fileSystem.FileExists(dockerConfigPath))
+        bool configFileFound = false;
+        foreach (var configFilePath in configFilePaths)
         {
-            throw new FileNotFoundException($"Docker config '{dockerConfigPath}' doesn't exist.");
-        }
-
-        using Stream openStream = fileSystem.FileOpenRead(dockerConfigPath);
-        using JsonDocument configDoc = await JsonDocument.ParseAsync(openStream);
-
-        if (configDoc.RootElement.TryGetProperty("credHelpers", out JsonElement credHelpersElement) &&
-            credHelpersElement.TryGetProperty(registry, out JsonElement credHelperElement))
-        {
-            string? credHelperName = credHelperElement.GetString();
-            if (credHelperName is null)
+            if (!fileSystem.FileExists(configFilePath))
             {
-                throw new JsonException($"Name of the credHelper for host '{registry}' was not set in Docker config {dockerConfigPath}.");
+                continue;
             }
 
-            return new NativeStore(credHelperName, processService, fileSystem, environment);
-        }
+            configFileFound = true;
 
-        if (configDoc.RootElement.TryGetProperty("credsStore", out JsonElement credsStoreElement))
-        {
-            string? credHelperName = credsStoreElement.GetString();
-            if (credHelperName is null)
+            using Stream openStream = fileSystem.FileOpenRead(configFilePath);
+            using JsonDocument configDoc = await JsonDocument.ParseAsync(openStream);
+
+            if (configDoc.RootElement.TryGetProperty("credHelpers", out JsonElement credHelpersElement) &&
+                credHelpersElement.TryGetProperty(registry, out JsonElement credHelperElement))
             {
-                throw new JsonException($"Name of the credsStore was not set in Docker config {dockerConfigPath}.");
+                string? credHelperName = credHelperElement.GetString();
+                if (credHelperName is null)
+                {
+                    throw new JsonException($"Name of the credHelper for host '{registry}' was not set in Docker config {configFilePath}.");
+                }
+
+                return new NativeStore(credHelperName, processService, fileSystem, environment);
             }
 
-            return new NativeStore(credHelperName, processService, fileSystem, environment);
-        }
-
-        if (configDoc.RootElement.TryGetProperty("auths", out JsonElement authsElement))
-        {
-            JsonProperty property = authsElement.EnumerateObject().FirstOrDefault(prop => prop.Name == registry);
-
-            if (property.Equals(default(JsonProperty)))
+            if (configDoc.RootElement.TryGetProperty("credsStore", out JsonElement credsStoreElement))
             {
-                throw new CredsNotFoundException($"No matching auth specified for registry '{registry}' in Docker config '{dockerConfigPath}'.");
+                string? credHelperName = credsStoreElement.GetString();
+                if (credHelperName is null)
+                {
+                    throw new JsonException($"Name of the credsStore was not set in Docker config {configFilePath}.");
+                }
+
+                return new NativeStore(credHelperName, processService, fileSystem, environment);
             }
 
-            return new EncodedStore(property, dockerConfigPath);
+            if (configDoc.RootElement.TryGetProperty("auths", out JsonElement authsElement))
+            {
+                JsonProperty property = authsElement.EnumerateObject().FirstOrDefault(prop => prop.Name == registry);
+
+                if (property.Equals(default(JsonProperty)))
+                {
+                    continue;
+                }
+
+                return new EncodedStore(property, configFilePath);
+            }
         }
 
-        throw new JsonException($"Unable to find credential information in Docker config '{dockerConfigPath}'.");
+        if (!configFileFound)
+        {
+            throw new FileNotFoundException($"Docker config file doesn't exist.");
+        }
+
+        throw new CredsNotFoundException($"No matching auth specified for registry '{registry}' in Docker config.");
     }
 }
