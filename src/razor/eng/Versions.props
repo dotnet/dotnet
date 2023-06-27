@@ -93,7 +93,7 @@
     <!-- Several packages from the editor are used for testing HTML support, and share the following version. -->
     <Tooling_HtmlEditorPackageVersion>17.5.101-preview-0002</Tooling_HtmlEditorPackageVersion>
     <!-- Several packages share the MS.CA.Testing version -->
-    <Tooling_MicrosoftCodeAnalysisTestingVersion>1.1.2-beta1.22512.1</Tooling_MicrosoftCodeAnalysisTestingVersion>
+    <Tooling_MicrosoftCodeAnalysisTestingVersion>1.1.2-beta1.23323.1</Tooling_MicrosoftCodeAnalysisTestingVersion>
     <MicrosoftVisualStudioShellPackagesVersion>17.7.35047-preview.1</MicrosoftVisualStudioShellPackagesVersion>
     <MicrosoftVisualStudioPackagesVersion>17.7.38-preview</MicrosoftVisualStudioPackagesVersion>
     <VisualStudioLanguageServerProtocolVersion>17.7.8-preview-g8c33dc3a76</VisualStudioLanguageServerProtocolVersion>
