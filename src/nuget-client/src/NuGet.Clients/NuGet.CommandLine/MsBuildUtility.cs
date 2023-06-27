@@ -28,6 +28,7 @@ namespace NuGet.CommandLine
 
         private readonly static string[] MSBuildVersions = new string[] { "14", "12", "4" };
 
+        private readonly static string[] ArchitectureFolderNames = new string[] { "arm64", "amd64" };
         public static bool IsMsBuildBasedProject(string projectFullPath)
         {
             return projectFullPath.EndsWith("proj", StringComparison.OrdinalIgnoreCase);
@@ -500,7 +501,7 @@ namespace NuGet.CommandLine
 
                     if (msbuildExe != null)
                     {
-                        var msBuildDirectory = Path.GetDirectoryName(msbuildExe);
+                        var msBuildDirectory = GetNonArchitectureDirectory(msbuildExe);
                         var msbuildVersion = FileVersionInfo.GetVersionInfo(msbuildExe)?.FileVersion;
                         return toolset = new MsBuildToolset(msbuildVersion, msBuildDirectory);
                     }
@@ -551,6 +552,43 @@ namespace NuGet.CommandLine
             {
                 LogToolsetToConsole(console, toolset);
             }
+        }
+
+        internal static string GetNonArchitectureDirectory(string msbuildExe)
+        {
+            var msbuildFile = Path.GetFileName(msbuildExe);
+            var directory = Path.GetDirectoryName(msbuildExe);
+            var directoryInfo = new DirectoryInfo(directory);
+            var directoryName = directoryInfo.Name;
+            var parentDirectory = directoryInfo.Parent.FullName;
+
+            //Given Visual Studio 2022 or later, the PATH environment variable in Developer Command Prompt contains the architecture specific path of msbuild.exe.
+            // e.g. C:\Program Files\Microsoft Visual Studio\2022\Preview\\MSBuild\Current\Bin\arm64
+            //Using the architecture specific path will cause some runtime error when loading assembly, e.g."Microsoft.Build.Framework.dll".
+            //
+            //This method is to get the non-architecture specific path of msbuild.exe if the msbuildexe is in the architecture specific folder.
+            //     C:\Program Files\Microsoft Visual Studio\2022\Preview\\MSBuild\Current\Bin\arm64
+            //  => C:\Program Files\Microsoft Visual Studio\2022\Preview\\MSBuild\Current\Bin
+            //If msbuildExe is already in the non-architecture specific folder, just return the directory.
+            foreach (var architecture in ArchitectureFolderNames)
+            {
+                if (directoryName.Equals(architecture, StringComparison.OrdinalIgnoreCase))
+                {
+                    if (File.Exists(Path.Combine(parentDirectory, msbuildFile)))
+                    {
+                        return parentDirectory;
+                    }
+                    else
+                    {
+                        throw new CommandException(
+                            string.Format(
+                                CultureInfo.CurrentCulture,
+                                LocalizedResourceManager.GetString(nameof(NuGetResources.Error_CannotFindNonArchitectureSpecificMsbuild)),
+                                directory));
+                    }
+                }
+            }
+            return directory;
         }
 
         /// <summary>
