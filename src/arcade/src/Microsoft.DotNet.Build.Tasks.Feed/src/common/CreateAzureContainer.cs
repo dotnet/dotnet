@@ -6,11 +6,11 @@ using System.Threading.Tasks;
 using System;
 using Azure.Storage.Sas;
 using Azure.Storage.Blobs.Models;
+using Microsoft.DotNet.Build.CloudTestTasks;
 
-namespace Microsoft.DotNet.Build.CloudTestTasks
+namespace Microsoft.DotNet.Build.Tasks.Feed
 {
-
-    public sealed class CreateAzureContainer : AzureConnectionStringBuildTask
+    public abstract class CreateAzureContainer : AzureConnectionStringBuildTask
     {
         /// <summary>
         /// The name of the container to create.  The specified name must be in the correct format, see the
@@ -18,12 +18,6 @@ namespace Microsoft.DotNet.Build.CloudTestTasks
         /// </summary>
         [Required]
         public string ContainerName { get; set; }
-
-        /// <summary>
-        /// When false, if the specified container already exists get a reference to it.
-        /// When true, if the specified container already exists, fail the task.
-        /// </summary>
-        public bool FailIfExists { get; set; }
 
         /// <summary>
         /// The read-only SAS token created when ReadOnlyTokenDaysValid is greater than zero.
@@ -58,6 +52,8 @@ namespace Microsoft.DotNet.Build.CloudTestTasks
         /// </summary>
         public bool IsPublic { get; set; } = false;
 
+        public abstract Task<AzureStorageUtils> GetBlobStorageUtilsAsync(string accountName, string accountKey, string containerName);
+
         public override bool Execute()
         {
             return ExecuteAsync().GetAwaiter().GetResult();
@@ -67,17 +63,13 @@ namespace Microsoft.DotNet.Build.CloudTestTasks
         {
             try
             {
-                AzureStorageUtils blobUtils = new AzureStorageUtils(AccountName, AccountKey, ContainerName);
-
-                if (FailIfExists && await blobUtils.CheckIfContainerExistsAsync())
-                {
-                    Log.LogError($"Container {ContainerName} already exists in storage account {AccountName}.");
-                    return false;
-                }
-
+                AzureStorageUtils blobUtils = await GetBlobStorageUtilsAsync(AccountName, AccountKey, ContainerName);
+                
                 PublicAccessType permissions = IsPublic ? PublicAccessType.Blob : PublicAccessType.None;
 
                 StorageUri = await blobUtils.CreateContainerAsync(permissions);
+
+                Log.LogMessage(MessageImportance.High, $"Created blob storage container {StorageUri}");
 
                 ReadOnlyToken = blobUtils.CreateSASToken(ReadOnlyTokenDaysValid, BlobContainerSasPermissions.Read);
                 WriteOnlyToken = blobUtils.CreateSASToken(WriteOnlyTokenDaysValid, BlobContainerSasPermissions.Write);
