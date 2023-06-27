@@ -38,7 +38,7 @@ namespace Microsoft.DotNet.SourceBuild.Tasks.UsageReport
         [Required]
         public string OutputReportFile { get; set; }
 
-        private readonly string _preBuiltDocMessage = "See aka.ms/dotnet/prebuilts " +
+        private readonly string _preBuiltDocMessage = "See https://aka.ms/dotnet/prebuilts " +
             "for guidance on what pre-builts are and how to eliminate them.";
 
         private readonly string _reviewRequestMessage = "Whenever altering this " +

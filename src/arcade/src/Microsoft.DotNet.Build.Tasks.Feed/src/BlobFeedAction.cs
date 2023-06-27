@@ -157,7 +157,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
         {
             Log.LogMessage($"Creating container {ContainerName}...");
 
-            CreateAzureContainer createContainer = new CreateAzureContainer
+            CreateAzureContainer createContainer = new CreateAzureContainerIfNotExists
             {
                 AccountKey = AccountKey,
                 AccountName = AccountName,

@@ -153,7 +153,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 
 <!-- component list beginning -->
 - `src/arcade`  
-*[dotnet/arcade@9747cf5](https://github.com/dotnet/arcade/commit/9747cf5ac4abb6a5a13cf31fa78b91d599180e07)*
+*[dotnet/arcade@c0e0c6d](https://github.com/dotnet/arcade/commit/c0e0c6d3e5b5fd90084486f11f0a7cb3d4577e4f)*
 - `src/aspnetcore`  
 *[dotnet/aspnetcore@b640052](https://github.com/dotnet/aspnetcore/commit/b640052a0a03e7ac488d14a8b8643ba814d7045a)*
     - `src/aspnetcore/src/submodules/googletest`  
