@@ -113,9 +113,7 @@ namespace NuGet.Packaging.Test
 
         private static X509Certificate2 Clone(X509Certificate2 certificate)
         {
-            var bytes = certificate.Export(X509ContentType.Pkcs12);
-
-            return new X509Certificate2(bytes);
+            return new X509Certificate2(certificate);
         }
     }
 }

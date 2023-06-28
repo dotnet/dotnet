@@ -99,7 +99,7 @@ namespace NuGet.Commands
             }
 
             // Virtual root for file globbing
-            var rootDirectory = new VirtualFileInfo(VirtualFileProvider.RootDir, isDirectory: true);
+            var rootDirectory = new VirtualFileInfo(SingleFileProvider.RootDir, isDirectory: true);
 
             // Apply all nuspec property mappings to the files returned by content model
             foreach (var filesEntry in nuspecContentFiles)
@@ -129,9 +129,8 @@ namespace NuGet.Commands
                         var relativePath = file.Substring(rootFolderPathLength, file.Length - rootFolderPathLength);
 
                         // Check if the nuspec group include/exclude patterns apply to the file
-                        var virtualDirectory = new VirtualFileProvider(new List<string>() { relativePath });
                         var globbingDirectory = new FileProviderGlobbingDirectory(
-                            virtualDirectory,
+                            fileProvider: new SingleFileProvider(relativePath),
                             fileInfo: rootDirectory,
                             parent: null);
 
@@ -139,7 +138,7 @@ namespace NuGet.Commands
                         // check individually.
                         var matchResults = matcher.Execute(globbingDirectory);
 
-                        if (matchResults.Files.Any())
+                        if (matchResults.HasMatches)
                         {
                             entries.Add(filesEntry);
                         }
