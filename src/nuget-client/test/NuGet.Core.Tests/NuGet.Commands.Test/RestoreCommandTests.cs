@@ -2821,7 +2821,7 @@ namespace NuGet.Commands.Test
 
             var projectInformationEvent = telemetryEvents.Single(e => e.Name.Equals("ProjectRestoreInformation"));
 
-            projectInformationEvent.Count.Should().Be(28);
+            projectInformationEvent.Count.Should().Be(29);
             projectInformationEvent["RestoreSuccess"].Should().Be(true);
             projectInformationEvent["NoOpResult"].Should().Be(false);
             projectInformationEvent["IsCentralVersionManagementEnabled"].Should().Be(false);
@@ -2850,6 +2850,7 @@ namespace NuGet.Commands.Test
             projectInformationEvent["HttpSourcesCount"].Should().Be(0);
             projectInformationEvent["LocalSourcesCount"].Should().Be(1);
             projectInformationEvent["FallbackFoldersCount"].Should().Be(0);
+            projectInformationEvent["Audit.Enabled"].Should().Be("Undefined");
         }
 
         [Fact]
@@ -2905,7 +2906,7 @@ namespace NuGet.Commands.Test
 
             var projectInformationEvent = telemetryEvents.Single(e => e.Name.Equals("ProjectRestoreInformation"));
 
-            projectInformationEvent.Count.Should().Be(21);
+            projectInformationEvent.Count.Should().Be(22);
             projectInformationEvent["RestoreSuccess"].Should().Be(true);
             projectInformationEvent["NoOpResult"].Should().Be(true);
             projectInformationEvent["IsCentralVersionManagementEnabled"].Should().Be(false);
@@ -2927,6 +2928,7 @@ namespace NuGet.Commands.Test
             projectInformationEvent["LocalSourcesCount"].Should().Be(1);
             projectInformationEvent["FallbackFoldersCount"].Should().Be(0);
             projectInformationEvent["IsLockFileEnabled"].Should().Be(false);
+            projectInformationEvent["NoOpCacheFileAgeDays"].Should().NotBeNull();
         }
 
         [Fact]
@@ -2984,7 +2986,7 @@ namespace NuGet.Commands.Test
 
             var projectInformationEvent = telemetryEvents.Single(e => e.Name.Equals("ProjectRestoreInformation"));
 
-            projectInformationEvent.Count.Should().Be(28);
+            projectInformationEvent.Count.Should().Be(29);
             projectInformationEvent["RestoreSuccess"].Should().Be(true);
             projectInformationEvent["NoOpResult"].Should().Be(false);
             projectInformationEvent["TotalUniquePackagesCount"].Should().Be(2);

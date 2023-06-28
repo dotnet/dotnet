@@ -73,7 +73,7 @@ internal class DefaultCodeRenderingContext : CodeRenderingContext
         }
 
         Items[NewLineString] = codeDocument.Items[NewLineString];
-        Items[SuppressUniqueIds] = codeDocument.Items[SuppressUniqueIds];
+        Items[SuppressUniqueIds] = codeDocument.Items[SuppressUniqueIds] ?? options.SuppressUniqueIds;
 
         _scopes = new List<ScopeInternal>();
         _scopes.Add(new ScopeInternal(nodeWriter));

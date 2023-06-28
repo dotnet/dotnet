@@ -11,6 +11,7 @@ using Microsoft.CodeAnalysis.ExternalAccess.Razor;
 using Microsoft.VisualStudio.Composition;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Nerdbank.Streams;
+using Newtonsoft.Json;
 using StreamJsonRpc;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Test.Common;
@@ -187,16 +188,16 @@ public sealed class CSharpTestLspServer : IAsyncDisposable
 
     #endregion
 
-    private class RazorCapabilitiesProvider : IRazorCapabilitiesProvider
+    private class RazorCapabilitiesProvider : IRazorTestCapabilitiesProvider
     {
-        private readonly ServerCapabilities _serverCapabilities;
+        private readonly string _serverCapabilities;
 
         public RazorCapabilitiesProvider(ServerCapabilities serverCapabilities)
         {
-            _serverCapabilities = serverCapabilities;
+            _serverCapabilities = JsonConvert.SerializeObject(serverCapabilities);
         }
 
-        public ServerCapabilities GetCapabilities(ClientCapabilities clientCapabilities)
+        public string GetServerCapabilitiesJson(string clientCapabilitiesJson)
             => _serverCapabilities;
     }
 }

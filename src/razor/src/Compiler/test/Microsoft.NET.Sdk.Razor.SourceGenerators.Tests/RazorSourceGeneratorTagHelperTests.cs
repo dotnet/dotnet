@@ -5,8 +5,8 @@
 
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.CodeAnalysis.CSharp;
+using Roslyn.Test.Utilities;
 using Xunit;
 
 namespace Microsoft.NET.Sdk.Razor.SourceGenerators;
@@ -275,11 +275,11 @@ public sealed class RazorSourceGeneratorTagHelperTests : RazorSourceGeneratorTes
             ["Views/Home/Index.cshtml"] = """
                 @model TestProject.Models.Employee
                 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
-                
+
                 @{
                     Html.Html5DateRenderingMode = Html5DateRenderingMode.Rfc3339;
                 }
-                
+
                 <!DOCTYPE html>
                 <html>
                 <head>
@@ -287,9 +287,9 @@ public sealed class RazorSourceGeneratorTagHelperTests : RazorSourceGeneratorTes
                     <title>Create</title>
                 </head>
                 <body>
-                
+
                     <form asp-antiforgery="false">
-                
+
                         <div class="form-horizontal">
                             <h4>Employee</h4>
                             <hr />
@@ -339,7 +339,7 @@ public sealed class RazorSourceGeneratorTagHelperTests : RazorSourceGeneratorTes
                                     <span asp-validation-for="Salary"></span>
                                 </div>
                             </div>
-                
+
                             <div class="form-group">
                                 <div class="col-md-offset-2 col-md-10">
                                     <input type="submit" value="Create" class="btn btn-default" />
@@ -1087,7 +1087,7 @@ public sealed class RazorSourceGeneratorTagHelperTests : RazorSourceGeneratorTes
                 <nested>some-content</nested>
                 """,
             ["Views/RemoveInheritedTagHelpers/_ViewStart.cshtml"] = """
-                @{ 
+                @{
                     Layout = "~/Views/Shared/_LayoutWithRootTagHelper.cshtml";
                 }
                 """,
@@ -1100,7 +1100,7 @@ public sealed class RazorSourceGeneratorTagHelperTests : RazorSourceGeneratorTes
                 <nested>some-content</nested>
                 """,
             ["Views/InheritedTagHelperPrefix/_ViewStart.cshtml"] = """
-                @{ 
+                @{
                     Layout = "~/Views/Shared/_LayoutWithRootTagHelper.cshtml";
                 }
                 """,

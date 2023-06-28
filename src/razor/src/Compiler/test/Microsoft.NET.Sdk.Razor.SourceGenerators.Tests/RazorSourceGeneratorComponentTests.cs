@@ -2,7 +2,7 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Razor.Test.Common;
+using Roslyn.Test.Utilities;
 using Xunit;
 
 namespace Microsoft.NET.Sdk.Razor.SourceGenerators;
@@ -23,7 +23,7 @@ public sealed class RazorSourceGeneratorComponentTests : RazorSourceGeneratorTes
                 """,
             ["Shared/Component2.razor"] = """
                 @inherits ComponentBase
-                
+
                 Value: @(Param + 1)
 
                 @code {
