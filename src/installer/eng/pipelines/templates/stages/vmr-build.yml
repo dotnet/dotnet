@@ -86,6 +86,23 @@ stages:
       useMonoRuntime: false              # 🚫
       withPreviousSDK: false             # 🚫
 
+  - template: ../jobs/vmr-build.yml
+    parameters:
+      buildName: CentOSStream8_Offline_MsftSdk
+      isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
+      vmrBranch: ${{ variables.VmrBranch }}
+      architecture: x64
+      pool:
+        name: ${{ variables.defaultPoolName }}
+        demands: ${{ variables.defaultPoolDemands }}
+      container: ${{ parameters.centOSStream8Container }}
+      buildFromArchive: true             # ✅
+      enablePoison: false                # 🚫
+      excludeOmniSharpTests: true        # ✅
+      runOnline: false                   # 🚫
+      useMonoRuntime: false              # 🚫
+      withPreviousSDK: false             # 🚫
+
   - ${{ if ne(variables['Build.Reason'], 'PullRequest') }}:
 
     # CI - Stage 1 x64 legs ------------------------------------
@@ -123,23 +140,6 @@ stages:
         runOnline: true                    # ✅
         useMonoRuntime: false              # 🚫
         withPreviousSDK: true              # ✅
-
-    - template: ../jobs/vmr-build.yml
-      parameters:
-        buildName: CentOSStream8_Offline_MsftSdk
-        isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
-        vmrBranch: ${{ variables.VmrBranch }}
-        architecture: x64
-        pool:
-          name: ${{ variables.defaultPoolName }}
-          demands: ${{ variables.defaultPoolDemands }}
-        container: ${{ parameters.centOSStream8Container }}
-        buildFromArchive: true             # ✅
-        enablePoison: false                # 🚫
-        excludeOmniSharpTests: true        # ✅
-        runOnline: false                   # 🚫
-        useMonoRuntime: false              # 🚫
-        withPreviousSDK: false             # 🚫
 
     - template: ../jobs/vmr-build.yml
       parameters:
