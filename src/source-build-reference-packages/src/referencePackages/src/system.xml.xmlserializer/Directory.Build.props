@@ -1,9 +1,0 @@
-<Project>
-
-  <Import Project="$([MSBuild]::GetPathOfFileAbove(Directory.Build.props, $(MSBuildThisFileDirectory)..))" />
-
-  <PropertyGroup>
-    <AssemblyName>System.Xml.XmlSerializer</AssemblyName>
-  </PropertyGroup>
-
-</Project>

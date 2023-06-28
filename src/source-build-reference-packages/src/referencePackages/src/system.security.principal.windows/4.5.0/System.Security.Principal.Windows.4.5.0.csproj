@@ -1,9 +1,0 @@
-<Project Sdk="Microsoft.NET.Sdk">
-
-  <PropertyGroup>
-    <TargetFrameworks>netstandard2.0</TargetFrameworks>
-    <AssemblyName>System.Security.Principal.Windows</AssemblyName>
-    <ProjectTemplateVersion>2</ProjectTemplateVersion>
-  </PropertyGroup>
-
-</Project>
