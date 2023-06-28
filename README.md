@@ -175,9 +175,9 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/format`  
 *[dotnet/format@9f25b1f](https://github.com/dotnet/format/commit/9f25b1fa22a5a6246ef1c68225d51e9ce219b27a)*
 - `src/fsharp`  
-*[dotnet/fsharp@635d129](https://github.com/dotnet/fsharp/commit/635d12955019bfcd4af5920e401037b2adff31d6)*
+*[dotnet/fsharp@9bf50f7](https://github.com/dotnet/fsharp/commit/9bf50f790ca3135b4428d464cc735ff4e8ff1bd5)*
 - `src/installer`  
-*[dotnet/installer@cbf78d4](https://github.com/dotnet/installer/commit/cbf78d4f5fe76e36bc3f275e45a1d5a5e09c1d2e)*
+*[dotnet/installer@841df5a](https://github.com/dotnet/installer/commit/841df5ab9019151f8d3d2210bfbabeac99f4709c)*
 - `src/msbuild`  
 *[dotnet/msbuild@5785ed5](https://github.com/dotnet/msbuild/commit/5785ed5c22cebcbf3a7c79dc8c91c3ce7954b2f5)*
 - `src/nuget-client`  
@@ -187,13 +187,13 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/razor`  
 *[dotnet/razor@4d1ba4f](https://github.com/dotnet/razor/commit/4d1ba4fcaee5a6ce6376145d9bd619c5c83ba0cb)*
 - `src/roslyn`  
-*[dotnet/roslyn@faa8b81](https://github.com/dotnet/roslyn/commit/faa8b81b227a8602bde45136233d7b1ecbbba48e)*
+*[dotnet/roslyn@7931076](https://github.com/dotnet/roslyn/commit/7931076b2157f58467930f226c67e000e007cfc9)*
 - `src/roslyn-analyzers`  
 *[dotnet/roslyn-analyzers@455013a](https://github.com/dotnet/roslyn-analyzers/commit/455013a34306e0053a26a3fab72a4a8470768d3b)*
 - `src/runtime`  
 *[dotnet/runtime@456d5f9](https://github.com/dotnet/runtime/commit/456d5f92a11331da51385752212a252863a2c736)*
 - `src/sdk`  
-*[dotnet/sdk@76d04e1](https://github.com/dotnet/sdk/commit/76d04e17a67965a6c360d03e98cb8298af667df1)*
+*[dotnet/sdk@41f48ab](https://github.com/dotnet/sdk/commit/41f48abd09f9333c6fa06747bf0e8ea2344b3ba4)*
 - `src/source-build-externals`  
 *[dotnet/source-build-externals@0d04efd](https://github.com/dotnet/source-build-externals/commit/0d04efdab9f26bad07edc881dc7fa088337b8562)*
     - `src/source-build-externals/src/application-insights`  
