@@ -326,7 +326,7 @@ namespace NuGet.Packaging.Test
             }
         }
 
-        [Fact(Skip="https://github.com/NuGet/Home/issues/12687")]
+        [Fact]
         public void GetHashString_UnknownHashAlgorithm_Throws()
         {
             using (var certificate = _fixture.GetDefaultCertificate())
