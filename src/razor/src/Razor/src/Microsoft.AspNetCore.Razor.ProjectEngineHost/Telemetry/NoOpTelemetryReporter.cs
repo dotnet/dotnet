@@ -36,7 +36,7 @@ public class NoOpTelemetryReporter : ITelemetryReporter
         return NullScope.Instance;
     }
 
-    public IDisposable TrackLspRequest(string name, string lspMethodName, string lspServerName, Guid correlationId)
+    public IDisposable TrackLspRequest(string lspMethodName, string lspServerName, Guid correlationId)
     {
         return NullScope.Instance;
     }

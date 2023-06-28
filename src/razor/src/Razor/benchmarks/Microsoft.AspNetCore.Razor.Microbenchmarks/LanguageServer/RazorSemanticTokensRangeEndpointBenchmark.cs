@@ -57,7 +57,6 @@ public class RazorSemanticTokensRangeEndpointBenchmark : RazorLanguageServerBenc
 
     private static List<SemanticRange> PregeneratedRandomSemanticRanges { get; set; }
 
-
     [GlobalSetup]
     public async Task InitializeRazorSemanticAsync()
     {

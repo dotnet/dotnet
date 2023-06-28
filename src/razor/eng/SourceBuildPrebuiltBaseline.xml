@@ -5,6 +5,9 @@
   <IgnorePatterns>
     <UsagePattern IdentityGlob="Microsoft.SourceBuild.Intermediate.*/*" />
 
+    <!-- Prebuilts showing in repo build only - ignoring. -->
+    <UsagePattern IdentityGlob="Microsoft.Extensions.ObjectPool/6.0.0" />
+
     <!-- 
       Ignoring the following prebuilts. NetPrevious targeting is needed in repo legs
       because the intermediate is used by multiple versions of dependent repos.

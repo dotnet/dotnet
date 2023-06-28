@@ -4,7 +4,6 @@
   <PropertyGroup>
     <GitHubRepositoryName>razor</GitHubRepositoryName>
     <SourceBuildManagedOnly>true</SourceBuildManagedOnly>
-    <SourceBuildTrimNetFrameworkTargets>true</SourceBuildTrimNetFrameworkTargets>
     <CloneSubmodulesToInnerSourceBuildRepo>false</CloneSubmodulesToInnerSourceBuildRepo>
   </PropertyGroup>
 
