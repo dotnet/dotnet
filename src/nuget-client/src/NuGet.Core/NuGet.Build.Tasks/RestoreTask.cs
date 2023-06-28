@@ -112,7 +112,7 @@ namespace NuGet.Build.Tasks
             {
                 return ExecuteAsync(log).Result;
             }
-            catch (AggregateException ex) when (_cts.Token.IsCancellationRequested && ex.InnerException is TaskCanceledException)
+            catch (AggregateException ex) when (_cts.Token.IsCancellationRequested && ex.InnerException is OperationCanceledException)
             {
                 // Canceled by user
                 log.LogError(Strings.RestoreCanceled);

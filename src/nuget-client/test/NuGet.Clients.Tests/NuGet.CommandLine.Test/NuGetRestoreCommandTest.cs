@@ -32,14 +32,15 @@ namespace NuGet.CommandLine.Test
         private const int _failureCode = 1;
         private const int _successCode = 0;
 
-        [Fact]
-        public void RestoreCommand_BadInputPath()
+        [Theory]
+        [InlineData("bad/pat.h/myfile.blah")]
+        [InlineData("**/*.sln")]
+        public void RestoreCommand_BadInputPath(string solutionPath)
         {
             using (var randomTestFolder = TestDirectory.Create())
             {
                 // Arrange
                 var nugetexe = Util.GetNuGetExePath();
-                var solutionPath = "bad/pat.h/myfile.blah";
 
                 var args = new string[]
                 {
@@ -59,7 +60,7 @@ namespace NuGet.CommandLine.Test
                 // Assert
                 Assert.NotEqual(_successCode, r.ExitCode);
                 var error = r.Errors;
-                Assert.Contains("Input file does not exist: bad/pat.h/myfile.blah", r.Errors, StringComparison.OrdinalIgnoreCase);
+                Assert.Contains("Input file does not exist: " + solutionPath, r.Errors, StringComparison.OrdinalIgnoreCase);
             }
         }
 

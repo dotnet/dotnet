@@ -498,7 +498,22 @@ namespace NuGet.CommandLine
             {
                 // Restore takes multiple arguments, each could be a file or directory
                 var argument = Arguments.Single();
-                var fullPath = Path.GetFullPath(argument);
+                string fullPath;
+                try
+                {
+                    fullPath = Path.GetFullPath(argument);
+                }
+                catch (ArgumentException)
+                {
+                    // Treat "invalid characters in path" like a file not found.
+                    // Afterall, a filename with invalid characters can't exist.
+                    var message = string.Format(
+                        CultureInfo.CurrentCulture,
+                        LocalizedResourceManager.GetString("RestoreCommandFileNotFound"),
+                        argument);
+
+                    throw new InvalidOperationException(message);
+                }
 
                 if (Directory.Exists(fullPath))
                 {
