@@ -3,6 +3,7 @@
 
 #nullable disable
 
+using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.LanguageServer.Test.Common;
 using Microsoft.AspNetCore.Razor.Test.Common;
@@ -30,7 +31,7 @@ public abstract class ResponseRewriterTestBase : LanguageServerTestBase
         var documentContext = TestDocumentContext.From("C:/path/to/file.cshtml", codeDocument, hostDocumentVersion: 0);
         var provider = TestDelegatedCompletionListProvider.Create(initialCompletionList, LoggerFactory, Rewriter);
         var clientCapabilities = new VSInternalClientCapabilities();
-        var completionList = await provider.GetCompletionListAsync(absoluteIndex, completionContext, documentContext, clientCapabilities, DisposalToken);
+        var completionList = await provider.GetCompletionListAsync(absoluteIndex, completionContext, documentContext, clientCapabilities, correlationId: Guid.Empty, cancellationToken: DisposalToken);
 
         return completionList;
     }

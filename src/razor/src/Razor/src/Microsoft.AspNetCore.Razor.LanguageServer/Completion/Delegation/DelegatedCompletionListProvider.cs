@@ -1,6 +1,7 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
+using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
@@ -48,6 +49,7 @@ internal class DelegatedCompletionListProvider
         VSInternalCompletionContext completionContext,
         VersionedDocumentContext documentContext,
         VSInternalClientCapabilities clientCapabilities,
+        Guid correlationId,
         CancellationToken cancellationToken)
     {
         var positionInfo = await _documentMappingService.GetPositionInfoAsync(documentContext, absoluteIndex, cancellationToken).ConfigureAwait(false);
@@ -73,7 +75,8 @@ internal class DelegatedCompletionListProvider
             positionInfo.Position,
             positionInfo.LanguageKind,
             completionContext,
-            provisionalTextEdit);
+            provisionalTextEdit,
+            correlationId);
 
         var delegatedResponse = await _languageServer.SendRequestAsync<DelegatedCompletionParams, VSInternalCompletionList?>(
             LanguageServerConstants.RazorCompletionEndpointName,

@@ -43,7 +43,7 @@ public class RazorCompletionBenchmark : RazorLanguageServerBenchmarkBase
 
         var delegatedCompletionListProvider = new TestDelegatedCompletionListProvider(responseRewriters, documentMappingService, clientNotifierServiceBase, completionListCache);
         var completionListProvider = new CompletionListProvider(razorCompletionListProvider, delegatedCompletionListProvider);
-        CompletionEndpoint = new RazorCompletionEndpoint(completionListProvider);
+        CompletionEndpoint = new RazorCompletionEndpoint(completionListProvider, telemetryReporter: null);
 
         var clientCapabilities = new VSInternalClientCapabilities
         {
@@ -147,7 +147,7 @@ public class RazorCompletionBenchmark : RazorLanguageServerBenchmarkBase
         {
         }
 
-        public override Task<VSInternalCompletionList?> GetCompletionListAsync(int absoluteIndex, VSInternalCompletionContext completionContext, VersionedDocumentContext documentContext, VSInternalClientCapabilities clientCapabilities, CancellationToken cancellationToken)
+        public override Task<VSInternalCompletionList?> GetCompletionListAsync(int absoluteIndex, VSInternalCompletionContext completionContext, VersionedDocumentContext documentContext, VSInternalClientCapabilities clientCapabilities, Guid correlationId, CancellationToken cancellationToken)
         {
             return Task.FromResult<VSInternalCompletionList?>(
                 new VSInternalCompletionList
