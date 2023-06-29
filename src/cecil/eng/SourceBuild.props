@@ -5,7 +5,6 @@
   <PropertyGroup>
     <GitHubRepositoryName>cecil</GitHubRepositoryName>
     <SourceBuildManagedOnly>true</SourceBuildManagedOnly>
-    <SourceBuildTrimNetFrameworkTargets>true</SourceBuildTrimNetFrameworkTargets>
   </PropertyGroup>
 
 </Project>
