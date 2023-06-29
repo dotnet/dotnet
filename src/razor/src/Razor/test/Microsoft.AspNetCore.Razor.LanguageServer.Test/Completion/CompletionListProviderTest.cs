@@ -50,7 +50,7 @@ public class CompletionListProviderTest : LanguageServerTestBase
 
         // Act
         var completionList = await provider.GetCompletionListAsync(
-            absoluteIndex: 0, _completionContext, _documentContext, _clientCapabilities, DisposalToken);
+            absoluteIndex: 0, _completionContext, _documentContext, _clientCapabilities, correlationId: Guid.Empty, cancellationToken: DisposalToken);
 
         // Assert
         Assert.NotSame(_completionList1, completionList);
@@ -67,7 +67,7 @@ public class CompletionListProviderTest : LanguageServerTestBase
 
         // Act
         var completionList = await provider.GetCompletionListAsync(
-            absoluteIndex: 0, _completionContext, _documentContext, _clientCapabilities, DisposalToken);
+            absoluteIndex: 0, _completionContext, _documentContext, _clientCapabilities, correlationId: Guid.Empty, cancellationToken: DisposalToken);
 
         // Assert
         Assert.Same(_completionList2, completionList);
@@ -91,6 +91,7 @@ public class CompletionListProviderTest : LanguageServerTestBase
             VSInternalCompletionContext completionContext,
             VersionedDocumentContext documentContext,
             VSInternalClientCapabilities clientCapabilities,
+            Guid correlationId,
             CancellationToken cancellationToken)
         {
             return Task.FromResult(_completionList);

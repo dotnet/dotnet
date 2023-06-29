@@ -27,9 +27,10 @@ using StreamJsonRpc;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.CodeActions;
 
-[LanguageServerEndpoint(Methods.TextDocumentCodeActionName)]
+[LanguageServerEndpoint(LspEndpointName)]
 internal sealed class CodeActionEndpoint : IRazorRequestHandler<VSCodeActionParams, SumType<Command, CodeAction>[]?>, IRegistrationExtension
 {
+    public const string LspEndpointName = Methods.TextDocumentCodeActionName;
     private readonly IRazorDocumentMappingService _documentMappingService;
     private readonly IEnumerable<IRazorCodeActionProvider> _razorCodeActionProviders;
     private readonly IEnumerable<ICSharpCodeActionProvider> _csharpCodeActionProviders;
@@ -86,7 +87,7 @@ internal sealed class CodeActionEndpoint : IRazorRequestHandler<VSCodeActionPara
         cancellationToken.ThrowIfCancellationRequested();
 
         var correlationId = Guid.NewGuid();
-        using var __ = _telemetryReporter?.TrackLspRequest(Methods.TextDocumentCodeActionName, LanguageServerConstants.RazorLanguageServerName, correlationId);
+        using var __ = _telemetryReporter?.TrackLspRequest(LspEndpointName, LanguageServerConstants.RazorLanguageServerName, correlationId);
         var razorCodeActions = await GetRazorCodeActionsAsync(razorCodeActionContext, cancellationToken).ConfigureAwait(false);
 
         cancellationToken.ThrowIfCancellationRequested();

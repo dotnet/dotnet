@@ -297,10 +297,11 @@ internal class DefaultRazorLanguageServerCustomMessageTarget : RazorLanguageServ
         codeActionParams.CodeActionParams.TextDocument.Uri = virtualDocumentSnapshot.Uri;
 
         var textBuffer = virtualDocumentSnapshot.Snapshot.TextBuffer;
-        using var _ = _telemetryReporter.TrackLspRequest(Methods.TextDocumentCodeActionName, languageServerName, codeActionParams.CorrelationId);
+        var lspMethodName = Methods.TextDocumentCodeActionName;
+        using var _ = _telemetryReporter.TrackLspRequest(lspMethodName, languageServerName, codeActionParams.CorrelationId);
         var requests = _requestInvoker.ReinvokeRequestOnMultipleServersAsync<VSCodeActionParams, IReadOnlyList<VSInternalCodeAction>>(
             textBuffer,
-            Methods.TextDocumentCodeActionName,
+            lspMethodName,
             SupportsCodeActionResolve,
             codeActionParams.CodeActionParams,
             cancellationToken).ConfigureAwait(false);
@@ -418,10 +419,13 @@ internal class DefaultRazorLanguageServerCustomMessageTarget : RazorLanguageServ
         };
 
         var textBuffer = csharpDoc.Snapshot.TextBuffer;
+        var languageServerName = RazorLSPConstants.RazorCSharpLanguageServerName;
+        var lspMethodName = Methods.TextDocumentSemanticTokensRangeName;
+        using var _ = _telemetryReporter.TrackLspRequest(lspMethodName, languageServerName, semanticTokensParams.CorrelationId);
         var csharpResults = await _requestInvoker.ReinvokeRequestOnServerAsync<SemanticTokensRangeParams, VSSemanticTokensResponse>(
             textBuffer,
-            Methods.TextDocumentSemanticTokensRangeName,
-            RazorLSPConstants.RazorCSharpLanguageServerName,
+            lspMethodName,
+            languageServerName,
             newParams,
             cancellationToken).ConfigureAwait(false);
 
@@ -874,9 +878,11 @@ internal class DefaultRazorLanguageServerCustomMessageTarget : RazorLanguageServ
         try
         {
             var textBuffer = virtualDocumentSnapshot.Snapshot.TextBuffer;
+            var lspMethodName = Methods.TextDocumentCompletion.Name;
+            using var _ = _telemetryReporter.TrackLspRequest(lspMethodName, languageServerName, request.CorrelationId);
             var response = await _requestInvoker.ReinvokeRequestOnServerAsync<CompletionParams, JToken?>(
                 textBuffer,
-                Methods.TextDocumentCompletion.Name,
+                lspMethodName,
                 languageServerName,
                 completionParams,
                 cancellationToken).ConfigureAwait(continueOnCapturedContext);
@@ -1169,10 +1175,11 @@ internal class DefaultRazorLanguageServerCustomMessageTarget : RazorLanguageServ
             },
         };
 
-        using var _ = _telemetryReporter.TrackLspRequest(VSInternalMethods.DocumentPullDiagnosticName, delegatedLanguageServerName, correlationId);
+        var lspMethodName = VSInternalMethods.DocumentPullDiagnosticName;
+        using var _ = _telemetryReporter.TrackLspRequest(lspMethodName, delegatedLanguageServerName, correlationId);
         var response = await _requestInvoker.ReinvokeRequestOnServerAsync<VSInternalDocumentDiagnosticsParams, VSInternalDiagnosticReport[]?>(
             virtualDocument.Snapshot.TextBuffer,
-            VSInternalMethods.DocumentPullDiagnosticName,
+            lspMethodName,
             delegatedLanguageServerName,
             request,
             cancellationToken).ConfigureAwait(false);
