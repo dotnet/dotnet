@@ -177,7 +177,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/fsharp`  
 *[dotnet/fsharp@9bf50f7](https://github.com/dotnet/fsharp/commit/9bf50f790ca3135b4428d464cc735ff4e8ff1bd5)*
 - `src/installer`  
-*[dotnet/installer@12bfecc](https://github.com/dotnet/installer/commit/12bfecc01dfa05c84102893928ddc3840f97bb70)*
+*[dotnet/installer@35fa25d](https://github.com/dotnet/installer/commit/35fa25da27ff7e430c5f4888ba32fa21ddeaddbd)*
 - `src/msbuild`  
 *[dotnet/msbuild@0cad196](https://github.com/dotnet/msbuild/commit/0cad196bd27a639e701af16d435e0be64bb852f6)*
 - `src/nuget-client`  
@@ -185,15 +185,15 @@ To enable full offline source-building of the VMR, we have no other choice than 
     - `src/nuget-client/submodules/NuGet.Build.Localization`  
     *[NuGet/NuGet.Build.Localization@f15db7b](https://github.com/NuGet/NuGet.Build.Localization/commit/f15db7b7c6f5affbea268632ef8333d2687c8031)*
 - `src/razor`  
-*[dotnet/razor@364befb](https://github.com/dotnet/razor/commit/364befb317b49d38397afd1853068b9d166b1057)*
+*[dotnet/razor@b382633](https://github.com/dotnet/razor/commit/b382633a860ff2c3cb538187f88c2bfa83776e12)*
 - `src/roslyn`  
 *[dotnet/roslyn@44ee200](https://github.com/dotnet/roslyn/commit/44ee200c0358f7e0451e7705e5183adc3af060f8)*
 - `src/roslyn-analyzers`  
 *[dotnet/roslyn-analyzers@c6b6e10](https://github.com/dotnet/roslyn-analyzers/commit/c6b6e10443eb1e0e9b1b2e2a5c477f7291611a6b)*
 - `src/runtime`  
-*[dotnet/runtime@cfae69f](https://github.com/dotnet/runtime/commit/cfae69f62414b68e4c98dd3b294154baabf58a5a)*
+*[dotnet/runtime@cc585f6](https://github.com/dotnet/runtime/commit/cc585f6d611b4d0cef2b19c4a1ca1e5ec435e80c)*
 - `src/sdk`  
-*[dotnet/sdk@921e803](https://github.com/dotnet/sdk/commit/921e803ec6612a962e5e8a84ccce86b4150619bb)*
+*[dotnet/sdk@d10b02a](https://github.com/dotnet/sdk/commit/d10b02ae5cc670609d920a672985ed4456bdd6b6)*
 - `src/source-build-externals`  
 *[dotnet/source-build-externals@a608dc3](https://github.com/dotnet/source-build-externals/commit/a608dc3aee366dce94fc4e819e5ea35d849152d2)*
     - `src/source-build-externals/src/application-insights`  
