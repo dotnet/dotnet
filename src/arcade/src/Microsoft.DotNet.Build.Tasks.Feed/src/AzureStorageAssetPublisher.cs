@@ -40,17 +40,17 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
                     {
                         if (!await blobClient.IsFileIdenticalToBlobAsync(file))
                         {
-                            _log.LogError($"Asset '{file}' already exists with different contents at '{blobPath}'");
+                            _log.LogError($"Asset '{file}' already exists with different contents at '{blobClient.Uri}'");
                         }
 
                         return;
                     }
 
-                    _log.LogError($"Asset '{file}' already exists at '{blobPath}'");
+                    _log.LogError($"Asset '{file}' already exists at '{blobClient.Uri}'");
                     return;
                 }
 
-                _log.LogMessage($"Uploading '{file}' to '{blobPath}'");
+                _log.LogMessage($"Uploading '{file}' to '{blobClient.Uri}'");
 
                 try
                 {
@@ -62,7 +62,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
                 }
                 catch (Exception e)
                 {
-                    _log.LogError($"Unexpected exception publishing file {file} to {blobPath}: {e.Message}");
+                    _log.LogError($"Unexpected exception publishing file {file} to {blobClient.Uri}: {e.Message}");
                 }
             }
         }

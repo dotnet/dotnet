@@ -28,7 +28,11 @@
         <Directory Id="DOTNETHOME" Name="dotnet">
           <Directory Id="ManifestDir" Name="sdk-manifests">
             <Directory Id="VersionDir" Name="$(var.SdkFeatureBandVersion)">
-              <Directory Id="ManifestIdDir" Name="$(var.ManifestId)" />
+              <Directory Id="ManifestIdDir" Name="$(var.ManifestId)">
+                <?ifdef ManifestVersion ?>
+                <Directory Id="ManifestVersionDir" Name="$(var.ManifestVersion)" />
+                <?endif?>
+              </Directory>
             </Directory>
           </Directory>
         </Directory>
