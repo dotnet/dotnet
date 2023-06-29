@@ -21,20 +21,35 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Msi
         public WorkloadManifestPackage Package { get; }
 
         /// <summary>
-        /// The directory reference to use when harvesting the package contents.
+        /// The directory reference to use when harvesting the package contents for upgradable manifest installers
         /// </summary>
-        private static readonly string ManifestIdDirectory = "ManifestIdDir";
+        private static readonly string s_ManifestIdDirectory = "ManifestIdDir";
+
+        /// <summary>
+        /// Directory reference to use when harvesting the package contents for SxS installers.
+        /// </summary>
+        private static readonly string s_ManifestVersionDirectory = "ManifestVersionDir";
 
         public List<WorkloadPackGroupJson> WorkloadPackGroups { get; } = new();
 
         /// <inheritdoc />
         protected override string BaseOutputName => Path.GetFileNameWithoutExtension(Package.PackagePath);
 
+        /// <summary>
+        /// <see langword="true">True</see> if the manifest installer supports side-by-side installs, otherwise the installer
+        /// supports major upgrades.
+        /// </summary>
+        protected bool IsSxS
+        {
+            get;
+        }
+
         public WorkloadManifestMsi(WorkloadManifestPackage package, string platform, IBuildEngine buildEngine, string wixToolsetPath,
-            string baseIntermediateOutputPath) :
+            string baseIntermediateOutputPath, bool isSxS = false) :
             base(MsiMetadata.Create(package), buildEngine, wixToolsetPath, platform, baseIntermediateOutputPath)
         {
             Package = package;
+            IsSxS = isSxS;
         }
 
         /// <inheritdoc />
@@ -47,7 +62,7 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Msi
 
             HarvesterToolTask heat = new(BuildEngine, WixToolsetPath)
             {
-                DirectoryReference = ManifestIdDirectory,
+                DirectoryReference = IsSxS ? s_ManifestVersionDirectory : s_ManifestIdDirectory,
                 OutputFile = packageContentWxs,
                 Platform = this.Platform,
                 SourceDirectory = packageDataDirectory
@@ -80,7 +95,7 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Msi
 
                 HarvesterToolTask jsonHeat = new(BuildEngine, WixToolsetPath)
                 {
-                    DirectoryReference = ManifestIdDirectory,
+                    DirectoryReference = IsSxS ? s_ManifestVersionDirectory : s_ManifestIdDirectory,
                     OutputFile = jsonContentWxs,
                     Platform = this.Platform,
                     SourceDirectory = jsonDirectory,
@@ -102,6 +117,11 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Msi
                 EmbeddedTemplates.Extract("dotnethome_x64.wxs", WixSourceDirectory),
                 EmbeddedTemplates.Extract("ManifestProduct.wxs", WixSourceDirectory));
 
+            if (IsSxS)
+            {
+                candle.AddPreprocessorDefinition("ManifestVersion", Package.GetManifest().Version);
+            }
+
             if (jsonContentWxs != null)
             {
                 candle.AddSourceFiles(jsonContentWxs);
@@ -119,9 +139,13 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Msi
             // To support upgrades, the UpgradeCode must be stable within an SDK feature band.
             // For example, 6.0.101 and 6.0.108 will generate the same GUID for the same platform and manifest ID. 
             // The workload author will need to guarantee that the version for the MSI is higher than previous shipped versions
-            // to ensure upgrades correctly trigger.
-            Guid upgradeCode = Utils.CreateUuid(UpgradeCodeNamespaceUuid, $"{Package.ManifestId};{Package.SdkFeatureBand};{Platform}");
-            string providerKeyName = $"{Package.ManifestId},{Package.SdkFeatureBand},{Platform}";
+            // to ensure upgrades correctly trigger. For SxS installs we use the package identity that would include that includes
+            // the package version.
+            Guid upgradeCode = IsSxS ? Utils.CreateUuid(UpgradeCodeNamespaceUuid, $"{Package.Identity};{Platform}") :
+                Utils.CreateUuid(UpgradeCodeNamespaceUuid, $"{Package.ManifestId};{Package.SdkFeatureBand};{Platform}");
+            string providerKeyName = IsSxS ?
+                $"{Package.ManifestId},{Package.SdkFeatureBand},{Package.PackageVersion},{Platform}" :
+                $"{Package.ManifestId},{Package.SdkFeatureBand},{Platform}";
 
             // Set up additional preprocessor definitions.
             candle.AddPreprocessorDefinition(PreprocessorDefinitionNames.UpgradeCode, $"{upgradeCode:B}");

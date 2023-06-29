@@ -63,6 +63,16 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads
         }
 
         /// <summary>
+        /// When <see langword="true" />, manifest installers will generate a non-stable UpgradeCode
+        /// and a unique dependency provider key to ensure side-by-side installs.
+        /// </summary>
+        public bool EnableSideBySideManifests
+        {
+            get;
+            set;
+        } = false;
+
+        /// <summary>
         /// A set of Internal Consistency Evaluators (ICEs) to suppress.
         /// </summary>
         public ITaskItem[] IceSuppressions
@@ -235,7 +245,7 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads
                     Dictionary<string, WorkloadManifestMsi> manifestMsisByPlatform = new();
                     foreach (string platform in SupportedPlatforms)
                     {
-                        var manifestMsi = new WorkloadManifestMsi(manifestPackage, platform, BuildEngine, WixToolsetPath, BaseIntermediateOutputPath);
+                        var manifestMsi = new WorkloadManifestMsi(manifestPackage, platform, BuildEngine, WixToolsetPath, BaseIntermediateOutputPath, EnableSideBySideManifests);
                         manifestMsisToBuild.Add(manifestMsi);
                         manifestMsisByPlatform[platform] = manifestMsi;
                     }

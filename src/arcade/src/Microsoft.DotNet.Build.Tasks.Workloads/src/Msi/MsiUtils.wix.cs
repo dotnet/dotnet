@@ -30,6 +30,11 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Msi
         private const string _getWixDependencyProviderQuery = "SELECT `ProviderKey` FROM `WixDependencyProvider`";
 
         /// <summary>
+        /// Query string to retrieve all the rows from the MSI Directory table.
+        /// </summary>
+        private const string _getDirectoriesQuery = "SELECT `Directory`, `Directory_Parent`, `DefaultDir` FROM `Directory`";
+
+        /// <summary>
         /// Gets an enumeration of all the files inside an MSI.
         /// </summary>
         /// <param name="packagePath">The path of the MSI package to query.</param>
@@ -48,6 +53,27 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Msi
             }
 
             return files;
+        }
+
+        /// <summary>
+        /// Gets an enumeration of all the directories inside an MSI.
+        /// </summary>
+        /// <param name="packagePath">The path of the MSI package to query.</param>
+        /// <returns>An enumeration of all the directories.</returns>
+        public static IEnumerable<DirectoryRow> GetAllDirectories(string packagePath)
+        {
+            using InstallPackage ip = new(packagePath, DatabaseOpenMode.ReadOnly);
+            using Database db = new(packagePath, DatabaseOpenMode.ReadOnly);
+            using View directoryView = db.OpenView(_getDirectoriesQuery);
+            List<DirectoryRow> directories = new();
+            directoryView.Execute();
+
+            foreach (Record directoryRecord in directoryView)
+            {
+                directories.Add(DirectoryRow.Create(directoryRecord));
+            }
+
+            return directories;
         }
 
         /// <summary>

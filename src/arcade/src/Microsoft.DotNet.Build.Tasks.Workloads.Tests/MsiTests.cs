@@ -4,6 +4,7 @@
 using System;
 using System.IO;
 using System.Linq;
+using FluentAssertions;
 using Microsoft.Arcade.Test.Common;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
@@ -17,7 +18,54 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Tests
     [Collection("6.0.200 Toolchain manifest tests")]
     public class MsiTests : TestBase
     {
-        [WindowsOnlyFact]        
+        private static ITaskItem BuildManifestMsi(string path, string msiVersion = "1.2.3", string platform = "x64")
+        {
+            TaskItem packageItem = new(path);
+            WorkloadManifestPackage pkg = new(packageItem, PackageRootDirectory, new Version(msiVersion));
+            pkg.Extract();
+            WorkloadManifestMsi msi = new(pkg, platform, new MockBuildEngine(), WixToolsetPath, BaseIntermediateOutputPath,
+                isSxS: true);
+            return msi.Build(MsiOutputPath);
+        }
+
+        [WindowsOnlyFact]
+        public void ItCanBuildSideBySideManifestMsis()
+        {
+            string PackageRootDirectory = Path.Combine(BaseIntermediateOutputPath, "pkg");
+
+            // Build 6.0.200 manifest for version 6.0.3
+            ITaskItem msi603 = BuildManifestMsi(Path.Combine(TestAssetsPath, "microsoft.net.workload.mono.toolchain.manifest-6.0.200.6.0.3.nupkg"));
+            string msiPath603 = msi603.GetMetadata(Metadata.FullPath);
+
+            // Build 6.0.200 manifest for version 6.0.4
+            ITaskItem msi604 = BuildManifestMsi(Path.Combine(TestAssetsPath, "microsoft.net.workload.mono.toolchain.manifest-6.0.200.6.0.4.nupkg"));
+            string msiPath604 = msi604.GetMetadata(Metadata.FullPath);
+
+            // For upgradable MSIs, the 6.0.4 and 6.0.3 copies of the package would have generated the same
+            // upgrade code to ensure upgrades along the manifest feature band. For SxS they should be different.
+            Assert.NotEqual(MsiUtils.GetProperty(msiPath603, MsiProperty.UpgradeCode), MsiUtils.GetProperty(msiPath604, MsiProperty.UpgradeCode));
+
+            // Provider keys for SxS MSIs should be different while upgrade related MSIs should have stable provider keys.
+            Assert.Equal("Microsoft.NET.Workload.Mono.ToolChain,6.0.200,6.0.3,x64", MsiUtils.GetProviderKeyName(msiPath603));
+            Assert.Equal("Microsoft.NET.Workload.Mono.ToolChain,6.0.200,6.0.4,x64", MsiUtils.GetProviderKeyName(msiPath604));
+
+            // WiX populates the DefaultDir column using "short name | long name" pairs.
+            MsiUtils.GetAllDirectories(msiPath603).Should().Contain(d =>
+                d.Directory == "ManifestVersionDir" &&
+                d.DirectoryParent == "ManifestIdDir" &&
+                d.DefaultDir.EndsWith("|6.0.3"));
+            MsiUtils.GetAllDirectories(msiPath604).Should().Contain(d =>
+                d.Directory == "ManifestVersionDir" &&
+                d.DirectoryParent == "ManifestIdDir" &&
+                d.DefaultDir.EndsWith("|6.0.4"));
+
+            // Generated MSI should return the path where the .wixobj files are located so
+            // WiX packs can be created for post-build signing.
+            Assert.NotNull(msi603.GetMetadata(Metadata.WixObj));
+            Assert.NotNull(msi604.GetMetadata(Metadata.WixObj));
+        }
+
+        [WindowsOnlyFact]
         public void ItCanBuildAManifestMsi()
         {
             string PackageRootDirectory = Path.Combine(BaseIntermediateOutputPath, "pkg");
@@ -39,6 +87,9 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Tests
             Assert.Equal("Microsoft.NET.Workload.Mono.ToolChain,6.0.200,x64", MsiUtils.GetProviderKeyName(msiPath));
             Assert.Equal("x64;1033", si.Template);
 
+            // There should be no version directory present if the old upgrade model is used.
+            MsiUtils.GetAllDirectories(msiPath).Select(d => d.Directory).Should().NotContain("ManifestVersionDir");
+
             // Generated MSI should return the path where the .wixobj files are located so
             // WiX packs can be created for post-build signing.
             Assert.NotNull(item.GetMetadata(Metadata.WixObj));
@@ -51,7 +102,7 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Tests
             string packagePath = Path.Combine(TestAssetsPath, "microsoft.ios.templates.15.2.302-preview.14.122.nupkg");
 
             WorkloadPack p = new(new WorkloadPackId("Microsoft.iOS.Templates"), "15.2.302-preview.14.122", WorkloadPackKind.Template, null);
-            TemplatePackPackage pkg = new(p, packagePath, new[] {"x64"}, PackageRootDirectory);
+            TemplatePackPackage pkg = new(p, packagePath, new[] { "x64" }, PackageRootDirectory);
             pkg.Extract();
             WorkloadPackMsi msi = new(pkg, "x64", new MockBuildEngine(), WixToolsetPath, BaseIntermediateOutputPath);
 
