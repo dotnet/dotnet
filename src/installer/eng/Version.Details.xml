@@ -102,22 +102,22 @@
       <Uri>https://github.com/dotnet/test-templates</Uri>
       <Sha>8cfe653fec0848f0745d1285f4bacb7195298b94</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.Common.ItemTemplates" Version="8.0.100-preview.7.23329.15">
+    <Dependency Name="Microsoft.DotNet.Common.ItemTemplates" Version="8.0.100-preview.7.23330.1">
       <Uri>https://github.com/dotnet/sdk</Uri>
-      <Sha>ccf2a8b9efe4a61f2089a464b249eea9741a89e4</Sha>
+      <Sha>c24068d23c636b121e1680f88bd773fc72109891</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.TemplateEngine.Cli" Version="8.0.100-preview.7.23329.15">
+    <Dependency Name="Microsoft.TemplateEngine.Cli" Version="8.0.100-preview.7.23330.1">
       <Uri>https://github.com/dotnet/sdk</Uri>
-      <Sha>ccf2a8b9efe4a61f2089a464b249eea9741a89e4</Sha>
+      <Sha>c24068d23c636b121e1680f88bd773fc72109891</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.NET.Sdk" Version="8.0.100-preview.7.23329.15">
+    <Dependency Name="Microsoft.NET.Sdk" Version="8.0.100-preview.7.23330.1">
       <Uri>https://github.com/dotnet/sdk</Uri>
-      <Sha>ccf2a8b9efe4a61f2089a464b249eea9741a89e4</Sha>
+      <Sha>c24068d23c636b121e1680f88bd773fc72109891</Sha>
       <SourceBuild RepoName="sdk" ManagedOnly="true" />
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.MSBuildSdkResolver" Version="8.0.100-preview.7.23329.15">
+    <Dependency Name="Microsoft.DotNet.MSBuildSdkResolver" Version="8.0.100-preview.7.23330.1">
       <Uri>https://github.com/dotnet/sdk</Uri>
-      <Sha>ccf2a8b9efe4a61f2089a464b249eea9741a89e4</Sha>
+      <Sha>c24068d23c636b121e1680f88bd773fc72109891</Sha>
     </Dependency>
     <!-- For coherency purposes, these versions should be gated by the versions of winforms and wpf routed via windowsdesktop -->
     <Dependency Name="Microsoft.Dotnet.WinForms.ProjectTemplates" Version="8.0.0-preview.7.23328.3" CoherentParentDependency="Microsoft.WindowsDesktop.App.Runtime.win-x64">
