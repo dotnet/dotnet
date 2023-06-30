@@ -1,12 +1,15 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
+using System;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Razor.LanguageServer.Common;
 using Microsoft.AspNetCore.Razor.LanguageServer.EndpointContracts;
 using Microsoft.AspNetCore.Razor.LanguageServer.Extensions;
+using Microsoft.AspNetCore.Razor.Telemetry;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Completion;
@@ -14,11 +17,13 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer.Completion;
 internal class RazorCompletionEndpoint : IVSCompletionEndpoint
 {
     private readonly CompletionListProvider _completionListProvider;
+    private readonly ITelemetryReporter? _telemetryReporter;
     private VSInternalClientCapabilities? _clientCapabilities;
 
-    public RazorCompletionEndpoint(CompletionListProvider completionListProvider)
+    public RazorCompletionEndpoint(CompletionListProvider completionListProvider, ITelemetryReporter? telemetryReporter)
     {
         _completionListProvider = completionListProvider;
+        _telemetryReporter = telemetryReporter;
     }
 
     public bool MutatesSolutionState => false;
@@ -65,11 +70,14 @@ internal class RazorCompletionEndpoint : IVSCompletionEndpoint
             return null;
         }
 
+        var correlationId = Guid.NewGuid();
+        using var _ = _telemetryReporter?.TrackLspRequest(Methods.TextDocumentCompletionName, LanguageServerConstants.RazorLanguageServerName, correlationId);
         var completionList = await _completionListProvider.GetCompletionListAsync(
             hostDocumentIndex,
             completionContext,
             documentContext,
             _clientCapabilities!,
+            correlationId,
             cancellationToken).ConfigureAwait(false);
         return completionList;
     }

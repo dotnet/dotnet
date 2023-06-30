@@ -2,13 +2,12 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-using System;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.CodeAnalysis.CSharp;
 
 namespace Microsoft.NET.Sdk.Razor.SourceGenerators
 {
-    internal sealed class RazorSourceGenerationOptions : IEquatable<RazorSourceGenerationOptions>
+    internal sealed record RazorSourceGenerationOptions
     {
         public string RootNamespace { get; set; } = "ASP";
 
@@ -29,17 +28,10 @@ namespace Microsoft.NET.Sdk.Razor.SourceGenerators
         /// </summary>
         public bool SupportLocalizedComponentNames { get; set; } = false;
 
-        public bool Equals(RazorSourceGenerationOptions other)
-        {
-            return
-                RootNamespace == other.RootNamespace &&
-                Configuration.Equals(other.Configuration) &&
-                GenerateMetadataSourceChecksumAttributes == other.GenerateMetadataSourceChecksumAttributes &&
-                CSharpLanguageVersion == other.CSharpLanguageVersion &&
-                SupportLocalizedComponentNames == other.SupportLocalizedComponentNames;
-        }
-
-        public override bool Equals(object obj) => obj is RazorSourceGenerationOptions other && Equals(other);
+        /// <summary>
+        /// Gets the flag that should be set on code documents to replace unique ids for testing purposes
+        /// </summary>
+        internal string? TestSuppressUniqueIds { get; set; }
 
         public override int GetHashCode() => Configuration.GetHashCode();
     }

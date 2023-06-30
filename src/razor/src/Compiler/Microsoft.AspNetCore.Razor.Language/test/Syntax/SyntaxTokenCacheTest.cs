@@ -3,7 +3,7 @@
 
 #nullable disable
 
-using Microsoft.AspNetCore.Razor.Test.Common;
+using Roslyn.Test.Utilities;
 using Xunit;
 
 namespace Microsoft.AspNetCore.Razor.Language.Syntax.InternalSyntax;

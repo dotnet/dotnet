@@ -85,6 +85,11 @@ public abstract class RazorCodeGenerationOptionsBuilder
     /// </summary>
     public virtual bool UseEnhancedLinePragma { get; set; }
 
+    /// <summary>
+    /// Gets or sets a value that determines if unique ids are suppressed for testing.
+    /// </summary>
+    internal string SuppressUniqueIds { get; set; }
+
     public abstract RazorCodeGenerationOptions Build();
 
     public virtual void SetDesignTime(bool designTime)

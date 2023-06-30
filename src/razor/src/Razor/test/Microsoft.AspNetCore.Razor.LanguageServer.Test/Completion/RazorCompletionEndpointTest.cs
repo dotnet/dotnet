@@ -24,7 +24,7 @@ public class RazorCompletionEndpointTest : LanguageServerTestBase
     {
         // Arrange
         var documentPath = "C:/path/to/document.cshtml";
-        var completionEndpoint = new RazorCompletionEndpoint(completionListProvider: null);
+        var completionEndpoint = new RazorCompletionEndpoint(completionListProvider: null, telemetryReporter: null);
         var request = new CompletionParams()
         {
             TextDocument = new TextDocumentIdentifier()

@@ -1,6 +1,7 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
+using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
@@ -33,11 +34,12 @@ internal class CompletionListProvider
         VSInternalCompletionContext completionContext,
         VersionedDocumentContext documentContext,
         VSInternalClientCapabilities clientCapabilities,
+        Guid correlationId,
         CancellationToken cancellationToken)
     {
         // First we delegate to get completion items from the individual language server
         var delegatedCompletionList = IsValidTrigger(_delegatedCompletionListProvider.TriggerCharacters, completionContext)
-            ? await _delegatedCompletionListProvider.GetCompletionListAsync(absoluteIndex, completionContext, documentContext, clientCapabilities, cancellationToken).ConfigureAwait(false)
+            ? await _delegatedCompletionListProvider.GetCompletionListAsync(absoluteIndex, completionContext, documentContext, clientCapabilities, correlationId, cancellationToken).ConfigureAwait(false)
             : null;
 
         // Extract the items we got back from the delegated server, to inform tag helper completion

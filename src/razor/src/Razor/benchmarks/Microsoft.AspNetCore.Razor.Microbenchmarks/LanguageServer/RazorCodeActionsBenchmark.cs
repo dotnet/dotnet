@@ -52,7 +52,8 @@ public class RazorCodeActionsBenchmark : RazorLanguageServerBenchmarkBase
             csharpCodeActionProviders: languageServer.GetRequiredService<IEnumerable<ICSharpCodeActionProvider>>(),
             htmlCodeActionProviders: languageServer.GetRequiredService<IEnumerable<IHtmlCodeActionProvider>>(),
             languageServer: languageServer.GetRequiredService<ClientNotifierServiceBase>(),
-            languageServerFeatureOptions: languageServer.GetRequiredService<LanguageServerFeatureOptions>());
+            languageServerFeatureOptions: languageServer.GetRequiredService<LanguageServerFeatureOptions>(),
+            telemetryReporter: null);
 
         var projectRoot = Path.Combine(RepoRoot, "src", "Razor", "test", "testapps", "ComponentApp");
         var projectFilePath = Path.Combine(projectRoot, "ComponentApp.csproj");

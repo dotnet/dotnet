@@ -93,10 +93,11 @@ public class RazorSemanticTokensBenchmark : RazorLanguageServerBenchmarkBase
         };
         var cancellationToken = CancellationToken.None;
         var documentVersion = 1;
+        var correlationId = Guid.Empty;
 
         await UpdateDocumentAsync(documentVersion, DocumentSnapshot, cancellationToken).ConfigureAwait(false);
         await RazorSemanticTokenService.GetSemanticTokensAsync(
-            textDocumentIdentifier, Range, DocumentContext, SemanticTokensLegend, cancellationToken).ConfigureAwait(false);
+            textDocumentIdentifier, Range, DocumentContext, SemanticTokensLegend, correlationId, cancellationToken).ConfigureAwait(false);
     }
 
     private async Task UpdateDocumentAsync(int newVersion, IDocumentSnapshot documentSnapshot, CancellationToken cancellationToken)
@@ -142,6 +143,7 @@ public class RazorSemanticTokensBenchmark : RazorLanguageServerBenchmarkBase
             TextDocumentIdentifier textDocumentIdentifier,
             Range razorRange,
             long documentVersion,
+            Guid correlationId,
             CancellationToken cancellationToken,
             string previousResultId = null)
         {

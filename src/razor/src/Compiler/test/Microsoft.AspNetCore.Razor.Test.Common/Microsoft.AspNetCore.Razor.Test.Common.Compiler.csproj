@@ -4,12 +4,9 @@
     <!-- To generate baselines, run tests with /p:GenerateBaselines=true -->
     <DefineConstants Condition="'$(GenerateBaselines)'=='true'">$(DefineConstants);GENERATE_BASELINES</DefineConstants>
     <DefineConstants>$(DefineConstants);__RemoveThisBitTo__GENERATE_BASELINES</DefineConstants>
-    <TargetFrameworks>$(DefaultNetFxTargetFramework);netstandard2.0</TargetFrameworks>
+    <TargetFrameworks>$(DefaultNetCoreTargetFrameworks)</TargetFrameworks>
+    <TargetFrameworks Condition="'$(OS)' == 'Windows_NT'">$(TargetFrameworks);$(DefaultNetFxTargetFramework)</TargetFrameworks>
   </PropertyGroup>
-
-  <ItemGroup>
-    <Compile Include="..\..\..\Razor\test\Microsoft.AspNetCore.Razor.Test.Common\WorkItemAttribute.cs" />
-  </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Microsoft.AspNetCore.Razor.Test.ComponentShim\Microsoft.AspNetCore.Razor.Test.ComponentShim.Compiler.csproj" />
@@ -24,6 +21,7 @@
     <PackageReference Include="xunit.assert" PrivateAssets="all" />
     <PackageVersion Include="xunit.assert" Version="$(XunitAssertVersion)" />
     <PackageReference Include="xunit.extensibility.execution" />
+    <PackageReference Include="Microsoft.CodeAnalysis.Test.Utilities" />
   </ItemGroup>
 
 </Project>

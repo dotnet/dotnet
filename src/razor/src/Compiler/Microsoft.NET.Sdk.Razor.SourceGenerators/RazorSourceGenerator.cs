@@ -18,6 +18,18 @@ namespace Microsoft.NET.Sdk.Razor.SourceGenerators
     {
         private static RazorSourceGeneratorEventSource Log => RazorSourceGeneratorEventSource.Log;
 
+        // Testing usage only.
+        private readonly string? _testSuppressUniqueIds;
+
+        public RazorSourceGenerator()
+        {
+        }
+
+        internal RazorSourceGenerator(string testUniqueIds)
+        {
+            _testSuppressUniqueIds = testUniqueIds;
+        }
+
         public void Initialize(IncrementalGeneratorInitializationContext context)
         {
             var analyzerConfigOptions = context.AnalyzerConfigOptionsProvider;

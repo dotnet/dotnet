@@ -31,6 +31,7 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.ExternalAccess.RazorCompiler;
+using Microsoft.CodeAnalysis.Test.Utilities;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyModel;
 using Microsoft.Extensions.DependencyModel.Resolution;
@@ -59,7 +60,7 @@ public abstract class RazorSourceGeneratorTestsBase
 
     protected static async ValueTask<(GeneratorDriver, ImmutableArray<AdditionalText>, TestAnalyzerConfigOptionsProvider)> GetDriverWithAdditionalTextAndProviderAsync(Project project, Action<TestAnalyzerConfigOptionsProvider>? configureGlobalOptions = null, bool hostOutputs = false)
     {
-        var razorSourceGenerator = new RazorSourceGenerator().AsSourceGenerator();
+        var razorSourceGenerator = new RazorSourceGenerator(testUniqueIds: "test").AsSourceGenerator();
         var disabledOutputs = hostOutputs ? IncrementalGeneratorOutputKind.None : (IncrementalGeneratorOutputKind)0b100000;
         var driver = (GeneratorDriver)CSharpGeneratorDriver.Create(new[] { razorSourceGenerator }, parseOptions: (CSharpParseOptions)project.ParseOptions!, driverOptions: new GeneratorDriverOptions(disabledOutputs, true));
 
@@ -93,24 +94,16 @@ public abstract class RazorSourceGeneratorTestsBase
         return (driver, additionalTexts, optionsProvider);
     }
 
-    protected static GeneratorRunResult RunGenerator(Compilation compilation, ref GeneratorDriver driver, params Action<Diagnostic>[] expectedDiagnostics)
+    protected static GeneratorRunResult RunGenerator(Compilation compilation, ref GeneratorDriver driver, params DiagnosticDescription[] expectedDiagnostics)
     {
         return RunGenerator(compilation, ref driver, out _, expectedDiagnostics);
     }
 
-    protected static GeneratorRunResult RunGenerator(Compilation compilation, ref GeneratorDriver driver, out Compilation outputCompilation, params Action<Diagnostic>[] expectedDiagnostics)
+    protected static GeneratorRunResult RunGenerator(Compilation compilation, ref GeneratorDriver driver, out Compilation outputCompilation, params DiagnosticDescription[] expectedDiagnostics)
     {
         driver = driver.RunGeneratorsAndUpdateCompilation(compilation, out outputCompilation, out _);
 
-        var actualDiagnostics = outputCompilation.GetDiagnostics().Where(d => d.Severity != DiagnosticSeverity.Hidden);
-        if (expectedDiagnostics.Length == 0 && actualDiagnostics.Any())
-        {
-            Assert.Fail($"Compilation failed: {string.Join(Environment.NewLine, actualDiagnostics)}");
-        }
-        else
-        {
-            Assert.Collection(actualDiagnostics, expectedDiagnostics);
-        }
+        outputCompilation.VerifyDiagnostics(expectedDiagnostics);
 
         var result = driver.GetRunResult();
         return result.Results.Single();
@@ -310,7 +303,9 @@ public abstract class RazorSourceGeneratorTestsBase
                 {
                     // Ignore warnings about conflicts due to referencing `Microsoft.AspNetCore.App` DLLs.
                     // Won't be necessary after fixing https://github.com/dotnet/roslyn/issues/19640.
-                    new("CS1701", ReportDiagnostic.Hidden)
+                    new("CS1701", ReportDiagnostic.Suppress),
+                    // Ignore warnings about unused usings, we don't attempt to trim them
+                    new("CS8019", ReportDiagnostic.Suppress),
                 }));
 
         project = project.WithParseOptions(((CSharpParseOptions)project.ParseOptions!).WithLanguageVersion(LanguageVersion.Preview));
@@ -419,7 +414,7 @@ internal static class Extensions
             for (int i = 0; i < result.GeneratedSources.Length; i++)
             {
                 var text = TrimChecksum(result.GeneratedSources[i].SourceText.ToString());
-                Assert.Equal(text, TrimChecksum(expectedOutput[i]), ignoreWhiteSpaceDifferences: true);
+                AssertEx.AssertEqualToleratingWhitespaceDifferences(text, TrimChecksum(expectedOutput[i]));
             }
         }
 
@@ -448,7 +443,7 @@ internal static class Extensions
 
         return result;
     }
-    
+
     private static string CreateBaselineDirectory(string testPath, string testName)
     {
         var baselineDirectory = Path.Join(
@@ -472,7 +467,7 @@ internal static class Extensions
             var sourceText = source.SourceText.ToString();
             GenerateOutputBaseline(baselinePath, sourceText);
             var baselineText = File.ReadAllText(baselinePath);
-            AssertEx.EqualOrDiff(TrimChecksum(baselineText), TrimChecksum(sourceText));
+            AssertEx.AssertEqualToleratingWhitespaceDifferences(TrimChecksum(baselineText), TrimChecksum(sourceText));
             Assert.True(touchedFiles.Add(baselinePath));
         }
 
@@ -558,7 +553,7 @@ internal static class Extensions
             }
             else
             {
-                AssertEx.EqualOrDiff(TrimChecksum(diff), TrimChecksum(actual.GeneratedSources[i].SourceText.ToString()));
+                AssertEx.AssertEqualToleratingWhitespaceDifferences(TrimChecksum(diff), TrimChecksum(actual.GeneratedSources[i].SourceText.ToString()));
             }
         }
 
