@@ -153,7 +153,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 
 <!-- component list beginning -->
 - `src/arcade`  
-*[dotnet/arcade@8ac0e12](https://github.com/dotnet/arcade/commit/8ac0e1280f04bc897998a1f33bf6f27fe2146561)*
+*[dotnet/arcade@3f47191](https://github.com/dotnet/arcade/commit/3f47191cc250c6cf7c1861079a2ee2f8c0fcc21b)*
 - `src/aspnetcore`  
 *[dotnet/aspnetcore@d07f4d4](https://github.com/dotnet/aspnetcore/commit/d07f4d43aa93d91dd2db65daaffbf37ce0012841)*
     - `src/aspnetcore/src/submodules/googletest`  
@@ -177,7 +177,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/fsharp`  
 *[dotnet/fsharp@9bf50f7](https://github.com/dotnet/fsharp/commit/9bf50f790ca3135b4428d464cc735ff4e8ff1bd5)*
 - `src/installer`  
-*[dotnet/installer@84af3c2](https://github.com/dotnet/installer/commit/84af3c21c7643cf3f08f6f3d52136ed5ef6f0e78)*
+*[dotnet/installer@288dea4](https://github.com/dotnet/installer/commit/288dea4c0512eabb86a708b152efa4790428746a)*
 - `src/msbuild`  
 *[dotnet/msbuild@0cad196](https://github.com/dotnet/msbuild/commit/0cad196bd27a639e701af16d435e0be64bb852f6)*
 - `src/nuget-client`  
@@ -225,7 +225,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/xdt`  
 *[dotnet/xdt@9a1c3e1](https://github.com/dotnet/xdt/commit/9a1c3e1b7f0c8763d4c96e593961a61a72679a7b)*
 - `src/xliff-tasks`  
-*[dotnet/xliff-tasks@b0368bf](https://github.com/dotnet/xliff-tasks/commit/b0368bfd6df87d2e30b1191d81c477b5419a9f29)*
+*[dotnet/xliff-tasks@10a822a](https://github.com/dotnet/xliff-tasks/commit/10a822a79bde97ca45faa76dc4ec33b85533728a)*
 <!-- component list end -->
 
 The repository also contains a [JSON manifest](https://github.com/dotnet/dotnet/blob/main/src/source-manifest.json) listing all components in a machine-readable format.
