@@ -704,9 +704,10 @@ public class RazorSemanticTokenInfoServiceTest : SemanticTokenTestBase
 
         var textDocumentIdentifier = textDocumentIdentifiers.Dequeue();
         var documentContext = documentContexts.Peek();
+        var correlationId = Guid.Empty;
 
         // Act
-        var tokens = await service.GetSemanticTokensAsync(textDocumentIdentifier, range, documentContext, TestRazorSemanticTokensLegend.Instance, DisposalToken);
+        var tokens = await service.GetSemanticTokensAsync(textDocumentIdentifier, range, documentContext, TestRazorSemanticTokensLegend.Instance, correlationId, DisposalToken);
 
         // Assert
         AssertSemanticTokensMatchesBaseline(tokens?.Data);

@@ -58,7 +58,8 @@ public class CodeActionEndpointTest : LanguageServerTestBase
             Array.Empty<ICSharpCodeActionProvider>(),
             Array.Empty<IHtmlCodeActionProvider>(),
             _languageServer,
-            _languageServerFeatureOptions)
+            _languageServerFeatureOptions,
+            telemetryReporter: null)
         {
             _supportsCodeActionResolve = false
         };
@@ -92,7 +93,8 @@ public class CodeActionEndpointTest : LanguageServerTestBase
             Array.Empty<ICSharpCodeActionProvider>(),
             Array.Empty<IHtmlCodeActionProvider>(),
             _languageServer,
-            _languageServerFeatureOptions)
+            _languageServerFeatureOptions,
+            telemetryReporter: null)
         {
             _supportsCodeActionResolve = false
         };
@@ -124,7 +126,8 @@ public class CodeActionEndpointTest : LanguageServerTestBase
             Array.Empty<ICSharpCodeActionProvider>(),
             Array.Empty<IHtmlCodeActionProvider>(),
             _languageServer,
-            _languageServerFeatureOptions)
+            _languageServerFeatureOptions,
+            telemetryReporter: null)
         {
             _supportsCodeActionResolve = false
         };
@@ -158,7 +161,8 @@ public class CodeActionEndpointTest : LanguageServerTestBase
             Array.Empty<ICSharpCodeActionProvider>(),
             Array.Empty<IHtmlCodeActionProvider>(),
             _languageServer,
-            _languageServerFeatureOptions)
+            _languageServerFeatureOptions,
+            telemetryReporter: null)
         {
             _supportsCodeActionResolve = false
         };
@@ -196,7 +200,8 @@ public class CodeActionEndpointTest : LanguageServerTestBase
             },
             Array.Empty<IHtmlCodeActionProvider>(),
             languageServer,
-            _languageServerFeatureOptions)
+            _languageServerFeatureOptions,
+            telemetryReporter: null)
         {
             _supportsCodeActionResolve = false
         };
@@ -232,7 +237,8 @@ public class CodeActionEndpointTest : LanguageServerTestBase
             Array.Empty<ICSharpCodeActionProvider>(),
             Array.Empty<IHtmlCodeActionProvider>(),
             _languageServer,
-            _languageServerFeatureOptions)
+            _languageServerFeatureOptions,
+            telemetryReporter: null)
         {
             _supportsCodeActionResolve = false
         };
@@ -275,7 +281,8 @@ public class CodeActionEndpointTest : LanguageServerTestBase
             },
             Array.Empty<IHtmlCodeActionProvider>(),
             languageServer,
-            _languageServerFeatureOptions)
+            _languageServerFeatureOptions,
+            telemetryReporter: null)
         {
             _supportsCodeActionResolve = false
         };
@@ -318,7 +325,8 @@ public class CodeActionEndpointTest : LanguageServerTestBase
             },
             Array.Empty<IHtmlCodeActionProvider>(),
             languageServer,
-            _languageServerFeatureOptions)
+            _languageServerFeatureOptions,
+            telemetryReporter: null)
         {
             _supportsCodeActionResolve = false
         };
@@ -354,7 +362,8 @@ public class CodeActionEndpointTest : LanguageServerTestBase
             Array.Empty<ICSharpCodeActionProvider>(),
             Array.Empty<IHtmlCodeActionProvider>(),
             _languageServer,
-            _languageServerFeatureOptions)
+            _languageServerFeatureOptions,
+            telemetryReporter: null)
         {
             _supportsCodeActionResolve = false
         };
@@ -397,7 +406,8 @@ public class CodeActionEndpointTest : LanguageServerTestBase
             },
             Array.Empty<IHtmlCodeActionProvider>(),
             languageServer,
-            _languageServerFeatureOptions)
+            _languageServerFeatureOptions,
+            telemetryReporter: null)
         {
             _supportsCodeActionResolve = false
         };
@@ -435,7 +445,8 @@ public class CodeActionEndpointTest : LanguageServerTestBase
             Array.Empty<ICSharpCodeActionProvider>(),
             Array.Empty<IHtmlCodeActionProvider>(),
             _languageServer,
-            _languageServerFeatureOptions)
+            _languageServerFeatureOptions,
+            telemetryReporter: null)
         {
             _supportsCodeActionResolve = true
         };
@@ -483,7 +494,8 @@ public class CodeActionEndpointTest : LanguageServerTestBase
             Array.Empty<ICSharpCodeActionProvider>(),
             Array.Empty<IHtmlCodeActionProvider>(),
             _languageServer,
-            _languageServerFeatureOptions)
+            _languageServerFeatureOptions,
+            telemetryReporter: null)
         {
             _supportsCodeActionResolve = false
         };
@@ -529,7 +541,8 @@ public class CodeActionEndpointTest : LanguageServerTestBase
             Array.Empty<ICSharpCodeActionProvider>(),
             Array.Empty<IHtmlCodeActionProvider>(),
             _languageServer,
-            _languageServerFeatureOptions)
+            _languageServerFeatureOptions,
+            telemetryReporter: null)
         {
             _supportsCodeActionResolve = false
         };
@@ -569,7 +582,8 @@ public class CodeActionEndpointTest : LanguageServerTestBase
             Array.Empty<ICSharpCodeActionProvider>(),
             Array.Empty<IHtmlCodeActionProvider>(),
             _languageServer,
-            _languageServerFeatureOptions)
+            _languageServerFeatureOptions,
+            telemetryReporter: null)
         {
             _supportsCodeActionResolve = false
         };
@@ -612,7 +626,8 @@ public class CodeActionEndpointTest : LanguageServerTestBase
             },
             Array.Empty<IHtmlCodeActionProvider>(),
             _languageServer,
-            _languageServerFeatureOptions)
+            _languageServerFeatureOptions,
+            telemetryReporter: null)
         {
             _supportsCodeActionResolve = false
         };
@@ -629,7 +644,7 @@ public class CodeActionEndpointTest : LanguageServerTestBase
         Assert.NotNull(context);
 
         // Act
-        var results = await codeActionEndpoint.GetCodeActionsFromLanguageServerAsync(RazorLanguageKind.CSharp, documentContext, context, Logger, default);
+        var results = await codeActionEndpoint.GetCodeActionsFromLanguageServerAsync(RazorLanguageKind.CSharp, documentContext, context, Guid.Empty, Logger, cancellationToken: default);
 
         // Assert
         Assert.Empty(results);
@@ -654,7 +669,8 @@ public class CodeActionEndpointTest : LanguageServerTestBase
             },
             Array.Empty<IHtmlCodeActionProvider>(),
             languageServer,
-            _languageServerFeatureOptions)
+            _languageServerFeatureOptions,
+            telemetryReporter: null)
         {
             _supportsCodeActionResolve = false
         };
@@ -674,7 +690,7 @@ public class CodeActionEndpointTest : LanguageServerTestBase
         Assert.NotNull(context);
 
         // Act
-        var results = await codeActionEndpoint.GetCodeActionsFromLanguageServerAsync(RazorLanguageKind.CSharp, documentContext, context, Logger, default);
+        var results = await codeActionEndpoint.GetCodeActionsFromLanguageServerAsync(RazorLanguageKind.CSharp, documentContext, context, Guid.Empty, Logger, cancellationToken: default);
 
         // Assert
         var result = Assert.Single(results);

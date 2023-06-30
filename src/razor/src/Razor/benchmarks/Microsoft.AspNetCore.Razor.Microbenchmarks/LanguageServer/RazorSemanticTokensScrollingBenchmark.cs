@@ -85,6 +85,7 @@ public class RazorSemanticTokensScrollingBenchmark : RazorLanguageServerBenchmar
             Uri = DocumentUri
         };
         var cancellationToken = CancellationToken.None;
+        var correlationId = Guid.Empty;
         var documentVersion = 1;
 
         await UpdateDocumentAsync(documentVersion, DocumentSnapshot).ConfigureAwait(false);
@@ -105,6 +106,7 @@ public class RazorSemanticTokensScrollingBenchmark : RazorLanguageServerBenchmar
                 range,
                 DocumentContext,
                 SemanticTokensLegend,
+                correlationId,
                 cancellationToken);
 
             lineCount = newLineCount;

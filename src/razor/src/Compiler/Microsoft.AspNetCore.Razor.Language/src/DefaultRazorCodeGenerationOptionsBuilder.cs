@@ -60,7 +60,8 @@ internal class DefaultRazorCodeGenerationOptionsBuilder : RazorCodeGenerationOpt
             SuppressNullabilityEnforcement,
             OmitMinimizedComponentAttributeValues,
             SupportLocalizedComponentNames,
-            UseEnhancedLinePragma)
+            UseEnhancedLinePragma,
+            SuppressUniqueIds)
         {
             SuppressMetadataSourceChecksumAttributes = SuppressMetadataSourceChecksumAttributes,
         };

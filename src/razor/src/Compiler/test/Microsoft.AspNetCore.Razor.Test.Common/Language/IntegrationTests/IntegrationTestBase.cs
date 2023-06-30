@@ -112,7 +112,12 @@ public abstract class IntegrationTestBase
     // Used by the test framework to set the 'base' name for test files.
     public static string FileName
     {
-        get { return _fileName.Value; }
+        get
+        {
+            var value = _fileName.Value;
+            Assert.NotNull(value);
+            return value;
+        }
         set { _fileName.Value = value; }
     }
 
@@ -140,6 +145,7 @@ public abstract class IntegrationTestBase
     {
         // Consider the file path to be relative to the 'FileName' of the test.
         var workingDirectory = Path.GetDirectoryName(FileName);
+        Assert.NotNull(workingDirectory);
 
         // Since these paths are used in baselines, we normalize them to windows style. We
         // use "" as the base path by convention to avoid baking in an actual file system

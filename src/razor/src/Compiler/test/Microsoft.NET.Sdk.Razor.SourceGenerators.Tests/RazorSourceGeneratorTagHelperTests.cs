@@ -5,8 +5,8 @@
 
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.CodeAnalysis.CSharp;
+using Roslyn.Test.Utilities;
 using Xunit;
 
 namespace Microsoft.NET.Sdk.Razor.SourceGenerators;
@@ -275,11 +275,11 @@ public sealed class RazorSourceGeneratorTagHelperTests : RazorSourceGeneratorTes
             ["Views/Home/Index.cshtml"] = """
                 @model TestProject.Models.Employee
                 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
-                
+
                 @{
                     Html.Html5DateRenderingMode = Html5DateRenderingMode.Rfc3339;
                 }
-                
+
                 <!DOCTYPE html>
                 <html>
                 <head>
@@ -287,9 +287,9 @@ public sealed class RazorSourceGeneratorTagHelperTests : RazorSourceGeneratorTes
                     <title>Create</title>
                 </head>
                 <body>
-                
+
                     <form asp-antiforgery="false">
-                
+
                         <div class="form-horizontal">
                             <h4>Employee</h4>
                             <hr />
@@ -339,7 +339,7 @@ public sealed class RazorSourceGeneratorTagHelperTests : RazorSourceGeneratorTes
                                     <span asp-validation-for="Salary"></span>
                                 </div>
                             </div>
-                
+
                             <div class="form-group">
                                 <div class="col-md-offset-2 col-md-10">
                                     <input type="submit" value="Create" class="btn btn-default" />
@@ -1087,7 +1087,7 @@ public sealed class RazorSourceGeneratorTagHelperTests : RazorSourceGeneratorTes
                 <nested>some-content</nested>
                 """,
             ["Views/RemoveInheritedTagHelpers/_ViewStart.cshtml"] = """
-                @{ 
+                @{
                     Layout = "~/Views/Shared/_LayoutWithRootTagHelper.cshtml";
                 }
                 """,
@@ -1100,7 +1100,7 @@ public sealed class RazorSourceGeneratorTagHelperTests : RazorSourceGeneratorTes
                 <nested>some-content</nested>
                 """,
             ["Views/InheritedTagHelperPrefix/_ViewStart.cshtml"] = """
-                @{ 
+                @{
                     Layout = "~/Views/Shared/_LayoutWithRootTagHelper.cshtml";
                 }
                 """,
@@ -1355,6 +1355,112 @@ public sealed class RazorSourceGeneratorTagHelperTests : RazorSourceGeneratorTes
         // Assert
         Assert.Empty(result.Diagnostics);
         Assert.Equal(2, result.GeneratedSources.Length);
+        await VerifyRazorPageMatchesBaselineAsync(compilation, "Views_Home_Index");
+    }
+
+    [Fact, WorkItem("https://github.com/dotnet/aspnetcore/pull/49034#issuecomment-1608571858")]
+    public async Task UrlResolutionTagHelper()
+    {
+        // Arrange
+        var project = CreateTestProject(new()
+        {
+            ["Views/Home/Index.cshtml"] = """
+                @page
+
+                <img src="~/images/red.png" alt="Red block" title="&lt;the title>" id="1">
+                """,
+        });
+        var compilation = await project.GetCompilationAsync();
+        var driver = await GetDriverAsync(project);
+
+        // Act
+        var result = RunGenerator(compilation!, ref driver, out compilation);
+
+        // Assert
+        Assert.Empty(result.Diagnostics);
+        Assert.Single(result.GeneratedSources);
+        await VerifyRazorPageMatchesBaselineAsync(compilation, "Views_Home_Index");
+    }
+
+    [Fact, WorkItem("https://github.com/dotnet/aspnetcore/pull/49034#issuecomment-1608571858")]
+    public async Task GlobalPrefixedDirective()
+    {
+        // Arrange
+        var project = CreateTestProject(new()
+        {
+            ["Views/Home/Index.cshtml"] = """
+                @addTagHelper *, TestProject
+                <vc:component1 />
+                <vc:component2 />
+                <vc:component3 />
+                <vc:component4 />
+                <vc:component5 />
+                <vc:component6 />
+                """,
+            ["Views/Shared/Components/Component1/Default.cshtml"] = """
+                <email>no directive</email>
+                """,
+            ["Views/Shared/Components/Component2/Default.cshtml"] = """
+                @addTagHelper global::TestProject.TagHelpers.EmailTagHelper, TestProject
+                <email>full name</email>
+                """,
+            ["Views/Shared/Components/Component3/Default.cshtml"] = """
+                @addTagHelper global::TestProject.TagHelpers.*, TestProject
+                <email>namespace prefix</email>
+                """,
+            ["Views/Shared/Components/Component4/Default.cshtml"] = """
+                @addTagHelper global::*, TestProject
+                <email>global prefix</email>
+                """,
+            ["Views/Shared/Components/Component5/Default.cshtml"] = """
+                @addTagHelper global::TestProject.TagHelpers.EmailTagHelper, TestProject
+                @removeTagHelper TestProject.TagHelpers.EmailTagHelper, TestProject
+                <email>add global, remove simple</email>
+                """,
+            ["Views/Shared/Components/Component6/Default.cshtml"] = """
+                @addTagHelper TestProject.TagHelpers.EmailTagHelper, TestProject
+                @removeTagHelper global::TestProject.TagHelpers.EmailTagHelper, TestProject
+                <email>add simple, remove global</email>
+                """,
+        }, new()
+        {
+            ["ViewComponents.cs"] = """
+                using Microsoft.AspNetCore.Mvc;
+
+                public class BaseComponent : ViewComponent
+                {
+                    public IViewComponentResult Invoke() => View();
+                }
+
+                public class Component1 : BaseComponent { }
+                public class Component2 : BaseComponent { }
+                public class Component3 : BaseComponent { }
+                public class Component4 : BaseComponent { }
+                public class Component5 : BaseComponent { }
+                public class Component6 : BaseComponent { }
+                """,
+            ["EmailTagHelper.cs"] = """
+                using Microsoft.AspNetCore.Razor.TagHelpers;
+                namespace TestProject.TagHelpers;
+
+                public class EmailTagHelper : TagHelper
+                {
+                    public override void Process(TagHelperContext context, TagHelperOutput output)
+                    {
+                        output.TagName = "a";
+                    }
+                }
+                """
+        });
+        var compilation = await project.GetCompilationAsync();
+        var driver = await GetDriverAsync(project);
+
+        // Act
+        var result = RunGenerator(compilation!, ref driver, out compilation);
+
+        // Assert
+        Assert.Empty(result.Diagnostics);
+        Assert.Equal(7, result.GeneratedSources.Length);
         await VerifyRazorPageMatchesBaselineAsync(compilation, "Views_Home_Index");
     }
 }
