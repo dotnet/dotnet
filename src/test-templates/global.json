@@ -10,12 +10,12 @@
       "version": "17.0",
       "allowPrerelease": false
     },
-    "dotnet": "8.0.100-preview.3.23178.7"
+    "dotnet": "8.0.100-preview.5.23303.2"
   },
   "msbuild-sdks": {
-    "Microsoft.DotNet.Arcade.Sdk": "8.0.0-beta.23224.1"
+    "Microsoft.DotNet.Arcade.Sdk": "8.0.0-beta.23322.2"
   },
   "sdk": {
-    "version": "8.0.100-preview.3.23178.7"
+    "version": "8.0.100-preview.5.23303.2"
   }
 }

@@ -81,10 +81,10 @@ stages:
           # Will eventually change this to two BYOC pools.
           ${{ if eq(variables._RunAsPublic, True) }}:
             name: NetCore-Public
-            demands: ImageOverride -equals windows.vs2022.amd64.open
+            demands: ImageOverride -equals windows.vs2022preview.amd64.open
           ${{ if eq(variables._RunAsInternal, True) }}:
             name: NetCore1ESPool-Internal
-            demands: ImageOverride -equals windows.vs2022.amd64
+            demands: ImageOverride -equals windows.vs2022preview.amd64
         strategy:
           matrix:
             Release:
