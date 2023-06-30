@@ -7,10 +7,10 @@
       "commitSha": "8ac0e1280f04bc897998a1f33bf6f27fe2146561"
     },
     {
-      "packageVersion": "8.0.0-preview.7.23328.3",
+      "packageVersion": "8.0.0-preview.7.23329.5",
       "path": "aspnetcore",
       "remoteUri": "https://github.com/dotnet/aspnetcore",
-      "commitSha": "c7b4724a7d90c247ba58715862dad29a704dd619"
+      "commitSha": "bbd739c2c7cc012365117280d40951b1277f32e2"
     },
     {
       "packageVersion": "0.11.4-alpha.23327.1",
@@ -58,7 +58,7 @@
       "packageVersion": "8.0.100",
       "path": "installer",
       "remoteUri": "https://github.com/dotnet/installer",
-      "commitSha": "bd6df861ce9cf8b406884a7cc1b7a383a994810b"
+      "commitSha": "b0946b1a29c4e9a11699dfc10e6560be5dc1cf55"
     },
     {
       "packageVersion": "17.8.0-preview-23328-02",
@@ -79,28 +79,28 @@
       "commitSha": "b382633a860ff2c3cb538187f88c2bfa83776e12"
     },
     {
-      "packageVersion": "4.7.0-3.23328.9",
+      "packageVersion": "4.7.0-3.23329.1",
       "path": "roslyn",
       "remoteUri": "https://github.com/dotnet/roslyn",
-      "commitSha": "44ee200c0358f7e0451e7705e5183adc3af060f8"
+      "commitSha": "b2bd4936daed91d4efd10c71177f7766823e615c"
     },
     {
-      "packageVersion": "3.3.5-beta1.23328.2",
+      "packageVersion": "3.3.5-beta1.23329.2",
       "path": "roslyn-analyzers",
       "remoteUri": "https://github.com/dotnet/roslyn-analyzers",
-      "commitSha": "c6b6e10443eb1e0e9b1b2e2a5c477f7291611a6b"
+      "commitSha": "9757d6136fc585a8f2029d9dd0493a20d5795d03"
     },
     {
-      "packageVersion": "8.0.0-preview.7.23328.10",
+      "packageVersion": "8.0.0-preview.7.23329.1",
       "path": "runtime",
       "remoteUri": "https://github.com/dotnet/runtime",
-      "commitSha": "cc585f6d611b4d0cef2b19c4a1ca1e5ec435e80c"
+      "commitSha": "3e34f7b955476b9f87d8392b63d4fd4ba40fd359"
     },
     {
-      "packageVersion": "8.0.100-preview.7.23329.3",
+      "packageVersion": "8.0.100-preview.7.23329.11",
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "d10b02ae5cc670609d920a672985ed4456bdd6b6"
+      "commitSha": "5964831aad7c00f0c7928447199c55d66a8c4c43"
     },
     {
       "packageVersion": "8.0.0-alpha.1.23326.1",
