@@ -177,7 +177,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/fsharp`  
 *[dotnet/fsharp@9bf50f7](https://github.com/dotnet/fsharp/commit/9bf50f790ca3135b4428d464cc735ff4e8ff1bd5)*
 - `src/installer`  
-*[dotnet/installer@ed5150f](https://github.com/dotnet/installer/commit/ed5150ffa1248db074339ac43f2391ef5ad74132)*
+*[dotnet/installer@28d4a6b](https://github.com/dotnet/installer/commit/28d4a6b4bed1515bdbe491c9e0c8ef7aa3a24497)*
 - `src/msbuild`  
 *[dotnet/msbuild@0cad196](https://github.com/dotnet/msbuild/commit/0cad196bd27a639e701af16d435e0be64bb852f6)*
 - `src/nuget-client`  
@@ -211,7 +211,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
     - `src/source-build-externals/src/newtonsoft-json`  
     *[JamesNK/Newtonsoft.Json@ae9fe44](https://github.com/JamesNK/Newtonsoft.Json/commit/ae9fe44e1323e91bcbd185ca1a14099fba7c021f)*
 - `src/source-build-reference-packages`  
-*[dotnet/source-build-reference-packages@bfbf6d4](https://github.com/dotnet/source-build-reference-packages/commit/bfbf6d4debede4e130db24f6ad40ace8f712d3b7)*
+*[dotnet/source-build-reference-packages@c7e229b](https://github.com/dotnet/source-build-reference-packages/commit/c7e229b7e8cd71c8479e236ae1efff3ad1d740f9)*
 - `src/sourcelink`  
 *[dotnet/sourcelink@4d2c8bf](https://github.com/dotnet/sourcelink/commit/4d2c8bf58e8cb7900ec2d9077c155572e2d3cd88)*
 - `src/symreader`  
@@ -219,7 +219,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/templating`  
 *[dotnet/templating@48614cc](https://github.com/dotnet/templating/commit/48614cc913441fa86a6214fa436203587db8fc1a)*
 - `src/test-templates`  
-*[dotnet/test-templates@8cfe653](https://github.com/dotnet/test-templates/commit/8cfe653fec0848f0745d1285f4bacb7195298b94)*
+*[dotnet/test-templates@86fd4cd](https://github.com/dotnet/test-templates/commit/86fd4cd1c57057f920678e29d6ecbba491abd142)*
 - `src/vstest`  
 *[microsoft/vstest@919ec83](https://github.com/microsoft/vstest/commit/919ec8358820228cc5fa77ef000051c1d6875399)*
 - `src/xdt`  

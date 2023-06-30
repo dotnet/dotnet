@@ -82,6 +82,11 @@
     <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\System.IO.Pipelines.6.0.3.csproj" />
 
     <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\System.Threading.Channels.6.0.0.csproj" />
+    
+    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\NuGet.Versioning.6.6.1.csproj" />
+    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\NuGet.Packaging.6.6.1.csproj" />
+    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\NuGet.Protocol.6.6.1.csproj" />
+    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\NuGet.Credentials.6.6.1.csproj" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(BuildDependencyPackageProjects)' == 'true'">
