@@ -18,26 +18,26 @@
       <Sha>209b724a3c843253d3071e8348c353b297b0b8b5</Sha>
       <SourceBuild RepoName="command-line-api" ManagedOnly="true" />
     </Dependency>
-    <Dependency Name="Microsoft.SourceBuild.Intermediate.source-build-reference-packages" Version="8.0.0-alpha.1.23314.1">
+    <Dependency Name="Microsoft.SourceBuild.Intermediate.source-build-reference-packages" Version="8.0.0-alpha.1.23326.1">
       <Uri>https://github.com/dotnet/source-build-reference-packages</Uri>
-      <Sha>f8ebadcc83f7fc8cfd5147078c87d6e583cb32f1</Sha>
+      <Sha>84f1ff26d068741fb0a9d3ff70f2e55ea0d26694</Sha>
       <SourceBuild RepoName="source-build-reference-packages" ManagedOnly="true" />
     </Dependency>
   </ProductDependencies>
   <ToolsetDependencies>
-    <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="8.0.0-beta.23262.5">
+    <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="8.0.0-beta.23322.2">
       <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>1aff4eb33aa7cbf26ccd9fc43c17cb609a14dad4</Sha>
+      <Sha>9747cf5ac4abb6a5a13cf31fa78b91d599180e07</Sha>
       <SourceBuild RepoName="arcade" ManagedOnly="true" />
     </Dependency>
-    <Dependency Name="Microsoft.SourceLink.GitHub" Version="8.0.0-beta.23218.3" CoherentParentDependency="Microsoft.DotNet.Arcade.Sdk">
+    <Dependency Name="Microsoft.SourceLink.GitHub" Version="8.0.0-beta.23314.2" CoherentParentDependency="Microsoft.DotNet.Arcade.Sdk">
       <Uri>https://github.com/dotnet/sourcelink</Uri>
-      <Sha>47c52dd2ebf9edfd40abdcff999c13eb461f6ce2</Sha>
+      <Sha>4d2c8bf58e8cb7900ec2d9077c155572e2d3cd88</Sha>
       <SourceBuild RepoName="sourcelink" ManagedOnly="true" />
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.XliffTasks" Version="1.0.0-beta.23261.1" CoherentParentDependency="Microsoft.DotNet.Arcade.Sdk">
+    <Dependency Name="Microsoft.DotNet.XliffTasks" Version="1.0.0-beta.23312.2" CoherentParentDependency="Microsoft.DotNet.Arcade.Sdk">
       <Uri>https://github.com/dotnet/xliff-tasks</Uri>
-      <Sha>a0391b3beff0696561189b5881f8af3b651d64ac</Sha>
+      <Sha>4234ffac87e305da80597cb46dc0d4a87fc4f7c2</Sha>
       <SourceBuild RepoName="xliff-tasks" ManagedOnly="true" />
     </Dependency>
   </ToolsetDependencies>
