@@ -5,6 +5,7 @@ using System.Collections;
 using System.CommandLine.Binding;
 using System.CommandLine.Parsing;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 
 namespace System.CommandLine
 {
@@ -48,12 +49,12 @@ namespace System.CommandLine
         }
 
         /// <summary>
-        /// Gets the minimum number of values required for an <see cref="Argument">argument</see>.
+        /// Gets the minimum number of values required for an <see cref="CliArgument">argument</see>.
         /// </summary>
         public int MinimumNumberOfValues { get; }
 
         /// <summary>
-        /// Gets the maximum number of values allowed for an <see cref="Argument">argument</see>.
+        /// Gets the maximum number of values allowed for an <see cref="CliArgument">argument</see>.
         /// </summary>
         public int MaximumNumberOfValues { get; }
 
@@ -72,48 +73,48 @@ namespace System.CommandLine
         public override int GetHashCode()
             => MaximumNumberOfValues ^ MinimumNumberOfValues ^ IsNonDefault.GetHashCode();
 
-        internal static ArgumentConversionResult? Validate(
-            SymbolResult symbolResult,
-            Argument argument,
-            int minimumNumberOfValues,
-            int maximumNumberOfValues)
+        internal static bool Validate(ArgumentResult argumentResult, [NotNullWhen(false)] out ArgumentConversionResult? error)
         {
-            var argumentResult = symbolResult switch
+            error = null;
+
+            if (argumentResult.Parent is null || argumentResult.Parent is OptionResult { Implicit: true })
             {
-                ArgumentResult a => a,
-                _ => symbolResult.Root!.FindResultFor(argument)
-            };
-
-            var tokenCount = argumentResult?.Tokens.Count ?? 0;
-
-            if (tokenCount < minimumNumberOfValues)
-            {
-                if (symbolResult.UseDefaultValueFor(argument))
-                {
-                    return null;
-                }
-
-                return ArgumentConversionResult.Failure(
-                    argument,
-                    symbolResult.LocalizationResources.RequiredArgumentMissing(symbolResult),
-                    ArgumentConversionResultType.FailedMissingArgument);
+                return true;
             }
 
-            if (tokenCount > maximumNumberOfValues)
+            int tokenCount = argumentResult.Tokens.Count;
+            if (tokenCount < argumentResult.Argument.Arity.MinimumNumberOfValues)
             {
-                if (symbolResult is OptionResult optionResult)
+                if (argumentResult.Parent.UseDefaultValueFor(argumentResult))
+                {
+                    return true;
+                }
+
+                error = ArgumentConversionResult.Failure(
+                    argumentResult,
+                    LocalizationResources.RequiredArgumentMissing(argumentResult),
+                    ArgumentConversionResultType.FailedMissingArgument);
+
+                return false;
+            }
+
+            if (tokenCount > argumentResult.Argument.Arity.MaximumNumberOfValues)
+            {
+                if (argumentResult.Parent is OptionResult optionResult)
                 {
                     if (!optionResult.Option.AllowMultipleArgumentsPerToken)
                     {
-                        return ArgumentConversionResult.Failure(
-                            argument,
-                            symbolResult!.LocalizationResources.ExpectsOneArgument(symbolResult),
+                        error = ArgumentConversionResult.Failure(
+                            argumentResult,
+                            LocalizationResources.ExpectsOneArgument(optionResult),
                             ArgumentConversionResultType.FailedTooManyArguments);
+
+                        return false;
                     }
                 }
             }
 
-            return null;
+            return true;
         }
 
         /// <summary>
@@ -141,23 +142,24 @@ namespace System.CommandLine
         /// </summary>
         public static ArgumentArity OneOrMore => new(1, MaximumArity);
 
-        internal static ArgumentArity Default(Type type, Argument argument, ParentNode? firstParent)
+        internal static ArgumentArity Default(CliArgument argument, ParentNode? firstParent)
         {
-            if (type == typeof(bool) || type == typeof(bool?))
+            if (argument.IsBoolean())
             {
                 return ZeroOrOne;
             }
 
             var parent = firstParent?.Symbol;
+            Type type = argument.ValueType;
 
             if (type != typeof(string) && typeof(IEnumerable).IsAssignableFrom(type))
             {
-                return parent is Command
+                return parent is CliCommand
                            ? ZeroOrMore
                            : OneOrMore;
             }
 
-            if (parent is Command &&
+            if (parent is CliCommand &&
                 (argument.HasDefaultValue ||
                  type.IsNullable()))
             {

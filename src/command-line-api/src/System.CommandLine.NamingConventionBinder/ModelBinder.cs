@@ -50,9 +50,9 @@ public class ModelBinder
     /// Sets a property using a value descriptor.
     /// </summary>
     /// <param name="property">The property to bind.</param>
-    /// <param name="valueDescriptor">A descriptor of the value to be used to set the property.</param>
+    /// <param name="symbol">A symbol to be used to set the property.</param>
     /// <exception cref="ArgumentException"></exception>
-    public void BindMemberFromValue(PropertyInfo property, IValueDescriptor valueDescriptor)
+    public void BindMemberFromValue(PropertyInfo property, CliSymbol symbol)
     {
         var propertyDescriptor = FindModelPropertyDescriptor(property.PropertyType, property.Name);
 
@@ -62,7 +62,7 @@ public class ModelBinder
                                         message: "Property is not described by any of the model property descriptors.");
         }
 
-        MemberBindingSources[propertyDescriptor] = new SpecificSymbolValueSource(valueDescriptor);
+        MemberBindingSources[propertyDescriptor] = new SpecificSymbolValueSource(symbol);
     }
 
     /// <summary>
@@ -132,7 +132,7 @@ public class ModelBinder
         var valueSource = GetValueSource(bindingSources, bindingContext, ValueDescriptor, EnforceExplicitBinding);
         return bindingContext.TryBindToScalarValue(ValueDescriptor,
                                                    valueSource,
-                                                   bindingContext.ParseResult.CommandResult.LocalizationResources,
+                                                   bindingContext.ParseResult,
                                                    out var boundValue)
                    ? (true, boundValue?.Value, true)
                    : (false, null, false);
@@ -141,7 +141,7 @@ public class ModelBinder
     private (bool success, object? newInstance, bool anyNonDefaults) InstanceFromSpecificConstructor(
         BindingContext bindingContext, ConstructorDescriptor constructor, IReadOnlyList<BoundValue>? boundValues, ref bool nonDefaultsUsed)
     {
-        var values = boundValues.Select(x => x.Value).ToArray();
+        var values = boundValues?.Select(x => x.Value).ToArray() ?? Array.Empty<object>();
         object? newInstance = null;
         try
         {
@@ -277,7 +277,7 @@ public class ModelBinder
         if (bindingContext.TryBindToScalarValue(
                 valueDescriptor,
                 valueSource,
-                bindingContext.ParseResult.CommandResult.LocalizationResources,
+                bindingContext.ParseResult,
                 out var boundValue))
         {
             return (boundValue, true);
@@ -332,7 +332,7 @@ public class ModelBinder
             valueSource);
     }
 
-    private protected IValueDescriptor FindModelPropertyDescriptor(Type propertyType, string propertyName)
+    private protected IValueDescriptor? FindModelPropertyDescriptor(Type propertyType, string propertyName)
     {
         return ModelDescriptor.PropertyDescriptors
                               .FirstOrDefault(desc =>

@@ -1,7 +1,6 @@
 ﻿// Copyright (c) .NET Foundation and contributors. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-using System.CommandLine.IO;
 using System.CommandLine.Parsing;
 using System.IO;
 using System.Linq;
@@ -15,7 +14,7 @@ namespace System.CommandLine.Suggest.Tests
 {
     public class SuggestionDispatcherTests
     {
-        private static readonly string _currentExeName = RootCommand.ExecutableName;
+        private static readonly string _currentExeName = CliRootCommand.ExecutableName;
         
         private static readonly string _dotnetExeFullPath = 
             DotnetMuxer.Path.FullName;
@@ -39,7 +38,7 @@ namespace System.CommandLine.Suggest.Tests
         {
             string receivedTargetExeName = null;
 
-            string[] args = CommandLineStringSplitter.Instance.Split($@"get -p 12 -e ""{CurrentExeFullPath()}"" -- ""{_currentExeName} add""").ToArray();
+            string[] args = CliParser.SplitCommandLine($@"get -p 12 -e ""{CurrentExeFullPath()}"" -- ""{_currentExeName} add""").ToArray();
 
             await InvokeAsync(
                 args,
@@ -112,13 +111,13 @@ namespace System.CommandLine.Suggest.Tests
         private static string[] PrepareArgs(string args)
         {
             var formattableString = args.Replace("$", "");
-            return CommandLineStringSplitter.Instance.Split(formattableString).ToArray();
+            return CliParser.SplitCommandLine(formattableString).ToArray();
         }
 
         [Fact]
         public async Task InvokeAsync_with_unknown_suggestion_provider_returns_empty_string()
         {
-            string[] args = Enumerable.ToArray(( CommandLineStringSplitter.Instance.Split(@"get -p 10 -e ""testcli.exe"" -- command op")));
+            string[] args = Enumerable.ToArray(CliParser.SplitCommandLine(@"get -p 10 -e ""testcli.exe"" -- command op"));
             (await InvokeAsync(args, new TestSuggestionRegistration()))
                 .Should()
                 .BeEmpty();
@@ -130,13 +129,13 @@ namespace System.CommandLine.Suggest.Tests
             var provider = new TestSuggestionRegistration(new Registration(CurrentExeFullPath()));
             var dispatcher = new SuggestionDispatcher(provider, new TestSuggestionStore());
             dispatcher.Timeout = TimeSpan.FromMilliseconds(1);
-            var testConsole = new TestConsole();
+            dispatcher.Configuration.Output = new StringWriter();
 
-            var args = CommandLineStringSplitter.Instance.Split($@"get -p 0 -e ""{_currentExeName}"" -- {_currentExeName} add").ToArray();
+            var args = CliParser.SplitCommandLine($@"get -p 0 -e ""{_currentExeName}"" -- {_currentExeName} add").ToArray();
 
-            await dispatcher.InvokeAsync(args, testConsole);
+            await dispatcher.InvokeAsync(args);
 
-            testConsole.Out.ToString().Should().BeEmpty();
+            dispatcher.Configuration.Output.ToString().Should().BeEmpty();
         }
 
         [Fact]
@@ -152,11 +151,11 @@ namespace System.CommandLine.Suggest.Tests
                 new Registration(_kiwiFruitExeFullPath));
 
             var dispatcher = new SuggestionDispatcher(testSuggestionProvider);
-            var testConsole = new TestConsole();
+            dispatcher.Configuration.Output = new StringWriter();
 
-            await dispatcher.InvokeAsync(new[] { "list" }, testConsole);
+            await dispatcher.InvokeAsync(new[] { "list" });
 
-            testConsole.Out
+            dispatcher.Configuration.Output
                        .ToString()
                        .Should()
                        .Be($"dotnet-format{Environment.NewLine}dotnet format{Environment.NewLine}kiwi-fruit{Environment.NewLine}");
@@ -168,7 +167,7 @@ namespace System.CommandLine.Suggest.Tests
             var provider = new TestSuggestionRegistration();
             var dispatcher = new SuggestionDispatcher(provider);
 
-            var args = CommandLineStringSplitter.Instance.Split($"register --command-path \"{_netExeFullPath}\"").ToArray();
+            var args = CliParser.SplitCommandLine($"register --command-path \"{_netExeFullPath}\"").ToArray();
 
             await dispatcher.InvokeAsync(args);
 
@@ -182,7 +181,7 @@ namespace System.CommandLine.Suggest.Tests
             var provider = new TestSuggestionRegistration();
             var dispatcher = new SuggestionDispatcher(provider);
 
-            var args = CommandLineStringSplitter.Instance.Split($"register --command-path \"{_netExeFullPath}\"").ToArray();
+            var args = CliParser.SplitCommandLine($"register --command-path \"{_netExeFullPath}\"").ToArray();
 
             await dispatcher.InvokeAsync(args);
             await dispatcher.InvokeAsync(args);
@@ -196,9 +195,9 @@ namespace System.CommandLine.Suggest.Tests
             ISuggestionStore suggestionStore = null)
         {
             var dispatcher = new SuggestionDispatcher(suggestionProvider, suggestionStore ?? new TestSuggestionStore());
-            var testConsole = new TestConsole();
-            await dispatcher.InvokeAsync(args, testConsole);
-            return testConsole.Out.ToString();
+            dispatcher.Configuration.Output = new StringWriter();
+            await dispatcher.InvokeAsync(args);
+            return dispatcher.Configuration.Output.ToString();
         }
 
         private class TestSuggestionStore : ISuggestionStore

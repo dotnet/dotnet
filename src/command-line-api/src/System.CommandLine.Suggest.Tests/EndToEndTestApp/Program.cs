@@ -1,6 +1,8 @@
 using System.CommandLine;
+using System.CommandLine.Help;
 using System.CommandLine.Parsing;
 using System.Threading.Tasks;
+using System.Threading;
 
 namespace EndToEndTestApp
 {
@@ -8,29 +10,30 @@ namespace EndToEndTestApp
     {
         static async Task Main(string[] args)
         {
-            var appleOption = new Option<string>("--apple" );
-            var bananaOption = new Option<string>("--banana");
-            var cherryOption = new Option<string>("--cherry");
-            var durianOption = new Option<string>("--durian");
+            CliOption<string> appleOption = new ("--apple" );
+            CliOption<string> bananaOption = new ("--banana");
+            CliOption<string> cherryOption = new ("--cherry");
+            CliOption<string> durianOption = new ("--durian");
 
-            var rootCommand = new RootCommand
+            CliRootCommand rootCommand = new ()
             {
                 appleOption,          
                 bananaOption,          
                 cherryOption,          
-                durianOption,          
+                durianOption,
             };
 
-            rootCommand.SetHandler(
-                (string apple, string banana, string cherry, string durian) => Task.CompletedTask,
-                appleOption,
-                bananaOption,
-                cherryOption,
-                durianOption);
+            rootCommand.SetAction((ParseResult ctx, CancellationToken cancellationToken) =>
+            {
+                string apple = ctx.GetValue(appleOption);
+                string banana = ctx.GetValue(bananaOption);
+                string cherry = ctx.GetValue(cherryOption);
+                string durian = ctx.GetValue(durianOption);
 
-            var commandLine = new CommandLineBuilder(rootCommand)
-                .UseDefaults()
-                .Build();
+                return Task.CompletedTask;
+            });
+
+            CliConfiguration commandLine = new (rootCommand);
 
             await commandLine.InvokeAsync(args);
         }

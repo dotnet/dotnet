@@ -2,7 +2,6 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System.Collections.Generic;
-using System.CommandLine.Binding;
 using System.Linq;
 
 namespace System.CommandLine.Parsing
@@ -12,202 +11,110 @@ namespace System.CommandLine.Parsing
     /// </summary>
     public abstract class SymbolResult
     {
-        private readonly List<SymbolResult> _children = new();
-        private protected readonly List<Token> _tokens = new();
-        private LocalizationResources? _resources;
-        private readonly Dictionary<Argument, ArgumentResult> _defaultArgumentValues = new();
+        internal readonly SymbolResultTree SymbolResultTree;
+        private protected List<CliToken>? _tokens;
 
-        private protected SymbolResult(
-            Symbol symbol, 
-            SymbolResult? parent)
+        private protected SymbolResult(SymbolResultTree symbolResultTree, SymbolResult? parent)
         {
-            Symbol = symbol ?? throw new ArgumentNullException(nameof(symbol));
-
+            SymbolResultTree = symbolResultTree;
             Parent = parent;
-            
-            Root = parent?.Root;
         }
 
         /// <summary>
-        /// An error message for this symbol result.
+        /// The parse errors associated with this symbol result.
         /// </summary>
-        /// <remarks>Setting this value to a non-<c>null</c> during parsing will cause the parser to indicate an error for the user and prevent invocation of the command line.</remarks>
-        public string? ErrorMessage { get; set; }
+        public IEnumerable<ParseError> Errors
+        {
+            get
+            {
+                var parseErrors = SymbolResultTree.Errors;
 
-        /// <summary>
-        /// Child symbol results in the parse tree.
-        /// </summary>
-        public IReadOnlyList<SymbolResult> Children => _children;
+                if (parseErrors is null)
+                {
+                    yield break;
+                }
 
-        internal void AddChild(SymbolResult symbolResult) => _children.Add(symbolResult);
+                for (var i = 0; i < parseErrors.Count; i++)
+                {
+                    var parseError = parseErrors[i];
+                    if (parseError.SymbolResult == this)
+                    {
+                        yield return parseError;
+                    }
+                }
+            }
+        }
 
         /// <summary>
         /// The parent symbol result in the parse tree.
         /// </summary>
         public SymbolResult? Parent { get; }
 
-        internal virtual RootCommandResult? Root { get; }
-
-        /// <summary>
-        /// The symbol to which the result applies.
-        /// </summary>
-        public Symbol Symbol { get; }
-
         /// <summary>
         /// The list of tokens associated with this symbol result during parsing.
         /// </summary>
-        public IReadOnlyList<Token> Tokens => _tokens;
+        public IReadOnlyList<CliToken> Tokens => _tokens is not null ? _tokens : Array.Empty<CliToken>();
 
-        internal bool IsArgumentLimitReached => RemainingArgumentCapacity == 0;
-
-        private protected virtual int RemainingArgumentCapacity =>
-            MaximumArgumentCapacity - Tokens.Count;
-
-        internal int MaximumArgumentCapacity
-        {
-            get
-            {
-                switch (Symbol)
-                {
-                    case Option option:
-                        return option.Argument.Arity.MaximumNumberOfValues;
-
-                    case Argument argument:
-                        return argument.Arity.MaximumNumberOfValues;
-
-                    case Command command:
-                        var value = 0;
-
-                        var arguments = command.Arguments;
-
-                        for (var i = 0; i < arguments.Count; i++)
-                        {
-                            value += arguments[i].Arity.MaximumNumberOfValues;
-                        }
-
-                        return value;
-
-                    default:
-                        throw new NotSupportedException();
-                }
-            }
-        }
+        internal void AddToken(CliToken token) => (_tokens ??= new()).Add(token);
 
         /// <summary>
-        /// Localization resources used to produce messages for this symbol result.
+        /// Adds an error message for this symbol result to it's parse tree.
         /// </summary>
-        public LocalizationResources LocalizationResources
-        {
-            get => _resources ??= Parent?.LocalizationResources ?? LocalizationResources.Instance;
-            set => _resources = value;
-        }
-
-        internal void AddToken(Token token) => _tokens.Add(token);
+        /// <remarks>Setting an error will cause the parser to indicate an error for the user and prevent invocation of the command line.</remarks>
+        public virtual void AddError(string errorMessage) => SymbolResultTree.AddError(new ParseError(errorMessage, this));
 
         /// <summary>
         /// Finds a result for the specific argument anywhere in the parse tree, including parent and child symbol results.
         /// </summary>
         /// <param name="argument">The argument for which to find a result.</param>
         /// <returns>An argument result if the argument was matched by the parser or has a default value; otherwise, <c>null</c>.</returns>
-        public virtual ArgumentResult? FindResultFor(Argument argument) =>
-            Root?.FindResultFor(argument);
+        public ArgumentResult? GetResult(CliArgument argument) => SymbolResultTree.GetResult(argument);
 
         /// <summary>
         /// Finds a result for the specific command anywhere in the parse tree, including parent and child symbol results.
         /// </summary>
         /// <param name="command">The command for which to find a result.</param>
         /// <returns>An command result if the command was matched by the parser; otherwise, <c>null</c>.</returns>
-        public virtual CommandResult? FindResultFor(Command command) =>
-            Root?.FindResultFor(command);
+        public CommandResult? GetResult(CliCommand command) => SymbolResultTree.GetResult(command);
 
         /// <summary>
         /// Finds a result for the specific option anywhere in the parse tree, including parent and child symbol results.
         /// </summary>
         /// <param name="option">The option for which to find a result.</param>
         /// <returns>An option result if the option was matched by the parser or has a default value; otherwise, <c>null</c>.</returns>
-        public virtual OptionResult? FindResultFor(Option option) =>
-            Root?.FindResultFor(option);
+        public OptionResult? GetResult(CliOption option) => SymbolResultTree.GetResult(option);
 
-        /// <inheritdoc cref="ParseResult.GetValue(Argument)"/>
-        public T GetValue<T>(Argument<T> argument)
+        /// <summary>
+        /// Finds a result for the specific directive anywhere in the parse tree.
+        /// </summary>
+        /// <param name="directive">The directive for which to find a result.</param>
+        /// <returns>A directive result if the directive was matched by the parser, <c>null</c> otherwise.</returns>
+        public DirectiveResult? GetResult(CliDirective directive) => SymbolResultTree.GetResult(directive);
+
+        /// <inheritdoc cref="ParseResult.GetValue{T}(CliArgument{T})"/>
+        public T? GetValue<T>(CliArgument<T> argument)
         {
-            if (FindResultFor(argument) is { } result &&
+            if (GetResult(argument) is { } result &&
                 result.GetValueOrDefault<T>() is { } t)
             {
                 return t;
             }
 
-            return (T)ArgumentConverter.GetDefaultValue(argument.ValueType)!;
+            return CliArgument<T>.CreateDefaultValue();
         }
 
-        /// <inheritdoc cref="ParseResult.GetValue(Argument)"/>
-        public object? GetValue(Argument argument)
+        /// <inheritdoc cref="ParseResult.GetValue{T}(CliOption{T})"/>
+        public T? GetValue<T>(CliOption<T> option)
         {
-            if (FindResultFor(argument) is { } result &&
-                result.GetValueOrDefault<object?>() is { } t)
-            {
-                return t;
-            }
-
-            return ArgumentConverter.GetDefaultValue(argument.ValueType);
-        }
-
-        /// <inheritdoc cref="ParseResult.GetValue(Option)"/>
-        public T? GetValue<T>(Option<T> option)
-        {
-            if (FindResultFor(option) is { } result &&
+            if (GetResult(option) is { } result &&
                 result.GetValueOrDefault<T>() is { } t)
             {
                 return t;
             }
 
-            return (T)ArgumentConverter.GetDefaultValue(option.Argument.ValueType)!;
+            return CliArgument<T>.CreateDefaultValue();
         }
 
-        /// <inheritdoc cref="ParseResult.GetValue(Option)"/>
-        public object? GetValue(Option option)
-        {
-            if (FindResultFor(option) is { } result && 
-                result.GetValueOrDefault<object?>() is { } t)
-            {
-                return t;
-            }
-
-            return ArgumentConverter.GetDefaultValue(option.Argument.ValueType);
-        }
-
-        internal ArgumentResult GetOrCreateDefaultArgumentResult(Argument argument) =>
-            _defaultArgumentValues.GetOrAdd(
-                argument,
-                arg => new ArgumentResult(arg, this));
-
-        internal virtual bool UseDefaultValueFor(Argument argument) => false;
-
-        /// <inheritdoc/>
-        public override string ToString() => $"{GetType().Name}: {this.Token()} {string.Join(" ", Tokens.Select(t => t.Value))}";
-
-        internal ParseError? UnrecognizedArgumentError(Argument argument)
-        {
-            if (argument.AllowedValues?.Count > 0 &&
-                Tokens.Count > 0)
-            {
-                for (var i = 0; i < Tokens.Count; i++)
-                {
-                    var token = Tokens[i];
-
-                    if (token.Symbol is null || token.Symbol == argument)
-                    {
-                        if (!argument.AllowedValues.Contains(token.Value))
-                        {
-                            return new ParseError(
-                                LocalizationResources.UnrecognizedArgument(token.Value, argument.AllowedValues),
-                                this);
-                        }
-                    }
-                }
-            }
-
-            return null;
-        }
+        internal virtual bool UseDefaultValueFor(ArgumentResult argumentResult) => false;
     }
 }

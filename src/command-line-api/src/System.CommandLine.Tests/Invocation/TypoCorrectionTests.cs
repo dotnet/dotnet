@@ -1,5 +1,4 @@
-using System.CommandLine.IO;
-using System.CommandLine.Parsing;
+using System.IO;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Xunit;
@@ -9,178 +8,185 @@ namespace System.CommandLine.Tests.Invocation
 {
     public class TypoCorrectionTests
     {
-        private readonly TestConsole _console = new();
-
         [Fact]
         public async Task When_option_is_mistyped_it_is_suggested()
         {
-            var option = new Option<string>("info");
+            CliRootCommand rootCommand = new () 
+            {
+                new CliOption<string>("info")
+            };
 
-            var parser =
-                new CommandLineBuilder(new RootCommand
-                    {
-                        option
-                    })
-                    .UseTypoCorrections()
-                    .Build();
+            CliConfiguration config = new(rootCommand)
+            {
+                EnableTypoCorrections = true,
+                Output = new StringWriter()
+            };
 
-            var result = parser.Parse("niof");
+            var result = rootCommand.Parse("niof", config);
 
-            await result.InvokeAsync(_console);
+            await result.InvokeAsync();
 
-            _console.Out.ToString().Should().Contain($"'niof' was not matched. Did you mean one of the following?{NewLine}info");
+            config.Output.ToString().Should().Contain($"'niof' was not matched. Did you mean one of the following?{NewLine}info");
         }
 
         [Fact]
         public async Task When_there_are_no_matches_then_nothing_is_suggested()
         {
-            var option = new Option<bool>("info");
+            var option = new CliOption<bool>("info");
+            CliRootCommand rootCommand = new() { option };
 
-            var parser =
-                new CommandLineBuilder(new RootCommand
-                    {
-                        option
-                    })
-                    .UseTypoCorrections()
-                    .Build();
+            CliConfiguration configuration = new(rootCommand)
+            {
+                EnableTypoCorrections = true,
+                Output = new StringWriter()
+            };
 
-            var result = parser.Parse("zzzzzzz");
+            var result = rootCommand.Parse("zzzzzzz", configuration);
 
-            await result.InvokeAsync(_console);
+            await result.InvokeAsync();
 
-            _console.Out.ToString().Should().NotContain("was not matched");
+            configuration.Output.ToString().Should().NotContain("was not matched");
         }
 
         [Fact]
         public async Task When_command_is_mistyped_it_is_suggested()
         {
-            var command = new Command("restore");
+            var command = new CliCommand("restore");
+            CliRootCommand rootCommand = new() { command };
 
-            var parser =
-                new CommandLineBuilder(new RootCommand
-                    {
-                        command
-                    })
-                    .UseTypoCorrections()
-                    .Build();
+            CliConfiguration configuration = new(rootCommand)
+            {
+                EnableTypoCorrections = true,
+                Output = new StringWriter()
+            };
 
-            var result = parser.Parse("sertor");
+            var result = rootCommand.Parse("sertor", configuration);
 
-            await result.InvokeAsync(_console);
+            await result.InvokeAsync();
 
-            _console.Out.ToString().Should().Contain($"'sertor' was not matched. Did you mean one of the following?{NewLine}restore");
+            configuration.Output.ToString().Should().Contain($"'sertor' was not matched. Did you mean one of the following?{NewLine}restore");
         }
 
         [Fact]
         public async Task When_there_are_multiple_matches_it_picks_the_best_matches()
         {
-            var fromCommand = new Command("from");
-            var seenCommand = new Command("seen");
-            var aOption = new Option<bool>("a");
-            var beenOption = new Option<bool>("been");
-            var parser =
-                new CommandLineBuilder(new RootCommand
-                    {
-                        fromCommand,
-                        seenCommand,
-                        aOption,
-                        beenOption
-                    })
-                    .UseTypoCorrections()
-                    .Build();
+            var fromCommand = new CliCommand("from");
+            var seenCommand = new CliCommand("seen");
+            var aOption = new CliOption<bool>("a");
+            var beenOption = new CliOption<bool>("been");
+            CliRootCommand rootCommand = new ()
+            {
+                fromCommand,
+                seenCommand,
+                aOption,
+                beenOption
+            };
+            CliConfiguration configuration = new(rootCommand)
+            {
+                EnableTypoCorrections = true,
+                Output = new StringWriter()
+            };
 
-            var result = parser.Parse("een");
+            var result = rootCommand.Parse("een", configuration);
 
-            await result.InvokeAsync(_console);
+            await result.InvokeAsync();
 
-            _console.Out.ToString().Should().Contain($"'een' was not matched. Did you mean one of the following?{NewLine}seen{NewLine}been");
+            configuration.Output.ToString().Should().Contain($"'een' was not matched. Did you mean one of the following?{NewLine}seen{NewLine}been");
         }
 
         [Fact]
         public async Task Hidden_commands_are_not_suggested()
         {
-            var fromCommand = new Command("from");
-            var seenCommand = new Command("seen") { IsHidden = true };
-            var beenCommand = new Command("been");
+            var fromCommand = new CliCommand("from");
+            var seenCommand = new CliCommand("seen") { Hidden = true };
+            var beenCommand = new CliCommand("been");
+            CliRootCommand rootCommand = new CliRootCommand
+            {
+                fromCommand,
+                seenCommand,
+                beenCommand
+            };
 
-            var parser =
-                new CommandLineBuilder(new RootCommand
-                    {
-                        fromCommand,
-                        seenCommand,
-                        beenCommand
-                    })
-                    .UseTypoCorrections()
-                    .Build();
+            CliConfiguration configuration = new(rootCommand)
+            {
+                EnableTypoCorrections = true,
+                Output = new StringWriter()
+            };
 
-            var result = parser.Parse("een");
+            var result = rootCommand.Parse("een", configuration);
 
-            await result.InvokeAsync(_console);
+            await result.InvokeAsync();
 
-            _console.Out.ToString().Should().Contain($"'een' was not matched. Did you mean one of the following?{NewLine}been");
+            configuration.Output.ToString().Should().Contain($"'een' was not matched. Did you mean one of the following?{NewLine}been");
         }
 
         [Fact]
         public async Task Arguments_are_not_suggested()
         {
-            var argument = new Argument<string>("the-argument");
-            var command = new Command("been");
+            var argument = new CliArgument<string>("the-argument");
+            var command = new CliCommand("been");
+            var rootCommand = new CliRootCommand
+            {
+                argument,
+                command
+            };
+            CliConfiguration configuration = new(rootCommand)
+            {
+                EnableTypoCorrections = true,
+                EnableParseErrorReporting = false,
+                Output = new StringWriter()
+            };
 
-            var parser =
-                new CommandLineBuilder(new RootCommand
-                    {
-                        argument,
-                        command
-                    })
-                    .UseTypoCorrections()
-                    .Build();
+            var result = rootCommand.Parse("een", configuration);
 
-            var result = parser.Parse("een");
+            await result.InvokeAsync();
 
-            await result.InvokeAsync(_console);
-
-            _console.Out.ToString().Should().NotContain("the-argument");
+            configuration.Output.ToString().Should().NotContain("the-argument");
         }
 
         [Fact]
         public async Task Hidden_options_are_not_suggested()
         {
-            var fromOption = new Option<string>("from");
-            var seenOption = new Option<string>("seen") { IsHidden = true };
-            var beenOption = new Option<string>("been");
+            var fromOption = new CliOption<string>("from");
+            var seenOption = new CliOption<string>("seen") { Hidden = true };
+            var beenOption = new CliOption<string>("been");
+            var rootCommand = new CliRootCommand
+            {
+                fromOption,
+                seenOption,
+                beenOption
+            };
+            CliConfiguration config = new(rootCommand)
+            {
+                EnableTypoCorrections = true,
+                Output = new StringWriter()
+            };
 
-            var parser =
-                new CommandLineBuilder(new RootCommand
-                    {
-                        fromOption,
-                        seenOption,
-                        beenOption
-                    })
-                    .UseTypoCorrections()
-                    .Build();
-            var result = parser.Parse("een");
+            var result = rootCommand.Parse("een", config);
 
-            await result.InvokeAsync(_console);
+            await result.InvokeAsync();
 
-            _console.Out.ToString().Should().Contain($"'een' was not matched. Did you mean one of the following?{NewLine}been");
+            config.Output.ToString().Should().Contain($"'een' was not matched. Did you mean one of the following?{NewLine}been");
         }
 
         [Fact]
         public async Task Suggestions_favor_matches_with_prefix()
         {
-            var parser =
-                new CommandLineBuilder(new RootCommand
-                    {
-                        new Option<string>(new[] { "/call", "-call", "--call" }),
-                        new Option<string>(new[] { "/email", "-email", "--email" })
-                    })
-                    .UseTypoCorrections()
-                    .Build();
-            var result = parser.Parse("-all");
+            var rootCommand = new CliRootCommand
+            {
+                new CliOption<string>("/call", "-call", "--call"),
+                new CliOption<string>("/email", "-email", "--email")
+            };
+            CliConfiguration config = new(rootCommand)
+            {
+                EnableTypoCorrections = true,
+                Output = new StringWriter()
+            };
+            var result = rootCommand.Parse("-all", config);
 
-            await result.InvokeAsync(_console);
+            await result.InvokeAsync();
 
-            _console.Out.ToString().Should().Contain($"'-all' was not matched. Did you mean one of the following?{NewLine}-call");
+            config.Output.ToString().Should().Contain($"'-all' was not matched. Did you mean one of the following?{NewLine}-call");
         }
     }
 }

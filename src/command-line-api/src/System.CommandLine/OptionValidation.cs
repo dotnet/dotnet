@@ -7,7 +7,7 @@ using System.IO;
 namespace System.CommandLine
 {
     /// <summary>
-    /// Provides extension methods for <see cref="Option" />.
+    /// Provides extension methods for <see cref="CliOption" />.
     /// </summary>
     public static class OptionValidation
     {
@@ -16,9 +16,10 @@ namespace System.CommandLine
         /// </summary>
         /// <param name="option">The option to configure.</param>
         /// <returns>The option being extended.</returns>
-        public static Option<FileInfo> AcceptExistingOnly(this Option<FileInfo> option)
+        public static CliOption<FileInfo> AcceptExistingOnly(this CliOption<FileInfo> option)
         {
-            option.Argument.AddValidator(Validate.FileExists);
+            option._argument.AcceptExistingOnly();
+
             return option;
         }
 
@@ -27,9 +28,9 @@ namespace System.CommandLine
         /// </summary>
         /// <param name="option">The option to configure.</param>
         /// <returns>The option being extended.</returns>
-        public static Option<DirectoryInfo> AcceptExistingOnly(this Option<DirectoryInfo> option)
+        public static CliOption<DirectoryInfo> AcceptExistingOnly(this CliOption<DirectoryInfo> option)
         {
-            option.Argument.AddValidator(Validate.DirectoryExists);
+            option._argument.AcceptExistingOnly();
             return option;
         }
 
@@ -38,9 +39,9 @@ namespace System.CommandLine
         /// </summary>
         /// <param name="option">The option to configure.</param>
         /// <returns>The option being extended.</returns>
-        public static Option<FileSystemInfo> AcceptExistingOnly(this Option<FileSystemInfo> option)
+        public static CliOption<FileSystemInfo> AcceptExistingOnly(this CliOption<FileSystemInfo> option)
         {
-            option.Argument.AddValidator(Validate.FileOrDirectoryExists);
+            option._argument.AcceptExistingOnly();
             return option;
         }
 
@@ -49,13 +50,10 @@ namespace System.CommandLine
         /// </summary>
         /// <param name="option">The option to configure.</param>
         /// <returns>The option being extended.</returns>
-        public static Option<T> AcceptExistingOnly<T>(this Option<T> option)
+        public static CliOption<T> AcceptExistingOnly<T>(this CliOption<T> option)
             where T : IEnumerable<FileSystemInfo>
         {
-            if (option.Argument is Argument<T> arg)
-            {
-                arg.AcceptExistingOnly();
-            }
+            option._argument.AcceptExistingOnly();
 
             return option;
         }

@@ -20,7 +20,7 @@ public partial class HelpBuilder
         /// Gets an argument's default value to be displayed in help.
         /// </summary>
         /// <param name="argument">The argument to get the default value for.</param>
-        public static string GetArgumentDefaultValue(Argument argument)
+        public static string GetArgumentDefaultValue(CliArgument argument)
         {
             if (argument.HasDefaultValue)
             {
@@ -43,71 +43,53 @@ public partial class HelpBuilder
         /// <summary>
         /// Gets the description for an argument (typically used in the second column text in the arguments section).
         /// </summary>
-        public static string GetArgumentDescription(Argument argument) => argument.Description ?? string.Empty;
+        public static string GetArgumentDescription(CliArgument argument) => argument.Description ?? string.Empty;
 
         /// <summary>
         /// Gets the usage title for an argument (for example: <c>&lt;value&gt;</c>, typically used in the first column text in the arguments usage section, or within the synopsis.
         /// </summary>
-        public static string GetArgumentUsageLabel(Argument argument)
+        public static string GetArgumentUsageLabel(CliArgument argument)
         {
-            if (argument.ValueType == typeof(bool) ||
-                argument.ValueType == typeof(bool?))
+            // Argument.HelpName is always first choice
+            if (!string.IsNullOrWhiteSpace(argument.HelpName))
             {
-                if (argument.FirstParent?.Symbol is Command)
+                return $"<{argument.HelpName}>";
+            }
+            else if (!argument.IsBoolean() && argument.CompletionSources.Count > 0)
+            {
+                IEnumerable<string> completions = argument
+                    .GetCompletions(CompletionContext.Empty)
+                    .Select(item => item.Label);
+
+                string joined = string.Join("|", completions);
+
+                if (!string.IsNullOrEmpty(joined))
                 {
-                    return $"<{argument.Name}>";
-                }
-                else
-                {
-                    return "";
+                    return $"<{joined}>";
                 }
             }
 
-            string firstColumn;
-            var completions = (argument is { } a
-                                   ? a.GetCompletions()
-                                   : Array.Empty<CompletionItem>())
-                              .Select(item => item.Label)
-                              .ToArray();
-
-            var arg = argument;
-            var helpName = arg?.HelpName ?? string.Empty;
-
-            if (!string.IsNullOrEmpty(helpName))
-            {
-                firstColumn = helpName!;
-            }
-            else if (completions.Length > 0)
-            {
-                firstColumn = string.Join("|", completions);
-            }
-            else
-            {
-                firstColumn = argument.Name;
-            }
-
-            if (!string.IsNullOrWhiteSpace(firstColumn))
-            {
-                return $"<{firstColumn}>";
-            }
-            return firstColumn;
+            // By default Option.Name == Argument.Name, don't repeat it
+            return argument.FirstParent?.Symbol is not CliOption ? $"<{argument.Name}>" : "";
         }
-
-        /// <summary>
-        /// Gets the description for the specified symbol (typically the used as the second column in help text).
-        /// </summary>
-        /// <param name="symbol">The symbol to get the description for.</param>
-        public static string GetIdentifierSymbolDescription(IdentifierSymbol symbol) => symbol.Description ?? string.Empty;
 
         /// <summary>
         /// Gets the usage label for the specified symbol (typically used as the first column text in help output).
         /// </summary>
         /// <param name="symbol">The symbol to get a help item for.</param>
-        /// <param name="context">The help context, used for localization purposes.</param>
         /// <returns>Text to display.</returns>
-        public static string GetIdentifierSymbolUsageLabel(IdentifierSymbol symbol, HelpContext context)
+        public static string GetCommandUsageLabel(CliCommand symbol)
+            => GetIdentifierSymbolUsageLabel(symbol, symbol._aliases);
+
+        /// <inheritdoc cref="GetCommandUsageLabel(CliCommand)"/>
+        public static string GetOptionUsageLabel(CliOption symbol)
+            => GetIdentifierSymbolUsageLabel(symbol, symbol._aliases);
+
+        private static string GetIdentifierSymbolUsageLabel(CliSymbol symbol, AliasSet? aliasSet)
         {
-            var aliases = symbol.Aliases
+            var aliases =  aliasSet is null
+                ? new [] { symbol.Name }
+                : new [] {symbol.Name}.Concat(aliasSet)
                                 .Select(r => r.SplitPrefix())
                                 .OrderBy(r => r.Prefix, StringComparer.OrdinalIgnoreCase)
                                 .ThenBy(r => r.Alias, StringComparer.OrdinalIgnoreCase)
@@ -119,7 +101,7 @@ public partial class HelpBuilder
 
             foreach (var argument in symbol.Arguments())
             {
-                if (!argument.IsHidden)
+                if (!argument.Hidden)
                 {
                     var argumentFirstColumnText = GetArgumentUsageLabel(argument);
 
@@ -130,9 +112,9 @@ public partial class HelpBuilder
                 }
             }
 
-            if (symbol is Option { IsRequired: true })
+            if (symbol is CliOption { Required: true })
             {
-                firstColumnText += $" {context.HelpBuilder.LocalizationResources.HelpOptionsRequiredLabel()}";
+                firstColumnText += $" {LocalizationResources.HelpOptionsRequiredLabel()}";
             }
 
             return firstColumnText;
@@ -157,7 +139,7 @@ public partial class HelpBuilder
         public static Action<HelpContext> SynopsisSection() =>
             ctx =>
             {
-                ctx.HelpBuilder.WriteHeading(ctx.HelpBuilder.LocalizationResources.HelpDescriptionTitle(), ctx.Command.Description, ctx.Output);
+                ctx.HelpBuilder.WriteHeading(LocalizationResources.HelpDescriptionTitle(), ctx.Command.Description, ctx.Output);
             };
 
         /// <summary>
@@ -166,7 +148,7 @@ public partial class HelpBuilder
         public static Action<HelpContext> CommandUsageSection() =>
             ctx =>
             {
-                ctx.HelpBuilder.WriteHeading(ctx.HelpBuilder.LocalizationResources.HelpUsageTitle(), ctx.HelpBuilder.GetUsage(ctx.Command), ctx.Output);
+                ctx.HelpBuilder.WriteHeading(LocalizationResources.HelpUsageTitle(), ctx.HelpBuilder.GetUsage(ctx.Command), ctx.Output);
             };
 
         ///  <summary>
@@ -183,7 +165,7 @@ public partial class HelpBuilder
                     return;
                 }
 
-                ctx.HelpBuilder.WriteHeading(ctx.HelpBuilder.LocalizationResources.HelpArgumentsTitle(), null, ctx.Output);
+                ctx.HelpBuilder.WriteHeading(LocalizationResources.HelpArgumentsTitle(), null, ctx.Output);
                 ctx.HelpBuilder.WriteColumns(commandArguments, ctx);
             };
 
@@ -199,32 +181,45 @@ public partial class HelpBuilder
         public static Action<HelpContext> OptionsSection() =>
             ctx =>
             {
-                // by making this logic more complex, we were able to get some nice perf wins elsewhere
-                List<TwoColumnHelpRow> options = new();
-                HashSet<Option> uniqueOptions = new();
-                foreach (Option option in ctx.Command.Options)
+                List<TwoColumnHelpRow> optionRows = new();
+                bool addedHelpOption = false;
+
+                if (ctx.Command.HasOptions)
                 {
-                    if (!option.IsHidden && uniqueOptions.Add(option))
+                    foreach (CliOption option in ctx.Command.Options)
                     {
-                        options.Add(ctx.HelpBuilder.GetTwoColumnRow(option, ctx));
+                        if (!option.Hidden)
+                        {
+                            optionRows.Add(ctx.HelpBuilder.GetTwoColumnRow(option, ctx));
+                            if (option is HelpOption)
+                            {
+                                addedHelpOption = true;
+                            }
+                        }
                     }
                 }
 
-                Command? current = ctx.Command;
+                CliCommand? current = ctx.Command;
                 while (current is not null)
                 {
-                    Command? parentCommand = null;
+                    CliCommand? parentCommand = null;
                     ParentNode? parent = current.FirstParent;
                     while (parent is not null)
                     {
-                        if ((parentCommand = parent.Symbol as Command) is not null)
+                        if ((parentCommand = parent.Symbol as CliCommand) is not null)
                         {
-                            foreach (var option in parentCommand.Options)
+                            if (parentCommand.HasOptions)
                             {
-                                // global help aliases may be duplicated, we just ignore them
-                                if (option.IsGlobal && !option.IsHidden && uniqueOptions.Add(option))
+                                foreach (var option in parentCommand.Options)
                                 {
-                                    options.Add(ctx.HelpBuilder.GetTwoColumnRow(option, ctx));
+                                    // global help aliases may be duplicated, we just ignore them
+                                    if (option is { Recursive: true, Hidden: false })
+                                    {
+                                        if (option is not HelpOption || !addedHelpOption)
+                                        {
+                                            optionRows.Add(ctx.HelpBuilder.GetTwoColumnRow(option, ctx));
+                                        }
+                                    }
                                 }
                             }
 
@@ -235,19 +230,19 @@ public partial class HelpBuilder
                     current = parentCommand;
                 }
 
-                if (options.Count <= 0)
+                if (optionRows.Count <= 0)
                 {
                     ctx.WasSectionSkipped = true;
                     return;
                 }
 
-                ctx.HelpBuilder.WriteHeading(ctx.HelpBuilder.LocalizationResources.HelpOptionsTitle(), null, ctx.Output);
-                ctx.HelpBuilder.WriteColumns(options, ctx);
+                ctx.HelpBuilder.WriteHeading(LocalizationResources.HelpOptionsTitle(), null, ctx.Output);
+                ctx.HelpBuilder.WriteColumns(optionRows, ctx);
                 ctx.Output.WriteLine();
             };
 
         ///  <summary>
-        /// Writes a help section describing a command's additional arguments, typically shown only when <see cref="Command.TreatUnmatchedTokensAsErrors"/> is set to <see langword="true"/>.
+        /// Writes a help section describing a command's additional arguments, typically shown only when <see cref="CliCommand.TreatUnmatchedTokensAsErrors"/> is set to <see langword="true"/>.
         ///  </summary>
         public static Action<HelpContext> AdditionalArgumentsSection() =>
             ctx => ctx.HelpBuilder.WriteAdditionalArguments(ctx);

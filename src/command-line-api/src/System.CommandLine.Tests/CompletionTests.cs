@@ -1,6 +1,7 @@
 ﻿// Copyright (c) .NET Foundation and contributors. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+using System.CommandLine.Completions;
 using System.CommandLine.Parsing;
 using System.CommandLine.Tests.Utility;
 using System.IO;
@@ -24,10 +25,10 @@ namespace System.CommandLine.Tests
         [Fact]
         public void Option_GetCompletions_returns_argument_completions_if_configured()
         {
-            var option = new Option<string>("--hello")
-                .AddCompletions("one", "two", "three");
+            var option = new CliOption<string>("--hello");
+            option.CompletionSources.Add("one", "two", "three");
 
-            var completions = option.GetCompletions();
+            var completions = option.GetCompletions(CompletionContext.Empty);
 
             completions
                 .Select(item => item.Label)
@@ -38,14 +39,14 @@ namespace System.CommandLine.Tests
         [Fact]
         public void Command_GetCompletions_returns_available_option_aliases()
         {
-            var command = new Command("command")
+            var command = new CliCommand("command")
             {
-                new Option<string>("--one", "option one"),
-                new Option<string>("--two", "option two"),
-                new Option<string>("--three", "option three")
+                new CliOption<string>("--one") { Description = "option one" },
+                new CliOption<string>("--two") { Description = "option two" },
+                new CliOption<string>("--three") { Description = "option three" },
             };
 
-            var completions = command.GetCompletions();
+            var completions = command.GetCompletions(CompletionContext.Empty);
 
             completions
                 .Select(item => item.Label)
@@ -56,20 +57,29 @@ namespace System.CommandLine.Tests
         [Fact] // https://github.com/dotnet/command-line-api/issues/1563
         public void Command_GetCompletions_returns_available_option_aliases_for_global_options()
         {
-            var subcommand = new Command("command")
+            var subcommand2 = new CliCommand("command2")
             {
-                new Option<string>("--one", "option one"),
-                new Option<string>("--two", "option two")
+                new CliOption<string>("--one") { Description = "option one" },
+                new CliOption<string>("--two") { Description = "option two" }
             };
 
-            var rootCommand = new RootCommand
+            var subcommand1 = new CliCommand("command1")
             {
-                subcommand
+                subcommand2
             };
 
-            rootCommand.AddGlobalOption(new Option<string>("--three", "option three"));
+            var rootCommand = new CliCommand("root")
+            {
+                subcommand1
+            };
 
-            var completions = subcommand.GetCompletions();
+            rootCommand.Options.Add(new CliOption<string>("--three") 
+            { 
+                Description = "option three",
+                Recursive = true
+            });
+
+            var completions = subcommand2.GetCompletions(CompletionContext.Empty);
 
             completions
                 .Select(item => item.Label)
@@ -80,14 +90,14 @@ namespace System.CommandLine.Tests
         [Fact]
         public void Command_GetCompletions_returns_available_subcommands()
         {
-            var command = new Command("command")
+            var command = new CliCommand("command")
             {
-                new Command("one"),
-                new Command("two"),
-                new Command("three")
+                new CliCommand("one"),
+                new CliCommand("two"),
+                new CliCommand("three")
             };
 
-            var completions = command.GetCompletions();
+            var completions = command.GetCompletions(CompletionContext.Empty);
 
             completions
                 .Select(item => item.Label)
@@ -98,13 +108,13 @@ namespace System.CommandLine.Tests
         [Fact]
         public void Command_GetCompletions_returns_available_subcommands_and_option_aliases()
         {
-            var command = new Command("command")
+            var command = new CliCommand("command")
             {
-                new Command("subcommand"),
-                new Option<string>("--option")
+                new CliCommand("subcommand"),
+                new CliOption<string>("--option")
             };
 
-            var completions = command.GetCompletions();
+            var completions = command.GetCompletions(CompletionContext.Empty);
 
             completions.Select(item => item.Label)
                        .Should()
@@ -114,18 +124,18 @@ namespace System.CommandLine.Tests
         [Fact]
         public void Command_GetCompletions_returns_available_subcommands_and_option_aliases_and_configured_arguments()
         {
-            var command = new Command("command")
+            var command = new CliCommand("command")
             {
-                new Command("subcommand", "subcommand"),
-                new Option<bool>("--option", "option"),
-                new Argument<string[]>
+                new CliCommand("subcommand", "subcommand"),
+                new CliOption<bool>("--option") { Description = "option" },
+                new CliArgument<string[]>("args")
                 {
                     Arity = ArgumentArity.OneOrMore,
-                    Completions = { "command-argument" }
+                    CompletionSources = { "command-argument" }
                 }
             };
 
-            var completions = command.GetCompletions();
+            var completions = command.GetCompletions(CompletionContext.Empty);
 
             completions.Select(item => item.Label)
                        .Should()
@@ -135,14 +145,14 @@ namespace System.CommandLine.Tests
         [Fact]
         public void Command_GetCompletions_without_text_to_match_orders_alphabetically()
         {
-            var command = new Command("command")
+            var command = new CliCommand("command")
             {
-                new Command("andmythirdsubcommand"),
-                new Command("mysubcommand"),
-                new Command("andmyothersubcommand"),
+                new CliCommand("andmythirdsubcommand"),
+                new CliCommand("mysubcommand"),
+                new CliCommand("andmyothersubcommand"),
             };
 
-            var completions = command.GetCompletions();
+            var completions = command.GetCompletions(CompletionContext.Empty);
 
             completions
                 .Select(item => item.Label)
@@ -153,12 +163,12 @@ namespace System.CommandLine.Tests
         [Fact]
         public void Command_GetCompletions_does_not_return_argument_names()
         {
-            var command = new Command("command")
+            var command = new CliCommand("command")
             {
-                new Argument<string>("the-argument")
+                new CliArgument<string>("the-argument")
             };
 
-            var completions = command.GetCompletions();
+            var completions = command.GetCompletions(CompletionContext.Empty);
 
             completions
                 .Select(item => item.Label)
@@ -169,14 +179,15 @@ namespace System.CommandLine.Tests
         [Fact]
         public void Command_GetCompletions_with_text_to_match_orders_by_match_position_then_alphabetically()
         {
-            var command = new Command("command")
+            var command = new CliCommand("command")
             {
-                new Command("andmythirdsubcommand"),
-                new Command("mysubcommand"),
-                new Command("andmyothersubcommand"),
+                new CliCommand("andmythirdsubcommand"),
+                new CliCommand("mysubcommand"),
+                new CliCommand("andmyothersubcommand"),
             };
 
-            var completions = command.Parse("my").GetCompletions();
+            CliConfiguration simpleConfig = new (command);
+            var completions = command.Parse("my", simpleConfig).GetCompletions();
 
             completions
                 .Select(item => item.Label)
@@ -187,14 +198,15 @@ namespace System.CommandLine.Tests
         [Fact]
         public void When_an_option_has_a_default_value_it_will_still_be_suggested()
         {
-            var parser = new RootCommand
+            var command = new CliCommand("test")
             {
-                new Option<string>("--apple", defaultValueFactory: () => "cortland"),
-                new Option<string>("--banana"),
-                new Option<string>("--cherry")
+                new CliOption<string>("--apple") { DefaultValueFactory = (_) => "cortland" },
+                new CliOption<string>("--banana"),
+                new CliOption<string>("--cherry")
             };
 
-            var result = parser.Parse("");
+            CliConfiguration simpleConfig = new (command);
+            var result = command.Parse("", simpleConfig);
 
             _output.WriteLine(result.ToString());
 
@@ -209,21 +221,23 @@ namespace System.CommandLine.Tests
         [Fact]
         public void Command_GetCompletions_can_access_ParseResult()
         {
-            var originOption = new Option<string>("--origin");
+            var originOption = new CliOption<string>("--origin");
+            var cloneOption = new CliOption<string>("--clone");
 
-            var parser = new Parser(
-                new RootCommand
-                {
-                    originOption,
-                    new Option<string>("--clone")
-                        .AddCompletions(ctx =>
-                        {
-                            var opt1Value = ctx.ParseResult.GetValue(originOption);
-                            return !string.IsNullOrWhiteSpace(opt1Value) ? new[] { opt1Value } : Array.Empty<string>();
-                        })
-                });
+            cloneOption.CompletionSources.Add(ctx =>
+            {
+                var opt1Value = ctx.ParseResult.GetValue(originOption);
+                return !string.IsNullOrWhiteSpace(opt1Value) ? new[] { opt1Value } : Array.Empty<string>();
+            });
 
-            var result = parser.Parse("--origin test --clone ");
+            CliRootCommand rootCommand = new CliRootCommand
+            {
+                originOption,
+                cloneOption
+            };
+
+            CliConfiguration simpleConfig = new (rootCommand);
+            var result = rootCommand.Parse("--origin test --clone ", simpleConfig);
 
             _output.WriteLine(result.ToString());
 
@@ -232,19 +246,41 @@ namespace System.CommandLine.Tests
                   .Should()
                   .BeEquivalentTo("test");
         }
-        
+
+        [Fact]
+        public void Command_GetCompletions_include_recursive_options_of_root_command()
+        {
+            CliRootCommand rootCommand = new()
+            {
+                new CliCommand("sub")
+                {
+                    new CliOption<int>("--option")
+                }
+            };
+
+            var result = rootCommand.Parse("sub --option 123 ");
+
+            _output.WriteLine(result.ToString());
+
+            result.GetCompletions()
+                  .Select(item => item.Label)
+                  .Should()
+                  .BeEquivalentTo("--help", "-?", "-h", "/?", "/h");
+        }
+
         [Fact]
         public void When_one_option_has_been_specified_then_it_and_its_siblings_will_still_be_suggested()
         {
-            var parser = new Command("command")
-                         {
-                             new Option<string>("--apple"),
-                             new Option<string>("--banana"),
-                             new Option<string>("--cherry")
-                         };
+            var command = new CliCommand("command")
+            {
+                new CliOption<string>("--apple"),
+                new CliOption<string>("--banana"),
+                new CliOption<string>("--cherry")
+            };
 
             var commandLine = "--apple grannysmith";
-            var result = parser.Parse(commandLine);
+            CliConfiguration simpleConfig = new (command);
+            var result = command.Parse(commandLine, simpleConfig);
 
             result.GetCompletions(commandLine.Length + 1)
                   .Select(item => item.Label)
@@ -256,23 +292,24 @@ namespace System.CommandLine.Tests
         [Fact]
         public void When_a_subcommand_has_been_specified_then_its_sibling_commands_will_not_be_suggested()
         {
-            var rootCommand = new RootCommand
+            var rootCommand = new CliRootCommand
             {
-                new Command("apple")
+                new CliCommand("apple")
                 {
-                    new Option<string>("--cortland")
+                    new CliOption<string>("--cortland")
                 },
-                new Command("banana")
+                new CliCommand("banana")
                 {
-                    new Option<string>("--cavendish")
+                    new CliOption<string>("--cavendish")
                 },
-                new Command("cherry")
+                new CliCommand("cherry")
                 {
-                    new Option<string>("--rainier")
+                    new CliOption<string>("--rainier")
                 }
             };
+            CliConfiguration simpleConfig = new (rootCommand);
 
-            var result = rootCommand.Parse("cherry ");
+            var result = rootCommand.Parse("cherry ", simpleConfig);
 
             result.GetCompletions()
                   .Should()
@@ -282,25 +319,26 @@ namespace System.CommandLine.Tests
         [Fact]
         public void When_a_subcommand_has_been_specified_then_its_sibling_commands_aliases_will_not_be_suggested()
         {
-            var apple = new Command("apple")
+            var apple = new CliCommand("apple")
             {
-                new Option<string>("--cortland")
+                new CliOption<string>("--cortland")
             };
-            apple.AddAlias("apl");
+            apple.Aliases.Add("apl");
 
-            var banana = new Command("banana")
+            var banana = new CliCommand("banana")
             {
-                new Option<string>("--cavendish")
+                new CliOption<string>("--cavendish")
             };
-            banana.AddAlias("bnn");
+            banana.Aliases.Add("bnn");
 
-            var rootCommand = new RootCommand
+            var rootCommand = new CliRootCommand
             {
                 apple,
                 banana
             };
+            CliConfiguration simpleConfig = new (rootCommand);
 
-            var result = rootCommand.Parse("banana ");
+            var result = rootCommand.Parse("banana ", simpleConfig);
 
             result.GetCompletions()
                   .Select(item => item.Label)
@@ -311,14 +349,15 @@ namespace System.CommandLine.Tests
         [Fact] // https://github.com/dotnet/command-line-api/issues/1494
         public void When_a_subcommand_has_been_specified_then_its_sibling_options_will_not_be_suggested()
         {
-            var command = new RootCommand("parent")
+            var command = new CliRootCommand("parent")
             {
-                new Command("child"), 
-                new Option<string>("--parent-option")
+                new CliCommand("child"), 
+                new CliOption<string>("--parent-option")
             };
 
             var commandLine = "child";
-            var parseResult = command.Parse(commandLine);
+            CliConfiguration simpleConfig = new (command);
+            var parseResult = command.Parse(commandLine, simpleConfig);
 
             parseResult
                 .GetCompletions(commandLine.Length + 1)
@@ -330,15 +369,16 @@ namespace System.CommandLine.Tests
         [Fact]
         public void When_a_subcommand_has_been_specified_then_its_sibling_options_with_argument_limit_reached_will_be_not_be_suggested()
         {
-            var command = new RootCommand("parent")
+            var command = new CliRootCommand("parent")
             {
-                new Command("child"),
-                new Option<string>("--parent-option"),
-                new Argument<string>()
+                new CliCommand("child"),
+                new CliOption<string>("--parent-option"),
+                new CliArgument<string>("arg")
             };
 
             var commandLine = "--parent-option 123 child";
-            var parseResult = command.Parse(commandLine);
+            CliConfiguration simpleConfig = new (command);
+            var parseResult = command.Parse(commandLine, simpleConfig);
 
             parseResult
                 .GetCompletions(commandLine.Length + 1)
@@ -349,17 +389,18 @@ namespace System.CommandLine.Tests
         [Fact]
         public void When_a_subcommand_has_been_specified_then_its_child_options_will_be_suggested()
         {
-            var command = new RootCommand("parent")
+            var command = new CliRootCommand("parent")
             {
-                new Argument<string>(),
-                new Command("child")
+                new CliArgument<string>("arg"),
+                new CliCommand("child")
                 {
-                    new Option<string>("--child-option")
+                    new CliOption<string>("--child-option")
                 }
             };
 
             var commandLine = "child ";
-            var parseResult = command.Parse(commandLine);
+            CliConfiguration simpleConfig = new (command);
+            var parseResult = command.Parse(commandLine, simpleConfig);
 
             parseResult
                 .GetCompletions(commandLine.Length + 1)
@@ -371,43 +412,45 @@ namespace System.CommandLine.Tests
         [Fact]
         public void When_a_subcommand_with_subcommands_has_been_specified_then_its_sibling_commands_will_not_be_suggested()
         {
-            var rootCommand = new RootCommand
+            var rootCommand = new CliRootCommand
             {
-                new Command("apple")
+                new CliCommand("apple")
                 {
-                    new Command("cortland")
+                    new CliCommand("cortland")
                 },
-                new Command("banana")
+                new CliCommand("banana")
                 {
-                    new Command("cavendish")
+                    new CliCommand("cavendish")
                 },
-                new Command("cherry")
+                new CliCommand("cherry")
                 {
-                    new Command("rainier")
+                    new CliCommand("rainier")
                 }
             };
 
             var commandLine = "cherry";
-            var result = rootCommand.Parse(commandLine);
+            CliConfiguration simpleConfig = new (rootCommand);
+            var result = rootCommand.Parse(commandLine, simpleConfig);
 
             result.GetCompletions(commandLine.Length + 1)
                   .Select(item => item.Label)
                   .Should()
-                  .BeEquivalentTo("rainier");
+                  .BeEquivalentTo("--help", "-?", "-h", "/?", "/h", "rainier");
         }
 
         [Fact]
         public void When_one_option_has_been_partially_specified_then_nonmatching_siblings_will_not_be_suggested()
         {
-            var command = new Command("the-command")
+            var command = new CliCommand("the-command")
             {
-                new Option<string>("--apple"),
-                new Option<string>("--banana"),
-                new Option<string>("--cherry")
+                new CliOption<string>("--apple"),
+                new CliOption<string>("--banana"),
+                new CliOption<string>("--cherry")
             };
 
             var input = "a";
-            var result = command.Parse(input);
+            CliConfiguration simpleConfig = new (command);
+            var result = command.Parse(input, simpleConfig);
 
             result.GetCompletions(input.Length)
                   .Select(item => item.Label)
@@ -419,16 +462,17 @@ namespace System.CommandLine.Tests
         [Fact]
         public void An_option_can_be_hidden_from_completions_by_setting_IsHidden_to_true()
         {
-            var command = new Command("the-command")
+            var command = new CliCommand("the-command")
             {
-                new Option<string>("--hide-me")
+                new CliOption<string>("--hide-me")
                 {
-                    IsHidden = true
+                    Hidden = true
                 },
-                new Option<string>("-n", "Not hidden")
+                new CliOption<string>("-n") { Description = "Not hidden" }
             };
 
-            var completions = command.Parse("the-command ").GetCompletions();
+            CliConfiguration simpleConfig = new (command);
+            var completions = command.Parse("the-command ", simpleConfig).GetCompletions();
 
             completions.Select(item => item.Label).Should().NotContain("--hide-me");
         }
@@ -436,14 +480,15 @@ namespace System.CommandLine.Tests
         [Fact]
         public void Parser_options_can_supply_context_sensitive_matches()
         {
-            var parser = new RootCommand
+            var command = new CliRootCommand
             {
-                new Option<string>("--bread").AcceptOnlyFromAmong("wheat", "sourdough", "rye"),
-                new Option<string>("--cheese").AcceptOnlyFromAmong("provolone", "cheddar", "cream cheese")
+                CreateOptionWithAcceptOnlyFromAmong(name: "--bread", "wheat", "sourdough", "rye"),
+                CreateOptionWithAcceptOnlyFromAmong(name: "--cheese", "provolone", "cheddar", "cream cheese")
             };
 
             var commandLine = "--bread";
-            var result = parser.Parse(commandLine);
+            CliConfiguration simpleConfig = new (command);
+            var result = command.Parse(commandLine, simpleConfig);
 
             result.GetCompletions(commandLine.Length + 1)
                   .Select(item => item.Label)
@@ -451,7 +496,7 @@ namespace System.CommandLine.Tests
                   .BeEquivalentTo("rye", "sourdough", "wheat");
 
             commandLine = "--bread wheat --cheese ";
-            result = parser.Parse(commandLine);
+            result = command.Parse(commandLine, simpleConfig);
 
             result.GetCompletions(commandLine.Length + 1)
                   .Select(item => item.Label)
@@ -462,15 +507,16 @@ namespace System.CommandLine.Tests
         [Fact]
         public void Subcommand_names_are_available_as_suggestions()
         {
-            var command = new Command("test")
+            var command = new CliCommand("test")
             {
-                new Command("one", "Command one"),
-                new Command("two", "Command two"),
-                new Argument<string>()
+                new CliCommand("one", "Command one"),
+                new CliCommand("two", "Command two"),
+                new CliArgument<string>("arg")
             };
 
             var commandLine = "test";
-            command.Parse(commandLine)
+            CliConfiguration simpleConfig = new (command);
+            command.Parse(commandLine, simpleConfig)
                    .GetCompletions(commandLine.Length + 1)
                    .Select(item => item.Label)
                    .Should()
@@ -480,16 +526,16 @@ namespace System.CommandLine.Tests
         [Fact]
         public void Both_subcommands_and_options_are_available_as_suggestions()
         {
-            var command = new Command("test")
+            var command = new CliCommand("test")
             {
-                new Command("one"),
-                new Option<string>("--one"),
-                new Argument<string>()
+                new CliCommand("one"),
+                new CliOption<string>("--one"),
+                new CliArgument<string>("arg")
             };
 
             var commandLine = "test";
-
-            command.Parse(commandLine)
+            CliConfiguration simpleConfig = new (command);
+            command.Parse(commandLine, simpleConfig)
                    .GetCompletions(commandLine.Length + 1)
                    .Select(item => item.Label)
                    .Should()
@@ -501,16 +547,15 @@ namespace System.CommandLine.Tests
         [InlineData("outer -")]
         public void Option_GetCompletions_are_not_provided_without_matching_prefix(string input)
         {
-            var command = new Command("outer")
+            var command = new CliCommand("outer")
             {
-                new Option<string>("--one"),
-                new Option<string>("--two"),
-                new Option<string>("--three")
+                new CliOption<string>("--one"),
+                new CliOption<string>("--two"),
+                new CliOption<string>("--three")
             };
 
-            var parser = new Parser(command);
-
-            ParseResult result = parser.Parse(input);
+            CliConfiguration simpleConfig = new (command);
+            ParseResult result = command.Parse(input, simpleConfig);
             result.GetCompletions()
                   .Select(item => item.Label)
                   .Should()
@@ -520,16 +565,16 @@ namespace System.CommandLine.Tests
         [Fact]
         public void Option_GetCompletions_can_be_based_on_the_proximate_option()
         {
-            var parser = new Parser(
-                new Command("outer")
-                {
-                    new Option<string>("--one"),
-                    new Option<string>("--two"),
-                    new Option<string>("--three")
-                });
+            CliCommand outer = new CliCommand("outer")
+            {
+                new CliOption<string>("--one"),
+                new CliOption<string>("--two"),
+                new CliOption<string>("--three")
+            };
 
             var commandLine = "outer";
-            ParseResult result = parser.Parse(commandLine);
+            CliConfiguration simpleConfig = new (outer);
+            ParseResult result = outer.Parse(commandLine, simpleConfig);
 
             result.GetCompletions(commandLine.Length + 1)
                   .Select(item => item.Label)
@@ -540,15 +585,15 @@ namespace System.CommandLine.Tests
         [Fact]
         public void Argument_completions_can_be_based_on_the_proximate_option()
         {
-            var parser = new Parser(
-                new Command("outer")
-                {
-                    new Option<string>("--one").AcceptOnlyFromAmong("one-a", "one-b"),
-                    new Option<string>("--two").AcceptOnlyFromAmong("two-a", "two-b")
-                });
+            var outer = new CliCommand("outer")
+            {
+                CreateOptionWithAcceptOnlyFromAmong(name: "--one", "one-a", "one-b"),
+                CreateOptionWithAcceptOnlyFromAmong(name: "--two", "two-a", "two-b")
+            };
 
             var commandLine = "outer --two";
-            ParseResult result = parser.Parse(commandLine);
+            CliConfiguration simpleConfig = new (outer);
+            ParseResult result = outer.Parse(commandLine, simpleConfig);
 
             result.GetCompletions(commandLine.Length + 1)
                   .Select(item => item.Label)
@@ -559,15 +604,15 @@ namespace System.CommandLine.Tests
         [Fact]
         public void Option_GetCompletions_can_be_based_on_the_proximate_option_and_partial_input()
         {
-            var parser = new Parser(
-                new Command("outer")
-                {
-                    new Command("one", "Command one"),
-                    new Command("two", "Command two"),
-                    new Command("three", "Command three")
-                });
+            var outer = new CliCommand("outer")
+            {
+                new CliCommand("one", "Command one"),
+                new CliCommand("two", "Command two"),
+                new CliCommand("three", "Command three")
+            };
 
-            ParseResult result = parser.Parse("outer o");
+            CliConfiguration simpleConfig = new (outer);
+            ParseResult result = outer.Parse("outer o", simpleConfig);
 
             result.GetCompletions()
                   .Select(item => item.Label)
@@ -578,20 +623,23 @@ namespace System.CommandLine.Tests
         [Fact]
         public void Completions_can_be_provided_in_the_absence_of_validation()
         {
-            var command = new Command("the-command")
-                {
-                    new Option<string>("-t")
-                        .AddCompletions("vegetable", "mineral", "animal")
-                };
+            CliOption<string> option = new ("-t");
+            option.CompletionSources.Add("vegetable", "mineral", "animal");
 
-            command.Parse("the-command -t m")
+            var command = new CliCommand("the-command")
+            {
+                option
+            };
+
+            CliConfiguration simpleConfig = new (command);
+            command.Parse("the-command -t m", simpleConfig)
                    .GetCompletions()
                    .Select(item => item.Label)
                    .Should()
                    .BeEquivalentTo("animal",
                                    "mineral");
 
-            command.Parse("the-command -t something-else")
+            command.Parse("the-command -t something-else", simpleConfig)
                    .Errors
                    .Should()
                    .BeEmpty();
@@ -600,13 +648,13 @@ namespace System.CommandLine.Tests
         [Fact]
         public void Command_argument_completions_can_be_provided_using_a_delegate()
         {
-            var command = new Command("the-command")
+            var command = new CliCommand("the-command")
             {
-                new Command("one")
+                new CliCommand("one")
                 {
-                    new Argument<string>
+                    new CliArgument<string>("arg")
                         {
-                            Completions = { _ => new[] { "vegetable", "mineral", "animal" } }
+                            CompletionSources = { _ => new[] { "vegetable", "mineral", "animal" } }
                         }
                 }
             };
@@ -621,10 +669,12 @@ namespace System.CommandLine.Tests
         [Fact]
         public void Option_argument_completions_can_be_provided_using_a_delegate()
         {
-            var command = new Command("the-command")
+            var option = new CliOption<string>("-x");
+            option.CompletionSources.Add(_ => new[] { "vegetable", "mineral", "animal" });
+
+            var command = new CliCommand("the-command")
             {
-                new Option<string>("-x")
-                    .AddCompletions(_ => new [] { "vegetable", "mineral", "animal" })
+                option
             };
 
             var parseResult = command.Parse("the-command -x m");
@@ -639,23 +689,16 @@ namespace System.CommandLine.Tests
         [Fact]
         public void When_caller_does_the_tokenizing_then_argument_completions_are_based_on_the_proximate_option()
         {
-            var command = new Command("outer")
+            var command = new CliCommand("outer")
             {
-                new Option<string>("one")
-                    .AcceptOnlyFromAmong("one-a", "one-b", "one-c"),
-                new Option<string>("two")
-                    .AcceptOnlyFromAmong("two-a", "two-b", "two-c"),
-                new Option<string>("three")
-                    .AcceptOnlyFromAmong("three-a", "three-b", "three-c")
+                CreateOptionWithAcceptOnlyFromAmong(name: "one", "one-a", "one-b", "one-c"),
+                CreateOptionWithAcceptOnlyFromAmong(name: "two", "two-a", "two-b", "two-c"),
+                CreateOptionWithAcceptOnlyFromAmong(name: "three", "three-a", "three-b", "three-c")
             };
 
-            var parser = new CommandLineBuilder(new RootCommand
-                         {
-                             command
-                         })
-                         .Build();
+            var configuration = new CliConfiguration(command);
 
-            var result = parser.Parse("outer two b" );
+            var result = command.Parse("outer two b", configuration);
 
             result.GetCompletions()
                   .Select(item => item.Label)
@@ -666,14 +709,11 @@ namespace System.CommandLine.Tests
         [Fact]
         public void When_parsing_from_array_then_argument_completions_are_based_on_the_proximate_option()
         {
-            var command = new Command("outer")
+            var command = new CliCommand("outer")
             {
-                new Option<string>("one")
-                    .AcceptOnlyFromAmong("one-a", "one-b", "one-c"),
-                new Option<string>("two")
-                    .AcceptOnlyFromAmong("two-a", "two-b", "two-c"),
-                new Option<string>("three")
-                    .AcceptOnlyFromAmong("three-a", "three-b", "three-c")
+                CreateOptionWithAcceptOnlyFromAmong(name: "one", "one-a", "one-b", "one-c"),
+                CreateOptionWithAcceptOnlyFromAmong(name: "two", "two-a", "two-b", "two-c"),
+                CreateOptionWithAcceptOnlyFromAmong(name: "three", "three-a", "three-b", "three-c")
             };
 
             var result = command.Parse("outer two b");
@@ -687,19 +727,19 @@ namespace System.CommandLine.Tests
         [Fact]
         public void When_parsing_from_text_then_argument_completions_are_based_on_the_proximate_command()
         {
-            var outer = new Command("outer")
+            var outer = new CliCommand("outer")
             {
-                new Command("one")
+                new CliCommand("one")
                 {
-                    new Argument<string>().AcceptOnlyFromAmong("one-a", "one-b", "one-c")
+                    CreateArgumentWithAcceptOnlyFromAmong("one-a", "one-b", "one-c")
                 },
-                new Command("two")
+                new CliCommand("two")
                 {
-                    new Argument<string>().AcceptOnlyFromAmong("two-a", "two-b", "two-c")
+                    CreateArgumentWithAcceptOnlyFromAmong("two-a", "two-b", "two-c")
                 },
-                new Command("three")
+                new CliCommand("three")
                 {
-                    new Argument<string>().AcceptOnlyFromAmong("three-a", "three-b", "three-c")
+                    CreateArgumentWithAcceptOnlyFromAmong("three-a", "three-b", "three-c")
                 }
             };
 
@@ -714,19 +754,19 @@ namespace System.CommandLine.Tests
         [Fact]
         public void When_parsing_from_array_then_argument_completions_are_based_on_the_proximate_command()
         {
-            var outer = new Command("outer")
+            var outer = new CliCommand("outer")
             {
-                new Command("one")
+                new CliCommand("one")
                 {
-                    new Argument<string>().AcceptOnlyFromAmong("one-a", "one-b", "one-c")
+                    CreateArgumentWithAcceptOnlyFromAmong("one-a", "one-b", "one-c")
                 },
-                new Command("two")
+                new CliCommand("two")
                 {
-                    new Argument<string>().AcceptOnlyFromAmong("two-a", "two-b", "two-c")
+                    CreateArgumentWithAcceptOnlyFromAmong("two-a", "two-b", "two-c")
                 },
-                new Command("three")
+                new CliCommand("three")
                 {
-                    new Argument<string>().AcceptOnlyFromAmong("three-a", "three-b", "three-c")
+                    CreateArgumentWithAcceptOnlyFromAmong("three-a", "three-b", "three-c")
                 }
             };
 
@@ -741,14 +781,14 @@ namespace System.CommandLine.Tests
         [Fact] // https://github.com/dotnet/command-line-api/issues/1518
         public void When_parsing_from_text_if_the_proximate_option_is_completed_then_completions_consider_other_option_tokens()
         {
-            var command = new RootCommand
+            var command = new CliRootCommand
             {
-                new Option<string>("--framework").AcceptOnlyFromAmong("net7.0"),
-                new Option<string>("--language").AcceptOnlyFromAmong("C#"),
-                new Option<string>("--langVersion")
+                CreateOptionWithAcceptOnlyFromAmong(name: "--framework", "net7.0"),
+                CreateOptionWithAcceptOnlyFromAmong(name: "--language", "C#"),
+                new CliOption<string>("--langVersion")
             };
-            var parser = new CommandLineBuilder(command).Build();
-            var completions = parser.Parse("--framework net7.0 --l").GetCompletions();
+            var configuration = new CliConfiguration(command);
+            var completions = command.Parse("--framework net7.0 --l", configuration).GetCompletions();
 
             completions.Select(item => item.Label)
                        .Should()
@@ -758,14 +798,14 @@ namespace System.CommandLine.Tests
         [Fact] 
         public void When_parsing_from_array_if_the_proximate_option_is_completed_then_completions_consider_other_option_tokens()
         {
-            var command = new RootCommand
+            var command = new CliRootCommand
             {
-                new Option<string>("--framework").AcceptOnlyFromAmong("net7.0"),
-                new Option<string>("--language").AcceptOnlyFromAmong("C#"),
-                new Option<string>("--langVersion")
+                CreateOptionWithAcceptOnlyFromAmong(name: "--framework", "net7.0"),
+                CreateOptionWithAcceptOnlyFromAmong(name: "--language", "C#"),
+                new CliOption<string>("--langVersion")
             };
-            var parser = new CommandLineBuilder(command).Build();
-            var completions = parser.Parse(new[]{"--framework","net7.0","--l"}).GetCompletions();
+            var configuration = new CliConfiguration(command);
+            var completions = command.Parse(new[]{"--framework","net7.0","--l"}, configuration).GetCompletions();
 
             completions.Select(item => item.Label)
                        .Should()
@@ -775,9 +815,9 @@ namespace System.CommandLine.Tests
         [Fact]
         public void Arguments_of_type_enum_provide_enum_values_as_suggestions()
         {
-            var command = new Command("the-command")
+            var command = new CliCommand("the-command")
             {
-                new Argument<FileMode>()
+                new CliArgument<FileMode>("arg")
             };
 
             var completions = command.Parse("the-command create")
@@ -792,14 +832,15 @@ namespace System.CommandLine.Tests
         [Fact]
         public void Options_that_have_been_specified_to_their_maximum_arity_are_not_suggested()
         {
-            var command = new Command("command")
+            var command = new CliCommand("command")
             {
-                new Option<string>("--allows-one"),
-                new Option<string[]>("--allows-many")
+                new CliOption<string>("--allows-one"),
+                new CliOption<string[]>("--allows-many")
             };
 
             var commandLine = "--allows-one x";
-            var completions = command.Parse(commandLine).GetCompletions(commandLine.Length + 1);
+            CliConfiguration simpleConfig = new (command);
+            var completions = command.Parse(commandLine, simpleConfig).GetCompletions(commandLine.Length + 1);
 
             completions.Select(item => item.Label)
                        .Should()
@@ -809,15 +850,16 @@ namespace System.CommandLine.Tests
         [Fact]
         public void When_current_symbol_is_an_option_that_requires_arguments_then_parent_symbol_completions_are_omitted()
         {
-            var parser = new CommandLineBuilder(new RootCommand
+            var configuration = new CliConfiguration(new CliRootCommand
                          {
-                             new Option<string>("--allows-one"),
-                             new Option<string[]>("--allows-many")
+                             new CliOption<string>("--allows-one"),
+                             new CliOption<string[]>("--allows-many")
                          })
-                         .UseSuggestDirective()
-                         .Build();
+            {
+                Directives = { new SuggestDirective() } 
+            };
 
-            var completions = parser.Parse("--allows-one ").GetCompletions();
+            var completions = configuration.Parse("--allows-one ").GetCompletions();
 
             completions.Should().BeEmpty();
         }
@@ -825,10 +867,10 @@ namespace System.CommandLine.Tests
         [Fact]
         public void Option_substring_matching_when_arguments_have_default_values()
         {
-            var command = new Command("the-command")
+            var command = new CliCommand("the-command")
             {
-                new Option<string>("--implicit", () => "the-default"),
-                new Option<string>("--not", () => "the-default")
+                new CliOption<string>("--implicit") { DefaultValueFactory = (_) => "the-default" },
+                new CliOption<string>("--not") { DefaultValueFactory = (_) => "the-default" }
             };
 
             var completions = command.Parse("m").GetCompletions();
@@ -850,10 +892,10 @@ namespace System.CommandLine.Tests
                 "\"nuget:Microsoft.DotNet.Interactive\""
             };
 
-            var argument = new Argument<string>()
-                .AddCompletions(expectedSuggestions);
+            var argument = new CliArgument<string>("arg");
+            argument.CompletionSources.Add(expectedSuggestions);
 
-            var r = new Command("#r")
+            var r = new CliCommand("#r")
             {
                 argument
             };
@@ -871,15 +913,15 @@ namespace System.CommandLine.Tests
         [Fact]
         public void Default_completions_can_be_cleared_and_replaced()
         {
-            var argument = new Argument<DayOfWeek>();
-            argument.Completions.Clear();
-            argument.Completions.Add(new[] { "mon", "tues", "wed", "thur", "fri", "sat", "sun" });
-            var command = new Command("the-command")
+            var argument = new CliArgument<DayOfWeek>("day");
+            argument.CompletionSources.Clear();
+            argument.CompletionSources.Add(new[] { "mon", "tues", "wed", "thur", "fri", "sat", "sun" });
+            var command = new CliCommand("the-command")
             {
                 argument
             };
-
-            var completions = command.Parse("the-command s")
+            CliConfiguration simpleConfig = new (command);
+            var completions = command.Parse("the-command s", simpleConfig)
                                      .GetCompletions();
 
             completions.Select(item => item.Label)
@@ -890,15 +932,16 @@ namespace System.CommandLine.Tests
         [Fact]
         public void Default_completions_can_be_appended_to()
         {
-            var command = new Command("the-command")
+            var command = new CliCommand("the-command")
             {
-                new Argument<DayOfWeek>
+                new CliArgument<DayOfWeek>("day")
                 {
-                    Completions = { "mon", "tues", "wed", "thur", "fri", "sat", "sun" }
+                    CompletionSources = { "mon", "tues", "wed", "thur", "fri", "sat", "sun" }
                 }
             };
 
-            var completions = command.Parse("the-command s")
+            CliConfiguration simpleConfig = new (command);
+            var completions = command.Parse("the-command s", simpleConfig)
                                      .GetCompletions();
 
             completions
@@ -919,9 +962,9 @@ namespace System.CommandLine.Tests
         public void Completions_for_options_provide_a_description()
         {
             var description = "The option before -y.";
-            var option = new Option<string>("-x", description);
+            var option = new CliOption<string>("-x") { Description = description };
 
-            var completions = new RootCommand { option }.GetCompletions();
+            var completions = new CliCommand("test") { option }.GetCompletions(CompletionContext.Empty);
 
             completions.Should().ContainSingle()
                        .Which
@@ -934,9 +977,9 @@ namespace System.CommandLine.Tests
         public void Completions_for_subcommands_provide_a_description()
         {
             var description = "The description for the subcommand";
-            var subcommand = new Command("-x", description);
+            var subcommand = new CliCommand("-x", description);
 
-            var completions = new RootCommand { subcommand }.GetCompletions();
+            var completions = new CliCommand("test") { subcommand }.GetCompletions(CompletionContext.Empty);
 
             completions.Should().ContainSingle()
                        .Which
@@ -948,9 +991,11 @@ namespace System.CommandLine.Tests
         [Fact] // https://github.com/dotnet/command-line-api/issues/1629
         public void When_option_completions_are_available_then_they_are_suggested_when_a_validation_error_occurs()
         {
-            var option = new Option<DayOfWeek>("--day");
+            CliOption<DayOfWeek> option = new ("--day");
+            CliRootCommand rootCommand = new () { option };
+            CliConfiguration simpleConfig = new (rootCommand);
 
-            var result = option.Parse("--day SleepyDay");
+            var result = rootCommand.Parse("--day SleepyDay", simpleConfig);
 
             result.Errors
                   .Should()
@@ -960,6 +1005,20 @@ namespace System.CommandLine.Tests
                   .Should()
                   .Be(
                       $"Cannot parse argument 'SleepyDay' for option '--day' as expected type 'System.DayOfWeek'. Did you mean one of the following?{NewLine}Friday{NewLine}Monday{NewLine}Saturday{NewLine}Sunday{NewLine}Thursday{NewLine}Tuesday{NewLine}Wednesday");
+        }
+
+        private static CliArgument<string> CreateArgumentWithAcceptOnlyFromAmong(params string[] values)
+        {
+            CliArgument<string> argument = new("arg");
+            argument.AcceptOnlyFromAmong(values);
+            return argument;
+        }
+
+        private static CliOption<string> CreateOptionWithAcceptOnlyFromAmong(string name, params string[] values)
+        {
+            CliOption<string> option = new(name);
+            option.AcceptOnlyFromAmong(values);
+            return option;
         }
     }
 }

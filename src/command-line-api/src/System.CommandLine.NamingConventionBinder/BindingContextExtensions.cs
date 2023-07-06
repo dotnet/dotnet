@@ -2,6 +2,8 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System.CommandLine.Binding;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace System.CommandLine.NamingConventionBinder;
 
@@ -10,6 +12,24 @@ namespace System.CommandLine.NamingConventionBinder;
 /// </summary>
 public static class BindingContextExtensions
 {
+    private sealed class DummyStateHoldingHandler : BindingHandler
+    {
+        public override int Invoke(ParseResult parseResult) => 0;
+
+        public override Task<int> InvokeAsync(ParseResult parseResult, CancellationToken cancellationToken = default) => Task.FromResult(0);
+    }
+
+    public static BindingContext GetBindingContext(this ParseResult parseResult)
+    {
+        // parsing resulted with no handler or it was not created yet, we fake it to just store the BindingContext between the calls
+        if (parseResult.CommandResult.Command.Action is null)
+        {
+            parseResult.CommandResult.Command.Action = new DummyStateHoldingHandler();
+        }
+
+        return ((BindingHandler)parseResult.CommandResult.Command.Action).GetBindingContext(parseResult);
+    }
+
     /// <summary>
     /// Adds a model binder which can be used to bind a specific type.
     /// </summary>

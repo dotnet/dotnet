@@ -1,16 +1,17 @@
 ﻿using System.CommandLine;
 using System.CommandLine.Invocation;
 
-var fileArgument = new Argument<FileInfo>().AcceptLegalFileNamesOnly();
+CliArgument<FileInfo> fileArgument = new ("file");
+fileArgument.AcceptLegalFileNamesOnly();
 
-var command = new RootCommand
+CliRootCommand command = new ()
 {
     fileArgument
 };
 
-command.SetHandler(context =>
+command.SetAction(parseResult =>
 {
-    context.Console.Write($"The file you chose was: {context.ParseResult.GetValue(fileArgument)}");
+    Console.Write($"The file you chose was: {parseResult.GetValue(fileArgument)}");
 });
 
-command.Invoke(args);
+command.Parse(args).Invoke();

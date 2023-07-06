@@ -1,8 +1,7 @@
 ﻿// Copyright (c) .NET Foundation and contributors. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-using System.CommandLine.Benchmarks.Helpers;
-using System.CommandLine.Parsing;
+using System.CommandLine.Completions;
 using System.Threading.Tasks;
 using BenchmarkDotNet.Attributes;
 
@@ -14,23 +13,28 @@ namespace System.CommandLine.Benchmarks.CommandLine
     [BenchmarkCategory(Categories.CommandLine)]
     public class Perf_Parser_Directives_Suggest
     {
-        private NullConsole _nullConsole;
-        private Parser _testParser;
+        private CliConfiguration _configuration;
 
         [GlobalSetup]
         public void Setup()
         {
-            _nullConsole = new NullConsole();
+            CliOption<string> fruitOption = new("--fruit");
+            fruitOption.CompletionSources.Add("apple", "banana", "cherry");
 
-            var eatCommand = new Command("eat")
+            CliOption<string> vegetableOption = new("--vegetable");
+            vegetableOption.CompletionSources.Add("asparagus", "broccoli", "carrot");
+
+            var eatCommand = new CliCommand("eat")
             {
-                new Option<string>("--fruit").AddCompletions("apple", "banana", "cherry"),
-                new Option<string>("--vegetable").AddCompletions("asparagus", "broccoli", "carrot")
+                fruitOption,
+                vegetableOption
             };
 
-            _testParser = new CommandLineBuilder(eatCommand)
-                .UseSuggestDirective()
-                .Build();
+            _configuration = new CliConfiguration(eatCommand)
+            {
+                Directives = { new SuggestDirective() },
+                Output = System.IO.TextWriter.Null
+            };
         }
 
         [Params(
@@ -40,8 +44,8 @@ namespace System.CommandLine.Benchmarks.CommandLine
         public string TestCmdArgs;
 
         [Benchmark]
-        public async Task InvokeSuggest()
-            => await _testParser.InvokeAsync(TestCmdArgs, _nullConsole);
+        public Task InvokeSuggest()
+            => _configuration.InvokeAsync(TestCmdArgs);
 
     }
 }

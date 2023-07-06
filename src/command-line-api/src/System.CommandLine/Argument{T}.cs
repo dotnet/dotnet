@@ -2,182 +2,128 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System.Collections.Generic;
-using System.CommandLine.Binding;
-using System.CommandLine.Completions;
 using System.CommandLine.Parsing;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 
 namespace System.CommandLine
 {
-    /// <inheritdoc cref="Argument" />
-    public class Argument<T> : Argument, IValueDescriptor<T>
+    /// <inheritdoc cref="CliArgument" />
+    public class CliArgument<T> : CliArgument
     {
-        private readonly bool _hasCustomParser;
+        private Func<ArgumentResult, T?>? _customParser;
 
         /// <summary>
         /// Initializes a new instance of the Argument class.
         /// </summary>
-        public Argument()
-        {
-        }
-
-        /// <inheritdoc />
-        public Argument(
-            string? name, 
-            string? description = null) : base(name, description)
+        /// <param name="name">The name of the argument. It's not used for parsing, only when displaying Help or creating parse errors.</param>>
+        public CliArgument(string name) : base(name)
         {
         }
 
         /// <summary>
-        /// Initializes a new instance of the Argument class.
+        /// The delegate to invoke to create the default value.
         /// </summary>
-        /// <param name="name">The name of the argument.</param>
-        /// <param name="defaultValueFactory">The delegate to invoke to return the default value.</param>
-        /// <param name="description">The description of the argument, shown in help.</param>
-        /// <exception cref="ArgumentNullException">Thrown when <paramref name="defaultValueFactory"/> is null.</exception>
-        public Argument(
-            string name, 
-            Func<T> defaultValueFactory, 
-            string? description = null) : this(name, description)
-        {
-            if (defaultValueFactory is null)
-            {
-                throw new ArgumentNullException(nameof(defaultValueFactory));
-            }
-
-            SetDefaultValueFactory(() => defaultValueFactory());
-        }
+        /// <remarks>
+        /// It's invoked when there was no parse input provided for given Argument.
+        /// The same instance can be set as <see cref="CustomParser"/>, in such case
+        /// the delegate is also invoked when an input was provided.
+        /// </remarks>
+        public Func<ArgumentResult, T>? DefaultValueFactory { get; set; }
 
         /// <summary>
-        /// Initializes a new instance of the Argument class.
+        /// A custom argument parser.
         /// </summary>
-        /// <param name="defaultValueFactory">The delegate to invoke to return the default value.</param>
-        /// <exception cref="ArgumentNullException">Thrown when <paramref name="defaultValueFactory"/> is null.</exception>
-        public Argument(Func<T> defaultValueFactory) : this()
+        /// <remarks>
+        /// It's invoked when there was parse input provided for given Argument.
+        /// The same instance can be set as <see cref="DefaultValueFactory"/>, in such case
+        /// the delegate is also invoked when no input was provided.
+        /// </remarks>
+        public Func<ArgumentResult, T?>? CustomParser
         {
-            if (defaultValueFactory is null)
+            get => _customParser;
+            set
             {
-                throw new ArgumentNullException(nameof(defaultValueFactory));
-            }
+                _customParser = value;
 
-            SetDefaultValueFactory(() => defaultValueFactory());
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the Argument class.
-        /// </summary>
-        /// <param name="name">The name of the argument.</param>
-        /// <param name="parse">A custom argument parser.</param>
-        /// <param name="isDefault"><see langword="true"/> to use the <paramref name="parse"/> result as default value.</param>
-        /// <param name="description">The description of the argument, shown in help.</param>
-        /// <exception cref="ArgumentNullException">Thrown when <paramref name="parse"/> is null.</exception>
-        public Argument(
-            string? name,
-            Func<ArgumentResult, T> parse, 
-            bool isDefault = false,
-            string? description = null) : this(name, description)
-        {
-            if (parse is null)
-            {
-                throw new ArgumentNullException(nameof(parse));
-            }
-
-            if (isDefault)
-            {
-                SetDefaultValueFactory(argumentResult => parse(argumentResult));
-            }
-
-            ConvertArguments = (ArgumentResult argumentResult, out object? value) =>
-            {
-                var result = parse(argumentResult);
-
-                if (string.IsNullOrEmpty(argumentResult.ErrorMessage))
+                if (value is not null)
                 {
-                    value = result;
-                    return true;
+                    ConvertArguments = (ArgumentResult argumentResult, out object? parsedValue) =>
+                    {
+                        int errorsBefore = argumentResult.SymbolResultTree.ErrorCount;
+                        var result = value(argumentResult);
+
+                        if (errorsBefore == argumentResult.SymbolResultTree.ErrorCount)
+                        {
+                            parsedValue = result;
+                            return true;
+                        }
+                        else
+                        {
+                            parsedValue = default(T)!;
+                            return false;
+                        }
+                    };
                 }
-                else
-                {
-                    value = default(T)!;
-                    return false;
-                }
-            };
-
-            _hasCustomParser = true;
+            }
         }
-
-        /// <summary>
-        /// Initializes a new instance of the Argument class.
-        /// </summary>
-        /// <param name="parse">A custom argument parser.</param>
-        /// <param name="isDefault"><see langword="true"/> to use the <paramref name="parse"/> result as default value.</param>
-        public Argument(Func<ArgumentResult, T> parse, bool isDefault = false) : this(null!, parse, isDefault)
-        {
-        }
-
-        internal override bool HasCustomParser => _hasCustomParser;
 
         /// <inheritdoc />
         public override Type ValueType => typeof(T);
 
-        /// <summary>
-        /// Adds completions for the argument.
-        /// </summary>
-        /// <param name="completions">The completions to add.</param>
-        /// <returns>The configured argument.</returns>
-        public Argument<T> AddCompletions(params string[] completions)
-        {
-            Completions.Add(completions);
-            return this;
-        }
+        /// <inheritdoc />
+        public override bool HasDefaultValue => DefaultValueFactory is not null;
 
-        /// <summary>
-        /// Adds completions for the argument.
-        /// </summary>
-        /// <param name="completionsDelegate">A function that will be called to provide completions.</param>
-        /// <returns>The option being extended.</returns>
-        public Argument<T> AddCompletions(Func<CompletionContext, IEnumerable<string>> completionsDelegate)
+        internal override object? GetDefaultValue(ArgumentResult argumentResult)
         {
-            Completions.Add(completionsDelegate);
-            return this;
-        }
+            if (DefaultValueFactory is null)
+            {
+                throw new InvalidOperationException($"Argument \"{Name}\" does not have a default value");
+            }
 
-        /// <summary>
-        /// Adds completions for the argument.
-        /// </summary>
-        /// <param name="completionsDelegate">A function that will be called to provide completions.</param>
-        /// <returns>The configured argument.</returns>
-        public Argument<T> AddCompletions(Func<CompletionContext, IEnumerable<CompletionItem>> completionsDelegate)
-        {
-            Completions.Add(completionsDelegate);
-            return this;
+            return DefaultValueFactory.Invoke(argumentResult);
         }
 
         /// <summary>
         /// Configures the argument to accept only the specified values, and to suggest them as command line completions.
         /// </summary>
         /// <param name="values">The values that are allowed for the argument.</param>
-        /// <returns>The configured argument.</returns>
-        public Argument<T> AcceptOnlyFromAmong(params string[] values)
+        public void AcceptOnlyFromAmong(params string[] values)
         {
-            AllowedValues?.Clear();
-            AddAllowedValues(values);
-            Completions.Clear();
-            Completions.Add(values);
+            if (values is not null && values.Length > 0)
+            {
+                Validators.Clear();
+                Validators.Add(UnrecognizedArgumentError);
+                CompletionSources.Clear();
+                CompletionSources.Add(values);
+            }
 
-            return this;
+            void UnrecognizedArgumentError(ArgumentResult argumentResult)
+            {
+                for (var i = 0; i < argumentResult.Tokens.Count; i++)
+                {
+                    var token = argumentResult.Tokens[i];
+
+                    if (token.Symbol is null || token.Symbol == this)
+                    {
+                        if (Array.IndexOf(values, token.Value) < 0)
+                        {
+                            argumentResult.AddError(LocalizationResources.UnrecognizedArgument(token.Value, values));
+                        }
+                    }
+                }
+            }
         }
 
         /// <summary>
         /// Configures the argument to accept only values representing legal file paths.
         /// </summary>
-        /// <returns>The configured argument.</returns>
-        public Argument<T> AcceptLegalFilePathsOnly()
+        public void AcceptLegalFilePathsOnly()
         {
-            var invalidPathChars = Path.GetInvalidPathChars();
-
-            AddValidator(result =>
+            Validators.Add(static result =>
             {
+                var invalidPathChars = Path.GetInvalidPathChars();
+
                 for (var i = 0; i < result.Tokens.Count; i++)
                 {
                     var token = result.Tokens[i];
@@ -188,25 +134,22 @@ namespace System.CommandLine
 
                     if (invalidCharactersIndex >= 0)
                     {
-                        result.ErrorMessage = result.LocalizationResources.InvalidCharactersInPath(token.Value[invalidCharactersIndex]);
+                        result.AddError(LocalizationResources.InvalidCharactersInPath(token.Value[invalidCharactersIndex]));
                     }
                 }
             });
-
-            return this;
         }
 
         /// <summary>
         /// Configures the argument to accept only values representing legal file names.
         /// </summary>
         /// <remarks>A parse error will result, for example, if file path separators are found in the parsed value.</remarks>
-        /// <returns>The configured argument.</returns>
-        public Argument<T> AcceptLegalFileNamesOnly()
+        public void AcceptLegalFileNamesOnly()
         {
-            var invalidFileNameChars = Path.GetInvalidFileNameChars();
-
-            AddValidator(result =>
+            Validators.Add(static result =>
             {
+                var invalidFileNameChars = Path.GetInvalidFileNameChars();
+
                 for (var i = 0; i < result.Tokens.Count; i++)
                 {
                     var token = result.Tokens[i];
@@ -214,12 +157,45 @@ namespace System.CommandLine
 
                     if (invalidCharactersIndex >= 0)
                     {
-                        result.ErrorMessage = result.LocalizationResources.InvalidCharactersInFileName(token.Value[invalidCharactersIndex]);
+                        result.AddError(LocalizationResources.InvalidCharactersInFileName(token.Value[invalidCharactersIndex]));
                     }
                 }
             });
+        }
 
-            return this;
+        [UnconditionalSuppressMessage("ReflectionAnalysis", "IL3050", Justification = "https://github.com/dotnet/command-line-api/issues/1638")]
+        [UnconditionalSuppressMessage("ReflectionAnalysis", "IL2091", Justification = "https://github.com/dotnet/command-line-api/issues/1638")]
+        internal static T? CreateDefaultValue()
+        {
+            if (default(T) is null && typeof(T) != typeof(string))
+            {
+#if NET7_0_OR_GREATER
+                if (typeof(T).IsSZArray)
+#else
+                if (typeof(T).IsArray && typeof(T).GetArrayRank() == 1)
+#endif
+                {
+                    return (T?)(object)Array.CreateInstance(typeof(T).GetElementType()!, 0);
+                }
+                else if (typeof(T).IsConstructedGenericType)
+                {
+                    var genericTypeDefinition = typeof(T).GetGenericTypeDefinition();
+
+                    if (genericTypeDefinition == typeof(IEnumerable<>) ||
+                        genericTypeDefinition == typeof(IList<>) ||
+                        genericTypeDefinition == typeof(ICollection<>))
+                    {
+                        return (T?)(object)Array.CreateInstance(typeof(T).GenericTypeArguments[0], 0);
+                    }
+
+                    if (genericTypeDefinition == typeof(List<>))
+                    {
+                        return Activator.CreateInstance<T>();
+                    }
+                }
+            }
+
+            return default;
         }
     }
 }

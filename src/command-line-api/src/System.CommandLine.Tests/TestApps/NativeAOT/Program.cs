@@ -1,29 +1,28 @@
 ﻿using System;
 using System.CommandLine;
-using System.CommandLine.Invocation;
 using System.CommandLine.Parsing;
 
 public class Program
 {
     private static int Main(string[] args)
     {
-        Option<bool> boolOption = new Option<bool>(new[] { "--bool", "-b" }, "Bool option");
-        Option<string> stringOption = new Option<string>(new[] { "--string", "-s" }, "String option");
+        CliOption<bool> boolOption = new ("--bool", "-b") { Description = "Bool option" };
+        CliOption<string> stringOption = new ("--string", "-s") { Description = "String option" };
 
-        RootCommand command = new RootCommand
+        CliRootCommand command = new ()
         {
             boolOption,
             stringOption
         };
 
-        command.SetHandler(Run);
+        command.SetAction(Run);
 
-        return new CommandLineBuilder(command).Build().Invoke(args);
+        return new CliConfiguration(command).Invoke(args);
 
-        void Run(InvocationContext context)
+        void Run(ParseResult parseResult)
         {
-            context.Console.WriteLine($"Bool option: {context.ParseResult.GetValue(boolOption)}");
-            context.Console.WriteLine($"String option: {context.ParseResult.GetValue(stringOption)}");
+            Console.WriteLine($"Bool option: {parseResult.GetValue(boolOption)}");
+            Console.WriteLine($"String option: {parseResult.GetValue(stringOption)}");
         }
     }
 }

@@ -9,20 +9,12 @@ namespace System.CommandLine.Generator
 {
     internal class WellKnownTypes
     {
-        public INamedTypeSymbol Console { get; }
         public INamedTypeSymbol ParseResult { get; }
-        public INamedTypeSymbol InvocationContext { get; }
-        public INamedTypeSymbol HelpBuilder { get; }
-        public INamedTypeSymbol BindingContext { get; }
         public IEqualityComparer<ISymbol?> Comparer { get; }
 
         public WellKnownTypes(Compilation compilation, IEqualityComparer<ISymbol?> comparer)
         {
-            Console = GetType("System.CommandLine.IConsole");
             ParseResult = GetType("System.CommandLine.ParseResult");
-            InvocationContext = GetType("System.CommandLine.Invocation.InvocationContext");
-            HelpBuilder = GetType("System.CommandLine.Help.HelpBuilder");
-            BindingContext = GetType("System.CommandLine.Binding.BindingContext");
 
             INamedTypeSymbol GetType(string typeName)
                 => compilation.GetTypeByMetadataName(typeName)
@@ -35,33 +27,15 @@ namespace System.CommandLine.Generator
 
         internal bool TryGet(ISymbol symbol, out Parameter? parameter)
         {
-            if (Comparer.Equals(Console, symbol))
-            {
-                parameter = new ConsoleParameter(Console);
-                return true;
-            }
-
-            if (Comparer.Equals(InvocationContext, symbol))
-            {
-                parameter = new InvocationContextParameter(InvocationContext);
-                return true;
-            }
-
             if (Comparer.Equals(ParseResult, symbol))
             {
                 parameter = new ParseResultParameter(ParseResult);
                 return true;
             }
 
-            if (Comparer.Equals(HelpBuilder, symbol))
+            if (symbol.MetadataName == "System.CommandLine.Binding.BindingContext" && symbol is INamedTypeSymbol bindingContext)
             {
-                parameter = new HelpBuilderParameter(HelpBuilder);
-                return true;
-            }
-
-            if (Comparer.Equals(BindingContext, symbol))
-            {
-                parameter = new BindingContextParameter(BindingContext);
+                parameter = new BindingContextParameter(bindingContext);
                 return true;
             }
 

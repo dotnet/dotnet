@@ -3,45 +3,39 @@
 
 namespace System.CommandLine.Help
 {
-    internal class HelpOption : Option<bool>
+    public sealed class HelpOption : CliOption<bool>
     {
-        private readonly Func<LocalizationResources> _localizationResources;
-        private string? _description;
+        private CliAction? _action;
 
-        public HelpOption(string[] aliases, Func<LocalizationResources> getLocalizationResources)
-            : base(aliases, null, new Argument<bool> { Arity = ArgumentArity.Zero })
-        {
-            _localizationResources = getLocalizationResources;
-            DisallowBinding = true;
-        }
-
-        public HelpOption(Func<LocalizationResources> getLocalizationResources) : this(new[]
-        {
-            "-h",
-            "/h",
-            "--help",
-            "-?",
-            "/?"
-        }, getLocalizationResources)
+        /// <summary>
+        /// When added to a <see cref="CliCommand"/>, it configures the application to show help when one of the following options are specified on the command line:
+        /// <code>
+        ///    -h
+        ///    /h
+        ///    --help
+        ///    -?
+        ///    /?
+        /// </code>
+        /// </summary>
+        public HelpOption() : this("--help", new[] { "-h", "/h", "-?", "/?" })
         {
         }
 
-        public override string? Description
+        /// <summary>
+        /// When added to a <see cref="CliCommand"/>, it configures the application to show help when given name or one of the aliases are specified on the command line.
+        /// </summary>
+        public HelpOption(string name, params string[] aliases)
+            : base(name, aliases, new CliArgument<bool>(name) { Arity = ArgumentArity.Zero })
         {
-            get => _description ??= _localizationResources().HelpOptionDescription();
-            set => _description = value;
+            Recursive = true;
+            Description = LocalizationResources.HelpOptionDescription();
         }
 
-        internal override bool IsGreedy => false;
-
-        public override bool Equals(object? obj)
-        {
-            return obj is HelpOption;
-        }
-
-        public override int GetHashCode()
-        {
-            return typeof(HelpOption).GetHashCode();
+        /// <inheritdoc />
+        public override CliAction? Action 
+        { 
+            get => _action ??= new HelpAction(); 
+            set => _action = value ?? throw new ArgumentNullException(nameof(value));
         }
     }
 }

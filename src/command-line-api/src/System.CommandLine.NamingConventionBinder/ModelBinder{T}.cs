@@ -18,17 +18,19 @@ public class ModelBinder<TModel> : ModelBinder
     /// Configures a custom binding behavior for the specified property.
     /// </summary>
     /// <param name="property">An expression specifying the property to bind.</param>
-    /// <param name="valueDescriptor">A value descriptor for the value from which the property will be bound.</param>
+    /// <param name="symbol">Symbol for the value from which the property will be bound.</param>
     /// <typeparam name="TValue">The type of the value to be bound.</typeparam>
     public void BindMemberFromValue<TValue>(
         Expression<Func<TModel, TValue>> property,
-        IValueDescriptor valueDescriptor)
+        CliSymbol symbol)
     {
         var (propertyType, propertyName) = property.MemberTypeAndName();
-        var propertyDescriptor = FindModelPropertyDescriptor(
-            propertyType, propertyName);
-        MemberBindingSources[propertyDescriptor] = 
-            new SpecificSymbolValueSource(valueDescriptor);
+        var propertyDescriptor = FindModelPropertyDescriptor(propertyType, propertyName);
+
+        if (propertyDescriptor is not null)
+        {
+            MemberBindingSources[propertyDescriptor] = new SpecificSymbolValueSource(symbol);
+        }
     }
 
     /// <summary>
@@ -42,9 +44,10 @@ public class ModelBinder<TModel> : ModelBinder
         Func<BindingContext?, TValue> getValue)
     {
         var (propertyType, propertyName) = property.MemberTypeAndName();
-        var propertyDescriptor = FindModelPropertyDescriptor(
-            propertyType, propertyName);
-        MemberBindingSources[propertyDescriptor] =
-            new DelegateValueSource(c => getValue(c));
+        var propertyDescriptor = FindModelPropertyDescriptor(propertyType, propertyName);
+        if (propertyDescriptor is not null)
+        {
+            MemberBindingSources[propertyDescriptor] = new DelegateValueSource(c => getValue(c));
+        }
     }
 }

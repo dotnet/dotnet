@@ -3,9 +3,9 @@
 
 using System.Collections.Generic;
 using System.CommandLine.Binding;
-using System.CommandLine.Invocation;
 using System.Linq;
 using System.Reflection;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace System.CommandLine.NamingConventionBinder;
@@ -13,7 +13,7 @@ namespace System.CommandLine.NamingConventionBinder;
 /// <summary>
 /// Instantiates values to be passed to a user-defined command handler method.
 /// </summary>
-public class ModelBindingCommandHandler : ICommandHandler
+public class ModelBindingCommandHandler : BindingHandler
 {
     private readonly Delegate? _handlerDelegate;
     private readonly object? _invocationTarget;
@@ -31,7 +31,7 @@ public class ModelBindingCommandHandler : ICommandHandler
         _handlerMethodInfo = handlerMethodInfo ?? throw new ArgumentNullException(nameof(handlerMethodInfo));
         _invocationTargetBinder = _handlerMethodInfo.IsStatic
                                       ? null
-                                      : new ModelBinder(_handlerMethodInfo.ReflectedType);
+                                      : new ModelBinder(_handlerMethodInfo.ReflectedType!);
         _methodDescriptor = methodDescriptor ?? throw new ArgumentNullException(nameof(methodDescriptor));
         _invocationTarget = invocationTarget;
     }
@@ -53,11 +53,12 @@ public class ModelBindingCommandHandler : ICommandHandler
     /// <summary>
     /// Binds values for the underlying user-defined method and uses them to invoke that method.
     /// </summary>
-    /// <param name="context">The current invocation context.</param>
+    /// <param name="parseResult">The current parse result.</param>
+    /// <param name="cancellationToken">A token that can be used to cancel the invocation.</param>
     /// <returns>A task whose value can be used to set the process exit code.</returns>
-    public async Task<int> InvokeAsync(InvocationContext context)
+    public override async Task<int> InvokeAsync(ParseResult parseResult, CancellationToken cancellationToken = default)
     {
-        var bindingContext = context.BindingContext;
+        var bindingContext = GetBindingContext(parseResult);
 
         var (boundValues, _) = ModelBinder.GetBoundValues(
             _invokeArgumentBindingSources,
@@ -69,11 +70,11 @@ public class ModelBindingCommandHandler : ICommandHandler
                                   .Select(x => x.Value)
                                   .ToArray();
 
-        object result;
+        object? result;
         if (_handlerDelegate is null)
         {
             var invocationTarget = _invocationTarget ?? 
-                                   bindingContext.GetService(_handlerMethodInfo!.ReflectedType);
+                                   bindingContext.GetService(_handlerMethodInfo!.ReflectedType!);
             if(invocationTarget is { })
             {
                 _invocationTargetBinder?.UpdateInstance(invocationTarget, bindingContext);
@@ -87,26 +88,26 @@ public class ModelBindingCommandHandler : ICommandHandler
             result = _handlerDelegate.DynamicInvoke(invocationArguments);
         }
 
-        return await CommandHandler.GetExitCodeAsync(result, context);
+        return await CommandHandler.GetExitCodeAsync(result);
     }
 
     /// <summary>
-    /// Binds a method or constructor parameter based on the specified <see cref="Argument"/>.
+    /// Binds a method or constructor parameter based on the specified <see cref="CliArgument"/>.
     /// </summary>
     /// <param name="param">The parameter to bind.</param>
     /// <param name="argument">The argument whose parsed result will be the source of the bound value.</param>
-    public void BindParameter(ParameterInfo param, Argument argument)
+    public void BindParameter(ParameterInfo param, CliArgument argument)
     {
         var _ = argument ?? throw new InvalidOperationException("You must specify an argument to bind");
         BindValueSource(param, new SpecificSymbolValueSource(argument));
     }
 
     /// <summary>
-    /// Binds a method or constructor parameter based on the specified <see cref="Option"/>.
+    /// Binds a method or constructor parameter based on the specified <see cref="CliOption"/>.
     /// </summary>
     /// <param name="param">The parameter to bind.</param>
     /// <param name="option">The option whose parsed result will be the source of the bound value.</param>
-    public void BindParameter(ParameterInfo param, Option option)
+    public void BindParameter(ParameterInfo param, CliOption option)
     {
         var _ = option ?? throw new InvalidOperationException("You must specify an option to bind");
         BindValueSource(param, new SpecificSymbolValueSource(option));
@@ -130,5 +131,5 @@ public class ModelBindingCommandHandler : ICommandHandler
                                                        x.ValueType == param.ParameterType);
 
     /// <inheritdoc />
-    public int Invoke(InvocationContext context) => InvokeAsync(context).GetAwaiter().GetResult();
+    public override int Invoke(ParseResult parseResult) => InvokeAsync(parseResult, CancellationToken.None).GetAwaiter().GetResult();
 }

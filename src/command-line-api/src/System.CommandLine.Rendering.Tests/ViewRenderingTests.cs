@@ -1,13 +1,10 @@
 ﻿// Copyright (c) .NET Foundation and contributors. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-using System.CommandLine.NamingConventionBinder;
-using System.CommandLine.Parsing;
 using System.CommandLine.Rendering.Views;
 using System.CommandLine.Tests.Utility;
 using System.Drawing;
 using FluentAssertions;
-using Microsoft.Extensions.DependencyInjection;
 using Xunit;
 
 namespace System.CommandLine.Rendering.Tests
@@ -17,37 +14,26 @@ namespace System.CommandLine.Rendering.Tests
         private readonly TestTerminal _terminal = new();
 
         [Fact]
-        public void Views_can_be_registered_for_specific_types()
+        public void Views_can_be_used_for_specific_types()
         {
             ParseResult parseResult = null;
-
-            var command = new RootCommand
-            {
-                Handler = CommandHandler.Create<ParseResult, IConsole>(
-                    (r, c) =>
-                    {
-                        parseResult = r;
-                        c.Append(new ParseResultView(r));
-                    })
-            };
-
-            var parser = new CommandLineBuilder(command)
-                         .AddMiddleware(c =>
-                         {
-                             c.BindingContext
-                              .AddService(
-                                  s => new ParseResultView(s.GetService<ParseResult>()));
-                         })
-                         .Build();
-
             var terminal = new TestTerminal
             {
                 IsAnsiTerminal = false
             };
 
-            parser.Invoke("", terminal);
+            var command = new CliRootCommand();
+            command.SetAction(ctx =>
+            {
+                parseResult = ctx;
+                terminal.Append(new ParseResultView(parseResult));
+            });
 
-            terminal.Out.ToString().Should().Contain(parseResult.Diagram());
+            var config = new CliConfiguration(command);
+
+            config.Invoke("");
+
+            terminal.Out.ToString().Should().Contain(parseResult.ToString());
         }
 
         [Theory]

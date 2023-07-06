@@ -1,10 +1,11 @@
 ﻿// Copyright (c) .NET Foundation and contributors. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-using System.Collections.Generic;
-using System.CommandLine.Parsing;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using FluentAssertions;
+using FluentAssertions.Execution;
 using Xunit;
 
 namespace System.CommandLine.Tests
@@ -12,55 +13,157 @@ namespace System.CommandLine.Tests
     public class DirectiveTests
     {
         [Fact]
-        public void Directives_should_not_be_considered_as_unmatched_tokens()
+        public void Directives_should_be_considered_as_unmatched_tokens_when_they_are_not_matched()
         {
-            var option = new Option<bool>("-y");
+            CliDirective directive = new("parse");
 
-            var result = option.Parse($"{RootCommand.ExecutableName} [parse] -y");
+            ParseResult result = Parse(new CliOption<bool>("-y"), directive, $"{CliRootCommand.ExecutableName} [nonExisting] -y");
 
-            result.UnmatchedTokens.Should().BeEmpty();
+            result.UnmatchedTokens.Should().ContainSingle("[nonExisting]");
         }
 
         [Fact]
         public void Raw_tokens_still_hold_directives()
         {
-            var option = new Option<bool>("-y");
+            CliDirective directive = new ("parse");
 
-            var result = option.Parse("[parse] -y");
+            ParseResult result = Parse(new CliOption<bool>("-y"), directive, "[parse] -y");
 
-            result.Directives.ContainsKey("parse").Should().BeTrue();
+            result.GetResult(directive).Should().NotBeNull();
             result.Tokens.Should().Contain(t => t.Value == "[parse]");
         }
 
         [Fact]
-        public void Directives_should_parse_into_the_directives_collection()
+        public void Directives_must_precede_other_symbols()
         {
-            var option = new Option<bool>("-y");
+            CliDirective directive = new("parse");
 
-            var result = option.Parse("[parse] -y");
+            ParseResult result = Parse(new CliOption<bool>("-y"), directive, "-y [parse]");
 
-            result.Directives.ContainsKey("parse").Should().BeTrue();
+            result.GetResult(directive).Should().BeNull();
         }
 
         [Fact]
         public void Multiple_directives_are_allowed()
         {
-            var option = new Option<bool>("-y");
+            CliRootCommand root = new() { new CliOption<bool>("-y") };
+            CliDirective parseDirective = new ("parse");
+            CliDirective suggestDirective = new ("suggest");
+            CliConfiguration config = new(root);
+            config.Directives.Add(parseDirective);
+            config.Directives.Add(suggestDirective);
 
-            var result = option.Parse("[parse] [suggest] -y");
+            var result = root.Parse("[parse] [suggest] -y", config);
 
-            result.Directives.ContainsKey("parse").Should().BeTrue();
-            result.Directives.ContainsKey("suggest").Should().BeTrue();
+            result.GetResult(parseDirective).Should().NotBeNull();
+            result.GetResult(suggestDirective).Should().NotBeNull();
         }
 
-        [Fact]
-        public void Directives_must_be_the_first_argument()
+        [Theory]
+        [InlineData(true)]
+        [InlineData(false)]
+        public async Task Multiple_instances_of_the_same_directive_can_be_invoked(bool invokeAsync)
         {
-            var option = new Option<bool>("-y");
+            var commandActionWasCalled = false;
+            var directiveCallCount = 0;
 
-            var result = option.Parse("-y [suggest]");
+            var testDirective = new TestDirective("test")
+            {
+                Action = new NonexclusiveTestAction(_ => directiveCallCount++)
+            };
 
-            result.Directives.Should().BeEmpty();
+            var config = new CliConfiguration(new CliRootCommand
+            {
+                Action = new NonexclusiveTestAction(_ => commandActionWasCalled = true)
+            })
+            {
+                Directives = { testDirective }
+            };
+
+            if (invokeAsync)
+            {
+                await config.InvokeAsync("[test:1] [test:2]");
+            }
+            else
+            {
+                config.Invoke("[test:1] [test:2]");
+            }
+
+            using var _ = new AssertionScope();
+
+            commandActionWasCalled.Should().BeTrue();
+            directiveCallCount.Should().Be(2);
+        }
+
+        [Theory]
+        [InlineData(true)]
+        [InlineData(false)]
+        public async Task Multiple_different_directives_can_be_invoked(bool invokeAsync)
+        {
+            bool commandActionWasCalled = false;
+            bool directiveOneActionWasCalled = false;
+            bool directiveTwoActionWasCalled = false;
+
+            var directiveOne = new TestDirective("one")
+            {
+                Action = new NonexclusiveTestAction(_ => directiveOneActionWasCalled = true)
+            };
+            var directiveTwo = new TestDirective("two")
+            {
+                Action = new NonexclusiveTestAction(_ => directiveTwoActionWasCalled = true)
+            };
+            var config = new CliConfiguration(new CliRootCommand
+            {
+                Action = new NonexclusiveTestAction(_ => commandActionWasCalled = true)
+            })
+            {
+                Directives = { directiveOne, directiveTwo }
+            };
+
+            if (invokeAsync)
+            {
+                await config.InvokeAsync("[one] [two]");
+            }
+            else
+            {
+                config.Invoke("[one] [two]");
+            }
+
+            using var _ = new AssertionScope();
+
+            commandActionWasCalled.Should().BeTrue();
+            directiveOneActionWasCalled.Should().BeTrue();
+            directiveTwoActionWasCalled.Should().BeTrue();
+        }
+
+        public class TestDirective : CliDirective
+        {
+            public TestDirective(string name) : base(name)
+            {
+            }
+        }
+
+        private class NonexclusiveTestAction : CliAction
+        {
+            private readonly Action<ParseResult> _invoke;
+
+            public NonexclusiveTestAction(Action<ParseResult> invoke)
+            {
+                _invoke = invoke;
+                Exclusive = false;
+            }
+
+            public override int Invoke(ParseResult parseResult)
+            {
+                _invoke(parseResult);
+                return 0;
+            }
+
+            public override Task<int> InvokeAsync(ParseResult parseResult, CancellationToken cancellationToken = default)
+            {
+                ;
+                return Task.FromResult(Invoke(parseResult));
+            }
         }
 
         [Theory]
@@ -68,27 +171,25 @@ namespace System.CommandLine.Tests
         [InlineData("[key:value:more]", "key", "value:more")]
         [InlineData("[key:]", "key", "")]
         public void Directives_can_have_a_value_which_is_everything_after_the_first_colon(
-            string directive,
-            string expectedKey,
+            string wholeText,
+            string key,
             string expectedValue)
         {
-            var option = new Option<bool>("-y");
+            CliDirective directive = new(key);
 
-            var result = option.Parse($"{directive} -y");
+            ParseResult result = Parse(new CliOption<bool>("-y"), directive, $"{wholeText} -y");
 
-            result.Directives.TryGetValue(expectedKey, out var values).Should().BeTrue();
-            values.Should().BeEquivalentTo(expectedValue);
+            result.GetResult(directive).Values.Single().Should().Be(expectedValue);
         }
 
         [Fact]
-        public void Directives_without_a_value_specified_have_a_value_of_empty_string()
+        public void Directives_without_a_value_specified_have_no_values()
         {
-            var option = new Option<bool>("-y");
+            CliDirective directive = new("parse");
 
-            var result = option.Parse("[parse] -y");
+            ParseResult result = Parse(new CliOption<bool>("-y"), directive, "[parse] -y");
 
-            result.Directives.TryGetValue("parse", out var values).Should().BeTrue();
-            values.Should().BeEmpty();
+            result.GetResult(directive).Values.Should().BeEmpty();
         }
 
         [Theory]
@@ -96,67 +197,47 @@ namespace System.CommandLine.Tests
         [InlineData("[:value]")]
         public void Directives_must_have_a_non_empty_key(string directive)
         {
-            var option = new Option<bool>("-a");
+            CliOption<bool> option = new ("-a");
+            CliRootCommand root = new () { option };
 
-            var result = option.Parse($"{directive} -a");
+            var result = root.Parse($"{directive} -a");
 
-            result.Directives.Should().BeEmpty();
             result.UnmatchedTokens.Should().Contain(directive);
         }
 
         [Theory]
-        [InlineData("[par se]")]
-        [InlineData("[ parse]")]
-        [InlineData("[parse ]")]
-        public void Directives_cannot_contain_spaces(object value)
+        [InlineData("[par se]", "[par", "se]")]
+        [InlineData("[ parse]", "[", "parse]")]
+        [InlineData("[parse ]", "[parse", "]")]
+        public void Directives_cannot_contain_spaces(string value, string firstUnmatchedToken, string secondUnmatchedToken)
         {
-            var option = new Option<bool>("-a");
+            Action create = () => new CliDirective(value);
+            create.Should().Throw<ArgumentException>();
 
-            var result = option.Parse($"{value} -a");
+            CliDirective directive = new("parse");
+            ParseResult result = Parse(new CliOption<bool>("-y"), directive, $"{value} -y");
+            result.GetResult(directive).Should().BeNull();
 
-            result.Directives.Should().BeEmpty();
+            result.UnmatchedTokens.Should().BeEquivalentTo(firstUnmatchedToken, secondUnmatchedToken);
         }
 
         [Fact]
         public void When_a_directive_is_specified_more_than_once_then_its_values_are_aggregated()
         {
-            var option = new Option<bool>("-a");
+            CliDirective directive = new("directive");
 
-            var result = option.Parse("[directive:one] [directive:two] -a");
+            ParseResult result = Parse(new CliOption<bool>("-a"), directive, "[directive:one] [directive:two] -a");
 
-            result.Directives.TryGetValue("directive", out var values).Should().BeTrue();
-            values.Should().BeEquivalentTo("one", "two");
+            result.GetResult(directive).Values.Should().BeEquivalentTo("one", "two");
         }
 
-        [Fact]
-        public void Directive_count_is_based_on_distinct_instances_of_directive_name()
+        private static ParseResult Parse(CliOption option, CliDirective directive, string commandLine)
         {
-            var command = new RootCommand();
+            CliRootCommand root = new() { option };
+            CliConfiguration config = new(root);
+            config.Directives.Add(directive);
 
-            var result = command.Parse("[one] [two] [one:a] [one:b]");
-
-            result.Directives.Should().HaveCount(2);
-        }
-
-        [Fact]
-        public void Directives_can_be_disabled()
-        {
-            var parser = new Parser(
-                new CommandLineConfiguration(
-                    new RootCommand
-                    {
-                        new Argument<List<string>>()
-                    },
-                    enableDirectives: false));
-
-            var result = parser.Parse("[hello]");
-
-            result.Directives.Count().Should().Be(0);
-            result.CommandResult
-                  .Tokens
-                  .Select(t => t.Value)
-                  .Should()
-                  .BeEquivalentTo("[hello]");
+            return root.Parse(commandLine, config);
         }
     }
 }

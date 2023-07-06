@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>net7.0</TargetFrameworks>
+    <TargetFrameworks>$(TargetFrameworkForNETSDK)</TargetFrameworks>
     <TargetFrameworks Condition="'$(OS)' == 'Windows_NT'">$(TargetFrameworks);net462</TargetFrameworks>
     <LangVersion>10</LangVersion>
   </PropertyGroup>
@@ -18,7 +18,6 @@
     <Compile Include="..\Common\OptionBuilder.cs" Link="Utility\OptionBuilder.cs" />
     <Compile Include="..\System.CommandLine.Tests\Binding\TestModels.cs" Link="TestModels.cs" />
     <Compile Include="..\System.CommandLine.Tests\Utility\AssertionExtensions.cs" Link="Utility\AssertionExtensions.cs" />
-    <Compile Include="..\System.CommandLine.Tests\Utility\ConsoleAssertions.cs" Link="Utility\ConsoleAssertions.cs" />
   </ItemGroup>
   
   <ItemGroup>

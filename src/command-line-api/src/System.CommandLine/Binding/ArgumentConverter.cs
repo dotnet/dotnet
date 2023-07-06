@@ -1,7 +1,6 @@
 // Copyright (c) .NET Foundation and contributors. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-using System.Collections;
 using System.Collections.Generic;
 using System.CommandLine.Parsing;
 using static System.CommandLine.Binding.ArgumentConversionResult;
@@ -11,70 +10,72 @@ namespace System.CommandLine.Binding
     internal static partial class ArgumentConverter
     {
         internal static ArgumentConversionResult ConvertObject(
-            Argument argument,
+            ArgumentResult argumentResult,
             Type type,
-            object? value,
-            LocalizationResources localizationResources)
+            object? value)
         {
             switch (value)
             {
-                case Token singleValue:
-                    return ConvertToken(argument, type, singleValue, localizationResources);
+                case CliToken singleValue:
+                    return ConvertToken(argumentResult, type, singleValue);
 
-                case IReadOnlyList<Token> manyValues:
-                    return ConvertTokens(argument, type, manyValues, localizationResources);
+                case IReadOnlyList<CliToken> manyValues:
+                    return ConvertTokens(argumentResult, type, manyValues);
 
                 default:
-                    return None(argument);
+                    return None(argumentResult);
             }
         }
 
         private static ArgumentConversionResult ConvertToken(
-            Argument argument,
+            ArgumentResult argumentResult,
             Type type,
-            Token token,
-            LocalizationResources localizationResources)
+            CliToken token)
         {
             var value = token.Value;
 
             if (type.TryGetNullableType(out var nullableType))
             {
-                return ConvertToken(argument, nullableType, token, localizationResources);
+                return ConvertToken(argumentResult, nullableType, token);
             }
 
-            if (_stringConverters.TryGetValue(type, out var tryConvert))
+            if (StringConverters.TryGetValue(type, out var tryConvert))
             {
                 if (tryConvert(value, out var converted))
                 {
-                    return Success(argument, converted);
+                    return Success(argumentResult, converted);
                 }
                 else
                 {
-                    return Failure(argument, type, value, localizationResources);
+                    return ArgumentConversionCannotParse(argumentResult, type, value);
                 }
             }
 
             if (type.IsEnum)
             {
+#if NET7_0_OR_GREATER
+                if (Enum.TryParse(type, value, ignoreCase: true, out var converted))
+                {
+                    return Success(argumentResult, converted);
+                }
+#else
                 try
                 {
-                    return Success(argument, Enum.Parse(type, value, true));
+                    return Success(argumentResult, Enum.Parse(type, value, true));
                 }
                 catch (ArgumentException)
                 {
-                    // TODO: find a way to do this without the try..catch
                 }
+#endif
             }
 
-            return Failure(argument, type, value, localizationResources);
+            return ArgumentConversionCannotParse(argumentResult, type, value);
         }
 
         private static ArgumentConversionResult ConvertTokens(
-            Argument argument,
+            ArgumentResult argumentResult,
             Type type,
-            IReadOnlyList<Token> tokens,
-            LocalizationResources localizationResources,
-            ArgumentResult? argumentResult = null)
+            IReadOnlyList<CliToken> tokens)
         {
             var itemType = type.GetElementTypeIfEnumerable() ?? typeof(string);
             var values = CreateEnumerable(type, itemType, tokens.Count);
@@ -84,7 +85,7 @@ namespace System.CommandLine.Binding
             {
                 var token = tokens[i];
 
-                var result = ConvertToken(argument, itemType, token, localizationResources);
+                var result = ConvertToken(argumentResult, itemType, token);
 
                 switch (result.Result)
                 {
@@ -101,7 +102,7 @@ namespace System.CommandLine.Binding
                         break;
 
                     default: // failures
-                        if (argumentResult is { Parent: CommandResult })
+                        if (argumentResult.Parent is CommandResult)
                         {
                             argumentResult.OnlyTake(i);
 
@@ -113,20 +114,20 @@ namespace System.CommandLine.Binding
                 }
             }
 
-            return Success(argument, values);
+            return Success(argumentResult, values);
         }
 
-        internal static TryConvertArgument? GetConverter(Argument argument)
+        internal static TryConvertArgument? GetConverter(CliArgument argument)
         {
             if (argument.Arity is { MaximumNumberOfValues: 1, MinimumNumberOfValues: 1 })
             {
                 if (argument.ValueType.TryGetNullableType(out var nullableType) &&
-                    _stringConverters.TryGetValue(nullableType, out var convertNullable))
+                    StringConverters.TryGetValue(nullableType, out var convertNullable))
                 {
                     return (ArgumentResult result, out object? value) => ConvertSingleString(result, convertNullable, out value);
                 }
 
-                if (_stringConverters.TryGetValue(argument.ValueType, out var convert1))
+                if (StringConverters.TryGetValue(argument.ValueType, out var convert1))
                 {
                     return (ArgumentResult result, out object? value) => ConvertSingleString(result, convert1, out value);
                 }
@@ -167,35 +168,24 @@ namespace System.CommandLine.Binding
             }
         }
 
-        private static ArgumentConversionResult Failure(
-            Argument argument,
-            Type expectedType,
-            string value,
-            LocalizationResources localizationResources)
-        {
-            return new ArgumentConversionResult(argument, expectedType, value, localizationResources);
-        }
-
         internal static ArgumentConversionResult ConvertIfNeeded(
             this ArgumentConversionResult conversionResult,
-            SymbolResult symbolResult,
             Type toType)
         {
             return conversionResult.Result switch
             {
                 ArgumentConversionResultType.Successful when !toType.IsInstanceOfType(conversionResult.Value) =>
-                    ConvertObject(conversionResult.Argument,
+                    ConvertObject(conversionResult.ArgumentResult,
                                   toType,
-                                  conversionResult.Value,
-                                  symbolResult.LocalizationResources),
+                                  conversionResult.Value),
 
-                ArgumentConversionResultType.NoArgument when conversionResult.Argument.ValueType == typeof(bool) || conversionResult.Argument.ValueType == typeof(bool?) =>
-                    Success(conversionResult.Argument, true),
+                ArgumentConversionResultType.NoArgument when conversionResult.ArgumentResult.Argument.IsBoolean() =>
+                    Success(conversionResult.ArgumentResult, true),
 
-                ArgumentConversionResultType.NoArgument when conversionResult.Argument.Arity.MinimumNumberOfValues > 0 =>
-                    ArgumentConversionResult.Failure(
-                        conversionResult.Argument,
-                        symbolResult.LocalizationResources.RequiredArgumentMissing(symbolResult),
+                ArgumentConversionResultType.NoArgument when conversionResult.ArgumentResult.Argument.Arity.MinimumNumberOfValues > 0 =>
+                    Failure(
+                        conversionResult.ArgumentResult,
+                        LocalizationResources.RequiredArgumentMissing(conversionResult.ArgumentResult),
                         ArgumentConversionResultType.FailedMissingArgument),
                         
                 _ => conversionResult
@@ -219,46 +209,19 @@ namespace System.CommandLine.Binding
             ArgumentConversionResult result = argument.Arity.MaximumNumberOfValues switch
             {
                 // 0 is an implicit bool, i.e. a "flag"
-                0 => Success(argumentResult.Argument, true),
-                1 => ConvertObject(argument,
+                0 => Success(argumentResult, true),
+                1 => ConvertObject(argumentResult,
                                    argument.ValueType,
                                    argumentResult.Tokens.Count > 0
                                        ? argumentResult.Tokens[argumentResult.Tokens.Count - 1]
-                                       : null, 
-                                   argumentResult.LocalizationResources),
-                _ => ConvertTokens(argument,
+                                       : null),
+                _ => ConvertTokens(argumentResult,
                                     argument.ValueType,
-                                    argumentResult.Tokens,
-                                    argumentResult.LocalizationResources,
-                                    argumentResult)
+                                    argumentResult.Tokens)
             };
 
             value = result;
             return result.Result == ArgumentConversionResultType.Successful;
-        }
-
-        internal static object? GetDefaultValue(Type type)
-        {
-            if (type.IsNullable())
-            {
-                return null;
-            }
-
-            if (type.GetElementTypeIfEnumerable() is { } itemType)
-            {
-                return CreateEnumerable(type, itemType);
-            }
-
-            return type switch
-            {
-                { } nonGeneric
-                    when nonGeneric == typeof(IList) ||
-                         nonGeneric == typeof(ICollection) ||
-                         nonGeneric == typeof(IEnumerable)
-                    => Array.Empty<object>(),
-                _ when type.IsValueType => CreateDefaultValueType(type),
-                _ => null
-            };
         }
     }
 }

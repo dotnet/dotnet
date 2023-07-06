@@ -44,16 +44,16 @@ namespace System.CommandLine.Benchmarks.Helpers
             return pathToAssemblyFile;
         }
 
-        public static Parser CreateParser(this IEnumerable<Option> symbols)
+        public static CliConfiguration CreateConfiguration(this IEnumerable<CliOption> symbols)
         {
-            var rootCommand = new RootCommand();
+            var rootCommand = new CliRootCommand();
 
             foreach (var symbol in symbols)
             {
                 rootCommand.Add(symbol);
             }
 
-            return new Parser(rootCommand);
+            return new CliConfiguration(rootCommand);
         }
     }
 }

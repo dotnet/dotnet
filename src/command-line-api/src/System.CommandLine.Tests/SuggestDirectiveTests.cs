@@ -1,8 +1,9 @@
 ﻿// Copyright (c) .NET Foundation and contributors. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-using System.CommandLine.IO;
-using System.CommandLine.Parsing;
+using System.CommandLine.Completions;
+using System.CommandLine.Help;
+using System.IO;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Xunit;
@@ -12,21 +13,21 @@ namespace System.CommandLine.Tests
 {
     public class SuggestDirectiveTests
     {
-        protected Option _fruitOption;
+        protected CliOption _fruitOption;
 
-        protected Option _vegetableOption;
+        protected CliOption _vegetableOption;
 
-        private readonly Command _eatCommand;
+        private readonly CliCommand _eatCommand;
 
         public SuggestDirectiveTests()
         {
-            _fruitOption = new Option<string>("--fruit")
-                .AddCompletions("apple", "banana", "cherry");
+            _fruitOption = new CliOption<string>("--fruit");
+            _fruitOption.CompletionSources.Add("apple", "banana", "cherry");
 
-            _vegetableOption = new Option<string>("--vegetable")
-                .AddCompletions(_ => new[] { "asparagus", "broccoli", "carrot" });
+            _vegetableOption = new CliOption<string>("--vegetable");
+            _vegetableOption.CompletionSources.Add(_ => new[] { "asparagus", "broccoli", "carrot" });
 
-            _eatCommand = new Command("eat")
+            _eatCommand = new CliCommand("eat")
             {
                 _fruitOption,
                 _vegetableOption
@@ -36,20 +37,18 @@ namespace System.CommandLine.Tests
         [Fact]
         public async Task It_writes_suggestions_for_option_arguments_when_under_subcommand()
         {
-            var parser = new CommandLineBuilder(new RootCommand
-                         {
-                             _eatCommand
-                         })
-                         .UseSuggestDirective()
-                         .Build();
+            CliRootCommand rootCommand = new () { _eatCommand };
+            CliConfiguration config = new (rootCommand)
+            {
+                Output = new StringWriter(),
+                Directives = { new SuggestDirective() }
+            };
 
-            var result = parser.Parse($"[suggest:13] \"eat --fruit\"");
+            var result = rootCommand.Parse($"[suggest:13] \"eat --fruit\"", config);
 
-            var console = new TestConsole();
+            await result.InvokeAsync();
 
-            await result.InvokeAsync(console);
-
-            console.Out
+            config.Output
                    .ToString()
                    .Should()
                    .Be($"apple{NewLine}banana{NewLine}cherry{NewLine}");
@@ -58,48 +57,49 @@ namespace System.CommandLine.Tests
         [Fact]
         public async Task It_writes_suggestions_for_option_arguments_when_under_root_command()
         {
-            var parser = new CommandLineBuilder(new RootCommand
-                         {
-                             _fruitOption,
-                             _vegetableOption
-                         })
-                         .UseSuggestDirective()
-                         .Build();
+            CliRootCommand rootCommand = new ()
+            {
+                _fruitOption,
+                _vegetableOption
+            };
+            CliConfiguration config = new (rootCommand)
+            {
+                Output = new StringWriter(),
+                Directives = { new SuggestDirective() }
+            };
 
-            var result = parser.Parse($"[suggest:8] \"--fruit\"");
+            var result = rootCommand.Parse($"[suggest:8] \"--fruit\"", config);
 
-            var console = new TestConsole();
+            await result.InvokeAsync();
 
-            await result.InvokeAsync(console);
-
-            console.Out
+            config.Output
                    .ToString()
                    .Should()
                    .Be($"apple{NewLine}banana{NewLine}cherry{NewLine}");
         }
 
         [Theory]
-        [InlineData("[suggest:4] \"eat\"")]
-        [InlineData("[suggest:6] \"eat --\"")]
-        public async Task It_writes_suggestions_for_option_aliases_under_subcommand(string commandLine)
+        [InlineData("[suggest:4] \"eat\"", new[] { "--fruit", "--help", "--vegetable", "-?", "-h", "/?", "/h" })]
+        [InlineData("[suggest:6] \"eat --\"", new[] { "--fruit", "--help", "--vegetable" })]
+        public async Task It_writes_suggestions_for_option_aliases_under_subcommand(string commandLine, string[] expectedCompletions)
         {
-            var parser = new CommandLineBuilder(new RootCommand
-                         {
-                             _eatCommand
-                         })
-                         .UseSuggestDirective()
-                         .Build();
+            CliRootCommand rootCommand = new() { _eatCommand };
+            CliConfiguration config = new(rootCommand)
+            {
+                Output = new StringWriter(),
+                Directives = { new SuggestDirective() }
+            };
 
-            var result = parser.Parse(commandLine);
+            var result = rootCommand.Parse(commandLine, config);
 
-            var console = new TestConsole();
+            await result.InvokeAsync();
 
-            await result.InvokeAsync(console);
+            string expected = string.Join(NewLine, expectedCompletions) + NewLine;
 
-            console.Out
+            config.Output
                    .ToString()
                    .Should()
-                   .Be($"--fruit{NewLine}--vegetable{NewLine}");
+                   .Be(expected);
         }
 
         [Theory]
@@ -109,66 +109,64 @@ namespace System.CommandLine.Tests
         [InlineData("[suggest:0] ")]
         public async Task It_writes_suggestions_for_option_aliases_under_root_command(string input)
         {
-            var parser = new CommandLineBuilder(new RootCommand
-                         {
-                             _vegetableOption,
-                             _fruitOption
-                         })
-                         .UseSuggestDirective()
-                         .Build();
+            CliRootCommand rootCommand = new()
+            {
+                _vegetableOption,
+                _fruitOption
+            };
+            CliConfiguration config = new(rootCommand)
+            {
+                Output = new StringWriter(),
+                Directives = { new SuggestDirective() }
+            };
 
-            var result = parser.Parse(input);
+            var result = rootCommand.Parse(input, config);
+            await result.InvokeAsync();
 
-            var console = new TestConsole();
-
-            await result.InvokeAsync(console);
-
-            console.Out
+            config.Output
                    .ToString()
                    .Should()
-                   .Be($"--fruit{NewLine}--vegetable{NewLine}");
+                   .Be($"--fruit{NewLine}--help{NewLine}--vegetable{NewLine}--version{NewLine}-?{NewLine}-h{NewLine}/?{NewLine}/h{NewLine}");
         }
 
         [Fact]
         public async Task It_writes_suggestions_for_subcommand_aliases_under_root_command()
         {
-            var parser = new CommandLineBuilder(new RootCommand
-                         {
-                             _eatCommand
-                         })
-                         .UseSuggestDirective()
-                         .Build();
+            CliRootCommand rootCommand = new() { _eatCommand };
+            CliConfiguration config = new(rootCommand)
+            {
+                Output = new StringWriter(),
+                Directives = { new SuggestDirective() }
+            };
 
-            var result = parser.Parse("[suggest]");
+            var result = rootCommand.Parse("[suggest]", config);
+            await result.InvokeAsync();
 
-            var console = new TestConsole();
-
-            await result.InvokeAsync(console);
-
-            console.Out
+            config.Output
                    .ToString()
                    .Should()
-                   .Be($"eat{NewLine}");
+                   .Be($"--help{NewLine}--version{NewLine}-?{NewLine}-h{NewLine}/?{NewLine}/h{NewLine}eat{NewLine}");
         }
 
         [Fact]
         public async Task It_writes_suggestions_for_partial_option_aliases_under_root_command()
         {
-            var parser = new CommandLineBuilder(new RootCommand
-                         {
-                             _fruitOption,
-                             _vegetableOption
-                         })
-                         .UseSuggestDirective()
-                         .Build();
+            CliRootCommand rootCommand = new()
+            {
+                _fruitOption,
+                _vegetableOption
+            };
+            CliConfiguration config = new (rootCommand)
+            {
+                Output = new StringWriter(),
+                Directives = { new SuggestDirective() }
+            };
 
-            var result = parser.Parse($"[suggest:1] \"f\"");
+            var result = rootCommand.Parse($"[suggest:1] \"f\"", config);
 
-            var console = new TestConsole();
+            await result.InvokeAsync();
 
-            await result.InvokeAsync(console);
-
-            console.Out
+            config.Output
                    .ToString()
                    .Should()
                    .Be($"--fruit{NewLine}");
@@ -177,21 +175,22 @@ namespace System.CommandLine.Tests
         [Fact]
         public async Task It_writes_suggestions_for_partial_subcommand_aliases_under_root_command()
         {
-            var parser = new CommandLineBuilder(new RootCommand
-                         {
-                             _eatCommand,
-                             new Command("wash-dishes")
-                         })
-                         .UseSuggestDirective()
-                         .Build();
+            CliRootCommand rootCommand = new ()
+            {
+                _eatCommand,
+                new CliCommand("wash-dishes")
+            };
+            CliConfiguration config = new (rootCommand)
+            {
+                Output = new StringWriter(),
+                Directives = { new SuggestDirective() }
+            };
 
-            var result = parser.Parse("[suggest:1] \"d\"");
+            var result = rootCommand.Parse("[suggest:1] \"d\"", config);
 
-            var console = new TestConsole();
+            await result.InvokeAsync();
 
-            await result.InvokeAsync(console);
-
-            console.Out
+            config.Output
                    .ToString()
                    .Should()
                    .Be($"wash-dishes{NewLine}");
@@ -200,22 +199,22 @@ namespace System.CommandLine.Tests
         [Fact]
         public async Task It_writes_suggestions_for_partial_option_and_subcommand_aliases_under_root_command()
         {
-            var parser = new CommandLineBuilder(new RootCommand
-                          {
-                              _eatCommand,
-                              new Command("wash-dishes")
-                          })
-                          .UseSuggestDirective()
-                          .UseVersionOption()
-                          .Build();
+            CliRootCommand rootCommand = new ()
+            {
+                _eatCommand,
+                new CliCommand("wash-dishes"),
+            };
+            CliConfiguration config = new (rootCommand)
+            {
+                Output = new StringWriter(),
+                Directives = { new SuggestDirective() }
+            };
 
-            var result = parser.Parse("[suggest:5] \"--ver\"");
+            var result = rootCommand.Parse("[suggest:5] \"--ver\"", config);
 
-            var console = new TestConsole();
+            await result.InvokeAsync();
 
-            await result.InvokeAsync(console);
-
-            console.Out
+            config.Output
                    .ToString()
                    .Should()
                    .Be($"--version{NewLine}");
@@ -224,21 +223,22 @@ namespace System.CommandLine.Tests
         [Fact]
         public async Task It_writes_suggestions_for_partial_option_and_subcommand_aliases_under_root_command_with_an_argument()
         {
-            var parser = new CommandLineBuilder(new Command("parent")
-                          {
-                              new Command("child"),
-                              new Option<bool>("--option1"),
-                              new Option<bool>("--option2"),
-                              new Argument<string>()
-                          })
-                          .UseSuggestDirective()
-                          .Build();
+            CliCommand command = new("parent")
+            {
+                new CliCommand("child"),
+                new CliOption<bool>("--option1"),
+                new CliOption<bool>("--option2"),
+                new CliArgument<string>("arg")
+            };
+            CliConfiguration config = new (command)
+            {
+                Output = new StringWriter(),
+                Directives = { new SuggestDirective() }
+            };
 
-            var console = new TestConsole();
+            await config.InvokeAsync("[suggest:3] \"opt\"");
 
-            await parser.InvokeAsync("[suggest:3] \"opt\"", console);
-
-            console.Out
+            config.Output
                    .ToString()
                    .Should()
                    .Be($"--option1{NewLine}--option2{NewLine}");
@@ -247,18 +247,20 @@ namespace System.CommandLine.Tests
         [Fact]
         public async Task It_does_not_repeat_suggestion_for_already_specified_bool_option()
         {
-            var command = new RootCommand
+            var command = new CliRootCommand
             {
-                new Option<bool>("--bool-option")
+                new CliOption<bool>("--bool-option")
             };
-
-            var console = new TestConsole();
+            CliConfiguration config = new (command)
+            {
+                Output = new StringWriter()
+            };
 
             var commandLine = "--bool-option false";
 
-            await command.InvokeAsync($"[suggest:{commandLine.Length + 1}] \"{commandLine}\"", console);
+            await command.Parse($"[suggest:{commandLine.Length + 1}] \"{commandLine}\"", config).InvokeAsync();
 
-            console.Out
+            config.Output
                    .ToString()
                    .Should()
                    .NotContain("--bool-option");

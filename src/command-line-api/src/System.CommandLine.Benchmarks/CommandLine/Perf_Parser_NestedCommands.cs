@@ -7,14 +7,14 @@ using BenchmarkDotNet.Attributes;
 namespace System.CommandLine.Benchmarks.CommandLine
 {
     /// <summary>
-    /// Measures the performance of <see cref="Parser"/> when parsing commands.
+    /// Measures the performance of <see cref="CliParser"/> when parsing commands.
     /// </summary>
     [BenchmarkCategory(Categories.CommandLine)]
     public class Perf_Parser_NestedCommands
     {
         private string _testSymbolsAsString;
-        private Parser _testParser;
-        private Command _rootCommand;
+        private CliCommand _rootCommand;
+        private CliConfiguration _configuration;
 
         /// <remarks>
         /// 1 - cmd-root
@@ -31,7 +31,7 @@ namespace System.CommandLine.Benchmarks.CommandLine
         [Params(1, 2, 5)]
         public int TestCommandsDepth;
 
-        private void GenerateTestNestedCommands(Command parent, int depth, int countPerLevel)
+        private void GenerateTestNestedCommands(CliCommand parent, int depth, int countPerLevel)
         {
             if (depth == 0)
                 return;
@@ -39,22 +39,22 @@ namespace System.CommandLine.Benchmarks.CommandLine
             for (int i = 0; i < countPerLevel; i++)
             {
                 string cmdName = $"{parent.Name}_{depth}.{i}";
-                Command cmd = new(cmdName);
-                parent.AddCommand(cmd);
+                CliCommand cmd = new(cmdName);
+                parent.Subcommands.Add(cmd);
                 GenerateTestNestedCommands(cmd, depth - 1, countPerLevel);
             }
         }
 
-        [GlobalSetup(Target = nameof(ParserFromNestedCommands_Ctor))]
+        [GlobalSetup]
         public void SetupRootCommand()
         {
             string rootCommandName = "root";
-            var rootCommand = new Command(rootCommandName);
+            var rootCommand = new CliCommand(rootCommandName);
             _testSymbolsAsString = rootCommandName;
             GenerateTestNestedCommands(rootCommand, TestCommandsDepth, TestCommandsDepth);
 
             // Choose only one path from the commands tree for the test arguments string
-            Command currentCmd = rootCommand;
+            CliCommand currentCmd = rootCommand;
             while (currentCmd is not null && currentCmd.Subcommands.Count > 0)
             {
                 currentCmd = currentCmd.Subcommands[0];
@@ -62,19 +62,10 @@ namespace System.CommandLine.Benchmarks.CommandLine
             }
 
             _rootCommand = rootCommand;
-        }
-
-        [GlobalSetup(Target = nameof(Parser_Parse))]
-        public void SetupParser()
-        {
-            SetupRootCommand();
-            _testParser = new Parser(_rootCommand);
+            _configuration = new CliConfiguration(rootCommand);
         }
 
         [Benchmark]
-        public Parser ParserFromNestedCommands_Ctor() => new(_rootCommand);
-
-        [Benchmark]
-        public ParseResult Parser_Parse() => _testParser.Parse(_testSymbolsAsString);
+        public ParseResult Parser_Parse() => CliParser.Parse(_rootCommand, _testSymbolsAsString, _configuration);
     }
 }
