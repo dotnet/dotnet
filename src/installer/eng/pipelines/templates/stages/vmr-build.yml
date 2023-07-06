@@ -17,7 +17,7 @@ parameters:
   centOSStream8Container: mcr.microsoft.com/dotnet-buildtools/prereqs:centos-stream8
   centOSStream9Container: mcr.microsoft.com/dotnet-buildtools/prereqs:centos-stream9
   fedora38Container: mcr.microsoft.com/dotnet-buildtools/prereqs:fedora-38
-  ubuntu2004Container: mcr.microsoft.com/dotnet-buildtools/prereqs:ubuntu-20.04
+  ubuntu2204Container: mcr.microsoft.com/dotnet-buildtools/prereqs:ubuntu-22.04
   ubuntu2204ArmContainer: mcr.microsoft.com/dotnet-buildtools/prereqs:ubuntu-22.04-arm64
 
   # Internal builds
@@ -71,6 +71,7 @@ stages:
 
   - template: ../jobs/vmr-build.yml
     parameters:
+      # Changing the build name requires updating the referenced name in the source-build-sdk-diff-tests.yml pipeline
       buildName: CentOSStream8_Online_MsftSdk
       isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
       vmrBranch: ${{ variables.VmrBranch }}
@@ -88,6 +89,7 @@ stages:
 
   - template: ../jobs/vmr-build.yml
     parameters:
+      # Changing the build name requires updating the referenced name in the source-build-sdk-diff-tests.yml pipeline
       buildName: CentOSStream8_Offline_MsftSdk
       isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
       vmrBranch: ${{ variables.VmrBranch }}
@@ -109,6 +111,7 @@ stages:
 
     - template: ../jobs/vmr-build.yml
       parameters:
+        # Changing the build name requires updating the referenced name in the source-build-sdk-diff-tests.yml pipeline
         buildName: Alpine317_Offline_MsftSdk
         isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
         vmrBranch: ${{ variables.VmrBranch }}
@@ -126,6 +129,7 @@ stages:
 
     - template: ../jobs/vmr-build.yml
       parameters:
+        # Changing the build name requires updating the referenced name in the source-build-sdk-diff-tests.yml pipeline
         buildName: CentOSStream8_Online_PreviousSourceBuiltSdk
         isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
         vmrBranch: ${{ variables.VmrBranch }}
@@ -143,6 +147,7 @@ stages:
 
     - template: ../jobs/vmr-build.yml
       parameters:
+        # Changing the build name requires updating the referenced name in the source-build-sdk-diff-tests.yml pipeline
         buildName: CentOSStream8_Mono_Offline_MsftSdk
         isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
         vmrBranch: ${{ variables.VmrBranch }}
@@ -160,6 +165,7 @@ stages:
 
     - template: ../jobs/vmr-build.yml
       parameters:
+        # Changing the build name requires updating the referenced name in the source-build-sdk-diff-tests.yml pipeline
         buildName: CentOSStream9_Offline_MsftSdk
         isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
         vmrBranch: ${{ variables.VmrBranch }}
@@ -177,6 +183,7 @@ stages:
 
     - template: ../jobs/vmr-build.yml
       parameters:
+        # Changing the build name requires updating the referenced name in the source-build-sdk-diff-tests.yml pipeline
         buildName: Fedora38_Offline_MsftSdk
         isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
         vmrBranch: ${{ variables.VmrBranch }}
@@ -194,14 +201,15 @@ stages:
 
     - template: ../jobs/vmr-build.yml
       parameters:
-        buildName: Ubuntu2004_Offline_MsftSdk
+        # Changing the build name requires updating the referenced name in the source-build-sdk-diff-tests.yml pipeline
+        buildName: Ubuntu2204_Offline_MsftSdk
         isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
         vmrBranch: ${{ variables.VmrBranch }}
         architecture: x64
         pool:
           name: ${{ variables.defaultPoolName }}
           demands: ${{ variables.defaultPoolDemands }}
-        container: ${{ parameters.ubuntu2004Container }}
+        container: ${{ parameters.ubuntu2204Container }}
         buildFromArchive: false            # 🚫
         enablePoison: false                # 🚫
         excludeOmniSharpTests: false       # 🚫
@@ -213,6 +221,7 @@ stages:
 
     - template: ../jobs/vmr-build.yml
       parameters:
+        # Changing the build name requires updating the referenced name in the source-build-sdk-diff-tests.yml pipeline
         buildName: Ubuntu2204Arm64_Offline_MsftSdk
         isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
         vmrBranch: ${{ variables.VmrBranch }}
@@ -230,6 +239,7 @@ stages:
 
     - template: ../jobs/vmr-build.yml
       parameters:
+        # Changing the build name requires updating the referenced name in the source-build-sdk-diff-tests.yml pipeline
         buildName: CentOSStream8_Online_CurrentSourceBuiltSdk
         isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
         vmrBranch: ${{ variables.VmrBranch }}
@@ -248,6 +258,7 @@ stages:
 
     - template: ../jobs/vmr-build.yml
       parameters:
+        # Changing the build name requires updating the referenced name in the source-build-sdk-diff-tests.yml pipeline
         buildName: Fedora38_Offline_CurrentSourceBuiltSdk
         isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
         vmrBranch: ${{ variables.VmrBranch }}

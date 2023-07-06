@@ -19,7 +19,7 @@
     <formatOutputPackageVersion>8.0.433001</formatOutputPackageVersion>
     <fsharpGitCommitHash>4885abbdf7595c1b8475ea868964d4ce43284b9e</fsharpGitCommitHash>
     <fsharpOutputPackageVersion>8.0.100-beta.23354.4</fsharpOutputPackageVersion>
-    <installerGitCommitHash>fe70075baebea9fd9de4cd1177096adff8563a61</installerGitCommitHash>
+    <installerGitCommitHash>8b4c48428e8feb8dfac0c832a0c90c53d933771e</installerGitCommitHash>
     <installerOutputPackageVersion>8.0.100</installerOutputPackageVersion>
     <msbuildGitCommitHash>946c584115367635c37ac7ecaadb2f36542f88b0</msbuildGitCommitHash>
     <msbuildOutputPackageVersion>17.8.0-preview-23353-01</msbuildOutputPackageVersion>
@@ -35,10 +35,10 @@
     <runtimeOutputPackageVersion>8.0.0-preview.7.23355.7</runtimeOutputPackageVersion>
     <sdkGitCommitHash>51762f9cd60ecc346dc6a13dcbb5f88fec1750d8</sdkGitCommitHash>
     <sdkOutputPackageVersion>8.0.100-preview.7.23356.4</sdkOutputPackageVersion>
-    <sourcebuildexternalsGitCommitHash>ac076c101e6fe5e8fbfbd0a0ab878bd3313d9138</sourcebuildexternalsGitCommitHash>
-    <sourcebuildexternalsOutputPackageVersion>8.0.0-alpha.1.23329.1</sourcebuildexternalsOutputPackageVersion>
-    <sourcebuildreferencepackagesGitCommitHash>06570e0fdc66b45f20fb34c3b6b1bfedcdcf45a3</sourcebuildreferencepackagesGitCommitHash>
-    <sourcebuildreferencepackagesOutputPackageVersion>8.0.0-alpha.1.23355.1</sourcebuildreferencepackagesOutputPackageVersion>
+    <sourcebuildexternalsGitCommitHash>449b2eed42c10f14eabb29d0f57c3ba77844f21c</sourcebuildexternalsGitCommitHash>
+    <sourcebuildexternalsOutputPackageVersion>8.0.0-alpha.1.23355.1</sourcebuildexternalsOutputPackageVersion>
+    <sourcebuildreferencepackagesGitCommitHash>2b9d14342b54a5b71f944364e1b58081be01e33f</sourcebuildreferencepackagesGitCommitHash>
+    <sourcebuildreferencepackagesOutputPackageVersion>8.0.0-alpha.1.23356.1</sourcebuildreferencepackagesOutputPackageVersion>
     <sourcelinkGitCommitHash>2cbc0223f1ea879a8ca3a5c744da52d57d6c1fcd</sourcelinkGitCommitHash>
     <sourcelinkOutputPackageVersion>8.0.0-beta.23330.1</sourcelinkOutputPackageVersion>
     <symreaderGitCommitHash>2c8079e2e8e78c0cd11ac75a32014756136ecdb9</symreaderGitCommitHash>
