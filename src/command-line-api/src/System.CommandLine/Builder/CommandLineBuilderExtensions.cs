@@ -107,7 +107,7 @@ namespace System.CommandLine
                     if (timeout! > TimeSpan.Zero)
                     {
                         Task
-                            .Delay(timeout.Value, (CancellationToken)default)
+                            .Delay(timeout.Value, default)
                             .ContinueWith(t =>
                             {
                                 // Prevent our ProcessExit from intervene and block the exit
