@@ -43,8 +43,8 @@ jobs:
 
 - template: templates/jobs/sdk-diff-tests.yml
   parameters:
-    buildName: Ubuntu2004_Offline_MsftSdk
-    targetRid: ubuntu.20.04-x64
+    buildName: Ubuntu2204_Offline_MsftSdk
+    targetRid: ubuntu.22.04-x64
     architecture: x64
     dotnetDotnetRunId: ${{ parameters.dotnetDotnetRunId }}
 
