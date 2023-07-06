@@ -1,6 +1,4 @@
 ﻿using System.CommandLine.Binding;
-using System.CommandLine.Invocation;
-using System.CommandLine.Parsing;
 using System.Linq;
 using CommandHandler = System.CommandLine.NamingConventionBinder.CommandHandler;
 
@@ -12,13 +10,14 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 
 using Xunit;
+using System.Threading.Tasks;
 
 namespace System.CommandLine.Hosting.Tests
 {
     public static class HostingTests
     {
         [Fact]
-        public static void UseHost_registers_IHost_to_binding_context()
+        public async static Task UseHost_registers_IHost_to_binding_context()
         {
             IHost hostFromHandler = null;
 
@@ -27,71 +26,59 @@ namespace System.CommandLine.Hosting.Tests
                 hostFromHandler = host;
             }
 
-            var parser = new CommandLineBuilder(
-                new RootCommand { Handler = CommandHandler.Create<IHost>(Execute) }
+            var config = new CliConfiguration(
+                new CliRootCommand { Action = CommandHandler.Create<IHost>(Execute) }
                 )
-                .UseHost()
-                .Build();
+                .UseHost();
 
-            parser.InvokeAsync(Array.Empty<string>())
-                .GetAwaiter().GetResult();
+            await config.InvokeAsync(Array.Empty<string>());
 
             hostFromHandler.Should().NotBeNull();
         }
 
         [Fact]
-        public static void UseHost_adds_invocation_context_to_HostBuilder_Properties()
+        public async static Task UseHost_adds_ParseResult_to_HostBuilder_Properties()
         {
-            InvocationContext invocationContext = null;
+            ParseResult parseResult = null;
 
-            var parser = new CommandLineBuilder()
+            var config = new CliConfiguration(new CliRootCommand())
                 .UseHost(host =>
                 {
-                    if (host.Properties.TryGetValue(typeof(InvocationContext), out var ctx))
-                        invocationContext = ctx as InvocationContext;
-                })
-                .Build();
+                    if (host.Properties.TryGetValue(typeof(ParseResult), out var ctx))
+                        parseResult = ctx as ParseResult;
+                });
 
-            parser.InvokeAsync(Array.Empty<string>())
-                .GetAwaiter().GetResult();
+            await config.InvokeAsync(Array.Empty<string>());
 
-            invocationContext.Should().NotBeNull();
+            parseResult.Should().NotBeNull();
         }
 
         [Fact]
-        public static void UseHost_adds_invocation_context_to_Host_Services()
+        public async static Task UseHost_adds_ParseResult_to_Host_Services()
         {
-            InvocationContext invocationContext = null;
             BindingContext bindingContext = null;
             ParseResult parseResult = null;
-            IConsole console = null;
 
             void Execute(IHost host)
             {
                 var services = host.Services;
-                invocationContext = services.GetRequiredService<InvocationContext>();
                 bindingContext = services.GetRequiredService<BindingContext>();
                 parseResult = services.GetRequiredService<ParseResult>();
-                console = services.GetRequiredService<IConsole>();
             }
 
-            var parser = new CommandLineBuilder(
-                new RootCommand { Handler = CommandHandler.Create<IHost>(Execute) }
+            var config = new CliConfiguration(
+                new CliRootCommand { Action = CommandHandler.Create<IHost>(Execute) }
                 )
-                .UseHost()
-                .Build();
+                .UseHost();
 
-            parser.InvokeAsync(Array.Empty<string>())
-                .GetAwaiter().GetResult();
+            await config.InvokeAsync(Array.Empty<string>());
 
-            invocationContext.Should().NotBeNull();
             bindingContext.Should().NotBeNull();
             parseResult.Should().NotBeNull();
-            console.Should().NotBeNull();
         }
 
         [Fact]
-        public static void UseHost_UnmatchedTokens_can_propagate_to_Host_Configuration()
+        public static async Task UseHost_UnmatchedTokens_can_propagate_to_Host_Configuration()
         {
             const string testArgument = "test";
             const string testKey = "unmatched-config";
@@ -105,30 +92,28 @@ namespace System.CommandLine.Hosting.Tests
                 testConfigValue = config[testKey];
             }
 
-            var parser = new CommandLineBuilder(
-                new RootCommand
+            var config = new CliConfiguration(
+                new CliRootCommand
                 {
-                    Handler = CommandHandler.Create<IHost>(Execute),
+                    Action = CommandHandler.Create<IHost>(Execute),
                 })
                 .UseHost(host =>
                 {
-                    var invocation = (InvocationContext)host.Properties[typeof(InvocationContext)];
-                    var args = invocation.ParseResult.UnmatchedTokens.ToArray();
+                    var parseResult = (ParseResult)host.Properties[typeof(ParseResult)];
+                    var args = parseResult.UnmatchedTokens.ToArray();
                     host.ConfigureHostConfiguration(config =>
                     {
                         config.AddCommandLine(args);
                     });
-                })
-                .Build();
+                });
 
-            parser.InvokeAsync(commandLineArgs)
-                .GetAwaiter().GetResult();
+            await config.InvokeAsync(commandLineArgs);
 
             testConfigValue.Should().BeEquivalentTo(testArgument);
         }
 
         [Fact]
-        public static void UseHost_UnmatchedTokens_are_available_in_HostBuilder_factory()
+        public async static Task UseHost_UnmatchedTokens_are_available_in_HostBuilder_factory()
         {
             const string testArgument = "test";
             const string testKey = "unmatched-config";
@@ -142,10 +127,10 @@ namespace System.CommandLine.Hosting.Tests
                 testConfigValue = config[testKey];
             }
 
-            var parser = new CommandLineBuilder(
-                new RootCommand
+            var config = new CliConfiguration(
+                new CliRootCommand
                 {
-                    Handler = CommandHandler.Create<IHost>(Execute),
+                    Action = CommandHandler.Create<IHost>(Execute),
                 })
                 .UseHost(args =>
                 {
@@ -157,17 +142,15 @@ namespace System.CommandLine.Hosting.Tests
                     });
 
                     return host;
-                })
-                .Build();
+                });
 
-            parser.InvokeAsync(commandLineArgs)
-                .GetAwaiter().GetResult();
+            await config.InvokeAsync(commandLineArgs);
 
             testConfigValue.Should().BeEquivalentTo(testArgument);
         }
 
         [Fact]
-        public static void UseHost_flows_config_directives_to_HostConfiguration()
+        public async static Task UseHost_flows_config_directives_to_HostConfiguration()
         {
             const string testKey = "Test";
             const string testValue = "Value";
@@ -181,15 +164,14 @@ namespace System.CommandLine.Hosting.Tests
                 testConfigValue = config[testKey];
             }
 
-            var parser = new CommandLineBuilder(
-                new RootCommand
+            var config = new CliConfiguration(
+                new CliRootCommand
                 {
-                    Handler = CommandHandler.Create<IHost>(Execute)
+                    Action = CommandHandler.Create<IHost>(Execute)
                 })
-                .UseHost()
-                .Build();
+                .UseHost();
 
-            parser.InvokeAsync(commandLine).GetAwaiter().GetResult();
+            await config.InvokeAsync(commandLine);
 
             testConfigValue.Should().BeEquivalentTo(testValue);
         }
@@ -201,16 +183,16 @@ namespace System.CommandLine.Hosting.Tests
             string commandLine = $"-{nameof(MyOptions.MyArgument)} {myValue}";
             MyOptions options = null;
 
-            var rootCmd = new RootCommand();
-            rootCmd.AddOption(new Option<int>($"-{nameof(MyOptions.MyArgument)}"));
-            rootCmd.Handler = CommandHandler.Create((IHost host) =>
+            var rootCmd = new CliRootCommand();
+            rootCmd.Options.Add(new CliOption<int>($"-{nameof(MyOptions.MyArgument)}"));
+            rootCmd.Action = CommandHandler.Create((IHost host) =>
             {
                 options = host.Services
                     .GetRequiredService<IOptions<MyOptions>>()
                     .Value;
             });
 
-            int result = new CommandLineBuilder(rootCmd)
+            int result = new CliConfiguration(rootCmd)
                 .UseHost(host =>
                 {
                     host.ConfigureServices(services =>
@@ -218,7 +200,6 @@ namespace System.CommandLine.Hosting.Tests
                         services.AddOptions<MyOptions>().BindCommandLine();
                     });
                 })
-                .Build()
                 .Invoke(commandLine);
 
             Assert.Equal(0, result);
@@ -257,89 +238,38 @@ namespace System.CommandLine.Hosting.Tests
         }
 
         [Fact]
-        public static void GetInvocationContext_returns_non_null_instance()
+        public async static Task GetParseResult_returns_non_null_instance()
         {
             bool ctxAsserted = false;
-            var parser = new CommandLineBuilder()
+            var config = new CliConfiguration(new CliRootCommand())
                 .UseHost(hostBuilder =>
                 {
-                    InvocationContext ctx = hostBuilder.GetInvocationContext();
+                    ParseResult ctx = hostBuilder.GetParseResult();
                     ctx.Should().NotBeNull();
                     ctxAsserted = true;
-                })
-                .Build();
+                });
 
-            _ = parser.Invoke(string.Empty);
+            await config.InvokeAsync(string.Empty);
             ctxAsserted.Should().BeTrue();
         }
 
         [Fact]
-        public static void GetInvocationContext_in_ConfigureServices_returns_non_null_instance()
+        public async static Task GetParseResult_in_ConfigureServices_returns_non_null_instance()
         {
             bool ctxAsserted = false;
-            var parser = new CommandLineBuilder()
+            var config = new CliConfiguration(new CliRootCommand())
                 .UseHost(hostBuilder =>
                 {
                     hostBuilder.ConfigureServices((hostingCtx, services) =>
                     {
-                        InvocationContext invocationCtx = hostingCtx.GetInvocationContext();
+                        ParseResult invocationCtx = hostingCtx.GetParseResult();
                         invocationCtx.Should().NotBeNull();
                         ctxAsserted = true;
                     });
-                })
-                .Build();
+                });
 
-            _ = parser.Invoke(string.Empty);
+            await config.InvokeAsync(string.Empty);
             ctxAsserted.Should().BeTrue();
-        }
-
-        [Fact]
-        public static void GetInvocationContext_returns_same_instance_as_outer_middleware()
-        {
-            InvocationContext ctxCustom = null;
-            InvocationContext ctxHosting = null;
-
-            var parser = new CommandLineBuilder()
-                .AddMiddleware((context, next) =>
-                {
-                    ctxCustom = context;
-                    return next(context);
-                })
-                .UseHost(hostBuilder =>
-                {
-                    ctxHosting = hostBuilder.GetInvocationContext();
-                })
-                .Build();
-
-            _ = parser.Invoke(string.Empty);
-
-            ctxHosting.Should().BeSameAs(ctxCustom);
-        }
-
-        [Fact]
-        public static void GetInvocationContext_in_ConfigureServices_returns_same_instance_as_outer_middleware()
-        {
-            InvocationContext ctxCustom = null;
-            InvocationContext ctxConfigureServices = null;
-
-            var parser = new CommandLineBuilder()
-                .AddMiddleware((context, next) =>
-                {
-                    ctxCustom = context;
-                    return next(context);
-                })
-                .UseHost(hostBuilder =>
-                {
-                    hostBuilder.ConfigureServices((hostingCtx, services) =>
-                    {
-                        ctxConfigureServices = hostingCtx.GetInvocationContext();
-                    });
-                })
-                .Build();
-
-            _ = parser.Invoke(string.Empty);
-
-            ctxConfigureServices.Should().BeSameAs(ctxCustom);
         }
 
         [Fact]
@@ -348,7 +278,7 @@ namespace System.CommandLine.Hosting.Tests
             var hostBuilder = new HostBuilder();
             hostBuilder.Invoking(b =>
             {
-                _ = b.GetInvocationContext();
+                _ = b.GetParseResult();
             })
                 .Should().Throw<InvalidOperationException>();
         }
@@ -360,52 +290,11 @@ namespace System.CommandLine.Hosting.Tests
             {
                 b.ConfigureServices((hostingCtx, services) =>
                 {
-                    _ = hostingCtx.GetInvocationContext();
+                    _ = hostingCtx.GetParseResult();
                 });
                 _ = b.Build();
             })
                 .Should().Throw<InvalidOperationException>();
-        }
-
-        [Fact]
-        public static void GetHost_returns_non_null_instance_in_subsequent_middleware()
-        {
-            bool hostAsserted = false;
-            var parser = new CommandLineBuilder()
-                .UseHost()
-                .AddMiddleware((invCtx, next) =>
-                {
-                    IHost host = invCtx.GetHost();
-                    host.Should().NotBeNull();
-                    hostAsserted = true;
-
-                    return next(invCtx);
-                })
-                .Build();
-
-            _ = parser.Invoke(string.Empty);
-
-            hostAsserted.Should().BeTrue();
-        }
-
-        [Fact]
-        public static void GetHost_returns_null_when_no_host_in_invocation()
-        {
-            bool hostAsserted = false;
-            var parser = new CommandLineBuilder()
-                .AddMiddleware((invCtx, next) =>
-                {
-                    IHost host = invCtx.GetHost();
-                    host.Should().BeNull();
-                    hostAsserted = true;
-
-                    return next(invCtx);
-                })
-                .Build();
-
-            _ = parser.Invoke(string.Empty);
-
-            hostAsserted.Should().BeTrue();
         }
     }
 }

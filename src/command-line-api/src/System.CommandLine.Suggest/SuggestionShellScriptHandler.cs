@@ -8,29 +8,42 @@ namespace System.CommandLine.Suggest
 {
     internal static class SuggestionShellScriptHandler
     {
-        public static void Handle(IConsole console, ShellType shellType)
+        public static void Handle(TextWriter output, ShellType shellType)
         {
             switch (shellType)
             {
                 case ShellType.Bash:
-                    PrintToConsoleFrom(console, "dotnet-suggest-shim.bash");
+                    PrintToConsoleFrom(output, "dotnet-suggest-shim.bash", useUnixLineEndings: true);
                     break;
                 case ShellType.PowerShell:
-                    PrintToConsoleFrom(console, "dotnet-suggest-shim.ps1");
+                    PrintToConsoleFrom(output, "dotnet-suggest-shim.ps1", useUnixLineEndings: false);
                     break;
                 case ShellType.Zsh:
-                    PrintToConsoleFrom(console, "dotnet-suggest-shim.zsh");
+                    PrintToConsoleFrom(output, "dotnet-suggest-shim.zsh", useUnixLineEndings: true);
                     break;
                 default:
                     throw new SuggestionShellScriptException($"Shell '{shellType}' is not supported.");
             }
         }
 
-        private static void PrintToConsoleFrom(IConsole console, string scriptName)
+        private static void PrintToConsoleFrom(TextWriter output, string scriptName, bool useUnixLineEndings)
         {
             var assemblyLocation = Assembly.GetAssembly(typeof(SuggestionShellScriptHandler)).Location;
             var directory = Path.GetDirectoryName(assemblyLocation);
-            console.Out.Write(File.ReadAllText(Path.Combine(directory, scriptName)));
+            string scriptContent = File.ReadAllText(Path.Combine(directory, scriptName));
+            bool hasUnixLineEndings = !scriptContent.Contains("\r\n");
+            if (hasUnixLineEndings != useUnixLineEndings)
+            {
+                if (useUnixLineEndings)
+                {
+                    scriptContent = scriptContent.Replace("\r\n", "\n");
+                }
+                else
+                {
+                    scriptContent = scriptContent.Replace("\n", "\r\n");
+                }
+            }
+            output.Write(scriptContent);
         }
     }
 }

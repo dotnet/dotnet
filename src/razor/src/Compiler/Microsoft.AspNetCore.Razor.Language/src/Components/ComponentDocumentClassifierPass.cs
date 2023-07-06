@@ -123,10 +123,13 @@ internal class ComponentDocumentClassifierPass : DocumentClassifierPassBase
                     continue;
                 }
 
+                // The first token is the type parameter's name, the rest are its constraints, if any.
+                var constraints = typeParamNode.Tokens.Skip(1).FirstOrDefault();
                 @class.TypeParameters.Add(new TypeParameter()
                 {
                     ParameterName = typeParamNode.Tokens.First().Content,
-                    Constraints = typeParamNode.Tokens.Skip(1).FirstOrDefault()?.Content
+                    Constraints = constraints?.Content,
+                    ConstraintsSource = constraints?.Source,
                 });
             }
 

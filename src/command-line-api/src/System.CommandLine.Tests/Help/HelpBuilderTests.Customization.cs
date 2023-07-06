@@ -1,11 +1,14 @@
 // Copyright (c) .NET Foundation and contributors. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+using System.Collections.Generic;
 using System.CommandLine.Help;
-using System.CommandLine.IO;
-using System.CommandLine.Parsing;
 using System.IO;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using FluentAssertions;
+using FluentAssertions.Common;
 using Xunit;
 using static System.Environment;
 
@@ -28,15 +31,13 @@ namespace System.CommandLine.Tests.Help
                 _indentation = new string(' ', IndentationWidth);
             }
 
-            private HelpBuilder GetHelpBuilder(int maxWidth) =>
-                new(LocalizationResources.Instance,
-                    maxWidth);
+            private HelpBuilder GetHelpBuilder(int maxWidth) => new (maxWidth);
 
             [Fact]
-            public void Option_can_customize_default_value()
+            public void Option_can_customize_displayed_default_value()
             {
-                var option = new Option<string>("--the-option", defaultValueFactory: () => "not 42");
-                var command = new Command("the-command", "command help")
+                var option = new CliOption<string>("--the-option") { DefaultValueFactory = _ => "not 42" };
+                var command = new CliCommand("the-command", "command help")
                 {
                     option
                 };
@@ -46,7 +47,7 @@ namespace System.CommandLine.Tests.Help
                 _helpBuilder.Write(command, _console);
                 var expected =
                     $"Options:{NewLine}" +
-                    $"{_indentation}--the-option <the-option>{_columnPadding}[default: 42]{NewLine}{NewLine}";
+                    $"{_indentation}--the-option{_columnPadding}[default: 42]{NewLine}{NewLine}";
 
                 _console.ToString().Should().Contain(expected);
             }
@@ -54,8 +55,8 @@ namespace System.CommandLine.Tests.Help
             [Fact]
             public void Option_can_customize_first_column_text()
             {
-                var option = new Option<string>("--the-option", "option description");
-                var command = new Command("the-command", "command help")
+                var option = new CliOption<string>("--the-option") { Description = "option description" };
+                var command = new CliCommand("the-command", "command help")
                 {
                     option
                 };
@@ -73,85 +74,99 @@ namespace System.CommandLine.Tests.Help
             [Fact]
             public void Option_can_customize_first_column_text_based_on_parse_result()
             {
-                var option = new Option<bool>("option");
-                var commandA = new Command("a", "a command help")
+                var option = new CliOption<bool>("option");
+                var commandA = new CliCommand("a", "a command help")
                 {
                     option
                 };
-                var commandB = new Command("b", "b command help")
+                var commandB = new CliCommand("b", "b command help")
                 {
                     option
                 };
-                var command = new Command("root", "root command help")
+                var command = new CliCommand("root", "root command help")
                 {
                     commandA, commandB
                 };
                 var optionAFirstColumnText = "option a help";
                 var optionBFirstColumnText = "option b help";
 
-                var helpBuilder = new HelpBuilder(LocalizationResources.Instance, LargeMaxWidth);
+                var helpBuilder = new HelpBuilder(LargeMaxWidth);
                 helpBuilder.CustomizeSymbol(option, firstColumnText: ctx =>
                                           ctx.Command.Equals(commandA) 
                                               ? optionAFirstColumnText
                                               : optionBFirstColumnText);
-                var parser = new CommandLineBuilder(command)
-                             .UseDefaults()
-                             .UseHelpBuilder(_ => helpBuilder)
-                             .Build();
+                command.Options.Add(new HelpOption()
+                {
+                    Action = new HelpAction()
+                    {
+                        Builder = helpBuilder
+                    }
+                });
 
-                var console = new TestConsole();
-                parser.Invoke("root a -h", console);
-                console.Out.ToString().Should().Contain(optionAFirstColumnText);
+                var console = new StringWriter();
+                var config = new CliConfiguration(command)
+                {
+                    Output = console
+                };
+                command.Parse("root a -h", config).Invoke();
+                console.ToString().Should().Contain(optionAFirstColumnText);
 
-                console = new TestConsole();
-                parser.Invoke("root b -h", console);
-                console.Out.ToString().Should().Contain(optionBFirstColumnText);
+                console = new StringWriter();
+                config.Output = console;
+                command.Parse("root b -h", config).Invoke();
+                console.ToString().Should().Contain(optionBFirstColumnText);
             }
 
             [Fact]
             public void Option_can_customize_second_column_text_based_on_parse_result()
             {
-                var option = new Option<bool>("option");
-                var commandA = new Command("a", "a command help")
+                var option = new CliOption<bool>("option");
+                var commandA = new CliCommand("a", "a command help")
                 {
                     option
                 };
-                var commandB = new Command("b", "b command help")
+                var commandB = new CliCommand("b", "b command help")
                 {
                     option
                 };
-                var command = new Command("root", "root command help")
+                var command = new CliCommand("root", "root command help")
                 {
                     commandA, commandB
                 };
                 var optionADescription = "option a help";
                 var optionBDescription = "option b help";
 
-                var helpBuilder = new HelpBuilder(LocalizationResources.Instance, LargeMaxWidth);
+                var helpBuilder = new HelpBuilder(LargeMaxWidth);
                 helpBuilder.CustomizeSymbol(option, secondColumnText: ctx =>
                                           ctx.Command.Equals(commandA)
                                               ? optionADescription
                                               : optionBDescription);
+                command.Options.Add(new HelpOption
+                {
+                    Action = new HelpAction
+                    { 
+                        Builder = helpBuilder
+                    }
+                });
 
-                var parser = new CommandLineBuilder(command)
-                             .UseDefaults()
-                             .UseHelpBuilder(_ => helpBuilder)
-                             .Build();
+                var config = new CliConfiguration(command)
+                {
+                    Output = new StringWriter()
+                };
 
-                var console = new TestConsole();
-                parser.Invoke("root a -h", console);
-                console.Out.ToString().Should().Contain($"option          {optionADescription}");
+                config.Invoke("root a -h");
+                config.Output.ToString().Should().Contain($"option          {optionADescription}");
 
-                console = new TestConsole();
-                parser.Invoke("root b -h", console);
-                console.Out.ToString().Should().Contain($"option          {optionBDescription}");
+                config.Output = new StringWriter();
+                config.Invoke("root b -h");
+                config.Output.ToString().Should().Contain($"option          {optionBDescription}");
             }
 
             [Fact]
             public void Subcommand_can_customize_first_column_text()
             {
-                var subcommand = new Command("subcommand", "subcommand description");
-                var command = new Command("the-command", "command help")
+                var subcommand = new CliCommand("subcommand", "subcommand description");
+                var command = new CliCommand("the-command", "command help")
                 {
                     subcommand
                 };
@@ -169,8 +184,8 @@ namespace System.CommandLine.Tests.Help
             [Fact]
             public void Command_arguments_can_customize_first_column_text()
             {
-                var argument = new Argument<string>("arg-name", "arg description");
-                var command = new Command("the-command", "command help")
+                var argument = new CliArgument<string>("arg-name") { Description = "arg description" };
+                var command = new CliCommand("the-command", "command help")
                 {
                     argument
                 };
@@ -188,8 +203,12 @@ namespace System.CommandLine.Tests.Help
             [Fact]
             public void Command_arguments_can_customize_second_column_text()
             {
-                var argument = new Argument<string>("some-arg", description: "Default description", defaultValueFactory: () => "not 42");
-                var command = new Command("the-command", "command help")
+                var argument = new CliArgument<string>("some-arg")
+                {
+                    Description = "Default description",
+                    DefaultValueFactory = _ => "not 42"
+                };
+                var command = new CliCommand("the-command", "command help")
                 {
                     argument
                 };
@@ -207,8 +226,11 @@ namespace System.CommandLine.Tests.Help
             [Fact]
             public void Command_arguments_can_customize_default_value()
             {
-                var argument = new Argument<string>("some-arg", defaultValueFactory: () => "not 42");
-                var command = new Command("the-command", "command help")
+                var argument = new CliArgument<string>("some-arg")
+                {
+                    DefaultValueFactory = (_) => "not 42"
+                };
+                var command = new CliCommand("the-command", "command help")
                 {
                     argument
                 };
@@ -226,37 +248,41 @@ namespace System.CommandLine.Tests.Help
             [Fact]
             public void Customize_throws_when_symbol_is_null()
             {
-                Action action = () => new HelpBuilder(LocalizationResources.Instance).CustomizeSymbol(null!, "");
+                Action action = () => new HelpBuilder().CustomizeSymbol(null!, "");
                 action.Should().Throw<ArgumentNullException>();
             }
 
 
             [Theory]
-            [InlineData(false, false, "--option <option>\\s*description")]
+            [InlineData(false, false, "--option \\s*description")]
             [InlineData(true, false, "custom 1st\\s*description")]
-            [InlineData(false, true, "--option <option>\\s*custom 2nd")]
+            [InlineData(false, true, "--option \\s*custom 2nd")]
             [InlineData(true, true, "custom 1st\\s*custom 2nd")]
             public void Option_can_fallback_to_default_when_customizing(bool conditionA, bool conditionB, string expected)
             {
-                var command = new Command("test");
-                var option = new Option<string>("--option", "description");
+                var command = new CliCommand("test");
+                var option = new CliOption<string>("--option") { Description = "description" };
 
-                command.AddOption(option);
+                command.Options.Add(option);
 
-                var helpBuilder = new HelpBuilder(LocalizationResources.Instance, LargeMaxWidth);
+                var helpBuilder = new HelpBuilder(LargeMaxWidth);
                 helpBuilder.CustomizeSymbol(option,
-                    firstColumnText: ctx => conditionA ? "custom 1st" : HelpBuilder.Default.GetIdentifierSymbolUsageLabel(option, ctx),
-                    secondColumnText: ctx => conditionB ? "custom 2nd" : HelpBuilder.Default.GetIdentifierSymbolDescription(option));
+                    firstColumnText: ctx => conditionA ? "custom 1st" : HelpBuilder.Default.GetOptionUsageLabel(option),
+                    secondColumnText: ctx => conditionB ? "custom 2nd" : option.Description ?? string.Empty);
 
+                command.Options.Add(new HelpOption()
+                {
+                    Action = new HelpAction()
+                    {
+                        Builder = helpBuilder
+                    }
+                });
 
-                var parser = new CommandLineBuilder(command)
-                             .UseDefaults()
-                             .UseHelpBuilder(_ => helpBuilder)
-                             .Build();
-
-                var console = new TestConsole();
-                parser.Invoke("test -h", console);
-                console.Out.ToString().Should().MatchRegex(expected);
+                CliConfiguration config = new (command);
+                var console = new StringWriter();
+                config.Output = console;
+                command.Parse("test -h", config).Invoke();
+                console.ToString().Should().MatchRegex(expected);
             }
 
             [Theory]
@@ -274,37 +300,276 @@ namespace System.CommandLine.Tests.Help
                 bool conditionC, 
                 string expected)
             {
-                var command = new Command("test");
-                var argument = new Argument<string>("arg", "description");
-                argument.SetDefaultValue("default");
+                var command = new CliCommand("test");
+                var argument = new CliArgument<string>("arg")
+                {
+                    Description = "description",
+                    DefaultValueFactory = _ => "default"
+                };
 
-                command.AddArgument(argument);
+                command.Arguments.Add(argument);
 
-                var helpBuilder = new HelpBuilder(LocalizationResources.Instance, LargeMaxWidth);
+                var helpBuilder = new HelpBuilder(LargeMaxWidth);
                 helpBuilder.CustomizeSymbol(argument,
                     firstColumnText: ctx => conditionA ? "custom 1st" : HelpBuilder.Default.GetArgumentUsageLabel(argument),
                     secondColumnText: ctx => conditionB ? "custom 2nd" : HelpBuilder.Default.GetArgumentDescription(argument),
                     defaultValue: ctx => conditionC ? "custom def" : HelpBuilder.Default.GetArgumentDefaultValue(argument));
 
 
-                var parser = new CommandLineBuilder(command)
-                             .UseDefaults()
-                             .UseHelpBuilder(_ => helpBuilder)
-                             .Build();
+                CliConfiguration config = new (command);
 
-                var console = new TestConsole();
-                parser.Invoke("test -h", console);
-                console.Out.ToString().Should().MatchRegex(expected);
+                command.Options.Add(new HelpOption
+                {
+                    Action = new HelpAction
+                    {
+                        Builder = helpBuilder
+                    }
+                });
+
+                config.Output = new StringWriter();
+                command.Parse("test -h", config).Invoke();
+                config.Output.ToString().Should().MatchRegex(expected);
             }
-        }
-        
-        private class CustomLocalizationResources : LocalizationResources
-        {
-            public string OverrideHelpDescriptionTitle { get; set; }
 
-            public override string HelpDescriptionTitle()
+
+            [Fact]
+            public void Individual_symbols_can_be_customized()
             {
-                return OverrideHelpDescriptionTitle ?? base.HelpDescriptionTitle();
+                var subcommand = new CliCommand("subcommand", "The default command description");
+                var option = new CliOption<int>("-x") { Description = "The default option description" };
+                var argument = new CliArgument<int>("int-value") { Description = "The default argument description" };
+
+                var rootCommand = new CliRootCommand
+                {
+                    subcommand,
+                    option,
+                    argument,
+                };
+
+                CliConfiguration config = new(rootCommand)
+                {
+                    Output = new StringWriter()
+                };
+
+                ParseResult parseResult = rootCommand.Parse("-h", config);
+
+                if (parseResult.Action is HelpAction helpAction)
+                {
+                    helpAction.Builder.CustomizeSymbol(subcommand, secondColumnText: "The custom command description");
+                    helpAction.Builder.CustomizeSymbol(option, secondColumnText: "The custom option description");
+                    helpAction.Builder.CustomizeSymbol(argument, secondColumnText: "The custom argument description");
+                }
+
+                parseResult.Invoke();
+
+                config.Output
+                      .ToString()
+                      .Should()
+                      .ContainAll("The custom command description",
+                                  "The custom option description",
+                                  "The custom argument description");
+            }
+
+            [Fact]
+            public void Help_sections_can_be_replaced()
+            {
+                CliConfiguration config = new(new CliRootCommand())
+                {
+                    Output = new StringWriter()
+                };
+
+                ParseResult parseResult = config.Parse("-h");
+
+                if (parseResult.Action is HelpAction helpAction)
+                {
+                    helpAction.Builder.CustomizeLayout(CustomLayout);
+                }
+
+                parseResult.Invoke();
+
+                config.Output.ToString().Should().Be($"one{NewLine}{NewLine}two{NewLine}{NewLine}three{NewLine}{NewLine}{NewLine}");
+
+                IEnumerable<Action<HelpContext>> CustomLayout(HelpContext _)
+                {
+                    yield return ctx => ctx.Output.WriteLine("one");
+                    yield return ctx => ctx.Output.WriteLine("two");
+                    yield return ctx => ctx.Output.WriteLine("three");
+                }
+            }
+
+            [Fact]
+            public void Help_sections_can_be_supplemented()
+            {
+                CliConfiguration config = new(new CliRootCommand("hello"))
+                {
+                    Output = new StringWriter(),
+                };
+
+                var defaultHelp = GetDefaultHelp(config.RootCommand);
+
+                ParseResult parseResult = config.Parse("-h");
+
+                if (parseResult.Action is HelpAction helpAction)
+                {
+                    helpAction.Builder.CustomizeLayout(CustomLayout);
+                }
+
+                parseResult.Invoke();
+
+                var output = config.Output.ToString();
+
+                var expected = $"first{NewLine}{NewLine}{defaultHelp}last{NewLine}{NewLine}";
+
+                output.Should().Be(expected);
+
+                IEnumerable<Action<HelpContext>> CustomLayout(HelpContext _)
+                {
+                    yield return ctx => ctx.Output.WriteLine("first");
+
+                    foreach (var section in HelpBuilder.Default.GetLayout())
+                    {
+                        yield return section;
+                    }
+
+                    yield return ctx => ctx.Output.WriteLine("last");
+                }
+            }
+
+            [Fact]
+            public void Layout_can_be_composed_dynamically_based_on_context()
+            {
+                HelpBuilder helpBuilder = new();
+                var commandWithTypicalHelp = new CliCommand("typical");
+                var commandWithCustomHelp = new CliCommand("custom");
+                var command = new CliRootCommand
+                {
+                    commandWithTypicalHelp,
+                    commandWithCustomHelp
+                };
+
+                command.Options.OfType<HelpOption>().Single().Action = new HelpAction()
+                {
+                    Builder = helpBuilder
+                };
+
+                var config = new CliConfiguration(command);
+                helpBuilder.CustomizeLayout(c =>
+                                                c.Command == commandWithTypicalHelp
+                                                    ? HelpBuilder.Default.GetLayout()
+                                                    : new Action<HelpContext>[]
+                                                        {
+                                                            c => c.Output.WriteLine("Custom layout!")
+                                                        }
+                                                        .Concat(HelpBuilder.Default.GetLayout()));
+
+                var typicalOutput = new StringWriter();
+                config.Output = typicalOutput;
+                command.Parse("typical -h", config).Invoke();
+
+                var customOutput = new StringWriter();
+                config.Output = customOutput;
+                command.Parse("custom -h", config).Invoke();
+
+                typicalOutput.ToString().Should().Be(GetDefaultHelp(commandWithTypicalHelp, false));
+                customOutput.ToString().Should().Be($"Custom layout!{NewLine}{NewLine}{GetDefaultHelp(commandWithCustomHelp, false)}");
+            }
+
+            [Fact]
+            public void Help_default_sections_can_be_wrapped()
+            {
+                CliCommand command = new("test")
+                {
+                    new CliOption<string>("--option")
+                    {
+                        Description = "option description",
+                        HelpName = "option"
+                    },
+                    new HelpOption
+                    {
+                        Action = new HelpAction
+                        {
+                            Builder = new HelpBuilder(30)
+                        }
+                    }
+                };
+
+                CliConfiguration config = new(command)
+                {
+                    Output = new StringWriter()
+                };
+
+                config.Invoke("test -h");
+
+                string result = config.Output.ToString();
+                result.Should().Be(
+                    $"Description:{NewLine}{NewLine}" +
+                    $"Usage:{NewLine}  test [options]{NewLine}{NewLine}" +
+                    $"Options:{NewLine}" +
+                    $"  --option   option {NewLine}" +
+                    $"  <option>   description{NewLine}" +
+                    $"  -?, -h,    Show help and {NewLine}" +
+                    $"  --help     usage {NewLine}" +
+                    $"             information{NewLine}{NewLine}{NewLine}");
+            }
+
+            [Fact]
+            public void Help_customized_sections_can_be_wrapped()
+            {
+                CliConfiguration config = new(new CliRootCommand())
+                {
+                    Output = new StringWriter()
+                };
+
+                ParseResult parseResult = config.Parse("-h");
+
+                if (parseResult.Action is HelpAction helpAction)
+                {
+                    helpAction.Builder = new HelpBuilder(10);
+                    helpAction.Builder.CustomizeLayout(CustomLayout);
+                }
+
+                parseResult.Invoke();
+
+                string result = config.Output.ToString();
+                result.Should().Be($"  123  123{NewLine}  456  456{NewLine}  78   789{NewLine}       0{NewLine}{NewLine}{NewLine}");
+
+                IEnumerable<Action<HelpContext>> CustomLayout(HelpContext _)
+                {
+                    yield return ctx => ctx.HelpBuilder.WriteColumns(new[] { new TwoColumnHelpRow("12345678", "1234567890") }, ctx);
+                }
+            }
+
+            private string GetDefaultHelp(CliCommand command, bool trimOneNewline = true)
+            {
+                // The command might have already defined a HelpOption with custom settings,
+                // we need to overwrite it to get the actual defaults.
+                HelpOption defaultHelp = new();
+                // HelpOption overrides Equals and treats every other instance of same type as equal
+                int index = command.Options.IndexOf(defaultHelp);
+                if (index >= 0)
+                {
+                    command.Options[index] = defaultHelp;
+                }
+                else
+                {
+                    command.Options.Add(defaultHelp);
+                }
+
+                CliConfiguration config = new(command)
+                {
+                    Output = new StringWriter()
+                };
+
+                config.Invoke("-h");
+
+                var output = config.Output.ToString();
+
+                if (trimOneNewline)
+                {
+                    output = output.Substring(0, output.Length - NewLine.Length);
+                }
+
+                return output;
             }
         }
     }

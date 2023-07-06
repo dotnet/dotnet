@@ -2,19 +2,19 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using System;
+using System.Collections.Generic;
+using System.Collections.Immutable;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.Text;
-using Microsoft.VisualStudio.Text;
-using Microsoft.CodeAnalysis.ExternalAccess.Razor;
-using Microsoft.VisualStudio.LanguageServer.ContainedLanguage;
-using System.Collections.Immutable;
-using System.Collections.Generic;
-using Microsoft.VisualStudio.LanguageServerClient.Razor.HtmlCSharp;
-using System.Linq;
-using Microsoft.VisualStudio.LanguageServerClient.Razor.Extensions;
 using Microsoft.AspNetCore.Razor.LanguageServer.Protocol;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.ExternalAccess.Razor;
+using Microsoft.CodeAnalysis.Text;
+using Microsoft.VisualStudio.LanguageServer.ContainedLanguage;
+using Microsoft.VisualStudio.LanguageServerClient.Razor.DocumentMapping;
+using Microsoft.VisualStudio.LanguageServerClient.Razor.Extensions;
+using Microsoft.VisualStudio.Text;
 
 namespace Microsoft.VisualStudio.LanguageServerClient.Razor;
 

@@ -1,8 +1,8 @@
 ﻿// Copyright (c) .NET Foundation and contributors. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-using System.CommandLine.IO;
-using System.CommandLine.Parsing;
+using System.CommandLine.Help;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
@@ -21,31 +21,29 @@ namespace System.CommandLine.Tests
         [Fact]
         public async Task When_the_version_option_is_specified_then_the_version_is_written_to_standard_out()
         {
-            var parser = new CommandLineBuilder()
-                         .UseVersionOption()
-                         .Build();
+            CliConfiguration configuration = new(new CliRootCommand())
+            {
+                Output = new StringWriter()
+            };
 
-            var console = new TestConsole();
+            await configuration.InvokeAsync("--version");
 
-            await parser.InvokeAsync("--version", console);
-
-            console.Out.ToString().Should().Be($"{version}{NewLine}");
+            configuration.Output.ToString().Should().Be($"{version}{NewLine}");
         }
 
         [Fact]
         public async Task When_the_version_option_is_specified_then_invocation_is_short_circuited()
         {
             var wasCalled = false;
-            var rootCommand = new RootCommand();
-            rootCommand.SetHandler(() => wasCalled = true);
+            var rootCommand = new CliRootCommand();
+            rootCommand.SetAction((_) => wasCalled = true);
 
-            var parser = new CommandLineBuilder(rootCommand)
-                         .UseVersionOption()
-                         .Build();
+            CliConfiguration configuration = new(rootCommand)
+            {
+                Output = new StringWriter()
+            };
 
-            var console = new TestConsole();
-
-            await parser.InvokeAsync("--version", console);
+            await configuration.InvokeAsync("--version");
 
             wasCalled.Should().BeFalse();
         }
@@ -53,16 +51,14 @@ namespace System.CommandLine.Tests
         [Fact]
         public async Task Version_option_appears_in_help()
         {
-            var parser = new CommandLineBuilder()
-                         .UseHelp()
-                         .UseVersionOption()
-                         .Build();
+            CliConfiguration configuration = new(new CliRootCommand())
+            {
+                Output = new StringWriter()
+            };
 
-            var console = new TestConsole();
+            await configuration.InvokeAsync("--help");
 
-            await parser.InvokeAsync("--help", console);
-
-            console.Out
+            configuration.Output
                    .ToString()
                    .Should()
                    .Match("*Options:*--version*Show version information*");
@@ -71,41 +67,42 @@ namespace System.CommandLine.Tests
         [Fact]
         public async Task When_the_version_option_is_specified_and_there_are_default_options_then_the_version_is_written_to_standard_out()
         {
-            var rootCommand = new RootCommand
+            var rootCommand = new CliRootCommand
             {
-                new Option<bool>("-x")
+                new CliOption<bool>("-x")
+                {
+                    DefaultValueFactory = (_) => true
+                },
             };
-            rootCommand.SetHandler(() => { });
+            rootCommand.SetAction((_) => { });
 
-            var parser = new CommandLineBuilder(rootCommand)
-                .UseVersionOption()
-                .Build();
+            CliConfiguration configuration = new(rootCommand)
+            {
+                Output = new StringWriter()
+            };
 
-            var console = new TestConsole();
+            await configuration.InvokeAsync("--version");
 
-            await parser.InvokeAsync("--version", console);
-
-            console.Out.ToString().Should().Be($"{version}{NewLine}");
+            configuration.Output.ToString().Should().Be($"{version}{NewLine}");
         }
 
         [Fact]
         public async Task When_the_version_option_is_specified_and_there_are_default_arguments_then_the_version_is_written_to_standard_out()
         {
-            var rootCommand = new RootCommand
+            CliRootCommand rootCommand = new ()
             {
-                new Argument<bool>("x", defaultValueFactory: () => true)
+                new CliArgument<bool>("x") { DefaultValueFactory =(_) => true },
             };
-            rootCommand.SetHandler(() => { });
+            rootCommand.SetAction((_) => { });
 
-            var parser = new CommandLineBuilder(rootCommand)
-                .UseVersionOption()
-                .Build();
+            CliConfiguration configuration = new(rootCommand)
+            {
+                Output = new StringWriter()
+            };
 
-            var console = new TestConsole();
+            await configuration.InvokeAsync("--version");
 
-            await parser.InvokeAsync("--version", console);
-
-            console.Out.ToString().Should().Be($"{version}{NewLine}");
+            configuration.Output.ToString().Should().Be($"{version}{NewLine}");
         }
 
         [Theory]
@@ -113,53 +110,43 @@ namespace System.CommandLine.Tests
         [InlineData("--version subcommand")]
         public void Version_is_not_valid_with_other_tokens(string commandLine)
         {
-            var subcommand = new Command("subcommand");
-            subcommand.SetHandler(() => { });
-            var rootCommand = new RootCommand
+            var subcommand = new CliCommand("subcommand");
+            subcommand.SetAction((_) => { });
+            var rootCommand = new CliRootCommand
             {
                 subcommand,
-                new Option<bool>("-x")
+                new CliOption<bool>("-x"),
             };
-            rootCommand.SetHandler(() => { });
+            rootCommand.SetAction((_) => { });
 
-            var parser = new CommandLineBuilder(rootCommand)
-                .UseVersionOption()
-                .Build();
+            CliConfiguration configuration = new(rootCommand)
+            {
+                Output = new StringWriter()
+            };
 
-            var console = new TestConsole();
+            var result = rootCommand.Parse(commandLine, configuration);
 
-            var result = parser.Invoke(commandLine, console);
-
-            console.Out
-                   .ToString()
-                   .Should()
-                   .NotContain(version);
-
-            console.Error
-                   .ToString()
-                   .Should()
-                   .Contain("--version option cannot be combined with other arguments.");
-
-            result.Should().NotBe(0);
+            result.Errors.Should().Contain(e => e.Message == "--version option cannot be combined with other arguments.");
         }
 
         [Fact]
         public void Version_option_is_not_added_to_subcommands()
         {
-            var childCommand = new Command("subcommand");
-            childCommand.SetHandler(() => { });
+            var childCommand = new CliCommand("subcommand");
+            childCommand.SetAction((_) => { });
 
-            var rootCommand = new RootCommand
+            var rootCommand = new CliRootCommand
             {
-                childCommand,
+                childCommand
             };
-            rootCommand.SetHandler(() => { });
+            rootCommand.SetAction((_) => { });
 
-            var parser = new CommandLineBuilder(rootCommand)
-                         .UseVersionOption()
-                         .Build();
+            CliConfiguration configuration = new(rootCommand)
+            {
+                Output = new StringWriter()
+            };
 
-            parser.Configuration
+            configuration
                   .RootCommand
                   .Subcommands
                   .Single(c => c.Name == "subcommand")
@@ -169,70 +156,51 @@ namespace System.CommandLine.Tests
         }
 
         [Fact]
-        public async Task Version_not_added_if_it_exists()
-        {
-            // Adding an option multiple times can occur two ways in
-            // real world scenarios - invocation can be invoked twice
-            // or the author may have their own version switch but
-            // still want other defaults.
-            var parser = new CommandLineBuilder()
-                         .UseVersionOption()
-                         .UseVersionOption()
-                         .Build();
-
-            var console = new TestConsole();
-
-            await parser.InvokeAsync("--version", console);
-
-            console.Out.ToString().Should().Be($"{version}{NewLine}");
-        }
-
-        [Fact]
         public async Task Version_can_specify_additional_alias()
         {
-            var parser = new CommandLineBuilder()
-                         .UseVersionOption("-v", "-version")
-                         .Build();
+            CliRootCommand rootCommand = new();
 
-            var console = new TestConsole();
-            await parser.InvokeAsync("-v", console);
-            console.Out.ToString().Should().Be($"{version}{NewLine}");
+            for (int i = 0; i < rootCommand.Options.Count; i++)
+            {
+                if (rootCommand.Options[i] is VersionOption)
+                    rootCommand.Options[i] = new VersionOption("-v", "-version");
+            }
 
-            console = new TestConsole();
-            await parser.InvokeAsync("-version", console);
-            console.Out.ToString().Should().Be($"{version}{NewLine}");
+            CliConfiguration configuration = new(rootCommand)
+            {
+                Output = new StringWriter()
+            };
+
+            await configuration.InvokeAsync("-v");
+            configuration.Output.ToString().Should().Be($"{version}{NewLine}");
+
+            configuration.Output = new StringWriter();
+            await configuration.InvokeAsync("-version");
+            configuration.Output.ToString().Should().Be($"{version}{NewLine}");
         }
 
         [Fact]
         public void Version_is_not_valid_with_other_tokens_uses_custom_alias()
         {
-            var childCommand =  new Command("subcommand");
-            childCommand.SetHandler(() => { });
-            var rootCommand = new RootCommand
+            var childCommand = new CliCommand("subcommand");
+            childCommand.SetAction((_) => { });
+            var rootCommand = new CliRootCommand
             {
                 childCommand
             };
-            rootCommand.SetHandler(() => { });
 
-            var parser = new CommandLineBuilder(rootCommand)
-                .UseVersionOption("-v")
-                .Build();
+            rootCommand.Options[1] = new VersionOption("-v");
 
-            var console = new TestConsole();
+            rootCommand.SetAction((_) => { });
 
-            var result = parser.Invoke("-v subcommand", console);
+            CliConfiguration configuration = new(rootCommand)
+            {
+                Output = new StringWriter()
+            };
 
-            console.Out
-                   .ToString()
-                   .Should()
-                   .NotContain(version);
+            var result = rootCommand.Parse("-v subcommand", configuration);
 
-            console.Error
-                   .ToString()
-                   .Should()
-                   .Contain("-v option cannot be combined with other arguments.");
-
-            result.Should().NotBe(0);
+            result.Errors.Should().ContainSingle(e => e.Message == "-v option cannot be combined with other arguments.");
         }
     }
 }

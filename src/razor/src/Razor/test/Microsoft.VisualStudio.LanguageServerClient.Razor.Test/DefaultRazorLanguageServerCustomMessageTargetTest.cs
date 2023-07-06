@@ -20,7 +20,6 @@ using Microsoft.VisualStudio.Editor.Razor;
 using Microsoft.VisualStudio.Editor.Razor.Logging;
 using Microsoft.VisualStudio.LanguageServer.ContainedLanguage;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
-using Microsoft.VisualStudio.LanguageServerClient.Razor.HtmlCSharp;
 using Microsoft.VisualStudio.LanguageServerClient.Razor.Test;
 using Microsoft.VisualStudio.Test;
 using Microsoft.VisualStudio.Text;
@@ -344,7 +343,7 @@ public class DefaultRazorLanguageServerCustomMessageTargetTest : TestBase
             .Setup(invoker => invoker.ReinvokeRequestOnServerAsync<SemanticTokensRangeParams, VSSemanticTokensResponse>(
                 _textBuffer,
                 Methods.TextDocumentSemanticTokensRangeName,
-                LanguageServerKind.CSharp.ToLanguageServerName(),
+                RazorLSPConstants.RazorCSharpLanguageServerName,
                 It.IsAny<SemanticTokensRangeParams>(),
                 It.IsAny<CancellationToken>()))
             .ReturnsAsync(new ReinvocationResponse<VSSemanticTokensResponse>("languageClient", expectedCSharpResults));

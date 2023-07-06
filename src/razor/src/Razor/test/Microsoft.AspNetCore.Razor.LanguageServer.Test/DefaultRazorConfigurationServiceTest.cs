@@ -26,7 +26,7 @@ public class DefaultRazorConfigurationServiceTest : LanguageServerTestBase
     {
         // Arrange
         var expectedOptions = new RazorLSPOptions(
-            Trace.Messages, EnableFormatting: false, AutoClosingTags: false, InsertSpaces: true, TabSize: 4, FormatOnType: true);
+            Trace.Messages, EnableFormatting: false, AutoClosingTags: false, InsertSpaces: true, TabSize: 4, FormatOnType: true, AutoInsertAttributeQuotes: true);
         var razorJsonString =
             """
 
@@ -98,7 +98,7 @@ public class DefaultRazorConfigurationServiceTest : LanguageServerTestBase
     {
         // Arrange - purposely choosing options opposite of default
         var expectedOptions = new RazorLSPOptions(
-            Trace.Verbose, EnableFormatting: false, AutoClosingTags: false, InsertSpaces: true, TabSize: 4, FormatOnType: true);
+            Trace.Verbose, EnableFormatting: false, AutoClosingTags: false, InsertSpaces: true, TabSize: 4, FormatOnType: true, AutoInsertAttributeQuotes: true);
         var razorJsonString = """
             {
               "trace": "Verbose",
@@ -135,7 +135,7 @@ public class DefaultRazorConfigurationServiceTest : LanguageServerTestBase
     {
         // Arrange - purposely choosing options opposite of default
         var expectedOptions = new RazorLSPOptions(
-            Trace.Off, EnableFormatting: true, AutoClosingTags: false, InsertSpaces: false, TabSize: 8, FormatOnType: false);
+            Trace.Off, EnableFormatting: true, AutoClosingTags: false, InsertSpaces: false, TabSize: 8, FormatOnType: false, AutoInsertAttributeQuotes: false);
         var razorJsonString = """
             {
             }
@@ -154,7 +154,8 @@ public class DefaultRazorConfigurationServiceTest : LanguageServerTestBase
                 },
                 "AdvancedSettings": {
                     "FormatOnType": "false",
-                    "AutoClosingTags": "false"
+                    "AutoClosingTags": "false",
+                    "AutoInsertAttributeQuotes": "false"
                 }
             }
             """;

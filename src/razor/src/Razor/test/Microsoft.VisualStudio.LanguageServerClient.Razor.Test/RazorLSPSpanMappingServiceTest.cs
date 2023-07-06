@@ -12,13 +12,13 @@ using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.CodeAnalysis.Text;
 using Microsoft.VisualStudio.LanguageServer.ContainedLanguage;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
+using Microsoft.VisualStudio.LanguageServerClient.Razor.DocumentMapping;
 using Microsoft.VisualStudio.LanguageServerClient.Razor.Extensions;
-using Microsoft.VisualStudio.LanguageServerClient.Razor.HtmlCSharp;
 using Microsoft.VisualStudio.Text;
 using Moq;
 using Xunit;
 using Xunit.Abstractions;
-using RazorMapToDocumentRangesResponse = Microsoft.VisualStudio.LanguageServerClient.Razor.HtmlCSharp.RazorMapToDocumentRangesResponse;
+using RazorMapToDocumentRangesResponse = Microsoft.VisualStudio.LanguageServerClient.Razor.DocumentMapping.RazorMapToDocumentRangesResponse;
 
 namespace Microsoft.VisualStudio.LanguageServerClient.Razor;
 

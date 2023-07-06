@@ -323,6 +323,27 @@ namespace Test
         CompileToAssembly(generated);
     }
 
+    [Fact, WorkItem("https://github.com/dotnet/razor/issues/8711")]
+    public void ComponentWithTypeParameters_Interconnected()
+    {
+        // Arrange
+        AdditionalSyntaxTrees.Add(Parse("""
+            public class C<T> { }
+            public class D<T1, T2> where T1 : C<T2> { }
+            """));
+
+        // Act
+        var generated = CompileToCSharp("""
+            @typeparam T1 where T1 : C<T2>
+            @typeparam T2 where T2 : D<T1, T2>
+            """);
+
+        // Assert
+        AssertDocumentNodeMatchesBaseline(generated.CodeDocument);
+        AssertCSharpDocumentMatchesBaseline(generated.CodeDocument);
+        CompileToAssembly(generated);
+    }
+
     [Fact]
     public void Component_WithEscapedParameterName()
     {

@@ -3,7 +3,6 @@
 
 using System.Collections.Generic;
 using System.CommandLine.Benchmarks.Helpers;
-using System.CommandLine.Parsing;
 using System.Linq;
 using System.Threading.Tasks;
 using BenchmarkDotNet.Attributes;
@@ -16,16 +15,17 @@ namespace System.CommandLine.Benchmarks.CommandLine
     [BenchmarkCategory(Categories.CommandLine)]
     public class Perf_Parser_TypoCorrection
     {
-        private readonly NullConsole _nullConsole = new();
-        private readonly Parser _testParser;
+        private readonly CliConfiguration _configuration;
 
         public Perf_Parser_TypoCorrection()
         {
-            var option = new Option<bool>("--0123456789");
+            var option = new CliOption<bool>("--0123456789");
 
-            _testParser = new CommandLineBuilder(new RootCommand { option })
-                          .UseTypoCorrections()
-                          .Build();
+            _configuration = new CliConfiguration(new CliRootCommand { option })
+            {
+                EnableTypoCorrections = true,
+                Output = System.IO.TextWriter.Null
+            };
         }
 
         public IEnumerable<BdnParam<ParseResult>> GenerateTestParseResults()
@@ -49,11 +49,11 @@ namespace System.CommandLine.Benchmarks.CommandLine
                     "--1023546798",
                     "--1032546798"
                 }
-                .Select(opt => new BdnParam<ParseResult>(_testParser.Parse(opt), opt));
+                .Select(opt => new BdnParam<ParseResult>(_configuration.Parse(opt), opt));
 
         [Benchmark]
         [ArgumentsSource(nameof(GenerateTestParseResults))]
-        public async Task TypoCorrection(BdnParam<ParseResult> parseResult)
-            => await parseResult.Value.InvokeAsync(_nullConsole);
+        public Task TypoCorrection(BdnParam<ParseResult> parseResult)
+            => parseResult.Value.InvokeAsync();
     }
 }

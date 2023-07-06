@@ -23,7 +23,7 @@ public class ParameterDescriptor : IValueDescriptor
     }
 
     /// <inheritdoc />
-    public string ValueName => _parameterInfo.Name;
+    public string ValueName => _parameterInfo.Name!;
 
     /// <summary>
     /// The method descriptor that this constructor belongs to.
@@ -58,7 +58,7 @@ public class ParameterDescriptor : IValueDescriptor
     /// <inheritdoc />
     public object? GetDefaultValue() =>
         _parameterInfo.DefaultValue is DBNull
-            ? ArgumentConverter.GetDefaultValue(ValueType)
+            ? ValueType.GetDefaultValue()
             : _parameterInfo.DefaultValue;
 
     /// <inheritdoc />

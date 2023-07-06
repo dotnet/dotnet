@@ -208,35 +208,6 @@ internal class DesignTimeDirectiveTargetExtension : IDesignTimeDirectiveTargetEx
                         context.CodeWriter.WriteLine(";");
                     }
                     break;
-                case DirectiveTokenKind.GenericTypeConstraint:
-                    // We generate a generic local function with a generic parameter using the
-                    // same name and apply the constraints, like below.
-                    // The two warnings that we disable are:
-                    // * Hiding the class type parameter with the parameter on the method
-                    // * The function is defined but not used.
-                    // static void TypeConstraints_TParamName<TParamName>() where TParamName ...;
-                    context.CodeWriter.WriteLine("#pragma warning disable CS0693");
-                    context.CodeWriter.WriteLine("#pragma warning disable CS8321");
-                    using (context.CodeWriter.BuildLinePragma(node.Source, context))
-                    {
-                        // It's OK to do this since a GenericTypeParameterConstraint token is always preceded by a member token.
-                        var genericTypeParamName = (DirectiveTokenIntermediateNode)parent.Children[currentIndex - 1];
-                        context.CodeWriter
-                            .Write("void __TypeConstraints_")
-                            .Write(genericTypeParamName.Content)
-                            .Write("<")
-                            .Write(genericTypeParamName.Content)
-                            .Write(">() ");
-
-                        context.AddSourceMappingFor(node);
-                        context.CodeWriter.Write(node.Content);
-                        context.CodeWriter.WriteLine();
-                        context.CodeWriter.WriteLine("{");
-                        context.CodeWriter.WriteLine("}");
-                        context.CodeWriter.WriteLine("#pragma warning restore CS0693");
-                        context.CodeWriter.WriteLine("#pragma warning restore CS8321");
-                    }
-                    break;
             }
             context.CodeWriter.CurrentIndent = originalIndent;
         }

@@ -9,8 +9,7 @@
     <UseSharedCompilation>false</UseSharedCompilation>
 
     <!-- Supported target frameworks -->
-    <TargetFrameworks Condition="'$(TargetFrameworks)' == '' AND '$(OS)' == 'Windows_NT'">$(TargetFrameworkForNETSDK)</TargetFrameworks>
-    <TargetFrameworks Condition="'$(TargetFrameworks)' == ''">$(TargetFrameworkForNETSDK)</TargetFrameworks>
+    <TargetFramework>$(TargetFrameworkForNETSDK)</TargetFramework>
 
     <!-- This repo does not produce any libraries, therefore generating docs is disabled -->
     <GenerateDocumentationFile>False</GenerateDocumentationFile>

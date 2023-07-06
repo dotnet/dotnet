@@ -9,8 +9,20 @@ namespace Test
     using global::System.Threading.Tasks;
     using global::Microsoft.AspNetCore.Components;
     public partial class TestComponent<TDomain, TValue> : global::Microsoft.AspNetCore.Components.ComponentBase
-    where TDomain : struct
-    where TValue : struct
+#nullable restore
+#line 1 "x:\dir\subdir\Test\TestComponent.cshtml"
+where TDomain : struct
+
+#line default
+#line hidden
+#nullable disable
+#nullable restore
+#line 2 "x:\dir\subdir\Test\TestComponent.cshtml"
+where TValue : struct
+
+#line default
+#line hidden
+#nullable disable
     {
         #pragma warning disable 1998
         protected override void BuildRenderTree(global::Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder)

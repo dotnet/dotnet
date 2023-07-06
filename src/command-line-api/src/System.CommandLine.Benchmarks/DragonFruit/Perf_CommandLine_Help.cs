@@ -17,7 +17,6 @@ namespace System.CommandLine.Benchmarks.DragonFruit
     [InvocationCount(3000)]
     public class Perf_CommandLine_Help
     {
-        private readonly NullConsole _nullConsole = new();
         private Assembly _testAssembly;
         private string _testAssemblyFilePath;
         private string _testAssemblyXmlDocsFilePath;
@@ -31,7 +30,7 @@ namespace System.CommandLine.Benchmarks.DragonFruit
                 {
                     typeof(object).GetTypeInfo().Assembly.Location,
                     typeof(Enumerable).GetTypeInfo().Assembly.Location,
-                    typeof(System.CommandLine.Invocation.InvocationContext).GetTypeInfo().Assembly.Location
+                    typeof(System.CommandLine.ParseResult).GetTypeInfo().Assembly.Location
                 }
             );
             _testAssembly = Assembly.Load(File.ReadAllBytes(_testAssemblyFilePath));
@@ -39,13 +38,12 @@ namespace System.CommandLine.Benchmarks.DragonFruit
         }
 
         [Benchmark(Description = "--help")]
-        public async Task SearchForStartingPointWhenGivenEntryPointClass_Help()
-            => await System.CommandLine.DragonFruit.CommandLine.ExecuteAssemblyAsync(
+        public Task SearchForStartingPointWhenGivenEntryPointClass_Help()
+            => System.CommandLine.DragonFruit.CommandLine.ExecuteAssemblyAsync(
                 _testAssembly,
                 new[] { "--help" },
                 null,
-                _testAssemblyXmlDocsFilePath,
-                _nullConsole);
+                _testAssemblyXmlDocsFilePath);
 
         [GlobalCleanup]
         public void Cleanup()

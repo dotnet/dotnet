@@ -1,101 +1,113 @@
 ﻿// Copyright (c) .NET Foundation and contributors. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace System.CommandLine.Invocation
 {
-    internal class InvocationPipeline
+    internal static class InvocationPipeline
     {
-        private readonly ParseResult _parseResult;
-
-        public InvocationPipeline(ParseResult parseResult)
+        internal static async Task<int> InvokeAsync(ParseResult parseResult, CancellationToken cancellationToken)
         {
-            _parseResult = parseResult ?? throw new ArgumentNullException(nameof(parseResult));
-        }
-
-        public Task<int> InvokeAsync(IConsole? console = null, CancellationToken cancellationToken = default)
-        {
-            var context = new InvocationContext(_parseResult, console, cancellationToken);
-
-            if (context.Parser.Configuration.Middleware.Count == 0
-                && context.ParseResult.CommandResult.Command.Handler is ICommandHandler handler)
+            if (parseResult.Action is null)
             {
-                return handler.InvokeAsync(context);
+                return ReturnCodeForMissingAction(parseResult);
             }
 
-            return FullInvocationChainAsync(context);
+            ProcessTerminationHandler? terminationHandler = null;
+            using CancellationTokenSource cts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
 
-            static async Task<int> FullInvocationChainAsync(InvocationContext context)
+            try
             {
-                InvocationMiddleware invocationChain = BuildInvocationChain(context, true);
-
-                await invocationChain(context, _ => Task.CompletedTask);
-
-                return GetExitCode(context);
-            }
-        }
-
-        public int Invoke(IConsole? console = null)
-        {
-            var context = new InvocationContext(_parseResult, console);
-
-            if (context.Parser.Configuration.Middleware.Count == 0
-                && context.ParseResult.CommandResult.Command.Handler is ICommandHandler handler)
-            {
-                return handler.Invoke(context);
-            }
-
-            return FullInvocationChain(context); // kept in a separate method to avoid JITting
-
-            static int FullInvocationChain(InvocationContext context)
-            {
-                InvocationMiddleware invocationChain = BuildInvocationChain(context, false);
-
-                invocationChain(context, static _ => Task.CompletedTask).ConfigureAwait(false).GetAwaiter().GetResult();
-
-                return GetExitCode(context);
-            }
-        }
-
-        private static InvocationMiddleware BuildInvocationChain(InvocationContext context, bool invokeAsync)
-        {
-            var invocations = new List<InvocationMiddleware>(context.Parser.Configuration.Middleware.Count + 1);
-            invocations.AddRange(context.Parser.Configuration.Middleware);
-
-            invocations.Add(async (invocationContext, _) =>
-            {
-                if (invocationContext
-                    .ParseResult
-                    .CommandResult
-                    .Command is Command command)
+                if (parseResult.NonexclusiveActions is not null)
                 {
-                    var handler = command.Handler;
-
-                    if (handler is not null)
+                    for (int i = 0; i < parseResult.NonexclusiveActions.Count; i++)
                     {
-                        context.ExitCode = invokeAsync
-                            ? await handler.InvokeAsync(invocationContext)
-                            : handler.Invoke(invocationContext);
+                        await parseResult.NonexclusiveActions[i].InvokeAsync(parseResult, cts.Token);
                     }
                 }
-            });
 
-            return invocations.Aggregate(
-                (first, second) =>
-                    (ctx, next) =>
-                        first(ctx,
-                            c => second(c, next)));
+                Task<int> startedInvocation = parseResult.Action.InvokeAsync(parseResult, cts.Token);
+
+                if (parseResult.Configuration.ProcessTerminationTimeout.HasValue)
+                {
+                    terminationHandler = new(cts, startedInvocation, parseResult.Configuration.ProcessTerminationTimeout.Value);
+                }
+
+                if (terminationHandler is null)
+                {
+                    return await startedInvocation;
+                }
+                else
+                {
+                    // Handlers may not implement cancellation.
+                    // In such cases, when CancelOnProcessTermination is configured and user presses Ctrl+C,
+                    // ProcessTerminationCompletionSource completes first, with the result equal to native exit code for given signal.
+                    Task<int> firstCompletedTask = await Task.WhenAny(startedInvocation, terminationHandler.ProcessTerminationCompletionSource.Task);
+                    return await firstCompletedTask; // return the result or propagate the exception
+                }
+            }
+            catch (Exception ex) when (parseResult.Configuration.EnableDefaultExceptionHandler)
+            {
+                return DefaultExceptionHandler(ex, parseResult.Configuration);
+            }
+            finally
+            {
+                terminationHandler?.Dispose();
+            }
         }
 
-        private static int GetExitCode(InvocationContext context)
+        internal static int Invoke(ParseResult parseResult)
         {
-            context.InvocationResult?.Invoke(context);
+            if (parseResult.Action is null)
+            {
+                return ReturnCodeForMissingAction(parseResult);
+            }
 
-            return context.ExitCode;
+            try
+            {
+                if (parseResult.NonexclusiveActions is not null)
+                {
+                    for (var i = 0; i < parseResult.NonexclusiveActions.Count; i++)
+                    {
+                        parseResult.NonexclusiveActions[i].Invoke(parseResult);
+                    }
+                }
+
+                return parseResult.Action.Invoke(parseResult);
+            }
+            catch (Exception ex) when (parseResult.Configuration.EnableDefaultExceptionHandler)
+            {
+                return DefaultExceptionHandler(ex, parseResult.Configuration);
+            }
+        }
+
+        private static int DefaultExceptionHandler(Exception exception, CliConfiguration config)
+        {
+            if (exception is not OperationCanceledException)
+            {
+                ConsoleHelpers.ResetTerminalForegroundColor();
+                ConsoleHelpers.SetTerminalForegroundRed();
+
+                config.Error.Write(LocalizationResources.ExceptionHandlerHeader());
+                config.Error.WriteLine(exception.ToString());
+
+                ConsoleHelpers.ResetTerminalForegroundColor();
+            }
+            return 1;
+        }
+
+        private static int ReturnCodeForMissingAction(ParseResult parseResult)
+        {
+            if (parseResult.Errors.Count > 0)
+            {
+                return 1;
+            }
+            else
+            {
+                return 0;
+            }
         }
     }
 }

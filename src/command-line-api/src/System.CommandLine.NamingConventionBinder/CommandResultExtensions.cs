@@ -18,11 +18,11 @@ internal static class CommandResultExtensions
         {
             var argument = arguments[i];
 
-            if (valueDescriptor.ValueName.IsMatch(argument.Name))
+            if (valueDescriptor.ValueName.IsMatch(RemovePrefix(argument.Name)))
             {
-                if (commandResult.FindResultFor(argument) is { } argumentResult)
+                if (commandResult.GetResult(argument) is { } argumentResult)
                 {
-                    value = argumentResult.GetValueOrDefault();
+                    value = argumentResult.GetValueOrDefault<object>();
                 }
                 else
                 {
@@ -46,18 +46,18 @@ internal static class CommandResultExtensions
 
         for (var i = 0; i < options.Count; i++)
         {
-            if (options[i] is Option option)
+            if (options[i] is CliOption option)
             {
                 var hasMatchingAlias =
                     HasMatchingAlias(valueDescriptor, option);
 
                 if (hasMatchingAlias)
                 {
-                    var optionResult = commandResult.FindResultFor(option);
+                    var optionResult = commandResult.GetResult(option);
 
                     if (optionResult is not null)
                     {
-                        value = optionResult.GetValueOrDefault();
+                        value = optionResult.GetValueOrDefault<object>();
 
                         return true;
                     }
@@ -70,9 +70,10 @@ internal static class CommandResultExtensions
 
         static bool HasMatchingAlias(
             IValueDescriptor valueDescriptor,
-            Option option)
+            CliOption option)
         {
-            if (option.HasAlias(valueDescriptor.ValueName))
+            string nameWithoutPrefix = RemovePrefix(option.Name);
+            if (valueDescriptor.ValueName.Equals(nameWithoutPrefix, StringComparison.OrdinalIgnoreCase) || valueDescriptor.ValueName.IsMatch(nameWithoutPrefix))
             {
                 return true;
             }
@@ -145,6 +146,31 @@ internal static class CommandResultExtensions
                     case '/':
                         return 1;
                 }
+            }
+
+            return 0;
+        }
+    }
+
+    private static string RemovePrefix(string name)
+    {
+        int prefixLength = GetPrefixLength(name);
+        return prefixLength > 0
+                   ? name.Substring(prefixLength)
+                   : name;
+
+        static int GetPrefixLength(string name)
+        {
+            if (name[0] == '-')
+            {
+                return name.Length > 1 && name[1] == '-'
+                           ? 2
+                           : 1;
+            }
+
+            if (name[0] == '/')
+            {
+                return 1;
             }
 
             return 0;

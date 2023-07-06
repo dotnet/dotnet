@@ -2,7 +2,6 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using System;
-using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.IO;
 using System.Linq;
@@ -21,10 +20,10 @@ using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Workspaces.Extensions;
 using Microsoft.CodeAnalysis.Testing;
-using Microsoft.CodeAnalysis.Testing.Verifiers;
 using Microsoft.CodeAnalysis.Text;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Moq;
+using Roslyn.Test.Utilities;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -99,7 +98,7 @@ public class FormattingTestBase : RazorIntegrationTestBase
         var edited = ApplyEdits(source, edits);
         var actual = edited.ToString();
 
-        new XUnitVerifier().EqualOrDiff(expected, actual);
+        AssertEx.EqualOrDiff(expected, actual);
 
         if (input.Equals(expected))
         {
@@ -146,7 +145,7 @@ public class FormattingTestBase : RazorIntegrationTestBase
         var edited = ApplyEdits(razorSourceText, edits);
         var actual = edited.ToString();
 
-        new XUnitVerifier().EqualOrDiff(expected, actual);
+        AssertEx.EqualOrDiff(expected, actual);
 
         if (input.Equals(expected))
         {
@@ -212,7 +211,7 @@ public class FormattingTestBase : RazorIntegrationTestBase
         var edited = ApplyEdits(razorSourceText, edits);
         var actual = edited.ToString();
 
-        new XUnitVerifier().EqualOrDiff(expected, actual);
+        AssertEx.EqualOrDiff(expected, actual);
     }
 
     protected static TextEdit Edit(int startLine, int startChar, int endLine, int endChar, string newText)
@@ -336,7 +335,7 @@ public class FormattingTestBase : RazorIntegrationTestBase
 
     private static ImmutableArray<TagHelperDescriptor> GetDefaultRuntimeComponents()
     {
-        var bytes = TestResources.GetResourceBytes(TestResources.BlazorServerAppTagHelpersJson);
+        var bytes = RazorTestResources.GetResourceBytes(RazorTestResources.BlazorServerAppTagHelpersJson);
 
         using var stream = new MemoryStream(bytes);
         using var reader = new StreamReader(stream);

@@ -18,19 +18,17 @@ namespace System.CommandLine.Tests
             [Fact]
             public void Multiple_arguments_can_differ_by_arity()
             {
-                var multipleArityArg = new Argument<IEnumerable<string>>
+                var multipleArityArg = new CliArgument<IEnumerable<string>>("several")
                 {
                     Arity = new ArgumentArity(3, 3),
-                    Name = "several"
                 };
 
-                var singleArityArg = new Argument<IEnumerable<string>>
+                var singleArityArg = new CliArgument<IEnumerable<string>>("one")
                 {
                     Arity = ArgumentArity.ZeroOrMore,
-                    Name = "one"
                 };
 
-                var command = new Command("the-command")
+                var command = new CliCommand("the-command")
                 {
                     multipleArityArg,
                     singleArityArg
@@ -49,16 +47,10 @@ namespace System.CommandLine.Tests
             [Fact]
             public void Multiple_arguments_can_differ_by_type()
             {
-                var stringArg = new Argument<string>
-                {
-                    Name = "the-string"
-                };
-                var intArg = new Argument<int>
-                {
-                    Name = "the-int"
-                };
+                var stringArg = new CliArgument<string>("the-string");
+                var intArg = new CliArgument<int>("the-int");
 
-                var command = new Command("the-command")
+                var command = new CliCommand("the-command")
                 {
                     stringArg,
                     intArg
@@ -85,12 +77,12 @@ namespace System.CommandLine.Tests
             [InlineData("one two three four five --verbose true")]
             public void When_multiple_arguments_are_present_then_their_order_relative_to_sibling_options_is_not_significant(string commandLine)
             {
-                var first = new Argument<string> { Name = "first" };
-                var second = new Argument<string> { Name = "second" };
-                var third = new Argument<string[]> { Name = "third" };
-                var verbose = new Option<bool>("--verbose");
+                var first = new CliArgument<string>("first");
+                var second = new CliArgument<string>("second");
+                var third = new CliArgument<string[]>("third");
+                var verbose = new CliOption<bool>("--verbose");
 
-                var command = new Command("the-command")
+                var command = new CliCommand("the-command")
                 {
                     first,
                     second,
@@ -124,9 +116,9 @@ namespace System.CommandLine.Tests
             [Fact]
             public void Multiple_arguments_of_unspecified_type_are_parsed_correctly()
             {
-                var sourceArg = new Argument<string>("source");
-                var destinationArg = new Argument<string>("destination");
-                var root = new RootCommand
+                var sourceArg = new CliArgument<string>("source");
+                var destinationArg = new CliArgument<string>("destination");
+                var root = new CliRootCommand
                 {
                     sourceArg,
                     destinationArg
@@ -134,13 +126,13 @@ namespace System.CommandLine.Tests
 
                 var result = root.Parse("src.txt dest.txt");
 
-                result.FindResultFor(sourceArg)
-                      .GetValueOrDefault()
+                result.GetResult(sourceArg)
+                      .GetValueOrDefault<string>()
                       .Should()
                       .Be("src.txt");
                 
-                result.FindResultFor(destinationArg)
-                      .GetValueOrDefault()
+                result.GetResult(destinationArg)
+                      .GetValueOrDefault<string>()
                       .Should()
                       .Be("dest.txt");
             }
@@ -149,12 +141,12 @@ namespace System.CommandLine.Tests
             [Fact]
             public void When_multiple_arguments_are_defined_but_not_provided_then_option_parses_correctly()
             {
-                var option = new Option<string>("-e");
-                var command = new Command("the-command")
+                var option = new CliOption<string>("-e");
+                var command = new CliCommand("the-command")
                 {
                     option,
-                    new Argument<string>(),
-                    new Argument<string>()
+                    new CliArgument<string>("arg1"),
+                    new CliArgument<string>("arg2")
                 };
 
                 var result = command.Parse("-e foo");
@@ -167,10 +159,10 @@ namespace System.CommandLine.Tests
             [Fact]
             public void Tokens_that_cannot_be_converted_by_multiple_arity_argument_flow_to_next_multiple_arity_argument()
             {
-                var ints = new Argument<int[]>();
-                var strings = new Argument<string[]>();
+                var ints = new CliArgument<int[]>("ints");
+                var strings = new CliArgument<string[]>("strings");
 
-                var root = new RootCommand
+                var root = new CliRootCommand
                 {
                     ints,
                     strings
@@ -194,10 +186,10 @@ namespace System.CommandLine.Tests
             [Fact]
             public void Tokens_that_cannot_be_converted_by_multiple_arity_argument_flow_to_next_single_arity_argument()
             {
-                var ints = new Argument<int[]>();
-                var strings = new Argument<string>();
+                var ints = new CliArgument<int[]>("arg1");
+                var strings = new CliArgument<string>("arg2");
 
-                var root = new RootCommand
+                var root = new CliRootCommand
                 {
                     ints,
                     strings
@@ -227,16 +219,16 @@ namespace System.CommandLine.Tests
             [Fact]
             public void Unsatisfied_subsequent_argument_with_min_arity_0_parses_as_default_value()
             {
-                var arg1 = new Argument<string>
+                var arg1 = new CliArgument<string>("arg1")
                 {
                     Arity = ArgumentArity.ExactlyOne
                 };
-                var arg2 = new Argument<string>
+                var arg2 = new CliArgument<string>("arg2")
                 {
                     Arity = ArgumentArity.ZeroOrOne,
+                    DefaultValueFactory = (_) => "the-default"
                 };
-                arg2.SetDefaultValue("the-default");
-                var rootCommand = new RootCommand
+                var rootCommand = new CliRootCommand
                 {
                     arg1,
                     arg2,
@@ -251,10 +243,13 @@ namespace System.CommandLine.Tests
             [Fact] // https://github.com/dotnet/command-line-api/issues/1403
             public void Unsatisfied_subsequent_argument_with_min_arity_1_parses_as_default_value()
             {
-                Argument<string> arg1 = new(name: "arg1");
-                Argument<string> arg2 = new(name: "arg2", defaultValueFactory: () => "the-default");
+                CliArgument<string> arg1 = new(name: "arg1");
+                CliArgument<string> arg2 = new(name: "arg2")
+                {
+                    DefaultValueFactory = (_) => "the-default"
+                };
 
-                var rootCommand = new RootCommand
+                var rootCommand = new CliRootCommand
                 {
                     arg1,
                     arg2,
@@ -262,18 +257,18 @@ namespace System.CommandLine.Tests
 
                 var result = rootCommand.Parse("");
 
-                result.FindResultFor(arg1).Should().BeNull();
+                result.GetResult(arg1).Should().NotBeNull();
                 result.GetValue(arg2).Should().Be("the-default");
             }
 
             [Fact] // https://github.com/dotnet/command-line-api/issues/1395
             public void When_subsequent_argument_with_ZeroOrOne_arity_is_not_provided_then_parse_is_correct()
             {
-                var argument1 = new Argument<string>();
-                var rootCommand = new RootCommand
+                var argument1 = new CliArgument<string>("arg1");
+                var rootCommand = new CliRootCommand
                 {
                     argument1,
-                    new Argument<string>
+                    new CliArgument<string>("arg2")
                     {
                         Arity = ArgumentArity.ZeroOrOne
                     },
@@ -294,22 +289,19 @@ namespace System.CommandLine.Tests
             public void When_there_are_not_enough_tokens_for_all_arguments_then_the_correct_number_of_errors_is_reported(
                 string providedArgs)
             {
-                var command = new Command("command")
+                var command = new CliCommand("command")
                 {
-                    new Argument<string>(),
-                    new Argument<string>(),
-                    new Argument<string>(),
-                    new Argument<string>()
+                    new CliArgument<string>("arg1"),
+                    new CliArgument<string>("arg2"),
+                    new CliArgument<string>("arg3"),
+                    new CliArgument<string>("arg4")
                 };
 
-                var result = new Parser(command).Parse(providedArgs);
+                var result = CliParser.Parse(command, providedArgs);
 
-                var numberOfMissingArgs =
-                    result
-                        .Errors
-                        .Count(e => e.Message == LocalizationResources.Instance.RequiredArgumentMissing(result.CommandResult));
-
-                numberOfMissingArgs
+                result
+                    .Errors
+                    .Count
                     .Should()
                     .Be(4 - providedArgs.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries).Length);
             }

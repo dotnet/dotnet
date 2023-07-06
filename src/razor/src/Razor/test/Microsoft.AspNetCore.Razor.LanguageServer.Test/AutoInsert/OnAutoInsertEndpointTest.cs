@@ -352,6 +352,38 @@ public class OnAutoInsertEndpointTest : SingleServerDelegatingEndpointTestBase
     }
 
     [Fact]
+    public async Task Handle_AutoInsertAttributeQuotesOff_Html_DoesNotCallLanguageServer()
+    {
+        // Arrange
+        var codeDocument = CreateCodeDocument();
+        var razorFilePath = "file://path/test.razor";
+        var uri = new Uri(razorFilePath);
+        await CreateLanguageServerAsync(codeDocument, razorFilePath);
+        var documentContext = CreateDocumentContext(uri, codeDocument);
+        var optionsMonitor = GetOptionsMonitor(autoInsertAttributeQuotes: false);
+        var insertProvider = new TestOnAutoInsertProvider("<", canResolve: false);
+        var endpoint = new OnAutoInsertEndpoint(LanguageServerFeatureOptions, DocumentMappingService, LanguageServer, new[] { insertProvider }, optionsMonitor, LoggerFactory);
+        var @params = new VSInternalDocumentOnAutoInsertParams()
+        {
+            TextDocument = new TextDocumentIdentifier { Uri = uri, },
+            Position = new Position(0, 0),
+            Character = "=",
+            Options = new FormattingOptions
+            {
+                TabSize = 4,
+                InsertSpaces = true
+            },
+        };
+        var requestContext = await CreateOnAutoInsertRequestContextAsync(documentContext);
+
+        // Act
+        var result = await endpoint.HandleRequestAsync(@params, requestContext, DisposalToken);
+
+        // Assert
+        Assert.Equal(0, LanguageServer.RequestCount);
+    }
+
+    [Fact]
     public async Task Handle_SingleServer_CSharpDocCommentSnippet()
     {
         // Arrange

@@ -9,8 +9,14 @@ namespace System.CommandLine.Completions
     /// <summary>
     /// Supports command line completion operations.
     /// </summary>
-    public abstract class CompletionContext
+    public class CompletionContext
     {
+        private static CompletionContext? _empty;
+
+        internal CompletionContext(ParseResult parseResult) : this(parseResult, GetWordToComplete(parseResult))
+        {
+        }
+
         internal CompletionContext(ParseResult parseResult, string wordToComplete)
         {
             ParseResult = parseResult;
@@ -23,7 +29,13 @@ namespace System.CommandLine.Completions
         /// The parse result for which completions are being requested.
         public ParseResult ParseResult { get; }
 
-        internal static CompletionContext Empty() => new TokenCompletionContext(ParseResult.Empty());
+        /// <summary>
+        /// Gets an empty CompletionContext.
+        /// </summary>
+        /// <remarks>Can be used for testing purposes.</remarks>
+        public static CompletionContext Empty => _empty ??= new CompletionContext(ParseResult.Empty());
+
+        internal bool IsEmpty => ReferenceEquals(this, _empty);
 
         /// <summary>
         /// Gets the text to be matched for completion, which can be used to filter a list of completions.
@@ -35,7 +47,7 @@ namespace System.CommandLine.Completions
             ParseResult parseResult,
             int? position = null)
         {
-            Token? lastToken = parseResult.Tokens.LastOrDefault(t => t.Type != TokenType.Directive);
+            CliToken? lastToken = parseResult.Tokens.LastOrDefault(t => t.Type != CliTokenType.Directive);
 
             string? textToMatch = null;
             string? rawInput = parseResult.CommandLineText;
@@ -64,7 +76,7 @@ namespace System.CommandLine.Completions
             if (string.IsNullOrWhiteSpace(rawInput))
             {
                 if (parseResult.UnmatchedTokens.Count > 0 ||
-                    lastToken?.Type == TokenType.Argument)
+                    lastToken?.Type == CliTokenType.Argument)
                 {
                     return textToMatch ?? "";
                 }

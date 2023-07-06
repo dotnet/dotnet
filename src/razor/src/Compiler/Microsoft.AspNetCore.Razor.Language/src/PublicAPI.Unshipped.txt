@@ -36,6 +36,8 @@ Microsoft.AspNetCore.Razor.Language.CodeGeneration.LinePragma.LinePragma() -> vo
 Microsoft.AspNetCore.Razor.Language.CommonMetadata
 Microsoft.AspNetCore.Razor.Language.Intermediate.IntermediateNodeCollection.Enumerator.Enumerator() -> void
 Microsoft.AspNetCore.Razor.Language.Intermediate.IntermediateNodeReference.IntermediateNodeReference() -> void
+Microsoft.AspNetCore.Razor.Language.Intermediate.TypeParameter.ConstraintsSource.get -> Microsoft.AspNetCore.Razor.Language.SourceSpan?
+Microsoft.AspNetCore.Razor.Language.Intermediate.TypeParameter.ConstraintsSource.init -> void
 Microsoft.AspNetCore.Razor.Language.MetadataCollection
 Microsoft.AspNetCore.Razor.Language.MetadataCollection.Enumerator
 Microsoft.AspNetCore.Razor.Language.MetadataCollection.Enumerator.Current.get -> System.Collections.Generic.KeyValuePair<string!, string?>

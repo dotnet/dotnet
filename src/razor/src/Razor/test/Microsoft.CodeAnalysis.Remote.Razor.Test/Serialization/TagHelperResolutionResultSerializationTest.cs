@@ -29,7 +29,7 @@ public class TagHelperResolutionResultSerializationTest : TestBase
     public void TagHelperResolutionResult_DefaultBlazorServerProject_RoundTrips()
     {
         // Arrange
-        var bytes = TestResources.GetResourceBytes(TestResources.BlazorServerAppTagHelpersJson);
+        var bytes = RazorTestResources.GetResourceBytes(RazorTestResources.BlazorServerAppTagHelpersJson);
 
         ImmutableArray<TagHelperDescriptor> tagHelpers;
         using (var stream = new MemoryStream(bytes))

@@ -117,26 +117,11 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="CommandExpectsFewerArguments" xml:space="preserve">
-    <value>Command '{0}' expects no more than {1} arguments, but {2} were provided.</value>
-  </data>
-  <data name="CommandExpectsOneArgument" xml:space="preserve">
-    <value>Command '{0}' expects a single argument but {1} were provided.</value>
-  </data>
-  <data name="CommandNoArgumentProvided" xml:space="preserve">
-    <value>No argument was provided for Command '{0}'.</value>
-  </data>
   <data name="DirectoryDoesNotExist" xml:space="preserve">
     <value>Directory does not exist: '{0}'.</value>
   </data>
-  <data name="OptionExpectsFewerArguments" xml:space="preserve">
-    <value>Option '{0}' expects no more than {1} arguments, but {2} were provided.</value>
-  </data>
   <data name="OptionExpectsOneArgument" xml:space="preserve">
     <value>Option '{0}' expects a single argument but {1} were provided.</value>
-  </data>
-  <data name="OptionNoArgumentProvided" xml:space="preserve">
-    <value>No argument was provided for Option '{0}'.</value>
   </data>
   <data name="FileDoesNotExist" xml:space="preserve">
     <value>File does not exist: '{0}'.</value>
@@ -233,5 +218,11 @@
   </data>
   <data name="RequiredOptionWasNotProvided" xml:space="preserve">
     <value>Option '{0}' is required.</value>
+  </data>
+  <data name="ArgumentConversionCannotParseForCommand_Completions" xml:space="preserve">
+    <value>Cannot parse argument '{0}' for command '{1}' as expected type '{2}'. Did you mean one of the following?{3}</value>
+  </data>
+  <data name="ArgumentConversionCannotParseForOption_Completions" xml:space="preserve">
+    <value>Cannot parse argument '{0}' for option '{1}' as expected type '{2}'. Did you mean one of the following?{3}</value>
   </data>
 </root>

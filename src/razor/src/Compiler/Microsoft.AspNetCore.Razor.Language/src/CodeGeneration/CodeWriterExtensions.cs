@@ -408,8 +408,11 @@ internal static class CodeWriterExtensions
         string baseType,
         IList<string> interfaces,
         IList<TypeParameter> typeParameters,
+        CodeRenderingContext context,
         bool useNullableContext = false)
     {
+        Debug.Assert(context == null || context.CodeWriter == writer);
+
         if (useNullableContext)
         {
             writer.WriteLine("#nullable restore");
@@ -457,13 +460,25 @@ internal static class CodeWriterExtensions
         writer.WriteLine();
         if (typeParameters != null)
         {
-            for (var i = 0; i < typeParameters.Count; i++)
+            foreach (var typeParameter in typeParameters)
             {
-                var constraint = typeParameters[i].Constraints;
+                var constraint = typeParameter.Constraints;
                 if (constraint != null)
                 {
-                    writer.Write(constraint);
-                    writer.WriteLine();
+                    if (typeParameter.ConstraintsSource is { } source)
+                    {
+                        Debug.Assert(context != null);
+                        using (writer.BuildLinePragma(source, context))
+                        {
+                            context.AddSourceMappingFor(source);
+                            writer.Write(constraint);
+                        }
+                    }
+                    else
+                    {
+                        writer.Write(constraint);
+                        writer.WriteLine();
+                    }
                 }
             }
         }

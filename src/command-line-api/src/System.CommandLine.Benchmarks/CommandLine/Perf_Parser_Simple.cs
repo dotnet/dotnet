@@ -1,5 +1,4 @@
 ﻿using BenchmarkDotNet.Attributes;
-using System.CommandLine.Parsing;
 using System.Threading.Tasks;
 
 namespace System.CommandLine.Benchmarks.CommandLine
@@ -11,31 +10,44 @@ namespace System.CommandLine.Benchmarks.CommandLine
         public string[] Args { get; set; }
 
         [Benchmark]
-        public int DefaultsSync() => BuildCommand().Invoke(Args);
+        public int DefaultsSync() => BuildCommand().Parse(Args).Invoke();
 
         [Benchmark]
-        public Task<int> DefaultsAsync() => BuildCommand().InvokeAsync(Args);
+        public Task<int> DefaultsAsync() => BuildCommand().Parse(Args).InvokeAsync();
 
         [Benchmark]
-        public int MinimalSync() => new CommandLineBuilder(BuildCommand()).Build().Invoke(Args);
+        public int MinimalSync() => BuildMinimalConfig(BuildCommand()).Invoke(Args);
 
         [Benchmark]
-        public Task<int> MinimalAsync() => new CommandLineBuilder(BuildCommand()).Build().InvokeAsync(Args);
+        public Task<int> MinimalAsync() => BuildMinimalConfig(BuildCommand()).InvokeAsync(Args);
 
-        private static RootCommand BuildCommand()
+        private static CliRootCommand BuildCommand()
         {
-            Option<bool> boolOption = new(new[] { "--bool", "-b" }, "Bool option");
-            Option<string> stringOption = new(new[] { "--string", "-s" }, "String option");
+            CliOption<bool> boolOption = new("--bool", "-b") { Description = "Bool option" };
+            CliOption<string> stringOption = new("--string", "-s") { Description = "String option" };
 
-            RootCommand command = new()
+            CliRootCommand command = new()
             {
                 boolOption,
                 stringOption
             };
 
-            command.SetHandler(static (bool _, string _) => { }, boolOption, stringOption);
+            command.SetAction(parseResult => 
+            {
+                bool boolean = parseResult.GetValue(boolOption);
+                string text = parseResult.GetValue(stringOption);
+            });
 
             return command;
+        }
+
+        private static CliConfiguration BuildMinimalConfig(CliCommand command)
+        {
+            CliConfiguration config = new(command);
+            config.Directives.Clear();
+            config.EnableDefaultExceptionHandler = false;
+            config.ProcessTerminationTimeout = null;
+            return config;
         }
     }
 }

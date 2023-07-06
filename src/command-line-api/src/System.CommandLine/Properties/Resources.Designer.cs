@@ -79,6 +79,15 @@ namespace System.CommandLine.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Cannot parse argument &apos;{0}&apos; for command &apos;{1}&apos; as expected type &apos;{2}&apos;. Did you mean one of the following?{3}.
+        /// </summary>
+        internal static string ArgumentConversionCannotParseForCommand_Completions {
+            get {
+                return ResourceManager.GetString("ArgumentConversionCannotParseForCommand_Completions", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Cannot parse argument &apos;{0}&apos; for option &apos;{1}&apos; as expected type &apos;{2}&apos;..
         /// </summary>
         internal static string ArgumentConversionCannotParseForOption {
@@ -88,29 +97,11 @@ namespace System.CommandLine.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Command &apos;{0}&apos; expects no more than {1} arguments, but {2} were provided..
+        ///   Looks up a localized string similar to Cannot parse argument &apos;{0}&apos; for option &apos;{1}&apos; as expected type &apos;{2}&apos;. Did you mean one of the following?{3}.
         /// </summary>
-        internal static string CommandExpectsFewerArguments {
+        internal static string ArgumentConversionCannotParseForOption_Completions {
             get {
-                return ResourceManager.GetString("CommandExpectsFewerArguments", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Command &apos;{0}&apos; expects a single argument but {1} were provided..
-        /// </summary>
-        internal static string CommandExpectsOneArgument {
-            get {
-                return ResourceManager.GetString("CommandExpectsOneArgument", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to No argument was provided for Command &apos;{0}&apos;..
-        /// </summary>
-        internal static string CommandNoArgumentProvided {
-            get {
-                return ResourceManager.GetString("CommandNoArgumentProvided", resourceCulture);
+                return ResourceManager.GetString("ArgumentConversionCannotParseForOption_Completions", resourceCulture);
             }
         }
         
@@ -304,29 +295,11 @@ namespace System.CommandLine.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Option &apos;{0}&apos; expects no more than {1} arguments, but {2} were provided..
-        /// </summary>
-        internal static string OptionExpectsFewerArguments {
-            get {
-                return ResourceManager.GetString("OptionExpectsFewerArguments", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Option &apos;{0}&apos; expects a single argument but {1} were provided..
         /// </summary>
         internal static string OptionExpectsOneArgument {
             get {
                 return ResourceManager.GetString("OptionExpectsOneArgument", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to No argument was provided for Option &apos;{0}&apos;..
-        /// </summary>
-        internal static string OptionNoArgumentProvided {
-            get {
-                return ResourceManager.GetString("OptionNoArgumentProvided", resourceCulture);
             }
         }
         

@@ -33,9 +33,9 @@ internal class VisualStudioMacLanguageServerFeatureOptions : LanguageServerFeatu
 
     public override string HtmlVirtualDocumentSuffix => "__virtual.html";
 
-    public override bool SingleServerCompletionSupport => false;
+    public override bool SingleServerCompletionSupport => true;
 
-    public override bool SingleServerSupport => false;
+    public override bool SingleServerSupport => true;
 
     public override bool SupportsDelegatedCodeActions => true;
 

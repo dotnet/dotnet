@@ -110,7 +110,7 @@ public class DocumentHighlightEndpointTest : LanguageServerTestBase
         var codeDocument = CreateCodeDocument(output);
         var csharpSourceText = codeDocument.GetCSharpSourceText();
         var csharpDocumentUri = new Uri("C:/path/to/file.razor__virtual.g.cs");
-        var serverCapabilities = new ServerCapabilities()
+        var serverCapabilities = new VSInternalServerCapabilities()
         {
             DocumentHighlightProvider = true
         };

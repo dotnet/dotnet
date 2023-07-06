@@ -15,9 +15,27 @@ using Microsoft.AspNetCore.Components;
 #line hidden
 #nullable disable
     public partial class TestComponent<TItem1, TItem2, TItem3> : global::Microsoft.AspNetCore.Components.ComponentBase
-    where TItem1 : Image
-    where TItem2 : ITag
-    where TItem3 : Image, new()
+#nullable restore
+#line 2 "x:\dir\subdir\Test\TestComponent.cshtml"
+where TItem1 : Image
+
+#line default
+#line hidden
+#nullable disable
+#nullable restore
+#line 3 "x:\dir\subdir\Test\TestComponent.cshtml"
+where TItem2 : ITag
+
+#line default
+#line hidden
+#nullable disable
+#nullable restore
+#line 4 "x:\dir\subdir\Test\TestComponent.cshtml"
+where TItem3 : Image, new()
+
+#line default
+#line hidden
+#nullable disable
     {
         #pragma warning disable 219
         private void __RazorDirectiveTokenHelpers__() {
@@ -32,19 +50,6 @@ global::System.Object TItem1 = null!;
         }
         ))();
         ((global::System.Action)(() => {
-#pragma warning disable CS0693
-#pragma warning disable CS8321
-#nullable restore
-#line 2 "x:\dir\subdir\Test\TestComponent.cshtml"
-void __TypeConstraints_TItem1<TItem1>() where TItem1 : Image
-{
-}
-#pragma warning restore CS0693
-#pragma warning restore CS8321
-
-#line default
-#line hidden
-#nullable disable
         }
         ))();
         ((global::System.Action)(() => {
@@ -58,19 +63,6 @@ global::System.Object TItem2 = null!;
         }
         ))();
         ((global::System.Action)(() => {
-#pragma warning disable CS0693
-#pragma warning disable CS8321
-#nullable restore
-#line 3 "x:\dir\subdir\Test\TestComponent.cshtml"
-void __TypeConstraints_TItem2<TItem2>() where TItem2 : ITag
-{
-}
-#pragma warning restore CS0693
-#pragma warning restore CS8321
-
-#line default
-#line hidden
-#nullable disable
         }
         ))();
         ((global::System.Action)(() => {
@@ -84,19 +76,6 @@ global::System.Object TItem3 = null!;
         }
         ))();
         ((global::System.Action)(() => {
-#pragma warning disable CS0693
-#pragma warning disable CS8321
-#nullable restore
-#line 4 "x:\dir\subdir\Test\TestComponent.cshtml"
-void __TypeConstraints_TItem3<TItem3>() where TItem3 : Image, new()
-{
-}
-#pragma warning restore CS0693
-#pragma warning restore CS8321
-
-#line default
-#line hidden
-#nullable disable
         }
         ))();
         }

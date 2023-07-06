@@ -3,7 +3,6 @@ using System.CommandLine.Hosting;
 using System.CommandLine.NamingConventionBinder;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using System.CommandLine.Parsing;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using static HostingPlayground.HostingPlaygroundLogEvents;
@@ -12,7 +11,7 @@ namespace HostingPlayground
 {
     class Program
     {
-        static async Task Main(string[] args) => await BuildCommandLine()
+        static Task Main(string[] args) => BuildCommandLine()
             .UseHost(_ => Host.CreateDefaultBuilder(),
                 host =>
                 {
@@ -21,19 +20,17 @@ namespace HostingPlayground
                         services.AddSingleton<IGreeter, Greeter>();
                     });
                 })
-            .UseDefaults()
-            .Build()
             .InvokeAsync(args);
 
-        private static CommandLineBuilder BuildCommandLine()
+        private static CliConfiguration BuildCommandLine()
         {
-            var root = new RootCommand(@"$ dotnet run --name 'Joe'"){
-                new Option<string>("--name"){
-                    IsRequired = true
+            var root = new CliRootCommand(@"$ dotnet run --name 'Joe'"){
+                new CliOption<string>("--name"){
+                    Required = true
                 }
             };
-            root.Handler = CommandHandler.Create<GreeterOptions, IHost>(Run);
-            return new CommandLineBuilder(root);
+            root.Action = CommandHandler.Create<GreeterOptions, IHost>(Run);
+            return new CliConfiguration(root);
         }
 
         private static void Run(GreeterOptions options, IHost host)

@@ -10,9 +10,9 @@ using Microsoft.AspNetCore.Razor.LanguageServer.EndpointContracts;
 using Microsoft.AspNetCore.Razor.LanguageServer.Extensions;
 using Microsoft.CodeAnalysis.Razor.Workspaces.Extensions;
 using Microsoft.CodeAnalysis.Testing;
-using Microsoft.CodeAnalysis.Testing.Verifiers;
 using Microsoft.CodeAnalysis.Text;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
+using Roslyn.Test.Utilities;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -187,6 +187,6 @@ public class DocumentSpellCheckEndpointTest : SingleServerDelegatingEndpointTest
             actual = actual.Insert(range.End, "|]").Insert(range.Start, "[|");
         }
 
-        new XUnitVerifier().EqualOrDiff(originalInput, actual);
+        AssertEx.EqualOrDiff(originalInput, actual);
     }
 }

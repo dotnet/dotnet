@@ -13,16 +13,16 @@ namespace System.CommandLine.Tests
         [Fact]
         public void Parse_result_diagram_helps_explain_parse_operation()
         {
-            var parser = new Parser(
-                new Command(
+            CliCommand command = 
+                new CliCommand(
                     "the-command")
                 {
-                    new Option<string>("-x"),
-                    new Option<bool>("-y"),
-                    new Argument<string[]>()
-                });
+                    new CliOption<string>("-x"),
+                    new CliOption<bool>("-y"),
+                    new CliArgument<string[]>("arg")
+                };
 
-            var result = parser.Parse("the-command -x one -y two three");
+            var result = command.Parse("the-command -x one -y two three");
 
             result.Diagram()
                   .Should()
@@ -32,9 +32,12 @@ namespace System.CommandLine.Tests
         [Fact]
         public void Parse_result_diagram_displays_unmatched_tokens()
         {
-            var command = new Command("command")
+            CliOption<string> option = new ("-x");
+            option.AcceptOnlyFromAmong("arg1", "arg2", "arg3");
+
+            var command = new CliCommand("command")
             {
-                new Option<string>("-x").AcceptOnlyFromAmong("arg1", "arg2", "arg3")
+                option
             };
 
             var result = command.Parse("command -x ar");
@@ -47,26 +50,26 @@ namespace System.CommandLine.Tests
         [Fact]
         public void Parse_diagram_shows_type_conversion_errors()
         {
-            var command = new RootCommand
+            var command = new CliRootCommand
             {
-                new Option<int>("-f")
+                new CliOption<int>("-f")
             };
 
             var result = command.Parse("-f not-an-int");
 
             result.Diagram()
                   .Should()
-                  .Be($"[ {RootCommand.ExecutableName} [ -f !<not-an-int> ] ]");
+                  .Be($"[ {CliRootCommand.ExecutableName} ![ -f <not-an-int> ] ]");
         }
 
         [Fact]
         public void Parse_diagram_identifies_options_where_default_values_have_been_applied()
         {
-            var rootCommand = new RootCommand
+            var rootCommand = new CliRootCommand
             {
-                new Option<int>(new[] { "-h", "--height" }, () => 10),
-                new Option<int>(new[] { "-w", "--width" }, () => 15),
-                new Option<ConsoleColor>(new[] { "-c", "--color" }, () => ConsoleColor.Cyan)
+                new CliOption<int>("--height", "-h") { DefaultValueFactory = (_) => 10 },
+                new CliOption<int>("-w", "--width") { DefaultValueFactory = (_) => 15 },
+                new CliOption<ConsoleColor>("--color", "-c") { DefaultValueFactory = (_) => ConsoleColor.Cyan }
             };
 
             var result = rootCommand.Parse("-w 9000");
@@ -74,17 +77,17 @@ namespace System.CommandLine.Tests
             var diagram = result.Diagram();
 
             diagram.Should()
-                   .Be($"[ {RootCommand.ExecutableName} [ -w <9000> ] *[ --height <10> ] *[ --color <Cyan> ] ]");
+                   .Be($"[ {CliRootCommand.ExecutableName} [ -w <9000> ] *[ --height <10> ] *[ --color <Cyan> ] ]");
         }
 
         [Fact]
         public void Parse_diagram_indicates_which_tokens_were_applied_to_which_command_argument()
         {
-            var command = new Command("the-command")
+            var command = new CliCommand("the-command")
             {
-                new Argument<string> { Name = "first" },
-                new Argument<string> { Name = "second" },
-                new Argument<string[]> { Name = "third" }
+                new CliArgument<string>("first"),
+                new CliArgument<string> ("second"),
+                new CliArgument<string[]> ("third")
             };
 
             var result = command.Parse("one two three four five");
@@ -97,11 +100,11 @@ namespace System.CommandLine.Tests
         [Fact]
         public void Parse_diagram_indicates_which_tokens_were_applied_to_which_command_argument_for_sequences_of_complex_types()
         {
-            var command = new Command("the-command")
+            var command = new CliCommand("the-command")
             {
-                new Argument<FileInfo> { Name = "first" },
-                new Argument<FileInfo> { Name = "second" },
-                new Argument<FileInfo[]> { Name = "third" }
+                new CliArgument<FileInfo> ("first"),
+                new CliArgument<FileInfo> ("second"),
+                new CliArgument<FileInfo[]> ("third")
             };
 
             var result = command.Parse("one two three four five");

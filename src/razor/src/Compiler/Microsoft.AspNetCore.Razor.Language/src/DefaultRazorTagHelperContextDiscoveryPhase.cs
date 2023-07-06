@@ -80,7 +80,7 @@ internal sealed class DefaultRazorTagHelperContextDiscoveryPhase : RazorEnginePh
             return false;
         }
 
-        var typePatternSpan = typePattern.AsSpan();
+        var typePatternSpan = RemoveGlobalPrefix(typePattern.AsSpan());
 
         if (typePatternSpan[^1] == '*')
         {
@@ -93,7 +93,19 @@ internal sealed class DefaultRazorTagHelperContextDiscoveryPhase : RazorEnginePh
             return descriptor.Name.AsSpan().StartsWith(typePatternSpan[..^1], StringComparison.Ordinal);
         }
 
-        return string.Equals(descriptor.Name, typePattern, StringComparison.Ordinal);
+        return descriptor.Name.AsSpan().Equals(typePatternSpan, StringComparison.Ordinal);
+    }
+
+    private static ReadOnlySpan<char> RemoveGlobalPrefix(in ReadOnlySpan<char> span)
+    {
+        const string globalPrefix = "global::";
+
+        if (span.StartsWith(globalPrefix.AsSpan(), StringComparison.Ordinal))
+        {
+            return span[globalPrefix.Length..];
+        }
+
+        return span;
     }
 
     internal abstract class DirectiveVisitor : SyntaxWalker
@@ -367,12 +379,7 @@ internal sealed class DefaultRazorTagHelperContextDiscoveryPhase : RazorEnginePh
                 }
 
                 // Remove global:: prefix from namespace.
-                const string globalPrefix = "global::";
-                var normalizedNamespace = @namespace.AsSpan();
-                if (@namespace.StartsWith(globalPrefix, StringComparison.Ordinal))
-                {
-                    normalizedNamespace = normalizedNamespace[globalPrefix.Length..];
-                }
+                var normalizedNamespace = RemoveGlobalPrefix(@namespace.AsSpan());
 
                 return normalizedNamespace.Equals(typeNamespace.AsSpan(), StringComparison.Ordinal);
             }

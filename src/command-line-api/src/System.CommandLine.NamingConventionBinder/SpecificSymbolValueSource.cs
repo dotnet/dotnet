@@ -7,33 +7,32 @@ namespace System.CommandLine.NamingConventionBinder;
 
 internal class SpecificSymbolValueSource : IValueSource
 {
-    public SpecificSymbolValueSource(IValueDescriptor valueDescriptor)
-    {
-        ValueDescriptor = valueDescriptor ?? throw new ArgumentNullException(nameof(valueDescriptor));
-    }
+    private readonly CliSymbol _symbol;
 
-    public IValueDescriptor ValueDescriptor { get; }
+    public SpecificSymbolValueSource(CliSymbol symbol)
+    {
+        _symbol = symbol ?? throw new ArgumentNullException(nameof(symbol));
+    }
 
     public bool TryGetValue(IValueDescriptor valueDescriptor,
         BindingContext? bindingContext,
         out object? boundValue)
     {
-        var specificDescriptor = ValueDescriptor;
-        switch (specificDescriptor)
+        switch (_symbol)
         {
-            case Option option:
-                var optionResult = bindingContext?.ParseResult.FindResultFor(option);
+            case CliOption option:
+                var optionResult = bindingContext?.ParseResult.GetResult(option);
                 if (optionResult is not null)
                 {
-                    boundValue = optionResult.GetValueOrDefault();
+                    boundValue = optionResult.GetValueOrDefault<object>();
                     return true;
                 }
                 break;
-            case Argument argument:
-                var argumentResult = bindingContext?.ParseResult.FindResultFor(argument);
+            case CliArgument argument:
+                var argumentResult = bindingContext?.ParseResult.GetResult(argument);
                 if (argumentResult is not null)
                 {
-                    boundValue = argumentResult.GetValueOrDefault();
+                    boundValue = argumentResult.GetValueOrDefault<object>();
                     return true;
                 }
                 break;

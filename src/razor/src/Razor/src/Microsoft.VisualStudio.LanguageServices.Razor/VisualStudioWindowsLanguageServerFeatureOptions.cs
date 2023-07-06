@@ -12,13 +12,9 @@ namespace Microsoft.VisualStudio.Editor.Razor;
 [Export(typeof(LanguageServerFeatureOptions))]
 internal class VisualStudioWindowsLanguageServerFeatureOptions : LanguageServerFeatureOptions
 {
-    private const string SingleServerCompletionFeatureFlag = "Razor.LSP.SingleServerCompletion";
-    private const string SingleServerFeatureFlag = "Razor.LSP.SingleServer";
     private const string ShowAllCSharpCodeActionsFeatureFlag = "Razor.LSP.ShowAllCSharpCodeActions";
 
     private readonly LSPEditorFeatureDetector _lspEditorFeatureDetector;
-    private readonly Lazy<bool> _singleServerCompletionSupport;
-    private readonly Lazy<bool> _singleServerSupport;
     private readonly Lazy<bool> _showAllCSharpCodeActions;
 
     [ImportingConstructor]
@@ -30,20 +26,6 @@ internal class VisualStudioWindowsLanguageServerFeatureOptions : LanguageServerF
         }
 
         _lspEditorFeatureDetector = lspEditorFeatureDetector;
-
-        _singleServerCompletionSupport = new Lazy<bool>(() =>
-        {
-            var featureFlags = (IVsFeatureFlags)AsyncPackage.GetGlobalService(typeof(SVsFeatureFlags));
-            var singleServerCompletionEnabled = featureFlags.IsFeatureEnabled(SingleServerCompletionFeatureFlag, defaultValue: false);
-            return singleServerCompletionEnabled;
-        });
-
-        _singleServerSupport = new Lazy<bool>(() =>
-        {
-            var featureFlags = (IVsFeatureFlags)AsyncPackage.GetGlobalService(typeof(SVsFeatureFlags));
-            var singleServerEnabled = featureFlags.IsFeatureEnabled(SingleServerFeatureFlag, defaultValue: false);
-            return singleServerEnabled;
-        });
 
         _showAllCSharpCodeActions = new Lazy<bool>(() =>
         {
@@ -63,9 +45,9 @@ internal class VisualStudioWindowsLanguageServerFeatureOptions : LanguageServerF
 
     public override string HtmlVirtualDocumentSuffix => "__virtual.html";
 
-    public override bool SingleServerCompletionSupport => _singleServerCompletionSupport.Value;
+    public override bool SingleServerCompletionSupport => true;
 
-    public override bool SingleServerSupport => _singleServerSupport.Value;
+    public override bool SingleServerSupport => true;
 
     public override bool SupportsDelegatedCodeActions => true;
 

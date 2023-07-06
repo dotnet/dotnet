@@ -1,11 +1,10 @@
 ﻿// // Copyright (c) .NET Foundation and contributors. All rights reserved.
 // // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-using System.CommandLine.Invocation;
-using System.CommandLine.IO;
 using System.CommandLine.Tests.Binding;
 using System.CommandLine.Utility;
 using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Xunit;
@@ -33,17 +32,19 @@ public partial class ModelBindingCommandHandlerTests
             var handler = HandlerDescriptor.FromMethodInfo(handlerMethod)
                                            .GetCommandHandler();
 
-            var command = new Command("the-command")
+            var command = new CliCommand("the-command")
             {
                 OptionBuilder.CreateOption("--value", type)
             };
+            command.Action = handler;
+            CliConfiguration configuration = new(command)
+            {
+                Output = new StringWriter()
+            };
 
-            var console = new TestConsole();
+            await command.Parse(commandLine, configuration).InvokeAsync(CancellationToken.None);
 
-            await handler.InvokeAsync(
-                new InvocationContext(command.Parse(commandLine), console));
-
-            console.Out.ToString().Should().Be(expectedValue.ToString());
+            configuration.Output.ToString().Should().Be(expectedValue.ToString());
         }
 
         [Theory]
@@ -65,17 +66,19 @@ public partial class ModelBindingCommandHandlerTests
             var handler = HandlerDescriptor.FromMethodInfo(handlerMethod)
                                            .GetCommandHandler();
 
-            var command = new Command("the-command")
+            var command = new CliCommand("the-command")
             {
                 OptionBuilder.CreateOption("--value", type)
             };
+            command.Action = handler;
+            CliConfiguration configuration = new(command)
+            {
+                Output = new StringWriter()
+            };
 
-            var console = new TestConsole();
+            await command.Parse(commandLine, configuration).InvokeAsync(CancellationToken.None);
 
-            await handler.InvokeAsync(
-                new InvocationContext(command.Parse(commandLine), console));
-
-            console.Out.ToString().Should().Be($"ClassWithSetter<{type.Name}>: {expectedValue}");
+            configuration.Output.ToString().Should().Be($"ClassWithSetter<{type.Name}>: {expectedValue}");
         }
 
         [Theory]
@@ -97,17 +100,19 @@ public partial class ModelBindingCommandHandlerTests
             var handler = HandlerDescriptor.FromMethodInfo(handlerMethod)
                                            .GetCommandHandler();
 
-            var command = new Command("the-command")
+            var command = new CliCommand("the-command")
             {
                 OptionBuilder.CreateOption("--value", type)
             };
+            command.Action = handler;
+            CliConfiguration configuration = new(command)
+            {
+                Output = new StringWriter()
+            };
 
-            var console = new TestConsole();
+            await command.Parse(commandLine, configuration).InvokeAsync(CancellationToken.None);
 
-            await handler.InvokeAsync(
-                new InvocationContext(command.Parse(commandLine), console));
-
-            console.Out.ToString().Should().Be($"ClassWithCtorParameter<{type.Name}>: {expectedValue}");
+            configuration.Output.ToString().Should().Be($"ClassWithCtorParameter<{type.Name}>: {expectedValue}");
         }
 
         [Theory]
@@ -125,17 +130,19 @@ public partial class ModelBindingCommandHandlerTests
             var handler = HandlerDescriptor.FromMethodInfo(handlerMethod)
                                            .GetCommandHandler();
 
-            var command = new Command("the-command")
+            var command = new CliCommand("the-command")
             {
                 ArgumentBuilder.CreateArgument(type)
             };
+            command.Action = handler;
+            CliConfiguration configuration = new(command)
+            {
+                Output = new StringWriter()
+            };
 
-            var console = new TestConsole();
+            await command.Parse(commandLine, configuration).InvokeAsync(CancellationToken.None);
 
-            await handler.InvokeAsync(
-                new InvocationContext(command.Parse(commandLine), console));
-
-            console.Out.ToString().Should().Be(expectedValue.ToString());
+            configuration.Output.ToString().Should().Be(expectedValue.ToString());
         }
 
         [Fact]
@@ -143,14 +150,14 @@ public partial class ModelBindingCommandHandlerTests
         {
             FileSystemInfo received = null;
 
-            var root = new RootCommand
+            var root = new CliRootCommand
             {
-                new Option<DirectoryInfo>("-f")
+                new CliOption<DirectoryInfo>("-f")
             };
-            root.Handler = CommandHandler.Create<FileSystemInfo>(f => received = f);
+            root.Action = CommandHandler.Create<FileSystemInfo>(f => received = f);
             var path = $"{Directory.GetCurrentDirectory()}{Path.DirectorySeparatorChar}";
 
-            root.Invoke($"-f {path}");
+            root.Parse($"-f {path}").Invoke();
 
             received.Should()
                     .BeOfType<DirectoryInfo>()

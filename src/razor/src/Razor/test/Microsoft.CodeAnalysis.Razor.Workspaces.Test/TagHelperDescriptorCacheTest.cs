@@ -93,7 +93,7 @@ public class TagHelperDescriptorCacheTest : TestBase
 
     private static ImmutableArray<TagHelperDescriptor> ReadTagHelpers()
     {
-        var bytes = TestResources.GetResourceBytes(TestResources.BlazorServerAppTagHelpersJson);
+        var bytes = RazorTestResources.GetResourceBytes(RazorTestResources.BlazorServerAppTagHelpersJson);
 
         using var stream = new MemoryStream(bytes);
         using var reader = new StreamReader(stream);

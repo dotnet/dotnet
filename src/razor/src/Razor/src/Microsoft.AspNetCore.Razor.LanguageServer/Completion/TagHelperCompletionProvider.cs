@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Language.Syntax;
 using Microsoft.CodeAnalysis.Razor.Completion;
 using Microsoft.CodeAnalysis.Razor.Tooltip;
+using Microsoft.Extensions.Options;
 using Microsoft.VisualStudio.Editor.Razor;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Completion;
@@ -26,30 +27,18 @@ internal class TagHelperCompletionProvider : RazorCompletionItemProvider
     private readonly HtmlFactsService _htmlFactsService;
     private readonly TagHelperCompletionService _tagHelperCompletionService;
     private readonly TagHelperFactsService _tagHelperFactsService;
+    private readonly IOptionsMonitor<RazorLSPOptions> _optionsMonitor;
 
     public TagHelperCompletionProvider(
         TagHelperCompletionService tagHelperCompletionService,
         HtmlFactsService htmlFactsService,
-        TagHelperFactsService tagHelperFactsService)
+        TagHelperFactsService tagHelperFactsService,
+        IOptionsMonitor<RazorLSPOptions> optionsMonitor)
     {
-        if (tagHelperCompletionService is null)
-        {
-            throw new ArgumentNullException(nameof(tagHelperCompletionService));
-        }
-
-        if (htmlFactsService is null)
-        {
-            throw new ArgumentNullException(nameof(htmlFactsService));
-        }
-
-        if (tagHelperFactsService is null)
-        {
-            throw new ArgumentNullException(nameof(tagHelperFactsService));
-        }
-
-        _tagHelperCompletionService = tagHelperCompletionService;
-        _htmlFactsService = htmlFactsService;
-        _tagHelperFactsService = tagHelperFactsService;
+        _tagHelperCompletionService = tagHelperCompletionService ?? throw new ArgumentException(nameof(tagHelperCompletionService));
+        _htmlFactsService = htmlFactsService ?? throw new ArgumentException(nameof(htmlFactsService));
+        _tagHelperFactsService = tagHelperFactsService ?? throw new ArgumentException(nameof(tagHelperFactsService));
+        _optionsMonitor = optionsMonitor ?? throw new ArgumentNullException(nameof(optionsMonitor));
     }
 
     public override IReadOnlyList<RazorCompletionItem> GetCompletionItems(RazorCompletionContext context)
@@ -212,11 +201,19 @@ internal class TagHelperCompletionProvider : RazorCompletionItemProvider
         return completionItems;
     }
 
-    private static bool TryResolveInsertText(string baseInsertText, AttributeContext context, [NotNullWhen(true)] out string? snippetText)
+    private bool TryResolveInsertText(string baseInsertText, AttributeContext context, [NotNullWhen(true)] out string? snippetText)
     {
         if (context == AttributeContext.FullSnippet)
         {
-            snippetText = $"{baseInsertText}=\"$0\"";
+            if (_optionsMonitor.CurrentValue.AutoInsertAttributeQuotes)
+            {
+                snippetText = $"{baseInsertText}=\"$0\"";
+            }
+            else
+            {
+                snippetText = $"{baseInsertText}=$0";
+            }
+
             return true;
         }
 

@@ -25,7 +25,7 @@ public class TagHelperDescriptorSerializationTest : TestBase
     public void TagHelperDescriptor_DefaultBlazorServerProject_RoundTrips()
     {
         // Arrange
-        var bytes = TestResources.GetResourceBytes(TestResources.BlazorServerAppTagHelpersJson);
+        var bytes = RazorTestResources.GetResourceBytes(RazorTestResources.BlazorServerAppTagHelpersJson);
 
         // Act
 

@@ -43,18 +43,6 @@
 "Title"="Use legacy Razor editor (requires restart)"
 "PreviewPaneChannels"="int.main"
 
-[$RootKey$\FeatureFlags\Razor\LSP\SingleServerCompletion]
-"Description"="Enable single server completion when editing Razor (ASP.NET Core)."
-"Value"=dword:00000001
-"Title"="Enable enhanced Razor completion (requires restart)"
-"PreviewPaneChannels"="IntPreview,int.main"
-
-[$RootKey$\FeatureFlags\Razor\LSP\SingleServer]
-"Description"="Enable single server support when editing Razor (ASP.NET Core)."
-"Value"=dword:00000001
-"Title"="Enable enhanced Razor LSP server (requires restart)"
-"PreviewPaneChannels"="IntPreview,int.main"
-
 [$RootKey$\FeatureFlags\Razor\LSP\ShowAllCSharpCodeActions]
 "Description"="Show all C# code actions in Razor files. Note: This is experimental, some actions may not apply correctly, or at all!"
 "Value"=dword:00000000

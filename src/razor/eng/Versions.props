@@ -32,8 +32,8 @@
     imported. This OK because we want to just have an obvious salt for a local build.
   -->
   <PropertyGroup>
-    <VsixVersionPrefix>17.7.3</VsixVersionPrefix>
-    <AddinMajorVersion>17.7</AddinMajorVersion>
+    <VsixVersionPrefix>17.8.1</VsixVersionPrefix>
+    <AddinMajorVersion>17.8</AddinMajorVersion>
     <AddinVersion>$(AddinMajorVersion)</AddinVersion>
     <AddinVersion Condition="'$(OfficialBuildId)' != ''">$(AddinVersion).$(OfficialBuildId)</AddinVersion>
     <AddinVersion Condition="'$(OfficialBuildId)' == ''">$(AddinVersion).42424242.42</AddinVersion>
@@ -51,7 +51,7 @@
   <PropertyGroup Label="Automated">
     <MicrosoftNETCoreBrowserDebugHostTransportPackageVersion>6.0.2-servicing.22064.6</MicrosoftNETCoreBrowserDebugHostTransportPackageVersion>
     <MicrosoftNETCorePlatformsPackageVersion>6.0.1</MicrosoftNETCorePlatformsPackageVersion>
-    <MicrosoftSourceBuildIntermediatesourcebuildreferencepackagesPackageVersion>8.0.0-alpha.1.23323.1</MicrosoftSourceBuildIntermediatesourcebuildreferencepackagesPackageVersion>
+    <MicrosoftSourceBuildIntermediatesourcebuildreferencepackagesPackageVersion>8.0.0-alpha.1.23330.2</MicrosoftSourceBuildIntermediatesourcebuildreferencepackagesPackageVersion>
     <MicrosoftNetCompilersToolsetPackageVersion>4.7.0-3.23326.2</MicrosoftNetCompilersToolsetPackageVersion>
     <MicrosoftCommonLanguageServerProtocolFrameworkPackageVersion>4.7.0-3.23326.2</MicrosoftCommonLanguageServerProtocolFrameworkPackageVersion>
     <MicrosoftCodeAnalysisExternalAccessRazorPackageVersion>4.7.0-3.23326.2</MicrosoftCodeAnalysisExternalAccessRazorPackageVersion>
@@ -72,8 +72,8 @@
     <MicrosoftCodeAnalysisWorkspacesCommonPackageVersion>4.7.0-3.23326.2</MicrosoftCodeAnalysisWorkspacesCommonPackageVersion>
     <MicrosoftCodeAnalysisWorkspacesMSBuildPackageVersion>4.7.0-3.23326.2</MicrosoftCodeAnalysisWorkspacesMSBuildPackageVersion>
     <MicrosoftVisualStudioLanguageServicesPackageVersion>4.7.0-3.23326.2</MicrosoftVisualStudioLanguageServicesPackageVersion>
-    <MicrosoftSourceLinkGitHubPackageVersion>8.0.0-beta.23314.2</MicrosoftSourceLinkGitHubPackageVersion>
-    <MicrosoftDotNetXliffTasksPackageVersion>1.0.0-beta.23319.1</MicrosoftDotNetXliffTasksPackageVersion>
+    <MicrosoftSourceLinkGitHubPackageVersion>8.0.0-beta.23330.1</MicrosoftSourceLinkGitHubPackageVersion>
+    <MicrosoftDotNetXliffTasksPackageVersion>1.0.0-beta.23326.1</MicrosoftDotNetXliffTasksPackageVersion>
     <!--
       Exception - Microsoft.Extensions.ObjectPool and System.Collections.Immutable packages are not updated by automation,
       but are present in Version.Details.xml for source-build PVP flow. See the comment in Version.Details.xml for more information.
@@ -93,8 +93,6 @@
   <PropertyGroup Label="Manual">
     <!-- Several packages from the editor are used for testing HTML support, and share the following version. -->
     <Tooling_HtmlEditorPackageVersion>17.5.101-preview-0002</Tooling_HtmlEditorPackageVersion>
-    <!-- Several packages share the MS.CA.Testing version -->
-    <Tooling_MicrosoftCodeAnalysisTestingVersion>1.1.2-beta1.23323.1</Tooling_MicrosoftCodeAnalysisTestingVersion>
     <MicrosoftVisualStudioShellPackagesVersion>17.7.35047-preview.1</MicrosoftVisualStudioShellPackagesVersion>
     <MicrosoftVisualStudioPackagesVersion>17.7.38-preview</MicrosoftVisualStudioPackagesVersion>
     <VisualStudioLanguageServerProtocolVersion>17.7.8-preview-g8c33dc3a76</VisualStudioLanguageServerProtocolVersion>
@@ -113,8 +111,7 @@
     <MicrosoftNETSdkRazorPackageVersion>6.0.0-alpha.1.21072.5</MicrosoftNETSdkRazorPackageVersion>
     <!-- Packages from dotnet/roslyn -->
     <MicrosoftNetCompilersToolsetVersion>$(MicrosoftNetCompilersToolsetPackageVersion)</MicrosoftNetCompilersToolsetVersion>
-    <MicrosoftCodeAnalysisAnalyzerTestingPackageVersion>$(Tooling_MicrosoftCodeAnalysisTestingVersion)</MicrosoftCodeAnalysisAnalyzerTestingPackageVersion>
-    <MicrosoftCodeAnalysisTestingVerifiersXunitPackageVersion>$(Tooling_MicrosoftCodeAnalysisTestingVersion)</MicrosoftCodeAnalysisTestingVerifiersXunitPackageVersion>
+    <MicrosoftCodeAnalysisAnalyzerTestingPackageVersion>1.1.2-beta1.23323.1</MicrosoftCodeAnalysisAnalyzerTestingPackageVersion>
     <MicrosoftVisualStudioEditorPackageVersion>$(MicrosoftVisualStudioPackagesVersion)</MicrosoftVisualStudioEditorPackageVersion>
     <MicrosoftVisualStudioExtensibilityTestingXunitVersion>0.1.169-beta</MicrosoftVisualStudioExtensibilityTestingXunitVersion>
     <MicrosoftVisualStudioExtensibilityTestingSourceGeneratorVersion>$(MicrosoftVisualStudioExtensibilityTestingXunitVersion)</MicrosoftVisualStudioExtensibilityTestingSourceGeneratorVersion>

@@ -22,6 +22,11 @@
         <target state="translated">提供 ASP.NET Core Razor 的語言服務。</target>
         <note />
       </trans-unit>
+      <trans-unit id="Completion">
+        <source>Completion</source>
+        <target state="new">Completion</target>
+        <note />
+      </trans-unit>
       <trans-unit id="Formatting">
         <source>Formatting</source>
         <target state="translated">格式化</target>
@@ -40,6 +45,16 @@
       <trans-unit id="Setting_AutoClosingTagsDisplayName">
         <source>Auto Insert Closing Tag</source>
         <target state="translated">自動插入結尾標籤</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Setting_AutoInsertAttributeQuotesDescription">
+        <source>If true, completion on attributes will add quotation marks</source>
+        <target state="new">If true, completion on attributes will add quotation marks</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Setting_AutoInsertAttributeQuotesDisplayName">
+        <source>Auto Insert Attribute Quotes</source>
+        <target state="new">Auto Insert Attribute Quotes</target>
         <note />
       </trans-unit>
       <trans-unit id="Setting_FormattingOnTypeDescription">

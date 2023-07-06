@@ -1,7 +1,6 @@
 ﻿// Copyright (c) .NET Foundation and contributors. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-using System.CommandLine.Parsing;
 using System.CommandLine.Tests.Utility;
 using FluentAssertions;
 using Xunit;
@@ -15,19 +14,17 @@ namespace System.CommandLine.Tests
             [Fact] // https://github.com/dotnet/command-line-api/issues/1238
             public void Subsequent_tokens_are_parsed_as_arguments_even_if_they_match_option_identifiers()
             {
-                var option = new Option<string[]>(new[] { "-o", "--one" });
-                var argument = new Argument<string[]>();
-                var rootCommand = new RootCommand
+                var option = new CliOption<string[]>("-o", "--one");
+                var argument = new CliArgument<string[]>("arg");
+                var rootCommand = new CliRootCommand
                 {
                     option,
                     argument
                 };
 
-                var result = new CommandLineBuilder(rootCommand)
-                             .Build()
-                             .Parse("-o \"some stuff\" -- -o --one -x -y -z -o:foo");
+                var result = rootCommand.Parse("-o \"some stuff\" -- -o --one -x -y -z -o:foo");
 
-                result.HasOption(option).Should().BeTrue();
+                result.GetResult(option).Should().NotBeNull();
 
                 result.GetValue(option).Should().BeEquivalentTo("some stuff");
 
@@ -39,17 +36,15 @@ namespace System.CommandLine.Tests
             [Fact]
             public void Unmatched_tokens_is_empty()
             {
-                var option = new Option<string[]>(new[] { "-o", "--one" });
-                var argument = new Argument<string[]>();
-                var rootCommand = new RootCommand
+                var option = new CliOption<string[]>("-o", "--one");
+                var argument = new CliArgument<string[]>("arg");
+                var rootCommand = new CliRootCommand
                 {
                     option,
                     argument
                 };
 
-                var result = new CommandLineBuilder(rootCommand)
-                             .Build()
-                             .Parse("-o \"some stuff\" -- --one -x -y -z -o:foo");
+                var result = rootCommand.Parse("-o \"some stuff\" -- --one -x -y -z -o:foo");
 
                 result.UnmatchedTokens.Should().BeEmpty();
             }
@@ -57,17 +52,15 @@ namespace System.CommandLine.Tests
             [Fact] // https://github.com/dotnet/command-line-api/issues/1631
             public void No_errors_are_generated()
             {
-                var option = new Option<string[]>(new[] { "-o", "--one" });
-                var argument = new Argument<string[]>();
-                var rootCommand = new RootCommand
+                var option = new CliOption<string[]>("-o", "--one");
+                var argument = new CliArgument<string[]>("arg");
+                var rootCommand = new CliRootCommand
                 {
                     option,
                     argument
                 };
 
-                var result = new CommandLineBuilder(rootCommand)
-                             .Build()
-                             .Parse("-o \"some stuff\" -- -o --one -x -y -z -o:foo");
+                var result = rootCommand.Parse("-o \"some stuff\" -- -o --one -x -y -z -o:foo");
 
                 result.Errors.Should().BeEmpty();
             }
@@ -75,15 +68,13 @@ namespace System.CommandLine.Tests
             [Fact]
             public void A_second_double_dash_is_parsed_as_an_argument()
             {
-                var argument = new Argument<string[]>();
-                var rootCommand = new RootCommand
+                var argument = new CliArgument<string[]>("arg");
+                var rootCommand = new CliRootCommand
                 {
                     argument
                 };
 
-                var result = new CommandLineBuilder(rootCommand)
-                             .Build()
-                             .Parse("a b c -- -- d");
+                var result = rootCommand.Parse("a b c -- -- d");
 
                 var strings = result.GetValue(argument);
 

@@ -1,6 +1,7 @@
-﻿using FluentAssertions;
-using System.CommandLine.Parsing;
+﻿using System.CommandLine.Help;
+using FluentAssertions;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 using Xunit;
@@ -9,71 +10,28 @@ namespace System.CommandLine.Tests
 {
     public class EnvironmentVariableDirectiveTests
     {
-        private static readonly Random randomizer = new(Seed: 456476756);
-        private readonly string test_variable = $"TEST_ENVIRONMENT_VARIABLE{randomizer.Next()}";
+        private static readonly Random _random = new();
+        private readonly string _testVariableName = $"TEST_ENVIRONMENT_VARIABLE_{_random.Next()}";
 
         [Fact]
         public async Task Sets_environment_variable_to_value()
         {
             bool asserted = false;
-            string variable = test_variable;
-            const string value = "This is a test";
-            var rootCommand = new RootCommand();
-            rootCommand.SetHandler(() =>
+            const string value = "hello";
+            var rootCommand = new CliRootCommand();
+            rootCommand.SetAction(_ =>
             {
                 asserted = true;
-                Environment.GetEnvironmentVariable(variable).Should().Be(value);
+                Environment.GetEnvironmentVariable(_testVariableName).Should().Be(value);
             });
 
-            var parser = new CommandLineBuilder(rootCommand)
-                .UseEnvironmentVariableDirective()
-                .Build();
-
-            await parser.InvokeAsync(new[] { $"[env:{variable}={value}]" });
-
-            asserted.Should().BeTrue();
-        }
-
-        [Fact]
-        public async Task Trims_environment_variable_name()
-        {
-            bool asserted = false;
-            string variable = test_variable;
-            const string value = "This is a test";
-            var rootCommand = new RootCommand();
-            rootCommand.SetHandler(() =>
+            var config = new CliConfiguration(rootCommand)
             {
-                asserted = true;
-                Environment.GetEnvironmentVariable(variable).Should().Be(value);
-            });
+                Directives = { new EnvironmentVariablesDirective() },
+                EnableDefaultExceptionHandler = false
+            };
 
-            var parser = new CommandLineBuilder(rootCommand)
-                .UseEnvironmentVariableDirective()
-                .Build();
-
-            await parser.InvokeAsync(new[] { $"[env:     {variable}    ={value}]" });
-
-            asserted.Should().BeTrue();
-        }
-
-        [Fact]
-        public async Task Trims_environment_variable_value()
-        {
-            bool asserted = false;
-            string variable = test_variable;
-            const string value = "This is a test";
-            var rootCommand = new RootCommand();
-            rootCommand.SetHandler(() =>
-            {
-                asserted = true;
-                Environment.GetEnvironmentVariable(variable).Should().Be(value);
-            });
-
-            var parser = new CommandLineBuilder(rootCommand)
-                .UseEnvironmentVariableDirective()
-                .Build();
-
-            await parser.InvokeAsync(new[] { $"[env:{variable}=    {value}     ]" });
+            await config.InvokeAsync($"[env:{_testVariableName}={value}]");
 
             asserted.Should().BeTrue();
         }
@@ -82,20 +40,21 @@ namespace System.CommandLine.Tests
         public async Task Sets_environment_variable_value_containing_equals_sign()
         {
             bool asserted = false;
-            string variable = test_variable;
-            const string value = "This is = a test containing equals";
-            var rootCommand = new RootCommand();
-            rootCommand.SetHandler(() =>
+            const string value = "1=2";
+            var rootCommand = new CliRootCommand();
+            rootCommand.SetAction(_ =>
             {
                 asserted = true;
-                Environment.GetEnvironmentVariable(variable).Should().Be(value);
+                Environment.GetEnvironmentVariable(_testVariableName).Should().Be(value);
             });
 
-            var parser = new CommandLineBuilder(rootCommand)
-                .UseEnvironmentVariableDirective()
-                .Build();
+            var config = new CliConfiguration(rootCommand)
+            {
+                Directives = { new EnvironmentVariablesDirective() },
+                EnableDefaultExceptionHandler = false
+            };
 
-            await parser.InvokeAsync(new[] { $"[env:{variable}={value}]" });
+            await config.InvokeAsync($"[env:{_testVariableName}={value}]" );
 
             asserted.Should().BeTrue();
         }
@@ -104,19 +63,21 @@ namespace System.CommandLine.Tests
         public async Task Ignores_environment_directive_without_equals_sign()
         {
             bool asserted = false;
-            string variable = test_variable;
-            var rootCommand = new RootCommand();
-            rootCommand.SetHandler(() =>
+            string variable = _testVariableName;
+            var rootCommand = new CliRootCommand();
+            rootCommand.SetAction(_ =>
             {
                 asserted = true;
                 Environment.GetEnvironmentVariable(variable).Should().BeNull();
             });
 
-            var parser = new CommandLineBuilder(rootCommand)
-                .UseEnvironmentVariableDirective()
-                .Build();
+            var config = new CliConfiguration(rootCommand)
+            {
+                Directives = { new EnvironmentVariablesDirective() },
+                EnableDefaultExceptionHandler = false
+            };
 
-            await parser.InvokeAsync(new[] { $"[env:{variable}]" });
+            await config.InvokeAsync( $"[env:{variable}]" );
 
             asserted.Should().BeTrue();
         }
@@ -125,44 +86,61 @@ namespace System.CommandLine.Tests
         public static async Task Ignores_environment_directive_with_empty_variable_name()
         {
             bool asserted = false;
-            string value = $"This is a test, random: {randomizer.Next()}";
-            var rootCommand = new RootCommand();
-            rootCommand.SetHandler(() =>
+            string value = "value";
+            var rootCommand = new CliRootCommand();
+            rootCommand.SetAction(_ =>
             {
                 asserted = true;
                 var env = Environment.GetEnvironmentVariables();
                 env.Values.Cast<string>().Should().NotContain(value);
             });
 
-            var parser = new CommandLineBuilder(rootCommand)
-                .UseEnvironmentVariableDirective()
-                .Build();
+            var config = new CliConfiguration(rootCommand)
+            {
+                Directives = { new EnvironmentVariablesDirective() },
+                EnableDefaultExceptionHandler = false
+            };
 
-            await parser.InvokeAsync(new[] { $"[env:={value}]" });
+            var result = config.Parse($"[env:={value}]");
+
+            await result.InvokeAsync();
 
             asserted.Should().BeTrue();
         }
 
         [Fact]
-        public static async Task Ignores_environment_directive_with_whitespace_variable_name()
+        public void It_does_not_prevent_help_from_being_invoked()
         {
-            bool asserted = false;
-            string value = $"This is a test, random: {randomizer.Next()}";
-            var rootCommand = new RootCommand();
-            rootCommand.SetHandler(() =>
+            var root = new CliRootCommand();
+            root.SetAction(_ => { });
+
+            var customHelpAction = new CustomHelpAction();
+            root.Options.OfType<HelpOption>().Single().Action = customHelpAction;
+
+            var config = new CliConfiguration(root);
+            config.Directives.Add(new EnvironmentVariablesDirective());
+
+            root.Parse($"[env:{_testVariableName}=1] -h", config).Invoke();
+
+            customHelpAction.WasCalled.Should().BeTrue();
+            Environment.GetEnvironmentVariable(_testVariableName).Should().Be("1");
+        }
+
+        private class CustomHelpAction : CliAction
+        {
+            public bool WasCalled { get; private set; }
+
+            public override int Invoke(ParseResult parseResult)
             {
-                asserted = true;
-                var env = Environment.GetEnvironmentVariables();
-                env.Values.Cast<string>().Should().NotContain(value);
-            });
+                WasCalled = true;
+                return 0;
+            }
 
-            var parser = new CommandLineBuilder(rootCommand)
-                .UseEnvironmentVariableDirective()
-                .Build();
-
-            await parser.InvokeAsync(new[] { $"[env:    ={value}]" });
-
-            asserted.Should().BeTrue();
+            public override Task<int> InvokeAsync(ParseResult parseResult, CancellationToken cancellationToken = default)
+            {
+                WasCalled = true;
+                return Task.FromResult(0);
+            }
         }
     }
 }

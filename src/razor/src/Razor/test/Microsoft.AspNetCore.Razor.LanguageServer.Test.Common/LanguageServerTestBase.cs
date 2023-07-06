@@ -134,16 +134,16 @@ public abstract class LanguageServerTestBase : TestBase
         return new VersionedDocumentContext(uri, snapshot, version: 0);
     }
 
-    internal static IOptionsMonitor<RazorLSPOptions> GetOptionsMonitor(bool enableFormatting = true, bool formatOnType = true)
+    internal static IOptionsMonitor<RazorLSPOptions> GetOptionsMonitor(bool enableFormatting = true, bool formatOnType = true, bool autoInsertAttributeQuotes = true)
     {
         var monitor = new Mock<IOptionsMonitor<RazorLSPOptions>>(MockBehavior.Strict);
-        monitor.SetupGet(m => m.CurrentValue).Returns(new RazorLSPOptions(default, enableFormatting, true, InsertSpaces: true, TabSize: 4, formatOnType));
+        monitor.SetupGet(m => m.CurrentValue).Returns(new RazorLSPOptions(default, enableFormatting, true, InsertSpaces: true, TabSize: 4, formatOnType, autoInsertAttributeQuotes));
         return monitor.Object;
     }
 
     private static IReadOnlyList<TagHelperDescriptor> GetDefaultRuntimeComponents()
     {
-        var bytes = TestResources.GetResourceBytes(TestResources.BlazorServerAppTagHelpersJson);
+        var bytes = RazorTestResources.GetResourceBytes(RazorTestResources.BlazorServerAppTagHelpersJson);
 
         using var stream = new MemoryStream(bytes);
         using var reader = new StreamReader(stream);

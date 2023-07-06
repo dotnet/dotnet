@@ -22,6 +22,11 @@
         <target state="translated">ASP.NET Core Razor용 언어 서비스를 제공합니다.</target>
         <note />
       </trans-unit>
+      <trans-unit id="Completion">
+        <source>Completion</source>
+        <target state="new">Completion</target>
+        <note />
+      </trans-unit>
       <trans-unit id="Formatting">
         <source>Formatting</source>
         <target state="translated">서식</target>
@@ -40,6 +45,16 @@
       <trans-unit id="Setting_AutoClosingTagsDisplayName">
         <source>Auto Insert Closing Tag</source>
         <target state="translated">닫는 태그 자동 삽입</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Setting_AutoInsertAttributeQuotesDescription">
+        <source>If true, completion on attributes will add quotation marks</source>
+        <target state="new">If true, completion on attributes will add quotation marks</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Setting_AutoInsertAttributeQuotesDisplayName">
+        <source>Auto Insert Attribute Quotes</source>
+        <target state="new">Auto Insert Attribute Quotes</target>
         <note />
       </trans-unit>
       <trans-unit id="Setting_FormattingOnTypeDescription">
