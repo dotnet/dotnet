@@ -36,8 +36,8 @@ jobs:
 
 - template: templates/jobs/sdk-diff-tests.yml
   parameters:
-    buildName: Fedora36_Offline_MsftSdk
-    targetRid: fedora.36-x64
+    buildName: Fedora38_Offline_MsftSdk
+    targetRid: fedora.38-x64
     architecture: x64
     dotnetDotnetRunId: ${{ parameters.dotnetDotnetRunId }}
 
@@ -50,7 +50,7 @@ jobs:
 
 - template: templates/jobs/sdk-diff-tests.yml
   parameters:
-    buildName: Debian11_Offline_MsftSdk
-    targetRid: debian.11-arm64
+    buildName: Ubuntu2204Arm64_Offline_MsftSdk
+    targetRid: ubuntu.22.04-arm64
     architecture: arm64
     dotnetDotnetRunId: ${{ parameters.dotnetDotnetRunId }}
