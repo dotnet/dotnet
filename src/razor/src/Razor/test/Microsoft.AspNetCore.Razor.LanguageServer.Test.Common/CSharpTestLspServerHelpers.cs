@@ -30,14 +30,14 @@ internal class CSharpTestLspServerHelpers
     public static Task<CSharpTestLspServer> CreateCSharpLspServerAsync(
         SourceText csharpSourceText,
         Uri csharpDocumentUri,
-        ServerCapabilities serverCapabilities,
+        VSInternalServerCapabilities serverCapabilities,
         CancellationToken cancellationToken) =>
         CreateCSharpLspServerAsync(csharpSourceText, csharpDocumentUri, serverCapabilities, new EmptyMappingService(), cancellationToken);
 
     public static Task<CSharpTestLspServer> CreateCSharpLspServerAsync(
         SourceText csharpSourceText,
         Uri csharpDocumentUri,
-        ServerCapabilities serverCapabilities,
+        VSInternalServerCapabilities serverCapabilities,
         IRazorSpanMappingService razorSpanMappingService,
         CancellationToken cancellationToken)
     {
@@ -49,7 +49,7 @@ internal class CSharpTestLspServerHelpers
         return CreateCSharpLspServerAsync(files, serverCapabilities, razorSpanMappingService, cancellationToken);
     }
 
-    public static async Task<CSharpTestLspServer> CreateCSharpLspServerAsync(IEnumerable<(Uri Uri, SourceText SourceText)> files, ServerCapabilities serverCapabilities, IRazorSpanMappingService razorSpanMappingService, CancellationToken cancellationToken)
+    public static async Task<CSharpTestLspServer> CreateCSharpLspServerAsync(IEnumerable<(Uri Uri, SourceText SourceText)> files, VSInternalServerCapabilities serverCapabilities, IRazorSpanMappingService razorSpanMappingService, CancellationToken cancellationToken)
     {
         var cSharpFiles = files.Select(f => new CSharpFile(f.Uri, f.SourceText));
 
@@ -138,7 +138,7 @@ internal class CSharpTestLspServerHelpers
         var analyzerLoader = RazorTestAnalyzerLoader.CreateAnalyzerAssemblyLoader();
 
         var analyzerPaths = new DirectoryInfo(AppContext.BaseDirectory).GetFiles("*.dll")
-            .Where(f => f.Name.StartsWith("Microsoft.CodeAnalysis.", StringComparison.Ordinal) && !f.Name.Contains("LanguageServer"))
+            .Where(f => f.Name.StartsWith("Microsoft.CodeAnalysis.", StringComparison.Ordinal) && !f.Name.Contains("LanguageServer") && !f.Name.Contains("Test.Utilities"))
             .Select(f => f.FullName)
             .ToImmutableArray();
         var references = new List<AnalyzerFileReference>();

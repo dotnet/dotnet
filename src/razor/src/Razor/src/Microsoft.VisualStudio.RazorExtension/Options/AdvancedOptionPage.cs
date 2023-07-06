@@ -17,6 +17,7 @@ internal class AdvancedOptionPage : DialogPage
 
     private bool? _formatOnType;
     private bool? _autoClosingTags;
+    private bool? _autoInsertAttributeQuotes;
 
     public AdvancedOptionPage()
     {
@@ -47,6 +48,15 @@ internal class AdvancedOptionPage : DialogPage
         set => _autoClosingTags = value;
     }
 
+    [LocCategory(nameof(VSPackage.Completion))]
+    [LocDescription(nameof(VSPackage.Setting_AutoInsertAttributeQuotesDescription))]
+    [LocDisplayName(nameof(VSPackage.Setting_AutoInsertAttributeQuotesDisplayName))]
+    public bool AutoInsertAttributeQuotes
+    {
+        get => _autoInsertAttributeQuotes ?? _optionsStorage.Value.AutoInsertAttributeQuotes;
+        set => _autoInsertAttributeQuotes = value;
+    }
+
     protected override void OnApply(PageApplyEventArgs e)
     {
         if (_formatOnType is not null)
@@ -58,11 +68,17 @@ internal class AdvancedOptionPage : DialogPage
         {
             _optionsStorage.Value.AutoClosingTags = _autoClosingTags.Value;
         }
+
+        if (_autoInsertAttributeQuotes is not null)
+        {
+            _optionsStorage.Value.AutoInsertAttributeQuotes = _autoInsertAttributeQuotes.Value;
+        }
     }
 
     protected override void OnClosed(EventArgs e)
     {
         _formatOnType = null;
         _autoClosingTags = null;
+        _autoInsertAttributeQuotes = null;
     }
 }

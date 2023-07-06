@@ -5,7 +5,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Razor.LanguageServer.CodeActions;
 using Microsoft.AspNetCore.Razor.LanguageServer.CodeActions.Models;
 using Microsoft.AspNetCore.Razor.LanguageServer.EndpointContracts;
 using Microsoft.AspNetCore.Razor.LanguageServer.Extensions;
@@ -13,9 +12,9 @@ using Microsoft.AspNetCore.Razor.LanguageServer.Formatting;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
 using Microsoft.CodeAnalysis.Razor.Workspaces.Extensions;
 using Microsoft.CodeAnalysis.Testing;
-using Microsoft.CodeAnalysis.Testing.Verifiers;
 using Microsoft.CodeAnalysis.Text;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
+using Roslyn.Test.Utilities;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -407,6 +406,6 @@ public class CSharpCodeActionEndToEndTest : SingleServerDelegatingEndpointTestBa
         }
 
         var actual = sourceText.WithChanges(edits).ToString();
-        new XUnitVerifier().EqualOrDiff(expected, actual);
+        AssertEx.EqualOrDiff(expected, actual);
     }
 }

@@ -9,8 +9,20 @@ namespace Test
     using global::System.Threading.Tasks;
     using global::Microsoft.AspNetCore.Components;
     public partial class TestComponent<TDomain, TValue> : global::Microsoft.AspNetCore.Components.ComponentBase
-    where TDomain : struct
-    where TValue : struct
+#nullable restore
+#line 1 "x:\dir\subdir\Test\TestComponent.cshtml"
+where TDomain : struct
+
+#line default
+#line hidden
+#nullable disable
+#nullable restore
+#line 2 "x:\dir\subdir\Test\TestComponent.cshtml"
+where TValue : struct
+
+#line default
+#line hidden
+#nullable disable
     {
         #pragma warning disable 219
         private void __RazorDirectiveTokenHelpers__() {
@@ -25,19 +37,6 @@ global::System.Object TDomain = null!;
         }
         ))();
         ((global::System.Action)(() => {
-#pragma warning disable CS0693
-#pragma warning disable CS8321
-#nullable restore
-#line 1 "x:\dir\subdir\Test\TestComponent.cshtml"
-void __TypeConstraints_TDomain<TDomain>() where TDomain : struct
-{
-}
-#pragma warning restore CS0693
-#pragma warning restore CS8321
-
-#line default
-#line hidden
-#nullable disable
         }
         ))();
         ((global::System.Action)(() => {
@@ -51,19 +50,6 @@ global::System.Object TValue = null!;
         }
         ))();
         ((global::System.Action)(() => {
-#pragma warning disable CS0693
-#pragma warning disable CS8321
-#nullable restore
-#line 2 "x:\dir\subdir\Test\TestComponent.cshtml"
-void __TypeConstraints_TValue<TValue>() where TValue : struct
-{
-}
-#pragma warning restore CS0693
-#pragma warning restore CS8321
-
-#line default
-#line hidden
-#nullable disable
         }
         ))();
         }

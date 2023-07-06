@@ -154,6 +154,7 @@ internal class DefaultDocumentWriter : DocumentWriter
                 node.BaseType,
                 node.Interfaces,
                 node.TypeParameters,
+                Context,
                 useNullableContext: !Context.Options.SuppressNullabilityEnforcement && node.Annotations[CommonAnnotations.NullableContext] is not null))
             {
                 VisitDefault(node);

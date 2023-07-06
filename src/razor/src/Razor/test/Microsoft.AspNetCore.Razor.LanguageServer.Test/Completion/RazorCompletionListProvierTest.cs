@@ -3,7 +3,10 @@
 
 #nullable disable
 
+using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Language.Components;
@@ -11,8 +14,10 @@ using Microsoft.AspNetCore.Razor.LanguageServer.Test.Common;
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.CodeAnalysis.Razor.Completion;
 using Microsoft.CodeAnalysis.Razor.Tooltip;
+using Microsoft.Extensions.Options;
 using Microsoft.VisualStudio.Editor.Razor;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
+using Moq;
 using Newtonsoft.Json;
 using Xunit;
 using Xunit.Abstractions;
@@ -29,19 +34,8 @@ public class RazorCompletionListProvierTest : LanguageServerTestBase
 
     public RazorCompletionListProvierTest(ITestOutputHelper testOutput)
         : base(testOutput)
-    {
-        // Working around strong naming restriction.
-        var tagHelperFactsService = new DefaultTagHelperFactsService();
-        var tagHelperCompletionService = new LanguageServerTagHelperCompletionService(tagHelperFactsService);
-        var completionProviders = new RazorCompletionItemProvider[]
-        {
-            new DirectiveCompletionItemProvider(),
-            new DirectiveAttributeCompletionItemProvider(tagHelperFactsService),
-            new DirectiveAttributeParameterCompletionItemProvider(tagHelperFactsService),
-            new TagHelperCompletionProvider(tagHelperCompletionService, new DefaultHtmlFactsService(), tagHelperFactsService)
-        };
-
-        _completionFactsService = new DefaultRazorCompletionFactsService(completionProviders);
+    {     
+        _completionFactsService = new DefaultRazorCompletionFactsService(GetCompletionProviders());
         _completionListCache = new CompletionListCache();
         _clientCapabilities = new VSInternalClientCapabilities()
         {
@@ -63,6 +57,25 @@ public class RazorCompletionListProvierTest : LanguageServerTestBase
         };
 
         _defaultCompletionContext = new VSInternalCompletionContext();
+    }
+
+    private static IEnumerable<RazorCompletionItemProvider> GetCompletionProviders(IOptionsMonitor<RazorLSPOptions> optionsMonitor = null)
+    {
+        // Working around strong naming restriction.
+        var tagHelperFactsService = new DefaultTagHelperFactsService();
+        var tagHelperCompletionService = new LanguageServerTagHelperCompletionService(tagHelperFactsService);
+
+        optionsMonitor ??= TestRazorLSPOptionsMonitor.Create();
+
+        var completionProviders = new RazorCompletionItemProvider[]
+        {
+            new DirectiveCompletionItemProvider(),
+            new DirectiveAttributeCompletionItemProvider(tagHelperFactsService),
+            new DirectiveAttributeParameterCompletionItemProvider(tagHelperFactsService),
+            new TagHelperCompletionProvider(tagHelperCompletionService, new DefaultHtmlFactsService(), tagHelperFactsService, optionsMonitor)
+        };
+
+        return completionProviders;
     }
 
     [Fact]
@@ -543,6 +556,41 @@ public class RazorCompletionListProvierTest : LanguageServerTestBase
 
         // Assert
         Assert.Contains(completionList.Items, item => item.InsertText == "testAttribute=\"$0\"");
+    }
+
+    [Fact]
+    public async Task GetCompletionListAsync_ProvidesTagHelperAttributeItems_AttributeQuotesOff()
+    {
+        // Arrange
+        var documentPath = "C:/path/to/document.cshtml";
+        var builder = TagHelperDescriptorBuilder.Create(ComponentMetadata.Component.TagHelperKind, "TestTagHelper", "TestAssembly");
+        builder.TagMatchingRule(rule => rule.TagName = "*");
+        builder.BindAttribute(attribute =>
+        {
+            attribute.Name = "testAttribute";
+            attribute.TypeName = typeof(string).FullName;
+            attribute.SetMetadata(PropertyName("TestAttribute"));
+        });
+        builder.SetMetadata(TypeName("TestNamespace.TestTagHelper"));
+        var tagHelper = builder.Build();
+        var tagHelperContext = TagHelperDocumentContext.Create(prefix: string.Empty, new[] { tagHelper });
+        var codeDocument = CreateCodeDocument("<test  ");
+        codeDocument.SetTagHelperContext(tagHelperContext);
+        var documentContext = TestDocumentContext.From(documentPath, codeDocument, hostDocumentVersion: 0);
+
+        // Set up a custom options monitor with desired options
+        var optionsMonitor = TestRazorLSPOptionsMonitor.Create();
+        await optionsMonitor.UpdateAsync(optionsMonitor.CurrentValue with { AutoInsertAttributeQuotes = false }, DisposalToken);
+
+        var completionFactsService = new DefaultRazorCompletionFactsService(GetCompletionProviders(optionsMonitor));
+        var provider = new RazorCompletionListProvider(completionFactsService, _completionListCache, LoggerFactory);
+
+        // Act
+        var completionList = await provider.GetCompletionListAsync(
+            absoluteIndex: 6, _defaultCompletionContext, documentContext, _clientCapabilities, existingCompletions: null, DisposalToken);
+
+        // Assert
+        Assert.Contains(completionList.Items, item => item.InsertText == "testAttribute=$0");
     }
 
     private static RazorCodeDocument CreateCodeDocument(string text)

@@ -36,7 +36,7 @@ public class RazorConfigurationEndpointTest : LanguageServerTestBase
     public async Task Handle_UpdatesOptions()
     {
         // Arrange
-        var optionsMonitor = new TestRazorLSPOptionsMonitor(_configurationService, _cache);
+        var optionsMonitor = TestRazorLSPOptionsMonitor.Create(_configurationService, _cache);
         var endpoint = new RazorConfigurationEndpoint(optionsMonitor);
         var request = new DidChangeConfigurationParams();
         var requestContext = CreateRazorRequestContext(documentContext: null);

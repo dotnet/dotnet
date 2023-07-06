@@ -28,7 +28,7 @@ public abstract class SemanticTokenTestBase : TagHelperServiceTestBase
     private static readonly AsyncLocal<string?> s_fileName = new();
     private static readonly string s_projectPath = TestProject.GetProjectDirectory(typeof(TagHelperServiceTestBase));
 
-    protected static readonly ServerCapabilities SemanticTokensServerCapabilities = new()
+    protected static readonly VSInternalServerCapabilities SemanticTokensServerCapabilities = new()
     {
         SemanticTokensOptions = new()
         {

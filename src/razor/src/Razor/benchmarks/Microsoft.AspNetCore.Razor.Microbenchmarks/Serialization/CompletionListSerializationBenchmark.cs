@@ -6,8 +6,10 @@ using System.Text;
 using BenchmarkDotNet.Attributes;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Language.Legacy;
+using Microsoft.AspNetCore.Razor.LanguageServer;
 using Microsoft.AspNetCore.Razor.LanguageServer.Completion;
 using Microsoft.CodeAnalysis.Razor.Completion;
+using Microsoft.Extensions.Options;
 using Microsoft.VisualStudio.Editor.Razor;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Newtonsoft.Json;
@@ -26,7 +28,8 @@ public class CompletionListSerializationBenchmark
         var tagHelperFactsService = new DefaultTagHelperFactsService();
         var completionService = new LanguageServerTagHelperCompletionService(tagHelperFactsService);
         var htmlFactsService = new DefaultHtmlFactsService();
-        var tagHelperCompletionProvider = new TagHelperCompletionProvider(completionService, htmlFactsService, tagHelperFactsService);
+        var optionsMonitor = new BenchmarkOptionsMonitor<RazorLSPOptions>(RazorLSPOptions.Default);
+        var tagHelperCompletionProvider = new TagHelperCompletionProvider(completionService, htmlFactsService, tagHelperFactsService, optionsMonitor);
 
         _serializer = JsonSerializer.Create();
 

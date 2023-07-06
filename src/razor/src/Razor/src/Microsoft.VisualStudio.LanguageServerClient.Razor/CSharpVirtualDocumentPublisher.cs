@@ -11,7 +11,7 @@ using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Text;
 using Microsoft.VisualStudio.Editor.Razor;
 using Microsoft.VisualStudio.LanguageServer.ContainedLanguage;
-using Microsoft.VisualStudio.LanguageServerClient.Razor.HtmlCSharp;
+using Microsoft.VisualStudio.LanguageServerClient.Razor.DocumentMapping;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Utilities;
 

@@ -391,7 +391,7 @@ public class CSharpCodeWriterTest
         var writer = new CodeWriter(Environment.NewLine, options);
 
         // Act
-        writer.BuildClassDeclaration(Array.Empty<string>(), "C", "", Array.Empty<string>(), Array.Empty<TypeParameter>());
+        writer.BuildClassDeclaration(Array.Empty<string>(), "C", "", Array.Empty<string>(), Array.Empty<TypeParameter>(), context: null);
         writer.WriteField(Array.Empty<string>(), Array.Empty<string>(), "int", "f");
 
         // Assert
@@ -412,7 +412,7 @@ public class CSharpCodeWriterTest
         var writer = new CodeWriter(Environment.NewLine, options);
 
         // Act
-        writer.BuildClassDeclaration(Array.Empty<string>(), "C", "", Array.Empty<string>(), Array.Empty<TypeParameter>());
+        writer.BuildClassDeclaration(Array.Empty<string>(), "C", "", Array.Empty<string>(), Array.Empty<TypeParameter>(), context: null);
         writer.WriteField(Array.Empty<string>(), Array.Empty<string>(), "int", "f");
 
         // Assert

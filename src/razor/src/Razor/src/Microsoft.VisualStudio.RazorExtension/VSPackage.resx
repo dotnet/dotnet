@@ -138,6 +138,9 @@
   <data name="500" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>SyntaxTree.bmp;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="Completion" xml:space="preserve">
+    <value>Completion</value>
+  </data>
   <data name="Formatting" xml:space="preserve">
     <value>Formatting</value>
   </data>
@@ -149,6 +152,12 @@
   </data>
   <data name="Setting_AutoClosingTagsDisplayName" xml:space="preserve">
     <value>Auto Insert Closing Tag</value>
+  </data>
+  <data name="Setting_AutoInsertAttributeQuotesDescription" xml:space="preserve">
+    <value>If true, completion on attributes will add quotation marks</value>
+  </data>
+  <data name="Setting_AutoInsertAttributeQuotesDisplayName" xml:space="preserve">
+    <value>Auto Insert Attribute Quotes</value>
   </data>
   <data name="Setting_FormattingOnTypeDescription" xml:space="preserve">
     <value>If true, formatting will be enabled while typing</value>

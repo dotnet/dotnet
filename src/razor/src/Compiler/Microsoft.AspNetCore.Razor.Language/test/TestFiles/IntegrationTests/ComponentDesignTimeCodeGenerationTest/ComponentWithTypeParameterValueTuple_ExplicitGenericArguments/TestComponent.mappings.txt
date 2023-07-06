@@ -1,41 +1,41 @@
-﻿Source Location: (11:0,11 [7] x:\dir\subdir\Test\TestComponent.cshtml)
-|TDomain|
-Generated Location: (693:19,22 [7] )
-|TDomain|
-
-Source Location: (19:0,19 [22] x:\dir\subdir\Test\TestComponent.cshtml)
+﻿Source Location: (19:0,19 [22] x:\dir\subdir\Test\TestComponent.cshtml)
 |where TDomain : struct|
-Generated Location: (1005:31,42 [22] )
+Generated Location: (473:13,0 [22] )
 |where TDomain : struct|
-
-Source Location: (54:1,11 [6] x:\dir\subdir\Test\TestComponent.cshtml)
-|TValue|
-Generated Location: (1309:45,22 [6] )
-|TValue|
 
 Source Location: (61:1,18 [21] x:\dir\subdir\Test\TestComponent.cshtml)
 |where TValue : struct|
-Generated Location: (1618:57,40 [21] )
+Generated Location: (617:20,0 [21] )
 |where TValue : struct|
+
+Source Location: (11:0,11 [7] x:\dir\subdir\Test\TestComponent.cshtml)
+|TDomain|
+Generated Location: (925:31,22 [7] )
+|TDomain|
+
+Source Location: (54:1,11 [6] x:\dir\subdir\Test\TestComponent.cshtml)
+|TValue|
+Generated Location: (1221:44,22 [6] )
+|TValue|
 
 Source Location: (122:3,36 [7] x:\dir\subdir\Test\TestComponent.cshtml)
 |decimal|
-Generated Location: (2264:79,36 [7] )
+Generated Location: (1859:65,36 [7] )
 |decimal|
 
 Source Location: (139:3,53 [7] x:\dir\subdir\Test\TestComponent.cshtml)
 |decimal|
-Generated Location: (2489:88,53 [7] )
+Generated Location: (2084:74,53 [7] )
 |decimal|
 
 Source Location: (107:3,21 [4] x:\dir\subdir\Test\TestComponent.cshtml)
 |null|
-Generated Location: (2831:97,21 [4] )
+Generated Location: (2426:83,21 [4] )
 |null|
 
 Source Location: (101:3,15 [4] x:\dir\subdir\Test\TestComponent.cshtml)
 |Data|
-Generated Location: (3265:110,15 [4] )
+Generated Location: (2860:96,15 [4] )
 |Data|
 
 Source Location: (161:5,7 [87] x:\dir\subdir\Test\TestComponent.cshtml)
@@ -43,7 +43,7 @@ Source Location: (161:5,7 [87] x:\dir\subdir\Test\TestComponent.cshtml)
     [Parameter]
     public List<(TDomain Domain, TValue Value)> Data { get; set; }
 |
-Generated Location: (3682:128,7 [87] )
+Generated Location: (3277:114,7 [87] )
 |
     [Parameter]
     public List<(TDomain Domain, TValue Value)> Data { get; set; }

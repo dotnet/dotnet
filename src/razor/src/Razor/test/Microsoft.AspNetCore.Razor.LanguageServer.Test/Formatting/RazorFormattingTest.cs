@@ -608,8 +608,8 @@ public class RazorFormattingTest : FormattingTestBase
     public async Task LargeFile()
     {
         await RunFormattingTestAsync(
-            input: TestResources.GetResourceText("FormattingTest.razor"),
-            expected: TestResources.GetResourceText("FormattingTest_Expected.razor"),
+            input: RazorTestResources.GetResourceText("FormattingTest.razor"),
+            expected: RazorTestResources.GetResourceText("FormattingTest_Expected.razor"),
             allowDiagnostics: true);
     }
 }

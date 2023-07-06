@@ -16,7 +16,7 @@ internal static class Assumed
     [DoesNotReturn]
     public static void Unreachable([CallerFilePath] string? path = null, [CallerLineNumber] int line = 0)
         => throw new InvalidOperationException(
-            SR.FormatThis_program_location_is_throught_to_be_unreachable_File_0_Line_1(path, line));
+            SR.FormatThis_program_location_is_thought_to_be_unreachable_File_0_Line_1(path, line));
 
     /// <summary>
     ///  Can be called at points that are assumed to be unreachable at runtime.
@@ -25,5 +25,5 @@ internal static class Assumed
     [DoesNotReturn]
     public static T Unreachable<T>([CallerFilePath] string? path = null, [CallerLineNumber] int line = 0)
         => throw new InvalidOperationException(
-            SR.FormatThis_program_location_is_throught_to_be_unreachable_File_0_Line_1(path, line));
+            SR.FormatThis_program_location_is_thought_to_be_unreachable_File_0_Line_1(path, line));
 }

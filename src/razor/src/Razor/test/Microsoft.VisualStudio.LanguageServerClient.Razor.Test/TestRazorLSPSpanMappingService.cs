@@ -11,8 +11,8 @@ using Microsoft.AspNetCore.Razor.LanguageServer.Protocol;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
 using Microsoft.CodeAnalysis.Text;
+using Microsoft.VisualStudio.LanguageServerClient.Razor.DocumentMapping;
 using Microsoft.VisualStudio.LanguageServerClient.Razor.Extensions;
-using Microsoft.VisualStudio.LanguageServerClient.Razor.HtmlCSharp;
 
 namespace Microsoft.VisualStudio.LanguageServerClient.Razor.Test;
 

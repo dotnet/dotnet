@@ -7,7 +7,7 @@ using System;
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.VisualStudio.LanguageServer.ContainedLanguage;
-using Microsoft.VisualStudio.LanguageServerClient.Razor.HtmlCSharp;
+using Microsoft.VisualStudio.LanguageServerClient.Razor.DocumentMapping;
 using Microsoft.VisualStudio.Text;
 using Moq;
 using Xunit;

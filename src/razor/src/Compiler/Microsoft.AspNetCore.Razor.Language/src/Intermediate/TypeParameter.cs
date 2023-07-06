@@ -9,4 +9,5 @@ public sealed class TypeParameter
 {
     public string ParameterName { get; set; }
     public string Constraints { get; set; }
+    public SourceSpan? ConstraintsSource { get; init; }
 }
