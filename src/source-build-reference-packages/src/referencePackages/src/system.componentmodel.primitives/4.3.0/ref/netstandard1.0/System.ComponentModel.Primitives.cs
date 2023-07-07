@@ -4,235 +4,322 @@
 // ------------------------------------------------------------------------------
 // Changes to this file must follow the http://aka.ms/api-review process.
 // ------------------------------------------------------------------------------
-
-using System;
-using System.Diagnostics;
-using System.Reflection;
-using System.Runtime.CompilerServices;
-using System.Security;
-
-[assembly: Debuggable(DebuggableAttribute.DebuggingModes.IgnoreSymbolStoreSequencePoints)]
-[assembly: AllowPartiallyTrustedCallers]
-[assembly: ReferenceAssembly]
-[assembly: AssemblyTitle("System.ComponentModel.Primitives")]
-[assembly: AssemblyDescription("System.ComponentModel.Primitives")]
-[assembly: AssemblyDefaultAlias("System.ComponentModel.Primitives")]
-[assembly: AssemblyCompany("Microsoft Corporation")]
-[assembly: AssemblyProduct("Microsoft® .NET Framework")]
-[assembly: AssemblyCopyright("© Microsoft Corporation.  All rights reserved.")]
-[assembly: AssemblyFileVersion("1.0.24212.01")]
-[assembly: AssemblyInformationalVersion("1.0.24212.01 built by: SOURCEBUILD")]
-[assembly: CLSCompliant(true)]
-[assembly: AssemblyMetadata("", "")]
-[assembly: AssemblyVersion("4.1.0.0")]
-
-
-
-
+[assembly: System.Runtime.CompilerServices.CompilationRelaxations(8)]
+[assembly: System.Runtime.CompilerServices.RuntimeCompatibility(WrapNonExceptionThrows = true)]
+[assembly: System.Diagnostics.Debuggable(System.Diagnostics.DebuggableAttribute.DebuggingModes.IgnoreSymbolStoreSequencePoints)]
+[assembly: System.Security.AllowPartiallyTrustedCallers]
+[assembly: System.Runtime.CompilerServices.ReferenceAssembly]
+[assembly: System.Reflection.AssemblyTitle("System.ComponentModel.Primitives")]
+[assembly: System.Reflection.AssemblyDescription("System.ComponentModel.Primitives")]
+[assembly: System.Reflection.AssemblyDefaultAlias("System.ComponentModel.Primitives")]
+[assembly: System.Reflection.AssemblyCompany("Microsoft Corporation")]
+[assembly: System.Reflection.AssemblyProduct("Microsoft® .NET Framework")]
+[assembly: System.Reflection.AssemblyCopyright("© Microsoft Corporation.  All rights reserved.")]
+[assembly: System.Reflection.AssemblyFileVersion("1.0.24212.01")]
+[assembly: System.Reflection.AssemblyInformationalVersion("1.0.24212.01. Commit Hash: 9688ddbb62c04189cac4c4a06e31e93377dccd41")]
+[assembly: System.CLSCompliant(true)]
+[assembly: System.Reflection.AssemblyMetadata(".NETFrameworkAssembly", "")]
+[assembly: System.Reflection.AssemblyMetadata("Serviceable", "True")]
+[assembly: System.Reflection.AssemblyVersionAttribute("4.1.0.0")]
+[assembly: System.Reflection.AssemblyFlagsAttribute((System.Reflection.AssemblyNameFlags)0x70)]
 namespace System.ComponentModel
 {
-    public sealed partial class BrowsableAttribute : System.Attribute
+    public sealed partial class BrowsableAttribute : Attribute
     {
-        public static readonly System.ComponentModel.BrowsableAttribute Default;
-        public static readonly System.ComponentModel.BrowsableAttribute No;
-        public static readonly System.ComponentModel.BrowsableAttribute Yes;
+        public static readonly BrowsableAttribute Default;
+        public static readonly BrowsableAttribute No;
+        public static readonly BrowsableAttribute Yes;
         public BrowsableAttribute(bool browsable) { }
+
         public bool Browsable { get { throw null; } }
+
         public override bool Equals(object obj) { throw null; }
+
         public override int GetHashCode() { throw null; }
     }
-    public partial class CategoryAttribute : System.Attribute
+
+    public partial class CategoryAttribute : Attribute
     {
         public CategoryAttribute() { }
+
         public CategoryAttribute(string category) { }
-        public static System.ComponentModel.CategoryAttribute Action { get { throw null; } }
-        public static System.ComponentModel.CategoryAttribute Appearance { get { throw null; } }
-        public static System.ComponentModel.CategoryAttribute Asynchronous { get { throw null; } }
-        public static System.ComponentModel.CategoryAttribute Behavior { get { throw null; } }
+
+        public static CategoryAttribute Action { get { throw null; } }
+
+        public static CategoryAttribute Appearance { get { throw null; } }
+
+        public static CategoryAttribute Asynchronous { get { throw null; } }
+
+        public static CategoryAttribute Behavior { get { throw null; } }
+
         public string Category { get { throw null; } }
-        public static System.ComponentModel.CategoryAttribute Data { get { throw null; } }
-        public static System.ComponentModel.CategoryAttribute Default { get { throw null; } }
-        public static System.ComponentModel.CategoryAttribute Design { get { throw null; } }
-        public static System.ComponentModel.CategoryAttribute DragDrop { get { throw null; } }
-        public static System.ComponentModel.CategoryAttribute Focus { get { throw null; } }
-        public static System.ComponentModel.CategoryAttribute Format { get { throw null; } }
-        public static System.ComponentModel.CategoryAttribute Key { get { throw null; } }
-        public static System.ComponentModel.CategoryAttribute Layout { get { throw null; } }
-        public static System.ComponentModel.CategoryAttribute Mouse { get { throw null; } }
-        public static System.ComponentModel.CategoryAttribute WindowStyle { get { throw null; } }
+
+        public static CategoryAttribute Data { get { throw null; } }
+
+        public static CategoryAttribute Default { get { throw null; } }
+
+        public static CategoryAttribute Design { get { throw null; } }
+
+        public static CategoryAttribute DragDrop { get { throw null; } }
+
+        public static CategoryAttribute Focus { get { throw null; } }
+
+        public static CategoryAttribute Format { get { throw null; } }
+
+        public static CategoryAttribute Key { get { throw null; } }
+
+        public static CategoryAttribute Layout { get { throw null; } }
+
+        public static CategoryAttribute Mouse { get { throw null; } }
+
+        public static CategoryAttribute WindowStyle { get { throw null; } }
+
         public override bool Equals(object obj) { throw null; }
+
         public override int GetHashCode() { throw null; }
+
         protected virtual string GetLocalizedString(string value) { throw null; }
     }
+
     public partial class ComponentCollection
     {
         internal ComponentCollection() { }
     }
-    public partial class DescriptionAttribute : System.Attribute
+
+    public partial class DescriptionAttribute : Attribute
     {
-        public static readonly System.ComponentModel.DescriptionAttribute Default;
+        public static readonly DescriptionAttribute Default;
         public DescriptionAttribute() { }
+
         public DescriptionAttribute(string description) { }
+
         public virtual string Description { get { throw null; } }
+
         protected string DescriptionValue { get { throw null; } set { } }
+
         public override bool Equals(object obj) { throw null; }
+
         public override int GetHashCode() { throw null; }
     }
-    public sealed partial class DesignerCategoryAttribute : System.Attribute
+
+    public sealed partial class DesignerCategoryAttribute : Attribute
     {
-        public static readonly System.ComponentModel.DesignerCategoryAttribute Component;
-        public static readonly System.ComponentModel.DesignerCategoryAttribute Default;
-        public static readonly System.ComponentModel.DesignerCategoryAttribute Form;
-        public static readonly System.ComponentModel.DesignerCategoryAttribute Generic;
+        public static readonly DesignerCategoryAttribute Component;
+        public static readonly DesignerCategoryAttribute Default;
+        public static readonly DesignerCategoryAttribute Form;
+        public static readonly DesignerCategoryAttribute Generic;
         public DesignerCategoryAttribute() { }
+
         public DesignerCategoryAttribute(string category) { }
+
         public string Category { get { throw null; } }
+
         public override bool Equals(object obj) { throw null; }
+
         public override int GetHashCode() { throw null; }
     }
+
     public enum DesignerSerializationVisibility
     {
-        Content = 2,
         Hidden = 0,
         Visible = 1,
+        Content = 2
     }
-    public sealed partial class DesignerSerializationVisibilityAttribute : System.Attribute
+
+    public sealed partial class DesignerSerializationVisibilityAttribute : Attribute
     {
-        public static readonly System.ComponentModel.DesignerSerializationVisibilityAttribute Content;
-        public static readonly System.ComponentModel.DesignerSerializationVisibilityAttribute Default;
-        public static readonly System.ComponentModel.DesignerSerializationVisibilityAttribute Hidden;
-        public static readonly System.ComponentModel.DesignerSerializationVisibilityAttribute Visible;
-        public DesignerSerializationVisibilityAttribute(System.ComponentModel.DesignerSerializationVisibility visibility) { }
-        public System.ComponentModel.DesignerSerializationVisibility Visibility { get { throw null; } }
+        public static readonly DesignerSerializationVisibilityAttribute Content;
+        public static readonly DesignerSerializationVisibilityAttribute Default;
+        public static readonly DesignerSerializationVisibilityAttribute Hidden;
+        public static readonly DesignerSerializationVisibilityAttribute Visible;
+        public DesignerSerializationVisibilityAttribute(DesignerSerializationVisibility visibility) { }
+
+        public DesignerSerializationVisibility Visibility { get { throw null; } }
+
         public override bool Equals(object obj) { throw null; }
+
         public override int GetHashCode() { throw null; }
     }
-    public sealed partial class DesignOnlyAttribute : System.Attribute
+
+    public sealed partial class DesignOnlyAttribute : Attribute
     {
-        public static readonly System.ComponentModel.DesignOnlyAttribute Default;
-        public static readonly System.ComponentModel.DesignOnlyAttribute No;
-        public static readonly System.ComponentModel.DesignOnlyAttribute Yes;
+        public static readonly DesignOnlyAttribute Default;
+        public static readonly DesignOnlyAttribute No;
+        public static readonly DesignOnlyAttribute Yes;
         public DesignOnlyAttribute(bool isDesignOnly) { }
+
         public bool IsDesignOnly { get { throw null; } }
+
         public override bool Equals(object obj) { throw null; }
+
         public override int GetHashCode() { throw null; }
     }
-    public partial class DisplayNameAttribute : System.Attribute
+
+    public partial class DisplayNameAttribute : Attribute
     {
-        public static readonly System.ComponentModel.DisplayNameAttribute Default;
+        public static readonly DisplayNameAttribute Default;
         public DisplayNameAttribute() { }
+
         public DisplayNameAttribute(string displayName) { }
+
         public virtual string DisplayName { get { throw null; } }
+
         protected string DisplayNameValue { get { throw null; } set { } }
+
         public override bool Equals(object obj) { throw null; }
+
         public override int GetHashCode() { throw null; }
     }
-    public sealed partial class EventHandlerList : System.IDisposable
+
+    public sealed partial class EventHandlerList : IDisposable
     {
-        public EventHandlerList() { }
-        public System.Delegate this[object key] { get { throw null; } set { } }
-        public void AddHandler(object key, System.Delegate value) { }
-        public void AddHandlers(System.ComponentModel.EventHandlerList listToAddFrom) { }
+        public Delegate this[object key] { get { throw null; } set { } }
+
+        public void AddHandler(object key, Delegate value) { }
+
+        public void AddHandlers(EventHandlerList listToAddFrom) { }
+
         public void Dispose() { }
-        public void RemoveHandler(object key, System.Delegate value) { }
+
+        public void RemoveHandler(object key, Delegate value) { }
     }
-    public partial interface IComponent : System.IDisposable
+
+    public partial interface IComponent : IDisposable
     {
-        System.ComponentModel.ISite Site { get; set; }
-        event System.EventHandler Disposed;
+        ISite Site { get; set; }
+
+        event EventHandler Disposed;
     }
-    public partial interface IContainer : System.IDisposable
+
+    public partial interface IContainer : IDisposable
     {
-        System.ComponentModel.ComponentCollection Components { get; }
-        void Add(System.ComponentModel.IComponent component);
-        void Add(System.ComponentModel.IComponent component, string name);
-        void Remove(System.ComponentModel.IComponent component);
+        ComponentCollection Components { get; }
+
+        void Add(IComponent component, string name);
+        void Add(IComponent component);
+        void Remove(IComponent component);
     }
-    public sealed partial class ImmutableObjectAttribute : System.Attribute
+
+    public sealed partial class ImmutableObjectAttribute : Attribute
     {
-        public static readonly System.ComponentModel.ImmutableObjectAttribute Default;
-        public static readonly System.ComponentModel.ImmutableObjectAttribute No;
-        public static readonly System.ComponentModel.ImmutableObjectAttribute Yes;
+        public static readonly ImmutableObjectAttribute Default;
+        public static readonly ImmutableObjectAttribute No;
+        public static readonly ImmutableObjectAttribute Yes;
         public ImmutableObjectAttribute(bool immutable) { }
+
         public bool Immutable { get { throw null; } }
+
         public override bool Equals(object obj) { throw null; }
+
         public override int GetHashCode() { throw null; }
     }
-    public sealed partial class InitializationEventAttribute : System.Attribute
+
+    public sealed partial class InitializationEventAttribute : Attribute
     {
         public InitializationEventAttribute(string eventName) { }
+
         public string EventName { get { throw null; } }
     }
-    public partial interface ISite : System.IServiceProvider
+
+    public partial interface ISite : IServiceProvider
     {
-        System.ComponentModel.IComponent Component { get; }
-        System.ComponentModel.IContainer Container { get; }
+        IComponent Component { get; }
+
+        IContainer Container { get; }
+
         bool DesignMode { get; }
+
         string Name { get; set; }
     }
-    public sealed partial class LocalizableAttribute : System.Attribute
+
+    public sealed partial class LocalizableAttribute : Attribute
     {
-        public static readonly System.ComponentModel.LocalizableAttribute Default;
-        public static readonly System.ComponentModel.LocalizableAttribute No;
-        public static readonly System.ComponentModel.LocalizableAttribute Yes;
+        public static readonly LocalizableAttribute Default;
+        public static readonly LocalizableAttribute No;
+        public static readonly LocalizableAttribute Yes;
         public LocalizableAttribute(bool isLocalizable) { }
+
         public bool IsLocalizable { get { throw null; } }
+
         public override bool Equals(object obj) { throw null; }
+
         public override int GetHashCode() { throw null; }
     }
-    public sealed partial class MergablePropertyAttribute : System.Attribute
+
+    public sealed partial class MergablePropertyAttribute : Attribute
     {
-        public static readonly System.ComponentModel.MergablePropertyAttribute Default;
-        public static readonly System.ComponentModel.MergablePropertyAttribute No;
-        public static readonly System.ComponentModel.MergablePropertyAttribute Yes;
+        public static readonly MergablePropertyAttribute Default;
+        public static readonly MergablePropertyAttribute No;
+        public static readonly MergablePropertyAttribute Yes;
         public MergablePropertyAttribute(bool allowMerge) { }
+
         public bool AllowMerge { get { throw null; } }
+
         public override bool Equals(object obj) { throw null; }
+
         public override int GetHashCode() { throw null; }
     }
-    public sealed partial class NotifyParentPropertyAttribute : System.Attribute
+
+    public sealed partial class NotifyParentPropertyAttribute : Attribute
     {
-        public static readonly System.ComponentModel.NotifyParentPropertyAttribute Default;
-        public static readonly System.ComponentModel.NotifyParentPropertyAttribute No;
-        public static readonly System.ComponentModel.NotifyParentPropertyAttribute Yes;
+        public static readonly NotifyParentPropertyAttribute Default;
+        public static readonly NotifyParentPropertyAttribute No;
+        public static readonly NotifyParentPropertyAttribute Yes;
         public NotifyParentPropertyAttribute(bool notifyParent) { }
+
         public bool NotifyParent { get { throw null; } }
+
         public override bool Equals(object obj) { throw null; }
+
         public override int GetHashCode() { throw null; }
     }
-    public sealed partial class ParenthesizePropertyNameAttribute : System.Attribute
+
+    public sealed partial class ParenthesizePropertyNameAttribute : Attribute
     {
-        public static readonly System.ComponentModel.ParenthesizePropertyNameAttribute Default;
+        public static readonly ParenthesizePropertyNameAttribute Default;
         public ParenthesizePropertyNameAttribute() { }
+
         public ParenthesizePropertyNameAttribute(bool needParenthesis) { }
+
         public bool NeedParenthesis { get { throw null; } }
+
         public override bool Equals(object o) { throw null; }
+
         public override int GetHashCode() { throw null; }
     }
-    public sealed partial class ReadOnlyAttribute : System.Attribute
+
+    public sealed partial class ReadOnlyAttribute : Attribute
     {
-        public static readonly System.ComponentModel.ReadOnlyAttribute Default;
-        public static readonly System.ComponentModel.ReadOnlyAttribute No;
-        public static readonly System.ComponentModel.ReadOnlyAttribute Yes;
+        public static readonly ReadOnlyAttribute Default;
+        public static readonly ReadOnlyAttribute No;
+        public static readonly ReadOnlyAttribute Yes;
         public ReadOnlyAttribute(bool isReadOnly) { }
+
         public bool IsReadOnly { get { throw null; } }
+
         public override bool Equals(object value) { throw null; }
+
         public override int GetHashCode() { throw null; }
     }
+
     public enum RefreshProperties
     {
-        All = 1,
         None = 0,
-        Repaint = 2,
+        All = 1,
+        Repaint = 2
     }
-    public sealed partial class RefreshPropertiesAttribute : System.Attribute
+
+    public sealed partial class RefreshPropertiesAttribute : Attribute
     {
-        public static readonly System.ComponentModel.RefreshPropertiesAttribute All;
-        public static readonly System.ComponentModel.RefreshPropertiesAttribute Default;
-        public static readonly System.ComponentModel.RefreshPropertiesAttribute Repaint;
-        public RefreshPropertiesAttribute(System.ComponentModel.RefreshProperties refresh) { }
-        public System.ComponentModel.RefreshProperties RefreshProperties { get { throw null; } }
+        public static readonly RefreshPropertiesAttribute All;
+        public static readonly RefreshPropertiesAttribute Default;
+        public static readonly RefreshPropertiesAttribute Repaint;
+        public RefreshPropertiesAttribute(RefreshProperties refresh) { }
+
+        public RefreshProperties RefreshProperties { get { throw null; } }
+
         public override bool Equals(object value) { throw null; }
+
         public override int GetHashCode() { throw null; }
     }
 }

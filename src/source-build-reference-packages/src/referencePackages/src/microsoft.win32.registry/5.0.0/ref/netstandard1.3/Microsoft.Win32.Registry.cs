@@ -4,95 +4,125 @@
 // ------------------------------------------------------------------------------
 // Changes to this file must follow the http://aka.ms/api-review process.
 // ------------------------------------------------------------------------------
-
-using System;
-using System.Diagnostics;
-using System.Reflection;
-using System.Runtime.CompilerServices;
-using System.Security;
-
-[assembly: Debuggable(DebuggableAttribute.DebuggingModes.IgnoreSymbolStoreSequencePoints)]
-[assembly: AllowPartiallyTrustedCallers]
-[assembly: ReferenceAssembly]
-[assembly: AssemblyTitle("Microsoft.Win32.Registry")]
-[assembly: AssemblyDescription("Microsoft.Win32.Registry")]
-[assembly: AssemblyDefaultAlias("Microsoft.Win32.Registry")]
-[assembly: AssemblyCompany("Microsoft Corporation")]
-[assembly: AssemblyProduct("Microsoft® .NET Framework")]
-[assembly: AssemblyCopyright("© Microsoft Corporation.  All rights reserved.")]
-[assembly: AssemblyFileVersion("1.0.24212.01")]
-[assembly: AssemblyInformationalVersion("1.0.24212.01 built by: SOURCEBUILD")]
-[assembly: CLSCompliant(true)]
-[assembly: AssemblyMetadata("", "")]
-[assembly: AssemblyVersion("4.0.0.0")]
-
-
-
-
+[assembly: System.Runtime.CompilerServices.CompilationRelaxations(8)]
+[assembly: System.Runtime.CompilerServices.RuntimeCompatibility(WrapNonExceptionThrows = true)]
+[assembly: System.Diagnostics.Debuggable(System.Diagnostics.DebuggableAttribute.DebuggingModes.IgnoreSymbolStoreSequencePoints)]
+[assembly: System.Security.AllowPartiallyTrustedCallers]
+[assembly: System.Runtime.CompilerServices.ReferenceAssembly]
+[assembly: System.Reflection.AssemblyTitle("Microsoft.Win32.Registry")]
+[assembly: System.Reflection.AssemblyDescription("Microsoft.Win32.Registry")]
+[assembly: System.Reflection.AssemblyDefaultAlias("Microsoft.Win32.Registry")]
+[assembly: System.Reflection.AssemblyCompany("Microsoft Corporation")]
+[assembly: System.Reflection.AssemblyProduct("Microsoft® .NET Framework")]
+[assembly: System.Reflection.AssemblyCopyright("© Microsoft Corporation.  All rights reserved.")]
+[assembly: System.Reflection.AssemblyFileVersion("1.0.24212.01")]
+[assembly: System.Reflection.AssemblyInformationalVersion("1.0.24212.01. Commit Hash: 9688ddbb62c04189cac4c4a06e31e93377dccd41")]
+[assembly: System.CLSCompliant(true)]
+[assembly: System.Reflection.AssemblyMetadata(".NETFrameworkAssembly", "")]
+[assembly: System.Reflection.AssemblyMetadata("Serviceable", "True")]
+[assembly: System.Reflection.AssemblyVersionAttribute("4.0.0.0")]
+[assembly: System.Reflection.AssemblyFlagsAttribute((System.Reflection.AssemblyNameFlags)0x70)]
 namespace Microsoft.Win32
 {
     public static partial class Registry
     {
-        public static readonly Microsoft.Win32.RegistryKey ClassesRoot;
-        public static readonly Microsoft.Win32.RegistryKey CurrentConfig;
-        public static readonly Microsoft.Win32.RegistryKey CurrentUser;
-        public static readonly Microsoft.Win32.RegistryKey LocalMachine;
-        public static readonly Microsoft.Win32.RegistryKey PerformanceData;
-        public static readonly Microsoft.Win32.RegistryKey Users;
+        public static readonly RegistryKey ClassesRoot;
+        public static readonly RegistryKey CurrentConfig;
+        public static readonly RegistryKey CurrentUser;
+        public static readonly RegistryKey LocalMachine;
+        public static readonly RegistryKey PerformanceData;
+        public static readonly RegistryKey Users;
         public static object GetValue(string keyName, string valueName, object defaultValue) { throw null; }
+
+        public static void SetValue(string keyName, string valueName, object value, RegistryValueKind valueKind) { }
+
         public static void SetValue(string keyName, string valueName, object value) { }
-        public static void SetValue(string keyName, string valueName, object value, Microsoft.Win32.RegistryValueKind valueKind) { }
     }
+
     public enum RegistryHive
     {
-        ClassesRoot = -2147483648,
+        ClassesRoot = int.MinValue,
         CurrentUser = -2147483647,
         LocalMachine = -2147483646,
         Users = -2147483645,
         PerformanceData = -2147483644,
-        CurrentConfig = -2147483643,
+        CurrentConfig = -2147483643
     }
+
     public sealed partial class RegistryKey : System.IDisposable
     {
         internal RegistryKey() { }
-        public Microsoft.Win32.SafeHandles.SafeRegistryHandle Handle { get { throw null; } }
+
+        public SafeHandles.SafeRegistryHandle Handle { get { throw null; } }
+
         public string Name { get { throw null; } }
+
         public int SubKeyCount { get { throw null; } }
+
         public int ValueCount { get { throw null; } }
-        public Microsoft.Win32.RegistryView View { get { throw null; } }
-        public Microsoft.Win32.RegistryKey CreateSubKey(string subkey) { throw null; }
-        public Microsoft.Win32.RegistryKey CreateSubKey(string subkey, bool writable) { throw null; }
-        public Microsoft.Win32.RegistryKey CreateSubKey(string subkey, bool writable, Microsoft.Win32.RegistryOptions options) { throw null; }
-        public void DeleteSubKey(string subkey) { }
+
+        public RegistryView View { get { throw null; } }
+
+        public RegistryKey CreateSubKey(string subkey, bool writable, RegistryOptions options) { throw null; }
+
+        public RegistryKey CreateSubKey(string subkey, bool writable) { throw null; }
+
+        public RegistryKey CreateSubKey(string subkey) { throw null; }
+
         public void DeleteSubKey(string subkey, bool throwOnMissingSubKey) { }
-        public void DeleteSubKeyTree(string subkey) { }
+
+        public void DeleteSubKey(string subkey) { }
+
         public void DeleteSubKeyTree(string subkey, bool throwOnMissingSubKey) { }
-        public void DeleteValue(string name) { }
+
+        public void DeleteSubKeyTree(string subkey) { }
+
         public void DeleteValue(string name, bool throwOnMissingValue) { }
+
+        public void DeleteValue(string name) { }
+
         public void Dispose() { }
+
         public void Flush() { }
-        public static Microsoft.Win32.RegistryKey FromHandle(Microsoft.Win32.SafeHandles.SafeRegistryHandle handle) { throw null; }
-        public static Microsoft.Win32.RegistryKey FromHandle(Microsoft.Win32.SafeHandles.SafeRegistryHandle handle, Microsoft.Win32.RegistryView view) { throw null; }
+
+        public static RegistryKey FromHandle(SafeHandles.SafeRegistryHandle handle, RegistryView view) { throw null; }
+
+        public static RegistryKey FromHandle(SafeHandles.SafeRegistryHandle handle) { throw null; }
+
         public string[] GetSubKeyNames() { throw null; }
-        public object GetValue(string name) { throw null; }
+
+        public object GetValue(string name, object defaultValue, RegistryValueOptions options) { throw null; }
+
         public object GetValue(string name, object defaultValue) { throw null; }
-        public object GetValue(string name, object defaultValue, Microsoft.Win32.RegistryValueOptions options) { throw null; }
-        public Microsoft.Win32.RegistryValueKind GetValueKind(string name) { throw null; }
+
+        public object GetValue(string name) { throw null; }
+
+        public RegistryValueKind GetValueKind(string name) { throw null; }
+
         public string[] GetValueNames() { throw null; }
-        public static Microsoft.Win32.RegistryKey OpenBaseKey(Microsoft.Win32.RegistryHive hKey, Microsoft.Win32.RegistryView view) { throw null; }
-        public Microsoft.Win32.RegistryKey OpenSubKey(string name) { throw null; }
-        public Microsoft.Win32.RegistryKey OpenSubKey(string name, bool writable) { throw null; }
-        public Microsoft.Win32.RegistryKey OpenSubKey(string name, System.Security.AccessControl.RegistryRights rights) { throw null; }
+
+        public static RegistryKey OpenBaseKey(RegistryHive hKey, RegistryView view) { throw null; }
+
+        public RegistryKey OpenSubKey(string name, bool writable) { throw null; }
+
+        public RegistryKey OpenSubKey(string name, System.Security.AccessControl.RegistryRights rights) { throw null; }
+
+        public RegistryKey OpenSubKey(string name) { throw null; }
+
+        public void SetValue(string name, object value, RegistryValueKind valueKind) { }
+
         public void SetValue(string name, object value) { }
-        public void SetValue(string name, object value, Microsoft.Win32.RegistryValueKind valueKind) { }
+
         public override string ToString() { throw null; }
     }
-    [System.FlagsAttribute]
+
+    [System.Flags]
     public enum RegistryOptions
     {
         None = 0,
-        Volatile = 1,
+        Volatile = 1
     }
+
     public enum RegistryValueKind
     {
         None = -1,
@@ -102,33 +132,39 @@ namespace Microsoft.Win32
         Binary = 3,
         DWord = 4,
         MultiString = 7,
-        QWord = 11,
+        QWord = 11
     }
-    [System.FlagsAttribute]
+
+    [System.Flags]
     public enum RegistryValueOptions
     {
         None = 0,
-        DoNotExpandEnvironmentNames = 1,
+        DoNotExpandEnvironmentNames = 1
     }
+
     public enum RegistryView
     {
         Default = 0,
         Registry64 = 256,
-        Registry32 = 512,
+        Registry32 = 512
     }
 }
+
 namespace Microsoft.Win32.SafeHandles
 {
     public sealed partial class SafeRegistryHandle : System.Runtime.InteropServices.SafeHandle
     {
-        public SafeRegistryHandle(System.IntPtr preexistingHandle, bool ownsHandle) : base (default(System.IntPtr), default(bool)) { }
+        public SafeRegistryHandle(System.IntPtr preexistingHandle, bool ownsHandle) : base(default, default) { }
+
         public override bool IsInvalid { get { throw null; } }
+
         protected override bool ReleaseHandle() { throw null; }
     }
 }
+
 namespace System.Security.AccessControl
 {
-    [System.FlagsAttribute]
+    [Flags]
     public enum RegistryRights
     {
         QueryValues = 1,
@@ -144,6 +180,6 @@ namespace System.Security.AccessControl
         ReadKey = 131097,
         ChangePermissions = 262144,
         TakeOwnership = 524288,
-        FullControl = 983103,
+        FullControl = 983103
     }
 }

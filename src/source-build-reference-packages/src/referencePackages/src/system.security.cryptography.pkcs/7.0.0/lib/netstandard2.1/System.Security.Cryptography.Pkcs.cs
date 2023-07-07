@@ -71,6 +71,8 @@ namespace System.Security.Cryptography
 
     public sealed partial class CryptographicAttributeObjectEnumerator : Collections.IEnumerator
     {
+        internal CryptographicAttributeObjectEnumerator() { }
+
         public CryptographicAttributeObject Current { get { throw null; } }
 
         object Collections.IEnumerator.Current { get { throw null; } }
@@ -146,6 +148,8 @@ namespace System.Security.Cryptography.Pkcs
 
     public sealed partial class CmsRecipientEnumerator : Collections.IEnumerator
     {
+        internal CmsRecipientEnumerator() { }
+
         public CmsRecipient Current { get { throw null; } }
 
         object Collections.IEnumerator.Current { get { throw null; } }
@@ -248,6 +252,8 @@ namespace System.Security.Cryptography.Pkcs
 
     public sealed partial class KeyAgreeRecipientInfo : RecipientInfo
     {
+        internal KeyAgreeRecipientInfo() { }
+
         public DateTime Date { get { throw null; } }
 
         public override byte[] EncryptedKey { get { throw null; } }
@@ -265,6 +271,8 @@ namespace System.Security.Cryptography.Pkcs
 
     public sealed partial class KeyTransRecipientInfo : RecipientInfo
     {
+        internal KeyTransRecipientInfo() { }
+
         public override byte[] EncryptedKey { get { throw null; } }
 
         public override AlgorithmIdentifier KeyEncryptionAlgorithm { get { throw null; } }
@@ -276,8 +284,6 @@ namespace System.Security.Cryptography.Pkcs
 
     public sealed partial class Pkcs12Builder
     {
-        public Pkcs12Builder() { }
-
         public bool IsSealed { get { throw null; } }
 
         public void AddSafeContentsEncrypted(Pkcs12SafeContents safeContents, byte[]? passwordBytes, PbeParameters pbeParameters) { }
@@ -324,6 +330,8 @@ namespace System.Security.Cryptography.Pkcs
 
     public sealed partial class Pkcs12Info
     {
+        internal Pkcs12Info() { }
+
         public Collections.ObjectModel.ReadOnlyCollection<Pkcs12SafeContents> AuthenticatedSafe { get { throw null; } }
 
         public Pkcs12IntegrityMode IntegrityMode { get { throw null; } }
@@ -367,8 +375,6 @@ namespace System.Security.Cryptography.Pkcs
 
     public sealed partial class Pkcs12SafeContents
     {
-        public Pkcs12SafeContents() { }
-
         public Pkcs12ConfidentialityMode ConfidentialityMode { get { throw null; } }
 
         public bool IsReadOnly { get { throw null; } }
@@ -475,8 +481,6 @@ namespace System.Security.Cryptography.Pkcs
 
     public sealed partial class Pkcs9ContentType : Pkcs9AttributeObject
     {
-        public Pkcs9ContentType() { }
-
         public Oid ContentType { get { throw null; } }
 
         public override void CopyFrom(AsnEncodedData asnEncodedData) { }
@@ -523,8 +527,6 @@ namespace System.Security.Cryptography.Pkcs
 
     public sealed partial class Pkcs9MessageDigest : Pkcs9AttributeObject
     {
-        public Pkcs9MessageDigest() { }
-
         public byte[] MessageDigest { get { throw null; } }
 
         public override void CopyFrom(AsnEncodedData asnEncodedData) { }
@@ -545,6 +547,8 @@ namespace System.Security.Cryptography.Pkcs
 
     public sealed partial class PublicKeyInfo
     {
+        internal PublicKeyInfo() { }
+
         public AlgorithmIdentifier Algorithm { get { throw null; } }
 
         public byte[] KeyValue { get { throw null; } }
@@ -552,6 +556,8 @@ namespace System.Security.Cryptography.Pkcs
 
     public abstract partial class RecipientInfo
     {
+        internal RecipientInfo() { }
+
         public abstract byte[] EncryptedKey { get; }
         public abstract AlgorithmIdentifier KeyEncryptionAlgorithm { get; }
         public abstract SubjectIdentifier RecipientIdentifier { get; }
@@ -563,6 +569,8 @@ namespace System.Security.Cryptography.Pkcs
 
     public sealed partial class RecipientInfoCollection : Collections.ICollection, Collections.IEnumerable
     {
+        internal RecipientInfoCollection() { }
+
         public int Count { get { throw null; } }
 
         public bool IsSynchronized { get { throw null; } }
@@ -582,6 +590,8 @@ namespace System.Security.Cryptography.Pkcs
 
     public sealed partial class RecipientInfoEnumerator : Collections.IEnumerator
     {
+        internal RecipientInfoEnumerator() { }
+
         public RecipientInfo Current { get { throw null; } }
 
         object Collections.IEnumerator.Current { get { throw null; } }
@@ -600,6 +610,8 @@ namespace System.Security.Cryptography.Pkcs
 
     public sealed partial class Rfc3161TimestampRequest
     {
+        internal Rfc3161TimestampRequest() { }
+
         public bool HasExtensions { get { throw null; } }
 
         public Oid HashAlgorithmId { get { throw null; } }
@@ -635,6 +647,8 @@ namespace System.Security.Cryptography.Pkcs
 
     public sealed partial class Rfc3161TimestampToken
     {
+        internal Rfc3161TimestampToken() { }
+
         public Rfc3161TimestampTokenInfo TokenInfo { get { throw null; } }
 
         public SignedCms AsSignedCms() { throw null; }
@@ -738,6 +752,8 @@ namespace System.Security.Cryptography.Pkcs
 
     public sealed partial class SignerInfo
     {
+        internal SignerInfo() { }
+
         public X509Certificates.X509Certificate2? Certificate { get { throw null; } }
 
         public SignerInfoCollection CounterSignerInfos { get { throw null; } }
@@ -777,6 +793,8 @@ namespace System.Security.Cryptography.Pkcs
 
     public sealed partial class SignerInfoCollection : Collections.ICollection, Collections.IEnumerable
     {
+        internal SignerInfoCollection() { }
+
         public int Count { get { throw null; } }
 
         public bool IsSynchronized { get { throw null; } }
@@ -796,6 +814,8 @@ namespace System.Security.Cryptography.Pkcs
 
     public sealed partial class SignerInfoEnumerator : Collections.IEnumerator
     {
+        internal SignerInfoEnumerator() { }
+
         public SignerInfo Current { get { throw null; } }
 
         object Collections.IEnumerator.Current { get { throw null; } }
@@ -807,6 +827,8 @@ namespace System.Security.Cryptography.Pkcs
 
     public sealed partial class SubjectIdentifier
     {
+        internal SubjectIdentifier() { }
+
         public SubjectIdentifierType Type { get { throw null; } }
 
         public object? Value { get { throw null; } }
@@ -816,6 +838,8 @@ namespace System.Security.Cryptography.Pkcs
 
     public sealed partial class SubjectIdentifierOrKey
     {
+        internal SubjectIdentifierOrKey() { }
+
         public SubjectIdentifierOrKeyType Type { get { throw null; } }
 
         public object Value { get { throw null; } }

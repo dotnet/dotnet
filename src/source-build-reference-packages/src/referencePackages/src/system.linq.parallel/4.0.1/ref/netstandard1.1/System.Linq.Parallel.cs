@@ -4,278 +4,481 @@
 // ------------------------------------------------------------------------------
 // Changes to this file must follow the http://aka.ms/api-review process.
 // ------------------------------------------------------------------------------
-
-using System;
-using System.Diagnostics;
-using System.Reflection;
-using System.Runtime.CompilerServices;
-using System.Security;
-
-[assembly: Debuggable(DebuggableAttribute.DebuggingModes.IgnoreSymbolStoreSequencePoints)]
-[assembly: AllowPartiallyTrustedCallers]
-[assembly: ReferenceAssembly]
-[assembly: AssemblyTitle("System.Linq.Parallel")]
-[assembly: AssemblyDescription("System.Linq.Parallel")]
-[assembly: AssemblyDefaultAlias("System.Linq.Parallel")]
-[assembly: AssemblyCompany("Microsoft Corporation")]
-[assembly: AssemblyProduct("Microsoft® .NET Framework")]
-[assembly: AssemblyCopyright("© Microsoft Corporation.  All rights reserved.")]
-[assembly: AssemblyFileVersion("1.0.24212.01")]
-[assembly: AssemblyInformationalVersion("1.0.24212.01 built by: SOURCEBUILD")]
-[assembly: CLSCompliant(true)]
-[assembly: AssemblyMetadata("", "")]
-[assembly: AssemblyVersion("4.0.0.0")]
-
-
-
-
+[assembly: System.Runtime.CompilerServices.CompilationRelaxations(8)]
+[assembly: System.Runtime.CompilerServices.RuntimeCompatibility(WrapNonExceptionThrows = true)]
+[assembly: System.Diagnostics.Debuggable(System.Diagnostics.DebuggableAttribute.DebuggingModes.IgnoreSymbolStoreSequencePoints)]
+[assembly: System.Security.AllowPartiallyTrustedCallers]
+[assembly: System.Runtime.CompilerServices.ReferenceAssembly]
+[assembly: System.Reflection.AssemblyTitle("System.Linq.Parallel")]
+[assembly: System.Reflection.AssemblyDescription("System.Linq.Parallel")]
+[assembly: System.Reflection.AssemblyDefaultAlias("System.Linq.Parallel")]
+[assembly: System.Reflection.AssemblyCompany("Microsoft Corporation")]
+[assembly: System.Reflection.AssemblyProduct("Microsoft® .NET Framework")]
+[assembly: System.Reflection.AssemblyCopyright("© Microsoft Corporation.  All rights reserved.")]
+[assembly: System.Reflection.AssemblyFileVersion("1.0.24212.01")]
+[assembly: System.Reflection.AssemblyInformationalVersion("1.0.24212.01. Commit Hash: 9688ddbb62c04189cac4c4a06e31e93377dccd41")]
+[assembly: System.CLSCompliant(true)]
+[assembly: System.Reflection.AssemblyMetadata(".NETFrameworkAssembly", "")]
+[assembly: System.Reflection.AssemblyMetadata("Serviceable", "True")]
+[assembly: System.Reflection.AssemblyVersionAttribute("4.0.0.0")]
+[assembly: System.Reflection.AssemblyFlagsAttribute((System.Reflection.AssemblyNameFlags)0x70)]
 namespace System.Linq
 {
-    public partial class OrderedParallelQuery<TSource> : System.Linq.ParallelQuery<TSource>
+    public partial class OrderedParallelQuery<TSource> : ParallelQuery<TSource>
     {
         internal OrderedParallelQuery() { }
-        public override System.Collections.Generic.IEnumerator<TSource> GetEnumerator() { throw null; }
+
+        public override Collections.Generic.IEnumerator<TSource> GetEnumerator() { throw null; }
     }
+
     public static partial class ParallelEnumerable
     {
-        public static TSource Aggregate<TSource>(this System.Linq.ParallelQuery<TSource> source, System.Func<TSource, TSource, TSource> func) { throw null; }
-        public static TAccumulate Aggregate<TSource, TAccumulate>(this System.Linq.ParallelQuery<TSource> source, TAccumulate seed, System.Func<TAccumulate, TSource, TAccumulate> func) { throw null; }
-        public static TResult Aggregate<TSource, TAccumulate, TResult>(this System.Linq.ParallelQuery<TSource> source, System.Func<TAccumulate> seedFactory, System.Func<TAccumulate, TSource, TAccumulate> updateAccumulatorFunc, System.Func<TAccumulate, TAccumulate, TAccumulate> combineAccumulatorsFunc, System.Func<TAccumulate, TResult> resultSelector) { throw null; }
-        public static TResult Aggregate<TSource, TAccumulate, TResult>(this System.Linq.ParallelQuery<TSource> source, TAccumulate seed, System.Func<TAccumulate, TSource, TAccumulate> updateAccumulatorFunc, System.Func<TAccumulate, TAccumulate, TAccumulate> combineAccumulatorsFunc, System.Func<TAccumulate, TResult> resultSelector) { throw null; }
-        public static TResult Aggregate<TSource, TAccumulate, TResult>(this System.Linq.ParallelQuery<TSource> source, TAccumulate seed, System.Func<TAccumulate, TSource, TAccumulate> func, System.Func<TAccumulate, TResult> resultSelector) { throw null; }
-        public static bool All<TSource>(this System.Linq.ParallelQuery<TSource> source, System.Func<TSource, bool> predicate) { throw null; }
-        public static bool Any<TSource>(this System.Linq.ParallelQuery<TSource> source) { throw null; }
-        public static bool Any<TSource>(this System.Linq.ParallelQuery<TSource> source, System.Func<TSource, bool> predicate) { throw null; }
-        public static System.Collections.Generic.IEnumerable<TSource> AsEnumerable<TSource>(this System.Linq.ParallelQuery<TSource> source) { throw null; }
-        public static System.Linq.ParallelQuery AsOrdered(this System.Linq.ParallelQuery source) { throw null; }
-        public static System.Linq.ParallelQuery<TSource> AsOrdered<TSource>(this System.Linq.ParallelQuery<TSource> source) { throw null; }
-        public static System.Linq.ParallelQuery AsParallel(this System.Collections.IEnumerable source) { throw null; }
-        public static System.Linq.ParallelQuery<TSource> AsParallel<TSource>(this System.Collections.Concurrent.Partitioner<TSource> source) { throw null; }
-        public static System.Linq.ParallelQuery<TSource> AsParallel<TSource>(this System.Collections.Generic.IEnumerable<TSource> source) { throw null; }
-        public static System.Collections.Generic.IEnumerable<TSource> AsSequential<TSource>(this System.Linq.ParallelQuery<TSource> source) { throw null; }
-        public static System.Linq.ParallelQuery<TSource> AsUnordered<TSource>(this System.Linq.ParallelQuery<TSource> source) { throw null; }
-        public static decimal Average(this System.Linq.ParallelQuery<decimal> source) { throw null; }
-        public static double Average(this System.Linq.ParallelQuery<double> source) { throw null; }
-        public static double Average(this System.Linq.ParallelQuery<int> source) { throw null; }
-        public static double Average(this System.Linq.ParallelQuery<long> source) { throw null; }
-        public static System.Nullable<decimal> Average(this System.Linq.ParallelQuery<System.Nullable<decimal>> source) { throw null; }
-        public static System.Nullable<double> Average(this System.Linq.ParallelQuery<System.Nullable<double>> source) { throw null; }
-        public static System.Nullable<double> Average(this System.Linq.ParallelQuery<System.Nullable<int>> source) { throw null; }
-        public static System.Nullable<double> Average(this System.Linq.ParallelQuery<System.Nullable<long>> source) { throw null; }
-        public static System.Nullable<float> Average(this System.Linq.ParallelQuery<System.Nullable<float>> source) { throw null; }
-        public static float Average(this System.Linq.ParallelQuery<float> source) { throw null; }
-        public static decimal Average<TSource>(this System.Linq.ParallelQuery<TSource> source, System.Func<TSource, decimal> selector) { throw null; }
-        public static double Average<TSource>(this System.Linq.ParallelQuery<TSource> source, System.Func<TSource, double> selector) { throw null; }
-        public static double Average<TSource>(this System.Linq.ParallelQuery<TSource> source, System.Func<TSource, int> selector) { throw null; }
-        public static double Average<TSource>(this System.Linq.ParallelQuery<TSource> source, System.Func<TSource, long> selector) { throw null; }
-        public static System.Nullable<decimal> Average<TSource>(this System.Linq.ParallelQuery<TSource> source, System.Func<TSource, System.Nullable<decimal>> selector) { throw null; }
-        public static System.Nullable<double> Average<TSource>(this System.Linq.ParallelQuery<TSource> source, System.Func<TSource, System.Nullable<double>> selector) { throw null; }
-        public static System.Nullable<double> Average<TSource>(this System.Linq.ParallelQuery<TSource> source, System.Func<TSource, System.Nullable<int>> selector) { throw null; }
-        public static System.Nullable<double> Average<TSource>(this System.Linq.ParallelQuery<TSource> source, System.Func<TSource, System.Nullable<long>> selector) { throw null; }
-        public static System.Nullable<float> Average<TSource>(this System.Linq.ParallelQuery<TSource> source, System.Func<TSource, System.Nullable<float>> selector) { throw null; }
-        public static float Average<TSource>(this System.Linq.ParallelQuery<TSource> source, System.Func<TSource, float> selector) { throw null; }
-        public static System.Linq.ParallelQuery<TResult> Cast<TResult>(this System.Linq.ParallelQuery source) { throw null; }
-        [System.ObsoleteAttribute("The second data source of a binary operator must be of type System.Linq.ParallelQuery<T> rather than System.Collections.Generic.IEnumerable<T>. To fix this problem, use the AsParallel() extension method to convert the right data source to System.Linq.ParallelQuery<T>.")]
-        public static System.Linq.ParallelQuery<TSource> Concat<TSource>(this System.Linq.ParallelQuery<TSource> first, System.Collections.Generic.IEnumerable<TSource> second) { throw null; }
-        public static System.Linq.ParallelQuery<TSource> Concat<TSource>(this System.Linq.ParallelQuery<TSource> first, System.Linq.ParallelQuery<TSource> second) { throw null; }
-        public static bool Contains<TSource>(this System.Linq.ParallelQuery<TSource> source, TSource value) { throw null; }
-        public static bool Contains<TSource>(this System.Linq.ParallelQuery<TSource> source, TSource value, System.Collections.Generic.IEqualityComparer<TSource> comparer) { throw null; }
-        public static int Count<TSource>(this System.Linq.ParallelQuery<TSource> source) { throw null; }
-        public static int Count<TSource>(this System.Linq.ParallelQuery<TSource> source, System.Func<TSource, bool> predicate) { throw null; }
-        public static System.Linq.ParallelQuery<TSource> DefaultIfEmpty<TSource>(this System.Linq.ParallelQuery<TSource> source) { throw null; }
-        public static System.Linq.ParallelQuery<TSource> DefaultIfEmpty<TSource>(this System.Linq.ParallelQuery<TSource> source, TSource defaultValue) { throw null; }
-        public static System.Linq.ParallelQuery<TSource> Distinct<TSource>(this System.Linq.ParallelQuery<TSource> source) { throw null; }
-        public static System.Linq.ParallelQuery<TSource> Distinct<TSource>(this System.Linq.ParallelQuery<TSource> source, System.Collections.Generic.IEqualityComparer<TSource> comparer) { throw null; }
-        public static TSource ElementAtOrDefault<TSource>(this System.Linq.ParallelQuery<TSource> source, int index) { throw null; }
-        public static TSource ElementAt<TSource>(this System.Linq.ParallelQuery<TSource> source, int index) { throw null; }
-        public static System.Linq.ParallelQuery<TResult> Empty<TResult>() { throw null; }
-        [System.ObsoleteAttribute("The second data source of a binary operator must be of type System.Linq.ParallelQuery<T> rather than System.Collections.Generic.IEnumerable<T>. To fix this problem, use the AsParallel() extension method to convert the right data source to System.Linq.ParallelQuery<T>.")]
-        public static System.Linq.ParallelQuery<TSource> Except<TSource>(this System.Linq.ParallelQuery<TSource> first, System.Collections.Generic.IEnumerable<TSource> second) { throw null; }
-        [System.ObsoleteAttribute("The second data source of a binary operator must be of type System.Linq.ParallelQuery<T> rather than System.Collections.Generic.IEnumerable<T>. To fix this problem, use the AsParallel() extension method to convert the right data source to System.Linq.ParallelQuery<T>.")]
-        public static System.Linq.ParallelQuery<TSource> Except<TSource>(this System.Linq.ParallelQuery<TSource> first, System.Collections.Generic.IEnumerable<TSource> second, System.Collections.Generic.IEqualityComparer<TSource> comparer) { throw null; }
-        public static System.Linq.ParallelQuery<TSource> Except<TSource>(this System.Linq.ParallelQuery<TSource> first, System.Linq.ParallelQuery<TSource> second) { throw null; }
-        public static System.Linq.ParallelQuery<TSource> Except<TSource>(this System.Linq.ParallelQuery<TSource> first, System.Linq.ParallelQuery<TSource> second, System.Collections.Generic.IEqualityComparer<TSource> comparer) { throw null; }
-        public static TSource FirstOrDefault<TSource>(this System.Linq.ParallelQuery<TSource> source) { throw null; }
-        public static TSource FirstOrDefault<TSource>(this System.Linq.ParallelQuery<TSource> source, System.Func<TSource, bool> predicate) { throw null; }
-        public static TSource First<TSource>(this System.Linq.ParallelQuery<TSource> source) { throw null; }
-        public static TSource First<TSource>(this System.Linq.ParallelQuery<TSource> source, System.Func<TSource, bool> predicate) { throw null; }
-        public static void ForAll<TSource>(this System.Linq.ParallelQuery<TSource> source, System.Action<TSource> action) { }
-        public static System.Linq.ParallelQuery<System.Linq.IGrouping<TKey, TSource>> GroupBy<TSource, TKey>(this System.Linq.ParallelQuery<TSource> source, System.Func<TSource, TKey> keySelector) { throw null; }
-        public static System.Linq.ParallelQuery<System.Linq.IGrouping<TKey, TSource>> GroupBy<TSource, TKey>(this System.Linq.ParallelQuery<TSource> source, System.Func<TSource, TKey> keySelector, System.Collections.Generic.IEqualityComparer<TKey> comparer) { throw null; }
-        public static System.Linq.ParallelQuery<System.Linq.IGrouping<TKey, TElement>> GroupBy<TSource, TKey, TElement>(this System.Linq.ParallelQuery<TSource> source, System.Func<TSource, TKey> keySelector, System.Func<TSource, TElement> elementSelector) { throw null; }
-        public static System.Linq.ParallelQuery<System.Linq.IGrouping<TKey, TElement>> GroupBy<TSource, TKey, TElement>(this System.Linq.ParallelQuery<TSource> source, System.Func<TSource, TKey> keySelector, System.Func<TSource, TElement> elementSelector, System.Collections.Generic.IEqualityComparer<TKey> comparer) { throw null; }
-        public static System.Linq.ParallelQuery<TResult> GroupBy<TSource, TKey, TResult>(this System.Linq.ParallelQuery<TSource> source, System.Func<TSource, TKey> keySelector, System.Func<TKey, System.Collections.Generic.IEnumerable<TSource>, TResult> resultSelector) { throw null; }
-        public static System.Linq.ParallelQuery<TResult> GroupBy<TSource, TKey, TResult>(this System.Linq.ParallelQuery<TSource> source, System.Func<TSource, TKey> keySelector, System.Func<TKey, System.Collections.Generic.IEnumerable<TSource>, TResult> resultSelector, System.Collections.Generic.IEqualityComparer<TKey> comparer) { throw null; }
-        public static System.Linq.ParallelQuery<TResult> GroupBy<TSource, TKey, TElement, TResult>(this System.Linq.ParallelQuery<TSource> source, System.Func<TSource, TKey> keySelector, System.Func<TSource, TElement> elementSelector, System.Func<TKey, System.Collections.Generic.IEnumerable<TElement>, TResult> resultSelector) { throw null; }
-        public static System.Linq.ParallelQuery<TResult> GroupBy<TSource, TKey, TElement, TResult>(this System.Linq.ParallelQuery<TSource> source, System.Func<TSource, TKey> keySelector, System.Func<TSource, TElement> elementSelector, System.Func<TKey, System.Collections.Generic.IEnumerable<TElement>, TResult> resultSelector, System.Collections.Generic.IEqualityComparer<TKey> comparer) { throw null; }
-        [System.ObsoleteAttribute("The second data source of a binary operator must be of type System.Linq.ParallelQuery<T> rather than System.Collections.Generic.IEnumerable<T>. To fix this problem, use the AsParallel() extension method to convert the right data source to System.Linq.ParallelQuery<T>.")]
-        public static System.Linq.ParallelQuery<TResult> GroupJoin<TOuter, TInner, TKey, TResult>(this System.Linq.ParallelQuery<TOuter> outer, System.Collections.Generic.IEnumerable<TInner> inner, System.Func<TOuter, TKey> outerKeySelector, System.Func<TInner, TKey> innerKeySelector, System.Func<TOuter, System.Collections.Generic.IEnumerable<TInner>, TResult> resultSelector) { throw null; }
-        [System.ObsoleteAttribute("The second data source of a binary operator must be of type System.Linq.ParallelQuery<T> rather than System.Collections.Generic.IEnumerable<T>. To fix this problem, use the AsParallel() extension method to convert the right data source to System.Linq.ParallelQuery<T>.")]
-        public static System.Linq.ParallelQuery<TResult> GroupJoin<TOuter, TInner, TKey, TResult>(this System.Linq.ParallelQuery<TOuter> outer, System.Collections.Generic.IEnumerable<TInner> inner, System.Func<TOuter, TKey> outerKeySelector, System.Func<TInner, TKey> innerKeySelector, System.Func<TOuter, System.Collections.Generic.IEnumerable<TInner>, TResult> resultSelector, System.Collections.Generic.IEqualityComparer<TKey> comparer) { throw null; }
-        public static System.Linq.ParallelQuery<TResult> GroupJoin<TOuter, TInner, TKey, TResult>(this System.Linq.ParallelQuery<TOuter> outer, System.Linq.ParallelQuery<TInner> inner, System.Func<TOuter, TKey> outerKeySelector, System.Func<TInner, TKey> innerKeySelector, System.Func<TOuter, System.Collections.Generic.IEnumerable<TInner>, TResult> resultSelector) { throw null; }
-        public static System.Linq.ParallelQuery<TResult> GroupJoin<TOuter, TInner, TKey, TResult>(this System.Linq.ParallelQuery<TOuter> outer, System.Linq.ParallelQuery<TInner> inner, System.Func<TOuter, TKey> outerKeySelector, System.Func<TInner, TKey> innerKeySelector, System.Func<TOuter, System.Collections.Generic.IEnumerable<TInner>, TResult> resultSelector, System.Collections.Generic.IEqualityComparer<TKey> comparer) { throw null; }
-        [System.ObsoleteAttribute("The second data source of a binary operator must be of type System.Linq.ParallelQuery<T> rather than System.Collections.Generic.IEnumerable<T>. To fix this problem, use the AsParallel() extension method to convert the right data source to System.Linq.ParallelQuery<T>.")]
-        public static System.Linq.ParallelQuery<TSource> Intersect<TSource>(this System.Linq.ParallelQuery<TSource> first, System.Collections.Generic.IEnumerable<TSource> second) { throw null; }
-        [System.ObsoleteAttribute("The second data source of a binary operator must be of type System.Linq.ParallelQuery<T> rather than System.Collections.Generic.IEnumerable<T>. To fix this problem, use the AsParallel() extension method to convert the right data source to System.Linq.ParallelQuery<T>.")]
-        public static System.Linq.ParallelQuery<TSource> Intersect<TSource>(this System.Linq.ParallelQuery<TSource> first, System.Collections.Generic.IEnumerable<TSource> second, System.Collections.Generic.IEqualityComparer<TSource> comparer) { throw null; }
-        public static System.Linq.ParallelQuery<TSource> Intersect<TSource>(this System.Linq.ParallelQuery<TSource> first, System.Linq.ParallelQuery<TSource> second) { throw null; }
-        public static System.Linq.ParallelQuery<TSource> Intersect<TSource>(this System.Linq.ParallelQuery<TSource> first, System.Linq.ParallelQuery<TSource> second, System.Collections.Generic.IEqualityComparer<TSource> comparer) { throw null; }
-        [System.ObsoleteAttribute("The second data source of a binary operator must be of type System.Linq.ParallelQuery<T> rather than System.Collections.Generic.IEnumerable<T>. To fix this problem, use the AsParallel() extension method to convert the right data source to System.Linq.ParallelQuery<T>.")]
-        public static System.Linq.ParallelQuery<TResult> Join<TOuter, TInner, TKey, TResult>(this System.Linq.ParallelQuery<TOuter> outer, System.Collections.Generic.IEnumerable<TInner> inner, System.Func<TOuter, TKey> outerKeySelector, System.Func<TInner, TKey> innerKeySelector, System.Func<TOuter, TInner, TResult> resultSelector) { throw null; }
-        [System.ObsoleteAttribute("The second data source of a binary operator must be of type System.Linq.ParallelQuery<T> rather than System.Collections.Generic.IEnumerable<T>. To fix this problem, use the AsParallel() extension method to convert the right data source to System.Linq.ParallelQuery<T>.")]
-        public static System.Linq.ParallelQuery<TResult> Join<TOuter, TInner, TKey, TResult>(this System.Linq.ParallelQuery<TOuter> outer, System.Collections.Generic.IEnumerable<TInner> inner, System.Func<TOuter, TKey> outerKeySelector, System.Func<TInner, TKey> innerKeySelector, System.Func<TOuter, TInner, TResult> resultSelector, System.Collections.Generic.IEqualityComparer<TKey> comparer) { throw null; }
-        public static System.Linq.ParallelQuery<TResult> Join<TOuter, TInner, TKey, TResult>(this System.Linq.ParallelQuery<TOuter> outer, System.Linq.ParallelQuery<TInner> inner, System.Func<TOuter, TKey> outerKeySelector, System.Func<TInner, TKey> innerKeySelector, System.Func<TOuter, TInner, TResult> resultSelector) { throw null; }
-        public static System.Linq.ParallelQuery<TResult> Join<TOuter, TInner, TKey, TResult>(this System.Linq.ParallelQuery<TOuter> outer, System.Linq.ParallelQuery<TInner> inner, System.Func<TOuter, TKey> outerKeySelector, System.Func<TInner, TKey> innerKeySelector, System.Func<TOuter, TInner, TResult> resultSelector, System.Collections.Generic.IEqualityComparer<TKey> comparer) { throw null; }
-        public static TSource LastOrDefault<TSource>(this System.Linq.ParallelQuery<TSource> source) { throw null; }
-        public static TSource LastOrDefault<TSource>(this System.Linq.ParallelQuery<TSource> source, System.Func<TSource, bool> predicate) { throw null; }
-        public static TSource Last<TSource>(this System.Linq.ParallelQuery<TSource> source) { throw null; }
-        public static TSource Last<TSource>(this System.Linq.ParallelQuery<TSource> source, System.Func<TSource, bool> predicate) { throw null; }
-        public static long LongCount<TSource>(this System.Linq.ParallelQuery<TSource> source) { throw null; }
-        public static long LongCount<TSource>(this System.Linq.ParallelQuery<TSource> source, System.Func<TSource, bool> predicate) { throw null; }
-        public static decimal Max(this System.Linq.ParallelQuery<decimal> source) { throw null; }
-        public static double Max(this System.Linq.ParallelQuery<double> source) { throw null; }
-        public static int Max(this System.Linq.ParallelQuery<int> source) { throw null; }
-        public static long Max(this System.Linq.ParallelQuery<long> source) { throw null; }
-        public static System.Nullable<decimal> Max(this System.Linq.ParallelQuery<System.Nullable<decimal>> source) { throw null; }
-        public static System.Nullable<double> Max(this System.Linq.ParallelQuery<System.Nullable<double>> source) { throw null; }
-        public static System.Nullable<int> Max(this System.Linq.ParallelQuery<System.Nullable<int>> source) { throw null; }
-        public static System.Nullable<long> Max(this System.Linq.ParallelQuery<System.Nullable<long>> source) { throw null; }
-        public static System.Nullable<float> Max(this System.Linq.ParallelQuery<System.Nullable<float>> source) { throw null; }
-        public static float Max(this System.Linq.ParallelQuery<float> source) { throw null; }
-        public static TSource Max<TSource>(this System.Linq.ParallelQuery<TSource> source) { throw null; }
-        public static decimal Max<TSource>(this System.Linq.ParallelQuery<TSource> source, System.Func<TSource, decimal> selector) { throw null; }
-        public static double Max<TSource>(this System.Linq.ParallelQuery<TSource> source, System.Func<TSource, double> selector) { throw null; }
-        public static int Max<TSource>(this System.Linq.ParallelQuery<TSource> source, System.Func<TSource, int> selector) { throw null; }
-        public static long Max<TSource>(this System.Linq.ParallelQuery<TSource> source, System.Func<TSource, long> selector) { throw null; }
-        public static System.Nullable<decimal> Max<TSource>(this System.Linq.ParallelQuery<TSource> source, System.Func<TSource, System.Nullable<decimal>> selector) { throw null; }
-        public static System.Nullable<double> Max<TSource>(this System.Linq.ParallelQuery<TSource> source, System.Func<TSource, System.Nullable<double>> selector) { throw null; }
-        public static System.Nullable<int> Max<TSource>(this System.Linq.ParallelQuery<TSource> source, System.Func<TSource, System.Nullable<int>> selector) { throw null; }
-        public static System.Nullable<long> Max<TSource>(this System.Linq.ParallelQuery<TSource> source, System.Func<TSource, System.Nullable<long>> selector) { throw null; }
-        public static System.Nullable<float> Max<TSource>(this System.Linq.ParallelQuery<TSource> source, System.Func<TSource, System.Nullable<float>> selector) { throw null; }
-        public static float Max<TSource>(this System.Linq.ParallelQuery<TSource> source, System.Func<TSource, float> selector) { throw null; }
-        public static TResult Max<TSource, TResult>(this System.Linq.ParallelQuery<TSource> source, System.Func<TSource, TResult> selector) { throw null; }
-        public static decimal Min(this System.Linq.ParallelQuery<decimal> source) { throw null; }
-        public static double Min(this System.Linq.ParallelQuery<double> source) { throw null; }
-        public static int Min(this System.Linq.ParallelQuery<int> source) { throw null; }
-        public static long Min(this System.Linq.ParallelQuery<long> source) { throw null; }
-        public static System.Nullable<decimal> Min(this System.Linq.ParallelQuery<System.Nullable<decimal>> source) { throw null; }
-        public static System.Nullable<double> Min(this System.Linq.ParallelQuery<System.Nullable<double>> source) { throw null; }
-        public static System.Nullable<int> Min(this System.Linq.ParallelQuery<System.Nullable<int>> source) { throw null; }
-        public static System.Nullable<long> Min(this System.Linq.ParallelQuery<System.Nullable<long>> source) { throw null; }
-        public static System.Nullable<float> Min(this System.Linq.ParallelQuery<System.Nullable<float>> source) { throw null; }
-        public static float Min(this System.Linq.ParallelQuery<float> source) { throw null; }
-        public static TSource Min<TSource>(this System.Linq.ParallelQuery<TSource> source) { throw null; }
-        public static decimal Min<TSource>(this System.Linq.ParallelQuery<TSource> source, System.Func<TSource, decimal> selector) { throw null; }
-        public static double Min<TSource>(this System.Linq.ParallelQuery<TSource> source, System.Func<TSource, double> selector) { throw null; }
-        public static int Min<TSource>(this System.Linq.ParallelQuery<TSource> source, System.Func<TSource, int> selector) { throw null; }
-        public static long Min<TSource>(this System.Linq.ParallelQuery<TSource> source, System.Func<TSource, long> selector) { throw null; }
-        public static System.Nullable<decimal> Min<TSource>(this System.Linq.ParallelQuery<TSource> source, System.Func<TSource, System.Nullable<decimal>> selector) { throw null; }
-        public static System.Nullable<double> Min<TSource>(this System.Linq.ParallelQuery<TSource> source, System.Func<TSource, System.Nullable<double>> selector) { throw null; }
-        public static System.Nullable<int> Min<TSource>(this System.Linq.ParallelQuery<TSource> source, System.Func<TSource, System.Nullable<int>> selector) { throw null; }
-        public static System.Nullable<long> Min<TSource>(this System.Linq.ParallelQuery<TSource> source, System.Func<TSource, System.Nullable<long>> selector) { throw null; }
-        public static System.Nullable<float> Min<TSource>(this System.Linq.ParallelQuery<TSource> source, System.Func<TSource, System.Nullable<float>> selector) { throw null; }
-        public static float Min<TSource>(this System.Linq.ParallelQuery<TSource> source, System.Func<TSource, float> selector) { throw null; }
-        public static TResult Min<TSource, TResult>(this System.Linq.ParallelQuery<TSource> source, System.Func<TSource, TResult> selector) { throw null; }
-        public static System.Linq.ParallelQuery<TResult> OfType<TResult>(this System.Linq.ParallelQuery source) { throw null; }
-        public static System.Linq.OrderedParallelQuery<TSource> OrderByDescending<TSource, TKey>(this System.Linq.ParallelQuery<TSource> source, System.Func<TSource, TKey> keySelector) { throw null; }
-        public static System.Linq.OrderedParallelQuery<TSource> OrderByDescending<TSource, TKey>(this System.Linq.ParallelQuery<TSource> source, System.Func<TSource, TKey> keySelector, System.Collections.Generic.IComparer<TKey> comparer) { throw null; }
-        public static System.Linq.OrderedParallelQuery<TSource> OrderBy<TSource, TKey>(this System.Linq.ParallelQuery<TSource> source, System.Func<TSource, TKey> keySelector) { throw null; }
-        public static System.Linq.OrderedParallelQuery<TSource> OrderBy<TSource, TKey>(this System.Linq.ParallelQuery<TSource> source, System.Func<TSource, TKey> keySelector, System.Collections.Generic.IComparer<TKey> comparer) { throw null; }
-        public static System.Linq.ParallelQuery<int> Range(int start, int count) { throw null; }
-        public static System.Linq.ParallelQuery<TResult> Repeat<TResult>(TResult element, int count) { throw null; }
-        public static System.Linq.ParallelQuery<TSource> Reverse<TSource>(this System.Linq.ParallelQuery<TSource> source) { throw null; }
-        public static System.Linq.ParallelQuery<TResult> SelectMany<TSource, TResult>(this System.Linq.ParallelQuery<TSource> source, System.Func<TSource, System.Collections.Generic.IEnumerable<TResult>> selector) { throw null; }
-        public static System.Linq.ParallelQuery<TResult> SelectMany<TSource, TResult>(this System.Linq.ParallelQuery<TSource> source, System.Func<TSource, int, System.Collections.Generic.IEnumerable<TResult>> selector) { throw null; }
-        public static System.Linq.ParallelQuery<TResult> SelectMany<TSource, TCollection, TResult>(this System.Linq.ParallelQuery<TSource> source, System.Func<TSource, System.Collections.Generic.IEnumerable<TCollection>> collectionSelector, System.Func<TSource, TCollection, TResult> resultSelector) { throw null; }
-        public static System.Linq.ParallelQuery<TResult> SelectMany<TSource, TCollection, TResult>(this System.Linq.ParallelQuery<TSource> source, System.Func<TSource, int, System.Collections.Generic.IEnumerable<TCollection>> collectionSelector, System.Func<TSource, TCollection, TResult> resultSelector) { throw null; }
-        public static System.Linq.ParallelQuery<TResult> Select<TSource, TResult>(this System.Linq.ParallelQuery<TSource> source, System.Func<TSource, int, TResult> selector) { throw null; }
-        public static System.Linq.ParallelQuery<TResult> Select<TSource, TResult>(this System.Linq.ParallelQuery<TSource> source, System.Func<TSource, TResult> selector) { throw null; }
-        [System.ObsoleteAttribute("The second data source of a binary operator must be of type System.Linq.ParallelQuery<T> rather than System.Collections.Generic.IEnumerable<T>. To fix this problem, use the AsParallel() extension method to convert the right data source to System.Linq.ParallelQuery<T>.")]
-        public static bool SequenceEqual<TSource>(this System.Linq.ParallelQuery<TSource> first, System.Collections.Generic.IEnumerable<TSource> second) { throw null; }
-        [System.ObsoleteAttribute("The second data source of a binary operator must be of type System.Linq.ParallelQuery<T> rather than System.Collections.Generic.IEnumerable<T>. To fix this problem, use the AsParallel() extension method to convert the right data source to System.Linq.ParallelQuery<T>.")]
-        public static bool SequenceEqual<TSource>(this System.Linq.ParallelQuery<TSource> first, System.Collections.Generic.IEnumerable<TSource> second, System.Collections.Generic.IEqualityComparer<TSource> comparer) { throw null; }
-        public static bool SequenceEqual<TSource>(this System.Linq.ParallelQuery<TSource> first, System.Linq.ParallelQuery<TSource> second) { throw null; }
-        public static bool SequenceEqual<TSource>(this System.Linq.ParallelQuery<TSource> first, System.Linq.ParallelQuery<TSource> second, System.Collections.Generic.IEqualityComparer<TSource> comparer) { throw null; }
-        public static TSource SingleOrDefault<TSource>(this System.Linq.ParallelQuery<TSource> source) { throw null; }
-        public static TSource SingleOrDefault<TSource>(this System.Linq.ParallelQuery<TSource> source, System.Func<TSource, bool> predicate) { throw null; }
-        public static TSource Single<TSource>(this System.Linq.ParallelQuery<TSource> source) { throw null; }
-        public static TSource Single<TSource>(this System.Linq.ParallelQuery<TSource> source, System.Func<TSource, bool> predicate) { throw null; }
-        public static System.Linq.ParallelQuery<TSource> SkipWhile<TSource>(this System.Linq.ParallelQuery<TSource> source, System.Func<TSource, bool> predicate) { throw null; }
-        public static System.Linq.ParallelQuery<TSource> SkipWhile<TSource>(this System.Linq.ParallelQuery<TSource> source, System.Func<TSource, int, bool> predicate) { throw null; }
-        public static System.Linq.ParallelQuery<TSource> Skip<TSource>(this System.Linq.ParallelQuery<TSource> source, int count) { throw null; }
-        public static decimal Sum(this System.Linq.ParallelQuery<decimal> source) { throw null; }
-        public static double Sum(this System.Linq.ParallelQuery<double> source) { throw null; }
-        public static int Sum(this System.Linq.ParallelQuery<int> source) { throw null; }
-        public static long Sum(this System.Linq.ParallelQuery<long> source) { throw null; }
-        public static System.Nullable<decimal> Sum(this System.Linq.ParallelQuery<System.Nullable<decimal>> source) { throw null; }
-        public static System.Nullable<double> Sum(this System.Linq.ParallelQuery<System.Nullable<double>> source) { throw null; }
-        public static System.Nullable<int> Sum(this System.Linq.ParallelQuery<System.Nullable<int>> source) { throw null; }
-        public static System.Nullable<long> Sum(this System.Linq.ParallelQuery<System.Nullable<long>> source) { throw null; }
-        public static System.Nullable<float> Sum(this System.Linq.ParallelQuery<System.Nullable<float>> source) { throw null; }
-        public static float Sum(this System.Linq.ParallelQuery<float> source) { throw null; }
-        public static decimal Sum<TSource>(this System.Linq.ParallelQuery<TSource> source, System.Func<TSource, decimal> selector) { throw null; }
-        public static double Sum<TSource>(this System.Linq.ParallelQuery<TSource> source, System.Func<TSource, double> selector) { throw null; }
-        public static int Sum<TSource>(this System.Linq.ParallelQuery<TSource> source, System.Func<TSource, int> selector) { throw null; }
-        public static long Sum<TSource>(this System.Linq.ParallelQuery<TSource> source, System.Func<TSource, long> selector) { throw null; }
-        public static System.Nullable<decimal> Sum<TSource>(this System.Linq.ParallelQuery<TSource> source, System.Func<TSource, System.Nullable<decimal>> selector) { throw null; }
-        public static System.Nullable<double> Sum<TSource>(this System.Linq.ParallelQuery<TSource> source, System.Func<TSource, System.Nullable<double>> selector) { throw null; }
-        public static System.Nullable<int> Sum<TSource>(this System.Linq.ParallelQuery<TSource> source, System.Func<TSource, System.Nullable<int>> selector) { throw null; }
-        public static System.Nullable<long> Sum<TSource>(this System.Linq.ParallelQuery<TSource> source, System.Func<TSource, System.Nullable<long>> selector) { throw null; }
-        public static System.Nullable<float> Sum<TSource>(this System.Linq.ParallelQuery<TSource> source, System.Func<TSource, System.Nullable<float>> selector) { throw null; }
-        public static float Sum<TSource>(this System.Linq.ParallelQuery<TSource> source, System.Func<TSource, float> selector) { throw null; }
-        public static System.Linq.ParallelQuery<TSource> TakeWhile<TSource>(this System.Linq.ParallelQuery<TSource> source, System.Func<TSource, bool> predicate) { throw null; }
-        public static System.Linq.ParallelQuery<TSource> TakeWhile<TSource>(this System.Linq.ParallelQuery<TSource> source, System.Func<TSource, int, bool> predicate) { throw null; }
-        public static System.Linq.ParallelQuery<TSource> Take<TSource>(this System.Linq.ParallelQuery<TSource> source, int count) { throw null; }
-        public static System.Linq.OrderedParallelQuery<TSource> ThenByDescending<TSource, TKey>(this System.Linq.OrderedParallelQuery<TSource> source, System.Func<TSource, TKey> keySelector) { throw null; }
-        public static System.Linq.OrderedParallelQuery<TSource> ThenByDescending<TSource, TKey>(this System.Linq.OrderedParallelQuery<TSource> source, System.Func<TSource, TKey> keySelector, System.Collections.Generic.IComparer<TKey> comparer) { throw null; }
-        public static System.Linq.OrderedParallelQuery<TSource> ThenBy<TSource, TKey>(this System.Linq.OrderedParallelQuery<TSource> source, System.Func<TSource, TKey> keySelector) { throw null; }
-        public static System.Linq.OrderedParallelQuery<TSource> ThenBy<TSource, TKey>(this System.Linq.OrderedParallelQuery<TSource> source, System.Func<TSource, TKey> keySelector, System.Collections.Generic.IComparer<TKey> comparer) { throw null; }
-        public static TSource[] ToArray<TSource>(this System.Linq.ParallelQuery<TSource> source) { throw null; }
-        public static System.Collections.Generic.Dictionary<TKey, TSource> ToDictionary<TSource, TKey>(this System.Linq.ParallelQuery<TSource> source, System.Func<TSource, TKey> keySelector) { throw null; }
-        public static System.Collections.Generic.Dictionary<TKey, TSource> ToDictionary<TSource, TKey>(this System.Linq.ParallelQuery<TSource> source, System.Func<TSource, TKey> keySelector, System.Collections.Generic.IEqualityComparer<TKey> comparer) { throw null; }
-        public static System.Collections.Generic.Dictionary<TKey, TElement> ToDictionary<TSource, TKey, TElement>(this System.Linq.ParallelQuery<TSource> source, System.Func<TSource, TKey> keySelector, System.Func<TSource, TElement> elementSelector) { throw null; }
-        public static System.Collections.Generic.Dictionary<TKey, TElement> ToDictionary<TSource, TKey, TElement>(this System.Linq.ParallelQuery<TSource> source, System.Func<TSource, TKey> keySelector, System.Func<TSource, TElement> elementSelector, System.Collections.Generic.IEqualityComparer<TKey> comparer) { throw null; }
-        public static System.Collections.Generic.List<TSource> ToList<TSource>(this System.Linq.ParallelQuery<TSource> source) { throw null; }
-        public static System.Linq.ILookup<TKey, TSource> ToLookup<TSource, TKey>(this System.Linq.ParallelQuery<TSource> source, System.Func<TSource, TKey> keySelector) { throw null; }
-        public static System.Linq.ILookup<TKey, TSource> ToLookup<TSource, TKey>(this System.Linq.ParallelQuery<TSource> source, System.Func<TSource, TKey> keySelector, System.Collections.Generic.IEqualityComparer<TKey> comparer) { throw null; }
-        public static System.Linq.ILookup<TKey, TElement> ToLookup<TSource, TKey, TElement>(this System.Linq.ParallelQuery<TSource> source, System.Func<TSource, TKey> keySelector, System.Func<TSource, TElement> elementSelector) { throw null; }
-        public static System.Linq.ILookup<TKey, TElement> ToLookup<TSource, TKey, TElement>(this System.Linq.ParallelQuery<TSource> source, System.Func<TSource, TKey> keySelector, System.Func<TSource, TElement> elementSelector, System.Collections.Generic.IEqualityComparer<TKey> comparer) { throw null; }
-        [System.ObsoleteAttribute("The second data source of a binary operator must be of type System.Linq.ParallelQuery<T> rather than System.Collections.Generic.IEnumerable<T>. To fix this problem, use the AsParallel() extension method to convert the right data source to System.Linq.ParallelQuery<T>.")]
-        public static System.Linq.ParallelQuery<TSource> Union<TSource>(this System.Linq.ParallelQuery<TSource> first, System.Collections.Generic.IEnumerable<TSource> second) { throw null; }
-        [System.ObsoleteAttribute("The second data source of a binary operator must be of type System.Linq.ParallelQuery<T> rather than System.Collections.Generic.IEnumerable<T>. To fix this problem, use the AsParallel() extension method to convert the right data source to System.Linq.ParallelQuery<T>.")]
-        public static System.Linq.ParallelQuery<TSource> Union<TSource>(this System.Linq.ParallelQuery<TSource> first, System.Collections.Generic.IEnumerable<TSource> second, System.Collections.Generic.IEqualityComparer<TSource> comparer) { throw null; }
-        public static System.Linq.ParallelQuery<TSource> Union<TSource>(this System.Linq.ParallelQuery<TSource> first, System.Linq.ParallelQuery<TSource> second) { throw null; }
-        public static System.Linq.ParallelQuery<TSource> Union<TSource>(this System.Linq.ParallelQuery<TSource> first, System.Linq.ParallelQuery<TSource> second, System.Collections.Generic.IEqualityComparer<TSource> comparer) { throw null; }
-        public static System.Linq.ParallelQuery<TSource> Where<TSource>(this System.Linq.ParallelQuery<TSource> source, System.Func<TSource, bool> predicate) { throw null; }
-        public static System.Linq.ParallelQuery<TSource> Where<TSource>(this System.Linq.ParallelQuery<TSource> source, System.Func<TSource, int, bool> predicate) { throw null; }
-        public static System.Linq.ParallelQuery<TSource> WithCancellation<TSource>(this System.Linq.ParallelQuery<TSource> source, System.Threading.CancellationToken cancellationToken) { throw null; }
-        public static System.Linq.ParallelQuery<TSource> WithDegreeOfParallelism<TSource>(this System.Linq.ParallelQuery<TSource> source, int degreeOfParallelism) { throw null; }
-        public static System.Linq.ParallelQuery<TSource> WithExecutionMode<TSource>(this System.Linq.ParallelQuery<TSource> source, System.Linq.ParallelExecutionMode executionMode) { throw null; }
-        public static System.Linq.ParallelQuery<TSource> WithMergeOptions<TSource>(this System.Linq.ParallelQuery<TSource> source, System.Linq.ParallelMergeOptions mergeOptions) { throw null; }
-        [System.ObsoleteAttribute("The second data source of a binary operator must be of type System.Linq.ParallelQuery<T> rather than System.Collections.Generic.IEnumerable<T>. To fix this problem, use the AsParallel() extension method to convert the right data source to System.Linq.ParallelQuery<T>.")]
-        public static System.Linq.ParallelQuery<TResult> Zip<TFirst, TSecond, TResult>(this System.Linq.ParallelQuery<TFirst> first, System.Collections.Generic.IEnumerable<TSecond> second, System.Func<TFirst, TSecond, TResult> resultSelector) { throw null; }
-        public static System.Linq.ParallelQuery<TResult> Zip<TFirst, TSecond, TResult>(this System.Linq.ParallelQuery<TFirst> first, System.Linq.ParallelQuery<TSecond> second, System.Func<TFirst, TSecond, TResult> resultSelector) { throw null; }
+        public static TSource Aggregate<TSource>(this ParallelQuery<TSource> source, Func<TSource, TSource, TSource> func) { throw null; }
+
+        public static TAccumulate Aggregate<TSource, TAccumulate>(this ParallelQuery<TSource> source, TAccumulate seed, Func<TAccumulate, TSource, TAccumulate> func) { throw null; }
+
+        public static TResult Aggregate<TSource, TAccumulate, TResult>(this ParallelQuery<TSource> source, TAccumulate seed, Func<TAccumulate, TSource, TAccumulate> updateAccumulatorFunc, Func<TAccumulate, TAccumulate, TAccumulate> combineAccumulatorsFunc, Func<TAccumulate, TResult> resultSelector) { throw null; }
+
+        public static TResult Aggregate<TSource, TAccumulate, TResult>(this ParallelQuery<TSource> source, TAccumulate seed, Func<TAccumulate, TSource, TAccumulate> func, Func<TAccumulate, TResult> resultSelector) { throw null; }
+
+        public static TResult Aggregate<TSource, TAccumulate, TResult>(this ParallelQuery<TSource> source, Func<TAccumulate> seedFactory, Func<TAccumulate, TSource, TAccumulate> updateAccumulatorFunc, Func<TAccumulate, TAccumulate, TAccumulate> combineAccumulatorsFunc, Func<TAccumulate, TResult> resultSelector) { throw null; }
+
+        public static bool All<TSource>(this ParallelQuery<TSource> source, Func<TSource, bool> predicate) { throw null; }
+
+        public static bool Any<TSource>(this ParallelQuery<TSource> source, Func<TSource, bool> predicate) { throw null; }
+
+        public static bool Any<TSource>(this ParallelQuery<TSource> source) { throw null; }
+
+        public static Collections.Generic.IEnumerable<TSource> AsEnumerable<TSource>(this ParallelQuery<TSource> source) { throw null; }
+
+        public static ParallelQuery AsOrdered(this ParallelQuery source) { throw null; }
+
+        public static ParallelQuery<TSource> AsOrdered<TSource>(this ParallelQuery<TSource> source) { throw null; }
+
+        public static ParallelQuery AsParallel(this Collections.IEnumerable source) { throw null; }
+
+        public static ParallelQuery<TSource> AsParallel<TSource>(this Collections.Concurrent.Partitioner<TSource> source) { throw null; }
+
+        public static ParallelQuery<TSource> AsParallel<TSource>(this Collections.Generic.IEnumerable<TSource> source) { throw null; }
+
+        public static Collections.Generic.IEnumerable<TSource> AsSequential<TSource>(this ParallelQuery<TSource> source) { throw null; }
+
+        public static ParallelQuery<TSource> AsUnordered<TSource>(this ParallelQuery<TSource> source) { throw null; }
+
+        public static decimal Average(this ParallelQuery<decimal> source) { throw null; }
+
+        public static double Average(this ParallelQuery<double> source) { throw null; }
+
+        public static double Average(this ParallelQuery<int> source) { throw null; }
+
+        public static double Average(this ParallelQuery<long> source) { throw null; }
+
+        public static decimal? Average(this ParallelQuery<decimal?> source) { throw null; }
+
+        public static double? Average(this ParallelQuery<double?> source) { throw null; }
+
+        public static double? Average(this ParallelQuery<int?> source) { throw null; }
+
+        public static double? Average(this ParallelQuery<long?> source) { throw null; }
+
+        public static float? Average(this ParallelQuery<float?> source) { throw null; }
+
+        public static float Average(this ParallelQuery<float> source) { throw null; }
+
+        public static decimal Average<TSource>(this ParallelQuery<TSource> source, Func<TSource, decimal> selector) { throw null; }
+
+        public static double Average<TSource>(this ParallelQuery<TSource> source, Func<TSource, double> selector) { throw null; }
+
+        public static double Average<TSource>(this ParallelQuery<TSource> source, Func<TSource, int> selector) { throw null; }
+
+        public static double Average<TSource>(this ParallelQuery<TSource> source, Func<TSource, long> selector) { throw null; }
+
+        public static decimal? Average<TSource>(this ParallelQuery<TSource> source, Func<TSource, decimal?> selector) { throw null; }
+
+        public static double? Average<TSource>(this ParallelQuery<TSource> source, Func<TSource, double?> selector) { throw null; }
+
+        public static double? Average<TSource>(this ParallelQuery<TSource> source, Func<TSource, int?> selector) { throw null; }
+
+        public static double? Average<TSource>(this ParallelQuery<TSource> source, Func<TSource, long?> selector) { throw null; }
+
+        public static float? Average<TSource>(this ParallelQuery<TSource> source, Func<TSource, float?> selector) { throw null; }
+
+        public static float Average<TSource>(this ParallelQuery<TSource> source, Func<TSource, float> selector) { throw null; }
+
+        public static ParallelQuery<TResult> Cast<TResult>(this ParallelQuery source) { throw null; }
+
+        [Obsolete("The second data source of a binary operator must be of type System.Linq.ParallelQuery<T> rather than System.Collections.Generic.IEnumerable<T>. To fix this problem, use the AsParallel() extension method to convert the right data source to System.Linq.ParallelQuery<T>.")]
+        public static ParallelQuery<TSource> Concat<TSource>(this ParallelQuery<TSource> first, Collections.Generic.IEnumerable<TSource> second) { throw null; }
+
+        public static ParallelQuery<TSource> Concat<TSource>(this ParallelQuery<TSource> first, ParallelQuery<TSource> second) { throw null; }
+
+        public static bool Contains<TSource>(this ParallelQuery<TSource> source, TSource value, Collections.Generic.IEqualityComparer<TSource> comparer) { throw null; }
+
+        public static bool Contains<TSource>(this ParallelQuery<TSource> source, TSource value) { throw null; }
+
+        public static int Count<TSource>(this ParallelQuery<TSource> source, Func<TSource, bool> predicate) { throw null; }
+
+        public static int Count<TSource>(this ParallelQuery<TSource> source) { throw null; }
+
+        public static ParallelQuery<TSource> DefaultIfEmpty<TSource>(this ParallelQuery<TSource> source, TSource defaultValue) { throw null; }
+
+        public static ParallelQuery<TSource> DefaultIfEmpty<TSource>(this ParallelQuery<TSource> source) { throw null; }
+
+        public static ParallelQuery<TSource> Distinct<TSource>(this ParallelQuery<TSource> source, Collections.Generic.IEqualityComparer<TSource> comparer) { throw null; }
+
+        public static ParallelQuery<TSource> Distinct<TSource>(this ParallelQuery<TSource> source) { throw null; }
+
+        public static TSource ElementAt<TSource>(this ParallelQuery<TSource> source, int index) { throw null; }
+
+        public static TSource ElementAtOrDefault<TSource>(this ParallelQuery<TSource> source, int index) { throw null; }
+
+        public static ParallelQuery<TResult> Empty<TResult>() { throw null; }
+
+        [Obsolete("The second data source of a binary operator must be of type System.Linq.ParallelQuery<T> rather than System.Collections.Generic.IEnumerable<T>. To fix this problem, use the AsParallel() extension method to convert the right data source to System.Linq.ParallelQuery<T>.")]
+        public static ParallelQuery<TSource> Except<TSource>(this ParallelQuery<TSource> first, Collections.Generic.IEnumerable<TSource> second, Collections.Generic.IEqualityComparer<TSource> comparer) { throw null; }
+
+        [Obsolete("The second data source of a binary operator must be of type System.Linq.ParallelQuery<T> rather than System.Collections.Generic.IEnumerable<T>. To fix this problem, use the AsParallel() extension method to convert the right data source to System.Linq.ParallelQuery<T>.")]
+        public static ParallelQuery<TSource> Except<TSource>(this ParallelQuery<TSource> first, Collections.Generic.IEnumerable<TSource> second) { throw null; }
+
+        public static ParallelQuery<TSource> Except<TSource>(this ParallelQuery<TSource> first, ParallelQuery<TSource> second, Collections.Generic.IEqualityComparer<TSource> comparer) { throw null; }
+
+        public static ParallelQuery<TSource> Except<TSource>(this ParallelQuery<TSource> first, ParallelQuery<TSource> second) { throw null; }
+
+        public static TSource First<TSource>(this ParallelQuery<TSource> source, Func<TSource, bool> predicate) { throw null; }
+
+        public static TSource First<TSource>(this ParallelQuery<TSource> source) { throw null; }
+
+        public static TSource FirstOrDefault<TSource>(this ParallelQuery<TSource> source, Func<TSource, bool> predicate) { throw null; }
+
+        public static TSource FirstOrDefault<TSource>(this ParallelQuery<TSource> source) { throw null; }
+
+        public static void ForAll<TSource>(this ParallelQuery<TSource> source, Action<TSource> action) { }
+
+        public static ParallelQuery<IGrouping<TKey, TSource>> GroupBy<TSource, TKey>(this ParallelQuery<TSource> source, Func<TSource, TKey> keySelector, Collections.Generic.IEqualityComparer<TKey> comparer) { throw null; }
+
+        public static ParallelQuery<IGrouping<TKey, TSource>> GroupBy<TSource, TKey>(this ParallelQuery<TSource> source, Func<TSource, TKey> keySelector) { throw null; }
+
+        public static ParallelQuery<IGrouping<TKey, TElement>> GroupBy<TSource, TKey, TElement>(this ParallelQuery<TSource> source, Func<TSource, TKey> keySelector, Func<TSource, TElement> elementSelector, Collections.Generic.IEqualityComparer<TKey> comparer) { throw null; }
+
+        public static ParallelQuery<IGrouping<TKey, TElement>> GroupBy<TSource, TKey, TElement>(this ParallelQuery<TSource> source, Func<TSource, TKey> keySelector, Func<TSource, TElement> elementSelector) { throw null; }
+
+        public static ParallelQuery<TResult> GroupBy<TSource, TKey, TResult>(this ParallelQuery<TSource> source, Func<TSource, TKey> keySelector, Func<TKey, Collections.Generic.IEnumerable<TSource>, TResult> resultSelector, Collections.Generic.IEqualityComparer<TKey> comparer) { throw null; }
+
+        public static ParallelQuery<TResult> GroupBy<TSource, TKey, TResult>(this ParallelQuery<TSource> source, Func<TSource, TKey> keySelector, Func<TKey, Collections.Generic.IEnumerable<TSource>, TResult> resultSelector) { throw null; }
+
+        public static ParallelQuery<TResult> GroupBy<TSource, TKey, TElement, TResult>(this ParallelQuery<TSource> source, Func<TSource, TKey> keySelector, Func<TSource, TElement> elementSelector, Func<TKey, Collections.Generic.IEnumerable<TElement>, TResult> resultSelector, Collections.Generic.IEqualityComparer<TKey> comparer) { throw null; }
+
+        public static ParallelQuery<TResult> GroupBy<TSource, TKey, TElement, TResult>(this ParallelQuery<TSource> source, Func<TSource, TKey> keySelector, Func<TSource, TElement> elementSelector, Func<TKey, Collections.Generic.IEnumerable<TElement>, TResult> resultSelector) { throw null; }
+
+        [Obsolete("The second data source of a binary operator must be of type System.Linq.ParallelQuery<T> rather than System.Collections.Generic.IEnumerable<T>. To fix this problem, use the AsParallel() extension method to convert the right data source to System.Linq.ParallelQuery<T>.")]
+        public static ParallelQuery<TResult> GroupJoin<TOuter, TInner, TKey, TResult>(this ParallelQuery<TOuter> outer, Collections.Generic.IEnumerable<TInner> inner, Func<TOuter, TKey> outerKeySelector, Func<TInner, TKey> innerKeySelector, Func<TOuter, Collections.Generic.IEnumerable<TInner>, TResult> resultSelector, Collections.Generic.IEqualityComparer<TKey> comparer) { throw null; }
+
+        [Obsolete("The second data source of a binary operator must be of type System.Linq.ParallelQuery<T> rather than System.Collections.Generic.IEnumerable<T>. To fix this problem, use the AsParallel() extension method to convert the right data source to System.Linq.ParallelQuery<T>.")]
+        public static ParallelQuery<TResult> GroupJoin<TOuter, TInner, TKey, TResult>(this ParallelQuery<TOuter> outer, Collections.Generic.IEnumerable<TInner> inner, Func<TOuter, TKey> outerKeySelector, Func<TInner, TKey> innerKeySelector, Func<TOuter, Collections.Generic.IEnumerable<TInner>, TResult> resultSelector) { throw null; }
+
+        public static ParallelQuery<TResult> GroupJoin<TOuter, TInner, TKey, TResult>(this ParallelQuery<TOuter> outer, ParallelQuery<TInner> inner, Func<TOuter, TKey> outerKeySelector, Func<TInner, TKey> innerKeySelector, Func<TOuter, Collections.Generic.IEnumerable<TInner>, TResult> resultSelector, Collections.Generic.IEqualityComparer<TKey> comparer) { throw null; }
+
+        public static ParallelQuery<TResult> GroupJoin<TOuter, TInner, TKey, TResult>(this ParallelQuery<TOuter> outer, ParallelQuery<TInner> inner, Func<TOuter, TKey> outerKeySelector, Func<TInner, TKey> innerKeySelector, Func<TOuter, Collections.Generic.IEnumerable<TInner>, TResult> resultSelector) { throw null; }
+
+        [Obsolete("The second data source of a binary operator must be of type System.Linq.ParallelQuery<T> rather than System.Collections.Generic.IEnumerable<T>. To fix this problem, use the AsParallel() extension method to convert the right data source to System.Linq.ParallelQuery<T>.")]
+        public static ParallelQuery<TSource> Intersect<TSource>(this ParallelQuery<TSource> first, Collections.Generic.IEnumerable<TSource> second, Collections.Generic.IEqualityComparer<TSource> comparer) { throw null; }
+
+        [Obsolete("The second data source of a binary operator must be of type System.Linq.ParallelQuery<T> rather than System.Collections.Generic.IEnumerable<T>. To fix this problem, use the AsParallel() extension method to convert the right data source to System.Linq.ParallelQuery<T>.")]
+        public static ParallelQuery<TSource> Intersect<TSource>(this ParallelQuery<TSource> first, Collections.Generic.IEnumerable<TSource> second) { throw null; }
+
+        public static ParallelQuery<TSource> Intersect<TSource>(this ParallelQuery<TSource> first, ParallelQuery<TSource> second, Collections.Generic.IEqualityComparer<TSource> comparer) { throw null; }
+
+        public static ParallelQuery<TSource> Intersect<TSource>(this ParallelQuery<TSource> first, ParallelQuery<TSource> second) { throw null; }
+
+        [Obsolete("The second data source of a binary operator must be of type System.Linq.ParallelQuery<T> rather than System.Collections.Generic.IEnumerable<T>. To fix this problem, use the AsParallel() extension method to convert the right data source to System.Linq.ParallelQuery<T>.")]
+        public static ParallelQuery<TResult> Join<TOuter, TInner, TKey, TResult>(this ParallelQuery<TOuter> outer, Collections.Generic.IEnumerable<TInner> inner, Func<TOuter, TKey> outerKeySelector, Func<TInner, TKey> innerKeySelector, Func<TOuter, TInner, TResult> resultSelector, Collections.Generic.IEqualityComparer<TKey> comparer) { throw null; }
+
+        [Obsolete("The second data source of a binary operator must be of type System.Linq.ParallelQuery<T> rather than System.Collections.Generic.IEnumerable<T>. To fix this problem, use the AsParallel() extension method to convert the right data source to System.Linq.ParallelQuery<T>.")]
+        public static ParallelQuery<TResult> Join<TOuter, TInner, TKey, TResult>(this ParallelQuery<TOuter> outer, Collections.Generic.IEnumerable<TInner> inner, Func<TOuter, TKey> outerKeySelector, Func<TInner, TKey> innerKeySelector, Func<TOuter, TInner, TResult> resultSelector) { throw null; }
+
+        public static ParallelQuery<TResult> Join<TOuter, TInner, TKey, TResult>(this ParallelQuery<TOuter> outer, ParallelQuery<TInner> inner, Func<TOuter, TKey> outerKeySelector, Func<TInner, TKey> innerKeySelector, Func<TOuter, TInner, TResult> resultSelector, Collections.Generic.IEqualityComparer<TKey> comparer) { throw null; }
+
+        public static ParallelQuery<TResult> Join<TOuter, TInner, TKey, TResult>(this ParallelQuery<TOuter> outer, ParallelQuery<TInner> inner, Func<TOuter, TKey> outerKeySelector, Func<TInner, TKey> innerKeySelector, Func<TOuter, TInner, TResult> resultSelector) { throw null; }
+
+        public static TSource Last<TSource>(this ParallelQuery<TSource> source, Func<TSource, bool> predicate) { throw null; }
+
+        public static TSource Last<TSource>(this ParallelQuery<TSource> source) { throw null; }
+
+        public static TSource LastOrDefault<TSource>(this ParallelQuery<TSource> source, Func<TSource, bool> predicate) { throw null; }
+
+        public static TSource LastOrDefault<TSource>(this ParallelQuery<TSource> source) { throw null; }
+
+        public static long LongCount<TSource>(this ParallelQuery<TSource> source, Func<TSource, bool> predicate) { throw null; }
+
+        public static long LongCount<TSource>(this ParallelQuery<TSource> source) { throw null; }
+
+        public static decimal Max(this ParallelQuery<decimal> source) { throw null; }
+
+        public static double Max(this ParallelQuery<double> source) { throw null; }
+
+        public static int Max(this ParallelQuery<int> source) { throw null; }
+
+        public static long Max(this ParallelQuery<long> source) { throw null; }
+
+        public static decimal? Max(this ParallelQuery<decimal?> source) { throw null; }
+
+        public static double? Max(this ParallelQuery<double?> source) { throw null; }
+
+        public static int? Max(this ParallelQuery<int?> source) { throw null; }
+
+        public static long? Max(this ParallelQuery<long?> source) { throw null; }
+
+        public static float? Max(this ParallelQuery<float?> source) { throw null; }
+
+        public static float Max(this ParallelQuery<float> source) { throw null; }
+
+        public static decimal Max<TSource>(this ParallelQuery<TSource> source, Func<TSource, decimal> selector) { throw null; }
+
+        public static double Max<TSource>(this ParallelQuery<TSource> source, Func<TSource, double> selector) { throw null; }
+
+        public static int Max<TSource>(this ParallelQuery<TSource> source, Func<TSource, int> selector) { throw null; }
+
+        public static long Max<TSource>(this ParallelQuery<TSource> source, Func<TSource, long> selector) { throw null; }
+
+        public static decimal? Max<TSource>(this ParallelQuery<TSource> source, Func<TSource, decimal?> selector) { throw null; }
+
+        public static double? Max<TSource>(this ParallelQuery<TSource> source, Func<TSource, double?> selector) { throw null; }
+
+        public static int? Max<TSource>(this ParallelQuery<TSource> source, Func<TSource, int?> selector) { throw null; }
+
+        public static long? Max<TSource>(this ParallelQuery<TSource> source, Func<TSource, long?> selector) { throw null; }
+
+        public static float? Max<TSource>(this ParallelQuery<TSource> source, Func<TSource, float?> selector) { throw null; }
+
+        public static float Max<TSource>(this ParallelQuery<TSource> source, Func<TSource, float> selector) { throw null; }
+
+        public static TSource Max<TSource>(this ParallelQuery<TSource> source) { throw null; }
+
+        public static TResult Max<TSource, TResult>(this ParallelQuery<TSource> source, Func<TSource, TResult> selector) { throw null; }
+
+        public static decimal Min(this ParallelQuery<decimal> source) { throw null; }
+
+        public static double Min(this ParallelQuery<double> source) { throw null; }
+
+        public static int Min(this ParallelQuery<int> source) { throw null; }
+
+        public static long Min(this ParallelQuery<long> source) { throw null; }
+
+        public static decimal? Min(this ParallelQuery<decimal?> source) { throw null; }
+
+        public static double? Min(this ParallelQuery<double?> source) { throw null; }
+
+        public static int? Min(this ParallelQuery<int?> source) { throw null; }
+
+        public static long? Min(this ParallelQuery<long?> source) { throw null; }
+
+        public static float? Min(this ParallelQuery<float?> source) { throw null; }
+
+        public static float Min(this ParallelQuery<float> source) { throw null; }
+
+        public static decimal Min<TSource>(this ParallelQuery<TSource> source, Func<TSource, decimal> selector) { throw null; }
+
+        public static double Min<TSource>(this ParallelQuery<TSource> source, Func<TSource, double> selector) { throw null; }
+
+        public static int Min<TSource>(this ParallelQuery<TSource> source, Func<TSource, int> selector) { throw null; }
+
+        public static long Min<TSource>(this ParallelQuery<TSource> source, Func<TSource, long> selector) { throw null; }
+
+        public static decimal? Min<TSource>(this ParallelQuery<TSource> source, Func<TSource, decimal?> selector) { throw null; }
+
+        public static double? Min<TSource>(this ParallelQuery<TSource> source, Func<TSource, double?> selector) { throw null; }
+
+        public static int? Min<TSource>(this ParallelQuery<TSource> source, Func<TSource, int?> selector) { throw null; }
+
+        public static long? Min<TSource>(this ParallelQuery<TSource> source, Func<TSource, long?> selector) { throw null; }
+
+        public static float? Min<TSource>(this ParallelQuery<TSource> source, Func<TSource, float?> selector) { throw null; }
+
+        public static float Min<TSource>(this ParallelQuery<TSource> source, Func<TSource, float> selector) { throw null; }
+
+        public static TSource Min<TSource>(this ParallelQuery<TSource> source) { throw null; }
+
+        public static TResult Min<TSource, TResult>(this ParallelQuery<TSource> source, Func<TSource, TResult> selector) { throw null; }
+
+        public static ParallelQuery<TResult> OfType<TResult>(this ParallelQuery source) { throw null; }
+
+        public static OrderedParallelQuery<TSource> OrderBy<TSource, TKey>(this ParallelQuery<TSource> source, Func<TSource, TKey> keySelector, Collections.Generic.IComparer<TKey> comparer) { throw null; }
+
+        public static OrderedParallelQuery<TSource> OrderBy<TSource, TKey>(this ParallelQuery<TSource> source, Func<TSource, TKey> keySelector) { throw null; }
+
+        public static OrderedParallelQuery<TSource> OrderByDescending<TSource, TKey>(this ParallelQuery<TSource> source, Func<TSource, TKey> keySelector, Collections.Generic.IComparer<TKey> comparer) { throw null; }
+
+        public static OrderedParallelQuery<TSource> OrderByDescending<TSource, TKey>(this ParallelQuery<TSource> source, Func<TSource, TKey> keySelector) { throw null; }
+
+        public static ParallelQuery<int> Range(int start, int count) { throw null; }
+
+        public static ParallelQuery<TResult> Repeat<TResult>(TResult element, int count) { throw null; }
+
+        public static ParallelQuery<TSource> Reverse<TSource>(this ParallelQuery<TSource> source) { throw null; }
+
+        public static ParallelQuery<TResult> Select<TSource, TResult>(this ParallelQuery<TSource> source, Func<TSource, TResult> selector) { throw null; }
+
+        public static ParallelQuery<TResult> Select<TSource, TResult>(this ParallelQuery<TSource> source, Func<TSource, int, TResult> selector) { throw null; }
+
+        public static ParallelQuery<TResult> SelectMany<TSource, TResult>(this ParallelQuery<TSource> source, Func<TSource, Collections.Generic.IEnumerable<TResult>> selector) { throw null; }
+
+        public static ParallelQuery<TResult> SelectMany<TSource, TResult>(this ParallelQuery<TSource> source, Func<TSource, int, Collections.Generic.IEnumerable<TResult>> selector) { throw null; }
+
+        public static ParallelQuery<TResult> SelectMany<TSource, TCollection, TResult>(this ParallelQuery<TSource> source, Func<TSource, Collections.Generic.IEnumerable<TCollection>> collectionSelector, Func<TSource, TCollection, TResult> resultSelector) { throw null; }
+
+        public static ParallelQuery<TResult> SelectMany<TSource, TCollection, TResult>(this ParallelQuery<TSource> source, Func<TSource, int, Collections.Generic.IEnumerable<TCollection>> collectionSelector, Func<TSource, TCollection, TResult> resultSelector) { throw null; }
+
+        [Obsolete("The second data source of a binary operator must be of type System.Linq.ParallelQuery<T> rather than System.Collections.Generic.IEnumerable<T>. To fix this problem, use the AsParallel() extension method to convert the right data source to System.Linq.ParallelQuery<T>.")]
+        public static bool SequenceEqual<TSource>(this ParallelQuery<TSource> first, Collections.Generic.IEnumerable<TSource> second, Collections.Generic.IEqualityComparer<TSource> comparer) { throw null; }
+
+        [Obsolete("The second data source of a binary operator must be of type System.Linq.ParallelQuery<T> rather than System.Collections.Generic.IEnumerable<T>. To fix this problem, use the AsParallel() extension method to convert the right data source to System.Linq.ParallelQuery<T>.")]
+        public static bool SequenceEqual<TSource>(this ParallelQuery<TSource> first, Collections.Generic.IEnumerable<TSource> second) { throw null; }
+
+        public static bool SequenceEqual<TSource>(this ParallelQuery<TSource> first, ParallelQuery<TSource> second, Collections.Generic.IEqualityComparer<TSource> comparer) { throw null; }
+
+        public static bool SequenceEqual<TSource>(this ParallelQuery<TSource> first, ParallelQuery<TSource> second) { throw null; }
+
+        public static TSource Single<TSource>(this ParallelQuery<TSource> source, Func<TSource, bool> predicate) { throw null; }
+
+        public static TSource Single<TSource>(this ParallelQuery<TSource> source) { throw null; }
+
+        public static TSource SingleOrDefault<TSource>(this ParallelQuery<TSource> source, Func<TSource, bool> predicate) { throw null; }
+
+        public static TSource SingleOrDefault<TSource>(this ParallelQuery<TSource> source) { throw null; }
+
+        public static ParallelQuery<TSource> Skip<TSource>(this ParallelQuery<TSource> source, int count) { throw null; }
+
+        public static ParallelQuery<TSource> SkipWhile<TSource>(this ParallelQuery<TSource> source, Func<TSource, bool> predicate) { throw null; }
+
+        public static ParallelQuery<TSource> SkipWhile<TSource>(this ParallelQuery<TSource> source, Func<TSource, int, bool> predicate) { throw null; }
+
+        public static decimal Sum(this ParallelQuery<decimal> source) { throw null; }
+
+        public static double Sum(this ParallelQuery<double> source) { throw null; }
+
+        public static int Sum(this ParallelQuery<int> source) { throw null; }
+
+        public static long Sum(this ParallelQuery<long> source) { throw null; }
+
+        public static decimal? Sum(this ParallelQuery<decimal?> source) { throw null; }
+
+        public static double? Sum(this ParallelQuery<double?> source) { throw null; }
+
+        public static int? Sum(this ParallelQuery<int?> source) { throw null; }
+
+        public static long? Sum(this ParallelQuery<long?> source) { throw null; }
+
+        public static float? Sum(this ParallelQuery<float?> source) { throw null; }
+
+        public static float Sum(this ParallelQuery<float> source) { throw null; }
+
+        public static decimal Sum<TSource>(this ParallelQuery<TSource> source, Func<TSource, decimal> selector) { throw null; }
+
+        public static double Sum<TSource>(this ParallelQuery<TSource> source, Func<TSource, double> selector) { throw null; }
+
+        public static int Sum<TSource>(this ParallelQuery<TSource> source, Func<TSource, int> selector) { throw null; }
+
+        public static long Sum<TSource>(this ParallelQuery<TSource> source, Func<TSource, long> selector) { throw null; }
+
+        public static decimal? Sum<TSource>(this ParallelQuery<TSource> source, Func<TSource, decimal?> selector) { throw null; }
+
+        public static double? Sum<TSource>(this ParallelQuery<TSource> source, Func<TSource, double?> selector) { throw null; }
+
+        public static int? Sum<TSource>(this ParallelQuery<TSource> source, Func<TSource, int?> selector) { throw null; }
+
+        public static long? Sum<TSource>(this ParallelQuery<TSource> source, Func<TSource, long?> selector) { throw null; }
+
+        public static float? Sum<TSource>(this ParallelQuery<TSource> source, Func<TSource, float?> selector) { throw null; }
+
+        public static float Sum<TSource>(this ParallelQuery<TSource> source, Func<TSource, float> selector) { throw null; }
+
+        public static ParallelQuery<TSource> Take<TSource>(this ParallelQuery<TSource> source, int count) { throw null; }
+
+        public static ParallelQuery<TSource> TakeWhile<TSource>(this ParallelQuery<TSource> source, Func<TSource, bool> predicate) { throw null; }
+
+        public static ParallelQuery<TSource> TakeWhile<TSource>(this ParallelQuery<TSource> source, Func<TSource, int, bool> predicate) { throw null; }
+
+        public static OrderedParallelQuery<TSource> ThenBy<TSource, TKey>(this OrderedParallelQuery<TSource> source, Func<TSource, TKey> keySelector, Collections.Generic.IComparer<TKey> comparer) { throw null; }
+
+        public static OrderedParallelQuery<TSource> ThenBy<TSource, TKey>(this OrderedParallelQuery<TSource> source, Func<TSource, TKey> keySelector) { throw null; }
+
+        public static OrderedParallelQuery<TSource> ThenByDescending<TSource, TKey>(this OrderedParallelQuery<TSource> source, Func<TSource, TKey> keySelector, Collections.Generic.IComparer<TKey> comparer) { throw null; }
+
+        public static OrderedParallelQuery<TSource> ThenByDescending<TSource, TKey>(this OrderedParallelQuery<TSource> source, Func<TSource, TKey> keySelector) { throw null; }
+
+        public static TSource[] ToArray<TSource>(this ParallelQuery<TSource> source) { throw null; }
+
+        public static Collections.Generic.Dictionary<TKey, TSource> ToDictionary<TSource, TKey>(this ParallelQuery<TSource> source, Func<TSource, TKey> keySelector, Collections.Generic.IEqualityComparer<TKey> comparer) { throw null; }
+
+        public static Collections.Generic.Dictionary<TKey, TSource> ToDictionary<TSource, TKey>(this ParallelQuery<TSource> source, Func<TSource, TKey> keySelector) { throw null; }
+
+        public static Collections.Generic.Dictionary<TKey, TElement> ToDictionary<TSource, TKey, TElement>(this ParallelQuery<TSource> source, Func<TSource, TKey> keySelector, Func<TSource, TElement> elementSelector, Collections.Generic.IEqualityComparer<TKey> comparer) { throw null; }
+
+        public static Collections.Generic.Dictionary<TKey, TElement> ToDictionary<TSource, TKey, TElement>(this ParallelQuery<TSource> source, Func<TSource, TKey> keySelector, Func<TSource, TElement> elementSelector) { throw null; }
+
+        public static Collections.Generic.List<TSource> ToList<TSource>(this ParallelQuery<TSource> source) { throw null; }
+
+        public static ILookup<TKey, TSource> ToLookup<TSource, TKey>(this ParallelQuery<TSource> source, Func<TSource, TKey> keySelector, Collections.Generic.IEqualityComparer<TKey> comparer) { throw null; }
+
+        public static ILookup<TKey, TSource> ToLookup<TSource, TKey>(this ParallelQuery<TSource> source, Func<TSource, TKey> keySelector) { throw null; }
+
+        public static ILookup<TKey, TElement> ToLookup<TSource, TKey, TElement>(this ParallelQuery<TSource> source, Func<TSource, TKey> keySelector, Func<TSource, TElement> elementSelector, Collections.Generic.IEqualityComparer<TKey> comparer) { throw null; }
+
+        public static ILookup<TKey, TElement> ToLookup<TSource, TKey, TElement>(this ParallelQuery<TSource> source, Func<TSource, TKey> keySelector, Func<TSource, TElement> elementSelector) { throw null; }
+
+        [Obsolete("The second data source of a binary operator must be of type System.Linq.ParallelQuery<T> rather than System.Collections.Generic.IEnumerable<T>. To fix this problem, use the AsParallel() extension method to convert the right data source to System.Linq.ParallelQuery<T>.")]
+        public static ParallelQuery<TSource> Union<TSource>(this ParallelQuery<TSource> first, Collections.Generic.IEnumerable<TSource> second, Collections.Generic.IEqualityComparer<TSource> comparer) { throw null; }
+
+        [Obsolete("The second data source of a binary operator must be of type System.Linq.ParallelQuery<T> rather than System.Collections.Generic.IEnumerable<T>. To fix this problem, use the AsParallel() extension method to convert the right data source to System.Linq.ParallelQuery<T>.")]
+        public static ParallelQuery<TSource> Union<TSource>(this ParallelQuery<TSource> first, Collections.Generic.IEnumerable<TSource> second) { throw null; }
+
+        public static ParallelQuery<TSource> Union<TSource>(this ParallelQuery<TSource> first, ParallelQuery<TSource> second, Collections.Generic.IEqualityComparer<TSource> comparer) { throw null; }
+
+        public static ParallelQuery<TSource> Union<TSource>(this ParallelQuery<TSource> first, ParallelQuery<TSource> second) { throw null; }
+
+        public static ParallelQuery<TSource> Where<TSource>(this ParallelQuery<TSource> source, Func<TSource, bool> predicate) { throw null; }
+
+        public static ParallelQuery<TSource> Where<TSource>(this ParallelQuery<TSource> source, Func<TSource, int, bool> predicate) { throw null; }
+
+        public static ParallelQuery<TSource> WithCancellation<TSource>(this ParallelQuery<TSource> source, Threading.CancellationToken cancellationToken) { throw null; }
+
+        public static ParallelQuery<TSource> WithDegreeOfParallelism<TSource>(this ParallelQuery<TSource> source, int degreeOfParallelism) { throw null; }
+
+        public static ParallelQuery<TSource> WithExecutionMode<TSource>(this ParallelQuery<TSource> source, ParallelExecutionMode executionMode) { throw null; }
+
+        public static ParallelQuery<TSource> WithMergeOptions<TSource>(this ParallelQuery<TSource> source, ParallelMergeOptions mergeOptions) { throw null; }
+
+        [Obsolete("The second data source of a binary operator must be of type System.Linq.ParallelQuery<T> rather than System.Collections.Generic.IEnumerable<T>. To fix this problem, use the AsParallel() extension method to convert the right data source to System.Linq.ParallelQuery<T>.")]
+        public static ParallelQuery<TResult> Zip<TFirst, TSecond, TResult>(this ParallelQuery<TFirst> first, Collections.Generic.IEnumerable<TSecond> second, Func<TFirst, TSecond, TResult> resultSelector) { throw null; }
+
+        public static ParallelQuery<TResult> Zip<TFirst, TSecond, TResult>(this ParallelQuery<TFirst> first, ParallelQuery<TSecond> second, Func<TFirst, TSecond, TResult> resultSelector) { throw null; }
     }
+
     public enum ParallelExecutionMode
     {
         Default = 0,
-        ForceParallelism = 1,
+        ForceParallelism = 1
     }
+
     public enum ParallelMergeOptions
     {
-        AutoBuffered = 2,
         Default = 0,
-        FullyBuffered = 3,
         NotBuffered = 1,
+        AutoBuffered = 2,
+        FullyBuffered = 3
     }
-    public partial class ParallelQuery : System.Collections.IEnumerable
+
+    public partial class ParallelQuery : Collections.IEnumerable
     {
         internal ParallelQuery() { }
-        System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator() { throw null; }
+
+        Collections.IEnumerator Collections.IEnumerable.GetEnumerator() { throw null; }
     }
-    public partial class ParallelQuery<TSource> : System.Linq.ParallelQuery, System.Collections.Generic.IEnumerable<TSource>, System.Collections.IEnumerable
+
+    public partial class ParallelQuery<TSource> : ParallelQuery, Collections.Generic.IEnumerable<TSource>, Collections.IEnumerable
     {
         internal ParallelQuery() { }
-        public virtual System.Collections.Generic.IEnumerator<TSource> GetEnumerator() { throw null; }
+
+        public virtual Collections.Generic.IEnumerator<TSource> GetEnumerator() { throw null; }
     }
 }

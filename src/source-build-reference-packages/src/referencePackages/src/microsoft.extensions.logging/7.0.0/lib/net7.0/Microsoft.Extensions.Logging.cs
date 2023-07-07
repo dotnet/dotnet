@@ -132,15 +132,11 @@ namespace Microsoft.Extensions.Logging
 
     public partial class LoggerFactoryOptions
     {
-        public LoggerFactoryOptions() { }
-
         public ActivityTrackingOptions ActivityTrackingOptions { get { throw null; } set { } }
     }
 
     public partial class LoggerFilterOptions
     {
-        public LoggerFilterOptions() { }
-
         public bool CaptureScopes { get { throw null; } set { } }
 
         public LogLevel MinLevel { get { throw null; } set { } }

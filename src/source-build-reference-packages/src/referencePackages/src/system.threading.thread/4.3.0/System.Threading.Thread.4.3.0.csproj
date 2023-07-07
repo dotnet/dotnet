@@ -1,21 +1,13 @@
 <Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
     <TargetFrameworks>netstandard1.3</TargetFrameworks>
-    <NuspecFile>$(ArtifactsBinDir)system.threading.thread/4.3.0/system.threading.thread.nuspec</NuspecFile>
-   </PropertyGroup>
-
-  <PropertyGroup>
-    <OutputPath>$(ArtifactsBinDir)system.threading.thread/4.3.0/ref/</OutputPath>
-    <IntermediateOutputPath>$(ArtifactsObjDir)system.threading.thread/4.3.0</IntermediateOutputPath>
+    <AssemblyName>System.Threading.Thread</AssemblyName>
+    <ProjectTemplateVersion>2</ProjectTemplateVersion>
   </PropertyGroup>
 
-  <ItemGroup>
-    <Compile Include="**/ref/$(TargetFramework)/*.cs" />
-    <Compile Include="**/lib/$(TargetFramework)/*.cs" />
-  </ItemGroup>
-
-  <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard1.3' ">
-      <PackageReference Include="System.Runtime" Version="4.3.0" />
+  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard1.3'">
+    <PackageReference Include="System.Runtime" Version="4.3.0" />
   </ItemGroup>
 
 </Project>

@@ -4,96 +4,130 @@
 // ------------------------------------------------------------------------------
 // Changes to this file must follow the http://aka.ms/api-review process.
 // ------------------------------------------------------------------------------
-
-using System;
-using System.Diagnostics;
-using System.Reflection;
-using System.Runtime.CompilerServices;
-using System.Security;
-
-[assembly: Debuggable(DebuggableAttribute.DebuggingModes.IgnoreSymbolStoreSequencePoints)]
-[assembly: AllowPartiallyTrustedCallers]
-[assembly: ReferenceAssembly]
-[assembly: AssemblyTitle("System.IO.FileSystem.AccessControl")]
-[assembly: AssemblyDescription("System.IO.FileSystem.AccessControl")]
-[assembly: AssemblyDefaultAlias("System.IO.FileSystem.AccessControl")]
-[assembly: AssemblyCompany("Microsoft Corporation")]
-[assembly: AssemblyProduct("Microsoft® .NET Framework")]
-[assembly: AssemblyCopyright("© Microsoft Corporation.  All rights reserved.")]
-[assembly: AssemblyFileVersion("1.0.24212.01")]
-[assembly: AssemblyInformationalVersion("1.0.24212.01 built by: SOURCEBUILD")]
-[assembly: CLSCompliant(true)]
-[assembly: AssemblyMetadata("", "")]
-[assembly: AssemblyVersion("4.0.0.0")]
-
-
-
-
+[assembly: System.Runtime.CompilerServices.CompilationRelaxations(8)]
+[assembly: System.Runtime.CompilerServices.RuntimeCompatibility(WrapNonExceptionThrows = true)]
+[assembly: System.Diagnostics.Debuggable(System.Diagnostics.DebuggableAttribute.DebuggingModes.IgnoreSymbolStoreSequencePoints)]
+[assembly: System.Security.AllowPartiallyTrustedCallers]
+[assembly: System.Runtime.CompilerServices.ReferenceAssembly]
+[assembly: System.Reflection.AssemblyTitle("System.IO.FileSystem.AccessControl")]
+[assembly: System.Reflection.AssemblyDescription("System.IO.FileSystem.AccessControl")]
+[assembly: System.Reflection.AssemblyDefaultAlias("System.IO.FileSystem.AccessControl")]
+[assembly: System.Reflection.AssemblyCompany("Microsoft Corporation")]
+[assembly: System.Reflection.AssemblyProduct("Microsoft® .NET Framework")]
+[assembly: System.Reflection.AssemblyCopyright("© Microsoft Corporation.  All rights reserved.")]
+[assembly: System.Reflection.AssemblyFileVersion("1.0.24212.01")]
+[assembly: System.Reflection.AssemblyInformationalVersion("1.0.24212.01. Commit Hash: 9688ddbb62c04189cac4c4a06e31e93377dccd41")]
+[assembly: System.CLSCompliant(true)]
+[assembly: System.Reflection.AssemblyMetadata(".NETFrameworkAssembly", "")]
+[assembly: System.Reflection.AssemblyMetadata("Serviceable", "True")]
+[assembly: System.Reflection.AssemblyVersionAttribute("4.0.0.0")]
+[assembly: System.Reflection.AssemblyFlagsAttribute((System.Reflection.AssemblyNameFlags)0x70)]
 namespace System.IO
 {
     public static partial class FileSystemAclExtensions
     {
-        public static System.Security.AccessControl.DirectorySecurity GetAccessControl(this System.IO.DirectoryInfo directoryInfo) { throw null; }
-        public static System.Security.AccessControl.DirectorySecurity GetAccessControl(this System.IO.DirectoryInfo directoryInfo, System.Security.AccessControl.AccessControlSections includeSections) { throw null; }
-        public static System.Security.AccessControl.FileSecurity GetAccessControl(this System.IO.FileInfo fileInfo) { throw null; }
-        public static System.Security.AccessControl.FileSecurity GetAccessControl(this System.IO.FileInfo fileInfo, System.Security.AccessControl.AccessControlSections includeSections) { throw null; }
-        public static System.Security.AccessControl.FileSecurity GetAccessControl(this System.IO.FileStream fileStream) { throw null; }
-        public static void SetAccessControl(this System.IO.DirectoryInfo directoryInfo, System.Security.AccessControl.DirectorySecurity directorySecurity) { }
-        public static void SetAccessControl(this System.IO.FileInfo fileInfo, System.Security.AccessControl.FileSecurity fileSecurity) { }
-        public static void SetAccessControl(this System.IO.FileStream fileStream, System.Security.AccessControl.FileSecurity fileSecurity) { }
+        public static Security.AccessControl.DirectorySecurity GetAccessControl(this DirectoryInfo directoryInfo, Security.AccessControl.AccessControlSections includeSections) { throw null; }
+
+        public static Security.AccessControl.DirectorySecurity GetAccessControl(this DirectoryInfo directoryInfo) { throw null; }
+
+        public static Security.AccessControl.FileSecurity GetAccessControl(this FileInfo fileInfo, Security.AccessControl.AccessControlSections includeSections) { throw null; }
+
+        public static Security.AccessControl.FileSecurity GetAccessControl(this FileInfo fileInfo) { throw null; }
+
+        public static Security.AccessControl.FileSecurity GetAccessControl(this FileStream fileStream) { throw null; }
+
+        public static void SetAccessControl(this DirectoryInfo directoryInfo, Security.AccessControl.DirectorySecurity directorySecurity) { }
+
+        public static void SetAccessControl(this FileInfo fileInfo, Security.AccessControl.FileSecurity fileSecurity) { }
+
+        public static void SetAccessControl(this FileStream fileStream, Security.AccessControl.FileSecurity fileSecurity) { }
     }
 }
+
 namespace System.Security.AccessControl
 {
-    public abstract partial class DirectoryObjectSecurity : System.Security.AccessControl.ObjectSecurity
+    public abstract partial class DirectoryObjectSecurity : ObjectSecurity
     {
         protected DirectoryObjectSecurity() { }
-        protected DirectoryObjectSecurity(System.Security.AccessControl.CommonSecurityDescriptor securityDescriptor) { }
-        public virtual System.Security.AccessControl.AccessRule AccessRuleFactory(System.Security.Principal.IdentityReference identityReference, int accessMask, bool isInherited, System.Security.AccessControl.InheritanceFlags inheritanceFlags, System.Security.AccessControl.PropagationFlags propagationFlags, System.Security.AccessControl.AccessControlType type, System.Guid objectType, System.Guid inheritedObjectType) { throw null; }
-        protected void AddAccessRule(System.Security.AccessControl.ObjectAccessRule rule) { }
-        protected void AddAuditRule(System.Security.AccessControl.ObjectAuditRule rule) { }
-        public virtual System.Security.AccessControl.AuditRule AuditRuleFactory(System.Security.Principal.IdentityReference identityReference, int accessMask, bool isInherited, System.Security.AccessControl.InheritanceFlags inheritanceFlags, System.Security.AccessControl.PropagationFlags propagationFlags, System.Security.AccessControl.AuditFlags flags, System.Guid objectType, System.Guid inheritedObjectType) { throw null; }
-        public System.Security.AccessControl.AuthorizationRuleCollection GetAccessRules(bool includeExplicit, bool includeInherited, System.Type targetType) { throw null; }
-        public System.Security.AccessControl.AuthorizationRuleCollection GetAuditRules(bool includeExplicit, bool includeInherited, System.Type targetType) { throw null; }
-        protected override bool ModifyAccess(System.Security.AccessControl.AccessControlModification modification, System.Security.AccessControl.AccessRule rule, out bool modified) { throw null; }
-        protected override bool ModifyAudit(System.Security.AccessControl.AccessControlModification modification, System.Security.AccessControl.AuditRule rule, out bool modified) { throw null; }
-        protected bool RemoveAccessRule(System.Security.AccessControl.ObjectAccessRule rule) { throw null; }
-        protected void RemoveAccessRuleAll(System.Security.AccessControl.ObjectAccessRule rule) { }
-        protected void RemoveAccessRuleSpecific(System.Security.AccessControl.ObjectAccessRule rule) { }
-        protected bool RemoveAuditRule(System.Security.AccessControl.ObjectAuditRule rule) { throw null; }
-        protected void RemoveAuditRuleAll(System.Security.AccessControl.ObjectAuditRule rule) { }
-        protected void RemoveAuditRuleSpecific(System.Security.AccessControl.ObjectAuditRule rule) { }
-        protected void ResetAccessRule(System.Security.AccessControl.ObjectAccessRule rule) { }
-        protected void SetAccessRule(System.Security.AccessControl.ObjectAccessRule rule) { }
-        protected void SetAuditRule(System.Security.AccessControl.ObjectAuditRule rule) { }
+
+        protected DirectoryObjectSecurity(CommonSecurityDescriptor securityDescriptor) { }
+
+        public virtual AccessRule AccessRuleFactory(Principal.IdentityReference identityReference, int accessMask, bool isInherited, InheritanceFlags inheritanceFlags, PropagationFlags propagationFlags, AccessControlType type, Guid objectType, Guid inheritedObjectType) { throw null; }
+
+        protected void AddAccessRule(ObjectAccessRule rule) { }
+
+        protected void AddAuditRule(ObjectAuditRule rule) { }
+
+        public virtual AuditRule AuditRuleFactory(Principal.IdentityReference identityReference, int accessMask, bool isInherited, InheritanceFlags inheritanceFlags, PropagationFlags propagationFlags, AuditFlags flags, Guid objectType, Guid inheritedObjectType) { throw null; }
+
+        public AuthorizationRuleCollection GetAccessRules(bool includeExplicit, bool includeInherited, Type targetType) { throw null; }
+
+        public AuthorizationRuleCollection GetAuditRules(bool includeExplicit, bool includeInherited, Type targetType) { throw null; }
+
+        protected override bool ModifyAccess(AccessControlModification modification, AccessRule rule, out bool modified) { throw null; }
+
+        protected override bool ModifyAudit(AccessControlModification modification, AuditRule rule, out bool modified) { throw null; }
+
+        protected bool RemoveAccessRule(ObjectAccessRule rule) { throw null; }
+
+        protected void RemoveAccessRuleAll(ObjectAccessRule rule) { }
+
+        protected void RemoveAccessRuleSpecific(ObjectAccessRule rule) { }
+
+        protected bool RemoveAuditRule(ObjectAuditRule rule) { throw null; }
+
+        protected void RemoveAuditRuleAll(ObjectAuditRule rule) { }
+
+        protected void RemoveAuditRuleSpecific(ObjectAuditRule rule) { }
+
+        protected void ResetAccessRule(ObjectAccessRule rule) { }
+
+        protected void SetAccessRule(ObjectAccessRule rule) { }
+
+        protected void SetAuditRule(ObjectAuditRule rule) { }
     }
-    public sealed partial class DirectorySecurity : System.Security.AccessControl.FileSystemSecurity
+
+    public sealed partial class DirectorySecurity : FileSystemSecurity
     {
         public DirectorySecurity() { }
-        public DirectorySecurity(string name, System.Security.AccessControl.AccessControlSections includeSections) { }
+
+        public DirectorySecurity(string name, AccessControlSections includeSections) { }
     }
-    public sealed partial class FileSecurity : System.Security.AccessControl.FileSystemSecurity
+
+    public sealed partial class FileSecurity : FileSystemSecurity
     {
         public FileSecurity() { }
-        public FileSecurity(string fileName, System.Security.AccessControl.AccessControlSections includeSections) { }
+
+        public FileSecurity(string fileName, AccessControlSections includeSections) { }
     }
-    public sealed partial class FileSystemAccessRule : System.Security.AccessControl.AccessRule
+
+    public sealed partial class FileSystemAccessRule : AccessRule
     {
-        public FileSystemAccessRule(System.Security.Principal.IdentityReference identity, System.Security.AccessControl.FileSystemRights fileSystemRights, System.Security.AccessControl.AccessControlType type) : base (default(System.Security.Principal.IdentityReference), default(int), default(bool), default(System.Security.AccessControl.InheritanceFlags), default(System.Security.AccessControl.PropagationFlags), default(System.Security.AccessControl.AccessControlType)) { }
-        public FileSystemAccessRule(System.Security.Principal.IdentityReference identity, System.Security.AccessControl.FileSystemRights fileSystemRights, System.Security.AccessControl.InheritanceFlags inheritanceFlags, System.Security.AccessControl.PropagationFlags propagationFlags, System.Security.AccessControl.AccessControlType type) : base (default(System.Security.Principal.IdentityReference), default(int), default(bool), default(System.Security.AccessControl.InheritanceFlags), default(System.Security.AccessControl.PropagationFlags), default(System.Security.AccessControl.AccessControlType)) { }
-        public FileSystemAccessRule(string identity, System.Security.AccessControl.FileSystemRights fileSystemRights, System.Security.AccessControl.AccessControlType type) : base (default(System.Security.Principal.IdentityReference), default(int), default(bool), default(System.Security.AccessControl.InheritanceFlags), default(System.Security.AccessControl.PropagationFlags), default(System.Security.AccessControl.AccessControlType)) { }
-        public FileSystemAccessRule(string identity, System.Security.AccessControl.FileSystemRights fileSystemRights, System.Security.AccessControl.InheritanceFlags inheritanceFlags, System.Security.AccessControl.PropagationFlags propagationFlags, System.Security.AccessControl.AccessControlType type) : base (default(System.Security.Principal.IdentityReference), default(int), default(bool), default(System.Security.AccessControl.InheritanceFlags), default(System.Security.AccessControl.PropagationFlags), default(System.Security.AccessControl.AccessControlType)) { }
-        public System.Security.AccessControl.FileSystemRights FileSystemRights { get { throw null; } }
+        public FileSystemAccessRule(Principal.IdentityReference identity, FileSystemRights fileSystemRights, AccessControlType type) : base(default!, default, default, default, default, default) { }
+
+        public FileSystemAccessRule(Principal.IdentityReference identity, FileSystemRights fileSystemRights, InheritanceFlags inheritanceFlags, PropagationFlags propagationFlags, AccessControlType type) : base(default!, default, default, default, default, default) { }
+
+        public FileSystemAccessRule(string identity, FileSystemRights fileSystemRights, AccessControlType type) : base(default!, default, default, default, default, default) { }
+
+        public FileSystemAccessRule(string identity, FileSystemRights fileSystemRights, InheritanceFlags inheritanceFlags, PropagationFlags propagationFlags, AccessControlType type) : base(default!, default, default, default, default, default) { }
+
+        public FileSystemRights FileSystemRights { get { throw null; } }
     }
-    public sealed partial class FileSystemAuditRule : System.Security.AccessControl.AuditRule
+
+    public sealed partial class FileSystemAuditRule : AuditRule
     {
-        public FileSystemAuditRule(System.Security.Principal.IdentityReference identity, System.Security.AccessControl.FileSystemRights fileSystemRights, System.Security.AccessControl.AuditFlags flags) : base (default(System.Security.Principal.IdentityReference), default(int), default(bool), default(System.Security.AccessControl.InheritanceFlags), default(System.Security.AccessControl.PropagationFlags), default(System.Security.AccessControl.AuditFlags)) { }
-        public FileSystemAuditRule(System.Security.Principal.IdentityReference identity, System.Security.AccessControl.FileSystemRights fileSystemRights, System.Security.AccessControl.InheritanceFlags inheritanceFlags, System.Security.AccessControl.PropagationFlags propagationFlags, System.Security.AccessControl.AuditFlags flags) : base (default(System.Security.Principal.IdentityReference), default(int), default(bool), default(System.Security.AccessControl.InheritanceFlags), default(System.Security.AccessControl.PropagationFlags), default(System.Security.AccessControl.AuditFlags)) { }
-        public FileSystemAuditRule(string identity, System.Security.AccessControl.FileSystemRights fileSystemRights, System.Security.AccessControl.AuditFlags flags) : base (default(System.Security.Principal.IdentityReference), default(int), default(bool), default(System.Security.AccessControl.InheritanceFlags), default(System.Security.AccessControl.PropagationFlags), default(System.Security.AccessControl.AuditFlags)) { }
-        public FileSystemAuditRule(string identity, System.Security.AccessControl.FileSystemRights fileSystemRights, System.Security.AccessControl.InheritanceFlags inheritanceFlags, System.Security.AccessControl.PropagationFlags propagationFlags, System.Security.AccessControl.AuditFlags flags) : base (default(System.Security.Principal.IdentityReference), default(int), default(bool), default(System.Security.AccessControl.InheritanceFlags), default(System.Security.AccessControl.PropagationFlags), default(System.Security.AccessControl.AuditFlags)) { }
-        public System.Security.AccessControl.FileSystemRights FileSystemRights { get { throw null; } }
+        public FileSystemAuditRule(Principal.IdentityReference identity, FileSystemRights fileSystemRights, AuditFlags flags) : base(default!, default, default, default, default, default) { }
+
+        public FileSystemAuditRule(Principal.IdentityReference identity, FileSystemRights fileSystemRights, InheritanceFlags inheritanceFlags, PropagationFlags propagationFlags, AuditFlags flags) : base(default!, default, default, default, default, default) { }
+
+        public FileSystemAuditRule(string identity, FileSystemRights fileSystemRights, AuditFlags flags) : base(default!, default, default, default, default, default) { }
+
+        public FileSystemAuditRule(string identity, FileSystemRights fileSystemRights, InheritanceFlags inheritanceFlags, PropagationFlags propagationFlags, AuditFlags flags) : base(default!, default, default, default, default, default) { }
+
+        public FileSystemRights FileSystemRights { get { throw null; } }
     }
-    [System.FlagsAttribute]
+
+    [Flags]
     public enum FileSystemRights
     {
         ListDirectory = 1,
@@ -118,26 +152,43 @@ namespace System.Security.AccessControl
         ChangePermissions = 262144,
         TakeOwnership = 524288,
         Synchronize = 1048576,
-        FullControl = 2032127,
+        FullControl = 2032127
     }
-    public abstract partial class FileSystemSecurity : System.Security.AccessControl.NativeObjectSecurity
+
+    public abstract partial class FileSystemSecurity : NativeObjectSecurity
     {
-        internal FileSystemSecurity() : base (default(bool), default(System.Security.AccessControl.ResourceType)) { }
-        public override System.Type AccessRightType { get { throw null; } }
-        public override System.Type AccessRuleType { get { throw null; } }
-        public override System.Type AuditRuleType { get { throw null; } }
-        public sealed override System.Security.AccessControl.AccessRule AccessRuleFactory(System.Security.Principal.IdentityReference identityReference, int accessMask, bool isInherited, System.Security.AccessControl.InheritanceFlags inheritanceFlags, System.Security.AccessControl.PropagationFlags propagationFlags, System.Security.AccessControl.AccessControlType type) { throw null; }
-        public void AddAccessRule(System.Security.AccessControl.FileSystemAccessRule rule) { }
-        public void AddAuditRule(System.Security.AccessControl.FileSystemAuditRule rule) { }
-        public sealed override System.Security.AccessControl.AuditRule AuditRuleFactory(System.Security.Principal.IdentityReference identityReference, int accessMask, bool isInherited, System.Security.AccessControl.InheritanceFlags inheritanceFlags, System.Security.AccessControl.PropagationFlags propagationFlags, System.Security.AccessControl.AuditFlags flags) { throw null; }
-        public bool RemoveAccessRule(System.Security.AccessControl.FileSystemAccessRule rule) { throw null; }
-        public void RemoveAccessRuleAll(System.Security.AccessControl.FileSystemAccessRule rule) { }
-        public void RemoveAccessRuleSpecific(System.Security.AccessControl.FileSystemAccessRule rule) { }
-        public bool RemoveAuditRule(System.Security.AccessControl.FileSystemAuditRule rule) { throw null; }
-        public void RemoveAuditRuleAll(System.Security.AccessControl.FileSystemAuditRule rule) { }
-        public void RemoveAuditRuleSpecific(System.Security.AccessControl.FileSystemAuditRule rule) { }
-        public void ResetAccessRule(System.Security.AccessControl.FileSystemAccessRule rule) { }
-        public void SetAccessRule(System.Security.AccessControl.FileSystemAccessRule rule) { }
-        public void SetAuditRule(System.Security.AccessControl.FileSystemAuditRule rule) { }
+        internal FileSystemSecurity() : base(default, default) { }
+
+        public override Type AccessRightType { get { throw null; } }
+
+        public override Type AccessRuleType { get { throw null; } }
+
+        public override Type AuditRuleType { get { throw null; } }
+
+        public sealed override AccessRule AccessRuleFactory(Principal.IdentityReference identityReference, int accessMask, bool isInherited, InheritanceFlags inheritanceFlags, PropagationFlags propagationFlags, AccessControlType type) { throw null; }
+
+        public void AddAccessRule(FileSystemAccessRule rule) { }
+
+        public void AddAuditRule(FileSystemAuditRule rule) { }
+
+        public sealed override AuditRule AuditRuleFactory(Principal.IdentityReference identityReference, int accessMask, bool isInherited, InheritanceFlags inheritanceFlags, PropagationFlags propagationFlags, AuditFlags flags) { throw null; }
+
+        public bool RemoveAccessRule(FileSystemAccessRule rule) { throw null; }
+
+        public void RemoveAccessRuleAll(FileSystemAccessRule rule) { }
+
+        public void RemoveAccessRuleSpecific(FileSystemAccessRule rule) { }
+
+        public bool RemoveAuditRule(FileSystemAuditRule rule) { throw null; }
+
+        public void RemoveAuditRuleAll(FileSystemAuditRule rule) { }
+
+        public void RemoveAuditRuleSpecific(FileSystemAuditRule rule) { }
+
+        public void ResetAccessRule(FileSystemAccessRule rule) { }
+
+        public void SetAccessRule(FileSystemAccessRule rule) { }
+
+        public void SetAuditRule(FileSystemAuditRule rule) { }
     }
 }

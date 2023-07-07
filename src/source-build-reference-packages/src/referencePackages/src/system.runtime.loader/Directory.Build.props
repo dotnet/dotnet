@@ -1,9 +1,0 @@
-<Project>
-
-  <Import Project="$([MSBuild]::GetPathOfFileAbove(Directory.Build.props, $(MSBuildThisFileDirectory)..))" />
-
-  <PropertyGroup>
-    <AssemblyName>System.Runtime.Loader</AssemblyName>
-  </PropertyGroup>
-
-</Project>

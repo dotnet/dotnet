@@ -4,84 +4,99 @@
 // ------------------------------------------------------------------------------
 // Changes to this file must follow the http://aka.ms/api-review process.
 // ------------------------------------------------------------------------------
-
-using System;
-using System.Diagnostics;
-using System.Reflection;
-using System.Runtime.CompilerServices;
-using System.Security;
-
-[assembly: Debuggable(DebuggableAttribute.DebuggingModes.IgnoreSymbolStoreSequencePoints)]
-[assembly: AllowPartiallyTrustedCallers]
-[assembly: ReferenceAssembly]
-[assembly: AssemblyTitle("Microsoft.Extensions.Configuration.Abstractions")]
-[assembly: AssemblyDescription("Microsoft.Extensions.Configuration.Abstractions")]
-[assembly: AssemblyDefaultAlias("Microsoft.Extensions.Configuration.Abstractions")]
-[assembly: AssemblyCompany("Microsoft Corporation")]
-[assembly: AssemblyProduct("Microsoft® .NET Framework")]
-[assembly: AssemblyCopyright("© Microsoft Corporation.  All rights reserved.")]
-[assembly: AssemblyFileVersion("2.1.1.18157")]
-[assembly: AssemblyInformationalVersion("2.1.1.18157 built by: SOURCEBUILD")]
-[assembly: CLSCompliant(true)]
-[assembly: AssemblyMetadata("", "")]
-[assembly: AssemblyVersion("2.1.1.0")]
-
-
-
-
+[assembly: System.Runtime.CompilerServices.CompilationRelaxations(8)]
+[assembly: System.Runtime.CompilerServices.RuntimeCompatibility(WrapNonExceptionThrows = true)]
+[assembly: System.Diagnostics.Debuggable(System.Diagnostics.DebuggableAttribute.DebuggingModes.IgnoreSymbolStoreSequencePoints)]
+[assembly: System.Runtime.Versioning.TargetFramework(".NETStandard,Version=v2.0", FrameworkDisplayName = "")]
+[assembly: System.Reflection.AssemblyMetadata("Serviceable", "True")]
+[assembly: System.Reflection.AssemblyMetadata("CommitHash", "2679cfd94694a29230726708717ab9c4579a5d80")]
+[assembly: System.Reflection.AssemblyMetadata("BuildNumber", "30846")]
+[assembly: System.Reflection.AssemblyCompany("Microsoft Corporation.")]
+[assembly: System.Reflection.AssemblyConfiguration("Release")]
+[assembly: System.Reflection.AssemblyCopyright("© Microsoft Corporation. All rights reserved.")]
+[assembly: System.Reflection.AssemblyDescription("Abstractions of key-value pair based configuration.\nCommonly used types:\nMicrosoft.Extensions.Configuration.IConfiguration\nMicrosoft.Extensions.Configuration.IConfigurationBuilder\nMicrosoft.Extensions.Configuration.IConfigurationProvider\nMicrosoft.Extensions.Configuration.IConfigurationRoot\nMicrosoft.Extensions.Configuration.IConfigurationSection")]
+[assembly: System.Reflection.AssemblyFileVersion("2.1.1.18157")]
+[assembly: System.Reflection.AssemblyInformationalVersion("2.1.1-rtm-30846")]
+[assembly: System.Reflection.AssemblyProduct("Microsoft .NET Extensions")]
+[assembly: System.Reflection.AssemblyTitle("Microsoft.Extensions.Configuration.Abstractions")]
+[assembly: System.Resources.NeutralResourcesLanguage("en-US")]
+[assembly: System.Reflection.AssemblyVersionAttribute("2.1.1.0")]
+[assembly: System.Runtime.CompilerServices.ReferenceAssembly]
+[assembly: System.Reflection.AssemblyFlagsAttribute((System.Reflection.AssemblyNameFlags)0x70)]
 namespace Microsoft.Extensions.Configuration
 {
     public static partial class ConfigurationExtensions
     {
-        public static Microsoft.Extensions.Configuration.IConfigurationBuilder Add<TSource>(this Microsoft.Extensions.Configuration.IConfigurationBuilder builder, System.Action<TSource> configureSource) where TSource : Microsoft.Extensions.Configuration.IConfigurationSource, new() { throw null; }
-        public static System.Collections.Generic.IEnumerable<System.Collections.Generic.KeyValuePair<string, string>> AsEnumerable(this Microsoft.Extensions.Configuration.IConfiguration configuration) { throw null; }
-        public static System.Collections.Generic.IEnumerable<System.Collections.Generic.KeyValuePair<string, string>> AsEnumerable(this Microsoft.Extensions.Configuration.IConfiguration configuration, bool makePathsRelative) { throw null; }
-        public static bool Exists(this Microsoft.Extensions.Configuration.IConfigurationSection section) { throw null; }
-        public static string GetConnectionString(this Microsoft.Extensions.Configuration.IConfiguration configuration, string name) { throw null; }
+        public static IConfigurationBuilder Add<TSource>(this IConfigurationBuilder builder, System.Action<TSource> configureSource)
+            where TSource : IConfigurationSource, new() { throw null; }
+
+        public static System.Collections.Generic.IEnumerable<System.Collections.Generic.KeyValuePair<string, string>> AsEnumerable(this IConfiguration configuration, bool makePathsRelative) { throw null; }
+
+        public static System.Collections.Generic.IEnumerable<System.Collections.Generic.KeyValuePair<string, string>> AsEnumerable(this IConfiguration configuration) { throw null; }
+
+        public static bool Exists(this IConfigurationSection section) { throw null; }
+
+        public static string GetConnectionString(this IConfiguration configuration, string name) { throw null; }
     }
+
     public static partial class ConfigurationPath
     {
         public static readonly string KeyDelimiter;
         public static string Combine(System.Collections.Generic.IEnumerable<string> pathSegments) { throw null; }
+
         public static string Combine(params string[] pathSegments) { throw null; }
+
         public static string GetParentPath(string path) { throw null; }
+
         public static string GetSectionKey(string path) { throw null; }
     }
+
     public partial interface IConfiguration
     {
         string this[string key] { get; set; }
-        System.Collections.Generic.IEnumerable<Microsoft.Extensions.Configuration.IConfigurationSection> GetChildren();
-        Microsoft.Extensions.Primitives.IChangeToken GetReloadToken();
-        Microsoft.Extensions.Configuration.IConfigurationSection GetSection(string key);
+
+        System.Collections.Generic.IEnumerable<IConfigurationSection> GetChildren();
+        Primitives.IChangeToken GetReloadToken();
+        IConfigurationSection GetSection(string key);
     }
+
     public partial interface IConfigurationBuilder
     {
         System.Collections.Generic.IDictionary<string, object> Properties { get; }
-        System.Collections.Generic.IList<Microsoft.Extensions.Configuration.IConfigurationSource> Sources { get; }
-        Microsoft.Extensions.Configuration.IConfigurationBuilder Add(Microsoft.Extensions.Configuration.IConfigurationSource source);
-        Microsoft.Extensions.Configuration.IConfigurationRoot Build();
+
+        System.Collections.Generic.IList<IConfigurationSource> Sources { get; }
+
+        IConfigurationBuilder Add(IConfigurationSource source);
+        IConfigurationRoot Build();
     }
+
     public partial interface IConfigurationProvider
     {
         System.Collections.Generic.IEnumerable<string> GetChildKeys(System.Collections.Generic.IEnumerable<string> earlierKeys, string parentPath);
-        Microsoft.Extensions.Primitives.IChangeToken GetReloadToken();
+        Primitives.IChangeToken GetReloadToken();
         void Load();
         void Set(string key, string value);
         bool TryGet(string key, out string value);
     }
-    public partial interface IConfigurationRoot : Microsoft.Extensions.Configuration.IConfiguration
+
+    public partial interface IConfigurationRoot : IConfiguration
     {
-        System.Collections.Generic.IEnumerable<Microsoft.Extensions.Configuration.IConfigurationProvider> Providers { get; }
+        System.Collections.Generic.IEnumerable<IConfigurationProvider> Providers { get; }
+
         void Reload();
     }
-    public partial interface IConfigurationSection : Microsoft.Extensions.Configuration.IConfiguration
+
+    public partial interface IConfigurationSection : IConfiguration
     {
         string Key { get; }
+
         string Path { get; }
+
         string Value { get; set; }
     }
+
     public partial interface IConfigurationSource
     {
-        Microsoft.Extensions.Configuration.IConfigurationProvider Build(Microsoft.Extensions.Configuration.IConfigurationBuilder builder);
+        IConfigurationProvider Build(IConfigurationBuilder builder);
     }
 }

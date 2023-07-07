@@ -18,7 +18,5 @@
         <dependency id="NuGet.Frameworks" version="6.6.0" exclude="Build,Analyzers" />
       </group>
     </dependencies>
-    <frameworkAssemblies>
-    </frameworkAssemblies>
   </metadata>
 </package>

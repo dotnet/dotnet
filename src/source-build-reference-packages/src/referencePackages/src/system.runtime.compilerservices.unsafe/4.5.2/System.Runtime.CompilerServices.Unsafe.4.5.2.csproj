@@ -1,26 +1,13 @@
 <Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
     <TargetFrameworks>netstandard1.0;netstandard2.0</TargetFrameworks>
-    <NuspecFile>$(ArtifactsBinDir)system.runtime.compilerservices.unsafe/4.5.2/system.runtime.compilerservices.unsafe.nuspec</NuspecFile>
-    <LangVersion>7.2</LangVersion>
-   </PropertyGroup>
-
-  <PropertyGroup>
-    <OutputPath>$(ArtifactsBinDir)system.runtime.compilerservices.unsafe/4.5.2/ref/</OutputPath>
-    <IntermediateOutputPath>$(ArtifactsObjDir)system.runtime.compilerservices.unsafe/4.5.2</IntermediateOutputPath>
+    <AssemblyName>System.Runtime.CompilerServices.Unsafe</AssemblyName>
+    <ProjectTemplateVersion>2</ProjectTemplateVersion>
   </PropertyGroup>
 
-  <ItemGroup>
-    <Compile Include="**/ref/$(TargetFramework)/*.cs" />
-    <Compile Include="**/lib/$(TargetFramework)/*.cs" />
+  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard1.0'">
+    <PackageReference Include="System.Runtime" Version="4.3.0" />
   </ItemGroup>
 
-    <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard1.0' ">
-        <PackageReference Include="System.Runtime" Version="4.3.0" />
-    </ItemGroup>
-    <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.0' ">
-        <PackageReference Include="NETStandard.Library" Version="$(NETStandardImplicitPackageVersion)" />
-    </ItemGroup>
-
-  
 </Project>

@@ -2,20 +2,11 @@
 
   <PropertyGroup>
     <TargetFrameworks>netstandard1.0</TargetFrameworks>
-    <NuspecFile>$(ArtifactsBinDir)system.resources.resourcemanager/4.3.0/system.resources.resourcemanager.nuspec</NuspecFile>
+    <AssemblyName>System.Resources.ResourceManager</AssemblyName>
+    <ProjectTemplateVersion>2</ProjectTemplateVersion>
   </PropertyGroup>
 
-  <PropertyGroup>
-    <OutputPath>$(ArtifactsBinDir)system.resources.resourcemanager/4.3.0/ref/</OutputPath>
-    <IntermediateOutputPath>$(ArtifactsObjDir)system.resources.resourcemanager/4.3.0</IntermediateOutputPath>
-  </PropertyGroup>
-
-  <ItemGroup>
-    <Compile Include="**/ref/$(TargetFramework)/*.cs" />
-    <Compile Include="**/lib/$(TargetFramework)/*.cs" />
-  </ItemGroup>
-
-  <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard1.0' ">
+  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard1.0'">
     <PackageReference Include="Microsoft.NETCore.Platforms" Version="1.1.0" />
     <PackageReference Include="Microsoft.NETCore.Targets" Version="1.1.0" />
     <PackageReference Include="System.Globalization" Version="4.3.0" />

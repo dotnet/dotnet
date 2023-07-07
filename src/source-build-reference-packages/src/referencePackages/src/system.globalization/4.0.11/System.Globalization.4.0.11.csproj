@@ -1,29 +1,21 @@
 <Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
     <TargetFrameworks>netstandard1.0;netstandard1.3</TargetFrameworks>
-    <NuspecFile>$(ArtifactsBinDir)system.globalization/4.0.11/system.globalization.nuspec</NuspecFile>
-   </PropertyGroup>
-
-  <PropertyGroup>
-    <OutputPath>$(ArtifactsBinDir)system.globalization/4.0.11/ref/</OutputPath>
-    <IntermediateOutputPath>$(ArtifactsObjDir)system.globalization/4.0.11</IntermediateOutputPath>
+    <AssemblyName>System.Globalization</AssemblyName>
+    <ProjectTemplateVersion>2</ProjectTemplateVersion>
   </PropertyGroup>
 
-  <ItemGroup>
-    <Compile Include="**/ref/$(TargetFramework)/*.cs" />
-    <Compile Include="**/lib/$(TargetFramework)/*.cs" />
+  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard1.0'">
+    <PackageReference Include="Microsoft.NETCore.Platforms" Version="1.0.1" />
+    <PackageReference Include="Microsoft.NETCore.Targets" Version="1.0.1" />
+    <PackageReference Include="System.Runtime" Version="4.1.0" />
   </ItemGroup>
 
-    <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard1.0' ">
-        <PackageReference Include="Microsoft.NETCore.Platforms" Version="1.0.1" />
-        <PackageReference Include="Microsoft.NETCore.Targets" Version="1.0.1" />
-        <PackageReference Include="System.Runtime" Version="4.1.0" />
-    </ItemGroup>
-    <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard1.3' ">
-        <PackageReference Include="Microsoft.NETCore.Platforms" Version="1.0.1" />
-        <PackageReference Include="Microsoft.NETCore.Targets" Version="1.0.1" />
-        <PackageReference Include="System.Runtime" Version="4.1.0" />
-    </ItemGroup>
+  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard1.3'">
+    <PackageReference Include="Microsoft.NETCore.Platforms" Version="1.0.1" />
+    <PackageReference Include="Microsoft.NETCore.Targets" Version="1.0.1" />
+    <PackageReference Include="System.Runtime" Version="4.1.0" />
+  </ItemGroup>
 
-  
 </Project>

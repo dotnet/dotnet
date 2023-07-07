@@ -2,24 +2,11 @@
 
   <PropertyGroup>
     <TargetFrameworks>netstandard1.0</TargetFrameworks>
-    <NuspecFile>$(ArtifactsBinDir)system.composition.runtime/1.0.31/system.composition.runtime.nuspec</NuspecFile>
+    <AssemblyName>System.Composition.Runtime</AssemblyName>
+    <ProjectTemplateVersion>2</ProjectTemplateVersion>
   </PropertyGroup>
 
-  <PropertyGroup>
-    <OutputPath>$(ArtifactsBinDir)system.composition.runtime/1.0.31/ref/</OutputPath>
-    <IntermediateOutputPath>$(ArtifactsObjDir)system.composition.runtime/1.0.31</IntermediateOutputPath>
-  </PropertyGroup>
-
-  <PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard1.0' ">
-    <OutputPath>$(ArtifactsBinDir)system.composition.runtime/1.0.31/lib/</OutputPath>
-  </PropertyGroup>
-
-  <ItemGroup>
-    <Compile Include="**/ref/$(TargetFramework)/*.cs" />
-    <Compile Include="**/lib/$(TargetFramework)/*.cs" />
-  </ItemGroup>
-
-  <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard1.0' ">
+  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard1.0'">
     <PackageReference Include="System.Collections" Version="4.3.0" />
     <PackageReference Include="System.Diagnostics.Debug" Version="4.3.0" />
     <PackageReference Include="System.Diagnostics.Tools" Version="4.3.0" />

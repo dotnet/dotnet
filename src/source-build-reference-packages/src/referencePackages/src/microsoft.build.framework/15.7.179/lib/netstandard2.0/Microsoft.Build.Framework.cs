@@ -4,70 +4,90 @@
 // ------------------------------------------------------------------------------
 // Changes to this file must follow the http://aka.ms/api-review process.
 // ------------------------------------------------------------------------------
-
-using System;
-using System.Diagnostics;
-using System.Reflection;
-using System.Runtime.CompilerServices;
-using System.Security;
-
-[assembly: Debuggable(DebuggableAttribute.DebuggingModes.IgnoreSymbolStoreSequencePoints)]
-[assembly: AllowPartiallyTrustedCallers]
-[assembly: ReferenceAssembly]
-[assembly: AssemblyTitle("Microsoft.Build.Framework")]
-[assembly: AssemblyDescription("Microsoft.Build.Framework")]
-[assembly: AssemblyDefaultAlias("Microsoft.Build.Framework")]
-[assembly: AssemblyCompany("Microsoft Corporation")]
-[assembly: AssemblyProduct("Microsoft® .NET Framework")]
-[assembly: AssemblyCopyright("© Microsoft Corporation.  All rights reserved.")]
-[assembly: AssemblyFileVersion("15.7.179.6572")]
-[assembly: AssemblyInformationalVersion("15.7.179.6572 built by: SOURCEBUILD")]
-[assembly: CLSCompliant(true)]
-[assembly: AssemblyMetadata("", "")]
-[assembly: AssemblyVersion("15.1.0.0")]
-
-
-
-
+[assembly: System.Runtime.CompilerServices.CompilationRelaxations(8)]
+[assembly: System.Runtime.CompilerServices.RuntimeCompatibility(WrapNonExceptionThrows = true)]
+[assembly: System.Diagnostics.Debuggable(System.Diagnostics.DebuggableAttribute.DebuggingModes.IgnoreSymbolStoreSequencePoints)]
+[assembly: System.Runtime.CompilerServices.InternalsVisibleTo("Microsoft.Build.Framework.UnitTests, PublicKey=002400000480000094000000060200000024000052534131000400000100010015c01ae1f50e8cc09ba9eac9147cf8fd9fce2cfe9f8dce4f7301c4132ca9fb50ce8cbf1df4dc18dd4d210e4345c744ecb3365ed327efdbc52603faa5e21daa11234c8c4a73e51f03bf192544581ebe107adee3a34928e39d04e524a9ce729d5090bfd7dad9d10c722c0def9ccc08ff0a03790e48bcd1f9b6c476063e1966a1c4")]
+[assembly: System.Runtime.CompilerServices.InternalsVisibleTo("Microsoft.Build.Tasks.UnitTests, PublicKey=002400000480000094000000060200000024000052534131000400000100010015c01ae1f50e8cc09ba9eac9147cf8fd9fce2cfe9f8dce4f7301c4132ca9fb50ce8cbf1df4dc18dd4d210e4345c744ecb3365ed327efdbc52603faa5e21daa11234c8c4a73e51f03bf192544581ebe107adee3a34928e39d04e524a9ce729d5090bfd7dad9d10c722c0def9ccc08ff0a03790e48bcd1f9b6c476063e1966a1c4")]
+[assembly: System.Runtime.CompilerServices.InternalsVisibleTo("Microsoft.Build.Framework.Whidbey.Unittest, PublicKey=002400000480000094000000060200000024000052534131000400000100010015c01ae1f50e8cc09ba9eac9147cf8fd9fce2cfe9f8dce4f7301c4132ca9fb50ce8cbf1df4dc18dd4d210e4345c744ecb3365ed327efdbc52603faa5e21daa11234c8c4a73e51f03bf192544581ebe107adee3a34928e39d04e524a9ce729d5090bfd7dad9d10c722c0def9ccc08ff0a03790e48bcd1f9b6c476063e1966a1c4")]
+[assembly: System.Runtime.InteropServices.DefaultDllImportSearchPaths(System.Runtime.InteropServices.DllImportSearchPath.SafeDirectories)]
+[assembly: System.Resources.NeutralResourcesLanguage("en")]
+[assembly: System.CLSCompliant(true)]
+[assembly: System.Reflection.AssemblyTitle("Microsoft.Build.Framework.dll")]
+[assembly: System.Reflection.AssemblyDescription("Microsoft.Build.Framework.dll")]
+[assembly: System.Reflection.AssemblyCompany("Microsoft Corporation")]
+[assembly: System.Reflection.AssemblyProduct("Microsoft® Build Tools®")]
+[assembly: System.Reflection.AssemblyCopyright("© Microsoft Corporation. All rights reserved.")]
+[assembly: System.Reflection.AssemblyFileVersion("15.7.179.6572")]
+[assembly: System.Reflection.AssemblyInformationalVersion("15.7.179+gac19036b0d")]
+[assembly: System.Runtime.Versioning.TargetFramework(".NETStandard,Version=v2.0", FrameworkDisplayName = "")]
+[assembly: System.Reflection.AssemblyConfiguration("Release")]
+[assembly: System.Reflection.AssemblyVersionAttribute("15.1.0.0")]
+[assembly: System.Runtime.CompilerServices.ReferenceAssembly]
+[assembly: System.Reflection.AssemblyFlagsAttribute((System.Reflection.AssemblyNameFlags)0x70)]
 namespace Microsoft.Build.Framework
 {
-    public delegate void AnyEventHandler(object sender, Microsoft.Build.Framework.BuildEventArgs e);
+    public delegate void AnyEventHandler(object sender, BuildEventArgs e);
     public partial struct BuildEngineResult
     {
         private object _dummy;
         private int _dummyPrimitive;
-        public BuildEngineResult(bool result, System.Collections.Generic.List<System.Collections.Generic.IDictionary<string, Microsoft.Build.Framework.ITaskItem[]>> targetOutputsPerProject) { throw null; }
+        public BuildEngineResult(bool result, System.Collections.Generic.List<System.Collections.Generic.IDictionary<string, ITaskItem[]>> targetOutputsPerProject) { }
+
         public bool Result { get { throw null; } }
-        public System.Collections.Generic.IList<System.Collections.Generic.IDictionary<string, Microsoft.Build.Framework.ITaskItem[]>> TargetOutputsPerProject { get { throw null; } }
+
+        public System.Collections.Generic.IList<System.Collections.Generic.IDictionary<string, ITaskItem[]>> TargetOutputsPerProject { get { throw null; } }
     }
-    public partial class BuildErrorEventArgs : Microsoft.Build.Framework.LazyFormattedBuildEventArgs
+
+    public partial class BuildErrorEventArgs : LazyFormattedBuildEventArgs
     {
         protected BuildErrorEventArgs() { }
-        public BuildErrorEventArgs(string subcategory, string code, string file, int lineNumber, int columnNumber, int endLineNumber, int endColumnNumber, string message, string helpKeyword, string senderName) { }
-        public BuildErrorEventArgs(string subcategory, string code, string file, int lineNumber, int columnNumber, int endLineNumber, int endColumnNumber, string message, string helpKeyword, string senderName, System.DateTime eventTimestamp) { }
+
         public BuildErrorEventArgs(string subcategory, string code, string file, int lineNumber, int columnNumber, int endLineNumber, int endColumnNumber, string message, string helpKeyword, string senderName, System.DateTime eventTimestamp, params object[] messageArgs) { }
+
+        public BuildErrorEventArgs(string subcategory, string code, string file, int lineNumber, int columnNumber, int endLineNumber, int endColumnNumber, string message, string helpKeyword, string senderName, System.DateTime eventTimestamp) { }
+
+        public BuildErrorEventArgs(string subcategory, string code, string file, int lineNumber, int columnNumber, int endLineNumber, int endColumnNumber, string message, string helpKeyword, string senderName) { }
+
         public string Code { get { throw null; } }
+
         public int ColumnNumber { get { throw null; } }
+
         public int EndColumnNumber { get { throw null; } }
+
         public int EndLineNumber { get { throw null; } }
+
         public string File { get { throw null; } }
+
         public int LineNumber { get { throw null; } }
+
         public string ProjectFile { get { throw null; } set { } }
+
         public string Subcategory { get { throw null; } }
     }
-    public delegate void BuildErrorEventHandler(object sender, Microsoft.Build.Framework.BuildErrorEventArgs e);
+
+    public delegate void BuildErrorEventHandler(object sender, BuildErrorEventArgs e);
     public abstract partial class BuildEventArgs : System.EventArgs
     {
         protected BuildEventArgs() { }
-        protected BuildEventArgs(string message, string helpKeyword, string senderName) { }
+
         protected BuildEventArgs(string message, string helpKeyword, string senderName, System.DateTime eventTimestamp) { }
-        public Microsoft.Build.Framework.BuildEventContext BuildEventContext { get { throw null; } set { } }
+
+        protected BuildEventArgs(string message, string helpKeyword, string senderName) { }
+
+        public BuildEventContext BuildEventContext { get { throw null; } set { } }
+
         public string HelpKeyword { get { throw null; } }
+
         public virtual string Message { get { throw null; } protected set { } }
+
         public string SenderName { get { throw null; } }
+
         public int ThreadId { get { throw null; } }
+
         public System.DateTime Timestamp { get { throw null; } }
     }
+
     public partial class BuildEventContext
     {
         public const int InvalidEvaluationId = -1;
@@ -77,565 +97,832 @@ namespace Microsoft.Build.Framework
         public const int InvalidSubmissionId = -1;
         public const int InvalidTargetId = -1;
         public const int InvalidTaskId = -1;
-        public BuildEventContext(int nodeId, int targetId, int projectContextId, int taskId) { }
-        public BuildEventContext(int nodeId, int projectInstanceId, int projectContextId, int targetId, int taskId) { }
-        public BuildEventContext(int submissionId, int nodeId, int projectInstanceId, int projectContextId, int targetId, int taskId) { }
         public BuildEventContext(int submissionId, int nodeId, int evaluationId, int projectInstanceId, int projectContextId, int targetId, int taskId) { }
+
+        public BuildEventContext(int submissionId, int nodeId, int projectInstanceId, int projectContextId, int targetId, int taskId) { }
+
+        public BuildEventContext(int nodeId, int projectInstanceId, int projectContextId, int targetId, int taskId) { }
+
+        public BuildEventContext(int nodeId, int targetId, int projectContextId, int taskId) { }
+
         public long BuildRequestId { get { throw null; } }
+
         public int EvaluationId { get { throw null; } }
-        public static Microsoft.Build.Framework.BuildEventContext Invalid { get { throw null; } }
+
+        public static BuildEventContext Invalid { get { throw null; } }
+
         public int NodeId { get { throw null; } }
+
         public int ProjectContextId { get { throw null; } }
+
         public int ProjectInstanceId { get { throw null; } }
+
         public int SubmissionId { get { throw null; } }
+
         public int TargetId { get { throw null; } }
+
         public int TaskId { get { throw null; } }
+
         public override bool Equals(object obj) { throw null; }
+
         public override int GetHashCode() { throw null; }
-        public static bool operator ==(Microsoft.Build.Framework.BuildEventContext left, Microsoft.Build.Framework.BuildEventContext right) { throw null; }
-        public static bool operator !=(Microsoft.Build.Framework.BuildEventContext left, Microsoft.Build.Framework.BuildEventContext right) { throw null; }
+
+        public static bool operator ==(BuildEventContext left, BuildEventContext right) { throw null; }
+
+        public static bool operator !=(BuildEventContext left, BuildEventContext right) { throw null; }
     }
-    public partial class BuildFinishedEventArgs : Microsoft.Build.Framework.BuildStatusEventArgs
+
+    public partial class BuildFinishedEventArgs : BuildStatusEventArgs
     {
         protected BuildFinishedEventArgs() { }
-        public BuildFinishedEventArgs(string message, string helpKeyword, bool succeeded) { }
-        public BuildFinishedEventArgs(string message, string helpKeyword, bool succeeded, System.DateTime eventTimestamp) { }
+
         public BuildFinishedEventArgs(string message, string helpKeyword, bool succeeded, System.DateTime eventTimestamp, params object[] messageArgs) { }
+
+        public BuildFinishedEventArgs(string message, string helpKeyword, bool succeeded, System.DateTime eventTimestamp) { }
+
+        public BuildFinishedEventArgs(string message, string helpKeyword, bool succeeded) { }
+
         public bool Succeeded { get { throw null; } }
     }
-    public delegate void BuildFinishedEventHandler(object sender, Microsoft.Build.Framework.BuildFinishedEventArgs e);
-    public partial class BuildMessageEventArgs : Microsoft.Build.Framework.LazyFormattedBuildEventArgs
+
+    public delegate void BuildFinishedEventHandler(object sender, BuildFinishedEventArgs e);
+    public partial class BuildMessageEventArgs : LazyFormattedBuildEventArgs
     {
         protected BuildMessageEventArgs() { }
-        public BuildMessageEventArgs(string message, string helpKeyword, string senderName, Microsoft.Build.Framework.MessageImportance importance) { }
-        public BuildMessageEventArgs(string message, string helpKeyword, string senderName, Microsoft.Build.Framework.MessageImportance importance, System.DateTime eventTimestamp) { }
-        public BuildMessageEventArgs(string message, string helpKeyword, string senderName, Microsoft.Build.Framework.MessageImportance importance, System.DateTime eventTimestamp, params object[] messageArgs) { }
-        public BuildMessageEventArgs(string subcategory, string code, string file, int lineNumber, int columnNumber, int endLineNumber, int endColumnNumber, string message, string helpKeyword, string senderName, Microsoft.Build.Framework.MessageImportance importance) { }
-        public BuildMessageEventArgs(string subcategory, string code, string file, int lineNumber, int columnNumber, int endLineNumber, int endColumnNumber, string message, string helpKeyword, string senderName, Microsoft.Build.Framework.MessageImportance importance, System.DateTime eventTimestamp) { }
-        public BuildMessageEventArgs(string subcategory, string code, string file, int lineNumber, int columnNumber, int endLineNumber, int endColumnNumber, string message, string helpKeyword, string senderName, Microsoft.Build.Framework.MessageImportance importance, System.DateTime eventTimestamp, params object[] messageArgs) { }
+
+        public BuildMessageEventArgs(string message, string helpKeyword, string senderName, MessageImportance importance, System.DateTime eventTimestamp, params object[] messageArgs) { }
+
+        public BuildMessageEventArgs(string message, string helpKeyword, string senderName, MessageImportance importance, System.DateTime eventTimestamp) { }
+
+        public BuildMessageEventArgs(string message, string helpKeyword, string senderName, MessageImportance importance) { }
+
+        public BuildMessageEventArgs(string subcategory, string code, string file, int lineNumber, int columnNumber, int endLineNumber, int endColumnNumber, string message, string helpKeyword, string senderName, MessageImportance importance, System.DateTime eventTimestamp, params object[] messageArgs) { }
+
+        public BuildMessageEventArgs(string subcategory, string code, string file, int lineNumber, int columnNumber, int endLineNumber, int endColumnNumber, string message, string helpKeyword, string senderName, MessageImportance importance, System.DateTime eventTimestamp) { }
+
+        public BuildMessageEventArgs(string subcategory, string code, string file, int lineNumber, int columnNumber, int endLineNumber, int endColumnNumber, string message, string helpKeyword, string senderName, MessageImportance importance) { }
+
         public string Code { get { throw null; } }
+
         public int ColumnNumber { get { throw null; } }
+
         public int EndColumnNumber { get { throw null; } }
+
         public int EndLineNumber { get { throw null; } }
+
         public string File { get { throw null; } }
-        public Microsoft.Build.Framework.MessageImportance Importance { get { throw null; } }
+
+        public MessageImportance Importance { get { throw null; } }
+
         public int LineNumber { get { throw null; } }
+
         public string ProjectFile { get { throw null; } set { } }
+
         public string Subcategory { get { throw null; } }
     }
-    public delegate void BuildMessageEventHandler(object sender, Microsoft.Build.Framework.BuildMessageEventArgs e);
-    public partial class BuildStartedEventArgs : Microsoft.Build.Framework.BuildStatusEventArgs
+
+    public delegate void BuildMessageEventHandler(object sender, BuildMessageEventArgs e);
+    public partial class BuildStartedEventArgs : BuildStatusEventArgs
     {
         protected BuildStartedEventArgs() { }
-        public BuildStartedEventArgs(string message, string helpKeyword) { }
+
         public BuildStartedEventArgs(string message, string helpKeyword, System.Collections.Generic.IDictionary<string, string> environmentOfBuild) { }
-        public BuildStartedEventArgs(string message, string helpKeyword, System.DateTime eventTimestamp) { }
+
         public BuildStartedEventArgs(string message, string helpKeyword, System.DateTime eventTimestamp, params object[] messageArgs) { }
+
+        public BuildStartedEventArgs(string message, string helpKeyword, System.DateTime eventTimestamp) { }
+
+        public BuildStartedEventArgs(string message, string helpKeyword) { }
+
         public System.Collections.Generic.IDictionary<string, string> BuildEnvironment { get { throw null; } }
     }
-    public delegate void BuildStartedEventHandler(object sender, Microsoft.Build.Framework.BuildStartedEventArgs e);
-    public abstract partial class BuildStatusEventArgs : Microsoft.Build.Framework.LazyFormattedBuildEventArgs
+
+    public delegate void BuildStartedEventHandler(object sender, BuildStartedEventArgs e);
+    public abstract partial class BuildStatusEventArgs : LazyFormattedBuildEventArgs
     {
         protected BuildStatusEventArgs() { }
-        protected BuildStatusEventArgs(string message, string helpKeyword, string senderName) { }
-        protected BuildStatusEventArgs(string message, string helpKeyword, string senderName, System.DateTime eventTimestamp) { }
+
         protected BuildStatusEventArgs(string message, string helpKeyword, string senderName, System.DateTime eventTimestamp, params object[] messageArgs) { }
+
+        protected BuildStatusEventArgs(string message, string helpKeyword, string senderName, System.DateTime eventTimestamp) { }
+
+        protected BuildStatusEventArgs(string message, string helpKeyword, string senderName) { }
     }
-    public delegate void BuildStatusEventHandler(object sender, Microsoft.Build.Framework.BuildStatusEventArgs e);
-    public partial class BuildWarningEventArgs : Microsoft.Build.Framework.LazyFormattedBuildEventArgs
+
+    public delegate void BuildStatusEventHandler(object sender, BuildStatusEventArgs e);
+    public partial class BuildWarningEventArgs : LazyFormattedBuildEventArgs
     {
         protected BuildWarningEventArgs() { }
-        public BuildWarningEventArgs(string subcategory, string code, string file, int lineNumber, int columnNumber, int endLineNumber, int endColumnNumber, string message, string helpKeyword, string senderName) { }
-        public BuildWarningEventArgs(string subcategory, string code, string file, int lineNumber, int columnNumber, int endLineNumber, int endColumnNumber, string message, string helpKeyword, string senderName, System.DateTime eventTimestamp) { }
+
         public BuildWarningEventArgs(string subcategory, string code, string file, int lineNumber, int columnNumber, int endLineNumber, int endColumnNumber, string message, string helpKeyword, string senderName, System.DateTime eventTimestamp, params object[] messageArgs) { }
+
+        public BuildWarningEventArgs(string subcategory, string code, string file, int lineNumber, int columnNumber, int endLineNumber, int endColumnNumber, string message, string helpKeyword, string senderName, System.DateTime eventTimestamp) { }
+
+        public BuildWarningEventArgs(string subcategory, string code, string file, int lineNumber, int columnNumber, int endLineNumber, int endColumnNumber, string message, string helpKeyword, string senderName) { }
+
         public string Code { get { throw null; } }
+
         public int ColumnNumber { get { throw null; } }
+
         public int EndColumnNumber { get { throw null; } }
+
         public int EndLineNumber { get { throw null; } }
+
         public string File { get { throw null; } }
+
         public int LineNumber { get { throw null; } }
+
         public string ProjectFile { get { throw null; } set { } }
+
         public string Subcategory { get { throw null; } }
     }
-    public delegate void BuildWarningEventHandler(object sender, Microsoft.Build.Framework.BuildWarningEventArgs e);
-    public partial class CriticalBuildMessageEventArgs : Microsoft.Build.Framework.BuildMessageEventArgs
+
+    public delegate void BuildWarningEventHandler(object sender, BuildWarningEventArgs e);
+    public partial class CriticalBuildMessageEventArgs : BuildMessageEventArgs
     {
         protected CriticalBuildMessageEventArgs() { }
-        public CriticalBuildMessageEventArgs(string subcategory, string code, string file, int lineNumber, int columnNumber, int endLineNumber, int endColumnNumber, string message, string helpKeyword, string senderName) { }
-        public CriticalBuildMessageEventArgs(string subcategory, string code, string file, int lineNumber, int columnNumber, int endLineNumber, int endColumnNumber, string message, string helpKeyword, string senderName, System.DateTime eventTimestamp) { }
+
         public CriticalBuildMessageEventArgs(string subcategory, string code, string file, int lineNumber, int columnNumber, int endLineNumber, int endColumnNumber, string message, string helpKeyword, string senderName, System.DateTime eventTimestamp, params object[] messageArgs) { }
+
+        public CriticalBuildMessageEventArgs(string subcategory, string code, string file, int lineNumber, int columnNumber, int endLineNumber, int endColumnNumber, string message, string helpKeyword, string senderName, System.DateTime eventTimestamp) { }
+
+        public CriticalBuildMessageEventArgs(string subcategory, string code, string file, int lineNumber, int columnNumber, int endLineNumber, int endColumnNumber, string message, string helpKeyword, string senderName) { }
     }
-    public abstract partial class CustomBuildEventArgs : Microsoft.Build.Framework.LazyFormattedBuildEventArgs
+
+    public abstract partial class CustomBuildEventArgs : LazyFormattedBuildEventArgs
     {
         protected CustomBuildEventArgs() { }
-        protected CustomBuildEventArgs(string message, string helpKeyword, string senderName) { }
-        protected CustomBuildEventArgs(string message, string helpKeyword, string senderName, System.DateTime eventTimestamp) { }
+
         protected CustomBuildEventArgs(string message, string helpKeyword, string senderName, System.DateTime eventTimestamp, params object[] messageArgs) { }
+
+        protected CustomBuildEventArgs(string message, string helpKeyword, string senderName, System.DateTime eventTimestamp) { }
+
+        protected CustomBuildEventArgs(string message, string helpKeyword, string senderName) { }
     }
-    public delegate void CustomBuildEventHandler(object sender, Microsoft.Build.Framework.CustomBuildEventArgs e);
-    public partial class ExternalProjectFinishedEventArgs : Microsoft.Build.Framework.CustomBuildEventArgs
+
+    public delegate void CustomBuildEventHandler(object sender, CustomBuildEventArgs e);
+    public partial class ExternalProjectFinishedEventArgs : CustomBuildEventArgs
     {
         protected ExternalProjectFinishedEventArgs() { }
-        public ExternalProjectFinishedEventArgs(string message, string helpKeyword, string senderName, string projectFile, bool succeeded) { }
+
         public ExternalProjectFinishedEventArgs(string message, string helpKeyword, string senderName, string projectFile, bool succeeded, System.DateTime eventTimestamp) { }
+
+        public ExternalProjectFinishedEventArgs(string message, string helpKeyword, string senderName, string projectFile, bool succeeded) { }
+
         public string ProjectFile { get { throw null; } }
+
         public bool Succeeded { get { throw null; } }
     }
-    public partial class ExternalProjectStartedEventArgs : Microsoft.Build.Framework.CustomBuildEventArgs
+
+    public partial class ExternalProjectStartedEventArgs : CustomBuildEventArgs
     {
         protected ExternalProjectStartedEventArgs() { }
-        public ExternalProjectStartedEventArgs(string message, string helpKeyword, string senderName, string projectFile, string targetNames) { }
+
         public ExternalProjectStartedEventArgs(string message, string helpKeyword, string senderName, string projectFile, string targetNames, System.DateTime eventTimestamp) { }
+
+        public ExternalProjectStartedEventArgs(string message, string helpKeyword, string senderName, string projectFile, string targetNames) { }
+
         public string ProjectFile { get { throw null; } }
+
         public string TargetNames { get { throw null; } }
     }
+
     public partial interface IBuildEngine
     {
         int ColumnNumberOfTaskNode { get; }
+
         bool ContinueOnError { get; }
+
         int LineNumberOfTaskNode { get; }
+
         string ProjectFileOfTaskNode { get; }
+
         bool BuildProjectFile(string projectFileName, string[] targetNames, System.Collections.IDictionary globalProperties, System.Collections.IDictionary targetOutputs);
-        void LogCustomEvent(Microsoft.Build.Framework.CustomBuildEventArgs e);
-        void LogErrorEvent(Microsoft.Build.Framework.BuildErrorEventArgs e);
-        void LogMessageEvent(Microsoft.Build.Framework.BuildMessageEventArgs e);
-        void LogWarningEvent(Microsoft.Build.Framework.BuildWarningEventArgs e);
+        void LogCustomEvent(CustomBuildEventArgs e);
+        void LogErrorEvent(BuildErrorEventArgs e);
+        void LogMessageEvent(BuildMessageEventArgs e);
+        void LogWarningEvent(BuildWarningEventArgs e);
     }
-    public partial interface IBuildEngine2 : Microsoft.Build.Framework.IBuildEngine
+
+    public partial interface IBuildEngine2 : IBuildEngine
     {
         bool IsRunningMultipleNodes { get; }
+
         bool BuildProjectFile(string projectFileName, string[] targetNames, System.Collections.IDictionary globalProperties, System.Collections.IDictionary targetOutputs, string toolsVersion);
         bool BuildProjectFilesInParallel(string[] projectFileNames, string[] targetNames, System.Collections.IDictionary[] globalProperties, System.Collections.IDictionary[] targetOutputsPerProject, string[] toolsVersion, bool useResultsCache, bool unloadProjectsOnCompletion);
     }
-    public partial interface IBuildEngine3 : Microsoft.Build.Framework.IBuildEngine, Microsoft.Build.Framework.IBuildEngine2
+
+    public partial interface IBuildEngine3 : IBuildEngine2, IBuildEngine
     {
-        Microsoft.Build.Framework.BuildEngineResult BuildProjectFilesInParallel(string[] projectFileNames, string[] targetNames, System.Collections.IDictionary[] globalProperties, System.Collections.Generic.IList<string>[] removeGlobalProperties, string[] toolsVersion, bool returnTargetOutputs);
+        BuildEngineResult BuildProjectFilesInParallel(string[] projectFileNames, string[] targetNames, System.Collections.IDictionary[] globalProperties, System.Collections.Generic.IList<string>[] removeGlobalProperties, string[] toolsVersion, bool returnTargetOutputs);
         void Reacquire();
         void Yield();
     }
-    public partial interface IBuildEngine4 : Microsoft.Build.Framework.IBuildEngine, Microsoft.Build.Framework.IBuildEngine2, Microsoft.Build.Framework.IBuildEngine3
+
+    public partial interface IBuildEngine4 : IBuildEngine3, IBuildEngine2, IBuildEngine
     {
-        object GetRegisteredTaskObject(object key, Microsoft.Build.Framework.RegisteredTaskObjectLifetime lifetime);
-        void RegisterTaskObject(object key, object obj, Microsoft.Build.Framework.RegisteredTaskObjectLifetime lifetime, bool allowEarlyCollection);
-        object UnregisterTaskObject(object key, Microsoft.Build.Framework.RegisteredTaskObjectLifetime lifetime);
+        object GetRegisteredTaskObject(object key, RegisteredTaskObjectLifetime lifetime);
+        void RegisterTaskObject(object key, object obj, RegisteredTaskObjectLifetime lifetime, bool allowEarlyCollection);
+        object UnregisterTaskObject(object key, RegisteredTaskObjectLifetime lifetime);
     }
-    public partial interface IBuildEngine5 : Microsoft.Build.Framework.IBuildEngine, Microsoft.Build.Framework.IBuildEngine2, Microsoft.Build.Framework.IBuildEngine3, Microsoft.Build.Framework.IBuildEngine4
+
+    public partial interface IBuildEngine5 : IBuildEngine4, IBuildEngine3, IBuildEngine2, IBuildEngine
     {
         void LogTelemetry(string eventName, System.Collections.Generic.IDictionary<string, string> properties);
     }
-    public partial interface ICancelableTask : Microsoft.Build.Framework.ITask
+
+    public partial interface ICancelableTask : ITask
     {
         void Cancel();
     }
+
     public partial interface IEventRedirector
     {
-        void ForwardEvent(Microsoft.Build.Framework.BuildEventArgs buildEvent);
+        void ForwardEvent(BuildEventArgs buildEvent);
     }
+
     public partial interface IEventSource
     {
-        event Microsoft.Build.Framework.AnyEventHandler AnyEventRaised;
-        event Microsoft.Build.Framework.BuildFinishedEventHandler BuildFinished;
-        event Microsoft.Build.Framework.BuildStartedEventHandler BuildStarted;
-        event Microsoft.Build.Framework.CustomBuildEventHandler CustomEventRaised;
-        event Microsoft.Build.Framework.BuildErrorEventHandler ErrorRaised;
-        event Microsoft.Build.Framework.BuildMessageEventHandler MessageRaised;
-        event Microsoft.Build.Framework.ProjectFinishedEventHandler ProjectFinished;
-        event Microsoft.Build.Framework.ProjectStartedEventHandler ProjectStarted;
-        event Microsoft.Build.Framework.BuildStatusEventHandler StatusEventRaised;
-        event Microsoft.Build.Framework.TargetFinishedEventHandler TargetFinished;
-        event Microsoft.Build.Framework.TargetStartedEventHandler TargetStarted;
-        event Microsoft.Build.Framework.TaskFinishedEventHandler TaskFinished;
-        event Microsoft.Build.Framework.TaskStartedEventHandler TaskStarted;
-        event Microsoft.Build.Framework.BuildWarningEventHandler WarningRaised;
+        event AnyEventHandler AnyEventRaised;
+        event BuildFinishedEventHandler BuildFinished;
+        event BuildStartedEventHandler BuildStarted;
+        event CustomBuildEventHandler CustomEventRaised;
+        event BuildErrorEventHandler ErrorRaised;
+        event BuildMessageEventHandler MessageRaised;
+        event ProjectFinishedEventHandler ProjectFinished;
+        event ProjectStartedEventHandler ProjectStarted;
+        event BuildStatusEventHandler StatusEventRaised;
+        event TargetFinishedEventHandler TargetFinished;
+        event TargetStartedEventHandler TargetStarted;
+        event TaskFinishedEventHandler TaskFinished;
+        event TaskStartedEventHandler TaskStarted;
+        event BuildWarningEventHandler WarningRaised;
     }
-    public partial interface IEventSource2 : Microsoft.Build.Framework.IEventSource
+
+    public partial interface IEventSource2 : IEventSource
     {
-        event Microsoft.Build.Framework.TelemetryEventHandler TelemetryLogged;
+        event TelemetryEventHandler TelemetryLogged;
     }
-    public partial interface IForwardingLogger : Microsoft.Build.Framework.ILogger, Microsoft.Build.Framework.INodeLogger
+
+    public partial interface IForwardingLogger : INodeLogger, ILogger
     {
-        Microsoft.Build.Framework.IEventRedirector BuildEventRedirector { get; set; }
+        IEventRedirector BuildEventRedirector { get; set; }
+
         int NodeId { get; set; }
     }
-    public partial interface IGeneratedTask : Microsoft.Build.Framework.ITask
+
+    public partial interface IGeneratedTask : ITask
     {
-        object GetPropertyValue(Microsoft.Build.Framework.TaskPropertyInfo property);
-        void SetPropertyValue(Microsoft.Build.Framework.TaskPropertyInfo property, object value);
+        object GetPropertyValue(TaskPropertyInfo property);
+        void SetPropertyValue(TaskPropertyInfo property, object value);
     }
+
     public partial interface ILogger
     {
         string Parameters { get; set; }
-        Microsoft.Build.Framework.LoggerVerbosity Verbosity { get; set; }
-        void Initialize(Microsoft.Build.Framework.IEventSource eventSource);
+
+        LoggerVerbosity Verbosity { get; set; }
+
+        void Initialize(IEventSource eventSource);
         void Shutdown();
     }
-    public partial interface INodeLogger : Microsoft.Build.Framework.ILogger
+
+    public partial interface INodeLogger : ILogger
     {
-        void Initialize(Microsoft.Build.Framework.IEventSource eventSource, int nodeCount);
+        void Initialize(IEventSource eventSource, int nodeCount);
     }
+
     public partial interface IProjectElement
     {
         string ElementName { get; }
+
         string OuterElement { get; }
     }
+
     public partial interface ITask
     {
-        Microsoft.Build.Framework.IBuildEngine BuildEngine { get; set; }
-        Microsoft.Build.Framework.ITaskHost HostObject { get; set; }
+        IBuildEngine BuildEngine { get; set; }
+
+        ITaskHost HostObject { get; set; }
+
         bool Execute();
     }
+
     public partial interface ITaskFactory
     {
         string FactoryName { get; }
+
         System.Type TaskType { get; }
-        void CleanupTask(Microsoft.Build.Framework.ITask task);
-        Microsoft.Build.Framework.ITask CreateTask(Microsoft.Build.Framework.IBuildEngine taskFactoryLoggingHost);
-        Microsoft.Build.Framework.TaskPropertyInfo[] GetTaskParameters();
-        bool Initialize(string taskName, System.Collections.Generic.IDictionary<string, Microsoft.Build.Framework.TaskPropertyInfo> parameterGroup, string taskBody, Microsoft.Build.Framework.IBuildEngine taskFactoryLoggingHost);
+
+        void CleanupTask(ITask task);
+        ITask CreateTask(IBuildEngine taskFactoryLoggingHost);
+        TaskPropertyInfo[] GetTaskParameters();
+        bool Initialize(string taskName, System.Collections.Generic.IDictionary<string, TaskPropertyInfo> parameterGroup, string taskBody, IBuildEngine taskFactoryLoggingHost);
     }
-    public partial interface ITaskFactory2 : Microsoft.Build.Framework.ITaskFactory
+
+    public partial interface ITaskFactory2 : ITaskFactory
     {
-        Microsoft.Build.Framework.ITask CreateTask(Microsoft.Build.Framework.IBuildEngine taskFactoryLoggingHost, System.Collections.Generic.IDictionary<string, string> taskIdentityParameters);
-        bool Initialize(string taskName, System.Collections.Generic.IDictionary<string, string> factoryIdentityParameters, System.Collections.Generic.IDictionary<string, Microsoft.Build.Framework.TaskPropertyInfo> parameterGroup, string taskBody, Microsoft.Build.Framework.IBuildEngine taskFactoryLoggingHost);
+        ITask CreateTask(IBuildEngine taskFactoryLoggingHost, System.Collections.Generic.IDictionary<string, string> taskIdentityParameters);
+        bool Initialize(string taskName, System.Collections.Generic.IDictionary<string, string> factoryIdentityParameters, System.Collections.Generic.IDictionary<string, TaskPropertyInfo> parameterGroup, string taskBody, IBuildEngine taskFactoryLoggingHost);
     }
+
     public partial interface ITaskHost
     {
     }
+
     public partial interface ITaskItem
     {
         string ItemSpec { get; set; }
+
         int MetadataCount { get; }
+
         System.Collections.ICollection MetadataNames { get; }
+
         System.Collections.IDictionary CloneCustomMetadata();
-        void CopyMetadataTo(Microsoft.Build.Framework.ITaskItem destinationItem);
+        void CopyMetadataTo(ITaskItem destinationItem);
         string GetMetadata(string metadataName);
         void RemoveMetadata(string metadataName);
         void SetMetadata(string metadataName, string metadataValue);
     }
-    public partial interface ITaskItem2 : Microsoft.Build.Framework.ITaskItem
+
+    public partial interface ITaskItem2 : ITaskItem
     {
         string EvaluatedIncludeEscaped { get; set; }
+
         System.Collections.IDictionary CloneCustomMetadataEscaped();
         string GetMetadataValueEscaped(string metadataName);
         void SetMetadataValueLiteral(string metadataName, string metadataValue);
     }
-    public partial class LazyFormattedBuildEventArgs : Microsoft.Build.Framework.BuildEventArgs
+
+    public partial class LazyFormattedBuildEventArgs : BuildEventArgs
     {
         protected LazyFormattedBuildEventArgs() { }
-        public LazyFormattedBuildEventArgs(string message, string helpKeyword, string senderName) { }
+
         public LazyFormattedBuildEventArgs(string message, string helpKeyword, string senderName, System.DateTime eventTimestamp, params object[] messageArgs) { }
+
+        public LazyFormattedBuildEventArgs(string message, string helpKeyword, string senderName) { }
+
         public override string Message { get { throw null; } }
     }
-    [System.AttributeUsageAttribute(System.AttributeTargets.Class, AllowMultiple=false, Inherited=true)]
+
+    [System.AttributeUsage(System.AttributeTargets.Class, AllowMultiple = false, Inherited = true)]
     public sealed partial class LoadInSeparateAppDomainAttribute : System.Attribute
     {
-        public LoadInSeparateAppDomainAttribute() { }
     }
+
     public partial class LoggerException : System.Exception
     {
         public LoggerException() { }
+
         protected LoggerException(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context) { }
-        public LoggerException(string message) { }
-        public LoggerException(string message, System.Exception innerException) { }
+
         public LoggerException(string message, System.Exception innerException, string errorCode, string helpKeyword) { }
+
+        public LoggerException(string message, System.Exception innerException) { }
+
+        public LoggerException(string message) { }
+
         public string ErrorCode { get { throw null; } }
+
         public string HelpKeyword { get { throw null; } }
+
         public override void GetObjectData(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context) { }
     }
+
     public enum LoggerVerbosity
     {
-        Detailed = 3,
-        Diagnostic = 4,
+        Quiet = 0,
         Minimal = 1,
         Normal = 2,
-        Quiet = 0,
+        Detailed = 3,
+        Diagnostic = 4
     }
+
     public enum MessageImportance
     {
         High = 0,
-        Low = 2,
         Normal = 1,
+        Low = 2
     }
-    [System.AttributeUsageAttribute(System.AttributeTargets.Property, AllowMultiple=false, Inherited=false)]
+
+    [System.AttributeUsage(System.AttributeTargets.Property, AllowMultiple = false, Inherited = false)]
     public sealed partial class OutputAttribute : System.Attribute
     {
-        public OutputAttribute() { }
     }
-    public sealed partial class ProjectEvaluationFinishedEventArgs : Microsoft.Build.Framework.BuildStatusEventArgs
+
+    public sealed partial class ProjectEvaluationFinishedEventArgs : BuildStatusEventArgs
     {
         public ProjectEvaluationFinishedEventArgs() { }
+
         public ProjectEvaluationFinishedEventArgs(string message, params object[] messageArgs) { }
-        public System.Nullable<Microsoft.Build.Framework.Profiler.ProfilerResult> ProfilerResult { get { throw null; } set { } }
+
+        public Profiler.ProfilerResult? ProfilerResult { get { throw null; } set { } }
+
         public string ProjectFile { get { throw null; } set { } }
     }
-    public partial class ProjectEvaluationStartedEventArgs : Microsoft.Build.Framework.BuildStatusEventArgs
+
+    public partial class ProjectEvaluationStartedEventArgs : BuildStatusEventArgs
     {
         public ProjectEvaluationStartedEventArgs() { }
+
         public ProjectEvaluationStartedEventArgs(string message, params object[] messageArgs) { }
+
         public string ProjectFile { get { throw null; } set { } }
     }
-    public partial class ProjectFinishedEventArgs : Microsoft.Build.Framework.BuildStatusEventArgs
+
+    public partial class ProjectFinishedEventArgs : BuildStatusEventArgs
     {
         protected ProjectFinishedEventArgs() { }
-        public ProjectFinishedEventArgs(string message, string helpKeyword, string projectFile, bool succeeded) { }
+
         public ProjectFinishedEventArgs(string message, string helpKeyword, string projectFile, bool succeeded, System.DateTime eventTimestamp) { }
+
+        public ProjectFinishedEventArgs(string message, string helpKeyword, string projectFile, bool succeeded) { }
+
         public string ProjectFile { get { throw null; } }
+
         public bool Succeeded { get { throw null; } }
     }
-    public delegate void ProjectFinishedEventHandler(object sender, Microsoft.Build.Framework.ProjectFinishedEventArgs e);
-    public partial class ProjectImportedEventArgs : Microsoft.Build.Framework.BuildMessageEventArgs
+
+    public delegate void ProjectFinishedEventHandler(object sender, ProjectFinishedEventArgs e);
+    public partial class ProjectImportedEventArgs : BuildMessageEventArgs
     {
         public ProjectImportedEventArgs() { }
+
         public ProjectImportedEventArgs(int lineNumber, int columnNumber, string message, params object[] messageArgs) { }
+
         public string ImportedProjectFile { get { throw null; } set { } }
+
         public bool ImportIgnored { get { throw null; } set { } }
+
         public string UnexpandedProject { get { throw null; } set { } }
     }
-    public partial class ProjectStartedEventArgs : Microsoft.Build.Framework.BuildStatusEventArgs
+
+    public partial class ProjectStartedEventArgs : BuildStatusEventArgs
     {
         public const int InvalidProjectId = -1;
         protected ProjectStartedEventArgs() { }
-        public ProjectStartedEventArgs(int projectId, string message, string helpKeyword, string projectFile, string targetNames, System.Collections.IEnumerable properties, System.Collections.IEnumerable items, Microsoft.Build.Framework.BuildEventContext parentBuildEventContext) { }
-        public ProjectStartedEventArgs(int projectId, string message, string helpKeyword, string projectFile, string targetNames, System.Collections.IEnumerable properties, System.Collections.IEnumerable items, Microsoft.Build.Framework.BuildEventContext parentBuildEventContext, System.Collections.Generic.IDictionary<string, string> globalProperties, string toolsVersion) { }
-        public ProjectStartedEventArgs(int projectId, string message, string helpKeyword, string projectFile, string targetNames, System.Collections.IEnumerable properties, System.Collections.IEnumerable items, Microsoft.Build.Framework.BuildEventContext parentBuildEventContext, System.DateTime eventTimestamp) { }
-        public ProjectStartedEventArgs(string message, string helpKeyword, string projectFile, string targetNames, System.Collections.IEnumerable properties, System.Collections.IEnumerable items) { }
+
+        public ProjectStartedEventArgs(int projectId, string message, string helpKeyword, string projectFile, string targetNames, System.Collections.IEnumerable properties, System.Collections.IEnumerable items, BuildEventContext parentBuildEventContext, System.Collections.Generic.IDictionary<string, string> globalProperties, string toolsVersion) { }
+
+        public ProjectStartedEventArgs(int projectId, string message, string helpKeyword, string projectFile, string targetNames, System.Collections.IEnumerable properties, System.Collections.IEnumerable items, BuildEventContext parentBuildEventContext, System.DateTime eventTimestamp) { }
+
+        public ProjectStartedEventArgs(int projectId, string message, string helpKeyword, string projectFile, string targetNames, System.Collections.IEnumerable properties, System.Collections.IEnumerable items, BuildEventContext parentBuildEventContext) { }
+
         public ProjectStartedEventArgs(string message, string helpKeyword, string projectFile, string targetNames, System.Collections.IEnumerable properties, System.Collections.IEnumerable items, System.DateTime eventTimestamp) { }
+
+        public ProjectStartedEventArgs(string message, string helpKeyword, string projectFile, string targetNames, System.Collections.IEnumerable properties, System.Collections.IEnumerable items) { }
+
         public System.Collections.Generic.IDictionary<string, string> GlobalProperties { get { throw null; } }
+
         public System.Collections.IEnumerable Items { get { throw null; } }
-        public Microsoft.Build.Framework.BuildEventContext ParentProjectBuildEventContext { get { throw null; } }
+
+        public BuildEventContext ParentProjectBuildEventContext { get { throw null; } }
+
         public string ProjectFile { get { throw null; } }
+
         public int ProjectId { get { throw null; } }
+
         public System.Collections.IEnumerable Properties { get { throw null; } }
+
         public string TargetNames { get { throw null; } }
+
         public string ToolsVersion { get { throw null; } }
     }
-    public delegate void ProjectStartedEventHandler(object sender, Microsoft.Build.Framework.ProjectStartedEventArgs e);
+
+    public delegate void ProjectStartedEventHandler(object sender, ProjectStartedEventArgs e);
     public enum RegisteredTaskObjectLifetime
     {
-        AppDomain = 1,
         Build = 0,
+        AppDomain = 1
     }
-    [System.AttributeUsageAttribute(System.AttributeTargets.Property, AllowMultiple=false, Inherited=false)]
+
+    [System.AttributeUsage(System.AttributeTargets.Property, AllowMultiple = false, Inherited = false)]
     public sealed partial class RequiredAttribute : System.Attribute
     {
-        public RequiredAttribute() { }
     }
-    [System.AttributeUsageAttribute(System.AttributeTargets.Class, AllowMultiple=false, Inherited=false)]
+
+    [System.AttributeUsage(System.AttributeTargets.Class, AllowMultiple = false, Inherited = false)]
     public sealed partial class RequiredRuntimeAttribute : System.Attribute
     {
         public RequiredRuntimeAttribute(string runtimeVersion) { }
+
         public string RuntimeVersion { get { throw null; } }
     }
-    [System.AttributeUsageAttribute(System.AttributeTargets.Class, AllowMultiple=false, Inherited=false)]
+
+    [System.AttributeUsage(System.AttributeTargets.Class, AllowMultiple = false, Inherited = false)]
     public sealed partial class RunInMTAAttribute : System.Attribute
     {
-        public RunInMTAAttribute() { }
     }
-    [System.AttributeUsageAttribute(System.AttributeTargets.Class, AllowMultiple=false, Inherited=false)]
+
+    [System.AttributeUsage(System.AttributeTargets.Class, AllowMultiple = false, Inherited = false)]
     public sealed partial class RunInSTAAttribute : System.Attribute
     {
-        public RunInSTAAttribute() { }
     }
+
     public abstract partial class SdkLogger
     {
-        protected SdkLogger() { }
-        public abstract void LogMessage(string message, Microsoft.Build.Framework.MessageImportance messageImportance = Microsoft.Build.Framework.MessageImportance.Low);
+        public abstract void LogMessage(string message, MessageImportance messageImportance = MessageImportance.Low);
     }
-    public sealed partial class SdkReference : System.IEquatable<Microsoft.Build.Framework.SdkReference>
+
+    public sealed partial class SdkReference : System.IEquatable<SdkReference>
     {
         public SdkReference(string name, string version, string minimumVersion) { }
+
         public string MinimumVersion { get { throw null; } }
+
         public string Name { get { throw null; } }
+
         public string Version { get { throw null; } }
-        public bool Equals(Microsoft.Build.Framework.SdkReference other) { throw null; }
+
+        public bool Equals(SdkReference other) { throw null; }
+
         public override bool Equals(object obj) { throw null; }
+
         public override int GetHashCode() { throw null; }
+
         public override string ToString() { throw null; }
-        public static bool TryParse(string sdk, out Microsoft.Build.Framework.SdkReference sdkReference) { throw null; }
+
+        public static bool TryParse(string sdk, out SdkReference sdkReference) { throw null; }
     }
+
     public abstract partial class SdkResolver
     {
-        protected SdkResolver() { }
         public abstract string Name { get; }
         public abstract int Priority { get; }
-        public abstract Microsoft.Build.Framework.SdkResult Resolve(Microsoft.Build.Framework.SdkReference sdkReference, Microsoft.Build.Framework.SdkResolverContext resolverContext, Microsoft.Build.Framework.SdkResultFactory factory);
+
+        public abstract SdkResult Resolve(SdkReference sdkReference, SdkResolverContext resolverContext, SdkResultFactory factory);
     }
+
     public abstract partial class SdkResolverContext
     {
-        protected SdkResolverContext() { }
-        public virtual Microsoft.Build.Framework.SdkLogger Logger { get { throw null; } protected set { } }
+        public virtual SdkLogger Logger { get { throw null; } protected set { } }
+
         public virtual System.Version MSBuildVersion { get { throw null; } protected set { } }
+
         public virtual string ProjectFilePath { get { throw null; } protected set { } }
+
         public virtual string SolutionFilePath { get { throw null; } protected set { } }
+
         public virtual object State { get { throw null; } set { } }
     }
+
     public abstract partial class SdkResult
     {
-        protected SdkResult() { }
         public bool Success { get { throw null; } protected set { } }
     }
+
     public abstract partial class SdkResultFactory
     {
-        protected SdkResultFactory() { }
-        public abstract Microsoft.Build.Framework.SdkResult IndicateFailure(System.Collections.Generic.IEnumerable<string> errors, System.Collections.Generic.IEnumerable<string> warnings = null);
-        public abstract Microsoft.Build.Framework.SdkResult IndicateSuccess(string path, string version, System.Collections.Generic.IEnumerable<string> warnings = null);
+        public abstract SdkResult IndicateFailure(System.Collections.Generic.IEnumerable<string> errors, System.Collections.Generic.IEnumerable<string> warnings = null);
+        public abstract SdkResult IndicateSuccess(string path, string version, System.Collections.Generic.IEnumerable<string> warnings = null);
     }
+
     public enum TargetBuiltReason
     {
-        AfterTargets = 3,
+        None = 0,
         BeforeTargets = 1,
         DependsOn = 2,
-        None = 0,
+        AfterTargets = 3
     }
-    public partial class TargetFinishedEventArgs : Microsoft.Build.Framework.BuildStatusEventArgs
+
+    public partial class TargetFinishedEventArgs : BuildStatusEventArgs
     {
         protected TargetFinishedEventArgs() { }
-        public TargetFinishedEventArgs(string message, string helpKeyword, string targetName, string projectFile, string targetFile, bool succeeded) { }
+
         public TargetFinishedEventArgs(string message, string helpKeyword, string targetName, string projectFile, string targetFile, bool succeeded, System.Collections.IEnumerable targetOutputs) { }
+
         public TargetFinishedEventArgs(string message, string helpKeyword, string targetName, string projectFile, string targetFile, bool succeeded, System.DateTime eventTimestamp, System.Collections.IEnumerable targetOutputs) { }
+
+        public TargetFinishedEventArgs(string message, string helpKeyword, string targetName, string projectFile, string targetFile, bool succeeded) { }
+
         public string ProjectFile { get { throw null; } }
+
         public bool Succeeded { get { throw null; } }
+
         public string TargetFile { get { throw null; } }
+
         public string TargetName { get { throw null; } }
+
         public System.Collections.IEnumerable TargetOutputs { get { throw null; } set { } }
     }
-    public delegate void TargetFinishedEventHandler(object sender, Microsoft.Build.Framework.TargetFinishedEventArgs e);
-    public partial class TargetSkippedEventArgs : Microsoft.Build.Framework.BuildMessageEventArgs
+
+    public delegate void TargetFinishedEventHandler(object sender, TargetFinishedEventArgs e);
+    public partial class TargetSkippedEventArgs : BuildMessageEventArgs
     {
         public TargetSkippedEventArgs() { }
+
         public TargetSkippedEventArgs(string message, params object[] messageArgs) { }
-        public Microsoft.Build.Framework.TargetBuiltReason BuildReason { get { throw null; } set { } }
+
+        public TargetBuiltReason BuildReason { get { throw null; } set { } }
+
         public string ParentTarget { get { throw null; } set { } }
+
         public string TargetFile { get { throw null; } set { } }
+
         public string TargetName { get { throw null; } set { } }
     }
-    public partial class TargetStartedEventArgs : Microsoft.Build.Framework.BuildStatusEventArgs
+
+    public partial class TargetStartedEventArgs : BuildStatusEventArgs
     {
         protected TargetStartedEventArgs() { }
-        public TargetStartedEventArgs(string message, string helpKeyword, string targetName, string projectFile, string targetFile) { }
-        public TargetStartedEventArgs(string message, string helpKeyword, string targetName, string projectFile, string targetFile, string parentTarget, Microsoft.Build.Framework.TargetBuiltReason buildReason, System.DateTime eventTimestamp) { }
+
+        public TargetStartedEventArgs(string message, string helpKeyword, string targetName, string projectFile, string targetFile, string parentTarget, TargetBuiltReason buildReason, System.DateTime eventTimestamp) { }
+
         public TargetStartedEventArgs(string message, string helpKeyword, string targetName, string projectFile, string targetFile, string parentTarget, System.DateTime eventTimestamp) { }
-        public Microsoft.Build.Framework.TargetBuiltReason BuildReason { get { throw null; } }
+
+        public TargetStartedEventArgs(string message, string helpKeyword, string targetName, string projectFile, string targetFile) { }
+
+        public TargetBuiltReason BuildReason { get { throw null; } }
+
         public string ParentTarget { get { throw null; } }
+
         public string ProjectFile { get { throw null; } }
+
         public string TargetFile { get { throw null; } }
+
         public string TargetName { get { throw null; } }
     }
-    public delegate void TargetStartedEventHandler(object sender, Microsoft.Build.Framework.TargetStartedEventArgs e);
-    public partial class TaskCommandLineEventArgs : Microsoft.Build.Framework.BuildMessageEventArgs
+
+    public delegate void TargetStartedEventHandler(object sender, TargetStartedEventArgs e);
+    public partial class TaskCommandLineEventArgs : BuildMessageEventArgs
     {
         protected TaskCommandLineEventArgs() { }
-        public TaskCommandLineEventArgs(string commandLine, string taskName, Microsoft.Build.Framework.MessageImportance importance) { }
-        public TaskCommandLineEventArgs(string commandLine, string taskName, Microsoft.Build.Framework.MessageImportance importance, System.DateTime eventTimestamp) { }
+
+        public TaskCommandLineEventArgs(string commandLine, string taskName, MessageImportance importance, System.DateTime eventTimestamp) { }
+
+        public TaskCommandLineEventArgs(string commandLine, string taskName, MessageImportance importance) { }
+
         public string CommandLine { get { throw null; } }
+
         public string TaskName { get { throw null; } }
     }
-    public partial class TaskFinishedEventArgs : Microsoft.Build.Framework.BuildStatusEventArgs
+
+    public partial class TaskFinishedEventArgs : BuildStatusEventArgs
     {
         protected TaskFinishedEventArgs() { }
-        public TaskFinishedEventArgs(string message, string helpKeyword, string projectFile, string taskFile, string taskName, bool succeeded) { }
+
         public TaskFinishedEventArgs(string message, string helpKeyword, string projectFile, string taskFile, string taskName, bool succeeded, System.DateTime eventTimestamp) { }
+
+        public TaskFinishedEventArgs(string message, string helpKeyword, string projectFile, string taskFile, string taskName, bool succeeded) { }
+
         public string ProjectFile { get { throw null; } }
+
         public bool Succeeded { get { throw null; } }
+
         public string TaskFile { get { throw null; } }
+
         public string TaskName { get { throw null; } }
     }
-    public delegate void TaskFinishedEventHandler(object sender, Microsoft.Build.Framework.TaskFinishedEventArgs e);
+
+    public delegate void TaskFinishedEventHandler(object sender, TaskFinishedEventArgs e);
     public partial class TaskPropertyInfo
     {
         public TaskPropertyInfo(string name, System.Type typeOfParameter, bool output, bool required) { }
+
         public string Name { get { throw null; } }
+
         public bool Output { get { throw null; } }
+
         public System.Type PropertyType { get { throw null; } }
+
         public bool Required { get { throw null; } }
     }
-    public partial class TaskStartedEventArgs : Microsoft.Build.Framework.BuildStatusEventArgs
+
+    public partial class TaskStartedEventArgs : BuildStatusEventArgs
     {
         protected TaskStartedEventArgs() { }
-        public TaskStartedEventArgs(string message, string helpKeyword, string projectFile, string taskFile, string taskName) { }
+
         public TaskStartedEventArgs(string message, string helpKeyword, string projectFile, string taskFile, string taskName, System.DateTime eventTimestamp) { }
+
+        public TaskStartedEventArgs(string message, string helpKeyword, string projectFile, string taskFile, string taskName) { }
+
         public string ProjectFile { get { throw null; } }
+
         public string TaskFile { get { throw null; } }
+
         public string TaskName { get { throw null; } }
     }
-    public delegate void TaskStartedEventHandler(object sender, Microsoft.Build.Framework.TaskStartedEventArgs e);
-    public sealed partial class TelemetryEventArgs : Microsoft.Build.Framework.BuildEventArgs
+
+    public delegate void TaskStartedEventHandler(object sender, TaskStartedEventArgs e);
+    public sealed partial class TelemetryEventArgs : BuildEventArgs
     {
-        public TelemetryEventArgs() { }
         public string EventName { get { throw null; } set { } }
+
         public System.Collections.Generic.IDictionary<string, string> Properties { get { throw null; } set { } }
     }
-    public delegate void TelemetryEventHandler(object sender, Microsoft.Build.Framework.TelemetryEventArgs e);
+
+    public delegate void TelemetryEventHandler(object sender, TelemetryEventArgs e);
 }
+
 namespace Microsoft.Build.Framework.Profiler
 {
     public partial struct EvaluationLocation
     {
         private object _dummy;
         private int _dummyPrimitive;
-        public EvaluationLocation(Microsoft.Build.Framework.Profiler.EvaluationPass evaluationPass, string evaluationPassDescription, string file, System.Nullable<int> line, string elementName, string elementDescription, Microsoft.Build.Framework.Profiler.EvaluationLocationKind kind) { throw null; }
-        public EvaluationLocation(long id, System.Nullable<long> parentId, Microsoft.Build.Framework.Profiler.EvaluationPass evaluationPass, string evaluationPassDescription, string file, System.Nullable<int> line, string elementName, string elementDescription, Microsoft.Build.Framework.Profiler.EvaluationLocationKind kind) { throw null; }
-        public EvaluationLocation(System.Nullable<long> parentId, Microsoft.Build.Framework.Profiler.EvaluationPass evaluationPass, string evaluationPassDescription, string file, System.Nullable<int> line, string elementName, string elementDescription, Microsoft.Build.Framework.Profiler.EvaluationLocationKind kind) { throw null; }
+        public EvaluationLocation(EvaluationPass evaluationPass, string evaluationPassDescription, string file, int? line, string elementName, string elementDescription, EvaluationLocationKind kind) { }
+
+        public EvaluationLocation(long id, long? parentId, EvaluationPass evaluationPass, string evaluationPassDescription, string file, int? line, string elementName, string elementDescription, EvaluationLocationKind kind) { }
+
+        public EvaluationLocation(long? parentId, EvaluationPass evaluationPass, string evaluationPassDescription, string file, int? line, string elementName, string elementDescription, EvaluationLocationKind kind) { }
+
         public string ElementDescription { get { throw null; } }
+
         public string ElementName { get { throw null; } }
-        public static Microsoft.Build.Framework.Profiler.EvaluationLocation EmptyLocation { get { throw null; } }
-        public Microsoft.Build.Framework.Profiler.EvaluationPass EvaluationPass { get { throw null; } }
+
+        public static EvaluationLocation EmptyLocation { get { throw null; } }
+
+        public EvaluationPass EvaluationPass { get { throw null; } }
+
         public string EvaluationPassDescription { get { throw null; } }
+
         public string File { get { throw null; } }
+
         public long Id { get { throw null; } }
+
         public bool IsEvaluationPass { get { throw null; } }
-        public Microsoft.Build.Framework.Profiler.EvaluationLocationKind Kind { get { throw null; } }
-        public System.Nullable<int> Line { get { throw null; } }
-        public System.Nullable<long> ParentId { get { throw null; } }
-        public static Microsoft.Build.Framework.Profiler.EvaluationLocation CreateLocationForAggregatedGlob() { throw null; }
-        public static Microsoft.Build.Framework.Profiler.EvaluationLocation CreateLocationForCondition(System.Nullable<long> parentId, Microsoft.Build.Framework.Profiler.EvaluationPass evaluationPass, string evaluationDescription, string file, System.Nullable<int> line, string condition) { throw null; }
-        public static Microsoft.Build.Framework.Profiler.EvaluationLocation CreateLocationForGlob(System.Nullable<long> parentId, Microsoft.Build.Framework.Profiler.EvaluationPass evaluationPass, string evaluationDescription, string file, System.Nullable<int> line, string globDescription) { throw null; }
-        public static Microsoft.Build.Framework.Profiler.EvaluationLocation CreateLocationForProject(System.Nullable<long> parentId, Microsoft.Build.Framework.Profiler.EvaluationPass evaluationPass, string evaluationDescription, string file, System.Nullable<int> line, Microsoft.Build.Framework.IProjectElement element) { throw null; }
+
+        public EvaluationLocationKind Kind { get { throw null; } }
+
+        public int? Line { get { throw null; } }
+
+        public long? ParentId { get { throw null; } }
+
+        public static EvaluationLocation CreateLocationForAggregatedGlob() { throw null; }
+
+        public static EvaluationLocation CreateLocationForCondition(long? parentId, EvaluationPass evaluationPass, string evaluationDescription, string file, int? line, string condition) { throw null; }
+
+        public static EvaluationLocation CreateLocationForGlob(long? parentId, EvaluationPass evaluationPass, string evaluationDescription, string file, int? line, string globDescription) { throw null; }
+
+        public static EvaluationLocation CreateLocationForProject(long? parentId, EvaluationPass evaluationPass, string evaluationDescription, string file, int? line, IProjectElement element) { throw null; }
+
         public override bool Equals(object obj) { throw null; }
+
         public override int GetHashCode() { throw null; }
+
         public override string ToString() { throw null; }
-        public Microsoft.Build.Framework.Profiler.EvaluationLocation WithEvaluationPass(Microsoft.Build.Framework.Profiler.EvaluationPass evaluationPass, string passDescription = null) { throw null; }
-        public Microsoft.Build.Framework.Profiler.EvaluationLocation WithFile(string file) { throw null; }
-        public Microsoft.Build.Framework.Profiler.EvaluationLocation WithFileLineAndCondition(string file, System.Nullable<int> line, string condition) { throw null; }
-        public Microsoft.Build.Framework.Profiler.EvaluationLocation WithFileLineAndElement(string file, System.Nullable<int> line, Microsoft.Build.Framework.IProjectElement element) { throw null; }
-        public Microsoft.Build.Framework.Profiler.EvaluationLocation WithGlob(string globDescription) { throw null; }
-        public Microsoft.Build.Framework.Profiler.EvaluationLocation WithParentId(System.Nullable<long> parentId) { throw null; }
+
+        public EvaluationLocation WithEvaluationPass(EvaluationPass evaluationPass, string passDescription = null) { throw null; }
+
+        public EvaluationLocation WithFile(string file) { throw null; }
+
+        public EvaluationLocation WithFileLineAndCondition(string file, int? line, string condition) { throw null; }
+
+        public EvaluationLocation WithFileLineAndElement(string file, int? line, IProjectElement element) { throw null; }
+
+        public EvaluationLocation WithGlob(string globDescription) { throw null; }
+
+        public EvaluationLocation WithParentId(long? parentId) { throw null; }
     }
+
     public enum EvaluationLocationKind : byte
     {
-        Condition = (byte)1,
-        Element = (byte)0,
-        Glob = (byte)2,
+        Element = 0,
+        Condition = 1,
+        Glob = 2
     }
+
     public enum EvaluationPass : byte
     {
-        InitialProperties = (byte)2,
-        ItemDefinitionGroups = (byte)4,
-        Items = (byte)5,
-        LazyItems = (byte)6,
-        Properties = (byte)3,
-        Targets = (byte)8,
-        TotalEvaluation = (byte)0,
-        TotalGlobbing = (byte)1,
-        UsingTasks = (byte)7,
+        TotalEvaluation = 0,
+        TotalGlobbing = 1,
+        InitialProperties = 2,
+        Properties = 3,
+        ItemDefinitionGroups = 4,
+        Items = 5,
+        LazyItems = 6,
+        UsingTasks = 7,
+        Targets = 8
     }
+
     public partial struct ProfiledLocation
     {
         private int _dummyPrimitive;
-        public ProfiledLocation(System.TimeSpan inclusiveTime, System.TimeSpan exclusiveTime, int numberOfHits) { throw null; }
+        public ProfiledLocation(System.TimeSpan inclusiveTime, System.TimeSpan exclusiveTime, int numberOfHits) { }
+
         public System.TimeSpan ExclusiveTime { get { throw null; } }
+
         public System.TimeSpan InclusiveTime { get { throw null; } }
+
         public int NumberOfHits { get { throw null; } }
+
         public override bool Equals(object obj) { throw null; }
+
         public override int GetHashCode() { throw null; }
+
         public override string ToString() { throw null; }
     }
+
     public partial struct ProfilerResult
     {
         private object _dummy;
-        public ProfilerResult(System.Collections.Generic.IDictionary<Microsoft.Build.Framework.Profiler.EvaluationLocation, Microsoft.Build.Framework.Profiler.ProfiledLocation> profiledLocations) { throw null; }
-        public System.Collections.Generic.IReadOnlyDictionary<Microsoft.Build.Framework.Profiler.EvaluationLocation, Microsoft.Build.Framework.Profiler.ProfiledLocation> ProfiledLocations { get { throw null; } }
+        private int _dummyPrimitive;
+        public ProfilerResult(System.Collections.Generic.IDictionary<EvaluationLocation, ProfiledLocation> profiledLocations) { }
+
+        public System.Collections.Generic.IReadOnlyDictionary<EvaluationLocation, ProfiledLocation> ProfiledLocations { get { throw null; } }
+
         public override bool Equals(object obj) { throw null; }
+
         public override int GetHashCode() { throw null; }
     }
 }

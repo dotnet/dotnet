@@ -4,479 +4,791 @@
 // ------------------------------------------------------------------------------
 // Changes to this file must follow the http://aka.ms/api-review process.
 // ------------------------------------------------------------------------------
-
-using System;
-using System.Diagnostics;
-using System.Reflection;
-using System.Runtime.CompilerServices;
-using System.Security;
-
-[assembly: Debuggable(DebuggableAttribute.DebuggingModes.IgnoreSymbolStoreSequencePoints)]
-[assembly: AllowPartiallyTrustedCallers]
-[assembly: ReferenceAssembly]
-[assembly: AssemblyTitle("System.Xml.XDocument")]
-[assembly: AssemblyDescription("System.Xml.XDocument")]
-[assembly: AssemblyDefaultAlias("System.Xml.XDocument")]
-[assembly: AssemblyCompany("Microsoft Corporation")]
-[assembly: AssemblyProduct("Microsoft® .NET Framework")]
-[assembly: AssemblyCopyright("© Microsoft Corporation.  All rights reserved.")]
-[assembly: AssemblyFileVersion("1.0.24212.01")]
-[assembly: AssemblyInformationalVersion("1.0.24212.01 built by: SOURCEBUILD")]
-[assembly: CLSCompliant(true)]
-[assembly: AssemblyMetadata("", "")]
-[assembly: AssemblyVersion("4.0.10.0")]
-
-
-
-
+[assembly: System.Runtime.CompilerServices.CompilationRelaxations(8)]
+[assembly: System.Runtime.CompilerServices.RuntimeCompatibility(WrapNonExceptionThrows = true)]
+[assembly: System.Diagnostics.Debuggable(System.Diagnostics.DebuggableAttribute.DebuggingModes.IgnoreSymbolStoreSequencePoints)]
+[assembly: System.Security.AllowPartiallyTrustedCallers]
+[assembly: System.Runtime.CompilerServices.ReferenceAssembly]
+[assembly: System.Reflection.AssemblyTitle("System.Xml.XDocument")]
+[assembly: System.Reflection.AssemblyDescription("System.Xml.XDocument")]
+[assembly: System.Reflection.AssemblyDefaultAlias("System.Xml.XDocument")]
+[assembly: System.Reflection.AssemblyCompany("Microsoft Corporation")]
+[assembly: System.Reflection.AssemblyProduct("Microsoft® .NET Framework")]
+[assembly: System.Reflection.AssemblyCopyright("© Microsoft Corporation.  All rights reserved.")]
+[assembly: System.Reflection.AssemblyFileVersion("1.0.24212.01")]
+[assembly: System.Reflection.AssemblyInformationalVersion("1.0.24212.01. Commit Hash: 9688ddbb62c04189cac4c4a06e31e93377dccd41")]
+[assembly: System.CLSCompliant(true)]
+[assembly: System.Reflection.AssemblyMetadata(".NETFrameworkAssembly", "")]
+[assembly: System.Reflection.AssemblyMetadata("Serviceable", "True")]
+[assembly: System.Reflection.AssemblyVersionAttribute("4.0.10.0")]
+[assembly: System.Reflection.AssemblyFlagsAttribute((System.Reflection.AssemblyNameFlags)0x70)]
 namespace System.Xml.Linq
 {
     public static partial class Extensions
     {
-        public static System.Collections.Generic.IEnumerable<System.Xml.Linq.XElement> AncestorsAndSelf(this System.Collections.Generic.IEnumerable<System.Xml.Linq.XElement> source) { throw null; }
-        public static System.Collections.Generic.IEnumerable<System.Xml.Linq.XElement> AncestorsAndSelf(this System.Collections.Generic.IEnumerable<System.Xml.Linq.XElement> source, System.Xml.Linq.XName name) { throw null; }
-        public static System.Collections.Generic.IEnumerable<System.Xml.Linq.XElement> Ancestors<T>(this System.Collections.Generic.IEnumerable<T> source) where T : System.Xml.Linq.XNode { throw null; }
-        public static System.Collections.Generic.IEnumerable<System.Xml.Linq.XElement> Ancestors<T>(this System.Collections.Generic.IEnumerable<T> source, System.Xml.Linq.XName name) where T : System.Xml.Linq.XNode { throw null; }
-        public static System.Collections.Generic.IEnumerable<System.Xml.Linq.XAttribute> Attributes(this System.Collections.Generic.IEnumerable<System.Xml.Linq.XElement> source) { throw null; }
-        public static System.Collections.Generic.IEnumerable<System.Xml.Linq.XAttribute> Attributes(this System.Collections.Generic.IEnumerable<System.Xml.Linq.XElement> source, System.Xml.Linq.XName name) { throw null; }
-        public static System.Collections.Generic.IEnumerable<System.Xml.Linq.XNode> DescendantNodesAndSelf(this System.Collections.Generic.IEnumerable<System.Xml.Linq.XElement> source) { throw null; }
-        public static System.Collections.Generic.IEnumerable<System.Xml.Linq.XNode> DescendantNodes<T>(this System.Collections.Generic.IEnumerable<T> source) where T : System.Xml.Linq.XContainer { throw null; }
-        public static System.Collections.Generic.IEnumerable<System.Xml.Linq.XElement> DescendantsAndSelf(this System.Collections.Generic.IEnumerable<System.Xml.Linq.XElement> source) { throw null; }
-        public static System.Collections.Generic.IEnumerable<System.Xml.Linq.XElement> DescendantsAndSelf(this System.Collections.Generic.IEnumerable<System.Xml.Linq.XElement> source, System.Xml.Linq.XName name) { throw null; }
-        public static System.Collections.Generic.IEnumerable<System.Xml.Linq.XElement> Descendants<T>(this System.Collections.Generic.IEnumerable<T> source) where T : System.Xml.Linq.XContainer { throw null; }
-        public static System.Collections.Generic.IEnumerable<System.Xml.Linq.XElement> Descendants<T>(this System.Collections.Generic.IEnumerable<T> source, System.Xml.Linq.XName name) where T : System.Xml.Linq.XContainer { throw null; }
-        public static System.Collections.Generic.IEnumerable<System.Xml.Linq.XElement> Elements<T>(this System.Collections.Generic.IEnumerable<T> source) where T : System.Xml.Linq.XContainer { throw null; }
-        public static System.Collections.Generic.IEnumerable<System.Xml.Linq.XElement> Elements<T>(this System.Collections.Generic.IEnumerable<T> source, System.Xml.Linq.XName name) where T : System.Xml.Linq.XContainer { throw null; }
-        public static System.Collections.Generic.IEnumerable<T> InDocumentOrder<T>(this System.Collections.Generic.IEnumerable<T> source) where T : System.Xml.Linq.XNode { throw null; }
-        public static System.Collections.Generic.IEnumerable<System.Xml.Linq.XNode> Nodes<T>(this System.Collections.Generic.IEnumerable<T> source) where T : System.Xml.Linq.XContainer { throw null; }
-        public static void Remove(this System.Collections.Generic.IEnumerable<System.Xml.Linq.XAttribute> source) { }
-        public static void Remove<T>(this System.Collections.Generic.IEnumerable<T> source) where T : System.Xml.Linq.XNode { }
+        public static Collections.Generic.IEnumerable<XElement> Ancestors<T>(this Collections.Generic.IEnumerable<T> source, XName name)
+            where T : XNode { throw null; }
+
+        public static Collections.Generic.IEnumerable<XElement> Ancestors<T>(this Collections.Generic.IEnumerable<T> source)
+            where T : XNode { throw null; }
+
+        public static Collections.Generic.IEnumerable<XElement> AncestorsAndSelf(this Collections.Generic.IEnumerable<XElement> source, XName name) { throw null; }
+
+        public static Collections.Generic.IEnumerable<XElement> AncestorsAndSelf(this Collections.Generic.IEnumerable<XElement> source) { throw null; }
+
+        public static Collections.Generic.IEnumerable<XAttribute> Attributes(this Collections.Generic.IEnumerable<XElement> source, XName name) { throw null; }
+
+        public static Collections.Generic.IEnumerable<XAttribute> Attributes(this Collections.Generic.IEnumerable<XElement> source) { throw null; }
+
+        public static Collections.Generic.IEnumerable<XNode> DescendantNodes<T>(this Collections.Generic.IEnumerable<T> source)
+            where T : XContainer { throw null; }
+
+        public static Collections.Generic.IEnumerable<XNode> DescendantNodesAndSelf(this Collections.Generic.IEnumerable<XElement> source) { throw null; }
+
+        public static Collections.Generic.IEnumerable<XElement> Descendants<T>(this Collections.Generic.IEnumerable<T> source, XName name)
+            where T : XContainer { throw null; }
+
+        public static Collections.Generic.IEnumerable<XElement> Descendants<T>(this Collections.Generic.IEnumerable<T> source)
+            where T : XContainer { throw null; }
+
+        public static Collections.Generic.IEnumerable<XElement> DescendantsAndSelf(this Collections.Generic.IEnumerable<XElement> source, XName name) { throw null; }
+
+        public static Collections.Generic.IEnumerable<XElement> DescendantsAndSelf(this Collections.Generic.IEnumerable<XElement> source) { throw null; }
+
+        public static Collections.Generic.IEnumerable<XElement> Elements<T>(this Collections.Generic.IEnumerable<T> source, XName name)
+            where T : XContainer { throw null; }
+
+        public static Collections.Generic.IEnumerable<XElement> Elements<T>(this Collections.Generic.IEnumerable<T> source)
+            where T : XContainer { throw null; }
+
+        public static Collections.Generic.IEnumerable<T> InDocumentOrder<T>(this Collections.Generic.IEnumerable<T> source)
+            where T : XNode { throw null; }
+
+        public static Collections.Generic.IEnumerable<XNode> Nodes<T>(this Collections.Generic.IEnumerable<T> source)
+            where T : XContainer { throw null; }
+
+        public static void Remove(this Collections.Generic.IEnumerable<XAttribute> source) { }
+
+        public static void Remove<T>(this Collections.Generic.IEnumerable<T> source)
+            where T : XNode { }
     }
-    [System.FlagsAttribute]
+
+    [Flags]
     public enum LoadOptions
     {
         None = 0,
         PreserveWhitespace = 1,
         SetBaseUri = 2,
-        SetLineInfo = 4,
+        SetLineInfo = 4
     }
-    [System.FlagsAttribute]
+
+    [Flags]
     public enum ReaderOptions
     {
         None = 0,
-        OmitDuplicateNamespaces = 1,
+        OmitDuplicateNamespaces = 1
     }
-    [System.FlagsAttribute]
+
+    [Flags]
     public enum SaveOptions
     {
-        DisableFormatting = 1,
         None = 0,
-        OmitDuplicateNamespaces = 2,
+        DisableFormatting = 1,
+        OmitDuplicateNamespaces = 2
     }
-    public partial class XAttribute : System.Xml.Linq.XObject
+
+    public partial class XAttribute : XObject
     {
-        public XAttribute(System.Xml.Linq.XAttribute other) { }
-        public XAttribute(System.Xml.Linq.XName name, object value) { }
-        public static System.Collections.Generic.IEnumerable<System.Xml.Linq.XAttribute> EmptySequence { get { throw null; } }
+        public XAttribute(XAttribute other) { }
+
+        public XAttribute(XName name, object value) { }
+
+        public static Collections.Generic.IEnumerable<XAttribute> EmptySequence { get { throw null; } }
+
         public bool IsNamespaceDeclaration { get { throw null; } }
-        public System.Xml.Linq.XName Name { get { throw null; } }
-        public System.Xml.Linq.XAttribute NextAttribute { get { throw null; } }
-        public override System.Xml.XmlNodeType NodeType { get { throw null; } }
-        public System.Xml.Linq.XAttribute PreviousAttribute { get { throw null; } }
+
+        public XName Name { get { throw null; } }
+
+        public XAttribute NextAttribute { get { throw null; } }
+
+        public override XmlNodeType NodeType { get { throw null; } }
+
+        public XAttribute PreviousAttribute { get { throw null; } }
+
         public string Value { get { throw null; } set { } }
-        [System.CLSCompliantAttribute(false)]
-        public static explicit operator bool (System.Xml.Linq.XAttribute attribute) { throw null; }
-        [System.CLSCompliantAttribute(false)]
-        public static explicit operator System.DateTime (System.Xml.Linq.XAttribute attribute) { throw null; }
-        [System.CLSCompliantAttribute(false)]
-        public static explicit operator System.DateTimeOffset (System.Xml.Linq.XAttribute attribute) { throw null; }
-        [System.CLSCompliantAttribute(false)]
-        public static explicit operator decimal (System.Xml.Linq.XAttribute attribute) { throw null; }
-        [System.CLSCompliantAttribute(false)]
-        public static explicit operator double (System.Xml.Linq.XAttribute attribute) { throw null; }
-        [System.CLSCompliantAttribute(false)]
-        public static explicit operator System.Guid (System.Xml.Linq.XAttribute attribute) { throw null; }
-        [System.CLSCompliantAttribute(false)]
-        public static explicit operator int (System.Xml.Linq.XAttribute attribute) { throw null; }
-        [System.CLSCompliantAttribute(false)]
-        public static explicit operator long (System.Xml.Linq.XAttribute attribute) { throw null; }
-        [System.CLSCompliantAttribute(false)]
-        public static explicit operator System.Nullable<bool> (System.Xml.Linq.XAttribute attribute) { throw null; }
-        [System.CLSCompliantAttribute(false)]
-        public static explicit operator System.Nullable<System.DateTimeOffset> (System.Xml.Linq.XAttribute attribute) { throw null; }
-        [System.CLSCompliantAttribute(false)]
-        public static explicit operator System.Nullable<System.DateTime> (System.Xml.Linq.XAttribute attribute) { throw null; }
-        [System.CLSCompliantAttribute(false)]
-        public static explicit operator System.Nullable<decimal> (System.Xml.Linq.XAttribute attribute) { throw null; }
-        [System.CLSCompliantAttribute(false)]
-        public static explicit operator System.Nullable<double> (System.Xml.Linq.XAttribute attribute) { throw null; }
-        [System.CLSCompliantAttribute(false)]
-        public static explicit operator System.Nullable<System.Guid> (System.Xml.Linq.XAttribute attribute) { throw null; }
-        [System.CLSCompliantAttribute(false)]
-        public static explicit operator System.Nullable<int> (System.Xml.Linq.XAttribute attribute) { throw null; }
-        [System.CLSCompliantAttribute(false)]
-        public static explicit operator System.Nullable<long> (System.Xml.Linq.XAttribute attribute) { throw null; }
-        [System.CLSCompliantAttribute(false)]
-        public static explicit operator System.Nullable<float> (System.Xml.Linq.XAttribute attribute) { throw null; }
-        [System.CLSCompliantAttribute(false)]
-        public static explicit operator System.Nullable<System.TimeSpan> (System.Xml.Linq.XAttribute attribute) { throw null; }
-        [System.CLSCompliantAttribute(false)]
-        public static explicit operator System.Nullable<uint> (System.Xml.Linq.XAttribute attribute) { throw null; }
-        [System.CLSCompliantAttribute(false)]
-        public static explicit operator System.Nullable<ulong> (System.Xml.Linq.XAttribute attribute) { throw null; }
-        [System.CLSCompliantAttribute(false)]
-        public static explicit operator float (System.Xml.Linq.XAttribute attribute) { throw null; }
-        [System.CLSCompliantAttribute(false)]
-        public static explicit operator string (System.Xml.Linq.XAttribute attribute) { throw null; }
-        [System.CLSCompliantAttribute(false)]
-        public static explicit operator System.TimeSpan (System.Xml.Linq.XAttribute attribute) { throw null; }
-        [System.CLSCompliantAttribute(false)]
-        public static explicit operator uint (System.Xml.Linq.XAttribute attribute) { throw null; }
-        [System.CLSCompliantAttribute(false)]
-        public static explicit operator ulong (System.Xml.Linq.XAttribute attribute) { throw null; }
+
+        [CLSCompliant(false)]
+        public static explicit operator bool(XAttribute attribute) { throw null; }
+
+        [CLSCompliant(false)]
+        public static explicit operator DateTime(XAttribute attribute) { throw null; }
+
+        [CLSCompliant(false)]
+        public static explicit operator DateTimeOffset(XAttribute attribute) { throw null; }
+
+        [CLSCompliant(false)]
+        public static explicit operator decimal(XAttribute attribute) { throw null; }
+
+        [CLSCompliant(false)]
+        public static explicit operator double(XAttribute attribute) { throw null; }
+
+        [CLSCompliant(false)]
+        public static explicit operator Guid(XAttribute attribute) { throw null; }
+
+        [CLSCompliant(false)]
+        public static explicit operator int(XAttribute attribute) { throw null; }
+
+        [CLSCompliant(false)]
+        public static explicit operator long(XAttribute attribute) { throw null; }
+
+        [CLSCompliant(false)]
+        public static explicit operator bool?(XAttribute attribute) { throw null; }
+
+        [CLSCompliant(false)]
+        public static explicit operator DateTime?(XAttribute attribute) { throw null; }
+
+        [CLSCompliant(false)]
+        public static explicit operator DateTimeOffset?(XAttribute attribute) { throw null; }
+
+        [CLSCompliant(false)]
+        public static explicit operator decimal?(XAttribute attribute) { throw null; }
+
+        [CLSCompliant(false)]
+        public static explicit operator double?(XAttribute attribute) { throw null; }
+
+        [CLSCompliant(false)]
+        public static explicit operator Guid?(XAttribute attribute) { throw null; }
+
+        [CLSCompliant(false)]
+        public static explicit operator int?(XAttribute attribute) { throw null; }
+
+        [CLSCompliant(false)]
+        public static explicit operator long?(XAttribute attribute) { throw null; }
+
+        [CLSCompliant(false)]
+        public static explicit operator float?(XAttribute attribute) { throw null; }
+
+        [CLSCompliant(false)]
+        public static explicit operator TimeSpan?(XAttribute attribute) { throw null; }
+
+        [CLSCompliant(false)]
+        public static explicit operator uint?(XAttribute attribute) { throw null; }
+
+        [CLSCompliant(false)]
+        public static explicit operator ulong?(XAttribute attribute) { throw null; }
+
+        [CLSCompliant(false)]
+        public static explicit operator float(XAttribute attribute) { throw null; }
+
+        [CLSCompliant(false)]
+        public static explicit operator string(XAttribute attribute) { throw null; }
+
+        [CLSCompliant(false)]
+        public static explicit operator TimeSpan(XAttribute attribute) { throw null; }
+
+        [CLSCompliant(false)]
+        public static explicit operator uint(XAttribute attribute) { throw null; }
+
+        [CLSCompliant(false)]
+        public static explicit operator ulong(XAttribute attribute) { throw null; }
+
         public void Remove() { }
+
         public void SetValue(object value) { }
+
         public override string ToString() { throw null; }
     }
-    public partial class XCData : System.Xml.Linq.XText
+
+    public partial class XCData : XText
     {
-        public XCData(string value) : base (default(string)) { }
-        public XCData(System.Xml.Linq.XCData other) : base (default(string)) { }
-        public override System.Xml.XmlNodeType NodeType { get { throw null; } }
-        public override void WriteTo(System.Xml.XmlWriter writer) { }
+        public XCData(string value) : base(default(string)!) { }
+
+        public XCData(XCData other) : base(default(string)!) { }
+
+        public override XmlNodeType NodeType { get { throw null; } }
+
+        public override void WriteTo(XmlWriter writer) { }
     }
-    public partial class XComment : System.Xml.Linq.XNode
+
+    public partial class XComment : XNode
     {
         public XComment(string value) { }
-        public XComment(System.Xml.Linq.XComment other) { }
-        public override System.Xml.XmlNodeType NodeType { get { throw null; } }
+
+        public XComment(XComment other) { }
+
+        public override XmlNodeType NodeType { get { throw null; } }
+
         public string Value { get { throw null; } set { } }
-        public override void WriteTo(System.Xml.XmlWriter writer) { }
+
+        public override void WriteTo(XmlWriter writer) { }
     }
-    public abstract partial class XContainer : System.Xml.Linq.XNode
+
+    public abstract partial class XContainer : XNode
     {
         internal XContainer() { }
-        public System.Xml.Linq.XNode FirstNode { get { throw null; } }
-        public System.Xml.Linq.XNode LastNode { get { throw null; } }
+
+        public XNode FirstNode { get { throw null; } }
+
+        public XNode LastNode { get { throw null; } }
+
         public void Add(object content) { }
+
         public void Add(params object[] content) { }
+
         public void AddFirst(object content) { }
+
         public void AddFirst(params object[] content) { }
-        public System.Xml.XmlWriter CreateWriter() { throw null; }
-        public System.Collections.Generic.IEnumerable<System.Xml.Linq.XNode> DescendantNodes() { throw null; }
-        public System.Collections.Generic.IEnumerable<System.Xml.Linq.XElement> Descendants() { throw null; }
-        public System.Collections.Generic.IEnumerable<System.Xml.Linq.XElement> Descendants(System.Xml.Linq.XName name) { throw null; }
-        public System.Xml.Linq.XElement Element(System.Xml.Linq.XName name) { throw null; }
-        public System.Collections.Generic.IEnumerable<System.Xml.Linq.XElement> Elements() { throw null; }
-        public System.Collections.Generic.IEnumerable<System.Xml.Linq.XElement> Elements(System.Xml.Linq.XName name) { throw null; }
-        public System.Collections.Generic.IEnumerable<System.Xml.Linq.XNode> Nodes() { throw null; }
+
+        public XmlWriter CreateWriter() { throw null; }
+
+        public Collections.Generic.IEnumerable<XNode> DescendantNodes() { throw null; }
+
+        public Collections.Generic.IEnumerable<XElement> Descendants() { throw null; }
+
+        public Collections.Generic.IEnumerable<XElement> Descendants(XName name) { throw null; }
+
+        public XElement Element(XName name) { throw null; }
+
+        public Collections.Generic.IEnumerable<XElement> Elements() { throw null; }
+
+        public Collections.Generic.IEnumerable<XElement> Elements(XName name) { throw null; }
+
+        public Collections.Generic.IEnumerable<XNode> Nodes() { throw null; }
+
         public void RemoveNodes() { }
+
         public void ReplaceNodes(object content) { }
+
         public void ReplaceNodes(params object[] content) { }
     }
+
     public partial class XDeclaration
     {
         public XDeclaration(string version, string encoding, string standalone) { }
-        public XDeclaration(System.Xml.Linq.XDeclaration other) { }
+
+        public XDeclaration(XDeclaration other) { }
+
         public string Encoding { get { throw null; } set { } }
+
         public string Standalone { get { throw null; } set { } }
+
         public string Version { get { throw null; } set { } }
+
         public override string ToString() { throw null; }
     }
-    public partial class XDocument : System.Xml.Linq.XContainer
+
+    public partial class XDocument : XContainer
     {
         public XDocument() { }
+
         public XDocument(params object[] content) { }
-        public XDocument(System.Xml.Linq.XDeclaration declaration, params object[] content) { }
-        public XDocument(System.Xml.Linq.XDocument other) { }
-        public System.Xml.Linq.XDeclaration Declaration { get { throw null; } set { } }
-        public System.Xml.Linq.XDocumentType DocumentType { get { throw null; } }
-        public override System.Xml.XmlNodeType NodeType { get { throw null; } }
-        public System.Xml.Linq.XElement Root { get { throw null; } }
-        public static System.Xml.Linq.XDocument Load(System.IO.Stream stream) { throw null; }
-        public static System.Xml.Linq.XDocument Load(System.IO.Stream stream, System.Xml.Linq.LoadOptions options) { throw null; }
-        public static System.Xml.Linq.XDocument Load(System.IO.TextReader textReader) { throw null; }
-        public static System.Xml.Linq.XDocument Load(System.IO.TextReader textReader, System.Xml.Linq.LoadOptions options) { throw null; }
-        public static System.Xml.Linq.XDocument Load(string uri) { throw null; }
-        public static System.Xml.Linq.XDocument Load(string uri, System.Xml.Linq.LoadOptions options) { throw null; }
-        public static System.Xml.Linq.XDocument Load(System.Xml.XmlReader reader) { throw null; }
-        public static System.Xml.Linq.XDocument Load(System.Xml.XmlReader reader, System.Xml.Linq.LoadOptions options) { throw null; }
-        public static System.Xml.Linq.XDocument Parse(string text) { throw null; }
-        public static System.Xml.Linq.XDocument Parse(string text, System.Xml.Linq.LoadOptions options) { throw null; }
-        public void Save(System.IO.Stream stream) { }
-        public void Save(System.IO.Stream stream, System.Xml.Linq.SaveOptions options) { }
-        public void Save(System.IO.TextWriter textWriter) { }
-        public void Save(System.IO.TextWriter textWriter, System.Xml.Linq.SaveOptions options) { }
-        public void Save(System.Xml.XmlWriter writer) { }
-        public override void WriteTo(System.Xml.XmlWriter writer) { }
+
+        public XDocument(XDeclaration declaration, params object[] content) { }
+
+        public XDocument(XDocument other) { }
+
+        public XDeclaration Declaration { get { throw null; } set { } }
+
+        public XDocumentType DocumentType { get { throw null; } }
+
+        public override XmlNodeType NodeType { get { throw null; } }
+
+        public XElement Root { get { throw null; } }
+
+        public static XDocument Load(IO.Stream stream, LoadOptions options) { throw null; }
+
+        public static XDocument Load(IO.Stream stream) { throw null; }
+
+        public static XDocument Load(IO.TextReader textReader, LoadOptions options) { throw null; }
+
+        public static XDocument Load(IO.TextReader textReader) { throw null; }
+
+        public static XDocument Load(string uri, LoadOptions options) { throw null; }
+
+        public static XDocument Load(string uri) { throw null; }
+
+        public static XDocument Load(XmlReader reader, LoadOptions options) { throw null; }
+
+        public static XDocument Load(XmlReader reader) { throw null; }
+
+        public static XDocument Parse(string text, LoadOptions options) { throw null; }
+
+        public static XDocument Parse(string text) { throw null; }
+
+        public void Save(IO.Stream stream, SaveOptions options) { }
+
+        public void Save(IO.Stream stream) { }
+
+        public void Save(IO.TextWriter textWriter, SaveOptions options) { }
+
+        public void Save(IO.TextWriter textWriter) { }
+
+        public void Save(XmlWriter writer) { }
+
+        public override void WriteTo(XmlWriter writer) { }
     }
-    public partial class XDocumentType : System.Xml.Linq.XNode
+
+    public partial class XDocumentType : XNode
     {
         public XDocumentType(string name, string publicId, string systemId, string internalSubset) { }
-        public XDocumentType(System.Xml.Linq.XDocumentType other) { }
+
+        public XDocumentType(XDocumentType other) { }
+
         public string InternalSubset { get { throw null; } set { } }
+
         public string Name { get { throw null; } set { } }
-        public override System.Xml.XmlNodeType NodeType { get { throw null; } }
+
+        public override XmlNodeType NodeType { get { throw null; } }
+
         public string PublicId { get { throw null; } set { } }
+
         public string SystemId { get { throw null; } set { } }
-        public override void WriteTo(System.Xml.XmlWriter writer) { }
+
+        public override void WriteTo(XmlWriter writer) { }
     }
-    public partial class XElement : System.Xml.Linq.XContainer, System.Xml.Serialization.IXmlSerializable
+
+    public partial class XElement : XContainer, Serialization.IXmlSerializable
     {
-        public XElement(System.Xml.Linq.XElement other) { }
-        public XElement(System.Xml.Linq.XName name) { }
-        public XElement(System.Xml.Linq.XName name, object content) { }
-        public XElement(System.Xml.Linq.XName name, params object[] content) { }
-        public XElement(System.Xml.Linq.XStreamingElement other) { }
-        public static System.Collections.Generic.IEnumerable<System.Xml.Linq.XElement> EmptySequence { get { throw null; } }
-        public System.Xml.Linq.XAttribute FirstAttribute { get { throw null; } }
+        public XElement(XElement other) { }
+
+        public XElement(XName name, object content) { }
+
+        public XElement(XName name, params object[] content) { }
+
+        public XElement(XName name) { }
+
+        public XElement(XStreamingElement other) { }
+
+        public static Collections.Generic.IEnumerable<XElement> EmptySequence { get { throw null; } }
+
+        public XAttribute FirstAttribute { get { throw null; } }
+
         public bool HasAttributes { get { throw null; } }
+
         public bool HasElements { get { throw null; } }
+
         public bool IsEmpty { get { throw null; } }
-        public System.Xml.Linq.XAttribute LastAttribute { get { throw null; } }
-        public System.Xml.Linq.XName Name { get { throw null; } set { } }
-        public override System.Xml.XmlNodeType NodeType { get { throw null; } }
+
+        public XAttribute LastAttribute { get { throw null; } }
+
+        public XName Name { get { throw null; } set { } }
+
+        public override XmlNodeType NodeType { get { throw null; } }
+
         public string Value { get { throw null; } set { } }
-        public System.Collections.Generic.IEnumerable<System.Xml.Linq.XElement> AncestorsAndSelf() { throw null; }
-        public System.Collections.Generic.IEnumerable<System.Xml.Linq.XElement> AncestorsAndSelf(System.Xml.Linq.XName name) { throw null; }
-        public System.Xml.Linq.XAttribute Attribute(System.Xml.Linq.XName name) { throw null; }
-        public System.Collections.Generic.IEnumerable<System.Xml.Linq.XAttribute> Attributes() { throw null; }
-        public System.Collections.Generic.IEnumerable<System.Xml.Linq.XAttribute> Attributes(System.Xml.Linq.XName name) { throw null; }
-        public System.Collections.Generic.IEnumerable<System.Xml.Linq.XNode> DescendantNodesAndSelf() { throw null; }
-        public System.Collections.Generic.IEnumerable<System.Xml.Linq.XElement> DescendantsAndSelf() { throw null; }
-        public System.Collections.Generic.IEnumerable<System.Xml.Linq.XElement> DescendantsAndSelf(System.Xml.Linq.XName name) { throw null; }
-        public System.Xml.Linq.XNamespace GetDefaultNamespace() { throw null; }
-        public System.Xml.Linq.XNamespace GetNamespaceOfPrefix(string prefix) { throw null; }
-        public string GetPrefixOfNamespace(System.Xml.Linq.XNamespace ns) { throw null; }
-        public static System.Xml.Linq.XElement Load(System.IO.Stream stream) { throw null; }
-        public static System.Xml.Linq.XElement Load(System.IO.Stream stream, System.Xml.Linq.LoadOptions options) { throw null; }
-        public static System.Xml.Linq.XElement Load(System.IO.TextReader textReader) { throw null; }
-        public static System.Xml.Linq.XElement Load(System.IO.TextReader textReader, System.Xml.Linq.LoadOptions options) { throw null; }
-        public static System.Xml.Linq.XElement Load(string uri) { throw null; }
-        public static System.Xml.Linq.XElement Load(string uri, System.Xml.Linq.LoadOptions options) { throw null; }
-        public static System.Xml.Linq.XElement Load(System.Xml.XmlReader reader) { throw null; }
-        public static System.Xml.Linq.XElement Load(System.Xml.XmlReader reader, System.Xml.Linq.LoadOptions options) { throw null; }
-        [System.CLSCompliantAttribute(false)]
-        public static explicit operator bool (System.Xml.Linq.XElement element) { throw null; }
-        [System.CLSCompliantAttribute(false)]
-        public static explicit operator System.DateTime (System.Xml.Linq.XElement element) { throw null; }
-        [System.CLSCompliantAttribute(false)]
-        public static explicit operator System.DateTimeOffset (System.Xml.Linq.XElement element) { throw null; }
-        [System.CLSCompliantAttribute(false)]
-        public static explicit operator decimal (System.Xml.Linq.XElement element) { throw null; }
-        [System.CLSCompliantAttribute(false)]
-        public static explicit operator double (System.Xml.Linq.XElement element) { throw null; }
-        [System.CLSCompliantAttribute(false)]
-        public static explicit operator System.Guid (System.Xml.Linq.XElement element) { throw null; }
-        [System.CLSCompliantAttribute(false)]
-        public static explicit operator int (System.Xml.Linq.XElement element) { throw null; }
-        [System.CLSCompliantAttribute(false)]
-        public static explicit operator long (System.Xml.Linq.XElement element) { throw null; }
-        [System.CLSCompliantAttribute(false)]
-        public static explicit operator System.Nullable<bool> (System.Xml.Linq.XElement element) { throw null; }
-        [System.CLSCompliantAttribute(false)]
-        public static explicit operator System.Nullable<System.DateTimeOffset> (System.Xml.Linq.XElement element) { throw null; }
-        [System.CLSCompliantAttribute(false)]
-        public static explicit operator System.Nullable<System.DateTime> (System.Xml.Linq.XElement element) { throw null; }
-        [System.CLSCompliantAttribute(false)]
-        public static explicit operator System.Nullable<decimal> (System.Xml.Linq.XElement element) { throw null; }
-        [System.CLSCompliantAttribute(false)]
-        public static explicit operator System.Nullable<double> (System.Xml.Linq.XElement element) { throw null; }
-        [System.CLSCompliantAttribute(false)]
-        public static explicit operator System.Nullable<System.Guid> (System.Xml.Linq.XElement element) { throw null; }
-        [System.CLSCompliantAttribute(false)]
-        public static explicit operator System.Nullable<int> (System.Xml.Linq.XElement element) { throw null; }
-        [System.CLSCompliantAttribute(false)]
-        public static explicit operator System.Nullable<long> (System.Xml.Linq.XElement element) { throw null; }
-        [System.CLSCompliantAttribute(false)]
-        public static explicit operator System.Nullable<float> (System.Xml.Linq.XElement element) { throw null; }
-        [System.CLSCompliantAttribute(false)]
-        public static explicit operator System.Nullable<System.TimeSpan> (System.Xml.Linq.XElement element) { throw null; }
-        [System.CLSCompliantAttribute(false)]
-        public static explicit operator System.Nullable<uint> (System.Xml.Linq.XElement element) { throw null; }
-        [System.CLSCompliantAttribute(false)]
-        public static explicit operator System.Nullable<ulong> (System.Xml.Linq.XElement element) { throw null; }
-        [System.CLSCompliantAttribute(false)]
-        public static explicit operator float (System.Xml.Linq.XElement element) { throw null; }
-        [System.CLSCompliantAttribute(false)]
-        public static explicit operator string (System.Xml.Linq.XElement element) { throw null; }
-        [System.CLSCompliantAttribute(false)]
-        public static explicit operator System.TimeSpan (System.Xml.Linq.XElement element) { throw null; }
-        [System.CLSCompliantAttribute(false)]
-        public static explicit operator uint (System.Xml.Linq.XElement element) { throw null; }
-        [System.CLSCompliantAttribute(false)]
-        public static explicit operator ulong (System.Xml.Linq.XElement element) { throw null; }
-        public static System.Xml.Linq.XElement Parse(string text) { throw null; }
-        public static System.Xml.Linq.XElement Parse(string text, System.Xml.Linq.LoadOptions options) { throw null; }
+
+        public Collections.Generic.IEnumerable<XElement> AncestorsAndSelf() { throw null; }
+
+        public Collections.Generic.IEnumerable<XElement> AncestorsAndSelf(XName name) { throw null; }
+
+        public XAttribute Attribute(XName name) { throw null; }
+
+        public Collections.Generic.IEnumerable<XAttribute> Attributes() { throw null; }
+
+        public Collections.Generic.IEnumerable<XAttribute> Attributes(XName name) { throw null; }
+
+        public Collections.Generic.IEnumerable<XNode> DescendantNodesAndSelf() { throw null; }
+
+        public Collections.Generic.IEnumerable<XElement> DescendantsAndSelf() { throw null; }
+
+        public Collections.Generic.IEnumerable<XElement> DescendantsAndSelf(XName name) { throw null; }
+
+        public XNamespace GetDefaultNamespace() { throw null; }
+
+        public XNamespace GetNamespaceOfPrefix(string prefix) { throw null; }
+
+        public string GetPrefixOfNamespace(XNamespace ns) { throw null; }
+
+        public static XElement Load(IO.Stream stream, LoadOptions options) { throw null; }
+
+        public static XElement Load(IO.Stream stream) { throw null; }
+
+        public static XElement Load(IO.TextReader textReader, LoadOptions options) { throw null; }
+
+        public static XElement Load(IO.TextReader textReader) { throw null; }
+
+        public static XElement Load(string uri, LoadOptions options) { throw null; }
+
+        public static XElement Load(string uri) { throw null; }
+
+        public static XElement Load(XmlReader reader, LoadOptions options) { throw null; }
+
+        public static XElement Load(XmlReader reader) { throw null; }
+
+        [CLSCompliant(false)]
+        public static explicit operator bool(XElement element) { throw null; }
+
+        [CLSCompliant(false)]
+        public static explicit operator DateTime(XElement element) { throw null; }
+
+        [CLSCompliant(false)]
+        public static explicit operator DateTimeOffset(XElement element) { throw null; }
+
+        [CLSCompliant(false)]
+        public static explicit operator decimal(XElement element) { throw null; }
+
+        [CLSCompliant(false)]
+        public static explicit operator double(XElement element) { throw null; }
+
+        [CLSCompliant(false)]
+        public static explicit operator Guid(XElement element) { throw null; }
+
+        [CLSCompliant(false)]
+        public static explicit operator int(XElement element) { throw null; }
+
+        [CLSCompliant(false)]
+        public static explicit operator long(XElement element) { throw null; }
+
+        [CLSCompliant(false)]
+        public static explicit operator bool?(XElement element) { throw null; }
+
+        [CLSCompliant(false)]
+        public static explicit operator DateTime?(XElement element) { throw null; }
+
+        [CLSCompliant(false)]
+        public static explicit operator DateTimeOffset?(XElement element) { throw null; }
+
+        [CLSCompliant(false)]
+        public static explicit operator decimal?(XElement element) { throw null; }
+
+        [CLSCompliant(false)]
+        public static explicit operator double?(XElement element) { throw null; }
+
+        [CLSCompliant(false)]
+        public static explicit operator Guid?(XElement element) { throw null; }
+
+        [CLSCompliant(false)]
+        public static explicit operator int?(XElement element) { throw null; }
+
+        [CLSCompliant(false)]
+        public static explicit operator long?(XElement element) { throw null; }
+
+        [CLSCompliant(false)]
+        public static explicit operator float?(XElement element) { throw null; }
+
+        [CLSCompliant(false)]
+        public static explicit operator TimeSpan?(XElement element) { throw null; }
+
+        [CLSCompliant(false)]
+        public static explicit operator uint?(XElement element) { throw null; }
+
+        [CLSCompliant(false)]
+        public static explicit operator ulong?(XElement element) { throw null; }
+
+        [CLSCompliant(false)]
+        public static explicit operator float(XElement element) { throw null; }
+
+        [CLSCompliant(false)]
+        public static explicit operator string(XElement element) { throw null; }
+
+        [CLSCompliant(false)]
+        public static explicit operator TimeSpan(XElement element) { throw null; }
+
+        [CLSCompliant(false)]
+        public static explicit operator uint(XElement element) { throw null; }
+
+        [CLSCompliant(false)]
+        public static explicit operator ulong(XElement element) { throw null; }
+
+        public static XElement Parse(string text, LoadOptions options) { throw null; }
+
+        public static XElement Parse(string text) { throw null; }
+
         public void RemoveAll() { }
+
         public void RemoveAttributes() { }
+
         public void ReplaceAll(object content) { }
+
         public void ReplaceAll(params object[] content) { }
+
         public void ReplaceAttributes(object content) { }
+
         public void ReplaceAttributes(params object[] content) { }
-        public void Save(System.IO.Stream stream) { }
-        public void Save(System.IO.Stream stream, System.Xml.Linq.SaveOptions options) { }
-        public void Save(System.IO.TextWriter textWriter) { }
-        public void Save(System.IO.TextWriter textWriter, System.Xml.Linq.SaveOptions options) { }
-        public void Save(System.Xml.XmlWriter writer) { }
-        public void SetAttributeValue(System.Xml.Linq.XName name, object value) { }
-        public void SetElementValue(System.Xml.Linq.XName name, object value) { }
+
+        public void Save(IO.Stream stream, SaveOptions options) { }
+
+        public void Save(IO.Stream stream) { }
+
+        public void Save(IO.TextWriter textWriter, SaveOptions options) { }
+
+        public void Save(IO.TextWriter textWriter) { }
+
+        public void Save(XmlWriter writer) { }
+
+        public void SetAttributeValue(XName name, object value) { }
+
+        public void SetElementValue(XName name, object value) { }
+
         public void SetValue(object value) { }
-        System.Xml.Schema.XmlSchema System.Xml.Serialization.IXmlSerializable.GetSchema() { throw null; }
-        void System.Xml.Serialization.IXmlSerializable.ReadXml(System.Xml.XmlReader reader) { }
-        void System.Xml.Serialization.IXmlSerializable.WriteXml(System.Xml.XmlWriter writer) { }
-        public override void WriteTo(System.Xml.XmlWriter writer) { }
+
+        Schema.XmlSchema Serialization.IXmlSerializable.GetSchema() { throw null; }
+
+        void Serialization.IXmlSerializable.ReadXml(XmlReader reader) { }
+
+        void Serialization.IXmlSerializable.WriteXml(XmlWriter writer) { }
+
+        public override void WriteTo(XmlWriter writer) { }
     }
-    public sealed partial class XName : System.IEquatable<System.Xml.Linq.XName>
+
+    public sealed partial class XName : IEquatable<XName>
     {
         internal XName() { }
+
         public string LocalName { get { throw null; } }
-        public System.Xml.Linq.XNamespace Namespace { get { throw null; } }
+
+        public XNamespace Namespace { get { throw null; } }
+
         public string NamespaceName { get { throw null; } }
+
         public override bool Equals(object obj) { throw null; }
-        public static System.Xml.Linq.XName Get(string expandedName) { throw null; }
-        public static System.Xml.Linq.XName Get(string localName, string namespaceName) { throw null; }
+
+        public static XName Get(string localName, string namespaceName) { throw null; }
+
+        public static XName Get(string expandedName) { throw null; }
+
         public override int GetHashCode() { throw null; }
-        public static bool operator ==(System.Xml.Linq.XName left, System.Xml.Linq.XName right) { throw null; }
-        [System.CLSCompliantAttribute(false)]
-        public static implicit operator System.Xml.Linq.XName (string expandedName) { throw null; }
-        public static bool operator !=(System.Xml.Linq.XName left, System.Xml.Linq.XName right) { throw null; }
-        bool System.IEquatable<System.Xml.Linq.XName>.Equals(System.Xml.Linq.XName other) { throw null; }
+
+        public static bool operator ==(XName left, XName right) { throw null; }
+
+        [CLSCompliant(false)]
+        public static implicit operator XName(string expandedName) { throw null; }
+
+        public static bool operator !=(XName left, XName right) { throw null; }
+
+        bool IEquatable<XName>.Equals(XName other) { throw null; }
+
         public override string ToString() { throw null; }
     }
+
     public sealed partial class XNamespace
     {
         internal XNamespace() { }
+
         public string NamespaceName { get { throw null; } }
-        public static System.Xml.Linq.XNamespace None { get { throw null; } }
-        public static System.Xml.Linq.XNamespace Xml { get { throw null; } }
-        public static System.Xml.Linq.XNamespace Xmlns { get { throw null; } }
+
+        public static XNamespace None { get { throw null; } }
+
+        public static XNamespace Xml { get { throw null; } }
+
+        public static XNamespace Xmlns { get { throw null; } }
+
         public override bool Equals(object obj) { throw null; }
-        public static System.Xml.Linq.XNamespace Get(string namespaceName) { throw null; }
+
+        public static XNamespace Get(string namespaceName) { throw null; }
+
         public override int GetHashCode() { throw null; }
-        public System.Xml.Linq.XName GetName(string localName) { throw null; }
-        public static System.Xml.Linq.XName operator +(System.Xml.Linq.XNamespace ns, string localName) { throw null; }
-        public static bool operator ==(System.Xml.Linq.XNamespace left, System.Xml.Linq.XNamespace right) { throw null; }
-        [System.CLSCompliantAttribute(false)]
-        public static implicit operator System.Xml.Linq.XNamespace (string namespaceName) { throw null; }
-        public static bool operator !=(System.Xml.Linq.XNamespace left, System.Xml.Linq.XNamespace right) { throw null; }
+
+        public XName GetName(string localName) { throw null; }
+
+        public static XName operator +(XNamespace ns, string localName) { throw null; }
+
+        public static bool operator ==(XNamespace left, XNamespace right) { throw null; }
+
+        [CLSCompliant(false)]
+        public static implicit operator XNamespace(string namespaceName) { throw null; }
+
+        public static bool operator !=(XNamespace left, XNamespace right) { throw null; }
+
         public override string ToString() { throw null; }
     }
-    public abstract partial class XNode : System.Xml.Linq.XObject
+
+    public abstract partial class XNode : XObject
     {
         internal XNode() { }
-        public static System.Xml.Linq.XNodeDocumentOrderComparer DocumentOrderComparer { get { throw null; } }
-        public static System.Xml.Linq.XNodeEqualityComparer EqualityComparer { get { throw null; } }
-        public System.Xml.Linq.XNode NextNode { get { throw null; } }
-        public System.Xml.Linq.XNode PreviousNode { get { throw null; } }
+
+        public static XNodeDocumentOrderComparer DocumentOrderComparer { get { throw null; } }
+
+        public static XNodeEqualityComparer EqualityComparer { get { throw null; } }
+
+        public XNode NextNode { get { throw null; } }
+
+        public XNode PreviousNode { get { throw null; } }
+
         public void AddAfterSelf(object content) { }
+
         public void AddAfterSelf(params object[] content) { }
+
         public void AddBeforeSelf(object content) { }
+
         public void AddBeforeSelf(params object[] content) { }
-        public System.Collections.Generic.IEnumerable<System.Xml.Linq.XElement> Ancestors() { throw null; }
-        public System.Collections.Generic.IEnumerable<System.Xml.Linq.XElement> Ancestors(System.Xml.Linq.XName name) { throw null; }
-        public static int CompareDocumentOrder(System.Xml.Linq.XNode n1, System.Xml.Linq.XNode n2) { throw null; }
-        public System.Xml.XmlReader CreateReader() { throw null; }
-        public System.Xml.XmlReader CreateReader(System.Xml.Linq.ReaderOptions readerOptions) { throw null; }
-        public static bool DeepEquals(System.Xml.Linq.XNode n1, System.Xml.Linq.XNode n2) { throw null; }
-        public System.Collections.Generic.IEnumerable<System.Xml.Linq.XElement> ElementsAfterSelf() { throw null; }
-        public System.Collections.Generic.IEnumerable<System.Xml.Linq.XElement> ElementsAfterSelf(System.Xml.Linq.XName name) { throw null; }
-        public System.Collections.Generic.IEnumerable<System.Xml.Linq.XElement> ElementsBeforeSelf() { throw null; }
-        public System.Collections.Generic.IEnumerable<System.Xml.Linq.XElement> ElementsBeforeSelf(System.Xml.Linq.XName name) { throw null; }
-        public bool IsAfter(System.Xml.Linq.XNode node) { throw null; }
-        public bool IsBefore(System.Xml.Linq.XNode node) { throw null; }
-        public System.Collections.Generic.IEnumerable<System.Xml.Linq.XNode> NodesAfterSelf() { throw null; }
-        public System.Collections.Generic.IEnumerable<System.Xml.Linq.XNode> NodesBeforeSelf() { throw null; }
-        public static System.Xml.Linq.XNode ReadFrom(System.Xml.XmlReader reader) { throw null; }
+
+        public Collections.Generic.IEnumerable<XElement> Ancestors() { throw null; }
+
+        public Collections.Generic.IEnumerable<XElement> Ancestors(XName name) { throw null; }
+
+        public static int CompareDocumentOrder(XNode n1, XNode n2) { throw null; }
+
+        public XmlReader CreateReader() { throw null; }
+
+        public XmlReader CreateReader(ReaderOptions readerOptions) { throw null; }
+
+        public static bool DeepEquals(XNode n1, XNode n2) { throw null; }
+
+        public Collections.Generic.IEnumerable<XElement> ElementsAfterSelf() { throw null; }
+
+        public Collections.Generic.IEnumerable<XElement> ElementsAfterSelf(XName name) { throw null; }
+
+        public Collections.Generic.IEnumerable<XElement> ElementsBeforeSelf() { throw null; }
+
+        public Collections.Generic.IEnumerable<XElement> ElementsBeforeSelf(XName name) { throw null; }
+
+        public bool IsAfter(XNode node) { throw null; }
+
+        public bool IsBefore(XNode node) { throw null; }
+
+        public Collections.Generic.IEnumerable<XNode> NodesAfterSelf() { throw null; }
+
+        public Collections.Generic.IEnumerable<XNode> NodesBeforeSelf() { throw null; }
+
+        public static XNode ReadFrom(XmlReader reader) { throw null; }
+
         public void Remove() { }
+
         public void ReplaceWith(object content) { }
+
         public void ReplaceWith(params object[] content) { }
+
         public override string ToString() { throw null; }
-        public string ToString(System.Xml.Linq.SaveOptions options) { throw null; }
-        public abstract void WriteTo(System.Xml.XmlWriter writer);
+
+        public string ToString(SaveOptions options) { throw null; }
+
+        public abstract void WriteTo(XmlWriter writer);
     }
-    public sealed partial class XNodeDocumentOrderComparer : System.Collections.Generic.IComparer<System.Xml.Linq.XNode>, System.Collections.IComparer
+
+    public sealed partial class XNodeDocumentOrderComparer : Collections.Generic.IComparer<XNode>, Collections.IComparer
     {
-        public XNodeDocumentOrderComparer() { }
-        public int Compare(System.Xml.Linq.XNode x, System.Xml.Linq.XNode y) { throw null; }
-        int System.Collections.IComparer.Compare(object x, object y) { throw null; }
+        public int Compare(XNode x, XNode y) { throw null; }
+
+        int Collections.IComparer.Compare(object x, object y) { throw null; }
     }
-    public sealed partial class XNodeEqualityComparer : System.Collections.Generic.IEqualityComparer<System.Xml.Linq.XNode>, System.Collections.IEqualityComparer
+
+    public sealed partial class XNodeEqualityComparer : Collections.Generic.IEqualityComparer<XNode>, Collections.IEqualityComparer
     {
-        public XNodeEqualityComparer() { }
-        public bool Equals(System.Xml.Linq.XNode x, System.Xml.Linq.XNode y) { throw null; }
-        public int GetHashCode(System.Xml.Linq.XNode obj) { throw null; }
-        bool System.Collections.IEqualityComparer.Equals(object x, object y) { throw null; }
-        int System.Collections.IEqualityComparer.GetHashCode(object obj) { throw null; }
+        public bool Equals(XNode x, XNode y) { throw null; }
+
+        public int GetHashCode(XNode obj) { throw null; }
+
+        bool Collections.IEqualityComparer.Equals(object x, object y) { throw null; }
+
+        int Collections.IEqualityComparer.GetHashCode(object obj) { throw null; }
     }
-    public abstract partial class XObject : System.Xml.IXmlLineInfo
+
+    public abstract partial class XObject : IXmlLineInfo
     {
         internal XObject() { }
+
         public string BaseUri { get { throw null; } }
-        public System.Xml.Linq.XDocument Document { get { throw null; } }
-        public abstract System.Xml.XmlNodeType NodeType { get; }
-        public System.Xml.Linq.XElement Parent { get { throw null; } }
-        int System.Xml.IXmlLineInfo.LineNumber { get { throw null; } }
-        int System.Xml.IXmlLineInfo.LinePosition { get { throw null; } }
-        public event System.EventHandler<System.Xml.Linq.XObjectChangeEventArgs> Changed { add { } remove { } }
-        public event System.EventHandler<System.Xml.Linq.XObjectChangeEventArgs> Changing { add { } remove { } }
+
+        public XDocument Document { get { throw null; } }
+
+        public abstract XmlNodeType NodeType { get; }
+
+        public XElement Parent { get { throw null; } }
+
+        int IXmlLineInfo.LineNumber { get { throw null; } }
+
+        int IXmlLineInfo.LinePosition { get { throw null; } }
+
+        public event EventHandler<XObjectChangeEventArgs> Changed { add { } remove { } }
+
+        public event EventHandler<XObjectChangeEventArgs> Changing { add { } remove { } }
+
         public void AddAnnotation(object annotation) { }
-        public object Annotation(System.Type type) { throw null; }
-        public System.Collections.Generic.IEnumerable<object> Annotations(System.Type type) { throw null; }
-        public System.Collections.Generic.IEnumerable<T> Annotations<T>() where T : class { throw null; }
-        public T Annotation<T>() where T : class { throw null; }
-        public void RemoveAnnotations(System.Type type) { }
-        public void RemoveAnnotations<T>() where T : class { }
-        bool System.Xml.IXmlLineInfo.HasLineInfo() { throw null; }
+
+        public object Annotation(Type type) { throw null; }
+
+        public T Annotation<T>()
+            where T : class { throw null; }
+
+        public Collections.Generic.IEnumerable<object> Annotations(Type type) { throw null; }
+
+        public Collections.Generic.IEnumerable<T> Annotations<T>()
+            where T : class { throw null; }
+
+        public void RemoveAnnotations(Type type) { }
+
+        public void RemoveAnnotations<T>()
+            where T : class { }
+
+        bool IXmlLineInfo.HasLineInfo() { throw null; }
     }
+
     public enum XObjectChange
     {
         Add = 0,
-        Name = 2,
         Remove = 1,
-        Value = 3,
+        Name = 2,
+        Value = 3
     }
-    public partial class XObjectChangeEventArgs : System.EventArgs
+
+    public partial class XObjectChangeEventArgs : EventArgs
     {
-        public static readonly System.Xml.Linq.XObjectChangeEventArgs Add;
-        public static readonly System.Xml.Linq.XObjectChangeEventArgs Name;
-        public static readonly System.Xml.Linq.XObjectChangeEventArgs Remove;
-        public static readonly System.Xml.Linq.XObjectChangeEventArgs Value;
-        public XObjectChangeEventArgs(System.Xml.Linq.XObjectChange objectChange) { }
-        public System.Xml.Linq.XObjectChange ObjectChange { get { throw null; } }
+        public static readonly XObjectChangeEventArgs Add;
+        public static readonly XObjectChangeEventArgs Name;
+        public static readonly XObjectChangeEventArgs Remove;
+        public static readonly XObjectChangeEventArgs Value;
+        public XObjectChangeEventArgs(XObjectChange objectChange) { }
+
+        public XObjectChange ObjectChange { get { throw null; } }
     }
-    public partial class XProcessingInstruction : System.Xml.Linq.XNode
+
+    public partial class XProcessingInstruction : XNode
     {
         public XProcessingInstruction(string target, string data) { }
-        public XProcessingInstruction(System.Xml.Linq.XProcessingInstruction other) { }
+
+        public XProcessingInstruction(XProcessingInstruction other) { }
+
         public string Data { get { throw null; } set { } }
-        public override System.Xml.XmlNodeType NodeType { get { throw null; } }
+
+        public override XmlNodeType NodeType { get { throw null; } }
+
         public string Target { get { throw null; } set { } }
-        public override void WriteTo(System.Xml.XmlWriter writer) { }
+
+        public override void WriteTo(XmlWriter writer) { }
     }
+
     public partial class XStreamingElement
     {
-        public XStreamingElement(System.Xml.Linq.XName name) { }
-        public XStreamingElement(System.Xml.Linq.XName name, object content) { }
-        public XStreamingElement(System.Xml.Linq.XName name, params object[] content) { }
-        public System.Xml.Linq.XName Name { get { throw null; } set { } }
+        public XStreamingElement(XName name, object content) { }
+
+        public XStreamingElement(XName name, params object[] content) { }
+
+        public XStreamingElement(XName name) { }
+
+        public XName Name { get { throw null; } set { } }
+
         public void Add(object content) { }
+
         public void Add(params object[] content) { }
-        public void Save(System.IO.Stream stream) { }
-        public void Save(System.IO.Stream stream, System.Xml.Linq.SaveOptions options) { }
-        public void Save(System.IO.TextWriter textWriter) { }
-        public void Save(System.IO.TextWriter textWriter, System.Xml.Linq.SaveOptions options) { }
-        public void Save(System.Xml.XmlWriter writer) { }
+
+        public void Save(IO.Stream stream, SaveOptions options) { }
+
+        public void Save(IO.Stream stream) { }
+
+        public void Save(IO.TextWriter textWriter, SaveOptions options) { }
+
+        public void Save(IO.TextWriter textWriter) { }
+
+        public void Save(XmlWriter writer) { }
+
         public override string ToString() { throw null; }
-        public string ToString(System.Xml.Linq.SaveOptions options) { throw null; }
-        public void WriteTo(System.Xml.XmlWriter writer) { }
+
+        public string ToString(SaveOptions options) { throw null; }
+
+        public void WriteTo(XmlWriter writer) { }
     }
-    public partial class XText : System.Xml.Linq.XNode
+
+    public partial class XText : XNode
     {
         public XText(string value) { }
-        public XText(System.Xml.Linq.XText other) { }
-        public override System.Xml.XmlNodeType NodeType { get { throw null; } }
+
+        public XText(XText other) { }
+
+        public override XmlNodeType NodeType { get { throw null; } }
+
         public string Value { get { throw null; } set { } }
-        public override void WriteTo(System.Xml.XmlWriter writer) { }
+
+        public override void WriteTo(XmlWriter writer) { }
     }
 }

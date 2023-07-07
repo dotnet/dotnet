@@ -24,7 +24,5 @@ System.Formats.Asn1.AsnWriter</description>
         <dependency id="System.Memory" version="4.5.5" exclude="Build,Analyzers" />
       </group>
     </dependencies>
-    <frameworkAssemblies>
-    </frameworkAssemblies>
   </metadata>
 </package>

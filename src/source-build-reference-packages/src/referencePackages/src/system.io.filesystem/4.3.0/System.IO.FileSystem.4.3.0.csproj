@@ -2,20 +2,11 @@
 
   <PropertyGroup>
     <TargetFrameworks>netstandard1.3</TargetFrameworks>
-    <NuspecFile>$(ArtifactsBinDir)system.io.filesystem/4.3.0/system.io.filesystem.nuspec</NuspecFile>
+    <AssemblyName>System.IO.FileSystem</AssemblyName>
+    <ProjectTemplateVersion>2</ProjectTemplateVersion>
   </PropertyGroup>
 
-  <PropertyGroup>
-    <OutputPath>$(ArtifactsBinDir)system.io.filesystem/4.3.0/ref/</OutputPath>
-    <IntermediateOutputPath>$(ArtifactsObjDir)system.io.filesystem/4.3.0</IntermediateOutputPath>
-  </PropertyGroup>
-
-  <ItemGroup>
-    <Compile Include="**/ref/$(TargetFramework)/*.cs" />
-    <Compile Include="**/lib/$(TargetFramework)/*.cs" />
-  </ItemGroup>
-
-  <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard1.3' ">
+  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard1.3'">
     <PackageReference Include="Microsoft.NETCore.Platforms" Version="1.1.0" />
     <PackageReference Include="Microsoft.NETCore.Targets" Version="1.1.0" />
     <PackageReference Include="System.IO" Version="4.3.0" />

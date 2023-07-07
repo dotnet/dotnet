@@ -4,118 +4,168 @@
 // ------------------------------------------------------------------------------
 // Changes to this file must follow the http://aka.ms/api-review process.
 // ------------------------------------------------------------------------------
-
-using System;
-using System.Diagnostics;
-using System.Reflection;
-using System.Runtime.CompilerServices;
-using System.Security;
-
-[assembly: Debuggable(DebuggableAttribute.DebuggingModes.IgnoreSymbolStoreSequencePoints)]
-[assembly: AllowPartiallyTrustedCallers]
-[assembly: ReferenceAssembly]
-[assembly: AssemblyTitle("System.Security.Principal.Windows")]
-[assembly: AssemblyDescription("System.Security.Principal.Windows")]
-[assembly: AssemblyDefaultAlias("System.Security.Principal.Windows")]
-[assembly: AssemblyCompany("Microsoft Corporation")]
-[assembly: AssemblyProduct("Microsoft® .NET Framework")]
-[assembly: AssemblyCopyright("© Microsoft Corporation.  All rights reserved.")]
-[assembly: AssemblyFileVersion("1.0.24212.01")]
-[assembly: AssemblyInformationalVersion("1.0.24212.01 built by: SOURCEBUILD")]
-[assembly: CLSCompliant(true)]
-[assembly: AssemblyMetadata("", "")]
-[assembly: AssemblyVersion("4.0.0.0")]
-
-
-
-
+[assembly: System.Runtime.CompilerServices.CompilationRelaxations(8)]
+[assembly: System.Runtime.CompilerServices.RuntimeCompatibility(WrapNonExceptionThrows = true)]
+[assembly: System.Diagnostics.Debuggable(System.Diagnostics.DebuggableAttribute.DebuggingModes.IgnoreSymbolStoreSequencePoints)]
+[assembly: System.Security.AllowPartiallyTrustedCallers]
+[assembly: System.Runtime.CompilerServices.ReferenceAssembly]
+[assembly: System.Reflection.AssemblyTitle("System.Security.Principal.Windows")]
+[assembly: System.Reflection.AssemblyDescription("System.Security.Principal.Windows")]
+[assembly: System.Reflection.AssemblyDefaultAlias("System.Security.Principal.Windows")]
+[assembly: System.Reflection.AssemblyCompany("Microsoft Corporation")]
+[assembly: System.Reflection.AssemblyProduct("Microsoft® .NET Framework")]
+[assembly: System.Reflection.AssemblyCopyright("© Microsoft Corporation.  All rights reserved.")]
+[assembly: System.Reflection.AssemblyFileVersion("1.0.24212.01")]
+[assembly: System.Reflection.AssemblyInformationalVersion("1.0.24212.01. Commit Hash: 9688ddbb62c04189cac4c4a06e31e93377dccd41")]
+[assembly: System.CLSCompliant(true)]
+[assembly: System.Reflection.AssemblyMetadata(".NETFrameworkAssembly", "")]
+[assembly: System.Reflection.AssemblyMetadata("Serviceable", "True")]
+[assembly: System.Reflection.AssemblyVersionAttribute("4.0.0.0")]
+[assembly: System.Reflection.AssemblyFlagsAttribute((System.Reflection.AssemblyNameFlags)0x70)]
 namespace Microsoft.Win32.SafeHandles
 {
     public sealed partial class SafeAccessTokenHandle : System.Runtime.InteropServices.SafeHandle
     {
-        public SafeAccessTokenHandle(System.IntPtr handle) : base (default(System.IntPtr), default(bool)) { }
-        public static Microsoft.Win32.SafeHandles.SafeAccessTokenHandle InvalidHandle { get { throw null; } }
+        public SafeAccessTokenHandle(System.IntPtr handle) : base(default, default) { }
+
+        public static SafeAccessTokenHandle InvalidHandle { get { throw null; } }
+
         public override bool IsInvalid { get { throw null; } }
+
         protected override bool ReleaseHandle() { throw null; }
     }
 }
+
 namespace System.Security.Principal
 {
-    public sealed partial class IdentityNotMappedException : System.Exception
+    public sealed partial class IdentityNotMappedException : Exception
     {
         public IdentityNotMappedException() { }
+
+        public IdentityNotMappedException(string message, Exception inner) { }
+
         public IdentityNotMappedException(string message) { }
-        public IdentityNotMappedException(string message, System.Exception inner) { }
-        public System.Security.Principal.IdentityReferenceCollection UnmappedIdentities { get { throw null; } }
+
+        public IdentityReferenceCollection UnmappedIdentities { get { throw null; } }
     }
+
     public abstract partial class IdentityReference
     {
         internal IdentityReference() { }
+
         public abstract string Value { get; }
+
         public abstract override bool Equals(object o);
         public abstract override int GetHashCode();
-        public abstract bool IsValidTargetType(System.Type targetType);
-        public static bool operator ==(System.Security.Principal.IdentityReference left, System.Security.Principal.IdentityReference right) { throw null; }
-        public static bool operator !=(System.Security.Principal.IdentityReference left, System.Security.Principal.IdentityReference right) { throw null; }
+        public abstract bool IsValidTargetType(Type targetType);
+        public static bool operator ==(IdentityReference left, IdentityReference right) { throw null; }
+
+        public static bool operator !=(IdentityReference left, IdentityReference right) { throw null; }
+
         public abstract override string ToString();
-        public abstract System.Security.Principal.IdentityReference Translate(System.Type targetType);
+        public abstract IdentityReference Translate(Type targetType);
     }
-    public partial class IdentityReferenceCollection : System.Collections.Generic.ICollection<System.Security.Principal.IdentityReference>, System.Collections.Generic.IEnumerable<System.Security.Principal.IdentityReference>, System.Collections.IEnumerable
+
+    public partial class IdentityReferenceCollection : Collections.Generic.ICollection<IdentityReference>, Collections.Generic.IEnumerable<IdentityReference>, Collections.IEnumerable
     {
         public IdentityReferenceCollection() { }
+
         public IdentityReferenceCollection(int capacity) { }
+
         public int Count { get { throw null; } }
-        public System.Security.Principal.IdentityReference this[int index] { get { throw null; } set { } }
-        bool System.Collections.Generic.ICollection<System.Security.Principal.IdentityReference>.IsReadOnly { get { throw null; } }
-        public void Add(System.Security.Principal.IdentityReference identity) { }
+
+        public IdentityReference this[int index] { get { throw null; } set { } }
+
+        bool Collections.Generic.ICollection<IdentityReference>.IsReadOnly { get { throw null; } }
+
+        public void Add(IdentityReference identity) { }
+
         public void Clear() { }
-        public bool Contains(System.Security.Principal.IdentityReference identity) { throw null; }
-        public void CopyTo(System.Security.Principal.IdentityReference[] array, int offset) { }
-        public System.Collections.Generic.IEnumerator<System.Security.Principal.IdentityReference> GetEnumerator() { throw null; }
-        public bool Remove(System.Security.Principal.IdentityReference identity) { throw null; }
-        System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator() { throw null; }
-        public System.Security.Principal.IdentityReferenceCollection Translate(System.Type targetType) { throw null; }
-        public System.Security.Principal.IdentityReferenceCollection Translate(System.Type targetType, bool forceSuccess) { throw null; }
+
+        public bool Contains(IdentityReference identity) { throw null; }
+
+        public void CopyTo(IdentityReference[] array, int offset) { }
+
+        public Collections.Generic.IEnumerator<IdentityReference> GetEnumerator() { throw null; }
+
+        public bool Remove(IdentityReference identity) { throw null; }
+
+        Collections.IEnumerator Collections.IEnumerable.GetEnumerator() { throw null; }
+
+        public IdentityReferenceCollection Translate(Type targetType, bool forceSuccess) { throw null; }
+
+        public IdentityReferenceCollection Translate(Type targetType) { throw null; }
     }
-    public sealed partial class NTAccount : System.Security.Principal.IdentityReference
+
+    public sealed partial class NTAccount : IdentityReference
     {
-        public NTAccount(string name) { }
         public NTAccount(string domainName, string accountName) { }
+
+        public NTAccount(string name) { }
+
         public override string Value { get { throw null; } }
+
         public override bool Equals(object o) { throw null; }
+
         public override int GetHashCode() { throw null; }
-        public override bool IsValidTargetType(System.Type targetType) { throw null; }
-        public static bool operator ==(System.Security.Principal.NTAccount left, System.Security.Principal.NTAccount right) { throw null; }
-        public static bool operator !=(System.Security.Principal.NTAccount left, System.Security.Principal.NTAccount right) { throw null; }
+
+        public override bool IsValidTargetType(Type targetType) { throw null; }
+
+        public static bool operator ==(NTAccount left, NTAccount right) { throw null; }
+
+        public static bool operator !=(NTAccount left, NTAccount right) { throw null; }
+
         public override string ToString() { throw null; }
-        public override System.Security.Principal.IdentityReference Translate(System.Type targetType) { throw null; }
+
+        public override IdentityReference Translate(Type targetType) { throw null; }
     }
-    public sealed partial class SecurityIdentifier : System.Security.Principal.IdentityReference, System.IComparable<System.Security.Principal.SecurityIdentifier>
+
+    public sealed partial class SecurityIdentifier : IdentityReference, IComparable<SecurityIdentifier>
     {
         public static readonly int MaxBinaryLength;
         public static readonly int MinBinaryLength;
         public SecurityIdentifier(byte[] binaryForm, int offset) { }
-        public SecurityIdentifier(System.IntPtr binaryForm) { }
-        public SecurityIdentifier(System.Security.Principal.WellKnownSidType sidType, System.Security.Principal.SecurityIdentifier domainSid) { }
+
+        public SecurityIdentifier(IntPtr binaryForm) { }
+
+        public SecurityIdentifier(WellKnownSidType sidType, SecurityIdentifier domainSid) { }
+
         public SecurityIdentifier(string sddlForm) { }
-        public System.Security.Principal.SecurityIdentifier AccountDomainSid { get { throw null; } }
+
+        public SecurityIdentifier AccountDomainSid { get { throw null; } }
+
         public int BinaryLength { get { throw null; } }
+
         public override string Value { get { throw null; } }
-        public int CompareTo(System.Security.Principal.SecurityIdentifier sid) { throw null; }
+
+        public int CompareTo(SecurityIdentifier sid) { throw null; }
+
         public override bool Equals(object o) { throw null; }
-        public bool Equals(System.Security.Principal.SecurityIdentifier sid) { throw null; }
+
+        public bool Equals(SecurityIdentifier sid) { throw null; }
+
         public void GetBinaryForm(byte[] binaryForm, int offset) { }
+
         public override int GetHashCode() { throw null; }
+
         public bool IsAccountSid() { throw null; }
-        public bool IsEqualDomainSid(System.Security.Principal.SecurityIdentifier sid) { throw null; }
-        public override bool IsValidTargetType(System.Type targetType) { throw null; }
-        public bool IsWellKnown(System.Security.Principal.WellKnownSidType type) { throw null; }
-        public static bool operator ==(System.Security.Principal.SecurityIdentifier left, System.Security.Principal.SecurityIdentifier right) { throw null; }
-        public static bool operator !=(System.Security.Principal.SecurityIdentifier left, System.Security.Principal.SecurityIdentifier right) { throw null; }
+
+        public bool IsEqualDomainSid(SecurityIdentifier sid) { throw null; }
+
+        public override bool IsValidTargetType(Type targetType) { throw null; }
+
+        public bool IsWellKnown(WellKnownSidType type) { throw null; }
+
+        public static bool operator ==(SecurityIdentifier left, SecurityIdentifier right) { throw null; }
+
+        public static bool operator !=(SecurityIdentifier left, SecurityIdentifier right) { throw null; }
+
         public override string ToString() { throw null; }
-        public override System.Security.Principal.IdentityReference Translate(System.Type targetType) { throw null; }
+
+        public override IdentityReference Translate(Type targetType) { throw null; }
     }
-    [System.FlagsAttribute]
+
+    [Flags]
     public enum TokenAccessLevels
     {
         AssignPrimary = 1,
@@ -130,8 +180,9 @@ namespace System.Security.Principal
         Read = 131080,
         Write = 131296,
         AllAccess = 983551,
-        MaximumAllowed = 33554432,
+        MaximumAllowed = 33554432
     }
+
     public enum WellKnownSidType
     {
         NullSid = 0,
@@ -195,8 +246,9 @@ namespace System.Security.Principal
         BuiltinPerformanceLoggingUsersSid = 58,
         BuiltinAuthorizationAccessSid = 59,
         MaxDefined = 60,
-        WinBuiltinTerminalServerLicenseServersSid = 60,
+        WinBuiltinTerminalServerLicenseServersSid = 60
     }
+
     public enum WindowsBuiltInRole
     {
         Administrator = 544,
@@ -207,43 +259,73 @@ namespace System.Security.Principal
         SystemOperator = 549,
         PrintOperator = 550,
         BackupOperator = 551,
-        Replicator = 552,
+        Replicator = 552
     }
-    public partial class WindowsIdentity : System.Security.Claims.ClaimsIdentity, System.IDisposable
+
+    public partial class WindowsIdentity : Claims.ClaimsIdentity, IDisposable
     {
         public new const string DefaultIssuer = "AD AUTHORITY";
-        public WindowsIdentity(System.IntPtr userToken) { }
-        public WindowsIdentity(System.IntPtr userToken, string type) { }
+        public WindowsIdentity(IntPtr userToken, string type) { }
+
+        public WindowsIdentity(IntPtr userToken) { }
+
         public WindowsIdentity(string sUserPrincipalName) { }
+
         public Microsoft.Win32.SafeHandles.SafeAccessTokenHandle AccessToken { get { throw null; } }
+
         public sealed override string AuthenticationType { get { throw null; } }
-        public override System.Collections.Generic.IEnumerable<System.Security.Claims.Claim> Claims { get { throw null; } }
-        public System.Security.Principal.IdentityReferenceCollection Groups { get { throw null; } }
-        public System.Security.Principal.TokenImpersonationLevel ImpersonationLevel { get { throw null; } }
+
+        public override Collections.Generic.IEnumerable<Claims.Claim> Claims { get { throw null; } }
+
+        public IdentityReferenceCollection Groups { get { throw null; } }
+
+        public TokenImpersonationLevel ImpersonationLevel { get { throw null; } }
+
         public virtual bool IsAnonymous { get { throw null; } }
+
         public override bool IsAuthenticated { get { throw null; } }
+
         public virtual bool IsGuest { get { throw null; } }
+
         public virtual bool IsSystem { get { throw null; } }
+
         public override string Name { get { throw null; } }
-        public System.Security.Principal.SecurityIdentifier Owner { get { throw null; } }
-        public System.Security.Principal.SecurityIdentifier User { get { throw null; } }
-        public override System.Security.Claims.ClaimsIdentity Clone() { throw null; }
+
+        public SecurityIdentifier Owner { get { throw null; } }
+
+        public SecurityIdentifier User { get { throw null; } }
+
+        public override Claims.ClaimsIdentity Clone() { throw null; }
+
         public void Dispose() { }
+
         protected virtual void Dispose(bool disposing) { }
-        public static System.Security.Principal.WindowsIdentity GetAnonymous() { throw null; }
-        public static System.Security.Principal.WindowsIdentity GetCurrent() { throw null; }
-        public static System.Security.Principal.WindowsIdentity GetCurrent(bool ifImpersonating) { throw null; }
-        public static System.Security.Principal.WindowsIdentity GetCurrent(System.Security.Principal.TokenAccessLevels desiredAccess) { throw null; }
-        public static void RunImpersonated(Microsoft.Win32.SafeHandles.SafeAccessTokenHandle safeAccessTokenHandle, System.Action action) { }
-        public static T RunImpersonated<T>(Microsoft.Win32.SafeHandles.SafeAccessTokenHandle safeAccessTokenHandle, System.Func<T> func) { throw null; }
+
+        public static WindowsIdentity GetAnonymous() { throw null; }
+
+        public static WindowsIdentity GetCurrent() { throw null; }
+
+        public static WindowsIdentity GetCurrent(bool ifImpersonating) { throw null; }
+
+        public static WindowsIdentity GetCurrent(TokenAccessLevels desiredAccess) { throw null; }
+
+        public static void RunImpersonated(Microsoft.Win32.SafeHandles.SafeAccessTokenHandle safeAccessTokenHandle, Action action) { }
+
+        public static T RunImpersonated<T>(Microsoft.Win32.SafeHandles.SafeAccessTokenHandle safeAccessTokenHandle, Func<T> func) { throw null; }
     }
-    public partial class WindowsPrincipal : System.Security.Claims.ClaimsPrincipal
+
+    public partial class WindowsPrincipal : Claims.ClaimsPrincipal
     {
-        public WindowsPrincipal(System.Security.Principal.WindowsIdentity ntIdentity) { }
-        public override System.Security.Principal.IIdentity Identity { get { throw null; } }
+        public WindowsPrincipal(WindowsIdentity ntIdentity) { }
+
+        public override IIdentity Identity { get { throw null; } }
+
         public virtual bool IsInRole(int rid) { throw null; }
-        public virtual bool IsInRole(System.Security.Principal.SecurityIdentifier sid) { throw null; }
-        public virtual bool IsInRole(System.Security.Principal.WindowsBuiltInRole role) { throw null; }
+
+        public virtual bool IsInRole(SecurityIdentifier sid) { throw null; }
+
+        public virtual bool IsInRole(WindowsBuiltInRole role) { throw null; }
+
         public override bool IsInRole(string role) { throw null; }
     }
 }

@@ -4,102 +4,145 @@
 // ------------------------------------------------------------------------------
 // Changes to this file must follow the http://aka.ms/api-review process.
 // ------------------------------------------------------------------------------
-
-using System;
-using System.Diagnostics;
-using System.Reflection;
-using System.Runtime.CompilerServices;
-using System.Security;
-
-[assembly: Debuggable(DebuggableAttribute.DebuggingModes.IgnoreSymbolStoreSequencePoints)]
-[assembly: AllowPartiallyTrustedCallers]
-[assembly: ReferenceAssembly]
-[assembly: AssemblyTitle("Microsoft.Extensions.Logging")]
-[assembly: AssemblyDescription("Microsoft.Extensions.Logging")]
-[assembly: AssemblyDefaultAlias("Microsoft.Extensions.Logging")]
-[assembly: AssemblyCompany("Microsoft Corporation")]
-[assembly: AssemblyProduct("Microsoft® .NET Framework")]
-[assembly: AssemblyCopyright("© Microsoft Corporation.  All rights reserved.")]
-[assembly: AssemblyFileVersion("2.1.1.18157")]
-[assembly: AssemblyInformationalVersion("2.1.1.18157 built by: SOURCEBUILD")]
-[assembly: CLSCompliant(true)]
-[assembly: AssemblyMetadata("", "")]
-[assembly: AssemblyVersion("2.1.1.0")]
-
-
-
-
+[assembly: System.Runtime.CompilerServices.CompilationRelaxations(8)]
+[assembly: System.Runtime.CompilerServices.RuntimeCompatibility(WrapNonExceptionThrows = true)]
+[assembly: System.Diagnostics.Debuggable(System.Diagnostics.DebuggableAttribute.DebuggingModes.IgnoreSymbolStoreSequencePoints)]
+[assembly: System.Runtime.CompilerServices.InternalsVisibleTo("Microsoft.Extensions.Logging.Configuration, PublicKey=0024000004800000940000000602000000240000525341310004000001000100f33a29044fa9d740c9b3213a93e57c84b472c84e0b8a0e1ae48e67a9f8f6de9d5f7f3d52ac23e48ac51801f1dc950abe901da34d2a9e3baadb141a17c77ef3c565dd5ee5054b91cf63bb3c6ab83f72ab3aafe93d0fc3c2348b764fafb0b1c0733de51459aeab46580384bf9d74c4e28164b7cde247f891ba07891c9d872ad2bb")]
+[assembly: System.Runtime.Versioning.TargetFramework(".NETStandard,Version=v2.0", FrameworkDisplayName = "")]
+[assembly: System.Reflection.AssemblyMetadata("Serviceable", "True")]
+[assembly: System.Reflection.AssemblyMetadata("CommitHash", "a0398f0baf9ecc8e5fb6afc3a9b89f0d49cf041e")]
+[assembly: System.Reflection.AssemblyMetadata("BuildNumber", "30846")]
+[assembly: System.Reflection.AssemblyCompany("Microsoft Corporation.")]
+[assembly: System.Reflection.AssemblyConfiguration("Release")]
+[assembly: System.Reflection.AssemblyCopyright("© Microsoft Corporation. All rights reserved.")]
+[assembly: System.Reflection.AssemblyDescription("Logging infrastructure default implementation for Microsoft.Extensions.Logging.")]
+[assembly: System.Reflection.AssemblyFileVersion("2.1.1.18157")]
+[assembly: System.Reflection.AssemblyInformationalVersion("2.1.1-rtm-30846")]
+[assembly: System.Reflection.AssemblyProduct("Microsoft .NET Extensions")]
+[assembly: System.Reflection.AssemblyTitle("Microsoft.Extensions.Logging")]
+[assembly: System.Resources.NeutralResourcesLanguage("en-US")]
+[assembly: System.Reflection.AssemblyVersionAttribute("2.1.1.0")]
+[assembly: System.Runtime.CompilerServices.ReferenceAssembly]
+[assembly: System.Reflection.AssemblyFlagsAttribute((System.Reflection.AssemblyNameFlags)0x70)]
 namespace Microsoft.Extensions.DependencyInjection
 {
     public static partial class LoggingServiceCollectionExtensions
     {
-        public static Microsoft.Extensions.DependencyInjection.IServiceCollection AddLogging(this Microsoft.Extensions.DependencyInjection.IServiceCollection services) { throw null; }
-        public static Microsoft.Extensions.DependencyInjection.IServiceCollection AddLogging(this Microsoft.Extensions.DependencyInjection.IServiceCollection services, System.Action<Microsoft.Extensions.Logging.ILoggingBuilder> configure) { throw null; }
+        public static IServiceCollection AddLogging(this IServiceCollection services, System.Action<Logging.ILoggingBuilder> configure) { throw null; }
+
+        public static IServiceCollection AddLogging(this IServiceCollection services) { throw null; }
     }
 }
+
 namespace Microsoft.Extensions.Logging
 {
     public static partial class FilterLoggingBuilderExtensions
     {
-        public static Microsoft.Extensions.Logging.ILoggingBuilder AddFilter(this Microsoft.Extensions.Logging.ILoggingBuilder builder, System.Func<Microsoft.Extensions.Logging.LogLevel, bool> levelFilter) { throw null; }
-        public static Microsoft.Extensions.Logging.ILoggingBuilder AddFilter(this Microsoft.Extensions.Logging.ILoggingBuilder builder, System.Func<string, Microsoft.Extensions.Logging.LogLevel, bool> categoryLevelFilter) { throw null; }
-        public static Microsoft.Extensions.Logging.ILoggingBuilder AddFilter(this Microsoft.Extensions.Logging.ILoggingBuilder builder, System.Func<string, string, Microsoft.Extensions.Logging.LogLevel, bool> filter) { throw null; }
-        public static Microsoft.Extensions.Logging.ILoggingBuilder AddFilter(this Microsoft.Extensions.Logging.ILoggingBuilder builder, string category, Microsoft.Extensions.Logging.LogLevel level) { throw null; }
-        public static Microsoft.Extensions.Logging.ILoggingBuilder AddFilter(this Microsoft.Extensions.Logging.ILoggingBuilder builder, string category, System.Func<Microsoft.Extensions.Logging.LogLevel, bool> levelFilter) { throw null; }
-        public static Microsoft.Extensions.Logging.LoggerFilterOptions AddFilter(this Microsoft.Extensions.Logging.LoggerFilterOptions builder, System.Func<Microsoft.Extensions.Logging.LogLevel, bool> levelFilter) { throw null; }
-        public static Microsoft.Extensions.Logging.LoggerFilterOptions AddFilter(this Microsoft.Extensions.Logging.LoggerFilterOptions builder, System.Func<string, Microsoft.Extensions.Logging.LogLevel, bool> categoryLevelFilter) { throw null; }
-        public static Microsoft.Extensions.Logging.LoggerFilterOptions AddFilter(this Microsoft.Extensions.Logging.LoggerFilterOptions builder, System.Func<string, string, Microsoft.Extensions.Logging.LogLevel, bool> filter) { throw null; }
-        public static Microsoft.Extensions.Logging.LoggerFilterOptions AddFilter(this Microsoft.Extensions.Logging.LoggerFilterOptions builder, string category, Microsoft.Extensions.Logging.LogLevel level) { throw null; }
-        public static Microsoft.Extensions.Logging.LoggerFilterOptions AddFilter(this Microsoft.Extensions.Logging.LoggerFilterOptions builder, string category, System.Func<Microsoft.Extensions.Logging.LogLevel, bool> levelFilter) { throw null; }
-        public static Microsoft.Extensions.Logging.ILoggingBuilder AddFilter<T>(this Microsoft.Extensions.Logging.ILoggingBuilder builder, System.Func<Microsoft.Extensions.Logging.LogLevel, bool> levelFilter) where T : Microsoft.Extensions.Logging.ILoggerProvider { throw null; }
-        public static Microsoft.Extensions.Logging.ILoggingBuilder AddFilter<T>(this Microsoft.Extensions.Logging.ILoggingBuilder builder, System.Func<string, Microsoft.Extensions.Logging.LogLevel, bool> categoryLevelFilter) where T : Microsoft.Extensions.Logging.ILoggerProvider { throw null; }
-        public static Microsoft.Extensions.Logging.ILoggingBuilder AddFilter<T>(this Microsoft.Extensions.Logging.ILoggingBuilder builder, string category, Microsoft.Extensions.Logging.LogLevel level) where T : Microsoft.Extensions.Logging.ILoggerProvider { throw null; }
-        public static Microsoft.Extensions.Logging.ILoggingBuilder AddFilter<T>(this Microsoft.Extensions.Logging.ILoggingBuilder builder, string category, System.Func<Microsoft.Extensions.Logging.LogLevel, bool> levelFilter) where T : Microsoft.Extensions.Logging.ILoggerProvider { throw null; }
-        public static Microsoft.Extensions.Logging.LoggerFilterOptions AddFilter<T>(this Microsoft.Extensions.Logging.LoggerFilterOptions builder, System.Func<Microsoft.Extensions.Logging.LogLevel, bool> levelFilter) where T : Microsoft.Extensions.Logging.ILoggerProvider { throw null; }
-        public static Microsoft.Extensions.Logging.LoggerFilterOptions AddFilter<T>(this Microsoft.Extensions.Logging.LoggerFilterOptions builder, System.Func<string, Microsoft.Extensions.Logging.LogLevel, bool> categoryLevelFilter) where T : Microsoft.Extensions.Logging.ILoggerProvider { throw null; }
-        public static Microsoft.Extensions.Logging.LoggerFilterOptions AddFilter<T>(this Microsoft.Extensions.Logging.LoggerFilterOptions builder, string category, Microsoft.Extensions.Logging.LogLevel level) where T : Microsoft.Extensions.Logging.ILoggerProvider { throw null; }
-        public static Microsoft.Extensions.Logging.LoggerFilterOptions AddFilter<T>(this Microsoft.Extensions.Logging.LoggerFilterOptions builder, string category, System.Func<Microsoft.Extensions.Logging.LogLevel, bool> levelFilter) where T : Microsoft.Extensions.Logging.ILoggerProvider { throw null; }
+        public static ILoggingBuilder AddFilter(this ILoggingBuilder builder, System.Func<LogLevel, bool> levelFilter) { throw null; }
+
+        public static ILoggingBuilder AddFilter(this ILoggingBuilder builder, System.Func<string, LogLevel, bool> categoryLevelFilter) { throw null; }
+
+        public static ILoggingBuilder AddFilter(this ILoggingBuilder builder, System.Func<string, string, LogLevel, bool> filter) { throw null; }
+
+        public static ILoggingBuilder AddFilter(this ILoggingBuilder builder, string category, LogLevel level) { throw null; }
+
+        public static ILoggingBuilder AddFilter(this ILoggingBuilder builder, string category, System.Func<LogLevel, bool> levelFilter) { throw null; }
+
+        public static LoggerFilterOptions AddFilter(this LoggerFilterOptions builder, System.Func<LogLevel, bool> levelFilter) { throw null; }
+
+        public static LoggerFilterOptions AddFilter(this LoggerFilterOptions builder, System.Func<string, LogLevel, bool> categoryLevelFilter) { throw null; }
+
+        public static LoggerFilterOptions AddFilter(this LoggerFilterOptions builder, System.Func<string, string, LogLevel, bool> filter) { throw null; }
+
+        public static LoggerFilterOptions AddFilter(this LoggerFilterOptions builder, string category, LogLevel level) { throw null; }
+
+        public static LoggerFilterOptions AddFilter(this LoggerFilterOptions builder, string category, System.Func<LogLevel, bool> levelFilter) { throw null; }
+
+        public static ILoggingBuilder AddFilter<T>(this ILoggingBuilder builder, System.Func<LogLevel, bool> levelFilter)
+            where T : ILoggerProvider { throw null; }
+
+        public static ILoggingBuilder AddFilter<T>(this ILoggingBuilder builder, System.Func<string, LogLevel, bool> categoryLevelFilter)
+            where T : ILoggerProvider { throw null; }
+
+        public static ILoggingBuilder AddFilter<T>(this ILoggingBuilder builder, string category, LogLevel level)
+            where T : ILoggerProvider { throw null; }
+
+        public static ILoggingBuilder AddFilter<T>(this ILoggingBuilder builder, string category, System.Func<LogLevel, bool> levelFilter)
+            where T : ILoggerProvider { throw null; }
+
+        public static LoggerFilterOptions AddFilter<T>(this LoggerFilterOptions builder, System.Func<LogLevel, bool> levelFilter)
+            where T : ILoggerProvider { throw null; }
+
+        public static LoggerFilterOptions AddFilter<T>(this LoggerFilterOptions builder, System.Func<string, LogLevel, bool> categoryLevelFilter)
+            where T : ILoggerProvider { throw null; }
+
+        public static LoggerFilterOptions AddFilter<T>(this LoggerFilterOptions builder, string category, LogLevel level)
+            where T : ILoggerProvider { throw null; }
+
+        public static LoggerFilterOptions AddFilter<T>(this LoggerFilterOptions builder, string category, System.Func<LogLevel, bool> levelFilter)
+            where T : ILoggerProvider { throw null; }
     }
+
     public partial interface ILoggingBuilder
     {
-        Microsoft.Extensions.DependencyInjection.IServiceCollection Services { get; }
+        DependencyInjection.IServiceCollection Services { get; }
     }
-    public partial class LoggerFactory : Microsoft.Extensions.Logging.ILoggerFactory, System.IDisposable
+
+    public partial class LoggerFactory : ILoggerFactory, System.IDisposable
     {
         public LoggerFactory() { }
-        public LoggerFactory(System.Collections.Generic.IEnumerable<Microsoft.Extensions.Logging.ILoggerProvider> providers) { }
-        public LoggerFactory(System.Collections.Generic.IEnumerable<Microsoft.Extensions.Logging.ILoggerProvider> providers, Microsoft.Extensions.Logging.LoggerFilterOptions filterOptions) { }
-        public LoggerFactory(System.Collections.Generic.IEnumerable<Microsoft.Extensions.Logging.ILoggerProvider> providers, Microsoft.Extensions.Options.IOptionsMonitor<Microsoft.Extensions.Logging.LoggerFilterOptions> filterOption) { }
-        public void AddProvider(Microsoft.Extensions.Logging.ILoggerProvider provider) { }
+
+        public LoggerFactory(System.Collections.Generic.IEnumerable<ILoggerProvider> providers, LoggerFilterOptions filterOptions) { }
+
+        public LoggerFactory(System.Collections.Generic.IEnumerable<ILoggerProvider> providers, Options.IOptionsMonitor<LoggerFilterOptions> filterOption) { }
+
+        public LoggerFactory(System.Collections.Generic.IEnumerable<ILoggerProvider> providers) { }
+
+        public void AddProvider(ILoggerProvider provider) { }
+
         protected virtual bool CheckDisposed() { throw null; }
-        public Microsoft.Extensions.Logging.ILogger CreateLogger(string categoryName) { throw null; }
+
+        public ILogger CreateLogger(string categoryName) { throw null; }
+
         public void Dispose() { }
     }
+
     public partial class LoggerFilterOptions
     {
-        public LoggerFilterOptions() { }
-        public Microsoft.Extensions.Logging.LogLevel MinLevel { get { throw null; } set { } }
-        public System.Collections.Generic.IList<Microsoft.Extensions.Logging.LoggerFilterRule> Rules { get { throw null; } }
+        public LogLevel MinLevel { get { throw null; } set { } }
+
+        public System.Collections.Generic.IList<LoggerFilterRule> Rules { get { throw null; } }
     }
+
     public partial class LoggerFilterRule
     {
-        public LoggerFilterRule(string providerName, string categoryName, Microsoft.Extensions.Logging.LogLevel? logLevel, System.Func<string, string, Microsoft.Extensions.Logging.LogLevel, bool> filter) { }
+        public LoggerFilterRule(string providerName, string categoryName, LogLevel? logLevel, System.Func<string, string, LogLevel, bool> filter) { }
+
         public string CategoryName { get { throw null; } }
-        public System.Func<string, string, Microsoft.Extensions.Logging.LogLevel, bool> Filter { get { throw null; } }
-        public Microsoft.Extensions.Logging.LogLevel? LogLevel { get { throw null; } }
+
+        public System.Func<string, string, LogLevel, bool> Filter { get { throw null; } }
+
+        public LogLevel? LogLevel { get { throw null; } }
+
         public string ProviderName { get { throw null; } }
+
         public override string ToString() { throw null; }
     }
+
     public static partial class LoggingBuilderExtensions
     {
-        public static Microsoft.Extensions.Logging.ILoggingBuilder AddProvider(this Microsoft.Extensions.Logging.ILoggingBuilder builder, Microsoft.Extensions.Logging.ILoggerProvider provider) { throw null; }
-        public static Microsoft.Extensions.Logging.ILoggingBuilder ClearProviders(this Microsoft.Extensions.Logging.ILoggingBuilder builder) { throw null; }
-        public static Microsoft.Extensions.Logging.ILoggingBuilder SetMinimumLevel(this Microsoft.Extensions.Logging.ILoggingBuilder builder, Microsoft.Extensions.Logging.LogLevel level) { throw null; }
+        public static ILoggingBuilder AddProvider(this ILoggingBuilder builder, ILoggerProvider provider) { throw null; }
+
+        public static ILoggingBuilder ClearProviders(this ILoggingBuilder builder) { throw null; }
+
+        public static ILoggingBuilder SetMinimumLevel(this ILoggingBuilder builder, LogLevel level) { throw null; }
     }
-    [System.AttributeUsageAttribute(System.AttributeTargets.Class, AllowMultiple=false, Inherited=false)]
+
+    [System.AttributeUsage(System.AttributeTargets.Class, AllowMultiple = false, Inherited = false)]
     public partial class ProviderAliasAttribute : System.Attribute
     {
         public ProviderAliasAttribute(string alias) { }
+
         public string Alias { get { throw null; } }
     }
 }

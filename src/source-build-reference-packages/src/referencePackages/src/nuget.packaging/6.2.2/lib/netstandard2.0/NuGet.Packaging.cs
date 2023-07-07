@@ -41,6 +41,8 @@ namespace NuGet.Client
 
         public partial class ManagedCodeCriteria
         {
+            internal ManagedCodeCriteria() { }
+
             public ContentModel.SelectionCriteria ForFramework(Frameworks.NuGetFramework framework) { throw null; }
 
             public ContentModel.SelectionCriteria ForFrameworkAndRuntime(Frameworks.NuGetFramework framework, string runtimeIdentifier) { throw null; }
@@ -50,6 +52,8 @@ namespace NuGet.Client
 
         public partial class ManagedCodePatterns
         {
+            internal ManagedCodePatterns() { }
+
             public ContentModel.PatternSet AnyTargettedFile { get { throw null; } }
 
             public ContentModel.PatternSet CompileLibAssemblies { get { throw null; } }
@@ -93,8 +97,6 @@ namespace NuGet.ContentModel
 {
     public partial class Asset
     {
-        public Asset() { }
-
         public string Link { get { throw null; } set { } }
 
         public string Path { get { throw null; } set { } }
@@ -104,8 +106,6 @@ namespace NuGet.ContentModel
 
     public partial class ContentItem
     {
-        public ContentItem() { }
-
         public string Path { get { throw null; } set { } }
 
         public System.Collections.Generic.Dictionary<string, object> Properties { get { throw null; } }
@@ -115,8 +115,6 @@ namespace NuGet.ContentModel
 
     public partial class ContentItemCollection
     {
-        public ContentItemCollection() { }
-
         public bool HasContract { get { throw null; } }
 
         public ContentItemGroup FindBestItemGroup(SelectionCriteria criteria, params PatternSet[] definitions) { throw null; }
@@ -135,8 +133,6 @@ namespace NuGet.ContentModel
 
     public partial class ContentItemGroup
     {
-        public ContentItemGroup() { }
-
         public System.Collections.Generic.IList<ContentItem> Items { get { throw null; } }
 
         public System.Collections.Generic.IDictionary<string, object> Properties { get { throw null; } }
@@ -233,8 +229,6 @@ namespace NuGet.ContentModel
 
     public partial class SelectionCriteria
     {
-        public SelectionCriteria() { }
-
         public System.Collections.Generic.IList<SelectionCriteriaEntry> Entries { get { throw null; } set { } }
     }
 
@@ -251,8 +245,6 @@ namespace NuGet.ContentModel
 
     public partial class SelectionCriteriaEntry
     {
-        public SelectionCriteriaEntry() { }
-
         public System.Collections.Generic.IDictionary<string, object> Properties { get { throw null; } set { } }
     }
 
@@ -619,8 +611,6 @@ namespace NuGet.Packaging
 
     public partial class ManifestContentFiles
     {
-        public ManifestContentFiles() { }
-
         public string BuildAction { get { throw null; } set { } }
 
         public string CopyToOutput { get { throw null; } set { } }
@@ -634,8 +624,6 @@ namespace NuGet.Packaging
 
     public partial class ManifestFile
     {
-        public ManifestFile() { }
-
         public string Exclude { get { throw null; } set { } }
 
         public string Source { get { throw null; } set { } }
@@ -759,8 +747,6 @@ namespace NuGet.Packaging
 
     public partial class NupkgMetadataFile : System.IEquatable<NupkgMetadataFile>
     {
-        public NupkgMetadataFile() { }
-
         public string ContentHash { get { throw null; } set { } }
 
         public string Source { get { throw null; } set { } }
@@ -794,17 +780,17 @@ namespace NuGet.Packaging
 
     public partial class NuspecReader : Core.NuspecCoreReaderBase
     {
-        public NuspecReader(System.IO.Stream stream, Frameworks.IFrameworkNameProvider frameworkProvider, bool leaveStreamOpen) : base(stream) { }
+        public NuspecReader(System.IO.Stream stream, Frameworks.IFrameworkNameProvider frameworkProvider, bool leaveStreamOpen) : base(default(string)!) { }
 
-        public NuspecReader(System.IO.Stream stream) : base(stream) { }
+        public NuspecReader(System.IO.Stream stream) : base(default(string)!) { }
 
-        public NuspecReader(string path, Frameworks.IFrameworkNameProvider frameworkProvider) : base(path) { }
+        public NuspecReader(string path, Frameworks.IFrameworkNameProvider frameworkProvider) : base(default(string)!) { }
 
-        public NuspecReader(string path) : base(path) { }
+        public NuspecReader(string path) : base(default(string)!) { }
 
-        public NuspecReader(System.Xml.Linq.XDocument xml, Frameworks.IFrameworkNameProvider frameworkProvider) : base(xml) { }
+        public NuspecReader(System.Xml.Linq.XDocument xml, Frameworks.IFrameworkNameProvider frameworkProvider) : base(default(string)!) { }
 
-        public NuspecReader(System.Xml.Linq.XDocument xml) : base(xml) { }
+        public NuspecReader(System.Xml.Linq.XDocument xml) : base(default(string)!) { }
 
         public string GetAuthors() { throw null; }
 
@@ -1576,8 +1562,6 @@ namespace NuGet.Packaging
 
     public partial class RepositorySignatureInfoProvider
     {
-        public RepositorySignatureInfoProvider() { }
-
         public static RepositorySignatureInfoProvider Instance { get { throw null; } }
 
         public void AddOrUpdateRepositorySignatureInfo(string source, RepositorySignatureInfo repositorySignatureInfo) { }
@@ -1587,8 +1571,6 @@ namespace NuGet.Packaging
 
     public sealed partial class Sha512HashFunction : IHashFunction, System.IDisposable
     {
-        public Sha512HashFunction() { }
-
         public void Dispose() { }
 
         public string GetHash() { throw null; }
@@ -1786,9 +1768,9 @@ namespace NuGet.Packaging.Core
 
     public partial class NuspecCoreReader : NuspecCoreReaderBase
     {
-        public NuspecCoreReader(System.IO.Stream stream) : base(stream) { }
+        public NuspecCoreReader(System.IO.Stream stream) : base(default(string)!) { }
 
-        public NuspecCoreReader(System.Xml.Linq.XDocument xml) : base(xml) { }
+        public NuspecCoreReader(System.Xml.Linq.XDocument xml) : base(default(string)!) { }
 
         public virtual System.Collections.Generic.IEnumerable<PackageDependency> GetDependencies() { throw null; }
     }
@@ -2109,6 +2091,8 @@ namespace NuGet.Packaging.Licenses
 
     public partial class NuGetLicense : NuGetLicenseExpression
     {
+        internal NuGetLicense() { }
+
         public string Identifier { get { throw null; } }
 
         public bool IsStandardLicense { get { throw null; } }
@@ -2127,6 +2111,8 @@ namespace NuGet.Packaging.Licenses
 
     public partial class NuGetLicenseException
     {
+        internal NuGetLicenseException() { }
+
         public string Identifier { get { throw null; } }
 
         public override string ToString() { throw null; }
@@ -2134,8 +2120,6 @@ namespace NuGet.Packaging.Licenses
 
     public abstract partial class NuGetLicenseExpression
     {
-        protected NuGetLicenseExpression() { }
-
         public LicenseExpressionType Type { get { throw null; } protected set { } }
 
         public static NuGetLicenseExpression Parse(string expression) { throw null; }
@@ -2184,6 +2168,8 @@ namespace NuGet.Packaging.Rules
     [System.CodeDom.Compiler.GeneratedCode("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
     public partial class AnalysisResources
     {
+        internal AnalysisResources() { }
+
         public static string AssemblyDirectlyUnderLibWarning { get { throw null; } }
 
         public static string AssemblyOutsideLibWarning { get { throw null; } }
@@ -2331,6 +2317,8 @@ namespace NuGet.Packaging.Signing
 {
     public sealed partial class Accuracy
     {
+        internal Accuracy() { }
+
         public int? Microseconds { get { throw null; } }
 
         public int? Milliseconds { get { throw null; } }
@@ -2344,6 +2332,8 @@ namespace NuGet.Packaging.Signing
 
     public sealed partial class AlgorithmIdentifier
     {
+        internal AlgorithmIdentifier() { }
+
         public System.Security.Cryptography.Oid Algorithm { get { throw null; } }
 
         public static AlgorithmIdentifier Read(byte[] bytes) { throw null; }
@@ -2362,7 +2352,6 @@ namespace NuGet.Packaging.Signing
 
     public sealed partial class AuthorPrimarySignature : PrimarySignature
     {
-        public AuthorPrimarySignature() { }
     }
 
     public sealed partial class AuthorSignPackageRequest : SignPackageRequest
@@ -2376,8 +2365,6 @@ namespace NuGet.Packaging.Signing
 
     public sealed partial class CentralDirectoryHeaderMetadata
     {
-        public CentralDirectoryHeaderMetadata() { }
-
         public long ChangeInOffset { get { throw null; } set { } }
 
         public long FileEntryTotalSize { get { throw null; } set { } }
@@ -2452,6 +2439,8 @@ namespace NuGet.Packaging.Signing
 
     public partial class ClientPolicyContext
     {
+        internal ClientPolicyContext() { }
+
         public System.Collections.Generic.IReadOnlyCollection<TrustedSignerAllowListEntry> AllowList { get { throw null; } }
 
         public Common.SignatureValidationMode Policy { get { throw null; } }
@@ -2463,6 +2452,8 @@ namespace NuGet.Packaging.Signing
 
     public sealed partial class CommitmentTypeIndication
     {
+        internal CommitmentTypeIndication() { }
+
         public System.Security.Cryptography.Oid CommitmentTypeId { get { throw null; } }
 
         public System.Collections.Generic.IReadOnlyList<CommitmentTypeQualifier> Qualifiers { get { throw null; } }
@@ -2474,6 +2465,8 @@ namespace NuGet.Packaging.Signing
 
     public sealed partial class CommitmentTypeQualifier
     {
+        internal CommitmentTypeQualifier() { }
+
         public System.Security.Cryptography.Oid CommitmentTypeIdentifier { get { throw null; } }
 
         public byte[] Qualifier { get { throw null; } }
@@ -2489,6 +2482,8 @@ namespace NuGet.Packaging.Signing
 
     public sealed partial class EssCertId
     {
+        internal EssCertId() { }
+
         public byte[] CertificateHash { get { throw null; } }
 
         public IssuerSerial IssuerSerial { get { throw null; } }
@@ -2498,6 +2493,8 @@ namespace NuGet.Packaging.Signing
 
     public sealed partial class EssCertIdV2
     {
+        internal EssCertIdV2() { }
+
         public byte[] CertificateHash { get { throw null; } }
 
         public AlgorithmIdentifier HashAlgorithm { get { throw null; } }
@@ -2511,6 +2508,8 @@ namespace NuGet.Packaging.Signing
 
     public sealed partial class Extension
     {
+        internal Extension() { }
+
         public bool Critical { get { throw null; } }
 
         public System.Security.Cryptography.Oid Id { get { throw null; } }
@@ -2520,6 +2519,8 @@ namespace NuGet.Packaging.Signing
 
     public sealed partial class Extensions
     {
+        internal Extensions() { }
+
         public System.Collections.Generic.IReadOnlyList<Extension> ExtensionsList { get { throw null; } }
 
         public static Extensions Read(byte[] bytes) { throw null; }
@@ -2527,6 +2528,8 @@ namespace NuGet.Packaging.Signing
 
     public sealed partial class GeneralName
     {
+        internal GeneralName() { }
+
         public System.Security.Cryptography.X509Certificates.X500DistinguishedName DirectoryName { get { throw null; } }
 
         public static GeneralName Create(System.Security.Cryptography.X509Certificates.X500DistinguishedName distinguishedName) { throw null; }
@@ -2536,8 +2539,6 @@ namespace NuGet.Packaging.Signing
 
     public partial class IntegrityVerificationProvider : ISignatureVerificationProvider
     {
-        public IntegrityVerificationProvider() { }
-
         public System.Threading.Tasks.Task<PackageVerificationResult> GetTrustResultAsync(ISignedPackageReader package, PrimarySignature signature, SignedPackageVerifierSettings settings, System.Threading.CancellationToken token) { throw null; }
     }
 
@@ -2590,6 +2591,8 @@ namespace NuGet.Packaging.Signing
 
     public sealed partial class IssuerSerial
     {
+        internal IssuerSerial() { }
+
         public System.Collections.Generic.IReadOnlyList<GeneralName> GeneralNames { get { throw null; } }
 
         public byte[] SerialNumber { get { throw null; } }
@@ -2646,6 +2649,8 @@ namespace NuGet.Packaging.Signing
 
     public sealed partial class MessageImprint
     {
+        internal MessageImprint() { }
+
         public AlgorithmIdentifier HashAlgorithm { get { throw null; } }
 
         public byte[] HashedMessage { get { throw null; } }
@@ -2730,6 +2735,8 @@ namespace NuGet.Packaging.Signing
 
     public sealed partial class PolicyInformation
     {
+        internal PolicyInformation() { }
+
         public System.Security.Cryptography.Oid PolicyIdentifier { get { throw null; } }
 
         public System.Collections.Generic.IReadOnlyList<PolicyQualifierInfo> PolicyQualifiers { get { throw null; } }
@@ -2739,6 +2746,8 @@ namespace NuGet.Packaging.Signing
 
     public sealed partial class PolicyQualifierInfo
     {
+        internal PolicyQualifierInfo() { }
+
         public System.Security.Cryptography.Oid PolicyQualifierId { get { throw null; } }
 
         public byte[] Qualifier { get { throw null; } }
@@ -2748,8 +2757,6 @@ namespace NuGet.Packaging.Signing
 
     public abstract partial class PrimarySignature : Signature
     {
-        protected PrimarySignature() { }
-
         public byte[] GetBytes() { throw null; }
     }
 
@@ -2804,14 +2811,11 @@ namespace NuGet.Packaging.Signing
 
     public sealed partial class RepositoryCountersignature : Signature, IRepositorySignature, ISignature
     {
-        public RepositoryCountersignature() { }
-
         public static RepositoryCountersignature GetRepositoryCountersignature(PrimarySignature primarySignature) { throw null; }
     }
 
     public sealed partial class RepositoryPrimarySignature : PrimarySignature, IRepositorySignature, ISignature
     {
-        public RepositoryPrimarySignature() { }
     }
 
     public static partial class RepositorySignatureInfoUtility
@@ -2841,12 +2845,10 @@ namespace NuGet.Packaging.Signing
 
     public sealed partial class Rfc3161TimestampTokenInfo : System.Security.Cryptography.AsnEncodedData
     {
-        public Rfc3161TimestampTokenInfo() { }
     }
 
     public abstract partial class Signature : ISignature
     {
-        protected Signature() { }
     }
 
     public sealed partial class SignatureContent
@@ -2885,6 +2887,8 @@ namespace NuGet.Packaging.Signing
 
     public partial class SignatureLog : Common.ILogMessage, System.IEquatable<SignatureLog>
     {
+        internal SignatureLog() { }
+
         public Common.NuGetLogCode Code { get { throw null; } set { } }
 
         public Common.LogLevel Level { get { throw null; } set { } }
@@ -3024,7 +3028,7 @@ namespace NuGet.Packaging.Signing
 
     public partial class SignedPackageArchive : PackageArchiveReader, ISignedPackage, ISignedPackageReader, System.IDisposable, ISignedPackageWriter
     {
-        public SignedPackageArchive(System.IO.Stream packageReadStream, System.IO.Stream packageWriteStream) : base(packageReadStream) { }
+        public SignedPackageArchive(System.IO.Stream packageReadStream, System.IO.Stream packageWriteStream) : base(default(System.IO.Stream)!) { }
 
         public System.Threading.Tasks.Task AddSignatureAsync(System.IO.Stream signatureStream, System.Threading.CancellationToken token) { throw null; }
 
@@ -3048,8 +3052,6 @@ namespace NuGet.Packaging.Signing
 
     public sealed partial class SignedPackageArchiveMetadata
     {
-        public SignedPackageArchiveMetadata() { }
-
         public System.Collections.Generic.List<CentralDirectoryHeaderMetadata> CentralDirectoryHeaders { get { throw null; } set { } }
 
         public long EndOfCentralDirectory { get { throw null; } set { } }
@@ -3118,6 +3120,8 @@ namespace NuGet.Packaging.Signing
 
     public sealed partial class SigningCertificate
     {
+        internal SigningCertificate() { }
+
         public System.Collections.Generic.IReadOnlyList<EssCertId> Certificates { get { throw null; } }
 
         public System.Collections.Generic.IReadOnlyList<PolicyInformation> Policies { get { throw null; } }
@@ -3127,6 +3131,8 @@ namespace NuGet.Packaging.Signing
 
     public sealed partial class SigningCertificateV2
     {
+        internal SigningCertificateV2() { }
+
         public System.Collections.Generic.IReadOnlyList<EssCertIdV2> Certificates { get { throw null; } }
 
         public System.Collections.Generic.IReadOnlyList<PolicyInformation> Policies { get { throw null; } }
@@ -3160,8 +3166,6 @@ namespace NuGet.Packaging.Signing
     public abstract partial class SigningSpecifications
     {
         public static readonly SigningSpecificationsV1 V1;
-        protected SigningSpecifications() { }
-
         public abstract string[] AllowedHashAlgorithmOids { get; }
         public abstract Common.HashAlgorithmName[] AllowedHashAlgorithms { get; }
         public abstract string[] AllowedSignatureAlgorithmOids { get; }
@@ -3174,8 +3178,6 @@ namespace NuGet.Packaging.Signing
 
     public sealed partial class SigningSpecificationsV1 : SigningSpecifications
     {
-        public SigningSpecificationsV1() { }
-
         public override string[] AllowedHashAlgorithmOids { get { throw null; } }
 
         public override Common.HashAlgorithmName[] AllowedHashAlgorithms { get { throw null; } }
@@ -3221,7 +3223,6 @@ namespace NuGet.Packaging.Signing
 
     public sealed partial class Timestamp
     {
-        public Timestamp() { }
     }
 
     public partial class TimestampException : SignatureException
@@ -3276,6 +3277,8 @@ namespace NuGet.Packaging.Signing
 
     public sealed partial class TstInfo
     {
+        internal TstInfo() { }
+
         public Accuracy Accuracy { get { throw null; } }
 
         public System.Security.Cryptography.X509Certificates.X509ExtensionCollection Extensions { get { throw null; } }
@@ -3301,7 +3304,6 @@ namespace NuGet.Packaging.Signing
 
     public sealed partial class UnknownPrimarySignature : PrimarySignature
     {
-        public UnknownPrimarySignature() { }
     }
 
     public partial class UnsignedPackageVerificationResult : PackageVerificationResult
@@ -3350,15 +3352,11 @@ namespace NuGet.Packaging.Signing
 
     public sealed partial class X509CertificateChain : System.Collections.Generic.List<System.Security.Cryptography.X509Certificates.X509Certificate2>, IX509CertificateChain, System.Collections.Generic.IReadOnlyList<System.Security.Cryptography.X509Certificates.X509Certificate2>, System.Collections.Generic.IEnumerable<System.Security.Cryptography.X509Certificates.X509Certificate2>, System.Collections.IEnumerable, System.Collections.Generic.IReadOnlyCollection<System.Security.Cryptography.X509Certificates.X509Certificate2>, System.IDisposable
     {
-        public X509CertificateChain() { }
-
         public void Dispose() { }
     }
 
     public sealed partial class X509ChainHolder : System.IDisposable
     {
-        public X509ChainHolder() { }
-
         public System.Security.Cryptography.X509Certificates.X509Chain Chain { get { throw null; } }
 
         public void Dispose() { }
@@ -3378,6 +3376,8 @@ namespace NuGet.Packaging.Signing.DerEncoding
 {
     public sealed partial class DerGeneralizedTime
     {
+        internal DerGeneralizedTime() { }
+
         public System.DateTime DateTime { get { throw null; } }
 
         public static DerGeneralizedTime Read(string decodedTime) { throw null; }

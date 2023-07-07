@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <package xmlns="http://schemas.microsoft.com/packaging/2013/05/nuspec.xsd">
   <metadata minClientVersion="2.12">
     <id>System.Text.Encoding.CodePages</id>
@@ -21,16 +21,10 @@ When using NuGet 3.x this package requires at least version 3.4.</description>
     <copyright>© Microsoft Corporation.  All rights reserved.</copyright>
     <serviceable>true</serviceable>
     <dependencies>
-      <group targetFramework="MonoAndroid1.0" />
-      <group targetFramework="MonoTouch1.0" />
       <group targetFramework=".NETStandard1.3">
         <dependency id="NETStandard.Library" version="1.6.1" />
       </group>
       <group targetFramework=".NETStandard2.0" />
-      <group targetFramework="Xamarin.iOS1.0" />
-      <group targetFramework="Xamarin.Mac2.0" />
-      <group targetFramework="Xamarin.TVOS1.0" />
-      <group targetFramework="Xamarin.WatchOS1.0" />
     </dependencies>
   </metadata>
 </package>

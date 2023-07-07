@@ -76,8 +76,6 @@ namespace Microsoft.Extensions.Logging.Console
 
     public partial class ConsoleFormatterOptions
     {
-        public ConsoleFormatterOptions() { }
-
         public bool IncludeScopes { get { throw null; } set { } }
 
         public string TimestampFormat { get { throw null; } set { } }
@@ -94,8 +92,6 @@ namespace Microsoft.Extensions.Logging.Console
 
     public partial class ConsoleLoggerOptions
     {
-        public ConsoleLoggerOptions() { }
-
         [System.Obsolete("ConsoleLoggerOptions.DisableColors has been deprecated. Use SimpleConsoleFormatterOptions.ColorBehavior instead.")]
         public bool DisableColors { get { throw null; } set { } }
 
@@ -132,8 +128,6 @@ namespace Microsoft.Extensions.Logging.Console
 
     public partial class JsonConsoleFormatterOptions : ConsoleFormatterOptions
     {
-        public JsonConsoleFormatterOptions() { }
-
         public System.Text.Json.JsonWriterOptions JsonWriterOptions { get { throw null; } set { } }
     }
 
@@ -146,8 +140,6 @@ namespace Microsoft.Extensions.Logging.Console
 
     public partial class SimpleConsoleFormatterOptions : ConsoleFormatterOptions
     {
-        public SimpleConsoleFormatterOptions() { }
-
         public LoggerColorBehavior ColorBehavior { get { throw null; } set { } }
 
         public bool SingleLine { get { throw null; } set { } }

@@ -22,7 +22,5 @@
         <dependency id="System.Text.Encoding.CodePages" version="4.0.1" exclude="Build,Analyzers" />
       </group>
     </dependencies>
-    <frameworkAssemblies>
-    </frameworkAssemblies>
   </metadata>
 </package>

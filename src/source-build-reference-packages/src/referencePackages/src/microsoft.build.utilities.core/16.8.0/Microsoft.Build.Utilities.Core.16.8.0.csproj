@@ -1,27 +1,12 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <LangVersion>8.0</LangVersion>
     <TargetFrameworks>netstandard2.0</TargetFrameworks>
-    <NuspecFile>$(ArtifactsBinDir)microsoft.build.utilities.core/16.8.0/microsoft.build.utilities.core.nuspec</NuspecFile>
+    <AssemblyName>Microsoft.Build.Utilities.Core</AssemblyName>
+    <ProjectTemplateVersion>2</ProjectTemplateVersion>
   </PropertyGroup>
 
-  <PropertyGroup>
-    <OutputPath>$(ArtifactsBinDir)microsoft.build.utilities.core/16.8.0/ref/</OutputPath>
-    <IntermediateOutputPath>$(ArtifactsObjDir)microsoft.build.utilities.core/16.8.0</IntermediateOutputPath>
-  </PropertyGroup>
-
-  <PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard2.0' ">
-    <OutputPath>$(ArtifactsBinDir)microsoft.build.utilities.core/16.8.0/lib/</OutputPath>
-  </PropertyGroup>
-
-  <ItemGroup>
-    <Compile Include="**/ref/$(TargetFramework)/*.cs" />
-    <Compile Include="**/lib/$(TargetFramework)/*.cs" />
-  </ItemGroup>
-
-  <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.0' ">
-    <PackageReference Include="NETStandard.Library" Version="$(NETStandardImplicitPackageVersion)" />
+  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
     <PackageReference Include="Microsoft.Build.Framework" Version="16.8.0" />
     <PackageReference Include="Microsoft.Win32.Registry" Version="4.3.0" />
     <PackageReference Include="System.Collections.Immutable" Version="1.5.0" />

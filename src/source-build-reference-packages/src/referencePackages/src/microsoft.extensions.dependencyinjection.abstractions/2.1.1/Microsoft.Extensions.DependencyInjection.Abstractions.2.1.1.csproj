@@ -2,26 +2,9 @@
 
   <PropertyGroup>
     <TargetFrameworks>netstandard2.0</TargetFrameworks>
-    <NuspecFile>$(ArtifactsBinDir)microsoft.extensions.dependencyinjection.abstractions/2.1.1/microsoft.extensions.dependencyinjection.abstractions.nuspec</NuspecFile>
+    <AssemblyName>Microsoft.Extensions.DependencyInjection.Abstractions</AssemblyName>
+    <ProjectTemplateVersion>2</ProjectTemplateVersion>
     <StrongNameKeyId>MicrosoftAspNetCore</StrongNameKeyId>
   </PropertyGroup>
-
-  <PropertyGroup>
-    <OutputPath>$(ArtifactsBinDir)microsoft.extensions.dependencyinjection.abstractions/2.1.1/ref/</OutputPath>
-    <IntermediateOutputPath>$(ArtifactsObjDir)microsoft.extensions.dependencyinjection.abstractions/2.1.1</IntermediateOutputPath>
-  </PropertyGroup>
-
-  <PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard2.0' ">
-    <OutputPath>$(ArtifactsBinDir)microsoft.extensions.dependencyinjection.abstractions/2.1.1/lib/</OutputPath>
-  </PropertyGroup>
-
-  <ItemGroup>
-    <Compile Include="**/ref/$(TargetFramework)/*.cs" />
-    <Compile Include="**/lib/$(TargetFramework)/*.cs" />
-  </ItemGroup>
-
-  <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.0' ">
-    <PackageReference Include="NETStandard.Library" Version="$(NETStandardImplicitPackageVersion)" />
-  </ItemGroup>
 
 </Project>

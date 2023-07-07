@@ -1,39 +1,33 @@
 <Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
     <TargetFrameworks>netstandard1.0;netstandard1.3;netstandard1.5</TargetFrameworks>
-    <NuspecFile>$(ArtifactsBinDir)system.io/4.1.0/system.io.nuspec</NuspecFile>
-   </PropertyGroup>
-
-  <PropertyGroup>
-    <OutputPath>$(ArtifactsBinDir)system.io/4.1.0/ref/</OutputPath>
-    <IntermediateOutputPath>$(ArtifactsObjDir)system.io/4.1.0</IntermediateOutputPath>
+    <AssemblyName>System.IO</AssemblyName>
+    <ProjectTemplateVersion>2</ProjectTemplateVersion>
   </PropertyGroup>
 
-  <ItemGroup>
-    <Compile Include="**/ref/$(TargetFramework)/*.cs" />
-    <Compile Include="**/lib/$(TargetFramework)/*.cs" />
+  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard1.0'">
+    <PackageReference Include="Microsoft.NETCore.Platforms" Version="1.0.1" />
+    <PackageReference Include="Microsoft.NETCore.Targets" Version="1.0.1" />
+    <PackageReference Include="System.Runtime" Version="4.1.0" />
+    <PackageReference Include="System.Text.Encoding" Version="4.0.11" />
+    <PackageReference Include="System.Threading.Tasks" Version="4.0.11" />
   </ItemGroup>
 
-  <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard1.0' ">
-      <PackageReference Include="Microsoft.NETCore.Platforms" Version="1.0.1" />
-      <PackageReference Include="Microsoft.NETCore.Targets" Version="1.0.1" />
-      <PackageReference Include="System.Runtime" Version="4.1.0" />
-      <PackageReference Include="System.Text.Encoding" Version="4.0.11" />
-      <PackageReference Include="System.Threading.Tasks" Version="4.0.11" />
+  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard1.3'">
+    <PackageReference Include="Microsoft.NETCore.Platforms" Version="1.0.1" />
+    <PackageReference Include="Microsoft.NETCore.Targets" Version="1.0.1" />
+    <PackageReference Include="System.Runtime" Version="4.1.0" />
+    <PackageReference Include="System.Text.Encoding" Version="4.0.11" />
+    <PackageReference Include="System.Threading.Tasks" Version="4.0.11" />
   </ItemGroup>
-  <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard1.3' ">
-      <PackageReference Include="Microsoft.NETCore.Platforms" Version="1.0.1" />
-      <PackageReference Include="Microsoft.NETCore.Targets" Version="1.0.1" />
-      <PackageReference Include="System.Runtime" Version="4.1.0" />
-      <PackageReference Include="System.Text.Encoding" Version="4.0.11" />
-      <PackageReference Include="System.Threading.Tasks" Version="4.0.11" />
-  </ItemGroup>
-  <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard1.5' ">
-      <PackageReference Include="Microsoft.NETCore.Platforms" Version="1.0.1" />
-      <PackageReference Include="Microsoft.NETCore.Targets" Version="1.0.1" />
-      <PackageReference Include="System.Runtime" Version="4.1.0" />
-      <PackageReference Include="System.Text.Encoding" Version="4.0.11" />
-      <PackageReference Include="System.Threading.Tasks" Version="4.0.11" />
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard1.5'">
+    <PackageReference Include="Microsoft.NETCore.Platforms" Version="1.0.1" />
+    <PackageReference Include="Microsoft.NETCore.Targets" Version="1.0.1" />
+    <PackageReference Include="System.Runtime" Version="4.1.0" />
+    <PackageReference Include="System.Text.Encoding" Version="4.0.11" />
+    <PackageReference Include="System.Threading.Tasks" Version="4.0.11" />
   </ItemGroup>
 
 </Project>

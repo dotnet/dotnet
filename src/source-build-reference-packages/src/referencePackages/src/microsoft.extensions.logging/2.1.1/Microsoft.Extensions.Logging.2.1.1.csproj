@@ -2,26 +2,12 @@
 
   <PropertyGroup>
     <TargetFrameworks>netstandard2.0</TargetFrameworks>
-    <NuspecFile>$(ArtifactsBinDir)microsoft.extensions.logging/2.1.1/microsoft.extensions.logging.nuspec</NuspecFile>
+    <AssemblyName>Microsoft.Extensions.Logging</AssemblyName>
+    <ProjectTemplateVersion>2</ProjectTemplateVersion>
     <StrongNameKeyId>MicrosoftAspNetCore</StrongNameKeyId>
   </PropertyGroup>
 
-  <PropertyGroup>
-    <OutputPath>$(ArtifactsBinDir)microsoft.extensions.logging/2.1.1/ref/</OutputPath>
-    <IntermediateOutputPath>$(ArtifactsObjDir)microsoft.extensions.logging/2.1.1</IntermediateOutputPath>
-  </PropertyGroup>
-
-  <PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard2.0' ">
-    <OutputPath>$(ArtifactsBinDir)microsoft.extensions.logging/2.1.1/lib/</OutputPath>
-  </PropertyGroup>
-
-  <ItemGroup>
-    <Compile Include="**/ref/$(TargetFramework)/*.cs" />
-    <Compile Include="**/lib/$(TargetFramework)/*.cs" />
-  </ItemGroup>
-
-  <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.0' ">
-    <PackageReference Include="NETStandard.Library" Version="$(NETStandardImplicitPackageVersion)" />
+  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="2.1.1" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="2.1.1" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="2.1.1" />

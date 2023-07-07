@@ -90,19 +90,15 @@ namespace System.Drawing
     [AttributeUsage(AttributeTargets.Assembly)]
     public partial class BitmapSuffixInSameAssemblyAttribute : Attribute
     {
-        public BitmapSuffixInSameAssemblyAttribute() { }
     }
 
     [AttributeUsage(AttributeTargets.Assembly)]
     public partial class BitmapSuffixInSatelliteAssemblyAttribute : Attribute
     {
-        public BitmapSuffixInSatelliteAssemblyAttribute() { }
     }
 
     public abstract partial class Brush : MarshalByRefObject, ICloneable, IDisposable
     {
-        protected Brush() { }
-
         public abstract object Clone();
         public void Dispose() { }
 
@@ -401,6 +397,8 @@ namespace System.Drawing
 
     public sealed partial class BufferedGraphics : IDisposable
     {
+        internal BufferedGraphics() { }
+
         public Graphics Graphics { get { throw null; } }
 
         public void Dispose() { }
@@ -414,8 +412,6 @@ namespace System.Drawing
 
     public sealed partial class BufferedGraphicsContext : IDisposable
     {
-        public BufferedGraphicsContext() { }
-
         public Size MaximumBuffer { get { throw null; } set { } }
 
         public BufferedGraphics Allocate(Graphics targetGraphics, Rectangle targetRectangle) { throw null; }
@@ -614,8 +610,6 @@ namespace System.Drawing
 
     public partial class FontConverter : ComponentModel.TypeConverter
     {
-        public FontConverter() { }
-
         public override bool CanConvertFrom(ComponentModel.ITypeDescriptorContext? context, Type sourceType) { throw null; }
 
         public override bool CanConvertTo(ComponentModel.ITypeDescriptorContext? context, Type? destinationType) { throw null; }
@@ -634,8 +628,6 @@ namespace System.Drawing
 
         public sealed partial class FontNameConverter : ComponentModel.TypeConverter, IDisposable
         {
-            public FontNameConverter() { }
-
             public override bool CanConvertFrom(ComponentModel.ITypeDescriptorContext? context, Type sourceType) { throw null; }
 
             public override object? ConvertFrom(ComponentModel.ITypeDescriptorContext? context, Globalization.CultureInfo? culture, object value) { throw null; }
@@ -713,6 +705,8 @@ namespace System.Drawing
 
     public sealed partial class Graphics : MarshalByRefObject, IDeviceContext, IDisposable
     {
+        internal Graphics() { }
+
         public Region Clip { get { throw null; } set { } }
 
         public RectangleF ClipBounds { get { throw null; } }
@@ -1258,8 +1252,6 @@ namespace System.Drawing
 
     public partial class IconConverter : ComponentModel.ExpandableObjectConverter
     {
-        public IconConverter() { }
-
         public override bool CanConvertFrom(ComponentModel.ITypeDescriptorContext? context, Type sourceType) { throw null; }
 
         public override bool CanConvertTo(ComponentModel.ITypeDescriptorContext? context, Type? destinationType) { throw null; }
@@ -1278,6 +1270,8 @@ namespace System.Drawing
     [ComponentModel.ImmutableObject(true)]
     public abstract partial class Image : MarshalByRefObject, ICloneable, IDisposable, Runtime.Serialization.ISerializable
     {
+        internal Image() { }
+
         [ComponentModel.Browsable(false)]
         public int Flags { get { throw null; } }
 
@@ -1389,6 +1383,8 @@ namespace System.Drawing
 
     public sealed partial class ImageAnimator
     {
+        internal ImageAnimator() { }
+
         public static void Animate(Image image, EventHandler onFrameChangedHandler) { }
 
         public static bool CanAnimate(Image? image) { throw null; }
@@ -1402,8 +1398,6 @@ namespace System.Drawing
 
     public partial class ImageConverter : ComponentModel.TypeConverter
     {
-        public ImageConverter() { }
-
         public override bool CanConvertFrom(ComponentModel.ITypeDescriptorContext? context, Type sourceType) { throw null; }
 
         public override bool CanConvertTo(ComponentModel.ITypeDescriptorContext? context, Type? destinationType) { throw null; }
@@ -1419,8 +1413,6 @@ namespace System.Drawing
 
     public partial class ImageFormatConverter : ComponentModel.TypeConverter
     {
-        public ImageFormatConverter() { }
-
         public override bool CanConvertFrom(ComponentModel.ITypeDescriptorContext? context, Type? sourceType) { throw null; }
 
         public override bool CanConvertTo(ComponentModel.ITypeDescriptorContext? context, Type? destinationType) { throw null; }
@@ -2516,6 +2508,7 @@ namespace System.Drawing.Drawing2D
 
     public sealed partial class GraphicsContainer : MarshalByRefObject
     {
+        internal GraphicsContainer() { }
     }
 
     public sealed partial class GraphicsPath : MarshalByRefObject, ICloneable, IDisposable
@@ -2748,6 +2741,7 @@ namespace System.Drawing.Drawing2D
 
     public sealed partial class GraphicsState : MarshalByRefObject
     {
+        internal GraphicsState() { }
     }
 
     public sealed partial class HatchBrush : Brush
@@ -3008,8 +3002,6 @@ namespace System.Drawing.Drawing2D
 
     public sealed partial class PathData
     {
-        public PathData() { }
-
         public PointF[]? Points { get { throw null; } set { } }
 
         public byte[]? Types { get { throw null; } set { } }
@@ -3124,6 +3116,8 @@ namespace System.Drawing.Drawing2D
 
     public sealed partial class RegionData
     {
+        internal RegionData() { }
+
         public byte[] Data { get { throw null; } set { } }
     }
 
@@ -3157,8 +3151,6 @@ namespace System.Drawing.Imaging
 {
     public sealed partial class BitmapData
     {
-        public BitmapData() { }
-
         public int Height { get { throw null; } set { } }
 
         public PixelFormat PixelFormat { get { throw null; } set { } }
@@ -3194,8 +3186,6 @@ namespace System.Drawing.Imaging
 
     public sealed partial class ColorMap
     {
-        public ColorMap() { }
-
         public Color NewColor { get { throw null; } set { } }
 
         public Color OldColor { get { throw null; } set { } }
@@ -3282,6 +3272,8 @@ namespace System.Drawing.Imaging
 
     public sealed partial class ColorPalette
     {
+        internal ColorPalette() { }
+
         public Color[] Entries { get { throw null; } }
 
         public int Flags { get { throw null; } }
@@ -3694,8 +3686,6 @@ namespace System.Drawing.Imaging
 
     public sealed partial class ImageAttributes : ICloneable, IDisposable
     {
-        public ImageAttributes() { }
-
         public void ClearBrushRemapTable() { }
 
         public void ClearColorKey() { }
@@ -3804,6 +3794,8 @@ namespace System.Drawing.Imaging
 
     public sealed partial class ImageCodecInfo
     {
+        internal ImageCodecInfo() { }
+
         public Guid Clsid { get { throw null; } set { } }
 
         public string? CodecName { get { throw null; } set { } }
@@ -4000,6 +3992,8 @@ namespace System.Drawing.Imaging
 
     public sealed partial class MetafileHeader
     {
+        internal MetafileHeader() { }
+
         public Rectangle Bounds { get { throw null; } }
 
         public float DpiX { get { throw null; } }
@@ -4049,8 +4043,6 @@ namespace System.Drawing.Imaging
 
     public sealed partial class MetaHeader
     {
-        public MetaHeader() { }
-
         public short HeaderSize { get { throw null; } set { } }
 
         public int MaxRecord { get { throw null; } set { } }
@@ -4104,6 +4096,8 @@ namespace System.Drawing.Imaging
     public delegate void PlayRecordCallback(EmfPlusRecordType recordType, int flags, int dataSize, IntPtr recordData);
     public sealed partial class PropertyItem
     {
+        internal PropertyItem() { }
+
         public int Id { get { throw null; } set { } }
 
         public int Len { get { throw null; } set { } }
@@ -4115,8 +4109,6 @@ namespace System.Drawing.Imaging
 
     public sealed partial class WmfPlaceableFileHeader
     {
-        public WmfPlaceableFileHeader() { }
-
         public short BboxBottom { get { throw null; } set { } }
 
         public short BboxLeft { get { throw null; } set { } }
@@ -4185,8 +4177,6 @@ namespace System.Drawing.Printing
 
     public partial class MarginsConverter : ComponentModel.ExpandableObjectConverter
     {
-        public MarginsConverter() { }
-
         public override bool CanConvertFrom(ComponentModel.ITypeDescriptorContext? context, Type sourceType) { throw null; }
 
         public override bool CanConvertTo(ComponentModel.ITypeDescriptorContext? context, Type? destinationType) { throw null; }
@@ -4379,8 +4369,6 @@ namespace System.Drawing.Printing
 
     public partial class PaperSource
     {
-        public PaperSource() { }
-
         public PaperSourceKind Kind { get { throw null; } }
 
         public int RawKind { get { throw null; } set { } }
@@ -4419,8 +4407,6 @@ namespace System.Drawing.Printing
 
     public partial class PreviewPrintController : PrintController
     {
-        public PreviewPrintController() { }
-
         public override bool IsPreview { get { throw null; } }
 
         public virtual bool UseAntiAlias { get { throw null; } set { } }
@@ -4445,8 +4431,6 @@ namespace System.Drawing.Printing
 
     public abstract partial class PrintController
     {
-        protected PrintController() { }
-
         public virtual bool IsPreview { get { throw null; } }
 
         public virtual void OnEndPage(PrintDocument document, PrintPageEventArgs e) { }
@@ -4462,8 +4446,6 @@ namespace System.Drawing.Printing
     [ComponentModel.DefaultProperty("DocumentName")]
     public partial class PrintDocument : ComponentModel.Component
     {
-        public PrintDocument() { }
-
         [ComponentModel.Browsable(false)]
         [ComponentModel.DesignerSerializationVisibility(ComponentModel.DesignerSerializationVisibility.Hidden)]
         public PageSettings DefaultPageSettings { get { throw null; } set { } }
@@ -4505,8 +4487,6 @@ namespace System.Drawing.Printing
 
     public partial class PrinterResolution
     {
-        public PrinterResolution() { }
-
         public PrinterResolutionKind Kind { get { throw null; } set { } }
 
         public int X { get { throw null; } set { } }
@@ -4527,8 +4507,6 @@ namespace System.Drawing.Printing
 
     public partial class PrinterSettings : ICloneable
     {
-        public PrinterSettings() { }
-
         public bool CanDuplex { get { throw null; } }
 
         public bool Collate { get { throw null; } set { } }
@@ -4712,6 +4690,8 @@ namespace System.Drawing.Printing
 
     public sealed partial class PrinterUnitConvert
     {
+        internal PrinterUnitConvert() { }
+
         public static double Convert(double value, PrinterUnit fromUnit, PrinterUnit toUnit) { throw null; }
 
         public static Point Convert(Point value, PrinterUnit fromUnit, PrinterUnit toUnit) { throw null; }
@@ -4727,8 +4707,6 @@ namespace System.Drawing.Printing
 
     public partial class PrintEventArgs : ComponentModel.CancelEventArgs
     {
-        public PrintEventArgs() { }
-
         public PrintAction PrintAction { get { throw null; } }
     }
 
@@ -4769,8 +4747,6 @@ namespace System.Drawing.Printing
     public delegate void QueryPageSettingsEventHandler(object sender, QueryPageSettingsEventArgs e);
     public partial class StandardPrintController : PrintController
     {
-        public StandardPrintController() { }
-
         public override void OnEndPage(PrintDocument document, PrintPageEventArgs e) { }
 
         public override void OnEndPrint(PrintDocument document, PrintEventArgs e) { }
@@ -4785,6 +4761,8 @@ namespace System.Drawing.Text
 {
     public abstract partial class FontCollection : IDisposable
     {
+        internal FontCollection() { }
+
         public FontFamily[] Families { get { throw null; } }
 
         public void Dispose() { }

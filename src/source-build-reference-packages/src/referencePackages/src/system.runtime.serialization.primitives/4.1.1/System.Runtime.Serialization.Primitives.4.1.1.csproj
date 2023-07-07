@@ -1,25 +1,18 @@
 <Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
     <TargetFrameworks>netstandard1.0;netstandard1.3</TargetFrameworks>
-    <NuspecFile>$(ArtifactsBinDir)system.runtime.serialization.primitives/4.1.1/system.runtime.serialization.primitives.nuspec</NuspecFile>
-   </PropertyGroup>
-
-  <PropertyGroup>
-    <OutputPath>$(ArtifactsBinDir)system.runtime.serialization.primitives/4.1.1/ref/</OutputPath>
-    <IntermediateOutputPath>$(ArtifactsObjDir)system.runtime.serialization.primitives/4.1.1</IntermediateOutputPath>
+    <AssemblyName>System.Runtime.Serialization.Primitives</AssemblyName>
+    <ProjectTemplateVersion>2</ProjectTemplateVersion>
   </PropertyGroup>
 
-  <ItemGroup>
-    <Compile Include="**/ref/$(TargetFramework)/*.cs" />
-    <Compile Include="**/lib/$(TargetFramework)/*.cs" />
+  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard1.0'">
+    <PackageReference Include="System.Runtime" Version="4.1.0" />
   </ItemGroup>
 
-  <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard1.0' ">
-      <PackageReference Include="System.Runtime" Version="4.1.0" />
-  </ItemGroup>
-  <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard1.3' ">
-      <PackageReference Include="System.Resources.ResourceManager" Version="4.0.1" />
-      <PackageReference Include="System.Runtime" Version="4.1.0" />
+  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard1.3'">
+    <PackageReference Include="System.Resources.ResourceManager" Version="4.0.1" />
+    <PackageReference Include="System.Runtime" Version="4.1.0" />
   </ItemGroup>
 
 </Project>

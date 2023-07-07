@@ -102,8 +102,6 @@ namespace NuGet.ProjectModel
 
     public partial class BuildOptions : System.IEquatable<BuildOptions>
     {
-        public BuildOptions() { }
-
         public string OutputName { get { throw null; } set { } }
 
         public BuildOptions Clone() { throw null; }
@@ -321,8 +319,6 @@ namespace NuGet.ProjectModel
 
     public partial class IncludeExcludeFiles : System.IEquatable<IncludeExcludeFiles>
     {
-        public IncludeExcludeFiles() { }
-
         public System.Collections.Generic.IReadOnlyList<string> Exclude { get { throw null; } set { } }
 
         public System.Collections.Generic.IReadOnlyList<string> ExcludeFiles { get { throw null; } set { } }
@@ -376,8 +372,6 @@ namespace NuGet.ProjectModel
     {
         public static readonly char DirectorySeparatorChar;
         public static readonly Frameworks.NuGetFramework ToolFramework;
-        public LockFile() { }
-
         public System.Collections.Generic.IList<CentralTransitiveDependencyGroup> CentralTransitiveDependencyGroups { get { throw null; } set { } }
 
         public System.Collections.Generic.IList<LockFileLibrary> Libraries { get { throw null; } set { } }
@@ -435,8 +429,6 @@ namespace NuGet.ProjectModel
 
     public partial class LockFileDependency : System.IEquatable<LockFileDependency>
     {
-        public LockFileDependency() { }
-
         public string ContentHash { get { throw null; } set { } }
 
         public System.Collections.Generic.IList<Packaging.Core.PackageDependency> Dependencies { get { throw null; } set { } }
@@ -458,8 +450,6 @@ namespace NuGet.ProjectModel
 
     public partial class LockFileDependencyIdVersionComparer : System.Collections.Generic.IEqualityComparer<LockFileDependency>
     {
-        public LockFileDependencyIdVersionComparer() { }
-
         public static LockFileDependencyIdVersionComparer Default { get { throw null; } }
 
         public bool Equals(LockFileDependency x, LockFileDependency y) { throw null; }
@@ -491,8 +481,6 @@ namespace NuGet.ProjectModel
         public static readonly string AssetsFileName;
         public static readonly string LockFileName;
         public static readonly int Version;
-        public LockFileFormat() { }
-
         public LockFile Parse(string lockFileContent, Common.ILogger log, string path) { throw null; }
 
         public LockFile Parse(string lockFileContent, string path) { throw null; }
@@ -544,8 +532,6 @@ namespace NuGet.ProjectModel
 
     public partial class LockFileLibrary : System.IEquatable<LockFileLibrary>
     {
-        public LockFileLibrary() { }
-
         public System.Collections.Generic.IList<string> Files { get { throw null; } set { } }
 
         public bool HasTools { get { throw null; } set { } }
@@ -588,8 +574,6 @@ namespace NuGet.ProjectModel
 
     public partial class LockFileTarget : System.IEquatable<LockFileTarget>
     {
-        public LockFileTarget() { }
-
         public System.Collections.Generic.IList<LockFileTargetLibrary> Libraries { get { throw null; } set { } }
 
         public string Name { get { throw null; } }
@@ -607,8 +591,6 @@ namespace NuGet.ProjectModel
 
     public partial class LockFileTargetLibrary : System.IEquatable<LockFileTargetLibrary>
     {
-        public LockFileTargetLibrary() { }
-
         public System.Collections.Generic.IList<LockFileItem> Build { get { throw null; } set { } }
 
         public System.Collections.Generic.IList<LockFileItem> BuildMultiTargeting { get { throw null; } set { } }
@@ -676,8 +658,6 @@ namespace NuGet.ProjectModel
 
     public partial class PackagesConfigProjectRestoreMetadata : ProjectRestoreMetadata
     {
-        public PackagesConfigProjectRestoreMetadata() { }
-
         public string PackagesConfigPath { get { throw null; } set { } }
 
         public string RepositoryPath { get { throw null; } set { } }
@@ -738,8 +718,6 @@ namespace NuGet.ProjectModel
 
     public partial class PackagesLockFileTarget : System.IEquatable<PackagesLockFileTarget>
     {
-        public PackagesLockFileTarget() { }
-
         public System.Collections.Generic.IList<LockFileDependency> Dependencies { get { throw null; } set { } }
 
         public string Name { get { throw null; } }
@@ -915,8 +893,6 @@ namespace NuGet.ProjectModel
 
     public sealed partial class PackageSpecWriter
     {
-        public PackageSpecWriter() { }
-
         public static void Write(PackageSpec packageSpec, RuntimeModel.IObjectWriter writer) { }
 
         public static void WriteToFile(PackageSpec packageSpec, string filePath) { }
@@ -924,8 +900,6 @@ namespace NuGet.ProjectModel
 
     public partial class PackOptions : System.IEquatable<PackOptions>
     {
-        public PackOptions() { }
-
         public IncludeExcludeFiles IncludeExcludeFiles { get { throw null; } set { } }
 
         public System.Collections.Generic.IDictionary<string, IncludeExcludeFiles> Mappings { get { throw null; } set { } }
@@ -958,8 +932,6 @@ namespace NuGet.ProjectModel
 
     public partial class ProjectRestoreMetadata : System.IEquatable<ProjectRestoreMetadata>
     {
-        public ProjectRestoreMetadata() { }
-
         public string CacheFilePath { get { throw null; } set { } }
 
         public bool CentralPackageTransitivePinningEnabled { get { throw null; } set { } }
@@ -1063,8 +1035,6 @@ namespace NuGet.ProjectModel
 
     public partial class ProjectRestoreReference : System.IEquatable<ProjectRestoreReference>
     {
-        public ProjectRestoreReference() { }
-
         public LibraryModel.LibraryIncludeFlags ExcludeAssets { get { throw null; } set { } }
 
         public LibraryModel.LibraryIncludeFlags IncludeAssets { get { throw null; } set { } }
@@ -1088,8 +1058,6 @@ namespace NuGet.ProjectModel
 
     public partial class ProjectRestoreSettings
     {
-        public ProjectRestoreSettings() { }
-
         public bool HideWarningsAndErrors { get { throw null; } set { } }
 
         public ProjectRestoreSettings Clone() { throw null; }
@@ -1135,8 +1103,6 @@ namespace NuGet.ProjectModel
 
     public partial class TargetFrameworkInformation : System.IEquatable<TargetFrameworkInformation>
     {
-        public TargetFrameworkInformation() { }
-
         public bool AssetTargetFallback { get { throw null; } set { } }
 
         public System.Collections.Generic.IDictionary<string, LibraryModel.CentralPackageVersion> CentralPackageVersions { get { throw null; } }
@@ -1213,8 +1179,6 @@ namespace NuGet.ProjectModel.ProjectLockFile
 {
     public partial class LockFileDependencyComparerWithoutContentHash : System.Collections.Generic.IEqualityComparer<LockFileDependency>
     {
-        public LockFileDependencyComparerWithoutContentHash() { }
-
         public static LockFileDependencyComparerWithoutContentHash Default { get { throw null; } }
 
         public bool Equals(LockFileDependency x, LockFileDependency y) { throw null; }

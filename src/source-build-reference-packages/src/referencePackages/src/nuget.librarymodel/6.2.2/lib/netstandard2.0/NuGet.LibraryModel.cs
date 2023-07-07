@@ -44,6 +44,8 @@ namespace NuGet.LibraryModel
 
     public sealed partial class CentralPackageVersionNameComparer : System.Collections.Generic.IEqualityComparer<CentralPackageVersion>
     {
+        internal CentralPackageVersionNameComparer() { }
+
         public static CentralPackageVersionNameComparer Default { get { throw null; } }
 
         public bool Equals(CentralPackageVersion x, CentralPackageVersion y) { throw null; }
@@ -124,8 +126,6 @@ namespace NuGet.LibraryModel
     public partial class Library
     {
         public static readonly System.Collections.Generic.IEqualityComparer<Library> IdentityComparer;
-        public Library() { }
-
         public System.Collections.Generic.IEnumerable<LibraryDependency> Dependencies { get { throw null; } set { } }
 
         public LibraryIdentity Identity { get { throw null; } set { } }
@@ -145,8 +145,6 @@ namespace NuGet.LibraryModel
 
     public partial class LibraryDependency : System.IEquatable<LibraryDependency>
     {
-        public LibraryDependency() { }
-
         public string Aliases { get { throw null; } set { } }
 
         public bool AutoReferenced { get { throw null; } set { } }

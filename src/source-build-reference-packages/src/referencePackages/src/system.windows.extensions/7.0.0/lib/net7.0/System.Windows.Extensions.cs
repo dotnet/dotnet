@@ -86,6 +86,8 @@ namespace System.Media
 
     public partial class SystemSound
     {
+        internal SystemSound() { }
+
         public void Play() { }
     }
 
@@ -107,8 +109,6 @@ namespace System.Security.Cryptography.X509Certificates
 {
     public sealed partial class X509Certificate2UI
     {
-        public X509Certificate2UI() { }
-
         public static void DisplayCertificate(X509Certificate2 certificate, nint hwndParent) { }
 
         public static void DisplayCertificate(X509Certificate2 certificate) { }
@@ -129,6 +129,8 @@ namespace System.Xaml.Permissions
 {
     public partial class XamlAccessLevel
     {
+        internal XamlAccessLevel() { }
+
         public Reflection.AssemblyName AssemblyAccessToAssemblyName { get { throw null; } }
 
         public string? PrivateAccessToTypeName { get { throw null; } }

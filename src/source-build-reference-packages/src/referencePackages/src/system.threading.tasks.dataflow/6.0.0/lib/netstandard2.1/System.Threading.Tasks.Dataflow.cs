@@ -29,7 +29,7 @@
 [assembly: System.Reflection.AssemblyFlagsAttribute((System.Reflection.AssemblyNameFlags)0x70)]
 namespace System.Threading.Tasks.Dataflow
 {
-    public sealed partial class ActionBlock<TInput> : IDataflowBlock
+    public sealed partial class ActionBlock<TInput> : ITargetBlock<TInput>, IDataflowBlock
     {
         public ActionBlock(Action<TInput> action, ExecutionDataflowBlockOptions dataflowBlockOptions) { }
 
@@ -49,10 +49,12 @@ namespace System.Threading.Tasks.Dataflow
 
         void IDataflowBlock.Fault(Exception exception) { }
 
+        DataflowMessageStatus ITargetBlock<TInput>.OfferMessage(DataflowMessageHeader messageHeader, TInput messageValue, ISourceBlock<TInput> source, bool consumeToAccept) { throw null; }
+
         public override string ToString() { throw null; }
     }
 
-    public sealed partial class BatchBlock<T> : IDataflowBlock
+    public sealed partial class BatchBlock<T> : IPropagatorBlock<T, T[]>, ITargetBlock<T>, IDataflowBlock, ISourceBlock<T[]>, IReceivableSourceBlock<T[]>
     {
         public BatchBlock(int batchSize, GroupingDataflowBlockOptions dataflowBlockOptions) { }
 
@@ -69,6 +71,14 @@ namespace System.Threading.Tasks.Dataflow
         public IDisposable LinkTo(ITargetBlock<T[]> target, DataflowLinkOptions linkOptions) { throw null; }
 
         void IDataflowBlock.Fault(Exception exception) { }
+
+        T[] ISourceBlock<T[]>.ConsumeMessage(DataflowMessageHeader messageHeader, ITargetBlock<T[]> target, out bool messageConsumed) { throw null; }
+
+        void ISourceBlock<T[]>.ReleaseReservation(DataflowMessageHeader messageHeader, ITargetBlock<T[]> target) { }
+
+        bool ISourceBlock<T[]>.ReserveMessage(DataflowMessageHeader messageHeader, ITargetBlock<T[]> target) { throw null; }
+
+        DataflowMessageStatus ITargetBlock<T>.OfferMessage(DataflowMessageHeader messageHeader, T messageValue, ISourceBlock<T> source, bool consumeToAccept) { throw null; }
 
         public override string ToString() { throw null; }
 
@@ -151,7 +161,7 @@ namespace System.Threading.Tasks.Dataflow
         public bool TryReceiveAll(out Collections.Generic.IList<Tuple<Collections.Generic.IList<T1>, Collections.Generic.IList<T2>, Collections.Generic.IList<T3>>>? items) { throw null; }
     }
 
-    public sealed partial class BroadcastBlock<T> : IDataflowBlock
+    public sealed partial class BroadcastBlock<T> : IPropagatorBlock<T, T>, ITargetBlock<T>, IDataflowBlock, ISourceBlock<T>, IReceivableSourceBlock<T>
     {
         public BroadcastBlock(Func<T, T>? cloningFunction, DataflowBlockOptions dataflowBlockOptions) { }
 
@@ -165,12 +175,22 @@ namespace System.Threading.Tasks.Dataflow
 
         void IDataflowBlock.Fault(Exception exception) { }
 
+        bool IReceivableSourceBlock<T>.TryReceiveAll(out Collections.Generic.IList<T> items) { throw null; }
+
+        T ISourceBlock<T>.ConsumeMessage(DataflowMessageHeader messageHeader, ITargetBlock<T> target, out bool messageConsumed) { throw null; }
+
+        void ISourceBlock<T>.ReleaseReservation(DataflowMessageHeader messageHeader, ITargetBlock<T> target) { }
+
+        bool ISourceBlock<T>.ReserveMessage(DataflowMessageHeader messageHeader, ITargetBlock<T> target) { throw null; }
+
+        DataflowMessageStatus ITargetBlock<T>.OfferMessage(DataflowMessageHeader messageHeader, T messageValue, ISourceBlock<T> source, bool consumeToAccept) { throw null; }
+
         public override string ToString() { throw null; }
 
         public bool TryReceive(Predicate<T>? filter, out T item) { throw null; }
     }
 
-    public sealed partial class BufferBlock<T> : IDataflowBlock
+    public sealed partial class BufferBlock<T> : IPropagatorBlock<T, T>, ITargetBlock<T>, IDataflowBlock, ISourceBlock<T>, IReceivableSourceBlock<T>
     {
         public BufferBlock() { }
 
@@ -185,6 +205,14 @@ namespace System.Threading.Tasks.Dataflow
         public IDisposable LinkTo(ITargetBlock<T> target, DataflowLinkOptions linkOptions) { throw null; }
 
         void IDataflowBlock.Fault(Exception exception) { }
+
+        T ISourceBlock<T>.ConsumeMessage(DataflowMessageHeader messageHeader, ITargetBlock<T> target, out bool messageConsumed) { throw null; }
+
+        void ISourceBlock<T>.ReleaseReservation(DataflowMessageHeader messageHeader, ITargetBlock<T> target) { }
+
+        bool ISourceBlock<T>.ReserveMessage(DataflowMessageHeader messageHeader, ITargetBlock<T> target) { throw null; }
+
+        DataflowMessageStatus ITargetBlock<T>.OfferMessage(DataflowMessageHeader messageHeader, T messageValue, ISourceBlock<T> source, bool consumeToAccept) { throw null; }
 
         public override string ToString() { throw null; }
 
@@ -251,8 +279,6 @@ namespace System.Threading.Tasks.Dataflow
     public partial class DataflowBlockOptions
     {
         public const int Unbounded = -1;
-        public DataflowBlockOptions() { }
-
         public int BoundedCapacity { get { throw null; } set { } }
 
         public CancellationToken CancellationToken { get { throw null; } set { } }
@@ -268,8 +294,6 @@ namespace System.Threading.Tasks.Dataflow
 
     public partial class DataflowLinkOptions
     {
-        public DataflowLinkOptions() { }
-
         public bool Append { get { throw null; } set { } }
 
         public int MaxMessages { get { throw null; } set { } }
@@ -308,8 +332,6 @@ namespace System.Threading.Tasks.Dataflow
 
     public partial class ExecutionDataflowBlockOptions : DataflowBlockOptions
     {
-        public ExecutionDataflowBlockOptions() { }
-
         public int MaxDegreeOfParallelism { get { throw null; } set { } }
 
         public bool SingleProducerConstrained { get { throw null; } set { } }
@@ -317,8 +339,6 @@ namespace System.Threading.Tasks.Dataflow
 
     public partial class GroupingDataflowBlockOptions : DataflowBlockOptions
     {
-        public GroupingDataflowBlockOptions() { }
-
         public bool Greedy { get { throw null; } set { } }
 
         public long MaxNumberOfGroups { get { throw null; } set { } }
@@ -332,11 +352,11 @@ namespace System.Threading.Tasks.Dataflow
         void Fault(Exception exception);
     }
 
-    public partial interface IPropagatorBlock<in TInput, out TOutput> : IDataflowBlock
+    public partial interface IPropagatorBlock<in TInput, out TOutput> : ITargetBlock<TInput>, IDataflowBlock, ISourceBlock<TOutput>
     {
     }
 
-    public partial interface IReceivableSourceBlock<TOutput> : IDataflowBlock
+    public partial interface IReceivableSourceBlock<TOutput> : ISourceBlock<TOutput>, IDataflowBlock
     {
         bool TryReceive(Predicate<TOutput>? filter, out TOutput item);
         bool TryReceiveAll(out Collections.Generic.IList<TOutput>? items);
@@ -423,7 +443,7 @@ namespace System.Threading.Tasks.Dataflow
         public bool TryReceiveAll(out Collections.Generic.IList<Tuple<T1, T2, T3>>? items) { throw null; }
     }
 
-    public sealed partial class TransformBlock<TInput, TOutput> : IDataflowBlock
+    public sealed partial class TransformBlock<TInput, TOutput> : IPropagatorBlock<TInput, TOutput>, ITargetBlock<TInput>, IDataflowBlock, ISourceBlock<TOutput>, IReceivableSourceBlock<TOutput>
     {
         public TransformBlock(Func<TInput, TOutput> transform, ExecutionDataflowBlockOptions dataflowBlockOptions) { }
 
@@ -445,6 +465,14 @@ namespace System.Threading.Tasks.Dataflow
 
         void IDataflowBlock.Fault(Exception exception) { }
 
+        TOutput ISourceBlock<TOutput>.ConsumeMessage(DataflowMessageHeader messageHeader, ITargetBlock<TOutput> target, out bool messageConsumed) { throw null; }
+
+        void ISourceBlock<TOutput>.ReleaseReservation(DataflowMessageHeader messageHeader, ITargetBlock<TOutput> target) { }
+
+        bool ISourceBlock<TOutput>.ReserveMessage(DataflowMessageHeader messageHeader, ITargetBlock<TOutput> target) { throw null; }
+
+        DataflowMessageStatus ITargetBlock<TInput>.OfferMessage(DataflowMessageHeader messageHeader, TInput messageValue, ISourceBlock<TInput> source, bool consumeToAccept) { throw null; }
+
         public override string ToString() { throw null; }
 
         public bool TryReceive(Predicate<TOutput>? filter, out TOutput item) { throw null; }
@@ -452,7 +480,7 @@ namespace System.Threading.Tasks.Dataflow
         public bool TryReceiveAll(out Collections.Generic.IList<TOutput>? items) { throw null; }
     }
 
-    public sealed partial class TransformManyBlock<TInput, TOutput> : IDataflowBlock
+    public sealed partial class TransformManyBlock<TInput, TOutput> : IPropagatorBlock<TInput, TOutput>, ITargetBlock<TInput>, IDataflowBlock, ISourceBlock<TOutput>, IReceivableSourceBlock<TOutput>
     {
         public TransformManyBlock(Func<TInput, Collections.Generic.IEnumerable<TOutput>> transform, ExecutionDataflowBlockOptions dataflowBlockOptions) { }
 
@@ -474,6 +502,14 @@ namespace System.Threading.Tasks.Dataflow
 
         void IDataflowBlock.Fault(Exception exception) { }
 
+        TOutput ISourceBlock<TOutput>.ConsumeMessage(DataflowMessageHeader messageHeader, ITargetBlock<TOutput> target, out bool messageConsumed) { throw null; }
+
+        void ISourceBlock<TOutput>.ReleaseReservation(DataflowMessageHeader messageHeader, ITargetBlock<TOutput> target) { }
+
+        bool ISourceBlock<TOutput>.ReserveMessage(DataflowMessageHeader messageHeader, ITargetBlock<TOutput> target) { throw null; }
+
+        DataflowMessageStatus ITargetBlock<TInput>.OfferMessage(DataflowMessageHeader messageHeader, TInput messageValue, ISourceBlock<TInput> source, bool consumeToAccept) { throw null; }
+
         public override string ToString() { throw null; }
 
         public bool TryReceive(Predicate<TOutput>? filter, out TOutput item) { throw null; }
@@ -481,7 +517,7 @@ namespace System.Threading.Tasks.Dataflow
         public bool TryReceiveAll(out Collections.Generic.IList<TOutput>? items) { throw null; }
     }
 
-    public sealed partial class WriteOnceBlock<T> : IDataflowBlock
+    public sealed partial class WriteOnceBlock<T> : IPropagatorBlock<T, T>, ITargetBlock<T>, IDataflowBlock, ISourceBlock<T>, IReceivableSourceBlock<T>
     {
         public WriteOnceBlock(Func<T, T>? cloningFunction, DataflowBlockOptions dataflowBlockOptions) { }
 
@@ -494,6 +530,16 @@ namespace System.Threading.Tasks.Dataflow
         public IDisposable LinkTo(ITargetBlock<T> target, DataflowLinkOptions linkOptions) { throw null; }
 
         void IDataflowBlock.Fault(Exception exception) { }
+
+        bool IReceivableSourceBlock<T>.TryReceiveAll(out Collections.Generic.IList<T> items) { throw null; }
+
+        T ISourceBlock<T>.ConsumeMessage(DataflowMessageHeader messageHeader, ITargetBlock<T> target, out bool messageConsumed) { throw null; }
+
+        void ISourceBlock<T>.ReleaseReservation(DataflowMessageHeader messageHeader, ITargetBlock<T> target) { }
+
+        bool ISourceBlock<T>.ReserveMessage(DataflowMessageHeader messageHeader, ITargetBlock<T> target) { throw null; }
+
+        DataflowMessageStatus ITargetBlock<T>.OfferMessage(DataflowMessageHeader messageHeader, T messageValue, ISourceBlock<T> source, bool consumeToAccept) { throw null; }
 
         public override string ToString() { throw null; }
 

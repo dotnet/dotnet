@@ -4,332 +4,539 @@
 // ------------------------------------------------------------------------------
 // Changes to this file must follow the http://aka.ms/api-review process.
 // ------------------------------------------------------------------------------
-
-using System;
-using System.Diagnostics;
-using System.Reflection;
-using System.Runtime.CompilerServices;
-using System.Security;
-
-[assembly: Debuggable(DebuggableAttribute.DebuggingModes.IgnoreSymbolStoreSequencePoints)]
-[assembly: AllowPartiallyTrustedCallers]
-[assembly: ReferenceAssembly]
-[assembly: AssemblyTitle("System.Threading.Tasks.Dataflow")]
-[assembly: AssemblyDescription("System.Threading.Tasks.Dataflow")]
-[assembly: AssemblyDefaultAlias("System.Threading.Tasks.Dataflow")]
-[assembly: AssemblyCompany("Microsoft Corporation")]
-[assembly: AssemblyProduct("Microsoft® .NET Framework")]
-[assembly: AssemblyCopyright("© Microsoft Corporation.  All rights reserved.")]
-[assembly: AssemblyFileVersion("4.6.26515.06")]
-[assembly: AssemblyInformationalVersion("4.6.26515.06 built by: SOURCEBUILD")]
-[assembly: CLSCompliant(true)]
-[assembly: AssemblyMetadata("", "")]
-[assembly: AssemblyVersion("4.6.3.0")]
-
-
-
-
+[assembly: System.Runtime.CompilerServices.CompilationRelaxations(8)]
+[assembly: System.Runtime.CompilerServices.RuntimeCompatibility(WrapNonExceptionThrows = true)]
+[assembly: System.Diagnostics.Debuggable(System.Diagnostics.DebuggableAttribute.DebuggingModes.IgnoreSymbolStoreSequencePoints)]
+[assembly: System.Resources.NeutralResourcesLanguage("en-US")]
+[assembly: System.Reflection.AssemblyTitle("System.Threading.Tasks.Dataflow")]
+[assembly: System.Reflection.AssemblyDescription("System.Threading.Tasks.Dataflow")]
+[assembly: System.Reflection.AssemblyDefaultAlias("System.Threading.Tasks.Dataflow")]
+[assembly: System.Reflection.AssemblyCompany("Microsoft Corporation")]
+[assembly: System.Reflection.AssemblyProduct("Microsoft® .NET Framework")]
+[assembly: System.Reflection.AssemblyCopyright("© Microsoft Corporation.  All rights reserved.")]
+[assembly: System.Reflection.AssemblyFileVersion("4.6.26515.06")]
+[assembly: System.Reflection.AssemblyInformationalVersion("4.6.26515.06 @BuiltBy: dlab-DDVSOWINAGE059 @Branch: release/2.1 @SrcCode: https://github.com/dotnet/corefx/tree/30ab651fcb4354552bd4891619a0bdd81e0ebdbf")]
+[assembly: System.CLSCompliant(true)]
+[assembly: System.Reflection.AssemblyMetadata(".NETFrameworkAssembly", "")]
+[assembly: System.Reflection.AssemblyMetadata("Serviceable", "True")]
+[assembly: System.Reflection.AssemblyMetadata("PreferInbox", "True")]
+[assembly: System.Reflection.AssemblyVersionAttribute("4.6.3.0")]
+[assembly: System.Runtime.CompilerServices.ReferenceAssembly]
+[assembly: System.Reflection.AssemblyFlagsAttribute((System.Reflection.AssemblyNameFlags)0x70)]
 namespace System.Threading.Tasks.Dataflow
 {
-    public sealed partial class ActionBlock<TInput> : System.Threading.Tasks.Dataflow.IDataflowBlock, System.Threading.Tasks.Dataflow.ITargetBlock<TInput>
+    public sealed partial class ActionBlock<TInput> : ITargetBlock<TInput>, IDataflowBlock
     {
-        public ActionBlock(System.Action<TInput> action) { }
-        public ActionBlock(System.Action<TInput> action, System.Threading.Tasks.Dataflow.ExecutionDataflowBlockOptions dataflowBlockOptions) { }
-        public ActionBlock(System.Func<TInput, System.Threading.Tasks.Task> action) { }
-        public ActionBlock(System.Func<TInput, System.Threading.Tasks.Task> action, System.Threading.Tasks.Dataflow.ExecutionDataflowBlockOptions dataflowBlockOptions) { }
-        public System.Threading.Tasks.Task Completion { get { throw null; } }
+        public ActionBlock(Action<TInput> action, ExecutionDataflowBlockOptions dataflowBlockOptions) { }
+
+        public ActionBlock(Action<TInput> action) { }
+
+        public ActionBlock(Func<TInput, Task> action, ExecutionDataflowBlockOptions dataflowBlockOptions) { }
+
+        public ActionBlock(Func<TInput, Task> action) { }
+
+        public Task Completion { get { throw null; } }
+
         public int InputCount { get { throw null; } }
+
         public void Complete() { }
+
         public bool Post(TInput item) { throw null; }
-        void System.Threading.Tasks.Dataflow.IDataflowBlock.Fault(System.Exception exception) { }
-        System.Threading.Tasks.Dataflow.DataflowMessageStatus System.Threading.Tasks.Dataflow.ITargetBlock<TInput>.OfferMessage(System.Threading.Tasks.Dataflow.DataflowMessageHeader messageHeader, TInput messageValue, System.Threading.Tasks.Dataflow.ISourceBlock<TInput> source, bool consumeToAccept) { throw null; }
+
+        void IDataflowBlock.Fault(Exception exception) { }
+
+        DataflowMessageStatus ITargetBlock<TInput>.OfferMessage(DataflowMessageHeader messageHeader, TInput messageValue, ISourceBlock<TInput> source, bool consumeToAccept) { throw null; }
+
         public override string ToString() { throw null; }
     }
-    public sealed partial class BatchBlock<T> : System.Threading.Tasks.Dataflow.IDataflowBlock, System.Threading.Tasks.Dataflow.IPropagatorBlock<T, T[]>, System.Threading.Tasks.Dataflow.IReceivableSourceBlock<T[]>, System.Threading.Tasks.Dataflow.ISourceBlock<T[]>, System.Threading.Tasks.Dataflow.ITargetBlock<T>
+
+    public sealed partial class BatchBlock<T> : IPropagatorBlock<T, T[]>, ITargetBlock<T>, IDataflowBlock, ISourceBlock<T[]>, IReceivableSourceBlock<T[]>
     {
+        public BatchBlock(int batchSize, GroupingDataflowBlockOptions dataflowBlockOptions) { }
+
         public BatchBlock(int batchSize) { }
-        public BatchBlock(int batchSize, System.Threading.Tasks.Dataflow.GroupingDataflowBlockOptions dataflowBlockOptions) { }
+
         public int BatchSize { get { throw null; } }
-        public System.Threading.Tasks.Task Completion { get { throw null; } }
+
+        public Task Completion { get { throw null; } }
+
         public int OutputCount { get { throw null; } }
+
         public void Complete() { }
-        public System.IDisposable LinkTo(System.Threading.Tasks.Dataflow.ITargetBlock<T[]> target, System.Threading.Tasks.Dataflow.DataflowLinkOptions linkOptions) { throw null; }
-        void System.Threading.Tasks.Dataflow.IDataflowBlock.Fault(System.Exception exception) { }
-        T[] System.Threading.Tasks.Dataflow.ISourceBlock<T[]>.ConsumeMessage(System.Threading.Tasks.Dataflow.DataflowMessageHeader messageHeader, System.Threading.Tasks.Dataflow.ITargetBlock<T[]> target, out bool messageConsumed) { throw null; }
-        void System.Threading.Tasks.Dataflow.ISourceBlock<T[]>.ReleaseReservation(System.Threading.Tasks.Dataflow.DataflowMessageHeader messageHeader, System.Threading.Tasks.Dataflow.ITargetBlock<T[]> target) { }
-        bool System.Threading.Tasks.Dataflow.ISourceBlock<T[]>.ReserveMessage(System.Threading.Tasks.Dataflow.DataflowMessageHeader messageHeader, System.Threading.Tasks.Dataflow.ITargetBlock<T[]> target) { throw null; }
-        System.Threading.Tasks.Dataflow.DataflowMessageStatus System.Threading.Tasks.Dataflow.ITargetBlock<T>.OfferMessage(System.Threading.Tasks.Dataflow.DataflowMessageHeader messageHeader, T messageValue, System.Threading.Tasks.Dataflow.ISourceBlock<T> source, bool consumeToAccept) { throw null; }
+
+        public IDisposable LinkTo(ITargetBlock<T[]> target, DataflowLinkOptions linkOptions) { throw null; }
+
+        void IDataflowBlock.Fault(Exception exception) { }
+
+        T[] ISourceBlock<T[]>.ConsumeMessage(DataflowMessageHeader messageHeader, ITargetBlock<T[]> target, out bool messageConsumed) { throw null; }
+
+        void ISourceBlock<T[]>.ReleaseReservation(DataflowMessageHeader messageHeader, ITargetBlock<T[]> target) { }
+
+        bool ISourceBlock<T[]>.ReserveMessage(DataflowMessageHeader messageHeader, ITargetBlock<T[]> target) { throw null; }
+
+        DataflowMessageStatus ITargetBlock<T>.OfferMessage(DataflowMessageHeader messageHeader, T messageValue, ISourceBlock<T> source, bool consumeToAccept) { throw null; }
+
         public override string ToString() { throw null; }
+
         public void TriggerBatch() { }
-        public bool TryReceive(System.Predicate<T[]> filter, out T[] item) { throw null; }
-        public bool TryReceiveAll(out System.Collections.Generic.IList<T[]> items) { throw null; }
+
+        public bool TryReceive(Predicate<T[]> filter, out T[] item) { throw null; }
+
+        public bool TryReceiveAll(out Collections.Generic.IList<T[]> items) { throw null; }
     }
-    public sealed partial class BatchedJoinBlock<T1, T2> : System.Threading.Tasks.Dataflow.IDataflowBlock, System.Threading.Tasks.Dataflow.IReceivableSourceBlock<System.Tuple<System.Collections.Generic.IList<T1>, System.Collections.Generic.IList<T2>>>, System.Threading.Tasks.Dataflow.ISourceBlock<System.Tuple<System.Collections.Generic.IList<T1>, System.Collections.Generic.IList<T2>>>
+
+    public sealed partial class BatchedJoinBlock<T1, T2> : IReceivableSourceBlock<Tuple<Collections.Generic.IList<T1>, Collections.Generic.IList<T2>>>, ISourceBlock<Tuple<Collections.Generic.IList<T1>, Collections.Generic.IList<T2>>>, IDataflowBlock
     {
+        public BatchedJoinBlock(int batchSize, GroupingDataflowBlockOptions dataflowBlockOptions) { }
+
         public BatchedJoinBlock(int batchSize) { }
-        public BatchedJoinBlock(int batchSize, System.Threading.Tasks.Dataflow.GroupingDataflowBlockOptions dataflowBlockOptions) { }
+
         public int BatchSize { get { throw null; } }
-        public System.Threading.Tasks.Task Completion { get { throw null; } }
+
+        public Task Completion { get { throw null; } }
+
         public int OutputCount { get { throw null; } }
-        public System.Threading.Tasks.Dataflow.ITargetBlock<T1> Target1 { get { throw null; } }
-        public System.Threading.Tasks.Dataflow.ITargetBlock<T2> Target2 { get { throw null; } }
+
+        public ITargetBlock<T1> Target1 { get { throw null; } }
+
+        public ITargetBlock<T2> Target2 { get { throw null; } }
+
         public void Complete() { }
-        public System.IDisposable LinkTo(System.Threading.Tasks.Dataflow.ITargetBlock<System.Tuple<System.Collections.Generic.IList<T1>, System.Collections.Generic.IList<T2>>> target, System.Threading.Tasks.Dataflow.DataflowLinkOptions linkOptions) { throw null; }
-        void System.Threading.Tasks.Dataflow.IDataflowBlock.Fault(System.Exception exception) { }
-        System.Tuple<System.Collections.Generic.IList<T1>, System.Collections.Generic.IList<T2>> System.Threading.Tasks.Dataflow.ISourceBlock<System.Tuple<System.Collections.Generic.IList<T1>,System.Collections.Generic.IList<T2>>>.ConsumeMessage(System.Threading.Tasks.Dataflow.DataflowMessageHeader messageHeader, System.Threading.Tasks.Dataflow.ITargetBlock<System.Tuple<System.Collections.Generic.IList<T1>, System.Collections.Generic.IList<T2>>> target, out bool messageConsumed) { throw null; }
-        void System.Threading.Tasks.Dataflow.ISourceBlock<System.Tuple<System.Collections.Generic.IList<T1>,System.Collections.Generic.IList<T2>>>.ReleaseReservation(System.Threading.Tasks.Dataflow.DataflowMessageHeader messageHeader, System.Threading.Tasks.Dataflow.ITargetBlock<System.Tuple<System.Collections.Generic.IList<T1>, System.Collections.Generic.IList<T2>>> target) { }
-        bool System.Threading.Tasks.Dataflow.ISourceBlock<System.Tuple<System.Collections.Generic.IList<T1>,System.Collections.Generic.IList<T2>>>.ReserveMessage(System.Threading.Tasks.Dataflow.DataflowMessageHeader messageHeader, System.Threading.Tasks.Dataflow.ITargetBlock<System.Tuple<System.Collections.Generic.IList<T1>, System.Collections.Generic.IList<T2>>> target) { throw null; }
+
+        public IDisposable LinkTo(ITargetBlock<Tuple<Collections.Generic.IList<T1>, Collections.Generic.IList<T2>>> target, DataflowLinkOptions linkOptions) { throw null; }
+
+        void IDataflowBlock.Fault(Exception exception) { }
+
+        Tuple<Collections.Generic.IList<T1>, Collections.Generic.IList<T2>> ISourceBlock<Tuple<Collections.Generic.IList<T1>, Collections.Generic.IList<T2>>>.ConsumeMessage(DataflowMessageHeader messageHeader, ITargetBlock<Tuple<Collections.Generic.IList<T1>, Collections.Generic.IList<T2>>> target, out bool messageConsumed) { throw null; }
+
+        void ISourceBlock<Tuple<Collections.Generic.IList<T1>, Collections.Generic.IList<T2>>>.ReleaseReservation(DataflowMessageHeader messageHeader, ITargetBlock<Tuple<Collections.Generic.IList<T1>, Collections.Generic.IList<T2>>> target) { }
+
+        bool ISourceBlock<Tuple<Collections.Generic.IList<T1>, Collections.Generic.IList<T2>>>.ReserveMessage(DataflowMessageHeader messageHeader, ITargetBlock<Tuple<Collections.Generic.IList<T1>, Collections.Generic.IList<T2>>> target) { throw null; }
+
         public override string ToString() { throw null; }
-        public bool TryReceive(System.Predicate<System.Tuple<System.Collections.Generic.IList<T1>, System.Collections.Generic.IList<T2>>> filter, out System.Tuple<System.Collections.Generic.IList<T1>, System.Collections.Generic.IList<T2>> item) { throw null; }
-        public bool TryReceiveAll(out System.Collections.Generic.IList<System.Tuple<System.Collections.Generic.IList<T1>, System.Collections.Generic.IList<T2>>> items) { throw null; }
+
+        public bool TryReceive(Predicate<Tuple<Collections.Generic.IList<T1>, Collections.Generic.IList<T2>>> filter, out Tuple<Collections.Generic.IList<T1>, Collections.Generic.IList<T2>> item) { throw null; }
+
+        public bool TryReceiveAll(out Collections.Generic.IList<Tuple<Collections.Generic.IList<T1>, Collections.Generic.IList<T2>>> items) { throw null; }
     }
-    public sealed partial class BatchedJoinBlock<T1, T2, T3> : System.Threading.Tasks.Dataflow.IDataflowBlock, System.Threading.Tasks.Dataflow.IReceivableSourceBlock<System.Tuple<System.Collections.Generic.IList<T1>, System.Collections.Generic.IList<T2>, System.Collections.Generic.IList<T3>>>, System.Threading.Tasks.Dataflow.ISourceBlock<System.Tuple<System.Collections.Generic.IList<T1>, System.Collections.Generic.IList<T2>, System.Collections.Generic.IList<T3>>>
+
+    public sealed partial class BatchedJoinBlock<T1, T2, T3> : IReceivableSourceBlock<Tuple<Collections.Generic.IList<T1>, Collections.Generic.IList<T2>, Collections.Generic.IList<T3>>>, ISourceBlock<Tuple<Collections.Generic.IList<T1>, Collections.Generic.IList<T2>, Collections.Generic.IList<T3>>>, IDataflowBlock
     {
+        public BatchedJoinBlock(int batchSize, GroupingDataflowBlockOptions dataflowBlockOptions) { }
+
         public BatchedJoinBlock(int batchSize) { }
-        public BatchedJoinBlock(int batchSize, System.Threading.Tasks.Dataflow.GroupingDataflowBlockOptions dataflowBlockOptions) { }
+
         public int BatchSize { get { throw null; } }
-        public System.Threading.Tasks.Task Completion { get { throw null; } }
+
+        public Task Completion { get { throw null; } }
+
         public int OutputCount { get { throw null; } }
-        public System.Threading.Tasks.Dataflow.ITargetBlock<T1> Target1 { get { throw null; } }
-        public System.Threading.Tasks.Dataflow.ITargetBlock<T2> Target2 { get { throw null; } }
-        public System.Threading.Tasks.Dataflow.ITargetBlock<T3> Target3 { get { throw null; } }
+
+        public ITargetBlock<T1> Target1 { get { throw null; } }
+
+        public ITargetBlock<T2> Target2 { get { throw null; } }
+
+        public ITargetBlock<T3> Target3 { get { throw null; } }
+
         public void Complete() { }
-        public System.IDisposable LinkTo(System.Threading.Tasks.Dataflow.ITargetBlock<System.Tuple<System.Collections.Generic.IList<T1>, System.Collections.Generic.IList<T2>, System.Collections.Generic.IList<T3>>> target, System.Threading.Tasks.Dataflow.DataflowLinkOptions linkOptions) { throw null; }
-        void System.Threading.Tasks.Dataflow.IDataflowBlock.Fault(System.Exception exception) { }
-        System.Tuple<System.Collections.Generic.IList<T1>, System.Collections.Generic.IList<T2>, System.Collections.Generic.IList<T3>> System.Threading.Tasks.Dataflow.ISourceBlock<System.Tuple<System.Collections.Generic.IList<T1>,System.Collections.Generic.IList<T2>,System.Collections.Generic.IList<T3>>>.ConsumeMessage(System.Threading.Tasks.Dataflow.DataflowMessageHeader messageHeader, System.Threading.Tasks.Dataflow.ITargetBlock<System.Tuple<System.Collections.Generic.IList<T1>, System.Collections.Generic.IList<T2>, System.Collections.Generic.IList<T3>>> target, out bool messageConsumed) { throw null; }
-        void System.Threading.Tasks.Dataflow.ISourceBlock<System.Tuple<System.Collections.Generic.IList<T1>,System.Collections.Generic.IList<T2>,System.Collections.Generic.IList<T3>>>.ReleaseReservation(System.Threading.Tasks.Dataflow.DataflowMessageHeader messageHeader, System.Threading.Tasks.Dataflow.ITargetBlock<System.Tuple<System.Collections.Generic.IList<T1>, System.Collections.Generic.IList<T2>, System.Collections.Generic.IList<T3>>> target) { }
-        bool System.Threading.Tasks.Dataflow.ISourceBlock<System.Tuple<System.Collections.Generic.IList<T1>,System.Collections.Generic.IList<T2>,System.Collections.Generic.IList<T3>>>.ReserveMessage(System.Threading.Tasks.Dataflow.DataflowMessageHeader messageHeader, System.Threading.Tasks.Dataflow.ITargetBlock<System.Tuple<System.Collections.Generic.IList<T1>, System.Collections.Generic.IList<T2>, System.Collections.Generic.IList<T3>>> target) { throw null; }
+
+        public IDisposable LinkTo(ITargetBlock<Tuple<Collections.Generic.IList<T1>, Collections.Generic.IList<T2>, Collections.Generic.IList<T3>>> target, DataflowLinkOptions linkOptions) { throw null; }
+
+        void IDataflowBlock.Fault(Exception exception) { }
+
+        Tuple<Collections.Generic.IList<T1>, Collections.Generic.IList<T2>, Collections.Generic.IList<T3>> ISourceBlock<Tuple<Collections.Generic.IList<T1>, Collections.Generic.IList<T2>, Collections.Generic.IList<T3>>>.ConsumeMessage(DataflowMessageHeader messageHeader, ITargetBlock<Tuple<Collections.Generic.IList<T1>, Collections.Generic.IList<T2>, Collections.Generic.IList<T3>>> target, out bool messageConsumed) { throw null; }
+
+        void ISourceBlock<Tuple<Collections.Generic.IList<T1>, Collections.Generic.IList<T2>, Collections.Generic.IList<T3>>>.ReleaseReservation(DataflowMessageHeader messageHeader, ITargetBlock<Tuple<Collections.Generic.IList<T1>, Collections.Generic.IList<T2>, Collections.Generic.IList<T3>>> target) { }
+
+        bool ISourceBlock<Tuple<Collections.Generic.IList<T1>, Collections.Generic.IList<T2>, Collections.Generic.IList<T3>>>.ReserveMessage(DataflowMessageHeader messageHeader, ITargetBlock<Tuple<Collections.Generic.IList<T1>, Collections.Generic.IList<T2>, Collections.Generic.IList<T3>>> target) { throw null; }
+
         public override string ToString() { throw null; }
-        public bool TryReceive(System.Predicate<System.Tuple<System.Collections.Generic.IList<T1>, System.Collections.Generic.IList<T2>, System.Collections.Generic.IList<T3>>> filter, out System.Tuple<System.Collections.Generic.IList<T1>, System.Collections.Generic.IList<T2>, System.Collections.Generic.IList<T3>> item) { throw null; }
-        public bool TryReceiveAll(out System.Collections.Generic.IList<System.Tuple<System.Collections.Generic.IList<T1>, System.Collections.Generic.IList<T2>, System.Collections.Generic.IList<T3>>> items) { throw null; }
+
+        public bool TryReceive(Predicate<Tuple<Collections.Generic.IList<T1>, Collections.Generic.IList<T2>, Collections.Generic.IList<T3>>> filter, out Tuple<Collections.Generic.IList<T1>, Collections.Generic.IList<T2>, Collections.Generic.IList<T3>> item) { throw null; }
+
+        public bool TryReceiveAll(out Collections.Generic.IList<Tuple<Collections.Generic.IList<T1>, Collections.Generic.IList<T2>, Collections.Generic.IList<T3>>> items) { throw null; }
     }
-    public sealed partial class BroadcastBlock<T> : System.Threading.Tasks.Dataflow.IDataflowBlock, System.Threading.Tasks.Dataflow.IPropagatorBlock<T, T>, System.Threading.Tasks.Dataflow.IReceivableSourceBlock<T>, System.Threading.Tasks.Dataflow.ISourceBlock<T>, System.Threading.Tasks.Dataflow.ITargetBlock<T>
+
+    public sealed partial class BroadcastBlock<T> : IPropagatorBlock<T, T>, ITargetBlock<T>, IDataflowBlock, ISourceBlock<T>, IReceivableSourceBlock<T>
     {
-        public BroadcastBlock(System.Func<T, T> cloningFunction) { }
-        public BroadcastBlock(System.Func<T, T> cloningFunction, System.Threading.Tasks.Dataflow.DataflowBlockOptions dataflowBlockOptions) { }
-        public System.Threading.Tasks.Task Completion { get { throw null; } }
+        public BroadcastBlock(Func<T, T> cloningFunction, DataflowBlockOptions dataflowBlockOptions) { }
+
+        public BroadcastBlock(Func<T, T> cloningFunction) { }
+
+        public Task Completion { get { throw null; } }
+
         public void Complete() { }
-        public System.IDisposable LinkTo(System.Threading.Tasks.Dataflow.ITargetBlock<T> target, System.Threading.Tasks.Dataflow.DataflowLinkOptions linkOptions) { throw null; }
-        void System.Threading.Tasks.Dataflow.IDataflowBlock.Fault(System.Exception exception) { }
-        bool System.Threading.Tasks.Dataflow.IReceivableSourceBlock<T>.TryReceiveAll(out System.Collections.Generic.IList<T> items) { throw null; }
-        T System.Threading.Tasks.Dataflow.ISourceBlock<T>.ConsumeMessage(System.Threading.Tasks.Dataflow.DataflowMessageHeader messageHeader, System.Threading.Tasks.Dataflow.ITargetBlock<T> target, out bool messageConsumed) { throw null; }
-        void System.Threading.Tasks.Dataflow.ISourceBlock<T>.ReleaseReservation(System.Threading.Tasks.Dataflow.DataflowMessageHeader messageHeader, System.Threading.Tasks.Dataflow.ITargetBlock<T> target) { }
-        bool System.Threading.Tasks.Dataflow.ISourceBlock<T>.ReserveMessage(System.Threading.Tasks.Dataflow.DataflowMessageHeader messageHeader, System.Threading.Tasks.Dataflow.ITargetBlock<T> target) { throw null; }
-        System.Threading.Tasks.Dataflow.DataflowMessageStatus System.Threading.Tasks.Dataflow.ITargetBlock<T>.OfferMessage(System.Threading.Tasks.Dataflow.DataflowMessageHeader messageHeader, T messageValue, System.Threading.Tasks.Dataflow.ISourceBlock<T> source, bool consumeToAccept) { throw null; }
+
+        public IDisposable LinkTo(ITargetBlock<T> target, DataflowLinkOptions linkOptions) { throw null; }
+
+        void IDataflowBlock.Fault(Exception exception) { }
+
+        bool IReceivableSourceBlock<T>.TryReceiveAll(out Collections.Generic.IList<T> items) { throw null; }
+
+        T ISourceBlock<T>.ConsumeMessage(DataflowMessageHeader messageHeader, ITargetBlock<T> target, out bool messageConsumed) { throw null; }
+
+        void ISourceBlock<T>.ReleaseReservation(DataflowMessageHeader messageHeader, ITargetBlock<T> target) { }
+
+        bool ISourceBlock<T>.ReserveMessage(DataflowMessageHeader messageHeader, ITargetBlock<T> target) { throw null; }
+
+        DataflowMessageStatus ITargetBlock<T>.OfferMessage(DataflowMessageHeader messageHeader, T messageValue, ISourceBlock<T> source, bool consumeToAccept) { throw null; }
+
         public override string ToString() { throw null; }
-        public bool TryReceive(System.Predicate<T> filter, out T item) { throw null; }
+
+        public bool TryReceive(Predicate<T> filter, out T item) { throw null; }
     }
-    public sealed partial class BufferBlock<T> : System.Threading.Tasks.Dataflow.IDataflowBlock, System.Threading.Tasks.Dataflow.IPropagatorBlock<T, T>, System.Threading.Tasks.Dataflow.IReceivableSourceBlock<T>, System.Threading.Tasks.Dataflow.ISourceBlock<T>, System.Threading.Tasks.Dataflow.ITargetBlock<T>
+
+    public sealed partial class BufferBlock<T> : IPropagatorBlock<T, T>, ITargetBlock<T>, IDataflowBlock, ISourceBlock<T>, IReceivableSourceBlock<T>
     {
         public BufferBlock() { }
-        public BufferBlock(System.Threading.Tasks.Dataflow.DataflowBlockOptions dataflowBlockOptions) { }
-        public System.Threading.Tasks.Task Completion { get { throw null; } }
+
+        public BufferBlock(DataflowBlockOptions dataflowBlockOptions) { }
+
+        public Task Completion { get { throw null; } }
+
         public int Count { get { throw null; } }
+
         public void Complete() { }
-        public System.IDisposable LinkTo(System.Threading.Tasks.Dataflow.ITargetBlock<T> target, System.Threading.Tasks.Dataflow.DataflowLinkOptions linkOptions) { throw null; }
-        void System.Threading.Tasks.Dataflow.IDataflowBlock.Fault(System.Exception exception) { }
-        T System.Threading.Tasks.Dataflow.ISourceBlock<T>.ConsumeMessage(System.Threading.Tasks.Dataflow.DataflowMessageHeader messageHeader, System.Threading.Tasks.Dataflow.ITargetBlock<T> target, out bool messageConsumed) { throw null; }
-        void System.Threading.Tasks.Dataflow.ISourceBlock<T>.ReleaseReservation(System.Threading.Tasks.Dataflow.DataflowMessageHeader messageHeader, System.Threading.Tasks.Dataflow.ITargetBlock<T> target) { }
-        bool System.Threading.Tasks.Dataflow.ISourceBlock<T>.ReserveMessage(System.Threading.Tasks.Dataflow.DataflowMessageHeader messageHeader, System.Threading.Tasks.Dataflow.ITargetBlock<T> target) { throw null; }
-        System.Threading.Tasks.Dataflow.DataflowMessageStatus System.Threading.Tasks.Dataflow.ITargetBlock<T>.OfferMessage(System.Threading.Tasks.Dataflow.DataflowMessageHeader messageHeader, T messageValue, System.Threading.Tasks.Dataflow.ISourceBlock<T> source, bool consumeToAccept) { throw null; }
+
+        public IDisposable LinkTo(ITargetBlock<T> target, DataflowLinkOptions linkOptions) { throw null; }
+
+        void IDataflowBlock.Fault(Exception exception) { }
+
+        T ISourceBlock<T>.ConsumeMessage(DataflowMessageHeader messageHeader, ITargetBlock<T> target, out bool messageConsumed) { throw null; }
+
+        void ISourceBlock<T>.ReleaseReservation(DataflowMessageHeader messageHeader, ITargetBlock<T> target) { }
+
+        bool ISourceBlock<T>.ReserveMessage(DataflowMessageHeader messageHeader, ITargetBlock<T> target) { throw null; }
+
+        DataflowMessageStatus ITargetBlock<T>.OfferMessage(DataflowMessageHeader messageHeader, T messageValue, ISourceBlock<T> source, bool consumeToAccept) { throw null; }
+
         public override string ToString() { throw null; }
-        public bool TryReceive(System.Predicate<T> filter, out T item) { throw null; }
-        public bool TryReceiveAll(out System.Collections.Generic.IList<T> items) { throw null; }
+
+        public bool TryReceive(Predicate<T> filter, out T item) { throw null; }
+
+        public bool TryReceiveAll(out Collections.Generic.IList<T> items) { throw null; }
     }
+
     public static partial class DataflowBlock
     {
-        public static System.IObservable<TOutput> AsObservable<TOutput>(this System.Threading.Tasks.Dataflow.ISourceBlock<TOutput> source) { throw null; }
-        public static System.IObserver<TInput> AsObserver<TInput>(this System.Threading.Tasks.Dataflow.ITargetBlock<TInput> target) { throw null; }
-        public static System.Threading.Tasks.Task<int> Choose<T1, T2>(System.Threading.Tasks.Dataflow.ISourceBlock<T1> source1, System.Action<T1> action1, System.Threading.Tasks.Dataflow.ISourceBlock<T2> source2, System.Action<T2> action2) { throw null; }
-        public static System.Threading.Tasks.Task<int> Choose<T1, T2>(System.Threading.Tasks.Dataflow.ISourceBlock<T1> source1, System.Action<T1> action1, System.Threading.Tasks.Dataflow.ISourceBlock<T2> source2, System.Action<T2> action2, System.Threading.Tasks.Dataflow.DataflowBlockOptions dataflowBlockOptions) { throw null; }
-        public static System.Threading.Tasks.Task<int> Choose<T1, T2, T3>(System.Threading.Tasks.Dataflow.ISourceBlock<T1> source1, System.Action<T1> action1, System.Threading.Tasks.Dataflow.ISourceBlock<T2> source2, System.Action<T2> action2, System.Threading.Tasks.Dataflow.ISourceBlock<T3> source3, System.Action<T3> action3) { throw null; }
-        public static System.Threading.Tasks.Task<int> Choose<T1, T2, T3>(System.Threading.Tasks.Dataflow.ISourceBlock<T1> source1, System.Action<T1> action1, System.Threading.Tasks.Dataflow.ISourceBlock<T2> source2, System.Action<T2> action2, System.Threading.Tasks.Dataflow.ISourceBlock<T3> source3, System.Action<T3> action3, System.Threading.Tasks.Dataflow.DataflowBlockOptions dataflowBlockOptions) { throw null; }
-        public static System.Threading.Tasks.Dataflow.IPropagatorBlock<TInput, TOutput> Encapsulate<TInput, TOutput>(System.Threading.Tasks.Dataflow.ITargetBlock<TInput> target, System.Threading.Tasks.Dataflow.ISourceBlock<TOutput> source) { throw null; }
-        public static System.IDisposable LinkTo<TOutput>(this System.Threading.Tasks.Dataflow.ISourceBlock<TOutput> source, System.Threading.Tasks.Dataflow.ITargetBlock<TOutput> target) { throw null; }
-        public static System.IDisposable LinkTo<TOutput>(this System.Threading.Tasks.Dataflow.ISourceBlock<TOutput> source, System.Threading.Tasks.Dataflow.ITargetBlock<TOutput> target, System.Predicate<TOutput> predicate) { throw null; }
-        public static System.IDisposable LinkTo<TOutput>(this System.Threading.Tasks.Dataflow.ISourceBlock<TOutput> source, System.Threading.Tasks.Dataflow.ITargetBlock<TOutput> target, System.Threading.Tasks.Dataflow.DataflowLinkOptions linkOptions, System.Predicate<TOutput> predicate) { throw null; }
-        public static System.Threading.Tasks.Dataflow.ITargetBlock<TInput> NullTarget<TInput>() { throw null; }
-        public static System.Threading.Tasks.Task<bool> OutputAvailableAsync<TOutput>(this System.Threading.Tasks.Dataflow.ISourceBlock<TOutput> source) { throw null; }
-        public static System.Threading.Tasks.Task<bool> OutputAvailableAsync<TOutput>(this System.Threading.Tasks.Dataflow.ISourceBlock<TOutput> source, System.Threading.CancellationToken cancellationToken) { throw null; }
-        public static bool Post<TInput>(this System.Threading.Tasks.Dataflow.ITargetBlock<TInput> target, TInput item) { throw null; }
-        public static System.Threading.Tasks.Task<TOutput> ReceiveAsync<TOutput>(this System.Threading.Tasks.Dataflow.ISourceBlock<TOutput> source) { throw null; }
-        public static System.Threading.Tasks.Task<TOutput> ReceiveAsync<TOutput>(this System.Threading.Tasks.Dataflow.ISourceBlock<TOutput> source, System.Threading.CancellationToken cancellationToken) { throw null; }
-        public static System.Threading.Tasks.Task<TOutput> ReceiveAsync<TOutput>(this System.Threading.Tasks.Dataflow.ISourceBlock<TOutput> source, System.TimeSpan timeout) { throw null; }
-        public static System.Threading.Tasks.Task<TOutput> ReceiveAsync<TOutput>(this System.Threading.Tasks.Dataflow.ISourceBlock<TOutput> source, System.TimeSpan timeout, System.Threading.CancellationToken cancellationToken) { throw null; }
-        public static TOutput Receive<TOutput>(this System.Threading.Tasks.Dataflow.ISourceBlock<TOutput> source) { throw null; }
-        public static TOutput Receive<TOutput>(this System.Threading.Tasks.Dataflow.ISourceBlock<TOutput> source, System.Threading.CancellationToken cancellationToken) { throw null; }
-        public static TOutput Receive<TOutput>(this System.Threading.Tasks.Dataflow.ISourceBlock<TOutput> source, System.TimeSpan timeout) { throw null; }
-        public static TOutput Receive<TOutput>(this System.Threading.Tasks.Dataflow.ISourceBlock<TOutput> source, System.TimeSpan timeout, System.Threading.CancellationToken cancellationToken) { throw null; }
-        public static System.Threading.Tasks.Task<bool> SendAsync<TInput>(this System.Threading.Tasks.Dataflow.ITargetBlock<TInput> target, TInput item) { throw null; }
-        public static System.Threading.Tasks.Task<bool> SendAsync<TInput>(this System.Threading.Tasks.Dataflow.ITargetBlock<TInput> target, TInput item, System.Threading.CancellationToken cancellationToken) { throw null; }
-        public static bool TryReceive<TOutput>(this System.Threading.Tasks.Dataflow.IReceivableSourceBlock<TOutput> source, out TOutput item) { throw null; }
+        public static IObservable<TOutput> AsObservable<TOutput>(this ISourceBlock<TOutput> source) { throw null; }
+
+        public static IObserver<TInput> AsObserver<TInput>(this ITargetBlock<TInput> target) { throw null; }
+
+        public static Task<int> Choose<T1, T2>(ISourceBlock<T1> source1, Action<T1> action1, ISourceBlock<T2> source2, Action<T2> action2, DataflowBlockOptions dataflowBlockOptions) { throw null; }
+
+        public static Task<int> Choose<T1, T2>(ISourceBlock<T1> source1, Action<T1> action1, ISourceBlock<T2> source2, Action<T2> action2) { throw null; }
+
+        public static Task<int> Choose<T1, T2, T3>(ISourceBlock<T1> source1, Action<T1> action1, ISourceBlock<T2> source2, Action<T2> action2, ISourceBlock<T3> source3, Action<T3> action3, DataflowBlockOptions dataflowBlockOptions) { throw null; }
+
+        public static Task<int> Choose<T1, T2, T3>(ISourceBlock<T1> source1, Action<T1> action1, ISourceBlock<T2> source2, Action<T2> action2, ISourceBlock<T3> source3, Action<T3> action3) { throw null; }
+
+        public static IPropagatorBlock<TInput, TOutput> Encapsulate<TInput, TOutput>(ITargetBlock<TInput> target, ISourceBlock<TOutput> source) { throw null; }
+
+        public static IDisposable LinkTo<TOutput>(this ISourceBlock<TOutput> source, ITargetBlock<TOutput> target, Predicate<TOutput> predicate) { throw null; }
+
+        public static IDisposable LinkTo<TOutput>(this ISourceBlock<TOutput> source, ITargetBlock<TOutput> target, DataflowLinkOptions linkOptions, Predicate<TOutput> predicate) { throw null; }
+
+        public static IDisposable LinkTo<TOutput>(this ISourceBlock<TOutput> source, ITargetBlock<TOutput> target) { throw null; }
+
+        public static ITargetBlock<TInput> NullTarget<TInput>() { throw null; }
+
+        public static Task<bool> OutputAvailableAsync<TOutput>(this ISourceBlock<TOutput> source, CancellationToken cancellationToken) { throw null; }
+
+        public static Task<bool> OutputAvailableAsync<TOutput>(this ISourceBlock<TOutput> source) { throw null; }
+
+        public static bool Post<TInput>(this ITargetBlock<TInput> target, TInput item) { throw null; }
+
+        public static TOutput Receive<TOutput>(this ISourceBlock<TOutput> source, CancellationToken cancellationToken) { throw null; }
+
+        public static TOutput Receive<TOutput>(this ISourceBlock<TOutput> source, TimeSpan timeout, CancellationToken cancellationToken) { throw null; }
+
+        public static TOutput Receive<TOutput>(this ISourceBlock<TOutput> source, TimeSpan timeout) { throw null; }
+
+        public static TOutput Receive<TOutput>(this ISourceBlock<TOutput> source) { throw null; }
+
+        public static Task<TOutput> ReceiveAsync<TOutput>(this ISourceBlock<TOutput> source, CancellationToken cancellationToken) { throw null; }
+
+        public static Task<TOutput> ReceiveAsync<TOutput>(this ISourceBlock<TOutput> source, TimeSpan timeout, CancellationToken cancellationToken) { throw null; }
+
+        public static Task<TOutput> ReceiveAsync<TOutput>(this ISourceBlock<TOutput> source, TimeSpan timeout) { throw null; }
+
+        public static Task<TOutput> ReceiveAsync<TOutput>(this ISourceBlock<TOutput> source) { throw null; }
+
+        public static Task<bool> SendAsync<TInput>(this ITargetBlock<TInput> target, TInput item, CancellationToken cancellationToken) { throw null; }
+
+        public static Task<bool> SendAsync<TInput>(this ITargetBlock<TInput> target, TInput item) { throw null; }
+
+        public static bool TryReceive<TOutput>(this IReceivableSourceBlock<TOutput> source, out TOutput item) { throw null; }
     }
+
     public partial class DataflowBlockOptions
     {
         public const int Unbounded = -1;
-        public DataflowBlockOptions() { }
         public int BoundedCapacity { get { throw null; } set { } }
-        public System.Threading.CancellationToken CancellationToken { get { throw null; } set { } }
+
+        public CancellationToken CancellationToken { get { throw null; } set { } }
+
         public bool EnsureOrdered { get { throw null; } set { } }
+
         public int MaxMessagesPerTask { get { throw null; } set { } }
+
         public string NameFormat { get { throw null; } set { } }
-        public System.Threading.Tasks.TaskScheduler TaskScheduler { get { throw null; } set { } }
+
+        public TaskScheduler TaskScheduler { get { throw null; } set { } }
     }
+
     public partial class DataflowLinkOptions
     {
-        public DataflowLinkOptions() { }
         public bool Append { get { throw null; } set { } }
+
         public int MaxMessages { get { throw null; } set { } }
+
         public bool PropagateCompletion { get { throw null; } set { } }
     }
-    public readonly partial struct DataflowMessageHeader : System.IEquatable<System.Threading.Tasks.Dataflow.DataflowMessageHeader>
+
+    public readonly partial struct DataflowMessageHeader : IEquatable<DataflowMessageHeader>
     {
         private readonly int _dummyPrimitive;
-        public DataflowMessageHeader(long id) { throw null; }
+        public DataflowMessageHeader(long id) { }
+
         public long Id { get { throw null; } }
+
         public bool IsValid { get { throw null; } }
-        public override bool Equals(object obj) { throw null; }
-        public bool Equals(System.Threading.Tasks.Dataflow.DataflowMessageHeader other) { throw null; }
-        public override int GetHashCode() { throw null; }
-        public static bool operator ==(System.Threading.Tasks.Dataflow.DataflowMessageHeader left, System.Threading.Tasks.Dataflow.DataflowMessageHeader right) { throw null; }
-        public static bool operator !=(System.Threading.Tasks.Dataflow.DataflowMessageHeader left, System.Threading.Tasks.Dataflow.DataflowMessageHeader right) { throw null; }
+
+        public override readonly bool Equals(object obj) { throw null; }
+
+        public readonly bool Equals(DataflowMessageHeader other) { throw null; }
+
+        public override readonly int GetHashCode() { throw null; }
+
+        public static bool operator ==(DataflowMessageHeader left, DataflowMessageHeader right) { throw null; }
+
+        public static bool operator !=(DataflowMessageHeader left, DataflowMessageHeader right) { throw null; }
     }
+
     public enum DataflowMessageStatus
     {
         Accepted = 0,
         Declined = 1,
-        DecliningPermanently = 4,
-        NotAvailable = 3,
         Postponed = 2,
+        NotAvailable = 3,
+        DecliningPermanently = 4
     }
-    public partial class ExecutionDataflowBlockOptions : System.Threading.Tasks.Dataflow.DataflowBlockOptions
+
+    public partial class ExecutionDataflowBlockOptions : DataflowBlockOptions
     {
-        public ExecutionDataflowBlockOptions() { }
         public int MaxDegreeOfParallelism { get { throw null; } set { } }
+
         public bool SingleProducerConstrained { get { throw null; } set { } }
     }
-    public partial class GroupingDataflowBlockOptions : System.Threading.Tasks.Dataflow.DataflowBlockOptions
+
+    public partial class GroupingDataflowBlockOptions : DataflowBlockOptions
     {
-        public GroupingDataflowBlockOptions() { }
         public bool Greedy { get { throw null; } set { } }
+
         public long MaxNumberOfGroups { get { throw null; } set { } }
     }
+
     public partial interface IDataflowBlock
     {
-        System.Threading.Tasks.Task Completion { get; }
+        Task Completion { get; }
+
         void Complete();
-        void Fault(System.Exception exception);
+        void Fault(Exception exception);
     }
-    public partial interface IPropagatorBlock<in TInput, out TOutput> : System.Threading.Tasks.Dataflow.IDataflowBlock, System.Threading.Tasks.Dataflow.ISourceBlock<TOutput>, System.Threading.Tasks.Dataflow.ITargetBlock<TInput>
+
+    public partial interface IPropagatorBlock<in TInput, out TOutput> : ITargetBlock<TInput>, IDataflowBlock, ISourceBlock<TOutput>
     {
     }
-    public partial interface IReceivableSourceBlock<TOutput> : System.Threading.Tasks.Dataflow.IDataflowBlock, System.Threading.Tasks.Dataflow.ISourceBlock<TOutput>
+
+    public partial interface IReceivableSourceBlock<TOutput> : ISourceBlock<TOutput>, IDataflowBlock
     {
-        bool TryReceive(System.Predicate<TOutput> filter, out TOutput item);
-        bool TryReceiveAll(out System.Collections.Generic.IList<TOutput> items);
+        bool TryReceive(Predicate<TOutput> filter, out TOutput item);
+        bool TryReceiveAll(out Collections.Generic.IList<TOutput> items);
     }
-    public partial interface ISourceBlock<out TOutput> : System.Threading.Tasks.Dataflow.IDataflowBlock
+
+    public partial interface ISourceBlock<out TOutput> : IDataflowBlock
     {
-        TOutput ConsumeMessage(System.Threading.Tasks.Dataflow.DataflowMessageHeader messageHeader, System.Threading.Tasks.Dataflow.ITargetBlock<TOutput> target, out bool messageConsumed);
-        System.IDisposable LinkTo(System.Threading.Tasks.Dataflow.ITargetBlock<TOutput> target, System.Threading.Tasks.Dataflow.DataflowLinkOptions linkOptions);
-        void ReleaseReservation(System.Threading.Tasks.Dataflow.DataflowMessageHeader messageHeader, System.Threading.Tasks.Dataflow.ITargetBlock<TOutput> target);
-        bool ReserveMessage(System.Threading.Tasks.Dataflow.DataflowMessageHeader messageHeader, System.Threading.Tasks.Dataflow.ITargetBlock<TOutput> target);
+        TOutput ConsumeMessage(DataflowMessageHeader messageHeader, ITargetBlock<TOutput> target, out bool messageConsumed);
+        IDisposable LinkTo(ITargetBlock<TOutput> target, DataflowLinkOptions linkOptions);
+        void ReleaseReservation(DataflowMessageHeader messageHeader, ITargetBlock<TOutput> target);
+        bool ReserveMessage(DataflowMessageHeader messageHeader, ITargetBlock<TOutput> target);
     }
-    public partial interface ITargetBlock<in TInput> : System.Threading.Tasks.Dataflow.IDataflowBlock
+
+    public partial interface ITargetBlock<in TInput> : IDataflowBlock
     {
-        System.Threading.Tasks.Dataflow.DataflowMessageStatus OfferMessage(System.Threading.Tasks.Dataflow.DataflowMessageHeader messageHeader, TInput messageValue, System.Threading.Tasks.Dataflow.ISourceBlock<TInput> source, bool consumeToAccept);
+        DataflowMessageStatus OfferMessage(DataflowMessageHeader messageHeader, TInput messageValue, ISourceBlock<TInput> source, bool consumeToAccept);
     }
-    public sealed partial class JoinBlock<T1, T2> : System.Threading.Tasks.Dataflow.IDataflowBlock, System.Threading.Tasks.Dataflow.IReceivableSourceBlock<System.Tuple<T1, T2>>, System.Threading.Tasks.Dataflow.ISourceBlock<System.Tuple<T1, T2>>
-    {
-        public JoinBlock() { }
-        public JoinBlock(System.Threading.Tasks.Dataflow.GroupingDataflowBlockOptions dataflowBlockOptions) { }
-        public System.Threading.Tasks.Task Completion { get { throw null; } }
-        public int OutputCount { get { throw null; } }
-        public System.Threading.Tasks.Dataflow.ITargetBlock<T1> Target1 { get { throw null; } }
-        public System.Threading.Tasks.Dataflow.ITargetBlock<T2> Target2 { get { throw null; } }
-        public void Complete() { }
-        public System.IDisposable LinkTo(System.Threading.Tasks.Dataflow.ITargetBlock<System.Tuple<T1, T2>> target, System.Threading.Tasks.Dataflow.DataflowLinkOptions linkOptions) { throw null; }
-        void System.Threading.Tasks.Dataflow.IDataflowBlock.Fault(System.Exception exception) { }
-        System.Tuple<T1, T2> System.Threading.Tasks.Dataflow.ISourceBlock<System.Tuple<T1,T2>>.ConsumeMessage(System.Threading.Tasks.Dataflow.DataflowMessageHeader messageHeader, System.Threading.Tasks.Dataflow.ITargetBlock<System.Tuple<T1, T2>> target, out bool messageConsumed) { throw null; }
-        void System.Threading.Tasks.Dataflow.ISourceBlock<System.Tuple<T1,T2>>.ReleaseReservation(System.Threading.Tasks.Dataflow.DataflowMessageHeader messageHeader, System.Threading.Tasks.Dataflow.ITargetBlock<System.Tuple<T1, T2>> target) { }
-        bool System.Threading.Tasks.Dataflow.ISourceBlock<System.Tuple<T1,T2>>.ReserveMessage(System.Threading.Tasks.Dataflow.DataflowMessageHeader messageHeader, System.Threading.Tasks.Dataflow.ITargetBlock<System.Tuple<T1, T2>> target) { throw null; }
-        public override string ToString() { throw null; }
-        public bool TryReceive(System.Predicate<System.Tuple<T1, T2>> filter, out System.Tuple<T1, T2> item) { throw null; }
-        public bool TryReceiveAll(out System.Collections.Generic.IList<System.Tuple<T1, T2>> items) { throw null; }
-    }
-    public sealed partial class JoinBlock<T1, T2, T3> : System.Threading.Tasks.Dataflow.IDataflowBlock, System.Threading.Tasks.Dataflow.IReceivableSourceBlock<System.Tuple<T1, T2, T3>>, System.Threading.Tasks.Dataflow.ISourceBlock<System.Tuple<T1, T2, T3>>
+
+    public sealed partial class JoinBlock<T1, T2> : IReceivableSourceBlock<Tuple<T1, T2>>, ISourceBlock<Tuple<T1, T2>>, IDataflowBlock
     {
         public JoinBlock() { }
-        public JoinBlock(System.Threading.Tasks.Dataflow.GroupingDataflowBlockOptions dataflowBlockOptions) { }
-        public System.Threading.Tasks.Task Completion { get { throw null; } }
+
+        public JoinBlock(GroupingDataflowBlockOptions dataflowBlockOptions) { }
+
+        public Task Completion { get { throw null; } }
+
         public int OutputCount { get { throw null; } }
-        public System.Threading.Tasks.Dataflow.ITargetBlock<T1> Target1 { get { throw null; } }
-        public System.Threading.Tasks.Dataflow.ITargetBlock<T2> Target2 { get { throw null; } }
-        public System.Threading.Tasks.Dataflow.ITargetBlock<T3> Target3 { get { throw null; } }
+
+        public ITargetBlock<T1> Target1 { get { throw null; } }
+
+        public ITargetBlock<T2> Target2 { get { throw null; } }
+
         public void Complete() { }
-        public System.IDisposable LinkTo(System.Threading.Tasks.Dataflow.ITargetBlock<System.Tuple<T1, T2, T3>> target, System.Threading.Tasks.Dataflow.DataflowLinkOptions linkOptions) { throw null; }
-        void System.Threading.Tasks.Dataflow.IDataflowBlock.Fault(System.Exception exception) { }
-        System.Tuple<T1, T2, T3> System.Threading.Tasks.Dataflow.ISourceBlock<System.Tuple<T1,T2,T3>>.ConsumeMessage(System.Threading.Tasks.Dataflow.DataflowMessageHeader messageHeader, System.Threading.Tasks.Dataflow.ITargetBlock<System.Tuple<T1, T2, T3>> target, out bool messageConsumed) { throw null; }
-        void System.Threading.Tasks.Dataflow.ISourceBlock<System.Tuple<T1,T2,T3>>.ReleaseReservation(System.Threading.Tasks.Dataflow.DataflowMessageHeader messageHeader, System.Threading.Tasks.Dataflow.ITargetBlock<System.Tuple<T1, T2, T3>> target) { }
-        bool System.Threading.Tasks.Dataflow.ISourceBlock<System.Tuple<T1,T2,T3>>.ReserveMessage(System.Threading.Tasks.Dataflow.DataflowMessageHeader messageHeader, System.Threading.Tasks.Dataflow.ITargetBlock<System.Tuple<T1, T2, T3>> target) { throw null; }
+
+        public IDisposable LinkTo(ITargetBlock<Tuple<T1, T2>> target, DataflowLinkOptions linkOptions) { throw null; }
+
+        void IDataflowBlock.Fault(Exception exception) { }
+
+        Tuple<T1, T2> ISourceBlock<Tuple<T1, T2>>.ConsumeMessage(DataflowMessageHeader messageHeader, ITargetBlock<Tuple<T1, T2>> target, out bool messageConsumed) { throw null; }
+
+        void ISourceBlock<Tuple<T1, T2>>.ReleaseReservation(DataflowMessageHeader messageHeader, ITargetBlock<Tuple<T1, T2>> target) { }
+
+        bool ISourceBlock<Tuple<T1, T2>>.ReserveMessage(DataflowMessageHeader messageHeader, ITargetBlock<Tuple<T1, T2>> target) { throw null; }
+
         public override string ToString() { throw null; }
-        public bool TryReceive(System.Predicate<System.Tuple<T1, T2, T3>> filter, out System.Tuple<T1, T2, T3> item) { throw null; }
-        public bool TryReceiveAll(out System.Collections.Generic.IList<System.Tuple<T1, T2, T3>> items) { throw null; }
+
+        public bool TryReceive(Predicate<Tuple<T1, T2>> filter, out Tuple<T1, T2> item) { throw null; }
+
+        public bool TryReceiveAll(out Collections.Generic.IList<Tuple<T1, T2>> items) { throw null; }
     }
-    public sealed partial class TransformBlock<TInput, TOutput> : System.Threading.Tasks.Dataflow.IDataflowBlock, System.Threading.Tasks.Dataflow.IPropagatorBlock<TInput, TOutput>, System.Threading.Tasks.Dataflow.IReceivableSourceBlock<TOutput>, System.Threading.Tasks.Dataflow.ISourceBlock<TOutput>, System.Threading.Tasks.Dataflow.ITargetBlock<TInput>
+
+    public sealed partial class JoinBlock<T1, T2, T3> : IReceivableSourceBlock<Tuple<T1, T2, T3>>, ISourceBlock<Tuple<T1, T2, T3>>, IDataflowBlock
     {
-        public TransformBlock(System.Func<TInput, System.Threading.Tasks.Task<TOutput>> transform) { }
-        public TransformBlock(System.Func<TInput, System.Threading.Tasks.Task<TOutput>> transform, System.Threading.Tasks.Dataflow.ExecutionDataflowBlockOptions dataflowBlockOptions) { }
-        public TransformBlock(System.Func<TInput, TOutput> transform) { }
-        public TransformBlock(System.Func<TInput, TOutput> transform, System.Threading.Tasks.Dataflow.ExecutionDataflowBlockOptions dataflowBlockOptions) { }
-        public System.Threading.Tasks.Task Completion { get { throw null; } }
+        public JoinBlock() { }
+
+        public JoinBlock(GroupingDataflowBlockOptions dataflowBlockOptions) { }
+
+        public Task Completion { get { throw null; } }
+
+        public int OutputCount { get { throw null; } }
+
+        public ITargetBlock<T1> Target1 { get { throw null; } }
+
+        public ITargetBlock<T2> Target2 { get { throw null; } }
+
+        public ITargetBlock<T3> Target3 { get { throw null; } }
+
+        public void Complete() { }
+
+        public IDisposable LinkTo(ITargetBlock<Tuple<T1, T2, T3>> target, DataflowLinkOptions linkOptions) { throw null; }
+
+        void IDataflowBlock.Fault(Exception exception) { }
+
+        Tuple<T1, T2, T3> ISourceBlock<Tuple<T1, T2, T3>>.ConsumeMessage(DataflowMessageHeader messageHeader, ITargetBlock<Tuple<T1, T2, T3>> target, out bool messageConsumed) { throw null; }
+
+        void ISourceBlock<Tuple<T1, T2, T3>>.ReleaseReservation(DataflowMessageHeader messageHeader, ITargetBlock<Tuple<T1, T2, T3>> target) { }
+
+        bool ISourceBlock<Tuple<T1, T2, T3>>.ReserveMessage(DataflowMessageHeader messageHeader, ITargetBlock<Tuple<T1, T2, T3>> target) { throw null; }
+
+        public override string ToString() { throw null; }
+
+        public bool TryReceive(Predicate<Tuple<T1, T2, T3>> filter, out Tuple<T1, T2, T3> item) { throw null; }
+
+        public bool TryReceiveAll(out Collections.Generic.IList<Tuple<T1, T2, T3>> items) { throw null; }
+    }
+
+    public sealed partial class TransformBlock<TInput, TOutput> : IPropagatorBlock<TInput, TOutput>, ITargetBlock<TInput>, IDataflowBlock, ISourceBlock<TOutput>, IReceivableSourceBlock<TOutput>
+    {
+        public TransformBlock(Func<TInput, TOutput> transform, ExecutionDataflowBlockOptions dataflowBlockOptions) { }
+
+        public TransformBlock(Func<TInput, TOutput> transform) { }
+
+        public TransformBlock(Func<TInput, Task<TOutput>> transform, ExecutionDataflowBlockOptions dataflowBlockOptions) { }
+
+        public TransformBlock(Func<TInput, Task<TOutput>> transform) { }
+
+        public Task Completion { get { throw null; } }
+
         public int InputCount { get { throw null; } }
+
         public int OutputCount { get { throw null; } }
+
         public void Complete() { }
-        public System.IDisposable LinkTo(System.Threading.Tasks.Dataflow.ITargetBlock<TOutput> target, System.Threading.Tasks.Dataflow.DataflowLinkOptions linkOptions) { throw null; }
-        void System.Threading.Tasks.Dataflow.IDataflowBlock.Fault(System.Exception exception) { }
-        TOutput System.Threading.Tasks.Dataflow.ISourceBlock<TOutput>.ConsumeMessage(System.Threading.Tasks.Dataflow.DataflowMessageHeader messageHeader, System.Threading.Tasks.Dataflow.ITargetBlock<TOutput> target, out bool messageConsumed) { throw null; }
-        void System.Threading.Tasks.Dataflow.ISourceBlock<TOutput>.ReleaseReservation(System.Threading.Tasks.Dataflow.DataflowMessageHeader messageHeader, System.Threading.Tasks.Dataflow.ITargetBlock<TOutput> target) { }
-        bool System.Threading.Tasks.Dataflow.ISourceBlock<TOutput>.ReserveMessage(System.Threading.Tasks.Dataflow.DataflowMessageHeader messageHeader, System.Threading.Tasks.Dataflow.ITargetBlock<TOutput> target) { throw null; }
-        System.Threading.Tasks.Dataflow.DataflowMessageStatus System.Threading.Tasks.Dataflow.ITargetBlock<TInput>.OfferMessage(System.Threading.Tasks.Dataflow.DataflowMessageHeader messageHeader, TInput messageValue, System.Threading.Tasks.Dataflow.ISourceBlock<TInput> source, bool consumeToAccept) { throw null; }
+
+        public IDisposable LinkTo(ITargetBlock<TOutput> target, DataflowLinkOptions linkOptions) { throw null; }
+
+        void IDataflowBlock.Fault(Exception exception) { }
+
+        TOutput ISourceBlock<TOutput>.ConsumeMessage(DataflowMessageHeader messageHeader, ITargetBlock<TOutput> target, out bool messageConsumed) { throw null; }
+
+        void ISourceBlock<TOutput>.ReleaseReservation(DataflowMessageHeader messageHeader, ITargetBlock<TOutput> target) { }
+
+        bool ISourceBlock<TOutput>.ReserveMessage(DataflowMessageHeader messageHeader, ITargetBlock<TOutput> target) { throw null; }
+
+        DataflowMessageStatus ITargetBlock<TInput>.OfferMessage(DataflowMessageHeader messageHeader, TInput messageValue, ISourceBlock<TInput> source, bool consumeToAccept) { throw null; }
+
         public override string ToString() { throw null; }
-        public bool TryReceive(System.Predicate<TOutput> filter, out TOutput item) { throw null; }
-        public bool TryReceiveAll(out System.Collections.Generic.IList<TOutput> items) { throw null; }
+
+        public bool TryReceive(Predicate<TOutput> filter, out TOutput item) { throw null; }
+
+        public bool TryReceiveAll(out Collections.Generic.IList<TOutput> items) { throw null; }
     }
-    public sealed partial class TransformManyBlock<TInput, TOutput> : System.Threading.Tasks.Dataflow.IDataflowBlock, System.Threading.Tasks.Dataflow.IPropagatorBlock<TInput, TOutput>, System.Threading.Tasks.Dataflow.IReceivableSourceBlock<TOutput>, System.Threading.Tasks.Dataflow.ISourceBlock<TOutput>, System.Threading.Tasks.Dataflow.ITargetBlock<TInput>
+
+    public sealed partial class TransformManyBlock<TInput, TOutput> : IPropagatorBlock<TInput, TOutput>, ITargetBlock<TInput>, IDataflowBlock, ISourceBlock<TOutput>, IReceivableSourceBlock<TOutput>
     {
-        public TransformManyBlock(System.Func<TInput, System.Collections.Generic.IEnumerable<TOutput>> transform) { }
-        public TransformManyBlock(System.Func<TInput, System.Collections.Generic.IEnumerable<TOutput>> transform, System.Threading.Tasks.Dataflow.ExecutionDataflowBlockOptions dataflowBlockOptions) { }
-        public TransformManyBlock(System.Func<TInput, System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<TOutput>>> transform) { }
-        public TransformManyBlock(System.Func<TInput, System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<TOutput>>> transform, System.Threading.Tasks.Dataflow.ExecutionDataflowBlockOptions dataflowBlockOptions) { }
-        public System.Threading.Tasks.Task Completion { get { throw null; } }
+        public TransformManyBlock(Func<TInput, Collections.Generic.IEnumerable<TOutput>> transform, ExecutionDataflowBlockOptions dataflowBlockOptions) { }
+
+        public TransformManyBlock(Func<TInput, Collections.Generic.IEnumerable<TOutput>> transform) { }
+
+        public TransformManyBlock(Func<TInput, Task<Collections.Generic.IEnumerable<TOutput>>> transform, ExecutionDataflowBlockOptions dataflowBlockOptions) { }
+
+        public TransformManyBlock(Func<TInput, Task<Collections.Generic.IEnumerable<TOutput>>> transform) { }
+
+        public Task Completion { get { throw null; } }
+
         public int InputCount { get { throw null; } }
+
         public int OutputCount { get { throw null; } }
+
         public void Complete() { }
-        public System.IDisposable LinkTo(System.Threading.Tasks.Dataflow.ITargetBlock<TOutput> target, System.Threading.Tasks.Dataflow.DataflowLinkOptions linkOptions) { throw null; }
-        void System.Threading.Tasks.Dataflow.IDataflowBlock.Fault(System.Exception exception) { }
-        TOutput System.Threading.Tasks.Dataflow.ISourceBlock<TOutput>.ConsumeMessage(System.Threading.Tasks.Dataflow.DataflowMessageHeader messageHeader, System.Threading.Tasks.Dataflow.ITargetBlock<TOutput> target, out bool messageConsumed) { throw null; }
-        void System.Threading.Tasks.Dataflow.ISourceBlock<TOutput>.ReleaseReservation(System.Threading.Tasks.Dataflow.DataflowMessageHeader messageHeader, System.Threading.Tasks.Dataflow.ITargetBlock<TOutput> target) { }
-        bool System.Threading.Tasks.Dataflow.ISourceBlock<TOutput>.ReserveMessage(System.Threading.Tasks.Dataflow.DataflowMessageHeader messageHeader, System.Threading.Tasks.Dataflow.ITargetBlock<TOutput> target) { throw null; }
-        System.Threading.Tasks.Dataflow.DataflowMessageStatus System.Threading.Tasks.Dataflow.ITargetBlock<TInput>.OfferMessage(System.Threading.Tasks.Dataflow.DataflowMessageHeader messageHeader, TInput messageValue, System.Threading.Tasks.Dataflow.ISourceBlock<TInput> source, bool consumeToAccept) { throw null; }
+
+        public IDisposable LinkTo(ITargetBlock<TOutput> target, DataflowLinkOptions linkOptions) { throw null; }
+
+        void IDataflowBlock.Fault(Exception exception) { }
+
+        TOutput ISourceBlock<TOutput>.ConsumeMessage(DataflowMessageHeader messageHeader, ITargetBlock<TOutput> target, out bool messageConsumed) { throw null; }
+
+        void ISourceBlock<TOutput>.ReleaseReservation(DataflowMessageHeader messageHeader, ITargetBlock<TOutput> target) { }
+
+        bool ISourceBlock<TOutput>.ReserveMessage(DataflowMessageHeader messageHeader, ITargetBlock<TOutput> target) { throw null; }
+
+        DataflowMessageStatus ITargetBlock<TInput>.OfferMessage(DataflowMessageHeader messageHeader, TInput messageValue, ISourceBlock<TInput> source, bool consumeToAccept) { throw null; }
+
         public override string ToString() { throw null; }
-        public bool TryReceive(System.Predicate<TOutput> filter, out TOutput item) { throw null; }
-        public bool TryReceiveAll(out System.Collections.Generic.IList<TOutput> items) { throw null; }
+
+        public bool TryReceive(Predicate<TOutput> filter, out TOutput item) { throw null; }
+
+        public bool TryReceiveAll(out Collections.Generic.IList<TOutput> items) { throw null; }
     }
-    public sealed partial class WriteOnceBlock<T> : System.Threading.Tasks.Dataflow.IDataflowBlock, System.Threading.Tasks.Dataflow.IPropagatorBlock<T, T>, System.Threading.Tasks.Dataflow.IReceivableSourceBlock<T>, System.Threading.Tasks.Dataflow.ISourceBlock<T>, System.Threading.Tasks.Dataflow.ITargetBlock<T>
+
+    public sealed partial class WriteOnceBlock<T> : IPropagatorBlock<T, T>, ITargetBlock<T>, IDataflowBlock, ISourceBlock<T>, IReceivableSourceBlock<T>
     {
-        public WriteOnceBlock(System.Func<T, T> cloningFunction) { }
-        public WriteOnceBlock(System.Func<T, T> cloningFunction, System.Threading.Tasks.Dataflow.DataflowBlockOptions dataflowBlockOptions) { }
-        public System.Threading.Tasks.Task Completion { get { throw null; } }
+        public WriteOnceBlock(Func<T, T> cloningFunction, DataflowBlockOptions dataflowBlockOptions) { }
+
+        public WriteOnceBlock(Func<T, T> cloningFunction) { }
+
+        public Task Completion { get { throw null; } }
+
         public void Complete() { }
-        public System.IDisposable LinkTo(System.Threading.Tasks.Dataflow.ITargetBlock<T> target, System.Threading.Tasks.Dataflow.DataflowLinkOptions linkOptions) { throw null; }
-        void System.Threading.Tasks.Dataflow.IDataflowBlock.Fault(System.Exception exception) { }
-        bool System.Threading.Tasks.Dataflow.IReceivableSourceBlock<T>.TryReceiveAll(out System.Collections.Generic.IList<T> items) { throw null; }
-        T System.Threading.Tasks.Dataflow.ISourceBlock<T>.ConsumeMessage(System.Threading.Tasks.Dataflow.DataflowMessageHeader messageHeader, System.Threading.Tasks.Dataflow.ITargetBlock<T> target, out bool messageConsumed) { throw null; }
-        void System.Threading.Tasks.Dataflow.ISourceBlock<T>.ReleaseReservation(System.Threading.Tasks.Dataflow.DataflowMessageHeader messageHeader, System.Threading.Tasks.Dataflow.ITargetBlock<T> target) { }
-        bool System.Threading.Tasks.Dataflow.ISourceBlock<T>.ReserveMessage(System.Threading.Tasks.Dataflow.DataflowMessageHeader messageHeader, System.Threading.Tasks.Dataflow.ITargetBlock<T> target) { throw null; }
-        System.Threading.Tasks.Dataflow.DataflowMessageStatus System.Threading.Tasks.Dataflow.ITargetBlock<T>.OfferMessage(System.Threading.Tasks.Dataflow.DataflowMessageHeader messageHeader, T messageValue, System.Threading.Tasks.Dataflow.ISourceBlock<T> source, bool consumeToAccept) { throw null; }
+
+        public IDisposable LinkTo(ITargetBlock<T> target, DataflowLinkOptions linkOptions) { throw null; }
+
+        void IDataflowBlock.Fault(Exception exception) { }
+
+        bool IReceivableSourceBlock<T>.TryReceiveAll(out Collections.Generic.IList<T> items) { throw null; }
+
+        T ISourceBlock<T>.ConsumeMessage(DataflowMessageHeader messageHeader, ITargetBlock<T> target, out bool messageConsumed) { throw null; }
+
+        void ISourceBlock<T>.ReleaseReservation(DataflowMessageHeader messageHeader, ITargetBlock<T> target) { }
+
+        bool ISourceBlock<T>.ReserveMessage(DataflowMessageHeader messageHeader, ITargetBlock<T> target) { throw null; }
+
+        DataflowMessageStatus ITargetBlock<T>.OfferMessage(DataflowMessageHeader messageHeader, T messageValue, ISourceBlock<T> source, bool consumeToAccept) { throw null; }
+
         public override string ToString() { throw null; }
-        public bool TryReceive(System.Predicate<T> filter, out T item) { throw null; }
+
+        public bool TryReceive(Predicate<T> filter, out T item) { throw null; }
     }
 }

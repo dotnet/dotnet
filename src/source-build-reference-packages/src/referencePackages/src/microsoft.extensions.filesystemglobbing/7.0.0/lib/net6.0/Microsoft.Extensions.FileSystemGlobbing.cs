@@ -110,8 +110,6 @@ namespace Microsoft.Extensions.FileSystemGlobbing.Abstractions
 {
     public abstract partial class DirectoryInfoBase : FileSystemInfoBase
     {
-        protected DirectoryInfoBase() { }
-
         public abstract System.Collections.Generic.IEnumerable<FileSystemInfoBase> EnumerateFileSystemInfos();
         public abstract DirectoryInfoBase? GetDirectory(string path);
         public abstract FileInfoBase? GetFile(string path);
@@ -136,7 +134,6 @@ namespace Microsoft.Extensions.FileSystemGlobbing.Abstractions
 
     public abstract partial class FileInfoBase : FileSystemInfoBase
     {
-        protected FileInfoBase() { }
     }
 
     public partial class FileInfoWrapper : FileInfoBase
@@ -152,8 +149,6 @@ namespace Microsoft.Extensions.FileSystemGlobbing.Abstractions
 
     public abstract partial class FileSystemInfoBase
     {
-        protected FileSystemInfoBase() { }
-
         public abstract string FullName { get; }
         public abstract string Name { get; }
         public abstract DirectoryInfoBase? ParentDirectory { get; }
@@ -224,8 +219,6 @@ namespace Microsoft.Extensions.FileSystemGlobbing.Internal.PathSegments
 {
     public partial class CurrentPathSegment : IPathSegment
     {
-        public CurrentPathSegment() { }
-
         public bool CanProduceStem { get { throw null; } }
 
         public bool Match(string value) { throw null; }
@@ -248,8 +241,6 @@ namespace Microsoft.Extensions.FileSystemGlobbing.Internal.PathSegments
 
     public partial class ParentPathSegment : IPathSegment
     {
-        public ParentPathSegment() { }
-
         public bool CanProduceStem { get { throw null; } }
 
         public bool Match(string value) { throw null; }
@@ -257,8 +248,6 @@ namespace Microsoft.Extensions.FileSystemGlobbing.Internal.PathSegments
 
     public partial class RecursiveWildcardSegment : IPathSegment
     {
-        public RecursiveWildcardSegment() { }
-
         public bool CanProduceStem { get { throw null; } }
 
         public bool Match(string value) { throw null; }
@@ -385,8 +374,6 @@ namespace Microsoft.Extensions.FileSystemGlobbing.Internal.PatternContexts
     public abstract partial class PatternContext<TFrame> : IPatternContext where TFrame : struct
     {
         protected TFrame Frame;
-        protected PatternContext() { }
-
         public virtual void Declare(System.Action<IPathSegment, bool> declare) { }
 
         protected bool IsStackEmpty() { throw null; }

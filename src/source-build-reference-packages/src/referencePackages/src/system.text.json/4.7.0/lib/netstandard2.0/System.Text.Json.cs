@@ -33,6 +33,8 @@ namespace System.Text.Json
 
     public sealed partial class JsonDocument : IDisposable
     {
+        internal JsonDocument() { }
+
         public JsonElement RootElement { get { throw null; } }
 
         public void Dispose() { }
@@ -267,8 +269,6 @@ namespace System.Text.Json
 
     public abstract partial class JsonNamingPolicy
     {
-        protected JsonNamingPolicy() { }
-
         public static JsonNamingPolicy CamelCase { get { throw null; } }
 
         public abstract string ConvertName(string name);
@@ -346,8 +346,6 @@ namespace System.Text.Json
 
     public sealed partial class JsonSerializerOptions
     {
-        public JsonSerializerOptions() { }
-
         public bool AllowTrailingCommas { get { throw null; } set { } }
 
         public Collections.Generic.IList<Serialization.JsonConverter> Converters { get { throw null; } }
@@ -785,11 +783,12 @@ namespace System.Text.Json.Serialization
 {
     public abstract partial class JsonAttribute : Attribute
     {
-        protected JsonAttribute() { }
     }
 
     public abstract partial class JsonConverter
     {
+        internal JsonConverter() { }
+
         public abstract bool CanConvert(Type typeToConvert);
     }
 
@@ -825,13 +824,11 @@ namespace System.Text.Json.Serialization
     [AttributeUsage(AttributeTargets.Property, AllowMultiple = false)]
     public sealed partial class JsonExtensionDataAttribute : JsonAttribute
     {
-        public JsonExtensionDataAttribute() { }
     }
 
     [AttributeUsage(AttributeTargets.Property, AllowMultiple = false)]
     public sealed partial class JsonIgnoreAttribute : JsonAttribute
     {
-        public JsonIgnoreAttribute() { }
     }
 
     [AttributeUsage(AttributeTargets.Property, AllowMultiple = false)]

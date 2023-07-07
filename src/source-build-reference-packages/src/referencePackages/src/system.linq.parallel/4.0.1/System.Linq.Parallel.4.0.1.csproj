@@ -1,41 +1,17 @@
 <Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-    <TargetFrameworks>netstandard1.1;netstandard1.3</TargetFrameworks>
-    <NuspecFile>$(ArtifactsBinDir)system.linq.parallel/4.0.1/system.linq.parallel.nuspec</NuspecFile>
-   </PropertyGroup>
 
   <PropertyGroup>
-    <OutputPath>$(ArtifactsBinDir)system.linq.parallel/4.0.1/ref/</OutputPath>
-    <IntermediateOutputPath>$(ArtifactsObjDir)system.linq.parallel/4.0.1</IntermediateOutputPath>
+    <TargetFrameworks>netstandard1.1</TargetFrameworks>
+    <AssemblyName>System.Linq.Parallel</AssemblyName>
+    <ProjectTemplateVersion>2</ProjectTemplateVersion>
   </PropertyGroup>
-    <PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard1.3' ">
-        <OutputPath>$(ArtifactsBinDir)system.linq.parallel/4.0.1/lib/</OutputPath>
-    </PropertyGroup>
 
-  <ItemGroup>
-    <Compile Include="**/ref/$(TargetFramework)/*.cs" />
-    <Compile Include="**/lib/$(TargetFramework)/*.cs" />
+  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard1.1'">
+    <PackageReference Include="System.Collections" Version="4.0.11" />
+    <PackageReference Include="System.Collections.Concurrent" Version="4.0.12" />
+    <PackageReference Include="System.Linq" Version="4.1.0" />
+    <PackageReference Include="System.Runtime" Version="4.1.0" />
+    <PackageReference Include="System.Threading.Tasks" Version="4.0.11" />
   </ItemGroup>
 
-    <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard1.1' ">
-        <PackageReference Include="System.Collections" Version="4.0.11" />
-        <PackageReference Include="System.Collections.Concurrent" Version="4.0.12" />
-        <PackageReference Include="System.Linq" Version="4.1.0" />
-        <PackageReference Include="System.Runtime" Version="4.1.0" />
-        <PackageReference Include="System.Threading.Tasks" Version="4.0.11" />
-    </ItemGroup>
-    <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard1.3' ">
-        <PackageReference Include="System.Collections" Version="4.0.11" />
-        <PackageReference Include="System.Collections.Concurrent" Version="4.0.12" />
-        <PackageReference Include="System.Diagnostics.Debug" Version="4.0.11" />
-        <PackageReference Include="System.Diagnostics.Tracing" Version="4.1.0" />
-        <PackageReference Include="System.Linq" Version="4.1.0" />
-        <PackageReference Include="System.Resources.ResourceManager" Version="4.0.1" />
-        <PackageReference Include="System.Runtime" Version="4.1.0" />
-        <PackageReference Include="System.Runtime.Extensions" Version="4.1.0" />
-        <PackageReference Include="System.Threading" Version="4.0.11" />
-        <PackageReference Include="System.Threading.Tasks" Version="4.0.11" />
-    </ItemGroup>
-
-  
 </Project>

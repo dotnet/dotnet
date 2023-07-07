@@ -4,58 +4,64 @@
 // ------------------------------------------------------------------------------
 // Changes to this file must follow the http://aka.ms/api-review process.
 // ------------------------------------------------------------------------------
-
-using System;
-using System.Diagnostics;
-using System.Reflection;
-using System.Runtime.CompilerServices;
-using System.Security;
-
-[assembly: Debuggable(DebuggableAttribute.DebuggingModes.IgnoreSymbolStoreSequencePoints)]
-[assembly: AllowPartiallyTrustedCallers]
-[assembly: ReferenceAssembly]
-[assembly: AssemblyTitle("System.Runtime.Loader")]
-[assembly: AssemblyDescription("System.Runtime.Loader")]
-[assembly: AssemblyDefaultAlias("System.Runtime.Loader")]
-[assembly: AssemblyCompany("Microsoft Corporation")]
-[assembly: AssemblyProduct("Microsoft® .NET Framework")]
-[assembly: AssemblyCopyright("© Microsoft Corporation.  All rights reserved.")]
-[assembly: AssemblyFileVersion("1.0.24212.01")]
-[assembly: AssemblyInformationalVersion("1.0.24212.01 built by: SOURCEBUILD")]
-[assembly: CLSCompliant(true)]
-[assembly: AssemblyMetadata("", "")]
-[assembly: AssemblyVersion("4.0.0.0")]
-
-
-
-
+[assembly: System.Runtime.CompilerServices.CompilationRelaxations(8)]
+[assembly: System.Runtime.CompilerServices.RuntimeCompatibility(WrapNonExceptionThrows = true)]
+[assembly: System.Diagnostics.Debuggable(System.Diagnostics.DebuggableAttribute.DebuggingModes.IgnoreSymbolStoreSequencePoints)]
+[assembly: System.Security.AllowPartiallyTrustedCallers]
+[assembly: System.Runtime.CompilerServices.ReferenceAssembly]
+[assembly: System.Reflection.AssemblyTitle("System.Runtime.Loader")]
+[assembly: System.Reflection.AssemblyDescription("System.Runtime.Loader")]
+[assembly: System.Reflection.AssemblyDefaultAlias("System.Runtime.Loader")]
+[assembly: System.Reflection.AssemblyCompany("Microsoft Corporation")]
+[assembly: System.Reflection.AssemblyProduct("Microsoft® .NET Framework")]
+[assembly: System.Reflection.AssemblyCopyright("© Microsoft Corporation.  All rights reserved.")]
+[assembly: System.Reflection.AssemblyFileVersion("1.0.24212.01")]
+[assembly: System.Reflection.AssemblyInformationalVersion("1.0.24212.01. Commit Hash: 9688ddbb62c04189cac4c4a06e31e93377dccd41")]
+[assembly: System.CLSCompliant(true)]
+[assembly: System.Reflection.AssemblyMetadata(".NETFrameworkAssembly", "")]
+[assembly: System.Reflection.AssemblyMetadata("Serviceable", "True")]
+[assembly: System.Reflection.AssemblyVersionAttribute("4.0.0.0")]
+[assembly: System.Reflection.AssemblyFlagsAttribute((System.Reflection.AssemblyNameFlags)0x70)]
 namespace System.Reflection.Metadata
 {
     public static partial class AssemblyExtensions
     {
-        [System.CLSCompliantAttribute(false)]
-        public unsafe static bool TryGetRawMetadata(this System.Reflection.Assembly assembly, out byte* blob, out int length) { throw null; }
+        [CLSCompliant(false)]
+        public static unsafe bool TryGetRawMetadata(this Assembly assembly, out byte* blob, out int length) { throw null; }
     }
 }
+
 namespace System.Runtime.Loader
 {
     public abstract partial class AssemblyLoadContext
     {
-        protected AssemblyLoadContext() { }
-        public static System.Runtime.Loader.AssemblyLoadContext Default { get { throw null; } }
-        public event System.Func<System.Runtime.Loader.AssemblyLoadContext, System.Reflection.AssemblyName, System.Reflection.Assembly> Resolving { add { } remove { } }
-        public event System.Action<System.Runtime.Loader.AssemblyLoadContext> Unloading { add { } remove { } }
-        public static System.Reflection.AssemblyName GetAssemblyName(string assemblyPath) { throw null; }
-        public static System.Runtime.Loader.AssemblyLoadContext GetLoadContext(System.Reflection.Assembly assembly) { throw null; }
-        protected abstract System.Reflection.Assembly Load(System.Reflection.AssemblyName assemblyName);
-        public System.Reflection.Assembly LoadFromAssemblyName(System.Reflection.AssemblyName assemblyName) { throw null; }
-        public System.Reflection.Assembly LoadFromAssemblyPath(string assemblyPath) { throw null; }
-        public System.Reflection.Assembly LoadFromNativeImagePath(string nativeImagePath, string assemblyPath) { throw null; }
-        public System.Reflection.Assembly LoadFromStream(System.IO.Stream assembly) { throw null; }
-        public System.Reflection.Assembly LoadFromStream(System.IO.Stream assembly, System.IO.Stream assemblySymbols) { throw null; }
-        protected virtual System.IntPtr LoadUnmanagedDll(string unmanagedDllName) { throw null; }
-        protected System.IntPtr LoadUnmanagedDllFromPath(string unmanagedDllPath) { throw null; }
+        public static AssemblyLoadContext Default { get { throw null; } }
+
+        public event Func<AssemblyLoadContext, Reflection.AssemblyName, Reflection.Assembly> Resolving { add { } remove { } }
+
+        public event Action<AssemblyLoadContext> Unloading { add { } remove { } }
+
+        public static Reflection.AssemblyName GetAssemblyName(string assemblyPath) { throw null; }
+
+        public static AssemblyLoadContext GetLoadContext(Reflection.Assembly assembly) { throw null; }
+
+        protected abstract Reflection.Assembly Load(Reflection.AssemblyName assemblyName);
+        public Reflection.Assembly LoadFromAssemblyName(Reflection.AssemblyName assemblyName) { throw null; }
+
+        public Reflection.Assembly LoadFromAssemblyPath(string assemblyPath) { throw null; }
+
+        public Reflection.Assembly LoadFromNativeImagePath(string nativeImagePath, string assemblyPath) { throw null; }
+
+        public Reflection.Assembly LoadFromStream(IO.Stream assembly, IO.Stream assemblySymbols) { throw null; }
+
+        public Reflection.Assembly LoadFromStream(IO.Stream assembly) { throw null; }
+
+        protected virtual IntPtr LoadUnmanagedDll(string unmanagedDllName) { throw null; }
+
+        protected IntPtr LoadUnmanagedDllFromPath(string unmanagedDllPath) { throw null; }
+
         public void SetProfileOptimizationRoot(string directoryPath) { }
+
         public void StartProfileOptimization(string profile) { }
     }
 }

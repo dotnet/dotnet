@@ -1,26 +1,19 @@
 <Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
     <TargetFrameworks>netstandard1.3;netstandard1.5</TargetFrameworks>
-    <NuspecFile>$(ArtifactsBinDir)system.reflection.typeextensions/4.1.0/system.reflection.typeextensions.nuspec</NuspecFile>
-   </PropertyGroup>
-
-  <PropertyGroup>
-    <OutputPath>$(ArtifactsBinDir)system.reflection.typeextensions/4.1.0/ref/</OutputPath>
-    <IntermediateOutputPath>$(ArtifactsObjDir)system.reflection.typeextensions/4.1.0</IntermediateOutputPath>
+    <AssemblyName>System.Reflection.TypeExtensions</AssemblyName>
+    <ProjectTemplateVersion>2</ProjectTemplateVersion>
   </PropertyGroup>
 
-  <ItemGroup>
-    <Compile Include="**/ref/$(TargetFramework)/*.cs" />
-    <Compile Include="**/lib/$(TargetFramework)/*.cs" />
+  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard1.3'">
+    <PackageReference Include="System.Reflection" Version="4.1.0" />
+    <PackageReference Include="System.Runtime" Version="4.1.0" />
   </ItemGroup>
 
-  <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard1.3' ">
-      <PackageReference Include="System.Reflection" Version="4.1.0" />
-      <PackageReference Include="System.Runtime" Version="4.1.0" />
-  </ItemGroup>
-  <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard1.5' ">
-      <PackageReference Include="System.Reflection" Version="4.1.0" />
-      <PackageReference Include="System.Runtime" Version="4.1.0" />
+  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard1.5'">
+    <PackageReference Include="System.Reflection" Version="4.1.0" />
+    <PackageReference Include="System.Runtime" Version="4.1.0" />
   </ItemGroup>
 
 </Project>

@@ -26,8 +26,6 @@ namespace NuGet.DependencyResolver
 {
     public partial class AnalyzeResult<TItem>
     {
-        public AnalyzeResult() { }
-
         public System.Collections.Generic.List<GraphNode<TItem>> Cycles { get { throw null; } }
 
         public System.Collections.Generic.List<DowngradeResult<TItem>> Downgrades { get { throw null; } }
@@ -48,8 +46,6 @@ namespace NuGet.DependencyResolver
 
     public partial class DowngradeResult<TItem>
     {
-        public DowngradeResult() { }
-
         public GraphNode<TItem> DowngradedFrom { get { throw null; } set { } }
 
         public GraphNode<TItem> DowngradedTo { get { throw null; } set { } }
@@ -68,6 +64,8 @@ namespace NuGet.DependencyResolver
 
     public sealed partial class GraphItemKeyComparer<T> : System.Collections.Generic.IEqualityComparer<GraphItem<T>>
     {
+        internal GraphItemKeyComparer() { }
+
         public static GraphItemKeyComparer<T> Instance { get { throw null; } }
 
         public bool Equals(GraphItem<T> x, GraphItem<T> y) { throw null; }
@@ -198,8 +196,6 @@ namespace NuGet.DependencyResolver
 
     public partial class LocalMatch : RemoteMatch
     {
-        public LocalMatch() { }
-
         public LibraryModel.Library LocalLibrary { get { throw null; } set { } }
 
         public IDependencyProvider LocalProvider { get { throw null; } set { } }
@@ -240,8 +236,6 @@ namespace NuGet.DependencyResolver
 
     public partial class RemoteMatch : System.IEquatable<RemoteMatch>
     {
-        public RemoteMatch() { }
-
         public LibraryModel.LibraryIdentity Library { get { throw null; } set { } }
 
         public string Path { get { throw null; } set { } }
@@ -257,8 +251,6 @@ namespace NuGet.DependencyResolver
 
     public partial class RemoteResolveResult
     {
-        public RemoteResolveResult() { }
-
         public System.Collections.Generic.List<LibraryModel.LibraryDependency> Dependencies { get { throw null; } set { } }
 
         public RemoteMatch Match { get { throw null; } set { } }
@@ -306,8 +298,6 @@ namespace NuGet.DependencyResolver
 
     public partial class Tracker<TItem>
     {
-        public Tracker() { }
-
         public System.Collections.Generic.IEnumerable<GraphItem<TItem>> GetDisputes(GraphItem<TItem> item) { throw null; }
 
         public bool IsAmbiguous(GraphItem<TItem> item) { throw null; }
@@ -323,8 +313,6 @@ namespace NuGet.DependencyResolver
 
     public partial class VersionConflictResult<TItem>
     {
-        public VersionConflictResult() { }
-
         public GraphNode<TItem> Conflicting { get { throw null; } set { } }
 
         public GraphNode<TItem> Selected { get { throw null; } set { } }

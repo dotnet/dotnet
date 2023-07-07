@@ -280,8 +280,6 @@ namespace System.Diagnostics
 
     public sealed partial class ActivityListener : IDisposable
     {
-        public ActivityListener() { }
-
         public Action<Activity>? ActivityStarted { get { throw null; } set { } }
 
         public Action<Activity>? ActivityStopped { get { throw null; } set { } }
@@ -494,8 +492,6 @@ namespace System.Diagnostics
 
     public abstract partial class DiagnosticSource
     {
-        protected DiagnosticSource() { }
-
         public virtual bool IsEnabled(string name, object? arg1, object? arg2 = null) { throw null; }
 
         public abstract bool IsEnabled(string name);
@@ -512,8 +508,6 @@ namespace System.Diagnostics
 
     public abstract partial class DistributedContextPropagator
     {
-        protected DistributedContextPropagator() { }
-
         public static DistributedContextPropagator Current { get { throw null; } set { } }
 
         public abstract Collections.Generic.IReadOnlyCollection<string> Fields { get; }
@@ -732,8 +726,6 @@ namespace System.Diagnostics.Metrics
 
     public sealed partial class MeterListener : IDisposable
     {
-        public MeterListener() { }
-
         public Action<Instrument, MeterListener>? InstrumentPublished { get { throw null; } set { } }
 
         public Action<Instrument, object?>? MeasurementsCompleted { get { throw null; } set { } }
