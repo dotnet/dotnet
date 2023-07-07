@@ -9,7 +9,6 @@
     <!-- Packages from dotnet/arcade -->
     <MicrosoftDotNetBuildTasksTemplatingVersion>6.0.0-beta.21373.11</MicrosoftDotNetBuildTasksTemplatingVersion>
     <!-- Packages from dotnet/aspnetcore -->
-    <MicrosoftAspNetCoreApiAuthorizationIdentityServerVersion>6.0.0</MicrosoftAspNetCoreApiAuthorizationIdentityServerVersion>
     <MicrosoftAspNetCoreDiagnosticsEntityFrameworkCoreVersion>6.0.0</MicrosoftAspNetCoreDiagnosticsEntityFrameworkCoreVersion>
     <MicrosoftAspNetCoreIdentityEntityFrameworkCoreVersion>6.0.0</MicrosoftAspNetCoreIdentityEntityFrameworkCoreVersion>
     <MicrosoftAspNetCoreIdentityUIVersion>6.0.0</MicrosoftAspNetCoreIdentityUIVersion>
