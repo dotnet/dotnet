@@ -8,6 +8,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
+using Microsoft.AspNetCore.Razor.Language.Components;
 using Microsoft.AspNetCore.Razor.Language.Extensions;
 using Microsoft.AspNetCore.Razor.Language.Legacy;
 using Microsoft.AspNetCore.Razor.Language.Syntax;
@@ -324,10 +325,13 @@ internal abstract class CSharpFormattingPassBase : FormattingPassBase
         owner = FixOwnerToWorkaroundCompilerQuirks(owner);
         foundOwner = owner;
 
-        // special case: If we're formatting implicit statements, we want to treat the `@attribute` directive as one
-        // so that the C# definition of the attribute is formatted as C#
+        // Special case: If we're formatting implicit statements, we want to treat the `@attribute` directive and
+        // the `@typeparam` directive as one so that the C# content within them is formatted as C#
         if (allowImplicitStatements &&
-            IsAttributeDirective())
+            (
+                IsAttributeDirective() ||
+                IsTypeParamDirective()
+            ))
         {
             return true;
         }
@@ -437,6 +441,19 @@ internal abstract class CSharpFormattingPassBase : FormattingPassBase
                     directive.DirectiveDescriptor != null &&
                     directive.DirectiveDescriptor.Kind == DirectiveKind.SingleLine &&
                     directive.DirectiveDescriptor.Directive.Equals(AttributeDirective.Directive.Directive, StringComparison.Ordinal));
+        }
+
+        bool IsTypeParamDirective()
+        {
+            // E.g, (| is position)
+            //
+            // `@typeparam |T where T : IDisposable
+            //
+            return owner.AncestorsAndSelf().Any(
+                n => n is RazorDirectiveSyntax directive &&
+                    directive.DirectiveDescriptor != null &&
+                    directive.DirectiveDescriptor.Kind == DirectiveKind.SingleLine &&
+                    directive.DirectiveDescriptor.Directive.Equals(ComponentTypeParamDirective.Directive.Directive, StringComparison.Ordinal));
         }
 
         bool IsInSingleLineDirective()

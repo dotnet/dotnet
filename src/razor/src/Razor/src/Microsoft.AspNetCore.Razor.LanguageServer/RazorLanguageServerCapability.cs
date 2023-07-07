@@ -1,35 +1,33 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Newtonsoft.Json.Linq;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer;
 
-internal class RazorLanguageServerCapability : IRegistrationExtension
+internal class RazorLanguageServerCapability : ICapabilitiesProvider
 {
     private const string RazorCapabilityKey = "razor";
     private static readonly RazorLanguageServerCapability s_default = new RazorLanguageServerCapability
     {
-        LanguageQuery = true,
         RangeMapping = true,
-        EditMapping = true,
-        MonitorProjectConfigurationFilePath = true,
         BreakpointSpan = true,
         ProximityExpressions = true
     };
 
-    public bool LanguageQuery { get; set; }
     public bool RangeMapping { get; set; }
-    public bool EditMapping { get; set; }
-    public bool MonitorProjectConfigurationFilePath { get; set; }
     public bool BreakpointSpan { get; set; }
     public bool ProximityExpressions { get; set; }
 
-    public RegistrationExtensionResult GetRegistration(VSInternalClientCapabilities clientCapabilities)
+    public void ApplyCapabilities(VSInternalServerCapabilities serverCapabilities, VSInternalClientCapabilities clientCapabilities)
     {
-        return new RegistrationExtensionResult(RazorCapabilityKey, JToken.FromObject(s_default));
+        serverCapabilities.Experimental ??= new Dictionary<string, object>();
+
+        var dict = (Dictionary<string, object>)serverCapabilities.Experimental;
+        dict["razor"] = s_default;
     }
 
     public static bool TryGet(JToken token, [NotNullWhen(true)] out RazorLanguageServerCapability? razorCapability)

@@ -622,7 +622,7 @@ public class FallbackWindowsRazorProjectHostTest : ProjectSnapshotManagerDispatc
 
         // Act - 2
         services.UnconfiguredProject.FullPath = "Test2.csproj";
-        await Task.Run(async () => await host.OnProjectRenamingAsync());
+        await Task.Run(async () => await host.OnProjectRenamingAsync("Test.csproj", "Test2.csproj"));
 
         // Assert - 1
         snapshot = Assert.Single(_projectManager.Projects);

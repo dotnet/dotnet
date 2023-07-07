@@ -16,7 +16,7 @@ using Microsoft.VisualStudio.LanguageServer.Protocol;
 namespace Microsoft.AspNetCore.Razor.LanguageServer.DocumentSynchronization;
 
 [LanguageServerEndpoint(Methods.TextDocumentDidChangeName)]
-internal class DocumentDidChangeEndpoint : IRazorNotificationHandler<DidChangeTextDocumentParams>, ITextDocumentIdentifierHandler<DidChangeTextDocumentParams, TextDocumentIdentifier>, IRegistrationExtension
+internal class DocumentDidChangeEndpoint : IRazorNotificationHandler<DidChangeTextDocumentParams>, ITextDocumentIdentifierHandler<DidChangeTextDocumentParams, TextDocumentIdentifier>, ICapabilitiesProvider
 {
     public bool MutatesSolutionState => true;
 
@@ -31,10 +31,9 @@ internal class DocumentDidChangeEndpoint : IRazorNotificationHandler<DidChangeTe
         _projectService = razorProjectService;
     }
 
-    public RegistrationExtensionResult GetRegistration(VSInternalClientCapabilities clientCapabilities)
+    public void ApplyCapabilities(VSInternalServerCapabilities serverCapabilities, VSInternalClientCapabilities clientCapabilities)
     {
-        const string AssociatedServerCapability = "textDocumentSync";
-        var registrationOptions = new TextDocumentSyncOptions()
+        serverCapabilities.TextDocumentSync = new TextDocumentSyncOptions()
         {
             Change = TextDocumentSyncKind.Incremental,
             OpenClose = true,
@@ -45,10 +44,6 @@ internal class DocumentDidChangeEndpoint : IRazorNotificationHandler<DidChangeTe
             WillSave = false,
             WillSaveWaitUntil = false,
         };
-
-        var result = new RegistrationExtensionResult(AssociatedServerCapability, registrationOptions);
-
-        return result;
     }
 
     public TextDocumentIdentifier GetTextDocumentIdentifier(DidChangeTextDocumentParams request)

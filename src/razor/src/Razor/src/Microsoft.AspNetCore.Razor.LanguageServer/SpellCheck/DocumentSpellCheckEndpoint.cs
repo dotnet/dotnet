@@ -20,7 +20,7 @@ using Microsoft.VisualStudio.LanguageServer.Protocol;
 namespace Microsoft.AspNetCore.Razor.LanguageServer.SpellCheck;
 
 [LanguageServerEndpoint(VSInternalMethods.TextDocumentSpellCheckableRangesName)]
-internal sealed class DocumentSpellCheckEndpoint : IRazorRequestHandler<VSInternalDocumentSpellCheckableParams, VSInternalSpellCheckableRangeReport[]>, IRegistrationExtension
+internal sealed class DocumentSpellCheckEndpoint : IRazorRequestHandler<VSInternalDocumentSpellCheckableParams, VSInternalSpellCheckableRangeReport[]>, ICapabilitiesProvider
 {
     private readonly IRazorDocumentMappingService _documentMappingService;
     private readonly LanguageServerFeatureOptions _languageServerFeatureOptions;
@@ -38,11 +38,9 @@ internal sealed class DocumentSpellCheckEndpoint : IRazorRequestHandler<VSIntern
 
     public bool MutatesSolutionState => false;
 
-    public RegistrationExtensionResult GetRegistration(VSInternalClientCapabilities clientCapabilities)
+    public void ApplyCapabilities(VSInternalServerCapabilities serverCapabilities, VSInternalClientCapabilities clientCapabilities)
     {
-        const string ServerCapability = "_vs_spellCheckingProvider";
-
-        return new RegistrationExtensionResult(ServerCapability, true);
+        serverCapabilities.SpellCheckingProvider = true;
     }
 
     public TextDocumentIdentifier GetTextDocumentIdentifier(VSInternalDocumentSpellCheckableParams request)

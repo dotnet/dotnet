@@ -38,11 +38,11 @@ internal class TestProjectSystemServices : IUnconfiguredProjectCommonServices
         ActiveConfiguredProject = new TestConfiguredProject(UnconfiguredProject, data);
         UnconfiguredProject.LoadedConfiguredProjects.Add(ActiveConfiguredProject);
 
-        ActiveConfiguredProjectAssemblyReferences = new TestAssemblyReferencesService();
-        ActiveConfiguredProjectRazorProperties = new Rules.RazorProjectProperties(ActiveConfiguredProject, UnconfiguredProject);
-        ActiveConfiguredProjectSubscription = new TestActiveConfiguredProjectSubscriptionService();
+        ActiveConfigurationGroupSubscriptionService = new TestActiveConfigurationGroupSubscriptionService();
 
         TasksService = new TestProjectAsynchronousTasksService(ProjectService, UnconfiguredProject, ActiveConfiguredProject);
+
+        FaultHandlerService = new TestProjectFaultHandlerService();
     }
 
     public ProjectServices Services { get; }
@@ -53,31 +53,23 @@ internal class TestProjectSystemServices : IUnconfiguredProjectCommonServices
 
     public TestConfiguredProject ActiveConfiguredProject { get; }
 
-    public TestAssemblyReferencesService ActiveConfiguredProjectAssemblyReferences { get; }
-
-    public Rules.RazorProjectProperties ActiveConfiguredProjectRazorProperties { get; }
-
-    public TestActiveConfiguredProjectSubscriptionService ActiveConfiguredProjectSubscription { get; }
+    public TestActiveConfigurationGroupSubscriptionService ActiveConfigurationGroupSubscriptionService { get; }
 
     public TestProjectAsynchronousTasksService TasksService { get; }
 
     public TestThreadingService ThreadingService { get; }
 
-    ConfiguredProject IUnconfiguredProjectCommonServices.ActiveConfiguredProject => ActiveConfiguredProject;
+    public TestProjectFaultHandlerService FaultHandlerService { get; }
 
-    IAssemblyReferencesService IUnconfiguredProjectCommonServices.ActiveConfiguredProjectAssemblyReferences => ActiveConfiguredProjectAssemblyReferences;
-
-    IPackageReferencesService IUnconfiguredProjectCommonServices.ActiveConfiguredProjectPackageReferences => throw new NotImplementedException();
-
-    Rules.RazorProjectProperties IUnconfiguredProjectCommonServices.ActiveConfiguredProjectRazorProperties => ActiveConfiguredProjectRazorProperties;
-
-    IActiveConfiguredProjectSubscriptionService IUnconfiguredProjectCommonServices.ActiveConfiguredProjectSubscription => ActiveConfiguredProjectSubscription;
+    IActiveConfigurationGroupSubscriptionService IUnconfiguredProjectCommonServices.ActiveConfigurationGroupSubscriptionService => ActiveConfigurationGroupSubscriptionService;
 
     IProjectAsynchronousTasksService IUnconfiguredProjectCommonServices.TasksService => TasksService;
 
     IProjectThreadingService IUnconfiguredProjectCommonServices.ThreadingService => ThreadingService;
 
     UnconfiguredProject IUnconfiguredProjectCommonServices.UnconfiguredProject => UnconfiguredProject;
+
+    IProjectFaultHandlerService IUnconfiguredProjectCommonServices.FaultHandlerService => FaultHandlerService;
 
     public IProjectVersionedValue<IProjectSubscriptionUpdate> CreateUpdate(params TestProjectChangeDescription[] descriptions)
     {
@@ -434,51 +426,37 @@ internal class TestProjectSystemServices : IUnconfiguredProjectCommonServices
         }
     }
 
-    public class TestActiveConfiguredProjectSubscriptionService : IActiveConfiguredProjectSubscriptionService
+    public class TestActiveConfigurationGroupSubscriptionService : IActiveConfigurationGroupSubscriptionService
     {
-        public TestActiveConfiguredProjectSubscriptionService()
+        public TestActiveConfigurationGroupSubscriptionService()
         {
-            JointRuleBlock = new BufferBlock<IProjectVersionedValue<IProjectSubscriptionUpdate>>();
-            JointRuleSource = new TestProjectValueDataSource<IProjectSubscriptionUpdate>(JointRuleBlock);
+            SourceBlock = new BufferBlock<IProjectVersionedValue<ConfigurationSubscriptionSources>>();
         }
 
-        public BufferBlock<IProjectVersionedValue<IProjectSubscriptionUpdate>> JointRuleBlock { get; }
+        public BufferBlock<IProjectVersionedValue<ConfigurationSubscriptionSources>> SourceBlock { get; }
 
-        public TestProjectValueDataSource<IProjectSubscriptionUpdate> JointRuleSource { get; }
+        ConfigurationSubscriptionSources IActiveConfigurationGroupSubscriptionService.Current { get; }
 
-        IReceivableSourceBlock<IProjectVersionedValue<VisualStudio.ProjectSystem.IProjectSnapshot>> IProjectSubscriptionService.ProjectBlock => throw new NotImplementedException();
+        IReceivableSourceBlock<IProjectVersionedValue<ConfigurationSubscriptionSources>> IProjectValueDataSource<ConfigurationSubscriptionSources>.SourceBlock => SourceBlock;
 
-        IProjectValueDataSource<VisualStudio.ProjectSystem.IProjectSnapshot> IProjectSubscriptionService.ProjectSource => throw new NotImplementedException();
+        ISourceBlock<IProjectVersionedValue<object>> IProjectValueDataSource.SourceBlock => SourceBlock;
 
-        IProjectValueDataSource<IProjectImportTreeSnapshot> IProjectSubscriptionService.ImportTreeSource => throw new NotImplementedException();
+        NamedIdentity IProjectValueDataSource.DataSourceKey { get; }
 
-        IProjectValueDataSource<IProjectSharedFoldersSnapshot> IProjectSubscriptionService.SharedFoldersSource => throw new NotImplementedException();
+        IComparable IProjectValueDataSource.DataSourceVersion { get; }
 
-        IProjectValueDataSource<IImmutableDictionary<string, IOutputGroup>> IProjectSubscriptionService.OutputGroupsSource => throw new NotImplementedException();
+        IDisposable IJoinableProjectValueDataSource.Join() => null;
+    }
 
-        IReceivableSourceBlock<IProjectVersionedValue<IProjectCatalogSnapshot>> IProjectSubscriptionService.ProjectCatalogBlock => throw new NotImplementedException();
+    public class TestProjectFaultHandlerService : IProjectFaultHandlerService
+    {
+        Task IProjectFaultHandlerService.HandleFaultAsync(Exception ex, ErrorReportSettings watsonReportSettings, ProjectFaultSeverity severity, UnconfiguredProject project) => throw new NotImplementedException();
 
-        IProjectValueDataSource<IProjectCatalogSnapshot> IProjectSubscriptionService.ProjectCatalogSource => throw new NotImplementedException();
+        void IProjectFaultHandlerService.RegisterFaultHandler(Task task, ErrorReportSettings watsonReportSettings, ProjectFaultSeverity severity, UnconfiguredProject project) => throw new NotImplementedException();
 
-        IReceivableSourceBlock<IProjectVersionedValue<IProjectSubscriptionUpdate>> IProjectSubscriptionService.ProjectRuleBlock => throw new NotImplementedException();
+        void IProjectFaultHandlerService.RegisterFaultHandler<TResult>(Task<TResult> task, ErrorReportSettings watsonReportSettings, ProjectFaultSeverity severity, UnconfiguredProject project) => throw new NotImplementedException();
 
-        IProjectValueDataSource<IProjectSubscriptionUpdate> IProjectSubscriptionService.ProjectRuleSource => throw new NotImplementedException();
-
-        IReceivableSourceBlock<IProjectVersionedValue<IProjectSubscriptionUpdate>> IProjectSubscriptionService.ProjectBuildRuleBlock => throw new NotImplementedException();
-
-        IProjectValueDataSource<IProjectSubscriptionUpdate> IProjectSubscriptionService.ProjectBuildRuleSource => throw new NotImplementedException();
-
-        ISourceBlock<IProjectVersionedValue<IProjectSubscriptionUpdate>> IProjectSubscriptionService.JointRuleBlock => JointRuleBlock;
-
-        IProjectValueDataSource<IProjectSubscriptionUpdate> IProjectSubscriptionService.JointRuleSource => JointRuleSource;
-
-        IReceivableSourceBlock<IProjectVersionedValue<IProjectSubscriptionUpdate>> IProjectSubscriptionService.SourceItemsRuleBlock => throw new NotImplementedException();
-
-        IProjectValueDataSource<IProjectSubscriptionUpdate> IProjectSubscriptionService.SourceItemsRuleSource => throw new NotImplementedException();
-
-        IReceivableSourceBlock<IProjectVersionedValue<IImmutableSet<string>>> IProjectSubscriptionService.SourceItemRuleNamesBlock => throw new NotImplementedException();
-
-        IProjectValueDataSource<IImmutableSet<string>> IProjectSubscriptionService.SourceItemRuleNamesSource => throw new NotImplementedException();
+        Task IProjectFaultHandlerService.ReportUserFaultAsync(Exception ex, ProjectFaultSeverity severity, UnconfiguredProject project) => throw new NotImplementedException();
     }
 
     public class TestProjectValueDataSource<T> : IProjectValueDataSource<T>

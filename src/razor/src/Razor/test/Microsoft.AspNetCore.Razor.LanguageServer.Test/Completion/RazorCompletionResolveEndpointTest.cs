@@ -43,7 +43,7 @@ public class RazorCompletionResolveEndpointTest : LanguageServerTestBase
                 }
             }
         };
-        _endpoint.GetRegistration(_clientCapabilities);
+        _endpoint.ApplyCapabilities(new(), _clientCapabilities);
     }
 
     [Fact]

@@ -46,11 +46,9 @@ internal class TextDocumentUriPresentationEndpoint : AbstractTextDocumentPresent
 
     public override string EndpointName => RazorLanguageServerCustomMessageTargets.RazorUriPresentationEndpoint;
 
-    public override RegistrationExtensionResult GetRegistration(VSInternalClientCapabilities clientCapabilities)
+    public override void ApplyCapabilities(VSInternalServerCapabilities serverCapabilities, VSInternalClientCapabilities clientCapabilities)
     {
-        const string AssociatedServerCapability = "_vs_uriPresentationProvider";
-
-        return new RegistrationExtensionResult(AssociatedServerCapability, options: true);
+        serverCapabilities.UriPresentationProvider = true;
     }
 
     public override TextDocumentIdentifier GetTextDocumentIdentifier(UriPresentationParams request)

@@ -660,75 +660,75 @@ public class DefaultWindowsRazorProjectHostTest : ProjectSnapshotManagerDispatch
         Assert.Empty(_projectManager.Projects);
     }
 
-    // [UIFact]
-    // public async Task OnProjectChanged_ReadsProperties_InitializesProject()
-    // {
-    //     // Arrange
-    //     RazorGeneralProperties.Property(Rules.RazorGeneral.RazorLangVersionProperty, "2.1");
-    //     RazorGeneralProperties.Property(Rules.RazorGeneral.RazorDefaultConfigurationProperty, "MVC-2.1");
+    [UIFact]
+    public async Task OnProjectChanged_ReadsProperties_InitializesProject()
+    {
+        // Arrange
+        _razorGeneralProperties.Property(Rules.RazorGeneral.RazorLangVersionProperty, "2.1");
+        _razorGeneralProperties.Property(Rules.RazorGeneral.RazorDefaultConfigurationProperty, "MVC-2.1");
 
-    //     ConfigurationItems.Item("MVC-2.1");
-    //     ConfigurationItems.Property("MVC-2.1", Rules.RazorConfiguration.ExtensionsProperty, "MVC-2.1;Another-Thing");
+        _configurationItems.Item("MVC-2.1");
+        _configurationItems.Property("MVC-2.1", Rules.RazorConfiguration.ExtensionsProperty, "MVC-2.1;Another-Thing");
 
-    //     ExtensionItems.Item("MVC-2.1");
-    //     ExtensionItems.Item("Another-Thing");
+        _extensionItems.Item("MVC-2.1");
+        _extensionItems.Item("Another-Thing");
 
-    //     RazorComponentWithTargetPathItems.Item(Path.GetFileName(TestProjectData.SomeProjectComponentFile1.FilePath));
-    //     RazorComponentWithTargetPathItems.Property(Path.GetFileName(TestProjectData.SomeProjectComponentFile1.FilePath), Rules.RazorGenerateWithTargetPath.TargetPathProperty, TestProjectData.SomeProjectComponentFile1.TargetPath);
+        _razorComponentWithTargetPathItems.Item(Path.GetFileName(TestProjectData.SomeProjectComponentFile1.FilePath));
+        _razorComponentWithTargetPathItems.Property(Path.GetFileName(TestProjectData.SomeProjectComponentFile1.FilePath), Rules.RazorGenerateWithTargetPath.TargetPathProperty, TestProjectData.SomeProjectComponentFile1.TargetPath);
 
-    //     RazorGenerateWithTargetPathItems.Item(Path.GetFileName(TestProjectData.SomeProjectFile1.FilePath));
-    //     RazorGenerateWithTargetPathItems.Property(Path.GetFileName(TestProjectData.SomeProjectFile1.FilePath), Rules.RazorGenerateWithTargetPath.TargetPathProperty, TestProjectData.SomeProjectFile1.TargetPath);
+        _razorGenerateWithTargetPathItems.Item(Path.GetFileName(TestProjectData.SomeProjectFile1.FilePath));
+        _razorGenerateWithTargetPathItems.Property(Path.GetFileName(TestProjectData.SomeProjectFile1.FilePath), Rules.RazorGenerateWithTargetPath.TargetPathProperty, TestProjectData.SomeProjectFile1.TargetPath);
 
-    //     var changes = new TestProjectChangeDescription[]
-    //     {
-    //         RazorGeneralProperties.ToChange(),
-    //         ConfigurationItems.ToChange(),
-    //         ExtensionItems.ToChange(),
-    //         RazorComponentWithTargetPathItems.ToChange(),
-    //         RazorGenerateWithTargetPathItems.ToChange(),
-    //     };
+        var changes = new TestProjectChangeDescription[]
+        {
+             _razorGeneralProperties.ToChange(),
+             _configurationItems.ToChange(),
+             _extensionItems.ToChange(),
+             _razorComponentWithTargetPathItems.ToChange(),
+             _razorGenerateWithTargetPathItems.ToChange(),
+        };
 
-    //     var services = new TestProjectSystemServices(TestProjectData.SomeProject.FilePath);
+        var services = new TestProjectSystemServices(TestProjectData.SomeProject.FilePath);
 
-    //     var host = new DefaultRazorProjectHost(services, Workspace, ProjectConfigurationFilePathStore, ProjectManager);
+        var host = new DefaultWindowsRazorProjectHost(services, Workspace, Dispatcher, _projectConfigurationFilePathStore, _projectManager);
 
-    //     await Task.Run(async () => await host.LoadAsync());
-    //     Assert.Empty(ProjectManager.Projects);
+        await Task.Run(async () => await host.LoadAsync());
+        Assert.Empty(_projectManager.Projects);
 
-    //     // Act
-    //     await Task.Run(async () => await host.OnProjectChangedAsync(services.CreateUpdate(changes)));
+        // Act
+        await Task.Run(async () => await host.OnProjectChangedAsync(services.CreateUpdate(changes)));
 
-    //     // Assert
-    //     var snapshot = Assert.Single(ProjectManager.Projects);
-    //     Assert.Equal(TestProjectData.SomeProject.FilePath, snapshot.FilePath);
+        // Assert
+        var snapshot = Assert.Single(_projectManager.Projects);
+        Assert.Equal(TestProjectData.SomeProject.FilePath, snapshot.FilePath);
 
-    //     Assert.Equal(RazorLanguageVersion.Version_2_1, snapshot.Configuration.LanguageVersion);
-    //     Assert.Equal("MVC-2.1", snapshot.Configuration.ConfigurationName);
-    //     Assert.Collection(
-    //         snapshot.Configuration.Extensions.OrderBy(e => e.ExtensionName),
-    //         e => Assert.Equal("Another-Thing", e.ExtensionName),
-    //         e => Assert.Equal("MVC-2.1", e.ExtensionName));
+        Assert.Equal(RazorLanguageVersion.Version_2_1, snapshot.Configuration.LanguageVersion);
+        Assert.Equal("MVC-2.1", snapshot.Configuration.ConfigurationName);
+        Assert.Collection(
+            snapshot.Configuration.Extensions.OrderBy(e => e.ExtensionName),
+            e => Assert.Equal("Another-Thing", e.ExtensionName),
+            e => Assert.Equal("MVC-2.1", e.ExtensionName));
 
-    //     Assert.Collection(
-    //         snapshot.DocumentFilePaths.OrderBy(d => d),
-    //         d =>
-    //         {
-    //             var document = snapshot.GetDocument(d);
-    //             Assert.Equal(TestProjectData.SomeProjectFile1.FilePath, document.FilePath);
-    //             Assert.Equal(TestProjectData.SomeProjectFile1.TargetPath, document.TargetPath);
-    //             Assert.Equal(FileKinds.Legacy, document.FileKind);
-    //         },
-    //         d =>
-    //         {
-    //             var document = snapshot.GetDocument(d);
-    //             Assert.Equal(TestProjectData.SomeProjectComponentFile1.FilePath, document.FilePath);
-    //             Assert.Equal(TestProjectData.SomeProjectComponentFile1.TargetPath, document.TargetPath);
-    //             Assert.Equal(FileKinds.Component, document.FileKind);
-    //         });
+        Assert.Collection(
+            snapshot.DocumentFilePaths.OrderBy(d => d),
+            d =>
+            {
+                var document = snapshot.GetDocument(d);
+                Assert.Equal(TestProjectData.SomeProjectFile1.FilePath, document.FilePath);
+                Assert.Equal(TestProjectData.SomeProjectFile1.TargetPath, document.TargetPath);
+                Assert.Equal(FileKinds.Legacy, document.FileKind);
+            },
+            d =>
+            {
+                var document = snapshot.GetDocument(d);
+                Assert.Equal(TestProjectData.SomeProjectComponentFile1.FilePath, document.FilePath);
+                Assert.Equal(TestProjectData.SomeProjectComponentFile1.TargetPath, document.TargetPath);
+                Assert.Equal(FileKinds.Component, document.FileKind);
+            });
 
-    //     await Task.Run(async () => await host.DisposeAsync());
-    //     Assert.Empty(ProjectManager.Projects);
-    // }
+        await Task.Run(async () => await host.DisposeAsync());
+        Assert.Empty(_projectManager.Projects);
+    }
 
     [UIFact]
     public async Task OnProjectChanged_NoVersionFound_DoesNotIniatializeProject()
@@ -1154,14 +1154,48 @@ public class DefaultWindowsRazorProjectHostTest : ProjectSnapshotManagerDispatch
         Assert.Equal(TestProjectData.SomeProject.FilePath, snapshot.FilePath);
         Assert.Same("MVC-2.1", snapshot.Configuration.ConfigurationName);
 
+        Assert.Collection(
+           snapshot.DocumentFilePaths.OrderBy(d => d),
+           d =>
+           {
+               var document = snapshot.GetDocument(d);
+               Assert.Equal(TestProjectData.SomeProjectFile1.FilePath, document.FilePath);
+               Assert.Equal(TestProjectData.SomeProjectFile1.TargetPath, document.TargetPath);
+               Assert.Equal(FileKinds.Legacy, document.FileKind);
+           },
+           d =>
+           {
+               var document = snapshot.GetDocument(d);
+               Assert.Equal(TestProjectData.SomeProjectComponentFile1.FilePath, document.FilePath);
+               Assert.Equal(TestProjectData.SomeProjectComponentFile1.TargetPath, document.TargetPath);
+               Assert.Equal(FileKinds.Component, document.FileKind);
+           });
+
         // Act - 2
         services.UnconfiguredProject.FullPath = TestProjectData.AnotherProject.FilePath;
-        await Task.Run(async () => await host.OnProjectRenamingAsync());
+        await Task.Run(async () => await host.OnProjectRenamingAsync(TestProjectData.SomeProject.FilePath, TestProjectData.AnotherProject.FilePath));
 
         // Assert - 1
         snapshot = Assert.Single(_projectManager.Projects);
         Assert.Equal(TestProjectData.AnotherProject.FilePath, snapshot.FilePath);
         Assert.Same("MVC-2.1", snapshot.Configuration.ConfigurationName);
+
+        Assert.Collection(
+           snapshot.DocumentFilePaths.OrderBy(d => d),
+           d =>
+           {
+               var document = snapshot.GetDocument(d);
+               Assert.Equal(TestProjectData.SomeProjectFile1.FilePath, document.FilePath);
+               Assert.Equal(TestProjectData.SomeProjectFile1.TargetPath, document.TargetPath);
+               Assert.Equal(FileKinds.Legacy, document.FileKind);
+           },
+           d =>
+           {
+               var document = snapshot.GetDocument(d);
+               Assert.Equal(TestProjectData.SomeProjectComponentFile1.FilePath, document.FilePath);
+               Assert.Equal(TestProjectData.SomeProjectComponentFile1.TargetPath, document.TargetPath);
+               Assert.Equal(FileKinds.Component, document.FileKind);
+           });
 
         await Task.Run(async () => await host.DisposeAsync());
         Assert.Empty(_projectManager.Projects);

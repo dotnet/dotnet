@@ -351,7 +351,7 @@ public class LegacyRazorCompletionEndpointTest : LanguageServerTestBase
         codeDocument.SetUnsupported();
         var documentContext = CreateDocumentContext(documentPath, codeDocument);
         var completionEndpoint = new LegacyRazorCompletionEndpoint(_completionFactsService, _completionListCache);
-        completionEndpoint.GetRegistration(_clientCapabilities);
+        completionEndpoint.ApplyCapabilities(new(), _clientCapabilities);
         var request = new CompletionParams()
         {
             TextDocument = new TextDocumentIdentifier()
@@ -380,7 +380,7 @@ public class LegacyRazorCompletionEndpointTest : LanguageServerTestBase
         var codeDocument = CreateCodeDocument("@");
         var documentContext = CreateDocumentContext(documentPath, codeDocument);
         var completionEndpoint = new LegacyRazorCompletionEndpoint(_completionFactsService, _completionListCache);
-        completionEndpoint.GetRegistration(_clientCapabilities);
+        completionEndpoint.ApplyCapabilities(new(), _clientCapabilities);
         var request = new CompletionParams()
         {
             TextDocument = new TextDocumentIdentifier()
@@ -423,7 +423,7 @@ public class LegacyRazorCompletionEndpointTest : LanguageServerTestBase
         codeDocument.SetTagHelperContext(tagHelperContext);
         var documentContext = CreateDocumentContext(documentPath, codeDocument);
         var completionEndpoint = new LegacyRazorCompletionEndpoint(_completionFactsService, _completionListCache);
-        completionEndpoint.GetRegistration(_clientCapabilities);
+        completionEndpoint.ApplyCapabilities(new(), _clientCapabilities);
         var request = new CompletionParams()
         {
             TextDocument = new TextDocumentIdentifier()
@@ -466,7 +466,7 @@ public class LegacyRazorCompletionEndpointTest : LanguageServerTestBase
         codeDocument.SetTagHelperContext(tagHelperContext);
         var documentContext = CreateDocumentContext(documentPath, codeDocument);
         var completionEndpoint = new LegacyRazorCompletionEndpoint(_completionFactsService, _completionListCache);
-        completionEndpoint.GetRegistration(_clientCapabilities);
+        completionEndpoint.ApplyCapabilities(new(), _clientCapabilities);
         var request = new CompletionParams()
         {
             TextDocument = new TextDocumentIdentifier()
@@ -503,7 +503,7 @@ public class LegacyRazorCompletionEndpointTest : LanguageServerTestBase
         codeDocument.SetTagHelperContext(tagHelperContext);
         var documentContext = CreateDocumentContext(documentPath, codeDocument);
         var completionEndpoint = new LegacyRazorCompletionEndpoint(_completionFactsService, _completionListCache);
-        completionEndpoint.GetRegistration(_clientCapabilities);
+        completionEndpoint.ApplyCapabilities(new(), _clientCapabilities);
         var request = new CompletionParams()
         {
             TextDocument = new TextDocumentIdentifier()
@@ -547,7 +547,7 @@ public class LegacyRazorCompletionEndpointTest : LanguageServerTestBase
         codeDocument.SetTagHelperContext(tagHelperContext);
         var documentContext = CreateDocumentContext(documentPath, codeDocument);
         var completionEndpoint = new LegacyRazorCompletionEndpoint(_completionFactsService, _completionListCache);
-        completionEndpoint.GetRegistration(_clientCapabilities);
+        completionEndpoint.ApplyCapabilities(new(), _clientCapabilities);
         var request = new CompletionParams()
         {
             TextDocument = new TextDocumentIdentifier()
@@ -587,7 +587,7 @@ public class LegacyRazorCompletionEndpointTest : LanguageServerTestBase
         codeDocument.SetTagHelperContext(tagHelperContext);
         var documentContext = CreateDocumentContext(documentPath, codeDocument);
         var completionEndpoint = new LegacyRazorCompletionEndpoint(_completionFactsService, _completionListCache);
-        completionEndpoint.GetRegistration(_clientCapabilities);
+        completionEndpoint.ApplyCapabilities(new(), _clientCapabilities);
         var request = new CompletionParams()
         {
             TextDocument = new TextDocumentIdentifier()

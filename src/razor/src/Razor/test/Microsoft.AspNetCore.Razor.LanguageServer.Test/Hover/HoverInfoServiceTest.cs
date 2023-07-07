@@ -747,7 +747,7 @@ public class HoverInfoServiceTest : TagHelperServiceTestBase
         var clientCapabilities = CreateMarkDownCapabilities();
         clientCapabilities.SupportsVisualStudioExtensions = true;
 
-        _ = endpoint.GetRegistration(clientCapabilities);
+        endpoint.ApplyCapabilities(new(), clientCapabilities);
 
         codeDocument.GetSourceText().GetLineAndOffset(cursorPosition, out var line, out var offset);
         var razorFileUri = new Uri(razorFilePath);

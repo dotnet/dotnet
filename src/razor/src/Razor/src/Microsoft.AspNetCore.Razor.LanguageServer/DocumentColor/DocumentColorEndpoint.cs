@@ -12,7 +12,7 @@ using Microsoft.VisualStudio.LanguageServer.Protocol;
 namespace Microsoft.AspNetCore.Razor.LanguageServer.DocumentColor;
 
 [LanguageServerEndpoint(Methods.TextDocumentDocumentColorName)]
-internal sealed class DocumentColorEndpoint : IRazorRequestHandler<DocumentColorParams, ColorInformation[]>, IRegistrationExtension
+internal sealed class DocumentColorEndpoint : IRazorRequestHandler<DocumentColorParams, ColorInformation[]>, ICapabilitiesProvider
 {
     private readonly ClientNotifierServiceBase _languageServer;
 
@@ -23,12 +23,9 @@ internal sealed class DocumentColorEndpoint : IRazorRequestHandler<DocumentColor
 
     public bool MutatesSolutionState => false;
 
-    public RegistrationExtensionResult GetRegistration(VSInternalClientCapabilities clientCapabilities)
+    public void ApplyCapabilities(VSInternalServerCapabilities serverCapabilities, VSInternalClientCapabilities clientCapabilities)
     {
-        const string ServerCapabilities = "colorProvider";
-        var options = new SumType<bool, DocumentColorOptions>(new DocumentColorOptions());
-
-        return new RegistrationExtensionResult(ServerCapabilities, options);
+        serverCapabilities.DocumentColorProvider = new DocumentColorOptions();
     }
 
     public TextDocumentIdentifier GetTextDocumentIdentifier(DocumentColorParams request)

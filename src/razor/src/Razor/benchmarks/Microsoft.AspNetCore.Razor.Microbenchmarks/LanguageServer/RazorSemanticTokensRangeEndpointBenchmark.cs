@@ -74,7 +74,7 @@ public class RazorSemanticTokensRangeEndpointBenchmark : RazorLanguageServerBenc
         DocumentContext = new VersionedDocumentContext(documentUri, documentSnapshot, version);
         Logger = new NoopLogger();
         SemanticTokensRangeEndpoint = new SemanticTokensRangeEndpoint(telemetryReporter: null);
-        _ = SemanticTokensRangeEndpoint.GetRegistration(new VSInternalClientCapabilities() { SupportsVisualStudioExtensions = true });
+        SemanticTokensRangeEndpoint.ApplyCapabilities(new(), new VSInternalClientCapabilities() { SupportsVisualStudioExtensions = true });
 
         var text = await DocumentContext.GetSourceTextAsync(CancellationToken.None).ConfigureAwait(false);
         Range = new Range

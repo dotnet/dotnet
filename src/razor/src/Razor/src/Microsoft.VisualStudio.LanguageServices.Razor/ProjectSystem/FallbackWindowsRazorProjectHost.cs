@@ -12,7 +12,6 @@ using System.Reflection.Metadata;
 using System.Reflection.PortableExecutable;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Threading.Tasks.Dataflow;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.VisualStudio.LanguageServices;
@@ -24,17 +23,20 @@ using ResolvedCompilationReference = Microsoft.CodeAnalysis.Razor.ProjectSystem.
 
 namespace Microsoft.CodeAnalysis.Razor.ProjectSystem;
 
-// Somewhat similar to https://github.com/dotnet/project-system/blob/fa074d228dcff6dae9e48ce43dd4a3a5aa22e8f0/src/Microsoft.VisualStudio.ProjectSystem.Managed/ProjectSystem/LanguageServices/LanguageServiceHost.cs
-//
-// This class is responsible for intializing the Razor ProjectSnapshotManager for cases where
+// This class is responsible for initializing the Razor ProjectSnapshotManager for cases where
 // MSBuild does not provides configuration support (SDK < 2.1).
 [AppliesTo("(DotNetCoreRazor | DotNetCoreWeb) & !DotNetCoreRazorConfiguration")]
 [Export(ExportContractNames.Scopes.UnconfiguredProject, typeof(IProjectDynamicLoadComponent))]
 internal class FallbackWindowsRazorProjectHost : WindowsRazorProjectHostBase
 {
     private const string MvcAssemblyFileName = "Microsoft.AspNetCore.Mvc.Razor.dll";
+    private static readonly ImmutableHashSet<string> s_ruleNames = ImmutableHashSet.CreateRange(new string[]
+        {
+            ResolvedCompilationReference.SchemaName,
+            ContentItem.SchemaName,
+            NoneItem.SchemaName,
+        });
     private readonly LanguageServerFeatureOptions _languageServerFeatureOptions;
-    private IDisposable? _subscription;
 
     [ImportingConstructor]
     public FallbackWindowsRazorProjectHost(
@@ -61,111 +63,72 @@ internal class FallbackWindowsRazorProjectHost : WindowsRazorProjectHostBase
     {
     }
 
-    protected override async Task InitializeCoreAsync(CancellationToken cancellationToken)
-    {
-        await base.InitializeCoreAsync(cancellationToken).ConfigureAwait(false);
+    protected override ImmutableHashSet<string> GetRuleNames() => s_ruleNames;
 
-        // Don't try to evaluate any properties here since the project is still loading and we require access
-        // to the UI thread to push our updates.
-        //
-        // Just subscribe and handle the notification later.
-        var receiver = new ActionBlock<IProjectVersionedValue<IProjectSubscriptionUpdate>>(OnProjectChangedAsync);
-        _subscription = CommonServices.ActiveConfiguredProjectSubscription.JointRuleSource.SourceBlock.LinkTo(
-            receiver,
-            initialDataAsNew: true,
-            suppressVersionOnlyUpdates: true,
-            ruleNames: new string[]
+    protected override async Task HandleProjectChangeAsync(IProjectVersionedValue<IProjectSubscriptionUpdate> update)
+    {
+        string? mvcReferenceFullPath = null;
+        if (update.Value.CurrentState.ContainsKey(ResolvedCompilationReference.SchemaName))
+        {
+            var references = update.Value.CurrentState[ResolvedCompilationReference.SchemaName].Items;
+            foreach (var reference in references)
             {
-                ResolvedCompilationReference.SchemaName,
-                ContentItem.SchemaName,
-                NoneItem.SchemaName,
-            },
-            linkOptions: new DataflowLinkOptions() { PropagateCompletion = true });
-    }
-
-    protected override async Task DisposeCoreAsync(bool initialized)
-    {
-        await base.DisposeCoreAsync(initialized).ConfigureAwait(false);
-
-        if (initialized)
-        {
-            _subscription?.Dispose();
+                if (reference.Key.EndsWith(MvcAssemblyFileName, StringComparison.OrdinalIgnoreCase))
+                {
+                    mvcReferenceFullPath = reference.Key;
+                    break;
+                }
+            }
         }
-    }
 
-    // Internal for testing
-    internal async Task OnProjectChangedAsync(IProjectVersionedValue<IProjectSubscriptionUpdate> update)
-    {
-        if (IsDisposing || IsDisposed)
+        if (mvcReferenceFullPath is null)
         {
+            // Ok we can't find an MVC version. Let's assume this project isn't using Razor then.
+            await UpdateAsync(() => UninitializeProjectUnsafe(CommonServices.UnconfiguredProject.FullPath), CancellationToken.None).ConfigureAwait(false);
             return;
         }
 
-        await CommonServices.TasksService.LoadedProjectAsync(async () => await ExecuteWithLockAsync(async () =>
+        var version = GetAssemblyVersion(mvcReferenceFullPath);
+        if (version is null)
         {
-            string? mvcReferenceFullPath = null;
-            if (update.Value.CurrentState.ContainsKey(ResolvedCompilationReference.SchemaName))
+            // Ok we can't find an MVC version. Let's assume this project isn't using Razor then.
+            await UpdateAsync(() => UninitializeProjectUnsafe(CommonServices.UnconfiguredProject.FullPath), CancellationToken.None).ConfigureAwait(false);
+            return;
+        }
+
+        // We need to deal with the case where the project was uninitialized, but now
+        // is valid for Razor. In that case we might have previously seen all of the documents
+        // but ignored them because the project wasn't active.
+        //
+        // So what we do to deal with this, is that we 'remove' all changed and removed items
+        // and then we 'add' all current items. This allows minimal churn to the PSM, but still
+        // makes us up-to-date.
+        var documents = GetCurrentDocuments(update.Value);
+        var changedDocuments = GetChangedAndRemovedDocuments(update.Value);
+
+        await UpdateAsync(() =>
+        {
+            var configuration = FallbackRazorConfiguration.SelectConfiguration(version);
+            var hostProject = new HostProject(CommonServices.UnconfiguredProject.FullPath, configuration, rootNamespace: null);
+
+            if (TryGetIntermediateOutputPath(update.Value.CurrentState, out var intermediatePath))
             {
-                var references = update.Value.CurrentState[ResolvedCompilationReference.SchemaName].Items;
-                foreach (var reference in references)
-                {
-                    if (reference.Key.EndsWith(MvcAssemblyFileName, StringComparison.OrdinalIgnoreCase))
-                    {
-                        mvcReferenceFullPath = reference.Key;
-                        break;
-                    }
-                }
+                var projectConfigurationFile = Path.Combine(intermediatePath, _languageServerFeatureOptions.ProjectConfigurationFileName);
+                ProjectConfigurationFilePathStore.Set(hostProject.FilePath, projectConfigurationFile);
             }
 
-            if (mvcReferenceFullPath is null)
+            UpdateProjectUnsafe(hostProject);
+
+            for (var i = 0; i < changedDocuments.Length; i++)
             {
-                // Ok we can't find an MVC version. Let's assume this project isn't using Razor then.
-                await UpdateAsync(UninitializeProjectUnsafe, CancellationToken.None).ConfigureAwait(false);
-                return;
+                RemoveDocumentUnsafe(hostProject, changedDocuments[i]);
             }
 
-            var version = GetAssemblyVersion(mvcReferenceFullPath);
-            if (version is null)
+            for (var i = 0; i < documents.Length; i++)
             {
-                // Ok we can't find an MVC version. Let's assume this project isn't using Razor then.
-                await UpdateAsync(UninitializeProjectUnsafe, CancellationToken.None).ConfigureAwait(false);
-                return;
+                AddDocumentUnsafe(hostProject, documents[i]);
             }
-
-            // We need to deal with the case where the project was uninitialized, but now
-            // is valid for Razor. In that case we might have previously seen all of the documents
-            // but ignored them because the project wasn't active.
-            //
-            // So what we do to deal with this, is that we 'remove' all changed and removed items
-            // and then we 'add' all current items. This allows minimal churn to the PSM, but still
-            // makes us up-to-date.
-            var documents = GetCurrentDocuments(update.Value);
-            var changedDocuments = GetChangedAndRemovedDocuments(update.Value);
-
-            await UpdateAsync(() =>
-            {
-                var configuration = FallbackRazorConfiguration.SelectConfiguration(version);
-                var hostProject = new HostProject(CommonServices.UnconfiguredProject.FullPath, configuration, rootNamespace: null);
-
-                if (TryGetIntermediateOutputPath(update.Value.CurrentState, out var intermediatePath))
-                {
-                    var projectConfigurationFile = Path.Combine(intermediatePath, _languageServerFeatureOptions.ProjectConfigurationFileName);
-                    ProjectConfigurationFilePathStore.Set(hostProject.FilePath, projectConfigurationFile);
-                }
-
-                UpdateProjectUnsafe(hostProject);
-
-                for (var i = 0; i < changedDocuments.Length; i++)
-                {
-                    RemoveDocumentUnsafe(changedDocuments[i]);
-                }
-
-                for (var i = 0; i < documents.Length; i++)
-                {
-                    AddDocumentUnsafe(documents[i]);
-                }
-            }, CancellationToken.None).ConfigureAwait(false);
-        }).ConfigureAwait(false), registerFaultHandler: true);
+        }, CancellationToken.None).ConfigureAwait(false);
     }
 
     // virtual for overriding in tests

@@ -349,7 +349,7 @@ public class CSharpCodeActionEndToEndTest : SingleServerDelegatingEndpointTestBa
         var endpoint = new CodeActionEndpoint(DocumentMappingService, razorCodeActionProviders, csharpCodeActionProviders, htmlCodeActionProviders, LanguageServer, LanguageServerFeatureOptions, default);
 
         // Call GetRegistration, so the endpoint knows we support resolve
-        endpoint.GetRegistration(new VSInternalClientCapabilities
+        endpoint.ApplyCapabilities(new(), new VSInternalClientCapabilities
         {
             TextDocument = new TextDocumentClientCapabilities
             {

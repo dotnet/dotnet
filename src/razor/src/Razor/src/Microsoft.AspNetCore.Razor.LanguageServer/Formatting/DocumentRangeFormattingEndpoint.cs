@@ -13,7 +13,7 @@ using Microsoft.VisualStudio.LanguageServer.Protocol;
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Formatting;
 
 [LanguageServerEndpoint(Methods.TextDocumentRangeFormattingName)]
-internal class DocumentRangeFormattingEndpoint : IRazorRequestHandler<DocumentRangeFormattingParams, TextEdit[]?>, IRegistrationExtension
+internal class DocumentRangeFormattingEndpoint : IRazorRequestHandler<DocumentRangeFormattingParams, TextEdit[]?>, ICapabilitiesProvider
 {
     private readonly IRazorFormattingService _razorFormattingService;
     private readonly IOptionsMonitor<RazorLSPOptions> _optionsMonitor;
@@ -28,11 +28,9 @@ internal class DocumentRangeFormattingEndpoint : IRazorRequestHandler<DocumentRa
 
     public bool MutatesSolutionState => false;
 
-    public RegistrationExtensionResult GetRegistration(VSInternalClientCapabilities clientCapabilities)
+    public void ApplyCapabilities(VSInternalServerCapabilities serverCapabilities, VSInternalClientCapabilities clientCapabilities)
     {
-        const string ServerCapability = "documentRangeFormattingProvider";
-
-        return new RegistrationExtensionResult(ServerCapability, new SumType<bool, DocumentRangeFormattingOptions>(new DocumentRangeFormattingOptions()));
+        serverCapabilities.DocumentRangeFormattingProvider = new DocumentRangeFormattingOptions();
     }
 
     public TextDocumentIdentifier GetTextDocumentIdentifier(DocumentRangeFormattingParams request)

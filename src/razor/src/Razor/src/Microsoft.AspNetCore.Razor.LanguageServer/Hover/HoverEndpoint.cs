@@ -17,7 +17,7 @@ using Microsoft.VisualStudio.LanguageServer.Protocol;
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Hover;
 
 [LanguageServerEndpoint(Methods.TextDocumentHoverName)]
-internal sealed class HoverEndpoint : AbstractRazorDelegatingEndpoint<TextDocumentPositionParams, VSInternalHover?>, IRegistrationExtension
+internal sealed class HoverEndpoint : AbstractRazorDelegatingEndpoint<TextDocumentPositionParams, VSInternalHover?>, ICapabilitiesProvider
 {
     private readonly IHoverInfoService _hoverInfoService;
     private readonly IRazorDocumentMappingService _documentMappingService;
@@ -35,17 +35,14 @@ internal sealed class HoverEndpoint : AbstractRazorDelegatingEndpoint<TextDocume
         _documentMappingService = documentMappingService ?? throw new ArgumentNullException(nameof(documentMappingService));
     }
 
-    public RegistrationExtensionResult GetRegistration(VSInternalClientCapabilities clientCapabilities)
+    public void ApplyCapabilities(VSInternalServerCapabilities serverCapabilities, VSInternalClientCapabilities clientCapabilities)
     {
-        const string AssociatedServerCapability = "hoverProvider";
         _clientCapabilities = clientCapabilities;
 
-        var registrationOptions = new HoverOptions()
+        serverCapabilities.HoverProvider = new HoverOptions()
         {
             WorkDoneProgress = false,
         };
-
-        return new RegistrationExtensionResult(AssociatedServerCapability, new SumType<bool, HoverOptions>(registrationOptions));
     }
 
     protected override bool PreferCSharpOverHtmlIfPossible => true;

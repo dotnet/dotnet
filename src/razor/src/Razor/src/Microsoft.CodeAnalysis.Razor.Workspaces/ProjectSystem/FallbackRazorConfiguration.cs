@@ -40,7 +40,11 @@ internal class FallbackRazorConfiguration : RazorConfiguration
          "MVC-3.0",
          new[] { new FallbackRazorExtension("MVC-3.0"), });
 
-    public static readonly RazorConfiguration Latest = MVC_3_0;
+    public static readonly RazorConfiguration Latest = new FallbackRazorConfiguration(
+         RazorLanguageVersion.Latest,
+         // Razor latest uses MVC 3.0 Razor configuration.
+         "MVC-3.0",
+         new[] { new FallbackRazorExtension("MVC-3.0"), });
 
     public static RazorConfiguration SelectConfiguration(Version version)
     {

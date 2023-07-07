@@ -494,6 +494,18 @@ public class RazorFormattingTest : FormattingTestBase
     }
 
     [Fact]
+    public async Task TypeParam()
+    {
+        await RunFormattingTestAsync(
+            input: """
+                    @typeparam     T     where    T    :   IDisposable
+                    """,
+            expected: """
+                    @typeparam T where T : IDisposable
+                    """);
+    }
+
+    [Fact]
     public async Task Model()
     {
         await RunFormattingTestAsync(

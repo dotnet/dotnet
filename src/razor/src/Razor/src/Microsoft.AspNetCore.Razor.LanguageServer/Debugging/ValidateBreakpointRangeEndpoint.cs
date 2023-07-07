@@ -16,7 +16,7 @@ using Microsoft.VisualStudio.LanguageServer.Protocol;
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Debugging;
 
 [LanguageServerEndpoint(VSInternalMethods.TextDocumentValidateBreakableRangeName)]
-internal class ValidateBreakpointRangeEndpoint : AbstractRazorDelegatingEndpoint<ValidateBreakpointRangeParams, Range?>, IRegistrationExtension
+internal class ValidateBreakpointRangeEndpoint : AbstractRazorDelegatingEndpoint<ValidateBreakpointRangeParams, Range?>, ICapabilitiesProvider
 {
     private readonly IRazorDocumentMappingService _documentMappingService;
 
@@ -34,11 +34,9 @@ internal class ValidateBreakpointRangeEndpoint : AbstractRazorDelegatingEndpoint
 
     protected override string CustomMessageTarget => RazorLanguageServerCustomMessageTargets.RazorValidateBreakpointRangeName;
 
-    public RegistrationExtensionResult GetRegistration(VSInternalClientCapabilities clientCapabilities)
+    public void ApplyCapabilities(VSInternalServerCapabilities serverCapabilities, VSInternalClientCapabilities clientCapabilities)
     {
-        const string ServerCapability = "_vs_breakableRangeProvider";
-
-        return new RegistrationExtensionResult(ServerCapability, true);
+        serverCapabilities.BreakableRangeProvider = true;
     }
 
     protected override Task<Range?> TryHandleAsync(ValidateBreakpointRangeParams request, RazorRequestContext requestContext, DocumentPositionInfo positionInfo, CancellationToken cancellationToken)

@@ -16,7 +16,7 @@ using Microsoft.VisualStudio.LanguageServer.Protocol;
 namespace Microsoft.AspNetCore.Razor.LanguageServer.DocumentHighlighting;
 
 [LanguageServerEndpoint(Methods.TextDocumentDocumentHighlightName)]
-internal class DocumentHighlightEndpoint : AbstractRazorDelegatingEndpoint<DocumentHighlightParams, DocumentHighlight[]?>, IRegistrationExtension
+internal class DocumentHighlightEndpoint : AbstractRazorDelegatingEndpoint<DocumentHighlightParams, DocumentHighlight[]?>, ICapabilitiesProvider
 {
     private readonly IRazorDocumentMappingService _documentMappingService;
 
@@ -30,16 +30,12 @@ internal class DocumentHighlightEndpoint : AbstractRazorDelegatingEndpoint<Docum
         _documentMappingService = documentMappingService ?? throw new ArgumentNullException(nameof(documentMappingService));
     }
 
-    public RegistrationExtensionResult GetRegistration(VSInternalClientCapabilities clientCapabilities)
+    public void ApplyCapabilities(VSInternalServerCapabilities serverCapabilities, VSInternalClientCapabilities clientCapabilities)
     {
-        const string ServerCapability = "documentHighlightProvider";
-        var options = new SumType<bool, DocumentHighlightOptions>(
-            new DocumentHighlightOptions
-            {
-                WorkDoneProgress = false
-            });
-
-        return new RegistrationExtensionResult(ServerCapability, options);
+        serverCapabilities.DocumentHighlightProvider = new DocumentHighlightOptions
+        {
+            WorkDoneProgress = false
+        };
     }
 
     protected override string CustomMessageTarget => RazorLanguageServerCustomMessageTargets.RazorDocumentHighlightEndpointName;

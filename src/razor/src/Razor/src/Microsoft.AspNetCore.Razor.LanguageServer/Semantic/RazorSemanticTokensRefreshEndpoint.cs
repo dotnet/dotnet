@@ -7,12 +7,11 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.LanguageServer.Common;
 using Microsoft.AspNetCore.Razor.LanguageServer.EndpointContracts;
 using Microsoft.CommonLanguageServerProtocol.Framework;
-using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Semantic;
 
 [LanguageServerEndpoint(RazorLanguageServerCustomMessageTargets.RazorSemanticTokensRefreshEndpoint)]
-internal sealed class RazorSemanticTokensRefreshEndpoint : IRazorNotificationHandler<SemanticTokensRefreshParams>, IRegistrationExtension
+internal sealed class RazorSemanticTokensRefreshEndpoint : IRazorNotificationHandler<SemanticTokensRefreshParams>
 {
     private readonly WorkspaceSemanticTokensRefreshPublisher _semanticTokensRefreshPublisher;
 
@@ -21,16 +20,6 @@ internal sealed class RazorSemanticTokensRefreshEndpoint : IRazorNotificationHan
     public RazorSemanticTokensRefreshEndpoint(WorkspaceSemanticTokensRefreshPublisher semanticTokensRefreshPublisher)
     {
         _semanticTokensRefreshPublisher = semanticTokensRefreshPublisher ?? throw new ArgumentNullException(nameof(semanticTokensRefreshPublisher));
-    }
-
-    public RegistrationExtensionResult GetRegistration(VSInternalClientCapabilities clientCapabilities)
-    {
-        const string ServerCapability = "workspace.semanticTokens";
-
-        return new RegistrationExtensionResult(ServerCapability, new SemanticTokensWorkspaceSetting
-        {
-            RefreshSupport = true,
-        });
     }
 
     public Task HandleNotificationAsync(SemanticTokensRefreshParams request, RazorRequestContext requestContext, CancellationToken cancellationToken)

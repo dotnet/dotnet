@@ -21,6 +21,18 @@ internal partial class EditorInProcess
         dte.ActiveDocument.Undo();
     }
 
+    public async Task InsertTextAsync(string text, CancellationToken cancellationToken)
+    {
+        await JoinableTaskFactory.SwitchToMainThreadAsync(cancellationToken);
+
+        var view = await GetActiveTextViewAsync(cancellationToken);
+        var textSnapshot = view.TextSnapshot;
+
+        var position = await GetCaretPositionAsync(cancellationToken);
+
+        _ = view.TextBuffer.Insert(position, text);
+    }
+
     public async Task SetTextAsync(string text, CancellationToken cancellationToken)
     {
         await JoinableTaskFactory.SwitchToMainThreadAsync(cancellationToken);
@@ -94,15 +106,21 @@ internal partial class EditorInProcess
     public async Task WaitForCurrentLineTextAsync(string text, CancellationToken cancellationToken)
     {
         await Helper.RetryAsync(async ct =>
-            {
-                var view = await GetActiveTextViewAsync(cancellationToken);
-                var caret = view.Caret.Position.BufferPosition;
-                var line = view.TextBuffer.CurrentSnapshot.GetLineFromPosition(caret).GetText();
+        {
+            var line = await GetCurrentLineTextAsync(cancellationToken);
 
-                return line.Trim() == text.Trim();
-            },
+            return line.Trim() == text.Trim();
+        },
             TimeSpan.FromMilliseconds(50),
             cancellationToken);
+    }
+
+    public async Task<string> GetCurrentLineTextAsync(CancellationToken cancellationToken)
+    {
+        var view = await GetActiveTextViewAsync(cancellationToken);
+        var caret = view.Caret.Position.BufferPosition;
+        var line = view.TextBuffer.CurrentSnapshot.GetLineFromPosition(caret).GetText();
+        return line;
     }
 
     public async Task WaitForCurrentLineTextStartsWithAsync(string text, CancellationToken cancellationToken)

@@ -122,11 +122,11 @@
     <MicrosoftVisualStudioLanguageServerProtocolExtensionsPackageVersion>$(VisualStudioLanguageServerProtocolVersion)</MicrosoftVisualStudioLanguageServerProtocolExtensionsPackageVersion>
     <MicrosoftVisualStudioLanguageServerProtocolInternalPackageVersion>$(VisualStudioLanguageServerProtocolVersion)</MicrosoftVisualStudioLanguageServerProtocolInternalPackageVersion>
     <MicrosoftVisualStudioLiveSharePackageVersion>0.3.1074</MicrosoftVisualStudioLiveSharePackageVersion>
-    <MicrosoftVisualStudioProjectSystemSDKPackageVersion>16.10.81-pre</MicrosoftVisualStudioProjectSystemSDKPackageVersion>
+    <MicrosoftVisualStudioProjectSystemSDKPackageVersion>17.7.294-pre</MicrosoftVisualStudioProjectSystemSDKPackageVersion>
     <MicrosoftVisualStudioShell150PackageVersion>$(MicrosoftVisualStudioShellPackagesVersion)</MicrosoftVisualStudioShell150PackageVersion>
     <MicrosoftVisualStudioInteropPackageVersion>$(MicrosoftVisualStudioShellPackagesVersion)</MicrosoftVisualStudioInteropPackageVersion>
     <MicrosoftInternalVisualStudioInteropPackageVersion>$(MicrosoftVisualStudioShellPackagesVersion)</MicrosoftInternalVisualStudioInteropPackageVersion>
-    <MicrosoftVisualStudioRpcContractsPackageVersion>17.7.1-preview</MicrosoftVisualStudioRpcContractsPackageVersion>
+    <MicrosoftVisualStudioRpcContractsPackageVersion>17.7.5-preview</MicrosoftVisualStudioRpcContractsPackageVersion>
     <MicrosoftVisualStudioTelemetryVersion>17.7.8</MicrosoftVisualStudioTelemetryVersion>
     <MicrosoftVisualStudioTextDataPackageVersion>$(MicrosoftVisualStudioPackagesVersion)</MicrosoftVisualStudioTextDataPackageVersion>
     <MicrosoftVisualStudioTextImplementationPackageVersion>$(MicrosoftVisualStudioPackagesVersion)</MicrosoftVisualStudioTextImplementationPackageVersion>

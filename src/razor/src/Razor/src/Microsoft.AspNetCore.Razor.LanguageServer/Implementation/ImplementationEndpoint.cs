@@ -18,7 +18,7 @@ using ImplementationResult = Microsoft.VisualStudio.LanguageServer.Protocol.SumT
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Implementation;
 
 [LanguageServerEndpoint(Methods.TextDocumentImplementationName)]
-internal sealed class ImplementationEndpoint : AbstractRazorDelegatingEndpoint<TextDocumentPositionParams, ImplementationResult>, IRegistrationExtension
+internal sealed class ImplementationEndpoint : AbstractRazorDelegatingEndpoint<TextDocumentPositionParams, ImplementationResult>, ICapabilitiesProvider
 {
     private readonly IRazorDocumentMappingService _documentMappingService;
 
@@ -38,12 +38,9 @@ internal sealed class ImplementationEndpoint : AbstractRazorDelegatingEndpoint<T
 
     protected override IDocumentPositionInfoStrategy DocumentPositionInfoStrategy => PreferAttributeNameDocumentPositionInfoStrategy.Instance;
 
-    public RegistrationExtensionResult GetRegistration(VSInternalClientCapabilities clientCapabilities)
+    public void ApplyCapabilities(VSInternalServerCapabilities serverCapabilities, VSInternalClientCapabilities clientCapabilities)
     {
-        const string ServerCapability = "implementationProvider";
-        var option = new SumType<bool, ImplementationOptions>(new ImplementationOptions());
-
-        return new RegistrationExtensionResult(ServerCapability, option);
+        serverCapabilities.ImplementationProvider= new ImplementationOptions();
     }
 
     protected override Task<IDelegatedParams?> CreateDelegatedParamsAsync(TextDocumentPositionParams request, RazorRequestContext requestContext, DocumentPositionInfo positionInfo, CancellationToken cancellationToken)
