@@ -1,27 +1,15 @@
 <Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-    <TargetFrameworks>netstandard1.0;netstandard1.3</TargetFrameworks>
-    <NuspecFile>$(ArtifactsBinDir)system.reflection.emit.ilgeneration/4.0.1/system.reflection.emit.ilgeneration.nuspec</NuspecFile>
-   </PropertyGroup>
 
   <PropertyGroup>
-    <OutputPath>$(ArtifactsBinDir)system.reflection.emit.ilgeneration/4.0.1/ref/</OutputPath>
-    <IntermediateOutputPath>$(ArtifactsObjDir)system.reflection.emit.ilgeneration/4.0.1</IntermediateOutputPath>
+    <TargetFrameworks>netstandard1.0</TargetFrameworks>
+    <AssemblyName>System.Reflection.Emit.ILGeneration</AssemblyName>
+    <ProjectTemplateVersion>2</ProjectTemplateVersion>
   </PropertyGroup>
-    <PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard1.3' ">
-        <OutputPath>$(ArtifactsBinDir)system.reflection.emit.ilgeneration/4.0.1/lib/</OutputPath>
-    </PropertyGroup>
 
-  <ItemGroup>
-    <Compile Include="**/ref/$(TargetFramework)/*.cs" />
-    <Compile Include="**/lib/$(TargetFramework)/*.cs" />
+  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard1.0'">
+    <PackageReference Include="System.Reflection" Version="4.1.0" />
+    <PackageReference Include="System.Reflection.Primitives" Version="4.0.1" />
+    <PackageReference Include="System.Runtime" Version="4.1.0" />
   </ItemGroup>
 
-    <ItemGroup>
-        <PackageReference Include="System.Reflection" Version="4.1.0" />
-        <PackageReference Include="System.Reflection.Primitives" Version="4.0.1" />
-        <PackageReference Include="System.Runtime" Version="4.1.0" />
-    </ItemGroup>
-
-  
 </Project>

@@ -58,6 +58,8 @@ namespace Microsoft.Extensions.DependencyInjection
 
     public sealed partial class ServiceProvider : System.IServiceProvider, System.IDisposable, System.IAsyncDisposable
     {
+        internal ServiceProvider() { }
+
         public void Dispose() { }
 
         public System.Threading.Tasks.ValueTask DisposeAsync() { throw null; }
@@ -67,8 +69,6 @@ namespace Microsoft.Extensions.DependencyInjection
 
     public partial class ServiceProviderOptions
     {
-        public ServiceProviderOptions() { }
-
         public bool ValidateOnBuild { get { throw null; } set { } }
 
         public bool ValidateScopes { get { throw null; } set { } }

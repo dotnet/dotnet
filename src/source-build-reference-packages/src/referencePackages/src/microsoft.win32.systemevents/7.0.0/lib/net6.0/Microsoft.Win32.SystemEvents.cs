@@ -93,6 +93,8 @@ namespace Microsoft.Win32
 
     public sealed partial class SystemEvents
     {
+        internal SystemEvents() { }
+
         public static event System.EventHandler? DisplaySettingsChanged { add { } remove { } }
 
         public static event System.EventHandler? DisplaySettingsChanging { add { } remove { } }

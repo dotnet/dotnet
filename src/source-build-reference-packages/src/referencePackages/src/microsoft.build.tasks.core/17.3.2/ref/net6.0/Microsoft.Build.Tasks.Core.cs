@@ -62,8 +62,6 @@ namespace Microsoft.Build.Tasks
 
     public partial class AssignProjectConfiguration : ResolveProjectBase
     {
-        public AssignProjectConfiguration() { }
-
         public bool AddSyntheticProjectReferencesForSolutionDependencies { get { throw null; } set { } }
 
         [Framework.Output]
@@ -130,8 +128,6 @@ namespace Microsoft.Build.Tasks
     [System.Obsolete("The CodeTaskFactory is not supported on .NET Core.  This class is included so that users receive run-time errors and should not be used for any other purpose.", true)]
     public sealed partial class CodeTaskFactory : Framework.ITaskFactory
     {
-        public CodeTaskFactory() { }
-
         public string FactoryName { get { throw null; } }
 
         public System.Type TaskType { get { throw null; } }
@@ -251,8 +247,6 @@ namespace Microsoft.Build.Tasks
 
     public partial class CreateCSharpManifestResourceName : CreateManifestResourceName
     {
-        public CreateCSharpManifestResourceName() { }
-
         protected override string SourceFileExtension { get { throw null; } }
 
         protected override string CreateManifestName(string fileName, string linkFileName, string rootNamespace, string dependentUponFileName, System.IO.Stream binaryStream) { throw null; }
@@ -320,8 +314,6 @@ namespace Microsoft.Build.Tasks
 
     public partial class CreateVisualBasicManifestResourceName : CreateManifestResourceName
     {
-        public CreateVisualBasicManifestResourceName() { }
-
         protected override string SourceFileExtension { get { throw null; } }
 
         protected override string CreateManifestName(string fileName, string linkFileName, string rootNamespace, string dependentUponFileName, System.IO.Stream binaryStream) { throw null; }
@@ -588,8 +580,6 @@ namespace Microsoft.Build.Tasks
     [System.Runtime.Versioning.SupportedOSPlatform("windows")]
     public sealed partial class GenerateApplicationManifest : GenerateManifestBase
     {
-        public GenerateApplicationManifest() { }
-
         public string ClrVersion { get { throw null; } set { } }
 
         public Framework.ITaskItem ConfigFile { get { throw null; } set { } }
@@ -660,8 +650,6 @@ namespace Microsoft.Build.Tasks
     [System.Runtime.Versioning.SupportedOSPlatform("windows")]
     public sealed partial class GenerateDeploymentManifest : GenerateManifestBase
     {
-        public GenerateDeploymentManifest() { }
-
         public bool CreateDesktopShortcut { get { throw null; } set { } }
 
         public string DeploymentUrl { get { throw null; } set { } }
@@ -728,8 +716,6 @@ namespace Microsoft.Build.Tasks
 
     public abstract partial class GenerateManifestBase : Utilities.Task
     {
-        protected GenerateManifestBase() { }
-
         public string AssemblyName { get { throw null; } set { } }
 
         public string AssemblyVersion { get { throw null; } set { } }
@@ -1531,8 +1517,6 @@ namespace Microsoft.Build.Tasks
 
     public partial class ResolveNonMSBuildProjectOutput : ResolveProjectBase
     {
-        public ResolveNonMSBuildProjectOutput() { }
-
         public string PreresolvedProjectOutputs { get { throw null; } set { } }
 
         [Framework.Output]
@@ -1601,8 +1585,6 @@ namespace Microsoft.Build.Tasks
 
     public sealed partial class RoslynCodeTaskFactory : Framework.ITaskFactory
     {
-        public RoslynCodeTaskFactory() { }
-
         public string FactoryName { get { throw null; } }
 
         public System.Type TaskType { get { throw null; } }
@@ -1663,8 +1645,6 @@ namespace Microsoft.Build.Tasks
     [System.Runtime.Versioning.SupportedOSPlatform("windows")]
     public sealed partial class SignFile : Utilities.Task
     {
-        public SignFile() { }
-
         [Framework.Required]
         public string CertificateThumbprint { get { throw null; } set { } }
 
@@ -1684,6 +1664,8 @@ namespace Microsoft.Build.Tasks
 
     public abstract partial class TaskExtension : Utilities.Task
     {
+        internal TaskExtension() { }
+
         public new Utilities.TaskLoggingHelper Log { get { throw null; } }
     }
 
@@ -1710,6 +1692,8 @@ namespace Microsoft.Build.Tasks
 
     public abstract partial class ToolTaskExtension : Utilities.ToolTask
     {
+        internal ToolTaskExtension() { }
+
         protected internal System.Collections.Hashtable Bag { get { throw null; } }
 
         protected override bool HasLoggedErrors { get { throw null; } }
@@ -1845,8 +1829,6 @@ namespace Microsoft.Build.Tasks
     [System.Obsolete("The XamlTaskFactory is not supported on .NET Core.  This class is included so that users receive run-time errors and should not be used for any other purpose.", true)]
     public sealed partial class XamlTaskFactory : Framework.ITaskFactory
     {
-        public XamlTaskFactory() { }
-
         public string FactoryName { get { throw null; } }
 
         public System.Type TaskType { get { throw null; } }
@@ -1958,6 +1940,8 @@ namespace Microsoft.Build.Tasks.Deployment.Bootstrapper
 
     public partial class BuildMessage : IBuildMessage
     {
+        internal BuildMessage() { }
+
         public int HelpId { get { throw null; } }
 
         public string HelpKeyword { get { throw null; } }
@@ -1976,6 +1960,8 @@ namespace Microsoft.Build.Tasks.Deployment.Bootstrapper
 
     public partial class BuildResults : IBuildResults
     {
+        internal BuildResults() { }
+
         public string[] ComponentFiles { get { throw null; } }
 
         public string KeyFile { get { throw null; } }
@@ -1987,8 +1973,6 @@ namespace Microsoft.Build.Tasks.Deployment.Bootstrapper
 
     public partial class BuildSettings : IBuildSettings
     {
-        public BuildSettings() { }
-
         public string ApplicationFile { get { throw null; } set { } }
 
         public string ApplicationName { get { throw null; } set { } }
@@ -2147,8 +2131,6 @@ namespace Microsoft.Build.Tasks.Deployment.Bootstrapper
 
     public partial class Product : IProduct
     {
-        public Product() { }
-
         public ProductCollection Includes { get { throw null; } }
 
         public string Name { get { throw null; } }
@@ -2160,11 +2142,15 @@ namespace Microsoft.Build.Tasks.Deployment.Bootstrapper
 
     public partial class ProductBuilder : IProductBuilder
     {
+        internal ProductBuilder() { }
+
         public Product Product { get { throw null; } }
     }
 
     public partial class ProductBuilderCollection : IProductBuilderCollection, System.Collections.IEnumerable
     {
+        internal ProductBuilderCollection() { }
+
         public void Add(ProductBuilder builder) { }
 
         public System.Collections.IEnumerator GetEnumerator() { throw null; }
@@ -2172,6 +2158,8 @@ namespace Microsoft.Build.Tasks.Deployment.Bootstrapper
 
     public partial class ProductCollection : IProductCollection, System.Collections.IEnumerable
     {
+        internal ProductCollection() { }
+
         public int Count { get { throw null; } }
 
         public System.Collections.IEnumerator GetEnumerator() { throw null; }
@@ -2380,8 +2368,6 @@ namespace Microsoft.Build.Tasks.Deployment.ManifestUtilities
 
     public partial class AssemblyManifest : Manifest
     {
-        public AssemblyManifest() { }
-
         public ProxyStub[] ExternalProxyStubs { get { throw null; } }
 
         [System.ComponentModel.Browsable(false)]
@@ -2418,6 +2404,8 @@ namespace Microsoft.Build.Tasks.Deployment.ManifestUtilities
 
     public sealed partial class AssemblyReferenceCollection : System.Collections.IEnumerable
     {
+        internal AssemblyReferenceCollection() { }
+
         public int Count { get { throw null; } }
 
         public AssemblyReference this[int index] { get { throw null; } }
@@ -2492,8 +2480,6 @@ namespace Microsoft.Build.Tasks.Deployment.ManifestUtilities
 
     public partial class ComClass
     {
-        public ComClass() { }
-
         public string ClsId { get { throw null; } }
 
         public string Description { get { throw null; } }
@@ -2522,8 +2508,6 @@ namespace Microsoft.Build.Tasks.Deployment.ManifestUtilities
 
     public sealed partial class CompatibleFramework
     {
-        public CompatibleFramework() { }
-
         public string Profile { get { throw null; } set { } }
 
         public string SupportedRuntime { get { throw null; } set { } }
@@ -2542,6 +2526,8 @@ namespace Microsoft.Build.Tasks.Deployment.ManifestUtilities
 
     public sealed partial class CompatibleFrameworkCollection : System.Collections.IEnumerable
     {
+        internal CompatibleFrameworkCollection() { }
+
         public int Count { get { throw null; } }
 
         public CompatibleFramework this[int index] { get { throw null; } }
@@ -2654,8 +2640,6 @@ namespace Microsoft.Build.Tasks.Deployment.ManifestUtilities
 
     public sealed partial class FileAssociation
     {
-        public FileAssociation() { }
-
         public string DefaultIcon { get { throw null; } set { } }
 
         public string Description { get { throw null; } set { } }
@@ -2679,6 +2663,8 @@ namespace Microsoft.Build.Tasks.Deployment.ManifestUtilities
 
     public sealed partial class FileAssociationCollection : System.Collections.IEnumerable
     {
+        internal FileAssociationCollection() { }
+
         public int Count { get { throw null; } }
 
         public FileAssociation this[int index] { get { throw null; } }
@@ -2724,6 +2710,8 @@ namespace Microsoft.Build.Tasks.Deployment.ManifestUtilities
 
     public sealed partial class FileReferenceCollection : System.Collections.IEnumerable
     {
+        internal FileReferenceCollection() { }
+
         public int Count { get { throw null; } }
 
         public FileReference this[int index] { get { throw null; } }
@@ -2833,6 +2821,8 @@ namespace Microsoft.Build.Tasks.Deployment.ManifestUtilities
 
     public sealed partial class OutputMessage
     {
+        internal OutputMessage() { }
+
         public string Name { get { throw null; } }
 
         public string Text { get { throw null; } }
@@ -2844,6 +2834,8 @@ namespace Microsoft.Build.Tasks.Deployment.ManifestUtilities
 
     public sealed partial class OutputMessageCollection : System.Collections.IEnumerable
     {
+        internal OutputMessageCollection() { }
+
         public int ErrorCount { get { throw null; } }
 
         public OutputMessage this[int index] { get { throw null; } }
@@ -2864,8 +2856,6 @@ namespace Microsoft.Build.Tasks.Deployment.ManifestUtilities
 
     public partial class ProxyStub
     {
-        public ProxyStub() { }
-
         public string BaseInterface { get { throw null; } }
 
         public string IID { get { throw null; } }
@@ -2915,8 +2905,6 @@ namespace Microsoft.Build.Tasks.Deployment.ManifestUtilities
 
     public sealed partial class TrustInfo
     {
-        public TrustInfo() { }
-
         public bool HasUnmanagedCodePermission { get { throw null; } }
 
         public bool IsFullTrust { get { throw null; } }
@@ -2950,8 +2938,6 @@ namespace Microsoft.Build.Tasks.Deployment.ManifestUtilities
 
     public partial class TypeLib
     {
-        public TypeLib() { }
-
         public string Flags { get { throw null; } }
 
         public string HelpDirectory { get { throw null; } }
@@ -3169,8 +3155,6 @@ namespace System.Deployment.Internal.CodeSigning
 {
     public sealed partial class RSAPKCS1SHA256SignatureDescription : Security.Cryptography.SignatureDescription
     {
-        public RSAPKCS1SHA256SignatureDescription() { }
-
         public override Security.Cryptography.AsymmetricSignatureDeformatter CreateDeformatter(Security.Cryptography.AsymmetricAlgorithm key) { throw null; }
 
         public override Security.Cryptography.AsymmetricSignatureFormatter CreateFormatter(Security.Cryptography.AsymmetricAlgorithm key) { throw null; }

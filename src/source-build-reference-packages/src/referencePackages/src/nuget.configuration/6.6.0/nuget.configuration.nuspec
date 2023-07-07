@@ -19,7 +19,5 @@
         <dependency id="System.Security.Cryptography.ProtectedData" version="4.4.0" exclude="Build,Analyzers" />
       </group>
     </dependencies>
-    <frameworkAssemblies>
-    </frameworkAssemblies>
   </metadata>
 </package>

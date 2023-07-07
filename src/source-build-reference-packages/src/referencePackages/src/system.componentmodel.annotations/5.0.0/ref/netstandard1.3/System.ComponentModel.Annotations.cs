@@ -4,75 +4,87 @@
 // ------------------------------------------------------------------------------
 // Changes to this file must follow the http://aka.ms/api-review process.
 // ------------------------------------------------------------------------------
-
-using System;
-using System.Diagnostics;
-using System.Reflection;
-using System.Runtime.CompilerServices;
-using System.Security;
-
-[assembly: Debuggable(DebuggableAttribute.DebuggingModes.IgnoreSymbolStoreSequencePoints)]
-[assembly: AllowPartiallyTrustedCallers]
-[assembly: ReferenceAssembly]
-[assembly: AssemblyTitle("System.ComponentModel.Annotations")]
-[assembly: AssemblyDescription("System.ComponentModel.Annotations")]
-[assembly: AssemblyDefaultAlias("System.ComponentModel.Annotations")]
-[assembly: AssemblyCompany("Microsoft Corporation")]
-[assembly: AssemblyProduct("Microsoft® .NET Framework")]
-[assembly: AssemblyCopyright("© Microsoft Corporation.  All rights reserved.")]
-[assembly: AssemblyFileVersion("4.6.23123.00")]
-[assembly: AssemblyInformationalVersion("4.6.23123.00 built by: SOURCEBUILD")]
-[assembly: CLSCompliant(true)]
-[assembly: AssemblyMetadata("", "")]
-[assembly: AssemblyVersion("4.0.10.0")]
-
-
-
-
+[assembly: System.Runtime.CompilerServices.CompilationRelaxations(8)]
+[assembly: System.Runtime.CompilerServices.RuntimeCompatibility(WrapNonExceptionThrows = true)]
+[assembly: System.Diagnostics.Debuggable(System.Diagnostics.DebuggableAttribute.DebuggingModes.IgnoreSymbolStoreSequencePoints)]
+[assembly: System.Security.AllowPartiallyTrustedCallers]
+[assembly: System.Runtime.CompilerServices.ReferenceAssembly]
+[assembly: System.Reflection.AssemblyTitle("System.ComponentModel.Annotations")]
+[assembly: System.Reflection.AssemblyDescription("System.ComponentModel.Annotations")]
+[assembly: System.Reflection.AssemblyDefaultAlias("System.ComponentModel.Annotations")]
+[assembly: System.Reflection.AssemblyCompany("Microsoft Corporation")]
+[assembly: System.Reflection.AssemblyProduct("Microsoft® .NET Framework")]
+[assembly: System.Reflection.AssemblyCopyright("© Microsoft Corporation.  All rights reserved.")]
+[assembly: System.Reflection.AssemblyFileVersion("4.6.23123.00")]
+[assembly: System.Reflection.AssemblyInformationalVersion("4.6.23123.00 built by: PROJECTKREL")]
+[assembly: System.CLSCompliant(true)]
+[assembly: System.Reflection.AssemblyMetadata("", "")]
+[assembly: System.Reflection.AssemblyVersionAttribute("4.0.10.0")]
+[assembly: System.Reflection.AssemblyFlagsAttribute((System.Reflection.AssemblyNameFlags)0x70)]
 namespace System.ComponentModel.DataAnnotations
 {
-    [System.AttributeUsageAttribute(System.AttributeTargets.Field | System.AttributeTargets.Property, AllowMultiple=false, Inherited=true)]
-    [System.ObsoleteAttribute("This attribute is no longer in use and will be ignored if applied.")]
-    public sealed partial class AssociationAttribute : System.Attribute
+    [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field, AllowMultiple = false, Inherited = true)]
+    [Obsolete("This attribute is no longer in use and will be ignored if applied.")]
+    public sealed partial class AssociationAttribute : Attribute
     {
         public AssociationAttribute(string name, string thisKey, string otherKey) { }
+
         public bool IsForeignKey { get { throw null; } set { } }
+
         public string Name { get { throw null; } }
+
         public string OtherKey { get { throw null; } }
-        public System.Collections.Generic.IEnumerable<string> OtherKeyMembers { get { throw null; } }
+
+        public Collections.Generic.IEnumerable<string> OtherKeyMembers { get { throw null; } }
+
         public string ThisKey { get { throw null; } }
-        public System.Collections.Generic.IEnumerable<string> ThisKeyMembers { get { throw null; } }
+
+        public Collections.Generic.IEnumerable<string> ThisKeyMembers { get { throw null; } }
     }
-    [System.AttributeUsageAttribute(System.AttributeTargets.Property, AllowMultiple=false)]
-    public partial class CompareAttribute : System.ComponentModel.DataAnnotations.ValidationAttribute
+
+    [AttributeUsage(AttributeTargets.Property, AllowMultiple = false)]
+    public partial class CompareAttribute : ValidationAttribute
     {
         public CompareAttribute(string otherProperty) { }
+
         public string OtherProperty { get { throw null; } }
+
         public string OtherPropertyDisplayName { get { throw null; } }
+
         public override bool RequiresValidationContext { get { throw null; } }
+
         public override string FormatErrorMessage(string name) { throw null; }
-        protected override System.ComponentModel.DataAnnotations.ValidationResult IsValid(object value, System.ComponentModel.DataAnnotations.ValidationContext validationContext) { throw null; }
+
+        protected override ValidationResult IsValid(object value, ValidationContext validationContext) { throw null; }
     }
-    [System.AttributeUsageAttribute(System.AttributeTargets.Field | System.AttributeTargets.Property, AllowMultiple=false, Inherited=true)]
-    public sealed partial class ConcurrencyCheckAttribute : System.Attribute
+
+    [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field, AllowMultiple = false, Inherited = true)]
+    public sealed partial class ConcurrencyCheckAttribute : Attribute
     {
-        public ConcurrencyCheckAttribute() { }
     }
-    [System.AttributeUsageAttribute(System.AttributeTargets.Field | System.AttributeTargets.Parameter | System.AttributeTargets.Property, AllowMultiple=false)]
-    public sealed partial class CreditCardAttribute : System.ComponentModel.DataAnnotations.DataTypeAttribute
+
+    [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field | AttributeTargets.Parameter, AllowMultiple = false)]
+    public sealed partial class CreditCardAttribute : DataTypeAttribute
     {
-        public CreditCardAttribute() : base (default(System.ComponentModel.DataAnnotations.DataType)) { }
+        public CreditCardAttribute() : base(default(DataType)) { }
+
         public override bool IsValid(object value) { throw null; }
     }
-    [System.AttributeUsageAttribute(System.AttributeTargets.Class | System.AttributeTargets.Field | System.AttributeTargets.Method | System.AttributeTargets.Parameter | System.AttributeTargets.Property, AllowMultiple=true)]
-    public sealed partial class CustomValidationAttribute : System.ComponentModel.DataAnnotations.ValidationAttribute
+
+    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method | AttributeTargets.Property | AttributeTargets.Field | AttributeTargets.Parameter, AllowMultiple = true)]
+    public sealed partial class CustomValidationAttribute : ValidationAttribute
     {
-        public CustomValidationAttribute(System.Type validatorType, string method) { }
+        public CustomValidationAttribute(Type validatorType, string method) { }
+
         public string Method { get { throw null; } }
-        public System.Type ValidatorType { get { throw null; } }
+
+        public Type ValidatorType { get { throw null; } }
+
         public override string FormatErrorMessage(string name) { throw null; }
-        protected override System.ComponentModel.DataAnnotations.ValidationResult IsValid(object value, System.ComponentModel.DataAnnotations.ValidationContext validationContext) { throw null; }
+
+        protected override ValidationResult IsValid(object value, ValidationContext validationContext) { throw null; }
     }
+
     public enum DataType
     {
         Custom = 0,
@@ -91,312 +103,468 @@ namespace System.ComponentModel.DataAnnotations
         ImageUrl = 13,
         CreditCard = 14,
         PostalCode = 15,
-        Upload = 16,
+        Upload = 16
     }
-    [System.AttributeUsageAttribute(System.AttributeTargets.Field | System.AttributeTargets.Method | System.AttributeTargets.Parameter | System.AttributeTargets.Property, AllowMultiple=false)]
-    public partial class DataTypeAttribute : System.ComponentModel.DataAnnotations.ValidationAttribute
+
+    [AttributeUsage(AttributeTargets.Method | AttributeTargets.Property | AttributeTargets.Field | AttributeTargets.Parameter, AllowMultiple = false)]
+    public partial class DataTypeAttribute : ValidationAttribute
     {
-        public DataTypeAttribute(System.ComponentModel.DataAnnotations.DataType dataType) { }
+        public DataTypeAttribute(DataType dataType) { }
+
         public DataTypeAttribute(string customDataType) { }
+
         public string CustomDataType { get { throw null; } }
-        public System.ComponentModel.DataAnnotations.DataType DataType { get { throw null; } }
-        public System.ComponentModel.DataAnnotations.DisplayFormatAttribute DisplayFormat { get { throw null; } protected set { } }
+
+        public DataType DataType { get { throw null; } }
+
+        public DisplayFormatAttribute DisplayFormat { get { throw null; } protected set { } }
+
         public virtual string GetDataTypeName() { throw null; }
+
         public override bool IsValid(object value) { throw null; }
     }
-    [System.AttributeUsageAttribute(System.AttributeTargets.Field | System.AttributeTargets.Method | System.AttributeTargets.Parameter | System.AttributeTargets.Property, AllowMultiple=false)]
-    public sealed partial class DisplayAttribute : System.Attribute
+
+    [AttributeUsage(AttributeTargets.Method | AttributeTargets.Property | AttributeTargets.Field | AttributeTargets.Parameter, AllowMultiple = false)]
+    public sealed partial class DisplayAttribute : Attribute
     {
-        public DisplayAttribute() { }
         public bool AutoGenerateField { get { throw null; } set { } }
+
         public bool AutoGenerateFilter { get { throw null; } set { } }
+
         public string Description { get { throw null; } set { } }
+
         public string GroupName { get { throw null; } set { } }
+
         public string Name { get { throw null; } set { } }
+
         public int Order { get { throw null; } set { } }
+
         public string Prompt { get { throw null; } set { } }
-        public System.Type ResourceType { get { throw null; } set { } }
+
+        public Type ResourceType { get { throw null; } set { } }
+
         public string ShortName { get { throw null; } set { } }
+
         public bool? GetAutoGenerateField() { throw null; }
+
         public bool? GetAutoGenerateFilter() { throw null; }
+
         public string GetDescription() { throw null; }
+
         public string GetGroupName() { throw null; }
+
         public string GetName() { throw null; }
+
         public int? GetOrder() { throw null; }
+
         public string GetPrompt() { throw null; }
+
         public string GetShortName() { throw null; }
     }
-    [System.AttributeUsageAttribute(System.AttributeTargets.Class, Inherited=true, AllowMultiple=false)]
-    public partial class DisplayColumnAttribute : System.Attribute
+
+    [AttributeUsage(AttributeTargets.Class, Inherited = true, AllowMultiple = false)]
+    public partial class DisplayColumnAttribute : Attribute
     {
-        public DisplayColumnAttribute(string displayColumn) { }
-        public DisplayColumnAttribute(string displayColumn, string sortColumn) { }
         public DisplayColumnAttribute(string displayColumn, string sortColumn, bool sortDescending) { }
+
+        public DisplayColumnAttribute(string displayColumn, string sortColumn) { }
+
+        public DisplayColumnAttribute(string displayColumn) { }
+
         public string DisplayColumn { get { throw null; } }
+
         public string SortColumn { get { throw null; } }
+
         public bool SortDescending { get { throw null; } }
     }
-    [System.AttributeUsageAttribute(System.AttributeTargets.Field | System.AttributeTargets.Property, AllowMultiple=false)]
-    public partial class DisplayFormatAttribute : System.Attribute
+
+    [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field, AllowMultiple = false)]
+    public partial class DisplayFormatAttribute : Attribute
     {
-        public DisplayFormatAttribute() { }
         public bool ApplyFormatInEditMode { get { throw null; } set { } }
+
         public bool ConvertEmptyStringToNull { get { throw null; } set { } }
+
         public string DataFormatString { get { throw null; } set { } }
+
         public bool HtmlEncode { get { throw null; } set { } }
+
         public string NullDisplayText { get { throw null; } set { } }
     }
-    [System.AttributeUsageAttribute(System.AttributeTargets.Field | System.AttributeTargets.Property, AllowMultiple=false, Inherited=true)]
-    public sealed partial class EditableAttribute : System.Attribute
+
+    [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field, AllowMultiple = false, Inherited = true)]
+    public sealed partial class EditableAttribute : Attribute
     {
         public EditableAttribute(bool allowEdit) { }
+
         public bool AllowEdit { get { throw null; } }
+
         public bool AllowInitialValue { get { throw null; } set { } }
     }
-    [System.AttributeUsageAttribute(System.AttributeTargets.Field | System.AttributeTargets.Parameter | System.AttributeTargets.Property, AllowMultiple=false)]
-    public sealed partial class EmailAddressAttribute : System.ComponentModel.DataAnnotations.DataTypeAttribute
+
+    [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field | AttributeTargets.Parameter, AllowMultiple = false)]
+    public sealed partial class EmailAddressAttribute : DataTypeAttribute
     {
-        public EmailAddressAttribute() : base (default(System.ComponentModel.DataAnnotations.DataType)) { }
+        public EmailAddressAttribute() : base(default(DataType)) { }
+
         public override bool IsValid(object value) { throw null; }
     }
-    [System.AttributeUsageAttribute(System.AttributeTargets.Field | System.AttributeTargets.Method | System.AttributeTargets.Parameter | System.AttributeTargets.Property, AllowMultiple=false)]
-    public sealed partial class EnumDataTypeAttribute : System.ComponentModel.DataAnnotations.DataTypeAttribute
+
+    [AttributeUsage(AttributeTargets.Method | AttributeTargets.Property | AttributeTargets.Field | AttributeTargets.Parameter, AllowMultiple = false)]
+    public sealed partial class EnumDataTypeAttribute : DataTypeAttribute
     {
-        public EnumDataTypeAttribute(System.Type enumType) : base (default(System.ComponentModel.DataAnnotations.DataType)) { }
-        public System.Type EnumType { get { throw null; } }
+        public EnumDataTypeAttribute(Type enumType) : base(default(DataType)) { }
+
+        public Type EnumType { get { throw null; } }
+
         public override bool IsValid(object value) { throw null; }
     }
-    [System.AttributeUsageAttribute(System.AttributeTargets.Field | System.AttributeTargets.Parameter | System.AttributeTargets.Property, AllowMultiple=false)]
-    public sealed partial class FileExtensionsAttribute : System.ComponentModel.DataAnnotations.DataTypeAttribute
+
+    [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field | AttributeTargets.Parameter, AllowMultiple = false)]
+    public sealed partial class FileExtensionsAttribute : DataTypeAttribute
     {
-        public FileExtensionsAttribute() : base (default(System.ComponentModel.DataAnnotations.DataType)) { }
+        public FileExtensionsAttribute() : base(default(DataType)) { }
+
         public string Extensions { get { throw null; } set { } }
+
         public override string FormatErrorMessage(string name) { throw null; }
+
         public override bool IsValid(object value) { throw null; }
     }
-    [System.AttributeUsageAttribute(System.AttributeTargets.Field | System.AttributeTargets.Property, AllowMultiple=false)]
-    [System.ObsoleteAttribute("This attribute is no longer in use and will be ignored if applied.")]
-    public sealed partial class FilterUIHintAttribute : System.Attribute
+
+    [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field, AllowMultiple = false)]
+    [Obsolete("This attribute is no longer in use and will be ignored if applied.")]
+    public sealed partial class FilterUIHintAttribute : Attribute
     {
-        public FilterUIHintAttribute(string filterUIHint) { }
-        public FilterUIHintAttribute(string filterUIHint, string presentationLayer) { }
         public FilterUIHintAttribute(string filterUIHint, string presentationLayer, params object[] controlParameters) { }
-        public System.Collections.Generic.IDictionary<string, object> ControlParameters { get { throw null; } }
+
+        public FilterUIHintAttribute(string filterUIHint, string presentationLayer) { }
+
+        public FilterUIHintAttribute(string filterUIHint) { }
+
+        public Collections.Generic.IDictionary<string, object> ControlParameters { get { throw null; } }
+
         public string FilterUIHint { get { throw null; } }
+
         public string PresentationLayer { get { throw null; } }
+
         public override bool Equals(object obj) { throw null; }
+
         public override int GetHashCode() { throw null; }
     }
+
     public partial interface IValidatableObject
     {
-        System.Collections.Generic.IEnumerable<System.ComponentModel.DataAnnotations.ValidationResult> Validate(System.ComponentModel.DataAnnotations.ValidationContext validationContext);
+        Collections.Generic.IEnumerable<ValidationResult> Validate(ValidationContext validationContext);
     }
-    [System.AttributeUsageAttribute(System.AttributeTargets.Field | System.AttributeTargets.Property, AllowMultiple=false, Inherited=true)]
-    public sealed partial class KeyAttribute : System.Attribute
+
+    [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field, AllowMultiple = false, Inherited = true)]
+    public sealed partial class KeyAttribute : Attribute
     {
-        public KeyAttribute() { }
     }
-    [System.AttributeUsageAttribute(System.AttributeTargets.Field | System.AttributeTargets.Parameter | System.AttributeTargets.Property, AllowMultiple=false)]
-    public partial class MaxLengthAttribute : System.ComponentModel.DataAnnotations.ValidationAttribute
+
+    [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field | AttributeTargets.Parameter, AllowMultiple = false)]
+    public partial class MaxLengthAttribute : ValidationAttribute
     {
         public MaxLengthAttribute() { }
+
         public MaxLengthAttribute(int length) { }
+
         public int Length { get { throw null; } }
+
         public override string FormatErrorMessage(string name) { throw null; }
+
         public override bool IsValid(object value) { throw null; }
     }
-    [System.AttributeUsageAttribute(System.AttributeTargets.Field | System.AttributeTargets.Parameter | System.AttributeTargets.Property, AllowMultiple=false)]
-    public partial class MinLengthAttribute : System.ComponentModel.DataAnnotations.ValidationAttribute
+
+    [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field | AttributeTargets.Parameter, AllowMultiple = false)]
+    public partial class MinLengthAttribute : ValidationAttribute
     {
         public MinLengthAttribute(int length) { }
+
         public int Length { get { throw null; } }
+
         public override string FormatErrorMessage(string name) { throw null; }
+
         public override bool IsValid(object value) { throw null; }
     }
-    [System.AttributeUsageAttribute(System.AttributeTargets.Field | System.AttributeTargets.Parameter | System.AttributeTargets.Property, AllowMultiple=false)]
-    public sealed partial class PhoneAttribute : System.ComponentModel.DataAnnotations.DataTypeAttribute
+
+    [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field | AttributeTargets.Parameter, AllowMultiple = false)]
+    public sealed partial class PhoneAttribute : DataTypeAttribute
     {
-        public PhoneAttribute() : base (default(System.ComponentModel.DataAnnotations.DataType)) { }
+        public PhoneAttribute() : base(default(DataType)) { }
+
         public override bool IsValid(object value) { throw null; }
     }
-    [System.AttributeUsageAttribute(System.AttributeTargets.Field | System.AttributeTargets.Parameter | System.AttributeTargets.Property, AllowMultiple=false)]
-    public partial class RangeAttribute : System.ComponentModel.DataAnnotations.ValidationAttribute
+
+    [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field | AttributeTargets.Parameter, AllowMultiple = false)]
+    public partial class RangeAttribute : ValidationAttribute
     {
         public RangeAttribute(double minimum, double maximum) { }
+
         public RangeAttribute(int minimum, int maximum) { }
-        public RangeAttribute(System.Type type, string minimum, string maximum) { }
+
+        public RangeAttribute(Type type, string minimum, string maximum) { }
+
         public object Maximum { get { throw null; } }
+
         public object Minimum { get { throw null; } }
-        public System.Type OperandType { get { throw null; } }
+
+        public Type OperandType { get { throw null; } }
+
         public override string FormatErrorMessage(string name) { throw null; }
+
         public override bool IsValid(object value) { throw null; }
     }
-    [System.AttributeUsageAttribute(System.AttributeTargets.Field | System.AttributeTargets.Parameter | System.AttributeTargets.Property, AllowMultiple=false)]
-    public partial class RegularExpressionAttribute : System.ComponentModel.DataAnnotations.ValidationAttribute
+
+    [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field | AttributeTargets.Parameter, AllowMultiple = false)]
+    public partial class RegularExpressionAttribute : ValidationAttribute
     {
         public RegularExpressionAttribute(string pattern) { }
+
         public string Pattern { get { throw null; } }
+
         public override string FormatErrorMessage(string name) { throw null; }
+
         public override bool IsValid(object value) { throw null; }
     }
-    [System.AttributeUsageAttribute(System.AttributeTargets.Field | System.AttributeTargets.Parameter | System.AttributeTargets.Property, AllowMultiple=false)]
-    public partial class RequiredAttribute : System.ComponentModel.DataAnnotations.ValidationAttribute
+
+    [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field | AttributeTargets.Parameter, AllowMultiple = false)]
+    public partial class RequiredAttribute : ValidationAttribute
     {
-        public RequiredAttribute() { }
         public bool AllowEmptyStrings { get { throw null; } set { } }
+
         public override bool IsValid(object value) { throw null; }
     }
-    [System.AttributeUsageAttribute(System.AttributeTargets.Field | System.AttributeTargets.Property, AllowMultiple=false)]
-    public partial class ScaffoldColumnAttribute : System.Attribute
+
+    [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field, AllowMultiple = false)]
+    public partial class ScaffoldColumnAttribute : Attribute
     {
         public ScaffoldColumnAttribute(bool scaffold) { }
+
         public bool Scaffold { get { throw null; } }
     }
-    [System.AttributeUsageAttribute(System.AttributeTargets.Field | System.AttributeTargets.Parameter | System.AttributeTargets.Property, AllowMultiple=false)]
-    public partial class StringLengthAttribute : System.ComponentModel.DataAnnotations.ValidationAttribute
+
+    [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field | AttributeTargets.Parameter, AllowMultiple = false)]
+    public partial class StringLengthAttribute : ValidationAttribute
     {
         public StringLengthAttribute(int maximumLength) { }
+
         public int MaximumLength { get { throw null; } }
+
         public int MinimumLength { get { throw null; } set { } }
+
         public override string FormatErrorMessage(string name) { throw null; }
+
         public override bool IsValid(object value) { throw null; }
     }
-    [System.AttributeUsageAttribute(System.AttributeTargets.Field | System.AttributeTargets.Property, AllowMultiple=false, Inherited=true)]
-    public sealed partial class TimestampAttribute : System.Attribute
+
+    [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field, AllowMultiple = false, Inherited = true)]
+    public sealed partial class TimestampAttribute : Attribute
     {
-        public TimestampAttribute() { }
     }
-    [System.AttributeUsageAttribute(System.AttributeTargets.Field | System.AttributeTargets.Property, AllowMultiple=true)]
-    public partial class UIHintAttribute : System.Attribute
+
+    [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field, AllowMultiple = true)]
+    public partial class UIHintAttribute : Attribute
     {
-        public UIHintAttribute(string uiHint) { }
-        public UIHintAttribute(string uiHint, string presentationLayer) { }
         public UIHintAttribute(string uiHint, string presentationLayer, params object[] controlParameters) { }
-        public System.Collections.Generic.IDictionary<string, object> ControlParameters { get { throw null; } }
+
+        public UIHintAttribute(string uiHint, string presentationLayer) { }
+
+        public UIHintAttribute(string uiHint) { }
+
+        public Collections.Generic.IDictionary<string, object> ControlParameters { get { throw null; } }
+
         public string PresentationLayer { get { throw null; } }
+
         public string UIHint { get { throw null; } }
+
         public override bool Equals(object obj) { throw null; }
+
         public override int GetHashCode() { throw null; }
     }
-    [System.AttributeUsageAttribute(System.AttributeTargets.Field | System.AttributeTargets.Parameter | System.AttributeTargets.Property, AllowMultiple=false)]
-    public sealed partial class UrlAttribute : System.ComponentModel.DataAnnotations.DataTypeAttribute
+
+    [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field | AttributeTargets.Parameter, AllowMultiple = false)]
+    public sealed partial class UrlAttribute : DataTypeAttribute
     {
-        public UrlAttribute() : base (default(System.ComponentModel.DataAnnotations.DataType)) { }
+        public UrlAttribute() : base(default(DataType)) { }
+
         public override bool IsValid(object value) { throw null; }
     }
-    public abstract partial class ValidationAttribute : System.Attribute
+
+    public abstract partial class ValidationAttribute : Attribute
     {
         protected ValidationAttribute() { }
-        protected ValidationAttribute(System.Func<string> errorMessageAccessor) { }
+
+        protected ValidationAttribute(Func<string> errorMessageAccessor) { }
+
         protected ValidationAttribute(string errorMessage) { }
+
         public string ErrorMessage { get { throw null; } set { } }
+
         public string ErrorMessageResourceName { get { throw null; } set { } }
-        public System.Type ErrorMessageResourceType { get { throw null; } set { } }
+
+        public Type ErrorMessageResourceType { get { throw null; } set { } }
+
         protected string ErrorMessageString { get { throw null; } }
+
         public virtual bool RequiresValidationContext { get { throw null; } }
+
         public virtual string FormatErrorMessage(string name) { throw null; }
-        public System.ComponentModel.DataAnnotations.ValidationResult GetValidationResult(object value, System.ComponentModel.DataAnnotations.ValidationContext validationContext) { throw null; }
+
+        public ValidationResult GetValidationResult(object value, ValidationContext validationContext) { throw null; }
+
+        protected virtual ValidationResult IsValid(object value, ValidationContext validationContext) { throw null; }
+
         public virtual bool IsValid(object value) { throw null; }
-        protected virtual System.ComponentModel.DataAnnotations.ValidationResult IsValid(object value, System.ComponentModel.DataAnnotations.ValidationContext validationContext) { throw null; }
-        public void Validate(object value, System.ComponentModel.DataAnnotations.ValidationContext validationContext) { }
+
+        public void Validate(object value, ValidationContext validationContext) { }
+
         public void Validate(object value, string name) { }
     }
-    public sealed partial class ValidationContext : System.IServiceProvider
+
+    public sealed partial class ValidationContext : IServiceProvider
     {
+        public ValidationContext(object instance, Collections.Generic.IDictionary<object, object> items) { }
+
+        public ValidationContext(object instance, IServiceProvider serviceProvider, Collections.Generic.IDictionary<object, object> items) { }
+
         public ValidationContext(object instance) { }
-        public ValidationContext(object instance, System.Collections.Generic.IDictionary<object, object> items) { }
-        public ValidationContext(object instance, System.IServiceProvider serviceProvider, System.Collections.Generic.IDictionary<object, object> items) { }
+
         public string DisplayName { get { throw null; } set { } }
-        public System.Collections.Generic.IDictionary<object, object> Items { get { throw null; } }
+
+        public Collections.Generic.IDictionary<object, object> Items { get { throw null; } }
+
         public string MemberName { get { throw null; } set { } }
+
         public object ObjectInstance { get { throw null; } }
-        public System.Type ObjectType { get { throw null; } }
-        public object GetService(System.Type serviceType) { throw null; }
-        public void InitializeServiceProvider(System.Func<System.Type, object> serviceProvider) { }
+
+        public Type ObjectType { get { throw null; } }
+
+        public object GetService(Type serviceType) { throw null; }
+
+        public void InitializeServiceProvider(Func<Type, object> serviceProvider) { }
     }
-    public partial class ValidationException : System.Exception
+
+    public partial class ValidationException : Exception
     {
         public ValidationException() { }
-        public ValidationException(System.ComponentModel.DataAnnotations.ValidationResult validationResult, System.ComponentModel.DataAnnotations.ValidationAttribute validatingAttribute, object value) { }
+
+        public ValidationException(ValidationResult validationResult, ValidationAttribute validatingAttribute, object value) { }
+
+        public ValidationException(string errorMessage, ValidationAttribute validatingAttribute, object value) { }
+
+        public ValidationException(string message, Exception innerException) { }
+
         public ValidationException(string message) { }
-        public ValidationException(string errorMessage, System.ComponentModel.DataAnnotations.ValidationAttribute validatingAttribute, object value) { }
-        public ValidationException(string message, System.Exception innerException) { }
-        public System.ComponentModel.DataAnnotations.ValidationAttribute ValidationAttribute { get { throw null; } }
-        public System.ComponentModel.DataAnnotations.ValidationResult ValidationResult { get { throw null; } }
+
+        public ValidationAttribute ValidationAttribute { get { throw null; } }
+
+        public ValidationResult ValidationResult { get { throw null; } }
+
         public object Value { get { throw null; } }
     }
+
     public partial class ValidationResult
     {
-        public static readonly System.ComponentModel.DataAnnotations.ValidationResult Success;
-        protected ValidationResult(System.ComponentModel.DataAnnotations.ValidationResult validationResult) { }
+        public static readonly ValidationResult Success;
+        protected ValidationResult(ValidationResult validationResult) { }
+
+        public ValidationResult(string errorMessage, Collections.Generic.IEnumerable<string> memberNames) { }
+
         public ValidationResult(string errorMessage) { }
-        public ValidationResult(string errorMessage, System.Collections.Generic.IEnumerable<string> memberNames) { }
+
         public string ErrorMessage { get { throw null; } set { } }
-        public System.Collections.Generic.IEnumerable<string> MemberNames { get { throw null; } }
+
+        public Collections.Generic.IEnumerable<string> MemberNames { get { throw null; } }
+
         public override string ToString() { throw null; }
     }
+
     public static partial class Validator
     {
-        public static bool TryValidateObject(object instance, System.ComponentModel.DataAnnotations.ValidationContext validationContext, System.Collections.Generic.ICollection<System.ComponentModel.DataAnnotations.ValidationResult> validationResults) { throw null; }
-        public static bool TryValidateObject(object instance, System.ComponentModel.DataAnnotations.ValidationContext validationContext, System.Collections.Generic.ICollection<System.ComponentModel.DataAnnotations.ValidationResult> validationResults, bool validateAllProperties) { throw null; }
-        public static bool TryValidateProperty(object value, System.ComponentModel.DataAnnotations.ValidationContext validationContext, System.Collections.Generic.ICollection<System.ComponentModel.DataAnnotations.ValidationResult> validationResults) { throw null; }
-        public static bool TryValidateValue(object value, System.ComponentModel.DataAnnotations.ValidationContext validationContext, System.Collections.Generic.ICollection<System.ComponentModel.DataAnnotations.ValidationResult> validationResults, System.Collections.Generic.IEnumerable<System.ComponentModel.DataAnnotations.ValidationAttribute> validationAttributes) { throw null; }
-        public static void ValidateObject(object instance, System.ComponentModel.DataAnnotations.ValidationContext validationContext) { }
-        public static void ValidateObject(object instance, System.ComponentModel.DataAnnotations.ValidationContext validationContext, bool validateAllProperties) { }
-        public static void ValidateProperty(object value, System.ComponentModel.DataAnnotations.ValidationContext validationContext) { }
-        public static void ValidateValue(object value, System.ComponentModel.DataAnnotations.ValidationContext validationContext, System.Collections.Generic.IEnumerable<System.ComponentModel.DataAnnotations.ValidationAttribute> validationAttributes) { }
+        public static bool TryValidateObject(object instance, ValidationContext validationContext, Collections.Generic.ICollection<ValidationResult> validationResults, bool validateAllProperties) { throw null; }
+
+        public static bool TryValidateObject(object instance, ValidationContext validationContext, Collections.Generic.ICollection<ValidationResult> validationResults) { throw null; }
+
+        public static bool TryValidateProperty(object value, ValidationContext validationContext, Collections.Generic.ICollection<ValidationResult> validationResults) { throw null; }
+
+        public static bool TryValidateValue(object value, ValidationContext validationContext, Collections.Generic.ICollection<ValidationResult> validationResults, Collections.Generic.IEnumerable<ValidationAttribute> validationAttributes) { throw null; }
+
+        public static void ValidateObject(object instance, ValidationContext validationContext, bool validateAllProperties) { }
+
+        public static void ValidateObject(object instance, ValidationContext validationContext) { }
+
+        public static void ValidateProperty(object value, ValidationContext validationContext) { }
+
+        public static void ValidateValue(object value, ValidationContext validationContext, Collections.Generic.IEnumerable<ValidationAttribute> validationAttributes) { }
     }
 }
+
 namespace System.ComponentModel.DataAnnotations.Schema
 {
-    [System.AttributeUsageAttribute(System.AttributeTargets.Field | System.AttributeTargets.Property, AllowMultiple=false)]
-    public partial class ColumnAttribute : System.Attribute
+    [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field, AllowMultiple = false)]
+    public partial class ColumnAttribute : Attribute
     {
         public ColumnAttribute() { }
+
         public ColumnAttribute(string name) { }
+
         public string Name { get { throw null; } }
+
         public int Order { get { throw null; } set { } }
+
         public string TypeName { get { throw null; } set { } }
     }
-    [System.AttributeUsageAttribute(System.AttributeTargets.Class, AllowMultiple=false)]
-    public partial class ComplexTypeAttribute : System.Attribute
+
+    [AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
+    public partial class ComplexTypeAttribute : Attribute
     {
-        public ComplexTypeAttribute() { }
     }
-    [System.AttributeUsageAttribute(System.AttributeTargets.Field | System.AttributeTargets.Property, AllowMultiple=false)]
-    public partial class DatabaseGeneratedAttribute : System.Attribute
+
+    [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field, AllowMultiple = false)]
+    public partial class DatabaseGeneratedAttribute : Attribute
     {
-        public DatabaseGeneratedAttribute(System.ComponentModel.DataAnnotations.Schema.DatabaseGeneratedOption databaseGeneratedOption) { }
-        public System.ComponentModel.DataAnnotations.Schema.DatabaseGeneratedOption DatabaseGeneratedOption { get { throw null; } }
+        public DatabaseGeneratedAttribute(DatabaseGeneratedOption databaseGeneratedOption) { }
+
+        public DatabaseGeneratedOption DatabaseGeneratedOption { get { throw null; } }
     }
+
     public enum DatabaseGeneratedOption
     {
         None = 0,
         Identity = 1,
-        Computed = 2,
+        Computed = 2
     }
-    [System.AttributeUsageAttribute(System.AttributeTargets.Field | System.AttributeTargets.Property, AllowMultiple=false)]
-    public partial class ForeignKeyAttribute : System.Attribute
+
+    [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field, AllowMultiple = false)]
+    public partial class ForeignKeyAttribute : Attribute
     {
         public ForeignKeyAttribute(string name) { }
+
         public string Name { get { throw null; } }
     }
-    [System.AttributeUsageAttribute(System.AttributeTargets.Field | System.AttributeTargets.Property, AllowMultiple=false)]
-    public partial class InversePropertyAttribute : System.Attribute
+
+    [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field, AllowMultiple = false)]
+    public partial class InversePropertyAttribute : Attribute
     {
         public InversePropertyAttribute(string property) { }
+
         public string Property { get { throw null; } }
     }
-    [System.AttributeUsageAttribute(System.AttributeTargets.Class | System.AttributeTargets.Field | System.AttributeTargets.Property, AllowMultiple=false)]
-    public partial class NotMappedAttribute : System.Attribute
+
+    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Property | AttributeTargets.Field, AllowMultiple = false)]
+    public partial class NotMappedAttribute : Attribute
     {
-        public NotMappedAttribute() { }
     }
-    [System.AttributeUsageAttribute(System.AttributeTargets.Class, AllowMultiple=false)]
-    public partial class TableAttribute : System.Attribute
+
+    [AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
+    public partial class TableAttribute : Attribute
     {
         public TableAttribute(string name) { }
+
         public string Name { get { throw null; } }
+
         public string Schema { get { throw null; } set { } }
     }
 }

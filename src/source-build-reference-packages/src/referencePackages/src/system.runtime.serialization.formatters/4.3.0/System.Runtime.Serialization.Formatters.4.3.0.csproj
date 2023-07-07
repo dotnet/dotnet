@@ -1,32 +1,14 @@
 <Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-    <TargetFrameworks>netstandard1.3;netstandard1.4</TargetFrameworks>
-    <NuspecFile>$(ArtifactsBinDir)system.runtime.serialization.formatters/4.3.0/system.runtime.serialization.formatters.nuspec</NuspecFile>
-   </PropertyGroup>
 
   <PropertyGroup>
-    <OutputPath>$(ArtifactsBinDir)system.runtime.serialization.formatters/4.3.0/ref/</OutputPath>
-    <IntermediateOutputPath>$(ArtifactsObjDir)system.runtime.serialization.formatters/4.3.0</IntermediateOutputPath>
+    <TargetFrameworks>netstandard1.3</TargetFrameworks>
+    <AssemblyName>System.Runtime.Serialization.Formatters</AssemblyName>
+    <ProjectTemplateVersion>2</ProjectTemplateVersion>
   </PropertyGroup>
-    <PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard1.4' ">
-        <OutputPath>$(ArtifactsBinDir)system.runtime.serialization.formatters/4.3.0/lib/</OutputPath>
-    </PropertyGroup>
 
-  <ItemGroup>
-    <Compile Include="**/ref/$(TargetFramework)/*.cs" />
-    <Compile Include="**/lib/$(TargetFramework)/*.cs" />
-  </ItemGroup>
-
-  <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard1.3' ">
-      <PackageReference Include="System.Runtime" Version="4.3.0" />
-      <PackageReference Include="System.Runtime.Serialization.Primitives" Version="4.3.0" />
-  </ItemGroup>
-  <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard1.4' ">
-      <PackageReference Include="System.Collections" Version="4.3.0" />
-      <PackageReference Include="System.Reflection" Version="4.3.0" />
-      <PackageReference Include="System.Resources.ResourceManager" Version="4.3.0" />
-      <PackageReference Include="System.Runtime" Version="4.3.0" />
-      <PackageReference Include="System.Runtime.Serialization.Primitives" Version="4.3.0" />
+  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard1.3'">
+    <PackageReference Include="System.Runtime" Version="4.3.0" />
+    <PackageReference Include="System.Runtime.Serialization.Primitives" Version="4.3.0" />
   </ItemGroup>
 
 </Project>

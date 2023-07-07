@@ -34,8 +34,6 @@ namespace NuGet.Protocol
 {
     public partial class AlternatePackageMetadata
     {
-        public AlternatePackageMetadata() { }
-
         [Newtonsoft.Json.JsonProperty(PropertyName = "id")]
         public string PackageId { get { throw null; } }
 
@@ -45,8 +43,6 @@ namespace NuGet.Protocol
 
     public partial class AmbientAuthenticationState
     {
-        public AmbientAuthenticationState() { }
-
         public int AuthenticationRetriesCount { get { throw null; } }
 
         public bool IsBlocked { get { throw null; } }
@@ -291,8 +287,6 @@ namespace NuGet.Protocol
 
     public abstract partial class FindLocalPackagesResource : Core.Types.INuGetResource
     {
-        protected FindLocalPackagesResource() { }
-
         public string Root { get { throw null; } protected set { } }
 
         public virtual bool Exists(Packaging.Core.PackageIdentity identity, Common.ILogger logger, System.Threading.CancellationToken token) { throw null; }
@@ -398,8 +392,6 @@ namespace NuGet.Protocol
 
     public partial class FingerprintsConverter : Newtonsoft.Json.JsonConverter
     {
-        public FingerprintsConverter() { }
-
         public override bool CanWrite { get { throw null; } }
 
         public override bool CanConvert(System.Type objectType) { throw null; }
@@ -520,8 +512,6 @@ namespace NuGet.Protocol
 
     public partial class HttpRetryHandler : IHttpRetryHandler
     {
-        public HttpRetryHandler() { }
-
         public System.Threading.Tasks.Task<System.Net.Http.HttpResponseMessage> SendAsync(HttpRetryHandlerRequest request, Common.ILogger log, System.Threading.CancellationToken cancellationToken) { throw null; }
 
         public System.Threading.Tasks.Task<System.Net.Http.HttpResponseMessage> SendAsync(HttpRetryHandlerRequest request, string source, Common.ILogger log, System.Threading.CancellationToken cancellationToken) { throw null; }
@@ -985,8 +975,6 @@ namespace NuGet.Protocol
 
     public partial class LocalPackageFileCache
     {
-        public LocalPackageFileCache() { }
-
         public virtual System.Lazy<System.Collections.Generic.IReadOnlyList<string>> GetOrAddFiles(string expandedPath) { throw null; }
 
         public virtual System.Lazy<Packaging.NuspecReader> GetOrAddNuspec(string manifestPath, string expandedPath) { throw null; }
@@ -1168,8 +1156,6 @@ namespace NuGet.Protocol
 
     public partial class MetadataFieldConverter : Newtonsoft.Json.JsonConverter
     {
-        public MetadataFieldConverter() { }
-
         public override bool CanWrite { get { throw null; } }
 
         public override bool CanConvert(System.Type objectType) { throw null; }
@@ -1181,8 +1167,6 @@ namespace NuGet.Protocol
 
     public partial class MetadataReferenceCache
     {
-        public MetadataReferenceCache() { }
-
         public T GetObject<T>(T input) { throw null; }
 
         public string GetString(string s) { throw null; }
@@ -1232,8 +1216,6 @@ namespace NuGet.Protocol
 
     public partial class NuGetVersionConverter : Newtonsoft.Json.JsonConverter
     {
-        public NuGetVersionConverter() { }
-
         public override bool CanConvert(System.Type objectType) { throw null; }
 
         public override object ReadJson(Newtonsoft.Json.JsonReader reader, System.Type objectType, object existingValue, Newtonsoft.Json.JsonSerializer serializer) { throw null; }
@@ -1243,8 +1225,6 @@ namespace NuGet.Protocol
 
     public partial class NullThrottle : IThrottle
     {
-        public NullThrottle() { }
-
         public static NullThrottle Instance { get { throw null; } }
 
         public void Release() { }
@@ -1271,8 +1251,6 @@ namespace NuGet.Protocol
 
         protected partial class ODataServiceDocumentCacheInfo
         {
-            public ODataServiceDocumentCacheInfo() { }
-
             public System.DateTime CachedTime { get { throw null; } set { } }
 
             public ODataServiceDocumentResourceV2 ServiceDocument { get { throw null; } set { } }
@@ -1281,8 +1259,6 @@ namespace NuGet.Protocol
 
     public partial class PackageDependencyGroupConverter : Newtonsoft.Json.JsonConverter
     {
-        public PackageDependencyGroupConverter() { }
-
         public override bool CanWrite { get { throw null; } }
 
         public override bool CanConvert(System.Type objectType) { throw null; }
@@ -1294,8 +1270,6 @@ namespace NuGet.Protocol
 
     public partial class PackageDeprecationMetadata
     {
-        public PackageDeprecationMetadata() { }
-
         [Newtonsoft.Json.JsonProperty(PropertyName = "alternatePackage")]
         public AlternatePackageMetadata AlternatePackage { get { throw null; } }
 
@@ -1308,6 +1282,8 @@ namespace NuGet.Protocol
 
     public partial class PackageDetailsUriResourceV3 : Core.Types.INuGetResource
     {
+        internal PackageDetailsUriResourceV3() { }
+
         public static PackageDetailsUriResourceV3 CreateOrNull(string uriTemplate) { throw null; }
 
         public System.Uri GetUri(string id, Versioning.NuGetVersion version) { throw null; }
@@ -1363,8 +1339,6 @@ namespace NuGet.Protocol
 
     public partial class PackageSearchMetadata : Core.Types.IPackageSearchMetadata
     {
-        public PackageSearchMetadata() { }
-
         [Newtonsoft.Json.JsonProperty(PropertyName = "authors")]
         [Newtonsoft.Json.JsonConverter(typeof(MetadataFieldConverter))]
         public string Authors { get { throw null; } }
@@ -1464,8 +1438,6 @@ namespace NuGet.Protocol
 
     public partial class PackageSearchMetadataRegistration : PackageSearchMetadata
     {
-        public PackageSearchMetadataRegistration() { }
-
         [Newtonsoft.Json.JsonProperty(PropertyName = "@id")]
         public System.Uri CatalogUri { get { throw null; } }
     }
@@ -1578,8 +1550,6 @@ namespace NuGet.Protocol
 
     public partial class PackageVulnerabilityMetadata
     {
-        public PackageVulnerabilityMetadata() { }
-
         [Newtonsoft.Json.JsonProperty(PropertyName = "advisoryUrl", ItemConverterType = typeof(SafeUriConverter))]
         public System.Uri AdvisoryUrl { get { throw null; } }
 
@@ -1751,8 +1721,6 @@ namespace NuGet.Protocol
 
     public partial class RepositoryCertificateInfo : Packaging.Core.IRepositoryCertificateInfo
     {
-        public RepositoryCertificateInfo() { }
-
         [Newtonsoft.Json.JsonProperty(PropertyName = "contentUrl")]
         public string ContentUrl { get { throw null; } }
 
@@ -1796,8 +1764,6 @@ namespace NuGet.Protocol
 
     public partial class SafeBoolConverter : Newtonsoft.Json.JsonConverter
     {
-        public SafeBoolConverter() { }
-
         public override bool CanRead { get { throw null; } }
 
         public override bool CanWrite { get { throw null; } }
@@ -1811,8 +1777,6 @@ namespace NuGet.Protocol
 
     public partial class SafeUriConverter : Newtonsoft.Json.JsonConverter
     {
-        public SafeUriConverter() { }
-
         public override bool CanRead { get { throw null; } }
 
         public override bool CanWrite { get { throw null; } }
@@ -1826,8 +1790,6 @@ namespace NuGet.Protocol
 
     public sealed partial class SemanticVersionConverter : Newtonsoft.Json.JsonConverter
     {
-        public SemanticVersionConverter() { }
-
         public override bool CanConvert(System.Type objectType) { throw null; }
 
         public override object ReadJson(Newtonsoft.Json.JsonReader reader, System.Type objectType, object existingValue, Newtonsoft.Json.JsonSerializer serializer) { throw null; }
@@ -1899,8 +1861,6 @@ namespace NuGet.Protocol
 
         protected partial class ServiceIndexCacheInfo
         {
-            public ServiceIndexCacheInfo() { }
-
             public System.DateTime CachedTime { get { throw null; } set { } }
 
             public ServiceIndexResourceV3 Index { get { throw null; } set { } }
@@ -1952,8 +1912,6 @@ namespace NuGet.Protocol
 
     public partial class TokenStore
     {
-        public TokenStore() { }
-
         public static TokenStore Instance { get { throw null; } }
 
         public System.Guid Version { get { throw null; } }
@@ -2070,8 +2028,6 @@ namespace NuGet.Protocol
 
     public partial class V2FeedQueryBuilder
     {
-        public V2FeedQueryBuilder() { }
-
         public string BuildFindPackagesByIdUri(string id) { throw null; }
 
         public string BuildGetPackagesUri(string searchTerm, Core.Types.SearchFilter filters, int? skip, int? take) { throw null; }
@@ -2095,8 +2051,6 @@ namespace NuGet.Protocol
 
     public partial class VersionInfoConverter : Newtonsoft.Json.JsonConverter
     {
-        public VersionInfoConverter() { }
-
         public override bool CanWrite { get { throw null; } }
 
         public override bool CanConvert(System.Type objectType) { throw null; }
@@ -2108,8 +2062,6 @@ namespace NuGet.Protocol
 
     public partial class VersionRangeConverter : Newtonsoft.Json.JsonConverter
     {
-        public VersionRangeConverter() { }
-
         public override bool CanConvert(System.Type objectType) { throw null; }
 
         public override object ReadJson(Newtonsoft.Json.JsonReader reader, System.Type objectType, object existingValue, Newtonsoft.Json.JsonSerializer serializer) { throw null; }
@@ -2122,16 +2074,12 @@ namespace NuGet.Protocol.Core.Types
 {
     public abstract partial class AutoCompleteResource : INuGetResource
     {
-        protected AutoCompleteResource() { }
-
         public abstract System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<string>> IdStartsWith(string packageIdPrefix, bool includePrerelease, Common.ILogger log, System.Threading.CancellationToken token);
         public abstract System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<Versioning.NuGetVersion>> VersionStartsWith(string packageId, string versionPrefix, bool includePrerelease, SourceCacheContext sourceCacheContext, Common.ILogger log, System.Threading.CancellationToken token);
     }
 
     public abstract partial class DependencyInfoResource : INuGetResource
     {
-        protected DependencyInfoResource() { }
-
         public abstract System.Threading.Tasks.Task<SourcePackageDependencyInfo> ResolvePackage(Packaging.Core.PackageIdentity package, Frameworks.NuGetFramework projectFramework, SourceCacheContext cacheContext, Common.ILogger log, System.Threading.CancellationToken token);
         public abstract System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<SourcePackageDependencyInfo>> ResolvePackages(string packageId, Frameworks.NuGetFramework projectFramework, SourceCacheContext cacheContext, Common.ILogger log, System.Threading.CancellationToken token);
         public virtual System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<RemoteSourceDependencyInfo>> ResolvePackages(string packageId, SourceCacheContext cacheContext, Common.ILogger log, System.Threading.CancellationToken token) { throw null; }
@@ -2139,8 +2087,6 @@ namespace NuGet.Protocol.Core.Types
 
     public abstract partial class DownloadResource : INuGetResource
     {
-        protected DownloadResource() { }
-
         public abstract System.Threading.Tasks.Task<DownloadResourceResult> GetDownloadResourceResultAsync(Packaging.Core.PackageIdentity identity, PackageDownloadContext downloadContext, string globalPackagesFolder, Common.ILogger logger, System.Threading.CancellationToken token);
     }
 
@@ -2195,8 +2141,6 @@ namespace NuGet.Protocol.Core.Types
 
     public abstract partial class FindPackageByIdResource : INuGetResource
     {
-        protected FindPackageByIdResource() { }
-
         public abstract System.Threading.Tasks.Task<bool> CopyNupkgToStreamAsync(string id, Versioning.NuGetVersion version, System.IO.Stream destination, SourceCacheContext cacheContext, Common.ILogger logger, System.Threading.CancellationToken cancellationToken);
         public abstract System.Threading.Tasks.Task<bool> DoesPackageExistAsync(string id, Versioning.NuGetVersion version, SourceCacheContext cacheContext, Common.ILogger logger, System.Threading.CancellationToken cancellationToken);
         public abstract System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<Versioning.NuGetVersion>> GetAllVersionsAsync(string id, SourceCacheContext cacheContext, Common.ILogger logger, System.Threading.CancellationToken cancellationToken);
@@ -2208,14 +2152,14 @@ namespace NuGet.Protocol.Core.Types
 
     public abstract partial class HttpHandlerResource : INuGetResource
     {
-        protected HttpHandlerResource() { }
-
         public abstract System.Net.Http.HttpClientHandler ClientHandler { get; }
         public abstract System.Net.Http.HttpMessageHandler MessageHandler { get; }
     }
 
     public partial class HttpSourceCacheContext
     {
+        internal HttpSourceCacheContext() { }
+
         public bool DirectDownload { get { throw null; } }
 
         public System.TimeSpan MaxAge { get { throw null; } }
@@ -2311,16 +2255,12 @@ namespace NuGet.Protocol.Core.Types
 
     public abstract partial class LegacyFeedCapabilityResource : INuGetResource, ILegacyFeedCapabilityResource
     {
-        protected LegacyFeedCapabilityResource() { }
-
         public abstract System.Threading.Tasks.Task<bool> SupportsIsAbsoluteLatestVersionAsync(Common.ILogger log, System.Threading.CancellationToken token);
         public abstract System.Threading.Tasks.Task<bool> SupportsSearchAsync(Common.ILogger log, System.Threading.CancellationToken token);
     }
 
     public abstract partial class ListResource : INuGetResource
     {
-        protected ListResource() { }
-
         public abstract string Source { get; }
 
         public abstract System.Threading.Tasks.Task<Common.IEnumerableAsync<IPackageSearchMetadata>> ListAsync(string searchTerm, bool prerelease, bool allVersions, bool includeDelisted, Common.ILogger log, System.Threading.CancellationToken token);
@@ -2328,8 +2268,6 @@ namespace NuGet.Protocol.Core.Types
 
     public abstract partial class MetadataResource : INuGetResource
     {
-        protected MetadataResource() { }
-
         public System.Threading.Tasks.Task<bool> Exists(Packaging.Core.PackageIdentity identity, SourceCacheContext sourceCacheContext, Common.ILogger log, System.Threading.CancellationToken token) { throw null; }
 
         public abstract System.Threading.Tasks.Task<bool> Exists(Packaging.Core.PackageIdentity identity, bool includeUnlisted, SourceCacheContext sourceCacheContext, Common.ILogger log, System.Threading.CancellationToken token);
@@ -2355,7 +2293,6 @@ namespace NuGet.Protocol.Core.Types
     {
         public const string First = "First";
         public const string Last = "Last";
-        public NuGetResourceProviderPositions() { }
     }
 
     public static partial class NuGetTestMode
@@ -2368,8 +2305,6 @@ namespace NuGet.Protocol.Core.Types
 
     public partial class NullSourceCacheContext : SourceCacheContext
     {
-        public NullSourceCacheContext() { }
-
         public override string GeneratedTempFolder { get { throw null; } }
 
         public static SourceCacheContext Instance { get { throw null; } }
@@ -2434,8 +2369,6 @@ namespace NuGet.Protocol.Core.Types
 
     public abstract partial class PackageMetadataResource : INuGetResource
     {
-        protected PackageMetadataResource() { }
-
         public abstract System.Threading.Tasks.Task<IPackageSearchMetadata> GetMetadataAsync(Packaging.Core.PackageIdentity package, SourceCacheContext sourceCacheContext, Common.ILogger log, System.Threading.CancellationToken token);
         public abstract System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<IPackageSearchMetadata>> GetMetadataAsync(string packageId, bool includePrerelease, bool includeUnlisted, SourceCacheContext sourceCacheContext, Common.ILogger log, System.Threading.CancellationToken token);
     }
@@ -2457,6 +2390,8 @@ namespace NuGet.Protocol.Core.Types
 
     public partial class PackageSearchMetadataBuilder
     {
+        internal PackageSearchMetadataBuilder() { }
+
         public IPackageSearchMetadata Build() { throw null; }
 
         public static PackageSearchMetadataBuilder FromIdentity(Packaging.Core.PackageIdentity identity) { throw null; }
@@ -2469,8 +2404,6 @@ namespace NuGet.Protocol.Core.Types
 
         public partial class ClonedPackageSearchMetadata : IPackageSearchMetadata
         {
-            public ClonedPackageSearchMetadata() { }
-
             public string Authors { get { throw null; } set { } }
 
             public System.Collections.Generic.IEnumerable<Packaging.PackageDependencyGroup> DependencySets { get { throw null; } set { } }
@@ -2535,8 +2468,6 @@ namespace NuGet.Protocol.Core.Types
 
     public abstract partial class PackageSearchResource : INuGetResource
     {
-        protected PackageSearchResource() { }
-
         public abstract System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<IPackageSearchMetadata>> SearchAsync(string searchTerm, SearchFilter filters, int skip, int take, Common.ILogger log, System.Threading.CancellationToken cancellationToken);
     }
 
@@ -2584,6 +2515,8 @@ namespace NuGet.Protocol.Core.Types
 
         public sealed partial class GetPluginResult
         {
+            internal GetPluginResult() { }
+
             public Plugins.IPlugin Plugin { get { throw null; } }
 
             public Plugins.IPluginMulticlientUtilities PluginMulticlientUtilities { get { throw null; } }
@@ -2642,14 +2575,11 @@ namespace NuGet.Protocol.Core.Types
 
         public partial class ProviderFactory
         {
-            public ProviderFactory() { }
-
             public virtual System.Collections.Generic.IEnumerable<System.Lazy<INuGetResourceProvider>> GetCoreV3() { throw null; }
         }
 
         public partial class RepositoryFactory
         {
-            public RepositoryFactory() { }
         }
     }
 
@@ -2713,8 +2643,6 @@ namespace NuGet.Protocol.Core.Types
 
     public partial class SourceCacheContext : System.IDisposable
     {
-        public SourceCacheContext() { }
-
         public bool DirectDownload { get { throw null; } set { } }
 
         public virtual string GeneratedTempFolder { get { throw null; } set { } }
@@ -2742,11 +2670,11 @@ namespace NuGet.Protocol.Core.Types
 
     public partial class SourcePackageDependencyInfo : Packaging.Core.PackageDependencyInfo
     {
-        public SourcePackageDependencyInfo(Packaging.Core.PackageIdentity identity, System.Collections.Generic.IEnumerable<Packaging.Core.PackageDependency> dependencies, bool listed, SourceRepository source, System.Uri downloadUri, string packageHash) : base(identity, dependencies) { }
+        public SourcePackageDependencyInfo(Packaging.Core.PackageIdentity identity, System.Collections.Generic.IEnumerable<Packaging.Core.PackageDependency> dependencies, bool listed, SourceRepository source, System.Uri downloadUri, string packageHash) : base(default!, default(Versioning.NuGetVersion)!) { }
 
-        public SourcePackageDependencyInfo(string id, Versioning.NuGetVersion version, System.Collections.Generic.IEnumerable<Packaging.Core.PackageDependency> dependencies, bool listed, SourceRepository source, System.Uri downloadUri, string packageHash) : base(id, version) { }
+        public SourcePackageDependencyInfo(string id, Versioning.NuGetVersion version, System.Collections.Generic.IEnumerable<Packaging.Core.PackageDependency> dependencies, bool listed, SourceRepository source, System.Uri downloadUri, string packageHash) : base(default!, default(Versioning.NuGetVersion)!) { }
 
-        public SourcePackageDependencyInfo(string id, Versioning.NuGetVersion version, System.Collections.Generic.IEnumerable<Packaging.Core.PackageDependency> dependencies, bool listed, SourceRepository source) : base(id, version) { }
+        public SourcePackageDependencyInfo(string id, Versioning.NuGetVersion version, System.Collections.Generic.IEnumerable<Packaging.Core.PackageDependency> dependencies, bool listed, SourceRepository source) : base(default!, default(Versioning.NuGetVersion)!) { }
 
         public System.Uri DownloadUri { get { throw null; } }
 
@@ -2940,6 +2868,8 @@ namespace NuGet.Protocol.Plugins
 {
     public sealed partial class AutomaticProgressReporter : System.IDisposable
     {
+        internal AutomaticProgressReporter() { }
+
         public static AutomaticProgressReporter Create(IConnection connection, Message request, System.TimeSpan interval, System.Threading.CancellationToken cancellationToken) { throw null; }
 
         public void Dispose() { }
@@ -3073,8 +3003,6 @@ namespace NuGet.Protocol.Plugins
 
     public abstract partial class EmbeddedSignatureVerifier
     {
-        protected EmbeddedSignatureVerifier() { }
-
         public static EmbeddedSignatureVerifier Create() { throw null; }
 
         public abstract bool IsValid(string filePath);
@@ -3082,8 +3010,6 @@ namespace NuGet.Protocol.Plugins
 
     public sealed partial class FallbackEmbeddedSignatureVerifier : EmbeddedSignatureVerifier
     {
-        public FallbackEmbeddedSignatureVerifier() { }
-
         public override bool IsValid(string filePath) { throw null; }
     }
 
@@ -3716,8 +3642,6 @@ namespace NuGet.Protocol.Plugins
 
     public abstract partial class OutboundRequestContext : System.IDisposable
     {
-        protected OutboundRequestContext() { }
-
         public System.Threading.CancellationToken CancellationToken { get { throw null; } protected set { } }
 
         public string RequestId { get { throw null; } protected set { } }
@@ -3906,8 +3830,6 @@ namespace NuGet.Protocol.Plugins
 
     public sealed partial class PluginMulticlientUtilities : IPluginMulticlientUtilities
     {
-        public PluginMulticlientUtilities() { }
-
         public System.Threading.Tasks.Task DoOncePerPluginLifetimeAsync(string key, System.Func<System.Threading.Tasks.Task> taskFunc, System.Threading.CancellationToken cancellationToken) { throw null; }
     }
 
@@ -4126,8 +4048,6 @@ namespace NuGet.Protocol.Plugins
 
     public abstract partial class Receiver : IReceiver, System.IDisposable
     {
-        protected Receiver() { }
-
         protected bool IsClosed { get { throw null; } }
 
         protected bool IsDisposed { get { throw null; } set { } }
@@ -4153,8 +4073,6 @@ namespace NuGet.Protocol.Plugins
 
     public sealed partial class RequestHandlers : IRequestHandlers
     {
-        public RequestHandlers() { }
-
         public void AddOrUpdate(MessageMethod method, System.Func<IRequestHandler> addHandlerFunc, System.Func<IRequestHandler, IRequestHandler> updateHandlerFunc) { }
 
         public bool TryAdd(MessageMethod method, IRequestHandler handler) { throw null; }
@@ -4166,8 +4084,6 @@ namespace NuGet.Protocol.Plugins
 
     public sealed partial class RequestIdGenerator : IIdGenerator
     {
-        public RequestIdGenerator() { }
-
         public string GenerateUniqueId() { throw null; }
     }
 
@@ -4269,15 +4185,11 @@ namespace NuGet.Protocol.Plugins
 
     public partial class UnixAndMonoPlatformsEmbeddedSignatureVerifier : EmbeddedSignatureVerifier
     {
-        public UnixAndMonoPlatformsEmbeddedSignatureVerifier() { }
-
         public override bool IsValid(string filePath) { throw null; }
     }
 
     public sealed partial class WindowsEmbeddedSignatureVerifier : EmbeddedSignatureVerifier
     {
-        public WindowsEmbeddedSignatureVerifier() { }
-
         public override bool IsValid(string filePath) { throw null; }
     }
 }

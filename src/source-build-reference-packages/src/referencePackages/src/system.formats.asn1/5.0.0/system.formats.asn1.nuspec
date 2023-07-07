@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <package xmlns="http://schemas.microsoft.com/packaging/2013/05/nuspec.xsd">
   <metadata minClientVersion="2.12">
     <id>System.Formats.Asn1</id>
@@ -23,30 +23,9 @@ When using NuGet 3.x this package requires at least version 3.4.</description>
     <serviceable>true</serviceable>
     <repository type="git" url="git://github.com/dotnet/runtime" commit="cf258a14b70ad9069470a108f13765e0e5988f51" />
     <dependencies>
-      <group targetFramework="MonoAndroid1.0">
-        <dependency id="System.Buffers" version="4.5.1" />
-      </group>
-      <group targetFramework="MonoTouch1.0">
-        <dependency id="System.Buffers" version="4.5.1" />
-      </group>
       <group targetFramework=".NETStandard2.0">
         <dependency id="System.Buffers" version="4.5.1" />
         <dependency id="System.Memory" version="4.5.4" />
-      </group>
-      <group targetFramework="UAP10.0.16299">
-        <dependency id="System.Memory" version="4.5.4" />
-      </group>
-      <group targetFramework="Xamarin.iOS1.0">
-        <dependency id="System.Buffers" version="4.5.1" />
-      </group>
-      <group targetFramework="Xamarin.Mac2.0">
-        <dependency id="System.Buffers" version="4.5.1" />
-      </group>
-      <group targetFramework="Xamarin.TVOS1.0">
-        <dependency id="System.Buffers" version="4.5.1" />
-      </group>
-      <group targetFramework="Xamarin.WatchOS1.0">
-        <dependency id="System.Buffers" version="4.5.1" />
       </group>
     </dependencies>
   </metadata>

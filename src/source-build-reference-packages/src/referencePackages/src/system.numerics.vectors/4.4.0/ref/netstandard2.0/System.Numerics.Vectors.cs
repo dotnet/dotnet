@@ -4,34 +4,28 @@
 // ------------------------------------------------------------------------------
 // Changes to this file must follow the http://aka.ms/api-review process.
 // ------------------------------------------------------------------------------
-
-using System;
-using System.Diagnostics;
-using System.Reflection;
-using System.Runtime.CompilerServices;
-using System.Security;
-
-[assembly: Debuggable(DebuggableAttribute.DebuggingModes.IgnoreSymbolStoreSequencePoints)]
-[assembly: AllowPartiallyTrustedCallers]
-[assembly: ReferenceAssembly]
-[assembly: AssemblyTitle("System.Numerics.Vectors")]
-[assembly: AssemblyDescription("System.Numerics.Vectors")]
-[assembly: AssemblyDefaultAlias("System.Numerics.Vectors")]
-[assembly: AssemblyCompany("Microsoft Corporation")]
-[assembly: AssemblyProduct("Microsoft® .NET Framework")]
-[assembly: AssemblyCopyright("© Microsoft Corporation.  All rights reserved.")]
-[assembly: AssemblyFileVersion("4.6.25519.03")]
-[assembly: AssemblyInformationalVersion("4.6.25519.03 built by: SOURCEBUILD")]
-[assembly: CLSCompliant(true)]
-[assembly: AssemblyMetadata("", "")]
-[assembly: AssemblyVersion("4.1.3.0")]
-
-
-
-
+[assembly: System.Runtime.CompilerServices.CompilationRelaxations(8)]
+[assembly: System.Runtime.CompilerServices.RuntimeCompatibility(WrapNonExceptionThrows = true)]
+[assembly: System.Diagnostics.Debuggable(System.Diagnostics.DebuggableAttribute.DebuggingModes.IgnoreSymbolStoreSequencePoints)]
+[assembly: System.Security.AllowPartiallyTrustedCallers]
+[assembly: System.Runtime.CompilerServices.ReferenceAssembly]
+[assembly: System.Reflection.AssemblyTitle("System.Numerics.Vectors")]
+[assembly: System.Reflection.AssemblyDescription("System.Numerics.Vectors")]
+[assembly: System.Reflection.AssemblyDefaultAlias("System.Numerics.Vectors")]
+[assembly: System.Reflection.AssemblyCompany("Microsoft Corporation")]
+[assembly: System.Reflection.AssemblyProduct("Microsoft® .NET Framework")]
+[assembly: System.Reflection.AssemblyCopyright("© Microsoft Corporation.  All rights reserved.")]
+[assembly: System.Reflection.AssemblyFileVersion("4.6.25519.03")]
+[assembly: System.Reflection.AssemblyInformationalVersion("4.6.25519.03 built by: dlab-DDVSOWINAGE013. Commit Hash: 8321c729934c0f8be754953439b88e6e1c120c24")]
+[assembly: System.CLSCompliant(true)]
+[assembly: System.Reflection.AssemblyMetadata(".NETFrameworkAssembly", "")]
+[assembly: System.Reflection.AssemblyMetadata("Serviceable", "True")]
+[assembly: System.Reflection.AssemblyMetadata("PreferInbox", "True")]
+[assembly: System.Reflection.AssemblyVersionAttribute("4.1.3.0")]
+[assembly: System.Reflection.AssemblyFlagsAttribute((System.Reflection.AssemblyNameFlags)0x70)]
 namespace System.Numerics
 {
-    public partial struct Matrix3x2 : System.IEquatable<System.Numerics.Matrix3x2>
+    public partial struct Matrix3x2 : IEquatable<Matrix3x2>
     {
         public float M11;
         public float M12;
@@ -39,43 +33,78 @@ namespace System.Numerics
         public float M22;
         public float M31;
         public float M32;
-        public Matrix3x2(float m11, float m12, float m21, float m22, float m31, float m32) { throw null; }
-        public static System.Numerics.Matrix3x2 Identity { get { throw null; } }
+        public Matrix3x2(float m11, float m12, float m21, float m22, float m31, float m32) { }
+
+        public static Matrix3x2 Identity { get { throw null; } }
+
         public bool IsIdentity { get { throw null; } }
-        public System.Numerics.Vector2 Translation { get { throw null; } set { } }
-        public static System.Numerics.Matrix3x2 Add(System.Numerics.Matrix3x2 value1, System.Numerics.Matrix3x2 value2) { throw null; }
-        public static System.Numerics.Matrix3x2 CreateRotation(float radians) { throw null; }
-        public static System.Numerics.Matrix3x2 CreateRotation(float radians, System.Numerics.Vector2 centerPoint) { throw null; }
-        public static System.Numerics.Matrix3x2 CreateScale(System.Numerics.Vector2 scales) { throw null; }
-        public static System.Numerics.Matrix3x2 CreateScale(System.Numerics.Vector2 scales, System.Numerics.Vector2 centerPoint) { throw null; }
-        public static System.Numerics.Matrix3x2 CreateScale(float scale) { throw null; }
-        public static System.Numerics.Matrix3x2 CreateScale(float scale, System.Numerics.Vector2 centerPoint) { throw null; }
-        public static System.Numerics.Matrix3x2 CreateScale(float xScale, float yScale) { throw null; }
-        public static System.Numerics.Matrix3x2 CreateScale(float xScale, float yScale, System.Numerics.Vector2 centerPoint) { throw null; }
-        public static System.Numerics.Matrix3x2 CreateSkew(float radiansX, float radiansY) { throw null; }
-        public static System.Numerics.Matrix3x2 CreateSkew(float radiansX, float radiansY, System.Numerics.Vector2 centerPoint) { throw null; }
-        public static System.Numerics.Matrix3x2 CreateTranslation(System.Numerics.Vector2 position) { throw null; }
-        public static System.Numerics.Matrix3x2 CreateTranslation(float xPosition, float yPosition) { throw null; }
-        public bool Equals(System.Numerics.Matrix3x2 other) { throw null; }
+
+        public Vector2 Translation { get { throw null; } set { } }
+
+        public static Matrix3x2 Add(Matrix3x2 value1, Matrix3x2 value2) { throw null; }
+
+        public static Matrix3x2 CreateRotation(float radians, Vector2 centerPoint) { throw null; }
+
+        public static Matrix3x2 CreateRotation(float radians) { throw null; }
+
+        public static Matrix3x2 CreateScale(Vector2 scales, Vector2 centerPoint) { throw null; }
+
+        public static Matrix3x2 CreateScale(Vector2 scales) { throw null; }
+
+        public static Matrix3x2 CreateScale(float scale, Vector2 centerPoint) { throw null; }
+
+        public static Matrix3x2 CreateScale(float xScale, float yScale, Vector2 centerPoint) { throw null; }
+
+        public static Matrix3x2 CreateScale(float xScale, float yScale) { throw null; }
+
+        public static Matrix3x2 CreateScale(float scale) { throw null; }
+
+        public static Matrix3x2 CreateSkew(float radiansX, float radiansY, Vector2 centerPoint) { throw null; }
+
+        public static Matrix3x2 CreateSkew(float radiansX, float radiansY) { throw null; }
+
+        public static Matrix3x2 CreateTranslation(Vector2 position) { throw null; }
+
+        public static Matrix3x2 CreateTranslation(float xPosition, float yPosition) { throw null; }
+
+        public bool Equals(Matrix3x2 other) { throw null; }
+
         public override bool Equals(object obj) { throw null; }
+
         public float GetDeterminant() { throw null; }
+
         public override int GetHashCode() { throw null; }
-        public static bool Invert(System.Numerics.Matrix3x2 matrix, out System.Numerics.Matrix3x2 result) { throw null; }
-        public static System.Numerics.Matrix3x2 Lerp(System.Numerics.Matrix3x2 matrix1, System.Numerics.Matrix3x2 matrix2, float amount) { throw null; }
-        public static System.Numerics.Matrix3x2 Multiply(System.Numerics.Matrix3x2 value1, System.Numerics.Matrix3x2 value2) { throw null; }
-        public static System.Numerics.Matrix3x2 Multiply(System.Numerics.Matrix3x2 value1, float value2) { throw null; }
-        public static System.Numerics.Matrix3x2 Negate(System.Numerics.Matrix3x2 value) { throw null; }
-        public static System.Numerics.Matrix3x2 operator +(System.Numerics.Matrix3x2 value1, System.Numerics.Matrix3x2 value2) { throw null; }
-        public static bool operator ==(System.Numerics.Matrix3x2 value1, System.Numerics.Matrix3x2 value2) { throw null; }
-        public static bool operator !=(System.Numerics.Matrix3x2 value1, System.Numerics.Matrix3x2 value2) { throw null; }
-        public static System.Numerics.Matrix3x2 operator *(System.Numerics.Matrix3x2 value1, System.Numerics.Matrix3x2 value2) { throw null; }
-        public static System.Numerics.Matrix3x2 operator *(System.Numerics.Matrix3x2 value1, float value2) { throw null; }
-        public static System.Numerics.Matrix3x2 operator -(System.Numerics.Matrix3x2 value1, System.Numerics.Matrix3x2 value2) { throw null; }
-        public static System.Numerics.Matrix3x2 operator -(System.Numerics.Matrix3x2 value) { throw null; }
-        public static System.Numerics.Matrix3x2 Subtract(System.Numerics.Matrix3x2 value1, System.Numerics.Matrix3x2 value2) { throw null; }
+
+        public static bool Invert(Matrix3x2 matrix, out Matrix3x2 result) { throw null; }
+
+        public static Matrix3x2 Lerp(Matrix3x2 matrix1, Matrix3x2 matrix2, float amount) { throw null; }
+
+        public static Matrix3x2 Multiply(Matrix3x2 value1, Matrix3x2 value2) { throw null; }
+
+        public static Matrix3x2 Multiply(Matrix3x2 value1, float value2) { throw null; }
+
+        public static Matrix3x2 Negate(Matrix3x2 value) { throw null; }
+
+        public static Matrix3x2 operator +(Matrix3x2 value1, Matrix3x2 value2) { throw null; }
+
+        public static bool operator ==(Matrix3x2 value1, Matrix3x2 value2) { throw null; }
+
+        public static bool operator !=(Matrix3x2 value1, Matrix3x2 value2) { throw null; }
+
+        public static Matrix3x2 operator *(Matrix3x2 value1, Matrix3x2 value2) { throw null; }
+
+        public static Matrix3x2 operator *(Matrix3x2 value1, float value2) { throw null; }
+
+        public static Matrix3x2 operator -(Matrix3x2 value1, Matrix3x2 value2) { throw null; }
+
+        public static Matrix3x2 operator -(Matrix3x2 value) { throw null; }
+
+        public static Matrix3x2 Subtract(Matrix3x2 value1, Matrix3x2 value2) { throw null; }
+
         public override string ToString() { throw null; }
     }
-    public partial struct Matrix4x4 : System.IEquatable<System.Numerics.Matrix4x4>
+
+    public partial struct Matrix4x4 : IEquatable<Matrix4x4>
     {
         public float M11;
         public float M12;
@@ -93,447 +122,875 @@ namespace System.Numerics
         public float M42;
         public float M43;
         public float M44;
-        public Matrix4x4(System.Numerics.Matrix3x2 value) { throw null; }
-        public Matrix4x4(float m11, float m12, float m13, float m14, float m21, float m22, float m23, float m24, float m31, float m32, float m33, float m34, float m41, float m42, float m43, float m44) { throw null; }
-        public static System.Numerics.Matrix4x4 Identity { get { throw null; } }
+        public Matrix4x4(Matrix3x2 value) { }
+
+        public Matrix4x4(float m11, float m12, float m13, float m14, float m21, float m22, float m23, float m24, float m31, float m32, float m33, float m34, float m41, float m42, float m43, float m44) { }
+
+        public static Matrix4x4 Identity { get { throw null; } }
+
         public bool IsIdentity { get { throw null; } }
-        public System.Numerics.Vector3 Translation { get { throw null; } set { } }
-        public static System.Numerics.Matrix4x4 Add(System.Numerics.Matrix4x4 value1, System.Numerics.Matrix4x4 value2) { throw null; }
-        public static System.Numerics.Matrix4x4 CreateBillboard(System.Numerics.Vector3 objectPosition, System.Numerics.Vector3 cameraPosition, System.Numerics.Vector3 cameraUpVector, System.Numerics.Vector3 cameraForwardVector) { throw null; }
-        public static System.Numerics.Matrix4x4 CreateConstrainedBillboard(System.Numerics.Vector3 objectPosition, System.Numerics.Vector3 cameraPosition, System.Numerics.Vector3 rotateAxis, System.Numerics.Vector3 cameraForwardVector, System.Numerics.Vector3 objectForwardVector) { throw null; }
-        public static System.Numerics.Matrix4x4 CreateFromAxisAngle(System.Numerics.Vector3 axis, float angle) { throw null; }
-        public static System.Numerics.Matrix4x4 CreateFromQuaternion(System.Numerics.Quaternion quaternion) { throw null; }
-        public static System.Numerics.Matrix4x4 CreateFromYawPitchRoll(float yaw, float pitch, float roll) { throw null; }
-        public static System.Numerics.Matrix4x4 CreateLookAt(System.Numerics.Vector3 cameraPosition, System.Numerics.Vector3 cameraTarget, System.Numerics.Vector3 cameraUpVector) { throw null; }
-        public static System.Numerics.Matrix4x4 CreateOrthographic(float width, float height, float zNearPlane, float zFarPlane) { throw null; }
-        public static System.Numerics.Matrix4x4 CreateOrthographicOffCenter(float left, float right, float bottom, float top, float zNearPlane, float zFarPlane) { throw null; }
-        public static System.Numerics.Matrix4x4 CreatePerspective(float width, float height, float nearPlaneDistance, float farPlaneDistance) { throw null; }
-        public static System.Numerics.Matrix4x4 CreatePerspectiveFieldOfView(float fieldOfView, float aspectRatio, float nearPlaneDistance, float farPlaneDistance) { throw null; }
-        public static System.Numerics.Matrix4x4 CreatePerspectiveOffCenter(float left, float right, float bottom, float top, float nearPlaneDistance, float farPlaneDistance) { throw null; }
-        public static System.Numerics.Matrix4x4 CreateReflection(System.Numerics.Plane value) { throw null; }
-        public static System.Numerics.Matrix4x4 CreateRotationX(float radians) { throw null; }
-        public static System.Numerics.Matrix4x4 CreateRotationX(float radians, System.Numerics.Vector3 centerPoint) { throw null; }
-        public static System.Numerics.Matrix4x4 CreateRotationY(float radians) { throw null; }
-        public static System.Numerics.Matrix4x4 CreateRotationY(float radians, System.Numerics.Vector3 centerPoint) { throw null; }
-        public static System.Numerics.Matrix4x4 CreateRotationZ(float radians) { throw null; }
-        public static System.Numerics.Matrix4x4 CreateRotationZ(float radians, System.Numerics.Vector3 centerPoint) { throw null; }
-        public static System.Numerics.Matrix4x4 CreateScale(System.Numerics.Vector3 scales) { throw null; }
-        public static System.Numerics.Matrix4x4 CreateScale(System.Numerics.Vector3 scales, System.Numerics.Vector3 centerPoint) { throw null; }
-        public static System.Numerics.Matrix4x4 CreateScale(float scale) { throw null; }
-        public static System.Numerics.Matrix4x4 CreateScale(float scale, System.Numerics.Vector3 centerPoint) { throw null; }
-        public static System.Numerics.Matrix4x4 CreateScale(float xScale, float yScale, float zScale) { throw null; }
-        public static System.Numerics.Matrix4x4 CreateScale(float xScale, float yScale, float zScale, System.Numerics.Vector3 centerPoint) { throw null; }
-        public static System.Numerics.Matrix4x4 CreateShadow(System.Numerics.Vector3 lightDirection, System.Numerics.Plane plane) { throw null; }
-        public static System.Numerics.Matrix4x4 CreateTranslation(System.Numerics.Vector3 position) { throw null; }
-        public static System.Numerics.Matrix4x4 CreateTranslation(float xPosition, float yPosition, float zPosition) { throw null; }
-        public static System.Numerics.Matrix4x4 CreateWorld(System.Numerics.Vector3 position, System.Numerics.Vector3 forward, System.Numerics.Vector3 up) { throw null; }
-        public static bool Decompose(System.Numerics.Matrix4x4 matrix, out System.Numerics.Vector3 scale, out System.Numerics.Quaternion rotation, out System.Numerics.Vector3 translation) { throw null; }
-        public bool Equals(System.Numerics.Matrix4x4 other) { throw null; }
+
+        public Vector3 Translation { get { throw null; } set { } }
+
+        public static Matrix4x4 Add(Matrix4x4 value1, Matrix4x4 value2) { throw null; }
+
+        public static Matrix4x4 CreateBillboard(Vector3 objectPosition, Vector3 cameraPosition, Vector3 cameraUpVector, Vector3 cameraForwardVector) { throw null; }
+
+        public static Matrix4x4 CreateConstrainedBillboard(Vector3 objectPosition, Vector3 cameraPosition, Vector3 rotateAxis, Vector3 cameraForwardVector, Vector3 objectForwardVector) { throw null; }
+
+        public static Matrix4x4 CreateFromAxisAngle(Vector3 axis, float angle) { throw null; }
+
+        public static Matrix4x4 CreateFromQuaternion(Quaternion quaternion) { throw null; }
+
+        public static Matrix4x4 CreateFromYawPitchRoll(float yaw, float pitch, float roll) { throw null; }
+
+        public static Matrix4x4 CreateLookAt(Vector3 cameraPosition, Vector3 cameraTarget, Vector3 cameraUpVector) { throw null; }
+
+        public static Matrix4x4 CreateOrthographic(float width, float height, float zNearPlane, float zFarPlane) { throw null; }
+
+        public static Matrix4x4 CreateOrthographicOffCenter(float left, float right, float bottom, float top, float zNearPlane, float zFarPlane) { throw null; }
+
+        public static Matrix4x4 CreatePerspective(float width, float height, float nearPlaneDistance, float farPlaneDistance) { throw null; }
+
+        public static Matrix4x4 CreatePerspectiveFieldOfView(float fieldOfView, float aspectRatio, float nearPlaneDistance, float farPlaneDistance) { throw null; }
+
+        public static Matrix4x4 CreatePerspectiveOffCenter(float left, float right, float bottom, float top, float nearPlaneDistance, float farPlaneDistance) { throw null; }
+
+        public static Matrix4x4 CreateReflection(Plane value) { throw null; }
+
+        public static Matrix4x4 CreateRotationX(float radians, Vector3 centerPoint) { throw null; }
+
+        public static Matrix4x4 CreateRotationX(float radians) { throw null; }
+
+        public static Matrix4x4 CreateRotationY(float radians, Vector3 centerPoint) { throw null; }
+
+        public static Matrix4x4 CreateRotationY(float radians) { throw null; }
+
+        public static Matrix4x4 CreateRotationZ(float radians, Vector3 centerPoint) { throw null; }
+
+        public static Matrix4x4 CreateRotationZ(float radians) { throw null; }
+
+        public static Matrix4x4 CreateScale(Vector3 scales, Vector3 centerPoint) { throw null; }
+
+        public static Matrix4x4 CreateScale(Vector3 scales) { throw null; }
+
+        public static Matrix4x4 CreateScale(float scale, Vector3 centerPoint) { throw null; }
+
+        public static Matrix4x4 CreateScale(float xScale, float yScale, float zScale, Vector3 centerPoint) { throw null; }
+
+        public static Matrix4x4 CreateScale(float xScale, float yScale, float zScale) { throw null; }
+
+        public static Matrix4x4 CreateScale(float scale) { throw null; }
+
+        public static Matrix4x4 CreateShadow(Vector3 lightDirection, Plane plane) { throw null; }
+
+        public static Matrix4x4 CreateTranslation(Vector3 position) { throw null; }
+
+        public static Matrix4x4 CreateTranslation(float xPosition, float yPosition, float zPosition) { throw null; }
+
+        public static Matrix4x4 CreateWorld(Vector3 position, Vector3 forward, Vector3 up) { throw null; }
+
+        public static bool Decompose(Matrix4x4 matrix, out Vector3 scale, out Quaternion rotation, out Vector3 translation) { throw null; }
+
+        public bool Equals(Matrix4x4 other) { throw null; }
+
         public override bool Equals(object obj) { throw null; }
+
         public float GetDeterminant() { throw null; }
+
         public override int GetHashCode() { throw null; }
-        public static bool Invert(System.Numerics.Matrix4x4 matrix, out System.Numerics.Matrix4x4 result) { throw null; }
-        public static System.Numerics.Matrix4x4 Lerp(System.Numerics.Matrix4x4 matrix1, System.Numerics.Matrix4x4 matrix2, float amount) { throw null; }
-        public static System.Numerics.Matrix4x4 Multiply(System.Numerics.Matrix4x4 value1, System.Numerics.Matrix4x4 value2) { throw null; }
-        public static System.Numerics.Matrix4x4 Multiply(System.Numerics.Matrix4x4 value1, float value2) { throw null; }
-        public static System.Numerics.Matrix4x4 Negate(System.Numerics.Matrix4x4 value) { throw null; }
-        public static System.Numerics.Matrix4x4 operator +(System.Numerics.Matrix4x4 value1, System.Numerics.Matrix4x4 value2) { throw null; }
-        public static bool operator ==(System.Numerics.Matrix4x4 value1, System.Numerics.Matrix4x4 value2) { throw null; }
-        public static bool operator !=(System.Numerics.Matrix4x4 value1, System.Numerics.Matrix4x4 value2) { throw null; }
-        public static System.Numerics.Matrix4x4 operator *(System.Numerics.Matrix4x4 value1, System.Numerics.Matrix4x4 value2) { throw null; }
-        public static System.Numerics.Matrix4x4 operator *(System.Numerics.Matrix4x4 value1, float value2) { throw null; }
-        public static System.Numerics.Matrix4x4 operator -(System.Numerics.Matrix4x4 value1, System.Numerics.Matrix4x4 value2) { throw null; }
-        public static System.Numerics.Matrix4x4 operator -(System.Numerics.Matrix4x4 value) { throw null; }
-        public static System.Numerics.Matrix4x4 Subtract(System.Numerics.Matrix4x4 value1, System.Numerics.Matrix4x4 value2) { throw null; }
+
+        public static bool Invert(Matrix4x4 matrix, out Matrix4x4 result) { throw null; }
+
+        public static Matrix4x4 Lerp(Matrix4x4 matrix1, Matrix4x4 matrix2, float amount) { throw null; }
+
+        public static Matrix4x4 Multiply(Matrix4x4 value1, Matrix4x4 value2) { throw null; }
+
+        public static Matrix4x4 Multiply(Matrix4x4 value1, float value2) { throw null; }
+
+        public static Matrix4x4 Negate(Matrix4x4 value) { throw null; }
+
+        public static Matrix4x4 operator +(Matrix4x4 value1, Matrix4x4 value2) { throw null; }
+
+        public static bool operator ==(Matrix4x4 value1, Matrix4x4 value2) { throw null; }
+
+        public static bool operator !=(Matrix4x4 value1, Matrix4x4 value2) { throw null; }
+
+        public static Matrix4x4 operator *(Matrix4x4 value1, Matrix4x4 value2) { throw null; }
+
+        public static Matrix4x4 operator *(Matrix4x4 value1, float value2) { throw null; }
+
+        public static Matrix4x4 operator -(Matrix4x4 value1, Matrix4x4 value2) { throw null; }
+
+        public static Matrix4x4 operator -(Matrix4x4 value) { throw null; }
+
+        public static Matrix4x4 Subtract(Matrix4x4 value1, Matrix4x4 value2) { throw null; }
+
         public override string ToString() { throw null; }
-        public static System.Numerics.Matrix4x4 Transform(System.Numerics.Matrix4x4 value, System.Numerics.Quaternion rotation) { throw null; }
-        public static System.Numerics.Matrix4x4 Transpose(System.Numerics.Matrix4x4 matrix) { throw null; }
+
+        public static Matrix4x4 Transform(Matrix4x4 value, Quaternion rotation) { throw null; }
+
+        public static Matrix4x4 Transpose(Matrix4x4 matrix) { throw null; }
     }
-    public partial struct Plane : System.IEquatable<System.Numerics.Plane>
+
+    public partial struct Plane : IEquatable<Plane>
     {
         public float D;
-        public System.Numerics.Vector3 Normal;
-        public Plane(System.Numerics.Vector3 normal, float d) { throw null; }
-        public Plane(System.Numerics.Vector4 value) { throw null; }
-        public Plane(float x, float y, float z, float d) { throw null; }
-        public static System.Numerics.Plane CreateFromVertices(System.Numerics.Vector3 point1, System.Numerics.Vector3 point2, System.Numerics.Vector3 point3) { throw null; }
-        public static float Dot(System.Numerics.Plane plane, System.Numerics.Vector4 value) { throw null; }
-        public static float DotCoordinate(System.Numerics.Plane plane, System.Numerics.Vector3 value) { throw null; }
-        public static float DotNormal(System.Numerics.Plane plane, System.Numerics.Vector3 value) { throw null; }
-        public bool Equals(System.Numerics.Plane other) { throw null; }
+        public Vector3 Normal;
+        public Plane(Vector3 normal, float d) { }
+
+        public Plane(Vector4 value) { }
+
+        public Plane(float x, float y, float z, float d) { }
+
+        public static Plane CreateFromVertices(Vector3 point1, Vector3 point2, Vector3 point3) { throw null; }
+
+        public static float Dot(Plane plane, Vector4 value) { throw null; }
+
+        public static float DotCoordinate(Plane plane, Vector3 value) { throw null; }
+
+        public static float DotNormal(Plane plane, Vector3 value) { throw null; }
+
+        public bool Equals(Plane other) { throw null; }
+
         public override bool Equals(object obj) { throw null; }
+
         public override int GetHashCode() { throw null; }
-        public static System.Numerics.Plane Normalize(System.Numerics.Plane value) { throw null; }
-        public static bool operator ==(System.Numerics.Plane value1, System.Numerics.Plane value2) { throw null; }
-        public static bool operator !=(System.Numerics.Plane value1, System.Numerics.Plane value2) { throw null; }
+
+        public static Plane Normalize(Plane value) { throw null; }
+
+        public static bool operator ==(Plane value1, Plane value2) { throw null; }
+
+        public static bool operator !=(Plane value1, Plane value2) { throw null; }
+
         public override string ToString() { throw null; }
-        public static System.Numerics.Plane Transform(System.Numerics.Plane plane, System.Numerics.Matrix4x4 matrix) { throw null; }
-        public static System.Numerics.Plane Transform(System.Numerics.Plane plane, System.Numerics.Quaternion rotation) { throw null; }
+
+        public static Plane Transform(Plane plane, Matrix4x4 matrix) { throw null; }
+
+        public static Plane Transform(Plane plane, Quaternion rotation) { throw null; }
     }
-    public partial struct Quaternion : System.IEquatable<System.Numerics.Quaternion>
+
+    public partial struct Quaternion : IEquatable<Quaternion>
     {
         public float W;
         public float X;
         public float Y;
         public float Z;
-        public Quaternion(System.Numerics.Vector3 vectorPart, float scalarPart) { throw null; }
-        public Quaternion(float x, float y, float z, float w) { throw null; }
-        public static System.Numerics.Quaternion Identity { get { throw null; } }
+        public Quaternion(Vector3 vectorPart, float scalarPart) { }
+
+        public Quaternion(float x, float y, float z, float w) { }
+
+        public static Quaternion Identity { get { throw null; } }
+
         public bool IsIdentity { get { throw null; } }
-        public static System.Numerics.Quaternion Add(System.Numerics.Quaternion value1, System.Numerics.Quaternion value2) { throw null; }
-        public static System.Numerics.Quaternion Concatenate(System.Numerics.Quaternion value1, System.Numerics.Quaternion value2) { throw null; }
-        public static System.Numerics.Quaternion Conjugate(System.Numerics.Quaternion value) { throw null; }
-        public static System.Numerics.Quaternion CreateFromAxisAngle(System.Numerics.Vector3 axis, float angle) { throw null; }
-        public static System.Numerics.Quaternion CreateFromRotationMatrix(System.Numerics.Matrix4x4 matrix) { throw null; }
-        public static System.Numerics.Quaternion CreateFromYawPitchRoll(float yaw, float pitch, float roll) { throw null; }
-        public static System.Numerics.Quaternion Divide(System.Numerics.Quaternion value1, System.Numerics.Quaternion value2) { throw null; }
-        public static float Dot(System.Numerics.Quaternion quaternion1, System.Numerics.Quaternion quaternion2) { throw null; }
-        public bool Equals(System.Numerics.Quaternion other) { throw null; }
+
+        public static Quaternion Add(Quaternion value1, Quaternion value2) { throw null; }
+
+        public static Quaternion Concatenate(Quaternion value1, Quaternion value2) { throw null; }
+
+        public static Quaternion Conjugate(Quaternion value) { throw null; }
+
+        public static Quaternion CreateFromAxisAngle(Vector3 axis, float angle) { throw null; }
+
+        public static Quaternion CreateFromRotationMatrix(Matrix4x4 matrix) { throw null; }
+
+        public static Quaternion CreateFromYawPitchRoll(float yaw, float pitch, float roll) { throw null; }
+
+        public static Quaternion Divide(Quaternion value1, Quaternion value2) { throw null; }
+
+        public static float Dot(Quaternion quaternion1, Quaternion quaternion2) { throw null; }
+
+        public bool Equals(Quaternion other) { throw null; }
+
         public override bool Equals(object obj) { throw null; }
+
         public override int GetHashCode() { throw null; }
-        public static System.Numerics.Quaternion Inverse(System.Numerics.Quaternion value) { throw null; }
+
+        public static Quaternion Inverse(Quaternion value) { throw null; }
+
         public float Length() { throw null; }
+
         public float LengthSquared() { throw null; }
-        public static System.Numerics.Quaternion Lerp(System.Numerics.Quaternion quaternion1, System.Numerics.Quaternion quaternion2, float amount) { throw null; }
-        public static System.Numerics.Quaternion Multiply(System.Numerics.Quaternion value1, System.Numerics.Quaternion value2) { throw null; }
-        public static System.Numerics.Quaternion Multiply(System.Numerics.Quaternion value1, float value2) { throw null; }
-        public static System.Numerics.Quaternion Negate(System.Numerics.Quaternion value) { throw null; }
-        public static System.Numerics.Quaternion Normalize(System.Numerics.Quaternion value) { throw null; }
-        public static System.Numerics.Quaternion operator +(System.Numerics.Quaternion value1, System.Numerics.Quaternion value2) { throw null; }
-        public static System.Numerics.Quaternion operator /(System.Numerics.Quaternion value1, System.Numerics.Quaternion value2) { throw null; }
-        public static bool operator ==(System.Numerics.Quaternion value1, System.Numerics.Quaternion value2) { throw null; }
-        public static bool operator !=(System.Numerics.Quaternion value1, System.Numerics.Quaternion value2) { throw null; }
-        public static System.Numerics.Quaternion operator *(System.Numerics.Quaternion value1, System.Numerics.Quaternion value2) { throw null; }
-        public static System.Numerics.Quaternion operator *(System.Numerics.Quaternion value1, float value2) { throw null; }
-        public static System.Numerics.Quaternion operator -(System.Numerics.Quaternion value1, System.Numerics.Quaternion value2) { throw null; }
-        public static System.Numerics.Quaternion operator -(System.Numerics.Quaternion value) { throw null; }
-        public static System.Numerics.Quaternion Slerp(System.Numerics.Quaternion quaternion1, System.Numerics.Quaternion quaternion2, float amount) { throw null; }
-        public static System.Numerics.Quaternion Subtract(System.Numerics.Quaternion value1, System.Numerics.Quaternion value2) { throw null; }
+
+        public static Quaternion Lerp(Quaternion quaternion1, Quaternion quaternion2, float amount) { throw null; }
+
+        public static Quaternion Multiply(Quaternion value1, Quaternion value2) { throw null; }
+
+        public static Quaternion Multiply(Quaternion value1, float value2) { throw null; }
+
+        public static Quaternion Negate(Quaternion value) { throw null; }
+
+        public static Quaternion Normalize(Quaternion value) { throw null; }
+
+        public static Quaternion operator +(Quaternion value1, Quaternion value2) { throw null; }
+
+        public static Quaternion operator /(Quaternion value1, Quaternion value2) { throw null; }
+
+        public static bool operator ==(Quaternion value1, Quaternion value2) { throw null; }
+
+        public static bool operator !=(Quaternion value1, Quaternion value2) { throw null; }
+
+        public static Quaternion operator *(Quaternion value1, Quaternion value2) { throw null; }
+
+        public static Quaternion operator *(Quaternion value1, float value2) { throw null; }
+
+        public static Quaternion operator -(Quaternion value1, Quaternion value2) { throw null; }
+
+        public static Quaternion operator -(Quaternion value) { throw null; }
+
+        public static Quaternion Slerp(Quaternion quaternion1, Quaternion quaternion2, float amount) { throw null; }
+
+        public static Quaternion Subtract(Quaternion value1, Quaternion value2) { throw null; }
+
         public override string ToString() { throw null; }
     }
+
     public static partial class Vector
     {
         public static bool IsHardwareAccelerated { get { throw null; } }
-        public static System.Numerics.Vector<T> Abs<T>(System.Numerics.Vector<T> value) where T : struct { throw null; }
-        public static System.Numerics.Vector<T> Add<T>(System.Numerics.Vector<T> left, System.Numerics.Vector<T> right) where T : struct { throw null; }
-        public static System.Numerics.Vector<T> AndNot<T>(System.Numerics.Vector<T> left, System.Numerics.Vector<T> right) where T : struct { throw null; }
-        public static System.Numerics.Vector<System.Byte> AsVectorByte<T>(System.Numerics.Vector<T> value) where T : struct { throw null; }
-        public static System.Numerics.Vector<System.Double> AsVectorDouble<T>(System.Numerics.Vector<T> value) where T : struct { throw null; }
-        public static System.Numerics.Vector<System.Int16> AsVectorInt16<T>(System.Numerics.Vector<T> value) where T : struct { throw null; }
-        public static System.Numerics.Vector<System.Int32> AsVectorInt32<T>(System.Numerics.Vector<T> value) where T : struct { throw null; }
-        public static System.Numerics.Vector<System.Int64> AsVectorInt64<T>(System.Numerics.Vector<T> value) where T : struct { throw null; }
-        [System.CLSCompliantAttribute(false)]
-        public static System.Numerics.Vector<System.SByte> AsVectorSByte<T>(System.Numerics.Vector<T> value) where T : struct { throw null; }
-        public static System.Numerics.Vector<System.Single> AsVectorSingle<T>(System.Numerics.Vector<T> value) where T : struct { throw null; }
-        [System.CLSCompliantAttribute(false)]
-        public static System.Numerics.Vector<System.UInt16> AsVectorUInt16<T>(System.Numerics.Vector<T> value) where T : struct { throw null; }
-        [System.CLSCompliantAttribute(false)]
-        public static System.Numerics.Vector<System.UInt32> AsVectorUInt32<T>(System.Numerics.Vector<T> value) where T : struct { throw null; }
-        [System.CLSCompliantAttribute(false)]
-        public static System.Numerics.Vector<System.UInt64> AsVectorUInt64<T>(System.Numerics.Vector<T> value) where T : struct { throw null; }
-        public static System.Numerics.Vector<T> BitwiseAnd<T>(System.Numerics.Vector<T> left, System.Numerics.Vector<T> right) where T : struct { throw null; }
-        public static System.Numerics.Vector<T> BitwiseOr<T>(System.Numerics.Vector<T> left, System.Numerics.Vector<T> right) where T : struct { throw null; }
-        public static System.Numerics.Vector<System.Single> ConditionalSelect(System.Numerics.Vector<System.Int32> condition, System.Numerics.Vector<System.Single> left, System.Numerics.Vector<System.Single> right) { throw null; }
-        public static System.Numerics.Vector<System.Double> ConditionalSelect(System.Numerics.Vector<System.Int64> condition, System.Numerics.Vector<System.Double> left, System.Numerics.Vector<System.Double> right) { throw null; }
-        public static System.Numerics.Vector<T> ConditionalSelect<T>(System.Numerics.Vector<T> condition, System.Numerics.Vector<T> left, System.Numerics.Vector<T> right) where T : struct { throw null; }
-        public static System.Numerics.Vector<System.Double> ConvertToDouble(System.Numerics.Vector<System.Int64> value) { throw null; }
-        [System.CLSCompliantAttribute(false)]
-        public static System.Numerics.Vector<System.Double> ConvertToDouble(System.Numerics.Vector<System.UInt64> value) { throw null; }
-        public static System.Numerics.Vector<System.Int32> ConvertToInt32(System.Numerics.Vector<System.Single> value) { throw null; }
-        public static System.Numerics.Vector<System.Int64> ConvertToInt64(System.Numerics.Vector<System.Double> value) { throw null; }
-        public static System.Numerics.Vector<System.Single> ConvertToSingle(System.Numerics.Vector<System.Int32> value) { throw null; }
-        [System.CLSCompliantAttribute(false)]
-        public static System.Numerics.Vector<System.Single> ConvertToSingle(System.Numerics.Vector<System.UInt32> value) { throw null; }
-        [System.CLSCompliantAttribute(false)]
-        public static System.Numerics.Vector<System.UInt32> ConvertToUInt32(System.Numerics.Vector<System.Single> value) { throw null; }
-        [System.CLSCompliantAttribute(false)]
-        public static System.Numerics.Vector<System.UInt64> ConvertToUInt64(System.Numerics.Vector<System.Double> value) { throw null; }
-        public static System.Numerics.Vector<T> Divide<T>(System.Numerics.Vector<T> left, System.Numerics.Vector<T> right) where T : struct { throw null; }
-        public static T Dot<T>(System.Numerics.Vector<T> left, System.Numerics.Vector<T> right) where T : struct { throw null; }
-        public static System.Numerics.Vector<System.Int64> Equals(System.Numerics.Vector<System.Double> left, System.Numerics.Vector<System.Double> right) { throw null; }
-        public static System.Numerics.Vector<System.Int32> Equals(System.Numerics.Vector<System.Int32> left, System.Numerics.Vector<System.Int32> right) { throw null; }
-        public static System.Numerics.Vector<System.Int64> Equals(System.Numerics.Vector<System.Int64> left, System.Numerics.Vector<System.Int64> right) { throw null; }
-        public static System.Numerics.Vector<System.Int32> Equals(System.Numerics.Vector<System.Single> left, System.Numerics.Vector<System.Single> right) { throw null; }
-        public static bool EqualsAll<T>(System.Numerics.Vector<T> left, System.Numerics.Vector<T> right) where T : struct { throw null; }
-        public static bool EqualsAny<T>(System.Numerics.Vector<T> left, System.Numerics.Vector<T> right) where T : struct { throw null; }
-        public static System.Numerics.Vector<T> Equals<T>(System.Numerics.Vector<T> left, System.Numerics.Vector<T> right) where T : struct { throw null; }
-        public static System.Numerics.Vector<System.Int64> GreaterThan(System.Numerics.Vector<System.Double> left, System.Numerics.Vector<System.Double> right) { throw null; }
-        public static System.Numerics.Vector<System.Int32> GreaterThan(System.Numerics.Vector<System.Int32> left, System.Numerics.Vector<System.Int32> right) { throw null; }
-        public static System.Numerics.Vector<System.Int64> GreaterThan(System.Numerics.Vector<System.Int64> left, System.Numerics.Vector<System.Int64> right) { throw null; }
-        public static System.Numerics.Vector<System.Int32> GreaterThan(System.Numerics.Vector<System.Single> left, System.Numerics.Vector<System.Single> right) { throw null; }
-        public static bool GreaterThanAll<T>(System.Numerics.Vector<T> left, System.Numerics.Vector<T> right) where T : struct { throw null; }
-        public static bool GreaterThanAny<T>(System.Numerics.Vector<T> left, System.Numerics.Vector<T> right) where T : struct { throw null; }
-        public static System.Numerics.Vector<System.Int64> GreaterThanOrEqual(System.Numerics.Vector<System.Double> left, System.Numerics.Vector<System.Double> right) { throw null; }
-        public static System.Numerics.Vector<System.Int32> GreaterThanOrEqual(System.Numerics.Vector<System.Int32> left, System.Numerics.Vector<System.Int32> right) { throw null; }
-        public static System.Numerics.Vector<System.Int64> GreaterThanOrEqual(System.Numerics.Vector<System.Int64> left, System.Numerics.Vector<System.Int64> right) { throw null; }
-        public static System.Numerics.Vector<System.Int32> GreaterThanOrEqual(System.Numerics.Vector<System.Single> left, System.Numerics.Vector<System.Single> right) { throw null; }
-        public static bool GreaterThanOrEqualAll<T>(System.Numerics.Vector<T> left, System.Numerics.Vector<T> right) where T : struct { throw null; }
-        public static bool GreaterThanOrEqualAny<T>(System.Numerics.Vector<T> left, System.Numerics.Vector<T> right) where T : struct { throw null; }
-        public static System.Numerics.Vector<T> GreaterThanOrEqual<T>(System.Numerics.Vector<T> left, System.Numerics.Vector<T> right) where T : struct { throw null; }
-        public static System.Numerics.Vector<T> GreaterThan<T>(System.Numerics.Vector<T> left, System.Numerics.Vector<T> right) where T : struct { throw null; }
-        public static System.Numerics.Vector<System.Int64> LessThan(System.Numerics.Vector<System.Double> left, System.Numerics.Vector<System.Double> right) { throw null; }
-        public static System.Numerics.Vector<System.Int32> LessThan(System.Numerics.Vector<System.Int32> left, System.Numerics.Vector<System.Int32> right) { throw null; }
-        public static System.Numerics.Vector<System.Int64> LessThan(System.Numerics.Vector<System.Int64> left, System.Numerics.Vector<System.Int64> right) { throw null; }
-        public static System.Numerics.Vector<System.Int32> LessThan(System.Numerics.Vector<System.Single> left, System.Numerics.Vector<System.Single> right) { throw null; }
-        public static bool LessThanAll<T>(System.Numerics.Vector<T> left, System.Numerics.Vector<T> right) where T : struct { throw null; }
-        public static bool LessThanAny<T>(System.Numerics.Vector<T> left, System.Numerics.Vector<T> right) where T : struct { throw null; }
-        public static System.Numerics.Vector<System.Int64> LessThanOrEqual(System.Numerics.Vector<System.Double> left, System.Numerics.Vector<System.Double> right) { throw null; }
-        public static System.Numerics.Vector<System.Int32> LessThanOrEqual(System.Numerics.Vector<System.Int32> left, System.Numerics.Vector<System.Int32> right) { throw null; }
-        public static System.Numerics.Vector<System.Int64> LessThanOrEqual(System.Numerics.Vector<System.Int64> left, System.Numerics.Vector<System.Int64> right) { throw null; }
-        public static System.Numerics.Vector<System.Int32> LessThanOrEqual(System.Numerics.Vector<System.Single> left, System.Numerics.Vector<System.Single> right) { throw null; }
-        public static bool LessThanOrEqualAll<T>(System.Numerics.Vector<T> left, System.Numerics.Vector<T> right) where T : struct { throw null; }
-        public static bool LessThanOrEqualAny<T>(System.Numerics.Vector<T> left, System.Numerics.Vector<T> right) where T : struct { throw null; }
-        public static System.Numerics.Vector<T> LessThanOrEqual<T>(System.Numerics.Vector<T> left, System.Numerics.Vector<T> right) where T : struct { throw null; }
-        public static System.Numerics.Vector<T> LessThan<T>(System.Numerics.Vector<T> left, System.Numerics.Vector<T> right) where T : struct { throw null; }
-        public static System.Numerics.Vector<T> Max<T>(System.Numerics.Vector<T> left, System.Numerics.Vector<T> right) where T : struct { throw null; }
-        public static System.Numerics.Vector<T> Min<T>(System.Numerics.Vector<T> left, System.Numerics.Vector<T> right) where T : struct { throw null; }
-        public static System.Numerics.Vector<T> Multiply<T>(System.Numerics.Vector<T> left, System.Numerics.Vector<T> right) where T : struct { throw null; }
-        public static System.Numerics.Vector<T> Multiply<T>(System.Numerics.Vector<T> left, T right) where T : struct { throw null; }
-        public static System.Numerics.Vector<T> Multiply<T>(T left, System.Numerics.Vector<T> right) where T : struct { throw null; }
-        public static System.Numerics.Vector<System.Single> Narrow(System.Numerics.Vector<System.Double> source1, System.Numerics.Vector<System.Double> source2) { throw null; }
-        [System.CLSCompliantAttribute(false)]
-        public static System.Numerics.Vector<System.SByte> Narrow(System.Numerics.Vector<System.Int16> source1, System.Numerics.Vector<System.Int16> source2) { throw null; }
-        public static System.Numerics.Vector<System.Int16> Narrow(System.Numerics.Vector<System.Int32> source1, System.Numerics.Vector<System.Int32> source2) { throw null; }
-        public static System.Numerics.Vector<System.Int32> Narrow(System.Numerics.Vector<System.Int64> source1, System.Numerics.Vector<System.Int64> source2) { throw null; }
-        [System.CLSCompliantAttribute(false)]
-        public static System.Numerics.Vector<System.Byte> Narrow(System.Numerics.Vector<System.UInt16> source1, System.Numerics.Vector<System.UInt16> source2) { throw null; }
-        [System.CLSCompliantAttribute(false)]
-        public static System.Numerics.Vector<System.UInt16> Narrow(System.Numerics.Vector<System.UInt32> source1, System.Numerics.Vector<System.UInt32> source2) { throw null; }
-        [System.CLSCompliantAttribute(false)]
-        public static System.Numerics.Vector<System.UInt32> Narrow(System.Numerics.Vector<System.UInt64> source1, System.Numerics.Vector<System.UInt64> source2) { throw null; }
-        public static System.Numerics.Vector<T> Negate<T>(System.Numerics.Vector<T> value) where T : struct { throw null; }
-        public static System.Numerics.Vector<T> OnesComplement<T>(System.Numerics.Vector<T> value) where T : struct { throw null; }
-        public static System.Numerics.Vector<T> SquareRoot<T>(System.Numerics.Vector<T> value) where T : struct { throw null; }
-        public static System.Numerics.Vector<T> Subtract<T>(System.Numerics.Vector<T> left, System.Numerics.Vector<T> right) where T : struct { throw null; }
-        [System.CLSCompliantAttribute(false)]
-        public static void Widen(System.Numerics.Vector<System.Byte> source, out System.Numerics.Vector<System.UInt16> dest1, out System.Numerics.Vector<System.UInt16> dest2) { throw null; }
-        public static void Widen(System.Numerics.Vector<System.Int16> source, out System.Numerics.Vector<System.Int32> dest1, out System.Numerics.Vector<System.Int32> dest2) { throw null; }
-        public static void Widen(System.Numerics.Vector<System.Int32> source, out System.Numerics.Vector<System.Int64> dest1, out System.Numerics.Vector<System.Int64> dest2) { throw null; }
-        [System.CLSCompliantAttribute(false)]
-        public static void Widen(System.Numerics.Vector<System.SByte> source, out System.Numerics.Vector<System.Int16> dest1, out System.Numerics.Vector<System.Int16> dest2) { throw null; }
-        public static void Widen(System.Numerics.Vector<System.Single> source, out System.Numerics.Vector<System.Double> dest1, out System.Numerics.Vector<System.Double> dest2) { throw null; }
-        [System.CLSCompliantAttribute(false)]
-        public static void Widen(System.Numerics.Vector<System.UInt16> source, out System.Numerics.Vector<System.UInt32> dest1, out System.Numerics.Vector<System.UInt32> dest2) { throw null; }
-        [System.CLSCompliantAttribute(false)]
-        public static void Widen(System.Numerics.Vector<System.UInt32> source, out System.Numerics.Vector<System.UInt64> dest1, out System.Numerics.Vector<System.UInt64> dest2) { throw null; }
-        public static System.Numerics.Vector<T> Xor<T>(System.Numerics.Vector<T> left, System.Numerics.Vector<T> right) where T : struct { throw null; }
+
+        public static Vector<T> Abs<T>(Vector<T> value)
+            where T : struct { throw null; }
+
+        public static Vector<T> Add<T>(Vector<T> left, Vector<T> right)
+            where T : struct { throw null; }
+
+        public static Vector<T> AndNot<T>(Vector<T> left, Vector<T> right)
+            where T : struct { throw null; }
+
+        public static Vector<byte> AsVectorByte<T>(Vector<T> value)
+            where T : struct { throw null; }
+
+        public static Vector<double> AsVectorDouble<T>(Vector<T> value)
+            where T : struct { throw null; }
+
+        public static Vector<short> AsVectorInt16<T>(Vector<T> value)
+            where T : struct { throw null; }
+
+        public static Vector<int> AsVectorInt32<T>(Vector<T> value)
+            where T : struct { throw null; }
+
+        public static Vector<long> AsVectorInt64<T>(Vector<T> value)
+            where T : struct { throw null; }
+
+        [CLSCompliant(false)]
+        public static Vector<sbyte> AsVectorSByte<T>(Vector<T> value)
+            where T : struct { throw null; }
+
+        public static Vector<float> AsVectorSingle<T>(Vector<T> value)
+            where T : struct { throw null; }
+
+        [CLSCompliant(false)]
+        public static Vector<ushort> AsVectorUInt16<T>(Vector<T> value)
+            where T : struct { throw null; }
+
+        [CLSCompliant(false)]
+        public static Vector<uint> AsVectorUInt32<T>(Vector<T> value)
+            where T : struct { throw null; }
+
+        [CLSCompliant(false)]
+        public static Vector<ulong> AsVectorUInt64<T>(Vector<T> value)
+            where T : struct { throw null; }
+
+        public static Vector<T> BitwiseAnd<T>(Vector<T> left, Vector<T> right)
+            where T : struct { throw null; }
+
+        public static Vector<T> BitwiseOr<T>(Vector<T> left, Vector<T> right)
+            where T : struct { throw null; }
+
+        public static Vector<float> ConditionalSelect(Vector<int> condition, Vector<float> left, Vector<float> right) { throw null; }
+
+        public static Vector<double> ConditionalSelect(Vector<long> condition, Vector<double> left, Vector<double> right) { throw null; }
+
+        public static Vector<T> ConditionalSelect<T>(Vector<T> condition, Vector<T> left, Vector<T> right)
+            where T : struct { throw null; }
+
+        public static Vector<double> ConvertToDouble(Vector<long> value) { throw null; }
+
+        [CLSCompliant(false)]
+        public static Vector<double> ConvertToDouble(Vector<ulong> value) { throw null; }
+
+        public static Vector<int> ConvertToInt32(Vector<float> value) { throw null; }
+
+        public static Vector<long> ConvertToInt64(Vector<double> value) { throw null; }
+
+        public static Vector<float> ConvertToSingle(Vector<int> value) { throw null; }
+
+        [CLSCompliant(false)]
+        public static Vector<float> ConvertToSingle(Vector<uint> value) { throw null; }
+
+        [CLSCompliant(false)]
+        public static Vector<uint> ConvertToUInt32(Vector<float> value) { throw null; }
+
+        [CLSCompliant(false)]
+        public static Vector<ulong> ConvertToUInt64(Vector<double> value) { throw null; }
+
+        public static Vector<T> Divide<T>(Vector<T> left, Vector<T> right)
+            where T : struct { throw null; }
+
+        public static T Dot<T>(Vector<T> left, Vector<T> right)
+            where T : struct { throw null; }
+
+        public static Vector<long> Equals(Vector<double> left, Vector<double> right) { throw null; }
+
+        public static Vector<int> Equals(Vector<int> left, Vector<int> right) { throw null; }
+
+        public static Vector<long> Equals(Vector<long> left, Vector<long> right) { throw null; }
+
+        public static Vector<int> Equals(Vector<float> left, Vector<float> right) { throw null; }
+
+        public static Vector<T> Equals<T>(Vector<T> left, Vector<T> right)
+            where T : struct { throw null; }
+
+        public static bool EqualsAll<T>(Vector<T> left, Vector<T> right)
+            where T : struct { throw null; }
+
+        public static bool EqualsAny<T>(Vector<T> left, Vector<T> right)
+            where T : struct { throw null; }
+
+        public static Vector<long> GreaterThan(Vector<double> left, Vector<double> right) { throw null; }
+
+        public static Vector<int> GreaterThan(Vector<int> left, Vector<int> right) { throw null; }
+
+        public static Vector<long> GreaterThan(Vector<long> left, Vector<long> right) { throw null; }
+
+        public static Vector<int> GreaterThan(Vector<float> left, Vector<float> right) { throw null; }
+
+        public static Vector<T> GreaterThan<T>(Vector<T> left, Vector<T> right)
+            where T : struct { throw null; }
+
+        public static bool GreaterThanAll<T>(Vector<T> left, Vector<T> right)
+            where T : struct { throw null; }
+
+        public static bool GreaterThanAny<T>(Vector<T> left, Vector<T> right)
+            where T : struct { throw null; }
+
+        public static Vector<long> GreaterThanOrEqual(Vector<double> left, Vector<double> right) { throw null; }
+
+        public static Vector<int> GreaterThanOrEqual(Vector<int> left, Vector<int> right) { throw null; }
+
+        public static Vector<long> GreaterThanOrEqual(Vector<long> left, Vector<long> right) { throw null; }
+
+        public static Vector<int> GreaterThanOrEqual(Vector<float> left, Vector<float> right) { throw null; }
+
+        public static Vector<T> GreaterThanOrEqual<T>(Vector<T> left, Vector<T> right)
+            where T : struct { throw null; }
+
+        public static bool GreaterThanOrEqualAll<T>(Vector<T> left, Vector<T> right)
+            where T : struct { throw null; }
+
+        public static bool GreaterThanOrEqualAny<T>(Vector<T> left, Vector<T> right)
+            where T : struct { throw null; }
+
+        public static Vector<long> LessThan(Vector<double> left, Vector<double> right) { throw null; }
+
+        public static Vector<int> LessThan(Vector<int> left, Vector<int> right) { throw null; }
+
+        public static Vector<long> LessThan(Vector<long> left, Vector<long> right) { throw null; }
+
+        public static Vector<int> LessThan(Vector<float> left, Vector<float> right) { throw null; }
+
+        public static Vector<T> LessThan<T>(Vector<T> left, Vector<T> right)
+            where T : struct { throw null; }
+
+        public static bool LessThanAll<T>(Vector<T> left, Vector<T> right)
+            where T : struct { throw null; }
+
+        public static bool LessThanAny<T>(Vector<T> left, Vector<T> right)
+            where T : struct { throw null; }
+
+        public static Vector<long> LessThanOrEqual(Vector<double> left, Vector<double> right) { throw null; }
+
+        public static Vector<int> LessThanOrEqual(Vector<int> left, Vector<int> right) { throw null; }
+
+        public static Vector<long> LessThanOrEqual(Vector<long> left, Vector<long> right) { throw null; }
+
+        public static Vector<int> LessThanOrEqual(Vector<float> left, Vector<float> right) { throw null; }
+
+        public static Vector<T> LessThanOrEqual<T>(Vector<T> left, Vector<T> right)
+            where T : struct { throw null; }
+
+        public static bool LessThanOrEqualAll<T>(Vector<T> left, Vector<T> right)
+            where T : struct { throw null; }
+
+        public static bool LessThanOrEqualAny<T>(Vector<T> left, Vector<T> right)
+            where T : struct { throw null; }
+
+        public static Vector<T> Max<T>(Vector<T> left, Vector<T> right)
+            where T : struct { throw null; }
+
+        public static Vector<T> Min<T>(Vector<T> left, Vector<T> right)
+            where T : struct { throw null; }
+
+        public static Vector<T> Multiply<T>(T left, Vector<T> right)
+            where T : struct { throw null; }
+
+        public static Vector<T> Multiply<T>(Vector<T> left, T right)
+            where T : struct { throw null; }
+
+        public static Vector<T> Multiply<T>(Vector<T> left, Vector<T> right)
+            where T : struct { throw null; }
+
+        public static Vector<float> Narrow(Vector<double> source1, Vector<double> source2) { throw null; }
+
+        [CLSCompliant(false)]
+        public static Vector<sbyte> Narrow(Vector<short> source1, Vector<short> source2) { throw null; }
+
+        public static Vector<short> Narrow(Vector<int> source1, Vector<int> source2) { throw null; }
+
+        public static Vector<int> Narrow(Vector<long> source1, Vector<long> source2) { throw null; }
+
+        [CLSCompliant(false)]
+        public static Vector<byte> Narrow(Vector<ushort> source1, Vector<ushort> source2) { throw null; }
+
+        [CLSCompliant(false)]
+        public static Vector<ushort> Narrow(Vector<uint> source1, Vector<uint> source2) { throw null; }
+
+        [CLSCompliant(false)]
+        public static Vector<uint> Narrow(Vector<ulong> source1, Vector<ulong> source2) { throw null; }
+
+        public static Vector<T> Negate<T>(Vector<T> value)
+            where T : struct { throw null; }
+
+        public static Vector<T> OnesComplement<T>(Vector<T> value)
+            where T : struct { throw null; }
+
+        public static Vector<T> SquareRoot<T>(Vector<T> value)
+            where T : struct { throw null; }
+
+        public static Vector<T> Subtract<T>(Vector<T> left, Vector<T> right)
+            where T : struct { throw null; }
+
+        [CLSCompliant(false)]
+        public static void Widen(Vector<byte> source, out Vector<ushort> dest1, out Vector<ushort> dest2) { throw null; }
+
+        public static void Widen(Vector<short> source, out Vector<int> dest1, out Vector<int> dest2) { throw null; }
+
+        public static void Widen(Vector<int> source, out Vector<long> dest1, out Vector<long> dest2) { throw null; }
+
+        [CLSCompliant(false)]
+        public static void Widen(Vector<sbyte> source, out Vector<short> dest1, out Vector<short> dest2) { throw null; }
+
+        public static void Widen(Vector<float> source, out Vector<double> dest1, out Vector<double> dest2) { throw null; }
+
+        [CLSCompliant(false)]
+        public static void Widen(Vector<ushort> source, out Vector<uint> dest1, out Vector<uint> dest2) { throw null; }
+
+        [CLSCompliant(false)]
+        public static void Widen(Vector<uint> source, out Vector<ulong> dest1, out Vector<ulong> dest2) { throw null; }
+
+        public static Vector<T> Xor<T>(Vector<T> left, Vector<T> right)
+            where T : struct { throw null; }
     }
-    public partial struct Vector2 : System.IEquatable<System.Numerics.Vector2>, System.IFormattable
+
+    public partial struct Vector2 : IEquatable<Vector2>, IFormattable
     {
         public float X;
         public float Y;
-        public Vector2(float value) { throw null; }
-        public Vector2(float x, float y) { throw null; }
-        public static System.Numerics.Vector2 One { get { throw null; } }
-        public static System.Numerics.Vector2 UnitX { get { throw null; } }
-        public static System.Numerics.Vector2 UnitY { get { throw null; } }
-        public static System.Numerics.Vector2 Zero { get { throw null; } }
-        public static System.Numerics.Vector2 Abs(System.Numerics.Vector2 value) { throw null; }
-        public static System.Numerics.Vector2 Add(System.Numerics.Vector2 left, System.Numerics.Vector2 right) { throw null; }
-        public static System.Numerics.Vector2 Clamp(System.Numerics.Vector2 value1, System.Numerics.Vector2 min, System.Numerics.Vector2 max) { throw null; }
-        public void CopyTo(float[] array) { }
+        public Vector2(float x, float y) { }
+
+        public Vector2(float value) { }
+
+        public static Vector2 One { get { throw null; } }
+
+        public static Vector2 UnitX { get { throw null; } }
+
+        public static Vector2 UnitY { get { throw null; } }
+
+        public static Vector2 Zero { get { throw null; } }
+
+        public static Vector2 Abs(Vector2 value) { throw null; }
+
+        public static Vector2 Add(Vector2 left, Vector2 right) { throw null; }
+
+        public static Vector2 Clamp(Vector2 value1, Vector2 min, Vector2 max) { throw null; }
+
         public void CopyTo(float[] array, int index) { }
-        public static float Distance(System.Numerics.Vector2 value1, System.Numerics.Vector2 value2) { throw null; }
-        public static float DistanceSquared(System.Numerics.Vector2 value1, System.Numerics.Vector2 value2) { throw null; }
-        public static System.Numerics.Vector2 Divide(System.Numerics.Vector2 left, System.Numerics.Vector2 right) { throw null; }
-        public static System.Numerics.Vector2 Divide(System.Numerics.Vector2 left, float divisor) { throw null; }
-        public static float Dot(System.Numerics.Vector2 value1, System.Numerics.Vector2 value2) { throw null; }
-        public bool Equals(System.Numerics.Vector2 other) { throw null; }
+
+        public void CopyTo(float[] array) { }
+
+        public static float Distance(Vector2 value1, Vector2 value2) { throw null; }
+
+        public static float DistanceSquared(Vector2 value1, Vector2 value2) { throw null; }
+
+        public static Vector2 Divide(Vector2 left, Vector2 right) { throw null; }
+
+        public static Vector2 Divide(Vector2 left, float divisor) { throw null; }
+
+        public static float Dot(Vector2 value1, Vector2 value2) { throw null; }
+
+        public bool Equals(Vector2 other) { throw null; }
+
         public override bool Equals(object obj) { throw null; }
+
         public override int GetHashCode() { throw null; }
+
         public float Length() { throw null; }
+
         public float LengthSquared() { throw null; }
-        public static System.Numerics.Vector2 Lerp(System.Numerics.Vector2 value1, System.Numerics.Vector2 value2, float amount) { throw null; }
-        public static System.Numerics.Vector2 Max(System.Numerics.Vector2 value1, System.Numerics.Vector2 value2) { throw null; }
-        public static System.Numerics.Vector2 Min(System.Numerics.Vector2 value1, System.Numerics.Vector2 value2) { throw null; }
-        public static System.Numerics.Vector2 Multiply(System.Numerics.Vector2 left, System.Numerics.Vector2 right) { throw null; }
-        public static System.Numerics.Vector2 Multiply(System.Numerics.Vector2 left, float right) { throw null; }
-        public static System.Numerics.Vector2 Multiply(float left, System.Numerics.Vector2 right) { throw null; }
-        public static System.Numerics.Vector2 Negate(System.Numerics.Vector2 value) { throw null; }
-        public static System.Numerics.Vector2 Normalize(System.Numerics.Vector2 value) { throw null; }
-        public static System.Numerics.Vector2 operator +(System.Numerics.Vector2 left, System.Numerics.Vector2 right) { throw null; }
-        public static System.Numerics.Vector2 operator /(System.Numerics.Vector2 left, System.Numerics.Vector2 right) { throw null; }
-        public static System.Numerics.Vector2 operator /(System.Numerics.Vector2 value1, float value2) { throw null; }
-        public static bool operator ==(System.Numerics.Vector2 left, System.Numerics.Vector2 right) { throw null; }
-        public static bool operator !=(System.Numerics.Vector2 left, System.Numerics.Vector2 right) { throw null; }
-        public static System.Numerics.Vector2 operator *(System.Numerics.Vector2 left, System.Numerics.Vector2 right) { throw null; }
-        public static System.Numerics.Vector2 operator *(System.Numerics.Vector2 left, float right) { throw null; }
-        public static System.Numerics.Vector2 operator *(float left, System.Numerics.Vector2 right) { throw null; }
-        public static System.Numerics.Vector2 operator -(System.Numerics.Vector2 left, System.Numerics.Vector2 right) { throw null; }
-        public static System.Numerics.Vector2 operator -(System.Numerics.Vector2 value) { throw null; }
-        public static System.Numerics.Vector2 Reflect(System.Numerics.Vector2 vector, System.Numerics.Vector2 normal) { throw null; }
-        public static System.Numerics.Vector2 SquareRoot(System.Numerics.Vector2 value) { throw null; }
-        public static System.Numerics.Vector2 Subtract(System.Numerics.Vector2 left, System.Numerics.Vector2 right) { throw null; }
+
+        public static Vector2 Lerp(Vector2 value1, Vector2 value2, float amount) { throw null; }
+
+        public static Vector2 Max(Vector2 value1, Vector2 value2) { throw null; }
+
+        public static Vector2 Min(Vector2 value1, Vector2 value2) { throw null; }
+
+        public static Vector2 Multiply(Vector2 left, Vector2 right) { throw null; }
+
+        public static Vector2 Multiply(Vector2 left, float right) { throw null; }
+
+        public static Vector2 Multiply(float left, Vector2 right) { throw null; }
+
+        public static Vector2 Negate(Vector2 value) { throw null; }
+
+        public static Vector2 Normalize(Vector2 value) { throw null; }
+
+        public static Vector2 operator +(Vector2 left, Vector2 right) { throw null; }
+
+        public static Vector2 operator /(Vector2 left, Vector2 right) { throw null; }
+
+        public static Vector2 operator /(Vector2 value1, float value2) { throw null; }
+
+        public static bool operator ==(Vector2 left, Vector2 right) { throw null; }
+
+        public static bool operator !=(Vector2 left, Vector2 right) { throw null; }
+
+        public static Vector2 operator *(Vector2 left, Vector2 right) { throw null; }
+
+        public static Vector2 operator *(Vector2 left, float right) { throw null; }
+
+        public static Vector2 operator *(float left, Vector2 right) { throw null; }
+
+        public static Vector2 operator -(Vector2 left, Vector2 right) { throw null; }
+
+        public static Vector2 operator -(Vector2 value) { throw null; }
+
+        public static Vector2 Reflect(Vector2 vector, Vector2 normal) { throw null; }
+
+        public static Vector2 SquareRoot(Vector2 value) { throw null; }
+
+        public static Vector2 Subtract(Vector2 left, Vector2 right) { throw null; }
+
         public override string ToString() { throw null; }
+
+        public string ToString(string format, IFormatProvider formatProvider) { throw null; }
+
         public string ToString(string format) { throw null; }
-        public string ToString(string format, System.IFormatProvider formatProvider) { throw null; }
-        public static System.Numerics.Vector2 Transform(System.Numerics.Vector2 position, System.Numerics.Matrix3x2 matrix) { throw null; }
-        public static System.Numerics.Vector2 Transform(System.Numerics.Vector2 position, System.Numerics.Matrix4x4 matrix) { throw null; }
-        public static System.Numerics.Vector2 Transform(System.Numerics.Vector2 value, System.Numerics.Quaternion rotation) { throw null; }
-        public static System.Numerics.Vector2 TransformNormal(System.Numerics.Vector2 normal, System.Numerics.Matrix3x2 matrix) { throw null; }
-        public static System.Numerics.Vector2 TransformNormal(System.Numerics.Vector2 normal, System.Numerics.Matrix4x4 matrix) { throw null; }
+
+        public static Vector2 Transform(Vector2 position, Matrix3x2 matrix) { throw null; }
+
+        public static Vector2 Transform(Vector2 position, Matrix4x4 matrix) { throw null; }
+
+        public static Vector2 Transform(Vector2 value, Quaternion rotation) { throw null; }
+
+        public static Vector2 TransformNormal(Vector2 normal, Matrix3x2 matrix) { throw null; }
+
+        public static Vector2 TransformNormal(Vector2 normal, Matrix4x4 matrix) { throw null; }
     }
-    public partial struct Vector3 : System.IEquatable<System.Numerics.Vector3>, System.IFormattable
+
+    public partial struct Vector3 : IEquatable<Vector3>, IFormattable
     {
         public float X;
         public float Y;
         public float Z;
-        public Vector3(System.Numerics.Vector2 value, float z) { throw null; }
-        public Vector3(float value) { throw null; }
-        public Vector3(float x, float y, float z) { throw null; }
-        public static System.Numerics.Vector3 One { get { throw null; } }
-        public static System.Numerics.Vector3 UnitX { get { throw null; } }
-        public static System.Numerics.Vector3 UnitY { get { throw null; } }
-        public static System.Numerics.Vector3 UnitZ { get { throw null; } }
-        public static System.Numerics.Vector3 Zero { get { throw null; } }
-        public static System.Numerics.Vector3 Abs(System.Numerics.Vector3 value) { throw null; }
-        public static System.Numerics.Vector3 Add(System.Numerics.Vector3 left, System.Numerics.Vector3 right) { throw null; }
-        public static System.Numerics.Vector3 Clamp(System.Numerics.Vector3 value1, System.Numerics.Vector3 min, System.Numerics.Vector3 max) { throw null; }
-        public void CopyTo(float[] array) { }
+        public Vector3(Vector2 value, float z) { }
+
+        public Vector3(float x, float y, float z) { }
+
+        public Vector3(float value) { }
+
+        public static Vector3 One { get { throw null; } }
+
+        public static Vector3 UnitX { get { throw null; } }
+
+        public static Vector3 UnitY { get { throw null; } }
+
+        public static Vector3 UnitZ { get { throw null; } }
+
+        public static Vector3 Zero { get { throw null; } }
+
+        public static Vector3 Abs(Vector3 value) { throw null; }
+
+        public static Vector3 Add(Vector3 left, Vector3 right) { throw null; }
+
+        public static Vector3 Clamp(Vector3 value1, Vector3 min, Vector3 max) { throw null; }
+
         public void CopyTo(float[] array, int index) { }
-        public static System.Numerics.Vector3 Cross(System.Numerics.Vector3 vector1, System.Numerics.Vector3 vector2) { throw null; }
-        public static float Distance(System.Numerics.Vector3 value1, System.Numerics.Vector3 value2) { throw null; }
-        public static float DistanceSquared(System.Numerics.Vector3 value1, System.Numerics.Vector3 value2) { throw null; }
-        public static System.Numerics.Vector3 Divide(System.Numerics.Vector3 left, System.Numerics.Vector3 right) { throw null; }
-        public static System.Numerics.Vector3 Divide(System.Numerics.Vector3 left, float divisor) { throw null; }
-        public static float Dot(System.Numerics.Vector3 vector1, System.Numerics.Vector3 vector2) { throw null; }
-        public bool Equals(System.Numerics.Vector3 other) { throw null; }
+
+        public void CopyTo(float[] array) { }
+
+        public static Vector3 Cross(Vector3 vector1, Vector3 vector2) { throw null; }
+
+        public static float Distance(Vector3 value1, Vector3 value2) { throw null; }
+
+        public static float DistanceSquared(Vector3 value1, Vector3 value2) { throw null; }
+
+        public static Vector3 Divide(Vector3 left, Vector3 right) { throw null; }
+
+        public static Vector3 Divide(Vector3 left, float divisor) { throw null; }
+
+        public static float Dot(Vector3 vector1, Vector3 vector2) { throw null; }
+
+        public bool Equals(Vector3 other) { throw null; }
+
         public override bool Equals(object obj) { throw null; }
+
         public override int GetHashCode() { throw null; }
+
         public float Length() { throw null; }
+
         public float LengthSquared() { throw null; }
-        public static System.Numerics.Vector3 Lerp(System.Numerics.Vector3 value1, System.Numerics.Vector3 value2, float amount) { throw null; }
-        public static System.Numerics.Vector3 Max(System.Numerics.Vector3 value1, System.Numerics.Vector3 value2) { throw null; }
-        public static System.Numerics.Vector3 Min(System.Numerics.Vector3 value1, System.Numerics.Vector3 value2) { throw null; }
-        public static System.Numerics.Vector3 Multiply(System.Numerics.Vector3 left, System.Numerics.Vector3 right) { throw null; }
-        public static System.Numerics.Vector3 Multiply(System.Numerics.Vector3 left, float right) { throw null; }
-        public static System.Numerics.Vector3 Multiply(float left, System.Numerics.Vector3 right) { throw null; }
-        public static System.Numerics.Vector3 Negate(System.Numerics.Vector3 value) { throw null; }
-        public static System.Numerics.Vector3 Normalize(System.Numerics.Vector3 value) { throw null; }
-        public static System.Numerics.Vector3 operator +(System.Numerics.Vector3 left, System.Numerics.Vector3 right) { throw null; }
-        public static System.Numerics.Vector3 operator /(System.Numerics.Vector3 left, System.Numerics.Vector3 right) { throw null; }
-        public static System.Numerics.Vector3 operator /(System.Numerics.Vector3 value1, float value2) { throw null; }
-        public static bool operator ==(System.Numerics.Vector3 left, System.Numerics.Vector3 right) { throw null; }
-        public static bool operator !=(System.Numerics.Vector3 left, System.Numerics.Vector3 right) { throw null; }
-        public static System.Numerics.Vector3 operator *(System.Numerics.Vector3 left, System.Numerics.Vector3 right) { throw null; }
-        public static System.Numerics.Vector3 operator *(System.Numerics.Vector3 left, float right) { throw null; }
-        public static System.Numerics.Vector3 operator *(float left, System.Numerics.Vector3 right) { throw null; }
-        public static System.Numerics.Vector3 operator -(System.Numerics.Vector3 left, System.Numerics.Vector3 right) { throw null; }
-        public static System.Numerics.Vector3 operator -(System.Numerics.Vector3 value) { throw null; }
-        public static System.Numerics.Vector3 Reflect(System.Numerics.Vector3 vector, System.Numerics.Vector3 normal) { throw null; }
-        public static System.Numerics.Vector3 SquareRoot(System.Numerics.Vector3 value) { throw null; }
-        public static System.Numerics.Vector3 Subtract(System.Numerics.Vector3 left, System.Numerics.Vector3 right) { throw null; }
+
+        public static Vector3 Lerp(Vector3 value1, Vector3 value2, float amount) { throw null; }
+
+        public static Vector3 Max(Vector3 value1, Vector3 value2) { throw null; }
+
+        public static Vector3 Min(Vector3 value1, Vector3 value2) { throw null; }
+
+        public static Vector3 Multiply(Vector3 left, Vector3 right) { throw null; }
+
+        public static Vector3 Multiply(Vector3 left, float right) { throw null; }
+
+        public static Vector3 Multiply(float left, Vector3 right) { throw null; }
+
+        public static Vector3 Negate(Vector3 value) { throw null; }
+
+        public static Vector3 Normalize(Vector3 value) { throw null; }
+
+        public static Vector3 operator +(Vector3 left, Vector3 right) { throw null; }
+
+        public static Vector3 operator /(Vector3 left, Vector3 right) { throw null; }
+
+        public static Vector3 operator /(Vector3 value1, float value2) { throw null; }
+
+        public static bool operator ==(Vector3 left, Vector3 right) { throw null; }
+
+        public static bool operator !=(Vector3 left, Vector3 right) { throw null; }
+
+        public static Vector3 operator *(Vector3 left, Vector3 right) { throw null; }
+
+        public static Vector3 operator *(Vector3 left, float right) { throw null; }
+
+        public static Vector3 operator *(float left, Vector3 right) { throw null; }
+
+        public static Vector3 operator -(Vector3 left, Vector3 right) { throw null; }
+
+        public static Vector3 operator -(Vector3 value) { throw null; }
+
+        public static Vector3 Reflect(Vector3 vector, Vector3 normal) { throw null; }
+
+        public static Vector3 SquareRoot(Vector3 value) { throw null; }
+
+        public static Vector3 Subtract(Vector3 left, Vector3 right) { throw null; }
+
         public override string ToString() { throw null; }
+
+        public string ToString(string format, IFormatProvider formatProvider) { throw null; }
+
         public string ToString(string format) { throw null; }
-        public string ToString(string format, System.IFormatProvider formatProvider) { throw null; }
-        public static System.Numerics.Vector3 Transform(System.Numerics.Vector3 position, System.Numerics.Matrix4x4 matrix) { throw null; }
-        public static System.Numerics.Vector3 Transform(System.Numerics.Vector3 value, System.Numerics.Quaternion rotation) { throw null; }
-        public static System.Numerics.Vector3 TransformNormal(System.Numerics.Vector3 normal, System.Numerics.Matrix4x4 matrix) { throw null; }
+
+        public static Vector3 Transform(Vector3 position, Matrix4x4 matrix) { throw null; }
+
+        public static Vector3 Transform(Vector3 value, Quaternion rotation) { throw null; }
+
+        public static Vector3 TransformNormal(Vector3 normal, Matrix4x4 matrix) { throw null; }
     }
-    public partial struct Vector4 : System.IEquatable<System.Numerics.Vector4>, System.IFormattable
+
+    public partial struct Vector4 : IEquatable<Vector4>, IFormattable
     {
         public float W;
         public float X;
         public float Y;
         public float Z;
-        public Vector4(System.Numerics.Vector2 value, float z, float w) { throw null; }
-        public Vector4(System.Numerics.Vector3 value, float w) { throw null; }
-        public Vector4(float value) { throw null; }
-        public Vector4(float x, float y, float z, float w) { throw null; }
-        public static System.Numerics.Vector4 One { get { throw null; } }
-        public static System.Numerics.Vector4 UnitW { get { throw null; } }
-        public static System.Numerics.Vector4 UnitX { get { throw null; } }
-        public static System.Numerics.Vector4 UnitY { get { throw null; } }
-        public static System.Numerics.Vector4 UnitZ { get { throw null; } }
-        public static System.Numerics.Vector4 Zero { get { throw null; } }
-        public static System.Numerics.Vector4 Abs(System.Numerics.Vector4 value) { throw null; }
-        public static System.Numerics.Vector4 Add(System.Numerics.Vector4 left, System.Numerics.Vector4 right) { throw null; }
-        public static System.Numerics.Vector4 Clamp(System.Numerics.Vector4 value1, System.Numerics.Vector4 min, System.Numerics.Vector4 max) { throw null; }
-        public void CopyTo(float[] array) { }
+        public Vector4(Vector2 value, float z, float w) { }
+
+        public Vector4(Vector3 value, float w) { }
+
+        public Vector4(float x, float y, float z, float w) { }
+
+        public Vector4(float value) { }
+
+        public static Vector4 One { get { throw null; } }
+
+        public static Vector4 UnitW { get { throw null; } }
+
+        public static Vector4 UnitX { get { throw null; } }
+
+        public static Vector4 UnitY { get { throw null; } }
+
+        public static Vector4 UnitZ { get { throw null; } }
+
+        public static Vector4 Zero { get { throw null; } }
+
+        public static Vector4 Abs(Vector4 value) { throw null; }
+
+        public static Vector4 Add(Vector4 left, Vector4 right) { throw null; }
+
+        public static Vector4 Clamp(Vector4 value1, Vector4 min, Vector4 max) { throw null; }
+
         public void CopyTo(float[] array, int index) { }
-        public static float Distance(System.Numerics.Vector4 value1, System.Numerics.Vector4 value2) { throw null; }
-        public static float DistanceSquared(System.Numerics.Vector4 value1, System.Numerics.Vector4 value2) { throw null; }
-        public static System.Numerics.Vector4 Divide(System.Numerics.Vector4 left, System.Numerics.Vector4 right) { throw null; }
-        public static System.Numerics.Vector4 Divide(System.Numerics.Vector4 left, float divisor) { throw null; }
-        public static float Dot(System.Numerics.Vector4 vector1, System.Numerics.Vector4 vector2) { throw null; }
-        public bool Equals(System.Numerics.Vector4 other) { throw null; }
+
+        public void CopyTo(float[] array) { }
+
+        public static float Distance(Vector4 value1, Vector4 value2) { throw null; }
+
+        public static float DistanceSquared(Vector4 value1, Vector4 value2) { throw null; }
+
+        public static Vector4 Divide(Vector4 left, Vector4 right) { throw null; }
+
+        public static Vector4 Divide(Vector4 left, float divisor) { throw null; }
+
+        public static float Dot(Vector4 vector1, Vector4 vector2) { throw null; }
+
+        public bool Equals(Vector4 other) { throw null; }
+
         public override bool Equals(object obj) { throw null; }
+
         public override int GetHashCode() { throw null; }
+
         public float Length() { throw null; }
+
         public float LengthSquared() { throw null; }
-        public static System.Numerics.Vector4 Lerp(System.Numerics.Vector4 value1, System.Numerics.Vector4 value2, float amount) { throw null; }
-        public static System.Numerics.Vector4 Max(System.Numerics.Vector4 value1, System.Numerics.Vector4 value2) { throw null; }
-        public static System.Numerics.Vector4 Min(System.Numerics.Vector4 value1, System.Numerics.Vector4 value2) { throw null; }
-        public static System.Numerics.Vector4 Multiply(System.Numerics.Vector4 left, System.Numerics.Vector4 right) { throw null; }
-        public static System.Numerics.Vector4 Multiply(System.Numerics.Vector4 left, float right) { throw null; }
-        public static System.Numerics.Vector4 Multiply(float left, System.Numerics.Vector4 right) { throw null; }
-        public static System.Numerics.Vector4 Negate(System.Numerics.Vector4 value) { throw null; }
-        public static System.Numerics.Vector4 Normalize(System.Numerics.Vector4 vector) { throw null; }
-        public static System.Numerics.Vector4 operator +(System.Numerics.Vector4 left, System.Numerics.Vector4 right) { throw null; }
-        public static System.Numerics.Vector4 operator /(System.Numerics.Vector4 left, System.Numerics.Vector4 right) { throw null; }
-        public static System.Numerics.Vector4 operator /(System.Numerics.Vector4 value1, float value2) { throw null; }
-        public static bool operator ==(System.Numerics.Vector4 left, System.Numerics.Vector4 right) { throw null; }
-        public static bool operator !=(System.Numerics.Vector4 left, System.Numerics.Vector4 right) { throw null; }
-        public static System.Numerics.Vector4 operator *(System.Numerics.Vector4 left, System.Numerics.Vector4 right) { throw null; }
-        public static System.Numerics.Vector4 operator *(System.Numerics.Vector4 left, float right) { throw null; }
-        public static System.Numerics.Vector4 operator *(float left, System.Numerics.Vector4 right) { throw null; }
-        public static System.Numerics.Vector4 operator -(System.Numerics.Vector4 left, System.Numerics.Vector4 right) { throw null; }
-        public static System.Numerics.Vector4 operator -(System.Numerics.Vector4 value) { throw null; }
-        public static System.Numerics.Vector4 SquareRoot(System.Numerics.Vector4 value) { throw null; }
-        public static System.Numerics.Vector4 Subtract(System.Numerics.Vector4 left, System.Numerics.Vector4 right) { throw null; }
+
+        public static Vector4 Lerp(Vector4 value1, Vector4 value2, float amount) { throw null; }
+
+        public static Vector4 Max(Vector4 value1, Vector4 value2) { throw null; }
+
+        public static Vector4 Min(Vector4 value1, Vector4 value2) { throw null; }
+
+        public static Vector4 Multiply(Vector4 left, Vector4 right) { throw null; }
+
+        public static Vector4 Multiply(Vector4 left, float right) { throw null; }
+
+        public static Vector4 Multiply(float left, Vector4 right) { throw null; }
+
+        public static Vector4 Negate(Vector4 value) { throw null; }
+
+        public static Vector4 Normalize(Vector4 vector) { throw null; }
+
+        public static Vector4 operator +(Vector4 left, Vector4 right) { throw null; }
+
+        public static Vector4 operator /(Vector4 left, Vector4 right) { throw null; }
+
+        public static Vector4 operator /(Vector4 value1, float value2) { throw null; }
+
+        public static bool operator ==(Vector4 left, Vector4 right) { throw null; }
+
+        public static bool operator !=(Vector4 left, Vector4 right) { throw null; }
+
+        public static Vector4 operator *(Vector4 left, Vector4 right) { throw null; }
+
+        public static Vector4 operator *(Vector4 left, float right) { throw null; }
+
+        public static Vector4 operator *(float left, Vector4 right) { throw null; }
+
+        public static Vector4 operator -(Vector4 left, Vector4 right) { throw null; }
+
+        public static Vector4 operator -(Vector4 value) { throw null; }
+
+        public static Vector4 SquareRoot(Vector4 value) { throw null; }
+
+        public static Vector4 Subtract(Vector4 left, Vector4 right) { throw null; }
+
         public override string ToString() { throw null; }
+
+        public string ToString(string format, IFormatProvider formatProvider) { throw null; }
+
         public string ToString(string format) { throw null; }
-        public string ToString(string format, System.IFormatProvider formatProvider) { throw null; }
-        public static System.Numerics.Vector4 Transform(System.Numerics.Vector2 position, System.Numerics.Matrix4x4 matrix) { throw null; }
-        public static System.Numerics.Vector4 Transform(System.Numerics.Vector2 value, System.Numerics.Quaternion rotation) { throw null; }
-        public static System.Numerics.Vector4 Transform(System.Numerics.Vector3 position, System.Numerics.Matrix4x4 matrix) { throw null; }
-        public static System.Numerics.Vector4 Transform(System.Numerics.Vector3 value, System.Numerics.Quaternion rotation) { throw null; }
-        public static System.Numerics.Vector4 Transform(System.Numerics.Vector4 vector, System.Numerics.Matrix4x4 matrix) { throw null; }
-        public static System.Numerics.Vector4 Transform(System.Numerics.Vector4 value, System.Numerics.Quaternion rotation) { throw null; }
+
+        public static Vector4 Transform(Vector2 position, Matrix4x4 matrix) { throw null; }
+
+        public static Vector4 Transform(Vector2 value, Quaternion rotation) { throw null; }
+
+        public static Vector4 Transform(Vector3 position, Matrix4x4 matrix) { throw null; }
+
+        public static Vector4 Transform(Vector3 value, Quaternion rotation) { throw null; }
+
+        public static Vector4 Transform(Vector4 vector, Matrix4x4 matrix) { throw null; }
+
+        public static Vector4 Transform(Vector4 value, Quaternion rotation) { throw null; }
     }
-    public partial struct Vector<T> : System.IEquatable<System.Numerics.Vector<T>>, System.IFormattable where T : struct
+
+    public partial struct Vector<T> : IEquatable<Vector<T>>, IFormattable where T : struct
     {
-        public Vector(T value) { throw null; }
-        public Vector(T[] values) { throw null; }
-        public Vector(T[] values, int index) { throw null; }
+        public Vector(T value) { }
+
+        public Vector(T[] values, int index) { }
+
+        public Vector(T[] values) { }
+
         public static int Count { get { throw null; } }
+
         public T this[int index] { get { throw null; } }
-        public static System.Numerics.Vector<T> One { get { throw null; } }
-        public static System.Numerics.Vector<T> Zero { get { throw null; } }
-        public void CopyTo(T[] destination) { }
+
+        public static Vector<T> One { get { throw null; } }
+
+        public static Vector<T> Zero { get { throw null; } }
+
         public void CopyTo(T[] destination, int startIndex) { }
-        public bool Equals(System.Numerics.Vector<T> other) { throw null; }
+
+        public void CopyTo(T[] destination) { }
+
+        public bool Equals(Vector<T> other) { throw null; }
+
         public override bool Equals(object obj) { throw null; }
+
         public override int GetHashCode() { throw null; }
-        public static System.Numerics.Vector<T> operator +(System.Numerics.Vector<T> left, System.Numerics.Vector<T> right) { throw null; }
-        public static System.Numerics.Vector<T> operator &(System.Numerics.Vector<T> left, System.Numerics.Vector<T> right) { throw null; }
-        public static System.Numerics.Vector<T> operator |(System.Numerics.Vector<T> left, System.Numerics.Vector<T> right) { throw null; }
-        public static System.Numerics.Vector<T> operator /(System.Numerics.Vector<T> left, System.Numerics.Vector<T> right) { throw null; }
-        public static bool operator ==(System.Numerics.Vector<T> left, System.Numerics.Vector<T> right) { throw null; }
-        public static System.Numerics.Vector<T> operator ^(System.Numerics.Vector<T> left, System.Numerics.Vector<T> right) { throw null; }
-        public static explicit operator System.Numerics.Vector<System.Byte> (System.Numerics.Vector<T> value) { throw null; }
-        public static explicit operator System.Numerics.Vector<System.Double> (System.Numerics.Vector<T> value) { throw null; }
-        public static explicit operator System.Numerics.Vector<System.Int16> (System.Numerics.Vector<T> value) { throw null; }
-        public static explicit operator System.Numerics.Vector<System.Int32> (System.Numerics.Vector<T> value) { throw null; }
-        public static explicit operator System.Numerics.Vector<System.Int64> (System.Numerics.Vector<T> value) { throw null; }
-        [System.CLSCompliantAttribute(false)]
-        public static explicit operator System.Numerics.Vector<System.SByte> (System.Numerics.Vector<T> value) { throw null; }
-        public static explicit operator System.Numerics.Vector<System.Single> (System.Numerics.Vector<T> value) { throw null; }
-        [System.CLSCompliantAttribute(false)]
-        public static explicit operator System.Numerics.Vector<System.UInt16> (System.Numerics.Vector<T> value) { throw null; }
-        [System.CLSCompliantAttribute(false)]
-        public static explicit operator System.Numerics.Vector<System.UInt32> (System.Numerics.Vector<T> value) { throw null; }
-        [System.CLSCompliantAttribute(false)]
-        public static explicit operator System.Numerics.Vector<System.UInt64> (System.Numerics.Vector<T> value) { throw null; }
-        public static bool operator !=(System.Numerics.Vector<T> left, System.Numerics.Vector<T> right) { throw null; }
-        public static System.Numerics.Vector<T> operator *(System.Numerics.Vector<T> left, System.Numerics.Vector<T> right) { throw null; }
-        public static System.Numerics.Vector<T> operator *(System.Numerics.Vector<T> value, T factor) { throw null; }
-        public static System.Numerics.Vector<T> operator *(T factor, System.Numerics.Vector<T> value) { throw null; }
-        public static System.Numerics.Vector<T> operator ~(System.Numerics.Vector<T> value) { throw null; }
-        public static System.Numerics.Vector<T> operator -(System.Numerics.Vector<T> left, System.Numerics.Vector<T> right) { throw null; }
-        public static System.Numerics.Vector<T> operator -(System.Numerics.Vector<T> value) { throw null; }
+
+        public static Vector<T> operator +(Vector<T> left, Vector<T> right) { throw null; }
+
+        public static Vector<T> operator &(Vector<T> left, Vector<T> right) { throw null; }
+
+        public static Vector<T> operator |(Vector<T> left, Vector<T> right) { throw null; }
+
+        public static Vector<T> operator /(Vector<T> left, Vector<T> right) { throw null; }
+
+        public static bool operator ==(Vector<T> left, Vector<T> right) { throw null; }
+
+        public static Vector<T> operator ^(Vector<T> left, Vector<T> right) { throw null; }
+
+        public static explicit operator Vector<byte>(Vector<T> value) { throw null; }
+
+        public static explicit operator Vector<double>(Vector<T> value) { throw null; }
+
+        public static explicit operator Vector<short>(Vector<T> value) { throw null; }
+
+        public static explicit operator Vector<int>(Vector<T> value) { throw null; }
+
+        public static explicit operator Vector<long>(Vector<T> value) { throw null; }
+
+        [CLSCompliant(false)]
+        public static explicit operator Vector<sbyte>(Vector<T> value) { throw null; }
+
+        public static explicit operator Vector<float>(Vector<T> value) { throw null; }
+
+        [CLSCompliant(false)]
+        public static explicit operator Vector<ushort>(Vector<T> value) { throw null; }
+
+        [CLSCompliant(false)]
+        public static explicit operator Vector<uint>(Vector<T> value) { throw null; }
+
+        [CLSCompliant(false)]
+        public static explicit operator Vector<ulong>(Vector<T> value) { throw null; }
+
+        public static bool operator !=(Vector<T> left, Vector<T> right) { throw null; }
+
+        public static Vector<T> operator *(T factor, Vector<T> value) { throw null; }
+
+        public static Vector<T> operator *(Vector<T> value, T factor) { throw null; }
+
+        public static Vector<T> operator *(Vector<T> left, Vector<T> right) { throw null; }
+
+        public static Vector<T> operator ~(Vector<T> value) { throw null; }
+
+        public static Vector<T> operator -(Vector<T> left, Vector<T> right) { throw null; }
+
+        public static Vector<T> operator -(Vector<T> value) { throw null; }
+
         public override string ToString() { throw null; }
+
+        public string ToString(string format, IFormatProvider formatProvider) { throw null; }
+
         public string ToString(string format) { throw null; }
-        public string ToString(string format, System.IFormatProvider formatProvider) { throw null; }
     }
 }

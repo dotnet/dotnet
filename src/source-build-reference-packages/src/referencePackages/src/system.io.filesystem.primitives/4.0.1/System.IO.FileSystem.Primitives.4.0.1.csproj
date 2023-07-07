@@ -1,21 +1,13 @@
 <Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
     <TargetFrameworks>netstandard1.3</TargetFrameworks>
-    <NuspecFile>$(ArtifactsBinDir)system.io.filesystem.primitives/4.0.1/system.io.filesystem.primitives.nuspec</NuspecFile>
-   </PropertyGroup>
-
-  <PropertyGroup>
-    <OutputPath>$(ArtifactsBinDir)system.io.filesystem.primitives/4.0.1/ref/</OutputPath>
-    <IntermediateOutputPath>$(ArtifactsObjDir)system.io.filesystem.primitives/4.0.1</IntermediateOutputPath>
+    <AssemblyName>System.IO.FileSystem.Primitives</AssemblyName>
+    <ProjectTemplateVersion>2</ProjectTemplateVersion>
   </PropertyGroup>
 
-  <ItemGroup>
-    <Compile Include="**/ref/$(TargetFramework)/*.cs" />
-    <Compile Include="**/lib/$(TargetFramework)/*.cs" />
-  </ItemGroup>
-
-  <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard1.3' ">
-      <PackageReference Include="System.Runtime" Version="4.1.0" />
+  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard1.3'">
+    <PackageReference Include="System.Runtime" Version="4.1.0" />
   </ItemGroup>
 
 </Project>

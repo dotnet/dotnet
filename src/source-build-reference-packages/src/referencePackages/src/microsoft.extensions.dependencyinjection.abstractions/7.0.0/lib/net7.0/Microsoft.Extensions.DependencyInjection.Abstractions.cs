@@ -46,7 +46,6 @@ namespace Microsoft.Extensions.DependencyInjection
     [System.AttributeUsage(System.AttributeTargets.All)]
     public partial class ActivatorUtilitiesConstructorAttribute : System.Attribute
     {
-        public ActivatorUtilitiesConstructorAttribute() { }
     }
 
     public readonly partial struct AsyncServiceScope : IServiceScope, System.IDisposable, System.IAsyncDisposable
@@ -95,8 +94,6 @@ namespace Microsoft.Extensions.DependencyInjection
     public delegate object ObjectFactory(System.IServiceProvider serviceProvider, object?[]? arguments);
     public partial class ServiceCollection : IServiceCollection, System.Collections.Generic.IList<ServiceDescriptor>, System.Collections.Generic.ICollection<ServiceDescriptor>, System.Collections.Generic.IEnumerable<ServiceDescriptor>, System.Collections.IEnumerable
     {
-        public ServiceCollection() { }
-
         public int Count { get { throw null; } }
 
         public bool IsReadOnly { get { throw null; } }

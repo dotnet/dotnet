@@ -1,42 +1,28 @@
 <Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
     <TargetFrameworks>netstandard1.1;netstandard2.0</TargetFrameworks>
-    <NuspecFile>$(ArtifactsBinDir)system.memory/4.5.4/system.memory.nuspec</NuspecFile>
+    <AssemblyName>System.Memory</AssemblyName>
+    <ProjectTemplateVersion>2</ProjectTemplateVersion>
     <StrongNameKeyId>Open</StrongNameKeyId>
-   </PropertyGroup>
-
-  <PropertyGroup>
-    <OutputPath>$(ArtifactsBinDir)system.memory/4.5.4/ref/</OutputPath>
-    <IntermediateOutputPath>$(ArtifactsObjDir)system.memory/4.5.4</IntermediateOutputPath>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard1.1' ">
-      <OutputPath>$(ArtifactsBinDir)system.memory/4.5.4/lib/</OutputPath>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard2.0' ">
-      <OutputPath>$(ArtifactsBinDir)system.memory/4.5.4/lib/</OutputPath>
   </PropertyGroup>
 
-  <ItemGroup>
-    <Compile Include="**/ref/$(TargetFramework)/*.cs" />
-    <Compile Include="**/lib/$(TargetFramework)/*.cs" />
+  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard1.1'">
+    <PackageReference Include="System.Buffers" Version="4.5.1" />
+    <PackageReference Include="System.Diagnostics.Debug" Version="4.3.0" />
+    <PackageReference Include="System.Globalization" Version="4.3.0" />
+    <PackageReference Include="System.Reflection" Version="4.3.0" />
+    <PackageReference Include="System.Resources.ResourceManager" Version="4.3.0" />
+    <PackageReference Include="System.Runtime" Version="4.3.0" />
+    <PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="4.5.3" />
+    <PackageReference Include="System.Runtime.Extensions" Version="4.3.0" />
+    <PackageReference Include="System.Runtime.InteropServices" Version="4.3.0" />
   </ItemGroup>
 
-  <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard1.1' ">
-      <PackageReference Include="System.Buffers" Version="4.5.1" />
-      <PackageReference Include="System.Diagnostics.Debug" Version="4.3.0" />
-      <PackageReference Include="System.Globalization" Version="4.3.0" />
-      <PackageReference Include="System.Reflection" Version="4.3.0" />
-      <PackageReference Include="System.Resources.ResourceManager" Version="4.3.0" />
-      <PackageReference Include="System.Runtime" Version="4.3.0" />
-      <PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="4.5.3" />
-      <PackageReference Include="System.Runtime.Extensions" Version="4.3.0" />
-      <PackageReference Include="System.Runtime.InteropServices" Version="4.3.0" />
-  </ItemGroup>
-  <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.0' ">
-      <PackageReference Include="NETStandard.Library" Version="$(NETStandardImplicitPackageVersion)" />
-      <PackageReference Include="System.Buffers" Version="4.5.1" />
-      <PackageReference Include="System.Numerics.Vectors" Version="4.4.0" />
-      <PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="4.5.3" />
+  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
+    <PackageReference Include="System.Buffers" Version="4.5.1" />
+    <PackageReference Include="System.Numerics.Vectors" Version="4.4.0" />
+    <PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="4.5.3" />
   </ItemGroup>
 
 </Project>

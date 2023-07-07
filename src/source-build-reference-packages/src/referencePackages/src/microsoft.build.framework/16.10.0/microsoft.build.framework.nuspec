@@ -19,7 +19,5 @@
         <dependency id="System.Security.Permissions" version="4.7.0" exclude="Build,Analyzers" />
       </group>
     </dependencies>
-    <frameworkAssemblies>
-    </frameworkAssemblies>
   </metadata>
 </package>

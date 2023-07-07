@@ -33,7 +33,5 @@ System.Security.Cryptography.Pkcs.EnvelopedCms</description>
         <dependency id="System.Security.Cryptography.Cng" version="5.0.0" exclude="Build,Analyzers" />
       </group>
     </dependencies>
-    <frameworkAssemblies>
-    </frameworkAssemblies>
   </metadata>
 </package>

@@ -56,8 +56,6 @@ namespace Microsoft.Extensions.Configuration
 
     public partial class ChainedConfigurationSource : IConfigurationSource
     {
-        public ChainedConfigurationSource() { }
-
         public IConfiguration Configuration { get { throw null; } set { } }
 
         public bool ShouldDisposeConfiguration { get { throw null; } set { } }
@@ -67,8 +65,6 @@ namespace Microsoft.Extensions.Configuration
 
     public partial class ConfigurationBuilder : IConfigurationBuilder
     {
-        public ConfigurationBuilder() { }
-
         public System.Collections.Generic.IDictionary<string, object> Properties { get { throw null; } }
 
         public System.Collections.Generic.IList<IConfigurationSource> Sources { get { throw null; } }
@@ -80,8 +76,6 @@ namespace Microsoft.Extensions.Configuration
 
     public partial class ConfigurationKeyComparer : System.Collections.Generic.IComparer<string>
     {
-        public ConfigurationKeyComparer() { }
-
         public static ConfigurationKeyComparer Instance { get { throw null; } }
 
         public int Compare(string x, string y) { throw null; }
@@ -89,8 +83,6 @@ namespace Microsoft.Extensions.Configuration
 
     public sealed partial class ConfigurationManager : IConfigurationBuilder, IConfigurationRoot, IConfiguration, System.IDisposable
     {
-        public ConfigurationManager() { }
-
         public string this[string key] { get { throw null; } set { } }
 
         System.Collections.Generic.IDictionary<string, object> IConfigurationBuilder.Properties { get { throw null; } }
@@ -116,8 +108,6 @@ namespace Microsoft.Extensions.Configuration
 
     public abstract partial class ConfigurationProvider : IConfigurationProvider
     {
-        protected ConfigurationProvider() { }
-
         protected System.Collections.Generic.IDictionary<string, string> Data { get { throw null; } set { } }
 
         public virtual System.Collections.Generic.IEnumerable<string> GetChildKeys(System.Collections.Generic.IEnumerable<string> earlierKeys, string parentPath) { throw null; }
@@ -137,8 +127,6 @@ namespace Microsoft.Extensions.Configuration
 
     public partial class ConfigurationReloadToken : Primitives.IChangeToken
     {
-        public ConfigurationReloadToken() { }
-
         public bool ActiveChangeCallbacks { get { throw null; } }
 
         public bool HasChanged { get { throw null; } }
@@ -206,8 +194,6 @@ namespace Microsoft.Extensions.Configuration
 
     public abstract partial class StreamConfigurationSource : IConfigurationSource
     {
-        protected StreamConfigurationSource() { }
-
         public System.IO.Stream Stream { get { throw null; } set { } }
 
         public abstract IConfigurationProvider Build(IConfigurationBuilder builder);
@@ -229,8 +215,6 @@ namespace Microsoft.Extensions.Configuration.Memory
 
     public partial class MemoryConfigurationSource : IConfigurationSource
     {
-        public MemoryConfigurationSource() { }
-
         public System.Collections.Generic.IEnumerable<System.Collections.Generic.KeyValuePair<string, string>> InitialData { get { throw null; } set { } }
 
         public IConfigurationProvider Build(IConfigurationBuilder builder) { throw null; }

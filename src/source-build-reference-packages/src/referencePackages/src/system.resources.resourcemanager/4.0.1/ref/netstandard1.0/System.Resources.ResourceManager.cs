@@ -4,56 +4,59 @@
 // ------------------------------------------------------------------------------
 // Changes to this file must follow the http://aka.ms/api-review process.
 // ------------------------------------------------------------------------------
-
-using System;
-using System.Diagnostics;
-using System.Reflection;
-using System.Runtime.CompilerServices;
-using System.Security;
-
-[assembly: Debuggable(DebuggableAttribute.DebuggingModes.IgnoreSymbolStoreSequencePoints)]
-[assembly: AllowPartiallyTrustedCallers]
-[assembly: ReferenceAssembly]
-[assembly: AssemblyTitle("System.Resources.ResourceManager")]
-[assembly: AssemblyDescription("System.Resources.ResourceManager")]
-[assembly: AssemblyDefaultAlias("System.Resources.ResourceManager")]
-[assembly: AssemblyCompany("Microsoft Corporation")]
-[assembly: AssemblyProduct("Microsoft® .NET Framework")]
-[assembly: AssemblyCopyright("© Microsoft Corporation.  All rights reserved.")]
-[assembly: AssemblyFileVersion("1.0.24212.01")]
-[assembly: AssemblyInformationalVersion("1.0.24212.01 built by: SOURCEBUILD")]
-[assembly: CLSCompliant(true)]
-[assembly: AssemblyMetadata("", "")]
-[assembly: AssemblyVersion("4.0.0.0")]
-
-
-
-
+[assembly: System.Runtime.CompilerServices.CompilationRelaxations(8)]
+[assembly: System.Runtime.CompilerServices.RuntimeCompatibility(WrapNonExceptionThrows = true)]
+[assembly: System.Diagnostics.Debuggable(System.Diagnostics.DebuggableAttribute.DebuggingModes.IgnoreSymbolStoreSequencePoints)]
+[assembly: System.Security.AllowPartiallyTrustedCallers]
+[assembly: System.Runtime.CompilerServices.ReferenceAssembly]
+[assembly: System.Reflection.AssemblyTitle("System.Resources.ResourceManager")]
+[assembly: System.Reflection.AssemblyDescription("System.Resources.ResourceManager")]
+[assembly: System.Reflection.AssemblyDefaultAlias("System.Resources.ResourceManager")]
+[assembly: System.Reflection.AssemblyCompany("Microsoft Corporation")]
+[assembly: System.Reflection.AssemblyProduct("Microsoft® .NET Framework")]
+[assembly: System.Reflection.AssemblyCopyright("© Microsoft Corporation.  All rights reserved.")]
+[assembly: System.Reflection.AssemblyFileVersion("1.0.24212.01")]
+[assembly: System.Reflection.AssemblyInformationalVersion("1.0.24212.01. Commit Hash: 9688ddbb62c04189cac4c4a06e31e93377dccd41")]
+[assembly: System.CLSCompliant(true)]
+[assembly: System.Reflection.AssemblyMetadata(".NETFrameworkAssembly", "")]
+[assembly: System.Reflection.AssemblyMetadata("Serviceable", "True")]
+[assembly: System.Reflection.AssemblyVersionAttribute("4.0.0.0")]
+[assembly: System.Reflection.AssemblyFlagsAttribute((System.Reflection.AssemblyNameFlags)0x70)]
 namespace System.Resources
 {
-    public partial class MissingManifestResourceException : System.Exception
+    public partial class MissingManifestResourceException : Exception
     {
         public MissingManifestResourceException() { }
+
+        public MissingManifestResourceException(string message, Exception inner) { }
+
         public MissingManifestResourceException(string message) { }
-        public MissingManifestResourceException(string message, System.Exception inner) { }
     }
-    [System.AttributeUsageAttribute(System.AttributeTargets.Assembly, AllowMultiple=false)]
-    public sealed partial class NeutralResourcesLanguageAttribute : System.Attribute
+
+    [AttributeUsage(AttributeTargets.Assembly, AllowMultiple = false)]
+    public sealed partial class NeutralResourcesLanguageAttribute : Attribute
     {
         public NeutralResourcesLanguageAttribute(string cultureName) { }
+
         public string CultureName { get { throw null; } }
     }
+
     public partial class ResourceManager
     {
-        public ResourceManager(string baseName, System.Reflection.Assembly assembly) { }
-        public ResourceManager(System.Type resourceSource) { }
+        public ResourceManager(string baseName, Reflection.Assembly assembly) { }
+
+        public ResourceManager(Type resourceSource) { }
+
+        public virtual string GetString(string name, Globalization.CultureInfo culture) { throw null; }
+
         public string GetString(string name) { throw null; }
-        public virtual string GetString(string name, System.Globalization.CultureInfo culture) { throw null; }
     }
-    [System.AttributeUsageAttribute(System.AttributeTargets.Assembly, AllowMultiple=false)]
-    public sealed partial class SatelliteContractVersionAttribute : System.Attribute
+
+    [AttributeUsage(AttributeTargets.Assembly, AllowMultiple = false)]
+    public sealed partial class SatelliteContractVersionAttribute : Attribute
     {
         public SatelliteContractVersionAttribute(string version) { }
+
         public string Version { get { throw null; } }
     }
 }

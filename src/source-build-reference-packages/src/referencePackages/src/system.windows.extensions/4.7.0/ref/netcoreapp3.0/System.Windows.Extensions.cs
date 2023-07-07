@@ -4,169 +4,233 @@
 // ------------------------------------------------------------------------------
 // Changes to this file must follow the http://aka.ms/api-review process.
 // ------------------------------------------------------------------------------
-
-using System;
-using System.Diagnostics;
-using System.Reflection;
-using System.Runtime.CompilerServices;
-using System.Security;
-
-[assembly: Debuggable(DebuggableAttribute.DebuggingModes.IgnoreSymbolStoreSequencePoints)]
-[assembly: AllowPartiallyTrustedCallers]
-[assembly: ReferenceAssembly]
-[assembly: AssemblyTitle("System.Windows.Extensions")]
-[assembly: AssemblyDescription("System.Windows.Extensions")]
-[assembly: AssemblyDefaultAlias("System.Windows.Extensions")]
-[assembly: AssemblyCompany("Microsoft Corporation")]
-[assembly: AssemblyProduct("Microsoft® .NET Framework")]
-[assembly: AssemblyCopyright("© Microsoft Corporation.  All rights reserved.")]
-[assembly: AssemblyFileVersion("4.700.19.56404")]
-[assembly: AssemblyInformationalVersion("4.700.19.56404 built by: SOURCEBUILD")]
-[assembly: CLSCompliant(true)]
-[assembly: AssemblyMetadata("", "")]
-[assembly: AssemblyVersion("4.0.1.0")]
-
-
-
-
+[assembly: System.Runtime.CompilerServices.CompilationRelaxations(8)]
+[assembly: System.Runtime.CompilerServices.RuntimeCompatibility(WrapNonExceptionThrows = true)]
+[assembly: System.Diagnostics.Debuggable(System.Diagnostics.DebuggableAttribute.DebuggingModes.IgnoreSymbolStoreSequencePoints)]
+[assembly: System.Reflection.AssemblyDefaultAlias("System.Windows.Extensions")]
+[assembly: System.Reflection.AssemblyMetadata(".NETFrameworkAssembly", "")]
+[assembly: System.Reflection.AssemblyMetadata("Serviceable", "True")]
+[assembly: System.Reflection.AssemblyMetadata("PreferInbox", "True")]
+[assembly: System.Reflection.AssemblyCompany("Microsoft Corporation")]
+[assembly: System.Reflection.AssemblyCopyright("© Microsoft Corporation. All rights reserved.")]
+[assembly: System.Reflection.AssemblyDescription("System.Windows.Extensions")]
+[assembly: System.Reflection.AssemblyFileVersion("4.700.19.56404")]
+[assembly: System.Reflection.AssemblyInformationalVersion("3.1.0+0f7f38c4fd323b26da10cce95f857f77f0f09b48")]
+[assembly: System.Reflection.AssemblyProduct("Microsoft® .NET Core")]
+[assembly: System.Reflection.AssemblyTitle("System.Windows.Extensions")]
+[assembly: System.Runtime.CompilerServices.ReferenceAssembly]
+[assembly: System.CLSCompliant(true)]
+[assembly: System.Reflection.AssemblyVersionAttribute("4.0.1.0")]
+[assembly: System.Reflection.AssemblyFlagsAttribute((System.Reflection.AssemblyNameFlags)0x70)]
 namespace System.Drawing
 {
-    public partial class FontConverter : System.ComponentModel.TypeConverter
+    public partial class FontConverter : ComponentModel.TypeConverter
     {
-        public FontConverter() { }
-        public override bool CanConvertFrom(System.ComponentModel.ITypeDescriptorContext context, System.Type sourceType) { throw null; }
-        public override bool CanConvertTo(System.ComponentModel.ITypeDescriptorContext context, System.Type destinationType) { throw null; }
-        public override object ConvertFrom(System.ComponentModel.ITypeDescriptorContext context, System.Globalization.CultureInfo culture, object value) { throw null; }
-        public override object ConvertTo(System.ComponentModel.ITypeDescriptorContext context, System.Globalization.CultureInfo culture, object value, System.Type destinationType) { throw null; }
-        public override object CreateInstance(System.ComponentModel.ITypeDescriptorContext context, System.Collections.IDictionary propertyValues) { throw null; }
-        public override bool GetCreateInstanceSupported(System.ComponentModel.ITypeDescriptorContext context) { throw null; }
-        public override System.ComponentModel.PropertyDescriptorCollection GetProperties(System.ComponentModel.ITypeDescriptorContext context, object value, System.Attribute[] attributes) { throw null; }
-        public override bool GetPropertiesSupported(System.ComponentModel.ITypeDescriptorContext context) { throw null; }
-        public sealed partial class FontNameConverter : System.ComponentModel.TypeConverter, System.IDisposable
+        public override bool CanConvertFrom(ComponentModel.ITypeDescriptorContext context, Type sourceType) { throw null; }
+
+        public override bool CanConvertTo(ComponentModel.ITypeDescriptorContext context, Type destinationType) { throw null; }
+
+        public override object ConvertFrom(ComponentModel.ITypeDescriptorContext context, Globalization.CultureInfo culture, object value) { throw null; }
+
+        public override object ConvertTo(ComponentModel.ITypeDescriptorContext context, Globalization.CultureInfo culture, object value, Type destinationType) { throw null; }
+
+        public override object CreateInstance(ComponentModel.ITypeDescriptorContext context, Collections.IDictionary propertyValues) { throw null; }
+
+        public override bool GetCreateInstanceSupported(ComponentModel.ITypeDescriptorContext context) { throw null; }
+
+        public override ComponentModel.PropertyDescriptorCollection GetProperties(ComponentModel.ITypeDescriptorContext context, object value, Attribute[] attributes) { throw null; }
+
+        public override bool GetPropertiesSupported(ComponentModel.ITypeDescriptorContext context) { throw null; }
+
+        public sealed partial class FontNameConverter : ComponentModel.TypeConverter, IDisposable
         {
-            public FontNameConverter() { }
-            public override bool CanConvertFrom(System.ComponentModel.ITypeDescriptorContext context, System.Type sourceType) { throw null; }
-            public override object ConvertFrom(System.ComponentModel.ITypeDescriptorContext context, System.Globalization.CultureInfo culture, object value) { throw null; }
-            public override System.ComponentModel.TypeConverter.StandardValuesCollection GetStandardValues(System.ComponentModel.ITypeDescriptorContext context) { throw null; }
-            public override bool GetStandardValuesExclusive(System.ComponentModel.ITypeDescriptorContext context) { throw null; }
-            public override bool GetStandardValuesSupported(System.ComponentModel.ITypeDescriptorContext context) { throw null; }
-            void System.IDisposable.Dispose() { }
+            public override bool CanConvertFrom(ComponentModel.ITypeDescriptorContext context, Type sourceType) { throw null; }
+
+            public override object ConvertFrom(ComponentModel.ITypeDescriptorContext context, Globalization.CultureInfo culture, object value) { throw null; }
+
+            public override StandardValuesCollection GetStandardValues(ComponentModel.ITypeDescriptorContext context) { throw null; }
+
+            public override bool GetStandardValuesExclusive(ComponentModel.ITypeDescriptorContext context) { throw null; }
+
+            public override bool GetStandardValuesSupported(ComponentModel.ITypeDescriptorContext context) { throw null; }
+
+            void IDisposable.Dispose() { }
         }
-        public partial class FontUnitConverter : System.ComponentModel.EnumConverter
+
+        public partial class FontUnitConverter : ComponentModel.EnumConverter
         {
-            public FontUnitConverter() : base (default(System.Type)) { }
-            public override System.ComponentModel.TypeConverter.StandardValuesCollection GetStandardValues(System.ComponentModel.ITypeDescriptorContext context) { throw null; }
+            public FontUnitConverter() : base(default!) { }
+
+            public override StandardValuesCollection GetStandardValues(ComponentModel.ITypeDescriptorContext context) { throw null; }
         }
     }
-    public partial class IconConverter : System.ComponentModel.ExpandableObjectConverter
+
+    public partial class IconConverter : ComponentModel.ExpandableObjectConverter
     {
-        public IconConverter() { }
-        public override bool CanConvertFrom(System.ComponentModel.ITypeDescriptorContext context, System.Type sourceType) { throw null; }
-        public override bool CanConvertTo(System.ComponentModel.ITypeDescriptorContext context, System.Type destinationType) { throw null; }
-        public override object ConvertFrom(System.ComponentModel.ITypeDescriptorContext context, System.Globalization.CultureInfo culture, object value) { throw null; }
-        public override object ConvertTo(System.ComponentModel.ITypeDescriptorContext context, System.Globalization.CultureInfo culture, object value, System.Type destinationType) { throw null; }
+        public override bool CanConvertFrom(ComponentModel.ITypeDescriptorContext context, Type sourceType) { throw null; }
+
+        public override bool CanConvertTo(ComponentModel.ITypeDescriptorContext context, Type destinationType) { throw null; }
+
+        public override object ConvertFrom(ComponentModel.ITypeDescriptorContext context, Globalization.CultureInfo culture, object value) { throw null; }
+
+        public override object ConvertTo(ComponentModel.ITypeDescriptorContext context, Globalization.CultureInfo culture, object value, Type destinationType) { throw null; }
     }
-    public partial class ImageConverter : System.ComponentModel.TypeConverter
+
+    public partial class ImageConverter : ComponentModel.TypeConverter
     {
-        public ImageConverter() { }
-        public override bool CanConvertFrom(System.ComponentModel.ITypeDescriptorContext context, System.Type sourceType) { throw null; }
-        public override bool CanConvertTo(System.ComponentModel.ITypeDescriptorContext context, System.Type destinationType) { throw null; }
-        public override object ConvertFrom(System.ComponentModel.ITypeDescriptorContext context, System.Globalization.CultureInfo culture, object value) { throw null; }
-        public override object ConvertTo(System.ComponentModel.ITypeDescriptorContext context, System.Globalization.CultureInfo culture, object value, System.Type destinationType) { throw null; }
-        public override System.ComponentModel.PropertyDescriptorCollection GetProperties(System.ComponentModel.ITypeDescriptorContext context, object value, System.Attribute[] attributes) { throw null; }
-        public override bool GetPropertiesSupported(System.ComponentModel.ITypeDescriptorContext context) { throw null; }
+        public override bool CanConvertFrom(ComponentModel.ITypeDescriptorContext context, Type sourceType) { throw null; }
+
+        public override bool CanConvertTo(ComponentModel.ITypeDescriptorContext context, Type destinationType) { throw null; }
+
+        public override object ConvertFrom(ComponentModel.ITypeDescriptorContext context, Globalization.CultureInfo culture, object value) { throw null; }
+
+        public override object ConvertTo(ComponentModel.ITypeDescriptorContext context, Globalization.CultureInfo culture, object value, Type destinationType) { throw null; }
+
+        public override ComponentModel.PropertyDescriptorCollection GetProperties(ComponentModel.ITypeDescriptorContext context, object value, Attribute[] attributes) { throw null; }
+
+        public override bool GetPropertiesSupported(ComponentModel.ITypeDescriptorContext context) { throw null; }
     }
-    public partial class ImageFormatConverter : System.ComponentModel.TypeConverter
+
+    public partial class ImageFormatConverter : ComponentModel.TypeConverter
     {
-        public ImageFormatConverter() { }
-        public override bool CanConvertFrom(System.ComponentModel.ITypeDescriptorContext context, System.Type sourceType) { throw null; }
-        public override bool CanConvertTo(System.ComponentModel.ITypeDescriptorContext context, System.Type destinationType) { throw null; }
-        public override object ConvertFrom(System.ComponentModel.ITypeDescriptorContext context, System.Globalization.CultureInfo culture, object value) { throw null; }
-        public override object ConvertTo(System.ComponentModel.ITypeDescriptorContext context, System.Globalization.CultureInfo culture, object value, System.Type destinationType) { throw null; }
-        public override System.ComponentModel.TypeConverter.StandardValuesCollection GetStandardValues(System.ComponentModel.ITypeDescriptorContext context) { throw null; }
-        public override bool GetStandardValuesSupported(System.ComponentModel.ITypeDescriptorContext context) { throw null; }
+        public override bool CanConvertFrom(ComponentModel.ITypeDescriptorContext context, Type sourceType) { throw null; }
+
+        public override bool CanConvertTo(ComponentModel.ITypeDescriptorContext context, Type destinationType) { throw null; }
+
+        public override object ConvertFrom(ComponentModel.ITypeDescriptorContext context, Globalization.CultureInfo culture, object value) { throw null; }
+
+        public override object ConvertTo(ComponentModel.ITypeDescriptorContext context, Globalization.CultureInfo culture, object value, Type destinationType) { throw null; }
+
+        public override StandardValuesCollection GetStandardValues(ComponentModel.ITypeDescriptorContext context) { throw null; }
+
+        public override bool GetStandardValuesSupported(ComponentModel.ITypeDescriptorContext context) { throw null; }
     }
 }
+
 namespace System.Drawing.Printing
 {
-    public partial class MarginsConverter : System.ComponentModel.ExpandableObjectConverter
+    public partial class MarginsConverter : ComponentModel.ExpandableObjectConverter
     {
-        public MarginsConverter() { }
-        public override bool CanConvertFrom(System.ComponentModel.ITypeDescriptorContext context, System.Type sourceType) { throw null; }
-        public override bool CanConvertTo(System.ComponentModel.ITypeDescriptorContext context, System.Type destinationType) { throw null; }
-        public override object ConvertFrom(System.ComponentModel.ITypeDescriptorContext context, System.Globalization.CultureInfo culture, object value) { throw null; }
-        public override object ConvertTo(System.ComponentModel.ITypeDescriptorContext context, System.Globalization.CultureInfo culture, object value, System.Type destinationType) { throw null; }
-        public override object CreateInstance(System.ComponentModel.ITypeDescriptorContext context, System.Collections.IDictionary propertyValues) { throw null; }
-        public override bool GetCreateInstanceSupported(System.ComponentModel.ITypeDescriptorContext context) { throw null; }
+        public override bool CanConvertFrom(ComponentModel.ITypeDescriptorContext context, Type sourceType) { throw null; }
+
+        public override bool CanConvertTo(ComponentModel.ITypeDescriptorContext context, Type destinationType) { throw null; }
+
+        public override object ConvertFrom(ComponentModel.ITypeDescriptorContext context, Globalization.CultureInfo culture, object value) { throw null; }
+
+        public override object ConvertTo(ComponentModel.ITypeDescriptorContext context, Globalization.CultureInfo culture, object value, Type destinationType) { throw null; }
+
+        public override object CreateInstance(ComponentModel.ITypeDescriptorContext context, Collections.IDictionary propertyValues) { throw null; }
+
+        public override bool GetCreateInstanceSupported(ComponentModel.ITypeDescriptorContext context) { throw null; }
     }
 }
+
 namespace System.Media
 {
-    public partial class SoundPlayer : System.ComponentModel.Component, System.Runtime.Serialization.ISerializable
+    public partial class SoundPlayer : ComponentModel.Component, Runtime.Serialization.ISerializable
     {
         public SoundPlayer() { }
-        public SoundPlayer(System.IO.Stream stream) { }
-        protected SoundPlayer(System.Runtime.Serialization.SerializationInfo serializationInfo, System.Runtime.Serialization.StreamingContext context) { }
+
+        public SoundPlayer(IO.Stream stream) { }
+
+        protected SoundPlayer(Runtime.Serialization.SerializationInfo serializationInfo, Runtime.Serialization.StreamingContext context) { }
+
         public SoundPlayer(string soundLocation) { }
+
         public bool IsLoadCompleted { get { throw null; } }
+
         public int LoadTimeout { get { throw null; } set { } }
+
         public string SoundLocation { get { throw null; } set { } }
-        public System.IO.Stream Stream { get { throw null; } set { } }
+
+        public IO.Stream Stream { get { throw null; } set { } }
+
         public object Tag { get { throw null; } set { } }
-        public event System.ComponentModel.AsyncCompletedEventHandler LoadCompleted { add { } remove { } }
-        public event System.EventHandler SoundLocationChanged { add { } remove { } }
-        public event System.EventHandler StreamChanged { add { } remove { } }
+
+        public event ComponentModel.AsyncCompletedEventHandler LoadCompleted { add { } remove { } }
+
+        public event EventHandler SoundLocationChanged { add { } remove { } }
+
+        public event EventHandler StreamChanged { add { } remove { } }
+
         public void Load() { }
+
         public void LoadAsync() { }
-        protected virtual void OnLoadCompleted(System.ComponentModel.AsyncCompletedEventArgs e) { }
-        protected virtual void OnSoundLocationChanged(System.EventArgs e) { }
-        protected virtual void OnStreamChanged(System.EventArgs e) { }
+
+        protected virtual void OnLoadCompleted(ComponentModel.AsyncCompletedEventArgs e) { }
+
+        protected virtual void OnSoundLocationChanged(EventArgs e) { }
+
+        protected virtual void OnStreamChanged(EventArgs e) { }
+
         public void Play() { }
+
         public void PlayLooping() { }
+
         public void PlaySync() { }
+
         public void Stop() { }
-        void System.Runtime.Serialization.ISerializable.GetObjectData(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context) { }
+
+        void Runtime.Serialization.ISerializable.GetObjectData(Runtime.Serialization.SerializationInfo info, Runtime.Serialization.StreamingContext context) { }
     }
+
     public partial class SystemSound
     {
         internal SystemSound() { }
+
         public void Play() { }
     }
+
     public static partial class SystemSounds
     {
-        public static System.Media.SystemSound Asterisk { get { throw null; } }
-        public static System.Media.SystemSound Beep { get { throw null; } }
-        public static System.Media.SystemSound Exclamation { get { throw null; } }
-        public static System.Media.SystemSound Hand { get { throw null; } }
-        public static System.Media.SystemSound Question { get { throw null; } }
+        public static SystemSound Asterisk { get { throw null; } }
+
+        public static SystemSound Beep { get { throw null; } }
+
+        public static SystemSound Exclamation { get { throw null; } }
+
+        public static SystemSound Hand { get { throw null; } }
+
+        public static SystemSound Question { get { throw null; } }
     }
 }
+
 namespace System.Security.Cryptography.X509Certificates
 {
     public sealed partial class X509Certificate2UI
     {
-        public X509Certificate2UI() { }
-        public static void DisplayCertificate(System.Security.Cryptography.X509Certificates.X509Certificate2 certificate) { }
-        public static void DisplayCertificate(System.Security.Cryptography.X509Certificates.X509Certificate2 certificate, System.IntPtr hwndParent) { }
-        public static System.Security.Cryptography.X509Certificates.X509Certificate2Collection SelectFromCollection(System.Security.Cryptography.X509Certificates.X509Certificate2Collection certificates, string title, string message, System.Security.Cryptography.X509Certificates.X509SelectionFlag selectionFlag) { throw null; }
-        public static System.Security.Cryptography.X509Certificates.X509Certificate2Collection SelectFromCollection(System.Security.Cryptography.X509Certificates.X509Certificate2Collection certificates, string title, string message, System.Security.Cryptography.X509Certificates.X509SelectionFlag selectionFlag, System.IntPtr hwndParent) { throw null; }
+        public static void DisplayCertificate(X509Certificate2 certificate, IntPtr hwndParent) { }
+
+        public static void DisplayCertificate(X509Certificate2 certificate) { }
+
+        public static X509Certificate2Collection SelectFromCollection(X509Certificate2Collection certificates, string title, string message, X509SelectionFlag selectionFlag, IntPtr hwndParent) { throw null; }
+
+        public static X509Certificate2Collection SelectFromCollection(X509Certificate2Collection certificates, string title, string message, X509SelectionFlag selectionFlag) { throw null; }
     }
+
     public enum X509SelectionFlag
     {
         SingleSelection = 0,
-        MultiSelection = 1,
+        MultiSelection = 1
     }
 }
+
 namespace System.Xaml.Permissions
 {
     public partial class XamlAccessLevel
     {
         internal XamlAccessLevel() { }
-        public System.Reflection.AssemblyName AssemblyAccessToAssemblyName { get { throw null; } }
+
+        public Reflection.AssemblyName AssemblyAccessToAssemblyName { get { throw null; } }
+
         public string PrivateAccessToTypeName { get { throw null; } }
-        public static System.Xaml.Permissions.XamlAccessLevel AssemblyAccessTo(System.Reflection.Assembly assembly) { throw null; }
-        public static System.Xaml.Permissions.XamlAccessLevel AssemblyAccessTo(System.Reflection.AssemblyName assemblyName) { throw null; }
-        public static System.Xaml.Permissions.XamlAccessLevel PrivateAccessTo(string assemblyQualifiedTypeName) { throw null; }
-        public static System.Xaml.Permissions.XamlAccessLevel PrivateAccessTo(System.Type type) { throw null; }
+
+        public static XamlAccessLevel AssemblyAccessTo(Reflection.Assembly assembly) { throw null; }
+
+        public static XamlAccessLevel AssemblyAccessTo(Reflection.AssemblyName assemblyName) { throw null; }
+
+        public static XamlAccessLevel PrivateAccessTo(string assemblyQualifiedTypeName) { throw null; }
+
+        public static XamlAccessLevel PrivateAccessTo(Type type) { throw null; }
     }
 }

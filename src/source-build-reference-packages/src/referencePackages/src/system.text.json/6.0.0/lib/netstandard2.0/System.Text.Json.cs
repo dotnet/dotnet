@@ -38,6 +38,8 @@ namespace System.Text.Json
 
     public sealed partial class JsonDocument : IDisposable
     {
+        internal JsonDocument() { }
+
         public JsonElement RootElement { get { throw null; } }
 
         public void Dispose() { }
@@ -276,8 +278,6 @@ namespace System.Text.Json
 
     public abstract partial class JsonNamingPolicy
     {
-        protected JsonNamingPolicy() { }
-
         public static JsonNamingPolicy CamelCase { get { throw null; } }
 
         public abstract string ConvertName(string name);
@@ -972,6 +972,8 @@ namespace System.Text.Json.Nodes
 
     public abstract partial class JsonNode
     {
+        internal JsonNode() { }
+
         public JsonNode? this[int index] { get { throw null; } set { } }
 
         public JsonNode? this[string propertyName] { get { throw null; } set { } }
@@ -1206,6 +1208,8 @@ namespace System.Text.Json.Nodes
 
     public abstract partial class JsonValue : JsonNode
     {
+        internal JsonValue() { }
+
         public static JsonValue Create(bool value, JsonNodeOptions? options = null) { throw null; }
 
         public static JsonValue Create(byte value, JsonNodeOptions? options = null) { throw null; }
@@ -1316,17 +1320,17 @@ namespace System.Text.Json.Serialization
 
     public abstract partial class JsonAttribute : Attribute
     {
-        protected JsonAttribute() { }
     }
 
     [AttributeUsage(AttributeTargets.Constructor, AllowMultiple = false)]
     public sealed partial class JsonConstructorAttribute : JsonAttribute
     {
-        public JsonConstructorAttribute() { }
     }
 
     public abstract partial class JsonConverter
     {
+        internal JsonConverter() { }
+
         public abstract bool CanConvert(Type typeToConvert);
     }
 
@@ -1367,14 +1371,11 @@ namespace System.Text.Json.Serialization
     [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field, AllowMultiple = false)]
     public sealed partial class JsonExtensionDataAttribute : JsonAttribute
     {
-        public JsonExtensionDataAttribute() { }
     }
 
     [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field, AllowMultiple = false)]
     public sealed partial class JsonIgnoreAttribute : JsonAttribute
     {
-        public JsonIgnoreAttribute() { }
-
         public JsonIgnoreCondition Condition { get { throw null; } set { } }
     }
 
@@ -1389,7 +1390,6 @@ namespace System.Text.Json.Serialization
     [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field, AllowMultiple = false)]
     public sealed partial class JsonIncludeAttribute : JsonAttribute
     {
-        public JsonIncludeAttribute() { }
     }
 
     public enum JsonKnownNamingPolicy
@@ -1463,8 +1463,6 @@ namespace System.Text.Json.Serialization
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
     public sealed partial class JsonSourceGenerationOptionsAttribute : JsonAttribute
     {
-        public JsonSourceGenerationOptionsAttribute() { }
-
         public JsonIgnoreCondition DefaultIgnoreCondition { get { throw null; } set { } }
 
         public JsonSourceGenerationMode GenerationMode { get { throw null; } set { } }
@@ -1499,8 +1497,6 @@ namespace System.Text.Json.Serialization
 
     public abstract partial class ReferenceHandler
     {
-        protected ReferenceHandler() { }
-
         public static ReferenceHandler IgnoreCycles { get { throw null; } }
 
         public static ReferenceHandler Preserve { get { throw null; } }
@@ -1510,15 +1506,11 @@ namespace System.Text.Json.Serialization
 
     public sealed partial class ReferenceHandler<T> : ReferenceHandler where T : ReferenceResolver, new()
     {
-        public ReferenceHandler() { }
-
         public override ReferenceResolver CreateResolver() { throw null; }
     }
 
     public abstract partial class ReferenceResolver
     {
-        protected ReferenceResolver() { }
-
         public abstract void AddReference(string referenceId, object value);
         public abstract string GetReference(object value, out bool alreadyExists);
         public abstract object ResolveReference(string referenceId);
@@ -1529,8 +1521,6 @@ namespace System.Text.Json.Serialization.Metadata
 {
     public sealed partial class JsonCollectionInfoValues<TCollection>
     {
-        public JsonCollectionInfoValues() { }
-
         public JsonTypeInfo ElementInfo { get { throw null; } set { } }
 
         public JsonTypeInfo? KeyInfo { get { throw null; } set { } }
@@ -1678,8 +1668,6 @@ namespace System.Text.Json.Serialization.Metadata
 
     public sealed partial class JsonObjectInfoValues<T>
     {
-        public JsonObjectInfoValues() { }
-
         public Func<JsonParameterInfoValues[]>? ConstructorParameterMetadataInitializer { get { throw null; } set { } }
 
         public JsonNumberHandling NumberHandling { get { throw null; } set { } }
@@ -1695,8 +1683,6 @@ namespace System.Text.Json.Serialization.Metadata
 
     public sealed partial class JsonParameterInfoValues
     {
-        public JsonParameterInfoValues() { }
-
         public object? DefaultValue { get { throw null; } set { } }
 
         public bool HasDefaultValue { get { throw null; } set { } }
@@ -1710,12 +1696,11 @@ namespace System.Text.Json.Serialization.Metadata
 
     public abstract partial class JsonPropertyInfo
     {
+        internal JsonPropertyInfo() { }
     }
 
     public sealed partial class JsonPropertyInfoValues<T>
     {
-        public JsonPropertyInfoValues() { }
-
         public JsonConverter<T>? Converter { get { throw null; } set { } }
 
         public Type DeclaringType { get { throw null; } set { } }
@@ -1747,10 +1732,13 @@ namespace System.Text.Json.Serialization.Metadata
 
     public partial class JsonTypeInfo
     {
+        internal JsonTypeInfo() { }
     }
 
     public abstract partial class JsonTypeInfo<T> : JsonTypeInfo
     {
+        internal JsonTypeInfo() { }
+
         public Action<Utf8JsonWriter, T>? SerializeHandler { get { throw null; } private protected set { } }
     }
 }

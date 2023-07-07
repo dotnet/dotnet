@@ -2,19 +2,9 @@
 
   <PropertyGroup>
     <TargetFrameworks>netstandard2.0;netstandard2.1</TargetFrameworks>
-    <NuspecFile>$(ArtifactsBinDir)microsoft.bcl.hashcode/1.1.1/microsoft.bcl.hashcode.nuspec</NuspecFile>
+    <AssemblyName>Microsoft.Bcl.HashCode</AssemblyName>
+    <ProjectTemplateVersion>2</ProjectTemplateVersion>
     <StrongNameKeyId>Open</StrongNameKeyId>
-    <DisableImplicitFrameworkReferences>false</DisableImplicitFrameworkReferences>
   </PropertyGroup>
-
-  <PropertyGroup>
-    <OutputPath>$(ArtifactsBinDir)microsoft.bcl.hashcode/1.1.1/ref/</OutputPath>
-    <IntermediateOutputPath>$(ArtifactsObjDir)microsoft.bcl.hashcode/1.1.1</IntermediateOutputPath>
-  </PropertyGroup>
-
-  <ItemGroup>
-    <Compile Include="**/ref/$(TargetFramework)/*.cs" />
-    <Compile Include="**/lib/$(TargetFramework)/*.cs" />
-  </ItemGroup>
 
 </Project>

@@ -924,6 +924,8 @@ namespace System.Reflection.Metadata
 
     public sealed partial class DebugMetadataHeader
     {
+        internal DebugMetadataHeader() { }
+
         public MethodDefinitionHandle EntryPoint { get { throw null; } }
 
         public Collections.Immutable.ImmutableArray<byte> Id { get { throw null; } }
@@ -1529,6 +1531,8 @@ namespace System.Reflection.Metadata
 
     public sealed partial class HandleComparer : Collections.Generic.IEqualityComparer<Handle>, Collections.Generic.IComparer<Handle>, Collections.Generic.IEqualityComparer<EntityHandle>, Collections.Generic.IComparer<EntityHandle>
     {
+        internal HandleComparer() { }
+
         public static HandleComparer Default { get { throw null; } }
 
         public int Compare(EntityHandle x, EntityHandle y) { throw null; }
@@ -2584,6 +2588,8 @@ namespace System.Reflection.Metadata
 
     public sealed partial class MetadataReaderProvider : IDisposable
     {
+        internal MetadataReaderProvider() { }
+
         public void Dispose() { }
 
         public static unsafe MetadataReaderProvider FromMetadataImage(byte* start, int size) { throw null; }
@@ -2643,6 +2649,8 @@ namespace System.Reflection.Metadata
 
     public sealed partial class MethodBodyBlock
     {
+        internal MethodBodyBlock() { }
+
         public Collections.Immutable.ImmutableArray<ExceptionRegion> ExceptionRegions { get { throw null; } }
 
         public StandaloneSignatureHandle LocalSignature { get { throw null; } }
@@ -3807,8 +3815,6 @@ namespace System.Reflection.Metadata.Ecma335
 
     public sealed partial class ControlFlowBuilder
     {
-        public ControlFlowBuilder() { }
-
         public void AddCatchRegion(LabelHandle tryStart, LabelHandle tryEnd, LabelHandle handlerStart, LabelHandle handlerEnd, EntityHandle catchType) { }
 
         public void AddFaultRegion(LabelHandle tryStart, LabelHandle tryEnd, LabelHandle handlerStart, LabelHandle handlerEnd) { }
@@ -4313,6 +4319,8 @@ namespace System.Reflection.Metadata.Ecma335
 
     public sealed partial class MetadataSizes
     {
+        internal MetadataSizes() { }
+
         public Collections.Immutable.ImmutableArray<int> ExternalRowCounts { get { throw null; } }
 
         public Collections.Immutable.ImmutableArray<int> HeapSizes { get { throw null; } }
@@ -4797,6 +4805,8 @@ namespace System.Reflection.PortableExecutable
 
     public sealed partial class CoffHeader
     {
+        internal CoffHeader() { }
+
         public Characteristics Characteristics { get { throw null; } }
 
         public Machine Machine { get { throw null; } }
@@ -4826,6 +4836,8 @@ namespace System.Reflection.PortableExecutable
 
     public sealed partial class CorHeader
     {
+        internal CorHeader() { }
+
         public DirectoryEntry CodeManagerTableDirectory { get { throw null; } }
 
         public int EntryPointTokenOrRelativeVirtualAddress { get { throw null; } }
@@ -4851,8 +4863,6 @@ namespace System.Reflection.PortableExecutable
 
     public sealed partial class DebugDirectoryBuilder
     {
-        public DebugDirectoryBuilder() { }
-
         public void AddCodeViewEntry(string pdbPath, Metadata.BlobContentId pdbContentId, ushort portablePdbVersion, int age) { }
 
         public void AddCodeViewEntry(string pdbPath, Metadata.BlobContentId pdbContentId, ushort portablePdbVersion) { }
@@ -5007,8 +5017,6 @@ namespace System.Reflection.PortableExecutable
 
     public sealed partial class PEDirectoriesBuilder
     {
-        public PEDirectoriesBuilder() { }
-
         public int AddressOfEntryPoint { get { throw null; } set { } }
 
         public DirectoryEntry BaseRelocationTable { get { throw null; } set { } }
@@ -5042,6 +5050,8 @@ namespace System.Reflection.PortableExecutable
 
     public sealed partial class PEHeader
     {
+        internal PEHeader() { }
+
         public int AddressOfEntryPoint { get { throw null; } }
 
         public int BaseOfCode { get { throw null; } }
@@ -5293,8 +5303,6 @@ namespace System.Reflection.PortableExecutable
 
     public abstract partial class ResourceSectionBuilder
     {
-        protected ResourceSectionBuilder() { }
-
         protected internal abstract void Serialize(Metadata.BlobBuilder builder, SectionLocation location);
     }
 

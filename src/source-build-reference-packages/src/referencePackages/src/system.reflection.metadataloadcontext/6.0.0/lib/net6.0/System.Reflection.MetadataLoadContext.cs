@@ -31,8 +31,6 @@ namespace System.Reflection
 {
     public abstract partial class MetadataAssemblyResolver
     {
-        protected MetadataAssemblyResolver() { }
-
         public abstract Assembly? Resolve(MetadataLoadContext context, AssemblyName assemblyName);
     }
 

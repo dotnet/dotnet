@@ -1,9 +1,0 @@
-<Project>
-
-  <Import Project="$([MSBuild]::GetPathOfFileAbove(Directory.Build.props, $(MSBuildThisFileDirectory)..))" />
-
-  <PropertyGroup>
-    <AssemblyName>System.Runtime.InteropServices.RuntimeInformation</AssemblyName>
-  </PropertyGroup>
-
-</Project>

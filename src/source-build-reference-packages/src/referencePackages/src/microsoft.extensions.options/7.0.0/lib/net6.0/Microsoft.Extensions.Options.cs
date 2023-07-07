@@ -327,8 +327,6 @@ namespace Microsoft.Extensions.Options
 
     public partial class OptionsCache<TOptions> : IOptionsMonitorCache<TOptions> where TOptions : class
     {
-        public OptionsCache() { }
-
         public void Clear() { }
 
         public virtual TOptions GetOrAdd(string? name, System.Func<TOptions> createOptions) { throw null; }
@@ -506,8 +504,6 @@ namespace Microsoft.Extensions.Options
     {
         public static readonly ValidateOptionsResult Skip;
         public static readonly ValidateOptionsResult Success;
-        public ValidateOptionsResult() { }
-
         [System.Diagnostics.CodeAnalysis.MemberNotNullWhen(true, "Failures")]
         [System.Diagnostics.CodeAnalysis.MemberNotNullWhen(true, "FailureMessage")]
         public bool Failed { get { throw null; } protected set { } }

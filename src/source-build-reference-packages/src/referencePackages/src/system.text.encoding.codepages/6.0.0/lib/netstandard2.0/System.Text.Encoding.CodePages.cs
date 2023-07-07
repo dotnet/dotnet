@@ -31,6 +31,8 @@ namespace System.Text
 {
     public sealed partial class CodePagesEncodingProvider : EncodingProvider
     {
+        internal CodePagesEncodingProvider() { }
+
         public static EncodingProvider Instance { get { throw null; } }
 
         public override Encoding? GetEncoding(int codepage) { throw null; }

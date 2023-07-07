@@ -73,8 +73,6 @@ namespace System.Threading.Channels
 
     public abstract partial class ChannelOptions
     {
-        protected ChannelOptions() { }
-
         public bool AllowSynchronousContinuations { get { throw null; } set { } }
 
         public bool SingleReader { get { throw null; } set { } }
@@ -84,8 +82,6 @@ namespace System.Threading.Channels
 
     public abstract partial class ChannelReader<T>
     {
-        protected ChannelReader() { }
-
         public virtual bool CanCount { get { throw null; } }
 
         public virtual bool CanPeek { get { throw null; } }
@@ -106,8 +102,6 @@ namespace System.Threading.Channels
 
     public abstract partial class ChannelWriter<T>
     {
-        protected ChannelWriter() { }
-
         public void Complete(Exception? error = null) { }
 
         public virtual bool TryComplete(Exception? error = null) { throw null; }
@@ -119,13 +113,10 @@ namespace System.Threading.Channels
 
     public abstract partial class Channel<T> : Channel<T, T>
     {
-        protected Channel() { }
     }
 
     public abstract partial class Channel<TWrite, TRead>
     {
-        protected Channel() { }
-
         public ChannelReader<TRead> Reader { get { throw null; } protected set { } }
 
         public ChannelWriter<TWrite> Writer { get { throw null; } protected set { } }
@@ -137,6 +128,5 @@ namespace System.Threading.Channels
 
     public sealed partial class UnboundedChannelOptions : ChannelOptions
     {
-        public UnboundedChannelOptions() { }
     }
 }

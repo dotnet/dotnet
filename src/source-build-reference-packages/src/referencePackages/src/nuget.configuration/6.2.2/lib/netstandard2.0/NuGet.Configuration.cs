@@ -100,8 +100,6 @@ namespace NuGet.Configuration
 
     public sealed partial class ClearItem : SettingItem
     {
-        public ClearItem() { }
-
         public override string ElementName { get { throw null; } }
 
         public override SettingBase Clone() { throw null; }
@@ -212,6 +210,8 @@ namespace NuGet.Configuration
 
     public partial class ConfigurationDefaults
     {
+        internal ConfigurationDefaults() { }
+
         public string DefaultPackageRestoreConsent { get { throw null; } }
 
         public System.Collections.Generic.IEnumerable<PackageSource> DefaultPackageSources { get { throw null; } }
@@ -400,8 +400,6 @@ namespace NuGet.Configuration
 
     public partial class NuGetPathContext : Common.INuGetPathContext
     {
-        public NuGetPathContext() { }
-
         public System.Collections.Generic.IReadOnlyList<string> FallbackPackageFolders { get { throw null; } }
 
         public string HttpCacheFolder { get { throw null; } }
@@ -415,8 +413,6 @@ namespace NuGet.Configuration
 
     public partial class NullSettings : ISettings
     {
-        public NullSettings() { }
-
         public static NullSettings Instance { get { throw null; } }
 
         public event System.EventHandler SettingsChanged { add { } remove { } }
@@ -560,6 +556,8 @@ namespace NuGet.Configuration
 
     public partial class PackageSourceMapping
     {
+        internal PackageSourceMapping() { }
+
         public bool IsEnabled { get { throw null; } }
 
         public System.Collections.Generic.IReadOnlyList<string> GetConfiguredPackageSources(string packageId) { throw null; }
@@ -702,8 +700,6 @@ namespace NuGet.Configuration
 
     public abstract partial class SettingBase
     {
-        protected SettingBase() { }
-
         public abstract SettingBase Clone();
         public abstract bool IsEmpty();
     }
@@ -843,8 +839,6 @@ namespace NuGet.Configuration
 
     public sealed partial class SettingsLoadingContext : System.IDisposable
     {
-        public SettingsLoadingContext() { }
-
         public void Dispose() { }
     }
 
@@ -1009,8 +1003,6 @@ namespace NuGet.Configuration
 
     public partial class XPlatMachineWideSetting : IMachineWideSettings
     {
-        public XPlatMachineWideSetting() { }
-
         public ISettings Settings { get { throw null; } }
     }
 }

@@ -26,7 +26,7 @@ namespace NuGet.Frameworks
 {
     public partial class AssetTargetFallbackFramework : NuGetFramework, System.IEquatable<AssetTargetFallbackFramework>
     {
-        public AssetTargetFallbackFramework(NuGetFramework framework, System.Collections.Generic.IReadOnlyList<NuGetFramework> fallbackFrameworks) : base(framework) { }
+        public AssetTargetFallbackFramework(NuGetFramework framework, System.Collections.Generic.IReadOnlyList<NuGetFramework> fallbackFrameworks) : base(default(NuGetFramework)!) { }
 
         public System.Collections.Generic.IReadOnlyList<NuGetFramework> Fallback { get { throw null; } }
 
@@ -52,8 +52,6 @@ namespace NuGet.Frameworks
 
     public partial class CompatibilityMappingComparer : System.Collections.Generic.IEqualityComparer<OneWayCompatibilityMappingEntry>
     {
-        public CompatibilityMappingComparer() { }
-
         public bool Equals(OneWayCompatibilityMappingEntry x, OneWayCompatibilityMappingEntry y) { throw null; }
 
         public int GetHashCode(OneWayCompatibilityMappingEntry obj) { throw null; }
@@ -88,8 +86,6 @@ namespace NuGet.Frameworks
 
     public sealed partial class DefaultFrameworkMappings : IFrameworkMappings
     {
-        public DefaultFrameworkMappings() { }
-
         public System.Collections.Generic.IEnumerable<OneWayCompatibilityMappingEntry> CompatibilityMappings { get { throw null; } }
 
         public System.Collections.Generic.IEnumerable<string> EquivalentFrameworkPrecedence { get { throw null; } }
@@ -126,8 +122,6 @@ namespace NuGet.Frameworks
 
     public partial class DefaultPortableFrameworkMappings : IPortableFrameworkMappings
     {
-        public DefaultPortableFrameworkMappings() { }
-
         public System.Collections.Generic.IEnumerable<System.Collections.Generic.KeyValuePair<int, FrameworkRange>> CompatibilityMappings { get { throw null; } }
 
         public static IPortableFrameworkMappings Instance { get { throw null; } }
@@ -139,7 +133,7 @@ namespace NuGet.Frameworks
 
     public partial class DualCompatibilityFramework : NuGetFramework
     {
-        public DualCompatibilityFramework(NuGetFramework framework, NuGetFramework secondaryFramework) : base(framework) { }
+        public DualCompatibilityFramework(NuGetFramework framework, NuGetFramework secondaryFramework) : base(default(NuGetFramework)!) { }
 
         public NuGetFramework RootFramework { get { throw null; } }
 
@@ -156,7 +150,7 @@ namespace NuGet.Frameworks
 
     public partial class FallbackFramework : NuGetFramework, System.IEquatable<FallbackFramework>
     {
-        public FallbackFramework(NuGetFramework framework, System.Collections.Generic.IReadOnlyList<NuGetFramework> fallbackFrameworks) : base(framework) { }
+        public FallbackFramework(NuGetFramework framework, System.Collections.Generic.IReadOnlyList<NuGetFramework> fallbackFrameworks) : base(default(NuGetFramework)!) { }
 
         public System.Collections.Generic.IReadOnlyList<NuGetFramework> Fallback { get { throw null; } }
 
@@ -419,8 +413,6 @@ namespace NuGet.Frameworks
 
     public partial class FrameworkRangeComparer : System.Collections.Generic.IEqualityComparer<FrameworkRange>
     {
-        public FrameworkRangeComparer() { }
-
         public bool Equals(FrameworkRange x, FrameworkRange y) { throw null; }
 
         public int GetHashCode(FrameworkRange obj) { throw null; }
@@ -653,8 +645,6 @@ namespace NuGet.Frameworks
 
     public partial class NuGetFrameworkFullComparer : System.Collections.Generic.IEqualityComparer<NuGetFramework>
     {
-        public NuGetFrameworkFullComparer() { }
-
         public bool Equals(NuGetFramework x, NuGetFramework y) { throw null; }
 
         public int GetHashCode(NuGetFramework obj) { throw null; }
@@ -662,8 +652,6 @@ namespace NuGet.Frameworks
 
     public partial class NuGetFrameworkNameComparer : System.Collections.Generic.IEqualityComparer<NuGetFramework>
     {
-        public NuGetFrameworkNameComparer() { }
-
         public bool Equals(NuGetFramework x, NuGetFramework y) { throw null; }
 
         public int GetHashCode(NuGetFramework obj) { throw null; }
@@ -671,8 +659,6 @@ namespace NuGet.Frameworks
 
     public partial class NuGetFrameworkSorter : System.Collections.Generic.IComparer<NuGetFramework>
     {
-        public NuGetFrameworkSorter() { }
-
         public int Compare(NuGetFramework x, NuGetFramework y) { throw null; }
     }
 

@@ -58,7 +58,7 @@ namespace Microsoft.Extensions.DependencyInjection
 
 namespace Microsoft.Extensions.Options
 {
-    public partial class ConfigurationChangeTokenSource<TOptions>
+    public partial class ConfigurationChangeTokenSource<TOptions> : IOptionsChangeTokenSource<TOptions>
     {
         public ConfigurationChangeTokenSource(Configuration.IConfiguration config) { }
 

@@ -205,8 +205,6 @@ namespace NuGet.Versioning
 
     public partial class SemanticVersionConverter : System.ComponentModel.TypeConverter
     {
-        public SemanticVersionConverter() { }
-
         public override bool CanConvertFrom(System.ComponentModel.ITypeDescriptorContext context, System.Type sourceType) { throw null; }
 
         public override bool CanConvertTo(System.ComponentModel.ITypeDescriptorContext context, System.Type destinationType) { throw null; }
@@ -254,8 +252,6 @@ namespace NuGet.Versioning
     public partial class VersionFormatter : System.IFormatProvider, System.ICustomFormatter
     {
         public static readonly VersionFormatter Instance;
-        public VersionFormatter() { }
-
         public string Format(string format, object arg, System.IFormatProvider formatProvider) { throw null; }
 
         public object GetFormat(System.Type formatType) { throw null; }
@@ -396,8 +392,6 @@ namespace NuGet.Versioning
     public partial class VersionRangeFormatter : System.IFormatProvider, System.ICustomFormatter
     {
         public static readonly VersionRangeFormatter Instance;
-        public VersionRangeFormatter() { }
-
         public string Format(string format, object arg, System.IFormatProvider formatProvider) { throw null; }
 
         public object GetFormat(System.Type formatType) { throw null; }

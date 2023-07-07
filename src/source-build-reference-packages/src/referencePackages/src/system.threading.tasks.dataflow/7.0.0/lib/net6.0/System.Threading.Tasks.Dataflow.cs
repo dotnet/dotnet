@@ -279,8 +279,6 @@ namespace System.Threading.Tasks.Dataflow
     public partial class DataflowBlockOptions
     {
         public const int Unbounded = -1;
-        public DataflowBlockOptions() { }
-
         public int BoundedCapacity { get { throw null; } set { } }
 
         public CancellationToken CancellationToken { get { throw null; } set { } }
@@ -296,8 +294,6 @@ namespace System.Threading.Tasks.Dataflow
 
     public partial class DataflowLinkOptions
     {
-        public DataflowLinkOptions() { }
-
         public bool Append { get { throw null; } set { } }
 
         public int MaxMessages { get { throw null; } set { } }
@@ -336,8 +332,6 @@ namespace System.Threading.Tasks.Dataflow
 
     public partial class ExecutionDataflowBlockOptions : DataflowBlockOptions
     {
-        public ExecutionDataflowBlockOptions() { }
-
         public int MaxDegreeOfParallelism { get { throw null; } set { } }
 
         public bool SingleProducerConstrained { get { throw null; } set { } }
@@ -345,8 +339,6 @@ namespace System.Threading.Tasks.Dataflow
 
     public partial class GroupingDataflowBlockOptions : DataflowBlockOptions
     {
-        public GroupingDataflowBlockOptions() { }
-
         public bool Greedy { get { throw null; } set { } }
 
         public long MaxNumberOfGroups { get { throw null; } set { } }

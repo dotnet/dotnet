@@ -90,8 +90,6 @@ namespace Microsoft.Extensions.Logging
 
     public partial class LogDefineOptions
     {
-        public LogDefineOptions() { }
-
         public bool SkipEnabledCheck { get { throw null; } set { } }
     }
 
@@ -158,8 +156,6 @@ namespace Microsoft.Extensions.Logging
 
     public partial class LoggerExternalScopeProvider : IExternalScopeProvider
     {
-        public LoggerExternalScopeProvider() { }
-
         public void ForEachScope<TState>(System.Action<object?, TState> callback, TState state) { }
 
         public System.IDisposable Push(object? state) { throw null; }
@@ -283,6 +279,8 @@ namespace Microsoft.Extensions.Logging.Abstractions
 
     public partial class NullLogger : ILogger
     {
+        internal NullLogger() { }
+
         public static NullLogger Instance { get { throw null; } }
 
         public System.IDisposable BeginScope<TState>(TState state) { throw null; }
@@ -295,8 +293,6 @@ namespace Microsoft.Extensions.Logging.Abstractions
     public partial class NullLoggerFactory : ILoggerFactory, System.IDisposable
     {
         public static readonly NullLoggerFactory Instance;
-        public NullLoggerFactory() { }
-
         public void AddProvider(ILoggerProvider provider) { }
 
         public ILogger CreateLogger(string name) { throw null; }
@@ -306,6 +302,8 @@ namespace Microsoft.Extensions.Logging.Abstractions
 
     public partial class NullLoggerProvider : ILoggerProvider, System.IDisposable
     {
+        internal NullLoggerProvider() { }
+
         public static NullLoggerProvider Instance { get { throw null; } }
 
         public ILogger CreateLogger(string categoryName) { throw null; }
@@ -316,8 +314,6 @@ namespace Microsoft.Extensions.Logging.Abstractions
     public partial class NullLogger<T> : ILogger<T>, ILogger
     {
         public static readonly NullLogger<T> Instance;
-        public NullLogger() { }
-
         public System.IDisposable BeginScope<TState>(TState state) { throw null; }
 
         public bool IsEnabled(LogLevel logLevel) { throw null; }

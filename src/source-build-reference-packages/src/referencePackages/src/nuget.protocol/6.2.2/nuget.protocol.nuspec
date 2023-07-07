@@ -21,7 +21,5 @@
         <dependency id="NuGet.Packaging" version="6.2.2" exclude="Build,Analyzers" />
       </group>
     </dependencies>
-    <frameworkAssemblies>
-    </frameworkAssemblies>
   </metadata>
 </package>

@@ -166,8 +166,6 @@ namespace NuGet.Common
 
     public partial class EnvironmentVariableWrapper : IEnvironmentVariableReader
     {
-        public EnvironmentVariableWrapper() { }
-
         public static IEnvironmentVariableReader Instance { get { throw null; } }
 
         public string GetEnvironmentVariable(string variable) { throw null; }
@@ -344,8 +342,6 @@ namespace NuGet.Common
 
     public abstract partial class LegacyLoggerAdapter : ILogger
     {
-        protected LegacyLoggerAdapter() { }
-
         public virtual void Log(ILogMessage message) { }
 
         public void Log(LogLevel level, string data) { }
@@ -700,8 +696,6 @@ namespace NuGet.Common
 
     public partial class NullLogger : LoggerBase
     {
-        public NullLogger() { }
-
         public static ILogger Instance { get { throw null; } }
 
         public override void Log(ILogMessage message) { }
@@ -715,6 +709,8 @@ namespace NuGet.Common
 
     public partial class PackagingLogMessage : IPackLogMessage, INuGetLogMessage, ILogMessage, ILogFileContext
     {
+        internal PackagingLogMessage() { }
+
         public NuGetLogCode Code { get { throw null; } set { } }
 
         public int EndColumnNumber { get { throw null; } set { } }
@@ -953,6 +949,8 @@ namespace NuGet.Common
 
     public partial class TelemetryActivity : System.IDisposable
     {
+        internal TelemetryActivity() { }
+
         public static INuGetTelemetryService NuGetTelemetryService { get { throw null; } set { } }
 
         public System.Guid OperationId { get { throw null; } }

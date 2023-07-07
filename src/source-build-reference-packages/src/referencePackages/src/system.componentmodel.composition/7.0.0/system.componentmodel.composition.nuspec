@@ -34,7 +34,5 @@ System.ComponentModel.Composition.ReflectionModel.ReflectionModelServices</descr
       <group targetFramework="net7.0" />
       <group targetFramework=".NETStandard2.0" />
     </dependencies>
-    <frameworkAssemblies>
-    </frameworkAssemblies>
   </metadata>
 </package>

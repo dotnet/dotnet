@@ -531,7 +531,6 @@ namespace Microsoft.Build.Framework
     [System.AttributeUsage(System.AttributeTargets.Class, AllowMultiple = false, Inherited = true)]
     public sealed partial class LoadInSeparateAppDomainAttribute : System.Attribute
     {
-        public LoadInSeparateAppDomainAttribute() { }
     }
 
     public partial class LoggerException : System.Exception
@@ -578,7 +577,6 @@ namespace Microsoft.Build.Framework
     [System.AttributeUsage(System.AttributeTargets.Property, AllowMultiple = false, Inherited = false)]
     public sealed partial class OutputAttribute : System.Attribute
     {
-        public OutputAttribute() { }
     }
 
     public sealed partial class ProjectEvaluationFinishedEventArgs : BuildStatusEventArgs
@@ -710,7 +708,6 @@ namespace Microsoft.Build.Framework
     [System.AttributeUsage(System.AttributeTargets.Property, AllowMultiple = false, Inherited = false)]
     public sealed partial class RequiredAttribute : System.Attribute
     {
-        public RequiredAttribute() { }
     }
 
     [System.AttributeUsage(System.AttributeTargets.Class, AllowMultiple = false, Inherited = false)]
@@ -724,19 +721,15 @@ namespace Microsoft.Build.Framework
     [System.AttributeUsage(System.AttributeTargets.Class, AllowMultiple = false, Inherited = false)]
     public sealed partial class RunInMTAAttribute : System.Attribute
     {
-        public RunInMTAAttribute() { }
     }
 
     [System.AttributeUsage(System.AttributeTargets.Class, AllowMultiple = false, Inherited = false)]
     public sealed partial class RunInSTAAttribute : System.Attribute
     {
-        public RunInSTAAttribute() { }
     }
 
     public abstract partial class SdkLogger
     {
-        protected SdkLogger() { }
-
         public abstract void LogMessage(string message, MessageImportance messageImportance = MessageImportance.Low);
     }
 
@@ -763,8 +756,6 @@ namespace Microsoft.Build.Framework
 
     public abstract partial class SdkResolver
     {
-        protected SdkResolver() { }
-
         public abstract string Name { get; }
         public abstract int Priority { get; }
 
@@ -773,8 +764,6 @@ namespace Microsoft.Build.Framework
 
     public abstract partial class SdkResolverContext
     {
-        protected SdkResolverContext() { }
-
         public virtual bool Interactive { get { throw null; } protected set { } }
 
         public virtual bool IsRunningInVisualStudio { get { throw null; } protected set { } }
@@ -792,8 +781,6 @@ namespace Microsoft.Build.Framework
 
     public abstract partial class SdkResult
     {
-        protected SdkResult() { }
-
         public virtual System.Collections.Generic.IList<string> AdditionalPaths { get { throw null; } set { } }
 
         public virtual System.Collections.Generic.IDictionary<string, SdkResultItem> ItemsToAdd { get { throw null; } protected set { } }
@@ -811,8 +798,6 @@ namespace Microsoft.Build.Framework
 
     public abstract partial class SdkResultFactory
     {
-        protected SdkResultFactory() { }
-
         public abstract SdkResult IndicateFailure(System.Collections.Generic.IEnumerable<string> errors, System.Collections.Generic.IEnumerable<string> warnings = null);
         public virtual SdkResult IndicateSuccess(System.Collections.Generic.IEnumerable<string> paths, string version, System.Collections.Generic.IDictionary<string, string> propertiesToAdd = null, System.Collections.Generic.IDictionary<string, SdkResultItem> itemsToAdd = null, System.Collections.Generic.IEnumerable<string> warnings = null) { throw null; }
 
@@ -1010,8 +995,6 @@ namespace Microsoft.Build.Framework
     public delegate void TaskStartedEventHandler(object sender, TaskStartedEventArgs e);
     public sealed partial class TelemetryEventArgs : BuildEventArgs
     {
-        public TelemetryEventArgs() { }
-
         public string EventName { get { throw null; } set { } }
 
         public System.Collections.Generic.IDictionary<string, string> Properties { get { throw null; } set { } }

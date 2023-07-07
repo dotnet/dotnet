@@ -4,107 +4,135 @@
 // ------------------------------------------------------------------------------
 // Changes to this file must follow the http://aka.ms/api-review process.
 // ------------------------------------------------------------------------------
-
-using System;
-using System.Diagnostics;
-using System.Reflection;
-using System.Runtime.CompilerServices;
-using System.Security;
-
-[assembly: Debuggable(DebuggableAttribute.DebuggingModes.IgnoreSymbolStoreSequencePoints)]
-[assembly: AllowPartiallyTrustedCallers]
-[assembly: ReferenceAssembly]
-[assembly: AssemblyTitle("System.Composition.Hosting")]
-[assembly: AssemblyDescription("System.Composition.Hosting")]
-[assembly: AssemblyDefaultAlias("System.Composition.Hosting")]
-[assembly: AssemblyCompany("Microsoft Corporation")]
-[assembly: AssemblyProduct("Microsoft® .NET Framework")]
-[assembly: AssemblyCopyright("© Microsoft Corporation.  All rights reserved.")]
-[assembly: AssemblyFileVersion("4.6.24705.01")]
-[assembly: AssemblyInformationalVersion("4.6.24705.01 built by: SOURCEBUILD")]
-[assembly: CLSCompliant(true)]
-[assembly: AssemblyMetadata("", "")]
-[assembly: AssemblyVersion("1.0.31.0")]
-
-
-
-
+[assembly: System.Runtime.CompilerServices.CompilationRelaxations(8)]
+[assembly: System.Runtime.CompilerServices.RuntimeCompatibility(WrapNonExceptionThrows = true)]
+[assembly: System.Diagnostics.Debuggable(System.Diagnostics.DebuggableAttribute.DebuggingModes.IgnoreSymbolStoreSequencePoints)]
+[assembly: System.Reflection.AssemblyTitle("System.Composition.Hosting")]
+[assembly: System.Reflection.AssemblyDescription("System.Composition.Hosting")]
+[assembly: System.Reflection.AssemblyDefaultAlias("System.Composition.Hosting")]
+[assembly: System.Reflection.AssemblyCompany("Microsoft Corporation")]
+[assembly: System.Reflection.AssemblyProduct("Microsoft® .NET Framework")]
+[assembly: System.Reflection.AssemblyCopyright("© Microsoft Corporation.  All rights reserved.")]
+[assembly: System.Reflection.AssemblyFileVersion("4.6.24705.01")]
+[assembly: System.Reflection.AssemblyInformationalVersion("4.6.24705.01. Commit Hash: 4d1af962ca0fede10beb01d197367c2f90e92c97")]
+[assembly: System.CLSCompliant(true)]
+[assembly: System.Reflection.AssemblyMetadata(".NETFrameworkAssembly", "")]
+[assembly: System.Reflection.AssemblyMetadata("Serviceable", "True")]
+[assembly: System.Reflection.AssemblyVersionAttribute("1.0.31.0")]
+[assembly: System.Runtime.CompilerServices.ReferenceAssembly]
+[assembly: System.Reflection.AssemblyFlagsAttribute((System.Reflection.AssemblyNameFlags)0x70)]
 namespace System.Composition.Hosting
 {
-    public sealed partial class CompositionHost : System.Composition.CompositionContext, System.IDisposable
+    public sealed partial class CompositionHost : CompositionContext, IDisposable
     {
         internal CompositionHost() { }
-        public static System.Composition.Hosting.CompositionHost CreateCompositionHost(System.Collections.Generic.IEnumerable<System.Composition.Hosting.Core.ExportDescriptorProvider> providers) { throw null; }
-        public static System.Composition.Hosting.CompositionHost CreateCompositionHost(params System.Composition.Hosting.Core.ExportDescriptorProvider[] providers) { throw null; }
+
+        public static CompositionHost CreateCompositionHost(Collections.Generic.IEnumerable<Core.ExportDescriptorProvider> providers) { throw null; }
+
+        public static CompositionHost CreateCompositionHost(params Core.ExportDescriptorProvider[] providers) { throw null; }
+
         public void Dispose() { }
-        public override bool TryGetExport(System.Composition.Hosting.Core.CompositionContract contract, out object export) { throw null; }
+
+        public override bool TryGetExport(Core.CompositionContract contract, out object export) { throw null; }
     }
 }
+
 namespace System.Composition.Hosting.Core
 {
-    public delegate object CompositeActivator(System.Composition.Hosting.Core.LifetimeContext context, System.Composition.Hosting.Core.CompositionOperation operation);
+    public delegate object CompositeActivator(LifetimeContext context, CompositionOperation operation);
     public partial class CompositionDependency
     {
         internal CompositionDependency() { }
-        public System.Composition.Hosting.Core.CompositionContract Contract { get { throw null; } }
+
+        public CompositionContract Contract { get { throw null; } }
+
         public bool IsPrerequisite { get { throw null; } }
+
         public object Site { get { throw null; } }
-        public System.Composition.Hosting.Core.ExportDescriptorPromise Target { get { throw null; } }
-        public static System.Composition.Hosting.Core.CompositionDependency Missing(System.Composition.Hosting.Core.CompositionContract contract, object site) { throw null; }
-        public static System.Composition.Hosting.Core.CompositionDependency Oversupplied(System.Composition.Hosting.Core.CompositionContract contract, System.Collections.Generic.IEnumerable<System.Composition.Hosting.Core.ExportDescriptorPromise> targets, object site) { throw null; }
-        public static System.Composition.Hosting.Core.CompositionDependency Satisfied(System.Composition.Hosting.Core.CompositionContract contract, System.Composition.Hosting.Core.ExportDescriptorPromise target, bool isPrerequisite, object site) { throw null; }
+
+        public ExportDescriptorPromise Target { get { throw null; } }
+
+        public static CompositionDependency Missing(CompositionContract contract, object site) { throw null; }
+
+        public static CompositionDependency Oversupplied(CompositionContract contract, Collections.Generic.IEnumerable<ExportDescriptorPromise> targets, object site) { throw null; }
+
+        public static CompositionDependency Satisfied(CompositionContract contract, ExportDescriptorPromise target, bool isPrerequisite, object site) { throw null; }
+
         public override string ToString() { throw null; }
     }
-    public sealed partial class CompositionOperation : System.IDisposable
+
+    public sealed partial class CompositionOperation : IDisposable
     {
         internal CompositionOperation() { }
-        public void AddNonPrerequisiteAction(System.Action action) { }
-        public void AddPostCompositionAction(System.Action action) { }
+
+        public void AddNonPrerequisiteAction(Action action) { }
+
+        public void AddPostCompositionAction(Action action) { }
+
         public void Dispose() { }
-        public static object Run(System.Composition.Hosting.Core.LifetimeContext outermostLifetimeContext, System.Composition.Hosting.Core.CompositeActivator compositionRootActivator) { throw null; }
+
+        public static object Run(LifetimeContext outermostLifetimeContext, CompositeActivator compositionRootActivator) { throw null; }
     }
+
     public abstract partial class DependencyAccessor
     {
-        protected DependencyAccessor() { }
-        protected abstract System.Collections.Generic.IEnumerable<System.Composition.Hosting.Core.ExportDescriptorPromise> GetPromises(System.Composition.Hosting.Core.CompositionContract exportKey);
-        public System.Collections.Generic.IEnumerable<System.Composition.Hosting.Core.CompositionDependency> ResolveDependencies(object site, System.Composition.Hosting.Core.CompositionContract contract, bool isPrerequisite) { throw null; }
-        public System.Composition.Hosting.Core.CompositionDependency ResolveRequiredDependency(object site, System.Composition.Hosting.Core.CompositionContract contract, bool isPrerequisite) { throw null; }
-        public bool TryResolveOptionalDependency(object site, System.Composition.Hosting.Core.CompositionContract contract, bool isPrerequisite, out System.Composition.Hosting.Core.CompositionDependency dependency) { throw null; }
+        protected abstract Collections.Generic.IEnumerable<ExportDescriptorPromise> GetPromises(CompositionContract exportKey);
+        public Collections.Generic.IEnumerable<CompositionDependency> ResolveDependencies(object site, CompositionContract contract, bool isPrerequisite) { throw null; }
+
+        public CompositionDependency ResolveRequiredDependency(object site, CompositionContract contract, bool isPrerequisite) { throw null; }
+
+        public bool TryResolveOptionalDependency(object site, CompositionContract contract, bool isPrerequisite, out CompositionDependency dependency) { throw null; }
     }
+
     public abstract partial class ExportDescriptor
     {
-        protected ExportDescriptor() { }
-        public abstract System.Composition.Hosting.Core.CompositeActivator Activator { get; }
-        public abstract System.Collections.Generic.IDictionary<string, object> Metadata { get; }
-        public static System.Composition.Hosting.Core.ExportDescriptor Create(System.Composition.Hosting.Core.CompositeActivator activator, System.Collections.Generic.IDictionary<string, object> metadata) { throw null; }
+        public abstract CompositeActivator Activator { get; }
+        public abstract Collections.Generic.IDictionary<string, object> Metadata { get; }
+
+        public static ExportDescriptor Create(CompositeActivator activator, Collections.Generic.IDictionary<string, object> metadata) { throw null; }
     }
+
     public partial class ExportDescriptorPromise
     {
-        public ExportDescriptorPromise(System.Composition.Hosting.Core.CompositionContract contract, string origin, bool isShared, System.Func<System.Collections.Generic.IEnumerable<System.Composition.Hosting.Core.CompositionDependency>> dependencies, System.Func<System.Collections.Generic.IEnumerable<System.Composition.Hosting.Core.CompositionDependency>, System.Composition.Hosting.Core.ExportDescriptor> getDescriptor) { }
-        public System.Composition.Hosting.Core.CompositionContract Contract { get { throw null; } }
-        public System.Collections.ObjectModel.ReadOnlyCollection<System.Composition.Hosting.Core.CompositionDependency> Dependencies { get { throw null; } }
+        public ExportDescriptorPromise(CompositionContract contract, string origin, bool isShared, Func<Collections.Generic.IEnumerable<CompositionDependency>> dependencies, Func<Collections.Generic.IEnumerable<CompositionDependency>, ExportDescriptor> getDescriptor) { }
+
+        public CompositionContract Contract { get { throw null; } }
+
+        public Collections.ObjectModel.ReadOnlyCollection<CompositionDependency> Dependencies { get { throw null; } }
+
         public bool IsShared { get { throw null; } }
+
         public string Origin { get { throw null; } }
-        public System.Composition.Hosting.Core.ExportDescriptor GetDescriptor() { throw null; }
+
+        public ExportDescriptor GetDescriptor() { throw null; }
+
         public override string ToString() { throw null; }
     }
+
     public abstract partial class ExportDescriptorProvider
     {
-        protected static readonly System.Func<System.Collections.Generic.IEnumerable<System.Composition.Hosting.Core.CompositionDependency>> NoDependencies;
-        protected static readonly System.Collections.Generic.IEnumerable<System.Composition.Hosting.Core.ExportDescriptorPromise> NoExportDescriptors;
-        protected static readonly System.Collections.Generic.IDictionary<string, object> NoMetadata;
-        protected ExportDescriptorProvider() { }
-        public abstract System.Collections.Generic.IEnumerable<System.Composition.Hosting.Core.ExportDescriptorPromise> GetExportDescriptors(System.Composition.Hosting.Core.CompositionContract contract, System.Composition.Hosting.Core.DependencyAccessor descriptorAccessor);
+        protected static readonly Func<Collections.Generic.IEnumerable<CompositionDependency>> NoDependencies;
+        protected static readonly Collections.Generic.IEnumerable<ExportDescriptorPromise> NoExportDescriptors;
+        protected static readonly Collections.Generic.IDictionary<string, object> NoMetadata;
+        public abstract Collections.Generic.IEnumerable<ExportDescriptorPromise> GetExportDescriptors(CompositionContract contract, DependencyAccessor descriptorAccessor);
     }
-    public sealed partial class LifetimeContext : System.Composition.CompositionContext, System.IDisposable
+
+    public sealed partial class LifetimeContext : CompositionContext, IDisposable
     {
         internal LifetimeContext() { }
-        public void AddBoundInstance(System.IDisposable instance) { }
+
+        public void AddBoundInstance(IDisposable instance) { }
+
         public static int AllocateSharingId() { throw null; }
+
         public void Dispose() { }
-        public System.Composition.Hosting.Core.LifetimeContext FindContextWithin(string sharingBoundary) { throw null; }
-        public object GetOrCreate(int sharingId, System.Composition.Hosting.Core.CompositionOperation operation, System.Composition.Hosting.Core.CompositeActivator creator) { throw null; }
+
+        public LifetimeContext FindContextWithin(string sharingBoundary) { throw null; }
+
+        public object GetOrCreate(int sharingId, CompositionOperation operation, CompositeActivator creator) { throw null; }
+
         public override string ToString() { throw null; }
-        public override bool TryGetExport(System.Composition.Hosting.Core.CompositionContract contract, out object export) { throw null; }
+
+        public override bool TryGetExport(CompositionContract contract, out object export) { throw null; }
     }
 }

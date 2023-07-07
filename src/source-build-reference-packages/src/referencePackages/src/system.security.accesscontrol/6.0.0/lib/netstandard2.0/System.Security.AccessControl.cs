@@ -87,6 +87,8 @@ namespace System.Security.AccessControl
 
     public sealed partial class AceEnumerator : Collections.IEnumerator
     {
+        internal AceEnumerator() { }
+
         public GenericAce Current { get { throw null; } }
 
         object Collections.IEnumerator.Current { get { throw null; } }
@@ -186,8 +188,6 @@ namespace System.Security.AccessControl
 
     public sealed partial class AuthorizationRuleCollection : Collections.ReadOnlyCollectionBase
     {
-        public AuthorizationRuleCollection() { }
-
         public AuthorizationRule? this[int index] { get { throw null; } }
 
         public void AddRule(AuthorizationRule? rule) { }
@@ -208,6 +208,8 @@ namespace System.Security.AccessControl
 
     public abstract partial class CommonAcl : GenericAcl
     {
+        internal CommonAcl() { }
+
         public sealed override int BinaryLength { get { throw null; } }
 
         public sealed override int Count { get { throw null; } }
@@ -394,6 +396,8 @@ namespace System.Security.AccessControl
 
     public abstract partial class GenericAce
     {
+        internal GenericAce() { }
+
         public AceFlags AceFlags { get { throw null; } set { } }
 
         public AceType AceType { get { throw null; } }
@@ -427,8 +431,6 @@ namespace System.Security.AccessControl
         public static readonly byte AclRevision;
         public static readonly byte AclRevisionDS;
         public static readonly int MaxBinaryLength;
-        protected GenericAcl() { }
-
         public abstract int BinaryLength { get; }
         public abstract int Count { get; }
 
@@ -452,6 +454,8 @@ namespace System.Security.AccessControl
 
     public abstract partial class GenericSecurityDescriptor
     {
+        internal GenericSecurityDescriptor() { }
+
         public int BinaryLength { get { throw null; } }
 
         public abstract ControlFlags ControlFlags { get; }
@@ -477,6 +481,8 @@ namespace System.Security.AccessControl
 
     public abstract partial class KnownAce : GenericAce
     {
+        internal KnownAce() { }
+
         public int AccessMask { get { throw null; } set { } }
 
         public Principal.SecurityIdentifier SecurityIdentifier { get { throw null; } set { } }
@@ -715,6 +721,8 @@ namespace System.Security.AccessControl
 
     public abstract partial class QualifiedAce : KnownAce
     {
+        internal QualifiedAce() { }
+
         public AceQualifier AceQualifier { get { throw null; } }
 
         public bool IsCallback { get { throw null; } }
@@ -893,8 +901,6 @@ namespace System.Security.Policy
 
     public abstract partial class EvidenceBase
     {
-        protected EvidenceBase() { }
-
         public virtual EvidenceBase? Clone() { throw null; }
     }
 }

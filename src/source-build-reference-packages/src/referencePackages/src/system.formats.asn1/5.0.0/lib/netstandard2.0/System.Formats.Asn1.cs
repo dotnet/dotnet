@@ -4,223 +4,361 @@
 // ------------------------------------------------------------------------------
 // Changes to this file must follow the http://aka.ms/api-review process.
 // ------------------------------------------------------------------------------
-
-using System;
-using System.Diagnostics;
-using System.Reflection;
-using System.Runtime.CompilerServices;
-using System.Security;
-
-[assembly: Debuggable(DebuggableAttribute.DebuggingModes.IgnoreSymbolStoreSequencePoints)]
-[assembly: AllowPartiallyTrustedCallers]
-[assembly: ReferenceAssembly]
-[assembly: AssemblyTitle("System.Formats.Asn1")]
-[assembly: AssemblyDescription("System.Formats.Asn1")]
-[assembly: AssemblyDefaultAlias("System.Formats.Asn1")]
-[assembly: AssemblyCompany("Microsoft Corporation")]
-[assembly: AssemblyProduct("Microsoft® .NET Framework")]
-[assembly: AssemblyCopyright("© Microsoft Corporation.  All rights reserved.")]
-[assembly: AssemblyFileVersion("5.0.20.51904")]
-[assembly: AssemblyInformationalVersion("5.0.20.51904 built by: SOURCEBUILD")]
-[assembly: CLSCompliant(true)]
-[assembly: AssemblyMetadata("", "")]
-[assembly: AssemblyVersion("5.0.0.0")]
-
-
-
-
+[assembly: System.Runtime.CompilerServices.CompilationRelaxations(8)]
+[assembly: System.Runtime.CompilerServices.RuntimeCompatibility(WrapNonExceptionThrows = true)]
+[assembly: System.Diagnostics.Debuggable(System.Diagnostics.DebuggableAttribute.DebuggingModes.IgnoreSymbolStoreSequencePoints)]
+[assembly: System.Runtime.Versioning.TargetFramework(".NETStandard,Version=v2.0", FrameworkDisplayName = "")]
+[assembly: System.CLSCompliant(true)]
+[assembly: System.Reflection.AssemblyDefaultAlias("System.Formats.Asn1")]
+[assembly: System.Resources.NeutralResourcesLanguage("en-US")]
+[assembly: System.Reflection.AssemblyMetadata(".NETFrameworkAssembly", "")]
+[assembly: System.Reflection.AssemblyMetadata("Serviceable", "True")]
+[assembly: System.Reflection.AssemblyMetadata("PreferInbox", "True")]
+[assembly: System.Reflection.AssemblyCompany("Microsoft Corporation")]
+[assembly: System.Reflection.AssemblyCopyright("© Microsoft Corporation. All rights reserved.")]
+[assembly: System.Reflection.AssemblyDescription("System.Formats.Asn1")]
+[assembly: System.Reflection.AssemblyFileVersion("5.0.20.51904")]
+[assembly: System.Reflection.AssemblyInformationalVersion("5.0.0+cf258a14b70ad9069470a108f13765e0e5988f51")]
+[assembly: System.Reflection.AssemblyProduct("Microsoft® .NET")]
+[assembly: System.Reflection.AssemblyTitle("System.Formats.Asn1")]
+[assembly: System.Reflection.AssemblyMetadata("RepositoryUrl", "git://github.com/dotnet/runtime")]
+[assembly: System.Reflection.AssemblyVersionAttribute("5.0.0.0")]
+[assembly: System.Runtime.CompilerServices.ReferenceAssembly]
+[assembly: System.Reflection.AssemblyFlagsAttribute((System.Reflection.AssemblyNameFlags)0x70)]
 namespace System.Formats.Asn1
 {
-    public readonly partial struct Asn1Tag : System.IEquatable<System.Formats.Asn1.Asn1Tag>
+    public readonly partial struct Asn1Tag : IEquatable<Asn1Tag>
     {
         private readonly int _dummyPrimitive;
-        public static readonly System.Formats.Asn1.Asn1Tag Boolean;
-        public static readonly System.Formats.Asn1.Asn1Tag ConstructedBitString;
-        public static readonly System.Formats.Asn1.Asn1Tag ConstructedOctetString;
-        public static readonly System.Formats.Asn1.Asn1Tag Enumerated;
-        public static readonly System.Formats.Asn1.Asn1Tag GeneralizedTime;
-        public static readonly System.Formats.Asn1.Asn1Tag Integer;
-        public static readonly System.Formats.Asn1.Asn1Tag Null;
-        public static readonly System.Formats.Asn1.Asn1Tag ObjectIdentifier;
-        public static readonly System.Formats.Asn1.Asn1Tag PrimitiveBitString;
-        public static readonly System.Formats.Asn1.Asn1Tag PrimitiveOctetString;
-        public static readonly System.Formats.Asn1.Asn1Tag Sequence;
-        public static readonly System.Formats.Asn1.Asn1Tag SetOf;
-        public static readonly System.Formats.Asn1.Asn1Tag UtcTime;
-        public Asn1Tag(System.Formats.Asn1.TagClass tagClass, int tagValue, bool isConstructed = false) { throw null; }
-        public Asn1Tag(System.Formats.Asn1.UniversalTagNumber universalTagNumber, bool isConstructed = false) { throw null; }
+        public static readonly Asn1Tag Boolean;
+        public static readonly Asn1Tag ConstructedBitString;
+        public static readonly Asn1Tag ConstructedOctetString;
+        public static readonly Asn1Tag Enumerated;
+        public static readonly Asn1Tag GeneralizedTime;
+        public static readonly Asn1Tag Integer;
+        public static readonly Asn1Tag Null;
+        public static readonly Asn1Tag ObjectIdentifier;
+        public static readonly Asn1Tag PrimitiveBitString;
+        public static readonly Asn1Tag PrimitiveOctetString;
+        public static readonly Asn1Tag Sequence;
+        public static readonly Asn1Tag SetOf;
+        public static readonly Asn1Tag UtcTime;
+        public Asn1Tag(TagClass tagClass, int tagValue, bool isConstructed = false) { }
+
+        public Asn1Tag(UniversalTagNumber universalTagNumber, bool isConstructed = false) { }
+
         public bool IsConstructed { get { throw null; } }
-        public System.Formats.Asn1.TagClass TagClass { get { throw null; } }
+
+        public TagClass TagClass { get { throw null; } }
+
         public int TagValue { get { throw null; } }
-        public System.Formats.Asn1.Asn1Tag AsConstructed() { throw null; }
-        public System.Formats.Asn1.Asn1Tag AsPrimitive() { throw null; }
-        public int CalculateEncodedSize() { throw null; }
-        public static System.Formats.Asn1.Asn1Tag Decode(System.ReadOnlySpan<byte> source, out int bytesConsumed) { throw null; }
-        public int Encode(System.Span<byte> destination) { throw null; }
-        public bool Equals(System.Formats.Asn1.Asn1Tag other) { throw null; }
-        public override bool Equals(object obj) { throw null; }
-        public override int GetHashCode() { throw null; }
-        public bool HasSameClassAndValue(System.Formats.Asn1.Asn1Tag other) { throw null; }
-        public static bool operator ==(System.Formats.Asn1.Asn1Tag left, System.Formats.Asn1.Asn1Tag right) { throw null; }
-        public static bool operator !=(System.Formats.Asn1.Asn1Tag left, System.Formats.Asn1.Asn1Tag right) { throw null; }
-        public override string ToString() { throw null; }
-        public static bool TryDecode(System.ReadOnlySpan<byte> source, out System.Formats.Asn1.Asn1Tag tag, out int bytesConsumed) { throw null; }
-        public bool TryEncode(System.Span<byte> destination, out int bytesWritten) { throw null; }
+
+        public readonly Asn1Tag AsConstructed() { throw null; }
+
+        public readonly Asn1Tag AsPrimitive() { throw null; }
+
+        public readonly int CalculateEncodedSize() { throw null; }
+
+        public static Asn1Tag Decode(ReadOnlySpan<byte> source, out int bytesConsumed) { throw null; }
+
+        public readonly int Encode(Span<byte> destination) { throw null; }
+
+        public readonly bool Equals(Asn1Tag other) { throw null; }
+
+        public override readonly bool Equals(object? obj) { throw null; }
+
+        public override readonly int GetHashCode() { throw null; }
+
+        public readonly bool HasSameClassAndValue(Asn1Tag other) { throw null; }
+
+        public static bool operator ==(Asn1Tag left, Asn1Tag right) { throw null; }
+
+        public static bool operator !=(Asn1Tag left, Asn1Tag right) { throw null; }
+
+        public override readonly string ToString() { throw null; }
+
+        public static bool TryDecode(ReadOnlySpan<byte> source, out Asn1Tag tag, out int bytesConsumed) { throw null; }
+
+        public readonly bool TryEncode(Span<byte> destination, out int bytesWritten) { throw null; }
     }
-    public partial class AsnContentException : System.Exception
+
+    public partial class AsnContentException : Exception
     {
         public AsnContentException() { }
-        protected AsnContentException(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context) { }
-        public AsnContentException(string message) { }
-        public AsnContentException(string message, System.Exception inner) { }
+
+        protected AsnContentException(Runtime.Serialization.SerializationInfo info, Runtime.Serialization.StreamingContext context) { }
+
+        public AsnContentException(string? message, Exception? inner) { }
+
+        public AsnContentException(string? message) { }
     }
+
     public static partial class AsnDecoder
     {
-        public static byte[] ReadBitString(System.ReadOnlySpan<byte> source, System.Formats.Asn1.AsnEncodingRules ruleSet, out int unusedBitCount, out int bytesConsumed, System.Formats.Asn1.Asn1Tag? expectedTag = default(System.Formats.Asn1.Asn1Tag?)) { throw null; }
-        public static bool ReadBoolean(System.ReadOnlySpan<byte> source, System.Formats.Asn1.AsnEncodingRules ruleSet, out int bytesConsumed, System.Formats.Asn1.Asn1Tag? expectedTag = default(System.Formats.Asn1.Asn1Tag?)) { throw null; }
-        public static string ReadCharacterString(System.ReadOnlySpan<byte> source, System.Formats.Asn1.AsnEncodingRules ruleSet, System.Formats.Asn1.UniversalTagNumber encodingType, out int bytesConsumed, System.Formats.Asn1.Asn1Tag? expectedTag = default(System.Formats.Asn1.Asn1Tag?)) { throw null; }
-        public static System.Formats.Asn1.Asn1Tag ReadEncodedValue(System.ReadOnlySpan<byte> source, System.Formats.Asn1.AsnEncodingRules ruleSet, out int contentOffset, out int contentLength, out int bytesConsumed) { throw null; }
-        public static System.ReadOnlySpan<byte> ReadEnumeratedBytes(System.ReadOnlySpan<byte> source, System.Formats.Asn1.AsnEncodingRules ruleSet, out int bytesConsumed, System.Formats.Asn1.Asn1Tag? expectedTag = default(System.Formats.Asn1.Asn1Tag?)) { throw null; }
-        public static System.Enum ReadEnumeratedValue(System.ReadOnlySpan<byte> source, System.Formats.Asn1.AsnEncodingRules ruleSet, System.Type enumType, out int bytesConsumed, System.Formats.Asn1.Asn1Tag? expectedTag = default(System.Formats.Asn1.Asn1Tag?)) { throw null; }
-        public static TEnum ReadEnumeratedValue<TEnum>(System.ReadOnlySpan<byte> source, System.Formats.Asn1.AsnEncodingRules ruleSet, out int bytesConsumed, System.Formats.Asn1.Asn1Tag? expectedTag = default(System.Formats.Asn1.Asn1Tag?)) where TEnum : System.Enum { throw null; }
-        public static System.DateTimeOffset ReadGeneralizedTime(System.ReadOnlySpan<byte> source, System.Formats.Asn1.AsnEncodingRules ruleSet, out int bytesConsumed, System.Formats.Asn1.Asn1Tag? expectedTag = default(System.Formats.Asn1.Asn1Tag?)) { throw null; }
-        public static System.Numerics.BigInteger ReadInteger(System.ReadOnlySpan<byte> source, System.Formats.Asn1.AsnEncodingRules ruleSet, out int bytesConsumed, System.Formats.Asn1.Asn1Tag? expectedTag = default(System.Formats.Asn1.Asn1Tag?)) { throw null; }
-        public static System.ReadOnlySpan<byte> ReadIntegerBytes(System.ReadOnlySpan<byte> source, System.Formats.Asn1.AsnEncodingRules ruleSet, out int bytesConsumed, System.Formats.Asn1.Asn1Tag? expectedTag = default(System.Formats.Asn1.Asn1Tag?)) { throw null; }
-        public static System.Collections.BitArray ReadNamedBitList(System.ReadOnlySpan<byte> source, System.Formats.Asn1.AsnEncodingRules ruleSet, out int bytesConsumed, System.Formats.Asn1.Asn1Tag? expectedTag = default(System.Formats.Asn1.Asn1Tag?)) { throw null; }
-        public static System.Enum ReadNamedBitListValue(System.ReadOnlySpan<byte> source, System.Formats.Asn1.AsnEncodingRules ruleSet, System.Type flagsEnumType, out int bytesConsumed, System.Formats.Asn1.Asn1Tag? expectedTag = default(System.Formats.Asn1.Asn1Tag?)) { throw null; }
-        public static TFlagsEnum ReadNamedBitListValue<TFlagsEnum>(System.ReadOnlySpan<byte> source, System.Formats.Asn1.AsnEncodingRules ruleSet, out int bytesConsumed, System.Formats.Asn1.Asn1Tag? expectedTag = default(System.Formats.Asn1.Asn1Tag?)) where TFlagsEnum : System.Enum { throw null; }
-        public static void ReadNull(System.ReadOnlySpan<byte> source, System.Formats.Asn1.AsnEncodingRules ruleSet, out int bytesConsumed, System.Formats.Asn1.Asn1Tag? expectedTag = default(System.Formats.Asn1.Asn1Tag?)) { throw null; }
-        public static string ReadObjectIdentifier(System.ReadOnlySpan<byte> source, System.Formats.Asn1.AsnEncodingRules ruleSet, out int bytesConsumed, System.Formats.Asn1.Asn1Tag? expectedTag = default(System.Formats.Asn1.Asn1Tag?)) { throw null; }
-        public static byte[] ReadOctetString(System.ReadOnlySpan<byte> source, System.Formats.Asn1.AsnEncodingRules ruleSet, out int bytesConsumed, System.Formats.Asn1.Asn1Tag? expectedTag = default(System.Formats.Asn1.Asn1Tag?)) { throw null; }
-        public static void ReadSequence(System.ReadOnlySpan<byte> source, System.Formats.Asn1.AsnEncodingRules ruleSet, out int contentOffset, out int contentLength, out int bytesConsumed, System.Formats.Asn1.Asn1Tag? expectedTag = default(System.Formats.Asn1.Asn1Tag?)) { throw null; }
-        public static void ReadSetOf(System.ReadOnlySpan<byte> source, System.Formats.Asn1.AsnEncodingRules ruleSet, out int contentOffset, out int contentLength, out int bytesConsumed, bool skipSortOrderValidation = false, System.Formats.Asn1.Asn1Tag? expectedTag = default(System.Formats.Asn1.Asn1Tag?)) { throw null; }
-        public static System.DateTimeOffset ReadUtcTime(System.ReadOnlySpan<byte> source, System.Formats.Asn1.AsnEncodingRules ruleSet, out int bytesConsumed, int twoDigitYearMax = 2049, System.Formats.Asn1.Asn1Tag? expectedTag = default(System.Formats.Asn1.Asn1Tag?)) { throw null; }
-        public static bool TryReadBitString(System.ReadOnlySpan<byte> source, System.Span<byte> destination, System.Formats.Asn1.AsnEncodingRules ruleSet, out int unusedBitCount, out int bytesConsumed, out int bytesWritten, System.Formats.Asn1.Asn1Tag? expectedTag = default(System.Formats.Asn1.Asn1Tag?)) { throw null; }
-        public static bool TryReadCharacterString(System.ReadOnlySpan<byte> source, System.Span<char> destination, System.Formats.Asn1.AsnEncodingRules ruleSet, System.Formats.Asn1.UniversalTagNumber encodingType, out int bytesConsumed, out int charsWritten, System.Formats.Asn1.Asn1Tag? expectedTag = default(System.Formats.Asn1.Asn1Tag?)) { throw null; }
-        public static bool TryReadCharacterStringBytes(System.ReadOnlySpan<byte> source, System.Span<byte> destination, System.Formats.Asn1.AsnEncodingRules ruleSet, System.Formats.Asn1.Asn1Tag expectedTag, out int bytesConsumed, out int bytesWritten) { throw null; }
-        public static bool TryReadEncodedValue(System.ReadOnlySpan<byte> source, System.Formats.Asn1.AsnEncodingRules ruleSet, out System.Formats.Asn1.Asn1Tag tag, out int contentOffset, out int contentLength, out int bytesConsumed) { throw null; }
-        public static bool TryReadInt32(System.ReadOnlySpan<byte> source, System.Formats.Asn1.AsnEncodingRules ruleSet, out int value, out int bytesConsumed, System.Formats.Asn1.Asn1Tag? expectedTag = default(System.Formats.Asn1.Asn1Tag?)) { throw null; }
-        public static bool TryReadInt64(System.ReadOnlySpan<byte> source, System.Formats.Asn1.AsnEncodingRules ruleSet, out long value, out int bytesConsumed, System.Formats.Asn1.Asn1Tag? expectedTag = default(System.Formats.Asn1.Asn1Tag?)) { throw null; }
-        public static bool TryReadOctetString(System.ReadOnlySpan<byte> source, System.Span<byte> destination, System.Formats.Asn1.AsnEncodingRules ruleSet, out int bytesConsumed, out int bytesWritten, System.Formats.Asn1.Asn1Tag? expectedTag = default(System.Formats.Asn1.Asn1Tag?)) { throw null; }
-        public static bool TryReadPrimitiveBitString(System.ReadOnlySpan<byte> source, System.Formats.Asn1.AsnEncodingRules ruleSet, out int unusedBitCount, out System.ReadOnlySpan<byte> value, out int bytesConsumed, System.Formats.Asn1.Asn1Tag? expectedTag = default(System.Formats.Asn1.Asn1Tag?)) { throw null; }
-        public static bool TryReadPrimitiveCharacterStringBytes(System.ReadOnlySpan<byte> source, System.Formats.Asn1.AsnEncodingRules ruleSet, System.Formats.Asn1.Asn1Tag expectedTag, out System.ReadOnlySpan<byte> value, out int bytesConsumed) { throw null; }
-        public static bool TryReadPrimitiveOctetString(System.ReadOnlySpan<byte> source, System.Formats.Asn1.AsnEncodingRules ruleSet, out System.ReadOnlySpan<byte> value, out int bytesConsumed, System.Formats.Asn1.Asn1Tag? expectedTag = default(System.Formats.Asn1.Asn1Tag?)) { throw null; }
-        [System.CLSCompliantAttribute(false)]
-        public static bool TryReadUInt32(System.ReadOnlySpan<byte> source, System.Formats.Asn1.AsnEncodingRules ruleSet, out uint value, out int bytesConsumed, System.Formats.Asn1.Asn1Tag? expectedTag = default(System.Formats.Asn1.Asn1Tag?)) { throw null; }
-        [System.CLSCompliantAttribute(false)]
-        public static bool TryReadUInt64(System.ReadOnlySpan<byte> source, System.Formats.Asn1.AsnEncodingRules ruleSet, out ulong value, out int bytesConsumed, System.Formats.Asn1.Asn1Tag? expectedTag = default(System.Formats.Asn1.Asn1Tag?)) { throw null; }
+        public static byte[] ReadBitString(ReadOnlySpan<byte> source, AsnEncodingRules ruleSet, out int unusedBitCount, out int bytesConsumed, Asn1Tag? expectedTag = null) { throw null; }
+
+        public static bool ReadBoolean(ReadOnlySpan<byte> source, AsnEncodingRules ruleSet, out int bytesConsumed, Asn1Tag? expectedTag = null) { throw null; }
+
+        public static string ReadCharacterString(ReadOnlySpan<byte> source, AsnEncodingRules ruleSet, UniversalTagNumber encodingType, out int bytesConsumed, Asn1Tag? expectedTag = null) { throw null; }
+
+        public static Asn1Tag ReadEncodedValue(ReadOnlySpan<byte> source, AsnEncodingRules ruleSet, out int contentOffset, out int contentLength, out int bytesConsumed) { throw null; }
+
+        public static ReadOnlySpan<byte> ReadEnumeratedBytes(ReadOnlySpan<byte> source, AsnEncodingRules ruleSet, out int bytesConsumed, Asn1Tag? expectedTag = null) { throw null; }
+
+        public static Enum ReadEnumeratedValue(ReadOnlySpan<byte> source, AsnEncodingRules ruleSet, Type enumType, out int bytesConsumed, Asn1Tag? expectedTag = null) { throw null; }
+
+        public static TEnum ReadEnumeratedValue<TEnum>(ReadOnlySpan<byte> source, AsnEncodingRules ruleSet, out int bytesConsumed, Asn1Tag? expectedTag = null)
+            where TEnum : Enum { throw null; }
+
+        public static DateTimeOffset ReadGeneralizedTime(ReadOnlySpan<byte> source, AsnEncodingRules ruleSet, out int bytesConsumed, Asn1Tag? expectedTag = null) { throw null; }
+
+        public static Numerics.BigInteger ReadInteger(ReadOnlySpan<byte> source, AsnEncodingRules ruleSet, out int bytesConsumed, Asn1Tag? expectedTag = null) { throw null; }
+
+        public static ReadOnlySpan<byte> ReadIntegerBytes(ReadOnlySpan<byte> source, AsnEncodingRules ruleSet, out int bytesConsumed, Asn1Tag? expectedTag = null) { throw null; }
+
+        public static Collections.BitArray ReadNamedBitList(ReadOnlySpan<byte> source, AsnEncodingRules ruleSet, out int bytesConsumed, Asn1Tag? expectedTag = null) { throw null; }
+
+        public static Enum ReadNamedBitListValue(ReadOnlySpan<byte> source, AsnEncodingRules ruleSet, Type flagsEnumType, out int bytesConsumed, Asn1Tag? expectedTag = null) { throw null; }
+
+        public static TFlagsEnum ReadNamedBitListValue<TFlagsEnum>(ReadOnlySpan<byte> source, AsnEncodingRules ruleSet, out int bytesConsumed, Asn1Tag? expectedTag = null)
+            where TFlagsEnum : Enum { throw null; }
+
+        public static void ReadNull(ReadOnlySpan<byte> source, AsnEncodingRules ruleSet, out int bytesConsumed, Asn1Tag? expectedTag = null) { throw null; }
+
+        public static string ReadObjectIdentifier(ReadOnlySpan<byte> source, AsnEncodingRules ruleSet, out int bytesConsumed, Asn1Tag? expectedTag = null) { throw null; }
+
+        public static byte[] ReadOctetString(ReadOnlySpan<byte> source, AsnEncodingRules ruleSet, out int bytesConsumed, Asn1Tag? expectedTag = null) { throw null; }
+
+        public static void ReadSequence(ReadOnlySpan<byte> source, AsnEncodingRules ruleSet, out int contentOffset, out int contentLength, out int bytesConsumed, Asn1Tag? expectedTag = null) { throw null; }
+
+        public static void ReadSetOf(ReadOnlySpan<byte> source, AsnEncodingRules ruleSet, out int contentOffset, out int contentLength, out int bytesConsumed, bool skipSortOrderValidation = false, Asn1Tag? expectedTag = null) { throw null; }
+
+        public static DateTimeOffset ReadUtcTime(ReadOnlySpan<byte> source, AsnEncodingRules ruleSet, out int bytesConsumed, int twoDigitYearMax = 2049, Asn1Tag? expectedTag = null) { throw null; }
+
+        public static bool TryReadBitString(ReadOnlySpan<byte> source, Span<byte> destination, AsnEncodingRules ruleSet, out int unusedBitCount, out int bytesConsumed, out int bytesWritten, Asn1Tag? expectedTag = null) { throw null; }
+
+        public static bool TryReadCharacterString(ReadOnlySpan<byte> source, Span<char> destination, AsnEncodingRules ruleSet, UniversalTagNumber encodingType, out int bytesConsumed, out int charsWritten, Asn1Tag? expectedTag = null) { throw null; }
+
+        public static bool TryReadCharacterStringBytes(ReadOnlySpan<byte> source, Span<byte> destination, AsnEncodingRules ruleSet, Asn1Tag expectedTag, out int bytesConsumed, out int bytesWritten) { throw null; }
+
+        public static bool TryReadEncodedValue(ReadOnlySpan<byte> source, AsnEncodingRules ruleSet, out Asn1Tag tag, out int contentOffset, out int contentLength, out int bytesConsumed) { throw null; }
+
+        public static bool TryReadInt32(ReadOnlySpan<byte> source, AsnEncodingRules ruleSet, out int value, out int bytesConsumed, Asn1Tag? expectedTag = null) { throw null; }
+
+        public static bool TryReadInt64(ReadOnlySpan<byte> source, AsnEncodingRules ruleSet, out long value, out int bytesConsumed, Asn1Tag? expectedTag = null) { throw null; }
+
+        public static bool TryReadOctetString(ReadOnlySpan<byte> source, Span<byte> destination, AsnEncodingRules ruleSet, out int bytesConsumed, out int bytesWritten, Asn1Tag? expectedTag = null) { throw null; }
+
+        public static bool TryReadPrimitiveBitString(ReadOnlySpan<byte> source, AsnEncodingRules ruleSet, out int unusedBitCount, out ReadOnlySpan<byte> value, out int bytesConsumed, Asn1Tag? expectedTag = null) { throw null; }
+
+        public static bool TryReadPrimitiveCharacterStringBytes(ReadOnlySpan<byte> source, AsnEncodingRules ruleSet, Asn1Tag expectedTag, out ReadOnlySpan<byte> value, out int bytesConsumed) { throw null; }
+
+        public static bool TryReadPrimitiveOctetString(ReadOnlySpan<byte> source, AsnEncodingRules ruleSet, out ReadOnlySpan<byte> value, out int bytesConsumed, Asn1Tag? expectedTag = null) { throw null; }
+
+        [CLSCompliant(false)]
+        public static bool TryReadUInt32(ReadOnlySpan<byte> source, AsnEncodingRules ruleSet, out uint value, out int bytesConsumed, Asn1Tag? expectedTag = null) { throw null; }
+
+        [CLSCompliant(false)]
+        public static bool TryReadUInt64(ReadOnlySpan<byte> source, AsnEncodingRules ruleSet, out ulong value, out int bytesConsumed, Asn1Tag? expectedTag = null) { throw null; }
     }
+
     public enum AsnEncodingRules
     {
         BER = 0,
         CER = 1,
-        DER = 2,
+        DER = 2
     }
+
     public partial class AsnReader
     {
-        public AsnReader(System.ReadOnlyMemory<byte> data, System.Formats.Asn1.AsnEncodingRules ruleSet, System.Formats.Asn1.AsnReaderOptions options = default(System.Formats.Asn1.AsnReaderOptions)) { }
+        public AsnReader(ReadOnlyMemory<byte> data, AsnEncodingRules ruleSet, AsnReaderOptions options = default) { }
+
         public bool HasData { get { throw null; } }
-        public System.Formats.Asn1.AsnEncodingRules RuleSet { get { throw null; } }
-        public System.ReadOnlyMemory<byte> PeekContentBytes() { throw null; }
-        public System.ReadOnlyMemory<byte> PeekEncodedValue() { throw null; }
-        public System.Formats.Asn1.Asn1Tag PeekTag() { throw null; }
-        public byte[] ReadBitString(out int unusedBitCount, System.Formats.Asn1.Asn1Tag? expectedTag = default(System.Formats.Asn1.Asn1Tag?)) { throw null; }
-        public bool ReadBoolean(System.Formats.Asn1.Asn1Tag? expectedTag = default(System.Formats.Asn1.Asn1Tag?)) { throw null; }
-        public string ReadCharacterString(System.Formats.Asn1.UniversalTagNumber encodingType, System.Formats.Asn1.Asn1Tag? expectedTag = default(System.Formats.Asn1.Asn1Tag?)) { throw null; }
-        public System.ReadOnlyMemory<byte> ReadEncodedValue() { throw null; }
-        public System.ReadOnlyMemory<byte> ReadEnumeratedBytes(System.Formats.Asn1.Asn1Tag? expectedTag = default(System.Formats.Asn1.Asn1Tag?)) { throw null; }
-        public System.Enum ReadEnumeratedValue(System.Type enumType, System.Formats.Asn1.Asn1Tag? expectedTag = default(System.Formats.Asn1.Asn1Tag?)) { throw null; }
-        public TEnum ReadEnumeratedValue<TEnum>(System.Formats.Asn1.Asn1Tag? expectedTag = default(System.Formats.Asn1.Asn1Tag?)) where TEnum : System.Enum { throw null; }
-        public System.DateTimeOffset ReadGeneralizedTime(System.Formats.Asn1.Asn1Tag? expectedTag = default(System.Formats.Asn1.Asn1Tag?)) { throw null; }
-        public System.Numerics.BigInteger ReadInteger(System.Formats.Asn1.Asn1Tag? expectedTag = default(System.Formats.Asn1.Asn1Tag?)) { throw null; }
-        public System.ReadOnlyMemory<byte> ReadIntegerBytes(System.Formats.Asn1.Asn1Tag? expectedTag = default(System.Formats.Asn1.Asn1Tag?)) { throw null; }
-        public System.Collections.BitArray ReadNamedBitList(System.Formats.Asn1.Asn1Tag? expectedTag = default(System.Formats.Asn1.Asn1Tag?)) { throw null; }
-        public System.Enum ReadNamedBitListValue(System.Type flagsEnumType, System.Formats.Asn1.Asn1Tag? expectedTag = default(System.Formats.Asn1.Asn1Tag?)) { throw null; }
-        public TFlagsEnum ReadNamedBitListValue<TFlagsEnum>(System.Formats.Asn1.Asn1Tag? expectedTag = default(System.Formats.Asn1.Asn1Tag?)) where TFlagsEnum : System.Enum { throw null; }
-        public void ReadNull(System.Formats.Asn1.Asn1Tag? expectedTag = default(System.Formats.Asn1.Asn1Tag?)) { }
-        public string ReadObjectIdentifier(System.Formats.Asn1.Asn1Tag? expectedTag = default(System.Formats.Asn1.Asn1Tag?)) { throw null; }
-        public byte[] ReadOctetString(System.Formats.Asn1.Asn1Tag? expectedTag = default(System.Formats.Asn1.Asn1Tag?)) { throw null; }
-        public System.Formats.Asn1.AsnReader ReadSequence(System.Formats.Asn1.Asn1Tag? expectedTag = default(System.Formats.Asn1.Asn1Tag?)) { throw null; }
-        public System.Formats.Asn1.AsnReader ReadSetOf(bool skipSortOrderValidation, System.Formats.Asn1.Asn1Tag? expectedTag = default(System.Formats.Asn1.Asn1Tag?)) { throw null; }
-        public System.Formats.Asn1.AsnReader ReadSetOf(System.Formats.Asn1.Asn1Tag? expectedTag = default(System.Formats.Asn1.Asn1Tag?)) { throw null; }
-        public System.DateTimeOffset ReadUtcTime(int twoDigitYearMax, System.Formats.Asn1.Asn1Tag? expectedTag = default(System.Formats.Asn1.Asn1Tag?)) { throw null; }
-        public System.DateTimeOffset ReadUtcTime(System.Formats.Asn1.Asn1Tag? expectedTag = default(System.Formats.Asn1.Asn1Tag?)) { throw null; }
+
+        public AsnEncodingRules RuleSet { get { throw null; } }
+
+        public ReadOnlyMemory<byte> PeekContentBytes() { throw null; }
+
+        public ReadOnlyMemory<byte> PeekEncodedValue() { throw null; }
+
+        public Asn1Tag PeekTag() { throw null; }
+
+        public byte[] ReadBitString(out int unusedBitCount, Asn1Tag? expectedTag = null) { throw null; }
+
+        public bool ReadBoolean(Asn1Tag? expectedTag = null) { throw null; }
+
+        public string ReadCharacterString(UniversalTagNumber encodingType, Asn1Tag? expectedTag = null) { throw null; }
+
+        public ReadOnlyMemory<byte> ReadEncodedValue() { throw null; }
+
+        public ReadOnlyMemory<byte> ReadEnumeratedBytes(Asn1Tag? expectedTag = null) { throw null; }
+
+        public Enum ReadEnumeratedValue(Type enumType, Asn1Tag? expectedTag = null) { throw null; }
+
+        public TEnum ReadEnumeratedValue<TEnum>(Asn1Tag? expectedTag = null)
+            where TEnum : Enum { throw null; }
+
+        public DateTimeOffset ReadGeneralizedTime(Asn1Tag? expectedTag = null) { throw null; }
+
+        public Numerics.BigInteger ReadInteger(Asn1Tag? expectedTag = null) { throw null; }
+
+        public ReadOnlyMemory<byte> ReadIntegerBytes(Asn1Tag? expectedTag = null) { throw null; }
+
+        public Collections.BitArray ReadNamedBitList(Asn1Tag? expectedTag = null) { throw null; }
+
+        public Enum ReadNamedBitListValue(Type flagsEnumType, Asn1Tag? expectedTag = null) { throw null; }
+
+        public TFlagsEnum ReadNamedBitListValue<TFlagsEnum>(Asn1Tag? expectedTag = null)
+            where TFlagsEnum : Enum { throw null; }
+
+        public void ReadNull(Asn1Tag? expectedTag = null) { }
+
+        public string ReadObjectIdentifier(Asn1Tag? expectedTag = null) { throw null; }
+
+        public byte[] ReadOctetString(Asn1Tag? expectedTag = null) { throw null; }
+
+        public AsnReader ReadSequence(Asn1Tag? expectedTag = null) { throw null; }
+
+        public AsnReader ReadSetOf(bool skipSortOrderValidation, Asn1Tag? expectedTag = null) { throw null; }
+
+        public AsnReader ReadSetOf(Asn1Tag? expectedTag = null) { throw null; }
+
+        public DateTimeOffset ReadUtcTime(int twoDigitYearMax, Asn1Tag? expectedTag = null) { throw null; }
+
+        public DateTimeOffset ReadUtcTime(Asn1Tag? expectedTag = null) { throw null; }
+
         public void ThrowIfNotEmpty() { }
-        public bool TryReadBitString(System.Span<byte> destination, out int unusedBitCount, out int bytesWritten, System.Formats.Asn1.Asn1Tag? expectedTag = default(System.Formats.Asn1.Asn1Tag?)) { throw null; }
-        public bool TryReadCharacterString(System.Span<char> destination, System.Formats.Asn1.UniversalTagNumber encodingType, out int charsWritten, System.Formats.Asn1.Asn1Tag? expectedTag = default(System.Formats.Asn1.Asn1Tag?)) { throw null; }
-        public bool TryReadCharacterStringBytes(System.Span<byte> destination, System.Formats.Asn1.Asn1Tag expectedTag, out int bytesWritten) { throw null; }
-        public bool TryReadInt32(out int value, System.Formats.Asn1.Asn1Tag? expectedTag = default(System.Formats.Asn1.Asn1Tag?)) { throw null; }
-        public bool TryReadInt64(out long value, System.Formats.Asn1.Asn1Tag? expectedTag = default(System.Formats.Asn1.Asn1Tag?)) { throw null; }
-        public bool TryReadOctetString(System.Span<byte> destination, out int bytesWritten, System.Formats.Asn1.Asn1Tag? expectedTag = default(System.Formats.Asn1.Asn1Tag?)) { throw null; }
-        public bool TryReadPrimitiveBitString(out int unusedBitCount, out System.ReadOnlyMemory<byte> value, System.Formats.Asn1.Asn1Tag? expectedTag = default(System.Formats.Asn1.Asn1Tag?)) { throw null; }
-        public bool TryReadPrimitiveCharacterStringBytes(System.Formats.Asn1.Asn1Tag expectedTag, out System.ReadOnlyMemory<byte> contents) { throw null; }
-        public bool TryReadPrimitiveOctetString(out System.ReadOnlyMemory<byte> contents, System.Formats.Asn1.Asn1Tag? expectedTag = default(System.Formats.Asn1.Asn1Tag?)) { throw null; }
-        [System.CLSCompliantAttribute(false)]
-        public bool TryReadUInt32(out uint value, System.Formats.Asn1.Asn1Tag? expectedTag = default(System.Formats.Asn1.Asn1Tag?)) { throw null; }
-        [System.CLSCompliantAttribute(false)]
-        public bool TryReadUInt64(out ulong value, System.Formats.Asn1.Asn1Tag? expectedTag = default(System.Formats.Asn1.Asn1Tag?)) { throw null; }
+
+        public bool TryReadBitString(Span<byte> destination, out int unusedBitCount, out int bytesWritten, Asn1Tag? expectedTag = null) { throw null; }
+
+        public bool TryReadCharacterString(Span<char> destination, UniversalTagNumber encodingType, out int charsWritten, Asn1Tag? expectedTag = null) { throw null; }
+
+        public bool TryReadCharacterStringBytes(Span<byte> destination, Asn1Tag expectedTag, out int bytesWritten) { throw null; }
+
+        public bool TryReadInt32(out int value, Asn1Tag? expectedTag = null) { throw null; }
+
+        public bool TryReadInt64(out long value, Asn1Tag? expectedTag = null) { throw null; }
+
+        public bool TryReadOctetString(Span<byte> destination, out int bytesWritten, Asn1Tag? expectedTag = null) { throw null; }
+
+        public bool TryReadPrimitiveBitString(out int unusedBitCount, out ReadOnlyMemory<byte> value, Asn1Tag? expectedTag = null) { throw null; }
+
+        public bool TryReadPrimitiveCharacterStringBytes(Asn1Tag expectedTag, out ReadOnlyMemory<byte> contents) { throw null; }
+
+        public bool TryReadPrimitiveOctetString(out ReadOnlyMemory<byte> contents, Asn1Tag? expectedTag = null) { throw null; }
+
+        [CLSCompliant(false)]
+        public bool TryReadUInt32(out uint value, Asn1Tag? expectedTag = null) { throw null; }
+
+        [CLSCompliant(false)]
+        public bool TryReadUInt64(out ulong value, Asn1Tag? expectedTag = null) { throw null; }
     }
+
     public partial struct AsnReaderOptions
     {
         private int _dummyPrimitive;
         public bool SkipSetSortOrderVerification { get { throw null; } set { } }
+
         public int UtcTimeTwoDigitYearMax { get { throw null; } set { } }
     }
+
     public sealed partial class AsnWriter
     {
-        public AsnWriter(System.Formats.Asn1.AsnEncodingRules ruleSet) { }
-        public System.Formats.Asn1.AsnEncodingRules RuleSet { get { throw null; } }
-        public void CopyTo(System.Formats.Asn1.AsnWriter destination) { }
+        public AsnWriter(AsnEncodingRules ruleSet) { }
+
+        public AsnEncodingRules RuleSet { get { throw null; } }
+
+        public void CopyTo(AsnWriter destination) { }
+
         public byte[] Encode() { throw null; }
-        public int Encode(System.Span<byte> destination) { throw null; }
-        public bool EncodedValueEquals(System.Formats.Asn1.AsnWriter other) { throw null; }
-        public bool EncodedValueEquals(System.ReadOnlySpan<byte> other) { throw null; }
+
+        public int Encode(Span<byte> destination) { throw null; }
+
+        public bool EncodedValueEquals(AsnWriter other) { throw null; }
+
+        public bool EncodedValueEquals(ReadOnlySpan<byte> other) { throw null; }
+
         public int GetEncodedLength() { throw null; }
-        public void PopOctetString(System.Formats.Asn1.Asn1Tag? tag = default(System.Formats.Asn1.Asn1Tag?)) { }
-        public void PopSequence(System.Formats.Asn1.Asn1Tag? tag = default(System.Formats.Asn1.Asn1Tag?)) { }
-        public void PopSetOf(System.Formats.Asn1.Asn1Tag? tag = default(System.Formats.Asn1.Asn1Tag?)) { }
-        public System.Formats.Asn1.AsnWriter.Scope PushOctetString(System.Formats.Asn1.Asn1Tag? tag = default(System.Formats.Asn1.Asn1Tag?)) { throw null; }
-        public System.Formats.Asn1.AsnWriter.Scope PushSequence(System.Formats.Asn1.Asn1Tag? tag = default(System.Formats.Asn1.Asn1Tag?)) { throw null; }
-        public System.Formats.Asn1.AsnWriter.Scope PushSetOf(System.Formats.Asn1.Asn1Tag? tag = default(System.Formats.Asn1.Asn1Tag?)) { throw null; }
+
+        public void PopOctetString(Asn1Tag? tag = null) { }
+
+        public void PopSequence(Asn1Tag? tag = null) { }
+
+        public void PopSetOf(Asn1Tag? tag = null) { }
+
+        public Scope PushOctetString(Asn1Tag? tag = null) { throw null; }
+
+        public Scope PushSequence(Asn1Tag? tag = null) { throw null; }
+
+        public Scope PushSetOf(Asn1Tag? tag = null) { throw null; }
+
         public void Reset() { }
-        public bool TryEncode(System.Span<byte> destination, out int bytesWritten) { throw null; }
-        public void WriteBitString(System.ReadOnlySpan<byte> value, int unusedBitCount = 0, System.Formats.Asn1.Asn1Tag? tag = default(System.Formats.Asn1.Asn1Tag?)) { }
-        public void WriteBoolean(bool value, System.Formats.Asn1.Asn1Tag? tag = default(System.Formats.Asn1.Asn1Tag?)) { }
-        public void WriteCharacterString(System.Formats.Asn1.UniversalTagNumber encodingType, System.ReadOnlySpan<char> str, System.Formats.Asn1.Asn1Tag? tag = default(System.Formats.Asn1.Asn1Tag?)) { }
-        public void WriteCharacterString(System.Formats.Asn1.UniversalTagNumber encodingType, string value, System.Formats.Asn1.Asn1Tag? tag = default(System.Formats.Asn1.Asn1Tag?)) { }
-        public void WriteEncodedValue(System.ReadOnlySpan<byte> value) { }
-        public void WriteEnumeratedValue(System.Enum value, System.Formats.Asn1.Asn1Tag? tag = default(System.Formats.Asn1.Asn1Tag?)) { }
-        public void WriteEnumeratedValue<TEnum>(TEnum value, System.Formats.Asn1.Asn1Tag? tag = default(System.Formats.Asn1.Asn1Tag?)) where TEnum : System.Enum { }
-        public void WriteGeneralizedTime(System.DateTimeOffset value, bool omitFractionalSeconds = false, System.Formats.Asn1.Asn1Tag? tag = default(System.Formats.Asn1.Asn1Tag?)) { }
-        public void WriteInteger(long value, System.Formats.Asn1.Asn1Tag? tag = default(System.Formats.Asn1.Asn1Tag?)) { }
-        public void WriteInteger(System.Numerics.BigInteger value, System.Formats.Asn1.Asn1Tag? tag = default(System.Formats.Asn1.Asn1Tag?)) { }
-        public void WriteInteger(System.ReadOnlySpan<byte> value, System.Formats.Asn1.Asn1Tag? tag = default(System.Formats.Asn1.Asn1Tag?)) { }
-        [System.CLSCompliantAttribute(false)]
-        public void WriteInteger(ulong value, System.Formats.Asn1.Asn1Tag? tag = default(System.Formats.Asn1.Asn1Tag?)) { }
-        public void WriteIntegerUnsigned(System.ReadOnlySpan<byte> value, System.Formats.Asn1.Asn1Tag? tag = default(System.Formats.Asn1.Asn1Tag?)) { }
-        public void WriteNamedBitList(System.Collections.BitArray value, System.Formats.Asn1.Asn1Tag? tag = default(System.Formats.Asn1.Asn1Tag?)) { }
-        public void WriteNamedBitList(System.Enum value, System.Formats.Asn1.Asn1Tag? tag = default(System.Formats.Asn1.Asn1Tag?)) { }
-        public void WriteNamedBitList<TEnum>(TEnum value, System.Formats.Asn1.Asn1Tag? tag = default(System.Formats.Asn1.Asn1Tag?)) where TEnum : System.Enum { }
-        public void WriteNull(System.Formats.Asn1.Asn1Tag? tag = default(System.Formats.Asn1.Asn1Tag?)) { }
-        public void WriteObjectIdentifier(System.ReadOnlySpan<char> oidValue, System.Formats.Asn1.Asn1Tag? tag = default(System.Formats.Asn1.Asn1Tag?)) { }
-        public void WriteObjectIdentifier(string oidValue, System.Formats.Asn1.Asn1Tag? tag = default(System.Formats.Asn1.Asn1Tag?)) { }
-        public void WriteOctetString(System.ReadOnlySpan<byte> value, System.Formats.Asn1.Asn1Tag? tag = default(System.Formats.Asn1.Asn1Tag?)) { }
-        public void WriteUtcTime(System.DateTimeOffset value, int twoDigitYearMax, System.Formats.Asn1.Asn1Tag? tag = default(System.Formats.Asn1.Asn1Tag?)) { }
-        public void WriteUtcTime(System.DateTimeOffset value, System.Formats.Asn1.Asn1Tag? tag = default(System.Formats.Asn1.Asn1Tag?)) { }
-        public readonly partial struct Scope : System.IDisposable
+
+        public bool TryEncode(Span<byte> destination, out int bytesWritten) { throw null; }
+
+        public void WriteBitString(ReadOnlySpan<byte> value, int unusedBitCount = 0, Asn1Tag? tag = null) { }
+
+        public void WriteBoolean(bool value, Asn1Tag? tag = null) { }
+
+        public void WriteCharacterString(UniversalTagNumber encodingType, ReadOnlySpan<char> str, Asn1Tag? tag = null) { }
+
+        public void WriteCharacterString(UniversalTagNumber encodingType, string value, Asn1Tag? tag = null) { }
+
+        public void WriteEncodedValue(ReadOnlySpan<byte> value) { }
+
+        public void WriteEnumeratedValue(Enum value, Asn1Tag? tag = null) { }
+
+        public void WriteEnumeratedValue<TEnum>(TEnum value, Asn1Tag? tag = null)
+            where TEnum : Enum { }
+
+        public void WriteGeneralizedTime(DateTimeOffset value, bool omitFractionalSeconds = false, Asn1Tag? tag = null) { }
+
+        public void WriteInteger(long value, Asn1Tag? tag = null) { }
+
+        public void WriteInteger(Numerics.BigInteger value, Asn1Tag? tag = null) { }
+
+        public void WriteInteger(ReadOnlySpan<byte> value, Asn1Tag? tag = null) { }
+
+        [CLSCompliant(false)]
+        public void WriteInteger(ulong value, Asn1Tag? tag = null) { }
+
+        public void WriteIntegerUnsigned(ReadOnlySpan<byte> value, Asn1Tag? tag = null) { }
+
+        public void WriteNamedBitList(Collections.BitArray value, Asn1Tag? tag = null) { }
+
+        public void WriteNamedBitList(Enum value, Asn1Tag? tag = null) { }
+
+        public void WriteNamedBitList<TEnum>(TEnum value, Asn1Tag? tag = null)
+            where TEnum : Enum { }
+
+        public void WriteNull(Asn1Tag? tag = null) { }
+
+        public void WriteObjectIdentifier(ReadOnlySpan<char> oidValue, Asn1Tag? tag = null) { }
+
+        public void WriteObjectIdentifier(string oidValue, Asn1Tag? tag = null) { }
+
+        public void WriteOctetString(ReadOnlySpan<byte> value, Asn1Tag? tag = null) { }
+
+        public void WriteUtcTime(DateTimeOffset value, int twoDigitYearMax, Asn1Tag? tag = null) { }
+
+        public void WriteUtcTime(DateTimeOffset value, Asn1Tag? tag = null) { }
+
+        public readonly partial struct Scope : IDisposable
         {
             private readonly object _dummy;
             private readonly int _dummyPrimitive;
-            public void Dispose() { }
+            public readonly void Dispose() { }
         }
     }
+
     public enum TagClass
     {
         Universal = 0,
         Application = 64,
         ContextSpecific = 128,
-        Private = 192,
+        Private = 192
     }
+
     public enum UniversalTagNumber
     {
         EndOfContents = 0,
@@ -263,6 +401,6 @@ namespace System.Formats.Asn1
         DateTime = 33,
         Duration = 34,
         ObjectIdentifierIRI = 35,
-        RelativeObjectIdentifierIRI = 36,
+        RelativeObjectIdentifierIRI = 36
     }
 }

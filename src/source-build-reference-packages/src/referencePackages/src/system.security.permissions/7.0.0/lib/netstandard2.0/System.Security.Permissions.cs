@@ -309,6 +309,8 @@ namespace System.Diagnostics
 
     public partial class EventLogPermissionEntryCollection : Collections.CollectionBase
     {
+        internal EventLogPermissionEntryCollection() { }
+
         public EventLogPermissionEntry this[int index] { get { throw null; } set { } }
 
         public int Add(EventLogPermissionEntry value) { throw null; }
@@ -387,6 +389,8 @@ namespace System.Diagnostics
 
     public partial class PerformanceCounterPermissionEntryCollection : Collections.CollectionBase
     {
+        internal PerformanceCounterPermissionEntryCollection() { }
+
         public PerformanceCounterPermissionEntry this[int index] { get { throw null; } set { } }
 
         public int Add(PerformanceCounterPermissionEntry value) { throw null; }
@@ -490,6 +494,8 @@ namespace System.Net
 
     public partial class EndpointPermission
     {
+        internal EndpointPermission() { }
+
         public string Hostname { get { throw null; } }
 
         public int Port { get { throw null; } }
@@ -776,8 +782,6 @@ namespace System.Security
 {
     public abstract partial class CodeAccessPermission : IPermission, ISecurityEncodable, IStackWalk
     {
-        protected CodeAccessPermission() { }
-
         public void Assert() { }
 
         public abstract IPermission Copy();
@@ -833,8 +837,6 @@ namespace System.Security
 
     public partial class HostSecurityManager
     {
-        public HostSecurityManager() { }
-
         public virtual Policy.PolicyLevel DomainPolicy { get { throw null; } }
 
         public virtual HostSecurityManagerOptions Flags { get { throw null; } }
@@ -890,13 +892,13 @@ namespace System.Security
 
     public sealed partial class NamedPermissionSet : PermissionSet
     {
-        public NamedPermissionSet(NamedPermissionSet permSet) : base(permSet) { }
+        public NamedPermissionSet(NamedPermissionSet permSet) : base(default(Permissions.PermissionState)) { }
 
-        public NamedPermissionSet(string name, Permissions.PermissionState state) : base(state) { }
+        public NamedPermissionSet(string name, Permissions.PermissionState state) : base(default(Permissions.PermissionState)) { }
 
-        public NamedPermissionSet(string name, PermissionSet permSet) : base(permSet) { }
+        public NamedPermissionSet(string name, PermissionSet permSet) : base(default(Permissions.PermissionState)) { }
 
-        public NamedPermissionSet(string name) : base(null) { }
+        public NamedPermissionSet(string name) : base(default(Permissions.PermissionState)) { }
 
         public string Description { get { throw null; } set { } }
 
@@ -1002,6 +1004,8 @@ namespace System.Security
 
     public sealed partial class SecurityContext : IDisposable
     {
+        internal SecurityContext() { }
+
         public static SecurityContext Capture() { throw null; }
 
         public SecurityContext CreateCopy() { throw null; }
@@ -1077,8 +1081,6 @@ namespace System.Security
 
     public abstract partial class SecurityState
     {
-        protected SecurityState() { }
-
         public abstract void EnsureState();
         public bool IsStateAvailable() { throw null; }
     }
@@ -1454,8 +1456,6 @@ namespace System.Security.Permissions
 
     public sealed partial class KeyContainerPermissionAccessEntryCollection : Collections.ICollection, Collections.IEnumerable
     {
-        public KeyContainerPermissionAccessEntryCollection() { }
-
         public int Count { get { throw null; } }
 
         public bool IsSynchronized { get { throw null; } }
@@ -1483,8 +1483,6 @@ namespace System.Security.Permissions
 
     public sealed partial class KeyContainerPermissionAccessEntryEnumerator : Collections.IEnumerator
     {
-        public KeyContainerPermissionAccessEntryEnumerator() { }
-
         public KeyContainerPermissionAccessEntry Current { get { throw null; } }
 
         object Collections.IEnumerator.Current { get { throw null; } }
@@ -2190,8 +2188,6 @@ namespace System.Security.Policy
 {
     public sealed partial class AllMembershipCondition : ISecurityEncodable, ISecurityPolicyEncodable, IMembershipCondition
     {
-        public AllMembershipCondition() { }
-
         public bool Check(Evidence evidence) { throw null; }
 
         public IMembershipCondition Copy() { throw null; }
@@ -2228,8 +2224,6 @@ namespace System.Security.Policy
 
     public sealed partial class ApplicationDirectoryMembershipCondition : ISecurityEncodable, ISecurityPolicyEncodable, IMembershipCondition
     {
-        public ApplicationDirectoryMembershipCondition() { }
-
         public bool Check(Evidence evidence) { throw null; }
 
         public IMembershipCondition Copy() { throw null; }
@@ -2276,6 +2270,8 @@ namespace System.Security.Policy
 
     public sealed partial class ApplicationTrustCollection : Collections.ICollection, Collections.IEnumerable
     {
+        internal ApplicationTrustCollection() { }
+
         public int Count { get { throw null; } }
 
         public bool IsSynchronized { get { throw null; } }
@@ -2315,6 +2311,8 @@ namespace System.Security.Policy
 
     public sealed partial class ApplicationTrustEnumerator : Collections.IEnumerator
     {
+        internal ApplicationTrustEnumerator() { }
+
         public ApplicationTrust Current { get { throw null; } }
 
         object Collections.IEnumerator.Current { get { throw null; } }
@@ -2438,8 +2436,6 @@ namespace System.Security.Policy
 
     public sealed partial class GacInstalled : EvidenceBase, IIdentityPermissionFactory
     {
-        public GacInstalled() { }
-
         public object Copy() { throw null; }
 
         public IPermission CreateIdentityPermission(Evidence evidence) { throw null; }
@@ -2453,8 +2449,6 @@ namespace System.Security.Policy
 
     public sealed partial class GacMembershipCondition : ISecurityEncodable, ISecurityPolicyEncodable, IMembershipCondition
     {
-        public GacMembershipCondition() { }
-
         public bool Check(Evidence evidence) { throw null; }
 
         public IMembershipCondition Copy() { throw null; }
@@ -2603,6 +2597,8 @@ namespace System.Security.Policy
 
     public sealed partial class PolicyLevel
     {
+        internal PolicyLevel() { }
+
         [Obsolete("Because all GAC assemblies always get full trust, the full trust list is no longer meaningful. You should install any assemblies that are used in security policy in the GAC to ensure they are trusted.")]
         public Collections.IList FullTrustAssemblies { get { throw null; } }
 
@@ -3005,6 +3001,8 @@ namespace System.ServiceProcess
 
     public partial class ServiceControllerPermissionEntryCollection : Collections.CollectionBase
     {
+        internal ServiceControllerPermissionEntryCollection() { }
+
         public ServiceControllerPermissionEntry this[int index] { get { throw null; } set { } }
 
         public int Add(ServiceControllerPermissionEntry value) { throw null; }

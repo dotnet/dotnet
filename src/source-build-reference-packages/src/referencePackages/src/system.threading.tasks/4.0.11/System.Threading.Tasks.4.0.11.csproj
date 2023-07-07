@@ -1,29 +1,21 @@
 <Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
     <TargetFrameworks>netstandard1.0;netstandard1.3</TargetFrameworks>
-    <NuspecFile>$(ArtifactsBinDir)system.threading.tasks/4.0.11/system.threading.tasks.nuspec</NuspecFile>
-   </PropertyGroup>
-
-  <PropertyGroup>
-    <OutputPath>$(ArtifactsBinDir)system.threading.tasks/4.0.11/ref/</OutputPath>
-    <IntermediateOutputPath>$(ArtifactsObjDir)system.threading.tasks/4.0.11</IntermediateOutputPath>
+    <AssemblyName>System.Threading.Tasks</AssemblyName>
+    <ProjectTemplateVersion>2</ProjectTemplateVersion>
   </PropertyGroup>
 
-  <ItemGroup>
-    <Compile Include="**/ref/$(TargetFramework)/*.cs" />
-    <Compile Include="**/lib/$(TargetFramework)/*.cs" />
+  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard1.0'">
+    <PackageReference Include="Microsoft.NETCore.Platforms" Version="1.0.1" />
+    <PackageReference Include="Microsoft.NETCore.Targets" Version="1.0.1" />
+    <PackageReference Include="System.Runtime" Version="4.1.0" />
   </ItemGroup>
 
-    <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard1.0' ">
-        <PackageReference Include="Microsoft.NETCore.Platforms" Version="1.0.1" />
-        <PackageReference Include="Microsoft.NETCore.Targets" Version="1.0.1" />
-        <PackageReference Include="System.Runtime" Version="4.1.0" />
-    </ItemGroup>
-    <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard1.3' ">
-        <PackageReference Include="Microsoft.NETCore.Platforms" Version="1.0.1" />
-        <PackageReference Include="Microsoft.NETCore.Targets" Version="1.0.1" />
-        <PackageReference Include="System.Runtime" Version="4.1.0" />
-    </ItemGroup>
+  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard1.3'">
+    <PackageReference Include="Microsoft.NETCore.Platforms" Version="1.0.1" />
+    <PackageReference Include="Microsoft.NETCore.Targets" Version="1.0.1" />
+    <PackageReference Include="System.Runtime" Version="4.1.0" />
+  </ItemGroup>
 
-  
 </Project>

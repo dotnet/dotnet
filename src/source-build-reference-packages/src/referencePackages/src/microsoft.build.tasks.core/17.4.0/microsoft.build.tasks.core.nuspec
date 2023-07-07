@@ -43,7 +43,5 @@
         <dependency id="System.Threading.Tasks.Dataflow" version="6.0.0" exclude="Build,Analyzers" />
       </group>
     </dependencies>
-    <frameworkAssemblies>
-    </frameworkAssemblies>
   </metadata>
 </package>

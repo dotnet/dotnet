@@ -2,22 +2,12 @@
 
   <PropertyGroup>
     <TargetFrameworks>netcoreapp3.0</TargetFrameworks>
-    <NuspecFile>$(ArtifactsBinDir)system.windows.extensions/4.7.0/system.windows.extensions.nuspec</NuspecFile>
+    <AssemblyName>System.Windows.Extensions</AssemblyName>
+    <ProjectTemplateVersion>2</ProjectTemplateVersion>
     <StrongNameKeyId>Open</StrongNameKeyId>
-    <DisableImplicitFrameworkReferences>false</DisableImplicitFrameworkReferences>
   </PropertyGroup>
 
-  <PropertyGroup>
-    <OutputPath>$(ArtifactsBinDir)system.windows.extensions/4.7.0/ref/</OutputPath>
-    <IntermediateOutputPath>$(ArtifactsObjDir)system.windows.extensions/4.7.0</IntermediateOutputPath>
-  </PropertyGroup>
-
-  <ItemGroup>
-    <Compile Include="**/ref/$(TargetFramework)/*.cs" />
-    <Compile Include="**/lib/$(TargetFramework)/*.cs" />
-  </ItemGroup>
-
-  <ItemGroup Condition=" '$(TargetFramework)' == 'netcoreapp3.0' ">
+  <ItemGroup Condition="'$(TargetFramework)' == 'netcoreapp3.0'">
     <PackageReference Include="System.Drawing.Common" Version="4.7.2" />
   </ItemGroup>
 

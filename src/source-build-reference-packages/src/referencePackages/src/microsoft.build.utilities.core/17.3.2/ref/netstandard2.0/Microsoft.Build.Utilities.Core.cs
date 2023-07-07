@@ -147,8 +147,6 @@ namespace Microsoft.Build.Utilities
 
     public abstract partial class Logger : Framework.ILogger
     {
-        protected Logger() { }
-
         public virtual string Parameters { get { throw null; } set { } }
 
         public virtual Framework.LoggerVerbosity Verbosity { get { throw null; } set { } }
@@ -172,8 +170,6 @@ namespace Microsoft.Build.Utilities
 
     public partial class MuxLogger : Framework.INodeLogger, Framework.ILogger
     {
-        public MuxLogger() { }
-
         public bool IncludeEvaluationMetaprojects { get { throw null; } set { } }
 
         public bool IncludeEvaluationProfiles { get { throw null; } set { } }

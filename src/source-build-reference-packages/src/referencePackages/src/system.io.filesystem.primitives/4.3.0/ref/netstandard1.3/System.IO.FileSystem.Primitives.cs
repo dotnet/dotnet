@@ -4,77 +4,73 @@
 // ------------------------------------------------------------------------------
 // Changes to this file must follow the http://aka.ms/api-review process.
 // ------------------------------------------------------------------------------
-
-using System;
-using System.Diagnostics;
-using System.Reflection;
-using System.Runtime.CompilerServices;
-using System.Security;
-
-[assembly: Debuggable(DebuggableAttribute.DebuggingModes.IgnoreSymbolStoreSequencePoints)]
-[assembly: AllowPartiallyTrustedCallers]
-[assembly: ReferenceAssembly]
-[assembly: AssemblyTitle("System.IO.FileSystem.Primitives")]
-[assembly: AssemblyDescription("System.IO.FileSystem.Primitives")]
-[assembly: AssemblyDefaultAlias("System.IO.FileSystem.Primitives")]
-[assembly: AssemblyCompany("Microsoft Corporation")]
-[assembly: AssemblyProduct("Microsoft® .NET Framework")]
-[assembly: AssemblyCopyright("© Microsoft Corporation.  All rights reserved.")]
-[assembly: AssemblyFileVersion("1.0.24212.01")]
-[assembly: AssemblyInformationalVersion("1.0.24212.01 built by: SOURCEBUILD")]
-[assembly: CLSCompliant(true)]
-[assembly: AssemblyMetadata("", "")]
-[assembly: AssemblyVersion("4.0.1.0")]
-
-
-
-
+[assembly: System.Runtime.CompilerServices.CompilationRelaxations(8)]
+[assembly: System.Runtime.CompilerServices.RuntimeCompatibility(WrapNonExceptionThrows = true)]
+[assembly: System.Diagnostics.Debuggable(System.Diagnostics.DebuggableAttribute.DebuggingModes.IgnoreSymbolStoreSequencePoints)]
+[assembly: System.Security.AllowPartiallyTrustedCallers]
+[assembly: System.Runtime.CompilerServices.ReferenceAssembly]
+[assembly: System.Reflection.AssemblyTitle("System.IO.FileSystem.Primitives")]
+[assembly: System.Reflection.AssemblyDescription("System.IO.FileSystem.Primitives")]
+[assembly: System.Reflection.AssemblyDefaultAlias("System.IO.FileSystem.Primitives")]
+[assembly: System.Reflection.AssemblyCompany("Microsoft Corporation")]
+[assembly: System.Reflection.AssemblyProduct("Microsoft® .NET Framework")]
+[assembly: System.Reflection.AssemblyCopyright("© Microsoft Corporation.  All rights reserved.")]
+[assembly: System.Reflection.AssemblyFileVersion("1.0.24212.01")]
+[assembly: System.Reflection.AssemblyInformationalVersion("1.0.24212.01. Commit Hash: 9688ddbb62c04189cac4c4a06e31e93377dccd41")]
+[assembly: System.CLSCompliant(true)]
+[assembly: System.Reflection.AssemblyMetadata(".NETFrameworkAssembly", "")]
+[assembly: System.Reflection.AssemblyMetadata("Serviceable", "True")]
+[assembly: System.Reflection.AssemblyVersionAttribute("4.0.1.0")]
+[assembly: System.Reflection.AssemblyFlagsAttribute((System.Reflection.AssemblyNameFlags)0x70)]
 namespace System.IO
 {
-    [System.FlagsAttribute]
+    [Flags]
     public enum FileAccess
     {
         Read = 1,
-        ReadWrite = 3,
         Write = 2,
+        ReadWrite = 3
     }
-    [System.FlagsAttribute]
+
+    [Flags]
     public enum FileAttributes
     {
-        Archive = 32,
-        Compressed = 2048,
-        Device = 64,
-        Directory = 16,
-        Encrypted = 16384,
-        Hidden = 2,
-        IntegrityStream = 32768,
-        Normal = 128,
-        NoScrubData = 131072,
-        NotContentIndexed = 8192,
-        Offline = 4096,
         ReadOnly = 1,
-        ReparsePoint = 1024,
-        SparseFile = 512,
+        Hidden = 2,
         System = 4,
+        Directory = 16,
+        Archive = 32,
+        Device = 64,
+        Normal = 128,
         Temporary = 256,
+        SparseFile = 512,
+        ReparsePoint = 1024,
+        Compressed = 2048,
+        Offline = 4096,
+        NotContentIndexed = 8192,
+        Encrypted = 16384,
+        IntegrityStream = 32768,
+        NoScrubData = 131072
     }
+
     public enum FileMode
     {
-        Append = 6,
-        Create = 2,
         CreateNew = 1,
+        Create = 2,
         Open = 3,
         OpenOrCreate = 4,
         Truncate = 5,
+        Append = 6
     }
-    [System.FlagsAttribute]
+
+    [Flags]
     public enum FileShare
     {
-        Delete = 4,
-        Inheritable = 16,
         None = 0,
         Read = 1,
-        ReadWrite = 3,
         Write = 2,
+        ReadWrite = 3,
+        Delete = 4,
+        Inheritable = 16
     }
 }

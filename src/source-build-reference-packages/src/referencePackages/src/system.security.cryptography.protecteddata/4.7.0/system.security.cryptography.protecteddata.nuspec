@@ -29,7 +29,5 @@ When using NuGet 3.x this package requires at least version 3.4.</description>
         <dependency id="System.Memory" version="4.5.3" exclude="Compile" />
       </group>
     </dependencies>
-    <frameworkAssemblies>
-    </frameworkAssemblies>
   </metadata>
 </package>
