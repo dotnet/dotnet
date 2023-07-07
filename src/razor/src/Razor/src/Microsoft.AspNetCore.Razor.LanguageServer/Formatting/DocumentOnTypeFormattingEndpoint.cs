@@ -18,7 +18,7 @@ using Microsoft.VisualStudio.LanguageServer.Protocol;
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Formatting;
 
 [LanguageServerEndpoint(Methods.TextDocumentOnTypeFormattingName)]
-internal class DocumentOnTypeFormattingEndpoint : IRazorRequestHandler<DocumentOnTypeFormattingParams, TextEdit[]?>, IRegistrationExtension
+internal class DocumentOnTypeFormattingEndpoint : IRazorRequestHandler<DocumentOnTypeFormattingParams, TextEdit[]?>, ICapabilitiesProvider
 {
     private readonly IRazorFormattingService _razorFormattingService;
     private readonly IRazorDocumentMappingService _razorDocumentMappingService;
@@ -40,16 +40,13 @@ internal class DocumentOnTypeFormattingEndpoint : IRazorRequestHandler<DocumentO
         _optionsMonitor = optionsMonitor ?? throw new ArgumentNullException(nameof(optionsMonitor));
     }
 
-    public RegistrationExtensionResult GetRegistration(VSInternalClientCapabilities clientCapabilities)
+    public void ApplyCapabilities(VSInternalServerCapabilities serverCapabilities, VSInternalClientCapabilities clientCapabilities)
     {
-        const string ServerCapability = "documentOnTypeFormattingProvider";
-
-        return new RegistrationExtensionResult(ServerCapability,
-            new DocumentOnTypeFormattingOptions
-            {
-                FirstTriggerCharacter = s_allTriggerCharacters[0],
-                MoreTriggerCharacter = s_allTriggerCharacters.Skip(1).ToArray(),
-            });
+        serverCapabilities.DocumentOnTypeFormattingProvider = new DocumentOnTypeFormattingOptions
+        {
+            FirstTriggerCharacter = s_allTriggerCharacters[0],
+            MoreTriggerCharacter = s_allTriggerCharacters.Skip(1).ToArray(),
+        };
     }
 
     public TextDocumentIdentifier GetTextDocumentIdentifier(DocumentOnTypeFormattingParams request)

@@ -5,7 +5,7 @@ using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer;
 
-internal interface IRegistrationExtension
+internal interface ICapabilitiesProvider
 {
-    RegistrationExtensionResult? GetRegistration(VSInternalClientCapabilities clientCapabilities);
+    void ApplyCapabilities(VSInternalServerCapabilities serverCapabilities, VSInternalClientCapabilities clientCapabilities);
 }

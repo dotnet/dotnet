@@ -28,20 +28,16 @@ internal class RazorCompletionEndpoint : IVSCompletionEndpoint
 
     public bool MutatesSolutionState => false;
 
-    public RegistrationExtensionResult GetRegistration(VSInternalClientCapabilities clientCapabilities)
+    public void ApplyCapabilities(VSInternalServerCapabilities serverCapabilities, VSInternalClientCapabilities clientCapabilities)
     {
-        const string AssociatedServerCapability = "completionProvider";
-
         _clientCapabilities = clientCapabilities;
 
-        var registrationOptions = new CompletionOptions()
+        serverCapabilities.CompletionProvider = new CompletionOptions()
         {
             ResolveProvider = true,
             TriggerCharacters = _completionListProvider.AggregateTriggerCharacters.ToArray(),
             AllCommitCharacters = new[] { ":", ">", " ", "=" },
         };
-
-        return new RegistrationExtensionResult(AssociatedServerCapability, registrationOptions);
     }
 
     public TextDocumentIdentifier GetTextDocumentIdentifier(CompletionParams request)

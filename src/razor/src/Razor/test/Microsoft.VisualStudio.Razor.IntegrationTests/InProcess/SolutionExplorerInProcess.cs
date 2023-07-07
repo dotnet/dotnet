@@ -296,7 +296,7 @@ internal partial class SolutionExplorerInProcess
         return Path.Combine(projectPath, relativeFilePath);
     }
 
-    private async Task<string> GetDirectoryNameAsync(CancellationToken cancellationToken)
+    public async Task<string> GetDirectoryNameAsync(CancellationToken cancellationToken)
     {
         await JoinableTaskFactory.SwitchToMainThreadAsync(cancellationToken);
 

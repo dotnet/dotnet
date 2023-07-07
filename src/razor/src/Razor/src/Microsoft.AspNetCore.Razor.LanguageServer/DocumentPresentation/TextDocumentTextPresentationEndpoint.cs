@@ -24,11 +24,9 @@ internal class TextDocumentTextPresentationEndpoint : AbstractTextDocumentPresen
 
     public override string EndpointName => RazorLanguageServerCustomMessageTargets.RazorTextPresentationEndpoint;
 
-    public override RegistrationExtensionResult GetRegistration(VSInternalClientCapabilities clientCapabilities)
+    public override void ApplyCapabilities(VSInternalServerCapabilities serverCapabilities, VSInternalClientCapabilities clientCapabilities)
     {
-        const string AssociatedServerCapability = "_vs_textPresentationProvider";
-
-        return new RegistrationExtensionResult(AssociatedServerCapability, options: true);
+        serverCapabilities.TextPresentationProvider = true;
     }
 
     public override TextDocumentIdentifier GetTextDocumentIdentifier(TextPresentationParams request)

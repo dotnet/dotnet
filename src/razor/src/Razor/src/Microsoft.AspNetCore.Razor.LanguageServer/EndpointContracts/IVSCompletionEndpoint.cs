@@ -7,6 +7,6 @@ using Microsoft.VisualStudio.LanguageServer.Protocol;
 namespace Microsoft.AspNetCore.Razor.LanguageServer.EndpointContracts;
 
 [LanguageServerEndpoint(Methods.TextDocumentCompletionName)]
-internal interface IVSCompletionEndpoint : IRazorRequestHandler<CompletionParams, VSInternalCompletionList?>, IRegistrationExtension
+internal interface IVSCompletionEndpoint : IRazorRequestHandler<CompletionParams, VSInternalCompletionList?>, ICapabilitiesProvider
 {
 }

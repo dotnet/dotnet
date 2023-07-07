@@ -18,7 +18,7 @@ using Microsoft.VisualStudio.LanguageServer.Protocol;
 namespace Microsoft.AspNetCore.Razor.LanguageServer.LinkedEditingRange;
 
 [LanguageServerEndpoint(Methods.TextDocumentLinkedEditingRangeName)]
-internal class LinkedEditingRangeEndpoint : IRazorRequestHandler<LinkedEditingRangeParams, LinkedEditingRanges?>, IRegistrationExtension
+internal class LinkedEditingRangeEndpoint : IRazorRequestHandler<LinkedEditingRangeParams, LinkedEditingRanges?>, ICapabilitiesProvider
 {
     // The regex below excludes characters that can never be valid in a TagHelper name.
     // This is loosely based off logic from the Razor compiler:
@@ -40,12 +40,9 @@ internal class LinkedEditingRangeEndpoint : IRazorRequestHandler<LinkedEditingRa
 
     public bool MutatesSolutionState => false;
 
-    public RegistrationExtensionResult GetRegistration(VSInternalClientCapabilities clientCapabilities)
+    public void ApplyCapabilities(VSInternalServerCapabilities serverCapabilities, VSInternalClientCapabilities clientCapabilities)
     {
-        const string ServerCapability = "linkedEditingRangeProvider";
-        var option = new SumType<bool, LinkedEditingRangeOptions>(new LinkedEditingRangeOptions { });
-
-        return new RegistrationExtensionResult(ServerCapability, option);
+        serverCapabilities.LinkedEditingRangeProvider = new LinkedEditingRangeOptions();
     }
 
     public TextDocumentIdentifier GetTextDocumentIdentifier(LinkedEditingRangeParams request)

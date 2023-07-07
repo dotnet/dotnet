@@ -54,7 +54,7 @@ public class RazorCompletionBenchmark : RazorLanguageServerBenchmarkBase
                 },
             },
         };
-        CompletionEndpoint.GetRegistration(clientCapabilities);
+        CompletionEndpoint.ApplyCapabilities(new(), clientCapabilities);
         var projectRoot = Path.Combine(RepoRoot, "src", "Razor", "test", "testapps", "ComponentApp");
         var projectFilePath = Path.Combine(projectRoot, "ComponentApp.csproj");
         _filePath = Path.Combine(projectRoot, "Components", "Pages", $"Generated.razor");

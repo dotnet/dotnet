@@ -8,6 +8,6 @@ using Microsoft.VisualStudio.LanguageServer.Protocol;
 namespace Microsoft.AspNetCore.Razor.LanguageServer.DocumentPresentation;
 
 [LanguageServerEndpoint(VSInternalMethods.TextDocumentTextPresentationName)]
-internal interface ITextDocumentTextPresentationHandler : IRazorRequestHandler<TextPresentationParams, WorkspaceEdit?>, IRegistrationExtension
+internal interface ITextDocumentTextPresentationHandler : IRazorRequestHandler<TextPresentationParams, WorkspaceEdit?>, ICapabilitiesProvider
 {
 }

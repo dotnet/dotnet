@@ -17,6 +17,13 @@ namespace Microsoft.VisualStudio.Extensibility.Testing;
 
 internal partial class EditorInProcess
 {
+    public async Task InvokeDeleteLineAsync(CancellationToken cancellationToken)
+    {
+        var commandGuid = typeof(VSStd2KCmdID).GUID;
+        var commandId = VSStd2KCmdID.DELETELINE;
+        await ExecuteCommandAsync(commandGuid, (uint)commandId, cancellationToken);
+    }
+
     public async Task InvokeFormatDocumentAsync(CancellationToken cancellationToken)
     {
         var commandGuid = typeof(VSStd2KCmdID).GUID;

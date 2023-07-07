@@ -28,7 +28,7 @@ using StreamJsonRpc;
 namespace Microsoft.AspNetCore.Razor.LanguageServer.CodeActions;
 
 [LanguageServerEndpoint(LspEndpointName)]
-internal sealed class CodeActionEndpoint : IRazorRequestHandler<VSCodeActionParams, SumType<Command, CodeAction>[]?>, IRegistrationExtension
+internal sealed class CodeActionEndpoint : IRazorRequestHandler<VSCodeActionParams, SumType<Command, CodeAction>[]?>, ICapabilitiesProvider
 {
     public const string LspEndpointName = Methods.TextDocumentCodeActionName;
     private readonly IRazorDocumentMappingService _documentMappingService;
@@ -129,13 +129,11 @@ internal sealed class CodeActionEndpoint : IRazorRequestHandler<VSCodeActionPara
         }
     }
 
-    public RegistrationExtensionResult GetRegistration(VSInternalClientCapabilities clientCapabilities)
+    public void ApplyCapabilities(VSInternalServerCapabilities serverCapabilities, VSInternalClientCapabilities clientCapabilities)
     {
         _supportsCodeActionResolve = clientCapabilities.TextDocument?.CodeAction?.ResolveSupport is not null;
 
-        const string ServerCapability = "codeActionProvider";
-
-        var options = new CodeActionOptions
+        serverCapabilities.CodeActionProvider = new CodeActionOptions
         {
             CodeActionKinds = new[]
             {
@@ -145,7 +143,6 @@ internal sealed class CodeActionEndpoint : IRazorRequestHandler<VSCodeActionPara
             },
             ResolveProvider = true,
         };
-        return new RegistrationExtensionResult(ServerCapability, new SumType<bool, CodeActionOptions>(options));
     }
 
     // internal for testing

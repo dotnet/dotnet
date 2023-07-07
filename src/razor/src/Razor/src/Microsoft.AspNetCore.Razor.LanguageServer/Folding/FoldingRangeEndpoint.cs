@@ -20,7 +20,7 @@ using Microsoft.VisualStudio.LanguageServer.Protocol;
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Folding;
 
 [LanguageServerEndpoint(Methods.TextDocumentFoldingRangeName)]
-internal sealed class FoldingRangeEndpoint : IRazorRequestHandler<FoldingRangeParams, IEnumerable<FoldingRange>?>, IRegistrationExtension
+internal sealed class FoldingRangeEndpoint : IRazorRequestHandler<FoldingRangeParams, IEnumerable<FoldingRange>?>, ICapabilitiesProvider
 {
     private readonly IRazorDocumentMappingService _documentMappingService;
     private readonly ClientNotifierServiceBase _languageServer;
@@ -41,13 +41,9 @@ internal sealed class FoldingRangeEndpoint : IRazorRequestHandler<FoldingRangePa
         _logger = loggerFactory.CreateLogger<FoldingRangeEndpoint>();
     }
 
-    public RegistrationExtensionResult GetRegistration(VSInternalClientCapabilities clientCapabilities)
+    public void ApplyCapabilities(VSInternalServerCapabilities serverCapabilities, VSInternalClientCapabilities clientCapabilities)
     {
-        const string AssociatedServerCapability = "foldingRangeProvider";
-
-        var registrationOptions = new SumType<bool, FoldingRangeOptions>(new FoldingRangeOptions());
-
-        return new RegistrationExtensionResult(AssociatedServerCapability, registrationOptions);
+        serverCapabilities.FoldingRangeProvider = new FoldingRangeOptions();
     }
 
     public TextDocumentIdentifier GetTextDocumentIdentifier(FoldingRangeParams request)

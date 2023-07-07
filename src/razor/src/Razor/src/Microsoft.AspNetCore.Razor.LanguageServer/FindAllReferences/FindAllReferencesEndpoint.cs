@@ -19,7 +19,7 @@ using Microsoft.VisualStudio.Text.Adornments;
 namespace Microsoft.AspNetCore.Razor.LanguageServer.FindAllReferences;
 
 [LanguageServerEndpoint(Methods.TextDocumentReferencesName)]
-internal sealed class FindAllReferencesEndpoint : AbstractRazorDelegatingEndpoint<ReferenceParams, VSInternalReferenceItem[]>, IRegistrationExtension
+internal sealed class FindAllReferencesEndpoint : AbstractRazorDelegatingEndpoint<ReferenceParams, VSInternalReferenceItem[]>, ICapabilitiesProvider
 {
     private readonly LanguageServerFeatureOptions _featureOptions;
     private readonly IRazorDocumentMappingService _documentMappingService;
@@ -36,17 +36,13 @@ internal sealed class FindAllReferencesEndpoint : AbstractRazorDelegatingEndpoin
         _documentMappingService = documentMappingService ?? throw new ArgumentNullException(nameof(documentMappingService));
     }
 
-    public RegistrationExtensionResult GetRegistration(VSInternalClientCapabilities clientCapabilities)
+    public void ApplyCapabilities(VSInternalServerCapabilities serverCapabilities, VSInternalClientCapabilities clientCapabilities)
     {
-        const string AssociatedServerCapability = "referencesProvider";
-
-        var registrationOptions = new ReferenceOptions()
+        serverCapabilities.ReferencesProvider = new ReferenceOptions()
         {
             // https://github.com/dotnet/razor/issues/8033
             WorkDoneProgress = false,
         };
-
-        return new RegistrationExtensionResult(AssociatedServerCapability, new SumType<bool, ReferenceOptions>(registrationOptions));
     }
 
     protected override string CustomMessageTarget => RazorLanguageServerCustomMessageTargets.RazorReferencesEndpointName;

@@ -23,7 +23,7 @@ using Microsoft.VisualStudio.LanguageServer.Protocol;
 namespace Microsoft.AspNetCore.Razor.LanguageServer.InlineCompletion;
 
 [LanguageServerEndpoint(VSInternalMethods.TextDocumentInlineCompletionName)]
-internal sealed class InlineCompletionEndpoint : IRazorRequestHandler<VSInternalInlineCompletionRequest, VSInternalInlineCompletionList?>, IRegistrationExtension
+internal sealed class InlineCompletionEndpoint : IRazorRequestHandler<VSInternalInlineCompletionRequest, VSInternalInlineCompletionList?>, ICapabilitiesProvider
 {
     private static readonly ImmutableHashSet<string> s_cSharpKeywords = ImmutableHashSet.Create(
         "~", "Attribute", "checked", "class", "ctor", "cw", "do", "else", "enum", "equals", "Exception", "for", "foreach", "forr",
@@ -47,16 +47,12 @@ internal sealed class InlineCompletionEndpoint : IRazorRequestHandler<VSInternal
         _adhocWorkspaceFactory = adhocWorkspaceFactory ?? throw new ArgumentNullException(nameof(adhocWorkspaceFactory));
     }
 
-    public RegistrationExtensionResult GetRegistration(VSInternalClientCapabilities clientCapabilities)
+    public void ApplyCapabilities(VSInternalServerCapabilities serverCapabilities, VSInternalClientCapabilities clientCapabilities)
     {
-        const string AssociatedServerCapability = "_vs_inlineCompletionOptions";
-
-        var registrationOptions = new VSInternalInlineCompletionOptions()
+        serverCapabilities.InlineCompletionOptions = new VSInternalInlineCompletionOptions()
         {
             Pattern = new Regex(string.Join("|", s_cSharpKeywords))
         };
-
-        return new RegistrationExtensionResult(AssociatedServerCapability, registrationOptions);
     }
 
     public TextDocumentIdentifier GetTextDocumentIdentifier(VSInternalInlineCompletionRequest request)

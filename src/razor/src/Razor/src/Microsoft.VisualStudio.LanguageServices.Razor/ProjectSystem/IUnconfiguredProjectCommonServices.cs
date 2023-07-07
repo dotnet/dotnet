@@ -2,7 +2,6 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using Microsoft.VisualStudio.ProjectSystem;
-using Microsoft.VisualStudio.ProjectSystem.References;
 
 namespace Microsoft.CodeAnalysis.Razor.ProjectSystem;
 
@@ -13,19 +12,13 @@ namespace Microsoft.CodeAnalysis.Razor.ProjectSystem;
 // for us to build reusable mocks instead.
 internal interface IUnconfiguredProjectCommonServices
 {
-    ConfiguredProject ActiveConfiguredProject { get; }
-
-    IAssemblyReferencesService ActiveConfiguredProjectAssemblyReferences { get; }
-
-    IPackageReferencesService ActiveConfiguredProjectPackageReferences { get; }
-
-    Rules.RazorProjectProperties ActiveConfiguredProjectRazorProperties { get; }
-
-    IActiveConfiguredProjectSubscriptionService ActiveConfiguredProjectSubscription { get; }
-
     IProjectAsynchronousTasksService TasksService { get; }
 
     IProjectThreadingService ThreadingService { get; }
 
     UnconfiguredProject UnconfiguredProject { get; }
+
+    IProjectFaultHandlerService FaultHandlerService { get; }
+
+    IActiveConfigurationGroupSubscriptionService ActiveConfigurationGroupSubscriptionService { get; }
 }

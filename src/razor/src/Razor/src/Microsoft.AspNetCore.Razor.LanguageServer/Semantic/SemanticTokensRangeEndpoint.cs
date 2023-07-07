@@ -15,7 +15,7 @@ using Microsoft.VisualStudio.LanguageServer.Protocol;
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Semantic;
 
 [LanguageServerEndpoint(LspEndpointName)]
-internal sealed class SemanticTokensRangeEndpoint : IRazorRequestHandler<SemanticTokensRangeParams, SemanticTokens?>, IRegistrationExtension
+internal sealed class SemanticTokensRangeEndpoint : IRazorRequestHandler<SemanticTokensRangeParams, SemanticTokens?>, ICapabilitiesProvider
 {
     public const string LspEndpointName = Methods.TextDocumentSemanticTokensRangeName;
     private RazorSemanticTokensLegend? _razorSemanticTokensLegend;
@@ -28,19 +28,16 @@ internal sealed class SemanticTokensRangeEndpoint : IRazorRequestHandler<Semanti
 
     public bool MutatesSolutionState { get; } = false;
 
-    public RegistrationExtensionResult GetRegistration(VSInternalClientCapabilities clientCapabilities)
+    public void ApplyCapabilities(VSInternalServerCapabilities serverCapabilities, VSInternalClientCapabilities clientCapabilities)
     {
-        const string ServerCapability = "semanticTokensProvider";
-
         _razorSemanticTokensLegend = new RazorSemanticTokensLegend(clientCapabilities);
 
-        return new RegistrationExtensionResult(ServerCapability,
-            new SemanticTokensOptions
-            {
-                Full = false,
-                Legend = _razorSemanticTokensLegend.Legend,
-                Range = true,
-            });
+        serverCapabilities.SemanticTokensOptions = new SemanticTokensOptions
+        {
+            Full = false,
+            Legend = _razorSemanticTokensLegend.Legend,
+            Range = true,
+        };
     }
 
     public TextDocumentIdentifier GetTextDocumentIdentifier(SemanticTokensRangeParams request)

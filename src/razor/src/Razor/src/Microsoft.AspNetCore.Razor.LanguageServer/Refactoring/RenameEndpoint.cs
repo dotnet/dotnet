@@ -25,7 +25,7 @@ using Microsoft.VisualStudio.LanguageServer.Protocol;
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Refactoring;
 
 [LanguageServerEndpoint(Methods.TextDocumentRenameName)]
-internal sealed class RenameEndpoint : AbstractRazorDelegatingEndpoint<RenameParams, WorkspaceEdit?>, IRegistrationExtension
+internal sealed class RenameEndpoint : AbstractRazorDelegatingEndpoint<RenameParams, WorkspaceEdit?>, ICapabilitiesProvider
 {
     private readonly ProjectSnapshotManagerDispatcher _projectSnapshotManagerDispatcher;
     private readonly DocumentContextFactory _documentContextFactory;
@@ -53,15 +53,12 @@ internal sealed class RenameEndpoint : AbstractRazorDelegatingEndpoint<RenamePar
         _documentMappingService = documentMappingService ?? throw new ArgumentNullException(nameof(documentMappingService));
     }
 
-    public RegistrationExtensionResult GetRegistration(VSInternalClientCapabilities clientCapabilities)
+    public void ApplyCapabilities(VSInternalServerCapabilities serverCapabilities, VSInternalClientCapabilities clientCapabilities)
     {
-        const string ServerCapability = "renameProvider";
-        var options = new RenameOptions
+        serverCapabilities.RenameProvider = new RenameOptions
         {
             PrepareProvider = false,
         };
-
-        return new RegistrationExtensionResult(ServerCapability, new SumType<bool, RenameOptions>(options));
     }
 
     protected override bool PreferCSharpOverHtmlIfPossible => true;

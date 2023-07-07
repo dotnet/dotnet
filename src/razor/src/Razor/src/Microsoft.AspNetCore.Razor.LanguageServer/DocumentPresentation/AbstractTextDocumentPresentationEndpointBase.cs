@@ -17,7 +17,7 @@ using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.DocumentPresentation;
 
-internal abstract class AbstractTextDocumentPresentationEndpointBase<TParams> : IRazorRequestHandler<TParams, WorkspaceEdit?>, IRegistrationExtension
+internal abstract class AbstractTextDocumentPresentationEndpointBase<TParams> : IRazorRequestHandler<TParams, WorkspaceEdit?>, ICapabilitiesProvider
     where TParams : IPresentationParams
 {
     private readonly IRazorDocumentMappingService _razorDocumentMappingService;
@@ -53,7 +53,7 @@ internal abstract class AbstractTextDocumentPresentationEndpointBase<TParams> : 
 
     public bool MutatesSolutionState => false;
 
-    public abstract RegistrationExtensionResult GetRegistration(VSInternalClientCapabilities clientCapabilities);
+    public abstract void ApplyCapabilities(VSInternalServerCapabilities serverCapabilities, VSInternalClientCapabilities clientCapabilities);
 
     protected abstract IRazorPresentationParams CreateRazorRequestParameters(TParams request);
 
