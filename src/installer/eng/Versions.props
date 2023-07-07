@@ -81,29 +81,29 @@
   </PropertyGroup>
   <PropertyGroup>
     <!-- Dependencies from https://github.com/dotnet/sdk -->
-    <MicrosoftDotNetCommonItemTemplatesPackageVersion>8.0.100-preview.7.23356.19</MicrosoftDotNetCommonItemTemplatesPackageVersion>
-    <MicrosoftNETSdkPackageVersion>8.0.100-preview.7.23356.19</MicrosoftNETSdkPackageVersion>
-    <MicrosoftDotNetMSBuildSdkResolverPackageVersion>8.0.100-preview.7.23356.19</MicrosoftDotNetMSBuildSdkResolverPackageVersion>
+    <MicrosoftDotNetCommonItemTemplatesPackageVersion>8.0.100-preview.7.23356.28</MicrosoftDotNetCommonItemTemplatesPackageVersion>
+    <MicrosoftNETSdkPackageVersion>8.0.100-preview.7.23356.28</MicrosoftNETSdkPackageVersion>
+    <MicrosoftDotNetMSBuildSdkResolverPackageVersion>8.0.100-preview.7.23356.28</MicrosoftDotNetMSBuildSdkResolverPackageVersion>
     <MicrosoftNETBuildExtensionsPackageVersion>$(MicrosoftNETSdkPackageVersion)</MicrosoftNETBuildExtensionsPackageVersion>
     <MicrosoftDotnetToolsetInternalPackageVersion>$(MicrosoftNETSdkPackageVersion)</MicrosoftDotnetToolsetInternalPackageVersion>
     <MicrosoftDotnetTemplateLocatorPackageVersion>$(MicrosoftNETSdkPackageVersion)</MicrosoftDotnetTemplateLocatorPackageVersion>
   </PropertyGroup>
   <PropertyGroup>
     <!-- Dependencies from https://github.com/dotnet/roslyn -->
-    <MicrosoftNetCompilersToolsetPackageVersion>4.8.0-1.23355.4</MicrosoftNetCompilersToolsetPackageVersion>
+    <MicrosoftNetCompilersToolsetPackageVersion>4.8.0-1.23356.4</MicrosoftNetCompilersToolsetPackageVersion>
   </PropertyGroup>
   <PropertyGroup>
     <!-- Dependencies from https://github.com/dotnet/corefx -->
-    <MicrosoftNETCorePlatformsPackageVersion>8.0.0-preview.7.23355.8</MicrosoftNETCorePlatformsPackageVersion>
+    <MicrosoftNETCorePlatformsPackageVersion>8.0.0-preview.7.23356.4</MicrosoftNETCorePlatformsPackageVersion>
   </PropertyGroup>
   <PropertyGroup>
     <!-- Dependencies from https://github.com/dotnet/core-setup -->
-    <VSRedistCommonNetCoreSharedFrameworkx6480PackageVersion>8.0.0-preview.7.23355.8</VSRedistCommonNetCoreSharedFrameworkx6480PackageVersion>
-    <VSRedistCommonNetCoreTargetingPackx6480PackageVersion>8.0.0-preview.7.23355.8</VSRedistCommonNetCoreTargetingPackx6480PackageVersion>
-    <MicrosoftNETCoreAppRuntimewinx64PackageVersion>8.0.0-preview.7.23355.8</MicrosoftNETCoreAppRuntimewinx64PackageVersion>
-    <MicrosoftNETCoreAppHostwinx64PackageVersion>8.0.0-preview.7.23355.8</MicrosoftNETCoreAppHostwinx64PackageVersion>
-    <MicrosoftNETCoreAppRefPackageVersion>8.0.0-preview.7.23355.8</MicrosoftNETCoreAppRefPackageVersion>
-    <MicrosoftNETCoreDotNetHostResolverPackageVersion>8.0.0-preview.7.23355.8</MicrosoftNETCoreDotNetHostResolverPackageVersion>
+    <VSRedistCommonNetCoreSharedFrameworkx6480PackageVersion>8.0.0-preview.7.23356.4</VSRedistCommonNetCoreSharedFrameworkx6480PackageVersion>
+    <VSRedistCommonNetCoreTargetingPackx6480PackageVersion>8.0.0-preview.7.23356.4</VSRedistCommonNetCoreTargetingPackx6480PackageVersion>
+    <MicrosoftNETCoreAppRuntimewinx64PackageVersion>8.0.0-preview.7.23356.4</MicrosoftNETCoreAppRuntimewinx64PackageVersion>
+    <MicrosoftNETCoreAppHostwinx64PackageVersion>8.0.0-preview.7.23356.4</MicrosoftNETCoreAppHostwinx64PackageVersion>
+    <MicrosoftNETCoreAppRefPackageVersion>8.0.0-preview.7.23356.4</MicrosoftNETCoreAppRefPackageVersion>
+    <MicrosoftNETCoreDotNetHostResolverPackageVersion>8.0.0-preview.7.23356.4</MicrosoftNETCoreDotNetHostResolverPackageVersion>
     <NETStandardLibraryRefPackageVersion>2.1.0</NETStandardLibraryRefPackageVersion>
   </PropertyGroup>
   <PropertyGroup>
