@@ -119,7 +119,7 @@ jobs:
       -e SMOKE_TESTS_WARN_SDK_CONTENT_DIFFS=false
       -e SMOKE_TESTS_RUNNING_IN_CI=true
       -e SMOKE_TESTS_TARGET_RID=${{ parameters.targetRid }}
-      -e SMOKE_TESTS_PORTABLE_RID=linux-x64
+      -e SMOKE_TESTS_PORTABLE_RID=linux-${{ parameters.architecture }}
       -e SMOKE_TESTS_CUSTOM_PACKAGES_PATH= 
     displayName: Run Tests
     workingDirectory: $(Build.SourcesDirectory)
