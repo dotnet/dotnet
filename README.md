@@ -155,7 +155,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/arcade`  
 *[dotnet/arcade@2820913](https://github.com/dotnet/arcade/commit/28209139ee0e4b7c5b3dbfe74e30c6de8399189e)*
 - `src/aspnetcore`  
-*[dotnet/aspnetcore@8973bf2](https://github.com/dotnet/aspnetcore/commit/8973bf25326bd90dccbf91e70b7e7c5126968037)*
+*[dotnet/aspnetcore@25098a6](https://github.com/dotnet/aspnetcore/commit/25098a65c5f6037d9631f7a7813214ec1e12365e)*
     - `src/aspnetcore/src/submodules/googletest`  
     *[google/googletest@be03d00](https://github.com/google/googletest/commit/be03d00f5f0cc3a997d1a368bee8a1fe93651f48)*
     - `src/aspnetcore/src/submodules/MessagePack-CSharp`  
