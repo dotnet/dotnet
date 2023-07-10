@@ -24,7 +24,7 @@
       </trans-unit>
       <trans-unit id="Completion">
         <source>Completion</source>
-        <target state="new">Completion</target>
+        <target state="translated">Completamento</target>
         <note />
       </trans-unit>
       <trans-unit id="Formatting">
@@ -49,12 +49,12 @@
       </trans-unit>
       <trans-unit id="Setting_AutoInsertAttributeQuotesDescription">
         <source>If true, completion on attributes will add quotation marks</source>
-        <target state="new">If true, completion on attributes will add quotation marks</target>
+        <target state="translated">Se true, il completamento degli attributi aggiungerà le virgolette</target>
         <note />
       </trans-unit>
       <trans-unit id="Setting_AutoInsertAttributeQuotesDisplayName">
         <source>Auto Insert Attribute Quotes</source>
-        <target state="new">Auto Insert Attribute Quotes</target>
+        <target state="translated">Inserire automaticamente le virgolette degli attributi</target>
         <note />
       </trans-unit>
       <trans-unit id="Setting_FormattingOnTypeDescription">

@@ -24,7 +24,7 @@
       </trans-unit>
       <trans-unit id="Completion">
         <source>Completion</source>
-        <target state="new">Completion</target>
+        <target state="translated">Uzupełnianie</target>
         <note />
       </trans-unit>
       <trans-unit id="Formatting">
@@ -49,12 +49,12 @@
       </trans-unit>
       <trans-unit id="Setting_AutoInsertAttributeQuotesDescription">
         <source>If true, completion on attributes will add quotation marks</source>
-        <target state="new">If true, completion on attributes will add quotation marks</target>
+        <target state="translated">Jeśli ma wartość true, uzupełnianie atrybutów spowoduje dodanie cudzysłowów</target>
         <note />
       </trans-unit>
       <trans-unit id="Setting_AutoInsertAttributeQuotesDisplayName">
         <source>Auto Insert Attribute Quotes</source>
-        <target state="new">Auto Insert Attribute Quotes</target>
+        <target state="translated">Automatyczne wstawianie cudzysłowów atrybutów</target>
         <note />
       </trans-unit>
       <trans-unit id="Setting_FormattingOnTypeDescription">

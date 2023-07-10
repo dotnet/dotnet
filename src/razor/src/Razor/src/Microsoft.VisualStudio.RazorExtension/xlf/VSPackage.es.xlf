@@ -24,7 +24,7 @@
       </trans-unit>
       <trans-unit id="Completion">
         <source>Completion</source>
-        <target state="new">Completion</target>
+        <target state="translated">Finalización</target>
         <note />
       </trans-unit>
       <trans-unit id="Formatting">
@@ -49,12 +49,12 @@
       </trans-unit>
       <trans-unit id="Setting_AutoInsertAttributeQuotesDescription">
         <source>If true, completion on attributes will add quotation marks</source>
-        <target state="new">If true, completion on attributes will add quotation marks</target>
+        <target state="translated">Si es true, la finalización en los atributos agregará comillas</target>
         <note />
       </trans-unit>
       <trans-unit id="Setting_AutoInsertAttributeQuotesDisplayName">
         <source>Auto Insert Attribute Quotes</source>
-        <target state="new">Auto Insert Attribute Quotes</target>
+        <target state="translated">Insertar automáticamente comillas de atributo</target>
         <note />
       </trans-unit>
       <trans-unit id="Setting_FormattingOnTypeDescription">
