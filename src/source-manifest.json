@@ -1,10 +1,10 @@
 {
   "repositories": [
     {
-      "packageVersion": "8.0.0-beta.23357.3",
+      "packageVersion": "8.0.0-beta.23360.1",
       "path": "arcade",
       "remoteUri": "https://github.com/dotnet/arcade",
-      "commitSha": "853cdb7499e6edddd5239e4b7a90f098ea84a261"
+      "commitSha": "226c103b56a979243f08032e6cddb4deb66ea54b"
     },
     {
       "packageVersion": "8.0.0-preview.7.23359.2",
@@ -58,7 +58,7 @@
       "packageVersion": "8.0.100",
       "path": "installer",
       "remoteUri": "https://github.com/dotnet/installer",
-      "commitSha": "9c792aa68d7be9647bce93b57743368eb51448f2"
+      "commitSha": "de5e90fc2dfadd73684b7f57fca827ccf0d4e567"
     },
     {
       "packageVersion": "17.8.0-preview-23356-04",
@@ -91,16 +91,16 @@
       "commitSha": "82603c16509d7383cd1922680773a79b839b1705"
     },
     {
-      "packageVersion": "8.0.0-preview.7.23359.1",
+      "packageVersion": "8.0.0-preview.7.23359.3",
       "path": "runtime",
       "remoteUri": "https://github.com/dotnet/runtime",
-      "commitSha": "31106939ba524a7e6df8225cf8d0fedefba92b9f"
+      "commitSha": "ab7c4528edb5301cb849f5e114b7f3cc1dea8149"
     },
     {
-      "packageVersion": "8.0.100-preview.7.23359.5",
+      "packageVersion": "8.0.100-preview.7.23360.1",
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "9c7567298308ca63c7e7c79028b111d989d9dcab"
+      "commitSha": "0ba5815c0898494771ef78dd6f1b64568f96b9a5"
     },
     {
       "packageVersion": "8.0.0-alpha.1.23355.1",
@@ -109,16 +109,16 @@
       "commitSha": "449b2eed42c10f14eabb29d0f57c3ba77844f21c"
     },
     {
-      "packageVersion": "8.0.0-alpha.1.23356.4",
+      "packageVersion": "8.0.0-alpha.1.23360.2",
       "path": "source-build-reference-packages",
       "remoteUri": "https://github.com/dotnet/source-build-reference-packages",
-      "commitSha": "81a9aad6994047fc0e589a82597d1d8c179f22bd"
+      "commitSha": "bea821278f04cf4e4d7e41e0cd28f640a710260c"
     },
     {
-      "packageVersion": "8.0.0-beta.23355.1",
+      "packageVersion": "8.0.0-beta.23358.1",
       "path": "sourcelink",
       "remoteUri": "https://github.com/dotnet/sourcelink",
-      "commitSha": "93698e3c7ca6ec3e5d4be9eff07166bb64975bbc"
+      "commitSha": "d65917a564ce5d2b75fc387a7f4d0bcc6bdd269d"
     },
     {
       "packageVersion": "2.1.0-beta.23253.1",
