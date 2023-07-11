@@ -10,7 +10,9 @@ using System.Linq;
 using Microsoft.AspNetCore.Razor.Language.CodeGeneration;
 using Microsoft.AspNetCore.Razor.Language.Extensions;
 using Microsoft.AspNetCore.Razor.Language.Intermediate;
-using Microsoft.AspNetCore.Razor.Language.Legacy;
+
+using CSharpSyntaxFacts = Microsoft.CodeAnalysis.CSharp.SyntaxFacts;
+using CSharpSyntaxKind = Microsoft.CodeAnalysis.CSharp.SyntaxKind;
 
 namespace Microsoft.AspNetCore.Razor.Language.Components;
 
@@ -762,9 +764,8 @@ internal class ComponentDesignTimeNodeWriter : ComponentNodeWriter
         {
             context.CodeWriter.WritePadding(0, attributeSourceSpan, context);
             // Escape the property name in case it's a C# keyword
-            // When https://github.com/dotnet/razor/issues/8445 is implemented,
-            // replace with a check against SyntaxFacts.IsKeywordKind || SyntaxFacts.IsConditionalKeywordKind
-            if (CSharpLanguageCharacteristics.GetKeywordKind(node.PropertyName) != null)
+            if (CSharpSyntaxFacts.GetKeywordKind(node.PropertyName) != CSharpSyntaxKind.None ||
+                CSharpSyntaxFacts.GetContextualKeywordKind(node.PropertyName) != CSharpSyntaxKind.None)
             {
                 context.CodeWriter.Write("@");
             }

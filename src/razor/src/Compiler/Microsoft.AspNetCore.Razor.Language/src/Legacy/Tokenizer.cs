@@ -32,7 +32,7 @@ internal abstract class Tokenizer : ITokenizer
 
     protected int? CurrentState { get; set; }
 
-    protected SyntaxToken CurrenSyntaxToken { get; private set; }
+    protected SyntaxToken CurrentSyntaxToken { get; private set; }
 
     public ITextDocument Source { get; private set; }
 
@@ -106,16 +106,16 @@ internal abstract class Tokenizer : ITokenizer
                 var next = Dispatch();
 
                 CurrentState = next.State;
-                CurrenSyntaxToken = next.Result;
+                CurrentSyntaxToken = next.Result;
             }
-            while (CurrentState != null && CurrenSyntaxToken == null);
+            while (CurrentState != null && CurrentSyntaxToken == null);
 
             if (CurrentState == null)
             {
                 return default(SyntaxToken); // Terminated
             }
 
-            return CurrenSyntaxToken;
+            return CurrentSyntaxToken;
         }
 
         return default(SyntaxToken);

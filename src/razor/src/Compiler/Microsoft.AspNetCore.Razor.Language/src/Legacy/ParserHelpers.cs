@@ -3,103 +3,35 @@
 
 using System;
 using System.Collections.Generic;
-using System.Globalization;
-using System.Runtime.CompilerServices;
+using System.Linq;
+using Microsoft.CodeAnalysis.CSharp;
 
 namespace Microsoft.AspNetCore.Razor.Language.Legacy;
 
 internal static class ParserHelpers
 {
-    public static bool IsNewLine(char value)
-    {
-        return value switch
-        {
-            '\r' => true,     // Carriage return
-            '\n' => true,     // Line feed
-            '\u0085' => true, // Next Line
-            '\u2028' => true, // Line separator
-            '\u2029' => true, // Paragraph separator
-            _ => false
-        };
-    }
-
     public static bool IsNewLine(string value)
     {
         // We want to handle both LF and CRLF regardless of the platform.
         // We explicitly check for CRLF and IsNewLine() should return true for LF.
-        return (value is [var ch] && IsNewLine(ch)) ||
+        return (value is [var ch] && SyntaxFacts.IsNewLine(ch)) ||
                value == "\r\n";
-    }
-
-    public static bool IsIdentifier(string value)
-    {
-        return IsIdentifier(value, requireIdentifierStart: true);
     }
 
     public static bool IsIdentifier(string value, bool requireIdentifierStart)
     {
-        var span = value.AsSpan();
+        if (requireIdentifierStart)
+        {
+            return SyntaxFacts.IsValidIdentifier(value);
+        }
 
-        if (span.Length == 0)
+        if (value.Length == 0)
         {
             return false;
         }
 
-        if (requireIdentifierStart)
-        {
-            if (!IsIdentifierStart(span[0]))
-            {
-                return false;
-            }
-
-            span = span[1..];
-        }
-
-        return AllIdentifierParts(span);
-
-        static bool AllIdentifierParts(ReadOnlySpan<char> span)
-        {
-            foreach (var ch in span)
-            {
-                if (!IsIdentifierPart(ch))
-                {
-                    return false;
-                }
-            }
-
-            return true;
-        }
+        return value.All(SyntaxFacts.IsIdentifierPartCharacter);
     }
-
-    public static bool IsIdentifierStart(char value)
-    {
-        return value == '_' || IsLetter(value);
-    }
-
-    public static bool IsIdentifierPart(char value)
-    {
-        return IsLetter(value) ||
-               IsDecimalDigit(value) ||
-              (CharUnicodeInfo.GetUnicodeCategory(value) is UnicodeCategory.Format
-                                                         or UnicodeCategory.SpacingCombiningMark
-                                                         or UnicodeCategory.NonSpacingMark
-                                                         or UnicodeCategory.ConnectorPunctuation);
-    }
-
-    public static bool IsWhitespace(char value)
-    {
-        return value == ' ' ||
-               value == '\f' ||
-               value == '\t' ||
-               value == '\u000B' || // Vertical Tab
-               char.IsSeparator(value);
-    }
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool IsLetter(char value) => char.IsLetter(value);
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool IsDecimalDigit(char value) => char.IsDigit(value);
 
     // From http://dev.w3.org/html5/spec/Overview.html#elements-0
     public static readonly HashSet<string> VoidElements = new(StringComparer.OrdinalIgnoreCase)
@@ -2360,7 +2292,7 @@ internal static class ParserHelpers
         { "&zwnj;", "\u200C" },
     };
 
-public static readonly Dictionary<int, string> HtmlEntityCodePoints = new Dictionary<int, string>()
+    public static readonly Dictionary<int, string> HtmlEntityCodePoints = new Dictionary<int, string>()
     {
         { 193, "\u00C1" },
         { 225, "\u00E1" },

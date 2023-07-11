@@ -11,6 +11,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using Microsoft.AspNetCore.Razor.Language.Syntax;
+using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.Extensions.Internal;
 
 namespace Microsoft.AspNetCore.Razor.Language.Legacy;
@@ -482,7 +483,7 @@ internal class ImplicitExpressionEditHandler : SpanEditHandler
         {
             return TryAcceptChange(target, change, PartialParseResultInternal.Accepted | PartialParseResultInternal.Provisional);
         }
-        else if (ParserHelpers.IsIdentifierPart(previousChar))
+        else if (SyntaxFacts.IsIdentifierPartCharacter(previousChar))
         {
             return TryAcceptChange(target, change);
         }
@@ -505,7 +506,7 @@ internal class ImplicitExpressionEditHandler : SpanEditHandler
         {
             return HandleInsertionAfterDot(target, change);
         }
-        else if (ParserHelpers.IsIdentifierPart(previousChar) || previousChar == ')' || previousChar == ']')
+        else if (SyntaxFacts.IsIdentifierPartCharacter(previousChar) || previousChar == ')' || previousChar == ']')
         {
             return HandleInsertionAfterIdPart(target, change);
         }
@@ -561,7 +562,7 @@ internal class ImplicitExpressionEditHandler : SpanEditHandler
     private PartialParseResultInternal HandleInsertionAfterDot(SyntaxNode target, SourceChange change)
     {
         // If the insertion is a full identifier or another dot, accept it
-        if (ParserHelpers.IsIdentifier(change.NewText) || change.NewText == ".")
+        if (SyntaxFacts.IsValidIdentifier(change.NewText) || change.NewText == ".")
         {
             return TryAcceptChange(target, change);
         }
@@ -607,14 +608,14 @@ internal class ImplicitExpressionEditHandler : SpanEditHandler
     {
         return (content.Length == 1 && content[0] == '.') ||
                (content[content.Length - 1] == '.' &&
-                content.Take(content.Length - 1).All(ParserHelpers.IsIdentifierPart));
+                content.Take(content.Length - 1).All(SyntaxFacts.IsIdentifierPartCharacter));
     }
 
     private bool StartsWithKeyword(string newContent)
     {
         using (var reader = new StringReader(newContent))
         {
-            return Keywords.Contains(reader.ReadWhile(ParserHelpers.IsIdentifierPart));
+            return Keywords.Contains(reader.ReadWhile(SyntaxFacts.IsIdentifierPartCharacter));
         }
     }
 }

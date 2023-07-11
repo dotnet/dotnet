@@ -2,9 +2,9 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
-using System.Globalization;
 using System.Text;
 using Microsoft.AspNetCore.Razor.PooledObjects;
+using Microsoft.CodeAnalysis.CSharp;
 
 namespace Microsoft.AspNetCore.Razor.Language;
 
@@ -29,31 +29,6 @@ internal static class CSharpIdentifier
         return SanitizeIdentifier(span);
     }
 
-    // CSharp Spec §2.4.2
-    private static bool IsIdentifierStart(char character)
-    {
-        return char.IsLetter(character) ||
-            character == '_' ||
-            CharUnicodeInfo.GetUnicodeCategory(character) == UnicodeCategory.LetterNumber;
-    }
-
-    public static bool IsIdentifierPart(char character)
-    {
-        return char.IsDigit(character) ||
-               IsIdentifierStart(character) ||
-               IsIdentifierPartByUnicodeCategory(character);
-    }
-
-    private static bool IsIdentifierPartByUnicodeCategory(char character)
-    {
-        var category = CharUnicodeInfo.GetUnicodeCategory(character);
-
-        return category is UnicodeCategory.NonSpacingMark or // Mn
-                           UnicodeCategory.SpacingCombiningMark or // Mc
-                           UnicodeCategory.ConnectorPunctuation or // Pc
-                           UnicodeCategory.Format; // Cf
-    }
-
     public static string SanitizeIdentifier(ReadOnlySpan<char> inputName)
     {
         if (inputName.Length == 0)
@@ -62,23 +37,7 @@ internal static class CSharpIdentifier
         }
 
         using var _ = StringBuilderPool.GetPooledObject(out var builder);
-
-        var firstChar = inputName[0];
-        if (!IsIdentifierStart(firstChar) && IsIdentifierPart(firstChar))
-        {
-            builder.SetCapacityIfLarger(inputName.Length + 1);
-            builder.Append('_');
-        }
-        else
-        {
-            builder.SetCapacityIfLarger(inputName.Length);
-        }
-
-        foreach (var ch in inputName)
-        {
-            builder.Append(IsIdentifierPart(ch) ? ch : '_');
-        }
-
+        AppendSanitized(builder, inputName);
         return builder.ToString();
     }
 
@@ -90,14 +49,19 @@ internal static class CSharpIdentifier
         }
 
         var firstChar = inputName[0];
-        if (!IsIdentifierStart(firstChar) && IsIdentifierPart(firstChar))
+        if (!SyntaxFacts.IsIdentifierStartCharacter(firstChar) && SyntaxFacts.IsIdentifierPartCharacter(firstChar))
         {
+            builder.SetCapacityIfLarger(builder.Length + inputName.Length + 1);
             builder.Append('_');
+        }
+        else
+        {
+            builder.SetCapacityIfLarger(builder.Length + inputName.Length);
         }
 
         foreach (var ch in inputName)
         {
-            builder.Append(IsIdentifierPart(ch) ? ch : '_');
+            builder.Append(SyntaxFacts.IsIdentifierPartCharacter(ch) ? ch : '_');
         }
     }
 }

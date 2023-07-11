@@ -271,19 +271,6 @@ internal class CSharpLanguageCharacteristics : LanguageCharacteristics<CSharpTok
         }
     }
 
-    public static CSharpKeyword? GetKeywordKind(string keyword)
-    {
-        foreach (var kvp in _keywordNames)
-        {
-            if (string.Equals(kvp.Value, keyword, StringComparison.Ordinal))
-            {
-                return kvp.Key;
-            }
-        }
-
-        return null;
-    }
-
     public static string GetKeyword(CSharpKeyword keyword)
     {
         if (!_keywordNames.TryGetValue(keyword, out var value))

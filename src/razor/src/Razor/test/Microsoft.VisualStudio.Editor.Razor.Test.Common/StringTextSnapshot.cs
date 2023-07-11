@@ -9,6 +9,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using Microsoft.AspNetCore.Razor.Language.Legacy;
+using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.VisualStudio.Utilities;
 
 namespace Microsoft.VisualStudio.Text;
@@ -41,7 +42,7 @@ public class StringTextSnapshot : ITextSnapshot2
                 delimiterLength = 1;
                 for (var i = start; i < Content.Length; i++)
                 {
-                    if (ParserHelpers.IsNewLine(content[i]))
+                    if (SyntaxFacts.IsNewLine(content[i]))
                     {
                         delimiterIndex = i;
                         break;
@@ -221,7 +222,7 @@ public class StringTextSnapshot : ITextSnapshot2
             {
                 _content = _content[..^2];
             }
-            else if(_content.Length > 0 && ParserHelpers.IsNewLine(_content[_content.Length - 1]))
+            else if(_content.Length > 0 && SyntaxFacts.IsNewLine(_content[_content.Length - 1]))
             {
                 _content = _content[..^1];
             }
