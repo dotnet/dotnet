@@ -40,8 +40,7 @@ namespace NuGet.CommandLine.Test
                 var result = CommandRunner.Run(
                     testInfo.NuGetExePath,
                     testInfo.WorkingPath,
-                    string.Join(" ", args.Select(a => $"\"{a}\"")),
-                    true);
+                    string.Join(" ", args.Select(a => $"\"{a}\"")));
 
                 // Assert
                 var expectedError = "Invalid combination of arguments";
@@ -69,8 +68,7 @@ namespace NuGet.CommandLine.Test
                 var result = CommandRunner.Run(
                     testInfo.NuGetExePath,
                     testInfo.WorkingPath,
-                    string.Join(" ", args.Select(a => $"\"{a}\"")),
-                    true);
+                    string.Join(" ", args.Select(a => $"\"{a}\"")));
 
                 // Assert
                 var expectedError = "Invalid combination of arguments";
@@ -100,8 +98,7 @@ namespace NuGet.CommandLine.Test
                 var result = CommandRunner.Run(
                     testInfo.NuGetExePath,
                     testInfo.WorkingPath,
-                    string.Join(" ", args.Select(a => $"\"{a}\"")),
-                    true);
+                    string.Join(" ", args.Select(a => $"\"{a}\"")));
 
                 // Assert
                 var expectedError = "file that does not exist";
@@ -121,8 +118,7 @@ namespace NuGet.CommandLine.Test
                 var result = CommandRunner.Run(
                     testInfo.NuGetExePath,
                     testInfo.WorkingPath,
-                    string.Join(" ", args.Select(a => $"\"{a}\"")),
-                    true);
+                    string.Join(" ", args.Select(a => $"\"{a}\"")));
 
                 // Assert
                 var expectedError = "Property 'PackageSource' should not be null or empty";
@@ -152,8 +148,7 @@ namespace NuGet.CommandLine.Test
                 var result = CommandRunner.Run(
                     testInfo.NuGetExePath,
                     testInfo.WorkingPath,
-                    string.Join(" ", args.Select(a => $"\"{a}\"")),
-                    true);
+                    string.Join(" ", args.Select(a => $"\"{a}\"")));
 
                 // Assert
                 var expectedError = "was not found";
@@ -191,8 +186,7 @@ namespace NuGet.CommandLine.Test
                 var result = CommandRunner.Run(
                     testInfo.NuGetExePath,
                     testInfo.WorkingPath,
-                    string.Join(" ", args.Select(a => $"\"{a}\"")),
-                    true);
+                    string.Join(" ", args.Select(a => $"\"{a}\"")));
 
                 // Assert
                 var expectedOutput = "was successfully added";
@@ -231,8 +225,7 @@ namespace NuGet.CommandLine.Test
                 var result = CommandRunner.Run(
                     testInfo.NuGetExePath,
                     testInfo.WorkingPath,
-                    string.Join(" ", args.Select(a => $"\"{a}\"")),
-                    true);
+                    string.Join(" ", args.Select(a => $"\"{a}\"")));
 
                 // Assert
                 var expectedOutput = "was successfully added";
@@ -272,8 +265,7 @@ namespace NuGet.CommandLine.Test
                 var result = CommandRunner.Run(
                     testInfo.NuGetExePath,
                     testInfo.WorkingPath,
-                    string.Join(" ", args.Select(a => $"\"{a}\"")),
-                    true);
+                    string.Join(" ", args.Select(a => $"\"{a}\"")));
 
                 // Assert
                 var expectedOutput = "was successfully added";
@@ -313,8 +305,7 @@ namespace NuGet.CommandLine.Test
                 var result = CommandRunner.Run(
                     testInfo.NuGetExePath,
                     testInfo.WorkingPath,
-                    string.Join(" ", args.Select(a => $"\"{a}\"")),
-                    true);
+                    string.Join(" ", args.Select(a => $"\"{a}\"")));
 
                 // Assert
                 var expectedOutput = "was successfully added";
@@ -357,8 +348,7 @@ namespace NuGet.CommandLine.Test
                 var result = CommandRunner.Run(
                     testInfo.NuGetExePath,
                     testInfo.WorkingPath,
-                    string.Join(" ", args.Select(a => $"\"{a}\"")),
-                    true);
+                    string.Join(" ", args.Select(a => $"\"{a}\"")));
 
                 // Assert
                 var expectedOutput = "was successfully added";
@@ -389,8 +379,7 @@ namespace NuGet.CommandLine.Test
                 var result = CommandRunner.Run(
                     testInfo.NuGetExePath,
                     testInfo.WorkingPath,
-                    string.Join(" ", args.Select(a => $"\"{a}\"")),
-                    true);
+                    string.Join(" ", args.Select(a => $"\"{a}\"")));
 
                 // Assert
                 var expectedOutput = "There are no client certificates";
@@ -416,8 +405,7 @@ namespace NuGet.CommandLine.Test
                 var result = CommandRunner.Run(
                     testInfo.NuGetExePath,
                     testInfo.WorkingPath,
-                    string.Join(" ", args.Select(a => $"\"{a}\"")),
-                    true);
+                    string.Join(" ", args.Select(a => $"\"{a}\"")));
 
                 // Assert
                 var expectedOutput = "There are no client certificates";
@@ -449,8 +437,7 @@ namespace NuGet.CommandLine.Test
                 var result = CommandRunner.Run(
                     testInfo.NuGetExePath,
                     testInfo.WorkingPath,
-                    string.Join(" ", args.Select(a => $"\"{a}\"")),
-                    true);
+                    string.Join(" ", args.Select(a => $"\"{a}\"")));
 
                 // Assert
                 var expectedOutput = $"{testInfo.PackageSourceName} [fileCert]";
@@ -478,8 +465,7 @@ namespace NuGet.CommandLine.Test
                 var result = CommandRunner.Run(
                     testInfo.NuGetExePath,
                     testInfo.WorkingPath,
-                    string.Join(" ", args.Select(a => $"\"{a}\"")),
-                    true);
+                    string.Join(" ", args.Select(a => $"\"{a}\"")));
 
                 // Assert
                 var expectedOutput = "There are no client certificates configured for";
@@ -514,8 +500,7 @@ namespace NuGet.CommandLine.Test
                 var result = CommandRunner.Run(
                     testInfo.NuGetExePath,
                     testInfo.WorkingPath,
-                    string.Join(" ", args.Select(a => $"\"{a}\"")),
-                    true);
+                    string.Join(" ", args.Select(a => $"\"{a}\"")));
 
                 // Assert
                 var expectedOutput = "was successfully removed";
@@ -549,8 +534,7 @@ namespace NuGet.CommandLine.Test
                 var result = CommandRunner.Run(
                     testInfo.NuGetExePath,
                     testInfo.WorkingPath,
-                    string.Join(" ", args.Select(a => $"\"{a}\"")),
-                    true);
+                    string.Join(" ", args.Select(a => $"\"{a}\"")));
 
                 // Assert
                 var expectedError = "Invalid combination of arguments";
@@ -582,8 +566,7 @@ namespace NuGet.CommandLine.Test
                 var result = CommandRunner.Run(
                     testInfo.NuGetExePath,
                     testInfo.WorkingPath,
-                    string.Join(" ", args.Select(a => $"\"{a}\"")),
-                    true);
+                    string.Join(" ", args.Select(a => $"\"{a}\"")));
 
                 // Assert
                 var expectedError = "does not exist";
@@ -611,8 +594,7 @@ namespace NuGet.CommandLine.Test
                 var result = CommandRunner.Run(
                     testInfo.NuGetExePath,
                     testInfo.WorkingPath,
-                    string.Join(" ", args.Select(a => $"\"{a}\"")),
-                    true);
+                    string.Join(" ", args.Select(a => $"\"{a}\"")));
 
                 // Assert
                 var expectedError = "Invalid combination of arguments";
@@ -653,8 +635,7 @@ namespace NuGet.CommandLine.Test
                 var result = CommandRunner.Run(
                     testInfo.NuGetExePath,
                     testInfo.WorkingPath,
-                    string.Join(" ", args.Select(a => $"\"{a}\"")),
-                    true);
+                    string.Join(" ", args.Select(a => $"\"{a}\"")));
 
                 // Assert
                 var expectedOutput = "was successfully updated";
@@ -707,8 +688,7 @@ namespace NuGet.CommandLine.Test
                 var result = CommandRunner.Run(
                     testInfo.NuGetExePath,
                     testInfo.WorkingPath,
-                    string.Join(" ", args.Select(a => $"\"{a}\"")),
-                    true);
+                    string.Join(" ", args.Select(a => $"\"{a}\"")));
 
                 // Assert
                 var expectedOutput = "was successfully updated";
@@ -755,8 +735,7 @@ namespace NuGet.CommandLine.Test
                 var result = CommandRunner.Run(
                     testInfo.NuGetExePath,
                     testInfo.WorkingPath,
-                    string.Join(" ", args.Select(a => $"\"{a}\"")),
-                    true);
+                    string.Join(" ", args.Select(a => $"\"{a}\"")));
 
                 // Assert
                 var expectedError = "A fileCert path specified a file that does not exist";
@@ -791,8 +770,7 @@ namespace NuGet.CommandLine.Test
                 var result = CommandRunner.Run(
                     testInfo.NuGetExePath,
                     testInfo.WorkingPath,
-                    string.Join(" ", args.Select(a => $"\"{a}\"")),
-                    true);
+                    string.Join(" ", args.Select(a => $"\"{a}\"")));
 
                 // Assert
                 var expectedError = "does not exist";
@@ -839,8 +817,7 @@ namespace NuGet.CommandLine.Test
                 var result = CommandRunner.Run(
                     testInfo.NuGetExePath,
                     testInfo.WorkingPath,
-                    string.Join(" ", args.Select(a => $"\"{a}\"")),
-                    true);
+                    string.Join(" ", args.Select(a => $"\"{a}\"")));
 
                 // Assert
                 var expectedError = "was not found";

@@ -10,6 +10,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using NuGet.Common;
+using NuGet.DependencyResolver;
 using NuGet.LibraryModel;
 using NuGet.Packaging.Core;
 using NuGet.Protocol.Model;
@@ -257,11 +258,11 @@ namespace NuGet.Commands.Restore.Utility
 
             foreach (RestoreTargetGraph graph in _targetGraphs)
             {
-                LibraryIdentity? currentProject = graph.Graphs.FirstOrDefault()?.Item.Key;
+                GraphItem<RemoteResolveResult>? currentProject = graph.Graphs.FirstOrDefault()?.Item;
 
-                foreach (ResolvedDependencyKey resolvedDependency in graph.ResolvedDependencies.Where(dep => dep.Child.Type == LibraryType.Package))
+                foreach (GraphItem<RemoteResolveResult>? node in graph.Flattened.Where(r => r.Key.Type == LibraryType.Package))
                 {
-                    LibraryIdentity package = resolvedDependency.Child;
+                    LibraryIdentity package = node.Key;
                     List<PackageVulnerabilityInfo>? knownVulnerabilitiesForPackage = GetKnownVulnerabilities(package.Name, package.Version, knownVulnerabilities);
 
                     if (knownVulnerabilitiesForPackage?.Count > 0)
@@ -298,7 +299,8 @@ namespace NuGet.Commands.Restore.Utility
                                 affectedGraphs.Add(graph.TargetGraphName);
                             }
 
-                            if (!auditInfo.IsDirect && resolvedDependency.Parent == currentProject)
+                            if (!auditInfo.IsDirect &&
+                                currentProject?.Data.Dependencies.Any(d => string.Equals(d.Name, packageIdentity.Id, StringComparison.OrdinalIgnoreCase)) == true)
                             {
                                 auditInfo.IsDirect = true;
                             }

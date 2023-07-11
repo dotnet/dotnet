@@ -18,7 +18,7 @@ namespace NuGet.Packaging.Core
         /// Default version range comparer.
         /// </summary>
         public PackageIdentityComparer()
-            : this(new VersionComparer(VersionComparison.Default))
+            : this(VersionComparer.Default)
         {
         }
 
@@ -26,7 +26,7 @@ namespace NuGet.Packaging.Core
         /// Compare versions with a specific VersionComparison
         /// </summary>
         public PackageIdentityComparer(VersionComparison versionComparison)
-            : this(new VersionComparer(versionComparison))
+            : this(VersionComparer.Get(versionComparison))
         {
         }
 
@@ -47,6 +47,22 @@ namespace NuGet.Packaging.Core
         /// Default comparer that compares on the id, version, and version release labels.
         /// </summary>
         public static PackageIdentityComparer Default { get; } = new PackageIdentityComparer();
+
+        internal static PackageIdentityComparer Version { get; } = new PackageIdentityComparer(VersionComparison.Version);
+        internal static PackageIdentityComparer VersionRelease { get; } = new PackageIdentityComparer(VersionComparison.VersionRelease);
+        internal static PackageIdentityComparer VersionReleaseMetadata { get; } = new PackageIdentityComparer(VersionComparison.VersionReleaseMetadata);
+
+        internal static PackageIdentityComparer Get(VersionComparison versionComparison)
+        {
+            return versionComparison switch
+            {
+                VersionComparison.Default => Default,
+                VersionComparison.Version => Version,
+                VersionComparison.VersionRelease => VersionRelease,
+                VersionComparison.VersionReleaseMetadata => VersionReleaseMetadata,
+                _ => new PackageIdentityComparer(versionComparison),
+            };
+        }
 
         /// <summary>
         /// True if the package identities are the same when ignoring build metadata.

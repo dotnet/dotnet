@@ -62,7 +62,6 @@ namespace NuGet.CommandLine.FuncTest.Commands
                         nuget,
                         packageDirectory,
                         $"push {sourcePath} -Source {server.Uri}push -Timeout 110",
-                        waitForExit: true,
                         timeOutInMilliseconds: 120 * 1000); // 120 seconds
                 }
                 // Assert
@@ -106,7 +105,6 @@ namespace NuGet.CommandLine.FuncTest.Commands
                         nuget,
                         packageDirectory,
                         $"push {sourcePath} -Source {server.Uri}push -Timeout 1",
-                        waitForExit: true,
                         timeOutInMilliseconds: 20 * 1000); // 20 seconds
                 }
 
@@ -147,7 +145,6 @@ namespace NuGet.CommandLine.FuncTest.Commands
                         nuget,
                         packageDirectory,
                         $"push {sourcePath} -Source {server.Uri}push -Timeout 110",
-                        waitForExit: true,
                         timeOutInMilliseconds: 120 * 1000); // 120 seconds
 
                     //Run again so that it will be a duplicate push.
@@ -155,14 +152,12 @@ namespace NuGet.CommandLine.FuncTest.Commands
                         nuget,
                         packageDirectory,
                         $"push {sourcePath} -Source {server.Uri}push -Timeout 110",
-                        waitForExit: true,
                         timeOutInMilliseconds: 120 * 1000); // 120 seconds
 
                     result3 = CommandRunner.Run(
                        nuget,
                        packageDirectory,
                        $"push {sourcePath2} -Source {server.Uri}push -Timeout 110",
-                       waitForExit: true,
                        timeOutInMilliseconds: 120 * 1000); // 120 seconds
                 }
 
@@ -213,7 +208,6 @@ namespace NuGet.CommandLine.FuncTest.Commands
                         nuget,
                         packageDirectory,
                         $"push {sourcePath} -Source {server.Uri}push -Timeout 110 -SkipDuplicate",
-                        waitForExit: true,
                         timeOutInMilliseconds: 120 * 1000); // 120 seconds
 
                     //Run again so that it will be a duplicate push but use the option to skip duplicate packages.
@@ -221,7 +215,6 @@ namespace NuGet.CommandLine.FuncTest.Commands
                         nuget,
                         packageDirectory,
                         $"push {sourcePath} -Source {server.Uri}push -Timeout 110 -SkipDuplicate",
-                        waitForExit: true,
                         timeOutInMilliseconds: 120 * 1000); // 120 seconds
 
                     //Third run with a different package.
@@ -229,7 +222,6 @@ namespace NuGet.CommandLine.FuncTest.Commands
                         nuget,
                         packageDirectory,
                         $"push {sourcePath2} -Source {server.Uri}push -Timeout 110 -SkipDuplicate",
-                        waitForExit: true,
                         timeOutInMilliseconds: 120 * 1000); // 120 seconds
                 }
 
@@ -275,7 +267,6 @@ namespace NuGet.CommandLine.FuncTest.Commands
                         nuget,
                         packageDirectory,
                         $"push {snupkgToPush} -Source {sourceName} -Timeout 110",
-                        waitForExit: true,
                         timeOutInMilliseconds: 120000); // 120 seconds
                 }
 
@@ -311,7 +302,6 @@ namespace NuGet.CommandLine.FuncTest.Commands
                         nuget,
                         packageDirectory,
                         $"push {snupkgToPush} -Source {sourceName} -Timeout 110",
-                        waitForExit: true,
                         timeOutInMilliseconds: 120000); // 120 seconds
                 }
 
@@ -345,7 +335,6 @@ namespace NuGet.CommandLine.FuncTest.Commands
                         nuget,
                         packageDirectory,
                         $"push {nupkgToPush} -Source {sourceName} -Timeout 110",
-                        waitForExit: true,
                         timeOutInMilliseconds: 120000); // 120 seconds
                 }
 
@@ -379,7 +368,6 @@ namespace NuGet.CommandLine.FuncTest.Commands
                         nuget,
                         packageDirectory,
                         $"push {nupkgToPush} -Source {sourceName} -Timeout 110",
-                        waitForExit: true,
                         timeOutInMilliseconds: 120000); // 120 seconds
                 }
 
@@ -423,7 +411,6 @@ namespace NuGet.CommandLine.FuncTest.Commands
                         nuget,
                         packageDirectory,
                         $"push {nupkgFullPath} -Source {sourceName} -Timeout 110",
-                        waitForExit: true,
                         timeOutInMilliseconds: 120000); // 120 seconds
                 }
 
@@ -464,7 +451,6 @@ namespace NuGet.CommandLine.FuncTest.Commands
                         nuget,
                         packageDirectory,
                         $"push {pushArgument} -Source {sourceName} -Timeout 110",
-                        waitForExit: true,
                         timeOutInMilliseconds: 120000); // 120 seconds
                 }
 
@@ -516,7 +502,6 @@ namespace NuGet.CommandLine.FuncTest.Commands
                         nuget,
                         packageDirectory,
                         $"push {nupkgFullPath} -Source {sourceName} -Timeout 110",
-                        waitForExit: true,
                         timeOutInMilliseconds: 120000); // 120 seconds
 
                     //Second run with SkipDuplicate
@@ -524,7 +509,6 @@ namespace NuGet.CommandLine.FuncTest.Commands
                         nuget,
                         packageDirectory,
                         $"push {nupkgFullPath} -Source {sourceName} -Timeout 110 -SkipDuplicate",
-                        waitForExit: true,
                         timeOutInMilliseconds: 120000); // 120 seconds
                 }
 
@@ -587,7 +571,6 @@ namespace NuGet.CommandLine.FuncTest.Commands
                         nuget,
                         packageDirectory,
                         $"push {wildcardPush} -Source {sourceName} -SymbolSource {sourceName} -Timeout 110",
-                        waitForExit: true,
                         timeOutInMilliseconds: 120000); // 120 seconds
                 }
 
@@ -651,7 +634,6 @@ namespace NuGet.CommandLine.FuncTest.Commands
                         nuget,
                         packageDirectory,
                         $"push {wildcardPush} -Source {sourceName} -Timeout 110 -SkipDuplicate",
-                        waitForExit: true,
                         timeOutInMilliseconds: 120000); // 120 seconds
                 }
 
@@ -711,7 +693,6 @@ namespace NuGet.CommandLine.FuncTest.Commands
                         nuget,
                         packageDirectory,
                         $"push {wildcardPush} -Source {sourceName} -Timeout 110",
-                        waitForExit: true,
                         timeOutInMilliseconds: 120000); // 120 seconds
                 }
 
@@ -774,7 +755,6 @@ namespace NuGet.CommandLine.FuncTest.Commands
                         nuget,
                         packageDirectory,
                         $"push {wildcardPush} -Source {sourceName} -Timeout 110 -SkipDuplicate",
-                        waitForExit: true,
                         timeOutInMilliseconds: 120000); // 120 seconds
                 }
                 // Assert
@@ -827,14 +807,12 @@ namespace NuGet.CommandLine.FuncTest.Commands
                         nuget,
                         packageDirectory,
                         $"push {snupkgFileName} -Source {sourceName} -Timeout 110 -Verbosity detailed",
-                        waitForExit: true,
                         timeOutInMilliseconds: 120000); // 120 seconds
 
                     result2 = CommandRunner.Run(
                         nuget,
                         packageDirectory,
                         $"push {snupkgFileName} -Source {sourceName} -Timeout 110 -SkipDuplicate -Verbosity detailed",
-                        waitForExit: true,
                         timeOutInMilliseconds: 120000); // 120 seconds
                 }
 
@@ -867,7 +845,6 @@ namespace NuGet.CommandLine.FuncTest.Commands
                 nuget,
                 packageDirectory,
                 $"push {snupkgFileName} -Source {sourceName} -Timeout 110 -Verbosity detailed",
-                waitForExit: true,
                 timeOutInMilliseconds: 120000); // 120 seconds
 
             // Assert

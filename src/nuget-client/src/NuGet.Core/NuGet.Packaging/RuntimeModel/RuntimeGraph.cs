@@ -8,98 +8,159 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using NuGet.Shared;
 
+#nullable enable
+
 namespace NuGet.RuntimeModel
 {
-    public class RuntimeGraph : IEquatable<RuntimeGraph>
+    public sealed class RuntimeGraph : IEquatable<RuntimeGraph>
     {
-        private readonly ConcurrentDictionary<RuntimeCompatKey, bool> _areCompatible
-            = new ConcurrentDictionary<RuntimeCompatKey, bool>();
+        private static readonly ReadOnlyDictionary<string, RuntimeDescription> EmptyRuntimes = new(new Dictionary<string, RuntimeDescription>());
+        private static readonly ReadOnlyDictionary<string, CompatibilityProfile> EmptySupports = new(new Dictionary<string, CompatibilityProfile>());
 
-        private readonly ConcurrentDictionary<string, HashSet<string>> _expandCache
-            = new ConcurrentDictionary<string, HashSet<string>>(StringComparer.Ordinal);
+        // These fields are null when IsEmpty is true
+        private readonly ConcurrentDictionary<RuntimeCompatKey, bool>? _areCompatible;
+        private readonly ConcurrentDictionary<string, HashSet<string>>? _expandCache;
+        private readonly ConcurrentDictionary<RuntimeDependencyKey, List<RuntimePackageDependency>>? _dependencyCache;
 
-        private readonly ConcurrentDictionary<RuntimeDependencyKey, List<RuntimePackageDependency>> _dependencyCache
-            = new ConcurrentDictionary<RuntimeDependencyKey, List<RuntimePackageDependency>>();
-
-        private HashSet<string> _packagesWithDependencies;
+        private HashSet<string>? _packagesWithDependencies;
 
         public static readonly string RuntimeGraphFileName = "runtime.json";
 
-        public static readonly RuntimeGraph Empty = new RuntimeGraph();
+        /// <summary>
+        /// Gets a singleton, immutable, empty instance of <see cref="RuntimeGraph"/>.
+        /// </summary>
+        public static readonly RuntimeGraph Empty = new();
 
+        /// <summary>
+        /// Gets a map of <see cref="RuntimeDescription"/> keyed by <see cref="RuntimeDescription.RuntimeIdentifier"/>.
+        /// </summary>
         public IReadOnlyDictionary<string, RuntimeDescription> Runtimes { get; }
-        public IReadOnlyDictionary<string, CompatibilityProfile> Supports { get; set; }
+
+        /// <summary>
+        /// Gets a map of <see cref="CompatibilityProfile"/> keyed by <see cref="CompatibilityProfile.Name"/>.
+        /// </summary>
+        public IReadOnlyDictionary<string, CompatibilityProfile> Supports { get; }
 
         public RuntimeGraph()
-            : this(Enumerable.Empty<RuntimeDescription>(), Enumerable.Empty<CompatibilityProfile>())
+            : this(EmptyRuntimes, EmptySupports)
         {
         }
 
         public RuntimeGraph(IEnumerable<RuntimeDescription> runtimes)
-            : this(runtimes, Enumerable.Empty<CompatibilityProfile>())
+            : this(runtimes.ToDictionary(r => r.RuntimeIdentifier), EmptySupports)
         {
         }
 
         public RuntimeGraph(IEnumerable<CompatibilityProfile> supports)
-            : this(Enumerable.Empty<RuntimeDescription>(), supports)
+            : this(EmptyRuntimes, supports.ToDictionary(r => r.Name))
         {
         }
 
         public RuntimeGraph(IEnumerable<RuntimeDescription> runtimes, IEnumerable<CompatibilityProfile> supports)
-            : this(runtimes.ToDictionary(r => r.RuntimeIdentifier), supports.ToDictionary(r => r.Name))
+            : this(
+                  runtimes.ToDictionary(r => r.RuntimeIdentifier),
+                  supports.ToDictionary(r => r.Name))
         {
         }
 
-        private RuntimeGraph(Dictionary<string, RuntimeDescription> runtimes, Dictionary<string, CompatibilityProfile> supports)
+        private RuntimeGraph(IReadOnlyDictionary<string, RuntimeDescription> runtimes, IReadOnlyDictionary<string, CompatibilityProfile> supports)
         {
-            Runtimes = new ReadOnlyDictionary<string, RuntimeDescription>(runtimes);
-            Supports = new ReadOnlyDictionary<string, CompatibilityProfile>(supports);
+            Runtimes = runtimes;
+            Supports = supports;
+
+            if (Runtimes.Count != 0 || Supports.Count != 0)
+            {
+                _areCompatible = new();
+                _expandCache = new(StringComparer.Ordinal);
+                _dependencyCache = new();
+            }
         }
+
+        internal bool IsEmpty => Runtimes.Count == 0 && Supports.Count == 0;
 
         public RuntimeGraph Clone()
         {
-            return new RuntimeGraph(Runtimes.Values.Select(r => r.Clone()), Supports.Values.Select(s => s.Clone()));
+            if (IsEmpty)
+            {
+                return this;
+            }
+
+            return new RuntimeGraph(
+                runtimes: Runtimes,
+                supports: Clone(Supports, s => s.Clone()));
+
+            static IReadOnlyDictionary<string, T> Clone<T>(IReadOnlyDictionary<string, T> source, Func<T, T> cloneFunc)
+            {
+                if (source.Count == 0)
+                {
+                    // No need to allocate anything
+                    return source;
+                }
+
+                Dictionary<string, T> clone = new(source.Count);
+
+                foreach (var pair in source.NoAllocEnumerate())
+                {
+                    clone[pair.Key] = cloneFunc(pair.Value);
+                }
+
+                return clone;
+            }
         }
 
         /// <summary>
-        /// Merges the content of the other runtime graph in to this runtime graph
+        /// Merges the content of two runtime graphs and returns the combined graph.
         /// </summary>
         /// <param name="other">The other graph to merge in to this graph</param>
         public static RuntimeGraph Merge(RuntimeGraph left, RuntimeGraph right)
         {
-            var runtimes = new Dictionary<string, RuntimeDescription>();
-            foreach (var runtime in left.Runtimes.Values)
+            if (left.IsEmpty)
             {
-                runtimes[runtime.RuntimeIdentifier] = runtime.Clone();
+                return right;
+            }
+
+            if (right.IsEmpty)
+            {
+                return left;
+            }
+
+            var runtimes = new Dictionary<string, RuntimeDescription>(capacity: left.Runtimes.Count + right.Runtimes.Count);
+
+            foreach (var pair in left.Runtimes.NoAllocEnumerate())
+            {
+                runtimes[pair.Key] = pair.Value;
             }
 
             // Merge the right-side runtimes
-            foreach (var runtime in right.Runtimes.Values)
+            foreach (var pair in right.Runtimes.NoAllocEnumerate())
             {
                 // Check if we already have the runtime defined
-                RuntimeDescription leftRuntime;
-                if (runtimes.TryGetValue(runtime.RuntimeIdentifier, out leftRuntime))
+                if (runtimes.TryGetValue(pair.Key, out RuntimeDescription? leftRuntime))
                 {
                     // Merge runtimes
-                    runtimes[runtime.RuntimeIdentifier] = RuntimeDescription.Merge(leftRuntime, runtime);
+                    runtimes[pair.Key] = RuntimeDescription.Merge(leftRuntime, pair.Value);
                 }
                 else
                 {
-                    runtimes[runtime.RuntimeIdentifier] = runtime;
+                    runtimes[pair.Key] = pair.Value;
                 }
             }
 
+            var supports = new Dictionary<string, CompatibilityProfile>(capacity: right.Supports.Count + left.Supports.Count);
+
             // Copy over the right ones
-            var supports = new Dictionary<string, CompatibilityProfile>();
-            foreach (var compatProfile in right.Supports)
+            foreach (var compatProfile in right.Supports.NoAllocEnumerate())
             {
                 supports[compatProfile.Key] = compatProfile.Value;
             }
 
             // Overwrite with non-empty profiles from left
-            foreach (var compatProfile in left.Supports.Where(p => p.Value.RestoreContexts.Count > 0))
+            foreach (var compatProfile in left.Supports.NoAllocEnumerate())
             {
-                supports[compatProfile.Key] = compatProfile.Value;
+                if (compatProfile.Value.RestoreContexts.Count > 0)
+                {
+                    supports[compatProfile.Key] = compatProfile.Value;
+                }
             }
 
             return new RuntimeGraph(runtimes, supports);
@@ -110,50 +171,52 @@ namespace NuGet.RuntimeModel
         /// </summary>
         public IEnumerable<string> ExpandRuntime(string runtime)
         {
+            if (IsEmpty)
+            {
+                return new[] { runtime };
+            }
+
             return ExpandRuntimeCached(runtime);
         }
 
         private HashSet<string> ExpandRuntimeCached(string runtime)
         {
-            return _expandCache.GetOrAdd(runtime, r => new HashSet<string>(ExpandRuntimeInternal(r), StringComparer.Ordinal));
-        }
+            return _expandCache!.GetOrAdd(runtime, r => new HashSet<string>(ExpandRuntimeInternal(r), StringComparer.Ordinal));
 
-        /// <summary>
-        /// Expand runtimes in a BFS walk. This ensures that nearest RIDs are returned first.
-        /// Ordering is important for finding the nearest runtime dependency.
-        /// </summary>
-        private IEnumerable<string> ExpandRuntimeInternal(string runtime)
-        {
-            yield return runtime;
-
-            // Try to expand the runtime based on the graph
-            var deduper = Cache<string>.RentHashSet();
-            var expansions = Cache<string>.RentList();
-            deduper.Add(runtime);
-            expansions.Add(runtime);
-            for (var i = 0; i < expansions.Count; i++)
+            // Expand runtimes in a BFS walk. This ensures that nearest RIDs are returned first.
+            // Ordering is important for finding the nearest runtime dependency.
+            IEnumerable<string> ExpandRuntimeInternal(string runtime)
             {
-                // expansions.Count will keep growing as we add items, but thats OK, we want to expand until we stop getting new items
-                RuntimeDescription desc;
-                if (Runtimes.TryGetValue(expansions[i], out desc))
+                yield return runtime;
+
+                // Try to expand the runtime based on the graph
+                var deduper = Cache<string>.RentHashSet();
+                var expansions = Cache<string>.RentList();
+                deduper.Add(runtime);
+                expansions.Add(runtime);
+                for (var i = 0; i < expansions.Count; i++)
                 {
-                    // Add the inherited runtimes to the list
-                    var inheritedRuntimes = desc.InheritedRuntimes;
-                    var count = inheritedRuntimes.Count;
-                    for (var r = 0; r < count; r++)
+                    // expansions.Count will keep growing as we add items, but that's OK, we want to expand until we stop getting new items
+                    if (Runtimes.TryGetValue(expansions[i], out RuntimeDescription? desc))
                     {
-                        var inheritedRuntime = inheritedRuntimes[r];
-                        if (deduper.Add(inheritedRuntime))
+                        // Add the inherited runtimes to the list
+                        var inheritedRuntimes = desc.InheritedRuntimes;
+                        var count = inheritedRuntimes.Count;
+                        for (var r = 0; r < count; r++)
                         {
-                            yield return inheritedRuntime;
-                            expansions.Add(inheritedRuntime);
+                            var inheritedRuntime = inheritedRuntimes[r];
+                            if (deduper.Add(inheritedRuntime))
+                            {
+                                yield return inheritedRuntime;
+                                expansions.Add(inheritedRuntime);
+                            }
                         }
                     }
                 }
-            }
 
-            Cache<string>.ReleaseHashSet(deduper);
-            Cache<string>.ReleaseList(expansions);
+                Cache<string>.ReleaseHashSet(deduper);
+                Cache<string>.ReleaseList(expansions);
+            }
         }
 
         /// <summary>
@@ -163,7 +226,7 @@ namespace NuGet.RuntimeModel
         /// <param name="provided">The value the criteria is being tested against</param>
         /// <returns>
         /// true if an asset for the runtime in <paramref name="provided" /> can be installed in a project
-        /// targetting <paramref name="criteria" />, false otherwise
+        /// targeting <paramref name="criteria" />, false otherwise
         /// </returns>
         public bool AreCompatible(string criteria, string provided)
         {
@@ -173,18 +236,28 @@ namespace NuGet.RuntimeModel
                 return true;
             }
 
+            if (IsEmpty)
+            {
+                return false;
+            }
+
             var key = new RuntimeCompatKey(criteria, provided);
 
-            return _areCompatible.GetOrAdd(key, k => AreCompatibleInternal(k));
-        }
+            return _areCompatible!.GetOrAdd(key, AreCompatibleInternal);
 
-        private bool AreCompatibleInternal(RuntimeCompatKey key)
-        {
-            return ExpandRuntimeCached(key.RuntimeName).Contains(key.Other);
+            bool AreCompatibleInternal(RuntimeCompatKey key)
+            {
+                return ExpandRuntimeCached(key.RuntimeName).Contains(key.Other);
+            }
         }
 
         public IEnumerable<RuntimePackageDependency> FindRuntimeDependencies(string runtimeName, string packageId)
         {
+            if (IsEmpty)
+            {
+                return Enumerable.Empty<RuntimePackageDependency>();
+            }
+
             if (_packagesWithDependencies == null)
             {
                 // Find all packages that have runtime dependencies and cache this index.
@@ -197,33 +270,29 @@ namespace NuGet.RuntimeModel
             {
                 var key = new RuntimeDependencyKey(runtimeName, packageId);
 
-                return _dependencyCache.GetOrAdd(key, k => FindRuntimeDependenciesInternal(k));
+                return _dependencyCache!.GetOrAdd(key, FindRuntimeDependenciesInternal);
             }
 
             return Enumerable.Empty<RuntimePackageDependency>();
-        }
 
-        /// <summary>
-        /// Find all possible dependencies for package id.
-        /// </summary>
-        private List<RuntimePackageDependency> FindRuntimeDependenciesInternal(RuntimeDependencyKey key)
-        {
-            // Find all compatible RIDs
-            foreach (var expandedRuntime in ExpandRuntimeCached(key.RuntimeName))
+            List<RuntimePackageDependency> FindRuntimeDependenciesInternal(RuntimeDependencyKey key)
             {
-                RuntimeDescription runtimeDescription;
-                if (Runtimes.TryGetValue(expandedRuntime, out runtimeDescription))
+                // Find all compatible RIDs
+                foreach (var expandedRuntime in ExpandRuntimeCached(key.RuntimeName))
                 {
-                    if (runtimeDescription.RuntimeDependencySets.TryGetValue(key.PackageId, out var dependencySet))
+                    if (Runtimes.TryGetValue(expandedRuntime, out RuntimeDescription? runtimeDescription))
                     {
-                        return dependencySet.Dependencies.Values.AsList();
+                        if (runtimeDescription.RuntimeDependencySets.TryGetValue(key.PackageId, out var dependencySet))
+                        {
+                            return dependencySet.Dependencies.Values.AsList();
+                        }
                     }
                 }
+                return new List<RuntimePackageDependency>();
             }
-            return new List<RuntimePackageDependency>();
         }
 
-        public bool Equals(RuntimeGraph other)
+        public bool Equals(RuntimeGraph? other)
         {
             // Breaking this up to ease debugging. The optimizer should be able to handle this, so don't refactor unless you have data :).
             if (other == null)
@@ -240,7 +309,7 @@ namespace NuGet.RuntimeModel
                 && Supports.OrderedEquals(other.Supports, pair => pair.Key, StringComparer.Ordinal);
         }
 
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             return Equals(obj as RuntimeGraph);
         }
@@ -260,8 +329,8 @@ namespace NuGet.RuntimeModel
         /// </summary>
         private static class Cache<T>
         {
-            [ThreadStatic] private static HashSet<T> _hashSet;
-            [ThreadStatic] private static List<T> _list;
+            [ThreadStatic] private static HashSet<T>? _hashSet;
+            [ThreadStatic] private static List<T>? _list;
 
             public static HashSet<T> RentHashSet()
             {
@@ -309,7 +378,7 @@ namespace NuGet.RuntimeModel
         /// <summary>
         /// RID + package id
         /// </summary>
-        private sealed class RuntimeDependencyKey : IEquatable<RuntimeDependencyKey>
+        private readonly struct RuntimeDependencyKey : IEquatable<RuntimeDependencyKey>
         {
             public string RuntimeName { get; }
 
@@ -341,7 +410,7 @@ namespace NuGet.RuntimeModel
         /// <summary>
         /// RID -> RID compatibility key
         /// </summary>
-        private sealed class RuntimeCompatKey : IEquatable<RuntimeCompatKey>
+        private readonly struct RuntimeCompatKey : IEquatable<RuntimeCompatKey>
         {
             public string RuntimeName { get; }
 

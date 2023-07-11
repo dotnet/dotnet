@@ -72,8 +72,7 @@ namespace NuGet.CommandLine.Test
                 var r = CommandRunner.Run(
                     nugetexe,
                     workingDirectory,
-                    "pack packageA.nuspec",
-                    waitForExit: true);
+                    "pack packageA.nuspec");
                 Assert.True(0 == r.ExitCode, r.Output + " " + r.Errors);
 
                 // Assert
@@ -151,8 +150,7 @@ namespace NuGet.CommandLine.Test
                 var r = CommandRunner.Run(
                     nugetexe,
                     workingDirectory,
-                    "pack packageA.nuspec",
-                    waitForExit: true);
+                    "pack packageA.nuspec");
                 Assert.True(0 == r.ExitCode, r.Output + " " + r.Errors);
 
                 // Assert
@@ -205,8 +203,7 @@ namespace NuGet.CommandLine.Test
                 var r = CommandRunner.Run(
                     nugetexe,
                     workingDirectory,
-                    "pack packageA.nuspec",
-                    waitForExit: true);
+                    "pack packageA.nuspec");
                 Assert.True(0 == r.ExitCode, r.Output + " " + r.Errors);
 
                 // Assert
@@ -271,8 +268,7 @@ namespace NuGet.CommandLine.Test
                 var r = CommandRunner.Run(
                     nugetexe,
                     workingDirectory,
-                    "pack packageA.nuspec",
-                    waitForExit: true);
+                    "pack packageA.nuspec");
                 Assert.True(0 == r.ExitCode, r.Output + " " + r.Errors);
 
                 // Assert
@@ -319,8 +315,7 @@ namespace NuGet.CommandLine.Test
                 var r = CommandRunner.Run(
                     nugetexe,
                     workingDirectory,
-                    "pack packageA.nuspec",
-                    waitForExit: true);
+                    "pack packageA.nuspec");
                 Assert.True(0 == r.ExitCode, r.Output + " " + r.Errors);
 
                 // Assert
@@ -381,8 +376,7 @@ namespace NuGet.CommandLine.Test
                 var r = CommandRunner.Run(
                     nugetexe,
                     workingDirectory,
-                    "pack packageA.nuspec",
-                    waitForExit: true);
+                    "pack packageA.nuspec");
                 Assert.True(0 == r.ExitCode, r.Output + " " + r.Errors);
 
                 // Assert
@@ -436,8 +430,7 @@ namespace NuGet.CommandLine.Test
                 var r = CommandRunner.Run(
                     nugetexe,
                     workingDirectory,
-                    "pack packageA.nuspec",
-                    waitForExit: true);
+                    "pack packageA.nuspec");
                 Assert.True(0 == r.ExitCode, r.Output + " " + r.Errors);
 
                 // Assert
@@ -504,8 +497,7 @@ namespace NuGet.CommandLine.Test
                 var r = CommandRunner.Run(
                     nugetexe,
                     workingDirectory,
-                    "pack packageA.nuspec -symbols -SymbolPackageFormat snupkg",
-                    waitForExit: true);
+                    "pack packageA.nuspec -symbols -SymbolPackageFormat snupkg");
                 Assert.True(0 == r.ExitCode, r.Output + " " + r.Errors);
 
                 // Assert
@@ -589,8 +581,7 @@ namespace NuGet.CommandLine.Test
                 var r = CommandRunner.Run(
                     nugetexe,
                     workingDirectory,
-                    "pack packageA.nuspec -symbols -SymbolPackageFormat snupkg",
-                    waitForExit: true);
+                    "pack packageA.nuspec -symbols -SymbolPackageFormat snupkg");
                 Assert.True(r.Success, r.AllOutput);
 
                 // Assert
@@ -672,8 +663,7 @@ namespace NuGet.CommandLine.Test
                 var r = CommandRunner.Run(
                     nugetexe,
                     workingDirectory,
-                    "pack packageA.nuspec -symbols -SymbolPackageFormat snupkg",
-                    waitForExit: true);
+                    "pack packageA.nuspec -symbols -SymbolPackageFormat snupkg");
                 Assert.True(0 == r.ExitCode, r.Output + " " + r.Errors);
 
                 // Assert
@@ -751,8 +741,7 @@ namespace NuGet.CommandLine.Test
                 var r = CommandRunner.Run(
                     nugetexe,
                     workingDirectory,
-                    "pack packageA.nuspec",
-                    waitForExit: true);
+                    "pack packageA.nuspec");
                 Assert.True(0 == r.ExitCode, r.Output + " " + r.Errors);
 
                 // Assert
@@ -870,8 +859,7 @@ namespace Proj2
                 var r = CommandRunner.Run(
                     nugetexe,
                     proj2Directory,
-                    "pack proj2.csproj -build -IncludeReferencedProjects",
-                    waitForExit: true);
+                    "pack proj2.csproj -build -IncludeReferencedProjects");
                 Assert.True(0 == r.ExitCode, r.Output + " " + r.Errors);
 
                 // Assert
@@ -961,7 +949,6 @@ namespace Proj1
                     nugetexe,
                     proj1Directory,
                     $"restore {project1Path}",
-                    waitForExit: true,
                     environmentVariables: environmentVariables);
                 Assert.True(t.Success, t.AllOutput);
 
@@ -970,7 +957,6 @@ namespace Proj1
                     nugetexe,
                     proj1Directory,
                     "pack proj1.csproj -build ",
-                    waitForExit: true,
                     environmentVariables: environmentVariables);
 
                 // Assert
@@ -1069,16 +1055,14 @@ namespace Proj1
                 var t = CommandRunner.Run(
                     nugetexe,
                     proj1Directory,
-                    "restore packages.config -PackagesDirectory " + packagesDirectory,
-                    waitForExit: true);
+                    "restore packages.config -PackagesDirectory " + packagesDirectory);
                 Assert.True(t.Success, t.AllOutput);
 
                 // Act
                 var r = CommandRunner.Run(
                     nugetexe,
                     proj1Directory,
-                    "pack proj1.csproj -build ",
-                    waitForExit: true);
+                    "pack proj1.csproj -build ");
                 Assert.True(0 == r.ExitCode, r.Output + " " + r.Errors);
 
                 // Assert
@@ -1172,8 +1156,7 @@ namespace Proj2
                 var r = CommandRunner.Run(
                     nugetexe,
                     proj2Directory,
-                    $"pack proj2.csproj -build -IncludeReferencedProjects -symbols -SymbolPackageFormat {extension}",
-                    waitForExit: true);
+                    $"pack proj2.csproj -build -IncludeReferencedProjects -symbols -SymbolPackageFormat {extension}");
                 Assert.True(0 == r.ExitCode, r.Output + " " + r.Errors);
 
                 // Assert
@@ -1246,8 +1229,7 @@ namespace Proj2
                 var result = CommandRunner.Run(
                     nugetexe,
                     projDirectory,
-                    $"pack A.csproj -build -symbols -SymbolPackageFormat {extension}",
-                    waitForExit: true);
+                    $"pack A.csproj -build -symbols -SymbolPackageFormat {extension}");
                 Assert.True(result.ExitCode == 0, result.Output + " " + result.Errors);
 
                 // Assert
@@ -1318,8 +1300,7 @@ public class B
                 var result = CommandRunner.Run(
                     nugetexe,
                     projDirectory,
-                    $"pack A.csproj -build -symbols -SymbolPackageFormat {extension}",
-                    waitForExit: true);
+                    $"pack A.csproj -build -symbols -SymbolPackageFormat {extension}");
                 Assert.True(result.ExitCode == 0, result.Output + " " + result.Errors);
 
                 // Assert
@@ -1389,8 +1370,7 @@ public class B
                 var result = CommandRunner.Run(
                     nugetexe,
                     projDirectory,
-                    "pack A.csproj -build",
-                    waitForExit: true);
+                    "pack A.csproj -build");
                 Assert.True(result.ExitCode == 0, result.Output + " " + result.Errors);
 
                 // Assert
@@ -1486,8 +1466,7 @@ public class B
                 var r = CommandRunner.Run(
                     nugetexe,
                     proj1Directory,
-                    "pack proj1.csproj -build -IncludeReferencedProjects",
-                    waitForExit: true);
+                    "pack proj1.csproj -build -IncludeReferencedProjects");
                 Assert.True(0 == r.ExitCode, r.Output + " " + r.Errors);
 
                 // Assert
@@ -1599,8 +1578,7 @@ public class B
                 var r = CommandRunner.Run(
                     nugetexe,
                     proj1Directory,
-                    "pack proj1.csproj -build -IncludeReferencedProjects",
-                    waitForExit: true);
+                    "pack proj1.csproj -build -IncludeReferencedProjects");
                 Assert.True(0 == r.ExitCode, r.Output + " " + r.Errors);
 
                 Assert.Contains(string.Format(NuGetResources.ProjectJsonPack_Deprecated, "proj2"), r.Output);
@@ -1713,8 +1691,7 @@ public class B
                 var r = CommandRunner.Run(
                     nugetexe,
                     proj1Directory,
-                    $@"pack proj1.csproj -build -IncludeReferencedProjects  -MSBuildVersion {version}",
-                    waitForExit: true);
+                    $@"pack proj1.csproj -build -IncludeReferencedProjects  -MSBuildVersion {version}");
                 Assert.True(0 == r.ExitCode, r.Output + " " + r.Errors);
 
                 // Assert
@@ -1818,8 +1795,7 @@ public class B
                 var r = CommandRunner.Run(
                     nugetexe,
                     proj1Directory,
-                    $@"pack proj1.csproj -build -IncludeReferencedProjects  -MSBuildVersion 15.0",
-                    waitForExit: true);
+                    $@"pack proj1.csproj -build -IncludeReferencedProjects  -MSBuildVersion 15.0");
                 Assert.True(0 == r.ExitCode, r.Output + " " + r.Errors);
 
                 // Assert
@@ -1933,8 +1909,7 @@ public class B
                 var r = CommandRunner.Run(
                     nugetexe,
                     proj1Directory,
-                    $@"pack proj1.csproj -build -IncludeReferencedProjects  -MSBuildVersion {version}",
-                    waitForExit: true);
+                    $@"pack proj1.csproj -build -IncludeReferencedProjects  -MSBuildVersion {version}");
                 Assert.True(0 == r.ExitCode, r.Output + " " + r.Errors);
 
                 // Assert
@@ -2044,8 +2019,7 @@ public class B
                 var r = CommandRunner.Run(
                     nugetexe,
                     proj1Directory,
-                    $@"pack proj1.csproj -build -IncludeReferencedProjects  -MSBuildVersion 15.0",
-                    waitForExit: true);
+                    $@"pack proj1.csproj -build -IncludeReferencedProjects  -MSBuildVersion 15.0");
                 Assert.True(0 == r.ExitCode, r.Output + " " + r.Errors);
 
                 // Assert
@@ -2158,8 +2132,7 @@ public class B
                 var r = CommandRunner.Run(
                     nugetexe,
                     proj1Directory,
-                    "pack proj1.csproj -build -IncludeReferencedProjects -Properties prefix=" + prefixTokenValue,
-                    waitForExit: true);
+                    "pack proj1.csproj -build -IncludeReferencedProjects -Properties prefix=" + prefixTokenValue);
                 Assert.True(0 == r.ExitCode, r.Output + " " + r.Errors);
 
                 // Assert
@@ -2195,7 +2168,7 @@ public class B
                 var projectDirectory = Path.Combine(workingDirectory, "Foo");
 
                 // Act
-                var r = CommandRunner.Run(nugetexe, projectDirectory, "pack Foo.csproj -build", waitForExit: true);
+                var r = CommandRunner.Run(nugetexe, projectDirectory, "pack Foo.csproj -build");
 
                 // The assembly version was used, not the informational version
                 var outputPackageFileName = Path.Combine(projectDirectory, $"Foo.{version}.nupkg");
@@ -2223,7 +2196,7 @@ public class B
                 var projectDirectory = Path.Combine(workingDirectory, "Foo");
 
                 // Act
-                var r = CommandRunner.Run(nugetexe, projectDirectory, "pack Foo.csproj -build", waitForExit: true);
+                var r = CommandRunner.Run(nugetexe, projectDirectory, "pack Foo.csproj -build");
 
                 // The informational version without the build metadata part was used
                 var outputPackageFileName = Path.Combine(projectDirectory, $"Foo.{semverVersion}.nupkg");
@@ -2401,8 +2374,7 @@ namespace " + projectName + @"
                 var r = CommandRunner.Run(
                     nugetexe,
                     proj1Directory,
-                    "pack proj1.csproj -build -IncludeReferencedProjects",
-                    waitForExit: true);
+                    "pack proj1.csproj -build -IncludeReferencedProjects");
                 Assert.True(0 == r.ExitCode, r.Output + " " + r.Errors);
 
                 // Assert
@@ -2464,8 +2436,7 @@ namespace " + projectName + @"
                 var commandRunner = CommandRunner.Run(
                     Util.GetNuGetExePath(),
                     workingDirectory,
-                    "pack packageA.nuspec -InstallPackageToOutputPath",
-                    waitForExit: true);
+                    "pack packageA.nuspec -InstallPackageToOutputPath");
 
                 // Assert
 
@@ -2537,8 +2508,7 @@ namespace " + projectName + @"
                 var commandRunner = CommandRunner.Run(
                     Util.GetNuGetExePath(),
                     workingDirectory,
-                    arguments,
-                    waitForExit: true);
+                    arguments);
 
                 // Assert
 
@@ -2639,8 +2609,7 @@ namespace " + projectName + @"
                 var commandRunner = CommandRunner.Run(
                     Util.GetNuGetExePath(),
                     workingDirectory,
-                    "@" + responseFilePath,
-                    waitForExit: true);
+                    "@" + responseFilePath);
 
                 // Assert
 
@@ -2703,8 +2672,7 @@ namespace " + projectName + @"
                 var r = CommandRunner.Run(
                     nugetexe,
                     proj1Directory,
-                    $"pack proj1.csproj -build -IncludeReferencedProjects -outputDirectory \"{outputDirectory}\"",
-                    waitForExit: true);
+                    $"pack proj1.csproj -build -IncludeReferencedProjects -outputDirectory \"{outputDirectory}\"");
 
                 Assert.True(0 == r.ExitCode, r.Output + Environment.NewLine + r.Errors);
 
@@ -2753,8 +2721,7 @@ namespace " + projectName + @"
                 var r = CommandRunner.Run(
                     nugetexe,
                     proj1Directory,
-                    "pack proj1.csproj -build -IncludeReferencedProjects",
-                    waitForExit: true);
+                    "pack proj1.csproj -build -IncludeReferencedProjects");
                 Assert.True(0 == r.ExitCode, r.Output + " " + r.Errors);
 
                 // Assert
@@ -2796,8 +2763,7 @@ namespace " + projectName + @"
                 var r = CommandRunner.Run(
                     nugetexe,
                     proj1Directory,
-                    "pack proj1.csproj -build -IncludeReferencedProjects",
-                    waitForExit: true);
+                    "pack proj1.csproj -build -IncludeReferencedProjects");
                 Assert.True(0 == r.ExitCode, r.Output + " " + r.Errors);
 
                 // Assert
@@ -2918,15 +2884,13 @@ namespace Proj2
                 var r = CommandRunner.Run(
                     msbuild,
                     proj2Directory,
-                    "proj2.csproj /p:Config=Release",
-                    waitForExit: true);
+                    "proj2.csproj /p:Config=Release");
 
                 // Act
                 r = CommandRunner.Run(
                     nugetexe,
                     proj2Directory,
-                    "pack proj2.csproj -p Config=Release",
-                    waitForExit: true);
+                    "pack proj2.csproj -p Config=Release");
                 Assert.True(0 == r.ExitCode, r.Output + " " + r.Errors);
 
                 // Assert
@@ -3040,8 +3004,7 @@ namespace Proj2
                 var r = CommandRunner.Run(
                     nugetexe,
                     proj2Directory,
-                    "pack proj2.csproj -build -IncludeReferencedProjects -p Config=Release",
-                    waitForExit: true);
+                    "pack proj2.csproj -build -IncludeReferencedProjects -p Config=Release");
                 Assert.True(0 == r.ExitCode, r.Output + " " + r.Errors);
 
                 // Assert
@@ -3100,8 +3063,7 @@ namespace Proj2
                 var r = CommandRunner.Run(
                     nugetexe,
                     projDirectory,
-                    "pack package.nuspec",
-                    waitForExit: true);
+                    "pack package.nuspec");
 
                 Assert.True(0 == r.ExitCode, r.Output + " " + r.Errors);
 
@@ -3190,8 +3152,7 @@ namespace Proj1
                 var r = CommandRunner.Run(
                     nugetexe,
                     proj1Directory,
-                    "pack proj1.csproj -build",
-                    waitForExit: true);
+                    "pack proj1.csproj -build");
                 Assert.True(0 == r.ExitCode, r.Output + " " + r.Errors);
 
                 // Assert
@@ -3277,8 +3238,7 @@ namespace Proj1
                 var r = CommandRunner.Run(
                     nugetexe,
                     proj1Directory,
-                    "pack proj1.csproj -build",
-                    waitForExit: true);
+                    "pack proj1.csproj -build");
                 Assert.True(0 == r.ExitCode, r.Output + " " + r.Errors);
 
                 // Assert
@@ -3396,8 +3356,7 @@ namespace Proj1
                 var r = CommandRunner.Run(
                     nugetexe,
                     proj1Directory,
-                    "pack proj1.csproj -build -IncludeReferencedProjects",
-                    waitForExit: true);
+                    "pack proj1.csproj -build -IncludeReferencedProjects");
                 Assert.True(0 == r.ExitCode, r.Output + " " + r.Errors);
 
                 // Assert
@@ -3511,8 +3470,7 @@ namespace Proj1
                 var r = CommandRunner.Run(
                     nugetexe,
                     proj1Directory,
-                    "pack proj1.csproj -build -IncludeReferencedProjects",
-                    waitForExit: true);
+                    "pack proj1.csproj -build -IncludeReferencedProjects");
                 Assert.True(0 == r.ExitCode, r.Output + " " + r.Errors);
 
                 // Assert
@@ -3618,15 +3576,13 @@ namespace Proj1
                 var r = CommandRunner.Run(
                     msbuild,
                     proj1Directory,
-                    "proj1.csproj /p:Config=Release",
-                    waitForExit: true);
+                    "proj1.csproj /p:Config=Release");
 
                 // Act
                 r = CommandRunner.Run(
                     nugetexe,
                     proj1Directory,
-                    "pack proj1.nuspec",
-                    waitForExit: true);
+                    "pack proj1.nuspec");
                 Assert.True(0 == r.ExitCode, r.Output + " " + r.Errors);
 
                 // Assert
@@ -3735,8 +3691,7 @@ namespace Proj2
                 var r = CommandRunner.Run(
                     nugetexe,
                     proj2Directory,
-                    $@"pack proj2.csproj -build -IncludeReferencedProjects -p Config=Release -msbuildversion 14",
-                    waitForExit: true);
+                    $@"pack proj2.csproj -build -IncludeReferencedProjects -p Config=Release -msbuildversion 14");
 
                 Assert.True(0 == r.ExitCode, r.Output + " " + r.Errors);
 
@@ -3860,8 +3815,7 @@ namespace Proj2
                 var r = CommandRunner.Run(
                     nugetexe,
                     proj2Directory,
-                    $@"pack proj2.csproj -build -IncludeReferencedProjects -p Config=Release -msbuildversion 15.0",
-                    waitForExit: true);
+                    $@"pack proj2.csproj -build -IncludeReferencedProjects -p Config=Release -msbuildversion 15.0");
 
                 Assert.True(0 == r.ExitCode, r.Output + " " + r.Errors);
 
@@ -3985,8 +3939,7 @@ namespace Proj2
                 var r = CommandRunner.Run(
                     nugetexe,
                     proj2Directory,
-                    @"pack proj2.csproj -build -IncludeReferencedProjects -p Config=Release -MSBuildVersion 15.1",
-                    waitForExit: true);
+                    @"pack proj2.csproj -build -IncludeReferencedProjects -p Config=Release -MSBuildVersion 15.1");
                 Assert.True(0 == r.ExitCode, r.Output + " " + r.Errors);
 
                 // Assert
@@ -4113,8 +4066,7 @@ namespace Proj2
                 var r = CommandRunner.Run(
                     nugetexe,
                     proj2Directory,
-                    $@"pack proj2.csproj -build -IncludeReferencedProjects -p Config=Release -MSBuildPath ""{msbuildPath}"" ",
-                    waitForExit: true);
+                    $@"pack proj2.csproj -build -IncludeReferencedProjects -p Config=Release -MSBuildPath ""{msbuildPath}"" ");
                 Assert.True(0 == r.ExitCode, r.Output + " " + r.Errors);
 
                 // Assert
@@ -4242,8 +4194,7 @@ namespace Proj2
                 var r = CommandRunner.Run(
                     nugetexe,
                     proj2Directory,
-                    $@"pack proj2.csproj -build -IncludeReferencedProjects -p Config=Release -MSBuildPath ""{msbuildPath}"" -MSBuildVersion 12 ",
-                    waitForExit: true);
+                    $@"pack proj2.csproj -build -IncludeReferencedProjects -p Config=Release -MSBuildPath ""{msbuildPath}"" -MSBuildVersion 12 ");
                 Assert.True(0 == r.ExitCode, r.Output + " " + r.Errors);
 
                 // Assert
@@ -4368,8 +4319,7 @@ namespace Proj2
                 var r = CommandRunner.Run(
                     nugetexe,
                     proj2Directory,
-                    $@"pack proj2.csproj -build -IncludeReferencedProjects -p Config=Release -MSBuildPath ""{msbuildPath}"" ",
-                    waitForExit: true);
+                    $@"pack proj2.csproj -build -IncludeReferencedProjects -p Config=Release -MSBuildPath ""{msbuildPath}"" ");
                 Assert.True(1 == r.ExitCode, r.Output + " " + r.Errors);
 
                 // Assert
@@ -4392,8 +4342,7 @@ namespace Proj2
                 var r = CommandRunner.Run(
                     nugetexe,
                     proj1Directory,
-                    "pack proj1.csproj -Build -Suffix alpha",
-                    waitForExit: true);
+                    "pack proj1.csproj -Build -Suffix alpha");
 
                 // Assert
                 Assert.True(r.Success, r.AllOutput);
@@ -4504,8 +4453,7 @@ stuff \n &lt;&lt;
                 var r = CommandRunner.Run(
                     nugetexe,
                     workingDirectory,
-                    "pack packageA.nuspec -verbosity detailed",
-                    waitForExit: true);
+                    "pack packageA.nuspec -verbosity detailed");
                 Assert.True(0 == r.ExitCode, r.Output + " " + r.Errors);
 
                 // Assert
@@ -4594,8 +4542,7 @@ stuff \n <<".Replace("\r\n", "\n");
                 var r = CommandRunner.Run(
                     nugetexe,
                     proj1Directory,
-                    "pack proj1.csproj -build",
-                    waitForExit: true);
+                    "pack proj1.csproj -build");
                 Assert.Equal(1, r.ExitCode);
 
                 // Assert
@@ -4640,8 +4587,7 @@ stuff \n <<".Replace("\r\n", "\n");
                 var r = CommandRunner.Run(
                     nugetexe,
                     workingDirectory,
-                    "pack packageA.nuspec",
-                    waitForExit: true);
+                    "pack packageA.nuspec");
                 Assert.True(0 == r.ExitCode, r.Output + " " + r.Errors);
 
                 // Assert
@@ -4716,8 +4662,7 @@ namespace Proj1
                 var r = CommandRunner.Run(
                     nugetexe,
                     proj1ProjectDirectory,
-                    @"pack proj1.csproj -build -IncludeReferencedProjects -Properties Configuration=Release",
-                    waitForExit: true);
+                    @"pack proj1.csproj -build -IncludeReferencedProjects -Properties Configuration=Release");
                 Assert.True(0 == r.ExitCode, r.Output + " " + r.Errors);
 
                 // Assert
@@ -4788,8 +4733,7 @@ namespace Proj1
                 var r = CommandRunner.Run(
                     nugetexe,
                     proj1Directory,
-                    $"pack proj1.csproj -build -version 1.0.0-rtm+asdassd",
-                    waitForExit: true);
+                    $"pack proj1.csproj -build -version 1.0.0-rtm+asdassd");
                 r.Success.Should().BeTrue(because: r.AllOutput);
                 var expectedMessage = "WARNING: " + NuGetLogCode.NU5115.ToString();
                 if (expectToWarn)
@@ -4857,8 +4801,7 @@ namespace Proj1
                 var r = CommandRunner.Run(
                     nugetexe,
                     proj1Directory,
-                    $"pack proj1.csproj -build -version 1.0.0-rtm+asdassd",
-                    waitForExit: true);
+                    $"pack proj1.csproj -build -version 1.0.0-rtm+asdassd");
 
                 var nupkgPath = Path.Combine(workingDirectory, "proj1", "proj1.1.0.0-rtm.nupkg");
 
@@ -4931,8 +4874,7 @@ namespace Proj1
                 var r = CommandRunner.Run(
                     nugetexe,
                     proj1Directory,
-                    $"pack proj1.csproj -build -version 1.0.0-rtm+asdassd",
-                    waitForExit: true);
+                    $"pack proj1.csproj -build -version 1.0.0-rtm+asdassd");
 
                 var nupkgPath = Path.Combine(workingDirectory, "proj1", "proj1.1.0.0-rtm.nupkg");
 
@@ -4979,8 +4921,7 @@ $@"<package xmlns='http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd'>
                 var r = CommandRunner.Run(
                     nugetexe,
                     workingDirectory,
-                    "pack packageA.nuspec",
-                    waitForExit: true);
+                    "pack packageA.nuspec");
                 Assert.True(0 == r.ExitCode, r.Output + " " + r.Errors);
 
                 // Assert
@@ -5043,8 +4984,7 @@ $@"<package xmlns='http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd'>
                 var r = CommandRunner.Run(
                     nugetexe,
                     workingDirectory,
-                    "pack packageA.nuspec",
-                    waitForExit: true);
+                    "pack packageA.nuspec");
                 Assert.True(0 == r.ExitCode, r.Output + " " + r.Errors);
 
                 // Assert
@@ -5108,8 +5048,7 @@ $@"<package xmlns='http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd'>
                 var r = CommandRunner.Run(
                     nugetexe,
                     workingDirectory,
-                    "pack packageA.nuspec",
-                    waitForExit: true);
+                    "pack packageA.nuspec");
                 // This should fail.
                 Assert.True(1 == r.ExitCode, r.Output + " " + r.Errors);
 
@@ -5156,8 +5095,7 @@ $@"<package xmlns='http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd'>
                 var r = CommandRunner.Run(
                     nugetexe,
                     workingDirectory,
-                    "pack packageA.nuspec",
-                    waitForExit: true);
+                    "pack packageA.nuspec");
                 // This should fail.
                 Assert.True(1 == r.ExitCode, r.Output + " " + r.Errors);
 
@@ -5204,8 +5142,7 @@ $@"<package xmlns='http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd'>
                 var r = CommandRunner.Run(
                     nugetexe,
                     workingDirectory,
-                    "pack packageA.nuspec",
-                    waitForExit: true);
+                    "pack packageA.nuspec");
                 // This should fail.
                 Assert.True(1 == r.ExitCode, r.Output + " " + r.Errors);
 
@@ -5258,8 +5195,7 @@ $@"<package xmlns='http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd'>
                 var r = CommandRunner.Run(
                     nugetexe,
                     workingDirectory,
-                    "pack packageA.nuspec",
-                    waitForExit: true);
+                    "pack packageA.nuspec");
                 Assert.True(0 == r.ExitCode, r.Output + " " + r.Errors);
 
                 // Assert
@@ -5326,8 +5262,7 @@ $@"<package xmlns='http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd'>
                 var r = CommandRunner.Run(
                     nugetexe,
                     workingDirectory,
-                    "pack packageA.nuspec",
-                    waitForExit: true);
+                    "pack packageA.nuspec");
                 // This should fail.
                 Assert.True(1 == r.ExitCode, r.Output + " " + r.Errors);
 
@@ -5377,8 +5312,7 @@ $@"<package xmlns='http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd'>
                 var r = CommandRunner.Run(
                     nugetexe,
                     workingDirectory,
-                    "pack packageA.nuspec",
-                    waitForExit: true);
+                    "pack packageA.nuspec");
                 // This should fail.
                 Assert.True(1 == r.ExitCode, r.Output + " " + r.Errors);
 
@@ -5429,8 +5363,7 @@ $@"<package xmlns='http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd'>
                 var r = CommandRunner.Run(
                     nugetexe,
                     workingDirectory,
-                    "pack packageA.nuspec",
-                    waitForExit: true);
+                    "pack packageA.nuspec");
                 // This should fail.
                 Assert.True(1 == r.ExitCode, r.Output + " " + r.Errors);
 
@@ -5478,8 +5411,7 @@ $@"<package xmlns='http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd'>
                 var r = CommandRunner.Run(
                     nugetexe,
                     workingDirectory,
-                    "pack packageA.nuspec",
-                    waitForExit: true);
+                    "pack packageA.nuspec");
                 // This should fail.
                 Assert.True(1 == r.ExitCode, r.Output + " " + r.Errors);
 
@@ -5524,8 +5456,7 @@ $@"<package xmlns='http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd'>
                 var r = CommandRunner.Run(
                     nugetexe,
                     workingDirectory,
-                    "pack packageA.nuspec",
-                    waitForExit: true);
+                    "pack packageA.nuspec");
                 Assert.True(0 == r.ExitCode, r.Output + " " + r.Errors);
 
                 Assert.Contains("NU5125", r.Output);
@@ -5590,8 +5521,7 @@ $@"<package xmlns='http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd'>
                 var r = CommandRunner.Run(
                     nugetexe,
                     workingDirectory,
-                    "pack packageA.nuspec",
-                    waitForExit: true);
+                    "pack packageA.nuspec");
                 Assert.True(0 == r.ExitCode, r.Output + " " + r.Errors);
 
                 // Assert
@@ -5694,8 +5624,7 @@ $@"<package xmlns='http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd'>
                 var r = CommandRunner.Run(
                     nugetexe,
                     workingDirectory,
-                    $"pack {packageName}.csproj -build -symbols -SymbolPackageFormat {extension}",
-                    waitForExit: true);
+                    $"pack {packageName}.csproj -build -symbols -SymbolPackageFormat {extension}");
                 Assert.True(0 == r.ExitCode, r.Output + " " + r.Errors);
 
                 // Assert
@@ -5796,8 +5725,7 @@ $@"<package xmlns='http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd'>
                 var r = CommandRunner.Run(
                     nugetexe,
                     workingDirectory,
-                    "pack packageA.nuspec",
-                    waitForExit: true);
+                    "pack packageA.nuspec");
                 Assert.True(0 == r.ExitCode, r.Output + " " + r.Errors);
 
                 // Assert
@@ -5864,8 +5792,7 @@ $@"<package xmlns='http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd'>
                 var r = CommandRunner.Run(
                     nugetexe,
                     workingDirectory,
-                    "pack packageA.nuspec",
-                    waitForExit: true);
+                    "pack packageA.nuspec");
                 Assert.True(0 == r.ExitCode, r.Output + " " + r.Errors);
 
                 // Assert
@@ -6015,8 +5942,7 @@ $@"<package xmlns='http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd'>
                 var r = CommandRunner.Run(
                     Util.GetNuGetExePath(),
                     testDirBuilder.BaseDir,
-                    $"pack {testDirBuilder.NuspecPath}",
-                    waitForExit: true);
+                    $"pack {testDirBuilder.NuspecPath}");
 
                 Util.VerifyResultSuccess(r, expectedOutputMessage: NuGetLogCode.NU5048.ToString());
                 Assert.Contains(AnalysisResources.IconUrlDeprecationWarning, r.Output);
@@ -6165,8 +6091,7 @@ $@"<package xmlns='http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd'>
                 var r = CommandRunner.Run(
                     Util.GetNuGetExePath(),
                     testDirBuilder.BaseDir,
-                    $"pack A.csproj -Build -Symbols -SymbolPackageFormat {symbolExtension}",
-                    waitForExit: true);
+                    $"pack A.csproj -Build -Symbols -SymbolPackageFormat {symbolExtension}");
 
                 // Verify
                 Util.VerifyResultSuccess(r);
@@ -6234,8 +6159,7 @@ $@"<package xmlns='http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd'>
                 var r = CommandRunner.Run(
                     Util.GetNuGetExePath(),
                     testDirBuilder.BaseDir,
-                    $"pack A.csproj -Build",
-                    waitForExit: true);
+                    $"pack A.csproj -Build");
 
                 Util.VerifyResultSuccess(r, expectedOutputMessage: NuGetLogCode.NU5048.ToString());
                 Assert.Contains(AnalysisResources.IconUrlDeprecationWarning, r.Output);
@@ -6276,8 +6200,7 @@ $@"<package xmlns='http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd'>
                 var r = CommandRunner.Run(
                     Util.GetNuGetExePath(),
                     testDirBuilder.BaseDir,
-                    $"pack {testDirBuilder.NuspecPath}",
-                    waitForExit: true);
+                    $"pack {testDirBuilder.NuspecPath}");
 
                 // Assert
                 Util.VerifyResultSuccess(r, message);
@@ -6308,8 +6231,7 @@ $@"<package xmlns='http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd'>
                 var r = CommandRunner.Run(
                     Util.GetNuGetExePath(),
                     testDirBuilder.BaseDir,
-                    $"pack {testDirBuilder.NuspecPath}",
-                    waitForExit: true);
+                    $"pack {testDirBuilder.NuspecPath}");
 
                 // Assert
                 Util.VerifyResultFailure(r, message);
@@ -6672,8 +6594,7 @@ $@"<package xmlns='http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd'>
                 var r = CommandRunner.Run(
                     Util.GetNuGetExePath(),
                     testDirBuilder.BaseDir,
-                    $"pack {testDirBuilder.NuspecPath}",
-                    waitForExit: true);
+                    $"pack {testDirBuilder.NuspecPath}");
 
                 // Assert
                 Util.VerifyResultSuccess(r, message);
@@ -6745,8 +6666,7 @@ $@"<package xmlns='http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd'>
                     var r = CommandRunner.Run(
                         nugetexe,
                         workingDirectory,
-                        string.Format(command, path),
-                        waitForExit: true);
+                        string.Format(command, path));
                     Assert.True(0 == r.ExitCode, r.Output + " " + r.Errors);
 
 
@@ -6825,8 +6745,7 @@ $@"<package xmlns='http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd'>
                 var r = CommandRunner.Run(
                     nugetexe,
                     proj1Directory,
-                    "pack proj1.csproj -build -solutionDir ../solution",
-                    waitForExit: true);
+                    "pack proj1.csproj -build -solutionDir ../solution");
                 Assert.True(r.Success, r.AllOutput);
             }
         }
@@ -6875,8 +6794,7 @@ $@"<package xmlns='http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd'>
                 var r = CommandRunner.Run(
                     nugetexe,
                     proj1Directory,
-                    "pack proj1.csproj -build -packagesDir ../pkgs",
-                    waitForExit: true);
+                    "pack proj1.csproj -build -packagesDir ../pkgs");
                 Assert.True(r.Success, r.AllOutput);
             }
         }
@@ -7001,8 +6919,7 @@ $@"<package xmlns='http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd'>
                 var r = CommandRunner.Run(
                     nugetexe,
                     proj1Directory,
-                    $"pack proj1.csproj -build -packagesDir {packagesFolder} -solutionDir {solDirectory}",
-                    waitForExit: true);
+                    $"pack proj1.csproj -build -packagesDir {packagesFolder} -solutionDir {solDirectory}");
                 Util.VerifyResultSuccess(r);
                 Assert.True(File.Exists(Path.Combine(proj1Directory, "proj1.0.0.0.nupkg")));
 
@@ -7010,8 +6927,7 @@ $@"<package xmlns='http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd'>
                 var r2 = CommandRunner.Run(
                     nugetexe,
                     proj3Directory,
-                    $"pack proj3.csproj -build -packagesDir {packagesFolder2} -solutionDir {solDirectory} -configFile {Path.Combine(solDirectory, "AlternateNuget.config")}",
-                    waitForExit: true);
+                    $"pack proj3.csproj -build -packagesDir {packagesFolder2} -solutionDir {solDirectory} -configFile {Path.Combine(solDirectory, "AlternateNuget.config")}");
                 Util.VerifyResultSuccess(r2);
                 Assert.True(File.Exists(Path.Combine(proj3Directory, "proj3.0.0.0.nupkg")));
             }
@@ -7068,8 +6984,7 @@ namespace Proj1
                 var r = CommandRunner.Run(
                     nugetexe,
                     proj1Directory,
-                    $"pack proj1.csproj -build -version 1.0.0-rtm+asdassd",
-                    waitForExit: true);
+                    $"pack proj1.csproj -build -version 1.0.0-rtm+asdassd");
                 r.Success.Should().BeTrue(because: r.AllOutput);
                 r.AllOutput.Should().NotContain(NuGetLogCode.NU5105.ToString());
             }
@@ -7169,8 +7084,7 @@ using System.Runtime.InteropServices;
                 var r = CommandRunner.Run(
                     nugetexe,
                     projectDirectory,
-                    "pack -build",
-                    waitForExit: true);
+                    "pack -build");
                 Assert.True(0 == r.ExitCode, r.Output + " " + r.Errors);
 
                 // Assert
@@ -7289,8 +7203,7 @@ using System.Runtime.InteropServices;
                 var r = CommandRunner.Run(
                     renamedNuGetExe,
                     projectDirectory,
-                    "pack -build",
-                    waitForExit: true);
+                    "pack -build");
                 Assert.True(0 == r.ExitCode, r.Output + " " + r.Errors);
 
                 // Assert
@@ -7335,8 +7248,7 @@ using System.Runtime.InteropServices;
                 var result = CommandRunner.Run(
                     nugetexe,
                     projDirectory,
-                    "pack A.csproj -build",
-                    waitForExit: true);
+                    "pack A.csproj -build");
                 Assert.True(result.ExitCode == 0, result.Output + " " + result.Errors);
 
                 // Assert
@@ -7382,13 +7294,11 @@ using System.Runtime.InteropServices;
                 CommandRunnerResult specResult = CommandRunner.Run(
                     nugetexe,
                     workingDirectory,
-                    "spec",
-                    waitForExit: true);
+                    "spec");
                 CommandRunnerResult packResult = CommandRunner.Run(
                     nugetexe,
                     workingDirectory,
-                    "pack Package.nuspec",
-                    waitForExit: true);
+                    "pack Package.nuspec");
                 Assert.True(0 == specResult.ExitCode, specResult.AllOutput);
                 Assert.True(0 == packResult.ExitCode, packResult.AllOutput);
 
@@ -7462,16 +7372,14 @@ namespace proj1
                 CommandRunnerResult specResult = CommandRunner.Run(
                     nugetexe,
                     workingDirectory,
-                    "spec",
-                    waitForExit: true);
+                    "spec");
 
                 Assert.True(0 == specResult.ExitCode, specResult.AllOutput);
 
                 CommandRunnerResult packResult = CommandRunner.Run(
                     nugetexe,
                     workingDirectory,
-                    " pack -properties tagVar=CustomTag;author=microsoft.com;Description=aaaaaaa -build",
-                    waitForExit: true);
+                    " pack -properties tagVar=CustomTag;author=microsoft.com;Description=aaaaaaa -build");
 
                 // Assert
                 Assert.True(0 == packResult.ExitCode, packResult.AllOutput);
@@ -7533,8 +7441,7 @@ namespace Proj1
             var r = CommandRunner.Run(
                 Util.GetNuGetExePath(),
                 proj1Directory,
-                "pack proj1.csproj -build",
-                waitForExit: true);
+                "pack proj1.csproj -build");
             r.Success.Should().BeFalse();
             r.AllOutput.Should().Contain("NU5049");
             r.AllOutput.Should().Contain("dotnet pack");
@@ -7581,7 +7488,6 @@ namespace Proj1
                 Util.GetNuGetExePath(),
                 proj1Directory,
                 "pack proj1.csproj -build",
-                waitForExit: true,
                 environmentVariables: new Dictionary<string, string>()
                 {
                     { "NUGET_ENABLE_LEGACY_CSPROJ_PACK", "true" }

@@ -19,8 +19,7 @@ namespace NuGet.CommandLine.Test
                 var result = CommandRunner.Run(
                     nugetexe,
                     randomTestFolder,
-                    "hello",
-                    true);
+                    "hello");
                 result.Output.Should().Be("Hello!" + Environment.NewLine);
             }
         }

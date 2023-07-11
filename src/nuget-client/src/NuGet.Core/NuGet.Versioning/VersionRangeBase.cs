@@ -116,7 +116,7 @@ namespace NuGet.Versioning
         /// <returns>True if the given version meets the version requirements.</returns>
         public bool Satisfies(NuGetVersion version, VersionComparison versionComparison)
         {
-            return Satisfies(version, new VersionComparer(versionComparison));
+            return Satisfies(version, VersionComparer.Get(versionComparison));
         }
 
         /// <summary>
@@ -206,7 +206,7 @@ namespace NuGet.Versioning
             }
 
 #pragma warning disable CS8604 // Possible null reference argument.
-            // IEqualtyComparer<T>.Equals doesn't have nullable annotations before .NET 5.0
+            // IEqualityComparer<T>.Equals doesn't have nullable annotations before .NET 5.0
             return comparer.Equals(this, other);
 #pragma warning restore CS8604 // Possible null reference argument.
         }
@@ -216,7 +216,7 @@ namespace NuGet.Versioning
         /// </summary>
         public bool Equals(VersionRangeBase? other, VersionComparison versionComparison)
         {
-            IVersionRangeComparer comparer = new VersionRangeComparer(versionComparison);
+            IVersionRangeComparer comparer = VersionRangeComparer.Get(versionComparison);
             return Equals(other, comparer);
         }
 

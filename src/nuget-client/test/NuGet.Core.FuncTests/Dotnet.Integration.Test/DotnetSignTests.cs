@@ -18,7 +18,7 @@ namespace Dotnet.Integration.Test
     [Collection(DotnetIntegrationCollection.Name)]
     public class DotnetSignTests
     {
-        private MsbuildIntegrationTestFixture _msbuildFixture;
+        private DotnetIntegrationTestFixture _msbuildFixture;
         private SignCommandTestFixture _signFixture;
 
         private const string _packageAlreadySignedError = "NU3001: The package already contains a signature. Please remove the existing signature before adding a new signature.";
@@ -28,7 +28,7 @@ namespace Dotnet.Integration.Test
         private readonly string _noTimestamperWarningCode = NuGetLogCode.NU3002.ToString();
         private readonly string _timestampUnsupportedDigestAlgorithmCode = NuGetLogCode.NU3024.ToString();
 
-        public DotnetSignTests(MsbuildIntegrationTestFixture buildFixture, SignCommandTestFixture signFixture)
+        public DotnetSignTests(DotnetIntegrationTestFixture buildFixture, SignCommandTestFixture signFixture)
         {
             _msbuildFixture = buildFixture;
             _signFixture = signFixture;
@@ -50,13 +50,11 @@ namespace Dotnet.Integration.Test
                 IX509StoreCertificate storeCertificate = _signFixture.DefaultCertificate;
 
                 // Act
-                CommandRunnerResult result = _msbuildFixture.RunDotnet(
+                CommandRunnerResult result = _msbuildFixture.RunDotnetExpectSuccess(
                     pathContext.PackageSource,
-                    GetDefaultArgs(packageFilePath, storeCertificate),
-                    ignoreExitCode: true);
+                    GetDefaultArgs(packageFilePath, storeCertificate));
 
                 // Assert
-                result.Success.Should().BeTrue(because: result.AllOutput);
                 result.AllOutput.Should().Contain(_noTimestamperWarningCode);
             }
         }
@@ -75,16 +73,14 @@ namespace Dotnet.Integration.Test
                 IX509StoreCertificate storeCertificate = _signFixture.DefaultCertificate;
 
                 // Act
-                CommandRunnerResult result = _msbuildFixture.RunDotnet(
+                CommandRunnerResult result = _msbuildFixture.RunDotnetExpectSuccess(
                     pathContext.PackageSource,
                     $"nuget sign .{Path.DirectorySeparatorChar}{packageFileName} " +
                     $"--certificate-fingerprint {storeCertificate.Certificate.Thumbprint} " +
                     $"--certificate-store-name {storeCertificate.StoreName} " +
-                    $"--certificate-store-location {storeCertificate.StoreLocation}",
-                    ignoreExitCode: true);
+                    $"--certificate-store-location {storeCertificate.StoreLocation}");
 
                 // Assert
-                result.Success.Should().BeTrue(because: result.AllOutput);
                 result.AllOutput.Should().Contain(_noTimestamperWarningCode);
             }
         }
@@ -103,13 +99,11 @@ namespace Dotnet.Integration.Test
                 IX509StoreCertificate storeCertificate = _signFixture.CertificateWithInvalidEku;
 
                 // Act
-                CommandRunnerResult result = _msbuildFixture.RunDotnet(
+                CommandRunnerResult result = _msbuildFixture.RunDotnetExpectFailure(
                     pathContext.PackageSource,
-                    GetDefaultArgs(packageFilePath, storeCertificate),
-                    ignoreExitCode: true);
+                    GetDefaultArgs(packageFilePath, storeCertificate));
 
                 // Assert
-                result.Success.Should().BeFalse(because: result.AllOutput);
                 result.AllOutput.Should().Contain(_noTimestamperWarningCode);
                 result.AllOutput.Should().Contain(_noCertFoundError);
             }
@@ -129,13 +123,11 @@ namespace Dotnet.Integration.Test
                 IX509StoreCertificate storeCertificate = _signFixture.ExpiredCertificate;
 
                 // Act
-                CommandRunnerResult result = _msbuildFixture.RunDotnet(
+                CommandRunnerResult result = _msbuildFixture.RunDotnetExpectFailure(
                     pathContext.PackageSource,
-                    GetDefaultArgs(packageFilePath, storeCertificate),
-                    ignoreExitCode: true);
+                    GetDefaultArgs(packageFilePath, storeCertificate));
 
                 // Assert
-                result.Success.Should().BeFalse(because: result.AllOutput);
                 result.AllOutput.Should().Contain(_noTimestamperWarningCode);
                 result.AllOutput.Should().Contain(_noCertFoundError);
             }
@@ -155,13 +147,11 @@ namespace Dotnet.Integration.Test
                 IX509StoreCertificate storeCertificate = _signFixture.NotYetValidCertificate;
 
                 // Act
-                CommandRunnerResult result = _msbuildFixture.RunDotnet(
+                CommandRunnerResult result = _msbuildFixture.RunDotnetExpectFailure(
                     pathContext.PackageSource,
-                    GetDefaultArgs(packageFilePath, storeCertificate),
-                    ignoreExitCode: true);
+                    GetDefaultArgs(packageFilePath, storeCertificate));
 
                 // Assert
-                result.Success.Should().BeFalse(because: result.AllOutput);
                 result.AllOutput.Should().Contain(_noTimestamperWarningCode);
                 result.AllOutput.Should().Contain(_noCertFoundError);
             }
@@ -182,14 +172,12 @@ namespace Dotnet.Integration.Test
                 IX509StoreCertificate storeCertificate = _signFixture.DefaultCertificate;
 
                 // Act
-                CommandRunnerResult result = _msbuildFixture.RunDotnet(
+                CommandRunnerResult result = _msbuildFixture.RunDotnetExpectSuccess(
                     pathContext.PackageSource,
                     GetDefaultArgs(packageFilePath, storeCertificate) +
-                    $" --timestamper {timestampService.Url.OriginalString}",
-                    ignoreExitCode: true);
+                    $" --timestamper {timestampService.Url.OriginalString}");
 
                 // Assert
-                result.Success.Should().BeTrue(because: result.AllOutput);
                 result.AllOutput.Should().NotContain(_noTimestamperWarningCode);
             }
         }
@@ -208,13 +196,11 @@ namespace Dotnet.Integration.Test
                 IX509StoreCertificate storeCertificate = _signFixture.RevokedCertificate;
 
                 // Act
-                CommandRunnerResult result = _msbuildFixture.RunDotnet(
+                CommandRunnerResult result = _msbuildFixture.RunDotnetExpectFailure(
                     pathContext.PackageSource,
-                    GetDefaultArgs(packageFilePath, storeCertificate),
-                    ignoreExitCode: true);
+                    GetDefaultArgs(packageFilePath, storeCertificate));
 
                 // Assert
-                result.Success.Should().BeFalse(because: result.AllOutput);
                 result.AllOutput.Should().Contain(_noTimestamperWarningCode);
                 result.AllOutput.Should().Contain(_noCertFoundError);
             }
@@ -234,13 +220,11 @@ namespace Dotnet.Integration.Test
                 IX509StoreCertificate storeCertificate = _signFixture.RevocationUnknownCertificate;
 
                 // Act
-                CommandRunnerResult result = _msbuildFixture.RunDotnet(
+                CommandRunnerResult result = _msbuildFixture.RunDotnetExpectSuccess(
                     pathContext.PackageSource,
-                    GetDefaultArgs(packageFilePath, storeCertificate),
-                    ignoreExitCode: true);
+                    GetDefaultArgs(packageFilePath, storeCertificate));
 
                 // Assert
-                result.Success.Should().BeTrue(because: result.AllOutput);
                 result.AllOutput.Should().Contain(_noTimestamperWarningCode);
                 result.AllOutput.Should().Contain(_chainBuildFailureErrorCode);
                 result.AllOutput.Should().Contain(X509ChainStatusFlags.RevocationStatusUnknown.ToString());
@@ -264,16 +248,14 @@ namespace Dotnet.Integration.Test
                 Directory.CreateDirectory(outputDir);
 
                 // Act
-                CommandRunnerResult result = _msbuildFixture.RunDotnet(
+                CommandRunnerResult result = _msbuildFixture.RunDotnetExpectSuccess(
                     pathContext.PackageSource,
                     GetDefaultArgs(packageFilePath, storeCertificate) +
-                    $" --output {outputDir}",
-                    ignoreExitCode: true);
+                    $" --output {outputDir}");
 
                 string signedPackagePath = Path.Combine(outputDir, "PackageA.1.0.0.nupkg");
 
                 // Assert
-                result.Success.Should().BeTrue(because: result.AllOutput);
                 result.AllOutput.Should().Contain(_noTimestamperWarningCode);
                 File.Exists(signedPackagePath).Should().BeTrue();
             }
@@ -294,20 +276,16 @@ namespace Dotnet.Integration.Test
                 string args = GetDefaultArgs(packageFilePath, storeCertificate);
 
                 // Act
-                CommandRunnerResult firstResult = _msbuildFixture.RunDotnet(
+                CommandRunnerResult firstResult = _msbuildFixture.RunDotnetExpectSuccess(
                     pathContext.PackageSource,
-                    args,
-                    ignoreExitCode: true);
+                    args);
 
-                CommandRunnerResult secondResult = _msbuildFixture.RunDotnet(
+                CommandRunnerResult secondResult = _msbuildFixture.RunDotnetExpectFailure(
                     pathContext.PackageSource,
-                    args,
-                    ignoreExitCode: true);
+                    args);
 
                 // Assert
-                firstResult.Success.Should().BeTrue(because: firstResult.AllOutput);
                 firstResult.AllOutput.Should().Contain(_noTimestamperWarningCode);
-                secondResult.Success.Should().BeFalse();
                 secondResult.AllOutput.Should().Contain(_packageAlreadySignedError);
             }
         }
@@ -327,20 +305,16 @@ namespace Dotnet.Integration.Test
                 string args = GetDefaultArgs(packageFilePath, storeCertificate);
 
                 // Act
-                CommandRunnerResult firstResult = _msbuildFixture.RunDotnet(
+                CommandRunnerResult firstResult = _msbuildFixture.RunDotnetExpectSuccess(
                     pathContext.PackageSource,
-                    args,
-                    ignoreExitCode: true);
+                    args);
 
-                CommandRunnerResult secondResult = _msbuildFixture.RunDotnet(
+                CommandRunnerResult secondResult = _msbuildFixture.RunDotnetExpectSuccess(
                     pathContext.PackageSource,
-                    args + " --overwrite",
-                    ignoreExitCode: true);
+                    args + " --overwrite");
 
                 // Assert
-                firstResult.Success.Should().BeTrue(because: firstResult.AllOutput);
                 firstResult.AllOutput.Should().Contain(_noTimestamperWarningCode);
-                secondResult.Success.Should().BeTrue();
                 secondResult.AllOutput.Should().Contain(_noTimestamperWarningCode);
             }
         }
@@ -359,13 +333,11 @@ namespace Dotnet.Integration.Test
                 IX509StoreCertificate storeCertificate = _signFixture.DefaultCertificate;
 
                 // Act
-                CommandRunnerResult result = _msbuildFixture.RunDotnet(
+                CommandRunnerResult result = _msbuildFixture.RunDotnetExpectSuccess(
                     pathContext.PackageSource,
-                    GetDefaultArgs(packageFilePath, storeCertificate) + " --overwrite",
-                    ignoreExitCode: true);
+                    GetDefaultArgs(packageFilePath, storeCertificate) + " --overwrite");
 
                 // Assert
-                result.Success.Should().BeTrue(because: result.AllOutput);
                 result.AllOutput.Should().Contain(_noTimestamperWarningCode);
             }
         }
@@ -390,15 +362,13 @@ namespace Dotnet.Integration.Test
                 File.WriteAllBytes(pfxPath, pfxBytes);
 
                 // Act
-                CommandRunnerResult result = _msbuildFixture.RunDotnet(
+                CommandRunnerResult result = _msbuildFixture.RunDotnetExpectSuccess(
                     pathContext.PackageSource,
                     $"nuget sign {packageFilePath} " +
                     $"--certificate-path {pfxPath} " +
-                    $"--certificate-password {password}",
-                    ignoreExitCode: true);
+                    $"--certificate-password {password}");
 
                 // Assert
-                result.Success.Should().BeTrue(because: result.AllOutput);
                 result.AllOutput.Should().Contain(_noTimestamperWarningCode);
             }
         }
@@ -424,15 +394,13 @@ namespace Dotnet.Integration.Test
                 File.WriteAllBytes(pfxPath, pfxBytes);
 
                 // Act
-                CommandRunnerResult result = _msbuildFixture.RunDotnet(
+                CommandRunnerResult result = _msbuildFixture.RunDotnetExpectSuccess(
                     pathContext.PackageSource,
                     $"nuget sign {packageFilePath} " +
                     $"--certificate-path .{Path.DirectorySeparatorChar}{pfxName} " +
-                    $"--certificate-password {password}",
-                    ignoreExitCode: true);
+                    $"--certificate-password {password}");
 
                 // Assert
-                result.Success.Should().BeTrue(because: result.AllOutput);
                 result.AllOutput.Should().Contain(_noTimestamperWarningCode);
             }
         }
@@ -456,13 +424,11 @@ namespace Dotnet.Integration.Test
                 File.WriteAllBytes(pfxPath, pfxBytes);
 
                 // Act
-                CommandRunnerResult result = _msbuildFixture.RunDotnet(
+                CommandRunnerResult result = _msbuildFixture.RunDotnetExpectFailure(
                     pathContext.PackageSource,
-                    $"nuget sign {packageFilePath} --certificate-path {pfxPath}",
-                    ignoreExitCode: true);
+                    $"nuget sign {packageFilePath} --certificate-path {pfxPath}");
 
                 // Assert
-                result.Success.Should().BeFalse(because: result.AllOutput);
                 result.AllOutput.Should().Contain(string.Format(_invalidPasswordError, pfxPath));
             }
         }
@@ -481,14 +447,12 @@ namespace Dotnet.Integration.Test
                 IX509StoreCertificate storeCertificate = _signFixture.UntrustedSelfIssuedCertificateInCertificateStore;
 
                 // Act
-                CommandRunnerResult result = _msbuildFixture.RunDotnet(
+                CommandRunnerResult result = _msbuildFixture.RunDotnetExpectSuccess(
                     pathContext.PackageSource,
                     $"nuget sign {packageFilePath} " +
-                    $"--certificate-fingerprint {storeCertificate.Certificate.Thumbprint}",
-                    ignoreExitCode: true);
+                    $"--certificate-fingerprint {storeCertificate.Certificate.Thumbprint}");
 
                 // Assert
-                result.Success.Should().BeTrue(because: result.AllOutput);
                 result.AllOutput.Should().Contain(_noTimestamperWarningCode);
                 result.AllOutput.Should().Contain(_chainBuildFailureErrorCode);
             }
@@ -516,15 +480,13 @@ namespace Dotnet.Integration.Test
                 using (testServer.RegisterResponder(timestampService))
                 {
                     // Act
-                    CommandRunnerResult result = _msbuildFixture.RunDotnet(
+                    CommandRunnerResult result = _msbuildFixture.RunDotnetExpectFailure(
                         pathContext.PackageSource,
                         $"nuget sign {packageFilePath} " +
                         $"--certificate-fingerprint {storeCertificate.Certificate.Thumbprint} " +
-                        $"--timestamper {timestampService.Url}",
-                        ignoreExitCode: true);
+                        $"--timestamper {timestampService.Url}");
 
                     // Assert
-                    result.Success.Should().BeFalse(because: result.AllOutput);
                     result.AllOutput.Should().Contain(_timestampUnsupportedDigestAlgorithmCode);
                     Assert.Contains("The timestamp signature has an unsupported digest algorithm (SHA1). The following algorithms are supported: SHA256, SHA384, SHA512.", result.AllOutput);
 

@@ -110,7 +110,7 @@ namespace NuGet.DependencyResolver
             //      -> D 2.0
             //
             // 2. This occurs if none of the sources have version C 1.0 so C 1.0 is bumped up to C 2.0.
-            // 
+            //
             //   A -> B -> C 2.0
             //     -> C 1.0
 
@@ -341,7 +341,7 @@ namespace NuGet.DependencyResolver
 
         private static bool TryResolveConflicts<TItem>(this GraphNode<TItem> root, List<VersionConflictResult<TItem>> versionConflicts)
         {
-            // now we walk the tree as often as it takes to determine 
+            // now we walk the tree as often as it takes to determine
             // which paths are accepted or rejected, based on conflicts occuring
             // between cousin packages
 
@@ -449,7 +449,7 @@ namespace NuGet.DependencyResolver
             // a1->b1->d1->x1
             // a1->c1->d2->z1
             // first attempt
-            //  d1/d2 are considered disputed 
+            //  d1/d2 are considered disputed
             //  x1 and z1 are considered ambiguous
             //  d1 is rejected
             // second attempt
@@ -845,19 +845,29 @@ namespace NuGet.DependencyResolver
         {
             // if a central transitive node has all parents disputed or ambiguous mark it and its children ambiguous
             int ctdCount = centralTransitiveNodes.Count;
-            for (int i = 0; i < ctdCount; i++)
+            while (true)
             {
-                if (centralTransitiveNodes[i].Disposition == Disposition.Acceptable)
+                bool nodeMarkedAmbiguous = false;
+                for (int i = 0; i < ctdCount; i++)
                 {
-                    bool allParentsAreDisputedOrAmbiguous = !centralTransitiveNodes[i].ParentNodes
-                        .Any(p => p.Disposition != Disposition.Rejected && !(tracker.IsDisputed(p.Item) || tracker.IsAmbiguous(p.Item)));
-
-                    if (allParentsAreDisputedOrAmbiguous)
+                    if (centralTransitiveNodes[i].Disposition == Disposition.Acceptable)
                     {
-                        // children of ambiguous nodes were already marked as ambiguous, skip them
-                        centralTransitiveNodes[i].ForEach(x => tracker.MarkAmbiguous(x.Item), pn => tracker.IsAmbiguous(pn.Item));
+                        bool allParentsAreDisputedOrAmbiguous = !centralTransitiveNodes[i].ParentNodes
+                            .Any(p => p.Disposition != Disposition.Rejected && !(tracker.IsDisputed(p.Item) || tracker.IsAmbiguous(p.Item)));
+
+                        if (allParentsAreDisputedOrAmbiguous && !tracker.IsAmbiguous(centralTransitiveNodes[i].Item))
+                        {
+                            nodeMarkedAmbiguous = true;
+
+                            // children of ambiguous nodes were already marked as ambiguous, skip them
+                            centralTransitiveNodes[i].ForEach(x => tracker.MarkAmbiguous(x.Item), pn => tracker.IsAmbiguous(pn.Item));
+                        }
                     }
                 }
+
+                // Some node were marked ambiguous, thus we need another run to check if nodes previously not marked ambiguous should be marked ambiguous this time.
+                if (!nodeMarkedAmbiguous)
+                    break;
             };
         }
 

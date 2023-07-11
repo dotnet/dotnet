@@ -8,6 +8,8 @@ namespace NuGet.VisualStudio.Implementation.Extensibility
 {
     internal class VsPackageMetadataComparer : IEqualityComparer<IVsPackageMetadata>
     {
+        public static VsPackageMetadataComparer Instance { get; } = new();
+
         public bool Equals(IVsPackageMetadata x, IVsPackageMetadata y)
         {
             if (ReferenceEquals(x, y))

@@ -96,8 +96,7 @@ namespace NuGet.Frameworks
 
         public bool Equals(FrameworkRange? other)
         {
-            var comparer = new FrameworkRangeComparer();
-            return comparer.Equals(this, other);
+            return FrameworkRangeComparer.Instance.Equals(this, other);
         }
 
         public override bool Equals(object? obj)
@@ -114,8 +113,7 @@ namespace NuGet.Frameworks
 
         public override int GetHashCode()
         {
-            var comparer = new FrameworkRangeComparer();
-            return comparer.GetHashCode(this);
+            return FrameworkRangeComparer.Instance.GetHashCode(this);
         }
     }
 }

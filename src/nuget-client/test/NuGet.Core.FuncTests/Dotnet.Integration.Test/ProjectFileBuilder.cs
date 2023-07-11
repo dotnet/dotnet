@@ -12,7 +12,7 @@ namespace NuGet.Test.Utility
     /// Represents a builder for dotnet core projects for integration tests.
     /// Relies on <c>MsbuildIntegrationTestFixture</c> to programmatically create the project
     /// </summary>
-    /// <seealso cref="MsbuildIntegrationTestFixture"/>
+    /// <seealso cref="DotnetIntegrationTestFixture"/>
     internal class ProjectFileBuilder
     {
         public string PackageIcon { get; private set; }
@@ -40,7 +40,7 @@ namespace NuGet.Test.Utility
             return new ProjectFileBuilder();
         }
 
-        public void Build(MsbuildIntegrationTestFixture fixture, string path)
+        public void Build(DotnetIntegrationTestFixture fixture, string path)
         {
             BaseDir = path;
 

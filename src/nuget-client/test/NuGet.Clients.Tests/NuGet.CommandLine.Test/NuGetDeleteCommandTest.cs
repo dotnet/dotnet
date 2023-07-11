@@ -35,8 +35,7 @@ namespace NuGet.CommandLine.Test
                 var r = CommandRunner.Run(
                     nugetexe,
                     Directory.GetCurrentDirectory(),
-                    String.Join(" ", args),
-                    waitForExit: true);
+                    String.Join(" ", args));
 
                 // Assert
                 Assert.Equal(0, r.ExitCode);
@@ -63,8 +62,7 @@ namespace NuGet.CommandLine.Test
                 var r = CommandRunner.Run(
                     nugetexe,
                     Directory.GetCurrentDirectory(),
-                    String.Join(" ", args),
-                    waitForExit: true);
+                    String.Join(" ", args));
 
                 // Assert
                 Assert.Equal(0, r.ExitCode);
@@ -93,8 +91,7 @@ namespace NuGet.CommandLine.Test
                 var r = CommandRunner.Run(
                     nugetexe,
                     Directory.GetCurrentDirectory(),
-                    String.Join(" ", args),
-                    waitForExit: true);
+                    String.Join(" ", args));
 
                 // Assert
                 Assert.Equal(0, r.ExitCode);
@@ -125,8 +122,7 @@ namespace NuGet.CommandLine.Test
                 var r = CommandRunner.Run(
                     nugetexe,
                     Directory.GetCurrentDirectory(),
-                    String.Join(" ", args),
-                    waitForExit: true);
+                    String.Join(" ", args));
 
                 // Assert
                 Assert.Equal(0, r.ExitCode);
@@ -161,8 +157,7 @@ namespace NuGet.CommandLine.Test
                 var r = CommandRunner.Run(
                     nugetexe,
                     Directory.GetCurrentDirectory(),
-                    $"delete testPackage1 1.1.0 -Source {source} -NonInteractive",
-                    waitForExit: true);
+                    $"delete testPackage1 1.1.0 -Source {source} -NonInteractive");
 
                 // Assert
                 Assert.Equal(0, r.ExitCode);
@@ -195,8 +190,7 @@ namespace NuGet.CommandLine.Test
                 var r = CommandRunner.Run(
                     nugetexe,
                     Directory.GetCurrentDirectory(),
-                    string.Join(" ", args),
-                    waitForExit: true);
+                    string.Join(" ", args));
 
                 // Assert
                 Assert.Equal(0, r.ExitCode);
@@ -239,8 +233,7 @@ namespace NuGet.CommandLine.Test
                 var result = CommandRunner.Run(
                     NuGetExePath,
                     Directory.GetCurrentDirectory(),
-                    string.Join(" ", args),
-                    waitForExit: true);
+                    string.Join(" ", args));
 
                 server.Stop();
 
@@ -288,8 +281,7 @@ namespace NuGet.CommandLine.Test
                 var result = CommandRunner.Run(
                     NuGetExePath,
                     Directory.GetCurrentDirectory(),
-                    string.Join(" ", args),
-                    waitForExit: true);
+                    string.Join(" ", args));
 
                 server.Stop();
 
@@ -368,8 +360,7 @@ namespace NuGet.CommandLine.Test
                 var result = CommandRunner.Run(
                     NuGetExePath,
                     Directory.GetCurrentDirectory(),
-                    string.Join(" ", args),
-                    waitForExit: true);
+                    string.Join(" ", args));
 
                 server.Stop();
 
@@ -402,8 +393,7 @@ namespace NuGet.CommandLine.Test
                 var r = CommandRunner.Run(
                     nugetexe,
                     Directory.GetCurrentDirectory(),
-                    string.Join(" ", args),
-                    waitForExit: true);
+                    string.Join(" ", args));
 
                 // Assert
                 foreach (var serverWarning in serverWarnings)
@@ -449,8 +439,7 @@ namespace NuGet.CommandLine.Test
                 var r = CommandRunner.Run(
                     nugetexe,
                     Directory.GetCurrentDirectory(),
-                    string.Join(" ", args),
-                    waitForExit: true);
+                    string.Join(" ", args));
 
                 // Assert
                 Assert.Equal(0, r.ExitCode);

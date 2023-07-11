@@ -1460,7 +1460,7 @@ namespace NuGet.ProjectModel
 
             jsonReader.ReadObject(propertyName =>
             {
-                dependencies = dependencies ?? new List<RuntimePackageDependency>();
+                dependencies ??= new List<RuntimePackageDependency>();
 
                 var dependency = new RuntimePackageDependency(propertyName, VersionRange.Parse(jsonReader.ReadNextTokenAsString()));
 
@@ -1469,7 +1469,7 @@ namespace NuGet.ProjectModel
 
             return new RuntimeDependencySet(
                 dependencySetName,
-                dependencies ?? Enumerable.Empty<RuntimePackageDependency>());
+                dependencies);
         }
 
         private static RuntimeDescription ReadRuntimeDescription(JsonTextReader jsonReader, string runtimeName)
@@ -1485,7 +1485,7 @@ namespace NuGet.ProjectModel
                 }
                 else
                 {
-                    additionalDependencies = additionalDependencies ?? new List<RuntimeDependencySet>();
+                    additionalDependencies ??= new List<RuntimeDependencySet>();
 
                     RuntimeDependencySet dependency = ReadRuntimeDependencySet(jsonReader, propertyName);
 
@@ -1495,8 +1495,8 @@ namespace NuGet.ProjectModel
 
             return new RuntimeDescription(
                 runtimeName,
-                inheritedRuntimes ?? Enumerable.Empty<string>(),
-                additionalDependencies ?? Enumerable.Empty<RuntimeDependencySet>());
+                inheritedRuntimes,
+                additionalDependencies);
         }
 
         private static List<RuntimeDescription> ReadRuntimes(JsonTextReader jsonReader)

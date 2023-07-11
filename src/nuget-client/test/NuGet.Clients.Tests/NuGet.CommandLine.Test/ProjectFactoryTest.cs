@@ -475,8 +475,7 @@ namespace NuGet.CommandLine
                 var r = CommandRunner.Run(
                     nugetexe,
                     workingDirectory,
-                    "pack Assembly.csproj -build",
-                    waitForExit: true);
+                    "pack Assembly.csproj -build");
 
                 Util.VerifyResultSuccess(r);
 
@@ -519,8 +518,7 @@ namespace NuGet.CommandLine
                 var r = CommandRunner.Run(
                     nugetexe,
                     workingDirectory,
-                    $"pack Link{Path.DirectorySeparatorChar}Link.csproj -build -IncludeReferencedProjects -Version 1.0.0",
-                    waitForExit: true);
+                    $"pack Link{Path.DirectorySeparatorChar}Link.csproj -build -IncludeReferencedProjects -Version 1.0.0");
 
                 // Assert
                 Util.VerifyResultSuccess(r);
@@ -573,8 +571,7 @@ namespace NuGet.CommandLine
                 var r = CommandRunner.Run(
                     nugetexe,
                     workingDirectory,
-                    $"pack Link{Path.DirectorySeparatorChar}Link.csproj -build -IncludeReferencedProjects -Version 1.0.0",
-                    waitForExit: true);
+                    $"pack Link{Path.DirectorySeparatorChar}Link.csproj -build -IncludeReferencedProjects -Version 1.0.0");
 
                 // Assert
                 Util.VerifyResultSuccess(r);

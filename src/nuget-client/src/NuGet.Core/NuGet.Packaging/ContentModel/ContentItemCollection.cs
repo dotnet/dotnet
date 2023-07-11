@@ -27,7 +27,7 @@ namespace NuGet.ContentModel
             // Read already loaded assets
             _assets = new List<Asset>();
 
-            foreach (var path in paths)
+            foreach (var path in paths.NoAllocEnumerate())
             {
                 // Skip files in the root of the directory
                 if (IsValidAsset(path))
@@ -144,7 +144,7 @@ namespace NuGet.ContentModel
             {
                 itemGroups.Clear();
                 PopulateItemGroups(definition, itemGroups);
-                foreach (var criteriaEntry in criteria.Entries)
+                foreach (var criteriaEntry in criteria.Entries.NoAllocEnumerate())
                 {
                     ContentItemGroup bestGroup = null;
                     var bestAmbiguity = false;
@@ -152,7 +152,7 @@ namespace NuGet.ContentModel
                     foreach (var itemGroup in itemGroups)
                     {
                         var groupIsValid = true;
-                        foreach (var criteriaProperty in criteriaEntry.Properties)
+                        foreach (var criteriaProperty in criteriaEntry.Properties.NoAllocEnumerate())
                         {
                             if (criteriaProperty.Value == null)
                             {
@@ -192,7 +192,7 @@ namespace NuGet.ContentModel
                             else
                             {
                                 var groupComparison = 0;
-                                foreach (var criteriaProperty in criteriaEntry.Properties)
+                                foreach (var criteriaProperty in criteriaEntry.Properties.NoAllocEnumerate())
                                 {
                                     if (criteriaProperty.Value == null)
                                     {
@@ -241,7 +241,7 @@ namespace NuGet.ContentModel
 
             List<ContentItem> items = new();
 
-            foreach (var asset in assets)
+            foreach (var asset in assets.NoAllocEnumerate())
             {
                 var path = asset.Path;
 
@@ -279,7 +279,7 @@ namespace NuGet.ContentModel
             }
 
             List<string> relatedFileExtensionList = null;
-            foreach (Asset asset in assets)
+            foreach (Asset asset in assets.NoAllocEnumerate())
             {
                 if (asset.Path is not null)
                 {

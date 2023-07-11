@@ -406,7 +406,7 @@ namespace NuGet.Test
 
             var frameworks = new List<NuGetFramework> { leftSide, rightSide };
 
-            var distinctFrameworksWithComparer = frameworks.Distinct(new NuGetFrameworkFullComparer()).ToArray();
+            var distinctFrameworksWithComparer = frameworks.Distinct(NuGetFrameworkFullComparer.Instance).ToArray();
             var distinctFrameworksWithoutComparer = frameworks.Distinct().ToArray();
 
             distinctFrameworksWithComparer.Should().HaveCount(1);

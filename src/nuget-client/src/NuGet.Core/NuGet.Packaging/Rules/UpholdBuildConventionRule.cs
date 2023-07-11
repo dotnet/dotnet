@@ -16,7 +16,7 @@ namespace NuGet.Packaging.Rules
 {
     internal class UpholdBuildConventionRule : IPackageRule
     {
-        private static ManagedCodeConventions ManagedCodeConventions = new ManagedCodeConventions(new RuntimeGraph());
+        private static ManagedCodeConventions ManagedCodeConventions = new ManagedCodeConventions(RuntimeGraph.Empty);
         private static readonly IReadOnlyList<string> BuildFolders = new string[]
         {
             PackagingConstants.Folders.Build,

@@ -84,7 +84,6 @@ namespace NuGet.CommandLine.Test
                 nugetExe,
                 pathContext.WorkingDirectory.Path,
                 string.Join(" ", arguments),
-                waitForExit: true,
                 environmentVariables: envVars);
 
             // Assert
@@ -1051,8 +1050,7 @@ EndProject");
             var result = CommandRunner.Run(
                 Util.GetNuGetExePath(),
                 Directory.GetCurrentDirectory(),
-                command,
-                waitForExit: true);
+                command);
 
             var commandSplit = command.Split(' ');
 

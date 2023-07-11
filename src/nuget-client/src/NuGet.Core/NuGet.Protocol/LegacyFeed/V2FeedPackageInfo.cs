@@ -247,7 +247,7 @@ namespace NuGet.Protocol
                 }
                 else
                 {
-                    var results = new Dictionary<NuGetFramework, List<PackageDependency>>(new NuGetFrameworkFullComparer());
+                    var results = new Dictionary<NuGetFramework, List<PackageDependency>>(NuGetFrameworkFullComparer.Instance);
 
                     foreach (var set in Dependencies.Split('|'))
                     {
