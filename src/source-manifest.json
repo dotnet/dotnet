@@ -49,10 +49,10 @@
       "commitSha": "6a6ebab20275991239c0224b56959f9d5537a280"
     },
     {
-      "packageVersion": "8.0.100-beta.23354.4",
+      "packageVersion": "8.0.100-beta.23361.1",
       "path": "fsharp",
       "remoteUri": "https://github.com/dotnet/fsharp",
-      "commitSha": "4885abbdf7595c1b8475ea868964d4ce43284b9e"
+      "commitSha": "7f2714a264b403745508385ed81326b0e2993bc7"
     },
     {
       "packageVersion": "8.0.100",
