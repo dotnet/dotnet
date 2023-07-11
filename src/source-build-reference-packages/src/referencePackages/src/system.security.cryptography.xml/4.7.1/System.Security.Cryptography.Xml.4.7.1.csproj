@@ -2,22 +2,12 @@
 
   <PropertyGroup>
     <TargetFrameworks>netstandard2.0</TargetFrameworks>
-    <NuspecFile>$(ArtifactsBinDir)system.security.cryptography.xml/4.7.1/system.security.cryptography.xml.nuspec</NuspecFile>
+    <AssemblyName>System.Security.Cryptography.Xml</AssemblyName>
+    <ProjectTemplateVersion>2</ProjectTemplateVersion>
     <StrongNameKeyId>Open</StrongNameKeyId>
   </PropertyGroup>
 
-  <PropertyGroup>
-    <OutputPath>$(ArtifactsBinDir)system.security.cryptography.xml/4.7.1/ref/</OutputPath>
-    <IntermediateOutputPath>$(ArtifactsObjDir)system.security.cryptography.xml/4.7.1</IntermediateOutputPath>
-  </PropertyGroup>
-
-  <ItemGroup>
-    <Compile Include="**/ref/$(TargetFramework)/*.cs" />
-    <Compile Include="**/lib/$(TargetFramework)/*.cs" />
-  </ItemGroup>
-
-  <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.0' ">
-    <PackageReference Include="NETStandard.Library" Version="$(NETStandardImplicitPackageVersion)" />
+  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
     <PackageReference Include="System.Security.Cryptography.Pkcs" Version="4.7.0" />
     <PackageReference Include="System.Security.Permissions" Version="4.7.0" />
   </ItemGroup>

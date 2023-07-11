@@ -1,22 +1,10 @@
 <Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
     <TargetFrameworks>netstandard2.0</TargetFrameworks>
-    <NuspecFile>$(ArtifactsBinDir)system.codedom/4.4.0/system.codedom.nuspec</NuspecFile>
+    <AssemblyName>System.CodeDom</AssemblyName>
+    <ProjectTemplateVersion>2</ProjectTemplateVersion>
     <StrongNameKeyId>Open</StrongNameKeyId>
-   </PropertyGroup>
-
-  <PropertyGroup>
-    <OutputPath>$(ArtifactsBinDir)system.codedom/4.4.0/ref/</OutputPath>
-    <IntermediateOutputPath>$(ArtifactsObjDir)system.codedom/4.4.0</IntermediateOutputPath>
   </PropertyGroup>
-
-  <ItemGroup>
-    <Compile Include="**/ref/$(TargetFramework)/*.cs" />
-    <Compile Include="**/lib/$(TargetFramework)/*.cs" />
-  </ItemGroup>
-
-  <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.0' ">
-      <PackageReference Include="NETStandard.Library" Version="$(NETStandardImplicitPackageVersion)" />
-  </ItemGroup>
 
 </Project>
