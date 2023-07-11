@@ -12,6 +12,13 @@ namespace NuGet.Frameworks
     /// </summary>
     public class NuGetFrameworkFullComparer : IEqualityComparer<NuGetFramework>
     {
+#pragma warning disable CS0618 // Type or member is obsolete
+        public static NuGetFrameworkFullComparer Instance { get; } = new();
+#pragma warning restore CS0618 // Type or member is obsolete
+
+        [Obsolete("Use singleton via NuGetFrameworkFullComparer.Instance instead")]
+        public NuGetFrameworkFullComparer() { }
+
         public bool Equals(NuGetFramework? x, NuGetFramework? y)
         {
             if (ReferenceEquals(x, y))

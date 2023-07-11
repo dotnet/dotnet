@@ -138,7 +138,7 @@ namespace NuGet.PackageManagement
 
         private async Task<Dictionary<PackageReference, List<string>>> GetPackagesReferencesDictionaryAsync(CancellationToken token)
         {
-            var packageReferencesDict = new Dictionary<PackageReference, List<string>>(new PackageReferenceComparer());
+            var packageReferencesDict = new Dictionary<PackageReference, List<string>>(PackageReferenceComparer.Instance);
             if (!await SolutionManager.IsSolutionAvailableAsync())
             {
                 return packageReferencesDict;
@@ -370,7 +370,7 @@ namespace NuGet.PackageManagement
             // It is possible that the dictionary passed in may not have used the PackageReferenceComparer.
             // So, just to be sure, create a hashset with the keys from the dictionary using the PackageReferenceComparer
             // Now, we are guaranteed to not restore the same package more than once
-            var hashSetOfMissingPackageReferences = new HashSet<PackageReference>(missingPackages.Select(p => p.PackageReference), new PackageReferenceComparer());
+            var hashSetOfMissingPackageReferences = new HashSet<PackageReference>(missingPackages.Select(p => p.PackageReference), PackageReferenceComparer.Instance);
 
             nuGetProjectContext.PackageExtractionContext.CopySatelliteFiles = false;
 
@@ -520,7 +520,7 @@ namespace NuGet.PackageManagement
 
                 if (packageRestoreContext.PackageRestoreFailedEvent != null)
                 {
-                    var packageReferenceComparer = new PackageReferenceComparer();
+                    var packageReferenceComparer = PackageReferenceComparer.Instance;
 
                     var packageRestoreData = packageRestoreContext.Packages
                         .Where(p => packageReferenceComparer.Equals(p.PackageReference, packageReference))

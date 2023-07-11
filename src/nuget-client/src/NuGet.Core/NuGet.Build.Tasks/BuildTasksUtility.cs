@@ -438,7 +438,7 @@ namespace NuGet.Build.Tasks
             string firstPackagesConfigPath = null;
             IList<PackageSource> packageSources = null;
 
-            var installedPackageReferences = new HashSet<Packaging.PackageReference>(new PackageReferenceComparer());
+            var installedPackageReferences = new HashSet<Packaging.PackageReference>(PackageReferenceComparer.Instance);
 
             ISettings settings = null;
 

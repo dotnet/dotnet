@@ -12,7 +12,7 @@ namespace NuGet.Frameworks
     {
         private readonly IFrameworkNameProvider _mappings;
         private readonly FrameworkExpander _expander;
-        private static readonly NuGetFrameworkFullComparer FullComparer = new NuGetFrameworkFullComparer();
+        private static readonly NuGetFrameworkFullComparer FullComparer = NuGetFrameworkFullComparer.Instance;
         private readonly ConcurrentDictionary<CompatibilityCacheKey, bool> _cache;
 
         public CompatibilityProvider(IFrameworkNameProvider mappings)

@@ -401,8 +401,7 @@ namespace NuGet.Signing.CrossFramework.Test
             CommandRunnerResult verifyResult = CommandRunner.Run(
                 command,
                 workingDirectory: ".",
-                arguments,
-                waitForExit: true);
+                arguments: arguments);
 
             return verifyResult;
         }

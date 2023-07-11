@@ -284,8 +284,7 @@ namespace NuGet.CommandLine.Test
             var r = CommandRunner.Run(
                 nugetexe,
                 pathContext.WorkingDirectory.Path,
-                string.Join(" ", args),
-                waitForExit: true);
+                string.Join(" ", args));
 
             // Assert
             Assert.True(exitCode == r.ExitCode, r.Errors + "\n\n" + r.Output);

@@ -73,7 +73,7 @@ namespace NuGet.ProjectModel
             Imports = new List<NuGetFramework>(cloneFrom.Imports);
             AssetTargetFallback = cloneFrom.AssetTargetFallback;
             Warn = cloneFrom.Warn;
-            DownloadDependencies = CloneList(cloneFrom.DownloadDependencies, static dep => dep.Clone());
+            DownloadDependencies = cloneFrom.DownloadDependencies.ToList();
             CentralPackageVersions = new Dictionary<string, CentralPackageVersion>(cloneFrom.CentralPackageVersions, StringComparer.OrdinalIgnoreCase);
             FrameworkReferences = new HashSet<FrameworkDependency>(cloneFrom.FrameworkReferences);
             RuntimeIdentifierGraphPath = cloneFrom.RuntimeIdentifierGraphPath;

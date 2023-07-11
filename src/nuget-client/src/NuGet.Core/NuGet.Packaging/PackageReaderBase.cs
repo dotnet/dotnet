@@ -366,7 +366,7 @@ namespace NuGet.Packaging
         /// </remarks>
         public virtual IEnumerable<NuGetFramework> GetSupportedFrameworks()
         {
-            var frameworks = new HashSet<NuGetFramework>(new NuGetFrameworkFullComparer());
+            var frameworks = new HashSet<NuGetFramework>(NuGetFrameworkFullComparer.Instance);
 
             frameworks.UnionWith(GetLibItems().Select(g => g.TargetFramework));
 
@@ -425,7 +425,7 @@ namespace NuGet.Packaging
 
         protected IEnumerable<FrameworkSpecificGroup> GetFileGroups(string folder)
         {
-            var groups = new Dictionary<NuGetFramework, List<string>>(new NuGetFrameworkFullComparer());
+            var groups = new Dictionary<NuGetFramework, List<string>>(NuGetFrameworkFullComparer.Instance);
             var allowSubFolders = true;
 
             foreach (var path in GetFiles(folder))

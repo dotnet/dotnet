@@ -239,7 +239,7 @@ namespace NuGet.Commands
             if (!warningPropertiesCache.TryGetValue(key, out var frameworkCollection))
             {
                 frameworkCollection
-                    = new Dictionary<NuGetFramework, WarningPropertiesCollection>(new NuGetFrameworkFullComparer());
+                    = new Dictionary<NuGetFramework, WarningPropertiesCollection>(NuGetFrameworkFullComparer.Instance);
 
                 warningPropertiesCache[key] = frameworkCollection;
             }
@@ -537,7 +537,7 @@ namespace NuGet.Commands
 
             if (packageSpecificWarningProperties?.Properties != null)
             {
-                result = new Dictionary<NuGetFramework, Dictionary<string, HashSet<NuGetLogCode>>>(new NuGetFrameworkFullComparer());
+                result = new Dictionary<NuGetFramework, Dictionary<string, HashSet<NuGetLogCode>>>(NuGetFrameworkFullComparer.Instance);
 
                 foreach (var codePair in packageSpecificWarningProperties.Properties)
                 {

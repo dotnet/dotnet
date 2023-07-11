@@ -197,8 +197,8 @@ namespace NuGet.RuntimeModel
         private static RuntimeDescription ReadRuntimeDescription(KeyValuePair<string, JToken> json)
         {
             var name = json.Key;
-            IList<string> inheritedRuntimes = new List<string>();
-            IList<RuntimeDependencySet> additionalDependencies = new List<RuntimeDependencySet>();
+            List<string> inheritedRuntimes = null;
+            List<RuntimeDependencySet> additionalDependencies = null;
             foreach (var property in EachProperty(json.Value))
             {
                 if (property.Key == "#import")
@@ -206,12 +206,14 @@ namespace NuGet.RuntimeModel
                     var imports = property.Value as JArray;
                     foreach (var import in imports)
                     {
+                        inheritedRuntimes ??= new();
                         inheritedRuntimes.Add(import.Value<string>());
                     }
                 }
                 else
                 {
                     var dependency = ReadRuntimeDependencySet(property);
+                    additionalDependencies ??= new();
                     additionalDependencies.Add(dependency);
                 }
             }

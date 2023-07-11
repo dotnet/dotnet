@@ -214,7 +214,7 @@ namespace NuGet.Commands
 
             return EqualityUtility.EqualsWithNullCheck(ProjectWideWarningProperties, other.ProjectWideWarningProperties) &&
                 EqualityUtility.EqualsWithNullCheck(PackageSpecificWarningProperties, other.PackageSpecificWarningProperties) &&
-                EqualityUtility.OrderedEquals(ProjectFrameworks, other.ProjectFrameworks, (fx) => fx.Framework, orderComparer: StringComparer.OrdinalIgnoreCase, sequenceComparer: new NuGetFrameworkFullComparer());
+                EqualityUtility.OrderedEquals(ProjectFrameworks, other.ProjectFrameworks, (fx) => fx.Framework, orderComparer: StringComparer.OrdinalIgnoreCase, sequenceComparer: NuGetFrameworkFullComparer.Instance);
         }
     }
 }

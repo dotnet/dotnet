@@ -372,7 +372,7 @@ namespace NuGet.VisualStudio
 
                 var groups = reader.GetReferenceItems();
 
-                var fwComparer = new NuGetFrameworkFullComparer();
+                var fwComparer = NuGetFrameworkFullComparer.Instance;
                 FrameworkReducer reducer = new FrameworkReducer();
                 NuGetFramework targetGroupFramework = reducer.GetNearest(projectSystem.TargetFramework, groups.Select(e => e.TargetFramework));
 

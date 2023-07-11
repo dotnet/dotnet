@@ -975,7 +975,6 @@ namespace NuGet.CommandLine.FuncTest.Commands
                 nugetExe,
                 pathContext.WorkingDirectory.Path,
                 string.Join(" ", args),
-                waitForExit: true,
                 environmentVariables: envVars);
 
             // Assert

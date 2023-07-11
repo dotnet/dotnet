@@ -17,7 +17,7 @@ using Test.Utility.Commands;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace NuGet.Commands.Test
+namespace NuGet.Commands.Test.RestoreCommandTests
 {
     public class ProjectRestoreCommandTests
     {

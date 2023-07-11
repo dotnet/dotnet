@@ -144,7 +144,6 @@ namespace Test.Utility.Signing
             CommandRunnerResult result = CommandRunner.Run("/bin/bash",
                 workingDirectory,
                 args,
-                waitForExit: true,
                 timeOutInMilliseconds: 60000);
 
             if (!result.Success)
