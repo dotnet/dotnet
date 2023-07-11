@@ -3,9 +3,11 @@
 
 #nullable disable
 
-using System.Collections.Generic;
 using System.Diagnostics;
 using Microsoft.AspNetCore.Razor.Language.Syntax.InternalSyntax;
+using Microsoft.CodeAnalysis.CSharp;
+
+using SyntaxFactory = Microsoft.AspNetCore.Razor.Language.Syntax.InternalSyntax.SyntaxFactory;
 
 namespace Microsoft.AspNetCore.Razor.Language.Legacy;
 
@@ -125,11 +127,11 @@ internal class HtmlTokenizer : Tokenizer
     // http://dev.w3.org/html5/spec/Overview.html#data-state
     private StateResult Data()
     {
-        if (ParserHelpers.IsWhitespace(CurrentCharacter))
+        if (SyntaxFacts.IsWhitespace(CurrentCharacter))
         {
             return Stay(Whitespace());
         }
-        else if (ParserHelpers.IsNewLine(CurrentCharacter))
+        else if (SyntaxFacts.IsNewLine(CurrentCharacter))
         {
             return Stay(Newline());
         }
@@ -172,7 +174,7 @@ internal class HtmlTokenizer : Tokenizer
     {
         var prev = '\0';
         while (!EndOfFile &&
-            !(ParserHelpers.IsWhitespace(CurrentCharacter) || ParserHelpers.IsNewLine(CurrentCharacter)) &&
+            !(SyntaxFacts.IsWhitespace(CurrentCharacter) || SyntaxFacts.IsNewLine(CurrentCharacter)) &&
             !AtToken())
         {
             prev = CurrentCharacter;
@@ -182,8 +184,8 @@ internal class HtmlTokenizer : Tokenizer
         if (CurrentCharacter == '@')
         {
             var next = Peek();
-            if ((ParserHelpers.IsLetter(prev) || ParserHelpers.IsDecimalDigit(prev)) &&
-                (ParserHelpers.IsLetter(next) || ParserHelpers.IsDecimalDigit(next)))
+            if ((char.IsLetter(prev) || char.IsDigit(prev)) &&
+                (char.IsLetter(next) || char.IsDigit(next)))
             {
                 TakeCurrent(); // Take the "@"
                 return Stay(); // Stay in the Text state
@@ -233,7 +235,7 @@ internal class HtmlTokenizer : Tokenizer
 
     private SyntaxToken Whitespace()
     {
-        while (ParserHelpers.IsWhitespace(CurrentCharacter))
+        while (SyntaxFacts.IsWhitespace(CurrentCharacter))
         {
             TakeCurrent();
         }
@@ -242,7 +244,7 @@ internal class HtmlTokenizer : Tokenizer
 
     private SyntaxToken Newline()
     {
-        Debug.Assert(ParserHelpers.IsNewLine(CurrentCharacter));
+        Debug.Assert(SyntaxFacts.IsNewLine(CurrentCharacter));
         // CSharp Spec §2.3.1
         var checkTwoCharNewline = CurrentCharacter == '\r';
         TakeCurrent();

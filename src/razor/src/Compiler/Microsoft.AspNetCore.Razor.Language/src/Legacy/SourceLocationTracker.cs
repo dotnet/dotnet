@@ -2,6 +2,7 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
+using Microsoft.CodeAnalysis.CSharp;
 
 namespace Microsoft.AspNetCore.Razor.Language.Legacy;
 
@@ -34,7 +35,7 @@ internal static class SourceLocationTracker
         absoluteIndex++;
 
         if ((Environment.NewLine.Length == 1 && characterRead == Environment.NewLine[0]) ||
-            (ParserHelpers.IsNewLine(characterRead) && (characterRead != '\r' || nextCharacter != '\n')))
+            (SyntaxFacts.IsNewLine(characterRead) && (characterRead != '\r' || nextCharacter != '\n')))
         {
             lineIndex++;
             characterIndex = 0;

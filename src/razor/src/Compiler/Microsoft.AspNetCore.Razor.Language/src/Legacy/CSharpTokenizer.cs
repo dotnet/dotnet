@@ -6,8 +6,10 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Globalization;
 using Microsoft.AspNetCore.Razor.Language.Syntax.InternalSyntax;
+using Microsoft.CodeAnalysis.CSharp;
+
+using SyntaxFactory = Microsoft.AspNetCore.Razor.Language.Syntax.InternalSyntax.SyntaxFactory;
 
 namespace Microsoft.AspNetCore.Razor.Language.Legacy;
 
@@ -354,7 +356,7 @@ internal class CSharpTokenizer : Tokenizer
 
     private StateResult Data()
     {
-        if (ParserHelpers.IsNewLine(CurrentCharacter))
+        if (SyntaxFacts.IsNewLine(CurrentCharacter))
         {
             // CSharp Spec §2.3.1
             var checkTwoCharNewline = CurrentCharacter == '\r';
@@ -365,13 +367,13 @@ internal class CSharpTokenizer : Tokenizer
             }
             return Stay(EndToken(SyntaxKind.NewLine));
         }
-        else if (ParserHelpers.IsWhitespace(CurrentCharacter))
+        else if (SyntaxFacts.IsWhitespace(CurrentCharacter))
         {
             // CSharp Spec §2.3.3
-            TakeUntil(c => !ParserHelpers.IsWhitespace(c));
+            TakeUntil(c => !SyntaxFacts.IsWhitespace(c));
             return Stay(EndToken(SyntaxKind.Whitespace));
         }
-        else if (IsIdentifierStart(CurrentCharacter))
+        else if (SyntaxFacts.IsIdentifierStartCharacter(CurrentCharacter))
         {
             return Identifier();
         }
@@ -561,8 +563,8 @@ internal class CSharpTokenizer : Tokenizer
 
     private StateResult QuotedStringLiteral() => QuotedLiteral('\"', IsEndQuotedStringLiteral, SyntaxKind.StringLiteral);
 
-    private readonly Func<char, bool> IsEndQuotedCharacterLiteral = (c) => c == '\\' || c == '\'' || ParserHelpers.IsNewLine(c);
-    private readonly Func<char, bool> IsEndQuotedStringLiteral = (c) => c == '\\' || c == '\"' || ParserHelpers.IsNewLine(c);
+    private readonly Func<char, bool> IsEndQuotedCharacterLiteral = (c) => c == '\\' || c == '\'' || SyntaxFacts.IsNewLine(c);
+    private readonly Func<char, bool> IsEndQuotedStringLiteral = (c) => c == '\\' || c == '\"' || SyntaxFacts.IsNewLine(c);
 
     private StateResult QuotedLiteral(char quote, Func<char, bool> isEndQuotedLiteral, SyntaxKind literalType)
     {
@@ -578,7 +580,7 @@ internal class CSharpTokenizer : Tokenizer
             }
             return Stay();
         }
-        else if (EndOfFile || ParserHelpers.IsNewLine(CurrentCharacter))
+        else if (EndOfFile || SyntaxFacts.IsNewLine(CurrentCharacter))
         {
             CurrentErrors.Add(
                 RazorDiagnosticFactory.CreateParsing_UnterminatedStringLiteral(
@@ -618,7 +620,7 @@ internal class CSharpTokenizer : Tokenizer
     // CSharp Spec §2.3.2
     private StateResult SingleLineComment()
     {
-        TakeUntil(c => ParserHelpers.IsNewLine(c));
+        TakeUntil(c => SyntaxFacts.IsNewLine(c));
         return Stay(EndToken(SyntaxKind.CSharpComment));
     }
 
@@ -712,9 +714,9 @@ internal class CSharpTokenizer : Tokenizer
     // CSharp Spec §2.4.2
     private StateResult Identifier()
     {
-        Debug.Assert(IsIdentifierStart(CurrentCharacter));
+        Debug.Assert(SyntaxFacts.IsIdentifierStartCharacter(CurrentCharacter));
         TakeCurrent();
-        TakeUntil(c => !IsIdentifierPart(c));
+        TakeUntil(c => !SyntaxFacts.IsIdentifierPartCharacter(c));
         SyntaxToken token = null;
         if (HaveContent)
         {
@@ -745,20 +747,6 @@ internal class CSharpTokenizer : Tokenizer
         return Transition((int)state, result);
     }
 
-    private static bool IsIdentifierStart(char character)
-    {
-        return char.IsLetter(character) ||
-               character == '_' ||
-               CharUnicodeInfo.GetUnicodeCategory(character) == UnicodeCategory.LetterNumber;
-    }
-
-    private static bool IsIdentifierPart(char character)
-    {
-        return char.IsDigit(character) ||
-               IsIdentifierStart(character) ||
-               IsIdentifierPartByUnicodeCategory(character);
-    }
-
     private static bool IsRealLiteralSuffix(char character)
     {
         return character == 'F' ||
@@ -767,16 +755,6 @@ internal class CSharpTokenizer : Tokenizer
                character == 'd' ||
                character == 'M' ||
                character == 'm';
-    }
-
-    private static bool IsIdentifierPartByUnicodeCategory(char character)
-    {
-        var category = CharUnicodeInfo.GetUnicodeCategory(character);
-
-        return category == UnicodeCategory.NonSpacingMark || // Mn
-               category == UnicodeCategory.SpacingCombiningMark || // Mc
-               category == UnicodeCategory.ConnectorPunctuation || // Pc
-               category == UnicodeCategory.Format; // Cf
     }
 
     private static bool IsHexDigit(char value)

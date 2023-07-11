@@ -6,7 +6,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using Microsoft.AspNetCore.Razor.Language.Legacy;
+using Microsoft.CodeAnalysis.CSharp;
 
 namespace Microsoft.AspNetCore.Razor.Language.Syntax;
 
@@ -78,7 +78,7 @@ internal static class SyntaxNodeExtensions
             {
                 // E.g. Marker symbol at the end of the document
                 var lastPosition = source.Length - 1;
-                var endsWithLineBreak = ParserHelpers.IsNewLine(source[lastPosition]);
+                var endsWithLineBreak = SyntaxFacts.IsNewLine(source[lastPosition]);
                 var lastLocation = source.Lines.GetLocation(lastPosition);
                 return new SourceLocation(
                     source.FilePath, // GetLocation prefers RelativePath but we want FilePath.
