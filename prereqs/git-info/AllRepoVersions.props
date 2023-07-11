@@ -3,8 +3,8 @@
   <PropertyGroup>
     <arcadeGitCommitHash>226c103b56a979243f08032e6cddb4deb66ea54b</arcadeGitCommitHash>
     <arcadeOutputPackageVersion>8.0.0-beta.23360.1</arcadeOutputPackageVersion>
-    <aspnetcoreGitCommitHash>78572fdfc5a4c016bcf87ff59ac36bd2c1c95216</aspnetcoreGitCommitHash>
-    <aspnetcoreOutputPackageVersion>8.0.0-preview.7.23360.15</aspnetcoreOutputPackageVersion>
+    <aspnetcoreGitCommitHash>a944ed30412909134bbc17de375f4e37f1b1a46b</aspnetcoreGitCommitHash>
+    <aspnetcoreOutputPackageVersion>8.0.0-preview.7.23360.36</aspnetcoreOutputPackageVersion>
     <cecilGitCommitHash>3e46711f5a933551557286d211970faa08b07b7e</cecilGitCommitHash>
     <cecilOutputPackageVersion>0.11.4-alpha.23327.1</cecilOutputPackageVersion>
     <commandlineapiGitCommitHash>02fe27cd6a9b001c8feb7938e6ef4b3799745759</commandlineapiGitCommitHash>
@@ -19,7 +19,7 @@
     <formatOutputPackageVersion>8.0.433001</formatOutputPackageVersion>
     <fsharpGitCommitHash>4885abbdf7595c1b8475ea868964d4ce43284b9e</fsharpGitCommitHash>
     <fsharpOutputPackageVersion>8.0.100-beta.23354.4</fsharpOutputPackageVersion>
-    <installerGitCommitHash>367806a29f41c6e7ff1ddeed8183a5376ea66ae1</installerGitCommitHash>
+    <installerGitCommitHash>0b59c3ee2ba7e00299a7ea02130196c9acb8ace3</installerGitCommitHash>
     <installerOutputPackageVersion>8.0.100</installerOutputPackageVersion>
     <msbuildGitCommitHash>bc97bd0d007610f3be67301395cb7c8a696a4a3b</msbuildGitCommitHash>
     <msbuildOutputPackageVersion>17.8.0-preview-23356-04</msbuildOutputPackageVersion>
@@ -33,8 +33,8 @@
     <roslynOutputPackageVersion>4.8.0-1.23360.3</roslynOutputPackageVersion>
     <runtimeGitCommitHash>ab7c4528edb5301cb849f5e114b7f3cc1dea8149</runtimeGitCommitHash>
     <runtimeOutputPackageVersion>8.0.0-preview.7.23359.3</runtimeOutputPackageVersion>
-    <sdkGitCommitHash>88229a1fd2398392a717790f1cf892d217278381</sdkGitCommitHash>
-    <sdkOutputPackageVersion>8.0.100-preview.7.23360.13</sdkOutputPackageVersion>
+    <sdkGitCommitHash>b90378bad79ffd86aedf04a558bc83294dbff1a1</sdkGitCommitHash>
+    <sdkOutputPackageVersion>8.0.100-preview.7.23360.18</sdkOutputPackageVersion>
     <sourcebuildexternalsGitCommitHash>449b2eed42c10f14eabb29d0f57c3ba77844f21c</sourcebuildexternalsGitCommitHash>
     <sourcebuildexternalsOutputPackageVersion>8.0.0-alpha.1.23355.1</sourcebuildexternalsOutputPackageVersion>
     <sourcebuildreferencepackagesGitCommitHash>bea821278f04cf4e4d7e41e0cd28f640a710260c</sourcebuildreferencepackagesGitCommitHash>
