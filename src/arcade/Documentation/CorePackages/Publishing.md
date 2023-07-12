@@ -212,12 +212,35 @@ Since the post-build stages will only trigger during builds that run in the inte
 1. Create a branch on the Azure DevOps internal mirror of the repo that includes the pipeline changes.
 1. Set up the "General Testing Channel" as a default channel for the internal repo + branch combination using Darc.
 
-    ``` Powershell
+    ```powershell
     darc add-default-channel --channel "General Testing" --branch "<my_new_branch>" --repo "https://dev.azure.com/dnceng/internal/_git/<repo_name>"
     ```
 
 1. Queue a build for your test branch
 1. Once the Build and Validate Build Assets stages complete, the *Publish Using Darc* stage should execute and publish the packages to the feed during the `Publish Using Darc` job. [Maestro Promotion Pipeline](https://dnceng.visualstudio.com/internal/_build?definitionId=750) is a pipeline used to publish the packages to the target channel. The job informs that a new build has been triggered in the promotion pipeline, and once it succeeds the build will be in the channel. The `Publish Using Darc` job calls [`darc add-build-to-channel`](https://github.com/dotnet/arcade/blob/ec191f3d706d740bc7a87fbb98d94d916f81f0cb/Documentation/Darc.md#add-build-to-channel) which waits until a build of the promotion pipeline publishes the assets.
+
+:warning: It is possible that even if you add a default channel, and the build artifacts will get published to the Build Asset Registry, the artifacts won't get published to the NuGet feed. 
+
+```
+// Publish Build Assets step
+  ...
+  Metadata has been pushed. Build id in the Build Asset Registry is '183022'
+  Found the following default channels:
+      https://dev.azure.com/dnceng/internal/_git/dotnet-arcade@deltabuild => (529) General Testing
+  Determined build will be added to the following channels: [529]
+
+// Publish Using Darc step
+  ...
+  Build '183022' is already on all target channel(s).
+```
+
+This is to do with the Maestro having some logic in it that preferences the repo URI to be "public", if the commit built is public.
+
+In situation like this, you can publish the artifacts to the desired NuGet feed by running the following command and waiting for it to complete:
+
+```powershell
+darc add-build-to-channel --channel "General Testing" --id <BAR ID>
+```
 
 ### Checksum generation
 
@@ -225,13 +248,13 @@ Arcade also includes support for automatically generating checksum files. To opt
 
 Example:
 
-    ```XML
-    <ItemGroup>
-      <GenerateChecksumItems Include="@(OutputFile)">
-        <DestinationPath>%(FullPath).Sha512</OutputPath>
-      </GenerateChecksumItems>
-    </ItemGroup>
-    ```
+```XML
+<ItemGroup>
+  <GenerateChecksumItems Include="@(OutputFile)">
+    <DestinationPath>%(FullPath).Sha512</OutputPath>
+  </GenerateChecksumItems>
+</ItemGroup>
+```
 
 Ensure that you do not set `publishInstallersAndChecksums=false` in your call to the `post-build.yml` template.
 
