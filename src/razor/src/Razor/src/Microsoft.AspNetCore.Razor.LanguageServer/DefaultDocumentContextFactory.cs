@@ -15,18 +15,18 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer;
 internal class DefaultDocumentContextFactory : DocumentContextFactory
 {
     private readonly ProjectSnapshotManagerDispatcher _projectSnapshotManagerDispatcher;
-    private readonly DocumentResolver _documentResolver;
+    private readonly ISnapshotResolver _snapshotResolver;
     private readonly DocumentVersionCache _documentVersionCache;
     private readonly ILogger<DefaultDocumentContextFactory> _logger;
 
     public DefaultDocumentContextFactory(
         ProjectSnapshotManagerDispatcher projectSnapshotManagerDispatcher,
-        DocumentResolver documentResolver,
+        ISnapshotResolver snapshotResolver,
         DocumentVersionCache documentVersionCache,
         ILoggerFactory loggerFactory)
     {
         _projectSnapshotManagerDispatcher = projectSnapshotManagerDispatcher;
-        _documentResolver = documentResolver;
+        _snapshotResolver = snapshotResolver;
         _documentVersionCache = documentVersionCache;
         _logger = loggerFactory.CreateLogger<DefaultDocumentContextFactory>();
     }
@@ -43,7 +43,7 @@ internal class DefaultDocumentContextFactory : DocumentContextFactory
 
         var documentAndVersion = await _projectSnapshotManagerDispatcher.RunOnDispatcherThreadAsync(() =>
         {
-            if (_documentResolver.TryResolveDocument(filePath, out var documentSnapshot))
+            if (_snapshotResolver.TryResolveDocument(filePath,  out var documentSnapshot))
             {
                 if (!versioned)
                 {

@@ -563,8 +563,8 @@ internal class CSharpTokenizer : Tokenizer
 
     private StateResult QuotedStringLiteral() => QuotedLiteral('\"', IsEndQuotedStringLiteral, SyntaxKind.StringLiteral);
 
-    private readonly Func<char, bool> IsEndQuotedCharacterLiteral = (c) => c == '\\' || c == '\'' || SyntaxFacts.IsNewLine(c);
-    private readonly Func<char, bool> IsEndQuotedStringLiteral = (c) => c == '\\' || c == '\"' || SyntaxFacts.IsNewLine(c);
+    private static readonly Func<char, bool> IsEndQuotedCharacterLiteral = static (c) => c == '\\' || c == '\'' || SyntaxFacts.IsNewLine(c);
+    private static readonly Func<char, bool> IsEndQuotedStringLiteral = static (c) => c == '\\' || c == '\"' || SyntaxFacts.IsNewLine(c);
 
     private StateResult QuotedLiteral(char quote, Func<char, bool> isEndQuotedLiteral, SyntaxKind literalType)
     {

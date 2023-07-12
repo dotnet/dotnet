@@ -5,6 +5,7 @@ using System;
 using System.Collections.Immutable;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
+using Microsoft.AspNetCore.Razor.Utilities;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Text;
@@ -25,8 +26,10 @@ internal class TestDocumentSnapshot : DocumentSnapshot
         => Create(filePath, text, VersionStamp.Default);
 
     public static TestDocumentSnapshot Create(string filePath, string text, VersionStamp version)
+        => Create(filePath, text, version, TestProjectSnapshot.Create(filePath + ".csproj"));
+
+    public static TestDocumentSnapshot Create(string filePath, string text, VersionStamp version, TestProjectSnapshot projectSnapshot)
     {
-        var testProject = TestProjectSnapshot.Create(filePath + ".csproj");
         using var testWorkspace = TestWorkspace.Create();
         var hostDocument = new HostDocument(filePath, filePath);
         var sourceText = SourceText.From(text);
@@ -36,15 +39,41 @@ internal class TestDocumentSnapshot : DocumentSnapshot
             SourceText.From(text),
             version,
             () => Task.FromResult(TextAndVersion.Create(sourceText, version)));
-        var testDocument = new TestDocumentSnapshot(testProject, documentState);
+        var testDocument = new TestDocumentSnapshot(projectSnapshot, documentState);
 
         return testDocument;
     }
 
-    private TestDocumentSnapshot(ProjectSnapshot projectSnapshot, DocumentState documentState)
+    internal static TestDocumentSnapshot Create(Workspace workspace, ProjectSnapshot projectSnapshot, string filePath, string text = "", VersionStamp? version = null)
+    {
+        version ??= VersionStamp.Default;
+
+        var targetPath = FilePathNormalizer.Normalize(filePath);
+        var projectDirectory = FilePathNormalizer.GetDirectory(projectSnapshot.FilePath);
+        if (targetPath.StartsWith(projectDirectory))
+        {
+            targetPath = targetPath[projectDirectory.Length..];
+        }
+
+        var hostDocument = new HostDocument(filePath, targetPath);
+        var sourceText = SourceText.From(text);
+        var documentState = new DocumentState(
+            workspace.Services,
+            hostDocument,
+            SourceText.From(text),
+            version,
+            () => Task.FromResult(TextAndVersion.Create(sourceText, version.Value)));
+        var testDocument = new TestDocumentSnapshot(projectSnapshot, documentState);
+
+        return testDocument;
+    }
+
+    public TestDocumentSnapshot(ProjectSnapshot projectSnapshot, DocumentState documentState)
         : base(projectSnapshot, documentState)
     {
     }
+
+    public HostDocument HostDocument => State.HostDocument;
 
     public override Task<RazorCodeDocument> GetGeneratedOutputAsync()
     {
