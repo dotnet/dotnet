@@ -173,14 +173,14 @@ public class DefaultVisualStudioDocumentTrackerTest : ProjectSnapshotManagerDisp
         // Arrange
         _projectManager.ProjectAdded(_hostProject);
 
-        var e = new ProjectChangeEventArgs(null, _projectManager.GetLoadedProject(_hostProject.FilePath), ProjectChangeKind.ProjectAdded);
+        var e = new ProjectChangeEventArgs(null, _projectManager.GetLoadedProject(_hostProject.Key), ProjectChangeKind.ProjectAdded);
 
         var called = false;
         _documentTracker.ContextChanged += (sender, args) =>
         {
             called = true;
 
-            Assert.Same(_projectManager.GetLoadedProject(_documentTracker.ProjectPath), _documentTracker.ProjectSnapshot);
+            Assert.Same(_projectManager.GetLoadedProject(ProjectKey.FromLegacy(_documentTracker.ProjectPath)), _documentTracker.ProjectSnapshot);
         };
 
         // Act
@@ -196,14 +196,14 @@ public class DefaultVisualStudioDocumentTrackerTest : ProjectSnapshotManagerDisp
         // Arrange
         _projectManager.ProjectAdded(_hostProject);
 
-        var e = new ProjectChangeEventArgs(null, _projectManager.GetLoadedProject(_hostProject.FilePath), ProjectChangeKind.ProjectChanged);
+        var e = new ProjectChangeEventArgs(null, _projectManager.GetLoadedProject(_hostProject.Key), ProjectChangeKind.ProjectChanged);
 
         var called = false;
         _documentTracker.ContextChanged += (sender, args) =>
         {
             called = true;
 
-            Assert.Same(_projectManager.GetLoadedProject(_documentTracker.ProjectPath), _documentTracker.ProjectSnapshot);
+            Assert.Same(_projectManager.GetLoadedProject(ProjectKey.FromLegacy(_documentTracker.ProjectPath)), _documentTracker.ProjectSnapshot);
         };
 
         // Act
@@ -219,8 +219,8 @@ public class DefaultVisualStudioDocumentTrackerTest : ProjectSnapshotManagerDisp
         // Arrange
         _projectManager.ProjectAdded(_hostProject);
 
-        var project = _projectManager.GetLoadedProject(_hostProject.FilePath);
-        _projectManager.ProjectRemoved(_hostProject);
+        var project = _projectManager.GetLoadedProject(_hostProject.Key);
+        _projectManager.ProjectRemoved(_hostProject.Key);
 
         var e = new ProjectChangeEventArgs(project, null, ProjectChangeKind.ProjectRemoved);
 
@@ -246,7 +246,7 @@ public class DefaultVisualStudioDocumentTrackerTest : ProjectSnapshotManagerDisp
         // Arrange
         _projectManager.ProjectAdded(_otherHostProject);
 
-        var e = new ProjectChangeEventArgs(null, _projectManager.GetLoadedProject(_otherHostProject.FilePath), ProjectChangeKind.ProjectChanged);
+        var e = new ProjectChangeEventArgs(null, _projectManager.GetLoadedProject(_otherHostProject.Key), ProjectChangeKind.ProjectChanged);
 
         var called = false;
         _documentTracker.ContextChanged += (sender, args) => called = true;
@@ -484,7 +484,7 @@ public class DefaultVisualStudioDocumentTrackerTest : ProjectSnapshotManagerDisp
         _documentTracker.ContextChanged += (sender, e) => args.Add(e);
 
         // Act
-        _projectManager.ProjectRemoved(_hostProject);
+        _projectManager.ProjectRemoved(_hostProject.Key);
 
         // Assert
         Assert.IsType<EphemeralProjectSnapshot>(_documentTracker.ProjectSnapshot);

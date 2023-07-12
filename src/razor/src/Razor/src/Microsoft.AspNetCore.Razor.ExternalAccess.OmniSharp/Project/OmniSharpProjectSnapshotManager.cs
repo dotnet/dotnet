@@ -1,6 +1,7 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
+using System.Collections.Immutable;
 using Microsoft.AspNetCore.Razor.ExternalAccess.OmniSharp.Document;
 using Microsoft.AspNetCore.Razor.LanguageServer.Common;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
@@ -36,18 +37,20 @@ public class OmniSharpProjectSnapshotManager
 
     public event EventHandler<OmniSharpProjectChangeEventArgs>? Changed;
 
-    public OmniSharpProjectSnapshot GetLoadedProject(OmniSharpHostProject project)
+    public OmniSharpProjectSnapshot GetLoadedProject(OmniSharpProjectKey projectKey)
     {
-        return GetLoadedProject(project.InternalHostProject.FilePath);
-    }
-
-    public OmniSharpProjectSnapshot GetLoadedProject(string filePath)
-    {
-        var projectSnapshot = InternalProjectSnapshotManager.GetLoadedProject(filePath);
+        var projectSnapshot = InternalProjectSnapshotManager.GetLoadedProject(projectKey.Key);
         // Forgiving null because we should only return null when projectSnapshot is null
         var converted = OmniSharpProjectSnapshot.Convert(projectSnapshot)!;
 
         return converted;
+    }
+
+    public ImmutableArray<OmniSharpProjectKey> GetAllProjectKeys(string projectFilePath)
+    {
+        var keys = InternalProjectSnapshotManager.GetAllProjectKeys(projectFilePath);
+
+        return ImmutableArray<OmniSharpProjectKey>.Empty.AddRange(keys.Select(k => new OmniSharpProjectKey(k)));
     }
 
     public void ProjectAdded(OmniSharpHostProject hostProject)
@@ -63,18 +66,21 @@ public class OmniSharpProjectSnapshotManager
     public void DocumentAdded(OmniSharpHostProject hostProject, OmniSharpHostDocument hostDocument)
     {
         var textLoader = _remoteTextLoaderFactory.Create(hostDocument.FilePath);
-        InternalProjectSnapshotManager.DocumentAdded(hostProject.InternalHostProject, hostDocument.InternalHostDocument, textLoader);
+        InternalProjectSnapshotManager.DocumentAdded(hostProject.InternalHostProject.Key, hostDocument.InternalHostDocument, textLoader);
     }
 
     public void DocumentChanged(string projectFilePath, string documentFilePath)
     {
         var textLoader = _remoteTextLoaderFactory.Create(documentFilePath);
-        InternalProjectSnapshotManager.DocumentChanged(projectFilePath, documentFilePath, textLoader);
+        foreach (var projectKey in InternalProjectSnapshotManager.GetAllProjectKeys(projectFilePath))
+        {
+            InternalProjectSnapshotManager.DocumentChanged(projectKey, documentFilePath, textLoader);
+        }
     }
 
     public void DocumentRemoved(OmniSharpHostProject hostProject, OmniSharpHostDocument hostDocument)
     {
-        InternalProjectSnapshotManager.DocumentRemoved(hostProject.InternalHostProject, hostDocument.InternalHostDocument);
+        InternalProjectSnapshotManager.DocumentRemoved(hostProject.InternalHostProject.Key, hostDocument.InternalHostDocument);
     }
 
     private void ProjectSnapshotManager_Changed(object? sender, ProjectChangeEventArgs args)

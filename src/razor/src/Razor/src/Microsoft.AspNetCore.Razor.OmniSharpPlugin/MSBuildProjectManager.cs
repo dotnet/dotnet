@@ -162,8 +162,8 @@ internal class MSBuildProjectManager : IOmniSharpProjectSnapshotManagerChangeTri
             return;
         }
 
-        var projectSnapshot = ProjectManager.GetLoadedProject(projectFilePath);
         var hostProject = new OmniSharpHostProject(projectFilePath, projectConfiguration.Configuration, projectConfiguration.RootNamespace);
+        var projectSnapshot = ProjectManager.GetLoadedProject(hostProject.Key);
         if (projectSnapshot is null)
         {
             // Project doesn't exist yet, create it and set it up with all of its host documents.
@@ -223,7 +223,7 @@ internal class MSBuildProjectManager : IOmniSharpProjectSnapshotManagerChangeTri
         }
 
         // Refresh the project snapshot to reflect any removed documents.
-        projectSnapshot = ProjectManager.GetLoadedProject(projectSnapshot.FilePath);
+        projectSnapshot = ProjectManager.GetLoadedProject(projectSnapshot.Key);
 
         // Add any documents that need to be added
         for (var i = 0; i < configuredHostDocuments.Count; i++)

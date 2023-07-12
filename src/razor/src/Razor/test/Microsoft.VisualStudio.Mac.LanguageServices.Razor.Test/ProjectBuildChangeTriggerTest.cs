@@ -4,6 +4,7 @@
 #nullable disable
 
 using System;
+using System.Collections.Immutable;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
@@ -57,7 +58,10 @@ public class ProjectBuildChangeTriggerTest : ProjectSnapshotManagerDispatcherTes
         var projectManager = new Mock<ProjectSnapshotManagerBase>(MockBehavior.Strict);
         projectManager.SetupGet(p => p.Workspace).Returns(_workspace);
         projectManager
-            .Setup(p => p.GetLoadedProject(_someProject.FilePath))
+            .Setup(p => p.GetAllProjectKeys(expectedProjectPath))
+            .Returns(ImmutableArray.Create(_someProject.Key));
+        projectManager
+            .Setup(p => p.GetLoadedProject(_someProject.Key))
             .Returns(projectSnapshot);
         var workspaceStateGenerator = new TestProjectWorkspaceStateGenerator();
         var trigger = new ProjectBuildChangeTrigger(Dispatcher, projectService, workspaceStateGenerator, projectManager.Object);
@@ -80,15 +84,19 @@ public class ProjectBuildChangeTriggerTest : ProjectSnapshotManagerDispatcherTes
         var projectService = CreateProjectService(expectedPath);
 
         var args = new BuildEventArgs(monitor: null, success: true);
+        var hostProject = new HostProject(expectedPath, RazorConfiguration.Default, "Project");
         var projectSnapshot = new ProjectSnapshot(
             ProjectState.Create(
                 _workspace.Services,
-                new HostProject(expectedPath, RazorConfiguration.Default, "Project")));
+                hostProject));
 
         var projectManager = new Mock<ProjectSnapshotManagerBase>(MockBehavior.Strict);
         projectManager.SetupGet(p => p.Workspace).Returns(_workspace);
         projectManager
-            .Setup(p => p.GetLoadedProject(expectedPath))
+            .Setup(p => p.GetAllProjectKeys(expectedPath))
+            .Returns(ImmutableArray.Create(hostProject.Key));
+        projectManager
+            .Setup(p => p.GetLoadedProject(hostProject.Key))
             .Returns(projectSnapshot);
         var workspaceStateGenerator = new TestProjectWorkspaceStateGenerator();
         var trigger = new ProjectBuildChangeTrigger(Dispatcher, projectService, workspaceStateGenerator, projectManager.Object);
@@ -111,7 +119,10 @@ public class ProjectBuildChangeTriggerTest : ProjectSnapshotManagerDispatcherTes
         var projectManager = new Mock<ProjectSnapshotManagerBase>(MockBehavior.Strict);
         projectManager.SetupGet(p => p.Workspace).Returns(_workspace);
         projectManager
-            .Setup(p => p.GetLoadedProject(_someProject.FilePath))
+            .Setup(p => p.GetAllProjectKeys(_someProject.FilePath))
+            .Returns(ImmutableArray.Create(_someProject.Key));
+        projectManager
+            .Setup(p => p.GetLoadedProject(_someProject.Key))
             .Returns<IProjectSnapshot>(null);
         var workspaceStateGenerator = new TestProjectWorkspaceStateGenerator();
         var trigger = new ProjectBuildChangeTrigger(Dispatcher, projectService, workspaceStateGenerator, projectManager.Object);

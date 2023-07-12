@@ -27,7 +27,7 @@ public class DefaultGeneratedDocumentPublisherTest : LanguageServerTestBase
         _hostProject = new HostProject("/path/to/project.csproj", RazorConfiguration.Default, "TestRootNamespace");
         _projectManager.ProjectAdded(_hostProject);
         _hostDocument = new HostDocument("/path/to/file.razor", "file.razor");
-        _projectManager.DocumentAdded(_hostProject, _hostDocument, new EmptyTextLoader(_hostDocument.FilePath));
+        _projectManager.DocumentAdded(_hostProject.Key, _hostDocument, new EmptyTextLoader(_hostDocument.FilePath));
     }
 
     [Fact]
@@ -213,7 +213,7 @@ public class DefaultGeneratedDocumentPublisherTest : LanguageServerTestBase
         generatedDocumentPublisher.PublishCSharp(_hostDocument.FilePath, initialSourceText, 123);
 
         // Act
-        _projectManager.DocumentOpened(_hostProject.FilePath, _hostDocument.FilePath, initialSourceText);
+        _projectManager.DocumentOpened(_hostProject.Key, _hostDocument.FilePath, initialSourceText);
         generatedDocumentPublisher.PublishCSharp(_hostDocument.FilePath, initialSourceText, 124);
 
         // Assert
@@ -235,7 +235,7 @@ public class DefaultGeneratedDocumentPublisherTest : LanguageServerTestBase
         generatedDocumentPublisher.PublishCSharp(_hostDocument.FilePath, initialSourceText, 123);
 
         // Act
-        _projectManager.DocumentOpened(_hostProject.FilePath, _hostDocument.FilePath, initialSourceText);
+        _projectManager.DocumentOpened(_hostProject.Key, _hostDocument.FilePath, initialSourceText);
         generatedDocumentPublisher.PublishCSharp(_hostDocument.FilePath, initialSourceText, 123);
 
         // Assert
@@ -255,7 +255,7 @@ public class DefaultGeneratedDocumentPublisherTest : LanguageServerTestBase
         generatedDocumentPublisher.PublishHtml(_hostDocument.FilePath, initialSourceText, 123);
 
         // Act
-        _projectManager.DocumentOpened(_hostProject.FilePath, _hostDocument.FilePath, initialSourceText);
+        _projectManager.DocumentOpened(_hostProject.Key, _hostDocument.FilePath, initialSourceText);
         generatedDocumentPublisher.PublishHtml(_hostDocument.FilePath, initialSourceText, 124);
 
         // Assert
@@ -277,7 +277,7 @@ public class DefaultGeneratedDocumentPublisherTest : LanguageServerTestBase
         generatedDocumentPublisher.PublishHtml(_hostDocument.FilePath, initialSourceText, 123);
 
         // Act
-        _projectManager.DocumentOpened(_hostProject.FilePath, _hostDocument.FilePath, initialSourceText);
+        _projectManager.DocumentOpened(_hostProject.Key, _hostDocument.FilePath, initialSourceText);
         generatedDocumentPublisher.PublishHtml(_hostDocument.FilePath, initialSourceText, 123);
 
         // Assert
@@ -295,10 +295,10 @@ public class DefaultGeneratedDocumentPublisherTest : LanguageServerTestBase
         var sourceTextContent = "// The content";
         var initialSourceText = SourceText.From(sourceTextContent);
         generatedDocumentPublisher.PublishCSharp(_hostDocument.FilePath, initialSourceText, 123);
-        _projectManager.DocumentOpened(_hostProject.FilePath, _hostDocument.FilePath, initialSourceText);
+        _projectManager.DocumentOpened(_hostProject.Key, _hostDocument.FilePath, initialSourceText);
 
         // Act
-        _projectManager.DocumentClosed(_hostProject.FilePath, _hostDocument.FilePath, new EmptyTextLoader(_hostDocument.FilePath));
+        _projectManager.DocumentClosed(_hostProject.Key, _hostDocument.FilePath, new EmptyTextLoader(_hostDocument.FilePath));
         generatedDocumentPublisher.PublishCSharp(_hostDocument.FilePath, initialSourceText, 123);
 
         // Assert

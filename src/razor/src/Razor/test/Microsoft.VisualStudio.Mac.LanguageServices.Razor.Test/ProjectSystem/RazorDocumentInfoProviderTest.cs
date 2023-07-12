@@ -37,7 +37,7 @@ public class RazorDocumentInfoProviderTest : WorkspaceTestBase
         var hostDocument = new HostDocument("C:/path/to/document.cshtml", "/C:/path/to/document.cshtml");
         var sourceText = SourceText.From("Hello World");
         var textAndVersion = TextAndVersion.Create(sourceText, VersionStamp.Default, hostDocument.FilePath);
-        _projectSnapshotManager.DocumentAdded(hostProject, hostDocument, TextLoader.From(textAndVersion));
+        _projectSnapshotManager.DocumentAdded(hostProject.Key, hostDocument, TextLoader.From(textAndVersion));
 
         _projectSnapshot = _projectSnapshotManager.Projects[0];
         _documentSnapshot = _projectSnapshot.GetDocument(hostDocument.FilePath);

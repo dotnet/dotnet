@@ -183,7 +183,7 @@ public class ProjectSnapshotSynchronizationServiceTest : WorkspaceTestBase
             _projectSnapshotManager);
         var hostProject = new HostProject("/guest/path/project.csproj", RazorConfiguration.Default, "project");
         _projectSnapshotManager.ProjectAdded(hostProject);
-        _projectSnapshotManager.ProjectWorkspaceStateChanged(hostProject.FilePath, oldHandle.ProjectWorkspaceState);
+        _projectSnapshotManager.ProjectWorkspaceStateChanged(hostProject.Key, oldHandle.ProjectWorkspaceState);
         var args = new ProjectChangeEventProxyArgs(oldHandle, newHandle, ProjectProxyChangeKind.ProjectChanged);
 
         // Act

@@ -4,6 +4,7 @@
 #nullable disable
 
 using System;
+using System.Collections.Immutable;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Test.Common;
@@ -118,7 +119,7 @@ public class VsSolutionUpdatesProjectSnapshotChangeTriggerTest : TestBase
             projectManager.ProjectAdded(_someProject);
             projectManager.ProjectAdded(_someOtherProject);
 
-            return projectManager.GetLoadedProject(_someProject.FilePath);
+            return projectManager.GetLoadedProject(_someProject.Key);
         }, DisposalToken);
 
         var projectService = new Mock<TextBufferProjectService>(MockBehavior.Strict);
@@ -134,7 +135,7 @@ public class VsSolutionUpdatesProjectSnapshotChangeTriggerTest : TestBase
         await s_dispatcher.RunOnDispatcherThreadAsync(() =>
         {
             projectManager.SolutionClosed();
-            projectManager.ProjectRemoved(_someProject);
+            projectManager.ProjectRemoved(_someProject.Key);
         }, DisposalToken);
 
         // Assert
@@ -155,7 +156,7 @@ public class VsSolutionUpdatesProjectSnapshotChangeTriggerTest : TestBase
             projectManager.ProjectAdded(_someProject);
             projectManager.ProjectAdded(_someOtherProject);
 
-            return projectManager.GetLoadedProject(_someProject.FilePath);
+            return projectManager.GetLoadedProject(_someProject.Key);
         }, DisposalToken);
 
         var projectService = new Mock<TextBufferProjectService>(MockBehavior.Strict);
@@ -198,7 +199,10 @@ public class VsSolutionUpdatesProjectSnapshotChangeTriggerTest : TestBase
         var projectManager = new Mock<ProjectSnapshotManagerBase>(MockBehavior.Strict);
         projectManager.SetupGet(p => p.Workspace).Returns(_workspace);
         projectManager
-            .Setup(p => p.GetLoadedProject(expectedProjectPath))
+            .Setup(p => p.GetAllProjectKeys(projectSnapshot.FilePath))
+            .Returns(ImmutableArray.Create(projectSnapshot.Key));
+        projectManager
+            .Setup(p => p.GetLoadedProject(projectSnapshot.Key))
             .Returns(projectSnapshot);
         var workspaceStateGenerator = new TestProjectWorkspaceStateGenerator();
 
@@ -216,7 +220,7 @@ public class VsSolutionUpdatesProjectSnapshotChangeTriggerTest : TestBase
     public async Task OnProjectBuiltAsync_UnknownProject_DoesNotEnqueueUpdate()
     {
         // Arrange
-        var expectedProjectPath = "Path/To/Project";
+        var expectedProjectPath = "Path/To/Project/proj.csproj";
 
         uint cookie;
         var buildManager = new Mock<IVsSolutionBuildManager>(MockBehavior.Strict);
@@ -233,8 +237,8 @@ public class VsSolutionUpdatesProjectSnapshotChangeTriggerTest : TestBase
         var projectManager = new Mock<ProjectSnapshotManagerBase>(MockBehavior.Strict);
         projectManager.SetupGet(p => p.Workspace).Returns(_workspace);
         projectManager
-            .Setup(p => p.GetLoadedProject(expectedProjectPath))
-            .Returns((IProjectSnapshot)null);
+            .Setup(p => p.GetAllProjectKeys(expectedProjectPath))
+            .Returns(ImmutableArray<ProjectKey>.Empty);
         var workspaceStateGenerator = new TestProjectWorkspaceStateGenerator();
 
         var trigger = new VsSolutionUpdatesProjectSnapshotChangeTrigger(services.Object, projectService.Object, workspaceStateGenerator, s_dispatcher, JoinableTaskFactory.Context);

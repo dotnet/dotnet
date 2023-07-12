@@ -144,16 +144,26 @@ internal class VsSolutionUpdatesProjectSnapshotChangeTrigger : ProjectSnapshotCh
         var projectFilePath = _projectService.GetProjectPath(projectHierarchy);
         return _projectSnapshotManagerDispatcher.RunOnDispatcherThreadAsync(() =>
         {
-            var projectSnapshot = _projectManager?.GetLoadedProject(projectFilePath);
-            if (projectSnapshot is not null)
+            if (_projectManager is null)
             {
-                var workspaceProject = _projectManager?.Workspace.CurrentSolution.Projects.FirstOrDefault(
-                    wp => FilePathComparer.Instance.Equals(wp.FilePath, projectSnapshot.FilePath));
-                if (workspaceProject is not null)
+                return;
+            }
+
+            var projectKeys = _projectManager.GetAllProjectKeys(projectFilePath);
+            foreach (var projectKey in projectKeys)
+            {
+                var projectSnapshot = _projectManager?.GetLoadedProject(projectKey);
+                if (projectSnapshot is not null)
                 {
-                    // Trigger a tag helper update by forcing the project manager to see the workspace Project
-                    // from the current solution.
-                    _workspaceStateGenerator.Update(workspaceProject, projectSnapshot, cancellationToken);
+                    // TODO: Find the right project... somehow
+                    var workspaceProject = _projectManager?.Workspace.CurrentSolution.Projects.FirstOrDefault(
+                        wp => FilePathComparer.Instance.Equals(wp.FilePath, projectSnapshot.FilePath));
+                    if (workspaceProject is not null)
+                    {
+                        // Trigger a tag helper update by forcing the project manager to see the workspace Project
+                        // from the current solution.
+                        _workspaceStateGenerator.Update(workspaceProject, projectSnapshot, cancellationToken);
+                    }
                 }
             }
         }, cancellationToken);

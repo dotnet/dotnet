@@ -84,7 +84,15 @@ internal class FallbackWindowsRazorProjectHost : WindowsRazorProjectHostBase
         if (mvcReferenceFullPath is null)
         {
             // Ok we can't find an MVC version. Let's assume this project isn't using Razor then.
-            await UpdateAsync(() => UninitializeProjectUnsafe(CommonServices.UnconfiguredProject.FullPath), CancellationToken.None).ConfigureAwait(false);
+            await UpdateAsync(() =>
+            {
+                var projectManager = GetProjectManager();
+                var projectKeys = projectManager.GetAllProjectKeys(CommonServices.UnconfiguredProject.FullPath);
+                foreach (var projectKey in projectKeys)
+                {
+                    UninitializeProjectUnsafe(projectKey);
+                }
+            }, CancellationToken.None).ConfigureAwait(false);
             return;
         }
 
@@ -92,7 +100,15 @@ internal class FallbackWindowsRazorProjectHost : WindowsRazorProjectHostBase
         if (version is null)
         {
             // Ok we can't find an MVC version. Let's assume this project isn't using Razor then.
-            await UpdateAsync(() => UninitializeProjectUnsafe(CommonServices.UnconfiguredProject.FullPath), CancellationToken.None).ConfigureAwait(false);
+            await UpdateAsync(() =>
+            {
+                var projectManager = GetProjectManager();
+                var projectKeys = projectManager.GetAllProjectKeys(CommonServices.UnconfiguredProject.FullPath);
+                foreach (var projectKey in projectKeys)
+                {
+                    UninitializeProjectUnsafe(projectKey);
+                }
+            }, CancellationToken.None).ConfigureAwait(false);
             return;
         }
 
@@ -121,12 +137,12 @@ internal class FallbackWindowsRazorProjectHost : WindowsRazorProjectHostBase
 
             for (var i = 0; i < changedDocuments.Length; i++)
             {
-                RemoveDocumentUnsafe(hostProject, changedDocuments[i]);
+                RemoveDocumentUnsafe(hostProject.Key, changedDocuments[i]);
             }
 
             for (var i = 0; i < documents.Length; i++)
             {
-                AddDocumentUnsafe(hostProject, documents[i]);
+                AddDocumentUnsafe(hostProject.Key, documents[i]);
             }
         }, CancellationToken.None).ConfigureAwait(false);
     }

@@ -57,8 +57,8 @@ public class CodeDocumentReferenceHolderTest : LanguageServerTestBase
         var unrelatedDocumentSnapshot = await Dispatcher.RunOnDispatcherThreadAsync(() =>
         {
             var unrelatedTextLoader = new SourceTextLoader("<p>Unrelated</p>", unrelatedHostDocument.FilePath);
-            _projectManager.DocumentAdded(_hostProject, unrelatedHostDocument, unrelatedTextLoader);
-            var project = _projectManager.GetLoadedProject(_hostProject.FilePath);
+            _projectManager.DocumentAdded(_hostProject.Key, unrelatedHostDocument, unrelatedTextLoader);
+            var project = _projectManager.GetLoadedProject(_hostProject.Key);
             var document = project.GetDocument(unrelatedHostDocument.FilePath);
             return document;
         }, DisposalToken);
@@ -71,7 +71,7 @@ public class CodeDocumentReferenceHolderTest : LanguageServerTestBase
         // Act
         await Dispatcher.RunOnDispatcherThreadAsync(() =>
         {
-            _projectManager.DocumentChanged(_hostProject.FilePath, unrelatedHostDocument.FilePath, SourceText.From(string.Empty));
+            _projectManager.DocumentChanged(_hostProject.Key, unrelatedHostDocument.FilePath, SourceText.From(string.Empty));
         }, DisposalToken);
 
         GC.Collect();
@@ -91,7 +91,7 @@ public class CodeDocumentReferenceHolderTest : LanguageServerTestBase
         // Act
         await Dispatcher.RunOnDispatcherThreadAsync(() =>
         {
-            _projectManager.DocumentChanged(_hostProject.FilePath, _hostDocument.FilePath, SourceText.From(string.Empty));
+            _projectManager.DocumentChanged(_hostProject.Key, _hostDocument.FilePath, SourceText.From(string.Empty));
         }, DisposalToken);
 
         GC.Collect();
@@ -110,7 +110,7 @@ public class CodeDocumentReferenceHolderTest : LanguageServerTestBase
         // Act
         await Dispatcher.RunOnDispatcherThreadAsync(() =>
         {
-            _projectManager.DocumentRemoved(_hostProject, _hostDocument);
+            _projectManager.DocumentRemoved(_hostProject.Key, _hostDocument);
         }, DisposalToken);
 
         GC.Collect();
@@ -148,7 +148,7 @@ public class CodeDocumentReferenceHolderTest : LanguageServerTestBase
         // Act
         await Dispatcher.RunOnDispatcherThreadAsync(() =>
         {
-            _projectManager.ProjectRemoved(_hostProject);
+            _projectManager.ProjectRemoved(_hostProject.Key);
         }, DisposalToken);
 
         GC.Collect();
@@ -163,8 +163,8 @@ public class CodeDocumentReferenceHolderTest : LanguageServerTestBase
         {
             _projectManager.ProjectAdded(_hostProject);
             var textLoader = new SourceTextLoader("<p>Hello World</p>", _hostDocument.FilePath);
-            _projectManager.DocumentAdded(_hostProject, _hostDocument, textLoader);
-            var project = _projectManager.GetLoadedProject(_hostProject.FilePath);
+            _projectManager.DocumentAdded(_hostProject.Key, _hostDocument, textLoader);
+            var project = _projectManager.GetLoadedProject(_hostProject.Key);
             return project.GetDocument(_hostDocument.FilePath).AssumeNotNull();
         }, cancellationToken);
     }

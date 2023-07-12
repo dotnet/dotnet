@@ -18,6 +18,8 @@ public sealed class OmniSharpProjectSnapshot
         InternalProjectSnapshot = projectSnapshot;
     }
 
+    public OmniSharpProjectKey Key => new OmniSharpProjectKey(InternalProjectSnapshot.Key);
+
     public string FilePath => InternalProjectSnapshot.FilePath;
 
     public IEnumerable<string> DocumentFilePaths => InternalProjectSnapshot.DocumentFilePaths;

@@ -37,7 +37,7 @@ public class BackgroundCodeGenerationBenchmark : ProjectSnapshotManagerBenchmark
     {
         for (var i = 0; i < Documents.Length; i++)
         {
-            SnapshotManager.DocumentAdded(HostProject, Documents[i], TextLoaders[i % 4]);
+            SnapshotManager.DocumentAdded(HostProject.Key, Documents[i], TextLoaders[i % 4]);
         }
 
         await Task.WhenAll(Tasks);
@@ -46,7 +46,7 @@ public class BackgroundCodeGenerationBenchmark : ProjectSnapshotManagerBenchmark
     private void SnapshotManager_Changed(object sender, ProjectChangeEventArgs e)
     {
         // The real work happens here.
-        var project = SnapshotManager.GetLoadedProject(e.ProjectFilePath);
+        var project = SnapshotManager.GetLoadedProject(e.ProjectKey);
         var document = project.GetDocument(e.DocumentFilePath);
 
         Tasks.Add(document.GetGeneratedOutputAsync());

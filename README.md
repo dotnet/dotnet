@@ -177,7 +177,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/fsharp`  
 *[dotnet/fsharp@7f2714a](https://github.com/dotnet/fsharp/commit/7f2714a264b403745508385ed81326b0e2993bc7)*
 - `src/installer`  
-*[dotnet/installer@3f1261b](https://github.com/dotnet/installer/commit/3f1261b564dbcfd168698e24344d68d6d5c07096)*
+*[dotnet/installer@69e13f1](https://github.com/dotnet/installer/commit/69e13f10dd492e4e15d97154c1c3fb49730e8a76)*
 - `src/msbuild`  
 *[dotnet/msbuild@1b0ed75](https://github.com/dotnet/msbuild/commit/1b0ed759abcce1d8bf22229787cccd2ee77962e4)*
 - `src/nuget-client`  
@@ -185,15 +185,15 @@ To enable full offline source-building of the VMR, we have no other choice than 
     - `src/nuget-client/submodules/NuGet.Build.Localization`  
     *[NuGet/NuGet.Build.Localization@f15db7b](https://github.com/NuGet/NuGet.Build.Localization/commit/f15db7b7c6f5affbea268632ef8333d2687c8031)*
 - `src/razor`  
-*[dotnet/razor@bd98548](https://github.com/dotnet/razor/commit/bd98548a124dd09b3171fa317fee993819c30ec4)*
+*[dotnet/razor@852f223](https://github.com/dotnet/razor/commit/852f223a1c5a7acc160fb85f36215cd0dfe89d55)*
 - `src/roslyn`  
-*[dotnet/roslyn@86156fa](https://github.com/dotnet/roslyn/commit/86156faa88860dac9b17223623743aea24814291)*
+*[dotnet/roslyn@9b8c6dd](https://github.com/dotnet/roslyn/commit/9b8c6dd65dcad9bb12522ded6ae2b2c8a5f0cb9e)*
 - `src/roslyn-analyzers`  
 *[dotnet/roslyn-analyzers@3bdcce1](https://github.com/dotnet/roslyn-analyzers/commit/3bdcce1d8eebbb3dcdbd2d5d4ea60d470a20eb3c)*
 - `src/runtime`  
 *[dotnet/runtime@e70f0df](https://github.com/dotnet/runtime/commit/e70f0dfc1a4e8256f91c8dd20042a0e21a4cd8c8)*
 - `src/sdk`  
-*[dotnet/sdk@00255f8](https://github.com/dotnet/sdk/commit/00255f870de46179627cfb6099b58ee6c4a89f8c)*
+*[dotnet/sdk@225eaa2](https://github.com/dotnet/sdk/commit/225eaa2a4b91cb686dd5d9be86da6f46e1a9ee93)*
 - `src/source-build-externals`  
 *[dotnet/source-build-externals@eb38743](https://github.com/dotnet/source-build-externals/commit/eb387432f36bfa3335010eea5b7f0e7dfebfa6dd)*
     - `src/source-build-externals/src/application-insights`  

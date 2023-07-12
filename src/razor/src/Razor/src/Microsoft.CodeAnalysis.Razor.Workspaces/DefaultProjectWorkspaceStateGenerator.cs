@@ -204,7 +204,7 @@ internal class DefaultProjectWorkspaceStateGenerator : ProjectWorkspaceStateGene
                         return;
                     }
 
-                    ReportWorkspaceStateChange(projectSnapshot.FilePath, workspaceState);
+                    ReportWorkspaceStateChange(projectSnapshot.Key, workspaceState);
                 },
                 cancellationToken).ConfigureAwait(false);
         }
@@ -241,11 +241,11 @@ internal class DefaultProjectWorkspaceStateGenerator : ProjectWorkspaceStateGene
         OnBackgroundWorkCompleted();
     }
 
-    private void ReportWorkspaceStateChange(string projectFilePath, ProjectWorkspaceState workspaceStateChange)
+    private void ReportWorkspaceStateChange(ProjectKey projectKey, ProjectWorkspaceState workspaceStateChange)
     {
         _projectSnapshotManagerDispatcher.AssertDispatcherThread();
 
-        _projectManager.ProjectWorkspaceStateChanged(projectFilePath, workspaceStateChange);
+        _projectManager.ProjectWorkspaceStateChanged(projectKey, workspaceStateChange);
     }
 
     private void OnStartingBackgroundWork()

@@ -151,12 +151,12 @@ internal class DefaultDocumentVersionCache : DocumentVersionCache
 
         // Any event that has a project may have changed the state of the documents
         // and therefore requires us to mark all existing documents as latest.
-        if (args.ProjectFilePath is null)
+        if (args.ProjectKey is null)
         {
             return;
         }
 
-        var project = ProjectSnapshotManager.GetLoadedProject(args.ProjectFilePath);
+        var project = ProjectSnapshotManager.GetLoadedProject(args.ProjectKey);
         if (project is null)
         {
             // Project no longer loaded, wait for document removed event.

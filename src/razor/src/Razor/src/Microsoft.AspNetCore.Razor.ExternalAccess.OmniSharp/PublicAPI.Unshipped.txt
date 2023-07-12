@@ -25,6 +25,7 @@ Microsoft.AspNetCore.Razor.ExternalAccess.OmniSharp.OmniSharpLanguageServerFeatu
 Microsoft.AspNetCore.Razor.ExternalAccess.OmniSharp.Project.IOmniSharpProjectSnapshotManagerChangeTrigger
 Microsoft.AspNetCore.Razor.ExternalAccess.OmniSharp.Project.IOmniSharpProjectSnapshotManagerChangeTrigger.Initialize(Microsoft.AspNetCore.Razor.ExternalAccess.OmniSharp.Project.OmniSharpProjectSnapshotManager! projectManager) -> void
 Microsoft.AspNetCore.Razor.ExternalAccess.OmniSharp.Project.OmniSharpHostProject
+Microsoft.AspNetCore.Razor.ExternalAccess.OmniSharp.Project.OmniSharpHostProject.Key.get -> Microsoft.AspNetCore.Razor.ExternalAccess.OmniSharp.Project.OmniSharpProjectKey!
 Microsoft.AspNetCore.Razor.ExternalAccess.OmniSharp.Project.OmniSharpHostProject.OmniSharpHostProject(string! projectFilePath, Microsoft.AspNetCore.Razor.Language.RazorConfiguration! razorConfiguration, string! rootNamespace) -> void
 Microsoft.AspNetCore.Razor.ExternalAccess.OmniSharp.Project.OmniSharpProjectChangeEventArgs
 Microsoft.AspNetCore.Razor.ExternalAccess.OmniSharp.Project.OmniSharpProjectChangeEventArgs.DocumentFilePath.get -> string?
@@ -38,10 +39,12 @@ Microsoft.AspNetCore.Razor.ExternalAccess.OmniSharp.Project.OmniSharpProjectChan
 Microsoft.AspNetCore.Razor.ExternalAccess.OmniSharp.Project.OmniSharpProjectChangeKind.ProjectAdded = 0 -> Microsoft.AspNetCore.Razor.ExternalAccess.OmniSharp.Project.OmniSharpProjectChangeKind
 Microsoft.AspNetCore.Razor.ExternalAccess.OmniSharp.Project.OmniSharpProjectChangeKind.ProjectChanged = 2 -> Microsoft.AspNetCore.Razor.ExternalAccess.OmniSharp.Project.OmniSharpProjectChangeKind
 Microsoft.AspNetCore.Razor.ExternalAccess.OmniSharp.Project.OmniSharpProjectChangeKind.ProjectRemoved = 1 -> Microsoft.AspNetCore.Razor.ExternalAccess.OmniSharp.Project.OmniSharpProjectChangeKind
+Microsoft.AspNetCore.Razor.ExternalAccess.OmniSharp.Project.OmniSharpProjectKey
 Microsoft.AspNetCore.Razor.ExternalAccess.OmniSharp.Project.OmniSharpProjectSnapshot
 Microsoft.AspNetCore.Razor.ExternalAccess.OmniSharp.Project.OmniSharpProjectSnapshot.DocumentFilePaths.get -> System.Collections.Generic.IEnumerable<string!>!
 Microsoft.AspNetCore.Razor.ExternalAccess.OmniSharp.Project.OmniSharpProjectSnapshot.FilePath.get -> string!
 Microsoft.AspNetCore.Razor.ExternalAccess.OmniSharp.Project.OmniSharpProjectSnapshot.GetDocument(string! filePath) -> Microsoft.AspNetCore.Razor.ExternalAccess.OmniSharp.Document.OmniSharpDocumentSnapshot?
+Microsoft.AspNetCore.Razor.ExternalAccess.OmniSharp.Project.OmniSharpProjectSnapshot.Key.get -> Microsoft.AspNetCore.Razor.ExternalAccess.OmniSharp.Project.OmniSharpProjectKey!
 Microsoft.AspNetCore.Razor.ExternalAccess.OmniSharp.Project.OmniSharpProjectSnapshot.ProjectWorkspaceState.get -> Microsoft.AspNetCore.Razor.ProjectSystem.ProjectWorkspaceState?
 Microsoft.AspNetCore.Razor.ExternalAccess.OmniSharp.Project.OmniSharpProjectSnapshot.Serialize(string! publishFilePath, Newtonsoft.Json.JsonSerializer! serializer, System.IO.StreamWriter! writer) -> void
 Microsoft.AspNetCore.Razor.ExternalAccess.OmniSharp.Project.OmniSharpProjectSnapshotManager
@@ -49,8 +52,8 @@ Microsoft.AspNetCore.Razor.ExternalAccess.OmniSharp.Project.OmniSharpProjectSnap
 Microsoft.AspNetCore.Razor.ExternalAccess.OmniSharp.Project.OmniSharpProjectSnapshotManager.DocumentAdded(Microsoft.AspNetCore.Razor.ExternalAccess.OmniSharp.Project.OmniSharpHostProject! hostProject, Microsoft.AspNetCore.Razor.ExternalAccess.OmniSharp.Document.OmniSharpHostDocument! hostDocument) -> void
 Microsoft.AspNetCore.Razor.ExternalAccess.OmniSharp.Project.OmniSharpProjectSnapshotManager.DocumentChanged(string! projectFilePath, string! documentFilePath) -> void
 Microsoft.AspNetCore.Razor.ExternalAccess.OmniSharp.Project.OmniSharpProjectSnapshotManager.DocumentRemoved(Microsoft.AspNetCore.Razor.ExternalAccess.OmniSharp.Project.OmniSharpHostProject! hostProject, Microsoft.AspNetCore.Razor.ExternalAccess.OmniSharp.Document.OmniSharpHostDocument! hostDocument) -> void
-Microsoft.AspNetCore.Razor.ExternalAccess.OmniSharp.Project.OmniSharpProjectSnapshotManager.GetLoadedProject(Microsoft.AspNetCore.Razor.ExternalAccess.OmniSharp.Project.OmniSharpHostProject! project) -> Microsoft.AspNetCore.Razor.ExternalAccess.OmniSharp.Project.OmniSharpProjectSnapshot!
-Microsoft.AspNetCore.Razor.ExternalAccess.OmniSharp.Project.OmniSharpProjectSnapshotManager.GetLoadedProject(string! filePath) -> Microsoft.AspNetCore.Razor.ExternalAccess.OmniSharp.Project.OmniSharpProjectSnapshot!
+Microsoft.AspNetCore.Razor.ExternalAccess.OmniSharp.Project.OmniSharpProjectSnapshotManager.GetAllProjectKeys(string! projectFilePath) -> System.Collections.Immutable.ImmutableArray<Microsoft.AspNetCore.Razor.ExternalAccess.OmniSharp.Project.OmniSharpProjectKey!>
+Microsoft.AspNetCore.Razor.ExternalAccess.OmniSharp.Project.OmniSharpProjectSnapshotManager.GetLoadedProject(Microsoft.AspNetCore.Razor.ExternalAccess.OmniSharp.Project.OmniSharpProjectKey! projectKey) -> Microsoft.AspNetCore.Razor.ExternalAccess.OmniSharp.Project.OmniSharpProjectSnapshot!
 Microsoft.AspNetCore.Razor.ExternalAccess.OmniSharp.Project.OmniSharpProjectSnapshotManager.ProjectAdded(Microsoft.AspNetCore.Razor.ExternalAccess.OmniSharp.Project.OmniSharpHostProject! hostProject) -> void
 Microsoft.AspNetCore.Razor.ExternalAccess.OmniSharp.Project.OmniSharpProjectSnapshotManager.ProjectConfigurationChanged(Microsoft.AspNetCore.Razor.ExternalAccess.OmniSharp.Project.OmniSharpHostProject! hostProject) -> void
 Microsoft.AspNetCore.Razor.ExternalAccess.OmniSharp.Project.OmniSharpProjectSnapshotManager.Projects.get -> System.Collections.Generic.IReadOnlyList<Microsoft.AspNetCore.Razor.ExternalAccess.OmniSharp.Project.OmniSharpProjectSnapshot!>!
@@ -71,6 +74,7 @@ Microsoft.AspNetCore.Razor.ExternalAccess.OmniSharp.Project.OmniSharpWorkspacePr
 Microsoft.AspNetCore.Razor.ExternalAccess.OmniSharp.Serialization.JsonConverterCollectionExtensions
 static Microsoft.AspNetCore.Razor.ExternalAccess.OmniSharp.Extensions.OmniSharpRazorCodeDocumentExtensions.GetInternalCSharpSourceText(this Microsoft.AspNetCore.Razor.Language.RazorCodeDocument! codeDocument) -> Microsoft.CodeAnalysis.Text.SourceText!
 static Microsoft.AspNetCore.Razor.ExternalAccess.OmniSharp.FallbackRazorConfiguration.SelectConfiguration(System.Version! version) -> Microsoft.AspNetCore.Razor.Language.RazorConfiguration!
+static Microsoft.AspNetCore.Razor.ExternalAccess.OmniSharp.Project.OmniSharpProjectKey.From(Microsoft.CodeAnalysis.Project! workspaceProject) -> Microsoft.AspNetCore.Razor.ExternalAccess.OmniSharp.Project.OmniSharpProjectKey?
 static Microsoft.AspNetCore.Razor.ExternalAccess.OmniSharp.Serialization.JsonConverterCollectionExtensions.RegisterOmniSharpRazorConverters(this Newtonsoft.Json.JsonConverterCollection! collection) -> void
 static readonly Microsoft.AspNetCore.Razor.ExternalAccess.OmniSharp.Document.OmniSharpHostDocumentComparer.Instance -> Microsoft.AspNetCore.Razor.ExternalAccess.OmniSharp.Document.OmniSharpHostDocumentComparer!
 virtual Microsoft.AspNetCore.Razor.ExternalAccess.OmniSharp.Project.OmniSharpProjectWorkspaceStateGenerator.Update(Microsoft.CodeAnalysis.Project! workspaceProject, Microsoft.AspNetCore.Razor.ExternalAccess.OmniSharp.Project.OmniSharpProjectSnapshot! projectSnapshot) -> void

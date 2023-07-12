@@ -155,7 +155,7 @@ public class WorkspaceProjectStateChangeDetectorTest : WorkspaceTestBase
             projectManager.SolutionClosed();
 
             // Trigger a project removed event while solution is closing to clear state.
-            projectManager.ProjectRemoved(_hostProjectOne);
+            projectManager.ProjectRemoved(_hostProjectOne.Key);
         }, DisposalToken);
 
         // Assert

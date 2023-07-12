@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Razor.ProjectSystem;
 using Microsoft.AspNetCore.Razor.Serialization;
 using Microsoft.AspNetCore.Razor.Utilities;
 using Microsoft.CodeAnalysis.Razor;
+using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.Extensions.Logging;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer;
@@ -130,8 +131,10 @@ internal class ProjectConfigurationStateSynchronizer : IProjectConfigurationFile
 
             var projectWorkspaceState = projectRazorJson.ProjectWorkspaceState ?? ProjectWorkspaceState.Default;
             var documents = projectRazorJson.Documents;
+            var normalizedPath = FilePathNormalizer.Normalize(projectRazorJson.FilePath);
+            var projectKey = ProjectKey.From(normalizedPath);
             _projectService.UpdateProject(
-                projectRazorJson.FilePath,
+                projectKey,
                 projectRazorJson.Configuration,
                 projectRazorJson.RootNamespace,
                 projectWorkspaceState,
@@ -165,8 +168,10 @@ internal class ProjectConfigurationStateSynchronizer : IProjectConfigurationFile
 
         void ResetProject(string projectFilePath)
         {
+            var normalizedPath = FilePathNormalizer.Normalize(projectFilePath);
+            var projectKey = ProjectKey.From(normalizedPath);
             _projectService.UpdateProject(
-                projectFilePath,
+                projectKey,
                 configuration: null,
                 rootNamespace: null,
                 ProjectWorkspaceState.Default,

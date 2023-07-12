@@ -58,11 +58,11 @@ internal class SnapshotResolver : ISnapshotResolver
 
     public IProjectSnapshot GetMiscellaneousProject()
     {
-        var miscellaneousProject = _projectSnapshotManagerAccessor.Instance.GetLoadedProject(MiscellaneousHostProject.FilePath);
+        var miscellaneousProject = _projectSnapshotManagerAccessor.Instance.GetLoadedProject(MiscellaneousHostProject.Key);
         if (miscellaneousProject is null)
         {
             _projectSnapshotManagerAccessor.Instance.ProjectAdded(MiscellaneousHostProject);
-            miscellaneousProject = _projectSnapshotManagerAccessor.Instance.GetLoadedProject(MiscellaneousHostProject.FilePath);
+            miscellaneousProject = _projectSnapshotManagerAccessor.Instance.GetLoadedProject(MiscellaneousHostProject.Key);
         }
 
         return miscellaneousProject;

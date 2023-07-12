@@ -19,7 +19,7 @@ namespace Microsoft.VisualStudio.Editor.Razor.Documents;
 internal class RazorCodeDocumentProvidingSnapshotChangeTrigger : ProjectSnapshotChangeTrigger
 {
     private readonly HashSet<string> _openDocuments = new(FilePathComparer.Instance);
-    private readonly Dictionary<string, string> _documentProjectMap = new(FilePathComparer.Instance);
+    private readonly Dictionary<string, ProjectKey> _documentProjectMap = new(FilePathComparer.Instance);
     private readonly ProjectSnapshotManagerDispatcher _projectSnapshotManagerDispatcher;
     private ProjectSnapshotManagerBase? _projectManager;
 
@@ -55,7 +55,7 @@ internal class RazorCodeDocumentProvidingSnapshotChangeTrigger : ProjectSnapshot
         else if (e.Kind == ProjectChangeKind.DocumentAdded)
         {
             var documentFilePath = e.DocumentFilePath!;
-            _documentProjectMap[documentFilePath] = e.ProjectFilePath!;
+            _documentProjectMap[documentFilePath] = e.ProjectKey!;
             if (_openDocuments.Contains(documentFilePath))
             {
                 _openDocuments.Remove(documentFilePath);
@@ -70,14 +70,14 @@ internal class RazorCodeDocumentProvidingSnapshotChangeTrigger : ProjectSnapshot
 
     public async Task<RazorCodeDocument?> GetRazorCodeDocumentAsync(string filePath, CancellationToken cancellationToken)
     {
-        if (!_documentProjectMap.TryGetValue(filePath, out var projectFilePath))
+        if (!_documentProjectMap.TryGetValue(filePath, out var projectKey))
         {
             _openDocuments.Add(filePath);
             return null;
         }
 
         var project = await _projectSnapshotManagerDispatcher.RunOnDispatcherThreadAsync(
-            () => _projectManager?.GetLoadedProject(projectFilePath), cancellationToken);
+            () => _projectManager?.GetLoadedProject(projectKey), cancellationToken);
 
         if (project is null)
         {

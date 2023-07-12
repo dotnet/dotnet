@@ -219,7 +219,7 @@ internal abstract class WindowsRazorProjectHostBase : OnceInitializedOnceDispose
                         var projects = _projectManager.Projects;
                         foreach (var project in projects)
                         {
-                            UninitializeProjectUnsafe(project.FilePath);
+                            UninitializeProjectUnsafe(project.Key);
                         }
                     }, CancellationToken.None)).ConfigureAwait(false);
             }
@@ -245,12 +245,16 @@ internal abstract class WindowsRazorProjectHostBase : OnceInitializedOnceDispose
         // reinitialize the HostProject with the same configuration and settings here, but the updated
         // FilePath.
         return ExecuteWithLockAsync(() => UpdateAsync(() =>
+        {
+            var projectManager = GetProjectManager();
+
+            var projectKeys = projectManager.GetAllProjectKeys(oldProjectFilePath);
+            foreach (var projectKey in projectKeys)
             {
-                var projectManager = GetProjectManager();
-                var current = projectManager.GetLoadedProject(oldProjectFilePath);
+                var current = projectManager.GetLoadedProject(projectKey);
                 if (current?.Configuration is not null)
                 {
-                    UninitializeProjectUnsafe(oldProjectFilePath);
+                    UninitializeProjectUnsafe(projectKey);
 
                     var hostProject = new HostProject(newProjectFilePath, current.Configuration, current.RootNamespace);
                     UpdateProjectUnsafe(hostProject);
@@ -262,14 +266,15 @@ internal abstract class WindowsRazorProjectHostBase : OnceInitializedOnceDispose
                         Assumes.NotNull(documentSnapshot);
                         // TODO: The creation of the HostProject here is silly
                         var hostDocument = new HostDocument(documentSnapshot.FilePath.AssumeNotNull(), documentSnapshot.TargetPath.AssumeNotNull(), documentSnapshot.FileKind);
-                        AddDocumentUnsafe(hostProject, hostDocument);
+                        AddDocumentUnsafe(hostProject.Key, hostDocument);
                     }
                 }
-            }, CancellationToken.None));
+            }
+        }, CancellationToken.None));
     }
 
     // Should only be called from the project snapshot manager's specialized thread.
-    private ProjectSnapshotManagerBase GetProjectManager()
+    protected ProjectSnapshotManagerBase GetProjectManager()
     {
         _projectSnapshotManagerDispatcher.AssertDispatcherThread();
 
@@ -281,19 +286,16 @@ internal abstract class WindowsRazorProjectHostBase : OnceInitializedOnceDispose
     protected Task UpdateAsync(Action action, CancellationToken cancellationToken)
         => _projectSnapshotManagerDispatcher.RunOnDispatcherThreadAsync(action, cancellationToken);
 
-    protected void UninitializeProjectUnsafe(string projectFilePath)
+    protected void UninitializeProjectUnsafe(ProjectKey projectKey)
     {
-        ClearDocumentsUnsafe(projectFilePath);
+        ClearDocumentsUnsafe(projectKey);
 
         var projectManager = GetProjectManager();
-        var current = projectManager.GetLoadedProject(projectFilePath);
+        var current = projectManager.GetLoadedProject(projectKey);
         if (current is not null)
         {
-            // TODO: The creation of the HostProject here is silly, but the ProjectRemoved method only uses it to use the FilePath as a key
-            // This will be cleaned up soon.
-            var hostProject = new HostProject(projectFilePath, RazorConfiguration.Default, null);
-            projectManager.ProjectRemoved(hostProject);
-            ProjectConfigurationFilePathStore.Remove(projectFilePath);
+            projectManager.ProjectRemoved(projectKey);
+            ProjectConfigurationFilePathStore.Remove(current.FilePath);
         }
     }
 
@@ -301,7 +303,7 @@ internal abstract class WindowsRazorProjectHostBase : OnceInitializedOnceDispose
     {
         var projectManager = GetProjectManager();
 
-        var current = projectManager.GetLoadedProject(project.FilePath);
+        var current = projectManager.GetLoadedProject(project.Key);
         if (current is null)
         {
             // Just in case we somehow got in a state where VS didn't tell us that solution close was finished, lets just
@@ -317,31 +319,27 @@ internal abstract class WindowsRazorProjectHostBase : OnceInitializedOnceDispose
         }
     }
 
-    protected void AddDocumentUnsafe(HostProject project, HostDocument document)
+    protected void AddDocumentUnsafe(ProjectKey projectKey, HostDocument document)
     {
         var projectManager = GetProjectManager();
-        projectManager.DocumentAdded(project, document, new FileTextLoader(document.FilePath, null));
+        projectManager.DocumentAdded(projectKey, document, new FileTextLoader(document.FilePath, null));
     }
 
-    protected void RemoveDocumentUnsafe(HostProject project, HostDocument document)
+    protected void RemoveDocumentUnsafe(ProjectKey projectKey, HostDocument document)
     {
         var projectManager = GetProjectManager();
-        projectManager.DocumentRemoved(project, document);
+        projectManager.DocumentRemoved(projectKey, document);
     }
 
-    private void ClearDocumentsUnsafe(string projectFilePath)
+    private void ClearDocumentsUnsafe(ProjectKey projectKey)
     {
         var projectManager = GetProjectManager();
-        var current = projectManager.GetLoadedProject(projectFilePath);
+        var current = projectManager.GetLoadedProject(projectKey);
 
         if (current is null)
         {
             return;
         }
-
-        // TODO: The creation of the HostProject here is silly, but the DocumentRemoved method only uses it to use the FilePath as a key
-        // This will be cleaned up soon.
-        var hostProject = new HostProject(projectFilePath, RazorConfiguration.Default, null);
 
         foreach (var documentFilePath in current.DocumentFilePaths)
         {
@@ -349,7 +347,7 @@ internal abstract class WindowsRazorProjectHostBase : OnceInitializedOnceDispose
             Assumes.NotNull(documentSnapshot);
             // TODO: The creation of the HostProject here is silly
             var hostDocument = new HostDocument(documentSnapshot.FilePath.AssumeNotNull(), documentSnapshot.TargetPath.AssumeNotNull(), documentSnapshot.FileKind);
-            projectManager.DocumentRemoved(hostProject, hostDocument);
+            projectManager.DocumentRemoved(projectKey, hostDocument);
         }
     }
 

@@ -23,5 +23,7 @@ public sealed class OmniSharpHostProject
         InternalHostProject = new HostProject(projectFilePath, razorConfiguration, rootNamespace);
     }
 
+    public OmniSharpProjectKey Key => new OmniSharpProjectKey(InternalHostProject.Key);
+
     internal HostProject InternalHostProject { get; }
 }

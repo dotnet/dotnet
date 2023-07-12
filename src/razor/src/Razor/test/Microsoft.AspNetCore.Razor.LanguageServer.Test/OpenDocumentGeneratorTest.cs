@@ -55,7 +55,7 @@ public class OpenDocumentGeneratorTest : LanguageServerTestBase
             queue.Initialize(projectManager);
 
             // Act
-            projectManager.DocumentAdded(_hostProject1, _documents[0], null);
+            projectManager.DocumentAdded(_hostProject1.Key, _documents[0], null);
         }, DisposalToken);
 
         // Assert
@@ -75,12 +75,12 @@ public class OpenDocumentGeneratorTest : LanguageServerTestBase
             projectManager.ProjectAdded(_hostProject1);
             projectManager.ProjectAdded(_hostProject2);
             projectManager.AllowNotifyListeners = true;
-            projectManager.DocumentAdded(_hostProject1, _documents[0], null);
+            projectManager.DocumentAdded(_hostProject1.Key, _documents[0], null);
 
             queue.Initialize(projectManager);
 
             // Act
-            projectManager.DocumentChanged(_hostProject1.FilePath, _documents[0].FilePath, SourceText.From("new"));
+            projectManager.DocumentChanged(_hostProject1.Key, _documents[0].FilePath, SourceText.From("new"));
         }, DisposalToken);
 
         // Assert
@@ -100,13 +100,13 @@ public class OpenDocumentGeneratorTest : LanguageServerTestBase
             projectManager.ProjectAdded(_hostProject1);
             projectManager.ProjectAdded(_hostProject2);
             projectManager.AllowNotifyListeners = true;
-            projectManager.DocumentAdded(_hostProject1, _documents[0], null);
-            projectManager.DocumentOpened(_hostProject1.FilePath, _documents[0].FilePath, SourceText.From(string.Empty));
+            projectManager.DocumentAdded(_hostProject1.Key, _documents[0], null);
+            projectManager.DocumentOpened(_hostProject1.Key, _documents[0].FilePath, SourceText.From(string.Empty));
 
             queue.Initialize(projectManager);
 
             // Act
-            projectManager.DocumentChanged(_hostProject1.FilePath, _documents[0].FilePath, SourceText.From("new"));
+            projectManager.DocumentChanged(_hostProject1.Key, _documents[0].FilePath, SourceText.From("new"));
         }, DisposalToken);
 
         // Assert
@@ -128,12 +128,12 @@ public class OpenDocumentGeneratorTest : LanguageServerTestBase
             projectManager.ProjectAdded(_hostProject1);
             projectManager.ProjectAdded(_hostProject2);
             projectManager.AllowNotifyListeners = true;
-            projectManager.DocumentAdded(_hostProject1, _documents[0], null);
+            projectManager.DocumentAdded(_hostProject1.Key, _documents[0], null);
 
             queue.Initialize(projectManager);
 
             // Act
-            projectManager.ProjectWorkspaceStateChanged(_hostProject1.FilePath,
+            projectManager.ProjectWorkspaceStateChanged(_hostProject1.Key,
                 new ProjectWorkspaceState(ImmutableArray<TagHelperDescriptor>.Empty, LanguageVersion.CSharp8));
         }, DisposalToken);
 
@@ -154,13 +154,13 @@ public class OpenDocumentGeneratorTest : LanguageServerTestBase
             projectManager.ProjectAdded(_hostProject1);
             projectManager.ProjectAdded(_hostProject2);
             projectManager.AllowNotifyListeners = true;
-            projectManager.DocumentAdded(_hostProject1, _documents[0], null);
-            projectManager.DocumentOpened(_hostProject1.FilePath, _documents[0].FilePath, SourceText.From(string.Empty));
+            projectManager.DocumentAdded(_hostProject1.Key, _documents[0], null);
+            projectManager.DocumentOpened(_hostProject1.Key, _documents[0].FilePath, SourceText.From(string.Empty));
 
             queue.Initialize(projectManager);
 
             // Act
-            projectManager.ProjectWorkspaceStateChanged(_hostProject1.FilePath,
+            projectManager.ProjectWorkspaceStateChanged(_hostProject1.Key,
                 new ProjectWorkspaceState(ImmutableArray<TagHelperDescriptor>.Empty, LanguageVersion.CSharp8));
         }, DisposalToken);
 

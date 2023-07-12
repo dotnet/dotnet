@@ -10,23 +10,20 @@ internal class HostProject
 {
     public HostProject(string projectFilePath, RazorConfiguration razorConfiguration, string? rootNamespace)
     {
-        if (projectFilePath is null)
-        {
-            throw new ArgumentNullException(nameof(projectFilePath));
-        }
-
-        if (razorConfiguration is null)
-        {
-            throw new ArgumentNullException(nameof(razorConfiguration));
-        }
-
-        FilePath = projectFilePath;
-        Configuration = razorConfiguration;
+        FilePath = projectFilePath ?? throw new ArgumentNullException(nameof(projectFilePath));
+        Configuration = razorConfiguration ?? throw new ArgumentNullException(nameof(razorConfiguration));
         RootNamespace = rootNamespace;
+
+        Key = ProjectKey.From(this);
     }
 
     public RazorConfiguration Configuration { get; }
 
+    public ProjectKey Key { get; }
+
+    /// <summary>
+    /// Gets the full path to the .csproj file for this project
+    /// </summary>
     public string FilePath { get; }
 
     public string? RootNamespace { get; }
