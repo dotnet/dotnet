@@ -144,7 +144,7 @@ internal class TagHelperRefreshTrigger : IOmniSharpProjectSnapshotManagerChangeT
 
         var solution = _omniSharpWorkspace.CurrentSolution;
         var workspaceProject = solution.Projects.FirstOrDefault(project => FilePathComparer.Instance.Equals(project.FilePath, projectFilePath));
-        if (workspaceProject != null && TryGetProjectSnapshot(workspaceProject.FilePath, out var projectSnapshot))
+        if (workspaceProject != null && TryGetProjectSnapshot(OmniSharpProjectKey.From(workspaceProject), out var projectSnapshot))
         {
             _workspaceStateGenerator.Update(workspaceProject, projectSnapshot);
         }
@@ -162,15 +162,15 @@ internal class TagHelperRefreshTrigger : IOmniSharpProjectSnapshotManagerChangeT
         }
     }
 
-    private bool TryGetProjectSnapshot(string projectFilePath, out OmniSharpProjectSnapshot projectSnapshot)
+    private bool TryGetProjectSnapshot(OmniSharpProjectKey projectKey, out OmniSharpProjectSnapshot projectSnapshot)
     {
-        if (projectFilePath is null)
+        if (projectKey is null)
         {
             projectSnapshot = null;
             return false;
         }
 
-        projectSnapshot = _projectManager.GetLoadedProject(projectFilePath);
+        projectSnapshot = _projectManager.GetLoadedProject(projectKey);
         return projectSnapshot != null;
     }
 
@@ -179,19 +179,24 @@ internal class TagHelperRefreshTrigger : IOmniSharpProjectSnapshotManagerChangeT
     {
         _projectSnapshotManagerDispatcher.AssertDispatcherThread();
 
-        var projectSnapshot = _projectManager.GetLoadedProject(projectFilePath);
-        if (projectSnapshot is null)
+        foreach (var key in _projectManager.GetAllProjectKeys(projectFilePath))
         {
-            return false;
+            var projectSnapshot = _projectManager.GetLoadedProject(key);
+            if (projectSnapshot is null)
+            {
+                continue;
+            }
+
+            var documentSnapshot = projectSnapshot.GetDocument(relativeDocumentFilePath);
+            if (documentSnapshot is null)
+            {
+                continue;
+            }
+
+            var isComponentKind = FileKinds.IsComponent(documentSnapshot.FileKind);
+            return isComponentKind;
         }
 
-        var documentSnapshot = projectSnapshot.GetDocument(relativeDocumentFilePath);
-        if (documentSnapshot is null)
-        {
-            return false;
-        }
-
-        var isComponentKind = FileKinds.IsComponent(documentSnapshot.FileKind);
-        return isComponentKind;
+        return false;
     }
 }

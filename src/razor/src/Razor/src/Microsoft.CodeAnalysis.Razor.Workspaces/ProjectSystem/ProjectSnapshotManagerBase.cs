@@ -18,31 +18,31 @@ internal abstract class ProjectSnapshotManagerBase : ProjectSnapshotManager
 
     internal abstract IReadOnlyCollection<string> OpenDocuments { get; }
 
-    internal abstract void DocumentAdded(HostProject hostProject, HostDocument hostDocument, TextLoader textLoader);
+    internal abstract void DocumentAdded(ProjectKey projectKey, HostDocument hostDocument, TextLoader textLoader);
 
-    internal abstract void DocumentOpened(string projectFilePath, string documentFilePath, SourceText sourceText);
+    internal abstract void DocumentOpened(ProjectKey projectKey, string documentFilePath, SourceText sourceText);
 
-    internal abstract void DocumentClosed(string projectFilePath, string documentFilePath, TextLoader textLoader);
+    internal abstract void DocumentClosed(ProjectKey projectKey, string documentFilePath, TextLoader textLoader);
 
-    internal abstract void DocumentChanged(string projectFilePath, string documentFilePath, TextLoader textLoader);
+    internal abstract void DocumentChanged(ProjectKey projectKey, string documentFilePath, TextLoader textLoader);
 
-    internal abstract void DocumentChanged(string projectFilePath, string documentFilePath, SourceText sourceText);
+    internal abstract void DocumentChanged(ProjectKey projectKey, string documentFilePath, SourceText sourceText);
 
-    internal abstract void DocumentRemoved(HostProject hostProject, HostDocument hostDocument);
+    internal abstract void DocumentRemoved(ProjectKey projectKey, HostDocument hostDocument);
 
     internal abstract void ProjectAdded(HostProject hostProject);
 
     internal abstract void ProjectConfigurationChanged(HostProject hostProject);
 
-    internal abstract void ProjectWorkspaceStateChanged(string projectFilePath, ProjectWorkspaceState projectWorkspaceState);
+    internal abstract void ProjectWorkspaceStateChanged(ProjectKey projectKey, ProjectWorkspaceState projectWorkspaceState);
 
-    internal abstract void ProjectRemoved(HostProject hostProject);
+    internal abstract void ProjectRemoved(ProjectKey projectKey);
 
     internal abstract void ReportError(Exception exception);
 
     internal abstract void ReportError(Exception exception, IProjectSnapshot project);
 
-    internal abstract void ReportError(Exception exception, HostProject hostProject);
+    internal abstract void ReportError(Exception exception, ProjectKey projectKey);
 
     internal abstract void SolutionOpened();
 

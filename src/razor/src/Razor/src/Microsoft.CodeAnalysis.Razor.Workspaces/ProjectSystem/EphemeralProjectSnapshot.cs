@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Diagnostics;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.CSharp;
@@ -16,23 +17,28 @@ internal class EphemeralProjectSnapshot : IProjectSnapshot
     private readonly HostWorkspaceServices _services;
     private readonly Lazy<RazorProjectEngine> _projectEngine;
 
-    public EphemeralProjectSnapshot(HostWorkspaceServices services, string filePath)
+    public EphemeralProjectSnapshot(HostWorkspaceServices services, ProjectKey projectKey)
     {
         if (services is null)
         {
             throw new ArgumentNullException(nameof(services));
         }
 
-        if (filePath is null)
+        if (projectKey is null)
         {
-            throw new ArgumentNullException(nameof(filePath));
+            throw new ArgumentNullException(nameof(projectKey));
         }
 
         _services = services;
-        FilePath = filePath;
+        Debug.Assert(projectKey.Id.EndsWith(".csproj", StringComparison.OrdinalIgnoreCase), "EphemeralProjectSnapshot should only be used in the legacy editor, where projects are tracked by the full path to the .csproj file");
+        FilePath = projectKey.Id;
 
         _projectEngine = new Lazy<RazorProjectEngine>(CreateProjectEngine);
+
+        Key = projectKey;
     }
+
+    public ProjectKey Key { get; }
 
     public RazorConfiguration? Configuration => FallbackRazorConfiguration.Latest;
 

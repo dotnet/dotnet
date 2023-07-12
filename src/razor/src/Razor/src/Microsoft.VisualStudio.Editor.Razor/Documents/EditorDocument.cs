@@ -5,6 +5,7 @@ using System;
 using System.Threading;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Razor;
+using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Text;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Threading;
@@ -105,7 +106,11 @@ internal sealed class EditorDocument : IDisposable
             EditorTextContainer = textBuffer.AsTextContainer();
             EditorTextContainer.TextChanged += TextContainer_Changed;
         }
+
+        ProjectKey = ProjectKey.FromLegacy(ProjectFilePath);
     }
+
+    public ProjectKey ProjectKey { get; }
 
     public string ProjectFilePath { get; }
 

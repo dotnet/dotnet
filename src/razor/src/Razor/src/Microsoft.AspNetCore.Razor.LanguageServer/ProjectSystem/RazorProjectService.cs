@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.ProjectSystem;
 using Microsoft.AspNetCore.Razor.Serialization;
+using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Text;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.ProjectSystem;
@@ -26,7 +27,7 @@ internal abstract class RazorProjectService
     public abstract void RemoveProject(string filePath);
 
     public abstract void UpdateProject(
-        string filePath,
+        ProjectKey projectKey,
         RazorConfiguration? configuration,
         string? rootNamespace,
         ProjectWorkspaceState projectWorkspaceState,

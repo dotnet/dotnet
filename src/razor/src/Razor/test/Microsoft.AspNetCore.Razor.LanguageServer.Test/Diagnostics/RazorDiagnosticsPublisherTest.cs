@@ -58,10 +58,10 @@ public class RazorDiagnosticsPublisherTest : LanguageServerTestBase
         var sourceText = SourceText.From(string.Empty);
         var textAndVersion = TextAndVersion.Create(sourceText, VersionStamp.Default);
         var openedHostDocument = new HostDocument("C:/project/open_document.cshtml", "C:/project/open_document.cshtml");
-        testProjectManager.DocumentAdded(hostProject, openedHostDocument, TextLoader.From(textAndVersion));
-        testProjectManager.DocumentOpened(hostProject.FilePath, openedHostDocument.FilePath, sourceText);
+        testProjectManager.DocumentAdded(hostProject.Key, openedHostDocument, TextLoader.From(textAndVersion));
+        testProjectManager.DocumentOpened(hostProject.Key, openedHostDocument.FilePath, sourceText);
         var closedHostDocument = new HostDocument("C:/project/closed_document.cshtml", "C:/project/closed_document.cshtml");
-        testProjectManager.DocumentAdded(hostProject, closedHostDocument, TextLoader.From(textAndVersion));
+        testProjectManager.DocumentAdded(hostProject.Key, closedHostDocument, TextLoader.From(textAndVersion));
 
         var openedDocument = testProjectManager.Projects[0].GetDocument(openedHostDocument.FilePath);
         Assert.NotNull(openedDocument);

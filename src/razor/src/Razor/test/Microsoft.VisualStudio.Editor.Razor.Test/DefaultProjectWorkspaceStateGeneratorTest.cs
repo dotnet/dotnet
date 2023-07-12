@@ -116,7 +116,7 @@ public class DefaultProjectWorkspaceStateGeneratorTest : ProjectSnapshotManagerD
             var projectManager = new TestProjectSnapshotManager(Dispatcher, _workspace);
             stateGenerator.Initialize(projectManager);
             projectManager.ProjectAdded(_projectSnapshot.HostProject);
-            projectManager.ProjectWorkspaceStateChanged(_projectSnapshot.FilePath, _projectWorkspaceStateWithTagHelpers);
+            projectManager.ProjectWorkspaceStateChanged(_projectSnapshot.Key, _projectWorkspaceStateWithTagHelpers);
 
             // Act
             stateGenerator.Update(workspaceProject: null, _projectSnapshot, DisposalToken);
@@ -125,7 +125,7 @@ public class DefaultProjectWorkspaceStateGeneratorTest : ProjectSnapshotManagerD
             await Task.Run(() => stateGenerator.NotifyBackgroundWorkCompleted.Wait(TimeSpan.FromSeconds(3)));
 
             // Assert
-            var newProjectSnapshot = projectManager.GetLoadedProject(_projectSnapshot.FilePath);
+            var newProjectSnapshot = projectManager.GetLoadedProject(_projectSnapshot.Key);
             Assert.Empty(newProjectSnapshot.TagHelpers);
         }
     }
@@ -148,7 +148,7 @@ public class DefaultProjectWorkspaceStateGeneratorTest : ProjectSnapshotManagerD
             await Task.Run(() => stateGenerator.NotifyBackgroundWorkCompleted.Wait(TimeSpan.FromSeconds(3)));
 
             // Assert
-            var newProjectSnapshot = projectManager.GetLoadedProject(_projectSnapshot.FilePath);
+            var newProjectSnapshot = projectManager.GetLoadedProject(_projectSnapshot.Key);
             Assert.Equal(_resolvableTagHelpers, newProjectSnapshot.TagHelpers, TagHelperDescriptorComparer.Default);
         }
     }

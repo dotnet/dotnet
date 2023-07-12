@@ -24,7 +24,7 @@ public class ProjectSnapshotSerializationBenchmark : ProjectSnapshotManagerBench
 
         var snapshotManager = CreateProjectSnapshotManager();
         snapshotManager.ProjectAdded(HostProject);
-        ProjectSnapshot = snapshotManager.GetLoadedProject(HostProject.FilePath);
+        ProjectSnapshot = snapshotManager.GetLoadedProject(HostProject.Key);
         Debug.Assert(ProjectSnapshot != null);
     }
 

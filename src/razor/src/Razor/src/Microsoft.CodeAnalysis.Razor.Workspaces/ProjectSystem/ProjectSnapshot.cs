@@ -26,6 +26,8 @@ internal class ProjectSnapshot : IProjectSnapshot
         _documents = new Dictionary<string, DocumentSnapshot>(FilePathComparer.Instance);
     }
 
+    public ProjectKey Key => State.HostProject.Key;
+
     public ProjectState State { get; }
 
     public RazorConfiguration? Configuration => HostProject.Configuration;

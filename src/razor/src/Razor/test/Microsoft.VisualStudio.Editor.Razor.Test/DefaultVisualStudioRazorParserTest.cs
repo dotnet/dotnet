@@ -30,7 +30,7 @@ public class DefaultVisualStudioRazorParserTest : ProjectSnapshotManagerDispatch
         _workspace = TestWorkspace.Create();
         AddDisposable(_workspace);
 
-        _projectSnapshot = new EphemeralProjectSnapshot(_workspace.Services, "c:\\SomeProject.csproj");
+        _projectSnapshot = new EphemeralProjectSnapshot(_workspace.Services, ProjectKey.FromLegacy("c:\\SomeProject.csproj"));
 
         var engine = RazorProjectEngine.Create(RazorConfiguration.Default, RazorProjectFileSystem.Empty);
         _projectEngineFactory = Mock.Of<ProjectSnapshotProjectEngineFactory>(

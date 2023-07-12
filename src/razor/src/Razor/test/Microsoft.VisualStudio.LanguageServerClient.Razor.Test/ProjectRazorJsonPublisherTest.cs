@@ -88,7 +88,7 @@ public class ProjectRazorJsonPublisherTest : LanguageServerTestBase
         publisher.Initialize(_projectSnapshotManager);
 
         // Act
-        _projectSnapshotManager.DocumentAdded(hostProject, hostDocument, new EmptyTextLoader(hostDocument.FilePath));
+        _projectSnapshotManager.DocumentAdded(hostProject.Key, hostDocument, new EmptyTextLoader(hostDocument.FilePath));
 
         // Assert
         Assert.Empty(publisher.DeferredPublishTasks);
@@ -103,7 +103,7 @@ public class ProjectRazorJsonPublisherTest : LanguageServerTestBase
         var hostProject = new HostProject(@"C:\path\to\project.csproj", RazorConfiguration.Default, rootNamespace: "TestRootNamespace");
         var hostDocument = new HostDocument(@"C:\path\to\file.razor", "file.razor");
         _projectSnapshotManager.ProjectAdded(hostProject);
-        _projectSnapshotManager.DocumentAdded(hostProject, hostDocument, new EmptyTextLoader(hostDocument.FilePath));
+        _projectSnapshotManager.DocumentAdded(hostProject.Key, hostDocument, new EmptyTextLoader(hostDocument.FilePath));
         var publisher = new TestProjectRazorJsonPublisher(
             _projectConfigurationFilePathStore,
             onSerializeToFile: (snapshot, configurationFilePath) => attemptedToSerialize = true)
@@ -113,7 +113,7 @@ public class ProjectRazorJsonPublisherTest : LanguageServerTestBase
         publisher.Initialize(_projectSnapshotManager);
 
         // Act
-        _projectSnapshotManager.DocumentOpened(hostProject.FilePath, hostDocument.FilePath, SourceText.From(string.Empty));
+        _projectSnapshotManager.DocumentOpened(hostProject.Key, hostDocument.FilePath, SourceText.From(string.Empty));
 
         // Assert
         Assert.Empty(publisher.DeferredPublishTasks);
@@ -128,8 +128,8 @@ public class ProjectRazorJsonPublisherTest : LanguageServerTestBase
         var hostProject = new HostProject(@"C:\path\to\project.csproj", RazorConfiguration.Default, rootNamespace: "TestRootNamespace");
         var hostDocument = new HostDocument(@"C:\path\to\file.razor", "file.razor");
         _projectSnapshotManager.ProjectAdded(hostProject);
-        _projectSnapshotManager.ProjectWorkspaceStateChanged(hostProject.FilePath, ProjectWorkspaceState.Default);
-        _projectSnapshotManager.DocumentAdded(hostProject, hostDocument, new EmptyTextLoader(hostDocument.FilePath));
+        _projectSnapshotManager.ProjectWorkspaceStateChanged(hostProject.Key, ProjectWorkspaceState.Default);
+        _projectSnapshotManager.DocumentAdded(hostProject.Key, hostDocument, new EmptyTextLoader(hostDocument.FilePath));
         var projectSnapshot = _projectSnapshotManager.Projects[0];
         var expectedConfigurationFilePath = @"C:\path\to\obj\bin\Debug\project.razor.json";
         _projectConfigurationFilePathStore.Set(projectSnapshot.FilePath, expectedConfigurationFilePath);
@@ -146,7 +146,7 @@ public class ProjectRazorJsonPublisherTest : LanguageServerTestBase
         publisher.Initialize(_projectSnapshotManager);
 
         // Act
-        _projectSnapshotManager.DocumentOpened(hostProject.FilePath, hostDocument.FilePath, SourceText.From(string.Empty));
+        _projectSnapshotManager.DocumentOpened(hostProject.Key, hostDocument.FilePath, SourceText.From(string.Empty));
 
         // Assert
         Assert.Empty(publisher.DeferredPublishTasks);
@@ -440,7 +440,7 @@ public class ProjectRazorJsonPublisherTest : LanguageServerTestBase
         await RunOnDispatcherThreadAsync(() =>
         {
             _projectSnapshotManager.ProjectAdded(hostProject);
-            _projectSnapshotManager.ProjectWorkspaceStateChanged(projectFilePath, projectWorkspaceState);
+            _projectSnapshotManager.ProjectWorkspaceStateChanged(hostProject.Key, projectWorkspaceState);
         }).ConfigureAwait(false);
 
         // Assert
@@ -491,7 +491,7 @@ public class ProjectRazorJsonPublisherTest : LanguageServerTestBase
         await RunOnDispatcherThreadAsync(() => _projectSnapshotManager.ProjectAdded(hostProject)).ConfigureAwait(false);
 
         // Act & Assert
-        await RunOnDispatcherThreadAsync(() => _projectSnapshotManager.ProjectRemoved(hostProject)).ConfigureAwait(false);
+        await RunOnDispatcherThreadAsync(() => _projectSnapshotManager.ProjectRemoved(hostProject.Key)).ConfigureAwait(false);
 
         Assert.Empty(publisher.DeferredPublishTasks);
     }
@@ -524,7 +524,7 @@ public class ProjectRazorJsonPublisherTest : LanguageServerTestBase
         await RunOnDispatcherThreadAsync(() =>
         {
             _projectSnapshotManager.ProjectAdded(hostProject);
-            _projectSnapshotManager.ProjectWorkspaceStateChanged(projectFilePath, projectWorkspaceState);
+            _projectSnapshotManager.ProjectWorkspaceStateChanged(hostProject.Key, projectWorkspaceState);
         }).ConfigureAwait(false);
 
         // Assert

@@ -167,7 +167,7 @@ internal class EditorDocumentManagerListener : ProjectSnapshotChangeTrigger
             // running on the project snapshot manager's specialized thread.
             await _projectSnapshotManagerDispatcher.RunOnDispatcherThreadAsync(() =>
             {
-                ProjectManager.DocumentChanged(document.ProjectFilePath, document.DocumentFilePath, document.TextLoader);
+                ProjectManager.DocumentChanged(document.ProjectKey, document.DocumentFilePath, document.TextLoader);
             }, cancellationToken).ConfigureAwait(false);
         }
         catch (Exception ex)
@@ -192,7 +192,7 @@ internal class EditorDocumentManagerListener : ProjectSnapshotChangeTrigger
             await _projectSnapshotManagerDispatcher.RunOnDispatcherThreadAsync(() =>
             {
                 var document = (EditorDocument)sender;
-                ProjectManager.DocumentChanged(document.ProjectFilePath, document.DocumentFilePath, document.EditorTextContainer!.CurrentText);
+                ProjectManager.DocumentChanged(document.ProjectKey, document.DocumentFilePath, document.EditorTextContainer!.CurrentText);
             }, cancellationToken).ConfigureAwait(false);
         }
         catch (Exception ex)
@@ -218,7 +218,7 @@ internal class EditorDocumentManagerListener : ProjectSnapshotChangeTrigger
             await _projectSnapshotManagerDispatcher.RunOnDispatcherThreadAsync(() =>
             {
                 var document = (EditorDocument)sender;
-                ProjectManager.DocumentOpened(document.ProjectFilePath, document.DocumentFilePath, document.EditorTextContainer!.CurrentText);
+                ProjectManager.DocumentOpened(document.ProjectKey, document.DocumentFilePath, document.EditorTextContainer!.CurrentText);
             }, cancellationToken).ConfigureAwait(false);
         }
         catch (Exception ex)
@@ -243,7 +243,7 @@ internal class EditorDocumentManagerListener : ProjectSnapshotChangeTrigger
             await _projectSnapshotManagerDispatcher.RunOnDispatcherThreadAsync(() =>
             {
                 var document = (EditorDocument)sender;
-                ProjectManager.DocumentClosed(document.ProjectFilePath, document.DocumentFilePath, document.TextLoader);
+                ProjectManager.DocumentClosed(document.ProjectKey, document.DocumentFilePath, document.TextLoader);
             }, cancellationToken).ConfigureAwait(false);
         }
         catch (Exception ex)

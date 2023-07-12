@@ -73,7 +73,7 @@ internal class ProjectSnapshotSynchronizationService : ICollaborationService, IA
         {
             try
             {
-                _projectSnapshotManager.ProjectRemoved(((ProjectSnapshot)project).HostProject);
+                _projectSnapshotManager.ProjectRemoved(project.Key);
             }
             catch (Exception ex)
             {
@@ -93,14 +93,17 @@ internal class ProjectSnapshotSynchronizationService : ICollaborationService, IA
 
             if (args.Newer.ProjectWorkspaceState != null)
             {
-                _projectSnapshotManager.ProjectWorkspaceStateChanged(guestPath, args.Newer.ProjectWorkspaceState);
+                _projectSnapshotManager.ProjectWorkspaceStateChanged(hostProject.Key, args.Newer.ProjectWorkspaceState);
             }
         }
         else if (args.Kind == ProjectProxyChangeKind.ProjectRemoved)
         {
             var guestPath = ResolveGuestPath(args.ProjectFilePath);
-            var hostProject = new HostProject(guestPath, args.Older!.Configuration, args.Older.RootNamespace);
-            _projectSnapshotManager.ProjectRemoved(hostProject);
+            var projectKeys = _projectSnapshotManager.GetAllProjectKeys(guestPath);
+            foreach (var projectKey in projectKeys)
+            {
+                _projectSnapshotManager.ProjectRemoved(projectKey);
+            }
         }
         else if (args.Kind == ProjectProxyChangeKind.ProjectChanged)
         {
@@ -114,7 +117,11 @@ internal class ProjectSnapshotSynchronizationService : ICollaborationService, IA
                 args.Older.ProjectWorkspaceState?.Equals(args.Newer.ProjectWorkspaceState) == false)
             {
                 var guestPath = ResolveGuestPath(args.Newer.FilePath);
-                _projectSnapshotManager.ProjectWorkspaceStateChanged(guestPath, args.Newer.ProjectWorkspaceState);
+                var projectKeys = _projectSnapshotManager.GetAllProjectKeys(guestPath);
+                foreach (var projectKey in projectKeys)
+                {
+                    _projectSnapshotManager.ProjectWorkspaceStateChanged(projectKey, args.Newer.ProjectWorkspaceState);
+                }
             }
         }
     }
@@ -133,7 +140,7 @@ internal class ProjectSnapshotSynchronizationService : ICollaborationService, IA
 
             if (projectHandle.ProjectWorkspaceState is not null)
             {
-                _projectSnapshotManager.ProjectWorkspaceStateChanged(guestPath, projectHandle.ProjectWorkspaceState);
+                _projectSnapshotManager.ProjectWorkspaceStateChanged(hostProject.Key, projectHandle.ProjectWorkspaceState);
             }
         }
     }

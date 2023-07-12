@@ -57,7 +57,11 @@ internal abstract class RazorServiceBase : IDisposable
             RootNamespace = rootNamespace;
 
             Version = VersionStamp.Default;
+
+            Key = ProjectKey.From(this);
         }
+
+        public ProjectKey Key { get; }
 
         public RazorConfiguration? Configuration { get; }
 

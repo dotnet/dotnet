@@ -52,9 +52,9 @@ public class ProjectMutationBenchmark : ProjectSnapshotManagerBenchmarkBase
             for (var i = 0; i < Documents.Length; i++)
             {
                 var document = Documents[i];
-                await _dispatcher.RunOnDispatcherThreadAsync(() => SnapshotManager.DocumentAdded(HostProject, document, TextLoaders[i % 4]), CancellationToken.None).ConfigureAwait(false);
+                await _dispatcher.RunOnDispatcherThreadAsync(() => SnapshotManager.DocumentAdded(HostProject.Key, document, TextLoaders[i % 4]), CancellationToken.None).ConfigureAwait(false);
                 Thread.Sleep(0);
-                await _dispatcher.RunOnDispatcherThreadAsync(() => SnapshotManager.DocumentRemoved(HostProject, document), CancellationToken.None).ConfigureAwait(false);
+                await _dispatcher.RunOnDispatcherThreadAsync(() => SnapshotManager.DocumentRemoved(HostProject.Key, document), CancellationToken.None).ConfigureAwait(false);
                 Thread.Sleep(0);
             }
 

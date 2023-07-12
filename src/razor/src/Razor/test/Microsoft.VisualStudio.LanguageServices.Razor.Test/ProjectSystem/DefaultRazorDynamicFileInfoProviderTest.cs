@@ -42,9 +42,9 @@ public class DefaultRazorDynamicFileInfoProviderTest : WorkspaceTestBase
         var hostProject = new HostProject("C:\\project.csproj", RazorConfiguration.Default, rootNamespace: "TestNamespace");
         _projectSnapshotManager.ProjectAdded(hostProject);
         var hostDocument1 = new HostDocument("C:\\document1.razor", "document1.razor", FileKinds.Component);
-        _projectSnapshotManager.DocumentAdded(hostProject, hostDocument1, new EmptyTextLoader(hostDocument1.FilePath));
+        _projectSnapshotManager.DocumentAdded(hostProject.Key, hostDocument1, new EmptyTextLoader(hostDocument1.FilePath));
         var hostDocument2 = new HostDocument("C:\\document2.razor", "document2.razor", FileKinds.Component);
-        _projectSnapshotManager.DocumentAdded(hostProject, hostDocument2, new EmptyTextLoader(hostDocument2.FilePath));
+        _projectSnapshotManager.DocumentAdded(hostProject.Key, hostDocument2, new EmptyTextLoader(hostDocument2.FilePath));
         _project = _projectSnapshotManager.GetSnapshot(hostProject);
         _document1 = (DocumentSnapshot)_project.GetDocument(hostDocument1.FilePath);
         _document2 = (DocumentSnapshot)_project.GetDocument(hostDocument2.FilePath);
@@ -93,7 +93,7 @@ public class DefaultRazorDynamicFileInfoProviderTest : WorkspaceTestBase
         await _testAccessor.GetDynamicFileInfoAsync(_project.FilePath, _document1.FilePath, DisposalToken);
         var called = false;
         _provider.Updated += (sender, args) => called = true;
-        _projectSnapshotManager.ProjectRemoved(_project.HostProject);
+        _projectSnapshotManager.ProjectRemoved(_project.Key);
 
         // Act
         _provider.UpdateLSPFileInfo(new Uri(_document1.FilePath), _lspDocumentContainer);
@@ -111,7 +111,7 @@ public class DefaultRazorDynamicFileInfoProviderTest : WorkspaceTestBase
         _provider.Updated += (sender, documentFilePath) => throw new InvalidOperationException("Should not have been called!");
 
         _projectSnapshotManager.SolutionClosed();
-        _projectSnapshotManager.DocumentClosed(_project.FilePath, _document1.FilePath, new EmptyTextLoader(string.Empty));
+        _projectSnapshotManager.DocumentClosed(_project.Key, _document1.FilePath, new EmptyTextLoader(string.Empty));
 
         // Act & Assert
         _provider.UpdateLSPFileInfo(new Uri(_document2.FilePath), _lspDocumentContainer);

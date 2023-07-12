@@ -47,8 +47,9 @@ public class SnapshotResolverTest : LanguageServerTestBase
         var snapshotResolver = new SnapshotResolver(projectSnapshotManagerAccessor, LoggerFactory);
         var miscProject = snapshotResolver.GetMiscellaneousProject();
 
+        var hostProject = new HostProject(miscProject.FilePath, RazorDefaults.Configuration, miscProject.RootNamespace);
         projectSnapshotManagerAccessor.Instance.DocumentAdded(
-            new HostProject(miscProject.FilePath, RazorDefaults.Configuration, miscProject.RootNamespace),
+            hostProject.Key,
             new HostDocument(normalizedFilePath, "document.cshtml"),
             new EmptyTextLoader(normalizedFilePath));
 
@@ -209,7 +210,7 @@ public class SnapshotResolverTest : LanguageServerTestBase
 
         // Act
         var project = snapshotResolver.GetMiscellaneousProject();
-        var inManager = snapshotManager.GetLoadedProject(snapshotResolver.MiscellaneousHostProject.FilePath);
+        var inManager = snapshotManager.GetLoadedProject(snapshotResolver.MiscellaneousHostProject.Key);
 
         // Assert
         Assert.Same(inManager, project);

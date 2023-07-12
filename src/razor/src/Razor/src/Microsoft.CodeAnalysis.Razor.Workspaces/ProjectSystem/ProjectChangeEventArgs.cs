@@ -25,11 +25,14 @@ internal class ProjectChangeEventArgs : EventArgs
         Kind = kind;
         SolutionIsClosing = solutionIsClosing;
         ProjectFilePath = older?.FilePath ?? newer?.FilePath;
+        ProjectKey = older?.Key ?? newer?.Key;
     }
 
     public IProjectSnapshot? Older { get; }
 
     public IProjectSnapshot? Newer { get; }
+
+    public ProjectKey? ProjectKey { get; }
 
     public string? ProjectFilePath { get; }
 

@@ -45,12 +45,12 @@ public class BackgroundDocumentGeneratorTest : LanguageServerTestBase
         {
             projectManager.ProjectAdded(_hostProject1);
             projectManager.ProjectAdded(_hostProject2);
-            projectManager.DocumentAdded(_hostProject1, _documents[0], null);
-            projectManager.DocumentAdded(_hostProject1, _documents[1], null);
+            projectManager.DocumentAdded(_hostProject1.Key, _documents[0], null);
+            projectManager.DocumentAdded(_hostProject1.Key, _documents[1], null);
         }, DisposalToken);
 
         var project = await Dispatcher.RunOnDispatcherThreadAsync(
-            () => projectManager.GetLoadedProject(_hostProject1.FilePath), DisposalToken);
+            () => projectManager.GetLoadedProject(_hostProject1.Key), DisposalToken);
 
         var queue = new TestBackgroundDocumentGenerator(Dispatcher)
         {
@@ -87,12 +87,12 @@ public class BackgroundDocumentGeneratorTest : LanguageServerTestBase
         {
             projectManager.ProjectAdded(_hostProject1);
             projectManager.ProjectAdded(_hostProject2);
-            projectManager.DocumentAdded(_hostProject1, _documents[0], null);
-            projectManager.DocumentAdded(_hostProject1, _documents[1], null);
+            projectManager.DocumentAdded(_hostProject1.Key, _documents[0], null);
+            projectManager.DocumentAdded(_hostProject1.Key, _documents[1], null);
         }, DisposalToken);
 
         var project = await Dispatcher.RunOnDispatcherThreadAsync(
-            () => projectManager.GetLoadedProject(_hostProject1.FilePath), DisposalToken);
+            () => projectManager.GetLoadedProject(_hostProject1.Key), DisposalToken);
 
         var queue = new TestBackgroundDocumentGenerator(Dispatcher)
         {

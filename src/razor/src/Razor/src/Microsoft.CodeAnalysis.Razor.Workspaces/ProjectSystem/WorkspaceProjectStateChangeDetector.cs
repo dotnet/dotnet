@@ -151,8 +151,7 @@ internal class WorkspaceProjectStateChangeDetector : ProjectSnapshotChangeTrigge
                                 var oldSolution = eventArgs.OldSolution;
 
                                 var project = oldSolution.GetRequiredProject(projectId);
-
-                                if (@this.TryGetProjectSnapshot(project.FilePath, out var projectSnapshot))
+                                if (@this.TryGetProjectSnapshot(ProjectKey.From(project), out var projectSnapshot))
                                 {
                                     @this.EnqueueUpdateOnProjectAndDependencies(projectId, project: null, oldSolution, projectSnapshot);
                                 }
@@ -297,7 +296,7 @@ internal class WorkspaceProjectStateChangeDetector : ProjectSnapshotChangeTrigge
 
                                 foreach (var project in oldSolution.Projects)
                                 {
-                                    if (@this.TryGetProjectSnapshot(project.FilePath, out var projectSnapshot))
+                                    if (@this.TryGetProjectSnapshot(ProjectKey.From(project), out var projectSnapshot))
                                     {
                                         @this.EnqueueUpdate(project: null, projectSnapshot);
                                     }
@@ -388,7 +387,7 @@ internal class WorkspaceProjectStateChangeDetector : ProjectSnapshotChangeTrigge
     {
         foreach (var project in solution.Projects)
         {
-            if (TryGetProjectSnapshot(project.FilePath, out var projectSnapshot))
+            if (TryGetProjectSnapshot(ProjectKey.From(project), out var projectSnapshot))
             {
                 EnqueueUpdate(project, projectSnapshot);
             }
@@ -429,7 +428,7 @@ internal class WorkspaceProjectStateChangeDetector : ProjectSnapshotChangeTrigge
 
     private void EnqueueUpdateOnProjectAndDependencies(Project project, Solution solution)
     {
-        if (TryGetProjectSnapshot(project.FilePath, out var projectSnapshot))
+        if (TryGetProjectSnapshot(ProjectKey.From(project), out var projectSnapshot))
         {
             EnqueueUpdateOnProjectAndDependencies(project.Id, project, solution, projectSnapshot);
         }
@@ -445,7 +444,7 @@ internal class WorkspaceProjectStateChangeDetector : ProjectSnapshotChangeTrigge
         foreach (var dependentProjectId in dependentProjectIds)
         {
             if (solution.GetProject(dependentProjectId) is { } dependentProject &&
-                TryGetProjectSnapshot(dependentProject.FilePath, out var dependentProjectSnapshot))
+                TryGetProjectSnapshot(ProjectKey.From(dependentProject), out var dependentProjectSnapshot))
             {
                 EnqueueUpdate(dependentProject, dependentProjectSnapshot);
             }
@@ -461,15 +460,15 @@ internal class WorkspaceProjectStateChangeDetector : ProjectSnapshotChangeTrigge
         _workQueue?.Enqueue(projectSnapshot.FilePath, workItem);
     }
 
-    private bool TryGetProjectSnapshot(string? projectFilePath, [NotNullWhen(true)] out IProjectSnapshot? projectSnapshot)
+    private bool TryGetProjectSnapshot(ProjectKey? projectKey, [NotNullWhen(true)] out IProjectSnapshot? projectSnapshot)
     {
-        if (projectFilePath is null)
+        if (projectKey is null)
         {
             projectSnapshot = null;
             return false;
         }
 
-        projectSnapshot = ProjectSnapshotManager.GetLoadedProject(projectFilePath);
+        projectSnapshot = ProjectSnapshotManager.GetLoadedProject(projectKey);
         return projectSnapshot is not null;
     }
 
