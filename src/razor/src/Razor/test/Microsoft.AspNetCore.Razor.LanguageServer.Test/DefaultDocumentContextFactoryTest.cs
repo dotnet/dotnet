@@ -4,6 +4,8 @@
 #nullable disable
 
 using System;
+using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.LanguageServer.ProjectSystem;
@@ -111,7 +113,7 @@ public class DefaultDocumentContextFactoryTest : LanguageServerTestBase
         Assert.Same(documentSnapshot, documentContext.Snapshot);
     }
 
-    private class TestDocumentResolver : DocumentResolver
+    private class TestDocumentResolver : ISnapshotResolver
     {
         private readonly IDocumentSnapshot _documentSnapshot;
 
@@ -124,15 +126,25 @@ public class DefaultDocumentContextFactoryTest : LanguageServerTestBase
             _documentSnapshot = documentSnapshot;
         }
 
-        public override bool TryResolveDocument(string documentFilePath, out IDocumentSnapshot document)
+        public IEnumerable<IProjectSnapshot> FindPotentialProjects(string documentFilePath)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IProjectSnapshot GetMiscellaneousProject()
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool TryResolveDocument(string documentFilePath, [NotNullWhen(true)] out IDocumentSnapshot documentSnapshot)
         {
             if (documentFilePath == _documentSnapshot?.FilePath)
             {
-                document = _documentSnapshot;
+                documentSnapshot = _documentSnapshot;
                 return true;
             }
 
-            document = null;
+            documentSnapshot = null;
             return false;
         }
     }

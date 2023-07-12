@@ -63,7 +63,7 @@ internal class TestProjectSnapshot : ProjectSnapshot
 
     public override IDocumentSnapshot? GetDocument(string filePath)
     {
-        return base.GetDocument(filePath) ?? throw new InvalidOperationException($"Test was not setup correctly. Could not locate document '{filePath}'.");
+        return base.GetDocument(filePath);
     }
 
     public override RazorProjectEngine GetProjectEngine()

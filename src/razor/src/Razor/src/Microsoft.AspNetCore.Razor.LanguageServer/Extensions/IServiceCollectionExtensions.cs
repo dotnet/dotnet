@@ -192,8 +192,7 @@ internal static class IServiceCollectionExtensions
         services.AddSingleton<ProjectSnapshotChangeTrigger>((services) => services.GetRequiredService<DocumentVersionCache>());
 
         services.AddSingleton<RemoteTextLoaderFactory, DefaultRemoteTextLoaderFactory>();
-        services.AddSingleton<ProjectResolver, DefaultProjectResolver>();
-        services.AddSingleton<DocumentResolver, DefaultDocumentResolver>();
+        services.AddSingleton<ISnapshotResolver, SnapshotResolver>();
         services.AddSingleton<RazorProjectService, DefaultRazorProjectService>();
         services.AddSingleton<ProjectSnapshotChangeTrigger, OpenDocumentGenerator>();
         services.AddSingleton<IRazorDocumentMappingService, RazorDocumentMappingService>();
