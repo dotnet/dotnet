@@ -183,15 +183,9 @@ namespace NuGet.CommandLine.Test
                 };
 
                 // Act
-                var result = CommandRunner.Run(
-                    testInfo.NuGetExePath,
-                    testInfo.WorkingPath,
-                    string.Join(" ", args.Select(a => $"\"{a}\"")));
+                testInfo.RunNuGetExpectSuccess(args, expectedOutput: "was successfully added");
 
                 // Assert
-                var expectedOutput = "was successfully added";
-                Util.VerifyResultSuccess(result, expectedOutput);
-
                 testInfo.ValidateSettings(new FileClientCertItem(packageSource, path, password, false, testInfo.ConfigFile));
             }
         }
@@ -222,15 +216,9 @@ namespace NuGet.CommandLine.Test
                 };
 
                 // Act
-                var result = CommandRunner.Run(
-                    testInfo.NuGetExePath,
-                    testInfo.WorkingPath,
-                    string.Join(" ", args.Select(a => $"\"{a}\"")));
+                testInfo.RunNuGetExpectSuccess(args, expectedOutput: "was successfully added");
 
                 // Assert
-                var expectedOutput = "was successfully added";
-                Util.VerifyResultSuccess(result, expectedOutput);
-
                 testInfo.ValidateSettings(new FileClientCertItem(packageSource, path, password, false, testInfo.ConfigFile));
             }
         }
@@ -262,15 +250,9 @@ namespace NuGet.CommandLine.Test
                 };
 
                 // Act
-                var result = CommandRunner.Run(
-                    testInfo.NuGetExePath,
-                    testInfo.WorkingPath,
-                    string.Join(" ", args.Select(a => $"\"{a}\"")));
+                testInfo.RunNuGetExpectSuccess(args, expectedOutput: "was successfully added");
 
                 // Assert
-                var expectedOutput = "was successfully added";
-                Util.VerifyResultSuccess(result, expectedOutput);
-
                 testInfo.ValidateSettings(new FileClientCertItem(packageSource, path, password, false, testInfo.ConfigFile));
             }
         }
@@ -298,19 +280,13 @@ namespace NuGet.CommandLine.Test
                     "-FindBy",
                     testInfo.CertificateFindBy.ToString().Replace("FindBy", string.Empty),
                     "-FindValue",
-                    testInfo.CertificateFindValue
+                    testInfo.CertificateFindValue.ToString()
                 };
 
                 // Act
-                var result = CommandRunner.Run(
-                    testInfo.NuGetExePath,
-                    testInfo.WorkingPath,
-                    string.Join(" ", args.Select(a => $"\"{a}\"")));
+                testInfo.RunNuGetExpectSuccess(args, expectedOutput: "was successfully added");
 
                 // Assert
-                var expectedOutput = "was successfully added";
-                Util.VerifyResultSuccess(result, expectedOutput);
-
                 testInfo.ValidateSettings(new StoreClientCertItem(testInfo.PackageSourceName,
                                                                   testInfo.CertificateFindValue.ToString(),
                                                                   testInfo.CertificateStoreLocation,
@@ -340,20 +316,14 @@ namespace NuGet.CommandLine.Test
                     "-FindBy",
                     testInfo.CertificateFindBy.ToString().Replace("FindBy", string.Empty),
                     "-FindValue",
-                    testInfo.CertificateFindValue,
+                    testInfo.CertificateFindValue.ToString(),
                     "-Force"
                 };
 
                 // Act
-                var result = CommandRunner.Run(
-                    testInfo.NuGetExePath,
-                    testInfo.WorkingPath,
-                    string.Join(" ", args.Select(a => $"\"{a}\"")));
+                testInfo.RunNuGetExpectSuccess(args, expectedOutput: "was successfully added");
 
                 // Assert
-                var expectedOutput = "was successfully added";
-                Util.VerifyResultSuccess(result, expectedOutput);
-
                 testInfo.ValidateSettings(new StoreClientCertItem(testInfo.PackageSourceName,
                                                                   testInfo.CertificateFindValue.ToString(),
                                                                   testInfo.CertificateStoreLocation,
@@ -375,15 +345,8 @@ namespace NuGet.CommandLine.Test
                     testInfo.ConfigFile
                 };
 
-                // Act
-                var result = CommandRunner.Run(
-                    testInfo.NuGetExePath,
-                    testInfo.WorkingPath,
-                    string.Join(" ", args.Select(a => $"\"{a}\"")));
-
-                // Assert
-                var expectedOutput = "There are no client certificates";
-                Util.VerifyResultSuccess(result, expectedOutput);
+                // Act & Assert
+                testInfo.RunNuGetExpectSuccess(args, expectedOutput: "There are no client certificates");
             }
         }
 
@@ -401,15 +364,8 @@ namespace NuGet.CommandLine.Test
                     testInfo.ConfigFile
                 };
 
-                // Act
-                var result = CommandRunner.Run(
-                    testInfo.NuGetExePath,
-                    testInfo.WorkingPath,
-                    string.Join(" ", args.Select(a => $"\"{a}\"")));
-
-                // Assert
-                var expectedOutput = "There are no client certificates";
-                Util.VerifyResultSuccess(result, expectedOutput);
+                // Act & Assert
+                testInfo.RunNuGetExpectSuccess(args, expectedOutput: "There are no client certificates");
             }
         }
 
@@ -433,15 +389,8 @@ namespace NuGet.CommandLine.Test
                     testInfo.ConfigFile
                 };
 
-                // Act
-                var result = CommandRunner.Run(
-                    testInfo.NuGetExePath,
-                    testInfo.WorkingPath,
-                    string.Join(" ", args.Select(a => $"\"{a}\"")));
-
-                // Assert
-                var expectedOutput = $"{testInfo.PackageSourceName} [fileCert]";
-                Util.VerifyResultSuccess(result, expectedOutput);
+                // Act & Assert
+                testInfo.RunNuGetExpectSuccess(args, expectedOutput: $"{testInfo.PackageSourceName} [fileCert]");
             }
         }
 
@@ -462,15 +411,8 @@ namespace NuGet.CommandLine.Test
                 };
 
                 // Act
-                var result = CommandRunner.Run(
-                    testInfo.NuGetExePath,
-                    testInfo.WorkingPath,
-                    string.Join(" ", args.Select(a => $"\"{a}\"")));
-
+                testInfo.RunNuGetExpectSuccess(args, expectedOutput: "There are no client certificates configured for");
                 // Assert
-                var expectedOutput = "There are no client certificates configured for";
-                Util.VerifyResultSuccess(result, expectedOutput);
-
                 testInfo.ValidateSettings();
             }
         }
@@ -497,15 +439,9 @@ namespace NuGet.CommandLine.Test
                 };
 
                 // Act
-                var result = CommandRunner.Run(
-                    testInfo.NuGetExePath,
-                    testInfo.WorkingPath,
-                    string.Join(" ", args.Select(a => $"\"{a}\"")));
+                testInfo.RunNuGetExpectSuccess(args, expectedOutput: "was successfully removed");
 
                 // Assert
-                var expectedOutput = "was successfully removed";
-                Util.VerifyResultSuccess(result, expectedOutput);
-
                 testInfo.ValidateSettings();
             }
         }
@@ -632,15 +568,9 @@ namespace NuGet.CommandLine.Test
                 };
 
                 // Act
-                var result = CommandRunner.Run(
-                    testInfo.NuGetExePath,
-                    testInfo.WorkingPath,
-                    string.Join(" ", args.Select(a => $"\"{a}\"")));
+                testInfo.RunNuGetExpectSuccess(args, expectedOutput: "was successfully updated");
 
                 // Assert
-                var expectedOutput = "was successfully updated";
-                Util.VerifyResultSuccess(result, expectedOutput);
-
                 testInfo.ValidateSettings(new FileClientCertItem(testInfo.PackageSourceName,
                                                                  updatedPath,
                                                                  updatedPassword,
@@ -685,15 +615,9 @@ namespace NuGet.CommandLine.Test
                 };
 
                 // Act
-                var result = CommandRunner.Run(
-                    testInfo.NuGetExePath,
-                    testInfo.WorkingPath,
-                    string.Join(" ", args.Select(a => $"\"{a}\"")));
+                testInfo.RunNuGetExpectSuccess(args, expectedOutput: "was successfully updated");
 
                 // Assert
-                var expectedOutput = "was successfully updated";
-                Util.VerifyResultSuccess(result, expectedOutput);
-
                 testInfo.ValidateSettings(new StoreClientCertItem(testInfo.PackageSourceName,
                                                                   updatedFindValue,
                                                                   updatedStoreLocation,
@@ -865,7 +789,7 @@ namespace NuGet.CommandLine.Test
                 CertificateStoreLocation = StoreLocation.CurrentUser;
                 CertificateStoreName = StoreName.My;
                 CertificateFindBy = X509FindType.FindByIssuerName;
-                CertificateFindValue = "Contoso";
+                CertificateFindValue = $"Contoso-{Guid.NewGuid():N})";
 
                 Util.CreateFile(Path.GetDirectoryName(ConfigFile),
                                 Path.GetFileName(ConfigFile),
@@ -893,6 +817,23 @@ namespace NuGet.CommandLine.Test
 
             public string PackageSourceName { get; }
             public TestDirectory WorkingPath { get; }
+
+            public void RunNuGetExpectSuccess(string[] args, string expectedOutput = null)
+            {
+                CommandRunnerResult result = CommandRunner.Run(
+                    NuGetExePath,
+                    WorkingPath,
+                    string.Join(" ", args.Select(i => i.StartsWith("-") ? i : $"\"{i}\"")));
+
+                string extraDebugInfo = null;
+
+                if (!result.Success)
+                {
+                    extraDebugInfo = $"{Environment.NewLine}Installed certificates:{Environment.NewLine}{string.Join(Environment.NewLine, EnumerateCurrentlyInstalledCertificates().Select(i => i.ToString()))}";
+                }
+
+                Util.VerifyResultSuccess(result, expectedOutput, extraDebugInfo);
+            }
 
             public void Dispose()
             {
@@ -964,6 +905,19 @@ namespace NuGet.CommandLine.Test
                     else
                     {
                         throw new NotSupportedException();
+                    }
+                }
+            }
+
+            private IEnumerable<X509Certificate2> EnumerateCurrentlyInstalledCertificates()
+            {
+                using (var store = new X509Store(CertificateStoreName, CertificateStoreLocation))
+                {
+                    store.Open(OpenFlags.ReadOnly);
+
+                    foreach (X509Certificate2 cert in store.Certificates)
+                    {
+                        yield return cert;
                     }
                 }
             }

@@ -123,6 +123,7 @@ namespace NuGet.PackageManagement.UI.Options
             // 
             resources.ApplyResources(this.NewPackageSource, "NewPackageSource");
             this.NewPackageSource.Name = "NewPackageSource";
+            this.NewPackageSource.AccessibleName = "Source:";
             this.NewPackageSource.TextChanged += new System.EventHandler(this.NewPackageSource_TextChanged);
             // 
             // NewPackageNameLabel

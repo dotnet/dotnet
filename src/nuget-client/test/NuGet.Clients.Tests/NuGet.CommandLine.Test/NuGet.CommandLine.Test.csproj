@@ -7,28 +7,19 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Reference Include="System" />
-    <Reference Include="System.Configuration" />
-    <Reference Include="System.Core" />
     <Reference Include="System.IO.Compression" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Net.Http" />
-    <Reference Include="System.Xml" />
-    <Reference Include="System.ComponentModel.DataAnnotations" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\src\NuGet.Clients\NuGet.CommandLine\NuGet.CommandLine.csproj">
-      <Project>{957c4e99-3644-47dd-8f9a-ae36f41ebe4a}</Project>
-      <Name>NuGet.CommandLine</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\TestUtilities\Test.Utility\Test.Utility.csproj" />
+    <ProjectReference Include="..\..\..\src\NuGet.Clients\NuGet.CommandLine\NuGet.CommandLine.csproj" />
     <ProjectReference Include="..\..\NuGet.Core.Tests\NuGet.Configuration.Test\NuGet.Configuration.Test.csproj" />
-    <ProjectReference Include="..\..\TestExtensions\SampleCommandLineExtensions\SampleCommandLineExtensions.csproj" ReferenceOutputAssembly="false" />
-    <ProjectReference Include="..\..\TestExtensions\TestablePluginCredentialProvider\TestableCredentialProvider.csproj" ReferenceOutputAssembly="false" />
+    <ProjectReference Include="..\..\TestExtensions\SampleCommandLineExtensions\SampleCommandLineExtensions.csproj"
+                      ReferenceOutputAssembly="false"
+                      OutputItemType="SampleCommandLineExtensionsOutputGroup" />
+    <ProjectReference Include="..\..\TestExtensions\TestablePluginCredentialProvider\TestableCredentialProvider.csproj"
+                      ReferenceOutputAssembly="false"
+                      OutputItemType="TestableCredentialProviderOutputGroup" />
+    <ProjectReference Include="..\..\TestUtilities\Test.Utility\Test.Utility.csproj" />
   </ItemGroup>
 
   <ItemGroup>
@@ -38,24 +29,32 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Service Include="{82a7f48d-3b50-4b1e-b82e-3ada8210c358}" />
-  </ItemGroup>
-
-  <ItemGroup>
     <Compile Remove="compiler\resources\*" />
     <EmbeddedResource Include="compiler\resources\*" />
+    <Content Include="$(PkgMicrosoft_TestPlatform_Portable)\tools\net451\**"
+             TargetPath="vstest\%(RecursiveDir)%(Filename)%(Extension)"
+             DestinationSubDirectory="vstest\"
+             CopyToOutputDirectory="PreserveNewest"
+             Visible="false"
+             Condition="'$(PkgMicrosoft_TestPlatform_Portable)' != ''" />
   </ItemGroup>
 
-  <PropertyGroup>
-    <PostBuildEvent>
-      xcopy /diy $(ArtifactsDirectory)TestableCredentialProvider\bin\$(Configuration)\$(TargetFramework)\CredentialProvider.Testable.exe $(OutputPath)TestableCredentialProvider\
-      xcopy /diy $(ArtifactsDirectory)TestableCredentialProvider\bin\$(Configuration)\$(TargetFramework)\*.dll $(OutputPath)TestableCredentialProvider\
-      xcopy /diy $(ArtifactsDirectory)SampleCommandLineExtensions\bin\$(Configuration)\$(TargetFramework)\SampleCommandLineExtensions.dll $(OutputPath)NuGet\
-      if exist $(ArtifactsDirectory)$(VsixOutputDirName)\NuGet.exe xcopy /diy $(ArtifactsDirectory)$(VsixOutputDirName)\NuGet.exe $(OutputPath)NuGet\
-      xcopy /diys &quot;$(PkgMicrosoft_TestPlatform_Portable)\tools\net451&quot; $(OutputPath)vstest\
-    </PostBuildEvent>
-  </PropertyGroup>
-
+  <Target Name="AddProjectReferenceFilesToOutputDirectory" AfterTargets="ResolveProjectReferences">
+    <ItemGroup>
+      <ProjectReferenceFiles Include="@(SampleCommandLineExtensionsOutputGroup)"
+                             DestinationSubDirectory="NuGet\" />
+      <ProjectReferenceFiles Include="$(ArtifactsDirectory)$(VsixOutputDirName)\NuGet.exe"
+                             DestinationSubDirectory="NuGet\"
+                             Condition="'$(SkipILMergeOfNuGetExe)' != 'true'" />
+      <ProjectReferenceFiles Include="%(TestableCredentialProviderOutputGroup.RootDir)\%(TestableCredentialProviderOutputGroup.Directory)**"
+                             DestinationSubDirectory="TestableCredentialProvider\" />
+      
+      <Content Include="@(ProjectReferenceFiles)"
+               TargetPath="%(DestinationSubDirectory)%(RecursiveDir)%(Filename)%(Extension)"
+               CopyToOutputDirectory="PreserveNewest" />
+    </ItemGroup>
+  </Target>
+  
   <Target Name="CopyFinalNuGetExeToOutputPath">
     <Copy SourceFiles="$(ArtifactsDirectory)$(VsixOutputDirName)\NuGet.exe"
           DestinationFolder="$(OutputPath)NuGet\" />

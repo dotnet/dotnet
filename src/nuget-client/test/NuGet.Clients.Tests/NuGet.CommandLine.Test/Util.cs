@@ -10,6 +10,7 @@ using System.Net;
 using System.Reflection;
 using System.Text;
 using System.Xml.Linq;
+using FluentAssertions;
 using Moq;
 using Newtonsoft.Json.Linq;
 using NuGet.Configuration;
@@ -638,17 +639,13 @@ Project(""{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"") = ""proj1"",
 EndProject";
         }
 
-        public static void VerifyResultSuccess(CommandRunnerResult result, string expectedOutputMessage = null)
+        public static void VerifyResultSuccess(CommandRunnerResult result, string expectedOutputMessage = null, string extraDebugInfo = null)
         {
-            Assert.True(
-                result.ExitCode == 0,
-                "nuget.exe DID NOT SUCCEED: Ouput is " + result.Output + ". Error is " + result.Errors);
+            result.ExitCode.Should().Be(0, $"nuget.exe should have succeeded with exit code 0 but returned exit code {result.ExitCode}{Environment.NewLine}Output:{Environment.NewLine}{result.Output}{Environment.NewLine}Errors:{Environment.NewLine}{result.Errors}{extraDebugInfo}");
 
             if (!string.IsNullOrEmpty(expectedOutputMessage))
             {
-                Assert.Contains(
-                    expectedOutputMessage,
-                    result.Output);
+                result.Output.Should().Contain(expectedOutputMessage);
             }
         }
 
@@ -662,13 +659,9 @@ EndProject";
         public static void VerifyResultFailure(CommandRunnerResult result,
                                                string expectedErrorMessage)
         {
-            Assert.True(
-                result.ExitCode != 0,
-                "nuget.exe DID NOT FAIL: Ouput is " + result.Output + ". Error is " + result.Errors);
+            result.ExitCode.Should().NotBe(0, $"nuget.exe should have failed with a non zero exit code but returned exit code {result.ExitCode}{Environment.NewLine}Output:{Environment.NewLine}{result.Output}{Environment.NewLine}Errors:{Environment.NewLine}{result.Errors}");
 
-            Assert.True(
-                result.Errors.Contains(expectedErrorMessage),
-                "Expected error is " + expectedErrorMessage + ". Actual error is " + result.Errors);
+            result.Errors.Should().Contain(expectedErrorMessage);
         }
 
         public static void VerifyPackageExists(
