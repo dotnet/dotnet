@@ -19,22 +19,22 @@
     <formatOutputPackageVersion>8.0.433001</formatOutputPackageVersion>
     <fsharpGitCommitHash>7f2714a264b403745508385ed81326b0e2993bc7</fsharpGitCommitHash>
     <fsharpOutputPackageVersion>8.0.100-beta.23361.1</fsharpOutputPackageVersion>
-    <installerGitCommitHash>12025a3584f4f49982fe4876cad1c120cfb6f3ba</installerGitCommitHash>
+    <installerGitCommitHash>b8347801d367088ceaab970059d2c02655ba43e8</installerGitCommitHash>
     <installerOutputPackageVersion>8.0.100</installerOutputPackageVersion>
     <msbuildGitCommitHash>1b0ed759abcce1d8bf22229787cccd2ee77962e4</msbuildGitCommitHash>
     <msbuildOutputPackageVersion>17.8.0-preview-23361-05</msbuildOutputPackageVersion>
     <nugetclientGitCommitHash>4187eab2d176d6fccb6f0cfc45fc71fd2e750708</nugetclientGitCommitHash>
     <nugetclientOutputPackageVersion>6.8.0-preview.1.17</nugetclientOutputPackageVersion>
-    <razorGitCommitHash>852f223a1c5a7acc160fb85f36215cd0dfe89d55</razorGitCommitHash>
-    <razorOutputPackageVersion>7.0.0-preview.23362.1</razorOutputPackageVersion>
+    <razorGitCommitHash>82a01fa140d3f87d513ebae4d55734cd91e00372</razorGitCommitHash>
+    <razorOutputPackageVersion>7.0.0-preview.23362.2</razorOutputPackageVersion>
     <roslynanalyzersGitCommitHash>3bdcce1d8eebbb3dcdbd2d5d4ea60d470a20eb3c</roslynanalyzersGitCommitHash>
     <roslynanalyzersOutputPackageVersion>3.11.0-beta1.23360.1</roslynanalyzersOutputPackageVersion>
     <roslynGitCommitHash>9b8c6dd65dcad9bb12522ded6ae2b2c8a5f0cb9e</roslynGitCommitHash>
     <roslynOutputPackageVersion>4.8.0-1.23362.1</roslynOutputPackageVersion>
     <runtimeGitCommitHash>e70f0dfc1a4e8256f91c8dd20042a0e21a4cd8c8</runtimeGitCommitHash>
     <runtimeOutputPackageVersion>8.0.0-preview.7.23361.9</runtimeOutputPackageVersion>
-    <sdkGitCommitHash>16546adca23bbbea314c734a684ea696b866d5fd</sdkGitCommitHash>
-    <sdkOutputPackageVersion>8.0.100-preview.7.23362.25</sdkOutputPackageVersion>
+    <sdkGitCommitHash>eaa01a54358c63494031e59e7ff8a6dfe2696b71</sdkGitCommitHash>
+    <sdkOutputPackageVersion>8.0.100-preview.7.23362.27</sdkOutputPackageVersion>
     <sourcebuildexternalsGitCommitHash>eb387432f36bfa3335010eea5b7f0e7dfebfa6dd</sourcebuildexternalsGitCommitHash>
     <sourcebuildexternalsOutputPackageVersion>8.0.0-alpha.1.23360.1</sourcebuildexternalsOutputPackageVersion>
     <sourcebuildreferencepackagesGitCommitHash>2b54fbefe764f25c622a0c6b7376bcf561d156cf</sourcebuildreferencepackagesGitCommitHash>
