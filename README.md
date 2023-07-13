@@ -177,9 +177,9 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/fsharp`  
 *[dotnet/fsharp@1a0939b](https://github.com/dotnet/fsharp/commit/1a0939b58f7db965bdf88e9319b2874eeea1d6e7)*
 - `src/installer`  
-*[dotnet/installer@72d8c53](https://github.com/dotnet/installer/commit/72d8c531d0b9665b97c2d8b8b94edfead975472d)*
+*[dotnet/installer@bef7f10](https://github.com/dotnet/installer/commit/bef7f10d1d7e65eb70157d6a90e90a0d402bc599)*
 - `src/msbuild`  
-*[dotnet/msbuild@1b0ed75](https://github.com/dotnet/msbuild/commit/1b0ed759abcce1d8bf22229787cccd2ee77962e4)*
+*[dotnet/msbuild@4598629](https://github.com/dotnet/msbuild/commit/4598629a2493ed6b366ab00d595ecd53a3164b60)*
 - `src/nuget-client`  
 *[nuget/nuget.client@b3c4e80](https://github.com/nuget/nuget.client/commit/b3c4e8094bbb924408180d700ae5b3d37713587c)*
     - `src/nuget-client/submodules/NuGet.Build.Localization`  
@@ -187,13 +187,13 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/razor`  
 *[dotnet/razor@82a01fa](https://github.com/dotnet/razor/commit/82a01fa140d3f87d513ebae4d55734cd91e00372)*
 - `src/roslyn`  
-*[dotnet/roslyn@24fbb2f](https://github.com/dotnet/roslyn/commit/24fbb2ff42b045831ea4814b35ad8688ec49a52b)*
+*[dotnet/roslyn@7c6d5b9](https://github.com/dotnet/roslyn/commit/7c6d5b92a584f0c512b51a0c44a9f441a9443f6f)*
 - `src/roslyn-analyzers`  
 *[dotnet/roslyn-analyzers@3bdcce1](https://github.com/dotnet/roslyn-analyzers/commit/3bdcce1d8eebbb3dcdbd2d5d4ea60d470a20eb3c)*
 - `src/runtime`  
 *[dotnet/runtime@e4c5b3e](https://github.com/dotnet/runtime/commit/e4c5b3eda1952af05a4592fbe093a2e396d1902e)*
 - `src/sdk`  
-*[dotnet/sdk@d6baf2d](https://github.com/dotnet/sdk/commit/d6baf2d7ab297dd8cbf0383697bec404f0c33b71)*
+*[dotnet/sdk@676d079](https://github.com/dotnet/sdk/commit/676d07949d868756967172ceaa7494bb2317cd15)*
 - `src/source-build-externals`  
 *[dotnet/source-build-externals@76026f9](https://github.com/dotnet/source-build-externals/commit/76026f9224bd83ede7b2f494912694a30169c233)*
     - `src/source-build-externals/src/application-insights`  
