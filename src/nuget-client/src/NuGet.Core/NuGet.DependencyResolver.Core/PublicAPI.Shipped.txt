@@ -117,12 +117,12 @@ NuGet.DependencyResolver.RemoteWalkContext.IsMsBuildBased.set -> void
 ~NuGet.DependencyResolver.RemoteWalkContext.RemoteWalkContext(NuGet.Protocol.Core.Types.SourceCacheContext cacheContext, NuGet.Configuration.PackageSourceMapping packageSourceMapping, NuGet.Common.ILogger logger) -> void
 NuGet.DependencyResolver.ResolverUtility
 NuGet.DependencyResolver.Tracker<TItem>
-~NuGet.DependencyResolver.Tracker<TItem>.GetDisputes(NuGet.DependencyResolver.GraphItem<TItem> item) -> System.Collections.Generic.IEnumerable<NuGet.DependencyResolver.GraphItem<TItem>>
-~NuGet.DependencyResolver.Tracker<TItem>.IsAmbiguous(NuGet.DependencyResolver.GraphItem<TItem> item) -> bool
-~NuGet.DependencyResolver.Tracker<TItem>.IsBestVersion(NuGet.DependencyResolver.GraphItem<TItem> item) -> bool
-~NuGet.DependencyResolver.Tracker<TItem>.IsDisputed(NuGet.DependencyResolver.GraphItem<TItem> item) -> bool
-~NuGet.DependencyResolver.Tracker<TItem>.MarkAmbiguous(NuGet.DependencyResolver.GraphItem<TItem> item) -> void
-~NuGet.DependencyResolver.Tracker<TItem>.Track(NuGet.DependencyResolver.GraphItem<TItem> item) -> void
+NuGet.DependencyResolver.Tracker<TItem>.GetDisputes(NuGet.DependencyResolver.GraphItem<TItem>! item) -> System.Collections.Generic.IEnumerable<NuGet.DependencyResolver.GraphItem<TItem>!>!
+NuGet.DependencyResolver.Tracker<TItem>.IsAmbiguous(NuGet.DependencyResolver.GraphItem<TItem>! item) -> bool
+NuGet.DependencyResolver.Tracker<TItem>.IsBestVersion(NuGet.DependencyResolver.GraphItem<TItem>! item) -> bool
+NuGet.DependencyResolver.Tracker<TItem>.IsDisputed(NuGet.DependencyResolver.GraphItem<TItem>! item) -> bool
+NuGet.DependencyResolver.Tracker<TItem>.MarkAmbiguous(NuGet.DependencyResolver.GraphItem<TItem>! item) -> void
+NuGet.DependencyResolver.Tracker<TItem>.Track(NuGet.DependencyResolver.GraphItem<TItem>! item) -> void
 NuGet.DependencyResolver.Tracker<TItem>.Tracker() -> void
 NuGet.DependencyResolver.VersionConflictResult<TItem>
 ~NuGet.DependencyResolver.VersionConflictResult<TItem>.Conflicting.get -> NuGet.DependencyResolver.GraphNode<TItem>
