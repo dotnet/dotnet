@@ -38,6 +38,8 @@ Microsoft.AspNetCore.Razor.Language.Intermediate.IntermediateNodeCollection.Enum
 Microsoft.AspNetCore.Razor.Language.Intermediate.IntermediateNodeReference.IntermediateNodeReference() -> void
 Microsoft.AspNetCore.Razor.Language.Intermediate.TypeParameter.ConstraintsSource.get -> Microsoft.AspNetCore.Razor.Language.SourceSpan?
 Microsoft.AspNetCore.Razor.Language.Intermediate.TypeParameter.ConstraintsSource.init -> void
+Microsoft.AspNetCore.Razor.Language.Intermediate.TypeParameter.ParameterNameSource.get -> Microsoft.AspNetCore.Razor.Language.SourceSpan?
+Microsoft.AspNetCore.Razor.Language.Intermediate.TypeParameter.ParameterNameSource.init -> void
 Microsoft.AspNetCore.Razor.Language.MetadataCollection
 Microsoft.AspNetCore.Razor.Language.MetadataCollection.Enumerator
 Microsoft.AspNetCore.Razor.Language.MetadataCollection.Enumerator.Current.get -> System.Collections.Generic.KeyValuePair<string!, string?>

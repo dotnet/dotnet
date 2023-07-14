@@ -3,54 +3,54 @@
 Generated Location: (308:11,0 [38] )
 |using Microsoft.AspNetCore.Components;|
 
-Source Location: (59:1,18 [20] x:\dir\subdir\Test\TestComponent.cshtml)
-|where TItem1 : Image|
-Generated Location: (588:19,0 [20] )
-|where TItem1 : Image|
-
-Source Location: (99:2,18 [19] x:\dir\subdir\Test\TestComponent.cshtml)
-|where TItem2 : ITag|
-Generated Location: (730:26,0 [19] )
-|where TItem2 : ITag|
-
-Source Location: (138:3,18 [27] x:\dir\subdir\Test\TestComponent.cshtml)
-|where TItem3 : Image, new()|
-Generated Location: (871:33,0 [27] )
-|where TItem3 : Image, new()|
-
 Source Location: (52:1,11 [6] x:\dir\subdir\Test\TestComponent.cshtml)
 |TItem1|
-Generated Location: (1185:44,22 [6] )
+Generated Location: (509:19,0 [6] )
 |TItem1|
 
 Source Location: (92:2,11 [6] x:\dir\subdir\Test\TestComponent.cshtml)
 |TItem2|
-Generated Location: (1480:57,22 [6] )
+Generated Location: (644:27,0 [6] )
 |TItem2|
 
 Source Location: (131:3,11 [6] x:\dir\subdir\Test\TestComponent.cshtml)
 |TItem3|
-Generated Location: (1775:70,22 [6] )
+Generated Location: (779:35,0 [6] )
 |TItem3|
+
+Source Location: (59:1,18 [20] x:\dir\subdir\Test\TestComponent.cshtml)
+|where TItem1 : Image|
+Generated Location: (970:43,0 [20] )
+|where TItem1 : Image|
+
+Source Location: (99:2,18 [19] x:\dir\subdir\Test\TestComponent.cshtml)
+|where TItem2 : ITag|
+Generated Location: (1112:50,0 [19] )
+|where TItem2 : ITag|
+
+Source Location: (138:3,18 [27] x:\dir\subdir\Test\TestComponent.cshtml)
+|where TItem3 : Image, new()|
+Generated Location: (1253:57,0 [27] )
+|where TItem3 : Image, new()|
 
 Source Location: (186:6,1 [38] x:\dir\subdir\Test\TestComponent.cshtml)
 |foreach (var item2 in Items2)
 {
     |
-Generated Location: (2351:90,1 [38] )
+Generated Location: (2256:93,1 [38] )
 |foreach (var item2 in Items2)
 {
     |
 
 Source Location: (234:9,5 [19] x:\dir\subdir\Test\TestComponent.cshtml)
 |ChildContent(item2)|
-Generated Location: (2518:99,6 [19] )
+Generated Location: (2423:102,6 [19] )
 |ChildContent(item2)|
 
 Source Location: (264:10,8 [3] x:\dir\subdir\Test\TestComponent.cshtml)
 |
 }|
-Generated Location: (2669:106,8 [3] )
+Generated Location: (2574:109,8 [3] )
 |
 }|
 
@@ -61,7 +61,7 @@ Source Location: (294:15,7 [236] x:\dir\subdir\Test\TestComponent.cshtml)
     [Parameter] public TItem3 Item3 { get; set; }
     [Parameter] public RenderFragment<TItem2> ChildContent { get; set; }
 |
-Generated Location: (2851:116,7 [236] )
+Generated Location: (2756:119,7 [236] )
 |
     [Parameter] public TItem1 Item1 { get; set; }
     [Parameter] public List<TItem2> Items2 { get; set; }

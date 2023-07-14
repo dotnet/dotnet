@@ -8,7 +8,23 @@ namespace Test
     using global::System.Linq;
     using global::System.Threading.Tasks;
     using global::Microsoft.AspNetCore.Components;
-    public partial class TestComponent<TDomain, TValue> : global::Microsoft.AspNetCore.Components.ComponentBase
+    public partial class TestComponent<
+#nullable restore
+#line 1 "x:\dir\subdir\Test\TestComponent.cshtml"
+TDomain
+
+#line default
+#line hidden
+#nullable disable
+    ,
+#nullable restore
+#line 2 "x:\dir\subdir\Test\TestComponent.cshtml"
+TValue
+
+#line default
+#line hidden
+#nullable disable
+    > : global::Microsoft.AspNetCore.Components.ComponentBase
 #nullable restore
 #line 1 "x:\dir\subdir\Test\TestComponent.cshtml"
 where TDomain : struct
@@ -27,26 +43,12 @@ where TValue : struct
         #pragma warning disable 219
         private void __RazorDirectiveTokenHelpers__() {
         ((global::System.Action)(() => {
-#nullable restore
-#line 1 "x:\dir\subdir\Test\TestComponent.cshtml"
-global::System.Object TDomain = null!;
-
-#line default
-#line hidden
-#nullable disable
         }
         ))();
         ((global::System.Action)(() => {
         }
         ))();
         ((global::System.Action)(() => {
-#nullable restore
-#line 2 "x:\dir\subdir\Test\TestComponent.cshtml"
-global::System.Object TValue = null!;
-
-#line default
-#line hidden
-#nullable disable
         }
         ))();
         ((global::System.Action)(() => {
