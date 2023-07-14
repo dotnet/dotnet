@@ -430,7 +430,30 @@ internal static class CodeWriterExtensions
         if (typeParameters != null && typeParameters.Count > 0)
         {
             writer.Write("<");
-            writer.Write(string.Join(", ", typeParameters.Select(tp => tp.ParameterName)));
+
+            for (var i = 0; i < typeParameters.Count; i++)
+            {
+                var typeParameter = typeParameters[i];
+                if (typeParameter.ParameterNameSource is { } source)
+                {
+                    using (writer.BuildLinePragma(source, context))
+                    {
+                        context.AddSourceMappingFor(source);
+                        writer.Write(typeParameter.ParameterName);
+                    }
+                }
+                else
+                {
+                    writer.Write(typeParameter.ParameterName);
+                }
+
+                // Write ',' between parameters, but not after them
+                if (i < typeParameters.Count - 1)
+                {
+                    writer.Write(",");
+                }
+            }
+
             writer.Write(">");
         }
 

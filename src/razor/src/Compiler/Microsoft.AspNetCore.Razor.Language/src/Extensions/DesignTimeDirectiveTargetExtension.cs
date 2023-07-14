@@ -101,6 +101,12 @@ internal class DesignTimeDirectiveTargetExtension : IDesignTimeDirectiveTargetEx
                         break;
                     }
 
+                    // Type parameters are mapped to actual source, so no need to generate design-time code for them here
+                    if (node.DirectiveToken.Name == ComponentResources.TypeParamDirective_Token_Name)
+                    {
+                        break;
+                    }
+
                     // global::System.Object {node.content} = null;
                     using (context.CodeWriter.BuildLinePragma(node.Source, context))
                     {

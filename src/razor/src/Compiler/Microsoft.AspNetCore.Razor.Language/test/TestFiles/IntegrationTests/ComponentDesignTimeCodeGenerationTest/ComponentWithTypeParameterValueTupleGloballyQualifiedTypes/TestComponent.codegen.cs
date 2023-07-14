@@ -15,18 +15,19 @@ using N;
 #line default
 #line hidden
 #nullable disable
-    public partial class TestComponent<TParam> : global::Microsoft.AspNetCore.Components.ComponentBase
-    {
-        #pragma warning disable 219
-        private void __RazorDirectiveTokenHelpers__() {
-        ((global::System.Action)(() => {
+    public partial class TestComponent<
 #nullable restore
 #line 2 "x:\dir\subdir\Test\TestComponent.cshtml"
-global::System.Object TParam = null!;
+TParam
 
 #line default
 #line hidden
 #nullable disable
+    > : global::Microsoft.AspNetCore.Components.ComponentBase
+    {
+        #pragma warning disable 219
+        private void __RazorDirectiveTokenHelpers__() {
+        ((global::System.Action)(() => {
         }
         ))();
         }

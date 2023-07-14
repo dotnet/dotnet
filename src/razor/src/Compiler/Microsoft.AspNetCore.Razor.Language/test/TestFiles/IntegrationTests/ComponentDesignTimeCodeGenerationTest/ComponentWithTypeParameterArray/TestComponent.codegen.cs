@@ -14,18 +14,19 @@ using Microsoft.AspNetCore.Components;
 #line default
 #line hidden
 #nullable disable
-    public partial class TestComponent<TItem> : global::Microsoft.AspNetCore.Components.ComponentBase
-    {
-        #pragma warning disable 219
-        private void __RazorDirectiveTokenHelpers__() {
-        ((global::System.Action)(() => {
+    public partial class TestComponent<
 #nullable restore
 #line 2 "x:\dir\subdir\Test\TestComponent.cshtml"
-global::System.Object TItem = null!;
+TItem
 
 #line default
 #line hidden
 #nullable disable
+    > : global::Microsoft.AspNetCore.Components.ComponentBase
+    {
+        #pragma warning disable 219
+        private void __RazorDirectiveTokenHelpers__() {
+        ((global::System.Action)(() => {
         }
         ))();
         }

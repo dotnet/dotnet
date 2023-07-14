@@ -8,7 +8,23 @@ namespace Test
     using global::System.Linq;
     using global::System.Threading.Tasks;
     using global::Microsoft.AspNetCore.Components;
-    public partial class TestComponent<T1, T2> : global::Microsoft.AspNetCore.Components.ComponentBase
+    public partial class TestComponent<
+#nullable restore
+#line 1 "x:\dir\subdir\Test\TestComponent.cshtml"
+T1
+
+#line default
+#line hidden
+#nullable disable
+    ,
+#nullable restore
+#line 2 "x:\dir\subdir\Test\TestComponent.cshtml"
+T2
+
+#line default
+#line hidden
+#nullable disable
+    > : global::Microsoft.AspNetCore.Components.ComponentBase
 #nullable restore
 #line 1 "x:\dir\subdir\Test\TestComponent.cshtml"
 where T1 : C<T2>
