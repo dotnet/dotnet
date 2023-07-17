@@ -211,32 +211,8 @@ internal class FormattingContext : IDisposable
     public string GetIndentationLevelString(int indentationLevel)
     {
         var indentation = GetIndentationOffsetForLevel(indentationLevel);
-        var indentationString = GetIndentationString(indentation);
+        var indentationString = FormattingUtilities.GetIndentationString(indentation, Options.InsertSpaces, Options.TabSize);
         return indentationString;
-    }
-
-    /// <summary>
-    /// Given a <paramref name="indentation"/> amount of characters, generate a string representing the configured indentation.
-    /// </summary>
-    /// <param name="indentation">An amount of characters to represent the indentation</param>
-    /// <returns>A whitespace string representation indentation.</returns>
-    public string GetIndentationString(int indentation)
-    {
-        if (Options.InsertSpaces)
-        {
-            return new string(' ', indentation);
-        }
-        else
-        {
-            var tabs = indentation / Options.TabSize;
-            var tabPrefix = new string('\t', tabs);
-
-            var spaces = indentation % Options.TabSize;
-            var spaceSuffix = new string(' ', spaces);
-
-            var combined = string.Concat(tabPrefix, spaceSuffix);
-            return combined;
-        }
     }
 
     /// <summary>

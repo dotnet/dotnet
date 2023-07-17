@@ -104,7 +104,7 @@ public class DefaultRazorSyntaxFactsServiceTest : RazorProjectEngineTestBase
         var sourceDocument = TestRazorSourceDocument.Create(source, normalizeNewLines: true);
         var importDocument = TestRazorSourceDocument.Create("@addTagHelper *, TestAssembly", filePath: "import.cshtml", relativePath: "import.cshtml");
 
-        var codeDocument = engine.ProcessDesignTime(sourceDocument, FileKinds.Legacy, importSources: new []{ importDocument }, new []{ taghelper });
+        var codeDocument = engine.ProcessDesignTime(sourceDocument, FileKinds.Legacy, importSources: new[] { importDocument }, new[] { taghelper });
 
         return codeDocument;
     }

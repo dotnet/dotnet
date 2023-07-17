@@ -14,8 +14,6 @@
     <EnableNETAnalyzers>true</EnableNETAnalyzers>
     <AnalysisLevel>Latest</AnalysisLevel>
     <AnalysisMode>Default</AnalysisMode>
-    <LangVersion>Latest</LangVersion>
-    <Nullable>enable</Nullable>
     <EnforceCodeStyleInBuild>false</EnforceCodeStyleInBuild>
     <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
     <GenerateDocumentationFile>false</GenerateDocumentationFile>

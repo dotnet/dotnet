@@ -14,6 +14,7 @@ internal static class RazorCodeActionFactory
     private readonly static Guid s_fullyQualifyComponentTelemetryId = new("3d9abe36-7d10-4e08-8c18-ad88baa9a923");
     private readonly static Guid s_createComponentFromTagTelemetryId = new("a28e0baa-a4d5-4953-a817-1db586035841");
     private readonly static Guid s_createExtractToCodeBehindTelemetryId = new("f63167f7-fdc6-450f-8b7b-b240892f4a27");
+    private readonly static Guid s_generateMethodTelemetryId = new("c14fa003-c752-45fc-bb29-3a123ae5ecef");
 
     public static RazorVSInternalCodeAction CreateAddComponentUsing(string @namespace, RazorCodeActionResolutionParams resolutionParams)
     {
@@ -61,6 +62,19 @@ internal static class RazorCodeActionFactory
             Title = title,
             Data = data,
             TelemetryId = s_createExtractToCodeBehindTelemetryId,
+        };
+        return codeAction;
+    }
+
+    public static RazorVSInternalCodeAction CreateGenerateMethod(RazorCodeActionResolutionParams resolutionParams)
+    {
+        var title = SR.FormatGenerate_Event_Handler_Title(((GenerateMethodCodeActionParams)resolutionParams.Data).MethodName);
+        var data = JToken.FromObject(resolutionParams);
+        var codeAction = new RazorVSInternalCodeAction()
+        {
+            Title = title,
+            Data = data,
+            TelemetryId = s_generateMethodTelemetryId
         };
         return codeAction;
     }

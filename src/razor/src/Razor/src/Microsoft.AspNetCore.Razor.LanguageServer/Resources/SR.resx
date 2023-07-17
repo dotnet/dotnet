@@ -129,6 +129,9 @@
   <data name="ExtractTo_CodeBehind_Title" xml:space="preserve">
     <value>Extract block to code behind</value>
   </data>
+  <data name="Generate_Event_Handler_Title" xml:space="preserve">
+    <value>Generate Event Handler '{0}'</value>
+  </data>
   <data name="Invalid_Offset" xml:space="preserve">
     <value>Invalid offset.</value>
   </data>
