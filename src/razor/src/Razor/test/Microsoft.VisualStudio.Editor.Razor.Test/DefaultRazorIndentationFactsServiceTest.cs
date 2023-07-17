@@ -1,11 +1,8 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Language.Syntax;
 using Microsoft.AspNetCore.Razor.Test.Common;
@@ -15,13 +12,8 @@ using Xunit.Abstractions;
 
 namespace Microsoft.VisualStudio.Editor.Razor;
 
-public class DefaultRazorIndentationFactsServiceTest : TestBase
+public class DefaultRazorIndentationFactsServiceTest(ITestOutputHelper testOutput) : TestBase(testOutput)
 {
-    public DefaultRazorIndentationFactsServiceTest(ITestOutputHelper testOutput)
-        : base(testOutput)
-    {
-    }
-
     [Fact]
     public void GetPreviousLineEndIndex_ReturnsPreviousLine()
     {
@@ -33,7 +25,7 @@ public class DefaultRazorIndentationFactsServiceTest : TestBase
         var line = textSnapshot.GetLineFromLineNumber(2);
 
         // Act
-        var previousLineEndIndex = DefaultRazorIndentationFactsService.GetPreviousLineEndIndex(textSnapshot, line);
+        var previousLineEndIndex = RazorIndentationFacts.GetPreviousLineEndIndex(textSnapshot, line);
 
         // Assert
         Assert.Equal(txt.IndexOf("</p>", StringComparison.Ordinal) + 2 + Environment.NewLine.Length, previousLineEndIndex);
@@ -48,7 +40,7 @@ public class DefaultRazorIndentationFactsServiceTest : TestBase
         var child = SyntaxFactory.RazorMetaCode(builder.ToList(), chunkGenerator: null);
 
         // Act
-        var result = DefaultRazorIndentationFactsService.IsCSharpOpenCurlyBrace(child);
+        var result = RazorIndentationFacts.IsCSharpOpenCurlyBrace(child);
 
         // Assert
         Assert.True(result);
@@ -68,7 +60,7 @@ public class DefaultRazorIndentationFactsServiceTest : TestBase
         var child = SyntaxFactory.MarkupTextLiteral(builder.ToList(), chunkGenerator: null);
 
         // Act
-        var result = DefaultRazorIndentationFactsService.IsCSharpOpenCurlyBrace(child);
+        var result = RazorIndentationFacts.IsCSharpOpenCurlyBrace(child);
 
         // Assert
         Assert.False(result);
@@ -84,7 +76,7 @@ public class DefaultRazorIndentationFactsServiceTest : TestBase
         var child = SyntaxFactory.MarkupTextLiteral(builder.ToList(), chunkGenerator: null);
 
         // Act
-        var result = DefaultRazorIndentationFactsService.IsCSharpOpenCurlyBrace(child);
+        var result = RazorIndentationFacts.IsCSharpOpenCurlyBrace(child);
 
         // Assert
         Assert.False(result);
@@ -99,7 +91,7 @@ public class DefaultRazorIndentationFactsServiceTest : TestBase
         var child = SyntaxFactory.MarkupTextLiteral(builder.ToList(), chunkGenerator: null);
 
         // Act
-        var result = DefaultRazorIndentationFactsService.IsCSharpOpenCurlyBrace(child);
+        var result = RazorIndentationFacts.IsCSharpOpenCurlyBrace(child);
 
         // Assert
         Assert.False(result);
@@ -112,7 +104,7 @@ public class DefaultRazorIndentationFactsServiceTest : TestBase
         var child = SyntaxFactory.MarkupBlock();
 
         // Act
-        var result = DefaultRazorIndentationFactsService.IsCSharpOpenCurlyBrace(child);
+        var result = RazorIndentationFacts.IsCSharpOpenCurlyBrace(child);
 
         // Assert
         Assert.False(result);
@@ -125,7 +117,7 @@ public class DefaultRazorIndentationFactsServiceTest : TestBase
         var text = "\t\tHello\tWorld.\t";
 
         // Act
-        var indentLevel = DefaultRazorIndentationFactsService.GetIndentLevelOfLine(text, 4);
+        var indentLevel = RazorIndentationFacts.GetIndentLevelOfLine(text, 4);
 
         // Assert
         Assert.Equal(8, indentLevel);
@@ -138,7 +130,7 @@ public class DefaultRazorIndentationFactsServiceTest : TestBase
         var text = "   Hello World. ";
 
         // Act
-        var indentLevel = DefaultRazorIndentationFactsService.GetIndentLevelOfLine(text, 4);
+        var indentLevel = RazorIndentationFacts.GetIndentLevelOfLine(text, 4);
 
         // Assert
         Assert.Equal(3, indentLevel);
@@ -151,7 +143,7 @@ public class DefaultRazorIndentationFactsServiceTest : TestBase
         var text = "  \t \tHello\t World.\t ";
 
         // Act
-        var indentLevel = DefaultRazorIndentationFactsService.GetIndentLevelOfLine(text, 4);
+        var indentLevel = RazorIndentationFacts.GetIndentLevelOfLine(text, 4);
 
         // Assert
         Assert.Equal(11, indentLevel);
@@ -164,7 +156,7 @@ public class DefaultRazorIndentationFactsServiceTest : TestBase
         var text = "Hello World.";
 
         // Act
-        var indentLevel = DefaultRazorIndentationFactsService.GetIndentLevelOfLine(text, 4);
+        var indentLevel = RazorIndentationFacts.GetIndentLevelOfLine(text, 4);
 
         // Assert
         Assert.Equal(0, indentLevel);
@@ -183,10 +175,9 @@ public class DefaultRazorIndentationFactsServiceTest : TestBase
 </div>
 ");
         var syntaxTree = GetSyntaxTree(new StringTextSnapshot("something else"));
-        var service = new DefaultRazorIndentationFactsService();
 
         // Act
-        var indentation = service.GetDesiredIndentation(
+        var indentation = RazorIndentationFacts.GetDesiredIndentation(
             syntaxTree,
             source,
             source.GetLineFromLineNumber(3),
@@ -205,10 +196,9 @@ public class DefaultRazorIndentationFactsServiceTest : TestBase
 @{{
 ");
         var syntaxTree = GetSyntaxTree(source);
-        var service = new DefaultRazorIndentationFactsService();
 
         // Act
-        var indentation = service.GetDesiredIndentation(
+        var indentation = RazorIndentationFacts.GetDesiredIndentation(
             syntaxTree,
             source,
             source.GetLineFromLineNumber(2),
@@ -228,10 +218,9 @@ public class DefaultRazorIndentationFactsServiceTest : TestBase
 @custom
 ");
         var syntaxTree = GetSyntaxTree(source, new[] { customDirective });
-        var service = new DefaultRazorIndentationFactsService();
 
         // Act
-        var indentation = service.GetDesiredIndentation(
+        var indentation = RazorIndentationFacts.GetDesiredIndentation(
             syntaxTree,
             source,
             source.GetLineFromLineNumber(2),
@@ -250,10 +239,9 @@ public class DefaultRazorIndentationFactsServiceTest : TestBase
     <div>
 ");
         var syntaxTree = GetSyntaxTree(source);
-        var service = new DefaultRazorIndentationFactsService();
 
         // Act
-        var indentation = service.GetDesiredIndentation(
+        var indentation = RazorIndentationFacts.GetDesiredIndentation(
             syntaxTree,
             source,
             source.GetLineFromLineNumber(2),
@@ -274,10 +262,9 @@ public class DefaultRazorIndentationFactsServiceTest : TestBase
     <div>
 }}");
         var syntaxTree = GetSyntaxTree(source, new[] { customDirective });
-        var service = new DefaultRazorIndentationFactsService();
 
         // Act
-        var indentation = service.GetDesiredIndentation(
+        var indentation = RazorIndentationFacts.GetDesiredIndentation(
             syntaxTree,
             source,
             source.GetLineFromLineNumber(3),
@@ -300,10 +287,9 @@ public class DefaultRazorIndentationFactsServiceTest : TestBase
 </div>
 ");
         var syntaxTree = GetSyntaxTree(source);
-        var service = new DefaultRazorIndentationFactsService();
 
         // Act
-        var indentation = service.GetDesiredIndentation(
+        var indentation = RazorIndentationFacts.GetDesiredIndentation(
             syntaxTree,
             source,
             source.GetLineFromLineNumber(4),
@@ -326,10 +312,9 @@ public class DefaultRazorIndentationFactsServiceTest : TestBase
     }}
 }}");
         var syntaxTree = GetSyntaxTree(source, new[] { customDirective });
-        var service = new DefaultRazorIndentationFactsService();
 
         // Act
-        var indentation = service.GetDesiredIndentation(
+        var indentation = RazorIndentationFacts.GetDesiredIndentation(
             syntaxTree,
             source,
             source.GetLineFromLineNumber(4),
@@ -340,9 +325,9 @@ public class DefaultRazorIndentationFactsServiceTest : TestBase
         Assert.Equal(8, indentation);
     }
 
-    private static RazorSyntaxTree GetSyntaxTree(StringTextSnapshot source, IEnumerable<DirectiveDescriptor> directives = null)
+    private static RazorSyntaxTree GetSyntaxTree(StringTextSnapshot source, IEnumerable<DirectiveDescriptor>? directives = null)
     {
-        directives ??= Enumerable.Empty<DirectiveDescriptor>();
+        directives ??= Array.Empty<DirectiveDescriptor>();
         var engine = RazorProjectEngine.Create(builder =>
         {
             foreach (var directive in directives)

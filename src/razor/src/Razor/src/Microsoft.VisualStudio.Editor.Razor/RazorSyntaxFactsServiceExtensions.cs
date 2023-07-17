@@ -25,7 +25,7 @@ public static class RazorSyntaxFactsServiceExtensions
         for (var i = 0; i < tagHelperSpans.Count; i++)
         {
             var tagHelperSpan = tagHelperSpans[i].Span;
-            if (tagHelperSpan.AbsoluteIndex == span.AbsoluteIndex &&  tagHelperSpan.Length == span.Length)
+            if (tagHelperSpan.AbsoluteIndex == span.AbsoluteIndex && tagHelperSpan.Length == span.Length)
             {
                 return true;
             }

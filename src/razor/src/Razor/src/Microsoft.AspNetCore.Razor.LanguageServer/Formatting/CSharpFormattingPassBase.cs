@@ -58,9 +58,20 @@ internal abstract class CSharpFormattingPassBase : FormattingPassBase
 #if DEBUG
             var spanText = context.SourceText.GetSubText(mappingSpan).ToString();
 #endif
-            if (!ShouldFormat(context, mappingSpan, allowImplicitStatements: true))
+            if (!ShouldFormat(context, mappingSpan, allowImplicitStatements: true, out var owner))
             {
                 // We don't care about this range as this can potentially lead to incorrect scopes.
+                continue;
+            }
+
+            // Special case: We are looking for "significant locations" that should affect indentation, but
+            // single line explicit expressions shouldn't. If there are any at the start of a line, the next
+            // loop will find them. Sadly the ShouldFormat method is used in too many places, for too many
+            // different purposes, to put this check there.
+            if (owner is { Parent.Parent.Parent: CSharpExplicitExpressionSyntax explicitExpression } &&
+                explicitExpression.Span.AsRange(text) is { } exprRange &&
+                exprRange.Start.Line == exprRange.End.Line)
+            {
                 continue;
             }
 
@@ -267,7 +278,7 @@ internal abstract class CSharpFormattingPassBase : FormattingPassBase
 
             var existingIndentationLength = indentations[line].ExistingIndentation;
             var spanToReplace = new TextSpan(context.SourceText.Lines[line].Start, existingIndentationLength);
-            var effectiveDesiredIndentation = context.GetIndentationString(indentation);
+            var effectiveDesiredIndentation = FormattingUtilities.GetIndentationString(indentation, context.Options.InsertSpaces, context.Options.TabSize);
             changes.Add(new TextChange(spanToReplace, effectiveDesiredIndentation));
         }
 

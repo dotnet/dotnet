@@ -22,6 +22,11 @@
         <target state="translated">将块提取到代码隐藏中</target>
         <note />
       </trans-unit>
+      <trans-unit id="Generate_Event_Handler_Title">
+        <source>Generate Event Handler '{0}'</source>
+        <target state="new">Generate Event Handler '{0}'</target>
+        <note />
+      </trans-unit>
       <trans-unit id="Invalid_Offset">
         <source>Invalid offset.</source>
         <target state="translated">偏移无效。</target>

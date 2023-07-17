@@ -45,6 +45,8 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer.Common;
 
         public static class CodeActions
         {
+            public const string GenerateEventHandler = "GenerateEventHandler";
+
             public const string EditBasedCodeActionCommand = "EditBasedCodeActionCommand";
 
             public const string ExtractToCodeBehindAction = "ExtractToCodeBehind";

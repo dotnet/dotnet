@@ -5,12 +5,12 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <NonShipping>true</NonShipping>
-
-    <!-- Ensure we run our custom target, below, to copy project references into the NuGet package.
-         Note: This is a temporary measure to aid in development. Once the Web Tools is no longer
-         using types from any of the references of this ExternalAccess package, this will be removed. -->
-    <TargetsForTfmSpecificBuildOutput>$(TargetsForTfmSpecificBuildOutput);CopyProjectReferencesToPackage</TargetsForTfmSpecificBuildOutput>
   </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.VisualStudio.ComponentModelHost" Version="$(MicrosoftVisualStudioComponentModelHostPackageVersion)" PrivateAssets="All" />
+    <PackageReference Include="Microsoft.VisualStudio.Shell.Framework" Version="$(MicrosoftVisualStudioShellFrameworkPackageVersion)" PrivateAssets="All" />
+  </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Microsoft.VisualStudio.Editor.Razor\Microsoft.VisualStudio.Editor.Razor.csproj" PrivateAssets="All" />
@@ -19,12 +19,7 @@
   <ItemGroup>
     <InternalsVisibleTo Include="Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.Test" Key="$(RazorKey)" />
     <InternalsVisibleTo Include="Microsoft.WebTools.Languages.Razor.Core" Key="$(VisualStudioKey)" />
+    <InternalsVisibleTo Include="Microsoft.WebTools.Languages.TestServices" Key="$(VisualStudioKey)" />
   </ItemGroup>
-
-  <Target DependsOnTargets="ResolveReferences" Name="CopyProjectReferencesToPackage">
-    <ItemGroup>
-      <BuildOutputInPackage Include="@(ReferenceCopyLocalPaths-&gt;WithMetadataValue('ReferenceSourceTarget', 'ProjectReference'))" />
-    </ItemGroup>
-  </Target>
 
 </Project>

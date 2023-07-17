@@ -155,7 +155,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/arcade`  
 *[dotnet/arcade@2d2482f](https://github.com/dotnet/arcade/commit/2d2482f9b6ccaaac02ef39adc06b3e30b29a5c13)*
 - `src/aspnetcore`  
-*[dotnet/aspnetcore@579d547](https://github.com/dotnet/aspnetcore/commit/579d547d708eb19f8b05b00f5386649d6dac7b6a)*
+*[dotnet/aspnetcore@c1e82b8](https://github.com/dotnet/aspnetcore/commit/c1e82b87adfc3d7dd75582eb8f437885e9e43be4)*
     - `src/aspnetcore/src/submodules/googletest`  
     *[google/googletest@be03d00](https://github.com/google/googletest/commit/be03d00f5f0cc3a997d1a368bee8a1fe93651f48)*
     - `src/aspnetcore/src/submodules/MessagePack-CSharp`  
@@ -177,23 +177,23 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/fsharp`  
 *[dotnet/fsharp@0b3c293](https://github.com/dotnet/fsharp/commit/0b3c293d1e721ae5fbfb10a4e9f191cbb64650ca)*
 - `src/installer`  
-*[dotnet/installer@ca467d6](https://github.com/dotnet/installer/commit/ca467d68c8f678a671984a46996d3fc37fe7f3de)*
+*[dotnet/installer@9bceac4](https://github.com/dotnet/installer/commit/9bceac44030ebe5054a8662a2a2437d79008130f)*
 - `src/msbuild`  
-*[dotnet/msbuild@4598629](https://github.com/dotnet/msbuild/commit/4598629a2493ed6b366ab00d595ecd53a3164b60)*
+*[dotnet/msbuild@4989625](https://github.com/dotnet/msbuild/commit/4989625ae896cf35e87c15fd756c3bec341734b3)*
 - `src/nuget-client`  
 *[nuget/nuget.client@b3c4e80](https://github.com/nuget/nuget.client/commit/b3c4e8094bbb924408180d700ae5b3d37713587c)*
     - `src/nuget-client/submodules/NuGet.Build.Localization`  
     *[NuGet/NuGet.Build.Localization@f15db7b](https://github.com/NuGet/NuGet.Build.Localization/commit/f15db7b7c6f5affbea268632ef8333d2687c8031)*
 - `src/razor`  
-*[dotnet/razor@675091f](https://github.com/dotnet/razor/commit/675091f4f7403dd3f428cd497476bc9e0fc58a9b)*
+*[dotnet/razor@619c1aa](https://github.com/dotnet/razor/commit/619c1aa061ca20fb696ec482a72fcacc22da52fb)*
 - `src/roslyn`  
-*[dotnet/roslyn@2d0b05d](https://github.com/dotnet/roslyn/commit/2d0b05d1158a58fffd34bba1a33d3ba8b62f3975)*
+*[dotnet/roslyn@006a3d3](https://github.com/dotnet/roslyn/commit/006a3d367a06a806454c63841c7df29e43a08b47)*
 - `src/roslyn-analyzers`  
 *[dotnet/roslyn-analyzers@3bdcce1](https://github.com/dotnet/roslyn-analyzers/commit/3bdcce1d8eebbb3dcdbd2d5d4ea60d470a20eb3c)*
 - `src/runtime`  
 *[dotnet/runtime@ae99bb2](https://github.com/dotnet/runtime/commit/ae99bb2e7a0a5db7c2bff129322965fd3c6e820d)*
 - `src/sdk`  
-*[dotnet/sdk@494a4d1](https://github.com/dotnet/sdk/commit/494a4d156e809019d17d667931c045f68827a895)*
+*[dotnet/sdk@90b64dd](https://github.com/dotnet/sdk/commit/90b64dd1baae3744708b97729f22199d6a8ebf71)*
 - `src/source-build-externals`  
 *[dotnet/source-build-externals@76026f9](https://github.com/dotnet/source-build-externals/commit/76026f9224bd83ede7b2f494912694a30169c233)*
     - `src/source-build-externals/src/application-insights`  

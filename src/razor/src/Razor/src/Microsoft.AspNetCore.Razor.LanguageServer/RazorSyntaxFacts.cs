@@ -112,4 +112,17 @@ internal static class RazorSyntaxFacts
             return new TextSpan(start, length);
         }
     }
+
+    public static CSharpCodeBlockSyntax? TryGetCSharpCodeFromCodeBlock(SyntaxNode node)
+    {
+        if (node is CSharpCodeBlockSyntax block &&
+            block.Children.FirstOrDefault() is RazorDirectiveSyntax directive &&
+            directive.Body is RazorDirectiveBodySyntax directiveBody &&
+            directiveBody.Keyword.GetContent().Equals("code"))
+        {
+            return directiveBody.CSharpCode;
+        }
+
+        return null;
+    }
 }
