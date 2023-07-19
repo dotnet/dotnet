@@ -42,18 +42,18 @@ namespace Microsoft.SourceLink.Tools
             ImmutableArray<byte> Hash,
             Guid HashAlgorithm);
 
-        private readonly ParseResult _parseResult;
+        private readonly IConsole _console;
         private bool _errorReported;
 
-        public Program(ParseResult parseResult)
+        public Program(IConsole console)
         {
-            _parseResult = parseResult;
+            _console = console;
         }
 
         public static async Task<int> Main(string[] args)
         {
             var rootCommand = GetRootCommand();
-            return await rootCommand.Parse(args).InvokeAsync();
+            return await rootCommand.InvokeAsync(args);
         }
 
         private static string GetSourceLinkVersion()
@@ -62,77 +62,41 @@ namespace Microsoft.SourceLink.Tools
             return attribute.InformationalVersion.Split('+').First();
         }
 
-        private static CliRootCommand GetRootCommand()
+        private static RootCommand GetRootCommand()
         {
-            var authArg = new CliOption<string>("--auth", "-a")
-            {
-                Description = "Authentication method"
-            };
-            authArg.AcceptOnlyFromAmong(AuthenticationMethod.Basic);
+            var authArg = new Option<string>(new[] { "--auth", "-a" }, "Authentication method").FromAmong(AuthenticationMethod.Basic);
+            var userArg = new Option<string>(new[] { "--user", "-u" }, "Username to use to authenticate") { Arity = ArgumentArity.ExactlyOne };
+            var passwordArg = new Option<string>(new[] { "--password", "-p" }, "Password to use to authenticate") { Arity = ArgumentArity.ExactlyOne };
 
-            var userArg = new CliOption<string>("--user", "-u")
+            var test = new Command("test", "TODO")
             {
-                Description = "Username to use to authenticate",
-                Arity = ArgumentArity.ExactlyOne
-            };
-
-            var passwordArg = new CliOption<string>("--password", "-p")
-            {
-                Description = "Password to use to authenticate",
-                Arity = ArgumentArity.ExactlyOne
-            };
-
-            var offlineArg = new CliOption<bool>("--offline")
-            {
-                Description = "Offline mode - skip validation of sourcelink URL targets"
-            };
-
-            var test = new CliCommand("test", "TODO")
-            {
-                new CliArgument<string>("path")
-                {
-                    Description = "Path to an assembly or .pdb"
-                },
+                new Argument<string>("path", "Path to an assembly or .pdb"),
                 authArg,
-                new CliOption<Encoding>("--auth-encoding", "-e")
-                {
-                    CustomParser = arg => Encoding.GetEncoding(arg.Tokens.Single().Value),
-                    Description = "Encoding to use for authentication value"
-                },
+                new Option<Encoding>(new[] { "--auth-encoding", "-e" }, (arg) => Encoding.GetEncoding(arg.Tokens.Single().Value), false, "Encoding to use for authentication value"),
                 userArg,
                 passwordArg,
-                offlineArg,
             };
-            test.Action = CommandHandler.Create<string, string?, Encoding?, string?, string?, bool, ParseResult>(TestAsync);
+            test.Handler = CommandHandler.Create<string, string?, Encoding?, string?, string?, IConsole>(TestAsync);
             
-            var printJson = new CliCommand("print-json", "Print Source Link JSON stored in the PDB")
+            var printJson = new Command("print-json", "Print Source Link JSON stored in the PDB")
             {
-                new CliArgument<string>("path")
-                {
-                    Description = "Path to an assembly or .pdb"
-                }
+                new Argument<string>("path", "Path to an assembly or .pdb"),
             };
-            printJson.Action = CommandHandler.Create<string, ParseResult>(PrintJsonAsync);
+            printJson.Handler = CommandHandler.Create<string, IConsole>(PrintJsonAsync);
 
-            var printDocuments = new CliCommand("print-documents", "TODO")
+            var printDocuments = new Command("print-documents", "TODO")
             {
-                new CliArgument<string>("path")
-                {
-                    Description = "Path to an assembly or .pdb"
-                }
+                new Argument<string>("path", "Path to an assembly or .pdb"),
             };
-            printDocuments.Action = CommandHandler.Create<string, ParseResult>(PrintDocumentsAsync);
+            printDocuments.Handler = CommandHandler.Create<string, IConsole>(PrintDocumentsAsync);
 
-            var printUrls = new CliCommand("print-urls", "TODO")
+            var printUrls = new Command("print-urls", "TODO")
             {
-                new CliArgument<string>("path")
-                {
-                    Description = "Path to an assembly or .pdb"
-                }
+                new Argument<string>("path", "Path to an assembly or .pdb"),
             };
-            printUrls.Action = CommandHandler.Create<string, ParseResult>(PrintUrlsAsync);
+            printUrls.Handler = CommandHandler.Create<string, IConsole>(PrintUrlsAsync);
 
-            var root = new CliRootCommand()
+            var root = new RootCommand()
             {
                 test,
                 printJson,
@@ -142,13 +106,13 @@ namespace Microsoft.SourceLink.Tools
 
             root.Description = "dotnet-sourcelink";
 
-            root.Validators.Add(commandResult =>
+            root.AddValidator(commandResult =>
             {
-                if (commandResult.GetResult(authArg) != null)
+                if (commandResult.FindResultFor(authArg) != null)
                 {
-                    if (commandResult.GetResult(userArg) == null || commandResult.GetResult(passwordArg) == null)
+                    if (commandResult.FindResultFor(userArg) == null || commandResult.FindResultFor(passwordArg) == null)
                     {
-                        commandResult.AddError("Specify --user and --password options");
+                        commandResult.ErrorMessage = "Specify --user and --password options";
                     }
                 }
             });
@@ -158,15 +122,15 @@ namespace Microsoft.SourceLink.Tools
 
         private void ReportError(string message)
         {
-            _parseResult.Configuration.Error.Write(message);
-            _parseResult.Configuration.Error.Write(Environment.NewLine);
+            _console.Error.Write(message);
+            _console.Error.Write(Environment.NewLine);
             _errorReported = true;
         }
 
         private void WriteOutputLine(string message)
         {
-            _parseResult.Configuration.Output.Write(message);
-            _parseResult.Configuration.Output.Write(Environment.NewLine);
+            _console.Out.Write(message);
+            _console.Out.Write(Environment.NewLine);
         }
 
         private static async Task<int> TestAsync(
@@ -175,8 +139,7 @@ namespace Microsoft.SourceLink.Tools
             Encoding? authEncoding,
             string? user,
             string? password,
-            bool offline,
-            ParseResult parseResult)
+            IConsole console)
         {
             var authenticationHeader = (authMethod != null) ? GetAuthenticationHeader(authMethod, authEncoding ?? Encoding.ASCII, user!, password!) : null;
 
@@ -189,17 +152,17 @@ namespace Microsoft.SourceLink.Tools
 
             try
             {
-                return await new Program(parseResult).TestAsync(path, authenticationHeader, offline, cancellationSource.Token).ConfigureAwait(false);
+                return await new Program(console).TestAsync(path, authenticationHeader, cancellationSource.Token).ConfigureAwait(false);
             }
             catch (OperationCanceledException)
             {
-                parseResult.Configuration.Error.Write("Operation canceled.");
-                parseResult.Configuration.Error.Write(Environment.NewLine);
+                console.Error.Write("Operation canceled.");
+                console.Error.Write(Environment.NewLine);
                 return -1;
             }
         }
 
-        private async Task<int> TestAsync(string path, AuthenticationHeaderValue? authenticationHeader, bool offline, CancellationToken cancellationToken)
+        private async Task<int> TestAsync(string path, AuthenticationHeaderValue? authenticationHeader, CancellationToken cancellationToken)
         {
             var documents = new List<DocumentInfo>();
             ReadAndResolveDocuments(path, documents);
@@ -209,34 +172,31 @@ namespace Microsoft.SourceLink.Tools
                 return _errorReported ? 1 : 0;
             }
 
-            if (!offline)
+            var handler = new HttpClientHandler();
+            if (handler.SupportsAutomaticDecompression)
+                handler.AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate;
+
+            using var client = new HttpClient(handler);
+            client.DefaultRequestHeaders.UserAgent.Add(s_sourceLinkProductHeaderValue);
+            client.DefaultRequestHeaders.Authorization = authenticationHeader;
+
+            var outputLock = new object();
+
+            var errorReporter = new Action<string>(message =>
             {
-                var handler = new HttpClientHandler();
-                if (handler.SupportsAutomaticDecompression)
-                    handler.AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate;
-
-                using var client = new HttpClient(handler);
-                client.DefaultRequestHeaders.UserAgent.Add(s_sourceLinkProductHeaderValue);
-                client.DefaultRequestHeaders.Authorization = authenticationHeader;
-
-                var outputLock = new object();
-
-                var errorReporter = new Action<string>(message =>
+                lock (outputLock)
                 {
-                    lock (outputLock)
-                    {
-                        ReportError(message);
-                    }
-                });
-
-                var tasks = documents.Where(document => document.Uri != null).Select(document => DownloadAndValidateDocumentAsync(client, document, errorReporter, cancellationToken));
-
-                _ = await Task.WhenAll(tasks).ConfigureAwait(false);
-
-                if (_errorReported)
-                {
-                    return 1;
+                    ReportError(message);
                 }
+            });
+
+            var tasks = documents.Where(document => document.Uri != null).Select(document => DownloadAndValidateDocumentAsync(client, document, errorReporter, cancellationToken));
+            
+            _ = await Task.WhenAll(tasks).ConfigureAwait(false);
+
+            if (_errorReported)
+            {
+                return 1;
             }
 
             WriteOutputLine($"File '{path}' validated.");
@@ -317,8 +277,8 @@ namespace Microsoft.SourceLink.Tools
             }
         }
 
-        private static Task<int> PrintJsonAsync(string path, ParseResult parseResult)
-            => Task.FromResult(new Program(parseResult).PrintJson(path));
+        private static Task<int> PrintJsonAsync(string path, IConsole console)
+            => Task.FromResult(new Program(console).PrintJson(path));
 
         private int PrintJson(string path)
         {
@@ -339,8 +299,8 @@ namespace Microsoft.SourceLink.Tools
             return _errorReported ? 1 : 0;
         }
 
-        private static Task<int> PrintDocumentsAsync(string path, ParseResult parseResult)
-            => Task.FromResult(new Program(parseResult).PrintDocuments(path));
+        private static Task<int> PrintDocumentsAsync(string path, IConsole console)
+            => Task.FromResult(new Program(console).PrintDocuments(path));
 
         public static string ToHex(byte[] bytes)
             => BitConverter.ToString(bytes).Replace("-", "").ToLowerInvariant();
@@ -364,8 +324,8 @@ namespace Microsoft.SourceLink.Tools
             return _errorReported ? 1 : 0;
         }
 
-        private static Task<int> PrintUrlsAsync(string path, ParseResult parseResult)
-            => Task.FromResult(new Program(parseResult).PrintUrls(path));
+        private static Task<int> PrintUrlsAsync(string path,IConsole console)
+            => Task.FromResult(new Program(console).PrintUrls(path));
 
         private int PrintUrls(string path)
         {
