@@ -49,9 +49,15 @@ public class FoldingEndpointTest : SingleServerDelegatingEndpointTestBase
 
         var request = new FoldingRangeParams()
         {
-            TextDocument = new TextDocumentIdentifier
+            TextDocument = new VSTextDocumentIdentifier
             {
-                Uri = new Uri(razorFilePath)
+                Uri = new Uri(razorFilePath),
+                ProjectContext = new VSProjectContext()
+                {
+                    Label = "test",
+                    Kind = VSProjectKind.CSharp,
+                    Id = "test"
+                }
             }
         };
         var documentContext = await DocumentContextFactory.TryCreateForOpenDocumentAsync(request.TextDocument.Uri, DisposalToken);

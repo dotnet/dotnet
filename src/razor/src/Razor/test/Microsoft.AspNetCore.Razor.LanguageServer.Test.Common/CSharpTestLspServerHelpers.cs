@@ -92,19 +92,30 @@ internal class CSharpTestLspServerHelpers
         var workspace = TestWorkspace.Create(hostServices);
 
         // Add project and solution to workspace
-        var projectInfo = ProjectInfo.Create(
-            id: ProjectId.CreateNewId("TestProject"),
+        var projectInfoNet60 = ProjectInfo.Create(
+            id: ProjectId.CreateNewId("TestProject (net6.0)"),
             version: VersionStamp.Default,
-            name: "TestProject",
+            name: "TestProject (net6.0)",
             assemblyName: "TestProject.dll",
             language: LanguageNames.CSharp,
             filePath: @"C:\TestSolution\TestProject.csproj",
             metadataReferences: metadataReferences).WithCompilationOutputInfo(new CompilationOutputInfo().WithAssemblyPath(@"C:\TestSolution\obj\TestProject.dll"));
 
+        var projectInfoNet80 = ProjectInfo.Create(
+            id: ProjectId.CreateNewId("TestProject (net8.0)"),
+            version: VersionStamp.Default,
+            name: "TestProject (net8.0)",
+            assemblyName: "TestProject.dll",
+            language: LanguageNames.CSharp,
+            filePath: @"C:\TestSolution\TestProject.csproj",
+            metadataReferences: metadataReferences);
+
+        var projectInfos = new ProjectInfo[] { projectInfoNet60, projectInfoNet80 };
+
         var solutionInfo = SolutionInfo.Create(
             id: SolutionId.CreateNewId("TestSolution"),
             version: VersionStamp.Default,
-            projects: new ProjectInfo[] { projectInfo });
+            projects: projectInfos);
 
         workspace.AddSolution(solutionInfo);
 
@@ -119,14 +130,19 @@ internal class CSharpTestLspServerHelpers
         {
             var documentFilePath = documentUri.AbsolutePath;
             var textAndVersion = TextAndVersion.Create(csharpSourceText, VersionStamp.Default, documentFilePath);
-            var documentInfo = languageServerFactory.CreateDocumentInfo(
-                id: DocumentId.CreateNewId(projectInfo.Id),
-                name: "TestDocument" + documentCount,
-                filePath: documentFilePath,
-                loader: TextLoader.From(textAndVersion),
-                razorDocumentServiceProvider: new TestRazorDocumentServiceProvider(razorSpanMappingService));
 
-            workspace.AddDocument(documentInfo);
+            foreach (var projectInfo in projectInfos)
+            {
+                var documentInfo = languageServerFactory.CreateDocumentInfo(
+                    id: DocumentId.CreateNewId(projectInfo.Id),
+                    name: "TestDocument" + documentCount,
+                    filePath: documentFilePath,
+                    loader: TextLoader.From(textAndVersion),
+                    razorDocumentServiceProvider: new TestRazorDocumentServiceProvider(razorSpanMappingService));
+
+                workspace.AddDocument(documentInfo);
+            }
+
             documentCount++;
         }
 
