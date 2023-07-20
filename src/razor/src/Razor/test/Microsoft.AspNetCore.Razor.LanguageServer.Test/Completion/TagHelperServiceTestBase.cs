@@ -6,11 +6,13 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Language.Components;
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
+using Microsoft.CodeAnalysis.Razor.Workspaces.Extensions;
 using Microsoft.VisualStudio.Editor.Razor;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Moq;
@@ -78,6 +80,8 @@ public abstract class TagHelperServiceTestBase : LanguageServerTestBase
         builder3.TagMatchingRule(rule => rule.TagName = "Component1");
         builder3.SetMetadata(
             TypeName("Component1"),
+            TypeNamespace("System"), // Just so we can reasonably assume a using directive is in place
+            TypeNameIdentifier("Component1"),
             new(ComponentMetadata.Component.NameMatchKey, ComponentMetadata.Component.FullyQualifiedNameMatch));
         builder3.BindAttribute(attribute =>
         {
@@ -90,6 +94,12 @@ public abstract class TagHelperServiceTestBase : LanguageServerTestBase
             attribute.Name = "int-val";
             attribute.SetMetadata(PropertyName("IntVal"));
             attribute.TypeName = typeof(int).FullName;
+        });
+        builder3.BindAttribute(attribute =>
+        {
+            attribute.Name = "Title";
+            attribute.SetMetadata(PropertyName("Title"));
+            attribute.TypeName = typeof(string).FullName;
         });
 
         var directiveAttribute1 = TagHelperDescriptorBuilder.Create(ComponentMetadata.Component.TagHelperKind, "TestDirectiveAttribute", "TestAssembly");
@@ -246,6 +256,9 @@ public abstract class TagHelperServiceTestBase : LanguageServerTestBase
 
             documentContext.Setup(d => d.Project)
                 .Returns(projectSnapshot.Object);
+
+            documentContext.Setup(d => d.GetSourceTextAsync(It.IsAny<CancellationToken>()))
+                .Returns(Task.FromResult(document.GetSourceText()));
 
             documentContexts.Enqueue(documentContext.Object);
             var identifier = GetIdentifier(isRazorFile);

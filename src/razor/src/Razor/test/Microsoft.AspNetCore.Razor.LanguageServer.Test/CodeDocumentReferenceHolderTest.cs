@@ -30,7 +30,7 @@ public class CodeDocumentReferenceHolderTest : LanguageServerTestBase
         _referenceHolder = new CodeDocumentReferenceHolder();
         _referenceHolder.Initialize(_projectManager);
 
-        _hostProject = new HostProject("C:/path/to/project.csproj", RazorConfiguration.Default, rootNamespace: "TestNamespace");
+        _hostProject = new HostProject("C:/path/to/project.csproj", "C:/path/to/obj", RazorConfiguration.Default, rootNamespace: "TestNamespace");
         _hostDocument = new HostDocument("C:/path/to/file.razor", "file.razor");
     }
 
@@ -129,7 +129,7 @@ public class CodeDocumentReferenceHolderTest : LanguageServerTestBase
         // Act
         await Dispatcher.RunOnDispatcherThreadAsync(() =>
         {
-            _projectManager.ProjectConfigurationChanged(new HostProject(_hostProject.FilePath, RazorConfiguration.Default, rootNamespace: "NewRootNamespace"));
+            _projectManager.ProjectConfigurationChanged(new HostProject(_hostProject.FilePath, _hostProject.IntermediateOutputPath, RazorConfiguration.Default, rootNamespace: "NewRootNamespace"));
         }, DisposalToken);
 
         GC.Collect();

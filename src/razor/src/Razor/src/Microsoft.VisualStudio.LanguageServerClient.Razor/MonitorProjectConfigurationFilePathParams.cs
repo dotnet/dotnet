@@ -5,7 +5,7 @@ namespace Microsoft.VisualStudio.LanguageServerClient.Razor;
 
 internal class MonitorProjectConfigurationFilePathParams
 {
-    public required string ProjectFilePath { get; init; }
+    public required string ProjectKeyId { get; init; }
 
     public required string? ConfigurationFilePath { get; init; }
 }

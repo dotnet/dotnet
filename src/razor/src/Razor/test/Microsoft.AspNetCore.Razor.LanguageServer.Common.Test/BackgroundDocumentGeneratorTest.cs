@@ -32,8 +32,8 @@ public class BackgroundDocumentGeneratorTest : LanguageServerTestBase
             new HostDocument("c:/Test1/Components/Counter.cshtml", "Components/Counter.cshtml"),
         };
 
-        _hostProject1 = new HostProject("c:/Test1/Test1.csproj", RazorConfiguration.Default, "TestRootNamespace");
-        _hostProject2 = new HostProject("c:/Test2/Test2.csproj", RazorConfiguration.Default, "TestRootNamespace");
+        _hostProject1 = new HostProject("c:/Test1/Test1.csproj", "c:/Test1/obj", RazorConfiguration.Default, "TestRootNamespace");
+        _hostProject2 = new HostProject("c:/Test2/Test2.csproj", "c:/Test2/obj", RazorConfiguration.Default, "TestRootNamespace");
     }
 
     [Fact]

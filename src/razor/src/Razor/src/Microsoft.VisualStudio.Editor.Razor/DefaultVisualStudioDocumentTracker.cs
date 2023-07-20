@@ -194,9 +194,14 @@ internal class DefaultVisualStudioDocumentTracker : VisualStudioDocumentTracker
     {
         _projectSnapshotManagerDispatcher.AssertDispatcherThread();
 
-        var projectKey = ProjectKey.FromLegacy(projectPath);
+        var projectKey = _projectManager.GetAllProjectKeys(projectPath).FirstOrDefault();
 
-        return _projectManager.GetLoadedProject(projectKey) ?? new EphemeralProjectSnapshot(Workspace.Services, projectKey);
+        if (projectKey is null || _projectManager.GetLoadedProject(projectKey) is not { } project)
+        {
+            return new EphemeralProjectSnapshot(Workspace.Services, projectPath);
+        }
+
+        return project;
     }
 
     public void Unsubscribe()

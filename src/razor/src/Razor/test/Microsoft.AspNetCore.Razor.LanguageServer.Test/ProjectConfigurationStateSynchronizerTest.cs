@@ -6,6 +6,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.IO;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.LanguageServer.Common;
@@ -15,6 +16,7 @@ using Microsoft.AspNetCore.Razor.ProjectSystem;
 using Microsoft.AspNetCore.Razor.Serialization;
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Moq;
 using Xunit;
@@ -57,9 +59,11 @@ public class ProjectConfigurationStateSynchronizerTest : LanguageServerTestBase
             rootNamespace: "TestRootNamespace",
             new ProjectWorkspaceState(ImmutableArray<TagHelperDescriptor>.Empty, LanguageVersion.CSharp5),
             ImmutableArray<DocumentSnapshotHandle>.Empty);
-        var projectKey = ProjectKey.From(projectRazorJson.FilePath);
+        var intermediateOutputPath = Path.GetDirectoryName(projectRazorJson.SerializedFilePath);
+        var projectKey = TestProjectKey.Create(intermediateOutputPath);
         var projectService = new Mock<RazorProjectService>(MockBehavior.Strict);
-        projectService.Setup(service => service.AddProject(projectRazorJson.FilePath, projectRazorJson.RootNamespace)).Verifiable();
+        projectService.Setup(service => service.AddProject(projectRazorJson.FilePath, @"path\to\obj", projectRazorJson.RootNamespace))
+            .Returns(projectKey);
         projectService.Setup(service => service.UpdateProject(
             projectKey,
             projectRazorJson.Configuration,
@@ -124,9 +128,10 @@ public class ProjectConfigurationStateSynchronizerTest : LanguageServerTestBase
             rootNamespace: "TestRootNamespace",
             new ProjectWorkspaceState(ImmutableArray<TagHelperDescriptor>.Empty, LanguageVersion.CSharp5),
             ImmutableArray<DocumentSnapshotHandle>.Empty);
-        var projectKey = ProjectKey.From(projectRazorJson.FilePath);
+        var projectKey = TestProjectKey.Create(Path.GetDirectoryName(projectRazorJson.SerializedFilePath));
         var projectService = new Mock<RazorProjectService>(MockBehavior.Strict);
-        projectService.Setup(service => service.AddProject(projectRazorJson.FilePath, projectRazorJson.RootNamespace)).Verifiable();
+        projectService.Setup(service => service.AddProject(projectRazorJson.FilePath, @"path\to\obj", projectRazorJson.RootNamespace))
+            .Returns(projectKey);
         projectService.Setup(service => service.UpdateProject(
             projectKey,
             projectRazorJson.Configuration,
@@ -160,9 +165,10 @@ public class ProjectConfigurationStateSynchronizerTest : LanguageServerTestBase
             rootNamespace: "TestRootNamespace",
             new ProjectWorkspaceState(ImmutableArray<TagHelperDescriptor>.Empty, LanguageVersion.CSharp5),
             ImmutableArray<DocumentSnapshotHandle>.Empty);
-        var projectKey = ProjectKey.From(projectRazorJson.FilePath);
+        var projectKey = TestProjectKey.Create(Path.GetDirectoryName(projectRazorJson.SerializedFilePath));
         var projectService = new Mock<RazorProjectService>(MockBehavior.Strict);
-        projectService.Setup(service => service.AddProject(projectRazorJson.FilePath, projectRazorJson.RootNamespace)).Verifiable();
+        projectService.Setup(service => service.AddProject(projectRazorJson.FilePath, @"path\to\obj", projectRazorJson.RootNamespace))
+            .Returns(projectKey);
         projectService.Setup(service => service.UpdateProject(
             projectKey,
             projectRazorJson.Configuration,
@@ -210,9 +216,10 @@ public class ProjectConfigurationStateSynchronizerTest : LanguageServerTestBase
             rootNamespace: "TestRootNamespace",
             new ProjectWorkspaceState(ImmutableArray<TagHelperDescriptor>.Empty, LanguageVersion.CSharp5),
             ImmutableArray<DocumentSnapshotHandle>.Empty);
-        var projectKey = ProjectKey.From(initialProjectRazorJson.FilePath);
+        var projectKey = TestProjectKey.Create(Path.GetDirectoryName(initialProjectRazorJson.SerializedFilePath));
         var projectService = new Mock<RazorProjectService>(MockBehavior.Strict);
-        projectService.Setup(service => service.AddProject(initialProjectRazorJson.FilePath, initialProjectRazorJson.RootNamespace)).Verifiable();
+        projectService.Setup(service => service.AddProject(initialProjectRazorJson.FilePath, @"path\to\obj", initialProjectRazorJson.RootNamespace))
+            .Returns(projectKey);
         projectService.Setup(service => service.UpdateProject(
             projectKey,
             initialProjectRazorJson.Configuration,
@@ -272,9 +279,10 @@ public class ProjectConfigurationStateSynchronizerTest : LanguageServerTestBase
             rootNamespace: "TestRootNamespace",
             new ProjectWorkspaceState(ImmutableArray<TagHelperDescriptor>.Empty, LanguageVersion.CSharp5),
             ImmutableArray<DocumentSnapshotHandle>.Empty);
-        var projectKey = ProjectKey.From(initialProjectRazorJson.FilePath);
+        var projectKey = TestProjectKey.Create(Path.GetDirectoryName(initialProjectRazorJson.SerializedFilePath));
         var projectService = new Mock<RazorProjectService>(MockBehavior.Strict);
-        projectService.Setup(service => service.AddProject(initialProjectRazorJson.FilePath, initialProjectRazorJson.RootNamespace)).Verifiable();
+        projectService.Setup(service => service.AddProject(initialProjectRazorJson.FilePath, @"path\to\obj", initialProjectRazorJson.RootNamespace))
+            .Returns(projectKey);
         projectService.Setup(service => service.UpdateProject(
             projectKey,
             initialProjectRazorJson.Configuration,
@@ -356,9 +364,10 @@ public class ProjectConfigurationStateSynchronizerTest : LanguageServerTestBase
             rootNamespace: "TestRootNamespace",
             new ProjectWorkspaceState(ImmutableArray<TagHelperDescriptor>.Empty, LanguageVersion.CSharp5),
             ImmutableArray<DocumentSnapshotHandle>.Empty);
-        var projectKey = ProjectKey.From(projectRazorJson.FilePath);
+        var projectKey = TestProjectKey.Create(Path.GetDirectoryName(projectRazorJson.SerializedFilePath));
         var projectService = new Mock<RazorProjectService>(MockBehavior.Strict);
-        projectService.Setup(service => service.AddProject(projectRazorJson.FilePath, projectRazorJson.RootNamespace)).Verifiable();
+        projectService.Setup(service => service.AddProject(projectRazorJson.FilePath, @"path\to\obj", projectRazorJson.RootNamespace))
+            .Returns(projectKey);
         projectService.Setup(p => p.UpdateProject(
             projectKey,
             It.IsAny<RazorConfiguration>(),

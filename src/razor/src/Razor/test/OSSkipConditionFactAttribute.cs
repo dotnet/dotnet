@@ -15,13 +15,26 @@ public class OSSkipConditionFactAttribute : FactAttribute
     /// <see href="https://source.dot.net/#System.Runtime.InteropServices.RuntimeInformation/System/Runtime/InteropServices/RuntimeInformation/OSPlatform.cs,26fa53454c093915"/></param>
     public OSSkipConditionFactAttribute(string[] skippedPlatforms)
     {
+        SetSkipIfNecessary(this, skippedPlatforms);
+    }
+
+    internal static void SetSkipIfNecessary(FactAttribute fact, string[] skippedPlatforms)
+    {
         foreach (var platform in skippedPlatforms)
         {
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Create(platform)))
             {
-                Skip = $"Ignored on {platform}";
+                fact.Skip = $"Ignored on {platform}";
                 break;
             }
         }
+    }
+}
+
+public class OSSkipConditionTheoryAttribute : TheoryAttribute
+{
+    public OSSkipConditionTheoryAttribute(string[] skippedPlatforms)
+    {
+        OSSkipConditionFactAttribute.SetSkipIfNecessary(this, skippedPlatforms);
     }
 }

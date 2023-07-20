@@ -5,6 +5,7 @@
 
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Razor;
+using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Text;
 using Microsoft.VisualStudio.Test;
 using Microsoft.VisualStudio.Text;
@@ -18,6 +19,7 @@ public class EditorDocumentTest : ProjectSnapshotManagerDispatcherTestBase
 {
     private readonly EditorDocumentManager _documentManager;
     private readonly string _projectFilePath;
+    private readonly ProjectKey _projectKey;
     private readonly string _documentFilePath;
     private readonly TextLoader _textLoader;
     private readonly FileChangeTracker _fileChangeTracker;
@@ -29,6 +31,7 @@ public class EditorDocumentTest : ProjectSnapshotManagerDispatcherTestBase
         _documentManager = new Mock<EditorDocumentManager>(MockBehavior.Strict).Object;
         Mock.Get(_documentManager).Setup(m => m.RemoveDocument(It.IsAny<EditorDocument>())).Verifiable();
         _projectFilePath = TestProjectData.SomeProject.FilePath;
+        _projectKey = TestProjectData.SomeProject.Key;
         _documentFilePath = TestProjectData.SomeProjectFile1.FilePath;
         _textLoader = TextLoader.From(TextAndVersion.Create(SourceText.From("FILE"), VersionStamp.Default));
         _fileChangeTracker = new DefaultFileChangeTracker(_documentFilePath);
@@ -46,6 +49,7 @@ public class EditorDocumentTest : ProjectSnapshotManagerDispatcherTestBase
             JoinableTaskFactory.Context,
             _projectFilePath,
             _documentFilePath,
+            _projectKey,
             _textLoader,
             _fileChangeTracker,
             _textBuffer,
@@ -71,6 +75,7 @@ public class EditorDocumentTest : ProjectSnapshotManagerDispatcherTestBase
             JoinableTaskFactory.Context,
             _projectFilePath,
             _documentFilePath,
+            _projectKey,
             _textLoader,
             _fileChangeTracker,
             null,

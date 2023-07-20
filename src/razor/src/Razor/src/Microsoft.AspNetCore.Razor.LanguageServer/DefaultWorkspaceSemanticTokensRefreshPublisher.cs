@@ -14,12 +14,19 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer;
 internal class DefaultWorkspaceSemanticTokensRefreshPublisher : WorkspaceSemanticTokensRefreshPublisher, IDisposable
 {
     private const string WorkspaceSemanticTokensRefreshKey = "WorkspaceSemanticTokensRefresh";
+    private static readonly TimeSpan s_debounceTimeSpan = TimeSpan.FromMilliseconds(250);
+
     private readonly IInitializeManager<InitializeParams, InitializeResult> _settingsManager;
     private readonly ClientNotifierServiceBase _notifierService;
     private readonly BatchingWorkQueue _workQueue;
-    private static readonly TimeSpan s_debounceTimeSpan = TimeSpan.FromMilliseconds(250);
 
-    public DefaultWorkspaceSemanticTokensRefreshPublisher(IInitializeManager<InitializeParams, InitializeResult> settingsManager, ClientNotifierServiceBase clientNotifier, IErrorReporter errorReporter)
+    private bool _isColoringBackground;
+
+    public DefaultWorkspaceSemanticTokensRefreshPublisher(
+        IInitializeManager<InitializeParams, InitializeResult> settingsManager,
+        ClientNotifierServiceBase clientNotifier,
+        IErrorReporter errorReporter,
+        RazorLSPOptionsMonitor razorLSPOptionsMonitor)
     {
         if (settingsManager is null)
         {
@@ -34,6 +41,18 @@ internal class DefaultWorkspaceSemanticTokensRefreshPublisher : WorkspaceSemanti
         _settingsManager = settingsManager;
         _notifierService = clientNotifier;
         _workQueue = new BatchingWorkQueue(s_debounceTimeSpan, StringComparer.Ordinal, errorReporter: errorReporter);
+
+        _isColoringBackground = razorLSPOptionsMonitor.CurrentValue.ColorBackground;
+        razorLSPOptionsMonitor.OnChange(HandleOptionsChange);
+    }
+
+    private void HandleOptionsChange(RazorLSPOptions options, string _)
+    {
+        if (options.ColorBackground != _isColoringBackground)
+        {
+            _isColoringBackground = options.ColorBackground;
+            EnqueueWorkspaceSemanticTokensRefresh();
+        }
     }
 
     public override void EnqueueWorkspaceSemanticTokensRefresh()

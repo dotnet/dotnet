@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.Extensions.ObjectPool;
 
 namespace Microsoft.AspNetCore.Razor.PooledObjects;
@@ -28,6 +29,28 @@ internal ref struct PooledArrayBuilder<T>
     {
         _pool = pool ?? ArrayBuilderPool<T>.Default;
         _capacity = capacity;
+    }
+
+    public readonly T this[int i]
+    {
+        get
+        {
+            if (_builder is null || Count <= i)
+            {
+                throw new IndexOutOfRangeException();
+            }
+
+            return _builder[i];
+        }
+        set
+        {
+            if (_builder is null || Count <= i)
+            {
+                throw new IndexOutOfRangeException();
+            }
+
+            _builder[i] = value;
+        }
     }
 
     public void Dispose()
@@ -70,6 +93,16 @@ internal ref struct PooledArrayBuilder<T>
         }
     }
 
+    public readonly void RemoveAt(int index)
+    {
+        if (_builder is null || Count <= index)
+        {
+            throw new IndexOutOfRangeException();
+        }
+
+        _builder.RemoveAt(index);
+    }
+
     private readonly ImmutableArray<T>.Builder GetBuilder()
     {
         var result = _pool.Get();
@@ -100,4 +133,33 @@ internal ref struct PooledArrayBuilder<T>
 
     public readonly T[] ToArray()
         => _builder?.ToArray() ?? Array.Empty<T>();
+
+    public void Push(T item)
+    {
+        this.Add(item);
+    }
+
+    public readonly T Peek()
+    {
+        return this[^1];
+    }
+
+    public readonly T Pop()
+    {
+        var item = this[^1];
+        RemoveAt(Count - 1);
+        return item;
+    }
+
+    public readonly bool TryPop([MaybeNullWhen(false)] out T item)
+    {
+        if (Count == 0)
+        {
+            item = default;
+            return false;
+        }
+
+        item = Pop();
+        return true;
+    }
 }

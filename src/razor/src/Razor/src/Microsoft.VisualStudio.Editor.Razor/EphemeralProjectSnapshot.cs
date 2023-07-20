@@ -4,38 +4,41 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.Diagnostics;
+using System.IO;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.ProjectSystem;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Host;
+using Microsoft.CodeAnalysis.Razor;
+using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 
-namespace Microsoft.CodeAnalysis.Razor.ProjectSystem;
+namespace Microsoft.VisualStudio.Editor.Razor;
 
 internal class EphemeralProjectSnapshot : IProjectSnapshot
 {
     private readonly HostWorkspaceServices _services;
     private readonly Lazy<RazorProjectEngine> _projectEngine;
 
-    public EphemeralProjectSnapshot(HostWorkspaceServices services, ProjectKey projectKey)
+    public EphemeralProjectSnapshot(HostWorkspaceServices services, string projectPath)
     {
         if (services is null)
         {
             throw new ArgumentNullException(nameof(services));
         }
 
-        if (projectKey is null)
+        if (projectPath is null)
         {
-            throw new ArgumentNullException(nameof(projectKey));
+            throw new ArgumentNullException(nameof(projectPath));
         }
 
         _services = services;
-        Debug.Assert(projectKey.Id.EndsWith(".csproj", StringComparison.OrdinalIgnoreCase), "EphemeralProjectSnapshot should only be used in the legacy editor, where projects are tracked by the full path to the .csproj file");
-        FilePath = projectKey.Id;
+        FilePath = projectPath;
+        IntermediateOutputPath = Path.Combine(Path.GetDirectoryName(FilePath) ?? FilePath, "obj");
 
         _projectEngine = new Lazy<RazorProjectEngine>(CreateProjectEngine);
 
-        Key = projectKey;
+        Key = ProjectKey.From(this);
     }
 
     public ProjectKey Key { get; }
@@ -45,6 +48,8 @@ internal class EphemeralProjectSnapshot : IProjectSnapshot
     public IEnumerable<string> DocumentFilePaths => Array.Empty<string>();
 
     public string FilePath { get; }
+
+    public string IntermediateOutputPath { get; }
 
     public string? RootNamespace { get; }
 

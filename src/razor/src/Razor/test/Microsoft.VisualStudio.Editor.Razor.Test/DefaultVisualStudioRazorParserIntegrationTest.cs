@@ -37,7 +37,7 @@ public class DefaultVisualStudioRazorParserIntegrationTest : ProjectSnapshotMana
         _workspace = CodeAnalysis.TestWorkspace.Create();
         AddDisposable(_workspace);
 
-        _projectSnapshot = new EphemeralProjectSnapshot(_workspace.Services, ProjectKey.FromLegacy(TestProjectPath));
+        _projectSnapshot = new EphemeralProjectSnapshot(_workspace.Services, TestProjectPath);
     }
 
     [UIFact]

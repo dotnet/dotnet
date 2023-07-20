@@ -128,7 +128,8 @@ internal class DefaultProjectSnapshotManagerProxy : IProjectSnapshotManagerProxy
 
         var projectWorkspaceState = new ProjectWorkspaceState(project.TagHelpers, project.CSharpLanguageVersion);
         var projectFilePath = _session.ConvertLocalPathToSharedUri(project.FilePath);
-        var projectHandleProxy = new ProjectSnapshotHandleProxy(projectFilePath, project.Configuration.AssumeNotNull(), project.RootNamespace, projectWorkspaceState);
+        var intermediateOutputPath = _session.ConvertLocalPathToSharedUri(project.IntermediateOutputPath);
+        var projectHandleProxy = new ProjectSnapshotHandleProxy(projectFilePath, intermediateOutputPath, project.Configuration.AssumeNotNull(), project.RootNamespace, projectWorkspaceState);
         return projectHandleProxy;
     }
 

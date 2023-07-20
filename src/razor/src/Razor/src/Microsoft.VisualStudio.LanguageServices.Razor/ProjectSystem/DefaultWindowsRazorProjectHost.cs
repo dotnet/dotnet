@@ -66,7 +66,8 @@ internal class DefaultWindowsRazorProjectHost : WindowsRazorProjectHostBase
 
     protected override async Task HandleProjectChangeAsync(IProjectVersionedValue<IProjectSubscriptionUpdate> update)
     {
-        if (TryGetConfiguration(update.Value.CurrentState, out var configuration))
+        if (TryGetConfiguration(update.Value.CurrentState, out var configuration) &&
+            TryGetIntermediateOutputPath(update.Value.CurrentState, out var intermediatePath))
         {
             TryGetRootNamespace(update.Value.CurrentState, out var rootNamespace);
 
@@ -82,12 +83,12 @@ internal class DefaultWindowsRazorProjectHost : WindowsRazorProjectHostBase
 
             await UpdateAsync(() =>
             {
-                var hostProject = new HostProject(CommonServices.UnconfiguredProject.FullPath, configuration, rootNamespace);
+                var hostProject = new HostProject(CommonServices.UnconfiguredProject.FullPath, intermediatePath, configuration, rootNamespace);
 
-                if (TryGetIntermediateOutputPath(update.Value.CurrentState, out var intermediatePath))
+                if (_languageServerFeatureOptions is not null)
                 {
                     var projectConfigurationFile = Path.Combine(intermediatePath, _languageServerFeatureOptions.ProjectConfigurationFileName);
-                    ProjectConfigurationFilePathStore.Set(hostProject.FilePath, projectConfigurationFile);
+                    ProjectConfigurationFilePathStore.Set(hostProject.Key, projectConfigurationFile);
                 }
 
                 UpdateProjectUnsafe(hostProject);

@@ -155,14 +155,14 @@ internal readonly struct ChildSyntaxList : IEquatable<ChildSyntaxList>, IReadOnl
     /// <remarks>
     /// Assumes that <paramref name="targetPosition"/> is within the span of <paramref name="node"/>.
     /// </remarks>
-    internal static SyntaxNode ChildThatContainsPosition(SyntaxNode node, int targetPosition)
+    internal static SyntaxNode ChildThatContainsPosition(SyntaxNode node, int targetPosition, out int index)
     {
         // The targetPosition must already be within this node
         Debug.Assert(node.FullSpan.Contains(targetPosition));
 
         var green = node.Green;
         var position = node.Position;
-        var index = 0;
+        index = 0;
 
         Debug.Assert(!green.IsList);
 
@@ -202,6 +202,10 @@ internal readonly struct ChildSyntaxList : IEquatable<ChildSyntaxList>, IReadOnl
         {
             slot = green.FindSlotIndexContainingOffset(targetPosition - position);
 
+            // Since we can't have "lists of lists", the Occupancy calculation for
+            // child elements in a list is simple.
+            index += slot;
+
             // Realize the red node (if any)
             if (red != null)
             {
@@ -212,10 +216,6 @@ internal readonly struct ChildSyntaxList : IEquatable<ChildSyntaxList>, IReadOnl
                     return red;
                 }
             }
-
-            // Since we can't have "lists of lists", the Occupancy calculation for
-            // child elements in a list is simple.
-            index += slot;
         }
 
         return node;
@@ -268,7 +268,9 @@ internal readonly struct ChildSyntaxList : IEquatable<ChildSyntaxList>, IReadOnl
     }
 
     // for debugging
+#pragma warning disable IDE0051 // Remove unused private members
     private SyntaxNode[] Nodes
+#pragma warning restore IDE0051 // Remove unused private members
     {
         get
         {

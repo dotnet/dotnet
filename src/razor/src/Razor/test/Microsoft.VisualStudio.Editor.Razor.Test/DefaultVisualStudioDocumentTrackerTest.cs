@@ -62,9 +62,9 @@ public class DefaultVisualStudioDocumentTrackerTest : ProjectSnapshotManagerDisp
 
         _projectManager = new TestProjectSnapshotManager(Dispatcher, Workspace) { AllowNotifyListeners = true };
 
-        _hostProject = new HostProject(_projectPath, FallbackRazorConfiguration.MVC_2_1, _rootNamespace);
-        _updatedHostProject = new HostProject(_projectPath, FallbackRazorConfiguration.MVC_2_0, _rootNamespace);
-        _otherHostProject = new HostProject(TestProjectData.AnotherProject.FilePath, FallbackRazorConfiguration.MVC_2_0, TestProjectData.AnotherProject.RootNamespace);
+        _hostProject = new HostProject(_projectPath, TestProjectData.SomeProject.IntermediateOutputPath, FallbackRazorConfiguration.MVC_2_1, _rootNamespace);
+        _updatedHostProject = new HostProject(_projectPath, TestProjectData.SomeProject.IntermediateOutputPath, FallbackRazorConfiguration.MVC_2_0, _rootNamespace);
+        _otherHostProject = new HostProject(TestProjectData.AnotherProject.FilePath, TestProjectData.AnotherProject.IntermediateOutputPath, FallbackRazorConfiguration.MVC_2_0, TestProjectData.AnotherProject.RootNamespace);
 
         _documentTracker = new DefaultVisualStudioDocumentTracker(
             Dispatcher,
@@ -180,7 +180,7 @@ public class DefaultVisualStudioDocumentTrackerTest : ProjectSnapshotManagerDisp
         {
             called = true;
 
-            Assert.Same(_projectManager.GetLoadedProject(ProjectKey.FromLegacy(_documentTracker.ProjectPath)), _documentTracker.ProjectSnapshot);
+            Assert.Same(_projectManager.GetLoadedProject(_hostProject.Key), _documentTracker.ProjectSnapshot);
         };
 
         // Act
@@ -203,7 +203,7 @@ public class DefaultVisualStudioDocumentTrackerTest : ProjectSnapshotManagerDisp
         {
             called = true;
 
-            Assert.Same(_projectManager.GetLoadedProject(ProjectKey.FromLegacy(_documentTracker.ProjectPath)), _documentTracker.ProjectSnapshot);
+            Assert.Same(_projectManager.GetLoadedProject(_hostProject.Key), _documentTracker.ProjectSnapshot);
         };
 
         // Act

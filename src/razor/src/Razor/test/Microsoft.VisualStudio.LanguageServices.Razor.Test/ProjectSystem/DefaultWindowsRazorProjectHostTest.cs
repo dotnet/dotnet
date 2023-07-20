@@ -27,6 +27,7 @@ public class DefaultWindowsRazorProjectHostTest : ProjectSnapshotManagerDispatch
     private readonly ItemCollection _razorComponentWithTargetPathItems;
     private readonly ItemCollection _razorGenerateWithTargetPathItems;
     private readonly PropertyCollection _razorGeneralProperties;
+    private readonly PropertyCollection _configurationGeneral;
     private readonly TestProjectSnapshotManager _projectManager;
 
     public DefaultWindowsRazorProjectHostTest(ITestOutputHelper testOutput)
@@ -35,7 +36,7 @@ public class DefaultWindowsRazorProjectHostTest : ProjectSnapshotManagerDispatch
         _projectManager = new TestProjectSnapshotManager(Dispatcher, Workspace);
 
         var projectConfigurationFilePathStore = new Mock<ProjectConfigurationFilePathStore>(MockBehavior.Strict);
-        projectConfigurationFilePathStore.Setup(s => s.Remove(It.IsAny<string>())).Verifiable();
+        projectConfigurationFilePathStore.Setup(s => s.Remove(It.IsAny<ProjectKey>())).Verifiable();
         _projectConfigurationFilePathStore = projectConfigurationFilePathStore.Object;
 
         _configurationItems = new ItemCollection(Rules.RazorConfiguration.SchemaName);
@@ -43,6 +44,8 @@ public class DefaultWindowsRazorProjectHostTest : ProjectSnapshotManagerDispatch
         _razorComponentWithTargetPathItems = new ItemCollection(Rules.RazorComponentWithTargetPath.SchemaName);
         _razorGenerateWithTargetPathItems = new ItemCollection(Rules.RazorGenerateWithTargetPath.SchemaName);
         _razorGeneralProperties = new PropertyCollection(Rules.RazorGeneral.SchemaName);
+
+        _configurationGeneral = new PropertyCollection(WindowsRazorProjectHostBase.ConfigurationGeneralSchemaName);
     }
 
     [Fact]
@@ -679,6 +682,9 @@ public class DefaultWindowsRazorProjectHostTest : ProjectSnapshotManagerDispatch
         _razorGenerateWithTargetPathItems.Item(Path.GetFileName(TestProjectData.SomeProjectFile1.FilePath));
         _razorGenerateWithTargetPathItems.Property(Path.GetFileName(TestProjectData.SomeProjectFile1.FilePath), Rules.RazorGenerateWithTargetPath.TargetPathProperty, TestProjectData.SomeProjectFile1.TargetPath);
 
+        _configurationGeneral.Property(WindowsRazorProjectHostBase.BaseIntermediateOutputPathPropertyName, TestProjectData.SomeProject.IntermediateOutputPath);
+        _configurationGeneral.Property(WindowsRazorProjectHostBase.IntermediateOutputPathPropertyName, "obj");
+
         var changes = new TestProjectChangeDescription[]
         {
              _razorGeneralProperties.ToChange(),
@@ -686,11 +692,13 @@ public class DefaultWindowsRazorProjectHostTest : ProjectSnapshotManagerDispatch
              _extensionItems.ToChange(),
              _razorComponentWithTargetPathItems.ToChange(),
              _razorGenerateWithTargetPathItems.ToChange(),
+             _configurationGeneral.ToChange(),
         };
 
         var services = new TestProjectSystemServices(TestProjectData.SomeProject.FilePath);
 
         var host = new DefaultWindowsRazorProjectHost(services, Workspace, Dispatcher, _projectConfigurationFilePathStore, _projectManager);
+        host.SkipIntermediateOutputPathExistCheck_TestOnly = true;
 
         await Task.Run(async () => await host.LoadAsync());
         Assert.Empty(_projectManager.Projects);
@@ -790,6 +798,9 @@ public class DefaultWindowsRazorProjectHostTest : ProjectSnapshotManagerDispatch
         _razorGenerateWithTargetPathItems.Item(Path.GetFileName(TestProjectData.SomeProjectFile1.FilePath));
         _razorGenerateWithTargetPathItems.Property(Path.GetFileName(TestProjectData.SomeProjectFile1.FilePath), Rules.RazorGenerateWithTargetPath.TargetPathProperty, TestProjectData.SomeProjectFile1.TargetPath);
 
+        _configurationGeneral.Property(WindowsRazorProjectHostBase.BaseIntermediateOutputPathPropertyName, TestProjectData.SomeProject.IntermediateOutputPath);
+        _configurationGeneral.Property(WindowsRazorProjectHostBase.IntermediateOutputPathPropertyName, "obj");
+
         var changes = new TestProjectChangeDescription[]
         {
              _razorGeneralProperties.ToChange(),
@@ -797,10 +808,12 @@ public class DefaultWindowsRazorProjectHostTest : ProjectSnapshotManagerDispatch
              _extensionItems.ToChange(),
              _razorComponentWithTargetPathItems.ToChange(),
              _razorGenerateWithTargetPathItems.ToChange(),
+             _configurationGeneral.ToChange(),
         };
 
         var services = new TestProjectSystemServices(TestProjectData.SomeProject.FilePath);
         var host = new DefaultWindowsRazorProjectHost(services, Workspace, Dispatcher, _projectConfigurationFilePathStore, _projectManager);
+        host.SkipIntermediateOutputPathExistCheck_TestOnly = true;
 
         await Task.Run(async () => await host.LoadAsync());
         Assert.Empty(_projectManager.Projects);
@@ -836,6 +849,9 @@ public class DefaultWindowsRazorProjectHostTest : ProjectSnapshotManagerDispatch
         _razorGenerateWithTargetPathItems.Item(Path.GetFileName(TestProjectData.SomeProjectFile1.FilePath));
         _razorGenerateWithTargetPathItems.Property(Path.GetFileName(TestProjectData.SomeProjectFile1.FilePath), Rules.RazorGenerateWithTargetPath.TargetPathProperty, TestProjectData.SomeProjectFile1.TargetPath);
 
+        _configurationGeneral.Property(WindowsRazorProjectHostBase.BaseIntermediateOutputPathPropertyName, TestProjectData.SomeProject.IntermediateOutputPath);
+        _configurationGeneral.Property(WindowsRazorProjectHostBase.IntermediateOutputPathPropertyName, "obj");
+
         var changes = new TestProjectChangeDescription[]
         {
              _razorGeneralProperties.ToChange(),
@@ -843,10 +859,12 @@ public class DefaultWindowsRazorProjectHostTest : ProjectSnapshotManagerDispatch
              _extensionItems.ToChange(),
              _razorComponentWithTargetPathItems.ToChange(),
              _razorGenerateWithTargetPathItems.ToChange(),
+             _configurationGeneral.ToChange(),
         };
 
         var services = new TestProjectSystemServices(TestProjectData.SomeProject.FilePath);
         var host = new DefaultWindowsRazorProjectHost(services, Workspace, Dispatcher, _projectConfigurationFilePathStore, _projectManager);
+        host.SkipIntermediateOutputPathExistCheck_TestOnly = true;
 
         await Task.Run(async () => await host.LoadAsync());
         Assert.Empty(_projectManager.Projects);
@@ -910,6 +928,7 @@ public class DefaultWindowsRazorProjectHostTest : ProjectSnapshotManagerDispatch
              _extensionItems.ToChange(changes[2].After),
              _razorComponentWithTargetPathItems.ToChange(changes[3].After),
              _razorGenerateWithTargetPathItems.ToChange(changes[4].After),
+             _configurationGeneral.ToChange(changes[5].After),
         };
 
         await Task.Run(async () => await host.OnProjectChangedAsync(services.CreateUpdate(changes)));
@@ -986,6 +1005,9 @@ public class DefaultWindowsRazorProjectHostTest : ProjectSnapshotManagerDispatch
         _razorGenerateWithTargetPathItems.Item(Path.GetFileName(TestProjectData.SomeProjectFile1.FilePath));
         _razorGenerateWithTargetPathItems.Property(Path.GetFileName(TestProjectData.SomeProjectFile1.FilePath), Rules.RazorGenerateWithTargetPath.TargetPathProperty, TestProjectData.SomeProjectFile1.TargetPath);
 
+        _configurationGeneral.Property(WindowsRazorProjectHostBase.BaseIntermediateOutputPathPropertyName, TestProjectData.SomeProject.IntermediateOutputPath);
+        _configurationGeneral.Property(WindowsRazorProjectHostBase.IntermediateOutputPathPropertyName, "obj");
+
         var changes = new TestProjectChangeDescription[]
         {
              _razorGeneralProperties.ToChange(),
@@ -993,10 +1015,12 @@ public class DefaultWindowsRazorProjectHostTest : ProjectSnapshotManagerDispatch
              _extensionItems.ToChange(),
              _razorComponentWithTargetPathItems.ToChange(),
              _razorGenerateWithTargetPathItems.ToChange(),
+             _configurationGeneral.ToChange(),
         };
 
         var services = new TestProjectSystemServices(TestProjectData.SomeProject.FilePath);
         var host = new DefaultWindowsRazorProjectHost(services, Workspace, Dispatcher, _projectConfigurationFilePathStore, _projectManager);
+        host.SkipIntermediateOutputPathExistCheck_TestOnly = true;
 
         await Task.Run(async () => await host.LoadAsync());
         Assert.Empty(_projectManager.Projects);
@@ -1056,6 +1080,9 @@ public class DefaultWindowsRazorProjectHostTest : ProjectSnapshotManagerDispatch
         _razorGenerateWithTargetPathItems.Item(Path.GetFileName(TestProjectData.SomeProjectFile1.FilePath));
         _razorGenerateWithTargetPathItems.Property(Path.GetFileName(TestProjectData.SomeProjectFile1.FilePath), Rules.RazorGenerateWithTargetPath.TargetPathProperty, TestProjectData.SomeProjectFile1.TargetPath);
 
+        _configurationGeneral.Property(WindowsRazorProjectHostBase.BaseIntermediateOutputPathPropertyName, TestProjectData.SomeProject.IntermediateOutputPath);
+        _configurationGeneral.Property(WindowsRazorProjectHostBase.IntermediateOutputPathPropertyName, "obj");
+
         var changes = new TestProjectChangeDescription[]
         {
              _razorGeneralProperties.ToChange(),
@@ -1063,10 +1090,12 @@ public class DefaultWindowsRazorProjectHostTest : ProjectSnapshotManagerDispatch
              _extensionItems.ToChange(),
              _razorComponentWithTargetPathItems.ToChange(),
              _razorGenerateWithTargetPathItems.ToChange(),
+             _configurationGeneral.ToChange(),
         };
 
         var services = new TestProjectSystemServices(TestProjectData.SomeProject.FilePath);
         var host = new DefaultWindowsRazorProjectHost(services, Workspace, Dispatcher, _projectConfigurationFilePathStore, _projectManager);
+        host.SkipIntermediateOutputPathExistCheck_TestOnly = true;
 
         await Task.Run(async () => await host.LoadAsync());
         Assert.Empty(_projectManager.Projects);
@@ -1130,6 +1159,9 @@ public class DefaultWindowsRazorProjectHostTest : ProjectSnapshotManagerDispatch
         _razorGenerateWithTargetPathItems.Item(Path.GetFileName(TestProjectData.SomeProjectFile1.FilePath));
         _razorGenerateWithTargetPathItems.Property(Path.GetFileName(TestProjectData.SomeProjectFile1.FilePath), Rules.RazorGenerateWithTargetPath.TargetPathProperty, TestProjectData.SomeProjectFile1.TargetPath);
 
+        _configurationGeneral.Property(WindowsRazorProjectHostBase.BaseIntermediateOutputPathPropertyName, TestProjectData.SomeProject.IntermediateOutputPath);
+        _configurationGeneral.Property(WindowsRazorProjectHostBase.IntermediateOutputPathPropertyName, "obj");
+
         var changes = new TestProjectChangeDescription[]
         {
              _razorGeneralProperties.ToChange(),
@@ -1137,11 +1169,13 @@ public class DefaultWindowsRazorProjectHostTest : ProjectSnapshotManagerDispatch
              _extensionItems.ToChange(),
              _razorComponentWithTargetPathItems.ToChange(),
              _razorGenerateWithTargetPathItems.ToChange(),
+             _configurationGeneral.ToChange(),
         };
 
         var services = new TestProjectSystemServices(TestProjectData.SomeProject.FilePath);
 
         var host = new DefaultWindowsRazorProjectHost(services, Workspace, Dispatcher, _projectConfigurationFilePathStore, _projectManager);
+        host.SkipIntermediateOutputPathExistCheck_TestOnly = true;
 
         await Task.Run(async () => await host.LoadAsync());
         Assert.Empty(_projectManager.Projects);

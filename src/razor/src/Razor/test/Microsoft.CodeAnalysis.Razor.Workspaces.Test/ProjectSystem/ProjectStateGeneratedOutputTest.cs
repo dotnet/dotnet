@@ -28,8 +28,8 @@ public class ProjectStateGeneratedOutputTest : WorkspaceTestBase
     public ProjectStateGeneratedOutputTest(ITestOutputHelper testOutput)
         : base(testOutput)
     {
-        _hostProject = new HostProject(TestProjectData.SomeProject.FilePath, FallbackRazorConfiguration.MVC_2_0, TestProjectData.SomeProject.RootNamespace);
-        _hostProjectWithConfigurationChange = new HostProject(TestProjectData.SomeProject.FilePath, FallbackRazorConfiguration.MVC_1_0, TestProjectData.SomeProject.RootNamespace);
+        _hostProject = new HostProject(TestProjectData.SomeProject.FilePath, TestProjectData.SomeProject.IntermediateOutputPath, FallbackRazorConfiguration.MVC_2_0, TestProjectData.SomeProject.RootNamespace);
+        _hostProjectWithConfigurationChange = new HostProject(TestProjectData.SomeProject.FilePath, TestProjectData.SomeProject.IntermediateOutputPath, FallbackRazorConfiguration.MVC_1_0, TestProjectData.SomeProject.RootNamespace);
 
         _tagHelperResolver = new TestTagHelperResolver();
 
@@ -204,7 +204,7 @@ public class ProjectStateGeneratedOutputTest : WorkspaceTestBase
     {
         // Arrange
         var csharp8ValidConfiguration = RazorConfiguration.Create(RazorLanguageVersion.Version_3_0, _hostProject.Configuration.ConfigurationName, _hostProject.Configuration.Extensions);
-        var hostProject = new HostProject(TestProjectData.SomeProject.FilePath, csharp8ValidConfiguration, TestProjectData.SomeProject.RootNamespace);
+        var hostProject = new HostProject(TestProjectData.SomeProject.FilePath, TestProjectData.SomeProject.IntermediateOutputPath, csharp8ValidConfiguration, TestProjectData.SomeProject.RootNamespace);
         var originalWorkspaceState = new ProjectWorkspaceState(_someTagHelpers, LanguageVersion.CSharp7);
         var original =
             ProjectState.Create(Workspace.Services, hostProject, originalWorkspaceState)

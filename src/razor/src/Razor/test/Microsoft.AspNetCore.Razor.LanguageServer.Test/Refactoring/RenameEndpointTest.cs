@@ -242,6 +242,64 @@ public class RenameEndpointTest : LanguageServerTestBase
         Assert.NotNull(result);
     }
 
+    [Fact, WorkItem("https://github.com/dotnet/razor/issues/8541")]
+    public async Task Handle_Rename_ComponentInSameFile()
+    {
+        // Arrange
+        var uri = new Uri("file:///c:/Second/Component4.razor");
+        var request = new RenameParams
+        {
+            TextDocument = new TextDocumentIdentifier
+            {
+                Uri = uri,
+            },
+            Position = new Position(1, 1),
+            NewName = "Component5"
+        };
+        var documentContext = await GetDocumentContextAsync(uri);
+        var requestContext = CreateRazorRequestContext(documentContext);
+
+        // Act
+        var result = await _endpoint.HandleRequestAsync(request, requestContext, DisposalToken);
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.Equal(4, result.DocumentChanges.Value.Count());
+        var renameChange = result.DocumentChanges.Value.ElementAt(0);
+        Assert.True(renameChange.TryGetThird(out var renameFile));
+        Assert.Equal(new Uri("file:///c:/Second/Component3.razor"), renameFile.OldUri);
+        Assert.Equal(new Uri("file:///c:/Second/Component5.razor"), renameFile.NewUri);
+        var editChange1 = result.DocumentChanges.Value.ElementAt(1);
+        Assert.True(editChange1.TryGetFirst(out var textDocumentEdit1));
+        Assert.Equal("file:///c:/Second/Component4.razor", textDocumentEdit1.TextDocument.Uri.ToString());
+        Assert.Equal(2, textDocumentEdit1.Edits.Length);
+        var editChange2 = result.DocumentChanges.Value.ElementAt(2);
+        Assert.True(editChange2.TryGetFirst(out var textDocumentEdit2));
+        Assert.Equal("file:///c:/Second/Component4.razor", textDocumentEdit2.TextDocument.Uri.ToString());
+        Assert.Equal(2, textDocumentEdit2.Edits.Length);
+        var editChange3 = result.DocumentChanges.Value.ElementAt(3);
+        Assert.True(editChange3.TryGetFirst(out var textDocumentEdit3));
+        Assert.Equal("file:///c:/Second/Component5.razor", textDocumentEdit3.TextDocument.Uri.ToString());
+        Assert.Collection(
+            textDocumentEdit3.Edits,
+            edit =>
+            {
+                Assert.Equal("Component5", edit.NewText);
+                Assert.Equal(1, edit.Range.Start.Line);
+                Assert.Equal(1, edit.Range.Start.Character);
+                Assert.Equal(1, edit.Range.End.Line);
+                Assert.Equal(11, edit.Range.End.Character);
+            },
+            edit =>
+            {
+                Assert.Equal("Component5", edit.NewText);
+                Assert.Equal(1, edit.Range.Start.Line);
+                Assert.Equal(14, edit.Range.Start.Character);
+                Assert.Equal(1, edit.Range.End.Line);
+                Assert.Equal(24, edit.Range.End.Character);
+            });
+    }
+
     [Fact]
     public async Task Handle_Rename_FullyQualifiedAndNot()
     {
@@ -344,7 +402,7 @@ public class RenameEndpointTest : LanguageServerTestBase
         Assert.Equal(new Uri("file:///c:/Second/Component5.razor"), renameFile.NewUri);
         var editChange1 = result.DocumentChanges.Value.ElementAt(1);
         Assert.True(editChange1.TryGetFirst(out var textDocumentEdit));
-        Assert.Equal("file:///c:/Second/Component3.razor", textDocumentEdit.TextDocument.Uri.ToString());
+        Assert.Equal("file:///c:/Second/Component5.razor", textDocumentEdit.TextDocument.Uri.ToString());
         Assert.Collection(
             textDocumentEdit.Edits,
             edit =>

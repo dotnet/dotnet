@@ -68,15 +68,15 @@ internal class MonitorProjectConfigurationFilePathEndpoint : IMonitorProjectConf
 
         if (request.ConfigurationFilePath is null)
         {
-            _logger.LogInformation("'null' configuration path provided. Stopping custom configuration monitoring for project '{0}'.", request.ProjectFilePath);
-            RemoveMonitor(request.ProjectFilePath);
+            _logger.LogInformation("'null' configuration path provided. Stopping custom configuration monitoring for project '{0}'.", request.ProjectKeyId);
+            RemoveMonitor(request.ProjectKeyId);
 
             return;
         }
 
         if (!request.ConfigurationFilePath.EndsWith(_options.ProjectConfigurationFileName, StringComparison.Ordinal))
         {
-            _logger.LogError("Invalid configuration file path provided for project '{0}': '{1}'", request.ProjectFilePath, request.ConfigurationFilePath);
+            _logger.LogError("Invalid configuration file path provided for project '{0}': '{1}'", request.ProjectKeyId, request.ConfigurationFilePath);
             return;
         }
 
@@ -87,18 +87,18 @@ internal class MonitorProjectConfigurationFilePathEndpoint : IMonitorProjectConf
 
         Assumes.NotNull(configurationDirectory);
 
-        var previousMonitorExists = _outputPathMonitors.TryGetValue(request.ProjectFilePath, out var entry);
+        var previousMonitorExists = _outputPathMonitors.TryGetValue(request.ProjectKeyId, out var entry);
 
         if (normalizedConfigurationDirectory.StartsWith(normalizedWorkspaceDirectory, FilePathComparison.Instance))
         {
             if (previousMonitorExists)
             {
-                _logger.LogInformation("Configuration directory changed from external directory -> internal directory for project '{0}, terminating existing monitor'.", request.ProjectFilePath);
-                RemoveMonitor(request.ProjectFilePath);
+                _logger.LogInformation("Configuration directory changed from external directory -> internal directory for project '{0}, terminating existing monitor'.", request.ProjectKeyId);
+                RemoveMonitor(request.ProjectKeyId);
             }
             else
             {
-                _logger.LogInformation("No custom configuration directory required. The workspace directory is sufficient for '{0}'.", request.ProjectFilePath);
+                _logger.LogInformation("No custom configuration directory required. The workspace directory is sufficient for '{0}'.", request.ProjectKeyId);
             }
 
             // Configuration directory is already in the workspace directory. We already monitor everything in the workspace directory.
@@ -109,27 +109,27 @@ internal class MonitorProjectConfigurationFilePathEndpoint : IMonitorProjectConf
         {
             if (FilePathComparer.Instance.Equals(configurationDirectory, entry.ConfigurationDirectory))
             {
-                _logger.LogInformation("Already tracking configuration directory for project '{0}'.", request.ProjectFilePath);
+                _logger.LogInformation("Already tracking configuration directory for project '{0}'.", request.ProjectKeyId);
 
                 // Already tracking the requested configuration output path for this project
                 return;
             }
 
-            _logger.LogInformation("Project configuration output path has changed. Stopping existing monitor for project '{0}' so we can restart it with a new directory.", request.ProjectFilePath);
-            RemoveMonitor(request.ProjectFilePath);
+            _logger.LogInformation("Project configuration output path has changed. Stopping existing monitor for project '{0}' so we can restart it with a new directory.", request.ProjectKeyId);
+            RemoveMonitor(request.ProjectKeyId);
         }
 
         var detector = CreateFileChangeDetector();
         entry = (configurationDirectory, detector);
 
-        if (!_outputPathMonitors.TryAdd(request.ProjectFilePath, entry))
+        if (!_outputPathMonitors.TryAdd(request.ProjectKeyId, entry))
         {
             // There's a concurrent request going on for this specific project. To avoid calling "StartAsync" twice we return early.
             // Note: This is an extremely edge case race condition that should in practice never happen due to how long it takes to calculate project state changes
             return;
         }
 
-        _logger.LogInformation("Starting new configuration monitor for project '{0}' for directory '{1}'.", request.ProjectFilePath, configurationDirectory);
+        _logger.LogInformation("Starting new configuration monitor for project '{0}' for directory '{1}'.", request.ProjectKeyId, configurationDirectory);
         await entry.Detector.StartAsync(configurationDirectory, cancellationToken).ConfigureAwait(false);
 
         if (cancellationToken.IsCancellationRequested)
@@ -139,7 +139,7 @@ internal class MonitorProjectConfigurationFilePathEndpoint : IMonitorProjectConf
             return;
         }
 
-        if (!_outputPathMonitors.ContainsKey(request.ProjectFilePath))
+        if (!_outputPathMonitors.ContainsKey(request.ProjectKeyId))
         {
             // This can happen if there were multiple concurrent requests to "remove" and "update" file change detectors for the same project path.
             // In that case we need to stop the detector to ensure we don't leak.
@@ -157,10 +157,10 @@ internal class MonitorProjectConfigurationFilePathEndpoint : IMonitorProjectConf
         }
     }
 
-    private void RemoveMonitor(string projectFilePath)
+    private void RemoveMonitor(string projectKeyId)
     {
         // Should no longer monitor configuration output paths for the project
-        if (_outputPathMonitors.TryRemove(projectFilePath, out var removedEntry))
+        if (_outputPathMonitors.TryRemove(projectKeyId, out var removedEntry))
         {
             removedEntry.Detector.Stop();
         }

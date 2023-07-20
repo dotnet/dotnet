@@ -7,6 +7,7 @@ using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.ProjectSystem;
 using Microsoft.AspNetCore.Razor.Utilities;
+using Microsoft.CodeAnalysis;
 
 namespace Microsoft.AspNetCore.Razor.Serialization;
 
@@ -69,11 +70,13 @@ internal static partial class ObjectReaders
 
     public static ProjectSnapshotHandle ReadProjectSnapshotHandleFromProperties(JsonDataReader reader)
     {
-        var filePath = reader.ReadNonNullString(nameof(ProjectSnapshotHandle.FilePath));
+        var projectIdString = reader.ReadNonNullString(nameof(ProjectSnapshotHandle.ProjectId));
         var configuration = reader.ReadObjectOrNull(nameof(ProjectSnapshotHandle.Configuration), ReadConfigurationFromProperties);
         var rootNamespace = reader.ReadStringOrNull(nameof(ProjectSnapshotHandle.RootNamespace));
 
-        return new(filePath, configuration, rootNamespace);
+        var projectId = ProjectId.CreateFromSerialized(Guid.Parse(projectIdString));
+
+        return new(projectId, configuration, rootNamespace);
     }
 
     public static DocumentSnapshotHandle ReadDocumentSnapshotHandleFromProperties(JsonDataReader reader)

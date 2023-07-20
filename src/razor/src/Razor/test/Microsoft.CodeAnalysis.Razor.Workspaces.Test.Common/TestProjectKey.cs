@@ -14,7 +14,7 @@ public static class TestProjectKey
     internal static ProjectKey Create(string projectFilePath)
     {
         // Parameters here are largely useless, we just want a key
-        var hostProject = new HostProject(projectFilePath, FallbackRazorConfiguration.Latest, rootNamespace: null);
+        var hostProject = new HostProject(projectFilePath, projectFilePath, FallbackRazorConfiguration.Latest, rootNamespace: null);
         return hostProject.Key;
     }
 }

@@ -24,7 +24,7 @@
       </trans-unit>
       <trans-unit id="Generate_Event_Handler_Title">
         <source>Generate Event Handler '{0}'</source>
-        <target state="new">Generate Event Handler '{0}'</target>
+        <target state="translated">Generuj obsługę zdarzeń „{0}”</target>
         <note />
       </trans-unit>
       <trans-unit id="Invalid_Offset">

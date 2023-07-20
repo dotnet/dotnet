@@ -119,7 +119,7 @@ internal class EditorDocumentManagerListener : ProjectSnapshotChangeTrigger
                     await _joinableTaskContext.Factory.SwitchToMainThreadAsync(cancellationToken);
 
                     var document = DocumentManager.GetOrCreateDocument(
-                        key, _onChangedOnDisk, _onChangedInEditor, _onOpened, _onClosed);
+                        key, e.ProjectKey.AssumeNotNull(), _onChangedOnDisk, _onChangedInEditor, _onOpened, _onClosed);
                     if (document.IsOpenInEditor)
                     {
                         _onOpened(document, EventArgs.Empty);
