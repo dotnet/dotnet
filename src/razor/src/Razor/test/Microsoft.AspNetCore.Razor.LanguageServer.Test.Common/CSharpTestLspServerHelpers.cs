@@ -99,7 +99,7 @@ internal class CSharpTestLspServerHelpers
             assemblyName: "TestProject.dll",
             language: LanguageNames.CSharp,
             filePath: @"C:\TestSolution\TestProject.csproj",
-            metadataReferences: metadataReferences);
+            metadataReferences: metadataReferences).WithCompilationOutputInfo(new CompilationOutputInfo().WithAssemblyPath(@"C:\TestSolution\obj\TestProject.dll"));
 
         var solutionInfo = SolutionInfo.Create(
             id: SolutionId.CreateNewId("TestSolution"),

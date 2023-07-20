@@ -262,6 +262,11 @@ internal class RazorLanguageServerClient : ILanguageClient, ILanguageClientCusto
         {
             logging.AddFilter<LogHubLoggerProvider>(level => true);
             logging.AddProvider(_loggerProvider);
+
+            if (_outputWindowLogger is not null)
+            {
+                logging.AddProvider(new RazorOutputWindowLoggerProvider(_outputWindowLogger));
+            }
         });
 
         if (_vsHostWorkspaceServicesProvider is not null)
@@ -306,7 +311,7 @@ internal class RazorLanguageServerClient : ILanguageClient, ILanguageClientCusto
         {
             var parameter = new MonitorProjectConfigurationFilePathParams()
             {
-                ProjectFilePath = args.ProjectFilePath,
+                ProjectKeyId = args.ProjectKey.Id,
                 ConfigurationFilePath = args.ConfigurationFilePath,
             };
 

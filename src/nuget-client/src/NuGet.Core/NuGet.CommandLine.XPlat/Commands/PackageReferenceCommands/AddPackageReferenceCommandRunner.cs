@@ -186,14 +186,14 @@ namespace NuGet.CommandLine.XPlat
                 .Result
                 .CompatibilityCheckResults
                 .Where(t => t.Success)
-                .Select(t => t.Graph.Framework), NuGetFrameworkFullComparer.Instance);
+                .Select(t => t.Graph.Framework), new NuGetFrameworkFullComparer());
 
             if (packageReferenceArgs.Frameworks?.Any() == true)
             {
                 // If the user has specified frameworks then we intersect that with the compatible frameworks.
                 var userSpecifiedFrameworkSet = new HashSet<NuGetFramework>(
                     userSpecifiedFrameworks,
-                    NuGetFrameworkFullComparer.Instance);
+                    new NuGetFrameworkFullComparer());
 
                 compatibleFrameworks.IntersectWith(userSpecifiedFrameworkSet);
             }
@@ -406,7 +406,7 @@ namespace NuGet.CommandLine.XPlat
                 // If the user specified frameworks then we get the flattened graphs  only from the compatible frameworks.
                 var userSpecifiedFrameworkSet = new HashSet<NuGetFramework>(
                     UserSpecifiedFrameworks,
-                    NuGetFrameworkFullComparer.Instance);
+                    new NuGetFrameworkFullComparer());
 
                 restoreGraphs = restoreGraphs
                     .Where(r => userSpecifiedFrameworkSet.Contains(r.Framework));

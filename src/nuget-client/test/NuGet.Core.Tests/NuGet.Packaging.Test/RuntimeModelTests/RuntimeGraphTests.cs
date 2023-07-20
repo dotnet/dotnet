@@ -286,7 +286,7 @@ namespace NuGet.RuntimeModel.Test
         [Fact]
         public void ExpandRuntimes_UnknownRuntimeVerifySelf()
         {
-            var graph = RuntimeGraph.Empty;
+            var graph = new RuntimeGraph();
 
             graph.ExpandRuntime("x").Should().BeEquivalentTo(new[] { "x" });
         }
@@ -294,7 +294,7 @@ namespace NuGet.RuntimeModel.Test
         [Fact]
         public void ExpandRuntimes_UnknownRuntimeVerifyCompat()
         {
-            var graph = RuntimeGraph.Empty;
+            var graph = new RuntimeGraph();
 
             graph.AreCompatible("x", "x").Should().BeTrue();
         }

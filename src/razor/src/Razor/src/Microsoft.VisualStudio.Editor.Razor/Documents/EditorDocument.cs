@@ -34,6 +34,7 @@ internal sealed class EditorDocument : IDisposable
         JoinableTaskContext joinableTaskContext,
         string projectFilePath,
         string documentFilePath,
+        ProjectKey projectKey,
         TextLoader textLoader,
         FileChangeTracker fileTracker,
         ITextBuffer? textBuffer,
@@ -82,6 +83,7 @@ internal sealed class EditorDocument : IDisposable
         _joinableTaskContext = joinableTaskContext;
         ProjectFilePath = projectFilePath;
         DocumentFilePath = documentFilePath;
+        ProjectKey = projectKey;
         TextLoader = textLoader;
         _fileTracker = fileTracker;
         _changedOnDisk = changedOnDisk;
@@ -106,8 +108,6 @@ internal sealed class EditorDocument : IDisposable
             EditorTextContainer = textBuffer.AsTextContainer();
             EditorTextContainer.TextChanged += TextContainer_Changed;
         }
-
-        ProjectKey = ProjectKey.FromLegacy(ProjectFilePath);
     }
 
     public ProjectKey ProjectKey { get; }

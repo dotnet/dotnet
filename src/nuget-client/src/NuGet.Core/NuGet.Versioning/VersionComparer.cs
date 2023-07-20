@@ -12,18 +12,6 @@ namespace NuGet.Versioning
     /// </summary>
     public sealed class VersionComparer : IVersionComparer
     {
-        public static IVersionComparer Get(VersionComparison versionComparison)
-        {
-            return versionComparison switch
-            {
-                VersionComparison.Default => Default,
-                VersionComparison.Version => Version,
-                VersionComparison.VersionRelease => VersionRelease,
-                VersionComparison.VersionReleaseMetadata => VersionReleaseMetadata,
-                _ => new VersionComparer(versionComparison)
-            };
-        }
-
         private readonly VersionComparison _mode;
 
         /// <summary>
@@ -82,7 +70,7 @@ namespace NuGet.Versioning
         /// </summary>
         public static int Compare(SemanticVersion? version1, SemanticVersion? version2, VersionComparison versionComparison)
         {
-            IVersionComparer comparer = VersionComparer.Get(versionComparison);
+            IVersionComparer comparer = new VersionComparer(versionComparison);
 #pragma warning disable CS8604 // Possible null reference argument.
             // The BCL is missing nullable annotations on IComparable<T> before net5.0
             return comparer.Compare(version1, version2);

@@ -19,9 +19,9 @@ namespace Dotnet.Integration.Test
     {
         private const string _successfulAddTrustedSigner = "Successfully added a trusted {0} '{1}'.";
         private const string _successfulRemoveTrustedSigner = "Successfully removed the trusted signer '{0}'.";
-        private DotnetIntegrationTestFixture _msbuildFixture;
+        private MsbuildIntegrationTestFixture _msbuildFixture;
 
-        public DotnetTrustTests(DotnetIntegrationTestFixture fixture)
+        public DotnetTrustTests(MsbuildIntegrationTestFixture fixture)
         {
             _msbuildFixture = fixture;
         }
@@ -51,11 +51,12 @@ namespace Dotnet.Integration.Test
                 File.WriteAllText(nugetConfigPath, nugetConfigContent);
 
                 //Act
-                CommandRunnerResult result = _msbuildFixture.RunDotnetExpectSuccess(
+                CommandRunnerResult result = _msbuildFixture.RunDotnet(
                     pathContext.WorkingDirectory,
                     $"nuget trust --configfile {nugetConfigPath}");
 
                 // Assert
+                result.Success.Should().BeTrue();
                 SettingsTestUtils.RemoveWhitespace(result.Output).Should().Contain(SettingsTestUtils.RemoveWhitespace(expectedAuthorContent));
             }
         }
@@ -70,11 +71,12 @@ namespace Dotnet.Integration.Test
                 var nugetConfigPath = Path.Combine(pathContext.WorkingDirectory, nugetConfigFileName);
 
                 // Act
-                CommandRunnerResult result = _msbuildFixture.RunDotnetExpectSuccess(
+                CommandRunnerResult result = _msbuildFixture.RunDotnet(
                     pathContext.SolutionRoot,
                     $"nuget trust --configfile {nugetConfigPath}");
 
                 //// Assert
+                result.Success.Should().BeTrue();
                 result.Output.Should().Contain("There are no trusted signers.");
             }
         }
@@ -105,11 +107,12 @@ namespace Dotnet.Integration.Test
                 File.WriteAllText(nugetConfigPath, nugetConfigContent);
 
                 //Act
-                CommandRunnerResult result = _msbuildFixture.RunDotnetExpectSuccess(
+                CommandRunnerResult result = _msbuildFixture.RunDotnet(
                     pathContext.WorkingDirectory,
                     $"nuget trust list --configfile {nugetConfigPath}");
 
                 // Assert
+                result.Success.Should().BeTrue();
                 SettingsTestUtils.RemoveWhitespace(result.Output).Should().Contain(SettingsTestUtils.RemoveWhitespace(expectedAuthorContent));
             }
         }
@@ -139,11 +142,12 @@ namespace Dotnet.Integration.Test
                 File.WriteAllText(nugetConfigPath, nugetConfigContent);
 
                 //Act
-                CommandRunnerResult result = _msbuildFixture.RunDotnetExpectSuccess(
+                CommandRunnerResult result = _msbuildFixture.RunDotnet(
                     pathContext.SolutionRoot,
                     $"nuget trust list --configfile ..{Path.DirectorySeparatorChar}{nugetConfigFileName}");
 
                 // Assert
+                result.Success.Should().BeTrue();
                 SettingsTestUtils.RemoveWhitespace(result.Output).Should().Contain(SettingsTestUtils.RemoveWhitespace(expectedAuthorContent));
             }
         }
@@ -182,7 +186,7 @@ namespace Dotnet.Integration.Test
                 var allowUntruestedRootValue = allowUntrustedRoot ? "true" : "false";
 
                 // Act
-                CommandRunnerResult resultAdd = _msbuildFixture.RunDotnetExpectSuccess(
+                CommandRunnerResult resultAdd = _msbuildFixture.RunDotnet(
                     pathContext.SolutionRoot,
                     $"nuget trust author nuget {signedPackagePath}  {allowUntrustedRootArg} --configfile ..{Path.DirectorySeparatorChar}{nugetConfigFileName}");
 
@@ -239,7 +243,7 @@ namespace Dotnet.Integration.Test
                 var nugetConfigPath = Path.Combine(pathContext.WorkingDirectory, nugetConfigFileName);
 
                 // Act
-                CommandRunnerResult resultAdd = _msbuildFixture.RunDotnetExpectSuccess(
+                CommandRunnerResult resultAdd = _msbuildFixture.RunDotnet(
                     pathContext.SolutionRoot,
                     $"nuget trust author nuget {signedPackagePath} --configfile ..{Path.DirectorySeparatorChar}{nugetConfigFileName}");
 
@@ -292,7 +296,7 @@ namespace Dotnet.Integration.Test
                 var allowUntruestedRootValue = allowUntrustedRoot ? "true" : "false";
 
                 // Act
-                CommandRunnerResult resultAdd = _msbuildFixture.RunDotnetExpectSuccess(
+                CommandRunnerResult resultAdd = _msbuildFixture.RunDotnet(
                     pathContext.SolutionRoot,
                     $"nuget trust author nuget {signedPackagePath}  {allowUntrustedRootArg} --configfile {nugetConfigPath}");
 
@@ -337,7 +341,7 @@ namespace Dotnet.Integration.Test
                 var allowUntruestedRootValue = allowUntrustedRoot ? "true" : "false";
 
                 // Act
-                CommandRunnerResult resultAdd = _msbuildFixture.RunDotnetExpectSuccess(
+                CommandRunnerResult resultAdd = _msbuildFixture.RunDotnet(
                     pathContext.SolutionRoot,
                     $"nuget trust author nuget {signedPackagePath}  {allowUntrustedRootArg} --configfile {nugetConfigPath}");
 
@@ -345,11 +349,12 @@ namespace Dotnet.Integration.Test
                 resultAdd.Success.Should().BeTrue();
 
                 // Try to add same author again.
-                resultAdd = _msbuildFixture.RunDotnetExpectFailure(
+                resultAdd = _msbuildFixture.RunDotnet(
                     pathContext.SolutionRoot,
-                    $"nuget trust author nuget {signedPackagePath}  {allowUntrustedRootArg} --configfile {nugetConfigPath}");
+                    $"nuget trust author nuget {signedPackagePath}  {allowUntrustedRootArg} --configfile {nugetConfigPath}", ignoreExitCode: true);
 
                 // Main assert
+                resultAdd.Success.Should().BeFalse();
                 resultAdd.AllOutput.Should().Contain("error: A trusted signer 'nuget' already exists.");
                 resultAdd.AllOutput.Should().NotContain("--help");
             }
@@ -392,7 +397,7 @@ namespace Dotnet.Integration.Test
                 }
 
                 // Act
-                CommandRunnerResult resultAdd = _msbuildFixture.RunDotnetExpectSuccess(
+                CommandRunnerResult resultAdd = _msbuildFixture.RunDotnet(
                     pathContext.SolutionRoot,
                     $"nuget trust repository nuget {signedPackagePath}  {allowUntrustedRootArg} {ownersArgs} --configfile {nugetConfigPath}");
 
@@ -435,7 +440,7 @@ namespace Dotnet.Integration.Test
                 var nugetConfigPath = Path.Combine(pathContext.WorkingDirectory, nugetConfigFileName);
 
                 // Act
-                CommandRunnerResult resultAdd = _msbuildFixture.RunDotnetExpectSuccess(
+                CommandRunnerResult resultAdd = _msbuildFixture.RunDotnet(
                     pathContext.SolutionRoot,
                     $"nuget trust repository nuget {signedPackagePath} --configfile {nugetConfigPath}");
 
@@ -443,11 +448,12 @@ namespace Dotnet.Integration.Test
                 resultAdd.Success.Should().BeTrue();
 
                 // Try to add same repository again
-                resultAdd = _msbuildFixture.RunDotnetExpectFailure(
+                resultAdd = _msbuildFixture.RunDotnet(
                     pathContext.SolutionRoot,
-                    $"nuget trust repository nuget {signedPackagePath} --configfile {nugetConfigPath}");
+                    $"nuget trust repository nuget {signedPackagePath} --configfile {nugetConfigPath}", ignoreExitCode: true);
 
                 // Main assert
+                resultAdd.Success.Should().BeFalse();
                 resultAdd.AllOutput.Should().Contain("error: A trusted signer 'nuget' already exists.");
                 resultAdd.AllOutput.Should().NotContain("--help");
             }
@@ -480,11 +486,12 @@ namespace Dotnet.Integration.Test
                 var authorName = "MyCompanyCert";
 
                 // Act
-                CommandRunnerResult result = _msbuildFixture.RunDotnetExpectSuccess(
+                CommandRunnerResult result = _msbuildFixture.RunDotnet(
                     pathContext.SolutionRoot,
                     $"nuget trust certificate {authorName} {certFingerprint} {allowUntrustedRootArg}  --algorithm SHA256 --configfile {nugetConfigPath}");
 
                 // Assert
+                result.Success.Should().BeTrue();
                 result.AllOutput.Should().Contain(string.Format(CultureInfo.CurrentCulture, _successfulAddTrustedSigner, "author", authorName));
 
                 string expectedResult = SettingsTestUtils.RemoveWhitespace($@"<?xml version=""1.0"" encoding=""utf-8""?>
@@ -527,19 +534,21 @@ namespace Dotnet.Integration.Test
                 var authorName = "MyCompanyCert";
 
                 // Act
-                CommandRunnerResult result = _msbuildFixture.RunDotnetExpectSuccess(
+                CommandRunnerResult result = _msbuildFixture.RunDotnet(
                     pathContext.SolutionRoot,
                     $"nuget trust certificate {authorName} {certFingerprint} {allowUntrustedRootArg}  --algorithm SHA256 --configfile {nugetConfigPath}");
 
                 // Assert
+                result.Success.Should().BeTrue();
                 result.AllOutput.Should().Contain(string.Format(CultureInfo.CurrentCulture, _successfulAddTrustedSigner, "author", authorName));
 
                 // Try to add same certificate fingerprint should fail
-                result = _msbuildFixture.RunDotnetExpectFailure(
+                result = _msbuildFixture.RunDotnet(
                     pathContext.SolutionRoot,
-                    $"nuget trust certificate {authorName} {certFingerprint} {allowUntrustedRootArg}  --algorithm SHA256 --configfile {nugetConfigPath}");
+                    $"nuget trust certificate {authorName} {certFingerprint} {allowUntrustedRootArg}  --algorithm SHA256 --configfile {nugetConfigPath}", ignoreExitCode: true);
 
                 // Main assert
+                result.Success.Should().BeFalse();
                 result.AllOutput.Should().Contain("The certificate finger you're trying to add is already in the certificate fingerprint list");
                 result.AllOutput.Should().NotContain("--help");
             }
@@ -578,7 +587,7 @@ namespace Dotnet.Integration.Test
                 var authorName = "MyCompanyCert";
 
                 // Act
-                CommandRunnerResult resultAdd = _msbuildFixture.RunDotnetExpectSuccess(
+                CommandRunnerResult resultAdd = _msbuildFixture.RunDotnet(
                     pathContext.SolutionRoot,
                     $"nuget trust certificate {authorName} {certFingerprint} {allowUntrustedRootArg}  --algorithm SHA256 --configfile {nugetConfigPath}");
 
@@ -628,7 +637,7 @@ namespace Dotnet.Integration.Test
                 var nugetConfigPath = Path.Combine(pathContext.WorkingDirectory, nugetConfigFileName);
 
                 // Act
-                CommandRunnerResult resultSync = _msbuildFixture.RunDotnetExpectSuccess(
+                CommandRunnerResult resultSync = _msbuildFixture.RunDotnet(
                     pathContext.SolutionRoot,
                     $"nuget trust remove {repositoryName} --configfile {nugetConfigPath}");
 
@@ -673,7 +682,7 @@ namespace Dotnet.Integration.Test
                 var nugetConfigPath = Path.Combine(pathContext.WorkingDirectory, nugetConfigFileName);
 
                 // Act
-                CommandRunnerResult resultSync = _msbuildFixture.RunDotnetExpectSuccess(
+                CommandRunnerResult resultSync = _msbuildFixture.RunDotnet(
                     pathContext.SolutionRoot,
                     $"nuget trust remove {repositoryWrongName} --configfile {nugetConfigPath}");
 

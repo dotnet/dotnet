@@ -38,9 +38,10 @@ namespace Msbuild.Integration.Test
                     try
                     {
                         var result = CommandRunner.Run(
-                            filename: msbuild,
+                            process: msbuild,
                             workingDirectory: Environment.CurrentDirectory,
-                            arguments: "-help");
+                            arguments: "-help",
+                            waitForExit: true);
                         if (result.Success)
                         {
                             return msbuild;
@@ -58,9 +59,10 @@ namespace Msbuild.Integration.Test
                 {
                     string vswherePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86), "Microsoft Visual Studio", "Installer", "vswhere.exe");
 
-                    CommandRunnerResult result = CommandRunner.Run(filename: vswherePath,
+                    CommandRunnerResult result = CommandRunner.Run(process: vswherePath,
                         workingDirectory: Environment.CurrentDirectory,
-                        arguments: "-latest -prerelease -requires Microsoft.Component.MSBuild -find MSBuild\\**\\Bin\\MSBuild.exe");
+                        arguments: "-latest -prerelease -requires Microsoft.Component.MSBuild -find MSBuild\\**\\Bin\\MSBuild.exe",
+                        waitForExit: true);
 
                     if (!result.Success)
                     {
@@ -106,6 +108,7 @@ namespace Msbuild.Integration.Test
             var result = CommandRunner.Run(_msbuildPath.Value,
                 workingDirectory,
                 $"/p:NuGetRestoreTargets={nugetRestoreTargetsPath} /p:RestoreTaskAssemblyFile={restoreDllPath} /p:ImportNuGetBuildTasksPackTargetsFromSdk=true {args}",
+                waitForExit: true,
                 environmentVariables: _processEnvVars);
 
             if (!ignoreExitCode)

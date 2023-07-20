@@ -760,7 +760,6 @@ namespace NuGet.ProjectModel.Test
         }
 
         [Fact]
-        [Obsolete]
         public void FrameworkRuntimePairCloneTest()
         {
             //Setup
@@ -768,7 +767,8 @@ namespace NuGet.ProjectModel.Test
             //Act
             var clone = frp.Clone();
             //Assert
-            Assert.Same(frp, clone);
+            Assert.Equal(frp, clone);
+            Assert.False(object.ReferenceEquals(frp, clone));
         }
 
         private static CompatibilityProfile CreateCompatibilityProfile(string name, string tfm = "net461")
@@ -786,7 +786,7 @@ namespace NuGet.ProjectModel.Test
             //Assert
             Assert.Equal(compat, clone);
             Assert.False(object.ReferenceEquals(compat, clone));
-            Assert.Same(compat.RestoreContexts[0], clone.RestoreContexts[0]); // FRP is immutable so the instance is reused
+            Assert.False(object.ReferenceEquals(compat.RestoreContexts[0], clone.RestoreContexts[0]));
 
             // Act - Change the list of compat
             compat.RestoreContexts.Add(CreateFrameworkRuntimePair(rid: "win10-x64"));

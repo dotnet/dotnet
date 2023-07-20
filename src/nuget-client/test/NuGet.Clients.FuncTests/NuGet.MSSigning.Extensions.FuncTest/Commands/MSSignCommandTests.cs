@@ -193,7 +193,8 @@ namespace NuGet.MSSigning.Extensions.FuncTest.Commands
                 var result = CommandRunner.Run(
                     _nugetExePath,
                     test.Directory,
-                    command);
+                    command,
+                    waitForExit: true);
 
                 result.Success.Should().BeTrue();
                 result.AllOutput.Should().Contain(_noTimestamperWarningCode);
@@ -215,7 +216,8 @@ namespace NuGet.MSSigning.Extensions.FuncTest.Commands
                 var result = CommandRunner.Run(
                     _nugetExePath,
                     test.Directory,
-                    command);
+                    command,
+                    waitForExit: true);
 
                 result.Success.Should().BeTrue();
                 result.AllOutput.Should().NotContain(_noTimestamperWarningCode);
@@ -236,7 +238,8 @@ namespace NuGet.MSSigning.Extensions.FuncTest.Commands
                 var result = CommandRunner.Run(
                     _nugetExePath,
                     test.Directory,
-                    command);
+                    command,
+                    waitForExit: true);
 
                 result.Success.Should().BeTrue();
                 result.AllOutput.Should().Contain(_noTimestamperWarningCode);
@@ -244,7 +247,8 @@ namespace NuGet.MSSigning.Extensions.FuncTest.Commands
                 result = CommandRunner.Run(
                     _nugetExePath,
                     test.Directory,
-                    command);
+                    command,
+                    waitForExit: true);
 
                 result.Success.Should().BeFalse();
                 result.AllOutput.Should().Contain(_noTimestamperWarningCode);
@@ -267,7 +271,8 @@ namespace NuGet.MSSigning.Extensions.FuncTest.Commands
                 var result = CommandRunner.Run(
                     _nugetExePath,
                     test.Directory,
-                    command);
+                    command,
+                    waitForExit: true);
 
                 result.Success.Should().BeTrue();
                 result.AllOutput.Should().Contain(_noTimestamperWarningCode);
@@ -275,7 +280,8 @@ namespace NuGet.MSSigning.Extensions.FuncTest.Commands
                 result = CommandRunner.Run(
                     _nugetExePath,
                     test.Directory,
-                    commandWithOverwrite);
+                    commandWithOverwrite,
+                    waitForExit: true);
 
                 result.Success.Should().BeTrue();
                 result.AllOutput.Should().Contain(_noTimestamperWarningCode);

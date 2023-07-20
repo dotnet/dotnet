@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Serialization;
 using Microsoft.AspNetCore.Razor.Serialization.Converters;
 using Microsoft.AspNetCore.Razor.Test.Common;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Newtonsoft.Json;
 using Xunit;
@@ -31,8 +32,9 @@ public class ProjectSnapshotHandleSerializationTest : TestBase
     public void ProjectSnapshotHandleJsonConverter_Serialization_CanKindaRoundTrip()
     {
         // Arrange
+        var projectId = ProjectId.CreateNewId();
         var snapshot = new ProjectSnapshotHandle(
-            "Test.csproj",
+            projectId,
             new ProjectSystemRazorConfiguration(
                 RazorLanguageVersion.Version_1_1,
                 "Test",
@@ -48,7 +50,7 @@ public class ProjectSnapshotHandleSerializationTest : TestBase
         var obj = JsonConvert.DeserializeObject<ProjectSnapshotHandle>(json, _converters);
 
         // Assert
-        Assert.Equal(snapshot.FilePath, obj.FilePath);
+        Assert.Equal(snapshot.ProjectId, obj.ProjectId);
         Assert.Equal(snapshot.Configuration.ConfigurationName, obj.Configuration.ConfigurationName);
         Assert.Collection(
             snapshot.Configuration.Extensions.OrderBy(e => e.ExtensionName),
@@ -62,14 +64,15 @@ public class ProjectSnapshotHandleSerializationTest : TestBase
     public void ProjectSnapshotHandleJsonConverter_SerializationWithNulls_CanKindaRoundTrip()
     {
         // Arrange
-        var snapshot = new ProjectSnapshotHandle("Test.csproj", null, null);
+        var projectId = ProjectId.CreateNewId();
+        var snapshot = new ProjectSnapshotHandle(projectId, null, null);
 
         // Act
         var json = JsonConvert.SerializeObject(snapshot, _converters);
         var obj = JsonConvert.DeserializeObject<ProjectSnapshotHandle>(json, _converters);
 
         // Assert
-        Assert.Equal(snapshot.FilePath, obj.FilePath);
+        Assert.Equal(snapshot.ProjectId, obj.ProjectId);
         Assert.Null(obj.Configuration);
         Assert.Null(obj.RootNamespace);
     }

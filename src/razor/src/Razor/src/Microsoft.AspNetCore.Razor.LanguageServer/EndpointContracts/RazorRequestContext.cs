@@ -12,6 +12,11 @@ internal readonly struct RazorRequestContext
     public readonly IRazorLogger Logger;
     public readonly ILspServices LspServices;
 
+#if DEBUG
+    public readonly string? LspMethodName;
+    public readonly Uri? Uri;
+#endif
+
     public RazorRequestContext(
         VersionedDocumentContext? documentContext,
         IRazorLogger logger,
@@ -22,11 +27,28 @@ internal readonly struct RazorRequestContext
         Logger = logger;
     }
 
+#if DEBUG
+    public RazorRequestContext(
+        VersionedDocumentContext? documentContext,
+        IRazorLogger logger,
+        ILspServices lspServices,
+        string lspMethodName,
+        Uri? uri) : this(documentContext, logger, lspServices)
+    {
+        LspMethodName = lspMethodName;
+        Uri = uri;
+    }
+#endif
+
     public VersionedDocumentContext GetRequiredDocumentContext()
     {
         if (DocumentContext is null)
         {
-            throw new ArgumentNullException(nameof(DocumentContext));
+            throw new ArgumentNullException(nameof(DocumentContext)
+#if DEBUG
+                , $"Could not find a document context for '{LspMethodName}' on '{Uri}'"
+#endif
+                );
         }
 
         return DocumentContext;

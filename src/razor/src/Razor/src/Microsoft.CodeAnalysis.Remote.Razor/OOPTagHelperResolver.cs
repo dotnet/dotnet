@@ -115,12 +115,12 @@ internal class OOPTagHelperResolver : TagHelperResolver
             return null;
         }
 
-        if (!_resultCache.TryGetId(projectSnapshot.FilePath, out var lastResultId))
+        if (!_resultCache.TryGetId(workspaceProject.Id, out var lastResultId))
         {
             lastResultId = -1;
         }
 
-        var projectHandle = new ProjectSnapshotHandle(projectSnapshot.FilePath, projectSnapshot.Configuration, projectSnapshot.RootNamespace);
+        var projectHandle = new ProjectSnapshotHandle(workspaceProject.Id, projectSnapshot.Configuration, projectSnapshot.RootNamespace);
         var result = await remoteClient.TryInvokeAsync<IRemoteTagHelperProviderService, TagHelperDeltaResult>(
             workspaceProject.Solution,
             (service, solutionInfo, innerCancellationToken) => service.GetTagHelpersDeltaAsync(solutionInfo, projectHandle, factory?.GetType().AssemblyQualifiedName, lastResultId, innerCancellationToken),
@@ -132,19 +132,18 @@ internal class OOPTagHelperResolver : TagHelperResolver
             return null;
         }
 
-        var tagHelpers = ProduceTagHelpersFromDelta(projectSnapshot.FilePath, lastResultId, result.Value);
+        var tagHelpers = ProduceTagHelpersFromDelta(workspaceProject.Id, lastResultId, result.Value);
 
         return new TagHelperResolutionResult(tagHelpers);
     }
 
     // Protected virtual for testing
-    protected virtual ImmutableArray<TagHelperDescriptor> ProduceTagHelpersFromDelta(
-        string projectFilePath, int lastResultId, TagHelperDeltaResult deltaResult)
+    protected virtual ImmutableArray<TagHelperDescriptor> ProduceTagHelpersFromDelta(ProjectId projectId, int lastResultId, TagHelperDeltaResult deltaResult)
     {
         var fromCache = true;
         var stopWatch = Stopwatch.StartNew();
 
-        if (!_resultCache.TryGet(projectFilePath, lastResultId, out var tagHelpers))
+        if (!_resultCache.TryGet(projectId, lastResultId, out var tagHelpers))
         {
             // We most likely haven't made a request to the server yet so there's no delta to apply
             tagHelpers = ImmutableArray<TagHelperDescriptor>.Empty;
@@ -168,7 +167,7 @@ internal class OOPTagHelperResolver : TagHelperResolver
         {
             // New results, lets build a coherent TagHelper collection and then cache it
             tagHelpers = deltaResult.Apply(tagHelpers);
-            _resultCache.Set(projectFilePath, deltaResult.ResultId, tagHelpers);
+            _resultCache.Set(projectId, deltaResult.ResultId, tagHelpers);
             fromCache = false;
         }
 

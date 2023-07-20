@@ -28,7 +28,8 @@ namespace NuGet.CommandLine.Test
                 var result = CommandRunner.Run(
                     nugetexe,
                     packageDirectory,
-                    string.Join(" ", args));
+                    string.Join(" ", args),
+                    true);
 
                 // Assert
                 Assert.Equal(_failureCode, result.ExitCode);
@@ -48,7 +49,8 @@ namespace NuGet.CommandLine.Test
                 var result = CommandRunner.Run(
                     nugetexe,
                     packageDirectory,
-                    string.Join(" ", args));
+                    string.Join(" ", args),
+                    true);
 
                 // Assert
                 if (RuntimeEnvironmentHelper.IsMono)
@@ -81,7 +83,8 @@ namespace NuGet.CommandLine.Test
                 var result = CommandRunner.Run(
                     nugetExe,
                     packageFile.Directory.FullName,
-                    string.Join(" ", args));
+                    string.Join(" ", args),
+                    waitForExit: true);
 
                 if (RuntimeEnvironmentHelper.IsMono)
                 {

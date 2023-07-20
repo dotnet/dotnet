@@ -21,11 +21,17 @@ internal abstract class ComponentNodeWriter : IntermediateNodeWriter, ITemplateT
         _version = version;
     }
 
-    protected bool IsAddComponentParameterAvailable => _version.CompareTo(RazorLanguageVersion.Version_8_0) >= 0;
+    protected bool CanUseAddComponentParameter(CodeRenderingContext context)
+    {
+        return !context.Options.SuppressAddComponentParameter && _version.CompareTo(RazorLanguageVersion.Version_8_0) >= 0;
+    }
 
-    protected string AddComponentParameterMethodName => IsAddComponentParameterAvailable
-        ? ComponentsApi.RenderTreeBuilder.AddComponentParameter
-        : ComponentsApi.RenderTreeBuilder.AddAttribute;
+    protected string GetAddComponentParameterMethodName(CodeRenderingContext context)
+    {
+        return CanUseAddComponentParameter(context)
+            ? ComponentsApi.RenderTreeBuilder.AddComponentParameter
+            : ComponentsApi.RenderTreeBuilder.AddAttribute;
+    }
 
     protected abstract void BeginWriteAttribute(CodeRenderingContext context, string key);
 
@@ -178,14 +184,14 @@ internal abstract class ComponentNodeWriter : IntermediateNodeWriter, ITemplateT
             switch (parameter.Source)
             {
                 case ComponentAttributeIntermediateNode attribute:
-                    context.CodeWriter.WriteStartInstanceMethodInvocation(ComponentsApi.RenderTreeBuilder.BuilderParameter, AddComponentParameterMethodName);
+                    context.CodeWriter.WriteStartInstanceMethodInvocation(ComponentsApi.RenderTreeBuilder.BuilderParameter, GetAddComponentParameterMethodName(context));
                     context.CodeWriter.Write(parameter.SeqName);
                     context.CodeWriter.Write(", ");
 
                     context.CodeWriter.Write($"\"{attribute.AttributeName}\"");
                     context.CodeWriter.Write(", ");
 
-                    if (!IsAddComponentParameterAvailable)
+                    if (!CanUseAddComponentParameter(context))
                     {
                         context.CodeWriter.Write("(object)");
                     }
@@ -204,14 +210,14 @@ internal abstract class ComponentNodeWriter : IntermediateNodeWriter, ITemplateT
                     break;
 
                 case ComponentChildContentIntermediateNode childContent:
-                    context.CodeWriter.WriteStartInstanceMethodInvocation(ComponentsApi.RenderTreeBuilder.BuilderParameter, AddComponentParameterMethodName);
+                    context.CodeWriter.WriteStartInstanceMethodInvocation(ComponentsApi.RenderTreeBuilder.BuilderParameter, GetAddComponentParameterMethodName(context));
                     context.CodeWriter.Write(parameter.SeqName);
                     context.CodeWriter.Write(", ");
 
                     context.CodeWriter.Write($"\"{childContent.AttributeName}\"");
                     context.CodeWriter.Write(", ");
 
-                    if (!IsAddComponentParameterAvailable)
+                    if (!CanUseAddComponentParameter(context))
                     {
                         context.CodeWriter.Write("(object)");
                     }

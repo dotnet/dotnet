@@ -169,7 +169,7 @@ internal abstract class MacRazorProjectHostBase
         else if (HostProject != null && newHostProject is null)
         {
             _projectSnapshotManager.ProjectRemoved(HostProject.Key);
-            ProjectConfigurationFilePathStore.Remove(HostProject.FilePath);
+            ProjectConfigurationFilePathStore.Remove(HostProject.Key);
         }
         else
         {

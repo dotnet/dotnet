@@ -30,7 +30,8 @@ namespace NuGet.CommandLine.Test
                 var result = CommandRunner.Run(
                     NuGetExePath,
                     testFolder,
-                    $"setApiKey {testApiKey} -ConfigFile {configFile}");
+                    $"setApiKey {testApiKey} -ConfigFile {configFile}",
+                    waitForExit: true);
 
                 // Assert
                 Assert.True(0 == result.ExitCode, $"{result.Output} {result.Errors}");
@@ -90,7 +91,8 @@ namespace NuGet.CommandLine.Test
                 var result = CommandRunner.Run(
                     NuGetExePath,
                     pathContext.WorkingDirectory,
-                    $"setApiKey {testApiKey} -Source {sourceKey} -ConfigFile {settings.ConfigPath}");
+                    $"setApiKey {testApiKey} -Source {sourceKey} -ConfigFile {settings.ConfigPath}",
+                    waitForExit: true);
 
                 var iSettings = Configuration.Settings.LoadDefaultSettings(
                     Path.GetDirectoryName(settings.ConfigPath),
@@ -140,7 +142,8 @@ namespace NuGet.CommandLine.Test
                 var result = CommandRunner.Run(
                     NuGetExePath,
                     pathContext.WorkingDirectory,
-                    $"setApiKey {testApiKey} -Source {serverUri} -ConfigFile {settings.ConfigPath}");
+                    $"setApiKey {testApiKey} -Source {serverUri} -ConfigFile {settings.ConfigPath}",
+                    waitForExit: true);
 
                 var iSettings = Configuration.Settings.LoadDefaultSettings(
                     Path.GetDirectoryName(settings.ConfigPath),

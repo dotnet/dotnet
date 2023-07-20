@@ -62,7 +62,7 @@ internal static class ObjectWriters
 
     public static void WriteProperties(JsonDataWriter writer, ProjectSnapshotHandle value)
     {
-        writer.Write(nameof(value.FilePath), value.FilePath);
+        writer.Write(nameof(value.ProjectId), value.ProjectId.Id.ToString());
         writer.WriteObjectIfNotNull(nameof(value.Configuration), value.Configuration, WriteProperties);
         writer.WriteIfNotNull(nameof(value.RootNamespace), value.RootNamespace);
     }

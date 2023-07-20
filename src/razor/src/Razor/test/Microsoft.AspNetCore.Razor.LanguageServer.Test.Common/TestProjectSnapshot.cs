@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.ProjectSystem;
@@ -36,7 +37,7 @@ internal class TestProjectSnapshot : ProjectSnapshot
 
         var hostServices = TestServices.Create(workspaceServices, languageServices);
         using var workspace = TestWorkspace.Create(hostServices);
-        var hostProject = new HostProject(filePath, configuration, "TestRootNamespace");
+        var hostProject = new HostProject(filePath, Path.Combine(Path.GetDirectoryName(filePath) ?? "\\\\path", "obj"), configuration, "TestRootNamespace");
         var state = ProjectState.Create(workspace.Services, hostProject);
         foreach (var documentFilePath in documentFilePaths)
         {

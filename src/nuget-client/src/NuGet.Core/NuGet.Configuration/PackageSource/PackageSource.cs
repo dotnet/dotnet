@@ -8,7 +8,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 using NuGet.Common;
-using NuGet.Shared;
 
 namespace NuGet.Configuration
 {
@@ -38,11 +37,7 @@ namespace NuGet.Configuration
                 }
 
                 _source = value;
-
-                HashCodeCombiner hash = new();
-                hash.AddStringIgnoreCase(Name);
-                hash.AddStringIgnoreCase(_source);
-                _hashCode = hash.CombinedHash;
+                _hashCode = Name.ToUpperInvariant().GetHashCode() * 3137 + _source.ToUpperInvariant().GetHashCode();
 
                 if (value.StartsWith("https://", StringComparison.OrdinalIgnoreCase))
                 {

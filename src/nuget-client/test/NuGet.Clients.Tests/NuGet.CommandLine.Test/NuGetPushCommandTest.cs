@@ -39,7 +39,8 @@ namespace NuGet.CommandLine.Test
                 var result = CommandRunner.Run(
                     nugetexe,
                     Directory.GetCurrentDirectory(),
-                    string.Join(" ", args));
+                    string.Join(" ", args),
+                    true);
 
                 // Assert
                 Assert.Equal(0, result.ExitCode);
@@ -74,7 +75,8 @@ namespace NuGet.CommandLine.Test
                 var result = CommandRunner.Run(
                     nugetexe,
                     Directory.GetCurrentDirectory(),
-                    string.Join(" ", args));
+                    string.Join(" ", args),
+                    true);
 
                 // Assert
                 Assert.Equal(0, result.ExitCode);
@@ -112,7 +114,8 @@ namespace NuGet.CommandLine.Test
                 var result = CommandRunner.Run(
                     nugetexe,
                     packageDirectory,
-                    string.Join(" ", args));
+                    string.Join(" ", args),
+                    true);
 
                 // Assert
                 Assert.Equal(0, result.ExitCode);
@@ -151,7 +154,8 @@ namespace NuGet.CommandLine.Test
                 var result = CommandRunner.Run(
                     nugetexe,
                     packageDirectory,
-                    string.Join(" ", args));
+                    string.Join(" ", args),
+                    true);
 
                 // Assert
                 Assert.Equal(0, result.ExitCode);
@@ -187,7 +191,8 @@ namespace NuGet.CommandLine.Test
                 var result = CommandRunner.Run(
                     nugetexe,
                     packageDirectory,
-                    string.Join(" ", args));
+                    string.Join(" ", args),
+                    true);
 
                 // Assert
                 Assert.Equal(0, result.ExitCode);
@@ -215,7 +220,8 @@ namespace NuGet.CommandLine.Test
                 var result = CommandRunner.Run(
                     nugetexe,
                     Directory.GetCurrentDirectory(),
-                    string.Join(" ", args));
+                    string.Join(" ", args),
+                    true);
 
                 // Assert
                 Assert.Equal(0, result.ExitCode);
@@ -242,7 +248,8 @@ namespace NuGet.CommandLine.Test
                 var result = CommandRunner.Run(
                                 nugetexe,
                                 Directory.GetCurrentDirectory(),
-                                string.Join(" ", args));
+                                string.Join(" ", args),
+                                true);
 
                 // Assert
                 Assert.Equal(0, result.ExitCode);
@@ -281,7 +288,8 @@ namespace NuGet.CommandLine.Test
                     var result = CommandRunner.Run(
                                     nugetexe,
                                     Directory.GetCurrentDirectory(),
-                                    $"push {packageFileName} -Source {server.Uri}push");
+                                    $"push {packageFileName} -Source {server.Uri}push",
+                                    true);
                     server.Stop();
 
                     // Assert
@@ -319,7 +327,8 @@ namespace NuGet.CommandLine.Test
                     var result = CommandRunner.Run(
                         nugetexe,
                         Directory.GetCurrentDirectory(),
-                        string.Join(" ", args));
+                        string.Join(" ", args),
+                        true);
                     server.Stop();
 
                     // Assert
@@ -358,7 +367,8 @@ namespace NuGet.CommandLine.Test
                 CommandRunnerResult result = CommandRunner.Run(
                     Util.GetNuGetExePath(),
                     Directory.GetCurrentDirectory(),
-                    $"push {packageFileName} -Source {server.Uri}push -NoSymbols");
+                    $"push {packageFileName} -Source {server.Uri}push -NoSymbols",
+                    waitForExit: true);
 
                 // Assert
                 Assert.Equal(0, result.ExitCode);
@@ -403,7 +413,8 @@ namespace NuGet.CommandLine.Test
                 CommandRunnerResult result = CommandRunner.Run(
                     Util.GetNuGetExePath(),
                     Directory.GetCurrentDirectory(),
-                    $"push {packageFileName} -Source {pushUri} -SymbolSource {pushSymbolsUri} -ApiKey PushKey -SymbolApiKey PushSymbolsKey");
+                    $"push {packageFileName} -Source {pushUri} -SymbolSource {pushSymbolsUri} -ApiKey PushKey -SymbolApiKey PushSymbolsKey",
+                    waitForExit: true);
 
                 // Assert
                 Assert.True(0 == result.ExitCode, result.AllOutput);
@@ -434,7 +445,8 @@ namespace NuGet.CommandLine.Test
                 CommandRunnerResult result = CommandRunner.Run(
                     Util.GetNuGetExePath(),
                     Directory.GetCurrentDirectory(),
-                    $"push {packageFileName} -Source {pushSource} -SymbolSource {pushSymbolsSource}");
+                    $"push {packageFileName} -Source {pushSource} -SymbolSource {pushSymbolsSource}",
+                    waitForExit: true);
 
                 // Assert
                 Assert.Equal(0, result.ExitCode);
@@ -474,7 +486,8 @@ namespace NuGet.CommandLine.Test
                 CommandRunnerResult result = CommandRunner.Run(
                     Util.GetNuGetExePath(),
                     packageDirectory,
-                    $"push {packageFileName} -Source pushSource -SymbolSource pushSymbolsSource");
+                    $"push {packageFileName} -Source pushSource -SymbolSource pushSymbolsSource",
+                    waitForExit: true);
 
                 // Assert
                 Assert.Equal(0, result.ExitCode);
@@ -504,7 +517,8 @@ namespace NuGet.CommandLine.Test
                 CommandRunnerResult result = CommandRunner.Run(
                     Util.GetNuGetExePath(),
                     Directory.GetCurrentDirectory(),
-                    $"push {packageFileName} -Source {server.Uri}push -Timeout 1");
+                    $"push {packageFileName} -Source {server.Uri}push -Timeout 1",
+                    waitForExit: true);
 
                 // Assert
                 Assert.Equal(1, result.ExitCode);
@@ -550,7 +564,8 @@ namespace NuGet.CommandLine.Test
                     var result = CommandRunner.Run(
                         nugetexe,
                         Directory.GetCurrentDirectory(),
-                        string.Join(" ", args));
+                        string.Join(" ", args),
+                        true);
                     server.Stop();
 
                     // Assert
@@ -590,7 +605,8 @@ namespace NuGet.CommandLine.Test
                     var result = CommandRunner.Run(
                         nugetexe,
                         Directory.GetCurrentDirectory(),
-                        string.Join(" ", args));
+                        string.Join(" ", args),
+                        true);
                     server.Stop();
 
                     // Assert
@@ -622,7 +638,8 @@ namespace NuGet.CommandLine.Test
                     var result = CommandRunner.Run(
                         nugetexe,
                         Directory.GetCurrentDirectory(),
-                        string.Join(" ", args));
+                        string.Join(" ", args),
+                        true);
                     server.Stop();
 
                     // Assert
@@ -664,6 +681,7 @@ namespace NuGet.CommandLine.Test
                         nugetexe,
                         packageDirectory,
                         args,
+                        waitForExit: true,
                         timeOutInMilliseconds: 10000);
                     server.Stop();
 
@@ -718,6 +736,7 @@ namespace NuGet.CommandLine.Test
                         nugetexe,
                         packageDirectory,
                         args,
+                        waitForExit: true,
                         timeOutInMilliseconds: 10000,
                         inputAction: (w) =>
                         {
@@ -797,6 +816,7 @@ namespace NuGet.CommandLine.Test
                         nugetexe,
                         packageDirectory,
                         args,
+                        waitForExit: true,
                         timeOutInMilliseconds: 10000,
                         inputAction: (w) =>
                         {
@@ -864,6 +884,7 @@ namespace NuGet.CommandLine.Test
                         nugetexe,
                         packageDirectory,
                         args,
+                        waitForExit: true,
                         timeOutInMilliseconds: 10000);
                     server.Stop();
 
@@ -907,6 +928,7 @@ namespace NuGet.CommandLine.Test
                         nugetexe,
                         packageDirectory,
                         args,
+                        waitForExit: true,
                         timeOutInMilliseconds: 10000);
                     server.Stop();
 
@@ -964,6 +986,7 @@ namespace NuGet.CommandLine.Test
                         nugetexe,
                         packageDirectory,
                         args,
+                        waitForExit: true,
                         timeOutInMilliseconds: 10000,
                         inputAction: (w) =>
                         {
@@ -1028,6 +1051,7 @@ namespace NuGet.CommandLine.Test
                         nugetexe,
                         packageDirectory,
                         args,
+                        waitForExit: true,
                         timeOutInMilliseconds: 10000,
                         inputAction: (w) =>
                         {
@@ -1096,6 +1120,7 @@ namespace NuGet.CommandLine.Test
                         nugetexe,
                         packageDirectory,
                         args,
+                        waitForExit: true,
                         timeOutInMilliseconds: 10000,
                         inputAction: (w) =>
                         {
@@ -1158,6 +1183,7 @@ namespace NuGet.CommandLine.Test
                         nugetexe,
                         packageDirectory,
                         args,
+                        waitForExit: true,
                         timeOutInMilliseconds: 10000,
                         inputAction: (w) =>
                         {
@@ -1229,6 +1255,7 @@ namespace NuGet.CommandLine.Test
                         nugetexe,
                         packageDirectory,
                         args,
+                        waitForExit: true,
                         timeOutInMilliseconds: 10000,
                         inputAction: (w) =>
                         {
@@ -1326,7 +1353,8 @@ namespace NuGet.CommandLine.Test
                         var result = CommandRunner.Run(
                                         nugetexe,
                                         pathContext.SolutionRoot,
-                                        string.Join(" ", args));
+                                        string.Join(" ", args),
+                                        true);
                         serverV2.Stop();
                         serverV3.Stop();
 
@@ -1380,7 +1408,8 @@ namespace NuGet.CommandLine.Test
                     var result = CommandRunner.Run(
                                     nugetexe,
                                     pathContext.SolutionRoot,
-                                    $"push {packageFileName} -Source {serverV3.Uri}index.json");
+                                    $"push {packageFileName} -Source {serverV3.Uri}index.json",
+                                    true);
 
                     serverV3.Stop();
 
@@ -1446,7 +1475,8 @@ namespace NuGet.CommandLine.Test
                     var result = CommandRunner.Run(
                                     nugetexe,
                                     pathContext.SolutionRoot,
-                                    string.Join(" ", args));
+                                    string.Join(" ", args),
+                                    true);
 
                     serverV3.Stop();
 
@@ -1494,7 +1524,8 @@ namespace NuGet.CommandLine.Test
                     var result = CommandRunner.Run(
                         NuGetExePath,
                         pathContext.SolutionRoot,
-                        $"push {packageFileName} {testApiKey} -Source {server.Uri}nuget -NonInteractive");
+                        $"push {packageFileName} {testApiKey} -Source {server.Uri}nuget -NonInteractive",
+                        waitForExit: true);
 
                     server.Stop();
 
@@ -1568,7 +1599,8 @@ namespace NuGet.CommandLine.Test
                     var result = CommandRunner.Run(
                         NuGetExePath,
                         pathContext.SolutionRoot,
-                        string.Join(" ", args));
+                        string.Join(" ", args),
+                        waitForExit: true);
 
                     serverV3.Stop();
 
@@ -1655,7 +1687,8 @@ namespace NuGet.CommandLine.Test
                     var result = CommandRunner.Run(
                         NuGetExePath,
                         pathContext.SolutionRoot,
-                        string.Join(" ", args));
+                        string.Join(" ", args),
+                        waitForExit: true);
 
                     serverV3.Stop();
 
@@ -1751,7 +1784,8 @@ namespace NuGet.CommandLine.Test
                     var result = CommandRunner.Run(
                         NuGetExePath,
                         pathContext.SolutionRoot,
-                        $"push {packageFileName} -Source contoso.org -SymbolSource {pushSymbolsUri} -ConfigFile {settings.ConfigPath}");
+                        $"push {packageFileName} -Source contoso.org -SymbolSource {pushSymbolsUri} -ConfigFile {settings.ConfigPath}",
+                        waitForExit: true);
 
                     serverV3.Stop();
 
@@ -1845,7 +1879,8 @@ namespace NuGet.CommandLine.Test
                     var result = CommandRunner.Run(
                         NuGetExePath,
                         pathContext.SolutionRoot,
-                        $"push {packageFileName} -Source contoso.org -SymbolSource {pushSymbolsUri} -ConfigFile {settings.ConfigPath} -ApiKey {testApiKey}");
+                        $"push {packageFileName} -Source contoso.org -SymbolSource {pushSymbolsUri} -ConfigFile {settings.ConfigPath} -ApiKey {testApiKey}",
+                        waitForExit: true);
 
                     serverV3.Stop();
 
@@ -1940,7 +1975,8 @@ namespace NuGet.CommandLine.Test
                     var result = CommandRunner.Run(
                         NuGetExePath,
                         pathContext.SolutionRoot,
-                        $"push {packageFileName} -Source contoso.org -SymbolSource {pushSymbolsUri} -ConfigFile {settings.ConfigPath} -SymbolApiKey {testSymbolApiKey}");
+                        $"push {packageFileName} -Source contoso.org -SymbolSource {pushSymbolsUri} -ConfigFile {settings.ConfigPath} -SymbolApiKey {testSymbolApiKey}",
+                        waitForExit: true);
 
                     serverV3.Stop();
 
@@ -2031,7 +2067,8 @@ namespace NuGet.CommandLine.Test
                     var result = CommandRunner.Run(
                         NuGetExePath,
                         pathContext.SolutionRoot,
-                        $"push {packageFileName} -Source contoso.org -ConfigFile {settings.ConfigPath}");
+                        $"push {packageFileName} -Source contoso.org -ConfigFile {settings.ConfigPath}",
+                        waitForExit: true);
 
                     serverV3.Stop();
 
@@ -2116,7 +2153,8 @@ namespace NuGet.CommandLine.Test
                     var result = CommandRunner.Run(
                         NuGetExePath,
                         pathContext.SolutionRoot,
-                        $"push {packageFileName} -Source contoso.org -SymbolSource {pushSymbolsUri} -ConfigFile {settings.ConfigPath} -ApiKey {testApiKey} -SymbolApiKey {testSymbolApiKey}");
+                        $"push {packageFileName} -Source contoso.org -SymbolSource {pushSymbolsUri} -ConfigFile {settings.ConfigPath} -ApiKey {testApiKey} -SymbolApiKey {testSymbolApiKey}",
+                        waitForExit: true);
 
                     serverV3.Stop();
 
@@ -2156,7 +2194,8 @@ namespace NuGet.CommandLine.Test
                 var result = CommandRunner.Run(
                                 nugetexe,
                                 pathContext.SolutionRoot,
-                                string.Join(" ", args));
+                                string.Join(" ", args),
+                                true);
 
                 // Assert
                 Assert.True(1 == result.ExitCode, result.Output + " " + result.Errors);
@@ -2233,7 +2272,8 @@ namespace NuGet.CommandLine.Test
                     var result = CommandRunner.Run(
                                     nugetexe,
                                     Directory.GetCurrentDirectory(),
-                                    string.Join(" ", args));
+                                    string.Join(" ", args),
+                                    true);
                     server.Stop();
 
                     // Assert
@@ -2268,7 +2308,8 @@ namespace NuGet.CommandLine.Test
                 var result = CommandRunner.Run(
                                 nugetexe,
                                 Directory.GetCurrentDirectory(),
-                                string.Join(" ", args));
+                                string.Join(" ", args),
+                                true);
 
                 // Assert
                 Assert.True(
@@ -2311,7 +2352,8 @@ namespace NuGet.CommandLine.Test
                 var result = CommandRunner.Run(
                                 nugetexe,
                                 Directory.GetCurrentDirectory(),
-                                string.Join(" ", args));
+                                string.Join(" ", args),
+                                true);
 
                 // Assert
                 Assert.True(
@@ -2360,7 +2402,8 @@ namespace NuGet.CommandLine.Test
                 var result = CommandRunner.Run(
                                 nugetexe,
                                 Directory.GetCurrentDirectory(),
-                                string.Join(" ", args));
+                                string.Join(" ", args),
+                                true);
 
                 // Assert
                 Assert.True(
@@ -2397,7 +2440,8 @@ namespace NuGet.CommandLine.Test
                 var result = CommandRunner.Run(
                                 nugetexe,
                                 pathContext.SolutionRoot,
-                                string.Join(" ", args));
+                                string.Join(" ", args),
+                                true);
 
                 // Assert
                 if (RuntimeEnvironmentHelper.IsMono)
@@ -2440,9 +2484,10 @@ namespace NuGet.CommandLine.Test
                 };
 
                 CommandRunnerResult result = CommandRunner.Run(
-                                filename: nugetexe,
+                                process: nugetexe,
                                 workingDirectory: pathContext.SolutionRoot,
-                                arguments: string.Join(" ", args));
+                                arguments: string.Join(" ", args),
+                                waitForExit: true);
 
                 // Assert
                 Assert.False(
@@ -2492,7 +2537,8 @@ namespace NuGet.CommandLine.Test
             var result = CommandRunner.Run(
                             nugetexe,
                             Directory.GetCurrentDirectory(),
-                            $"push {packageFileName} -Source {server.Uri}push");
+                            $"push {packageFileName} -Source {server.Uri}push",
+                            true);
             // Assert
             result.Success.Should().BeTrue(result.AllOutput);
             result.AllOutput.Should().Contain("WARNING: You are running the 'push' operation with an 'HTTP' source");
@@ -2533,7 +2579,8 @@ namespace NuGet.CommandLine.Test
             CommandRunnerResult result = CommandRunner.Run(
                 Util.GetNuGetExePath(),
                 Directory.GetCurrentDirectory(),
-                $"push {packageFileName} -Source {pushUri} -SymbolSource {pushSymbolsUri} -ApiKey PushKey -SymbolApiKey PushSymbolsKey");
+                $"push {packageFileName} -Source {pushUri} -SymbolSource {pushSymbolsUri} -ApiKey PushKey -SymbolApiKey PushSymbolsKey",
+                waitForExit: true);
 
             // Assert
             result.Success.Should().BeTrue(because: result.AllOutput);
@@ -2611,7 +2658,8 @@ namespace NuGet.CommandLine.Test
                         var result = CommandRunner.Run(
                                         nugetexe,
                                         pathContext.SolutionRoot,
-                                        string.Join(" ", args));
+                                        string.Join(" ", args),
+                                        true);
 
                         // Assert
                         result.Success.Should().BeTrue(result.AllOutput);

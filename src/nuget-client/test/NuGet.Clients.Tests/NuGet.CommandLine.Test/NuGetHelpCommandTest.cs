@@ -37,7 +37,8 @@ namespace NuGet.CommandLine.Test
             CommandRunnerResult r = CommandRunner.Run(
                 nugetexe,
                 Directory.GetCurrentDirectory(),
-                "help " + command);
+                "help " + command,
+                waitForExit: true);
 
             // Assert
             Assert.True(0 == r.ExitCode, r.Output + Environment.NewLine + r.Errors);
@@ -54,7 +55,8 @@ namespace NuGet.CommandLine.Test
             CommandRunnerResult r = CommandRunner.Run(
                 nugetexe,
                 Directory.GetCurrentDirectory(),
-                "help spec");
+                "help spec",
+                waitForExit: true);
 
             // Assert
             Assert.Equal(0, r.ExitCode);
@@ -77,7 +79,8 @@ namespace NuGet.CommandLine.Test
             CommandRunnerResult r = CommandRunner.Run(
                 nugetexe,
                 Directory.GetCurrentDirectory(),
-                "help help -ForceEnglishOutput");
+                "help help -ForceEnglishOutput",
+                waitForExit: true);
 
             // Assert
             Assert.Equal(0, r.ExitCode);

@@ -22,7 +22,8 @@ namespace NuGet.CommandLine.FuncTest.Commands
                 CommandRunner.Run(
                     nugetexe,
                     config.WorkingDirectory,
-                    $"source add -name mockSource -source {server.Uri}v3/index.json -configfile {config.NuGetConfig}");
+                    $"source add -name mockSource -source {server.Uri}v3/index.json -configfile {config.NuGetConfig}",
+                    waitForExit: true);
 
                 string index = $@"
                 {{
@@ -109,7 +110,8 @@ namespace NuGet.CommandLine.FuncTest.Commands
                 CommandRunnerResult result = CommandRunner.Run(
                     nugetexe,
                     config.WorkingDirectory,
-                    string.Join(" ", args));
+                    string.Join(" ", args),
+                    waitForExit: true);
 
                 server.Stop();
 
@@ -131,7 +133,8 @@ namespace NuGet.CommandLine.FuncTest.Commands
                 CommandRunner.Run(
                     nugetexe,
                     config.WorkingDirectory,
-                    $"source add -name mockSource -source {server.Uri}v3/index.json -configfile {config.NuGetConfig}");
+                    $"source add -name mockSource -source {server.Uri}v3/index.json -configfile {config.NuGetConfig}",
+                    waitForExit: true);
 
                 string index = $@"
                 {{
@@ -220,7 +223,8 @@ namespace NuGet.CommandLine.FuncTest.Commands
                 CommandRunnerResult result = CommandRunner.Run(
                     nugetexe,
                     config.WorkingDirectory,
-                    string.Join(" ", args));
+                    string.Join(" ", args),
+                    waitForExit: true);
 
                 server.Stop();
 
@@ -246,7 +250,8 @@ namespace NuGet.CommandLine.FuncTest.Commands
                 CommandRunner.Run(
                     nugetexe,
                     config.WorkingDirectory,
-                    $"source add -name mockSource -source {server.Uri}v3/index.json -configfile {config.NuGetConfig}");
+                    $"source add -name mockSource -source {server.Uri}v3/index.json -configfile {config.NuGetConfig}",
+                    waitForExit: true);
 
                 string index = $@"
                 {{
@@ -335,7 +340,8 @@ namespace NuGet.CommandLine.FuncTest.Commands
                 CommandRunnerResult result = CommandRunner.Run(
                     nugetexe,
                     config.WorkingDirectory,
-                    string.Join(" ", args));
+                    string.Join(" ", args),
+                    waitForExit: true);
 
                 server.Stop();
 
@@ -361,7 +367,8 @@ namespace NuGet.CommandLine.FuncTest.Commands
                 CommandRunner.Run(
                     nugetexe,
                     config.WorkingDirectory,
-                    $"source add -name mockSource -source {server.Uri}v3/index.json -configfile {config.NuGetConfig}");
+                    $"source add -name mockSource -source {server.Uri}v3/index.json -configfile {config.NuGetConfig}",
+                    waitForExit: true);
 
                 string index = $@"
                 {{
@@ -450,7 +457,8 @@ namespace NuGet.CommandLine.FuncTest.Commands
                 CommandRunnerResult result = CommandRunner.Run(
                     nugetexe,
                     config.WorkingDirectory,
-                    string.Join(" ", args));
+                    string.Join(" ", args),
+                    waitForExit: true);
 
                 server.Stop();
 
@@ -476,7 +484,8 @@ namespace NuGet.CommandLine.FuncTest.Commands
                 CommandRunner.Run(
                     nugetexe,
                     config.WorkingDirectory,
-                    $"source add -name mockSource -source {server.Uri}v3/index.json -configfile {config.NuGetConfig}");
+                    $"source add -name mockSource -source {server.Uri}v3/index.json -configfile {config.NuGetConfig}",
+                    waitForExit: true);
 
                 string index = $@"
                 {{
@@ -617,7 +626,8 @@ namespace NuGet.CommandLine.FuncTest.Commands
                 CommandRunnerResult result = CommandRunner.Run(
                     nugetexe,
                     config.WorkingDirectory,
-                    string.Join(" ", args));
+                    string.Join(" ", args),
+                    waitForExit: true);
 
                 server.Stop();
 
@@ -639,7 +649,8 @@ namespace NuGet.CommandLine.FuncTest.Commands
                 CommandRunner.Run(
                     nugetexe,
                     config.WorkingDirectory,
-                    $"source add -name mockSource -source {server.Uri}v3/index.json -configfile {config.NuGetConfig}");
+                    $"source add -name mockSource -source {server.Uri}v3/index.json -configfile {config.NuGetConfig}",
+                    waitForExit: true);
 
                 string index = $@"
                 {{
@@ -728,7 +739,8 @@ namespace NuGet.CommandLine.FuncTest.Commands
                 CommandRunnerResult result = CommandRunner.Run(
                     nugetexe,
                     config.WorkingDirectory,
-                    string.Join(" ", args));
+                    string.Join(" ", args),
+                    waitForExit: true);
 
                 server.Stop();
 
@@ -750,7 +762,8 @@ namespace NuGet.CommandLine.FuncTest.Commands
                 CommandRunner.Run(
                     nugetexe,
                     config.WorkingDirectory,
-                    $"source add -name mockSource -source {server.Uri}v3/index.json -configfile {config.NuGetConfig}");
+                    $"source add -name mockSource -source {server.Uri}v3/index.json -configfile {config.NuGetConfig}",
+                    waitForExit: true);
 
                 string index = $@"
                 {{
@@ -839,7 +852,8 @@ namespace NuGet.CommandLine.FuncTest.Commands
                 CommandRunnerResult result = CommandRunner.Run(
                     nugetexe,
                     config.WorkingDirectory,
-                    string.Join(" ", args));
+                    string.Join(" ", args),
+                    waitForExit: true);
 
                 server.Stop();
 
@@ -861,7 +875,8 @@ namespace NuGet.CommandLine.FuncTest.Commands
                 CommandRunner.Run(
                     nugetexe,
                     config.WorkingDirectory,
-                    $"source add -name mockSource -source {server.Uri}v3/index.json -configfile {config.NuGetConfig}");
+                    $"source add -name mockSource -source {server.Uri}v3/index.json -configfile {config.NuGetConfig}",
+                    waitForExit: true);
 
                 string index = $@"
                 {{
@@ -909,7 +924,8 @@ namespace NuGet.CommandLine.FuncTest.Commands
                 CommandRunnerResult result = CommandRunner.Run(
                     nugetexe,
                     config.WorkingDirectory,
-                    string.Join(" ", args));
+                    string.Join(" ", args),
+                    waitForExit: true);
 
                 server.Stop();
 
@@ -931,7 +947,8 @@ namespace NuGet.CommandLine.FuncTest.Commands
             CommandRunner.Run(
                 nugetexe,
                 config.WorkingDirectory,
-                $"source add -name mockSource -source {server.Uri}v3/index.json -configfile {config.NuGetConfig}");
+                $"source add -name mockSource -source {server.Uri}v3/index.json -configfile {config.NuGetConfig}",
+                waitForExit: true);
 
             string index = $@"
                 {{
@@ -979,7 +996,8 @@ namespace NuGet.CommandLine.FuncTest.Commands
             CommandRunnerResult result = CommandRunner.Run(
                 nugetexe,
                 config.WorkingDirectory,
-                string.Join(" ", args));
+                string.Join(" ", args),
+                waitForExit: true);
 
             server.Stop();
 
@@ -1002,12 +1020,14 @@ namespace NuGet.CommandLine.FuncTest.Commands
             CommandRunner.Run(
                 nugetexe,
                 config.WorkingDirectory,
-                $"source add -name mockSource -source {server1.Uri}v3/index.json -configfile {config.NuGetConfig}");
+                $"source add -name mockSource -source {server1.Uri}v3/index.json -configfile {config.NuGetConfig}",
+                waitForExit: true);
 
             CommandRunner.Run(
                 nugetexe,
                 config.WorkingDirectory,
-                $"source add -name mockSource -source {server2.Uri}v3/index.json -configfile {config.NuGetConfig}");
+                $"source add -name mockSource -source {server2.Uri}v3/index.json -configfile {config.NuGetConfig}",
+                waitForExit: true);
 
             string index = $@"
                 {{
@@ -1090,7 +1110,8 @@ namespace NuGet.CommandLine.FuncTest.Commands
             CommandRunnerResult result = CommandRunner.Run(
                 nugetexe,
                 config.WorkingDirectory,
-                string.Join(" ", args));
+                string.Join(" ", args),
+                waitForExit: true);
 
             server1.Stop();
             server2.Stop();

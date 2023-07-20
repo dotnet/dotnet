@@ -206,7 +206,7 @@ namespace NuGet.Commands
 
                 if (copyToOutput)
                 {
-                    string destination;
+                    string destination = null;
 
                     if (flatten)
                     {
@@ -216,7 +216,7 @@ namespace NuGet.Commands
                     {
                         // Find path relative to the TxM
                         // Ex: contentFiles/cs/net45/config/config.xml -> config/config.xml
-                        destination = GetContentFileFolderRelativeToFramework(file.AsSpan());
+                        destination = GetContentFileFolderRelativeToFramework(file);
                     }
 
                     if (isPP)
@@ -231,8 +231,8 @@ namespace NuGet.Commands
                 // Add the pp transform file if one exists
                 if (isPP)
                 {
-                    var destination = GetContentFileFolderRelativeToFramework(
-                        lockFileItem.Path.AsSpan().Slice(0, lockFileItem.Path.Length - 3));
+                    var destination = lockFileItem.Path.Substring(0, lockFileItem.Path.Length - 3);
+                    destination = GetContentFileFolderRelativeToFramework(destination);
 
                     lockFileItem.PPOutputPath = destination;
                 }
@@ -259,36 +259,17 @@ namespace NuGet.Commands
         // Find path relative to the TxM
         // Ex: contentFiles/cs/net45/config/config.xml -> config/config.xml
         // Ex: contentFiles/any/any/config/config.xml -> config/config.xml
-        internal static string GetContentFileFolderRelativeToFramework(ReadOnlySpan<char> itemPath)
+        private static string GetContentFileFolderRelativeToFramework(string itemPath)
         {
-            ReadOnlySpan<char> span = itemPath;
+            var parts = itemPath.Split('/');
 
-            int found = 0;
-
-            while (true)
+            if (parts.Length > 3)
             {
-                int slashIndex = span.IndexOf('/');
-
-                if (slashIndex == -1)
-                {
-                    // Didn't find enough parts
-                    break;
-                }
-
-                span = span.Slice(slashIndex + 1);
-
-                found++;
-
-                if (found == 3)
-                {
-                    // We have skipped three levels. Return what remains.
-                    return span.ToString();
-                }
+                return string.Join("/", parts.Skip(3));
             }
 
-            var path = itemPath.ToString();
-            Debug.Fail("Unable to get relative path: " + path);
-            return path;
+            Debug.Fail("Unable to get relative path: " + itemPath);
+            return itemPath;
         }
     }
 }

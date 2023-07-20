@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using NuGet.Common;
 using NuGet.Frameworks;
 using NuGet.ProjectModel;
@@ -97,7 +98,7 @@ namespace NuGet.Commands
 
             if (!frameworksByLibraryId.TryGetValue(libraryId, out ISet<NuGetFramework> frameworks))
             {
-                frameworks = new HashSet<NuGetFramework>(NuGetFrameworkFullComparer.Instance);
+                frameworks = new HashSet<NuGetFramework>(new NuGetFrameworkFullComparer());
                 frameworksByLibraryId[libraryId] = frameworks;
             }
 

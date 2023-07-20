@@ -15,6 +15,8 @@ using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Moq;
 using Xunit;
 using Xunit.Abstractions;
+using Microsoft.Extensions.Options;
+using System.Threading;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Semantic;
 
@@ -34,7 +36,8 @@ public class RazorSemanticTokensRefreshEndpointTest : TestBase
         clientSettingsManager.Setup(m => m.GetInitializeParams()).Returns(clientSettings);
         var serverClient = new TestClient();
         var errorReporter = new TestErrorReporter();
-        using var semanticTokensRefreshPublisher = new DefaultWorkspaceSemanticTokensRefreshPublisher(clientSettingsManager.Object, serverClient, errorReporter);
+        var optionsMonitor = GetOptionsMonitor();
+        using var semanticTokensRefreshPublisher = new DefaultWorkspaceSemanticTokensRefreshPublisher(clientSettingsManager.Object, serverClient, errorReporter, optionsMonitor);
         var refreshEndpoint = new RazorSemanticTokensRefreshEndpoint(semanticTokensRefreshPublisher);
         var refreshParams = new SemanticTokensRefreshParams();
         var requestContext = new RazorRequestContext();
@@ -45,6 +48,24 @@ public class RazorSemanticTokensRefreshEndpointTest : TestBase
 
         // Assert
         Assert.Equal(Methods.WorkspaceSemanticTokensRefreshName, serverClient.Requests.Single().Method);
+    }
+
+    private static RazorLSPOptionsMonitor GetOptionsMonitor()
+    {
+        var configurationSyncService = new Mock<IConfigurationSyncService>(MockBehavior.Strict);
+
+        var options = RazorLSPOptions.Default;
+        configurationSyncService
+            .Setup(c => c.GetLatestOptionsAsync(It.IsAny<CancellationToken>()))
+            .Returns(Task.FromResult<RazorLSPOptions?>(options));
+
+        var optionsMonitorCache = new OptionsCache<RazorLSPOptions>();
+
+        var optionsMonitor = TestRazorLSPOptionsMonitor.Create(
+            configurationSyncService.Object,
+            optionsMonitorCache);
+
+        return optionsMonitor;
     }
 
     private static InitializeParams GetInitializedParams(bool semanticRefreshEnabled)

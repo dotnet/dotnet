@@ -20,11 +20,11 @@ internal class RemoteTagHelperDeltaProvider
     }
 
     public TagHelperDeltaResult GetTagHelpersDelta(
-        string projectFilePath,
+        ProjectId projectId,
         int lastResultId,
         ImmutableArray<TagHelperDescriptor> currentTagHelpers)
     {
-        var cacheHit = _resultCache.TryGet(projectFilePath, lastResultId, out var cachedTagHelpers);
+        var cacheHit = _resultCache.TryGet(projectId, lastResultId, out var cachedTagHelpers);
         if (!cacheHit)
         {
             cachedTagHelpers = ImmutableArray<TagHelperDescriptor>.Empty;
@@ -40,7 +40,7 @@ internal class RemoteTagHelperDeltaProvider
             {
                 // The result actually changed, lets generate & cache a new result
                 resultId = ++_currentResultId;
-                _resultCache.Set(projectFilePath, resultId, currentTagHelpers);
+                _resultCache.Set(projectId, resultId, currentTagHelpers);
             }
             else if (cacheHit)
             {

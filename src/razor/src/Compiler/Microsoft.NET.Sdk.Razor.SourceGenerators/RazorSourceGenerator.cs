@@ -7,6 +7,7 @@ using System.Collections.Immutable;
 using System.IO;
 using System.Linq;
 using Microsoft.AspNetCore.Razor.Language;
+using Microsoft.AspNetCore.Razor.Language.Extensions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.ExternalAccess.RazorCompiler;
@@ -226,15 +227,28 @@ namespace Microsoft.NET.Sdk.Razor.SourceGenerators
                 .Where(pair => pair.Right)
                 .Select((pair, _) => pair.Left);
 
+            var isAddComponentParameterAvailable = context.MetadataReferencesProvider
+                .Where(r => r.Display is { } display && display.EndsWith("Microsoft.AspNetCore.Components.dll", StringComparison.Ordinal))
+                .Collect()
+                .Select((refs, _) =>
+                {
+                    var compilation = CSharpCompilation.Create("components", references: refs);
+                    return compilation.GetTypesByMetadataName("Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder")
+                        .Any(static (t, compilation) => t.DeclaredAccessibility == Accessibility.Public &&
+                            t.GetMembers("AddComponentParameter").Any(static m => m.DeclaredAccessibility == Accessibility.Public), compilation);
+                });
+
             IncrementalValuesProvider<(string, RazorCodeDocument)> processed(bool designTime) => (designTime ? withOptionsDesignTime : withOptions)
+                .Combine(isAddComponentParameterAvailable)
                 .Select((pair, _) =>
                 {
-                    var (((sourceItem, imports), allTagHelpers), razorSourceGeneratorOptions) = pair;
+                    var ((((sourceItem, imports), allTagHelpers), razorSourceGeneratorOptions), isAddComponentParameterAvailable) = pair;
 
                     var kind = designTime ? "DesignTime" : "Runtime";
                     RazorSourceGeneratorEventSource.Log.RazorCodeGenerateStart(sourceItem.FilePath, kind);
 
-                    var projectEngine = GetGenerationProjectEngine(allTagHelpers, sourceItem, imports, razorSourceGeneratorOptions);
+                    var projectEngine = GetGenerationProjectEngine(allTagHelpers, sourceItem, imports, razorSourceGeneratorOptions,
+                        isAddComponentParameterAvailable: isAddComponentParameterAvailable);
 
                     var codeDocument = designTime
                         ? projectEngine.ProcessDesignTime(sourceItem)

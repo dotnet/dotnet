@@ -22,7 +22,8 @@ public abstract class OmniSharpWorkspaceTestBase : OmniSharpTestBase
         AddDisposable(Workspace);
 
         var projectId = ProjectId.CreateNewId();
-        var projectInfo = ProjectInfo.Create(projectId, VersionStamp.Default, "TestProject", "TestAssembly", LanguageNames.CSharp, filePath: "/path/to/project.csproj");
+        var projectInfo = ProjectInfo.Create(projectId, VersionStamp.Default, "TestProject", "TestAssembly", LanguageNames.CSharp, filePath: "/path/to/project.csproj")
+            .WithCompilationOutputInfo(new CompilationOutputInfo().WithAssemblyPath("/path/to/obj/project.dll"));
         Workspace.AddProject(projectInfo);
         Project = Workspace.CurrentSolution.Projects.FirstOrDefault();
     }

@@ -19,6 +19,7 @@ public sealed class ProjectChangeEventProxyArgs : EventArgs
         Kind = kind;
 
         ProjectFilePath = older?.FilePath ?? newer!.FilePath;
+        IntermediateOutputPath = older?.IntermediateOutputPath ?? newer!.IntermediateOutputPath;
     }
 
     public ProjectSnapshotHandleProxy? Older { get; }
@@ -26,6 +27,8 @@ public sealed class ProjectChangeEventProxyArgs : EventArgs
     public ProjectSnapshotHandleProxy? Newer { get; }
 
     public Uri ProjectFilePath { get; }
+
+    public Uri IntermediateOutputPath { get; }
 
     public ProjectProxyChangeKind Kind { get; }
 }

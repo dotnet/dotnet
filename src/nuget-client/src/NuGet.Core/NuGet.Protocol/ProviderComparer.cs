@@ -12,9 +12,7 @@ namespace NuGet.Protocol.Core.Types
     /// </summary>
     internal class ProviderComparer : IComparer<INuGetResourceProvider>
     {
-        public static ProviderComparer Instance { get; } = new();
-
-        private ProviderComparer()
+        public ProviderComparer()
         {
         }
 

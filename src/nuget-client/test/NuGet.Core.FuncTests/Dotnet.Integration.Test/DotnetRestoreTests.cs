@@ -26,10 +26,10 @@ namespace Dotnet.Integration.Test
         private const string SignatureVerificationEnvironmentVariable = "DOTNET_NUGET_SIGNATURE_VERIFICATION";
         private const string SignatureVerificationEnvironmentVariableTypo = "DOTNET_NUGET_SIGNATURE_VERIFICATIOn";
 
-        private readonly DotnetIntegrationTestFixture _msbuildFixture;
+        private readonly MsbuildIntegrationTestFixture _msbuildFixture;
         private readonly SignCommandTestFixture _signFixture;
 
-        public DotnetRestoreTests(DotnetIntegrationTestFixture msbuildFixture, SignCommandTestFixture signFixture)
+        public DotnetRestoreTests(MsbuildIntegrationTestFixture msbuildFixture, SignCommandTestFixture signFixture)
         {
             _msbuildFixture = msbuildFixture;
             _signFixture = signFixture;
@@ -83,7 +83,7 @@ EndGlobal";
                 File.Delete(projPath);
                 File.WriteAllText(projPath, doc.ToString());
 
-                var result = _msbuildFixture.RunDotnetExpectFailure(pathContext.SolutionRoot, "msbuild proj.sln /t:restore /p:DisableImplicitFrameworkReferences=true");
+                var result = _msbuildFixture.RunDotnet(pathContext.SolutionRoot, "msbuild proj.sln /t:restore /p:DisableImplicitFrameworkReferences=true", ignoreExitCode: true);
 
                 result.ExitCode.Should().Be(1, "error text should be displayed");
                 result.AllOutput.Should().Contain($"|SOLUTION {PathUtility.EnsureTrailingSlash(pathContext.SolutionRoot)} proj .sln proj.sln {slnPath}|");
@@ -122,7 +122,7 @@ EndGlobal";
                     ProjectFileUtils.WriteXmlToFile(xml, stream);
                 }
 
-                _msbuildFixture.RestoreProjectExpectSuccess(workingDirectory, projectName);
+                _msbuildFixture.RestoreProject(workingDirectory, projectName, args: string.Empty);
             }
         }
 
@@ -161,14 +161,16 @@ EndGlobal";
                     ProjectFileUtils.WriteXmlToFile(xml, stream);
                 }
 
-                CommandRunnerResult result = _msbuildFixture.RunDotnetExpectSuccess(
+                CommandRunnerResult result = _msbuildFixture.RunDotnet(
                     workingDirectory,
                     $"restore {projectName}.csproj",
-                    environmentVariables: new Dictionary<string, string>()
+                    additionalEnvVars: new Dictionary<string, string>()
                         {
                             { EnvironmentVariableConstants.DotNetNuGetSignatureVerification, "true" }
                         }
                     );
+
+                Assert.True(result.Success);
 
                 string expectedText = "warning NU3042:";
 
@@ -238,7 +240,7 @@ EndGlobal";
                 File.WriteAllText(Path.Combine(workingDirectory, "NuGet.Config"), doc.ToString());
 
                 // first restore
-                _msbuildFixture.RestoreProjectExpectSuccess(workingDirectory, projectName);
+                _msbuildFixture.RestoreProject(workingDirectory, projectName, args: string.Empty);
 
                 var testFolder = Path.GetDirectoryName(Path.GetDirectoryName(workingDirectory));
                 var metadataFile = Path.Combine(testFolder, "globalPackages", packageX.Id.ToLower(), packageX.Version, ".nupkg.metadata");
@@ -247,7 +249,7 @@ EndGlobal";
                 var TenMinsAgo = DateTime.UtcNow.AddMinutes(-10);
                 File.SetLastAccessTimeUtc(metadataFile, TenMinsAgo);
 
-                _msbuildFixture.RestoreProjectExpectSuccess(workingDirectory, projectName);
+                _msbuildFixture.RestoreProject(workingDirectory, projectName, args: string.Empty);
 
                 var updatedAccessTime = File.GetLastAccessTimeUtc(metadataFile);
 
@@ -320,9 +322,10 @@ EndGlobal";
                 File.WriteAllText(Path.Combine(workingDirectory, "NuGet.Config"), doc.ToString());
 
                 // Act
-                var result = _msbuildFixture.RunDotnetExpectFailure(workingDirectory, "restore");
+                var result = _msbuildFixture.RunDotnet(workingDirectory, "restore", ignoreExitCode: true);
 
                 result.AllOutput.Should().Contain($"error NU3004: Package '{packageX.Id} {packageX.Version}' from source '{pathContext.PackageSource}': signatureValidationMode is set to require, so packages are allowed only if signed by trusted signers; however, this package is unsigned.");
+                result.Success.Should().BeFalse();
                 result.ExitCode.Should().Be(1, because: "error text should be displayed as restore failed");
             }
         }
@@ -391,9 +394,11 @@ EndGlobal";
                 File.WriteAllText(Path.Combine(workingDirectory, "NuGet.Config"), doc.ToString());
 
                 // Act
-                CommandRunnerResult result = _msbuildFixture.RunDotnetExpectSuccess(workingDirectory, "restore");
+                CommandRunnerResult result = _msbuildFixture.RunDotnet(workingDirectory, "restore", ignoreExitCode: true);
 
                 result.AllOutput.Should().NotContain($"error NU3004");
+                result.Success.Should().BeTrue();
+                result.ExitCode.Should().Be(0);
             }
         }
 
@@ -466,15 +471,17 @@ EndGlobal";
                 File.WriteAllText(Path.Combine(workingDirectory, "NuGet.Config"), doc.ToString());
 
                 // Act
-                CommandRunnerResult result = _msbuildFixture.RunDotnetExpectFailure(
+                CommandRunnerResult result = _msbuildFixture.RunDotnet(
                     workingDirectory, "restore",
-                    environmentVariables: new Dictionary<string, string>()
+                    ignoreExitCode: true,
+                    additionalEnvVars: new Dictionary<string, string>()
                         {
                             { envVarName, envVarValue }
                         }
                     );
 
                 result.AllOutput.Should().Contain($"error NU3004: Package '{packageX.Id} {packageX.Version}' from source '{pathContext.PackageSource}': signatureValidationMode is set to require, so packages are allowed only if signed by trusted signers; however, this package is unsigned.");
+                result.Success.Should().BeFalse(because: "error text should be displayed as restore failed");
             }
         }
 
@@ -546,15 +553,18 @@ EndGlobal";
                 File.WriteAllText(Path.Combine(workingDirectory, "NuGet.Config"), doc.ToString());
 
                 // Act
-                CommandRunnerResult result = _msbuildFixture.RunDotnetExpectSuccess(
+                CommandRunnerResult result = _msbuildFixture.RunDotnet(
                     workingDirectory, "restore",
-                    environmentVariables: new Dictionary<string, string>()
+                    ignoreExitCode: true,
+                    additionalEnvVars: new Dictionary<string, string>()
                         {
                             { envVarName, envVarValue }
                         }
                     );
 
                 result.AllOutput.Should().NotContain($"error NU3004");
+                result.Success.Should().BeTrue();
+                result.ExitCode.Should().Be(0);
             }
         }
 
@@ -626,15 +636,17 @@ EndGlobal";
                 File.WriteAllText(Path.Combine(workingDirectory, "NuGet.Config"), doc.ToString());
 
                 // Act
-                CommandRunnerResult result = _msbuildFixture.RunDotnetExpectFailure(
+                CommandRunnerResult result = _msbuildFixture.RunDotnet(
                     workingDirectory, "restore",
-                    environmentVariables: new Dictionary<string, string>()
+                    ignoreExitCode: true,
+                    additionalEnvVars: new Dictionary<string, string>()
                         {
                             { envVarName, envVarValue }
                         }
                     );
 
                 result.AllOutput.Should().Contain($"error NU3004: Package '{packageX.Id} {packageX.Version}' from source '{pathContext.PackageSource}': signatureValidationMode is set to require, so packages are allowed only if signed by trusted signers; however, this package is unsigned.");
+                result.Success.Should().BeFalse(because: "error text should be displayed as restore failed");
             }
         }
 
@@ -718,7 +730,7 @@ EndGlobal";
 
                 File.WriteAllText(configPath, doc.ToString());
 
-                _msbuildFixture.RestoreProjectExpectSuccess(workingDirectory, projectName);
+                _msbuildFixture.RestoreProject(workingDirectory, projectName, args: string.Empty);
             }
         }
 #endif //IS_SIGNING_SUPPORTED
@@ -788,15 +800,17 @@ EndGlobal";
 
                 // Act
                 var arguments = $"restore proj.sln {$"--source \"{pathContext.PackageSource}\""}" + (useStaticGraphRestore ? " /p:RestoreUseStaticGraphEvaluation=true" : string.Empty);
-                var result = _msbuildFixture.RunDotnetExpectSuccess(pathContext.SolutionRoot, arguments);
+                var result = _msbuildFixture.RunDotnet(pathContext.SolutionRoot, arguments, ignoreExitCode: true);
 
                 // Assert
+                Assert.True(result.ExitCode == 0, result.AllOutput);
                 Assert.True(2 == result.AllOutput.Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries).Length, result.AllOutput);
 
                 // Act - make sure no-op does the same thing.
-                result = _msbuildFixture.RunDotnetExpectSuccess(pathContext.SolutionRoot, arguments);
+                result = _msbuildFixture.RunDotnet(pathContext.SolutionRoot, arguments, ignoreExitCode: true);
 
                 // Assert
+                Assert.True(result.ExitCode == 0, result.AllOutput);
                 Assert.True(2 == result.AllOutput.Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries).Length, result.AllOutput);
 
             }
@@ -843,17 +857,19 @@ EndGlobal";
 
 
                 // Act
-                var result = _msbuildFixture.RunDotnetExpectSuccess(projectDirectory, $"build {projectFile1} {$"--source \"{pathContext.PackageSource}\""}");
+                var result = _msbuildFixture.RunDotnet(projectDirectory, $"build {projectFile1} {$"--source \"{pathContext.PackageSource}\""}", ignoreExitCode: true);
 
 
                 // Assert
+                Assert.True(result.ExitCode == 0, result.AllOutput);
                 Assert.Contains("Restored ", result.AllOutput);
 
                 Directory.Move(projectDirectory, movedDirectory);
 
-                result = _msbuildFixture.RunDotnetExpectSuccess(movedDirectory, $"build {movedProjectFile} --no-restore");
+                result = _msbuildFixture.RunDotnet(movedDirectory, $"build {movedProjectFile} --no-restore", ignoreExitCode: true);
 
                 // Assert
+                Assert.True(result.ExitCode == 0, result.AllOutput);
                 Assert.DoesNotContain("Restored ", result.AllOutput);
 
             }
@@ -879,7 +895,7 @@ EndGlobal";
                 File.Delete(projPath);
                 File.WriteAllText(projPath, doc.ToString());
 
-                var result = _msbuildFixture.RunDotnetExpectFailure(pathContext.SolutionRoot, $"msbuild /t:restore {projPath}");
+                var result = _msbuildFixture.RunDotnet(pathContext.SolutionRoot, $"msbuild /t:restore {projPath}", ignoreExitCode: true);
 
                 result.ExitCode.Should().Be(1, because: "error text should be displayed");
                 result.AllOutput.Should().Contain(errorText);
@@ -938,7 +954,7 @@ EndGlobal";
                 var projdir = Path.GetDirectoryName(projectA.ProjectPath);
                 var projfilename = Path.GetFileNameWithoutExtension(projectA.ProjectName);
 
-                _msbuildFixture.RestoreProjectExpectSuccess(projdir, projfilename, args);
+                _msbuildFixture.RestoreProject(projdir, projfilename, args);
                 Assert.True(File.Exists(projectA.NuGetLockFileOutputPath));
 
                 //Now set it to locked mode
@@ -948,7 +964,7 @@ EndGlobal";
                 //Act
                 //Run the restore and it should still properly restore.
                 //Assert within RestoreProject piece
-                _msbuildFixture.RestoreProjectExpectSuccess(projdir, projfilename, args);
+                _msbuildFixture.RestoreProject(projdir, projfilename, args);
                 Assert.True(File.Exists(projectA.NuGetLockFileOutputPath));
             }
         }
@@ -968,13 +984,13 @@ EndGlobal";
 </Project>";
                 File.WriteAllText(Path.Combine(pathContext.SolutionRoot, "a.csproj"), projectFileContents);
 
-                _msbuildFixture.RestoreProjectExpectSuccess(pathContext.SolutionRoot, "a", args: "--use-lock-file");
+                _msbuildFixture.RestoreProject(pathContext.SolutionRoot, "a", args: "--use-lock-file");
                 string lockFilePath = Path.Combine(pathContext.SolutionRoot, PackagesLockFileFormat.LockFileName);
                 Assert.True(File.Exists(lockFilePath));
                 Directory.Delete(Path.Combine(pathContext.SolutionRoot, "obj"), recursive: true);
 
                 // Act
-                _msbuildFixture.RestoreProjectExpectSuccess(pathContext.SolutionRoot, "a", args: "--locked-mode");
+                _msbuildFixture.RestoreProject(pathContext.SolutionRoot, "a", args: "--locked-mode");
 
                 // Assert
                 PackagesLockFile lockFile = PackagesLockFileFormat.Read(lockFilePath);
@@ -1070,7 +1086,9 @@ EndGlobal";
                 solution.Create(pathContext.SolutionRoot);
 
                 // Act
-                var result = _msbuildFixture.RunDotnetExpectSuccess(pathContext.SolutionRoot, $"restore {projectRoot.ProjectPath}");
+                var result = _msbuildFixture.RunDotnet(pathContext.SolutionRoot, $"restore {projectRoot.ProjectPath}");
+
+                result.Success.Should().BeTrue(because: result.AllOutput);
 
                 // Assert
                 projects.Should().NotBeEmpty();
@@ -1163,16 +1181,18 @@ EndGlobal";
                 }
                 projectRoot.Save();
                 var solutionPath = Path.Combine(pathContext.SolutionRoot, "solution.sln");
-                _msbuildFixture.RunDotnetExpectSuccess(pathContext.SolutionRoot, $"new sln -n solution");
+                _msbuildFixture.RunDotnet(pathContext.SolutionRoot, $"new sln -n solution");
 
                 foreach (var child in projects.Values)
                 {
-                    _msbuildFixture.RunDotnetExpectSuccess(pathContext.SolutionRoot, $"sln {solutionPath} add {child.ProjectPath}");
+                    _msbuildFixture.RunDotnet(pathContext.SolutionRoot, $"sln {solutionPath} add {child.ProjectPath}");
                 }
-                _msbuildFixture.RunDotnetExpectSuccess(pathContext.SolutionRoot, $"sln {solutionPath} add {projectRoot.ProjectPath}");
+                _msbuildFixture.RunDotnet(pathContext.SolutionRoot, $"sln {solutionPath} add {projectRoot.ProjectPath}");
 
                 // Act
-                var result = _msbuildFixture.RunDotnetExpectSuccess(pathContext.SolutionRoot, $"restore {solutionPath}");
+                var result = _msbuildFixture.RunDotnet(pathContext.SolutionRoot, $"restore {solutionPath}");
+
+                result.Success.Should().BeTrue(because: result.AllOutput);
 
                 // Assert
                 projects.Count.Should().BeGreaterThan(0);
@@ -1223,7 +1243,7 @@ EndGlobal";
                 var projdir = Path.GetDirectoryName(projectA.ProjectPath);
                 var projfilename = Path.GetFileNameWithoutExtension(projectA.ProjectName);
 
-                _msbuildFixture.RestoreProjectExpectSuccess(projdir, projfilename, args);
+                _msbuildFixture.RestoreProject(projdir, projfilename, args);
                 Assert.True(File.Exists(projectA.AssetsFileOutputPath));
 
                 var library = projectA.AssetsFile.Targets.First(e => e.RuntimeIdentifier == null).Libraries.First();
@@ -1279,9 +1299,10 @@ EndGlobal";
                 }
 
                 // Act
-                var result = _msbuildFixture.RunDotnetExpectSuccess(pathContext.SolutionRoot, $"restore {projectFile1} {$"--source \"{pathContext.PackageSource}\" /p:AutomaticallyUseReferenceAssemblyPackages=false"}");
+                var result = _msbuildFixture.RunDotnet(pathContext.SolutionRoot, $"restore {projectFile1} {$"--source \"{pathContext.PackageSource}\" /p:AutomaticallyUseReferenceAssemblyPackages=false"}", ignoreExitCode: true);
 
                 // Assert
+                result.ExitCode.Should().Be(0, because: result.AllOutput);
                 var assetsFilePath = Path.Combine(workingDirectory1, "obj", "project.assets.json");
                 File.Exists(assetsFilePath).Should().BeTrue(because: "The assets file needs to exist");
                 var assetsFile = new LockFileFormat().Read(assetsFilePath);
@@ -1325,8 +1346,9 @@ EndGlobal";
 
                 // Preconditions
                 var command = $"restore {projectFile1} {$"--source \"{pathContext.PackageSource}\" /p:AutomaticallyUseReferenceAssemblyPackages=false"}";
-                var result = _msbuildFixture.RunDotnetExpectSuccess(pathContext.SolutionRoot, command);
+                var result = _msbuildFixture.RunDotnet(pathContext.SolutionRoot, command, ignoreExitCode: true);
 
+                result.ExitCode.Should().Be(0, because: result.AllOutput);
                 var assetsFilePath = Path.Combine(workingDirectory1, "obj", "project.assets.json");
                 File.Exists(assetsFilePath).Should().BeTrue(because: "The assets file needs to exist");
                 var assetsFile = new LockFileFormat().Read(assetsFilePath);
@@ -1334,9 +1356,10 @@ EndGlobal";
                 target.Libraries.Should().ContainSingle(e => e.Name.Equals("x"));
 
                 // Act static graph restore
-                result = _msbuildFixture.RunDotnetExpectSuccess(pathContext.SolutionRoot, command + " /p:RestoreUseStaticGraphEvaluation=true");
+                result = _msbuildFixture.RunDotnet(pathContext.SolutionRoot, command + " /p:RestoreUseStaticGraphEvaluation=true", ignoreExitCode: true);
 
                 // Ensure static graph restore no-ops
+                result.ExitCode.Should().Be(0, because: result.AllOutput);
                 result.AllOutput.Should().Contain("All projects are up-to-date for restore.");
             }
         }
@@ -1354,15 +1377,15 @@ EndGlobal";
                 _msbuildFixture.CreateDotnetNewProject(testDirectory, projectName1, " classlib");
                 _msbuildFixture.CreateDotnetNewProject(testDirectory, projectName2, " console");
                 _msbuildFixture.CreateDotnetNewProject(testDirectory, projectName3, " webapp");
-                _msbuildFixture.RunDotnetExpectSuccess(testDirectory, "new sln --name test");
-                _msbuildFixture.RunDotnetExpectSuccess(testDirectory, $"sln add {projectName1}");
-                _msbuildFixture.RunDotnetExpectSuccess(testDirectory, $"sln add {projectName2}");
-                _msbuildFixture.RunDotnetExpectSuccess(testDirectory, $"sln add {projectName3}");
+                _msbuildFixture.RunDotnet(testDirectory, "new sln --name test");
+                _msbuildFixture.RunDotnet(testDirectory, $"sln add {projectName1}");
+                _msbuildFixture.RunDotnet(testDirectory, $"sln add {projectName2}");
+                _msbuildFixture.RunDotnet(testDirectory, $"sln add {projectName3}");
                 var targetPath = Path.Combine(testDirectory, "test.sln");
                 var standardDgSpecFile = Path.Combine(pathContext.WorkingDirectory, "standard.dgspec.json");
                 var staticGraphDgSpecFile = Path.Combine(pathContext.WorkingDirectory, "staticGraph.dgspec.json");
-                _msbuildFixture.RunDotnetExpectSuccess(testDirectory, $"msbuild /t:GenerateRestoreGraphFile /p:RestoreGraphOutputPath=\"{standardDgSpecFile}\" {targetPath}");
-                _msbuildFixture.RunDotnetExpectSuccess(testDirectory, $"msbuild /t:GenerateRestoreGraphFile /p:RestoreGraphOutputPath=\"{staticGraphDgSpecFile}\" /p:RestoreUseStaticGraphEvaluation=true {targetPath}");
+                _msbuildFixture.RunDotnet(testDirectory, $"msbuild /t:GenerateRestoreGraphFile /p:RestoreGraphOutputPath=\"{standardDgSpecFile}\" {targetPath}");
+                _msbuildFixture.RunDotnet(testDirectory, $"msbuild /t:GenerateRestoreGraphFile /p:RestoreGraphOutputPath=\"{staticGraphDgSpecFile}\" /p:RestoreUseStaticGraphEvaluation=true {targetPath}");
 
                 var regularDgSpec = File.ReadAllText(standardDgSpecFile);
                 var staticGraphDgSpec = File.ReadAllText(staticGraphDgSpecFile);
@@ -1421,12 +1444,14 @@ EndGlobal";
 
                 // Preconditions
                 var additionalArgs = useStaticGraphRestore ? "/p:RestoreUseStaticGraphEvaluation=true" : string.Empty;
-                var result = _msbuildFixture.RunDotnetExpectSuccess(projectDirectory, $"restore {projectFilePath} {additionalArgs}");
+                var result = _msbuildFixture.RunDotnet(projectDirectory, $"restore {projectFilePath} {additionalArgs}", ignoreExitCode: true);
+                result.Success.Should().BeTrue(because: result.AllOutput);
                 var assetsFilePath = Path.Combine(projectDirectory, "obj", "project.assets.json");
                 DateTime originalAssetsFileWriteTime = new FileInfo(assetsFilePath).LastWriteTimeUtc;
 
                 //Act
-                result = _msbuildFixture.RunDotnetExpectSuccess(projectDirectory, $"restore {projectFilePath} --force {additionalArgs}");
+                result = _msbuildFixture.RunDotnet(projectDirectory, $"restore {projectFilePath} --force {additionalArgs}", ignoreExitCode: true);
+                result.Success.Should().BeTrue(because: result.AllOutput);
                 DateTime forceAssetsFileWriteTime = new FileInfo(assetsFilePath).LastWriteTimeUtc;
 
                 forceAssetsFileWriteTime.Should().Be(originalAssetsFileWriteTime);
@@ -1502,19 +1527,21 @@ EndGlobal";
 
                 // Preconditions
                 var additionalArgs = useStaticGraphRestore ? "/p:RestoreUseStaticGraphEvaluation=true" : string.Empty;
-                var result = _msbuildFixture.RunDotnetExpectSuccess(projectDirectory, $"restore {projectFilePath} {additionalArgs}");
+                var result = _msbuildFixture.RunDotnet(projectDirectory, $"restore {projectFilePath} {additionalArgs}", ignoreExitCode: true);
+                result.Success.Should().BeTrue(because: result.AllOutput);
                 var assetsFilePath = Path.Combine(projectDirectory, "obj", "project.assets.json");
                 DateTime originalAssetsFileWriteTime = new FileInfo(assetsFilePath).LastWriteTimeUtc;
 
                 //Act
-                result = _msbuildFixture.RunDotnetExpectSuccess(projectDirectory, $"restore {projectFilePath} --force {additionalArgs}");
+                result = _msbuildFixture.RunDotnet(projectDirectory, $"restore {projectFilePath} --force {additionalArgs}", ignoreExitCode: true);
+                result.Success.Should().BeTrue(because: result.AllOutput);
                 DateTime forceAssetsFileWriteTime = new FileInfo(assetsFilePath).LastWriteTimeUtc;
 
                 forceAssetsFileWriteTime.Should().Be(originalAssetsFileWriteTime);
             }
         }
 
-        [PlatformFact(Platform.Windows, Platform.Linux)]
+        [Fact]
         public void CollectFrameworkReferences_WithTransitiveFrameworkReferences_ExcludesTransitiveFrameworkReferences()
         {
             using (SimpleTestPathContext pathContext = _msbuildFixture.CreateSimpleTestPathContext())
@@ -1539,7 +1566,8 @@ EndGlobal";
                     ProjectFileUtils.WriteXmlToFile(xml, stream);
                 }
 
-                var packResult = _msbuildFixture.RunDotnetExpectSuccess(pathContext.SolutionRoot, $"pack {libraryProjectFilePath} /p:PackageOutputPath=\"{pathContext.PackageSource}\"");
+                var packResult = _msbuildFixture.RunDotnet(pathContext.SolutionRoot, $"pack {libraryProjectFilePath} /p:PackageOutputPath=\"{pathContext.PackageSource}\"", ignoreExitCode: true);
+                packResult.Success.Should().BeTrue(because: packResult.AllOutput);
 
                 // Consumer project.
                 var consumerName = "Consumer";
@@ -1569,9 +1597,10 @@ EndGlobal";
 </Project>");
 
                 // Act
-                var buildResult = _msbuildFixture.RunDotnetExpectSuccess(pathContext.SolutionRoot, $"build {consumerProjectFilePath}");
+                var buildResult = _msbuildFixture.RunDotnet(pathContext.SolutionRoot, $"build {consumerProjectFilePath}", ignoreExitCode: true);
 
                 // Assert
+                buildResult.Success.Should().BeTrue(because: buildResult.AllOutput);
                 buildResult.AllOutput.Should().Contain("Microsoft.NETCore.App");
                 buildResult.AllOutput.Should().NotContain("Microsoft.AspNetCore.App");
             }
@@ -1600,10 +1629,11 @@ EndGlobal";
                 var solutionDirectory = pathContext.SolutionRoot;
 
                 // Act
-                CommandRunnerResult newResult = _msbuildFixture.RunDotnetExpectSuccess(solutionDirectory, "new " + template);
+                CommandRunnerResult newResult = _msbuildFixture.RunDotnet(solutionDirectory, "new " + template);
 
                 // Assert
                 // Make sure restore action was success.
+                newResult.Success.Should().BeTrue(because: newResult.AllOutput);
                 Assert.True(File.Exists(Path.Combine(solutionDirectory, "obj", "project.assets.json")));
                 // Pack doesn't work because `IsPackable` is set to false.
             }
@@ -1659,12 +1689,12 @@ EndGlobal";
 
                 var projdir = Path.GetDirectoryName(projectA.ProjectPath);
                 var projfilename = Path.GetFileNameWithoutExtension(projectA.ProjectName);
-                _msbuildFixture.RestoreProjectExpectSuccess(projdir, projfilename, args);
+                _msbuildFixture.RestoreProject(projdir, projfilename, args);
                 Assert.True(File.Exists(projectA.AssetsFileOutputPath));
 
                 projdir = Path.GetDirectoryName(projectIntermed.ProjectPath);
                 projfilename = Path.GetFileNameWithoutExtension(projectIntermed.ProjectName);
-                _msbuildFixture.RestoreProjectExpectSuccess(projdir, projfilename, args);
+                _msbuildFixture.RestoreProject(projdir, projfilename, args);
                 Assert.True(File.Exists(projectIntermed.AssetsFileOutputPath));
                 var lockFile = reader.Read(projectIntermed.AssetsFileOutputPath);
                 IList<LockFileTargetLibrary> libraries = lockFile.Targets[0].Libraries;
@@ -1672,7 +1702,7 @@ EndGlobal";
 
                 projdir = Path.GetDirectoryName(projectMain.ProjectPath);
                 projfilename = Path.GetFileNameWithoutExtension(projectMain.ProjectName);
-                _msbuildFixture.RestoreProjectExpectSuccess(projdir, projfilename, args);
+                _msbuildFixture.RestoreProject(projdir, projfilename, args);
                 Assert.True(File.Exists(projectMain.AssetsFileOutputPath));
                 lockFile = reader.Read(projectMain.AssetsFileOutputPath);
                 var errors = lockFile.LogMessages.Where(m => m.Level == LogLevel.Error);
@@ -1725,8 +1755,9 @@ EndGlobal";
                     ProjectFileUtils.WriteXmlToFile(xml, stream);
                 }
 
-                var result = _msbuildFixture.RunDotnetExpectSuccess(workingDirectory, $"restore {projectFile}");
+                var result = _msbuildFixture.RunDotnet(workingDirectory, $"restore {projectFile}", ignoreExitCode: true);
 
+                result.Success.Should().BeTrue();
                 result.AllOutput.Should().Contain(logCode);
                 result.AllOutput.Contains("X [1.0.0], X [2.0.0]");
             }
@@ -1774,8 +1805,9 @@ EndGlobal";
                     ProjectFileUtils.WriteXmlToFile(xml, stream);
                 }
 
-                var result = _msbuildFixture.RunDotnetExpectSuccess(workingDirectory, $"restore {projectFile}");
+                var result = _msbuildFixture.RunDotnet(workingDirectory, $"restore {projectFile}", ignoreExitCode: true);
 
+                result.Success.Should().BeTrue();
                 result.AllOutput.Should().Contain("NU1506");
                 result.AllOutput.Contains("X [1.0.0], X [2.0.0]");
             }
@@ -1826,8 +1858,9 @@ EndGlobal";
                     ProjectFileUtils.WriteXmlToFile(xml, stream);
                 }
 
-                var result = _msbuildFixture.RunDotnetExpectFailure(workingDirectory, $"restore {projectFile}");
+                var result = _msbuildFixture.RunDotnet(workingDirectory, $"restore {projectFile}", ignoreExitCode: true);
 
+                result.Success.Should().BeFalse();
                 result.AllOutput.Should().Contain(logCode);
                 result.AllOutput.Contains("X [1.0.0], X [2.0.0]");
             }
@@ -1903,8 +1936,9 @@ EndGlobal";
             File.WriteAllText(Path.Combine(pathContext.SolutionRoot, projectA.ProjectName, "NuGet.Config"), configFile);
 
             //Act
-            var result = _msbuildFixture.RunDotnetExpectSuccess(pathContext.WorkingDirectory, $"restore {projectA.ProjectPath} -v n");
+            var result = _msbuildFixture.RunDotnet(pathContext.WorkingDirectory, $"restore {projectA.ProjectPath} -v n", ignoreExitCode: true);
 
+            result.Success.Should().BeTrue(because: result.AllOutput);
             Assert.Contains($"Installed {packageX} {version} from {packageSource2.FullName}", result.AllOutput);
             Assert.Contains($"Installed {packageZ} {version} from {pathContext.PackageSource}", result.AllOutput);
             Assert.Contains($"Installed {packageY} {version} from {pathContext.PackageSource}", result.AllOutput);
@@ -1979,8 +2013,9 @@ EndGlobal";
             File.WriteAllText(Path.Combine(pathContext.SolutionRoot, projectA.ProjectName, "NuGet.Config"), configFile);
 
             //Act
-            var result = _msbuildFixture.RunDotnetExpectFailure(pathContext.WorkingDirectory, $"restore {projectA.ProjectPath} -v n");
+            var result = _msbuildFixture.RunDotnet(pathContext.WorkingDirectory, $"restore {projectA.ProjectPath} -v n", ignoreExitCode: true);
 
+            result.Success.Should().BeFalse(because: result.AllOutput);
             Assert.Contains($"NU1100: Unable to resolve '{packageZ} (>= {version})'", result.AllOutput);
             Assert.Contains($"NU1100: Unable to resolve '{packageK} (= {version})'", result.AllOutput);
             Assert.Contains($"Installed {packageX} {version} from {packageSource2.FullName}", result.AllOutput);
@@ -2058,8 +2093,9 @@ EndGlobal";
             File.WriteAllText(Path.Combine(pathContext.SolutionRoot, projectA.ProjectName, "NuGet.Config"), configFile);
 
             //Act
-            var result = _msbuildFixture.RunDotnetExpectSuccess(pathContext.WorkingDirectory, $"restore {projectA.ProjectPath} --source {packageSource2.FullName};{pathContext.PackageSource} --verbosity detailed");
+            var result = _msbuildFixture.RunDotnet(pathContext.WorkingDirectory, $"restore {projectA.ProjectPath} --source {packageSource2.FullName};{pathContext.PackageSource} -v d", ignoreExitCode: true);
 
+            result.Success.Should().BeTrue(because: result.AllOutput);
             Assert.Contains($"Installed {packageX} {version} from {packageSource2.FullName}", result.AllOutput);
             Assert.Contains($"Installed {packageZ} {version} from {pathContext.PackageSource}", result.AllOutput);
             Assert.Contains($"Installed {packageY} {version} from {pathContext.PackageSource}", result.AllOutput);
@@ -2131,8 +2167,9 @@ EndGlobal";
             File.WriteAllText(Path.Combine(pathContext.SolutionRoot, projectA.ProjectName, "NuGet.Config"), configFile);
 
             //Act
-            var result = _msbuildFixture.RunDotnetExpectFailure(pathContext.WorkingDirectory, $"restore {projectA.ProjectPath} --source {packageSource2.FullName} --verbosity detailed");
+            var result = _msbuildFixture.RunDotnet(pathContext.WorkingDirectory, $"restore {projectA.ProjectPath} --source {packageSource2.FullName} -v d", ignoreExitCode: true);
 
+            result.Success.Should().BeFalse(because: result.AllOutput);
             Assert.Contains("Package source mapping match not found for package ID 'Y'", result.AllOutput);
             Assert.Contains($"NU1100: Unable to resolve '{packageY} (>= {version})'", result.AllOutput);
             Assert.Contains($"Package source mapping matches found for package ID 'X' are: 'source2'.", result.AllOutput);
@@ -2201,9 +2238,10 @@ EndGlobal";
             File.WriteAllText(Path.Combine(pathContext.SolutionRoot, projectA.ProjectName, "NuGet.Config"), configFile);
 
             //Act
-            var result = _msbuildFixture.RunDotnetExpectSuccess(pathContext.WorkingDirectory, $"restore {projectA.ProjectPath} --verbosity normal");
+            var result = _msbuildFixture.RunDotnet(pathContext.WorkingDirectory, $"restore {projectA.ProjectPath} -v d", ignoreExitCode: true);
 
             // Assert
+            result.Success.Should().BeTrue(because: result.AllOutput);
             Assert.Contains($"Installed {packageY} {version} from {pathContext.PackageSource}", result.AllOutput);
             Assert.Contains($"Installed {packageX} {version} from {packageSource2.FullName}", result.AllOutput);
         }
@@ -2271,9 +2309,10 @@ EndGlobal";
             File.WriteAllText(Path.Combine(pathContext.SolutionRoot, projectA.ProjectName, "NuGet.Config"), configFile);
 
             //Act
-            var result = _msbuildFixture.RunDotnetExpectFailure(pathContext.WorkingDirectory, $"restore {projectA.ProjectPath} --verbosity detailed");
+            var result = _msbuildFixture.RunDotnet(pathContext.WorkingDirectory, $"restore {projectA.ProjectPath} -v d", ignoreExitCode: true);
 
             //Assert
+            result.Success.Should().BeFalse(because: result.AllOutput);
             Assert.Contains("Package source mapping match not found for package ID 'X'", result.AllOutput);
             Assert.Contains($"NU1100: Unable to resolve '{packageX} (>= {version})'", result.AllOutput);
             Assert.Contains($"Package source mapping matches found for package ID 'Y' are: 'source'.", result.AllOutput);
@@ -2326,8 +2365,9 @@ EndGlobal";
                     ProjectFileUtils.WriteXmlToFile(xml, stream);
                 }
 
-                var result = _msbuildFixture.RunDotnetExpectFailure(workingDirectory, $"restore {projectFile}");
+                var result = _msbuildFixture.RunDotnet(workingDirectory, $"restore {projectFile}", ignoreExitCode: true);
 
+                result.Success.Should().BeFalse();
                 result.Errors.Should().Contain("NU1506");
                 result.AllOutput.Contains("X [1.0.0], X [2.0.0]");
             }
@@ -2371,8 +2411,9 @@ EndGlobal";
                     ProjectFileUtils.WriteXmlToFile(xml, stream);
                 }
 
-                var result = _msbuildFixture.RunDotnetExpectSuccess(workingDirectory, $"restore {projectFile} /p:ContinueOnError=true");
+                var result = _msbuildFixture.RunDotnet(workingDirectory, $"restore {projectFile} /p:ContinueOnError=true", ignoreExitCode: true);
 
+                result.Success.Should().BeTrue(because: result.AllOutput);
                 result.AllOutput.Should().Contain("warning NU1504");
                 result.AllOutput.Contains("X [1.0.0], X [2.0.0]");
             }
@@ -2434,9 +2475,11 @@ EndGlobal";
                     packageY);
 
             //Act
-            var result = _msbuildFixture.RunDotnetExpectSuccess(pathContext.WorkingDirectory, $"restore {projectA.ProjectPath} -v n");
+            var result = _msbuildFixture.RunDotnet(pathContext.WorkingDirectory, $"restore {projectA.ProjectPath} -v n", ignoreExitCode: true);
 
             // Assert
+            result.Success.Should().BeTrue(because: result.AllOutput);
+
             var assetsFile = projectA.AssetsFile;
             Assert.NotNull(assetsFile);
             var targets = assetsFile.GetTarget(framework, null);
@@ -2523,8 +2566,9 @@ EndGlobal";
 
                 // Preconditions
                 var command = $"restore {projectFile1} {$"--source \"{pathContext.PackageSource}\" /p:AutomaticallyUseReferenceAssemblyPackages=false"}";
-                var result = _msbuildFixture.RunDotnetExpectSuccess(pathContext.SolutionRoot, command);
+                var result = _msbuildFixture.RunDotnet(pathContext.SolutionRoot, command, ignoreExitCode: true);
 
+                result.ExitCode.Should().Be(0, because: result.AllOutput);
                 var assetsFilePath = Path.Combine(workingDirectory1, "obj", "project.assets.json");
                 File.Exists(assetsFilePath).Should().BeTrue(because: "The assets file needs to exist");
                 var assetsFile = new LockFileFormat().Read(assetsFilePath);
@@ -2532,9 +2576,10 @@ EndGlobal";
                 target.Libraries.Should().ContainSingle(e => e.Name.Equals("x"));
 
                 // Act another restore
-                result = _msbuildFixture.RunDotnetExpectSuccess(pathContext.SolutionRoot, command);
+                result = _msbuildFixture.RunDotnet(pathContext.SolutionRoot, command, ignoreExitCode: true);
 
                 // Ensure restore no-ops
+                result.ExitCode.Should().Be(0, because: result.AllOutput);
                 result.AllOutput.Should().Contain("All projects are up-to-date for restore.");
             }
         }
@@ -2562,9 +2607,10 @@ EndGlobal";
 
             // Act
             var additionalArgs = useStaticGraphEvaluation ? "/p:RestoreUseStaticGraphEvaluation=true" : string.Empty;
-            var result = _msbuildFixture.RunDotnetExpectSuccess(pathContext.SolutionRoot, args: $"restore a.csproj {additionalArgs} /p:TargetFramework=\"{tfm}\"");
+            var result = _msbuildFixture.RunDotnet(pathContext.SolutionRoot, args: $"restore a.csproj {additionalArgs} /p:TargetFramework=\"{tfm}\"", ignoreExitCode: true);
 
             // Assert
+            result.Success.Should().BeTrue(because: result.AllOutput);
             var assetsFilePath = Path.Combine(pathContext.SolutionRoot, "obj", LockFileFormat.AssetsFileName);
             var format = new LockFileFormat();
             LockFile assetsFile = format.Read(assetsFilePath);
@@ -2612,9 +2658,10 @@ EndGlobal";
 
             // Act
             var additionalArgs = useStaticGraphEvaluation ? "/p:RestoreUseStaticGraphEvaluation=true" : string.Empty;
-            var result = _msbuildFixture.RunDotnetExpectSuccess(projectAWorkingDirectory, args: $"restore a.csproj /p:TargetFramework=\"{tfm}\" /p:RestoreRecursive=\"false\" {additionalArgs}");
+            var result = _msbuildFixture.RunDotnet(projectAWorkingDirectory, args: $"restore a.csproj /p:TargetFramework=\"{tfm}\" /p:RestoreRecursive=\"false\" {additionalArgs}", ignoreExitCode: true);
 
             // Assert
+            result.Success.Should().BeTrue(because: result.AllOutput);
             var assetsFilePath = Path.Combine(projectAWorkingDirectory, "obj", LockFileFormat.AssetsFileName);
             var format = new LockFileFormat();
             LockFile assetsFile = format.Read(assetsFilePath);
@@ -2652,9 +2699,10 @@ EndGlobal";
 
             // Act
             var additionalArgs = useStaticGraphEvaluation ? "/p:RestoreUseStaticGraphEvaluation=true" : string.Empty;
-            var result = _msbuildFixture.RunDotnetExpectSuccess(pathContext.SolutionRoot, args: $"restore a.csproj /p:TargetFramework=\"{tfm}\" {additionalArgs}");
+            var result = _msbuildFixture.RunDotnet(pathContext.SolutionRoot, args: $"restore a.csproj /p:TargetFramework=\"{tfm}\" {additionalArgs}", ignoreExitCode: true);
 
             // Assert
+            result.Success.Should().BeTrue(because: result.AllOutput);
             var assetsFilePath = Path.Combine(pathContext.SolutionRoot, "obj", LockFileFormat.AssetsFileName);
             var format = new LockFileFormat();
             LockFile assetsFile = format.Read(assetsFilePath);

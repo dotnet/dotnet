@@ -35,6 +35,7 @@ internal class FallbackWindowsRazorProjectHost : WindowsRazorProjectHostBase
             ResolvedCompilationReference.SchemaName,
             ContentItem.SchemaName,
             NoneItem.SchemaName,
+            ConfigurationGeneralSchemaName,
         });
     private readonly LanguageServerFeatureOptions _languageServerFeatureOptions;
 
@@ -112,6 +113,12 @@ internal class FallbackWindowsRazorProjectHost : WindowsRazorProjectHostBase
             return;
         }
 
+        if (!TryGetIntermediateOutputPath(update.Value.CurrentState, out var intermediatePath))
+        {
+            // Can't find an IntermediateOutputPath, so don't know what to do with this project
+            return;
+        }
+
         // We need to deal with the case where the project was uninitialized, but now
         // is valid for Razor. In that case we might have previously seen all of the documents
         // but ignored them because the project wasn't active.
@@ -125,12 +132,12 @@ internal class FallbackWindowsRazorProjectHost : WindowsRazorProjectHostBase
         await UpdateAsync(() =>
         {
             var configuration = FallbackRazorConfiguration.SelectConfiguration(version);
-            var hostProject = new HostProject(CommonServices.UnconfiguredProject.FullPath, configuration, rootNamespace: null);
+            var hostProject = new HostProject(CommonServices.UnconfiguredProject.FullPath, intermediatePath, configuration, rootNamespace: null);
 
-            if (TryGetIntermediateOutputPath(update.Value.CurrentState, out var intermediatePath))
+            if (_languageServerFeatureOptions is not null)
             {
                 var projectConfigurationFile = Path.Combine(intermediatePath, _languageServerFeatureOptions.ProjectConfigurationFileName);
-                ProjectConfigurationFilePathStore.Set(hostProject.FilePath, projectConfigurationFile);
+                ProjectConfigurationFilePathStore.Set(hostProject.Key, projectConfigurationFile);
             }
 
             UpdateProjectUnsafe(hostProject);

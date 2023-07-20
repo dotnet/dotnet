@@ -31,7 +31,8 @@ namespace NuGet.XPlat.FuncTest
                 CommandRunnerResult result = CommandRunner.Run(
                       DotnetCli,
                       Directory.GetCurrentDirectory(),
-                      $"{XplatDll} trust {unrecognizedOption}");
+                      $"{XplatDll} trust {unrecognizedOption}",
+                      waitForExit: true);
 
                 // Assert
                 Assert.Equal(1, result.ExitCode);
@@ -56,7 +57,8 @@ error: Unrecognized option '{unrecognizedOption}'"));
                 CommandRunnerResult result = CommandRunner.Run(
                       DotnetCli,
                       Directory.GetCurrentDirectory(),
-                      $"{XplatDll} trust {unrecognizedOption}");
+                      $"{XplatDll} trust {unrecognizedOption}",
+                      waitForExit: true);
 
                 // Assert
                 Assert.Equal(1, result.ExitCode);
@@ -81,7 +83,8 @@ error: Unrecognized option '{unrecognizedOption}'"));
                 CommandRunnerResult result = CommandRunner.Run(
                       DotnetCli,
                       mockPackagesDirectory.FullName,
-                      $"{XplatDll} {args}");
+                      $"{XplatDll} {args}",
+                      waitForExit: true);
 
                 // Assert
                 DotnetCliUtil.VerifyResultSuccess(result, "There are no trusted signers.");

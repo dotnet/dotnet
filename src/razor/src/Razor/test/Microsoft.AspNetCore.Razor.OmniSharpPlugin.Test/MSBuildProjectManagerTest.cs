@@ -50,7 +50,7 @@ public class MSBuildProjectManagerTest : OmniSharpTestBase
             LoggerFactory);
         var projectManager = CreateProjectSnapshotManager();
         msbuildProjectManager.Initialize(projectManager);
-        var hostProject = new OmniSharpHostProject("/path/to/project.csproj", _customConfiguration, "TestRootNamespace");
+        var hostProject = new OmniSharpHostProject("/path/to/project.csproj", "/path/to/obj", _customConfiguration, "TestRootNamespace");
         var configuredHostDocuments = new[]
         {
             new OmniSharpHostDocument("file.cshtml", "file.cshtml", FileKinds.Component),
@@ -93,7 +93,7 @@ public class MSBuildProjectManagerTest : OmniSharpTestBase
             LoggerFactory);
         var projectManager = CreateProjectSnapshotManager();
         msbuildProjectManager.Initialize(projectManager);
-        var hostProject = new OmniSharpHostProject("/path/to/project.csproj", _customConfiguration, "TestRootNamespace");
+        var hostProject = new OmniSharpHostProject("/path/to/project.csproj", "/path/to/obj", _customConfiguration, "TestRootNamespace");
         var projectSnapshot = await RunOnDispatcherThreadAsync(() =>
         {
             projectManager.ProjectAdded(hostProject);
@@ -131,7 +131,7 @@ public class MSBuildProjectManagerTest : OmniSharpTestBase
             LoggerFactory);
         var projectManager = CreateProjectSnapshotManager(allowNotifyListeners: true);
         msbuildProjectManager.Initialize(projectManager);
-        var hostProject = new OmniSharpHostProject("/path/to/project.csproj", _customConfiguration, "TestRootNamespace");
+        var hostProject = new OmniSharpHostProject("/path/to/project.csproj", "/path/to/obj", _customConfiguration, "TestRootNamespace");
         var projectSnapshot = await RunOnDispatcherThreadAsync(() =>
         {
             projectManager.ProjectAdded(hostProject);
@@ -163,7 +163,7 @@ public class MSBuildProjectManagerTest : OmniSharpTestBase
             LoggerFactory);
         var projectManager = CreateProjectSnapshotManager();
         msbuildProjectManager.Initialize(projectManager);
-        var hostProject = new OmniSharpHostProject("/path/to/project.csproj", _customConfiguration, "TestRootNamespace");
+        var hostProject = new OmniSharpHostProject("/path/to/project.csproj", "/path/to/obj", _customConfiguration, "TestRootNamespace");
         var projectSnapshot = await RunOnDispatcherThreadAsync(() =>
         {
             projectManager.ProjectAdded(hostProject);

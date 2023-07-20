@@ -50,7 +50,11 @@ internal class RazorRequestContextFactory : IRequestContextFactory<RazorRequestC
 
         var loggerAdapter = _lspServices.GetRequiredService<LoggerAdapter>();
 
-        var requestContext = new RazorRequestContext(documentContext, loggerAdapter, _lspServices);
+        var requestContext = new RazorRequestContext(documentContext, loggerAdapter, _lspServices
+#if DEBUG
+            , queueItem.MethodName, uri
+#endif
+            );
 
         return requestContext;
     }

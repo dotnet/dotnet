@@ -53,7 +53,7 @@ namespace NuGet.RuntimeModel
 
         public CompatibilityProfile Clone()
         {
-            return new CompatibilityProfile(Name, RestoreContexts.ToList());
+            return new CompatibilityProfile(Name, RestoreContexts.Select(e => e.Clone()));
         }
     }
 }

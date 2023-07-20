@@ -86,7 +86,8 @@ namespace NuGet.CommandLine.FuncTest
                 var result = CommandRunner.Run(
                     fileName,
                     Directory.GetCurrentDirectory(),
-                    args);
+                    args,
+                    waitForExit: true);
 
                 // Assert
                 Assert.Equal(0, result.ExitCode);
@@ -129,7 +130,8 @@ namespace NuGet.CommandLine.FuncTest
             var result = CommandRunner.Run(
                 fileName,
                 Directory.GetCurrentDirectory(),
-                args);
+                args,
+                waitForExit: true);
 
             // Assert
             Assert.Equal(0, result.ExitCode);
