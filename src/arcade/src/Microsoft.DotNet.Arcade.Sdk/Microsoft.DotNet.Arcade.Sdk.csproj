@@ -67,8 +67,6 @@
     <ArcadeSdkVersion>$(PackageVersion)</ArcadeSdkVersion>
     <MicrosoftNetCompilersToolsetVersion>$(MicrosoftNetCompilersToolsetVersion)</MicrosoftNetCompilersToolsetVersion>
     <MicrosoftNetILLinkTasksVersion>$(MicrosoftNetILLinkTasksVersion)</MicrosoftNetILLinkTasksVersion>
-    <MicrosoftSourceLinkGitHubVersion>$(MicrosoftSourceLinkGitHubVersion)</MicrosoftSourceLinkGitHubVersion>
-    <MicrosoftSourceLinkAzureReposGitVersion>$(MicrosoftSourceLinkAzureReposGitVersion)</MicrosoftSourceLinkAzureReposGitVersion>
     <MicrosoftDiaSymReaderPdb2PdbVersion>$(MicrosoftDiaSymReaderPdb2PdbVersion)</MicrosoftDiaSymReaderPdb2PdbVersion>
     <MicrosoftDotNetXliffTasksVersion>$(MicrosoftDotNetXliffTasksVersion)</MicrosoftDotNetXliffTasksVersion>
     <MicrosoftDotNetMaestroTasksVersion>$(MicrosoftDotNetMaestroTasksVersion)</MicrosoftDotNetMaestroTasksVersion>
