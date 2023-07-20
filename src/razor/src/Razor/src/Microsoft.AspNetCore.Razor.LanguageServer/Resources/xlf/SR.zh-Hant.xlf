@@ -22,6 +22,11 @@
         <target state="translated">擷取區塊以在後方編碼</target>
         <note />
       </trans-unit>
+      <trans-unit id="Generate_Async_Event_Handler_Title">
+        <source>Generate Async Event Handler '{0}'</source>
+        <target state="new">Generate Async Event Handler '{0}'</target>
+        <note />
+      </trans-unit>
       <trans-unit id="Generate_Event_Handler_Title">
         <source>Generate Event Handler '{0}'</source>
         <target state="translated">產生事件處理常式 '{0}'</target>
