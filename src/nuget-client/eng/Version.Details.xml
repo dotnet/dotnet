@@ -34,6 +34,10 @@
       <Uri>https://github.com/dotnet/corefx</Uri>
       <Sha>30ab651fcb4354552bd4891619a0bdd81e0ebdbf</Sha>
     </Dependency>
+    <Dependency Name="System.Security.Cryptography.Pkcs" Version="6.0.4">
+      <Uri>https://github.com/dotnet/runtime</Uri>
+      <Sha>e37fab9fc9f7bce120a7165491ed392a73f8ab51</Sha>
+    </Dependency>
     <Dependency Name="System.Security.Cryptography.Xml" Version="6.0.1">
       <Uri>https://github.com/dotnet/runtime</Uri>
       <Sha>55fb7ef977e7d120dc12f0960edcff0739d7ee0e</Sha>

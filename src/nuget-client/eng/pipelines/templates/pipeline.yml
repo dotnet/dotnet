@@ -87,6 +87,7 @@ resources:
     ref: refs/heads/main
 
 variables:
+  BINLOG_DIRECTORY: $(Build.StagingDirectory)/binlog
   DOTNET_NOLOGO: 1
   NUGET_EXPERIMENTAL_CHAIN_BUILD_RETRY_POLICY: 3,1000
   Codeql.Enabled: ${{ parameters.isOfficialBuild }}
@@ -263,7 +264,6 @@ stages:
       MSBUILDDISABLENODEREUSE: 1
       # Set MSBuildEnableWorkloadResolver to work around https://github.com/dotnet/sdk/issues/17461
       MSBuildEnableWorkloadResolver: false
-      BUILD_NET8: 'false'
     condition: "and(succeeded(), ne(variables['RunTestsOnMac'], 'false'))"
     pool:
       vmImage: macos-latest

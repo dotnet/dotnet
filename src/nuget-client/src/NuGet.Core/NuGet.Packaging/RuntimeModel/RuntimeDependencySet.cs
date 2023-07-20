@@ -3,14 +3,18 @@
 
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
 using NuGet.Shared;
 
 namespace NuGet.RuntimeModel
 {
-    public class RuntimeDependencySet : IEquatable<RuntimeDependencySet>
+    /// <remarks>
+    /// Immutable.
+    /// </remarks>
+    public sealed class RuntimeDependencySet : IEquatable<RuntimeDependencySet>
     {
+        private static readonly IReadOnlyDictionary<string, RuntimePackageDependency> EmptyDependencies = new Dictionary<string, RuntimePackageDependency>();
+
         /// <summary>
         /// Package Id
         /// </summary>
@@ -22,14 +26,19 @@ namespace NuGet.RuntimeModel
         public IReadOnlyDictionary<string, RuntimePackageDependency> Dependencies { get; }
 
         public RuntimeDependencySet(string id)
-            : this(id, Enumerable.Empty<RuntimePackageDependency>())
+            : this(id, (IReadOnlyDictionary<string, RuntimePackageDependency>)null)
         {
         }
 
         public RuntimeDependencySet(string id, IEnumerable<RuntimePackageDependency> dependencies)
+            : this(id, dependencies?.ToDictionary(d => d.Id, StringComparer.OrdinalIgnoreCase))
+        {
+        }
+
+        private RuntimeDependencySet(string id, IReadOnlyDictionary<string, RuntimePackageDependency> dependencies)
         {
             Id = id;
-            Dependencies = new ReadOnlyDictionary<string, RuntimePackageDependency>(dependencies.ToDictionary(d => d.Id, StringComparer.OrdinalIgnoreCase));
+            Dependencies = dependencies is null or { Count: 0 } ? EmptyDependencies : dependencies;
         }
 
         public bool Equals(RuntimeDependencySet other)
@@ -61,9 +70,10 @@ namespace NuGet.RuntimeModel
             return combiner.CombinedHash;
         }
 
+        [Obsolete("This type is immutable, so there is no need or point to clone it.")]
         public RuntimeDependencySet Clone()
         {
-            return new RuntimeDependencySet(Id, Dependencies.Values.Select(d => d.Clone()));
+            return this;
         }
 
         public override string ToString()

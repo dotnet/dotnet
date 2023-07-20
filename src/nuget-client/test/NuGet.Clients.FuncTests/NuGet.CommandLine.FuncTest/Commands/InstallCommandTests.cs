@@ -247,7 +247,6 @@ namespace NuGet.CommandLine.FuncTest.Commands
                 nugetExe,
                 pathContext.WorkingDirectory,
                 string.Join(" ", args),
-                waitForExit: true,
                 environmentVariables: envVars);
 
             // Assert

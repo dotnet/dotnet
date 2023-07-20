@@ -72,7 +72,7 @@ namespace NuGet.Packaging.Core
         /// </summary>
         public virtual bool Equals(PackageIdentity other, VersionComparison versionComparison)
         {
-            var comparer = new PackageIdentityComparer(versionComparison);
+            var comparer = PackageIdentityComparer.Get(versionComparison);
 
             return comparer.Equals(this, other);
         }

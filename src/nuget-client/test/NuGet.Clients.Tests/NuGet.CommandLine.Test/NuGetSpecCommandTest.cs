@@ -31,8 +31,7 @@ namespace NuGet.CommandLine.Test
                 var r = CommandRunner.Run(
                     nugetexe,
                     workingDirectory,
-                    "spec",
-                    waitForExit: true);
+                    "spec");
 
                 Assert.True(0 == r.ExitCode, r.Output + " " + r.Errors);
 
@@ -71,8 +70,7 @@ namespace NuGet.CommandLine.Test
                 var r = CommandRunner.Run(
                     nugetexe,
                     workingDirectory,
-                    "spec Whatnot",
-                    waitForExit: true);
+                    "spec Whatnot");
 
                 Assert.True(0 == r.ExitCode, r.Output + " " + r.Errors);
 
@@ -125,8 +123,7 @@ namespace NuGet.CommandLine.Test
                 var r = CommandRunner.Run(
                     nugetexe,
                     workingDirectory,
-                    "spec",
-                    waitForExit: true);
+                    "spec");
 
                 Assert.True(0 == r.ExitCode, r.Output + " " + r.Errors);
 
@@ -163,8 +160,7 @@ namespace NuGet.CommandLine.Test
                 var r = CommandRunner.Run(
                     nugetexe,
                     workingDirectory,
-                    "spec",
-                    waitForExit: true);
+                    "spec");
 
                 Util.VerifyResultSuccess(r);
 

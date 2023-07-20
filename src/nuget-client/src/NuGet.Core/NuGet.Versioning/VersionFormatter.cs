@@ -122,7 +122,7 @@ namespace NuGet.Versioning
         /// Appends a normalized version string. This string is unique for each version 'identity' 
         /// and does not include leading zeros or metadata.
         /// </summary>
-        private static void AppendNormalized(StringBuilder builder, SemanticVersion version)
+        internal static void AppendNormalized(StringBuilder builder, SemanticVersion version)
         {
             AppendVersion(builder, version);
 

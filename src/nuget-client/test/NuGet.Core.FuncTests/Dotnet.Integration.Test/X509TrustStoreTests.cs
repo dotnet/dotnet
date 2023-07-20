@@ -22,7 +22,7 @@ namespace Dotnet.Integration.Test
         private readonly FileInfo _timestampingCertificateBundle;
         private readonly TestLogger _logger;
 
-        public X509TrustStoreTests(MsbuildIntegrationTestFixture msbuildFixture, ITestOutputHelper helper)
+        public X509TrustStoreTests(DotnetIntegrationTestFixture msbuildFixture, ITestOutputHelper helper)
         {
             _logger = new TestLogger(helper);
 

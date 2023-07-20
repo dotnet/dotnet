@@ -116,7 +116,6 @@ namespace NuGet.CommandLine.Test
                     nugetexe,
                     pathContext.SolutionRoot,
                     string.Join(" ", args),
-                    waitForExit: true,
                     timeOutInMilliseconds: (int)TimeSpan.FromMinutes(3).TotalMilliseconds);
 
                 var allPackages = LocalFolderUtility.GetPackagesV2(packagesFolderPath, NullLogger.Instance);
@@ -253,7 +252,6 @@ namespace NuGet.CommandLine.Test
                     nugetexe,
                     pathContext.SolutionRoot,
                     string.Join(" ", args),
-                    waitForExit: true,
                     timeOutInMilliseconds: (int)TimeSpan.FromMinutes(3).TotalMilliseconds);
 
                 var allPackages = LocalFolderUtility.GetPackagesV2(packagesFolderPath, NullLogger.Instance);
@@ -386,7 +384,6 @@ namespace NuGet.CommandLine.Test
                     nugetexe,
                     pathContext.SolutionRoot,
                     string.Join(" ", args),
-                    waitForExit: true,
                     timeOutInMilliseconds: (int)TimeSpan.FromMinutes(3).TotalMilliseconds);
 
                 var allPackages = LocalFolderUtility.GetPackagesV2(packagesFolderPath, NullLogger.Instance);
@@ -516,7 +513,6 @@ namespace NuGet.CommandLine.Test
                     nugetexe,
                     pathContext.SolutionRoot,
                     string.Join(" ", args),
-                    waitForExit: true,
                     timeOutInMilliseconds: (int)TimeSpan.FromMinutes(3).TotalMilliseconds);
 
                 var allPackages = LocalFolderUtility.GetPackagesV2(packagesFolderPath, NullLogger.Instance);
@@ -615,8 +611,7 @@ namespace NuGet.CommandLine.Test
                 var r = CommandRunner.Run(
                     nugetexe,
                     pathContext.SolutionRoot,
-                    string.Join(" ", args),
-                    waitForExit: true);
+                    string.Join(" ", args));
 
                 task.Wait();
 
@@ -713,7 +708,6 @@ namespace NuGet.CommandLine.Test
                     nugetexe,
                     pathContext.SolutionRoot,
                     string.Join(" ", args),
-                    waitForExit: true,
                     timeOutInMilliseconds: int.MaxValue);
 
                 task.Wait();
@@ -798,8 +792,7 @@ namespace NuGet.CommandLine.Test
                 var r = CommandRunner.Run(
                     nugetexe,
                     pathContext.SolutionRoot,
-                    string.Join(" ", args),
-                    waitForExit: true);
+                    string.Join(" ", args));
 
                 // Assert
                 Assert.True(0 == r.ExitCode, r.Output + " " + r.Errors);
@@ -877,8 +870,7 @@ namespace NuGet.CommandLine.Test
                 var r = CommandRunner.Run(
                     nugetexe,
                     pathContext.SolutionRoot,
-                    string.Join(" ", args),
-                    waitForExit: true);
+                    string.Join(" ", args));
 
                 // Assert
                 Assert.True(0 == r.ExitCode, r.Output + " " + r.Errors);
@@ -950,8 +942,7 @@ namespace NuGet.CommandLine.Test
                 var r = CommandRunner.Run(
                     nugetexe,
                     pathContext.SolutionRoot,
-                    string.Join(" ", args),
-                    waitForExit: true);
+                    string.Join(" ", args));
 
                 // Assert
                 Assert.True(0 == r.ExitCode, r.Output + " " + r.Errors);
@@ -1023,8 +1014,7 @@ namespace NuGet.CommandLine.Test
                 var r = CommandRunner.Run(
                     nugetexe,
                     pathContext.SolutionRoot,
-                    string.Join(" ", args),
-                    waitForExit: true);
+                    string.Join(" ", args));
 
                 // Assert
                 Assert.True(0 == r.ExitCode, r.Output + " " + r.Errors);
@@ -1094,8 +1084,7 @@ namespace NuGet.CommandLine.Test
                 var r = CommandRunner.Run(
                     nugetexe,
                     pathContext.SolutionRoot,
-                    string.Join(" ", args),
-                    waitForExit: true);
+                    string.Join(" ", args));
 
                 // Assert
                 Assert.True(0 == r.ExitCode, r.Output + " " + r.Errors);
@@ -1167,8 +1156,7 @@ namespace NuGet.CommandLine.Test
                 var r = CommandRunner.Run(
                     nugetexe,
                     pathContext.SolutionRoot,
-                    string.Join(" ", args),
-                    waitForExit: true);
+                    string.Join(" ", args));
 
                 // Assert
                 Assert.True(0 == r.ExitCode, r.Output + " " + r.Errors);
@@ -1236,8 +1224,7 @@ namespace NuGet.CommandLine.Test
                 var r = CommandRunner.Run(
                     nugetexe,
                     pathContext.SolutionRoot,
-                    string.Join(" ", args),
-                    waitForExit: true);
+                    string.Join(" ", args));
 
                 // Assert
                 Assert.True(0 == r.ExitCode, r.Output + " " + r.Errors);
@@ -1318,8 +1305,7 @@ namespace NuGet.CommandLine.Test
                 var r = CommandRunner.Run(
                     nugetexe,
                     pathContext.SolutionRoot,
-                    string.Join(" ", args),
-                    waitForExit: true);
+                    string.Join(" ", args));
 
                 // Assert
                 Assert.True(0 == r.ExitCode, r.Output + " " + r.Errors);
@@ -1386,8 +1372,7 @@ namespace NuGet.CommandLine.Test
                 var r = CommandRunner.Run(
                     nugetexe,
                     pathContext.SolutionRoot,
-                    string.Join(" ", args),
-                    waitForExit: true);
+                    string.Join(" ", args));
 
                 // Assert
                 Assert.True(0 == r.ExitCode, r.Output + " " + r.Errors);
@@ -1453,8 +1438,7 @@ namespace NuGet.CommandLine.Test
                 var r = CommandRunner.Run(
                     nugetexe,
                     pathContext.SolutionRoot,
-                    string.Join(" ", args),
-                    waitForExit: true);
+                    string.Join(" ", args));
 
                 // Assert
                 Assert.True(0 == r.ExitCode, r.Output + " " + r.Errors);
@@ -1519,8 +1503,7 @@ namespace NuGet.CommandLine.Test
                 var r = CommandRunner.Run(
                     nugetexe,
                     workingPath,
-                    string.Join(" ", args),
-                    waitForExit: true);
+                    string.Join(" ", args));
 
                 // Assert
                 Assert.True(0 == r.ExitCode, r.Output + " " + r.Errors);

@@ -52,13 +52,14 @@ stages:
       value: ${{parameters.part}}
     - ${{if gt(length(parameters.variables), 0)}}:
       - ${{parameters.variables}}
-    baseVisualStudioBootstrapperURI: ${{parameters.baseBuildDrop}};bootstrappers/Enterprise/vs_enterprise.exe
+    baseVisualStudioBootstrapperURI: https://vsdrop.corp.microsoft.com/file/v1/$(VisualStudio.BaseBuild.ProductsDropName);bootstrappers/Enterprise/vs_enterprise.exe
     candidateBaselineBuilds: $(BaselineBuildCommitIds)
     visualStudioBootstrapperURI: $(bootstrapperUrl)
     visualStudioInstallationParameters: $(VisualStudio.InstallationUnderTest.SetupParameters)
     testLabPoolName: VS-Platform
     dartLabEnvironment: ${{parameters.DartLabEnvironment}}
     visualStudioSigning: Test
+    testMachineConfigurationJobTimeoutInMinutes: 30
     testMachineCleanUpStrategy: ${{parameters.testMachineCleanUpStrategy}}
     preTestMachineConfigurationStepList:
     - task: PowerShell@2
@@ -74,13 +75,14 @@ stages:
         filePath: $(DartLab.Path)\Scripts\AzureDevOps\Build\Get-BuildIdFromCloudBuildSessionID.ps1
         arguments: -ClientSecret (ConvertTo-SecureString '$(CloudBuild-ClientSecret)' -AsPlainText -Force) -ClientID '$(CloudBuild-ClientID)' -SessionID '${{ parameters.QBuildSessionId }}' -OutVariableName 'BaselineBuildID'
     
-    - task: PowerShell@1
+    - task: PowerShell@2
       displayName: "Get Baseline build commit ids"
       name: "getbaselinebuildcommitids"
+      retryCountOnTaskFailure: 3
       continueOnError: true
       inputs:
-        scriptType: "inlineScript"
-        inlineScript: |
+        targetType: 'inline'
+        script: |
           try {
           Write-Host "Getting Baseline build commit ids for build: '$(BaselineBuildID)'"
           
@@ -96,8 +98,36 @@ stages:
 
           $(DartLab.Path)\Scripts\VisualStudio\Build\Get-BaselineBuildCommitIDs.ps1 -BuildJson $baselineBuildsFile -OutVariableName "BaselineBuildCommitIds"
           } catch {
-            Write-Host "##vso[task.LogIssue type=error;]Unable to get Baseline build commit ids: $_"
+            Write-Host "Unable to get Baseline build commit ids: $_"
           }
+    - task: PowerShell@2
+      name: SetVisualStudioBaseBuildID
+      displayName: Set 'VisualStudio.BaseBuild.ID'
+      retryCountOnTaskFailure: 3
+      condition: ne(variables['BaselineBuildCommitIds'], '')
+      continueOnError: true
+      inputs:
+        filePath: $(DartLab.Path)\Scripts\VisualStudio\Build\Get-BaselineBuildID.ps1
+        arguments: -OAuthAccessToken (ConvertTo-SecureString '$(System.AccessToken)' -AsPlainText -Force) -InstanceURL '$(System.CollectionUri)' -RepositoryName 'VS' -ProjectName '$(System.TeamProject)' -CommitIDs $(BaselineBuildCommitIds) -BuildDefinitionIDs 10289 -OutVariableName 'VisualStudio.BaseBuild.ID'
+    - task: PowerShell@2
+      name: SetVisualStudioBaseBuildProductsDropName
+      displayName: Set 'VisualStudio.BaseBuild.ProductsDropName'
+      retryCountOnTaskFailure: 3
+      condition: ne(variables['VisualStudio.BaseBuild.ID'], '')
+      inputs:
+        filePath: $(DartLab.Path)\Scripts\VisualStudio\Build\Get-VisualStudioDropName.ps1
+        arguments: -AccessToken (ConvertTo-SecureString '$(System.AccessToken)' -AsPlainText -Force) -DropNamePrefix 'Products' -AccountURL '$(System.CollectionUri)' -ProjectName '$(System.TeamProject)' -BuildID $(VisualStudio.BaseBuild.ID) -OutVariableName 'VisualStudio.BaseBuild.ProductsDropName'
+    - task: PowerShell@2
+      name: SetBaseProductsDropNameToTarget
+      displayName: Set 'VisualStudio.BaseBuild.ProductsDropName' to drop from target build
+      retryCountOnTaskFailure: 3
+      condition: eq(variables['VisualStudio.BaseBuild.ID'], '')
+      inputs:
+        targetType: 'inline'
+        script: |
+          $buildDrop = "${{parameters.baseBuildDrop}}" -split "/"
+          $dropName = "Products/DevDiv/VS/$($buildDrop[-2])/$($buildDrop[-1])"
+          Write-Host "##vso[task.setvariable variable=VisualStudio.BaseBuild.ProductsDropName]$dropName"
     deployAndRunTestsStepList:
     - task: PowerShell@1
       displayName: "Define variables"

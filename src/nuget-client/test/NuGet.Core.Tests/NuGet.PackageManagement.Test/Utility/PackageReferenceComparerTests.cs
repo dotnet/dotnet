@@ -12,7 +12,7 @@ namespace NuGet.PackageManagement.Test
 {
     public class PackageReferenceComparerTests
     {
-        private static readonly PackageReferenceComparer Comparer = new PackageReferenceComparer();
+        private static readonly PackageReferenceComparer Comparer = PackageReferenceComparer.Instance;
         private static readonly NuGetVersion Version100 = NuGetVersion.Parse("1.0.0");
         private static readonly NuGetVersion Version200 = NuGetVersion.Parse("2.0.0");
         private static readonly PackageIdentity PackageIdentity = new PackageIdentity(id: "a", Version100);

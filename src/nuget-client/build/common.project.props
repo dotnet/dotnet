@@ -112,35 +112,6 @@
     <VsixPublishDestination>$(ArtifactRoot)$(VsixOutputDirName)\</VsixPublishDestination>
   </PropertyGroup>
 
-  <PropertyGroup Condition=" '$(PreReleaseVersion)' == '' ">
-    <PreReleaseVersion>32767</PreReleaseVersion>
-  </PropertyGroup>
-
-  <!--Setting the Pre-release/Build meta-data from CI if Version is set-->
-  <PropertyGroup Condition="'$(BuildNumber)' != ''">
-    <PreReleaseVersion>$(BuildNumber)</PreReleaseVersion>
-  </PropertyGroup>
-
-  <!--Setting the product information for Beta builds-->
-  <Choose>
-    <!-- If we aren't excluding the build number, use the release label and the build number. -->
-    <When Condition="'$(BuildRTM)' != 'true' AND '$(PreReleaseVersion)' != '' AND '$(PreReleaseVersion)' != '0' ">
-      <PropertyGroup>
-        <PreReleaseInformationVersion>-$(ReleaseLabel).$(PreReleaseVersion)</PreReleaseInformationVersion>
-      </PropertyGroup>
-    </When>
-    <!-- If we are excluding the build number, show the release label unless we are RTM. -->
-    <When Condition="'$(ReleaseLabel)' != 'rtm' AND '$(ReleaseLabel)' != 'svc' AND '$(ReleaseLabel)' != 'rc' ">
-      <PropertyGroup>
-        <PreReleaseInformationVersion>-$(ReleaseLabel)</PreReleaseInformationVersion>
-      </PropertyGroup>
-    </When>
-  </Choose>
-
-  <PropertyGroup Condition=" '$(Version)' == '' ">
-    <Version>$(SemanticVersion)$(PreReleaseInformationVersion)</Version>
-  </PropertyGroup>
-
   <!-- Set the output location for all non-test projects -->
   <!-- Test projects currently fail when the output dir is moved -->
   <PropertyGroup Condition=" '$(TestProject)' != 'true' OR '$(Shipping)' == 'true'">

@@ -232,7 +232,7 @@ namespace NuGet.Build.Tasks.Pack
                 aliases[tfm.TargetAlias] = tfm.FrameworkName.GetShortFolderName();
             }
 
-            var nuGetFrameworkComparer = new NuGetFrameworkFullComparer();
+            var nuGetFrameworkComparer = NuGetFrameworkFullComparer.Instance;
             var frameworksWithSuppressedDependencies = new HashSet<NuGetFramework>(nuGetFrameworkComparer);
             if (request.FrameworksWithSuppressedDependencies != null && request.FrameworksWithSuppressedDependencies.Any())
             {

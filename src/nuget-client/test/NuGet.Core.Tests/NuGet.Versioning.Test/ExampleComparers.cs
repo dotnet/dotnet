@@ -1,7 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-using System;
 using System.Globalization;
 
 namespace NuGet.Versioning.Test
@@ -13,7 +12,7 @@ namespace NuGet.Versioning.Test
             return Compare(x, y) == 0;
         }
 
-        public int GetHashCode(SemanticVersion obj)
+        public int GetHashCode(SemanticVersion? obj)
         {
             var version = obj as NuGetVersion;
 

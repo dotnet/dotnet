@@ -41,8 +41,8 @@ namespace NuGet.Packaging
             var combiner = new HashCodeCombiner();
 
             combiner.AddObject(Version);
-            combiner.AddSequence(ContentHash);
-            combiner.AddSequence(Source);
+            combiner.AddObject(ContentHash);
+            combiner.AddObject(Source);
 
             return combiner.CombinedHash;
         }

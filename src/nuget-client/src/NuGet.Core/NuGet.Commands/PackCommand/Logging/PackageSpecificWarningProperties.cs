@@ -65,7 +65,7 @@ namespace NuGet.Commands.PackCommand
 
             if (!frameworksByLibraryId.TryGetValue(libraryId, out ISet<NuGetFramework> frameworks))
             {
-                frameworks = new HashSet<NuGetFramework>(new NuGetFrameworkFullComparer());
+                frameworks = new HashSet<NuGetFramework>(NuGetFrameworkFullComparer.Instance);
                 frameworksByLibraryId.Add(libraryId, frameworks);
             }
 

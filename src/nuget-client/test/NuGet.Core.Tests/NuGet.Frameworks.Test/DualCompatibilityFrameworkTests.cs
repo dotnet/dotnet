@@ -32,7 +32,7 @@ namespace NuGet.Frameworks.Test
         {
             var nugetFramework = NuGetFramework.Parse(shortFrameworkName);
             var extendedFramework = new DualCompatibilityFramework(NuGetFramework.Parse(rootFrameworkName), secondaryFramework: NuGetFramework.Parse(rootFrameworkName));
-            var comparer = new NuGetFrameworkFullComparer();
+            var comparer = NuGetFrameworkFullComparer.Instance;
             comparer.Equals(nugetFramework, extendedFramework).Should().Be(equals);
             nugetFramework.Equals(extendedFramework).Should().Be(equals);
         }
@@ -56,7 +56,7 @@ namespace NuGet.Frameworks.Test
 
             FallbackFramework fallbackFramework = dualCompatibilityFramework.AsFallbackFramework();
 
-            var comparer = new NuGetFrameworkFullComparer();
+            var comparer = NuGetFrameworkFullComparer.Instance;
             Assert.True(comparer.Equals(fallbackFramework, nugetFramework));
 
             fallbackFramework.Fallback.Should().HaveCount(1);

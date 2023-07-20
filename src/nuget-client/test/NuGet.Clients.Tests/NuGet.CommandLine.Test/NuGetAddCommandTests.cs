@@ -33,8 +33,7 @@ namespace NuGet.CommandLine.Test
                 var result = CommandRunner.Run(
                     testInfo.NuGetExePath,
                     testInfo.WorkingPath,
-                    string.Join(" ", args),
-                    waitForExit: true);
+                    string.Join(" ", args));
 
                 // Assert
                 Util.VerifyResultFailure(result, NuGetResources.AddCommand_SourceNotProvided);
@@ -61,8 +60,7 @@ namespace NuGet.CommandLine.Test
                 var result = CommandRunner.Run(
                     testInfo.NuGetExePath,
                     testInfo.WorkingPath,
-                    string.Join(" ", args),
-                    waitForExit: true);
+                    string.Join(" ", args));
 
                 // Assert
                 Util.VerifyResultSuccess(result);
@@ -91,8 +89,7 @@ namespace NuGet.CommandLine.Test
                 var result = CommandRunner.Run(
                     testInfo.NuGetExePath,
                     testInfo.WorkingPath,
-                    string.Join(" ", args),
-                    waitForExit: true);
+                    string.Join(" ", args));
 
                 // Assert
                 Util.VerifyResultSuccess(result);
@@ -123,8 +120,7 @@ namespace NuGet.CommandLine.Test
                 var result = CommandRunner.Run(
                     testInfo.NuGetExePath,
                     testInfo.WorkingPath,
-                    string.Join(" ", args),
-                    waitForExit: true);
+                    string.Join(" ", args));
 
                 // Assert
                 Util.VerifyResultSuccess(result);
@@ -153,8 +149,7 @@ namespace NuGet.CommandLine.Test
                 var result = CommandRunner.Run(
                     testInfo.NuGetExePath,
                     testInfo.WorkingPath,
-                    string.Join(" ", args),
-                    waitForExit: true);
+                    string.Join(" ", args));
 
                 // Assert
                 Util.VerifyResultSuccess(result);
@@ -164,8 +159,7 @@ namespace NuGet.CommandLine.Test
                 result = CommandRunner.Run(
                     testInfo.NuGetExePath,
                     testInfo.WorkingPath,
-                    string.Join(" ", args),
-                    waitForExit: true);
+                    string.Join(" ", args));
 
                 // Assert
                 Util.VerifyResultSuccess(result, string.Format(
@@ -195,8 +189,7 @@ namespace NuGet.CommandLine.Test
                 var result = CommandRunner.Run(
                     testInfo.NuGetExePath,
                     testInfo.WorkingPath,
-                    string.Join(" ", args),
-                    waitForExit: true);
+                    string.Join(" ", args));
 
                 // Assert
                 Util.VerifyResultSuccess(result);
@@ -211,8 +204,7 @@ namespace NuGet.CommandLine.Test
                 result = CommandRunner.Run(
                     testInfo.NuGetExePath,
                     testInfo.WorkingPath,
-                    string.Join(" ", args),
-                    waitForExit: true);
+                    string.Join(" ", args));
 
                 // Assert
                 Util.VerifyResultFailure(result, string.Format(
@@ -242,8 +234,7 @@ namespace NuGet.CommandLine.Test
                 var result = CommandRunner.Run(
                     testInfo.NuGetExePath,
                     testInfo.WorkingPath,
-                    string.Join(" ", args),
-                    waitForExit: true);
+                    string.Join(" ", args));
 
                 // Assert
                 var expectedErrorMessage
@@ -276,8 +267,7 @@ namespace NuGet.CommandLine.Test
                 var result = CommandRunner.Run(
                     testInfo.NuGetExePath,
                     testInfo.WorkingPath,
-                    string.Join(" ", args),
-                    waitForExit: true);
+                    string.Join(" ", args));
 
                 // Assert
                 var expectedErrorMessage
@@ -310,8 +300,7 @@ namespace NuGet.CommandLine.Test
                 var result = CommandRunner.Run(
                     testInfo.NuGetExePath,
                     testInfo.WorkingPath,
-                    string.Join(" ", args),
-                    waitForExit: true);
+                    string.Join(" ", args));
 
                 // Assert
                 var expectedErrorMessage
@@ -351,8 +340,7 @@ namespace NuGet.CommandLine.Test
                 var result = CommandRunner.Run(
                     testInfo.NuGetExePath,
                     testInfo.WorkingPath,
-                    string.Join(" ", args),
-                    waitForExit: true);
+                    string.Join(" ", args));
 
                 // Assert
                 var expectedErrorMessage
@@ -392,8 +380,7 @@ namespace NuGet.CommandLine.Test
                 var result = CommandRunner.Run(
                     testInfo.NuGetExePath,
                     testInfo.WorkingPath,
-                    string.Join(" ", args),
-                    waitForExit: true);
+                    string.Join(" ", args));
 
                 // Assert
                 var expectedErrorMessage
@@ -435,8 +422,7 @@ namespace NuGet.CommandLine.Test
                 var result = CommandRunner.Run(
                     testInfo.NuGetExePath,
                     testInfo.WorkingPath,
-                    string.Join(" ", args),
-                    waitForExit: true);
+                    string.Join(" ", args));
 
                 // Assert
                 Util.VerifyResultSuccess(result);

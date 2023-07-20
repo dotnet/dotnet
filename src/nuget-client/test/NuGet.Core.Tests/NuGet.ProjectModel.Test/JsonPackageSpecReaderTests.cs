@@ -3258,7 +3258,7 @@ namespace NuGet.ProjectModel.Test
         [Fact]
         public void GetPackageSpec_WhenRuntimesValueIsEmptyObject_ReturnsRuntimes()
         {
-            var expectedResult = new RuntimeGraph();
+            var expectedResult = RuntimeGraph.Empty;
             const string json = "{\"runtimes\":{}}";
             PackageSpec packageSpec = GetPackageSpec(json);
 
@@ -3315,7 +3315,7 @@ namespace NuGet.ProjectModel.Test
         [Fact]
         public void GetPackageSpec_WhenSupportsValueIsEmptyObject_ReturnsSupports()
         {
-            var expectedResult = new RuntimeGraph();
+            var expectedResult = RuntimeGraph.Empty;
             const string json = "{\"supports\":{}}";
             PackageSpec packageSpec = GetPackageSpec(json);
 

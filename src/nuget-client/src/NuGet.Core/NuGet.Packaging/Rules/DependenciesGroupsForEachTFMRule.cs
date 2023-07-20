@@ -60,7 +60,7 @@ namespace NuGet.Packaging.Rules
 
         internal (HashSet<NuGetFramework>, HashSet<NuGetFramework>, HashSet<NuGetFramework>) Categorize(IEnumerable<string> files, IEnumerable<NuGetFramework> tfmsFromNuspec)
         {
-            var managedCodeConventions = new ManagedCodeConventions(new RuntimeGraph());
+            var managedCodeConventions = new ManagedCodeConventions(RuntimeGraph.Empty);
             Func<object, object, bool> isCompatible = managedCodeConventions.Properties["tfm"].CompatibilityTest;
             var collection = new ContentItemCollection();
             collection.Load(files);

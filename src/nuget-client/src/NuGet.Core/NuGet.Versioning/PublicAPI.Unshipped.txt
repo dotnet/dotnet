@@ -8,3 +8,5 @@ NuGet.Versioning.VersionRange.IsMaxInclusive.get -> bool
 NuGet.Versioning.VersionRange.IsMinInclusive.get -> bool
 NuGet.Versioning.VersionRange.MaxVersion.get -> NuGet.Versioning.NuGetVersion?
 NuGet.Versioning.VersionRange.MinVersion.get -> NuGet.Versioning.NuGetVersion?
+static NuGet.Versioning.VersionComparer.Get(NuGet.Versioning.VersionComparison versionComparison) -> NuGet.Versioning.IVersionComparer!
+static NuGet.Versioning.VersionRangeComparer.Get(NuGet.Versioning.VersionComparison versionComparison) -> NuGet.Versioning.IVersionRangeComparer!

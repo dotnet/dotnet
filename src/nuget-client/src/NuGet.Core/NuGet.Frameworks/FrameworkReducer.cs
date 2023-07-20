@@ -15,8 +15,6 @@ namespace NuGet.Frameworks
     {
         private readonly IFrameworkNameProvider _mappings;
         private readonly IFrameworkCompatibilityProvider _compat;
-        private readonly NuGetFrameworkFullComparer _fullComparer;
-        private readonly NuGetFrameworkNameComparer _fwNameComparer;
 
         /// <summary>
         /// Creates a FrameworkReducer using the default framework mappings.
@@ -33,8 +31,6 @@ namespace NuGet.Frameworks
         {
             _mappings = mappings ?? throw new ArgumentNullException(nameof(mappings));
             _compat = compat ?? throw new ArgumentNullException(nameof(compat));
-            _fullComparer = new NuGetFrameworkFullComparer();
-            _fwNameComparer = new NuGetFrameworkNameComparer();
         }
 
         /// <summary>
@@ -81,7 +77,7 @@ namespace NuGet.Frameworks
             }
 
             // Try exact matches first
-            nearest = possibleFrameworks.Where(f => _fullComparer.Equals(framework, f)).FirstOrDefault();
+            nearest = possibleFrameworks.Where(f => NuGetFrameworkFullComparer.Instance.Equals(framework, f)).FirstOrDefault();
 
             if (nearest == null)
             {
@@ -94,7 +90,7 @@ namespace NuGet.Frameworks
                 bool isNet6Era = framework.IsNet5Era && framework.Version.Major >= 6;
 
                 // Reduce to the same framework name if possible, with an exception for Xamarin, MonoAndroid and Tizen when net6.0+
-                if (reduced.Count() > 1 && reduced.Any(f => _fwNameComparer.Equals(f, framework)))
+                if (reduced.Count() > 1 && reduced.Any(f => NuGetFrameworkNameComparer.Instance.Equals(f, framework)))
                 {
                     reduced = reduced.Where(f =>
                     {
@@ -107,7 +103,7 @@ namespace NuGet.Frameworks
                         }
                         else
                         {
-                            return _fwNameComparer.Equals(f, framework);
+                            return NuGetFrameworkNameComparer.Instance.Equals(f, framework);
                         }
                     });
                 }
@@ -162,7 +158,7 @@ namespace NuGet.Frameworks
                     // Prefer the same framework and profile
                     if (framework.HasProfile)
                     {
-                        var sameProfile = reduced.Where(f => _fwNameComparer.Equals(framework, f)
+                        var sameProfile = reduced.Where(f => NuGetFrameworkNameComparer.Instance.Equals(framework, f)
                                                              && StringComparer.OrdinalIgnoreCase.Equals(framework.Profile, f.Profile));
 
                         if (sameProfile.Any())
@@ -184,10 +180,10 @@ namespace NuGet.Frameworks
                 if (reduced.Count() > 1
                     && framework.HasPlatform)
                 {
-                    if (!isNet6Era || reduced.Any(f => _fwNameComparer.Equals(framework, f) && f.Version.Major >= 6))
+                    if (!isNet6Era || reduced.Any(f => NuGetFrameworkNameComparer.Instance.Equals(framework, f) && f.Version.Major >= 6))
                     {
                         // Prefer the highest framework version, likely to be the non-platform specific option.
-                        reduced = reduced.Where(f => _fwNameComparer.Equals(framework, f)).GroupBy(f => f.Version).OrderByDescending(f => f.Key).First();
+                        reduced = reduced.Where(f => NuGetFrameworkNameComparer.Instance.Equals(framework, f)).GroupBy(f => f.Version).OrderByDescending(f => f.Key).First();
                     }
                     else if (isNet6Era && reduced.Any(f =>
                     {
@@ -305,7 +301,7 @@ namespace NuGet.Frameworks
         private IEnumerable<NuGetFramework> ReduceCore(IEnumerable<NuGetFramework> frameworks, Func<NuGetFramework, NuGetFramework, bool> isCompat)
         {
             // remove duplicate frameworks
-            var input = frameworks.Distinct(_fullComparer).ToArray();
+            var input = frameworks.Distinct(NuGetFrameworkFullComparer.Instance).ToArray();
 
             var results = new List<NuGetFramework>(input.Length);
 
@@ -332,7 +328,7 @@ namespace NuGet.Frameworks
 
                             // for scenarios where the framework identifiers are the same dupe the zero version
                             // Ex: win, win8 - these are equivalent, but only one is needed
-                            if (revCompat && _fwNameComparer.Equals(x, y))
+                            if (revCompat && NuGetFrameworkNameComparer.Instance.Equals(x, y))
                             {
                                 // Throw out the zero version
                                 // Profile, Platform, and all other aspects should have been covered by the compat check already
@@ -384,7 +380,7 @@ namespace NuGet.Frameworks
 
             // Find all frameworks in all PCLs
             var pclToFrameworks = ExplodePortableFrameworks(reduced);
-            var allPclFrameworks = pclToFrameworks.Values.SelectMany(f => f).Distinct(_fullComparer);
+            var allPclFrameworks = pclToFrameworks.Values.SelectMany(f => f).Distinct(NuGetFrameworkFullComparer.Instance);
 
             var scores = new Dictionary<NuGetFramework, int>();
 
@@ -401,7 +397,7 @@ namespace NuGet.Frameworks
                     // +1 each framework containing the best match
                     foreach (KeyValuePair<NuGetFramework, IEnumerable<NuGetFramework>> pair in pclToFrameworks)
                     {
-                        if (pair.Value.Contains(nearestForSub, _fullComparer))
+                        if (pair.Value.Contains(nearestForSub, NuGetFrameworkFullComparer.Instance))
                         {
                             if (!scores.ContainsKey(pair.Key))
                             {

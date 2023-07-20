@@ -12,6 +12,9 @@ namespace NuGet.Versioning
     /// <summary>
     /// Represents a range of versions and a preferred order.
     /// </summary>
+    /// <remarks>
+    /// Immutable, although subclasses may introduce mutable state.
+    /// </remarks>
     public partial class VersionRange : VersionRangeBase, IFormattable
     {
         private readonly FloatRange? _floatRange;

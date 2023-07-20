@@ -226,12 +226,14 @@ namespace NuGet.PackageManagement.UI
             if (latestPrerelease.version != null
                 && (latestStableVersion.version == null || latestPrerelease.version > latestStableVersion.version))
             {
-                _versions.Add(new DisplayVersion(latestPrerelease.version, Resources.Version_LatestPrerelease, isDeprecated: latestPrerelease.isDeprecated));
+                var versionRange = new VersionRange(latestPrerelease.version, true, latestPrerelease.version, true);
+                _versions.Add(new DisplayVersion(versionRange, version: latestPrerelease.version, Resources.Version_LatestPrerelease, isDeprecated: latestPrerelease.isDeprecated, isVulnerable: latestPrerelease.isVulnerable));
             }
 
             if (latestStableVersion.version != null)
             {
-                _versions.Add(new DisplayVersion(latestStableVersion.version, Resources.Version_LatestStable, isDeprecated: latestStableVersion.isDeprecated));
+                var versionRange = new VersionRange(latestStableVersion.version, true, latestStableVersion.version, true);
+                _versions.Add(new DisplayVersion(versionRange, version: latestStableVersion.version, Resources.Version_LatestStable, isDeprecated: latestStableVersion.isDeprecated, isVulnerable: latestStableVersion.isVulnerable));
             }
 
             // add a separator
@@ -243,7 +245,8 @@ namespace NuGet.PackageManagement.UI
             // first add all the available versions to be updated
             foreach (var version in allVersionsAllowed)
             {
-                _versions.Add(new DisplayVersion(version.version, null, isDeprecated: version.isDeprecated));
+                var versionRange = new VersionRange(version.version, true, version.version, true);
+                _versions.Add(new DisplayVersion(versionRange, version: version.version, null, isDeprecated: version.isDeprecated, isVulnerable: version.isVulnerable));
             }
 
             ProjectVersionConstraint[] selectedProjects = (await GetConstraintsForSelectedProjectsAsync(cancellationToken)).ToArray();

@@ -264,7 +264,7 @@ namespace NuGet.CommandLine
             var sourceRepositoryProvider = new CommandLineSourceRepositoryProvider(SourceProvider);
             var nuGetPackageManager = new NuGetPackageManager(sourceRepositoryProvider, Settings, packagesFolderPath);
 
-            var installedPackageReferences = new HashSet<Packaging.PackageReference>(new PackageReferenceComparer());
+            var installedPackageReferences = new HashSet<Packaging.PackageReference>(PackageReferenceComparer.Instance);
             if (packageRestoreInputs.RestoringWithSolutionFile)
             {
                 installedPackageReferences.AddRange(packageRestoreInputs

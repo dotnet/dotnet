@@ -22,7 +22,7 @@ using NuGet.Versioning;
 using Test.Utility;
 using Xunit;
 
-namespace NuGet.Commands.Test
+namespace NuGet.Commands.Test.RestoreCommandTests
 {
     using LocalPackageArchiveDownloader = Protocol.LocalPackageArchiveDownloader;
 

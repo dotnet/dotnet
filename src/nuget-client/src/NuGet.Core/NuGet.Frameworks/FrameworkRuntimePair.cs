@@ -7,7 +7,10 @@ using NuGet.Shared;
 
 namespace NuGet.Frameworks
 {
-    public class FrameworkRuntimePair : IEquatable<FrameworkRuntimePair>, IComparable<FrameworkRuntimePair>
+    /// <remarks>
+    /// Immutable.
+    /// </remarks>
+    public sealed class FrameworkRuntimePair : IEquatable<FrameworkRuntimePair>, IComparable<FrameworkRuntimePair>
     {
         public NuGetFramework Framework { get; }
 
@@ -48,9 +51,10 @@ namespace NuGet.Frameworks
                 RuntimeIdentifier);
         }
 
+        [Obsolete("This type is immutable, so there is no need or point to clone it.")]
         public FrameworkRuntimePair Clone()
         {
-            return new FrameworkRuntimePair(Framework, RuntimeIdentifier);
+            return this;
         }
 
         public int CompareTo(FrameworkRuntimePair? other)

@@ -2335,7 +2335,7 @@ namespace NuGet.SolutionRestoreManager.Test
 
             if (isDualCompatibilityFramework)
             {
-                var comparer = new NuGetFrameworkFullComparer();
+                var comparer = NuGetFrameworkFullComparer.Instance;
                 comparer.Equals(targetFrameworkInfo.FrameworkName, managedFramework).Should().BeTrue();
                 targetFrameworkInfo.FrameworkName.Should().BeOfType<DualCompatibilityFramework>();
                 var dualCompatibilityFramework = targetFrameworkInfo.FrameworkName as DualCompatibilityFramework;

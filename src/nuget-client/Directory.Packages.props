@@ -2,7 +2,6 @@
   <PropertyGroup>
     <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
 
-    <CryptographyPackagesVersion Condition="'$(CryptographyPackagesVersion)' == ''">5.0.0</CryptographyPackagesVersion>
     <MicrosoftCodeAnalysisPublicApiAnalyzersVersion Condition="'$(MicrosoftCodeAnalysisPublicApiAnalyzersVersion)' == ''">3.3.4</MicrosoftCodeAnalysisPublicApiAnalyzersVersion>
     <NewtonsoftJsonPackageVersion Condition="'$(NewtonsoftJsonPackageVersion)' == ''">13.0.1</NewtonsoftJsonPackageVersion>
     <SystemPackagesVersion Condition="'$(SystemPackagesVersion)' == ''">4.3.0</SystemPackagesVersion>
@@ -24,6 +23,7 @@
     <MicrosoftExtensionsFileSystemGlobbingPackageVersion Condition="'$(MicrosoftExtensionsFileSystemGlobbingPackageVersion)' == ''">6.0.0</MicrosoftExtensionsFileSystemGlobbingPackageVersion>
     <MicrosoftWebXdtPackageVersion Condition="'$(MicrosoftWebXdtPackageVersion)' == ''">3.0.0</MicrosoftWebXdtPackageVersion>
     <SystemComponentModelCompositionPackageVersion Condition="'$(SystemComponentModelCompositionPackageVersion)' == ''">4.5.0</SystemComponentModelCompositionPackageVersion>
+    <SystemSecurityCryptographyPkcsVersion Condition="'$(SystemSecurityCryptographyPkcsVersion)' == ''">6.0.4</SystemSecurityCryptographyPkcsVersion>
     <!-- System.Security.Cryptography.Xml is a dependency of Microsoft.Build.Tasks.Core. This property can be probably removed when MSBuild is updated to a newer version. -->
     <SystemSecurityCryptographyXmlVersion Condition="'$(SystemSecurityCryptographyXmlVersion)' == ''">6.0.1</SystemSecurityCryptographyXmlVersion>
     <SystemSecurityCryptographyXmlVersion Condition="'$(MicrosoftBuildVersion)' == '16.8.0' Or '$(MicrosoftBuildVersion)' == '16.11.0'">4.7.1</SystemSecurityCryptographyXmlVersion>
@@ -95,8 +95,7 @@
     <PackageVersion Include="System.Resources.ResourceManager" Version="$(SystemPackagesVersion)" />
     <PackageVersion Include="System.Runtime.Extensions" Version="$(SystemPackagesVersion)" />
     <PackageVersion Include="System.Runtime.InteropServices" Version="$(SystemPackagesVersion)" />
-    <PackageVersion Include="System.Security.Cryptography.Cng" Version="$(CryptographyPackagesVersion)" />
-    <PackageVersion Include="System.Security.Cryptography.Pkcs" Version="$(CryptographyPackagesVersion)" />
+    <PackageVersion Include="System.Security.Cryptography.Pkcs" Version="$(SystemSecurityCryptographyPkcsVersion)" />
     <PackageVersion Include="System.Security.Cryptography.ProtectedData" Version="4.4.0" />
     <PackageVersion Include="System.Security.Cryptography.Xml" Version="$(SystemSecurityCryptographyXmlVersion)" />
     <PackageVersion Include="System.Text.Encoding.Extensions" Version="$(SystemPackagesVersion)" />

@@ -337,7 +337,7 @@ namespace NuGet.Test
                 var restoredPackages = new List<PackageIdentity>();
                 packageRestoreManager.PackageRestoredEvent += delegate (object sender, PackageRestoredEventArgs args) { restoredPackages.Add(args.Package); };
 
-                var restoreFailedPackages = new ConcurrentDictionary<Packaging.PackageReference, IEnumerable<string>>(new PackageReferenceComparer());
+                var restoreFailedPackages = new ConcurrentDictionary<Packaging.PackageReference, IEnumerable<string>>(PackageReferenceComparer.Instance);
                 packageRestoreManager.PackageRestoreFailedEvent += delegate (object sender, PackageRestoreFailedEventArgs args)
                 {
                     restoreFailedPackages.AddOrUpdate(args.RestoreFailedPackageReference,

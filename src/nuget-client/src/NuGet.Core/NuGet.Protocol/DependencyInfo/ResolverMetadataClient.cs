@@ -124,7 +124,7 @@ namespace NuGet.Protocol
             ILogger log,
             CancellationToken token)
         {
-            var frameworkComparer = new NuGetFrameworkFullComparer();
+            var frameworkComparer = NuGetFrameworkFullComparer.Instance;
             var frameworkReducer = new FrameworkReducer();
             var dependencies = await GetDependencies(httpClient, registrationUri, packageId, range, cacheContext, log, token);
 

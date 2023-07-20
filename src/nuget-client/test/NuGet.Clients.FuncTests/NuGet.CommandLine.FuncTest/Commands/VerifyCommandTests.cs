@@ -57,8 +57,7 @@ namespace NuGet.CommandLine.FuncTest.Commands
                 var signResult = CommandRunner.Run(
                     _nugetExePath,
                     dir,
-                    $"sign {packagePath} -CertificateFingerprint {_trustedTestCert.Source.Cert.Thumbprint} -CertificateStoreName {_trustedTestCert.StoreName} -CertificateStoreLocation {_trustedTestCert.StoreLocation}",
-                    waitForExit: true);
+                    $"sign {packagePath} -CertificateFingerprint {_trustedTestCert.Source.Cert.Thumbprint} -CertificateStoreName {_trustedTestCert.StoreName} -CertificateStoreLocation {_trustedTestCert.StoreLocation}");
 
                 signResult.Success.Should().BeTrue();
 
@@ -66,8 +65,7 @@ namespace NuGet.CommandLine.FuncTest.Commands
                 var verifyResult = CommandRunner.Run(
                     _nugetExePath,
                     dir,
-                    $"verify {packagePath} -Signatures",
-                    waitForExit: true);
+                    $"verify {packagePath} -Signatures");
 
                 // Assert
                 verifyResult.Success.Should().BeTrue();
@@ -97,8 +95,7 @@ namespace NuGet.CommandLine.FuncTest.Commands
                 var signResult = CommandRunner.Run(
                     _nugetExePath,
                     dir,
-                    $"sign {packagePath} -Timestamper {timestampService.Url.OriginalString} -CertificateFingerprint {_trustedTestCert.Source.Cert.Thumbprint} -CertificateStoreName {_trustedTestCert.StoreName} -CertificateStoreLocation {_trustedTestCert.StoreLocation}",
-                    waitForExit: true);
+                    $"sign {packagePath} -Timestamper {timestampService.Url.OriginalString} -CertificateFingerprint {_trustedTestCert.Source.Cert.Thumbprint} -CertificateStoreName {_trustedTestCert.StoreName} -CertificateStoreLocation {_trustedTestCert.StoreLocation}");
 
                 signResult.Success.Should().BeTrue();
 
@@ -106,8 +103,7 @@ namespace NuGet.CommandLine.FuncTest.Commands
                 var verifyResult = CommandRunner.Run(
                     _nugetExePath,
                     dir,
-                    $"verify {packagePath} -Signatures",
-                    waitForExit: true);
+                    $"verify {packagePath} -Signatures");
 
                 // Assert
                 verifyResult.Success.Should().BeTrue();
@@ -135,14 +131,12 @@ namespace NuGet.CommandLine.FuncTest.Commands
                 var firstResult = CommandRunner.Run(
                     _nugetExePath,
                     dir,
-                    $"sign {packagePath} -CertificateFingerprint {_trustedTestCert.Source.Cert.Thumbprint} -CertificateStoreName {_trustedTestCert.StoreName} -CertificateStoreLocation {_trustedTestCert.StoreLocation}",
-                    waitForExit: true);
+                    $"sign {packagePath} -CertificateFingerprint {_trustedTestCert.Source.Cert.Thumbprint} -CertificateStoreName {_trustedTestCert.StoreName} -CertificateStoreLocation {_trustedTestCert.StoreLocation}");
 
                 var secondResult = CommandRunner.Run(
                     _nugetExePath,
                     dir,
-                    $"sign {packagePath} -CertificateFingerprint {_trustedTestCert.Source.Cert.Thumbprint} -CertificateStoreName {_trustedTestCert.StoreName} -CertificateStoreLocation {_trustedTestCert.StoreLocation} -Overwrite",
-                    waitForExit: true);
+                    $"sign {packagePath} -CertificateFingerprint {_trustedTestCert.Source.Cert.Thumbprint} -CertificateStoreName {_trustedTestCert.StoreName} -CertificateStoreLocation {_trustedTestCert.StoreLocation} -Overwrite");
 
                 firstResult.Success.Should().BeTrue();
                 secondResult.Success.Should().BeTrue();
@@ -151,8 +145,7 @@ namespace NuGet.CommandLine.FuncTest.Commands
                 var verifyResult = CommandRunner.Run(
                     _nugetExePath,
                     dir,
-                    $"verify {packagePath} -Signatures",
-                    waitForExit: true);
+                    $"verify {packagePath} -Signatures");
 
                 // Assert
                 verifyResult.Success.Should().BeTrue();
@@ -182,8 +175,7 @@ namespace NuGet.CommandLine.FuncTest.Commands
                 var signResult = CommandRunner.Run(
                     _nugetExePath,
                     dir,
-                    $"sign {packagePath} -CertificateFingerprint {cert.Source.Cert.Thumbprint} -CertificateStoreName {cert.StoreName} -CertificateStoreLocation {cert.StoreLocation}",
-                    waitForExit: true);
+                    $"sign {packagePath} -CertificateFingerprint {cert.Source.Cert.Thumbprint} -CertificateStoreName {cert.StoreName} -CertificateStoreLocation {cert.StoreLocation}");
 
                 signResult.Success.Should().BeTrue();
 
@@ -191,8 +183,7 @@ namespace NuGet.CommandLine.FuncTest.Commands
                 var verifyResult = CommandRunner.Run(
                     _nugetExePath,
                     dir,
-                    $"verify {packagePath} -Signatures",
-                    waitForExit: true);
+                    $"verify {packagePath} -Signatures");
 
                 // Assert
                 verifyResult.Success.Should().BeTrue();
@@ -222,8 +213,7 @@ namespace NuGet.CommandLine.FuncTest.Commands
                 var signResult = CommandRunner.Run(
                     _nugetExePath,
                     dir,
-                    $"sign {packagePath} -CertificateFingerprint {cert.Source.Cert.Thumbprint} -CertificateStoreName {cert.StoreName} -CertificateStoreLocation {cert.StoreLocation}",
-                    waitForExit: true);
+                    $"sign {packagePath} -CertificateFingerprint {cert.Source.Cert.Thumbprint} -CertificateStoreName {cert.StoreName} -CertificateStoreLocation {cert.StoreLocation}");
 
                 signResult.Success.Should().BeTrue();
 
@@ -233,8 +223,7 @@ namespace NuGet.CommandLine.FuncTest.Commands
                 var verifyResult = CommandRunner.Run(
                     _nugetExePath,
                     dir,
-                    $"verify {packagePath} -Signatures -CertificateFingerprint {certificateFingerprintString};abc;def",
-                    waitForExit: true);
+                    $"verify {packagePath} -Signatures -CertificateFingerprint {certificateFingerprintString};abc;def");
 
                 // Assert
                 verifyResult.Success.Should().BeTrue();
@@ -264,8 +253,7 @@ namespace NuGet.CommandLine.FuncTest.Commands
                 var signResult = CommandRunner.Run(
                     _nugetExePath,
                     dir,
-                    $"sign {packagePath} -CertificateFingerprint {cert.Source.Cert.Thumbprint} -CertificateStoreName {cert.StoreName} -CertificateStoreLocation {cert.StoreLocation}",
-                    waitForExit: true);
+                    $"sign {packagePath} -CertificateFingerprint {cert.Source.Cert.Thumbprint} -CertificateStoreName {cert.StoreName} -CertificateStoreLocation {cert.StoreLocation}");
 
                 signResult.Success.Should().BeTrue();
 
@@ -273,8 +261,7 @@ namespace NuGet.CommandLine.FuncTest.Commands
                 var verifyResult = CommandRunner.Run(
                     _nugetExePath,
                     dir,
-                    $"verify {packagePath} -Signatures -CertificateFingerprint abc;def",
-                    waitForExit: true);
+                    $"verify {packagePath} -Signatures -CertificateFingerprint abc;def");
 
                 // Assert
                 verifyResult.Success.Should().BeFalse();
@@ -318,8 +305,7 @@ namespace NuGet.CommandLine.FuncTest.Commands
                 CommandRunnerResult verifyResult = CommandRunner.Run(
                     _nugetExePath,
                     testDirectory,
-                    $"verify {signedPackagePath} -Signatures {fingerprint}",
-                    waitForExit: true);
+                    $"verify {signedPackagePath} -Signatures {fingerprint}");
 
                 // Assert
                 // For certificate with trusted root setting allowUntrustedRoot to true/false doesn't matter
@@ -363,8 +349,7 @@ namespace NuGet.CommandLine.FuncTest.Commands
                 CommandRunnerResult verifyResult = CommandRunner.Run(
                     _nugetExePath,
                     pathContext.PackageSource,
-                    $"verify {signedPackagePath} -Signatures {fingerprint}",
-                    waitForExit: true);
+                    $"verify {signedPackagePath} -Signatures {fingerprint}");
 
                 // Assert
                 verifyResult.Success.Should().BeFalse(because: verifyResult.AllOutput);
@@ -410,8 +395,7 @@ namespace NuGet.CommandLine.FuncTest.Commands
                 CommandRunnerResult verifyResult = CommandRunner.Run(
                     _nugetExePath,
                     pathContext.PackageSource,
-                    $"verify {signedPackagePath} -Signatures {fingerprint}",
-                    waitForExit: true);
+                    $"verify {signedPackagePath} -Signatures {fingerprint}");
 
                 // Assert
                 verifyResult.Success.Should().BeFalse(because: verifyResult.AllOutput);
@@ -464,8 +448,7 @@ namespace NuGet.CommandLine.FuncTest.Commands
                 CommandRunnerResult verifyResult = CommandRunner.Run(
                     _nugetExePath,
                     pathContext.PackageSource,
-                    $"verify {signedPackagePath} -Signatures {fingerprint}",
-                    waitForExit: true);
+                    $"verify {signedPackagePath} -Signatures {fingerprint}");
 
                 // Assert
                 // Unless allowUntrustedRoot is set true in nuget.config verify always fails for cert without trusted root.
@@ -510,8 +493,7 @@ namespace NuGet.CommandLine.FuncTest.Commands
                 CommandRunnerResult verifyResult = CommandRunner.Run(
                     _nugetExePath,
                     pathContext.PackageSource,
-                    $"verify {signedPackagePath} -Signatures {fingerprint}",
-                    waitForExit: true);
+                    $"verify {signedPackagePath} -Signatures {fingerprint}");
 
                 // Assert
                 // If allowUntrustedRoot is set true in nuget.config then verify succeeds for cert with untrusted root.
@@ -561,8 +543,7 @@ namespace NuGet.CommandLine.FuncTest.Commands
                 CommandRunnerResult verifyResult = CommandRunner.Run(
                     _nugetExePath,
                     pathContext.PackageSource,
-                    $"verify {signedPackagePath} -Signatures {fingerprint}",
-                    waitForExit: true);
+                    $"verify {signedPackagePath} -Signatures {fingerprint}");
 
                 // Assert
                 // Owners is casesensitive, owner info should be "nuget;contoso" not "Nuget;Contoso"
@@ -611,8 +592,7 @@ namespace NuGet.CommandLine.FuncTest.Commands
                 CommandRunnerResult verifyResult = CommandRunner.Run(
                     _nugetExePath,
                     pathContext.PackageSource,
-                    $"verify {signedPackagePath} -Signatures {fingerprint}",
-                    waitForExit: true);
+                    $"verify {signedPackagePath} -Signatures {fingerprint}");
 
                 // Assert
                 // Owners is casesensitive, here owner "nuget" matches
@@ -661,8 +641,7 @@ namespace NuGet.CommandLine.FuncTest.Commands
                 CommandRunnerResult verifyResult = CommandRunner.Run(
                     _nugetExePath,
                     pathContext.PackageSource,
-                    $"verify {signedPackagePath} -Signatures {fingerprint}",
-                    waitForExit: true);
+                    $"verify {signedPackagePath} -Signatures {fingerprint}");
 
                 // Assert
                 // Owners is casesensitive, owner info should be "nuget;contoso" not "Nuget;Contoso"
@@ -710,8 +689,7 @@ namespace NuGet.CommandLine.FuncTest.Commands
                 CommandRunnerResult verifyResult = CommandRunner.Run(
                     _nugetExePath,
                     pathContext.PackageSource,
-                    $"verify {signedPackagePath} -Signatures {fingerprint}",
-                    waitForExit: true);
+                    $"verify {signedPackagePath} -Signatures {fingerprint}");
 
                 // Assert
                 // For certificate with trusted root setting allowUntrustedRoot value true/false doesn't matter.
@@ -754,8 +732,7 @@ namespace NuGet.CommandLine.FuncTest.Commands
                 CommandRunnerResult verifyResult = CommandRunner.Run(
                     _nugetExePath,
                     pathContext.PackageSource,
-                    $"verify {signedPackagePath} -All -CertificateFingerprint {certificateFingerprintString};def -ConfigFile {nugetConfigPath2}",
-                    waitForExit: true);
+                    $"verify {signedPackagePath} -All -CertificateFingerprint {certificateFingerprintString};def -ConfigFile {nugetConfigPath2}");
 
                 // Assert
                 // allowUntrustedRoot is not set true in nuget2.config, but in nuget.config, so verify fails.
@@ -797,8 +774,7 @@ namespace NuGet.CommandLine.FuncTest.Commands
                 CommandRunnerResult verifyResult = CommandRunner.Run(
                     _nugetExePath,
                     pathContext.PackageSource,
-                    $"verify {signedPackagePath} -All -CertificateFingerprint {certificateFingerprintString};def -ConfigFile {nugetConfigPath2}",
-                    waitForExit: true);
+                    $"verify {signedPackagePath} -All -CertificateFingerprint {certificateFingerprintString};def -ConfigFile {nugetConfigPath2}");
 
                 // Assert
                 // allowUntrustedRoot is set true in nuget2.config, so verify succeeds.
