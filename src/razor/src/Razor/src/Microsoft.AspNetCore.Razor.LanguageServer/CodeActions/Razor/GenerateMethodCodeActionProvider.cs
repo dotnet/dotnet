@@ -1,7 +1,6 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
-using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
@@ -12,7 +11,6 @@ using Microsoft.AspNetCore.Razor.Language.Extensions;
 using Microsoft.AspNetCore.Razor.Language.Legacy;
 using Microsoft.AspNetCore.Razor.Language.Syntax;
 using Microsoft.AspNetCore.Razor.LanguageServer.CodeActions.Models;
-using Microsoft.AspNetCore.Razor.LanguageServer.Common;
 using Microsoft.CodeAnalysis;
 using SyntaxFacts = Microsoft.CodeAnalysis.CSharp.SyntaxFacts;
 using SyntaxNode = Microsoft.AspNetCore.Razor.Language.Syntax.SyntaxNode;
@@ -39,33 +37,27 @@ internal class GenerateMethodCodeActionProvider : IRazorCodeActionProvider
             return s_emptyResult;
         }
 
-        if (IsGenerateEventHandlerValid(owner, context, out var @params))
+        if (IsGenerateEventHandlerValid(owner, out var methodName, out var eventName))
         {
-            return Task.FromResult<IReadOnlyList<RazorVSInternalCodeAction>?>(CreateCodeAction(@params));
+            var uri = context.Request.TextDocument.Uri;
+            var codeActions = new List<RazorVSInternalCodeAction>()
+            {
+                RazorCodeActionFactory.CreateGenerateMethod(uri, methodName, eventName),
+                RazorCodeActionFactory.CreateAsyncGenerateMethod(uri, methodName, eventName)
+            };
+            return Task.FromResult<IReadOnlyList<RazorVSInternalCodeAction>?>(codeActions);
         }
 
         return s_emptyResult;
     }
 
-    private static List<RazorVSInternalCodeAction> CreateCodeAction(GenerateMethodCodeActionParams @params)
-    {
-        var resolutionParams = new RazorCodeActionResolutionParams()
-        {
-            Action = LanguageServerConstants.CodeActions.GenerateEventHandler,
-            Language = LanguageServerConstants.CodeActions.Languages.Razor,
-            Data = @params,
-        };
-
-        var codeAction = RazorCodeActionFactory.CreateGenerateMethod(resolutionParams);
-        return new List<RazorVSInternalCodeAction> { codeAction };
-    }
-
     private static bool IsGenerateEventHandlerValid(
         SyntaxNode owner,
-        RazorCodeActionContext context,
-        [NotNullWhen(true)] out GenerateMethodCodeActionParams? @params)
+        [NotNullWhen(true)] out string? methodName,
+        [NotNullWhen(true)] out string? eventName)
     {
-        @params = null;
+        methodName = null;
+        eventName = null;
 
         // The owner should have a SyntaxKind of CSharpExpressionLiteral or MarkupTextLiteral.
         // MarkupTextLiteral if the cursor is directly before the first letter of the method name.
@@ -75,51 +67,34 @@ internal class GenerateMethodCodeActionProvider : IRazorCodeActionProvider
             return false;
         }
 
-        var parent = owner.Kind == SyntaxKind.CSharpExpressionLiteral ? owner.Parent.Parent : owner.Parent;
-        if (parent.Kind != SyntaxKind.MarkupTagHelperDirectiveAttribute)
+        // We want to get MarkupTagHelperDirectiveAttribute since this has information about the event name.
+        // Hierarchy:
+        // MarkupTagHelperDirectiveAttribute > MarkupTextLiteral
+        // or
+        // MarkupTagHelperDirectiveAttribute > MarkupTagHelperAttributeValue > CSharpExpressionLiteral
+        var commonParent = owner.Kind == SyntaxKind.CSharpExpressionLiteral ? owner.Parent.Parent : owner.Parent;
+        if (commonParent is not MarkupTagHelperDirectiveAttributeSyntax markupTagHelperDirectiveAttribute)
         {
             return false;
         }
 
-        var methodName = string.Empty;
-        if (owner.Kind == SyntaxKind.CSharpExpressionLiteral)
+        if (markupTagHelperDirectiveAttribute.TagHelperAttributeInfo.ParameterName is not null)
         {
-            var content = owner.GetContent();
-            if (!SyntaxFacts.IsValidIdentifier(content))
-            {
-                return false;
-            }
-
-            methodName = content;
-        }
-        else
-        {
-            var children = parent.ChildNodes();
-            foreach (var child in children)
-            {
-                if (child.Kind == SyntaxKind.MarkupTagHelperAttributeValue)
-                {
-                    var content = child.GetContent();
-                    if (SyntaxFacts.IsValidIdentifier(content))
-                    {
-                        methodName = content;
-                        break;
-                    }
-                }
-            }
+            // An event parameter is being set instead of the event handler e.g.
+            // <button @onclick:preventDefault=SomeValue/>, this is not a generate event handler scenario.
+            return false;
         }
 
-        if (methodName.IsNullOrEmpty())
+        // The TagHelperAttributeInfo Name property includes the '@' in the beginning so exclude it.
+        eventName = markupTagHelperDirectiveAttribute.TagHelperAttributeInfo.Name[1..];
+
+        var content = markupTagHelperDirectiveAttribute.Value.GetContent();
+        if (!SyntaxFacts.IsValidIdentifier(content))
         {
             return false;
         }
 
-        @params = new GenerateMethodCodeActionParams()
-        {
-            Uri = context.Request.TextDocument.Uri,
-            MethodName = methodName,
-        };
-
+        methodName = content;
         return true;
     }
 }

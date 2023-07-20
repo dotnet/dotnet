@@ -20,12 +20,12 @@ internal static class CodeBlockService
     /// <param name="code">
     ///  The <see cref="RazorCodeDocument"/> of the file where the generated method will be placed.
     /// </param>
-    /// <param name="templateWithMethodName">
+    /// <param name="templateWithMethodSignature">
     ///  The skeleton of the generated method where a <see cref="FormattingUtilities.Indent"/> should be placed
     ///  anywhere that needs to have some indenting, <see cref="FormattingUtilities.InitialIndent"/> anywhere that
-    ///  needs some initial indenting, and a '$$MethodName$$' for where the method name should be placed.
+    ///  needs some initial indenting.
     ///  It should look something like:
-    ///   <see cref="FormattingUtilities.InitialIndent"/><see cref="FormattingUtilities.Indent"/>public void $$MethodName$$()
+    ///   <see cref="FormattingUtilities.InitialIndent"/><see cref="FormattingUtilities.Indent"/>public void MethodName()
     ///   <see cref="FormattingUtilities.InitialIndent"/><see cref="FormattingUtilities.Indent"/>{
     ///   <see cref="FormattingUtilities.InitialIndent"/><see cref="FormattingUtilities.Indent"/><see cref="FormattingUtilities.Indent"/>throw new NotImplementedException();
     ///   <see cref="FormattingUtilities.InitialIndent"/><see cref="FormattingUtilities.Indent"/>}
@@ -36,7 +36,7 @@ internal static class CodeBlockService
     /// <returns>
     ///  A <see cref="TextEdit"/> that will place the formatted generated method within a @code block in the file.
     /// </returns>
-    public static TextEdit CreateFormattedTextEdit(RazorCodeDocument code, string templateWithMethodName, RazorLSPOptions options)
+    public static TextEdit CreateFormattedTextEdit(RazorCodeDocument code, string templateWithMethodSignature, RazorLSPOptions options)
     {
         var csharpCodeBlock = code.GetSyntaxTree().Root.DescendantNodes()
             .Select(RazorSyntaxFacts.TryGetCSharpCodeFromCodeBlock)
@@ -46,7 +46,7 @@ internal static class CodeBlockService
             || !csharpCodeBlock.Children.TryGetCloseBraceNode(out var closeBrace))
         {
             // No well-formed @code block exists. Generate the method within an @code block at the end of the file.
-            var indentedMethod = FormattingUtilities.AddIndentationToMethod(templateWithMethodName, options, startingIndent: 0);
+            var indentedMethod = FormattingUtilities.AddIndentationToMethod(templateWithMethodSignature, options, startingIndent: 0);
             var textWithCodeBlock = "@code {" + Environment.NewLine + indentedMethod + Environment.NewLine + "}";
             var lastCharacterLocation = code.Source.Lines.GetLocation(code.Source.Length - 1);
             var insertCharacterIndex = 0;
@@ -82,7 +82,7 @@ internal static class CodeBlockService
             closeBraceLocation.LineIndex,
             insertLineLocation,
             options,
-            templateWithMethodName);
+            templateWithMethodSignature);
 
         var insertCharacter = openBraceLocation.LineIndex == closeBraceLocation.LineIndex
             ? closeBraceLocation.CharacterIndex

@@ -7,6 +7,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
+using Microsoft.AspNetCore.Razor.Language.Components;
 using Microsoft.AspNetCore.Razor.LanguageServer.CodeActions.Models;
 using Microsoft.AspNetCore.Razor.LanguageServer.Common;
 using Microsoft.AspNetCore.Razor.LanguageServer.Formatting;
@@ -26,8 +27,11 @@ internal class GenerateMethodCodeActionResolver : IRazorCodeActionResolver
     private readonly RazorLSPOptionsMonitor _razorLSPOptionsMonitor;
 
     private static readonly string s_beginningIndents = $"{FormattingUtilities.InitialIndent}{FormattingUtilities.Indent}";
+    private static readonly string s_returnType = "$$ReturnType$$";
+    private static readonly string s_methodName = "$$MethodName$$";
+    private static readonly string s_eventArgs = "$$EventArgs$$";
     private static readonly string s_generateMethodTemplate =
-        $"{s_beginningIndents}private void $$MethodName$$(){Environment.NewLine}" +
+        $"{s_beginningIndents}private {s_returnType} {s_methodName}({s_eventArgs}){Environment.NewLine}" +
         s_beginningIndents + "{" + Environment.NewLine +
         $"{s_beginningIndents}{FormattingUtilities.Indent}throw new System.NotImplementedException();{Environment.NewLine}" +
         s_beginningIndents + "}";
@@ -59,7 +63,8 @@ internal class GenerateMethodCodeActionResolver : IRazorCodeActionResolver
             return null;
         }
 
-        var templateWithMethodName = s_generateMethodTemplate.Replace("$$MethodName$$", actionParams.MethodName);
+        var templateWithMethodSignature = PopulateMethodSignature(documentContext, actionParams);
+
         var code = await documentContext.GetCodeDocumentAsync(cancellationToken).ConfigureAwait(false);
         var uriPath = FilePathNormalizer.Normalize(actionParams.Uri.GetAbsoluteOrUNCPath());
         var razorClassName = Path.GetFileNameWithoutExtension(uriPath);
@@ -69,7 +74,7 @@ internal class GenerateMethodCodeActionResolver : IRazorCodeActionResolver
             || razorClassName is null
             || !code.TryComputeNamespace(fallbackToRootNamespace: true, out var razorNamespace))
         {
-            return GenerateMethodInCodeBlock(code, actionParams, templateWithMethodName);
+            return GenerateMethodInCodeBlock(code, actionParams, templateWithMethodSignature);
         }
 
         var content = File.ReadAllText(codeBehindPath);
@@ -79,7 +84,7 @@ internal class GenerateMethodCodeActionResolver : IRazorCodeActionResolver
         if (@namespace is null)
         {
             // The code behind file is malformed, generate the code in the razor file instead.
-            return GenerateMethodInCodeBlock(code, actionParams, templateWithMethodName);
+            return GenerateMethodInCodeBlock(code, actionParams, templateWithMethodSignature);
         }
 
         var @class = ((BaseNamespaceDeclarationSyntax)@namespace).Members
@@ -87,12 +92,12 @@ internal class GenerateMethodCodeActionResolver : IRazorCodeActionResolver
         if (@class is null)
         {
             // The code behind file is malformed, generate the code in the razor file instead.
-            return GenerateMethodInCodeBlock(code, actionParams, templateWithMethodName);
+            return GenerateMethodInCodeBlock(code, actionParams, templateWithMethodSignature);
         }
 
         var classLocationLineSpan = @class.GetLocation().GetLineSpan();
         var formattedMethod = FormattingUtilities.AddIndentationToMethod(
-            templateWithMethodName,
+            templateWithMethodSignature,
             _razorLSPOptionsMonitor.CurrentValue,
             @class.SpanStart,
             classLocationLineSpan.StartLinePosition.Character,
@@ -121,9 +126,9 @@ internal class GenerateMethodCodeActionResolver : IRazorCodeActionResolver
         return new WorkspaceEdit() { DocumentChanges = new[] { codeBehindTextDocEdit } };
     }
 
-    private WorkspaceEdit GenerateMethodInCodeBlock(RazorCodeDocument code, GenerateMethodCodeActionParams actionParams, string templateWithMethodName)
+    private WorkspaceEdit GenerateMethodInCodeBlock(RazorCodeDocument code, GenerateMethodCodeActionParams actionParams, string templateWithMethodSignature)
     {
-        var edit = CodeBlockService.CreateFormattedTextEdit(code, templateWithMethodName, _razorLSPOptionsMonitor.CurrentValue);
+        var edit = CodeBlockService.CreateFormattedTextEdit(code, templateWithMethodSignature, _razorLSPOptionsMonitor.CurrentValue);
         var razorTextDocEdit = new TextDocumentEdit()
         {
             TextDocument = new OptionalVersionedTextDocumentIdentifier() { Uri = actionParams.Uri },
@@ -131,5 +136,21 @@ internal class GenerateMethodCodeActionResolver : IRazorCodeActionResolver
         };
 
         return new WorkspaceEdit() { DocumentChanges = new[] { razorTextDocEdit } };
+    }
+
+    private static string PopulateMethodSignature(VersionedDocumentContext documentContext, GenerateMethodCodeActionParams actionParams)
+    {
+        var templateWithMethodSignature = s_generateMethodTemplate.Replace(s_methodName, actionParams.MethodName);
+
+        var returnType = actionParams.IsAsync ? "async System.Threading.Tasks.Task" : "void";
+        templateWithMethodSignature = templateWithMethodSignature.Replace(s_returnType, returnType);
+
+        var eventTagHelper = documentContext.Project.TagHelpers
+            .FirstOrDefault(th => th.Name == actionParams.EventName && th.IsEventHandlerTagHelper() && th.GetEventArgsType() is not null);
+        var eventArgsType = eventTagHelper is null
+            ? string.Empty // Couldn't find the params, generate no params instead.
+            : $"{eventTagHelper.GetEventArgsType()} e";
+
+        return templateWithMethodSignature.Replace(s_eventArgs, eventArgsType);
     }
 }
