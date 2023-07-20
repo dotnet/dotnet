@@ -102,22 +102,22 @@
       <Uri>https://github.com/dotnet/test-templates</Uri>
       <Sha>86fd4cd1c57057f920678e29d6ecbba491abd142</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.Common.ItemTemplates" Version="8.0.100-rc.1.23369.11">
+    <Dependency Name="Microsoft.DotNet.Common.ItemTemplates" Version="8.0.100-rc.1.23369.18">
       <Uri>https://github.com/dotnet/sdk</Uri>
-      <Sha>bf59e641b67ac8c39650725298f6fbe5900fee94</Sha>
+      <Sha>9438eb8268201b82bfdd7c68e077e7319568991a</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.TemplateEngine.Cli" Version="8.0.100-rc.1.23369.11">
+    <Dependency Name="Microsoft.TemplateEngine.Cli" Version="8.0.100-rc.1.23369.18">
       <Uri>https://github.com/dotnet/sdk</Uri>
-      <Sha>bf59e641b67ac8c39650725298f6fbe5900fee94</Sha>
+      <Sha>9438eb8268201b82bfdd7c68e077e7319568991a</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.NET.Sdk" Version="8.0.100-rc.1.23369.11">
+    <Dependency Name="Microsoft.NET.Sdk" Version="8.0.100-rc.1.23369.18">
       <Uri>https://github.com/dotnet/sdk</Uri>
-      <Sha>bf59e641b67ac8c39650725298f6fbe5900fee94</Sha>
+      <Sha>9438eb8268201b82bfdd7c68e077e7319568991a</Sha>
       <SourceBuild RepoName="sdk" ManagedOnly="true" />
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.MSBuildSdkResolver" Version="8.0.100-rc.1.23369.11">
+    <Dependency Name="Microsoft.DotNet.MSBuildSdkResolver" Version="8.0.100-rc.1.23369.18">
       <Uri>https://github.com/dotnet/sdk</Uri>
-      <Sha>bf59e641b67ac8c39650725298f6fbe5900fee94</Sha>
+      <Sha>9438eb8268201b82bfdd7c68e077e7319568991a</Sha>
     </Dependency>
     <!-- For coherency purposes, these versions should be gated by the versions of winforms and wpf routed via windowsdesktop -->
     <Dependency Name="Microsoft.Dotnet.WinForms.ProjectTemplates" Version="8.0.0-preview.7.23363.9" CoherentParentDependency="Microsoft.WindowsDesktop.App.Runtime.win-x64">
@@ -146,9 +146,9 @@
       <Uri>https://github.com/dotnet/runtime</Uri>
       <Sha>16dc5330051a97aec4ba89d21263cdccc7b7552c</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.Net.Compilers.Toolset" Version="4.8.0-1.23369.2" CoherentParentDependency="Microsoft.NET.Sdk">
+    <Dependency Name="Microsoft.Net.Compilers.Toolset" Version="4.8.0-1.23369.9" CoherentParentDependency="Microsoft.NET.Sdk">
       <Uri>https://github.com/dotnet/roslyn</Uri>
-      <Sha>9a2664fd7a40c41d114240e913fded754c59f346</Sha>
+      <Sha>1d93aa7f837459bacbf239d3c068c87ec3ca0ad4</Sha>
       <SourceBuild RepoName="roslyn" ManagedOnly="true" />
     </Dependency>
     <Dependency Name="Microsoft.Build" Version="17.8.0-preview-23367-03" CoherentParentDependency="Microsoft.NET.Sdk">
