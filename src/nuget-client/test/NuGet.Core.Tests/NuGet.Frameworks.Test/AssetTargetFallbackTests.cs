@@ -38,7 +38,7 @@ namespace NuGet.Frameworks.Test
         {
             var nugetFramework = NuGetFramework.Parse(shortFrameworkName);
             var assetTargetFallback = new AssetTargetFallbackFramework(nugetFramework, fallbackFrameworks: SampleFrameworkList);
-            var comparer = NuGetFrameworkFullComparer.Instance;
+            var comparer = new NuGetFrameworkFullComparer();
             Assert.True(comparer.Equals(nugetFramework, assetTargetFallback));
         }
 

@@ -8,10 +8,7 @@ using NuGet.Versioning;
 
 namespace NuGet.LibraryModel
 {
-    /// <remarks>
-    /// Immutable.
-    /// </remarks>
-    public sealed class DownloadDependency : IEquatable<DownloadDependency>, IComparable<DownloadDependency>
+    public class DownloadDependency : IEquatable<DownloadDependency>, IComparable<DownloadDependency>
     {
         public string Name { get; }
 
@@ -103,10 +100,9 @@ namespace NuGet.LibraryModel
                    EqualityUtility.EqualsWithNullCheck(VersionRange, other.VersionRange);
         }
 
-        [Obsolete("This type is immutable, so there is no need or point to clone it.")]
         public DownloadDependency Clone()
         {
-            return this;
+            return new DownloadDependency(Name, VersionRange);
         }
     }
 }

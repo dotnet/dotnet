@@ -121,12 +121,8 @@ namespace NuGet.Versioning
         /// </summary>
         public virtual bool Equals(SemanticVersion? other, VersionComparison versionComparison)
         {
-            var comparer = VersionComparer.Get(versionComparison);
-
-#pragma warning disable CS8604 // Possible null reference argument.
-            // BCL is missing nullable annotations on IEqualityComparer<T> before net5.0
+            var comparer = new VersionComparer(versionComparison);
             return comparer.Equals(this, other);
-#pragma warning restore CS8604 // Possible null reference argument.
         }
 
         /// <summary>
@@ -134,12 +130,8 @@ namespace NuGet.Versioning
         /// </summary>
         public virtual int CompareTo(SemanticVersion? other, VersionComparison versionComparison)
         {
-            var comparer = VersionComparer.Get(versionComparison);
-
-#pragma warning disable CS8604 // Possible null reference argument.
-            // BCL is missing nullable annotations on IEqualityComparer<T> before net5.0
+            var comparer = new VersionComparer(versionComparison);
             return comparer.Compare(this, other);
-#pragma warning restore CS8604 // Possible null reference argument.
         }
 
         /// <summary>

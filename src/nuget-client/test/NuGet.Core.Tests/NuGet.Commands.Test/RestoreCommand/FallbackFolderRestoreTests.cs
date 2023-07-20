@@ -11,10 +11,11 @@ using NuGet.Common;
 using NuGet.Configuration;
 using NuGet.Packaging;
 using NuGet.ProjectModel;
+using NuGet.Protocol.Core.Types;
 using NuGet.Test.Utility;
 using Xunit;
 
-namespace NuGet.Commands.Test.RestoreCommandTests
+namespace NuGet.Commands.Test
 {
     [Collection(nameof(NotThreadSafeResourceCollection))]
     public class FallbackFolderRestoreTests

@@ -2935,7 +2935,7 @@ namespace NuGet.PackageManagement
 
             // Add all enabled sources for the existing projects
             var enabledSources = SourceRepositoryProvider.GetRepositories();
-            var allSources = new HashSet<SourceRepository>(enabledSources, SourceRepositoryComparer.Instance);
+            var allSources = new HashSet<SourceRepository>(enabledSources, new SourceRepositoryComparer());
 
             foreach (var buildIntegratedProject in buildIntegratedProjects)
             {
@@ -2974,7 +2974,7 @@ namespace NuGet.PackageManagement
                 var sources = new HashSet<SourceRepository>(
                     nuGetProjectActions.Where(action => action.SourceRepository != null)
                         .Select(action => action.SourceRepository),
-                        SourceRepositoryComparer.Instance);
+                        new SourceRepositoryComparer());
 
                 allSources.UnionWith(sources);
                 sources.UnionWith(enabledSources);
@@ -3886,7 +3886,7 @@ namespace NuGet.PackageManagement
                 effectiveSources.AddRange(secondarySources);
             }
 
-            return new HashSet<SourceRepository>(effectiveSources, SourceRepositoryComparer.Instance);
+            return new HashSet<SourceRepository>(effectiveSources, new SourceRepositoryComparer());
         }
 
         public static void SetDirectInstall(PackageIdentity directInstall,

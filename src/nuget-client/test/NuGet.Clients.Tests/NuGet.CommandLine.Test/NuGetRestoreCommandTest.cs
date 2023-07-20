@@ -54,7 +54,8 @@ namespace NuGet.CommandLine.Test
                 var r = CommandRunner.Run(
                     nugetexe,
                     Directory.GetCurrentDirectory(),
-                    string.Join(" ", args));
+                    string.Join(" ", args),
+                    waitForExit: true);
 
                 // Assert
                 Assert.NotEqual(_successCode, r.ExitCode);
@@ -84,7 +85,8 @@ namespace NuGet.CommandLine.Test
                 var r = CommandRunner.Run(
                     nugetexe,
                     Directory.GetCurrentDirectory(),
-                    string.Join(" ", args));
+                    string.Join(" ", args),
+                    waitForExit: true);
 
                 // Assert
                 Assert.NotEqual(_successCode, r.ExitCode);
@@ -116,7 +118,8 @@ namespace NuGet.CommandLine.Test
                 var r = CommandRunner.Run(
                     nugetexe,
                     Directory.GetCurrentDirectory(),
-                    string.Join(" ", args));
+                    string.Join(" ", args),
+                    waitForExit: true);
 
                 // Assert
                 Assert.NotEqual(_successCode, r.ExitCode);
@@ -146,7 +149,8 @@ namespace NuGet.CommandLine.Test
                 var r = CommandRunner.Run(
                     nugetexe,
                     Directory.GetCurrentDirectory(),
-                    string.Join(" ", args));
+                    string.Join(" ", args),
+                    waitForExit: true);
 
                 // Assert
                 Assert.NotEqual(_successCode, r.ExitCode);
@@ -180,7 +184,8 @@ namespace NuGet.CommandLine.Test
                 var r = CommandRunner.Run(
                     nugetexe,
                     workingPath,
-                    string.Join(" ", args));
+                    string.Join(" ", args),
+                    waitForExit: true);
 
                 // Assert
                 Assert.Equal(_successCode, r.ExitCode);
@@ -215,7 +220,8 @@ namespace NuGet.CommandLine.Test
                 var r = CommandRunner.Run(
                     nugetexe,
                     workingPath,
-                    string.Join(" ", args));
+                    string.Join(" ", args),
+                    waitForExit: true);
 
                 // Assert
                 var packageFileA = Path.Combine(workingPath, @"outputDir", "a.1.1.0", "a.1.1.0.nupkg");
@@ -279,7 +285,8 @@ namespace NuGet.CommandLine.Test
                     var result = CommandRunner.Run(
                         nugetexe,
                         workingPath,
-                        string.Join(" ", args));
+                        string.Join(" ", args),
+                        waitForExit: true);
 
                     // Assert
                     Assert.True(result.Errors == string.Empty, $"There should not be any STDERR:{Environment.NewLine}{result.Errors}");
@@ -310,7 +317,8 @@ namespace NuGet.CommandLine.Test
                 var r = CommandRunner.Run(
                     nugetexe,
                     workingPath,
-                    "restore -Source " + repositoryPath);
+                    "restore -Source " + repositoryPath,
+                    waitForExit: true);
 
                 // Assert
                 Assert.True(_successCode == r.ExitCode, r.Output + " " + r.Errors);
@@ -336,7 +344,8 @@ namespace NuGet.CommandLine.Test
                 var r = CommandRunner.Run(
                     nugetexe,
                     workingPath,
-                    "restore " + Path.Combine(workingPath, "a.proj1.slnf") + " -Source " + repositoryPath);
+                    "restore " + Path.Combine(workingPath, "a.proj1.slnf") + " -Source " + repositoryPath,
+                    waitForExit: true);
 
                 // Assert
                 Assert.True(_successCode == r.ExitCode, r.Output + " " + r.Errors);
@@ -355,7 +364,8 @@ namespace NuGet.CommandLine.Test
                 var r = CommandRunner.Run(
                     nugetexe,
                     workingPath,
-                    "restore " + Path.Combine(workingPath, "a.proj2.slnf") + " -Source " + repositoryPath);
+                    "restore " + Path.Combine(workingPath, "a.proj2.slnf") + " -Source " + repositoryPath,
+                    waitForExit: true);
 
                 // Assert
                 Assert.True(_successCode == r.ExitCode, r.Output + " " + r.Errors);
@@ -372,7 +382,8 @@ namespace NuGet.CommandLine.Test
 
                 // Act
                 var r = CommandRunner.Run(nugetexe,
-                    workingPath, "restore " + Path.Combine(workingPath, "filter", "filterinsubfolder.slnf") + " -Source " + repositoryPath);
+                    workingPath, "restore " + Path.Combine(workingPath, "filter", "filterinsubfolder.slnf") + " -Source " + repositoryPath,
+                    waitForExit: true);
 
                 // Assert
                 Assert.True(_successCode == r.ExitCode, r.Output + " " + r.Errors);
@@ -437,7 +448,8 @@ namespace NuGet.CommandLine.Test
                 var r = CommandRunner.Run(
                     nugetexe,
                     workingPath,
-                    string.Join(" ", args));
+                    string.Join(" ", args),
+                    waitForExit: true);
 
                 // Assert
                 Assert.Equal(_successCode, r.ExitCode);
@@ -470,7 +482,8 @@ Microsoft Visual Studio Solution File, Format Version 12.00
                 var r = CommandRunner.Run(
                     nugetexe,
                     workingPath,
-                    "restore");
+                    "restore",
+                    waitForExit: true);
 
                 // Assert
                 Assert.True(string.IsNullOrEmpty(r.Errors)); // No error
@@ -498,7 +511,8 @@ Microsoft Visual Studio Solution File, Format Version 12.00
                 var r = CommandRunner.Run(
                     nugetexe,
                     workingPath,
-                    "restore -Source " + repositoryPath);
+                    "restore -Source " + repositoryPath,
+                    waitForExit: true);
 
                 // Assert
                 Assert.True(_successCode == r.ExitCode, r.Output + "" + r.Errors);
@@ -532,7 +546,8 @@ Microsoft Visual Studio Solution File, Format Version 12.00
                 var r = CommandRunner.Run(
                     nugetexe,
                     workingPath,
-                    "restore -Source " + repositoryPath + @" -msbuildversion 12");
+                    "restore -Source " + repositoryPath + @" -msbuildversion 12",
+                    waitForExit: true);
 
                 // Assert
                 Assert.True(_successCode == r.ExitCode, $"Expected: {_successCode} - Actual: {r.ExitCode}{Environment.NewLine} {r.AllOutput}");
@@ -565,7 +580,8 @@ Microsoft Visual Studio Solution File, Format Version 12.00
                 var r = CommandRunner.Run(
                     nugetexe,
                     workingPath,
-                    "restore -Source " + repositoryPath + $@" -MSBuildPath ""{msbuildPath}"" ");
+                    "restore -Source " + repositoryPath + $@" -MSBuildPath ""{msbuildPath}"" ",
+                    waitForExit: true);
 
                 // Assert
                 Assert.True(_successCode == r.ExitCode, r.Output);
@@ -592,7 +608,8 @@ Microsoft Visual Studio Solution File, Format Version 12.00
                 var r = CommandRunner.Run(
                     nugetexe,
                     workingPath,
-                    "restore -Source " + repositoryPath + $@" -MSBuildPath ""{msbuildPath}"" ");
+                    "restore -Source " + repositoryPath + $@" -MSBuildPath ""{msbuildPath}"" ",
+                    waitForExit: true);
 
                 // Assert
                 Assert.True(_failureCode == r.ExitCode, r.Output + " " + r.Errors);
@@ -621,7 +638,8 @@ Microsoft Visual Studio Solution File, Format Version 12.00
                 var r = CommandRunner.Run(
                     nugetexe,
                     workingPath,
-                    "restore -Source " + repositoryPath + $@" -MSBuildPath ""{msbuildPath}"" -MSBuildVersion 12");
+                    "restore -Source " + repositoryPath + $@" -MSBuildPath ""{msbuildPath}"" -MSBuildVersion 12",
+                    waitForExit: true);
 
                 // Assert
                 Assert.Equal(_successCode, r.ExitCode);
@@ -684,7 +702,8 @@ EndProject");
                 var r = CommandRunner.Run(
                     nugetexe,
                     workingPath,
-                    "restore -Source " + repositoryPath);
+                    "restore -Source " + repositoryPath,
+                    waitForExit: true);
 
                 // Assert
                 Assert.Equal(_successCode, r.ExitCode);
@@ -722,7 +741,8 @@ EndProject");
                 var r = CommandRunner.Run(
                     nugetexe,
                     workingPath,
-                    string.Join(" ", args));
+                    string.Join(" ", args),
+                    waitForExit: true);
 
                 // Assert
                 Assert.True(_successCode == r.ExitCode, r.Output + " " + r.Errors);
@@ -759,7 +779,8 @@ EndProject");
                 var r = CommandRunner.Run(
                     nugetexe,
                     workingPath,
-                    "restore -Source " + repositoryPath + " -ConfigFile my.config -RequireConsent");
+                    "restore -Source " + repositoryPath + " -ConfigFile my.config -RequireConsent",
+                    waitForExit: true);
 
                 // Assert
                 Assert.Equal(_successCode, r.ExitCode);
@@ -798,7 +819,8 @@ EndProject");
                 var r = CommandRunner.Run(
                     nugetexe,
                     workingPath,
-                    "restore -Source " + repositoryPath + " -ConfigFile my.config");
+                    "restore -Source " + repositoryPath + " -ConfigFile my.config",
+                    waitForExit: true);
 
                 // Assert
                 Assert.Equal(_successCode, r.ExitCode);
@@ -835,7 +857,8 @@ EndProject");
                 var r = CommandRunner.Run(
                     nugetexe,
                     randomTestFolder,
-                    "restore " + workingPath + " -Source " + repositoryPath);
+                    "restore " + workingPath + " -Source " + repositoryPath,
+                    waitForExit: true);
 
                 // Assert
                 Assert.Equal(_successCode, r.ExitCode);
@@ -923,7 +946,8 @@ EndProject");
                 var r = CommandRunner.Run(
                     nugetexe,
                     randomTestFolder,
-                    "restore " + workingPath + " -Source " + repositoryPath);
+                    "restore " + workingPath + " -Source " + repositoryPath,
+                    waitForExit: true);
 
                 // Assert
                 Assert.Equal(_failureCode, r.ExitCode);
@@ -995,7 +1019,8 @@ EndProject");
                 var r = CommandRunner.Run(
                     nugetexe,
                     randomTestFolder,
-                    "restore " + workingPath + " -Source " + repositoryPath);
+                    "restore " + workingPath + " -Source " + repositoryPath,
+                    waitForExit: true);
 
                 // Assert
                 Assert.Equal(_failureCode, r.ExitCode);
@@ -1062,7 +1087,8 @@ EndProject");
                 var r = CommandRunner.Run(
                     nugetexe,
                     workingPath,
-                    "restore -ConfigFile my.config");
+                    "restore -ConfigFile my.config",
+                    waitForExit: true);
 
                 // Assert
                 Assert.Equal(_successCode, r.ExitCode);
@@ -1151,7 +1177,8 @@ EndProject");
                 var r1 = CommandRunner.Run(
                     nugetexe,
                     workingPath,
-                    "restore -Source " + repositoryPath + packageSaveMode1);
+                    "restore -Source " + repositoryPath + packageSaveMode1,
+                    waitForExit: true);
 
                 Assert.Equal(_successCode, r1.ExitCode);
                 Assert.Equal(expectedPackageFileAExists, File.Exists(packageFileA));
@@ -1184,7 +1211,8 @@ EndProject");
                 var r2 = CommandRunner.Run(
                     nugetexe,
                     workingPath,
-                    "restore -Source " + repositoryPath + packageSaveMode2);
+                    "restore -Source " + repositoryPath + packageSaveMode2,
+                    waitForExit: true);
 
                 Assert.Equal(_successCode, r2.ExitCode);
                 Assert.Equal(expectedPackageFileAExists, File.Exists(packageFileA));
@@ -1255,7 +1283,8 @@ EndProject");
                     var r1 = CommandRunner.Run(
                         nugetexe,
                         workingDirectory,
-                        args);
+                        args,
+                        waitForExit: true);
                     server.Stop();
 
                     // Assert
@@ -1325,7 +1354,8 @@ $@"<?xml version=""1.0"" encoding=""utf-8""?>
                 var r = CommandRunner.Run(
                     nugetexe,
                     workingPath,
-                    string.Join(" ", args));
+                    string.Join(" ", args),
+                    waitForExit: true);
 
                 // Assert
                 Assert.True(_successCode == r.ExitCode, r.Output + " " + r.Errors);
@@ -1368,7 +1398,8 @@ $@"<?xml version=""1.0"" encoding=""utf-8""?>
                 var r = CommandRunner.Run(
                     nugetexe,
                     Directory.GetCurrentDirectory(),
-                    string.Join(" ", args));
+                    string.Join(" ", args),
+                    waitForExit: true);
 
                 // Assert
                 Assert.NotEqual(_successCode, r.ExitCode);
@@ -1407,7 +1438,8 @@ EndProject";
                 var r = CommandRunner.Run(
                     nugetexe,
                     randomTestFolder,
-                    string.Join(" ", args));
+                    string.Join(" ", args),
+                    waitForExit: true);
 
                 // Assert
                 Assert.NotEqual(_successCode, r.ExitCode);
@@ -1447,6 +1479,7 @@ EndProject";
                     nugetexe,
                     workingPath,
                     string.Join(" ", args),
+                    waitForExit: true,
                     environmentVariables: envVars);
 
                 var output = r.Output + " " + r.Errors;
@@ -1510,6 +1543,7 @@ EndProject";
                     nugetexe,
                     randomTestFolder,
                     string.Join(" ", args),
+                    waitForExit: true,
                     environmentVariables: envVars);
 
                 // Assert
@@ -1583,7 +1617,8 @@ EndProject";
                 var r = CommandRunner.Run(
                     nugetexe,
                     randomSolutionFolder,
-                    "restore " + randomSolutionFolder + " -Source " + randomRepositoryPath);
+                    "restore " + randomSolutionFolder + " -Source " + randomRepositoryPath,
+                    waitForExit: true);
 
                 // Assert
                 Assert.True(_successCode == r.ExitCode, r.Output + " " + r.Errors);
@@ -1655,7 +1690,8 @@ EndProject";
                 var r = CommandRunner.Run(
                     nugetexe,
                     randomSolutionFolder,
-                    "restore " + solutionFile + " -Source " + randomRepositoryPath);
+                    "restore " + solutionFile + " -Source " + randomRepositoryPath,
+                    waitForExit: true);
 
                 // Assert
                 Assert.True(_successCode == r.ExitCode, r.Output + " " + r.Errors);
@@ -1727,7 +1763,8 @@ EndProject";
                 var r = CommandRunner.Run(
                     nugetexe,
                     randomSolutionFolder,
-                    "restore  -Source " + randomRepositoryPath);
+                    "restore  -Source " + randomRepositoryPath,
+                    waitForExit: true);
 
                 // Assert
                 Assert.True(_successCode == r.ExitCode, r.Output + " " + r.Errors);
@@ -1809,7 +1846,8 @@ EndProject";
                 var r = CommandRunner.Run(
                     nugetexe,
                     randomSolutionFolder,
-                    "restore  -Source " + randomRepositoryPath);
+                    "restore  -Source " + randomRepositoryPath,
+                    waitForExit: true);
 
                 // Assert
                 Assert.True(_successCode == r.ExitCode, r.Output + " " + r.Errors);
@@ -1902,7 +1940,8 @@ EndProject";
                 var r = CommandRunner.Run(
                     nugetexe,
                     randomSolutionFolder,
-                    "restore  -Source " + randomRepositoryPath);
+                    "restore  -Source " + randomRepositoryPath,
+                    waitForExit: true);
 
                 // Assert
                 Assert.False(_successCode == r.ExitCode, r.Output + " " + r.Errors);
@@ -1941,7 +1980,8 @@ EndProject";
                 var r = CommandRunner.Run(
                     nugetexe,
                     workingPath,
-                    string.Join(" ", args));
+                    string.Join(" ", args),
+                    waitForExit: true);
 
                 // Assert
                 Assert.Equal(_successCode, r.ExitCode);
@@ -2049,7 +2089,8 @@ EndProject");
                 var r = CommandRunner.Run(
                     nugetexe,
                     basePath,
-                    string.Join(" ", args));
+                    string.Join(" ", args),
+                    waitForExit: true);
 
                 // Assert
                 Assert.True(_successCode == r.ExitCode, r.Output + " " + r.Errors);
@@ -2087,7 +2128,8 @@ EndProject");
                 var r = CommandRunner.Run(
                     nugetexe,
                     workingPath,
-                    string.Join(" ", args));
+                    string.Join(" ", args),
+                    waitForExit: true);
 
                 // Assert
                 Assert.Equal(_successCode, r.ExitCode);
@@ -2120,7 +2162,8 @@ EndProject");
                 var r = CommandRunner.Run(
                     nugetexe,
                     workingPath,
-                    string.Join(" ", args));
+                    string.Join(" ", args),
+                    waitForExit: true);
 
                 // Assert
                 Assert.Equal(_successCode, r.ExitCode);
@@ -2157,7 +2200,8 @@ EndProject");
                 CommandRunner.Run(
                     nugetexe,
                     workingPath,
-                    string.Join(" ", args1));
+                    string.Join(" ", args1),
+                    waitForExit: true);
                 //Verify primed
                 Assert.True(File.Exists(Path.Combine(globalPackagesFolder, @"newtonsoft.json", "7.0.1", "newtonsoft.json.7.0.1.nupkg")));
 
@@ -2166,7 +2210,8 @@ EndProject");
                 var r = CommandRunner.Run(
                     nugetexe,
                     workingPath,
-                    string.Join(" ", args2));
+                    string.Join(" ", args2),
+                    waitForExit: true);
 
                 // Assert
                 Assert.Equal(_successCode, r.ExitCode);
@@ -2240,7 +2285,8 @@ EndProject";
                 var r = CommandRunner.Run(
                     nugetexe,
                     randomSolutionFolder,
-                    "restore  -Source " + randomRepositoryPath);
+                    "restore  -Source " + randomRepositoryPath,
+                    waitForExit: true);
 
                 // Assert
                 Assert.True(_successCode == r.ExitCode, r.Output + " " + r.Errors);
@@ -2309,7 +2355,8 @@ EndProject";
                 var result = CommandRunner.Run(
                     nugetExe,
                     pathContext.SolutionRoot,
-                    string.Join(" ", args));
+                    string.Join(" ", args),
+                    waitForExit: true);
 
                 Assert.True(_successCode == result.ExitCode, result.AllOutput);
                 Assert.True(result.Success);
@@ -2345,7 +2392,8 @@ EndProject";
                 var r = CommandRunner.Run(
                     nugetexe,
                     pathContext.WorkingDirectory,
-                    string.Join(" ", args));
+                    string.Join(" ", args),
+                    waitForExit: true);
 
                 // Assert
                 Assert.Equal(_successCode, r.ExitCode);
@@ -2386,7 +2434,8 @@ EndProject";
                 CommandRunnerResult result = CommandRunner.Run(
                     nugetexe,
                     workingPath,
-                    string.Join(" ", args));
+                    string.Join(" ", args),
+                    waitForExit: true);
 
                 // Assert
                 Assert.False(result.Success);
@@ -2545,7 +2594,8 @@ EndProject";
                 var r = CommandRunner.Run(
                     nugetexe,
                     workingPath,
-                    string.Join(" ", args));
+                    string.Join(" ", args),
+                    waitForExit: true);
 
                 // Assert
                 r.Success.Should().BeTrue(r.AllOutput);
@@ -2644,7 +2694,8 @@ EndProject";
                 var r = CommandRunner.Run(
                     nugetexe,
                     workingPath,
-                    string.Join(" ", args));
+                    string.Join(" ", args),
+                    waitForExit: true);
 
                 // Assert
                 Assert.Equal(_failureCode, r.ExitCode);
@@ -2730,7 +2781,8 @@ EndProject";
                 var r = CommandRunner.Run(
                     nugetexe,
                     workingPath,
-                    string.Join(" ", args));
+                    string.Join(" ", args),
+                    waitForExit: true);
 
                 // Assert
                 Assert.Equal(_successCode, r.ExitCode);
@@ -2803,7 +2855,8 @@ EndProject";
                 var r = CommandRunner.Run(
                     nugetexe,
                     workingPath,
-                    string.Join(" ", args));
+                    string.Join(" ", args),
+                    waitForExit: true);
 
                 // Assert
                 Assert.Equal(_failureCode, r.ExitCode);
@@ -2884,7 +2937,8 @@ EndProject";
                 var r = CommandRunner.Run(
                     nugetexe,
                     workingPath,
-                    string.Join(" ", args));
+                    string.Join(" ", args),
+                    waitForExit: true);
 
                 // Assert
                 Assert.Equal(_successCode, r.ExitCode);
@@ -2961,7 +3015,8 @@ EndProject";
                 var r = CommandRunner.Run(
                     nugetexe,
                     workingPath,
-                    string.Join(" ", args));
+                    string.Join(" ", args),
+                    waitForExit: true);
 
                 // Assert
                 Assert.Equal(_successCode, r.ExitCode);
@@ -3031,7 +3086,8 @@ EndProject";
                 var r = CommandRunner.Run(
                     nugetexe,
                     workingPath,
-                    string.Join(" ", args));
+                    string.Join(" ", args),
+                    waitForExit: true);
 
                 // Assert
                 Assert.Equal(_successCode, r.ExitCode);
@@ -3114,7 +3170,8 @@ EndProject";
             var r = CommandRunner.Run(
                 nugetexe,
                 workingPath,
-                string.Join(" ", args));
+                string.Join(" ", args),
+                waitForExit: true);
 
             // Assert
             Assert.Equal(_successCode, r.ExitCode);
@@ -3199,7 +3256,8 @@ EndProject";
             var r = CommandRunner.Run(
                 nugetexe,
                 workingPath,
-                string.Join(" ", args));
+                string.Join(" ", args),
+                waitForExit: true);
 
             // Assert
             Assert.Contains($"Package source mapping matches found for package ID 'Contoso.MVC.ASP' are: 'SharedRepository'", r.Output);
@@ -3280,7 +3338,8 @@ EndProject";
                 var r = CommandRunner.Run(
                     nugetexe,
                     workingPath,
-                    string.Join(" ", args));
+                    string.Join(" ", args),
+                    waitForExit: true);
 
                 // Assert
                 Assert.Equal(_successCode, r.ExitCode);

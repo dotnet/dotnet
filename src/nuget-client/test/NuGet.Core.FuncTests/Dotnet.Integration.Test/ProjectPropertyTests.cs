@@ -2,6 +2,7 @@
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System.IO;
+using FluentAssertions;
 using NuGet.Test.Utility;
 using Xunit;
 
@@ -10,9 +11,9 @@ namespace Dotnet.Integration.Test
     [Collection(DotnetIntegrationCollection.Name)]
     public class ProjectPropertyTests
     {
-        private DotnetIntegrationTestFixture _msbuildFixture;
+        private MsbuildIntegrationTestFixture _msbuildFixture;
 
-        public ProjectPropertyTests(DotnetIntegrationTestFixture fixture)
+        public ProjectPropertyTests(MsbuildIntegrationTestFixture fixture)
         {
             _msbuildFixture = fixture;
         }
@@ -43,7 +44,10 @@ namespace Dotnet.Integration.Test
 #endif
 
             // Act
-            var result = _msbuildFixture.RunDotnetExpectSuccess(testDirectory.Path, $"msbuild -t:ValidateNuGetAuditValue -p:ExpectedValue={expected}");
+            var result = _msbuildFixture.RunDotnet(testDirectory.Path, $"msbuild -t:ValidateNuGetAuditValue -p:ExpectedValue={expected}");
+
+            // Assert
+            result.Success.Should().BeTrue(result.AllOutput);
         }
     }
 }

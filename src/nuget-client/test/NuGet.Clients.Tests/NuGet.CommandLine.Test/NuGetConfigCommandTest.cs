@@ -159,7 +159,8 @@ namespace NuGet.CommandLine.Test
                 var result = CommandRunner.Run(
                     nugetexe,
                     Directory.GetCurrentDirectory(),
-                    string.Join(" ", args));
+                    string.Join(" ", args),
+                    waitForExit: true);
 
                 // Act
                 args = new string[] {
@@ -173,7 +174,8 @@ namespace NuGet.CommandLine.Test
                 result = CommandRunner.Run(
                     nugetexe,
                     Directory.GetCurrentDirectory(),
-                    string.Join(" ", args));
+                    string.Join(" ", args),
+                    waitForExit: true);
 
                 var output = result.Output;
 
@@ -203,7 +205,8 @@ namespace NuGet.CommandLine.Test
             var result = CommandRunner.Run(
                 nugetexe,
                 Directory.GetCurrentDirectory(),
-                string.Join(" ", args));
+                string.Join(" ", args),
+                waitForExit: true);
 
             // Assert
             Assert.True(result.Errors.Contains("Key 'nonExistentKey' not found."));
@@ -240,7 +243,8 @@ namespace NuGet.CommandLine.Test
                 var result = CommandRunner.Run(
                     nugetexe,
                     testFolder,
-                    string.Join(" ", args));
+                    string.Join(" ", args),
+                    waitForExit: true);
 
                 var output = result.Output;
                 Environment.SetEnvironmentVariable("RP_ENV_VAR", string.Empty);

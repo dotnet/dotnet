@@ -513,7 +513,7 @@ namespace NuGet.Protocol.Plugins
         {
             cancellationToken.ThrowIfCancellationRequested();
 
-            var frameworks = new HashSet<NuGetFramework>(NuGetFrameworkFullComparer.Instance);
+            var frameworks = new HashSet<NuGetFramework>(new NuGetFrameworkFullComparer());
 
             frameworks.UnionWith((await GetLibItemsAsync(cancellationToken)).Select(g => g.TargetFramework));
 
@@ -990,7 +990,7 @@ namespace NuGet.Protocol.Plugins
             string folder,
             CancellationToken cancellationToken)
         {
-            var groups = new Dictionary<NuGetFramework, List<string>>(NuGetFrameworkFullComparer.Instance);
+            var groups = new Dictionary<NuGetFramework, List<string>>(new NuGetFrameworkFullComparer());
 
             var isContentFolder = StringComparer.OrdinalIgnoreCase.Equals(folder, PackagingConstants.Folders.Content);
             var allowSubFolders = true;

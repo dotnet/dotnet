@@ -19,9 +19,9 @@ namespace Dotnet.Integration.Test
     [Collection(DotnetIntegrationCollection.Name)]
     public class DotnetToolTests
     {
-        private DotnetIntegrationTestFixture _msbuildFixture;
+        private MsbuildIntegrationTestFixture _msbuildFixture;
 
-        public DotnetToolTests(DotnetIntegrationTestFixture fixture)
+        public DotnetToolTests(MsbuildIntegrationTestFixture fixture)
         {
             _msbuildFixture = fixture;
         }
@@ -39,7 +39,7 @@ namespace Dotnet.Integration.Test
                 _msbuildFixture.CreateDotnetToolProject(testDirectory.Path, projectName, tfm, rid);
 
                 // Act
-                var result = _msbuildFixture.RestoreToolProjectExpectFailure(workingDirectory, projectName);
+                var result = _msbuildFixture.RestoreToolProject(workingDirectory, projectName, string.Empty);
 
                 // Assert
                 Assert.True(result.ExitCode == 1, result.AllOutput);
@@ -63,7 +63,7 @@ namespace Dotnet.Integration.Test
                 _msbuildFixture.CreateDotnetToolProject(testDirectory, projectName, tfm, rid, packageSource, packages);
 
                 // Act
-                var result = _msbuildFixture.RestoreToolProjectExpectFailure(workingDirectory, projectName);
+                var result = _msbuildFixture.RestoreToolProject(workingDirectory, projectName, string.Empty);
 
                 // Assert
                 Assert.True(result.ExitCode == 1, result.AllOutput);
@@ -98,9 +98,10 @@ namespace Dotnet.Integration.Test
                 _msbuildFixture.CreateDotnetToolProject(testDirectory, projectName, tfm, rid, packageSource, packages);
 
                 // Act
-                var result = _msbuildFixture.RestoreToolProjectExpectSuccess(workingDirectory, projectName);
+                var result = _msbuildFixture.RestoreToolProject(workingDirectory, projectName, string.Empty);
 
                 // Assert
+                Assert.True(result.ExitCode == 0, result.AllOutput);
                 Assert.True(2 == result.AllOutput.Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries).Length, result.AllOutput);
                 // Verify the assets file
                 var lockFile = LockFileUtilities.GetLockFile(Path.Combine(testDirectory, projectName, "project.assets.json"), NullLogger.Instance);
@@ -141,7 +142,7 @@ namespace Dotnet.Integration.Test
                 _msbuildFixture.CreateDotnetToolProject(testDirectory, projectName, tfm, projectRID, packageSource, packages);
 
                 // Act
-                var result = _msbuildFixture.RestoreToolProjectExpectFailure(workingDirectory, projectName);
+                var result = _msbuildFixture.RestoreToolProject(workingDirectory, projectName, string.Empty);
 
                 // Assert
                 Assert.True(result.ExitCode == 1, result.AllOutput);
@@ -177,9 +178,10 @@ namespace Dotnet.Integration.Test
                 _msbuildFixture.CreateDotnetToolProject(testDirectory, projectName, tfm, rid, packageSource, packages);
 
                 // Act
-                var result = _msbuildFixture.RestoreToolProjectExpectSuccess(workingDirectory, projectName);
+                var result = _msbuildFixture.RestoreToolProject(workingDirectory, projectName, string.Empty);
 
                 // Assert
+                Assert.True(result.ExitCode == 0, result.AllOutput);
                 // Verify the assets file
                 var lockFile = LockFileUtilities.GetLockFile(Path.Combine(testDirectory, projectName, "project.assets.json"), NullLogger.Instance);
                 Assert.NotNull(lockFile);
@@ -221,9 +223,10 @@ namespace Dotnet.Integration.Test
                 _msbuildFixture.CreateDotnetToolProject(testDirectory, projectName, tfm, projectRID, packageSource, packages);
 
                 // Act
-                var result = _msbuildFixture.RestoreToolProjectExpectSuccess(workingDirectory, projectName);
+                var result = _msbuildFixture.RestoreToolProject(workingDirectory, projectName, string.Empty);
 
                 // Assert
+                Assert.True(result.ExitCode == 0, result.AllOutput);
                 // Verify the assets file
                 var lockFile = LockFileUtilities.GetLockFile(Path.Combine(testDirectory, projectName, "project.assets.json"), NullLogger.Instance);
                 Assert.NotNull(lockFile);
@@ -271,7 +274,7 @@ namespace Dotnet.Integration.Test
                 _msbuildFixture.CreateDotnetToolProject(testDirectory, projectName, tfm, rid, packageSources, packages);
 
                 // Act
-                var result = _msbuildFixture.RestoreToolProjectExpectFailure(workingDirectory, projectName);
+                var result = _msbuildFixture.RestoreToolProject(workingDirectory, projectName, string.Empty);
 
                 // Assert
                 Assert.True(result.ExitCode == 1, result.AllOutput);
@@ -322,9 +325,10 @@ namespace Dotnet.Integration.Test
                 _msbuildFixture.CreateDotnetToolProject(testDirectory, projectName, tfm, projectRid, packageSource, packages);
 
                 // Act
-                var result = _msbuildFixture.RestoreToolProjectExpectSuccess(workingDirectory, projectName);
+                var result = _msbuildFixture.RestoreToolProject(workingDirectory, projectName, string.Empty);
 
                 // Assert
+                Assert.True(result.ExitCode == 0, result.AllOutput);
                 var lockFile = LockFileUtilities.GetLockFile(Path.Combine(testDirectory, projectName, "project.assets.json"), NullLogger.Instance);
                 Assert.NotNull(lockFile);
                 Assert.Equal(2, lockFile.Targets.Count);
@@ -366,7 +370,7 @@ namespace Dotnet.Integration.Test
                 _msbuildFixture.CreateDotnetToolProject(testDirectory, projectName, tfm, rid, packageSource, packages);
 
                 // Act
-                var result = _msbuildFixture.RestoreToolProjectExpectFailure(workingDirectory, projectName);
+                var result = _msbuildFixture.RestoreToolProject(workingDirectory, projectName, string.Empty);
 
                 // Assert
                 Assert.True(result.ExitCode == 1, result.AllOutput);
@@ -400,7 +404,7 @@ namespace Dotnet.Integration.Test
                 _msbuildFixture.CreateDotnetToolProject(testDirectory, projectName, tfm, rid, packageSource, packages);
 
                 // Act
-                var result = _msbuildFixture.RestoreToolProjectExpectFailure(workingDirectory, projectName);
+                var result = _msbuildFixture.RestoreToolProject(workingDirectory, projectName, string.Empty);
 
                 // Assert
                 Assert.True(result.ExitCode == 1, result.AllOutput);
@@ -435,9 +439,10 @@ namespace Dotnet.Integration.Test
                 _msbuildFixture.CreateDotnetToolProject(testDirectory, projectName, tfm, rid, packageSource, packages);
 
                 // Act
-                var result = _msbuildFixture.RestoreToolProjectExpectSuccess(workingDirectory, projectName);
+                var result = _msbuildFixture.RestoreToolProject(workingDirectory, projectName, string.Empty);
 
                 // Assert
+                Assert.True(result.ExitCode == 0, result.AllOutput);
                 // Verify the assets file
                 var lockFile = LockFileUtilities.GetLockFile(Path.Combine(testDirectory, projectName, "project.assets.json"), NullLogger.Instance);
                 Assert.NotNull(lockFile);
@@ -490,7 +495,7 @@ namespace Dotnet.Integration.Test
                 MakePackageReferenceImplicitlyDefined(fullProjectPath, autoReferencePackageName);
 
                 // Act
-                var result = _msbuildFixture.RestoreToolProjectExpectSuccess(workingDirectory, projectName);
+                var result = _msbuildFixture.RestoreToolProject(workingDirectory, projectName, string.Empty);
 
                 // Assert
                 var lockFile = LockFileUtilities.GetLockFile(Path.Combine(testDirectory, projectName, "project.assets.json"), NullLogger.Instance);
@@ -543,7 +548,7 @@ namespace Dotnet.Integration.Test
                 MakePackageReferenceImplicitlyDefined(fullProjectPath, autoReferencePackageName);
 
                 // Act
-                var result = _msbuildFixture.RestoreToolProjectExpectFailure(workingDirectory, projectName);
+                var result = _msbuildFixture.RestoreToolProject(workingDirectory, projectName, string.Empty);
 
                 // Assert
                 var lockFile = LockFileUtilities.GetLockFile(Path.Combine(testDirectory, projectName, "project.assets.json"), NullLogger.Instance);
@@ -594,7 +599,7 @@ namespace Dotnet.Integration.Test
                 MakePackageReferenceImplicitlyDefined(fullProjectPath, autoReferencePackageName);
 
                 // Act
-                var result = _msbuildFixture.RestoreToolProjectExpectSuccess(workingDirectory, projectName);
+                var result = _msbuildFixture.RestoreToolProject(workingDirectory, projectName, string.Empty);
 
                 // Assert
                 var lockFile = LockFileUtilities.GetLockFile(Path.Combine(testDirectory, projectName, "project.assets.json"), NullLogger.Instance);
@@ -652,7 +657,7 @@ namespace Dotnet.Integration.Test
                 MakePackageReferenceImplicitlyDefined(fullProjectPath, autoReferencePackageName);
 
                 // Act
-                var result = _msbuildFixture.RestoreToolProjectExpectFailure(workingDirectory, projectName);
+                var result = _msbuildFixture.RestoreToolProject(workingDirectory, projectName, string.Empty);
 
                 // Assert
                 var lockFilePath = Path.Combine(testDirectory, projectName, "project.assets.json");
@@ -707,9 +712,10 @@ namespace Dotnet.Integration.Test
                 }
 
                 // Act
-                var result = _msbuildFixture.RestoreToolProjectExpectSuccess(workingDirectory, projectName);
+                var result = _msbuildFixture.RestoreToolProject(workingDirectory, projectName, string.Empty);
 
                 // Assert
+                Assert.True(result.ExitCode == 0, result.AllOutput);
                 // Verify the assets file
                 var lockFile = LockFileUtilities.GetLockFile(Path.Combine(testDirectory, projectName, "project.assets.json"), NullLogger.Instance);
                 Assert.NotNull(lockFile);
@@ -767,9 +773,10 @@ namespace Dotnet.Integration.Test
                 }
 
                 // Act
-                var result = _msbuildFixture.RestoreToolProjectExpectSuccess(workingDirectory, projectName);
+                var result = _msbuildFixture.RestoreToolProject(workingDirectory, projectName, string.Empty);
 
                 // Assert
+                Assert.True(result.ExitCode == 0, result.AllOutput);
                 // Verify the assets file
                 var lockFile = LockFileUtilities.GetLockFile(Path.Combine(testDirectory, projectName, "project.assets.json"), NullLogger.Instance);
                 Assert.NotNull(lockFile);

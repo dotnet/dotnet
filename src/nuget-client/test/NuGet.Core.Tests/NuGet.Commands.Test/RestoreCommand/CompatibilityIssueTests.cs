@@ -6,7 +6,7 @@ using NuGet.Packaging.Core;
 using NuGet.Versioning;
 using Xunit;
 
-namespace NuGet.Commands.Test.RestoreCommandTests
+namespace NuGet.Commands.Test
 {
     public class CompatibilityIssueTests
     {

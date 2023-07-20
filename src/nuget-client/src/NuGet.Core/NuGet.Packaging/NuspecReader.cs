@@ -215,7 +215,7 @@ namespace NuGet.Packaging
 
             var ns = Xml.Root.GetDefaultNamespace().NamespaceName;
 
-            var groups = new Dictionary<NuGetFramework, HashSet<string>>(NuGetFrameworkFullComparer.Instance);
+            var groups = new Dictionary<NuGetFramework, HashSet<string>>(new NuGetFrameworkFullComparer());
 
             foreach (var group in MetadataNode.Elements(XName.Get(FrameworkAssemblies, ns)).Elements(XName.Get(FrameworkAssembly, ns))
                 .GroupBy(n => GetAttributeValue(n, TargetFramework)))

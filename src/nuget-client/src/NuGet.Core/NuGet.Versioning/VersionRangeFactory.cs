@@ -9,10 +9,11 @@ using System.Linq;
 
 namespace NuGet.Versioning
 {
+    /// <summary>
+    /// Static factory methods for creating version range objects.
+    /// </summary>
     public partial class VersionRange
     {
-        // Static factory methods for creating version range objects.
-
         /// <summary>
         /// A range that accepts all versions, prerelease and stable.
         /// </summary>
@@ -327,6 +328,8 @@ namespace NuGet.Versioning
 
             if (ranges.Any())
             {
+                var rangeComparer = new VersionRangeComparer(comparer);
+
                 // start with the first range in the list
                 var first = ranges.First();
 

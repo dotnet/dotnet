@@ -6,33 +6,12 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
-using System.Text;
 
 namespace NuGet.Frameworks
 {
     public class FrameworkNameProvider : IFrameworkNameProvider
     {
-        private static readonly HashSet<NuGetFramework> EmptyFrameworkSet = new();
-
-        /// <summary>
-        /// Legacy frameworks that are allowed to have a single digit for the version number.
-        /// </summary>
-        private static readonly HashSet<string> SingleDigitVersionFrameworks = new(StringComparer.OrdinalIgnoreCase)
-        {
-            FrameworkConstants.FrameworkIdentifiers.Windows,
-            FrameworkConstants.FrameworkIdentifiers.WindowsPhone,
-            FrameworkConstants.FrameworkIdentifiers.Silverlight
-        };
-
-        /// <summary>
-        /// Frameworks that must always include a decimal point (period) between numerical parts.
-        /// </summary>
-        private static readonly HashSet<string> DecimalPointFrameworks = new(StringComparer.OrdinalIgnoreCase)
-        {
-            FrameworkConstants.FrameworkIdentifiers.NetCoreApp,
-            FrameworkConstants.FrameworkIdentifiers.NetStandard,
-            FrameworkConstants.FrameworkIdentifiers.NanoFramework
-        };
+        private static readonly HashSet<NuGetFramework> EmptyFrameworkSet = new HashSet<NuGetFramework>();
 
         /// <summary>
         /// Contains identifier -> identifier
@@ -153,10 +132,11 @@ namespace NuGet.Frameworks
 
         public bool TryGetVersion(string versionString, [NotNullWhen(true)] out Version? version)
         {
+            version = null;
+
             if (string.IsNullOrEmpty(versionString))
             {
-                version = null;
-                return false;
+                version = new Version(0, 0);
             }
             else
             {
@@ -179,14 +159,17 @@ namespace NuGet.Frameworks
                     return Version.TryParse(string.Join(".", versionString.ToCharArray().Take(4)), out version);
                 }
             }
+
+            return false;
         }
 
         public bool TryGetPlatformVersion(string versionString, [NotNullWhen(true)] out Version? version)
         {
+            version = null;
+
             if (string.IsNullOrEmpty(versionString))
             {
-                version = null;
-                return false;
+                version = new Version(0, 0);
             }
             else
             {
@@ -196,81 +179,78 @@ namespace NuGet.Frameworks
                 }
                 return Version.TryParse(versionString, out version);
             }
+
+            return false;
         }
 
         public string GetVersionString(string framework, Version version)
         {
-            if (version is null || IsZero(version))
+            var versionString = string.Empty;
+
+            if (version != null
+                && (version.Major > 0
+                    || version.Minor > 0
+                    || version.Build > 0
+                    || version.Revision > 0))
             {
-                return string.Empty;
+                var versionParts = new Stack<int>(4);
+
+                versionParts.Push(version.Major > 0 ? version.Major : 0);
+                versionParts.Push(version.Minor > 0 ? version.Minor : 0);
+                versionParts.Push(version.Build > 0 ? version.Build : 0);
+                versionParts.Push(version.Revision > 0 ? version.Revision : 0);
+
+                // By default require the version to have 2 digits, for legacy frameworks 1 is allowed
+                var minPartCount = SingleDigitVersionFrameworks.Contains(framework) ? 1 : 2;
+
+                // remove all trailing zeros beyond the minor version
+                while ((versionParts.Count > minPartCount
+                       && versionParts.Peek() <= 0))
+                {
+                    versionParts.Pop();
+                }
+
+                // Always use decimals and 2+ digits for dotnet, netstandard, netstandardapp,
+                // netcoreapp, or if any parts of the version are over 9 we need to use decimals
+                if (string.Equals(
+                        framework,
+                        FrameworkConstants.FrameworkIdentifiers.NetCoreApp,
+                        StringComparison.OrdinalIgnoreCase)
+                    || string.Equals(
+                        framework,
+                        FrameworkConstants.FrameworkIdentifiers.NetStandard,
+                        StringComparison.OrdinalIgnoreCase)
+                    || versionParts.Any(x => x > 9)
+                    || string.Equals(
+                        framework,
+                        FrameworkConstants.FrameworkIdentifiers.NanoFramework,
+                        StringComparison.OrdinalIgnoreCase))
+                {
+                    // An additional zero is needed for decimals
+                    if (versionParts.Count < 2)
+                    {
+                        versionParts.Push(0);
+                    }
+
+                    versionString = string.Join(".", versionParts.Reverse());
+                }
+                else
+                {
+                    versionString = string.Join(string.Empty, versionParts.Reverse());
+                }
             }
 
-            int major = version.Major > 0 ? version.Major : 0;
-            int minor = version.Minor > 0 ? version.Minor : 0;
-            int build = version.Build > 0 ? version.Build : 0;
-            int revision = version.Revision > 0 ? version.Revision : 0;
-
-            // Remove all trailing zeros beyond the minor version.
-            int partCount = (minor == 0, build == 0, revision == 0) switch
-            {
-                (true, true, true) => 1,
-                (false, true, true) => 2,
-                (_, false, true) => 3,
-                (_, _, false) => 4
-            };
-
-            // Only some legacy frameworks are allowed to have one part in their version.
-            if (partCount == 1 && !SingleDigitVersionFrameworks.Contains(framework))
-            {
-                partCount = 2;
-            }
-
-            StringBuilder sb = StringBuilderPool.Shared.Rent(256);
-
-            // Some frameworks require a decimal point between parts.
-            // If any part is greater than 9 (requiring multiple digits), we add decimal points.
-            if (DecimalPointFrameworks.Contains(framework) || HasGreaterThanNinePart())
-            {
-                // An additional zero is needed for decimals.
-                if (partCount == 1)
-                    partCount = 2;
-
-                sb.Append(major);
-                if (partCount > 1)
-                    sb.Append('.').Append(minor);
-                if (partCount > 2)
-                    sb.Append('.').Append(build);
-                if (partCount > 3)
-                    sb.Append('.').Append(revision);
-            }
-            else
-            {
-                sb.Append(major);
-                if (partCount > 1)
-                    sb.Append(minor);
-                if (partCount > 2)
-                    sb.Append(build);
-                if (partCount > 3)
-                    sb.Append(revision);
-            }
-
-            return StringBuilderPool.Shared.ToStringAndReturn(sb);
-
-            bool HasGreaterThanNinePart()
-            {
-                return major > 9 || minor > 9 || build > 9 || revision > 9;
-            }
-
-            static bool IsZero(Version version)
-            {
-                // Build and Revision can be -1 when only major & minor are specified.
-                // Out of caution, check all values for zero or less.
-                return version.Major <= 0
-                    && version.Minor <= 0
-                    && version.Build <= 0
-                    && version.Revision <= 0;
-            }
+            return versionString;
         }
+
+        // Legacy frameworks that are allowed to have a single digit for the version number
+        private static readonly HashSet<string> SingleDigitVersionFrameworks = new HashSet<string>(
+            new string[] {
+                FrameworkConstants.FrameworkIdentifiers.Windows,
+                FrameworkConstants.FrameworkIdentifiers.WindowsPhone,
+                FrameworkConstants.FrameworkIdentifiers.Silverlight
+            },
+            StringComparer.OrdinalIgnoreCase);
 
         public bool TryGetPortableProfile(IEnumerable<NuGetFramework> supportedFrameworks, out int profileNumber)
         {
@@ -940,7 +920,7 @@ namespace NuGet.Frameworks
                 {
                     if (!_portableCompatibilityMappings.TryGetValue(mapping.Key, out HashSet<FrameworkRange>? entries))
                     {
-                        entries = new HashSet<FrameworkRange>(FrameworkRangeComparer.Instance);
+                        entries = new HashSet<FrameworkRange>(new FrameworkRangeComparer());
                         _portableCompatibilityMappings.Add(mapping.Key, entries);
                     }
 

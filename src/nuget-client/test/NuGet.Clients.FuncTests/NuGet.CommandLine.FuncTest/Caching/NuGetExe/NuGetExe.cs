@@ -95,6 +95,7 @@ namespace NuGet.CommandLine.Test.Caching
                 context.WorkingPath,
                 args,
                 timeOutInMilliseconds: timeout,
+                waitForExit: true,
                 environmentVariables: environmentVariables);
         }
 
@@ -179,7 +180,8 @@ namespace NuGet.CommandLine.Test.Caching
                             var helpResult = CommandRunner.Run(
                                 thisPath,
                                 ".",
-                                "help");
+                                "help",
+                                waitForExit: true);
 
                             if (helpResult.ExitCode == 0)
                             {

@@ -12,6 +12,7 @@ using FluentAssertions;
 using Moq;
 using NuGet.Common;
 using NuGet.Configuration;
+using NuGet.Configuration.Test;
 using NuGet.DependencyResolver;
 using NuGet.Frameworks;
 using NuGet.LibraryModel;
@@ -30,7 +31,7 @@ using Test.Utility.ProjectManagement;
 using Test.Utility.Signing;
 using Xunit;
 
-namespace NuGet.Commands.Test.RestoreCommandTests
+namespace NuGet.Commands.Test
 {
     [Collection(nameof(NotThreadSafeResourceCollection))]
     public class RestoreCommandTests

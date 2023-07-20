@@ -23,8 +23,8 @@
     <installerOutputPackageVersion>8.0.100</installerOutputPackageVersion>
     <msbuildGitCommitHash>0ff2a83e927c14235a95d04291e16fbdc3b29237</msbuildGitCommitHash>
     <msbuildOutputPackageVersion>17.8.0-preview-23367-03</msbuildOutputPackageVersion>
-    <nugetclientGitCommitHash>b3c4e8094bbb924408180d700ae5b3d37713587c</nugetclientGitCommitHash>
-    <nugetclientOutputPackageVersion>6.8.0-preview.1.22</nugetclientOutputPackageVersion>
+    <nugetclientGitCommitHash>13f2b6af6e9864711e815cfbffd7aa5015c52cec</nugetclientGitCommitHash>
+    <nugetclientOutputPackageVersion>6.7.0-rc.111</nugetclientOutputPackageVersion>
     <razorGitCommitHash>619c1aa061ca20fb696ec482a72fcacc22da52fb</razorGitCommitHash>
     <razorOutputPackageVersion>7.0.0-preview.23364.3</razorOutputPackageVersion>
     <roslynanalyzersGitCommitHash>3bdcce1d8eebbb3dcdbd2d5d4ea60d470a20eb3c</roslynanalyzersGitCommitHash>

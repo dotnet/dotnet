@@ -1,8 +1,13 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
 using System.Linq;
+using System.Reflection;
+using System.Runtime.Versioning;
 using System.Text;
+using System.Threading.Tasks;
 using NuGet.Client;
 using NuGet.Common;
 using NuGet.ContentModel;
@@ -29,7 +34,7 @@ namespace NuGet.Packaging.Rules
 
         internal IEnumerable<PackagingLogMessage> Validate(IEnumerable<string> files)
         {
-            var managedCodeConventions = new ManagedCodeConventions(RuntimeGraph.Empty);
+            var managedCodeConventions = new ManagedCodeConventions(new RuntimeGraph());
             var collection = new ContentItemCollection();
             collection.Load(files);
 

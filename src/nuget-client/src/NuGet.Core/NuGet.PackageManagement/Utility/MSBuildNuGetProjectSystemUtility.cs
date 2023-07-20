@@ -143,7 +143,7 @@ namespace NuGet.ProjectManagement
             var packageTargetFramework = frameworkSpecificGroup.TargetFramework;
 
             var packageItemListAsArchiveEntryNames = frameworkSpecificGroup.Items.ToList();
-            packageItemListAsArchiveEntryNames.Sort(PackageItemComparer.Instance);
+            packageItemListAsArchiveEntryNames.Sort(new PackageItemComparer());
 
             try
             {
@@ -629,8 +629,6 @@ namespace NuGet.ProjectManagement
 
         private class PackageItemComparer : IComparer<string>
         {
-            public static PackageItemComparer Instance { get; } = new();
-
             public int Compare(string x, string y)
             {
                 // BUG 636: We sort files so that they are added in the correct order

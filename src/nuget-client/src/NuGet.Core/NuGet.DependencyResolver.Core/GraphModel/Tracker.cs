@@ -3,139 +3,83 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
-
-#nullable enable
 
 namespace NuGet.DependencyResolver
 {
     public class Tracker<TItem>
     {
-        private readonly Dictionary<string, Entry> _entryByLibraryName = new(StringComparer.OrdinalIgnoreCase);
+        private readonly Dictionary<string, Entry> _entries
+            = new Dictionary<string, Entry>(StringComparer.OrdinalIgnoreCase);
 
         public void Track(GraphItem<TItem> item)
         {
-            GetOrAddEntry(item).AddItem(item);
+            var entry = GetEntry(item);
+            if (!entry.List.Contains(item))
+            {
+                entry.List.Add(item);
+            }
         }
 
         public bool IsDisputed(GraphItem<TItem> item)
         {
-            return TryGetEntry(item)?.HasMultipleItems ?? false;
+            return GetEntry(item).List.Count > 1;
         }
 
         public bool IsAmbiguous(GraphItem<TItem> item)
         {
-            return TryGetEntry(item)?.Ambiguous ?? false;
+            return GetEntry(item).Ambiguous;
         }
 
         public void MarkAmbiguous(GraphItem<TItem> item)
         {
-            GetOrAddEntry(item).Ambiguous = true;
+            GetEntry(item).Ambiguous = true;
         }
 
-        /// <remarks>
-        /// Note, this method returns <see langword="true"/> for items that were never tracked.
-        /// </remarks>
         public bool IsBestVersion(GraphItem<TItem> item)
         {
-            var entry = TryGetEntry(item);
+            var entry = GetEntry(item);
 
-            if (entry is not null)
+            var version = item.Key.Version;
+
+            foreach (var known in entry.List)
             {
-                var version = item.Key.Version;
-
-                foreach (var known in entry.Items)
+                if (version < known.Key.Version)
                 {
-                    if (version < known.Key.Version)
-                    {
-                        return false;
-                    }
+                    return false;
                 }
             }
 
             return true;
         }
 
-        public IEnumerable<GraphItem<TItem>> GetDisputes(GraphItem<TItem> item)
-        {
-            return TryGetEntry(item)?.Items ?? Enumerable.Empty<GraphItem<TItem>>();
-        }
+        public IEnumerable<GraphItem<TItem>> GetDisputes(GraphItem<TItem> item) => GetEntry(item).List;
 
         internal void Clear()
         {
-            _entryByLibraryName.Clear();
+            _entries.Clear();
         }
 
-        private Entry? TryGetEntry(GraphItem<TItem> item)
+        private Entry GetEntry(GraphItem<TItem> item)
         {
-            _entryByLibraryName.TryGetValue(item.Key.Name, out Entry? entry);
-            return entry;
-        }
-
-        private Entry GetOrAddEntry(GraphItem<TItem> item)
-        {
-            if (!_entryByLibraryName.TryGetValue(item.Key.Name, out Entry? entry))
+            Entry itemList;
+            if (!_entries.TryGetValue(item.Key.Name, out itemList))
             {
-                entry = new Entry();
-                _entryByLibraryName[item.Key.Name] = entry;
+                itemList = new Entry();
+                _entries[item.Key.Name] = itemList;
+            }
+            return itemList;
+        }
+
+        private class Entry
+        {
+            public Entry()
+            {
+                List = new HashSet<GraphItem<TItem>>();
             }
 
-            return entry;
-        }
-
-        private sealed class Entry
-        {
-            /// <summary>
-            /// This field can have one of three values:
-            ///
-            /// - null: when no graph items exist in this entry
-            /// - a graph item: when only a single graph item exists in this entry
-            /// - a hash set of graph items: when multiple graph items exist in this entry
-            ///
-            /// This packing exists in order to reduce the size of this object in
-            /// memory. For large graphs, this can amount to a significant saving in memory,
-            /// which helps overall performance.
-            /// </summary>
-            private object? _storage;
+            public HashSet<GraphItem<TItem>> List { get; set; }
 
             public bool Ambiguous { get; set; }
-
-            public void AddItem(GraphItem<TItem> item)
-            {
-                if (_storage is null)
-                {
-                    _storage = item;
-                }
-                else if (_storage is GraphItem<TItem> existingItem)
-                {
-                    if (!existingItem.Equals(item))
-                    {
-#if NETSTANDARD2_0
-                        _storage = new HashSet<GraphItem<TItem>>() { existingItem, item };
-#else
-                        _storage = new HashSet<GraphItem<TItem>>(capacity: 3) { existingItem, item };
-#endif
-                    }
-                }
-                else
-                {
-                    ((HashSet<GraphItem<TItem>>)_storage).Add(item);
-                }
-            }
-
-            public bool HasMultipleItems => _storage is HashSet<GraphItem<TItem>>;
-
-            public IEnumerable<GraphItem<TItem>> Items
-            {
-                get
-                {
-                    if (_storage is null)
-                        return Enumerable.Empty<GraphItem<TItem>>();
-                    if (_storage is GraphItem<TItem> item)
-                        return new[] { item };
-                    return (HashSet<GraphItem<TItem>>)_storage;
-                }
-            }
         }
     }
 }

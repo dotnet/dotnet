@@ -667,6 +667,7 @@ namespace NuGet.CommandLine.Test
                     nugetexe,
                     workingPath,
                     string.Join(" ", args),
+                    waitForExit: true,
                     environmentVariables: envVars);
 
                 // Assert
@@ -1050,7 +1051,8 @@ namespace NuGet.CommandLine.Test
                     var r1 = CommandRunner.Run(
                         nugetexe,
                         workingPath,
-                        args);
+                        args,
+                        waitForExit: true);
 
                     // Assert
                     r1.Success.Should().BeTrue(because: r1.AllOutput);
@@ -1087,7 +1089,8 @@ namespace NuGet.CommandLine.Test
                     var r1 = CommandRunner.Run(
                         nugetexe,
                         workingPath,
-                        args);
+                        args,
+                        waitForExit: true);
 
                     // Assert
                     Assert.Equal(0, r1.ExitCode);
@@ -1123,7 +1126,8 @@ namespace NuGet.CommandLine.Test
                     var r1 = CommandRunner.Run(
                         nugetexe,
                         workingPath,
-                        args);
+                        args,
+                        waitForExit: true);
 
                     // Assert
                     Assert.Equal(0, r1.ExitCode);
@@ -1183,7 +1187,8 @@ namespace NuGet.CommandLine.Test
                     var r1 = CommandRunner.Run(
                         nugetexe,
                         pathContext.WorkingDirectory,
-                        args);
+                        args,
+                        waitForExit: true);
 
                     // Assert
                     r1.Success.Should().BeTrue(r1.AllOutput);
@@ -1238,12 +1243,14 @@ namespace NuGet.CommandLine.Test
                     var r1 = CommandRunner.Run(
                         nugetexe,
                         workingPath,
-                        args);
+                        args,
+                        waitForExit: true);
 
                     var r2 = CommandRunner.Run(
                         nugetexe,
                         workingPath,
-                        args);
+                        args,
+                        waitForExit: true);
 
                     // Assert
                     r1.ExitCode.Should().Be(0);
@@ -1273,7 +1280,8 @@ namespace NuGet.CommandLine.Test
                 var r1 = CommandRunner.Run(
                     nugetexe,
                     workingPath,
-                    args);
+                    args,
+                    waitForExit: true);
 
                 // Assert
                 r1.ExitCode.Should().Be(1);
@@ -1380,7 +1388,8 @@ namespace NuGet.CommandLine.Test
                 var r = CommandRunner.Run(
                     nugetexe,
                     pathContext.WorkingDirectory,
-                    string.Join(" ", args));
+                    string.Join(" ", args),
+                    waitForExit: true);
 
                 // Assert
                 r.Success.Should().BeTrue(because: r.AllOutput);
@@ -1428,7 +1437,8 @@ namespace NuGet.CommandLine.Test
                 var r = CommandRunner.Run(
                     nugetexe,
                     workingPath,
-                    args);
+                    args,
+                    waitForExit: true);
 
                 // Assert
                 Assert.NotEqual(0, r.ExitCode);
@@ -1500,7 +1510,8 @@ namespace NuGet.CommandLine.Test
                 var r = CommandRunner.Run(
                     nugetexe,
                     pathContext.WorkingDirectory,
-                    cmd);
+                    cmd,
+                    waitForExit: true);
 
                 // Assert
                 Assert.Equal(0, r.ExitCode);
@@ -1617,7 +1628,8 @@ namespace NuGet.CommandLine.Test
                     var result = CommandRunner.Run(
                         nugetexe,
                         Directory.GetCurrentDirectory(),
-                        string.Join(" ", args));
+                        string.Join(" ", args),
+                        true);
 
                     // Assert
                     Assert.True(credentialsPassedToRegistrationEndPoint);
@@ -1648,7 +1660,8 @@ namespace NuGet.CommandLine.Test
                 var result = CommandRunner.Run(
                    nugetexe,
                    testDir,
-                   string.Join(" ", args));
+                   string.Join(" ", args),
+                   true);
                 Util.VerifyResultFailure(result, "'-outputdirectory' is not a valid version string.");
             }
         }
@@ -1691,7 +1704,8 @@ namespace NuGet.CommandLine.Test
                 var result = CommandRunner.Run(
                     nugetexe,
                     randomTestFolder,
-                    string.Join(" ", args));
+                    string.Join(" ", args),
+                    true);
 
                 var expectedPath = Path.Combine(
                     randomTestFolder,
@@ -2100,6 +2114,7 @@ namespace NuGet.CommandLine.Test
                 nugetexe,
                 pathContext.WorkingDirectory,
                 string.Join(" ", args),
+                waitForExit: true,
                 environmentVariables: envVars);
 
             // Assert

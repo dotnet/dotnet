@@ -732,7 +732,7 @@ namespace NuGet.PackageManagement.UI
             }
             else
             {
-                var installedVersion = _searchResultPackage?.AllowedVersions?.OriginalString ?? _searchResultPackage?.InstalledVersion.ToNormalizedString();
+                var installedVersion = _searchResultPackage?.AllowedVersions?.OriginalString ?? _searchResultPackage?.InstalledVersion.ToString();
                 SelectedVersion =
                     possibleVersions.FirstOrDefault(v => StringComparer.OrdinalIgnoreCase.Equals(v.Range?.OriginalString, installedVersion))
                     ?? possibleVersions.FirstOrDefault(v => v.IsValidVersion);

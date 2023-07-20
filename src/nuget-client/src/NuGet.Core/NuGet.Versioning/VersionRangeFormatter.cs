@@ -11,6 +11,9 @@ namespace NuGet.Versioning
     /// </summary>
     public class VersionRangeFormatter : IFormatProvider, ICustomFormatter
     {
+        private const string ZeroN = "{0:N}";
+        private static readonly VersionFormatter VersionFormatter = VersionFormatter.Instance;
+
         /// <summary>
         /// A static instance of the <see cref="VersionRangeFormatter"/> class.
         /// </summary>
@@ -26,7 +29,8 @@ namespace NuGet.Versioning
                 throw new ArgumentNullException(nameof(arg));
             }
 
-            if (arg is not VersionRange range)
+            var range = arg as VersionRange;
+            if (range == null)
             {
                 throw ResourcesFormatter.TypeNotSupported(arg.GetType(), nameof(arg));
             }
@@ -36,14 +40,32 @@ namespace NuGet.Versioning
                 format = "N";
             }
 
-            var builder = StringBuilderPool.Shared.Rent(256);
-
-            for (var i = 0; i < format!.Length; i++)
+            // single char identifiers
+            if (format!.Length == 1)
             {
-                Format(builder, format[i], range);
+                string formatted = Format(format[0], range);
+                return formatted;
             }
+            else
+            {
+                var sb = StringBuilderPool.Shared.Rent(format.Length);
 
-            return StringBuilderPool.Shared.ToStringAndReturn(builder);
+                for (var i = 0; i < format.Length; i++)
+                {
+                    var s = Format(format[i], range);
+
+                    if (s == null)
+                    {
+                        sb.Append(format[i]);
+                    }
+                    else
+                    {
+                        sb.Append(s);
+                    }
+                }
+
+                return StringBuilderPool.Shared.ToStringAndReturn(sb);
+            }
         }
 
         /// <summary>
@@ -59,250 +81,254 @@ namespace NuGet.Versioning
             return null;
         }
 
-        private static void Format(StringBuilder builder, char c, VersionRange range)
+        private string Format(char c, VersionRange range)
         {
+            string s = string.Empty;
+
             switch (c)
             {
                 case 'P':
-                    PrettyPrint(builder, range, useParentheses: true);
+                    s = PrettyPrint(range, useParentheses: true);
                     break;
                 case 'p':
-                    PrettyPrint(builder, range, useParentheses: false);
+                    s = PrettyPrint(range, useParentheses: false);
                     break;
                 case 'L':
-                    if (range.HasLowerBound)
-                    {
-                        VersionFormatter.AppendNormalized(builder, range.MinVersion);
-                    }
+                    s = range.HasLowerBound ? string.Format(VersionFormatter, ZeroN, range.MinVersion) : string.Empty;
                     break;
                 case 'U':
-                    if (range.HasUpperBound)
-                    {
-                        VersionFormatter.AppendNormalized(builder, range.MaxVersion);
-                    }
+                    s = range.HasUpperBound ? string.Format(VersionFormatter, ZeroN, range.MaxVersion) : string.Empty;
                     break;
                 case 'S':
-                    GetToString(builder, range);
+                    s = GetToString(range);
                     break;
                 case 'N':
-                    GetNormalizedString(builder, range);
+                    s = GetNormalizedString(range);
                     break;
                 case 'D':
-                    GetLegacyString(builder, range);
+                    s = GetLegacyString(range);
                     break;
                 case 'T':
-                    GetLegacyShortString(builder, range);
+                    s = GetLegacyShortString(range);
                     break;
                 case 'A':
-                    GetShortString(builder, range);
-                    break;
-                default:
-                    builder.Append(c);
+                    s = GetShortString(range);
                     break;
             }
+
+            return s;
         }
 
-        private static void GetShortString(StringBuilder builder, VersionRange range)
+        private string GetShortString(VersionRange range)
         {
+            string s;
+
             if (range.HasLowerBound
                 && range.IsMinInclusive
                 && !range.HasUpperBound)
             {
-                if (range.IsFloating)
-                {
-                    range.Float.ToString(builder);
-                }
-                else
-                {
-                    VersionFormatter.AppendNormalized(builder, range.MinVersion);
-                }
+                s = range.IsFloating ?
+                    range.Float.ToString() :
+                    string.Format(VersionFormatter, ZeroN, range.MinVersion);
             }
             else if (range.HasLowerAndUpperBounds
                      && range.IsMinInclusive
                      && range.IsMaxInclusive
-                     && range.MinVersion.Equals(range.MaxVersion))
+                     &&
+                     range.MinVersion.Equals(range.MaxVersion))
             {
                 // Floating should be ignored here.
-                builder.Append('[');
-                VersionFormatter.AppendNormalized(builder, range.MinVersion);
-                builder.Append(']');
+                s = string.Format(VersionFormatter, "[{0:N}]", range.MinVersion);
             }
             else
             {
-                GetNormalizedString(builder, range);
+                s = GetNormalizedString(range);
             }
+
+            return s;
         }
 
         /// <summary>
         /// Builds a normalized string with no short hand
         /// </summary>
-        private static void GetNormalizedString(StringBuilder builder, VersionRange range)
+        private string GetNormalizedString(VersionRange range)
         {
-            builder.Append(range.HasLowerBound && range.IsMinInclusive ? '[' : '(');
+            StringBuilder sb = StringBuilderPool.Shared.Rent(256);
+
+            sb.Append(range.HasLowerBound && range.IsMinInclusive ? '[' : '(');
 
             if (range.HasLowerBound)
             {
                 if (range.IsFloating)
                 {
-                    range.Float.ToString(builder);
+                    range.Float.ToString(sb);
                 }
                 else
                 {
-                    VersionFormatter.AppendNormalized(builder, range.MinVersion);
+                    sb.AppendFormat(VersionFormatter, ZeroN, range.MinVersion);
                 }
             }
 
-            builder.Append(", ");
+            sb.Append(", ");
 
             if (range.HasUpperBound)
             {
-                VersionFormatter.AppendNormalized(builder, range.MaxVersion);
+                sb.AppendFormat(VersionFormatter, ZeroN, range.MaxVersion);
             }
 
-            builder.Append(range.HasUpperBound && range.IsMaxInclusive ? ']' : ')');
+            sb.Append(range.HasUpperBound && range.IsMaxInclusive ? ']' : ')');
+
+            return StringBuilderPool.Shared.ToStringAndReturn(sb);
         }
 
         /// <summary>
         /// Builds a string to represent the VersionRange. This string can include short hand notations.
         /// </summary>
-        private static void GetToString(StringBuilder builder, VersionRange range)
+        private string GetToString(VersionRange range)
         {
+            string s;
+
             if (range.HasLowerBound
                 && range.IsMinInclusive
                 && !range.HasUpperBound)
             {
-                VersionFormatter.AppendNormalized(builder, range.MinVersion);
+                s = string.Format(VersionFormatter, ZeroN, range.MinVersion);
             }
             else if (range.HasLowerAndUpperBounds
                      && range.IsMinInclusive
                      && range.IsMaxInclusive
-                     && range.MinVersion.Equals(range.MaxVersion))
+                     &&
+                     range.MinVersion.Equals(range.MaxVersion))
             {
-                // TODO: Does this need a specific version comparison? Does metadata matter?
+                // TODO: Does this need a specific version comparision? Does metadata matter?
 
-                builder.Append('[');
-                VersionFormatter.AppendNormalized(builder, range.MinVersion);
-                builder.Append(']');
+                s = string.Format(VersionFormatter, "[{0:N}]", range.MinVersion);
             }
             else
             {
-                GetNormalizedString(builder, range);
+                s = GetNormalizedString(range);
             }
+
+            return s;
         }
 
         /// <summary>
         /// Creates a legacy short string that is compatible with NuGet 2.8.3
         /// </summary>
-        private static void GetLegacyShortString(StringBuilder builder, VersionRangeBase range)
+        private string GetLegacyShortString(VersionRangeBase range)
         {
+            string s;
+
             if (range.HasLowerBound
                 && range.IsMinInclusive
                 && !range.HasUpperBound)
             {
-                VersionFormatter.AppendNormalized(builder, range.MinVersion);
+                s = string.Format(VersionFormatter, ZeroN, range.MinVersion);
             }
             else if (range.HasLowerAndUpperBounds
                      && range.IsMinInclusive
                      && range.IsMaxInclusive
-                     && range.MinVersion.Equals(range.MaxVersion))
+                     &&
+                     range.MinVersion.Equals(range.MaxVersion))
             {
-                builder.Append('[');
-                VersionFormatter.AppendNormalized(builder, range.MinVersion);
-                builder.Append(']');
+                s = string.Format(VersionFormatter, "[{0:N}]", range.MinVersion);
             }
             else
             {
-                GetLegacyString(builder, range);
+                s = GetLegacyString(range);
             }
+
+            return s;
         }
 
         /// <summary>
         /// Creates a legacy string that is compatible with NuGet 2.8.3
         /// </summary>
-        private static void GetLegacyString(StringBuilder builder, VersionRangeBase range)
+        private string GetLegacyString(VersionRangeBase range)
         {
-            builder.Append(range.HasLowerBound && range.IsMinInclusive ? '[' : '(');
+            var sb = new StringBuilder();
+
+            sb.Append(range.HasLowerBound && range.IsMinInclusive ? '[' : '(');
 
             if (range.HasLowerBound)
             {
-                VersionFormatter.AppendNormalized(builder, range.MinVersion);
+                sb.AppendFormat(VersionFormatter, ZeroN, range.MinVersion);
             }
 
-            builder.Append(", ");
+            sb.Append(", ");
 
             if (range.HasUpperBound)
             {
-                VersionFormatter.AppendNormalized(builder, range.MaxVersion);
+                sb.AppendFormat(VersionFormatter, ZeroN, range.MaxVersion);
             }
 
-            builder.Append(range.HasUpperBound && range.IsMaxInclusive ? ']' : ')');
+            sb.Append(range.HasUpperBound && range.IsMaxInclusive ? ']' : ')');
+
+            return sb.ToString();
         }
 
         /// <summary>
         /// A pretty print representation of the VersionRange.
         /// </summary>
-        private static void PrettyPrint(StringBuilder builder, VersionRange range, bool useParentheses)
+        private string PrettyPrint(VersionRange range, bool useParentheses)
         {
+            // empty range
             if (!range.HasLowerBound
-                && !range.HasUpperBound)
+                 && !range.HasUpperBound)
             {
-                // empty range
-                return;
+                return string.Empty;
             }
 
-            if (useParentheses)
-            {
-                builder.Append('(');
-            }
-
+            // single version
             if (range.HasLowerAndUpperBounds
-                && range.MaxVersion.Equals(range.MinVersion)
-                && range.IsMinInclusive
-                && range.IsMaxInclusive)
+                     && range.MaxVersion.Equals(range.MinVersion)
+                     && range.IsMinInclusive
+                     && range.IsMaxInclusive)
             {
-                // single version
-                builder.Append("= ");
-                VersionFormatter.AppendNormalized(builder, range.MinVersion);
+                if (useParentheses)
+                {
+                    return string.Format(VersionFormatter, "(= {0:N})", range.MinVersion);
+                }
+                else return string.Format(VersionFormatter, "= {0:N}", range.MinVersion);
             }
-            else
+
+            // normal case with a lower, upper, or both.
+            var sb = new StringBuilder(useParentheses ? "(" : string.Empty);
+
+            if (range.HasLowerBound)
             {
-                // normal case with a lower, upper, or both.
-                if (range.HasLowerBound)
-                {
-                    PrettyPrintBound(builder, range.MinVersion, range.IsMinInclusive, ">");
-                }
+                PrettyPrintBound(sb, range.MinVersion, range.IsMinInclusive, ">");
+            }
 
-                if (range.HasLowerAndUpperBounds)
-                {
-                    builder.Append(" && ");
-                }
+            if (range.HasLowerAndUpperBounds)
+            {
+                sb.Append(" && ");
+            }
 
-                if (range.HasUpperBound)
-                {
-                    PrettyPrintBound(builder, range.MaxVersion, range.IsMaxInclusive, "<");
-                }
+            if (range.HasUpperBound)
+            {
+                PrettyPrintBound(sb, range.MaxVersion, range.IsMaxInclusive, "<");
             }
 
             if (useParentheses)
             {
-                builder.Append(')');
+                sb.Append(")");
             }
+
+            return sb.ToString();
         }
 
-        private static void PrettyPrintBound(StringBuilder builder, NuGetVersion version, bool inclusive, string boundChar)
+        private void PrettyPrintBound(StringBuilder sb, NuGetVersion version, bool inclusive, string boundChar)
         {
-            builder.Append(boundChar);
+            sb.Append(boundChar);
 
             if (inclusive)
             {
-                builder.Append("= ");
-            }
-            else
-            {
-                builder.Append(' ');
+                sb.Append("=");
             }
 
-            VersionFormatter.AppendNormalized(builder, version);
+            sb.Append(" ");
+            sb.AppendFormat(VersionFormatter, ZeroN, version);
         }
     }
 }
