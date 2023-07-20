@@ -3,10 +3,22 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Net.Http;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Documents;
+using Microsoft.ServiceHub.Framework;
+using Microsoft.ServiceHub.Framework.Services;
+using Moq;
+using NuGet.PackageManagement.VisualStudio;
 using NuGet.Packaging;
+using NuGet.Packaging.Core;
 using NuGet.Packaging.Licenses;
+using NuGet.Test.Utility;
+using NuGet.Versioning;
+using NuGet.VisualStudio.Telemetry;
 using Xunit;
 
 namespace NuGet.PackageManagement.UI.Test
@@ -144,23 +156,76 @@ namespace NuGet.PackageManagement.UI.Test
         [Fact]
         public void PackageLicenseUtility_GeneratesLinkForFiles()
         {
-            // Setup
-            var licenseFileLocation = "License.txt";
-            var licenseFileHeader = "header";
-            var licenseData = new LicenseMetadata(LicenseType.File, licenseFileLocation, null, null, LicenseMetadata.CurrentVersion);
+            using (var pathContext = new SimpleTestPathContext())
+            {
+                // Setup
+                var packageA1 = new SimpleTestPackageContext("AddLicenseToCache", "1.0.0");
+                string licenseFileLocation = "License.txt";
+                string licenseFileHeader = "header";
+                LicenseMetadata licenseData = new LicenseMetadata(LicenseType.File, licenseFileLocation, null, null, LicenseMetadata.CurrentVersion);
+                packageA1.AddFile(licenseFileLocation, StreamLicenseContents);
 
-            // Act
-            var links = PackageLicenseUtilities.GenerateLicenseLinks(
-                licenseData,
-                licenseFileHeader,
-                licenseFileLocation,
-                packageIdentity: null);
+                PackageIdentity packageIdentity = new PackageIdentity("AddLicenseToCache", NuGetVersion.Parse("1.0.0"));
 
-            Assert.Equal(1, links.Count);
-            Assert.True(links[0] is LicenseFileText);
-            var licenseFileText = links[0] as LicenseFileText;
-            Assert.Equal(Resources.Text_ViewLicense, licenseFileText.Text);
-            Assert.Equal(Resources.LicenseFile_Loading, ((Run)((Paragraph)licenseFileText.LicenseText.Blocks.AsEnumerable().First()).Inlines.First()).Text);
+                // Act
+                IReadOnlyList<IText> links = PackageLicenseUtilities.GenerateLicenseLinks(
+                    licenseData,
+                    licenseFileHeader,
+                    pathContext.SolutionRoot,
+                    packageIdentity: packageIdentity);
+
+                Assert.Equal(1, links.Count);
+                Assert.True(links[0] is LicenseFileText);
+                LicenseFileText licenseFileText = links[0] as LicenseFileText;
+                Assert.Equal(Resources.Text_ViewLicense, licenseFileText.Text);
+                Assert.Equal(Resources.LicenseFile_Loading, ((Run)((Paragraph)licenseFileText.LicenseText.Blocks.AsEnumerable().First()).Inlines.First()).Text);
+            }
+        }
+
+        private Mock<INuGetTelemetryProvider> _telemetryProvider = new Mock<INuGetTelemetryProvider>(MockBehavior.Strict);
+
+        [Fact]
+        public async Task PackageLicenseUtility_GeneratesLinkForFiles_And_CacheIsUpdated()
+        {
+            using (var pathContext = new SimpleTestPathContext())
+            {
+                // Setup
+                var package = new SimpleTestPackageContext("AddLicenseToCache", "1.0.0");
+                string licenseFileLocation = "License.txt";
+                string licenseFileHeader = "header";
+                LicenseMetadata licenseData = new LicenseMetadata(LicenseType.File, licenseFileLocation, null, null, LicenseMetadata.CurrentVersion);
+                package.AddFile(licenseFileLocation, StreamLicenseContents);
+
+                NuGetPackageFileService packageFileService = new NuGetPackageFileService(
+                        default(ServiceActivationOptions),
+                        Mock.Of<IServiceBroker>(),
+                        new AuthorizationServiceClient(Mock.Of<IAuthorizationService>()),
+                        _telemetryProvider.Object);
+
+                await SimpleTestPackageUtility.CreateFolderFeedV3Async(
+                    pathContext.PackageSource,
+                    PackageSaveMode.Defaultv3,
+                    package);
+
+                PackageIdentity packageIdentity = new PackageIdentity("AddLicenseToCache", NuGetVersion.Parse("1.0.0"));
+
+                // Act
+                IReadOnlyList<IText> links = PackageLicenseUtilities.GenerateLicenseLinks(
+                    licenseData,
+                    licenseFileHeader,
+                    Path.Combine(pathContext.PackageSource, packageIdentity.Id, packageIdentity.Version.ToString(), package.PackageName),
+                    packageIdentity);
+
+                Assert.Equal(1, links.Count);
+                Assert.True(links[0] is LicenseFileText);
+                LicenseFileText licenseFileText = links[0] as LicenseFileText;
+                Assert.Equal(Resources.Text_ViewLicense, licenseFileText.Text);
+                Assert.Equal(Resources.LicenseFile_Loading, ((Run)((Paragraph)licenseFileText.LicenseText.Blocks.AsEnumerable().First()).Inlines.First()).Text);
+
+                Stream licenseStream = await packageFileService.GetEmbeddedLicenseAsync(packageIdentity, CancellationToken.None);
+                Assert.NotNull(licenseStream);
+                Assert.Equal(StreamLicenseContents.Length, licenseStream.Length);
+            }
         }
 
         [Fact]
@@ -181,5 +246,7 @@ namespace NuGet.PackageManagement.UI.Test
             Assert.Equal(license, licenseText.Text);
             Assert.Equal("https://licenses.nuget.org/MIT", licenseText.Link.AbsoluteUri);
         }
+
+        private const string StreamLicenseContents = "I am a license";
     }
 }

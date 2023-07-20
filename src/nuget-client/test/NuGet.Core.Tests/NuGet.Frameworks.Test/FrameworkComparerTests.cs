@@ -167,7 +167,7 @@ namespace NuGet.Test
             var fw4 = NuGetFramework.Parse("net450");
             var fw5 = NuGetFramework.Parse(".NETFramework45");
 
-            var comparer = new NuGetFrameworkFullComparer();
+            var comparer = NuGetFrameworkFullComparer.Instance;
 
             Assert.True(comparer.Equals(fw1, fw2));
             Assert.True(comparer.Equals(fw1, fw3));
@@ -182,7 +182,7 @@ namespace NuGet.Test
             var fw2 = NuGetFramework.Parse("portable-net45+win8+wp8+wpa81");
             var fw3 = NuGetFramework.Parse(".NETPortable, Version=v0.0, Profile=Profile259");
 
-            var comparer = new NuGetFrameworkFullComparer();
+            var comparer = NuGetFrameworkFullComparer.Instance;
 
             Assert.True(comparer.Equals(fw1, fw2), "2");
             Assert.True(comparer.Equals(fw1, fw3), "3");

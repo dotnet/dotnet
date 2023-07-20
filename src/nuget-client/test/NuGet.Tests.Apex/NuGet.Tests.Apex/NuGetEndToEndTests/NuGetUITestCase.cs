@@ -530,10 +530,90 @@ namespace NuGet.Tests.Apex
             uiwindow.InstallPackageFromUI(TestPackageName, TestPackageVersionV1);
             uiwindow.SwitchTabToUpdate();
             uiwindow.SearchPackageFromUI(TestPackageName);
-            
+
             // Assert
             VisualStudio.AssertNoErrors();
             uiwindow.AssertSearchedPackageItem(tabName, TestPackageName, TestPackageVersionV2);
+        }
+
+        [StaFact]
+        public void InstallVulnerablePackageFromUI()
+        {
+            // Arrange
+            EnsureVisualStudioHost();
+            var solutionService = VisualStudio.Get<SolutionService>();
+            solutionService.CreateEmptySolution();
+            var project = solutionService.AddProject(ProjectLanguage.CSharp, ProjectTemplate.ClassLibrary, ProjectTargetFramework.V48, "TestProject");
+            VisualStudio.ClearOutputWindow();
+            solutionService.SaveAll();
+
+            // Act
+            CommonUtility.OpenNuGetPackageManagerWithDte(VisualStudio, XunitLogger);
+            var nugetTestService = GetNuGetTestService();
+            var uiwindow = nugetTestService.GetUIWindowfromProject(project);
+            uiwindow.InstallPackageFromUI("Newtonsoft.Json", "10.0.1");
+
+            // Assert
+            CommonUtility.AssertPackageInPackagesConfig(VisualStudio, project, "Newtonsoft.Json", "10.0.1", XunitLogger);
+            uiwindow.AssertInstalledPackageVulnerable();
+        }
+
+        [StaFact]
+        public void UpdateVulnerablePackageFromUI()
+        {
+            // Arrange
+            EnsureVisualStudioHost();
+            var solutionService = VisualStudio.Get<SolutionService>();
+            solutionService.CreateEmptySolution();
+            var project = solutionService.AddProject(ProjectLanguage.CSharp, ProjectTemplate.ClassLibrary, ProjectTargetFramework.V48, "TestProject");
+            VisualStudio.ClearOutputWindow();
+            solutionService.SaveAll();
+
+            // Act
+            CommonUtility.OpenNuGetPackageManagerWithDte(VisualStudio, XunitLogger);
+            var nugetTestService = GetNuGetTestService();
+            var uiwindow = nugetTestService.GetUIWindowfromProject(project);
+            uiwindow.InstallPackageFromUI("Newtonsoft.Json", "12.0.1");
+
+            // Assert
+            CommonUtility.AssertPackageInPackagesConfig(VisualStudio, project, "Newtonsoft.Json", "12.0.1", XunitLogger);
+            uiwindow.AssertInstalledPackageVulnerable();
+
+            // Act
+            uiwindow.UpdatePackageFromUI("Newtonsoft.Json", "13.0.1");
+
+            // Assert
+            CommonUtility.AssertPackageInPackagesConfig(VisualStudio, project, "Newtonsoft.Json", "13.0.1", XunitLogger);
+            uiwindow.AssertInstalledPackageNotVulnerable();
+        }
+
+        [StaFact]
+        public void UninstallVulnerablePackageFromUI()
+        {
+            // Arrange
+            EnsureVisualStudioHost();
+            var solutionService = VisualStudio.Get<SolutionService>();
+            solutionService.CreateEmptySolution();
+            var project = solutionService.AddProject(ProjectLanguage.CSharp, ProjectTemplate.ClassLibrary, ProjectTargetFramework.V48, "Testproject");
+            VisualStudio.ClearOutputWindow();
+            solutionService.SaveAll();
+
+            // Act
+            CommonUtility.OpenNuGetPackageManagerWithDte(VisualStudio, XunitLogger);
+            var nugetTestService = GetNuGetTestService();
+            var uiwindow = nugetTestService.GetUIWindowfromProject(project);
+            uiwindow.InstallPackageFromUI("Newtonsoft.json", "12.0.3");
+
+            // Assert
+            CommonUtility.AssertPackageInPackagesConfig(VisualStudio, project, "Newtonsoft.Json", "12.0.3", XunitLogger);
+            uiwindow.AssertInstalledPackageVulnerable();
+
+            // Act
+            VisualStudio.ClearWindows();
+            uiwindow.UninstallPackageFromUI("Newtonsoft.json");
+
+            // Assert
+            CommonUtility.AssertPackageNotInPackagesConfig(VisualStudio, project, "Newtonsoft.json", XunitLogger);
         }
     }
 }

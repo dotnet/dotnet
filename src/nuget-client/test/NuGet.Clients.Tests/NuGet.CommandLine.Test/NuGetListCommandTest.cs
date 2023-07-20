@@ -35,7 +35,6 @@ namespace NuGet.CommandLine.Test
                 nugetexe,
                 Directory.GetCurrentDirectory(),
                 string.Join(" ", args),
-                waitForExit: true,
                 environmentVariables: new Dictionary<string, string>
                 {
                     { "NUGET_SHOW_STACK", "true" }
@@ -66,7 +65,6 @@ namespace NuGet.CommandLine.Test
                 nugetexe,
                 Directory.GetCurrentDirectory(),
                 string.Join(" ", args),
-                waitForExit: true,
                 environmentVariables: new Dictionary<string, string>
                 {
                     { "NUGET_SHOW_STACK", "false" }
@@ -94,8 +92,7 @@ namespace NuGet.CommandLine.Test
                 var result = CommandRunner.Run(
                     nugetexe,
                     Directory.GetCurrentDirectory(),
-                    string.Join(" ", args),
-                    waitForExit: true);
+                    string.Join(" ", args));
 
                 // Assert
                 Assert.Equal(0, result.ExitCode);
@@ -120,8 +117,7 @@ namespace NuGet.CommandLine.Test
                 var r = CommandRunner.Run(
                     nugetexe,
                     Directory.GetCurrentDirectory(),
-                    string.Join(" ", args),
-                    waitForExit: true);
+                    string.Join(" ", args));
 
                 // Assert
                 Assert.Equal(0, r.ExitCode);
@@ -171,8 +167,7 @@ namespace NuGet.CommandLine.Test
                 var result = CommandRunner.Run(
                     nugetexe,
                     Directory.GetCurrentDirectory(),
-                    string.Join(" ", args),
-                    waitForExit: true);
+                    string.Join(" ", args));
 
                 // Assert
                 Assert.Equal(0, result.ExitCode);
@@ -219,8 +214,7 @@ namespace NuGet.CommandLine.Test
                     var result = CommandRunner.Run(
                         nugetexe,
                         randomTestFolder,
-                        args,
-                        waitForExit: true);
+                        args);
                     server.Stop();
 
                     // Assert
@@ -276,8 +270,7 @@ namespace NuGet.CommandLine.Test
                     var r1 = CommandRunner.Run(
                         nugetexe,
                         randomTestFolder,
-                        args,
-                        waitForExit: true);
+                        args);
                     server.Stop();
 
                     // Assert
@@ -337,8 +330,7 @@ namespace NuGet.CommandLine.Test
                     var r1 = CommandRunner.Run(
                         nugetexe,
                         randomTestFolder,
-                        args,
-                        waitForExit: true);
+                        args);
                     server.Stop();
 
                     // Assert
@@ -395,8 +387,7 @@ namespace NuGet.CommandLine.Test
                     var r1 = CommandRunner.Run(
                         nugetexe,
                         randomTestFolder,
-                        args,
-                        waitForExit: true);
+                        args);
                     server.Stop();
 
                     // Assert
@@ -452,8 +443,7 @@ namespace NuGet.CommandLine.Test
                     var r1 = CommandRunner.Run(
                         nugetexe,
                         randomTestFolder,
-                        args,
-                        waitForExit: true);
+                        args);
                     server.Stop();
 
                     // Assert
@@ -512,8 +502,7 @@ namespace NuGet.CommandLine.Test
                     var r1 = CommandRunner.Run(
                         nugetexe,
                         solutionFolder,
-                        args,
-                        waitForExit: true);
+                        args);
                     server.Stop();
 
                     // Assert
@@ -572,8 +561,7 @@ namespace NuGet.CommandLine.Test
                     var r1 = CommandRunner.Run(
                         nugetexe,
                         solutionFolder,
-                        args,
-                        waitForExit: true);
+                        args);
                     server.Stop();
 
                     // Assert
@@ -670,8 +658,7 @@ namespace NuGet.CommandLine.Test
                         var result = CommandRunner.Run(
                             nugetexe,
                             pathContext.SolutionRoot,
-                            args,
-                            waitForExit: true);
+                            args);
 
                         serverV2.Stop();
                         serverV3.Stop();
@@ -731,8 +718,7 @@ namespace NuGet.CommandLine.Test
                     var result = CommandRunner.Run(
                         nugetexe,
                         pathContext.SolutionRoot,
-                        args,
-                        waitForExit: true);
+                        args);
 
                     serverV3.Stop();
 
@@ -786,8 +772,7 @@ namespace NuGet.CommandLine.Test
                     var result = CommandRunner.Run(
                         nugetexe,
                         pathContext.SolutionRoot,
-                        args,
-                        waitForExit: true);
+                        args);
 
                     serverV3.Stop();
 
@@ -815,8 +800,7 @@ namespace NuGet.CommandLine.Test
                 var result = CommandRunner.Run(
                     nugetexe,
                     pathContext.SolutionRoot,
-                    args,
-                    waitForExit: true);
+                    args);
 
                 // Assert
                 Assert.True(
@@ -848,8 +832,7 @@ namespace NuGet.CommandLine.Test
                 var result = CommandRunner.Run(
                     nugetexe,
                     pathContext.SolutionRoot,
-                    args,
-                    waitForExit: true);
+                    args);
 
                 // Assert
                 Assert.True(
@@ -872,8 +855,7 @@ namespace NuGet.CommandLine.Test
             var result = CommandRunner.Run(
                 nugetexe,
                 Directory.GetCurrentDirectory(),
-                args,
-                waitForExit: true);
+                args);
 
             // Assert
             Assert.True(
@@ -901,8 +883,7 @@ namespace NuGet.CommandLine.Test
                 var result = CommandRunner.Run(
                     nugetexe,
                     pathContext.SolutionRoot,
-                    args,
-                    waitForExit: true);
+                    args);
 
                 // Assert
                 Assert.True(
@@ -928,10 +909,9 @@ namespace NuGet.CommandLine.Test
             {
                 var args = "list test -Source " + invalidInput;
                 CommandRunnerResult result = CommandRunner.Run(
-                    process: nugetexe,
+                    filename: nugetexe,
                     workingDirectory: pathContext.SolutionRoot,
-                    arguments: args,
-                    waitForExit: true);
+                    arguments: args);
 
                 // Assert
                 Assert.False(
@@ -1033,8 +1013,7 @@ namespace NuGet.CommandLine.Test
                     var result = CommandRunner.Run(
                         Util.GetNuGetExePath(),
                         pathContext.SolutionRoot,
-                        $"list test -source {serverV3.Uri}index.json -configfile {pathContext.NuGetConfig} -verbosity detailed -noninteractive",
-                        waitForExit: true);
+                        $"list test -source {serverV3.Uri}index.json -configfile {pathContext.NuGetConfig} -verbosity detailed -noninteractive");
 
                     serverV3.Stop();
 
@@ -1135,8 +1114,7 @@ namespace NuGet.CommandLine.Test
                     var result = CommandRunner.Run(
                         Util.GetNuGetExePath(),
                         Directory.GetCurrentDirectory(),
-                        $"list test -source {serverV3.Uri}api/v2 -configfile {pathContext.NuGetConfig} -verbosity detailed -noninteractive",
-                        waitForExit: true);
+                        $"list test -source {serverV3.Uri}api/v2 -configfile {pathContext.NuGetConfig} -verbosity detailed -noninteractive");
                     serverV3.Stop();
 
                     // Assert
@@ -1179,8 +1157,7 @@ namespace NuGet.CommandLine.Test
             var result = CommandRunner.Run(
                 nugetexe,
                 packageDirectory,
-                args,
-                waitForExit: true);
+                args);
             server.Stop();
 
             // Assert
@@ -1236,8 +1213,7 @@ namespace NuGet.CommandLine.Test
             var result = CommandRunner.Run(
                 nugetexe,
                 packageDirectory,
-                args,
-                waitForExit: true);
+                args);
             server1.Stop();
             server2.Stop();
 

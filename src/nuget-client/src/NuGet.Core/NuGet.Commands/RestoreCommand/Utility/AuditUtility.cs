@@ -10,6 +10,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using NuGet.Common;
+using NuGet.DependencyResolver;
 using NuGet.LibraryModel;
 using NuGet.Packaging.Core;
 using NuGet.Protocol.Model;
@@ -71,6 +72,11 @@ namespace NuGet.Commands.Restore.Utility
             stopwatch.Stop();
             DownloadDurationSeconds = stopwatch.Elapsed.TotalSeconds;
 
+            if (allVulnerabilityData?.Exceptions is not null)
+            {
+                ReplayErrors(allVulnerabilityData.Exceptions);
+            }
+
             if (allVulnerabilityData is null || !AnyVulnerabilityDataFound(allVulnerabilityData.KnownVulnerabilities))
             {
                 if (_auditEnabled == EnabledValue.ExplicitOptIn)
@@ -83,12 +89,7 @@ namespace NuGet.Commands.Restore.Utility
                 return;
             }
 
-            if (allVulnerabilityData.Exceptions != null)
-            {
-                ReplayErrors(allVulnerabilityData.Exceptions);
-            }
-
-            if (allVulnerabilityData.KnownVulnerabilities != null)
+            if (allVulnerabilityData.KnownVulnerabilities is not null)
             {
                 CheckPackageVulnerabilities(allVulnerabilityData.KnownVulnerabilities);
             }
@@ -118,7 +119,8 @@ namespace NuGet.Commands.Restore.Utility
             foreach (Exception exception in exceptions.InnerExceptions)
             {
                 var messageText = string.Format(Strings.Error_VulnerabilityDataFetch, exception.Message);
-                RestoreLogMessage logMessage = RestoreLogMessage.CreateError(NuGetLogCode.NU1900, messageText);
+                RestoreLogMessage logMessage = RestoreLogMessage.CreateWarning(NuGetLogCode.NU1900, messageText);
+                logMessage.ProjectPath = _projectFullPath;
                 _logger.Log(logMessage);
             }
         }
@@ -236,13 +238,13 @@ namespace NuGet.Commands.Restore.Utility
         {
             switch (severity)
             {
-                case 1:
+                case 0:
                     return (Strings.Vulnerability_Severity_1, NuGetLogCode.NU1901);
-                case 2:
+                case 1:
                     return (Strings.Vulnerability_Severity_2, NuGetLogCode.NU1902);
-                case 3:
+                case 2:
                     return (Strings.Vulnerability_Severity_3, NuGetLogCode.NU1903);
-                case 4:
+                case 3:
                     return (Strings.Vulnerability_Severity_4, NuGetLogCode.NU1904);
                 default:
                     return (Strings.Vulnerability_Severity_unknown, NuGetLogCode.NU1900);
@@ -257,11 +259,11 @@ namespace NuGet.Commands.Restore.Utility
 
             foreach (RestoreTargetGraph graph in _targetGraphs)
             {
-                LibraryIdentity? currentProject = graph.Graphs.FirstOrDefault()?.Item.Key;
+                GraphItem<RemoteResolveResult>? currentProject = graph.Graphs.FirstOrDefault()?.Item;
 
-                foreach (ResolvedDependencyKey resolvedDependency in graph.ResolvedDependencies.Where(dep => dep.Child.Type == LibraryType.Package))
+                foreach (GraphItem<RemoteResolveResult>? node in graph.Flattened.Where(r => r.Key.Type == LibraryType.Package))
                 {
-                    LibraryIdentity package = resolvedDependency.Child;
+                    LibraryIdentity package = node.Key;
                     List<PackageVulnerabilityInfo>? knownVulnerabilitiesForPackage = GetKnownVulnerabilities(package.Name, package.Version, knownVulnerabilities);
 
                     if (knownVulnerabilitiesForPackage?.Count > 0)
@@ -298,7 +300,8 @@ namespace NuGet.Commands.Restore.Utility
                                 affectedGraphs.Add(graph.TargetGraphName);
                             }
 
-                            if (!auditInfo.IsDirect && resolvedDependency.Parent == currentProject)
+                            if (!auditInfo.IsDirect &&
+                                currentProject?.Data.Dependencies.Any(d => string.Equals(d.Name, packageIdentity.Id, StringComparison.OrdinalIgnoreCase)) == true)
                             {
                                 auditInfo.IsDirect = true;
                             }
@@ -366,31 +369,31 @@ namespace NuGet.Commands.Restore.Utility
 
             if (auditLevel == null)
             {
-                return 1;
+                return 0;
             }
 
             if (string.Equals("low", auditLevel, StringComparison.OrdinalIgnoreCase))
             {
-                return 1;
+                return 0;
             }
             if (string.Equals("moderate", auditLevel, StringComparison.OrdinalIgnoreCase))
             {
-                return 2;
+                return 1;
             }
             if (string.Equals("high", auditLevel, StringComparison.OrdinalIgnoreCase))
             {
-                return 3;
+                return 2;
             }
             if (string.Equals("critical", auditLevel, StringComparison.OrdinalIgnoreCase))
             {
-                return 4;
+                return 3;
             }
 
             string messageText = string.Format(Strings.Error_InvalidNuGetAuditLevelValue, auditLevel, "low, moderate, high, critical");
             RestoreLogMessage message = RestoreLogMessage.CreateError(NuGetLogCode.NU1014, messageText);
             message.ProjectPath = _projectFullPath;
             _logger.Log(message);
-            return 1;
+            return 0;
         }
 
         internal enum NuGetAuditMode { Unknown, Direct, All }

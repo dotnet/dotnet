@@ -3,23 +3,15 @@
 
 using System;
 using System.Linq;
-using System.Reflection;
-using NuGet.Client;
 using NuGet.Common;
-using NuGet.ContentModel;
 using NuGet.Frameworks;
-using NuGet.Packaging.Core;
 using NuGet.Packaging.Rules;
-using NuGet.RuntimeModel;
 using Xunit;
 
 namespace NuGet.Packaging.Test
 {
     public class DependenciesGroupsForEachTFMRuleTests
     {
-        ManagedCodeConventions _managedCodeConventions = new ManagedCodeConventions(new RuntimeGraph());
-        ContentItemCollection _collection = new ContentItemCollection();
-
         [Fact]
         public void GenerateWarnings_PackageWithDependenciesForEachTFMInLib_ShouldNotWarn()
         {

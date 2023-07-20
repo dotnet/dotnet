@@ -136,8 +136,6 @@ namespace NuGet.ProjectModel.Test
 
             var files = new IncludeExcludeFiles();
 
-            Assert.Equal(0, files.GetHashCode());
-
             files.Exclude = exclude;
             files.ExcludeFiles = excludeFiles;
             files.Include = include;

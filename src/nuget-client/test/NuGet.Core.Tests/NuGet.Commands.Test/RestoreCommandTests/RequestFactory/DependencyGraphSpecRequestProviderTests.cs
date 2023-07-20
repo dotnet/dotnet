@@ -6,7 +6,7 @@ using NuGet.Common;
 using NuGet.ProjectModel;
 using Xunit;
 
-namespace NuGet.Commands.Test
+namespace NuGet.Commands.Test.RestoreCommandTests.RequestFactory
 {
     public class DependencyGraphSpecRequestProviderTests
     {

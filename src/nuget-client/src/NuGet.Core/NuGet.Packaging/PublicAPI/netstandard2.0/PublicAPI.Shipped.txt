@@ -179,11 +179,11 @@ NuGet.Packaging.Core.PackageDependencyComparer
 NuGet.Packaging.Core.PackageDependencyComparer.PackageDependencyComparer() -> void
 ~NuGet.Packaging.Core.PackageDependencyComparer.PackageDependencyComparer(NuGet.Versioning.IVersionRangeComparer versionRangeComparer) -> void
 NuGet.Packaging.Core.PackageDependencyInfo
-~NuGet.Packaging.Core.PackageDependencyInfo.Dependencies.get -> System.Collections.Generic.IEnumerable<NuGet.Packaging.Core.PackageDependency>
-~NuGet.Packaging.Core.PackageDependencyInfo.Equals(NuGet.Packaging.Core.PackageDependencyInfo other) -> bool
-~NuGet.Packaging.Core.PackageDependencyInfo.PackageDependencyInfo(NuGet.Packaging.Core.PackageIdentity identity, System.Collections.Generic.IEnumerable<NuGet.Packaging.Core.PackageDependency> dependencies) -> void
-~NuGet.Packaging.Core.PackageDependencyInfo.PackageDependencyInfo(string id, NuGet.Versioning.NuGetVersion version) -> void
-~NuGet.Packaging.Core.PackageDependencyInfo.PackageDependencyInfo(string id, NuGet.Versioning.NuGetVersion version, System.Collections.Generic.IEnumerable<NuGet.Packaging.Core.PackageDependency> dependencies) -> void
+NuGet.Packaging.Core.PackageDependencyInfo.Dependencies.get -> System.Collections.Generic.IEnumerable<NuGet.Packaging.Core.PackageDependency!>!
+NuGet.Packaging.Core.PackageDependencyInfo.Equals(NuGet.Packaging.Core.PackageDependencyInfo? other) -> bool
+NuGet.Packaging.Core.PackageDependencyInfo.PackageDependencyInfo(NuGet.Packaging.Core.PackageIdentity! identity, System.Collections.Generic.IEnumerable<NuGet.Packaging.Core.PackageDependency!>? dependencies) -> void
+NuGet.Packaging.Core.PackageDependencyInfo.PackageDependencyInfo(string! id, NuGet.Versioning.NuGetVersion! version) -> void
+NuGet.Packaging.Core.PackageDependencyInfo.PackageDependencyInfo(string! id, NuGet.Versioning.NuGetVersion! version, System.Collections.Generic.IEnumerable<NuGet.Packaging.Core.PackageDependency!>? dependencies) -> void
 NuGet.Packaging.Core.PackageDependencyInfoComparer
 ~NuGet.Packaging.Core.PackageDependencyInfoComparer.Equals(NuGet.Packaging.Core.PackageDependencyInfo x, NuGet.Packaging.Core.PackageDependencyInfo y) -> bool
 ~NuGet.Packaging.Core.PackageDependencyInfoComparer.GetHashCode(NuGet.Packaging.Core.PackageDependencyInfo obj) -> int
@@ -1290,18 +1290,22 @@ NuGet.RuntimeModel.RuntimeDescription
 ~NuGet.RuntimeModel.RuntimeDescription.RuntimeDescription(string runtimeIdentifier, System.Collections.Generic.IEnumerable<string> inheritedRuntimes, System.Collections.Generic.IEnumerable<NuGet.RuntimeModel.RuntimeDependencySet> runtimeDependencySets) -> void
 ~NuGet.RuntimeModel.RuntimeDescription.RuntimeIdentifier.get -> string
 NuGet.RuntimeModel.RuntimeGraph
-~NuGet.RuntimeModel.RuntimeGraph.AreCompatible(string criteria, string provided) -> bool
-~NuGet.RuntimeModel.RuntimeGraph.Clone() -> NuGet.RuntimeModel.RuntimeGraph
-~NuGet.RuntimeModel.RuntimeGraph.Equals(NuGet.RuntimeModel.RuntimeGraph other) -> bool
-~NuGet.RuntimeModel.RuntimeGraph.ExpandRuntime(string runtime) -> System.Collections.Generic.IEnumerable<string>
-~NuGet.RuntimeModel.RuntimeGraph.FindRuntimeDependencies(string runtimeName, string packageId) -> System.Collections.Generic.IEnumerable<NuGet.RuntimeModel.RuntimePackageDependency>
 NuGet.RuntimeModel.RuntimeGraph.RuntimeGraph() -> void
-~NuGet.RuntimeModel.RuntimeGraph.RuntimeGraph(System.Collections.Generic.IEnumerable<NuGet.RuntimeModel.CompatibilityProfile> supports) -> void
-~NuGet.RuntimeModel.RuntimeGraph.RuntimeGraph(System.Collections.Generic.IEnumerable<NuGet.RuntimeModel.RuntimeDescription> runtimes) -> void
-~NuGet.RuntimeModel.RuntimeGraph.RuntimeGraph(System.Collections.Generic.IEnumerable<NuGet.RuntimeModel.RuntimeDescription> runtimes, System.Collections.Generic.IEnumerable<NuGet.RuntimeModel.CompatibilityProfile> supports) -> void
-~NuGet.RuntimeModel.RuntimeGraph.Runtimes.get -> System.Collections.Generic.IReadOnlyDictionary<string, NuGet.RuntimeModel.RuntimeDescription>
-~NuGet.RuntimeModel.RuntimeGraph.Supports.get -> System.Collections.Generic.IReadOnlyDictionary<string, NuGet.RuntimeModel.CompatibilityProfile>
-~NuGet.RuntimeModel.RuntimeGraph.Supports.set -> void
+NuGet.RuntimeModel.RuntimeGraph.AreCompatible(string! criteria, string! provided) -> bool
+NuGet.RuntimeModel.RuntimeGraph.Clone() -> NuGet.RuntimeModel.RuntimeGraph!
+NuGet.RuntimeModel.RuntimeGraph.Equals(NuGet.RuntimeModel.RuntimeGraph? other) -> bool
+NuGet.RuntimeModel.RuntimeGraph.ExpandRuntime(string! runtime) -> System.Collections.Generic.IEnumerable<string!>!
+NuGet.RuntimeModel.RuntimeGraph.FindRuntimeDependencies(string! runtimeName, string! packageId) -> System.Collections.Generic.IEnumerable<NuGet.RuntimeModel.RuntimePackageDependency!>!
+NuGet.RuntimeModel.RuntimeGraph.RuntimeGraph(System.Collections.Generic.IEnumerable<NuGet.RuntimeModel.CompatibilityProfile!>! supports) -> void
+NuGet.RuntimeModel.RuntimeGraph.RuntimeGraph(System.Collections.Generic.IEnumerable<NuGet.RuntimeModel.RuntimeDescription!>! runtimes) -> void
+NuGet.RuntimeModel.RuntimeGraph.RuntimeGraph(System.Collections.Generic.IEnumerable<NuGet.RuntimeModel.RuntimeDescription!>! runtimes, System.Collections.Generic.IEnumerable<NuGet.RuntimeModel.CompatibilityProfile!>! supports) -> void
+NuGet.RuntimeModel.RuntimeGraph.Runtimes.get -> System.Collections.Generic.IReadOnlyDictionary<string!, NuGet.RuntimeModel.RuntimeDescription!>!
+NuGet.RuntimeModel.RuntimeGraph.Supports.get -> System.Collections.Generic.IReadOnlyDictionary<string!, NuGet.RuntimeModel.CompatibilityProfile!>!
+override NuGet.RuntimeModel.RuntimeGraph.Equals(object? obj) -> bool
+override NuGet.RuntimeModel.RuntimeGraph.GetHashCode() -> int
+static NuGet.RuntimeModel.RuntimeGraph.Merge(NuGet.RuntimeModel.RuntimeGraph! left, NuGet.RuntimeModel.RuntimeGraph! right) -> NuGet.RuntimeModel.RuntimeGraph!
+static readonly NuGet.RuntimeModel.RuntimeGraph.Empty -> NuGet.RuntimeModel.RuntimeGraph!
+static readonly NuGet.RuntimeModel.RuntimeGraph.RuntimeGraphFileName -> string!
 NuGet.RuntimeModel.RuntimePackageDependency
 ~NuGet.RuntimeModel.RuntimePackageDependency.Clone() -> NuGet.RuntimeModel.RuntimePackageDependency
 ~NuGet.RuntimeModel.RuntimePackageDependency.Equals(NuGet.RuntimeModel.RuntimePackageDependency other) -> bool
@@ -1378,9 +1382,9 @@ const NuGet.Packaging.PackageIdValidator.MaxPackageIdLength = 100 -> int
 ~override NuGet.Packaging.Core.PackageDependency.Equals(object obj) -> bool
 override NuGet.Packaging.Core.PackageDependency.GetHashCode() -> int
 ~override NuGet.Packaging.Core.PackageDependency.ToString() -> string
-~override NuGet.Packaging.Core.PackageDependencyInfo.Equals(object obj) -> bool
+override NuGet.Packaging.Core.PackageDependencyInfo.Equals(object? obj) -> bool
 override NuGet.Packaging.Core.PackageDependencyInfo.GetHashCode() -> int
-~override NuGet.Packaging.Core.PackageDependencyInfo.ToString() -> string
+override NuGet.Packaging.Core.PackageDependencyInfo.ToString() -> string!
 ~override NuGet.Packaging.Core.PackageIdentity.Equals(object obj) -> bool
 override NuGet.Packaging.Core.PackageIdentity.GetHashCode() -> int
 ~override NuGet.Packaging.Core.PackageIdentity.ToString() -> string
@@ -1480,8 +1484,6 @@ override NuGet.RuntimeModel.RuntimeDependencySet.GetHashCode() -> int
 ~override NuGet.RuntimeModel.RuntimeDescription.Equals(object obj) -> bool
 override NuGet.RuntimeModel.RuntimeDescription.GetHashCode() -> int
 ~override NuGet.RuntimeModel.RuntimeDescription.ToString() -> string
-~override NuGet.RuntimeModel.RuntimeGraph.Equals(object obj) -> bool
-override NuGet.RuntimeModel.RuntimeGraph.GetHashCode() -> int
 ~override NuGet.RuntimeModel.RuntimePackageDependency.Equals(object obj) -> bool
 override NuGet.RuntimeModel.RuntimePackageDependency.GetHashCode() -> int
 ~override NuGet.RuntimeModel.RuntimePackageDependency.ToString() -> string
@@ -1696,7 +1698,6 @@ static NuGet.Packaging.Signing.VerificationUtility.IsVerificationTarget(NuGet.Pa
 ~static NuGet.RuntimeModel.JsonRuntimeFormat.WriteRuntimeGraph(NuGet.RuntimeModel.IObjectWriter writer, NuGet.RuntimeModel.RuntimeGraph runtimeGraph) -> void
 ~static NuGet.RuntimeModel.JsonRuntimeFormat.WriteRuntimeGraph(string filePath, NuGet.RuntimeModel.RuntimeGraph runtimeGraph) -> void
 ~static NuGet.RuntimeModel.RuntimeDescription.Merge(NuGet.RuntimeModel.RuntimeDescription left, NuGet.RuntimeModel.RuntimeDescription right) -> NuGet.RuntimeModel.RuntimeDescription
-~static NuGet.RuntimeModel.RuntimeGraph.Merge(NuGet.RuntimeModel.RuntimeGraph left, NuGet.RuntimeModel.RuntimeGraph right) -> NuGet.RuntimeModel.RuntimeGraph
 ~static readonly NuGet.Client.ManagedCodeConventions.PropertyNames.AnyValue -> string
 ~static readonly NuGet.Client.ManagedCodeConventions.PropertyNames.CodeLanguage -> string
 ~static readonly NuGet.Client.ManagedCodeConventions.PropertyNames.Locale -> string
@@ -1775,8 +1776,6 @@ static readonly NuGet.Packaging.NupkgMetadataFileFormat.Version -> int
 ~static readonly NuGet.Packaging.PackagingConstants.SymbolsNupkgFormat -> string
 ~static readonly NuGet.Packaging.PackagingConstants.TargetFrameworkPropertyKey -> string
 ~static readonly NuGet.Packaging.Signing.SigningSpecifications.V1 -> NuGet.Packaging.Signing.SigningSpecificationsV1
-~static readonly NuGet.RuntimeModel.RuntimeGraph.Empty -> NuGet.RuntimeModel.RuntimeGraph
-~static readonly NuGet.RuntimeModel.RuntimeGraph.RuntimeGraphFileName -> string
 ~virtual NuGet.ContentModel.ContentPropertyDefinition.Compare(object criteriaValue, object candidateValue1, object candidateValue2) -> int
 ~virtual NuGet.ContentModel.ContentPropertyDefinition.IsCriteriaSatisfied(object critieriaValue, object candidateValue) -> bool
 ~virtual NuGet.ContentModel.ContentPropertyDefinition.TryLookup(string name, NuGet.ContentModel.PatternTable table, out object value) -> bool

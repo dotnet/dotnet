@@ -258,36 +258,47 @@
 
         <!-- row 0: -->
 
-        <!-- warnings indicator -->
-        <imaging:CrispImage
-                      x:Name="_warningIndicator"
+        <!-- warnings indicators -->
+        <StackPanel
                       Grid.Row="0"
                       Grid.Column="0"
+                      Orientation="Horizontal">
+          <imaging:CrispImage
+            VerticalAlignment="Center"
+            Moniker="{x:Static catalog:KnownMonikers.CloudError}"
+            Visibility="{Binding IsPackageWithNetworkErrors,Converter={StaticResource BooleanToVisibilityConverter}}">
+            <imaging:CrispImage.ToolTip>
+              <TextBlock Text="{x:Static nuget:Resources.Label_NetworkError}" />
+            </imaging:CrispImage.ToolTip>
+          </imaging:CrispImage>
+          <imaging:CrispImage
+                      x:Name="_warningIndicator"
                       Visibility="{Binding IsPackageWithWarnings,Converter={StaticResource BooleanToVisibilityConverter}}"
                       VerticalAlignment="Center"
                       AutomationProperties.Name="{x:Static nuget:Resources.Label_Deprecated}"
                       Moniker="{x:Static catalog:KnownMonikers.StatusWarning}">
-          <imaging:CrispImage.ToolTip>
-            <StackPanel>
-              <TextBlock
+            <imaging:CrispImage.ToolTip>
+              <StackPanel>
+                <TextBlock
                 Margin="0, 0, 0, 8"
                 Visibility="{Binding IsPackageVulnerable,Converter={StaticResource BooleanToVisibilityConverter}}">
-                <TextBlock.Text>
-                  <MultiBinding Converter="{StaticResource StringFormatConverter}">
-                    <Binding Source="{x:Static nuget:Resources.Label_PackageVulnerableToolTip}" />
-                    <Binding Path="VulnerabilityMaxSeverity" Converter="{StaticResource IntToVulnerabilitySeverityConverter}" />
-                  </MultiBinding>
-                </TextBlock.Text>
-              </TextBlock>
-              <TextBlock
+                  <TextBlock.Text>
+                    <MultiBinding Converter="{StaticResource StringFormatConverter}">
+                      <Binding Source="{x:Static nuget:Resources.Label_PackageVulnerableToolTip}" />
+                      <Binding Path="VulnerabilityMaxSeverity" Converter="{StaticResource IntToVulnerabilitySeverityConverter}" />
+                    </MultiBinding>
+                  </TextBlock.Text>
+                </TextBlock>
+                <TextBlock
                 Text="{x:Static nuget:Resources.Label_PackageDeprecatedToolTip}"
                 Margin="0, 0, 0, 8"
                 Visibility="{Binding IsPackageDeprecated,Converter={StaticResource BooleanToVisibilityConverter}}" />
-              <TextBlock
+                <TextBlock
                 Text="{x:Static nuget:Resources.Label_PackageSelectForInfoToolTip}" />
-            </StackPanel>
-          </imaging:CrispImage.ToolTip>
-        </imaging:CrispImage>
+              </StackPanel>
+            </imaging:CrispImage.ToolTip>
+          </imaging:CrispImage>
+        </StackPanel>
 
         <!-- installed version -->
         <TextBlock

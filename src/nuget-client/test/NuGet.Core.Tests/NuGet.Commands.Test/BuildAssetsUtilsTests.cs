@@ -7,6 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Xml.Linq;
+using NuGet.Commands.Test.RestoreCommandTests;
 using NuGet.Common;
 using NuGet.Configuration;
 using NuGet.LibraryModel;

@@ -8,7 +8,7 @@ namespace Dotnet.Integration.Test
 {
     [CollectionDefinition(Name)]
     public class DotnetIntegrationCollection
-        : ICollectionFixture<MsbuildIntegrationTestFixture>,
+        : ICollectionFixture<DotnetIntegrationTestFixture>,
         ICollectionFixture<SignCommandTestFixture>,
         ICollectionFixture<X509TrustTestFixture>
     {

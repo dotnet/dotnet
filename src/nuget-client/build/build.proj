@@ -359,13 +359,16 @@
       <DotNetTestConsoleVerbosity Condition="'$(DotNetTestConsoleVerbosity)' == '' And '$(System_Debug)' == 'true'">detailed</DotNetTestConsoleVerbosity>
       <DotNetTestConsoleVerbosity Condition="'$(DotNetTestConsoleVerbosity)' == ''">minimal</DotNetTestConsoleVerbosity>
     </PropertyGroup>
+    <PropertyGroup>
+      <DotNetTestAdditionalArgs Condition="'$(SYSTEM_DEBUG)' == 'true' And '$(BINLOG_DIRECTORY)' != ''">--diag &quot;$(BINLOG_DIRECTORY)\vstest.log&quot;</DotNetTestAdditionalArgs>
+    </PropertyGroup>
 
     <ItemGroup Condition=" '$(SkipDesktopAssemblies)' != 'true' ">
       <DesktopInputTestAssemblies Include="@(TestAssemblyPath->WithMetadataValue('IsDesktop', 'true'))" />
     </ItemGroup>
 
     <PropertyGroup Condition=" '$(SkipDesktopAssemblies)' != 'true' ">
-      <DesktopTestCommand>&quot;$(DotnetExePath)&quot; test @(DesktopInputTestAssemblies->'&quot;%(Identity)&quot;', ' ') --logger:&quot;console;verbosity=$(DotNetTestConsoleVerbosity)&quot; --settings:&quot;$(MSBuildThisFileDirectory)xunit.runsettings&quot; --ResultsDirectory:&quot;$(TestResultsDirectory)&quot; --logger:&quot;trx&quot;</DesktopTestCommand>
+      <DesktopTestCommand>&quot;$(DotnetExePath)&quot; test @(DesktopInputTestAssemblies->'&quot;%(Identity)&quot;', ' ') --logger:&quot;console;verbosity=$(DotNetTestConsoleVerbosity)&quot; --settings:&quot;$(MSBuildThisFileDirectory)xunit.runsettings&quot; --ResultsDirectory:&quot;$(TestResultsDirectory)&quot; --logger:&quot;trx&quot; $(DotNetTestAdditionalArgs)</DesktopTestCommand>
     </PropertyGroup>
 
     <ItemGroup Condition=" '$(SkipCoreAssemblies)' != 'true' ">
@@ -373,7 +376,7 @@
     </ItemGroup>
     
     <PropertyGroup Condition=" '$(SkipCoreAssemblies)' != 'true' ">
-      <CoreTestCommand>&quot;$(DotnetExePath)&quot; test @(CoreInputTestAssemblies->'&quot;%(Identity)&quot;', ' ') --logger:&quot;console;verbosity=$(DotNetTestConsoleVerbosity)&quot; --settings:&quot;$(MSBuildThisFileDirectory)xunit.runsettings&quot; --ResultsDirectory:&quot;$(TestResultsDirectory)&quot; --logger:&quot;trx&quot;</CoreTestCommand>
+      <CoreTestCommand>&quot;$(DotnetExePath)&quot; test @(CoreInputTestAssemblies->'&quot;%(Identity)&quot;', ' ') --logger:&quot;console;verbosity=$(DotNetTestConsoleVerbosity)&quot; --settings:&quot;$(MSBuildThisFileDirectory)xunit.runsettings&quot; --ResultsDirectory:&quot;$(TestResultsDirectory)&quot; --logger:&quot;trx&quot; $(DotNetTestAdditionalArgs)</CoreTestCommand>
     </PropertyGroup>
 
     <!-- Desktop -->

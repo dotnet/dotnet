@@ -199,7 +199,7 @@ namespace NuGet.Packaging.Rules
                 set.Add(file);
             }
 
-            var managedCodeConventions = new ManagedCodeConventions(new RuntimeGraph());
+            var managedCodeConventions = new ManagedCodeConventions(RuntimeGraph.Empty);
             var collection = new ContentItemCollection();
             collection.Load(set.Select(path => path.Replace('\\', '/')).ToArray());
 

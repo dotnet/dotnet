@@ -1,12 +1,16 @@
 anycpu
 csproj
 entityframework
+enumerables
 globalpackages
 globbing
 netcore
 netcoreapp
 netstandard
 netstandardapp
+nupkg
+snupkg
 winmd
 winrt
 Xunit
+dgspec

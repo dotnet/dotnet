@@ -9,6 +9,11 @@ namespace NuGet.Frameworks
 {
     public class FrameworkRangeComparer : IEqualityComparer<FrameworkRange>
     {
+#pragma warning disable CS0618 // Type or member is obsolete
+        public static FrameworkRangeComparer Instance { get; } = new();
+#pragma warning restore CS0618 // Type or member is obsolete
+
+        [Obsolete("Use singleton FrameworkRangeComparer.Instance instead")]
         public FrameworkRangeComparer()
         {
         }

@@ -9,9 +9,17 @@ namespace NuGet.Packaging
     {
         public static void AddRange<T>(this ICollection<T> collection, IEnumerable<T> items)
         {
-            foreach (var item in items)
+            if (collection is List<T> list)
             {
-                collection.Add(item);
+                // use List's AddRange which has optimizations to minimize resizing
+                list.AddRange(items);
+            }
+            else
+            {
+                foreach (var item in items)
+                {
+                    collection.Add(item);
+                }
             }
         }
     }

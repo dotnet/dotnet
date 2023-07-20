@@ -10,7 +10,10 @@ namespace NuGet.RuntimeModel
     /// <summary>
     /// A package dependency for a specific RID.
     /// </summary>
-    public class RuntimePackageDependency : IEquatable<RuntimePackageDependency>
+    /// <remarks>
+    /// Immutable.
+    /// </remarks>
+    public sealed class RuntimePackageDependency : IEquatable<RuntimePackageDependency>
     {
         /// <summary>
         /// Dependency package id.
@@ -28,9 +31,10 @@ namespace NuGet.RuntimeModel
             VersionRange = versionRange;
         }
 
+        [Obsolete("This type is immutable, so there is no need or point to clone it.")]
         public RuntimePackageDependency Clone()
         {
-            return new RuntimePackageDependency(Id, VersionRange);
+            return this;
         }
 
         public override string ToString()

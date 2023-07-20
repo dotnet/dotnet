@@ -8,18 +8,10 @@ namespace NuGet.LibraryModel
 {
     public sealed class CentralPackageVersionNameComparer : IEqualityComparer<CentralPackageVersion>
     {
-        private static readonly Lazy<CentralPackageVersionNameComparer> _defaultComparer = new Lazy<CentralPackageVersionNameComparer>(() => new CentralPackageVersionNameComparer());
-
         /// <summary>
         /// Returns a singleton instance for the <see cref="CentralPackageVersionNameComparer"/>.
         /// </summary>
-        public static CentralPackageVersionNameComparer Default
-        {
-            get
-            {
-                return _defaultComparer.Value;
-            }
-        }
+        public static CentralPackageVersionNameComparer Default { get; } = new();
 
         /// <summary>
         /// Get a singleton instance only through the <see cref="CentralPackageVersionNameComparer.Default"/>.

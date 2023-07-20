@@ -164,7 +164,7 @@ namespace NuGet.Commands
 
             // Duplicate frameworks may not exist
             // Change in ATF should *not* affect our duplicate check, so we use the full framework comparer.
-            if (frameworks.Length != frameworks.Distinct(new NuGetFrameworkFullComparer()).Count())
+            if (frameworks.Length != frameworks.Distinct(NuGetFrameworkFullComparer.Instance).Count())
             {
                 var message = string.Format(
                     CultureInfo.CurrentCulture,

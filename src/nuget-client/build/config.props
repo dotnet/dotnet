@@ -13,13 +13,13 @@
     <!-- **  Change for each new version -->
     <!-- when changing any of the NuGetVersion props below, run tools-local\ship-public-apis -->
     <MajorNuGetVersion Condition="'$(MajorNuGetVersion)' == ''">6</MajorNuGetVersion>
-    <MinorNuGetVersion Condition="'$(MinorNuGetVersion)' == ''">7</MinorNuGetVersion>
+    <MinorNuGetVersion Condition="'$(MinorNuGetVersion)' == ''">8</MinorNuGetVersion>
     <PatchNuGetVersion Condition="'$(PatchNuGetVersion)' == ''">0</PatchNuGetVersion>
     <SemanticVersion Condition=" '$(SemanticVersion)' == '' ">$(MajorNuGetVersion).$(MinorNuGetVersion).$(PatchNuGetVersion)</SemanticVersion>
 
     <!-- ** Change for each new preview/rc -->
     <!-- Check the VS schedule and manually enter a preview number here that makes sense. -->
-    <ReleaseLabel Condition=" '$(ReleaseLabel)' == '' ">rc</ReleaseLabel>
+    <ReleaseLabel Condition=" '$(ReleaseLabel)' == '' ">preview.1</ReleaseLabel>
 
     <IsEscrowMode>false</IsEscrowMode>
 
@@ -35,6 +35,39 @@
     <!-- This branches are used for creating insertion PRs -->
     <VsTargetBranch Condition="'$(IsEscrowMode)' == 'true'">rel/d$(VsTargetMajorVersion).$(MinorNuGetVersion)</VsTargetBranch>
     <VsTargetChannel Condition="'$(IsEscrowMode)' == 'true'">int.d$(VsTargetMajorVersion).$(MinorNuGetVersion)</VsTargetChannel>
+  </PropertyGroup>
+
+ <PropertyGroup Condition=" '$(PreReleaseVersion)' == '' ">
+    <PreReleaseVersion>32767</PreReleaseVersion>
+  </PropertyGroup>
+
+  <!--Setting the Pre-release/Build meta-data from CI if Version is set-->
+  <PropertyGroup Condition="'$(BuildNumber)' != ''">
+    <PreReleaseVersion>$(BuildNumber)</PreReleaseVersion>
+  </PropertyGroup>
+
+  <!--Setting the product information for Beta builds-->
+  <Choose>
+    <!-- If we aren't excluding the build number, use the release label and the build number. -->
+    <When Condition="'$(BuildRTM)' != 'true' AND '$(PreReleaseVersion)' != '' AND '$(PreReleaseVersion)' != '0' ">
+      <PropertyGroup>
+        <PreReleaseInformationVersion>-$(ReleaseLabel).$(PreReleaseVersion)</PreReleaseInformationVersion>
+      </PropertyGroup>
+    </When>
+    <!-- If we are excluding the build number, show the release label unless we are RTM. -->
+    <When Condition="'$(ReleaseLabel)' != 'rtm' AND '$(ReleaseLabel)' != 'svc' AND '$(ReleaseLabel)' != 'rc' ">
+      <PropertyGroup>
+        <PreReleaseInformationVersion>-$(ReleaseLabel)</PreReleaseInformationVersion>
+      </PropertyGroup>
+    </When>
+  </Choose>
+
+  <PropertyGroup Condition=" '$(Version)' == '' ">
+    <Version>$(SemanticVersion)$(PreReleaseInformationVersion)</Version>
+  </PropertyGroup>
+  
+  <PropertyGroup Condition=" '$(NuGetVsVersion)' == '' ">
+    <NuGetVsVersion>$(NuGetSdkVsSemanticVersion)$(PreReleaseInformationVersion)</NuGetVsVersion>
   </PropertyGroup>
 
   <!-- Config -->
@@ -70,6 +103,9 @@
   </Target>
   <Target Name="GetVsTargetMajorVersion">
     <Message Text="$(VsTargetMajorVersion)" Importance="High"/>
+  </Target>
+  <Target Name="GetNuGetVsVersion">
+    <Message Text="$(NuGetVsVersion)" Importance="High"/>
   </Target>
   <Target Name="GetVsTargetBranch">
     <Message Text="$(VsTargetBranch)" Importance="High"/>

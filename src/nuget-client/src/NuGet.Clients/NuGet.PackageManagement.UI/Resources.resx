@@ -994,4 +994,7 @@ Please see https://aka.ms/troubleshoot_nuget_cache for more help.</value>
     <value>_OK</value>
     <comment>Button_Cancel and Button_OK must have underscore in different letters. See https://docs.microsoft.com/windows/apps/design/input/access-keys#choose-access-keys</comment>
   </data>
+  <data name="Label_NetworkError" xml:space="preserve">
+    <value>An error occurred while fetching additional information about the package. Refresh to try again.</value>
+  </data>
 </root>

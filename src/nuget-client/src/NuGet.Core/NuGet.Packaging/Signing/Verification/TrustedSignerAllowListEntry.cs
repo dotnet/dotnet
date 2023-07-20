@@ -1,7 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using NuGet.Common;
@@ -60,13 +59,9 @@ namespace NuGet.Packaging.Signing
             combiner.AddStruct(Target);
             combiner.AddObject(Fingerprint);
             combiner.AddStruct(FingerprintAlgorithm);
+            combiner.AddSequence(Owners);
 
-            if (Owners != null)
-            {
-                combiner.AddSequence(Owners);
-            }
-
-            return combiner.GetHashCode();
+            return combiner.CombinedHash;
         }
     }
 }

@@ -8,80 +8,204 @@ using NuGet.Packaging.Core;
 using NuGet.Shared;
 using NuGet.Versioning;
 
+#nullable enable
+
 namespace NuGet.ProjectModel
 {
     public class LockFileTargetLibrary : IEquatable<LockFileTargetLibrary>
     {
-        public string Name { get; set; }
+        #region Property packing
 
-        public string Framework { get; set; }
+        private readonly record struct PropertyKey(string PropertyName);
 
-        public NuGetVersion Version { get; set; }
+        private static readonly PropertyKey DependenciesKey = new(nameof(Dependencies));
+        private static readonly PropertyKey FrameworkAssembliesKey = new(nameof(FrameworkAssemblies));
+        private static readonly PropertyKey FrameworkReferencesKey = new(nameof(FrameworkReferences));
+        private static readonly PropertyKey RuntimeAssembliesKey = new(nameof(RuntimeAssemblies));
+        private static readonly PropertyKey ResourceAssembliesKey = new(nameof(ResourceAssemblies));
+        private static readonly PropertyKey CompileTimeAssembliesKey = new(nameof(CompileTimeAssemblies));
+        private static readonly PropertyKey NativeLibrariesKey = new(nameof(NativeLibraries));
+        private static readonly PropertyKey BuildKey = new(nameof(Build));
+        private static readonly PropertyKey BuildMultiTargetingKey = new(nameof(BuildMultiTargeting));
+        private static readonly PropertyKey ContentFilesKey = new(nameof(ContentFiles));
+        private static readonly PropertyKey RuntimeTargetsKey = new(nameof(RuntimeTargets));
+        private static readonly PropertyKey ToolsAssembliesKey = new(nameof(ToolsAssemblies));
+        private static readonly PropertyKey EmbedAssembliesKey = new(nameof(EmbedAssemblies));
+        private static readonly PropertyKey PackageTypeKey = new(nameof(PackageType));
 
-        public string Type { get; set; }
+        private readonly Dictionary<PropertyKey, object> _propertyValues = new();
 
-        public IList<PackageDependency> Dependencies { get; set; } = new List<PackageDependency>();
+        private bool _isFrozen;
 
-        public IList<string> FrameworkAssemblies { get; set; } = new List<string>();
+        private IList<T> GetListProperty<T>(PropertyKey key)
+        {
+            if (!_propertyValues.TryGetValue(key, out object? value))
+            {
+                if (_isFrozen)
+                {
+                    return Array.Empty<T>();
+                }
 
-        public IList<string> FrameworkReferences { get; set; } = new List<string>();
+                var list = new List<T>();
+                _propertyValues[key] = list;
+                return list;
+            }
 
-        public IList<LockFileItem> RuntimeAssemblies { get; set; } = new List<LockFileItem>();
+            return (IList<T>)value;
+        }
 
-        public IList<LockFileItem> ResourceAssemblies { get; set; } = new List<LockFileItem>();
+        private void SetListProperty<T>(PropertyKey key, IList<T> list)
+        {
+            System.Diagnostics.Debug.Assert(!_isFrozen, "Attempting to set a property on a frozen instance.");
+            _propertyValues[key] = list;
+        }
 
-        public IList<LockFileItem> CompileTimeAssemblies { get; set; } = new List<LockFileItem>();
+        public void Freeze()
+        {
+            _isFrozen = true;
+        }
 
-        public IList<LockFileItem> NativeLibraries { get; set; } = new List<LockFileItem>();
+        #endregion
 
-        public IList<LockFileItem> Build { get; set; } = new List<LockFileItem>();
+        public string? Name { get; set; }
 
-        public IList<LockFileItem> BuildMultiTargeting { get; set; } = new List<LockFileItem>();
+        public string? Framework { get; set; }
 
-        public IList<LockFileContentFile> ContentFiles { get; set; } = new List<LockFileContentFile>();
+        public NuGetVersion? Version { get; set; }
 
-        public IList<LockFileRuntimeTarget> RuntimeTargets { get; set; } = new List<LockFileRuntimeTarget>();
+        public string? Type { get; set; }
 
-        public IList<LockFileItem> ToolsAssemblies { get; set; } = new List<LockFileItem>();
+        public IList<PackageDependency> Dependencies
+        {
+            get => GetListProperty<PackageDependency>(DependenciesKey);
+            set => SetListProperty(DependenciesKey, value);
+        }
 
-        public IList<LockFileItem> EmbedAssemblies { get; set; } = new List<LockFileItem>();
+        public IList<string> FrameworkAssemblies
+        {
+            get => GetListProperty<string>(FrameworkAssembliesKey);
+            set => SetListProperty(FrameworkAssembliesKey, value);
+        }
 
-        // Package Type does not belong in Equals and HashCode, since it's only used for compatibility checking post restore.
-        public IList<PackageType> PackageType { get; set; } = new List<PackageType>();
+        public IList<string> FrameworkReferences
+        {
+            get => GetListProperty<string>(FrameworkReferencesKey);
+            set => SetListProperty(FrameworkReferencesKey, value);
+        }
+
+        public IList<LockFileItem> RuntimeAssemblies
+        {
+            get => GetListProperty<LockFileItem>(RuntimeAssembliesKey);
+            set => SetListProperty(RuntimeAssembliesKey, value);
+        }
+
+        public IList<LockFileItem> ResourceAssemblies
+        {
+            get => GetListProperty<LockFileItem>(ResourceAssembliesKey);
+            set => SetListProperty(ResourceAssembliesKey, value);
+        }
+
+        public IList<LockFileItem> CompileTimeAssemblies
+        {
+            get => GetListProperty<LockFileItem>(CompileTimeAssembliesKey);
+            set => SetListProperty(CompileTimeAssembliesKey, value);
+        }
+
+        public IList<LockFileItem> NativeLibraries
+        {
+            get => GetListProperty<LockFileItem>(NativeLibrariesKey);
+            set => SetListProperty(NativeLibrariesKey, value);
+        }
+
+        public IList<LockFileItem> Build
+        {
+            get => GetListProperty<LockFileItem>(BuildKey);
+            set => SetListProperty(BuildKey, value);
+        }
+
+        public IList<LockFileItem> BuildMultiTargeting
+        {
+            get => GetListProperty<LockFileItem>(BuildMultiTargetingKey);
+            set => SetListProperty(BuildMultiTargetingKey, value);
+        }
+
+        public IList<LockFileContentFile> ContentFiles
+        {
+            get => GetListProperty<LockFileContentFile>(ContentFilesKey);
+            set => SetListProperty(ContentFilesKey, value);
+        }
+
+        public IList<LockFileRuntimeTarget> RuntimeTargets
+        {
+            get => GetListProperty<LockFileRuntimeTarget>(RuntimeTargetsKey);
+            set => SetListProperty(RuntimeTargetsKey, value);
+        }
+
+        public IList<LockFileItem> ToolsAssemblies
+        {
+            get => GetListProperty<LockFileItem>(ToolsAssembliesKey);
+            set => SetListProperty(ToolsAssembliesKey, value);
+        }
+
+        public IList<LockFileItem> EmbedAssemblies
+        {
+            get => GetListProperty<LockFileItem>(EmbedAssembliesKey);
+            set => SetListProperty(EmbedAssembliesKey, value);
+        }
+
+        // PackageType does not belong in Equals and HashCode, since it's only used for compatibility checking post restore.
+        public IList<PackageType> PackageType
+        {
+            get => GetListProperty<PackageType>(PackageTypeKey);
+            set => SetListProperty(PackageTypeKey, value);
+        }
 
 
-        public bool Equals(LockFileTargetLibrary other)
+        public bool Equals(LockFileTargetLibrary? other)
         {
             if (other == null)
             {
                 return false;
             }
 
-            if (Object.ReferenceEquals(this, other))
+            if (ReferenceEquals(this, other))
             {
                 return true;
             }
 
             return string.Equals(Name, other.Name, StringComparison.Ordinal)
-                && VersionComparer.Default.Equals(Version, other.Version)
+                && VersionComparer.Default.Equals(Version!, other.Version!)
                 && string.Equals(Type, other.Type, StringComparison.Ordinal)
                 && string.Equals(Framework, other.Framework, StringComparison.Ordinal)
-                && Dependencies.OrderedEquals(other.Dependencies, dependency => dependency.Id, StringComparer.OrdinalIgnoreCase)
-                && FrameworkAssemblies.OrderedEquals(other.FrameworkAssemblies, s => s, StringComparer.OrdinalIgnoreCase, StringComparer.OrdinalIgnoreCase)
-                && FrameworkReferences.OrderedEquals(other.FrameworkReferences, s => s, StringComparer.OrdinalIgnoreCase, StringComparer.OrdinalIgnoreCase)
-                && RuntimeAssemblies.OrderedEquals(other.RuntimeAssemblies, item => item.Path, StringComparer.OrdinalIgnoreCase)
-                && ResourceAssemblies.OrderedEquals(other.ResourceAssemblies, item => item.Path, StringComparer.OrdinalIgnoreCase)
-                && CompileTimeAssemblies.OrderedEquals(other.CompileTimeAssemblies, item => item.Path, StringComparer.OrdinalIgnoreCase)
-                && NativeLibraries.OrderedEquals(other.NativeLibraries, item => item.Path, StringComparer.OrdinalIgnoreCase)
-                && ContentFiles.OrderedEquals(other.ContentFiles, item => item.Path, StringComparer.OrdinalIgnoreCase)
-                && RuntimeTargets.OrderedEquals(other.RuntimeTargets, item => item.Path, StringComparer.OrdinalIgnoreCase)
-                && Build.OrderedEquals(other.Build, item => item.Path, StringComparer.OrdinalIgnoreCase)
-                && BuildMultiTargeting.OrderedEquals(other.BuildMultiTargeting, item => item.Path, StringComparer.OrdinalIgnoreCase)
-                && ToolsAssemblies.OrderedEquals(other.ToolsAssemblies, item => item.Path, StringComparer.OrdinalIgnoreCase)
-                && EmbedAssemblies.OrderedEquals(other.EmbedAssemblies, item => item.Path, StringComparer.OrdinalIgnoreCase);
+                && IsListOrderedEqual<PackageDependency>(DependenciesKey, static o => o.Id)
+                && IsListOrderedEqual<string>(FrameworkAssembliesKey, static o => o, sequenceComparer: StringComparer.OrdinalIgnoreCase)
+                && IsListOrderedEqual<string>(FrameworkReferencesKey, static o => o, sequenceComparer: StringComparer.OrdinalIgnoreCase)
+                && IsListOrderedEqual<LockFileItem>(RuntimeAssembliesKey, static o => o.Path)
+                && IsListOrderedEqual<LockFileItem>(ResourceAssembliesKey, static o => o.Path)
+                && IsListOrderedEqual<LockFileItem>(CompileTimeAssembliesKey, static o => o.Path)
+                && IsListOrderedEqual<LockFileItem>(NativeLibrariesKey, static o => o.Path)
+                && IsListOrderedEqual<LockFileContentFile>(ContentFilesKey, static o => o.Path)
+                && IsListOrderedEqual<LockFileRuntimeTarget>(RuntimeTargetsKey, static o => o.Path)
+                && IsListOrderedEqual<LockFileItem>(BuildKey, static o => o.Path)
+                && IsListOrderedEqual<LockFileItem>(BuildMultiTargetingKey, static o => o.Path)
+                && IsListOrderedEqual<LockFileItem>(ToolsAssembliesKey, static o => o.Path)
+                && IsListOrderedEqual<LockFileItem>(EmbedAssembliesKey, static o => o.Path);
+
+            // NOTE we don't include PackageType in Equals or GetHashCode, since it's only used for compatibility checking post restore.
+
+            bool IsListOrderedEqual<T>(PropertyKey key, Func<T, string> accessor, IEqualityComparer<T>? sequenceComparer = null)
+            {
+                _propertyValues.TryGetValue(key, out object? thisValue);
+                other._propertyValues.TryGetValue(key, out object? thatValue);
+
+                IList<T>? thisList = thisValue is IList<T> { Count: not 0 } list1 ? list1 : null;
+                IList<T>? thatList = thatValue is IList<T> { Count: not 0 } list2 ? list2 : null;
+
+                return thisList!.OrderedEquals<T, string>(thatList!, accessor, orderComparer: StringComparer.OrdinalIgnoreCase, sequenceComparer: sequenceComparer);
+            }
         }
 
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             return Equals(obj as LockFileTargetLibrary);
         }
@@ -161,6 +285,8 @@ namespace NuGet.ProjectModel
             }
 
             return combiner.CombinedHash;
+
+            // NOTE we don't include PackageType in Equals or GetHashCode, since it's only used for compatibility checking post restore.
         }
     }
 }

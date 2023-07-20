@@ -26,8 +26,7 @@ namespace NuGet.CommandLine.Test
             var result = CommandRunner.Run(
                 Util.GetNuGetExePath(),
                 Directory.GetCurrentDirectory(),
-                args,
-                waitForExit: true);
+                args);
 
             // Assert
             Util.VerifyResultSuccess(result, LocalsHelpStringFragment);
@@ -50,8 +49,7 @@ namespace NuGet.CommandLine.Test
             var result = CommandRunner.Run(
                 Util.GetNuGetExePath(),
                 Directory.GetCurrentDirectory(),
-                args,
-                waitForExit: true);
+                args);
 
             // Assert
             Util.VerifyResultFailure(result, "An invalid local resource name was provided. Provide one of the following values: http-cache, temp, global-packages, all.");
@@ -66,8 +64,7 @@ namespace NuGet.CommandLine.Test
             var result = CommandRunner.Run(
                 Util.GetNuGetExePath(),
                 Directory.GetCurrentDirectory(),
-                args,
-                waitForExit: true);
+                args);
 
             // Assert
             Util.VerifyResultSuccess(result, LocalsHelpStringFragment);
@@ -82,8 +79,7 @@ namespace NuGet.CommandLine.Test
             var result = CommandRunner.Run(
                 Util.GetNuGetExePath(),
                 Directory.GetCurrentDirectory(),
-                args,
-                waitForExit: true);
+                args);
 
             // Assert
             Util.VerifyResultSuccess(result, LocalsHelpStringFragment);
@@ -99,8 +95,7 @@ namespace NuGet.CommandLine.Test
             var result = CommandRunner.Run(
                 Util.GetNuGetExePath(),
                 Directory.GetCurrentDirectory(),
-                $"locals {args} -list",
-                waitForExit: true);
+                $"locals {args} -list");
 
             // Assert
             Util.VerifyResultSuccess(result, $"{args}: ");

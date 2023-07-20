@@ -404,6 +404,20 @@ namespace NuGet.PackageManagement.UI
             get => IsPackageDeprecated || IsPackageVulnerable;
         }
 
+        private bool _isPackageWithNetworkErrors;
+        public bool IsPackageWithNetworkErrors
+        {
+            get => _isPackageWithNetworkErrors;
+            set
+            {
+                if (IsPackageWithNetworkErrors != value)
+                {
+                    _isPackageWithNetworkErrors = value;
+                    OnPropertyChanged(nameof(IsPackageWithNetworkErrors));
+                }
+            }
+        }
+
         private Uri _iconUrl;
         public Uri IconUrl
         {
@@ -711,6 +725,19 @@ namespace NuGet.PackageManagement.UI
             {
                 // UI requested cancellation
             }
+            catch (TaskCanceledException)
+            {
+                // HttpClient throws TaskCanceledExceptions for HTTP timeouts
+                try
+                {
+                    await NuGetUIThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync(cancellationToken);
+                    IsPackageWithNetworkErrors = true;
+                }
+                catch (OperationCanceledException)
+                {
+                    // if cancellationToken cancelled before the above is scheduled on UI thread, don't log fault telemetry
+                }
+            }
         }
 
         private async Task ReloadPackageMetadataAsync()
@@ -732,6 +759,19 @@ namespace NuGet.PackageManagement.UI
             catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
             {
                 // UI requested cancellation.
+            }
+            catch (TaskCanceledException)
+            {
+                // HttpClient throws TaskCanceledExceptions for HTTP timeouts
+                try
+                {
+                    await NuGetUIThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync(cancellationToken);
+                    IsPackageWithNetworkErrors = true;
+                }
+                catch (OperationCanceledException)
+                {
+                    // if cancellationToken cancelled before the above is scheduled on UI thread, don't log fault telemetry
+                }
             }
         }
 

@@ -68,7 +68,7 @@ namespace NuGet.VisualStudio.Implementation.Extensibility
             using var _ = NuGetETW.ExtensibilityEventSource.StartStopEvent(eventName);
             try
             {
-                var packages = new HashSet<IVsPackageMetadata>(new VsPackageMetadataComparer());
+                var packages = new HashSet<IVsPackageMetadata>(VsPackageMetadataComparer.Instance);
 
                 return _threadingService.JoinableTaskFactory.Run(async delegate
                     {

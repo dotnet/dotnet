@@ -225,30 +225,99 @@ namespace NuGet.Test
         }
 
         [Theory]
-        [InlineData("", "")]
-        [InlineData("1", "1")]
-        [InlineData("10", "1")]
-        [InlineData("100", "1")]
-        [InlineData("101", "101")]
-        [InlineData("1010", "101")]
-        [InlineData("1001", "1001")]
-        [InlineData("1.0", "1")]
-        [InlineData("1.0.0", "1")]
-        [InlineData("1.0.1", "101")]
-        [InlineData("1.0.1.0", "101")]
-        [InlineData("1.0.0.1", "1001")]
-        [InlineData("10.0", "10.0")]
-        [InlineData("10.1", "10.1")]
-        [InlineData("10.1.0.1", "10.1.0.1")]
-        [InlineData("1.1.10", "1.1.10")]
-        [InlineData("1.10.1", "1.10.1")]
-        public void FrameworkNameProvider_VersionRoundTrip(string versionString, string expected)
+        [InlineData(null)]
+        [InlineData("")]
+        [InlineData(" ")]
+        [InlineData("\t")]
+        [InlineData("Hello")]
+        public void TryGetVersion_Failures(string? versionString)
+        {
+            Assert.False(DefaultFrameworkNameProvider.Instance.TryGetVersion(versionString!, out Version? version));
+            Assert.Null(version);
+        }
+
+        [Fact]
+        public void GetVersionString_Null()
+        {
+            Assert.Equal(
+                string.Empty,
+                DefaultFrameworkNameProvider.Instance.GetVersionString(NetCoreApp, null!));
+        }
+
+        [Fact]
+        public void GetVersionString_Zero()
+        {
+            Assert.Equal(
+                string.Empty,
+                DefaultFrameworkNameProvider.Instance.GetVersionString(NetCoreApp, new Version(0, 0, 0, 0)));
+            Assert.Equal(
+                string.Empty,
+                DefaultFrameworkNameProvider.Instance.GetVersionString(NetCoreApp, new Version(0, 0, 0)));
+            Assert.Equal(
+                string.Empty,
+                DefaultFrameworkNameProvider.Instance.GetVersionString(NetCoreApp, new Version(0, 0)));
+        }
+
+        [Theory]
+        // NetCoreApp requires a minimum of two parts, and require decimal points
+        [InlineData(NetCoreApp, "1", "1.0")]
+        [InlineData(NetCoreApp, "10", "1.0")]
+        [InlineData(NetCoreApp, "100", "1.0")]
+        [InlineData(NetCoreApp, "101", "1.0.1")]
+        [InlineData(NetCoreApp, "1010", "1.0.1")]
+        [InlineData(NetCoreApp, "1001", "1.0.0.1")]
+        [InlineData(NetCoreApp, "1.0", "1.0")]
+        [InlineData(NetCoreApp, "1.0.0", "1.0")]
+        [InlineData(NetCoreApp, "1.0.1", "1.0.1")]
+        [InlineData(NetCoreApp, "1.0.1.0", "1.0.1")]
+        [InlineData(NetCoreApp, "1.0.0.1", "1.0.0.1")]
+        [InlineData(NetCoreApp, "10.0", "10.0")]
+        [InlineData(NetCoreApp, "10.1", "10.1")]
+        [InlineData(NetCoreApp, "10.1.0.1", "10.1.0.1")]
+        [InlineData(NetCoreApp, "1.1.10", "1.1.10")]
+        [InlineData(NetCoreApp, "1.10.1", "1.10.1")]
+        // AspNetCore has no special requirements
+        [InlineData(AspNetCore, "1", "10")]
+        [InlineData(AspNetCore, "10", "10")]
+        [InlineData(AspNetCore, "100", "10")]
+        [InlineData(AspNetCore, "101", "101")]
+        [InlineData(AspNetCore, "1010", "101")]
+        [InlineData(AspNetCore, "1001", "1001")]
+        [InlineData(AspNetCore, "1.0", "10")]
+        [InlineData(AspNetCore, "1.0.0", "10")]
+        [InlineData(AspNetCore, "1.0.1", "101")]
+        [InlineData(AspNetCore, "1.0.1.0", "101")]
+        [InlineData(AspNetCore, "1.0.0.1", "1001")]
+        [InlineData(AspNetCore, "10.0", "10.0")]
+        [InlineData(AspNetCore, "10.1", "10.1")]
+        [InlineData(AspNetCore, "10.1.0.1", "10.1.0.1")]
+        [InlineData(AspNetCore, "1.1.10", "1.1.10")]
+        [InlineData(AspNetCore, "1.10.1", "1.10.1")]
+        // WindowsPhone supports single digit versions
+        [InlineData(WindowsPhone, "1", "1")]
+        [InlineData(WindowsPhone, "10", "1")]
+        [InlineData(WindowsPhone, "100", "1")]
+        [InlineData(WindowsPhone, "101", "101")]
+        [InlineData(WindowsPhone, "1010", "101")]
+        [InlineData(WindowsPhone, "1001", "1001")]
+        [InlineData(WindowsPhone, "1.0", "1")]
+        [InlineData(WindowsPhone, "1.0.0", "1")]
+        [InlineData(WindowsPhone, "1.0.1", "101")]
+        [InlineData(WindowsPhone, "1.0.1.0", "101")]
+        [InlineData(WindowsPhone, "1.0.0.1", "1001")]
+        [InlineData(WindowsPhone, "10.0", "10.0")]
+        [InlineData(WindowsPhone, "10.1", "10.1")]
+        [InlineData(WindowsPhone, "10.1.0.1", "10.1.0.1")]
+        [InlineData(WindowsPhone, "1.1.10", "1.1.10")]
+        [InlineData(WindowsPhone, "1.10.1", "1.10.1")]
+        public void FrameworkNameProvider_VersionRoundTrip(string framework, string versionString, string expected)
         {
             var provider = DefaultFrameworkNameProvider.Instance;
 
-            provider.TryGetVersion(versionString, out Version? version);
+            Assert.True(provider.TryGetVersion(versionString, out Version? version));
+            Assert.NotNull(version);
 
-            string actual = provider.GetVersionString("Windows", version!);
+            string actual = provider.GetVersionString(framework, version);
 
             Assert.Equal(expected, actual);
         }
