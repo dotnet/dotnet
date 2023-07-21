@@ -14,12 +14,12 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads
     public class Utils
     {
         /// <summary>
-        /// Generate a hash for a string value using a given hash algorithm.
+        /// Generate a truncated hash (first 16 bytes) for a string value using a given hash algorithm.
         /// </summary>
         /// <param name="value">The value to hash.</param>
         /// <param name="hashName">The name of the <see cref="HashAlgorithm"/> to use.</param>
         /// <returns>A string containing the hash result.</returns>
-        public static string GetHash(string value, HashAlgorithmName hashName)
+        public static string GetTruncatedHash(string value, HashAlgorithmName hashName)
         {
             byte[] bytes = Encoding.UTF8.GetBytes(value);
 #pragma warning disable SYSLIB0045 // Cryptographic factory methods accepting an algorithm name are obsolete. Use the parameterless Create factory method on the algorithm type instead.
@@ -32,7 +32,9 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads
                 sb.Append(b.ToString("x2"));
             }
 
-            return sb.ToString();
+            string result = sb.ToString();
+
+            return result.Substring(0, 32);
         }
 
         /// <summary>
@@ -51,7 +53,7 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads
         /// <param name="id">The identifier to convert to a safe identifier</param>
         /// <returns>The safe identifier.</returns>
         internal static string ToSafeId(string id, string suffix = null) =>
-            id.Replace("-", ".").Replace(" ", ".").Replace("_", ".")+
+            id.Replace("-", ".").Replace(" ", ".").Replace("_", ".") +
             (string.IsNullOrWhiteSpace(suffix) ? null : $".{suffix}");
 
         /// <summary>
