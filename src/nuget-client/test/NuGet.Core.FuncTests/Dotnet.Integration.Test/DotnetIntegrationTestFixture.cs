@@ -234,7 +234,8 @@ namespace Dotnet.Integration.Test
                 ["UseSharedCompilation"] = bool.FalseString,
                 ["DOTNET_MULTILEVEL_LOOKUP"] = "0",
                 ["DOTNET_ROOT"] = _cliDirectory,
-                ["MSBUILDDISABLENODEREUSE"] = bool.TrueString
+                ["MSBUILDDISABLENODEREUSE"] = bool.TrueString,
+                ["NUGET_SHOW_STACK"] = bool.TrueString
             };
 
             if (enableDiagnostics)
