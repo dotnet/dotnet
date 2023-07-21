@@ -61,9 +61,9 @@ namespace NuGet.ProjectModel
             var hashCode = new HashCodeCombiner();
 
             hashCode.AddObject(AllWarningsAsErrors);
-            hashCode.AddSequence(WarningsAsErrors.OrderBy(e => e));
-            hashCode.AddSequence(NoWarn.OrderBy(e => e));
-            hashCode.AddSequence(WarningsNotAsErrors.OrderBy(e => e));
+            hashCode.AddUnorderedSequence(WarningsAsErrors);
+            hashCode.AddUnorderedSequence(NoWarn);
+            hashCode.AddUnorderedSequence(WarningsNotAsErrors);
 
             return hashCode.CombinedHash;
         }

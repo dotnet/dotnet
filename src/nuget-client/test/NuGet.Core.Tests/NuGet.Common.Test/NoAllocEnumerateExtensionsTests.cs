@@ -101,7 +101,7 @@ public class NoAllocEnumerateExtensionsTests
     }
 
     [Fact]
-    public void NoAllocEnumerate_IList_Fallback()
+    public void NoAllocEnumerate_IList_Mocked()
     {
         int[] array = { 0, 1, 2, 3 };
 
@@ -109,8 +109,11 @@ public class NoAllocEnumerateExtensionsTests
 
         mock.SetupGet(o => o.Count)
             .Returns(array.Length);
-        mock.Setup(o => o.GetEnumerator())
-            .Returns(((IEnumerable<int>)array).GetEnumerator());
+
+        mock.SetupGet(o => o[0]).Returns(0);
+        mock.SetupGet(o => o[1]).Returns(1);
+        mock.SetupGet(o => o[2]).Returns(2);
+        mock.SetupGet(o => o[3]).Returns(3);
 
         ValidateIList(mock.Object);
 

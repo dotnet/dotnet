@@ -239,7 +239,38 @@ For example the following are correct:
     }
     ```
 
-Exceptions are allowed when multiple type names coming from different namespaces are available.
+    Exceptions are allowed when multiple type names coming from different namespaces are available.
+
+1. Do not use `as` to cast types
+
+   These are correct:
+
+   ```cs
+   ListItem item = (ListItem)selectedItem; // InvalidCastException if wrong type
+   string name = item.Name;
+   ```
+
+   ```cs
+   if (obj is Type1 t1)
+   {
+       return t1.Value;
+   }
+   else if (obj is Type2 t2)
+   {
+       return t2.Value;
+   }
+   else
+   {
+        throw new InvalidOperationException($"Unexpected type {sender.GetType().Name}");
+   }
+   ```
+
+   This is incorrect:
+
+   ```cs
+   ListItem item = selectedItem as ListItem;
+   string name = item.Name; // NullReferenceException if selectedItem was not ListItem
+   ```
 
 Many of the guidelines, wherever possible, and potentially some not listed here, are enforced by an [EditorConfig](https://editorconfig.org "EditorConfig homepage") file (`.editorconfig`) at the root of the repository.
 
