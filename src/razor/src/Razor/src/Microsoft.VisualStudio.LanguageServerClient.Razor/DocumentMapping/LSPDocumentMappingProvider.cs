@@ -11,6 +11,4 @@ namespace Microsoft.VisualStudio.LanguageServerClient.Razor.DocumentMapping;
 internal abstract class LSPDocumentMappingProvider
 {
     public abstract Task<RazorMapToDocumentRangesResponse?> MapToDocumentRangesAsync(RazorLanguageKind languageKind, Uri razorDocumentUri, Range[] projectedRanges, CancellationToken cancellationToken);
-
-    public abstract Task<RazorMapToDocumentRangesResponse?> MapToDocumentRangesAsync(RazorLanguageKind languageKind, Uri razorDocumentUri, Range[] projectedRanges, LanguageServerMappingBehavior mappingBehavior, CancellationToken cancellationToken);
 }

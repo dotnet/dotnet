@@ -26,10 +26,7 @@ public class DefaultLSPDocumentMappingProviderTest : TestBase
     private static readonly Uri s_razorFile = new("file:///some/folder/to/file.razor");
     private static readonly Uri s_razorVirtualCSharpFile = new("file:///some/folder/to/file.razor.ide.g.cs");
     private static readonly Uri s_anotherRazorFile = new("file:///some/folder/to/anotherfile.razor");
-    private static readonly Uri s_anotherRazorVirtualCSharpFile = new("file:///some/folder/to/anotherfile.razor.ide.g.cs");
-    private static readonly Uri s_csharpFile = new("file:///some/folder/to/csharpfile.cs");
 
-    private readonly RazorLSPConventions _razorLSPConventions;
     private readonly Lazy<LSPDocumentManager> _documentManager;
 
     public DefaultLSPDocumentMappingProviderTest(ITestOutputHelper testOutput)
@@ -42,7 +39,6 @@ public class DefaultLSPDocumentMappingProviderTest : TestBase
         documentManager.AddDocument(s_razorFile, documentSnapshot1);
         documentManager.AddDocument(s_anotherRazorFile, documentSnapshot2);
         _documentManager = new Lazy<LSPDocumentManager>(() => documentManager);
-        _razorLSPConventions = new RazorLSPConventions(TestLanguageServerFeatureOptions.Instance);
     }
 
     [Fact]
@@ -73,7 +69,7 @@ public class DefaultLSPDocumentMappingProviderTest : TestBase
                 It.IsAny<CancellationToken>()))
             .ReturnsAsync(new ReinvocationResponse<RazorMapToDocumentRangesResponse>("TestLanguageClient", response));
 
-        var mappingProvider = new DefaultLSPDocumentMappingProvider(requestInvoker.Object, _documentManager, _razorLSPConventions);
+        var mappingProvider = new DefaultLSPDocumentMappingProvider(requestInvoker.Object, _documentManager);
         var projectedRange = new Range()
         {
             Start = new Position(10, 10),
