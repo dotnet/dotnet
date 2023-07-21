@@ -22,12 +22,4 @@ internal static class RazorLSPConstants
     public const string CSharpContentTypeName = "CSharp";
 
     public const string HtmlLSPDelegationContentTypeName = "html-delegation";
-
-    public const string HtmlLSPContentTypeName = "htmlLSPClient";
-
-    public const string CssLSPContentTypeName = "cssLSPClient";
-
-    public const string TypeScriptLSPContentTypeName = "JavaScript";
-
-    public static readonly Guid RazorActiveUIContextGuid = new("3c5ded8f-72c7-4b1f-af2d-099ceeb935b8");
 }

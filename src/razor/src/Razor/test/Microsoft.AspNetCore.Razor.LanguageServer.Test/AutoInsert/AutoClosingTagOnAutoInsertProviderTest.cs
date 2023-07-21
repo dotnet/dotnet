@@ -728,7 +728,7 @@ expected: @"
 @addTagHelper *, TestAssembly
 
 @{
-    <test>
+    <test />
 }
 ",
 fileKind: FileKinds.Legacy,
