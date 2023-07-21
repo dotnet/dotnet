@@ -46,7 +46,7 @@ public class TagHelperRefreshTriggerTest : OmniSharpTestBase
         _project1Instance = new ProjectInstance(projectRoot1);
         _projectManager = CreateProjectSnapshotManager();
         _project1FilePath = projectRoot1.ProjectFileLocation.File;
-        _project1 = new OmniSharpHostProject(_project1FilePath, RazorConfiguration.Default, "TestRootNamespace");
+        _project1 = new OmniSharpHostProject(_project1FilePath, "/path/to/obj", RazorConfiguration.Default, "TestRootNamespace");
 
         var solution = _workspace.CurrentSolution.AddProject(
             ProjectInfo.Create(
@@ -55,7 +55,7 @@ public class TagHelperRefreshTriggerTest : OmniSharpTestBase
                 "Project1",
                 "Project1",
                 LanguageNames.CSharp,
-                filePath: _project1FilePath));
+                filePath: _project1FilePath).WithCompilationOutputInfo(new CompilationOutputInfo().WithAssemblyPath("/path/to/obj/Project1.dll")));
         _workspace.TryApplyChanges(solution);
     }
 
@@ -82,7 +82,7 @@ public class TagHelperRefreshTriggerTest : OmniSharpTestBase
         var refreshTrigger = CreateRefreshTrigger();
         refreshTrigger.Initialize(projectManager);
         var projectFilePath = "/path/to/project.csproj";
-        var hostProject = new OmniSharpHostProject(projectFilePath, RazorConfiguration.Default, "TestRootNamespace");
+        var hostProject = new OmniSharpHostProject(projectFilePath, "/path/to/obj", RazorConfiguration.Default, "TestRootNamespace");
         await RunOnDispatcherThreadAsync(() => projectManager.ProjectAdded(hostProject));
 
         // Act
@@ -100,7 +100,7 @@ public class TagHelperRefreshTriggerTest : OmniSharpTestBase
         var refreshTrigger = CreateRefreshTrigger();
         refreshTrigger.Initialize(projectManager);
         var projectFilePath = "/path/to/project.csproj";
-        var hostProject = new OmniSharpHostProject(projectFilePath, RazorConfiguration.Default, "TestRootNamespace");
+        var hostProject = new OmniSharpHostProject(projectFilePath, "/path/to/obj", RazorConfiguration.Default, "TestRootNamespace");
         var hostDocument = new OmniSharpHostDocument("file.cshtml", "file.cshtml", FileKinds.Legacy);
         await RunOnDispatcherThreadAsync(() =>
         {
@@ -123,7 +123,7 @@ public class TagHelperRefreshTriggerTest : OmniSharpTestBase
         var refreshTrigger = CreateRefreshTrigger();
         refreshTrigger.Initialize(projectManager);
         var projectFilePath = "/path/to/project.csproj";
-        var hostProject = new OmniSharpHostProject(projectFilePath, RazorConfiguration.Default, "TestRootNamespace");
+        var hostProject = new OmniSharpHostProject(projectFilePath, "/path/to/obj", RazorConfiguration.Default, "TestRootNamespace");
         var hostDocument = new OmniSharpHostDocument("file.cshtml", "file.cshtml", FileKinds.Component);
         await RunOnDispatcherThreadAsync(() =>
         {

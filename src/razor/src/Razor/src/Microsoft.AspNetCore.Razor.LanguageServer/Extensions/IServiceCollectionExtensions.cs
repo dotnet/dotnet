@@ -203,12 +203,10 @@ internal static class IServiceCollectionExtensions
 
         // File change listeners
         services.AddSingleton<IProjectConfigurationFileChangeListener, ProjectConfigurationStateSynchronizer>();
-        services.AddSingleton<IProjectFileChangeListener, ProjectFileSynchronizer>();
         services.AddSingleton<IRazorFileChangeListener, RazorFileSynchronizer>();
 
         // File Change detectors
         services.AddSingleton<IFileChangeDetector, ProjectConfigurationFileChangeDetector>();
-        services.AddSingleton<IFileChangeDetector, ProjectFileChangeDetector>();
         services.AddSingleton<IFileChangeDetector, RazorFileChangeDetector>();
 
         // Document processed listeners

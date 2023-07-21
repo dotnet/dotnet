@@ -261,44 +261,44 @@ NuGet.ProjectModel.LockFileTarget.LockFileTarget() -> void
 ~NuGet.ProjectModel.LockFileTarget.TargetFramework.get -> NuGet.Frameworks.NuGetFramework
 ~NuGet.ProjectModel.LockFileTarget.TargetFramework.set -> void
 NuGet.ProjectModel.LockFileTargetLibrary
-~NuGet.ProjectModel.LockFileTargetLibrary.Build.get -> System.Collections.Generic.IList<NuGet.ProjectModel.LockFileItem>
-~NuGet.ProjectModel.LockFileTargetLibrary.Build.set -> void
-~NuGet.ProjectModel.LockFileTargetLibrary.BuildMultiTargeting.get -> System.Collections.Generic.IList<NuGet.ProjectModel.LockFileItem>
-~NuGet.ProjectModel.LockFileTargetLibrary.BuildMultiTargeting.set -> void
-~NuGet.ProjectModel.LockFileTargetLibrary.CompileTimeAssemblies.get -> System.Collections.Generic.IList<NuGet.ProjectModel.LockFileItem>
-~NuGet.ProjectModel.LockFileTargetLibrary.CompileTimeAssemblies.set -> void
-~NuGet.ProjectModel.LockFileTargetLibrary.ContentFiles.get -> System.Collections.Generic.IList<NuGet.ProjectModel.LockFileContentFile>
-~NuGet.ProjectModel.LockFileTargetLibrary.ContentFiles.set -> void
-~NuGet.ProjectModel.LockFileTargetLibrary.Dependencies.get -> System.Collections.Generic.IList<NuGet.Packaging.Core.PackageDependency>
-~NuGet.ProjectModel.LockFileTargetLibrary.Dependencies.set -> void
-~NuGet.ProjectModel.LockFileTargetLibrary.EmbedAssemblies.get -> System.Collections.Generic.IList<NuGet.ProjectModel.LockFileItem>
-~NuGet.ProjectModel.LockFileTargetLibrary.EmbedAssemblies.set -> void
-~NuGet.ProjectModel.LockFileTargetLibrary.Equals(NuGet.ProjectModel.LockFileTargetLibrary other) -> bool
-~NuGet.ProjectModel.LockFileTargetLibrary.Framework.get -> string
-~NuGet.ProjectModel.LockFileTargetLibrary.Framework.set -> void
-~NuGet.ProjectModel.LockFileTargetLibrary.FrameworkAssemblies.get -> System.Collections.Generic.IList<string>
-~NuGet.ProjectModel.LockFileTargetLibrary.FrameworkAssemblies.set -> void
-~NuGet.ProjectModel.LockFileTargetLibrary.FrameworkReferences.get -> System.Collections.Generic.IList<string>
-~NuGet.ProjectModel.LockFileTargetLibrary.FrameworkReferences.set -> void
+NuGet.ProjectModel.LockFileTargetLibrary.Build.get -> System.Collections.Generic.IList<NuGet.ProjectModel.LockFileItem!>!
+NuGet.ProjectModel.LockFileTargetLibrary.Build.set -> void
+NuGet.ProjectModel.LockFileTargetLibrary.BuildMultiTargeting.get -> System.Collections.Generic.IList<NuGet.ProjectModel.LockFileItem!>!
+NuGet.ProjectModel.LockFileTargetLibrary.BuildMultiTargeting.set -> void
+NuGet.ProjectModel.LockFileTargetLibrary.CompileTimeAssemblies.get -> System.Collections.Generic.IList<NuGet.ProjectModel.LockFileItem!>!
+NuGet.ProjectModel.LockFileTargetLibrary.CompileTimeAssemblies.set -> void
+NuGet.ProjectModel.LockFileTargetLibrary.ContentFiles.get -> System.Collections.Generic.IList<NuGet.ProjectModel.LockFileContentFile!>!
+NuGet.ProjectModel.LockFileTargetLibrary.ContentFiles.set -> void
+NuGet.ProjectModel.LockFileTargetLibrary.Dependencies.get -> System.Collections.Generic.IList<NuGet.Packaging.Core.PackageDependency!>!
+NuGet.ProjectModel.LockFileTargetLibrary.Dependencies.set -> void
+NuGet.ProjectModel.LockFileTargetLibrary.EmbedAssemblies.get -> System.Collections.Generic.IList<NuGet.ProjectModel.LockFileItem!>!
+NuGet.ProjectModel.LockFileTargetLibrary.EmbedAssemblies.set -> void
+NuGet.ProjectModel.LockFileTargetLibrary.Equals(NuGet.ProjectModel.LockFileTargetLibrary? other) -> bool
+NuGet.ProjectModel.LockFileTargetLibrary.Framework.get -> string?
+NuGet.ProjectModel.LockFileTargetLibrary.Framework.set -> void
+NuGet.ProjectModel.LockFileTargetLibrary.FrameworkAssemblies.get -> System.Collections.Generic.IList<string!>!
+NuGet.ProjectModel.LockFileTargetLibrary.FrameworkAssemblies.set -> void
+NuGet.ProjectModel.LockFileTargetLibrary.FrameworkReferences.get -> System.Collections.Generic.IList<string!>!
+NuGet.ProjectModel.LockFileTargetLibrary.FrameworkReferences.set -> void
 NuGet.ProjectModel.LockFileTargetLibrary.LockFileTargetLibrary() -> void
-~NuGet.ProjectModel.LockFileTargetLibrary.Name.get -> string
-~NuGet.ProjectModel.LockFileTargetLibrary.Name.set -> void
-~NuGet.ProjectModel.LockFileTargetLibrary.NativeLibraries.get -> System.Collections.Generic.IList<NuGet.ProjectModel.LockFileItem>
-~NuGet.ProjectModel.LockFileTargetLibrary.NativeLibraries.set -> void
-~NuGet.ProjectModel.LockFileTargetLibrary.PackageType.get -> System.Collections.Generic.IList<NuGet.Packaging.Core.PackageType>
-~NuGet.ProjectModel.LockFileTargetLibrary.PackageType.set -> void
-~NuGet.ProjectModel.LockFileTargetLibrary.ResourceAssemblies.get -> System.Collections.Generic.IList<NuGet.ProjectModel.LockFileItem>
-~NuGet.ProjectModel.LockFileTargetLibrary.ResourceAssemblies.set -> void
-~NuGet.ProjectModel.LockFileTargetLibrary.RuntimeAssemblies.get -> System.Collections.Generic.IList<NuGet.ProjectModel.LockFileItem>
-~NuGet.ProjectModel.LockFileTargetLibrary.RuntimeAssemblies.set -> void
-~NuGet.ProjectModel.LockFileTargetLibrary.RuntimeTargets.get -> System.Collections.Generic.IList<NuGet.ProjectModel.LockFileRuntimeTarget>
-~NuGet.ProjectModel.LockFileTargetLibrary.RuntimeTargets.set -> void
-~NuGet.ProjectModel.LockFileTargetLibrary.ToolsAssemblies.get -> System.Collections.Generic.IList<NuGet.ProjectModel.LockFileItem>
-~NuGet.ProjectModel.LockFileTargetLibrary.ToolsAssemblies.set -> void
-~NuGet.ProjectModel.LockFileTargetLibrary.Type.get -> string
-~NuGet.ProjectModel.LockFileTargetLibrary.Type.set -> void
-~NuGet.ProjectModel.LockFileTargetLibrary.Version.get -> NuGet.Versioning.NuGetVersion
-~NuGet.ProjectModel.LockFileTargetLibrary.Version.set -> void
+NuGet.ProjectModel.LockFileTargetLibrary.Name.get -> string?
+NuGet.ProjectModel.LockFileTargetLibrary.Name.set -> void
+NuGet.ProjectModel.LockFileTargetLibrary.NativeLibraries.get -> System.Collections.Generic.IList<NuGet.ProjectModel.LockFileItem!>!
+NuGet.ProjectModel.LockFileTargetLibrary.NativeLibraries.set -> void
+NuGet.ProjectModel.LockFileTargetLibrary.PackageType.get -> System.Collections.Generic.IList<NuGet.Packaging.Core.PackageType!>!
+NuGet.ProjectModel.LockFileTargetLibrary.PackageType.set -> void
+NuGet.ProjectModel.LockFileTargetLibrary.ResourceAssemblies.get -> System.Collections.Generic.IList<NuGet.ProjectModel.LockFileItem!>!
+NuGet.ProjectModel.LockFileTargetLibrary.ResourceAssemblies.set -> void
+NuGet.ProjectModel.LockFileTargetLibrary.RuntimeAssemblies.get -> System.Collections.Generic.IList<NuGet.ProjectModel.LockFileItem!>!
+NuGet.ProjectModel.LockFileTargetLibrary.RuntimeAssemblies.set -> void
+NuGet.ProjectModel.LockFileTargetLibrary.RuntimeTargets.get -> System.Collections.Generic.IList<NuGet.ProjectModel.LockFileRuntimeTarget!>!
+NuGet.ProjectModel.LockFileTargetLibrary.RuntimeTargets.set -> void
+NuGet.ProjectModel.LockFileTargetLibrary.ToolsAssemblies.get -> System.Collections.Generic.IList<NuGet.ProjectModel.LockFileItem!>!
+NuGet.ProjectModel.LockFileTargetLibrary.ToolsAssemblies.set -> void
+NuGet.ProjectModel.LockFileTargetLibrary.Type.get -> string?
+NuGet.ProjectModel.LockFileTargetLibrary.Type.set -> void
+NuGet.ProjectModel.LockFileTargetLibrary.Version.get -> NuGet.Versioning.NuGetVersion?
+NuGet.ProjectModel.LockFileTargetLibrary.Version.set -> void
 NuGet.ProjectModel.LockFileUtilities
 NuGet.ProjectModel.LockFileValidationResult
 ~NuGet.ProjectModel.LockFileValidationResult.InvalidReasons.get -> System.Collections.Generic.IReadOnlyList<string>
@@ -599,7 +599,7 @@ override NuGet.ProjectModel.LockFileItem.GetHashCode() -> int
 override NuGet.ProjectModel.LockFileLibrary.GetHashCode() -> int
 ~override NuGet.ProjectModel.LockFileTarget.Equals(object obj) -> bool
 override NuGet.ProjectModel.LockFileTarget.GetHashCode() -> int
-~override NuGet.ProjectModel.LockFileTargetLibrary.Equals(object obj) -> bool
+override NuGet.ProjectModel.LockFileTargetLibrary.Equals(object? obj) -> bool
 override NuGet.ProjectModel.LockFileTargetLibrary.GetHashCode() -> int
 ~override NuGet.ProjectModel.PackOptions.Equals(object obj) -> bool
 override NuGet.ProjectModel.PackOptions.GetHashCode() -> int

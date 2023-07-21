@@ -19,7 +19,8 @@ internal class DefaultRazorCodeGenerationOptions : RazorCodeGenerationOptions
         bool omitMinimizedComponentAttributeValues,
         bool supportLocalizedComponentNames,
         bool useEnhancedLinePragma,
-        string suppressUniqueIds)
+        string suppressUniqueIds,
+        bool suppressAddComponentParameter)
     {
         IndentWithTabs = indentWithTabs;
         IndentSize = indentSize;
@@ -33,6 +34,7 @@ internal class DefaultRazorCodeGenerationOptions : RazorCodeGenerationOptions
         SupportLocalizedComponentNames = supportLocalizedComponentNames;
         UseEnhancedLinePragma = useEnhancedLinePragma;
         SuppressUniqueIds = suppressUniqueIds;
+        SuppressAddComponentParameter = suppressAddComponentParameter;
     }
 
     public override bool DesignTime { get; }

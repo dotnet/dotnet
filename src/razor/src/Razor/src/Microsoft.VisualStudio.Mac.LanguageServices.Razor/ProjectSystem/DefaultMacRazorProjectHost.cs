@@ -47,16 +47,15 @@ internal class DefaultMacRazorProjectHost : MacRazorProjectHostBase
             var projectProperties = DotNetProject.MSBuildProject.EvaluatedProperties;
             var projectItems = DotNetProject.MSBuildProject.EvaluatedItems;
 
-            if (TryGetIntermediateOutputPath(projectProperties, out var intermediatePath))
-            {
-                var projectConfigurationFile = Path.Combine(intermediatePath, _languageServerFeatureOptions.ProjectConfigurationFileName);
-                ProjectConfigurationFilePathStore.Set(DotNetProject.FileName.FullPath, projectConfigurationFile);
-            }
-
-            if (TryGetConfiguration(projectProperties, projectItems, out var configuration))
+            if (TryGetIntermediateOutputPath(projectProperties, out var intermediatePath) &&
+                TryGetConfiguration(projectProperties, projectItems, out var configuration))
             {
                 TryGetRootNamespace(projectProperties, out var rootNamespace);
-                var hostProject = new HostProject(DotNetProject.FileName.FullPath, configuration, rootNamespace);
+                var hostProject = new HostProject(DotNetProject.FileName.FullPath, intermediatePath, configuration, rootNamespace);
+
+                var projectConfigurationFile = Path.Combine(intermediatePath, _languageServerFeatureOptions.ProjectConfigurationFileName);
+                ProjectConfigurationFilePathStore.Set(hostProject.Key, projectConfigurationFile);
+
                 await UpdateHostProjectUnsafeAsync(hostProject).ConfigureAwait(false);
                 UpdateDocuments(hostProject, projectItems);
             }

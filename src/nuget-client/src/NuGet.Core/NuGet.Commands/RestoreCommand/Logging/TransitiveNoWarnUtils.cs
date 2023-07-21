@@ -3,7 +3,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using NuGet.Common;
 using NuGet.DependencyResolver;
@@ -722,7 +721,7 @@ namespace NuGet.Commands
             {
                 var hashCode = new HashCodeCombiner();
 
-                hashCode.AddSequence(ProjectWide);
+                hashCode.AddUnorderedSequence(ProjectWide);
                 hashCode.AddDictionary(PackageSpecific);
 
                 return hashCode.CombinedHash;

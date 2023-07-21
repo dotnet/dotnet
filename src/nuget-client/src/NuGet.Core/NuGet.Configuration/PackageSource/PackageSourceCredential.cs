@@ -113,7 +113,7 @@ namespace NuGet.Configuration
                 combiner.AddObject(PasswordText);
                 combiner.AddObject(IsPasswordClearText);
 
-                return combiner.GetHashCode();
+                return combiner.CombinedHash;
             });
         }
 

@@ -27,7 +27,8 @@ internal class SnapshotResolver : ISnapshotResolver
         _logger = loggerFactory?.CreateLogger<SnapshotResolver>() ?? throw new ArgumentNullException(nameof(loggerFactory));
 
         var miscellaneousProjectPath = Path.Combine(TempDirectory.Instance.DirectoryPath, "__MISC_RAZOR_PROJECT__");
-        MiscellaneousHostProject = new HostProject(FilePathNormalizer.Normalize(miscellaneousProjectPath), RazorDefaults.Configuration, RazorDefaults.RootNamespace);
+        var normalizedPath = FilePathNormalizer.Normalize(miscellaneousProjectPath);
+        MiscellaneousHostProject = new HostProject(normalizedPath, normalizedPath, RazorDefaults.Configuration, RazorDefaults.RootNamespace);
     }
 
     /// <inheritdoc/>

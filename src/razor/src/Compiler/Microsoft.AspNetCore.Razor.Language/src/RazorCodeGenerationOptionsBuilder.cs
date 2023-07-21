@@ -90,6 +90,11 @@ public abstract class RazorCodeGenerationOptionsBuilder
     /// </summary>
     internal string SuppressUniqueIds { get; set; }
 
+    /// <summary>
+    /// Determines whether RenderTreeBuilder.AddComponentParameter should not be used.
+    /// </summary>
+    internal bool SuppressAddComponentParameter { get; set; }
+
     public abstract RazorCodeGenerationOptions Build();
 
     public virtual void SetDesignTime(bool designTime)

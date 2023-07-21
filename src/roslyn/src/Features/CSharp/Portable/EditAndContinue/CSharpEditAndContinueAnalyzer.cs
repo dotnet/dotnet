@@ -1076,7 +1076,7 @@ namespace Microsoft.CodeAnalysis.CSharp.EditAndContinue
                         var oldGetterSymbol = ((IPropertySymbol)oldSymbol).GetMethod;
                         var newGetterSymbol = ((IPropertySymbol)newSymbol).GetMethod;
 
-                        return OneOrMany.Create(ImmutableArray.Create((oldSymbol, newSymbol, editKind), (oldGetterSymbol, newGetterSymbol, editKind)));
+                        return OneOrMany.Create((oldSymbol, newSymbol, editKind), (oldGetterSymbol, newGetterSymbol, editKind));
                     }
 
                     // 2) Property/indexer declarations differ in readonly keyword.
@@ -1161,26 +1161,26 @@ namespace Microsoft.CodeAnalysis.CSharp.EditAndContinue
                     {
                         var oldGetterSymbol = ((IPropertySymbol?)oldSymbol)?.GetMethod;
                         var newGetterSymbol = ((IPropertySymbol?)newSymbol)?.GetMethod;
-                        return OneOrMany.Create(ImmutableArray.Create((oldSymbol, newSymbol, editKind), (oldGetterSymbol, newGetterSymbol, editKind)));
+                        return OneOrMany.Create((oldSymbol, newSymbol, editKind), (oldGetterSymbol, newGetterSymbol, editKind));
                     }
 
                     // Inserting/deleting a type parameter constraint should result in an update of the corresponding type parameter symbol:
                     if (node.IsKind(SyntaxKind.TypeParameterConstraintClause))
                     {
-                        return OneOrMany.Create(ImmutableArray.Create((oldSymbol, newSymbol, EditKind.Update)));
+                        return OneOrMany.Create((oldSymbol, newSymbol, EditKind.Update));
                     }
 
                     // Inserting/deleting a global statement should result in an update of the implicit main method:
                     if (node.IsKind(SyntaxKind.GlobalStatement))
                     {
-                        return OneOrMany.Create(ImmutableArray.Create((oldSymbol, newSymbol, EditKind.Update)));
+                        return OneOrMany.Create((oldSymbol, newSymbol, EditKind.Update));
                     }
 
                     // Inserting/deleting a primary constructor base initializer/base list is an update of the constructor/type,
                     // not a delete/insert of the constructor/type itself:
                     if (node is (kind: SyntaxKind.PrimaryConstructorBaseType or SyntaxKind.BaseList))
                     {
-                        return OneOrMany.Create(ImmutableArray.Create((oldSymbol, newSymbol, EditKind.Update)));
+                        return OneOrMany.Create((oldSymbol, newSymbol, EditKind.Update));
                     }
 
                     break;
@@ -2252,21 +2252,6 @@ namespace Microsoft.CodeAnalysis.CSharp.EditAndContinue
                         return;
                 }
             }
-
-            public void ClassifyDeclarationBodyRudeUpdates(DeclarationBody newBody)
-            {
-                foreach (var root in newBody.RootNodes)
-                {
-                    foreach (var node in root.DescendantNodesAndSelf(LambdaUtilities.IsNotLambda))
-                    {
-                        if (node.Kind() is SyntaxKind.StackAllocArrayCreationExpression or SyntaxKind.ImplicitStackAllocArrayCreationExpression)
-                        {
-                            ReportError(RudeEditKind.StackAllocUpdate, node, _newNode);
-                            return;
-                        }
-                    }
-                }
-            }
         }
 
         internal override void ReportTopLevelSyntacticRudeEdits(
@@ -2284,10 +2269,27 @@ namespace Microsoft.CodeAnalysis.CSharp.EditAndContinue
             classifier.ClassifyEdit();
         }
 
-        internal override void ReportMemberOrLambdaBodyUpdateRudeEditsImpl(ArrayBuilder<RudeEditDiagnostic> diagnostics, SyntaxNode newDeclaration, DeclarationBody newBody, TextSpan? span)
+        internal override void ReportMemberOrLambdaBodyUpdateRudeEditsImpl(ArrayBuilder<RudeEditDiagnostic> diagnostics, SyntaxNode newDeclaration, DeclarationBody newBody)
         {
-            var classifier = new EditClassifier(this, diagnostics, oldNode: null, newDeclaration, EditKind.Update, span: span);
-            classifier.ClassifyDeclarationBodyRudeUpdates(newBody);
+            // Disallow editing the body even if the change is only in trivia.
+            // The compiler might emit extra temp local variables, which would change stack layout and cause the CLR to fail.
+
+            foreach (var root in newBody.RootNodes)
+            {
+                foreach (var node in root.DescendantNodesAndSelf(LambdaUtilities.IsNotLambda))
+                {
+                    if (node.Kind() is SyntaxKind.StackAllocArrayCreationExpression or SyntaxKind.ImplicitStackAllocArrayCreationExpression)
+                    {
+                        diagnostics.Add(new RudeEditDiagnostic(
+                            RudeEditKind.StackAllocUpdate,
+                            GetDiagnosticSpan(node, EditKind.Update),
+                            newDeclaration,
+                            arguments: new[] { GetDisplayName(newDeclaration, EditKind.Update) }));
+
+                        return;
+                    }
+                }
+            }
         }
 
         #endregion

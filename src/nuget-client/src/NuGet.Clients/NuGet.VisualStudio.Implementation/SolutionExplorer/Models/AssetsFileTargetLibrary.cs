@@ -68,8 +68,8 @@ namespace NuGet.VisualStudio.SolutionExplorer.Models
 
         private AssetsFileTargetLibrary(LockFileLibrary? library, LockFileTargetLibrary targetLibrary, AssetsFileLibraryType type)
         {
-            Name = targetLibrary.Name;
-            Version = targetLibrary.Version.ToNormalizedString();
+            Name = targetLibrary.Name!;
+            Version = targetLibrary.Version!.ToNormalizedString();
             Type = type;
 
             Dependencies = targetLibrary.Dependencies.Select(dep => dep.Id).ToImmutableArray();

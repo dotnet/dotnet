@@ -202,6 +202,7 @@ internal class DefaultRazorProjectService : RazorProjectService
         _projectSnapshotManagerDispatcher.AssertDispatcherThread();
 
         var textDocumentPath = FilePathNormalizer.Normalize(filePath);
+        // TODO: Needs to handle multiple projects!
         if (!_snapshotResolver.TryResolveProject(textDocumentPath, out var projectSnapshot))
         {
             projectSnapshot = _snapshotResolver.GetMiscellaneousProject();
@@ -214,22 +215,20 @@ internal class DefaultRazorProjectService : RazorProjectService
         TrackDocumentVersion(textDocumentPath, version);
     }
 
-    public override void AddProject(string filePath, string? rootNamespace)
+    public override ProjectKey AddProject(string filePath, string intermediateOutputPath, string? rootNamespace)
     {
         _projectSnapshotManagerDispatcher.AssertDispatcherThread();
 
         var normalizedPath = FilePathNormalizer.Normalize(filePath);
-        if (_projectSnapshotManagerAccessor.Instance.GetAllProjectKeys(normalizedPath).Length > 0)
-        {
-            // Project already exists, noop.
-            return;
-        }
-
-        var hostProject = new HostProject(normalizedPath, RazorDefaults.Configuration, rootNamespace ?? RazorDefaults.RootNamespace);
+        var hostProject = new HostProject(normalizedPath, intermediateOutputPath, RazorDefaults.Configuration, rootNamespace ?? RazorDefaults.RootNamespace);
+        // ProjectAdded will no-op if the project already exists
         _projectSnapshotManagerAccessor.Instance.ProjectAdded(hostProject);
+
         _logger.LogInformation("Added project '{filePath}' to project system.", filePath);
 
         TryMigrateMiscellaneousDocumentsToProject();
+
+        return hostProject.Key;
     }
 
     public override void RemoveProject(string filePath)
@@ -310,7 +309,7 @@ internal class DefaultRazorProjectService : RazorProjectService
             _logger.LogInformation("Updating project '{filePath}''s root namespace to '{rootNamespace}'.", project.FilePath, rootNamespace);
         }
 
-        var hostProject = new HostProject(project.FilePath, configuration, rootNamespace);
+        var hostProject = new HostProject(project.FilePath, project.IntermediateOutputPath, configuration, rootNamespace);
         _projectSnapshotManagerAccessor.Instance.ProjectConfigurationChanged(hostProject);
     }
 

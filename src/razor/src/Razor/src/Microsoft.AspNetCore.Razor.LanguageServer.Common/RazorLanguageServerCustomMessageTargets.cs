@@ -13,6 +13,8 @@ internal static class RazorLanguageServerCustomMessageTargets
     public const string RazorTextPresentationEndpoint = "razor/textPresentation";
     public const string RazorUriPresentationEndpoint = "razor/uriPresentation";
     public const string RazorSpellCheckEndpoint = "razor/spellCheck";
+    public const string RazorProjectContextsEndpoint = "razor/projectContexts";
+    public const string RazorDocumentSymbolEndpoint = "razor/documentSymbol";
 
     // Cross platform
     public const string RazorUpdateCSharpBufferEndpoint = "razor/updateCSharpBuffer";

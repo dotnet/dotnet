@@ -7,6 +7,7 @@ namespace Microsoft.VisualStudio.Razor.IntegrationTests;
 
 public static class RazorProjectConstants
 {
+    internal const string BlazorSolutionName = "BlazorSolution";
     internal const string BlazorProjectName = "BlazorProject";
 
     private static readonly string s_pagesDir = Path.Combine("Pages");

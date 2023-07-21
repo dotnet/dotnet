@@ -100,6 +100,8 @@ internal abstract class WindowsRazorProjectHostBase : OnceInitializedOnceDispose
 
     protected IUnconfiguredProjectCommonServices CommonServices { get; }
 
+    internal bool SkipIntermediateOutputPathExistCheck_TestOnly { get; set; }
+
     // internal for tests. The product will call through the IProjectDynamicLoadComponent interface.
     internal Task LoadAsync()
     {
@@ -256,7 +258,7 @@ internal abstract class WindowsRazorProjectHostBase : OnceInitializedOnceDispose
                 {
                     UninitializeProjectUnsafe(projectKey);
 
-                    var hostProject = new HostProject(newProjectFilePath, current.Configuration, current.RootNamespace);
+                    var hostProject = new HostProject(newProjectFilePath, current.IntermediateOutputPath, current.Configuration, current.RootNamespace);
                     UpdateProjectUnsafe(hostProject);
 
                     // This should no-op in the common case, just putting it here for insurance.
@@ -295,7 +297,7 @@ internal abstract class WindowsRazorProjectHostBase : OnceInitializedOnceDispose
         if (current is not null)
         {
             projectManager.ProjectRemoved(projectKey);
-            ProjectConfigurationFilePathStore.Remove(current.FilePath);
+            ProjectConfigurationFilePathStore.Remove(projectKey);
         }
     }
 
@@ -376,8 +378,8 @@ internal abstract class WindowsRazorProjectHostBase : OnceInitializedOnceDispose
     private Task UnconfiguredProject_ProjectRenamingAsync(object? sender, ProjectRenamedEventArgs args)
         => OnProjectRenamingAsync(args.OldFullPath, args.NewFullPath);
 
-    // Internal for testing
-    internal static bool TryGetIntermediateOutputPath(
+    // virtual for testing
+    protected virtual bool TryGetIntermediateOutputPath(
         IImmutableDictionary<string, IProjectRuleSnapshot> state,
         [NotNullWhen(returnValue: true)] out string? path)
     {
@@ -408,7 +410,7 @@ internal abstract class WindowsRazorProjectHostBase : OnceInitializedOnceDispose
         var basePath = new DirectoryInfo(baseIntermediateOutputPathValue).Parent;
         var joinedPath = Path.Combine(basePath.FullName, intermediateOutputPathValue);
 
-        if (!Directory.Exists(joinedPath))
+        if (!SkipIntermediateOutputPathExistCheck_TestOnly && !Directory.Exists(joinedPath))
         {
             // The directory doesn't exist for the currently executing application.
             // This can occur in Razor class library scenarios because:

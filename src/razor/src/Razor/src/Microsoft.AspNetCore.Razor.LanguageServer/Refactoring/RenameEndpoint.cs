@@ -93,7 +93,8 @@ internal sealed class RenameEndpoint : AbstractRazorDelegatingEndpoint<RenamePar
                 documentContext.Identifier,
                 positionInfo.Position,
                 positionInfo.LanguageKind,
-                request.NewName));
+                request.NewName,
+                request.TextDocument.GetProjectContext()));
     }
 
     protected override async Task<WorkspaceEdit?> HandleDelegatedResponseAsync(WorkspaceEdit? response, RenameParams request, RazorRequestContext requestContext, DocumentPositionInfo positionInfo, CancellationToken cancellationToken)
@@ -130,7 +131,8 @@ internal sealed class RenameEndpoint : AbstractRazorDelegatingEndpoint<RenamePar
         }
 
         var documentChanges = new List<SumType<TextDocumentEdit, CreateFile, RenameFile, DeleteFile>>();
-        AddFileRenameForComponent(documentChanges, originComponentDocumentSnapshot, newPath);
+        var fileRename = GetFileRenameForComponent(originComponentDocumentSnapshot, newPath);
+        documentChanges.Add(fileRename);
         AddEditsForCodeDocument(documentChanges, originTagHelpers, request.NewName, request.TextDocument.Uri, codeDocument);
 
         var documentSnapshots = await GetAllDocumentSnapshotsAsync(documentContext, cancellationToken).ConfigureAwait(false);
@@ -138,6 +140,15 @@ internal sealed class RenameEndpoint : AbstractRazorDelegatingEndpoint<RenamePar
         foreach (var documentSnapshot in documentSnapshots)
         {
             await AddEditsForCodeDocumentAsync(documentChanges, originTagHelpers, request.NewName, documentSnapshot).ConfigureAwait(false);
+        }
+
+        foreach (var documentChange in documentChanges)
+        {
+            if (documentChange.TryGetFirst(out var textDocumentEdit) &&
+                textDocumentEdit.TextDocument.Uri == fileRename.OldUri)
+            {
+                textDocumentEdit.TextDocument.Uri = fileRename.NewUri;
+            }
         }
 
         return new WorkspaceEdit
@@ -184,7 +195,7 @@ internal sealed class RenameEndpoint : AbstractRazorDelegatingEndpoint<RenamePar
         return documentSnapshots;
     }
 
-    public void AddFileRenameForComponent(List<SumType<TextDocumentEdit, CreateFile, RenameFile, DeleteFile>> documentChanges, IDocumentSnapshot documentSnapshot, string newPath)
+    public RenameFile GetFileRenameForComponent(IDocumentSnapshot documentSnapshot, string newPath)
     {
         // VS Code in Windows expects path to start with '/'
         var filePath = documentSnapshot.FilePath.AssumeNotNull();
@@ -210,11 +221,11 @@ internal sealed class RenameEndpoint : AbstractRazorDelegatingEndpoint<RenamePar
             Scheme = Uri.UriSchemeFile,
         }.Uri;
 
-        documentChanges.Add(new RenameFile
+        return new RenameFile
         {
             OldUri = oldUri,
             NewUri = newUri,
-        });
+        };
     }
 
     private static string MakeNewPath(string originalPath, string newName)

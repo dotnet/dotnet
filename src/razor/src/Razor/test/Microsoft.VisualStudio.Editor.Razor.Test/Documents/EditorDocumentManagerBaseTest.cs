@@ -38,7 +38,7 @@ public class EditorDocumentManagerBaseTest : ProjectSnapshotManagerDispatcherTes
     public void GetOrCreateDocument_CreatesAndCachesDocument()
     {
         // Arrange
-        var expected = _manager.GetOrCreateDocument(new DocumentKey(_project1, _file1), null, null, null, null);
+        var expected = _manager.GetOrCreateDocument(new DocumentKey(_project1, _file1), null, null, null, null, null);
 
         // Act
         _manager.TryGetDocument(new DocumentKey(_project1, _file1), out var actual);
@@ -51,10 +51,10 @@ public class EditorDocumentManagerBaseTest : ProjectSnapshotManagerDispatcherTes
     public void GetOrCreateDocument_NoOp()
     {
         // Arrange
-        var expected = _manager.GetOrCreateDocument(new DocumentKey(_project1, _file1), null, null, null, null);
+        var expected = _manager.GetOrCreateDocument(new DocumentKey(_project1, _file1), null, null, null, null, null);
 
         // Act
-        var actual = _manager.GetOrCreateDocument(new DocumentKey(_project1, _file1), null, null, null, null);
+        var actual = _manager.GetOrCreateDocument(new DocumentKey(_project1, _file1), null, null, null, null, null);
 
         // Assert
         Assert.Same(expected, actual);
@@ -64,10 +64,10 @@ public class EditorDocumentManagerBaseTest : ProjectSnapshotManagerDispatcherTes
     public void GetOrCreateDocument_SameFile_MulipleProjects()
     {
         // Arrange
-        var document1 = _manager.GetOrCreateDocument(new DocumentKey(_project1, _file1), null, null, null, null);
+        var document1 = _manager.GetOrCreateDocument(new DocumentKey(_project1, _file1), null, null, null, null, null);
 
         // Act
-        var document2 = _manager.GetOrCreateDocument(new DocumentKey(_project2, _file1), null, null, null, null);
+        var document2 = _manager.GetOrCreateDocument(new DocumentKey(_project2, _file1), null, null, null, null, null);
 
         // Assert
         Assert.NotSame(document1, document2);
@@ -77,10 +77,10 @@ public class EditorDocumentManagerBaseTest : ProjectSnapshotManagerDispatcherTes
     public void GetOrCreateDocument_MulipleFiles_SameProject()
     {
         // Arrange
-        var document1 = _manager.GetOrCreateDocument(new DocumentKey(_project1, _file1), null, null, null, null);
+        var document1 = _manager.GetOrCreateDocument(new DocumentKey(_project1, _file1), null, null, null, null, null);
 
         // Act
-        var document2 = _manager.GetOrCreateDocument(new DocumentKey(_project1, _file2), null, null, null, null);
+        var document2 = _manager.GetOrCreateDocument(new DocumentKey(_project1, _file2), null, null, null, null, null);
 
         // Assert
         Assert.NotSame(document1, document2);
@@ -93,7 +93,7 @@ public class EditorDocumentManagerBaseTest : ProjectSnapshotManagerDispatcherTes
         _manager.Buffers.Add(_file1, _textBuffer);
 
         // Act
-        var document = _manager.GetOrCreateDocument(new DocumentKey(_project1, _file1), null, null, null, null);
+        var document = _manager.GetOrCreateDocument(new DocumentKey(_project1, _file1), null, null, null, null, null);
 
         // Assert
         Assert.True(document.IsOpenInEditor);
@@ -107,8 +107,8 @@ public class EditorDocumentManagerBaseTest : ProjectSnapshotManagerDispatcherTes
     public void TryGetMatchingDocuments_MultipleDocuments()
     {
         // Arrange
-        var document1 = _manager.GetOrCreateDocument(new DocumentKey(_project1, _file1), null, null, null, null);
-        var document2 = _manager.GetOrCreateDocument(new DocumentKey(_project2, _file1), null, null, null, null);
+        var document1 = _manager.GetOrCreateDocument(new DocumentKey(_project1, _file1), null, null, null, null, null);
+        var document2 = _manager.GetOrCreateDocument(new DocumentKey(_project2, _file1), null, null, null, null, null);
 
         // Act
         _manager.TryGetMatchingDocuments(_file1, out var documents);
@@ -124,8 +124,8 @@ public class EditorDocumentManagerBaseTest : ProjectSnapshotManagerDispatcherTes
     public void RemoveDocument_MultipleDocuments_RemovesOne()
     {
         // Arrange
-        var document1 = _manager.GetOrCreateDocument(new DocumentKey(_project1, _file1), null, null, null, null);
-        var document2 = _manager.GetOrCreateDocument(new DocumentKey(_project2, _file1), null, null, null, null);
+        var document1 = _manager.GetOrCreateDocument(new DocumentKey(_project1, _file1), null, null, null, null, null);
+        var document2 = _manager.GetOrCreateDocument(new DocumentKey(_project2, _file1), null, null, null, null, null);
 
         // Act
         _manager.RemoveDocument(document1);
@@ -141,8 +141,8 @@ public class EditorDocumentManagerBaseTest : ProjectSnapshotManagerDispatcherTes
     public void DocumentOpened_MultipleDocuments_OpensAll()
     {
         // Arrange
-        var document1 = _manager.GetOrCreateDocument(new DocumentKey(_project1, _file1), null, null, null, null);
-        var document2 = _manager.GetOrCreateDocument(new DocumentKey(_project2, _file1), null, null, null, null);
+        var document1 = _manager.GetOrCreateDocument(new DocumentKey(_project1, _file1), null, null, null, null, null);
+        var document2 = _manager.GetOrCreateDocument(new DocumentKey(_project2, _file1), null, null, null, null, null);
 
         // Act
         _manager.DocumentOpened(_file1, _textBuffer);
@@ -158,8 +158,8 @@ public class EditorDocumentManagerBaseTest : ProjectSnapshotManagerDispatcherTes
     public void DocumentOpened_MultipleDocuments_ClosesAll()
     {
         // Arrange
-        var document1 = _manager.GetOrCreateDocument(new DocumentKey(_project1, _file1), null, null, null, null);
-        var document2 = _manager.GetOrCreateDocument(new DocumentKey(_project2, _file1), null, null, null, null);
+        var document1 = _manager.GetOrCreateDocument(new DocumentKey(_project1, _file1), null, null, null, null, null);
+        var document2 = _manager.GetOrCreateDocument(new DocumentKey(_project2, _file1), null, null, null, null, null);
         _manager.DocumentOpened(_file1, _textBuffer);
 
         // Act

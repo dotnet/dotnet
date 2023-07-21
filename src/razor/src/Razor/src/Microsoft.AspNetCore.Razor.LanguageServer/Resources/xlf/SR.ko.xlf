@@ -22,9 +22,14 @@
         <target state="translated">코드 숨김에 블록 추출</target>
         <note />
       </trans-unit>
+      <trans-unit id="Generate_Async_Event_Handler_Title">
+        <source>Generate Async Event Handler '{0}'</source>
+        <target state="new">Generate Async Event Handler '{0}'</target>
+        <note />
+      </trans-unit>
       <trans-unit id="Generate_Event_Handler_Title">
         <source>Generate Event Handler '{0}'</source>
-        <target state="new">Generate Event Handler '{0}'</target>
+        <target state="translated">이벤트 처리기 '{0}' 생성</target>
         <note />
       </trans-unit>
       <trans-unit id="Invalid_Offset">

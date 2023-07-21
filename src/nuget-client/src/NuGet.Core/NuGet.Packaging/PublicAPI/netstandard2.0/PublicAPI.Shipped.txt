@@ -179,11 +179,11 @@ NuGet.Packaging.Core.PackageDependencyComparer
 NuGet.Packaging.Core.PackageDependencyComparer.PackageDependencyComparer() -> void
 ~NuGet.Packaging.Core.PackageDependencyComparer.PackageDependencyComparer(NuGet.Versioning.IVersionRangeComparer versionRangeComparer) -> void
 NuGet.Packaging.Core.PackageDependencyInfo
-~NuGet.Packaging.Core.PackageDependencyInfo.Dependencies.get -> System.Collections.Generic.IEnumerable<NuGet.Packaging.Core.PackageDependency>
-~NuGet.Packaging.Core.PackageDependencyInfo.Equals(NuGet.Packaging.Core.PackageDependencyInfo other) -> bool
-~NuGet.Packaging.Core.PackageDependencyInfo.PackageDependencyInfo(NuGet.Packaging.Core.PackageIdentity identity, System.Collections.Generic.IEnumerable<NuGet.Packaging.Core.PackageDependency> dependencies) -> void
-~NuGet.Packaging.Core.PackageDependencyInfo.PackageDependencyInfo(string id, NuGet.Versioning.NuGetVersion version) -> void
-~NuGet.Packaging.Core.PackageDependencyInfo.PackageDependencyInfo(string id, NuGet.Versioning.NuGetVersion version, System.Collections.Generic.IEnumerable<NuGet.Packaging.Core.PackageDependency> dependencies) -> void
+NuGet.Packaging.Core.PackageDependencyInfo.Dependencies.get -> System.Collections.Generic.IEnumerable<NuGet.Packaging.Core.PackageDependency!>!
+NuGet.Packaging.Core.PackageDependencyInfo.Equals(NuGet.Packaging.Core.PackageDependencyInfo? other) -> bool
+NuGet.Packaging.Core.PackageDependencyInfo.PackageDependencyInfo(NuGet.Packaging.Core.PackageIdentity! identity, System.Collections.Generic.IEnumerable<NuGet.Packaging.Core.PackageDependency!>? dependencies) -> void
+NuGet.Packaging.Core.PackageDependencyInfo.PackageDependencyInfo(string! id, NuGet.Versioning.NuGetVersion! version) -> void
+NuGet.Packaging.Core.PackageDependencyInfo.PackageDependencyInfo(string! id, NuGet.Versioning.NuGetVersion! version, System.Collections.Generic.IEnumerable<NuGet.Packaging.Core.PackageDependency!>? dependencies) -> void
 NuGet.Packaging.Core.PackageDependencyInfoComparer
 ~NuGet.Packaging.Core.PackageDependencyInfoComparer.Equals(NuGet.Packaging.Core.PackageDependencyInfo x, NuGet.Packaging.Core.PackageDependencyInfo y) -> bool
 ~NuGet.Packaging.Core.PackageDependencyInfoComparer.GetHashCode(NuGet.Packaging.Core.PackageDependencyInfo obj) -> int
@@ -1382,9 +1382,9 @@ const NuGet.Packaging.PackageIdValidator.MaxPackageIdLength = 100 -> int
 ~override NuGet.Packaging.Core.PackageDependency.Equals(object obj) -> bool
 override NuGet.Packaging.Core.PackageDependency.GetHashCode() -> int
 ~override NuGet.Packaging.Core.PackageDependency.ToString() -> string
-~override NuGet.Packaging.Core.PackageDependencyInfo.Equals(object obj) -> bool
+override NuGet.Packaging.Core.PackageDependencyInfo.Equals(object? obj) -> bool
 override NuGet.Packaging.Core.PackageDependencyInfo.GetHashCode() -> int
-~override NuGet.Packaging.Core.PackageDependencyInfo.ToString() -> string
+override NuGet.Packaging.Core.PackageDependencyInfo.ToString() -> string!
 ~override NuGet.Packaging.Core.PackageIdentity.Equals(object obj) -> bool
 override NuGet.Packaging.Core.PackageIdentity.GetHashCode() -> int
 ~override NuGet.Packaging.Core.PackageIdentity.ToString() -> string

@@ -6,6 +6,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using BenchmarkDotNet.Attributes;
 using Microsoft.AspNetCore.Razor.Language;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Remote.Razor;
 
 namespace Microsoft.AspNetCore.Razor.Microbenchmarks;
@@ -36,6 +37,8 @@ public class RemoteTagHelperDeltaProviderBenchmark
             .Concat(tagHelpersToMutate)
             .ToHashSet()
             .ToImmutableArray();
+
+        ProjectId = ProjectId.CreateNewId();
     }
 
     private ImmutableArray<TagHelperDescriptor> DefaultTagHelperSet { get; }
@@ -46,7 +49,7 @@ public class RemoteTagHelperDeltaProviderBenchmark
 
     private ImmutableArray<TagHelperDescriptor> MutatedTwoDefaultTagHelpers { get; }
 
-    private string ProjectFilePath { get; } = "C:/path/to/project.csproj";
+    private ProjectId ProjectId { get; }
 
     [AllowNull]
     private RemoteTagHelperDeltaProvider Provider { get; set; }
@@ -57,44 +60,45 @@ public class RemoteTagHelperDeltaProviderBenchmark
     public void IterationSetup()
     {
         Provider = new RemoteTagHelperDeltaProvider();
-        var delta = Provider.GetTagHelpersDelta(ProjectFilePath, lastResultId: -1, DefaultTagHelperSet);
+        var delta = Provider.GetTagHelpersDelta(ProjectId, lastResultId: -1, DefaultTagHelperSet);
         LastResultId = delta.ResultId;
     }
 
     [Benchmark(Description = "Calculate Delta - New project")]
     public void TagHelper_GetTagHelpersDelta_NewProject()
     {
-        _ = Provider.GetTagHelpersDelta("C:/path/to/newproject.csproj", lastResultId: -1, DefaultTagHelperSet);
+        var projectId = ProjectId.CreateNewId();
+        _ = Provider.GetTagHelpersDelta(projectId, lastResultId: -1, DefaultTagHelperSet);
     }
 
     [Benchmark(Description = "Calculate Delta - Remove project")]
     public void TagHelper_GetTagHelpersDelta_RemoveProject()
     {
-        _ = Provider.GetTagHelpersDelta(ProjectFilePath, LastResultId, ImmutableArray<TagHelperDescriptor>.Empty);
+        _ = Provider.GetTagHelpersDelta(ProjectId, LastResultId, ImmutableArray<TagHelperDescriptor>.Empty);
     }
 
     [Benchmark(Description = "Calculate Delta - Add lots of TagHelpers")]
     public void TagHelper_GetTagHelpersDelta_AddLots()
     {
-        _ = Provider.GetTagHelpersDelta(ProjectFilePath, LastResultId, Added50PercentMoreDefaultTagHelpers);
+        _ = Provider.GetTagHelpersDelta(ProjectId, LastResultId, Added50PercentMoreDefaultTagHelpers);
     }
 
     [Benchmark(Description = "Calculate Delta - Remove lots of TagHelpers")]
     public void TagHelper_GetTagHelpersDelta_RemoveLots()
     {
-        _ = Provider.GetTagHelpersDelta(ProjectFilePath, LastResultId, RemovedHalfOfDefaultTagHelpers);
+        _ = Provider.GetTagHelpersDelta(ProjectId, LastResultId, RemovedHalfOfDefaultTagHelpers);
     }
 
     [Benchmark(Description = "Calculate Delta - Mutate two TagHelpers")]
     public void TagHelper_GetTagHelpersDelta_Mutate2()
     {
-        _ = Provider.GetTagHelpersDelta(ProjectFilePath, LastResultId, MutatedTwoDefaultTagHelpers);
+        _ = Provider.GetTagHelpersDelta(ProjectId, LastResultId, MutatedTwoDefaultTagHelpers);
     }
 
     [Benchmark(Description = "Calculate Delta - No change")]
     public void TagHelper_GetTagHelpersDelta_NoChange()
     {
-        _ = Provider.GetTagHelpersDelta(ProjectFilePath, LastResultId, DefaultTagHelperSet);
+        _ = Provider.GetTagHelpersDelta(ProjectId, LastResultId, DefaultTagHelperSet);
     }
 
     internal class RenamedTagHelperDescriptor : DefaultTagHelperDescriptor

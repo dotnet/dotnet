@@ -31,7 +31,7 @@ public class SerializationTest : TestBase
         var projectWorkspaceState = new ProjectWorkspaceState(tagHelpers, default);
         var expectedConfiguration = RazorConfiguration.Default;
         var expectedRootNamespace = "project";
-        var handle = new ProjectSnapshotHandleProxy(new Uri("vsls://some/path/project.csproj"), RazorConfiguration.Default, expectedRootNamespace, projectWorkspaceState);
+        var handle = new ProjectSnapshotHandleProxy(new Uri("vsls://some/path/project.csproj"), new Uri("vsls://some/path/obj"), RazorConfiguration.Default, expectedRootNamespace, projectWorkspaceState);
 
         var json = JsonConvert.SerializeObject(handle, ProjectSnapshotHandleProxyJsonConverter.Instance);
         Assert.NotNull(json);

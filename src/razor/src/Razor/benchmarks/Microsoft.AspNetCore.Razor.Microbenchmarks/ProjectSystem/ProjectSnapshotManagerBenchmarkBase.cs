@@ -34,7 +34,7 @@ public abstract partial class ProjectSnapshotManagerBenchmarkBase
         RepoRoot = current?.FullName ?? throw new InvalidOperationException("Could not find Razor.sln");
         var projectRoot = Path.Combine(RepoRoot, "src", "Razor", "test", "testapps", "LargeProject");
 
-        HostProject = new HostProject(Path.Combine(projectRoot, "LargeProject.csproj"), FallbackRazorConfiguration.MVC_2_1, rootNamespace: null);
+        HostProject = new HostProject(Path.Combine(projectRoot, "LargeProject.csproj"), Path.Combine(projectRoot, "obj"), FallbackRazorConfiguration.MVC_2_1, rootNamespace: null);
 
         using var _1 = ArrayBuilderPool<TextLoader>.GetPooledObject(out var textLoaders);
 

@@ -100,16 +100,16 @@ namespace NuGet.ProjectModel
 
             hashCode.AddObject(FrameworkName);
             hashCode.AddObject(AssetTargetFallback);
-            hashCode.AddSequence(Dependencies.OrderBy(s => s.Name, StringComparer.OrdinalIgnoreCase));
+            hashCode.AddUnorderedSequence(Dependencies);
             hashCode.AddSequence(Imports);
             hashCode.AddObject(Warn);
-            hashCode.AddSequence(DownloadDependencies.OrderBy(s => s.Name, StringComparer.OrdinalIgnoreCase));
-            hashCode.AddSequence(FrameworkReferences.OrderBy(s => s.Name, ComparisonUtility.FrameworkReferenceNameComparer));
+            hashCode.AddUnorderedSequence(DownloadDependencies);
+            hashCode.AddUnorderedSequence(FrameworkReferences);
             if (RuntimeIdentifierGraphPath != null)
             {
                 hashCode.AddObject(PathUtility.GetStringComparerBasedOnOS().GetHashCode(RuntimeIdentifierGraphPath));
             }
-            hashCode.AddSequence(CentralPackageVersions.Values.OrderBy(s => s.Name, StringComparer.OrdinalIgnoreCase));
+            hashCode.AddUnorderedSequence(CentralPackageVersions.Values);
             hashCode.AddStringIgnoreCase(TargetAlias);
             return hashCode.CombinedHash;
         }

@@ -57,6 +57,16 @@
         <target state="translated">특성 따옴표 자동 삽입</target>
         <note />
       </trans-unit>
+      <trans-unit id="Setting_ColorBackgroundDescription">
+        <source>If true, gives C# code in Razor files a background color</source>
+        <target state="new">If true, gives C# code in Razor files a background color</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Setting_ColorBackgroundDisplayName">
+        <source>Background for C# Code</source>
+        <target state="new">Background for C# Code</target>
+        <note />
+      </trans-unit>
       <trans-unit id="Setting_FormattingOnTypeDescription">
         <source>If true, formatting will be enabled while typing</source>
         <target state="translated">true이면 입력하는 동안 서식을 사용할 수 있습니다.</target>

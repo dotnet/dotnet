@@ -155,9 +155,7 @@ internal class VsSolutionUpdatesProjectSnapshotChangeTrigger : ProjectSnapshotCh
                 var projectSnapshot = _projectManager?.GetLoadedProject(projectKey);
                 if (projectSnapshot is not null)
                 {
-                    // TODO: Find the right project... somehow
-                    var workspaceProject = _projectManager?.Workspace.CurrentSolution.Projects.FirstOrDefault(
-                        wp => FilePathComparer.Instance.Equals(wp.FilePath, projectSnapshot.FilePath));
+                    var workspaceProject = _projectManager?.Workspace.CurrentSolution.Projects.FirstOrDefault(wp => ProjectKey.From(wp) == projectSnapshot.Key);
                     if (workspaceProject is not null)
                     {
                         // Trigger a tag helper update by forcing the project manager to see the workspace Project

@@ -88,6 +88,15 @@ internal partial class SolutionExplorerInProcess
             cancellationToken);
     }
 
+    public async Task OpenSolutionAsync(string solutionFileName, CancellationToken cancellationToken)
+    {
+        await JoinableTaskFactory.SwitchToMainThreadAsync(cancellationToken);
+
+        var dte = await GetRequiredGlobalServiceAsync<SDTE, EnvDTE.DTE>(cancellationToken);
+
+        dte.Solution.Open(solutionFileName);
+    }
+
     public async Task OpenFileAsync(string projectName, string relativeFilePath, CancellationToken cancellationToken)
     {
         await JoinableTaskFactory.SwitchToMainThreadAsync(cancellationToken);
@@ -276,7 +285,7 @@ internal partial class SolutionExplorerInProcess
         };
     }
 
-    private async Task<string> GetAbsolutePathForProjectRelativeFilePathAsync(string projectName, string relativeFilePath, CancellationToken cancellationToken)
+    public async Task<string> GetAbsolutePathForProjectRelativeFilePathAsync(string projectName, string relativeFilePath, CancellationToken cancellationToken)
     {
         await JoinableTaskFactory.SwitchToMainThreadAsync(cancellationToken);
 

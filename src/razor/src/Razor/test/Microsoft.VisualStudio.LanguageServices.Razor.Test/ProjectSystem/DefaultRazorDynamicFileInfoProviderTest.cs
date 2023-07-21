@@ -39,7 +39,7 @@ public class DefaultRazorDynamicFileInfoProviderTest : WorkspaceTestBase
         {
             AllowNotifyListeners = true
         };
-        var hostProject = new HostProject("C:\\project.csproj", RazorConfiguration.Default, rootNamespace: "TestNamespace");
+        var hostProject = new HostProject("C:\\project.csproj", "C:\\obj", RazorConfiguration.Default, rootNamespace: "TestNamespace");
         _projectSnapshotManager.ProjectAdded(hostProject);
         var hostDocument1 = new HostDocument("C:\\document1.razor", "document1.razor", FileKinds.Component);
         _projectSnapshotManager.DocumentAdded(hostProject.Key, hostDocument1, new EmptyTextLoader(hostDocument1.FilePath));

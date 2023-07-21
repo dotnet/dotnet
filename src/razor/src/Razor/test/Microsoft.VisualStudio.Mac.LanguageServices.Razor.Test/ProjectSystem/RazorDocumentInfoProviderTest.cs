@@ -31,7 +31,7 @@ public class RazorDocumentInfoProviderTest : WorkspaceTestBase
         _innerDynamicDocumentInfoProvider = new DefaultRazorDynamicFileInfoProvider(serviceProviderFactory, lspEditorEnabledFeatureDetector, TestLanguageServerFeatureOptions.Instance);
         _projectSnapshotManager = new TestProjectSnapshotManager(Workspace);
 
-        var hostProject = new HostProject("C:/path/to/project.csproj", RazorConfiguration.Default, "RootNamespace");
+        var hostProject = new HostProject("C:/path/to/project.csproj", "C:/path/to/obj", RazorConfiguration.Default, "RootNamespace");
         _projectSnapshotManager.ProjectAdded(hostProject);
 
         var hostDocument = new HostDocument("C:/path/to/document.cshtml", "/C:/path/to/document.cshtml");

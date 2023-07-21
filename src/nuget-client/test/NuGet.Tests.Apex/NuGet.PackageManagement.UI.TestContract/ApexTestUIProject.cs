@@ -69,6 +69,12 @@ namespace NuGet.PackageManagement.UI.TestContract
             }
         }
 
+        public bool VerifyVulnerablePackageOnTopOfInstalledTab()
+        {
+            var result = _packageManagerControl.PackageList.PackageItems.FirstOrDefault().IsPackageVulnerable;
+            return result;
+        }
+
         public void InstallPackage(string packageId, string version)
         {
             UIInvoke(() => _packageManagerControl.InstallPackage(packageId, NuGetVersion.Parse(version), null));

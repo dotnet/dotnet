@@ -37,7 +37,7 @@ public class DefaultProjectSnapshotManagerProxyTest : ProjectSnapshotManagerDisp
         _projectSnapshot1 = new ProjectSnapshot(
             ProjectState.Create(
                 _workspace.Services,
-                new HostProject("/host/path/to/project1.csproj", RazorConfiguration.Default, "project1"),
+                new HostProject("/host/path/to/project1.csproj", "/host/path/to/obj", RazorConfiguration.Default, "project1"),
                 projectWorkspaceState1));
 
         var projectWorkspaceState2 = new ProjectWorkspaceState(ImmutableArray.Create(
@@ -47,7 +47,7 @@ public class DefaultProjectSnapshotManagerProxyTest : ProjectSnapshotManagerDisp
         _projectSnapshot2 = new ProjectSnapshot(
             ProjectState.Create(
                 _workspace.Services,
-                new HostProject("/host/path/to/project2.csproj", RazorConfiguration.Default, "project2"),
+                new HostProject("/host/path/to/project2.csproj", "/host/path/to/obj", RazorConfiguration.Default, "project2"),
                 projectWorkspaceState2));
     }
 

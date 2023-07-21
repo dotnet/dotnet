@@ -162,7 +162,12 @@ internal class MSBuildProjectManager : IOmniSharpProjectSnapshotManagerChangeTri
             return;
         }
 
-        var hostProject = new OmniSharpHostProject(projectFilePath, projectConfiguration.Configuration, projectConfiguration.RootNamespace);
+        if (!TryResolveConfigurationOutputPath(projectInstance, out var configPath) || configPath is null)
+        {
+            return;
+        }
+
+        var hostProject = new OmniSharpHostProject(projectFilePath, configPath, projectConfiguration.Configuration, projectConfiguration.RootNamespace);
         var projectSnapshot = ProjectManager.GetLoadedProject(hostProject.Key);
         if (projectSnapshot is null)
         {

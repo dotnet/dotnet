@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Razor;
+using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Threading;
 
@@ -96,6 +97,7 @@ internal abstract class EditorDocumentManagerBase : EditorDocumentManager
 
     public sealed override EditorDocument GetOrCreateDocument(
         DocumentKey key,
+        ProjectKey projectKey,
         EventHandler? changedOnDisk,
         EventHandler? changedInEditor,
         EventHandler? opened,
@@ -118,6 +120,7 @@ internal abstract class EditorDocumentManagerBase : EditorDocumentManager
                 JoinableTaskContext,
                 key.ProjectFilePath,
                 key.DocumentFilePath,
+                projectKey,
                 new FileTextLoader(key.DocumentFilePath, defaultEncoding: null),
                 _fileChangeTrackerFactory.Create(key.DocumentFilePath),
                 textBuffer,

@@ -11,7 +11,6 @@ using Newtonsoft.Json.Linq;
 using NuGet.Common;
 using NuGet.Frameworks;
 using NuGet.LibraryModel;
-using NuGet.Packaging.Core;
 using NuGet.RuntimeModel;
 using NuGet.Versioning;
 
@@ -526,19 +525,72 @@ namespace NuGet.ProjectModel
             library.Type = JsonUtility.ReadProperty<string>(jObject, TypeProperty);
             library.Framework = JsonUtility.ReadProperty<string>(jObject, FrameworkProperty);
 
-            library.Dependencies = JsonUtility.ReadObject(json[DependenciesProperty] as JObject, JsonUtility.ReadPackageDependency);
-            library.FrameworkAssemblies = ReadArray(json[FrameworkAssembliesProperty] as JArray, ReadString);
-            library.RuntimeAssemblies = JsonUtility.ReadObject(json[RuntimeProperty] as JObject, ReadFileItem);
-            library.CompileTimeAssemblies = JsonUtility.ReadObject(json[CompileProperty] as JObject, ReadFileItem);
-            library.ResourceAssemblies = JsonUtility.ReadObject(json[ResourceProperty] as JObject, ReadFileItem);
-            library.NativeLibraries = JsonUtility.ReadObject(json[NativeProperty] as JObject, ReadFileItem);
-            library.Build = JsonUtility.ReadObject(json[BuildProperty] as JObject, ReadFileItem);
-            library.BuildMultiTargeting = JsonUtility.ReadObject(json[BuildMultiTargetingProperty] as JObject, ReadFileItem);
-            library.ContentFiles = JsonUtility.ReadObject(json[ContentFilesProperty] as JObject, ReadContentFile);
-            library.RuntimeTargets = JsonUtility.ReadObject(json[RuntimeTargetsProperty] as JObject, ReadRuntimeTarget);
-            library.ToolsAssemblies = JsonUtility.ReadObject(json[ToolsProperty] as JObject, ReadFileItem);
-            library.EmbedAssemblies = JsonUtility.ReadObject(json[EmbedProperty] as JObject, ReadFileItem);
-            library.FrameworkReferences = ReadArray(json[FrameworkReferencesProperty] as JArray, ReadString);
+            if (JsonUtility.ReadObject(json[DependenciesProperty] as JObject, JsonUtility.ReadPackageDependency) is { Count: not 0 } dependencies)
+            {
+                library.Dependencies = dependencies;
+            }
+
+            if (ReadArray(json[FrameworkAssembliesProperty] as JArray, ReadString) is { Count: not 0 } frameworkAssemblies)
+            {
+                library.FrameworkAssemblies = frameworkAssemblies;
+            }
+
+            if (JsonUtility.ReadObject(json[RuntimeProperty] as JObject, ReadFileItem) is { Count: not 0 } runtimeAssemblies)
+            {
+                library.RuntimeAssemblies = runtimeAssemblies;
+            }
+
+            if (JsonUtility.ReadObject(json[CompileProperty] as JObject, ReadFileItem) is { Count: not 0 } compileTimeAssemblies)
+            {
+                library.CompileTimeAssemblies = compileTimeAssemblies;
+            }
+
+            if (JsonUtility.ReadObject(json[ResourceProperty] as JObject, ReadFileItem) is { Count: not 0 } resourceAssemblies)
+            {
+                library.ResourceAssemblies = resourceAssemblies;
+            }
+
+            if (JsonUtility.ReadObject(json[NativeProperty] as JObject, ReadFileItem) is { Count: not 0 } nativeLibraries)
+            {
+                library.NativeLibraries = nativeLibraries;
+            }
+
+            if (JsonUtility.ReadObject(json[BuildProperty] as JObject, ReadFileItem) is { Count: not 0 } build)
+            {
+                library.Build = build;
+            }
+
+            if (JsonUtility.ReadObject(json[BuildMultiTargetingProperty] as JObject, ReadFileItem) is { Count: not 0 } buildMultiTargeting)
+            {
+                library.BuildMultiTargeting = buildMultiTargeting;
+            }
+
+            if (JsonUtility.ReadObject(json[ContentFilesProperty] as JObject, ReadContentFile) is { Count: not 0 } contentFiles)
+            {
+                library.ContentFiles = contentFiles;
+            }
+
+            if (JsonUtility.ReadObject(json[RuntimeTargetsProperty] as JObject, ReadRuntimeTarget) is { Count: not 0 } runtimeTargets)
+            {
+                library.RuntimeTargets = runtimeTargets;
+            }
+
+            if (JsonUtility.ReadObject(json[ToolsProperty] as JObject, ReadFileItem) is { Count: not 0 } toolsAssemblies)
+            {
+                library.ToolsAssemblies = toolsAssemblies;
+            }
+
+            if (JsonUtility.ReadObject(json[EmbedProperty] as JObject, ReadFileItem) is { Count: not 0 } embedAssemblies)
+            {
+                library.EmbedAssemblies = embedAssemblies;
+            }
+
+            if (ReadArray(json[FrameworkReferencesProperty] as JArray, ReadString) is { Count: not 0 } frameworkReferences)
+            {
+                library.FrameworkReferences = frameworkReferences;
+            }
+
+            library.Freeze();
 
             return library;
         }
