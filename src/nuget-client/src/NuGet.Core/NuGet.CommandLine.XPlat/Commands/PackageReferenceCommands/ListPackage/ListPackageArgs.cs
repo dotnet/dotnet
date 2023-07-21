@@ -16,8 +16,8 @@ namespace NuGet.CommandLine.XPlat
     {
         public ILogger Logger { get; }
         public string Path { get; }
-        public IEnumerable<PackageSource> PackageSources { get; }
-        public IEnumerable<string> Frameworks { get; }
+        public List<PackageSource> PackageSources { get; }
+        public List<string> Frameworks { get; }
         public ReportType ReportType { get; }
         public IReportRenderer Renderer { get; }
         public string ArgumentText { get; }
@@ -45,8 +45,8 @@ namespace NuGet.CommandLine.XPlat
         /// <param name="cancellationToken"></param>
         public ListPackageArgs(
             string path,
-            IEnumerable<PackageSource> packageSources,
-            IEnumerable<string> frameworks,
+            List<PackageSource> packageSources,
+            List<string> frameworks,
             ReportType reportType,
             IReportRenderer renderer,
             bool includeTransitive,

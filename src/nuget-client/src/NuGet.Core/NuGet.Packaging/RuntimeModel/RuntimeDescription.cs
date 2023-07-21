@@ -104,7 +104,7 @@ namespace NuGet.RuntimeModel
             }
 
             // Merge dependency sets
-            var newSets = new Dictionary<string, RuntimeDependencySet>();
+            var newSets = new Dictionary<string, RuntimeDependencySet>(StringComparer.OrdinalIgnoreCase);
             foreach (var dependencySet in left.RuntimeDependencySets.Values)
             {
                 newSets[dependencySet.Id] = dependencySet;

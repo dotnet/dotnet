@@ -135,8 +135,8 @@ namespace NuGet.CommandLine.Xplat.Tests
                 packages.TopLevelPackages = topLevelPackages;
                 packages.TransitivePackages = transitivePackages;
                 var allPackages = new List<FrameworkPackages> { packages };
-                var listPackageArgs = new ListPackageArgs(path: "", packageSources: Enumerable.Empty<PackageSource>(),
-                    frameworks: Enumerable.Empty<string>(),
+                var listPackageArgs = new ListPackageArgs(path: "", packageSources: new List<PackageSource>(),
+                    frameworks: new List<string>(),
                     ReportType.Outdated,
                     new ListPackageConsoleRenderer(),
                     includeTransitive: true, prerelease: false, highestPatch: false, highestMinor: false,
@@ -210,8 +210,8 @@ namespace NuGet.CommandLine.Xplat.Tests
                 packages.TopLevelPackages = topLevelPackages;
                 packages.TransitivePackages = transitivePackages;
                 var allPackages = new List<FrameworkPackages> { packages };
-                var listPackageArgs = new ListPackageArgs(path: "", packageSources: Enumerable.Empty<PackageSource>(),
-                    frameworks: Enumerable.Empty<string>(),
+                var listPackageArgs = new ListPackageArgs(path: "", packageSources: new List<PackageSource>(),
+                    frameworks: new List<string>(),
                     ReportType.Deprecated,
                     new ListPackageConsoleRenderer(),
                     includeTransitive: true, prerelease: false, highestPatch: false, highestMinor: false, logger: new Mock<ILogger>().Object,
@@ -284,8 +284,8 @@ namespace NuGet.CommandLine.Xplat.Tests
                 packages.TopLevelPackages = topLevelPackages;
                 packages.TransitivePackages = transitivePackages;
                 var allPackages = new List<FrameworkPackages> { packages };
-                var listPackageArgs = new ListPackageArgs(path: "", packageSources: Enumerable.Empty<PackageSource>(),
-                    frameworks: Enumerable.Empty<string>(),
+                var listPackageArgs = new ListPackageArgs(path: "", packageSources: new List<PackageSource>(),
+                    frameworks: new List<string>(),
                     ReportType.Vulnerable,
                     new ListPackageConsoleRenderer(),
                     includeTransitive: true, prerelease: false, highestPatch: false, highestMinor: false, logger: new Mock<ILogger>().Object,
