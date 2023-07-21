@@ -5,6 +5,7 @@
 
 using System;
 using System.Collections.Immutable;
+using System.IO;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Test.Common;
@@ -33,8 +34,8 @@ public class VsSolutionUpdatesProjectSnapshotChangeTriggerTest : TestBase
     public VsSolutionUpdatesProjectSnapshotChangeTriggerTest(ITestOutputHelper testOutput)
         : base(testOutput)
     {
-        _someProject = new HostProject(TestProjectData.SomeProject.FilePath, FallbackRazorConfiguration.MVC_1_0, TestProjectData.SomeProject.RootNamespace);
-        _someOtherProject = new HostProject(TestProjectData.AnotherProject.FilePath, FallbackRazorConfiguration.MVC_2_0, TestProjectData.AnotherProject.RootNamespace);
+        _someProject = new HostProject(TestProjectData.SomeProject.FilePath, TestProjectData.SomeProject.IntermediateOutputPath, FallbackRazorConfiguration.MVC_1_0, TestProjectData.SomeProject.RootNamespace);
+        _someOtherProject = new HostProject(TestProjectData.AnotherProject.FilePath, TestProjectData.AnotherProject.IntermediateOutputPath, FallbackRazorConfiguration.MVC_2_0, TestProjectData.AnotherProject.RootNamespace);
 
         _workspace = TestWorkspace.Create(w => _someWorkspaceProject = w.AddProject(ProjectInfo.Create(
                 ProjectId.CreateNewId(),
@@ -42,7 +43,7 @@ public class VsSolutionUpdatesProjectSnapshotChangeTriggerTest : TestBase
                 "SomeProject",
                 "SomeProject",
                 LanguageNames.CSharp,
-                filePath: _someProject.FilePath)));
+                filePath: _someProject.FilePath).WithCompilationOutputInfo(new CompilationOutputInfo().WithAssemblyPath(Path.Combine(_someProject.IntermediateOutputPath, "SomeProject.dll")))));
 
         AddDisposable(_workspace);
     }
@@ -190,7 +191,7 @@ public class VsSolutionUpdatesProjectSnapshotChangeTriggerTest : TestBase
         var projectSnapshot = new ProjectSnapshot(
             ProjectState.Create(
                 _workspace.Services,
-                new HostProject("/Some/Unknown/Path.csproj", RazorConfiguration.Default, "Path")));
+                new HostProject("/Some/Unknown/Path.csproj", "/Some/Unknown/obj", RazorConfiguration.Default, "Path")));
         var expectedProjectPath = projectSnapshot.FilePath;
 
         var projectService = new Mock<TextBufferProjectService>(MockBehavior.Strict);

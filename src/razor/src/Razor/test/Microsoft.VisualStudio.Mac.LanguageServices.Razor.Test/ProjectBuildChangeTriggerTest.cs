@@ -5,6 +5,7 @@
 
 using System;
 using System.Collections.Immutable;
+using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
@@ -31,8 +32,8 @@ public class ProjectBuildChangeTriggerTest : ProjectSnapshotManagerDispatcherTes
     public ProjectBuildChangeTriggerTest(ITestOutputHelper testOutput)
         : base(testOutput)
     {
-        _someProject = new HostProject("c:\\SomeProject\\SomeProject.csproj", FallbackRazorConfiguration.MVC_1_0, "SomeProject");
-        _someOtherProject = new HostProject("c:\\SomeOtherProject\\SomeOtherProject.csproj", FallbackRazorConfiguration.MVC_2_0, "SomeOtherProject");
+        _someProject = new HostProject("c:\\SomeProject\\SomeProject.csproj", "c:\\SomeProject\\obj", FallbackRazorConfiguration.MVC_1_0, "SomeProject");
+        _someOtherProject = new HostProject("c:\\SomeOtherProject\\SomeOtherProject.csproj", "c:\\SomeOtherProject\\obj", FallbackRazorConfiguration.MVC_2_0, "SomeOtherProject");
 
         _workspace = TestWorkspace.Create(w => _someWorkspaceProject = w.AddProject(
             ProjectInfo.Create(
@@ -41,7 +42,7 @@ public class ProjectBuildChangeTriggerTest : ProjectSnapshotManagerDispatcherTes
                 "SomeProject",
                 "SomeProject",
                 LanguageNames.CSharp,
-                filePath: _someProject.FilePath)));
+                filePath: _someProject.FilePath).WithCompilationOutputInfo(new CompilationOutputInfo().WithAssemblyPath(Path.Combine(_someProject.IntermediateOutputPath, "SomeProject.dll")))));
         AddDisposable(_workspace);
     }
 
@@ -84,7 +85,7 @@ public class ProjectBuildChangeTriggerTest : ProjectSnapshotManagerDispatcherTes
         var projectService = CreateProjectService(expectedPath);
 
         var args = new BuildEventArgs(monitor: null, success: true);
-        var hostProject = new HostProject(expectedPath, RazorConfiguration.Default, "Project");
+        var hostProject = new HostProject(expectedPath, "Path/To/obj", RazorConfiguration.Default, "Project");
         var projectSnapshot = new ProjectSnapshot(
             ProjectState.Create(
                 _workspace.Services,

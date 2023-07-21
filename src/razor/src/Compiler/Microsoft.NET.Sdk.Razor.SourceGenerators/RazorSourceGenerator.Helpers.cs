@@ -87,7 +87,8 @@ namespace Microsoft.NET.Sdk.Razor.SourceGenerators
             IReadOnlyList<TagHelperDescriptor> tagHelpers,
             SourceGeneratorProjectItem item,
             IEnumerable<SourceGeneratorProjectItem> imports,
-            RazorSourceGenerationOptions razorSourceGeneratorOptions)
+            RazorSourceGenerationOptions razorSourceGeneratorOptions,
+            bool isAddComponentParameterAvailable)
         {
             var fileSystem = new VirtualRazorProjectFileSystem();
             fileSystem.Add(item);
@@ -106,6 +107,7 @@ namespace Microsoft.NET.Sdk.Razor.SourceGenerators
                     options.SuppressMetadataSourceChecksumAttributes = !razorSourceGeneratorOptions.GenerateMetadataSourceChecksumAttributes;
                     options.SupportLocalizedComponentNames = razorSourceGeneratorOptions.SupportLocalizedComponentNames;
                     options.SuppressUniqueIds = razorSourceGeneratorOptions.TestSuppressUniqueIds;
+                    options.SuppressAddComponentParameter = !isAddComponentParameterAvailable;
                 }));
 
                 b.Features.Add(new StaticTagHelperFeature { TagHelpers = tagHelpers });

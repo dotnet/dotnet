@@ -6,9 +6,11 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.VisualStudio.ProjectSystem;
+using Microsoft.VisualStudio.ProjectSystem.Properties;
 using Moq;
 using Xunit;
 using Xunit.Abstractions;
@@ -31,7 +33,7 @@ public class FallbackWindowsRazorProjectHostTest : ProjectSnapshotManagerDispatc
         _projectManager = new TestProjectSnapshotManager(Dispatcher, Workspace);
 
         var projectConfigurationFilePathStore = new Mock<ProjectConfigurationFilePathStore>(MockBehavior.Strict);
-        projectConfigurationFilePathStore.Setup(s => s.Remove(It.IsAny<string>())).Verifiable();
+        projectConfigurationFilePathStore.Setup(s => s.Remove(It.IsAny<ProjectKey>())).Verifiable();
         _projectConfigurationFilePathStore = projectConfigurationFilePathStore.Object;
 
         _referenceItems = new ItemCollection(ManagedProjectSystemSchema.ResolvedCompilationReference.SchemaName);
@@ -643,6 +645,7 @@ public class FallbackWindowsRazorProjectHostTest : ProjectSnapshotManagerDispatc
             ProjectSnapshotManagerBase projectManager)
             : base(commonServices, workspace, projectSnapshotManagerDispatcher, projectConfigurationFilePathStore, projectManager)
         {
+            base.SkipIntermediateOutputPathExistCheck_TestOnly = true;
         }
 
         public Version AssemblyVersion { get; set; }
@@ -650,6 +653,12 @@ public class FallbackWindowsRazorProjectHostTest : ProjectSnapshotManagerDispatc
         protected override Version GetAssemblyVersion(string filePath)
         {
             return AssemblyVersion;
+        }
+
+        protected override bool TryGetIntermediateOutputPath(IImmutableDictionary<string, IProjectRuleSnapshot> state, [NotNullWhen(true)] out string path)
+        {
+            path = "obj";
+            return true;
         }
     }
 

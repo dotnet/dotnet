@@ -24,12 +24,13 @@ internal abstract class TagHelperResolver : IWorkspaceService
 
     public abstract Task<TagHelperResolutionResult> GetTagHelpersAsync(Project workspaceProject, IProjectSnapshot projectSnapshot, CancellationToken cancellationToken = default);
 
-
     protected Task<TagHelperResolutionResult> GetTagHelpersAsync(Project workspaceProject, RazorProjectEngine engine, CancellationToken cancellationToken)
     {
         _compilationTagHelperResolver ??= new CompilationTagHelperResolver(_telemetryReporter);
 
         return _compilationTagHelperResolver.GetTagHelpersAsync(workspaceProject, engine, cancellationToken);
     }
-    protected virtual Task<TagHelperResolutionResult> GetTagHelpersAsync(Project workspaceProject, RazorProjectEngine engine) => GetTagHelpersAsync(workspaceProject, engine, CancellationToken.None);
+
+    protected virtual Task<TagHelperResolutionResult> GetTagHelpersAsync(Project workspaceProject, RazorProjectEngine engine)
+        => GetTagHelpersAsync(workspaceProject, engine, CancellationToken.None);
 }

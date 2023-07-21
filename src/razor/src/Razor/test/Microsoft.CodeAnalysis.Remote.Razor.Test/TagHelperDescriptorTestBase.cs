@@ -11,11 +11,13 @@ namespace Microsoft.CodeAnalysis.Remote.Razor.Test;
 public class TagHelperDescriptorTestBase : TestBase
 {
     protected string Project1FilePath { get; }
+    internal ProjectId Project1Id { get; }
     protected TagHelperDescriptor TagHelper1_Project1 { get; }
     protected TagHelperDescriptor TagHelper2_Project1 { get; }
     protected ImmutableArray<TagHelperDescriptor> Project1TagHelpers { get; }
 
     protected string Project2FilePath { get; }
+    internal ProjectId Project2Id { get; }
     protected TagHelperDescriptor TagHelper1_Project2 { get; }
     protected TagHelperDescriptor TagHelper2_Project2 { get; }
     protected ImmutableArray<TagHelperDescriptor> Project2TagHelpers { get; }
@@ -25,11 +27,13 @@ public class TagHelperDescriptorTestBase : TestBase
         : base(testOutput)
     {
         Project1FilePath = "C:/path/to/Project1/Project1.csproj";
+        Project1Id = ProjectId.CreateNewId();
         TagHelper1_Project1 = TagHelperDescriptorBuilder.Create("TagHelper1", "Project1").Build();
         TagHelper2_Project1 = TagHelperDescriptorBuilder.Create("TagHelper2", "Project1").Build();
         Project1TagHelpers = ImmutableArray.Create(TagHelper1_Project1, TagHelper2_Project1);
 
         Project2FilePath = "C:/path/to/Project2/Project2.csproj";
+        Project2Id = ProjectId.CreateNewId();
         TagHelper1_Project2 = TagHelperDescriptorBuilder.Create("TagHelper1", "Project2").Build();
         TagHelper2_Project2 = TagHelperDescriptorBuilder.Create("TagHelper2", "Project2").Build();
         Project2TagHelpers = ImmutableArray.Create(TagHelper1_Project2, TagHelper2_Project2);

@@ -53,7 +53,7 @@ public class RazorDiagnosticsPublisherTest : LanguageServerTestBase
         : base(testOutput)
     {
         var testProjectManager = TestProjectSnapshotManager.Create(LegacyDispatcher, ErrorReporter);
-        var hostProject = new HostProject("C:/project/project.csproj", RazorConfiguration.Default, "TestRootNamespace");
+        var hostProject = new HostProject("C:/project/project.csproj", "C:/project/obj", RazorConfiguration.Default, "TestRootNamespace");
         testProjectManager.ProjectAdded(hostProject);
         var sourceText = SourceText.From(string.Empty);
         var textAndVersion = TextAndVersion.Create(sourceText, VersionStamp.Default);
@@ -340,7 +340,7 @@ public class RazorDiagnosticsPublisherTest : LanguageServerTestBase
             {
                 Assert.Equal(_openedDocumentUri, @params.TextDocument.Uri);
             })
-            .Returns(Task.FromResult(new SumType<FullDocumentDiagnosticReport, UnchangedDocumentDiagnosticReport>?( new FullDocumentDiagnosticReport())));
+            .Returns(Task.FromResult(new SumType<FullDocumentDiagnosticReport, UnchangedDocumentDiagnosticReport>?(new FullDocumentDiagnosticReport())));
 
         languageServer
             .Setup(server => server.SendNotificationAsync(

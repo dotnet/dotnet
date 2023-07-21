@@ -23,7 +23,8 @@ public abstract class RazorCodeGenerationOptions
             omitMinimizedComponentAttributeValues: false,
             supportLocalizedComponentNames: false,
             useEnhancedLinePragma: true,
-            suppressUniqueIds: null);
+            suppressUniqueIds: null,
+            suppressAddComponentParameter: false);
     }
 
     public static RazorCodeGenerationOptions CreateDesignTimeDefault()
@@ -40,7 +41,8 @@ public abstract class RazorCodeGenerationOptions
             omitMinimizedComponentAttributeValues: false,
             supportLocalizedComponentNames: false,
             useEnhancedLinePragma: true,
-            suppressUniqueIds: null);
+            suppressUniqueIds: null,
+            suppressAddComponentParameter: false);
     }
 
     public static RazorCodeGenerationOptions Create(Action<RazorCodeGenerationOptionsBuilder> configure)
@@ -153,4 +155,9 @@ public abstract class RazorCodeGenerationOptions
     /// Gets a value used for unique ids for testing purposes. Null for unique ids.
     /// </summary>
     internal string SuppressUniqueIds { get; private protected init; }
+
+    /// <summary>
+    /// Determines whether RenderTreeBuilder.AddComponentParameter should not be used.
+    /// </summary>
+    internal bool SuppressAddComponentParameter { get; private protected init; }
 }

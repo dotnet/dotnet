@@ -151,7 +151,7 @@ internal class WorkspaceProjectStateChangeDetector : ProjectSnapshotChangeTrigge
                                 var oldSolution = eventArgs.OldSolution;
 
                                 var project = oldSolution.GetRequiredProject(projectId);
-                                if (@this.TryGetProjectSnapshot(ProjectKey.From(project), out var projectSnapshot))
+                                if (@this.TryGetProjectSnapshot(project, out var projectSnapshot))
                                 {
                                     @this.EnqueueUpdateOnProjectAndDependencies(projectId, project: null, oldSolution, projectSnapshot);
                                 }
@@ -296,7 +296,7 @@ internal class WorkspaceProjectStateChangeDetector : ProjectSnapshotChangeTrigge
 
                                 foreach (var project in oldSolution.Projects)
                                 {
-                                    if (@this.TryGetProjectSnapshot(ProjectKey.From(project), out var projectSnapshot))
+                                    if (@this.TryGetProjectSnapshot(project, out var projectSnapshot))
                                     {
                                         @this.EnqueueUpdate(project: null, projectSnapshot);
                                     }
@@ -387,7 +387,7 @@ internal class WorkspaceProjectStateChangeDetector : ProjectSnapshotChangeTrigge
     {
         foreach (var project in solution.Projects)
         {
-            if (TryGetProjectSnapshot(ProjectKey.From(project), out var projectSnapshot))
+            if (TryGetProjectSnapshot(project, out var projectSnapshot))
             {
                 EnqueueUpdate(project, projectSnapshot);
             }
@@ -410,7 +410,7 @@ internal class WorkspaceProjectStateChangeDetector : ProjectSnapshotChangeTrigge
             case ProjectChangeKind.DocumentAdded:
                 var currentSolution = ProjectSnapshotManager.Workspace.CurrentSolution;
                 var associatedWorkspaceProject = currentSolution.Projects
-                    .FirstOrDefault(project => FilePathComparer.Instance.Equals(e.ProjectFilePath, project.FilePath));
+                    .FirstOrDefault(project => e.ProjectKey == ProjectKey.From(project));
 
                 if (associatedWorkspaceProject is not null)
                 {
@@ -428,7 +428,7 @@ internal class WorkspaceProjectStateChangeDetector : ProjectSnapshotChangeTrigge
 
     private void EnqueueUpdateOnProjectAndDependencies(Project project, Solution solution)
     {
-        if (TryGetProjectSnapshot(ProjectKey.From(project), out var projectSnapshot))
+        if (TryGetProjectSnapshot(project, out var projectSnapshot))
         {
             EnqueueUpdateOnProjectAndDependencies(project.Id, project, solution, projectSnapshot);
         }
@@ -444,7 +444,7 @@ internal class WorkspaceProjectStateChangeDetector : ProjectSnapshotChangeTrigge
         foreach (var dependentProjectId in dependentProjectIds)
         {
             if (solution.GetProject(dependentProjectId) is { } dependentProject &&
-                TryGetProjectSnapshot(ProjectKey.From(dependentProject), out var dependentProjectSnapshot))
+                TryGetProjectSnapshot(dependentProject, out var dependentProjectSnapshot))
             {
                 EnqueueUpdate(dependentProject, dependentProjectSnapshot);
             }
@@ -457,11 +457,19 @@ internal class WorkspaceProjectStateChangeDetector : ProjectSnapshotChangeTrigge
 
         EnsureWorkQueue();
 
-        _workQueue?.Enqueue(projectSnapshot.FilePath, workItem);
+        _workQueue?.Enqueue(projectSnapshot.Key.Id, workItem);
     }
 
-    private bool TryGetProjectSnapshot(ProjectKey? projectKey, [NotNullWhen(true)] out IProjectSnapshot? projectSnapshot)
+    private bool TryGetProjectSnapshot(Project? project, [NotNullWhen(true)] out IProjectSnapshot? projectSnapshot)
     {
+        if (project is null)
+        {
+            projectSnapshot = null;
+            return false;
+        }
+
+        var projectKey = ProjectKey.From(project);
+        // ProjectKey could be null, if Roslyn doesn't know the IntermediateOutputPath for the project
         if (projectKey is null)
         {
             projectSnapshot = null;

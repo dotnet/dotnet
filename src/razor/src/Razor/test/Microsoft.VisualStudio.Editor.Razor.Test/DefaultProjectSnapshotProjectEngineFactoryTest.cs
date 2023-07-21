@@ -47,20 +47,22 @@ public class DefaultProjectSnapshotProjectEngineFactoryTest : TestBase
 
         _projectWorkspaceState = ProjectWorkspaceState.Default;
 
-        _hostProject_For_1_0 = new HostProject("/TestPath/SomePath/Test.csproj", FallbackRazorConfiguration.MVC_1_0, "Test");
-        _hostProject_For_1_1 = new HostProject("/TestPath/SomePath/Test.csproj", FallbackRazorConfiguration.MVC_1_1, "Test");
-        _hostProject_For_2_0 = new HostProject("/TestPath/SomePath/Test.csproj", FallbackRazorConfiguration.MVC_2_0, "Test");
+        var projectFilePath = "/TestPath/SomePath/Test.csproj";
+        var intermediateOutputPath = "/TestPath/SomePath/obj";
+        _hostProject_For_1_0 = new HostProject(projectFilePath, intermediateOutputPath, FallbackRazorConfiguration.MVC_1_0, "Test");
+        _hostProject_For_1_1 = new HostProject(projectFilePath, intermediateOutputPath, FallbackRazorConfiguration.MVC_1_1, "Test");
+        _hostProject_For_2_0 = new HostProject(projectFilePath, intermediateOutputPath, FallbackRazorConfiguration.MVC_2_0, "Test");
 
         _hostProject_For_2_1 = new HostProject(
-            "/TestPath/SomePath/Test.csproj",
+            projectFilePath, intermediateOutputPath,
             new ProjectSystemRazorConfiguration(RazorLanguageVersion.Version_2_1, "MVC-2.1", Array.Empty<RazorExtension>()), "Test");
 
         _hostProject_For_3_0 = new HostProject(
-            "/TestPath/SomePath/Test.csproj",
+            projectFilePath, intermediateOutputPath,
             new ProjectSystemRazorConfiguration(RazorLanguageVersion.Version_3_0, "MVC-3.0", Array.Empty<RazorExtension>()), "Test");
 
         _hostProject_For_UnknownConfiguration = new HostProject(
-            "/TestPath/SomePath/Test.csproj",
+            projectFilePath, intermediateOutputPath,
             new ProjectSystemRazorConfiguration(RazorLanguageVersion.Version_2_1, "Random-0.1", Array.Empty<RazorExtension>()), rootNamespace: null);
 
         _snapshot_For_1_0 = new ProjectSnapshot(ProjectState.Create(_workspace.Services, _hostProject_For_1_0, _projectWorkspaceState));

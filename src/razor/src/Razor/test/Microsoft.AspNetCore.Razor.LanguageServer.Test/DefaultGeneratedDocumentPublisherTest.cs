@@ -24,7 +24,7 @@ public class DefaultGeneratedDocumentPublisherTest : LanguageServerTestBase
         _serverClient = new TestClient();
         _projectManager = TestProjectSnapshotManager.Create(LegacyDispatcher, ErrorReporter);
         _projectManager.AllowNotifyListeners = true;
-        _hostProject = new HostProject("/path/to/project.csproj", RazorConfiguration.Default, "TestRootNamespace");
+        _hostProject = new HostProject("/path/to/project.csproj", "/path/to/obj", RazorConfiguration.Default, "TestRootNamespace");
         _projectManager.ProjectAdded(_hostProject);
         _hostDocument = new HostDocument("/path/to/file.razor", "file.razor");
         _projectManager.DocumentAdded(_hostProject.Key, _hostDocument, new EmptyTextLoader(_hostDocument.FilePath));

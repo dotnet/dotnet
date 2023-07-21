@@ -18,6 +18,7 @@ namespace Microsoft.VisualStudio.Editor.Razor.Documents;
 public class EditorDocumentManagerListenerTest : ProjectSnapshotManagerDispatcherTestBase
 {
     private readonly string _projectFilePath;
+    private readonly ProjectKey _projectKey;
     private readonly string _documentFilePath;
     private readonly TextLoader _textLoader;
     private readonly FileChangeTracker _fileChangeTracker;
@@ -27,6 +28,7 @@ public class EditorDocumentManagerListenerTest : ProjectSnapshotManagerDispatche
         : base(testOutput)
     {
         _projectFilePath = TestProjectData.SomeProject.FilePath;
+        _projectKey = TestProjectData.SomeProject.Key;
         _documentFilePath = TestProjectData.SomeProjectFile1.FilePath;
         _textLoader = TextLoader.From(TextAndVersion.Create(SourceText.From("FILE"), VersionStamp.Default));
         _fileChangeTracker = new DefaultFileChangeTracker(_documentFilePath);
@@ -45,9 +47,9 @@ public class EditorDocumentManagerListenerTest : ProjectSnapshotManagerDispatche
 
         var editorDocumentManger = new Mock<EditorDocumentManager>(MockBehavior.Strict);
         editorDocumentManger
-            .Setup(e => e.GetOrCreateDocument(It.IsAny<DocumentKey>(), It.IsAny<EventHandler>(), It.IsAny<EventHandler>(), It.IsAny<EventHandler>(), It.IsAny<EventHandler>()))
+            .Setup(e => e.GetOrCreateDocument(It.IsAny<DocumentKey>(), It.IsAny<ProjectKey>(), It.IsAny<EventHandler>(), It.IsAny<EventHandler>(), It.IsAny<EventHandler>(), It.IsAny<EventHandler>()))
             .Returns(GetEditorDocument())
-            .Callback<DocumentKey, EventHandler, EventHandler, EventHandler, EventHandler>((key, onChangedOnDisk, onChangedInEditor, onOpened, onClosed) =>
+            .Callback<DocumentKey, ProjectKey, EventHandler, EventHandler, EventHandler, EventHandler>((key, projectKey, onChangedOnDisk, onChangedInEditor, onOpened, onClosed) =>
             {
                 Assert.Same(changedOnDisk, onChangedOnDisk);
                 Assert.Same(changedInEditor, onChangedInEditor);
@@ -59,7 +61,7 @@ public class EditorDocumentManagerListenerTest : ProjectSnapshotManagerDispatche
             Dispatcher, JoinableTaskFactory.Context, editorDocumentManger.Object, changedOnDisk, changedInEditor, opened, closed);
 
         var projectFilePath = "/Path/to/project.csproj";
-        var project = Mock.Of<IProjectSnapshot>(p => p.Key == TestProjectKey.Create(projectFilePath) && p.FilePath == projectFilePath, MockBehavior.Strict);
+        var project = Mock.Of<IProjectSnapshot>(p => p.Key == TestProjectKey.Create("/Path/to/obj") && p.FilePath == projectFilePath, MockBehavior.Strict);
 
         // Act & Assert
         listener.ProjectManager_Changed(null, new ProjectChangeEventArgs(project, project, "/Path/to/file", ProjectChangeKind.DocumentAdded, solutionIsClosing: false));
@@ -74,14 +76,14 @@ public class EditorDocumentManagerListenerTest : ProjectSnapshotManagerDispatche
 
         var editorDocumentManger = new Mock<EditorDocumentManager>(MockBehavior.Strict);
         editorDocumentManger
-            .Setup(e => e.GetOrCreateDocument(It.IsAny<DocumentKey>(), It.IsAny<EventHandler>(), It.IsAny<EventHandler>(), It.IsAny<EventHandler>(), It.IsAny<EventHandler>()))
+            .Setup(e => e.GetOrCreateDocument(It.IsAny<DocumentKey>(), It.IsAny<ProjectKey>(), It.IsAny<EventHandler>(), It.IsAny<EventHandler>(), It.IsAny<EventHandler>(), It.IsAny<EventHandler>()))
             .Returns(GetEditorDocument(isOpen: true));
 
         var listener = new EditorDocumentManagerListener(
             Dispatcher, JoinableTaskFactory.Context, editorDocumentManger.Object, onChangedOnDisk: null, onChangedInEditor: null, onOpened: opened, onClosed: null);
 
         var projectFilePath = "/Path/to/project.csproj";
-        var project = Mock.Of<IProjectSnapshot>(p => p.Key == TestProjectKey.Create(projectFilePath) && p.FilePath == projectFilePath, MockBehavior.Strict);
+        var project = Mock.Of<IProjectSnapshot>(p => p.Key == TestProjectKey.Create("/Path/to/obj") && p.FilePath == projectFilePath, MockBehavior.Strict);
 
         // Act
         listener.ProjectManager_Changed(null, new ProjectChangeEventArgs(project, project, "/Path/to/file", ProjectChangeKind.DocumentAdded, solutionIsClosing: false));
@@ -98,6 +100,7 @@ public class EditorDocumentManagerListenerTest : ProjectSnapshotManagerDispatche
             JoinableTaskFactory.Context,
             _projectFilePath,
             _documentFilePath,
+            _projectKey,
             _textLoader,
             _fileChangeTracker,
             isOpen ? _textBuffer : null,

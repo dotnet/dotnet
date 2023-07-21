@@ -129,7 +129,7 @@ public class BackgroundDocumentProcessedPublisherTest : OmniSharpWorkspaceTestBa
     {
         // Arrange
         var projectSnapshotManager = CreateProjectSnapshotManager(allowNotifyListeners: true);
-        var hostProject = new OmniSharpHostProject("/path/to/unknownproject.csproj", RazorConfiguration.Default, rootNamespace: "TestRootNamespace");
+        var hostProject = new OmniSharpHostProject("/path/to/unknownproject.csproj", "/path/to/obj", RazorConfiguration.Default, rootNamespace: "TestRootNamespace");
         var hostDocument = new OmniSharpHostDocument("/path/to/Counter.razor", "path\\to\\Counter.razor", FileKinds.Component);
         await RunOnDispatcherThreadAsync(() =>
         {
@@ -152,7 +152,7 @@ public class BackgroundDocumentProcessedPublisherTest : OmniSharpWorkspaceTestBa
     {
         // Arrange
         var projectSnapshotManager = CreateProjectSnapshotManager(allowNotifyListeners: true);
-        var hostProject = new OmniSharpHostProject(Project.FilePath, RazorConfiguration.Default, rootNamespace: "TestRootNamespace");
+        var hostProject = new OmniSharpHostProject(Project.FilePath, Project.CompilationOutputInfo.AssemblyPath, RazorConfiguration.Default, rootNamespace: "TestRootNamespace");
         var hostDocument = new OmniSharpHostDocument("/path/to/Counter.razor", "path\\to\\Counter.razor", FileKinds.Component);
         await RunOnDispatcherThreadAsync(() =>
         {
@@ -175,7 +175,7 @@ public class BackgroundDocumentProcessedPublisherTest : OmniSharpWorkspaceTestBa
     {
         // Arrange
         var projectSnapshotManager = CreateProjectSnapshotManager(allowNotifyListeners: true);
-        var hostProject = new OmniSharpHostProject(Project.FilePath, RazorConfiguration.Default, rootNamespace: "TestRootNamespace");
+        var hostProject = new OmniSharpHostProject(Project.FilePath, Project.CompilationOutputInfo.AssemblyPath, RazorConfiguration.Default, rootNamespace: "TestRootNamespace");
         var hostDocument = new OmniSharpHostDocument("/path/to/Counter.razor", "path\\to\\Counter.razor", FileKinds.Component);
         await RunOnDispatcherThreadAsync(() =>
         {

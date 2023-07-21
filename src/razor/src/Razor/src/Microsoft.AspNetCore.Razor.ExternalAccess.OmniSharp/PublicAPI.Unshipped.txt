@@ -26,7 +26,7 @@ Microsoft.AspNetCore.Razor.ExternalAccess.OmniSharp.Project.IOmniSharpProjectSna
 Microsoft.AspNetCore.Razor.ExternalAccess.OmniSharp.Project.IOmniSharpProjectSnapshotManagerChangeTrigger.Initialize(Microsoft.AspNetCore.Razor.ExternalAccess.OmniSharp.Project.OmniSharpProjectSnapshotManager! projectManager) -> void
 Microsoft.AspNetCore.Razor.ExternalAccess.OmniSharp.Project.OmniSharpHostProject
 Microsoft.AspNetCore.Razor.ExternalAccess.OmniSharp.Project.OmniSharpHostProject.Key.get -> Microsoft.AspNetCore.Razor.ExternalAccess.OmniSharp.Project.OmniSharpProjectKey!
-Microsoft.AspNetCore.Razor.ExternalAccess.OmniSharp.Project.OmniSharpHostProject.OmniSharpHostProject(string! projectFilePath, Microsoft.AspNetCore.Razor.Language.RazorConfiguration! razorConfiguration, string! rootNamespace) -> void
+Microsoft.AspNetCore.Razor.ExternalAccess.OmniSharp.Project.OmniSharpHostProject.OmniSharpHostProject(string! projectFilePath, string! intermediateOutputPath, Microsoft.AspNetCore.Razor.Language.RazorConfiguration! razorConfiguration, string! rootNamespace) -> void
 Microsoft.AspNetCore.Razor.ExternalAccess.OmniSharp.Project.OmniSharpProjectChangeEventArgs
 Microsoft.AspNetCore.Razor.ExternalAccess.OmniSharp.Project.OmniSharpProjectChangeEventArgs.DocumentFilePath.get -> string?
 Microsoft.AspNetCore.Razor.ExternalAccess.OmniSharp.Project.OmniSharpProjectChangeEventArgs.Kind.get -> Microsoft.AspNetCore.Razor.ExternalAccess.OmniSharp.Project.OmniSharpProjectChangeKind

@@ -28,8 +28,9 @@ public abstract class AbstractRazorEditorTest : AbstractEditorTest
 
         VisualStudioLogging.AddCustomLoggers();
 
-        await TestServices.SolutionExplorer.CreateSolutionAsync("BlazorSolution", ControlledHangMitigatingCancellationToken);
-        await TestServices.SolutionExplorer.AddProjectAsync("BlazorProject", WellKnownProjectTemplates.BlazorProject, groupId: WellKnownProjectTemplates.GroupIdentifiers.Server, templateId: null, LanguageName, ControlledHangMitigatingCancellationToken);
+        await TestServices.SolutionExplorer.CreateSolutionAsync(RazorProjectConstants.BlazorSolutionName, ControlledHangMitigatingCancellationToken);
+        await TestServices.SolutionExplorer.AddProjectAsync(RazorProjectConstants.BlazorProjectName, WellKnownProjectTemplates.BlazorProject, groupId: WellKnownProjectTemplates.GroupIdentifiers.Server, templateId: null, LanguageName, ControlledHangMitigatingCancellationToken);
+
         await TestServices.SolutionExplorer.RestoreNuGetPackagesAsync(ControlledHangMitigatingCancellationToken);
         await TestServices.Workspace.WaitForProjectSystemAsync(ControlledHangMitigatingCancellationToken);
 

@@ -6,9 +6,11 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Text;
 using System.Threading;
+using Microsoft.AspNetCore.Razor.PooledObjects;
 
 namespace Microsoft.AspNetCore.Razor.Language.Syntax;
 
@@ -419,6 +421,193 @@ internal abstract partial class SyntaxNode
 
         return Green.IsEquivalentTo(other.Green);
     }
+
+#nullable enable
+    /// <summary>
+    /// Finds a descendant token of this node whose span includes the supplied position.
+    /// </summary>
+    /// <param name="position">The character position of the token relative to the beginning of the file.</param>
+    /// <param name="includeWhitespace">
+    /// True to return whitespace or newline tokens. If false, finds the closest non-whitespace, non-newline token that matches the following algorithm:
+    /// <list type="number">
+    /// <item>
+    /// <description>
+    /// Scan backwards until a non-whitespace token is found. If a newline is found, continue to the next step. Otherwise, return the found token.
+    /// </description>
+    /// </item>
+    /// <item>
+    /// <description>
+    /// Scan forwards until a non-whitespace, non-newline token is found. Return the found token.
+    /// </description>
+    /// </item>
+    /// </param>
+    /// <exception cref="ArgumentOutOfRangeException">
+    /// Thrown when requested position is out of range of the root token requested. This includes the whitespace scanning: calling FindToken(0, false)
+    /// on a whitespace token will throw.
+    /// </exception>
+    public SyntaxToken FindToken(int position, bool includeWhitespace = false)
+    {
+        if (position == EndPosition && this is RazorDocumentSyntax document)
+        {
+            return document.EndOfFile;
+        }
+
+        if (!FullSpan.Contains(position))
+        {
+            throw new ArgumentOutOfRangeException(nameof(position));
+        }
+
+        // Stack for walking efficiently back up the tree. Only used when includeWhitespace is false.
+        using var stack = new PooledArrayBuilder<(SyntaxNode node, int nodeIndexInParent)>();
+        SyntaxNode curNode = this;
+
+        while (true)
+        {
+            Debug.Assert(curNode.Kind is < SyntaxKind.FirstAvailableTokenKind and >= 0);
+            Debug.Assert(curNode.FullSpan.Contains(position));
+
+            if (!curNode.IsToken)
+            {
+                curNode = ChildSyntaxList.ChildThatContainsPosition(curNode, position, out var nodeIndexInParent);
+                if (!includeWhitespace)
+                {
+                    stack.Push((curNode, nodeIndexInParent));
+                }
+            }
+            else
+            {
+                // Once we've found the token that covers the exact position, we potentially need to account for whitespace to
+                // partially emulate Roslyn's behavior. The rule is pretty simple:
+                //
+                //  After a non-whitespace token, all whitespace up to and including the next newline is considered part of the previous token.
+                //  All whitespace after it is considered part of the next token.
+                //
+                // Roslyn, of course, includes all trivia in this rule, and also uses trivia to represent comments. Razor does neither of these things,
+                // and we only want to skip past whitespace. Therefore, the algorithm we implement is:
+                //
+                //  Walk backwards until we find a non-whitespace token. If we find something that isn't a newline, that is the node requested.
+                //  If we find a newline, we need to walk forwards until we find the first non-whitespace or newline token. That is the node requested.
+                var foundToken = (SyntaxToken)curNode;
+                if (includeWhitespace || foundToken.Kind is not (SyntaxKind.Whitespace or SyntaxKind.NewLine))
+                {
+                    return foundToken;
+                }
+
+                // Walk backwards until we find a non-whitespace token. We accomplish this by looking up the stack and walking nodes backwards from where we
+                // were located.
+                if (tryWalkBackwards(stack, out foundToken))
+                {
+                    return foundToken;
+                }
+
+                // Encountered a newline while backtracking, so we need to walk forward instead.
+                return walkForward(stack);
+            }
+
+            bool tryWalkBackwards(PooledArrayBuilder<(SyntaxNode node, int nodeIndexInParent)> stack, [NotNullWhen(true)] out SyntaxToken? foundToken)
+            {
+                // Can't just pop the stack, we may need to rewalk from the start to find the next node if this fails
+                for (var originalStackPosition = stack.Count - 1; originalStackPosition >= 0; originalStackPosition--)
+                {
+                    var (node, nodeIndexInParent) = stack[originalStackPosition];
+
+                    switch (walkNodeChildren(node.Parent, nodeIndexInParent, walkBackwards: true, stopOnNewline: true, out foundToken))
+                    {
+                        case true:
+                            return true;
+                        case false:
+                            return false;
+                        case null:
+                            // Didn't find anything in this node, keep walking
+                            continue;
+                    }
+                }
+
+                // Walked all the way back to the end of the node that was requested and did not find either a newline or non-whitespace token. The user requested
+                // something out of range.
+                throw new ArgumentOutOfRangeException(nameof(position));
+            }
+
+            SyntaxToken walkForward(PooledArrayBuilder<(SyntaxNode node, int nodeIndexInParent)> stack)
+            {
+                while (stack.TryPop(out var entry))
+                {
+                    var (node, nodeIndexInParent) = entry;
+
+                    switch (walkNodeChildren(node.Parent, nodeIndexInParent, walkBackwards: false, stopOnNewline: false, out var foundToken))
+                    {
+                        case true:
+                            return foundToken;
+                        case null:
+                            // Didn't find anything in this node, keep walking
+                            continue;
+                        case false:
+                            // False is only returned when stopOnNewline is true
+                            return Assumed.Unreachable<SyntaxToken>();
+                    }
+                }
+
+                // Walked all the way forward to the end of the root that was requested and did not find any non-whitespace tokens. The user requested
+                // something out of range.
+                throw new ArgumentOutOfRangeException(nameof(position));
+            }
+
+            static bool? walkNodeChildren(SyntaxNode parent, int startIndex, bool walkBackwards, bool stopOnNewline, [NotNullWhen(true)] out SyntaxToken? foundToken)
+            {
+                Debug.Assert(parent != null, "Node should have been out of range of the document");
+
+                var (indexIncrement, endIndex) = walkBackwards
+                    ? (-1, -1)
+                    : (1, ChildSyntaxList.CountNodes(parent!.Green));
+
+                for (int currentIndex = startIndex + indexIncrement; currentIndex != endIndex; currentIndex += indexIncrement)
+                {
+                    var currentChild = ChildSyntaxList.ItemInternal(parent, currentIndex);
+                    switch (currentChild.Kind)
+                    {
+                        case SyntaxKind.NewLine when stopOnNewline:
+                            // We found a newline, we need to walk forwards until we find the first non-whitespace or newline token.
+                            foundToken = null;
+                            return false;
+                        case SyntaxKind.Whitespace:
+                            // We found whitespace, keep walking
+                            continue;
+                        default:
+                            if (currentChild.IsToken)
+                            {
+                                // This is the node we're looking for
+                                foundToken = (SyntaxToken)currentChild;
+                                return true;
+                            }
+                            else
+                            {
+                                // The previous node is something complex. Walk its children to find a desired token.
+                                // If this ever becomes a stack overflow concern, we could make it iterative, but this is much
+                                // simpler for now.
+                                switch (walkNodeChildren(parent: currentChild, startIndex: walkBackwards ? ChildSyntaxList.CountNodes(currentChild.Green) : -1, walkBackwards, stopOnNewline, out foundToken))
+                                {
+                                    case true:
+                                        return true;
+                                    case false:
+                                        return false;
+                                    case null:
+                                        // Couldn't find a desired node in the child, keep walking backwards. This is believed to be impossible,
+                                        // but isn't an inherent issue in itself, so if it's encountered we should understand the scenario and
+                                        // cover with a test if it's not decided to be a bug.
+                                        Debug.Fail("This is believed to be impossible. If this fails, add a test for the case.");
+                                        continue;
+                                }
+                            }
+                    }
+                }
+
+                // Got to the end of the node without finding a desired token. Pop up the stack and try again
+                foundToken = null;
+                return null;
+            }
+        }
+    }
+#nullable disable
 
     public override string ToString()
     {

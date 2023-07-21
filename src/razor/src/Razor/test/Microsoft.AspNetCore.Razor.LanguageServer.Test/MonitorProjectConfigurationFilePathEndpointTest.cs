@@ -45,7 +45,7 @@ public class MonitorProjectConfigurationFilePathEndpointTest : LanguageServerTes
         configurationFileEndpoint.Dispose();
         var request = new MonitorProjectConfigurationFilePathParams()
         {
-            ProjectFilePath = "C:/dir/project.csproj",
+            ProjectKeyId = TestProjectKey.Create("C:/dir/obj").Id,
             ConfigurationFilePath = "C:/dir/obj/Debug/project.razor.json",
         };
         var requestContext = CreateRazorRequestContext(documentContext: null);
@@ -69,7 +69,7 @@ public class MonitorProjectConfigurationFilePathEndpointTest : LanguageServerTes
             LoggerFactory);
         var request = new MonitorProjectConfigurationFilePathParams()
         {
-            ProjectFilePath = "C:/dir/project.csproj",
+            ProjectKeyId = TestProjectKey.Create("C:/dir/obj").Id,
             ConfigurationFilePath = null,
         };
         var requestContext = CreateRazorRequestContext(documentContext: null);
@@ -91,14 +91,14 @@ public class MonitorProjectConfigurationFilePathEndpointTest : LanguageServerTes
             LoggerFactory);
         var startRequest = new MonitorProjectConfigurationFilePathParams()
         {
-            ProjectFilePath = "C:/dir/project.csproj",
+            ProjectKeyId = TestProjectKey.Create("C:/dir/obj").Id,
             ConfigurationFilePath = "C:/externaldir/obj/Debug/project.razor.json",
         };
         var requestContext = CreateRazorRequestContext(documentContext: null);
         await configurationFileEndpoint.HandleNotificationAsync(startRequest, requestContext, DisposalToken);
         var stopRequest = new MonitorProjectConfigurationFilePathParams()
         {
-            ProjectFilePath = "C:/dir/project.csproj",
+            ProjectKeyId = TestProjectKey.Create("C:/dir/obj").Id,
             ConfigurationFilePath = null,
         };
 
@@ -123,7 +123,7 @@ public class MonitorProjectConfigurationFilePathEndpointTest : LanguageServerTes
             LoggerFactory);
         var startRequest = new MonitorProjectConfigurationFilePathParams()
         {
-            ProjectFilePath = "C:/dir/project.csproj",
+            ProjectKeyId = TestProjectKey.Create("C:/dir/obj").Id,
             ConfigurationFilePath = "C:/dir/obj/Debug/project.razor.json",
         };
         var requestContext = CreateRazorRequestContext(documentContext: null);
@@ -148,7 +148,7 @@ public class MonitorProjectConfigurationFilePathEndpointTest : LanguageServerTes
             LoggerFactory);
         var startRequest = new MonitorProjectConfigurationFilePathParams()
         {
-            ProjectFilePath = "C:/dir/project.csproj",
+            ProjectKeyId = TestProjectKey.Create("C:/dir/obj").Id,
             ConfigurationFilePath = "C:/externaldir/obj/Debug/project.razor.json",
         };
         var requestContext = CreateRazorRequestContext(documentContext: null);
@@ -175,12 +175,12 @@ public class MonitorProjectConfigurationFilePathEndpointTest : LanguageServerTes
             LoggerFactory);
         var debugOutputPath = new MonitorProjectConfigurationFilePathParams()
         {
-            ProjectFilePath = "C:\\dir\\project.csproj",
+            ProjectKeyId = TestProjectKey.Create("C:/dir/obj").Id,
             ConfigurationFilePath = "C:\\externaldir\\obj\\Debug\\project.razor.json",
         };
         var releaseOutputPath = new MonitorProjectConfigurationFilePathParams()
         {
-            ProjectFilePath = debugOutputPath.ProjectFilePath,
+            ProjectKeyId = debugOutputPath.ProjectKeyId,
             ConfigurationFilePath = "C:\\externaldir\\obj\\Release\\project.razor.json",
         };
         var requestContext = CreateRazorRequestContext(documentContext: null);
@@ -207,12 +207,12 @@ public class MonitorProjectConfigurationFilePathEndpointTest : LanguageServerTes
             LoggerFactory);
         var externalRequest = new MonitorProjectConfigurationFilePathParams()
         {
-            ProjectFilePath = "C:\\dir\\project.csproj",
+            ProjectKeyId = TestProjectKey.Create("C:\\dir\\obj").Id,
             ConfigurationFilePath = "C:\\externaldir\\obj\\Debug\\project.razor.json",
         };
         var internalRequest = new MonitorProjectConfigurationFilePathParams()
         {
-            ProjectFilePath = externalRequest.ProjectFilePath,
+            ProjectKeyId = externalRequest.ProjectKeyId,
             ConfigurationFilePath = "C:\\dir\\obj\\Release\\project.razor.json",
         };
         var requestContext = CreateRazorRequestContext(documentContext: null);
@@ -243,12 +243,12 @@ public class MonitorProjectConfigurationFilePathEndpointTest : LanguageServerTes
             LoggerFactory);
         var debugOutputPath = new MonitorProjectConfigurationFilePathParams()
         {
-            ProjectFilePath = "C:\\dir\\project1.csproj",
+            ProjectKeyId = TestProjectKey.Create("C:\\dir\\obj").Id,
             ConfigurationFilePath = "C:\\externaldir1\\obj\\Debug\\project.razor.json",
         };
         var releaseOutputPath = new MonitorProjectConfigurationFilePathParams()
         {
-            ProjectFilePath = debugOutputPath.ProjectFilePath,
+            ProjectKeyId = debugOutputPath.ProjectKeyId,
             ConfigurationFilePath = "C:\\externaldir1\\obj\\Release\\project.razor.json",
         };
         var requestContext = CreateRazorRequestContext(documentContext: null);
@@ -290,17 +290,17 @@ public class MonitorProjectConfigurationFilePathEndpointTest : LanguageServerTes
             LoggerFactory);
         var debugOutputPath1 = new MonitorProjectConfigurationFilePathParams()
         {
-            ProjectFilePath = "C:\\dir\\project1.csproj",
+            ProjectKeyId = TestProjectKey.Create("C:\\dir\\obj").Id,
             ConfigurationFilePath = "C:\\externaldir1\\obj\\Debug\\project.razor.json",
         };
         var releaseOutputPath1 = new MonitorProjectConfigurationFilePathParams()
         {
-            ProjectFilePath = debugOutputPath1.ProjectFilePath,
+            ProjectKeyId = debugOutputPath1.ProjectKeyId,
             ConfigurationFilePath = "C:\\externaldir1\\obj\\Release\\project.razor.json",
         };
         var debugOutputPath2 = new MonitorProjectConfigurationFilePathParams()
         {
-            ProjectFilePath = "C:\\dir\\project2.csproj",
+            ProjectKeyId = TestProjectKey.Create("C:\\dir\\obj2").Id,
             ConfigurationFilePath = "C:\\externaldir2\\obj\\Debug\\project.razor.json",
         };
         var requestContext = CreateRazorRequestContext(documentContext: null);

@@ -27,6 +27,7 @@ internal class OptionsStorage : IAdvancedSettingsStorage
     private const string FormatOnTypeName = "FormatOnType";
     private const string AutoClosingTagsName = "AutoClosingTags";
     private const string AutoInsertAttributeQuotesName = "AutoInsertAttributeQuotes";
+    private const string ColorBackgroundName = "ColorBackground";
 
     public bool FormatOnType
     {
@@ -46,6 +47,12 @@ internal class OptionsStorage : IAdvancedSettingsStorage
         set => SetBool(AutoInsertAttributeQuotesName, value);
     }
 
+    public bool ColorBackground
+    {
+        get => GetBool(ColorBackgroundName, defaultValue: false);
+        set => SetBool(ColorBackgroundName, value);
+    }
+
     [ImportingConstructor]
     public OptionsStorage(SVsServiceProvider vsServiceProvider, ITelemetryReporter telemetryReporter)
     {
@@ -58,7 +65,7 @@ internal class OptionsStorage : IAdvancedSettingsStorage
 
     public event EventHandler<ClientAdvancedSettingsChangedEventArgs>? Changed;
 
-    public ClientAdvancedSettings GetAdvancedSettings() => new(FormatOnType, AutoClosingTags, AutoInsertAttributeQuotes);
+    public ClientAdvancedSettings GetAdvancedSettings() => new(FormatOnType, AutoClosingTags, AutoInsertAttributeQuotes, ColorBackground);
 
     public bool GetBool(string name, bool defaultValue)
     {

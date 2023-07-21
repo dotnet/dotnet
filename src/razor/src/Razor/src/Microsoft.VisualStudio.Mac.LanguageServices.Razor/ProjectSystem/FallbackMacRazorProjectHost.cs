@@ -39,10 +39,9 @@ internal class FallbackMacRazorProjectHost : MacRazorProjectHostBase
             var mvcReference = referencedAssemblies.FirstOrDefault(IsMvcAssembly);
             var projectProperties = DotNetProject.MSBuildProject.EvaluatedProperties;
 
-            if (TryGetIntermediateOutputPath(projectProperties, out var intermediatePath))
+            if (!TryGetIntermediateOutputPath(projectProperties, out var intermediatePath))
             {
-                var projectConfigurationFile = Path.Combine(intermediatePath, _languageServerFeatureOptions.ProjectConfigurationFileName);
-                ProjectConfigurationFilePathStore.Set(DotNetProject.FileName.FullPath, projectConfigurationFile);
+                return;
             }
 
             if (mvcReference is null)
@@ -61,7 +60,11 @@ internal class FallbackMacRazorProjectHost : MacRazorProjectHostBase
             }
 
             var configuration = FallbackRazorConfiguration.SelectConfiguration(version);
-            var hostProject = new HostProject(DotNetProject.FileName.FullPath, configuration, rootNamespace: null);
+            var hostProject = new HostProject(DotNetProject.FileName.FullPath, intermediatePath, configuration, rootNamespace: null);
+
+            var projectConfigurationFile = Path.Combine(intermediatePath, _languageServerFeatureOptions.ProjectConfigurationFileName);
+            ProjectConfigurationFilePathStore.Set(hostProject.Key, projectConfigurationFile);
+
             await UpdateHostProjectUnsafeAsync(hostProject).ConfigureAwait(false);
         });
     }

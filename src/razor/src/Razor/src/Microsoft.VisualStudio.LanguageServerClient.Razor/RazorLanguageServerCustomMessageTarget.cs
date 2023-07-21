@@ -129,4 +129,10 @@ internal abstract class RazorLanguageServerCustomMessageTarget
 
     [JsonRpcMethod(RazorLanguageServerCustomMessageTargets.RazorSpellCheckEndpoint, UseSingleObjectParameterDeserialization = true)]
     public abstract Task<VSInternalSpellCheckableRangeReport[]> SpellCheckAsync(DelegatedSpellCheckParams request, CancellationToken cancellationToken);
+
+    [JsonRpcMethod(RazorLanguageServerCustomMessageTargets.RazorProjectContextsEndpoint, UseSingleObjectParameterDeserialization = true)]
+    public abstract Task<VSProjectContextList?> ProjectContextsAsync(DelegatedProjectContextsParams request, CancellationToken cancellationToken);
+
+    [JsonRpcMethod(RazorLanguageServerCustomMessageTargets.RazorDocumentSymbolEndpoint, UseSingleObjectParameterDeserialization = true)]
+    public abstract Task<SumType<DocumentSymbol[], SymbolInformation[]>?> DocumentSymbolsAsync(DelegatedDocumentSymbolParams request, CancellationToken cancellationToken);
 }

@@ -36,6 +36,8 @@ internal class ProjectSnapshot : IProjectSnapshot
 
     public string FilePath => State.HostProject.FilePath;
 
+    public string IntermediateOutputPath => State.HostProject.IntermediateOutputPath;
+
     public string? RootNamespace => State.HostProject.RootNamespace;
 
     public LanguageVersion CSharpLanguageVersion => State.CSharpLanguageVersion;

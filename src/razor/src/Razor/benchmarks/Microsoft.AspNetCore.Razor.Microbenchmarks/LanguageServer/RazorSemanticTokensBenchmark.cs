@@ -132,8 +132,9 @@ public class RazorSemanticTokensBenchmark : RazorLanguageServerBenchmarkBase
         public TestRazorSemanticTokensInfoService(
             ClientNotifierServiceBase languageServer,
             IRazorDocumentMappingService documentMappingService,
+            RazorLSPOptionsMonitor razorLSPOptionsMonitor,
             ILoggerFactory loggerFactory)
-            : base(languageServer, documentMappingService, loggerFactory)
+            : base(languageServer, documentMappingService, razorLSPOptionsMonitor, loggerFactory)
         {
         }
 
@@ -142,6 +143,7 @@ public class RazorSemanticTokensBenchmark : RazorLanguageServerBenchmarkBase
             RazorCodeDocument codeDocument,
             TextDocumentIdentifier textDocumentIdentifier,
             Range razorRange,
+            RazorSemanticTokensLegend razorSemanticTokensLegend,
             long documentVersion,
             Guid correlationId,
             CancellationToken cancellationToken,

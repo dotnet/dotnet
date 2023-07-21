@@ -47,7 +47,7 @@ public class SnapshotResolverTest : LanguageServerTestBase
         var snapshotResolver = new SnapshotResolver(projectSnapshotManagerAccessor, LoggerFactory);
         var miscProject = snapshotResolver.GetMiscellaneousProject();
 
-        var hostProject = new HostProject(miscProject.FilePath, RazorDefaults.Configuration, miscProject.RootNamespace);
+        var hostProject = new HostProject(miscProject.FilePath, miscProject.IntermediateOutputPath, RazorDefaults.Configuration, miscProject.RootNamespace);
         projectSnapshotManagerAccessor.Instance.DocumentAdded(
             hostProject.Key,
             new HostDocument(normalizedFilePath, "document.cshtml"),

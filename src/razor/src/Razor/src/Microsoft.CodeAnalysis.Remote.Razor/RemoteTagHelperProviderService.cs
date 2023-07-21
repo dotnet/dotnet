@@ -2,7 +2,6 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using System;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Serialization;
@@ -46,10 +45,7 @@ internal sealed class RemoteTagHelperProviderService : RazorServiceBase, IRemote
 #pragma warning disable CS0618 // Type or member is obsolete
         var solution = await solutionInfo.GetSolutionAsync(ServiceBrokerClient, cancellationToken).ConfigureAwait(false);
 #pragma warning restore CS0618 // Type or member is obsolete
-        var projectSnapshot = await GetProjectSnapshotAsync(projectHandle, cancellationToken).ConfigureAwait(false);
-        var workspaceProject = solution
-            .Projects
-            .FirstOrDefault(project => FilePathComparer.Instance.Equals(project.FilePath, projectSnapshot.FilePath));
+        var workspaceProject = solution.GetProject(projectHandle.ProjectId);
 
         if (workspaceProject is null)
         {
@@ -64,6 +60,6 @@ internal sealed class RemoteTagHelperProviderService : RazorServiceBase, IRemote
         var tagHelperResolutionResult = await GetTagHelpersCoreAsync(solutionInfo, projectHandle, factoryTypeName, cancellationToken).ConfigureAwait(false);
         var currentTagHelpers = tagHelperResolutionResult.Descriptors;
 
-        return _tagHelperDeltaProvider.GetTagHelpersDelta(projectHandle.FilePath, lastResultId, currentTagHelpers);
+        return _tagHelperDeltaProvider.GetTagHelpersDelta(projectHandle.ProjectId, lastResultId, currentTagHelpers);
     }
 }
