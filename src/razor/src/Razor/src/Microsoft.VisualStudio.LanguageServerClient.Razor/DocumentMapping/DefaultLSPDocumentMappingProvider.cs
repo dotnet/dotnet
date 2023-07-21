@@ -9,7 +9,6 @@ using Microsoft.AspNetCore.Razor.LanguageServer;
 using Microsoft.AspNetCore.Razor.LanguageServer.Common;
 using Microsoft.AspNetCore.Razor.LanguageServer.Protocol;
 using Microsoft.VisualStudio.LanguageServer.ContainedLanguage;
-using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Newtonsoft.Json.Linq;
 
 namespace Microsoft.VisualStudio.LanguageServerClient.Razor.DocumentMapping;
@@ -18,21 +17,17 @@ namespace Microsoft.VisualStudio.LanguageServerClient.Razor.DocumentMapping;
 [Export(typeof(LSPDocumentMappingProvider))]
 internal class DefaultLSPDocumentMappingProvider : LSPDocumentMappingProvider
 {
-    private static readonly TextEdit[] s_emptyEdits = Array.Empty<TextEdit>();
-
     private readonly LSPRequestInvoker _requestInvoker;
 
     // Lazy loading the document manager to get around circular dependencies
     // The Document Manager is a more "Core Service" it depends on the ChangeTriggers which require the LSPDocumentMappingProvider
     // LSPDocumentManager => LSPDocumentMappingProvider => LSPDocumentManagerChangeTrigger => LSPDocumentManager
     private readonly Lazy<LSPDocumentManager> _lazyDocumentManager;
-    private readonly RazorLSPConventions _razorConventions;
 
     [ImportingConstructor]
     public DefaultLSPDocumentMappingProvider(
         LSPRequestInvoker requestInvoker,
-        Lazy<LSPDocumentManager> lazyDocumentManager,
-        RazorLSPConventions razorConventions)
+        Lazy<LSPDocumentManager> lazyDocumentManager)
     {
         if (requestInvoker is null)
         {
@@ -44,24 +39,14 @@ internal class DefaultLSPDocumentMappingProvider : LSPDocumentMappingProvider
             throw new ArgumentNullException(nameof(lazyDocumentManager));
         }
 
-        if (razorConventions is null)
-        {
-            throw new ArgumentNullException(nameof(razorConventions));
-        }
-
         _requestInvoker = requestInvoker;
         _lazyDocumentManager = lazyDocumentManager;
-        _razorConventions = razorConventions;
     }
-
-    public override Task<RazorMapToDocumentRangesResponse?> MapToDocumentRangesAsync(RazorLanguageKind languageKind, Uri razorDocumentUri, Range[] projectedRanges, CancellationToken cancellationToken)
-        => MapToDocumentRangesAsync(languageKind, razorDocumentUri, projectedRanges, LanguageServerMappingBehavior.Strict, cancellationToken);
 
     public async override Task<RazorMapToDocumentRangesResponse?> MapToDocumentRangesAsync(
         RazorLanguageKind languageKind,
         Uri razorDocumentUri,
         Range[] projectedRanges,
-        LanguageServerMappingBehavior mappingBehavior,
         CancellationToken cancellationToken)
     {
         if (razorDocumentUri is null)
@@ -79,7 +64,7 @@ internal class DefaultLSPDocumentMappingProvider : LSPDocumentMappingProvider
             Kind = languageKind,
             RazorDocumentUri = razorDocumentUri,
             ProjectedRanges = projectedRanges,
-            MappingBehavior = mappingBehavior,
+            MappingBehavior = LanguageServerMappingBehavior.Strict,
         };
 
         if (!_lazyDocumentManager.Value.TryGetDocument(razorDocumentUri, out var documentSnapshot))

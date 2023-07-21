@@ -120,18 +120,10 @@ internal sealed class AutoClosingTagOnAutoInsertProvider : IOnAutoInsertProvider
 
     private static bool TryResolveAutoClosingBehavior(FormattingContext context, int afterCloseAngleIndex, [NotNullWhen(true)] out string? name, out AutoClosingBehavior autoClosingBehavior)
     {
-        var change = new SourceChange(afterCloseAngleIndex, 0, string.Empty);
         var syntaxTree = context.CodeDocument.GetSyntaxTree();
-        var originalOwner = syntaxTree.Root.LocateOwner(change);
+        var closeAngle = syntaxTree.Root.FindToken(afterCloseAngleIndex - 1);
 
-        if (!TryEnsureOwner_WorkaroundCompilerQuirks(afterCloseAngleIndex, syntaxTree, originalOwner, out var owner))
-        {
-            name = null;
-            autoClosingBehavior = default;
-            return false;
-        }
-
-        if (owner.Parent is MarkupStartTagSyntax
+        if (closeAngle.Parent is MarkupStartTagSyntax
             {
                 ForwardSlash: null,
                 Parent: MarkupElementSyntax htmlElement
@@ -153,7 +145,7 @@ internal sealed class AutoClosingTagOnAutoInsertProvider : IOnAutoInsertProvider
             return true;
         }
 
-        if (owner.Parent is MarkupTagHelperStartTagSyntax
+        if (closeAngle.Parent is MarkupTagHelperStartTagSyntax
             {
                 ForwardSlash: null,
                 Parent: MarkupTagHelperElementSyntax tagHelperElement
@@ -180,144 +172,6 @@ internal sealed class AutoClosingTagOnAutoInsertProvider : IOnAutoInsertProvider
         autoClosingBehavior = default;
         name = null;
         return false;
-    }
-
-    private static bool TryEnsureOwner_WorkaroundCompilerQuirks(int afterCloseAngleIndex, RazorSyntaxTree syntaxTree, SyntaxNode? currentOwner, [NotNullWhen(true)] out SyntaxNode? newOwner)
-    {
-        // All of these owner modifications are to account for https://github.com/dotnet/aspnetcore/issues/33919
-
-        if (currentOwner?.Parent is null)
-        {
-            newOwner = null;
-            return false;
-        }
-
-        if (currentOwner.Parent is MarkupElementSyntax
-            {
-                StartTag: not null
-            } parentElement)
-        {
-            // In cases where a user types ">" in a C# code block there can be uncertainty as to "who owns" the edge of the element. Reason being that the tag
-            // could be malformed and you could be in a situation like this:
-            //
-            // @{
-            //     <div>|
-            // }
-            //
-            // In this situation <div> is unclosed and is overriding the `}` understanding of `@{`. Because of this we're in an errored state and the syntax tree
-            // doesn't indicate the appropriate language delimiter.
-
-            if (parentElement.StartTag.EndPosition == afterCloseAngleIndex)
-            {
-                currentOwner = parentElement.StartTag.CloseAngle;
-            }
-        }
-        else if (currentOwner.Parent is MarkupTagHelperElementSyntax
-        {
-            StartTag: not null
-        } parentTagHelperElement)
-        {
-            // Same reasoning as the above block here.
-
-            if (afterCloseAngleIndex == parentTagHelperElement.StartTag.EndPosition)
-            {
-                currentOwner = parentTagHelperElement.StartTag.CloseAngle;
-            }
-        }
-        else if (currentOwner is CSharpStatementLiteralSyntax)
-        {
-            // In cases where a user types ">" in a C# code block there can be uncertainty as to "who owns" the edge of the element in void element
-            // scenarios. In a situation like this:
-            //
-            // @{
-            //     <input>|
-            // }
-            //
-            // In this situation <input> is a 100% valid HTML element but after it the C# context begins. When querying owner for the location after
-            // the ">" we get the C# statement block instead of the end close-angle (Razor compiler quirk).
-
-            var closeAngleIndex = afterCloseAngleIndex - 1;
-            var closeAngleSourceChange = new SourceChange(closeAngleIndex, length: 0, newText: string.Empty);
-            currentOwner = syntaxTree.Root.LocateOwner(closeAngleSourceChange);
-        }
-        else if (currentOwner.Parent is MarkupEndTagSyntax or MarkupTagHelperEndTagSyntax)
-        {
-            // Quirk: https://github.com/dotnet/aspnetcore/issues/33919#issuecomment-870233627
-            // When tags are nested within each other within a C# block like:
-            //
-            // @if (true)
-            // {
-            //     <div><em>|</div>
-            // }
-            //
-            // The owner will be the </div>. Note this does not happen outside of C# blocks.
-
-            var closeAngleSourceChange = new SourceChange(afterCloseAngleIndex - 1, length: 0, newText: string.Empty);
-            currentOwner = syntaxTree.Root.LocateOwner(closeAngleSourceChange) switch
-            {
-                // Get the real closing angle if we get the quote from an attribute syntax. See https://github.com/dotnet/razor-tooling/issues/5694
-                MarkupTextLiteralSyntax { Parent.Parent: MarkupStartTagSyntax startTag } => startTag.CloseAngle,
-                MarkupTextLiteralSyntax { Parent.Parent: MarkupTagHelperStartTagSyntax startTagHelper } => startTagHelper.CloseAngle,
-                var owner => owner
-            };
-        }
-        else if (currentOwner.Parent is MarkupStartTagSyntax startTag &&
-            startTag.OpenAngle.Position == afterCloseAngleIndex)
-        {
-            // We found the wrong owner. We really need a SyntaxTree API which is "get me the token at position x" :(
-            // This can happen when you are at the following:
-            //
-            // @if (true)
-            // {
-            //     <em>|<div></div>
-            // }
-            //
-            // It's picking up the trailing <div> as the owner
-
-            var startElement = startTag.Parent;
-            if (startElement.TryGetPreviousSibling(out var previousSibling))
-            {
-                var potentialCloseAngle = previousSibling.GetLastToken();
-                if (potentialCloseAngle.Kind == SyntaxKind.CloseAngle &&
-                    potentialCloseAngle.Position == afterCloseAngleIndex - 1)
-                {
-                    currentOwner = potentialCloseAngle;
-                }
-            }
-        }
-        else if (currentOwner.Parent is MarkupTagHelperStartTagSyntax startTagHelperSyntax &&
-            startTagHelperSyntax.OpenAngle.Position == afterCloseAngleIndex)
-        {
-            // We found the wrong owner. We really need a SyntaxTree API which is "get me the token at position x" :(
-            // This can happen when you are at the following:
-            //
-            // @if (true)
-            // {
-            //     <em>|<th2></th2>
-            // }
-            //
-            // It's picking up the trailing <th2> as the owner
-
-            var startTagHelperElement = startTagHelperSyntax.Parent;
-            if (startTagHelperElement.TryGetPreviousSibling(out var previousSibling))
-            {
-                var potentialCloseAngle = previousSibling.GetLastToken();
-                if (potentialCloseAngle.Kind == SyntaxKind.CloseAngle &&
-                    potentialCloseAngle.Position == afterCloseAngleIndex - 1)
-                {
-                    currentOwner = potentialCloseAngle;
-                }
-            }
-        }
-
-        if (currentOwner?.Parent is null)
-        {
-            newOwner = null;
-            return false;
-        }
-
-        newOwner = currentOwner;
-        return true;
     }
 
     private static AutoClosingBehavior InferAutoClosingBehavior(string name, bool caseSensitive)
