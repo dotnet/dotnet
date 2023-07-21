@@ -93,7 +93,7 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Msi
         /// <summary>
         /// The filename of the MSI file to generate.
         /// </summary>
-        protected string OutputName => $"{Utils.GetHash(BaseOutputName, HashAlgorithmName.MD5)}-{Platform}.msi";
+        protected string OutputName => $"{Utils.GetTruncatedHash(BaseOutputName, HashAlgorithmName.SHA256)}-{Platform}.msi";
 
         /// <summary>
         /// The directory where the WiX source code will be generated.
