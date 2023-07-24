@@ -21,6 +21,14 @@ namespace Microsoft.IdentityModel.Logging.Tests
             _logs.Add(new Tuple<string, EventLogLevel>(entry.Message, entry.EventLogLevel));
         }
 
+        public bool LogStartsWith(string prefix, EventLogLevel logLevel)
+        {
+            if (string.IsNullOrEmpty(prefix))
+                return true;
+
+            return _logs.Any(x => x.Item1.StartsWith(prefix) && x.Item2 == logLevel);
+        }
+
         public bool ContainsLog(string substring)
         {
             if (string.IsNullOrEmpty(substring))

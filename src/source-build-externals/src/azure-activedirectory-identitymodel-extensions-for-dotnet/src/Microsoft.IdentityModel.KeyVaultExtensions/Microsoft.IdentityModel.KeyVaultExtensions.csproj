@@ -8,8 +8,8 @@
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <LangVersion>latest</LangVersion>
     <PackageId>Microsoft.IdentityModel.KeyVaultExtensions</PackageId>
-    <TargetFrameworks Condition=" '$(OS)' == 'Windows_NT' ">net452;netstandard2.0;net6.0</TargetFrameworks>
-    <TargetFrameworks Condition=" '$(OS)' != 'Windows_NT' ">netstandard2.0;net6.0</TargetFrameworks>
+    <TargetFrameworks Condition="'$(TargetNet8)' == 'True'">netstandard2.0;net6.0;net8.0</TargetFrameworks>
+    <TargetFrameworks Condition="'$(TargetNet8)' != 'True'">netstandard2.0;net6.0</TargetFrameworks>
     <PackageTags>.NET;Windows;Authentication;Identity;Azure;Key;Vault;Extensions</PackageTags>
   </PropertyGroup>
 
@@ -31,10 +31,4 @@
     <ProjectReference Include="..\Microsoft.IdentityModel.Tokens\Microsoft.IdentityModel.Tokens.csproj" />
   </ItemGroup>
 
-  <ItemGroup Condition="'$(TargetFramework)' == 'net452'">
-    <PackageReference Include="Microsoft.Net.Http">
-      <Version>2.2.29</Version>
-    </PackageReference>
-  </ItemGroup>
-  
 </Project>

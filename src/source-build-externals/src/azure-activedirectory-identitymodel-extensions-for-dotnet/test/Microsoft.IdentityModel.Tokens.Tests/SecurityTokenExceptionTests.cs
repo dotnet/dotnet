@@ -1,35 +1,15 @@
-﻿//------------------------------------------------------------------------------
-//
-// Copyright (c) Microsoft Corporation.
-// All rights reserved.
-//
-// This code is licensed under the MIT License.
-//
-// Permission is hereby granted, free of charge, to any person obtaining a copy
-// of this software and associated documentation files(the "Software"), to deal
-// in the Software without restriction, including without limitation the rights
-// to use, copy, modify, merge, publish, distribute, sublicense, and / or sell
-// copies of the Software, and to permit persons to whom the Software is
-// furnished to do so, subject to the following conditions :
-//
-// The above copyright notice and this permission notice shall be included in
-// all copies or substantial portions of the Software.
-//
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.IN NO EVENT SHALL THE
-// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-// THE SOFTWARE.
-//
-//------------------------------------------------------------------------------
+﻿// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Runtime.Serialization;
+#if NET8_0_OR_GREATER
+using System.Text.Json;
+#else
 using System.Runtime.Serialization.Formatters.Binary;
+#endif
 using Microsoft.IdentityModel.TestUtils;
 using Xunit;
 
@@ -51,6 +31,14 @@ namespace Microsoft.IdentityModel.Tokens.Tests
 
                 var memoryStream = new MemoryStream();
 
+#if NET8_0_OR_GREATER
+                var serializerOptions = new JsonSerializerOptions();
+                serializerOptions.Converters.Add(new SecurityKeyConverterWithTypeDiscriminator());
+
+                JsonSerializer.Serialize(memoryStream, exception, theoryData.ExceptionType, serializerOptions);
+                memoryStream.Seek(0, SeekOrigin.Begin);
+                var serializedException = JsonSerializer.Deserialize(memoryStream, theoryData.ExceptionType, serializerOptions);
+#else
                 BinaryFormatter formatter = new BinaryFormatter();
 #pragma warning disable SYSLIB0011 // Type or member is obsolete
                 formatter.Serialize(memoryStream, exception);
@@ -63,6 +51,7 @@ namespace Microsoft.IdentityModel.Tokens.Tests
                 var serializedException = formatter.Deserialize(memoryStream);
 #pragma warning restore SYSLIB0011 // Type or member is obsolete
 
+#endif
                 theoryData.ExpectedException.ProcessNoException(context);
 
                 IdentityComparer.AreEqual(exception, serializedException, context);
@@ -89,7 +78,7 @@ namespace Microsoft.IdentityModel.Tokens.Tests
                         ExceptionSetter = (ex) =>
                         {
                             if (!(ex is SecurityTokenInvalidAudienceException securityTokenInvalidAudienceException))
-                                throw new ArgumentException($"expected argument of type {nameof(SecurityTokenInvalidAudienceException)} recieved type {ex.GetType()}");
+                                throw new ArgumentException($"expected argument of type {nameof(SecurityTokenInvalidAudienceException)} received type {ex.GetType()}");
 
                             securityTokenInvalidAudienceException.InvalidAudience = Guid.NewGuid().ToString();
                         }
@@ -106,7 +95,7 @@ namespace Microsoft.IdentityModel.Tokens.Tests
                         ExceptionSetter = (ex) =>
                         {
                             if (!(ex is SecurityTokenInvalidIssuerException securityTokenInvalidIssuerException))
-                                throw new ArgumentException($"expected argument of type {nameof(SecurityTokenInvalidIssuerException)} recieved type {ex.GetType()}");
+                                throw new ArgumentException($"expected argument of type {nameof(SecurityTokenInvalidIssuerException)} received type {ex.GetType()}");
 
                             securityTokenInvalidIssuerException.InvalidIssuer = Guid.NewGuid().ToString();
                         }
@@ -123,7 +112,7 @@ namespace Microsoft.IdentityModel.Tokens.Tests
                         ExceptionSetter = (ex) =>
                         {
                             if (!(ex is SecurityTokenExpiredException securityTokenExpiredException))
-                                throw new ArgumentException($"expected argument of type {nameof(SecurityTokenExpiredException)} recieved type {ex.GetType()}");
+                                throw new ArgumentException($"expected argument of type {nameof(SecurityTokenExpiredException)} received type {ex.GetType()}");
 
                             securityTokenExpiredException.Expires = DateTime.Now;
                         }
@@ -140,7 +129,7 @@ namespace Microsoft.IdentityModel.Tokens.Tests
                         ExceptionSetter = (ex) =>
                         {
                             if (!(ex is SecurityTokenInvalidLifetimeException securityTokenInvalidLifetimeException))
-                                throw new ArgumentException($"expected argument of type {nameof(SecurityTokenInvalidLifetimeException)} recieved type {ex.GetType()}");
+                                throw new ArgumentException($"expected argument of type {nameof(SecurityTokenInvalidLifetimeException)} received type {ex.GetType()}");
 
                             securityTokenInvalidLifetimeException.Expires = DateTime.Now;
                             securityTokenInvalidLifetimeException.NotBefore = DateTime.Now;
@@ -158,7 +147,7 @@ namespace Microsoft.IdentityModel.Tokens.Tests
                         ExceptionSetter = (ex) =>
                         {
                             if (!(ex is SecurityTokenInvalidTypeException securityTokenInvalidTypeException))
-                                throw new ArgumentException($"expected argument of type {nameof(SecurityTokenInvalidTypeException)} recieved type {ex.GetType()}");
+                                throw new ArgumentException($"expected argument of type {nameof(SecurityTokenInvalidTypeException)} received type {ex.GetType()}");
 
                             securityTokenInvalidTypeException.InvalidType = Guid.NewGuid().ToString();
                         }
@@ -175,7 +164,7 @@ namespace Microsoft.IdentityModel.Tokens.Tests
                         ExceptionSetter = (ex) =>
                         {
                             if (!(ex is SecurityTokenNotYetValidException securityTokenNotYetValidException))
-                                throw new ArgumentException($"expected argument of type {nameof(SecurityTokenNotYetValidException)} recieved type {ex.GetType()}");
+                                throw new ArgumentException($"expected argument of type {nameof(SecurityTokenNotYetValidException)} received type {ex.GetType()}");
 
                             securityTokenNotYetValidException.NotBefore = DateTime.Now;
                         }
@@ -192,7 +181,7 @@ namespace Microsoft.IdentityModel.Tokens.Tests
                         ExceptionSetter = (ex) =>
                         {
                             if (!(ex is SecurityTokenInvalidSigningKeyException securityTokenInvalidSigningKeyException))
-                                throw new ArgumentException($"expected argument of type {nameof(SecurityTokenInvalidSigningKeyException)} recieved type {ex.GetType()}");
+                                throw new ArgumentException($"expected argument of type {nameof(SecurityTokenInvalidSigningKeyException)} received type {ex.GetType()}");
 
                             securityTokenInvalidSigningKeyException.SigningKey = new CustomSecurityKey();
                         },
@@ -213,7 +202,7 @@ namespace Microsoft.IdentityModel.Tokens.Tests
                         ExceptionSetter = (ex) =>
                         {
                             if (!(ex is SecurityTokenInvalidAlgorithmException securityTokenInvalidAlgorithm))
-                                throw new ArgumentException($"expected argument of type {nameof(SecurityTokenInvalidAlgorithmException)} recieved type {ex.GetType()}");
+                                throw new ArgumentException($"expected argument of type {nameof(SecurityTokenInvalidAlgorithmException)} received type {ex.GetType()}");
 
                             securityTokenInvalidAlgorithm.InvalidAlgorithm = Guid.NewGuid().ToString();
                         },
@@ -223,6 +212,7 @@ namespace Microsoft.IdentityModel.Tokens.Tests
                         TestId = "SecurityTokenInvalidAlgorithmSerializesPropertiesDefaultValue",
                         ExceptionType = typeof(SecurityTokenInvalidAlgorithmException),
                     },
+#pragma warning disable CS0618 // Type or member is obsolete
                     new SecurityTokenExceptionTheoryData
                     {
                         TestId = "SecurityTokenUnableToValidateExceptionDefaultValue",
@@ -235,20 +225,16 @@ namespace Microsoft.IdentityModel.Tokens.Tests
                         ExceptionSetter = (ex) =>
                         {
                             if (!(ex is SecurityTokenUnableToValidateException securityTokenUnableToValidateException))
-                                throw new ArgumentException($"expected argument of type {nameof(SecurityTokenUnableToValidateException)} recieved type {ex.GetType()}");
+                                throw new ArgumentException($"expected argument of type {nameof(SecurityTokenUnableToValidateException)} received type {ex.GetType()}");
 
                             securityTokenUnableToValidateException.ValidationFailure = ValidationFailure.InvalidIssuer;
                             securityTokenUnableToValidateException.ValidationFailure |= ValidationFailure.InvalidLifetime;
                         },
                     },
+#pragma warning restore CS0618 // Type or member is obsolete
                 };
             }
-        }
-
-        public class CustomSecurityKey : SecurityKey
-        {
-            public override int KeySize => 1;
-        }
+        }    
     }
 
     public class SecurityTokenExceptionTheoryData : TheoryDataBase

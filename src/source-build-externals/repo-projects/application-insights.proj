@@ -16,7 +16,6 @@
     <PropertyGroup>
       <BuildCommandArgs>$(ProjectDirectory)/BASE/src/Microsoft.ApplicationInsights/Microsoft.ApplicationInsights.csproj</BuildCommandArgs>
       <BuildCommandArgs>$(BuildCommandArgs) /p:Configuration=$(Configuration)</BuildCommandArgs>
-      <BuildCommandArgs>$(BuildCommandArgs) /p:MicrosoftSourceLinkGitHubVersion=$(MicrosoftSourceLinkGitHubVersion)</BuildCommandArgs>
       <BuildCommandArgs>$(BuildCommandArgs) /p:StableRelease=True</BuildCommandArgs>
       <BuildCommandArgs>$(BuildCommandArgs) /p:RelativeOutputPathBase=</BuildCommandArgs>
       <BuildCommandArgs>$(BuildCommandArgs) /v:$(LogVerbosity)</BuildCommandArgs>

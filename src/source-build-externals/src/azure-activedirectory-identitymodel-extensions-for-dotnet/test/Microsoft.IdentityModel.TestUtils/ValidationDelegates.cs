@@ -1,33 +1,11 @@
-//------------------------------------------------------------------------------
-//
-// Copyright (c) Microsoft Corporation.
-// All rights reserved.
-//
-// This code is licensed under the MIT License.
-//
-// Permission is hereby granted, free of charge, to any person obtaining a copy
-// of this software and associated documentation files(the "Software"), to deal
-// in the Software without restriction, including without limitation the rights
-// to use, copy, modify, merge, publish, distribute, sublicense, and / or sell
-// copies of the Software, and to permit persons to whom the Software is
-// furnished to do so, subject to the following conditions :
-//
-// The above copyright notice and this permission notice shall be included in
-// all copies or substantial portions of the Software.
-//
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.IN NO EVENT SHALL THE
-// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-// THE SOFTWARE.
-//
-//------------------------------------------------------------------------------
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
+using System.Threading.Tasks;
+using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.IdentityModel.Tokens.Saml;
 using Microsoft.IdentityModel.Tokens.Saml2;
@@ -42,6 +20,11 @@ namespace Microsoft.IdentityModel.TestUtils
         public static AlgorithmValidator AlgorithmValidatorBuilder(bool result)
         {
             return (string algorithm, SecurityKey securityKey, SecurityToken securityToken, TokenValidationParameters validationParameters) => result;
+        }
+
+        public static bool AlgorithmValidator(string algorithm, SecurityKey securityKey, SecurityToken securityToken, TokenValidationParameters validationParameters)
+        {
+            return true;
         }
 
         public static bool AudienceValidatorReturnsFalse(IEnumerable<string> audiences, SecurityToken token, TokenValidationParameters validationParameters)
@@ -74,9 +57,39 @@ namespace Microsoft.IdentityModel.TestUtils
             throw new SecurityTokenInvalidSigningKeyException("IssuerSecurityKeyValidatorThrows");
         }
 
+        public static IEnumerable<SecurityKey> IssuerSigningKeyResolver(string token, SecurityToken securityToken, string kid, TokenValidationParameters validationParameters)
+        {
+            return new List<SecurityKey>();
+        }
+
+        public static IEnumerable<SecurityKey> IssuerSigningKeyResolverUsingConfiguration(string token, SecurityToken securityToken, string kid, TokenValidationParameters validationParameters, BaseConfiguration configuration)
+        {
+            return new List<SecurityKey>();
+        }
+
+        public static bool IssuerSigningKeyValidator(SecurityKey securityKey, SecurityToken securityToken, TokenValidationParameters validationParameters)
+        {
+            return true;
+        }
+
+        public static bool IssuerSigningKeyValidatorUsingConfiguration(SecurityKey securityKey, SecurityToken securityToken, TokenValidationParameters validationParameters, BaseConfiguration configuration)
+        {
+            return true;
+        }
+
         public static string IssuerValidatorEcho(string issuer, SecurityToken token, TokenValidationParameters validationParameters)
         {
             return issuer;
+        }
+
+        public static string IssuerValidatorUsingConfigEcho(string issuer, SecurityToken token, TokenValidationParameters validationParameters, BaseConfiguration baseConfiguration)
+        {
+            return issuer;
+        }
+
+        public static Task<string> IssuerValidatorAsync(string issuer, SecurityToken token, TokenValidationParameters validationParameters)
+        {
+            return Task.FromResult(issuer);
         }
 
         public static string IssuerValidatorReturnsDifferentIssuer(string issuer, SecurityToken token, TokenValidationParameters validationParameters)
@@ -109,9 +122,24 @@ namespace Microsoft.IdentityModel.TestUtils
             throw new SecurityTokenInvalidLifetimeException("LifetimeValidatorThrows");
         }
 
+        public static string NameClaimTypeRetriever(SecurityToken securityToken, string issuer)
+        {
+            return "NameClaimType";
+        }
+
+        public static string RoleClaimTypeRetriever(SecurityToken securityToken, string issuer)
+        {
+            return "RoleClaimType";
+        }
+
         public static SecurityToken SignatureValidatorReturnsJwtTokenAsIs(string token, TokenValidationParameters validationParameters)
         {
             return new JwtSecurityToken(token);
+        }
+
+        public static SecurityToken SignatureValidatorReturnsJsonWebToken(string token, TokenValidationParameters validationParameters)
+        {
+            return new JsonWebToken(token);
         }
 
         public static SecurityToken SignatureValidatorReturnsNull(string token, TokenValidationParameters validationParameters)
@@ -124,9 +152,29 @@ namespace Microsoft.IdentityModel.TestUtils
             throw new SecurityTokenInvalidSignatureException("SignatureValidatorThrows");
         }
 
+        public static SecurityToken SignatureValidatorUsingConfigReturnsJwtTokenAsIs(string token, TokenValidationParameters validationParameters, BaseConfiguration baseConfiguration)
+        {
+            return new JwtSecurityToken(token);
+        }
+
+        public static SecurityToken SignatureValidatorUsingConfigReturnsJsonWebToken(string token, TokenValidationParameters validationParameters, BaseConfiguration baseConfiguration)
+        {
+            return new JsonWebToken(token);
+        }
+
+        public static IEnumerable<SecurityKey> TokenDecryptionKeyResolver(string token, SecurityToken securityToken, string kid, TokenValidationParameters validationParameters)
+        {
+            return new List<SecurityKey>();
+        }
+
         public static SecurityToken TokenReaderReturnsJwtSecurityToken(string token, TokenValidationParameters validationParameters)
         {
             return new JwtSecurityToken(token);
+        }
+
+        public static SecurityToken TokenReaderReturnsJsonWebToken(string token, TokenValidationParameters validationParameters)
+        {
+            return new JsonWebToken(token);
         }
 
         public static SecurityToken TokenReaderReturnsIncorrectSecurityTokenType(string token, TokenValidationParameters validationParameters)
@@ -184,6 +232,16 @@ namespace Microsoft.IdentityModel.TestUtils
         public static bool TokenReplayValidatorThrows(DateTime? expires, string token, TokenValidationParameters validationParameters)
         {
             throw new SecurityTokenReplayDetectedException("TokenReplayValidatorThrows");
+        }
+
+        public static SecurityToken TransformBeforeSignatureValidation(SecurityToken token, TokenValidationParameters validationParameters)
+        {
+            return token;
+        }
+
+        public static string TypeValidator(string type, SecurityToken securityToken, TokenValidationParameters validationParameters)
+        {
+            return type;
         }
     }
 }

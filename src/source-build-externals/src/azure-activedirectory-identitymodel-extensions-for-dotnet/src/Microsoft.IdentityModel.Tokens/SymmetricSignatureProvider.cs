@@ -1,31 +1,8 @@
-//------------------------------------------------------------------------------
-//
-// Copyright (c) Microsoft Corporation.
-// All rights reserved.
-//
-// This code is licensed under the MIT License.
-//
-// Permission is hereby granted, free of charge, to any person obtaining a copy
-// of this software and associated documentation files(the "Software"), to deal
-// in the Software without restriction, including without limitation the rights
-// to use, copy, modify, merge, publish, distribute, sublicense, and / or sell
-// copies of the Software, and to permit persons to whom the Software is
-// furnished to do so, subject to the following conditions :
-//
-// The above copyright notice and this permission notice shall be included in
-// all copies or substantial portions of the Software.
-//
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.IN NO EVENT SHALL THE
-// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-// THE SOFTWARE.
-//
-//------------------------------------------------------------------------------
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System;
+using System.Collections.Generic;
 using System.Security.Cryptography;
 using Microsoft.IdentityModel.Logging;
 
@@ -38,6 +15,22 @@ namespace Microsoft.IdentityModel.Tokens
     {
         private bool _disposed;
         private DisposableObjectPool<KeyedHashAlgorithm> _keyedHashObjectPool;
+
+        /// <summary>
+        /// Mapping from algorithm to the expected signature size in bytes.
+        /// </summary>
+        private static readonly Dictionary<string, int> _expectedSignatureSizeInBytes = new Dictionary<string, int>
+        {
+            { SecurityAlgorithms.HmacSha256, 32 },
+            { SecurityAlgorithms.HmacSha256Signature, 32 },
+            { SecurityAlgorithms.HmacSha384, 48 },
+            { SecurityAlgorithms.HmacSha384Signature, 48 },
+            { SecurityAlgorithms.HmacSha512, 64 },
+            { SecurityAlgorithms.HmacSha512Signature, 64 },
+            { SecurityAlgorithms.Aes128CbcHmacSha256, 16 },
+            { SecurityAlgorithms.Aes192CbcHmacSha384, 24 },
+            { SecurityAlgorithms.Aes256CbcHmacSha512, 32 }
+        };
 
         /// <summary>
         /// This is the minimum <see cref="SymmetricSecurityKey"/>.KeySize when creating and verifying signatures.
@@ -226,6 +219,10 @@ namespace Microsoft.IdentityModel.Tokens
             if (signature == null || signature.Length == 0)
                 throw LogHelper.LogArgumentNullException(nameof(signature));
 
+            // The reason this method doesn't call through to: Verify(input, 0, input.Length, signature, 0, signature.Length);
+            // Is because this method's contract is to check the entire signature, if the signature was truncated and signature.Length
+            // was passed, the signature may verify.
+
             if (_disposed)
             {
                 CryptoProviderCache?.TryRemove(this);
@@ -267,14 +264,107 @@ namespace Microsoft.IdentityModel.Tokens
         /// <exception cref="InvalidOperationException">If the internal <see cref="KeyedHashAlgorithm"/> is null. This can occur if a derived type deletes it or does not create it.</exception>
         public bool Verify(byte[] input, byte[] signature, int length)
         {
+            if (input == null)
+                throw LogHelper.LogArgumentNullException(nameof(input));
+
+            return Verify(input, 0, input.Length, signature, 0, length);
+        }
+
+        /// <inheritdoc/>
+        public override bool Verify(byte[] input, int inputOffset, int inputLength, byte[] signature, int signatureOffset, int signatureLength)
+        {
+            return Verify(input, inputOffset, inputLength, signature, signatureOffset, signatureLength, null);
+        }
+
+        /// <summary>
+        /// This internal method is called from the AuthenticatedEncryptionProvider which passes in the algorithm that defines the size expected for the signature.
+        /// The reason is the way the AuthenticationTag is validated.
+        /// For example when "A128CBC-HS256" is specified, SHA256 will used to create the HMAC and 32 bytes will be generated, but only the first 16 will be validated.
+        /// </summary>
+        /// <param name="input">The bytes to verify.</param>
+        /// <param name="inputOffset">offset in to input bytes to caculate hash.</param>
+        /// <param name="inputLength">number of bytes of signature to use.</param>
+        /// <param name="signature">signature to compare against.</param>
+        /// <param name="signatureOffset">offset into signature array.</param>
+        /// <param name="signatureLength">how many bytes to verfiy.</param>
+        /// <param name="algorithm">algorithm passed by AuthenticatedEncryptionProvider.</param>
+        /// <returns>true if computed signature matches the signature parameter, false otherwise.</returns>
+        internal bool Verify(byte[] input, int inputOffset, int inputLength, byte[] signature, int signatureOffset, int signatureLength, string algorithm)
+        {
             if (input == null || input.Length == 0)
                 throw LogHelper.LogArgumentNullException(nameof(input));
 
             if (signature == null || signature.Length == 0)
                 throw LogHelper.LogArgumentNullException(nameof(signature));
 
-            if (length < 1)
-                throw LogHelper.LogExceptionMessage(new ArgumentException(LogHelper.FormatInvariant(LogMessages.IDX10655, LogHelper.MarkAsNonPII(length))));
+            if (inputOffset < 0)
+                throw LogHelper.LogExceptionMessage(new ArgumentException(
+                    LogHelper.FormatInvariant(
+                        LogMessages.IDX10716,
+                        LogHelper.MarkAsNonPII(nameof(inputOffset)),
+                        LogHelper.MarkAsNonPII(inputOffset))));
+
+            if (inputLength < 1)
+                throw LogHelper.LogExceptionMessage(new ArgumentException(
+                    LogHelper.FormatInvariant(
+                        LogMessages.IDX10655,
+                        LogHelper.MarkAsNonPII(nameof(inputLength)),
+                        LogHelper.MarkAsNonPII(inputLength))));
+
+            if (inputOffset + inputLength > input.Length)
+                throw LogHelper.LogExceptionMessage(new ArgumentException(
+                    LogHelper.FormatInvariant(
+                        LogMessages.IDX10717,
+                        LogHelper.MarkAsNonPII(nameof(inputOffset)),
+                        LogHelper.MarkAsNonPII(nameof(inputLength)),
+                        LogHelper.MarkAsNonPII(nameof(input)),
+                        LogHelper.MarkAsNonPII(inputOffset),
+                        LogHelper.MarkAsNonPII(inputLength),
+                        LogHelper.MarkAsNonPII(input.Length))));
+
+            if (signatureOffset < 0)
+                throw LogHelper.LogExceptionMessage(new ArgumentException(
+                    LogHelper.FormatInvariant(
+                        LogMessages.IDX10716,
+                        LogHelper.MarkAsNonPII(nameof(signatureOffset)),
+                        LogHelper.MarkAsNonPII(signatureOffset))));
+
+            if (signatureLength < 1)
+                throw LogHelper.LogExceptionMessage(new ArgumentException(
+                    LogHelper.FormatInvariant(
+                        LogMessages.IDX10655,
+                        LogHelper.MarkAsNonPII(nameof(signatureLength)),
+                        LogHelper.MarkAsNonPII(signatureLength))));
+
+            if (signatureLength + signatureOffset > signature.Length)
+                throw LogHelper.LogExceptionMessage(new ArgumentException(
+                    LogHelper.FormatInvariant(
+                        LogMessages.IDX10717,
+                        LogHelper.MarkAsNonPII(nameof(signatureOffset)),
+                        LogHelper.MarkAsNonPII(nameof(signatureLength)),
+                        LogHelper.MarkAsNonPII(nameof(signature)),
+                        LogHelper.MarkAsNonPII(signatureOffset),
+                        LogHelper.MarkAsNonPII(signatureLength),
+                        LogHelper.MarkAsNonPII(signature.Length))));
+
+            string algorithmToValidate = algorithm ?? Algorithm;
+
+            // Check that signature length matches algorithm.
+            // If we don't have an entry for the algorithm in our dictionary, that is probably a bug.
+            // This is why a new message was created, rather than using IDX10640.
+            if (!_expectedSignatureSizeInBytes.TryGetValue(algorithmToValidate, out int expectedSignatureLength))
+                throw LogHelper.LogExceptionMessage(new ArgumentException(
+                    LogHelper.FormatInvariant(
+                        LogMessages.IDX10718,
+                        LogHelper.MarkAsNonPII(algorithmToValidate),
+                        LogHelper.MarkAsNonPII(Algorithm))));
+
+            if (expectedSignatureLength != signatureLength)
+                throw LogHelper.LogExceptionMessage(new ArgumentException(
+                    LogHelper.FormatInvariant(
+                        LogMessages.IDX10719,
+                        LogHelper.MarkAsNonPII(signatureLength),
+                        LogHelper.MarkAsNonPII(expectedSignatureLength))));
 
             if (_disposed)
             {
@@ -283,14 +373,14 @@ namespace Microsoft.IdentityModel.Tokens
             }
 
             LogHelper.LogInformation(LogMessages.IDX10643, input);
-            KeyedHashAlgorithm keyedHashAlgorithm = GetKeyedHashAlgorithm(GetKeyBytes(Key), Algorithm);
+            KeyedHashAlgorithm keyedHashAlgorithm = null;
             try
             {
-                return Utility.AreEqual(signature, keyedHashAlgorithm.ComputeHash(input), length);
+                keyedHashAlgorithm = GetKeyedHashAlgorithm(GetKeyBytes(Key), Algorithm);
+                return Utility.AreEqual(signature, keyedHashAlgorithm.ComputeHash(input, inputOffset, inputLength), signatureLength);
             }
             catch
             {
-                CryptoProviderCache?.TryRemove(this);
                 Dispose(true);
                 throw;
             }
@@ -300,6 +390,7 @@ namespace Microsoft.IdentityModel.Tokens
                     ReleaseKeyedHashAlgorithm(keyedHashAlgorithm);
             }
         }
+
 
         #region IDisposable Members
 

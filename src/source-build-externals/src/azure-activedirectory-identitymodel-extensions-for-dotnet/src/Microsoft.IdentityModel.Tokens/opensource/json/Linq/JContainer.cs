@@ -943,12 +943,16 @@ namespace Microsoft.IdentityModel.Json.Linq
         }
 
 #if HAVE_COMPONENT_MODEL
+#pragma warning disable CS8769 // Nullability of reference types in type of parameter doesn't match implemented member (possibly because of nullability attributes).
         string ITypedList.GetListName(PropertyDescriptor[] listAccessors)
+#pragma warning restore CS8769 // Nullability of reference types in type of parameter doesn't match implemented member (possibly because of nullability attributes).
         {
             return string.Empty;
         }
 
+#pragma warning disable CS8769 // Nullability of reference types in type of parameter doesn't match implemented member (possibly because of nullability attributes).
         PropertyDescriptorCollection ITypedList.GetItemProperties(PropertyDescriptor[] listAccessors)
+#pragma warning restore CS8769 // Nullability of reference types in type of parameter doesn't match implemented member (possibly because of nullability attributes).
         {
             ICustomTypeDescriptor? d = First as ICustomTypeDescriptor;
 

@@ -1,35 +1,12 @@
-//------------------------------------------------------------------------------
-//
-// Copyright (c) Microsoft Corporation.
-// All rights reserved.
-//
-// This code is licensed under the MIT License.
-//
-// Permission is hereby granted, free of charge, to any person obtaining a copy
-// of this software and associated documentation files(the "Software"), to deal
-// in the Software without restriction, including without limitation the rights
-// to use, copy, modify, merge, publish, distribute, sublicense, and / or sell
-// copies of the Software, and to permit persons to whom the Software is
-// furnished to do so, subject to the following conditions :
-//
-// The above copyright notice and this permission notice shall be included in
-// all copies or substantial portions of the Software.
-//
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.IN NO EVENT SHALL THE
-// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-// THE SOFTWARE.
-//
-//------------------------------------------------------------------------------
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System;
 using System.IO;
 using System.Security.Cryptography;
 using System.Text;
 using Microsoft.IdentityModel.JsonWebTokens;
+using Microsoft.IdentityModel.Logging;
 using Microsoft.IdentityModel.TestUtils;
 using Microsoft.IdentityModel.Tokens;
 using Xunit;
@@ -45,7 +22,7 @@ namespace Microsoft.IdentityModel.Tokens.Tests
     public class ReferenceTests
     {
 
-#if NET472 || NET6_0
+#if NET472 || NET6_0_OR_GREATER
         [Fact]
         public void ECDH_ESReferenceTest()
         {
@@ -96,7 +73,8 @@ namespace Microsoft.IdentityModel.Tokens.Tests
         [Theory, MemberData(nameof(AuthenticatedEncryptionTheoryData))]
         public void AuthenticatedEncryptionReferenceTest(AuthenticationEncryptionTestParams testParams)
         {
-            var context = new CompareContext();
+            var context = TestUtilities.WriteHeader("AuthenticatedEncryptionReferenceTest", testParams);
+
             var providerForEncryption = CryptoProviderFactory.Default.CreateAuthenticatedEncryptionProvider(testParams.EncryptionKey, testParams.Algorithm);
             var providerForDecryption = CryptoProviderFactory.Default.CreateAuthenticatedEncryptionProvider(testParams.DecryptionKey, testParams.Algorithm);
             var plaintext = providerForDecryption.Decrypt(testParams.Ciphertext, testParams.AuthenticationData, testParams.IV, testParams.AuthenticationTag);
@@ -123,7 +101,7 @@ namespace Microsoft.IdentityModel.Tokens.Tests
             {
                 var theoryData = new TheoryData<AuthenticationEncryptionTestParams>();
 
-                theoryData.Add(new AuthenticationEncryptionTestParams
+                theoryData.Add(new AuthenticationEncryptionTestParams("AES_128_CBC_HMAC_SHA_256")
                 {
                     Algorithm = AES_128_CBC_HMAC_SHA_256.Algorithm,
                     AuthenticationData = AES_128_CBC_HMAC_SHA_256.A,
@@ -132,11 +110,10 @@ namespace Microsoft.IdentityModel.Tokens.Tests
                     DecryptionKey = new SymmetricSecurityKey(AES_128_CBC_HMAC_SHA_256.K) { KeyId = "DecryptionKey.AES_128_CBC_HMAC_SHA_256.K" },
                     EncryptionKey = new SymmetricSecurityKey(AES_128_CBC_HMAC_SHA_256.K) { KeyId = "EncryptionKey.AES_128_CBC_HMAC_SHA_256.K" },
                     IV = AES_128_CBC_HMAC_SHA_256.IV,
-                    Plaintext = AES_128_CBC_HMAC_SHA_256.P,
-                    TestId = "AES_128_CBC_HMAC_SHA_256"
+                    Plaintext = AES_128_CBC_HMAC_SHA_256.P
                 });
 
-                theoryData.Add(new AuthenticationEncryptionTestParams
+                theoryData.Add(new AuthenticationEncryptionTestParams("AES_192_CBC_HMAC_SHA_384")
                 {
                     Algorithm = AES_192_CBC_HMAC_SHA_384.Algorithm,
                     AuthenticationData = AES_192_CBC_HMAC_SHA_384.A,
@@ -145,11 +122,10 @@ namespace Microsoft.IdentityModel.Tokens.Tests
                     DecryptionKey = new SymmetricSecurityKey(AES_192_CBC_HMAC_SHA_384.K) { KeyId = "DecryptionKey.AES_192_CBC_HMAC_SHA_384.K" },
                     EncryptionKey = new SymmetricSecurityKey(AES_192_CBC_HMAC_SHA_384.K) { KeyId = "EncryptionKey.AES_192_CBC_HMAC_SHA_384.K" },
                     IV = AES_192_CBC_HMAC_SHA_384.IV,
-                    Plaintext = AES_192_CBC_HMAC_SHA_384.P,
-                    TestId = "AES_192_CBC_HMAC_SHA_384"
+                    Plaintext = AES_192_CBC_HMAC_SHA_384.P
                 });
 
-                theoryData.Add(new AuthenticationEncryptionTestParams
+                theoryData.Add(new AuthenticationEncryptionTestParams("AES_256_CBC_HMAC_SHA_512")
                 {
                     Algorithm = AES_256_CBC_HMAC_SHA_512.Algorithm,
                     AuthenticationData = AES_256_CBC_HMAC_SHA_512.A,
@@ -158,16 +134,19 @@ namespace Microsoft.IdentityModel.Tokens.Tests
                     DecryptionKey = new SymmetricSecurityKey(AES_256_CBC_HMAC_SHA_512.K) { KeyId = "DecryptionKey.AES_256_CBC_HMAC_SHA_512.K" },
                     EncryptionKey = new SymmetricSecurityKey(AES_256_CBC_HMAC_SHA_512.K) { KeyId = "EncryptionKey.AES_256_CBC_HMAC_SHA_512.K" },
                     IV = AES_256_CBC_HMAC_SHA_512.IV,
-                    Plaintext = AES_256_CBC_HMAC_SHA_512.P,
-                    TestId = "AES_256_CBC_HMAC_SHA_512"
+                    Plaintext = AES_256_CBC_HMAC_SHA_512.P
                 });
 
                 return theoryData;
             }
         }
 
-        public class AuthenticationEncryptionTestParams
+        public class AuthenticationEncryptionTestParams : TheoryDataBase
         {
+            public AuthenticationEncryptionTestParams() { }
+
+            public AuthenticationEncryptionTestParams(string testId) : base(testId) { }
+
             public string Algorithm { get; set; }
             public byte[] AuthenticationData { get; set; }
             public byte[] AuthenticationTag { get; set; }
@@ -176,7 +155,6 @@ namespace Microsoft.IdentityModel.Tokens.Tests
             public SecurityKey EncryptionKey { get; set; }
             public byte[] IV { get; set; }
             public byte[] Plaintext { get; set; }
-            public string TestId { get; set; }
 
             public override string ToString()
             {
