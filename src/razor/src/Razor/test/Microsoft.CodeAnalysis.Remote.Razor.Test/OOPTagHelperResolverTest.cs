@@ -238,20 +238,10 @@ public class OOPTagHelperResolverTest : TagHelperDescriptorTestBase
     {
         public TestProjectSnapshotManager(Workspace workspace)
             : base(
-                  CreateProjectSnapshotManagerDispatcher(),
                   Mock.Of<IErrorReporter>(MockBehavior.Strict),
                   Enumerable.Empty<ProjectSnapshotChangeTrigger>(),
                   workspace)
         {
-        }
-
-        private static ProjectSnapshotManagerDispatcher CreateProjectSnapshotManagerDispatcher()
-        {
-            var dispatcher = new Mock<ProjectSnapshotManagerDispatcher>(MockBehavior.Strict);
-            dispatcher.Setup(d => d.AssertDispatcherThread(It.IsAny<string>())).Verifiable();
-            dispatcher.Setup(d => d.IsDispatcherThread).Returns(true);
-            dispatcher.Setup(d => d.DispatcherScheduler).Returns(TaskScheduler.FromCurrentSynchronizationContext());
-            return dispatcher.Object;
         }
     }
 }

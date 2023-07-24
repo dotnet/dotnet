@@ -3,7 +3,9 @@
 
 #nullable disable
 
+using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
@@ -45,7 +47,7 @@ public class DefaultRazorDocumentManagerTest : ProjectSnapshotManagerDispatcherT
             MockBehavior.Strict);
 
         _projectManager = Mock.Of<ProjectSnapshotManager>(
-            p => p.Projects == new List<IProjectSnapshot>() &&
+            p => p.GetProjects() == ImmutableArray<IProjectSnapshot>.Empty &&
                 p.GetLoadedProject(It.IsAny<ProjectKey>()) == null &&
                 p.GetAllProjectKeys(It.IsAny<string>()) == System.Collections.Immutable.ImmutableArray<ProjectKey>.Empty,
             MockBehavior.Strict);

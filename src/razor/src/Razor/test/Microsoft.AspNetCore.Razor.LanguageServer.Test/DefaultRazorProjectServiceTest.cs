@@ -43,7 +43,7 @@ public class DefaultRazorProjectServiceTest : LanguageServerTestBase
     public void UpdateProject_UpdatesProjectWorkspaceState()
     {
         // Arrange
-        var projectManager = TestProjectSnapshotManager.Create(LegacyDispatcher, ErrorReporter);
+        var projectManager = TestProjectSnapshotManager.Create(ErrorReporter);
         var hostProject = new HostProject("C:/path/to/project.csproj", "C:/path/to/obj", RazorConfiguration.Default, "TestRootNamespace");
         projectManager.ProjectAdded(hostProject);
         var projectService = CreateProjectService(new TestSnapshotResolver(), projectManager);
@@ -61,7 +61,7 @@ public class DefaultRazorProjectServiceTest : LanguageServerTestBase
     public void UpdateProject_UpdatingDocument_MapsRelativeFilePathToActualDocument()
     {
         // Arrange
-        var projectManager = TestProjectSnapshotManager.Create(LegacyDispatcher, ErrorReporter);
+        var projectManager = TestProjectSnapshotManager.Create(ErrorReporter);
         var hostProject = new HostProject("C:/path/to/project.csproj", "C:/path/to/obj", RazorConfiguration.Default, "TestRootNamespace");
         projectManager.ProjectAdded(hostProject);
         var hostDocument = new HostDocument("C:/path/to/file.cshtml", "file.cshtml", FileKinds.Legacy);
@@ -83,7 +83,7 @@ public class DefaultRazorProjectServiceTest : LanguageServerTestBase
     public void UpdateProject_AddsNewDocuments()
     {
         // Arrange
-        var projectManager = TestProjectSnapshotManager.Create(LegacyDispatcher, ErrorReporter);
+        var projectManager = TestProjectSnapshotManager.Create(ErrorReporter);
         var hostProject = new HostProject("C:/path/to/project.csproj", "C:/path/to/obj", RazorConfiguration.Default, "TestRootNamespace");
         projectManager.ProjectAdded(hostProject);
         var hostDocument = new HostDocument("C:/path/to/file.cshtml", "file.cshtml", FileKinds.Legacy);
@@ -105,7 +105,7 @@ public class DefaultRazorProjectServiceTest : LanguageServerTestBase
     public void UpdateProject_MovesDocumentsFromMisc()
     {
         // Arrange
-        var projectManager = TestProjectSnapshotManager.Create(LegacyDispatcher, ErrorReporter);
+        var projectManager = TestProjectSnapshotManager.Create(ErrorReporter);
         var hostDocument = new HostDocument("C:/path/to/file.cshtml", "file.cshtml", FileKinds.Legacy);
         var miscProject = TestProjectSnapshot.Create("C:/__MISC_PROJECT__");
         projectManager.ProjectAdded(miscProject.HostProject);
@@ -138,7 +138,7 @@ public class DefaultRazorProjectServiceTest : LanguageServerTestBase
     public void UpdateProject_MovesExistingDocumentToMisc()
     {
         // Arrange
-        var projectManager = TestProjectSnapshotManager.Create(LegacyDispatcher, ErrorReporter);
+        var projectManager = TestProjectSnapshotManager.Create(ErrorReporter);
         IProjectSnapshot miscProject = TestProjectSnapshot.Create("C:/__MISC_PROJECT__");
         var miscHostProject = new HostProject(miscProject.FilePath, miscProject.IntermediateOutputPath, RazorConfiguration.Default, "TestRootNamespace");
         projectManager.ProjectAdded(miscHostProject);
@@ -171,7 +171,7 @@ public class DefaultRazorProjectServiceTest : LanguageServerTestBase
     public void UpdateProject_KnownDocuments()
     {
         // Arrange
-        var projectManager = TestProjectSnapshotManager.Create(LegacyDispatcher, ErrorReporter);
+        var projectManager = TestProjectSnapshotManager.Create(ErrorReporter);
         var hostProject = new HostProject("path/to/project.csproj", "path/to/obj", RazorConfiguration.Default, "TestRootNamespace");
         projectManager.ProjectAdded(hostProject);
         var document = new HostDocument("path/to/file.cshtml", "file.cshtml", FileKinds.Legacy);
@@ -197,7 +197,7 @@ public class DefaultRazorProjectServiceTest : LanguageServerTestBase
     public void UpdateProject_UpdatesLegacyDocumentsAsComponents()
     {
         // Arrange
-        var projectManager = TestProjectSnapshotManager.Create(LegacyDispatcher, ErrorReporter);
+        var projectManager = TestProjectSnapshotManager.Create(ErrorReporter);
         var hostProject = new HostProject("C:/path/to/project.csproj", "C:/path/to/obj", RazorConfiguration.Default, "TestRootNamespace");
         projectManager.ProjectAdded(hostProject);
         var legacyDocument = new HostDocument("C:/path/to/file.cshtml", "file.cshtml", FileKinds.Legacy);

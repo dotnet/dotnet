@@ -98,7 +98,7 @@ internal class DefaultProjectSnapshotManagerProxy : IProjectSnapshotManagerProxy
             await _joinableTaskFactory.SwitchToMainThreadAsync(CancellationToken.None);
         }
 
-        return _projectSnapshotManager.Projects.ToArray();
+        return _projectSnapshotManager.GetProjects();
     }
 
     // Internal for testing

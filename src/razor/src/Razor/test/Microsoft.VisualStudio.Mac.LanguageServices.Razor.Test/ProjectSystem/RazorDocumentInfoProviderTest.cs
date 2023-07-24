@@ -39,7 +39,7 @@ public class RazorDocumentInfoProviderTest : WorkspaceTestBase
         var textAndVersion = TextAndVersion.Create(sourceText, VersionStamp.Default, hostDocument.FilePath);
         _projectSnapshotManager.DocumentAdded(hostProject.Key, hostDocument, TextLoader.From(textAndVersion));
 
-        _projectSnapshot = _projectSnapshotManager.Projects[0];
+        _projectSnapshot = _projectSnapshotManager.GetProjects()[0];
         _documentSnapshot = _projectSnapshot.GetDocument(hostDocument.FilePath);
 
         var factory = new Mock<VisualStudioMacDocumentInfoFactory>(MockBehavior.Strict);

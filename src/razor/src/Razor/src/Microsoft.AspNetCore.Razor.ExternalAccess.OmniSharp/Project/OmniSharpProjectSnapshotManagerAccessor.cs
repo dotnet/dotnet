@@ -55,7 +55,6 @@ public class OmniSharpProjectSnapshotManagerAccessor
             if (_instance is null)
             {
                 var projectSnapshotManager = new DefaultProjectSnapshotManager(
-                    _projectSnapshotManagerDispatcher.InternalDispatcher,
                     ErrorReporter.Instance,
                     Array.Empty<ProjectSnapshotChangeTrigger>(),
                     _workspace);
