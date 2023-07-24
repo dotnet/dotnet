@@ -1,29 +1,5 @@
-//------------------------------------------------------------------------------
-//
-// Copyright (c) Microsoft Corporation.
-// All rights reserved.
-//
-// This code is licensed under the MIT License.
-//
-// Permission is hereby granted, free of charge, to any person obtaining a copy
-// of this software and associated documentation files(the "Software"), to deal
-// in the Software without restriction, including without limitation the rights
-// to use, copy, modify, merge, publish, distribute, sublicense, and / or sell
-// copies of the Software, and to permit persons to whom the Software is
-// furnished to do so, subject to the following conditions :
-//
-// The above copyright notice and this permission notice shall be included in
-// all copies or substantial portions of the Software.
-//
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.IN NO EVENT SHALL THE
-// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-// THE SOFTWARE.
-//
-//------------------------------------------------------------------------------
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System;
 using System.Security.Cryptography;
@@ -39,18 +15,13 @@ namespace Microsoft.IdentityModel.Tokens.Tests
 {
     public class AsymmetricSignatureTests
     {
-        // Throw for NET45 target for derived RSA types.
         [Fact]
         public void UnsupportedRSATypes()
         {
             var context = new CompareContext("UnsupportedRSATypes");
             TestUtilities.WriteHeader($"{this}.UnsupportedRSATypes");
 
-#if NET452
-            var expectedException = ExpectedException.NotSupportedException();
-#endif
-
-#if NET461 || NET472 || NET_CORE
+#if NET461 || NET462 || NET472 || NET_CORE
             var expectedException = ExpectedException.NoExceptionExpected;
 #endif
             try
@@ -63,12 +34,7 @@ namespace Microsoft.IdentityModel.Tokens.Tests
                 expectedException.ProcessException(ex, context);
             }
 
-#if NET452
-            // RSA-PSS is not available on .NET 4.5.2
-            expectedException = ExpectedException.NotSupportedException("IDX10687:");
-#endif
-
-#if NET461 || NET472 || NET_CORE
+#if NET461 || NET462 || NET472 || NET_CORE
             expectedException = ExpectedException.NoExceptionExpected;
 #endif
 
@@ -141,7 +107,7 @@ namespace Microsoft.IdentityModel.Tokens.Tests
                     },
                     theoryData);
 
-#if NET461 || NET472 || NET_CORE
+#if NET461 || NET462 || NET472 || NET_CORE
                 theoryData.Add(new SignatureProviderTheoryData()
                 {
                     SigningAlgorithm = SecurityAlgorithms.RsaSsaPssSha512,
@@ -185,7 +151,7 @@ namespace Microsoft.IdentityModel.Tokens.Tests
                         SigningKey = new RsaSecurityKey(certTuple.Item1.PrivateKey as RSA),
                         TestId = "CapiCapi" + certTuple.Item3,
                         VerifyKey = new RsaSecurityKey(certTuple.Item2.PublicKey.Key as RSA),
-#if NET461 || NET472
+#if NET461 || NET462 || NET472
                         ExpectedException = ExpectedException.NotSupportedException("IDX10634:"),
 #elif NET_CORE
                         ExpectedException = ExpectedException.NoExceptionExpected,
@@ -199,7 +165,7 @@ namespace Microsoft.IdentityModel.Tokens.Tests
                         SigningKey = new RsaSecurityKey(certTuple.Item1.PrivateKey as RSA),
                         TestId = "CapiCng" + certTuple.Item3,
                         VerifyKey = new RsaSecurityKey(certTuple.Item2.GetRSAPublicKey()),
-#if NET461 || NET472
+#if NET461 || NET462 || NET472
                         ExpectedException = ExpectedException.NotSupportedException("IDX10634:"),
 #elif NET_CORE
                         ExpectedException = ExpectedException.NoExceptionExpected,
@@ -213,7 +179,7 @@ namespace Microsoft.IdentityModel.Tokens.Tests
                         SigningKey = new RsaSecurityKey(certTuple.Item1.GetRSAPrivateKey()),
                         TestId = "CngCapi" + certTuple.Item3,
                         VerifyKey = new RsaSecurityKey(certTuple.Item2.PublicKey.Key as RSA),
-#if NET461 || NET472
+#if NET461 || NET462 || NET472
                         ExpectedException = ExpectedException.NotSupportedException("IDX10634:"),
 #elif NET_CORE
                         ExpectedException = ExpectedException.NoExceptionExpected,
@@ -303,18 +269,6 @@ namespace Microsoft.IdentityModel.Tokens.Tests
                     },
                     theoryData);
 
-#if NET452
-                // RSA-PSS is not available on .NET 4.5.2
-                foreach (var certTuple in AsymmetricSignatureTestData.Certificates)
-                    AsymmetricSignatureTestData.AddRsaPssAlgorithmVariations(new SignatureProviderTheoryData
-                    {
-                        SigningKey = new RsaSecurityKey(certTuple.Item1.PrivateKey as RSA),
-                        TestId = "CapiCapi" + certTuple.Item3,
-                        VerifyKey = new RsaSecurityKey(certTuple.Item2.PublicKey.Key as RSA),
-                        ExpectedException = ExpectedException.NotSupportedException("IDX10634:"),
-                    },
-                    theoryData);
-#endif
                 return theoryData;
             }
         }

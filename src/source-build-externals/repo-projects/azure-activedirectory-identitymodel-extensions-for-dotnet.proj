@@ -16,10 +16,9 @@
       <MicrosoftIdentityModelLoggingProject>$(ProjectDirectory)src/Microsoft.IdentityModel.Logging/Microsoft.IdentityModel.Logging.csproj</MicrosoftIdentityModelLoggingProject>
 
       <BuildCommandArgs>$(BuildCommandArgs) /p:Configuration=$(Configuration)</BuildCommandArgs>
-      <BuildCommandArgs>$(BuildCommandArgs) /p:MicrosoftSourceLinkGitHubVersion=$(MicrosoftSourceLinkGitHubVersion)</BuildCommandArgs>
       <BuildCommandArgs>$(BuildCommandArgs) /v:$(LogVerbosity)</BuildCommandArgs>
       <BuildCommandArgs>$(BuildCommandArgs) $(RedirectRepoOutputToLog)</BuildCommandArgs>
-      <BuildCommandArgs>$(BuildCommandArgs) /p:Version=6.21.0</BuildCommandArgs>
+      <BuildCommandArgs>$(BuildCommandArgs) /p:Version=7.0.0-preview</BuildCommandArgs>
 
       <PackCommandArgs>$(BuildCommandArgs) --output $(ProjectDirectory)pack</PackCommandArgs>
     </PropertyGroup>

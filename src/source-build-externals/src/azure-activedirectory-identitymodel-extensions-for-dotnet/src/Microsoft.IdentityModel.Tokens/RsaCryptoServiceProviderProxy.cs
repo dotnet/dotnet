@@ -1,29 +1,5 @@
-//------------------------------------------------------------------------------
-//
-// Copyright (c) Microsoft Corporation.
-// All rights reserved.
-//
-// This code is licensed under the MIT License.
-//
-// Permission is hereby granted, free of charge, to any person obtaining a copy
-// of this software and associated documentation files(the "Software"), to deal
-// in the Software without restriction, including without limitation the rights
-// to use, copy, modify, merge, publish, distribute, sublicense, and / or sell
-// copies of the Software, and to permit persons to whom the Software is
-// furnished to do so, subject to the following conditions :
-//
-// The above copyright notice and this permission notice shall be included in
-// all copies or substantial portions of the Software.
-//
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.IN NO EVENT SHALL THE
-// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-// THE SOFTWARE.
-//
-//------------------------------------------------------------------------------
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 #if DESKTOP
 
@@ -219,6 +195,64 @@ namespace Microsoft.IdentityModel.Tokens
             return _rsa.VerifyData(input, hash, signature);
         }
 
+#if NET461 || NET462 || NET472 || NETSTANDARD2_0
+        /// <summary>
+        /// Verifies that a digital signature is valid by determining the hash value in the signature using the provided public key and comparing it to the hash value of the provided data.
+        /// </summary>
+        /// <param name="input">The input byte array.</param>
+        /// <param name="offset"></param>
+        /// <param name="length"></param>
+        /// <param name="hash">The hash algorithm to use to create the hash value.</param>
+        /// <param name="hashAlgorithmName"></param>
+        /// <param name="signature">The signature byte array to be verified.</param>
+        /// <returns>true if the signature is valid; otherwise, false.</returns>
+        /// <exception cref="ArgumentNullException">if <paramref name="input"/> is null or Length == 0.</exception>
+        /// <exception cref="ArgumentNullException">if <paramref name="hash"/> is null.</exception>
+        /// <exception cref="ArgumentNullException">if <paramref name="signature"/> is null or Length == 0.</exception>
+        public bool VerifyDataWithLength(byte[] input, int offset, int length, object hash, HashAlgorithmName hashAlgorithmName, byte[] signature)
+        {
+            if (input == null || input.Length == 0)
+                throw LogHelper.LogArgumentNullException(nameof(input));
+
+            if (hash == null)
+                throw LogHelper.LogArgumentNullException(nameof(hash));
+
+            if (signature == null || signature.Length == 0)
+                throw LogHelper.LogArgumentNullException(nameof(signature));
+
+            if (offset < 0)
+                throw LogHelper.LogExceptionMessage(new ArgumentException(
+                    LogHelper.FormatInvariant(
+                        LogMessages.IDX10716,
+                        LogHelper.MarkAsNonPII(nameof(offset)),
+                        LogHelper.MarkAsNonPII(offset))));
+
+            if (length < 1)
+                throw LogHelper.LogExceptionMessage(new ArgumentException(
+                    LogHelper.FormatInvariant(
+                        LogMessages.IDX10655,
+                        LogHelper.MarkAsNonPII(nameof(length)),
+                        LogHelper.MarkAsNonPII(length))));
+
+            if (offset + length > input.Length)
+                throw LogHelper.LogExceptionMessage(new ArgumentException(
+                    LogHelper.FormatInvariant(
+                        LogMessages.IDX10717,
+                        LogHelper.MarkAsNonPII(nameof(offset)),
+                        LogHelper.MarkAsNonPII(nameof(length)),
+                        LogHelper.MarkAsNonPII(nameof(input)),
+                        LogHelper.MarkAsNonPII(offset),
+                        LogHelper.MarkAsNonPII(length),
+                        LogHelper.MarkAsNonPII(input.Length))));
+
+            return _rsa.VerifyHash(
+                (hash as HashAlgorithm).ComputeHash(input, offset, length),
+                signature,
+                hashAlgorithmName,
+                RSASignaturePadding.Pkcs1);
+        }
+#endif
+
         /// <summary>
         /// Exports rsa parameters as <see cref="RSAParameters"/>
         /// </summary>
@@ -255,6 +289,7 @@ namespace Microsoft.IdentityModel.Tokens
                     }
                 }
             }
+
             base.Dispose(disposing);
         }
     }

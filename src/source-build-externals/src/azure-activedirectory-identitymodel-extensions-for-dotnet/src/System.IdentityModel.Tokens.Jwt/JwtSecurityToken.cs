@@ -1,29 +1,5 @@
-﻿//------------------------------------------------------------------------------
-//
-// Copyright (c) Microsoft Corporation.
-// All rights reserved.
-//
-// This code is licensed under the MIT License.
-//
-// Permission is hereby granted, free of charge, to any person obtaining a copy
-// of this software and associated documentation files(the "Software"), to deal
-// in the Software without restriction, including without limitation the rights
-// to use, copy, modify, merge, publish, distribute, sublicense, and / or sell
-// copies of the Software, and to permit persons to whom the Software is
-// furnished to do so, subject to the following conditions :
-//
-// The above copyright notice and this permission notice shall be included in
-// all copies or substantial portions of the Software.
-//
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.IN NO EVENT SHALL THE
-// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-// THE SOFTWARE.
-//
-//------------------------------------------------------------------------------
+﻿// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System.Collections.Generic;
 using System.Security.Claims;
@@ -44,9 +20,10 @@ namespace System.IdentityModel.Tokens.Jwt
         /// Initializes a new instance of <see cref="JwtSecurityToken"/> from a string in JWS Compact serialized format.
         /// </summary>
         /// <param name="jwtEncodedString">A JSON Web Token that has been serialized in JWS Compact serialized format.</param>
-        /// <exception cref="ArgumentNullException">'jwtEncodedString' is null.</exception>
-        /// <exception cref="ArgumentException">'jwtEncodedString' contains only whitespace.</exception>
-        /// <exception cref="ArgumentException">'jwtEncodedString' is not in JWS Compact serialized format.</exception>
+        /// <exception cref="ArgumentNullException">'jwtEncodedString' is null or contains only whitespace.</exception>
+        /// <exception cref="SecurityTokenMalformedException">'jwtEncodedString' contains only whitespace.</exception>
+        /// <exception cref="SecurityTokenMalformedException">'jwtEncodedString' is not in JWE format.</exception>
+        /// <exception cref="SecurityTokenMalformedException">'jwtEncodedString' is not in JWS or JWE format.</exception>
         /// <remarks>
         /// The contents of this <see cref="JwtSecurityToken"/> have not been validated, the JSON Web Token is simply decoded. Validation can be accomplished using <see cref="JwtSecurityTokenHandler.ValidateToken(String, TokenValidationParameters, out SecurityToken)"/>
         /// </remarks>
@@ -62,15 +39,15 @@ namespace System.IdentityModel.Tokens.Jwt
             if (tokenParts.Length == JwtConstants.JwsSegmentCount)
             {
                 if (!JwtTokenUtilities.RegexJws.IsMatch(jwtEncodedString))
-                    throw LogHelper.LogExceptionMessage(new ArgumentException(LogHelper.FormatInvariant(LogMessages.IDX12739, jwtEncodedString)));
+                    throw LogHelper.LogExceptionMessage(new SecurityTokenMalformedException(LogHelper.FormatInvariant(LogMessages.IDX12739, jwtEncodedString)));
             }
             else if (tokenParts.Length == JwtConstants.JweSegmentCount)
             {
                 if (!JwtTokenUtilities.RegexJwe.IsMatch(jwtEncodedString))
-                    throw LogHelper.LogExceptionMessage(new ArgumentException(LogHelper.FormatInvariant(LogMessages.IDX12740, jwtEncodedString)));
+                    throw LogHelper.LogExceptionMessage(new SecurityTokenMalformedException(LogHelper.FormatInvariant(LogMessages.IDX12740, jwtEncodedString)));
             }
             else
-                throw LogHelper.LogExceptionMessage(new ArgumentException(LogHelper.FormatInvariant(LogMessages.IDX12741, jwtEncodedString)));
+                throw LogHelper.LogExceptionMessage(new SecurityTokenMalformedException(LogHelper.FormatInvariant(LogMessages.IDX12741, jwtEncodedString)));
 
             Decode(tokenParts, jwtEncodedString);
         }
@@ -278,7 +255,7 @@ namespace System.IdentityModel.Tokens.Jwt
         public JwtHeader Header { get; internal set; }
 
         /// <summary>
-        /// Gets the 'value' of the 'JWT ID' claim { jti, ''value' }.
+        /// Gets the 'value' of the 'JWT ID' claim { jti, 'value' }.
         /// </summary>
         /// <remarks>If the 'JWT ID' claim is not found, an empty string is returned.</remarks>
         public override string Id
@@ -492,6 +469,9 @@ namespace System.IdentityModel.Tokens.Jwt
             else
                 return Header.SerializeToJson() + ".";
         }
+
+        /// <inheritdoc/>
+        public override string UnsafeToString() => RawData;
 
         /// <summary>
         /// Decodes the string into the header, payload and signature.

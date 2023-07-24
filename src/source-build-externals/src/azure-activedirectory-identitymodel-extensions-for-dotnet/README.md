@@ -8,6 +8,10 @@ IdentityModel Extensions for .NET provide assemblies that are interesting for we
 
 You can find the release notes for each version [here](https://github.com/AzureAD/azure-activedirectory-identitymodel-extensions-for-dotnet/releases). Older versions can be found [here](https://github.com/AzureAD/azure-activedirectory-identitymodel-extensions-for-dotnet/wiki/Release-Notes).
 
+## Note about 6.28.0
+We delisted 6.28.0 as we found an edge case where a null reference could occur.
+Please use 6.28.1.
+
 ## Note about 6.x
 
 If you noticed, we bumped the release from 5.x to 6.x\
@@ -19,7 +23,7 @@ Internally at Microsoft we were quickly required to remove all 3rd party librari
 Since there were some breaking changes, given the time-line we had to maintain two releases.
 
 Both of these branches were public and moved forward mostly in lock-step.\
-Once we finished our SignedHttpRequest functionality in the 6.x branch, we realized the delta between 5.x aqnd 6.x was too large to maintain in both branches.\
+Once we finished our SignedHttpRequest functionality in the 6.x branch, we realized the delta between 5.x and 6.x was too large to maintain in both branches.\
 We decided now was the time to switch to a single release branch.\
 Since internally the versioning was at 6.4.2, we needed to release at 6.5.0.
 
@@ -53,13 +57,13 @@ The scenarios supported by IdentityModel extensions for .NET are described in [S
 - [Developing ASP.NET Apps with Azure Active Directory](https://docs.microsoft.com/en-us/aspnet/identity/overview/getting-started/developing-aspnet-apps-with-windows-azure-active-directory)
 - [Validating tokens](https://github.com/AzureAD/azure-activedirectory-identitymodel-extensions-for-dotnet/wiki/ValidatingTokens)
 - more generally, the library's [Wiki](https://github.com/AzureAD/azure-activedirectory-identitymodel-extensions-for-dotnet/wiki)
-- the [reference documentation](https://docs.microsoft.com/en-us/dotnet/api/overview/azure/activedirectory/client?view=azure-dotnet)
+- the [reference documentation](https://learn.microsoft.com/dotnet/api/microsoft.identitymodel.jsonwebtokens.jsonwebtokenhandler?view=msal-web-dotnet-latest)
 
 ## Community Help and Support
 
 We leverage [Stack Overflow](http://stackoverflow.com/) to work with the community on supporting Azure Active Directory and its SDKs, including this one! We highly recommend you ask your questions on Stack Overflow (we're all on there!) Also browse existing issues to see if someone has had your question before.
 
-We recommend you use the "adal" tag so we can see it! Here is the latest Q&A on Stack Overflow for ADAL: [http://stackoverflow.com/questions/tagged/adal](http://stackoverflow.com/questions/tagged/adal)
+We recommend you use the "adal" tag so we can see it! Here is the latest Q&A on Stack Overflow for IdentityModel: [https://stackoverflow.com/questions/tagged/identityModel](https://stackoverflow.com/questions/tagged/identityModel)
 
 ## Security Reporting
 

@@ -31,7 +31,7 @@ using System.Diagnostics.CodeAnalysis;
 [assembly: SuppressMessage("Reliability", "CA2000:Dispose objects before losing scope", Justification = "Doesn't own object", Scope = "member", Target = "~M:Microsoft.IdentityModel.Protocols.WsFederation.WsFederationMetadataSerializer.ReadEntityDescriptor(System.Xml.XmlReader)~Microsoft.IdentityModel.Protocols.WsFederation.WsFederationConfiguration")]
 
 [assembly: SuppressMessage("Usage", "CA2227:Collection properties should be read only", Justification = "Breaking change", Scope = "member", Target = "~P:Microsoft.IdentityModel.Protocols.WsFederation.SecurityTokenServiceTypeRoleDescriptor.KeyInfos")]
-#if NET6_0
+#if NET6_0_OR_GREATER
 [assembly: SuppressMessage("Globalization", "CA1307:Specify StringComparison", Justification = "Adding StringComparison.Ordinal adds a performance penalty.", Scope = "member", Target = "~M:Microsoft.IdentityModel.Protocols.WsFederation.QueryHelper.ParseNullableQuery(System.String)~System.Collections.Generic.IDictionary{System.String,System.Collections.Generic.IList{System.String}}")]
 #endif
 
