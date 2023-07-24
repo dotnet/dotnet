@@ -84,6 +84,7 @@
       <!-- check box -->
       <CheckBox
                     Grid.Column="0"
+                    Style="{StaticResource CheckBoxSelectorAware}"
                     Margin="4,12,4,0"
                     VerticalAlignment="top"
                     Visibility="{Binding CheckBoxesEnabled, RelativeSource={RelativeSource AncestorType={x:Type nuget:InfiniteScrollList}}, Converter={StaticResource BooleanToHiddenVisibilityConverter}}"

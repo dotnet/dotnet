@@ -737,11 +737,11 @@ namespace Dotnet.Integration.Test
                 string invalidMessage;
                 if (badCommand.StartsWith("-"))
                 {
-                    invalidMessage = "error: Unrecognized option";
+                    invalidMessage = ": Unrecognized option";
                 }
                 else
                 {
-                    invalidMessage = "error: Unrecognized command";
+                    invalidMessage = ": Unrecognized command";
                 }
 
                 Assert.True(result.Output.Contains(invalidMessage), "Expected error is " + invalidMessage + ". Actual error is " + result.Output);
