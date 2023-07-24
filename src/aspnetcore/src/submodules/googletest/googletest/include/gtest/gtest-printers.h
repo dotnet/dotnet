@@ -298,8 +298,8 @@ struct FindFirstPrinter<
 //  - Print containers (they have begin/end/etc).
 //  - Print function pointers.
 //  - Print object pointers.
-//  - Use the stream operator, if available.
 //  - Print protocol buffers.
+//  - Use the stream operator, if available.
 //  - Print types convertible to BiggestInt.
 //  - Print types convertible to StringView, if available.
 //  - Fallback to printing the raw bytes of the object.
@@ -531,7 +531,7 @@ int AppropriateResolution(FloatType val) {
     } else if (val >= 0.0001) {
       mulfor6 = 1e9;
     }
-    if (static_cast<float>(static_cast<int32_t>(val * mulfor6 + 0.5)) /
+    if (static_cast<FloatType>(static_cast<int32_t>(val * mulfor6 + 0.5)) /
             mulfor6 ==
         val)
       return 6;
@@ -546,7 +546,7 @@ int AppropriateResolution(FloatType val) {
     } else if (val >= 1e6) {  // 1,000,000 to 9,999,999
       divfor6 = 10;
     }
-    if (static_cast<float>(static_cast<int32_t>(val / divfor6 + 0.5)) *
+    if (static_cast<FloatType>(static_cast<int32_t>(val / divfor6 + 0.5)) *
             divfor6 ==
         val)
       return 6;
