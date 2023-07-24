@@ -3,7 +3,7 @@
   <Import Project="..\..\build\commonTest.props" />
 
   <PropertyGroup>
-    <TargetFrameworks>net452</TargetFrameworks>
+    <TargetFrameworks>net462</TargetFrameworks>
     <AssemblyName>CrossVersionTokenValidation.Tests</AssemblyName>
     <AssemblyOriginatorKeyFile>$(MSBuildThisFileDirectory)..\..\build\35MSSharedLib1024.snk</AssemblyOriginatorKeyFile>
     <FileUpgradeFlags>
@@ -31,7 +31,7 @@
     <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="$(SystemIdentityModelTokensJwtVersion4x)" />
   </ItemGroup>
   
-  <ItemGroup Condition=" '$(TargetFramework)' == 'net452' ">
+  <ItemGroup Condition=" '$(TargetFramework)' == 'net462' ">
     <Reference Include="System.IdentityModel" />
   </ItemGroup>
   

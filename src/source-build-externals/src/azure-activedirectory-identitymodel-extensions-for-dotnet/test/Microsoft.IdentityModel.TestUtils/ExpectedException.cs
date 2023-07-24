@@ -1,29 +1,5 @@
-//------------------------------------------------------------------------------
-//
-// Copyright (c) Microsoft Corporation.
-// All rights reserved.
-//
-// This code is licensed under the MIT License.
-//
-// Permission is hereby granted, free of charge, to any person obtaining a copy
-// of this software and associated documentation files(the "Software"), to deal
-// in the Software without restriction, including without limitation the rights
-// to use, copy, modify, merge, publish, distribute, sublicense, and / or sell
-// copies of the Software, and to permit persons to whom the Software is
-// furnished to do so, subject to the following conditions :
-//
-// The above copyright notice and this permission notice shall be included in
-// all copies or substantial portions of the Software.
-//
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.IN NO EVENT SHALL THE
-// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-// THE SOFTWARE.
-//
-//------------------------------------------------------------------------------
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System;
 using System.Collections.Generic;
@@ -74,6 +50,11 @@ namespace Microsoft.IdentityModel.TestUtils
         public static ExpectedException SecurityTokenDecryptionFailedException(string substringExpected = null, Type innerTypeExpected = null)
         {
             return new ExpectedException(typeof(SecurityTokenDecryptionFailedException), substringExpected, innerTypeExpected);
+        }
+
+        public static ExpectedException SecurityTokenMalformedTokenException(string substringExpected = null, Type innerTypeExpected = null)
+        {
+            return new ExpectedException(typeof(SecurityTokenMalformedException), substringExpected, innerTypeExpected);
         }
 
         public static ExpectedException InvalidOperationException(string substringExpected = null, Type inner = null, string contains = null)
@@ -159,6 +140,13 @@ namespace Microsoft.IdentityModel.TestUtils
                 {
                     HandleError("exception.InnerException != expectedException.InnerTypeExpected." + "\nexception.InnerException: '" + exception.InnerException + "\nInnerTypeExpected: " + InnerTypeExpected, errors);
                 }
+
+                if (!string.IsNullOrWhiteSpace(InnerSubstringExpected) && !exception.InnerException.Message.Contains(InnerSubstringExpected))
+                {
+                    HandleError($"!InnerException.Message.Contains('{InnerSubstringExpected}').\nInnerException.Message: {exception.InnerException.Message} \nexpectedException.InnerSubstringExpected: {InnerSubstringExpected}", errors);
+                    return;
+                }
+
             }
 
             if (PropertiesExpected != null && PropertiesExpected.Count > 0)
@@ -225,7 +213,9 @@ namespace Microsoft.IdentityModel.TestUtils
 
         public static ExpectedException SecurityTokenUnableToValidateException(string substringExpected = null, Type innerTypeExpected = null)
         {
+#pragma warning disable CS0618 // Type or member is obsolete
             return new ExpectedException(typeof(SecurityTokenUnableToValidateException), substringExpected, innerTypeExpected);
+#pragma warning restore CS0618 // Type or member is obsolete
         }
 
         public static ExpectedException SecurityTokenEncryptionFailedException(string substringExpected = null, Type innerTypeExpected = null)
@@ -317,6 +307,8 @@ namespace Microsoft.IdentityModel.TestUtils
         public Dictionary<string, object> PropertiesExpected { get; set; } = new Dictionary<string, object>();
 
         public string SubstringExpected { get; set; }
+
+        public string InnerSubstringExpected { get; set; }
 
         public override string ToString()
         {

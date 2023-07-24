@@ -1,33 +1,10 @@
-﻿//------------------------------------------------------------------------------
-//
-// Copyright (c) Microsoft Corporation.
-// All rights reserved.
-//
-// This code is licensed under the MIT License.
-//
-// Permission is hereby granted, free of charge, to any person obtaining a copy
-// of this software and associated documentation files(the "Software"), to deal
-// in the Software without restriction, including without limitation the rights
-// to use, copy, modify, merge, publish, distribute, sublicense, and / or sell
-// copies of the Software, and to permit persons to whom the Software is
-// furnished to do so, subject to the following conditions :
-//
-// The above copyright notice and this permission notice shall be included in
-// all copies or substantial portions of the Software.
-//
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.IN NO EVENT SHALL THE
-// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-// THE SOFTWARE.
-//
-//------------------------------------------------------------------------------
+﻿// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using Microsoft.IdentityModel.Logging;
 using System;
 using System.ComponentModel;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using static Microsoft.IdentityModel.Logging.LogHelper;
 
@@ -42,9 +19,10 @@ namespace Microsoft.IdentityModel.Tokens
         private int _maximumTokenSizeInBytes = TokenValidationParameters.DefaultMaximumTokenSizeInBytes;
 
         /// <summary>
-        /// Default lifetime of tokens created. When creating tokens, if 'expires' and 'notbefore' are both null, 
-        /// then a default will be set to: expires = DateTime.UtcNow, notbefore = DateTime.UtcNow + TimeSpan.FromMinutes(TokenLifetimeInMinutes).
+        /// Default lifetime of tokens created. When creating tokens, if 'expires', 'notbefore' or 'issuedat' are null, 
+        /// then a default will be set to: issuedat = DateTime.UtcNow, notbefore = DateTime.UtcNow, expires = DateTime.UtcNow + TimeSpan.FromMinutes(TokenLifetimeInMinutes).
         /// </summary>
+        /// <remarks>See: <see cref="SetDefaultTimesOnTokenCreation"/> for configuration.</remarks>
         public static readonly int DefaultTokenLifetimeInMinutes = 60;
 
         /// <summary>
@@ -88,6 +66,16 @@ namespace Microsoft.IdentityModel.Tokens
         public virtual Task<TokenValidationResult> ValidateTokenAsync(string token, TokenValidationParameters validationParameters) => throw new NotImplementedException();
 
         /// <summary>
+        /// Validates a token.
+        /// On a validation failure, no exception will be thrown; instead, the exception will be set in the returned TokenValidationResult.Exception property.
+        /// Callers should always check the TokenValidationResult.IsValid property to verify the validity of the result.
+        /// </summary>
+        /// <param name="token">The <see cref="SecurityToken"/> to be validated.</param>
+        /// <param name="validationParameters">A <see cref="TokenValidationParameters"/> required for validation.</param>
+        /// <returns>A <see cref="TokenValidationResult"/></returns>
+        public virtual Task<TokenValidationResult> ValidateTokenAsync(SecurityToken token, TokenValidationParameters validationParameters) => throw new NotImplementedException();
+
+        /// <summary>
         /// Converts a string into an instance of <see cref="SecurityToken"/>.
         /// </summary>
         /// <param name="token">The string to be deserialized.</param>
@@ -95,6 +83,17 @@ namespace Microsoft.IdentityModel.Tokens
         /// <exception cref="ArgumentException">'token.Length' is greater than <see cref="TokenHandler.MaximumTokenSizeInBytes"/>.</exception>
         /// <returns>A <see cref="SecurityToken"/>.</returns>
         public virtual SecurityToken ReadToken(string token) => throw new NotImplementedException();
+
+        /// <summary>
+        /// Called by base class to create a <see cref="ClaimsIdentity"/>.
+        /// Currently only used by the JsonWebTokenHandler to allow for a Lazy creation.
+        /// </summary>
+        /// <param name="securityToken">the <see cref="SecurityToken"/> that has the Claims.</param>
+        /// <param name="tokenValidationParameters">the <see cref="TokenValidationParameters"/> that was used to validate the token.</param>
+        /// <param name="issuer">the 'issuer' to use by default when creating a Claim.</param>
+        /// <returns>A <see cref="ClaimsIdentity"/>.</returns>
+        /// <exception cref="NotImplementedException"></exception>
+        internal virtual ClaimsIdentity CreateClaimsIdentityInternal(SecurityToken securityToken, TokenValidationParameters tokenValidationParameters, string issuer) => throw new NotImplementedException();
 
         #endregion
     }

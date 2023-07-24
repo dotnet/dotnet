@@ -1,29 +1,5 @@
-//------------------------------------------------------------------------------
-//
-// Copyright (c) Microsoft Corporation.
-// All rights reserved.
-//
-// This code is licensed under the MIT License.
-//
-// Permission is hereby granted, free of charge, to any person obtaining a copy
-// of this software and associated documentation files(the "Software"), to deal
-// in the Software without restriction, including without limitation the rights
-// to use, copy, modify, merge, publish, distribute, sublicense, and / or sell
-// copies of the Software, and to permit persons to whom the Software is
-// furnished to do so, subject to the following conditions :
-//
-// The above copyright notice and this permission notice shall be included in
-// all copies or substantial portions of the Software.
-//
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.IN NO EVENT SHALL THE
-// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-// THE SOFTWARE.
-//
-//------------------------------------------------------------------------------
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System;
 using System.Globalization;
@@ -50,15 +26,6 @@ namespace Microsoft.IdentityModel.Tokens.Tests
 
             // testing constructor that takes Rsa instance
             RsaSecurityKeyConstructorWithRsa(null, ExpectedException.ArgumentNullException("rsa"));
-#if NET452
-            RSA rsaCsp_2048 = new RSACryptoServiceProvider();
-            rsaCsp_2048.ImportParameters(KeyingMaterial.RsaParameters_2048);
-            RSA rsaCsp_2048_Public = new RSACryptoServiceProvider();
-            rsaCsp_2048_Public.ImportParameters(KeyingMaterial.RsaParameters_2048_Public);
-
-            RsaSecurityKeyConstructorWithRsa(rsaCsp_2048, ExpectedException.NoExceptionExpected);
-            RsaSecurityKeyConstructorWithRsa(rsaCsp_2048_Public, ExpectedException.NoExceptionExpected);
-#endif
         }
 
         private void RsaSecurityKeyConstructor(RSAParameters parameters, ExpectedException ee)
@@ -99,7 +66,7 @@ namespace Microsoft.IdentityModel.Tokens.Tests
         public static TheoryData<string, SecurityKey, bool> HasPrivateKeyTheoryData()
         {
             var theoryData = new TheoryData<string, SecurityKey, bool>();
-#if NET452 || NET461
+#if NET461 || NET462
             theoryData.Add(
                 "KeyingMaterial.RsaSecurityKeyWithCspProvider_2048",
                 KeyingMaterial.RsaSecurityKeyWithCspProvider_2048,
@@ -112,7 +79,8 @@ namespace Microsoft.IdentityModel.Tokens.Tests
                 false
             );
 #endif
-#if NET461
+
+#if NET461 || NET462
 
             theoryData.Add(
                 "KeyingMaterial.RsaSecurityKeyWithCngProvider_2048",
@@ -157,10 +125,6 @@ namespace Microsoft.IdentityModel.Tokens.Tests
         [Fact]
         public void KeySize()
         {
-#if NET452
-            Assert.True(KeyingMaterial.RsaSecurityKeyWithCspProvider_2048.KeySize == 2048, string.Format(CultureInfo.InvariantCulture, "Keysize '{0}' != 2048", KeyingMaterial.RsaSecurityKeyWithCspProvider_2048.KeySize));
-            Assert.True(KeyingMaterial.RsaSecurityKeyWithCspProvider_2048_Public.KeySize == 2048, string.Format(CultureInfo.InvariantCulture, "Keysize '{0}' != 2048", KeyingMaterial.RsaSecurityKeyWithCspProvider_2048.KeySize));
-#endif
             Assert.True(KeyingMaterial.RsaSecurityKey_2048.KeySize == 2048, string.Format(CultureInfo.InvariantCulture, "Keysize '{0}' != 2048", KeyingMaterial.RsaSecurityKey_2048.KeySize));
             Assert.True(KeyingMaterial.RsaSecurityKey_4096.KeySize == 4096, string.Format(CultureInfo.InvariantCulture, "Keysize '{0}' != 4096", KeyingMaterial.RsaSecurityKey_4096.KeySize));
         }

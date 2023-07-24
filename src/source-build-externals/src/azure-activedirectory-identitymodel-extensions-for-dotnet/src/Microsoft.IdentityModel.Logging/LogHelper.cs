@@ -1,34 +1,13 @@
-//------------------------------------------------------------------------------
-//
-// Copyright (c) Microsoft Corporation.
-// All rights reserved.
-//
-// This code is licensed under the MIT License.
-//
-// Permission is hereby granted, free of charge, to any person obtaining a copy
-// of this software and associated documentation files(the "Software"), to deal
-// in the Software without restriction, including without limitation the rights
-// to use, copy, modify, merge, publish, distribute, sublicense, and / or sell
-// copies of the Software, and to permit persons to whom the Software is
-// furnished to do so, subject to the following conditions :
-//
-// The above copyright notice and this permission notice shall be included in
-// all copies or substantial portions of the Software.
-//
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.IN NO EVENT SHALL THE
-// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-// THE SOFTWARE.
-//
-//------------------------------------------------------------------------------
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System;
+using System.Data;
+using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Tracing;
 using System.Globalization;
 using System.Linq;
+using System.Text.RegularExpressions;
 using Microsoft.IdentityModel.Abstractions;
 
 namespace Microsoft.IdentityModel.Logging
@@ -58,6 +37,13 @@ namespace Microsoft.IdentityModel.Logging
         /// </summary>
         private static string _piiOnLogMessage = "PII logging is ON, do not use in production. See https://aka.ms/IdentityModel/PII for details. ";
 
+        // internal for testing purposes only
+        internal static bool HeaderWritten
+        {
+            get { return _isHeaderWritten; }
+            set { _isHeaderWritten = value; }
+        }
+
         /// <summary>
         /// Logs an exception using the event source logger and returns new <see cref="ArgumentNullException"/> exception.
         /// </summary>
@@ -73,7 +59,7 @@ namespace Microsoft.IdentityModel.Logging
         /// </summary>
         /// <param name="message">message to log.</param>
         /// <remarks>EventLevel is set to Error.</remarks>
-        public static T LogException<T>(string message) where T : Exception
+        public static T LogException<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] T>(string message) where T : Exception
         {
             return LogException<T>(EventLevel.Error, null, message, null);
         }
@@ -84,11 +70,10 @@ namespace Microsoft.IdentityModel.Logging
         /// <param name="argumentName">Identifies the argument whose value generated the ArgumentException.</param>
         /// <param name="message">message to log.</param>
         /// <remarks>EventLevel is set to Error.</remarks>
-        public static T LogArgumentException<T>(string argumentName, string message) where T : ArgumentException
+        public static T LogArgumentException<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] T>(string argumentName, string message) where T : ArgumentException
         {
             return LogArgumentException<T>(EventLevel.Error, argumentName, null, message, null);
         }
-
 
         /// <summary>
         /// Logs an exception using the event source logger and returns new typed exception.
@@ -96,7 +81,7 @@ namespace Microsoft.IdentityModel.Logging
         /// <param name="format">Format string of the log message.</param>
         /// <param name="args">An object array that contains zero or more objects to format.</param>
         /// <remarks>EventLevel is set to Error.</remarks>
-        public static T LogException<T>(string format, params object[] args) where T : Exception
+        public static T LogException<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] T>(string format, params object[] args) where T : Exception
         {
             return LogException<T>(EventLevel.Error, null, format, args);
         }
@@ -108,7 +93,7 @@ namespace Microsoft.IdentityModel.Logging
         /// <param name="format">Format string of the log message.</param>
         /// <param name="args">An object array that contains zero or more objects to format.</param>
         /// <remarks>EventLevel is set to Error.</remarks>
-        public static T LogArgumentException<T>(string argumentName, string format, params object[] args) where T : ArgumentException
+        public static T LogArgumentException<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] T>(string argumentName, string format, params object[] args) where T : ArgumentException
         {
             return LogArgumentException<T>(EventLevel.Error, argumentName, null, format, args);
         }
@@ -119,7 +104,7 @@ namespace Microsoft.IdentityModel.Logging
         /// <param name="innerException">the inner <see cref="Exception"/> to be added to the outer exception.</param>
         /// <param name="message">message to log.</param>
         /// <remarks>EventLevel is set to Error.</remarks>
-        public static T LogException<T>(Exception innerException, string message) where T : Exception
+        public static T LogException<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] T>(Exception innerException, string message) where T : Exception
         {
             return LogException<T>(EventLevel.Error, innerException, message, null);
         }
@@ -131,7 +116,7 @@ namespace Microsoft.IdentityModel.Logging
         /// <param name="innerException">the inner <see cref="Exception"/> to be added to the outer exception.</param>
         /// <param name="message">message to log.</param>
         /// <remarks>EventLevel is set to Error.</remarks>
-        public static T LogArgumentException<T>(string argumentName, Exception innerException, string message) where T : ArgumentException
+        public static T LogArgumentException<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] T>(string argumentName, Exception innerException, string message) where T : ArgumentException
         {
             return LogArgumentException<T>(EventLevel.Error, argumentName, innerException, message, null);
         }
@@ -143,7 +128,7 @@ namespace Microsoft.IdentityModel.Logging
         /// <param name="format">Format string of the log message.</param>
         /// <param name="args">An object array that contains zero or more objects to format.</param>
         /// <remarks>EventLevel is set to Error.</remarks>
-        public static T LogException<T>(Exception innerException, string format, params object[] args) where T : Exception
+        public static T LogException<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] T>(Exception innerException, string format, params object[] args) where T : Exception
         {
             return LogException<T>(EventLevel.Error, innerException, format, args);
         }
@@ -156,7 +141,7 @@ namespace Microsoft.IdentityModel.Logging
         /// <param name="format">Format string of the log message.</param>
         /// <param name="args">An object array that contains zero or more objects to format.</param>
         /// <remarks>EventLevel is set to Error.</remarks>
-        public static T LogArgumentException<T>(string argumentName, Exception innerException, string format, params object[] args) where T : ArgumentException
+        public static T LogArgumentException<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] T>(string argumentName, Exception innerException, string format, params object[] args) where T : ArgumentException
         {
             return LogArgumentException<T>(EventLevel.Error, argumentName, innerException, format, args);
         }
@@ -166,7 +151,7 @@ namespace Microsoft.IdentityModel.Logging
         /// </summary>
         /// <param name="eventLevel">Identifies the level of an event to be logged.</param>
         /// <param name="message">message to log.</param>
-        public static T LogException<T>(EventLevel eventLevel, string message) where T : Exception
+        public static T LogException<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] T>(EventLevel eventLevel, string message) where T : Exception
         {
             return LogException<T>(eventLevel, null, message, null);
         }
@@ -177,7 +162,7 @@ namespace Microsoft.IdentityModel.Logging
         /// <param name="eventLevel">Identifies the level of an event to be logged.</param>
         /// <param name="argumentName">Identifies the argument whose value generated the ArgumentException.</param>
         /// <param name="message">message to log.</param>
-        public static T LogArgumentException<T>(EventLevel eventLevel, string argumentName, string message) where T : ArgumentException
+        public static T LogArgumentException<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] T>(EventLevel eventLevel, string argumentName, string message) where T : ArgumentException
         {
             return LogArgumentException<T>(eventLevel, argumentName, null, message, null);
         }
@@ -188,7 +173,7 @@ namespace Microsoft.IdentityModel.Logging
         /// <param name="eventLevel">Identifies the level of an event to be logged.</param>
         /// <param name="format">Format string of the log message.</param>
         /// <param name="args">An object array that contains zero or more objects to format.</param>
-        public static T LogException<T>(EventLevel eventLevel, string format, params object[] args) where T : Exception
+        public static T LogException<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] T>(EventLevel eventLevel, string format, params object[] args) where T : Exception
         {
             return LogException<T>(eventLevel, null, format, args);
         }
@@ -200,7 +185,7 @@ namespace Microsoft.IdentityModel.Logging
         /// <param name="argumentName">Identifies the argument whose value generated the ArgumentException.</param>
         /// <param name="format">Format string of the log message.</param>
         /// <param name="args">An object array that contains zero or more objects to format.</param>
-        public static T LogArgumentException<T>(EventLevel eventLevel, string argumentName, string format, params object[] args) where T : ArgumentException
+        public static T LogArgumentException<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] T>(EventLevel eventLevel, string argumentName, string format, params object[] args) where T : ArgumentException
         {
             return LogArgumentException<T>(eventLevel, argumentName, null, format, args);
         }
@@ -211,7 +196,7 @@ namespace Microsoft.IdentityModel.Logging
         /// <param name="eventLevel">Identifies the level of an event to be logged.</param>
         /// <param name="innerException">the inner <see cref="Exception"/> to be added to the outer exception.</param>
         /// <param name="message">message to log.</param>
-        public static T LogException<T>(EventLevel eventLevel, Exception innerException, string message) where T : Exception
+        public static T LogException<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] T>(EventLevel eventLevel, Exception innerException, string message) where T : Exception
         {
             return LogException<T>(eventLevel, innerException, message, null);
         }
@@ -223,7 +208,7 @@ namespace Microsoft.IdentityModel.Logging
         /// <param name="argumentName">Identifies the argument whose value generated the ArgumentException.</param>
         /// <param name="innerException">the inner <see cref="Exception"/> to be added to the outer exception.</param>
         /// <param name="message">message to log.</param>
-        public static T LogArgumentException<T>(EventLevel eventLevel, string argumentName, Exception innerException, string message) where T : ArgumentException
+        public static T LogArgumentException<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] T>(EventLevel eventLevel, string argumentName, Exception innerException, string message) where T : ArgumentException
         {
             return LogArgumentException<T>(eventLevel, argumentName, innerException, message, null);
         }
@@ -235,7 +220,7 @@ namespace Microsoft.IdentityModel.Logging
         /// <param name="innerException">the inner <see cref="Exception"/> to be added to the outer exception.</param>
         /// <param name="format">Format string of the log message.</param>
         /// <param name="args">An object array that contains zero or more objects to format.</param>
-        public static T LogException<T>(EventLevel eventLevel, Exception innerException, string format, params object[] args) where T : Exception
+        public static T LogException<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] T>(EventLevel eventLevel, Exception innerException, string format, params object[] args) where T : Exception
         {
             return LogExceptionImpl<T>(eventLevel, null, innerException, format, args);
         }
@@ -248,7 +233,7 @@ namespace Microsoft.IdentityModel.Logging
         /// <param name="innerException">the inner <see cref="Exception"/> to be added to the outer exception.</param>
         /// <param name="format">Format string of the log message.</param>
         /// <param name="args">An object array that contains zero or more objects to format.</param>
-        public static T LogArgumentException<T>(EventLevel eventLevel, string argumentName, Exception innerException, string format, params object[] args) where T : ArgumentException
+        public static T LogArgumentException<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] T>(EventLevel eventLevel, string argumentName, Exception innerException, string format, params object[] args) where T : ArgumentException
         {
             return LogExceptionImpl<T>(eventLevel, argumentName, innerException, format, args);
         }
@@ -332,7 +317,7 @@ namespace Microsoft.IdentityModel.Logging
         /// <param name="innerException">the inner <see cref="Exception"/> to be added to the outer exception.</param>
         /// <param name="format">Format string of the log message.</param>
         /// <param name="args">An object array that contains zero or more objects to format.</param>
-        private static T LogExceptionImpl<T>(EventLevel eventLevel, string argumentName, Exception innerException, string format, params object[] args) where T : Exception 
+        private static T LogExceptionImpl<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] T>(EventLevel eventLevel, string argumentName, Exception innerException, string format, params object[] args) where T : Exception 
         {
             string message = null;
 
@@ -375,9 +360,20 @@ namespace Microsoft.IdentityModel.Logging
                 return format;
 
             if (!IdentityModelEventSource.ShowPII)
-                return string.Format(CultureInfo.InvariantCulture, format, args.Select(RemovePII).ToArray()); 
+                return string.Format(CultureInfo.InvariantCulture, format, args.Select(RemovePII).ToArray());
+            else
+                return string.Format(CultureInfo.InvariantCulture, format, args.Select(SanitizeSecurityArtifact).ToArray());
+        }
 
-            return string.Format(CultureInfo.InvariantCulture, format, args);
+        private static string SanitizeSecurityArtifact(object arg)
+        {
+            if (arg == null)
+                return "null";
+
+            if (arg is ISafeLogSecurityArtifact && IdentityModelEventSource.LogCompleteSecurityArtifact)
+                return (arg as ISafeLogSecurityArtifact).UnsafeToString();
+
+            return arg.ToString();
         }
 
         private static string RemovePII(object arg)
@@ -411,6 +407,17 @@ namespace Microsoft.IdentityModel.Logging
         }
 
         /// <summary>
+        /// Marks a log message argument (<paramref name="arg"/>) as SecurityArtifact.
+        /// </summary>
+        /// <param name="arg">A log message argument to be marked as SecurityArtifact.</param>
+        /// <param name="callback">A callback function to log the security artifact safely.</param>
+        /// <returns>An argument marked as SecurityArtifact.</returns>
+        public static object MarkAsSecurityArtifact(object arg, Func<object, string> callback)
+        {
+            return new SecurityArtifact(arg, callback);
+        }
+
+        /// <summary>
         /// Creates a <see cref="LogEntry"/> by using the provided event level, exception argument, string argument and arguments list.
         /// </summary>
         /// <param name="eventLogLevel"><see cref="EventLogLevel"/></param>
@@ -433,27 +440,23 @@ namespace Microsoft.IdentityModel.Logging
 
             message = args == null ? message : FormatInvariant(message, args);
 
-            // Logs basic information (library version, DateTime, whether PII is ON/OFF) once before any log messages are written.
+            LogEntry entry = new LogEntry();
+            entry.EventLogLevel = eventLogLevel;
+
+            // Prefix header (library version, DateTime, whether PII is ON/OFF) to the first message logged by Wilson.
             if (!_isHeaderWritten)
             {
-                string headerMessage = string.Format(
-                    CultureInfo.InvariantCulture,
-                    "Microsoft.IdentityModel Version: {0}. Date {1}. {2}",
+                string headerMessage = string.Format(CultureInfo.InvariantCulture, "Microsoft.IdentityModel Version: {0}. Date {1}. {2}",
                     typeof(IdentityModelEventSource).Assembly.GetName().Version.ToString(),
                     DateTime.UtcNow,
                     IdentityModelEventSource.ShowPII ? _piiOnLogMessage : _piiOffLogMessage);
 
-                LogEntry headerEntry = new LogEntry();
-                headerEntry.EventLogLevel = EventLogLevel.LogAlways;
-                headerEntry.Message = headerMessage;
-                Logger.Log(headerEntry);
+                entry.Message = headerMessage + Environment.NewLine + message;
 
                 _isHeaderWritten = true;
             }
-
-            LogEntry entry = new LogEntry();
-            entry.EventLogLevel = eventLogLevel;
-            entry.Message = message;
+            else
+                entry.Message = message;
 
             return entry;
         }

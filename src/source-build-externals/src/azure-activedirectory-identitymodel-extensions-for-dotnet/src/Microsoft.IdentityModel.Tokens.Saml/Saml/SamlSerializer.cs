@@ -1,29 +1,5 @@
-//------------------------------------------------------------------------------
-//
-// Copyright (c) Microsoft Corporation.
-// All rights reserved.
-//
-// This code is licensed under the MIT License.
-//
-// Permission is hereby granted, free of charge, to any person obtaining a copy
-// of this software and associated documentation files(the "Software"), to deal
-// in the Software without restriction, including without limitation the rights
-// to use, copy, modify, merge, publish, distribute, sublicense, and / or sell
-// copies of the Software, and to permit persons to whom the Software is
-// furnished to do so, subject to the following conditions :
-//
-// The above copyright notice and this permission notice shall be included in
-// all copies or substantial portions of the Software.
-//
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.IN NO EVENT SHALL THE
-// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-// THE SOFTWARE.
-//
-//------------------------------------------------------------------------------
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System;
 using System.Collections.Generic;
@@ -232,23 +208,23 @@ namespace Microsoft.IdentityModel.Tokens.Saml
                 // @MajorVersion - required - must be "1"
                 var majorVersion = envelopeReader.GetAttribute(SamlConstants.Attributes.MajorVersion);
                 if (string.IsNullOrEmpty(majorVersion))
-                    throw LogReadException(LogMessages.IDX11115, SamlConstants.Elements.Assertion, SamlConstants.Attributes.MajorVersion);
+                    throw LogReadException(LogMessages.IDX11115, MarkAsNonPII(SamlConstants.Elements.Assertion), MarkAsNonPII(SamlConstants.Attributes.MajorVersion));
 
                 if (!majorVersion.Equals(SamlConstants.MajorVersionValue))
-                    throw LogReadException(LogMessages.IDX11116, majorVersion);
+                    throw LogReadException(LogMessages.IDX11116, MarkAsNonPII(majorVersion));
 
                 // @MinorVersion - required - must be "1"
                 var minorVersion = envelopeReader.GetAttribute(SamlConstants.Attributes.MinorVersion);
                 if (string.IsNullOrEmpty(minorVersion))
-                    throw LogReadException(LogMessages.IDX11115, SamlConstants.Elements.Assertion, SamlConstants.Attributes.MinorVersion);
+                    throw LogReadException(LogMessages.IDX11115, MarkAsNonPII(SamlConstants.Elements.Assertion), MarkAsNonPII(SamlConstants.Attributes.MinorVersion));
 
                 if (!minorVersion.Equals(SamlConstants.MinorVersionValue))
-                    throw LogReadException(LogMessages.IDX11117, minorVersion);
+                    throw LogReadException(LogMessages.IDX11117, MarkAsNonPII(minorVersion));
 
                 // @AssertionId - required
                 var assertionId = envelopeReader.GetAttribute(SamlConstants.Attributes.AssertionID);
                 if (string.IsNullOrEmpty(assertionId))
-                    throw LogReadException(LogMessages.IDX11115, SamlConstants.Elements.Assertion, SamlConstants.Attributes.AssertionID);
+                    throw LogReadException(LogMessages.IDX11115, MarkAsNonPII(SamlConstants.Elements.Assertion), MarkAsNonPII(SamlConstants.Attributes.AssertionID));
 
                 if (!IsAssertionIdValid(assertionId))
                     throw LogReadException(LogMessages.IDX11121, assertionId);
@@ -256,12 +232,12 @@ namespace Microsoft.IdentityModel.Tokens.Saml
                 // @Issuer - required
                 var issuer = envelopeReader.GetAttribute(SamlConstants.Attributes.Issuer);
                 if (string.IsNullOrEmpty(issuer))
-                    throw LogReadException(LogMessages.IDX11115, SamlConstants.Elements.Assertion, SamlConstants.Attributes.Issuer);
+                    throw LogReadException(LogMessages.IDX11115, MarkAsNonPII(SamlConstants.Elements.Assertion), MarkAsNonPII(SamlConstants.Attributes.Issuer));
 
                 // @IssueInstant - required
                 var issueInstantAttribute = envelopeReader.GetAttribute(SamlConstants.Attributes.IssueInstant);
                 if (string.IsNullOrEmpty(issueInstantAttribute))
-                    throw LogReadException(LogMessages.IDX11115, SamlConstants.Elements.Assertion, SamlConstants.Attributes.IssueInstant);
+                    throw LogReadException(LogMessages.IDX11115, MarkAsNonPII(SamlConstants.Elements.Assertion), MarkAsNonPII(SamlConstants.Attributes.IssueInstant));
 
                 var issueInstant = DateTime.ParseExact(issueInstantAttribute, SamlConstants.AcceptedDateTimeFormats, DateTimeFormatInfo.InvariantInfo, DateTimeStyles.None).ToUniversalTime();
 

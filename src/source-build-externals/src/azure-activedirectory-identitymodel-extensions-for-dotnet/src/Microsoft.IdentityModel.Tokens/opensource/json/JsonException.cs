@@ -77,6 +77,9 @@ namespace Microsoft.IdentityModel.Json
         /// <param name="context">The <see cref="StreamingContext"/> that contains contextual information about the source or destination.</param>
         /// <exception cref="ArgumentNullException">The <paramref name="info"/> parameter is <c>null</c>.</exception>
         /// <exception cref="SerializationException">The class name is <c>null</c> or <see cref="Exception.HResult"/> is zero (0).</exception>
+#if NET8_0_OR_GREATER
+        [Obsolete("Formatter-based serialization is obsolete", DiagnosticId = "SYSLIB0051")]
+#endif
         public JsonException(SerializationInfo info, StreamingContext context)
             : base(info, context)
         {

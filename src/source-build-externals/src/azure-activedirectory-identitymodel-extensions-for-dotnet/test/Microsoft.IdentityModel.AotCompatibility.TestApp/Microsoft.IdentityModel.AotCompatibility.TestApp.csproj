@@ -1,0 +1,31 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  
+  <PropertyGroup>
+    <TargetFramework Condition="'$(TargetNet8)' == 'True'">net8.0</TargetFramework>
+    <TargetFramework Condition="'$(TargetNet8)' != 'True'">net6.0</TargetFramework>
+    <OutputType>Exe</OutputType>
+    <PublishTrimmed>true</PublishTrimmed>
+    <TrimMode>full</TrimMode>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- List of the assemblies to analyze.
+
+      FullAnalyze indicates whether to analyze the whole assembly (i.e. TrimmerRootAssembly).
+      Other referenced assemblies will only have code referenced from Program.cs analyzed.
+    -->
+    <CompatibleReference Include="Microsoft.IdentityModel.Abstractions" FullAnalyze="true" />
+    <CompatibleReference Include="Microsoft.IdentityModel.Logging" FullAnalyze="true" />
+    <CompatibleReference Include="Microsoft.IdentityModel.JsonWebTokens" />
+    
+    <CompatibleReference Update="@(CompatibleReference)" Path="..\..\src\%(Identity)\%(Identity).csproj" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <ProjectReference Include="@(CompatibleReference->'%(Path)')" />
+
+    <TrimmerRootAssembly Include="@(CompatibleReference->WithMetadataValue('FullAnalyze','true'))"/>
+  </ItemGroup>
+
+</Project>

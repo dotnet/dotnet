@@ -8,6 +8,7 @@
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <PackageId>Microsoft.IdentityModel.Logging</PackageId>
     <PackageTags>.NET;Windows;Authentication;Identity;Logging</PackageTags>
+    <IsTrimmable>true</IsTrimmable>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)'=='Debug'">
@@ -15,7 +16,12 @@
     <DebugSymbols>true</DebugSymbols>
   </PropertyGroup>
 
-  <ItemGroup Condition=" '$(TargetFramework)' == 'net45' Or '$(TargetFramework)' == 'net461' Or '$(TargetFramework)' == 'net472'">
+  <ItemGroup>
+    <Compile Include="..\Common\TrimmingAttributes.cs" LinkBase="Common"
+             Condition="'$(TargetFrameworkIdentifier)' != '.NETCoreApp'" />
+  </ItemGroup>
+  
+  <ItemGroup Condition=" '$(TargetFramework)' == 'net461' Or '$(TargetFramework)' == 'net462' Or '$(TargetFramework)' == 'net472'">
     <Reference Include="System.Net.Http" />
   </ItemGroup>
 

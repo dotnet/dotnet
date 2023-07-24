@@ -1,29 +1,5 @@
-﻿//------------------------------------------------------------------------------
-//
-// Copyright (c) Microsoft Corporation.
-// All rights reserved.
-//
-// This code is licensed under the MIT License.
-//
-// Permission is hereby granted, free of charge, to any person obtaining a copy
-// of this software and associated documentation files(the "Software"), to deal
-// in the Software without restriction, including without limitation the rights
-// to use, copy, modify, merge, publish, distribute, sublicense, and / or sell
-// copies of the Software, and to permit persons to whom the Software is
-// furnished to do so, subject to the following conditions :
-//
-// The above copyright notice and this permission notice shall be included in
-// all copies or substantial portions of the Software.
-//
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.IN NO EVENT SHALL THE
-// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-// THE SOFTWARE.
-//
-//------------------------------------------------------------------------------
+﻿// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System;
 using Microsoft.IdentityModel.TestUtils;
@@ -106,13 +82,9 @@ namespace Microsoft.IdentityModel.Tokens.Tests
                 foreach (var alg in SupportedAlgorithms.RsaSigningAlgorithms)
                     SupportedAlgorithmTheoryData.AddTestCase(alg, KeyingMaterial.JsonWebKeyRsa_2048, true, $"JsonWebKey_Rsa_{alg}", theoryData);
 
-                // Pss not supported on NET451
                 foreach (var alg in SupportedAlgorithms.RsaPssSigningAlgorithms)
-#if NET452
-                    SupportedAlgorithmTheoryData.AddTestCase(alg, KeyingMaterial.JsonWebKeyRsa_2048, false, $"JsonWebKey_Rsa_{alg}", theoryData);
-#else
                     SupportedAlgorithmTheoryData.AddTestCase(alg, KeyingMaterial.JsonWebKeyRsa_2048, true, $"JsonWebKeyRsa_2048_{alg}", theoryData);
-#endif
+
                 // Symmetric
                 foreach (var alg in SupportedAlgorithms.SymmetricEncryptionAlgorithms)
                     SupportedAlgorithmTheoryData.AddTestCase(alg, KeyingMaterial.JsonWebKeySymmetric256, true, $"JsonWebKey_Symmetric_{alg}", theoryData);
@@ -144,15 +116,9 @@ namespace Microsoft.IdentityModel.Tokens.Tests
                 foreach (var alg in SupportedAlgorithms.RsaSigningAlgorithms)
                     SupportedAlgorithmTheoryData.AddTestCase(alg, KeyingMaterial.RsaSecurityKey_2048, true, $"Rsa_{alg}", theoryData);
 
-                // Pss not supported on NET451
                 foreach (var alg in SupportedAlgorithms.RsaPssSigningAlgorithms)
                 {
-#if NET452
-                    SupportedAlgorithmTheoryData.AddTestCase(alg, KeyingMaterial.RsaSecurityKey_2048, false, $"Rsa_{alg}", theoryData);
-                    SupportedAlgorithmTheoryData.AddTestCase(alg, KeyingMaterial.RsaSecurityKeyWithCspProvider_2048, false, $"Rsa_CspProvider_{alg}", theoryData);
-#else
                     SupportedAlgorithmTheoryData.AddTestCase(alg, KeyingMaterial.RsaSecurityKey_2048, true, $"Rsa_{alg}", theoryData);
-#endif
                 }
 
                 SupportedAlgorithmTheoryData.AddTestCase(SecurityAlgorithms.EcdsaSha256,
@@ -191,16 +157,8 @@ namespace Microsoft.IdentityModel.Tokens.Tests
                 foreach (var alg in SupportedAlgorithms.RsaSigningAlgorithms)
                     SupportedAlgorithmTheoryData.AddTestCase(alg, KeyingMaterial.X509SecurityKeySelfSigned2048_SHA256, true, $"X509_{alg}", theoryData);
 
-                // Pss not supported on NET451
                 foreach (var alg in SupportedAlgorithms.RsaPssSigningAlgorithms)
-                {
-#if NET452
-                    SupportedAlgorithmTheoryData.AddTestCase(alg, KeyingMaterial.X509SecurityKeySelfSigned2048_SHA256, false, $"X509_{alg}", theoryData);
-                    SupportedAlgorithmTheoryData.AddTestCase(alg, KeyingMaterial.X509SecurityKeySelfSigned2048_SHA256, false, $"X509_{alg}", theoryData);
-#else
                     SupportedAlgorithmTheoryData.AddTestCase(alg, KeyingMaterial.X509SecurityKeySelfSigned2048_SHA256, true, $"X509_{alg}", theoryData);
-#endif
-                }
 
                 SupportedAlgorithmTheoryData.AddTestCase(SecurityAlgorithms.Aes128Encryption, KeyingMaterial.X509SecurityKeySelfSigned2048_SHA512, false, "X509_Aes128Encryption", theoryData);
                 SupportedAlgorithmTheoryData.AddTestCase(SecurityAlgorithms.RsaSsaPssSha256Signature,

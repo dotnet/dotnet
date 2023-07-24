@@ -46,7 +46,7 @@ namespace Microsoft.IdentityModel.Protocols.SignedHttpRequest
     /// <remarks>The handler implementation is based on 'A Method for Signing HTTP Requests for OAuth' specification.</remarks>
     public class SignedHttpRequestHandler
     {
-        // (https://datatracker.ietf.org/doc/html/draft-ietf-oauth-signed-http-request-03#section-3.2)
+        // https://datatracker.ietf.org/doc/html/draft-ietf-oauth-signed-http-request-03#section-3.2
         // "Encodes the name and value of the header as "name: value" and appends it to the string buffer separated by a newline "\n" character."
         private readonly string _newlineSeparator = "\n";
 
@@ -54,6 +54,7 @@ namespace Microsoft.IdentityModel.Protocols.SignedHttpRequest
         {
             SetDefaultTimesOnTokenCreation = false
         };
+
         private readonly Uri _baseUriHelper = new Uri("http://localhost", UriKind.Absolute);
         private readonly HttpClient _defaultHttpClient = new HttpClient();
 
@@ -370,7 +371,7 @@ namespace Microsoft.IdentityModel.Protocols.SignedHttpRequest
             var httpRequestBody = signedHttpRequestDescriptor.HttpRequestData.Body;
 
             if (httpRequestBody == null)
-                httpRequestBody = new byte[0];
+                httpRequestBody = Array.Empty<byte>();
 
             try
             {
@@ -523,12 +524,12 @@ namespace Microsoft.IdentityModel.Protocols.SignedHttpRequest
         /// <param name="signedHttpRequestValidationContext">A structure that wraps parameters needed for SignedHttpRequest validation.</param>
         /// <param name="cancellationToken">Propagates notification that operations should be canceled.</param>
         /// <returns>A <see cref="TokenValidationResult"/>.</returns>
-        internal virtual Task<TokenValidationResult> ValidateAccessTokenAsync(string accessToken, SignedHttpRequestValidationContext signedHttpRequestValidationContext, CancellationToken cancellationToken)
+        internal async virtual Task<TokenValidationResult> ValidateAccessTokenAsync(string accessToken, SignedHttpRequestValidationContext signedHttpRequestValidationContext, CancellationToken cancellationToken)
         {
             if (string.IsNullOrEmpty(accessToken))
                 throw LogHelper.LogArgumentNullException(nameof(accessToken));
-            var tokenValidationResult = _jwtTokenHandler.ValidateToken(accessToken, signedHttpRequestValidationContext.AccessTokenValidationParameters);
-            return Task.FromResult(tokenValidationResult);
+
+            return await signedHttpRequestValidationContext.SignedHttpRequestValidationParameters.TokenHandler.ValidateTokenAsync(accessToken, signedHttpRequestValidationContext.AccessTokenValidationParameters).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -632,8 +633,17 @@ namespace Microsoft.IdentityModel.Protocols.SignedHttpRequest
                         if (signatureProvider == null)
                             throw LogHelper.LogExceptionMessage(new InvalidOperationException(LogHelper.FormatInvariant(Tokens.LogMessages.IDX10636, popKey.ToString(), LogHelper.MarkAsNonPII(signedHttpRequest.Alg))));
 
-                        if (signatureProvider.Verify(Encoding.UTF8.GetBytes(signedHttpRequest.EncodedHeader + "." + signedHttpRequest.EncodedPayload), Base64UrlEncoder.DecodeBytes(signedHttpRequest.EncodedSignature)))
-                            return popKey;
+                        if(EncodingUtils.PerformEncodingDependentOperation<bool, string, int, SignatureProvider>(
+                            signedHttpRequest.EncodedToken,
+                            0,
+                            signedHttpRequest.Dot2,
+                            Encoding.UTF8,
+                            signedHttpRequest.EncodedToken,
+                            signedHttpRequest.Dot2,
+                            signatureProvider,
+                            JsonWebTokenHandler.ValidateSignature))
+
+                        return popKey;
                     }
                     finally
                     {
@@ -942,7 +952,7 @@ namespace Microsoft.IdentityModel.Protocols.SignedHttpRequest
             var httpRequestBody = signedHttpRequestValidationContext.HttpRequestData.Body;
 
             if (httpRequestBody == null)
-                httpRequestBody = new byte[0];
+                httpRequestBody = Array.Empty<byte>();
 
             if (!signedHttpRequest.TryGetPayloadValue(SignedHttpRequestClaimTypes.B, out string bClaim) || bClaim == null)
                 throw LogHelper.LogExceptionMessage(new SignedHttpRequestInvalidBClaimException(LogHelper.FormatInvariant(LogMessages.IDX23003, LogHelper.MarkAsNonPII(SignedHttpRequestClaimTypes.B))));
@@ -1105,7 +1115,7 @@ namespace Microsoft.IdentityModel.Protocols.SignedHttpRequest
                         return key;
                 }
 
-                throw LogHelper.LogExceptionMessage(new SignedHttpRequestInvalidPopKeyException(LogHelper.FormatInvariant(LogMessages.IDX23021, kid, string.Join(", ", popKeys.Select(x => x.KeyId ?? "Null")))));
+                throw LogHelper.LogExceptionMessage(new SignedHttpRequestInvalidPopKeyException(LogHelper.FormatInvariant(LogMessages.IDX23021, LogHelper.MarkAsNonPII(kid), string.Join(", ", popKeys.Select(x => x.KeyId ?? "Null")))));
             }
             else
             {
@@ -1234,10 +1244,10 @@ namespace Microsoft.IdentityModel.Protocols.SignedHttpRequest
         /// <summary>
         /// Sanitizes the query params to comply with the specification.
         /// </summary>
-        /// <remarks>https://datatracker.ietf.org/doc/html/draft-ietf-oauth-signed-http-request-03#section-7.5.</remarks>
+        /// <remarks>https://datatracker.ietf.org/doc/html/draft-ietf-oauth-signed-http-request-03#section-7.5</remarks>
         private static Dictionary<string, string> SanitizeQueryParams(Uri httpRequestUri)
         {
-            // Remove repeated query params according to the spec: https://datatracker.ietf.org/doc/html/draft-ietf-oauth-signed-http-request-03#section-7.5.
+            // Remove repeated query params according to the spec: https://datatracker.ietf.org/doc/html/draft-ietf-oauth-signed-http-request-03#section-7-5
             // "If a header or query parameter is repeated on either the outgoing request from the client or the
             // incoming request to the protected resource, that query parameter or header name MUST NOT be covered by the hash and signature."
             var sanitizedQueryParams = new Dictionary<string, string>(StringComparer.Ordinal);
@@ -1290,7 +1300,7 @@ namespace Microsoft.IdentityModel.Protocols.SignedHttpRequest
         /// </remarks>
         private static Dictionary<string, string> SanitizeHeaders(IDictionary<string, IEnumerable<string>> headers)
         {
-            // Remove repeated headers according to the spec: https://datatracker.ietf.org/doc/html/draft-ietf-oauth-signed-http-request-03#section-7.5.
+            // Remove repeated headers according to the spec: https://datatracker.ietf.org/doc/html/draft-ietf-oauth-signed-http-request-03#section-7.5
             // "If a header or query parameter is repeated on either the outgoing request from the client or the
             // incoming request to the protected resource, that query parameter or header name MUST NOT be covered by the hash and signature."
             var sanitizedHeaders = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
@@ -1302,7 +1312,7 @@ namespace Microsoft.IdentityModel.Protocols.SignedHttpRequest
                 if (string.IsNullOrEmpty(headerName))
                     continue;
 
-                // Don't include the authorization header (https://datatracker.ietf.org/doc/html/draft-ietf-oauth-signed-http-request-03#section-4.1).
+                // Don't include the authorization header https://datatracker.ietf.org/doc/html/draft-ietf-oauth-signed-http-request-03#section-4.1
                 if (string.Equals(headerName, SignedHttpRequestConstants.AuthorizationHeader, StringComparison.OrdinalIgnoreCase))
                     continue;
 

@@ -1,30 +1,7 @@
-//------------------------------------------------------------------------------
-//
-// Copyright (c) Microsoft Corporation.
-// All rights reserved.
-//
-// This code is licensed under the MIT License.
-//
-// Permission is hereby granted, free of charge, to any person obtaining a copy
-// of this software and associated documentation files(the "Software"), to deal
-// in the Software without restriction, including without limitation the rights
-// to use, copy, modify, merge, publish, distribute, sublicense, and / or sell
-// copies of the Software, and to permit persons to whom the Software is
-// furnished to do so, subject to the following conditions :
-//
-// The above copyright notice and this permission notice shall be included in
-// all copies or substantial portions of the Software.
-//
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.IN NO EVENT SHALL THE
-// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-// THE SOFTWARE.
-//
-//------------------------------------------------------------------------------
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
+using System.Collections.Generic;
 using Microsoft.IdentityModel.Json;
 using Microsoft.IdentityModel.TestUtils;
 using Xunit;
@@ -58,7 +35,7 @@ namespace System.IdentityModel.Tokens.Jwt.Tests
             return theoryData;
         }
 
-        public static TheoryData<JwtTheoryData> InvalidNumberOfSegmentsData(string errorString, TheoryData<JwtTheoryData> theoryData)
+        public static TheoryData<JwtTheoryData> InvalidNumberOfSegmentsData(IList<string> errorStrings, TheoryData<JwtTheoryData> theoryData)
         {
             theoryData.Add(new JwtTheoryData
             {
@@ -77,28 +54,42 @@ namespace System.IdentityModel.Tokens.Jwt.Tests
             theoryData.Add(new JwtTheoryData
             {
                 CanRead = false,
-                ExpectedException = ExpectedException.ArgumentException(errorString),
+                ExpectedException = ExpectedException.SecurityTokenMalformedTokenException(errorStrings[0]),
                 TestId = "a",
                 Token = "a"
             });
             theoryData.Add(new JwtTheoryData
             {
                 CanRead = false,
-                ExpectedException = ExpectedException.ArgumentException(errorString),
+                ExpectedException = ExpectedException.SecurityTokenMalformedTokenException(errorStrings[1]),
                 TestId = "a.b",
                 Token = "a.b"
             });
             theoryData.Add(new JwtTheoryData
             {
                 CanRead = false,
-                ExpectedException = ExpectedException.ArgumentException(errorString),
+                ExpectedException = ExpectedException.SecurityTokenMalformedTokenException(errorStrings[2]),
+                TestId = "a.b.c.",
+                Token = "a.b.c."
+            });
+            theoryData.Add(new JwtTheoryData
+            {
+                CanRead = false,
+                ExpectedException = ExpectedException.SecurityTokenMalformedTokenException(errorStrings[3]),
                 TestId = "a.b.c.d",
                 Token = "a.b.c.d"
             });
             theoryData.Add(new JwtTheoryData
             {
                 CanRead = false,
-                ExpectedException = ExpectedException.ArgumentException(errorString),
+                ExpectedException = ExpectedException.SecurityTokenMalformedTokenException(errorStrings[4]),
+                TestId = "a.b.c.d.",
+                Token = "a.b.c.d."
+            });
+            theoryData.Add(new JwtTheoryData
+            {
+                CanRead = false,
+                ExpectedException = ExpectedException.SecurityTokenMalformedTokenException(errorStrings[5]),
                 TestId = "a.b.c.d.e.f",
                 Token = "a.b.c.d.e.f"
             });
@@ -115,98 +106,98 @@ namespace System.IdentityModel.Tokens.Jwt.Tests
                 CanRead = false,
                 TestId = "'invalidRegEx: first position'",
                 Token = invalidRegEx + "." + validRegEx + "." + validRegEx + "." + validRegEx + "." + validRegEx,
-                ExpectedException = ExpectedException.ArgumentException("IDX12740:")
+                ExpectedException = ExpectedException.SecurityTokenMalformedTokenException("IDX12740:")
             });
             theoryData.Add(new JwtTheoryData
             {
                 CanRead = false,
                 TestId = "'invalidRegEx: second position'",
                 Token = validRegEx + "." + invalidRegEx + "." + validRegEx + "." + validRegEx + "." + validRegEx,
-                ExpectedException = ExpectedException.ArgumentException("IDX12740:")
+                ExpectedException = ExpectedException.SecurityTokenMalformedTokenException("IDX12740:")
             });
             theoryData.Add(new JwtTheoryData
             {
                 CanRead = false,
                 TestId = "'invalidRegEx: third position'",
                 Token = validRegEx + "." + validRegEx + "." + invalidRegEx + "." + validRegEx + "." + validRegEx,
-                ExpectedException = ExpectedException.ArgumentException("IDX12740:")
+                ExpectedException = ExpectedException.SecurityTokenMalformedTokenException("IDX12740:")
             });
             theoryData.Add(new JwtTheoryData
             {
                 CanRead = false,
                 TestId = "'invalidRegEx: fourth position'",
                 Token = validRegEx + "." + validRegEx + "." + validRegEx + "." + invalidRegEx + "." + validRegEx,
-                ExpectedException = ExpectedException.ArgumentException("IDX12740:")
+                ExpectedException = ExpectedException.SecurityTokenMalformedTokenException("IDX12740:")
             });
             theoryData.Add(new JwtTheoryData
             {
                 CanRead = false,
                 TestId = "'invalidRegEx: fifth position'",
                 Token = validRegEx + "." + validRegEx + "." + validRegEx + "." + validRegEx + "." + invalidRegEx,
-                ExpectedException = ExpectedException.ArgumentException("IDX12740:")
+                ExpectedException = ExpectedException.SecurityTokenMalformedTokenException("IDX12740:")
             });
             theoryData.Add(new JwtTheoryData
             {
                 CanRead = false,
                 TestId = "'invalidRegEx: first position (dir)'",
                 Token = invalidRegEx + ".." + validRegEx + "." + validRegEx + "." + validRegEx,
-                ExpectedException = ExpectedException.ArgumentException("IDX12740:")
+                ExpectedException = ExpectedException.SecurityTokenMalformedTokenException("IDX12740:")
             });
             theoryData.Add(new JwtTheoryData
             {
                 CanRead = false,
                 TestId = "'invalidRegEx: third position (dir)'",
                 Token = validRegEx + ".." + invalidRegEx + "." + validRegEx + "." + validRegEx,
-                ExpectedException = ExpectedException.ArgumentException("IDX12740:")
+                ExpectedException = ExpectedException.SecurityTokenMalformedTokenException("IDX12740:")
             });
             theoryData.Add(new JwtTheoryData
             {
                 CanRead = false,
                 TestId = "'invalidRegEx: fourth position (dir)'",
                 Token = invalidRegEx + ".." + validRegEx + "." + invalidRegEx + "." + validRegEx,
-                ExpectedException = ExpectedException.ArgumentException("IDX12740:")
+                ExpectedException = ExpectedException.SecurityTokenMalformedTokenException("IDX12740:")
             });
             theoryData.Add(new JwtTheoryData
             {
                 CanRead = false,
                 TestId = "'invalidRegEx: fifth position (dir)'",
                 Token = invalidRegEx + ".." + validRegEx + "." + validRegEx + "." + invalidRegEx,
-                ExpectedException = ExpectedException.ArgumentException("IDX12740:")
+                ExpectedException = ExpectedException.SecurityTokenMalformedTokenException("IDX12740:")
             });
             theoryData.Add(new JwtTheoryData
             {
                 CanRead = false,
                 TestId = "'invalidRegEx: first position (dir, Cipher text missing)'",
                 Token = invalidRegEx + "." + validRegEx + "." + validRegEx,
-                ExpectedException = ExpectedException.ArgumentException("IDX12739:")
+                ExpectedException = ExpectedException.SecurityTokenMalformedTokenException("IDX12739:")
             });
             theoryData.Add(new JwtTheoryData
             {
                 CanRead = false,
                 TestId = "'invalidRegEx: third position (dir, Cipher text missing)'",
                 Token = validRegEx + "." + invalidRegEx + "." + validRegEx,
-                ExpectedException = ExpectedException.ArgumentException("IDX12739:")
+                ExpectedException = ExpectedException.SecurityTokenMalformedTokenException("IDX12739:")
             });
             theoryData.Add(new JwtTheoryData
             {
                 CanRead = false,
                 TestId = "'invalidRegEx: third position (four parts)'",
                 Token = validRegEx + "." + invalidRegEx + ".",
-                ExpectedException = ExpectedException.ArgumentException("IDX12739:")
+                ExpectedException = ExpectedException.SecurityTokenMalformedTokenException("IDX12739:")
             });
             theoryData.Add(new JwtTheoryData
             {
                 CanRead = false,
                 TestId = "'invalidRegEx: fifth position (dir, Cipher text missing)'",
                 Token = validRegEx + "." + validRegEx + "." + invalidRegEx,
-                ExpectedException = ExpectedException.ArgumentException("IDX12739:")
+                ExpectedException = ExpectedException.SecurityTokenMalformedTokenException("IDX12739:")
             });
             theoryData.Add(new JwtTheoryData
             {
                 CanRead = false,
                 TestId = "'Encoding == SignedEncodedJwts.Asymmetric_LocalSts'",
                 Token = "SignedEncodedJwts.Asymmetric_LocalSts",
-                ExpectedException = ExpectedException.ArgumentException("IDX12741:")
+                ExpectedException = ExpectedException.SecurityTokenMalformedTokenException("IDX12741:")
             });
 
             return theoryData;
@@ -221,98 +212,98 @@ namespace System.IdentityModel.Tokens.Jwt.Tests
                 CanRead = false,
                 TestId =  "'invalidRegEx: first position'",
                 Token = invalidRegEx + "." + validRegEx + "." + validRegEx + "." + validRegEx + "." + validRegEx,
-                ExpectedException = ExpectedException.ArgumentException(errorString)
+                ExpectedException = ExpectedException.SecurityTokenMalformedTokenException(errorString)
             });
             theoryData.Add(new JwtTheoryData
             {
                 CanRead = false,
                 TestId = "'invalidRegEx: second position'",
                 Token = validRegEx + "." + invalidRegEx + "." + validRegEx + "." + validRegEx + "." + validRegEx,
-                ExpectedException = ExpectedException.ArgumentException(errorString)
+                ExpectedException = ExpectedException.SecurityTokenMalformedTokenException(errorString)
             });
             theoryData.Add(new JwtTheoryData
             {
                 CanRead = false,
                 TestId = "'invalidRegEx: third position'",
                 Token = validRegEx + "." + validRegEx + "." + invalidRegEx + "." + validRegEx + "." + validRegEx,
-                ExpectedException = ExpectedException.ArgumentException(errorString)
+                ExpectedException = ExpectedException.SecurityTokenMalformedTokenException(errorString)
             });
             theoryData.Add(new JwtTheoryData
             {
                 CanRead = false,
                 TestId = "'invalidRegEx: fourth position'",
                 Token = validRegEx + "." + validRegEx + "." + validRegEx + "." + invalidRegEx + "." + validRegEx,
-                ExpectedException = ExpectedException.ArgumentException(errorString)
+                ExpectedException = ExpectedException.SecurityTokenMalformedTokenException(errorString)
             });
             theoryData.Add(new JwtTheoryData
             {
                 CanRead = false,
                 TestId = "'invalidRegEx: fifth position'",
                 Token = validRegEx + "." + validRegEx + "." + validRegEx + "." + validRegEx + "." + invalidRegEx,
-                ExpectedException = ExpectedException.ArgumentException(errorString)
+                ExpectedException = ExpectedException.SecurityTokenMalformedTokenException(errorString)
             });
             theoryData.Add(new JwtTheoryData
             {
                 CanRead = false,
                 TestId = "'invalidRegEx: first position (dir)'",
                 Token = invalidRegEx + ".." + validRegEx + "." + validRegEx + "." + validRegEx,
-                ExpectedException = ExpectedException.ArgumentException(errorString)
+                ExpectedException = ExpectedException.SecurityTokenMalformedTokenException(errorString)
             });
             theoryData.Add(new JwtTheoryData
             {
                 CanRead = false,
                 TestId = "'invalidRegEx: third position (dir)'",
                 Token = validRegEx + ".." + invalidRegEx + "." + validRegEx + "." + validRegEx,
-                ExpectedException = ExpectedException.ArgumentException(errorString)
+                ExpectedException = ExpectedException.SecurityTokenMalformedTokenException(errorString)
             });
             theoryData.Add(new JwtTheoryData
             {
                 CanRead = false,
                 TestId = "'invalidRegEx: fourth position (dir)'",
                 Token = invalidRegEx + ".." + validRegEx + "." + invalidRegEx + "." + validRegEx,
-                ExpectedException = ExpectedException.ArgumentException(errorString)
+                ExpectedException = ExpectedException.SecurityTokenMalformedTokenException(errorString)
             });
             theoryData.Add(new JwtTheoryData
             {
                 CanRead = false,
                 TestId = "'invalidRegEx: fifth position (dir)'",
                 Token = invalidRegEx + ".." + validRegEx + "." + validRegEx + "." + invalidRegEx,
-                ExpectedException = ExpectedException.ArgumentException(errorString)
+                ExpectedException = ExpectedException.SecurityTokenMalformedTokenException(errorString)
             });
             theoryData.Add(new JwtTheoryData
             {
                 CanRead = false,
                 TestId = "'invalidRegEx: first position (dir, Cipher text missing)'",
                 Token = invalidRegEx + "." + validRegEx + "." + validRegEx,
-                ExpectedException = ExpectedException.ArgumentException(errorString)
+                ExpectedException = ExpectedException.SecurityTokenMalformedTokenException(errorString)
             });
             theoryData.Add(new JwtTheoryData
             {
                 CanRead = false,
                 TestId = "'invalidRegEx: third position (dir, Cipher text missing)'",
                 Token = validRegEx + "." + invalidRegEx + "." + validRegEx,
-                ExpectedException = ExpectedException.ArgumentException(errorString)
+                ExpectedException = ExpectedException.SecurityTokenMalformedTokenException(errorString)
             });
             theoryData.Add(new JwtTheoryData
             {
                 CanRead = false,
                 TestId = "'invalidRegEx: third position (four parts)'",
                 Token = validRegEx + "." + invalidRegEx + ".",
-                ExpectedException = ExpectedException.ArgumentException(errorString)
+                ExpectedException = ExpectedException.SecurityTokenMalformedTokenException(errorString)
             });
             theoryData.Add(new JwtTheoryData
             {
                 CanRead = false,
                 TestId = "'invalidRegEx: fifth position (dir, Cipher text missing)'",
                 Token = validRegEx + "." + validRegEx + "." + invalidRegEx,
-                ExpectedException = ExpectedException.ArgumentException(errorString)
+                ExpectedException = ExpectedException.SecurityTokenMalformedTokenException(errorString)
             });
             theoryData.Add(new JwtTheoryData
             {
                 CanRead = false,
                 TestId = "'Encoding == SignedEncodedJwts.Asymmetric_LocalSts'",
                 Token = "SignedEncodedJwts.Asymmetric_LocalSts",
-                ExpectedException = ExpectedException.ArgumentException(errorString)
+                ExpectedException = ExpectedException.SecurityTokenMalformedTokenException(errorString)
             });
 
             return theoryData;
