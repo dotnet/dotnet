@@ -24,7 +24,7 @@
       </trans-unit>
       <trans-unit id="Generate_Async_Event_Handler_Title">
         <source>Generate Async Event Handler '{0}'</source>
-        <target state="new">Generate Async Event Handler '{0}'</target>
+        <target state="translated">'{0}' Asenkron Olay İşleyicisini Oluştur</target>
         <note />
       </trans-unit>
       <trans-unit id="Generate_Event_Handler_Title">

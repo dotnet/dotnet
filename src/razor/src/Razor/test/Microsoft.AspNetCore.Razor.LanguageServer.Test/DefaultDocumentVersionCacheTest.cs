@@ -90,7 +90,7 @@ public class DefaultDocumentVersionCacheTest : LanguageServerTestBase
     {
         // Arrange
         var documentVersionCache = new DefaultDocumentVersionCache(LegacyDispatcher);
-        var projectSnapshotManager = TestProjectSnapshotManager.Create(LegacyDispatcher, ErrorReporter);
+        var projectSnapshotManager = TestProjectSnapshotManager.Create(ErrorReporter);
         projectSnapshotManager.AllowNotifyListeners = true;
         documentVersionCache.Initialize(projectSnapshotManager);
         var document = TestDocumentSnapshot.Create("C:/file.cshtml");
@@ -120,7 +120,7 @@ public class DefaultDocumentVersionCacheTest : LanguageServerTestBase
     {
         // Arrange
         var documentVersionCache = new DefaultDocumentVersionCache(LegacyDispatcher);
-        var projectSnapshotManager = TestProjectSnapshotManager.Create(LegacyDispatcher, ErrorReporter);
+        var projectSnapshotManager = TestProjectSnapshotManager.Create(ErrorReporter);
         projectSnapshotManager.AllowNotifyListeners = true;
         documentVersionCache.Initialize(projectSnapshotManager);
         var document = TestDocumentSnapshot.Create("C:/file.cshtml");
@@ -152,7 +152,7 @@ public class DefaultDocumentVersionCacheTest : LanguageServerTestBase
     {
         // Arrange
         var documentVersionCache = new DefaultDocumentVersionCache(LegacyDispatcher);
-        var projectSnapshotManager = TestProjectSnapshotManager.Create(LegacyDispatcher, ErrorReporter);
+        var projectSnapshotManager = TestProjectSnapshotManager.Create(ErrorReporter);
         projectSnapshotManager.AllowNotifyListeners = true;
         documentVersionCache.Initialize(projectSnapshotManager);
         var document = TestDocumentSnapshot.Create("C:/file.cshtml");

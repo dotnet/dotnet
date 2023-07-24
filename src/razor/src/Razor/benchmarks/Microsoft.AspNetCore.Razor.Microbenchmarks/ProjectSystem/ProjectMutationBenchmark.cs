@@ -30,7 +30,7 @@ public class ProjectMutationBenchmark : ProjectSnapshotManagerBenchmarkBase
     [IterationSetup]
     public void Setup()
     {
-        SnapshotManager = CreateProjectSnapshotManager(_dispatcher);
+        SnapshotManager = CreateProjectSnapshotManager();
     }
 
     private DefaultProjectSnapshotManager SnapshotManager { get; set; }
@@ -71,9 +71,9 @@ public class ProjectMutationBenchmark : ProjectSnapshotManagerBenchmarkBase
                     return;
                 }
 
-                await _dispatcher.RunOnDispatcherThreadAsync(() => SnapshotManager.Projects, CancellationToken.None).ConfigureAwait(false);
+                await _dispatcher.RunOnDispatcherThreadAsync(() => SnapshotManager.GetProjects(), CancellationToken.None).ConfigureAwait(false);
                 Thread.Sleep(0);
-                await _dispatcher.RunOnDispatcherThreadAsync(() => SnapshotManager.OpenDocuments, CancellationToken.None).ConfigureAwait(false);
+                await _dispatcher.RunOnDispatcherThreadAsync(() => SnapshotManager.GetOpenDocuments(), CancellationToken.None).ConfigureAwait(false);
                 Thread.Sleep(0);
             }
         });

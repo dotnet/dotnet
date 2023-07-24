@@ -33,7 +33,7 @@ public class DefaultWindowsRazorProjectHostTest : ProjectSnapshotManagerDispatch
     public DefaultWindowsRazorProjectHostTest(ITestOutputHelper testOutput)
         : base(testOutput)
     {
-        _projectManager = new TestProjectSnapshotManager(Dispatcher, Workspace);
+        _projectManager = new TestProjectSnapshotManager(Workspace);
 
         var projectConfigurationFilePathStore = new Mock<ProjectConfigurationFilePathStore>(MockBehavior.Strict);
         projectConfigurationFilePathStore.Setup(s => s.Remove(It.IsAny<ProjectKey>())).Verifiable();
@@ -623,10 +623,10 @@ public class DefaultWindowsRazorProjectHostTest : ProjectSnapshotManagerDispatch
 
         // Act & Assert
         await host.LoadAsync();
-        Assert.Empty(_projectManager.Projects);
+        Assert.Empty(_projectManager.GetProjects());
 
         await host.DisposeAsync();
-        Assert.Empty(_projectManager.Projects);
+        Assert.Empty(_projectManager.GetProjects());
     }
 
     [UIFact]
@@ -638,10 +638,10 @@ public class DefaultWindowsRazorProjectHostTest : ProjectSnapshotManagerDispatch
 
         // Act & Assert
         await Task.Run(async () => await host.LoadAsync());
-        Assert.Empty(_projectManager.Projects);
+        Assert.Empty(_projectManager.GetProjects());
 
         await Task.Run(async () => await host.DisposeAsync());
-        Assert.Empty(_projectManager.Projects);
+        Assert.Empty(_projectManager.GetProjects());
     }
 
     [UIFact] // This can happen if the .xaml files aren't included correctly.
@@ -657,10 +657,10 @@ public class DefaultWindowsRazorProjectHostTest : ProjectSnapshotManagerDispatch
 
         // Act & Assert
         await Task.Run(async () => await host.LoadAsync());
-        Assert.Empty(_projectManager.Projects);
+        Assert.Empty(_projectManager.GetProjects());
 
         await Task.Run(async () => await host.OnProjectChangedAsync(services.CreateUpdate(changes)));
-        Assert.Empty(_projectManager.Projects);
+        Assert.Empty(_projectManager.GetProjects());
     }
 
     [UIFact]
@@ -701,13 +701,13 @@ public class DefaultWindowsRazorProjectHostTest : ProjectSnapshotManagerDispatch
         host.SkipIntermediateOutputPathExistCheck_TestOnly = true;
 
         await Task.Run(async () => await host.LoadAsync());
-        Assert.Empty(_projectManager.Projects);
+        Assert.Empty(_projectManager.GetProjects());
 
         // Act
         await Task.Run(async () => await host.OnProjectChangedAsync(services.CreateUpdate(changes)));
 
         // Assert
-        var snapshot = Assert.Single(_projectManager.Projects);
+        var snapshot = Assert.Single(_projectManager.GetProjects());
         Assert.Equal(TestProjectData.SomeProject.FilePath, snapshot.FilePath);
 
         Assert.Equal(RazorLanguageVersion.Version_2_1, snapshot.Configuration.LanguageVersion);
@@ -735,7 +735,7 @@ public class DefaultWindowsRazorProjectHostTest : ProjectSnapshotManagerDispatch
             });
 
         await Task.Run(async () => await host.DisposeAsync());
-        Assert.Empty(_projectManager.Projects);
+        Assert.Empty(_projectManager.GetProjects());
     }
 
     [UIFact]
@@ -764,16 +764,16 @@ public class DefaultWindowsRazorProjectHostTest : ProjectSnapshotManagerDispatch
         var host = new DefaultWindowsRazorProjectHost(services, Workspace, Dispatcher, _projectConfigurationFilePathStore, _projectManager);
 
         await Task.Run(async () => await host.LoadAsync());
-        Assert.Empty(_projectManager.Projects);
+        Assert.Empty(_projectManager.GetProjects());
 
         // Act
         await Task.Run(async () => await host.OnProjectChangedAsync(services.CreateUpdate(changes)));
 
         // Assert
-        Assert.Empty(_projectManager.Projects);
+        Assert.Empty(_projectManager.GetProjects());
 
         await Task.Run(async () => await host.DisposeAsync());
-        Assert.Empty(_projectManager.Projects);
+        Assert.Empty(_projectManager.GetProjects());
     }
 
     [UIFact]
@@ -816,7 +816,7 @@ public class DefaultWindowsRazorProjectHostTest : ProjectSnapshotManagerDispatch
         host.SkipIntermediateOutputPathExistCheck_TestOnly = true;
 
         await Task.Run(async () => await host.LoadAsync());
-        Assert.Empty(_projectManager.Projects);
+        Assert.Empty(_projectManager.GetProjects());
 
         // Act - 1
         _projectManager.SolutionClosed();
@@ -867,13 +867,13 @@ public class DefaultWindowsRazorProjectHostTest : ProjectSnapshotManagerDispatch
         host.SkipIntermediateOutputPathExistCheck_TestOnly = true;
 
         await Task.Run(async () => await host.LoadAsync());
-        Assert.Empty(_projectManager.Projects);
+        Assert.Empty(_projectManager.GetProjects());
 
         // Act - 1
         await Task.Run(async () => await host.OnProjectChangedAsync(services.CreateUpdate(changes)));
 
         // Assert - 1
-        var snapshot = Assert.Single(_projectManager.Projects);
+        var snapshot = Assert.Single(_projectManager.GetProjects());
         Assert.Equal(TestProjectData.SomeProject.FilePath, snapshot.FilePath);
 
         Assert.Equal(RazorLanguageVersion.Version_2_1, snapshot.Configuration.LanguageVersion);
@@ -934,7 +934,7 @@ public class DefaultWindowsRazorProjectHostTest : ProjectSnapshotManagerDispatch
         await Task.Run(async () => await host.OnProjectChangedAsync(services.CreateUpdate(changes)));
 
         // Assert - 2
-        snapshot = Assert.Single(_projectManager.Projects);
+        snapshot = Assert.Single(_projectManager.GetProjects());
         Assert.Equal(TestProjectData.SomeProject.FilePath, snapshot.FilePath);
 
         Assert.Equal(RazorLanguageVersion.Version_2_0, snapshot.Configuration.LanguageVersion);
@@ -983,7 +983,7 @@ public class DefaultWindowsRazorProjectHostTest : ProjectSnapshotManagerDispatch
             });
 
         await Task.Run(async () => await host.DisposeAsync());
-        Assert.Empty(_projectManager.Projects);
+        Assert.Empty(_projectManager.GetProjects());
     }
 
     [UIFact]
@@ -1023,13 +1023,13 @@ public class DefaultWindowsRazorProjectHostTest : ProjectSnapshotManagerDispatch
         host.SkipIntermediateOutputPathExistCheck_TestOnly = true;
 
         await Task.Run(async () => await host.LoadAsync());
-        Assert.Empty(_projectManager.Projects);
+        Assert.Empty(_projectManager.GetProjects());
 
         // Act - 1
         await Task.Run(async () => await host.OnProjectChangedAsync(services.CreateUpdate(changes)));
 
         // Assert - 1
-        var snapshot = Assert.Single(_projectManager.Projects);
+        var snapshot = Assert.Single(_projectManager.GetProjects());
         Assert.Equal(TestProjectData.SomeProject.FilePath, snapshot.FilePath);
 
         Assert.Equal(RazorLanguageVersion.Version_2_1, snapshot.Configuration.LanguageVersion);
@@ -1055,10 +1055,10 @@ public class DefaultWindowsRazorProjectHostTest : ProjectSnapshotManagerDispatch
         await Task.Run(async () => await host.OnProjectChangedAsync(services.CreateUpdate(changes)));
 
         // Assert - 2
-        Assert.Empty(_projectManager.Projects);
+        Assert.Empty(_projectManager.GetProjects());
 
         await Task.Run(async () => await host.DisposeAsync());
-        Assert.Empty(_projectManager.Projects);
+        Assert.Empty(_projectManager.GetProjects());
     }
 
     [UIFact]
@@ -1098,13 +1098,13 @@ public class DefaultWindowsRazorProjectHostTest : ProjectSnapshotManagerDispatch
         host.SkipIntermediateOutputPathExistCheck_TestOnly = true;
 
         await Task.Run(async () => await host.LoadAsync());
-        Assert.Empty(_projectManager.Projects);
+        Assert.Empty(_projectManager.GetProjects());
 
         // Act - 1
         await Task.Run(async () => await host.OnProjectChangedAsync(services.CreateUpdate(changes)));
 
         // Assert - 1
-        var snapshot = Assert.Single(_projectManager.Projects);
+        var snapshot = Assert.Single(_projectManager.GetProjects());
         Assert.Equal(TestProjectData.SomeProject.FilePath, snapshot.FilePath);
 
         Assert.Equal(RazorLanguageVersion.Version_2_1, snapshot.Configuration.LanguageVersion);
@@ -1118,7 +1118,7 @@ public class DefaultWindowsRazorProjectHostTest : ProjectSnapshotManagerDispatch
         await Task.Run(async () => await host.DisposeAsync());
 
         // Assert - 2
-        Assert.Empty(_projectManager.Projects);
+        Assert.Empty(_projectManager.GetProjects());
 
         // Act - 3
         _razorGeneralProperties.Property(Rules.RazorGeneral.RazorLangVersionProperty, "2.0");
@@ -1137,7 +1137,7 @@ public class DefaultWindowsRazorProjectHostTest : ProjectSnapshotManagerDispatch
         await Task.Run(async () => await host.OnProjectChangedAsync(services.CreateUpdate(changes)));
 
         // Assert - 3
-        Assert.Empty(_projectManager.Projects);
+        Assert.Empty(_projectManager.GetProjects());
     }
 
     [UIFact]
@@ -1178,13 +1178,13 @@ public class DefaultWindowsRazorProjectHostTest : ProjectSnapshotManagerDispatch
         host.SkipIntermediateOutputPathExistCheck_TestOnly = true;
 
         await Task.Run(async () => await host.LoadAsync());
-        Assert.Empty(_projectManager.Projects);
+        Assert.Empty(_projectManager.GetProjects());
 
         // Act - 1
         await Task.Run(async () => await host.OnProjectChangedAsync(services.CreateUpdate(changes)));
 
         // Assert - 1
-        var snapshot = Assert.Single(_projectManager.Projects);
+        var snapshot = Assert.Single(_projectManager.GetProjects());
         Assert.Equal(TestProjectData.SomeProject.FilePath, snapshot.FilePath);
         Assert.Same("MVC-2.1", snapshot.Configuration.ConfigurationName);
 
@@ -1210,7 +1210,7 @@ public class DefaultWindowsRazorProjectHostTest : ProjectSnapshotManagerDispatch
         await Task.Run(async () => await host.OnProjectRenamingAsync(TestProjectData.SomeProject.FilePath, TestProjectData.AnotherProject.FilePath));
 
         // Assert - 1
-        snapshot = Assert.Single(_projectManager.Projects);
+        snapshot = Assert.Single(_projectManager.GetProjects());
         Assert.Equal(TestProjectData.AnotherProject.FilePath, snapshot.FilePath);
         Assert.Same("MVC-2.1", snapshot.Configuration.ConfigurationName);
 
@@ -1232,13 +1232,13 @@ public class DefaultWindowsRazorProjectHostTest : ProjectSnapshotManagerDispatch
            });
 
         await Task.Run(async () => await host.DisposeAsync());
-        Assert.Empty(_projectManager.Projects);
+        Assert.Empty(_projectManager.GetProjects());
     }
 
     private class TestProjectSnapshotManager : DefaultProjectSnapshotManager
     {
-        public TestProjectSnapshotManager(ProjectSnapshotManagerDispatcher dispatcher, Workspace workspace)
-            : base(dispatcher, Mock.Of<IErrorReporter>(MockBehavior.Strict), Array.Empty<ProjectSnapshotChangeTrigger>(), workspace)
+        public TestProjectSnapshotManager(Workspace workspace)
+            : base(Mock.Of<IErrorReporter>(MockBehavior.Strict), Array.Empty<ProjectSnapshotChangeTrigger>(), workspace)
         {
         }
     }

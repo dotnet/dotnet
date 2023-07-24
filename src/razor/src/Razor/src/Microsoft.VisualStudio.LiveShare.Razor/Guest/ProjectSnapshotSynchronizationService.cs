@@ -68,7 +68,7 @@ internal class ProjectSnapshotSynchronizationService : ICollaborationService, IA
 
         await _joinableTaskFactory.SwitchToMainThreadAsync();
 
-        var projects = _projectSnapshotManager.Projects.ToArray();
+        var projects = _projectSnapshotManager.GetProjects();
         foreach (var project in projects)
         {
             try
