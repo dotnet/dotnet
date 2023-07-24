@@ -1,29 +1,5 @@
-//------------------------------------------------------------------------------
-//
-// Copyright (c) Microsoft Corporation.
-// All rights reserved.
-//
-// This code is licensed under the MIT License.
-//
-// Permission is hereby granted, free of charge, to any person obtaining a copy
-// of this software and associated documentation files(the "Software"), to deal
-// in the Software without restriction, including without limitation the rights
-// to use, copy, modify, merge, publish, distribute, sublicense, and / or sell
-// copies of the Software, and to permit persons to whom the Software is
-// furnished to do so, subject to the following conditions :
-//
-// The above copyright notice and this permission notice shall be included in
-// all copies or substantial portions of the Software.
-//
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.IN NO EVENT SHALL THE
-// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-// THE SOFTWARE.
-//
-//------------------------------------------------------------------------------
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System;
 using System.Text;
@@ -37,9 +13,6 @@ namespace Microsoft.IdentityModel.Tokens
     public static class Base64UrlEncoder
     {
         private const char base64PadCharacter = '=';
-#if NET45
-        private const string doubleBase64PadCharacter = "==";
-#endif
         private const char base64Character62 = '+';
         private const char base64Character63 = '/';
         private const char base64UrlCharacter62 = '-';
@@ -86,17 +59,33 @@ namespace Microsoft.IdentityModel.Tokens
         {
             _ = inArray ?? throw LogHelper.LogArgumentNullException(nameof(inArray));
 
+            if (offset < 0)
+                throw LogHelper.LogExceptionMessage(new ArgumentOutOfRangeException(
+                    LogHelper.FormatInvariant(
+                        LogMessages.IDX10716,
+                        LogHelper.MarkAsNonPII(nameof(offset)),
+                        LogHelper.MarkAsNonPII(offset))));
+
             if (length == 0)
                 return string.Empty;
 
             if (length < 0)
-                throw LogHelper.LogExceptionMessage(new ArgumentOutOfRangeException(LogHelper.FormatInvariant(LogMessages.IDX10106, LogHelper.MarkAsNonPII(nameof(length)), LogHelper.MarkAsNonPII(length))));
-
-            if (offset < 0 || inArray.Length < offset)
-                throw LogHelper.LogExceptionMessage(new ArgumentOutOfRangeException(LogHelper.FormatInvariant(LogMessages.IDX10106, LogHelper.MarkAsNonPII(nameof(offset)), LogHelper.MarkAsNonPII(offset))));
+                throw LogHelper.LogExceptionMessage(new ArgumentOutOfRangeException(
+                    LogHelper.FormatInvariant(
+                        LogMessages.IDX10716,
+                        LogHelper.MarkAsNonPII(nameof(length)),
+                        LogHelper.MarkAsNonPII(length))));
 
             if (inArray.Length < offset + length)
-                throw LogHelper.LogExceptionMessage(new ArgumentOutOfRangeException(LogHelper.FormatInvariant(LogMessages.IDX10106, LogHelper.MarkAsNonPII(nameof(length)), LogHelper.MarkAsNonPII(length))));
+                throw LogHelper.LogExceptionMessage(new ArgumentOutOfRangeException(
+                    LogHelper.FormatInvariant(
+                        LogMessages.IDX10717,
+                        LogHelper.MarkAsNonPII(nameof(offset)),
+                        LogHelper.MarkAsNonPII(nameof(length)),
+                        LogHelper.MarkAsNonPII(nameof(inArray)),
+                        LogHelper.MarkAsNonPII(offset),
+                        LogHelper.MarkAsNonPII(length),
+                        LogHelper.MarkAsNonPII(inArray.Length))));
 
             int lengthmod3 = length % 3;
             int limit = offset + (length - lengthmod3);
@@ -173,45 +162,16 @@ namespace Microsoft.IdentityModel.Tokens
         }
 
         /// <summary>
-        ///  Converts the specified string, which encodes binary data as base-64-url digits, to an equivalent 8-bit unsigned integer array.</summary>
+        /// Converts the specified string, base-64-url encoded to utf8 bytes.</summary>
         /// <param name="str">base64Url encoded string.</param>
         /// <returns>UTF8 bytes.</returns>
         public static byte[] DecodeBytes(string str)
         {
             _ = str ?? throw LogHelper.LogExceptionMessage(new ArgumentNullException(nameof(str)));
-#if NET45
-            // 62nd char of encoding
-            str = str.Replace(base64UrlCharacter62, base64Character62);
-            
-            // 63rd char of encoding
-            str = str.Replace(base64UrlCharacter63, base64Character63);
-
-            // check for padding
-            switch (str.Length % 4)
-            {
-                case 0:
-                    // No pad chars in this case
-                    break;
-                case 2:
-                    // Two pad chars
-                    str += doubleBase64PadCharacter;
-                    break;
-                case 3:
-                    // One pad char
-                    str += base64PadCharacter;
-                    break;
-                default:
-                    throw LogHelper.LogExceptionMessage(new FormatException(LogHelper.FormatInvariant(LogMessages.IDX10400, str)));
-            }
-
-            return Convert.FromBase64String(str);
-#else
             return UnsafeDecode(str);
-#endif
         }
 
-#if !NET45
-        private unsafe static byte[] UnsafeDecode(string str)
+        internal static unsafe byte[] UnsafeDecode(string str)
         {
             int mod = str.Length % 4;
             if (mod == 1)
@@ -231,7 +191,7 @@ namespace Microsoft.IdentityModel.Tokens
 
             if (needReplace)
             {
-                string decodedString = new string(char.MinValue, decodedLength);
+                string decodedString = new(char.MinValue, decodedLength);
                 fixed (char* dest = decodedString)
                 {
                     int i = 0;
@@ -259,11 +219,12 @@ namespace Microsoft.IdentityModel.Tokens
                 }
                 else
                 {
-                    string decodedString = new string(char.MinValue, decodedLength);
+                    string decodedString = new(char.MinValue, decodedLength);
                     fixed (char* src = str)
                     fixed (char* dest = decodedString)
                     {
                         Buffer.MemoryCopy(src, dest, str.Length * 2, str.Length * 2);
+
                         dest[str.Length] = base64PadCharacter;
                         if (str.Length + 2 == decodedLength)
                             dest[str.Length + 1] = base64PadCharacter;
@@ -273,7 +234,71 @@ namespace Microsoft.IdentityModel.Tokens
                 }
             }
         }
-#endif
+
+        internal static unsafe byte[] UnsafeDecode(char[] str)
+        {
+            int mod = str.Length % 4;
+            if (mod == 1)
+                throw LogHelper.LogExceptionMessage(new FormatException(LogHelper.FormatInvariant(LogMessages.IDX10400, str)));
+
+            bool needReplace = false;
+            // the decoded length 
+            int decodedLength = str.Length + (4 - mod) % 4;
+
+            for (int i = 0; i < str.Length; i++)
+            {
+                if (str[i] == base64UrlCharacter62 || str[i] == base64UrlCharacter63)
+                {
+                    needReplace = true;
+                    break;
+                }
+            }
+
+            if (needReplace)
+            {
+                string decodedString = new(char.MinValue, decodedLength);
+                fixed (char* dest = decodedString)
+                {
+                    int i = 0;
+                    for (; i < str.Length; i++)
+                    {
+                        if (str[i] == base64UrlCharacter62)
+                            dest[i] = base64Character62;
+                        else if (str[i] == base64UrlCharacter63)
+                            dest[i] = base64Character63;
+                        else
+                            dest[i] = str[i];
+                    }
+
+                    for (; i < decodedLength; i++)
+                        dest[i] = base64PadCharacter;
+                }
+
+                return Convert.FromBase64String(decodedString);
+            }
+            else
+            {
+                if (decodedLength == str.Length)
+                {
+                    return Convert.FromBase64CharArray(str, 0, str.Length);
+                }
+                else
+                {
+                    string decodedString = new(char.MinValue, decodedLength);
+                    fixed (char* src = str)
+                    fixed (char* dest = decodedString)
+                    {
+                        Buffer.MemoryCopy(src, dest, str.Length * 2, str.Length * 2);
+
+                        dest[str.Length] = base64PadCharacter;
+                        if (str.Length + 2 == decodedLength)
+                            dest[str.Length + 1] = base64PadCharacter;
+                    }
+
+                    return Convert.FromBase64String(decodedString);
+                }
+            }
+        }
 
         /// <summary>
         /// Decodes the string from Base64UrlEncoded to UTF8.

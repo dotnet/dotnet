@@ -1,29 +1,5 @@
-//------------------------------------------------------------------------------
-//
-// Copyright (c) Microsoft Corporation.
-// All rights reserved.
-//
-// This code is licensed under the MIT License.
-//
-// Permission is hereby granted, free of charge, to any person obtaining a copy
-// of this software and associated documentation files(the "Software"), to deal
-// in the Software without restriction, including without limitation the rights
-// to use, copy, modify, merge, publish, distribute, sublicense, and / or sell
-// copies of the Software, and to permit persons to whom the Software is
-// furnished to do so, subject to the following conditions :
-//
-// The above copyright notice and this permission notice shall be included in
-// all copies or substantial portions of the Software.
-//
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.IN NO EVENT SHALL THE
-// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-// THE SOFTWARE.
-//
-//------------------------------------------------------------------------------
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System;
 using System.Diagnostics.Contracts;
@@ -31,6 +7,7 @@ using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.IdentityModel.Logging;
+using Microsoft.IdentityModel.Protocols.Configuration;
 using Microsoft.IdentityModel.Tokens;
 
 namespace Microsoft.IdentityModel.Protocols
@@ -51,13 +28,8 @@ namespace Microsoft.IdentityModel.Protocols
         private readonly IConfigurationRetriever<T> _configRetriever;
         private readonly IConfigurationValidator<T> _configValidator;
         private T _currentConfiguration;
-
-        /// <summary>
-        /// Static initializer for a new object. Static initializers run before the first instance of the type is created.
-        /// </summary>
-        static ConfigurationManager()
-        {
-        }
+        private Exception _fetchMetadataFailure;
+        private TimeSpan _bootstrapRefreshInterval = TimeSpan.FromSeconds(1);
 
         /// <summary>
         /// Instantiates a new <see cref="ConfigurationManager{T}"/> that manages automatic and controls refreshing on configuration data.
@@ -65,7 +37,7 @@ namespace Microsoft.IdentityModel.Protocols
         /// <param name="metadataAddress">The address to obtain configuration.</param>
         /// <param name="configRetriever">The <see cref="IConfigurationRetriever{T}"/></param>
         public ConfigurationManager(string metadataAddress, IConfigurationRetriever<T> configRetriever)
-            : this(metadataAddress, configRetriever, new HttpDocumentRetriever())
+            : this(metadataAddress, configRetriever, new HttpDocumentRetriever(), new LastKnownGoodConfigurationCacheOptions())
         {
         }
 
@@ -76,7 +48,7 @@ namespace Microsoft.IdentityModel.Protocols
         /// <param name="configRetriever">The <see cref="IConfigurationRetriever{T}"/></param>
         /// <param name="httpClient">The client to use when obtaining configuration.</param>
         public ConfigurationManager(string metadataAddress, IConfigurationRetriever<T> configRetriever, HttpClient httpClient)
-            : this(metadataAddress, configRetriever, new HttpDocumentRetriever(httpClient))
+            : this(metadataAddress, configRetriever, new HttpDocumentRetriever(httpClient), new LastKnownGoodConfigurationCacheOptions())
         {
         }
 
@@ -90,6 +62,23 @@ namespace Microsoft.IdentityModel.Protocols
         /// <exception cref="ArgumentNullException">If 'configRetriever' is null.</exception>
         /// <exception cref="ArgumentNullException">If 'docRetriever' is null.</exception>
         public ConfigurationManager(string metadataAddress, IConfigurationRetriever<T> configRetriever, IDocumentRetriever docRetriever)
+            : this(metadataAddress, configRetriever, docRetriever, new LastKnownGoodConfigurationCacheOptions())
+        {
+        }
+
+        /// <summary>
+        /// Instantiates a new <see cref="ConfigurationManager{T}"/> that manages automatic and controls refreshing on configuration data.
+        /// </summary>
+        /// <param name="metadataAddress">The address to obtain configuration.</param>
+        /// <param name="configRetriever">The <see cref="IConfigurationRetriever{T}"/></param>
+        /// <param name="docRetriever">The <see cref="IDocumentRetriever"/> that reaches out to obtain the configuration.</param>
+        /// <param name="lkgCacheOptions">The <see cref="LastKnownGoodConfigurationCacheOptions"/></param>
+        /// <exception cref="ArgumentNullException">If 'metadataAddress' is null or empty.</exception>
+        /// <exception cref="ArgumentNullException">If 'configRetriever' is null.</exception>
+        /// <exception cref="ArgumentNullException">If 'docRetriever' is null.</exception>
+        /// <exception cref="ArgumentNullException">If 'lkgCacheOptions' is null.</exception>
+        public ConfigurationManager(string metadataAddress, IConfigurationRetriever<T> configRetriever, IDocumentRetriever docRetriever, LastKnownGoodConfigurationCacheOptions lkgCacheOptions)
+            : base(lkgCacheOptions)
         {
             if (string.IsNullOrWhiteSpace(metadataAddress))
                 throw LogHelper.LogArgumentNullException(nameof(metadataAddress));
@@ -107,7 +96,7 @@ namespace Microsoft.IdentityModel.Protocols
         }
 
         /// <summary>
-        /// Instantiates a new <see cref="ConfigurationManager{T}"/> with cinfiguration validator that manages automatic and controls refreshing on configuration data.
+        /// Instantiates a new <see cref="ConfigurationManager{T}"/> with configuration validator that manages automatic and controls refreshing on configuration data.
         /// </summary>
         /// <param name="metadataAddress">The address to obtain configuration.</param>
         /// <param name="configRetriever">The <see cref="IConfigurationRetriever{T}"/></param>
@@ -115,7 +104,21 @@ namespace Microsoft.IdentityModel.Protocols
         /// <param name="configValidator">The <see cref="IConfigurationValidator{T}"/></param>
         /// <exception cref="ArgumentNullException">If 'configValidator' is null.</exception>
         public ConfigurationManager(string metadataAddress, IConfigurationRetriever<T> configRetriever, IDocumentRetriever docRetriever, IConfigurationValidator<T> configValidator)
-            :this(metadataAddress, configRetriever, docRetriever)
+            : this(metadataAddress, configRetriever, docRetriever, configValidator, new LastKnownGoodConfigurationCacheOptions())
+        {
+        }
+
+        /// <summary>
+        /// Instantiates a new <see cref="ConfigurationManager{T}"/> with configuration validator that manages automatic and controls refreshing on configuration data.
+        /// </summary>
+        /// <param name="metadataAddress">The address to obtain configuration.</param>
+        /// <param name="configRetriever">The <see cref="IConfigurationRetriever{T}"/></param>
+        /// <param name="docRetriever">The <see cref="IDocumentRetriever"/> that reaches out to obtain the configuration.</param>
+        /// <param name="configValidator">The <see cref="IConfigurationValidator{T}"/></param>
+        /// <param name="lkgCacheOptions">The <see cref="LastKnownGoodConfigurationCacheOptions"/></param>
+        /// <exception cref="ArgumentNullException">If 'configValidator' is null.</exception>
+        public ConfigurationManager(string metadataAddress, IConfigurationRetriever<T> configRetriever, IDocumentRetriever docRetriever, IConfigurationValidator<T> configValidator, LastKnownGoodConfigurationCacheOptions lkgCacheOptions)
+            : this(metadataAddress, configRetriever, docRetriever, lkgCacheOptions)
         {
             if (configValidator == null)
                 throw LogHelper.LogArgumentNullException(nameof(configValidator));
@@ -141,8 +144,7 @@ namespace Microsoft.IdentityModel.Protocols
         /// <remarks>If the time since the last call is less than <see cref="BaseConfigurationManager.AutomaticRefreshInterval"/> then <see cref="IConfigurationRetriever{T}.GetConfigurationAsync"/> is not called and the current Configuration is returned.</remarks>
         public async Task<T> GetConfigurationAsync(CancellationToken cancel)
         {
-            DateTimeOffset now = DateTimeOffset.UtcNow;
-            if (_currentConfiguration != null && _syncAfter > now)
+            if (_currentConfiguration != null && _syncAfter > DateTimeOffset.UtcNow)
             {
                 return _currentConfiguration;
             }
@@ -150,32 +152,56 @@ namespace Microsoft.IdentityModel.Protocols
             await _refreshLock.WaitAsync(cancel).ConfigureAwait(false);
             try
             {
-                if (_syncAfter <= now)
+                if (_syncAfter <= DateTimeOffset.UtcNow)
                 {
                     try
                     {
                         // Don't use the individual CT here, this is a shared operation that shouldn't be affected by an individual's cancellation.
                         // The transport should have it's own timeouts, etc..
                         var configuration = await _configRetriever.GetConfigurationAsync(MetadataAddress, _docRetriever, CancellationToken.None).ConfigureAwait(false);
-                        _lastRefresh = now;
-                        _syncAfter = DateTimeUtil.Add(now.UtcDateTime, AutomaticRefreshInterval);
                         if (_configValidator != null)
                         {
                             ConfigurationValidationResult result = _configValidator.Validate(configuration);
                             if (!result.Succeeded)
-                                LogHelper.LogWarning(LogMessages.IDX20810, result.ErrorMessage);
+                                throw LogHelper.LogExceptionMessage(new InvalidConfigurationException(LogHelper.FormatInvariant(LogMessages.IDX20810, result.ErrorMessage)));
                         }
 
+                        _lastRefresh = DateTimeOffset.UtcNow;
+                        // Add a random amount between 0 and 5% of AutomaticRefreshInterval jitter to avoid spike traffic to IdentityProvider.
+                        _syncAfter = DateTimeUtil.Add(DateTime.UtcNow, AutomaticRefreshInterval +
+                            TimeSpan.FromSeconds(new Random().Next((int)AutomaticRefreshInterval.TotalSeconds / 20)));
                         _currentConfiguration = configuration;
-
                     }
                     catch (Exception ex)
                     {
-                        _syncAfter = DateTimeUtil.Add(now.UtcDateTime, AutomaticRefreshInterval < RefreshInterval ? AutomaticRefreshInterval : RefreshInterval);
+                        _fetchMetadataFailure = ex;
+
                         if (_currentConfiguration == null) // Throw an exception if there's no configuration to return.
-                            throw LogHelper.LogExceptionMessage(new InvalidOperationException(LogHelper.FormatInvariant(LogMessages.IDX20803, (MetadataAddress ?? "null")), ex));
+                        {
+                            if (_bootstrapRefreshInterval < RefreshInterval)
+                            {
+                                // Adopt exponential backoff for bootstrap refresh interval with a decorrelated jitter if it is not longer than the refresh interval.
+                                TimeSpan _bootstrapRefreshIntervalWithJitter = TimeSpan.FromSeconds(new Random().Next((int)_bootstrapRefreshInterval.TotalSeconds));
+                                _bootstrapRefreshInterval += _bootstrapRefreshInterval;
+                                _syncAfter = DateTimeUtil.Add(DateTime.UtcNow, _bootstrapRefreshIntervalWithJitter);
+                            }
+                            else
+                            {
+                                _syncAfter = DateTimeUtil.Add(DateTime.UtcNow, AutomaticRefreshInterval < RefreshInterval ? AutomaticRefreshInterval : RefreshInterval);
+                            }
+
+                            throw LogHelper.LogExceptionMessage(
+                                new InvalidOperationException(
+                                    LogHelper.FormatInvariant(LogMessages.IDX20803, LogHelper.MarkAsNonPII(MetadataAddress ?? "null"), LogHelper.MarkAsNonPII(_syncAfter), LogHelper.MarkAsNonPII(ex)), ex));
+                        } 
                         else
-                            LogHelper.LogExceptionMessage(new InvalidOperationException(LogHelper.FormatInvariant(LogMessages.IDX20806, (MetadataAddress ?? "null")), ex));
+                        {
+                            _syncAfter = DateTimeUtil.Add(DateTime.UtcNow, AutomaticRefreshInterval < RefreshInterval ? AutomaticRefreshInterval : RefreshInterval);
+
+                            LogHelper.LogExceptionMessage(
+                                new InvalidOperationException(
+                                    LogHelper.FormatInvariant(LogMessages.IDX20806, LogHelper.MarkAsNonPII(MetadataAddress ?? "null"), LogHelper.MarkAsNonPII(ex)), ex));
+                        }
                     }
                 }
 
@@ -183,7 +209,14 @@ namespace Microsoft.IdentityModel.Protocols
                 if (_currentConfiguration != null)
                     return _currentConfiguration;
                 else
-                    throw LogHelper.LogExceptionMessage(new InvalidOperationException(LogHelper.FormatInvariant(LogMessages.IDX20803, (MetadataAddress ?? "null"))));
+                    throw LogHelper.LogExceptionMessage(
+                        new InvalidOperationException(
+                            LogHelper.FormatInvariant(
+                                LogMessages.IDX20803,
+                                LogHelper.MarkAsNonPII(MetadataAddress ?? "null"),
+                                LogHelper.MarkAsNonPII(_syncAfter),
+                                LogHelper.MarkAsNonPII(_fetchMetadataFailure)),
+                            _fetchMetadataFailure));
             }
             finally
             {

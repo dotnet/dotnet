@@ -11,7 +11,6 @@
     <PackageId>Microsoft.IdentityModel.TestUtils</PackageId>
     <SignAssembly>true</SignAssembly>
     <IsTestProject>false</IsTestProject>
-    <TargetFrameworks Condition=" '$(OS)' == 'Windows_NT' ">$(TestTargets);net45</TargetFrameworks>
   </PropertyGroup>
 
   <ItemGroup>
@@ -25,14 +24,8 @@
     <ProjectReference Include="..\..\src\System.IdentityModel.Tokens.Jwt\System.IdentityModel.Tokens.Jwt.csproj" />
   </ItemGroup>
 
-  <ItemGroup Condition=" '$(TargetFramework)' == 'net45' ">
-    <PackageReference Include="NETStandard.Library" Version="$(NetStandardVersion)" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Reference Include="System.Net.Http">
-      <HintPath>..\..\..\..\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.5\System.Net.Http.dll</HintPath>
-    </Reference>
+  <ItemGroup Condition="'$(TargetFramework)' == 'net461' Or '$(TargetFramework)' == 'net462' Or '$(TargetFramework)' == 'net472'">
+      <Reference Include="System.Net.Http"/>
   </ItemGroup>
 
   <ItemGroup>

@@ -3,8 +3,6 @@
     <AspNetCoreMinSupportedVersion>2.1.1</AspNetCoreMinSupportedVersion>
     <MicrosoftAzureKeyVaultVersion>3.0.5</MicrosoftAzureKeyVaultVersion>
     <MicrosoftAzureServicesAppAuthenticationVersion>1.0.3</MicrosoftAzureServicesAppAuthenticationVersion>
-    <MicrosoftCSharpVersion>4.5.0</MicrosoftCSharpVersion>
-    <MicrosoftSourceLinkGitHubVersion>1.0.0</MicrosoftSourceLinkGitHubVersion>
     <NetStandardVersion>2.0.3</NetStandardVersion>
     <SystemCollectionsSpecializedVersion>4.3.0</SystemCollectionsSpecializedVersion>
     <SystemComponentModelTypeConverterVersion>4.3.0</SystemComponentModelTypeConverterVersion>
@@ -15,7 +13,20 @@
     <SystemRuntimeSerializationPrimitivesVersion>4.3.0</SystemRuntimeSerializationPrimitivesVersion>
     <SystemRuntimeSerializationXmlVersion>4.3.0</SystemRuntimeSerializationXmlVersion>
     <SystemSecurityClaimsVersion>4.3.0</SystemSecurityClaimsVersion>
-    <SystemSecurityCryptographyCngVersion>4.5.0</SystemSecurityCryptographyCngVersion>
+    <SystemTextEncoding>4.3.0</SystemTextEncoding>
+    <SystemTextJson>4.7.2</SystemTextJson>
+    <SystemTextEncodingsWeb>4.7.2</SystemTextEncodingsWeb>
     <SystemXmlXmlDocumentVersion>4.3.0</SystemXmlXmlDocumentVersion>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(TargetFramework)' == 'net8.0'">
+    <SystemSecurityCryptographyCngVersion>5.0.0</SystemSecurityCryptographyCngVersion>
+    <MicrosoftCSharpVersion>4.7.0</MicrosoftCSharpVersion>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(TargetFramework)' != 'net8.0'">
+    <SystemSecurityCryptographyCngVersion>4.5.0</SystemSecurityCryptographyCngVersion>
+    <MicrosoftCSharpVersion>4.5.0</MicrosoftCSharpVersion>
+    <MicrosoftSourceLinkGitHubVersion>1.0.0</MicrosoftSourceLinkGitHubVersion>
   </PropertyGroup>
 </Project>

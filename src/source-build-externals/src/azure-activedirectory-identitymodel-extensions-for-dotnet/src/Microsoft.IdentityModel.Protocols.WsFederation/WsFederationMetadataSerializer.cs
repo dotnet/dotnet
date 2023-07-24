@@ -1,29 +1,5 @@
-﻿//------------------------------------------------------------------------------
-//
-// Copyright (c) Microsoft Corporation.
-// All rights reserved.
-//
-// This code is licensed under the MIT License.
-//
-// Permission is hereby granted, free of charge, to any person obtaining a copy
-// of this software and associated documentation files(the "Software"), to deal
-// in the Software without restriction, including without limitation the rights
-// to use, copy, modify, merge, publish, distribute, sublicense, and / or sell
-// copies of the Software, and to permit persons to whom the Software is
-// furnished to do so, subject to the following conditions :
-//
-// The above copyright notice and this permission notice shall be included in
-// all copies or substantial portions of the Software.
-//
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.IN NO EVENT SHALL THE
-// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-// THE SOFTWARE.
-//
-//------------------------------------------------------------------------------
+﻿// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System;
 using System.Security.Cryptography.X509Certificates;
@@ -130,7 +106,9 @@ namespace Microsoft.IdentityModel.Protocols.WsFederation
                             }
                         }
                     }
+
                     configuration.TokenEndpoint = roleDescriptor.TokenEndpoint;
+                    configuration.ActiveTokenEndpoint = roleDescriptor.ActiveTokenEndpoint;
                 }
                 else
                 {
@@ -201,6 +179,8 @@ namespace Microsoft.IdentityModel.Protocols.WsFederation
                     roleDescriptor.KeyInfos.Add(ReadKeyDescriptorForSigning(reader));
                 else if (reader.IsStartElement(Elements.PassiveRequestorEndpoint, Namespace))
                     roleDescriptor.TokenEndpoint = ReadPassiveRequestorEndpoint(reader);
+                else if (reader.IsStartElement(Elements.SecurityTokenServiceEndpoint, Namespace))
+                    roleDescriptor.ActiveTokenEndpoint = ReadSecurityTokenServiceEndpoint(reader);
                 else
                     reader.ReadOuterXml();
             }
@@ -214,6 +194,9 @@ namespace Microsoft.IdentityModel.Protocols.WsFederation
 
             if (string.IsNullOrEmpty(roleDescriptor.TokenEndpoint))
                 LogHelper.LogWarning(LogMessages.IDX22807);
+
+            if (string.IsNullOrEmpty(roleDescriptor.ActiveTokenEndpoint))
+                LogHelper.LogWarning(LogMessages.IDX22813);
 
             return roleDescriptor;
         }
@@ -235,6 +218,7 @@ namespace Microsoft.IdentityModel.Protocols.WsFederation
             reader.ReadStartElement();
             reader.MoveToContent();
 
+            // <EndpointReference>
             XmlUtil.CheckReaderOnEntry(reader, WsAddressing.Elements.EndpointReference, WsAddressing.Namespace);
             if (reader.IsEmptyElement)
                 throw XmlUtil.LogReadException(LogMessages.IDX22812, WsAddressing.Elements.EndpointReference);
@@ -245,7 +229,9 @@ namespace Microsoft.IdentityModel.Protocols.WsFederation
             if (reader.IsEmptyElement)
                 throw XmlUtil.LogReadException(LogMessages.IDX22803);
 
+            // <Address>
             XmlUtil.CheckReaderOnEntry(reader, WsAddressing.Elements.Address, WsAddressing.Namespace);
+
             if (reader.IsEmptyElement)
                 throw XmlUtil.LogReadException(LogMessages.IDX22812, WsAddressing.Elements.Address);
 
@@ -266,6 +252,75 @@ namespace Microsoft.IdentityModel.Protocols.WsFederation
             reader.ReadEndElement();
 
             // </PassiveRequestorEndpoint>
+            reader.MoveToContent();
+            reader.ReadEndElement();
+
+            return tokenEndpoint;
+        }
+
+        /// <summary>
+        /// Read fed:SecurityTokenServiceEndpoint element from metadata XML.
+        /// </summary>
+        /// <param name="reader"><see cref="XmlReader"/> used to read SecurityTokenServiceEndpoint.</param>
+        /// <returns>Active token endpoint string</returns>
+        /// <exception cref="XmlReadException">If an error occurs while reading the SecurityTokenServiceEndpoint</exception>
+        protected virtual string ReadSecurityTokenServiceEndpoint(XmlReader reader)
+        {
+            XmlUtil.CheckReaderOnEntry(reader, Elements.SecurityTokenServiceEndpoint, Namespace);
+
+            // <SecurityTokenServiceEndpoint>
+            if (reader.IsEmptyElement)
+                throw XmlUtil.LogReadException(LogMessages.IDX22812, Elements.SecurityTokenServiceEndpoint);
+
+            reader.ReadStartElement();
+            reader.MoveToContent();
+
+            // <EndpointReference>
+            XmlUtil.CheckReaderOnEntry(reader, WsAddressing.Elements.EndpointReference, WsAddressing.Namespace);
+            if (reader.IsEmptyElement)
+                throw XmlUtil.LogReadException(LogMessages.IDX22812, WsAddressing.Elements.EndpointReference);
+
+            reader.ReadStartElement(WsAddressing.Elements.EndpointReference, WsAddressing.Namespace);
+            reader.MoveToContent();
+
+            if (reader.IsEmptyElement)
+                throw XmlUtil.LogReadException(LogMessages.IDX22814);
+
+            string tokenEndpoint = null;
+
+            while (reader.IsStartElement())
+            {
+                if (reader.IsStartElement(WsAddressing.Elements.Address, WsAddressing.Namespace))
+                {
+                    // <Address>
+                    XmlUtil.CheckReaderOnEntry(reader, WsAddressing.Elements.Address, WsAddressing.Namespace);
+
+                    if (reader.IsEmptyElement)
+                        throw XmlUtil.LogReadException(LogMessages.IDX22812, WsAddressing.Elements.Address);
+
+                    reader.ReadStartElement(WsAddressing.Elements.Address, WsAddressing.Namespace);
+                    reader.MoveToContent();
+
+                    tokenEndpoint = Trim(reader.ReadContentAsString());
+
+                    if (string.IsNullOrEmpty(tokenEndpoint))
+                        throw XmlUtil.LogReadException(LogMessages.IDX22814);
+
+                    // </Address>
+                    reader.MoveToContent();
+                    reader.ReadEndElement();
+                }
+                else
+                {
+                    reader.ReadOuterXml();
+                }
+            }
+
+            // </EndpointReference>
+            reader.MoveToContent();
+            reader.ReadEndElement();
+
+            // </SecurityTokenServiceEndpoint>
             reader.MoveToContent();
             reader.ReadEndElement();
 
@@ -325,7 +380,7 @@ namespace Microsoft.IdentityModel.Protocols.WsFederation
 
             if (string.IsNullOrEmpty(configuration.TokenEndpoint))
                 throw XmlUtil.LogWriteException(LogMessages.IDX22811);
-
+            
             if (configuration.SigningCredentials != null)
                 writer = new EnvelopedSignatureWriter(writer, configuration.SigningCredentials, "id");
 
@@ -356,6 +411,30 @@ namespace Microsoft.IdentityModel.Protocols.WsFederation
                     // </KeyDescriptor>
                     writer.WriteEndElement();
                 }
+            }
+
+            if (!string.IsNullOrEmpty(configuration.ActiveTokenEndpoint))
+            {
+                // <fed:SecurityTokenServiceEndpoint>
+                writer.WriteStartElement(PreferredPrefix, Elements.SecurityTokenServiceEndpoint, Namespace);
+
+                // <wsa:EndpointReference xmlns:wsa=""http://www.w3.org/2005/08/addressing"">
+                writer.WriteStartElement(WsAddressing.PreferredPrefix, WsAddressing.Elements.EndpointReference, WsAddressing.Namespace);
+
+                // <wsa:Address>
+                writer.WriteStartElement(WsAddressing.PreferredPrefix, WsAddressing.Elements.Address, WsAddressing.Namespace);
+
+                // write TokenEndpoint
+                writer.WriteString(configuration.ActiveTokenEndpoint);
+
+                // </wsa:Address>
+                writer.WriteEndElement();
+
+                // </wsa:EndpointReference>
+                writer.WriteEndElement();
+
+                // </fed:SecurityTokenServiceEndpoint>
+                writer.WriteEndElement();
             }
 
             // <fed:PassiveRequestorEndpoint>
