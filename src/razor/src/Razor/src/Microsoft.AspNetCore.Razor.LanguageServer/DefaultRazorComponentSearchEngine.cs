@@ -50,7 +50,7 @@ internal class DefaultRazorComponentSearchEngine : RazorComponentSearchEngine
         }
 
         var projects = await _projectSnapshotManagerDispatcher.RunOnDispatcherThreadAsync(
-             () => _projectSnapshotManager.Projects.ToArray(),
+             () => _projectSnapshotManager.GetProjects().ToArray(),
              cancellationToken).ConfigureAwait(false);
 
         foreach (var project in projects)
@@ -111,7 +111,7 @@ internal class DefaultRazorComponentSearchEngine : RazorComponentSearchEngine
         var lookupSymbolName = RemoveGenericContent(typeName.AsMemory());
 
         var projects = await _projectSnapshotManagerDispatcher.RunOnDispatcherThreadAsync(
-            () => _projectSnapshotManager.Projects.ToArray(),
+            () => _projectSnapshotManager.GetProjects(),
             CancellationToken.None).ConfigureAwait(false);
 
         foreach (var project in projects)

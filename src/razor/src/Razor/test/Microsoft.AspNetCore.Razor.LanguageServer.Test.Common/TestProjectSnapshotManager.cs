@@ -16,18 +16,13 @@ namespace Microsoft.AspNetCore.Razor.Test.Common;
 
 internal class TestProjectSnapshotManager : DefaultProjectSnapshotManager
 {
-    private TestProjectSnapshotManager(ProjectSnapshotManagerDispatcher dispatcher, IErrorReporter errorReporter, Workspace workspace)
-        : base(dispatcher, errorReporter, Array.Empty<ProjectSnapshotChangeTrigger>(), workspace)
+    private TestProjectSnapshotManager(IErrorReporter errorReporter, Workspace workspace)
+        : base(errorReporter, Array.Empty<ProjectSnapshotChangeTrigger>(), workspace)
     {
     }
 
-    public static TestProjectSnapshotManager Create(ProjectSnapshotManagerDispatcher dispatcher, IErrorReporter errorReporter)
+    public static TestProjectSnapshotManager Create(IErrorReporter errorReporter)
     {
-        if (dispatcher is null)
-        {
-            throw new ArgumentNullException(nameof(dispatcher));
-        }
-
         var services = TestServices.Create(
             workspaceServices: new[]
             {
@@ -35,7 +30,7 @@ internal class TestProjectSnapshotManager : DefaultProjectSnapshotManager
             },
             razorLanguageServices: Enumerable.Empty<ILanguageService>());
         var workspace = TestWorkspace.Create(services);
-        var testProjectManager = new TestProjectSnapshotManager(dispatcher, errorReporter, workspace);
+        var testProjectManager = new TestProjectSnapshotManager(errorReporter, workspace);
 
         return testProjectManager;
     }

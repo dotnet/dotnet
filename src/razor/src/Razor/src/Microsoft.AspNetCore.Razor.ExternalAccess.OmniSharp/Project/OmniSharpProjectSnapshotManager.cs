@@ -33,7 +33,7 @@ public class OmniSharpProjectSnapshotManager
 
     internal ProjectSnapshotManagerBase InternalProjectSnapshotManager { get; }
 
-    public IReadOnlyList<OmniSharpProjectSnapshot> Projects => InternalProjectSnapshotManager.Projects.Select(project => OmniSharpProjectSnapshot.Convert(project)!).ToList();
+    public IReadOnlyList<OmniSharpProjectSnapshot> Projects => InternalProjectSnapshotManager.GetProjects().Select(project => OmniSharpProjectSnapshot.Convert(project)!).ToList();
 
     public event EventHandler<OmniSharpProjectChangeEventArgs>? Changed;
 

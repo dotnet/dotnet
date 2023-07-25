@@ -52,7 +52,7 @@ public class RazorDiagnosticsPublisherTest : LanguageServerTestBase
     public RazorDiagnosticsPublisherTest(ITestOutputHelper testOutput)
         : base(testOutput)
     {
-        var testProjectManager = TestProjectSnapshotManager.Create(LegacyDispatcher, ErrorReporter);
+        var testProjectManager = TestProjectSnapshotManager.Create(ErrorReporter);
         var hostProject = new HostProject("C:/project/project.csproj", "C:/project/obj", RazorConfiguration.Default, "TestRootNamespace");
         testProjectManager.ProjectAdded(hostProject);
         var sourceText = SourceText.From(string.Empty);
@@ -63,12 +63,12 @@ public class RazorDiagnosticsPublisherTest : LanguageServerTestBase
         var closedHostDocument = new HostDocument("C:/project/closed_document.cshtml", "C:/project/closed_document.cshtml");
         testProjectManager.DocumentAdded(hostProject.Key, closedHostDocument, TextLoader.From(textAndVersion));
 
-        var openedDocument = testProjectManager.Projects[0].GetDocument(openedHostDocument.FilePath);
+        var openedDocument = testProjectManager.GetProjects()[0].GetDocument(openedHostDocument.FilePath);
         Assert.NotNull(openedDocument);
         _openedDocument = openedDocument;
         _openedDocumentUri = new Uri("C:/project/open_document.cshtml");
 
-        var closedDocument = testProjectManager.Projects[0].GetDocument(closedHostDocument.FilePath);
+        var closedDocument = testProjectManager.GetProjects()[0].GetDocument(closedHostDocument.FilePath);
         Assert.NotNull(closedDocument);
         _closedDocument = closedDocument;
 

@@ -1,7 +1,7 @@
 ﻿<Project>
   <ItemGroup>
-    <PackageVersion Include="BenchmarkDotNet" Version="$(BenchmarkDotNetVersion)" />
-    <PackageVersion Include="BenchmarkDotNet.Diagnostics.Windows" Version="$(BenchmarkDotNetVersion)" />
+    <PackageVersion Include="BenchmarkDotNet" Version="$(BenchmarkDotNetPackageVersion)" />
+    <PackageVersion Include="BenchmarkDotNet.Diagnostics.Windows" Version="$(BenchmarkDotNetPackageVersion)" />
     <PackageVersion Include="DiffPlex" Version="$(DiffPlexVersion)" />
     <PackageVersion Include="FluentAssertions" Version="$(FluentAssertionsVersion)" />
     <PackageVersion Include="Microsoft.AspNetCore.App.Runtime.$(NetCoreSDKRuntimeIdentifier)" Version="$(MicrosoftAspNetCoreAppVersion)" />

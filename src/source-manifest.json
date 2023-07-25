@@ -73,10 +73,10 @@
       "commitSha": "3b6ddc5b9f878f7408695f16c67198fa4e747b71"
     },
     {
-      "packageVersion": "7.0.0-preview.23371.1",
+      "packageVersion": "7.0.0-preview.23374.3",
       "path": "razor",
       "remoteUri": "https://github.com/dotnet/razor",
-      "commitSha": "066b8006951d506e345e10fd693715572b967930"
+      "commitSha": "21cbe4670c0198ede96bdf094187a4ed8a1449aa"
     },
     {
       "packageVersion": "4.8.0-1.23374.5",

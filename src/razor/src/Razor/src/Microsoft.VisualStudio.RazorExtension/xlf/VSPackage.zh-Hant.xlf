@@ -59,12 +59,12 @@
       </trans-unit>
       <trans-unit id="Setting_ColorBackgroundDescription">
         <source>If true, gives C# code in Razor files a background color</source>
-        <target state="new">If true, gives C# code in Razor files a background color</target>
+        <target state="translated">若為 true，則給予 Razor 檔案中的 C# 程式碼背景色彩</target>
         <note />
       </trans-unit>
       <trans-unit id="Setting_ColorBackgroundDisplayName">
         <source>Background for C# Code</source>
-        <target state="new">Background for C# Code</target>
+        <target state="translated">C# 程式碼的背景</target>
         <note />
       </trans-unit>
       <trans-unit id="Setting_FormattingOnTypeDescription">
