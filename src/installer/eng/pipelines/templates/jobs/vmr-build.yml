@@ -223,7 +223,6 @@ jobs:
 
       if [[ '${{ parameters.enablePoison }}' == 'True' ]]; then
         poisonArg='--poison'
-        dockerEnvArgs+=" -e SMOKE_TESTS_WARN_POISON_DIFFS=true"
       fi
 
       docker run --rm $dockerVolumeArgs -w /vmr $dockerEnvArgs ${{ parameters.container }} ./build.sh $poisonArg --run-smoke-test $(additionalBuildArgs) -- -p:SmokeTestConsoleVerbosity=detailed
