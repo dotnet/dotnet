@@ -6,10 +6,13 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Composition;
 using System.Diagnostics;
-using System.Linq;
 using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.Telemetry;
+
+#if DEBUG
+using System.Linq;
+#endif
 
 namespace Microsoft.AspNetCore.Razor.Telemetry;
 

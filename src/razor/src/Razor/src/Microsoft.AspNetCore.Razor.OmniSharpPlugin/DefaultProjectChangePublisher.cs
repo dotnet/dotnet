@@ -8,7 +8,6 @@ using System.Collections.Generic;
 using System.Composition;
 using System.IO;
 using System.Threading.Tasks;
-using Microsoft.CodeAnalysis.Razor.Workspaces.Serialization;
 using Microsoft.AspNetCore.Razor.ExternalAccess.OmniSharp.Project;
 using Microsoft.AspNetCore.Razor.ExternalAccess.OmniSharp.Serialization;
 using Microsoft.Extensions.Logging;
