@@ -7,10 +7,10 @@
       "commitSha": "2d2482f9b6ccaaac02ef39adc06b3e30b29a5c13"
     },
     {
-      "packageVersion": "8.0.0-preview.7.23371.19",
+      "packageVersion": "8.0.0-preview.7.23374.15",
       "path": "aspnetcore",
       "remoteUri": "https://github.com/dotnet/aspnetcore",
-      "commitSha": "a5d97963ccd9fca4312b8b768028d02ffa00ec52"
+      "commitSha": "587c9188292499af1b81709f571c7906d518c125"
     },
     {
       "packageVersion": "0.11.4-alpha.23360.2",
@@ -37,10 +37,10 @@
       "commitSha": "5ce78f66d89ea529e459abddb129ab36cb5bd936"
     },
     {
-      "packageVersion": "8.0.0-preview.7.23368.4",
+      "packageVersion": "8.0.0-preview.7.23371.9",
       "path": "emsdk",
       "remoteUri": "https://github.com/dotnet/emsdk",
-      "commitSha": "8a689686a6edbbcac9881e906e50750f44b72bf1"
+      "commitSha": "a429056d19aed777f6b50fe05c1c8ab482784007"
     },
     {
       "packageVersion": "8.0.433001",
@@ -58,7 +58,7 @@
       "packageVersion": "8.0.100",
       "path": "installer",
       "remoteUri": "https://github.com/dotnet/installer",
-      "commitSha": "a2c74562638e7c9b87c788802b53eac702c9a11b"
+      "commitSha": "a9440e1a3b6aa9a378698dd9d16e8916d4696435"
     },
     {
       "packageVersion": "17.8.0-preview-23367-03",
@@ -91,16 +91,16 @@
       "commitSha": "45879f0b46557886b8d553d121a81866f67ce08a"
     },
     {
-      "packageVersion": "8.0.0-preview.7.23370.6",
+      "packageVersion": "8.0.0-preview.7.23374.5",
       "path": "runtime",
       "remoteUri": "https://github.com/dotnet/runtime",
-      "commitSha": "ebd23467f0b677c66ad85cf4e63ffef4a50acc25"
+      "commitSha": "c13b009957b489e34abed3fb292305e392bc4214"
     },
     {
-      "packageVersion": "8.0.100-preview.7.23374.11",
+      "packageVersion": "8.0.100-preview.7.23375.1",
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "e4f6d49ebd195f416cfef1e433a01c65a59aeae7"
+      "commitSha": "ecefbf63c30224ef76c332ca33ea7a3857c97229"
     },
     {
       "packageVersion": "8.0.0-alpha.1.23374.2",
