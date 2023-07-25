@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.Razor.LanguageServer.CodeActions.Models;
 using Microsoft.AspNetCore.Razor.LanguageServer.Common;
 using Microsoft.AspNetCore.Razor.LanguageServer.Diagnostics;
 using Microsoft.AspNetCore.Razor.LanguageServer.EndpointContracts;
+using Microsoft.AspNetCore.Razor.LanguageServer.Extensions;
 using Microsoft.AspNetCore.Razor.LanguageServer.Folding;
 using Microsoft.AspNetCore.Razor.LanguageServer.Protocol;
 using Microsoft.AspNetCore.Razor.LanguageServer.Test.Common;
@@ -185,13 +186,14 @@ public abstract class SingleServerDelegatingEndpointTestBase : LanguageServerTes
 
         private async Task<VSInternalSpellCheckableRangeReport[]> HandleSpellCheckAsync<TParams>(TParams @params)
         {
-            Assert.IsType<DelegatedSpellCheckParams>(@params);
+            var delegatedParams = Assert.IsType<DelegatedSpellCheckParams>(@params);
 
             var delegatedRequest = new VSInternalDocumentSpellCheckableParams
             {
-                TextDocument = new TextDocumentIdentifier
+                TextDocument = new VSTextDocumentIdentifier
                 {
                     Uri = _csharpDocumentUri,
+                    ProjectContext = delegatedParams.Identifier.TextDocumentIdentifier.GetProjectContext(),
                 },
             };
 
@@ -205,13 +207,14 @@ public abstract class SingleServerDelegatingEndpointTestBase : LanguageServerTes
 
         private async Task<RazorPullDiagnosticResponse> HandlePullDiagnosticsAsync<TParams>(TParams @params)
         {
-            Assert.IsType<DelegatedDiagnosticParams>(@params);
+            var delegatedParams = Assert.IsType<DelegatedDiagnosticParams>(@params);
 
             var delegatedRequest = new VSInternalDocumentDiagnosticsParams
             {
-                TextDocument = new TextDocumentIdentifier
+                TextDocument = new VSTextDocumentIdentifier
                 {
                     Uri = _csharpDocumentUri,
+                    ProjectContext = delegatedParams.Identifier.TextDocumentIdentifier.GetProjectContext(),
                 },
             };
 
@@ -265,6 +268,7 @@ public abstract class SingleServerDelegatingEndpointTestBase : LanguageServerTes
                 TextDocument = new VSTextDocumentIdentifier()
                 {
                     Uri = _csharpDocumentUri,
+                    ProjectContext = delegatedParams.Identifier.TextDocumentIdentifier.GetProjectContext(),
                 },
                 Position = delegatedParams.ProjectedPosition
             };
@@ -285,6 +289,7 @@ public abstract class SingleServerDelegatingEndpointTestBase : LanguageServerTes
                 TextDocument = new VSTextDocumentIdentifier()
                 {
                     Uri = _csharpDocumentUri,
+                    ProjectContext = delegatedParams.Identifier.TextDocumentIdentifier.GetProjectContext(),
                 },
                 Position = delegatedParams.ProjectedPosition
             };
@@ -305,6 +310,7 @@ public abstract class SingleServerDelegatingEndpointTestBase : LanguageServerTes
                 TextDocument = new VSTextDocumentIdentifier()
                 {
                     Uri = _csharpDocumentUri,
+                    ProjectContext = delegatedParams.Identifier.TextDocumentIdentifier.GetProjectContext(),
                 },
                 Position = delegatedParams.ProjectedPosition
             };
@@ -325,6 +331,7 @@ public abstract class SingleServerDelegatingEndpointTestBase : LanguageServerTes
                 TextDocument = new VSTextDocumentIdentifier()
                 {
                     Uri = _csharpDocumentUri,
+                    ProjectContext = delegatedParams.Identifier.TextDocumentIdentifier.GetProjectContext(),
                 },
                 Position = delegatedParams.ProjectedPosition,
             };
@@ -345,7 +352,7 @@ public abstract class SingleServerDelegatingEndpointTestBase : LanguageServerTes
                 TextDocument = new VSTextDocumentIdentifier()
                 {
                     Uri = _csharpDocumentUri,
-                    ProjectContext = delegatedParams.ProjectContext,
+                    ProjectContext = delegatedParams.Identifier.TextDocumentIdentifier.GetProjectContext(),
                 },
                 Position = delegatedParams.ProjectedPosition,
                 NewName = delegatedParams.NewName,
@@ -364,9 +371,10 @@ public abstract class SingleServerDelegatingEndpointTestBase : LanguageServerTes
             var delegatedParams = Assert.IsType<DelegatedOnAutoInsertParams>(@params);
             var delegatedRequest = new VSInternalDocumentOnAutoInsertParams()
             {
-                TextDocument = new TextDocumentIdentifier()
+                TextDocument = new VSTextDocumentIdentifier()
                 {
-                    Uri = _csharpDocumentUri
+                    Uri = _csharpDocumentUri,
+                    ProjectContext = delegatedParams.Identifier.TextDocumentIdentifier.GetProjectContext()
                 },
                 Position = delegatedParams.ProjectedPosition,
                 Character = delegatedParams.Character,
@@ -396,9 +404,10 @@ public abstract class SingleServerDelegatingEndpointTestBase : LanguageServerTes
             var delegatedParams = Assert.IsType<DelegatedValidateBreakpointRangeParams>(@params);
             var delegatedRequest = new VSInternalValidateBreakableRangeParams()
             {
-                TextDocument = new TextDocumentIdentifier()
+                TextDocument = new VSTextDocumentIdentifier()
                 {
-                    Uri = _csharpDocumentUri
+                    Uri = _csharpDocumentUri,
+                    ProjectContext = delegatedParams.Identifier.TextDocumentIdentifier.GetProjectContext(),
                 },
                 Range = delegatedParams.ProjectedRange,
             };

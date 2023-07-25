@@ -71,7 +71,7 @@ public class DelegatedCompletionListProviderTest : LanguageServerTestBase
         Assert.Equal(RazorLanguageKind.Html, delegatedParameters.ProjectedKind);
         Assert.Equal(new Position(0, 1), delegatedParameters.ProjectedPosition);
         Assert.Equal(CompletionTriggerKind.Invoked, delegatedParameters.Context.TriggerKind);
-        Assert.Equal(1337, delegatedParameters.HostDocument.Version);
+        Assert.Equal(1337, delegatedParameters.Identifier.Version);
         Assert.Null(delegatedParameters.ProvisionalTextEdit);
     }
 
@@ -99,7 +99,7 @@ public class DelegatedCompletionListProviderTest : LanguageServerTestBase
         Assert.Equal(new Position(0, 1), delegatedParameters.ProjectedPosition);
         Assert.Equal(CompletionTriggerKind.TriggerCharacter, delegatedParameters.Context.TriggerKind);
         Assert.Equal(VSInternalCompletionInvokeKind.Typing, delegatedParameters.Context.InvokeKind);
-        Assert.Equal(1337, delegatedParameters.HostDocument.Version);
+        Assert.Equal(1337, delegatedParameters.Identifier.Version);
         Assert.Null(delegatedParameters.ProvisionalTextEdit);
     }
 
@@ -127,7 +127,7 @@ public class DelegatedCompletionListProviderTest : LanguageServerTestBase
         Assert.Equal(new Position(0, 1), delegatedParameters.ProjectedPosition);
         Assert.Equal(CompletionTriggerKind.Invoked, delegatedParameters.Context.TriggerKind);
         Assert.Equal(VSInternalCompletionInvokeKind.Typing, delegatedParameters.Context.InvokeKind);
-        Assert.Equal(1337, delegatedParameters.HostDocument.Version);
+        Assert.Equal(1337, delegatedParameters.Identifier.Version);
         Assert.Null(delegatedParameters.ProvisionalTextEdit);
     }
 
@@ -205,7 +205,7 @@ public class DelegatedCompletionListProviderTest : LanguageServerTestBase
         Assert.True(delegatedParameters.ProjectedPosition.Line > 2);
         Assert.Equal(CompletionTriggerKind.TriggerCharacter, delegatedParameters.Context.TriggerKind);
         Assert.Equal(VSInternalCompletionInvokeKind.Typing, delegatedParameters.Context.InvokeKind);
-        Assert.Equal(1337, delegatedParameters.HostDocument.Version);
+        Assert.Equal(1337, delegatedParameters.Identifier.Version);
         Assert.NotNull(delegatedParameters.ProvisionalTextEdit);
     }
 
@@ -235,7 +235,7 @@ public class DelegatedCompletionListProviderTest : LanguageServerTestBase
         Assert.True(delegatedParameters.ProjectedPosition.Line > 2);
         Assert.Equal(CompletionTriggerKind.TriggerCharacter, delegatedParameters.Context.TriggerKind);
         Assert.Equal(VSInternalCompletionInvokeKind.Typing, delegatedParameters.Context.InvokeKind);
-        Assert.Equal(1337, delegatedParameters.HostDocument.Version);
+        Assert.Equal(1337, delegatedParameters.Identifier.Version);
         Assert.Null(delegatedParameters.ProvisionalTextEdit);
     }
 

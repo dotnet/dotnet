@@ -131,7 +131,7 @@ public abstract class LanguageServerTestBase : TestBase
 
     internal static VersionedDocumentContext CreateDocumentContext(Uri uri, IDocumentSnapshot snapshot)
     {
-        return new VersionedDocumentContext(uri, snapshot, version: 0);
+        return new VersionedDocumentContext(uri, snapshot, projectContext: null, version: 0);
     }
 
     internal static IOptionsMonitor<RazorLSPOptions> GetOptionsMonitor(bool enableFormatting = true, bool formatOnType = true, bool autoInsertAttributeQuotes = true, bool colorBackground = false)

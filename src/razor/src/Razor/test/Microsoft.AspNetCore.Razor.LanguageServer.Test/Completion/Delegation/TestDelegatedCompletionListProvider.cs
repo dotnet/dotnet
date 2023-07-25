@@ -109,7 +109,7 @@ internal class TestDelegatedCompletionListProvider : DelegatedCompletionListProv
             var completionParams = (DelegatedCompletionParams)parameters;
             _delegatedParams = completionParams;
 
-            var csharpDocumentPath = completionParams.HostDocument.Uri.OriginalString + "__virtual.g.cs";
+            var csharpDocumentPath = completionParams.Identifier.TextDocumentIdentifier.Uri.OriginalString + "__virtual.g.cs";
             var csharpDocumentUri = new Uri(csharpDocumentPath);
             var csharpCompletionParams = new CompletionParams()
             {

@@ -5,6 +5,7 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
+using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Test.Common;
 
@@ -25,23 +26,23 @@ internal class TestDocumentContextFactory : DocumentContextFactory
         _version = version;
     }
 
-    public override Task<DocumentContext?> TryCreateAsync(Uri documentUri, CancellationToken cancellationToken)
+    protected override Task<DocumentContext?> TryCreateCoreAsync(Uri documentUri, VSProjectContext? projectContext, bool versioned, CancellationToken cancellationToken)
     {
         if (FilePath is null || CodeDocument is null)
         {
             return Task.FromResult<DocumentContext?>(null);
         }
 
-        return Task.FromResult<DocumentContext?>(TestDocumentContext.From(FilePath, CodeDocument));
-    }
-
-    public override Task<VersionedDocumentContext?> TryCreateForOpenDocumentAsync(Uri documentUri, CancellationToken cancellationToken)
-    {
-        if (FilePath is null || CodeDocument is null || _version is null)
+        if (versioned)
         {
-            return Task.FromResult<VersionedDocumentContext?>(null);
+            if (_version is null)
+            {
+                return Task.FromResult<DocumentContext?>(null);
+            }
+
+            return Task.FromResult<DocumentContext?>(TestDocumentContext.From(FilePath, CodeDocument, _version.Value));
         }
 
-        return Task.FromResult<VersionedDocumentContext?>(TestDocumentContext.From(FilePath, CodeDocument, _version.Value));
+        return Task.FromResult<DocumentContext?>(TestDocumentContext.From(FilePath, CodeDocument));
     }
 }

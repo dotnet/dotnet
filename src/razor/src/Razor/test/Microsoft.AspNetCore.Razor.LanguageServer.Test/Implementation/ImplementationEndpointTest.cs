@@ -112,7 +112,7 @@ public class ImplementationEndpointTest : SingleServerDelegatingEndpointTestBase
             },
             Position = new Position(line, offset)
         };
-        var documentContext = await DocumentContextFactory.TryCreateForOpenDocumentAsync(request.TextDocument.Uri, DisposalToken);
+        var documentContext = await DocumentContextFactory.TryCreateForOpenDocumentAsync(request.TextDocument, DisposalToken);
         var requestContext = CreateRazorRequestContext(documentContext);
 
         // Act

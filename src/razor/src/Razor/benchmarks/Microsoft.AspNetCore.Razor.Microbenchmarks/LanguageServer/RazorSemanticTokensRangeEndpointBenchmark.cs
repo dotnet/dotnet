@@ -71,7 +71,7 @@ public class RazorSemanticTokensRangeEndpointBenchmark : RazorLanguageServerBenc
         var documentUri = new Uri(filePath);
         var documentSnapshot = GetDocumentSnapshot(ProjectFilePath, filePath, TargetPath);
         var version = 1;
-        DocumentContext = new VersionedDocumentContext(documentUri, documentSnapshot, version);
+        DocumentContext = new VersionedDocumentContext(documentUri, documentSnapshot, projectContext: null, version);
         Logger = new NoopLogger();
         SemanticTokensRangeEndpoint = new SemanticTokensRangeEndpoint(telemetryReporter: null);
         SemanticTokensRangeEndpoint.ApplyCapabilities(new(), new VSInternalClientCapabilities() { SupportsVisualStudioExtensions = true });

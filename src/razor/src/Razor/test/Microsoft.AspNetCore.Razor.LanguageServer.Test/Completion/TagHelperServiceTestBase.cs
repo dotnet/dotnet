@@ -247,7 +247,7 @@ public abstract class TagHelperServiceTestBase : LanguageServerTestBase
                 .Returns(projectVersion);
 
             var documentSnapshot = Mock.Of<IDocumentSnapshot>(MockBehavior.Strict);
-            var documentContext = new Mock<VersionedDocumentContext>(MockBehavior.Strict, new Uri("c:/path/to/file.razor"), documentSnapshot, 0);
+            var documentContext = new Mock<VersionedDocumentContext>(MockBehavior.Strict, new Uri("c:/path/to/file.razor"), documentSnapshot, /* projectContext */ null, 0);
             documentContext.Setup(d => d.GetCodeDocumentAsync(It.IsAny<CancellationToken>()))
                 .ReturnsAsync(document);
 

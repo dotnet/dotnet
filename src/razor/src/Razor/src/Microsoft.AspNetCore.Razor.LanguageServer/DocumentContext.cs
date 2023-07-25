@@ -18,13 +18,16 @@ internal class DocumentContext
 {
     private RazorCodeDocument? _codeDocument;
     private SourceText? _sourceText;
+    private readonly VSProjectContext? _projectContext;
 
     public DocumentContext(
         Uri uri,
-        IDocumentSnapshot snapshot)
+        IDocumentSnapshot snapshot,
+        VSProjectContext? projectContext)
     {
         Uri = uri;
         Snapshot = snapshot;
+        _projectContext = projectContext;
     }
 
     public virtual Uri Uri { get; }
@@ -37,9 +40,10 @@ internal class DocumentContext
 
     public virtual IProjectSnapshot Project => Snapshot.Project;
 
-    public virtual TextDocumentIdentifier Identifier => new VersionedTextDocumentIdentifier()
+    public virtual TextDocumentIdentifier Identifier => new VSTextDocumentIdentifier()
     {
-        Uri = Uri
+        Uri = Uri,
+        ProjectContext = _projectContext,
     };
 
     public virtual async Task<RazorCodeDocument> GetCodeDocumentAsync(CancellationToken cancellationToken)
