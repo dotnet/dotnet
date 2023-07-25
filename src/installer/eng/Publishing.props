@@ -72,6 +72,7 @@
         Condition=" '$(PublishBinariesAndBadge)' == 'true' and '$(OS)' == 'Windows_NT' and '$(Architecture)' == 'x64' and '$(PgoInstrument)' != 'true'" />
     <SdkAssetsToPublish Include="$(ArtifactsShippingPackagesDir)sdk-productVersion.txt"
         Condition=" '$(PublishBinariesAndBadge)' == 'true' and '$(OS)' == 'Windows_NT' and '$(Architecture)' == 'x64' and '$(PgoInstrument)' != 'true'" />
+    <SdkAssetsToPublish Include="$(ArtifactsShippingPackagesDir)productCommit-*.json" Condition=" '$(PublishBinariesAndBadge)' == 'true' " />
     <SdkAssetsToPublish Include="$(ArtifactsShippingPackagesDir)productCommit-*.txt" Condition=" '$(PublishBinariesAndBadge)' == 'true' " />
     <SdkNonShippingAssetsToPublish Include="$(ArtifactsNonShippingPackagesDir)*.swr" />
     <SdkNonShippingAssetsToPublish Include="$(ArtifactsNonShippingPackagesDir)*.msi" />
@@ -82,6 +83,7 @@
     <SdkNonShippingAssetsToPublish Remove="@(WixPacksToPublish)" Condition="'$(PostBuildSign)' != 'true'" />
     <SdkNonShippingAssetsToPublish Include="$(ArtifactsNonShippingPackagesDir)*.pkg" />
     <CheckSumsToPublish Include="$(ArtifactsShippingPackagesDir)*.sha512" />
+    <CheckSumsToPublish Remove="$(ArtifactsShippingPackagesDir)productCommit-*.json.sha512" Condition=" '$(PublishBinariesAndBadge)' == 'false'" />
     <CheckSumsToPublish Remove="$(ArtifactsShippingPackagesDir)productCommit-*.txt.sha512" Condition=" '$(PublishBinariesAndBadge)' == 'false'" />
     <CheckSumsToPublish Remove="$(ArtifactsShippingPackagesDir)productVersion.txt.sha512" Condition=" '$(OS)' != 'Windows_NT' or '$(Architecture)' != 'x64'" />
     <CheckSumsToPublish Remove="$(ArtifactsShippingPackagesDir)sdk-productVersion.txt.sha512" Condition=" '$(OS)' != 'Windows_NT' or '$(Architecture)' != 'x64'" />
