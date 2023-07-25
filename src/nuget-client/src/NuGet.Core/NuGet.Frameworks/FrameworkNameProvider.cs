@@ -1083,7 +1083,7 @@ namespace NuGet.Frameworks
                 }
             }
 
-            _netStandardVersions.Sort(new NuGetFrameworkSorter());
+            _netStandardVersions.Sort(NuGetFrameworkSorter.Instance);
         }
 
         private void AddCompatibleCandidates()
@@ -1152,7 +1152,7 @@ namespace NuGet.Frameworks
             }
 
             _compatibleCandidates.AddRange(set);
-            _compatibleCandidates.Sort(new NuGetFrameworkSorter());
+            _compatibleCandidates.Sort(NuGetFrameworkSorter.Instance);
         }
 
         // Strong typed non-IEnumerator based HashSet functions

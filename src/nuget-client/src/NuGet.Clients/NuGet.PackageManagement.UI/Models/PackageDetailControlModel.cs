@@ -252,12 +252,9 @@ namespace NuGet.PackageManagement.UI
             if ((UserInput.StartsWith("(", StringComparison.OrdinalIgnoreCase) || UserInput.StartsWith("[", StringComparison.OrdinalIgnoreCase)) &&
                VersionRange.TryParse(UserInput, out VersionRange userRange))
             {
-                if (o != null && NuGetVersion.TryParse(o.ToString(), out NuGetVersion userVersion))
+                if (o != null && userRange.Satisfies(version.Version))
                 {
-                    if (userRange.Satisfies(userVersion))
-                    {
-                        return true;
-                    }
+                    return true;
                 }
 
                 return false;

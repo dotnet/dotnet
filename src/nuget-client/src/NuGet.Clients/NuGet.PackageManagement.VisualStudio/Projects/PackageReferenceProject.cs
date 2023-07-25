@@ -34,7 +34,7 @@ namespace NuGet.PackageManagement.VisualStudio
     /// <typeparam name="U">Type of the collection elements for Installed and Transitive packages</typeparam>
     public abstract class PackageReferenceProject<T, U> : BuildIntegratedNuGetProject, IPackageReferenceProject where T : ICollection<U>, new()
     {
-        private static readonly NuGetFrameworkSorter FrameworkSorter = new();
+        private static readonly NuGetFrameworkSorter FrameworkSorter = NuGetFrameworkSorter.Instance;
 
         private static readonly ProjectPackages EmptyProjectPackages = new(Array.Empty<PackageReference>(), Array.Empty<TransitivePackageReference>());
 

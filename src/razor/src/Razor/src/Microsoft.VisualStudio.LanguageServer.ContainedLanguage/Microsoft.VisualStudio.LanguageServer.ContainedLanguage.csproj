@@ -17,8 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <!-- This is marked with PrivateAssets="All" to avoid exposing this internal dependency to Web Tools. -->
-    <ProjectReference Include="$(SharedSourceRoot)\Microsoft.AspNetCore.Razor.Utilities.Shared\Microsoft.AspNetCore.Razor.Utilities.Shared.csproj" PrivateAssets="All" />
+    <ProjectReference Include="$(SharedSourceRoot)\Microsoft.AspNetCore.Razor.Utilities.Shared\Microsoft.AspNetCore.Razor.Utilities.Shared.csproj" />
   </ItemGroup>
 
   <ItemGroup>

@@ -64,7 +64,7 @@ public abstract partial class ProjectSnapshotManagerBenchmarkBase
         TagHelperResolver = new StaticTagHelperResolver(tagHelpers, NoOpTelemetryReporter.Instance);
     }
 
-    internal DefaultProjectSnapshotManager CreateProjectSnapshotManager(ProjectSnapshotManagerDispatcher? dispatcher = null)
+    internal DefaultProjectSnapshotManager CreateProjectSnapshotManager()
     {
         var services = TestServices.Create(
             new IWorkspaceService[]
@@ -75,7 +75,6 @@ public abstract partial class ProjectSnapshotManagerBenchmarkBase
             Array.Empty<ILanguageService>());
 
         return new DefaultProjectSnapshotManager(
-            dispatcher ?? new TestProjectSnapshotManagerDispatcher(),
             new TestErrorReporter(),
             Array.Empty<ProjectSnapshotChangeTrigger>(),
 #pragma warning disable CA2000 // Dispose objects before losing scope

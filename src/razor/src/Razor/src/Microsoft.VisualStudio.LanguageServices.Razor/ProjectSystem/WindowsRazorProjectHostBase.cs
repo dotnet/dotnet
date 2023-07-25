@@ -218,7 +218,7 @@ internal abstract class WindowsRazorProjectHostBase : OnceInitializedOnceDispose
                 await ExecuteWithLockAsync(() => UpdateAsync(() =>
                     {
                         // The Projects property creates a copy, so its okay to iterate through this
-                        var projects = _projectManager.Projects;
+                        var projects = _projectManager.GetProjects();
                         foreach (var project in projects)
                         {
                             UninitializeProjectUnsafe(project.Key);

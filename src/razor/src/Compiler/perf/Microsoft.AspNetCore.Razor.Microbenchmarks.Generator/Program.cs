@@ -35,7 +35,7 @@ var reports =
     from summary in results
     from report in summary.Reports
     where !summary.IsBaseline(report.BenchmarkCase)
-    let baselineCase = summary.GetBaseline(summary.GetLogicalGroupKey(report.BenchmarkCase))
+    let baselineCase = summary.GetBaseline(summary.GetLogicalGroupKey(report.BenchmarkCase)!)
     let baseline = summary.Reports.Single(r => r.BenchmarkCase == baselineCase)
     select (report, baseline);
 
@@ -45,7 +45,7 @@ foreach ((var benchmark, var baseline) in reports)
     // Note: there are actual statistical tests we could do here, but this should suffice.
     // We can invest more if we see consistent false positives
 
-    var ratio = benchmark.ResultStatistics.Mean / baseline.ResultStatistics.Mean;
+    var ratio = benchmark.ResultStatistics!.Mean / baseline.ResultStatistics!.Mean;
 
     if (ratio > 1.1)
     {

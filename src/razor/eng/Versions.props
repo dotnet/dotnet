@@ -104,7 +104,7 @@
     <SystemTextEncodingsWebPackageVersion>6.0.0</SystemTextEncodingsWebPackageVersion>
     <SystemPrivateUriPackageVersion>4.3.2</SystemPrivateUriPackageVersion>
     <MicrosoftExtensionsNonCapturingTimerSourcesPackageVersion>5.0.0-preview.4.20205.1</MicrosoftExtensionsNonCapturingTimerSourcesPackageVersion>
-    <BenchmarkDotNetPackageVersion>0.13.2.2052</BenchmarkDotNetPackageVersion>
+    <BenchmarkDotNetPackageVersion>0.13.5.2136</BenchmarkDotNetPackageVersion>
     <MicrosoftBuildLocatorPackageVersion>1.2.6</MicrosoftBuildLocatorPackageVersion>
     <MicrosoftBuildPackageVersion>16.8.0</MicrosoftBuildPackageVersion>
     <MicrosoftDiaSymReaderVersion>2.0.0</MicrosoftDiaSymReaderVersion>
@@ -168,7 +168,6 @@
     <MicrosoftInternalVisualStudioShellFrameworkPackageVersion>$(MicrosoftVisualStudioShellPackagesVersion)</MicrosoftInternalVisualStudioShellFrameworkPackageVersion>
     <MicrosoftIORedistPackageVersion>6.0.0</MicrosoftIORedistPackageVersion>
     <!-- Compiler Deps -->
-    <BenchmarkDotNetVersion>0.13.2.1938</BenchmarkDotNetVersion>
     <DiffPlexVersion>1.5.0</DiffPlexVersion>
     <FluentAssertionsVersion>6.7.0</FluentAssertionsVersion>
     <MicrosoftAspNetCoreAppVersion>7.0.7</MicrosoftAspNetCoreAppVersion>

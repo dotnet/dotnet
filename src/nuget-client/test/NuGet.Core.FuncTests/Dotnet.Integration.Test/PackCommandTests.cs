@@ -529,7 +529,7 @@ namespace Dotnet.Integration.Test
                     var dependencyGroups = nuspecReader
                         .GetDependencyGroups()
                         .OrderBy(x => x.TargetFramework,
-                            new NuGetFrameworkSorter())
+                            NuGetFrameworkSorter.Instance)
                         .ToList();
 
                     Assert.Equal(1,
@@ -613,7 +613,7 @@ namespace Dotnet.Integration.Test
                     var dependencyGroups = nuspecReader
                         .GetDependencyGroups()
                         .OrderBy(x => x.TargetFramework,
-                            new NuGetFrameworkSorter())
+                            NuGetFrameworkSorter.Instance)
                         .ToList();
 
                     Assert.Equal(1,
@@ -682,7 +682,7 @@ namespace Dotnet.Integration.Test
                     var dependencyGroups = nuspecReader
                         .GetDependencyGroups()
                         .OrderBy(x => x.TargetFramework,
-                            new NuGetFrameworkSorter())
+                            NuGetFrameworkSorter.Instance)
                         .ToList();
 
                     Assert.Equal(2,
@@ -945,7 +945,7 @@ namespace Dotnet.Integration.Test
                     var dependencyGroups = nuspecReader
                         .GetDependencyGroups()
                         .OrderBy(x => x.TargetFramework,
-                            new NuGetFrameworkSorter())
+                            NuGetFrameworkSorter.Instance)
                         .ToList();
 
                     Assert.Equal(1,
@@ -1051,7 +1051,7 @@ namespace Dotnet.Integration.Test
                     var dependencyGroups = nuspecReader
                         .GetDependencyGroups()
                         .OrderBy(x => x.TargetFramework,
-                            new NuGetFrameworkSorter())
+                            NuGetFrameworkSorter.Instance)
                         .ToList();
 
                     Assert.Equal(tfmValue.Split(';').Count(),
@@ -1133,7 +1133,7 @@ namespace Dotnet.Integration.Test
                     var dependencyGroups = nuspecReader
                         .GetDependencyGroups()
                         .OrderBy(x => x.TargetFramework,
-                            new NuGetFrameworkSorter())
+                            NuGetFrameworkSorter.Instance)
                         .ToList();
 
                     Assert.Equal(tfmValue.Split(';').Count(),
@@ -1223,7 +1223,7 @@ namespace Dotnet.Integration.Test
                     var dependencyGroups = nuspecReader
                         .GetDependencyGroups()
                         .OrderBy(x => x.TargetFramework,
-                            new NuGetFrameworkSorter())
+                            NuGetFrameworkSorter.Instance)
                         .ToList();
 
                     Assert.Equal(tfmValue.Split(';').Count(),
@@ -3343,7 +3343,7 @@ namespace ClassLibrary
                     var dependencyGroups = nuspecReader
                         .GetDependencyGroups()
                         .OrderBy(x => x.TargetFramework,
-                            new NuGetFrameworkSorter())
+                            NuGetFrameworkSorter.Instance)
                         .ToList();
 
                     Assert.Equal(1,
@@ -3931,7 +3931,7 @@ namespace ClassLibrary
                     var dependencyGroups = nuspecReader
                         .GetDependencyGroups()
                         .OrderBy(x => x.TargetFramework,
-                            new NuGetFrameworkSorter())
+                            NuGetFrameworkSorter.Instance)
                         .ToList();
 
                     Assert.Equal(1,
@@ -4002,7 +4002,7 @@ namespace ClassLibrary
                     var dependencyGroups = nuspecReader
                         .GetDependencyGroups()
                         .OrderBy(x => x.TargetFramework,
-                            new NuGetFrameworkSorter())
+                            NuGetFrameworkSorter.Instance)
                         .ToList();
 
                     Assert.Equal(expectedFrameworks.Where(t => !string.IsNullOrEmpty(t)).Count(),
@@ -5802,7 +5802,7 @@ namespace ClassLibrary
                     var dependencyGroups = nuspecReader
                         .GetDependencyGroups()
                         .OrderBy(x => x.TargetFramework,
-                            new NuGetFrameworkSorter())
+                            NuGetFrameworkSorter.Instance)
                         .ToList();
 
                     Assert.Equal(1,
@@ -5919,7 +5919,7 @@ namespace ClassLibrary
                     var dependencyGroups = nuspecReader
                         .GetDependencyGroups()
                         .OrderBy(x => x.TargetFramework,
-                            new NuGetFrameworkSorter())
+                            NuGetFrameworkSorter.Instance)
                         .ToList();
 
                     Assert.Equal(1,
@@ -6058,7 +6058,7 @@ namespace ClassLibrary
                     var dependencyGroups = nuspecReader
                         .GetDependencyGroups()
                         .OrderBy(x => x.TargetFramework,
-                            new NuGetFrameworkSorter())
+                            NuGetFrameworkSorter.Instance)
                         .ToList();
 
                     Assert.Equal(2,
@@ -6137,7 +6137,7 @@ namespace ClassLibrary
                     var dependencyGroups = nuspecReader
                         .GetDependencyGroups()
                         .OrderBy(x => x.TargetFramework,
-                            new NuGetFrameworkSorter())
+                            NuGetFrameworkSorter.Instance)
                         .ToList();
 
                     Assert.Equal(2,

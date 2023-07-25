@@ -11,7 +11,6 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer;
 
 internal class DefaultProjectSnapshotManagerAccessor : ProjectSnapshotManagerAccessor, IDisposable
 {
-    private readonly ProjectSnapshotManagerDispatcher _projectSnapshotManagerDispatcher;
     private readonly IEnumerable<ProjectSnapshotChangeTrigger> _changeTriggers;
     private readonly IOptionsMonitor<RazorLSPOptions> _optionsMonitor;
     private readonly AdhocWorkspaceFactory _workspaceFactory;
@@ -19,16 +18,10 @@ internal class DefaultProjectSnapshotManagerAccessor : ProjectSnapshotManagerAcc
     private bool _disposed;
 
     public DefaultProjectSnapshotManagerAccessor(
-        ProjectSnapshotManagerDispatcher projectSnapshotManagerDispatcher,
         IEnumerable<ProjectSnapshotChangeTrigger> changeTriggers,
         IOptionsMonitor<RazorLSPOptions> optionsMonitor,
         AdhocWorkspaceFactory workspaceFactory)
     {
-        if (projectSnapshotManagerDispatcher is null)
-        {
-            throw new ArgumentNullException(nameof(projectSnapshotManagerDispatcher));
-        }
-
         if (changeTriggers is null)
         {
             throw new ArgumentNullException(nameof(changeTriggers));
@@ -44,7 +37,6 @@ internal class DefaultProjectSnapshotManagerAccessor : ProjectSnapshotManagerAcc
             throw new ArgumentNullException(nameof(workspaceFactory));
         }
 
-        _projectSnapshotManagerDispatcher = projectSnapshotManagerDispatcher;
         _changeTriggers = changeTriggers;
         _optionsMonitor = optionsMonitor;
         _workspaceFactory = workspaceFactory;
@@ -62,7 +54,6 @@ internal class DefaultProjectSnapshotManagerAccessor : ProjectSnapshotManagerAcc
                         new RemoteProjectSnapshotProjectEngineFactory(_optionsMonitor)
                     });
                 _instance = new DefaultProjectSnapshotManager(
-                    _projectSnapshotManagerDispatcher,
                     ErrorReporter.Instance,
                     _changeTriggers,
                     workspace);
