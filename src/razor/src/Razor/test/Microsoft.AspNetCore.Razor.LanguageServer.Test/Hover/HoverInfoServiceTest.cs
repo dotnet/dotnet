@@ -789,7 +789,7 @@ public class HoverInfoServiceTest : TagHelperServiceTestBase
             d.GetTextAsync() == Task.FromResult(sourceText) &&
             d.Project == projectSnapshot, MockBehavior.Strict);
 
-        var documentContext = new VersionedDocumentContext(new Uri(path), snapshot, 1337);
+        var documentContext = new VersionedDocumentContext(new Uri(path), snapshot, projectContext: null, 1337);
 
         return documentContext;
     }

@@ -44,7 +44,6 @@ internal sealed class SignatureHelpEndpoint : AbstractRazorDelegatingEndpoint<Si
         return Task.FromResult<IDelegatedParams?>(new DelegatedPositionParams(
                 documentContext.Identifier,
                 positionInfo.Position,
-                positionInfo.LanguageKind,
-                request.TextDocument.GetProjectContext()));
+                positionInfo.LanguageKind));
     }
 }

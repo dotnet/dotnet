@@ -43,13 +43,7 @@ internal class ProjectContextsEndpoint : IRazorRequestHandler<VSGetProjectContex
         }
 
         var documentContext = context.GetRequiredDocumentContext();
-        var delegatedParams = new DelegatedProjectContextsParams(
-            new VersionedTextDocumentIdentifier()
-            {
-                Uri = documentContext.Uri,
-                Version = documentContext.Version
-            }
-        );
+        var delegatedParams = new DelegatedProjectContextsParams(documentContext.Identifier);
 
         var response = await _languageServer.SendRequestAsync<DelegatedProjectContextsParams, VSProjectContextList>(
             RazorLanguageServerCustomMessageTargets.RazorProjectContextsEndpoint,

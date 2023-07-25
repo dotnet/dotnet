@@ -127,7 +127,7 @@ public class ValidateBreakpointRangeEndpointTest : SingleServerDelegatingEndpoin
             Range = breakpointSpan.AsRange(codeDocument.GetSourceText())
         };
 
-        var documentContext = await DocumentContextFactory.TryCreateForOpenDocumentAsync(request.TextDocument.Uri, DisposalToken);
+        var documentContext = await DocumentContextFactory.TryCreateForOpenDocumentAsync(request.TextDocument, DisposalToken);
         var requestContext = CreateValidateBreakpointRangeRequestContext(documentContext);
 
         return await endpoint.HandleRequestAsync(request, requestContext, DisposalToken);

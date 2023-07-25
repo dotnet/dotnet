@@ -529,7 +529,7 @@ public class OnAutoInsertEndpointTest : SingleServerDelegatingEndpointTestBase
                 InsertSpaces = true
             },
         };
-        var documentContext = await DocumentContextFactory.TryCreateForOpenDocumentAsync(@params.TextDocument.Uri, DisposalToken);
+        var documentContext = await DocumentContextFactory.TryCreateForOpenDocumentAsync(@params.TextDocument, DisposalToken);
 
         var requestContext = await CreateOnAutoInsertRequestContextAsync(documentContext);
 

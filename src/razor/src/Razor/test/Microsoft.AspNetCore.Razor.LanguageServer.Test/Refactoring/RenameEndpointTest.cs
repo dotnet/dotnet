@@ -21,6 +21,7 @@ using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.AspNetCore.Razor.ProjectSystem;
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.AspNetCore.Razor.Test.Common.Mef;
+using Microsoft.AspNetCore.Razor.Utilities;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
@@ -616,7 +617,7 @@ public class RenameEndpointTest : LanguageServerTestBase
             d.GetTextAsync() == Task.FromResult(sourceText) &&
             d.Project == projectSnapshot, MockBehavior.Strict);
         var version = 1337;
-        var documentSnapshot = new VersionedDocumentContext(new Uri(item.FilePath), snapshot, version);
+        var documentSnapshot = new VersionedDocumentContext(new Uri(item.FilePath), snapshot, projectContext: null, version);
 
         return documentSnapshot;
     }
@@ -662,27 +663,19 @@ public class RenameEndpointTest : LanguageServerTestBase
         var directory1Component = CreateRazorDocumentContext(projectEngine, itemDirectory1, "Test.Components", tagHelperDescriptors);
         var directory2Component = CreateRazorDocumentContext(projectEngine, itemDirectory2, "Test.Components", tagHelperDescriptors);
 
-        // Normally, the document context factory would be able to retrieve the same document as either versioned or not. Due to the
-        // way mocks work, sadly we have to add each one twice 🤦‍
-        _documentContextFactory = Mock.Of<DocumentContextFactory>(d =>
-            d.TryCreateAsync(new Uri("c:/First/Component1.razor"), It.IsAny<CancellationToken>()) == Task.FromResult((DocumentContext)component1) &&
-            d.TryCreateAsync(new Uri("c:/First/Component2.razor"), It.IsAny<CancellationToken>()) == Task.FromResult((DocumentContext)component2) &&
-            d.TryCreateAsync(new Uri("c:/Second/Component3.razor"), It.IsAny<CancellationToken>()) == Task.FromResult((DocumentContext)component3) &&
-            d.TryCreateAsync(new Uri("c:/Second/Component4.razor"), It.IsAny<CancellationToken>()) == Task.FromResult((DocumentContext)component4) &&
-            d.TryCreateAsync(new Uri("c:/Second/ComponentWithParam.razor"), It.IsAny<CancellationToken>()) == Task.FromResult((DocumentContext)componentWithParam) &&
-            d.TryCreateAsync(new Uri(index.FilePath), It.IsAny<CancellationToken>()) == Task.FromResult((DocumentContext)index) &&
-            d.TryCreateAsync(new Uri(component1337.FilePath), It.IsAny<CancellationToken>()) == Task.FromResult((DocumentContext)component1337) &&
-            d.TryCreateAsync(new Uri(itemDirectory1.FilePath), It.IsAny<CancellationToken>()) == Task.FromResult((DocumentContext)directory1Component) &&
-            d.TryCreateAsync(new Uri(itemDirectory2.FilePath), It.IsAny<CancellationToken>()) == Task.FromResult((DocumentContext)directory2Component) &&
-            d.TryCreateForOpenDocumentAsync(new Uri("c:/First/Component1.razor"), It.IsAny<CancellationToken>()) == Task.FromResult(component1) &&
-            d.TryCreateForOpenDocumentAsync(new Uri("c:/First/Component2.razor"), It.IsAny<CancellationToken>()) == Task.FromResult(component2) &&
-            d.TryCreateForOpenDocumentAsync(new Uri("c:/Second/Component3.razor"), It.IsAny<CancellationToken>()) == Task.FromResult(component3) &&
-            d.TryCreateForOpenDocumentAsync(new Uri("c:/Second/Component4.razor"), It.IsAny<CancellationToken>()) == Task.FromResult(component4) &&
-            d.TryCreateForOpenDocumentAsync(new Uri("c:/Second/ComponentWithParam.razor"), It.IsAny<CancellationToken>()) == Task.FromResult(componentWithParam) &&
-            d.TryCreateForOpenDocumentAsync(new Uri(index.FilePath), It.IsAny<CancellationToken>()) == Task.FromResult(index) &&
-            d.TryCreateForOpenDocumentAsync(new Uri(component1337.FilePath), It.IsAny<CancellationToken>()) == Task.FromResult(component1337) &&
-            d.TryCreateForOpenDocumentAsync(new Uri(itemDirectory1.FilePath), It.IsAny<CancellationToken>()) == Task.FromResult(directory1Component) &&
-            d.TryCreateForOpenDocumentAsync(new Uri(itemDirectory2.FilePath), It.IsAny<CancellationToken>()) == Task.FromResult(directory2Component), MockBehavior.Strict);
+        _documentContextFactory = new TestDocumentContextFactory(
+            new Dictionary<string, DocumentContext>()
+            {
+                { "c:/First/Component1.razor", component1 },
+                { "c:/First/Component2.razor", component2 },
+                { "c:/Second/Component3.razor", component3 },
+                { "c:/Second/Component4.razor", component4 },
+                { "c:/Second/ComponentWithParam.razor", componentWithParam },
+                { index.FilePath, index },
+                { component1337.FilePath, component1337 },
+                { itemDirectory1.FilePath, directory1Component },
+                { itemDirectory2.FilePath, directory2Component },
+            });
 
         var firstProject = Mock.Of<IProjectSnapshot>(p =>
             p.FilePath == "c:/First/First.csproj" &&
@@ -734,5 +727,22 @@ public class RenameEndpointTest : LanguageServerTestBase
             LoggerFactory);
 
         return endpoint;
+    }
+
+    private class TestDocumentContextFactory : DocumentContextFactory
+    {
+        private readonly ImmutableDictionary<string, DocumentContext> _pathToContextMap;
+
+        public TestDocumentContextFactory(Dictionary<string, DocumentContext> pathToContextMap)
+        {
+            _pathToContextMap = pathToContextMap.ToImmutableDictionary(kvp => FilePathNormalizer.Normalize(kvp.Key), kvp => kvp.Value);
+        }
+
+        protected override Task<DocumentContext> TryCreateCoreAsync(Uri documentUri, VSProjectContext projectContext, bool versioned, CancellationToken cancellationToken)
+        {
+            var path = FilePathNormalizer.Normalize(documentUri.AbsolutePath);
+            _pathToContextMap.TryGetValue(path, out var context);
+            return Task.FromResult(context);
+        }
     }
 }

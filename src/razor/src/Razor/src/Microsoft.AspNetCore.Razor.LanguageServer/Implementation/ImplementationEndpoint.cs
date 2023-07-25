@@ -50,8 +50,7 @@ internal sealed class ImplementationEndpoint : AbstractRazorDelegatingEndpoint<T
         return Task.FromResult<IDelegatedParams?>(new DelegatedPositionParams(
                 documentContext.Identifier,
                 positionInfo.Position,
-                positionInfo.LanguageKind,
-                request.TextDocument.GetProjectContext()));
+                positionInfo.LanguageKind));
     }
 
     protected async override Task<ImplementationResult> HandleDelegatedResponseAsync(ImplementationResult delegatedResponse, TextDocumentPositionParams request, RazorRequestContext requestContext, DocumentPositionInfo positionInfo, CancellationToken cancellationToken)

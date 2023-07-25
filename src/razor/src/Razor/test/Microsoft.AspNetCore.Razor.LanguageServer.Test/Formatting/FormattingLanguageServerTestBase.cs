@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Language.CodeGeneration;
 using Microsoft.AspNetCore.Razor.LanguageServer.Protocol;
+using Microsoft.AspNetCore.Razor.LanguageServer.Test.Common;
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.Extensions.Options;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
@@ -23,11 +24,7 @@ public abstract class FormattingLanguageServerTestBase : LanguageServerTestBase
     public FormattingLanguageServerTestBase(ITestOutputHelper testOutput)
         : base(testOutput)
     {
-        EmptyDocumentContextFactory = Mock.Of<DocumentContextFactory>(
-            r => r.TryCreateAsync(
-                It.IsAny<Uri>(),
-                It.IsAny<CancellationToken>()) == Task.FromResult<DocumentContext?>(null),
-            MockBehavior.Strict);
+        EmptyDocumentContextFactory = new TestDocumentContextFactory();
     }
 
     internal static RazorCodeDocument CreateCodeDocument(string content, IReadOnlyList<SourceMapping> sourceMappings)

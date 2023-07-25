@@ -93,8 +93,7 @@ internal sealed class RenameEndpoint : AbstractRazorDelegatingEndpoint<RenamePar
                 documentContext.Identifier,
                 positionInfo.Position,
                 positionInfo.LanguageKind,
-                request.NewName,
-                request.TextDocument.GetProjectContext()));
+                request.NewName));
     }
 
     protected override async Task<WorkspaceEdit?> HandleDelegatedResponseAsync(WorkspaceEdit? response, RenameParams request, RazorRequestContext requestContext, DocumentPositionInfo positionInfo, CancellationToken cancellationToken)
@@ -181,13 +180,13 @@ internal sealed class RenameEndpoint : AbstractRazorDelegatingEndpoint<RenamePar
                 }
 
                 // Add to the list and add the path to the set
-                var documentContext = await _documentContextFactory.TryCreateAsync(new Uri(documentPath), cancellationToken).ConfigureAwait(false);
-                if (documentContext is null)
+                var snapshot = project.GetDocument(documentPath);
+                if (snapshot is null)
                 {
                     throw new NotImplementedException($"{documentPath} in project {project.FilePath} but not retrievable");
                 }
 
-                documentSnapshots.Add(documentContext.Snapshot);
+                documentSnapshots.Add(snapshot);
                 documentPaths.Add(documentPath);
             }
         }

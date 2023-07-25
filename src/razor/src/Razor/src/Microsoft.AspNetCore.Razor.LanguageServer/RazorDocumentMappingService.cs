@@ -833,7 +833,7 @@ internal sealed class RazorDocumentMappingService : IRazorDocumentMappingService
             }
 
             var razorDocumentUri = _languageServerFeatureOptions.GetRazorDocumentUri(generatedDocumentUri);
-            var documentContext = await _documentContextFactory.TryCreateForOpenDocumentAsync(razorDocumentUri, cancellationToken).ConfigureAwait(false);
+            var documentContext = await _documentContextFactory.TryCreateForOpenDocumentAsync(razorDocumentUri, entry.TextDocument.GetProjectContext(), cancellationToken).ConfigureAwait(false);
             if (documentContext is null)
             {
                 continue;
