@@ -802,6 +802,10 @@
   </Suppression>
   <Suppression>
     <DiagnosticId>CP0001</DiagnosticId>
+    <Target>T:System.Diagnostics.DebuggerGuidedStepThroughAttribute</Target>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0001</DiagnosticId>
     <Target>T:System.MDArray</Target>
   </Suppression>
   <Suppression>
@@ -863,6 +867,10 @@
   <Suppression>
     <DiagnosticId>CP0001</DiagnosticId>
     <Target>T:System.Reflection.RuntimeAssemblyName</Target>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0001</DiagnosticId>
+    <Target>T:System.Runtime.CompilerServices.EagerStaticClassConstructionAttribute</Target>
   </Suppression>
   <Suppression>
     <DiagnosticId>CP0001</DiagnosticId>
@@ -997,5 +1005,9 @@
     <Target>M:System.Diagnostics.Tracing.EventSource.WriteEventWithRelatedActivityIdCore(System.Int32,System.Guid*,System.Int32,System.Diagnostics.Tracing.EventSource.EventData*):[T:System.Diagnostics.CodeAnalysis.RequiresUnreferencedCodeAttribute]</Target>
     <Left>ref/net8.0/System.Private.CoreLib.dll</Left>
     <Right>lib/net8.0/System.Private.CoreLib.dll</Right>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0016</DiagnosticId>
+    <Target>M:System.Runtime.InteropServices.Marshal.GetObjectForNativeVariant``1(System.IntPtr)-&gt;T?:[T:System.Diagnostics.CodeAnalysis.MaybeNullAttribute]</Target>
   </Suppression>
 </Suppressions>
