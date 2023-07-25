@@ -162,7 +162,7 @@ namespace NuGet.Test
             provider.TryGetEquivalentFrameworks(input, out IEnumerable<NuGetFramework>? frameworks);
 
             var results = frameworks
-                .OrderBy(f => f, new NuGetFrameworkSorter())
+                .OrderBy(f => f, NuGetFrameworkSorter.Instance)
                 .Select(f => f.GetShortFolderName())
                 .ToArray();
 

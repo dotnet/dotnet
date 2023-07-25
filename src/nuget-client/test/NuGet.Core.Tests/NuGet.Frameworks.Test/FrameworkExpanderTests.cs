@@ -66,7 +66,7 @@ namespace NuGet.Test
             FrameworkExpander expander = new FrameworkExpander();
             var expanded = expander
                 .Expand(framework)
-                .OrderBy(f => f, new NuGetFrameworkSorter())
+                .OrderBy(f => f, NuGetFrameworkSorter.Instance)
                 .ToArray();
 
             Assert.Equal(7, expanded.Length);
@@ -89,7 +89,7 @@ namespace NuGet.Test
             FrameworkExpander expander = new FrameworkExpander();
             var expanded = expander
                 .Expand(framework)
-                .OrderBy(f => f, new NuGetFrameworkSorter())
+                .OrderBy(f => f, NuGetFrameworkSorter.Instance)
                 .ToArray();
 
             Assert.Equal(10, expanded.Length);

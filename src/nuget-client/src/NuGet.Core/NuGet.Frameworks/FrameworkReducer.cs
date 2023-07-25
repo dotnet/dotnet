@@ -216,7 +216,7 @@ namespace NuGet.Frameworks
                     // Sort by precedence rules, then by name in the case of a tie
                     nearest = reduced
                         .OrderBy(f => f, new FrameworkPrecedenceSorter(_mappings, false))
-                        .ThenByDescending(f => f, new NuGetFrameworkSorter())
+                        .ThenByDescending(f => f, NuGetFrameworkSorter.Instance)
                         .ThenBy(f => f.GetHashCode())
                         .First();
                 }
@@ -235,7 +235,7 @@ namespace NuGet.Frameworks
             // order first so we get consistent results for equivalent frameworks
             var input = frameworks
                 .OrderBy(f => f, new FrameworkPrecedenceSorter(_mappings, true))
-                .ThenByDescending(f => f, new NuGetFrameworkSorter())
+                .ThenByDescending(f => f, NuGetFrameworkSorter.Instance)
                 .ToArray();
 
             var duplicates = new HashSet<NuGetFramework>();

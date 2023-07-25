@@ -33,7 +33,7 @@ namespace NuGet.Frameworks
             remaining = ReduceDownwards(remaining);
 
             return remaining
-                .OrderBy(f => f, new NuGetFrameworkSorter());
+                .OrderBy(f => f, NuGetFrameworkSorter.Instance);
         }
 
         private IEnumerable<NuGetFramework> ReduceDownwards(IEnumerable<NuGetFramework> frameworks)

@@ -186,7 +186,8 @@
     <Setter Property="FocusVisualStyle" Value="{StaticResource ControlsFocusVisualStyle}" />
   </Style>
 
-  <Style x:Key="{x:Type CheckBox}" TargetType="{x:Type CheckBox}" BasedOn="{StaticResource {x:Type CheckBox}}">
+  <Style x:Key="{x:Type CheckBox}" TargetType="{x:Type CheckBox}" BasedOn="{StaticResource {x:Static vs:VsResourceKeys.CheckBoxStyleKey}}" />
+  <Style x:Key="CheckBoxSelectorAware" TargetType="{x:Type CheckBox}" BasedOn="{StaticResource {x:Type CheckBox}}">
     <Setter Property="FocusVisualStyle" Value="{DynamicResource ControlsFocusVisualStyle}"/>
     <Setter Property="Foreground" Value="{DynamicResource {x:Static nuget:Brushes.UIText}}"/>
     <Setter Property="Template">
@@ -201,8 +202,18 @@
               <Border
                 x:Name="CheckMarkBorder"
                 Background="{DynamicResource {x:Static nuget:Brushes.CheckBoxBackgroundBrushKey}}"
-                BorderBrush="{DynamicResource {x:Static nuget:Brushes.CheckBoxBorderBrushKey}}"
-                BorderThickness="1"/>
+                BorderThickness="1">
+                <Border.Style>
+                  <Style TargetType="{x:Type Border}">
+                    <Setter Property="BorderBrush" Value="{DynamicResource {x:Static nuget:Brushes.CheckBoxBorderBrushKey}}" />
+                    <Style.Triggers>
+                      <DataTrigger Binding="{Binding IsSelected, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListBoxItem}}" Value="True">
+                        <Setter Property="BorderBrush" Value="{DynamicResource {x:Static nuget:Brushes.UIText}}" />
+                      </DataTrigger>
+                    </Style.Triggers>
+                  </Style>
+                </Border.Style>
+              </Border>
               <Path
                 x:Name="CheckMark"
                 Data="M 6.22,11.02 C6.22,11.02 2.50,7.24 2.50,7.24 2.50,7.24 4.05,5.71 4.05,5.71 4.05,5.71 5.97,7.65 5.97,7.65 5.97,7.65 10.52,1.38 10.52,1.38 10.52,1.38 13.19,1.38 13.19,1.38 13.19,1.38 6.22,11.02 6.22,11.02 6.22,11.02 6.22,11.02 6.22,11.02 z"

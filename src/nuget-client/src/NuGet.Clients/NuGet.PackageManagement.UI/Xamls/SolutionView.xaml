@@ -266,6 +266,7 @@
             <GridViewColumn.CellTemplate>
               <DataTemplate>
                 <CheckBox
+                  Style="{StaticResource CheckBoxSelectorAware}"
                   IsTabStop="False"
                   AutomationProperties.AutomationId="{Binding ProjectName, Mode=OneWay, StringFormat='ProjectCheckBox_{0}'}"
                   IsChecked="{Binding IsSelected}"
