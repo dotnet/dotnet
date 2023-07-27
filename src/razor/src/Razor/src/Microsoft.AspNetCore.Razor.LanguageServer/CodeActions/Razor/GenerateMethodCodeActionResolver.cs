@@ -142,7 +142,7 @@ internal class GenerateMethodCodeActionResolver : IRazorCodeActionResolver
     {
         var templateWithMethodSignature = s_generateMethodTemplate.Replace(s_methodName, actionParams.MethodName);
 
-        var returnType = actionParams.IsAsync ? "async System.Threading.Tasks.Task" : "void";
+        var returnType = actionParams.IsAsync ? "System.Threading.Tasks.Task" : "void";
         templateWithMethodSignature = templateWithMethodSignature.Replace(s_returnType, returnType);
 
         var eventTagHelper = documentContext.Project.TagHelpers

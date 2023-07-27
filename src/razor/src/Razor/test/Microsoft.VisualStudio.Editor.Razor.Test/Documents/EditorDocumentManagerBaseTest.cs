@@ -6,6 +6,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.CodeAnalysis.Razor;
+using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.VisualStudio.Test;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Threading;
@@ -17,8 +18,10 @@ namespace Microsoft.VisualStudio.Editor.Razor.Documents;
 public class EditorDocumentManagerBaseTest : ProjectSnapshotManagerDispatcherTestBase
 {
     private readonly TestEditorDocumentManager _manager;
-    private readonly string _project1;
-    private readonly string _project2;
+    private readonly ProjectKey _projectKey1;
+    private readonly ProjectKey _projectKey2;
+    private readonly string _projectFile1;
+    private readonly string _projectFile2;
     private readonly string _file1;
     private readonly string _file2;
     private readonly TestTextBuffer _textBuffer;
@@ -27,8 +30,10 @@ public class EditorDocumentManagerBaseTest : ProjectSnapshotManagerDispatcherTes
         : base(testOutput)
     {
         _manager = new TestEditorDocumentManager(Dispatcher, JoinableTaskFactory.Context);
-        _project1 = TestProjectData.SomeProject.FilePath;
-        _project2 = TestProjectData.AnotherProject.FilePath;
+        _projectKey1 = TestProjectData.SomeProject.Key;
+        _projectKey2 = TestProjectData.AnotherProject.Key;
+        _projectFile1 = TestProjectData.SomeProject.FilePath;
+        _projectFile2 = TestProjectData.AnotherProject.FilePath;
         _file1 = TestProjectData.SomeProjectFile1.FilePath;
         _file2 = TestProjectData.AnotherProjectFile2.FilePath;
         _textBuffer = new TestTextBuffer(new StringTextSnapshot("HI"));
@@ -38,10 +43,10 @@ public class EditorDocumentManagerBaseTest : ProjectSnapshotManagerDispatcherTes
     public void GetOrCreateDocument_CreatesAndCachesDocument()
     {
         // Arrange
-        var expected = _manager.GetOrCreateDocument(new DocumentKey(_project1, _file1), null, null, null, null, null);
+        var expected = _manager.GetOrCreateDocument(new DocumentKey(_projectKey1, _file1), _projectFile1, _projectKey1, null, null, null, null);
 
         // Act
-        _manager.TryGetDocument(new DocumentKey(_project1, _file1), out var actual);
+        _manager.TryGetDocument(new DocumentKey(_projectKey1, _file1), out var actual);
 
         // Assert
         Assert.Same(expected, actual);
@@ -51,10 +56,10 @@ public class EditorDocumentManagerBaseTest : ProjectSnapshotManagerDispatcherTes
     public void GetOrCreateDocument_NoOp()
     {
         // Arrange
-        var expected = _manager.GetOrCreateDocument(new DocumentKey(_project1, _file1), null, null, null, null, null);
+        var expected = _manager.GetOrCreateDocument(new DocumentKey(_projectKey1, _file1), _projectFile1, _projectKey1, null, null, null, null);
 
         // Act
-        var actual = _manager.GetOrCreateDocument(new DocumentKey(_project1, _file1), null, null, null, null, null);
+        var actual = _manager.GetOrCreateDocument(new DocumentKey(_projectKey1, _file1), _projectFile1, _projectKey1, null, null, null, null);
 
         // Assert
         Assert.Same(expected, actual);
@@ -64,10 +69,10 @@ public class EditorDocumentManagerBaseTest : ProjectSnapshotManagerDispatcherTes
     public void GetOrCreateDocument_SameFile_MulipleProjects()
     {
         // Arrange
-        var document1 = _manager.GetOrCreateDocument(new DocumentKey(_project1, _file1), null, null, null, null, null);
+        var document1 = _manager.GetOrCreateDocument(new DocumentKey(_projectKey1, _file1), _projectFile1, _projectKey1, null, null, null, null);
 
         // Act
-        var document2 = _manager.GetOrCreateDocument(new DocumentKey(_project2, _file1), null, null, null, null, null);
+        var document2 = _manager.GetOrCreateDocument(new DocumentKey(_projectKey2, _file1), _projectFile2, _projectKey2, null, null, null, null);
 
         // Assert
         Assert.NotSame(document1, document2);
@@ -77,10 +82,10 @@ public class EditorDocumentManagerBaseTest : ProjectSnapshotManagerDispatcherTes
     public void GetOrCreateDocument_MulipleFiles_SameProject()
     {
         // Arrange
-        var document1 = _manager.GetOrCreateDocument(new DocumentKey(_project1, _file1), null, null, null, null, null);
+        var document1 = _manager.GetOrCreateDocument(new DocumentKey(_projectKey1, _file1), _projectFile1, _projectKey1, null, null, null, null);
 
         // Act
-        var document2 = _manager.GetOrCreateDocument(new DocumentKey(_project1, _file2), null, null, null, null, null);
+        var document2 = _manager.GetOrCreateDocument(new DocumentKey(_projectKey1, _file2), _projectFile1, _projectKey1, null, null, null, null);
 
         // Assert
         Assert.NotSame(document1, document2);
@@ -93,7 +98,7 @@ public class EditorDocumentManagerBaseTest : ProjectSnapshotManagerDispatcherTes
         _manager.Buffers.Add(_file1, _textBuffer);
 
         // Act
-        var document = _manager.GetOrCreateDocument(new DocumentKey(_project1, _file1), null, null, null, null, null);
+        var document = _manager.GetOrCreateDocument(new DocumentKey(_projectKey1, _file1), _projectFile1, _projectKey1, null, null, null, null);
 
         // Assert
         Assert.True(document.IsOpenInEditor);
@@ -107,8 +112,8 @@ public class EditorDocumentManagerBaseTest : ProjectSnapshotManagerDispatcherTes
     public void TryGetMatchingDocuments_MultipleDocuments()
     {
         // Arrange
-        var document1 = _manager.GetOrCreateDocument(new DocumentKey(_project1, _file1), null, null, null, null, null);
-        var document2 = _manager.GetOrCreateDocument(new DocumentKey(_project2, _file1), null, null, null, null, null);
+        var document1 = _manager.GetOrCreateDocument(new DocumentKey(_projectKey1, _file1), _projectFile1, _projectKey1, null, null, null, null);
+        var document2 = _manager.GetOrCreateDocument(new DocumentKey(_projectKey2, _file1), _projectFile2, _projectKey2, null, null, null, null);
 
         // Act
         _manager.TryGetMatchingDocuments(_file1, out var documents);
@@ -124,8 +129,8 @@ public class EditorDocumentManagerBaseTest : ProjectSnapshotManagerDispatcherTes
     public void RemoveDocument_MultipleDocuments_RemovesOne()
     {
         // Arrange
-        var document1 = _manager.GetOrCreateDocument(new DocumentKey(_project1, _file1), null, null, null, null, null);
-        var document2 = _manager.GetOrCreateDocument(new DocumentKey(_project2, _file1), null, null, null, null, null);
+        var document1 = _manager.GetOrCreateDocument(new DocumentKey(_projectKey1, _file1), _projectFile1, _projectKey1, null, null, null, null);
+        var document2 = _manager.GetOrCreateDocument(new DocumentKey(_projectKey2, _file1), _projectFile2, _projectKey2, null, null, null, null);
 
         // Act
         _manager.RemoveDocument(document1);
@@ -141,8 +146,8 @@ public class EditorDocumentManagerBaseTest : ProjectSnapshotManagerDispatcherTes
     public void DocumentOpened_MultipleDocuments_OpensAll()
     {
         // Arrange
-        var document1 = _manager.GetOrCreateDocument(new DocumentKey(_project1, _file1), null, null, null, null, null);
-        var document2 = _manager.GetOrCreateDocument(new DocumentKey(_project2, _file1), null, null, null, null, null);
+        var document1 = _manager.GetOrCreateDocument(new DocumentKey(_projectKey1, _file1), _projectFile1, _projectKey1, null, null, null, null);
+        var document2 = _manager.GetOrCreateDocument(new DocumentKey(_projectKey2, _file1), _projectFile2, _projectKey2, null, null, null, null);
 
         // Act
         _manager.DocumentOpened(_file1, _textBuffer);
@@ -158,8 +163,8 @@ public class EditorDocumentManagerBaseTest : ProjectSnapshotManagerDispatcherTes
     public void DocumentOpened_MultipleDocuments_ClosesAll()
     {
         // Arrange
-        var document1 = _manager.GetOrCreateDocument(new DocumentKey(_project1, _file1), null, null, null, null, null);
-        var document2 = _manager.GetOrCreateDocument(new DocumentKey(_project2, _file1), null, null, null, null, null);
+        var document1 = _manager.GetOrCreateDocument(new DocumentKey(_projectKey1, _file1), _projectFile1, _projectKey1, null, null, null, null);
+        var document2 = _manager.GetOrCreateDocument(new DocumentKey(_projectKey2, _file1), _projectFile2, _projectKey2, null, null, null, null);
         _manager.DocumentOpened(_file1, _textBuffer);
 
         // Act

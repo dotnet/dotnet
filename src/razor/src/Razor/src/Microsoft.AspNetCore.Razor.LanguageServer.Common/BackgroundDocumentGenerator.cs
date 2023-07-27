@@ -20,7 +20,7 @@ internal class BackgroundDocumentGenerator : ProjectSnapshotChangeTrigger
 
     private readonly ProjectSnapshotManagerDispatcher _dispatcher;
     private readonly IEnumerable<DocumentProcessedListener> _listeners;
-    private readonly Dictionary<string, IDocumentSnapshot> _work;
+    private readonly Dictionary<DocumentKey, IDocumentSnapshot> _work;
     private ProjectSnapshotManagerBase? _projectManager;
     private Timer? _timer;
     private bool _solutionIsClosing;
@@ -31,7 +31,7 @@ internal class BackgroundDocumentGenerator : ProjectSnapshotChangeTrigger
     {
         _dispatcher = dispatcher ?? throw new ArgumentNullException(nameof(dispatcher));
         _listeners = listeners ?? throw new ArgumentNullException(nameof(listeners));
-        _work = new Dictionary<string, IDocumentSnapshot>(StringComparer.Ordinal);
+        _work = new Dictionary<DocumentKey, IDocumentSnapshot>();
     }
 
     // For testing only
@@ -39,7 +39,7 @@ internal class BackgroundDocumentGenerator : ProjectSnapshotChangeTrigger
         ProjectSnapshotManagerDispatcher dispatcher)
     {
         _dispatcher = dispatcher;
-        _work = new Dictionary<string, IDocumentSnapshot>(StringComparer.Ordinal);
+        _work = new Dictionary<DocumentKey, IDocumentSnapshot>();
         _listeners = Enumerable.Empty<DocumentProcessedListener>();
     }
 
@@ -139,8 +139,8 @@ internal class BackgroundDocumentGenerator : ProjectSnapshotChangeTrigger
         {
             // We only want to store the last 'seen' version of any given document. That way when we pick one to process
             // it's always the best version to use.
-            var filePath = document.FilePath.AssumeNotNull();
-            _work[filePath] = document;
+            var key = new DocumentKey(document.Project.Key, document.FilePath.AssumeNotNull());
+            _work[key] = document;
 
             StartWorker();
         }
@@ -164,7 +164,7 @@ internal class BackgroundDocumentGenerator : ProjectSnapshotChangeTrigger
         {
             OnStartingBackgroundWork();
 
-            KeyValuePair<string, IDocumentSnapshot>[] work;
+            KeyValuePair<DocumentKey, IDocumentSnapshot>[] work;
             List<WorkResult> results = new();
             lock (_work)
             {

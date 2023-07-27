@@ -113,13 +113,13 @@ internal class EditorDocumentManagerListener : ProjectSnapshotChangeTrigger
                         return;
                     }
 
-                    var key = new DocumentKey(e.ProjectFilePath.AssumeNotNull(), e.DocumentFilePath.AssumeNotNull());
+                    var key = new DocumentKey(e.ProjectKey, e.DocumentFilePath.AssumeNotNull());
 
                     // GetOrCreateDocument needs to be run on the UI thread
                     await _joinableTaskContext.Factory.SwitchToMainThreadAsync(cancellationToken);
 
                     var document = DocumentManager.GetOrCreateDocument(
-                        key, e.ProjectKey.AssumeNotNull(), _onChangedOnDisk, _onChangedInEditor, _onOpened, _onClosed);
+                        key, e.ProjectFilePath, e.ProjectKey, _onChangedOnDisk, _onChangedInEditor, _onOpened, _onClosed);
                     if (document.IsOpenInEditor)
                     {
                         _onOpened(document, EventArgs.Empty);
@@ -136,7 +136,7 @@ internal class EditorDocumentManagerListener : ProjectSnapshotChangeTrigger
                     await _joinableTaskContext.Factory.SwitchToMainThreadAsync(cancellationToken);
 
                     if (DocumentManager.TryGetDocument(
-                        new DocumentKey(e.ProjectFilePath.AssumeNotNull(), e.DocumentFilePath.AssumeNotNull()), out var document))
+                        new DocumentKey(e.ProjectKey, e.DocumentFilePath.AssumeNotNull()), out var document))
                     {
                         // This class 'owns' the document entry so it's safe for us to dispose it.
                         document.Dispose();

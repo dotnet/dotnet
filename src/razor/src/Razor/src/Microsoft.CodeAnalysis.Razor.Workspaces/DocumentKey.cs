@@ -2,23 +2,24 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using System;
+using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.Extensions.Internal;
 
 namespace Microsoft.CodeAnalysis.Razor;
 
-public readonly struct DocumentKey : IEquatable<DocumentKey>
+internal readonly struct DocumentKey : IEquatable<DocumentKey>
 {
-    public string ProjectFilePath { get; }
+    public ProjectKey ProjectKey { get; }
     public string DocumentFilePath { get; }
 
-    public DocumentKey(string projectFilePath, string documentFilePath)
+    public DocumentKey(ProjectKey projectKey, string documentFilePath)
     {
-        ProjectFilePath = projectFilePath;
+        ProjectKey = projectKey;
         DocumentFilePath = documentFilePath;
     }
 
     public bool Equals(DocumentKey other)
-        => FilePathComparer.Instance.Equals(ProjectFilePath, other.ProjectFilePath) &&
+        => ProjectKey.Equals(other.ProjectKey) &&
            FilePathComparer.Instance.Equals(DocumentFilePath, other.DocumentFilePath);
 
     public override bool Equals(object? obj)
@@ -28,7 +29,7 @@ public readonly struct DocumentKey : IEquatable<DocumentKey>
     public override int GetHashCode()
     {
         var hash = new HashCodeCombiner();
-        hash.Add(ProjectFilePath, FilePathComparer.Instance);
+        hash.Add(ProjectKey);
         hash.Add(DocumentFilePath, FilePathComparer.Instance);
         return hash;
     }

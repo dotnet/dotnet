@@ -101,7 +101,7 @@ internal static partial class ObjectReaders
     public static TagHelperDescriptor ReadTagHelperFromProperties(JsonDataReader reader, bool useCache)
     {
         // Try reading the optional hashcode
-        var hashWasRead = reader.TryReadInt32(RazorSerializationConstants.HashCodePropertyName, out var hash);
+        var hashWasRead = reader.TryReadInt32(WellKnownPropertyNames.HashCode, out var hash);
         if (useCache && hashWasRead &&
             TagHelperDescriptorCache.TryGetDescriptor(hash, out var descriptor))
         {
@@ -189,20 +189,18 @@ internal static partial class ObjectReaders
 
     public static ProjectRazorJson ReadProjectRazorJsonFromProperties(JsonDataReader reader)
     {
-        ProjectRazorJsonData data = default;
-        reader.ReadProperties(ref data, ProjectRazorJsonData.PropertyMap);
-
-        // We need to add a serialization format to the project response to indicate that this version
-        // of the code is compatible with what's being serialized. This scenario typically happens when
-        // a user has an incompatible serialized project snapshot but is using the latest Razor bits.
-
-        if (string.IsNullOrEmpty(data.SerializationFormat) || data.SerializationFormat != ProjectSerializationFormat.Version)
+        if (!reader.TryReadInt32(WellKnownPropertyNames.Version, out var version) || version != ProjectRazorJson.Version)
         {
-            // Unknown serialization format.
-            return null!;
+            throw new ProjectRazorJsonSerializationException(SR.Unsupported_project_razor_json_version_encountered);
         }
 
-        return new ProjectRazorJson(
-            data.SerializedFilePath, data.FilePath, data.Configuration, data.RootNamespace, data.ProjectWorkspaceState, data.Documents);
+        var serializedFilePath = reader.ReadNonNullString(nameof(ProjectRazorJson.SerializedFilePath));
+        var filePath = reader.ReadNonNullString(nameof(ProjectRazorJson.FilePath));
+        var configuration = reader.ReadObject(nameof(ProjectRazorJson.Configuration), ReadConfigurationFromProperties);
+        var projectWorkspaceState = reader.ReadObject(nameof(ProjectRazorJson.ProjectWorkspaceState), ReadProjectWorkspaceStateFromProperties);
+        var rootNamespace = reader.ReadString(nameof(ProjectRazorJson.RootNamespace));
+        var documents = reader.ReadImmutableArray(nameof(ProjectRazorJson.Documents), static r => r.ReadNonNullObject(ReadDocumentSnapshotHandleFromProperties));
+
+        return new ProjectRazorJson(serializedFilePath, filePath, configuration, rootNamespace, projectWorkspaceState, documents);
     }
 }

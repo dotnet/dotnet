@@ -97,6 +97,7 @@ internal abstract class EditorDocumentManagerBase : EditorDocumentManager
 
     public sealed override EditorDocument GetOrCreateDocument(
         DocumentKey key,
+        string projectFilePath,
         ProjectKey projectKey,
         EventHandler? changedOnDisk,
         EventHandler? changedInEditor,
@@ -118,7 +119,7 @@ internal abstract class EditorDocumentManagerBase : EditorDocumentManager
                 this,
                 ProjectSnapshotManagerDispatcher,
                 JoinableTaskContext,
-                key.ProjectFilePath,
+                projectFilePath,
                 key.DocumentFilePath,
                 projectKey,
                 new FileTextLoader(key.DocumentFilePath, defaultEncoding: null),
@@ -215,7 +216,7 @@ internal abstract class EditorDocumentManagerBase : EditorDocumentManager
 
         lock (Lock)
         {
-            var key = new DocumentKey(document.ProjectFilePath, document.DocumentFilePath);
+            var key = new DocumentKey(document.ProjectKey, document.DocumentFilePath);
             if (_documentsByFilePath.TryGetValue(document.DocumentFilePath, out var documents))
             {
                 documents.Remove(key);

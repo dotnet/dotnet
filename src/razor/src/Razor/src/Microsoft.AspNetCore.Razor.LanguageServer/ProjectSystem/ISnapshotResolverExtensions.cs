@@ -1,22 +1,37 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
-using System.Diagnostics.CodeAnalysis;
+using Microsoft.AspNetCore.Razor.PooledObjects;
+using Microsoft.AspNetCore.Razor.Utilities;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.ProjectSystem;
 
 internal static class ISnapshotResolverExtensions
 {
-    public static bool TryResolveProject(this ISnapshotResolver snapshotResolver, string documentFilePath, [NotNullWhen(true)] out IProjectSnapshot? projectSnapshot)
+    public static bool TryResolveAllProjects(this ISnapshotResolver snapshotResolver, string documentFilePath, out IProjectSnapshot[] projectSnapshots)
     {
-        if (snapshotResolver.TryResolveDocument(documentFilePath, out var documentSnapshot))
+        var potentialProjects = snapshotResolver.FindPotentialProjects(documentFilePath);
+
+        using var _ = ListPool<IProjectSnapshot>.GetPooledObject(out var projects);
+
+        foreach (var project in potentialProjects)
         {
-            projectSnapshot = documentSnapshot.Project;
-            return true;
+            if (project.GetDocument(documentFilePath) is not null)
+            {
+                projects.Add(project);
+            }
         }
 
-        projectSnapshot = null;
-        return false;
+        var normalizedDocumentPath = FilePathNormalizer.Normalize(documentFilePath);
+        var miscProject = snapshotResolver.GetMiscellaneousProject();
+        if (miscProject.GetDocument(normalizedDocumentPath) is not null)
+        {
+            projects.Add(miscProject);
+        }
+
+        projectSnapshots = projects.ToArray();
+
+        return projects.Count > 0;
     }
 }

@@ -94,7 +94,7 @@ internal class VisualStudioEditorDocumentManager : EditorDocumentManagerBase
         var cookie = _runningDocumentTable.GetDocumentCookie(document.DocumentFilePath);
         if (cookie != VSConstants.VSCOOKIE_NIL)
         {
-            TrackOpenDocument(cookie, new DocumentKey(document.ProjectFilePath, document.DocumentFilePath));
+            TrackOpenDocument(cookie, new DocumentKey(document.ProjectKey, document.DocumentFilePath));
         }
     }
 
@@ -104,7 +104,7 @@ internal class VisualStudioEditorDocumentManager : EditorDocumentManagerBase
 
         EnsureDocumentTableAdvised();
 
-        var key = new DocumentKey(document.ProjectFilePath, document.DocumentFilePath);
+        var key = new DocumentKey(document.ProjectKey, document.DocumentFilePath);
         if (_cookiesByDocument.TryGetValue(key, out var cookie))
         {
             UntrackOpenDocument(cookie, key);

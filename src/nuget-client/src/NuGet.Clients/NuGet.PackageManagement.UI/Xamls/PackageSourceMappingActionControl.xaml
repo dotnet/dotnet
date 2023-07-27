@@ -5,6 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:imaging="clr-namespace:Microsoft.VisualStudio.Imaging;assembly=Microsoft.VisualStudio.Imaging"
              xmlns:nuget="clr-namespace:NuGet.PackageManagement.UI"
+             xmlns:controls="clr-namespace:NuGet.PackageManagement.UI.Controls"
              mc:Ignorable="d"
              Margin="0,9,0,0"
              x:Name="_self"
@@ -25,11 +26,11 @@
       <TextBlock x:Name="_textStatus" Margin="0,0,9,0" TextWrapping="Wrap">
         <Run Text="{Binding MappingStatus, Mode=OneWay}" />
         <Control Margin="6,0,0,0" IsTabStop="False" />
-        <Hyperlink Click="SettingsButtonClicked"
+        <controls:ButtonHyperlink Click="SettingsButtonClicked"
                    Style="{StaticResource HyperlinkStyleNoUri}"
                    AutomationProperties.Name="{x:Static nuget:Resources.Hyperlink_PackageSourceMappingSettings}">
           <TextBlock TextWrapping="Wrap" Text="{x:Static nuget:Resources.Hyperlink_PackageSourceMappingSettings}" />
-        </Hyperlink>
+        </controls:ButtonHyperlink>
       </TextBlock>
     </StackPanel>
   </Grid>

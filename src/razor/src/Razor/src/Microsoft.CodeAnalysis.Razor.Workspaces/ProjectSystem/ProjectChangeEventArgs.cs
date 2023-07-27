@@ -24,17 +24,17 @@ internal class ProjectChangeEventArgs : EventArgs
         DocumentFilePath = documentFilePath;
         Kind = kind;
         SolutionIsClosing = solutionIsClosing;
-        ProjectFilePath = older?.FilePath ?? newer?.FilePath;
-        ProjectKey = older?.Key ?? newer?.Key;
+        ProjectFilePath = (older ?? newer)!.FilePath;
+        ProjectKey = (older ?? newer)!.Key;
     }
 
     public IProjectSnapshot? Older { get; }
 
     public IProjectSnapshot? Newer { get; }
 
-    public ProjectKey? ProjectKey { get; }
+    public ProjectKey ProjectKey { get; }
 
-    public string? ProjectFilePath { get; }
+    public string ProjectFilePath { get; }
 
     public string? DocumentFilePath { get; }
 

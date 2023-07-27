@@ -293,6 +293,9 @@ public class FormattingTestBase : RazorIntegrationTestBase
             .Setup(d => d.FilePath)
             .Returns(path);
         documentSnapshot
+            .Setup(d => d.Project.Key)
+            .Returns(TestProjectKey.Create("/obj"));
+        documentSnapshot
             .Setup(d => d.TargetPath)
             .Returns(path);
         documentSnapshot

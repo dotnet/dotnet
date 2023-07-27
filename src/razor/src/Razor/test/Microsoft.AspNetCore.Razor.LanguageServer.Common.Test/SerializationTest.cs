@@ -18,6 +18,9 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer.Common;
 
 public class SerializationTest : TestBase
 {
+    private readonly RazorConfiguration _configuration;
+    private readonly ProjectWorkspaceState _projectWorkspaceState;
+
     public SerializationTest(ITestOutputHelper testOutput)
         : base(testOutput)
     {
@@ -26,68 +29,75 @@ public class SerializationTest : TestBase
         {
             new SerializedRazorExtension("TestExtension"),
         };
-        Configuration = RazorConfiguration.Create(languageVersion, "Custom", extensions);
-        ProjectWorkspaceState = new ProjectWorkspaceState(ImmutableArray.Create(
+
+        _configuration = RazorConfiguration.Create(languageVersion, "Custom", extensions);
+        _projectWorkspaceState = new ProjectWorkspaceState(ImmutableArray.Create(
             TagHelperDescriptorBuilder.Create("Test", "TestAssembly").Build()),
             csharpLanguageVersion: LanguageVersion.LatestMajor);
     }
 
-    private RazorConfiguration Configuration { get; }
-    private ProjectWorkspaceState ProjectWorkspaceState { get; }
-
     [Fact]
-    public void ProjectRazorJson_InvalidSerializationFormat_SerializesToNull()
+    public void ProjectRazorJson_InvalidVersionThrows()
     {
         // Arrange
         var projectRazorJson = new ProjectRazorJson(
             "/path/to/obj/project.razor.json",
             "/path/to/project.csproj",
-            Configuration,
+            _configuration,
             rootNamespace: "TestProject",
-            ProjectWorkspaceState,
+            _projectWorkspaceState,
             ImmutableArray<DocumentSnapshotHandle>.Empty);
 
-        var serializedHandle = JsonConvert.SerializeObject(projectRazorJson, ProjectRazorJsonJsonConverter.Instance);
-        Assert.NotNull(serializedHandle);
+        var jsonText = JsonConvert.SerializeObject(projectRazorJson, ProjectRazorJsonJsonConverter.Instance);
+        Assert.NotNull(jsonText);
 
-        var serializedJObject = JObject.Parse(serializedHandle);
-        serializedJObject["SerializationFormat"] = "INVALID";
-        var reserializedHandle = JsonConvert.SerializeObject(serializedJObject);
-        Assert.NotNull(reserializedHandle);
+        var serializedJObject = JObject.Parse(jsonText);
+        serializedJObject[WellKnownPropertyNames.Version] = -1;
+
+        var updatedJsonText = JsonConvert.SerializeObject(serializedJObject);
+        Assert.NotNull(updatedJsonText);
 
         // Act
-        var deserializedHandle = JsonConvert.DeserializeObject<ProjectRazorJson>(reserializedHandle, ProjectRazorJsonJsonConverter.Instance);
+        ProjectRazorJson? deserializedProjectRazorJson = null;
+        Assert.Throws<ProjectRazorJsonSerializationException>(() =>
+        {
+            deserializedProjectRazorJson = JsonConvert.DeserializeObject<ProjectRazorJson>(updatedJsonText, ProjectRazorJsonJsonConverter.Instance);
+        });
 
         // Assert
-        Assert.Null(deserializedHandle);
+        Assert.Null(deserializedProjectRazorJson);
     }
 
     [Fact]
-    public void ProjectRazorJson_MissingSerializationFormat_SerializesToNull()
+    public void ProjectRazorJson_MissingVersionThrows()
     {
         // Arrange
         var projectRazorJson = new ProjectRazorJson(
             "/path/to/obj/project.razor.json",
             "/path/to/project.csproj",
-            Configuration,
+            _configuration,
             rootNamespace: "TestProject",
-            ProjectWorkspaceState,
+            _projectWorkspaceState,
             ImmutableArray<DocumentSnapshotHandle>.Empty);
 
-        var serializedHandle = JsonConvert.SerializeObject(projectRazorJson, ProjectRazorJsonJsonConverter.Instance);
-        Assert.NotNull(serializedHandle);
+        var jsonText = JsonConvert.SerializeObject(projectRazorJson, ProjectRazorJsonJsonConverter.Instance);
+        Assert.NotNull(jsonText);
 
-        var serializedJObject = JObject.Parse(serializedHandle);
-        serializedJObject.Remove("SerializationFormat");
+        var serializedJObject = JObject.Parse(jsonText);
+        serializedJObject.Remove(WellKnownPropertyNames.Version);
 
-        var reserializedHandle = JsonConvert.SerializeObject(serializedJObject);
-        Assert.NotNull(reserializedHandle);
+        var updatedJsonText = JsonConvert.SerializeObject(serializedJObject);
+        Assert.NotNull(updatedJsonText);
 
         // Act
-        var deserializedHandle = JsonConvert.DeserializeObject<ProjectRazorJson>(reserializedHandle, ProjectRazorJsonJsonConverter.Instance);
+        ProjectRazorJson? deserializedProjectRazorJson = null;
+        Assert.Throws<ProjectRazorJsonSerializationException>(() =>
+        {
+            deserializedProjectRazorJson = JsonConvert.DeserializeObject<ProjectRazorJson>(updatedJsonText, ProjectRazorJsonJsonConverter.Instance);
+        });
 
         // Assert
-        Assert.Null(deserializedHandle);
+        Assert.Null(deserializedProjectRazorJson);
     }
 
     [Fact]
@@ -99,23 +109,23 @@ public class SerializationTest : TestBase
         var projectRazorJson = new ProjectRazorJson(
             "/path/to/obj/project.razor.json",
             "/path/to/project.csproj",
-            Configuration,
+            _configuration,
             rootNamespace: "TestProject",
-            ProjectWorkspaceState,
+            _projectWorkspaceState,
             ImmutableArray.Create(legacyDocument, componentDocument));
 
-        var serializedHandle = JsonConvert.SerializeObject(projectRazorJson, ProjectRazorJsonJsonConverter.Instance);
-        Assert.NotNull(serializedHandle);
+        var jsonText = JsonConvert.SerializeObject(projectRazorJson, ProjectRazorJsonJsonConverter.Instance);
+        Assert.NotNull(jsonText);
 
         // Act
-        var deserializedHandle = JsonConvert.DeserializeObject<ProjectRazorJson>(serializedHandle, ProjectRazorJsonJsonConverter.Instance);
-        Assert.NotNull(deserializedHandle);
+        var deserializedProjectRazorJson = JsonConvert.DeserializeObject<ProjectRazorJson>(jsonText, ProjectRazorJsonJsonConverter.Instance);
+        Assert.NotNull(deserializedProjectRazorJson);
 
         // Assert
-        Assert.Equal(projectRazorJson.FilePath, deserializedHandle.FilePath);
-        Assert.Equal(projectRazorJson.Configuration, deserializedHandle.Configuration);
-        Assert.Equal(projectRazorJson.RootNamespace, deserializedHandle.RootNamespace);
-        Assert.Equal(projectRazorJson.ProjectWorkspaceState, deserializedHandle.ProjectWorkspaceState);
+        Assert.Equal(projectRazorJson.FilePath, deserializedProjectRazorJson.FilePath);
+        Assert.Equal(projectRazorJson.Configuration, deserializedProjectRazorJson.Configuration);
+        Assert.Equal(projectRazorJson.RootNamespace, deserializedProjectRazorJson.RootNamespace);
+        Assert.Equal(projectRazorJson.ProjectWorkspaceState, deserializedProjectRazorJson.ProjectWorkspaceState);
         Assert.Collection(projectRazorJson.Documents.OrderBy(doc => doc.FilePath),
             document =>
             {
@@ -135,13 +145,13 @@ public class SerializationTest : TestBase
     public void RazorConfiguration_CanRoundTrip()
     {
         // Arrange
-        var serializedConfiguration = JsonDataConvert.SerializeObject(Configuration, ObjectWriters.WriteProperties);
-        Assert.NotNull(serializedConfiguration);
+        var jsonText = JsonDataConvert.SerializeObject(_configuration, ObjectWriters.WriteProperties);
+        Assert.NotNull(jsonText);
 
         // Act
-        var deserializedConfiguration = JsonDataConvert.DeserializeObject(serializedConfiguration, ObjectReaders.ReadConfigurationFromProperties);
+        var deserializedConfiguration = JsonDataConvert.DeserializeObject(jsonText, ObjectReaders.ReadConfigurationFromProperties);
 
         // Assert
-        Assert.Equal(Configuration, deserializedConfiguration);
+        Assert.Equal(_configuration, deserializedConfiguration);
     }
 }

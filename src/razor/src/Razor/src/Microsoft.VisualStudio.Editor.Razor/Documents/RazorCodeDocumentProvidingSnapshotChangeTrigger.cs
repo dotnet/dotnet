@@ -55,7 +55,7 @@ internal class RazorCodeDocumentProvidingSnapshotChangeTrigger : ProjectSnapshot
         else if (e.Kind == ProjectChangeKind.DocumentAdded)
         {
             var documentFilePath = e.DocumentFilePath!;
-            _documentProjectMap[documentFilePath] = e.ProjectKey!;
+            _documentProjectMap[documentFilePath] = e.ProjectKey;
             if (_openDocuments.Contains(documentFilePath))
             {
                 _openDocuments.Remove(documentFilePath);

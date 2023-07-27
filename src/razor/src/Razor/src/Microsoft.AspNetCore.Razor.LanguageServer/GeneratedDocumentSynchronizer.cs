@@ -42,10 +42,10 @@ internal class GeneratedDocumentSynchronizer : DocumentProcessedListener
 
         var htmlText = codeDocument.GetHtmlSourceText();
 
-        _publisher.PublishHtml(filePath, htmlText, hostDocumentVersion.Value);
+        _publisher.PublishHtml(document.Project.Key, filePath, htmlText, hostDocumentVersion.Value);
 
         var csharpText = codeDocument.GetCSharpSourceText();
 
-        _publisher.PublishCSharp(filePath, csharpText, hostDocumentVersion.Value);
+        _publisher.PublishCSharp(document.Project.Key, filePath, csharpText, hostDocumentVersion.Value);
     }
 }

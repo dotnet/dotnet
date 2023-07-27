@@ -150,7 +150,7 @@ internal class BackgroundDocumentGenerator : ProjectSnapshotChangeTrigger
 
             // We only want to store the last 'seen' version of any given document. That way when we pick one to process
             // it's always the best version to use.
-            Work[new DocumentKey(project.FilePath, document.FilePath.AssumeNotNull())] = (project, document);
+            Work[new DocumentKey(project.Key, document.FilePath.AssumeNotNull())] = (project, document);
 
             StartWorker();
         }
@@ -269,7 +269,7 @@ internal class BackgroundDocumentGenerator : ProjectSnapshotChangeTrigger
             if (_projectManager.IsDocumentOpen(filePath))
             {
                 _suppressedDocuments.Add(filePath);
-                _infoProvider.SuppressDocument(project.FilePath, filePath);
+                _infoProvider.SuppressDocument(project.Key, filePath);
                 return true;
             }
 
@@ -287,7 +287,7 @@ internal class BackgroundDocumentGenerator : ProjectSnapshotChangeTrigger
             if (!_suppressedDocuments.Contains(filePath))
             {
                 var container = new DefaultDynamicDocumentContainer(document);
-                _infoProvider.UpdateFileInfo(project.FilePath, container);
+                _infoProvider.UpdateFileInfo(project.Key, container);
             }
         }
     }

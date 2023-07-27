@@ -2,6 +2,7 @@
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Text;
 using Microsoft.AspNetCore.Mvc.Razor.Extensions;
 using Microsoft.AspNetCore.Razor.Language;
@@ -66,13 +67,14 @@ namespace Microsoft.NET.Sdk.Razor.SourceGenerators
             return discoveryProjectEngine;
         }
 
-        private static RazorProjectEngine GetDiscoveryProjectEngine(
-            IReadOnlyList<MetadataReference> references,
-            StaticCompilationTagHelperFeature tagHelperFeature)
+        private static StaticCompilationTagHelperFeature GetStaticTagHelperFeature(Compilation compilation)
         {
+            var tagHelperFeature = new StaticCompilationTagHelperFeature(compilation);
+
+            // the tagHelperFeature will have its Engine property set as part of adding it to the engine, which is used later when doing the actual discovery
             var discoveryProjectEngine = RazorProjectEngine.Create(RazorConfiguration.Default, new VirtualRazorProjectFileSystem(), b =>
             {
-                b.Features.Add(new DefaultMetadataReferenceFeature { References = references });
+                b.Features.Add(new DefaultMetadataReferenceFeature { References = compilation.References.ToImmutableArray() });
                 b.Features.Add(tagHelperFeature);
                 b.Features.Add(new DefaultTagHelperDescriptorProvider());
 
@@ -80,11 +82,10 @@ namespace Microsoft.NET.Sdk.Razor.SourceGenerators
                 RazorExtensions.Register(b);
             });
 
-            return discoveryProjectEngine;
+            return tagHelperFeature;
         }
 
-        private static RazorProjectEngine GetGenerationProjectEngine(
-            IReadOnlyList<TagHelperDescriptor> tagHelpers,
+        private static SourceGeneratorProjectEngine GetGenerationProjectEngine(
             SourceGeneratorProjectItem item,
             IEnumerable<SourceGeneratorProjectItem> imports,
             RazorSourceGenerationOptions razorSourceGeneratorOptions,
@@ -97,7 +98,7 @@ namespace Microsoft.NET.Sdk.Razor.SourceGenerators
                 fileSystem.Add(import);
             }
 
-            var projectEngine = RazorProjectEngine.Create(razorSourceGeneratorOptions.Configuration, fileSystem, b =>
+            var projectEngine = (DefaultRazorProjectEngine)RazorProjectEngine.Create(razorSourceGeneratorOptions.Configuration, fileSystem, b =>
             {
                 b.Features.Add(new DefaultTypeNameFeature());
                 b.SetRootNamespace(razorSourceGeneratorOptions.RootNamespace);
@@ -110,16 +111,13 @@ namespace Microsoft.NET.Sdk.Razor.SourceGenerators
                     options.SuppressAddComponentParameter = !isAddComponentParameterAvailable;
                 }));
 
-                b.Features.Add(new StaticTagHelperFeature { TagHelpers = tagHelpers });
-                b.Features.Add(new DefaultTagHelperDescriptorProvider());
-
                 CompilerFeatures.Register(b);
                 RazorExtensions.Register(b);
 
                 b.SetCSharpLanguageVersion(razorSourceGeneratorOptions.CSharpLanguageVersion);
             });
 
-            return projectEngine;
+            return new SourceGeneratorProjectEngine(projectEngine);
         }
     }
 }
