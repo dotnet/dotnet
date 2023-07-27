@@ -20,7 +20,19 @@ Our methodology for testing changes to localization in our UI components is with
 
 ## Accessibility
 
-### Accessibility Insights
+## Custom Controls 
+
+There are occasions where WPF, .NET framework, or VS platform behavior requires custom control modifications to be compliant with accessibility.
+The following table lists controls and a basic use case for each one.
+
+|Custom Control|Criteria|Reason|
+|---|---|---|
+|`ButtonHyperlink`|A `Hyperlink` which doesn't function by opening an external URL (web page), but instead performs some action within VS.|Assistive technologies read the control type, and a `Hyperlink` is expected to behave in a way consistent with Web page hyperlinks. The customization sets the control type as a `Button`. |
+
+
+## Accessibility Testing
+
+#### Accessibility Insights
 
 We use the [Accessibility Insights For Windows](https://accessibilityinsights.io) tool to validate our UI meets accessibility standards. Although no tool catches every accessibility problem, it provides a baseline of how the UI change may affect assistive technologies.
 
@@ -28,7 +40,7 @@ We use the [Accessibility Insights For Windows](https://accessibilityinsights.io
 
 The [Accessibility Insights FastPass](https://accessibilityinsights.io/docs/windows/getstarted/fastpass/) needs to be run on the parent control being affected. A screenshot of the result can be placed in the PR description. 
 
-### Screen-reader Testing
+#### Screen-reader Testing
 
 [Windows Narrator](https://support.microsoft.com/windows/complete-guide-to-narrator-e4397a0d-ef4f-b386-d8ae-c172f109bdb1) is the screen-reader we use for testing. 
 - Ensuring that the screen-reader is able to announce all visible controls and text is ideal. 
