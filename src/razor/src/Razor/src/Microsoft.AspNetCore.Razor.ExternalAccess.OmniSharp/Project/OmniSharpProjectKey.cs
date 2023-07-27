@@ -10,7 +10,7 @@ public sealed class OmniSharpProjectKey
     public static OmniSharpProjectKey? From(CodeAnalysis.Project workspaceProject)
     {
         var key = ProjectKey.From(workspaceProject);
-        return key is null ? null : new(key);
+        return key is null ? null : new(key.Value);
     }
 
     internal ProjectKey Key { get; }

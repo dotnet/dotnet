@@ -13,13 +13,8 @@ using Xunit.Abstractions;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer;
 
-public class ProjectConfigurationFileChangeEventArgsTest : TestBase
+public class ProjectConfigurationFileChangeEventArgsTest(ITestOutputHelper testOutput) : TestBase(testOutput)
 {
-    public ProjectConfigurationFileChangeEventArgsTest(ITestOutputHelper testOutput)
-        : base(testOutput)
-    {
-    }
-
     [Fact]
     public void TryDeserialize_RemovedKind_ReturnsFalse()
     {

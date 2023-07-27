@@ -31,11 +31,6 @@ internal class DefaultProjectConfigurationFilePathStore : ProjectConfigurationFi
 
     public override void Set(ProjectKey projectKey, string configurationFilePath)
     {
-        if (projectKey is null)
-        {
-            throw new ArgumentNullException(nameof(projectKey));
-        }
-
         if (configurationFilePath is null)
         {
             throw new ArgumentNullException(nameof(configurationFilePath));
@@ -62,11 +57,6 @@ internal class DefaultProjectConfigurationFilePathStore : ProjectConfigurationFi
 
     public override void Remove(ProjectKey projectKey)
     {
-        if (projectKey is null)
-        {
-            throw new ArgumentNullException(nameof(projectKey));
-        }
-
         lock (_mappingsLock)
         {
             if (!_mappings.Remove(projectKey))
@@ -82,11 +72,6 @@ internal class DefaultProjectConfigurationFilePathStore : ProjectConfigurationFi
 
     public override bool TryGet(ProjectKey projectKey, [NotNullWhen(returnValue: true)] out string? configurationFilePath)
     {
-        if (projectKey is null)
-        {
-            throw new ArgumentNullException(nameof(projectKey));
-        }
-
         lock (_mappingsLock)
         {
             return _mappings.TryGetValue(projectKey, out configurationFilePath);

@@ -8,7 +8,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Language.Extensions;
-using Microsoft.AspNetCore.Razor.Language.Legacy;
 using Microsoft.AspNetCore.Razor.Language.Syntax;
 using Microsoft.AspNetCore.Razor.LanguageServer.CodeActions.Models;
 using Microsoft.CodeAnalysis;
@@ -29,13 +28,9 @@ internal class GenerateMethodCodeActionProvider : IRazorCodeActionProvider
             return s_emptyResult;
         }
 
-        var change = new SourceChange(context.Location.AbsoluteIndex, length: 0, newText: string.Empty);
         var syntaxTree = context.CodeDocument.GetSyntaxTree();
-        var owner = syntaxTree.Root.LocateOwner(change);
-        if (owner is null)
-        {
-            return s_emptyResult;
-        }
+        var owner = syntaxTree.Root.FindToken(context.Location.AbsoluteIndex).Parent;
+        Assumes.NotNull(owner);
 
         if (IsGenerateEventHandlerValid(owner, out var methodName, out var eventName))
         {

@@ -13,7 +13,8 @@ namespace Microsoft.CodeAnalysis.Razor.ProjectSystem;
 /// A very light wrapper around a file path, used to ensure consistency across the code base for what constitutes the unique
 /// identifier for a project.
 /// </summary>
-internal sealed class ProjectKey : IEquatable<ProjectKey>
+[DebuggerDisplay("id: {Id}")]
+internal readonly record struct ProjectKey : IEquatable<ProjectKey>
 {
     // ProjectKey represents the path of the intermediate output path, which is where the project.razor.json file will
     // end up. All creation logic is here in one place to ensure this is consistent.
@@ -37,31 +38,11 @@ internal sealed class ProjectKey : IEquatable<ProjectKey>
 
     public override int GetHashCode()
     {
-        return FilePathComparer.Instance.GetHashCode(Id);
+        return Id is null ? 0 : FilePathComparer.Instance.GetHashCode(Id);
     }
 
-    public override bool Equals(object? other)
+    public bool Equals(ProjectKey other)
     {
-        return Equals(other as ProjectKey);
-    }
-
-    public bool Equals(ProjectKey? other)
-    {
-        return FilePathComparer.Instance.Equals(Id, other?.Id);
-    }
-
-    public static bool operator ==(ProjectKey? lhs, ProjectKey? rhs)
-    {
-        return lhs?.Equals(rhs) ?? false;
-    }
-
-    public static bool operator !=(ProjectKey? lhs, ProjectKey? rhs)
-    {
-        return !lhs?.Equals(rhs) ?? false;
-    }
-
-    public override string ToString()
-    {
-        return "{id:" + Id + "}";
+        return FilePathComparer.Instance.Equals(Id, other.Id);
     }
 }

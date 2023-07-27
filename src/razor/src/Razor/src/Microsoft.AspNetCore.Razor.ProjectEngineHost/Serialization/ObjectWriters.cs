@@ -91,7 +91,7 @@ internal static class ObjectWriters
 
     public static void WriteProperties(JsonDataWriter writer, TagHelperDescriptor value)
     {
-        writer.Write(RazorSerializationConstants.HashCodePropertyName, TagHelperDescriptorCache.GetTagHelperDescriptorCacheId(value));
+        writer.Write(WellKnownPropertyNames.HashCode, TagHelperDescriptorCache.GetTagHelperDescriptorCacheId(value));
         writer.Write(nameof(value.Kind), value.Kind);
         writer.Write(nameof(value.Name), value.Name);
         writer.Write(nameof(value.AssemblyName), value.AssemblyName);
@@ -218,12 +218,12 @@ internal static class ObjectWriters
 
     public static void WriteProperties(JsonDataWriter writer, ProjectRazorJson value)
     {
+        writer.Write(WellKnownPropertyNames.Version, ProjectRazorJson.Version);
         writer.Write(nameof(value.SerializedFilePath), value.SerializedFilePath);
         writer.Write(nameof(value.FilePath), value.FilePath);
         writer.WriteObject(nameof(value.Configuration), value.Configuration, WriteProperties);
         writer.WriteObject(nameof(value.ProjectWorkspaceState), value.ProjectWorkspaceState, WriteProperties);
         writer.Write(nameof(value.RootNamespace), value.RootNamespace);
         writer.WriteArray(nameof(value.Documents), value.Documents, Write);
-        writer.Write("SerializationFormat", ProjectSerializationFormat.Version);
     }
 }

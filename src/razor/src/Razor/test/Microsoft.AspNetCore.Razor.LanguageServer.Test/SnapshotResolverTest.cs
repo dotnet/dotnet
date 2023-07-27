@@ -4,13 +4,11 @@
 #nullable disable
 
 using System.IO;
-using System.Threading.Tasks;
+using System.Linq;
 using Microsoft.AspNetCore.Razor.LanguageServer.ProjectSystem;
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.AspNetCore.Razor.Utilities;
-using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
-using Moq;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -22,7 +20,7 @@ public class SnapshotResolverTest : LanguageServerTestBase
     }
 
     [Fact]
-    public void TryResolveDocument_AsksPotentialParentProjectForDocumentItsTracking_ReturnsTrue()
+    public void TryResolveDocumentInAnyProject_AsksPotentialParentProjectForDocumentItsTracking_ReturnsTrue()
     {
         // Arrange
         var documentFilePath = @"C:\path\to\document.cshtml";
@@ -30,7 +28,7 @@ public class SnapshotResolverTest : LanguageServerTestBase
         var snapshotResolver = CreateSnapshotResolver(normalizedFilePath);
 
         // Act
-        var result = snapshotResolver.TryResolveDocument(documentFilePath, out var document);
+        var result = snapshotResolver.TryResolveDocumentInAnyProject(documentFilePath, out var document);
 
         // Assert
         Assert.True(result);
@@ -38,7 +36,7 @@ public class SnapshotResolverTest : LanguageServerTestBase
     }
 
     [Fact]
-    public void TryResolveDocument_AsksMiscellaneousProjectForDocumentItIsTracking_ReturnsTrue()
+    public void TryResolveDocumentInAnyProject_AsksMiscellaneousProjectForDocumentItIsTracking_ReturnsTrue()
     {
         // Arrange
         var documentFilePath = @"C:\path\to\document.cshtml";
@@ -47,14 +45,14 @@ public class SnapshotResolverTest : LanguageServerTestBase
         var snapshotResolver = new SnapshotResolver(projectSnapshotManagerAccessor, LoggerFactory);
         var miscProject = snapshotResolver.GetMiscellaneousProject();
 
-        var hostProject = new HostProject(miscProject.FilePath, miscProject.IntermediateOutputPath, RazorDefaults.Configuration, miscProject.RootNamespace);
+        var hostProject = new HostProject(miscProject.FilePath, miscProject.IntermediateOutputPath, FallbackRazorConfiguration.Latest, miscProject.RootNamespace);
         projectSnapshotManagerAccessor.Instance.DocumentAdded(
             hostProject.Key,
             new HostDocument(normalizedFilePath, "document.cshtml"),
             new EmptyTextLoader(normalizedFilePath));
 
         // Act
-        var result = snapshotResolver.TryResolveDocument(documentFilePath, out var document);
+        var result = snapshotResolver.TryResolveDocumentInAnyProject(documentFilePath, out var document);
 
         // Assert
         Assert.True(result);
@@ -63,7 +61,7 @@ public class SnapshotResolverTest : LanguageServerTestBase
     }
 
     [Fact]
-    public void TryResolveDocument_AsksPotentialParentProjectForDocumentItsNotTrackingAndMiscellaneousProjectIsNotTrackingEither_ReturnsFalse()
+    public void TryResolveDocumentInAnyProject_AsksPotentialParentProjectForDocumentItsNotTrackingAndMiscellaneousProjectIsNotTrackingEither_ReturnsFalse()
     {
         // Arrange
         var documentFilePath = @"C:\path\to\document.cshtml";
@@ -71,7 +69,7 @@ public class SnapshotResolverTest : LanguageServerTestBase
         var snapshotResolver = new SnapshotResolver(projectSnapshotManagerAccessor, LoggerFactory);
 
         // Act
-        var result = snapshotResolver.TryResolveDocument(documentFilePath, out var document);
+        var result = snapshotResolver.TryResolveDocumentInAnyProject(documentFilePath, out var document);
 
         // Assert
         Assert.False(result);
@@ -79,22 +77,22 @@ public class SnapshotResolverTest : LanguageServerTestBase
     }
 
     [Fact]
-    public void TryResolveProject_NoProjects_ReturnsFalse()
+    public void TryResolveAllProjects_NoProjects_ReturnsFalse()
     {
         // Arrange
         var documentFilePath = "C:/path/to/document.cshtml";
         var snapshotResolver = new SnapshotResolver(new TestProjectSnapshotManagerAccessor(TestProjectSnapshotManager.Create(ErrorReporter)), LoggerFactory);
 
         // Act
-        var result = snapshotResolver.TryResolveProject(documentFilePath, out var project);
+        var result = snapshotResolver.TryResolveAllProjects(documentFilePath, out var projects);
 
         // Assert
         Assert.False(result);
-        Assert.Null(project);
+        Assert.Empty(projects);
     }
 
     [Fact]
-    public void TryResolveProject_OnlyMiscellaneousProjectDoesNotContainDocument_ReturnsFalse()
+    public void TryResolveAllProjects_OnlyMiscellaneousProjectDoesNotContainDocument_ReturnsFalse()
     {
         // Arrange
         var documentFilePath = "C:/path/to/document.cshtml";
@@ -102,30 +100,30 @@ public class SnapshotResolverTest : LanguageServerTestBase
         _ = snapshotResolver.GetMiscellaneousProject();
 
         // Act
-        var result = snapshotResolver.TryResolveProject(documentFilePath, out var project);
+        var result = snapshotResolver.TryResolveAllProjects(documentFilePath, out var projects);
 
         // Assert
         Assert.False(result);
-        Assert.Null(project);
+        Assert.Empty(projects);
     }
 
     [Fact]
-    public void TryResolveProject_OnlyMiscellaneousProjectContainsDocument_ReturnsTrue()
+    public void TryResolveAllProjects_OnlyMiscellaneousProjectContainsDocument_ReturnsTrue()
     {
         // Arrange
         var documentFilePath = Path.Join(TempDirectory.Instance.DirectoryPath, "document.cshtml");
         var snapshotResolver = CreateSnapshotResolver(documentFilePath, addToMiscellaneous: true);
 
         // Act
-        var result = snapshotResolver.TryResolveProject(documentFilePath, out var project);
+        var result = snapshotResolver.TryResolveAllProjects(documentFilePath, out var projects);
 
         // Assert
         Assert.True(result);
-        Assert.Equal(snapshotResolver.GetMiscellaneousProject(), project);
+        Assert.Single(projects, snapshotResolver.GetMiscellaneousProject());
     }
 
     [Fact]
-    public void TryResolveProject_UnrelatedProject_ReturnsFalse()
+    public void TryResolveAllProjects_UnrelatedProject_ReturnsFalse()
     {
         // Arrange
         var documentFilePath = "C:/path/to/document.cshtml";
@@ -134,15 +132,15 @@ public class SnapshotResolverTest : LanguageServerTestBase
         snapshotManager.ProjectAdded(TestProjectSnapshot.Create("C:/other/path/to/project.csproj").HostProject);
 
         // Act
-        var result = snapshotResolver.TryResolveProject(documentFilePath, out var project);
+        var result = snapshotResolver.TryResolveAllProjects(documentFilePath, out var projects);
 
         // Assert
         Assert.False(result);
-        Assert.Null(project);
+        Assert.Empty(projects);
     }
 
     [Fact]
-    public void TryResolveProject_OwnerProjectWithOthers_ReturnsTrue()
+    public void TryResolveAllProjects_OwnerProjectWithOthers_ReturnsTrue()
     {
         // Arrange
         var documentFilePath = "C:/path/to/document.cshtml";
@@ -154,15 +152,15 @@ public class SnapshotResolverTest : LanguageServerTestBase
         var snapshotResolver = new SnapshotResolver(new TestProjectSnapshotManagerAccessor(snapshotManager), LoggerFactory);
 
         // Act
-        var result = snapshotResolver.TryResolveProject(documentFilePath, out var project);
+        var result = snapshotResolver.TryResolveAllProjects(documentFilePath, out var projects);
 
         // Assert
         Assert.True(result);
-        AssertSnapshotsEqual(expectedProject, project);
+        AssertSnapshotsEqual(expectedProject, projects.Single());
     }
 
     [Fact]
-    public void TryResolveProject_MiscellaneousOwnerProjectWithOthers_ReturnsTrue()
+    public void TryResolveAllProjects_MiscellaneousOwnerProjectWithOthers_ReturnsTrue()
     {
         // Arrange
         var documentFilePath = Path.Join(TempDirectory.Instance.DirectoryPath, "file.cshtml");
@@ -175,15 +173,15 @@ public class SnapshotResolverTest : LanguageServerTestBase
         snapshotManager.CreateAndAddProject("C:/path/to/project.csproj");
 
         // Act
-        var result = snapshotResolver.TryResolveProject(documentFilePath, out var project);
+        var result = snapshotResolver.TryResolveAllProjects(documentFilePath, out var projects);
 
         // Assert
         Assert.True(result);
-        AssertSnapshotsEqual(miscProject, project);
+        AssertSnapshotsEqual(miscProject, projects.Single());
     }
 
     [OSSkipConditionFact(new[] { "OSX", "Linux" })]
-    public void TryResolveProject_OwnerProjectDifferentCasing_ReturnsTrue()
+    public void TryResolveAllProjects_OwnerProjectDifferentCasing_ReturnsTrue()
     {
         // Arrange
         var documentFilePath = "c:/path/to/document.cshtml";
@@ -194,11 +192,11 @@ public class SnapshotResolverTest : LanguageServerTestBase
         snapshotManager.CreateAndAddDocument(ownerProject, documentFilePath);
 
         // Act
-        var result = snapshotResolver.TryResolveProject(documentFilePath, out var project);
+        var result = snapshotResolver.TryResolveAllProjects(documentFilePath, out var projects);
 
         // Assert
         Assert.True(result);
-        AssertSnapshotsEqual(ownerProject, project);
+        AssertSnapshotsEqual(ownerProject, projects.Single());
     }
 
     [Fact]
@@ -259,7 +257,7 @@ public class SnapshotResolverTest : LanguageServerTestBase
         return snapshotResolver;
     }
 
-    private void AssertSnapshotsEqual(IProjectSnapshot first, IProjectSnapshot second)
+    private static void AssertSnapshotsEqual(IProjectSnapshot first, IProjectSnapshot second)
     {
         Assert.Equal(first.FilePath, second.FilePath);
         Assert.Equal(first.CSharpLanguageVersion, second.CSharpLanguageVersion);

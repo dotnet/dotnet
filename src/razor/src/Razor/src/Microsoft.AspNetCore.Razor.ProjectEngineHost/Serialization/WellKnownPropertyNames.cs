@@ -3,7 +3,8 @@
 
 namespace Microsoft.AspNetCore.Razor.Serialization;
 
-internal static class ProjectSerializationFormat
+internal static class WellKnownPropertyNames
 {
-    public static string Version => "0.3";
+    public const string Version = "__Version";
+    public const string HashCode = "HashCode";
 }

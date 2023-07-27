@@ -53,13 +53,12 @@ public abstract class AbstractRazorEditorTest : AbstractEditorTest
         await TestServices.Editor.PlaceCaretAsync("</PageTitle>", charsOffset: 1, ControlledHangMitigatingCancellationToken);
         await TestServices.Editor.WaitForComponentClassificationAsync(ControlledHangMitigatingCancellationToken, count: 3);
 
+        // Making a code change gets us flowing new generated code versions around the system
+        // which seems to have a positive effect on Web Tools in particular. Given the relatively
+        // fast pace of running integration tests, it's worth taking a slight delay at the start for a more reliable run.
         TestServices.Input.Send("{ENTER}");
 
-        await Task.Delay(10000);
-
-        TestServices.Input.Send("{ENTER}");
-
-        await Task.Delay(10000);
+        await Task.Delay(2500);
 
         // Close the file we opened, just in case, so the test can start with a clean slate
         await TestServices.Editor.CloseCodeFileAsync(RazorProjectConstants.BlazorProjectName, RazorProjectConstants.IndexRazorFile, saveFile: false, ControlledHangMitigatingCancellationToken);

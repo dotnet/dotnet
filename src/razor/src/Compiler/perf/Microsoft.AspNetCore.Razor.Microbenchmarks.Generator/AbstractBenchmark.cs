@@ -28,8 +28,7 @@ public abstract class AbstractBenchmark
     protected GeneratorDriver RunBenchmark(Func<ProjectSetup.RazorProject, GeneratorDriver> updateDriver)
     {
         var compilation = _project!.Compilation;
-        var driver = _project!.GeneratorDriver;
-        driver = updateDriver(_project!);
+        var driver = updateDriver(_project!);
 
         driver = driver.RunGenerators(compilation);
         return driver;

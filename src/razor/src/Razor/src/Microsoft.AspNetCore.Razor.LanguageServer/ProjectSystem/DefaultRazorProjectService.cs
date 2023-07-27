@@ -81,33 +81,45 @@ internal class DefaultRazorProjectService : RazorProjectService
         _projectSnapshotManagerDispatcher.AssertDispatcherThread();
 
         var textDocumentPath = FilePathNormalizer.Normalize(filePath);
-        if (_snapshotResolver.TryResolveDocument(textDocumentPath, out var _))
+
+        var added = false;
+        foreach (var projectSnapshot in _snapshotResolver.FindPotentialProjects(textDocumentPath))
         {
-            // Document already added. This usually occurs when VSCode has already pre-initialized
-            // open documents and then we try to manually add all known razor documents.
-            return;
+            added = true;
+            AddDocumentToProject(projectSnapshot, textDocumentPath);
         }
 
-        var projectSnapshot = _snapshotResolver.FindPotentialProjects(textDocumentPath).FirstOrDefault()
-            ?? _snapshotResolver.GetMiscellaneousProject();
-
-        var targetFilePath = textDocumentPath;
-        var projectDirectory = FilePathNormalizer.GetDirectory(projectSnapshot.FilePath);
-        if (targetFilePath.StartsWith(projectDirectory, FilePathComparison.Instance))
+        if (!added)
         {
-            // Make relative
-            targetFilePath = textDocumentPath[projectDirectory.Length..];
+            AddDocumentToProject(_snapshotResolver.GetMiscellaneousProject(), textDocumentPath);
         }
 
-        // Representing all of our host documents with a re-normalized target path to workaround GetRelatedDocument limitations.
-        var normalizedTargetFilePath = targetFilePath.Replace('/', '\\').TrimStart('\\');
+        void AddDocumentToProject(IProjectSnapshot projectSnapshot, string textDocumentPath)
+        {
+            if (projectSnapshot.GetDocument(FilePathNormalizer.Normalize(textDocumentPath)) is not null)
+            {
+                // Document already added. This usually occurs when VSCode has already pre-initialized
+                // open documents and then we try to manually add all known razor documents.
+                return;
+            }
 
-        var hostDocument = new HostDocument(textDocumentPath, normalizedTargetFilePath);
-        var defaultProject = (ProjectSnapshot)projectSnapshot;
-        var textLoader = _remoteTextLoaderFactory.Create(textDocumentPath);
+            var targetFilePath = textDocumentPath;
+            var projectDirectory = FilePathNormalizer.GetDirectory(projectSnapshot.FilePath);
+            if (targetFilePath.StartsWith(projectDirectory, FilePathComparison.Instance))
+            {
+                // Make relative
+                targetFilePath = textDocumentPath[projectDirectory.Length..];
+            }
 
-        _logger.LogInformation("Adding document '{filePath}' to project '{projectSnapshotFilePath}'.", filePath, projectSnapshot.FilePath);
-        _projectSnapshotManagerAccessor.Instance.DocumentAdded(defaultProject.Key, hostDocument, textLoader);
+            // Representing all of our host documents with a re-normalized target path to workaround GetRelatedDocument limitations.
+            var normalizedTargetFilePath = targetFilePath.Replace('/', '\\').TrimStart('\\');
+
+            var hostDocument = new HostDocument(textDocumentPath, normalizedTargetFilePath);
+            var textLoader = _remoteTextLoaderFactory.Create(textDocumentPath);
+
+            _logger.LogInformation("Adding document '{filePath}' to project '{projectSnapshotFilePath}'.", filePath, projectSnapshot.FilePath);
+            _projectSnapshotManagerAccessor.Instance.DocumentAdded(projectSnapshot.Key, hostDocument, textLoader);
+        }
     }
 
     public override void OpenDocument(string filePath, SourceText sourceText, int version)
@@ -115,112 +127,117 @@ internal class DefaultRazorProjectService : RazorProjectService
         _projectSnapshotManagerDispatcher.AssertDispatcherThread();
 
         var textDocumentPath = FilePathNormalizer.Normalize(filePath);
-        if (!_snapshotResolver.TryResolveDocument(textDocumentPath, out _))
+
+        // We are okay to use the non-project-key overload of TryResolveDocument here because we really are just checking if the document
+        // has been added to _any_ project. AddDocument will take care of adding to all of the necessary ones, and then below we ensure
+        // we process them all too
+        if (!_snapshotResolver.TryResolveDocumentInAnyProject(textDocumentPath, out _))
         {
             // Document hasn't been added. This usually occurs when VSCode trumps all other initialization
             // processes and pre-initializes already open documents.
             AddDocument(filePath);
         }
 
-        if (!_snapshotResolver.TryResolveProject(textDocumentPath, out var projectSnapshot))
+        ActOnDocumentInMultipleProjects(filePath, (projectSnapshot, textDocumentPath) =>
         {
-            projectSnapshot = _snapshotResolver.GetMiscellaneousProject();
-        }
+            _logger.LogInformation("Opening document '{textDocumentPath}' in project '{projectSnapshotFilePath}'.", textDocumentPath, projectSnapshot.FilePath);
+            _projectSnapshotManagerAccessor.Instance.DocumentOpened(projectSnapshot.Key, textDocumentPath, sourceText);
+        });
 
-        var defaultProject = (ProjectSnapshot)projectSnapshot;
-
-        _logger.LogInformation("Opening document '{textDocumentPath}' in project '{projectSnapshotFilePath}'.", textDocumentPath, projectSnapshot.FilePath);
-        _projectSnapshotManagerAccessor.Instance.DocumentOpened(defaultProject.Key, textDocumentPath, sourceText);
-
-        TrackDocumentVersion(textDocumentPath, version);
-
-        if (_snapshotResolver.TryResolveDocument(textDocumentPath, out var documentSnapshot))
+        // Use a separate loop, as the above call modified out projects, so we have to make sure we're operating on the latest snapshot
+        ActOnDocumentInMultipleProjects(filePath, (projectSnapshot, textDocumentPath) =>
         {
-            // Start generating the C# for the document so it can immediately be ready for incoming requests.
-            _ = documentSnapshot.GetGeneratedOutputAsync();
-        }
+            TrackDocumentVersion(projectSnapshot, textDocumentPath, version, startGenerating: true);
+        });
     }
 
     public override void CloseDocument(string filePath)
     {
         _projectSnapshotManagerDispatcher.AssertDispatcherThread();
 
-        var textDocumentPath = FilePathNormalizer.Normalize(filePath);
-        if (!_snapshotResolver.TryResolveProject(textDocumentPath, out var projectSnapshot))
+        ActOnDocumentInMultipleProjects(filePath, (projectSnapshot, textDocumentPath) =>
         {
-            projectSnapshot = _snapshotResolver.GetMiscellaneousProject();
-        }
-
-        var textLoader = _remoteTextLoaderFactory.Create(filePath);
-        var defaultProject = (ProjectSnapshot)projectSnapshot;
-        _logger.LogInformation("Closing document '{textDocumentPath}' in project '{projectSnapshotFilePath}'.", textDocumentPath, projectSnapshot.FilePath);
-        _projectSnapshotManagerAccessor.Instance.DocumentClosed(defaultProject.Key, textDocumentPath, textLoader);
+            var textLoader = _remoteTextLoaderFactory.Create(filePath);
+            _logger.LogInformation("Closing document '{textDocumentPath}' in project '{projectSnapshotFilePath}'.", textDocumentPath, projectSnapshot.FilePath);
+            _projectSnapshotManagerAccessor.Instance.DocumentClosed(projectSnapshot.Key, textDocumentPath, textLoader);
+        });
     }
 
     public override void RemoveDocument(string filePath)
     {
         _projectSnapshotManagerDispatcher.AssertDispatcherThread();
 
-        var textDocumentPath = FilePathNormalizer.Normalize(filePath);
-        if (!_snapshotResolver.TryResolveProject(textDocumentPath, out var projectSnapshot))
+        ActOnDocumentInMultipleProjects(filePath, (projectSnapshot, textDocumentPath) =>
         {
-            projectSnapshot = _snapshotResolver.GetMiscellaneousProject();
-        }
+            if (!projectSnapshot.DocumentFilePaths.Contains(textDocumentPath, FilePathComparer.Instance))
+            {
+                _logger.LogInformation("Containing project is not tracking document '{filePath}'", textDocumentPath);
+                return;
+            }
 
-        if (!projectSnapshot.DocumentFilePaths.Contains(textDocumentPath, FilePathComparer.Instance))
-        {
-            _logger.LogInformation("Containing project is not tracking document '{filePath}'", filePath);
-            return;
-        }
+            if (projectSnapshot.GetDocument(textDocumentPath) is not DocumentSnapshot documentSnapshot)
+            {
+                _logger.LogError("Containing project does not contain document '{filePath}'", textDocumentPath);
+                return;
+            }
 
-        if (projectSnapshot.GetDocument(textDocumentPath) is not DocumentSnapshot documentSnapshot)
-        {
-            _logger.LogError("Containing project does not contain document '{filePath}'", filePath);
-            return;
-        }
-
-        var defaultProject = (ProjectSnapshot)projectSnapshot;
-
-        // If the document is open, we can't remove it, because we could still get a request for it, and that
-        // request would fail. Instead we move it to the miscellaneous project, just like if we got notified of
-        // a remove via the project.razor.json
-        if (_projectSnapshotManagerAccessor.Instance.IsDocumentOpen(textDocumentPath))
-        {
-            _logger.LogInformation("Moving document '{textDocumentPath}' from project '{projectSnapshotFilePath}' to misc files because it is open.", textDocumentPath, projectSnapshot.FilePath);
-            var miscellaneousProject = (ProjectSnapshot)_snapshotResolver.GetMiscellaneousProject();
-            MoveDocument(textDocumentPath, defaultProject, miscellaneousProject);
-        }
-        else
-        {
-            _logger.LogInformation("Removing document '{textDocumentPath}' from project '{projectSnapshotFilePath}'.", textDocumentPath, projectSnapshot.FilePath);
-            _projectSnapshotManagerAccessor.Instance.DocumentRemoved(defaultProject.Key, documentSnapshot.State.HostDocument);
-        }
+            // If the document is open, we can't remove it, because we could still get a request for it, and that
+            // request would fail. Instead we move it to the miscellaneous project, just like if we got notified of
+            // a remove via the project.razor.json
+            if (_projectSnapshotManagerAccessor.Instance.IsDocumentOpen(textDocumentPath))
+            {
+                _logger.LogInformation("Moving document '{textDocumentPath}' from project '{projectSnapshotFilePath}' to misc files because it is open.", textDocumentPath, projectSnapshot.FilePath);
+                var miscellaneousProject = (ProjectSnapshot)_snapshotResolver.GetMiscellaneousProject();
+                if (projectSnapshot != miscellaneousProject)
+                {
+                    MoveDocument(textDocumentPath, projectSnapshot, miscellaneousProject);
+                }
+            }
+            else
+            {
+                _logger.LogInformation("Removing document '{textDocumentPath}' from project '{projectSnapshotFilePath}'.", textDocumentPath, projectSnapshot.FilePath);
+                _projectSnapshotManagerAccessor.Instance.DocumentRemoved(projectSnapshot.Key, documentSnapshot.State.HostDocument);
+            }
+        });
     }
 
     public override void UpdateDocument(string filePath, SourceText sourceText, int version)
     {
         _projectSnapshotManagerDispatcher.AssertDispatcherThread();
 
-        var textDocumentPath = FilePathNormalizer.Normalize(filePath);
-        // TODO: Needs to handle multiple projects!
-        if (!_snapshotResolver.TryResolveProject(textDocumentPath, out var projectSnapshot))
+        ActOnDocumentInMultipleProjects(filePath, (project, textDocumentPath) =>
         {
-            projectSnapshot = _snapshotResolver.GetMiscellaneousProject();
-        }
+            _logger.LogTrace("Updating document '{textDocumentPath}' in {projectKey}.", textDocumentPath, project.Key);
+            _projectSnapshotManagerAccessor.Instance.DocumentChanged(project.Key, textDocumentPath, sourceText);
+        });
 
-        var defaultProject = (ProjectSnapshot)projectSnapshot;
-        _logger.LogTrace("Updating document '{textDocumentPath}'.", textDocumentPath);
-        _projectSnapshotManagerAccessor.Instance.DocumentChanged(defaultProject.Key, textDocumentPath, sourceText);
-
-        TrackDocumentVersion(textDocumentPath, version);
+        // Use a separate loop, as the above call modified out projects, so we have to make sure we're operating on the latest snapshot
+        ActOnDocumentInMultipleProjects(filePath, (projectSnapshot, textDocumentPath) =>
+        {
+            TrackDocumentVersion(projectSnapshot, textDocumentPath, version, startGenerating: false);
+        });
     }
 
-    public override ProjectKey AddProject(string filePath, string intermediateOutputPath, string? rootNamespace)
+    private void ActOnDocumentInMultipleProjects(string filePath, Action<IProjectSnapshot, string> action)
+    {
+        var textDocumentPath = FilePathNormalizer.Normalize(filePath);
+        if (!_snapshotResolver.TryResolveAllProjects(textDocumentPath, out var projectSnapshots))
+        {
+            projectSnapshots = new[] { _snapshotResolver.GetMiscellaneousProject() };
+        }
+
+        foreach (var project in projectSnapshots)
+        {
+            action(project, textDocumentPath);
+        }
+    }
+
+    public override ProjectKey AddProject(string filePath, string intermediateOutputPath, RazorConfiguration? configuration, string? rootNamespace)
     {
         _projectSnapshotManagerDispatcher.AssertDispatcherThread();
 
         var normalizedPath = FilePathNormalizer.Normalize(filePath);
-        var hostProject = new HostProject(normalizedPath, intermediateOutputPath, RazorDefaults.Configuration, rootNamespace ?? RazorDefaults.RootNamespace);
+        var hostProject = new HostProject(normalizedPath, intermediateOutputPath, configuration ?? FallbackRazorConfiguration.Latest, rootNamespace);
         // ProjectAdded will no-op if the project already exists
         _projectSnapshotManagerAccessor.Instance.ProjectAdded(hostProject);
 
@@ -295,8 +312,8 @@ internal class DefaultRazorProjectService : RazorProjectService
 
         if (configuration is null)
         {
-            configuration = RazorDefaults.Configuration;
-            _logger.LogInformation("Updating project '{filePath}' to use Razor's default configuration ('{configuration.ConfigurationName}')'.", project.FilePath, configuration.ConfigurationName);
+            configuration = FallbackRazorConfiguration.Latest;
+            _logger.LogInformation("Updating project '{filePath}' to use the latest configuration ('{configuration.ConfigurationName}')'.", project.FilePath, configuration.ConfigurationName);
         }
         else if (currentConfiguration.ConfigurationName != configuration.ConfigurationName)
         {
@@ -398,7 +415,7 @@ internal class DefaultRazorProjectService : RazorProjectService
         }
     }
 
-    private void MoveDocument(string documentFilePath, ProjectSnapshot fromProject, ProjectSnapshot toProject)
+    private void MoveDocument(string documentFilePath, IProjectSnapshot fromProject, ProjectSnapshot toProject)
     {
         Debug.Assert(fromProject.DocumentFilePaths.Contains(documentFilePath, FilePathComparer.Instance));
         Debug.Assert(!toProject.DocumentFilePaths.Contains(documentFilePath, FilePathComparer.Instance));
@@ -493,14 +510,20 @@ internal class DefaultRazorProjectService : RazorProjectService
         }
     }
 
-    private void TrackDocumentVersion(string textDocumentPath, int version)
+    private void TrackDocumentVersion(IProjectSnapshot projectSnapshot, string textDocumentPath, int version, bool startGenerating)
     {
-        if (!_snapshotResolver.TryResolveDocument(textDocumentPath, out var documentSnapshot))
+        if (projectSnapshot.GetDocument(FilePathNormalizer.Normalize(textDocumentPath)) is not { } documentSnapshot)
         {
             return;
         }
 
         _documentVersionCache.TrackDocumentVersion(documentSnapshot, version);
+
+        if (startGenerating)
+        {
+            // Start generating the C# for the document so it can immediately be ready for incoming requests.
+            _ = documentSnapshot.GetGeneratedOutputAsync();
+        }
     }
 
     private class DelegatingTextLoader : TextLoader

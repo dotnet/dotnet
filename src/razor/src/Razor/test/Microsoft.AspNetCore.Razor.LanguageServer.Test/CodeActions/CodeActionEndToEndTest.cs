@@ -37,7 +37,8 @@ public class CodeActionEndToEndTest : SingleServerDelegatingEndpointTestBase
     private const string GenerateEventHandlerTitle = "Generate Event Handler 'DoesNotExist'";
     private const string GenerateAsyncEventHandlerTitle = "Generate Async Event Handler 'DoesNotExist'";
     private const string GenerateEventHandlerReturnType = "void";
-    private const string GenerateAsyncEventHandlerReturnType = "async System.Threading.Tasks.Task";
+    private const string GenerateAsyncEventHandlerReturnType = "System.Threading.Tasks.Task";
+    private const string CodeBehindTestReplaceNamespace = "$$Replace_Namespace$$";
 
     private static GenerateMethodCodeActionResolver[] CreateRazorCodeActionResolversFn(
         string filePath,
@@ -675,7 +676,6 @@ public class CodeActionEndToEndTest : SingleServerDelegatingEndpointTestBase
     [InlineData("\r\npublic void Exists(){}\r\n")]
     public async Task Handle_GenerateMethod_CodeBehindFile_Exists(string spacingOrMethod)
     {
-        var @namespace = $"Test.{Path.GetTempPath().Replace(":", "_").Replace("\\", ".")[..^1]}";
         var input = """
             <button @onclick="[||]DoesNotExist"></button>
             """;
@@ -685,7 +685,7 @@ public class CodeActionEndToEndTest : SingleServerDelegatingEndpointTestBase
             """;
 
         var initialCodeBehindContent = $$"""
-            namespace {{@namespace}}
+            namespace {{CodeBehindTestReplaceNamespace}}
             {
                 public partial class test
                 {{{spacingOrMethod}}
@@ -694,7 +694,7 @@ public class CodeActionEndToEndTest : SingleServerDelegatingEndpointTestBase
             """;
 
         var expectedCodeBehindContent = $$"""
-            namespace {{@namespace}}
+            namespace {{CodeBehindTestReplaceNamespace}}
             {
                 public partial class test
                 {{{spacingOrMethod}}
@@ -720,7 +720,6 @@ public class CodeActionEndToEndTest : SingleServerDelegatingEndpointTestBase
     [InlineData("\r\npublic void Exists(){}\r\n")]
     public async Task Handle_GenerateAsyncMethod_CodeBehindFile_Exists(string spacingOrMethod)
     {
-        var @namespace = $"Test.{Path.GetTempPath().Replace(":", "_").Replace("\\", ".")[..^1]}";
         var input = """
             <button @onclick="[||]DoesNotExist"></button>
             """;
@@ -730,7 +729,7 @@ public class CodeActionEndToEndTest : SingleServerDelegatingEndpointTestBase
             """;
 
         var initialCodeBehindContent = $$"""
-            namespace {{@namespace}}
+            namespace {{CodeBehindTestReplaceNamespace}}
             {
                 public partial class test
                 {{{spacingOrMethod}}
@@ -739,7 +738,7 @@ public class CodeActionEndToEndTest : SingleServerDelegatingEndpointTestBase
             """;
 
         var expectedCodeBehindContent = $$"""
-            namespace {{@namespace}}
+            namespace {{CodeBehindTestReplaceNamespace}}
             {
                 public partial class test
                 {{{spacingOrMethod}}
@@ -789,7 +788,6 @@ public class CodeActionEndToEndTest : SingleServerDelegatingEndpointTestBase
     [Fact]
     public async Task Handle_GenerateMethod_CodeBehindFile_FileScopedNamespace()
     {
-        var @namespace = $"Test.{Path.GetTempPath().Replace(":", "_").Replace("\\", ".")[..^1]}";
         var input = """
             <button @onclick="[||]DoesNotExist"></button>
             """;
@@ -799,14 +797,14 @@ public class CodeActionEndToEndTest : SingleServerDelegatingEndpointTestBase
             """;
 
         var initialCodeBehindContent = $$"""
-            namespace {{@namespace}};
+            namespace {{CodeBehindTestReplaceNamespace}};
             public partial class test
             {
             }
             """;
 
         var expectedCodeBehindContent = $$"""
-            namespace {{@namespace}};
+            namespace {{CodeBehindTestReplaceNamespace}};
             public partial class test
             {
                 private void DoesNotExist(Microsoft.AspNetCore.Components.Web.MouseEventArgs e)
@@ -848,10 +846,11 @@ public class CodeActionEndToEndTest : SingleServerDelegatingEndpointTestBase
         await CreateLanguageServerAsync(codeDocument, razorFilePath);
         var documentContext = CreateDocumentContext(uri, codeDocument);
         var requestContext = new RazorRequestContext(documentContext, Logger, null!);
-
         File.Create(codeBehindFilePath).Close();
         try
         {
+            codeDocument.TryComputeNamespace(fallbackToRootNamespace: true, out var @namespace);
+            initialCodeBehindContent = initialCodeBehindContent.Replace(CodeBehindTestReplaceNamespace, @namespace);
             File.WriteAllText(codeBehindFilePath, initialCodeBehindContent);
 
             var result = await GetCodeActionsAsync(uri, textSpan, razorSourceText, requestContext, razorCodeActionProviders: new[] { new GenerateMethodCodeActionProvider() }, diagnostics);
@@ -876,7 +875,7 @@ public class CodeActionEndToEndTest : SingleServerDelegatingEndpointTestBase
             AssertEx.EqualOrDiff(expectedRazorContent, actualRazorContent);
 
             var actualCodeBehindContent = codeBehindSourceText.WithChanges(codeBehindEdits).ToString();
-            AssertEx.EqualOrDiff(expectedCodeBehindContent, actualCodeBehindContent);
+            AssertEx.EqualOrDiff(expectedCodeBehindContent.Replace(CodeBehindTestReplaceNamespace, @namespace), actualCodeBehindContent);
         }
         finally
         {

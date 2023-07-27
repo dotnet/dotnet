@@ -296,7 +296,7 @@ public class BackgroundDocumentGeneratorTest : ProjectSnapshotManagerDispatcherW
 
         for (var i = 0; i < documents.Length; i++)
         {
-            var key = new DocumentKey(_hostProject1.FilePath, documents[i].FilePath);
+            var key = new DocumentKey(_hostProject1.Key, documents[i].FilePath);
             Assert.True(queue.Work.ContainsKey(key));
         }
 
@@ -350,7 +350,7 @@ public class BackgroundDocumentGeneratorTest : ProjectSnapshotManagerDispatcherW
         Assert.True(queue.HasPendingNotifications, "Queue should have a notification created during Enqueue");
 
         var kvp = Assert.Single(queue.Work);
-        var expectedKey = new DocumentKey(_hostProject1.FilePath, TestProjectData.SomeProjectComponentFile1.FilePath);
+        var expectedKey = new DocumentKey(_hostProject1.Key, TestProjectData.SomeProjectComponentFile1.FilePath);
         Assert.Equal(expectedKey, kvp.Key);
 
         // Allow the background work to start.
@@ -387,12 +387,12 @@ public class BackgroundDocumentGeneratorTest : ProjectSnapshotManagerDispatcherW
         {
         }
 
-        public override void SuppressDocument(string projectFilePath, string documentFilePath)
+        public override void SuppressDocument(ProjectKey projectFilePath, string documentFilePath)
         {
             _dynamicDocuments[documentFilePath] = null;
         }
 
-        public override void UpdateFileInfo(string projectFilePath, DynamicDocumentContainer documentContainer)
+        public override void UpdateFileInfo(ProjectKey projectKey, DynamicDocumentContainer documentContainer)
         {
             _dynamicDocuments[documentContainer.FilePath] = documentContainer;
         }

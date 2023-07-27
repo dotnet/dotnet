@@ -22,7 +22,7 @@ internal abstract class RazorProjectService
 
     public abstract void UpdateDocument(string filePath, SourceText sourceText, int version);
 
-    public abstract ProjectKey AddProject(string filePath, string intermediateOutputPath, string? rootNamespace);
+    public abstract ProjectKey AddProject(string filePath, string intermediateOutputPath, RazorConfiguration? configuration, string? rootNamespace);
 
     public abstract void RemoveProject(string filePath);
 

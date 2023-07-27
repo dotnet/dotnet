@@ -124,7 +124,7 @@ internal class ProjectConfigurationStateSynchronizer : IProjectConfigurationFile
             var intermediateOutputPath = Path.GetDirectoryName(configurationFilePath).AssumeNotNull();
             var rootNamespace = projectRazorJson.RootNamespace;
 
-            var projectKey = _projectService.AddProject(projectFilePath, intermediateOutputPath, rootNamespace);
+            var projectKey = _projectService.AddProject(projectFilePath, intermediateOutputPath, projectRazorJson.Configuration, rootNamespace);
             _configurationToProjectMap[configurationFilePath] = projectKey;
 
             _logger.LogInformation("Project configuration file added for project '{0}': '{1}'", projectFilePath, configurationFilePath);
@@ -133,11 +133,6 @@ internal class ProjectConfigurationStateSynchronizer : IProjectConfigurationFile
 
         void UpdateProject(ProjectKey projectKey, ProjectRazorJson? projectRazorJson)
         {
-            if (projectKey is null)
-            {
-                throw new ArgumentNullException(nameof(projectKey));
-            }
-
             if (projectRazorJson is null)
             {
                 ResetProject(projectKey);

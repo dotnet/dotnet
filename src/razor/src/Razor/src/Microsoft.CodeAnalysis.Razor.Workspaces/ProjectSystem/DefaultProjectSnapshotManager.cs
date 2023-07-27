@@ -88,11 +88,6 @@ internal class DefaultProjectSnapshotManager : ProjectSnapshotManagerBase
 
     public override IProjectSnapshot? GetLoadedProject(ProjectKey projectKey)
     {
-        if (projectKey is null)
-        {
-            throw new ArgumentNullException(nameof(projectKey));
-        }
-
         using var _ = _rwLocker.EnterReadLock();
         if (_projects_needsLock.TryGetValue(projectKey, out var entry))
         {
@@ -136,11 +131,6 @@ internal class DefaultProjectSnapshotManager : ProjectSnapshotManagerBase
 
     internal override void DocumentAdded(ProjectKey projectKey, HostDocument document, TextLoader textLoader)
     {
-        if (projectKey is null)
-        {
-            throw new ArgumentNullException(nameof(projectKey));
-        }
-
         if (document is null)
         {
             throw new ArgumentNullException(nameof(document));
@@ -159,11 +149,6 @@ internal class DefaultProjectSnapshotManager : ProjectSnapshotManagerBase
 
     internal override void DocumentRemoved(ProjectKey projectKey, HostDocument document)
     {
-        if (projectKey is null)
-        {
-            throw new ArgumentNullException(nameof(projectKey));
-        }
-
         if (document is null)
         {
             throw new ArgumentNullException(nameof(document));
@@ -182,11 +167,6 @@ internal class DefaultProjectSnapshotManager : ProjectSnapshotManagerBase
 
     internal override void DocumentOpened(ProjectKey projectKey, string documentFilePath, SourceText sourceText)
     {
-        if (projectKey is null)
-        {
-            throw new ArgumentNullException(nameof(projectKey));
-        }
-
         if (documentFilePath is null)
         {
             throw new ArgumentNullException(nameof(documentFilePath));
@@ -210,11 +190,6 @@ internal class DefaultProjectSnapshotManager : ProjectSnapshotManagerBase
 
     internal override void DocumentClosed(ProjectKey projectKey, string documentFilePath, TextLoader textLoader)
     {
-        if (projectKey is null)
-        {
-            throw new ArgumentNullException(nameof(projectKey));
-        }
-
         if (documentFilePath is null)
         {
             throw new ArgumentNullException(nameof(documentFilePath));
@@ -238,11 +213,6 @@ internal class DefaultProjectSnapshotManager : ProjectSnapshotManagerBase
 
     internal override void DocumentChanged(ProjectKey projectKey, string documentFilePath, SourceText sourceText)
     {
-        if (projectKey is null)
-        {
-            throw new ArgumentNullException(nameof(projectKey));
-        }
-
         if (documentFilePath is null)
         {
             throw new ArgumentNullException(nameof(documentFilePath));
@@ -266,11 +236,6 @@ internal class DefaultProjectSnapshotManager : ProjectSnapshotManagerBase
 
     internal override void DocumentChanged(ProjectKey projectKey, string documentFilePath, TextLoader textLoader)
     {
-        if (projectKey is null)
-        {
-            throw new ArgumentNullException(nameof(projectKey));
-        }
-
         if (documentFilePath is null)
         {
             throw new ArgumentNullException(nameof(documentFilePath));
@@ -359,11 +324,6 @@ internal class DefaultProjectSnapshotManager : ProjectSnapshotManagerBase
 
     internal override void ProjectWorkspaceStateChanged(ProjectKey projectKey, ProjectWorkspaceState? projectWorkspaceState)
     {
-        if (projectKey is null)
-        {
-            throw new ArgumentNullException(nameof(projectKey));
-        }
-
         if (projectWorkspaceState is null)
         {
             throw new ArgumentNullException(nameof(projectWorkspaceState));
@@ -382,11 +342,6 @@ internal class DefaultProjectSnapshotManager : ProjectSnapshotManagerBase
 
     internal override void ProjectRemoved(ProjectKey projectKey)
     {
-        if (projectKey is null)
-        {
-            throw new ArgumentNullException(nameof(projectKey));
-        }
-
         if (TryChangeEntry_UsesLock(
             projectKey,
             documentFilePath: null,
@@ -451,7 +406,7 @@ internal class DefaultProjectSnapshotManager : ProjectSnapshotManagerBase
             throw new ArgumentNullException(nameof(exception));
         }
 
-        var snapshot = projectKey is null ? null : GetLoadedProject(projectKey);
+        var snapshot = GetLoadedProject(projectKey);
         ErrorReporter.ReportError(exception, snapshot);
     }
 

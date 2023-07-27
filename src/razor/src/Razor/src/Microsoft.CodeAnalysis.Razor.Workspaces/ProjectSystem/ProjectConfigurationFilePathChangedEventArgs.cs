@@ -9,11 +9,6 @@ internal class ProjectConfigurationFilePathChangedEventArgs : EventArgs
 {
     public ProjectConfigurationFilePathChangedEventArgs(ProjectKey projectKey, string? configurationFilePath)
     {
-        if (projectKey is null)
-        {
-            throw new ArgumentNullException(nameof(projectKey));
-        }
-
         ProjectKey = projectKey;
         ConfigurationFilePath = configurationFilePath;
     }

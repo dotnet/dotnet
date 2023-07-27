@@ -47,9 +47,9 @@ public class EditorDocumentManagerListenerTest : ProjectSnapshotManagerDispatche
 
         var editorDocumentManger = new Mock<EditorDocumentManager>(MockBehavior.Strict);
         editorDocumentManger
-            .Setup(e => e.GetOrCreateDocument(It.IsAny<DocumentKey>(), It.IsAny<ProjectKey>(), It.IsAny<EventHandler>(), It.IsAny<EventHandler>(), It.IsAny<EventHandler>(), It.IsAny<EventHandler>()))
+            .Setup(e => e.GetOrCreateDocument(It.IsAny<DocumentKey>(), It.IsAny<string>(), It.IsAny<ProjectKey>(), It.IsAny<EventHandler>(), It.IsAny<EventHandler>(), It.IsAny<EventHandler>(), It.IsAny<EventHandler>()))
             .Returns(GetEditorDocument())
-            .Callback<DocumentKey, ProjectKey, EventHandler, EventHandler, EventHandler, EventHandler>((key, projectKey, onChangedOnDisk, onChangedInEditor, onOpened, onClosed) =>
+            .Callback<DocumentKey, string, ProjectKey, EventHandler, EventHandler, EventHandler, EventHandler>((key, filePath, projectKey, onChangedOnDisk, onChangedInEditor, onOpened, onClosed) =>
             {
                 Assert.Same(changedOnDisk, onChangedOnDisk);
                 Assert.Same(changedInEditor, onChangedInEditor);
@@ -76,7 +76,7 @@ public class EditorDocumentManagerListenerTest : ProjectSnapshotManagerDispatche
 
         var editorDocumentManger = new Mock<EditorDocumentManager>(MockBehavior.Strict);
         editorDocumentManger
-            .Setup(e => e.GetOrCreateDocument(It.IsAny<DocumentKey>(), It.IsAny<ProjectKey>(), It.IsAny<EventHandler>(), It.IsAny<EventHandler>(), It.IsAny<EventHandler>(), It.IsAny<EventHandler>()))
+            .Setup(e => e.GetOrCreateDocument(It.IsAny<DocumentKey>(), It.IsAny<string>(), It.IsAny<ProjectKey>(), It.IsAny<EventHandler>(), It.IsAny<EventHandler>(), It.IsAny<EventHandler>(), It.IsAny<EventHandler>()))
             .Returns(GetEditorDocument(isOpen: true));
 
         var listener = new EditorDocumentManagerListener(

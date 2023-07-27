@@ -169,15 +169,14 @@ internal class OpenDocumentGenerator : ProjectSnapshotChangeTrigger, IDisposable
 
                 void TryEnqueue(IDocumentSnapshot document)
                 {
-                    var filePath = document.FilePath.AssumeNotNull();
-
-                    if (!ProjectManager.IsDocumentOpen(filePath) && !_languageServerFeatureOptions.UpdateBuffersForClosedDocuments)
+                    if (!ProjectManager.IsDocumentOpen(document.FilePath) && !_languageServerFeatureOptions.UpdateBuffersForClosedDocuments)
                     {
                         return;
                     }
 
+                    var key = $"{document.Project.Key.Id}:{document.FilePath.AssumeNotNull()}";
                     var workItem = new ProcessWorkItem(document, _documentProcessedListeners, _projectSnapshotManagerDispatcher);
-                    _workQueue.Enqueue(filePath, workItem);
+                    _workQueue.Enqueue(key, workItem);
                 }
         }
     }
