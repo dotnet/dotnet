@@ -48,18 +48,18 @@
       <Sha>1f68fcee45ca75a2cb780edaff1e695af4d4f787</Sha>
       <SourceBuild RepoName="emsdk" ManagedOnly="true" />
     </Dependency>
-    <Dependency Name="Microsoft.Build" Version="17.8.0-preview-23374-02">
+    <Dependency Name="Microsoft.Build" Version="17.8.0-preview-23377-03">
       <Uri>https://github.com/dotnet/msbuild</Uri>
-      <Sha>ee4e0772202202b91cf74f06dc7bda968fdff389</Sha>
+      <Sha>24ee0c75a7c5a9924c68157ae7f8e0ce6c9adca3</Sha>
       <SourceBuild RepoName="msbuild" ManagedOnly="true" />
     </Dependency>
-    <Dependency Name="Microsoft.Build.Localization" Version="17.8.0-preview-23374-02">
+    <Dependency Name="Microsoft.Build.Localization" Version="17.8.0-preview-23377-03">
       <Uri>https://github.com/dotnet/msbuild</Uri>
-      <Sha>ee4e0772202202b91cf74f06dc7bda968fdff389</Sha>
+      <Sha>24ee0c75a7c5a9924c68157ae7f8e0ce6c9adca3</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.SourceBuild.Intermediate.msbuild" Version="17.8.0-preview-23374-02">
+    <Dependency Name="Microsoft.SourceBuild.Intermediate.msbuild" Version="17.8.0-preview-23377-03">
       <Uri>https://github.com/dotnet/msbuild</Uri>
-      <Sha>ee4e0772202202b91cf74f06dc7bda968fdff389</Sha>
+      <Sha>24ee0c75a7c5a9924c68157ae7f8e0ce6c9adca3</Sha>
     </Dependency>
     <Dependency Name="Microsoft.FSharp.Compiler" Version="12.8.0-beta.23374.4">
       <Uri>https://github.com/dotnet/fsharp</Uri>
@@ -209,25 +209,25 @@
       <Uri>https://github.com/dotnet/runtime</Uri>
       <Sha>ea97babd7ccfd2f6e9553093d315f26b51e4c7ac</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.WindowsDesktop.App.Runtime.win-x64" Version="8.0.0-rc.1.23376.2">
+    <Dependency Name="Microsoft.WindowsDesktop.App.Runtime.win-x64" Version="8.0.0-rc.1.23377.2">
       <Uri>https://github.com/dotnet/windowsdesktop</Uri>
-      <Sha>e4abbb1fddf917c4deb817cb8ad13428aaf02cb7</Sha>
+      <Sha>55c6dd1bed96897df770f35421346f473d553e06</Sha>
     </Dependency>
-    <Dependency Name="VS.Redist.Common.WindowsDesktop.SharedFramework.x64.8.0" Version="8.0.0-rc.1.23376.2">
+    <Dependency Name="VS.Redist.Common.WindowsDesktop.SharedFramework.x64.8.0" Version="8.0.0-rc.1.23377.2">
       <Uri>https://github.com/dotnet/windowsdesktop</Uri>
-      <Sha>e4abbb1fddf917c4deb817cb8ad13428aaf02cb7</Sha>
+      <Sha>55c6dd1bed96897df770f35421346f473d553e06</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.WindowsDesktop.App.Ref" Version="8.0.0-rc.1.23376.2">
+    <Dependency Name="Microsoft.WindowsDesktop.App.Ref" Version="8.0.0-rc.1.23377.2">
       <Uri>https://github.com/dotnet/windowsdesktop</Uri>
-      <Sha>e4abbb1fddf917c4deb817cb8ad13428aaf02cb7</Sha>
+      <Sha>55c6dd1bed96897df770f35421346f473d553e06</Sha>
     </Dependency>
-    <Dependency Name="VS.Redist.Common.WindowsDesktop.TargetingPack.x64.8.0" Version="8.0.0-rc.1.23376.2">
+    <Dependency Name="VS.Redist.Common.WindowsDesktop.TargetingPack.x64.8.0" Version="8.0.0-rc.1.23377.2">
       <Uri>https://github.com/dotnet/windowsdesktop</Uri>
-      <Sha>e4abbb1fddf917c4deb817cb8ad13428aaf02cb7</Sha>
+      <Sha>55c6dd1bed96897df770f35421346f473d553e06</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.NET.Sdk.WindowsDesktop" Version="8.0.0-rc.1.23375.2" CoherentParentDependency="Microsoft.WindowsDesktop.App.Ref">
+    <Dependency Name="Microsoft.NET.Sdk.WindowsDesktop" Version="8.0.0-rc.1.23376.1" CoherentParentDependency="Microsoft.WindowsDesktop.App.Ref">
       <Uri>https://github.com/dotnet/wpf</Uri>
-      <Sha>bcd2abd6cc865b36356ed9f26517004516ab087d</Sha>
+      <Sha>6404669f90d721fb1f062f1e781a0d3512a7f996</Sha>
     </Dependency>
     <Dependency Name="Microsoft.AspNetCore.App.Ref" Version="8.0.0-rc.1.23376.5">
       <Uri>https://github.com/dotnet/aspnetcore</Uri>
@@ -398,30 +398,30 @@
     </Dependency>
   </ProductDependencies>
   <ToolsetDependencies>
-    <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="8.0.0-beta.23371.1">
+    <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="8.0.0-beta.23376.1">
       <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>602351e3681015ea789b2aeaa7b2a9156a8baf38</Sha>
+      <Sha>9c133f0206c655b7a12a045b1de7c76804cde3fb</Sha>
       <SourceBuild RepoName="arcade" ManagedOnly="true" />
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.Helix.Sdk" Version="8.0.0-beta.23371.1">
+    <Dependency Name="Microsoft.DotNet.Helix.Sdk" Version="8.0.0-beta.23376.1">
       <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>602351e3681015ea789b2aeaa7b2a9156a8baf38</Sha>
+      <Sha>9c133f0206c655b7a12a045b1de7c76804cde3fb</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.SignTool" Version="8.0.0-beta.23371.1">
+    <Dependency Name="Microsoft.DotNet.SignTool" Version="8.0.0-beta.23376.1">
       <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>602351e3681015ea789b2aeaa7b2a9156a8baf38</Sha>
+      <Sha>9c133f0206c655b7a12a045b1de7c76804cde3fb</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.XUnitExtensions" Version="8.0.0-beta.23371.1">
+    <Dependency Name="Microsoft.DotNet.XUnitExtensions" Version="8.0.0-beta.23376.1">
       <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>602351e3681015ea789b2aeaa7b2a9156a8baf38</Sha>
+      <Sha>9c133f0206c655b7a12a045b1de7c76804cde3fb</Sha>
     </Dependency>
     <Dependency Name="System.Reflection.MetadataLoadContext" Version="8.0.0-rc.1.23376.5">
       <Uri>https://github.com/dotnet/runtime</Uri>
       <Sha>ea97babd7ccfd2f6e9553093d315f26b51e4c7ac</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.XliffTasks" Version="1.0.0-beta.23368.1" CoherentParentDependency="Microsoft.DotNet.Arcade.Sdk">
+    <Dependency Name="Microsoft.DotNet.XliffTasks" Version="1.0.0-beta.23374.1" CoherentParentDependency="Microsoft.DotNet.Arcade.Sdk">
       <Uri>https://github.com/dotnet/xliff-tasks</Uri>
-      <Sha>3aa0b2b84cab7d94b9136547563d027fd78e82a6</Sha>
+      <Sha>a61cdec7a7f96c654b8c92bea0167df0427cc26c</Sha>
       <SourceBuild RepoName="xliff-tasks" ManagedOnly="true" />
     </Dependency>
   </ToolsetDependencies>
