@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2013/05/nuspec.xsd">
+  <metadata minClientVersion="2.12">
+    <id>xunit.abstractions</id>
+    <version>2.0.3</version>
+    <title>xUnit.net [Abstractions]</title>
+    <authors>James Newkirk,Brad Wilson</authors>
+    <owners>James Newkirk,Brad Wilson</owners>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <licenseUrl>https://raw.githubusercontent.com/xunit/xunit/master/license.txt</licenseUrl>
+    <projectUrl>https://github.com/xunit/xunit</projectUrl>
+    <iconUrl>https://raw.githubusercontent.com/xunit/media/master/logo-512-transparent.png</iconUrl>
+    <description>Common abstractions used to exchange information between xUnit.net and version-independent runners (xunit.abstractions.dll).</description>
+    <summary>Common abstractions used to exchange information between xUnit.net and version-independent runners (xunit.abstractions.dll).</summary>
+    <language>en-US</language>
+    <dependencies>
+      <group targetFramework=".NETStandard1.0">
+        <dependency id="NETStandard.Library" version="1.6.0" />
+      </group>
+      <group targetFramework=".NETStandard2.0" />
+    </dependencies>
+  </metadata>
+</package>
