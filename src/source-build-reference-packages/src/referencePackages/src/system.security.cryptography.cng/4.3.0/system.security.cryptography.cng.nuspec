@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <package xmlns="http://schemas.microsoft.com/packaging/2013/05/nuspec.xsd">
   <metadata minClientVersion="2.12">
     <id>System.Security.Cryptography.Cng</id>
@@ -22,10 +22,6 @@ When using NuGet 3.x this package requires at least version 3.4.</description>
     <copyright>© Microsoft Corporation.  All rights reserved.</copyright>
     <serviceable>true</serviceable>
     <dependencies>
-      <group targetFramework=".NETFramework4.6.3">
-        <dependency id="System.Security.Cryptography.Algorithms" version="4.3.0" />
-        <dependency id="System.Security.Cryptography.Primitives" version="4.3.0" />
-      </group>
       <group targetFramework=".NETStandard1.3">
         <dependency id="System.IO" version="4.3.0" />
         <dependency id="System.Runtime" version="4.3.0" />
@@ -60,9 +56,5 @@ When using NuGet 3.x this package requires at least version 3.4.</description>
         <dependency id="System.Text.Encoding" version="4.3.0" exclude="Compile" />
       </group>
     </dependencies>
-    <frameworkAssemblies>
-      <frameworkAssembly assemblyName="mscorlib" targetFramework=".NETFramework4.6.3" />
-      <frameworkAssembly assemblyName="System.Core" targetFramework=".NETFramework4.6.3" />
-    </frameworkAssemblies>
   </metadata>
 </package>

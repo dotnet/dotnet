@@ -11,6 +11,7 @@
       System.Collections.Concurrent;
       System.Console;
       System.Diagnostics.Debug;
+      System.Diagnostics.DiagnosticSource;
       System.Diagnostics.Tools;
       System.Diagnostics.Tracing;
       System.Globalization;
@@ -37,8 +38,10 @@
       System.Runtime.InteropServices.RuntimeInformation;
       System.Runtime.Numerics;
       System.Security.Cryptography.Algorithms;
+      System.Security.Cryptography.Cng;
       System.Security.Cryptography.Encoding;
       System.Security.Cryptography.Primitives;
+      System.Security.Cryptography.OpenSsl;
       System.Security.Cryptography.X509Certificates;
       System.Text.Encoding;
       System.Text.Encoding.Extensions;

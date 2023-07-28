@@ -4,48 +4,48 @@
 // ------------------------------------------------------------------------------
 // Changes to this file must follow the http://aka.ms/api-review process.
 // ------------------------------------------------------------------------------
-
-using System;
-using System.Diagnostics;
-using System.Reflection;
-using System.Runtime.CompilerServices;
-using System.Security;
-
-[assembly: Debuggable(DebuggableAttribute.DebuggingModes.IgnoreSymbolStoreSequencePoints)]
-[assembly: AllowPartiallyTrustedCallers]
-[assembly: ReferenceAssembly]
-[assembly: AssemblyTitle("System.Diagnostics.DiagnosticSource")]
-[assembly: AssemblyDescription("System.Diagnostics.DiagnosticSource")]
-[assembly: AssemblyDefaultAlias("System.Diagnostics.DiagnosticSource")]
-[assembly: AssemblyCompany("Microsoft Corporation")]
-[assembly: AssemblyProduct("Microsoft® .NET Framework")]
-[assembly: AssemblyCopyright("© Microsoft Corporation.  All rights reserved.")]
-[assembly: AssemblyFileVersion("4.6.24705.01")]
-[assembly: AssemblyInformationalVersion("4.6.24705.01 built by: SOURCEBUILD")]
-[assembly: CLSCompliant(true)]
-[assembly: AssemblyMetadata("", "")]
-[assembly: AssemblyVersion("4.0.1.0")]
-
-
-
-
+[assembly: System.Runtime.CompilerServices.CompilationRelaxations(8)]
+[assembly: System.Runtime.CompilerServices.RuntimeCompatibility(WrapNonExceptionThrows = true)]
+[assembly: System.Diagnostics.Debuggable(System.Diagnostics.DebuggableAttribute.DebuggingModes.IgnoreSymbolStoreSequencePoints)]
+[assembly: System.Reflection.AssemblyTitle("System.Diagnostics.DiagnosticSource")]
+[assembly: System.Reflection.AssemblyDescription("System.Diagnostics.DiagnosticSource")]
+[assembly: System.Reflection.AssemblyDefaultAlias("System.Diagnostics.DiagnosticSource")]
+[assembly: System.Reflection.AssemblyCompany("Microsoft Corporation")]
+[assembly: System.Reflection.AssemblyProduct("Microsoft® .NET Framework")]
+[assembly: System.Reflection.AssemblyCopyright("© Microsoft Corporation.  All rights reserved.")]
+[assembly: System.Reflection.AssemblyFileVersion("4.6.24705.01")]
+[assembly: System.Reflection.AssemblyInformationalVersion("4.6.24705.01. Commit Hash: 4d1af962ca0fede10beb01d197367c2f90e92c97")]
+[assembly: System.CLSCompliant(true)]
+[assembly: System.Reflection.AssemblyMetadata(".NETFrameworkAssembly", "")]
+[assembly: System.Reflection.AssemblyMetadata("Serviceable", "True")]
+[assembly: System.Reflection.AssemblyVersionAttribute("4.0.1.0")]
+[assembly: System.Runtime.CompilerServices.ReferenceAssembly]
+[assembly: System.Reflection.AssemblyFlagsAttribute((System.Reflection.AssemblyNameFlags)0x70)]
 namespace System.Diagnostics
 {
-    public partial class DiagnosticListener : System.Diagnostics.DiagnosticSource, System.IDisposable, System.IObservable<System.Collections.Generic.KeyValuePair<string, object>>
+    public partial class DiagnosticListener : DiagnosticSource, IObservable<Collections.Generic.KeyValuePair<string, object>>, IDisposable
     {
         public DiagnosticListener(string name) { }
-        public static System.IObservable<System.Diagnostics.DiagnosticListener> AllListeners { get { throw null; } }
+
+        public static IObservable<DiagnosticListener> AllListeners { get { throw null; } }
+
         public string Name { get { throw null; } }
+
         public virtual void Dispose() { }
+
         public override bool IsEnabled(string name) { throw null; }
-        public System.IDisposable Subscribe(System.IObserver<System.Collections.Generic.KeyValuePair<string, object>> observer) { throw null; }
-        public virtual System.IDisposable Subscribe(System.IObserver<System.Collections.Generic.KeyValuePair<string, object>> observer, System.Predicate<string> isEnabled) { throw null; }
+
+        public virtual IDisposable Subscribe(IObserver<Collections.Generic.KeyValuePair<string, object>> observer, Predicate<string> isEnabled) { throw null; }
+
+        public IDisposable Subscribe(IObserver<Collections.Generic.KeyValuePair<string, object>> observer) { throw null; }
+
         public override string ToString() { throw null; }
+
         public override void Write(string name, object value) { }
     }
+
     public abstract partial class DiagnosticSource
     {
-        protected DiagnosticSource() { }
         public abstract bool IsEnabled(string name);
         public abstract void Write(string name, object value);
     }

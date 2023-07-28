@@ -14,7 +14,6 @@
     <copyright>Copyright 2012-2016</copyright>
     <language>en</language>
     <dependencies>
-      <group targetFramework=".NETPortable0.0-Profile259" />
       <group targetFramework=".NETStandard1.0">
         <dependency id="NETStandard.Library" version="1.6.1" />
       </group>

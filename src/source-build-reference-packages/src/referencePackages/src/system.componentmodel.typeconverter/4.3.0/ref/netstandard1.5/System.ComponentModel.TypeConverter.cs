@@ -4,680 +4,1062 @@
 // ------------------------------------------------------------------------------
 // Changes to this file must follow the http://aka.ms/api-review process.
 // ------------------------------------------------------------------------------
-
-using System;
-using System.Diagnostics;
-using System.Reflection;
-using System.Runtime.CompilerServices;
-using System.Security;
-
-[assembly: Debuggable(DebuggableAttribute.DebuggingModes.IgnoreSymbolStoreSequencePoints)]
-[assembly: AllowPartiallyTrustedCallers]
-[assembly: ReferenceAssembly]
-[assembly: AssemblyTitle("System.ComponentModel.TypeConverter")]
-[assembly: AssemblyDescription("System.ComponentModel.TypeConverter")]
-[assembly: AssemblyDefaultAlias("System.ComponentModel.TypeConverter")]
-[assembly: AssemblyCompany("Microsoft Corporation")]
-[assembly: AssemblyProduct("Microsoft® .NET Framework")]
-[assembly: AssemblyCopyright("© Microsoft Corporation.  All rights reserved.")]
-[assembly: AssemblyFileVersion("1.0.24212.01")]
-[assembly: AssemblyInformationalVersion("1.0.24212.01 built by: SOURCEBUILD")]
-[assembly: CLSCompliant(true)]
-[assembly: AssemblyMetadata("", "")]
-[assembly: AssemblyVersion("4.1.0.0")]
-
-
-
-
+[assembly: System.Runtime.CompilerServices.CompilationRelaxations(8)]
+[assembly: System.Runtime.CompilerServices.RuntimeCompatibility(WrapNonExceptionThrows = true)]
+[assembly: System.Diagnostics.Debuggable(System.Diagnostics.DebuggableAttribute.DebuggingModes.IgnoreSymbolStoreSequencePoints)]
+[assembly: System.Security.AllowPartiallyTrustedCallers]
+[assembly: System.Runtime.CompilerServices.ReferenceAssembly]
+[assembly: System.Reflection.AssemblyTitle("System.ComponentModel.TypeConverter")]
+[assembly: System.Reflection.AssemblyDescription("System.ComponentModel.TypeConverter")]
+[assembly: System.Reflection.AssemblyDefaultAlias("System.ComponentModel.TypeConverter")]
+[assembly: System.Reflection.AssemblyCompany("Microsoft Corporation")]
+[assembly: System.Reflection.AssemblyProduct("Microsoft® .NET Framework")]
+[assembly: System.Reflection.AssemblyCopyright("© Microsoft Corporation.  All rights reserved.")]
+[assembly: System.Reflection.AssemblyFileVersion("1.0.24212.01")]
+[assembly: System.Reflection.AssemblyInformationalVersion("1.0.24212.01. Commit Hash: 9688ddbb62c04189cac4c4a06e31e93377dccd41")]
+[assembly: System.CLSCompliant(true)]
+[assembly: System.Reflection.AssemblyMetadata(".NETFrameworkAssembly", "")]
+[assembly: System.Reflection.AssemblyMetadata("Serviceable", "True")]
+[assembly: System.Reflection.AssemblyVersionAttribute("4.1.0.0")]
+[assembly: System.Reflection.AssemblyFlagsAttribute((System.Reflection.AssemblyNameFlags)0x70)]
 namespace System
 {
-    public partial class UriTypeConverter : System.ComponentModel.TypeConverter
+    public partial class UriTypeConverter : ComponentModel.TypeConverter
     {
-        public UriTypeConverter() { }
-        public override bool CanConvertFrom(System.ComponentModel.ITypeDescriptorContext context, System.Type sourceType) { throw null; }
-        public override bool CanConvertTo(System.ComponentModel.ITypeDescriptorContext context, System.Type destinationType) { throw null; }
-        public override object ConvertFrom(System.ComponentModel.ITypeDescriptorContext context, System.Globalization.CultureInfo culture, object value) { throw null; }
-        public override object ConvertTo(System.ComponentModel.ITypeDescriptorContext context, System.Globalization.CultureInfo culture, object value, System.Type destinationType) { throw null; }
+        public override bool CanConvertFrom(ComponentModel.ITypeDescriptorContext context, Type sourceType) { throw null; }
+
+        public override bool CanConvertTo(ComponentModel.ITypeDescriptorContext context, Type destinationType) { throw null; }
+
+        public override object ConvertFrom(ComponentModel.ITypeDescriptorContext context, Globalization.CultureInfo culture, object value) { throw null; }
+
+        public override object ConvertTo(ComponentModel.ITypeDescriptorContext context, Globalization.CultureInfo culture, object value, Type destinationType) { throw null; }
     }
 }
+
 namespace System.ComponentModel
 {
-    public partial class ArrayConverter : System.ComponentModel.CollectionConverter
+    public partial class ArrayConverter : CollectionConverter
     {
-        public ArrayConverter() { }
-        public override object ConvertTo(System.ComponentModel.ITypeDescriptorContext context, System.Globalization.CultureInfo culture, object value, System.Type destinationType) { throw null; }
-        public override System.ComponentModel.PropertyDescriptorCollection GetProperties(System.ComponentModel.ITypeDescriptorContext context, object value, System.Attribute[] attributes) { throw null; }
-        public override bool GetPropertiesSupported(System.ComponentModel.ITypeDescriptorContext context) { throw null; }
+        public override object ConvertTo(ITypeDescriptorContext context, Globalization.CultureInfo culture, object value, Type destinationType) { throw null; }
+
+        public override PropertyDescriptorCollection GetProperties(ITypeDescriptorContext context, object value, Attribute[] attributes) { throw null; }
+
+        public override bool GetPropertiesSupported(ITypeDescriptorContext context) { throw null; }
     }
-    public partial class AttributeCollection : System.Collections.ICollection, System.Collections.IEnumerable
+
+    public partial class AttributeCollection : Collections.ICollection, Collections.IEnumerable
     {
-        public static readonly System.ComponentModel.AttributeCollection Empty;
+        public static readonly AttributeCollection Empty;
         protected AttributeCollection() { }
-        public AttributeCollection(params System.Attribute[] attributes) { }
-        protected virtual System.Attribute[] Attributes { get { throw null; } }
+
+        public AttributeCollection(params Attribute[] attributes) { }
+
+        protected virtual Attribute[] Attributes { get { throw null; } }
+
         public int Count { get { throw null; } }
-        public virtual System.Attribute this[int index] { get { throw null; } }
-        public virtual System.Attribute this[System.Type attributeType] { get { throw null; } }
-        bool System.Collections.ICollection.IsSynchronized { get { throw null; } }
-        object System.Collections.ICollection.SyncRoot { get { throw null; } }
-        public bool Contains(System.Attribute attribute) { throw null; }
-        public bool Contains(System.Attribute[] attributes) { throw null; }
-        public void CopyTo(System.Array array, int index) { }
-        public static System.ComponentModel.AttributeCollection FromExisting(System.ComponentModel.AttributeCollection existing, params System.Attribute[] newAttributes) { throw null; }
-        protected System.Attribute GetDefaultAttribute(System.Type attributeType) { throw null; }
-        public System.Collections.IEnumerator GetEnumerator() { throw null; }
-        public bool Matches(System.Attribute attribute) { throw null; }
-        public bool Matches(System.Attribute[] attributes) { throw null; }
+
+        public virtual Attribute this[int index] { get { throw null; } }
+
+        public virtual Attribute this[Type attributeType] { get { throw null; } }
+
+        bool Collections.ICollection.IsSynchronized { get { throw null; } }
+
+        object Collections.ICollection.SyncRoot { get { throw null; } }
+
+        public bool Contains(Attribute attribute) { throw null; }
+
+        public bool Contains(Attribute[] attributes) { throw null; }
+
+        public void CopyTo(Array array, int index) { }
+
+        public static AttributeCollection FromExisting(AttributeCollection existing, params Attribute[] newAttributes) { throw null; }
+
+        protected Attribute GetDefaultAttribute(Type attributeType) { throw null; }
+
+        public Collections.IEnumerator GetEnumerator() { throw null; }
+
+        public bool Matches(Attribute attribute) { throw null; }
+
+        public bool Matches(Attribute[] attributes) { throw null; }
     }
-    public partial class AttributeProviderAttribute : System.Attribute
+
+    public partial class AttributeProviderAttribute : Attribute
     {
-        public AttributeProviderAttribute(string typeName) { }
         public AttributeProviderAttribute(string typeName, string propertyName) { }
-        public AttributeProviderAttribute(System.Type type) { }
+
+        public AttributeProviderAttribute(string typeName) { }
+
+        public AttributeProviderAttribute(Type type) { }
+
         public string PropertyName { get { throw null; } }
+
         public string TypeName { get { throw null; } }
     }
-    public abstract partial class BaseNumberConverter : System.ComponentModel.TypeConverter
+
+    public abstract partial class BaseNumberConverter : TypeConverter
     {
-        protected BaseNumberConverter() { }
-        public override bool CanConvertFrom(System.ComponentModel.ITypeDescriptorContext context, System.Type sourceType) { throw null; }
-        public override bool CanConvertTo(System.ComponentModel.ITypeDescriptorContext context, System.Type t) { throw null; }
-        public override object ConvertFrom(System.ComponentModel.ITypeDescriptorContext context, System.Globalization.CultureInfo culture, object value) { throw null; }
-        public override object ConvertTo(System.ComponentModel.ITypeDescriptorContext context, System.Globalization.CultureInfo culture, object value, System.Type destinationType) { throw null; }
+        public override bool CanConvertFrom(ITypeDescriptorContext context, Type sourceType) { throw null; }
+
+        public override bool CanConvertTo(ITypeDescriptorContext context, Type t) { throw null; }
+
+        public override object ConvertFrom(ITypeDescriptorContext context, Globalization.CultureInfo culture, object value) { throw null; }
+
+        public override object ConvertTo(ITypeDescriptorContext context, Globalization.CultureInfo culture, object value, Type destinationType) { throw null; }
     }
-    public partial class BooleanConverter : System.ComponentModel.TypeConverter
+
+    public partial class BooleanConverter : TypeConverter
     {
-        public BooleanConverter() { }
-        public override bool CanConvertFrom(System.ComponentModel.ITypeDescriptorContext context, System.Type sourceType) { throw null; }
-        public override object ConvertFrom(System.ComponentModel.ITypeDescriptorContext context, System.Globalization.CultureInfo culture, object value) { throw null; }
-        public override System.ComponentModel.TypeConverter.StandardValuesCollection GetStandardValues(System.ComponentModel.ITypeDescriptorContext context) { throw null; }
-        public override bool GetStandardValuesExclusive(System.ComponentModel.ITypeDescriptorContext context) { throw null; }
-        public override bool GetStandardValuesSupported(System.ComponentModel.ITypeDescriptorContext context) { throw null; }
+        public override bool CanConvertFrom(ITypeDescriptorContext context, Type sourceType) { throw null; }
+
+        public override object ConvertFrom(ITypeDescriptorContext context, Globalization.CultureInfo culture, object value) { throw null; }
+
+        public override StandardValuesCollection GetStandardValues(ITypeDescriptorContext context) { throw null; }
+
+        public override bool GetStandardValuesExclusive(ITypeDescriptorContext context) { throw null; }
+
+        public override bool GetStandardValuesSupported(ITypeDescriptorContext context) { throw null; }
     }
-    public partial class ByteConverter : System.ComponentModel.BaseNumberConverter
+
+    public partial class ByteConverter : BaseNumberConverter
     {
-        public ByteConverter() { }
     }
-    public delegate void CancelEventHandler(object sender, System.ComponentModel.CancelEventArgs e);
-    public partial class CharConverter : System.ComponentModel.TypeConverter
+
+    public delegate void CancelEventHandler(object sender, CancelEventArgs e);
+    public partial class CharConverter : TypeConverter
     {
-        public CharConverter() { }
-        public override bool CanConvertFrom(System.ComponentModel.ITypeDescriptorContext context, System.Type sourceType) { throw null; }
-        public override object ConvertFrom(System.ComponentModel.ITypeDescriptorContext context, System.Globalization.CultureInfo culture, object value) { throw null; }
-        public override object ConvertTo(System.ComponentModel.ITypeDescriptorContext context, System.Globalization.CultureInfo culture, object value, System.Type destinationType) { throw null; }
+        public override bool CanConvertFrom(ITypeDescriptorContext context, Type sourceType) { throw null; }
+
+        public override object ConvertFrom(ITypeDescriptorContext context, Globalization.CultureInfo culture, object value) { throw null; }
+
+        public override object ConvertTo(ITypeDescriptorContext context, Globalization.CultureInfo culture, object value, Type destinationType) { throw null; }
     }
+
     public enum CollectionChangeAction
     {
         Add = 1,
-        Refresh = 3,
         Remove = 2,
+        Refresh = 3
     }
-    public partial class CollectionChangeEventArgs : System.EventArgs
+
+    public partial class CollectionChangeEventArgs : EventArgs
     {
-        public CollectionChangeEventArgs(System.ComponentModel.CollectionChangeAction action, object element) { }
-        public virtual System.ComponentModel.CollectionChangeAction Action { get { throw null; } }
+        public CollectionChangeEventArgs(CollectionChangeAction action, object element) { }
+
+        public virtual CollectionChangeAction Action { get { throw null; } }
+
         public virtual object Element { get { throw null; } }
     }
-    public delegate void CollectionChangeEventHandler(object sender, System.ComponentModel.CollectionChangeEventArgs e);
-    public partial class CollectionConverter : System.ComponentModel.TypeConverter
+
+    public delegate void CollectionChangeEventHandler(object sender, CollectionChangeEventArgs e);
+    public partial class CollectionConverter : TypeConverter
     {
-        public CollectionConverter() { }
-        public override object ConvertTo(System.ComponentModel.ITypeDescriptorContext context, System.Globalization.CultureInfo culture, object value, System.Type destinationType) { throw null; }
-        public override System.ComponentModel.PropertyDescriptorCollection GetProperties(System.ComponentModel.ITypeDescriptorContext context, object value, System.Attribute[] attributes) { throw null; }
-        public override bool GetPropertiesSupported(System.ComponentModel.ITypeDescriptorContext context) { throw null; }
+        public override object ConvertTo(ITypeDescriptorContext context, Globalization.CultureInfo culture, object value, Type destinationType) { throw null; }
+
+        public override PropertyDescriptorCollection GetProperties(ITypeDescriptorContext context, object value, Attribute[] attributes) { throw null; }
+
+        public override bool GetPropertiesSupported(ITypeDescriptorContext context) { throw null; }
     }
-    public abstract partial class CustomTypeDescriptor : System.ComponentModel.ICustomTypeDescriptor
+
+    public abstract partial class CustomTypeDescriptor : ICustomTypeDescriptor
     {
         protected CustomTypeDescriptor() { }
-        protected CustomTypeDescriptor(System.ComponentModel.ICustomTypeDescriptor parent) { }
-        public virtual System.ComponentModel.AttributeCollection GetAttributes() { throw null; }
+
+        protected CustomTypeDescriptor(ICustomTypeDescriptor parent) { }
+
+        public virtual AttributeCollection GetAttributes() { throw null; }
+
         public virtual string GetClassName() { throw null; }
+
         public virtual string GetComponentName() { throw null; }
-        public virtual System.ComponentModel.TypeConverter GetConverter() { throw null; }
-        public virtual System.ComponentModel.EventDescriptor GetDefaultEvent() { throw null; }
-        public virtual System.ComponentModel.PropertyDescriptor GetDefaultProperty() { throw null; }
-        public virtual object GetEditor(System.Type editorBaseType) { throw null; }
-        public virtual System.ComponentModel.EventDescriptorCollection GetEvents() { throw null; }
-        public virtual System.ComponentModel.EventDescriptorCollection GetEvents(System.Attribute[] attributes) { throw null; }
-        public virtual System.ComponentModel.PropertyDescriptorCollection GetProperties() { throw null; }
-        public virtual System.ComponentModel.PropertyDescriptorCollection GetProperties(System.Attribute[] attributes) { throw null; }
-        public virtual object GetPropertyOwner(System.ComponentModel.PropertyDescriptor pd) { throw null; }
+
+        public virtual TypeConverter GetConverter() { throw null; }
+
+        public virtual EventDescriptor GetDefaultEvent() { throw null; }
+
+        public virtual PropertyDescriptor GetDefaultProperty() { throw null; }
+
+        public virtual object GetEditor(Type editorBaseType) { throw null; }
+
+        public virtual EventDescriptorCollection GetEvents() { throw null; }
+
+        public virtual EventDescriptorCollection GetEvents(Attribute[] attributes) { throw null; }
+
+        public virtual PropertyDescriptorCollection GetProperties() { throw null; }
+
+        public virtual PropertyDescriptorCollection GetProperties(Attribute[] attributes) { throw null; }
+
+        public virtual object GetPropertyOwner(PropertyDescriptor pd) { throw null; }
     }
-    public partial class DateTimeConverter : System.ComponentModel.TypeConverter
+
+    public partial class DateTimeConverter : TypeConverter
     {
-        public DateTimeConverter() { }
-        public override bool CanConvertFrom(System.ComponentModel.ITypeDescriptorContext context, System.Type sourceType) { throw null; }
-        public override bool CanConvertTo(System.ComponentModel.ITypeDescriptorContext context, System.Type destinationType) { throw null; }
-        public override object ConvertFrom(System.ComponentModel.ITypeDescriptorContext context, System.Globalization.CultureInfo culture, object value) { throw null; }
-        public override object ConvertTo(System.ComponentModel.ITypeDescriptorContext context, System.Globalization.CultureInfo culture, object value, System.Type destinationType) { throw null; }
+        public override bool CanConvertFrom(ITypeDescriptorContext context, Type sourceType) { throw null; }
+
+        public override bool CanConvertTo(ITypeDescriptorContext context, Type destinationType) { throw null; }
+
+        public override object ConvertFrom(ITypeDescriptorContext context, Globalization.CultureInfo culture, object value) { throw null; }
+
+        public override object ConvertTo(ITypeDescriptorContext context, Globalization.CultureInfo culture, object value, Type destinationType) { throw null; }
     }
-    public partial class DateTimeOffsetConverter : System.ComponentModel.TypeConverter
+
+    public partial class DateTimeOffsetConverter : TypeConverter
     {
-        public DateTimeOffsetConverter() { }
-        public override bool CanConvertFrom(System.ComponentModel.ITypeDescriptorContext context, System.Type sourceType) { throw null; }
-        public override bool CanConvertTo(System.ComponentModel.ITypeDescriptorContext context, System.Type destinationType) { throw null; }
-        public override object ConvertFrom(System.ComponentModel.ITypeDescriptorContext context, System.Globalization.CultureInfo culture, object value) { throw null; }
-        public override object ConvertTo(System.ComponentModel.ITypeDescriptorContext context, System.Globalization.CultureInfo culture, object value, System.Type destinationType) { throw null; }
+        public override bool CanConvertFrom(ITypeDescriptorContext context, Type sourceType) { throw null; }
+
+        public override bool CanConvertTo(ITypeDescriptorContext context, Type destinationType) { throw null; }
+
+        public override object ConvertFrom(ITypeDescriptorContext context, Globalization.CultureInfo culture, object value) { throw null; }
+
+        public override object ConvertTo(ITypeDescriptorContext context, Globalization.CultureInfo culture, object value, Type destinationType) { throw null; }
     }
-    public partial class DecimalConverter : System.ComponentModel.BaseNumberConverter
+
+    public partial class DecimalConverter : BaseNumberConverter
     {
-        public DecimalConverter() { }
-        public override bool CanConvertTo(System.ComponentModel.ITypeDescriptorContext context, System.Type destinationType) { throw null; }
-        public override object ConvertTo(System.ComponentModel.ITypeDescriptorContext context, System.Globalization.CultureInfo culture, object value, System.Type destinationType) { throw null; }
+        public override bool CanConvertTo(ITypeDescriptorContext context, Type destinationType) { throw null; }
+
+        public override object ConvertTo(ITypeDescriptorContext context, Globalization.CultureInfo culture, object value, Type destinationType) { throw null; }
     }
-    public sealed partial class DefaultEventAttribute : System.Attribute
+
+    public sealed partial class DefaultEventAttribute : Attribute
     {
-        public static readonly System.ComponentModel.DefaultEventAttribute Default;
+        public static readonly DefaultEventAttribute Default;
         public DefaultEventAttribute(string name) { }
+
         public string Name { get { throw null; } }
+
         public override bool Equals(object obj) { throw null; }
+
         public override int GetHashCode() { throw null; }
     }
-    public sealed partial class DefaultPropertyAttribute : System.Attribute
+
+    public sealed partial class DefaultPropertyAttribute : Attribute
     {
-        public static readonly System.ComponentModel.DefaultPropertyAttribute Default;
+        public static readonly DefaultPropertyAttribute Default;
         public DefaultPropertyAttribute(string name) { }
+
         public string Name { get { throw null; } }
+
         public override bool Equals(object obj) { throw null; }
+
         public override int GetHashCode() { throw null; }
     }
-    public partial class DoubleConverter : System.ComponentModel.BaseNumberConverter
+
+    public partial class DoubleConverter : BaseNumberConverter
     {
-        public DoubleConverter() { }
     }
-    public partial class EnumConverter : System.ComponentModel.TypeConverter
+
+    public partial class EnumConverter : TypeConverter
     {
-        public EnumConverter(System.Type type) { }
-        protected virtual System.Collections.IComparer Comparer { get { throw null; } }
-        protected System.Type EnumType { get { throw null; } }
-        protected System.ComponentModel.TypeConverter.StandardValuesCollection Values { get { throw null; } set { } }
-        public override bool CanConvertFrom(System.ComponentModel.ITypeDescriptorContext context, System.Type sourceType) { throw null; }
-        public override bool CanConvertTo(System.ComponentModel.ITypeDescriptorContext context, System.Type destinationType) { throw null; }
-        public override object ConvertFrom(System.ComponentModel.ITypeDescriptorContext context, System.Globalization.CultureInfo culture, object value) { throw null; }
-        public override object ConvertTo(System.ComponentModel.ITypeDescriptorContext context, System.Globalization.CultureInfo culture, object value, System.Type destinationType) { throw null; }
-        public override System.ComponentModel.TypeConverter.StandardValuesCollection GetStandardValues(System.ComponentModel.ITypeDescriptorContext context) { throw null; }
-        public override bool GetStandardValuesExclusive(System.ComponentModel.ITypeDescriptorContext context) { throw null; }
-        public override bool GetStandardValuesSupported(System.ComponentModel.ITypeDescriptorContext context) { throw null; }
-        public override bool IsValid(System.ComponentModel.ITypeDescriptorContext context, object value) { throw null; }
+        public EnumConverter(Type type) { }
+
+        protected virtual Collections.IComparer Comparer { get { throw null; } }
+
+        protected Type EnumType { get { throw null; } }
+
+        protected StandardValuesCollection Values { get { throw null; } set { } }
+
+        public override bool CanConvertFrom(ITypeDescriptorContext context, Type sourceType) { throw null; }
+
+        public override bool CanConvertTo(ITypeDescriptorContext context, Type destinationType) { throw null; }
+
+        public override object ConvertFrom(ITypeDescriptorContext context, Globalization.CultureInfo culture, object value) { throw null; }
+
+        public override object ConvertTo(ITypeDescriptorContext context, Globalization.CultureInfo culture, object value, Type destinationType) { throw null; }
+
+        public override StandardValuesCollection GetStandardValues(ITypeDescriptorContext context) { throw null; }
+
+        public override bool GetStandardValuesExclusive(ITypeDescriptorContext context) { throw null; }
+
+        public override bool GetStandardValuesSupported(ITypeDescriptorContext context) { throw null; }
+
+        public override bool IsValid(ITypeDescriptorContext context, object value) { throw null; }
     }
-    public abstract partial class EventDescriptor : System.ComponentModel.MemberDescriptor
+
+    public abstract partial class EventDescriptor : MemberDescriptor
     {
-        protected EventDescriptor(System.ComponentModel.MemberDescriptor descr) : base (default(System.ComponentModel.MemberDescriptor)) { }
-        protected EventDescriptor(System.ComponentModel.MemberDescriptor descr, System.Attribute[] attrs) : base (default(System.ComponentModel.MemberDescriptor)) { }
-        protected EventDescriptor(string name, System.Attribute[] attrs) : base (default(System.ComponentModel.MemberDescriptor)) { }
-        public abstract System.Type ComponentType { get; }
-        public abstract System.Type EventType { get; }
+        protected EventDescriptor(MemberDescriptor descr, Attribute[] attrs) : base(default(MemberDescriptor)!) { }
+
+        protected EventDescriptor(MemberDescriptor descr) : base(default(MemberDescriptor)!) { }
+
+        protected EventDescriptor(string name, Attribute[] attrs) : base(default(MemberDescriptor)!) { }
+
+        public abstract Type ComponentType { get; }
+        public abstract Type EventType { get; }
         public abstract bool IsMulticast { get; }
-        public abstract void AddEventHandler(object component, System.Delegate value);
-        public abstract void RemoveEventHandler(object component, System.Delegate value);
+
+        public abstract void AddEventHandler(object component, Delegate value);
+        public abstract void RemoveEventHandler(object component, Delegate value);
     }
-    public partial class EventDescriptorCollection : System.Collections.ICollection, System.Collections.IEnumerable, System.Collections.IList
+
+    public partial class EventDescriptorCollection : Collections.ICollection, Collections.IEnumerable, Collections.IList
     {
-        public static readonly System.ComponentModel.EventDescriptorCollection Empty;
-        public EventDescriptorCollection(System.ComponentModel.EventDescriptor[] events) { }
-        public EventDescriptorCollection(System.ComponentModel.EventDescriptor[] events, bool readOnly) { }
+        public static readonly EventDescriptorCollection Empty;
+        public EventDescriptorCollection(EventDescriptor[] events, bool readOnly) { }
+
+        public EventDescriptorCollection(EventDescriptor[] events) { }
+
         public int Count { get { throw null; } }
-        public virtual System.ComponentModel.EventDescriptor this[int index] { get { throw null; } }
-        public virtual System.ComponentModel.EventDescriptor this[string name] { get { throw null; } }
-        bool System.Collections.ICollection.IsSynchronized { get { throw null; } }
-        object System.Collections.ICollection.SyncRoot { get { throw null; } }
-        bool System.Collections.IList.IsFixedSize { get { throw null; } }
-        bool System.Collections.IList.IsReadOnly { get { throw null; } }
+
+        public virtual EventDescriptor this[int index] { get { throw null; } }
+
+        public virtual EventDescriptor this[string name] { get { throw null; } }
+
+        bool Collections.ICollection.IsSynchronized { get { throw null; } }
+
+        object Collections.ICollection.SyncRoot { get { throw null; } }
+
+        bool Collections.IList.IsFixedSize { get { throw null; } }
+
+        bool Collections.IList.IsReadOnly { get { throw null; } }
+
         object System.Collections.IList.this[int index] { get { throw null; } set { } }
-        public int Add(System.ComponentModel.EventDescriptor value) { throw null; }
+
+        public int Add(EventDescriptor value) { throw null; }
+
         public void Clear() { }
-        public bool Contains(System.ComponentModel.EventDescriptor value) { throw null; }
-        public virtual System.ComponentModel.EventDescriptor Find(string name, bool ignoreCase) { throw null; }
-        public System.Collections.IEnumerator GetEnumerator() { throw null; }
-        public int IndexOf(System.ComponentModel.EventDescriptor value) { throw null; }
-        public void Insert(int index, System.ComponentModel.EventDescriptor value) { }
-        protected void InternalSort(System.Collections.IComparer sorter) { }
+
+        public bool Contains(EventDescriptor value) { throw null; }
+
+        public virtual EventDescriptor Find(string name, bool ignoreCase) { throw null; }
+
+        public Collections.IEnumerator GetEnumerator() { throw null; }
+
+        public int IndexOf(EventDescriptor value) { throw null; }
+
+        public void Insert(int index, EventDescriptor value) { }
+
+        protected void InternalSort(Collections.IComparer sorter) { }
+
         protected void InternalSort(string[] names) { }
-        public void Remove(System.ComponentModel.EventDescriptor value) { }
+
+        public void Remove(EventDescriptor value) { }
+
         public void RemoveAt(int index) { }
-        public virtual System.ComponentModel.EventDescriptorCollection Sort() { throw null; }
-        public virtual System.ComponentModel.EventDescriptorCollection Sort(System.Collections.IComparer comparer) { throw null; }
-        public virtual System.ComponentModel.EventDescriptorCollection Sort(string[] names) { throw null; }
-        public virtual System.ComponentModel.EventDescriptorCollection Sort(string[] names, System.Collections.IComparer comparer) { throw null; }
-        void System.Collections.ICollection.CopyTo(System.Array array, int index) { }
-        int System.Collections.IList.Add(object value) { throw null; }
-        bool System.Collections.IList.Contains(object value) { throw null; }
-        int System.Collections.IList.IndexOf(object value) { throw null; }
-        void System.Collections.IList.Insert(int index, object value) { }
-        void System.Collections.IList.Remove(object value) { }
+
+        public virtual EventDescriptorCollection Sort() { throw null; }
+
+        public virtual EventDescriptorCollection Sort(Collections.IComparer comparer) { throw null; }
+
+        public virtual EventDescriptorCollection Sort(string[] names, Collections.IComparer comparer) { throw null; }
+
+        public virtual EventDescriptorCollection Sort(string[] names) { throw null; }
+
+        void Collections.ICollection.CopyTo(Array array, int index) { }
+
+        int Collections.IList.Add(object value) { throw null; }
+
+        bool Collections.IList.Contains(object value) { throw null; }
+
+        int Collections.IList.IndexOf(object value) { throw null; }
+
+        void Collections.IList.Insert(int index, object value) { }
+
+        void Collections.IList.Remove(object value) { }
     }
-    public sealed partial class ExtenderProvidedPropertyAttribute : System.Attribute
+
+    public sealed partial class ExtenderProvidedPropertyAttribute : Attribute
     {
-        public ExtenderProvidedPropertyAttribute() { }
-        public System.ComponentModel.PropertyDescriptor ExtenderProperty { get { throw null; } }
-        public System.ComponentModel.IExtenderProvider Provider { get { throw null; } }
-        public System.Type ReceiverType { get { throw null; } }
+        public PropertyDescriptor ExtenderProperty { get { throw null; } }
+
+        public IExtenderProvider Provider { get { throw null; } }
+
+        public Type ReceiverType { get { throw null; } }
+
         public override bool Equals(object obj) { throw null; }
+
         public override int GetHashCode() { throw null; }
     }
-    public partial class GuidConverter : System.ComponentModel.TypeConverter
+
+    public partial class GuidConverter : TypeConverter
     {
-        public GuidConverter() { }
-        public override bool CanConvertFrom(System.ComponentModel.ITypeDescriptorContext context, System.Type sourceType) { throw null; }
-        public override bool CanConvertTo(System.ComponentModel.ITypeDescriptorContext context, System.Type destinationType) { throw null; }
-        public override object ConvertFrom(System.ComponentModel.ITypeDescriptorContext context, System.Globalization.CultureInfo culture, object value) { throw null; }
-        public override object ConvertTo(System.ComponentModel.ITypeDescriptorContext context, System.Globalization.CultureInfo culture, object value, System.Type destinationType) { throw null; }
+        public override bool CanConvertFrom(ITypeDescriptorContext context, Type sourceType) { throw null; }
+
+        public override bool CanConvertTo(ITypeDescriptorContext context, Type destinationType) { throw null; }
+
+        public override object ConvertFrom(ITypeDescriptorContext context, Globalization.CultureInfo culture, object value) { throw null; }
+
+        public override object ConvertTo(ITypeDescriptorContext context, Globalization.CultureInfo culture, object value, Type destinationType) { throw null; }
     }
-    public partial class HandledEventArgs : System.EventArgs
+
+    public partial class HandledEventArgs : EventArgs
     {
         public HandledEventArgs() { }
+
         public HandledEventArgs(bool defaultHandledValue) { }
+
         public bool Handled { get { throw null; } set { } }
     }
-    public delegate void HandledEventHandler(object sender, System.ComponentModel.HandledEventArgs e);
+
+    public delegate void HandledEventHandler(object sender, HandledEventArgs e);
     public partial interface ICustomTypeDescriptor
     {
-        System.ComponentModel.AttributeCollection GetAttributes();
+        AttributeCollection GetAttributes();
         string GetClassName();
         string GetComponentName();
-        System.ComponentModel.TypeConverter GetConverter();
-        System.ComponentModel.EventDescriptor GetDefaultEvent();
-        System.ComponentModel.PropertyDescriptor GetDefaultProperty();
-        object GetEditor(System.Type editorBaseType);
-        System.ComponentModel.EventDescriptorCollection GetEvents();
-        System.ComponentModel.EventDescriptorCollection GetEvents(System.Attribute[] attributes);
-        System.ComponentModel.PropertyDescriptorCollection GetProperties();
-        System.ComponentModel.PropertyDescriptorCollection GetProperties(System.Attribute[] attributes);
-        object GetPropertyOwner(System.ComponentModel.PropertyDescriptor pd);
+        TypeConverter GetConverter();
+        EventDescriptor GetDefaultEvent();
+        PropertyDescriptor GetDefaultProperty();
+        object GetEditor(Type editorBaseType);
+        EventDescriptorCollection GetEvents();
+        EventDescriptorCollection GetEvents(Attribute[] attributes);
+        PropertyDescriptorCollection GetProperties();
+        PropertyDescriptorCollection GetProperties(Attribute[] attributes);
+        object GetPropertyOwner(PropertyDescriptor pd);
     }
+
     public partial interface IExtenderProvider
     {
         bool CanExtend(object extendee);
     }
+
     public partial interface IListSource
     {
         bool ContainsListCollection { get; }
-        System.Collections.IList GetList();
+
+        Collections.IList GetList();
     }
-    public partial class Int16Converter : System.ComponentModel.BaseNumberConverter
+
+    public partial class Int16Converter : BaseNumberConverter
     {
-        public Int16Converter() { }
     }
-    public partial class Int32Converter : System.ComponentModel.BaseNumberConverter
+
+    public partial class Int32Converter : BaseNumberConverter
     {
-        public Int32Converter() { }
     }
-    public partial class Int64Converter : System.ComponentModel.BaseNumberConverter
+
+    public partial class Int64Converter : BaseNumberConverter
     {
-        public Int64Converter() { }
     }
-    public partial class InvalidAsynchronousStateException : System.ArgumentException
+
+    public partial class InvalidAsynchronousStateException : ArgumentException
     {
         public InvalidAsynchronousStateException() { }
+
+        public InvalidAsynchronousStateException(string message, Exception innerException) { }
+
         public InvalidAsynchronousStateException(string message) { }
-        public InvalidAsynchronousStateException(string message, System.Exception innerException) { }
     }
-    public partial interface ITypeDescriptorContext : System.IServiceProvider
+
+    public partial interface ITypeDescriptorContext : IServiceProvider
     {
-        System.ComponentModel.IContainer Container { get; }
+        IContainer Container { get; }
+
         object Instance { get; }
-        System.ComponentModel.PropertyDescriptor PropertyDescriptor { get; }
+
+        PropertyDescriptor PropertyDescriptor { get; }
+
         void OnComponentChanged();
         bool OnComponentChanging();
     }
+
     public partial interface ITypedList
     {
-        System.ComponentModel.PropertyDescriptorCollection GetItemProperties(System.ComponentModel.PropertyDescriptor[] listAccessors);
-        string GetListName(System.ComponentModel.PropertyDescriptor[] listAccessors);
+        PropertyDescriptorCollection GetItemProperties(PropertyDescriptor[] listAccessors);
+        string GetListName(PropertyDescriptor[] listAccessors);
     }
+
     public abstract partial class MemberDescriptor
     {
-        protected MemberDescriptor(System.ComponentModel.MemberDescriptor descr) { }
-        protected MemberDescriptor(System.ComponentModel.MemberDescriptor oldMemberDescriptor, System.Attribute[] newAttributes) { }
+        protected MemberDescriptor(MemberDescriptor oldMemberDescriptor, Attribute[] newAttributes) { }
+
+        protected MemberDescriptor(MemberDescriptor descr) { }
+
+        protected MemberDescriptor(string name, Attribute[] attributes) { }
+
         protected MemberDescriptor(string name) { }
-        protected MemberDescriptor(string name, System.Attribute[] attributes) { }
-        protected virtual System.Attribute[] AttributeArray { get { throw null; } set { } }
-        public virtual System.ComponentModel.AttributeCollection Attributes { get { throw null; } }
+
+        protected virtual Attribute[] AttributeArray { get { throw null; } set { } }
+
+        public virtual AttributeCollection Attributes { get { throw null; } }
+
         public virtual string Category { get { throw null; } }
+
         public virtual string Description { get { throw null; } }
+
         public virtual bool DesignTimeOnly { get { throw null; } }
+
         public virtual string DisplayName { get { throw null; } }
+
         public virtual bool IsBrowsable { get { throw null; } }
+
         public virtual string Name { get { throw null; } }
+
         protected virtual int NameHashCode { get { throw null; } }
-        protected virtual System.ComponentModel.AttributeCollection CreateAttributeCollection() { throw null; }
+
+        protected virtual AttributeCollection CreateAttributeCollection() { throw null; }
+
         public override bool Equals(object obj) { throw null; }
-        protected virtual void FillAttributes(System.Collections.IList attributeList) { }
-        protected static System.Reflection.MethodInfo FindMethod(System.Type componentClass, string name, System.Type[] args, System.Type returnType) { throw null; }
-        protected static System.Reflection.MethodInfo FindMethod(System.Type componentClass, string name, System.Type[] args, System.Type returnType, bool publicOnly) { throw null; }
+
+        protected virtual void FillAttributes(Collections.IList attributeList) { }
+
+        protected static Reflection.MethodInfo FindMethod(Type componentClass, string name, Type[] args, Type returnType, bool publicOnly) { throw null; }
+
+        protected static Reflection.MethodInfo FindMethod(Type componentClass, string name, Type[] args, Type returnType) { throw null; }
+
         public override int GetHashCode() { throw null; }
-        protected virtual object GetInvocationTarget(System.Type type, object instance) { throw null; }
-        protected static System.ComponentModel.ISite GetSite(object component) { throw null; }
+
+        protected virtual object GetInvocationTarget(Type type, object instance) { throw null; }
+
+        protected static ISite GetSite(object component) { throw null; }
     }
-    public partial class MultilineStringConverter : System.ComponentModel.TypeConverter
+
+    public partial class MultilineStringConverter : TypeConverter
     {
-        public MultilineStringConverter() { }
-        public override object ConvertTo(System.ComponentModel.ITypeDescriptorContext context, System.Globalization.CultureInfo culture, object value, System.Type destinationType) { throw null; }
-        public override System.ComponentModel.PropertyDescriptorCollection GetProperties(System.ComponentModel.ITypeDescriptorContext context, object value, System.Attribute[] attributes) { throw null; }
-        public override bool GetPropertiesSupported(System.ComponentModel.ITypeDescriptorContext context) { throw null; }
+        public override object ConvertTo(ITypeDescriptorContext context, Globalization.CultureInfo culture, object value, Type destinationType) { throw null; }
+
+        public override PropertyDescriptorCollection GetProperties(ITypeDescriptorContext context, object value, Attribute[] attributes) { throw null; }
+
+        public override bool GetPropertiesSupported(ITypeDescriptorContext context) { throw null; }
     }
-    public partial class NullableConverter : System.ComponentModel.TypeConverter
+
+    public partial class NullableConverter : TypeConverter
     {
-        public NullableConverter(System.Type type) { }
-        public System.Type NullableType { get { throw null; } }
-        public System.Type UnderlyingType { get { throw null; } }
-        public System.ComponentModel.TypeConverter UnderlyingTypeConverter { get { throw null; } }
-        public override bool CanConvertFrom(System.ComponentModel.ITypeDescriptorContext context, System.Type sourceType) { throw null; }
-        public override bool CanConvertTo(System.ComponentModel.ITypeDescriptorContext context, System.Type destinationType) { throw null; }
-        public override object ConvertFrom(System.ComponentModel.ITypeDescriptorContext context, System.Globalization.CultureInfo culture, object value) { throw null; }
-        public override object ConvertTo(System.ComponentModel.ITypeDescriptorContext context, System.Globalization.CultureInfo culture, object value, System.Type destinationType) { throw null; }
-        public override object CreateInstance(System.ComponentModel.ITypeDescriptorContext context, System.Collections.IDictionary propertyValues) { throw null; }
-        public override bool GetCreateInstanceSupported(System.ComponentModel.ITypeDescriptorContext context) { throw null; }
-        public override System.ComponentModel.PropertyDescriptorCollection GetProperties(System.ComponentModel.ITypeDescriptorContext context, object value, System.Attribute[] attributes) { throw null; }
-        public override bool GetPropertiesSupported(System.ComponentModel.ITypeDescriptorContext context) { throw null; }
-        public override System.ComponentModel.TypeConverter.StandardValuesCollection GetStandardValues(System.ComponentModel.ITypeDescriptorContext context) { throw null; }
-        public override bool GetStandardValuesExclusive(System.ComponentModel.ITypeDescriptorContext context) { throw null; }
-        public override bool GetStandardValuesSupported(System.ComponentModel.ITypeDescriptorContext context) { throw null; }
-        public override bool IsValid(System.ComponentModel.ITypeDescriptorContext context, object value) { throw null; }
+        public NullableConverter(Type type) { }
+
+        public Type NullableType { get { throw null; } }
+
+        public Type UnderlyingType { get { throw null; } }
+
+        public TypeConverter UnderlyingTypeConverter { get { throw null; } }
+
+        public override bool CanConvertFrom(ITypeDescriptorContext context, Type sourceType) { throw null; }
+
+        public override bool CanConvertTo(ITypeDescriptorContext context, Type destinationType) { throw null; }
+
+        public override object ConvertFrom(ITypeDescriptorContext context, Globalization.CultureInfo culture, object value) { throw null; }
+
+        public override object ConvertTo(ITypeDescriptorContext context, Globalization.CultureInfo culture, object value, Type destinationType) { throw null; }
+
+        public override object CreateInstance(ITypeDescriptorContext context, Collections.IDictionary propertyValues) { throw null; }
+
+        public override bool GetCreateInstanceSupported(ITypeDescriptorContext context) { throw null; }
+
+        public override PropertyDescriptorCollection GetProperties(ITypeDescriptorContext context, object value, Attribute[] attributes) { throw null; }
+
+        public override bool GetPropertiesSupported(ITypeDescriptorContext context) { throw null; }
+
+        public override StandardValuesCollection GetStandardValues(ITypeDescriptorContext context) { throw null; }
+
+        public override bool GetStandardValuesExclusive(ITypeDescriptorContext context) { throw null; }
+
+        public override bool GetStandardValuesSupported(ITypeDescriptorContext context) { throw null; }
+
+        public override bool IsValid(ITypeDescriptorContext context, object value) { throw null; }
     }
-    public abstract partial class PropertyDescriptor : System.ComponentModel.MemberDescriptor
+
+    public abstract partial class PropertyDescriptor : MemberDescriptor
     {
-        protected PropertyDescriptor(System.ComponentModel.MemberDescriptor descr) : base (default(System.ComponentModel.MemberDescriptor)) { }
-        protected PropertyDescriptor(System.ComponentModel.MemberDescriptor descr, System.Attribute[] attrs) : base (default(System.ComponentModel.MemberDescriptor)) { }
-        protected PropertyDescriptor(string name, System.Attribute[] attrs) : base (default(System.ComponentModel.MemberDescriptor)) { }
-        public abstract System.Type ComponentType { get; }
-        public virtual System.ComponentModel.TypeConverter Converter { get { throw null; } }
+        protected PropertyDescriptor(MemberDescriptor descr, Attribute[] attrs) : base(default(MemberDescriptor)!) { }
+
+        protected PropertyDescriptor(MemberDescriptor descr) : base(default(MemberDescriptor)!) { }
+
+        protected PropertyDescriptor(string name, Attribute[] attrs) : base(default(MemberDescriptor)!) { }
+
+        public abstract Type ComponentType { get; }
+
+        public virtual TypeConverter Converter { get { throw null; } }
+
         public virtual bool IsLocalizable { get { throw null; } }
+
         public abstract bool IsReadOnly { get; }
-        public abstract System.Type PropertyType { get; }
-        public System.ComponentModel.DesignerSerializationVisibility SerializationVisibility { get { throw null; } }
+        public abstract Type PropertyType { get; }
+
+        public DesignerSerializationVisibility SerializationVisibility { get { throw null; } }
+
         public virtual bool SupportsChangeEvents { get { throw null; } }
-        public virtual void AddValueChanged(object component, System.EventHandler handler) { }
+
+        public virtual void AddValueChanged(object component, EventHandler handler) { }
+
         public abstract bool CanResetValue(object component);
-        protected object CreateInstance(System.Type type) { throw null; }
+        protected object CreateInstance(Type type) { throw null; }
+
         public override bool Equals(object obj) { throw null; }
-        protected override void FillAttributes(System.Collections.IList attributeList) { }
-        public System.ComponentModel.PropertyDescriptorCollection GetChildProperties() { throw null; }
-        public System.ComponentModel.PropertyDescriptorCollection GetChildProperties(System.Attribute[] filter) { throw null; }
-        public System.ComponentModel.PropertyDescriptorCollection GetChildProperties(object instance) { throw null; }
-        public virtual System.ComponentModel.PropertyDescriptorCollection GetChildProperties(object instance, System.Attribute[] filter) { throw null; }
-        public virtual object GetEditor(System.Type editorBaseType) { throw null; }
+
+        protected override void FillAttributes(Collections.IList attributeList) { }
+
+        public PropertyDescriptorCollection GetChildProperties() { throw null; }
+
+        public PropertyDescriptorCollection GetChildProperties(Attribute[] filter) { throw null; }
+
+        public virtual PropertyDescriptorCollection GetChildProperties(object instance, Attribute[] filter) { throw null; }
+
+        public PropertyDescriptorCollection GetChildProperties(object instance) { throw null; }
+
+        public virtual object GetEditor(Type editorBaseType) { throw null; }
+
         public override int GetHashCode() { throw null; }
-        protected override object GetInvocationTarget(System.Type type, object instance) { throw null; }
-        protected System.Type GetTypeFromName(string typeName) { throw null; }
+
+        protected override object GetInvocationTarget(Type type, object instance) { throw null; }
+
+        protected Type GetTypeFromName(string typeName) { throw null; }
+
         public abstract object GetValue(object component);
-        protected internal System.EventHandler GetValueChangedHandler(object component) { throw null; }
-        protected virtual void OnValueChanged(object component, System.EventArgs e) { }
-        public virtual void RemoveValueChanged(object component, System.EventHandler handler) { }
+        protected internal EventHandler GetValueChangedHandler(object component) { throw null; }
+
+        protected virtual void OnValueChanged(object component, EventArgs e) { }
+
+        public virtual void RemoveValueChanged(object component, EventHandler handler) { }
+
         public abstract void ResetValue(object component);
         public abstract void SetValue(object component, object value);
         public abstract bool ShouldSerializeValue(object component);
     }
-    public partial class PropertyDescriptorCollection : System.Collections.ICollection, System.Collections.IDictionary, System.Collections.IEnumerable, System.Collections.IList
+
+    public partial class PropertyDescriptorCollection : Collections.ICollection, Collections.IEnumerable, Collections.IDictionary, Collections.IList
     {
-        public static readonly System.ComponentModel.PropertyDescriptorCollection Empty;
-        public PropertyDescriptorCollection(System.ComponentModel.PropertyDescriptor[] properties) { }
-        public PropertyDescriptorCollection(System.ComponentModel.PropertyDescriptor[] properties, bool readOnly) { }
+        public static readonly PropertyDescriptorCollection Empty;
+        public PropertyDescriptorCollection(PropertyDescriptor[] properties, bool readOnly) { }
+
+        public PropertyDescriptorCollection(PropertyDescriptor[] properties) { }
+
         public int Count { get { throw null; } }
-        public virtual System.ComponentModel.PropertyDescriptor this[int index] { get { throw null; } }
-        public virtual System.ComponentModel.PropertyDescriptor this[string name] { get { throw null; } }
-        bool System.Collections.ICollection.IsSynchronized { get { throw null; } }
-        object System.Collections.ICollection.SyncRoot { get { throw null; } }
-        bool System.Collections.IDictionary.IsFixedSize { get { throw null; } }
-        bool System.Collections.IDictionary.IsReadOnly { get { throw null; } }
+
+        public virtual PropertyDescriptor this[int index] { get { throw null; } }
+
+        public virtual PropertyDescriptor this[string name] { get { throw null; } }
+
+        bool Collections.ICollection.IsSynchronized { get { throw null; } }
+
+        object Collections.ICollection.SyncRoot { get { throw null; } }
+
+        bool Collections.IDictionary.IsFixedSize { get { throw null; } }
+
+        bool Collections.IDictionary.IsReadOnly { get { throw null; } }
+
         object System.Collections.IDictionary.this[object key] { get { throw null; } set { } }
-        System.Collections.ICollection System.Collections.IDictionary.Keys { get { throw null; } }
-        System.Collections.ICollection System.Collections.IDictionary.Values { get { throw null; } }
-        bool System.Collections.IList.IsFixedSize { get { throw null; } }
-        bool System.Collections.IList.IsReadOnly { get { throw null; } }
+
+        Collections.ICollection Collections.IDictionary.Keys { get { throw null; } }
+
+        Collections.ICollection Collections.IDictionary.Values { get { throw null; } }
+
+        bool Collections.IList.IsFixedSize { get { throw null; } }
+
+        bool Collections.IList.IsReadOnly { get { throw null; } }
+
         object System.Collections.IList.this[int index] { get { throw null; } set { } }
-        public int Add(System.ComponentModel.PropertyDescriptor value) { throw null; }
+
+        public int Add(PropertyDescriptor value) { throw null; }
+
         public void Clear() { }
-        public bool Contains(System.ComponentModel.PropertyDescriptor value) { throw null; }
-        public void CopyTo(System.Array array, int index) { }
-        public virtual System.ComponentModel.PropertyDescriptor Find(string name, bool ignoreCase) { throw null; }
-        public virtual System.Collections.IEnumerator GetEnumerator() { throw null; }
-        public int IndexOf(System.ComponentModel.PropertyDescriptor value) { throw null; }
-        public void Insert(int index, System.ComponentModel.PropertyDescriptor value) { }
-        protected void InternalSort(System.Collections.IComparer sorter) { }
+
+        public bool Contains(PropertyDescriptor value) { throw null; }
+
+        public void CopyTo(Array array, int index) { }
+
+        public virtual PropertyDescriptor Find(string name, bool ignoreCase) { throw null; }
+
+        public virtual Collections.IEnumerator GetEnumerator() { throw null; }
+
+        public int IndexOf(PropertyDescriptor value) { throw null; }
+
+        public void Insert(int index, PropertyDescriptor value) { }
+
+        protected void InternalSort(Collections.IComparer sorter) { }
+
         protected void InternalSort(string[] names) { }
-        public void Remove(System.ComponentModel.PropertyDescriptor value) { }
+
+        public void Remove(PropertyDescriptor value) { }
+
         public void RemoveAt(int index) { }
-        public virtual System.ComponentModel.PropertyDescriptorCollection Sort() { throw null; }
-        public virtual System.ComponentModel.PropertyDescriptorCollection Sort(System.Collections.IComparer comparer) { throw null; }
-        public virtual System.ComponentModel.PropertyDescriptorCollection Sort(string[] names) { throw null; }
-        public virtual System.ComponentModel.PropertyDescriptorCollection Sort(string[] names, System.Collections.IComparer comparer) { throw null; }
-        void System.Collections.IDictionary.Add(object key, object value) { }
-        bool System.Collections.IDictionary.Contains(object key) { throw null; }
-        System.Collections.IDictionaryEnumerator System.Collections.IDictionary.GetEnumerator() { throw null; }
-        void System.Collections.IDictionary.Remove(object key) { }
-        int System.Collections.IList.Add(object value) { throw null; }
-        bool System.Collections.IList.Contains(object value) { throw null; }
-        int System.Collections.IList.IndexOf(object value) { throw null; }
-        void System.Collections.IList.Insert(int index, object value) { }
-        void System.Collections.IList.Remove(object value) { }
+
+        public virtual PropertyDescriptorCollection Sort() { throw null; }
+
+        public virtual PropertyDescriptorCollection Sort(Collections.IComparer comparer) { throw null; }
+
+        public virtual PropertyDescriptorCollection Sort(string[] names, Collections.IComparer comparer) { throw null; }
+
+        public virtual PropertyDescriptorCollection Sort(string[] names) { throw null; }
+
+        void Collections.IDictionary.Add(object key, object value) { }
+
+        bool Collections.IDictionary.Contains(object key) { throw null; }
+
+        Collections.IDictionaryEnumerator Collections.IDictionary.GetEnumerator() { throw null; }
+
+        void Collections.IDictionary.Remove(object key) { }
+
+        int Collections.IList.Add(object value) { throw null; }
+
+        bool Collections.IList.Contains(object value) { throw null; }
+
+        int Collections.IList.IndexOf(object value) { throw null; }
+
+        void Collections.IList.Insert(int index, object value) { }
+
+        void Collections.IList.Remove(object value) { }
     }
-    public sealed partial class ProvidePropertyAttribute : System.Attribute
+
+    public sealed partial class ProvidePropertyAttribute : Attribute
     {
         public ProvidePropertyAttribute(string propertyName, string receiverTypeName) { }
-        public ProvidePropertyAttribute(string propertyName, System.Type receiverType) { }
+
+        public ProvidePropertyAttribute(string propertyName, Type receiverType) { }
+
         public string PropertyName { get { throw null; } }
+
         public string ReceiverTypeName { get { throw null; } }
+
         public override bool Equals(object obj) { throw null; }
+
         public override int GetHashCode() { throw null; }
     }
-    public partial class RefreshEventArgs : System.EventArgs
+
+    public partial class RefreshEventArgs : EventArgs
     {
         public RefreshEventArgs(object componentChanged) { }
-        public RefreshEventArgs(System.Type typeChanged) { }
+
+        public RefreshEventArgs(Type typeChanged) { }
+
         public object ComponentChanged { get { throw null; } }
-        public System.Type TypeChanged { get { throw null; } }
+
+        public Type TypeChanged { get { throw null; } }
     }
-    public delegate void RefreshEventHandler(System.ComponentModel.RefreshEventArgs e);
-    public partial class SByteConverter : System.ComponentModel.BaseNumberConverter
+
+    public delegate void RefreshEventHandler(RefreshEventArgs e);
+    public partial class SByteConverter : BaseNumberConverter
     {
-        public SByteConverter() { }
     }
-    public partial class SingleConverter : System.ComponentModel.BaseNumberConverter
+
+    public partial class SingleConverter : BaseNumberConverter
     {
-        public SingleConverter() { }
     }
-    public partial class StringConverter : System.ComponentModel.TypeConverter
+
+    public partial class StringConverter : TypeConverter
     {
-        public StringConverter() { }
-        public override bool CanConvertFrom(System.ComponentModel.ITypeDescriptorContext context, System.Type sourceType) { throw null; }
-        public override object ConvertFrom(System.ComponentModel.ITypeDescriptorContext context, System.Globalization.CultureInfo culture, object value) { throw null; }
+        public override bool CanConvertFrom(ITypeDescriptorContext context, Type sourceType) { throw null; }
+
+        public override object ConvertFrom(ITypeDescriptorContext context, Globalization.CultureInfo culture, object value) { throw null; }
     }
-    public partial class TimeSpanConverter : System.ComponentModel.TypeConverter
+
+    public partial class TimeSpanConverter : TypeConverter
     {
-        public TimeSpanConverter() { }
-        public override bool CanConvertFrom(System.ComponentModel.ITypeDescriptorContext context, System.Type sourceType) { throw null; }
-        public override bool CanConvertTo(System.ComponentModel.ITypeDescriptorContext context, System.Type destinationType) { throw null; }
-        public override object ConvertFrom(System.ComponentModel.ITypeDescriptorContext context, System.Globalization.CultureInfo culture, object value) { throw null; }
-        public override object ConvertTo(System.ComponentModel.ITypeDescriptorContext context, System.Globalization.CultureInfo culture, object value, System.Type destinationType) { throw null; }
+        public override bool CanConvertFrom(ITypeDescriptorContext context, Type sourceType) { throw null; }
+
+        public override bool CanConvertTo(ITypeDescriptorContext context, Type destinationType) { throw null; }
+
+        public override object ConvertFrom(ITypeDescriptorContext context, Globalization.CultureInfo culture, object value) { throw null; }
+
+        public override object ConvertTo(ITypeDescriptorContext context, Globalization.CultureInfo culture, object value, Type destinationType) { throw null; }
     }
+
     public partial class TypeConverter
     {
-        public TypeConverter() { }
-        public virtual bool CanConvertFrom(System.ComponentModel.ITypeDescriptorContext context, System.Type sourceType) { throw null; }
-        public bool CanConvertFrom(System.Type sourceType) { throw null; }
-        public virtual bool CanConvertTo(System.ComponentModel.ITypeDescriptorContext context, System.Type destinationType) { throw null; }
-        public bool CanConvertTo(System.Type destinationType) { throw null; }
-        public virtual object ConvertFrom(System.ComponentModel.ITypeDescriptorContext context, System.Globalization.CultureInfo culture, object value) { throw null; }
+        public virtual bool CanConvertFrom(ITypeDescriptorContext context, Type sourceType) { throw null; }
+
+        public bool CanConvertFrom(Type sourceType) { throw null; }
+
+        public virtual bool CanConvertTo(ITypeDescriptorContext context, Type destinationType) { throw null; }
+
+        public bool CanConvertTo(Type destinationType) { throw null; }
+
+        public virtual object ConvertFrom(ITypeDescriptorContext context, Globalization.CultureInfo culture, object value) { throw null; }
+
         public object ConvertFrom(object value) { throw null; }
-        public object ConvertFromInvariantString(System.ComponentModel.ITypeDescriptorContext context, string text) { throw null; }
+
+        public object ConvertFromInvariantString(ITypeDescriptorContext context, string text) { throw null; }
+
         public object ConvertFromInvariantString(string text) { throw null; }
-        public object ConvertFromString(System.ComponentModel.ITypeDescriptorContext context, System.Globalization.CultureInfo culture, string text) { throw null; }
-        public object ConvertFromString(System.ComponentModel.ITypeDescriptorContext context, string text) { throw null; }
+
+        public object ConvertFromString(ITypeDescriptorContext context, Globalization.CultureInfo culture, string text) { throw null; }
+
+        public object ConvertFromString(ITypeDescriptorContext context, string text) { throw null; }
+
         public object ConvertFromString(string text) { throw null; }
-        public virtual object ConvertTo(System.ComponentModel.ITypeDescriptorContext context, System.Globalization.CultureInfo culture, object value, System.Type destinationType) { throw null; }
-        public object ConvertTo(object value, System.Type destinationType) { throw null; }
-        public string ConvertToInvariantString(System.ComponentModel.ITypeDescriptorContext context, object value) { throw null; }
+
+        public virtual object ConvertTo(ITypeDescriptorContext context, Globalization.CultureInfo culture, object value, Type destinationType) { throw null; }
+
+        public object ConvertTo(object value, Type destinationType) { throw null; }
+
+        public string ConvertToInvariantString(ITypeDescriptorContext context, object value) { throw null; }
+
         public string ConvertToInvariantString(object value) { throw null; }
-        public string ConvertToString(System.ComponentModel.ITypeDescriptorContext context, System.Globalization.CultureInfo culture, object value) { throw null; }
-        public string ConvertToString(System.ComponentModel.ITypeDescriptorContext context, object value) { throw null; }
+
+        public string ConvertToString(ITypeDescriptorContext context, Globalization.CultureInfo culture, object value) { throw null; }
+
+        public string ConvertToString(ITypeDescriptorContext context, object value) { throw null; }
+
         public string ConvertToString(object value) { throw null; }
-        public object CreateInstance(System.Collections.IDictionary propertyValues) { throw null; }
-        public virtual object CreateInstance(System.ComponentModel.ITypeDescriptorContext context, System.Collections.IDictionary propertyValues) { throw null; }
-        protected System.Exception GetConvertFromException(object value) { throw null; }
-        protected System.Exception GetConvertToException(object value, System.Type destinationType) { throw null; }
+
+        public object CreateInstance(Collections.IDictionary propertyValues) { throw null; }
+
+        public virtual object CreateInstance(ITypeDescriptorContext context, Collections.IDictionary propertyValues) { throw null; }
+
+        protected Exception GetConvertFromException(object value) { throw null; }
+
+        protected Exception GetConvertToException(object value, Type destinationType) { throw null; }
+
         public bool GetCreateInstanceSupported() { throw null; }
-        public virtual bool GetCreateInstanceSupported(System.ComponentModel.ITypeDescriptorContext context) { throw null; }
-        public System.ComponentModel.PropertyDescriptorCollection GetProperties(System.ComponentModel.ITypeDescriptorContext context, object value) { throw null; }
-        public virtual System.ComponentModel.PropertyDescriptorCollection GetProperties(System.ComponentModel.ITypeDescriptorContext context, object value, System.Attribute[] attributes) { throw null; }
-        public System.ComponentModel.PropertyDescriptorCollection GetProperties(object value) { throw null; }
+
+        public virtual bool GetCreateInstanceSupported(ITypeDescriptorContext context) { throw null; }
+
+        public virtual PropertyDescriptorCollection GetProperties(ITypeDescriptorContext context, object value, Attribute[] attributes) { throw null; }
+
+        public PropertyDescriptorCollection GetProperties(ITypeDescriptorContext context, object value) { throw null; }
+
+        public PropertyDescriptorCollection GetProperties(object value) { throw null; }
+
         public bool GetPropertiesSupported() { throw null; }
-        public virtual bool GetPropertiesSupported(System.ComponentModel.ITypeDescriptorContext context) { throw null; }
-        public System.Collections.ICollection GetStandardValues() { throw null; }
-        public virtual System.ComponentModel.TypeConverter.StandardValuesCollection GetStandardValues(System.ComponentModel.ITypeDescriptorContext context) { throw null; }
+
+        public virtual bool GetPropertiesSupported(ITypeDescriptorContext context) { throw null; }
+
+        public Collections.ICollection GetStandardValues() { throw null; }
+
+        public virtual StandardValuesCollection GetStandardValues(ITypeDescriptorContext context) { throw null; }
+
         public bool GetStandardValuesExclusive() { throw null; }
-        public virtual bool GetStandardValuesExclusive(System.ComponentModel.ITypeDescriptorContext context) { throw null; }
+
+        public virtual bool GetStandardValuesExclusive(ITypeDescriptorContext context) { throw null; }
+
         public bool GetStandardValuesSupported() { throw null; }
-        public virtual bool GetStandardValuesSupported(System.ComponentModel.ITypeDescriptorContext context) { throw null; }
-        public virtual bool IsValid(System.ComponentModel.ITypeDescriptorContext context, object value) { throw null; }
+
+        public virtual bool GetStandardValuesSupported(ITypeDescriptorContext context) { throw null; }
+
+        public virtual bool IsValid(ITypeDescriptorContext context, object value) { throw null; }
+
         public bool IsValid(object value) { throw null; }
-        protected System.ComponentModel.PropertyDescriptorCollection SortProperties(System.ComponentModel.PropertyDescriptorCollection props, string[] names) { throw null; }
-        protected abstract partial class SimplePropertyDescriptor : System.ComponentModel.PropertyDescriptor
+
+        protected PropertyDescriptorCollection SortProperties(PropertyDescriptorCollection props, string[] names) { throw null; }
+
+        protected abstract partial class SimplePropertyDescriptor : PropertyDescriptor
         {
-            protected SimplePropertyDescriptor(System.Type componentType, string name, System.Type propertyType) : base (default(System.ComponentModel.MemberDescriptor)) { }
-            protected SimplePropertyDescriptor(System.Type componentType, string name, System.Type propertyType, System.Attribute[] attributes) : base (default(System.ComponentModel.MemberDescriptor)) { }
-            public override System.Type ComponentType { get { throw null; } }
+            protected SimplePropertyDescriptor(Type componentType, string name, Type propertyType, Attribute[] attributes) : base(default!) { }
+
+            protected SimplePropertyDescriptor(Type componentType, string name, Type propertyType) : base(default!) { }
+
+            public override Type ComponentType { get { throw null; } }
+
             public override bool IsReadOnly { get { throw null; } }
-            public override System.Type PropertyType { get { throw null; } }
+
+            public override Type PropertyType { get { throw null; } }
+
             public override bool CanResetValue(object component) { throw null; }
+
             public override void ResetValue(object component) { }
+
             public override bool ShouldSerializeValue(object component) { throw null; }
         }
-        public partial class StandardValuesCollection : System.Collections.ICollection, System.Collections.IEnumerable
+
+        public partial class StandardValuesCollection : Collections.ICollection, Collections.IEnumerable
         {
-            public StandardValuesCollection(System.Collections.ICollection values) { }
+            public StandardValuesCollection(Collections.ICollection values) { }
+
             public int Count { get { throw null; } }
+
             public object this[int index] { get { throw null; } }
-            bool System.Collections.ICollection.IsSynchronized { get { throw null; } }
-            object System.Collections.ICollection.SyncRoot { get { throw null; } }
-            public void CopyTo(System.Array array, int index) { }
-            public System.Collections.IEnumerator GetEnumerator() { throw null; }
+
+            bool Collections.ICollection.IsSynchronized { get { throw null; } }
+
+            object Collections.ICollection.SyncRoot { get { throw null; } }
+
+            public void CopyTo(Array array, int index) { }
+
+            public Collections.IEnumerator GetEnumerator() { throw null; }
         }
     }
-    [System.AttributeUsageAttribute(System.AttributeTargets.All)]
-    public sealed partial class TypeConverterAttribute : System.Attribute
-    {
-        public static readonly System.ComponentModel.TypeConverterAttribute Default;
-        public TypeConverterAttribute() { }
-        public TypeConverterAttribute(string typeName) { }
-        public TypeConverterAttribute(System.Type type) { }
-        public string ConverterTypeName { get { throw null; } }
-        public override bool Equals(object obj) { throw null; }
-        public override int GetHashCode() { throw null; }
-    }
+
     public abstract partial class TypeDescriptionProvider
     {
         protected TypeDescriptionProvider() { }
-        protected TypeDescriptionProvider(System.ComponentModel.TypeDescriptionProvider parent) { }
-        public virtual object CreateInstance(System.IServiceProvider provider, System.Type objectType, System.Type[] argTypes, object[] args) { throw null; }
-        public virtual System.Collections.IDictionary GetCache(object instance) { throw null; }
-        public virtual System.ComponentModel.ICustomTypeDescriptor GetExtendedTypeDescriptor(object instance) { throw null; }
-        protected internal virtual System.ComponentModel.IExtenderProvider[] GetExtenderProviders(object instance) { throw null; }
+
+        protected TypeDescriptionProvider(TypeDescriptionProvider parent) { }
+
+        public virtual object CreateInstance(IServiceProvider provider, Type objectType, Type[] argTypes, object[] args) { throw null; }
+
+        public virtual Collections.IDictionary GetCache(object instance) { throw null; }
+
+        public virtual ICustomTypeDescriptor GetExtendedTypeDescriptor(object instance) { throw null; }
+
+        protected internal virtual IExtenderProvider[] GetExtenderProviders(object instance) { throw null; }
+
         public virtual string GetFullComponentName(object component) { throw null; }
-        public System.Type GetReflectionType(object instance) { throw null; }
-        public System.Type GetReflectionType(System.Type objectType) { throw null; }
-        public virtual System.Type GetReflectionType(System.Type objectType, object instance) { throw null; }
-        public virtual System.Type GetRuntimeType(System.Type reflectionType) { throw null; }
-        public System.ComponentModel.ICustomTypeDescriptor GetTypeDescriptor(object instance) { throw null; }
-        public System.ComponentModel.ICustomTypeDescriptor GetTypeDescriptor(System.Type objectType) { throw null; }
-        public virtual System.ComponentModel.ICustomTypeDescriptor GetTypeDescriptor(System.Type objectType, object instance) { throw null; }
-        public virtual bool IsSupportedType(System.Type type) { throw null; }
+
+        public Type GetReflectionType(object instance) { throw null; }
+
+        public virtual Type GetReflectionType(Type objectType, object instance) { throw null; }
+
+        public Type GetReflectionType(Type objectType) { throw null; }
+
+        public virtual Type GetRuntimeType(Type reflectionType) { throw null; }
+
+        public ICustomTypeDescriptor GetTypeDescriptor(object instance) { throw null; }
+
+        public virtual ICustomTypeDescriptor GetTypeDescriptor(Type objectType, object instance) { throw null; }
+
+        public ICustomTypeDescriptor GetTypeDescriptor(Type objectType) { throw null; }
+
+        public virtual bool IsSupportedType(Type type) { throw null; }
     }
-    public sealed partial class TypeDescriptionProviderAttribute : System.Attribute
+
+    public sealed partial class TypeDescriptionProviderAttribute : Attribute
     {
         public TypeDescriptionProviderAttribute(string typeName) { }
-        public TypeDescriptionProviderAttribute(System.Type type) { }
+
+        public TypeDescriptionProviderAttribute(Type type) { }
+
         public string TypeName { get { throw null; } }
     }
+
     public sealed partial class TypeDescriptor
     {
         internal TypeDescriptor() { }
-        public static System.Type InterfaceType { get { throw null; } }
-        public static event System.ComponentModel.RefreshEventHandler Refreshed { add { } remove { } }
-        public static System.ComponentModel.TypeDescriptionProvider AddAttributes(object instance, params System.Attribute[] attributes) { throw null; }
-        public static System.ComponentModel.TypeDescriptionProvider AddAttributes(System.Type type, params System.Attribute[] attributes) { throw null; }
-        public static void AddEditorTable(System.Type editorBaseType, System.Collections.Hashtable table) { }
-        public static void AddProvider(System.ComponentModel.TypeDescriptionProvider provider, object instance) { }
-        public static void AddProvider(System.ComponentModel.TypeDescriptionProvider provider, System.Type type) { }
-        public static void AddProviderTransparent(System.ComponentModel.TypeDescriptionProvider provider, object instance) { }
-        public static void AddProviderTransparent(System.ComponentModel.TypeDescriptionProvider provider, System.Type type) { }
+
+        public static Type InterfaceType { get { throw null; } }
+
+        public static event RefreshEventHandler Refreshed { add { } remove { } }
+
+        public static TypeDescriptionProvider AddAttributes(object instance, params Attribute[] attributes) { throw null; }
+
+        public static TypeDescriptionProvider AddAttributes(Type type, params Attribute[] attributes) { throw null; }
+
+        public static void AddEditorTable(Type editorBaseType, Collections.Hashtable table) { }
+
+        public static void AddProvider(TypeDescriptionProvider provider, object instance) { }
+
+        public static void AddProvider(TypeDescriptionProvider provider, Type type) { }
+
+        public static void AddProviderTransparent(TypeDescriptionProvider provider, object instance) { }
+
+        public static void AddProviderTransparent(TypeDescriptionProvider provider, Type type) { }
+
         public static void CreateAssociation(object primary, object secondary) { }
-        public static System.ComponentModel.EventDescriptor CreateEvent(System.Type componentType, System.ComponentModel.EventDescriptor oldEventDescriptor, params System.Attribute[] attributes) { throw null; }
-        public static System.ComponentModel.EventDescriptor CreateEvent(System.Type componentType, string name, System.Type type, params System.Attribute[] attributes) { throw null; }
-        public static object CreateInstance(System.IServiceProvider provider, System.Type objectType, System.Type[] argTypes, object[] args) { throw null; }
-        public static System.ComponentModel.PropertyDescriptor CreateProperty(System.Type componentType, System.ComponentModel.PropertyDescriptor oldPropertyDescriptor, params System.Attribute[] attributes) { throw null; }
-        public static System.ComponentModel.PropertyDescriptor CreateProperty(System.Type componentType, string name, System.Type type, params System.Attribute[] attributes) { throw null; }
-        public static object GetAssociation(System.Type type, object primary) { throw null; }
-        public static System.ComponentModel.AttributeCollection GetAttributes(object component) { throw null; }
-        public static System.ComponentModel.AttributeCollection GetAttributes(object component, bool noCustomTypeDesc) { throw null; }
-        public static System.ComponentModel.AttributeCollection GetAttributes(System.Type componentType) { throw null; }
-        public static string GetClassName(object component) { throw null; }
+
+        public static EventDescriptor CreateEvent(Type componentType, EventDescriptor oldEventDescriptor, params Attribute[] attributes) { throw null; }
+
+        public static EventDescriptor CreateEvent(Type componentType, string name, Type type, params Attribute[] attributes) { throw null; }
+
+        public static object CreateInstance(IServiceProvider provider, Type objectType, Type[] argTypes, object[] args) { throw null; }
+
+        public static PropertyDescriptor CreateProperty(Type componentType, PropertyDescriptor oldPropertyDescriptor, params Attribute[] attributes) { throw null; }
+
+        public static PropertyDescriptor CreateProperty(Type componentType, string name, Type type, params Attribute[] attributes) { throw null; }
+
+        public static object GetAssociation(Type type, object primary) { throw null; }
+
+        public static AttributeCollection GetAttributes(object component, bool noCustomTypeDesc) { throw null; }
+
+        public static AttributeCollection GetAttributes(object component) { throw null; }
+
+        public static AttributeCollection GetAttributes(Type componentType) { throw null; }
+
         public static string GetClassName(object component, bool noCustomTypeDesc) { throw null; }
-        public static string GetClassName(System.Type componentType) { throw null; }
-        public static string GetComponentName(object component) { throw null; }
+
+        public static string GetClassName(object component) { throw null; }
+
+        public static string GetClassName(Type componentType) { throw null; }
+
         public static string GetComponentName(object component, bool noCustomTypeDesc) { throw null; }
-        public static System.ComponentModel.TypeConverter GetConverter(object component) { throw null; }
-        public static System.ComponentModel.TypeConverter GetConverter(object component, bool noCustomTypeDesc) { throw null; }
-        public static System.ComponentModel.TypeConverter GetConverter(System.Type type) { throw null; }
-        public static System.ComponentModel.EventDescriptor GetDefaultEvent(object component) { throw null; }
-        public static System.ComponentModel.EventDescriptor GetDefaultEvent(object component, bool noCustomTypeDesc) { throw null; }
-        public static System.ComponentModel.EventDescriptor GetDefaultEvent(System.Type componentType) { throw null; }
-        public static System.ComponentModel.PropertyDescriptor GetDefaultProperty(object component) { throw null; }
-        public static System.ComponentModel.PropertyDescriptor GetDefaultProperty(object component, bool noCustomTypeDesc) { throw null; }
-        public static System.ComponentModel.PropertyDescriptor GetDefaultProperty(System.Type componentType) { throw null; }
-        public static object GetEditor(object component, System.Type editorBaseType) { throw null; }
-        public static object GetEditor(object component, System.Type editorBaseType, bool noCustomTypeDesc) { throw null; }
-        public static object GetEditor(System.Type type, System.Type editorBaseType) { throw null; }
-        public static System.ComponentModel.EventDescriptorCollection GetEvents(object component) { throw null; }
-        public static System.ComponentModel.EventDescriptorCollection GetEvents(object component, System.Attribute[] attributes) { throw null; }
-        public static System.ComponentModel.EventDescriptorCollection GetEvents(object component, System.Attribute[] attributes, bool noCustomTypeDesc) { throw null; }
-        public static System.ComponentModel.EventDescriptorCollection GetEvents(object component, bool noCustomTypeDesc) { throw null; }
-        public static System.ComponentModel.EventDescriptorCollection GetEvents(System.Type componentType) { throw null; }
-        public static System.ComponentModel.EventDescriptorCollection GetEvents(System.Type componentType, System.Attribute[] attributes) { throw null; }
+
+        public static string GetComponentName(object component) { throw null; }
+
+        public static TypeConverter GetConverter(object component, bool noCustomTypeDesc) { throw null; }
+
+        public static TypeConverter GetConverter(object component) { throw null; }
+
+        public static TypeConverter GetConverter(Type type) { throw null; }
+
+        public static EventDescriptor GetDefaultEvent(object component, bool noCustomTypeDesc) { throw null; }
+
+        public static EventDescriptor GetDefaultEvent(object component) { throw null; }
+
+        public static EventDescriptor GetDefaultEvent(Type componentType) { throw null; }
+
+        public static PropertyDescriptor GetDefaultProperty(object component, bool noCustomTypeDesc) { throw null; }
+
+        public static PropertyDescriptor GetDefaultProperty(object component) { throw null; }
+
+        public static PropertyDescriptor GetDefaultProperty(Type componentType) { throw null; }
+
+        public static object GetEditor(object component, Type editorBaseType, bool noCustomTypeDesc) { throw null; }
+
+        public static object GetEditor(object component, Type editorBaseType) { throw null; }
+
+        public static object GetEditor(Type type, Type editorBaseType) { throw null; }
+
+        public static EventDescriptorCollection GetEvents(object component, Attribute[] attributes, bool noCustomTypeDesc) { throw null; }
+
+        public static EventDescriptorCollection GetEvents(object component, Attribute[] attributes) { throw null; }
+
+        public static EventDescriptorCollection GetEvents(object component, bool noCustomTypeDesc) { throw null; }
+
+        public static EventDescriptorCollection GetEvents(object component) { throw null; }
+
+        public static EventDescriptorCollection GetEvents(Type componentType, Attribute[] attributes) { throw null; }
+
+        public static EventDescriptorCollection GetEvents(Type componentType) { throw null; }
+
         public static string GetFullComponentName(object component) { throw null; }
-        public static System.ComponentModel.PropertyDescriptorCollection GetProperties(object component) { throw null; }
-        public static System.ComponentModel.PropertyDescriptorCollection GetProperties(object component, System.Attribute[] attributes) { throw null; }
-        public static System.ComponentModel.PropertyDescriptorCollection GetProperties(object component, System.Attribute[] attributes, bool noCustomTypeDesc) { throw null; }
-        public static System.ComponentModel.PropertyDescriptorCollection GetProperties(object component, bool noCustomTypeDesc) { throw null; }
-        public static System.ComponentModel.PropertyDescriptorCollection GetProperties(System.Type componentType) { throw null; }
-        public static System.ComponentModel.PropertyDescriptorCollection GetProperties(System.Type componentType, System.Attribute[] attributes) { throw null; }
-        public static System.ComponentModel.TypeDescriptionProvider GetProvider(object instance) { throw null; }
-        public static System.ComponentModel.TypeDescriptionProvider GetProvider(System.Type type) { throw null; }
-        public static System.Type GetReflectionType(object instance) { throw null; }
-        public static System.Type GetReflectionType(System.Type type) { throw null; }
+
+        public static PropertyDescriptorCollection GetProperties(object component, Attribute[] attributes, bool noCustomTypeDesc) { throw null; }
+
+        public static PropertyDescriptorCollection GetProperties(object component, Attribute[] attributes) { throw null; }
+
+        public static PropertyDescriptorCollection GetProperties(object component, bool noCustomTypeDesc) { throw null; }
+
+        public static PropertyDescriptorCollection GetProperties(object component) { throw null; }
+
+        public static PropertyDescriptorCollection GetProperties(Type componentType, Attribute[] attributes) { throw null; }
+
+        public static PropertyDescriptorCollection GetProperties(Type componentType) { throw null; }
+
+        public static TypeDescriptionProvider GetProvider(object instance) { throw null; }
+
+        public static TypeDescriptionProvider GetProvider(Type type) { throw null; }
+
+        public static Type GetReflectionType(object instance) { throw null; }
+
+        public static Type GetReflectionType(Type type) { throw null; }
+
         public static void Refresh(object component) { }
-        public static void Refresh(System.Reflection.Assembly assembly) { }
-        public static void Refresh(System.Reflection.Module module) { }
-        public static void Refresh(System.Type type) { }
+
+        public static void Refresh(Reflection.Assembly assembly) { }
+
+        public static void Refresh(Reflection.Module module) { }
+
+        public static void Refresh(Type type) { }
+
         public static void RemoveAssociation(object primary, object secondary) { }
+
         public static void RemoveAssociations(object primary) { }
-        public static void RemoveProvider(System.ComponentModel.TypeDescriptionProvider provider, object instance) { }
-        public static void RemoveProvider(System.ComponentModel.TypeDescriptionProvider provider, System.Type type) { }
-        public static void RemoveProviderTransparent(System.ComponentModel.TypeDescriptionProvider provider, object instance) { }
-        public static void RemoveProviderTransparent(System.ComponentModel.TypeDescriptionProvider provider, System.Type type) { }
-        public static void SortDescriptorArray(System.Collections.IList infos) { }
+
+        public static void RemoveProvider(TypeDescriptionProvider provider, object instance) { }
+
+        public static void RemoveProvider(TypeDescriptionProvider provider, Type type) { }
+
+        public static void RemoveProviderTransparent(TypeDescriptionProvider provider, object instance) { }
+
+        public static void RemoveProviderTransparent(TypeDescriptionProvider provider, Type type) { }
+
+        public static void SortDescriptorArray(Collections.IList infos) { }
     }
-    public abstract partial class TypeListConverter : System.ComponentModel.TypeConverter
+
+    public abstract partial class TypeListConverter : TypeConverter
     {
-        protected TypeListConverter(System.Type[] types) { }
-        public override bool CanConvertFrom(System.ComponentModel.ITypeDescriptorContext context, System.Type sourceType) { throw null; }
-        public override bool CanConvertTo(System.ComponentModel.ITypeDescriptorContext context, System.Type destinationType) { throw null; }
-        public override object ConvertFrom(System.ComponentModel.ITypeDescriptorContext context, System.Globalization.CultureInfo culture, object value) { throw null; }
-        public override object ConvertTo(System.ComponentModel.ITypeDescriptorContext context, System.Globalization.CultureInfo culture, object value, System.Type destinationType) { throw null; }
-        public override System.ComponentModel.TypeConverter.StandardValuesCollection GetStandardValues(System.ComponentModel.ITypeDescriptorContext context) { throw null; }
-        public override bool GetStandardValuesExclusive(System.ComponentModel.ITypeDescriptorContext context) { throw null; }
-        public override bool GetStandardValuesSupported(System.ComponentModel.ITypeDescriptorContext context) { throw null; }
+        protected TypeListConverter(Type[] types) { }
+
+        public override bool CanConvertFrom(ITypeDescriptorContext context, Type sourceType) { throw null; }
+
+        public override bool CanConvertTo(ITypeDescriptorContext context, Type destinationType) { throw null; }
+
+        public override object ConvertFrom(ITypeDescriptorContext context, Globalization.CultureInfo culture, object value) { throw null; }
+
+        public override object ConvertTo(ITypeDescriptorContext context, Globalization.CultureInfo culture, object value, Type destinationType) { throw null; }
+
+        public override StandardValuesCollection GetStandardValues(ITypeDescriptorContext context) { throw null; }
+
+        public override bool GetStandardValuesExclusive(ITypeDescriptorContext context) { throw null; }
+
+        public override bool GetStandardValuesSupported(ITypeDescriptorContext context) { throw null; }
     }
-    public partial class UInt16Converter : System.ComponentModel.BaseNumberConverter
+
+    public partial class UInt16Converter : BaseNumberConverter
     {
-        public UInt16Converter() { }
     }
-    public partial class UInt32Converter : System.ComponentModel.BaseNumberConverter
+
+    public partial class UInt32Converter : BaseNumberConverter
     {
-        public UInt32Converter() { }
     }
-    public partial class UInt64Converter : System.ComponentModel.BaseNumberConverter
+
+    public partial class UInt64Converter : BaseNumberConverter
     {
-        public UInt64Converter() { }
     }
 }
