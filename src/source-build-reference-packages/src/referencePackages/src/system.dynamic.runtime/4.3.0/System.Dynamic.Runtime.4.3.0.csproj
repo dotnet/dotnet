@@ -1,41 +1,33 @@
 <Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
     <TargetFrameworks>netstandard1.0;netstandard1.3</TargetFrameworks>
-    <NuspecFile>$(ArtifactsBinDir)system.dynamic.runtime/4.3.0/system.dynamic.runtime.nuspec</NuspecFile>
-   </PropertyGroup>
-
-  <PropertyGroup>
-    <OutputPath>$(ArtifactsBinDir)system.dynamic.runtime/4.3.0/ref/</OutputPath>
-    <IntermediateOutputPath>$(ArtifactsObjDir)system.dynamic.runtime/4.3.0</IntermediateOutputPath>
+    <AssemblyName>System.Dynamic.Runtime</AssemblyName>
+    <ProjectTemplateVersion>2</ProjectTemplateVersion>
   </PropertyGroup>
 
-  <ItemGroup>
-    <Compile Include="**/ref/$(TargetFramework)/*.cs" />
-    <Compile Include="**/lib/$(TargetFramework)/*.cs" />
+  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard1.0'">
+    <PackageReference Include="System.Linq.Expressions" Version="4.3.0" />
+    <PackageReference Include="System.ObjectModel" Version="4.3.0" />
+    <PackageReference Include="System.Reflection" Version="4.3.0" />
+    <PackageReference Include="System.Runtime" Version="4.3.0" />
   </ItemGroup>
 
-    <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard1.0' ">
-        <PackageReference Include="System.Linq.Expressions" Version="4.3.0" />
-        <PackageReference Include="System.ObjectModel" Version="4.3.0" />
-        <PackageReference Include="System.Reflection" Version="4.3.0" />
-        <PackageReference Include="System.Runtime" Version="4.3.0" />
-    </ItemGroup>
-    <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard1.3' ">
-        <PackageReference Include="System.Collections" Version="4.3.0" />
-        <PackageReference Include="System.Diagnostics.Debug" Version="4.3.0" />
-        <PackageReference Include="System.Linq" Version="4.3.0" />
-        <PackageReference Include="System.Linq.Expressions" Version="4.3.0" />
-        <PackageReference Include="System.ObjectModel" Version="4.3.0" />
-        <PackageReference Include="System.Reflection" Version="4.3.0" />
-        <PackageReference Include="System.Reflection.Emit" Version="4.3.0" />
-        <PackageReference Include="System.Reflection.Emit.ILGeneration" Version="4.3.0" />
-        <PackageReference Include="System.Reflection.Primitives" Version="4.3.0" />
-        <PackageReference Include="System.Reflection.TypeExtensions" Version="4.3.0" />
-        <PackageReference Include="System.Resources.ResourceManager" Version="4.3.0" />
-        <PackageReference Include="System.Runtime" Version="4.3.0" />
-        <PackageReference Include="System.Runtime.Extensions" Version="4.3.0" />
-        <PackageReference Include="System.Threading" Version="4.3.0" />
-    </ItemGroup>
+  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard1.3'">
+    <PackageReference Include="System.Collections" Version="4.3.0" />
+    <PackageReference Include="System.Diagnostics.Debug" Version="4.3.0" />
+    <PackageReference Include="System.Linq" Version="4.3.0" />
+    <PackageReference Include="System.Linq.Expressions" Version="4.3.0" />
+    <PackageReference Include="System.ObjectModel" Version="4.3.0" />
+    <PackageReference Include="System.Reflection" Version="4.3.0" />
+    <PackageReference Include="System.Reflection.Emit" Version="4.3.0" />
+    <PackageReference Include="System.Reflection.Emit.ILGeneration" Version="4.3.0" />
+    <PackageReference Include="System.Reflection.Primitives" Version="4.3.0" />
+    <PackageReference Include="System.Reflection.TypeExtensions" Version="4.3.0" />
+    <PackageReference Include="System.Resources.ResourceManager" Version="4.3.0" />
+    <PackageReference Include="System.Runtime" Version="4.3.0" />
+    <PackageReference Include="System.Runtime.Extensions" Version="4.3.0" />
+    <PackageReference Include="System.Threading" Version="4.3.0" />
+  </ItemGroup>
 
-  
 </Project>

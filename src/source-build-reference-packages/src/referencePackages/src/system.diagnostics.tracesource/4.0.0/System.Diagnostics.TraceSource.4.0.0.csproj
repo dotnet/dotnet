@@ -1,28 +1,20 @@
 <Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
     <TargetFrameworks>netstandard1.3</TargetFrameworks>
-    <NuspecFile>$(ArtifactsBinDir)system.diagnostics.tracesource/4.0.0/system.diagnostics.tracesource.nuspec</NuspecFile>
-   </PropertyGroup>
-
-  <PropertyGroup>
-    <OutputPath>$(ArtifactsBinDir)system.diagnostics.tracesource/4.0.0/ref/</OutputPath>
-    <IntermediateOutputPath>$(ArtifactsObjDir)system.diagnostics.tracesource/4.0.0</IntermediateOutputPath>
+    <AssemblyName>System.Diagnostics.TraceSource</AssemblyName>
+    <ProjectTemplateVersion>2</ProjectTemplateVersion>
   </PropertyGroup>
 
-  <ItemGroup>
-    <Compile Include="**/ref/$(TargetFramework)/*.cs" />
-    <Compile Include="**/lib/$(TargetFramework)/*.cs" />
-  </ItemGroup>
-
-  <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard1.3' ">
-      <PackageReference Include="Microsoft.NETCore.Platforms" Version="1.0.1" />
-      <PackageReference Include="System.Collections" Version="4.0.11" />
-      <PackageReference Include="System.Diagnostics.Debug" Version="4.0.11" />
-      <PackageReference Include="System.Globalization" Version="4.0.11" />
-      <PackageReference Include="System.Resources.ResourceManager" Version="4.0.1" />
-      <PackageReference Include="System.Runtime" Version="4.1.0" />
-      <PackageReference Include="System.Runtime.Extensions" Version="4.1.0" />
-      <PackageReference Include="System.Threading" Version="4.0.11" />
+  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard1.3'">
+    <PackageReference Include="Microsoft.NETCore.Platforms" Version="1.0.1" />
+    <PackageReference Include="System.Collections" Version="4.0.11" />
+    <PackageReference Include="System.Diagnostics.Debug" Version="4.0.11" />
+    <PackageReference Include="System.Globalization" Version="4.0.11" />
+    <PackageReference Include="System.Resources.ResourceManager" Version="4.0.1" />
+    <PackageReference Include="System.Runtime" Version="4.1.0" />
+    <PackageReference Include="System.Runtime.Extensions" Version="4.1.0" />
+    <PackageReference Include="System.Threading" Version="4.0.11" />
   </ItemGroup>
 
 </Project>

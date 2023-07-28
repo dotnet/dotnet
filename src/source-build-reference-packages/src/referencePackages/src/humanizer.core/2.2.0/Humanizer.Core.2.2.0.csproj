@@ -2,25 +2,8 @@
 
   <PropertyGroup>
     <TargetFrameworks>netstandard1.0</TargetFrameworks>
-    <NuspecFile>$(ArtifactsBinDir)humanizer.core/2.2.0/humanizer.core.nuspec</NuspecFile>
+    <AssemblyName>Humanizer.Core</AssemblyName>
+    <ProjectTemplateVersion>2</ProjectTemplateVersion>
   </PropertyGroup>
-
-  <PropertyGroup>
-    <OutputPath>$(ArtifactsBinDir)humanizer.core/2.2.0/ref/</OutputPath>
-    <IntermediateOutputPath>$(ArtifactsObjDir)humanizer.core/2.2.0</IntermediateOutputPath>
-  </PropertyGroup>
-
-  <PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard1.0' ">
-    <OutputPath>$(ArtifactsBinDir)humanizer.core/2.2.0/lib/</OutputPath>
-  </PropertyGroup>
-
-  <ItemGroup>
-    <Compile Include="**/ref/$(TargetFramework)/*.cs" />
-    <Compile Include="**/lib/$(TargetFramework)/*.cs" />
-  </ItemGroup>
-
-  <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard1.0' ">
-    <PackageReference Include="NETStandard.Library" Version="$(NETStandardImplicitPackageVersion)" />
-  </ItemGroup>
 
 </Project>

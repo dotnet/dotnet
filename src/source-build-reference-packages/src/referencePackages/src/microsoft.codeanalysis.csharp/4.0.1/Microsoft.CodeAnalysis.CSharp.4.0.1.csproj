@@ -2,30 +2,13 @@
 
   <PropertyGroup>
     <TargetFrameworks>netstandard2.0</TargetFrameworks>
-    <NuspecFile>$(ArtifactsBinDir)microsoft.codeanalysis.csharp/4.0.1/microsoft.codeanalysis.csharp.nuspec</NuspecFile>
+    <AssemblyName>Microsoft.CodeAnalysis.CSharp</AssemblyName>
+    <ProjectTemplateVersion>2</ProjectTemplateVersion>
     <StrongNameKeyId>MicrosoftShared</StrongNameKeyId>
   </PropertyGroup>
 
-  <PropertyGroup>
-    <OutputPath>$(ArtifactsBinDir)microsoft.codeanalysis.csharp/4.0.1/ref/</OutputPath>
-    <IntermediateOutputPath>$(ArtifactsObjDir)microsoft.codeanalysis.csharp/4.0.1</IntermediateOutputPath>
-  </PropertyGroup>
-
-  <PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard2.0' ">
-    <OutputPath>$(ArtifactsBinDir)microsoft.codeanalysis.csharp/4.0.1/lib/</OutputPath>
-  </PropertyGroup>
-
-  <ItemGroup>
-    <Compile Include="**/ref/$(TargetFramework)/*.cs" />
-    <Compile Include="**/lib/$(TargetFramework)/*.cs" />
-  </ItemGroup>
-
-  <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.0' ">
-    <PackageReference Include="NETStandard.Library" Version="$(NETStandardImplicitPackageVersion)" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\..\microsoft.codeanalysis.common\4.0.1\Microsoft.CodeAnalysis.Common.4.0.1.csproj" />
+  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
+    <PackageReference Include="Microsoft.CodeAnalysis.Common" Version="4.0.1" />
   </ItemGroup>
 
 </Project>
