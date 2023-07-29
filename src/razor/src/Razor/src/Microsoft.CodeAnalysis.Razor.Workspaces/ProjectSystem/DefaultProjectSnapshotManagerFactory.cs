@@ -13,11 +13,11 @@ namespace Microsoft.CodeAnalysis.Razor.ProjectSystem;
 [ExportLanguageServiceFactory(typeof(ProjectSnapshotManager), RazorLanguage.Name)]
 internal class DefaultProjectSnapshotManagerFactory : ILanguageServiceFactory
 {
-    private readonly IEnumerable<ProjectSnapshotChangeTrigger> _triggers;
+    private readonly IEnumerable<IProjectSnapshotChangeTrigger> _triggers;
 
     [ImportingConstructor]
     public DefaultProjectSnapshotManagerFactory(
-        [ImportMany] IEnumerable<ProjectSnapshotChangeTrigger> triggers)
+        [ImportMany] IEnumerable<IProjectSnapshotChangeTrigger> triggers)
     {
         if (triggers is null)
         {

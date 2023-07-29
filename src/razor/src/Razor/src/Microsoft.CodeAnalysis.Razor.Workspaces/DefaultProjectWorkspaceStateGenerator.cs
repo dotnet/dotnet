@@ -17,7 +17,7 @@ namespace Microsoft.CodeAnalysis.Razor;
 
 [Shared]
 [Export(typeof(ProjectWorkspaceStateGenerator))]
-[Export(typeof(ProjectSnapshotChangeTrigger))]
+[Export(typeof(IProjectSnapshotChangeTrigger))]
 internal class DefaultProjectWorkspaceStateGenerator : ProjectWorkspaceStateGenerator, IDisposable
 {
     // Internal for testing

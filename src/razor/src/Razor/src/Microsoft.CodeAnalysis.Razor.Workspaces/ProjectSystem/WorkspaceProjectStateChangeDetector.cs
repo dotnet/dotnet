@@ -17,8 +17,8 @@ using Microsoft.CodeAnalysis.Razor.Workspaces.Extensions;
 namespace Microsoft.CodeAnalysis.Razor.ProjectSystem;
 
 [Shared]
-[Export(typeof(ProjectSnapshotChangeTrigger))]
-internal class WorkspaceProjectStateChangeDetector : ProjectSnapshotChangeTrigger, IDisposable
+[Export(typeof(IProjectSnapshotChangeTrigger))]
+internal class WorkspaceProjectStateChangeDetector : IProjectSnapshotChangeTrigger, IDisposable
 {
     private static readonly TimeSpan s_batchingDelay = TimeSpan.FromSeconds(1);
     private readonly object _disposedLock = new();
@@ -59,7 +59,7 @@ internal class WorkspaceProjectStateChangeDetector : ProjectSnapshotChangeTrigge
 
     public ManualResetEventSlim? NotifyWorkspaceChangedEventComplete { get; set; }
 
-    public override void Initialize(ProjectSnapshotManagerBase projectManager)
+    public void Initialize(ProjectSnapshotManagerBase projectManager)
     {
         _projectManager = projectManager;
 

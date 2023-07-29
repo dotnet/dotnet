@@ -21,7 +21,7 @@ namespace Microsoft.CodeAnalysis.Razor.Workspaces;
 [Shared]
 [Export(typeof(IRazorDynamicFileInfoProvider))]
 [Export(typeof(RazorDynamicFileInfoProvider))]
-[Export(typeof(ProjectSnapshotChangeTrigger))]
+[Export(typeof(IProjectSnapshotChangeTrigger))]
 internal class DefaultRazorDynamicFileInfoProvider : RazorDynamicFileInfoProvider, IRazorDynamicFileInfoProvider
 {
     private readonly ConcurrentDictionary<Key, Entry> _entries;

@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.LanguageServer;
 using Microsoft.AspNetCore.Razor.LanguageServer.EndpointContracts;
 using Microsoft.AspNetCore.Razor.LanguageServer.Semantic;
+using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.Extensions.DependencyInjection;
@@ -53,7 +54,7 @@ public class RazorSemanticTokensRangeEndpointBenchmark : RazorLanguageServerBenc
     private RazorRequestContext RequestContext { get; set; }
 
     [Params(0, 100, 1000)]
-    public int NumberOfCsSemanticRangesToReturn { get; set; }
+    public int CsSemanticRangesToReturn { get; set; }
 
     private static List<SemanticRange> PregeneratedRandomSemanticRanges { get; set; }
 
@@ -65,11 +66,15 @@ public class RazorSemanticTokensRangeEndpointBenchmark : RazorLanguageServerBenc
         var projectRoot = Path.Combine(RepoRoot, "src", "Razor", "test", "testapps", "ComponentApp");
         ProjectFilePath = Path.Combine(projectRoot, "ComponentApp.csproj");
         PagesDirectory = Path.Combine(projectRoot, "Components", "Pages");
-        var filePath = Path.Combine(PagesDirectory, $"SemanticTokens.razor");
-        TargetPath = "/Components/Pages/SemanticTokens.razor";
 
-        var documentUri = new Uri(filePath);
-        var documentSnapshot = GetDocumentSnapshot(ProjectFilePath, filePath, TargetPath);
+        var largeFileText = Resources.GetResourceText("MSN.cshtml");
+
+        var largeFilePath = Path.Combine(PagesDirectory, $"MSN.cshtml");
+        var documentUri = new Uri(largeFilePath);
+
+        TargetPath = "/Components/Pages/MSN.cshtml";
+
+        var documentSnapshot = GetDocumentSnapshot(ProjectFilePath, largeFilePath, largeFileText, TargetPath);
         var version = 1;
         DocumentContext = new VersionedDocumentContext(documentUri, documentSnapshot, projectContext: null, version);
         Logger = new NoopLogger();
@@ -92,21 +97,25 @@ public class RazorSemanticTokensRangeEndpointBenchmark : RazorLanguageServerBenc
 
         var random = new Random();
         var codeDocument = await DocumentContext.GetCodeDocumentAsync(CancellationToken);
-        PregeneratedRandomSemanticRanges = new List<SemanticRange>(NumberOfCsSemanticRangesToReturn);
-        for (var i = 0; i < NumberOfCsSemanticRangesToReturn; i++)
+        var pooledList = ListPool<SemanticRange>.GetPooledObject(out var pregeneratedRandomSemanticRanges);
+        pregeneratedRandomSemanticRanges.Capacity = CsSemanticRangesToReturn;
+        for (var i = 0; i < CsSemanticRangesToReturn; i++)
         {
             var startLine = random.Next(Range.Start.Line, Range.End.Line);
             var startChar = random.Next(0, codeDocument.Source.Lines.GetLineLength(startLine));
             var endLine = random.Next(startLine, Range.End.Line);
             var endChar = startLine == endLine
-                ? random.Next(startChar, codeDocument.Source.Lines.GetLineLength(startLine))
+                ? random.Next(startChar + 1, codeDocument.Source.Lines.GetLineLength(startLine))
                 : random.Next(0, codeDocument.Source.Lines.GetLineLength(endLine));
 
-            PregeneratedRandomSemanticRanges.Add(
+            pregeneratedRandomSemanticRanges.Add(
                 new SemanticRange(random.Next(),
                     new Range { Start = new Position(startLine, startChar), End = new Position(endLine, endChar) },
-                    0, fromRazor: false));
+                    modifier: 0, fromRazor: false));
         }
+
+        pregeneratedRandomSemanticRanges.Sort();
+        PregeneratedRandomSemanticRanges = pregeneratedRandomSemanticRanges;
     }
 
     [Benchmark(Description = "Razor Semantic Tokens Range Endpoint")]
@@ -159,7 +168,7 @@ public class RazorSemanticTokensRangeEndpointBenchmark : RazorLanguageServerBenc
         }
 
         // We can't get C# responses without significant amounts of extra work, so let's just shim it for now, any non-Null result is fine.
-        internal override Task<List<SemanticRange>> GetCSharpSemanticRangesAsync(
+        internal override Task<PooledObject<List<SemanticRange>>?> GetCSharpSemanticRangesAsync(
             RazorCodeDocument codeDocument,
             TextDocumentIdentifier textDocumentIdentifier,
             Range razorRange,
@@ -169,7 +178,11 @@ public class RazorSemanticTokensRangeEndpointBenchmark : RazorLanguageServerBenc
             CancellationToken cancellationToken,
             string previousResultId = null)
         {
-            return Task.FromResult(PregeneratedRandomSemanticRanges);
+            var pooledList = ListPool<SemanticRange>.GetPooledObject(out var randomSemanticRanges);
+            randomSemanticRanges.Capacity = PregeneratedRandomSemanticRanges.Count;
+            randomSemanticRanges.AddRange(PregeneratedRandomSemanticRanges);
+
+            return Task.FromResult<PooledObject<List<SemanticRange>>?>(pooledList);
         }
     }
 }

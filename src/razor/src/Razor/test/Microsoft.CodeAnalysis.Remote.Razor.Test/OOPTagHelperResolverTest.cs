@@ -239,7 +239,7 @@ public class OOPTagHelperResolverTest : TagHelperDescriptorTestBase
         public TestProjectSnapshotManager(Workspace workspace)
             : base(
                   Mock.Of<IErrorReporter>(MockBehavior.Strict),
-                  Enumerable.Empty<ProjectSnapshotChangeTrigger>(),
+                  Enumerable.Empty<IProjectSnapshotChangeTrigger>(),
                   workspace)
         {
         }

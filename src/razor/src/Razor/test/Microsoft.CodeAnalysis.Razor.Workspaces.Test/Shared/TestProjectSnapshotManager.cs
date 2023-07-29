@@ -12,7 +12,7 @@ namespace Microsoft.CodeAnalysis.Razor.ProjectSystem;
 internal class TestProjectSnapshotManager : DefaultProjectSnapshotManager
 {
     public TestProjectSnapshotManager(Workspace workspace)
-        : base(Mock.Of<IErrorReporter>(MockBehavior.Strict), Enumerable.Empty<ProjectSnapshotChangeTrigger>(), workspace)
+        : base(Mock.Of<IErrorReporter>(MockBehavior.Strict), Enumerable.Empty<IProjectSnapshotChangeTrigger>(), workspace)
     {
     }
 

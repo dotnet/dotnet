@@ -41,7 +41,7 @@ public class ProjectContextsEndpointTest : SingleServerDelegatingEndpointTestBas
             }
         };
 
-        var documentContext = await DocumentContextFactory.TryCreateForOpenDocumentAsync(request.TextDocument.Uri, DisposalToken);
+        var documentContext = DocumentContextFactory.TryCreateForOpenDocument(request.TextDocument.Uri);
         var requestContext = CreateRazorRequestContext(documentContext);
 
         var results = await endpoint.HandleRequestAsync(request, requestContext, default);

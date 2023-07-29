@@ -783,7 +783,7 @@ namespace Microsoft.AspNetCore.Components
     private class TestProjectSnapshotManager : DefaultProjectSnapshotManager
     {
         public TestProjectSnapshotManager(
-            IEnumerable<ProjectSnapshotChangeTrigger> triggers,
+            IEnumerable<IProjectSnapshotChangeTrigger> triggers,
             Workspace workspace)
             : base(Mock.Of<IErrorReporter>(MockBehavior.Strict), triggers, workspace)
         {

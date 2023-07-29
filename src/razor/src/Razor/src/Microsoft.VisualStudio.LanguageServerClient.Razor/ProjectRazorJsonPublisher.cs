@@ -21,8 +21,8 @@ namespace Microsoft.VisualStudio.LanguageServerClient.Razor;
 /// Publishes project.razor.json files.
 /// </summary>
 [Shared]
-[Export(typeof(ProjectSnapshotChangeTrigger))]
-internal class ProjectRazorJsonPublisher : ProjectSnapshotChangeTrigger
+[Export(typeof(IProjectSnapshotChangeTrigger))]
+internal class ProjectRazorJsonPublisher : IProjectSnapshotChangeTrigger
 {
     internal readonly Dictionary<string, Task> DeferredPublishTasks;
 
@@ -93,7 +93,7 @@ internal class ProjectRazorJsonPublisher : ProjectSnapshotChangeTrigger
     // 3000ms between publishes to prevent bursts of changes yet still be responsive to changes.
     internal int EnqueueDelay { get; set; } = 3000;
 
-    public override void Initialize(ProjectSnapshotManagerBase projectManager)
+    public void Initialize(ProjectSnapshotManagerBase projectManager)
     {
         ProjectSnapshotManager = projectManager;
         ProjectSnapshotManager.Changed += ProjectSnapshotManager_Changed;

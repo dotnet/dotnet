@@ -76,7 +76,7 @@ public abstract partial class ProjectSnapshotManagerBenchmarkBase
 
         return new DefaultProjectSnapshotManager(
             new TestErrorReporter(),
-            Array.Empty<ProjectSnapshotChangeTrigger>(),
+            Array.Empty<IProjectSnapshotChangeTrigger>(),
 #pragma warning disable CA2000 // Dispose objects before losing scope
             new AdhocWorkspace(services));
 #pragma warning restore CA2000 // Dispose objects before losing scope

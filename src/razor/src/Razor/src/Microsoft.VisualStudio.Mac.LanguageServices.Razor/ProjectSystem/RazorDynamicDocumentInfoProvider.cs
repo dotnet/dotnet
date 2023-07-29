@@ -18,8 +18,8 @@ namespace Microsoft.CodeAnalysis.Razor.ProjectSystem;
 [System.Composition.Shared]
 [ExportMetadata("Extensions", new string[] { "cshtml", "razor", })]
 [Export(typeof(IDynamicDocumentInfoProvider))]
-[Export(typeof(ProjectSnapshotChangeTrigger))]
-internal class RazorDynamicDocumentInfoProvider : ProjectSnapshotChangeTrigger, IDynamicDocumentInfoProvider
+[Export(typeof(IProjectSnapshotChangeTrigger))]
+internal class RazorDynamicDocumentInfoProvider : IProjectSnapshotChangeTrigger, IDynamicDocumentInfoProvider
 {
     private readonly ConcurrentDictionary<Key, Entry> _entries;
     private readonly VisualStudioMacDocumentInfoFactory _documentInfoFactory;
@@ -38,9 +38,9 @@ internal class RazorDynamicDocumentInfoProvider : ProjectSnapshotChangeTrigger, 
 
     public event Action<DocumentInfo>? Updated;
 
-    public override void Initialize(ProjectSnapshotManagerBase projectManager)
+    public void Initialize(ProjectSnapshotManagerBase projectManager)
     {
-        ((ProjectSnapshotChangeTrigger)_dynamicFileInfoProvider).Initialize(projectManager);
+        ((IProjectSnapshotChangeTrigger)_dynamicFileInfoProvider).Initialize(projectManager);
     }
 
     public DocumentInfo GetDynamicDocumentInfo(ProjectId projectId, string projectFilePath, string filePath)

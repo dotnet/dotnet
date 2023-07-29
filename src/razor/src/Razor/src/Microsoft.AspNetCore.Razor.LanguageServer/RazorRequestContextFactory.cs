@@ -19,7 +19,7 @@ internal class RazorRequestContextFactory : IRequestContextFactory<RazorRequestC
         _lspServices = lspServices;
     }
 
-    public async Task<RazorRequestContext> CreateRequestContextAsync<TRequestParams>(IQueueItem<RazorRequestContext> queueItem, TRequestParams @params, CancellationToken cancellationToken)
+    public Task<RazorRequestContext> CreateRequestContextAsync<TRequestParams>(IQueueItem<RazorRequestContext> queueItem, TRequestParams @params, CancellationToken cancellationToken)
     {
         VersionedDocumentContext? documentContext = null;
         var textDocumentHandler = queueItem.MethodHandler as ITextDocumentIdentifierHandler;
@@ -31,12 +31,12 @@ internal class RazorRequestContextFactory : IRequestContextFactory<RazorRequestC
             if (textDocumentHandler is ITextDocumentIdentifierHandler<TRequestParams, TextDocumentIdentifier> tdiHandler)
             {
                 var textDocumentIdentifier = tdiHandler.GetTextDocumentIdentifier(@params);
-                documentContext = await documentContextFactory.TryCreateForOpenDocumentAsync(textDocumentIdentifier, cancellationToken).ConfigureAwait(false);
+                documentContext = documentContextFactory.TryCreateForOpenDocument(textDocumentIdentifier);
             }
             else if (textDocumentHandler is ITextDocumentIdentifierHandler<TRequestParams, Uri> uriHandler)
             {
                 uri = uriHandler.GetTextDocumentIdentifier(@params);
-                documentContext = await documentContextFactory.TryCreateForOpenDocumentAsync(uri, cancellationToken).ConfigureAwait(false);
+                documentContext = documentContextFactory.TryCreateForOpenDocument(uri);
             }
             else
             {
@@ -52,6 +52,6 @@ internal class RazorRequestContextFactory : IRequestContextFactory<RazorRequestC
 #endif
             );
 
-        return requestContext;
+        return Task.FromResult(requestContext);
     }
 }

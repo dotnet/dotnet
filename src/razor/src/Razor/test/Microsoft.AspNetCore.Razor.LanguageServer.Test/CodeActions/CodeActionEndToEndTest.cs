@@ -1014,18 +1014,18 @@ public class CodeActionEndToEndTest : SingleServerDelegatingEndpointTestBase
             }
         }
 
-        protected override Task<DocumentContext?> TryCreateCoreAsync(Uri documentUri, VSProjectContext? projectContext, bool versioned, CancellationToken cancellationToken)
+        protected override DocumentContext? TryCreateCore(Uri documentUri, VSProjectContext? projectContext, bool versioned)
         {
             if (FilePath is null || CodeDocument is null)
             {
-                return Task.FromResult<DocumentContext?>(null);
+                return null;
             }
 
             var projectWorkspaceState = new ProjectWorkspaceState(_tagHelperDescriptors.ToImmutableArray(), LanguageVersion.Default);
             var testDocumentSnapshot = TestDocumentSnapshot.Create(FilePath, CodeDocument.GetSourceText().ToString(), CodeAnalysis.VersionStamp.Default, projectWorkspaceState);
             testDocumentSnapshot.With(CodeDocument);
 
-            return Task.FromResult<DocumentContext?>(CreateDocumentContext(new Uri(FilePath), testDocumentSnapshot));
+            return CreateDocumentContext(new Uri(FilePath), testDocumentSnapshot);
         }
 
         private static List<TagHelperDescriptor> CreateTagHelperDescriptors()
