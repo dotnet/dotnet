@@ -82,27 +82,7 @@ In most cases, this is because the option _Use previews of the .NET Core SDK_ in
 
 ## Building with Visual Studio Code
 
-Note, the [Visual Studio Code C# Extension](https://marketplace.visualstudio.com/items?itemName=ms-dotnettools.csharp) is required.
-
-1. Run `Restore.cmd` on the command line.
-1. Launch the `razor` repo in VS Code.
-2. Open VS Code settings (`CTRL+,`) and navigate to the `Razor > Plugin: Path` setting:
-![image](https://user-images.githubusercontent.com/16968319/192892840-ae2b102c-a282-472f-b1f1-ef3dad671874.png)
-3. Set path to `C:\path_to_razor_repo\artifacts\bin\Microsoft.AspNetCore.Razor.OmniSharpPlugin\Debug\net472\Microsoft.AspNetCore.Razor.OmniSharpPlugin.dll`.
-4. Launch extension via `Run and Debug -> Run Extension`.
-5. Install missing assets if prompted.
-
-### If you want to make changes within the Razor language server
-1. Make the changes, then run `Build.cmd -pack`.
-2. To debug through the language server code, open VS Code settings and check the box `Razor > Language Server: Debug`.
-![image](https://user-images.githubusercontent.com/16968319/192892444-1e4e514a-d41a-4aea-b739-cecee48d12d6.png)
-3. Attach your Visual Studio instance to `rzls.exe`.
-
-### If you want to make changes within Razor VS Code
-(i.e. anywhere within the `Microsoft.AspNetCore.Razor.VSCode` folder)
-1. Make the changes, then delete the existing `node_modules` folder within `Microsoft.AspNetCore.Razor.VSCode.Extension` if one exists. (Deleting the `node_modules` folder is supposed to be unnecessary, but there is currently a bug preventing changes from being detected - tracked by [#6788](https://github.com/dotnet/razor-tooling/issues/6788)).
-2. Run `Restore.cmd`.
-3. When debugging, ensure breakpoints are set within the `*.js` equivalent of a given `*.ts` file. This file can generally be found in the `node_modules` folder within `Microsoft.AspNetCore.Razor.VSCode.Extension`.
+Outside of Razor's language server and C# workspace logic, the bulk of our VS Code logic now lives in the [dotnet/vscode-csharp](https://github.com/dotnet/vscode-csharp) repo.
 
 ## Building on command-line
 

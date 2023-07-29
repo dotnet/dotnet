@@ -12,7 +12,7 @@ using Microsoft.CodeAnalysis.Razor.Workspaces;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer;
 
-internal class OpenDocumentGenerator : ProjectSnapshotChangeTrigger, IDisposable
+internal class OpenDocumentGenerator : IProjectSnapshotChangeTrigger, IDisposable
 {
     // Using 10 milliseconds for the delay here because we want document synchronization to be very fast,
     // so that features like completion are not delayed, but at the same time we don't want to do more work
@@ -60,13 +60,8 @@ internal class OpenDocumentGenerator : ProjectSnapshotChangeTrigger, IDisposable
 
     private ProjectSnapshotManagerBase ProjectManager => _projectManager ?? throw new InvalidOperationException($"{nameof(ProjectManager)} was unexpectedly 'null'. Has {nameof(Initialize)} been called?");
 
-    public override void Initialize(ProjectSnapshotManagerBase projectManager)
+    public void Initialize(ProjectSnapshotManagerBase projectManager)
     {
-        if (projectManager is null)
-        {
-            throw new ArgumentNullException(nameof(projectManager));
-        }
-
         _projectManager = projectManager;
 
         ProjectManager.Changed += ProjectSnapshotManager_Changed;

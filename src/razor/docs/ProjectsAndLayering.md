@@ -9,7 +9,6 @@ Created with https://www.sankeymatic.com/build/
 
 Input:
 ```
-OmniSharp [1] MS.AspNetCore.Razor.LanguageServer.Common
 RoslynWorkspace [1] ProjectEngineHost
 MS.AspNetCore.Razor.LanguageServer [1] MS.AspNetCore.Razor.LanguageServer.Common
 MS.AspNetCore.Razor.LanguageServer.Common [1] Compiler
@@ -114,13 +113,6 @@ target the broadest set of frameworks.
   - Microsoft.VisualStudio.Mac.LanguageServices.Razor
   - Microsoft.VisualStudio.Mac.RazorAddin
 
-### Visual Studio Code (OmniSharp Plug-in)
-
-- Target Framework: `net472`
-- Projects:
-  - Microsoft.AspNetCore.Razor.OmniSharpPlugin
-  - Microsoft.AspNetCore.Razor.ExternalAccess.OmniSharp
-
 ### Miscellaneous / Test hosting
 
 - Target Framework: net7.0
@@ -170,7 +162,3 @@ target the broadest set of frameworks.
 ### Visual Studio (Mac) Tests
 
 - Microsoft.VisualStudio.Mac.LanguageServices.Razor.Test (`net472`)
-
-### Visual Studio Code (OmniSharp Plug-in) Tests
-
-- Microsoft.AspNetCore.Razor.OmniSharpPlugin.Test (`net472`)

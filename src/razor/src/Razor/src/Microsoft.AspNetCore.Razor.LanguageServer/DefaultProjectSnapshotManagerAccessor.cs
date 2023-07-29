@@ -11,14 +11,14 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer;
 
 internal class DefaultProjectSnapshotManagerAccessor : ProjectSnapshotManagerAccessor, IDisposable
 {
-    private readonly IEnumerable<ProjectSnapshotChangeTrigger> _changeTriggers;
+    private readonly IEnumerable<IProjectSnapshotChangeTrigger> _changeTriggers;
     private readonly IOptionsMonitor<RazorLSPOptions> _optionsMonitor;
     private readonly AdhocWorkspaceFactory _workspaceFactory;
     private ProjectSnapshotManagerBase? _instance;
     private bool _disposed;
 
     public DefaultProjectSnapshotManagerAccessor(
-        IEnumerable<ProjectSnapshotChangeTrigger> changeTriggers,
+        IEnumerable<IProjectSnapshotChangeTrigger> changeTriggers,
         IOptionsMonitor<RazorLSPOptions> optionsMonitor,
         AdhocWorkspaceFactory workspaceFactory)
     {

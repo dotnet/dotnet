@@ -14,9 +14,9 @@ using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 namespace Microsoft.VisualStudio.Editor.Razor.Documents;
 
 [Export(typeof(RazorCodeDocumentProvidingSnapshotChangeTrigger))]
-[Export(typeof(ProjectSnapshotChangeTrigger))]
+[Export(typeof(IProjectSnapshotChangeTrigger))]
 [System.Composition.Shared]
-internal class RazorCodeDocumentProvidingSnapshotChangeTrigger : ProjectSnapshotChangeTrigger
+internal class RazorCodeDocumentProvidingSnapshotChangeTrigger : IProjectSnapshotChangeTrigger
 {
     private readonly HashSet<string> _openDocuments = new(FilePathComparer.Instance);
     private readonly Dictionary<string, ProjectKey> _documentProjectMap = new(FilePathComparer.Instance);
@@ -31,7 +31,7 @@ internal class RazorCodeDocumentProvidingSnapshotChangeTrigger : ProjectSnapshot
         _projectSnapshotManagerDispatcher = projectSnapshotManagerDispatcher;
     }
 
-    public override void Initialize(ProjectSnapshotManagerBase projectManager)
+    public void Initialize(ProjectSnapshotManagerBase projectManager)
     {
         _projectManager = projectManager;
 

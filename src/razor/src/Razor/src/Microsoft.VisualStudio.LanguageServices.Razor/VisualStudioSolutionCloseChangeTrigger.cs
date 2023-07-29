@@ -11,9 +11,9 @@ using Microsoft.VisualStudio.Threading;
 
 namespace Microsoft.VisualStudio.LanguageServices.Razor;
 
-[Export(typeof(ProjectSnapshotChangeTrigger))]
+[Export(typeof(IProjectSnapshotChangeTrigger))]
 [System.Composition.Shared]
-internal class VisualStudioSolutionCloseChangeTrigger : ProjectSnapshotChangeTrigger, IVsSolutionEvents3, IDisposable
+internal class VisualStudioSolutionCloseChangeTrigger : IProjectSnapshotChangeTrigger, IVsSolutionEvents3, IDisposable
 {
     private IVsSolution? _solution;
     private readonly IServiceProvider _serviceProvider;
@@ -31,7 +31,7 @@ internal class VisualStudioSolutionCloseChangeTrigger : ProjectSnapshotChangeTri
         _joinableTaskContext = joinableTaskContext;
     }
 
-    public override void Initialize(ProjectSnapshotManagerBase projectManager)
+    public void Initialize(ProjectSnapshotManagerBase projectManager)
     {
         _projectSnapshotManager = projectManager;
 

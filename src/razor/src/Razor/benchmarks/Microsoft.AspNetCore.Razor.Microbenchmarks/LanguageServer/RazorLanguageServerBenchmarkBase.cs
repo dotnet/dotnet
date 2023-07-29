@@ -49,12 +49,29 @@ public class RazorLanguageServerBenchmarkBase : ProjectSnapshotManagerBenchmarkB
 
     private protected IRazorLogger Logger { get; }
 
+    /// <summary>
+    /// Adds a file at a path with content from a string (can be a read from disk or from a resource)
+    /// </summary>
+    internal IDocumentSnapshot GetDocumentSnapshot(string projectFilePath, string filePath, string fileContent, string targetPath)
+    {
+        var text = SourceText.From(fileContent);
+        return GetDocumentSnapshot(projectFilePath, filePath, text, targetPath);
+    }
+
+    /// <summary>
+    /// Adds a file at a path with the content from the disk location.
+    /// </summary>
     internal IDocumentSnapshot GetDocumentSnapshot(string projectFilePath, string filePath, string targetPath)
+    {       
+        using var fileStream = new FileStream(filePath, FileMode.Open);
+        var text = SourceText.From(fileStream);
+        return GetDocumentSnapshot(projectFilePath, filePath, text, targetPath);
+    }
+
+    internal IDocumentSnapshot GetDocumentSnapshot(string projectFilePath, string filePath, SourceText text, string targetPath)
     {
         var intermediateOutputPath = Path.Combine(Path.GetDirectoryName(projectFilePath), "obj");
         var hostProject = new HostProject(projectFilePath, intermediateOutputPath, RazorConfiguration.Default, rootNamespace: null);
-        using var fileStream = new FileStream(filePath, FileMode.Open);
-        var text = SourceText.From(fileStream);
         var textLoader = TextLoader.From(TextAndVersion.Create(text, VersionStamp.Create()));
         var hostDocument = new HostDocument(filePath, targetPath, FileKinds.Component);
 

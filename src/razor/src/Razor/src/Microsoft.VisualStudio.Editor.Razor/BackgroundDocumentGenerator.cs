@@ -17,8 +17,8 @@ using Microsoft.VisualStudio.Threading;
 namespace Microsoft.CodeAnalysis.Razor;
 
 [Shared]
-[Export(typeof(ProjectSnapshotChangeTrigger))]
-internal class BackgroundDocumentGenerator : ProjectSnapshotChangeTrigger
+[Export(typeof(IProjectSnapshotChangeTrigger))]
+internal class BackgroundDocumentGenerator : IProjectSnapshotChangeTrigger
 {
     // Internal for testing
     internal readonly Dictionary<DocumentKey, (IProjectSnapshot project, IDocumentSnapshot document)> Work;
@@ -109,13 +109,8 @@ internal class BackgroundDocumentGenerator : ProjectSnapshotChangeTrigger
         NotifyErrorBeingReported?.Set();
     }
 
-    public override void Initialize(ProjectSnapshotManagerBase projectManager)
+    public void Initialize(ProjectSnapshotManagerBase projectManager)
     {
-        if (projectManager is null)
-        {
-            throw new ArgumentNullException(nameof(projectManager));
-        }
-
         _projectManager = projectManager;
         _projectManager.Changed += ProjectManager_Changed;
     }

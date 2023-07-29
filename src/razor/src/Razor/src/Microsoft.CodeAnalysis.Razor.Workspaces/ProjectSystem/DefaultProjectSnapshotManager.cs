@@ -2,12 +2,10 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using System;
-using System.Buffers;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor;
@@ -30,8 +28,6 @@ internal class DefaultProjectSnapshotManager : ProjectSnapshotManagerBase
 {
     public override event EventHandler<ProjectChangeEventArgs>? Changed;
 
-    private readonly ProjectSnapshotChangeTrigger[] _triggers;
-
     // Each entry holds a ProjectState and an optional ProjectSnapshot. ProjectSnapshots are
     // created lazily.
     private readonly ReadWriterLocker _rwLocker = new();
@@ -44,18 +40,28 @@ internal class DefaultProjectSnapshotManager : ProjectSnapshotManagerBase
 
     public DefaultProjectSnapshotManager(
         IErrorReporter errorReporter,
-        IEnumerable<ProjectSnapshotChangeTrigger> triggers,
+        IEnumerable<IProjectSnapshotChangeTrigger> triggers,
         Workspace workspace)
     {
-        _triggers = triggers?.OrderByDescending(trigger => trigger.InitializePriority).ToArray() ?? throw new ArgumentNullException(nameof(triggers));
         Workspace = workspace ?? throw new ArgumentNullException(nameof(workspace));
         ErrorReporter = errorReporter ?? throw new ArgumentNullException(nameof(errorReporter));
 
         using (_rwLocker.EnterReadLock())
         {
-            for (var i = 0; i < _triggers.Length; i++)
+            foreach (var trigger in triggers)
             {
-                _triggers[i].Initialize(this);
+                if (trigger is IPriorityProjectSnapshotChangeTrigger)
+                {
+                    trigger.Initialize(this);
+                }
+            }
+
+            foreach (var trigger in triggers) 
+            {
+                if (trigger is not IPriorityProjectSnapshotChangeTrigger)
+                {
+                    trigger.Initialize(this);
+                }
             }
         }
     }

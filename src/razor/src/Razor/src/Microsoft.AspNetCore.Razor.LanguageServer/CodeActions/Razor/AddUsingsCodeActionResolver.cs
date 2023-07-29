@@ -44,7 +44,7 @@ internal sealed class AddUsingsCodeActionResolver : IRazorCodeActionResolver
             return null;
         }
 
-        var documentContext = await _documentContextFactory.TryCreateAsync(actionParams.Uri, cancellationToken).ConfigureAwait(false);
+        var documentContext = _documentContextFactory.TryCreate(actionParams.Uri);
         if (documentContext is null)
         {
             return null;

@@ -601,8 +601,17 @@ internal abstract partial class SyntaxNode
                     }
                 }
 
-                // Got to the end of the node without finding a desired token. Pop up the stack and try again
                 foundToken = null;
+
+                // The start of the document is the only special case:
+                //  - If we're walking backwards and hit the start of the document, we need to treat this as if we should walk forward. There's no
+                //    previous node to attach the token to, so walking forward is the only option.
+                if (walkBackwards && parent!.SpanStart == 0)
+                {
+                    return false;
+                }
+
+                // Got to the end of the node without finding a desired token. Pop up the stack and try again
                 return null;
             }
         }

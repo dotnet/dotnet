@@ -19,22 +19,22 @@
     <formatOutputPackageVersion>8.0.437601</formatOutputPackageVersion>
     <fsharpGitCommitHash>f9ee9af59817df5782425534bf2cce40904fed61</fsharpGitCommitHash>
     <fsharpOutputPackageVersion>8.0.100-beta.23374.4</fsharpOutputPackageVersion>
-    <installerGitCommitHash>c590ab91d3ea464aec85de529f00070679b243ce</installerGitCommitHash>
+    <installerGitCommitHash>ee8db94b7f4b2c9aebefbb15fbceed056403934f</installerGitCommitHash>
     <installerOutputPackageVersion>8.0.100</installerOutputPackageVersion>
     <msbuildGitCommitHash>24ee0c75a7c5a9924c68157ae7f8e0ce6c9adca3</msbuildGitCommitHash>
     <msbuildOutputPackageVersion>17.8.0-preview-23377-03</msbuildOutputPackageVersion>
     <nugetclientGitCommitHash>c7035e0564fc33c43bf3f17b612a052e0a01c95b</nugetclientGitCommitHash>
     <nugetclientOutputPackageVersion>6.8.0-preview.1.44</nugetclientOutputPackageVersion>
-    <razorGitCommitHash>9c1b1dc9f27013074196a5773f5257e386594036</razorGitCommitHash>
-    <razorOutputPackageVersion>7.0.0-preview.23377.1</razorOutputPackageVersion>
+    <razorGitCommitHash>8d6629d71de7d4524e0dcd5f3de254e17c8da3db</razorGitCommitHash>
+    <razorOutputPackageVersion>7.0.0-preview.23378.3</razorOutputPackageVersion>
     <roslynanalyzersGitCommitHash>45879f0b46557886b8d553d121a81866f67ce08a</roslynanalyzersGitCommitHash>
     <roslynanalyzersOutputPackageVersion>3.11.0-beta1.23364.2</roslynanalyzersOutputPackageVersion>
     <roslynGitCommitHash>3ce621cff1833477316d49712730f09e9a820679</roslynGitCommitHash>
     <roslynOutputPackageVersion>4.8.0-1.23376.7</roslynOutputPackageVersion>
     <runtimeGitCommitHash>ea97babd7ccfd2f6e9553093d315f26b51e4c7ac</runtimeGitCommitHash>
     <runtimeOutputPackageVersion>8.0.0-rc.1.23376.5</runtimeOutputPackageVersion>
-    <sdkGitCommitHash>aa5b43795bee224bb97755d65d7da095d6743ee1</sdkGitCommitHash>
-    <sdkOutputPackageVersion>8.0.100-rc.1.23377.6</sdkOutputPackageVersion>
+    <sdkGitCommitHash>8208a1df1f33b4a9b17c311a9a3cfdff9a3a395d</sdkGitCommitHash>
+    <sdkOutputPackageVersion>8.0.100-rc.1.23378.2</sdkOutputPackageVersion>
     <sourcebuildexternalsGitCommitHash>b9eb9bc83da8a0dc5b62e67d576867f7f11e7c0c</sourcebuildexternalsGitCommitHash>
     <sourcebuildexternalsOutputPackageVersion>8.0.0-alpha.1.23374.2</sourcebuildexternalsOutputPackageVersion>
     <sourcebuildreferencepackagesGitCommitHash>b5368f118ae0b04a7ea1c08c41ba5df3494ff7c6</sourcebuildreferencepackagesGitCommitHash>

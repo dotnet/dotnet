@@ -62,7 +62,7 @@ public class RenameEndpointTest : LanguageServerTestBase
             Position = new Position(2, 1),
             NewName = "Component5"
         };
-        var documentContext = await GetDocumentContextAsync(uri);
+        var documentContext = GetDocumentContext(uri);
         var requestContext = CreateRazorRequestContext(documentContext);
 
         // Act
@@ -86,7 +86,7 @@ public class RenameEndpointTest : LanguageServerTestBase
             Position = new Position(2, 1),
             NewName = "Component5"
         };
-        var documentContext = await GetDocumentContextAsync(uri);
+        var documentContext = GetDocumentContext(uri);
         var requestContext = CreateRazorRequestContext(documentContext);
 
         // Act
@@ -137,7 +137,7 @@ public class RenameEndpointTest : LanguageServerTestBase
             Position = new Position(1, 14),
             NewName = "Test2"
         };
-        var documentContext = await GetDocumentContextAsync(uri);
+        var documentContext = GetDocumentContext(uri);
         var requestContext = CreateRazorRequestContext(documentContext);
 
         // Act
@@ -161,7 +161,7 @@ public class RenameEndpointTest : LanguageServerTestBase
             Position = new Position(1, 0),
             NewName = "Test2"
         };
-        var documentContext = await GetDocumentContextAsync(uri);
+        var documentContext = GetDocumentContext(uri);
         var requestContext = CreateRazorRequestContext(documentContext);
 
         // Act
@@ -185,7 +185,7 @@ public class RenameEndpointTest : LanguageServerTestBase
             Position = new Position(1, 1),
             NewName = "Test2"
         };
-        var documentContext = await GetDocumentContextAsync(uri);
+        var documentContext = GetDocumentContext(uri);
         var requestContext = CreateRazorRequestContext(documentContext);
 
         // Act
@@ -209,7 +209,7 @@ public class RenameEndpointTest : LanguageServerTestBase
             Position = new Position(1, 3),
             NewName = "Test2"
         };
-        var documentContext = await GetDocumentContextAsync(uri);
+        var documentContext = GetDocumentContext(uri);
         var requestContext = CreateRazorRequestContext(documentContext);
 
         // Act
@@ -233,7 +233,7 @@ public class RenameEndpointTest : LanguageServerTestBase
             Position = new Position(1, 10),
             NewName = "Test2"
         };
-        var documentContext = await GetDocumentContextAsync(uri);
+        var documentContext = GetDocumentContext(uri);
         var requestContext = CreateRazorRequestContext(documentContext);
 
         // Act
@@ -257,7 +257,7 @@ public class RenameEndpointTest : LanguageServerTestBase
             Position = new Position(1, 1),
             NewName = "Component5"
         };
-        var documentContext = await GetDocumentContextAsync(uri);
+        var documentContext = GetDocumentContext(uri);
         var requestContext = CreateRazorRequestContext(documentContext);
 
         // Act
@@ -315,7 +315,7 @@ public class RenameEndpointTest : LanguageServerTestBase
             Position = new Position(2, 1),
             NewName = "Component5"
         };
-        var documentContext = await GetDocumentContextAsync(uri);
+        var documentContext = GetDocumentContext(uri);
         var requestContext = CreateRazorRequestContext(documentContext);
 
         // Act
@@ -388,7 +388,7 @@ public class RenameEndpointTest : LanguageServerTestBase
             Position = new Position(1, 1),
             NewName = "Component5"
         };
-        var documentContext = await GetDocumentContextAsync(uri);
+        var documentContext = GetDocumentContext(uri);
         var requestContext = CreateRazorRequestContext(documentContext);
 
         // Act
@@ -442,7 +442,7 @@ public class RenameEndpointTest : LanguageServerTestBase
             Position = new Position(1, 1),
             NewName = "TestComponent"
         };
-        var documentContext = await GetDocumentContextAsync(uri);
+        var documentContext = GetDocumentContext(uri);
         var requestContext = CreateRazorRequestContext(documentContext);
 
         // Act
@@ -517,7 +517,7 @@ public class RenameEndpointTest : LanguageServerTestBase
             NewName = "Test2"
         };
 
-        var documentContext = await GetDocumentContextAsync(uri);
+        var documentContext = GetDocumentContext(uri);
         var requestContext = CreateRazorRequestContext(documentContext);
 
         // Act
@@ -551,7 +551,7 @@ public class RenameEndpointTest : LanguageServerTestBase
             NewName = "Test2"
         };
 
-        var documentContext = await GetDocumentContextAsync(request.TextDocument.Uri);
+        var documentContext = GetDocumentContext(request.TextDocument.Uri);
         var requestContext = CreateRazorRequestContext(documentContext);
 
         // Act
@@ -561,9 +561,9 @@ public class RenameEndpointTest : LanguageServerTestBase
         Assert.Null(result);
     }
 
-    private Task<VersionedDocumentContext> GetDocumentContextAsync(Uri file)
+    private VersionedDocumentContext GetDocumentContext(Uri file)
     {
-        return _documentContextFactory.TryCreateForOpenDocumentAsync(file, DisposalToken);
+        return _documentContextFactory.TryCreateForOpenDocument(file);
     }
 
     private static IEnumerable<TagHelperDescriptor> CreateRazorComponentTagHelperDescriptors(string assemblyName, string namespaceName, string tagName)
@@ -699,7 +699,7 @@ public class RenameEndpointTest : LanguageServerTestBase
 
         var projectSnapshotManagerDispatcher = new LSPProjectSnapshotManagerDispatcher(LoggerFactory);
 
-        var searchEngine = new DefaultRazorComponentSearchEngine(Dispatcher, projectSnapshotManagerAccessor, LoggerFactory);
+        var searchEngine = new DefaultRazorComponentSearchEngine(projectSnapshotManagerAccessor, LoggerFactory);
         languageServerFeatureOptions ??= Mock.Of<LanguageServerFeatureOptions>(
             options => options.SupportsFileManipulation == true && options.SingleServerSupport == false && options.ReturnCodeActionAndRenamePathsWithPrefixedSlash == false, MockBehavior.Strict);
 
@@ -738,11 +738,11 @@ public class RenameEndpointTest : LanguageServerTestBase
             _pathToContextMap = pathToContextMap.ToImmutableDictionary(kvp => FilePathNormalizer.Normalize(kvp.Key), kvp => kvp.Value);
         }
 
-        protected override Task<DocumentContext> TryCreateCoreAsync(Uri documentUri, VSProjectContext projectContext, bool versioned, CancellationToken cancellationToken)
+        protected override DocumentContext TryCreateCore(Uri documentUri, VSProjectContext projectContext, bool versioned)
         {
             var path = FilePathNormalizer.Normalize(documentUri.AbsolutePath);
             _pathToContextMap.TryGetValue(path, out var context);
-            return Task.FromResult(context);
+            return context;
         }
     }
 }

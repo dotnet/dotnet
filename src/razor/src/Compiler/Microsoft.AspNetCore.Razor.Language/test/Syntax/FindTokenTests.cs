@@ -42,6 +42,34 @@ public class FindTokenTests
         AssertEx.Equal("""EndOfFile;[];""", SyntaxSerializer.Serialize(token).Trim());
     }
 
+    [Fact, WorkItem("https://github.com/dotnet/razor/issues/7505")]
+    public void ReturnsEofOnFileEnd_WithTrailingTrivia()
+    {
+        var text = """
+            <div></div>
+            $$
+
+            """;
+        var (tree, position) = ParseWithPosition(text);
+
+        var token = tree.Root.FindToken(position);
+
+        AssertEx.Equal("""EndOfFile;[];""", SyntaxSerializer.Serialize(token).Trim());
+    }
+
+    [Fact, WorkItem("https://github.com/dotnet/razor/issues/9040")]
+    public void LeadingWhitespace_BeforeAnyNode()
+    {
+        var text = """
+        $$ <Component></Component>
+        """;
+        var (tree, position) = ParseWithPosition(text);
+
+        var token = tree.Root.FindToken(position);
+
+        AssertEx.Equal("""OpenAngle;[<];""", SyntaxSerializer.Serialize(token).Trim());
+    }
+
     [Fact]
     public void ReturnsOpenAngle()
     {

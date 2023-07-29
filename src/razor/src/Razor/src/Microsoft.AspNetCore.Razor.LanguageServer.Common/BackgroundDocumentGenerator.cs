@@ -14,7 +14,7 @@ using Microsoft.VisualStudio.Threading;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Common;
 
-internal class BackgroundDocumentGenerator : ProjectSnapshotChangeTrigger
+internal class BackgroundDocumentGenerator : IProjectSnapshotChangeTrigger
 {
     private record struct WorkResult(RazorCodeDocument Output, IDocumentSnapshot Document);
 
@@ -74,13 +74,8 @@ internal class BackgroundDocumentGenerator : ProjectSnapshotChangeTrigger
     public ManualResetEventSlim? NotifyBackgroundWorkCompleted { get; set; }
 
     [MemberNotNull(nameof(_projectManager))]
-    public override void Initialize(ProjectSnapshotManagerBase projectManager)
+    public void Initialize(ProjectSnapshotManagerBase projectManager)
     {
-        if (projectManager is null)
-        {
-            throw new ArgumentNullException(nameof(projectManager));
-        }
-
         _projectManager = projectManager;
 
         _projectManager.Changed += ProjectSnapshotManager_Changed;

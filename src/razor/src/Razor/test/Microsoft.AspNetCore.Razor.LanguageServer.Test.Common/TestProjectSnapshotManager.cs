@@ -17,7 +17,7 @@ namespace Microsoft.AspNetCore.Razor.Test.Common;
 internal class TestProjectSnapshotManager : DefaultProjectSnapshotManager
 {
     private TestProjectSnapshotManager(IErrorReporter errorReporter, Workspace workspace)
-        : base(errorReporter, Array.Empty<ProjectSnapshotChangeTrigger>(), workspace)
+        : base(errorReporter, Array.Empty<IProjectSnapshotChangeTrigger>(), workspace)
     {
     }
 

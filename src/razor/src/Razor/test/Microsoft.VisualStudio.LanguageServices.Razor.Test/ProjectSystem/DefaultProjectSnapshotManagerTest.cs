@@ -58,7 +58,7 @@ public class DefaultProjectSnapshotManagerTest : ProjectSnapshotManagerDispatche
         _hostProject2 = new HostProject(TestProjectData.AnotherProject.FilePath, TestProjectData.AnotherProject.IntermediateOutputPath, FallbackRazorConfiguration.MVC_2_1, TestProjectData.AnotherProject.RootNamespace);
         _hostProjectWithConfigurationChange = new HostProject(TestProjectData.SomeProject.FilePath, TestProjectData.SomeProject.IntermediateOutputPath, FallbackRazorConfiguration.MVC_1_0, TestProjectData.SomeProject.RootNamespace);
 
-        _projectManager = new TestProjectSnapshotManager(Enumerable.Empty<ProjectSnapshotChangeTrigger>(), Workspace);
+        _projectManager = new TestProjectSnapshotManager(Enumerable.Empty<IProjectSnapshotChangeTrigger>(), Workspace);
 
         _projectWorkspaceStateWithTagHelpers = new ProjectWorkspaceState(_tagHelperResolver.TagHelpers, default);
 
@@ -80,8 +80,8 @@ public class DefaultProjectSnapshotManagerTest : ProjectSnapshotManagerDispatche
     {
         // Arrange
         var initializedOrder = new List<string>();
-        var highPriorityTrigger = new InitializeInspectionTrigger(() => initializedOrder.Add("highPriority"), 100);
-        var defaultPriorityTrigger = new InitializeInspectionTrigger(() => initializedOrder.Add("lowPriority"), 0);
+        var highPriorityTrigger = new PriorityInitializeInspectionTrigger(() => initializedOrder.Add("highPriority"));
+        var defaultPriorityTrigger = new InitializeInspectionTrigger(() => initializedOrder.Add("lowPriority"));
 
         // Building this list in the wrong order so we can verify priority matters
         var triggers = new[] { defaultPriorityTrigger, highPriorityTrigger };
@@ -852,7 +852,7 @@ public class DefaultProjectSnapshotManagerTest : ProjectSnapshotManagerDispatche
 
     private class TestProjectSnapshotManager : DefaultProjectSnapshotManager
     {
-        public TestProjectSnapshotManager(IEnumerable<ProjectSnapshotChangeTrigger> triggers, Workspace workspace)
+        public TestProjectSnapshotManager(IEnumerable<IProjectSnapshotChangeTrigger> triggers, Workspace workspace)
             : base(Mock.Of<IErrorReporter>(MockBehavior.Strict), triggers, workspace)
         {
         }
@@ -887,21 +887,16 @@ public class DefaultProjectSnapshotManagerTest : ProjectSnapshotManagerDispatche
         }
     }
 
-    private class InitializeInspectionTrigger : ProjectSnapshotChangeTrigger
+    private class InitializeInspectionTrigger(Action initializeNotification) : IProjectSnapshotChangeTrigger
     {
-        private readonly Action _initializeNotification;
+        private readonly Action _initializeNotification = initializeNotification;
 
-        public InitializeInspectionTrigger(Action initializeNotification, int initializePriority)
-        {
-            _initializeNotification = initializeNotification;
-            InitializePriority = initializePriority;
-        }
-
-        public override int InitializePriority { get; }
-
-        public override void Initialize(ProjectSnapshotManagerBase projectManager)
+        public void Initialize(ProjectSnapshotManagerBase projectManager)
         {
             _initializeNotification();
         }
     }
+
+    private class PriorityInitializeInspectionTrigger(Action initializeNotification)
+        : InitializeInspectionTrigger(initializeNotification), IPriorityProjectSnapshotChangeTrigger;
 }

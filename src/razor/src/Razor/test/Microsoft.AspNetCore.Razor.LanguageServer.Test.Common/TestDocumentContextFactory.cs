@@ -2,8 +2,6 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using System;
-using System.Threading;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 
@@ -26,23 +24,23 @@ internal class TestDocumentContextFactory : DocumentContextFactory
         _version = version;
     }
 
-    protected override Task<DocumentContext?> TryCreateCoreAsync(Uri documentUri, VSProjectContext? projectContext, bool versioned, CancellationToken cancellationToken)
+    protected override DocumentContext? TryCreateCore(Uri documentUri, VSProjectContext? projectContext, bool versioned)
     {
         if (FilePath is null || CodeDocument is null)
         {
-            return Task.FromResult<DocumentContext?>(null);
+            return null;
         }
 
         if (versioned)
         {
             if (_version is null)
             {
-                return Task.FromResult<DocumentContext?>(null);
+                return null;
             }
 
-            return Task.FromResult<DocumentContext?>(TestDocumentContext.From(FilePath, CodeDocument, _version.Value));
+            return TestDocumentContext.From(FilePath, CodeDocument, _version.Value);
         }
 
-        return Task.FromResult<DocumentContext?>(TestDocumentContext.From(FilePath, CodeDocument));
+        return TestDocumentContext.From(FilePath, CodeDocument);
     }
 }

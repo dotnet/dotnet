@@ -129,7 +129,7 @@ internal class TextDocumentUriPresentationEndpoint : AbstractTextDocumentPresent
     {
         _logger.LogInformation("Trying to find document info for dropped uri {uri}.", uri);
 
-        var documentContext = await _documentContextFactory.TryCreateAsync(uri, cancellationToken).ConfigureAwait(false);
+        var documentContext = _documentContextFactory.TryCreate(uri);
         if (documentContext is null)
         {
             _logger.LogInformation("Failed to find document for component {uri}.", uri);

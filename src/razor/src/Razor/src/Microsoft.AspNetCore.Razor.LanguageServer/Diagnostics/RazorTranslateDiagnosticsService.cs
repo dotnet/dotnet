@@ -35,6 +35,13 @@ internal class RazorTranslateDiagnosticsService
         "IDE0005_gen", // Using directive is unnecessary
     };
 
+    /// <summary>
+    /// Contains several methods for mapping and filtering Razor and C# diagnostics. It allows for
+    /// translating code diagnostics from one representation into another, such as from C# to Razor.
+    /// </summary>
+    /// <param name="documentMappingService">The <see cref="IRazorDocumentMappingService"/>.</param>
+    /// <param name="loggerFactory">The <see cref="ILoggerFactory"/>.</param>
+    /// <exception cref="ArgumentNullException"/>
     public RazorTranslateDiagnosticsService(IRazorDocumentMappingService documentMappingService, ILoggerFactory loggerFactory)
     {
         if (documentMappingService is null)
@@ -51,6 +58,14 @@ internal class RazorTranslateDiagnosticsService
         _logger = loggerFactory.CreateLogger<RazorTranslateDiagnosticsService>();
     }
 
+    /// <summary>
+    /// Translates code diagnostics from one representation into another.
+    /// </summary>
+    /// <param name="diagnosticKind">The `RazorLanguageKind` of the `Diagnostic` objects included in `diagnostics`.</param>
+    /// <param name="diagnostics">An array of `Diagnostic` objects to translate.</param>
+    /// <param name="documentContext">The `DocumentContext` for the code document associated with the diagnostics.</param>
+    /// <param name="cancellationToken">A `CancellationToken` to observe while waiting for the task to complete.</param>
+    /// <returns>An array of translated diagnostics</returns>
     internal async Task<Diagnostic[]> TranslateAsync(
         RazorLanguageKind diagnosticKind,
         Diagnostic[] diagnostics,

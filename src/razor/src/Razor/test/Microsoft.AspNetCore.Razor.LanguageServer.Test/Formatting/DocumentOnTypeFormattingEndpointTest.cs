@@ -210,7 +210,7 @@ public class DocumentOnTypeFormattingEndpointTest : FormattingLanguageServerTest
             Position = new Position(2, 11),
             Options = new FormattingOptions { InsertSpaces = true, TabSize = 4 }
         };
-        var documentContext = await documentResolver.TryCreateForOpenDocumentAsync(uri, DisposalToken);
+        var documentContext = documentResolver.TryCreateForOpenDocument(uri);
         var requestContext = CreateRazorRequestContext(documentContext!);
 
         // Act
