@@ -9,7 +9,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Language.Components;
-using Microsoft.AspNetCore.Razor.Language.Legacy;
 using Microsoft.AspNetCore.Razor.Language.Syntax;
 using Microsoft.AspNetCore.Razor.LanguageServer.CodeActions.Models;
 using Microsoft.AspNetCore.Razor.LanguageServer.CodeActions.Razor;
@@ -39,8 +38,7 @@ internal sealed class ComponentAccessibilityCodeActionProvider : IRazorCodeActio
         using var _ = ListPool<RazorVSInternalCodeAction>.GetPooledObject(out var codeActions);
 
         // Locate cursor
-        var change = new SourceChange(context.Location.AbsoluteIndex, length: 0, newText: string.Empty);
-        var node = context.CodeDocument.GetSyntaxTree().Root.LocateOwner(change);
+        var node = context.CodeDocument.GetSyntaxTree().Root.FindInnermostNode(context.Location.AbsoluteIndex);
         if (node is null)
         {
             return s_emptyResult;
@@ -48,9 +46,17 @@ internal sealed class ComponentAccessibilityCodeActionProvider : IRazorCodeActio
 
         // Find start tag. We allow this code action to work from anywhere in the start tag, which includes
         // embedded C#, so we just have to traverse up the tree to find a start tag if there is one.
-        var startTag = (MarkupStartTagSyntax?)node.Ancestors().FirstOrDefault(n => n is MarkupStartTagSyntax);
+        var startTag = (MarkupStartTagSyntax?)node.FirstAncestorOrSelf<SyntaxNode>(n => n is MarkupStartTagSyntax);
         if (startTag is null)
         {
+            return s_emptyResult;
+        }
+
+        if (context.Location.AbsoluteIndex < startTag.SpanStart)
+        {
+            // Cursor is before the start tag, so we shouldn't show a light bulb. This can happen
+            // in cases where the cursor is in whitespace at the beginning of the document
+            // eg: $$ <Component></Component>
             return s_emptyResult;
         }
 

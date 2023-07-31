@@ -351,7 +351,7 @@ internal sealed class RenameEndpoint : AbstractRazorDelegatingEndpoint<RenamePar
             return null;
         }
 
-        var node = owner.Ancestors().FirstOrDefault(n => n.Kind == SyntaxKind.MarkupTagHelperStartTag);
+        var node = owner.Parent?.FirstAncestorOrSelf<SyntaxNode>(n => n.Kind == SyntaxKind.MarkupTagHelperStartTag);
         if (node is not MarkupTagHelperStartTagSyntax tagHelperStartTag)
         {
             return null;

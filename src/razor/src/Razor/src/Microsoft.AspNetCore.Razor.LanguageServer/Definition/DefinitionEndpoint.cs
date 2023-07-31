@@ -160,7 +160,7 @@ internal sealed class DefinitionEndpoint : AbstractRazorDelegatingEndpoint<TextD
             return (null, null);
         }
 
-        var node = owner.Ancestors().FirstOrDefault(n =>
+        var node = owner.Parent?.FirstAncestorOrSelf<SyntaxNode>(n =>
             n.Kind == SyntaxKind.MarkupTagHelperStartTag ||
             n.Kind == SyntaxKind.MarkupTagHelperEndTag);
         if (node is null)

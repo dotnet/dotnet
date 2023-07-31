@@ -20,8 +20,7 @@ internal class DefaultRazorSyntaxFactsService : RazorSyntaxFactsService
                 item.Span,
                 item.BlockSpan,
                 (SpanKind)item.SpanKind,
-                (BlockKind)item.BlockKind,
-                (AcceptedCharacters)item.AcceptedCharacters)).ToArray();
+                (BlockKind)item.BlockKind)).ToArray();
     }
 
     public override IReadOnlyList<TagHelperSpan> GetTagHelperSpans(RazorSyntaxTree syntaxTree)

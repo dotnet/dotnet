@@ -9,7 +9,6 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
-using Microsoft.AspNetCore.Razor.Language.Legacy;
 using Microsoft.AspNetCore.Razor.Language.Syntax;
 using Microsoft.AspNetCore.Razor.LanguageServer.CodeActions.Models;
 using Microsoft.AspNetCore.Razor.LanguageServer.CodeActions.Razor;
@@ -217,7 +216,6 @@ internal sealed class TypeAccessibilityCodeActionProvider : ICSharpCodeActionPro
 
         static bool TryGetOwner(RazorCodeActionContext context, [NotNullWhen(true)] out SyntaxNode? owner)
         {
-            var change = new SourceChange(context.Location.AbsoluteIndex, length: 0, newText: string.Empty);
             var syntaxTree = context.CodeDocument.GetSyntaxTree();
             if (syntaxTree?.Root is null)
             {
@@ -225,7 +223,7 @@ internal sealed class TypeAccessibilityCodeActionProvider : ICSharpCodeActionPro
                 return false;
             }
 
-            owner = syntaxTree.Root.LocateOwner(change);
+            owner = syntaxTree.Root.FindInnermostNode(context.Location.AbsoluteIndex);
             if (owner is null)
             {
                 Debug.Fail("Owner should never be null.");
