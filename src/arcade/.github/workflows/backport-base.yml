@@ -17,7 +17,7 @@ on:
 
 jobs:
   cleanup:
-    if: ${{ github.repository_owner == 'dotnet' && github.event_name == 'schedule' }}
+    if: ${{ (github.repository_owner == 'dotnet' || github.repository_owner == 'microsoft') && github.event_name == 'schedule' }}
     runs-on: ubuntu-latest
     permissions:
       actions: write
@@ -57,7 +57,7 @@ jobs:
           }
 
   run_backport:
-    if: ${{ github.repository_owner == 'dotnet' && github.event.issue.pull_request != '' && contains(github.event.comment.body, '/backport to') }}
+    if: ${{ (github.repository_owner == 'dotnet' || github.repository_owner == 'microsoft') && github.event.issue.pull_request != '' && contains(github.event.comment.body, '/backport to') }}
     runs-on: ubuntu-latest
     permissions:
       contents: write
