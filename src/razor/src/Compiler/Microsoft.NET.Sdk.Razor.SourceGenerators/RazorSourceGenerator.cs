@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.IO;
 using System.Linq;
-using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Language.Extensions;
 using Microsoft.CodeAnalysis;
@@ -81,7 +80,7 @@ namespace Microsoft.NET.Sdk.Razor.SourceGenerators
             var generatedDeclarationCode = componentFiles
                 .Combine(importFiles.Collect())
                 .Combine(razorSourceGeneratorOptions)
-                .WithLambdaComparer((old, @new) => (old.Right.Equals(@new.Right) && old.Left.Left.Equals(@new.Left.Left) && old.Left.Right.SequenceEqual(@new.Left.Right)), getHashCode: (a) => Assumed.Unreachable<int>())
+                .WithLambdaComparer((old, @new) => (old.Right.Equals(@new.Right) && old.Left.Left.Equals(@new.Left.Left) && old.Left.Right.SequenceEqual(@new.Left.Right)))
                 .Select(static (pair, _) =>
                 {
                     var ((sourceItem, importFiles), razorSourceGeneratorOptions) = pair;
@@ -144,7 +143,7 @@ namespace Microsoft.NET.Sdk.Razor.SourceGenerators
                     }
 
                     return true;
-                }, getHashCode: static a => a.Count);
+                });
 
             var tagHelpersFromReferences = compilation
                 .Combine(razorSourceGeneratorOptions)
@@ -165,12 +164,6 @@ namespace Microsoft.NET.Sdk.Razor.SourceGenerators
                     }
 
                     return hasRazorFilesA == hasRazorFilesB;
-                },
-                static item =>
-                {
-                    // we'll use the number of references as a hashcode.
-                    var ((compilationA, razorSourceGeneratorOptionsA), hasRazorFilesA) = item;
-                    return compilationA.References.GetHashCode();
                 })
                 .Select(static (pair, _) =>
                 {
@@ -219,7 +212,7 @@ namespace Microsoft.NET.Sdk.Razor.SourceGenerators
 
             var withOptions = sourceItems
                 .Combine(importFiles.Collect())
-                .WithLambdaComparer((old, @new) => old.Left.Equals(@new.Left) && old.Right.SequenceEqual(@new.Right), (a) => a.GetHashCode())
+                .WithLambdaComparer((old, @new) => old.Left.Equals(@new.Left) && old.Right.SequenceEqual(@new.Right))
                 .Combine(razorSourceGeneratorOptions);
 
             var withOptionsDesignTime = withOptions
@@ -256,7 +249,7 @@ namespace Microsoft.NET.Sdk.Razor.SourceGenerators
 
                 // Add the tag helpers in, but ignore if they've changed or not, only reprocessing the actual document changed
                 .Combine(allTagHelpers)
-                .WithLambdaComparer((old, @new) => old.Left.Equals(@new.Left), getHashCode: (item) => Assumed.Unreachable<int>())
+                .WithLambdaComparer((old, @new) => old.Left.Equals(@new.Left))
                 .Select(static (pair, _) =>
                 {
                     var ((projectEngine, filePath, codeDocument), allTagHelpers) = pair;
@@ -308,7 +301,7 @@ namespace Microsoft.NET.Sdk.Razor.SourceGenerators
                     }
 
                     return string.Equals(a.csharpDocument.GeneratedCode, b.csharpDocument.GeneratedCode, StringComparison.Ordinal);
-                }, static a => StringComparer.Ordinal.GetHashCode(a.csharpDocument));
+                });
 
             context.RegisterImplementationSourceOutput(csharpDocuments, static (context, pair) =>
             {

@@ -347,7 +347,7 @@ internal class CSharpOnTypeFormattingPass : CSharpFormattingPassBase
 
         if (owner is CSharpStatementLiteralSyntax &&
             owner.TryGetPreviousSibling(out var prevNode) &&
-            prevNode.AncestorsAndSelf().FirstOrDefault(a => a is CSharpTemplateBlockSyntax) is { } template &&
+            prevNode.FirstAncestorOrSelf<SyntaxNode>(a => a is CSharpTemplateBlockSyntax) is { } template &&
             owner.SpanStart == template.Span.End &&
             IsOnSingleLine(template, text))
         {
@@ -502,7 +502,7 @@ internal class CSharpOnTypeFormattingPass : CSharpFormattingPassBase
 
         if (owner is CSharpStatementLiteralSyntax &&
             owner.NextSpan() is { } nextNode &&
-            nextNode.AncestorsAndSelf().FirstOrDefault(a => a is CSharpTemplateBlockSyntax) is { } template &&
+            nextNode.FirstAncestorOrSelf<SyntaxNode>(a => a is CSharpTemplateBlockSyntax) is { } template &&
             template.SpanStart == owner.Span.End &&
             IsOnSingleLine(template, text))
         {
