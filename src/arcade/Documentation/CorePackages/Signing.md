@@ -48,6 +48,8 @@ This field **requires** the following metadata: `PublicKeyToken`, `CertificateNa
 
 This field requires two metadata attributes: `CertificateName` and `Include` which should be a file extension in the format `.ext`. This field is used to configure a default certificate for all files that have an specific extension.
 
+Note:  Technically this is optional, but it's best practice to at least provide the default value for this property when calling signtool (ie. `FileExtensionSigninfo=@(FileExtensionSignInfo)`.  If this property is entirely ommitted, signtool will ignore all files.
+
 **CertificatesSignInfo** - Optional parameter
 
 This field requires the following metadata: `DualSigningAllowed` (boolean) and `Include` which is assumed to hold a valid certificate name. Use this list to explicitly configure the tool to allow the use of the specified certificate as a dual certificate - i.e., be able to use it to sign already signed files.

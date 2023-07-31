@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Net;
 using System.Net.Http;
@@ -90,7 +91,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Tests
                 BuildEngine = buildEngine,
             };
             var path = TestInputs.GetFullPath("Symbol");
-            var buildAsset = new Dictionary<string, HashSet<Asset>>();
+            var buildAsset = new Dictionary<string, Asset>().AsReadOnly();
             await task.HandleSymbolPublishingAsync(path, MsdlToken, SymWebToken, "", false, buildAsset, null, path);
             Assert.True(task.Log.HasLoggedErrors);
         }
