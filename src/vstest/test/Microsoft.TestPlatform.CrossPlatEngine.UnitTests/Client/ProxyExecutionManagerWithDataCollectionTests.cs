@@ -6,8 +6,10 @@ using System.Collections.Generic;
 
 using Microsoft.VisualStudio.TestPlatform.Common;
 using Microsoft.VisualStudio.TestPlatform.Common.Telemetry;
+using Microsoft.VisualStudio.TestPlatform.CommunicationUtilities;
 using Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.DataCollection.Interfaces;
 using Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Interfaces;
+using Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.ObjectModel;
 using Microsoft.VisualStudio.TestPlatform.CrossPlatEngine.Client;
 using Microsoft.VisualStudio.TestPlatform.CrossPlatEngine.DataCollection;
 using Microsoft.VisualStudio.TestPlatform.CrossPlatEngine.DataCollection.Interfaces;
@@ -171,6 +173,12 @@ public class ProxyExecutionManagerWithDataCollectionTests
             }
         };
 
+        string raw1 = JsonDataSerializer.Instance.SerializePayload(MessageType.TelemetryEventMessage, new TelemetryEvent("aaa", new Dictionary<string, object>()));
+        string raw2 = JsonDataSerializer.Instance.SerializePayload(MessageType.TelemetryEventMessage, new TelemetryEvent("aaa", new Dictionary<string, object>()));
+
+        proxyExecutionManager.DataCollectionRunEventsHandler.HandleRawMessage(raw1);
+        proxyExecutionManager.DataCollectionRunEventsHandler.HandleRawMessage(raw2);
+
         // Act.
         proxyExecutionManager.StartTestRun(mockTestRunCriteria.Object, mockRunEventsHandler.Object);
         proxyExecutionManager.LaunchProcessWithDebuggerAttached(testProcessStartInfo);
@@ -181,6 +189,10 @@ public class ProxyExecutionManagerWithDataCollectionTests
         {
             Assert.AreEqual(envVaribale.Value, launchedStartInfo.EnvironmentVariables![envVaribale.Key], $"Expected environment variable {envVaribale.Key} : {envVaribale.Value} not found");
         }
+
+        mockRunEventsHandler.Verify(r => r.HandleRawMessage(raw1));
+        mockRunEventsHandler.Verify(r => r.HandleRawMessage(raw2));
+        Assert.AreEqual(0, proxyExecutionManager.DataCollectionRunEventsHandler.RawMessages.Count);
     }
 
     [TestMethod]

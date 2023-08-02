@@ -9,6 +9,7 @@ using Microsoft.TestPlatform.VsTestConsole.TranslationLayer.Interfaces;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel.Client;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.Interfaces;
+using Microsoft.VisualStudio.TestPlatform.VsTestConsole.TranslationLayer;
 using Microsoft.VisualStudio.TestPlatform.VsTestConsole.TranslationLayer.Interfaces;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -132,7 +133,8 @@ public class TestSessionTests
                 _testSettings,
                 null,
                 _testSessionInfo,
-                mockTestRunEventsHandler.Object),
+                mockTestRunEventsHandler.Object,
+                It.IsAny<NoOpTelemetryEventsHandler>()),
             Times.Once);
     }
 
@@ -154,7 +156,8 @@ public class TestSessionTests
                 _testSettings,
                 testPlatformOptions,
                 _testSessionInfo,
-                mockTestRunEventsHandler.Object),
+                mockTestRunEventsHandler.Object,
+                It.IsAny<NoOpTelemetryEventsHandler>()),
             Times.Once);
     }
 
@@ -174,7 +177,8 @@ public class TestSessionTests
                 _testSettings,
                 null,
                 _testSessionInfo,
-                mockTestRunEventsHandler.Object),
+                mockTestRunEventsHandler.Object,
+                It.IsAny<NoOpTelemetryEventsHandler>()),
             Times.Once);
     }
 
@@ -196,7 +200,33 @@ public class TestSessionTests
                 _testSettings,
                 testPlatformOptions,
                 _testSessionInfo,
-                mockTestRunEventsHandler.Object),
+                mockTestRunEventsHandler.Object,
+                It.IsAny<NoOpTelemetryEventsHandler>()),
+            Times.Once);
+    }
+
+    [TestMethod]
+    public void RunTestsWithTestCasesShouldCallConsoleWrapperRunTestsWithCorrectArgumentsAndTelemetryHandler()
+    {
+        var testPlatformOptions = new TestPlatformOptions();
+        var mockTestRunEventsHandler = new Mock<ITestRunEventsHandler>();
+        var telemetryEventsHandler = new Mock<ITelemetryEventsHandler>();
+
+        _testSession.RunTests(
+            _testCases,
+            _testSettings,
+            testPlatformOptions,
+            mockTestRunEventsHandler.Object,
+            telemetryEventsHandler.Object);
+
+        _mockVsTestConsoleWrapper.Verify(
+            vtcw => vtcw.RunTests(
+                _testCases,
+                _testSettings,
+                testPlatformOptions,
+                _testSessionInfo,
+                mockTestRunEventsHandler.Object,
+                telemetryEventsHandler.Object),
             Times.Once);
     }
 
@@ -219,6 +249,7 @@ public class TestSessionTests
                 null,
                 _testSessionInfo,
                 mockTestRunEventsHandler.Object,
+                It.IsAny<NoOpTelemetryEventsHandler>(),
                 mockTestHostLauncher.Object),
             Times.Once);
     }
@@ -244,6 +275,7 @@ public class TestSessionTests
                 testPlatformOptions,
                 _testSessionInfo,
                 mockTestRunEventsHandler.Object,
+                It.IsAny<NoOpTelemetryEventsHandler>(),
                 mockTestHostLauncher.Object),
             Times.Once);
     }
@@ -267,6 +299,7 @@ public class TestSessionTests
                 null,
                 _testSessionInfo,
                 mockTestRunEventsHandler.Object,
+                It.IsAny<NoOpTelemetryEventsHandler>(),
                 mockTestHostLauncher.Object),
             Times.Once);
     }
@@ -292,6 +325,35 @@ public class TestSessionTests
                 testPlatformOptions,
                 _testSessionInfo,
                 mockTestRunEventsHandler.Object,
+                It.IsAny<NoOpTelemetryEventsHandler>(),
+                mockTestHostLauncher.Object),
+            Times.Once);
+    }
+
+    [TestMethod]
+    public void RunTestsWithTestCasesAndCustomTesthostShouldCallConsoleWrapperRunTestsWithCorrectArgumentsAndTelemetryHandler()
+    {
+        var testPlatformOptions = new TestPlatformOptions();
+        var mockTestRunEventsHandler = new Mock<ITestRunEventsHandler>();
+        var mockTestHostLauncher = new Mock<ITestHostLauncher>();
+        var telemetryEventsHandler = new Mock<ITelemetryEventsHandler>();
+
+        _testSession.RunTestsWithCustomTestHost(
+            _testCases,
+            _testSettings,
+            testPlatformOptions,
+            mockTestRunEventsHandler.Object,
+            telemetryEventsHandler.Object,
+            mockTestHostLauncher.Object);
+
+        _mockVsTestConsoleWrapper.Verify(
+            vtcw => vtcw.RunTestsWithCustomTestHost(
+                _testCases,
+                _testSettings,
+                testPlatformOptions,
+                _testSessionInfo,
+                mockTestRunEventsHandler.Object,
+                telemetryEventsHandler.Object,
                 mockTestHostLauncher.Object),
             Times.Once);
     }
@@ -401,7 +463,8 @@ public class TestSessionTests
                 _testSettings,
                 null,
                 _testSessionInfo,
-                mockTestRunEventsHandler.Object),
+                mockTestRunEventsHandler.Object,
+                It.IsAny<NoOpTelemetryEventsHandler>()),
             Times.Once);
     }
 
@@ -424,7 +487,8 @@ public class TestSessionTests
                 _testSettings,
                 testPlatformOptions,
                 _testSessionInfo,
-                mockTestRunEventsHandler.Object),
+                mockTestRunEventsHandler.Object,
+                It.IsAny<NoOpTelemetryEventsHandler>()),
             Times.Once);
     }
 
@@ -445,7 +509,8 @@ public class TestSessionTests
                 _testSettings,
                 null,
                 _testSessionInfo,
-                mockTestRunEventsHandler.Object),
+                mockTestRunEventsHandler.Object,
+                It.IsAny<NoOpTelemetryEventsHandler>()),
             Times.Once);
     }
 
@@ -468,7 +533,34 @@ public class TestSessionTests
                 _testSettings,
                 testPlatformOptions,
                 _testSessionInfo,
-                mockTestRunEventsHandler.Object),
+                mockTestRunEventsHandler.Object,
+                It.IsAny<NoOpTelemetryEventsHandler>()),
+            Times.Once);
+    }
+
+    [TestMethod]
+    public async Task RunTestsAsyncWithTestCasesShouldCallConsoleWrapperRunTestsWithCorrectArgumentsWithTelemetryHandler()
+    {
+        var testPlatformOptions = new TestPlatformOptions();
+        var mockTestRunEventsHandler = new Mock<ITestRunEventsHandler>();
+        var telemetryEventsHandler = new Mock<ITelemetryEventsHandler>();
+
+        await _testSession.RunTestsAsync(
+                _testCases,
+                _testSettings,
+                testPlatformOptions,
+                mockTestRunEventsHandler.Object,
+                telemetryEventsHandler.Object)
+            .ConfigureAwait(false); ;
+
+        _mockVsTestConsoleWrapper.Verify(
+            vtcw => vtcw.RunTestsAsync(
+                _testCases,
+                _testSettings,
+                testPlatformOptions,
+                _testSessionInfo,
+                mockTestRunEventsHandler.Object,
+                telemetryEventsHandler.Object),
             Times.Once);
     }
 
@@ -492,6 +584,7 @@ public class TestSessionTests
                 null,
                 _testSessionInfo,
                 mockTestRunEventsHandler.Object,
+                It.IsAny<NoOpTelemetryEventsHandler>(),
                 mockTestHostLauncher.Object),
             Times.Once);
     }
@@ -518,6 +611,7 @@ public class TestSessionTests
                 testPlatformOptions,
                 _testSessionInfo,
                 mockTestRunEventsHandler.Object,
+                It.IsAny<NoOpTelemetryEventsHandler>(),
                 mockTestHostLauncher.Object),
             Times.Once);
     }
@@ -542,6 +636,7 @@ public class TestSessionTests
                 null,
                 _testSessionInfo,
                 mockTestRunEventsHandler.Object,
+                It.IsAny<NoOpTelemetryEventsHandler>(),
                 mockTestHostLauncher.Object),
             Times.Once);
     }
@@ -568,6 +663,36 @@ public class TestSessionTests
                 testPlatformOptions,
                 _testSessionInfo,
                 mockTestRunEventsHandler.Object,
+                It.IsAny<NoOpTelemetryEventsHandler>(),
+                mockTestHostLauncher.Object),
+            Times.Once);
+    }
+
+    [TestMethod]
+    public async Task RunTestsAsyncWithTestCasesAndCustomTesthostShouldCallConsoleWrapperRunTestsWithCorrectArgumentsWithTelemetryHandler()
+    {
+        var testPlatformOptions = new TestPlatformOptions();
+        var mockTestRunEventsHandler = new Mock<ITestRunEventsHandler>();
+        var mockTestHostLauncher = new Mock<ITestHostLauncher>();
+        var telemetryEventsHandler = new Mock<ITelemetryEventsHandler>();
+
+        await _testSession.RunTestsWithCustomTestHostAsync(
+                _testCases,
+                _testSettings,
+                testPlatformOptions,
+                mockTestRunEventsHandler.Object,
+                telemetryEventsHandler.Object,
+                mockTestHostLauncher.Object)
+            .ConfigureAwait(false);
+
+        _mockVsTestConsoleWrapper.Verify(
+            vtcw => vtcw.RunTestsWithCustomTestHostAsync(
+                _testCases,
+                _testSettings,
+                testPlatformOptions,
+                _testSessionInfo,
+                mockTestRunEventsHandler.Object,
+                telemetryEventsHandler.Object,
                 mockTestHostLauncher.Object),
             Times.Once);
     }

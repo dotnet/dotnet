@@ -191,6 +191,24 @@ public interface IVsTestConsoleWrapperAsync
     /// <summary>
     /// Asynchronous equivalent of <see cref="
     /// IVsTestConsoleWrapper.RunTests(
+    ///     IEnumerable{string},
+    ///     string,
+    ///     TestPlatformOptions,
+    ///     TestSessionInfo,
+    ///     ITestRunEventsHandler,
+    ///     ITelemetryEventsHandler)"/>.
+    /// </summary>
+    Task RunTestsAsync(
+        IEnumerable<string> sources,
+        string? runSettings,
+        TestPlatformOptions? options,
+        TestSessionInfo? testSessionInfo,
+        ITestRunEventsHandler testRunEventsHandler,
+        ITelemetryEventsHandler telemetryEventsHandler);
+
+    /// <summary>
+    /// Asynchronous equivalent of <see cref="
+    /// IVsTestConsoleWrapper.RunTests(
     ///     IEnumerable{TestCase},
     ///     string,
     ///     ITestRunEventsHandler)"/>.
@@ -232,6 +250,24 @@ public interface IVsTestConsoleWrapperAsync
 
     /// <summary>
     /// Asynchronous equivalent of <see cref="
+    ///     IVsTestConsoleWrapper.RunTests(
+    ///     IEnumerable{TestCase},
+    ///     string,
+    ///     TestPlatformOptions,
+    ///     TestSessionInfo,
+    ///     ITestRunEventsHandler,
+    ///     ITelemetryEventsHandler)"/>.
+    /// </summary>
+    Task RunTestsAsync(
+        IEnumerable<TestCase> testCases,
+        string? runSettings,
+        TestPlatformOptions? options,
+        TestSessionInfo? testSessionInfo,
+        ITestRunEventsHandler testRunEventsHandler,
+        ITelemetryEventsHandler telemetryEventsHandler);
+
+    /// <summary>
+    /// Asynchronous equivalent of <see cref="
     /// IVsTestConsoleWrapper.RunTestsWithCustomTestHost(
     ///     IEnumerable{string},
     ///     string,
@@ -281,6 +317,26 @@ public interface IVsTestConsoleWrapperAsync
     /// <summary>
     /// Asynchronous equivalent of <see cref="
     /// IVsTestConsoleWrapper.RunTestsWithCustomTestHost(
+    ///     IEnumerable{string},
+    ///     string,
+    ///     TestPlatformOptions,
+    ///     TestSessionInfo,
+    ///     ITestRunEventsHandler,
+    ///     ITelemetryEventsHandler,
+    ///     ITestHostLauncher)"/>.
+    /// </summary>
+    Task RunTestsWithCustomTestHostAsync(
+        IEnumerable<string> sources,
+        string? runSettings,
+        TestPlatformOptions? options,
+        TestSessionInfo? testSessionInfo,
+        ITestRunEventsHandler testRunEventsHandler,
+        ITelemetryEventsHandler telemetryEventsHandler,
+        ITestHostLauncher customTestHostLauncher);
+
+    /// <summary>
+    /// Asynchronous equivalent of <see cref="
+    /// IVsTestConsoleWrapper.RunTestsWithCustomTestHost(
     ///     IEnumerable{TestCase},
     ///     string,
     ///     ITestRunEventsHandler,
@@ -324,6 +380,26 @@ public interface IVsTestConsoleWrapperAsync
         TestPlatformOptions? options,
         TestSessionInfo? testSessionInfo,
         ITestRunEventsHandler testRunEventsHandler,
+        ITestHostLauncher customTestHostLauncher);
+
+    /// <summary>
+    /// Asynchronous equivalent of <see cref="
+    /// IVsTestConsoleWrapper.RunTestsWithCustomTestHost(
+    ///     IEnumerable{TestCase},
+    ///     string,
+    ///     TestPlatformOptions,
+    ///     TestSessionInfo,
+    ///     ITestRunEventsHandler,
+    ///     ITelemetryEventsHandler,
+    ///     ITestHostLauncher)"/>.
+    /// </summary>
+    Task RunTestsWithCustomTestHostAsync(
+        IEnumerable<TestCase> testCases,
+        string? runSettings,
+        TestPlatformOptions? options,
+        TestSessionInfo? testSessionInfo,
+        ITestRunEventsHandler testRunEventsHandler,
+        ITelemetryEventsHandler telemetryEventsHandler,
         ITestHostLauncher customTestHostLauncher);
 
     /// <summary>

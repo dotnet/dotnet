@@ -85,6 +85,23 @@ public interface ITestSessionAsync : IDisposable
     /// Starts a test run.
     /// </summary>
     ///
+    /// <param name="sources">The list of source assemblies for the test run.</param>
+    /// <param name="runSettings">The run settings for the run.</param>
+    /// <param name="options">The test platform options.</param>
+    /// <param name="testRunEventsHandler">The run event handler.</param>
+    /// <param name="telemetryEventsHandler">The telemetry event handler.</param>
+    [Obsolete("This API is not final yet and is subject to changes.", false)]
+    Task RunTestsAsync(
+        IEnumerable<string> sources,
+        string runSettings,
+        TestPlatformOptions options,
+        ITestRunEventsHandler testRunEventsHandler,
+        ITelemetryEventsHandler telemetryEventsHandler);
+
+    /// <summary>
+    /// Starts a test run.
+    /// </summary>
+    ///
     /// <param name="testCases">The list of test cases for the test run.</param>
     /// <param name="runSettings">The run settings for the run.</param>
     /// <param name="testRunEventsHandler">The run event handler.</param>
@@ -108,6 +125,23 @@ public interface ITestSessionAsync : IDisposable
         string runSettings,
         TestPlatformOptions options,
         ITestRunEventsHandler testRunEventsHandler);
+
+    /// <summary>
+    /// Starts a test run.
+    /// </summary>
+    ///
+    /// <param name="testCases">The list of test cases for the test run.</param>
+    /// <param name="runSettings">The run settings for the run.</param>
+    /// <param name="options">The test platform options.</param>
+    /// <param name="testRunEventsHandler">The run event handler.</param>
+    /// <param name="telemetryEventsHandler">The telemetry event handler.</param>
+    [Obsolete("This API is not final yet and is subject to changes.", false)]
+    Task RunTestsAsync(
+        IEnumerable<TestCase> testCases,
+        string runSettings,
+        TestPlatformOptions options,
+        ITestRunEventsHandler testRunEventsHandler,
+        ITelemetryEventsHandler telemetryEventsHandler);
 
     /// <summary>
     /// Starts a test run.
@@ -145,6 +179,25 @@ public interface ITestSessionAsync : IDisposable
     /// Starts a test run.
     /// </summary>
     ///
+    /// <param name="sources">The list of source assemblies for the test run.</param>
+    /// <param name="runSettings">The run settings for the run.</param>
+    /// <param name="options">The test platform options.</param>
+    /// <param name="testRunEventsHandler">The run event handler.</param>
+    /// <param name="telemetryEventsHandler">The telemetry event handler.</param>
+    /// <param name="customTestHostLauncher">The custom host launcher.</param>
+    [Obsolete("This API is not final yet and is subject to changes.", false)]
+    Task RunTestsWithCustomTestHostAsync(
+        IEnumerable<string> sources,
+        string runSettings,
+        TestPlatformOptions options,
+        ITestRunEventsHandler testRunEventsHandler,
+        ITelemetryEventsHandler telemetryEventsHandler,
+        ITestHostLauncher customTestHostLauncher);
+
+    /// <summary>
+    /// Starts a test run.
+    /// </summary>
+    ///
     /// <param name="testCases">The list of test cases for the test run.</param>
     /// <param name="runSettings">The run settings for the run.</param>
     /// <param name="testRunEventsHandler">The run event handler.</param>
@@ -171,6 +224,25 @@ public interface ITestSessionAsync : IDisposable
         string runSettings,
         TestPlatformOptions options,
         ITestRunEventsHandler testRunEventsHandler,
+        ITestHostLauncher customTestHostLauncher);
+
+    /// <summary>
+    /// Starts a test run.
+    /// </summary>
+    ///
+    /// <param name="testCases">The list of test cases for the test run.</param>
+    /// <param name="runSettings">The run settings for the run.</param>
+    /// <param name="options">The test platform options.</param>
+    /// <param name="testRunEventsHandler">The run event handler.</param>
+    /// <param name="telemetryEventsHandler">The telemetry event handler.</param>
+    /// <param name="customTestHostLauncher">The custom host launcher.</param>
+    [Obsolete("This API is not final yet and is subject to changes.", false)]
+    Task RunTestsWithCustomTestHostAsync(
+        IEnumerable<TestCase> testCases,
+        string runSettings,
+        TestPlatformOptions options,
+        ITestRunEventsHandler testRunEventsHandler,
+        ITelemetryEventsHandler telemetryEventsHandler,
         ITestHostLauncher customTestHostLauncher);
 
     /// <summary>

@@ -110,11 +110,16 @@ internal class DataCollectorInformation
     /// <summary>
     /// Initializes datacollectors.
     /// </summary>
-    internal void InitializeDataCollector()
+    internal void InitializeDataCollector(ITelemetryReporter telemetryReporter)
     {
         UpdateConfigurationElement();
 
         DataCollector.Initialize(ConfigurationElement, Events, DataCollectionSink, Logger, EnvironmentContext);
+
+        if (DataCollector is ITelemetryInitializer telemetryInitializer)
+        {
+            telemetryInitializer.Initialize(telemetryReporter);
+        }
     }
 
     private void UpdateConfigurationElement()

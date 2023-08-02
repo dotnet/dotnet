@@ -11,6 +11,8 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
+using Abstraction::Microsoft.VisualStudio.TestPlatform.PlatformAbstractions;
+
 using Microsoft.TestPlatform.VsTestConsole.TranslationLayer;
 using Microsoft.TestPlatform.VsTestConsole.TranslationLayer.Interfaces;
 using Microsoft.VisualStudio.TestPlatform.Client;
@@ -25,7 +27,6 @@ using Microsoft.VisualStudio.TestPlatform.ObjectModel.Client;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.Interfaces;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.Payloads;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel.Logging;
-using Abstraction::Microsoft.VisualStudio.TestPlatform.PlatformAbstractions;
 using Microsoft.VisualStudio.TestPlatform.Utilities;
 using Microsoft.VisualStudio.TestPlatform.Utilities.Helpers.Interfaces;
 using Microsoft.VisualStudio.TestPlatform.VsTestConsole.TranslationLayer.Interfaces;
@@ -528,6 +529,23 @@ internal class InProcessVsTestConsoleWrapper : IVsTestConsoleWrapper
 
     /// <inheritdoc/>
     public void RunTests(
+        IEnumerable<string> sources,
+        string? runSettings,
+        TestPlatformOptions? options,
+        TestSessionInfo? testSessionInfo,
+        ITestRunEventsHandler testRunEventsHandler,
+        ITelemetryEventsHandler telemetryEventsHandler)
+    {
+        RunTests(
+            sources,
+            runSettings,
+            options,
+            testSessionInfo,
+            testRunEventsHandler);
+    }
+
+    /// <inheritdoc/>
+    public void RunTests(
         IEnumerable<TestCase> testCases,
         string? runSettings,
         ITestRunEventsHandler testRunEventsHandler)
@@ -597,6 +615,23 @@ internal class InProcessVsTestConsoleWrapper : IVsTestConsoleWrapper
         }
 
         _testPlatformEventSource.TranslationLayerExecutionStop();
+    }
+
+    /// <inheritdoc/>
+    public void RunTests(
+        IEnumerable<TestCase> testCases,
+        string? runSettings,
+        TestPlatformOptions? options,
+        TestSessionInfo? testSessionInfo,
+        ITestRunEventsHandler testRunEventsHandler,
+        ITelemetryEventsHandler telemetryEventsHandler)
+    {
+        RunTests(
+            testCases,
+            runSettings,
+            options,
+            testSessionInfo,
+            testRunEventsHandler);
     }
 
     /// <inheritdoc/>
@@ -693,6 +728,25 @@ internal class InProcessVsTestConsoleWrapper : IVsTestConsoleWrapper
 
     /// <inheritdoc/>
     public void RunTestsWithCustomTestHost(
+        IEnumerable<string> sources,
+        string? runSettings,
+        TestPlatformOptions? options,
+        TestSessionInfo? testSessionInfo,
+        ITestRunEventsHandler testRunEventsHandler,
+        ITelemetryEventsHandler telemetryEventsHandler,
+        ITestHostLauncher? customTestHostLauncher)
+    {
+        RunTestsWithCustomTestHost(
+            sources,
+            runSettings,
+            options,
+            testSessionInfo,
+            testRunEventsHandler,
+            customTestHostLauncher);
+    }
+
+    /// <inheritdoc/>
+    public void RunTestsWithCustomTestHost(
         IEnumerable<TestCase> testCases,
         string? runSettings,
         ITestRunEventsHandler testRunEventsHandler,
@@ -781,6 +835,25 @@ internal class InProcessVsTestConsoleWrapper : IVsTestConsoleWrapper
         }
 
         _testPlatformEventSource.TranslationLayerExecutionStop();
+    }
+
+    /// <inheritdoc/>
+    public void RunTestsWithCustomTestHost(
+        IEnumerable<TestCase> testCases,
+        string? runSettings,
+        TestPlatformOptions? options,
+        TestSessionInfo? testSessionInfo,
+        ITestRunEventsHandler testRunEventsHandler,
+        ITelemetryEventsHandler telemetryEventsHandler,
+        ITestHostLauncher? customTestHostLauncher)
+    {
+        RunTestsWithCustomTestHost(
+            testCases,
+            runSettings,
+            options,
+            testSessionInfo,
+            testRunEventsHandler,
+            customTestHostLauncher);
     }
 
     #region Async, not implemented
@@ -954,6 +1027,18 @@ internal class InProcessVsTestConsoleWrapper : IVsTestConsoleWrapper
     }
 
     /// <inheritdoc/>
+    public Task RunTestsAsync(
+        IEnumerable<string> sources,
+        string? runSettings,
+        TestPlatformOptions? options,
+        TestSessionInfo? testSessionInfo,
+        ITestRunEventsHandler testRunEventsHandler,
+        ITelemetryEventsHandler telemetryEventsHandler)
+    {
+        throw new NotImplementedException();
+    }
+
+    /// <inheritdoc/>
     public async Task RunTestsAsync(
         IEnumerable<TestCase> testCases,
         string? runSettings,
@@ -995,6 +1080,18 @@ internal class InProcessVsTestConsoleWrapper : IVsTestConsoleWrapper
     }
 
     /// <inheritdoc/>
+    public Task RunTestsAsync(
+        IEnumerable<TestCase> testCases,
+        string? runSettings,
+        TestPlatformOptions? options,
+        TestSessionInfo? testSessionInfo,
+        ITestRunEventsHandler testRunEventsHandler,
+        ITelemetryEventsHandler telemetryEventsHandler)
+    {
+        throw new NotImplementedException();
+    }
+
+    /// <inheritdoc/>
     public async Task RunTestsWithCustomTestHostAsync(
         IEnumerable<string> sources,
         string? runSettings,
@@ -1041,6 +1138,19 @@ internal class InProcessVsTestConsoleWrapper : IVsTestConsoleWrapper
     }
 
     /// <inheritdoc/>
+    public Task RunTestsWithCustomTestHostAsync(
+        IEnumerable<string> sources,
+        string? runSettings,
+        TestPlatformOptions? options,
+        TestSessionInfo? testSessionInfo,
+        ITestRunEventsHandler testRunEventsHandler,
+        ITelemetryEventsHandler telemetryEventsHandler,
+        ITestHostLauncher customTestHostLauncher)
+    {
+        throw new NotImplementedException();
+    }
+
+    /// <inheritdoc/>
     public async Task RunTestsWithCustomTestHostAsync(
         IEnumerable<TestCase> testCases,
         string? runSettings,
@@ -1081,6 +1191,19 @@ internal class InProcessVsTestConsoleWrapper : IVsTestConsoleWrapper
         TestPlatformOptions? options,
         TestSessionInfo? testSessionInfo,
         ITestRunEventsHandler testRunEventsHandler,
+        ITestHostLauncher customTestHostLauncher)
+    {
+        throw new NotImplementedException();
+    }
+
+    /// <inheritdoc/>
+    public Task RunTestsWithCustomTestHostAsync(
+        IEnumerable<TestCase> testCases,
+        string? runSettings,
+        TestPlatformOptions? options,
+        TestSessionInfo? testSessionInfo,
+        ITestRunEventsHandler testRunEventsHandler,
+        ITelemetryEventsHandler telemetryEventsHandler,
         ITestHostLauncher customTestHostLauncher)
     {
         throw new NotImplementedException();

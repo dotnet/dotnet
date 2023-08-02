@@ -54,6 +54,11 @@ internal class DataCollectionManager : IDataCollectionManager
     private readonly TestPlatformDataCollectionEvents _events;
 
     /// <summary>
+    /// Telemetry reporter
+    /// </summary>
+    private readonly ITelemetryReporter _telemetryReporter;
+
+    /// <summary>
     /// Specifies whether the object is disposed or not.
     /// </summary>
     private bool _isDisposed;
@@ -74,7 +79,7 @@ internal class DataCollectionManager : IDataCollectionManager
     /// <param name="messageSink">
     /// The message Sink.
     /// </param>
-    internal DataCollectionManager(IMessageSink messageSink, IRequestData requestData) : this(new DataCollectionAttachmentManager(), messageSink, new DataCollectionTelemetryManager(requestData))
+    internal DataCollectionManager(IMessageSink messageSink, IRequestData requestData, ITelemetryReporter telemetryReporter) : this(new DataCollectionAttachmentManager(), messageSink, new DataCollectionTelemetryManager(requestData), telemetryReporter)
     {
     }
 
@@ -90,7 +95,7 @@ internal class DataCollectionManager : IDataCollectionManager
     /// <remarks>
     /// The constructor is not public because the factory method should be used to get instances of this class.
     /// </remarks>
-    protected DataCollectionManager(IDataCollectionAttachmentManager datacollectionAttachmentManager, IMessageSink messageSink, IDataCollectionTelemetryManager dataCollectionTelemetryManager)
+    protected DataCollectionManager(IDataCollectionAttachmentManager datacollectionAttachmentManager, IMessageSink messageSink, IDataCollectionTelemetryManager dataCollectionTelemetryManager, ITelemetryReporter telemetryReporter)
     {
         _attachmentManager = datacollectionAttachmentManager;
         _messageSink = messageSink;
@@ -98,6 +103,7 @@ internal class DataCollectionManager : IDataCollectionManager
         _dataCollectorExtensionManager = null;
         RunDataCollectors = new Dictionary<Type, DataCollectorInformation>();
         _dataCollectionTelemetryManager = dataCollectionTelemetryManager;
+        _telemetryReporter = telemetryReporter;
     }
 
     /// <summary>
@@ -133,13 +139,13 @@ internal class DataCollectionManager : IDataCollectionManager
     /// <returns>
     /// The <see cref="DataCollectionManager"/>.
     /// </returns>
-    public static DataCollectionManager Create(IMessageSink messageSink, IRequestData requestData)
+    public static DataCollectionManager Create(IMessageSink messageSink, IRequestData requestData, ITelemetryReporter telemetryReporter)
     {
         if (Instance == null)
         {
             lock (SyncObject)
             {
-                Instance ??= new DataCollectionManager(messageSink, requestData);
+                Instance ??= new DataCollectionManager(messageSink, requestData, telemetryReporter);
             }
         }
 
@@ -528,7 +534,7 @@ internal class DataCollectionManager : IDataCollectionManager
 
         try
         {
-            dataCollectorInfo.InitializeDataCollector();
+            dataCollectorInfo.InitializeDataCollector(_telemetryReporter);
             TPDebug.Assert(dataCollectorConfig is not null, "dataCollectorConfig is null");
             lock (RunDataCollectors)
             {
