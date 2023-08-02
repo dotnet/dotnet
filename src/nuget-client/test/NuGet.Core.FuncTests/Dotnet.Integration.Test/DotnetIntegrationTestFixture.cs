@@ -285,7 +285,7 @@ namespace Dotnet.Integration.Test
                         stopwatch.Elapsed.TotalSeconds,
                         Environment.NewLine,
                         result.AllOutput);
-                    
+
                 }
                 else
                 {

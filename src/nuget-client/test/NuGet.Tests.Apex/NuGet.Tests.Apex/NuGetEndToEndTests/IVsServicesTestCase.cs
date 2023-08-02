@@ -88,7 +88,7 @@ namespace NuGet.Tests.Apex
             // Arrange
             await CommonUtility.CreatePackageInSourceAsync(_pathContext.PackageSource, TestPackageName, TestPackageVersionV1);
             _pathContext.Settings.AddPackageSourceMapping(PrimarySourceName, "Contoso.*", "Test.*");
-            
+
             NuGetApexTestService nugetTestService = GetNuGetTestService();
 
             SolutionService solutionService = VisualStudio.Get<SolutionService>();
@@ -111,7 +111,7 @@ namespace NuGet.Tests.Apex
             await CommonUtility.CreateNetFrameworkPackageInSourceAsync(_pathContext.PackageSource, TestPackageName, TestPackageVersionV1, "Thisisfromprivaterepo1.txt");
             await CommonUtility.CreateNetFrameworkPackageInSourceAsync(_pathContext.PackageSource, TestPackageName, TestPackageVersionV2, "Thisisfromprivaterepo2.txt");
             _pathContext.Settings.AddPackageSourceMapping(PrimarySourceName, "Contoso.*", "Test.*");
-            
+
             NuGetApexTestService nugetTestService = GetNuGetTestService();
 
             SolutionService solutionService = VisualStudio.Get<SolutionService>();

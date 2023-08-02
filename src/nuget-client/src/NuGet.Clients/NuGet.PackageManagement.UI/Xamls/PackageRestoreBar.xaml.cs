@@ -126,8 +126,7 @@ namespace NuGet.PackageManagement.UI
 
                         // if the project is PR and there is no restore running, check for missing assets file
                         // otherwise check for missing packages
-                        if (await ExperimentUtility.IsTransitiveOriginExpEnabled.GetValueAsync(CancellationToken.None) &&
-                            _projectContextInfo?.ProjectStyle == ProjectModel.ProjectStyle.PackageReference &&
+                        if (_projectContextInfo?.ProjectStyle == ProjectModel.ProjectStyle.PackageReference &&
                             _solutionRestoreWorker.IsRunning == false &&
                             await GetMissingAssetsFileStatusAsync(_projectContextInfo.ProjectId))
                         {

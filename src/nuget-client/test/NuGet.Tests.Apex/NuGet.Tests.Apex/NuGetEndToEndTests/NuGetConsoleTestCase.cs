@@ -921,7 +921,7 @@ namespace NuGet.Tests.Apex
             {
                 // Arrange
                 SolutionService solutionService = VisualStudio.Get<SolutionService>();
-                var nugetConsole = GetConsole(testContext.Project);                           
+                var nugetConsole = GetConsole(testContext.Project);
                 var source = NuGetConstants.V3FeedUrl;
 
                 // Act
@@ -938,7 +938,7 @@ namespace NuGet.Tests.Apex
                 Assert.True(nugetConsole.IsMessageFoundInPMC("install.ps1"), "The install.ps1 script in TestProject was not executed when the jquery package was installed.");
 
                 // Act
-                nugetConsole.Clear();                
+                nugetConsole.Clear();
                 nugetConsole.Execute($"install-package entityframework.sqlservercompact -source {source} -Verbose");
 
                 // Assert

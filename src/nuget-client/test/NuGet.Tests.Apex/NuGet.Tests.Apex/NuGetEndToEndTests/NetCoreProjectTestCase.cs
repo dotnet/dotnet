@@ -179,7 +179,7 @@ namespace NuGet.Tests.Apex
                     VisualStudio.ClearWindows();
 
                     // Act
-                    uiwindow.UpdatePackageFromUI(packageName, packageVersion2);                    
+                    uiwindow.UpdatePackageFromUI(packageName, packageVersion2);
 
                     // Assert
                     VisualStudio.AssertNuGetOutputDoesNotHaveErrors();

@@ -3,7 +3,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using NuGet.Frameworks;
 using NuGet.Shared;
 
@@ -53,11 +52,7 @@ namespace NuGet.ProjectModel
             combiner.AddObject(TargetFramework);
             combiner.AddObject(RuntimeIdentifier);
             combiner.AddObject(Name);
-
-            foreach (var library in Libraries.OrderBy(library => library.Name, StringComparer.OrdinalIgnoreCase))
-            {
-                combiner.AddObject(library);
-            }
+            combiner.AddUnorderedSequence(Libraries);
 
             return combiner.CombinedHash;
         }

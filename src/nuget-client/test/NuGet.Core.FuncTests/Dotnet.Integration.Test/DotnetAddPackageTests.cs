@@ -203,7 +203,7 @@ namespace Dotnet.Integration.Test
 
                 // Make sure source is replaced in generated dgSpec file.
                 PackageSpec packageSpec = projectA.AssetsFile.PackageSpec;
-                
+
                 packageSpec.RestoreMetadata.Sources.Select(s => s.Name).Should().ContainSingle()
                     .Which.Should().Be(pathContext.PackageSource);
 

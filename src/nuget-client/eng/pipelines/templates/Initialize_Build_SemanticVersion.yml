@@ -1,4 +1,13 @@
 steps:
+- task: PowerShell@1
+  displayName: "Initialize Git Commit Status on GitHub"
+  inputs:
+    scriptType: "inlineScript"
+    inlineScript: |
+      . $(Build.Repository.LocalPath)\\scripts\\utils\\PostGitCommitStatus.ps1
+      InitializeAllTestsToPending -PersonalAccessToken $(NuGetLurkerPersonalAccessToken) -CommitSha $(Build.SourceVersion)
+  condition: "not(eq(variables['ManualGitHubChecks'], 'false'))"
+
 - task: PublishPipelineArtifact@1
   displayName: "Save build YAML"
   inputs:

@@ -17,6 +17,7 @@ using NuGet.DependencyResolver;
 using NuGet.Frameworks;
 using NuGet.LibraryModel;
 using NuGet.ProjectModel;
+using NuGet.Protocol;
 using NuGet.Protocol.Model;
 using NuGet.RuntimeModel;
 using NuGet.Test.Utility;
@@ -95,7 +96,7 @@ public class AuditUtilityTests
         var context = new AuditTestContext();
 
         var packageVulnerabilities = context.WithVulnerabilityProvider().WithPackageVulnerability("SomePackage");
-        packageVulnerabilities.Add(new PackageVulnerabilityInfo(CveUrl, 1, UpToV2));
+        packageVulnerabilities.Add(new PackageVulnerabilityInfo(CveUrl, PackageVulnerabilitySeverity.Moderate, UpToV2));
 
         context.WithRestoreTarget();
 
@@ -112,12 +113,12 @@ public class AuditUtilityTests
     }
 
     [Theory]
-    [InlineData(0, NuGetLogCode.NU1901)]
-    [InlineData(1, NuGetLogCode.NU1902)]
-    [InlineData(2, NuGetLogCode.NU1903)]
-    [InlineData(3, NuGetLogCode.NU1904)]
-    [InlineData(4, NuGetLogCode.NU1900)]
-    public async Task Check_ProjectReferencingPackageWithVulnerability_WarningLogged(int severity, NuGetLogCode expectedCode)
+    [InlineData(PackageVulnerabilitySeverity.Low, NuGetLogCode.NU1901)]
+    [InlineData(PackageVulnerabilitySeverity.Moderate, NuGetLogCode.NU1902)]
+    [InlineData(PackageVulnerabilitySeverity.High, NuGetLogCode.NU1903)]
+    [InlineData(PackageVulnerabilitySeverity.Critical, NuGetLogCode.NU1904)]
+    [InlineData(PackageVulnerabilitySeverity.Unknown, NuGetLogCode.NU1900)]
+    public async Task Check_ProjectReferencingPackageWithVulnerability_WarningLogged(PackageVulnerabilitySeverity severity, NuGetLogCode expectedCode)
     {
         // Arrange
         var context = new AuditTestContext();
@@ -167,23 +168,23 @@ public class AuditUtilityTests
         auditUtility.TransitivePackagesWithAdvisory.Should().NotBeNull();
         auditUtility.TransitivePackagesWithAdvisory!.Should().BeEquivalentTo(new[] { "pkgb" });
 
-        int expectedCount = severity == 0 ? 1 : 0;
+        int expectedCount = severity == PackageVulnerabilitySeverity.Low ? 1 : 0;
         auditUtility.Sev0DirectMatches.Should().Be(expectedCount);
         auditUtility.Sev0TransitiveMatches.Should().Be(expectedCount);
 
-        expectedCount = severity == 1 ? 1 : 0;
+        expectedCount = severity == PackageVulnerabilitySeverity.Moderate ? 1 : 0;
         auditUtility.Sev1DirectMatches.Should().Be(expectedCount);
         auditUtility.Sev1TransitiveMatches.Should().Be(expectedCount);
 
-        expectedCount = severity == 2 ? 1 : 0;
+        expectedCount = severity == PackageVulnerabilitySeverity.High ? 1 : 0;
         auditUtility.Sev2DirectMatches.Should().Be(expectedCount);
         auditUtility.Sev2TransitiveMatches.Should().Be(expectedCount);
 
-        expectedCount = severity == 3 ? 1 : 0;
+        expectedCount = severity == PackageVulnerabilitySeverity.Critical ? 1 : 0;
         auditUtility.Sev3DirectMatches.Should().Be(expectedCount);
         auditUtility.Sev3TransitiveMatches.Should().Be(expectedCount);
 
-        expectedCount = severity < 0 || severity > 3 ? 1 : 0;
+        expectedCount = severity == PackageVulnerabilitySeverity.Unknown ? 1 : 0;
         auditUtility.InvalidSevDirectMatches.Should().Be(expectedCount);
         auditUtility.InvalidSevTransitiveMatches.Should().Be(expectedCount);
 
@@ -195,7 +196,6 @@ public class AuditUtilityTests
             message.ProjectPath.Should().Be(context.ProjectFullPath);
             message.LibraryId.Should().Be(packageId);
             message.TargetGraphs.Should().BeEquivalentTo(new[] { "net6.0" });
-
         }
     }
 
@@ -206,7 +206,7 @@ public class AuditUtilityTests
         var context = new AuditTestContext();
         context.Mode = "all";
 
-        PackageVulnerabilityInfo commonKnownVulnerability = new PackageVulnerabilityInfo(CveUrl, severity: 1, UpToV2);
+        PackageVulnerabilityInfo commonKnownVulnerability = new PackageVulnerabilityInfo(CveUrl, PackageVulnerabilitySeverity.Moderate, UpToV2);
         Uri cve2Url = new("https://cve.test/2");
         Uri cve3Url = new("https://cve.test/3");
 
@@ -214,13 +214,13 @@ public class AuditUtilityTests
         var vulnerabilityProvider = context.WithVulnerabilityProvider();
         var knownVulnerabilities = vulnerabilityProvider.WithPackageVulnerability("pkga");
         knownVulnerabilities.Add(commonKnownVulnerability);
-        knownVulnerabilities.Add(new PackageVulnerabilityInfo(cve2Url, severity: 1, UpToV2));
+        knownVulnerabilities.Add(new PackageVulnerabilityInfo(cve2Url, PackageVulnerabilitySeverity.Moderate, UpToV2));
 
         // provider 2 knows about vulnerabilities 1 and 3
         vulnerabilityProvider = context.WithVulnerabilityProvider();
         knownVulnerabilities = vulnerabilityProvider.WithPackageVulnerability("pkga");
         knownVulnerabilities.Add(commonKnownVulnerability);
-        knownVulnerabilities.Add(new PackageVulnerabilityInfo(cve3Url, severity: 1, UpToV2));
+        knownVulnerabilities.Add(new PackageVulnerabilityInfo(cve3Url, PackageVulnerabilitySeverity.Moderate, UpToV2));
 
         context.WithRestoreTarget().DependsOn("pkga", "1.0.0");
         context.PackagesDependencyProvider.Package("pkga", "1.0.0");
@@ -269,7 +269,7 @@ public class AuditUtilityTests
         pkgaVulnerabilities.Add(
             new PackageVulnerabilityInfo(
                 new Uri("https://cve.test/cve1"),
-                severity: 1,
+                PackageVulnerabilitySeverity.Moderate,
                 new VersionRange(maxVersion: new NuGetVersion(2, 0, 0), includeMaxVersion: false)));
 
         // Act
@@ -309,7 +309,7 @@ public class AuditUtilityTests
         pkgaVulnerabilities.Add(
             new PackageVulnerabilityInfo(
                 new Uri("https://cve.test/cve1"),
-                severity: 1,
+                PackageVulnerabilitySeverity.Moderate,
                 new VersionRange(maxVersion: new NuGetVersion(2, 0, 0), includeMaxVersion: false)));
 
         // Act

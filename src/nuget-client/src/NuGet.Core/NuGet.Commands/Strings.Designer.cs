@@ -2375,38 +2375,38 @@ namespace NuGet.Commands {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to low.
+        ///   Looks up a localized string similar to critical.
         /// </summary>
-        internal static string Vulnerability_Severity_1 {
+        internal static string Vulnerability_Severity_Critical {
             get {
-                return ResourceManager.GetString("Vulnerability_Severity_1", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to moderate.
-        /// </summary>
-        internal static string Vulnerability_Severity_2 {
-            get {
-                return ResourceManager.GetString("Vulnerability_Severity_2", resourceCulture);
+                return ResourceManager.GetString("Vulnerability_Severity_Critical", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to high.
         /// </summary>
-        internal static string Vulnerability_Severity_3 {
+        internal static string Vulnerability_Severity_High {
             get {
-                return ResourceManager.GetString("Vulnerability_Severity_3", resourceCulture);
+                return ResourceManager.GetString("Vulnerability_Severity_High", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to critical.
+        ///   Looks up a localized string similar to low.
         /// </summary>
-        internal static string Vulnerability_Severity_4 {
+        internal static string Vulnerability_Severity_Low {
             get {
-                return ResourceManager.GetString("Vulnerability_Severity_4", resourceCulture);
+                return ResourceManager.GetString("Vulnerability_Severity_Low", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to moderate.
+        /// </summary>
+        internal static string Vulnerability_Severity_Moderate {
+            get {
+                return ResourceManager.GetString("Vulnerability_Severity_Moderate", resourceCulture);
             }
         }
         

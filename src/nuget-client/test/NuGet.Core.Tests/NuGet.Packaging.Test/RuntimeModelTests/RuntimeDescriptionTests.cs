@@ -45,7 +45,7 @@ public sealed class RuntimeDescriptionTests
     [Fact]
     public void Merge_UsesLeftImportsIfRightEmpty()
     {
-        RuntimeDescription l = new(runtimeIdentifier: "rid", Array.Empty<string>(),  Array.Empty<RuntimeDependencySet>());
+        RuntimeDescription l = new(runtimeIdentifier: "rid", Array.Empty<string>(), Array.Empty<RuntimeDependencySet>());
         RuntimeDescription r = new(runtimeIdentifier: "rid", new[] { "InheritedB" }, Array.Empty<RuntimeDependencySet>());
 
         var merged = RuntimeDescription.Merge(l, r);

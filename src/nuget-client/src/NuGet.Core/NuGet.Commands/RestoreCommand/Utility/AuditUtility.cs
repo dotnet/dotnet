@@ -13,6 +13,7 @@ using NuGet.Common;
 using NuGet.DependencyResolver;
 using NuGet.LibraryModel;
 using NuGet.Packaging.Core;
+using NuGet.Protocol;
 using NuGet.Protocol.Model;
 using NuGet.Versioning;
 
@@ -27,7 +28,7 @@ namespace NuGet.Commands.Restore.Utility
         private readonly IReadOnlyList<IVulnerabilityInformationProvider> _vulnerabilityInfoProviders;
         private readonly ILogger _logger;
 
-        internal int MinSeverity { get; }
+        internal PackageVulnerabilitySeverity MinSeverity { get; }
         internal NuGetAuditMode AuditMode { get; }
         internal List<string>? DirectPackagesWithAdvisory { get; private set; }
         internal List<string>? TransitivePackagesWithAdvisory { get; private set; }
@@ -176,11 +177,11 @@ namespace NuGet.Commands.Restore.Utility
 
                     foreach (var advisory in auditInfo.GraphsPerVulnerability.Keys)
                     {
-                        int severity = advisory.Severity;
-                        if (severity == 0) { Sev0DirectMatches++; }
-                        else if (severity == 1) { Sev1DirectMatches++; }
-                        else if (severity == 2) { Sev2DirectMatches++; }
-                        else if (severity == 3) { Sev3DirectMatches++; }
+                        PackageVulnerabilitySeverity severity = advisory.Severity;
+                        if (severity == PackageVulnerabilitySeverity.Low) { Sev0DirectMatches++; }
+                        else if (severity == PackageVulnerabilitySeverity.Moderate) { Sev1DirectMatches++; }
+                        else if (severity == PackageVulnerabilitySeverity.High) { Sev2DirectMatches++; }
+                        else if (severity == PackageVulnerabilitySeverity.Critical) { Sev3DirectMatches++; }
                         else { InvalidSevDirectMatches++; }
                     }
                 }
@@ -190,11 +191,11 @@ namespace NuGet.Commands.Restore.Utility
 
                     foreach (var advisory in auditInfo.GraphsPerVulnerability.Keys)
                     {
-                        int severity = advisory.Severity;
-                        if (severity == 0) { Sev0TransitiveMatches++; }
-                        else if (severity == 1) { Sev1TransitiveMatches++; }
-                        else if (severity == 2) { Sev2TransitiveMatches++; }
-                        else if (severity == 3) { Sev3TransitiveMatches++; }
+                        PackageVulnerabilitySeverity severity = advisory.Severity;
+                        if (severity == PackageVulnerabilitySeverity.Low) { Sev0TransitiveMatches++; }
+                        else if (severity == PackageVulnerabilitySeverity.Moderate) { Sev1TransitiveMatches++; }
+                        else if (severity == PackageVulnerabilitySeverity.High) { Sev2TransitiveMatches++; }
+                        else if (severity == PackageVulnerabilitySeverity.Critical) { Sev3TransitiveMatches++; }
                         else { InvalidSevTransitiveMatches++; }
                     }
                 }
@@ -234,18 +235,18 @@ namespace NuGet.Commands.Restore.Utility
             return vulnerabilities != null ? vulnerabilities.ToList() : null;
         }
 
-        private static (string severityLabel, NuGetLogCode code) GetSeverityLabelAndCode(int severity)
+        private static (string severityLabel, NuGetLogCode code) GetSeverityLabelAndCode(PackageVulnerabilitySeverity severity)
         {
             switch (severity)
             {
-                case 0:
-                    return (Strings.Vulnerability_Severity_1, NuGetLogCode.NU1901);
-                case 1:
-                    return (Strings.Vulnerability_Severity_2, NuGetLogCode.NU1902);
-                case 2:
-                    return (Strings.Vulnerability_Severity_3, NuGetLogCode.NU1903);
-                case 3:
-                    return (Strings.Vulnerability_Severity_4, NuGetLogCode.NU1904);
+                case PackageVulnerabilitySeverity.Low:
+                    return (Strings.Vulnerability_Severity_Low, NuGetLogCode.NU1901);
+                case PackageVulnerabilitySeverity.Moderate:
+                    return (Strings.Vulnerability_Severity_Moderate, NuGetLogCode.NU1902);
+                case PackageVulnerabilitySeverity.High:
+                    return (Strings.Vulnerability_Severity_High, NuGetLogCode.NU1903);
+                case PackageVulnerabilitySeverity.Critical:
+                    return (Strings.Vulnerability_Severity_Critical, NuGetLogCode.NU1904);
                 default:
                     return (Strings.Vulnerability_Severity_unknown, NuGetLogCode.NU1900);
             }
@@ -272,7 +273,7 @@ namespace NuGet.Commands.Restore.Utility
 
                         foreach (PackageVulnerabilityInfo knownVulnerability in knownVulnerabilitiesForPackage)
                         {
-                            if (knownVulnerability.Severity < MinSeverity)
+                            if ((int)knownVulnerability.Severity < (int)MinSeverity && knownVulnerability.Severity != PackageVulnerabilitySeverity.Unknown)
                             {
                                 continue;
                             }
@@ -363,30 +364,30 @@ namespace NuGet.Commands.Restore.Utility
             return final;
         }
 
-        private int ParseAuditLevel()
+        private PackageVulnerabilitySeverity ParseAuditLevel()
         {
             string? auditLevel = _restoreAuditProperties.AuditLevel?.Trim();
 
             if (auditLevel == null)
             {
-                return 0;
+                return PackageVulnerabilitySeverity.Low;
             }
 
             if (string.Equals("low", auditLevel, StringComparison.OrdinalIgnoreCase))
             {
-                return 0;
+                return PackageVulnerabilitySeverity.Low;
             }
             if (string.Equals("moderate", auditLevel, StringComparison.OrdinalIgnoreCase))
             {
-                return 1;
+                return PackageVulnerabilitySeverity.Moderate;
             }
             if (string.Equals("high", auditLevel, StringComparison.OrdinalIgnoreCase))
             {
-                return 2;
+                return PackageVulnerabilitySeverity.High;
             }
             if (string.Equals("critical", auditLevel, StringComparison.OrdinalIgnoreCase))
             {
-                return 3;
+                return PackageVulnerabilitySeverity.Critical;
             }
 
             string messageText = string.Format(Strings.Error_InvalidNuGetAuditLevelValue, auditLevel, "low, moderate, high, critical");

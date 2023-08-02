@@ -969,7 +969,7 @@ EndProject");
 }");
 
 
-            CreateFile(filterInSubfolderPath, "filterinsubfolder.slnf",  @"{
+            CreateFile(filterInSubfolderPath, "filterinsubfolder.slnf", @"{
   ""solution"": {
     ""path"": ""..\\a.sln"",
     ""projects"": [

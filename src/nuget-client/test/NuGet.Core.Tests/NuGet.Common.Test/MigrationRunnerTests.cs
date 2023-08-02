@@ -74,7 +74,7 @@ namespace NuGet.Common.Test
             t.Start();
             t.Join();
             Assert.True(signal, userMessage: "Failed to acquire the mutex.");
-            
+
             string directory = MigrationRunner.GetMigrationsDirectory();
             if (Directory.Exists(directory))
                 Directory.Delete(path: directory, recursive: true);
@@ -87,7 +87,7 @@ namespace NuGet.Common.Test
             var files = Directory.GetFiles(directory);
             Assert.Equal(1, files.Length);
             Assert.Equal(Path.Combine(directory, "1"), files[0]);
-            
+
 
             void AbandonMutex()
             {

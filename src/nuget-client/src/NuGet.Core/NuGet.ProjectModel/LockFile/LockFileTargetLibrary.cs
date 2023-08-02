@@ -3,7 +3,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using NuGet.Packaging.Core;
 using NuGet.Shared;
 using NuGet.Versioning;
@@ -201,7 +200,7 @@ namespace NuGet.ProjectModel
                 IList<T>? thisList = thisValue is IList<T> { Count: not 0 } list1 ? list1 : null;
                 IList<T>? thatList = thatValue is IList<T> { Count: not 0 } list2 ? list2 : null;
 
-                return thisList!.OrderedEquals<T, string>(thatList!, accessor, orderComparer: StringComparer.OrdinalIgnoreCase, sequenceComparer: sequenceComparer);
+                return thisList.OrderedEquals<T, string>(thatList, accessor, orderComparer: StringComparer.OrdinalIgnoreCase, sequenceComparer: sequenceComparer);
             }
         }
 
@@ -218,71 +217,19 @@ namespace NuGet.ProjectModel
             combiner.AddObject(Version);
             combiner.AddObject(Type);
             combiner.AddObject(Framework);
-
-            foreach (var dependency in Dependencies.OrderBy(dependency => dependency.Id, StringComparer.OrdinalIgnoreCase))
-            {
-                combiner.AddObject(dependency);
-            }
-
-            foreach (var reference in FrameworkAssemblies.OrderBy(s => s, StringComparer.OrdinalIgnoreCase))
-            {
-                combiner.AddStringIgnoreCase(reference);
-            }
-
-            foreach (var reference in FrameworkReferences.OrderBy(s => s, StringComparer.OrdinalIgnoreCase))
-            {
-                combiner.AddStringIgnoreCase(reference);
-            }
-
-            foreach (var item in RuntimeAssemblies.OrderBy(item => item.Path, StringComparer.OrdinalIgnoreCase))
-            {
-                combiner.AddObject(item);
-            }
-
-            foreach (var item in ResourceAssemblies.OrderBy(item => item.Path, StringComparer.OrdinalIgnoreCase))
-            {
-                combiner.AddObject(item);
-            }
-
-            foreach (var item in CompileTimeAssemblies.OrderBy(item => item.Path, StringComparer.OrdinalIgnoreCase))
-            {
-                combiner.AddObject(item);
-            }
-
-            foreach (var item in NativeLibraries.OrderBy(item => item.Path, StringComparer.OrdinalIgnoreCase))
-            {
-                combiner.AddObject(item);
-            }
-
-            foreach (var item in ContentFiles.OrderBy(item => item.Path, StringComparer.OrdinalIgnoreCase))
-            {
-                combiner.AddObject(item);
-            }
-
-            foreach (var item in RuntimeTargets.OrderBy(item => item.Path, StringComparer.OrdinalIgnoreCase))
-            {
-                combiner.AddObject(item);
-            }
-
-            foreach (var item in Build.OrderBy(item => item.Path, StringComparer.OrdinalIgnoreCase))
-            {
-                combiner.AddObject(item);
-            }
-
-            foreach (var item in BuildMultiTargeting.OrderBy(item => item.Path, StringComparer.OrdinalIgnoreCase))
-            {
-                combiner.AddObject(item);
-            }
-
-            foreach (var item in ToolsAssemblies.OrderBy(item => item.Path, StringComparer.OrdinalIgnoreCase))
-            {
-                combiner.AddObject(item);
-            }
-
-            foreach (var item in EmbedAssemblies.OrderBy(item => item.Path, StringComparer.OrdinalIgnoreCase))
-            {
-                combiner.AddObject(item);
-            }
+            combiner.AddUnorderedSequence(Dependencies);
+            combiner.AddUnorderedSequence(FrameworkAssemblies, StringComparer.OrdinalIgnoreCase);
+            combiner.AddUnorderedSequence(FrameworkReferences, StringComparer.OrdinalIgnoreCase);
+            combiner.AddUnorderedSequence(RuntimeAssemblies);
+            combiner.AddUnorderedSequence(ResourceAssemblies);
+            combiner.AddUnorderedSequence(CompileTimeAssemblies);
+            combiner.AddUnorderedSequence(NativeLibraries);
+            combiner.AddUnorderedSequence(ContentFiles);
+            combiner.AddUnorderedSequence(RuntimeTargets);
+            combiner.AddUnorderedSequence(Build);
+            combiner.AddUnorderedSequence(BuildMultiTargeting);
+            combiner.AddUnorderedSequence(ToolsAssemblies);
+            combiner.AddUnorderedSequence(EmbedAssemblies);
 
             return combiner.CombinedHash;
 

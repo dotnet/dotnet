@@ -8,7 +8,6 @@ using System.Linq;
 using System.Runtime.Caching;
 using System.Threading;
 using System.Threading.Tasks;
-using FluentAssertions;
 using Microsoft.ServiceHub.Framework;
 using Microsoft.ServiceHub.Framework.Services;
 using Microsoft.VisualStudio.ComponentModelHost;
@@ -74,10 +73,6 @@ namespace NuGet.PackageManagement.VisualStudio.Test
             var mockOutputConsoleUtility = OutputConsoleUtility.GetMock();
             _outputConsoleProviderMock = mockOutputConsoleUtility.mockIOutputConsoleProvider;
             _outputConsoleProvider = new Lazy<IOutputConsoleProvider>(() => _outputConsoleProviderMock.Object);
-            var service = new NuGetExperimentationService(Mock.Of<IEnvironmentVariableReader>(), NuGetExperimentationServiceUtility.GetMock(_experimentationFlags), _outputConsoleProvider);
-
-            service.IsExperimentEnabled(ExperimentationConstants.TransitiveDependenciesInPMUI).Should().Be(false);
-            _componentModel.Setup(x => x.GetService<INuGetExperimentationService>()).Returns(service);
 
             globalServiceProvider.AddService(typeof(SComponentModel), _componentModel.Object);
 
@@ -399,32 +394,18 @@ namespace NuGet.PackageManagement.VisualStudio.Test
         }
 
         [Theory]
-        [InlineData(false, ItemFilter.All, true, typeof(MultiSourcePackageFeed))]
-        [InlineData(false, ItemFilter.All, false, typeof(MultiSourcePackageFeed))]
-        [InlineData(false, ItemFilter.Installed, true, typeof(InstalledPackageFeed))]
-        [InlineData(false, ItemFilter.Installed, false, typeof(InstalledPackageFeed))]
-        [InlineData(false, ItemFilter.UpdatesAvailable, true, typeof(UpdatePackageFeed))]
-        [InlineData(false, ItemFilter.UpdatesAvailable, false, typeof(UpdatePackageFeed))]
-        [InlineData(false, ItemFilter.Consolidate, true, typeof(ConsolidatePackageFeed))]
-        [InlineData(false, ItemFilter.Consolidate, false, typeof(ConsolidatePackageFeed))]
-        [InlineData(true, ItemFilter.All, true, typeof(MultiSourcePackageFeed))]
-        [InlineData(true, ItemFilter.All, false, typeof(MultiSourcePackageFeed))]
-        [InlineData(true, ItemFilter.Installed, true, typeof(InstalledPackageFeed))]
-        [InlineData(true, ItemFilter.Installed, false, typeof(InstalledAndTransitivePackageFeed))] // Only when transitive experiment is enabled, show Transitive Dependencies in Installed Tab
-        [InlineData(true, ItemFilter.UpdatesAvailable, true, typeof(UpdatePackageFeed))]
-        [InlineData(true, ItemFilter.UpdatesAvailable, false, typeof(UpdatePackageFeed))]
-        [InlineData(true, ItemFilter.Consolidate, true, typeof(ConsolidatePackageFeed))]
-        [InlineData(true, ItemFilter.Consolidate, false, typeof(ConsolidatePackageFeed))]
-        public async Task CreatePackageFeedAsync_WithTransitiveOriginsExpFlag_OnlyInstalledFeedOnSolutionViewAsync(bool transitiveDependenciesExperimentEnabled, ItemFilter itemFilter, bool isSolution, Type expectedFeedType)
+        [InlineData(ItemFilter.All, true, typeof(MultiSourcePackageFeed))]
+        [InlineData(ItemFilter.All, false, typeof(MultiSourcePackageFeed))]
+        [InlineData(ItemFilter.Installed, true, typeof(InstalledPackageFeed))]
+        [InlineData(ItemFilter.Installed, false, typeof(InstalledAndTransitivePackageFeed))]
+        [InlineData(ItemFilter.UpdatesAvailable, true, typeof(UpdatePackageFeed))]
+        [InlineData(ItemFilter.UpdatesAvailable, false, typeof(UpdatePackageFeed))]
+        [InlineData(ItemFilter.Consolidate, true, typeof(ConsolidatePackageFeed))]
+        [InlineData(ItemFilter.Consolidate, false, typeof(ConsolidatePackageFeed))]
+        public async Task CreatePackageFeedAsync_WithTransitiveOrigins_OnlyInstalledFeedOnSolutionViewAsync(ItemFilter itemFilter, bool isSolution, Type expectedFeedType)
         {
             // Arrange
-            // Recreate async lazy on each test
-            _experimentationFlags[ExperimentationConstants.TransitiveDependenciesInPMUI.FlightFlag] = transitiveDependenciesExperimentEnabled;
-            ExperimentUtility.ResetAsyncValues();
-
             using NuGetPackageSearchService searchService = SetupSearchService();
-            bool expValue = await ExperimentUtility.IsTransitiveOriginExpEnabled.GetValueAsync();
-            Assert.Equal(transitiveDependenciesExperimentEnabled, expValue);
 
             // Act
             (IPackageFeed main, IPackageFeed recommender) = await searchService.CreatePackageFeedAsync(
@@ -439,69 +420,6 @@ namespace NuGet.PackageManagement.VisualStudio.Test
             // Assert
             Assert.IsType(expectedFeedType, main);
             Assert.Null(recommender);
-        }
-
-        [Fact]
-        public async Task CreatePackageFeedAsync_ProjectPMUIInstalledTab_EmitsCounterfactualTelemetryAsync()
-        {
-            // Arrange
-            var telemetrySession = new Mock<ITelemetrySession>();
-            var telemetryEvents = new ConcurrentQueue<TelemetryEvent>();
-            telemetrySession
-                .Setup(x => x.PostEvent(It.IsAny<TelemetryEvent>()))
-                .Callback<TelemetryEvent>(x => telemetryEvents.Enqueue(x));
-            TelemetryActivity.NuGetTelemetryService = new NuGetVSTelemetryService(telemetrySession.Object);
-
-            using NuGetPackageSearchService searchService = SetupSearchService();
-            CounterfactualLoggers.PMUITransitiveDependencies.Reset();
-
-            // Act
-            _ = await searchService.CreatePackageFeedAsync(
-                projectContextInfos: _projects,
-                targetFrameworks: new List<string>() { "net45" },
-                itemFilter: ItemFilter.Installed,
-                isSolution: false,
-                recommendPackages: It.IsAny<bool>(),
-                sourceRepositories: new List<SourceRepository>() { _sourceRepository },
-                cancellationToken: CancellationToken.None);
-
-            // Assert
-            Assert.Contains(telemetryEvents, evt => evt.Name == CounterfactualLoggers.PMUITransitiveDependencies.EventName);
-        }
-
-        [Theory] // Installed tab and and project PM UI emits counterfactual, proved in test above
-        [InlineData(ItemFilter.All, true)]
-        [InlineData(ItemFilter.Installed, true)]
-        [InlineData(ItemFilter.UpdatesAvailable, true)]
-        [InlineData(ItemFilter.Consolidate, true)]
-        [InlineData(ItemFilter.All, false)]
-        [InlineData(ItemFilter.UpdatesAvailable, false)]
-        [InlineData(ItemFilter.Consolidate, false)]
-        public async Task CreatePackageFeedAsync_NotInProjectPMUIInstalledTab_DoesNotEmitCounterfactualTelemetryAsync(ItemFilter itemFilter, bool isSolution)
-        {
-            // Arrange
-            var telemetrySession = new Mock<ITelemetrySession>();
-            var telemetryEvents = new ConcurrentQueue<TelemetryEvent>();
-            telemetrySession
-                .Setup(x => x.PostEvent(It.IsAny<TelemetryEvent>()))
-                .Callback<TelemetryEvent>(x => telemetryEvents.Enqueue(x));
-            TelemetryActivity.NuGetTelemetryService = new NuGetVSTelemetryService(telemetrySession.Object);
-
-            using NuGetPackageSearchService searchService = SetupSearchService();
-            CounterfactualLoggers.PMUITransitiveDependencies.Reset();
-
-            // Act
-            _ = await searchService.CreatePackageFeedAsync(
-                projectContextInfos: _projects,
-                targetFrameworks: new List<string>() { "net45" },
-                itemFilter: itemFilter,
-                isSolution: isSolution,
-                recommendPackages: It.IsAny<bool>(),
-                sourceRepositories: new List<SourceRepository>() { _sourceRepository },
-                cancellationToken: CancellationToken.None);
-
-            // Assert
-            Assert.DoesNotContain(telemetryEvents, evt => evt.Name == CounterfactualLoggers.PMUITransitiveDependencies.EventName);
         }
 
         private NuGetPackageSearchService SetupSearchService()

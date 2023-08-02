@@ -3,7 +3,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using NuGet.Shared;
 using NuGet.Versioning;
 
@@ -79,11 +78,7 @@ namespace NuGet.ProjectModel
             combiner.AddObject(Version);
             combiner.AddObject(Path);
             combiner.AddObject(MSBuildProject);
-
-            foreach (var file in Files.OrderBy(s => s, StringComparer.Ordinal))
-            {
-                combiner.AddObject(file);
-            }
+            combiner.AddUnorderedSequence(Files);
 
             return combiner.CombinedHash;
         }

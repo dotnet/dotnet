@@ -62,7 +62,7 @@ namespace NuGet.Tests.Apex
             string packageVersion,
             X509Certificate2 testCertificate,
             Uri v3ServiceIndexUrl,
-            IReadOnlyList<string>packageOwners = null,
+            IReadOnlyList<string> packageOwners = null,
             Uri timestampProviderUrl = null)
         {
             var package = CreatePackage(packageName, packageVersion);
@@ -97,7 +97,8 @@ namespace NuGet.Tests.Apex
             package.IsPrimarySigned = true;
             package.PrimarySignatureCertificate = authorCertificate;
 
-            if (package.PrimaryTimestampProvider == null && timestampProviderUrl != null) {
+            if (package.PrimaryTimestampProvider == null && timestampProviderUrl != null)
+            {
                 package.PrimaryTimestampProvider = new Rfc3161TimestampProvider(timestampProviderUrl);
             }
 
@@ -353,7 +354,7 @@ namespace NuGet.Tests.Apex
         {
             var numAttempts = 0;
             LockFileLibrary lockFileLibrary = null;
-            while(numAttempts++ < 3)
+            while (numAttempts++ < 3)
             {
                 var version = NuGetVersion.Parse(packageVersion);
                 var lockFile = GetAssetsFileWithRetry(pathToAssetsFile);

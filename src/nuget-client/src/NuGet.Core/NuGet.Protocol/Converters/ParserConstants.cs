@@ -75,5 +75,6 @@ namespace NuGet.Protocol
         public const string Vulnerabilities = "vulnerabilities";
         public const string AdvisoryUrl = "advisoryUrl";
         public const string Severity = "severity";
+        public const string Url = "url";
     }
 }
