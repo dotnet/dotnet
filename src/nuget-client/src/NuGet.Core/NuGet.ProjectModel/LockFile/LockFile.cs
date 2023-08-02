@@ -4,7 +4,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using NuGet.Common;
 using NuGet.Frameworks;
 using NuGet.Shared;
 using NuGet.Versioning;
@@ -192,62 +191,15 @@ namespace NuGet.ProjectModel
             var combiner = new HashCodeCombiner();
 
             combiner.AddObject(Version);
-
-            HashProjectFileDependencyGroups(combiner, ProjectFileDependencyGroups);
-
-            foreach (var item in Libraries.OrderBy(library => library.Name, StringComparer.OrdinalIgnoreCase))
-            {
-                combiner.AddObject(item);
-            }
-
-            HashLockFileTargets(combiner, Targets);
-
-            foreach (var item in PackageFolders)
-            {
-                combiner.AddObject(item);
-            }
-
+            combiner.AddUnorderedSequence(ProjectFileDependencyGroups);
+            combiner.AddUnorderedSequence(Libraries);
+            combiner.AddUnorderedSequence(Targets);
+            combiner.AddSequence(PackageFolders); // ordered
             combiner.AddObject(PackageSpec);
-
-            HashLogMessages(combiner, LogMessages);
-
-            HashCentralTransitiveDependencyGroups(combiner, CentralTransitiveDependencyGroups);
+            combiner.AddUnorderedSequence(LogMessages);
+            combiner.AddUnorderedSequence(CentralTransitiveDependencyGroups);
 
             return combiner.CombinedHash;
-        }
-
-        private static void HashLockFileTargets(HashCodeCombiner combiner, IList<LockFileTarget> targets)
-        {
-            foreach (var item in targets.OrderBy(target => target.Name, StringComparer.OrdinalIgnoreCase))
-            {
-                combiner.AddObject(item);
-            }
-        }
-
-        private static void HashProjectFileDependencyGroups(HashCodeCombiner combiner, IList<ProjectFileDependencyGroup> groups)
-        {
-            foreach (var item in groups.OrderBy(
-                group => @group.FrameworkName, StringComparer.OrdinalIgnoreCase))
-            {
-                combiner.AddObject(item);
-            }
-        }
-
-        private static void HashCentralTransitiveDependencyGroups(HashCodeCombiner combiner, IList<CentralTransitiveDependencyGroup> groups)
-        {
-            foreach (CentralTransitiveDependencyGroup item in groups.OrderBy(group => group.FrameworkName, StringComparer.OrdinalIgnoreCase))
-            {
-                combiner.AddObject(item);
-            }
-        }
-
-        private static void HashLogMessages(HashCodeCombiner combiner, IList<IAssetsLogMessage> logMessages)
-        {
-            foreach (var item in logMessages.OrderBy(
-                logMessage => @logMessage.Message, StringComparer.Ordinal))
-            {
-                combiner.AddObject(item);
-            }
         }
     }
 }

@@ -3,7 +3,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using NuGet.Shared;
 
 namespace NuGet.ProjectModel
@@ -55,14 +54,7 @@ namespace NuGet.ProjectModel
             var combiner = new HashCodeCombiner();
 
             combiner.AddStringIgnoreCase(FrameworkName);
-
-            if (Dependencies != null)
-            {
-                foreach (var dependency in Dependencies.OrderBy(s => s, StringComparer.OrdinalIgnoreCase))
-                {
-                    combiner.AddStringIgnoreCase(dependency);
-                }
-            }
+            combiner.AddUnorderedSequence(Dependencies, StringComparer.OrdinalIgnoreCase);
 
             return combiner.CombinedHash;
         }

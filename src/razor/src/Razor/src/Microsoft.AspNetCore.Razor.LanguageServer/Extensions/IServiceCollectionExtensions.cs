@@ -32,12 +32,12 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer.Extensions;
 
 internal static class IServiceCollectionExtensions
 {
-    public static void AddLifeCycleServices(this IServiceCollection services, RazorLanguageServer razorLanguageServer, ClientNotifierServiceBase serverManager)
+    public static void AddLifeCycleServices(this IServiceCollection services, RazorLanguageServer razorLanguageServer, ClientNotifierServiceBase serverManager, ILspServerActivationTracker? lspServerActivationTracker)
     {
         services.AddHandler<RazorInitializeEndpoint>();
         services.AddHandler<RazorInitializedEndpoint>();
 
-        var razorLifeCycleManager = new RazorLifeCycleManager(razorLanguageServer);
+        var razorLifeCycleManager = new RazorLifeCycleManager(razorLanguageServer, lspServerActivationTracker);
         services.AddSingleton<ILifeCycleManager>(razorLifeCycleManager);
         services.AddSingleton<RazorLifeCycleManager>(razorLifeCycleManager);
         services.AddSingleton<IInitializeManager<InitializeParams, InitializeResult>, CapabilitiesManager>();

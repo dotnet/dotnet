@@ -28,6 +28,13 @@ internal class HtmlTransformer : IHtmlTransformer
     /// </summary>
     public void Transform(string xmlFile, string htmlFile)
     {
-        _xslTransform.Transform(xmlFile, htmlFile);
+
+        // DCS happily serializes characters into character references that are not strictly valid XML,
+        // for example &#xFFFF;. DCS will load them, but for XSL to load them here we need to pass it
+        // a reader that we've configured to be tolerant of such references.
+        using XmlReader xr = XmlReader.Create(xmlFile, new XmlReaderSettings() { CheckCharacters = false });
+        using XmlWriter xw = XmlWriter.Create(htmlFile, new XmlWriterSettings() { CheckCharacters = false });
+
+        _xslTransform.Transform(xr, xw);
     }
 }

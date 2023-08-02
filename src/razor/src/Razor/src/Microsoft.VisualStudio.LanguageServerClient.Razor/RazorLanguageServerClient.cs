@@ -40,6 +40,7 @@ internal class RazorLanguageServerClient : ILanguageClient, ILanguageClientCusto
     private readonly ILanguageServiceBroker2 _languageServiceBroker;
     private readonly ITelemetryReporter _telemetryReporter;
     private readonly IClientSettingsManager _clientSettingsManager;
+    private readonly ILspServerActivationTracker _lspServerActivationTracker;
     private readonly RazorLanguageServerCustomMessageTarget _customMessageTarget;
     private readonly ILanguageClientMiddleLayer _middleLayer;
     private readonly LSPRequestInvoker _requestInvoker;
@@ -75,6 +76,7 @@ internal class RazorLanguageServerClient : ILanguageClient, ILanguageClientCusto
         ILanguageServiceBroker2 languageServiceBroker,
         ITelemetryReporter telemetryReporter,
         IClientSettingsManager clientSettingsManager,
+        ILspServerActivationTracker lspServerActivationTracker,
         [Import(AllowDefault = true)] VisualStudioHostServicesProvider? vsHostWorkspaceServicesProvider)
     {
         if (customTarget is null)
@@ -132,6 +134,11 @@ internal class RazorLanguageServerClient : ILanguageClient, ILanguageClientCusto
             throw new ArgumentNullException(nameof(clientSettingsManager));
         }
 
+        if (lspServerActivationTracker is null)
+        {
+            throw new ArgumentNullException(nameof(lspServerActivationTracker));
+        }
+
         _customMessageTarget = customTarget;
         _middleLayer = middleLayer;
         _requestInvoker = requestInvoker;
@@ -145,6 +152,7 @@ internal class RazorLanguageServerClient : ILanguageClient, ILanguageClientCusto
         _projectSnapshotManagerDispatcher = projectSnapshotManagerDispatcher;
         _telemetryReporter = telemetryReporter;
         _clientSettingsManager = clientSettingsManager;
+        _lspServerActivationTracker = lspServerActivationTracker;
     }
 
     public string Name => RazorLSPConstants.RazorLanguageServerName;
@@ -193,6 +201,7 @@ internal class RazorLanguageServerClient : ILanguageClient, ILanguageClientCusto
             ConfigureLanguageServer,
             _languageServerFeatureOptions,
             lspOptions,
+            _lspServerActivationTracker,
             traceSource);
 
         // This must not happen on an RPC endpoint due to UIThread concerns, so ActivateAsync was chosen.
@@ -254,6 +263,9 @@ internal class RazorLanguageServerClient : ILanguageClient, ILanguageClientCusto
         }
 
         await Task.WhenAll(clientLoadTasks).ConfigureAwait(false);
+
+        // We only want to mark the server as activated after the delegated language servers have been initialized.
+        _lspServerActivationTracker.Activated();
     }
 
     private void ConfigureLanguageServer(IServiceCollection serviceCollection)
@@ -341,6 +353,8 @@ internal class RazorLanguageServerClient : ILanguageClient, ILanguageClientCusto
 
     public Task<InitializationFailureContext?> OnServerInitializeFailedAsync(ILanguageClientInitializationInfo initializationState)
     {
+        _lspServerActivationTracker.Deactivated();
+
         var initializationFailureContext = new InitializationFailureContext
         {
             FailureMessage = string.Format(SR.LanguageServer_Initialization_Failed,

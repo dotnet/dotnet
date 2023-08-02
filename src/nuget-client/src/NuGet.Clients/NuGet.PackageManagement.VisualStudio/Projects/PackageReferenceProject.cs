@@ -200,11 +200,10 @@ namespace NuGet.PackageManagement.VisualStudio
                     .Select(g => g.OrderBy(p => p.TargetFramework, FrameworkSorter).First());
             }
 
-            CounterfactualLoggers.TransitiveDependencies.EmitIfNeeded(); // Emit only one event per VS session
             IEnumerable<TransitivePackageReference> transitivePackagesWithOrigins = Enumerable.Empty<TransitivePackageReference>();
             if (includeTransitivePackages)
             {
-                if (includeTransitiveOrigins && await ExperimentUtility.IsTransitiveOriginExpEnabled.GetValueAsync(token))
+                if (includeTransitiveOrigins)
                 {
                     // Compute Transitive Origins
                     if (IsInstalledAndTransitiveComputationNeeded // Cache invalidation

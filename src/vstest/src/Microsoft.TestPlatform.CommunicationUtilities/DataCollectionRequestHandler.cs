@@ -58,28 +58,6 @@ internal class DataCollectionRequestHandler : IDataCollectionRequestHandler, IDi
     /// <summary>
     /// Initializes a new instance of the <see cref="DataCollectionRequestHandler"/> class.
     /// </summary>
-    /// <param name="messageSink">
-    /// The message sink.
-    /// </param>
-    /// <param name="requestData">
-    /// The request data.
-    /// </param>
-    protected DataCollectionRequestHandler(IMessageSink messageSink, IRequestData requestData)
-        : this(
-            new SocketCommunicationManager(),
-            messageSink,
-            DataCollectionManager.Create(messageSink, requestData),
-            new DataCollectionTestCaseEventHandler(messageSink),
-            JsonDataSerializer.Instance,
-            new FileHelper(),
-            requestData)
-    {
-        _messageSink = messageSink;
-    }
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="DataCollectionRequestHandler"/> class.
-    /// </summary>
     /// <param name="communicationManager">
     /// The communication manager.
     /// </param>
@@ -159,11 +137,12 @@ internal class DataCollectionRequestHandler : IDataCollectionRequestHandler, IDi
                 if (Instance == null)
                 {
                     var requestData = new RequestData();
+                    var telemetryReporter = new TelemetryReporter(requestData, communicationManager, JsonDataSerializer.Instance);
 
                     Instance = new DataCollectionRequestHandler(
                         communicationManager,
                         messageSink,
-                        DataCollectionManager.Create(messageSink, requestData),
+                        DataCollectionManager.Create(messageSink, requestData, telemetryReporter),
                         new DataCollectionTestCaseEventHandler(messageSink),
                         JsonDataSerializer.Instance,
                         new FileHelper(),

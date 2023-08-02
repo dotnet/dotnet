@@ -71,20 +71,9 @@ namespace NuGet.PackageManagement.VisualStudio.Test
             componentModel.Setup(x => x.GetService<INuGetProjectContext>()).Returns(_projectContext);
             AddService<SComponentModel>(Task.FromResult((object)componentModel.Object));
 
-            // Force Enable Transitive Origin experiment tests
-            ExperimentationConstants constant = ExperimentationConstants.TransitiveDependenciesInPMUI;
-            var flightsEnabled = new Dictionary<string, bool>()
-            {
-                { constant.FlightFlag, true },
-            };
-
             var mockOutputConsoleUtility = OutputConsoleUtility.GetMock();
             _outputConsoleProviderMock = mockOutputConsoleUtility.mockIOutputConsoleProvider;
             _outputConsoleProvider = new Lazy<IOutputConsoleProvider>(() => _outputConsoleProviderMock.Object);
-            var service = new NuGetExperimentationService(Mock.Of<IEnvironmentVariableReader>(), NuGetExperimentationServiceUtility.GetMock(flightsEnabled), _outputConsoleProvider);
-
-            service.IsExperimentEnabled(ExperimentationConstants.TransitiveDependenciesInPMUI).Should().Be(true);
-            componentModel.Setup(x => x.GetService<INuGetExperimentationService>()).Returns(service);
 
             _logger = new TestLogger(output);
         }
@@ -799,7 +788,7 @@ namespace NuGet.PackageManagement.VisualStudio.Test
         }
 
         [Fact]
-        private async Task GetInstalledAndTransitivePackagesAsync_WithCpsPackageReferenceProject_OneTransitiveReferenceAndEmitsCounterfactualTelemetryAsync()
+        private async Task GetInstalledAndTransitivePackagesAsync_WithCpsPackageReferenceProject_OneTransitiveReferenceAsync()
         {
             // packageA_2.0.0 -> packageB_1.0.0
 
@@ -871,9 +860,6 @@ namespace NuGet.PackageManagement.VisualStudio.Test
             Assert.True(result.Success);
             Assert.True(File.Exists(pajFilepath));
 
-            // Reset sending counterfactual telemetry, for testing purposes
-            CounterfactualLoggers.TransitiveDependencies.Reset();
-
             // Act
             var installedAndTransitive = await _projectManager.GetInstalledAndTransitivePackagesAsync(new[] { projectId }, includeTransitiveOrigins: true, CancellationToken.None);
 
@@ -886,7 +872,6 @@ namespace NuGet.PackageManagement.VisualStudio.Test
             Assert.Equal(1, packagesB.Count());
             Assert.Collection(packagesB,
                 pkg => AssertElement(pkg, "packageA", "2.0.0"));
-            Assert.Contains(telemetryEvents, te => te.Name == CounterfactualLoggers.TransitiveDependencies.EventName);
         }
 
         [Fact]

@@ -4,7 +4,6 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
 using NuGet.Frameworks;
 using NuGet.Packaging.Core;
 using NuGet.Shared;
@@ -82,12 +81,7 @@ namespace NuGet.Packaging
             var combiner = new HashCodeCombiner();
 
             combiner.AddObject(TargetFramework.GetHashCode());
-
-            // order the dependencies by hash code to make this consistent
-            foreach (int hash in Packages.Select(p => p.GetHashCode()).OrderBy(h => h))
-            {
-                combiner.AddObject(hash);
-            }
+            combiner.AddUnorderedSequence(Packages);
 
             return combiner.CombinedHash;
         }

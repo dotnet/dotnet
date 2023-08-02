@@ -503,23 +503,12 @@ namespace NuGet.PackageManagement.VisualStudio
                 }
                 else // is Project
                 {
-                    CounterfactualLoggers.PMUITransitiveDependencies.EmitIfNeeded();
-                    if (await ExperimentUtility.IsTransitiveOriginExpEnabled.GetValueAsync(cancellationToken))
-                    {
-                        // Installed Tab, Project View, Experiment On: needs installed, transitive packages and transitive origins data
-                        IInstalledAndTransitivePackages installedTabWithTransitiveOrigins = await GetInstalledAndTransitivePackagesAsync(projectContextInfos, includeTransitiveOrigins: true, cancellationToken);
-                        PackageCollection installedPackageCollection = PackageCollection.FromPackageReferences(installedTabWithTransitiveOrigins.InstalledPackages);
-                        PackageCollection transitivePackageCollection = PackageCollection.FromPackageReferences(installedTabWithTransitiveOrigins.TransitivePackages);
+                    // Installed Tab, Project View, Experiment On: needs installed, transitive packages and transitive origins data
+                    IInstalledAndTransitivePackages installedTabWithTransitiveOrigins = await GetInstalledAndTransitivePackagesAsync(projectContextInfos, includeTransitiveOrigins: true, cancellationToken);
+                    PackageCollection installedPackageCollection = PackageCollection.FromPackageReferences(installedTabWithTransitiveOrigins.InstalledPackages);
+                    PackageCollection transitivePackageCollection = PackageCollection.FromPackageReferences(installedTabWithTransitiveOrigins.TransitivePackages);
 
-                        packageFeeds.mainFeed = new InstalledAndTransitivePackageFeed(installedPackageCollection, transitivePackageCollection, metadataProvider);
-                    }
-                    else
-                    {
-                        // Installed Tab, Project View, Experiment Off: only needs installed packages
-                        IReadOnlyCollection<IPackageReferenceContextInfo> installedTabPackages = await GetAllInstalledPackagesAsync(projectContextInfos, cancellationToken);
-                        PackageCollection installedPackageCollection = PackageCollection.FromPackageReferences(installedTabPackages);
-                        packageFeeds.mainFeed = new InstalledPackageFeed(installedPackageCollection, metadataProvider);
-                    }
+                    packageFeeds.mainFeed = new InstalledAndTransitivePackageFeed(installedPackageCollection, transitivePackageCollection, metadataProvider);
                 }
 
                 return packageFeeds;

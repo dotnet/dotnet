@@ -3,7 +3,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using NuGet.Frameworks;
 using NuGet.Shared;
 
@@ -61,17 +60,9 @@ namespace NuGet.Packaging
             var combiner = new HashCodeCombiner();
 
             combiner.AddObject(TargetFramework);
-
-            if (FrameworkReferences != null)
-            {
-                foreach (var frameworkReference in FrameworkReferences.OrderBy(e => e))
-                {
-                    combiner.AddObject(frameworkReference);
-                }
-            }
+            combiner.AddUnorderedSequence(FrameworkReferences);
 
             return combiner.CombinedHash;
         }
     }
 }
-

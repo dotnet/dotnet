@@ -29,6 +29,7 @@
     <ProjectReference Include="$(RepoRoot)src\testhost\testhost.csproj" />
     <ProjectReference Include="$(RepoRoot)src\vstest.console\vstest.console.csproj" />
     <ProjectReference Include="$(RepoRoot)playground\MSTest1\MSTest1.csproj" />
+    <ProjectReference Include="$(RepoRoot)src\AttachVS\AttachVS.csproj" />
   </ItemGroup>
   <ItemGroup Condition=" $(TargetFramework.StartsWith('net4')) AND '$(OS)' != 'Windows_NT' ">
     <Reference Include="System" />

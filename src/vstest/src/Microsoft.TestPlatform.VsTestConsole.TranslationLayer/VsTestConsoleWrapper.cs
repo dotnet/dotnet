@@ -21,6 +21,7 @@ using Microsoft.VisualStudio.TestPlatform.ObjectModel.Client;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.Interfaces;
 using Microsoft.VisualStudio.TestPlatform.PlatformAbstractions;
 using Microsoft.VisualStudio.TestPlatform.PlatformAbstractions.Interfaces;
+using Microsoft.VisualStudio.TestPlatform.VsTestConsole.TranslationLayer;
 using Microsoft.VisualStudio.TestPlatform.VsTestConsole.TranslationLayer.Interfaces;
 
 using CommunicationUtilitiesResources = Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Resources.Resources;
@@ -355,6 +356,24 @@ public class VsTestConsoleWrapper : IVsTestConsoleWrapper
         TestSessionInfo? testSessionInfo,
         ITestRunEventsHandler testRunEventsHandler)
     {
+        RunTests(
+            sources,
+            runSettings,
+            options,
+            testSessionInfo,
+            testRunEventsHandler,
+            new NoOpTelemetryEventsHandler());
+    }
+
+    /// <inheritdoc/>
+    public void RunTests(
+        IEnumerable<string> sources,
+        string? runSettings,
+        TestPlatformOptions? options,
+        TestSessionInfo? testSessionInfo,
+        ITestRunEventsHandler testRunEventsHandler,
+        ITelemetryEventsHandler telemetryEventsHandler)
+    {
         var sourceList = sources.ToList();
         _testPlatformEventSource.TranslationLayerExecutionStart(
             0,
@@ -368,7 +387,8 @@ public class VsTestConsoleWrapper : IVsTestConsoleWrapper
             runSettings,
             options,
             testSessionInfo,
-            testRunEventsHandler);
+            testRunEventsHandler,
+            telemetryEventsHandler);
     }
 
     /// <inheritdoc/>
@@ -407,6 +427,24 @@ public class VsTestConsoleWrapper : IVsTestConsoleWrapper
         TestSessionInfo? testSessionInfo,
         ITestRunEventsHandler testRunEventsHandler)
     {
+        RunTests(
+            testCases,
+            runSettings,
+            options,
+            testSessionInfo,
+            testRunEventsHandler,
+            new NoOpTelemetryEventsHandler());
+    }
+
+    /// <inheritdoc/>
+    public void RunTests(
+        IEnumerable<TestCase> testCases,
+        string? runSettings,
+        TestPlatformOptions? options,
+        TestSessionInfo? testSessionInfo,
+        ITestRunEventsHandler testRunEventsHandler,
+        ITelemetryEventsHandler telemetryEventsHandler)
+    {
         var testCaseList = testCases.ToList();
         _testPlatformEventSource.TranslationLayerExecutionStart(
             0,
@@ -420,7 +458,8 @@ public class VsTestConsoleWrapper : IVsTestConsoleWrapper
             runSettings,
             options,
             testSessionInfo,
-            testRunEventsHandler);
+            testRunEventsHandler,
+            telemetryEventsHandler);
     }
 
     /// <inheritdoc/>
@@ -464,6 +503,26 @@ public class VsTestConsoleWrapper : IVsTestConsoleWrapper
         ITestRunEventsHandler testRunEventsHandler,
         ITestHostLauncher customTestHostLauncher)
     {
+        RunTestsWithCustomTestHost(
+            sources,
+            runSettings,
+            options,
+            testSessionInfo,
+            testRunEventsHandler,
+            new NoOpTelemetryEventsHandler(),
+            customTestHostLauncher);
+    }
+
+    /// <inheritdoc/>
+    public void RunTestsWithCustomTestHost(
+        IEnumerable<string> sources,
+        string? runSettings,
+        TestPlatformOptions? options,
+        TestSessionInfo? testSessionInfo,
+        ITestRunEventsHandler testRunEventsHandler,
+        ITelemetryEventsHandler telemetryEventsHandler,
+        ITestHostLauncher customTestHostLauncher)
+    {
         var sourceList = sources.ToList();
         _testPlatformEventSource.TranslationLayerExecutionStart(
             1,
@@ -478,6 +537,7 @@ public class VsTestConsoleWrapper : IVsTestConsoleWrapper
             options,
             testSessionInfo,
             testRunEventsHandler,
+            telemetryEventsHandler,
             customTestHostLauncher);
     }
 
@@ -522,6 +582,26 @@ public class VsTestConsoleWrapper : IVsTestConsoleWrapper
         ITestRunEventsHandler testRunEventsHandler,
         ITestHostLauncher customTestHostLauncher)
     {
+        RunTestsWithCustomTestHost(
+            testCases,
+            runSettings,
+            options,
+            testSessionInfo,
+            testRunEventsHandler,
+            new NoOpTelemetryEventsHandler(),
+            customTestHostLauncher);
+    }
+
+    /// <inheritdoc/>
+    public void RunTestsWithCustomTestHost(
+        IEnumerable<TestCase> testCases,
+        string? runSettings,
+        TestPlatformOptions? options,
+        TestSessionInfo? testSessionInfo,
+        ITestRunEventsHandler testRunEventsHandler,
+        ITelemetryEventsHandler telemetryEventsHandler,
+        ITestHostLauncher customTestHostLauncher)
+    {
         var testCaseList = testCases.ToList();
         _testPlatformEventSource.TranslationLayerExecutionStart(
             1,
@@ -536,6 +616,7 @@ public class VsTestConsoleWrapper : IVsTestConsoleWrapper
             options,
             testSessionInfo,
             testRunEventsHandler,
+            telemetryEventsHandler,
             customTestHostLauncher);
     }
 
@@ -780,6 +861,24 @@ public class VsTestConsoleWrapper : IVsTestConsoleWrapper
         TestSessionInfo? testSessionInfo,
         ITestRunEventsHandler testRunEventsHandler)
     {
+        await RunTestsAsync(
+            sources,
+            runSettings,
+            options,
+            testSessionInfo,
+            testRunEventsHandler,
+            new NoOpTelemetryEventsHandler()).ConfigureAwait(false);
+    }
+
+    /// <inheritdoc/>
+    public async Task RunTestsAsync(
+        IEnumerable<string> sources,
+        string? runSettings,
+        TestPlatformOptions? options,
+        TestSessionInfo? testSessionInfo,
+        ITestRunEventsHandler testRunEventsHandler,
+        ITelemetryEventsHandler telemetryEventsHandler)
+    {
         var sourceList = sources.ToList();
         _testPlatformEventSource.TranslationLayerExecutionStart(
             0,
@@ -793,7 +892,8 @@ public class VsTestConsoleWrapper : IVsTestConsoleWrapper
             runSettings,
             options,
             testSessionInfo,
-            testRunEventsHandler).ConfigureAwait(false);
+            testRunEventsHandler,
+            telemetryEventsHandler).ConfigureAwait(false);
     }
 
     /// <inheritdoc/>
@@ -832,6 +932,24 @@ public class VsTestConsoleWrapper : IVsTestConsoleWrapper
         TestSessionInfo? testSessionInfo,
         ITestRunEventsHandler testRunEventsHandler)
     {
+        await RunTestsAsync(
+            testCases,
+            runSettings,
+            options,
+            testSessionInfo,
+            testRunEventsHandler,
+            new NoOpTelemetryEventsHandler()).ConfigureAwait(false);
+    }
+
+    /// <inheritdoc/>
+    public async Task RunTestsAsync(
+        IEnumerable<TestCase> testCases,
+        string? runSettings,
+        TestPlatformOptions? options,
+        TestSessionInfo? testSessionInfo,
+        ITestRunEventsHandler testRunEventsHandler,
+        ITelemetryEventsHandler telemetryEventsHandler)
+    {
         var testCaseList = testCases.ToList();
         _testPlatformEventSource.TranslationLayerExecutionStart(
             0,
@@ -845,7 +963,8 @@ public class VsTestConsoleWrapper : IVsTestConsoleWrapper
             runSettings,
             options,
             testSessionInfo,
-            testRunEventsHandler).ConfigureAwait(false);
+            testRunEventsHandler,
+            telemetryEventsHandler).ConfigureAwait(false);
     }
 
     /// <inheritdoc/>
@@ -889,6 +1008,26 @@ public class VsTestConsoleWrapper : IVsTestConsoleWrapper
         ITestRunEventsHandler testRunEventsHandler,
         ITestHostLauncher customTestHostLauncher)
     {
+        await RunTestsWithCustomTestHostAsync(
+            sources,
+            runSettings,
+            options,
+            testSessionInfo,
+            testRunEventsHandler,
+            new NoOpTelemetryEventsHandler(),
+            customTestHostLauncher).ConfigureAwait(false);
+    }
+
+    /// <inheritdoc/>
+    public async Task RunTestsWithCustomTestHostAsync(
+        IEnumerable<string> sources,
+        string? runSettings,
+        TestPlatformOptions? options,
+        TestSessionInfo? testSessionInfo,
+        ITestRunEventsHandler testRunEventsHandler,
+        ITelemetryEventsHandler telemetryEventsHandler,
+        ITestHostLauncher customTestHostLauncher)
+    {
         var sourceList = sources.ToList();
         _testPlatformEventSource.TranslationLayerExecutionStart(
             1,
@@ -903,6 +1042,7 @@ public class VsTestConsoleWrapper : IVsTestConsoleWrapper
             options,
             testSessionInfo,
             testRunEventsHandler,
+            telemetryEventsHandler,
             customTestHostLauncher).ConfigureAwait(false);
     }
 
@@ -947,6 +1087,26 @@ public class VsTestConsoleWrapper : IVsTestConsoleWrapper
         ITestRunEventsHandler testRunEventsHandler,
         ITestHostLauncher customTestHostLauncher)
     {
+        await RunTestsWithCustomTestHostAsync(
+            testCases,
+            runSettings,
+            options,
+            testSessionInfo,
+            testRunEventsHandler,
+            new NoOpTelemetryEventsHandler(),
+            customTestHostLauncher).ConfigureAwait(false);
+    }
+
+    /// <inheritdoc/>
+    public async Task RunTestsWithCustomTestHostAsync(
+        IEnumerable<TestCase> testCases,
+        string? runSettings,
+        TestPlatformOptions? options,
+        TestSessionInfo? testSessionInfo,
+        ITestRunEventsHandler testRunEventsHandler,
+        ITelemetryEventsHandler telemetryEventsHandler,
+        ITestHostLauncher customTestHostLauncher)
+    {
         var testCaseList = testCases.ToList();
         _testPlatformEventSource.TranslationLayerExecutionStart(
             1,
@@ -961,6 +1121,7 @@ public class VsTestConsoleWrapper : IVsTestConsoleWrapper
             options,
             testSessionInfo,
             testRunEventsHandler,
+            telemetryEventsHandler,
             customTestHostLauncher).ConfigureAwait(false);
     }
 

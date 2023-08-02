@@ -5,6 +5,7 @@ using System;
 using System.ComponentModel.Design;
 using System.Runtime.InteropServices;
 using System.Threading;
+using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.VisualStudio.ComponentModelHost;
 using Microsoft.VisualStudio.Editor;
 using Microsoft.VisualStudio.Editor.Razor;
@@ -57,9 +58,10 @@ public sealed class RazorPackage : AsyncPackage
             var proximityExpressionResolver = componentModel.GetService<RazorProximityExpressionResolver>();
             var uiThreadOperationExecutor = componentModel.GetService<IUIThreadOperationExecutor>();
             var editorAdaptersFactory = componentModel.GetService<IVsEditorAdaptersFactoryService>();
+            var lspServerActivationTracker = componentModel.GetService<ILspServerActivationTracker>();
             var joinableTaskContext = componentModel.GetService<JoinableTaskContext>();
 
-            return new RazorLanguageService(breakpointResolver, proximityExpressionResolver, uiThreadOperationExecutor, editorAdaptersFactory, joinableTaskContext.Factory);
+            return new RazorLanguageService(breakpointResolver, proximityExpressionResolver, lspServerActivationTracker, uiThreadOperationExecutor, editorAdaptersFactory, joinableTaskContext.Factory);
         }, promote: true);
 
         // Add our command handlers for menu (commands must exist in the .vsct file).

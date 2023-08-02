@@ -1206,7 +1206,7 @@ $@"<?xml version=""1.0"" encoding=""utf-8""?>
   </Target>
   <Import Project=""$(NuGetRestoreTargets)"" />
 </Project>");
-            
+
 
             CommandRunnerResult result = _msbuildFixture.RunMsBuild(pathContext.WorkingDirectory, $"/NoAutoResponse /NoLogo /ConsoleLoggerParameters:Verbosity=Minimal;NoSummary;ForceNoAlign /Target:PrintPackageReferences {projectPath}", ignoreExitCode: false);
 

@@ -442,7 +442,7 @@ public class ExecutionTests : AcceptanceTestBase
 
         string assemblyPaths = string.Join(" ", allDllsMatchingTestPattern.Concat(new[] { testAssemblyPath }).Select(s => s.AddDoubleQuote()));
         InvokeVsTestForExecution(assemblyPaths, testAdapterPath: string.Empty, FrameworkArgValue, string.Empty);
-        var fails = this.StdErrWithWhiteSpace.Split('\n').Where(s => !s.IsNullOrWhiteSpace()).Select(s => s.Trim()).ToList();
+        var fails = StdErrWithWhiteSpace.Split('\n').Where(s => !s.IsNullOrWhiteSpace()).Select(s => s.Trim()).ToList();
         fails.Should().HaveCount(2, "because there is 1 failed test, and one message that tests failed.");
         fails.Last().Should().Be("Test Run Failed.");
     }

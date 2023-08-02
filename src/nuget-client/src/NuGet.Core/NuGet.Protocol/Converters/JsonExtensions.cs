@@ -8,6 +8,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Serialization;
+using NuGet.Protocol.Converters;
 
 namespace NuGet.Protocol
 {
@@ -27,7 +28,8 @@ namespace NuGet.Protocol
                 new StringEnumConverter { NamingStrategy = new CamelCaseNamingStrategy() },
                 new IsoDateTimeConverter { DateTimeStyles = DateTimeStyles.AssumeUniversal },
                 new FingerprintsConverter(),
-                new VersionRangeConverter()
+                new VersionRangeConverter(),
+                new PackageVulnerabilityInfoConverter()
             },
         };
 

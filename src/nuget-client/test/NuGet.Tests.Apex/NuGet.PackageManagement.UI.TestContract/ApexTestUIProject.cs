@@ -146,7 +146,8 @@ namespace NuGet.PackageManagement.UI.TestContract
         /// <summary>
         /// Used for package source mapping Apex tests which require All option in package sources.
         /// </summary>
-        public void SetPackageSourceOptionToAll() => UIInvoke(() => {
+        public void SetPackageSourceOptionToAll() => UIInvoke(() =>
+        {
             // First one is always 'All' option
             _packageManagerControl.SelectedSource = _packageManagerControl.PackageSources.First();
         });

@@ -69,12 +69,14 @@ internal interface ITranslationLayerRequestSender : IDisposable, ITranslationLay
     /// <param name="options">Options to be passed into the platform.</param>
     /// <param name="testSessionInfo">Test session info.</param>
     /// <param name="runEventsHandler">Event handler for test run events.</param>
+    /// <param name="telemetryEventsHandler">Event handler for telemetry events.</param>
     void StartTestRun(
         IEnumerable<string> sources,
         string? runSettings,
         TestPlatformOptions? options,
         TestSessionInfo? testSessionInfo,
-        ITestRunEventsHandler runEventsHandler);
+        ITestRunEventsHandler runEventsHandler,
+        ITelemetryEventsHandler telemetryEventsHandler);
 
     /// <summary>
     /// Starts the test run with given sources and criteria.
@@ -85,12 +87,14 @@ internal interface ITranslationLayerRequestSender : IDisposable, ITranslationLay
     /// <param name="options">Options to be passed into the platform.</param>
     /// <param name="testSessionInfo">Test session info.</param>
     /// <param name="runEventsHandler">Event handler for test run events.</param>
+    /// <param name="telemetryEventsHandler">Event handler for telemetry events.</param>
     void StartTestRun(
         IEnumerable<TestCase> testCases,
         string? runSettings,
         TestPlatformOptions? options,
         TestSessionInfo? testSessionInfo,
-        ITestRunEventsHandler runEventsHandler);
+        ITestRunEventsHandler runEventsHandler,
+        ITelemetryEventsHandler telemetryEventsHandler);
 
     /// <summary>
     /// Starts the test run with given sources and criteria and a custom launcher.
@@ -101,6 +105,7 @@ internal interface ITranslationLayerRequestSender : IDisposable, ITranslationLay
     /// <param name="options">Options to be passed into the platform.</param>
     /// <param name="testSessionInfo">Test session info.</param>
     /// <param name="runEventsHandler">Event handler for test run events.</param>
+    /// <param name="telemetryEventsHandler">Event handler for telemetry events.</param>
     /// <param name="customTestHostLauncher">Custom test host launcher.</param>
     void StartTestRunWithCustomHost(
         IEnumerable<string> sources,
@@ -108,6 +113,7 @@ internal interface ITranslationLayerRequestSender : IDisposable, ITranslationLay
         TestPlatformOptions? options,
         TestSessionInfo? testSessionInfo,
         ITestRunEventsHandler runEventsHandler,
+        ITelemetryEventsHandler telemetryEventsHandler,
         ITestHostLauncher customTestHostLauncher);
 
     /// <summary>
@@ -119,6 +125,7 @@ internal interface ITranslationLayerRequestSender : IDisposable, ITranslationLay
     /// <param name="options">Options to be passed into the platform.</param>
     /// <param name="testSessionInfo">Test session info.</param>
     /// <param name="runEventsHandler">Event handler for test run events.</param>
+    /// <param name="telemetryEventsHandler">Event handler for telemetry events.</param>
     /// <param name="customTestHostLauncher">Custom test host launcher.</param>
     void StartTestRunWithCustomHost(
         IEnumerable<TestCase> testCases,
@@ -126,6 +133,7 @@ internal interface ITranslationLayerRequestSender : IDisposable, ITranslationLay
         TestPlatformOptions? options,
         TestSessionInfo? testSessionInfo,
         ITestRunEventsHandler runEventsHandler,
+        ITelemetryEventsHandler telemetryEventsHandler,
         ITestHostLauncher customTestHostLauncher);
 
     /// <summary>

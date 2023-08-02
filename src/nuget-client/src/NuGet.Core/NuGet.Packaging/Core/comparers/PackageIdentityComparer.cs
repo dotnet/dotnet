@@ -97,7 +97,7 @@ namespace NuGet.Packaging.Core
             var combiner = new HashCodeCombiner();
 
             combiner.AddObject(obj.Id, StringComparer.OrdinalIgnoreCase);
-            combiner.AddObject(_versionComparer.GetHashCode(obj.Version));
+            combiner.AddObject(obj.Version, _versionComparer);
 
             return combiner.CombinedHash;
         }

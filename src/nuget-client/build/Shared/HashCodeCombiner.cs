@@ -133,7 +133,7 @@ namespace NuGet.Shared
             {
                 int count = 0;
                 int hashCode = 0;
-                foreach (var item in list)
+                foreach (var item in list.NoAllocEnumerate())
                 {
                     // XOR is commutative -- the order of operations doesn't matter
                     hashCode ^= item.GetHashCode();
@@ -150,7 +150,7 @@ namespace NuGet.Shared
             {
                 int count = 0;
                 int hashCode = 0;
-                foreach (var item in list)
+                foreach (var item in list.NoAllocEnumerate())
                 {
                     // XOR is commutative -- the order of operations doesn't matter
                     hashCode ^= comparer.GetHashCode(item);

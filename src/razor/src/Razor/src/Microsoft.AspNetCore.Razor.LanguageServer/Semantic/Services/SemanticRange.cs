@@ -13,9 +13,7 @@ internal sealed class SemanticRange : IComparable<SemanticRange>
         Kind = kind;
         Modifier = modifier;
         Range = range;
-#if DEBUG
         FromRazor = fromRazor;
-#endif
     }
 
     public Range Range { get; }
@@ -24,15 +22,12 @@ internal sealed class SemanticRange : IComparable<SemanticRange>
 
     public int Modifier { get; }
 
-#if DEBUG
     /// <summary>
     /// If we produce a token, and a delegated server produces a token, we want to prefer ours, so we use this flag to help our
     /// sort algorithm, that way we can avoid the perf hit of actually finding duplicates, and just take the first instance that
     /// covers a range.
-    /// Presently used only in Debug
     /// </summary>
     public bool FromRazor { get; }
-#endif
 
     public int CompareTo(SemanticRange? other)
     {
@@ -51,6 +46,16 @@ internal sealed class SemanticRange : IComparable<SemanticRange>
         if (endCompare != 0)
         {
             return endCompare;
+        }
+
+        // If we have ranges that are the same, we want a Razor produced token to win over a non-Razor produced token
+        if (FromRazor && !other.FromRazor)
+        {
+            return -1;
+        }
+        else if (other.FromRazor && !FromRazor)
+        {
+            return 1;
         }
 
         return 0;

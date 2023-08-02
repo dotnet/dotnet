@@ -11,7 +11,7 @@ namespace NuGet.VisualStudio.Common.Test
     {
         public class Dispose : OutputConsoleLoggerTests
         {
-            public Dispose (GlobalServiceProvider sp)
+            public Dispose(GlobalServiceProvider sp)
                 : base(sp)
             {
                 _errorList.Reset();
