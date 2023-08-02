@@ -13,7 +13,6 @@ using BenchmarkDotNet.Attributes;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.LanguageServer;
 using Microsoft.AspNetCore.Razor.LanguageServer.Semantic;
-using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.Extensions.DependencyInjection;
@@ -140,7 +139,7 @@ public class RazorSemanticTokensBenchmark : RazorLanguageServerBenchmarkBase
         }
 
         // We can't get C# responses without significant amounts of extra work, so let's just shim it for now, any non-Null result is fine.
-        internal override Task<PooledObject<List<SemanticRange>>?> GetCSharpSemanticRangesAsync(
+        internal override Task<List<SemanticRange>> GetCSharpSemanticRangesAsync(
             RazorCodeDocument codeDocument,
             TextDocumentIdentifier textDocumentIdentifier,
             Range razorRange,
@@ -150,7 +149,7 @@ public class RazorSemanticTokensBenchmark : RazorLanguageServerBenchmarkBase
             CancellationToken cancellationToken,
             string previousResultId = null)
         {
-            return Task.FromResult<PooledObject<List<SemanticRange>>?>(ListPool<SemanticRange>.GetPooledObject());
+            return Task.FromResult(new List<SemanticRange>());
         }
     }
 }

@@ -10,7 +10,6 @@ using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.VisualStudio.Editor.Razor.Debugging;
 using Microsoft.VisualStudio.LanguageServer.ContainedLanguage;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
-using Microsoft.VisualStudio.LanguageServerClient.Razor.Extensions;
 using Microsoft.VisualStudio.LanguageServerClient.Razor.Test;
 using Microsoft.VisualStudio.Test;
 using Microsoft.VisualStudio.Text;
@@ -186,7 +185,7 @@ $@"public class SomeRazorFile
             throw new ArgumentOutOfRangeException(nameof(content));
         }
 
-        textBuffer.CurrentSnapshot.GetLineAndCharacter(index, out var lineIndex, out var characterIndex);
-        return new Position(lineIndex, characterIndex);
+        var line = textBuffer.CurrentSnapshot.GetLineFromPosition(index);
+        return new Position(line.LineNumber, index - line.Start.Position);
     }
 }

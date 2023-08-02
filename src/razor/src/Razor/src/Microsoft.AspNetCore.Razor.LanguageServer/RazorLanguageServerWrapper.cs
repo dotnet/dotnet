@@ -42,6 +42,7 @@ internal sealed class RazorLanguageServerWrapper : IDisposable
         Action<IServiceCollection>? configure = null,
         LanguageServerFeatureOptions? featureOptions = null,
         RazorLSPOptions? razorLSPOptions = null,
+        ILspServerActivationTracker? lspServerActivationTracker = null,
         TraceSource? traceSource = null)
     {
         var jsonRpc = CreateJsonRpc(input, output);
@@ -59,6 +60,7 @@ internal sealed class RazorLanguageServerWrapper : IDisposable
             featureOptions,
             configure,
             razorLSPOptions,
+            lspServerActivationTracker,
             telemetryReporter);
 
         var razorLanguageServer = new RazorLanguageServerWrapper(server);

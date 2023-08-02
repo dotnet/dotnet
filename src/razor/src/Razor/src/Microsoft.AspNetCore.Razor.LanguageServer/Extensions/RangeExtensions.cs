@@ -138,19 +138,8 @@ internal static class RangeExtensions
             throw new ArgumentOutOfRangeException($"Range end line {range.End.Line} matches or exceeds SourceText boundary {sourceText.Lines.Count}.");
         }
 
-        var startLine = sourceText.Lines[range.Start.Line];
-        TextLine endLine;
-        if (range.Start.Line == range.End.Line)
-        {
-            endLine = startLine;
-        }
-        else
-        {
-            endLine = sourceText.Lines[range.End.Line];
-        }
-
-        var start = startLine.Start + range.Start.Character;
-        var end = endLine.Start + range.End.Character;
+        var start = sourceText.Lines[range.Start.Line].Start + range.Start.Character;
+        var end = sourceText.Lines[range.End.Line].Start + range.End.Character;
 
         var length = end - start;
         if (length < 0)
