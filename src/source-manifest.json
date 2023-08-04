@@ -103,10 +103,10 @@
       "commitSha": "9d732b9cf69896f944a238670eed7edf41127af4"
     },
     {
-      "packageVersion": "8.0.0-alpha.1.23374.2",
+      "packageVersion": "8.0.0-alpha.1.23401.1",
       "path": "source-build-externals",
       "remoteUri": "https://github.com/dotnet/source-build-externals",
-      "commitSha": "b9eb9bc83da8a0dc5b62e67d576867f7f11e7c0c"
+      "commitSha": "ef9a715923692e0a8f693e64e9c2da4bbc0515f3"
     },
     {
       "packageVersion": "8.0.0-alpha.1.23378.3",
@@ -207,6 +207,26 @@
       "path": "source-build-externals/src/newtonsoft-json",
       "remoteUri": "https://github.com/JamesNK/Newtonsoft.Json.git",
       "commitSha": "ae9fe44e1323e91bcbd185ca1a14099fba7c021f"
+    },
+    {
+      "path": "source-build-externals/src/xunit",
+      "remoteUri": "https://github.com/xunit/xunit",
+      "commitSha": "f110e5bee5dfd4c08339587c9c3df9292fcb597c"
+    },
+    {
+      "path": "source-build-externals/src/xunit/src/xunit.assert/Asserts",
+      "remoteUri": "https://github.com/xunit/assert.xunit",
+      "commitSha": "5c8c10e085eb42f39f2fe0b40c94bf56649eb0a4"
+    },
+    {
+      "path": "source-build-externals/src/xunit/tools/build",
+      "remoteUri": "https://github.com/xunit/build-tools",
+      "commitSha": "8e186b0f8e398796e75453f3f18952b06d29fdfd"
+    },
+    {
+      "path": "source-build-externals/src/xunit/tools/media",
+      "remoteUri": "https://github.com/xunit/media",
+      "commitSha": "5738b6e86f08e0389c4392b939c20e3eca2d9822"
     }
   ]
 }

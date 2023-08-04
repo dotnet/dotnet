@@ -1,0 +1,41 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <DefineConstants>$(DefineConstants);UNIT_TEST</DefineConstants>
+    <TargetFrameworks>net452;netcoreapp2.0</TargetFrameworks>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="..\..\src\common\AssemblyExtensions.cs" LinkBase="Common" />
+    <Compile Include="..\..\src\common\DictionaryExtensions.cs" LinkBase="Common" />
+    <Compile Include="..\..\src\common\ExecutionHelper.cs" LinkBase="Common" />
+    <Compile Include="..\..\src\common\Guard.cs" LinkBase="Common" />
+    <Compile Include="..\..\src\common\Json.cs" LinkBase="Common" />
+    <Compile Include="..\..\src\common\NewReflectionExtensions.cs" LinkBase="Common" />
+    <Compile Include="..\..\src\common\SerializationHelper.cs" LinkBase="Common" />
+    <Compile Include="..\..\src\common\TestOptionsNames.cs" LinkBase="Common" />
+    <Compile Include="..\..\src\common\XunitSerializationInfo.cs" LinkBase="Common" />
+    <Compile Include="..\..\src\common\AssemblyResolution\**\*.cs" LinkBase="Common\AssemblyResolution" />
+    <Compile Include="..\..\src\xunit.runner.utility\Frameworks\v1\Xunit1ExceptionUtility.cs" LinkBase="Common\RunnerUtility" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="ConfigReader_*.*">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="System.Web" />
+  </ItemGroup>
+
+  <Target Condition=" '$(TargetFramework)' == 'net452' " Name="CopyXunitV1" AfterTargets="Build">
+    <ItemGroup>
+      <XunitV1Binaries Include="$(NuGetPackageRoot)xunit\1.9.2\lib\net20\xunit.dll" />
+      <XunitV1Binaries Include="$(NuGetPackageRoot)xunit.extensions\1.9.2\lib\net20\xunit.extensions.dll" />
+    </ItemGroup>
+    <Copy SourceFiles="@(XunitV1Binaries)" DestinationFolder="$(OutputPath)" />
+  </Target>
+
+</Project>
