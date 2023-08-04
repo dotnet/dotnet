@@ -52,7 +52,7 @@ stages:
           value: Release
         steps:
         - checkout: self
-          submodules: true
+          submodules: recursive
         - template: /eng/common/templates/steps/source-build.yml
 
 - ${{ if and(ne(variables['System.TeamProject'], 'public'), notin(variables['Build.Reason'], 'PullRequest')) }}:

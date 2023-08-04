@@ -1,0 +1,30 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <AssemblyName>xunit.runner.msbuild.net452</AssemblyName>
+    <RootNamespace>Xunit.Runner.MSBuild</RootNamespace>
+    <TargetFramework>net452</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="..\common\AssemblyExtensions.cs" LinkBase="Common" />
+    <Compile Include="..\common\DictionaryExtensions.cs" LinkBase="Common" />
+    <Compile Include="..\common\Guard.cs" LinkBase="Common" />
+    <Compile Include="..\common\AssemblyResolution\**\*.cs" LinkBase="Common\AssemblyResolution" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="..\xunit.console\*.xslt" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="Microsoft.Build.Framework" />
+    <Reference Include="Microsoft.Build.Utilities.v4.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\xunit.runner.reporters\xunit.runner.reporters.csproj" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,18 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <DefineConstants>$(DefineConstants);XUNIT_FRAMEWORK</DefineConstants>
+    <TargetFrameworks>net452;netcoreapp2.0</TargetFrameworks>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="..\..\src\common\AssemblyExtensions.cs" LinkBase="Common" />
+    <Compile Include="..\..\src\common\ExecutionHelper.cs" LinkBase="Common" />
+    <Compile Include="..\..\src\common\Guard.cs" LinkBase="Common" />
+    <Compile Include="..\..\src\common\NewReflectionExtensions.cs" LinkBase="Common" />
+    <Compile Include="..\..\src\common\SerializationHelper.cs" LinkBase="Common" />
+    <Compile Include="..\..\src\common\TestOptionsNames.cs" LinkBase="Common" />
+    <Compile Include="..\..\src\common\XunitSerializationInfo.cs" LinkBase="Common" />
+  </ItemGroup>
+
+</Project>
