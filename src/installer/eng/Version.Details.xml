@@ -206,18 +206,18 @@
     </Dependency>
   </ProductDependencies>
   <ToolsetDependencies>
-    <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="8.0.0-beta.23381.1">
+    <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="8.0.0-beta.23402.2">
       <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>aeaa48c51d6494adc1b1fab870e7b8c89752d1ba</Sha>
+      <Sha>3addc5d978d01e864792d2c6bce0b50ec105f857</Sha>
       <SourceBuild RepoName="arcade" ManagedOnly="true" />
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.CMake.Sdk" Version="8.0.0-beta.23381.1">
+    <Dependency Name="Microsoft.DotNet.CMake.Sdk" Version="8.0.0-beta.23402.2">
       <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>aeaa48c51d6494adc1b1fab870e7b8c89752d1ba</Sha>
+      <Sha>3addc5d978d01e864792d2c6bce0b50ec105f857</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.Build.Tasks.Installers" Version="8.0.0-beta.23381.1">
+    <Dependency Name="Microsoft.DotNet.Build.Tasks.Installers" Version="8.0.0-beta.23402.2">
       <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>aeaa48c51d6494adc1b1fab870e7b8c89752d1ba</Sha>
+      <Sha>3addc5d978d01e864792d2c6bce0b50ec105f857</Sha>
     </Dependency>
     <Dependency Name="Microsoft.DotNet.Darc" Version="1.1.0-beta.23374.1">
       <Uri>https://github.com/dotnet/arcade-services</Uri>
@@ -236,9 +236,9 @@
       <Sha>b5368f118ae0b04a7ea1c08c41ba5df3494ff7c6</Sha>
       <SourceBuild RepoName="source-build-reference-packages" ManagedOnly="true" />
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.XliffTasks" Version="1.0.0-beta.23374.1" CoherentParentDependency="Microsoft.DotNet.Arcade.Sdk">
+    <Dependency Name="Microsoft.DotNet.XliffTasks" Version="1.0.0-beta.23381.1" CoherentParentDependency="Microsoft.DotNet.Arcade.Sdk">
       <Uri>https://github.com/dotnet/xliff-tasks</Uri>
-      <Sha>a61cdec7a7f96c654b8c92bea0167df0427cc26c</Sha>
+      <Sha>d3553ca27fb1c128f302f52b73c0079e65d62ea8</Sha>
       <SourceBuild RepoName="xliff-tasks" ManagedOnly="true" />
     </Dependency>
   </ToolsetDependencies>
