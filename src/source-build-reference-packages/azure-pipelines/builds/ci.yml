@@ -30,6 +30,9 @@ stages:
           artifacts: true
           manifests: true
       enableSourceBuild: true
+  - template: /azure-pipelines/builds/generatescript-tests.yml
+    parameters:
+      buildConfiguration: Debug
 
 # Based on - https://github.com/dotnet/arcade/blob/9b3f304c7bc9fd4d11be9ca0b466b83e98d2a191/Documentation/CorePackages/Publishing.md#moving-away-from-the-legacy-pushtoblobfeed-task
 - ${{ if and(ne(variables['System.TeamProject'], 'public'), notin(variables['Build.Reason'], 'PullRequest')) }}:

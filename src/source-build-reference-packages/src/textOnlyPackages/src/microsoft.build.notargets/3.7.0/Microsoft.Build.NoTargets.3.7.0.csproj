@@ -1,0 +1,9 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>netstandard2.0</TargetFrameworks>
+    <AssemblyName>Microsoft.Build.NoTargets</AssemblyName>
+    <ProjectTemplateVersion>2</ProjectTemplateVersion>
+  </PropertyGroup>
+
+</Project>
