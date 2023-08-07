@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <package xmlns="http://schemas.microsoft.com/packaging/2013/05/nuspec.xsd">
   <metadata minClientVersion="2.8.6">
     <id>System.Collections.Immutable</id>
@@ -33,8 +33,6 @@ System.Collections.Immutable.ImmutableStack&lt;T&gt;</description>
     <copyright>© Microsoft Corporation.  All rights reserved.</copyright>
     <serviceable>true</serviceable>
     <dependencies>
-      <group targetFramework="MonoAndroid1.0" />
-      <group targetFramework="MonoTouch1.0" />
       <group targetFramework=".NETStandard1.0">
         <dependency id="System.Collections" version="4.0.11" />
         <dependency id="System.Diagnostics.Debug" version="4.0.11" />
@@ -45,13 +43,6 @@ System.Collections.Immutable.ImmutableStack&lt;T&gt;</description>
         <dependency id="System.Runtime.Extensions" version="4.1.0" />
         <dependency id="System.Threading" version="4.0.11" />
       </group>
-      <group targetFramework="Windows8.0" />
-      <group targetFramework="WindowsPhone8.0" />
-      <group targetFramework="WindowsPhoneApp8.1" />
-      <group targetFramework="Xamarin.iOS1.0" />
-      <group targetFramework="Xamarin.Mac2.0" />
-      <group targetFramework="Xamarin.TVOS1.0" />
-      <group targetFramework="Xamarin.WatchOS1.0" />
     </dependencies>
   </metadata>
 </package>

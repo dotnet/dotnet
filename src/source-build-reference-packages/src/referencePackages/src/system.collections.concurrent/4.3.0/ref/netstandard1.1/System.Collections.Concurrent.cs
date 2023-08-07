@@ -4,228 +4,376 @@
 // ------------------------------------------------------------------------------
 // Changes to this file must follow the http://aka.ms/api-review process.
 // ------------------------------------------------------------------------------
-
-using System;
-using System.Diagnostics;
-using System.Reflection;
-using System.Runtime.CompilerServices;
-using System.Security;
-
-[assembly: Debuggable(DebuggableAttribute.DebuggingModes.IgnoreSymbolStoreSequencePoints)]
-[assembly: AllowPartiallyTrustedCallers]
-[assembly: ReferenceAssembly]
-[assembly: AssemblyTitle("System.Collections.Concurrent")]
-[assembly: AssemblyDescription("System.Collections.Concurrent")]
-[assembly: AssemblyDefaultAlias("System.Collections.Concurrent")]
-[assembly: AssemblyCompany("Microsoft Corporation")]
-[assembly: AssemblyProduct("Microsoft® .NET Framework")]
-[assembly: AssemblyCopyright("© Microsoft Corporation.  All rights reserved.")]
-[assembly: AssemblyFileVersion("4.0.30319.17929")]
-[assembly: AssemblyInformationalVersion("4.0.30319.17929 built by: SOURCEBUILD")]
-[assembly: CLSCompliant(true)]
-[assembly: AssemblyMetadata("", "")]
-[assembly: AssemblyVersion("4.0.0.0")]
-
-
-
-
+[assembly: System.Reflection.AssemblyFileVersion("4.0.30319.17929")]
+[assembly: System.Runtime.CompilerServices.RuntimeCompatibility(WrapNonExceptionThrows = true)]
+[assembly: System.Reflection.AssemblyTitle("System.Collections.Concurrent.dll")]
+[assembly: System.Reflection.AssemblyDescription("System.Collections.Concurrent.dll")]
+[assembly: System.Reflection.AssemblyDefaultAlias("System.Collections.Concurrent.dll")]
+[assembly: System.Reflection.AssemblyCompany("Microsoft Corporation")]
+[assembly: System.Reflection.AssemblyProduct("Microsoft® .NET Framework")]
+[assembly: System.Reflection.AssemblyCopyright("© Microsoft Corporation.  All rights reserved.")]
+[assembly: System.Reflection.AssemblyInformationalVersion("4.0.30319.17929")]
+[assembly: System.CLSCompliant(true)]
+[assembly: System.Security.AllowPartiallyTrustedCallers]
+[assembly: System.Runtime.CompilerServices.ReferenceAssembly]
+[assembly: System.Runtime.CompilerServices.CompilationRelaxations(8)]
+[assembly: System.Reflection.AssemblyVersionAttribute("4.0.0.0")]
+[assembly: System.Reflection.AssemblyFlagsAttribute((System.Reflection.AssemblyNameFlags)0x70)]
 namespace System.Collections.Concurrent
 {
-    public partial class BlockingCollection<T> : System.Collections.Generic.IEnumerable<T>, System.Collections.ICollection, System.Collections.IEnumerable, System.IDisposable
+    public partial class BlockingCollection<T> : Generic.IEnumerable<T>, ICollection, IEnumerable, IDisposable
     {
         public BlockingCollection() { }
-        public BlockingCollection(System.Collections.Concurrent.IProducerConsumerCollection<T> collection) { }
-        public BlockingCollection(System.Collections.Concurrent.IProducerConsumerCollection<T> collection, int boundedCapacity) { }
+
+        public BlockingCollection(IProducerConsumerCollection<T> collection, int boundedCapacity) { }
+
+        public BlockingCollection(IProducerConsumerCollection<T> collection) { }
+
         public BlockingCollection(int boundedCapacity) { }
+
         public int BoundedCapacity { get { throw null; } }
+
         public int Count { get { throw null; } }
+
         public bool IsAddingCompleted { get { throw null; } }
+
         public bool IsCompleted { get { throw null; } }
-        bool System.Collections.ICollection.IsSynchronized { get { throw null; } }
-        object System.Collections.ICollection.SyncRoot { get { throw null; } }
+
+        bool ICollection.IsSynchronized { get { throw null; } }
+
+        object ICollection.SyncRoot { get { throw null; } }
+
+        public void Add(T item, Threading.CancellationToken cancellationToken) { }
+
         public void Add(T item) { }
-        public void Add(T item, System.Threading.CancellationToken cancellationToken) { }
-        public static int AddToAny(System.Collections.Concurrent.BlockingCollection<T>[] collections, T item) { throw null; }
-        public static int AddToAny(System.Collections.Concurrent.BlockingCollection<T>[] collections, T item, System.Threading.CancellationToken cancellationToken) { throw null; }
+
+        public static int AddToAny(BlockingCollection<T>[] collections, T item, Threading.CancellationToken cancellationToken) { throw null; }
+
+        public static int AddToAny(BlockingCollection<T>[] collections, T item) { throw null; }
+
         public void CompleteAdding() { }
+
         public void CopyTo(T[] array, int index) { }
+
         public void Dispose() { }
+
         protected virtual void Dispose(bool disposing) { }
-        public System.Collections.Generic.IEnumerable<T> GetConsumingEnumerable() { throw null; }
-        public System.Collections.Generic.IEnumerable<T> GetConsumingEnumerable(System.Threading.CancellationToken cancellationToken) { throw null; }
-        System.Collections.Generic.IEnumerator<T> System.Collections.Generic.IEnumerable<T>.GetEnumerator() { throw null; }
-        void System.Collections.ICollection.CopyTo(System.Array array, int index) { }
-        System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator() { throw null; }
+
+        public Generic.IEnumerable<T> GetConsumingEnumerable() { throw null; }
+
+        public Generic.IEnumerable<T> GetConsumingEnumerable(Threading.CancellationToken cancellationToken) { throw null; }
+
+        Generic.IEnumerator<T> Generic.IEnumerable<T>.GetEnumerator() { throw null; }
+
+        void ICollection.CopyTo(Array array, int index) { }
+
+        IEnumerator IEnumerable.GetEnumerator() { throw null; }
+
         public T Take() { throw null; }
-        public T Take(System.Threading.CancellationToken cancellationToken) { throw null; }
-        public static int TakeFromAny(System.Collections.Concurrent.BlockingCollection<T>[] collections, out T item) { throw null; }
-        public static int TakeFromAny(System.Collections.Concurrent.BlockingCollection<T>[] collections, out T item, System.Threading.CancellationToken cancellationToken) { throw null; }
+
+        public T Take(Threading.CancellationToken cancellationToken) { throw null; }
+
+        public static int TakeFromAny(BlockingCollection<T>[] collections, out T item, Threading.CancellationToken cancellationToken) { throw null; }
+
+        public static int TakeFromAny(BlockingCollection<T>[] collections, out T item) { throw null; }
+
         public T[] ToArray() { throw null; }
-        public bool TryAdd(T item) { throw null; }
+
+        public bool TryAdd(T item, int millisecondsTimeout, Threading.CancellationToken cancellationToken) { throw null; }
+
         public bool TryAdd(T item, int millisecondsTimeout) { throw null; }
-        public bool TryAdd(T item, int millisecondsTimeout, System.Threading.CancellationToken cancellationToken) { throw null; }
-        public bool TryAdd(T item, System.TimeSpan timeout) { throw null; }
-        public static int TryAddToAny(System.Collections.Concurrent.BlockingCollection<T>[] collections, T item) { throw null; }
-        public static int TryAddToAny(System.Collections.Concurrent.BlockingCollection<T>[] collections, T item, int millisecondsTimeout) { throw null; }
-        public static int TryAddToAny(System.Collections.Concurrent.BlockingCollection<T>[] collections, T item, int millisecondsTimeout, System.Threading.CancellationToken cancellationToken) { throw null; }
-        public static int TryAddToAny(System.Collections.Concurrent.BlockingCollection<T>[] collections, T item, System.TimeSpan timeout) { throw null; }
-        public bool TryTake(out T item) { throw null; }
+
+        public bool TryAdd(T item, TimeSpan timeout) { throw null; }
+
+        public bool TryAdd(T item) { throw null; }
+
+        public static int TryAddToAny(BlockingCollection<T>[] collections, T item, int millisecondsTimeout, Threading.CancellationToken cancellationToken) { throw null; }
+
+        public static int TryAddToAny(BlockingCollection<T>[] collections, T item, int millisecondsTimeout) { throw null; }
+
+        public static int TryAddToAny(BlockingCollection<T>[] collections, T item, TimeSpan timeout) { throw null; }
+
+        public static int TryAddToAny(BlockingCollection<T>[] collections, T item) { throw null; }
+
+        public bool TryTake(out T item, int millisecondsTimeout, Threading.CancellationToken cancellationToken) { throw null; }
+
         public bool TryTake(out T item, int millisecondsTimeout) { throw null; }
-        public bool TryTake(out T item, int millisecondsTimeout, System.Threading.CancellationToken cancellationToken) { throw null; }
-        public bool TryTake(out T item, System.TimeSpan timeout) { throw null; }
-        public static int TryTakeFromAny(System.Collections.Concurrent.BlockingCollection<T>[] collections, out T item) { throw null; }
-        public static int TryTakeFromAny(System.Collections.Concurrent.BlockingCollection<T>[] collections, out T item, int millisecondsTimeout) { throw null; }
-        public static int TryTakeFromAny(System.Collections.Concurrent.BlockingCollection<T>[] collections, out T item, int millisecondsTimeout, System.Threading.CancellationToken cancellationToken) { throw null; }
-        public static int TryTakeFromAny(System.Collections.Concurrent.BlockingCollection<T>[] collections, out T item, System.TimeSpan timeout) { throw null; }
+
+        public bool TryTake(out T item, TimeSpan timeout) { throw null; }
+
+        public bool TryTake(out T item) { throw null; }
+
+        public static int TryTakeFromAny(BlockingCollection<T>[] collections, out T item, int millisecondsTimeout, Threading.CancellationToken cancellationToken) { throw null; }
+
+        public static int TryTakeFromAny(BlockingCollection<T>[] collections, out T item, int millisecondsTimeout) { throw null; }
+
+        public static int TryTakeFromAny(BlockingCollection<T>[] collections, out T item, TimeSpan timeout) { throw null; }
+
+        public static int TryTakeFromAny(BlockingCollection<T>[] collections, out T item) { throw null; }
     }
-    public partial class ConcurrentBag<T> : System.Collections.Concurrent.IProducerConsumerCollection<T>, System.Collections.Generic.IEnumerable<T>, System.Collections.ICollection, System.Collections.IEnumerable
+
+    public partial class ConcurrentBag<T> : IProducerConsumerCollection<T>, Generic.IEnumerable<T>, ICollection, IEnumerable
     {
         public ConcurrentBag() { }
-        public ConcurrentBag(System.Collections.Generic.IEnumerable<T> collection) { }
+
+        public ConcurrentBag(Generic.IEnumerable<T> collection) { }
+
         public int Count { get { throw null; } }
+
         public bool IsEmpty { get { throw null; } }
-        bool System.Collections.ICollection.IsSynchronized { get { throw null; } }
-        object System.Collections.ICollection.SyncRoot { get { throw null; } }
+
+        bool ICollection.IsSynchronized { get { throw null; } }
+
+        object ICollection.SyncRoot { get { throw null; } }
+
         public void Add(T item) { }
+
         public void CopyTo(T[] array, int index) { }
-        public System.Collections.Generic.IEnumerator<T> GetEnumerator() { throw null; }
-        bool System.Collections.Concurrent.IProducerConsumerCollection<T>.TryAdd(T item) { throw null; }
-        void System.Collections.ICollection.CopyTo(System.Array array, int index) { }
-        System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator() { throw null; }
+
+        public Generic.IEnumerator<T> GetEnumerator() { throw null; }
+
+        bool IProducerConsumerCollection<T>.TryAdd(T item) { throw null; }
+
+        void ICollection.CopyTo(Array array, int index) { }
+
+        IEnumerator IEnumerable.GetEnumerator() { throw null; }
+
         public T[] ToArray() { throw null; }
+
         public bool TryPeek(out T result) { throw null; }
+
         public bool TryTake(out T result) { throw null; }
     }
-    public partial class ConcurrentDictionary<TKey, TValue> : System.Collections.Generic.ICollection<System.Collections.Generic.KeyValuePair<TKey, TValue>>, System.Collections.Generic.IDictionary<TKey, TValue>, System.Collections.Generic.IEnumerable<System.Collections.Generic.KeyValuePair<TKey, TValue>>, System.Collections.ICollection, System.Collections.IDictionary, System.Collections.IEnumerable
+
+    public partial class ConcurrentDictionary<TKey, TValue> : Generic.IDictionary<TKey, TValue>, Generic.ICollection<Generic.KeyValuePair<TKey, TValue>>, Generic.IEnumerable<Generic.KeyValuePair<TKey, TValue>>, IDictionary, ICollection, IEnumerable
     {
         public ConcurrentDictionary() { }
-        public ConcurrentDictionary(System.Collections.Generic.IEnumerable<System.Collections.Generic.KeyValuePair<TKey, TValue>> collection) { }
-        public ConcurrentDictionary(System.Collections.Generic.IEnumerable<System.Collections.Generic.KeyValuePair<TKey, TValue>> collection, System.Collections.Generic.IEqualityComparer<TKey> comparer) { }
-        public ConcurrentDictionary(System.Collections.Generic.IEqualityComparer<TKey> comparer) { }
-        public ConcurrentDictionary(int concurrencyLevel, System.Collections.Generic.IEnumerable<System.Collections.Generic.KeyValuePair<TKey, TValue>> collection, System.Collections.Generic.IEqualityComparer<TKey> comparer) { }
+
+        public ConcurrentDictionary(Generic.IEnumerable<Generic.KeyValuePair<TKey, TValue>> collection, Generic.IEqualityComparer<TKey> comparer) { }
+
+        public ConcurrentDictionary(Generic.IEnumerable<Generic.KeyValuePair<TKey, TValue>> collection) { }
+
+        public ConcurrentDictionary(Generic.IEqualityComparer<TKey> comparer) { }
+
+        public ConcurrentDictionary(int concurrencyLevel, Generic.IEnumerable<Generic.KeyValuePair<TKey, TValue>> collection, Generic.IEqualityComparer<TKey> comparer) { }
+
+        public ConcurrentDictionary(int concurrencyLevel, int capacity, Generic.IEqualityComparer<TKey> comparer) { }
+
         public ConcurrentDictionary(int concurrencyLevel, int capacity) { }
-        public ConcurrentDictionary(int concurrencyLevel, int capacity, System.Collections.Generic.IEqualityComparer<TKey> comparer) { }
+
         public int Count { get { throw null; } }
+
         public bool IsEmpty { get { throw null; } }
+
         public TValue this[TKey key] { get { throw null; } set { } }
-        public System.Collections.Generic.ICollection<TKey> Keys { get { throw null; } }
-        bool System.Collections.Generic.ICollection<System.Collections.Generic.KeyValuePair<TKey,TValue>>.IsReadOnly { get { throw null; } }
-        bool System.Collections.ICollection.IsSynchronized { get { throw null; } }
-        object System.Collections.ICollection.SyncRoot { get { throw null; } }
-        bool System.Collections.IDictionary.IsFixedSize { get { throw null; } }
-        bool System.Collections.IDictionary.IsReadOnly { get { throw null; } }
-        object System.Collections.IDictionary.this[object key] { get { throw null; } set { } }
-        System.Collections.ICollection System.Collections.IDictionary.Keys { get { throw null; } }
-        System.Collections.ICollection System.Collections.IDictionary.Values { get { throw null; } }
-        public System.Collections.Generic.ICollection<TValue> Values { get { throw null; } }
-        public TValue AddOrUpdate(TKey key, System.Func<TKey, TValue> addValueFactory, System.Func<TKey, TValue, TValue> updateValueFactory) { throw null; }
-        public TValue AddOrUpdate(TKey key, TValue addValue, System.Func<TKey, TValue, TValue> updateValueFactory) { throw null; }
+
+        public Generic.ICollection<TKey> Keys { get { throw null; } }
+
+        bool Generic.ICollection<Generic.KeyValuePair<TKey, TValue>>.IsReadOnly { get { throw null; } }
+
+        bool ICollection.IsSynchronized { get { throw null; } }
+
+        object ICollection.SyncRoot { get { throw null; } }
+
+        bool IDictionary.IsFixedSize { get { throw null; } }
+
+        bool IDictionary.IsReadOnly { get { throw null; } }
+
+        object IDictionary.this[object key] { get { throw null; } set { } }
+
+        ICollection IDictionary.Keys { get { throw null; } }
+
+        ICollection IDictionary.Values { get { throw null; } }
+
+        public Generic.ICollection<TValue> Values { get { throw null; } }
+
+        public TValue AddOrUpdate(TKey key, TValue addValue, Func<TKey, TValue, TValue> updateValueFactory) { throw null; }
+
+        public TValue AddOrUpdate(TKey key, Func<TKey, TValue> addValueFactory, Func<TKey, TValue, TValue> updateValueFactory) { throw null; }
+
         public void Clear() { }
+
         public bool ContainsKey(TKey key) { throw null; }
-        public System.Collections.Generic.IEnumerator<System.Collections.Generic.KeyValuePair<TKey, TValue>> GetEnumerator() { throw null; }
-        public TValue GetOrAdd(TKey key, System.Func<TKey, TValue> valueFactory) { throw null; }
+
+        public Generic.IEnumerator<Generic.KeyValuePair<TKey, TValue>> GetEnumerator() { throw null; }
+
         public TValue GetOrAdd(TKey key, TValue value) { throw null; }
-        void System.Collections.Generic.ICollection<System.Collections.Generic.KeyValuePair<TKey,TValue>>.Add(System.Collections.Generic.KeyValuePair<TKey, TValue> keyValuePair) { }
-        bool System.Collections.Generic.ICollection<System.Collections.Generic.KeyValuePair<TKey,TValue>>.Contains(System.Collections.Generic.KeyValuePair<TKey, TValue> keyValuePair) { throw null; }
-        void System.Collections.Generic.ICollection<System.Collections.Generic.KeyValuePair<TKey,TValue>>.CopyTo(System.Collections.Generic.KeyValuePair<TKey, TValue>[] array, int index) { }
-        bool System.Collections.Generic.ICollection<System.Collections.Generic.KeyValuePair<TKey,TValue>>.Remove(System.Collections.Generic.KeyValuePair<TKey, TValue> keyValuePair) { throw null; }
-        void System.Collections.Generic.IDictionary<TKey,TValue>.Add(TKey key, TValue value) { }
-        bool System.Collections.Generic.IDictionary<TKey,TValue>.Remove(TKey key) { throw null; }
-        void System.Collections.ICollection.CopyTo(System.Array array, int index) { }
-        void System.Collections.IDictionary.Add(object key, object value) { }
-        bool System.Collections.IDictionary.Contains(object key) { throw null; }
-        System.Collections.IDictionaryEnumerator System.Collections.IDictionary.GetEnumerator() { throw null; }
-        void System.Collections.IDictionary.Remove(object key) { }
-        System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator() { throw null; }
-        public System.Collections.Generic.KeyValuePair<TKey, TValue>[] ToArray() { throw null; }
+
+        public TValue GetOrAdd(TKey key, Func<TKey, TValue> valueFactory) { throw null; }
+
+        void Generic.ICollection<Generic.KeyValuePair<TKey, TValue>>.Add(Generic.KeyValuePair<TKey, TValue> keyValuePair) { }
+
+        bool Generic.ICollection<Generic.KeyValuePair<TKey, TValue>>.Contains(Generic.KeyValuePair<TKey, TValue> keyValuePair) { throw null; }
+
+        void Generic.ICollection<Generic.KeyValuePair<TKey, TValue>>.CopyTo(Generic.KeyValuePair<TKey, TValue>[] array, int index) { }
+
+        bool Generic.ICollection<Generic.KeyValuePair<TKey, TValue>>.Remove(Generic.KeyValuePair<TKey, TValue> keyValuePair) { throw null; }
+
+        void Generic.IDictionary<TKey, TValue>.Add(TKey key, TValue value) { }
+
+        bool Generic.IDictionary<TKey, TValue>.Remove(TKey key) { throw null; }
+
+        void ICollection.CopyTo(Array array, int index) { }
+
+        void IDictionary.Add(object key, object value) { }
+
+        bool IDictionary.Contains(object key) { throw null; }
+
+        IDictionaryEnumerator IDictionary.GetEnumerator() { throw null; }
+
+        void IDictionary.Remove(object key) { }
+
+        IEnumerator IEnumerable.GetEnumerator() { throw null; }
+
+        public Generic.KeyValuePair<TKey, TValue>[] ToArray() { throw null; }
+
         public bool TryAdd(TKey key, TValue value) { throw null; }
+
         public bool TryGetValue(TKey key, out TValue value) { throw null; }
+
         public bool TryRemove(TKey key, out TValue value) { throw null; }
+
         public bool TryUpdate(TKey key, TValue newValue, TValue comparisonValue) { throw null; }
     }
-    public partial class ConcurrentQueue<T> : System.Collections.Concurrent.IProducerConsumerCollection<T>, System.Collections.Generic.IEnumerable<T>, System.Collections.ICollection, System.Collections.IEnumerable
+
+    public partial class ConcurrentQueue<T> : IProducerConsumerCollection<T>, Generic.IEnumerable<T>, ICollection, IEnumerable
     {
         public ConcurrentQueue() { }
-        public ConcurrentQueue(System.Collections.Generic.IEnumerable<T> collection) { }
+
+        public ConcurrentQueue(Generic.IEnumerable<T> collection) { }
+
         public int Count { get { throw null; } }
+
         public bool IsEmpty { get { throw null; } }
-        bool System.Collections.ICollection.IsSynchronized { get { throw null; } }
-        object System.Collections.ICollection.SyncRoot { get { throw null; } }
+
+        bool ICollection.IsSynchronized { get { throw null; } }
+
+        object ICollection.SyncRoot { get { throw null; } }
+
         public void CopyTo(T[] array, int index) { }
+
         public void Enqueue(T item) { }
-        public System.Collections.Generic.IEnumerator<T> GetEnumerator() { throw null; }
-        bool System.Collections.Concurrent.IProducerConsumerCollection<T>.TryAdd(T item) { throw null; }
-        bool System.Collections.Concurrent.IProducerConsumerCollection<T>.TryTake(out T item) { throw null; }
-        void System.Collections.ICollection.CopyTo(System.Array array, int index) { }
-        System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator() { throw null; }
+
+        public Generic.IEnumerator<T> GetEnumerator() { throw null; }
+
+        bool IProducerConsumerCollection<T>.TryAdd(T item) { throw null; }
+
+        bool IProducerConsumerCollection<T>.TryTake(out T item) { throw null; }
+
+        void ICollection.CopyTo(Array array, int index) { }
+
+        IEnumerator IEnumerable.GetEnumerator() { throw null; }
+
         public T[] ToArray() { throw null; }
+
         public bool TryDequeue(out T result) { throw null; }
+
         public bool TryPeek(out T result) { throw null; }
     }
-    public partial class ConcurrentStack<T> : System.Collections.Concurrent.IProducerConsumerCollection<T>, System.Collections.Generic.IEnumerable<T>, System.Collections.ICollection, System.Collections.IEnumerable
+
+    public partial class ConcurrentStack<T> : IProducerConsumerCollection<T>, Generic.IEnumerable<T>, ICollection, IEnumerable
     {
         public ConcurrentStack() { }
-        public ConcurrentStack(System.Collections.Generic.IEnumerable<T> collection) { }
+
+        public ConcurrentStack(Generic.IEnumerable<T> collection) { }
+
         public int Count { get { throw null; } }
+
         public bool IsEmpty { get { throw null; } }
-        bool System.Collections.ICollection.IsSynchronized { get { throw null; } }
-        object System.Collections.ICollection.SyncRoot { get { throw null; } }
+
+        bool ICollection.IsSynchronized { get { throw null; } }
+
+        object ICollection.SyncRoot { get { throw null; } }
+
         public void Clear() { }
+
         public void CopyTo(T[] array, int index) { }
-        public System.Collections.Generic.IEnumerator<T> GetEnumerator() { throw null; }
+
+        public Generic.IEnumerator<T> GetEnumerator() { throw null; }
+
         public void Push(T item) { }
-        public void PushRange(T[] items) { }
+
         public void PushRange(T[] items, int startIndex, int count) { }
-        bool System.Collections.Concurrent.IProducerConsumerCollection<T>.TryAdd(T item) { throw null; }
-        bool System.Collections.Concurrent.IProducerConsumerCollection<T>.TryTake(out T item) { throw null; }
-        void System.Collections.ICollection.CopyTo(System.Array array, int index) { }
-        System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator() { throw null; }
+
+        public void PushRange(T[] items) { }
+
+        bool IProducerConsumerCollection<T>.TryAdd(T item) { throw null; }
+
+        bool IProducerConsumerCollection<T>.TryTake(out T item) { throw null; }
+
+        void ICollection.CopyTo(Array array, int index) { }
+
+        IEnumerator IEnumerable.GetEnumerator() { throw null; }
+
         public T[] ToArray() { throw null; }
+
         public bool TryPeek(out T result) { throw null; }
+
         public bool TryPop(out T result) { throw null; }
-        public int TryPopRange(T[] items) { throw null; }
+
         public int TryPopRange(T[] items, int startIndex, int count) { throw null; }
+
+        public int TryPopRange(T[] items) { throw null; }
     }
-    [System.FlagsAttribute]
+
+    [Flags]
     public enum EnumerablePartitionerOptions
     {
-        NoBuffering = 1,
         None = 0,
+        NoBuffering = 1
     }
-    public partial interface IProducerConsumerCollection<T> : System.Collections.Generic.IEnumerable<T>, System.Collections.ICollection, System.Collections.IEnumerable
+
+    public partial interface IProducerConsumerCollection<T> : Generic.IEnumerable<T>, ICollection, IEnumerable
     {
         void CopyTo(T[] array, int index);
         T[] ToArray();
         bool TryAdd(T item);
         bool TryTake(out T item);
     }
-    public abstract partial class OrderablePartitioner<TSource> : System.Collections.Concurrent.Partitioner<TSource>
+
+    public abstract partial class OrderablePartitioner<TSource> : Partitioner<TSource>
     {
         protected OrderablePartitioner(bool keysOrderedInEachPartition, bool keysOrderedAcrossPartitions, bool keysNormalized) { }
+
         public bool KeysNormalized { get { throw null; } }
+
         public bool KeysOrderedAcrossPartitions { get { throw null; } }
+
         public bool KeysOrderedInEachPartition { get { throw null; } }
-        public override System.Collections.Generic.IEnumerable<TSource> GetDynamicPartitions() { throw null; }
-        public virtual System.Collections.Generic.IEnumerable<System.Collections.Generic.KeyValuePair<long, TSource>> GetOrderableDynamicPartitions() { throw null; }
-        public abstract System.Collections.Generic.IList<System.Collections.Generic.IEnumerator<System.Collections.Generic.KeyValuePair<long, TSource>>> GetOrderablePartitions(int partitionCount);
-        public override System.Collections.Generic.IList<System.Collections.Generic.IEnumerator<TSource>> GetPartitions(int partitionCount) { throw null; }
+
+        public override Generic.IEnumerable<TSource> GetDynamicPartitions() { throw null; }
+
+        public virtual Generic.IEnumerable<Generic.KeyValuePair<long, TSource>> GetOrderableDynamicPartitions() { throw null; }
+
+        public abstract Generic.IList<Generic.IEnumerator<Generic.KeyValuePair<long, TSource>>> GetOrderablePartitions(int partitionCount);
+        public override Generic.IList<Generic.IEnumerator<TSource>> GetPartitions(int partitionCount) { throw null; }
     }
+
     public static partial class Partitioner
     {
-        public static System.Collections.Concurrent.OrderablePartitioner<System.Tuple<int, int>> Create(int fromInclusive, int toExclusive) { throw null; }
-        public static System.Collections.Concurrent.OrderablePartitioner<System.Tuple<int, int>> Create(int fromInclusive, int toExclusive, int rangeSize) { throw null; }
-        public static System.Collections.Concurrent.OrderablePartitioner<System.Tuple<long, long>> Create(long fromInclusive, long toExclusive) { throw null; }
-        public static System.Collections.Concurrent.OrderablePartitioner<System.Tuple<long, long>> Create(long fromInclusive, long toExclusive, long rangeSize) { throw null; }
-        public static System.Collections.Concurrent.OrderablePartitioner<TSource> Create<TSource>(System.Collections.Generic.IEnumerable<TSource> source) { throw null; }
-        public static System.Collections.Concurrent.OrderablePartitioner<TSource> Create<TSource>(System.Collections.Generic.IEnumerable<TSource> source, System.Collections.Concurrent.EnumerablePartitionerOptions partitionerOptions) { throw null; }
-        public static System.Collections.Concurrent.OrderablePartitioner<TSource> Create<TSource>(System.Collections.Generic.IList<TSource> list, bool loadBalance) { throw null; }
-        public static System.Collections.Concurrent.OrderablePartitioner<TSource> Create<TSource>(TSource[] array, bool loadBalance) { throw null; }
+        public static OrderablePartitioner<Tuple<int, int>> Create(int fromInclusive, int toExclusive, int rangeSize) { throw null; }
+
+        public static OrderablePartitioner<Tuple<int, int>> Create(int fromInclusive, int toExclusive) { throw null; }
+
+        public static OrderablePartitioner<Tuple<long, long>> Create(long fromInclusive, long toExclusive, long rangeSize) { throw null; }
+
+        public static OrderablePartitioner<Tuple<long, long>> Create(long fromInclusive, long toExclusive) { throw null; }
+
+        public static OrderablePartitioner<TSource> Create<TSource>(TSource[] array, bool loadBalance) { throw null; }
+
+        public static OrderablePartitioner<TSource> Create<TSource>(Generic.IEnumerable<TSource> source, EnumerablePartitionerOptions partitionerOptions) { throw null; }
+
+        public static OrderablePartitioner<TSource> Create<TSource>(Generic.IEnumerable<TSource> source) { throw null; }
+
+        public static OrderablePartitioner<TSource> Create<TSource>(Generic.IList<TSource> list, bool loadBalance) { throw null; }
     }
+
     public abstract partial class Partitioner<TSource>
     {
-        protected Partitioner() { }
         public virtual bool SupportsDynamicPartitions { get { throw null; } }
-        public virtual System.Collections.Generic.IEnumerable<TSource> GetDynamicPartitions() { throw null; }
-        public abstract System.Collections.Generic.IList<System.Collections.Generic.IEnumerator<TSource>> GetPartitions(int partitionCount);
+
+        public virtual Generic.IEnumerable<TSource> GetDynamicPartitions() { throw null; }
+
+        public abstract Generic.IList<Generic.IEnumerator<TSource>> GetPartitions(int partitionCount);
     }
 }

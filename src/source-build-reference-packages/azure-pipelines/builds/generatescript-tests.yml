@@ -1,0 +1,37 @@
+parameters:
+- name: buildConfiguration
+  type: string
+  values:
+  - Debug
+  - Release
+
+jobs:
+- job:
+  strategy:
+    matrix:
+      Windows_NT:
+        agentOs: Windows_NT
+        imageName: "windows-latest"
+      Linux:
+        agentOs: Linux
+        imageName: "ubuntu-latest" 
+  pool:
+    vmImage: $(imageName)
+
+  steps:
+  - checkout: self
+    clean: true
+  - script: $(Build.SourcesDirectory)/test.cmd
+    displayName: Windows NT GenerateScript Tests
+    condition: eq(variables.agentOs, 'Windows_NT')
+  - script: $(Build.SourcesDirectory)/test.sh
+    displayName: Linux GenerateScript Tests
+    condition: eq(variables.agentOs, 'Linux')
+  - task: PublishTestResults@2
+    displayName: Publish Test Results
+    inputs:
+      testRunner: xUnit
+      testResultsFiles: 'artifacts/TestResults/${{ parameters.buildConfiguration }}/*.xml'
+      testRunTitle: '$(agentOs)_GenerateScript_tests'
+      configuration: '${{ parameters.buildConfiguration }}'
+    condition: always()

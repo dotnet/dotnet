@@ -4,7 +4,11 @@
     <ProjectToBuild Include="$(RepoRoot)src\packageSourceGenerator\PackageSourceGenerator.proj" />
   </ItemGroup>
 
-  <ItemGroup Condition="'$(GeneratePackageSource)' != 'true'">
+  <ItemGroup Condition="'$(Test)' == 'true'">
+    <ProjectToBuild Include="$(RepoRoot)tests\GenerateScriptTests\GenerateScript.Tests.csproj" Test="$(Test)" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(GeneratePackageSource)' != 'true' and '$(Test)' != 'true'">
     <!--
       The following DependencyPackageProjects are ones on which other packages depend on that do
       not exist in the source-build package cache. Adding them to this ItemGroup will ensure that
@@ -79,7 +83,7 @@
           DestinationFolder="$(LocalNuGetPackageCacheDirectory)" />
   </Target>
 
-  <ItemGroup Condition="'$(GeneratePackageSource)' != 'true' and '$(BuildDependencyPackageProjects)' != 'true'">
+  <ItemGroup Condition="'$(GeneratePackageSource)' != 'true' and '$(BuildDependencyPackageProjects)' != 'true' and '$(Test)' != 'true'">
     <TargetingPackageProject Include="$(RepoRoot)src\targetPacks\ILsrc\**\*.csproj" />
     <ProjectToBuild Include="@(TargetingPackageProject)" />
 
