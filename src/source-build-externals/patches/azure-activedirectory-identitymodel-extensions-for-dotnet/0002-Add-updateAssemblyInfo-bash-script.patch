@@ -1,0 +1,65 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Matt Thalman <mthalman@microsoft.com>
+Date: Fri, 28 Jul 2023 16:04:03 -0500
+Subject: [PATCH] Add updateAssemblyInfo bash script
+
+Backport: https://github.com/AzureAD/azure-activedirectory-identitymodel-extensions-for-dotnet/pull/2211
+---
+ updateAssemblyInfo.sh | 48 +++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 48 insertions(+)
+ create mode 100755 updateAssemblyInfo.sh
+
+diff --git a/updateAssemblyInfo.sh b/updateAssemblyInfo.sh
+new file mode 100755
+index 00000000..39173e2c
+--- /dev/null
++++ b/updateAssemblyInfo.sh
+@@ -0,0 +1,48 @@
++#!/bin/bash
++set -euo pipefail
++
++# This script is converted from PowerShell at:
++# https://github.com/AzureAD/azure-activedirectory-identitymodel-extensions-for-dotnet/blob/620be62dda649d4c63e88ec9ae994a12cf54c707/updateAssemblyInfo.ps1
++
++date=$(date '+%y%m%d%H%M%S')
++# Formats the date by replacing the 4-digit year with a 2-digit value and then subtract 19
++dateTimeStamp=$(echo $((10#${date:0:2}-19)))${date:2}
++
++buildConfiguration=$(cat $PWD/buildConfiguration.xml)
++
++assemblyVersion=$(echo $buildConfiguration | xmllint --xpath 'string(/root/assemblyVersion)' -)
++assemblyFileVersion="$assemblyVersion.${dateTimeStamp::-6}" # Trim the time portion of the date/time
++
++# TODO: The commit SHA needs to be appended to the end of this version (see https://github.com/dotnet/source-build/issues/3573)
++assemblyInformationalVersion="$assemblyVersion.$dateTimeStamp"
++
++echo "assemblyVersion: $assemblyVersion"
++echo "assemblyFileVersion: $assemblyFileVersion"
++echo "assemblyInformationalVersion: $assemblyInformationalVersion"
++
++nugetSuffix=$(xmllint --xpath "string(/root/nugetSuffix)" buildConfiguration.xml)
++versionSuffix=""
++
++echo "nugetSuffix: $nugetSuffix"
++
++versionPath="$PWD/build/version.props"
++version=$(cat $versionPath)
++version=$(echo "$version" | sed "s|<VersionPrefix>.*</VersionPrefix>|<VersionPrefix>$assemblyVersion</VersionPrefix>|")
++version=$(echo "$version" | sed "s|<VersionSuffix>.*</VersionSuffix>|<VersionSuffix>$versionSuffix</VersionSuffix>|")
++echo "$version" > $versionPath
++
++# Get the names of all src projects from the buildConfiguration.xml file
++projects=$(xmllint --xpath "/root/projects/src/project" buildConfiguration.xml | grep -oP 'name="\K[^"]+')
++
++# Inject the new version numbers into the AssemblyInfo.cs files for each project
++for project in $projects; do
++    name="$project"
++    assemblyInfoPath="$PWD/src/$name/Properties/AssemblyInfo.cs"
++    echo "assemblyInfoPath: $assemblyInfoPath"
++
++    assemblyInfo=$(cat $assemblyInfoPath)
++    assemblyInfo=$(echo "$assemblyInfo" | sed "s|AssemblyVersion.*|AssemblyVersion(\"$assemblyVersion\")]|")
++    assemblyInfo=$(echo "$assemblyInfo" | sed "s|AssemblyFileVersion.*|AssemblyFileVersion(\"$assemblyFileVersion\")]|")
++    assemblyInfo=$(echo "$assemblyInfo" | sed "s|AssemblyInformationalVersion.*|AssemblyInformationalVersion(\"$assemblyInformationalVersion\")]|")
++    echo "$assemblyInfo" > $assemblyInfoPath
++done
