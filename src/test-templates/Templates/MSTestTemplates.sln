@@ -3,13 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29613.14
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MSTestDesktopVB", "VisualBasic\Desktop\MSTestDesktopVB.csproj", "{1AFFAE1C-BD70-4201-B8C8-3862F56E784B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MSTestDesktopVB", "Desktop-VisualBasic\MSTestDesktopVB.csproj", "{1AFFAE1C-BD70-4201-B8C8-3862F56E784B}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MSTestDesktopCSharp", "CSharp\Desktop\MSTestDesktopCSharp.csproj", "{9E08BE4A-D3C8-4E8D-AFBE-FA571F878464}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MSTestDesktopCSharp", "Desktop-CSharp\MSTestDesktopCSharp.csproj", "{9E08BE4A-D3C8-4E8D-AFBE-FA571F878464}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EdgeDriverTemplate", "CSharp\EdgeDriverTemplate\DotNetFramwork\EdgeDriverTemplate.csproj", "{6E299C10-B3AD-4D9F-BA12-333BEE9CDCC1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EdgeDriverTemplate", "EdgeDriver-DotNetFramework-CSharp\EdgeDriverTemplate.csproj", "{6E299C10-B3AD-4D9F-BA12-333BEE9CDCC1}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EdgeDriverTemplateCore", "CSharp\EdgeDriverTemplate\DotNetCore\EdgeDriverTemplateCore\EdgeDriverTemplateCore.csproj", "{831B6078-B48F-4697-9C70-2EBF6B64CADF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EdgeDriverTemplateCore", "EdgeDriver-DotNetCore-CSharp\EdgeDriverTemplateCore.csproj", "{831B6078-B48F-4697-9C70-2EBF6B64CADF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
