@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<VSTemplate Version="3.0.0" xmlns="http://schemas.microsoft.com/developer/vstemplate/2005" Type="Project">
+  <TemplateData>
+    <TemplateID>Microsoft.CSharp.Web.EdgeDriverTest</TemplateID>
+    <Name Package="{52CBD135-1F97-2580-011F-C7CD052E44DE}" ID="706"/>
+    <Description Package="{52CBD135-1F97-2580-011F-C7CD052E44DE}" ID="708"/>
+    <Icon Package="{52CBD135-1F97-2580-011F-C7CD052E44DE}" ID="531"/>
+    <ProjectType>CSharp</ProjectType>
+    <SortOrder>100</SortOrder>
+    <CreateNewFolder>true</CreateNewFolder>
+    <DefaultName>EdgeDriverTest</DefaultName>
+    <ProvideDefaultName>true</ProvideDefaultName>
+    <CreateInPlace>false</CreateInPlace>
+    <RequiredFrameworkVersion>4.5</RequiredFrameworkVersion>
+  </TemplateData>
+  <TemplateContent />
+  <WizardExtension>
+    <Assembly>Microsoft.VisualStudio.Test.Project, Version=1.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</Assembly>
+    <FullClassName>Microsoft.VisualStudio.Test.Project.FrameworkTemplateWizard</FullClassName>
+  </WizardExtension>
+  <WizardData>
+    <Templates>
+      <Template Path="..\MSTestV2Desktop45.cs\MSTestV2Desktop.vstemplate" MinimumFrameworkVersion="4.5"/>
+      <Template Path="..\MSTestV2Desktop462.cs\MSTestV2Desktop.vstemplate" MinimumFrameworkVersion="4.6.2"/>
+    </Templates>
+  </WizardData>
+</VSTemplate>

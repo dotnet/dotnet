@@ -1,0 +1,27 @@
+<VSTemplate Version="3.0.0" Type="Project" xmlns="http://schemas.microsoft.com/developer/vstemplate/2005">
+  <TemplateData>
+    <Name Package="{52CBD135-1F97-2580-011F-C7CD052E44DE}" ID="510" />
+    <Description Package="{52CBD135-1F97-2580-011F-C7CD052E44DE}" ID="511" />
+    <Icon Package="{52CBD135-1F97-2580-011F-C7CD052E44DE}" ID="533"/>
+    <TemplateID>Microsoft.VisualBasic.UnitTestProject.v2</TemplateID>
+    <ProjectType>VisualBasic</ProjectType>
+    <RequiredFrameworkVersion>4.5</RequiredFrameworkVersion>
+    <SortOrder>90</SortOrder>
+    <CreateNewFolder>true</CreateNewFolder>
+    <PromptForSaveOnCreation>true</PromptForSaveOnCreation>
+    <DefaultName>UnitTestProject</DefaultName>
+    <ProvideDefaultName>true</ProvideDefaultName>
+	<License>http://www.microsoft.com/web/webpi/eula/net_library_eula_enu.htm</License>
+  </TemplateData>
+  <TemplateContent />
+  <WizardExtension>
+    <Assembly>Microsoft.VisualStudio.Test.Project, Version=1.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</Assembly>
+    <FullClassName>Microsoft.VisualStudio.Test.Project.FrameworkTemplateWizard</FullClassName>
+  </WizardExtension>
+  <WizardData>
+    <Templates>
+      <Template Path="..\MSTestV2Desktop45.vb\MSTestV2Desktop.vstemplate" MinimumFrameworkVersion="4.5"/>
+      <Template Path="..\MSTestV2Desktop462.vb\MSTestV2Desktop.vstemplate" MinimumFrameworkVersion="4.6.2"/>
+    </Templates>
+  </WizardData>
+</VSTemplate>

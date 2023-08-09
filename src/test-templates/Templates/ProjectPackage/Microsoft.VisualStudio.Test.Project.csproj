@@ -1,0 +1,37 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net472</TargetFramework>
+    <CreateVsixContainer>true</CreateVsixContainer>
+    <EnableXlfLocalization>false</EnableXlfLocalization>
+    <GeneratePkgDefFile>false</GeneratePkgDefFile>
+      <VisualStudioInsertionComponent>Microsoft.VisualStudio.Templates.MSTest.Tools</VisualStudioInsertionComponent>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.VisualStudio.Shell.15.0" Version="$(MicrosoftVisualStudioToolsVersion)" />
+    <PackageReference Include="Microsoft.VisualStudio.TemplateWizardInterface" Version="$(MicrosoftVisualStudioToolsVersion)" />
+  </ItemGroup>
+
+  <ItemGroup>    
+    <Compile Update="FrameworkTemplateWizard\FrameworkTemplateWizardResources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>FrameworkTemplateWizardResources.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+    
+  <ItemGroup>
+    <EmbeddedResource Update="FrameworkTemplateWizard\FrameworkTemplateWizardResources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>FrameworkTemplateWizardResources.Designer.cs</LastGenOutput>
+      <CustomToolNamespace>Microsoft.VisualStudio.Test.Project</CustomToolNamespace>
+    </EmbeddedResource>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="source.extension.vsixmanifest">
+      <SubType>Designer</SubType>
+    </None>
+  </ItemGroup>
+</Project>
