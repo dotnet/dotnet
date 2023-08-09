@@ -64,7 +64,8 @@ Please, make the changes in the respective development repositories (e.g., [dotn
 
 ## Dev instructions
 
-Please note that **this repository is an experiment and a work-in-progress so it is possible that the build is broken**.
+Please note that **this repository is a work-in-progress** and there are some usability issues connected to this.
+These can be nuisances such as some checked-in files getting modified by the build itself and similar.
 For the latest information about Source-Build support, please watch for announcements posted on our [GitHub Discussions page](https://github.com/dotnet/source-build/discussions).
 
 ### Prerequisites
@@ -175,7 +176,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/fsharp`  
 *[dotnet/fsharp@d55c3ef](https://github.com/dotnet/fsharp/commit/d55c3ef1b3dc620a5b6e4ad061633139f06ee44e)*
 - `src/installer`  
-*[dotnet/installer@e4ba943](https://github.com/dotnet/installer/commit/e4ba9439b56671bc8e06d20678af7d3a27bbc0e7)*
+*[dotnet/installer@d656cec](https://github.com/dotnet/installer/commit/d656cec265c6844e1ae17fbf3cc4ae6d40fe3510)*
 - `src/msbuild`  
 *[dotnet/msbuild@b3989dc](https://github.com/dotnet/msbuild/commit/b3989dc43a984b7fbeffb7881ae5bfc9cc793126)*
 - `src/nuget-client`  
