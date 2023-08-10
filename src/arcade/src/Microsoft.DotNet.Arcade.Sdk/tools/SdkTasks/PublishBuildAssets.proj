@@ -30,8 +30,7 @@
   <PropertyGroup>
     <!-- Microsoft.DotNet.Maestro.Tasks is produced from arcade-services, which should always target an LTS TFM -->
     <_MicrosoftDotNetMaestroTasksBaseDir>$(NuGetPackageRoot)microsoft.dotnet.maestro.tasks\$(MicrosoftDotNetMaestroTasksVersion)\tools\</_MicrosoftDotNetMaestroTasksBaseDir>
-    <_MicrosoftDotNetMaestroTasksDir>$(_MicrosoftDotNetMaestroTasksBaseDir)net472</_MicrosoftDotNetMaestroTasksDir>
-    <_MicrosoftDotNetMaestroTasksDir Condition="'$(MSBuildRuntimeType)' == 'Core'">$(_MicrosoftDotNetMaestroTasksBaseDir)netcoreapp3.1</_MicrosoftDotNetMaestroTasksDir>
+    <_MicrosoftDotNetMaestroTasksDir>$(_MicrosoftDotNetMaestroTasksBaseDir)net6.0</_MicrosoftDotNetMaestroTasksDir>
   </PropertyGroup>
   
   <UsingTask TaskName="PushMetadataToBuildAssetRegistry" AssemblyFile="$(_MicrosoftDotNetMaestroTasksDir)\Microsoft.DotNet.Maestro.Tasks.dll"/>
