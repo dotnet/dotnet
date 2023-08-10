@@ -3,9 +3,10 @@
     <Name Package="{52CBD135-1F97-2580-011F-C7CD052E44DE}" ID="510" />
     <Description Package="{52CBD135-1F97-2580-011F-C7CD052E44DE}" ID="511" />
     <Icon Package="{52CBD135-1F97-2580-011F-C7CD052E44DE}" ID="533"/>
-    <TemplateID>Microsoft.VisualBasic.UnitTestProject.v2</TemplateID>
+    <TemplateID>Microsoft.VisualBasic.UnitTestProject.v2.45</TemplateID>
     <ProjectType>VisualBasic</ProjectType>
     <RequiredFrameworkVersion>4.5</RequiredFrameworkVersion>
+    <MaxFrameworkVersion>4.6.1</MaxFrameworkVersion>
     <SortOrder>90</SortOrder>
     <CreateNewFolder>true</CreateNewFolder>
     <PromptForSaveOnCreation>true</PromptForSaveOnCreation>
@@ -31,8 +32,8 @@
   </WizardExtension>
   <WizardData>
     <packages repository="extension" repositoryId="MSTestDesktopVB.Microsoft.c6c7fff6-20cb-405d-9ad4-a60a6d0c55d9" isPreunzipped="false" >
-      <package id="MSTest.TestAdapter" version="3.0.4" skipAssemblyReferences="false"  />
-      <package id="MSTest.TestFramework" version="3.0.4" skipAssemblyReferences="false" />
+      <package id="MSTest.TestAdapter" version="2.2.10" skipAssemblyReferences="false"  />
+      <package id="MSTest.TestFramework" version="2.2.10" skipAssemblyReferences="false" />
     </packages>
   </WizardData>
 </VSTemplate>

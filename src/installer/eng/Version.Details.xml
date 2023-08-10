@@ -106,22 +106,22 @@
       <Uri>https://github.com/dotnet/test-templates</Uri>
       <Sha>0385265f4d0b6413d64aea0223172366a9b9858c</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.Test.ProjectTemplates.5.0" Version="1.1.0-rc.23409.1">
+    <Dependency Name="Microsoft.DotNet.Test.ProjectTemplates.5.0" Version="1.1.0-rc.23409.2">
       <Uri>https://github.com/dotnet/test-templates</Uri>
-      <Sha>81e0a39fcf0321e38debc165803390d070c29d18</Sha>
+      <Sha>3337ce19e6fb3365f80f69df56c77c87d308db1d</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.Test.ProjectTemplates.6.0" Version="1.1.0-rc.23409.1">
+    <Dependency Name="Microsoft.DotNet.Test.ProjectTemplates.6.0" Version="1.1.0-rc.23409.2">
       <Uri>https://github.com/dotnet/test-templates</Uri>
-      <Sha>81e0a39fcf0321e38debc165803390d070c29d18</Sha>
+      <Sha>3337ce19e6fb3365f80f69df56c77c87d308db1d</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.Test.ProjectTemplates.7.0" Version="1.1.0-rc.23409.1">
+    <Dependency Name="Microsoft.DotNet.Test.ProjectTemplates.7.0" Version="1.1.0-rc.23409.2">
       <Uri>https://github.com/dotnet/test-templates</Uri>
-      <Sha>81e0a39fcf0321e38debc165803390d070c29d18</Sha>
+      <Sha>3337ce19e6fb3365f80f69df56c77c87d308db1d</Sha>
       <SourceBuild RepoName="test-templates" ManagedOnly="true" />
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.Test.ProjectTemplates.8.0" Version="1.1.0-rc.23409.1">
+    <Dependency Name="Microsoft.DotNet.Test.ProjectTemplates.8.0" Version="1.1.0-rc.23409.2">
       <Uri>https://github.com/dotnet/test-templates</Uri>
-      <Sha>81e0a39fcf0321e38debc165803390d070c29d18</Sha>
+      <Sha>3337ce19e6fb3365f80f69df56c77c87d308db1d</Sha>
     </Dependency>
     <!-- For coherency purposes, these versions should be gated by the versions of winforms and wpf routed via windowsdesktop -->
     <Dependency Name="Microsoft.Dotnet.WinForms.ProjectTemplates" Version="8.0.0-rc.1.23380.1" CoherentParentDependency="Microsoft.WindowsDesktop.App.Runtime.win-x64">

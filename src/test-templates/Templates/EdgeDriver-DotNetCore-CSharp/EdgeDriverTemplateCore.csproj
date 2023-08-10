@@ -30,7 +30,6 @@
     <Content Include="ProjectTemplates\**">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
-    <Content Include="EdgeDriver.xml" />
   </ItemGroup>
   <ItemGroup>
     <VSTemplate Include="ProjectTemplates\CSharp\Test\EdgeDriverTemplate\EdgeDriverTemplate.vstemplate" />
