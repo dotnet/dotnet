@@ -10,9 +10,6 @@
     <DebugSymbols>true</DebugSymbols>
     <LangVersion>Latest</LangVersion>
 
-    <!-- TODO: Remove when a new Arcade.Sdk is consumed with the changes in TargetFrameworkDefaults.props. -->
-    <NetFrameworkToolCurrent>net472</NetFrameworkToolCurrent>
-
     <!--
       Tools and packages produced by this repository support infrastructure and are not shipping on NuGet or via any other official channel.
     -->
