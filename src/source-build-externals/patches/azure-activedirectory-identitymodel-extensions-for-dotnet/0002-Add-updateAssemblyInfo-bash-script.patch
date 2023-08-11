@@ -1,12 +1,12 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Matt Thalman <mthalman@microsoft.com>
-Date: Fri, 28 Jul 2023 16:04:03 -0500
+Date: Wed, 9 Aug 2023 14:54:03 -0500
 Subject: [PATCH] Add updateAssemblyInfo bash script
 
 Backport: https://github.com/AzureAD/azure-activedirectory-identitymodel-extensions-for-dotnet/pull/2211
 ---
- updateAssemblyInfo.sh | 48 +++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 48 insertions(+)
+ updateAssemblyInfo.sh | 46 +++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 46 insertions(+)
  create mode 100755 updateAssemblyInfo.sh
 
 diff --git a/updateAssemblyInfo.sh b/updateAssemblyInfo.sh
@@ -14,7 +14,7 @@ new file mode 100755
 index 00000000..39173e2c
 --- /dev/null
 +++ b/updateAssemblyInfo.sh
-@@ -0,0 +1,48 @@
+@@ -0,0 +1,46 @@
 +#!/bin/bash
 +set -euo pipefail
 +
@@ -25,9 +25,7 @@ index 00000000..39173e2c
 +# Formats the date by replacing the 4-digit year with a 2-digit value and then subtract 19
 +dateTimeStamp=$(echo $((10#${date:0:2}-19)))${date:2}
 +
-+buildConfiguration=$(cat $PWD/buildConfiguration.xml)
-+
-+assemblyVersion=$(echo $buildConfiguration | xmllint --xpath 'string(/root/assemblyVersion)' -)
++assemblyVersion=$(grep -oP '(?<=<assemblyVersion>)[^<]+' $PWD/buildConfiguration.xml)
 +assemblyFileVersion="$assemblyVersion.${dateTimeStamp::-6}" # Trim the time portion of the date/time
 +
 +# TODO: The commit SHA needs to be appended to the end of this version (see https://github.com/dotnet/source-build/issues/3573)
@@ -37,7 +35,7 @@ index 00000000..39173e2c
 +echo "assemblyFileVersion: $assemblyFileVersion"
 +echo "assemblyInformationalVersion: $assemblyInformationalVersion"
 +
-+nugetSuffix=$(xmllint --xpath "string(/root/nugetSuffix)" buildConfiguration.xml)
++nugetSuffix=$(grep -oP '(?<=<nugetSuffix>)[^<]+' $PWD/buildConfiguration.xml)
 +versionSuffix=""
 +
 +echo "nugetSuffix: $nugetSuffix"
@@ -49,7 +47,7 @@ index 00000000..39173e2c
 +echo "$version" > $versionPath
 +
 +# Get the names of all src projects from the buildConfiguration.xml file
-+projects=$(xmllint --xpath "/root/projects/src/project" buildConfiguration.xml | grep -oP 'name="\K[^"]+')
++projects=$(grep -zoP '(?<=<src>)(.|[\s])*?(?=<\/src>)' $PWD/buildConfiguration.xml | grep -aoP 'name="\K[^"]+')
 +
 +# Inject the new version numbers into the AssemblyInfo.cs files for each project
 +for project in $projects; do
