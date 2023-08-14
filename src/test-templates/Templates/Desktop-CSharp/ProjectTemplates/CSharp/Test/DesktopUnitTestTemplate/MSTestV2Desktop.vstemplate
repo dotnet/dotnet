@@ -4,9 +4,9 @@
     <Name Package="{52CBD135-1F97-2580-011F-C7CD052E44DE}" ID="510" />
     <Description Package="{52CBD135-1F97-2580-011F-C7CD052E44DE}" ID="511" />
     <Icon Package="{52CBD135-1F97-2580-011F-C7CD052E44DE}" ID="531"/>
-    <TemplateID>Microsoft.CSharp.UnitTestProject.v2.462</TemplateID>
+    <TemplateID>Microsoft.CSharp.UnitTestProject.v2</TemplateID>
     <ProjectType>CSharp</ProjectType>
-    <RequiredFrameworkVersion>4.6.2</RequiredFrameworkVersion>
+    <RequiredFrameworkVersion>4.5</RequiredFrameworkVersion>
     <SortOrder>100</SortOrder>
     <CreateNewFolder>true</CreateNewFolder>
     <DefaultName>UnitTestProject</DefaultName>
@@ -25,8 +25,8 @@
   </WizardExtension>
   <WizardData>
     <packages repository="extension" repositoryId="mstestProjectTemplate" isPreunzipped="false" >
-      <package id="MSTest.TestAdapter" version="3.0.4" skipAssemblyReferences="false"  />
-      <package id="MSTest.TestFramework" version="3.0.4" skipAssemblyReferences="false" />
+      <package id="MSTest.TestAdapter" version="2.2.10" skipAssemblyReferences="false"  />
+      <package id="MSTest.TestFramework" version="2.2.10" skipAssemblyReferences="false" />
     </packages>
   </WizardData>
 </VSTemplate>

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <VSTemplate Version="3.0.0" xmlns="http://schemas.microsoft.com/developer/vstemplate/2005" Type="Project">
   <TemplateData>
-    <TemplateID>Microsoft.CSharp.Web.EdgeDriverTest.45</TemplateID>
+    <TemplateID>Microsoft.CSharp.Web.EdgeDriverTest</TemplateID>
     <Name Package="{52CBD135-1F97-2580-011F-C7CD052E44DE}" ID="706"/>
     <Description Package="{52CBD135-1F97-2580-011F-C7CD052E44DE}" ID="708"/>
     <Icon Package="{52CBD135-1F97-2580-011F-C7CD052E44DE}" ID="531"/>
@@ -12,7 +12,6 @@
     <ProvideDefaultName>true</ProvideDefaultName>
     <CreateInPlace>false</CreateInPlace>
     <RequiredFrameworkVersion>4.5</RequiredFrameworkVersion>
-    <MaxFrameworkVersion>4.6.1</MaxFrameworkVersion>
   </TemplateData>
   <TemplateContent>
     <Project TargetFileName="$safeprojectname$.csproj" File="EdgeDriverSample.csproj" ReplaceParameters="true">
