@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project  Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>net461</TargetFramework>
     <RootNamespace>MSTestDesktopVB</RootNamespace>
@@ -20,12 +20,6 @@
     </Content>
     <Content Include="extension.vsixlangpack">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="packages\MSTest.TestAdapter.3.0.4.nupkg">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="packages\MSTest.TestFramework.3.0.4.nupkg">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
     <Content Include="packages\MSTest.TestAdapter.2.2.10.nupkg">
