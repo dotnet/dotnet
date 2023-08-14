@@ -25,7 +25,7 @@ index 00000000..39173e2c
 +# Formats the date by replacing the 4-digit year with a 2-digit value and then subtract 19
 +dateTimeStamp=$(echo $((10#${date:0:2}-19)))${date:2}
 +
-+assemblyVersion=$(grep -oP '(?<=<assemblyVersion>)[^<]+' $PWD/buildConfiguration.xml)
++assemblyVersion=$(sed -n 's/.*<assemblyVersion>\([^<]*\)<.*/\1/p' $PWD/buildConfiguration.xml)
 +assemblyFileVersion="$assemblyVersion.${dateTimeStamp::-6}" # Trim the time portion of the date/time
 +
 +# TODO: The commit SHA needs to be appended to the end of this version (see https://github.com/dotnet/source-build/issues/3573)
@@ -35,7 +35,7 @@ index 00000000..39173e2c
 +echo "assemblyFileVersion: $assemblyFileVersion"
 +echo "assemblyInformationalVersion: $assemblyInformationalVersion"
 +
-+nugetSuffix=$(grep -oP '(?<=<nugetSuffix>)[^<]+' $PWD/buildConfiguration.xml)
++nugetSuffix=$(sed -n 's/.*<nugetSuffix>\([^<]*\)<.*/\1/p' $PWD/buildConfiguration.xml)
 +versionSuffix=""
 +
 +echo "nugetSuffix: $nugetSuffix"
@@ -47,7 +47,7 @@ index 00000000..39173e2c
 +echo "$version" > $versionPath
 +
 +# Get the names of all src projects from the buildConfiguration.xml file
-+projects=$(grep -zoP '(?<=<src>)(.|[\s])*?(?=<\/src>)' $PWD/buildConfiguration.xml | grep -aoP 'name="\K[^"]+')
++projects=$(sed -n '/<src>/,/<\/src>/p' $PWD/buildConfiguration.xml | sed -n 's/.*name="\([^"]*\)".*/\1/p')
 +
 +# Inject the new version numbers into the AssemblyInfo.cs files for each project
 +for project in $projects; do
