@@ -56,7 +56,7 @@ public class VersionTrimmingOperation : IOperation
             {
                 info = _context.NupkgInfoFactory.CreateNupkgInfo(assetFileName);
             }
-            catch (InvalidDataException e)
+            catch (Exception e)
             {
                 _context.Logger.WriteError($"Asset {assetFileName} in not a valid nuget package: {e.Message}");
                 continue;

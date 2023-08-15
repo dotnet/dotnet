@@ -79,6 +79,7 @@ getNonPortableDistroRid()
 # Input:
 #   os: (str)
 #   arch: (str)
+#   isPortable: (int)
 #   rootfsDir?: (nullable:string)
 #
 # Return:
@@ -96,9 +97,10 @@ initDistroRidGlobal()
 {
     local targetOs="$1"
     local targetArch="$2"
+    local isPortable="$3"
     local rootfsDir=""
-    if [ "$#" -ge 3 ]; then
-        rootfsDir="$3"
+    if [ "$#" -ge 4 ]; then
+        rootfsDir="$4"
     fi
 
     if [ -n "${rootfsDir}" ]; then
