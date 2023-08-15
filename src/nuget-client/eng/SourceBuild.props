@@ -6,6 +6,10 @@
     <GitHubRepositoryName>nuget-client</GitHubRepositoryName>
     <SourceBuildManagedOnly>true</SourceBuildManagedOnly>
     <VersionPrefix>1.0.0</VersionPrefix>
+
+    <!-- Addresses empty intermediate issue originally found by https://github.com/dotnet/arcade/pull/13067 -->
+    <!-- Should be removed once https://github.com/NuGet/Home/issues/11059 is implemented -->
+    <AllowEmptySourceBuiltIntermediates>true</AllowEmptySourceBuiltIntermediates>
   </PropertyGroup>
 
 </Project>
