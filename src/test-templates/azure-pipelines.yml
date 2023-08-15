@@ -57,6 +57,7 @@ variables:
       /p:DotNetPublishUsingPipelines=true
       /p:DotNetArtifactsCategory=.NETCore
       /p:OfficialBuildId=$(BUILD.BUILDNUMBER)
+      /p:GenerateSbom=true
 
 stages:
 - stage: build
@@ -95,6 +96,10 @@ stages:
         steps:
         - checkout: self
           clean: true
+
+        # Restore internal tools required for SBOM generation
+        - ${{ if eq(variables._RunAsInternal, True) }}:
+          - template: /eng/restore-internal-tools.yml
 
         - script: eng\common\cibuild.cmd
             -configuration $(_BuildConfig)
