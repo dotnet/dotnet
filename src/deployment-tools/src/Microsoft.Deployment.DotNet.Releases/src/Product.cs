@@ -7,7 +7,6 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
 using System.Text.Json;
-using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace Microsoft.Deployment.DotNet.Releases
@@ -23,8 +22,6 @@ namespace Microsoft.Deployment.DotNet.Releases
         /// <summary>
         /// The version of the product, e.g "5.0" or "1.1".
         /// </summary>
-        [JsonPropertyName("channel-version")]
-        [JsonInclude]
         public string ProductVersion
         {
             get;
@@ -35,8 +32,6 @@ namespace Microsoft.Deployment.DotNet.Releases
         /// The end-of-life (EOL) date for this <see cref="Product"/> when it is considered to be out of support. The value 
         /// may be <see langword="null" /> if the EOL date is undetermined, e.g. when a product is still a prerelease.
         /// </summary>
-        [JsonPropertyName("eol-date")]
-        [JsonInclude]
         public DateTime? EndOfLifeDate
         {
             get;
@@ -47,8 +42,6 @@ namespace Microsoft.Deployment.DotNet.Releases
         /// <see langword="True"/> if the latest release of the product contained a security update;
         /// <see langword="false"/> otherwise.
         /// </summary>
-        [JsonPropertyName("security")]
-        [JsonInclude]
         public bool LatestReleaseIncludesSecurityUpdate
         {
             get;
@@ -58,8 +51,6 @@ namespace Microsoft.Deployment.DotNet.Releases
         /// <summary>
         /// The date of the latest release for this product.
         /// </summary>
-        [JsonPropertyName("latest-release-date")]
-        [JsonInclude]
         public DateTime LatestReleaseDate
         {
             get;
@@ -69,9 +60,6 @@ namespace Microsoft.Deployment.DotNet.Releases
         /// <summary>
         /// The version of the latest release.
         /// </summary>
-        [JsonPropertyName("latest-release")]
-        [JsonInclude]
-        [JsonConverter(typeof(ReleaseVersionConverter))]
         public ReleaseVersion LatestReleaseVersion
         {
             get;
@@ -81,9 +69,6 @@ namespace Microsoft.Deployment.DotNet.Releases
         /// <summary>
         /// The version of the runtime included in the latest release.
         /// </summary>
-        [JsonPropertyName("latest-runtime")]
-        [JsonInclude]
-        [JsonConverter(typeof(ReleaseVersionConverter))]
         public ReleaseVersion LatestRuntimeVersion
         {
             get;
@@ -97,9 +82,6 @@ namespace Microsoft.Deployment.DotNet.Releases
         /// This is usually the SDK with the highest feature band. A <see cref="ProductRelease"/>
         /// may include multiple SDKs across different feature bands, all of which carry the same runtime version.
         /// </remarks>
-        [JsonPropertyName("latest-sdk")]
-        [JsonInclude]
-        [JsonConverter(typeof(ReleaseVersionConverter))]
         public ReleaseVersion LatestSdkVersion
         {
             get;
@@ -109,8 +91,6 @@ namespace Microsoft.Deployment.DotNet.Releases
         /// <summary>
         /// The name of the product.
         /// </summary>
-        [JsonPropertyName("product")]
-        [JsonInclude]
         public string ProductName
         {
             get;
@@ -121,8 +101,6 @@ namespace Microsoft.Deployment.DotNet.Releases
         /// The URL pointing to the releases.json file that contains information about all the releases 
         /// associated with this <see cref="Product"/>.
         /// </summary>
-        [JsonPropertyName("releases.json")]
-        [JsonInclude]
         public Uri ReleasesJson
         {
             get;
@@ -132,8 +110,6 @@ namespace Microsoft.Deployment.DotNet.Releases
         /// <summary>
         /// A value indicating the support duration of the product.
         /// </summary>
-        [JsonPropertyName("release-type")]
-        [JsonInclude]
         public ReleaseType ReleaseType
         {
             get;
@@ -148,8 +124,6 @@ namespace Microsoft.Deployment.DotNet.Releases
         /// The EOL dates are often published in advance, but there can be delays to updating the support phase in the published
         /// data.
         /// </remarks>
-        [JsonPropertyName("support-phase")]
-        [JsonInclude]
         public SupportPhase SupportPhase
         {
             get;
@@ -162,7 +136,6 @@ namespace Microsoft.Deployment.DotNet.Releases
         /// <see langword="false"/> otherwise.
         /// </summary>
         /// <returns><see langword="true"/> if the product is currently supported; <see langword="false"/> otherwise.</returns>
-        [JsonIgnore]
         public bool IsSupported => !IsOutOfSupport();
 
         /// <summary>
@@ -171,6 +144,31 @@ namespace Microsoft.Deployment.DotNet.Releases
         /// <returns>A collection of all releases for this product.</returns>
         public Task<ReadOnlyCollection<ProductRelease>> GetReleasesAsync() =>
             GetReleasesAsync(ReleasesJson);
+
+        internal Product(JsonElement productElement)
+        {
+            ReleaseType = productElement.TryGetProperty("release-type", out JsonElement value) ?
+                Enum.TryParse(value.GetString(), ignoreCase: true, out ReleaseType releaseType) ? releaseType : ReleaseType.Unknown :
+                ReleaseType.Unknown;
+
+            SupportPhase = productElement.TryGetProperty("support-phase", out value) ?
+                Enum.TryParse(value.GetString()?.Replace("-", ""), ignoreCase: true, out SupportPhase supportPhase) ? supportPhase : SupportPhase.Unknown :
+                SupportPhase.Unknown;
+
+            if (productElement.TryGetProperty("eol-date", out value))
+            {
+                EndOfLifeDate = value.ValueKind == JsonValueKind.Null ? null : value.GetDateTime();
+            }
+
+            LatestReleaseDate = productElement.GetProperty("latest-release-date").GetDateTime();
+            LatestReleaseVersion = productElement.GetReleaseVersionOrDefault("latest-release");
+            LatestReleaseIncludesSecurityUpdate = productElement.GetProperty("security").GetBoolean();
+            LatestRuntimeVersion = productElement.GetReleaseVersionOrDefault("latest-runtime");
+            LatestSdkVersion = productElement.GetReleaseVersionOrDefault("latest-sdk");
+            ProductName = productElement.GetStringOrDefault("product");
+            ProductVersion = productElement.GetStringOrDefault("channel-version");
+            ReleasesJson = productElement.GetUriOrDefault("releases.json");
+        }
 
         /// <summary>
         /// Gets a collection of all releases associated with this <see cref="Product"/> using a file

@@ -5,6 +5,8 @@
     <MinorVersion>0</MinorVersion>
     <PreReleaseVersionIteration>6</PreReleaseVersionIteration>
     <SuppressFinalPackageVersion>true</SuppressFinalPackageVersion>
+    <IsTrimmable>true</IsTrimmable>
+    <EnableTrimAnalyzer>true</EnableTrimAnalyzer>
   </PropertyGroup>
 
   <PropertyGroup>

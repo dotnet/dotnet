@@ -46,6 +46,17 @@ namespace Microsoft.Deployment.DotNet.Releases.Tests
         }
 
         [Fact]
+        public void ItContainsAllCves()
+        {
+            ProductRelease release = GetProductRelease("6.0", "6.0.5");
+
+            Assert.Equal(3, release.Cves.Count);
+            Assert.Equal("CVE-2022-29117", release.Cves[0].Id);
+            Assert.Equal("CVE-2022-23267", release.Cves[1].Id);
+            Assert.Equal("CVE-2022-29145", release.Cves[2].Id);
+        }
+
+        [Fact]
         public async Task ItCanCreateASingleRelease()
         {
             var releases = await Product.GetReleasesAsync(@"data\5.0\releases.json").ConfigureAwait(false);
