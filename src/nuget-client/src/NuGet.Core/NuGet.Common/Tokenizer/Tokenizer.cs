@@ -39,7 +39,7 @@ namespace NuGet.Common
         /// Gets the next token.
         /// </summary>
         /// <returns>The parsed token. Or null if no more tokens are available.</returns>
-        public Token Read()
+        public Token? Read()
         {
             if (_index >= _text.Length)
             {

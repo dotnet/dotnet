@@ -165,8 +165,8 @@ namespace NuGet.Common
 
         private static IEnumerable<string> GetMessages(Exception exception)
         {
-            Exception current = exception;
-            string previous = null;
+            Exception? current = exception;
+            string? previous = null;
             while (current != null)
             {
                 if (current.Message != null &&
@@ -184,7 +184,7 @@ namespace NuGet.Common
         {
             using (var reader = new StringReader(input))
             {
-                string line;
+                string? line;
                 while ((line = reader.ReadLine()) != null)
                 {
                     yield return line;

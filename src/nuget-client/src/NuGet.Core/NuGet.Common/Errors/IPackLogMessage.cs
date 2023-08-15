@@ -10,11 +10,11 @@ namespace NuGet.Common
         /// <summary>
         /// Project or Package Id.
         /// </summary>
-        string LibraryId { get; set; }
+        string? LibraryId { get; set; }
 
         /// <summary>
         /// NuGet Framework
         /// </summary>
-        public NuGetFramework Framework { get; set; }
+        public NuGetFramework? Framework { get; set; }
     }
 }

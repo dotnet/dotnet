@@ -186,7 +186,7 @@ namespace NuGet.Common.Test
         class IntegerEnumeratorAsync : IEnumeratorAsync<int>
         {
             private readonly IList<int> _enumInts;
-            private IEnumerator<int> enumerator = null;
+            private IEnumerator<int> enumerator;
 
             public int Current
             {

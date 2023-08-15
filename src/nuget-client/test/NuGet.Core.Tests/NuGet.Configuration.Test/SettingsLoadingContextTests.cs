@@ -130,5 +130,23 @@ namespace NuGet.Configuration.Test
                 .Should()
                 .Be(nameof(SettingsLoadingContext));
         }
+
+        /// <summary>
+        /// Verifies that <see cref="SettingsLoadingContext.GetOrCreateSettingsFile(string, bool, bool)" /> throws an <see cref="ArgumentException"/> when a non-rooted path is specified (ie just a filename).
+        /// </summary>
+        [Fact]
+        public void GetOrCreateSettingsFile_ThrowsArgumentException_WhenNonRootedPathSpecified()
+        {
+            var settingsLoadingContext = new SettingsLoadingContext();
+
+            Action action = () => settingsLoadingContext.GetOrCreateSettingsFile(filePath: "Something.config");
+
+            action.Should()
+                .Throw<ArgumentException>()
+                .Which
+                .ParamName
+                .Should()
+                .Be("filePath");
+        }
     }
 }

@@ -489,5 +489,17 @@ namespace NuGet.Tests.Apex
 
             return s;
         }
+
+        public static void AssertInstalledPackageByProjectType(VisualStudioHost visualStudio, ProjectTemplate projectTemplate, ProjectTestExtension project, string packageName, string packageVersion, ILogger logger)
+        {
+            if (projectTemplate.Equals(ProjectTemplate.ClassLibrary))
+            {
+                AssertPackageInPackagesConfig(visualStudio, project, packageName, packageVersion, logger);
+            }
+            else
+            {
+                AssertPackageReferenceExists(visualStudio, project, packageName, packageVersion, logger);
+            }
+        }
     }
 }

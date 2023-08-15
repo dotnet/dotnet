@@ -193,7 +193,7 @@ namespace NuGet.PackageManagement.Test.Telemetry
                 isPackageSourceMappingEnabled: false);
 
             // Simulate UIActionEngine.AddUiActionEngineTelemetryProperties()
-            var pkgAdded = new TelemetryEvent(eventName: null);
+            var pkgAdded = new TelemetryEvent(eventName: string.Empty);
             pkgAdded.AddPiiData("id", VSTelemetryServiceUtility.NormalizePackageId(testPackageId));
             pkgAdded.AddPiiData("version", testPackageVersion.ToNormalizedString());
 

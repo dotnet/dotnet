@@ -129,13 +129,6 @@ namespace NuGet.PackageManagement.UI.Test
             {
                 return new ValueTask<IReadOnlyList<PackageSourceContextInfo>>(PackageSources);
             }
-
-#pragma warning disable CS0618 // Type or member is obsolete
-            public ValueTask SavePackageSourcesAsync(IReadOnlyList<Configuration.PackageSource> sources, Configuration.PackageSourceUpdateOptions packageSourceUpdateOptions, CancellationToken cancellationToken)
-#pragma warning restore CS0618 // Type or member is obsolete
-            {
-                return new ValueTask();
-            }
         }
     }
 }

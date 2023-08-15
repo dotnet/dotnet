@@ -123,8 +123,6 @@ namespace NuGet.Common
                 // Key doesn't yet exist, so create one and set the initial count to 1, indicating that the current thread
                 // has interest in the key's LockState.
                 lockState = new LockState();
-                lockState.Semaphore = new SemaphoreSlim(initialCount: 1);
-                lockState.Count = 1;
                 _locks[key] = lockState;
             }
 
@@ -187,21 +185,34 @@ namespace NuGet.Common
             {
                 // count == 0 means that this was the only/last thread accessing this key's LockState. Therefore, we
                 // can dispose of it and remove the key from the dictionary.
-                lockState.Semaphore.Dispose();
+                lockState.Dispose();
                 _locks.Remove(key);
             }
         }
 
         /// <summary>Nested class to hold the state of per-key locks.</summary>
-        private class LockState
+        private sealed class LockState : IDisposable
         {
             /// <summary>The synchronization object used to ensure only 1 thread at a time can obtain the key's lock.</summary>
-            public SemaphoreSlim Semaphore;
+            public SemaphoreSlim Semaphore { get; }
 
             /// <summary>A counter of how many threads/tasks have interest in the key's lock. When this reaches zero,
             /// it means no more threads or tasks want access to the resource, and the dictionary can clear its memory
             /// of the key and this state.</summary>
             public int Count;
+
+            public LockState()
+            {
+                Semaphore = new SemaphoreSlim(initialCount: 1);
+                Count = 1;
+            }
+
+            public void Dispose()
+            {
+                Semaphore.Dispose();
+
+                GC.SuppressFinalize(this);
+            }
         }
 
         public void Dispose()

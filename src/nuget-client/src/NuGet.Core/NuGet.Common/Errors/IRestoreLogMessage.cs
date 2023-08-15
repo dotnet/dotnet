@@ -10,7 +10,7 @@ namespace NuGet.Common
         /// <summary>
         /// Project or Package Id.
         /// </summary>
-        string LibraryId { get; set; }
+        string? LibraryId { get; set; }
 
         /// <summary>
         /// List of TargetGraphs.

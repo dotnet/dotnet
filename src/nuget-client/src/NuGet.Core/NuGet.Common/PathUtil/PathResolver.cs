@@ -138,7 +138,7 @@ namespace NuGet.Common
             // (a) Path is not recursive search
             bool isRecursiveSearch = searchPath.IndexOf("**", StringComparison.OrdinalIgnoreCase) != -1;
             // (b) Path does not have any wildcards.
-            bool isWildcardPath = Path.GetDirectoryName(searchPath).Contains('*');
+            bool isWildcardPath = Path.GetDirectoryName(searchPath)?.Contains('*') ?? false;
             if (!isRecursiveSearch && !isWildcardPath)
             {
                 searchOption = SearchOption.TopDirectoryOnly;
@@ -178,7 +178,11 @@ namespace NuGet.Common
                 // For paths without wildcard, we could either have base relative paths (such as lib\foo.dll) or paths outside the base path
                 // (such as basePath: C:\packages and searchPath: D:\packages\foo.dll)
                 // In this case, Path.Combine would pick up the right root to enumerate from.
-                string searchRoot = Path.GetDirectoryName(searchPath);
+                string? searchRoot = Path.GetDirectoryName(searchPath);
+                if (searchRoot is null)
+                {
+                    throw new ArgumentException(paramName: nameof(searchPath), message: "Path.GetDirectoryName(searchPath) returned null");
+                }
                 basePathToEnumerate = Path.Combine(basePath, searchRoot);
             }
             else
@@ -201,7 +205,7 @@ namespace NuGet.Common
             return basePathToEnumerate;
         }
 
-        internal static string NormalizeBasePath(string basePath, ref string searchPath)
+        internal static string NormalizeBasePath(string? basePath, ref string searchPath)
         {
             string parentDirectoryPath = $"..{Path.DirectorySeparatorChar}";
             string currentDirectoryPath = $".{Path.DirectorySeparatorChar}";
@@ -228,7 +232,7 @@ namespace NuGet.Common
             return filter.IndexOf('*') != -1;
         }
 
-        public static bool IsDirectoryPath(string path)
+        public static bool IsDirectoryPath(string? path)
         {
             return path != null && path.Length > 1 &&
                 (path[path.Length - 1] == Path.DirectorySeparatorChar ||

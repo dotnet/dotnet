@@ -1,0 +1,62 @@
+<UserControl x:Class="NuGet.PackageManagement.UI.Options.ConfigurationFilesControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:nuget="clr-namespace:NuGet.PackageManagement.UI"
+             xmlns:options="clr-namespace:NuGet.PackageManagement.UI.Options"
+             Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}"
+             Foreground="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+  <UserControl.Resources>
+    <ResourceDictionary>
+      <ResourceDictionary.MergedDictionaries>
+        <options:SharedResources />
+      </ResourceDictionary.MergedDictionaries>
+      <Style TargetType="ListViewItem">
+        <EventSetter Event="MouseDoubleClick" Handler="ListViewItem_MouseDoubleClick"/>
+      </Style>
+    </ResourceDictionary>
+  </UserControl.Resources>
+  <Grid>
+    <Grid.RowDefinitions>
+      <RowDefinition Height="auto" />
+      <RowDefinition Height="*" />
+      <RowDefinition Height="auto" />
+    </Grid.RowDefinitions>
+    <TextBlock Grid.Row="0" Text="{x:Static nuget:Resources.VSOptions_Label_ConfigurationFiles}"/>
+    <ListView
+      Name="_configurationFiles"
+      Grid.Row="1"
+      SelectedItem="{Binding SelectedPath}"
+      ItemsSource="{Binding ConfigurationFilesCollection}"
+      AutomationProperties.Name="{x:Static nuget:Resources.VSOptions_Label_ConfigurationFiles}" />
+    <Grid Grid.Row="2">
+      <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="*"></ColumnDefinition>
+        <ColumnDefinition Width="auto"></ColumnDefinition>
+      </Grid.ColumnDefinitions>
+      <Grid Grid.Column="0">
+        <Grid.RowDefinitions>
+          <RowDefinition Height="auto" />
+          <RowDefinition Height="auto" />
+        </Grid.RowDefinitions>
+        <TextBlock Grid.Row="0" TextWrapping="WrapWithOverflow" Text="{x:Static nuget:Resources.Text_ApplyingConfigurationFiles}"/>
+        <TextBlock Grid.Row="1" TextWrapping="WrapWithOverflow">
+          <Hyperlink
+              NavigateUri="https://aka.ms/nuget/how-settings-are-applied"
+              RequestNavigate="Hyperlink_RequestNavigate">
+            <Run Text="{x:Static nuget:Resources.Text_ApplyingConfigurationFiles_DocumentLink}"/>
+          </Hyperlink>
+        </TextBlock>
+      </Grid>
+      <Button
+        Name="_openButton"
+        Style="{DynamicResource ConfigurationFilesButtonStyle}"
+        Content="{x:Static nuget:Resources.VSOptions_Button_Open}"
+        Grid.Column="2"
+        Command="{Binding OpenConfigurationFile}"/>
+    </Grid>
+  </Grid>
+</UserControl>

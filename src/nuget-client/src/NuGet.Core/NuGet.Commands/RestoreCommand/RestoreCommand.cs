@@ -515,7 +515,7 @@ namespace NuGet.Commands
                 List<TelemetryEvent> result = new List<TelemetryEvent>(packages.Count);
                 foreach (var package in packages)
                 {
-                    TelemetryEvent packageData = new TelemetryEvent(eventName: null);
+                    TelemetryEvent packageData = new TelemetryEvent(eventName: string.Empty);
                     packageData.AddPiiData("id", package);
                     result.Add(packageData);
                 }

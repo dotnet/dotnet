@@ -1,6 +1,8 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+#nullable enable
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -58,7 +60,7 @@ namespace NuGet.Configuration.Test
 
             // Act & Assert
             IReadOnlyList<string> configuredSources = searchTree.GetConfiguredPackageSources(term);
-            Assert.Null(configuredSources);
+            Assert.Empty(configuredSources);
         }
 
         [Theory]
@@ -105,7 +107,7 @@ namespace NuGet.Configuration.Test
 
             // Act & Assert
             IReadOnlyList<string> configuredSources = searchTree.GetConfiguredPackageSources(term);
-            Assert.Null(configuredSources);
+            Assert.Empty(configuredSources);
         }
 
         [Theory]
@@ -119,7 +121,7 @@ namespace NuGet.Configuration.Test
 
             // Act & Assert
             IReadOnlyList<string> configuredSources = searchTree.GetConfiguredPackageSources(term);
-            Assert.Null(configuredSources);
+            Assert.Empty(configuredSources);
         }
 
         [Theory]
@@ -139,7 +141,7 @@ namespace NuGet.Configuration.Test
 
             // Act & Assert
             IReadOnlyList<string> configuredSources = searchTree.GetConfiguredPackageSources(term);
-            Assert.Null(configuredSources);
+            Assert.Empty(configuredSources);
         }
 
         [Fact]
@@ -194,7 +196,7 @@ namespace NuGet.Configuration.Test
 
             // Act & Assert
             var packageSourcesMatch = searchTree.GetConfiguredPackageSources(term);
-            Assert.Null(packageSourcesMatch);
+            Assert.Empty(packageSourcesMatch);
         }
 
         [Theory]
@@ -258,7 +260,7 @@ namespace NuGet.Configuration.Test
             SearchTree searchTree = new SearchTree(configuration);
 
             // Act
-            string foundPattern = searchTree.SearchForPattern(term);
+            string? foundPattern = searchTree.SearchForPattern(term);
 
             // Assert
             configuration.IsEnabled.Should().BeTrue();

@@ -1,41 +1,41 @@
 #nullable enable
 NuGet.Common.ActivityCorrelationId
 NuGet.Common.AggregateEnumerableAsync<T>
-~NuGet.Common.AggregateEnumerableAsync<T>.AggregateEnumerableAsync(System.Collections.Generic.IList<NuGet.Common.IEnumerableAsync<T>> asyncEnumerables, System.Collections.Generic.IComparer<T> comparer, System.Collections.Generic.IEqualityComparer<T> equalityComparer) -> void
-~NuGet.Common.AggregateEnumerableAsync<T>.GetEnumeratorAsync() -> NuGet.Common.IEnumeratorAsync<T>
+NuGet.Common.AggregateEnumerableAsync<T>.AggregateEnumerableAsync(System.Collections.Generic.IList<NuGet.Common.IEnumerableAsync<T>!>! asyncEnumerables, System.Collections.Generic.IComparer<T>? comparer, System.Collections.Generic.IEqualityComparer<T>? equalityComparer) -> void
+NuGet.Common.AggregateEnumerableAsync<T>.GetEnumeratorAsync() -> NuGet.Common.IEnumeratorAsync<T>!
 NuGet.Common.AggregateEnumeratorAsync<T>
-~NuGet.Common.AggregateEnumeratorAsync<T>.AggregateEnumeratorAsync(System.Collections.Generic.IList<NuGet.Common.IEnumerableAsync<T>> asyncEnumerables, System.Collections.Generic.IComparer<T> orderingComparer, System.Collections.Generic.IEqualityComparer<T> equalityComparer) -> void
+NuGet.Common.AggregateEnumeratorAsync<T>.AggregateEnumeratorAsync(System.Collections.Generic.IList<NuGet.Common.IEnumerableAsync<T>!>! asyncEnumerables, System.Collections.Generic.IComparer<T>? orderingComparer, System.Collections.Generic.IEqualityComparer<T>? equalityComparer) -> void
 NuGet.Common.AggregateEnumeratorAsync<T>.Current.get -> T
-~NuGet.Common.AggregateEnumeratorAsync<T>.MoveNextAsync() -> System.Threading.Tasks.Task<bool>
+NuGet.Common.AggregateEnumeratorAsync<T>.MoveNextAsync() -> System.Threading.Tasks.Task<bool>!
 NuGet.Common.AsyncLazy
 NuGet.Common.AsyncLazy<T>
-~NuGet.Common.AsyncLazy<T>.AsyncLazy(System.Func<System.Threading.Tasks.Task<T>> valueFactory) -> void
-~NuGet.Common.AsyncLazy<T>.AsyncLazy(System.Lazy<System.Threading.Tasks.Task<T>> inner) -> void
+NuGet.Common.AsyncLazy<T>.AsyncLazy(System.Func<System.Threading.Tasks.Task<T>!>! valueFactory) -> void
+NuGet.Common.AsyncLazy<T>.AsyncLazy(System.Lazy<System.Threading.Tasks.Task<T>!>! inner) -> void
 NuGet.Common.AsyncLazy<T>.GetAwaiter() -> System.Runtime.CompilerServices.TaskAwaiter<T>
 NuGet.Common.AuthTypeFilteredCredentials
-~NuGet.Common.AuthTypeFilteredCredentials.AuthTypeFilteredCredentials(System.Net.NetworkCredential innerCredential, System.Collections.Generic.IEnumerable<string> authTypes) -> void
-~NuGet.Common.AuthTypeFilteredCredentials.AuthTypes.get -> System.Collections.Generic.IReadOnlyList<string>
-~NuGet.Common.AuthTypeFilteredCredentials.GetCredential(System.Uri uri, string authType) -> System.Net.NetworkCredential
-~NuGet.Common.AuthTypeFilteredCredentials.InnerCredential.get -> System.Net.NetworkCredential
+NuGet.Common.AuthTypeFilteredCredentials.AuthTypeFilteredCredentials(System.Net.NetworkCredential! innerCredential, System.Collections.Generic.IEnumerable<string!>! authTypes) -> void
+NuGet.Common.AuthTypeFilteredCredentials.AuthTypes.get -> System.Collections.Generic.IReadOnlyList<string!>!
+NuGet.Common.AuthTypeFilteredCredentials.GetCredential(System.Uri! uri, string! authType) -> System.Net.NetworkCredential?
+NuGet.Common.AuthTypeFilteredCredentials.InnerCredential.get -> System.Net.NetworkCredential!
 NuGet.Common.ClientVersionUtility
 NuGet.Common.CommandLineArgumentCombinationException
-~NuGet.Common.CommandLineArgumentCombinationException.CommandLineArgumentCombinationException(string message) -> void
+NuGet.Common.CommandLineArgumentCombinationException.CommandLineArgumentCombinationException(string! message) -> void
 NuGet.Common.ComparisonUtility
 NuGet.Common.ConcurrencyUtilities
 NuGet.Common.CryptoHashProvider
-~NuGet.Common.CryptoHashProvider.CalculateHash(System.IO.Stream stream) -> byte[]
-~NuGet.Common.CryptoHashProvider.CalculateHash(byte[] data) -> byte[]
+NuGet.Common.CryptoHashProvider.CalculateHash(System.IO.Stream! stream) -> byte[]!
+NuGet.Common.CryptoHashProvider.CalculateHash(byte[]! data) -> byte[]!
 NuGet.Common.CryptoHashProvider.CryptoHashProvider() -> void
-~NuGet.Common.CryptoHashProvider.CryptoHashProvider(string hashAlgorithm) -> void
-~NuGet.Common.CryptoHashProvider.VerifyHash(byte[] data, byte[] hash) -> bool
+NuGet.Common.CryptoHashProvider.CryptoHashProvider(string? hashAlgorithm) -> void
+NuGet.Common.CryptoHashProvider.VerifyHash(byte[]! data, byte[]! hash) -> bool
 NuGet.Common.CryptoHashUtility
 NuGet.Common.CultureUtility
 NuGet.Common.DatetimeUtility
 NuGet.Common.EnvironmentVariableWrapper
 NuGet.Common.EnvironmentVariableWrapper.EnvironmentVariableWrapper() -> void
-~NuGet.Common.EnvironmentVariableWrapper.GetEnvironmentVariable(string variable) -> string
+NuGet.Common.EnvironmentVariableWrapper.GetEnvironmentVariable(string! variable) -> string?
 NuGet.Common.ExceptionLogger
-~NuGet.Common.ExceptionLogger.ExceptionLogger(NuGet.Common.IEnvironmentVariableReader reader) -> void
+NuGet.Common.ExceptionLogger.ExceptionLogger(NuGet.Common.IEnvironmentVariableReader! reader) -> void
 NuGet.Common.ExceptionLogger.ShowStack.get -> bool
 NuGet.Common.ExceptionUtilities
 NuGet.Common.FileUtility
@@ -45,21 +45,21 @@ NuGet.Common.HashAlgorithmName.SHA384 = 2 -> NuGet.Common.HashAlgorithmName
 NuGet.Common.HashAlgorithmName.SHA512 = 3 -> NuGet.Common.HashAlgorithmName
 NuGet.Common.HashAlgorithmName.Unknown = 0 -> NuGet.Common.HashAlgorithmName
 NuGet.Common.ICollectorLogger
-~NuGet.Common.ICollectorLogger.Errors.get -> System.Collections.Generic.IEnumerable<NuGet.Common.IRestoreLogMessage>
+NuGet.Common.ICollectorLogger.Errors.get -> System.Collections.Generic.IEnumerable<NuGet.Common.IRestoreLogMessage!>!
 NuGet.Common.IEnumerableAsync<T>
-~NuGet.Common.IEnumerableAsync<T>.GetEnumeratorAsync() -> NuGet.Common.IEnumeratorAsync<T>
+NuGet.Common.IEnumerableAsync<T>.GetEnumeratorAsync() -> NuGet.Common.IEnumeratorAsync<T>!
 NuGet.Common.IEnumeratorAsync<T>
 NuGet.Common.IEnumeratorAsync<T>.Current.get -> T
-~NuGet.Common.IEnumeratorAsync<T>.MoveNextAsync() -> System.Threading.Tasks.Task<bool>
+NuGet.Common.IEnumeratorAsync<T>.MoveNextAsync() -> System.Threading.Tasks.Task<bool>!
 NuGet.Common.IEnvironmentVariableReader
-~NuGet.Common.IEnvironmentVariableReader.GetEnvironmentVariable(string variable) -> string
+NuGet.Common.IEnvironmentVariableReader.GetEnvironmentVariable(string! variable) -> string?
 NuGet.Common.ILogFileContext
 NuGet.Common.ILogFileContext.EndColumnNumber.get -> int
 NuGet.Common.ILogFileContext.EndColumnNumber.set -> void
 NuGet.Common.ILogFileContext.EndLineNumber.get -> int
 NuGet.Common.ILogFileContext.EndLineNumber.set -> void
-~NuGet.Common.ILogFileContext.FilePath.get -> string
-~NuGet.Common.ILogFileContext.FilePath.set -> void
+NuGet.Common.ILogFileContext.FilePath.get -> string?
+NuGet.Common.ILogFileContext.FilePath.set -> void
 NuGet.Common.ILogFileContext.StartColumnNumber.get -> int
 NuGet.Common.ILogFileContext.StartColumnNumber.set -> void
 NuGet.Common.ILogFileContext.StartLineNumber.get -> int
@@ -69,54 +69,54 @@ NuGet.Common.ILogMessage.Code.get -> NuGet.Common.NuGetLogCode
 NuGet.Common.ILogMessage.Code.set -> void
 NuGet.Common.ILogMessage.Level.get -> NuGet.Common.LogLevel
 NuGet.Common.ILogMessage.Level.set -> void
-~NuGet.Common.ILogMessage.Message.get -> string
-~NuGet.Common.ILogMessage.Message.set -> void
-~NuGet.Common.ILogMessage.ProjectPath.get -> string
-~NuGet.Common.ILogMessage.ProjectPath.set -> void
+NuGet.Common.ILogMessage.Message.get -> string!
+NuGet.Common.ILogMessage.Message.set -> void
+NuGet.Common.ILogMessage.ProjectPath.get -> string?
+NuGet.Common.ILogMessage.ProjectPath.set -> void
 NuGet.Common.ILogMessage.Time.get -> System.DateTimeOffset
 NuGet.Common.ILogMessage.Time.set -> void
 NuGet.Common.ILogMessage.WarningLevel.get -> NuGet.Common.WarningLevel
 NuGet.Common.ILogMessage.WarningLevel.set -> void
 NuGet.Common.ILogMessageException
-~NuGet.Common.ILogMessageException.AsLogMessage() -> NuGet.Common.ILogMessage
+NuGet.Common.ILogMessageException.AsLogMessage() -> NuGet.Common.ILogMessage!
 NuGet.Common.ILogger
-~NuGet.Common.ILogger.Log(NuGet.Common.ILogMessage message) -> void
-~NuGet.Common.ILogger.Log(NuGet.Common.LogLevel level, string data) -> void
-~NuGet.Common.ILogger.LogAsync(NuGet.Common.ILogMessage message) -> System.Threading.Tasks.Task
-~NuGet.Common.ILogger.LogAsync(NuGet.Common.LogLevel level, string data) -> System.Threading.Tasks.Task
-~NuGet.Common.ILogger.LogDebug(string data) -> void
-~NuGet.Common.ILogger.LogError(string data) -> void
-~NuGet.Common.ILogger.LogInformation(string data) -> void
-~NuGet.Common.ILogger.LogInformationSummary(string data) -> void
-~NuGet.Common.ILogger.LogMinimal(string data) -> void
-~NuGet.Common.ILogger.LogVerbose(string data) -> void
-~NuGet.Common.ILogger.LogWarning(string data) -> void
+NuGet.Common.ILogger.Log(NuGet.Common.ILogMessage! message) -> void
+NuGet.Common.ILogger.Log(NuGet.Common.LogLevel level, string! data) -> void
+NuGet.Common.ILogger.LogAsync(NuGet.Common.ILogMessage! message) -> System.Threading.Tasks.Task!
+NuGet.Common.ILogger.LogAsync(NuGet.Common.LogLevel level, string! data) -> System.Threading.Tasks.Task!
+NuGet.Common.ILogger.LogDebug(string! data) -> void
+NuGet.Common.ILogger.LogError(string! data) -> void
+NuGet.Common.ILogger.LogInformation(string! data) -> void
+NuGet.Common.ILogger.LogInformationSummary(string! data) -> void
+NuGet.Common.ILogger.LogMinimal(string! data) -> void
+NuGet.Common.ILogger.LogVerbose(string! data) -> void
+NuGet.Common.ILogger.LogWarning(string! data) -> void
 NuGet.Common.INuGetLogMessage
 NuGet.Common.INuGetPathContext
-~NuGet.Common.INuGetPathContext.FallbackPackageFolders.get -> System.Collections.Generic.IReadOnlyList<string>
-~NuGet.Common.INuGetPathContext.HttpCacheFolder.get -> string
-~NuGet.Common.INuGetPathContext.UserPackageFolder.get -> string
+NuGet.Common.INuGetPathContext.FallbackPackageFolders.get -> System.Collections.Generic.IReadOnlyList<string!>!
+NuGet.Common.INuGetPathContext.HttpCacheFolder.get -> string!
+NuGet.Common.INuGetPathContext.UserPackageFolder.get -> string!
 NuGet.Common.INuGetTelemetryService
-~NuGet.Common.INuGetTelemetryService.EmitTelemetryEvent(NuGet.Common.TelemetryEvent telemetryData) -> void
-~NuGet.Common.INuGetTelemetryService.StartActivity(string activityName) -> System.IDisposable
+NuGet.Common.INuGetTelemetryService.EmitTelemetryEvent(NuGet.Common.TelemetryEvent! telemetryData) -> void
+NuGet.Common.INuGetTelemetryService.StartActivity(string! activityName) -> System.IDisposable!
 NuGet.Common.IPackLogMessage
-~NuGet.Common.IPackLogMessage.Framework.get -> NuGet.Frameworks.NuGetFramework
-~NuGet.Common.IPackLogMessage.Framework.set -> void
-~NuGet.Common.IPackLogMessage.LibraryId.get -> string
-~NuGet.Common.IPackLogMessage.LibraryId.set -> void
+NuGet.Common.IPackLogMessage.Framework.get -> NuGet.Frameworks.NuGetFramework?
+NuGet.Common.IPackLogMessage.Framework.set -> void
+NuGet.Common.IPackLogMessage.LibraryId.get -> string?
+NuGet.Common.IPackLogMessage.LibraryId.set -> void
 NuGet.Common.IRestoreLogMessage
-~NuGet.Common.IRestoreLogMessage.LibraryId.get -> string
-~NuGet.Common.IRestoreLogMessage.LibraryId.set -> void
+NuGet.Common.IRestoreLogMessage.LibraryId.get -> string?
+NuGet.Common.IRestoreLogMessage.LibraryId.set -> void
 NuGet.Common.IRestoreLogMessage.ShouldDisplay.get -> bool
 NuGet.Common.IRestoreLogMessage.ShouldDisplay.set -> void
-~NuGet.Common.IRestoreLogMessage.TargetGraphs.get -> System.Collections.Generic.IReadOnlyList<string>
-~NuGet.Common.IRestoreLogMessage.TargetGraphs.set -> void
+NuGet.Common.IRestoreLogMessage.TargetGraphs.get -> System.Collections.Generic.IReadOnlyList<string!>!
+NuGet.Common.IRestoreLogMessage.TargetGraphs.set -> void
 NuGet.Common.ITelemetrySession
-~NuGet.Common.ITelemetrySession.PostEvent(NuGet.Common.TelemetryEvent telemetryEvent) -> void
+NuGet.Common.ITelemetrySession.PostEvent(NuGet.Common.TelemetryEvent! telemetryEvent) -> void
 NuGet.Common.LegacyLoggerAdapter
 NuGet.Common.LegacyLoggerAdapter.LegacyLoggerAdapter() -> void
-~NuGet.Common.LegacyLoggerAdapter.Log(NuGet.Common.LogLevel level, string data) -> void
-~NuGet.Common.LegacyLoggerAdapter.LogAsync(NuGet.Common.LogLevel level, string data) -> System.Threading.Tasks.Task
+NuGet.Common.LegacyLoggerAdapter.Log(NuGet.Common.LogLevel level, string! data) -> void
+NuGet.Common.LegacyLoggerAdapter.LogAsync(NuGet.Common.LogLevel level, string! data) -> System.Threading.Tasks.Task!
 NuGet.Common.LocalResourceUtils
 NuGet.Common.LogLevel
 NuGet.Common.LogLevel.Debug = 0 -> NuGet.Common.LogLevel
@@ -130,12 +130,12 @@ NuGet.Common.LogMessage.Code.get -> NuGet.Common.NuGetLogCode
 NuGet.Common.LogMessage.Code.set -> void
 NuGet.Common.LogMessage.Level.get -> NuGet.Common.LogLevel
 NuGet.Common.LogMessage.Level.set -> void
-~NuGet.Common.LogMessage.LogMessage(NuGet.Common.LogLevel level, string message) -> void
-~NuGet.Common.LogMessage.LogMessage(NuGet.Common.LogLevel level, string message, NuGet.Common.NuGetLogCode code) -> void
-~NuGet.Common.LogMessage.Message.get -> string
-~NuGet.Common.LogMessage.Message.set -> void
-~NuGet.Common.LogMessage.ProjectPath.get -> string
-~NuGet.Common.LogMessage.ProjectPath.set -> void
+NuGet.Common.LogMessage.LogMessage(NuGet.Common.LogLevel level, string! message) -> void
+NuGet.Common.LogMessage.LogMessage(NuGet.Common.LogLevel level, string! message, NuGet.Common.NuGetLogCode code) -> void
+NuGet.Common.LogMessage.Message.get -> string!
+NuGet.Common.LogMessage.Message.set -> void
+NuGet.Common.LogMessage.ProjectPath.get -> string?
+NuGet.Common.LogMessage.ProjectPath.set -> void
 NuGet.Common.LogMessage.Time.get -> System.DateTimeOffset
 NuGet.Common.LogMessage.Time.set -> void
 NuGet.Common.LogMessage.WarningLevel.get -> NuGet.Common.WarningLevel
@@ -357,18 +357,18 @@ NuGet.Common.PackagingLogMessage.EndColumnNumber.get -> int
 NuGet.Common.PackagingLogMessage.EndColumnNumber.set -> void
 NuGet.Common.PackagingLogMessage.EndLineNumber.get -> int
 NuGet.Common.PackagingLogMessage.EndLineNumber.set -> void
-~NuGet.Common.PackagingLogMessage.FilePath.get -> string
-~NuGet.Common.PackagingLogMessage.FilePath.set -> void
-~NuGet.Common.PackagingLogMessage.Framework.get -> NuGet.Frameworks.NuGetFramework
-~NuGet.Common.PackagingLogMessage.Framework.set -> void
+NuGet.Common.PackagingLogMessage.FilePath.get -> string?
+NuGet.Common.PackagingLogMessage.FilePath.set -> void
+NuGet.Common.PackagingLogMessage.Framework.get -> NuGet.Frameworks.NuGetFramework?
+NuGet.Common.PackagingLogMessage.Framework.set -> void
 NuGet.Common.PackagingLogMessage.Level.get -> NuGet.Common.LogLevel
 NuGet.Common.PackagingLogMessage.Level.set -> void
-~NuGet.Common.PackagingLogMessage.LibraryId.get -> string
-~NuGet.Common.PackagingLogMessage.LibraryId.set -> void
-~NuGet.Common.PackagingLogMessage.Message.get -> string
-~NuGet.Common.PackagingLogMessage.Message.set -> void
-~NuGet.Common.PackagingLogMessage.ProjectPath.get -> string
-~NuGet.Common.PackagingLogMessage.ProjectPath.set -> void
+NuGet.Common.PackagingLogMessage.LibraryId.get -> string?
+NuGet.Common.PackagingLogMessage.LibraryId.set -> void
+NuGet.Common.PackagingLogMessage.Message.get -> string!
+NuGet.Common.PackagingLogMessage.Message.set -> void
+NuGet.Common.PackagingLogMessage.ProjectPath.get -> string?
+NuGet.Common.PackagingLogMessage.ProjectPath.set -> void
 NuGet.Common.PackagingLogMessage.StartColumnNumber.get -> int
 NuGet.Common.PackagingLogMessage.StartColumnNumber.set -> void
 NuGet.Common.PackagingLogMessage.StartLineNumber.get -> int
@@ -380,8 +380,8 @@ NuGet.Common.PackagingLogMessage.WarningLevel.set -> void
 NuGet.Common.PathResolver
 NuGet.Common.PathResolver.SearchPathResult
 NuGet.Common.PathResolver.SearchPathResult.IsFile.get -> bool
-~NuGet.Common.PathResolver.SearchPathResult.Path.get -> string
-~NuGet.Common.PathResolver.SearchPathResult.SearchPathResult(string path, bool isFile) -> void
+NuGet.Common.PathResolver.SearchPathResult.Path.get -> string!
+NuGet.Common.PathResolver.SearchPathResult.SearchPathResult(string! path, bool isFile) -> void
 NuGet.Common.PathUtility
 NuGet.Common.PathValidator
 NuGet.Common.Preprocessor
@@ -393,28 +393,28 @@ NuGet.Common.RestoreLogMessage.EndColumnNumber.get -> int
 NuGet.Common.RestoreLogMessage.EndColumnNumber.set -> void
 NuGet.Common.RestoreLogMessage.EndLineNumber.get -> int
 NuGet.Common.RestoreLogMessage.EndLineNumber.set -> void
-~NuGet.Common.RestoreLogMessage.FilePath.get -> string
-~NuGet.Common.RestoreLogMessage.FilePath.set -> void
+NuGet.Common.RestoreLogMessage.FilePath.get -> string?
+NuGet.Common.RestoreLogMessage.FilePath.set -> void
 NuGet.Common.RestoreLogMessage.Level.get -> NuGet.Common.LogLevel
 NuGet.Common.RestoreLogMessage.Level.set -> void
-~NuGet.Common.RestoreLogMessage.LibraryId.get -> string
-~NuGet.Common.RestoreLogMessage.LibraryId.set -> void
-~NuGet.Common.RestoreLogMessage.Message.get -> string
-~NuGet.Common.RestoreLogMessage.Message.set -> void
-~NuGet.Common.RestoreLogMessage.ProjectPath.get -> string
-~NuGet.Common.RestoreLogMessage.ProjectPath.set -> void
-~NuGet.Common.RestoreLogMessage.RestoreLogMessage(NuGet.Common.LogLevel logLevel, NuGet.Common.NuGetLogCode errorCode, string errorString) -> void
-~NuGet.Common.RestoreLogMessage.RestoreLogMessage(NuGet.Common.LogLevel logLevel, NuGet.Common.NuGetLogCode errorCode, string errorString, string targetGraph) -> void
-~NuGet.Common.RestoreLogMessage.RestoreLogMessage(NuGet.Common.LogLevel logLevel, NuGet.Common.NuGetLogCode errorCode, string errorString, string targetGraph, bool logToInnerLogger) -> void
-~NuGet.Common.RestoreLogMessage.RestoreLogMessage(NuGet.Common.LogLevel logLevel, string errorString) -> void
+NuGet.Common.RestoreLogMessage.LibraryId.get -> string?
+NuGet.Common.RestoreLogMessage.LibraryId.set -> void
+NuGet.Common.RestoreLogMessage.Message.get -> string!
+NuGet.Common.RestoreLogMessage.Message.set -> void
+NuGet.Common.RestoreLogMessage.ProjectPath.get -> string?
+NuGet.Common.RestoreLogMessage.ProjectPath.set -> void
+NuGet.Common.RestoreLogMessage.RestoreLogMessage(NuGet.Common.LogLevel logLevel, NuGet.Common.NuGetLogCode errorCode, string! errorString) -> void
+NuGet.Common.RestoreLogMessage.RestoreLogMessage(NuGet.Common.LogLevel logLevel, NuGet.Common.NuGetLogCode errorCode, string! errorString, string? targetGraph) -> void
+NuGet.Common.RestoreLogMessage.RestoreLogMessage(NuGet.Common.LogLevel logLevel, NuGet.Common.NuGetLogCode errorCode, string! errorString, string? targetGraph, bool logToInnerLogger) -> void
+NuGet.Common.RestoreLogMessage.RestoreLogMessage(NuGet.Common.LogLevel logLevel, string! errorString) -> void
 NuGet.Common.RestoreLogMessage.ShouldDisplay.get -> bool
 NuGet.Common.RestoreLogMessage.ShouldDisplay.set -> void
 NuGet.Common.RestoreLogMessage.StartColumnNumber.get -> int
 NuGet.Common.RestoreLogMessage.StartColumnNumber.set -> void
 NuGet.Common.RestoreLogMessage.StartLineNumber.get -> int
 NuGet.Common.RestoreLogMessage.StartLineNumber.set -> void
-~NuGet.Common.RestoreLogMessage.TargetGraphs.get -> System.Collections.Generic.IReadOnlyList<string>
-~NuGet.Common.RestoreLogMessage.TargetGraphs.set -> void
+NuGet.Common.RestoreLogMessage.TargetGraphs.get -> System.Collections.Generic.IReadOnlyList<string!>!
+NuGet.Common.RestoreLogMessage.TargetGraphs.set -> void
 NuGet.Common.RestoreLogMessage.Time.get -> System.DateTimeOffset
 NuGet.Common.RestoreLogMessage.Time.set -> void
 NuGet.Common.RestoreLogMessage.WarningLevel.get -> NuGet.Common.WarningLevel
@@ -433,35 +433,35 @@ NuGet.Common.SignatureValidationMode.Accept = 0 -> NuGet.Common.SignatureValidat
 NuGet.Common.SignatureValidationMode.Require = 1 -> NuGet.Common.SignatureValidationMode
 NuGet.Common.TelemetryActivity
 NuGet.Common.TelemetryActivity.Dispose() -> void
-~NuGet.Common.TelemetryActivity.EndIntervalMeasure(string propertyName) -> void
+NuGet.Common.TelemetryActivity.EndIntervalMeasure(string! propertyName) -> void
 NuGet.Common.TelemetryActivity.OperationId.get -> System.Guid
 NuGet.Common.TelemetryActivity.ParentId.get -> System.Guid
-~NuGet.Common.TelemetryActivity.StartIndependentInterval(string propertyName) -> System.IDisposable
+NuGet.Common.TelemetryActivity.StartIndependentInterval(string! propertyName) -> System.IDisposable!
 NuGet.Common.TelemetryActivity.StartIntervalMeasure() -> void
-~NuGet.Common.TelemetryActivity.TelemetryEvent.get -> NuGet.Common.TelemetryEvent
-~NuGet.Common.TelemetryActivity.TelemetryEvent.set -> void
+NuGet.Common.TelemetryActivity.TelemetryEvent.get -> NuGet.Common.TelemetryEvent!
+NuGet.Common.TelemetryActivity.TelemetryEvent.set -> void
 NuGet.Common.TelemetryEvent
-~NuGet.Common.TelemetryEvent.AddPiiData(string key, object value) -> void
-~NuGet.Common.TelemetryEvent.ComplexData.get -> System.Collections.Generic.IDictionary<string, object>
+NuGet.Common.TelemetryEvent.AddPiiData(string! key, object? value) -> void
+NuGet.Common.TelemetryEvent.ComplexData.get -> System.Collections.Generic.IDictionary<string!, object?>!
 NuGet.Common.TelemetryEvent.Count.get -> int
-~NuGet.Common.TelemetryEvent.GetEnumerator() -> System.Collections.Generic.IEnumerator<System.Collections.Generic.KeyValuePair<string, object>>
-~NuGet.Common.TelemetryEvent.GetPiiData() -> System.Collections.Generic.IEnumerable<System.Collections.Generic.KeyValuePair<string, object>>
-~NuGet.Common.TelemetryEvent.Name.get -> string
-~NuGet.Common.TelemetryEvent.TelemetryEvent(string eventName) -> void
-~NuGet.Common.TelemetryEvent.TelemetryEvent(string eventName, System.Collections.Generic.Dictionary<string, object> properties) -> void
-~NuGet.Common.TelemetryEvent.this[string key].get -> object
-~NuGet.Common.TelemetryEvent.this[string key].set -> void
+NuGet.Common.TelemetryEvent.GetEnumerator() -> System.Collections.Generic.IEnumerator<System.Collections.Generic.KeyValuePair<string!, object?>>!
+NuGet.Common.TelemetryEvent.GetPiiData() -> System.Collections.Generic.IEnumerable<System.Collections.Generic.KeyValuePair<string!, object?>>!
+NuGet.Common.TelemetryEvent.Name.get -> string!
+NuGet.Common.TelemetryEvent.TelemetryEvent(string! eventName) -> void
+NuGet.Common.TelemetryEvent.TelemetryEvent(string! eventName, System.Collections.Generic.Dictionary<string!, object?>! properties) -> void
+NuGet.Common.TelemetryEvent.this[string! key].get -> object?
+NuGet.Common.TelemetryEvent.this[string! key].set -> void
 NuGet.Common.TelemetryServiceUtility
 NuGet.Common.Token
 NuGet.Common.Token.Category.get -> NuGet.Common.TokenCategory
-~NuGet.Common.Token.Token(NuGet.Common.TokenCategory category, string value) -> void
-~NuGet.Common.Token.Value.get -> string
+NuGet.Common.Token.Token(NuGet.Common.TokenCategory category, string! value) -> void
+NuGet.Common.Token.Value.get -> string!
 NuGet.Common.TokenCategory
 NuGet.Common.TokenCategory.Text = 0 -> NuGet.Common.TokenCategory
 NuGet.Common.TokenCategory.Variable = 1 -> NuGet.Common.TokenCategory
 NuGet.Common.Tokenizer
-~NuGet.Common.Tokenizer.Read() -> NuGet.Common.Token
-~NuGet.Common.Tokenizer.Tokenizer(string text) -> void
+NuGet.Common.Tokenizer.Read() -> NuGet.Common.Token?
+NuGet.Common.Tokenizer.Tokenizer(string! text) -> void
 NuGet.Common.UriUtility
 NuGet.Common.WarningLevel
 NuGet.Common.WarningLevel.Default = 4 -> NuGet.Common.WarningLevel
@@ -469,195 +469,195 @@ NuGet.Common.WarningLevel.Important = 2 -> NuGet.Common.WarningLevel
 NuGet.Common.WarningLevel.Minimal = 3 -> NuGet.Common.WarningLevel
 NuGet.Common.WarningLevel.Severe = 1 -> NuGet.Common.WarningLevel
 NuGet.Common.XmlUtility
-~abstract NuGet.Common.LegacyLoggerAdapter.LogDebug(string data) -> void
-~abstract NuGet.Common.LegacyLoggerAdapter.LogError(string data) -> void
-~abstract NuGet.Common.LegacyLoggerAdapter.LogInformation(string data) -> void
-~abstract NuGet.Common.LegacyLoggerAdapter.LogInformationSummary(string data) -> void
-~abstract NuGet.Common.LegacyLoggerAdapter.LogMinimal(string data) -> void
-~abstract NuGet.Common.LegacyLoggerAdapter.LogVerbose(string data) -> void
-~abstract NuGet.Common.LegacyLoggerAdapter.LogWarning(string data) -> void
-~abstract NuGet.Common.LoggerBase.Log(NuGet.Common.ILogMessage message) -> void
-~abstract NuGet.Common.LoggerBase.LogAsync(NuGet.Common.ILogMessage message) -> System.Threading.Tasks.Task
-~const NuGet.Common.LogMessageProperties.CODE = "code" -> string
-~const NuGet.Common.LogMessageProperties.END_COLUMN_NUMBER = "endColumnNumber" -> string
-~const NuGet.Common.LogMessageProperties.END_LINE_NUMBER = "endLineNumber" -> string
-~const NuGet.Common.LogMessageProperties.FILE_PATH = "filePath" -> string
-~const NuGet.Common.LogMessageProperties.LEVEL = "level" -> string
-~const NuGet.Common.LogMessageProperties.LIBRARY_ID = "libraryId" -> string
-~const NuGet.Common.LogMessageProperties.MESSAGE = "message" -> string
-~const NuGet.Common.LogMessageProperties.START_COLUMN_NUMBER = "startColumnNumber" -> string
-~const NuGet.Common.LogMessageProperties.START_LINE_NUMBER = "startLineNumber" -> string
-~const NuGet.Common.LogMessageProperties.TARGET_GRAPHS = "targetGraphs" -> string
-~const NuGet.Common.LogMessageProperties.WARNING_LEVEL = "warningLevel" -> string
-~override NuGet.Common.LogMessage.ToString() -> string
-~override NuGet.Common.NullLogger.Log(NuGet.Common.ILogMessage message) -> void
-~override NuGet.Common.NullLogger.Log(NuGet.Common.LogLevel level, string data) -> void
-~override NuGet.Common.NullLogger.LogAsync(NuGet.Common.ILogMessage message) -> System.Threading.Tasks.Task
-~override NuGet.Common.NullLogger.LogAsync(NuGet.Common.LogLevel level, string data) -> System.Threading.Tasks.Task
+abstract NuGet.Common.LegacyLoggerAdapter.LogDebug(string! data) -> void
+abstract NuGet.Common.LegacyLoggerAdapter.LogError(string! data) -> void
+abstract NuGet.Common.LegacyLoggerAdapter.LogInformation(string! data) -> void
+abstract NuGet.Common.LegacyLoggerAdapter.LogInformationSummary(string! data) -> void
+abstract NuGet.Common.LegacyLoggerAdapter.LogMinimal(string! data) -> void
+abstract NuGet.Common.LegacyLoggerAdapter.LogVerbose(string! data) -> void
+abstract NuGet.Common.LegacyLoggerAdapter.LogWarning(string! data) -> void
+abstract NuGet.Common.LoggerBase.Log(NuGet.Common.ILogMessage! message) -> void
+abstract NuGet.Common.LoggerBase.LogAsync(NuGet.Common.ILogMessage! message) -> System.Threading.Tasks.Task!
+const NuGet.Common.LogMessageProperties.CODE = "code" -> string!
+const NuGet.Common.LogMessageProperties.END_COLUMN_NUMBER = "endColumnNumber" -> string!
+const NuGet.Common.LogMessageProperties.END_LINE_NUMBER = "endLineNumber" -> string!
+const NuGet.Common.LogMessageProperties.FILE_PATH = "filePath" -> string!
+const NuGet.Common.LogMessageProperties.LEVEL = "level" -> string!
+const NuGet.Common.LogMessageProperties.LIBRARY_ID = "libraryId" -> string!
+const NuGet.Common.LogMessageProperties.MESSAGE = "message" -> string!
+const NuGet.Common.LogMessageProperties.START_COLUMN_NUMBER = "startColumnNumber" -> string!
+const NuGet.Common.LogMessageProperties.START_LINE_NUMBER = "startLineNumber" -> string!
+const NuGet.Common.LogMessageProperties.TARGET_GRAPHS = "targetGraphs" -> string!
+const NuGet.Common.LogMessageProperties.WARNING_LEVEL = "warningLevel" -> string!
+override NuGet.Common.LogMessage.ToString() -> string!
+override NuGet.Common.NullLogger.Log(NuGet.Common.ILogMessage! message) -> void
+override NuGet.Common.NullLogger.Log(NuGet.Common.LogLevel level, string! data) -> void
+override NuGet.Common.NullLogger.LogAsync(NuGet.Common.ILogMessage! message) -> System.Threading.Tasks.Task!
+override NuGet.Common.NullLogger.LogAsync(NuGet.Common.LogLevel level, string! data) -> System.Threading.Tasks.Task!
 static NuGet.Common.ActivityCorrelationId.Clear() -> void
-~static NuGet.Common.ActivityCorrelationId.Current.get -> string
+static NuGet.Common.ActivityCorrelationId.Current.get -> string!
 static NuGet.Common.ActivityCorrelationId.StartNew() -> void
-~static NuGet.Common.AsyncLazy.New<T>(System.Func<System.Threading.Tasks.Task<T>> asyncValueFactory) -> NuGet.Common.AsyncLazy<T>
-~static NuGet.Common.AsyncLazy.New<T>(System.Func<T> valueFactory) -> NuGet.Common.AsyncLazy<T>
-~static NuGet.Common.AsyncLazy.New<T>(System.Lazy<System.Threading.Tasks.Task<T>> inner) -> NuGet.Common.AsyncLazy<T>
-~static NuGet.Common.AsyncLazy.New<T>(T innerData) -> NuGet.Common.AsyncLazy<T>
-~static NuGet.Common.AsyncLazy<T>.implicit operator System.Lazy<System.Threading.Tasks.Task<T>>(NuGet.Common.AsyncLazy<T> outer) -> System.Lazy<System.Threading.Tasks.Task<T>>
-~static NuGet.Common.ClientVersionUtility.GetNuGetAssemblyVersion() -> string
-~static NuGet.Common.ConcurrencyUtilities.ExecuteWithFileLocked(string filePath, System.Action action) -> void
-~static NuGet.Common.ConcurrencyUtilities.ExecuteWithFileLockedAsync<T>(string filePath, System.Func<System.Threading.CancellationToken, System.Threading.Tasks.Task<T>> action, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<T>
-~static NuGet.Common.CryptoHashUtility.ComputeHash(this NuGet.Common.HashAlgorithmName hashAlgorithmName, byte[] data) -> byte[]
-~static NuGet.Common.CryptoHashUtility.ComputeHash(this System.Security.Cryptography.HashAlgorithm hashAlgorithm, System.IO.Stream data) -> byte[]
-~static NuGet.Common.CryptoHashUtility.ComputeHash(this System.Security.Cryptography.HashAlgorithm hashAlgorithm, System.IO.Stream data, bool leaveStreamOpen) -> byte[]
-~static NuGet.Common.CryptoHashUtility.ComputeHashAsBase64(this System.Security.Cryptography.HashAlgorithm hashAlgorithm, System.IO.Stream data) -> string
-~static NuGet.Common.CryptoHashUtility.ComputeHashAsBase64(this System.Security.Cryptography.HashAlgorithm hashAlgorithm, System.IO.Stream data, bool leaveStreamOpen) -> string
-~static NuGet.Common.CryptoHashUtility.ConvertToOid(this NuGet.Common.HashAlgorithmName hashAlgorithm) -> System.Security.Cryptography.Oid
-~static NuGet.Common.CryptoHashUtility.ConvertToOidString(this NuGet.Common.HashAlgorithmName hashAlgorithmName) -> string
-~static NuGet.Common.CryptoHashUtility.ConvertToOidString(this NuGet.Common.SignatureAlgorithmName signatureAlgorithmName) -> string
+static NuGet.Common.AsyncLazy.New<T>(System.Func<System.Threading.Tasks.Task<T>!>! asyncValueFactory) -> NuGet.Common.AsyncLazy<T>!
+static NuGet.Common.AsyncLazy.New<T>(System.Func<T>! valueFactory) -> NuGet.Common.AsyncLazy<T>!
+static NuGet.Common.AsyncLazy.New<T>(System.Lazy<System.Threading.Tasks.Task<T>!>! inner) -> NuGet.Common.AsyncLazy<T>!
+static NuGet.Common.AsyncLazy.New<T>(T innerData) -> NuGet.Common.AsyncLazy<T>!
+static NuGet.Common.AsyncLazy<T>.implicit operator System.Lazy<System.Threading.Tasks.Task<T>!>!(NuGet.Common.AsyncLazy<T>! outer) -> System.Lazy<System.Threading.Tasks.Task<T>!>!
+static NuGet.Common.ClientVersionUtility.GetNuGetAssemblyVersion() -> string!
+static NuGet.Common.ConcurrencyUtilities.ExecuteWithFileLocked(string! filePath, System.Action! action) -> void
+static NuGet.Common.ConcurrencyUtilities.ExecuteWithFileLockedAsync<T>(string! filePath, System.Func<System.Threading.CancellationToken, System.Threading.Tasks.Task<T>!>! action, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<T>!
+static NuGet.Common.CryptoHashUtility.ComputeHash(this NuGet.Common.HashAlgorithmName hashAlgorithmName, byte[]! data) -> byte[]!
+static NuGet.Common.CryptoHashUtility.ComputeHash(this System.Security.Cryptography.HashAlgorithm! hashAlgorithm, System.IO.Stream! data) -> byte[]!
+static NuGet.Common.CryptoHashUtility.ComputeHash(this System.Security.Cryptography.HashAlgorithm! hashAlgorithm, System.IO.Stream! data, bool leaveStreamOpen) -> byte[]!
+static NuGet.Common.CryptoHashUtility.ComputeHashAsBase64(this System.Security.Cryptography.HashAlgorithm! hashAlgorithm, System.IO.Stream! data) -> string!
+static NuGet.Common.CryptoHashUtility.ComputeHashAsBase64(this System.Security.Cryptography.HashAlgorithm! hashAlgorithm, System.IO.Stream! data, bool leaveStreamOpen) -> string!
+static NuGet.Common.CryptoHashUtility.ConvertToOid(this NuGet.Common.HashAlgorithmName hashAlgorithm) -> System.Security.Cryptography.Oid!
+static NuGet.Common.CryptoHashUtility.ConvertToOidString(this NuGet.Common.HashAlgorithmName hashAlgorithmName) -> string!
+static NuGet.Common.CryptoHashUtility.ConvertToOidString(this NuGet.Common.SignatureAlgorithmName signatureAlgorithmName) -> string!
 static NuGet.Common.CryptoHashUtility.ConvertToSystemSecurityHashAlgorithmName(this NuGet.Common.HashAlgorithmName hashAlgorithmName) -> System.Security.Cryptography.HashAlgorithmName
-~static NuGet.Common.CryptoHashUtility.GenerateUniqueToken(string caseInsensitiveKey) -> string
-~static NuGet.Common.CryptoHashUtility.GetHashAlgorithm(NuGet.Common.HashAlgorithmName hashAlgorithmName) -> System.Security.Cryptography.HashAlgorithm
-~static NuGet.Common.CryptoHashUtility.GetHashAlgorithm(string hashAlgorithmName) -> System.Security.Cryptography.HashAlgorithm
-~static NuGet.Common.CryptoHashUtility.GetHashAlgorithmName(string hashAlgorithm) -> NuGet.Common.HashAlgorithmName
-~static NuGet.Common.CryptoHashUtility.GetHashProvider(this NuGet.Common.HashAlgorithmName hashAlgorithmName) -> System.Security.Cryptography.HashAlgorithm
-~static NuGet.Common.CryptoHashUtility.OidToHashAlgorithmName(string oid) -> NuGet.Common.HashAlgorithmName
+static NuGet.Common.CryptoHashUtility.GenerateUniqueToken(string! caseInsensitiveKey) -> string!
+static NuGet.Common.CryptoHashUtility.GetHashAlgorithm(NuGet.Common.HashAlgorithmName hashAlgorithmName) -> System.Security.Cryptography.HashAlgorithm!
+static NuGet.Common.CryptoHashUtility.GetHashAlgorithm(string! hashAlgorithmName) -> System.Security.Cryptography.HashAlgorithm!
+static NuGet.Common.CryptoHashUtility.GetHashAlgorithmName(string! hashAlgorithm) -> NuGet.Common.HashAlgorithmName
+static NuGet.Common.CryptoHashUtility.GetHashProvider(this NuGet.Common.HashAlgorithmName hashAlgorithmName) -> System.Security.Cryptography.HashAlgorithm!
+static NuGet.Common.CryptoHashUtility.OidToHashAlgorithmName(string! oid) -> NuGet.Common.HashAlgorithmName
 static NuGet.Common.CultureUtility.DisableLocalization() -> void
-~static NuGet.Common.DatetimeUtility.ToReadableTimeFormat(System.TimeSpan time) -> string
-~static NuGet.Common.EnvironmentVariableWrapper.Instance.get -> NuGet.Common.IEnvironmentVariableReader
-~static NuGet.Common.ExceptionLogger.Instance.get -> NuGet.Common.ExceptionLogger
-~static NuGet.Common.ExceptionUtilities.DisplayMessage(System.AggregateException exception) -> string
-~static NuGet.Common.ExceptionUtilities.DisplayMessage(System.Exception exception) -> string
-~static NuGet.Common.ExceptionUtilities.DisplayMessage(System.Exception exception, bool indent) -> string
-~static NuGet.Common.ExceptionUtilities.DisplayMessage(System.Reflection.TargetInvocationException exception) -> string
-~static NuGet.Common.ExceptionUtilities.LogException(System.Exception ex, NuGet.Common.ILogger logger) -> void
-~static NuGet.Common.ExceptionUtilities.LogException(System.Exception ex, NuGet.Common.ILogger logger, bool logStackAsError) -> void
-~static NuGet.Common.ExceptionUtilities.Unwrap(System.Exception exception) -> System.Exception
-~static NuGet.Common.FileUtility.Delete(string path) -> void
-~static NuGet.Common.FileUtility.DeleteWithLock(string filePath) -> System.Threading.Tasks.Task
-~static NuGet.Common.FileUtility.GetTempFilePath(string directory) -> string
-~static NuGet.Common.FileUtility.Move(string sourceFileName, string destFileName) -> void
-~static NuGet.Common.FileUtility.Replace(System.Action<string> writeSourceFile, string destFilePath) -> void
-~static NuGet.Common.FileUtility.Replace(string sourceFileName, string destFileName) -> void
-~static NuGet.Common.FileUtility.ReplaceAsync(System.Func<string, System.Threading.Tasks.Task> writeSourceFile, string destFilePath) -> System.Threading.Tasks.Task
-~static NuGet.Common.FileUtility.ReplaceWithLock(System.Action<string> writeSourceFile, string destFilePath) -> System.Threading.Tasks.Task
-~static NuGet.Common.FileUtility.SafeRead<T>(string filePath, System.Func<System.IO.FileStream, string, T> read) -> T
-~static NuGet.Common.FileUtility.SafeReadAsync<T>(string filePath, System.Func<System.IO.FileStream, string, System.Threading.Tasks.Task<T>> read) -> System.Threading.Tasks.Task<T>
-~static NuGet.Common.LocalResourceUtils.DeleteDirectoryTree(string folderPath, System.Collections.Generic.List<string> failedDeletes) -> void
-~static NuGet.Common.LogMessage.Create(NuGet.Common.LogLevel level, string message) -> NuGet.Common.LogMessage
-~static NuGet.Common.LogMessage.CreateError(NuGet.Common.NuGetLogCode code, string message) -> NuGet.Common.LogMessage
-~static NuGet.Common.LogMessage.CreateWarning(NuGet.Common.NuGetLogCode code, string message) -> NuGet.Common.LogMessage
-~static NuGet.Common.LoggingExtensions.FormatWithCode(this NuGet.Common.ILogMessage message) -> string
-~static NuGet.Common.LoggingExtensions.GetName(this NuGet.Common.NuGetLogCode code) -> string
-~static NuGet.Common.LoggingExtensions.TryGetName(this NuGet.Common.NuGetLogCode code, out string codeString) -> bool
-~static NuGet.Common.MSBuildStringUtility.Convert(string value) -> string
-~static NuGet.Common.MSBuildStringUtility.GetBooleanOrNull(string value) -> bool?
-~static NuGet.Common.MSBuildStringUtility.GetDistinctNuGetLogCodesOrDefault(System.Collections.Generic.IEnumerable<System.Collections.Generic.IEnumerable<NuGet.Common.NuGetLogCode>> nugetLogCodeLists) -> System.Collections.Generic.IEnumerable<NuGet.Common.NuGetLogCode>
-~static NuGet.Common.MSBuildStringUtility.GetNuGetLogCodes(string s) -> System.Collections.Generic.IEnumerable<NuGet.Common.NuGetLogCode>
-~static NuGet.Common.MSBuildStringUtility.IsTrue(string value) -> bool
-~static NuGet.Common.MSBuildStringUtility.IsTrueOrEmpty(string value) -> bool
-~static NuGet.Common.MSBuildStringUtility.Split(string s) -> string[]
-~static NuGet.Common.MSBuildStringUtility.Split(string s, params char[] chars) -> string[]
-~static NuGet.Common.MSBuildStringUtility.TrimAndExcludeNullOrEmpty(string[] strings) -> string[]
-~static NuGet.Common.MSBuildStringUtility.TrimAndGetNullForEmpty(string s) -> string
+static NuGet.Common.DatetimeUtility.ToReadableTimeFormat(System.TimeSpan time) -> string!
+static NuGet.Common.EnvironmentVariableWrapper.Instance.get -> NuGet.Common.IEnvironmentVariableReader!
+static NuGet.Common.ExceptionLogger.Instance.get -> NuGet.Common.ExceptionLogger!
+static NuGet.Common.ExceptionUtilities.DisplayMessage(System.AggregateException! exception) -> string!
+static NuGet.Common.ExceptionUtilities.DisplayMessage(System.Exception! exception) -> string!
+static NuGet.Common.ExceptionUtilities.DisplayMessage(System.Exception! exception, bool indent) -> string!
+static NuGet.Common.ExceptionUtilities.DisplayMessage(System.Reflection.TargetInvocationException! exception) -> string!
+static NuGet.Common.ExceptionUtilities.LogException(System.Exception! ex, NuGet.Common.ILogger! logger) -> void
+static NuGet.Common.ExceptionUtilities.LogException(System.Exception! ex, NuGet.Common.ILogger! logger, bool logStackAsError) -> void
+static NuGet.Common.ExceptionUtilities.Unwrap(System.Exception! exception) -> System.Exception!
+static NuGet.Common.FileUtility.Delete(string! path) -> void
+static NuGet.Common.FileUtility.DeleteWithLock(string! filePath) -> System.Threading.Tasks.Task!
+static NuGet.Common.FileUtility.GetTempFilePath(string! directory) -> string!
+static NuGet.Common.FileUtility.Move(string! sourceFileName, string! destFileName) -> void
+static NuGet.Common.FileUtility.Replace(System.Action<string!>! writeSourceFile, string! destFilePath) -> void
+static NuGet.Common.FileUtility.Replace(string! sourceFileName, string! destFileName) -> void
+static NuGet.Common.FileUtility.ReplaceAsync(System.Func<string!, System.Threading.Tasks.Task!>! writeSourceFile, string! destFilePath) -> System.Threading.Tasks.Task!
+static NuGet.Common.FileUtility.ReplaceWithLock(System.Action<string!>! writeSourceFile, string! destFilePath) -> System.Threading.Tasks.Task!
+static NuGet.Common.FileUtility.SafeRead<T>(string! filePath, System.Func<System.IO.FileStream!, string!, T>! read) -> T
+static NuGet.Common.FileUtility.SafeReadAsync<T>(string! filePath, System.Func<System.IO.FileStream!, string!, System.Threading.Tasks.Task<T>!>! read) -> System.Threading.Tasks.Task<T>!
+static NuGet.Common.LocalResourceUtils.DeleteDirectoryTree(string! folderPath, System.Collections.Generic.List<string!>! failedDeletes) -> void
+static NuGet.Common.LogMessage.Create(NuGet.Common.LogLevel level, string! message) -> NuGet.Common.LogMessage!
+static NuGet.Common.LogMessage.CreateError(NuGet.Common.NuGetLogCode code, string! message) -> NuGet.Common.LogMessage!
+static NuGet.Common.LogMessage.CreateWarning(NuGet.Common.NuGetLogCode code, string! message) -> NuGet.Common.LogMessage!
+static NuGet.Common.LoggingExtensions.FormatWithCode(this NuGet.Common.ILogMessage! message) -> string!
+static NuGet.Common.LoggingExtensions.GetName(this NuGet.Common.NuGetLogCode code) -> string?
+static NuGet.Common.LoggingExtensions.TryGetName(this NuGet.Common.NuGetLogCode code, out string? codeString) -> bool
+static NuGet.Common.MSBuildStringUtility.Convert(string? value) -> string?
+static NuGet.Common.MSBuildStringUtility.GetBooleanOrNull(string? value) -> bool?
+static NuGet.Common.MSBuildStringUtility.GetDistinctNuGetLogCodesOrDefault(System.Collections.Generic.IEnumerable<System.Collections.Generic.IEnumerable<NuGet.Common.NuGetLogCode>!>! nugetLogCodeLists) -> System.Collections.Generic.IEnumerable<NuGet.Common.NuGetLogCode>!
+static NuGet.Common.MSBuildStringUtility.GetNuGetLogCodes(string! s) -> System.Collections.Generic.IEnumerable<NuGet.Common.NuGetLogCode>!
+static NuGet.Common.MSBuildStringUtility.IsTrue(string? value) -> bool
+static NuGet.Common.MSBuildStringUtility.IsTrueOrEmpty(string? value) -> bool
+static NuGet.Common.MSBuildStringUtility.Split(string! s) -> string![]!
+static NuGet.Common.MSBuildStringUtility.Split(string! s, params char[]! chars) -> string![]!
+static NuGet.Common.MSBuildStringUtility.TrimAndExcludeNullOrEmpty(string?[]? strings) -> string![]!
+static NuGet.Common.MSBuildStringUtility.TrimAndGetNullForEmpty(string? s) -> string?
 static NuGet.Common.Migrations.MigrationRunner.Run() -> void
 static NuGet.Common.NetworkProtocolUtility.SetConnectionLimit() -> void
 ~static NuGet.Common.NuGetEnvironment.GetDotNetLocation() -> string
 ~static NuGet.Common.NuGetEnvironment.GetFolderPath(NuGet.Common.NuGetFolderPath folder) -> string
-~static NuGet.Common.NullLogger.Instance.get -> NuGet.Common.ILogger
-~static NuGet.Common.PackagingLogMessage.CreateError(string message, NuGet.Common.NuGetLogCode code) -> NuGet.Common.PackagingLogMessage
-~static NuGet.Common.PackagingLogMessage.CreateMessage(string message, NuGet.Common.LogLevel logLevel) -> NuGet.Common.PackagingLogMessage
-~static NuGet.Common.PackagingLogMessage.CreateWarning(string message, NuGet.Common.NuGetLogCode code) -> NuGet.Common.PackagingLogMessage
-~static NuGet.Common.PackagingLogMessage.CreateWarning(string message, NuGet.Common.NuGetLogCode code, string libraryId, NuGet.Frameworks.NuGetFramework framework) -> NuGet.Common.PackagingLogMessage
-~static NuGet.Common.PathResolver.FilterPackageFiles<T>(System.Collections.Generic.ICollection<T> source, System.Func<T, string> getPath, System.Collections.Generic.IEnumerable<string> wildcards) -> void
-~static NuGet.Common.PathResolver.GetFilteredPackageFiles<T>(System.Collections.Generic.ICollection<T> source, System.Func<T, string> getPath, System.Collections.Generic.IEnumerable<string> wildcards) -> System.Collections.Generic.IEnumerable<T>
-~static NuGet.Common.PathResolver.GetMatches<T>(System.Collections.Generic.IEnumerable<T> source, System.Func<T, string> getPath, System.Collections.Generic.IEnumerable<string> wildcards) -> System.Collections.Generic.IEnumerable<T>
-~static NuGet.Common.PathResolver.IsDirectoryPath(string path) -> bool
-~static NuGet.Common.PathResolver.IsWildcardSearch(string filter) -> bool
-~static NuGet.Common.PathResolver.NormalizeWildcardForExcludedFiles(string basePath, string wildcard) -> string
-~static NuGet.Common.PathResolver.PerformWildcardSearch(string basePath, string searchPath) -> System.Collections.Generic.IEnumerable<string>
-~static NuGet.Common.PathResolver.PerformWildcardSearch(string basePath, string searchPath, bool includeEmptyDirectories, out string normalizedBasePath) -> System.Collections.Generic.IEnumerable<NuGet.Common.PathResolver.SearchPathResult>
-~static NuGet.Common.PathUtility.EnsureParentDirectory(string filePath) -> void
-~static NuGet.Common.PathUtility.EnsureTrailingForwardSlash(string path) -> string
-~static NuGet.Common.PathUtility.EnsureTrailingSlash(string path) -> string
-~static NuGet.Common.PathUtility.EscapePSPath(string path) -> string
-~static NuGet.Common.PathUtility.GetAbsolutePath(string basePath, string relativePath) -> string
-~static NuGet.Common.PathUtility.GetDirectoryName(string path) -> string
-~static NuGet.Common.PathUtility.GetEntry(System.IO.Compression.ZipArchive archive, string path) -> System.IO.Compression.ZipArchiveEntry
-~static NuGet.Common.PathUtility.GetPath(System.Uri uri) -> string
-~static NuGet.Common.PathUtility.GetPathWithBackSlashes(string path) -> string
-~static NuGet.Common.PathUtility.GetPathWithDirectorySeparator(string path) -> string
-~static NuGet.Common.PathUtility.GetPathWithForwardSlashes(string path) -> string
-~static NuGet.Common.PathUtility.GetRelativePath(string path1, string path2) -> string
-~static NuGet.Common.PathUtility.GetRelativePath(string path1, string path2, char separator) -> string
-~static NuGet.Common.PathUtility.GetStringComparerBasedOnOS() -> System.StringComparer
+static NuGet.Common.NullLogger.Instance.get -> NuGet.Common.ILogger!
+static NuGet.Common.PackagingLogMessage.CreateError(string! message, NuGet.Common.NuGetLogCode code) -> NuGet.Common.PackagingLogMessage!
+static NuGet.Common.PackagingLogMessage.CreateMessage(string! message, NuGet.Common.LogLevel logLevel) -> NuGet.Common.PackagingLogMessage!
+static NuGet.Common.PackagingLogMessage.CreateWarning(string! message, NuGet.Common.NuGetLogCode code) -> NuGet.Common.PackagingLogMessage!
+static NuGet.Common.PackagingLogMessage.CreateWarning(string! message, NuGet.Common.NuGetLogCode code, string? libraryId, NuGet.Frameworks.NuGetFramework? framework) -> NuGet.Common.PackagingLogMessage!
+static NuGet.Common.PathResolver.FilterPackageFiles<T>(System.Collections.Generic.ICollection<T>! source, System.Func<T, string!>! getPath, System.Collections.Generic.IEnumerable<string!>! wildcards) -> void
+static NuGet.Common.PathResolver.GetFilteredPackageFiles<T>(System.Collections.Generic.ICollection<T>! source, System.Func<T, string!>! getPath, System.Collections.Generic.IEnumerable<string!>! wildcards) -> System.Collections.Generic.IEnumerable<T>!
+static NuGet.Common.PathResolver.GetMatches<T>(System.Collections.Generic.IEnumerable<T>! source, System.Func<T, string!>! getPath, System.Collections.Generic.IEnumerable<string!>! wildcards) -> System.Collections.Generic.IEnumerable<T>!
+static NuGet.Common.PathResolver.IsDirectoryPath(string? path) -> bool
+static NuGet.Common.PathResolver.IsWildcardSearch(string! filter) -> bool
+static NuGet.Common.PathResolver.NormalizeWildcardForExcludedFiles(string! basePath, string! wildcard) -> string!
+static NuGet.Common.PathResolver.PerformWildcardSearch(string! basePath, string! searchPath) -> System.Collections.Generic.IEnumerable<string!>!
+static NuGet.Common.PathResolver.PerformWildcardSearch(string! basePath, string! searchPath, bool includeEmptyDirectories, out string! normalizedBasePath) -> System.Collections.Generic.IEnumerable<NuGet.Common.PathResolver.SearchPathResult>!
+static NuGet.Common.PathUtility.EnsureParentDirectory(string! filePath) -> void
+static NuGet.Common.PathUtility.EnsureTrailingForwardSlash(string! path) -> string!
+static NuGet.Common.PathUtility.EnsureTrailingSlash(string! path) -> string!
+static NuGet.Common.PathUtility.EscapePSPath(string! path) -> string!
+static NuGet.Common.PathUtility.GetAbsolutePath(string! basePath, string! relativePath) -> string!
+static NuGet.Common.PathUtility.GetDirectoryName(string! path) -> string!
+static NuGet.Common.PathUtility.GetEntry(System.IO.Compression.ZipArchive! archive, string! path) -> System.IO.Compression.ZipArchiveEntry?
+static NuGet.Common.PathUtility.GetPath(System.Uri! uri) -> string!
+static NuGet.Common.PathUtility.GetPathWithBackSlashes(string! path) -> string!
+static NuGet.Common.PathUtility.GetPathWithDirectorySeparator(string! path) -> string!
+static NuGet.Common.PathUtility.GetPathWithForwardSlashes(string! path) -> string!
+static NuGet.Common.PathUtility.GetRelativePath(string! path1, string! path2) -> string!
+static NuGet.Common.PathUtility.GetRelativePath(string! path1, string! path2, char separator) -> string!
+static NuGet.Common.PathUtility.GetStringComparerBasedOnOS() -> System.StringComparer!
 static NuGet.Common.PathUtility.GetStringComparisonBasedOnOS() -> System.StringComparison
-~static NuGet.Common.PathUtility.GetUniquePathsBasedOnOS(System.Collections.Generic.IEnumerable<string> paths) -> System.Collections.Generic.IEnumerable<string>
-~static NuGet.Common.PathUtility.HasTrailingDirectorySeparator(string path) -> bool
-~static NuGet.Common.PathUtility.IsChildOfDirectory(string dir, string candidate) -> bool
+static NuGet.Common.PathUtility.GetUniquePathsBasedOnOS(System.Collections.Generic.IEnumerable<string!>! paths) -> System.Collections.Generic.IEnumerable<string!>!
+static NuGet.Common.PathUtility.HasTrailingDirectorySeparator(string? path) -> bool
+static NuGet.Common.PathUtility.IsChildOfDirectory(string! dir, string! candidate) -> bool
 static NuGet.Common.PathUtility.IsDirectorySeparatorChar(char ch) -> bool
 static NuGet.Common.PathUtility.IsFileSystemCaseInsensitive.get -> bool
-~static NuGet.Common.PathUtility.IsSubdirectory(string basePath, string path) -> bool
-~static NuGet.Common.PathUtility.ReplaceAltDirSeparatorWithDirSeparator(string path) -> string
-~static NuGet.Common.PathUtility.ReplaceDirSeparatorWithAltDirSeparator(string path) -> string
-~static NuGet.Common.PathUtility.SmartTruncate(string path, int maxWidth) -> string
-~static NuGet.Common.PathUtility.StripLeadingDirectorySeparators(string filename) -> string
-~static NuGet.Common.PathValidator.IsValidLocalPath(string path) -> bool
-~static NuGet.Common.PathValidator.IsValidRelativePath(string path) -> bool
-~static NuGet.Common.PathValidator.IsValidSource(string source) -> bool
-~static NuGet.Common.PathValidator.IsValidUncPath(string path) -> bool
-~static NuGet.Common.PathValidator.IsValidUrl(string url) -> bool
-~static NuGet.Common.Preprocessor.Process(System.IO.Stream stream, System.Func<string, string> tokenReplacement) -> string
-~static NuGet.Common.Preprocessor.ProcessAsync(System.Func<System.Threading.Tasks.Task<System.IO.Stream>> streamTaskFactory, System.Func<string, string> tokenReplacement, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<string>
-~static NuGet.Common.ProjectJsonPathUtilities.GetLockFilePath(string configFilePath) -> string
-~static NuGet.Common.ProjectJsonPathUtilities.GetProjectConfigPath(string directoryPath, string projectName) -> string
-~static NuGet.Common.ProjectJsonPathUtilities.GetProjectConfigWithProjectName(string projectName) -> string
-~static NuGet.Common.ProjectJsonPathUtilities.GetProjectLockFileNameWithProjectName(string projectName) -> string
-~static NuGet.Common.ProjectJsonPathUtilities.GetProjectNameFromConfigFileName(string configPath) -> string
-~static NuGet.Common.ProjectJsonPathUtilities.IsProjectConfig(string configPath) -> bool
-~static NuGet.Common.RestoreLogMessage.CreateError(NuGet.Common.NuGetLogCode code, string message) -> NuGet.Common.RestoreLogMessage
-~static NuGet.Common.RestoreLogMessage.CreateError(NuGet.Common.NuGetLogCode code, string message, string libraryId, params string[] targetGraphs) -> NuGet.Common.RestoreLogMessage
-~static NuGet.Common.RestoreLogMessage.CreateWarning(NuGet.Common.NuGetLogCode code, string message) -> NuGet.Common.RestoreLogMessage
-~static NuGet.Common.RestoreLogMessage.CreateWarning(NuGet.Common.NuGetLogCode code, string message, string libraryId, params string[] targetGraphs) -> NuGet.Common.RestoreLogMessage
+static NuGet.Common.PathUtility.IsSubdirectory(string! basePath, string! path) -> bool
+static NuGet.Common.PathUtility.ReplaceAltDirSeparatorWithDirSeparator(string! path) -> string!
+static NuGet.Common.PathUtility.ReplaceDirSeparatorWithAltDirSeparator(string! path) -> string!
+static NuGet.Common.PathUtility.SmartTruncate(string! path, int maxWidth) -> string!
+static NuGet.Common.PathUtility.StripLeadingDirectorySeparators(string! filename) -> string!
+static NuGet.Common.PathValidator.IsValidLocalPath(string! path) -> bool
+static NuGet.Common.PathValidator.IsValidRelativePath(string! path) -> bool
+static NuGet.Common.PathValidator.IsValidSource(string! source) -> bool
+static NuGet.Common.PathValidator.IsValidUncPath(string! path) -> bool
+static NuGet.Common.PathValidator.IsValidUrl(string! url) -> bool
+static NuGet.Common.Preprocessor.Process(System.IO.Stream! stream, System.Func<string!, string!>! tokenReplacement) -> string!
+static NuGet.Common.Preprocessor.ProcessAsync(System.Func<System.Threading.Tasks.Task<System.IO.Stream!>!>! streamTaskFactory, System.Func<string!, string!>! tokenReplacement, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<string!>!
+static NuGet.Common.ProjectJsonPathUtilities.GetLockFilePath(string! configFilePath) -> string!
+static NuGet.Common.ProjectJsonPathUtilities.GetProjectConfigPath(string! directoryPath, string! projectName) -> string!
+static NuGet.Common.ProjectJsonPathUtilities.GetProjectConfigWithProjectName(string! projectName) -> string!
+static NuGet.Common.ProjectJsonPathUtilities.GetProjectLockFileNameWithProjectName(string! projectName) -> string!
+static NuGet.Common.ProjectJsonPathUtilities.GetProjectNameFromConfigFileName(string! configPath) -> string?
+static NuGet.Common.ProjectJsonPathUtilities.IsProjectConfig(string! configPath) -> bool
+static NuGet.Common.RestoreLogMessage.CreateError(NuGet.Common.NuGetLogCode code, string! message) -> NuGet.Common.RestoreLogMessage!
+static NuGet.Common.RestoreLogMessage.CreateError(NuGet.Common.NuGetLogCode code, string! message, string? libraryId, params string![]! targetGraphs) -> NuGet.Common.RestoreLogMessage!
+static NuGet.Common.RestoreLogMessage.CreateWarning(NuGet.Common.NuGetLogCode code, string! message) -> NuGet.Common.RestoreLogMessage!
+static NuGet.Common.RestoreLogMessage.CreateWarning(NuGet.Common.NuGetLogCode code, string! message, string? libraryId, params string![]! targetGraphs) -> NuGet.Common.RestoreLogMessage!
 static NuGet.Common.RuntimeEnvironmentHelper.IsLinux.get -> bool
 static NuGet.Common.RuntimeEnvironmentHelper.IsMacOSX.get -> bool
 static NuGet.Common.RuntimeEnvironmentHelper.IsMono.get -> bool
 static NuGet.Common.RuntimeEnvironmentHelper.IsRunningInVisualStudio.get -> bool
 static NuGet.Common.RuntimeEnvironmentHelper.IsWindows.get -> bool
-~static NuGet.Common.TelemetryActivity.Create(NuGet.Common.TelemetryEvent telemetryEvent) -> NuGet.Common.TelemetryActivity
-~static NuGet.Common.TelemetryActivity.Create(System.Guid parentId, NuGet.Common.TelemetryEvent telemetryEvent) -> NuGet.Common.TelemetryActivity
-~static NuGet.Common.TelemetryActivity.Create(System.Guid parentId, string eventName) -> NuGet.Common.TelemetryActivity
-~static NuGet.Common.TelemetryActivity.Create(string eventName) -> NuGet.Common.TelemetryActivity
-~static NuGet.Common.TelemetryActivity.EmitTelemetryEvent(NuGet.Common.TelemetryEvent TelemetryEvent) -> void
-~static NuGet.Common.TelemetryActivity.NuGetTelemetryService.get -> NuGet.Common.INuGetTelemetryService
-~static NuGet.Common.TelemetryActivity.NuGetTelemetryService.set -> void
+static NuGet.Common.TelemetryActivity.Create(NuGet.Common.TelemetryEvent! telemetryEvent) -> NuGet.Common.TelemetryActivity!
+static NuGet.Common.TelemetryActivity.Create(System.Guid parentId, NuGet.Common.TelemetryEvent! telemetryEvent) -> NuGet.Common.TelemetryActivity!
+static NuGet.Common.TelemetryActivity.Create(System.Guid parentId, string! eventName) -> NuGet.Common.TelemetryActivity!
+static NuGet.Common.TelemetryActivity.Create(string! eventName) -> NuGet.Common.TelemetryActivity!
+static NuGet.Common.TelemetryActivity.EmitTelemetryEvent(NuGet.Common.TelemetryEvent! TelemetryEvent) -> void
+static NuGet.Common.TelemetryActivity.NuGetTelemetryService.get -> NuGet.Common.INuGetTelemetryService?
+static NuGet.Common.TelemetryActivity.NuGetTelemetryService.set -> void
 static NuGet.Common.TelemetryServiceUtility.GetTimerElapsedTime() -> System.TimeSpan
 static NuGet.Common.TelemetryServiceUtility.GetTimerElapsedTimeInSeconds() -> double
 static NuGet.Common.TelemetryServiceUtility.StartOrResumeTimer() -> void
 static NuGet.Common.TelemetryServiceUtility.StopTimer() -> void
-~static NuGet.Common.UriUtility.CreateSourceUri(string source, System.UriKind kind = System.UriKind.Absolute) -> System.Uri
-~static NuGet.Common.UriUtility.GetAbsolutePath(string rootDirectory, string path) -> string
-~static NuGet.Common.UriUtility.GetAbsolutePathFromFile(string sourceFile, string path) -> string
-~static NuGet.Common.UriUtility.GetLocalPath(string localOrUriPath) -> string
-~static NuGet.Common.UriUtility.IsNuGetOrg(string source) -> bool
-~static NuGet.Common.UriUtility.TryCreateSourceUri(string source, System.UriKind kind) -> System.Uri
-~static NuGet.Common.UriUtility.UrlEncodeOdataParameter(string value) -> string
-~static NuGet.Common.XmlUtility.Load(string filePath) -> System.Xml.Linq.XDocument
-~static readonly NuGet.Common.ComparisonUtility.FrameworkReferenceNameComparer -> System.StringComparer
+static NuGet.Common.UriUtility.CreateSourceUri(string! source, System.UriKind kind = System.UriKind.Absolute) -> System.Uri!
+static NuGet.Common.UriUtility.GetAbsolutePath(string? rootDirectory, string? path) -> string?
+static NuGet.Common.UriUtility.GetAbsolutePathFromFile(string? sourceFile, string! path) -> string!
+static NuGet.Common.UriUtility.GetLocalPath(string! localOrUriPath) -> string!
+static NuGet.Common.UriUtility.IsNuGetOrg(string? source) -> bool
+static NuGet.Common.UriUtility.TryCreateSourceUri(string! source, System.UriKind kind) -> System.Uri?
+static NuGet.Common.UriUtility.UrlEncodeOdataParameter(string! value) -> string!
+static NuGet.Common.XmlUtility.Load(string! filePath) -> System.Xml.Linq.XDocument!
+static readonly NuGet.Common.ComparisonUtility.FrameworkReferenceNameComparer -> System.StringComparer!
 static readonly NuGet.Common.FileUtility.FileSharePermissions -> System.IO.FileShare
 static readonly NuGet.Common.FileUtility.MaxTries -> int
-~static readonly NuGet.Common.ProjectJsonPathUtilities.ProjectConfigFileEnding -> string
-~static readonly NuGet.Common.ProjectJsonPathUtilities.ProjectConfigFileName -> string
-~static readonly NuGet.Common.ProjectJsonPathUtilities.ProjectLockFileName -> string
-~virtual NuGet.Common.CommandLineArgumentCombinationException.AsLogMessage() -> NuGet.Common.ILogMessage
-~virtual NuGet.Common.LegacyLoggerAdapter.Log(NuGet.Common.ILogMessage message) -> void
-~virtual NuGet.Common.LegacyLoggerAdapter.LogAsync(NuGet.Common.ILogMessage message) -> System.Threading.Tasks.Task
+static readonly NuGet.Common.ProjectJsonPathUtilities.ProjectConfigFileEnding -> string!
+static readonly NuGet.Common.ProjectJsonPathUtilities.ProjectConfigFileName -> string!
+static readonly NuGet.Common.ProjectJsonPathUtilities.ProjectLockFileName -> string!
+virtual NuGet.Common.CommandLineArgumentCombinationException.AsLogMessage() -> NuGet.Common.ILogMessage!
+virtual NuGet.Common.LegacyLoggerAdapter.Log(NuGet.Common.ILogMessage! message) -> void
+virtual NuGet.Common.LegacyLoggerAdapter.LogAsync(NuGet.Common.ILogMessage! message) -> System.Threading.Tasks.Task!
 virtual NuGet.Common.LoggerBase.CollectMessage(NuGet.Common.LogLevel messageLevel) -> bool
 virtual NuGet.Common.LoggerBase.DisplayMessage(NuGet.Common.LogLevel messageLevel) -> bool
-~virtual NuGet.Common.LoggerBase.Log(NuGet.Common.LogLevel level, string data) -> void
-~virtual NuGet.Common.LoggerBase.LogAsync(NuGet.Common.LogLevel level, string data) -> System.Threading.Tasks.Task
-~virtual NuGet.Common.LoggerBase.LogDebug(string data) -> void
-~virtual NuGet.Common.LoggerBase.LogError(string data) -> void
-~virtual NuGet.Common.LoggerBase.LogInformation(string data) -> void
-~virtual NuGet.Common.LoggerBase.LogInformationSummary(string data) -> void
-~virtual NuGet.Common.LoggerBase.LogMinimal(string data) -> void
-~virtual NuGet.Common.LoggerBase.LogVerbose(string data) -> void
-~virtual NuGet.Common.LoggerBase.LogWarning(string data) -> void
+virtual NuGet.Common.LoggerBase.Log(NuGet.Common.LogLevel level, string! data) -> void
+virtual NuGet.Common.LoggerBase.LogAsync(NuGet.Common.LogLevel level, string! data) -> System.Threading.Tasks.Task!
+virtual NuGet.Common.LoggerBase.LogDebug(string! data) -> void
+virtual NuGet.Common.LoggerBase.LogError(string! data) -> void
+virtual NuGet.Common.LoggerBase.LogInformation(string! data) -> void
+virtual NuGet.Common.LoggerBase.LogInformationSummary(string! data) -> void
+virtual NuGet.Common.LoggerBase.LogMinimal(string! data) -> void
+virtual NuGet.Common.LoggerBase.LogVerbose(string! data) -> void
+virtual NuGet.Common.LoggerBase.LogWarning(string! data) -> void

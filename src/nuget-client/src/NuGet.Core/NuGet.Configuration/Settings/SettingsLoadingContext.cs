@@ -57,6 +57,11 @@ namespace NuGet.Configuration
                 throw new ArgumentNullException(nameof(filePath));
             }
 
+            if (!Path.IsPathRooted(filePath))
+            {
+                throw new ArgumentException("SettingsLoadingContext requires a rooted path", nameof(filePath));
+            }
+
             Lazy<SettingsFile> settingsLazy = _cache.GetOrAdd(
                 filePath,
                 (key) => new Lazy<SettingsFile>(() =>

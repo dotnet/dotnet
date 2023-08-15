@@ -443,7 +443,8 @@ namespace NuGet.Configuration
                 validSettingFiles,
                 machineWideSettings,
                 loadUserWideSettings,
-                useTestingGlobalPath);
+                useTestingGlobalPath,
+                settingsLoadingContext);
         }
 
         /// <summary>
@@ -773,6 +774,11 @@ namespace NuGet.Configuration
             {
                 if (settingsLoadingContext != null)
                 {
+                    if (!Path.IsPathRooted(settingsPath) && !string.IsNullOrWhiteSpace(settingsRoot))
+                    {
+                        settingsPath = Path.Combine(settingsRoot, settingsPath);
+                    }
+
                     return settingsLoadingContext.GetOrCreateSettingsFile(settingsPath, isMachineWideSettings, isAdditionalUserWideConfig);
                 }
 

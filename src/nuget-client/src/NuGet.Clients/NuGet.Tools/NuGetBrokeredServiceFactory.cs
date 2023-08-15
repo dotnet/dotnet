@@ -77,13 +77,11 @@ namespace NuGetVSExtension
         {
             await _lazyInitializer.InitializeAsync(cancellationToken);
 
-#pragma warning disable CA2000 // Dispose objects before losing scope
             var service = new NuGetSourcesService(
                 options,
                 serviceBroker,
                 authorizationServiceClient,
-                _sharedServiceState);
-#pragma warning restore CA2000 // Dispose objects before losing scope
+                _sharedServiceState.SourceRepositoryProvider.PackageSourceProvider);
 
             return service;
         }

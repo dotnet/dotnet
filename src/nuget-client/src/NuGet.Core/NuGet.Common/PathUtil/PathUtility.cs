@@ -86,7 +86,12 @@ namespace NuGet.Common
             }
 
             // Leave the path unchanged.
+#pragma warning disable CS8603 // Possible null reference return.
+            // It would be a breaking change to remove the path != null in the if statement above, but a lot of
+            // existing code doesn't check the return code for nulls. So, we'll annotate as not accepting null
+            // but leave the code, and we can reconsider once every project has nullable checks enabled.
             return path;
+#pragma warning restore CS8603 // Possible null reference return.
         }
 
         public static string EnsureTrailingSlash(string path)
@@ -138,7 +143,7 @@ namespace NuGet.Common
             return candidate.StartsWith(dir, StringComparison.OrdinalIgnoreCase);
         }
 
-        public static bool HasTrailingDirectorySeparator(string path)
+        public static bool HasTrailingDirectorySeparator(string? path)
         {
             if (string.IsNullOrEmpty(path))
             {
@@ -146,7 +151,7 @@ namespace NuGet.Common
             }
             else
             {
-                return IsDirectorySeparatorChar(path[path.Length - 1]);
+                return IsDirectorySeparatorChar(path![path.Length - 1]);
             }
         }
 
@@ -166,7 +171,11 @@ namespace NuGet.Common
 
         public static void EnsureParentDirectory(string filePath)
         {
-            string directory = Path.GetDirectoryName(filePath);
+            string? directory = Path.GetDirectoryName(filePath);
+            if (directory is null)
+            {
+                throw new ArgumentException(paramName: filePath, message: "Path.GetDirectoryName(filePath) returned null");
+            }
             if (!Directory.Exists(directory))
             {
                 Directory.CreateDirectory(directory);
@@ -287,7 +296,12 @@ namespace NuGet.Common
         public static string GetDirectoryName(string path)
         {
             path = path.TrimEnd(Path.DirectorySeparatorChar);
-            return path.Substring(Path.GetDirectoryName(path).Length).Trim(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+            string? fullDirectoryPath = Path.GetDirectoryName(path);
+            if (fullDirectoryPath is null)
+            {
+                throw new ArgumentException(paramName: nameof(path), message: "Path.GetDirectoryName(path) returned null");
+            }
+            return path.Substring(fullDirectoryPath.Length).Trim(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
         }
 
         public static string GetPathWithBackSlashes(string path)
@@ -366,6 +380,10 @@ namespace NuGet.Common
             folder = Path.DirectorySeparatorChar + folder + Path.DirectorySeparatorChar;
 
             var root = Path.GetPathRoot(path);
+            if (root is null)
+            {
+                throw new ArgumentException(paramName: nameof(path), message: "Path.GetPathRoot(path) returned null");
+            }
             var remainingWidth = maxWidth - root.Length - 3; // 3 = length(ellipsis)
 
             // is the directory name too big? 
@@ -410,7 +428,7 @@ namespace NuGet.Common
             return path.Replace(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
         }
 
-        public static ZipArchiveEntry GetEntry(ZipArchive archive, string path)
+        public static ZipArchiveEntry? GetEntry(ZipArchive archive, string path)
         {
             return archive.Entries.SingleOrDefault(
                     z => string.Equals(
@@ -442,43 +460,39 @@ namespace NuGet.Common
                 var isCaseInsensitive = true;
                 foreach (var path in listOfPathsToCheck)
                 {
-                    bool ignore;
-                    var result = CheckCaseSenstivityRecursivelyTillDirectoryExists(path, out ignore);
-                    if (!ignore)
+                    string? firstParentDirectory = GetFirstParentDirectoryThatExists(path);
+                    if (firstParentDirectory is not null)
                     {
-                        isCaseInsensitive &= result;
+                        isCaseInsensitive &= CheckIfFileSystemIsCaseInsensitive(firstParentDirectory);
                     }
                 }
                 return isCaseInsensitive;
             }
         }
 
-        private static bool CheckCaseSenstivityRecursivelyTillDirectoryExists(string path, out bool ignoreResult)
+        private static string? GetFirstParentDirectoryThatExists(string path)
         {
-            var parentDirectoryFound = true;
-            path = Path.GetFullPath(path);
-            ignoreResult = true;
-            while (true)
+            string? parentDirectory = Path.GetFullPath(path);
+            while (parentDirectory != null)
             {
-                if (path.Length <= 1)
+                if (Directory.Exists(parentDirectory))
                 {
-                    ignoreResult = true;
-                    parentDirectoryFound = false;
-                    break;
+                    return parentDirectory;
                 }
-                if (Directory.Exists(path))
+                else
                 {
-                    ignoreResult = false;
-                    break;
+                    parentDirectory = Path.GetDirectoryName(parentDirectory);
                 }
-                path = Path.GetDirectoryName(path);
             }
 
-            if (parentDirectoryFound)
-            {
-                return Directory.Exists(path.ToLowerInvariant()) && Directory.Exists(path.ToUpperInvariant());
-            }
-            return false;
+            return null;
+        }
+
+        private static bool CheckIfFileSystemIsCaseInsensitive(string path)
+        {
+#pragma warning disable CA1308 // Normalize strings to uppercase
+            return Directory.Exists(path.ToLowerInvariant()) && Directory.Exists(path.ToUpperInvariant());
+#pragma warning restore CA1308 // Normalize strings to uppercase
         }
 
         public static string StripLeadingDirectorySeparators(string filename)

@@ -36,15 +36,18 @@ namespace NuGet.Common
         /// <summary>
         /// Creates an instance of CryptoHashProvider using the hashAlgorithm
         /// </summary>
-        public CryptoHashProvider(string hashAlgorithm)
+        public CryptoHashProvider(string? hashAlgorithm)
         {
             if (string.IsNullOrEmpty(hashAlgorithm))
             {
                 hashAlgorithm = SHA512HashAlgorithm;
             }
+#pragma warning disable CS8602 // Dereference of a possibly null reference.
+            // null annotation on string.IsNullOrEmpty missing before .NET 3.0
             else if (!hashAlgorithm.Equals(SHA512HashAlgorithm, StringComparison.OrdinalIgnoreCase)
                      &&
                      !hashAlgorithm.Equals(SHA256HashAlgorithm, StringComparison.OrdinalIgnoreCase))
+#pragma warning restore CS8602 // Dereference of a possibly null reference.
             {
                 // Only support a vetted list of hash algorithms.
                 throw new ArgumentException(string.Format(CultureInfo.CurrentCulture, Strings.UnsupportedHashAlgorithm, hashAlgorithm), nameof(hashAlgorithm));

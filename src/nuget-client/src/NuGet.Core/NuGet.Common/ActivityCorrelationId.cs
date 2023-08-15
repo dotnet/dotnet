@@ -19,7 +19,7 @@ namespace NuGet.Common
     public static class ActivityCorrelationId
     {
 #if IS_CORECLR
-        private static readonly AsyncLocal<string> _correlationId = new AsyncLocal<string>();
+        private static readonly AsyncLocal<string?> _correlationId = new AsyncLocal<string?>();
 #else
         private const string CorrelationIdSlot = "NuGet.Common.ActivityCorrelationId";
 #endif

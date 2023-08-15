@@ -44,7 +44,7 @@ namespace NuGet.Common
 
                 while (true)
                 {
-                    FileStream fs = null;
+                    FileStream? fs = null;
                     var lockPath = string.Empty;
 
                     try
@@ -133,7 +133,7 @@ namespace NuGet.Common
 
                 while (true)
                 {
-                    FileStream fs = null;
+                    FileStream? fs = null;
                     var lockPath = string.Empty;
                     try
                     {
@@ -215,7 +215,7 @@ namespace NuGet.Common
                 options: UseDeleteOnClose ? FileOptions.DeleteOnClose : FileOptions.None);
         }
 
-        private static string _basePath;
+        private static string? _basePath;
         private static string BasePath
         {
             get

@@ -8,7 +8,7 @@ namespace NuGet.Common
         /// <summary>
         /// Indicates the file for which the error was thrown.
         /// </summary>
-        string FilePath { get; set; }
+        string? FilePath { get; set; }
 
         /// <summary>
         /// Indicates the starting line for which the error was thrown.

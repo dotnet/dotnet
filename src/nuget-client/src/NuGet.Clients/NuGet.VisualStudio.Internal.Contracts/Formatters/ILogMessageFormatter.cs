@@ -63,7 +63,7 @@ namespace NuGet.VisualStudio.Internal.Contracts
                 bool? shouldDisplay = null;
                 int? startColumnNumber = null;
                 int? startLineNumber = null;
-                List<string>? targetGraphs = null;
+                IReadOnlyList<string> targetGraphs = Array.Empty<string>();
                 DateTimeOffset? time = null;
                 string? typeName = null;
                 WarningLevel? warningLevel = null;
@@ -121,7 +121,7 @@ namespace NuGet.VisualStudio.Internal.Contracts
                         case TargetGraphsPropertyName:
                             if (!reader.TryReadNil())
                             {
-                                targetGraphs = new List<string>();
+                                var list = new List<string>();
 
                                 int targetGraphsCount = reader.ReadArrayHeader();
 
@@ -129,8 +129,10 @@ namespace NuGet.VisualStudio.Internal.Contracts
                                 {
                                     string targetGraph = reader.ReadString();
 
-                                    targetGraphs.Add(targetGraph);
+                                    list.Add(targetGraph);
                                 }
+
+                                targetGraphs = list;
                             }
                             break;
 

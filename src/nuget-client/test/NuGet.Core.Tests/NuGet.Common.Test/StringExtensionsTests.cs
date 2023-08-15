@@ -10,8 +10,8 @@ namespace NuGet.Common.Test
         [Fact]
         public void FormatWithDoubleQuotes_WhenNullIsPassedReturnsNull_Success()
         {
-            string actual = null;
-            string formatted = actual.FormatWithDoubleQuotes();
+            string? actual = null;
+            string? formatted = actual.FormatWithDoubleQuotes();
             Assert.Equal(actual, formatted);
         }
 
@@ -23,7 +23,7 @@ namespace NuGet.Common.Test
         [InlineData(@"c:\users\NuGet\Share")]
         public void FormatWithDoubleQuotes_WhenNonNullStringIsPassedReturnsFormattedString_Success(string actual)
         {
-            string formatted = actual.FormatWithDoubleQuotes();
+            string? formatted = actual.FormatWithDoubleQuotes();
             Assert.Equal($@"""{actual}""", formatted);
         }
     }
