@@ -141,7 +141,7 @@ internal class DocumentPullDiagnosticsEndpoint : IRazorRequestHandler<VSInternal
     {
         var delegatedParams = new DelegatedDiagnosticParams(documentContext.Identifier, correlationId);
         var delegatedResponse = await _languageServer.SendRequestAsync<DelegatedDiagnosticParams, RazorPullDiagnosticResponse?>(
-            RazorLanguageServerCustomMessageTargets.RazorPullDiagnosticEndpointName,
+            CustomMessageNames.RazorPullDiagnosticEndpointName,
             delegatedParams,
             cancellationToken).ConfigureAwait(false);
 

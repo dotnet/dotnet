@@ -56,11 +56,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.VisualStudio.Live
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.VisualStudio.LiveShare.Razor.Test", "src\Razor\test\Microsoft.VisualStudio.LiveShare.Razor.Test\Microsoft.VisualStudio.LiveShare.Razor.Test.csproj", "{9A27DD55-E8CD-4C03-A89B-A7348B787660}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.AspNetCore.Razor.LanguageServer.Common", "src\Razor\src\Microsoft.AspNetCore.Razor.LanguageServer.Common\Microsoft.AspNetCore.Razor.LanguageServer.Common.csproj", "{F2B59848-345E-4ECB-ADDB-277F3C937B9C}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.AspNetCore.Razor.LanguageServer", "src\Razor\src\Microsoft.AspNetCore.Razor.LanguageServer\Microsoft.AspNetCore.Razor.LanguageServer.csproj", "{1D15867E-E50F-4107-92A4-BBC2EE6B088C}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.AspNetCore.Razor.LanguageServer.Common.Test", "src\Razor\test\Microsoft.AspNetCore.Razor.LanguageServer.Common.Test\Microsoft.AspNetCore.Razor.LanguageServer.Common.Test.csproj", "{6C8A42B5-B41C-4334-959F-684E647A24E1}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.AspNetCore.Razor.LanguageServer.Test", "src\Razor\test\Microsoft.AspNetCore.Razor.LanguageServer.Test\Microsoft.AspNetCore.Razor.LanguageServer.Test.csproj", "{FBAE9975-77BE-411B-A1A3-4790C8A367EF}"
 EndProject
@@ -178,6 +174,8 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor", "src\Razor\src\Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor\Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.csproj", "{53977089-1A87-4521-8368-0D50DFDA1279}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.Test", "src\Razor\test\Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.Test\Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.Test.csproj", "{C0C2AD17-5F5B-4B11-956D-203D91C377FB}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.AspNetCore.Razor.ProjectEngineHost.Test", "src\Razor\test\Microsoft.AspNetCore.Razor.ProjectEngineHost.Test\Microsoft.AspNetCore.Razor.ProjectEngineHost.Test.csproj", "{4126E0A6-1CA9-44B1-AD22-66EDB9FEE7AD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -363,14 +361,6 @@ Global
 		{9A27DD55-E8CD-4C03-A89B-A7348B787660}.Release|Any CPU.Build.0 = Release|Any CPU
 		{9A27DD55-E8CD-4C03-A89B-A7348B787660}.ReleaseNoVSIX|Any CPU.ActiveCfg = Debug|Any CPU
 		{9A27DD55-E8CD-4C03-A89B-A7348B787660}.ReleaseNoVSIX|Any CPU.Build.0 = Debug|Any CPU
-		{F2B59848-345E-4ECB-ADDB-277F3C937B9C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{F2B59848-345E-4ECB-ADDB-277F3C937B9C}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{F2B59848-345E-4ECB-ADDB-277F3C937B9C}.DebugNoVSIX|Any CPU.ActiveCfg = Debug|Any CPU
-		{F2B59848-345E-4ECB-ADDB-277F3C937B9C}.DebugNoVSIX|Any CPU.Build.0 = Debug|Any CPU
-		{F2B59848-345E-4ECB-ADDB-277F3C937B9C}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{F2B59848-345E-4ECB-ADDB-277F3C937B9C}.Release|Any CPU.Build.0 = Release|Any CPU
-		{F2B59848-345E-4ECB-ADDB-277F3C937B9C}.ReleaseNoVSIX|Any CPU.ActiveCfg = Release|Any CPU
-		{F2B59848-345E-4ECB-ADDB-277F3C937B9C}.ReleaseNoVSIX|Any CPU.Build.0 = Release|Any CPU
 		{1D15867E-E50F-4107-92A4-BBC2EE6B088C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{1D15867E-E50F-4107-92A4-BBC2EE6B088C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1D15867E-E50F-4107-92A4-BBC2EE6B088C}.DebugNoVSIX|Any CPU.ActiveCfg = Debug|Any CPU
@@ -379,14 +369,6 @@ Global
 		{1D15867E-E50F-4107-92A4-BBC2EE6B088C}.Release|Any CPU.Build.0 = Release|Any CPU
 		{1D15867E-E50F-4107-92A4-BBC2EE6B088C}.ReleaseNoVSIX|Any CPU.ActiveCfg = Release|Any CPU
 		{1D15867E-E50F-4107-92A4-BBC2EE6B088C}.ReleaseNoVSIX|Any CPU.Build.0 = Release|Any CPU
-		{6C8A42B5-B41C-4334-959F-684E647A24E1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{6C8A42B5-B41C-4334-959F-684E647A24E1}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{6C8A42B5-B41C-4334-959F-684E647A24E1}.DebugNoVSIX|Any CPU.ActiveCfg = Debug|Any CPU
-		{6C8A42B5-B41C-4334-959F-684E647A24E1}.DebugNoVSIX|Any CPU.Build.0 = Debug|Any CPU
-		{6C8A42B5-B41C-4334-959F-684E647A24E1}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{6C8A42B5-B41C-4334-959F-684E647A24E1}.Release|Any CPU.Build.0 = Release|Any CPU
-		{6C8A42B5-B41C-4334-959F-684E647A24E1}.ReleaseNoVSIX|Any CPU.ActiveCfg = Release|Any CPU
-		{6C8A42B5-B41C-4334-959F-684E647A24E1}.ReleaseNoVSIX|Any CPU.Build.0 = Release|Any CPU
 		{FBAE9975-77BE-411B-A1A3-4790C8A367EF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{FBAE9975-77BE-411B-A1A3-4790C8A367EF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FBAE9975-77BE-411B-A1A3-4790C8A367EF}.DebugNoVSIX|Any CPU.ActiveCfg = Debug|Any CPU
@@ -747,6 +729,14 @@ Global
 		{C0C2AD17-5F5B-4B11-956D-203D91C377FB}.Release|Any CPU.Build.0 = Release|Any CPU
 		{C0C2AD17-5F5B-4B11-956D-203D91C377FB}.ReleaseNoVSIX|Any CPU.ActiveCfg = Release|Any CPU
 		{C0C2AD17-5F5B-4B11-956D-203D91C377FB}.ReleaseNoVSIX|Any CPU.Build.0 = Release|Any CPU
+		{4126E0A6-1CA9-44B1-AD22-66EDB9FEE7AD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4126E0A6-1CA9-44B1-AD22-66EDB9FEE7AD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4126E0A6-1CA9-44B1-AD22-66EDB9FEE7AD}.DebugNoVSIX|Any CPU.ActiveCfg = Debug|Any CPU
+		{4126E0A6-1CA9-44B1-AD22-66EDB9FEE7AD}.DebugNoVSIX|Any CPU.Build.0 = Debug|Any CPU
+		{4126E0A6-1CA9-44B1-AD22-66EDB9FEE7AD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4126E0A6-1CA9-44B1-AD22-66EDB9FEE7AD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4126E0A6-1CA9-44B1-AD22-66EDB9FEE7AD}.ReleaseNoVSIX|Any CPU.ActiveCfg = Release|Any CPU
+		{4126E0A6-1CA9-44B1-AD22-66EDB9FEE7AD}.ReleaseNoVSIX|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -774,9 +764,7 @@ Global
 		{5B232E77-F0D3-4298-9A5D-D965788D7A79} = {92463391-81BE-462B-AC3C-78C6C760741F}
 		{20193C6A-8981-447F-99B3-120DD3B06279} = {3C0D6505-79B3-49D0-B4C3-176F0F1836ED}
 		{9A27DD55-E8CD-4C03-A89B-A7348B787660} = {92463391-81BE-462B-AC3C-78C6C760741F}
-		{F2B59848-345E-4ECB-ADDB-277F3C937B9C} = {3C0D6505-79B3-49D0-B4C3-176F0F1836ED}
 		{1D15867E-E50F-4107-92A4-BBC2EE6B088C} = {3C0D6505-79B3-49D0-B4C3-176F0F1836ED}
-		{6C8A42B5-B41C-4334-959F-684E647A24E1} = {92463391-81BE-462B-AC3C-78C6C760741F}
 		{FBAE9975-77BE-411B-A1A3-4790C8A367EF} = {92463391-81BE-462B-AC3C-78C6C760741F}
 		{9D300F9A-1F78-45C9-B4BB-476EF12E40F8} = {92463391-81BE-462B-AC3C-78C6C760741F}
 		{70E70B52-EB70-42D1-B785-8618BD0B950E} = {3C0D6505-79B3-49D0-B4C3-176F0F1836ED}
@@ -829,6 +817,7 @@ Global
 		{6117D32B-DDAE-4654-8260-783B27153E0B} = {AA4EE974-E765-4B97-AF35-F734BF9830F6}
 		{53977089-1A87-4521-8368-0D50DFDA1279} = {3C0D6505-79B3-49D0-B4C3-176F0F1836ED}
 		{C0C2AD17-5F5B-4B11-956D-203D91C377FB} = {92463391-81BE-462B-AC3C-78C6C760741F}
+		{4126E0A6-1CA9-44B1-AD22-66EDB9FEE7AD} = {92463391-81BE-462B-AC3C-78C6C760741F}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {0035341D-175A-4D05-95E6-F1C2785A1E26}

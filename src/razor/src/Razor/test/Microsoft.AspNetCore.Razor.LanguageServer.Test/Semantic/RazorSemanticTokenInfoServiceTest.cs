@@ -856,7 +856,7 @@ public class RazorSemanticTokenInfoServiceTest : SemanticTokenTestBase
         var languageServer = new Mock<ClientNotifierServiceBase>(MockBehavior.Strict);
         languageServer
             .Setup(l => l.SendRequestAsync<SemanticTokensParams, ProvideSemanticTokensResponse?>(
-                RazorLanguageServerCustomMessageTargets.RazorProvideSemanticTokensRangeEndpoint,
+                CustomMessageNames.RazorProvideSemanticTokensRangeEndpoint,
                 It.IsAny<SemanticTokensParams>(),
                 It.IsAny<CancellationToken>()))
             .ReturnsAsync(csharpTokens);

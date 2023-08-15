@@ -10,11 +10,8 @@ using Newtonsoft.Json;
 
 namespace Microsoft.AspNetCore.Razor.Serialization;
 
-internal delegate void ReadPropertyValue<TData>(JsonDataReader reader, ref TData data);
 internal delegate T ReadValue<T>(JsonDataReader reader);
 internal delegate T ReadProperties<T>(JsonDataReader reader);
-internal delegate void ProcessValue<T>(JsonDataReader reader, T arg);
-internal delegate void ProcessProperties<T>(JsonDataReader reader, T arg);
 
 /// <summary>
 ///  This is an abstraction used to read JSON data. Currently, this
@@ -174,6 +171,41 @@ internal partial class JsonDataReader
         return ReadInt32();
     }
 
+    public long ReadInt64()
+    {
+        _reader.CheckToken(JsonToken.Integer);
+
+        var result = Convert.ToInt64(_reader.Value);
+        _reader.Read();
+
+        return result;
+    }
+
+    public long ReadInt64OrDefault(string propertyName, int defaultValue = default)
+        => TryReadPropertyName(propertyName) ? ReadInt64() : defaultValue;
+
+    public long ReadInt64OrZero(string propertyName)
+        => TryReadPropertyName(propertyName) ? ReadInt64() : 0;
+
+    public bool TryReadInt64(string propertyName, out long value)
+    {
+        if (TryReadPropertyName(propertyName))
+        {
+            value = ReadInt64();
+            return true;
+        }
+
+        value = default;
+        return false;
+    }
+
+    public long ReadInt64(string propertyName)
+    {
+        ReadPropertyName(propertyName);
+
+        return ReadInt64();
+    }
+
     public string? ReadString()
     {
         if (TryReadNull())
@@ -320,64 +352,6 @@ internal partial class JsonDataReader
         return ReadNonNullObject(readProperties);
     }
 
-    public TData ReadObjectData<TData>(PropertyMap<TData> propertyMap)
-        where TData : struct
-    {
-        _reader.ReadToken(JsonToken.StartObject);
-        var result = ReadProperties(propertyMap);
-        _reader.ReadToken(JsonToken.EndObject);
-
-        return result;
-    }
-
-    public void ReadObjectData<TData>(ref TData data, PropertyMap<TData> propertyMap)
-        where TData : struct
-    {
-        _reader.ReadToken(JsonToken.StartObject);
-        ReadProperties(ref data, propertyMap);
-        _reader.ReadToken(JsonToken.EndObject);
-    }
-
-    public TData ReadProperties<TData>(PropertyMap<TData> propertyMap)
-        where TData : struct
-    {
-        TData result = default;
-        ReadProperties(ref result, propertyMap);
-
-        return result;
-    }
-
-    public void ReadProperties<TData>(ref TData data, PropertyMap<TData> propertyMap)
-        where TData : struct
-    {
-        while (true)
-        {
-            switch (_reader.TokenType)
-            {
-                case JsonToken.PropertyName:
-                    var propertyName = (string)_reader.Value.AssumeNotNull();
-
-                    if (!propertyMap.TryGetPropertyReader(propertyName, out var readPropertyValue))
-                    {
-                        throw new InvalidOperationException(
-                            SR.FormatEncountered_unexpected_JSON_property_0(propertyName));
-                    }
-
-                    _reader.Read();
-                    readPropertyValue(this, ref data);
-
-                    break;
-
-                case JsonToken.EndObject:
-                    return;
-
-                case var token:
-                    throw new InvalidOperationException(
-                        SR.FormatEncountered_unexpected_JSON_token_0(token));
-            }
-        }
-    }
-
     public T[]? ReadArray<T>(ReadValue<T> readElement)
     {
         if (TryReadNull())
@@ -478,81 +452,6 @@ internal partial class JsonDataReader
 
     public ImmutableArray<T> ReadImmutableArrayOrEmpty<T>(string propertyName, ReadValue<T> readElement)
         => TryReadPropertyName(propertyName) ? ReadImmutableArray(readElement) : ImmutableArray<T>.Empty;
-
-    public void ProcessObject<T>(T arg, ProcessProperties<T> processProperties)
-    {
-        if (TryReadNull())
-        {
-            return;
-        }
-
-        _reader.ReadToken(JsonToken.StartObject);
-
-        while (_reader.TokenType != JsonToken.EndObject)
-        {
-            processProperties(this, arg);
-        }
-
-        _reader.ReadToken(JsonToken.EndObject);
-    }
-
-    public void ProcessObject<T>(T arg, PropertyMap<T> propertyMap)
-        where T : struct
-    {
-        _reader.ReadToken(JsonToken.StartObject);
-        ProcessProperties(arg, propertyMap);
-        _reader.ReadToken(JsonToken.EndObject);
-    }
-
-    public void ProcessProperties<T>(T arg, PropertyMap<T> propertyMap)
-        where T : struct
-    {
-        ref var localArg = ref arg;
-
-        while (true)
-        {
-            switch (_reader.TokenType)
-            {
-                case JsonToken.PropertyName:
-                    var propertyName = (string)_reader.Value.AssumeNotNull();
-
-                    if (!propertyMap.TryGetPropertyReader(propertyName, out var readProperty))
-                    {
-                        throw new InvalidOperationException(
-                            SR.FormatEncountered_unexpected_JSON_property_0(propertyName));
-                    }
-
-                    _reader.Read();
-                    readProperty(this, ref localArg);
-
-                    break;
-
-                case JsonToken.EndObject:
-                    return;
-
-                case var token:
-                    throw new InvalidOperationException(
-                        SR.FormatEncountered_unexpected_JSON_token_0(token));
-            }
-        }
-    }
-
-    public void ProcessArray<T>(T arg, ProcessValue<T> processElement)
-    {
-        if (TryReadNull())
-        {
-            return;
-        }
-
-        _reader.ReadToken(JsonToken.StartArray);
-
-        while (_reader.TokenType != JsonToken.EndArray)
-        {
-            processElement(this, arg);
-        }
-
-        _reader.ReadToken(JsonToken.EndArray);
-    }
 
     public void ReadToEndOfCurrentObject()
     {

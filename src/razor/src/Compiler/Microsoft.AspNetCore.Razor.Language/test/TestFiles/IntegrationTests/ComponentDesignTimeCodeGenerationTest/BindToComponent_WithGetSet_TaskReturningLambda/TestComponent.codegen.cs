@@ -30,7 +30,14 @@ namespace Test
 #nullable disable
             );
             __o = new global::System.Func<System.Int32, System.Threading.Tasks.Task>(
-            value => { ParentValue = value; return Task.CompletedTask; });
+#nullable restore
+#line 1 "x:\dir\subdir\Test\TestComponent.cshtml"
+                                                            value => { ParentValue = value; return Task.CompletedTask; }
+
+#line default
+#line hidden
+#nullable disable
+            );
             __builder.AddAttribute(-1, "ChildContent", (global::Microsoft.AspNetCore.Components.RenderFragment)((__builder2) => {
             }
             ));

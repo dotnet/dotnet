@@ -23,7 +23,15 @@ namespace Test
 #line hidden
 #nullable disable
             ));
-            __builder.AddComponentParameter(2, "ValueChanged", (global::System.Action<System.Int32>)(value => ParentValue = value));
+            __builder.AddComponentParameter(2, "ValueChanged", (global::System.Action<System.Int32>)(
+#nullable restore
+#line 1 "x:\dir\subdir\Test\TestComponent.cshtml"
+                                                            value => ParentValue = value
+
+#line default
+#line hidden
+#nullable disable
+            ));
             __builder.CloseComponent();
         }
         #pragma warning restore 1998

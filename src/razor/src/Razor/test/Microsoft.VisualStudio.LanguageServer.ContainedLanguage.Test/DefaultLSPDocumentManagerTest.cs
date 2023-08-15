@@ -160,6 +160,38 @@ public class DefaultLSPDocumentManagerTest : TestBase
     }
 
     [Fact]
+    public void UpdateVirtualDocument_SpecificVirtualDocument_InvokesVirtualDocumentChanged()
+    {
+        // Arrange
+        var changeListenerLazy = CreateChangeListenerForContentTypes(new[] { _lspDocumentSnapshot.Snapshot.ContentType.TypeName });
+
+        var testVirtualDocument1 = new TestVirtualDocument(new Uri("C:/path/to/doc1.razor.g.cs"));
+        var testVirtualDocument2 = new TestVirtualDocument(new Uri("C:/path/to/doc2.razor.g.cs"));
+
+        var lspDocument = new DefaultLSPDocument(_uri, _textBuffer, new[] { testVirtualDocument1, testVirtualDocument2 });
+        var lspDocumentFactory = Mock.Of<LSPDocumentFactory>(factory => factory.Create(_textBuffer) == lspDocument, MockBehavior.Strict);
+        var lspDocumentSnapshot = lspDocument.CurrentSnapshot;
+
+        var changeListenerMock = Mock.Get(changeListenerLazy.Value);
+        changeListenerMock.Setup(l => l.Changed(null, lspDocumentSnapshot, It.IsAny<VirtualDocumentSnapshot>(), It.IsAny<VirtualDocumentSnapshot>(), LSPDocumentChangeKind.Added));
+        changeListenerMock.Setup(l => l.Changed(It.IsAny<LSPDocumentSnapshot>(), It.IsAny<LSPDocumentSnapshot>(), testVirtualDocument2.CurrentSnapshot, It.IsAny<VirtualDocumentSnapshot>(), LSPDocumentChangeKind.VirtualDocumentChanged));
+
+        var uriProvider = Mock.Of<FileUriProvider>(provider => provider.GetOrCreate(_textBuffer) == lspDocument.Uri, MockBehavior.Strict);
+
+        var manager = new DefaultLSPDocumentManager(JoinableTaskContext, uriProvider, lspDocumentFactory, new[] { changeListenerLazy });
+        manager.TrackDocument(_textBuffer);
+
+        var changes = new[] { new VisualStudioTextChange(1, 1, string.Empty) };
+
+        // Act
+        manager.UpdateVirtualDocument<TestVirtualDocument>(lspDocument.Uri, testVirtualDocument2.Uri, changes, 123, state: null);
+
+        // Assert
+        changeListenerMock.Verify(l => l.Changed(It.IsAny<LSPDocumentSnapshot>(), It.IsAny<LSPDocumentSnapshot>(), It.IsAny<VirtualDocumentSnapshot>(), It.IsAny<VirtualDocumentSnapshot>(), LSPDocumentChangeKind.VirtualDocumentChanged),
+                                       Times.Once);
+    }
+
+    [Fact]
     public void TryGetDocument_TrackedDocument_ReturnsTrue()
     {
         // Arrange
@@ -217,13 +249,20 @@ public class DefaultLSPDocumentManagerTest : TestBase
 
     private class TestVirtualDocument : VirtualDocument
     {
-        public override Uri Uri => throw new NotImplementedException();
+        private readonly Uri _uri;
+
+        public override Uri Uri => _uri ?? throw new NotImplementedException();
 
         public override ITextBuffer TextBuffer => throw new NotImplementedException();
 
         public override VirtualDocumentSnapshot CurrentSnapshot { get; } = new TestVirtualDocumentSnapshot(new Uri("C:/path/to/something.razor.g.cs"), 123);
 
         public override int HostDocumentVersion => 123;
+
+        public TestVirtualDocument(Uri uri = null)
+        {
+            _uri = uri;
+        }
 
         public override VirtualDocumentSnapshot Update(IReadOnlyList<ITextChange> changes, int hostDocumentVersion, object state)
         {

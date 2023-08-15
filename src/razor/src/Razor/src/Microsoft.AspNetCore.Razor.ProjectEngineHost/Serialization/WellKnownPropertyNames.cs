@@ -7,4 +7,5 @@ internal static class WellKnownPropertyNames
 {
     public const string Version = "__Version";
     public const string HashCode = "HashCode";
+    public const string Message = "Message";
 }

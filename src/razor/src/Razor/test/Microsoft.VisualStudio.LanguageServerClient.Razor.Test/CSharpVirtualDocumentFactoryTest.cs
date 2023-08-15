@@ -51,7 +51,7 @@ public class CSharpVirtualDocumentFactoryTest : TestBase
     }
 
     [Fact]
-    public void TryCreateFor_NonRazorLSPBuffer_ReturnsFalse()
+    public void TryCreateMultipleFor_NonRazorLSPBuffer_ReturnsFalse()
     {
         // Arrange
         var uri = new Uri("C:/path/to/file.razor");
@@ -59,18 +59,15 @@ public class CSharpVirtualDocumentFactoryTest : TestBase
         var factory = new CSharpVirtualDocumentFactory(_contentTypeRegistryService, _textBufferFactoryService, TextDocumentFactoryService, uriProvider, TestLanguageServerFeatureOptions.Instance);
 
         // Act
-        var result = factory.TryCreateFor(_nonRazorLSPBuffer, out var virtualDocument);
+        var result = factory.TryCreateMultipleFor(_nonRazorLSPBuffer, out var virtualDocuments);
 
-        using (virtualDocument)
-        {
-            // Assert
-            Assert.False(result);
-            Assert.Null(virtualDocument);
-        }
+        // Assert
+        Assert.False(result);
+        Assert.Null(virtualDocuments);
     }
 
     [Fact]
-    public void TryCreateFor_RazorLSPBuffer_ReturnsCSharpVirtualDocumentAndTrue()
+    public void TryCreateMultipleFor_RazorLSPBuffer_ReturnsCSharpVirtualDocumentAndTrue()
     {
         // Arrange
         var uri = new Uri("C:/path/to/file.razor");
@@ -79,14 +76,11 @@ public class CSharpVirtualDocumentFactoryTest : TestBase
         var factory = new CSharpVirtualDocumentFactory(_contentTypeRegistryService, _textBufferFactoryService, TextDocumentFactoryService, uriProvider, TestLanguageServerFeatureOptions.Instance);
 
         // Act
-        var result = factory.TryCreateFor(_razorLSPBuffer, out var virtualDocument);
+        var result = factory.TryCreateMultipleFor(_razorLSPBuffer, out var virtualDocuments);
 
-        using (virtualDocument)
-        {
-            // Assert
-            Assert.True(result);
-            Assert.NotNull(virtualDocument);
-            Assert.EndsWith(TestLanguageServerFeatureOptions.Instance.CSharpVirtualDocumentSuffix, virtualDocument.Uri.OriginalString, StringComparison.Ordinal);
-        }
+        // Assert
+        Assert.True(result);
+        using var virtualDocument = Assert.Single(virtualDocuments);
+        Assert.EndsWith(TestLanguageServerFeatureOptions.Instance.CSharpVirtualDocumentSuffix, virtualDocument.Uri.OriginalString, StringComparison.Ordinal);
     }
 }

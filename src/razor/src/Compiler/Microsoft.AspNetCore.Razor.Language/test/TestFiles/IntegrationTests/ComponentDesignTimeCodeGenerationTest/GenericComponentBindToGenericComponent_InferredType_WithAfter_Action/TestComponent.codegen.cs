@@ -40,7 +40,15 @@ TParam
 #line hidden
 #nullable disable
             , -1, 
-            __value => { ParentValue = __value; global::Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.InvokeSynchronousDelegate(Update); });
+             __value => { ParentValue = __value; global::Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.InvokeSynchronousDelegate(
+#nullable restore
+#line 2 "x:\dir\subdir\Test\TestComponent.cshtml"
+                                                              Update
+
+#line default
+#line hidden
+#nullable disable
+            ); });
             #pragma warning disable BL0005
             __typeInference_CreateMyComponent_0.
 #nullable restore

@@ -15,13 +15,8 @@ using static Microsoft.AspNetCore.Razor.Language.CommonMetadata;
 
 namespace Microsoft.CodeAnalysis.Razor.Workspaces.Test;
 
-public class TagHelperDescriptorCacheTest : TestBase
+public class TagHelperDescriptorCacheTest(ITestOutputHelper testOutput) : TestBase(testOutput)
 {
-    public TagHelperDescriptorCacheTest(ITestOutputHelper testOutput)
-        : base(testOutput)
-    {
-    }
-
     [Fact]
     public void TagHelperDescriptorCache_TypeNameAffectsHash()
     {

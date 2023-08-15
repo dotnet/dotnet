@@ -8,13 +8,18 @@ Source Location: (13:0,13 [11] x:\dir\subdir\Test\TestComponent.cshtml)
 Generated Location: (1172:32,13 [11] )
 |ParentValue|
 
+Source Location: (62:0,62 [11] x:\dir\subdir\Test\TestComponent.cshtml)
+|UpdateValue|
+Generated Location: (1591:41,62 [11] )
+|UpdateValue|
+
 Source Location: (86:1,7 [124] x:\dir\subdir\Test\TestComponent.cshtml)
 |
     public string ParentValue { get; set; } = "hi";
 
     public void UpdateValue(string value) => ParentValue = value;
 |
-Generated Location: (1632:43,7 [124] )
+Generated Location: (1830:51,7 [124] )
 |
     public string ParentValue { get; set; } = "hi";
 

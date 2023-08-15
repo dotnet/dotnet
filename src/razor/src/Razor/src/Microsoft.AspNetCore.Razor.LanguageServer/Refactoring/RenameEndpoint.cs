@@ -63,7 +63,7 @@ internal sealed class RenameEndpoint : AbstractRazorDelegatingEndpoint<RenamePar
 
     protected override bool PreferCSharpOverHtmlIfPossible => true;
 
-    protected override string CustomMessageTarget => RazorLanguageServerCustomMessageTargets.RazorRenameEndpointName;
+    protected override string CustomMessageTarget => CustomMessageNames.RazorRenameEndpointName;
 
     protected override async Task<WorkspaceEdit?> TryHandleAsync(RenameParams request, RazorRequestContext requestContext, DocumentPositionInfo positionInfo, CancellationToken cancellationToken)
     {

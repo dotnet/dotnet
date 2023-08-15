@@ -45,7 +45,7 @@ internal sealed class FindAllReferencesEndpoint : AbstractRazorDelegatingEndpoin
         };
     }
 
-    protected override string CustomMessageTarget => RazorLanguageServerCustomMessageTargets.RazorReferencesEndpointName;
+    protected override string CustomMessageTarget => CustomMessageNames.RazorReferencesEndpointName;
 
     protected override bool PreferCSharpOverHtmlIfPossible => true;
 

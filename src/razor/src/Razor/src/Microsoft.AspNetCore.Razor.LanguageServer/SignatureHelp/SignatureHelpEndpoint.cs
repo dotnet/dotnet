@@ -26,7 +26,7 @@ internal sealed class SignatureHelpEndpoint : AbstractRazorDelegatingEndpoint<Si
     {
     }
 
-    protected override string CustomMessageTarget => RazorLanguageServerCustomMessageTargets.RazorSignatureHelpEndpointName;
+    protected override string CustomMessageTarget => CustomMessageNames.RazorSignatureHelpEndpointName;
 
     public void ApplyCapabilities(VSInternalServerCapabilities serverCapabilities, VSInternalClientCapabilities clientCapabilities)
     {

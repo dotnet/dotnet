@@ -2,6 +2,7 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using System;
+using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.VisualStudio.LanguageServer.ContainedLanguage;
 using Microsoft.VisualStudio.Text;
 
@@ -10,6 +11,7 @@ namespace Microsoft.VisualStudio.LanguageServerClient.Razor;
 internal class CSharpVirtualDocumentSnapshot : VirtualDocumentSnapshot
 {
     public CSharpVirtualDocumentSnapshot(
+        ProjectKey projectKey,
         Uri uri,
         ITextSnapshot snapshot,
         long? hostDocumentSyncVersion)
@@ -24,10 +26,13 @@ internal class CSharpVirtualDocumentSnapshot : VirtualDocumentSnapshot
             throw new ArgumentNullException(nameof(snapshot));
         }
 
+        ProjectKey = projectKey;
         Uri = uri;
         Snapshot = snapshot;
         HostDocumentSyncVersion = hostDocumentSyncVersion;
     }
+
+    public ProjectKey ProjectKey { get; }
 
     public override Uri Uri { get; }
 

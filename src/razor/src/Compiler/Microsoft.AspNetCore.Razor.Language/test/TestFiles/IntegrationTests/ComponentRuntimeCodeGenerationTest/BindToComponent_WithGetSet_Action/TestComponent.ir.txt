@@ -13,7 +13,7 @@
                             LazyIntermediateToken - (30:0,30 [11] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - ParentValue
                     ComponentAttribute - (30:0,30 [11] x:\dir\subdir\Test\TestComponent.cshtml) - ValueChanged - ValueChanged - AttributeStructure.DoubleQuotes
                         CSharpExpression - 
-                            IntermediateToken -  - CSharp - UpdateValue
+                            LazyIntermediateToken - (60:0,60 [11] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - UpdateValue
                     ComponentAttribute - (60:0,60 [11] x:\dir\subdir\Test\TestComponent.cshtml) - bind-Value - Value - AttributeStructure.DoubleQuotes
                         LazyIntermediateToken - (60:0,60 [11] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - UpdateValue
             CSharpCode - (84:1,7 [116] x:\dir\subdir\Test\TestComponent.cshtml)

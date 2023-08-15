@@ -22,6 +22,11 @@
         <target state="translated">Извлечь блок в код программной части</target>
         <note />
       </trans-unit>
+      <trans-unit id="File_Externally_Modified">
+        <source>File was externally modified: {0}</source>
+        <target state="translated">Файл был изменен извне: {0}</target>
+        <note />
+      </trans-unit>
       <trans-unit id="Generate_Async_Event_Handler_Title">
         <source>Generate Async Event Handler '{0}'</source>
         <target state="translated">Создать обработчик асинхронных событий "{0}"</target>
@@ -35,6 +40,11 @@
       <trans-unit id="Invalid_Offset">
         <source>Invalid offset.</source>
         <target state="translated">Недопустимое смещение.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Language_Services_Missing_Service">
+        <source>Razor language services not configured properly, missing language service '{0}'.</source>
+        <target state="translated">Языковые службы Razor настроены неправильно, отсутствует языковая служба "{0}".</target>
         <note />
       </trans-unit>
       <trans-unit id="PositionIndex_Outside_Range">
@@ -55,6 +65,11 @@
       <trans-unit id="TagHelper_Element_Glyph">
         <source>Razor TagHelper Element Glyph</source>
         <target state="translated">Глиф элемента TagHelper Razor</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Unknown_ProjectChangeKind">
+        <source>Unknown ProjectChangeKind {0}</source>
+        <target state="translated">Неизвестный ProjectChangeKind {0}</target>
         <note />
       </trans-unit>
       <trans-unit id="Unknown_RazorMetaCode">

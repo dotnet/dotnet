@@ -91,7 +91,7 @@ internal sealed class FoldingRangeEndpoint : IRazorRequestHandler<FoldingRangePa
     private async Task<IEnumerable<FoldingRange>?> HandleCoreAsync(RazorFoldingRangeRequestParam requestParams, DocumentContext documentContext, CancellationToken cancellationToken)
     {
         var foldingResponse = await _languageServer.SendRequestAsync<RazorFoldingRangeRequestParam, RazorFoldingRangeResponse?>(
-            RazorLanguageServerCustomMessageTargets.RazorFoldingRangeEndpoint,
+            CustomMessageNames.RazorFoldingRangeEndpoint,
             requestParams,
             cancellationToken).ConfigureAwait(false);
         var codeDocument = await documentContext.GetCodeDocumentAsync(cancellationToken).ConfigureAwait(false);

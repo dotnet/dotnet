@@ -489,7 +489,7 @@ public class RenameEndpointTest : LanguageServerTestBase
 
         var languageServerMock = new Mock<ClientNotifierServiceBase>(MockBehavior.Strict);
         languageServerMock
-            .Setup(c => c.SendRequestAsync<IDelegatedParams, WorkspaceEdit>(RazorLanguageServerCustomMessageTargets.RazorRenameEndpointName, It.IsAny<DelegatedRenameParams>(), It.IsAny<CancellationToken>()))
+            .Setup(c => c.SendRequestAsync<IDelegatedParams, WorkspaceEdit>(CustomMessageNames.RazorRenameEndpointName, It.IsAny<DelegatedRenameParams>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(delegatedEdit);
 
         var documentMappingServiceMock = new Mock<IRazorDocumentMappingService>(MockBehavior.Strict);

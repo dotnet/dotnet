@@ -10,13 +10,8 @@ using Xunit.Abstractions;
 
 namespace Microsoft.VisualStudio.LanguageServices.Razor.Serialization;
 
-public class RazorConfigurationSerializationTest : TestBase
+public class RazorConfigurationSerializationTest(ITestOutputHelper testOutput) : TestBase(testOutput)
 {
-    public RazorConfigurationSerializationTest(ITestOutputHelper testOutput)
-        : base(testOutput)
-    {
-    }
-
     [Fact]
     public void RazorConfigurationJsonConverter_Serialization_CanRoundTrip()
     {
@@ -54,11 +49,7 @@ public class RazorConfigurationSerializationTest : TestBase
             {
               "ConfigurationName": "MVC-3.0",
               "LanguageVersion": "3.0",
-              "Extensions": [
-                {
-                  "ExtensionName": "MVC-3.0"
-                }
-              ]
+              "Extensions": ["MVC-3.0"]
             }
             """;
 
@@ -81,11 +72,7 @@ public class RazorConfigurationSerializationTest : TestBase
             {
               "ConfigurationName": "MVC-2.1",
               "LanguageVersion": "2.1",
-              "Extensions": [
-                {
-                  "ExtensionName": "MVC-2.1"
-                }
-              ]
+              "Extensions": ["MVC-2.1"]
             }
             """;
 
@@ -107,15 +94,8 @@ public class RazorConfigurationSerializationTest : TestBase
         var configurationJson = """
             {
               "ConfigurationName": "MVC-1.1",
-              "Extensions": [
-                {
-                  "ExtensionName": "MVC-1.1"
-                }
-              ],
-              "LanguageVersion": {
-                "Major": 1,
-                "Minor": 1
-              }
+              "LanguageVersion": "1.1",
+              "Extensions": ["MVC-1.1"]
             }
             """;
 

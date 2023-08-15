@@ -128,20 +128,18 @@ internal class DefaultDocumentVersionCache : DocumentVersionCache
             case ProjectChangeKind.DocumentChanged:
                 var documentFilePath = args.DocumentFilePath!;
 
-                if (ProjectSnapshotManager.IsDocumentOpen(documentFilePath))
+                if (!ProjectSnapshotManager.IsDocumentOpen(documentFilePath))
                 {
-                    return;
-                }
-
-                using (upgradeableLock.EnterWriteLock())
-                {
-                    // Document closed, evict all entries.
-                    var keys = DocumentLookup_NeedsLock.Keys.ToArray();
-                    foreach (var key in keys)
+                    using (upgradeableLock.EnterWriteLock())
                     {
-                        if (key.DocumentFilePath == documentFilePath)
+                        // Document closed, evict all entries.
+                        var keys = DocumentLookup_NeedsLock.Keys.ToArray();
+                        foreach (var key in keys)
                         {
-                            DocumentLookup_NeedsLock.Remove(key);
+                            if (key.DocumentFilePath == documentFilePath)
+                            {
+                                DocumentLookup_NeedsLock.Remove(key);
+                            }
                         }
                     }
                 }

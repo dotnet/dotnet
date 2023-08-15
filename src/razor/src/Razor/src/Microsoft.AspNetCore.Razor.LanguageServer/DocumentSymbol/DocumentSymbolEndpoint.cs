@@ -63,7 +63,7 @@ internal class DocumentSymbolEndpoint : IRazorRequestHandler<DocumentSymbolParam
         var delegatedParams = new DelegatedDocumentSymbolParams(documentContext.Identifier);
 
         var symbolInformations = await _languageServer.SendRequestAsync<DelegatedDocumentSymbolParams, SymbolInformation[]?>(
-            RazorLanguageServerCustomMessageTargets.RazorDocumentSymbolEndpoint,
+            CustomMessageNames.RazorDocumentSymbolEndpoint,
             delegatedParams,
             cancellationToken).ConfigureAwait(false);
 

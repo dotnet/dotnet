@@ -6,11 +6,10 @@ using System.Collections.Immutable;
 using System.IO;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.PooledObjects;
-using Microsoft.AspNetCore.Razor.Telemetry;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Host;
-using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
+using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Text;
 
 namespace Microsoft.AspNetCore.Razor.Microbenchmarks;
@@ -20,7 +19,7 @@ public abstract partial class ProjectSnapshotManagerBenchmarkBase
     internal HostProject HostProject { get; }
     internal ImmutableArray<HostDocument> Documents { get; }
     internal ImmutableArray<TextLoader> TextLoaders { get; }
-    internal TagHelperResolver TagHelperResolver { get; }
+    internal ITagHelperResolver TagHelperResolver { get; }
     protected string RepoRoot { get; }
 
     protected ProjectSnapshotManagerBenchmarkBase(int documentCount = 100)
@@ -61,7 +60,7 @@ public abstract partial class ProjectSnapshotManagerBenchmarkBase
         Documents = documents.ToImmutable();
 
         var tagHelpers = CommonResources.LegacyTagHelpers;
-        TagHelperResolver = new StaticTagHelperResolver(tagHelpers, NoOpTelemetryReporter.Instance);
+        TagHelperResolver = new StaticTagHelperResolver(tagHelpers);
     }
 
     internal DefaultProjectSnapshotManager CreateProjectSnapshotManager()

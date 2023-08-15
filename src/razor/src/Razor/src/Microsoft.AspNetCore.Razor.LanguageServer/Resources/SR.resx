@@ -129,6 +129,9 @@
   <data name="ExtractTo_CodeBehind_Title" xml:space="preserve">
     <value>Extract block to code behind</value>
   </data>
+  <data name="File_Externally_Modified" xml:space="preserve">
+    <value>File was externally modified: {0}</value>
+  </data>
   <data name="Generate_Async_Event_Handler_Title" xml:space="preserve">
     <value>Generate Async Event Handler '{0}'</value>
   </data>
@@ -137,6 +140,9 @@
   </data>
   <data name="Invalid_Offset" xml:space="preserve">
     <value>Invalid offset.</value>
+  </data>
+  <data name="Language_Services_Missing_Service" xml:space="preserve">
+    <value>Razor language services not configured properly, missing language service '{0}'.</value>
   </data>
   <data name="PositionIndex_Outside_Range" xml:space="preserve">
     <value>Line '{0}' outside of the {1} range of '{2}' was queried. The document may not be up to date.</value>
@@ -152,6 +158,9 @@
   </data>
   <data name="Unknown_mapping_behavior" xml:space="preserve">
     <value>Unknown mapping behavior</value>
+  </data>
+  <data name="Unknown_ProjectChangeKind" xml:space="preserve">
+    <value>Unknown ProjectChangeKind {0}</value>
   </data>
   <data name="Unknown_RazorMetaCode" xml:space="preserve">
     <value>Attempted to visit a RazorMetaCode other than '{' or '}'.</value>

@@ -22,6 +22,11 @@
         <target state="translated">Extraer el bloque al código subyacente</target>
         <note />
       </trans-unit>
+      <trans-unit id="File_Externally_Modified">
+        <source>File was externally modified: {0}</source>
+        <target state="translated">El archivo se modificó externamente: {0}</target>
+        <note />
+      </trans-unit>
       <trans-unit id="Generate_Async_Event_Handler_Title">
         <source>Generate Async Event Handler '{0}'</source>
         <target state="translated">Generar controlador de eventos asincrónicos ''{0}''</target>
@@ -35,6 +40,11 @@
       <trans-unit id="Invalid_Offset">
         <source>Invalid offset.</source>
         <target state="translated">Desplazamiento no válido.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Language_Services_Missing_Service">
+        <source>Razor language services not configured properly, missing language service '{0}'.</source>
+        <target state="translated">Los servicios de lenguaje Razor no están configurados correctamente; falta el servicio de idioma "{0}".</target>
         <note />
       </trans-unit>
       <trans-unit id="PositionIndex_Outside_Range">
@@ -55,6 +65,11 @@
       <trans-unit id="TagHelper_Element_Glyph">
         <source>Razor TagHelper Element Glyph</source>
         <target state="translated">Glifo del elemento TagHelper de Razor</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Unknown_ProjectChangeKind">
+        <source>Unknown ProjectChangeKind {0}</source>
+        <target state="translated">ProjectChangeKind desconocido {0}</target>
         <note />
       </trans-unit>
       <trans-unit id="Unknown_RazorMetaCode">

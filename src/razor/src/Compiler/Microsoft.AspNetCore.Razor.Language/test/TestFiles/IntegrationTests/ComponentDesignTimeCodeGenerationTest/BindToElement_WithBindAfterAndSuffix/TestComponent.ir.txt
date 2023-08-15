@@ -25,7 +25,9 @@
                     HtmlAttribute - (20:0,20 [12] x:\dir\subdir\Test\TestComponent.cshtml) - myevent=" - "
                         CSharpExpressionAttributeValue -  - 
                             IntermediateToken -  - CSharp - global::Microsoft.AspNetCore.Components.EventCallback.Factory.CreateBinder(this, 
-                            IntermediateToken -  - CSharp - global::Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.CreateInferredBindSetter(callback: __value => { ParentValue = __value; return global::Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.InvokeAsynchronousDelegate(callback: DoSomething); }, value: ParentValue)
+                            IntermediateToken -  - CSharp - global::Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.CreateInferredBindSetter(callback: __value => { ParentValue = __value; return global::Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.InvokeAsynchronousDelegate(callback: 
+                            LazyIntermediateToken - (55:0,55 [11] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - DoSomething
+                            IntermediateToken -  - CSharp - ); }, value: ParentValue)
                             IntermediateToken -  - CSharp - , 
                             IntermediateToken -  - CSharp - ParentValue
                             IntermediateToken -  - CSharp - )

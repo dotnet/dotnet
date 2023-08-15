@@ -21,7 +21,15 @@ namespace Test
 #line default
 #line hidden
 #nullable disable
-            , 2, global::Microsoft.AspNetCore.Components.EventCallback.Factory.Create(this, global::Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.CreateInferredEventCallback(this, UpdateValue, ParentValue)));
+            , 2, global::Microsoft.AspNetCore.Components.EventCallback.Factory.Create(this, global::Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.CreateInferredEventCallback(this, 
+#nullable restore
+#line 1 "x:\dir\subdir\Test\TestComponent.cshtml"
+                                                            UpdateValue
+
+#line default
+#line hidden
+#nullable disable
+            , ParentValue)));
         }
         #pragma warning restore 1998
 #nullable restore

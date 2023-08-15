@@ -51,7 +51,7 @@ internal sealed class ColorPresentationEndpoint : IRazorRequestHandler<ColorPres
         };
 
         var colorPresentations = await _languageServer.SendRequestAsync<ColorPresentationParams, ColorPresentation[]>(
-            RazorLanguageServerCustomMessageTargets.RazorProvideHtmlColorPresentationEndpoint,
+            CustomMessageNames.RazorProvideHtmlColorPresentationEndpoint,
             delegatedRequest,
             cancellationToken).ConfigureAwait(false);
 

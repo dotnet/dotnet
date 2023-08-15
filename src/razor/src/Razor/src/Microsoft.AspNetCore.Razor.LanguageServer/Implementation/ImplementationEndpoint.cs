@@ -32,7 +32,7 @@ internal sealed class ImplementationEndpoint : AbstractRazorDelegatingEndpoint<T
         _documentMappingService = documentMappingService ?? throw new ArgumentNullException(nameof(documentMappingService));
     }
 
-    protected override string CustomMessageTarget => RazorLanguageServerCustomMessageTargets.RazorImplementationEndpointName;
+    protected override string CustomMessageTarget => CustomMessageNames.RazorImplementationEndpointName;
 
     protected override bool PreferCSharpOverHtmlIfPossible => true;
 

@@ -13,10 +13,10 @@ internal static class JsonConverterCollectionExtensions
     private static readonly ImmutableArray<JsonConverter> s_converters = ImmutableArray.CreateRange(
         new JsonConverter[]
         {
+            ChecksumJsonConverter.Instance,
             ProjectRazorJsonJsonConverter.Instance,
             ProjectSnapshotHandleJsonConverter.Instance,
             TagHelperDeltaResultJsonConverter.Instance,
-            TagHelperResolutionResultJsonConverter.Instance,
         });
 
     public static void RegisterRazorConverters(this ICollection<JsonConverter> collection)
