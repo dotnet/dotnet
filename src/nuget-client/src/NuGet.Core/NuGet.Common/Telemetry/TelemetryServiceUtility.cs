@@ -9,7 +9,7 @@ namespace NuGet.Common
     /// <summary> Utility for managing stopwatch timers. </summary>
     public static class TelemetryServiceUtility
     {
-        private static Stopwatch StopWatch;
+        private static Stopwatch? StopWatch;
 
         /// <summary> Starts or resumes timer. </summary>
         public static void StartOrResumeTimer()

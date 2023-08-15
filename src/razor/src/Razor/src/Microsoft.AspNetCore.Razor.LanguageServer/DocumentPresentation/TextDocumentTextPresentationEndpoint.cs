@@ -22,7 +22,7 @@ internal class TextDocumentTextPresentationEndpoint : AbstractTextDocumentPresen
     {
     }
 
-    public override string EndpointName => RazorLanguageServerCustomMessageTargets.RazorTextPresentationEndpoint;
+    public override string EndpointName => CustomMessageNames.RazorTextPresentationEndpoint;
 
     public override void ApplyCapabilities(VSInternalServerCapabilities serverCapabilities, VSInternalClientCapabilities clientCapabilities)
     {

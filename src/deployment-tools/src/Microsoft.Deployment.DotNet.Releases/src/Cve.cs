@@ -2,7 +2,7 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
-using System.Text.Json.Serialization;
+using System.Text.Json;
 
 namespace Microsoft.Deployment.DotNet.Releases
 {
@@ -14,8 +14,6 @@ namespace Microsoft.Deployment.DotNet.Releases
         /// <summary>
         /// The identifier of the CVE.
         /// </summary>
-        [JsonPropertyName("cve-id")]
-        [JsonInclude]
         public string Id
         {
             get;
@@ -25,12 +23,31 @@ namespace Microsoft.Deployment.DotNet.Releases
         /// <summary>
         /// The URI pointing to a description of the vulnerability.
         /// </summary>
-        [JsonPropertyName("cve-url")]
-        [JsonInclude]
         public Uri DescriptionLink
         {
             get;
             private set;
+        }
+
+        /// <summary>
+        /// Creates a new <see cref="Cve"/> instance from a <see cref="JsonElement"/>.
+        /// </summary>
+        /// <param name="cveElement">The <see cref="JsonElement"/> to deserialize.</param>
+        internal Cve(JsonElement cveElement)
+        {
+            DescriptionLink = cveElement.GetUriOrDefault("cve-url");
+            Id = cveElement.GetStringOrDefault("cve-id");
+        }
+
+        /// <summary>
+        /// Creates a new <see cref="Cve"/> instance.
+        /// </summary>
+        /// <param name="id">The CVE identifier.</param>
+        /// <param name="address">The URI pointing to the CVE description.</param>
+        internal Cve(string id, Uri address)
+        {
+            DescriptionLink = address;
+            Id = id;
         }
 
         /// <summary>
@@ -60,7 +77,7 @@ namespace Microsoft.Deployment.DotNet.Releases
         /// <returns>A hash code for the current object.</returns>
         public override int GetHashCode() => Id.GetHashCode() ^ DescriptionLink.GetHashCode();
 
-        internal static Cve Create(string id, string address) =>
-            new Cve { Id = id, DescriptionLink = new Uri(address) };
+        internal static Cve Create(string id, string address) => 
+            new(id, new Uri(address));
     }
 }

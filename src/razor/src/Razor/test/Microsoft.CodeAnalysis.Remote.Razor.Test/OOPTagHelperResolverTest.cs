@@ -1,14 +1,12 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using ICSharpCode.Decompiler.Solution;
+using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Serialization;
 using Microsoft.AspNetCore.Razor.Telemetry;
@@ -21,7 +19,7 @@ using Xunit.Abstractions;
 
 namespace Microsoft.CodeAnalysis.Remote.Razor;
 
-public class OOPTagHelperResolverTest : TagHelperDescriptorTestBase
+public partial class OOPTagHelperResolverTest : TagHelperDescriptorTestBase
 {
     private readonly ProjectSnapshotProjectEngineFactory _engineFactory;
     private readonly Lazy<IProjectEngineFactory, ICustomProjectEngineFactoryMetadata>[] _customFactories;
@@ -58,7 +56,7 @@ public class OOPTagHelperResolverTest : TagHelperDescriptorTestBase
         AddDisposable(_workspace);
 
         var info = ProjectInfo.Create(ProjectId.CreateNewId("Test"), VersionStamp.Default, "Test", "Test", LanguageNames.CSharp, filePath: "Test.csproj");
-        _workspaceProject = _workspace.CurrentSolution.AddProject(info).GetProject(info.Id);
+        _workspaceProject = _workspace.CurrentSolution.AddProject(info).GetProject(info.Id).AssumeNotNull();
 
         _projectManager = new TestProjectSnapshotManager(_workspace);
         _engineFactory = new DefaultProjectSnapshotProjectEngineFactory(_fallbackFactory, _customFactories);
@@ -72,21 +70,21 @@ public class OOPTagHelperResolverTest : TagHelperDescriptorTestBase
 
         var projectSnapshot = _projectManager.GetLoadedProject(_hostProject_For_2_0.Key);
 
-        var resolver = new TestTagHelperResolver(_engineFactory, ErrorReporter, _workspace, NoOpTelemetryReporter.Instance)
+        var resolver = new TestResolver(_engineFactory, ErrorReporter, _workspace, NoOpTelemetryReporter.Instance)
         {
             OnResolveOutOfProcess = (f, p) =>
             {
                 Assert.Same(_customFactories[0].Value, f);
                 Assert.Same(projectSnapshot, p);
 
-                return Task.FromResult(TagHelperResolutionResult.Empty);
+                return new(ImmutableArray<TagHelperDescriptor>.Empty);
             },
         };
 
-        var result = await resolver.GetTagHelpersAsync(_workspaceProject, projectSnapshot);
+        var result = await resolver.GetTagHelpersAsync(_workspaceProject, projectSnapshot, DisposalToken);
 
         // Assert
-        Assert.Same(TagHelperResolutionResult.Empty, result);
+        Assert.Empty(result);
     }
 
     [Fact]
@@ -97,20 +95,20 @@ public class OOPTagHelperResolverTest : TagHelperDescriptorTestBase
 
         var projectSnapshot = _projectManager.GetLoadedProject(_hostProject_For_2_0.Key);
 
-        var resolver = new TestTagHelperResolver(_engineFactory, ErrorReporter, _workspace, NoOpTelemetryReporter.Instance)
+        var resolver = new TestResolver(_engineFactory, ErrorReporter, _workspace, NoOpTelemetryReporter.Instance)
         {
             OnResolveInProcess = (p) =>
             {
                 Assert.Same(projectSnapshot, p);
 
-                return Task.FromResult(TagHelperResolutionResult.Empty);
+                return new(ImmutableArray<TagHelperDescriptor>.Empty);
             },
         };
 
-        var result = await resolver.GetTagHelpersAsync(_workspaceProject, projectSnapshot);
+        var result = await resolver.GetTagHelpersAsync(_workspaceProject, projectSnapshot, DisposalToken);
 
         // Assert
-        Assert.Same(TagHelperResolutionResult.Empty, result);
+        Assert.Empty(result);
     }
 
     [Fact]
@@ -122,13 +120,13 @@ public class OOPTagHelperResolverTest : TagHelperDescriptorTestBase
         var projectSnapshot = _projectManager.GetLoadedProject(_hostProject_For_2_0.Key);
 
         var cancellationToken = new CancellationToken(canceled: true);
-        var resolver = new TestTagHelperResolver(_engineFactory, ErrorReporter, _workspace, NoOpTelemetryReporter.Instance)
+        var resolver = new TestResolver(_engineFactory, ErrorReporter, _workspace, NoOpTelemetryReporter.Instance)
         {
             OnResolveInProcess = (p) =>
             {
                 Assert.Same(projectSnapshot, p);
 
-                return Task.FromResult(TagHelperResolutionResult.Empty);
+                return new(ImmutableArray<TagHelperDescriptor>.Empty);
             },
             OnResolveOutOfProcess = (f, p) =>
             {
@@ -138,14 +136,14 @@ public class OOPTagHelperResolverTest : TagHelperDescriptorTestBase
             }
         };
 
-        await Assert.ThrowsAsync<OperationCanceledException>(() => resolver.GetTagHelpersAsync(_workspaceProject, projectSnapshot, cancellationToken));
+        await Assert.ThrowsAsync<OperationCanceledException>(async () => await resolver.GetTagHelpersAsync(_workspaceProject, projectSnapshot, cancellationToken));
     }
 
     [Fact]
     public void CalculateTagHelpersFromDelta_NewProject()
     {
         // Arrange
-        var resolver = new TestTagHelperResolver(_engineFactory, ErrorReporter, _workspace, NoOpTelemetryReporter.Instance);
+        var resolver = new TestResolver(_engineFactory, ErrorReporter, _workspace, NoOpTelemetryReporter.Instance);
         var initialDelta = new TagHelperDeltaResult(Delta: false, ResultId: 1, Project1TagHelpers, ImmutableArray<TagHelperDescriptor>.Empty);
 
         // Act
@@ -159,7 +157,7 @@ public class OOPTagHelperResolverTest : TagHelperDescriptorTestBase
     public void CalculateTagHelpersFromDelta_DeltaFailedToApplyToKnownProject()
     {
         // Arrange
-        var resolver = new TestTagHelperResolver(_engineFactory, ErrorReporter, _workspace, NoOpTelemetryReporter.Instance);
+        var resolver = new TestResolver(_engineFactory, ErrorReporter, _workspace, NoOpTelemetryReporter.Instance);
         var initialDelta = new TagHelperDeltaResult(Delta: false, ResultId: 1, Project1TagHelpers, ImmutableArray<TagHelperDescriptor>.Empty);
         resolver.PublicProduceTagHelpersFromDelta(Project1Id, lastResultId: -1, initialDelta);
         var newTagHelperSet = ImmutableArray.Create(TagHelper1_Project1);
@@ -176,7 +174,7 @@ public class OOPTagHelperResolverTest : TagHelperDescriptorTestBase
     public void CalculateTagHelpersFromDelta_NoopResult()
     {
         // Arrange
-        var resolver = new TestTagHelperResolver(_engineFactory, ErrorReporter, _workspace, NoOpTelemetryReporter.Instance);
+        var resolver = new TestResolver(_engineFactory, ErrorReporter, _workspace, NoOpTelemetryReporter.Instance);
         var initialDelta = new TagHelperDeltaResult(Delta: false, ResultId: 1, Project1TagHelpers, ImmutableArray<TagHelperDescriptor>.Empty);
         resolver.PublicProduceTagHelpersFromDelta(Project1Id, lastResultId: -1, initialDelta);
         var noopDelta = new TagHelperDeltaResult(Delta: true, initialDelta.ResultId, ImmutableArray<TagHelperDescriptor>.Empty, ImmutableArray<TagHelperDescriptor>.Empty);
@@ -192,7 +190,7 @@ public class OOPTagHelperResolverTest : TagHelperDescriptorTestBase
     public void CalculateTagHelpersFromDelta_ReplacedTagHelpers()
     {
         // Arrange
-        var resolver = new TestTagHelperResolver(_engineFactory, ErrorReporter, _workspace, NoOpTelemetryReporter.Instance);
+        var resolver = new TestResolver(_engineFactory, ErrorReporter, _workspace, NoOpTelemetryReporter.Instance);
         var initialDelta = new TagHelperDeltaResult(Delta: false, ResultId: 1, Project1TagHelpers, ImmutableArray<TagHelperDescriptor>.Empty);
         resolver.PublicProduceTagHelpersFromDelta(Project1Id, lastResultId: -1, initialDelta);
         var changedDelta = new TagHelperDeltaResult(Delta: true, initialDelta.ResultId + 1, ImmutableArray.Create(TagHelper2_Project2), ImmutableArray.Create(TagHelper2_Project1));
@@ -202,46 +200,5 @@ public class OOPTagHelperResolverTest : TagHelperDescriptorTestBase
 
         // Assert
         Assert.Equal(new[] { TagHelper1_Project1, TagHelper2_Project2 }, tagHelpers.OrderBy(th => th.Name));
-    }
-
-    private class TestTagHelperResolver : OOPTagHelperResolver
-    {
-        public TestTagHelperResolver(ProjectSnapshotProjectEngineFactory factory, IErrorReporter errorReporter, Workspace workspace, ITelemetryReporter telemetryReporter)
-            : base(factory, errorReporter, workspace, telemetryReporter)
-        {
-        }
-
-        public Func<IProjectEngineFactory, IProjectSnapshot, Task<TagHelperResolutionResult>> OnResolveOutOfProcess { get; set; }
-
-        public Func<IProjectSnapshot, Task<TagHelperResolutionResult>> OnResolveInProcess { get; set; }
-
-        protected override Task<TagHelperResolutionResult> ResolveTagHelpersOutOfProcessAsync(IProjectEngineFactory factory, Project workspaceProject, IProjectSnapshot projectSnapshot, CancellationToken cancellationToken)
-        {
-            Assert.NotNull(OnResolveOutOfProcess);
-            return OnResolveOutOfProcess(factory, projectSnapshot);
-        }
-
-        protected override Task<TagHelperResolutionResult> ResolveTagHelpersInProcessAsync(Project project, IProjectSnapshot projectSnapshot, CancellationToken cancellationToken)
-        {
-            Assert.NotNull(OnResolveInProcess);
-            return OnResolveInProcess(projectSnapshot);
-        }
-
-        public ImmutableArray<TagHelperDescriptor> PublicProduceTagHelpersFromDelta(ProjectId projectId, int lastResultId, TagHelperDeltaResult deltaResult)
-            => ProduceTagHelpersFromDelta(projectId, lastResultId, deltaResult);
-
-        protected override ImmutableArray<TagHelperDescriptor> ProduceTagHelpersFromDelta(ProjectId projectId, int lastResultId, TagHelperDeltaResult deltaResult)
-            => base.ProduceTagHelpersFromDelta(projectId, lastResultId, deltaResult);
-    }
-
-    private class TestProjectSnapshotManager : DefaultProjectSnapshotManager
-    {
-        public TestProjectSnapshotManager(Workspace workspace)
-            : base(
-                  Mock.Of<IErrorReporter>(MockBehavior.Strict),
-                  Enumerable.Empty<IProjectSnapshotChangeTrigger>(),
-                  workspace)
-        {
-        }
     }
 }

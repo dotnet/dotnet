@@ -2,6 +2,7 @@
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace NuGet.Common
 {
@@ -29,8 +30,8 @@ namespace NuGet.Common
         /// Formats a NuGetLogCode into a string representation.
         /// </summary>
         /// <param name="code">NuGetLogCode to be formatted into string.</param>
-        /// <returns>strings representation of the NuGetLogCode.</returns>
-        public static string GetName(this NuGetLogCode code)
+        /// <returns>strings representation of the NuGetLogCode, or null if no such constant exists.</returns>
+        public static string? GetName(this NuGetLogCode code)
         {
             return Enum.GetName(typeof(NuGetLogCode), code);
         }
@@ -40,8 +41,8 @@ namespace NuGet.Common
         /// </summary>
         /// <param name="code">NuGetLogCode to be formatted into string.</param>
         /// <param name="codeString">strings representation of the NuGetLogCode if the result is true else null.</param>
-        /// <returns>bool indcating if the GetName operation was successfull or not.</returns>
-        public static bool TryGetName(this NuGetLogCode code, out string codeString)
+        /// <returns>bool indicating if the GetName operation was successful or not.</returns>
+        public static bool TryGetName(this NuGetLogCode code, [NotNullWhen(true)] out string? codeString)
         {
             codeString = code.GetName();
             return codeString != null;

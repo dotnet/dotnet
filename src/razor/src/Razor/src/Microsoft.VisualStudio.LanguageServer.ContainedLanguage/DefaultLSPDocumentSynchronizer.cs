@@ -60,12 +60,40 @@ internal class DefaultLSPDocumentSynchronizer : LSPDocumentSynchronizer
             rejectOnNewerParallelRequest: true,
             cancellationToken);
 
-    public override async Task<SynchronizedResult<TVirtualDocumentSnapshot>> TrySynchronizeVirtualDocumentAsync<TVirtualDocumentSnapshot>(
+    public override Task<SynchronizedResult<TVirtualDocumentSnapshot>> TrySynchronizeVirtualDocumentAsync<TVirtualDocumentSnapshot>(
         int requiredHostDocumentVersion,
         Uri hostDocumentUri,
         bool rejectOnNewerParallelRequest,
         CancellationToken cancellationToken)
         where TVirtualDocumentSnapshot : class
+        => TrySynchronizeVirtualDocumentCoreAsync<TVirtualDocumentSnapshot>(
+            requiredHostDocumentVersion,
+            hostDocumentUri,
+            specificVirtualDocumentUri: null,
+            rejectOnNewerParallelRequest,
+            cancellationToken);
+
+    public override Task<SynchronizedResult<TVirtualDocumentSnapshot>> TrySynchronizeVirtualDocumentAsync<TVirtualDocumentSnapshot>(
+        int requiredHostDocumentVersion,
+        Uri hostDocumentUri,
+        Uri virtualDocumentUri,
+        bool rejectOnNewerParallelRequest,
+        CancellationToken cancellationToken)
+        where TVirtualDocumentSnapshot : class
+        => TrySynchronizeVirtualDocumentCoreAsync<TVirtualDocumentSnapshot>(
+            requiredHostDocumentVersion,
+            hostDocumentUri,
+            virtualDocumentUri,
+            rejectOnNewerParallelRequest,
+            cancellationToken);
+
+    private async Task<SynchronizedResult<TVirtualDocumentSnapshot>> TrySynchronizeVirtualDocumentCoreAsync<TVirtualDocumentSnapshot>(
+        int requiredHostDocumentVersion,
+        Uri hostDocumentUri,
+        Uri? specificVirtualDocumentUri,
+        bool rejectOnNewerParallelRequest,
+        CancellationToken cancellationToken)
+        where TVirtualDocumentSnapshot : VirtualDocumentSnapshot
     {
         if (hostDocumentUri is null)
         {
@@ -75,7 +103,7 @@ internal class DefaultLSPDocumentSynchronizer : LSPDocumentSynchronizer
         Task<bool> onSynchronizedTask;
         lock (_documentContextLock)
         {
-            var preSyncedSnapshot = GetVirtualDocumentSnapshot<TVirtualDocumentSnapshot>(hostDocumentUri);
+            var preSyncedSnapshot = GetVirtualDocumentSnapshot<TVirtualDocumentSnapshot>(hostDocumentUri, specificVirtualDocumentUri);
             var virtualDocumentUri = preSyncedSnapshot.Uri;
             if (!_virtualDocumentContexts.TryGetValue(virtualDocumentUri, out var documentContext))
             {
@@ -95,7 +123,7 @@ internal class DefaultLSPDocumentSynchronizer : LSPDocumentSynchronizer
 
         var onSynchronizedResult = await onSynchronizedTask.ConfigureAwait(false);
 
-        var virtualDocumentSnapshot = GetVirtualDocumentSnapshot<TVirtualDocumentSnapshot>(hostDocumentUri);
+        var virtualDocumentSnapshot = GetVirtualDocumentSnapshot<TVirtualDocumentSnapshot>(hostDocumentUri, specificVirtualDocumentUri);
 
         return new SynchronizedResult<TVirtualDocumentSnapshot>(onSynchronizedResult, virtualDocumentSnapshot);
     }
@@ -103,10 +131,19 @@ internal class DefaultLSPDocumentSynchronizer : LSPDocumentSynchronizer
     internal SynchronizedResult<TVirtualDocumentSnapshot>? TryReturnPossiblyFutureSnapshot<TVirtualDocumentSnapshot>(
         int requiredHostDocumentVersion,
         Uri hostDocumentUri) where TVirtualDocumentSnapshot : VirtualDocumentSnapshot
+        => TryReturnPossiblyFutureSnapshot<TVirtualDocumentSnapshot>(
+            requiredHostDocumentVersion,
+            hostDocumentUri,
+            specificVirtualDocumentUri: null);
+
+    internal SynchronizedResult<TVirtualDocumentSnapshot>? TryReturnPossiblyFutureSnapshot<TVirtualDocumentSnapshot>(
+        int requiredHostDocumentVersion,
+        Uri hostDocumentUri,
+        Uri? specificVirtualDocumentUri) where TVirtualDocumentSnapshot : VirtualDocumentSnapshot
     {
         lock (_documentContextLock)
         {
-            var preSyncedSnapshot = GetVirtualDocumentSnapshot<TVirtualDocumentSnapshot>(hostDocumentUri);
+            var preSyncedSnapshot = GetVirtualDocumentSnapshot<TVirtualDocumentSnapshot>(hostDocumentUri, specificVirtualDocumentUri);
             var virtualDocumentUri = preSyncedSnapshot.Uri;
             if (!_virtualDocumentContexts.TryGetValue(virtualDocumentUri, out var documentContext))
             {
@@ -156,7 +193,7 @@ internal class DefaultLSPDocumentSynchronizer : LSPDocumentSynchronizer
         }
     }
 
-    private TVirtualDocumentSnapshot GetVirtualDocumentSnapshot<TVirtualDocumentSnapshot>(Uri hostDocumentUri)
+    private TVirtualDocumentSnapshot GetVirtualDocumentSnapshot<TVirtualDocumentSnapshot>(Uri hostDocumentUri, Uri? specificVirtualDocumentUri)
         where TVirtualDocumentSnapshot : VirtualDocumentSnapshot
     {
         var normalizedString = hostDocumentUri.GetAbsoluteOrUNCPath();
@@ -165,6 +202,24 @@ internal class DefaultLSPDocumentSynchronizer : LSPDocumentSynchronizer
         if (!_documentManager.TryGetDocument(normalizedUri, out var documentSnapshot))
         {
             throw new InvalidOperationException($"Unable to retrieve snapshot for document {normalizedUri} after synchronization");
+        }
+
+        if (specificVirtualDocumentUri is not null)
+        {
+            if (!documentSnapshot.TryGetAllVirtualDocuments<TVirtualDocumentSnapshot>(out var virtualDocuments))
+            {
+                throw new InvalidOperationException($"Unable to retrieve virtual documents for {normalizedUri} after document synchronization");
+            }
+
+            foreach (var virtualDocument in virtualDocuments)
+            {
+                if (virtualDocument.Uri == specificVirtualDocumentUri)
+                {
+                    return virtualDocument;
+                }
+            }
+
+            throw new InvalidOperationException($"Unable to retrieve virtual document {specificVirtualDocumentUri} for {normalizedUri} after document synchronization");
         }
 
         if (!documentSnapshot.TryGetVirtualDocument<TVirtualDocumentSnapshot>(out var virtualDoc))

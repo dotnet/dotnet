@@ -670,7 +670,7 @@ type internal TypeCheckInfo
                         None
                 | id :: rest ->
                     match fields |> List.tryFind (fun f -> f.LogicalName = id) with
-                    | Some f -> dive f.RecdField.FormalType denv ad m rest true wasPathEmpty
+                    | Some f -> dive f.FieldType denv ad m rest true wasPathEmpty
                     | _ ->
                         // Field name can be optionally qualified.
                         // If we haven't matched a field name yet, keep peeling off the prefix.
@@ -1007,6 +1007,47 @@ type internal TypeCheckInfo
             |> List.prependIfSome (SuggestNameBasedOnType g caseIdPos ty)
             |> List.prependIfSome (CreateCompletionItemForSuggestedPatternName caseIdPos fieldName))
         |> Option.defaultValue completions
+
+    /// Gets all methods that a type can override, but has not yet done so.
+    let GetOverridableMethods pos typeNameRange =
+        let isMethodOverridable alreadyOverridden (candidate: MethInfo) =
+            not candidate.IsFinal
+            && not (
+                alreadyOverridden
+                |> List.exists (MethInfosEquivByNameAndSig EraseNone true g amap range0 candidate)
+            )
+
+        let (nenv, ad), m = GetBestEnvForPos pos
+
+        sResolutions.CapturedNameResolutions
+        |> ResizeArray.tryPick (fun r ->
+            match r.Item with
+            | Item.Types (_, ty :: _) when equals r.Range typeNameRange && isAppTy g ty ->
+                let superTy =
+                    (tcrefOfAppTy g ty).TypeContents.tcaug_super |> Option.defaultValue g.obj_ty
+
+                let overriddenMethods =
+                    GetImmediateIntrinsicMethInfosOfType (None, ad) g amap typeNameRange ty
+                    |> List.filter (fun x -> x.IsDefiniteFSharpOverride)
+
+                let overridableMethods =
+                    GetIntrinsicMethInfosOfType
+                        infoReader
+                        None
+                        ad
+                        TypeHierarchy.AllowMultiIntfInstantiations.No
+                        FindMemberFlag.PreferOverrides
+                        range0
+                        superTy
+                    |> List.filter (isMethodOverridable overriddenMethods)
+                    |> List.groupBy (fun x -> x.DisplayName)
+                    |> List.map (fun (name, overloads) ->
+                        Item.MethodGroup(name, overloads, None)
+                        |> ItemWithNoInst
+                        |> CompletionItem ValueNone ValueNone)
+
+                Some(overridableMethods, nenv.DisplayEnv, m)
+            | _ -> None)
 
     let getItem (x: ItemWithInst) = x.Item
 
@@ -1530,7 +1571,13 @@ type internal TypeCheckInfo
                             |> List.filter (fun item ->
                                 match item.Item with
                                 | Item.Value v -> v.LiteralValue.IsSome
-                                | _ -> true)
+                                | Item.ILField field -> field.LiteralValue.IsSome
+                                | Item.ActivePatternCase _
+                                | Item.ModuleOrNamespaces _
+                                | Item.NewDef _
+                                | Item.Types _
+                                | Item.UnionCase _ -> true
+                                | _ -> false)
 
                         filtered, denv, range)
 
@@ -1552,6 +1599,8 @@ type internal TypeCheckInfo
                             Some(SuggestNameForUnionCaseFieldPattern g caseIdRange.End pos uci indexOrName list, r.DisplayEnv, r.Range)
                         | _ -> None)
                     |> Option.orElse declaredItems
+
+            | Some (CompletionContext.MethodOverride enclosingTypeNameRange) -> GetOverridableMethods pos enclosingTypeNameRange
 
             // Other completions
             | cc ->
@@ -1658,7 +1707,10 @@ type internal TypeCheckInfo
                         |> Option.map (fun parsedInput ->
                             ParsedInput.GetFullNameOfSmallestModuleOrNamespaceAtPoint(mkPos line 0, parsedInput))
 
-                    let isAttributeApplication = ctx = Some CompletionContext.AttributeApplication
+                    let isAttributeApplication =
+                        match ctx with
+                        | Some CompletionContext.AttributeApplication -> true
+                        | _ -> false
 
                     DeclarationListInfo.Create(
                         infoReader,

@@ -95,7 +95,7 @@ public class RazorDiagnosticsPublisherTest : LanguageServerTestBase
             .Verifiable();
         Mock.Get(languageServerDocument)
             .Setup(d => d.SendRequestAsync<DocumentDiagnosticParams, SumType<FullDocumentDiagnosticReport, UnchangedDocumentDiagnosticReport>?>(
-                RazorLanguageServerCustomMessageTargets.RazorPullDiagnosticEndpointName,
+                CustomMessageNames.RazorPullDiagnosticEndpointName,
                 It.IsAny<DocumentDiagnosticParams>(),
                 It.IsAny<CancellationToken>()))
             .Returns(Task.FromResult(new SumType<FullDocumentDiagnosticReport, UnchangedDocumentDiagnosticReport>?(new FullDocumentDiagnosticReport())))
@@ -142,7 +142,7 @@ public class RazorDiagnosticsPublisherTest : LanguageServerTestBase
 
         languageServer
             .Setup(server => server.SendRequestAsync<DocumentDiagnosticParams, SumType<FullDocumentDiagnosticReport, UnchangedDocumentDiagnosticReport>?>(
-                RazorLanguageServerCustomMessageTargets.RazorPullDiagnosticEndpointName,
+                CustomMessageNames.RazorPullDiagnosticEndpointName,
                 It.IsAny<DocumentDiagnosticParams>(),
                 It.IsAny<CancellationToken>()))
             .Callback<string, DocumentDiagnosticParams, CancellationToken>((method, @params, cancellationToken) =>
@@ -198,7 +198,7 @@ public class RazorDiagnosticsPublisherTest : LanguageServerTestBase
         var languageServer = new Mock<ClientNotifierServiceBase>(MockBehavior.Strict);
         languageServer
             .Setup(server => server.SendRequestAsync<DocumentDiagnosticParams, SumType<FullDocumentDiagnosticReport, UnchangedDocumentDiagnosticReport>?>(
-                RazorLanguageServerCustomMessageTargets.RazorPullDiagnosticEndpointName,
+                CustomMessageNames.RazorPullDiagnosticEndpointName,
                 It.IsAny<DocumentDiagnosticParams>(),
                 It.IsAny<CancellationToken>()))
             .Callback<string, DocumentDiagnosticParams, CancellationToken>((method, @params, cancellationToken) =>
@@ -248,7 +248,7 @@ public class RazorDiagnosticsPublisherTest : LanguageServerTestBase
         var languageServer = new Mock<ClientNotifierServiceBase>(MockBehavior.Strict);
         languageServer
             .Setup(server => server.SendRequestAsync<DocumentDiagnosticParams, SumType<FullDocumentDiagnosticReport, UnchangedDocumentDiagnosticReport>?>(
-                RazorLanguageServerCustomMessageTargets.RazorPullDiagnosticEndpointName,
+                CustomMessageNames.RazorPullDiagnosticEndpointName,
                 It.IsAny<DocumentDiagnosticParams>(),
                 It.IsAny<CancellationToken>()))
             .Callback<string, DocumentDiagnosticParams, CancellationToken>((method, @params, cancellationToken) =>
@@ -299,7 +299,7 @@ public class RazorDiagnosticsPublisherTest : LanguageServerTestBase
         var languageServer = new Mock<ClientNotifierServiceBase>(MockBehavior.Strict);
         languageServer
             .Setup(server => server.SendRequestAsync<DocumentDiagnosticParams, SumType<FullDocumentDiagnosticReport, UnchangedDocumentDiagnosticReport>?>(
-                RazorLanguageServerCustomMessageTargets.RazorPullDiagnosticEndpointName,
+                CustomMessageNames.RazorPullDiagnosticEndpointName,
                 It.IsAny<DocumentDiagnosticParams>(),
                 It.IsAny<CancellationToken>()))
             .Callback<string, DocumentDiagnosticParams, CancellationToken>((method, @params, cancellationToken) =>
@@ -333,7 +333,7 @@ public class RazorDiagnosticsPublisherTest : LanguageServerTestBase
 
         languageServer
             .Setup(server => server.SendRequestAsync<DocumentDiagnosticParams, SumType<FullDocumentDiagnosticReport, UnchangedDocumentDiagnosticReport>?>(
-                RazorLanguageServerCustomMessageTargets.RazorPullDiagnosticEndpointName,
+                CustomMessageNames.RazorPullDiagnosticEndpointName,
                 It.IsAny<DocumentDiagnosticParams>(),
                 It.IsAny<CancellationToken>()))
             .Callback<string, DocumentDiagnosticParams, CancellationToken>((method, @params, cancellationToken) =>

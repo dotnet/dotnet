@@ -68,7 +68,7 @@ namespace Microsoft.Deployment.DotNet.Releases.Tests
         /// <returns></returns>
         protected Product CreateProduct(string json)
         {
-            return JsonSerializer.Deserialize<Product>(json, SerializerOptions.Default);
+            return new Product(JsonDocument.Parse(json).RootElement);
         }
 
         /// <summary>

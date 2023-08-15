@@ -8,7 +8,7 @@ namespace NuGet.Common
 {
     public class NullLogger : LoggerBase
     {
-        private static ILogger _instance;
+        private static ILogger? _instance;
 
         public static ILogger Instance
         {

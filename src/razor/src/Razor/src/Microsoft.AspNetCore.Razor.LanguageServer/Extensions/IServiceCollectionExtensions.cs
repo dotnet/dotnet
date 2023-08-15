@@ -40,7 +40,8 @@ internal static class IServiceCollectionExtensions
         var razorLifeCycleManager = new RazorLifeCycleManager(razorLanguageServer, lspServerActivationTracker);
         services.AddSingleton<ILifeCycleManager>(razorLifeCycleManager);
         services.AddSingleton<RazorLifeCycleManager>(razorLifeCycleManager);
-        services.AddSingleton<IInitializeManager<InitializeParams, InitializeResult>, CapabilitiesManager>();
+        services.AddSingleton<CapabilitiesManager>();
+        services.AddSingleton<IInitializeManager<InitializeParams, InitializeResult>, CapabilitiesManager>(sp => sp.GetRequiredService<CapabilitiesManager>());
         services.AddSingleton<IRequestContextFactory<RazorRequestContext>, RazorRequestContextFactory>();
 
         services.AddSingleton<ICapabilitiesProvider, RazorLanguageServerCapability>();

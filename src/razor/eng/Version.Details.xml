@@ -5,9 +5,9 @@
       <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-runtime</Uri>
       <Sha>839cdfb0ecca5e0be3dbccd926e7651ef50fdf10</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.SourceBuild.Intermediate.source-build-reference-packages" Version="8.0.0-alpha.1.23371.1">
+    <Dependency Name="Microsoft.SourceBuild.Intermediate.source-build-reference-packages" Version="8.0.0-alpha.1.23381.3">
       <Uri>https://github.com/dotnet/source-build-reference-packages</Uri>
-      <Sha>c418ea641dfded915409e09387985fba7bccc781</Sha>
+      <Sha>5a1492557c8717b428b69fd4b7ca8c91d5d18cd3</Sha>
       <SourceBuild RepoName="source-build-reference-packages" ManagedOnly="true" />
     </Dependency>
     <Dependency Name="Microsoft.Net.Compilers.Toolset" Version="4.7.0-3.23326.2">
@@ -98,19 +98,14 @@
       <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-runtime</Uri>
       <Sha>3a25a7f1cc446b60678ed25c9d829420d6321eba</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="8.0.0-beta.23381.1">
+    <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="8.0.0-beta.23407.1">
       <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>aeaa48c51d6494adc1b1fab870e7b8c89752d1ba</Sha>
+      <Sha>9a7b1d30fd536da1b71d74b184e857ee96c12a76</Sha>
       <SourceBuild RepoName="arcade" ManagedOnly="true" />
     </Dependency>
-    <Dependency Name="Microsoft.SourceLink.GitHub" Version="8.0.0-beta.23361.2" CoherentParentDependency="Microsoft.DotNet.Arcade.Sdk">
-      <Uri>https://github.com/dotnet/sourcelink</Uri>
-      <Sha>d2e046aec870a5a7601cc51c5607f34463cc2d42</Sha>
-      <SourceBuild RepoName="sourcelink" ManagedOnly="true" />
-    </Dependency>
-    <Dependency Name="Microsoft.DotNet.XliffTasks" Version="1.0.0-beta.23374.1" CoherentParentDependency="Microsoft.DotNet.Arcade.Sdk">
+    <Dependency Name="Microsoft.DotNet.XliffTasks" Version="1.0.0-beta.23381.1" CoherentParentDependency="Microsoft.DotNet.Arcade.Sdk">
       <Uri>https://github.com/dotnet/xliff-tasks</Uri>
-      <Sha>a61cdec7a7f96c654b8c92bea0167df0427cc26c</Sha>
+      <Sha>d3553ca27fb1c128f302f52b73c0079e65d62ea8</Sha>
       <SourceBuild RepoName="xliff-tasks" ManagedOnly="true" />
     </Dependency>
     <!-- Necessary for source-build. This allows Microsoft.Extensions.ObjectPool and System.Collections.Immutable packages

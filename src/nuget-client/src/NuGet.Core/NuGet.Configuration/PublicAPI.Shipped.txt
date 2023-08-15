@@ -83,8 +83,6 @@ NuGet.Configuration.IPackageSourceProvider.PackageSourcesChanged -> System.Event
 ~NuGet.Configuration.IPackageSourceProvider.SaveActivePackageSource(NuGet.Configuration.PackageSource source) -> void
 ~NuGet.Configuration.IPackageSourceProvider.SavePackageSources(System.Collections.Generic.IEnumerable<NuGet.Configuration.PackageSource> sources) -> void
 ~NuGet.Configuration.IPackageSourceProvider.UpdatePackageSource(NuGet.Configuration.PackageSource source, bool updateCredentials, bool updateEnabled) -> void
-NuGet.Configuration.IPackageSourceProvider2
-~NuGet.Configuration.IPackageSourceProvider2.SavePackageSources(System.Collections.Generic.IEnumerable<NuGet.Configuration.PackageSource> sources, NuGet.Configuration.PackageSourceUpdateOptions packageSourceUpdateOptions) -> void
 NuGet.Configuration.IProxyCache
 ~NuGet.Configuration.IProxyCache.Add(System.Net.IWebProxy proxy) -> void
 ~NuGet.Configuration.IProxyCache.GetProxy(System.Uri uri) -> System.Net.IWebProxy
@@ -171,9 +169,9 @@ NuGet.Configuration.PackageSourceCredential.IsValid() -> bool
 ~NuGet.Configuration.PackageSourceCredential.ValidAuthenticationTypes.get -> System.Collections.Generic.IEnumerable<string>
 ~NuGet.Configuration.PackageSourceCredential.ValidAuthenticationTypesText.get -> string
 NuGet.Configuration.PackageSourceMapping
-~NuGet.Configuration.PackageSourceMapping.GetConfiguredPackageSources(string packageId) -> System.Collections.Generic.IReadOnlyList<string>
+NuGet.Configuration.PackageSourceMapping.GetConfiguredPackageSources(string! packageId) -> System.Collections.Generic.IReadOnlyList<string!>!
 NuGet.Configuration.PackageSourceMapping.IsEnabled.get -> bool
-~NuGet.Configuration.PackageSourceMapping.PackageSourceMapping(System.Collections.Generic.IReadOnlyDictionary<string, System.Collections.Generic.IReadOnlyList<string>> patterns) -> void
+NuGet.Configuration.PackageSourceMapping.PackageSourceMapping(System.Collections.Generic.IReadOnlyDictionary<string!, System.Collections.Generic.IReadOnlyList<string!>!>! patterns) -> void
 NuGet.Configuration.PackageSourceMappingProvider
 ~NuGet.Configuration.PackageSourceMappingProvider.GetPackageSourceMappingItems() -> System.Collections.Generic.IReadOnlyList<NuGet.Configuration.PackageSourceMappingSourceItem>
 ~NuGet.Configuration.PackageSourceMappingProvider.PackageSourceMappingProvider(NuGet.Configuration.ISettings settings) -> void
@@ -203,13 +201,8 @@ NuGet.Configuration.PackageSourceProvider.PackageSourcesChanged -> System.EventH
 ~NuGet.Configuration.PackageSourceProvider.RemovePackageSource(string name) -> void
 ~NuGet.Configuration.PackageSourceProvider.SaveActivePackageSource(NuGet.Configuration.PackageSource source) -> void
 ~NuGet.Configuration.PackageSourceProvider.SavePackageSources(System.Collections.Generic.IEnumerable<NuGet.Configuration.PackageSource> sources) -> void
-~NuGet.Configuration.PackageSourceProvider.SavePackageSources(System.Collections.Generic.IEnumerable<NuGet.Configuration.PackageSource> sources, NuGet.Configuration.PackageSourceUpdateOptions sourceUpdateSettings) -> void
 ~NuGet.Configuration.PackageSourceProvider.Settings.get -> NuGet.Configuration.ISettings
 ~NuGet.Configuration.PackageSourceProvider.UpdatePackageSource(NuGet.Configuration.PackageSource source, bool updateCredentials, bool updateEnabled) -> void
-NuGet.Configuration.PackageSourceUpdateOptions
-NuGet.Configuration.PackageSourceUpdateOptions.PackageSourceUpdateOptions(bool updateCredentials, bool updateEnabled) -> void
-NuGet.Configuration.PackageSourceUpdateOptions.UpdateCredentials.get -> bool
-NuGet.Configuration.PackageSourceUpdateOptions.UpdateEnabled.get -> bool
 NuGet.Configuration.ProxyCache
 ~NuGet.Configuration.ProxyCache.Add(System.Net.IWebProxy proxy) -> void
 ~NuGet.Configuration.ProxyCache.GetCredential(System.Uri proxyAddress, string authType) -> System.Net.NetworkCredential
@@ -327,8 +320,8 @@ const NuGet.Configuration.PackageSource.DefaultProtocolVersion = 2 -> int
 ~override NuGet.Configuration.AddItem.Clone() -> NuGet.Configuration.SettingBase
 ~override NuGet.Configuration.AddItem.DisallowedValues.get -> System.Collections.Generic.IReadOnlyDictionary<string, System.Collections.Generic.IReadOnlyCollection<string>>
 ~override NuGet.Configuration.AddItem.ElementName.get -> string
-~override NuGet.Configuration.AddItem.Equals(object other) -> bool
-override NuGet.Configuration.AddItem.GetHashCode() -> int
+~override sealed NuGet.Configuration.AddItem.Equals(object other) -> bool
+override sealed NuGet.Configuration.AddItem.GetHashCode() -> int
 ~override NuGet.Configuration.AddItem.RequiredAttributes.get -> System.Collections.Generic.IReadOnlyCollection<string>
 ~override NuGet.Configuration.AuthorItem.Clone() -> NuGet.Configuration.SettingBase
 ~override NuGet.Configuration.AuthorItem.ElementName.get -> string
@@ -388,8 +381,6 @@ override NuGet.Configuration.SettingText.GetHashCode() -> int
 override NuGet.Configuration.SettingText.IsEmpty() -> bool
 override NuGet.Configuration.SettingsGroup<T>.IsEmpty() -> bool
 ~override NuGet.Configuration.SourceItem.Clone() -> NuGet.Configuration.SettingBase
-~override NuGet.Configuration.SourceItem.Equals(object other) -> bool
-override NuGet.Configuration.SourceItem.GetHashCode() -> int
 ~override NuGet.Configuration.StoreClientCertItem.Clone() -> NuGet.Configuration.SettingBase
 ~override NuGet.Configuration.StoreClientCertItem.ElementName.get -> string
 ~override NuGet.Configuration.StoreClientCertItem.Search() -> System.Collections.Generic.IEnumerable<System.Security.Cryptography.X509Certificates.X509Certificate>
@@ -407,7 +398,7 @@ override NuGet.Configuration.UnknownItem.IsEmpty() -> bool
 ~static NuGet.Configuration.NuGetPathContext.Create(string settingsRoot) -> NuGet.Configuration.NuGetPathContext
 ~static NuGet.Configuration.NullSettings.Instance.get -> NuGet.Configuration.NullSettings
 ~static NuGet.Configuration.PackageSourceCredential.FromUserInput(string source, string username, string password, bool storePasswordInClearText, string validAuthenticationTypesText) -> NuGet.Configuration.PackageSourceCredential
-~static NuGet.Configuration.PackageSourceMapping.GetPackageSourceMapping(NuGet.Configuration.ISettings settings) -> NuGet.Configuration.PackageSourceMapping
+static NuGet.Configuration.PackageSourceMapping.GetPackageSourceMapping(NuGet.Configuration.ISettings! settings) -> NuGet.Configuration.PackageSourceMapping!
 ~static NuGet.Configuration.PackageSourceProvider.LoadPackageSources(NuGet.Configuration.ISettings settings) -> System.Collections.Generic.IEnumerable<NuGet.Configuration.PackageSource>
 ~static NuGet.Configuration.ProxyCache.Instance.get -> NuGet.Configuration.ProxyCache
 ~static NuGet.Configuration.Settings.ApplyEnvironmentTransform(string value) -> string
@@ -523,7 +514,6 @@ override NuGet.Configuration.UnknownItem.IsEmpty() -> bool
 ~static readonly NuGet.Configuration.NuGetConstants.V2LegacyFeedUrl -> string
 ~static readonly NuGet.Configuration.NuGetConstants.V2LegacyOfficialPackageSourceUrl -> string
 static readonly NuGet.Configuration.OwnersItem.OwnersListSeparator -> char
-~static readonly NuGet.Configuration.PackageSourceUpdateOptions.Default -> NuGet.Configuration.PackageSourceUpdateOptions
 ~static readonly NuGet.Configuration.Settings.DefaultSettingsFileName -> string
 ~static readonly NuGet.Configuration.Settings.OrderedSettingsFileNames -> string[]
 ~static readonly NuGet.Configuration.Settings.SupportedMachineWideConfigExtension -> string[]

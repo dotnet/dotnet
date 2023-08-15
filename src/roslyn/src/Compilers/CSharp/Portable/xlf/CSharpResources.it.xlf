@@ -692,6 +692,11 @@
         <target state="translated">La funzionalità '{0}' non è disponibile in C# 11.0. Usare la versione {1} o versioni successive del linguaggio.</target>
         <note />
       </trans-unit>
+      <trans-unit id="ERR_FeatureNotAvailableInVersion12">
+        <source>Feature '{0}' is not available in C# 12.0. Please use language version {1} or greater.</source>
+        <target state="new">Feature '{0}' is not available in C# 12.0. Please use language version {1} or greater.</target>
+        <note />
+      </trans-unit>
       <trans-unit id="ERR_FeatureNotAvailableInVersion8">
         <source>Feature '{0}' is not available in C# 8.0. Please use language version {1} or greater.</source>
         <target state="translated">La funzionalità '{0}' non è disponibile in C# 8.0. Usare la versione {1} o versioni successive del linguaggio.</target>
@@ -4992,6 +4997,16 @@ target:module               Compila un modulo che può essere aggiunto ad altro
         <target state="translated">Uso della proprietà implementata automaticamente probabilmente non assegnata</target>
         <note />
       </trans-unit>
+      <trans-unit id="WRN_UseDefViolationRefField">
+        <source>Ref field '{0}' should be ref-assigned before use.</source>
+        <target state="new">Ref field '{0}' should be ref-assigned before use.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="WRN_UseDefViolationRefField_Title">
+        <source>Ref field should be ref-assigned before use.</source>
+        <target state="new">Ref field should be ref-assigned before use.</target>
+        <note />
+      </trans-unit>
       <trans-unit id="WRN_UseDefViolationThisSupportedVersion">
         <source>The 'this' object is read before all of its fields have been assigned, causing preceding implicit assignments of 'default' to non-explicitly assigned fields.</source>
         <target state="translated">L'oggetto 'this' viene letto prima che tutti i relativi campi siano stati assegnati, determinando le assegnazioni implicite precedenti di 'default' ai campi non esplicitamente assegnati.</target>
@@ -6668,8 +6683,8 @@ target:module               Compila un modulo che può essere aggiunto ad altro
         <note />
       </trans-unit>
       <trans-unit id="ERR_AttributeCtorInParameter">
-        <source>Cannot use attribute constructor '{0}' because it has 'in' parameters.</source>
-        <target state="translated">Non è possibile usare il costruttore di attributo '{0}' perché contiene parametri 'in'.</target>
+        <source>Cannot use attribute constructor '{0}' because it has 'in' or 'ref readonly' parameters.</source>
+        <target state="needs-review-translation">Non è possibile usare il costruttore di attributo '{0}' perché contiene parametri 'in'.</target>
         <note />
       </trans-unit>
       <trans-unit id="ERR_OverrideWithConstraints">
@@ -12664,8 +12679,8 @@ Per rimuovere l'avviso, è invece possibile usare /reference (impostare la propr
         <note />
       </trans-unit>
       <trans-unit id="ERR_InExtensionMustBeValueType">
-        <source>The first parameter of the 'in' extension method '{0}' must be a concrete (non-generic) value type.</source>
-        <target state="translated">Il primo parametro del metodo di estensione 'in' '{0}' deve essere un tipo valore concreto (non generico).</target>
+        <source>The first 'in' or 'ref readonly' parameter of the extension method '{0}' must be a concrete (non-generic) value type.</source>
+        <target state="needs-review-translation">Il primo parametro del metodo di estensione 'in' '{0}' deve essere un tipo valore concreto (non generico).</target>
         <note />
       </trans-unit>
       <trans-unit id="ERR_FieldsInRoStruct">

@@ -287,6 +287,12 @@ internal sealed class ParallelProxyDiscoveryManager : IParallelProxyDiscoveryMan
         bool initialized,
         Task? task)
     {
+        // If we do the scheduling incorrectly this will get null. It should not happen, but it has happened before.
+        if (discoveryCriteria == null)
+        {
+            throw new ArgumentNullException(nameof(discoveryCriteria));
+        }
+
         // Kick off another discovery task for the next source
         Task.Run(() =>
             {

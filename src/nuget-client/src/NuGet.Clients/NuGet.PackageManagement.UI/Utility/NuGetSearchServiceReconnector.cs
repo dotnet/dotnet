@@ -124,6 +124,11 @@ namespace NuGet.PackageManagement.UI.Utility
                 // do not dispose `_parent`, it's the responsibility of the object owning the instance.
             }
 
+            public Task<IReadOnlyList<SourceRepository>> GetAllPackageFoldersAsync(IReadOnlyCollection<IProjectContextInfo> projectContextInfos, CancellationToken cancellationToken)
+            {
+                return _parent._service.GetAllPackageFoldersAsync(projectContextInfos, cancellationToken);
+            }
+
             public ValueTask<IReadOnlyCollection<PackageSearchMetadataContextInfo>> GetAllPackagesAsync(
                 IReadOnlyCollection<IProjectContextInfo> projectContextInfos,
                 IReadOnlyCollection<PackageSourceContextInfo> packageSources,

@@ -267,7 +267,7 @@ namespace NuGet.Common.Test
             var output = new List<string>();
             using (var reader = new StringReader(input))
             {
-                string line;
+                string? line;
                 while ((line = reader.ReadLine()) != null)
                 {
                     output.Add(line);

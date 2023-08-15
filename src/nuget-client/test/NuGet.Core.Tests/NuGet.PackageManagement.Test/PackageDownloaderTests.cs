@@ -2,6 +2,7 @@
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
@@ -473,6 +474,71 @@ namespace NuGet.PackageManagement
                 // Assert
                 Assert.True(targetPackageStream.CanSeek);
             }
+        }
+
+        [Fact]
+        public async Task GetDownloadResourceResultAsync_WithSourceMappingFound_PackageDownloaded()
+        {
+            // Arrange
+            var sourceRepositoryProvider = TestSourceRepositoryUtility.CreateSourceRepositoryProvider(new[]
+            {
+                TestSourceRepositoryUtility.V3PackageSource,
+                TestSourceRepositoryUtility.V2PackageSource,
+            });
+
+            string packageId = "jQuery.Validation";
+            string packagePatterns = $"{TestSourceRepositoryUtility.V3PackageSource.Name},jQuery.*|{TestSourceRepositoryUtility.V2PackageSource.Name},jQuery.* ";
+            var packageIdentity = new PackageIdentity(packageId, new NuGetVersion("1.19.5"));
+            PackageSourceMapping packageSourceMapping = PackageSourceMappingUtility.GetPackageSourceMapping(packagePatterns);
+
+            // Act
+            using (var cacheContext = new SourceCacheContext())
+            using (var packagesDirectory = TestDirectory.Create())
+            using (var downloadResult = await PackageDownloader.GetDownloadResourceResultAsync(
+                sourceRepositoryProvider.GetRepositories(),
+                packageIdentity,
+                new PackageDownloadContext(cacheContext, directDownloadDirectory: null, directDownload: false, packageSourceMapping),
+                packagesDirectory,
+                NullLogger.Instance,
+                CancellationToken.None))
+            {
+                var targetPackageStream = downloadResult.PackageStream;
+
+                // Assert
+                Assert.True(targetPackageStream.CanSeek);
+            }
+        }
+
+        [Fact]
+        public async Task GetDownloadResourceResultAsync_WithSourceMappingNotFound_PackageNotFound()
+        {
+            // Arrange
+            var sourceRepositoryProvider = TestSourceRepositoryUtility.CreateSourceRepositoryProvider(new[]
+            {
+                TestSourceRepositoryUtility.V3PackageSource,
+                TestSourceRepositoryUtility.V2PackageSource,
+            });
+
+            string mappedPackageId = "jQuery";
+            string notMappedPackageId = "jQuery.Validation";
+            string notMappedPackageVersion = "1.19.5";
+            string packagePatterns = $"{TestSourceRepositoryUtility.V3PackageSource.Name},{mappedPackageId}|{TestSourceRepositoryUtility.V2PackageSource.Name},{mappedPackageId}";
+            var notFoundPackageIdentity = new PackageIdentity(notMappedPackageId, new NuGetVersion(notMappedPackageVersion));
+            PackageSourceMapping packageSourceMapping = PackageSourceMappingUtility.GetPackageSourceMapping(packagePatterns);
+
+            // Act
+            using var cacheContext = new SourceCacheContext();
+            using var packagesDirectory = TestDirectory.Create();
+            var exception = await Assert.ThrowsAsync<FatalProtocolException>(
+                () => PackageDownloader.GetDownloadResourceResultAsync(
+                    sourceRepositoryProvider.GetRepositories(),
+                    notFoundPackageIdentity,
+                    new PackageDownloadContext(cacheContext, directDownloadDirectory: null, directDownload: false, packageSourceMapping),
+                    packagesDirectory,
+                    NullLogger.Instance,
+                    CancellationToken.None));
+
+            Assert.Contains($"Unable to find version '{notMappedPackageVersion}' of package '{notMappedPackageId}'.", exception.Message);
         }
 
         [Fact]

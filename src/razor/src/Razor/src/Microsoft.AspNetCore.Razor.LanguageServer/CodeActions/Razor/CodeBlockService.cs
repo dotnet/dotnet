@@ -36,7 +36,7 @@ internal static class CodeBlockService
     /// <returns>
     ///  A <see cref="TextEdit"/> that will place the formatted generated method within a @code block in the file.
     /// </returns>
-    public static TextEdit CreateFormattedTextEdit(RazorCodeDocument code, string templateWithMethodSignature, RazorLSPOptions options)
+    public static TextEdit[] CreateFormattedTextEdit(RazorCodeDocument code, string templateWithMethodSignature, RazorLSPOptions options)
     {
         var csharpCodeBlock = code.GetSyntaxTree().Root.DescendantNodes()
             .Select(RazorSyntaxFacts.TryGetCSharpCodeFromCodeBlock)
@@ -45,27 +45,43 @@ internal static class CodeBlockService
             || !csharpCodeBlock.Children.TryGetOpenBraceNode(out var openBrace)
             || !csharpCodeBlock.Children.TryGetCloseBraceNode(out var closeBrace))
         {
-            // No well-formed @code block exists. Generate the method within an @code block at the end of the file.
+            // No well-formed @code block exists. Generate the method within an @code block at the end of the file and conduct manual formatting.
             var indentedMethod = FormattingUtilities.AddIndentationToMethod(templateWithMethodSignature, options, startingIndent: 0);
-            var textWithCodeBlock = "@code {" + Environment.NewLine + indentedMethod + Environment.NewLine + "}";
+            var codeBlockStartText = "@code {" + Environment.NewLine;
             var lastCharacterLocation = code.Source.Lines.GetLocation(code.Source.Length - 1);
             var insertCharacterIndex = 0;
             if (lastCharacterLocation.LineIndex == code.Source.Lines.Count - 1 && !IsLineEmpty(code.Source, lastCharacterLocation))
             {
                 // The last line of the file is not empty so we need to place the code at the end of that line with a new line at the beginning.
                 insertCharacterIndex = lastCharacterLocation.CharacterIndex + 1;
-                textWithCodeBlock = $"{Environment.NewLine}{textWithCodeBlock}";
+                codeBlockStartText = $"{Environment.NewLine}{codeBlockStartText}";
             }
 
-            var eof = new Position(code.Source.Lines.Count - 1, insertCharacterIndex);
-            return new TextEdit()
+            var eofPosition = new Position(code.Source.Lines.Count - 1, insertCharacterIndex);
+            var eofRange = new Range { Start = eofPosition, End = eofPosition };
+            var start = new TextEdit()
             {
-                Range = new Range { Start = eof, End = eof },
-                NewText = textWithCodeBlock
+                NewText = codeBlockStartText,
+                Range = eofRange
             };
+
+            var method = new TextEdit()
+            {
+                NewText = indentedMethod,
+                Range = eofRange
+            };
+
+            var end = new TextEdit()
+            {
+                NewText = Environment.NewLine + "}",
+                Range = eofRange
+            };
+
+            return new TextEdit[] { start, method, end };
         }
 
         // A well-formed @code block exists, generate the method within it.
+
         var openBraceLocation = openBrace.GetSourceLocation(code.Source);
         var closeBraceLocation = closeBrace.GetSourceLocation(code.Source);
         var previousLine = code.Source.Lines.GetLocation(closeBraceLocation.AbsoluteIndex - closeBraceLocation.CharacterIndex - 1);
@@ -88,11 +104,14 @@ internal static class CodeBlockService
             ? closeBraceLocation.CharacterIndex
             : 0;
         var insertPosition = new Position(insertLineLocation.LineIndex, insertCharacter);
-        return new TextEdit()
+
+        var edit = new TextEdit()
         {
             Range = new Range { Start = insertPosition, End = insertPosition },
             NewText = formattedGeneratedMethod
         };
+
+        return new TextEdit[] { edit };
     }
 
     private static string FormatMethodInCodeBlock(

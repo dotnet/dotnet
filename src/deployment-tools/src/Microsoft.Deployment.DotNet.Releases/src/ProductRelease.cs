@@ -7,7 +7,6 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Text.Json;
-using System.Text.Json.Serialization;
 
 namespace Microsoft.Deployment.DotNet.Releases
 {
@@ -151,7 +150,7 @@ namespace Microsoft.Deployment.DotNet.Releases
 
                 while (enumerator.MoveNext())
                 {
-                    cves.Add(JsonSerializer.Deserialize<Cve>(enumerator.Current));
+                    cves.Add(new(enumerator.Current));
                 }
             }
 

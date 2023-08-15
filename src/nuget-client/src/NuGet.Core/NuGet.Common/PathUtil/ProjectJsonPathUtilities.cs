@@ -81,9 +81,13 @@ namespace NuGet.Common
         /// </summary>
         public static string GetLockFilePath(string configFilePath)
         {
-            string lockFilePath = null;
+            string lockFilePath;
 
             var dir = Path.GetDirectoryName(configFilePath);
+            if (dir is null)
+            {
+                throw new ArgumentException(paramName: nameof(configFilePath), message: "Couldn't calculate directory path");
+            }
 
             var projectName = GetProjectNameFromConfigFileName(configFilePath);
 
@@ -104,7 +108,7 @@ namespace NuGet.Common
         /// Parses a projectName.project.json file name into a project name.
         /// If there is no project name null will be returned.
         /// </summary>
-        public static string GetProjectNameFromConfigFileName(string configPath)
+        public static string? GetProjectNameFromConfigFileName(string configPath)
         {
             if (configPath == null)
             {
@@ -113,7 +117,7 @@ namespace NuGet.Common
 
             var file = Path.GetFileName(configPath);
 
-            string projectName = null;
+            string? projectName = null;
 
             if (file != null && file.EndsWith(ProjectConfigFileEnding, StringComparison.OrdinalIgnoreCase))
             {
@@ -136,7 +140,7 @@ namespace NuGet.Common
 
             if (configPath.EndsWith(ProjectConfigFileName, StringComparison.OrdinalIgnoreCase))
             {
-                string file = null;
+                string file;
 
                 try
                 {

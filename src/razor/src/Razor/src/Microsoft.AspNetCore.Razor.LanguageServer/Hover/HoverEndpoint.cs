@@ -49,7 +49,7 @@ internal sealed class HoverEndpoint : AbstractRazorDelegatingEndpoint<TextDocume
 
     protected override IDocumentPositionInfoStrategy DocumentPositionInfoStrategy => PreferAttributeNameDocumentPositionInfoStrategy.Instance;
 
-    protected override string CustomMessageTarget => RazorLanguageServerCustomMessageTargets.RazorHoverEndpointName;
+    protected override string CustomMessageTarget => CustomMessageNames.RazorHoverEndpointName;
 
     protected override Task<IDelegatedParams?> CreateDelegatedParamsAsync(TextDocumentPositionParams request, RazorRequestContext requestContext, DocumentPositionInfo positionInfo, CancellationToken cancellationToken)
     {

@@ -2,7 +2,6 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System.Text.Json;
-using System.Text.Json.Serialization;
 
 namespace Microsoft.Deployment.DotNet.Releases
 {
@@ -19,7 +18,6 @@ namespace Microsoft.Deployment.DotNet.Releases
         /// <summary>
         /// The versions of Visual Studio for Mac that includes this runtime.
         /// </summary>
-        [JsonPropertyName("vs-mac-version")]
         public string VisualStudioMacVersion
         {
             get;
@@ -30,7 +28,6 @@ namespace Microsoft.Deployment.DotNet.Releases
         /// The versions of Visual Studio that includes this runtime. Multiple versions may be listed, e.g.
         /// &quot;15.9.25, 16.0.16, 16.4.11, 16.6.4&quot;
         /// </summary>
-        [JsonPropertyName("vs-version")]
         public string VisualStudioVersion
         {
             get;

@@ -43,11 +43,23 @@ public class CSharpDiagnosticsEndToEndTest : SingleServerDelegatingEndpointTestB
         await ValidateDiagnosticsAsync(input);
     }
 
-    private async Task ValidateDiagnosticsAsync(string input)
+    [Fact]
+    public async Task Handle_Razor()
+    {     
+        var input = """
+
+            {|RZ10012:<NonExistentComponent />|}
+
+            """;
+
+        await ValidateDiagnosticsAsync(input, "File.razor");
+    }
+
+    private async Task ValidateDiagnosticsAsync(string input, string? filePath = null)
     {
         TestFileMarkupParser.GetSpans(input, out input, out ImmutableDictionary<string, ImmutableArray<TextSpan>> spans);
 
-        var codeDocument = CreateCodeDocument(input);
+        var codeDocument = CreateCodeDocument(input, filePath: filePath);
         var sourceText = codeDocument.GetSourceText();
         var razorFilePath = "file://C:/path/test.razor";
         var uri = new Uri(razorFilePath);

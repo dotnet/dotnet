@@ -10,13 +10,8 @@ using Xunit.Abstractions;
 
 namespace Microsoft.CodeAnalysis.Remote.Razor;
 
-public class TagHelperDeltaResultTest : TagHelperDescriptorTestBase
+public class TagHelperDeltaResultTest(ITestOutputHelper testOutput) : TagHelperDescriptorTestBase(testOutput)
 {
-    public TagHelperDeltaResultTest(ITestOutputHelper testOutput)
-        : base(testOutput)
-    {
-    }
-
     [Fact]
     public void Apply_Noop()
     {

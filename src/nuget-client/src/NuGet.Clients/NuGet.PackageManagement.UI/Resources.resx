@@ -990,11 +990,36 @@ Please see https://aka.ms/troubleshoot_nuget_cache for more help.</value>
   <data name="Label_Vulnerable" xml:space="preserve">
     <value>Vulnerable</value>
   </data>
+  <data name="Text_ApplyingConfigurationFiles" xml:space="preserve">
+    <value>Note: Configuration files are listed in order from highest to lowest priority.</value>
+  </data>
+  <data name="Text_ApplyingConfigurationFiles_DocumentLink" xml:space="preserve">
+    <value>Common NuGet configurations: How settings are applied</value>
+  </data>
+  <data name="VSOptions_Accessibility_ConfigurationFilesList" xml:space="preserve">
+    <value>Configuration files list</value>
+  </data>
+  <data name="VSOptions_Button_Open" xml:space="preserve">
+    <value>_Open</value>
+  </data>
+  <data name="VSOptions_Label_ConfigurationFiles" xml:space="preserve">
+    <value>Configuration Files:</value>
+  </data>
   <data name="Button_OK" xml:space="preserve">
     <value>_OK</value>
     <comment>Button_Cancel and Button_OK must have underscore in different letters. See https://docs.microsoft.com/windows/apps/design/input/access-keys#choose-access-keys</comment>
   </data>
   <data name="Label_NetworkError" xml:space="preserve">
     <value>An error occurred while fetching additional information about the package. Refresh to try again.</value>
+  </data>
+  <data name="ShowError_FileNotFound" xml:space="preserve">
+    <value>The following file could not be found:</value>
+  </data>
+  <data name="ConfigurationFilesOptions_OnActivated" xml:space="preserve">
+    <value>Getting Configuration Files...</value>
+  </data>
+  <data name="Error_MetadataNotFound" xml:space="preserve">
+    <value>Unable to find metadata of {0}</value>
+    <comment>{0} is the package ID</comment>
   </data>
 </root>

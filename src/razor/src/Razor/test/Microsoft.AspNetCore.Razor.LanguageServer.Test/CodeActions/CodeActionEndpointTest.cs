@@ -795,7 +795,7 @@ public class CodeActionEndpointTest : LanguageServerTestBase
 
         public override Task SendNotificationAsync<TParams>(string method, TParams @params, CancellationToken cancellationToken)
         {
-            if (method != RazorLanguageServerCustomMessageTargets.RazorProvideCodeActionsEndpoint)
+            if (method != CustomMessageNames.RazorProvideCodeActionsEndpoint)
             {
                 throw new InvalidOperationException($"Unexpected method {method}");
             }
@@ -810,7 +810,7 @@ public class CodeActionEndpointTest : LanguageServerTestBase
 
         public override Task<TResponse> SendRequestAsync<TParams, TResponse>(string method, TParams @params, CancellationToken cancellationToken)
         {
-            if (method != RazorLanguageServerCustomMessageTargets.RazorProvideCodeActionsEndpoint)
+            if (method != CustomMessageNames.RazorProvideCodeActionsEndpoint)
             {
                 throw new InvalidOperationException($"Unexpected method {method}");
             }

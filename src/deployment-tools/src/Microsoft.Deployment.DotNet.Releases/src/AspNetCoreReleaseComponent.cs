@@ -42,8 +42,22 @@ namespace Microsoft.Deployment.DotNet.Releases
         /// <param name="release">The release to which the component belongs.</param>
         internal AspNetCoreReleaseComponent(JsonElement element, ProductRelease release) : base(element, release)
         {
-            AspNetCoreModuleVersions = element.TryGetProperty("version-aspnetcoremodule", out JsonElement ancmVersionValue) && ancmVersionValue.ValueKind != JsonValueKind.Null ?
-                new ReadOnlyCollection<Version>(JsonSerializer.Deserialize<Version[]>(ancmVersionValue, SerializerOptions.Default)) : new ReadOnlyCollection<Version>(new List<Version>());
+            List<Version> ancmVersions = new();
+
+            if (element.TryGetProperty("version-aspnetcoremodule", out JsonElement ancmVersionValue) && ancmVersionValue.ValueKind != JsonValueKind.Null)
+            {
+                var enumerator = ancmVersionValue.EnumerateArray();
+
+                while (enumerator.MoveNext())
+                {
+                    if (System.Version.TryParse(enumerator.Current.GetString(), out Version version))
+                    {
+                        ancmVersions.Add(version);
+                    }
+                }
+            }
+
+            AspNetCoreModuleVersions = new ReadOnlyCollection<Version>(ancmVersions);
             VisualStudioVersion = element.GetStringOrDefault("vs-version");
         }
     }

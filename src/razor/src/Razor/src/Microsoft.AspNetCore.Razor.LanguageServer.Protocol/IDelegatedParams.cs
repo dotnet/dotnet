@@ -4,7 +4,7 @@
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Protocol;
 
 /// <summary>
-/// Interface for delegated params that enables sharing of code in DefaultRazorLanguageServerCustomMessageTarget
+/// Interface for delegated params that enables sharing of code in RazorCustomMessageTarget
 /// </summary>
 internal interface IDelegatedParams
 {

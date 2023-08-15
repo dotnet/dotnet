@@ -9,15 +9,9 @@ using Xunit.Abstractions;
 
 namespace Microsoft.CodeAnalysis.Remote.Razor;
 
-public class RemoteTagHelperDeltaProviderTest : TagHelperDescriptorTestBase
+public class RemoteTagHelperDeltaProviderTest(ITestOutputHelper testOutput) : TagHelperDescriptorTestBase(testOutput)
 {
-    private readonly RemoteTagHelperDeltaProvider _provider;
-
-    public RemoteTagHelperDeltaProviderTest(ITestOutputHelper testOutput)
-        : base(testOutput)
-    {
-        _provider = new RemoteTagHelperDeltaProvider();
-    }
+    private readonly RemoteTagHelperDeltaProvider _provider = new();
 
     [Fact]
     public void GetTagHelpersDelta_Clean_SingleProject()

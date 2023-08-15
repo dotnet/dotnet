@@ -1,12 +1,15 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
+#if !NETCOREAPP
 using System.Collections.Generic;
+#endif
 using System.Diagnostics;
 using System.Globalization;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.ProjectSystem;
 using Microsoft.AspNetCore.Razor.Utilities;
+using Checksum = Microsoft.AspNetCore.Razor.Utilities.Checksum;
 
 namespace Microsoft.AspNetCore.Razor.Serialization;
 
@@ -27,16 +30,13 @@ internal static class ObjectWriters
     {
         writer.Write(nameof(value.ConfigurationName), value.ConfigurationName);
 
-        if (value.LanguageVersion == RazorLanguageVersion.Experimental)
-        {
-            writer.Write(nameof(value.LanguageVersion), "Experimental");
-        }
-        else
-        {
-            writer.Write(nameof(value.LanguageVersion), value.LanguageVersion.ToString());
-        }
+        var languageVersionText = value.LanguageVersion == RazorLanguageVersion.Experimental
+            ? nameof(RazorLanguageVersion.Experimental)
+            : value.LanguageVersion.ToString();
 
-        writer.WriteArray(nameof(value.Extensions), value.Extensions, Write);
+        writer.Write(nameof(value.LanguageVersion), languageVersionText);
+
+        writer.WriteArrayIfNotNullOrEmpty(nameof(value.Extensions), value.Extensions, static (w, v) => w.Write(v.ExtensionName));
     }
 
     public static void Write(JsonDataWriter writer, RazorDiagnostic? value)
@@ -46,15 +46,14 @@ internal static class ObjectWriters
     {
         writer.Write(nameof(value.Id), value.Id);
         writer.Write(nameof(value.Severity), (int)value.Severity);
-        writer.Write("Message", value.GetMessage(CultureInfo.CurrentCulture));
-        writer.WriteObject(nameof(value.Span), value.Span, static (writer, value) =>
-        {
-            writer.Write(nameof(value.FilePath), value.FilePath);
-            writer.Write(nameof(value.AbsoluteIndex), value.AbsoluteIndex);
-            writer.Write(nameof(value.LineIndex), value.LineIndex);
-            writer.Write(nameof(value.CharacterIndex), value.CharacterIndex);
-            writer.Write(nameof(value.Length), value.Length);
-        });
+        writer.Write(WellKnownPropertyNames.Message, value.GetMessage(CultureInfo.CurrentCulture));
+
+        var span = value.Span;
+        writer.WriteIfNotNull(nameof(span.FilePath), span.FilePath);
+        writer.WriteIfNotZero(nameof(span.AbsoluteIndex), span.AbsoluteIndex);
+        writer.WriteIfNotZero(nameof(span.LineIndex), span.LineIndex);
+        writer.WriteIfNotZero(nameof(span.CharacterIndex), span.CharacterIndex);
+        writer.WriteIfNotZero(nameof(span.Length), span.Length);
     }
 
     public static void Write(JsonDataWriter writer, ProjectSnapshotHandle? value)
@@ -82,8 +81,8 @@ internal static class ObjectWriters
 
     public static void WriteProperties(JsonDataWriter writer, ProjectWorkspaceState value)
     {
-        writer.WriteArray(nameof(value.TagHelpers), value.TagHelpers, Write);
-        writer.Write(nameof(value.CSharpLanguageVersion), (int)value.CSharpLanguageVersion);
+        writer.WriteArrayIfNotDefaultOrEmpty(nameof(value.TagHelpers), value.TagHelpers, Write);
+        writer.WriteIfNotZero(nameof(value.CSharpLanguageVersion), (int)value.CSharpLanguageVersion);
     }
 
     public static void Write(JsonDataWriter writer, TagHelperDescriptor? value)
@@ -95,14 +94,15 @@ internal static class ObjectWriters
         writer.Write(nameof(value.Kind), value.Kind);
         writer.Write(nameof(value.Name), value.Name);
         writer.Write(nameof(value.AssemblyName), value.AssemblyName);
+        writer.WriteIfNotNull(nameof(value.DisplayName), value.DisplayName);
         WriteDocumentationObject(writer, nameof(value.Documentation), value.DocumentationObject);
         writer.WriteIfNotNull(nameof(value.TagOutputHint), value.TagOutputHint);
         writer.Write(nameof(value.CaseSensitive), value.CaseSensitive);
-        writer.WriteArray(nameof(value.TagMatchingRules), value.TagMatchingRules, WriteTagMatchingRule);
+        writer.WriteArrayIfNotNullOrEmpty(nameof(value.TagMatchingRules), value.TagMatchingRules, WriteTagMatchingRule);
         writer.WriteArrayIfNotNullOrEmpty(nameof(value.BoundAttributes), value.BoundAttributes, WriteBoundAttribute);
         writer.WriteArrayIfNotNullOrEmpty(nameof(value.AllowedChildTags), value.AllowedChildTags, WriteAllowedChildTag);
+        WriteMetadata(writer, nameof(value.Metadata), (MetadataCollection)value.Metadata);
         writer.WriteArrayIfNotNullOrEmpty(nameof(value.Diagnostics), value.Diagnostics, Write);
-        writer.WriteObject(nameof(value.Metadata), value.Metadata, WriteMetadata);
 
         static void WriteDocumentationObject(JsonDataWriter writer, string propertyName, DocumentationObject documentationObject)
         {
@@ -141,6 +141,7 @@ internal static class ObjectWriters
                 writer.Write(nameof(value.TagName), value.TagName);
                 writer.WriteIfNotNull(nameof(value.ParentTag), value.ParentTag);
                 writer.WriteIfNotZero(nameof(value.TagStructure), (int)value.TagStructure);
+                writer.WriteIfNotTrue(nameof(value.CaseSensitive), value.CaseSensitive);
                 writer.WriteArrayIfNotNullOrEmpty(nameof(value.Attributes), value.Attributes, WriteRequiredAttribute);
                 writer.WriteArrayIfNotNullOrEmpty(nameof(value.Diagnostics), value.Diagnostics, Write);
             });
@@ -152,14 +153,13 @@ internal static class ObjectWriters
             {
                 writer.Write(nameof(value.Name), value.Name);
                 writer.WriteIfNotZero(nameof(value.NameComparison), (int)value.NameComparison);
+                writer.WriteIfNotTrue(nameof(value.CaseSensitive), value.CaseSensitive);
                 writer.WriteIfNotNull(nameof(value.Value), value.Value);
                 writer.WriteIfNotZero(nameof(value.ValueComparison), (int)value.ValueComparison);
-                writer.WriteArrayIfNotNullOrEmpty(nameof(value.Diagnostics), value.Diagnostics, Write);
+                writer.WriteIfNotNull(nameof(value.DisplayName), value.DisplayName);
 
-                if (value.Metadata is { Count: > 0 })
-                {
-                    writer.WriteObject(nameof(value.Metadata), value.Metadata, WriteMetadata);
-                }
+                WriteMetadata(writer, nameof(value.Metadata), (MetadataCollection)value.Metadata);
+                writer.WriteArrayIfNotNullOrEmpty(nameof(value.Diagnostics), value.Diagnostics, Write);
             });
         }
 
@@ -171,13 +171,17 @@ internal static class ObjectWriters
                 writer.Write(nameof(value.Name), value.Name);
                 writer.Write(nameof(value.TypeName), value.TypeName);
                 writer.WriteIfNotFalse(nameof(value.IsEnum), value.IsEnum);
-                writer.WriteIfNotFalse(nameof(value.IsEditorRequired), value.IsEditorRequired);
+                writer.WriteIfNotFalse(nameof(value.HasIndexer), value.HasIndexer);
                 writer.WriteIfNotNull(nameof(value.IndexerNamePrefix), value.IndexerNamePrefix);
                 writer.WriteIfNotNull(nameof(value.IndexerTypeName), value.IndexerTypeName);
+                writer.WriteIfNotNull(nameof(value.DisplayName), value.DisplayName);
                 WriteDocumentationObject(writer, nameof(value.Documentation), value.DocumentationObject);
-                writer.WriteArrayIfNotNullOrEmpty(nameof(value.Diagnostics), value.Diagnostics, Write);
-                writer.WriteObject(nameof(value.Metadata), value.Metadata, WriteMetadata);
+                writer.WriteIfNotTrue(nameof(value.CaseSensitive), value.CaseSensitive);
+                writer.WriteIfNotFalse(nameof(value.IsEditorRequired), value.IsEditorRequired);
                 writer.WriteArrayIfNotNullOrEmpty(nameof(value.BoundAttributeParameters), value.BoundAttributeParameters, WriteBoundAttributeParameter);
+
+                WriteMetadata(writer, nameof(value.Metadata), (MetadataCollection)value.Metadata);
+                writer.WriteArrayIfNotNullOrEmpty(nameof(value.Diagnostics), value.Diagnostics, Write);
             });
         }
 
@@ -185,12 +189,16 @@ internal static class ObjectWriters
         {
             writer.WriteObject(value, static (writer, value) =>
             {
+                writer.Write(nameof(value.Kind), value.Kind);
                 writer.Write(nameof(value.Name), value.Name);
                 writer.Write(nameof(value.TypeName), value.TypeName);
                 writer.WriteIfNotFalse(nameof(value.IsEnum), value.IsEnum);
+                writer.WriteIfNotNull(nameof(value.DisplayName), value.DisplayName);
                 WriteDocumentationObject(writer, nameof(value.Documentation), value.DocumentationObject);
+                writer.WriteIfNotTrue(nameof(value.CaseSensitive), value.CaseSensitive);
+
+                WriteMetadata(writer, nameof(value.Metadata), (MetadataCollection)value.Metadata);
                 writer.WriteArrayIfNotNullOrEmpty(nameof(value.Diagnostics), value.Diagnostics, Write);
-                writer.WriteObject(nameof(value.Metadata), value.Metadata, WriteMetadata);
             });
         }
 
@@ -204,12 +212,21 @@ internal static class ObjectWriters
             });
         }
 
-        static void WriteMetadata(JsonDataWriter writer, IReadOnlyDictionary<string, string> metadata)
+        static void WriteMetadata(JsonDataWriter writer, string propertyName, MetadataCollection metadata)
         {
-            foreach (var (key, value) in metadata)
+            // If there isn't any metadata, don't write the property.
+            if (metadata.Count == 0)
             {
-                writer.Write(key, value);
+                return;
             }
+
+            writer.WriteObject(propertyName, metadata, static (writer, metadata) =>
+            {
+                foreach (var (key, value) in metadata)
+                {
+                    writer.Write(key, value);
+                }
+            });
         }
     }
 
@@ -225,5 +242,18 @@ internal static class ObjectWriters
         writer.WriteObject(nameof(value.ProjectWorkspaceState), value.ProjectWorkspaceState, WriteProperties);
         writer.Write(nameof(value.RootNamespace), value.RootNamespace);
         writer.WriteArray(nameof(value.Documents), value.Documents, Write);
+    }
+
+    public static void Write(JsonDataWriter writer, Checksum value)
+        => writer.WriteObject(value, WriteProperties);
+
+    public static void WriteProperties(JsonDataWriter writer, Checksum value)
+    {
+        var data = value.Data;
+
+        writer.Write(nameof(data.Data1), data.Data1);
+        writer.Write(nameof(data.Data2), data.Data2);
+        writer.Write(nameof(data.Data3), data.Data3);
+        writer.Write(nameof(data.Data4), data.Data4);
     }
 }

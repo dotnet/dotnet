@@ -14,20 +14,20 @@ namespace NuGet.Common
         public NuGetLogCode Code { get; set; }
         public string Message { get; set; }
         public DateTimeOffset Time { get; set; }
-        public string ProjectPath { get; set; }
+        public string? ProjectPath { get; set; }
         public WarningLevel WarningLevel { get; set; } = WarningLevel.Severe; //setting default to Severe as 0 implies show no warnings
-        public string FilePath { get; set; }
+        public string? FilePath { get; set; }
         public int StartLineNumber { get; set; }
         public int StartColumnNumber { get; set; }
         public int EndLineNumber { get; set; }
         public int EndColumnNumber { get; set; }
-        public string LibraryId { get; set; }
+        public string? LibraryId { get; set; }
         public IReadOnlyList<string> TargetGraphs { get; set; }
         public bool ShouldDisplay { get; set; }
 
 
         public RestoreLogMessage(LogLevel logLevel, NuGetLogCode errorCode,
-            string errorString, string targetGraph, bool logToInnerLogger)
+            string errorString, string? targetGraph, bool logToInnerLogger)
         {
             Level = logLevel;
             Code = errorCode;
@@ -38,7 +38,10 @@ namespace NuGet.Common
 
             if (!string.IsNullOrEmpty(targetGraph))
             {
+#pragma warning disable CS8604 // Possible null reference argument.
+                // .NET BCL is missing annotations on string.IsNullOrEmpty before .NET 3.0
                 graphList.Add(targetGraph);
+#pragma warning restore CS8604 // Possible null reference argument.
             }
 
             TargetGraphs = graphList;
@@ -46,7 +49,7 @@ namespace NuGet.Common
         }
 
         public RestoreLogMessage(LogLevel logLevel, NuGetLogCode errorCode,
-            string errorString, string targetGraph)
+            string errorString, string? targetGraph)
             : this(logLevel, errorCode, errorString, targetGraph, logToInnerLogger: false)
         {
         }
@@ -67,7 +70,7 @@ namespace NuGet.Common
         public static RestoreLogMessage CreateWarning(
             NuGetLogCode code,
             string message,
-            string libraryId,
+            string? libraryId,
             params string[] targetGraphs)
         {
             return new RestoreLogMessage(LogLevel.Warning, message)
@@ -104,7 +107,7 @@ namespace NuGet.Common
         public static RestoreLogMessage CreateError(
             NuGetLogCode code,
             string message,
-            string libraryId,
+            string? libraryId,
             params string[] targetGraphs)
         {
             return new RestoreLogMessage(LogLevel.Error, message)

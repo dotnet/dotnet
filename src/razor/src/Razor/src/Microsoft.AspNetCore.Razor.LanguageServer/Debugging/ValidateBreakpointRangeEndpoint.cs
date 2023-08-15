@@ -32,7 +32,7 @@ internal class ValidateBreakpointRangeEndpoint : AbstractRazorDelegatingEndpoint
 
     protected override bool OnlySingleServer => false;
 
-    protected override string CustomMessageTarget => RazorLanguageServerCustomMessageTargets.RazorValidateBreakpointRangeName;
+    protected override string CustomMessageTarget => CustomMessageNames.RazorValidateBreakpointRangeName;
 
     public void ApplyCapabilities(VSInternalServerCapabilities serverCapabilities, VSInternalClientCapabilities clientCapabilities)
     {

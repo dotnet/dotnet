@@ -818,7 +818,7 @@ namespace Microsoft.WebAssembly.Diagnostics
 
         private static int debuggerObjectId;
         private static int cmdId = 1; //cmdId == 0 is used by events which come from runtime
-        private const int MINOR_VERSION = 62;
+        private const int MINOR_VERSION = 65;
         private const int MAJOR_VERSION = 2;
 
         private int VmMinorVersion { get; set; }
@@ -1933,14 +1933,14 @@ namespace Microsoft.WebAssembly.Diagnostics
                 : throw new ArgumentException($"Cannot invoke method with id {methodId} on {dotnetObjectId}", nameof(dotnetObjectId));
         }
 
-        public async Task<string> InvokeToStringAsync(IEnumerable<int> typeIds, bool isValueType, bool isEnum, int objectId, BindingFlags extraFlags, CancellationToken token)
+        public async Task<string> InvokeToStringAsync(IEnumerable<int> typeIds, bool isValueType, bool isEnum, int objectId, BindingFlags extraFlags, bool invokeToStringInObject, CancellationToken token)
         {
             try
             {
                 foreach (var typeId in typeIds)
                 {
                     var typeInfo = await GetTypeInfo(typeId, token);
-                    if (typeInfo == null || typeInfo.Name == "object")
+                    if (typeInfo == null || (typeInfo.Name == "object" && !invokeToStringInObject))
                         continue;
                     Microsoft.WebAssembly.Diagnostics.MethodInfo methodInfo = typeInfo.Info.Methods.FirstOrDefault(m => m.Name == "ToString");
                     if (isEnum != true && methodInfo == null)

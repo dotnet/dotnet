@@ -68,7 +68,7 @@ namespace NuGet.DependencyResolver
             {
                 IReadOnlyList<string> sources = PackageSourceMapping.GetConfiguredPackageSources(libraryRange.Name);
 
-                if (sources == null || sources.Count == 0)
+                if (sources.Count == 0)
                 {
                     return Array.Empty<IRemoteDependencyProvider>();
                 }

@@ -1,1 +1,5 @@
 #nullable enable
+Microsoft.VisualStudio.LanguageServer.ContainedLanguage.LSPDocument.TryGetVirtualDocument<TVirtualDocument>(System.Uri! virtualDocumentUri, out TVirtualDocument? virtualDocument) -> bool
+Microsoft.VisualStudio.LanguageServer.ContainedLanguage.LSPDocumentSnapshot.TryGetAllVirtualDocuments<TVirtualDocument>(out TVirtualDocument![]? virtualDocuments) -> bool
+virtual Microsoft.VisualStudio.LanguageServer.ContainedLanguage.LSPDocument.UpdateVirtualDocument<TVirtualDocument>(TVirtualDocument! virtualDocument, System.Collections.Generic.IReadOnlyList<Microsoft.VisualStudio.Text.ITextChange!>! changes, int hostDocumentVersion, object? state) -> Microsoft.VisualStudio.LanguageServer.ContainedLanguage.LSPDocumentSnapshot!
+virtual Microsoft.VisualStudio.LanguageServer.ContainedLanguage.VirtualDocumentFactory.TryCreateMultipleFor(Microsoft.VisualStudio.Text.ITextBuffer! hostDocumentBuffer, out Microsoft.VisualStudio.LanguageServer.ContainedLanguage.VirtualDocument![]? virtualDocuments) -> bool

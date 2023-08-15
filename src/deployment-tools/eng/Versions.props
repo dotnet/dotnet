@@ -17,8 +17,8 @@
   </PropertyGroup>
   <PropertyGroup>
     <!-- Arcade dependencies -->
-    <MicrosoftDotNetBuildTasksFeedVersion>8.0.0-beta.23156.4</MicrosoftDotNetBuildTasksFeedVersion>
-    <MicrosoftDotNetCodeAnalysisVersion>8.0.0-beta.23156.4</MicrosoftDotNetCodeAnalysisVersion>
+    <MicrosoftDotNetBuildTasksFeedVersion>8.0.0-beta.23371.1</MicrosoftDotNetBuildTasksFeedVersion>
+    <MicrosoftDotNetCodeAnalysisVersion>8.0.0-beta.23371.1</MicrosoftDotNetCodeAnalysisVersion>
     <!--
       These are used as reference assemblies only, so they must not take a ProdCon/source-build
       version. Insert "RefOnly" to avoid assignment via PVP.
@@ -27,9 +27,9 @@
     <RefOnlyMicrosoftBuildFrameworkVersion>$(RefOnlyMicrosoftBuildVersion)</RefOnlyMicrosoftBuildFrameworkVersion>
     <RefOnlyMicrosoftBuildTasksCoreVersion>$(RefOnlyMicrosoftBuildVersion)</RefOnlyMicrosoftBuildTasksCoreVersion>
     <RefOnlyMicrosoftBuildUtilitiesCoreVersion>$(RefOnlyMicrosoftBuildVersion)</RefOnlyMicrosoftBuildUtilitiesCoreVersion>
-    <RefOnlyNugetProtocolVersion>4.9.6</RefOnlyNugetProtocolVersion>
-    <RefOnlyNugetProjectModelVersion>4.9.6</RefOnlyNugetProjectModelVersion>
-    <RefOnlyNugetPackagingVersion>4.9.6</RefOnlyNugetPackagingVersion>
+    <RefOnlyNugetProtocolVersion>6.2.4</RefOnlyNugetProtocolVersion>
+    <RefOnlyNugetProjectModelVersion>6.2.4</RefOnlyNugetProjectModelVersion>
+    <RefOnlyNugetPackagingVersion>6.2.4</RefOnlyNugetPackagingVersion>
     <!-- Installer dependencies -->
     <MicrosoftExtensionsDependencyModelVersion>3.1.0</MicrosoftExtensionsDependencyModelVersion>
     <!-- Libraries dependencies -->

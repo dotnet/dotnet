@@ -52,12 +52,12 @@ internal abstract class AbstractRazorDelegatingEndpoint<TRequest, TResponse> : I
     protected virtual bool PreferCSharpOverHtmlIfPossible { get; } = false;
 
     /// <summary>
-    /// The name of the endpoint to delegate to, from <see cref="RazorLanguageServerCustomMessageTargets"/>. This is the
+    /// The name of the endpoint to delegate to, from <see cref="CustomMessageNames"/>. This is the
     /// custom endpoint that is sent via <see cref="ClientNotifierServiceBase"/> which returns
     /// a response by delegating to C#/HTML.
     /// </summary>
     /// <remarks>
-    /// An example is <see cref="RazorLanguageServerCustomMessageTargets.RazorHoverEndpointName"/>
+    /// An example is <see cref="CustomMessageNames.RazorHoverEndpointName"/>
     /// </remarks>
     protected abstract string CustomMessageTarget { get; }
 

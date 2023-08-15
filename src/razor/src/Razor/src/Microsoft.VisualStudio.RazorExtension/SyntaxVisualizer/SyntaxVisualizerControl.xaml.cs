@@ -8,11 +8,12 @@ using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using Microsoft.AspNetCore.Razor.Language;
-using Microsoft.CodeAnalysis.Razor.Workspaces;
-using Microsoft.CodeAnalysis.Razor.Workspaces.Extensions;
 using Microsoft.VisualStudio.Editor.Razor;
 using Microsoft.VisualStudio.Editor.Razor.Documents;
 using Microsoft.VisualStudio.Editor.Razor.SyntaxVisualizer;
+using Microsoft.VisualStudio.LanguageServer.ContainedLanguage;
+using Microsoft.VisualStudio.LanguageServer.ContainedLanguage.Extensions;
+using Microsoft.VisualStudio.LanguageServerClient.Razor;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 using Microsoft.VisualStudio.Text;
@@ -27,9 +28,9 @@ public partial class SyntaxVisualizerControl : UserControl, IVsRunningDocTableEv
     private static string s_baseTempPath = Path.Combine(Path.GetTempPath(), "RazorDevTools");
 
     private RazorCodeDocumentProvidingSnapshotChangeTrigger? _codeDocumentProvider;
-    private ITextDocumentFactoryService? _textDocumentFactoryService;
     private JoinableTaskFactory? _joinableTaskFactory;
-    private LanguageServerFeatureOptions? _languageServerFeatureOptions;
+    private LSPDocumentManager? _documentManager;
+    private FileUriProvider? _fileUriProvider;
     private uint _runningDocumentTableCookie;
     private IVsRunningDocumentTable? _runningDocumentTable;
     private IWpfTextView? _activeWpfTextView;
@@ -56,18 +57,21 @@ public partial class SyntaxVisualizerControl : UserControl, IVsRunningDocTableEv
         InitializeRunningDocumentTable();
     }
 
-    [MemberNotNull(nameof(_codeDocumentProvider), nameof(_textDocumentFactoryService), nameof(_joinableTaskFactory), nameof(_languageServerFeatureOptions))]
+    [MemberNotNull(nameof(_codeDocumentProvider), nameof(_joinableTaskFactory), nameof(_documentManager), nameof(_fileUriProvider))]
     private void EnsureInitialized()
     {
-        if (_codeDocumentProvider is not null && _textDocumentFactoryService is not null && _joinableTaskFactory is not null && _languageServerFeatureOptions is not null)
+        if (_codeDocumentProvider is not null &&
+            _joinableTaskFactory is not null &&
+            _documentManager is not null &&
+            _fileUriProvider is not null)
         {
             return;
         }
 
         _codeDocumentProvider = VSServiceHelpers.GetRequiredMefService<RazorCodeDocumentProvidingSnapshotChangeTrigger>();
-        _textDocumentFactoryService = VSServiceHelpers.GetRequiredMefService<ITextDocumentFactoryService>();
         _joinableTaskFactory = VSServiceHelpers.GetRequiredMefService<JoinableTaskContext>().Factory;
-        _languageServerFeatureOptions = VSServiceHelpers.GetRequiredMefService<LanguageServerFeatureOptions>();
+        _documentManager = VSServiceHelpers.GetRequiredMefService<LSPDocumentManager>();
+        _fileUriProvider = VSServiceHelpers.GetRequiredMefService<FileUriProvider>();
     }
 
     private void InitializeRunningDocumentTable()
@@ -109,27 +113,27 @@ public partial class SyntaxVisualizerControl : UserControl, IVsRunningDocTableEv
             return;
         }
 
-        EnsureInitialized();
-
-        var textBuffer = _activeWpfTextView.TextBuffer;
-
-        if (!_textDocumentFactoryService.TryGetTextDocument(textBuffer, out var textDocument))
-        {
-            return;
-        }
-
-        var codeDocument = GetCodeDocument(textDocument);
-        if (codeDocument is null)
-        {
-            return;
-        }
-
-        OpenGeneratedCode(textDocument.FilePath, _languageServerFeatureOptions.CSharpVirtualDocumentSuffix, codeDocument.GetCSharpDocument().GeneratedCode);
+        OpenVirtualDocuments<CSharpVirtualDocumentSnapshot>(_activeWpfTextView.TextBuffer);
     }
 
-    private void OpenGeneratedCode(string filePath, string extension, string generatedCode)
+    private void OpenVirtualDocuments<T>(ITextBuffer hostDocumentBuffer) where T : VirtualDocumentSnapshot
     {
-        var tempFileName = GetTempFileName(filePath, extension);
+        EnsureInitialized();
+
+        if (_fileUriProvider.TryGet(hostDocumentBuffer, out var hostDocumentUri) &&
+            _documentManager.TryGetDocument(hostDocumentUri, out var hostDocument) &&
+            hostDocument.TryGetAllVirtualDocuments<T>(out var virtualDocuments))
+        {
+            foreach (var doc in virtualDocuments)
+            {
+                OpenGeneratedCode(doc.Uri.AbsolutePath, doc.Snapshot.GetText());
+            }
+        }
+    }
+
+    private void OpenGeneratedCode(string filePath, string generatedCode)
+    {
+        var tempFileName = GetTempFileName(filePath);
 
         // Ignore any I/O errors
         try
@@ -149,30 +153,15 @@ public partial class SyntaxVisualizerControl : UserControl, IVsRunningDocTableEv
             return;
         }
 
-        EnsureInitialized();
-
-        var textBuffer = _activeWpfTextView.TextBuffer;
-
-        if (!_textDocumentFactoryService.TryGetTextDocument(textBuffer, out var textDocument))
-        {
-            return;
-        }
-
-        var codeDocument = GetCodeDocument(textDocument);
-        if (codeDocument is null)
-        {
-            return;
-        }
-
-        OpenGeneratedCode(textDocument.FilePath, ".g.html", codeDocument.GetHtmlSourceText().ToString());
+        OpenVirtualDocuments<HtmlVirtualDocumentSnapshot>(_activeWpfTextView.TextBuffer);
     }
 
-    private static string GetTempFileName(string originalFilePath, string extension)
+    private static string GetTempFileName(string originalFilePath)
     {
         var fileName = Path.GetFileName(originalFilePath);
         var tempPath = Path.Combine(s_baseTempPath, Guid.NewGuid().ToString("N"));
         Directory.CreateDirectory(tempPath);
-        var tempFileName = Path.Combine(tempPath, fileName + extension);
+        var tempFileName = Path.Combine(tempPath, fileName);
         return tempFileName;
     }
 
@@ -315,21 +304,6 @@ public partial class SyntaxVisualizerControl : UserControl, IVsRunningDocTableEv
         }
 
         var caret = _activeWpfTextView.Selection.StreamSelectionSpan.SnapshotSpan.Span.Start;
-
-        var codeDocument = GetCodeDocument();
-        if (codeDocument is null)
-        {
-            return;
-        }
-
-        var tree = codeDocument.GetSyntaxTree();
-
-        var change = new SourceChange(caret, 0, string.Empty);
-        // Sadly introducing the namespace to allow us to call the extension method causes heaps of type name conflicts
-        var owner = AspNetCore.Razor.Language.Legacy.LegacySyntaxNodeExtensions.LocateOwner(tree.Root, change);
-
-        var ownerString = owner is null ? "(null)" : $"{owner.Kind} [{owner.SpanStart}-{owner.Span.End}]";
-        infoLabel.Content = $"Owner: {ownerString}, {AspNetCore.Razor.Language.Syntax.SyntaxNodeExtensions.GetContent(owner).Replace("\n", "\\n").Replace("\r", "\\r")}";
 
         var node = FindNodeForPosition((TreeViewItem)treeView.Items[0], caret);
         if (node is null)
@@ -521,19 +495,14 @@ public partial class SyntaxVisualizerControl : UserControl, IVsRunningDocTableEv
 
         var textBuffer = _activeWpfTextView.TextBuffer;
 
-        if (!_textDocumentFactoryService.TryGetTextDocument(textBuffer, out var textDocument))
+        if (!_fileUriProvider.TryGet(textBuffer, out var hostDocumentUri))
         {
             return null;
         }
 
-        return GetCodeDocument(textDocument);
-    }
+        var filePath = hostDocumentUri.GetAbsoluteOrUNCPath().Replace('/', '\\');
 
-    private RazorCodeDocument? GetCodeDocument(ITextDocument textDocument)
-    {
-        EnsureInitialized();
-
-        var codeDocument = _joinableTaskFactory.Run(() => _codeDocumentProvider.GetRazorCodeDocumentAsync(textDocument.FilePath, CancellationToken.None));
+        var codeDocument = _joinableTaskFactory.Run(() => _codeDocumentProvider.GetRazorCodeDocumentAsync(filePath, CancellationToken.None));
         if (codeDocument is null)
         {
             return null;

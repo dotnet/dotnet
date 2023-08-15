@@ -72,6 +72,7 @@ internal class DefaultRazorProximityExpressionResolver : RazorProximityExpressio
             return null;
         }
 
+        // TODO: Support multiple C# documents per Razor document.
         if (!documentSnapshot.TryGetVirtualDocument<CSharpVirtualDocumentSnapshot>(out var virtualDocument))
         {
             Debug.Fail($"Some how there's no C# document associated with the host Razor document {documentUri.OriginalString} when resolving proximity expressions.");

@@ -14,7 +14,7 @@ namespace NuGet.Common
         public WarningLevel WarningLevel { get; set; } = WarningLevel.Severe; //setting default to Severe as 0 implies show no warnings
         public NuGetLogCode Code { get; set; }
         public string Message { get; set; }
-        public string ProjectPath { get; set; }
+        public string? ProjectPath { get; set; }
         public DateTimeOffset Time { get; set; } = DateTimeOffset.UtcNow;
 
         public LogMessage(LogLevel level, string message, NuGetLogCode code)

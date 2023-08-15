@@ -59,7 +59,6 @@
     <Asset Type="Microsoft.VisualStudio.Assembly" Path="Microsoft.AspNetCore.Razor.LanguageServer.dll" />
     <Asset Type="Microsoft.VisualStudio.Assembly" Path="Microsoft.AspNetCore.Razor.LanguageSupport.dll" />
     <Asset Type="Microsoft.VisualStudio.Assembly" Path="Microsoft.AspNetCore.Razor.LanguageServer.Protocol.dll" />
-    <Asset Type="Microsoft.VisualStudio.Assembly" Path="Microsoft.AspNetCore.Razor.LanguageServer.Common.dll" />
     <Asset Type="Microsoft.VisualStudio.MefComponent" Path="Microsoft.AspNetCore.Razor.Language.dll" />
     <Asset Type="Microsoft.VisualStudio.Assembly" Path="Microsoft.CodeAnalysis.Razor.dll" />
     <Asset Type="Microsoft.VisualStudio.MefComponent" Path="Microsoft.CodeAnalysis.Razor.dll" />

@@ -67,6 +67,15 @@ internal class RazorLanguageServer : AbstractLanguageServer<RazorRequestContext>
         Initialize();
     }
 
+    protected override IRequestExecutionQueue<RazorRequestContext> ConstructRequestExecutionQueue()
+    {
+        var handlerProvider = GetHandlerProvider();
+        var queue = new RazorRequestExecutionQueue(this, _logger, handlerProvider);
+        queue.Start();
+        return queue;
+
+    }
+
     protected override ILspServices ConstructLspServices()
     {
         var services = new ServiceCollection()
@@ -223,6 +232,11 @@ internal class RazorLanguageServer : AbstractLanguageServer<RazorRequestContext>
         public IHandlerProvider GetHandlerProvider()
         {
             return _server.GetHandlerProvider();
+        }
+
+        public RazorRequestExecutionQueue GetRequestExecutionQueue()
+        {
+            return (RazorRequestExecutionQueue)_server.GetRequestExecutionQueue();
         }
     }
 }

@@ -118,6 +118,25 @@ public class DefinitionEndpointDelegationTest : SingleServerDelegatingEndpointTe
         await VerifyCSharpGoToDefinitionAsync(input, "test.razor");
     }
 
+    [Fact]
+    public async Task Handle_SingleServer_AttributeValue_BindAfter()
+    {
+        var input = """
+            <input type="text" @bind="InputValue" @bind:after="() => Af$$ter()">
+
+            @code
+            {
+                public string InputValue { get; set; }
+
+                public void [|After|]()
+                {
+                }
+            }
+            """;
+
+        await VerifyCSharpGoToDefinitionAsync(input, "test.razor");
+    }
+
     [Theory]
     [InlineData("Ti$$tle")]
     [InlineData("$$@bind-Title")]

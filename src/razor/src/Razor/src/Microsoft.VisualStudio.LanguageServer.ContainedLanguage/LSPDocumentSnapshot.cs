@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.VisualStudio.Text;
 
@@ -20,16 +21,37 @@ public abstract class LSPDocumentSnapshot
 
     public bool TryGetVirtualDocument<TVirtualDocument>([NotNullWhen(returnValue: true)] out TVirtualDocument? virtualDocument) where TVirtualDocument : VirtualDocumentSnapshot
     {
+        virtualDocument = null;
+
         for (var i = 0; i < VirtualDocuments.Count; i++)
         {
             if (VirtualDocuments[i] is TVirtualDocument actualVirtualDocument)
             {
+                Debug.Assert(virtualDocument is null, "Found multiple virtual documents of the same type. Should call TryGetAllVirtualDocuments instead.");
                 virtualDocument = actualVirtualDocument;
+#if !DEBUG
                 return true;
+#endif
             }
         }
 
-        virtualDocument = null;
-        return false;
+        return virtualDocument is not null;
+    }
+
+    public bool TryGetAllVirtualDocuments<TVirtualDocument>([NotNullWhen(returnValue: true)] out TVirtualDocument[]? virtualDocuments) where TVirtualDocument : VirtualDocumentSnapshot
+    {
+        List<TVirtualDocument>? actualVirtualDocuments = null;
+
+        for (var i = 0; i < VirtualDocuments.Count; i++)
+        {
+            if (VirtualDocuments[i] is TVirtualDocument actualVirtualDocument)
+            {
+                actualVirtualDocuments ??= new List<TVirtualDocument>();
+                actualVirtualDocuments.Add(actualVirtualDocument);
+            }
+        }
+
+        virtualDocuments = actualVirtualDocuments?.ToArray();
+        return virtualDocuments is not null;
     }
 }

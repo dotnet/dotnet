@@ -117,7 +117,7 @@ internal sealed class DocumentSpellCheckEndpoint : IRazorRequestHandler<VSIntern
     {
         var delegatedParams = new DelegatedSpellCheckParams(documentContext.Identifier);
         var delegatedResponse = await _languageServer.SendRequestAsync<DelegatedSpellCheckParams, VSInternalSpellCheckableRangeReport[]?>(
-            RazorLanguageServerCustomMessageTargets.RazorSpellCheckEndpoint,
+            CustomMessageNames.RazorSpellCheckEndpoint,
             delegatedParams,
             cancellationToken).ConfigureAwait(false);
 

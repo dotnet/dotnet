@@ -138,6 +138,9 @@
   <data name="116" xml:space="preserve">
     <value>Package Source Mapping</value>
   </data>
+  <data name="117" xml:space="preserve">
+    <value>Configuration Files</value>
+  </data>
   <data name="2" xml:space="preserve">
     <value>plk</value>
   </data>

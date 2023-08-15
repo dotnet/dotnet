@@ -692,6 +692,11 @@
         <target state="translated">C# 11.0. 中無法使用 '{0}' 功能。請使用語言版本 {1} 或更高的版本。</target>
         <note />
       </trans-unit>
+      <trans-unit id="ERR_FeatureNotAvailableInVersion12">
+        <source>Feature '{0}' is not available in C# 12.0. Please use language version {1} or greater.</source>
+        <target state="new">Feature '{0}' is not available in C# 12.0. Please use language version {1} or greater.</target>
+        <note />
+      </trans-unit>
       <trans-unit id="ERR_FeatureNotAvailableInVersion8">
         <source>Feature '{0}' is not available in C# 8.0. Please use language version {1} or greater.</source>
         <target state="translated">C# 8.0 中無法使用功能 '{0}'。請使用 {1} 或更新的語言版本。</target>
@@ -4992,6 +4997,16 @@ strument:TestCoverage      產生檢測要收集
         <target state="translated">使用可能未指派的自動實作屬性</target>
         <note />
       </trans-unit>
+      <trans-unit id="WRN_UseDefViolationRefField">
+        <source>Ref field '{0}' should be ref-assigned before use.</source>
+        <target state="new">Ref field '{0}' should be ref-assigned before use.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="WRN_UseDefViolationRefField_Title">
+        <source>Ref field should be ref-assigned before use.</source>
+        <target state="new">Ref field should be ref-assigned before use.</target>
+        <note />
+      </trans-unit>
       <trans-unit id="WRN_UseDefViolationThisSupportedVersion">
         <source>The 'this' object is read before all of its fields have been assigned, causing preceding implicit assignments of 'default' to non-explicitly assigned fields.</source>
         <target state="translated">在指派 'this' 物件的所有欄位之前，會先讀取該物件，導致先前對未明確指派的欄位進行隱含的 'default' 指派。</target>
@@ -6668,8 +6683,8 @@ strument:TestCoverage      產生檢測要收集
         <note />
       </trans-unit>
       <trans-unit id="ERR_AttributeCtorInParameter">
-        <source>Cannot use attribute constructor '{0}' because it has 'in' parameters.</source>
-        <target state="translated">因為屬性建構函式 '{0}' 包含 'in' 參數，所以無法使用。</target>
+        <source>Cannot use attribute constructor '{0}' because it has 'in' or 'ref readonly' parameters.</source>
+        <target state="needs-review-translation">因為屬性建構函式 '{0}' 包含 'in' 參數，所以無法使用。</target>
         <note />
       </trans-unit>
       <trans-unit id="ERR_OverrideWithConstraints">
@@ -12664,8 +12679,8 @@ To remove the warning, you can use /reference instead (set the Embed Interop Typ
         <note />
       </trans-unit>
       <trans-unit id="ERR_InExtensionMustBeValueType">
-        <source>The first parameter of the 'in' extension method '{0}' must be a concrete (non-generic) value type.</source>
-        <target state="translated">'in' 擴充方法 '{0}' 中的第一個參數必須是實體 (非泛型) 實值型別。</target>
+        <source>The first 'in' or 'ref readonly' parameter of the extension method '{0}' must be a concrete (non-generic) value type.</source>
+        <target state="needs-review-translation">'in' 擴充方法 '{0}' 中的第一個參數必須是實體 (非泛型) 實值型別。</target>
         <note />
       </trans-unit>
       <trans-unit id="ERR_FieldsInRoStruct">

@@ -23,7 +23,15 @@ namespace Test
 #line hidden
 #nullable disable
             ));
-            __builder.AddComponentParameter(2, "ValueChanged", (global::System.Func<System.Int32, System.Threading.Tasks.Task>)(value => { ParentValue = value; return Task.CompletedTask; }));
+            __builder.AddComponentParameter(2, "ValueChanged", (global::System.Func<System.Int32, System.Threading.Tasks.Task>)(
+#nullable restore
+#line 1 "x:\dir\subdir\Test\TestComponent.cshtml"
+                                                            value => { ParentValue = value; return Task.CompletedTask; }
+
+#line default
+#line hidden
+#nullable disable
+            ));
             __builder.CloseComponent();
         }
         #pragma warning restore 1998

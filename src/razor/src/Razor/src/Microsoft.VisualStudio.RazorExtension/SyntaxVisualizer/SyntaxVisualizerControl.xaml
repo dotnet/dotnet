@@ -20,16 +20,13 @@
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </UserControl.Resources>
-    <DockPanel>
-        <Label x:Name="infoLabel" AutomationProperties.Name="Info" DockPanel.Dock="Top" Content="&lt;info&gt;" />
-        <TreeView x:Name="treeView" AutomationProperties.Name="Nodes" KeyUp="treeView_KeyUp">
-            <TreeView.Resources>
-                <!-- Style the inactive selection the same as active -->
-                <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightBrushKey}"
+    <TreeView x:Name="treeView" AutomationProperties.Name="Nodes" KeyUp="treeView_KeyUp">
+        <TreeView.Resources>
+            <!-- Style the inactive selection the same as active -->
+            <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightBrushKey}"
                      Color="{DynamicResource {x:Static SystemColors.HighlightColorKey}}" />
-                <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightTextBrushKey}"
+            <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightTextBrushKey}"
                      Color="{DynamicResource {x:Static SystemColors.HighlightTextColorKey}}"/>
-            </TreeView.Resources>
-        </TreeView>
-    </DockPanel>
+        </TreeView.Resources>
+    </TreeView>
 </UserControl>

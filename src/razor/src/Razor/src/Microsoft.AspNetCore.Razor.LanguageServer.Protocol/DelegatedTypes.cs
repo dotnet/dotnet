@@ -63,3 +63,8 @@ internal record DelegatedProjectContextsParams(
 
 internal record DelegatedDocumentSymbolParams(
     TextDocumentIdentifierAndVersion Identifier);
+
+internal record DelegatedSimplifyMethodParams(
+    TextDocumentIdentifierAndVersion Identifier,
+    bool RequiresVirtualDocument,
+    TextEdit TextEdit);

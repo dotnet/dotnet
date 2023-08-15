@@ -29,7 +29,15 @@ namespace Test
 #line hidden
 #nullable disable
             );
-            __o = global::Microsoft.AspNetCore.Components.EventCallback.Factory.CreateBinder(this, global::Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.CreateInferredBindSetter(callback: ValueChanged, value: ParentValue), ParentValue);
+            __o = global::Microsoft.AspNetCore.Components.EventCallback.Factory.CreateBinder(this, global::Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.CreateInferredBindSetter(callback: 
+#nullable restore
+#line 1 "x:\dir\subdir\Test\TestComponent.cshtml"
+                                                         ValueChanged
+
+#line default
+#line hidden
+#nullable disable
+            , value: ParentValue), ParentValue);
         }
         #pragma warning restore 1998
 #nullable restore

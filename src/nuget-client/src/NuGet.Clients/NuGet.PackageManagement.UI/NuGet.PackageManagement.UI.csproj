@@ -113,5 +113,11 @@
     </None>
   </ItemGroup>
 
+  <ItemGroup>
+    <Page Update="Options\ConfigurationFilesControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v$(VisualStudioVersion)\TextTemplating\Microsoft.TextTemplating.targets" Condition=" '$(MSBuildRuntimeType)' == 'Full' " />
 </Project>

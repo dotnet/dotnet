@@ -71,6 +71,11 @@ internal class DefaultLSPDocument : LSPDocument
             throw new InvalidOperationException($"Cannot update virtual document of type {typeof(TVirtualDocument)} because LSP document {Uri} does not contain a virtual document of that type.");
         }
 
+        return UpdateVirtualDocument<TVirtualDocument>(virtualDocument, changes, hostDocumentVersion, state);
+    }
+
+    public override LSPDocumentSnapshot UpdateVirtualDocument<TVirtualDocument>(TVirtualDocument virtualDocument, IReadOnlyList<ITextChange> changes, int hostDocumentVersion, object? state)
+    {
         virtualDocument.Update(changes, hostDocumentVersion, state);
 
         _currentSnapshot = UpdateSnapshot();

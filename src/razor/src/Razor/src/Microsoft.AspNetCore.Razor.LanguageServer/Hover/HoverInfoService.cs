@@ -7,7 +7,6 @@ using System.Composition;
 using System.Diagnostics;
 using System.Linq;
 using Microsoft.AspNetCore.Razor.Language;
-using Microsoft.AspNetCore.Razor.Language.Legacy;
 using Microsoft.AspNetCore.Razor.Language.Syntax;
 using Microsoft.AspNetCore.Razor.LanguageServer.Extensions;
 using Microsoft.AspNetCore.Razor.LanguageServer.Tooltip;
@@ -68,23 +67,28 @@ internal sealed class HoverInfoService : IHoverInfoService
 
         var syntaxTree = codeDocument.GetSyntaxTree();
 
-        var change = new SourceChange(location.AbsoluteIndex, length: 0, newText: "");
-        var owner = syntaxTree.Root.LocateOwner(change);
-
+        var owner = syntaxTree.Root.FindInnermostNode(location.AbsoluteIndex);
         if (owner is null)
         {
             Debug.Fail("Owner should never be null.");
             return null;
         }
 
-        var parent = owner.Parent;
+        // For cases where the point in the middle of an attribute,
+        // such as <any tes$$t=""></any>
+        // the node desired is the *AttributeSyntax
+        if (owner.Kind is SyntaxKind.MarkupTextLiteral)
+        {
+            owner = owner.Parent;
+        }
+
         var position = new Position(location.LineIndex, location.CharacterIndex);
         var tagHelperDocumentContext = codeDocument.GetTagHelperContext();
 
         var ancestors = owner.Ancestors();
         var (parentTag, parentIsTagHelper) = _tagHelperFactsService.GetNearestAncestorTagInfo(ancestors);
 
-        if (_htmlFactsService.TryGetElementInfo(parent, out var containingTagNameToken, out var attributes) &&
+        if (_htmlFactsService.TryGetElementInfo(owner, out var containingTagNameToken, out var attributes) &&
             containingTagNameToken.Span.IntersectsWith(location.AbsoluteIndex))
         {
             // Hovering over HTML tag name
@@ -112,7 +116,7 @@ internal sealed class HoverInfoService : IHoverInfoService
             }
         }
 
-        if (_htmlFactsService.TryGetAttributeInfo(parent, out containingTagNameToken, out _, out var selectedAttributeName, out var selectedAttributeNameLocation, out attributes) &&
+        if (_htmlFactsService.TryGetAttributeInfo(owner, out containingTagNameToken, out _, out var selectedAttributeName, out var selectedAttributeNameLocation, out attributes) &&
             selectedAttributeNameLocation?.IntersectsWith(location.AbsoluteIndex) == true)
         {
             // Hovering over HTML attribute name

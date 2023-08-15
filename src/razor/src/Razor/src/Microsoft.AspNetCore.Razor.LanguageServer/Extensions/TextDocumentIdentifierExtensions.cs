@@ -4,6 +4,7 @@
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Extensions;
+
 internal static class TextDocumentIdentifierExtensions
 {
     public static VSProjectContext? GetProjectContext(this TextDocumentIdentifier textDocumentIdentifier)

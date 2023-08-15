@@ -37,7 +37,7 @@ namespace Microsoft.Deployment.DotNet.Releases.Tests
         [Fact]
         public void ItCanDeserializeACveEntry()
         {
-            Cve cve = JsonSerializer.Deserialize<Cve>(@"{""cve-id"": ""CVE-2020-1147"", ""cve-url"": ""https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2020-1147""}");
+            Cve cve = new(JsonDocument.Parse(@"{""cve-id"": ""CVE-2020-1147"", ""cve-url"": ""https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2020-1147""}").RootElement);
 
             Assert.Equal("CVE-2020-1147", cve.Id);
             Assert.Equal("https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2020-1147", cve.DescriptionLink.ToString());

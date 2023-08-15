@@ -5,7 +5,6 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using NuGet.Configuration;
 
 namespace NuGet.VisualStudio.Internal.Contracts
 {
@@ -21,8 +20,5 @@ namespace NuGet.VisualStudio.Internal.Contracts
         ValueTask SavePackageSourceContextInfosAsync(IReadOnlyList<PackageSourceContextInfo> sources, CancellationToken cancellationToken);
 
         ValueTask<IReadOnlyList<PackageSourceContextInfo>> GetPackageSourcesAsync(CancellationToken cancellationToken);
-
-        [Obsolete("Remove in next version")]
-        ValueTask SavePackageSourcesAsync(IReadOnlyList<PackageSource> sources, PackageSourceUpdateOptions packageSourceUpdateOptions, CancellationToken cancellationToken);
     }
 }

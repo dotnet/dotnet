@@ -6,7 +6,6 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Razor.LanguageServer;
 using Microsoft.AspNetCore.Razor.LanguageServer.Common;
 using Microsoft.AspNetCore.Razor.LanguageServer.Protocol;
 using Microsoft.AspNetCore.Razor.Test.Common;
@@ -32,7 +31,7 @@ public class DefaultLSPDocumentMappingProviderTest : TestBase
     public DefaultLSPDocumentMappingProviderTest(ITestOutputHelper testOutput)
         : base(testOutput)
     {
-        var csharpVirtualDocumentSnapshot = new CSharpVirtualDocumentSnapshot(s_razorVirtualCSharpFile, new StringTextSnapshot(string.Empty), hostDocumentSyncVersion: 0);
+        var csharpVirtualDocumentSnapshot = new CSharpVirtualDocumentSnapshot(projectKey: default, s_razorVirtualCSharpFile, new StringTextSnapshot(string.Empty), hostDocumentSyncVersion: 0);
         var documentSnapshot1 = new TestLSPDocumentSnapshot(s_razorFile, version: 1, "first doc", csharpVirtualDocumentSnapshot);
         var documentSnapshot2 = new TestLSPDocumentSnapshot(s_anotherRazorFile, version: 5, "second doc", csharpVirtualDocumentSnapshot);
         var documentManager = new TestDocumentManager();

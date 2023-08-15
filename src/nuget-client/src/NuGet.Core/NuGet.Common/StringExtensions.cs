@@ -5,7 +5,7 @@ namespace NuGet.Common
 {
     internal static class StringExtensions
     {
-        internal static string FormatWithDoubleQuotes(this string s)
+        internal static string? FormatWithDoubleQuotes(this string? s)
         {
             return s == null ? s : $@"""{s}""";
         }

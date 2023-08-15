@@ -49,7 +49,7 @@ internal sealed class DefinitionEndpoint : AbstractRazorDelegatingEndpoint<TextD
 
     protected override IDocumentPositionInfoStrategy DocumentPositionInfoStrategy => PreferAttributeNameDocumentPositionInfoStrategy.Instance;
 
-    protected override string CustomMessageTarget => RazorLanguageServerCustomMessageTargets.RazorDefinitionEndpointName;
+    protected override string CustomMessageTarget => CustomMessageNames.RazorDefinitionEndpointName;
 
     public void ApplyCapabilities(VSInternalServerCapabilities serverCapabilities, VSInternalClientCapabilities clientCapabilities)
     {

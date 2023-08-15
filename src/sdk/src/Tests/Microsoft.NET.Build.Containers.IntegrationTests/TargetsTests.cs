@@ -56,7 +56,7 @@ public class TargetsTests
         }, projectName: $"{nameof(CanNormalizeInputContainerNames)}_{projectName}_{expectedContainerImageName}_{shouldPass}");
         using var _ = d;
         var instance = project.CreateProjectInstance(global::Microsoft.Build.Execution.ProjectInstanceSettings.None);
-        instance.Build(new[] { ComputeContainerConfig }, new [] { logger }, null, out var outputs).Should().Be(shouldPass, "Build should have succeeded");
+        instance.Build(new[] { ComputeContainerConfig }, new[]{ logger }, null, out var outputs).Should().Be(shouldPass, String.Join(Environment.NewLine, logger.AllMessages));
         Assert.Equal(expectedContainerImageName, instance.GetPropertyValue(ContainerRepository));
     }
 
@@ -221,5 +221,27 @@ public class TargetsTests
         instance.Build(new[]{ComputeContainerConfig}, null, null, out var outputs).Should().BeTrue(String.Join(Environment.NewLine, logger.Errors));
         var computedRid = instance.GetProperty(KnownStrings.Properties.ContainerRuntimeIdentifier)?.EvaluatedValue;
         computedRid.Should().Be(expectedRid);
+    }
+
+    [InlineData("8.0.100", "v7.0", "", "7.0")]
+    [InlineData("8.0.100-preview.2", "v8.0", "", "8.0.0-preview.2")]
+    [InlineData("8.0.100-preview.2", "v8.0", "jammy", "8.0.0-preview.2-jammy")]
+    [InlineData("8.0.100-preview.2", "v8.0", "jammy-chiseled", "8.0.0-preview.2-jammy-chiseled")]
+    [InlineData("8.0.100-rc.2", "v8.0", "jammy-chiseled", "8.0.0-rc.2-jammy-chiseled")]
+    [InlineData("8.0.100", "v8.0", "jammy-chiseled", "8.0-jammy-chiseled")]
+    [Theory]
+    public void CanTakeContainerBaseFamilyIntoAccount(string sdkVersion, string tfmMajMin, string containerFamily, string expectedTag)
+    {
+        var (project, logger, d) = ProjectInitializer.InitProject(new()
+        {
+            ["NetCoreSdkVersion"] = sdkVersion,
+            ["TargetFrameworkVersion"] = tfmMajMin,
+            [KnownStrings.Properties.ContainerFamily] = containerFamily,
+        }, projectName: $"{nameof(CanTakeContainerBaseFamilyIntoAccount)}_{sdkVersion}_{tfmMajMin}_{containerFamily}_{expectedTag}");
+        using var _ = d;
+        var instance = project.CreateProjectInstance(global::Microsoft.Build.Execution.ProjectInstanceSettings.None);
+        instance.Build(new[]{ _ComputeContainerBaseImageTag }, null, null, out var outputs).Should().BeTrue(String.Join(Environment.NewLine, logger.Errors));
+        var computedBaseImageTag = instance.GetProperty(KnownStrings.Properties._ContainerBaseImageTag)?.EvaluatedValue;
+        computedBaseImageTag.Should().Be(expectedTag);
     }
 }

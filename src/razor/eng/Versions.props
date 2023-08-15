@@ -51,7 +51,7 @@
   <PropertyGroup Label="Automated">
     <MicrosoftNETCoreBrowserDebugHostTransportPackageVersion>6.0.2-servicing.22064.6</MicrosoftNETCoreBrowserDebugHostTransportPackageVersion>
     <MicrosoftNETCorePlatformsPackageVersion>6.0.1</MicrosoftNETCorePlatformsPackageVersion>
-    <MicrosoftSourceBuildIntermediatesourcebuildreferencepackagesPackageVersion>8.0.0-alpha.1.23371.1</MicrosoftSourceBuildIntermediatesourcebuildreferencepackagesPackageVersion>
+    <MicrosoftSourceBuildIntermediatesourcebuildreferencepackagesPackageVersion>8.0.0-alpha.1.23381.3</MicrosoftSourceBuildIntermediatesourcebuildreferencepackagesPackageVersion>
     <MicrosoftNetCompilersToolsetPackageVersion>4.7.0-3.23326.2</MicrosoftNetCompilersToolsetPackageVersion>
     <MicrosoftCommonLanguageServerProtocolFrameworkPackageVersion>4.7.0-3.23326.2</MicrosoftCommonLanguageServerProtocolFrameworkPackageVersion>
     <MicrosoftCodeAnalysisExternalAccessRazorPackageVersion>4.7.0-3.23326.2</MicrosoftCodeAnalysisExternalAccessRazorPackageVersion>
@@ -72,8 +72,7 @@
     <MicrosoftCodeAnalysisWorkspacesCommonPackageVersion>4.7.0-3.23326.2</MicrosoftCodeAnalysisWorkspacesCommonPackageVersion>
     <MicrosoftCodeAnalysisWorkspacesMSBuildPackageVersion>4.7.0-3.23326.2</MicrosoftCodeAnalysisWorkspacesMSBuildPackageVersion>
     <MicrosoftVisualStudioLanguageServicesPackageVersion>4.7.0-3.23326.2</MicrosoftVisualStudioLanguageServicesPackageVersion>
-    <MicrosoftSourceLinkGitHubPackageVersion>8.0.0-beta.23361.2</MicrosoftSourceLinkGitHubPackageVersion>
-    <MicrosoftDotNetXliffTasksPackageVersion>1.0.0-beta.23374.1</MicrosoftDotNetXliffTasksPackageVersion>
+    <MicrosoftDotNetXliffTasksPackageVersion>1.0.0-beta.23381.1</MicrosoftDotNetXliffTasksPackageVersion>
     <!--
       Exception - Microsoft.Extensions.ObjectPool and System.Collections.Immutable packages are not updated by automation,
       but are present in Version.Details.xml for source-build PVP flow. See the comment in Version.Details.xml for more information.
@@ -95,7 +94,7 @@
     <Tooling_HtmlEditorPackageVersion>17.5.101-preview-0002</Tooling_HtmlEditorPackageVersion>
     <MicrosoftVisualStudioShellPackagesVersion>17.7.35047-preview.1</MicrosoftVisualStudioShellPackagesVersion>
     <MicrosoftVisualStudioPackagesVersion>17.7.38-preview</MicrosoftVisualStudioPackagesVersion>
-    <VisualStudioLanguageServerProtocolVersion>17.7.8-preview-g8c33dc3a76</VisualStudioLanguageServerProtocolVersion>
+    <VisualStudioLanguageServerProtocolVersion>17.8.3-preview</VisualStudioLanguageServerProtocolVersion>
     <!-- dotnet/runtime packages -->
     <MicrosoftExtensionsPackageVersion>6.0.0</MicrosoftExtensionsPackageVersion>
     <SystemCompositionPackageVersion>7.0.0</SystemCompositionPackageVersion>

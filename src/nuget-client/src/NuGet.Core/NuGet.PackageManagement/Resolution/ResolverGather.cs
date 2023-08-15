@@ -542,7 +542,7 @@ namespace NuGet.PackageManagement
 
                 configuredPackageSources = _context.PackageSourceMapping.GetConfiguredPackageSources(package.Id);
 
-                if (configuredPackageSources != null)
+                if (configuredPackageSources.Count > 0)
                 {
                     var packageSourcesAtPrefix = string.Join(", ", configuredPackageSources);
                     _context.Log.LogDebug(StringFormatter.Log_PackageSourceMappingMatchFound((package.Id), packageSourcesAtPrefix));

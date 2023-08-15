@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
+using Microsoft.CodeAnalysis.Razor.Workspaces;
 
 namespace Microsoft.CodeAnalysis.Razor;
 
@@ -26,7 +27,7 @@ internal class DefaultProjectWorkspaceStateGenerator : ProjectWorkspaceStateGene
     private readonly ProjectSnapshotManagerDispatcher _projectSnapshotManagerDispatcher;
     private readonly SemaphoreSlim _semaphore;
     private ProjectSnapshotManagerBase _projectManager;
-    private TagHelperResolver _tagHelperResolver;
+    private ITagHelperResolver _tagHelperResolver;
     private bool _disposed;
 
     [ImportingConstructor]
@@ -58,7 +59,7 @@ internal class DefaultProjectWorkspaceStateGenerator : ProjectWorkspaceStateGene
 
         _projectManager = projectManager;
 
-        _tagHelperResolver = _projectManager.Workspace.Services.GetRequiredService<TagHelperResolver>();
+        _tagHelperResolver = _projectManager.Workspace.Services.GetRequiredService<ITagHelperResolver>();
     }
 
     public override void Update(Project workspaceProject, IProjectSnapshot projectSnapshot, CancellationToken cancellationToken)
@@ -172,8 +173,8 @@ internal class DefaultProjectWorkspaceStateGenerator : ProjectWorkspaceStateGene
                         csharpLanguageVersion = csharpParseOptions.LanguageVersion;
                     }
 
-                    var tagHelperResolutionResult = await _tagHelperResolver.GetTagHelpersAsync(workspaceProject, projectSnapshot, cancellationToken).ConfigureAwait(false);
-                    workspaceState = new ProjectWorkspaceState(tagHelperResolutionResult.Descriptors, csharpLanguageVersion);
+                    var tagHelpers = await _tagHelperResolver.GetTagHelpersAsync(workspaceProject, projectSnapshot, cancellationToken).ConfigureAwait(false);
+                    workspaceState = new ProjectWorkspaceState(tagHelpers, csharpLanguageVersion);
                 }
             }
             catch (OperationCanceledException)

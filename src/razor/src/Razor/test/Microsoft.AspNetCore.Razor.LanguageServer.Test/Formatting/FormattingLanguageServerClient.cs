@@ -183,14 +183,14 @@ internal class FormattingLanguageServerClient : ClientNotifierServiceBase
     public override Task<TResponse> SendRequestAsync<TParams, TResponse>(string method, TParams @params, CancellationToken cancellationToken)
     {
         if (@params is DocumentFormattingParams formattingParams &&
-            string.Equals(method, RazorLanguageServerCustomMessageTargets.RazorHtmlFormattingEndpoint, StringComparison.Ordinal))
+            string.Equals(method, CustomMessageNames.RazorHtmlFormattingEndpoint, StringComparison.Ordinal))
         {
             var response = Format(formattingParams);
 
             return Task.FromResult(Convert<TResponse>(response));
         }
         else if (@params is DocumentOnTypeFormattingParams onTypeFormattingParams &&
-            string.Equals(method, RazorLanguageServerCustomMessageTargets.RazorHtmlOnTypeFormattingEndpoint, StringComparison.Ordinal))
+            string.Equals(method, CustomMessageNames.RazorHtmlOnTypeFormattingEndpoint, StringComparison.Ordinal))
         {
             var response = Format(onTypeFormattingParams);
 

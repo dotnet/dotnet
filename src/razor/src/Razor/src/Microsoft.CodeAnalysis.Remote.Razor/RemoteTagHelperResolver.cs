@@ -2,85 +2,71 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using System;
+using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.Language;
-using Microsoft.AspNetCore.Razor.Serialization;
 using Microsoft.AspNetCore.Razor.Telemetry;
-using Microsoft.CodeAnalysis.Razor.ProjectSystem;
+using Microsoft.CodeAnalysis.Razor;
 
-namespace Microsoft.CodeAnalysis.Razor;
+namespace Microsoft.CodeAnalysis.Remote.Razor;
 
-internal class RemoteTagHelperResolver : TagHelperResolver
+internal class RemoteTagHelperResolver(ITelemetryReporter telemetryReporter)
 {
-    private readonly static RazorConfiguration s_defaultConfiguration = FallbackRazorConfiguration.MVC_2_0;
+    private readonly IFallbackProjectEngineFactory _fallbackFactory = new FallbackProjectEngineFactory();
+    private readonly Dictionary<string, IProjectEngineFactory> _typeNameToFactoryMap = new(StringComparer.Ordinal);
+    private readonly CompilationTagHelperResolver _compilationTagHelperResolver = new(telemetryReporter);
 
-    private readonly IFallbackProjectEngineFactory _fallbackFactory;
-
-    public RemoteTagHelperResolver(IFallbackProjectEngineFactory fallbackFactory, ITelemetryReporter telemetryReporter)
-        : base(telemetryReporter)
-    {
-        if (fallbackFactory is null)
-        {
-            throw new ArgumentNullException(nameof(fallbackFactory));
-        }
-
-        _fallbackFactory = fallbackFactory;
-    }
-
-    public override Task<TagHelperResolutionResult> GetTagHelpersAsync(Project project, IProjectSnapshot projectSnapshot, CancellationToken cancellationToken = default)
-    {
-        throw new NotImplementedException();
-    }
-
-    public Task<TagHelperResolutionResult> GetTagHelpersAsync(
-        Project project,
+    public ValueTask<ImmutableArray<TagHelperDescriptor>> GetTagHelpersAsync(
+        Project workspaceProject,
         RazorConfiguration? configuration,
-        string? factoryTypeName,
-        CancellationToken cancellationToken = default)
+        string factoryTypeName,
+        CancellationToken cancellationToken)
     {
-        if (project is null)
+        if (configuration is null)
         {
-            throw new ArgumentNullException(nameof(project));
+            return new(ImmutableArray<TagHelperDescriptor>.Empty);
         }
 
-        if (configuration is null || project is null)
-        {
-            return Task.FromResult(TagHelperResolutionResult.Empty);
-        }
-
-        var engine = CreateProjectEngine(configuration, factoryTypeName);
-        return GetTagHelpersAsync(project, engine, cancellationToken);
+        return _compilationTagHelperResolver.GetTagHelpersAsync(
+            workspaceProject,
+            CreateProjectEngine(configuration, factoryTypeName),
+            cancellationToken);
     }
 
-    internal RazorProjectEngine CreateProjectEngine(RazorConfiguration? configuration, string? factoryTypeName)
+    private RazorProjectEngine CreateProjectEngine(RazorConfiguration configuration, string factoryTypeName)
     {
-        // This section is really similar to the code DefaultProjectEngineFactoryService
-        // but with a few differences that are significant in the remote scenario
-        //
-        // Most notably, we are going to find the Tag Helpers using a compilation, and we have
-        // no editor settings.
-        //
-        // The default configuration currently matches MVC-2.0. Beyond MVC-2.0 we added SDK support for
-        // properly detecting project versions, so that's a good version to assume when we can't find a
-        // configuration.
-        configuration ??= s_defaultConfiguration;
-
         // If there's no factory to handle the configuration then fall back to a very basic configuration.
         //
         // This will stop a crash from happening in this case (misconfigured project), but will still make
         // it obvious to the user that something is wrong.
-        var factory = CreateFactory(factoryTypeName) ?? _fallbackFactory;
-        return factory.Create(configuration, RazorProjectFileSystem.Empty, b => { });
-    }
 
-    private static IProjectEngineFactory? CreateFactory(string? factoryTypeName)
-    {
-        if (factoryTypeName is null)
+        IProjectEngineFactory factory;
+
+        lock (_typeNameToFactoryMap)
         {
-            return null;
+            if (!_typeNameToFactoryMap.TryGetValue(factoryTypeName, out factory))
+            {
+                factory = CreateFactory(factoryTypeName) ?? _fallbackFactory;
+                _typeNameToFactoryMap.Add(factoryTypeName, factory);
+            }
         }
 
-        return (IProjectEngineFactory)Activator.CreateInstance(Type.GetType(factoryTypeName, throwOnError: true));
+        return factory.Create(configuration, RazorProjectFileSystem.Empty, static _ => { });
+
+        static IProjectEngineFactory? CreateFactory(string factoryTypeName)
+        {
+            try
+            {
+                var factoryType = Type.GetType(factoryTypeName, throwOnError: true);
+                return (IProjectEngineFactory)Activator.CreateInstance(factoryType);
+            }
+            catch
+            {
+                return null;
+            }
+        }
     }
 }

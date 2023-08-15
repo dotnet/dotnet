@@ -1044,7 +1044,7 @@ namespace NuGet.Configuration.Test
                 var sources = new[]
                     {
                     new PackageSource("Source1", "Source1-Name"),
-                    new PackageSource("Source2", "Source2-Name") { ProtocolVersion = 3 }
+                    new PackageSource("Source2", "Source2-Name")
                };
                 // Act
                 packageSourceProvider.SavePackageSources(sources);
@@ -1052,7 +1052,7 @@ namespace NuGet.Configuration.Test
                 // Assert
                 var packageSourcesSection = settings.GetSection("packageSources");
                 packageSourcesSection.Should().NotBeNull();
-                packageSourcesSection.Items.Count.Should().Be(3);
+                packageSourcesSection.Items.Count.Should().Be(2);
                 packageSourcesSection.Items.Should().AllBeOfType<SourceItem>();
 
                 var children = packageSourcesSection.Items.Select(c => c as SourceItem).ToList();
@@ -1060,8 +1060,6 @@ namespace NuGet.Configuration.Test
                 children[0].ProtocolVersion.Should().BeNullOrEmpty();
                 children[1].Key.Should().Be("Source1-Name");
                 children[1].ProtocolVersion.Should().BeNullOrEmpty();
-                children[2].Key.Should().Be("Source2-Name");
-                children[2].ProtocolVersion.Should().Be("3");
 
                 var disabledPackageSourcesSection = settings.GetSection("disabledPackageSources");
                 disabledPackageSourcesSection.Should().BeNull();
@@ -1630,7 +1628,6 @@ namespace NuGet.Configuration.Test
 <configuration>
     <packageSources>
         <add key=""a"" value=""https://a.test"" />
-        <add key=""b"" value=""https://b.test"" />
         <add key=""b"" value=""https://new.b.test"" protocolVersion=""3"" />
         <add key=""c"" value=""https://c.test"" />
     </packageSources>
@@ -1684,7 +1681,6 @@ namespace NuGet.Configuration.Test
 <configuration>
     <packageSources>
         <add key=""a"" value=""https://a.test"" />
-        <add key=""b"" value=""https://b.test"" />
         <add key=""b"" value=""https://newer.b.test"" protocolVersion=""3"" />
         <add key=""c"" value=""https://c.test"" />
     </packageSources>

@@ -115,7 +115,16 @@ namespace Microsoft.Deployment.DotNet.Releases
 
             using var releasesIndexDocument = JsonDocument.Parse(await reader.ReadToEndAsync().ConfigureAwait(false));
             var root = releasesIndexDocument.RootElement.GetProperty("releases-index");
-            return new ProductCollection(root.Deserialize<List<Product>>(SerializerOptions.Default));
+            var products = new List<Product>();
+
+            using JsonElement.ArrayEnumerator enumerator = root.EnumerateArray();
+
+            while (enumerator.MoveNext())
+            {
+                products.Add(new(enumerator.Current));
+            }
+
+            return new ProductCollection(products);
         }
     }
 }

@@ -37,7 +37,7 @@ namespace NuGet.Common
             AuthTypes = new List<string>(authTypes);
         }
 
-        public NetworkCredential GetCredential(Uri uri, string authType)
+        public NetworkCredential? GetCredential(Uri uri, string authType)
         {
             return authType == null || !AuthTypes.Any() || AuthTypes.Any(x => StringComparer.OrdinalIgnoreCase.Equals(x, authType))
                 ? InnerCredential.GetCredential(uri, authType)

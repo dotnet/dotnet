@@ -1,6 +1,7 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
+using System;
 using System.Runtime.InteropServices;
 using Xunit;
 
@@ -22,7 +23,18 @@ public class OSSkipConditionFactAttribute : FactAttribute
     {
         foreach (var platform in skippedPlatforms)
         {
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Create(platform)))
+            var osPlatform = platform switch
+            {
+                "Windows" => OSPlatform.Windows,
+                "Linux" => OSPlatform.Linux,
+                "OSX" => OSPlatform.OSX,
+#if NET
+                "FreeBSD" => OSPlatform.FreeBSD,
+#endif
+                _ => throw new NotSupportedException($"Unsupported platform: {platform}")
+            };
+
+            if (RuntimeInformation.IsOSPlatform(osPlatform))
             {
                 fact.Skip = $"Ignored on {platform}";
                 break;

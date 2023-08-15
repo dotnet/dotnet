@@ -41,7 +41,7 @@ internal class RazorLanguageServerClient : ILanguageClient, ILanguageClientCusto
     private readonly ITelemetryReporter _telemetryReporter;
     private readonly IClientSettingsManager _clientSettingsManager;
     private readonly ILspServerActivationTracker _lspServerActivationTracker;
-    private readonly RazorLanguageServerCustomMessageTarget _customMessageTarget;
+    private readonly RazorCustomMessageTarget _customMessageTarget;
     private readonly ILanguageClientMiddleLayer _middleLayer;
     private readonly LSPRequestInvoker _requestInvoker;
     private readonly ProjectConfigurationFilePathStore _projectConfigurationFilePathStore;
@@ -64,7 +64,7 @@ internal class RazorLanguageServerClient : ILanguageClient, ILanguageClientCusto
 
     [ImportingConstructor]
     public RazorLanguageServerClient(
-        RazorLanguageServerCustomMessageTarget customTarget,
+        RazorCustomMessageTarget customTarget,
         RazorLanguageClientMiddleLayer middleLayer,
         LSPRequestInvoker requestInvoker,
         ProjectConfigurationFilePathStore projectConfigurationFilePathStore,

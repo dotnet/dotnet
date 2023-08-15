@@ -66,7 +66,7 @@ public class CSharpVirtualDocumentPublisherTest : TestBase
     public void DocumentManager_Changed_VirtualDocumentChanged_UpdatesFileInfo()
     {
         // Arrange
-        var csharpSnapshot = new CSharpVirtualDocumentSnapshot(new Uri("C:/path/to/something.razor.g.cs"), Mock.Of<ITextSnapshot>(MockBehavior.Strict), hostDocumentSyncVersion: 1337);
+        var csharpSnapshot = new CSharpVirtualDocumentSnapshot(projectKey: default, new Uri("C:/path/to/something.razor.g.cs"), Mock.Of<ITextSnapshot>(MockBehavior.Strict), hostDocumentSyncVersion: 1337);
         var lspDocument = new TestLSPDocumentSnapshot(new Uri("C:/path/to/something.razor"), 1337, csharpSnapshot);
         var fileInfoProvider = new Mock<RazorDynamicFileInfoProvider>(MockBehavior.Strict);
         var lspDocumentMappingProvider = new Mock<LSPDocumentMappingProvider>(MockBehavior.Strict);

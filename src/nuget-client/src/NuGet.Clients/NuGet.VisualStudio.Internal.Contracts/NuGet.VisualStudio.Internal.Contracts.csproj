@@ -1,7 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>$(NETFXTargetFramework)</TargetFramework>
-    <SkipShared>true</SkipShared>
     <PackProject>false</PackProject>
     <Shipping>true</Shipping>
     <IncludeInVsix>true</IncludeInVsix>

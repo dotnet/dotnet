@@ -9,7 +9,7 @@ internal static class DefaultPool
 {
     public const int MaximumObjectSize = 512;
 
-    public static ObjectPool<T> Create<T>(IPooledObjectPolicy<T> policy)
+    public static ObjectPool<T> Create<T>(IPooledObjectPolicy<T> policy, int size = 20)
         where T : class
-        => new DefaultObjectPool<T>(policy, 20);
+        => new DefaultObjectPool<T>(policy, size);
 }

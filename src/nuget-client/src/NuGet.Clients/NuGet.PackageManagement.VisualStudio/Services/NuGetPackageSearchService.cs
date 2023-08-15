@@ -416,7 +416,7 @@ namespace NuGet.PackageManagement.VisualStudio
         /// <param name="projectContextInfos">A collection of projects</param>
         /// <param name="cancellationToken">Cancellation Token</param>
         /// <returns>A collection of Global package folder repositories combined with repositories found in packageFolders from PackageReference projects</returns>
-        private async Task<IReadOnlyList<SourceRepository>> GetAllPackageFoldersAsync(
+        public async Task<IReadOnlyList<SourceRepository>> GetAllPackageFoldersAsync(
             IReadOnlyCollection<IProjectContextInfo> projectContextInfos,
             CancellationToken cancellationToken)
         {

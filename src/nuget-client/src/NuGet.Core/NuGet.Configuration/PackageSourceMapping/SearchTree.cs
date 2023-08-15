@@ -1,6 +1,8 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+#nullable enable
+
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -81,7 +83,7 @@ namespace NuGet.Configuration
         /// </summary>
         /// <param name="term">Term to search for in <see cref="PackageSourceMapping.Patterns"/>.</param>
         /// <returns>Found <see cref="PackageSourceMapping.Patterns"/> which satisfies the <paramref name="term"/>, or `null`.</returns>
-        public string SearchForPattern(string term)
+        public string? SearchForPattern(string term)
         {
             return SearchPatternByTerm(term);
         }
@@ -94,10 +96,16 @@ namespace NuGet.Configuration
         /// <exception cref="ArgumentException"> if <paramref name="term"/> is null, empty, or whitespace only.</exception>
         public IReadOnlyList<string> GetConfiguredPackageSources(string term)
         {
-            return SearchNodeByTerm(term)?.PackageSources;
+            SearchNode? searchNodeResult = SearchNodeByTerm(term);
+            if (searchNodeResult is null || searchNodeResult.PackageSources is null)
+            {
+                return Array.Empty<string>();
+            }
+
+            return searchNodeResult.PackageSources;
         }
 
-        private SearchNode SearchNodeByTerm(string term)
+        private SearchNode? SearchNodeByTerm(string term)
         {
             if (string.IsNullOrWhiteSpace(term))
             {
@@ -107,7 +115,7 @@ namespace NuGet.Configuration
             term = term.ToLower(CultureInfo.CurrentCulture).Trim();
 
             SearchNode currentNode = _root;
-            SearchNode longestMatchingPrefixNode = null;
+            SearchNode? longestMatchingPrefixNode = null;
 
             if (currentNode.IsGlobbing)
             {
@@ -141,7 +149,7 @@ namespace NuGet.Configuration
             return longestMatchingPrefixNode;
         }
 
-        private string SearchPatternByTerm(string term)
+        private string? SearchPatternByTerm(string term)
         {
             if (string.IsNullOrWhiteSpace(term))
             {
