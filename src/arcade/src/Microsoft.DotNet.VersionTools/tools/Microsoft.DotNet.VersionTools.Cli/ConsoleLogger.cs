@@ -16,7 +16,7 @@ internal class ConsoleLogger : ILogger
     {
         var fgColor = Console.ForegroundColor;
         Console.ForegroundColor = ConsoleColor.Red;
-        Console.Error.WriteLine(message);
+        Console.Error.WriteLine(String.Format(message, values));
         Console.ForegroundColor = fgColor;
     }
 }
