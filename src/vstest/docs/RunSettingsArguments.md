@@ -52,11 +52,14 @@ Starting from .NET SDK 5.0 you can also set `TestRunParameters` using command li
 # cmd
 dotnet test  -- TestRunParameters.Parameter(name=\"myParam\", value=\"value\")
 
-# powershell
-dotnet test --%  -- TestRunParameters.Parameter(name=\"myParam\", value=\"value\") 
+# powershell (prior 7.3, or with $PSNativeCommandArgumentPassing = "legacy")
+dotnet test --%  -- TestRunParameters.Parameter(name=\"myParam\", value=\"value\")
+
+# powershell (7.3+)
+dotnet test --%  -- TestRunParameters.Parameter(name="myParam", value="value") 
 
 # bash
 dotnet test -- TestRunParameters.Parameter\(name=\"myParam\",\ value=\"value\"\) 
 ```
 
-In this example, `\"myParam\"` corresponds to the name of you parameter and `\"value\"` - the value of your parameter. Note, that `\` are escaping characters and they should stay as shown above.
+In this example, `\"myParam\"` corresponds to the name of you parameter and `\"value\"` - the value of your parameter. Note, that `\` are escaping characters and they should stay as shown above, unless you are in PowerShell 7.3+. For more examples in PowerShell, such as using variables for the data, please [refer here](https://github.com/microsoft/vstest/issues/4637).

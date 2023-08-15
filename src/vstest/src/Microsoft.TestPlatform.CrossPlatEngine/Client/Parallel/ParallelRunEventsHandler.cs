@@ -66,10 +66,12 @@ internal class ParallelRunEventsHandler : IInternalTestRunEventsHandler
         ICollection<AttachmentSet>? runContextAttachments,
         ICollection<string>? executorUris)
     {
+        EqtTrace.Verbose($"ParallelRunEventsHandler.HandleTestRunComplete: Handling a run completion, this can be either one part of parallel run completing, or the whole parallel run completing.");
         var parallelRunComplete = HandleSingleTestRunComplete(testRunCompleteArgs, lastChunkArgs, runContextAttachments, executorUris);
 
         if (parallelRunComplete)
         {
+            EqtTrace.Verbose($"ParallelRunEventsHandler.HandleTestRunComplete: Whole parallel run completed.");
             var completedArgs = new TestRunCompleteEventArgs(_runDataAggregator.GetAggregatedRunStats(),
                 _runDataAggregator.IsCanceled,
                 _runDataAggregator.IsAborted,
@@ -95,6 +97,10 @@ internal class ParallelRunEventsHandler : IInternalTestRunEventsHandler
             completedArgs.Metrics = aggregatedRunDataMetrics;
 
             HandleParallelTestRunComplete(completedArgs);
+        }
+        else
+        {
+            EqtTrace.Verbose($"ParallelRunEventsHandler.HandleTestRunComplete: Single part of parallel run completed, but whole run is not complete yet.");
         }
     }
 

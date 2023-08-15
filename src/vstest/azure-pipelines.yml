@@ -101,10 +101,6 @@ variables:
         /p:VisualStudioDropName=$(VisualStudioDropName)
         /p:GenerateSbom=true
 
-  - ${{ if eq(parameters.isRTM, True) }}:
-    - name: _InternalBuildArgs
-      value: $(_InternalBuildArgs) /p:DotNetFinalVersionKind=release
-
 stages:
 
 - stage: build

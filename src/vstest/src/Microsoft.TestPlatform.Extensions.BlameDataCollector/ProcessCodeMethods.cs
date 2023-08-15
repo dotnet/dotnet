@@ -31,7 +31,8 @@ internal static class ProcessCodeMethods
 
         if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
         {
-            SuspendWindows(process);
+            // There is no supported or documented API to suspend a process. If there was you should call it here.
+            // SuspendWindows(process);
         }
         else
         {
@@ -68,40 +69,6 @@ internal static class ProcessCodeMethods
         ResolveChildren(process, acc, level, limit);
 
         return new List<ProcessTreeNode> { new ProcessTreeNode { Process = process, Level = 0 } }.Concat(acc.Where(a => a.Level > 0)).ToList();
-    }
-
-    internal static void SuspendWindows(Process process)
-    {
-        EqtTrace.Verbose($"ProcessCodeMethods.Suspend: Suspending process {process.Id} - {process.ProcessName}.");
-        NtSuspendProcess(process.Handle);
-    }
-
-    internal static void SuspendLinuxMacOs(Process process)
-    {
-        try
-        {
-            var output = new StringBuilder();
-            var err = new StringBuilder();
-            Process ps = new();
-            ps.StartInfo.FileName = "kill";
-            ps.StartInfo.Arguments = $"-STOP {process.Id}";
-            ps.StartInfo.UseShellExecute = false;
-            ps.StartInfo.RedirectStandardOutput = true;
-            ps.OutputDataReceived += (_, e) => output.Append(e.Data);
-            ps.ErrorDataReceived += (_, e) => err.Append(e.Data);
-            ps.Start();
-            ps.BeginOutputReadLine();
-            ps.WaitForExit(5_000);
-
-            if (!err.ToString().IsNullOrWhiteSpace())
-            {
-                EqtTrace.Verbose($"ProcessCodeMethods.SuspendLinuxMacOs: Error suspending process {process.Id} - {process.ProcessName}, {err}.");
-            }
-        }
-        catch (Exception ex)
-        {
-            EqtTrace.Verbose($"ProcessCodeMethods.GetParentPidMacOs: Error getting parent of process {process.Id} - {process.ProcessName}, {ex}.");
-        }
     }
 
     /// <summary>
@@ -248,6 +215,7 @@ internal static class ProcessCodeMethods
         int processInformationLength,
         out int returnLength);
 
-    [DllImport("ntdll.dll", SetLastError = true)]
-    private static extern IntPtr NtSuspendProcess(IntPtr processHandle);
+    // This call is undocumented api, and should not be used.
+    //[DllImport("ntdll.dll", SetLastError = true)]
+    //private static extern IntPtr NtSuspendProcess(IntPtr processHandle);
 }

@@ -23,7 +23,7 @@ Trace level can be changed using below command line:
 > vstest.console testApp.dll --diag:log.txt;tracelevel=verbose
 ```
 
-Allowed values for tracelevel are: off, error, warning, info and verbose.
+Allowed values for tracelevel are: off, error, warning, info and verbose. The default value is verbose.
 
 ### Dotnet test
 
