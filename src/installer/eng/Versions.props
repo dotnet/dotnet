@@ -19,7 +19,7 @@
     <PreReleaseVersionLabel Condition="'$(StabilizePackageVersion)' != 'true'">rc</PreReleaseVersionLabel>
     <PreReleaseVersionLabel Condition="'$(StabilizePackageVersion)' == 'true' and '$(VersionFeature)' == '00'">rtm</PreReleaseVersionLabel>
     <PreReleaseVersionLabel Condition="'$(StabilizePackageVersion)' == 'true' and '$(VersionFeature)' != '00'">servicing</PreReleaseVersionLabel>
-    <PreReleaseVersionIteration Condition="'$(StabilizePackageVersion)' != 'true'">1</PreReleaseVersionIteration>
+    <PreReleaseVersionIteration Condition="'$(StabilizePackageVersion)' != 'true'">2</PreReleaseVersionIteration>
   </PropertyGroup>
   <PropertyGroup>
     <VersionFeature21>30</VersionFeature21>
@@ -60,10 +60,10 @@
     <MicrosoftDotNetTestProjectTemplates30PackageVersion>1.0.2-beta4.22406.1</MicrosoftDotNetTestProjectTemplates30PackageVersion>
     <!-- Supported versions -->
     <MicrosoftDotNetTestProjectTemplates31PackageVersion>1.1.0-rc.22558.1</MicrosoftDotNetTestProjectTemplates31PackageVersion>
-    <MicrosoftDotNetTestProjectTemplates50PackageVersion>1.1.0-rc.23415.2</MicrosoftDotNetTestProjectTemplates50PackageVersion>
-    <MicrosoftDotNetTestProjectTemplates60PackageVersion>1.1.0-rc.23415.2</MicrosoftDotNetTestProjectTemplates60PackageVersion>
-    <MicrosoftDotNetTestProjectTemplates70PackageVersion>1.1.0-rc.23415.2</MicrosoftDotNetTestProjectTemplates70PackageVersion>
-    <MicrosoftDotNetTestProjectTemplates80PackageVersion>1.1.0-rc.23415.2</MicrosoftDotNetTestProjectTemplates80PackageVersion>
+    <MicrosoftDotNetTestProjectTemplates50PackageVersion>1.1.0-rc.23410.2</MicrosoftDotNetTestProjectTemplates50PackageVersion>
+    <MicrosoftDotNetTestProjectTemplates60PackageVersion>1.1.0-rc.23410.2</MicrosoftDotNetTestProjectTemplates60PackageVersion>
+    <MicrosoftDotNetTestProjectTemplates70PackageVersion>1.1.0-rc.23410.2</MicrosoftDotNetTestProjectTemplates70PackageVersion>
+    <MicrosoftDotNetTestProjectTemplates80PackageVersion>1.1.0-rc.23410.2</MicrosoftDotNetTestProjectTemplates80PackageVersion>
   </PropertyGroup>
   <PropertyGroup>
     <!-- NUnit3.DotNetNew.Template versions do not 'flow in' -->
