@@ -1,3 +1,33 @@
+<#
+.SYNOPSIS
+Adds flow for a .NET preview or RC
+
+.PARAMETER RuntimeChannel
+Public runtime channel 
+
+.PARAMETER SdkChannel
+Public sdk channel
+
+.PARAMETER RuntimeBranch
+Public runtime repo branch (e.g. release/8.0-preview2)
+
+.PARAMETER SdkBranch
+Public sdk repo branch (e.g. release/8.0.1xx-preview2)
+
+.PARAMETER VSChannel
+Channel for tooling flow (e.g. VS 17.8)
+
+.PARAMETER AddInternalFlow
+If true, adds internal flow for the preview/rc.
+
+.PARAMETER InternalRuntimeChannel
+Internal runtime channel
+
+.PARAMETER InternalSdkChannel
+Internal sdk channel
+
+#>
+
 param
 (
     [Parameter(Mandatory=$true)][string]$RuntimeChannel,
