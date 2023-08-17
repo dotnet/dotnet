@@ -30,7 +30,7 @@ resources:
   - repository: vmr
     type: git
     name: dotnet-dotnet
-    ref: $(VmrBranch)
+    ref: ${{ variables.VmrBranch }}
 
 stages:
 # You can temporarily disable the VMR Build stage by changing the default of disableVmrBuild
