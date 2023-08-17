@@ -63,4 +63,8 @@ while [[ $# > 0 ]]; do
     shift
 done
 
+source $REPOROOT/eng/common/native/init-os-and-arch.sh
+source $REPOROOT/eng/common/native/init-distro-rid.sh
+initDistroRidGlobal "$os" "$arch" ""
+
 . "$REPOROOT/eng/common/build.sh" --build --restore "${args[@]}"
