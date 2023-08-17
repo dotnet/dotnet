@@ -32,6 +32,7 @@ steps:
     ./eng/vmr-sync.sh
     --vmr ${{ parameters.vmrPath }}
     --tmp $(Agent.TempDirectory)
+    --azdev-pat '$(System.AccessToken)'
     --branch ${{ parameters.vmrBranch }}
     --repository "installer:${{ parameters.targetRef }}"
     --recursive
