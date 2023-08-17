@@ -58,6 +58,9 @@
 ###       Optional. Template for the header of VMRs THIRD-PARTY-NOTICES file.
 ###       Defaults to src/VirtualMonoRepo/THIRD-PARTY-NOTICES.template.txt
 ###
+###   --azdev-pat
+###       Optional. Azure DevOps PAT to use for cloning private repositories.
+###
 ###   -v, --vmr, --vmr-dir PATH
 ###       Optional. Path to the dotnet/dotnet repository. When null, gets cloned to the temporary folder
 
@@ -102,6 +105,7 @@ recursive=false
 verbosity=verbose
 readme_template="$installer_dir/src/VirtualMonoRepo/README.template.md"
 tpn_template="$installer_dir/src/VirtualMonoRepo/THIRD-PARTY-NOTICES.template.txt"
+azdev_pat=''
 
 # If installer is a repo, we're in an installer and not in the dotnet/dotnet repo
 if [[ -d "$installer_dir/.git" ]]; then
@@ -140,6 +144,10 @@ while [[ $# -gt 0 ]]; do
       ;;
     --tpn-template)
       tpn_template=$2
+      shift
+      ;;
+    --azdev-pat)
+      azdev_pat=$2
       shift
       ;;
     -d|--debug)
@@ -245,11 +253,16 @@ if [[ -n "$additional_remotes" ]]; then
   additional_remotes="--additional-remotes $additional_remotes"
 fi
 
+if [[ -n "$azdev_pat" ]]; then
+  azdev_pat="--azdev-pat $azdev_pat"
+fi
+
 # Synchronize the VMR
 
 "$dotnet" darc vmr update                    \
   --vmr "$vmr_dir"                           \
   --tmp "$tmp_dir"                           \
+  $azdev_pat                                 \
   --$verbosity                               \
   $recursive_arg                             \
   --readme-template "$readme_template"       \
