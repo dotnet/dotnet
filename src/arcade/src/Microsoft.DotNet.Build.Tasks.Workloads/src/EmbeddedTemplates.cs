@@ -81,6 +81,8 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads
                 { $"component.res.swr", $"{ns}.SwixTemplate.component.res.swr" },
                 { $"component.swixproj", $"{ns}.SwixTemplate.component.swixproj" },
                 { $"manifest.vsmanproj", $"{ns}.SwixTempalte.manifest.vsmanproj" },
+                { $"packageGroup.swr", $"{ns}.SwixTemplate.packageGroup.swr" },
+                { $"packageGroup.swixproj", $"{ns}.SwixTemplate.packageGroup.swixproj" },
 
                 { "Icon.png", $"{ns}.Misc.Icon.png" },
                 { "LICENSE.TXT", $"{ns}.Misc.LICENSE.TXT" },

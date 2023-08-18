@@ -134,7 +134,9 @@ PATs that may be used:
 - A GitHub PAT for downloading files from GitHub (e.g. eng/Version.Details.xml or
   arcade script files.  Required scopes: None
 - An Azure DevOps PAT for downloading files from Azure DevOps. (e.g.
-  eng/Version.Details.xml)  Required scopes: Code-Read, Build-Read & Execute, Packaging Read
+  eng/Version.Details.xml)  Required scopes: Code-Read, Build-Read & Execute, Packaging Read.
+  The recommended way of generating the PAT is using the [PatGeneratorTool](https://dev.azure.com/dnceng/public/_artifacts/feed/dotnet-eng/NuGet/Microsoft.DncEng.PatGeneratorTool),
+  with the `dotnet pat-generator --scopes build_execute code --organizations dnceng devdiv --expires-in 180` command
 - A Build Asset Registry (BAR) password for interacting with Maestro++/BAR (e.g.
   obtaining build information needed for a drop).
 

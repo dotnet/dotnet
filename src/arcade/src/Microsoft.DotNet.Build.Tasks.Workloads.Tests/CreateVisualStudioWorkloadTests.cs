@@ -90,9 +90,15 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Tests
 
             // Verify the SWIX authoring for the component representing the workload in VS. The first should be a standard
             // component. There should also be a second preview component.
-            string componentSwr = File.ReadAllText(Path.Combine(baseIntermediateOutputPath, "src", "swix", "6.0.200", "microsoft.net.sdk.emscripten.5.6.7.8", "component.swr"));
+            string componentSwr = File.ReadAllText(
+                Path.Combine(Path.GetDirectoryName(
+                    createWorkloadTask.SwixProjects.FirstOrDefault(
+                        i => i.ItemSpec.Contains("microsoft.net.sdk.emscripten.5.6.swixproj")).ItemSpec), "component.swr"));
             Assert.Contains("package name=microsoft.net.sdk.emscripten", componentSwr);
-            string previewComponentSwr = File.ReadAllText(Path.Combine(baseIntermediateOutputPath, "src", "swix", "6.0.200", "microsoft.net.sdk.emscripten.pre.5.6.7.8", "component.swr"));
+            string previewComponentSwr = File.ReadAllText(
+                Path.Combine(Path.GetDirectoryName(
+                    createWorkloadTask.SwixProjects.FirstOrDefault(
+                        i => i.ItemSpec.Contains("microsoft.net.sdk.emscripten.pre.5.6.swixproj")).ItemSpec), "component.swr"));
             Assert.Contains("package name=microsoft.net.sdk.emscripten.pre", previewComponentSwr);
 
             // Emscripten is an abstract workload so it should be a component group.
@@ -219,7 +225,10 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Tests
             Assert.Equal("Arm64;1033", si.Template);
 
             // Verify the SWIX authoring for the component representing the workload in VS.
-            string componentSwr = File.ReadAllText(Path.Combine(baseIntermediateOutputPath, "src", "swix", "6.0.200", "microsoft.net.sdk.emscripten.5.6.7.8", "component.swr"));
+            string componentSwr = File.ReadAllText(
+                Path.Combine(Path.GetDirectoryName(
+                    createWorkloadTask.SwixProjects.FirstOrDefault(
+                        i => i.ItemSpec.Contains("microsoft.net.sdk.emscripten.5.6.swixproj")).ItemSpec), "component.swr"));
             Assert.Contains("package name=microsoft.net.sdk.emscripten", componentSwr);
 
             // Emscripten is an abstract workload so it should be a component group.
