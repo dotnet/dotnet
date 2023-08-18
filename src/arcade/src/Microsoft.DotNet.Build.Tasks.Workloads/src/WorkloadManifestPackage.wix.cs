@@ -22,6 +22,11 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads
         public override PackageExtractionMethod ExtractionMethod => PackageExtractionMethod.Unzip;
 
         /// <summary>
+        /// Prefix used in Visual Studio for SWIX based package group.
+        /// </summary>
+        private const string PackageGroupPrefix = "PackageGroup";
+
+        /// <summary>
         /// Special separator value used in workload manifest package IDs.
         /// </summary>
         private const string ManifestSeparator = ".Manifest-";
@@ -63,6 +68,14 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads
         }
 
         /// <summary>
+        /// The package ID to use when wrapping the manifest MSI inside a package group.
+        /// </summary>
+        public string SwixPackageGroupId
+        {
+            get;
+        }
+
+        /// <summary>
         /// Creates a new instance of a <see cref="WorkloadManifestPackage"/>.
         /// </summary>
         /// <param name="package">A task item for the workload manifest NuGet package.</param>
@@ -70,9 +83,10 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads
         /// <param name="msiVersion">The general MSI version to use when the package does not contain metadata for the installer version.</param>
         /// <param name="shortNames">A set of items used to shorten the names and identifiers of setup packages.</param>
         /// <param name="log">A <see cref="TaskLoggingHelper"/> class containing task logging methods.</param>
+        /// <param name="isSxS"><see langword="true"/> if the manifest supports SxS installs.</param>
         /// <exception cref="Exception" />
         public WorkloadManifestPackage(ITaskItem package, string destinationBaseDirectory, Version msiVersion,
-            ITaskItem[]? shortNames = null, TaskLoggingHelper? log = null) :
+            ITaskItem[]? shortNames = null, TaskLoggingHelper? log = null, bool isSxS = false) :
             base(package.ItemSpec, destinationBaseDirectory, shortNames, log)
         {
             if (!string.IsNullOrWhiteSpace(package.GetMetadata(Metadata.MsiVersion)))
@@ -82,7 +96,7 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads
             }
             else if (msiVersion != null)
             {
-                // Fall back to the version provided by the task parameter, e.g. if all manifests follow the same versioing rules.
+                // Fall back to the version provided by the task parameter, e.g. if all manifests follow the same versioning rules.
                 MsiVersion = msiVersion;
             }
             else
@@ -95,9 +109,17 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads
 
             SdkFeatureBand = GetSdkFeatureBandVersion(GetSdkVersion(Id));
             ManifestId = GetManifestId(Id);
-            SwixPackageId = $"{Id.Replace(shortNames)}";
-            SupportsMachineArch = bool.TryParse(package.GetMetadata(Metadata.SupportsMachineArch), out bool supportsMachineArch) ? supportsMachineArch : false; 
-         }
+            // For SxS manifests, the MSI provider key changes and so VS requires we change the MSI package ID as well, similar to
+            // what we do for packs.
+            SwixPackageId = isSxS ? $"{Id.Replace(shortNames)}.{Identity.Version}" : $"{Id.Replace(shortNames)}";
+
+            // For package groups, we want to only retain the SDK major.minor.featureband part and discard any semantic components
+            // in the package ID. For example, if the package ID is "Microsoft.NET.Workload.Emscripten.net6.Manifest-8.0.100-preview.6"
+            // then we want the package group to be "Microsoft.NET.Workload.Emscripten.net6.Manifest-8.0.100". The group would still point
+            // to the versioned SWIX package wrapping the MSI.
+            SwixPackageGroupId = $"{PackageGroupPrefix}.{ManifestId.Replace(shortNames)}.Manifest-{SdkFeatureBand.ToString(3)}";
+            SupportsMachineArch = bool.TryParse(package.GetMetadata(Metadata.SupportsMachineArch), out bool supportsMachineArch) ? supportsMachineArch : false;
+        }
 
         /// <summary>
         /// Gets the path of the workload manifest file. 

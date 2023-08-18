@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <OutputArchitecture>neutral</OutputArchitecture>
+    <OutputLocalized>false</OutputLocalized>
+    <OutputType>manifest</OutputType>
+    <OutputPath>$(ManifestOutputPath)</OutputPath>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <PackagePreprocessorDefinitions>$(PackagePreprocessorDefinitions)</PackagePreprocessorDefinitions>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Package Include="packageGroup.swr" />
+  </ItemGroup>
+  
+  <Target Name="GetNativeManifest" />  
+
+  <Import Project="$(SwixBuildTargets)"/>  
+</Project>

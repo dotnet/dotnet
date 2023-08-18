@@ -38,5 +38,10 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads
         /// A value indicating that the SWIX project creates a component package for a workload. 
         /// </summary>
         public static readonly string PackageTypeComponent = "component";
+
+        /// <summary>
+        /// A value indicating that the SWIX project creates a package group for a workload manifest. 
+        /// </summary>
+        public static readonly string PackageTypePackageGroup = "manifest-package-group";
     }
 }
