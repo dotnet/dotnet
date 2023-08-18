@@ -216,6 +216,7 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads
                 List<WorkloadManifestPackage> manifestPackages = new();
                 List<WorkloadManifestMsi> manifestMsisToBuild = new();
                 HashSet<SwixComponent> swixComponents = new();
+                HashSet<SwixPackageGroup> swixPackageGroups = new();
                 Dictionary<string, BuildData> buildData = new();
                 Dictionary<string, WorkloadPackGroupPackage> packGroupPackages = new();
 
@@ -226,7 +227,7 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads
                 {
                     // 1. Process the manifest package and create a set of installers.
                     WorkloadManifestPackage manifestPackage = new(workloadManifestPackageFile, PackageRootDirectory,
-                        string.IsNullOrWhiteSpace(ManifestMsiVersion) ? null : new Version(ManifestMsiVersion), ShortNames, Log);
+                        string.IsNullOrWhiteSpace(ManifestMsiVersion) ? null : new Version(ManifestMsiVersion), ShortNames, Log, EnableSideBySideManifests);
                     manifestPackages.Add(manifestPackage);
 
                     if (!_supportsMachineArch.ContainsKey(manifestPackage.SdkFeatureBand))
@@ -248,6 +249,18 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads
                         var manifestMsi = new WorkloadManifestMsi(manifestPackage, platform, BuildEngine, WixToolsetPath, BaseIntermediateOutputPath, EnableSideBySideManifests);
                         manifestMsisToBuild.Add(manifestMsi);
                         manifestMsisByPlatform[platform] = manifestMsi;
+                    }
+
+                    // If we're supporting SxS manifests, generate a package group to wrap the manifest VS packages
+                    // so we don't deal with unstable package IDs during VS insertions.
+                    if (EnableSideBySideManifests)
+                    {
+                        SwixPackageGroup packageGroup = SwixPackageGroup.Create(manifestPackage);
+
+                        if (!swixPackageGroups.Add(packageGroup))
+                        {
+                            Log.LogError(Strings.ManifestPackageGroupExists, manifestPackage.Id, packageGroup.Name);
+                        }
                     }
 
                     // 2. Process the manifest itself to determine the set of packs involved and create
@@ -545,6 +558,18 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads
                         swixProjectItems.Add(swixProjectItem);
                     }
                 });
+
+                if (EnableSideBySideManifests)
+                {
+                    // Generate SWIX projects for the Visual Studio package groups.
+                    _ = Parallel.ForEach(swixPackageGroups, swixPackageGroup =>
+                    {
+                        lock (swixProjectItems)
+                        {
+                            swixProjectItems.Add(PackageGroupSwixProject.CreateProjectItem(swixPackageGroup, BaseIntermediateOutputPath, BaseOutputPath));
+                        }
+                    });
+                }
 
                 Msis = msiItems.ToArray();
                 SwixProjects = swixProjectItems.ToArray();
