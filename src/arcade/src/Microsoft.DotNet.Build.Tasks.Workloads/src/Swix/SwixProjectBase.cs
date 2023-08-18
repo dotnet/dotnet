@@ -67,6 +67,18 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Swix
             ReplacementTokens[SwixTokens.__VS_PACKAGE_VERSION__] = $"{Version}";
         }
 
+        internal SwixProjectBase(SwixPackageBase package, string baseIntermediateOutputPath, string baseOutputPath, bool outOfSupport = false) :
+            base(baseIntermediateOutputPath, baseOutputPath)
+        {
+            Id = package.Name;
+            Version = package.Version;
+            OutOfSupport = outOfSupport;
+
+            ReplacementTokens[SwixTokens.__VS_PACKAGE_NAME__] = Id;
+            ReplacementTokens[SwixTokens.__VS_PACKAGE_VERSION__] = $"{Version}";
+        }
+
+
         /// <summary>
         /// Replace all tokens in the specified file.
         /// </summary>
