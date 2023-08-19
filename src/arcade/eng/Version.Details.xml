@@ -19,34 +19,34 @@
       <Uri>https://github.com/dotnet/templating</Uri>
       <Sha>ff0bf67619979e5f8d791e40ae56a8e3e857ea2f</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="8.0.0-beta.23415.4">
+    <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="8.0.0-beta.23417.3">
       <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>46ff142f43e887d5f9a4d87ef39d72166f61db8d</Sha>
+      <Sha>7837a0b504ed9a598daebd50f20520ccda5fe2b1</Sha>
       <SourceBuild RepoName="arcade" ManagedOnly="true" />
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.Build.Tasks.Feed" Version="8.0.0-beta.23415.4">
+    <Dependency Name="Microsoft.DotNet.Build.Tasks.Feed" Version="8.0.0-beta.23417.3">
       <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>46ff142f43e887d5f9a4d87ef39d72166f61db8d</Sha>
+      <Sha>7837a0b504ed9a598daebd50f20520ccda5fe2b1</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.SignTool" Version="8.0.0-beta.23415.4">
+    <Dependency Name="Microsoft.DotNet.SignTool" Version="8.0.0-beta.23417.3">
       <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>46ff142f43e887d5f9a4d87ef39d72166f61db8d</Sha>
+      <Sha>7837a0b504ed9a598daebd50f20520ccda5fe2b1</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.Helix.Sdk" Version="8.0.0-beta.23415.4">
+    <Dependency Name="Microsoft.DotNet.Helix.Sdk" Version="8.0.0-beta.23417.3">
       <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>46ff142f43e887d5f9a4d87ef39d72166f61db8d</Sha>
+      <Sha>7837a0b504ed9a598daebd50f20520ccda5fe2b1</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.SwaggerGenerator.MSBuild" Version="8.0.0-beta.23415.4">
+    <Dependency Name="Microsoft.DotNet.SwaggerGenerator.MSBuild" Version="8.0.0-beta.23417.3">
       <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>46ff142f43e887d5f9a4d87ef39d72166f61db8d</Sha>
+      <Sha>7837a0b504ed9a598daebd50f20520ccda5fe2b1</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.Maestro.Client" Version="1.1.0-beta.23416.3">
+    <Dependency Name="Microsoft.DotNet.Maestro.Client" Version="1.1.0-beta.23418.3">
       <Uri>https://github.com/dotnet/arcade-services</Uri>
-      <Sha>5d63a226d022fda90cae2c239e882ad253baa758</Sha>
+      <Sha>3d0ca14bd5718ba753e8dc1846db38913137cc85</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.Maestro.Tasks" Version="1.1.0-beta.23416.3">
+    <Dependency Name="Microsoft.DotNet.Maestro.Tasks" Version="1.1.0-beta.23418.3">
       <Uri>https://github.com/dotnet/arcade-services</Uri>
-      <Sha>5d63a226d022fda90cae2c239e882ad253baa758</Sha>
+      <Sha>3d0ca14bd5718ba753e8dc1846db38913137cc85</Sha>
     </Dependency>
     <Dependency Name="Microsoft.DotNet.XHarness.CLI" Version="8.0.0-prerelease.23407.2">
       <Uri>https://github.com/dotnet/xharness</Uri>
@@ -68,9 +68,9 @@
       <Uri>https://github.com/dotnet/symreader-converter</Uri>
       <Sha>c5ba7c88f92e2dde156c324a8c8edc04d9fa4fe0</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.XliffTasks" Version="1.0.0-beta.23416.1">
+    <Dependency Name="Microsoft.DotNet.XliffTasks" Version="1.0.0-beta.23418.1">
       <Uri>https://github.com/dotnet/xliff-tasks</Uri>
-      <Sha>1d688e4b21c1782d802beb1e9478535f647a28ec</Sha>
+      <Sha>bb654cd4736e7e8cb99f1c355ce2b8f0a686ba74</Sha>
     </Dependency>
     <!-- Necessary for source-build. This allows the package to be retrieved from previously-source-built artifacts
          and flow in as dependencies of the packages produced by arcade. -->
@@ -90,9 +90,9 @@
       <Sha>45f5554ac6813e1e155c47fd80ec146c684f65e8</Sha>
       <SourceBuild RepoName="source-build-reference-packages" ManagedOnly="true" />
     </Dependency>
-    <Dependency Name="Microsoft.SourceBuild.Intermediate.source-build-externals" Version="8.0.0-alpha.1.23414.2">
+    <Dependency Name="Microsoft.SourceBuild.Intermediate.source-build-externals" Version="8.0.0-alpha.1.23418.1">
       <Uri>https://github.com/dotnet/source-build-externals</Uri>
-      <Sha>72f5ac04ce80508c7a7d7aaba4ecf7df51c5eca2</Sha>
+      <Sha>8fc77fa8f591051da1120ebb76c3795b7b584495</Sha>
       <SourceBuild RepoName="source-build-externals" ManagedOnly="true" />
     </Dependency>
     <Dependency Name="Microsoft.Deployment.DotNet.Releases" Version="1.0.0-preview6.1.23159.4" CoherentParentDependency="Microsoft.NET.Sdk.WorkloadManifestReader">
