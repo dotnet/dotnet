@@ -122,7 +122,7 @@ namespace NuGet.Common
         NU1013 = 1013,
 
         /// <summary>
-        /// NuGetAuditLevel input errors
+        /// NuGetAudit* MSBuild property input errors
         /// </summary>
         NU1014 = 1014,
 

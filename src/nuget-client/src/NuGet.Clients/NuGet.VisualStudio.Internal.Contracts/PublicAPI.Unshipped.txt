@@ -3,7 +3,10 @@ NuGet.VisualStudio.Internal.Contracts.INuGetProjectManagerService.GetInstallActi
 NuGet.VisualStudio.Internal.Contracts.INuGetSearchService.GetAllPackageFoldersAsync(System.Collections.Generic.IReadOnlyCollection<NuGet.VisualStudio.Internal.Contracts.IProjectContextInfo!>! projectContextInfos, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<System.Collections.Generic.IReadOnlyList<NuGet.Protocol.Core.Types.SourceRepository!>!>!
 NuGet.VisualStudio.Internal.Contracts.IPackageReferenceContextInfo.VersionOverride.get -> NuGet.Versioning.VersionRange?
 NuGet.VisualStudio.Internal.Contracts.PackageReferenceContextInfo.VersionOverride.get -> NuGet.Versioning.VersionRange?
+NuGet.VisualStudio.Internal.Contracts.PackageSourceContextInfo.AllowInsecureConnections.get -> bool
+NuGet.VisualStudio.Internal.Contracts.PackageSourceContextInfo.AllowInsecureConnections.set -> void
 NuGet.VisualStudio.Internal.Contracts.PackageSourceContextInfo.PackageSourceContextInfo(string! source, string! name, bool isEnabled, int protocolVersion) -> void
+NuGet.VisualStudio.Internal.Contracts.PackageSourceContextInfo.PackageSourceContextInfo(string! source, string! name, bool isEnabled, int protocolVersion, bool allowInsecureConnections) -> void
 NuGet.VisualStudio.Internal.Contracts.PackageSourceContextInfo.ProtocolVersion.get -> int
 NuGet.VisualStudio.Internal.Contracts.PackageSourceContextInfo.ProtocolVersion.set -> void
 NuGet.VisualStudio.Internal.Contracts.TransitivePackageReferenceContextInfo.VersionOverride.get -> NuGet.Versioning.VersionRange?

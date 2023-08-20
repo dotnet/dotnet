@@ -45,6 +45,7 @@ namespace NuGet.SolutionRestoreManager
         private readonly Lazy<IVsSolutionManager> _solutionManager;
         private readonly Lazy<INuGetLockService> _lockService;
         private readonly Lazy<Common.ILogger> _logger;
+        private readonly Lazy<IVulnerabilitiesNotificationService> _vulnerabilitiesFoundService;
         private readonly AsyncLazy<IComponentModel> _componentModel;
 
         private EnvDTE.SolutionEvents _solutionEvents;
@@ -97,14 +98,16 @@ namespace NuGet.SolutionRestoreManager
             Lazy<Common.ILogger> logger,
             Lazy<INuGetErrorList> errorList,
             Lazy<IOutputConsoleProvider> outputConsoleProvider,
-            Lazy<INuGetFeatureFlagService> nugetFeatureFlagService)
+            Lazy<INuGetFeatureFlagService> nugetFeatureFlagService,
+            Lazy<IVulnerabilitiesNotificationService> vulnerabilitiesFoundService)
             : this(AsyncServiceProvider.GlobalProvider,
                   solutionManager,
                   lockService,
                   logger,
                   errorList,
                   outputConsoleProvider,
-                  nugetFeatureFlagService)
+                  nugetFeatureFlagService,
+                  vulnerabilitiesFoundService)
         { }
 
         public SolutionRestoreWorker(
@@ -114,7 +117,8 @@ namespace NuGet.SolutionRestoreManager
             Lazy<Common.ILogger> logger,
             Lazy<INuGetErrorList> errorList,
             Lazy<IOutputConsoleProvider> outputConsoleProvider,
-            Lazy<INuGetFeatureFlagService> nugetFeatureFlagService)
+            Lazy<INuGetFeatureFlagService> nugetFeatureFlagService,
+            Lazy<IVulnerabilitiesNotificationService> vulnerabilitiesFoundService)
         {
             if (asyncServiceProvider == null)
             {
@@ -151,6 +155,11 @@ namespace NuGet.SolutionRestoreManager
                 throw new ArgumentNullException(nameof(nugetFeatureFlagService));
             }
 
+            if (vulnerabilitiesFoundService == null)
+            {
+                throw new ArgumentNullException(nameof(vulnerabilitiesFoundService));
+            }
+
             _asyncServiceProvider = asyncServiceProvider;
             _solutionManager = solutionManager;
             _lockService = lockService;
@@ -158,6 +167,7 @@ namespace NuGet.SolutionRestoreManager
             _errorList = errorList;
             _outputConsoleProvider = outputConsoleProvider;
             _nugetFeatureFlagService = nugetFeatureFlagService;
+            _vulnerabilitiesFoundService = vulnerabilitiesFoundService;
 
             var joinableTaskContextNode = new JoinableTaskContextNode(ThreadHelper.JoinableTaskContext);
             _joinableCollection = joinableTaskContextNode.CreateCollection();
@@ -781,7 +791,7 @@ namespace NuGet.SolutionRestoreManager
 
                             // Run restore
                             var job = componentModel.GetService<ISolutionRestoreJob>();
-                            return await job.ExecuteAsync(request, _restoreJobContext, logger, restoreStartTrackingData, jobCts.Token);
+                            return await job.ExecuteAsync(request, _restoreJobContext, logger, restoreStartTrackingData, _vulnerabilitiesFoundService, jobCts.Token);
                         }
                         finally
                         {

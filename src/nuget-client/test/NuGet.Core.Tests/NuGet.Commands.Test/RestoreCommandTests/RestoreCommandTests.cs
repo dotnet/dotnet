@@ -2787,6 +2787,7 @@ namespace NuGet.Commands.Test.RestoreCommandTests
             var projectName = "TestProject";
             var projectPath = Path.Combine(pathContext.SolutionRoot, projectName);
             PackageSpec packageSpec = ProjectTestHelpers.GetPackageSpec(projectName, pathContext.SolutionRoot, "net472", "a");
+            packageSpec.RestoreMetadata.RestoreAuditProperties.EnableAudit = bool.TrueString;
 
             await SimpleTestPackageUtility.CreateFolderFeedV3Async(
                 pathContext.PackageSource,
@@ -2820,36 +2821,71 @@ namespace NuGet.Commands.Test.RestoreCommandTests
 
             var projectInformationEvent = telemetryEvents.Single(e => e.Name.Equals("ProjectRestoreInformation"));
 
-            projectInformationEvent.Count.Should().Be(29);
-            projectInformationEvent["RestoreSuccess"].Should().Be(true);
-            projectInformationEvent["NoOpResult"].Should().Be(false);
-            projectInformationEvent["IsCentralVersionManagementEnabled"].Should().Be(false);
-            projectInformationEvent["NoOpCacheFileEvaluationResult"].Should().Be(false);
-            projectInformationEvent["IsLockFileEnabled"].Should().Be(false);
-            projectInformationEvent["IsLockFileValidForRestore"].Should().Be(false);
-            projectInformationEvent["LockFileEvaluationResult"].Should().Be(true);
-            projectInformationEvent["NoOpDuration"].Should().NotBeNull();
-            projectInformationEvent["TotalUniquePackagesCount"].Should().Be(1);
-            projectInformationEvent["NewPackagesInstalledCount"].Should().Be(1);
-            projectInformationEvent["EvaluateLockFileDuration"].Should().NotBeNull();
-            projectInformationEvent["CreateRestoreTargetGraphDuration"].Should().NotBeNull();
-            projectInformationEvent["GenerateRestoreGraphDuration"].Should().NotBeNull();
-            projectInformationEvent["CreateRestoreResultDuration"].Should().NotBeNull();
-            projectInformationEvent["WalkFrameworkDependencyDuration"].Should().NotBeNull();
-            projectInformationEvent["GenerateAssetsFileDuration"].Should().NotBeNull();
-            projectInformationEvent["ValidateRestoreGraphsDuration"].Should().NotBeNull();
-            projectInformationEvent["EvaluateDownloadDependenciesDuration"].Should().NotBeNull();
-            projectInformationEvent["NoOpCacheFileEvaluateDuration"].Should().NotBeNull();
-            projectInformationEvent["StartTime"].Should().NotBeNull();
-            projectInformationEvent["EndTime"].Should().NotBeNull();
-            projectInformationEvent["OperationId"].Should().NotBeNull();
-            projectInformationEvent["Duration"].Should().NotBeNull();
-            projectInformationEvent["PackageSourceMapping.IsMappingEnabled"].Should().Be(false);
-            projectInformationEvent["SourcesCount"].Should().Be(1);
-            projectInformationEvent["HttpSourcesCount"].Should().Be(0);
-            projectInformationEvent["LocalSourcesCount"].Should().Be(1);
-            projectInformationEvent["FallbackFoldersCount"].Should().Be(0);
-            projectInformationEvent["Audit.Enabled"].Should().Be("Undefined");
+            var expectedProperties = new Dictionary<string, Action<object>>()
+            {
+                ["RestoreSuccess"] = value => value.Should().Be(true),
+                ["NoOpResult"] = value => value.Should().Be(false),
+                ["IsCentralVersionManagementEnabled"] = value => value.Should().Be(false),
+                ["NoOpCacheFileEvaluationResult"] = value => value.Should().Be(false),
+                ["IsLockFileEnabled"] = value => value.Should().Be(false),
+                ["IsLockFileValidForRestore"] = value => value.Should().Be(false),
+                ["LockFileEvaluationResult"] = value => value.Should().Be(true),
+                ["NoOpDuration"] = value => value.Should().NotBeNull(),
+                ["TotalUniquePackagesCount"] = value => value.Should().Be(1),
+                ["NewPackagesInstalledCount"] = value => value.Should().Be(1),
+                ["EvaluateLockFileDuration"] = value => value.Should().NotBeNull(),
+                ["CreateRestoreTargetGraphDuration"] = value => value.Should().NotBeNull(),
+                ["GenerateRestoreGraphDuration"] = value => value.Should().NotBeNull(),
+                ["CreateRestoreResultDuration"] = value => value.Should().NotBeNull(),
+                ["WalkFrameworkDependencyDuration"] = value => value.Should().NotBeNull(),
+                ["GenerateAssetsFileDuration"] = value => value.Should().NotBeNull(),
+                ["ValidateRestoreGraphsDuration"] = value => value.Should().NotBeNull(),
+                ["EvaluateDownloadDependenciesDuration"] = value => value.Should().NotBeNull(),
+                ["NoOpCacheFileEvaluateDuration"] = value => value.Should().NotBeNull(),
+                ["StartTime"] = value => value.Should().NotBeNull(),
+                ["EndTime"] = value => value.Should().NotBeNull(),
+                ["OperationId"] = value => value.Should().NotBeNull(),
+                ["Duration"] = value => value.Should().NotBeNull(),
+                ["PackageSourceMapping.IsMappingEnabled"] = value => value.Should().Be(false),
+                ["SourcesCount"] = value => value.Should().Be(1),
+                ["HttpSourcesCount"] = value => value.Should().Be(0),
+                ["LocalSourcesCount"] = value => value.Should().Be(1),
+                ["FallbackFoldersCount"] = value => value.Should().Be(0),
+                ["WarningCodes"] = value => value.Should().Be("NU1905"),
+                ["Audit.Enabled"] = value => value.Should().Be("ExplicitOptIn"),
+                ["Audit.Level"] = value => value.Should().Be(0),
+                ["Audit.Mode"] = value => value.Should().Be("Unknown"),
+                ["Audit.Vulnerability.Direct.Count"] = value => value.Should().Be(0),
+                ["Audit.Vulnerability.Direct.Severity0"] = value => value.Should().Be(0),
+                ["Audit.Vulnerability.Direct.Severity1"] = value => value.Should().Be(0),
+                ["Audit.Vulnerability.Direct.Severity2"] = value => value.Should().Be(0),
+                ["Audit.Vulnerability.Direct.Severity3"] = value => value.Should().Be(0),
+                ["Audit.Vulnerability.Direct.SeverityInvalid"] = value => value.Should().Be(0),
+                ["Audit.Vulnerability.Transitive.Count"] = value => value.Should().Be(0),
+                ["Audit.Vulnerability.Transitive.Severity0"] = value => value.Should().Be(0),
+                ["Audit.Vulnerability.Transitive.Severity1"] = value => value.Should().Be(0),
+                ["Audit.Vulnerability.Transitive.Severity2"] = value => value.Should().Be(0),
+                ["Audit.Vulnerability.Transitive.Severity3"] = value => value.Should().Be(0),
+                ["Audit.Vulnerability.Transitive.SeverityInvalid"] = value => value.Should().Be(0),
+                ["Audit.DataSources"] = value => value.Should().Be(0),
+                ["Audit.Duration.Download"] = value => value.Should().BeOfType<double>(),
+                ["Audit.Duration.Total"] = value => value.Should().BeOfType<double>(),
+            };
+
+            HashSet<string> actualProperties = new();
+            foreach (var eventProperty in projectInformationEvent)
+            {
+                actualProperties.Add(eventProperty.Key);
+            }
+
+            expectedProperties.Keys.Except(actualProperties).Should().BeEmpty();
+            actualProperties.Except(expectedProperties.Keys).Should().BeEmpty();
+
+            foreach (var kvp in expectedProperties)
+            {
+                object value = projectInformationEvent[kvp.Key];
+                kvp.Value(value);
+            }
         }
 
         [Fact]
