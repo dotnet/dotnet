@@ -162,6 +162,11 @@ namespace NuGet.Commands.Test
             updated.RestoreMetadata.CentralPackageVersionsEnabled = spec.RestoreMetadata?.CentralPackageVersionsEnabled ?? false;
             updated.RestoreMetadata.CentralPackageTransitivePinningEnabled = spec.RestoreMetadata?.CentralPackageTransitivePinningEnabled ?? false;
 
+            updated.RestoreMetadata.RestoreAuditProperties = new RestoreAuditProperties()
+            {
+                EnableAudit = bool.FalseString
+            };
+
             // Update the Target Alias.
             foreach (var framework in updated.TargetFrameworks)
             {
@@ -193,6 +198,10 @@ namespace NuGet.Commands.Test
             metadata.ProjectUniqueName = msbuildProjectFilePath;
             metadata.CacheFilePath = NoOpRestoreUtilities.GetProjectCacheFilePath(msbuildProjectExtensionsPath);
             metadata.ConfigFilePaths = new List<string>();
+            metadata.RestoreAuditProperties = new RestoreAuditProperties()
+            {
+                EnableAudit = bool.FalseString
+            };
 
             foreach (var framework in updated.TargetFrameworks)
             {

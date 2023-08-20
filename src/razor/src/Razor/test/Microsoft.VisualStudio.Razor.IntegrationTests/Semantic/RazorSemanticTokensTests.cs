@@ -14,11 +14,12 @@ using Microsoft.VisualStudio.Razor.IntegrationTests.InProcess;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Classification;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace Microsoft.VisualStudio.Razor.IntegrationTests;
 
 [IntializeTestFile]
-public class RazorSemanticTokensTests : AbstractRazorEditorTest
+public class RazorSemanticTokensTests(ITestOutputHelper testOutputHelper) : AbstractRazorEditorTest(testOutputHelper)
 {
     private static readonly AsyncLocal<string?> s_fileName = new();
 

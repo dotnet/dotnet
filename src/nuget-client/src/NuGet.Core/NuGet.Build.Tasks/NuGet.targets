@@ -61,8 +61,6 @@ Copyright (c) .NET Foundation. All rights reserved.
     <GetReferenceNearestTargetFrameworkTaskSupportsTargetPlatformParameter>true</GetReferenceNearestTargetFrameworkTaskSupportsTargetPlatformParameter>
     <!-- Flag if the Central package file is enabled -->
     <_CentralPackageVersionsEnabled Condition="'$(ManagePackageVersionsCentrally)' == 'true' AND '$(CentralPackageVersionsFileImported)' == 'true'">true</_CentralPackageVersionsEnabled>
-    <!-- NuGetAudit is enabled by default when using the .NET 8 SDK or above. Customers should set 'true', so we'll use 'default' to signal implicit opt-in -->
-    <NuGetAudit Condition=" '$(NuGetAudit)' == '' AND $([MSBuild]::VersionGreaterThanOrEquals($([MSBuild]::ValueOrDefault('$(NETCoreSdkVersion)', '0.0')), '8.0'))">default</NuGetAudit>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -378,6 +376,7 @@ Copyright (c) .NET Foundation. All rights reserved.
        Condition=" '%(RestoreGraphProjectInputItems.Extension)' != '.metaproj'
                    AND '%(RestoreGraphProjectInputItems.Extension)' != '.shproj'
                    AND '%(RestoreGraphProjectInputItems.Extension)' != '.vcxitems'
+                   AND '%(RestoreGraphProjectInputItems.Extension)' != '.vdproj'
                    AND '%(RestoreGraphProjectInputItems.Extension)' != '' " />
     </ItemGroup>
 
