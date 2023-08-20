@@ -12,13 +12,16 @@ using Microsoft.VisualStudio.Razor.IntegrationTests.InProcess;
 using Microsoft.VisualStudio.Settings;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Xunit.Abstractions;
 
 namespace Microsoft.VisualStudio.Razor.IntegrationTests;
 
-public abstract class AbstractRazorEditorTest : AbstractEditorTest
+public abstract class AbstractRazorEditorTest(ITestOutputHelper testOutputHelper) : AbstractEditorTest
 {
     private const string LegacyRazorEditorFeatureFlag = "Razor.LSP.LegacyEditor";
     private const string UseLegacyASPNETCoreEditorSetting = "TextEditor.HTML.Specific.UseLegacyASPNETCoreRazorEditor";
+
+    private readonly ITestOutputHelper _testOutputHelper = testOutputHelper;
 
     protected override string LanguageName => LanguageNames.Razor;
 
@@ -62,6 +65,12 @@ public abstract class AbstractRazorEditorTest : AbstractEditorTest
 
         // Close the file we opened, just in case, so the test can start with a clean slate
         await TestServices.Editor.CloseCodeFileAsync(RazorProjectConstants.BlazorProjectName, RazorProjectConstants.IndexRazorFile, saveFile: false, ControlledHangMitigatingCancellationToken);
+    }
+
+    public override async Task DisposeAsync()
+    {
+        var paneContent = await TestServices.Output.GetRazorOutputPaneContentAsync(CancellationToken.None);
+        _testOutputHelper.WriteLine($"Razor Output Pane Content:{Environment.NewLine}{paneContent}");
     }
 
     private static void EnsureLSPEditorEnabled()

@@ -326,8 +326,9 @@ internal sealed class RazorDocumentMappingService : IRazorDocumentMappingService
             throw new InvalidOperationException("Cannot use document mapping service on a generated document that has a null CodeDocument.");
         }
 
-        foreach (var mapping in generatedDocument.SourceMappings)
+        for (var i = 0; i < generatedDocument.SourceMappings.Count; i++)
         {
+            var mapping = generatedDocument.SourceMappings[i];
             var generatedSpan = mapping.GeneratedSpan;
             var generatedAbsoluteIndex = generatedSpan.AbsoluteIndex;
             if (generatedAbsoluteIndex <= generatedDocumentIndex)
