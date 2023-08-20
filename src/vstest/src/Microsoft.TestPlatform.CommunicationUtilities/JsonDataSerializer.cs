@@ -3,6 +3,7 @@
 
 using System;
 using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using System.IO;
 
 using Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Interfaces;
@@ -25,12 +26,14 @@ public class JsonDataSerializer : IDataSerializer
 
     private static readonly JsonSerializer PayloadSerializerV1; // payload serializer for version <= 1
     private static readonly JsonSerializer PayloadSerializerV2; // payload serializer for version >= 2
+    private static readonly JsonSerializer FastSerializer;
     private static readonly JsonSerializerSettings FastJsonSettings; // serializer settings for faster json
     private static readonly JsonSerializerSettings JsonSettings; // serializer settings for serializer v1, which should use to deserialize message headers
     private static readonly JsonSerializer Serializer; // generic serializer
 
     static JsonDataSerializer()
     {
+
         var jsonSettings = new JsonSerializerSettings
         {
             DateFormatHandling = DateFormatHandling.IsoDateFormat,
@@ -38,6 +41,22 @@ public class JsonDataSerializer : IDataSerializer
             DateTimeZoneHandling = DateTimeZoneHandling.Utc,
             TypeNameHandling = TypeNameHandling.None,
             ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
+            MissingMemberHandling = MissingMemberHandling.Ignore,
+            NullValueHandling = NullValueHandling.Include,
+            DefaultValueHandling = DefaultValueHandling.Include,
+            ObjectCreationHandling = ObjectCreationHandling.Auto,
+            PreserveReferencesHandling = PreserveReferencesHandling.None,
+            ConstructorHandling = ConstructorHandling.Default,
+            MetadataPropertyHandling = MetadataPropertyHandling.Default,
+            Formatting = Formatting.None,
+            FloatParseHandling = FloatParseHandling.Double,
+            FloatFormatHandling = FloatFormatHandling.String,
+            StringEscapeHandling = StringEscapeHandling.Default,
+            TypeNameAssemblyFormatHandling = TypeNameAssemblyFormatHandling.Simple,
+            Culture = CultureInfo.InvariantCulture,
+            CheckAdditionalContent = false,
+            DateFormatString = @"yyyy'-'MM'-'dd'T'HH':'mm':'ss.FFFFFFFK",
+            MaxDepth = 64,
         };
 
         JsonSettings = jsonSettings;
@@ -54,12 +73,28 @@ public class JsonDataSerializer : IDataSerializer
             DateTimeZoneHandling = jsonSettings.DateTimeZoneHandling,
             TypeNameHandling = jsonSettings.TypeNameHandling,
             ReferenceLoopHandling = jsonSettings.ReferenceLoopHandling,
+            MissingMemberHandling = jsonSettings.MissingMemberHandling,
             // PERF: Null value handling has very small impact on serialization and deserialization. Enabling it does not warrant the risk we run
-            // of changing how our consumers get their data.
-            // NullValueHandling = NullValueHandling.Ignore,
-
+            // of changing how our consumers get their data. so we leave it at the default value
+            NullValueHandling = jsonSettings.NullValueHandling,
+            DefaultValueHandling = jsonSettings.DefaultValueHandling,
+            ObjectCreationHandling = jsonSettings.ObjectCreationHandling,
+            PreserveReferencesHandling = jsonSettings.PreserveReferencesHandling,
+            ConstructorHandling = jsonSettings.ConstructorHandling,
+            MetadataPropertyHandling = jsonSettings.MetadataPropertyHandling,
+            Formatting = jsonSettings.Formatting,
+            FloatParseHandling = jsonSettings.FloatParseHandling,
+            FloatFormatHandling = jsonSettings.FloatFormatHandling,
+            StringEscapeHandling = jsonSettings.StringEscapeHandling,
+            TypeNameAssemblyFormatHandling = jsonSettings.TypeNameAssemblyFormatHandling,
+            Culture = jsonSettings.Culture,
+            CheckAdditionalContent = jsonSettings.CheckAdditionalContent,
+            DateFormatString = jsonSettings.DateFormatString,
+            MaxDepth = jsonSettings.MaxDepth,
             ContractResolver = contractResolver,
         };
+
+        FastSerializer = JsonSerializer.Create(FastJsonSettings);
 
         PayloadSerializerV1.ContractResolver = new TestPlatformContractResolver1();
         PayloadSerializerV2.ContractResolver = contractResolver;
@@ -73,6 +108,8 @@ public class JsonDataSerializer : IDataSerializer
         payloadSerializer2.TraceWriter = new MemoryTraceWriter();
 #endif
     }
+
+
 
     /// <summary>
     /// Prevents a default instance of the <see cref="JsonDataSerializer"/> class from being created.
@@ -105,7 +142,7 @@ public class JsonDataSerializer : IDataSerializer
         {
             // PERF: If the fast path fails, deserialize into header object that does not have any Payload. When the message type info
             // is at the start of the message, this is also pretty fast. Again, this won't touch the payload.
-            MessageHeader header = JsonConvert.DeserializeObject<MessageHeader>(rawMessage, JsonSettings)!;
+            MessageHeader header = DeserializeObjectFast<MessageHeader>(rawMessage)!;
             version = header.Version;
             messageType = header.MessageType;
         }
@@ -171,7 +208,7 @@ public class JsonDataSerializer : IDataSerializer
         {
             // PERF: Fast path is compatibile only with protocol versions that use serializer_2,
             // and this is faster than deserializing via deserializer_2.
-            var messageWithPayload = JsonConvert.DeserializeObject<PayloadedMessage<T>>(rawMessage, FastJsonSettings);
+            var messageWithPayload = DeserializeObjectFast<PayloadedMessage<T>>(rawMessage);
 
             return messageWithPayload == null ? default : messageWithPayload.Payload;
         }
@@ -185,6 +222,12 @@ public class JsonDataSerializer : IDataSerializer
             TPDebug.Assert(rawMessagePayload is not null, "rawMessagePayload should not be null");
             return Deserialize<T>(payloadSerializer, rawMessagePayload);
         }
+    }
+
+    private static T? DeserializeObjectFast<T>(string value)
+    {
+        using JsonTextReader reader = new(new StringReader(value));
+        return (T?)FastSerializer.Deserialize(reader, typeof(T));
     }
 
     private static bool FastHeaderParse(string rawMessage, out int version, out string? messageType)
@@ -345,7 +388,7 @@ public class JsonDataSerializer : IDataSerializer
         }
         else
         {
-            return JsonConvert.SerializeObject(new VersionedMessageForSerialization { MessageType = messageType, Version = version, Payload = payload }, FastJsonSettings);
+            return Serialize(FastSerializer, new VersionedMessageForSerialization { MessageType = messageType, Version = version, Payload = payload });
         }
     }
 
