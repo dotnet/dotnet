@@ -70,7 +70,7 @@ jobs:
   - template: /eng/common/templates/variables/pool-providers.yml
   - ${{ if eq(variables['System.TeamProject'], 'internal') }}:
     - group: AzureDevOps-Artifact-Feeds-Pats
-  - ${{ if and(not(parameters.isBuiltFromVmr), eq(variables['System.TeamProject'], 'internal'), not(startswith(parameters.vmrBranch, 'internal/release/'))) }}:
+  - ${{ if and(not(parameters.isBuiltFromVmr), eq(variables['System.TeamProject'], 'internal'), not(startswith(parameters.vmrBranch, 'internal/release/')), not(eq(variables['Build.Reason'], 'PullRequest'))) }}:
     - group: DotNetBot-GitHub
   - ${{ else }}:
     - name: BotAccount-dotnet-bot-repo-PAT
