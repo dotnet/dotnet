@@ -117,8 +117,19 @@ internal class DefaultRazorProjectService : RazorProjectService
             var hostDocument = new HostDocument(textDocumentPath, normalizedTargetFilePath);
             var textLoader = _remoteTextLoaderFactory.Create(textDocumentPath);
 
+            var projectSnapshotManager = _projectSnapshotManagerAccessor.Instance;
             _logger.LogInformation("Adding document '{filePath}' to project '{projectSnapshotFilePath}'.", filePath, projectSnapshot.FilePath);
-            _projectSnapshotManagerAccessor.Instance.DocumentAdded(projectSnapshot.Key, hostDocument, textLoader);
+            projectSnapshotManager.DocumentAdded(projectSnapshot.Key, hostDocument, textLoader);
+
+            // Adding a document to a project could also happen because a target was added to a project, or we're moving a document
+            // from Misc Project to a real one, and means the newly added document could actually already be open.
+            // If it is, we need to make sure we start generating it so we're ready to handle requests that could start coming in.
+            if (projectSnapshotManager.IsDocumentOpen(textDocumentPath) &&
+                projectSnapshotManager.GetLoadedProject(projectSnapshot.Key) is { } project &&
+                project.GetDocument(textDocumentPath) is { } document)
+            {
+                _ = document.GetGeneratedOutputAsync();
+            }
         }
     }
 

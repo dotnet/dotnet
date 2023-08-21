@@ -7,10 +7,10 @@
       "commitSha": "46ff142f43e887d5f9a4d87ef39d72166f61db8d"
     },
     {
-      "packageVersion": "8.0.0-rc.1.23418.12",
+      "packageVersion": "8.0.0-rc.1.23420.3",
       "path": "aspnetcore",
       "remoteUri": "https://dev.azure.com/dnceng/internal/_git/dotnet-aspnetcore",
-      "commitSha": "6dbf89806f873628c9f7539e24a7319291ad33e7"
+      "commitSha": "d62ccadb8cf11643758752aefde797382ad71ef0"
     },
     {
       "packageVersion": "0.11.4-alpha.23407.2",
@@ -58,7 +58,7 @@
       "packageVersion": "8.0.100",
       "path": "installer",
       "remoteUri": "https://github.com/dotnet/installer",
-      "commitSha": "c36f35061fa79595a7822c3947cccb0a8b8df3ac"
+      "commitSha": "99b5f0767ae6df4c07fba274f4d7f1afd080f23a"
     },
     {
       "packageVersion": "17.8.0-preview-23418-03",
@@ -73,10 +73,10 @@
       "commitSha": "e873b496daa6839a86f4b820d15945a9aad98e3d"
     },
     {
-      "packageVersion": "7.0.0-preview.23416.4",
+      "packageVersion": "7.0.0-preview.23420.1",
       "path": "razor",
       "remoteUri": "https://github.com/dotnet/razor",
-      "commitSha": "105d6b9b990298bc1196c805c537b56e5667a437"
+      "commitSha": "f72cc5b96599c5d1de7fa8dcfb1da9ac82ddb0e4"
     },
     {
       "packageVersion": "4.8.0-1.23419.1",
@@ -85,10 +85,10 @@
       "commitSha": "5fcefbef4fa8a28c2ac73c8c03ab37fca30e4570"
     },
     {
-      "packageVersion": "3.11.0-beta1.23414.1",
+      "packageVersion": "3.11.0-beta1.23420.2",
       "path": "roslyn-analyzers",
       "remoteUri": "https://github.com/dotnet/roslyn-analyzers",
-      "commitSha": "2af4cd81f7b5ac21569411f8dd5c93272c6dd19f"
+      "commitSha": "76d99c5f3e11f0600fae074270c0d89042c360f0"
     },
     {
       "packageVersion": "8.0.0-rc.1.23419.4",
@@ -97,10 +97,10 @@
       "commitSha": "92959931a32a37a19d8e1b1684edc6db0857d7de"
     },
     {
-      "packageVersion": "8.0.100-rc.1.23419.13",
+      "packageVersion": "8.0.100-rc.1.23420.16",
       "path": "sdk",
       "remoteUri": "https://dev.azure.com/dnceng/internal/_git/dotnet-sdk",
-      "commitSha": "1e4fa2e4ebc2b1ee91bd1343b36b60522f7288fd"
+      "commitSha": "bfb1d918520dd95ceabfeef501ba0a8cf2c7348b"
     },
     {
       "packageVersion": "8.0.0-alpha.1.23414.2",
@@ -127,10 +127,10 @@
       "commitSha": "2c8079e2e8e78c0cd11ac75a32014756136ecdb9"
     },
     {
-      "packageVersion": "8.0.100-rc.1.23419.1",
+      "packageVersion": "8.0.100-rc.1.23420.1",
       "path": "templating",
       "remoteUri": "https://dev.azure.com/dnceng/internal/_git/dotnet-templating",
-      "commitSha": "d3907d93ae43e4e859cec5a37b78f5fb7d2d5434"
+      "commitSha": "d6094ca85193c4f1903a35b23147127a2ca7cdac"
     },
     {
       "packageVersion": "1.1.0-rc.23410.2",
