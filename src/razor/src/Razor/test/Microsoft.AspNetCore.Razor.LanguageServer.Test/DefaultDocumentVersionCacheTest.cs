@@ -3,7 +3,9 @@
 
 #nullable disable
 
+using System;
 using System.Linq;
+using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.CodeAnalysis;
 using Xunit;
@@ -158,7 +160,7 @@ public class DefaultDocumentVersionCacheTest : LanguageServerTestBase
 
         // Assert
         var kvp = Assert.Single(documentVersionCache.DocumentLookup_NeedsLock);
-        Assert.Equal(document.FilePath, kvp.Key.DocumentFilePath);
+        Assert.Equal(document.FilePath, kvp.Key);
         var entry = Assert.Single(kvp.Value);
         Assert.True(entry.Document.TryGetTarget(out var actualDocument));
         Assert.Same(document, actualDocument);
@@ -232,5 +234,51 @@ public class DefaultDocumentVersionCacheTest : LanguageServerTestBase
         // Assert
         Assert.True(result);
         Assert.Equal(1337, version);
+    }
+
+    [Fact]
+    public void ProjectSnapshotManager_KnownDocumentAdded_TracksNewDocument()
+    {
+        // Arrange
+        var documentVersionCache = new DefaultDocumentVersionCache();
+        var projectSnapshotManager = TestProjectSnapshotManager.Create(ErrorReporter);
+        projectSnapshotManager.AllowNotifyListeners = true;
+        documentVersionCache.Initialize(projectSnapshotManager);
+
+        var project1 = TestProjectSnapshot.Create("C:/path/to/project1.csproj", intermediateOutputPath: "C:/path/to/obj1", documentFilePaths: Array.Empty<string>(), RazorConfiguration.Default, projectWorkspaceState: null);
+        projectSnapshotManager.ProjectAdded(project1.HostProject);
+        var document1 = projectSnapshotManager.CreateAndAddDocument(project1, @"C:\path\to\file.razor");
+
+        // Act
+        documentVersionCache.TrackDocumentVersion(document1, 1337);
+
+        // Assert
+        var kvp = Assert.Single(documentVersionCache.DocumentLookup_NeedsLock);
+        Assert.Equal(document1.FilePath, kvp.Key);
+        var entry = Assert.Single(kvp.Value);
+        Assert.True(entry.Document.TryGetTarget(out var actualDocument));
+        Assert.Same(document1, actualDocument);
+        Assert.Equal(1337, entry.Version);
+
+        // Act II
+        var project2 = TestProjectSnapshot.Create("C:/path/to/project2.csproj", intermediateOutputPath: "C:/path/to/obj2", documentFilePaths: Array.Empty<string>(), RazorConfiguration.Default, projectWorkspaceState: null);
+        projectSnapshotManager.ProjectAdded(project2.HostProject);
+        projectSnapshotManager.CreateAndAddDocument(project2, @"C:\path\to\file.razor");
+
+        var document2 = projectSnapshotManager.GetLoadedProject(project2.Key).GetDocument(document1.FilePath);
+
+        // Assert II
+        kvp = Assert.Single(documentVersionCache.DocumentLookup_NeedsLock);
+        Assert.Equal(document1.FilePath, kvp.Key);
+        Assert.Equal(2, kvp.Value.Count);
+
+        // Should still be tracking document 1 with no changes
+        Assert.True(kvp.Value[0].Document.TryGetTarget(out actualDocument));
+        Assert.Same(document1, actualDocument);
+        Assert.Equal(1337, kvp.Value[0].Version);
+
+        Assert.True(kvp.Value[1].Document.TryGetTarget(out actualDocument));
+        Assert.Same(document2, actualDocument);
+        Assert.Equal(1337, kvp.Value[1].Version);
     }
 }
