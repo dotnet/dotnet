@@ -44,11 +44,11 @@ namespace NuGet.PackageManagement.UI
 
             if (string.Equals(culture.Name, "ja-JP", StringComparison.Ordinal))
             {
-                return $"{dateTime.ToString("D", culture)} {dateTime.ToString("dddd", culture)} ({ dateTime.ToString("d", culture)})";
+                return $"{dateTime.ToString("D", culture)} {dateTime.ToString("dddd", culture)} ({dateTime.ToString("d", culture)})";
             }
             else
             {
-                return $"{dateTime.ToString("D", culture)} ({ dateTime.ToString("d", culture)})";
+                return $"{dateTime.ToString("D", culture)} ({dateTime.ToString("d", culture)})";
             }
         }
 

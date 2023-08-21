@@ -1,31 +1,24 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
+using System.Composition;
 using Microsoft.AspNetCore.Razor.Telemetry;
 using Microsoft.CodeAnalysis.Host;
 using Microsoft.CodeAnalysis.Host.Mef;
 using Microsoft.CodeAnalysis.Razor;
+using Microsoft.CodeAnalysis.Razor.Workspaces;
 
 namespace Microsoft.CodeAnalysis.Remote.Razor;
 
-[System.Composition.Shared]
-[ExportWorkspaceServiceFactory(typeof(TagHelperResolver), ServiceLayer.Host)]
-internal class OOPTagHelperResolverFactory : IWorkspaceServiceFactory
+[Shared]
+[ExportWorkspaceServiceFactory(typeof(ITagHelperResolver), ServiceLayer.Host)]
+[method: ImportingConstructor]
+internal class OOPTagHelperResolverFactory(ITelemetryReporter telemetryReporter) : IWorkspaceServiceFactory
 {
-    private readonly ITelemetryReporter _telemetryReporter;
-
-    [System.Composition.ImportingConstructor]
-    public OOPTagHelperResolverFactory(ITelemetryReporter telemetryReporter)
-    {
-        _telemetryReporter = telemetryReporter;
-    }
-
     public IWorkspaceService CreateService(HostWorkspaceServices workspaceServices)
-    {
-        return new OOPTagHelperResolver(
+        => new OOPTagHelperResolver(
             workspaceServices.GetRequiredService<ProjectSnapshotProjectEngineFactory>(),
             workspaceServices.GetRequiredService<IErrorReporter>(),
             workspaceServices.Workspace,
-            _telemetryReporter);
-    }
+            telemetryReporter);
 }

@@ -52,8 +52,8 @@ public class RazorDiagnosticsPublisherTest : LanguageServerTestBase
     public RazorDiagnosticsPublisherTest(ITestOutputHelper testOutput)
         : base(testOutput)
     {
-        var testProjectManager = TestProjectSnapshotManager.Create(LegacyDispatcher, ErrorReporter);
-        var hostProject = new HostProject("C:/project/project.csproj", RazorConfiguration.Default, "TestRootNamespace");
+        var testProjectManager = TestProjectSnapshotManager.Create(ErrorReporter);
+        var hostProject = new HostProject("C:/project/project.csproj", "C:/project/obj", RazorConfiguration.Default, "TestRootNamespace");
         testProjectManager.ProjectAdded(hostProject);
         var sourceText = SourceText.From(string.Empty);
         var textAndVersion = TextAndVersion.Create(sourceText, VersionStamp.Default);
@@ -63,12 +63,12 @@ public class RazorDiagnosticsPublisherTest : LanguageServerTestBase
         var closedHostDocument = new HostDocument("C:/project/closed_document.cshtml", "C:/project/closed_document.cshtml");
         testProjectManager.DocumentAdded(hostProject.Key, closedHostDocument, TextLoader.From(textAndVersion));
 
-        var openedDocument = testProjectManager.Projects[0].GetDocument(openedHostDocument.FilePath);
+        var openedDocument = testProjectManager.GetProjects()[0].GetDocument(openedHostDocument.FilePath);
         Assert.NotNull(openedDocument);
         _openedDocument = openedDocument;
         _openedDocumentUri = new Uri("C:/project/open_document.cshtml");
 
-        var closedDocument = testProjectManager.Projects[0].GetDocument(closedHostDocument.FilePath);
+        var closedDocument = testProjectManager.GetProjects()[0].GetDocument(closedHostDocument.FilePath);
         Assert.NotNull(closedDocument);
         _closedDocument = closedDocument;
 
@@ -95,7 +95,7 @@ public class RazorDiagnosticsPublisherTest : LanguageServerTestBase
             .Verifiable();
         Mock.Get(languageServerDocument)
             .Setup(d => d.SendRequestAsync<DocumentDiagnosticParams, SumType<FullDocumentDiagnosticReport, UnchangedDocumentDiagnosticReport>?>(
-                RazorLanguageServerCustomMessageTargets.RazorPullDiagnosticEndpointName,
+                CustomMessageNames.RazorPullDiagnosticEndpointName,
                 It.IsAny<DocumentDiagnosticParams>(),
                 It.IsAny<CancellationToken>()))
             .Returns(Task.FromResult(new SumType<FullDocumentDiagnosticReport, UnchangedDocumentDiagnosticReport>?(new FullDocumentDiagnosticReport())))
@@ -142,7 +142,7 @@ public class RazorDiagnosticsPublisherTest : LanguageServerTestBase
 
         languageServer
             .Setup(server => server.SendRequestAsync<DocumentDiagnosticParams, SumType<FullDocumentDiagnosticReport, UnchangedDocumentDiagnosticReport>?>(
-                RazorLanguageServerCustomMessageTargets.RazorPullDiagnosticEndpointName,
+                CustomMessageNames.RazorPullDiagnosticEndpointName,
                 It.IsAny<DocumentDiagnosticParams>(),
                 It.IsAny<CancellationToken>()))
             .Callback<string, DocumentDiagnosticParams, CancellationToken>((method, @params, cancellationToken) =>
@@ -198,7 +198,7 @@ public class RazorDiagnosticsPublisherTest : LanguageServerTestBase
         var languageServer = new Mock<ClientNotifierServiceBase>(MockBehavior.Strict);
         languageServer
             .Setup(server => server.SendRequestAsync<DocumentDiagnosticParams, SumType<FullDocumentDiagnosticReport, UnchangedDocumentDiagnosticReport>?>(
-                RazorLanguageServerCustomMessageTargets.RazorPullDiagnosticEndpointName,
+                CustomMessageNames.RazorPullDiagnosticEndpointName,
                 It.IsAny<DocumentDiagnosticParams>(),
                 It.IsAny<CancellationToken>()))
             .Callback<string, DocumentDiagnosticParams, CancellationToken>((method, @params, cancellationToken) =>
@@ -248,7 +248,7 @@ public class RazorDiagnosticsPublisherTest : LanguageServerTestBase
         var languageServer = new Mock<ClientNotifierServiceBase>(MockBehavior.Strict);
         languageServer
             .Setup(server => server.SendRequestAsync<DocumentDiagnosticParams, SumType<FullDocumentDiagnosticReport, UnchangedDocumentDiagnosticReport>?>(
-                RazorLanguageServerCustomMessageTargets.RazorPullDiagnosticEndpointName,
+                CustomMessageNames.RazorPullDiagnosticEndpointName,
                 It.IsAny<DocumentDiagnosticParams>(),
                 It.IsAny<CancellationToken>()))
             .Callback<string, DocumentDiagnosticParams, CancellationToken>((method, @params, cancellationToken) =>
@@ -299,7 +299,7 @@ public class RazorDiagnosticsPublisherTest : LanguageServerTestBase
         var languageServer = new Mock<ClientNotifierServiceBase>(MockBehavior.Strict);
         languageServer
             .Setup(server => server.SendRequestAsync<DocumentDiagnosticParams, SumType<FullDocumentDiagnosticReport, UnchangedDocumentDiagnosticReport>?>(
-                RazorLanguageServerCustomMessageTargets.RazorPullDiagnosticEndpointName,
+                CustomMessageNames.RazorPullDiagnosticEndpointName,
                 It.IsAny<DocumentDiagnosticParams>(),
                 It.IsAny<CancellationToken>()))
             .Callback<string, DocumentDiagnosticParams, CancellationToken>((method, @params, cancellationToken) =>
@@ -333,14 +333,14 @@ public class RazorDiagnosticsPublisherTest : LanguageServerTestBase
 
         languageServer
             .Setup(server => server.SendRequestAsync<DocumentDiagnosticParams, SumType<FullDocumentDiagnosticReport, UnchangedDocumentDiagnosticReport>?>(
-                RazorLanguageServerCustomMessageTargets.RazorPullDiagnosticEndpointName,
+                CustomMessageNames.RazorPullDiagnosticEndpointName,
                 It.IsAny<DocumentDiagnosticParams>(),
                 It.IsAny<CancellationToken>()))
             .Callback<string, DocumentDiagnosticParams, CancellationToken>((method, @params, cancellationToken) =>
             {
                 Assert.Equal(_openedDocumentUri, @params.TextDocument.Uri);
             })
-            .Returns(Task.FromResult(new SumType<FullDocumentDiagnosticReport, UnchangedDocumentDiagnosticReport>?( new FullDocumentDiagnosticReport())));
+            .Returns(Task.FromResult(new SumType<FullDocumentDiagnosticReport, UnchangedDocumentDiagnosticReport>?(new FullDocumentDiagnosticReport())));
 
         languageServer
             .Setup(server => server.SendNotificationAsync(

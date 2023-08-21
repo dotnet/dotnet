@@ -6,10 +6,13 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Composition;
 using System.Diagnostics;
-using System.Linq;
 using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.Telemetry;
+
+#if DEBUG
+using System.Linq;
+#endif
 
 namespace Microsoft.AspNetCore.Razor.Telemetry;
 
@@ -142,7 +145,15 @@ internal class TelemetryReporter : ITelemetryReporter
             var propertyString = string.Join(",", telemetryEvent.Properties.Select(kvp => $"[ {kvp.Key}:{kvp.Value} ]"));
             _logger?.LogTrace("Telemetry Event: {name} \n Properties: {propertyString}\n", name, propertyString);
 
-            Debug.Assert(telemetryEvent is not FaultEvent, $"Fault Event: {name} \n Properties: {propertyString}");
+            if (telemetryEvent is FaultEvent)
+            {
+                var eventType = telemetryEvent.GetType();
+                var description = eventType.GetProperty("Description", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)?.GetValue(telemetryEvent, null);
+                var exception = eventType.GetProperty("ExceptionObject", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)?.GetValue(telemetryEvent, null);
+                var message = $"Fault Event: {name} \n Exception Info: {exception ?? description} \n Properties: {propertyString}";
+
+                Debug.Assert(true, message);
+            }
 #endif
         }
         catch (Exception e)

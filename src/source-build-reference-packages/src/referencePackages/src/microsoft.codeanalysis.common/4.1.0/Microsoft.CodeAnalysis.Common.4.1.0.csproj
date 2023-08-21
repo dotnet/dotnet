@@ -2,26 +2,12 @@
 
   <PropertyGroup>
     <TargetFrameworks>netstandard2.0</TargetFrameworks>
-    <NuspecFile>$(ArtifactsBinDir)microsoft.codeanalysis.common/4.1.0/microsoft.codeanalysis.common.nuspec</NuspecFile>
+    <AssemblyName>Microsoft.CodeAnalysis</AssemblyName>
+    <ProjectTemplateVersion>2</ProjectTemplateVersion>
     <StrongNameKeyId>MicrosoftShared</StrongNameKeyId>
   </PropertyGroup>
 
-  <PropertyGroup>
-    <OutputPath>$(ArtifactsBinDir)microsoft.codeanalysis.common/4.1.0/ref/</OutputPath>
-    <IntermediateOutputPath>$(ArtifactsObjDir)microsoft.codeanalysis.common/4.1.0</IntermediateOutputPath>
-  </PropertyGroup>
-
-  <PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard2.0' ">
-    <OutputPath>$(ArtifactsBinDir)microsoft.codeanalysis.common/4.1.0/lib/</OutputPath>
-  </PropertyGroup>
-
-  <ItemGroup>
-    <Compile Include="**/ref/$(TargetFramework)/*.cs" />
-    <Compile Include="**/lib/$(TargetFramework)/*.cs" />
-  </ItemGroup>
-
-  <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.0' ">
-    <PackageReference Include="NETStandard.Library" Version="$(NETStandardImplicitPackageVersion)" />
+  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
     <PackageReference Include="System.Collections.Immutable" Version="5.0.0" />
     <PackageReference Include="System.Memory" Version="4.5.4" />
     <PackageReference Include="System.Reflection.Metadata" Version="5.0.0" />

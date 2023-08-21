@@ -32,15 +32,16 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer.Extensions;
 
 internal static class IServiceCollectionExtensions
 {
-    public static void AddLifeCycleServices(this IServiceCollection services, RazorLanguageServer razorLanguageServer, ClientNotifierServiceBase serverManager)
+    public static void AddLifeCycleServices(this IServiceCollection services, RazorLanguageServer razorLanguageServer, ClientNotifierServiceBase serverManager, ILspServerActivationTracker? lspServerActivationTracker)
     {
         services.AddHandler<RazorInitializeEndpoint>();
         services.AddHandler<RazorInitializedEndpoint>();
 
-        var razorLifeCycleManager = new RazorLifeCycleManager(razorLanguageServer);
+        var razorLifeCycleManager = new RazorLifeCycleManager(razorLanguageServer, lspServerActivationTracker);
         services.AddSingleton<ILifeCycleManager>(razorLifeCycleManager);
         services.AddSingleton<RazorLifeCycleManager>(razorLifeCycleManager);
-        services.AddSingleton<IInitializeManager<InitializeParams, InitializeResult>, CapabilitiesManager>();
+        services.AddSingleton<CapabilitiesManager>();
+        services.AddSingleton<IInitializeManager<InitializeParams, InitializeResult>, CapabilitiesManager>(sp => sp.GetRequiredService<CapabilitiesManager>());
         services.AddSingleton<IRequestContextFactory<RazorRequestContext>, RazorRequestContextFactory>();
 
         services.AddSingleton<ICapabilitiesProvider, RazorLanguageServerCapability>();
@@ -122,7 +123,7 @@ internal static class IServiceCollectionExtensions
         services.AddHandler<RazorSemanticTokensRefreshEndpoint>();
 
         services.AddSingleton<WorkspaceSemanticTokensRefreshPublisher, DefaultWorkspaceSemanticTokensRefreshPublisher>();
-        services.AddSingleton<ProjectSnapshotChangeTrigger, DefaultWorkspaceSemanticTokensRefreshTrigger>();
+        services.AddSingleton<IProjectSnapshotChangeTrigger, DefaultWorkspaceSemanticTokensRefreshTrigger>();
 
         // Ensure that we don't add the default service if something else has added one.
         services.TryAddSingleton<IRazorSemanticTokensInfoService, RazorSemanticTokensInfoService>();
@@ -188,27 +189,25 @@ internal static class IServiceCollectionExtensions
     public static void AddDocumentManagementServices(this IServiceCollection services, LanguageServerFeatureOptions featureOptions)
     {
         services.AddSingleton<GeneratedDocumentPublisher, DefaultGeneratedDocumentPublisher>();
-        services.AddSingleton<ProjectSnapshotChangeTrigger>((services) => services.GetRequiredService<GeneratedDocumentPublisher>());
+        services.AddSingleton<IProjectSnapshotChangeTrigger>((services) => services.GetRequiredService<GeneratedDocumentPublisher>());
         services.AddSingleton<DocumentContextFactory, DefaultDocumentContextFactory>();
 
         services.AddSingleton<DocumentVersionCache, DefaultDocumentVersionCache>();
-        services.AddSingleton<ProjectSnapshotChangeTrigger>((services) => services.GetRequiredService<DocumentVersionCache>());
+        services.AddSingleton<IProjectSnapshotChangeTrigger>((services) => services.GetRequiredService<DocumentVersionCache>());
 
         services.AddSingleton<RemoteTextLoaderFactory, DefaultRemoteTextLoaderFactory>();
         services.AddSingleton<ISnapshotResolver, SnapshotResolver>();
         services.AddSingleton<RazorProjectService, DefaultRazorProjectService>();
-        services.AddSingleton<ProjectSnapshotChangeTrigger, OpenDocumentGenerator>();
+        services.AddSingleton<IProjectSnapshotChangeTrigger, OpenDocumentGenerator>();
         services.AddSingleton<IRazorDocumentMappingService, RazorDocumentMappingService>();
         services.AddSingleton<RazorFileChangeDetectorManager>();
 
         // File change listeners
         services.AddSingleton<IProjectConfigurationFileChangeListener, ProjectConfigurationStateSynchronizer>();
-        services.AddSingleton<IProjectFileChangeListener, ProjectFileSynchronizer>();
         services.AddSingleton<IRazorFileChangeListener, RazorFileSynchronizer>();
 
         // File Change detectors
         services.AddSingleton<IFileChangeDetector, ProjectConfigurationFileChangeDetector>();
-        services.AddSingleton<IFileChangeDetector, ProjectFileChangeDetector>();
         services.AddSingleton<IFileChangeDetector, RazorFileChangeDetector>();
 
         // Document processed listeners

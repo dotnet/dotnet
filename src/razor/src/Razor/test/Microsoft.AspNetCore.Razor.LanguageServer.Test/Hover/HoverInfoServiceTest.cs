@@ -4,6 +4,7 @@
 #nullable disable
 
 using System;
+using System.Collections.Immutable;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -601,7 +602,7 @@ public class HoverInfoServiceTest : TagHelperServiceTestBase
 
         var languageServerMock = new Mock<ClientNotifierServiceBase>(MockBehavior.Strict);
         languageServerMock
-            .Setup(c => c.SendRequestAsync<IDelegatedParams, VSInternalHover>(RazorLanguageServerCustomMessageTargets.RazorHoverEndpointName, It.IsAny<DelegatedPositionParams>(), It.IsAny<CancellationToken>()))
+            .Setup(c => c.SendRequestAsync<IDelegatedParams, VSInternalHover>(CustomMessageNames.RazorHoverEndpointName, It.IsAny<DelegatedPositionParams>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(delegatedHover);
 
         var documentMappingServiceMock = new Mock<IRazorDocumentMappingService>(MockBehavior.Strict);
@@ -734,7 +735,7 @@ public class HoverInfoServiceTest : TagHelperServiceTestBase
             , MockBehavior.Strict);
         var languageServer = new HoverLanguageServer(csharpServer, csharpDocumentUri, DisposalToken);
         var documentMappingService = new RazorDocumentMappingService(languageServerFeatureOptions, documentContextFactory, LoggerFactory);
-        var projectSnapshotManager = Mock.Of<ProjectSnapshotManagerBase>(p => p.Projects == new[] { Mock.Of<IProjectSnapshot>(MockBehavior.Strict) }, MockBehavior.Strict);
+        var projectSnapshotManager = Mock.Of<ProjectSnapshotManagerBase>(p => p.GetProjects() == new[] { Mock.Of<IProjectSnapshot>(MockBehavior.Strict) }.ToImmutableArray(), MockBehavior.Strict);
         var hoverInfoService = GetHoverInfoService();
 
         var endpoint = new HoverEndpoint(
@@ -788,7 +789,7 @@ public class HoverInfoServiceTest : TagHelperServiceTestBase
             d.GetTextAsync() == Task.FromResult(sourceText) &&
             d.Project == projectSnapshot, MockBehavior.Strict);
 
-        var documentContext = new VersionedDocumentContext(new Uri(path), snapshot, 1337);
+        var documentContext = new VersionedDocumentContext(new Uri(path), snapshot, projectContext: null, 1337);
 
         return documentContext;
     }
@@ -858,14 +859,14 @@ public class HoverInfoServiceTest : TagHelperServiceTestBase
 
         public override async Task<TResponse> SendRequestAsync<TParams, TResponse>(string method, TParams @params, CancellationToken cancellationToken)
         {
-            Assert.Equal(RazorLanguageServerCustomMessageTargets.RazorHoverEndpointName, method);
+            Assert.Equal(CustomMessageNames.RazorHoverEndpointName, method);
             var hoverParams = Assert.IsType<DelegatedPositionParams>(@params);
 
             var hoverRequest = new TextDocumentPositionParams()
             {
-                TextDocument = new TextDocumentIdentifier()
+                TextDocument = new VSTextDocumentIdentifier()
                 {
-                    Uri = _csharpDocumentUri
+                    Uri = _csharpDocumentUri,
                 },
                 Position = hoverParams.ProjectedPosition
             };

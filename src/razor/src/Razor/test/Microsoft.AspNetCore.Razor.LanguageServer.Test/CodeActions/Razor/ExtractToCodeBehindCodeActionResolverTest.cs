@@ -8,9 +8,11 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.LanguageServer.CodeActions.Models;
 using Microsoft.AspNetCore.Razor.LanguageServer.Extensions;
+using Microsoft.AspNetCore.Razor.LanguageServer.Test.Common;
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Razor.Workspaces.Extensions;
+using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Moq;
 using Newtonsoft.Json.Linq;
 using Xunit;
@@ -25,13 +27,7 @@ public class ExtractToCodeBehindCodeActionResolverTest : LanguageServerTestBase
     public ExtractToCodeBehindCodeActionResolverTest(ITestOutputHelper testOutput)
         : base(testOutput)
     {
-        _emptyDocumentContextFactory = new Mock<DocumentContextFactory>(MockBehavior.Strict).Object;
-
-        Mock.Get(_emptyDocumentContextFactory)
-            .Setup(r => r.TryCreateAsync(
-                It.IsAny<Uri>(),
-                It.IsAny<CancellationToken>()))
-            .ReturnsAsync(value: null);
+        _emptyDocumentContextFactory = new TestDocumentContextFactory();
     }
 
     [Fact]

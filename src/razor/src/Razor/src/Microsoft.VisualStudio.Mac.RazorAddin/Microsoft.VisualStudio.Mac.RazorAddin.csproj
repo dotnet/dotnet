@@ -77,7 +77,6 @@
     <!-- Language Server Dependencies -->
     <MPackFile Include="$(ArtifactsBinDir)Microsoft.VisualStudio.LanguageServerClient.Razor\$(Configuration)\net472\Microsoft.VisualStudio.LanguageServerClient.Razor.dll" />
     <MPackFile Include="$(ArtifactsBinDir)Microsoft.VisualStudio.LanguageServer.ContainedLanguage\$(Configuration)\net472\Microsoft.VisualStudio.LanguageServer.ContainedLanguage.dll" />
-    <MPackFile Include="$(ArtifactsBinDir)Microsoft.AspNetCore.Razor.LanguageServer.Common\$(Configuration)\net472\Microsoft.AspNetCore.Razor.LanguageServer.Common.dll" />
     <MPackFile Include="$(ArtifactsBinDir)Microsoft.AspNetCore.Razor.LanguageServer.Protocol\$(Configuration)\net472\Microsoft.AspNetCore.Razor.LanguageServer.Protocol.dll" />
     <MPackFile Include="$(ArtifactsBinDir)Microsoft.AspNetCore.Razor.LanguageServer\$(Configuration)\net472\Microsoft.AspNetCore.Razor.LanguageServer.dll" />
     <MPackFile Include="$(ArtifactsBinDir)Microsoft.AspNetCore.Razor.ProjectEngineHost\$(Configuration)\net472\Microsoft.AspNetCore.Razor.ProjectEngineHost.dll" />

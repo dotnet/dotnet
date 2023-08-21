@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <Compile Include="$(SharedDirectory)\HashCodeCombiner.cs" />
+    <Compile Include="$(SharedDirectory)\NoAllocEnumerateExtensions.cs" />
   </ItemGroup>
 
   <ItemGroup>

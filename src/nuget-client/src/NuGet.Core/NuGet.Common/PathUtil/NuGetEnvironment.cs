@@ -1,6 +1,9 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+// BCL annotations on Environment.GetEnvironmentVariable makes this file difficult to annotate in .NET 5+
+#nullable disable
+
 using System;
 using System.Globalization;
 using System.IO;

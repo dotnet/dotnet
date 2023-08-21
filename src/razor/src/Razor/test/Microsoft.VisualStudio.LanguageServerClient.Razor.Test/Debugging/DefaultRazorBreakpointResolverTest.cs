@@ -10,7 +10,6 @@ using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.VisualStudio.Editor.Razor.Debugging;
 using Microsoft.VisualStudio.LanguageServer.ContainedLanguage;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
-using Microsoft.VisualStudio.LanguageServerClient.Razor.Extensions;
 using Microsoft.VisualStudio.LanguageServerClient.Razor.Test;
 using Microsoft.VisualStudio.Test;
 using Microsoft.VisualStudio.Text;
@@ -88,7 +87,7 @@ $@"public class SomeRazorFile
     {
         // Arrange
         var documentManager = new TestDocumentManager();
-        var testCSharpDocument = new CSharpVirtualDocumentSnapshot(_csharpDocumentUri, _csharpTextBuffer.CurrentSnapshot, hostDocumentSyncVersion: 1);
+        var testCSharpDocument = new CSharpVirtualDocumentSnapshot(projectKey: default, _csharpDocumentUri, _csharpTextBuffer.CurrentSnapshot, hostDocumentSyncVersion: 1);
         var document = new TestLSPDocumentSnapshot(_documentUri, version: (int)(testCSharpDocument.HostDocumentSyncVersion.Value + 1), testCSharpDocument);
         documentManager.AddDocument(document.Uri, document);
         var resolver = CreateResolverWith(documentManager: documentManager);
@@ -159,7 +158,7 @@ $@"public class SomeRazorFile
     {
         var documentUri = _documentUri;
         uriProvider ??= Mock.Of<FileUriProvider>(provider => provider.TryGet(_hostTextbuffer, out documentUri) == true && provider.TryGet(It.IsNotIn(_hostTextbuffer), out It.Ref<Uri>.IsAny) == false, MockBehavior.Strict);
-        var csharpVirtualDocumentSnapshot = new CSharpVirtualDocumentSnapshot(_csharpDocumentUri, _csharpTextBuffer.CurrentSnapshot, hostDocumentSyncVersion: 0);
+        var csharpVirtualDocumentSnapshot = new CSharpVirtualDocumentSnapshot(projectKey: default, _csharpDocumentUri, _csharpTextBuffer.CurrentSnapshot, hostDocumentSyncVersion: 0);
         LSPDocumentSnapshot documentSnapshot = new TestLSPDocumentSnapshot(_documentUri, 0, csharpVirtualDocumentSnapshot);
         documentManager ??= Mock.Of<LSPDocumentManager>(manager => manager.TryGetDocument(_documentUri, out documentSnapshot) == true, MockBehavior.Strict);
         if (projectionProvider is null)
@@ -186,7 +185,7 @@ $@"public class SomeRazorFile
             throw new ArgumentOutOfRangeException(nameof(content));
         }
 
-        textBuffer.CurrentSnapshot.GetLineAndCharacter(index, out var lineIndex, out var characterIndex);
-        return new Position(lineIndex, characterIndex);
+        var line = textBuffer.CurrentSnapshot.GetLineFromPosition(index);
+        return new Position(line.LineNumber, index - line.Start.Position);
     }
 }

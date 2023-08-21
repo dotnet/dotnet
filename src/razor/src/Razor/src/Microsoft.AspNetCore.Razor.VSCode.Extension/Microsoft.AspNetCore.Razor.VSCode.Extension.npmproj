@@ -7,19 +7,6 @@
     <IsPackable>false</IsPackable>
   </PropertyGroup>
 
-  <ItemGroup>
-    <ProjectReference
-      Include="..\Microsoft.AspNetCore.Razor.VSCode\Microsoft.AspNetCore.Razor.VSCode.npmproj"
-      ReferenceOutputAssemblies="false"
-      SkipGetTargetFrameworkProperties="true"
-      UndefineProperties="TargetFramework"
-      Private="false" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <BuildOutputFiles Include="dist\extension.js" />
-  </ItemGroup>
-
   <Import Project="$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildThisFileDirectory), Directory.Build.targets))\Directory.Build.targets" />
 
 </Project>

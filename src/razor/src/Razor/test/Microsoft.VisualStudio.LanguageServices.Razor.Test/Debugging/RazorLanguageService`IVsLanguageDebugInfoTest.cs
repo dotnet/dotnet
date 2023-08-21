@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Threading;
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.VisualStudio.Editor;
+using Microsoft.VisualStudio.Editor.Razor;
 using Microsoft.VisualStudio.Editor.Razor.Debugging;
 using Microsoft.VisualStudio.Test;
 using Microsoft.VisualStudio.Text;
@@ -217,7 +218,10 @@ public class RazorLanguageService_IVsLanguageDebugInfoTest : TestBase
         uiThreadOperationExecutor ??= new TestIUIThreadOperationExecutor();
         editorAdaptersFactory ??= Mock.Of<IVsEditorAdaptersFactoryService>(service => service.GetDataBuffer(It.IsAny<IVsTextBuffer>()) == new TestTextBuffer(new StringTextSnapshot(Environment.NewLine)), MockBehavior.Strict);
 
-        var languageService = new RazorLanguageService(breakpointResolver, proximityExpressionResolver, uiThreadOperationExecutor, editorAdaptersFactory, JoinableTaskFactory);
+        var lspServerActivationTracker = new LspServerActivationTracker();
+        lspServerActivationTracker.Activated();
+
+        var languageService = new RazorLanguageService(breakpointResolver, proximityExpressionResolver, lspServerActivationTracker, uiThreadOperationExecutor, editorAdaptersFactory, JoinableTaskFactory);
         return languageService;
     }
 

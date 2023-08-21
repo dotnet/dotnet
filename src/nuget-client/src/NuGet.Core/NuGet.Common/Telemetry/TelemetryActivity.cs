@@ -16,7 +16,7 @@ namespace NuGet.Common
         private readonly Stopwatch _stopwatch;
         private readonly Stopwatch _intervalWatch = new Stopwatch();
         private readonly List<Tuple<string, TimeSpan>> _intervalList;
-        private readonly IDisposable _telemetryActivity;
+        private readonly IDisposable? _telemetryActivity;
         private bool _disposed;
 
         /// <summary> Telemetry event which represents end of telemetry activity. </summary>
@@ -29,16 +29,24 @@ namespace NuGet.Common
         public Guid OperationId { get; }
 
         /// <summary> Singleton of NuGet telemetry service instance. </summary>
-        public static INuGetTelemetryService NuGetTelemetryService { get; set; }
+        public static INuGetTelemetryService? NuGetTelemetryService { get; set; }
 
         private TelemetryActivity(Guid parentId, TelemetryEvent telemetryEvent, Guid operationId)
         {
             if (telemetryEvent != null)
             {
+                if (telemetryEvent.Name is null)
+                {
+                    throw new ArgumentException(paramName: nameof(telemetryEvent), message: "Property 'Name' must not be null");
+                }
                 _telemetryActivity = NuGetTelemetryService?.StartActivity(telemetryEvent.Name);
             }
+            else
+            {
+                Debug.Fail("Looking at all references to the static Create methods, I don't think this code path is possible.");
+            }
 
-            TelemetryEvent = telemetryEvent;
+            TelemetryEvent = telemetryEvent!;
             ParentId = parentId;
             OperationId = operationId;
 

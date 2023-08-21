@@ -1,0 +1,190 @@
+﻿#nullable enable
+Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.AcceptedCharacters
+Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.AcceptedCharacters.AllWhiteSpace = Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.AcceptedCharacters.NewLine | Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.AcceptedCharacters.WhiteSpace -> Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.AcceptedCharacters
+Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.AcceptedCharacters.Any = Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.AcceptedCharacters.NewLine | Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.AcceptedCharacters.AnyExceptNewline -> Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.AcceptedCharacters
+Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.AcceptedCharacters.AnyExceptNewline = Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.AcceptedCharacters.WhiteSpace | Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.AcceptedCharacters.NonWhiteSpace -> Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.AcceptedCharacters
+Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.AcceptedCharacters.NewLine = 1 -> Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.AcceptedCharacters
+Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.AcceptedCharacters.None = 0 -> Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.AcceptedCharacters
+Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.AcceptedCharacters.NonWhiteSpace = 4 -> Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.AcceptedCharacters
+Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.AcceptedCharacters.WhiteSpace = 2 -> Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.AcceptedCharacters
+Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.BlockKind
+Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.BlockKind.Comment = 8 -> Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.BlockKind
+Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.BlockKind.Directive = 1 -> Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.BlockKind
+Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.BlockKind.Expression = 3 -> Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.BlockKind
+Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.BlockKind.Functions = 2 -> Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.BlockKind
+Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.BlockKind.Helper = 4 -> Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.BlockKind
+Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.BlockKind.HtmlComment = 10 -> Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.BlockKind
+Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.BlockKind.Markup = 5 -> Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.BlockKind
+Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.BlockKind.Section = 6 -> Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.BlockKind
+Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.BlockKind.Statement = 0 -> Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.BlockKind
+Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.BlockKind.Tag = 9 -> Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.BlockKind
+Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.BlockKind.Template = 7 -> Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.BlockKind
+Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.ClassifiedSpan
+Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.ClassifiedSpan.AcceptedCharacters.get -> Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.AcceptedCharacters
+Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.ClassifiedSpan.AcceptedCharacters.init -> void
+Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.ClassifiedSpan.BlockKind.get -> Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.BlockKind
+Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.ClassifiedSpan.BlockKind.init -> void
+Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.ClassifiedSpan.BlockSpan.get -> Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.RazorSourceSpan
+Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.ClassifiedSpan.BlockSpan.init -> void
+Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.ClassifiedSpan.ClassifiedSpan() -> void
+Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.ClassifiedSpan.ClassifiedSpan(Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.RazorSourceSpan Span, Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.RazorSourceSpan BlockSpan, Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.SpanKind SpanKind, Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.BlockKind BlockKind, Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.AcceptedCharacters AcceptedCharacters) -> void
+Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.ClassifiedSpan.Span.get -> Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.RazorSourceSpan
+Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.ClassifiedSpan.Span.init -> void
+Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.ClassifiedSpan.SpanKind.get -> Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.SpanKind
+Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.ClassifiedSpan.SpanKind.init -> void
+Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.ContextChangeEventArgs
+Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.ContextChangeEventArgs.ContextChangeEventArgs(Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.ContextChangeKind kind) -> void
+Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.ContextChangeEventArgs.Kind.get -> Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.ContextChangeKind
+Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.ContextChangeKind
+Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.ContextChangeKind.EditorSettingsChanged = 1 -> Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.ContextChangeKind
+Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.ContextChangeKind.ImportsChanged = 3 -> Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.ContextChangeKind
+Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.ContextChangeKind.ProjectChanged = 0 -> Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.ContextChangeKind
+Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.ContextChangeKind.TagHelpersChanged = 2 -> Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.ContextChangeKind
+Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.DocumentStructureChangedEventArgs
+Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.DocumentStructureChangedEventArgs.CodeDocument.get -> Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.IRazorCodeDocument!
+Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.DocumentStructureChangedEventArgs.DocumentStructureChangedEventArgs(Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.RazorSourceChange? change, Microsoft.VisualStudio.Text.ITextSnapshot! snapshot, Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.IRazorCodeDocument! codeDocument) -> void
+Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.DocumentStructureChangedEventArgs.Snapshot.get -> Microsoft.VisualStudio.Text.ITextSnapshot!
+Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.DocumentStructureChangedEventArgs.SourceChange.get -> Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.RazorSourceChange?
+Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.Extensions
+Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.IRazorBoundAttributeDescriptor
+Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.IRazorBoundAttributeDescriptor.BoundAttributeParameters.get -> System.Collections.Immutable.ImmutableArray<Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.IRazorBoundAttributeParameterDescriptor!>
+Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.IRazorBoundAttributeDescriptor.CaseSensitive.get -> bool
+Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.IRazorBoundAttributeDescriptor.DisplayName.get -> string!
+Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.IRazorBoundAttributeDescriptor.Documentation.get -> string?
+Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.IRazorBoundAttributeDescriptor.IndexerNamePrefix.get -> string?
+Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.IRazorBoundAttributeDescriptor.Name.get -> string!
+Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.IRazorBoundAttributeParameterDescriptor
+Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.IRazorBoundAttributeParameterDescriptor.Name.get -> string!
+Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.IRazorCodeDocument
+Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.IRazorCodeDocument.GetClassifiedSpans() -> System.Collections.Immutable.ImmutableArray<Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.ClassifiedSpan>
+Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.IRazorCodeDocument.GetDesiredIndentation(Microsoft.VisualStudio.Text.ITextSnapshot! snapshot, Microsoft.VisualStudio.Text.ITextSnapshotLine! line, int indentSize, int tabSize) -> int?
+Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.IRazorCodeDocument.GetDiagnostics() -> System.Collections.Immutable.ImmutableArray<Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.IRazorDiagnostic!>
+Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.IRazorCodeDocument.GetGeneratedCode() -> string!
+Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.IRazorCodeDocument.GetSourceMappings() -> System.Collections.Immutable.ImmutableArray<Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.RazorSourceMapping!>
+Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.IRazorCodeDocument.GetTagHelperContext() -> Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.IRazorTagHelperDocumentContext!
+Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.IRazorCodeDocument.GetTagHelperSpans() -> System.Collections.Immutable.ImmutableArray<Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.TagHelperSpan>
+Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.IRazorDiagnostic
+Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.IRazorDiagnostic.GetMessage(System.IFormatProvider? formatProvider) -> string!
+Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.IRazorDiagnostic.Span.get -> Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.RazorSourceSpan
+Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.IRazorDocumentTracker
+Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.IRazorDocumentTracker.ContextChanged -> System.EventHandler<Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.ContextChangeEventArgs!>!
+Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.IRazorDocumentTracker.TextViews.get -> System.Collections.Immutable.ImmutableArray<Microsoft.VisualStudio.Text.Editor.ITextView!>
+Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.IRazorEditorFactoryService
+Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.IRazorEditorFactoryService.TryGetDocumentTracker(Microsoft.VisualStudio.Text.ITextBuffer! textBuffer, out Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.IRazorDocumentTracker? documentTracker) -> bool
+Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.IRazorEditorFactoryService.TryGetParser(Microsoft.VisualStudio.Text.ITextBuffer! textBuffer, out Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.IRazorParser? parser) -> bool
+Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.IRazorEditorSettingsManager
+Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.IRazorEditorSettingsManager.Update(bool indentWithTabs, int indentSize) -> void
+Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.IRazorElementCompletionContext
+Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.IRazorParser
+Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.IRazorParser.DocumentStructureChanged -> System.EventHandler<Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.DocumentStructureChangedEventArgs!>?
+Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.IRazorParser.HasPendingChanges.get -> bool
+Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.IRazorParser.QueueReparse() -> void
+Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.IRazorRequiredAttributeDescriptor
+Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.IRazorRequiredAttributeDescriptor.DisplayName.get -> string!
+Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.IRazorRequiredAttributeDescriptor.Name.get -> string!
+Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.IRazorTagHelperBinding
+Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.IRazorTagHelperBinding.Descriptors.get -> System.Collections.Immutable.ImmutableArray<Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.IRazorTagHelperDescriptor!>
+Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.IRazorTagHelperBinding.GetBoundRules(Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.IRazorTagHelperDescriptor! descriptor) -> System.Collections.Immutable.ImmutableArray<Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.IRazorTagMatchingRuleDescriptor!>
+Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.IRazorTagHelperCompletionService
+Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.IRazorTagHelperCompletionService.CreateContext(Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.IRazorTagHelperDocumentContext! tagHelperContext, System.Collections.Generic.IEnumerable<string!>? existingCompletions, string? containingTagName, System.Collections.Generic.IEnumerable<System.Collections.Generic.KeyValuePair<string!, string!>>! attributes, string? containingParentTagName, bool containingParentIsTagHelper, System.Func<string!, bool>! inHTMLSchema) -> Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.IRazorElementCompletionContext!
+Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.IRazorTagHelperCompletionService.GetElementCompletions(Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.IRazorElementCompletionContext! completionContext) -> System.Collections.Immutable.ImmutableDictionary<string!, System.Collections.Immutable.ImmutableArray<Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.IRazorTagHelperDescriptor!>>!
+Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.IRazorTagHelperDescriptor
+Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.IRazorTagHelperDescriptor.BoundAttributes.get -> System.Collections.Immutable.ImmutableArray<Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.IRazorBoundAttributeDescriptor!>
+Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.IRazorTagHelperDescriptor.CaseSensitive.get -> bool
+Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.IRazorTagHelperDescriptor.DisplayName.get -> string!
+Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.IRazorTagHelperDescriptor.Documentation.get -> string?
+Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.IRazorTagHelperDescriptor.IsComponentOrChildContentTagHelper() -> bool
+Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.IRazorTagHelperDescriptor.TagMatchingRules.get -> System.Collections.Immutable.ImmutableArray<Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.IRazorTagMatchingRuleDescriptor!>
+Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.IRazorTagHelperDescriptor.TagOutputHint.get -> string?
+Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.IRazorTagHelperDocumentContext
+Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.IRazorTagHelperDocumentContext.Prefix.get -> string!
+Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.IRazorTagHelperDocumentContext.TagHelpers.get -> System.Collections.Immutable.ImmutableArray<Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.IRazorTagHelperDescriptor!>
+Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.IRazorTagHelperFactsService
+Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.IRazorTagHelperFactsService.GetBoundTagHelperAttributes(Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.IRazorTagHelperDocumentContext! documentContext, string! attributeName, Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.IRazorTagHelperBinding! binding) -> System.Collections.Immutable.ImmutableArray<Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.IRazorBoundAttributeDescriptor!>
+Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.IRazorTagHelperFactsService.GetTagHelperBinding(Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.IRazorTagHelperDocumentContext! documentContext, string? tagName, System.Collections.Generic.IEnumerable<System.Collections.Generic.KeyValuePair<string!, string!>>! attributes, string? parentTag, bool parentIsTagHelper) -> Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.IRazorTagHelperBinding?
+Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.IRazorTagHelperFactsService.GetTagHelpersGivenTag(Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.IRazorTagHelperDocumentContext! documentContext, string! tagName, string? parentTag) -> System.Collections.Immutable.ImmutableArray<Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.IRazorTagHelperDescriptor!>
+Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.IRazorTagMatchingRuleDescriptor
+Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.IRazorTagMatchingRuleDescriptor.Attributes.get -> System.Collections.Immutable.ImmutableArray<Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.IRazorRequiredAttributeDescriptor!>
+Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.IRazorTagMatchingRuleDescriptor.TagStructure.get -> Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.TagStructure
+Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.RazorServices
+Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.RazorServices.EditorFactoryService.get -> Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.IRazorEditorFactoryService!
+Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.RazorServices.EditorSettingsManager.get -> Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.IRazorEditorSettingsManager!
+Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.RazorServices.RazorServices(Microsoft.VisualStudio.Shell.SVsServiceProvider! serviceProvider) -> void
+Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.RazorServices.TagHelperCompletionService.get -> Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.IRazorTagHelperCompletionService!
+Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.RazorServices.TagHelperFactsService.get -> Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.IRazorTagHelperFactsService!
+Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.RazorSourceChange
+Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.RazorSourceChange.IsDelete.get -> bool
+Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.RazorSourceChange.IsInsert.get -> bool
+Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.RazorSourceChange.IsReplace.get -> bool
+Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.RazorSourceChange.NewText.get -> string!
+Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.RazorSourceChange.NewText.init -> void
+Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.RazorSourceChange.RazorSourceChange(Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.RazorSourceSpan Span, string! NewText) -> void
+Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.RazorSourceChange.Span.get -> Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.RazorSourceSpan
+Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.RazorSourceChange.Span.init -> void
+Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.RazorSourceMapping
+Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.RazorSourceMapping.GeneratedSpan.get -> Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.RazorSourceSpan
+Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.RazorSourceMapping.GeneratedSpan.init -> void
+Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.RazorSourceMapping.OriginalSpan.get -> Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.RazorSourceSpan
+Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.RazorSourceMapping.OriginalSpan.init -> void
+Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.RazorSourceMapping.RazorSourceMapping(Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.RazorSourceSpan OriginalSpan, Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.RazorSourceSpan GeneratedSpan) -> void
+Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.RazorSourceSpan
+Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.RazorSourceSpan.AbsoluteIndex.get -> int
+Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.RazorSourceSpan.AbsoluteIndex.set -> void
+Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.RazorSourceSpan.CharacterIndex.get -> int
+Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.RazorSourceSpan.CharacterIndex.set -> void
+Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.RazorSourceSpan.EndCharacterIndex.get -> int
+Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.RazorSourceSpan.EndCharacterIndex.set -> void
+Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.RazorSourceSpan.Equals(Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.RazorSourceSpan other) -> bool
+Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.RazorSourceSpan.FilePath.get -> string?
+Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.RazorSourceSpan.FilePath.set -> void
+Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.RazorSourceSpan.Length.get -> int
+Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.RazorSourceSpan.Length.set -> void
+Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.RazorSourceSpan.LineCount.get -> int
+Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.RazorSourceSpan.LineCount.set -> void
+Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.RazorSourceSpan.LineIndex.get -> int
+Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.RazorSourceSpan.LineIndex.set -> void
+Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.RazorSourceSpan.RazorSourceSpan() -> void
+Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.RazorSourceSpan.RazorSourceSpan(int absoluteIndex, int length) -> void
+Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.RazorSourceSpan.RazorSourceSpan(int absoluteIndex, int lineIndex, int characterIndex, int length) -> void
+Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.RazorSourceSpan.RazorSourceSpan(string? filePath, int absoluteIndex, int lineIndex, int characterIndex, int length) -> void
+Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.RazorSourceSpan.RazorSourceSpan(string? FilePath, int AbsoluteIndex, int LineIndex, int CharacterIndex, int Length, int LineCount, int EndCharacterIndex) -> void
+Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.RazorWrapperFactory
+Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.SpanKind
+Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.SpanKind.Code = 3 -> Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.SpanKind
+Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.SpanKind.Comment = 2 -> Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.SpanKind
+Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.SpanKind.Markup = 4 -> Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.SpanKind
+Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.SpanKind.MetaCode = 1 -> Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.SpanKind
+Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.SpanKind.None = 5 -> Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.SpanKind
+Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.SpanKind.Transition = 0 -> Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.SpanKind
+Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.TagHelperSpan
+Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.TagHelperSpan.Span.get -> Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.RazorSourceSpan
+Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.TagHelperSpan.Span.init -> void
+Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.TagHelperSpan.TagHelpers.get -> System.Collections.Immutable.ImmutableArray<Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.IRazorTagHelperDescriptor!>
+Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.TagHelperSpan.TagHelpers.init -> void
+Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.TagHelperSpan.TagHelperSpan() -> void
+Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.TagHelperSpan.TagHelperSpan(Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.RazorSourceSpan Span, System.Collections.Immutable.ImmutableArray<Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.IRazorTagHelperDescriptor!> TagHelpers) -> void
+Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.TagStructure
+Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.TagStructure.NormalOrSelfClosing = 1 -> Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.TagStructure
+Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.TagStructure.Unspecified = 0 -> Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.TagStructure
+Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.TagStructure.WithoutEndTag = 2 -> Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.TagStructure
+override Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.RazorSourceSpan.GetHashCode() -> int
+static Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.Extensions.TryGetRazorParser(this Microsoft.VisualStudio.Utilities.PropertyCollection! properties, out Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.IRazorParser? parser) -> bool
+static Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.RazorWrapperFactory.ConvertSourceChange(object? obj) -> Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.RazorSourceChange?
+static Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.RazorWrapperFactory.ConvertSourceMapping(object? obj) -> Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.RazorSourceMapping?
+static Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.RazorWrapperFactory.ConvertSourceSpan(object! obj) -> Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.RazorSourceSpan
+static Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.RazorWrapperFactory.WrapBoundAttributeDescriptor(object! obj) -> Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.IRazorBoundAttributeDescriptor!
+static Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.RazorWrapperFactory.WrapBoundAttributeParameterDescriptor(object! obj) -> Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.IRazorBoundAttributeParameterDescriptor!
+static Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.RazorWrapperFactory.WrapCodeDocument(object! obj) -> Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.IRazorCodeDocument!
+static Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.RazorWrapperFactory.WrapDiagnostic(object! obj) -> Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.IRazorDiagnostic!
+static Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.RazorWrapperFactory.WrapDocumentTracker(object! obj) -> Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.IRazorDocumentTracker!
+static Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.RazorWrapperFactory.WrapEditorFactoryService(object! obj) -> Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.IRazorEditorFactoryService!
+static Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.RazorWrapperFactory.WrapEditorSettingsManager(object! obj) -> Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.IRazorEditorSettingsManager!
+static Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.RazorWrapperFactory.WrapElementCompletionContext(object! obj) -> Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.IRazorElementCompletionContext!
+static Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.RazorWrapperFactory.WrapParser(object! obj) -> Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.IRazorParser!
+static Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.RazorWrapperFactory.WrapRequiredAttributeDescriptor(object! obj) -> Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.IRazorRequiredAttributeDescriptor!
+static Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.RazorWrapperFactory.WrapTagHelperBinding(object! obj) -> Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.IRazorTagHelperBinding!
+static Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.RazorWrapperFactory.WrapTagHelperCompletionService(object! obj) -> Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.IRazorTagHelperCompletionService!
+static Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.RazorWrapperFactory.WrapTagHelperDescriptor(object! obj) -> Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.IRazorTagHelperDescriptor!
+static Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.RazorWrapperFactory.WrapTagHelperDocumentContext(object! obj) -> Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.IRazorTagHelperDocumentContext!
+static Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.RazorWrapperFactory.WrapTagHelperFactsService(object! obj) -> Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.IRazorTagHelperFactsService!
+static Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.RazorWrapperFactory.WrapTagMatchingRuleDescriptor(object! obj) -> Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.IRazorTagMatchingRuleDescriptor!

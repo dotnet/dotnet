@@ -50,7 +50,15 @@ TParam
 #nullable disable
             );
             __o = global::Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.TypeCheck<global::Microsoft.AspNetCore.Components.EventCallback<TParam>>(global::Microsoft.AspNetCore.Components.EventCallback.Factory.Create<TParam>(this, 
-            global::Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.CreateInferredEventCallback(this, UpdateValue, ParentValue)));
+            global::Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.CreateInferredEventCallback(this, 
+#nullable restore
+#line 2 "x:\dir\subdir\Test\TestComponent.cshtml"
+                                                                            UpdateValue
+
+#line default
+#line hidden
+#nullable disable
+            , ParentValue)));
             __builder.AddAttribute(-1, "ChildContent", (global::Microsoft.AspNetCore.Components.RenderFragment)((__builder2) => {
             }
             ));

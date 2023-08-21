@@ -46,23 +46,9 @@ namespace NuGet.PackageManagement.VisualStudio.Test
         {
             var componentModel = new Mock<IComponentModel>();
 
-            // Force Enable Transitive Origin experiment tests
-            var constant = ExperimentationConstants.TransitiveDependenciesInPMUI;
-            var flightsEnabled = new Dictionary<string, bool>()
-            {
-                { constant.FlightFlag, true },
-            };
-
             var mockOutputConsoleUtility = OutputConsoleUtility.GetMock();
             _outputConsoleProviderMock = mockOutputConsoleUtility.mockIOutputConsoleProvider;
             _outputConsoleProvider = new Lazy<IOutputConsoleProvider>(() => _outputConsoleProviderMock.Object);
-            var serviceMock = new Mock<NuGetExperimentationService>(Mock.Of<IEnvironmentVariableReader>(), NuGetExperimentationServiceUtility.GetMock(flightsEnabled), _outputConsoleProvider);
-            INuGetExperimentationService service = serviceMock.Object;
-
-            service.IsExperimentEnabled(ExperimentationConstants.TransitiveDependenciesInPMUI).Should().Be(true);
-            componentModel.Setup(x => x.GetService<INuGetExperimentationService>()).Returns(service);
-
-            AddService<SComponentModel>(Task.FromResult((object)componentModel.Object));
         }
 
         [Fact]
@@ -2886,7 +2872,7 @@ namespace NuGet.PackageManagement.VisualStudio.Test
 
             var project = await PrepareTestProjectAsync(testContext) as CpsPackageReferenceProject;
 
-            var tasks = new []
+            var tasks = new[]
             {
                 project.GetInstalledPackagesAsync(CancellationToken.None),
                 project.GetInstalledPackagesAsync(CancellationToken.None),

@@ -8,6 +8,7 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Razor;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
@@ -169,11 +170,11 @@ internal abstract class MacRazorProjectHostBase
         else if (HostProject != null && newHostProject is null)
         {
             _projectSnapshotManager.ProjectRemoved(HostProject.Key);
-            ProjectConfigurationFilePathStore.Remove(HostProject.FilePath);
+            ProjectConfigurationFilePathStore.Remove(HostProject.Key);
         }
         else
         {
-            _projectSnapshotManager.ProjectConfigurationChanged(newHostProject);
+            _projectSnapshotManager.ProjectConfigurationChanged(newHostProject.AssumeNotNull());
         }
 
         HostProject = newHostProject;

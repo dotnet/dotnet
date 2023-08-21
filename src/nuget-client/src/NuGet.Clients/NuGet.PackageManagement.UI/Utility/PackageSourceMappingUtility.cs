@@ -32,8 +32,8 @@ namespace NuGet.PackageManagement.UI
             List<string> addedPackageIdsWithoutExistingMappings = new();
             foreach (string addedPackageId in addedPackageIds)
             {
-                IReadOnlyList<string>? configuredSource = packageSourceMapping.GetConfiguredPackageSources(addedPackageId);
-                if (configuredSource is null || configuredSource.Count == 0)
+                IReadOnlyList<string> configuredSource = packageSourceMapping.GetConfiguredPackageSources(addedPackageId);
+                if (configuredSource.Count == 0)
                 {
                     addedPackageIdsWithoutExistingMappings.Add(addedPackageId);
                 }

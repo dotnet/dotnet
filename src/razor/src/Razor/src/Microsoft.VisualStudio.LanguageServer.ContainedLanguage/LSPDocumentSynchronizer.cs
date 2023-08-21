@@ -23,6 +23,18 @@ internal abstract class LSPDocumentSynchronizer : LSPDocumentChangeListener
         CancellationToken cancellationToken)
         where TVirtualDocumentSnapshot : VirtualDocumentSnapshot;
 
+    public virtual Task<SynchronizedResult<TVirtualDocumentSnapshot>> TrySynchronizeVirtualDocumentAsync<TVirtualDocumentSnapshot>(
+        int requiredHostDocumentVersion,
+        Uri hostDocumentUri,
+        Uri virtualDocumentUri,
+        bool rejectOnNewerParallelRequest,
+        CancellationToken cancellationToken)
+        where TVirtualDocumentSnapshot : VirtualDocumentSnapshot
+    {
+        // This is only virtual to prevent a binary breaking change. We don't expect anyone to call this method, without also implementing it
+        throw new NotImplementedException();
+    }
+
     [Obsolete]
     public abstract Task<bool> TrySynchronizeVirtualDocumentAsync(int requiredHostDocumentVersion, VirtualDocumentSnapshot virtualDocument, CancellationToken cancellationToken);
 

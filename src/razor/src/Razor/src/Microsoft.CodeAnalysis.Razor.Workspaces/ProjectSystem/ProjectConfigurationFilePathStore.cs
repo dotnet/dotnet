@@ -11,11 +11,11 @@ internal abstract class ProjectConfigurationFilePathStore
 {
     public abstract event EventHandler<ProjectConfigurationFilePathChangedEventArgs>? Changed;
 
-    public abstract IReadOnlyDictionary<string, string> GetMappings();
+    public abstract IReadOnlyDictionary<ProjectKey, string> GetMappings();
 
-    public abstract void Set(string projectFilePath, string configurationFilePath);
+    public abstract void Set(ProjectKey projectKey, string configurationFilePath);
 
-    public abstract bool TryGet(string projectFilePath, [NotNullWhen(returnValue: true)] out string? configurationFilePath);
+    public abstract bool TryGet(ProjectKey projectKey, [NotNullWhen(returnValue: true)] out string? configurationFilePath);
 
-    public abstract void Remove(string projectFilePath);
+    public abstract void Remove(ProjectKey projectKey);
 }

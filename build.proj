@@ -34,6 +34,22 @@
     <RemoveDir Directories="$(BaseOutputPath)" />
   </Target>
 
+  <!-- Copies the output assets of the builds to the output path. -->
+  <Target Name="CopyBinariesToBinFolder"
+          AfterTargets="Build"
+          Inputs="$(MSBuildProjectFullPath)"
+          Outputs="$(CompletedSemaphorePath)CopyBinariesToBinFolder.complete">
+    <ItemGroup>
+      <BinariesToCopy Include="$(SourceBuiltAssetsDir)*.*" Exclude="$(SourceBuiltAssetsDir)*.nupkg;$(SourceBuiltAssetsDir)*.requires_nupkg_signing" />
+    </ItemGroup>
+
+    <Copy SourceFiles="@(BinariesToCopy)"
+          DestinationFolder="$(OutputPath)"
+          Condition="'@(BinariesToCopy)'!=''" />
+
+    <WriteLinesToFile File="$(CompletedSemaphorePath)CopyBinariesToBinFolder.complete" Overwrite="true" />
+  </Target>
+
   <!-- After building, generate a prebuilt usage report. -->
   <Target Name="ReportPrebuiltUsage"
           AfterTargets="Build"
@@ -70,8 +86,7 @@
                     HashCatalogFilePath="$(PoisonReportDataFile)"
                     MarkerFileName="$(PoisonMarkerFile)"
                     PoisonReportOutputFilePath="$(PoisonUsageReportFile)"
-                    NonShippingPackagesListFiles="@(NonShippingPackagesList)"
-                    FailOnPoisonFound="true" />
+                    NonShippingPackagesListFiles="@(NonShippingPackagesList)" />
 
     <WriteLinesToFile File="$(CompletedSemaphorePath)ReportPoisonUsage.complete" Overwrite="true" />
     <Message Importance="High" Text="[$([System.DateTime]::Now.ToString('HH:mm:ss.ff'))] Done checking for poison." />
@@ -94,6 +109,7 @@
     </ItemGroup>
 
     <PropertyGroup>
+      <CustomTestEnvVars Condition="'$(EnablePoison)' == 'true'">SMOKE_TESTS_POISON_REPORT_PATH=$(PoisonUsageReportFile);</CustomTestEnvVars>
       <SdkTarballPath>%(SdkTarballItem.Identity)</SdkTarballPath>
       <SourceBuiltArtifactsPath>%(SourceBuiltArtifactsItem.Identity)</SourceBuiltArtifactsPath>
       <SmokeTestConsoleVerbosity Condition="'$(SmokeTestConsoleVerbosity)' == ''">normal</SmokeTestConsoleVerbosity>
@@ -145,31 +161,6 @@
           WorkingDirectory="$(SmokeTestsPrereqPackagesDir)"/>
 
     <Message Importance="High" Text="Packaged smoke-test prereqs in '$(SmokeTestPrereqsTarballName)'" />
-  </Target>
-
-  <UsingTask AssemblyFile="$(XPlatSourceBuildTasksAssembly)" TaskName="UploadToAzure" />
-
-  <Target Name="PublishPrebuiltReportData">
-    <Error Text="RelativeBlobPath must be set to a non-empty string." Condition="'$(RelativeBlobPath)' == ''" />
-    <Error Text="ContainerName must be set to a non-empty string." Condition="'$(ContainerName)' == ''" />
-    <Error Text="AzureAccountName must be set to a non-empty string." Condition="'$(AzureAccountName)' == ''" />
-    <Error Text="AzureAccessToken must be set to a non-empty string." Condition="'$(AzureAccessToken)' == ''" />
-
-    <ItemGroup>
-      <ItemsToPublish Include="$(PackageReportDir)*.xml" />
-      <ItemsToPublish Include="$(PackageReportDir)*.csv" />
-      <ItemsToPublish>
-        <RelativeBlobPath>$(RelativeBlobPath)/%(Filename)%(Extension)</RelativeBlobPath>
-      </ItemsToPublish>
-    </ItemGroup>
-
-    <Message Text="Uploading files to '$(AzureAccountName)' blob storage at $(ContainerName)/$(RelativeBlobPath)" />
-
-    <UploadToAzure AccountName="$(AzureAccountName)"
-                   AccountKey="$(AzureAccessToken)"
-                   ContainerName="$(ContainerName)"
-                   Items="@(ItemsToPublish)"
-                   Overwrite="true" />
   </Target>
 
   <Target Name="CreatePrebuiltsTarball"

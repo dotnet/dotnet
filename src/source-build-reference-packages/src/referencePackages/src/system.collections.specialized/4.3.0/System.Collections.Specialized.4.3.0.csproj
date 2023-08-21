@@ -1,27 +1,19 @@
 <Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
     <TargetFrameworks>netstandard1.3</TargetFrameworks>
-    <NuspecFile>$(ArtifactsBinDir)system.collections.specialized/4.3.0/system.collections.specialized.nuspec</NuspecFile>
-   </PropertyGroup>
-
-  <PropertyGroup>
-    <OutputPath>$(ArtifactsBinDir)system.collections.specialized/4.3.0/ref/</OutputPath>
-    <IntermediateOutputPath>$(ArtifactsObjDir)system.collections.specialized/4.3.0</IntermediateOutputPath>
+    <AssemblyName>System.Collections.Specialized</AssemblyName>
+    <ProjectTemplateVersion>2</ProjectTemplateVersion>
   </PropertyGroup>
 
-  <ItemGroup>
-    <Compile Include="**/ref/$(TargetFramework)/*.cs" />
-    <Compile Include="**/lib/$(TargetFramework)/*.cs" />
-  </ItemGroup>
-
-  <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard1.3' ">
-      <PackageReference Include="System.Collections.NonGeneric" Version="4.3.0" />
-      <PackageReference Include="System.Globalization" Version="4.3.0" />
-      <PackageReference Include="System.Globalization.Extensions" Version="4.3.0" />
-      <PackageReference Include="System.Resources.ResourceManager" Version="4.3.0" />
-      <PackageReference Include="System.Runtime" Version="4.3.0" />
-      <PackageReference Include="System.Runtime.Extensions" Version="4.3.0" />
-      <PackageReference Include="System.Threading" Version="4.3.0" />
+  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard1.3'">
+    <PackageReference Include="System.Collections.NonGeneric" Version="4.3.0" />
+    <PackageReference Include="System.Globalization" Version="4.3.0" />
+    <PackageReference Include="System.Globalization.Extensions" Version="4.3.0" />
+    <PackageReference Include="System.Resources.ResourceManager" Version="4.3.0" />
+    <PackageReference Include="System.Runtime" Version="4.3.0" />
+    <PackageReference Include="System.Runtime.Extensions" Version="4.3.0" />
+    <PackageReference Include="System.Threading" Version="4.3.0" />
   </ItemGroup>
 
 </Project>

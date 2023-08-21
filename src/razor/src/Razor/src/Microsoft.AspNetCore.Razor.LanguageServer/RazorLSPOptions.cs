@@ -13,14 +13,15 @@ public record RazorLSPOptions(
     bool InsertSpaces,
     int TabSize,
     bool FormatOnType,
-    bool AutoInsertAttributeQuotes)
+    bool AutoInsertAttributeQuotes,
+    bool ColorBackground)
 {
     public RazorLSPOptions(Trace trace, bool enableFormatting, bool autoClosingTags, ClientSettings settings)
-        : this(trace, enableFormatting, autoClosingTags, !settings.ClientSpaceSettings.IndentWithTabs, settings.ClientSpaceSettings.IndentSize, settings.AdvancedSettings.FormatOnType, settings.AdvancedSettings.AutoInsertAttributeQuotes)
+        : this(trace, enableFormatting, autoClosingTags, !settings.ClientSpaceSettings.IndentWithTabs, settings.ClientSpaceSettings.IndentSize, settings.AdvancedSettings.FormatOnType, settings.AdvancedSettings.AutoInsertAttributeQuotes, settings.AdvancedSettings.ColorBackground)
     {
     }
 
-    public readonly static RazorLSPOptions Default = new(Trace: default, EnableFormatting: true, AutoClosingTags: true, InsertSpaces: true, TabSize: 4, FormatOnType: true, AutoInsertAttributeQuotes: true);
+    public readonly static RazorLSPOptions Default = new(Trace: default, EnableFormatting: true, AutoClosingTags: true, InsertSpaces: true, TabSize: 4, FormatOnType: true, AutoInsertAttributeQuotes: true, ColorBackground: false);
 
     public LogLevel MinLogLevel => GetLogLevelForTrace(Trace);
 

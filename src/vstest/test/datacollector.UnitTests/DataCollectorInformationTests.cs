@@ -6,6 +6,7 @@ using System.Linq;
 
 using Microsoft.VisualStudio.TestPlatform.Common.DataCollector.Interfaces;
 using Microsoft.VisualStudio.TestPlatform.Common.DataCollectorUnitTests;
+using Microsoft.VisualStudio.TestPlatform.ObjectModel;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -23,6 +24,8 @@ public class DataCollectorInformationTests
 
     private readonly Mock<DataCollector2> _mockDataCollector;
 
+    private readonly Mock<ITelemetryReporter> _telemetryReporter;
+
     public DataCollectorInformationTests()
     {
         _envVarList = new List<KeyValuePair<string, string>>();
@@ -39,6 +42,7 @@ public class DataCollectorInformationTests
             new TestPlatformDataCollectionEvents(),
             mockMessageSink.Object,
             string.Empty);
+        _telemetryReporter = new Mock<ITelemetryReporter>();
     }
 
     [TestMethod]
@@ -46,7 +50,7 @@ public class DataCollectorInformationTests
     {
         _envVarList.Add(new KeyValuePair<string, string>("key", "value"));
 
-        _dataCollectorInfo.InitializeDataCollector();
+        _dataCollectorInfo.InitializeDataCollector(_telemetryReporter.Object);
         _dataCollectorInfo.SetTestExecutionEnvironmentVariables();
 
         CollectionAssert.AreEqual(_envVarList, _dataCollectorInfo.TestExecutionEnvironmentVariables!.ToList());
@@ -55,7 +59,7 @@ public class DataCollectorInformationTests
     [TestMethod]
     public void DisposeShouldInvokeDisposeOfDatacollector()
     {
-        _dataCollectorInfo.InitializeDataCollector();
+        _dataCollectorInfo.InitializeDataCollector(_telemetryReporter.Object);
         _dataCollectorInfo.DisposeDataCollector();
 
         _mockDataCollector.Protected().Verify("Dispose", Times.Once(), false, true);

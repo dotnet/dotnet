@@ -121,11 +121,12 @@
     <file src="net48\testhost.net48.arm64.exe"          target="contentFiles\any\netcoreapp3.1\TestHostNetFramework" />
     <file src="net48\testhost.net48.arm64.exe.config"   target="contentFiles\any\netcoreapp3.1\TestHostNetFramework" />
 
-    <file src="net472\Newtonsoft.Json\Newtonsoft.Json.dll" target="contentFiles\any\netcoreapp3.1\TestHostNetFramework" />
-    <file src="net472\NuGet.Frameworks\NuGet.Frameworks.dll" target="contentFiles\any\netcoreapp3.1\TestHostNetFramework" />
+    <file src="net462\Newtonsoft.Json.dll" target="contentFiles\any\netcoreapp3.1\TestHostNetFramework" />
+    <file src="net462\NuGet.Frameworks.dll" target="contentFiles\any\netcoreapp3.1\TestHostNetFramework" />
 
-    <file src="net472\NETStandard.Library\**\*.dll" exclude="**\mscorlib.dll;**\*.xml" target="contentFiles\any\netcoreapp3.1\TestHostNetFramework" />
-    <file src="net472\System*.dll" exclude="net472\System.ComponentModel.Composition.dll" target="contentFiles\any\netcoreapp3.1\TestHostNetFramework" />
+    <file src="net462\System*.dll" exclude="net462\System.Buffers.dll;net462\System.ComponentModel.Composition.dll;net462\System.Memory.dll;net462\System.Numerics.Vectors.dll;net462\System.Runtime.CompilerServices.Unsafe.dll;net462\System.Threading.Tasks.Extensions.dll" target="contentFiles\any\netcoreapp3.1\TestHostNetFramework" />
+    <file src="net462\netstandard.dll" target="contentFiles\any\netcoreapp3.1\TestHostNetFramework" />
+    <file src="net462\Microsoft.Win32.Primitives.dll" target="contentFiles\any\netcoreapp3.1\TestHostNetFramework" />
 
     <!-- Resources -->
     <file src="netcoreapp3.1\Microsoft.CodeCoverage.IO\cs\Microsoft.CodeCoverage.IO.resources.dll" target="contentFiles\any\netcoreapp3.1\cs" />

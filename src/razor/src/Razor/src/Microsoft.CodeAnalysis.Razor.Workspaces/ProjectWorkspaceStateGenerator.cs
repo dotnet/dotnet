@@ -6,7 +6,9 @@ using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 
 namespace Microsoft.CodeAnalysis.Razor;
 
-internal abstract class ProjectWorkspaceStateGenerator : ProjectSnapshotChangeTrigger
+internal abstract class ProjectWorkspaceStateGenerator : IProjectSnapshotChangeTrigger
 {
+    public abstract void Initialize(ProjectSnapshotManagerBase projectManager);
+
     public abstract void Update(Project? workspaceProject, IProjectSnapshot projectSnapshot, CancellationToken cancellationToken);
 }

@@ -13,28 +13,18 @@ internal static class NoAllocEnumerateExtensions
     #region IList
 
     /// <summary>
-    /// Avoids allocating an enumerator when enumerating an <see cref="IList{T}"/> where the concrete type
-    /// has a well known struct enumerator, such as for <see cref="List{T}"/>.
+    /// Avoids allocating an enumerator when enumerating an <see cref="IList{T}"/>.
     /// </summary>
     /// <remarks>
     /// <para>
-    /// Several collection types (e.g. <see cref="List{T}"/>) provide a struct-based enumerator type
-    /// (e.g. <see cref="List{T}.Enumerator"/>) which the compiler can use in <see langword="foreach" /> statements.
-    /// When using a struct-based enumerator, no heap allocation occurs during such enumeration.
+    /// Returns a struct-based enumerator that avoids heap allocation during enumeration.
+    /// If the underlying type is <see cref="List{T}"/> then this method will delegate to <see cref="List{T}.Enumerator"/>,
+    /// otherwise the collection's items are accessed by index via <see cref="IList{T}"/>'s indexer directly.
+    /// </para>
+    /// <para>
+    /// When using a struct-based enumerator, no heap allocation occurs during enumeration via <see langword="foreach" />.
     /// This is in contrast to the interface-based enumerator <see cref="IEnumerator{T}"/> which will
     /// always be allocated on the heap.
-    /// </para>
-    /// <para>
-    /// This method returns a custom struct enumerator that will avoid any heap allocation if <paramref name="list"/>
-    /// (which is declared via interface <see cref="IList{T}"/>) is actually of known concrete type that
-    /// provides its own struct enumerator. If so, it delegates to that type's enumerator without any boxing
-    /// or other heap allocation.
-    /// </para>
-    /// <para>
-    /// If <paramref name="list"/> is not of a known concrete type, the returned enumerator falls back to the
-    /// interface-based enumerator, which will be allocated on the heap. Benchmarking shows the overhead in
-    /// such cases is low enough to be within the measurement error, meaning this is an inexpensive optimization
-    /// that won't regress behavior and with low downside for cases where it cannot apply an optimization.
     /// </para>
     /// </remarks>
     /// <example>
@@ -75,29 +65,30 @@ internal static class NoAllocEnumerateExtensions
         /// </summary>
         public struct Enumerator : IDisposable
         {
-            private readonly int _enumeratorType;
-            private readonly IEnumerator<T>? _fallbackEnumerator;
-            private List<T>.Enumerator _concreteEnumerator;
+            private enum EnumeratorKind : byte { Empty, List, IList };
+
+            private readonly EnumeratorKind _kind;
+            private List<T>.Enumerator _listEnumerator;
+            private readonly IList<T>? _iList;
+            private int _iListIndex;
 
             internal Enumerator(IList<T> list)
             {
-                _concreteEnumerator = default;
-                _fallbackEnumerator = null;
-
                 if (list.Count == 0)
                 {
                     // The collection is empty, just return false from MoveNext.
-                    _enumeratorType = 100;
+                    _kind = EnumeratorKind.Empty;
                 }
-                else if (list is List<T> concrete)
+                else if (list is List<T> concreteList)
                 {
-                    _enumeratorType = 0;
-                    _concreteEnumerator = concrete.GetEnumerator();
+                    _kind = EnumeratorKind.List;
+                    _listEnumerator = concreteList.GetEnumerator();
                 }
                 else
                 {
-                    _enumeratorType = 99;
-                    _fallbackEnumerator = list.GetEnumerator();
+                    _kind = EnumeratorKind.IList;
+                    _iList = list;
+                    _iListIndex = -1;
                 }
             }
 
@@ -105,34 +96,31 @@ internal static class NoAllocEnumerateExtensions
             {
                 get
                 {
-                    return _enumeratorType switch
+                    return _kind switch
                     {
-                        0 => _concreteEnumerator.Current,
-                        99 => _fallbackEnumerator!.Current,
-                        _ => default!,
+                        EnumeratorKind.List => _listEnumerator.Current,
+                        EnumeratorKind.IList => _iList![_iListIndex],
+                        _ => default!
                     };
                 }
             }
 
             public bool MoveNext()
             {
-                return _enumeratorType switch
+                return _kind switch
                 {
-                    0 => _concreteEnumerator.MoveNext(),
-                    99 => _fallbackEnumerator!.MoveNext(),
-                    _ => false,
+                    EnumeratorKind.List => _listEnumerator.MoveNext(),
+                    EnumeratorKind.IList => ++_iListIndex < _iList!.Count,
+                    _ => false
                 };
             }
 
             public void Dispose()
             {
-                switch (_enumeratorType)
+                switch (_kind)
                 {
-                    case 0:
-                        _concreteEnumerator.Dispose();
-                        break;
-                    case 99:
-                        _fallbackEnumerator!.Dispose();
+                    case EnumeratorKind.List:
+                        _listEnumerator.Dispose();
                         break;
                 }
             }
@@ -145,7 +133,8 @@ internal static class NoAllocEnumerateExtensions
 
     /// <summary>
     /// Avoids allocating an enumerator when enumerating an <see cref="IEnumerable{T}"/> where the concrete type
-    /// has a well known struct enumerator, such as for <see cref="List{T}"/>.
+    /// has a well known struct enumerator, such as for <see cref="List{T}"/>, or when index-based access is possible via
+    /// <see cref="IList{T}"/>.
     /// </summary>
     /// <remarks>
     /// <para>
@@ -206,28 +195,35 @@ internal static class NoAllocEnumerateExtensions
         /// </summary>
         public struct Enumerator : IDisposable
         {
-            private readonly int _enumeratorType;
+            private enum EnumeratorKind : byte { Empty, List, IList, Fallback };
+
+            private readonly EnumeratorKind _kind;
             private readonly IEnumerator<T>? _fallbackEnumerator;
-            private List<T>.Enumerator _concreteEnumerator;
+            private List<T>.Enumerator _listEnumerator;
+            private readonly IList<T>? _iList;
+            private int _iListIndex;
 
             internal Enumerator(IEnumerable<T> source)
             {
-                _concreteEnumerator = default;
-                _fallbackEnumerator = null;
-
                 if (source is ICollection<T> { Count: 0 } or IReadOnlyCollection<T> { Count: 0 })
                 {
                     // The collection is empty, just return false from MoveNext.
-                    _enumeratorType = 100;
+                    _kind = EnumeratorKind.Empty;
                 }
-                else if (source is List<T> concrete)
+                else if (source is List<T> list)
                 {
-                    _enumeratorType = 0;
-                    _concreteEnumerator = concrete.GetEnumerator();
+                    _kind = EnumeratorKind.List;
+                    _listEnumerator = list.GetEnumerator();
+                }
+                else if (source is IList<T> iList)
+                {
+                    _kind = EnumeratorKind.IList;
+                    _iList = iList;
+                    _iListIndex = -1;
                 }
                 else
                 {
-                    _enumeratorType = 99;
+                    _kind = EnumeratorKind.Fallback;
                     _fallbackEnumerator = source.GetEnumerator();
                 }
             }
@@ -236,10 +232,11 @@ internal static class NoAllocEnumerateExtensions
             {
                 get
                 {
-                    return _enumeratorType switch
+                    return _kind switch
                     {
-                        0 => _concreteEnumerator.Current,
-                        99 => _fallbackEnumerator!.Current,
+                        EnumeratorKind.List => _listEnumerator.Current,
+                        EnumeratorKind.IList => _iList![_iListIndex],
+                        EnumeratorKind.Fallback => _fallbackEnumerator!.Current,
                         _ => default!,
                     };
                 }
@@ -247,22 +244,23 @@ internal static class NoAllocEnumerateExtensions
 
             public bool MoveNext()
             {
-                return _enumeratorType switch
+                return _kind switch
                 {
-                    0 => _concreteEnumerator.MoveNext(),
-                    99 => _fallbackEnumerator!.MoveNext(),
-                    _ => false,
+                    EnumeratorKind.List => _listEnumerator.MoveNext(),
+                    EnumeratorKind.IList => ++_iListIndex < _iList!.Count,
+                    EnumeratorKind.Fallback => _fallbackEnumerator!.MoveNext(),
+                    _ => false
                 };
             }
 
             public void Dispose()
             {
-                switch (_enumeratorType)
+                switch (_kind)
                 {
-                    case 0:
-                        _concreteEnumerator.Dispose();
+                    case EnumeratorKind.List:
+                        _listEnumerator.Dispose();
                         break;
-                    case 99:
+                    case EnumeratorKind.Fallback:
                         _fallbackEnumerator!.Dispose();
                         break;
                 }
@@ -339,28 +337,27 @@ internal static class NoAllocEnumerateExtensions
         /// </summary>
         public struct Enumerator : IDisposable
         {
-            private readonly int _enumeratorType;
+            private enum EnumeratorKind : byte { Empty, Dictionary, Fallback };
+
+            private readonly EnumeratorKind _kind;
             private readonly IEnumerator<KeyValuePair<TKey, TValue>>? _fallbackEnumerator;
             private Dictionary<TKey, TValue>.Enumerator _concreteEnumerator;
 
             internal Enumerator(IDictionary<TKey, TValue> dictionary)
             {
-                _concreteEnumerator = default;
-                _fallbackEnumerator = null;
-
                 if (dictionary.Count == 0)
                 {
                     // The collection is empty, just return false from MoveNext.
-                    _enumeratorType = 100;
+                    _kind = EnumeratorKind.Empty;
                 }
                 else if (dictionary is Dictionary<TKey, TValue> concrete)
                 {
-                    _enumeratorType = 0;
+                    _kind = EnumeratorKind.Dictionary;
                     _concreteEnumerator = concrete.GetEnumerator();
                 }
                 else
                 {
-                    _enumeratorType = 99;
+                    _kind = EnumeratorKind.Fallback;
                     _fallbackEnumerator = dictionary.GetEnumerator();
                 }
             }
@@ -369,10 +366,10 @@ internal static class NoAllocEnumerateExtensions
             {
                 get
                 {
-                    return _enumeratorType switch
+                    return _kind switch
                     {
-                        0 => _concreteEnumerator.Current,
-                        99 => _fallbackEnumerator!.Current,
+                        EnumeratorKind.Dictionary => _concreteEnumerator.Current,
+                        EnumeratorKind.Fallback => _fallbackEnumerator!.Current,
                         _ => default!,
                     };
                 }
@@ -380,22 +377,22 @@ internal static class NoAllocEnumerateExtensions
 
             public bool MoveNext()
             {
-                return _enumeratorType switch
+                return _kind switch
                 {
-                    0 => _concreteEnumerator.MoveNext(),
-                    99 => _fallbackEnumerator!.MoveNext(),
+                    EnumeratorKind.Dictionary => _concreteEnumerator.MoveNext(),
+                    EnumeratorKind.Fallback => _fallbackEnumerator!.MoveNext(),
                     _ => false,
                 };
             }
 
             public void Dispose()
             {
-                switch (_enumeratorType)
+                switch (_kind)
                 {
-                    case 0:
+                    case EnumeratorKind.Dictionary:
                         _concreteEnumerator.Dispose();
                         break;
-                    case 99:
+                    case EnumeratorKind.Fallback:
                         _fallbackEnumerator!.Dispose();
                         break;
                 }

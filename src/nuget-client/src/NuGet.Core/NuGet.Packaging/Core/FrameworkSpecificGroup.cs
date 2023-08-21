@@ -101,19 +101,7 @@ namespace NuGet.Packaging
             var combiner = new HashCodeCombiner();
 
             combiner.AddObject(TargetFramework);
-
-            if (Items != null)
-            {
-#if NETFRAMEWORK || NETSTANDARD
-
-                foreach (var hash in Items.Select(e => e.GetHashCode()).OrderBy(e => e))
-#else
-                foreach (var hash in Items.Select(e => e.GetHashCode(StringComparison.Ordinal)).OrderBy(e => e))
-#endif
-                {
-                    combiner.AddObject(hash);
-                }
-            }
+            combiner.AddUnorderedSequence(Items, StringComparer.Ordinal);
 
             return combiner.CombinedHash;
         }

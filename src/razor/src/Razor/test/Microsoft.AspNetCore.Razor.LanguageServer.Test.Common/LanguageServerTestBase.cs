@@ -131,13 +131,13 @@ public abstract class LanguageServerTestBase : TestBase
 
     internal static VersionedDocumentContext CreateDocumentContext(Uri uri, IDocumentSnapshot snapshot)
     {
-        return new VersionedDocumentContext(uri, snapshot, version: 0);
+        return new VersionedDocumentContext(uri, snapshot, projectContext: null, version: 0);
     }
 
-    internal static IOptionsMonitor<RazorLSPOptions> GetOptionsMonitor(bool enableFormatting = true, bool formatOnType = true, bool autoInsertAttributeQuotes = true)
+    internal static IOptionsMonitor<RazorLSPOptions> GetOptionsMonitor(bool enableFormatting = true, bool formatOnType = true, bool autoInsertAttributeQuotes = true, bool colorBackground = false)
     {
         var monitor = new Mock<IOptionsMonitor<RazorLSPOptions>>(MockBehavior.Strict);
-        monitor.SetupGet(m => m.CurrentValue).Returns(new RazorLSPOptions(default, enableFormatting, true, InsertSpaces: true, TabSize: 4, formatOnType, autoInsertAttributeQuotes));
+        monitor.SetupGet(m => m.CurrentValue).Returns(new RazorLSPOptions(default, enableFormatting, true, InsertSpaces: true, TabSize: 4, formatOnType, autoInsertAttributeQuotes, colorBackground));
         return monitor.Object;
     }
 

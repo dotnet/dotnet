@@ -2,7 +2,6 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using System;
-using System.Collections.Immutable;
 using System.Linq;
 using Microsoft.AspNetCore.Razor.LanguageServer.AutoInsert;
 using Microsoft.AspNetCore.Razor.LanguageServer.ColorPresentation;
@@ -10,12 +9,14 @@ using Microsoft.AspNetCore.Razor.LanguageServer.Debugging;
 using Microsoft.AspNetCore.Razor.LanguageServer.Definition;
 using Microsoft.AspNetCore.Razor.LanguageServer.DocumentColor;
 using Microsoft.AspNetCore.Razor.LanguageServer.DocumentHighlighting;
+using Microsoft.AspNetCore.Razor.LanguageServer.DocumentSymbol;
 using Microsoft.AspNetCore.Razor.LanguageServer.EndpointContracts;
 using Microsoft.AspNetCore.Razor.LanguageServer.Extensions;
 using Microsoft.AspNetCore.Razor.LanguageServer.FindAllReferences;
 using Microsoft.AspNetCore.Razor.LanguageServer.Folding;
 using Microsoft.AspNetCore.Razor.LanguageServer.Implementation;
 using Microsoft.AspNetCore.Razor.LanguageServer.LinkedEditingRange;
+using Microsoft.AspNetCore.Razor.LanguageServer.ProjectContexts;
 using Microsoft.AspNetCore.Razor.LanguageServer.Refactoring;
 using Microsoft.AspNetCore.Razor.LanguageServer.SignatureHelp;
 using Microsoft.AspNetCore.Razor.LanguageServer.WrapWithTag;
@@ -38,6 +39,7 @@ internal class RazorLanguageServer : AbstractLanguageServer<RazorRequestContext>
     private readonly ProjectSnapshotManagerDispatcher? _projectSnapshotManagerDispatcher;
     private readonly Action<IServiceCollection>? _configureServer;
     private readonly RazorLSPOptions _lspOptions;
+    private readonly ILspServerActivationTracker? _lspServerActivationTracker;
     private readonly ITelemetryReporter _telemetryReporter;
 
     // Cached for testing
@@ -50,6 +52,7 @@ internal class RazorLanguageServer : AbstractLanguageServer<RazorRequestContext>
         LanguageServerFeatureOptions? featureOptions,
         Action<IServiceCollection>? configureServer,
         RazorLSPOptions? lspOptions,
+        ILspServerActivationTracker? lspServerActivationTracker,
         ITelemetryReporter telemetryReporter)
         : base(jsonRpc, logger)
     {
@@ -58,9 +61,19 @@ internal class RazorLanguageServer : AbstractLanguageServer<RazorRequestContext>
         _projectSnapshotManagerDispatcher = projectSnapshotManagerDispatcher;
         _configureServer = configureServer;
         _lspOptions = lspOptions ?? RazorLSPOptions.Default;
+        _lspServerActivationTracker = lspServerActivationTracker;
         _telemetryReporter = telemetryReporter;
 
         Initialize();
+    }
+
+    protected override IRequestExecutionQueue<RazorRequestContext> ConstructRequestExecutionQueue()
+    {
+        var handlerProvider = GetHandlerProvider();
+        var queue = new RazorRequestExecutionQueue(this, _logger, handlerProvider);
+        queue.Start();
+        return queue;
+
     }
 
     protected override ILspServices ConstructLspServices()
@@ -122,7 +135,7 @@ internal class RazorLanguageServer : AbstractLanguageServer<RazorRequestContext>
         var featureOptions = _featureOptions ?? new DefaultLanguageServerFeatureOptions();
         services.AddSingleton(featureOptions);
 
-        services.AddLifeCycleServices(this, serverManager);
+        services.AddLifeCycleServices(this, serverManager, _lspServerActivationTracker);
 
         services.AddDiagnosticServices();
         services.AddSemanticTokensServices();
@@ -182,6 +195,8 @@ internal class RazorLanguageServer : AbstractLanguageServer<RazorRequestContext>
             services.AddHandlerWithCapabilities<FoldingRangeEndpoint>();
             services.AddHandlerWithCapabilities<ValidateBreakpointRangeEndpoint>();
             services.AddHandlerWithCapabilities<FindAllReferencesEndpoint>();
+            services.AddHandlerWithCapabilities<ProjectContextsEndpoint>();
+            services.AddHandlerWithCapabilities<DocumentSymbolEndpoint>();
         }
     }
 
@@ -217,6 +232,11 @@ internal class RazorLanguageServer : AbstractLanguageServer<RazorRequestContext>
         public IHandlerProvider GetHandlerProvider()
         {
             return _server.GetHandlerProvider();
+        }
+
+        public RazorRequestExecutionQueue GetRequestExecutionQueue()
+        {
+            return (RazorRequestExecutionQueue)_server.GetRequestExecutionQueue();
         }
     }
 }

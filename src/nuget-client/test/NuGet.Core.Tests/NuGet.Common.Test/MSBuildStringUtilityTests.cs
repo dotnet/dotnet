@@ -58,7 +58,7 @@ namespace NuGet.Common.Test
             // Arrange
             var logCodes1 = new List<NuGetLogCode>() { NuGetLogCode.NU1001, NuGetLogCode.NU1000 };
 
-            var logCodesList = new List<IEnumerable<NuGetLogCode>>() { null, logCodes1 };
+            var logCodesList = new List<IEnumerable<NuGetLogCode>>() { null!, logCodes1 };
 
             // Act
             var result = MSBuildStringUtility.GetDistinctNuGetLogCodesOrDefault(logCodesList);
@@ -71,7 +71,7 @@ namespace NuGet.Common.Test
         public void GetDistinctNuGetLogCodesOrDefault_AllNullCodes()
         {
             // Arrange
-            var logCodesList = new List<IEnumerable<NuGetLogCode>>() { null, null };
+            var logCodesList = new List<IEnumerable<NuGetLogCode>>() { null!, null! };
 
             // Act
             var result = MSBuildStringUtility.GetDistinctNuGetLogCodesOrDefault(logCodesList);
@@ -85,7 +85,7 @@ namespace NuGet.Common.Test
         {
             // Arrange
             var logCodes1 = new List<NuGetLogCode>() { NuGetLogCode.NU1001, NuGetLogCode.NU1000 };
-            var logCodesList = new List<IEnumerable<NuGetLogCode>>() { logCodes1, null };
+            var logCodesList = new List<IEnumerable<NuGetLogCode>>() { logCodes1, null! };
 
             // Act
             var result = MSBuildStringUtility.GetDistinctNuGetLogCodesOrDefault(logCodesList);

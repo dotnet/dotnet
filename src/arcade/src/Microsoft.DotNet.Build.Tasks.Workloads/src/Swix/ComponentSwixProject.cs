@@ -37,7 +37,7 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Swix
             }
 
             ProjectSourceDirectory = Path.Combine(SwixDirectory, $"{component.SdkFeatureBand}",
-                $"{component.Name}.{component.Version}");
+                $"{Path.GetRandomFileName()}");
 
             ReplacementTokens[SwixTokens.__VS_COMPONENT_TITLE__] = component.Title;
             ReplacementTokens[SwixTokens.__VS_COMPONENT_DESCRIPTION__] = component.Description;

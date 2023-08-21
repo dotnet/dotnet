@@ -76,7 +76,6 @@ namespace NuGet.VisualStudio.Internal.Contracts
                 PackageSearchMetadataContextInfoFormatter.Instance,
                 PackageSourceContextInfoFormatter.Instance,
                 PackageSourceFormatter.Instance,
-                PackageSourceUpdateOptionsFormatter.Instance,
                 PackageVulnerabilityMetadataContextInfoFormatter.Instance,
                 ProjectActionFormatter.Instance,
                 RemoteErrorFormatter.Instance,

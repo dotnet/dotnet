@@ -1,29 +1,29 @@
-From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
-From: "msimons@microsoft.com" <MichaelSimons>
-Date: Fri, 15 Oct 2021 18:10:34 +0000
+From 8dea9f48af22684ef26b83ad141b5a1cf0789632 Mon Sep 17 00:00:00 2001
+From: Matt Mitchell <mmitche@microsoft.com>
+Date: Tue, 18 Jul 2023 12:28:00 -0700
 Subject: [PATCH] Eliminate prebuilts
 
-* Updated SourceLink reference to pick up the source-build version
-* Removed Nerdbank.GitVersioning references because it would introduce a prebuilt. Instead version property is set as build prop
 ---
- Directory.Build.props                             | 3 +--
+ Directory.Build.props                             | 5 -----
  src/MSBuildLocator/Microsoft.Build.Locator.csproj | 2 +-
- 2 files changed, 2 insertions(+), 3 deletions(-)
+ 2 files changed, 1 insertion(+), 6 deletions(-)
 
 diff --git a/Directory.Build.props b/Directory.Build.props
-index 95ec511..5227a47 100644
+index 95ec511..f075a6a 100644
 --- a/Directory.Build.props
 +++ b/Directory.Build.props
-@@ -28,8 +28,7 @@
+@@ -27,11 +27,6 @@
+     <RestoreUseStaticGraphEvaluation>true</RestoreUseStaticGraphEvaluation>
    </PropertyGroup>
  
-   <ItemGroup>
+-  <ItemGroup>
 -    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1" PrivateAssets="All"/>
 -    <PackageReference Include="Nerdbank.GitVersioning" Version="3.5.107" PrivateAssets="all" />
-+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="$(MicrosoftSourceLinkGitHubVersion)" PrivateAssets="All"/>
-   </ItemGroup>
- 
+-  </ItemGroup>
+-
    <ItemGroup>
+     <None Include="$(MSBuildThisFileDirectory)\branding\MSBuild-NuGet-Icon.png"
+           Pack="true"
 diff --git a/src/MSBuildLocator/Microsoft.Build.Locator.csproj b/src/MSBuildLocator/Microsoft.Build.Locator.csproj
 index a3977cd..921c8c0 100644
 --- a/src/MSBuildLocator/Microsoft.Build.Locator.csproj
@@ -37,3 +37,6 @@ index a3977cd..921c8c0 100644
      <DebugType>full</DebugType>
  
      <CopyLocalLockFileAssemblies>false</CopyLocalLockFileAssemblies>
+-- 
+2.41.0.windows.2
+

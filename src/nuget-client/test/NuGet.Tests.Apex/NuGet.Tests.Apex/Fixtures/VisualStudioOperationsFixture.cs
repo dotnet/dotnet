@@ -52,7 +52,7 @@ namespace NuGet.Tests.Apex
                         typeof(NuGetApexConsoleTestService).Assembly.Location, // NuGet.Console.TestContract.dll
                     };
 
-                    foreach(var testAssembly in compositionAssemblies)
+                    foreach (var testAssembly in compositionAssemblies)
                     {
                         _visualStudioHostConfiguration.AddCompositionAssembly(testAssembly);
                     }

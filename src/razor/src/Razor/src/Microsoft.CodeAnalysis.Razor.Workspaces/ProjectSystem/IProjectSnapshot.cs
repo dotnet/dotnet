@@ -21,6 +21,11 @@ internal interface IProjectSnapshot
     /// </summary>
     string FilePath { get; }
 
+    /// <summary>
+    /// Gets the full path to the folder under 'obj' where the project.razor.json file will live
+    /// </summary>
+    string IntermediateOutputPath { get; }
+
     string? RootNamespace { get; }
     VersionStamp Version { get; }
     LanguageVersion CSharpLanguageVersion { get; }

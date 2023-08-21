@@ -5,7 +5,6 @@
   <PropertyGroup>
     <GitHubRepositoryName>xliff-tasks</GitHubRepositoryName>
     <SourceBuildManagedOnly>true</SourceBuildManagedOnly>
-    <SourceBuildTrimNetFrameworkTargets>true</SourceBuildTrimNetFrameworkTargets>
   </PropertyGroup>
 
 </Project>

@@ -51,7 +51,7 @@ namespace NuGet.Common.Test
             var semaphore = new SemaphoreSlim(1);
             semaphore.Wait();
 
-            string existingThreadOutput = null;
+            string? existingThreadOutput = null;
             var existingThread = new Thread(() =>
             {
                 semaphore.Wait();
@@ -62,7 +62,7 @@ namespace NuGet.Common.Test
             action();
 
             // Get the results.
-            string newThreadOutput = null;
+            string? newThreadOutput = null;
             var newThread = new Thread(() => newThreadOutput = TestResource.Example);
 
             string mainThreadOutput = TestResource.Example;
@@ -84,9 +84,9 @@ namespace NuGet.Common.Test
 
         private class LocalizedOutput
         {
-            public string MainThread { get; set; }
-            public string ExistingThread { get; set; }
-            public string NewThread { get; set; }
+            public string? MainThread { get; set; }
+            public string? ExistingThread { get; set; }
+            public string? NewThread { get; set; }
         }
     }
 }

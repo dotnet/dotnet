@@ -8,6 +8,7 @@
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <PackageId>Microsoft.IdentityModel.Abstractions</PackageId>
     <PackageTags>.NET;Windows;Authentication;Identity;Abstractions</PackageTags>
+    <IsTrimmable>true</IsTrimmable>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)'=='Debug'">

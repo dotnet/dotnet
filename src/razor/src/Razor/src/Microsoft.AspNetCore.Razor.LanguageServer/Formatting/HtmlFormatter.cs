@@ -35,8 +35,7 @@ internal class HtmlFormatter
             throw new ArgumentNullException(nameof(context));
         }
 
-        var documentVersion = await _documentVersionCache.TryGetDocumentVersionAsync(context.OriginalSnapshot, cancellationToken).ConfigureAwait(false);
-        if (documentVersion is null)
+        if (!_documentVersionCache.TryGetDocumentVersion(context.OriginalSnapshot, out var documentVersion))
         {
             return Array.Empty<TextEdit>();
         }
@@ -52,7 +51,7 @@ internal class HtmlFormatter
         };
 
         var result = await _server.SendRequestAsync<DocumentFormattingParams, RazorDocumentFormattingResponse?>(
-            RazorLanguageServerCustomMessageTargets.RazorHtmlFormattingEndpoint,
+            CustomMessageNames.RazorHtmlFormattingEndpoint,
             @params,
             cancellationToken).ConfigureAwait(false);
 
@@ -63,8 +62,7 @@ internal class HtmlFormatter
        FormattingContext context,
        CancellationToken cancellationToken)
     {
-        var documentVersion = await _documentVersionCache.TryGetDocumentVersionAsync(context.OriginalSnapshot, cancellationToken).ConfigureAwait(false);
-        if (documentVersion == null)
+        if (!_documentVersionCache.TryGetDocumentVersion(context.OriginalSnapshot, out var documentVersion))
         {
             return Array.Empty<TextEdit>();
         }
@@ -80,7 +78,7 @@ internal class HtmlFormatter
         };
 
         var result = await _server.SendRequestAsync<RazorDocumentOnTypeFormattingParams, RazorDocumentFormattingResponse?>(
-            RazorLanguageServerCustomMessageTargets.RazorHtmlOnTypeFormattingEndpoint,
+            CustomMessageNames.RazorHtmlOnTypeFormattingEndpoint,
             @params,
             cancellationToken).ConfigureAwait(false);
 

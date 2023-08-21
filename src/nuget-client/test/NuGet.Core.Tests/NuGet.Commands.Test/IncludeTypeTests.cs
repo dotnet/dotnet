@@ -1813,7 +1813,7 @@ namespace NuGet.Commands.Test
                     .WithCentralPackageTransitivePinningEnabled()
                     .Build()
                     .WithTestRestoreMetadata()
-                    .WithTestProjectReference(project3Spec, privateAssets:(LibraryIncludeFlags.All & (~includeFlags)));
+                    .WithTestProjectReference(project3Spec, privateAssets: (LibraryIncludeFlags.All & (~includeFlags)));
 
 
                 var project1Spec = PackageReferenceSpecBuilder.Create("Project1", project1Directory.FullName)

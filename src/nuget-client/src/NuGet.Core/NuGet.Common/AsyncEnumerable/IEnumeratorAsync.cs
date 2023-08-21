@@ -22,10 +22,10 @@ namespace NuGet.Common
         /// The element in the collection at the current position of the enumerator.
         /// </returns>
         T Current { get; }
+
         /// <summary>
         /// Moves the pointer to the next element in the collection. 
         /// </summary>
-        /// 
         /// <returns>
         /// Success status of the pointer move
         /// </returns>

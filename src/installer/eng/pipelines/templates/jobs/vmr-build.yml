@@ -70,7 +70,7 @@ jobs:
   - template: /eng/common/templates/variables/pool-providers.yml
   - ${{ if eq(variables['System.TeamProject'], 'internal') }}:
     - group: AzureDevOps-Artifact-Feeds-Pats
-  - ${{ if and(not(parameters.isBuiltFromVmr), eq(variables['System.TeamProject'], 'internal'), not(startswith(parameters.vmrBranch, 'internal/release/'))) }}:
+  - ${{ if and(not(parameters.isBuiltFromVmr), eq(variables['System.TeamProject'], 'internal'), not(startswith(parameters.vmrBranch, 'internal/release/')), not(eq(variables['Build.Reason'], 'PullRequest'))) }}:
     - group: DotNetBot-GitHub
   - ${{ else }}:
     - name: BotAccount-dotnet-bot-repo-PAT
@@ -219,8 +219,13 @@ jobs:
 
       dockerVolumeArgs="-v $(sourcesPath):/vmr"
       dockerEnvArgs="-e SMOKE_TESTS_EXCLUDE_OMNISHARP=${{ parameters.excludeOmniSharpTests }} -e SMOKE_TESTS_WARN_SDK_CONTENT_DIFFS=true -e SMOKE_TESTS_RUNNING_IN_CI=true"
+      poisonArg=''
 
-      docker run --rm $dockerVolumeArgs -w /vmr $dockerEnvArgs ${{ parameters.container }} ./build.sh --run-smoke-test $(additionalBuildArgs) -- -p:SmokeTestConsoleVerbosity=detailed
+      if [[ '${{ parameters.enablePoison }}' == 'True' ]]; then
+        poisonArg='--poison'
+      fi
+
+      docker run --rm $dockerVolumeArgs -w /vmr $dockerEnvArgs ${{ parameters.container }} ./build.sh $poisonArg --run-smoke-test $(additionalBuildArgs) -- -p:SmokeTestConsoleVerbosity=detailed
     displayName: Run Tests
 
   # Don't use CopyFiles@2 as it encounters permissions issues because it indexes all files in the source directory graph.

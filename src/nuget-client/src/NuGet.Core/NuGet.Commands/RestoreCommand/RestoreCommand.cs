@@ -485,7 +485,7 @@ namespace NuGet.Commands
                 _logger);
             await audit.CheckPackageVulnerabilitiesAsync(token);
 
-            telemetry.TelemetryEvent[AuditLevel] = audit.MinSeverity;
+            telemetry.TelemetryEvent[AuditLevel] = (int)audit.MinSeverity;
             telemetry.TelemetryEvent[AuditMode] = AuditUtility.GetString(audit.AuditMode);
 
             if (audit.DirectPackagesWithAdvisory is not null) { AddPackagesList(telemetry, AuditDirectVulnerabilitiesPackages, audit.DirectPackagesWithAdvisory); }
@@ -515,7 +515,7 @@ namespace NuGet.Commands
                 List<TelemetryEvent> result = new List<TelemetryEvent>(packages.Count);
                 foreach (var package in packages)
                 {
-                    TelemetryEvent packageData = new TelemetryEvent(eventName: null);
+                    TelemetryEvent packageData = new TelemetryEvent(eventName: string.Empty);
                     packageData.AddPiiData("id", package);
                     result.Add(packageData);
                 }

@@ -2538,7 +2538,7 @@ namespace NuGet.Commands.Test.RestoreCommandTests
                     .WithCentralPackageTransitivePinningEnabled()
                     .Build()
                     .WithTestRestoreMetadata()
-                    .WithTestProjectReference(project2Spec, privateAssets:privateAssets);
+                    .WithTestProjectReference(project2Spec, privateAssets: privateAssets);
 
                 var restoreContext = new RestoreArgs()
                 {

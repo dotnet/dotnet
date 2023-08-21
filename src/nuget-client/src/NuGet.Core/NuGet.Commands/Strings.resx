@@ -1041,19 +1041,19 @@ Non-HTTPS access will be removed in a future version. Consider migrating to 'HTT
     <value>Warning As Error: {0}</value>
     <comment>{0} is a warning message</comment>
   </data>
-  <data name="Vulnerability_Severity_1" xml:space="preserve">
+  <data name="Vulnerability_Severity_Low" xml:space="preserve">
     <value>low</value>
     <comment>As in "This package has a low severity vulnerability"</comment>
   </data>
-  <data name="Vulnerability_Severity_2" xml:space="preserve">
+  <data name="Vulnerability_Severity_Moderate" xml:space="preserve">
     <value>moderate</value>
     <comment>As in "This package has a moderate severity vulnerability"</comment>
   </data>
-  <data name="Vulnerability_Severity_3" xml:space="preserve">
+  <data name="Vulnerability_Severity_High" xml:space="preserve">
     <value>high</value>
     <comment>As in "This package has a high severity vulnerability"</comment>
   </data>
-  <data name="Vulnerability_Severity_4" xml:space="preserve">
+  <data name="Vulnerability_Severity_Critical" xml:space="preserve">
     <value>critical</value>
     <comment>As in "This package has a critical severity vulnerability"</comment>
   </data>

@@ -2,6 +2,7 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Runtime.CompilerServices;
 
 namespace Microsoft.Extensions.Internal;
@@ -45,6 +46,20 @@ internal ref struct HashCodeCombiner
     {
         var hashCode = value != null ? comparer.GetHashCode(value) : 0;
         Add(hashCode);
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public void Add<T>(ImmutableArray<T> array, IEqualityComparer<T> comparer)
+    {
+        if (array.IsDefault)
+        {
+            return;
+        }
+
+        foreach (var item in array)
+        {
+            Add(item, comparer);
+        }
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]

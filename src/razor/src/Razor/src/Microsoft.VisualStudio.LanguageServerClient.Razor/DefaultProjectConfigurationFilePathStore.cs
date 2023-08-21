@@ -15,7 +15,7 @@ namespace Microsoft.VisualStudio.LanguageServerClient.Razor;
 [Export(typeof(ProjectConfigurationFilePathStore))]
 internal class DefaultProjectConfigurationFilePathStore : ProjectConfigurationFilePathStore
 {
-    private readonly Dictionary<string, string> _mappings;
+    private readonly Dictionary<ProjectKey, string> _mappings;
     private readonly object _mappingsLock;
 
     public override event EventHandler<ProjectConfigurationFilePathChangedEventArgs>? Changed;
@@ -23,19 +23,14 @@ internal class DefaultProjectConfigurationFilePathStore : ProjectConfigurationFi
     [ImportingConstructor]
     public DefaultProjectConfigurationFilePathStore()
     {
-        _mappings = new Dictionary<string, string>(FilePathComparer.Instance);
+        _mappings = new Dictionary<ProjectKey, string>();
         _mappingsLock = new object();
     }
 
-    public override IReadOnlyDictionary<string, string> GetMappings() => new Dictionary<string, string>(_mappings);
+    public override IReadOnlyDictionary<ProjectKey, string> GetMappings() => new Dictionary<ProjectKey, string>(_mappings);
 
-    public override void Set(string projectFilePath, string configurationFilePath)
+    public override void Set(ProjectKey projectKey, string configurationFilePath)
     {
-        if (projectFilePath is null)
-        {
-            throw new ArgumentNullException(nameof(projectFilePath));
-        }
-
         if (configurationFilePath is null)
         {
             throw new ArgumentNullException(nameof(configurationFilePath));
@@ -46,50 +41,40 @@ internal class DefaultProjectConfigurationFilePathStore : ProjectConfigurationFi
             // Resolve any relative pathing in the configuration path so we can talk in absolutes
             configurationFilePath = Path.GetFullPath(configurationFilePath);
 
-            if (_mappings.TryGetValue(projectFilePath, out var existingConfigurationFilePath) &&
+            if (_mappings.TryGetValue(projectKey, out var existingConfigurationFilePath) &&
                 FilePathComparer.Instance.Equals(configurationFilePath, existingConfigurationFilePath))
             {
                 // Already have this mapping, don't invoke changed.
                 return;
             }
 
-            _mappings[projectFilePath] = configurationFilePath;
+            _mappings[projectKey] = configurationFilePath;
         }
 
-        var args = new ProjectConfigurationFilePathChangedEventArgs(projectFilePath, configurationFilePath);
+        var args = new ProjectConfigurationFilePathChangedEventArgs(projectKey, configurationFilePath);
         Changed?.Invoke(this, args);
     }
 
-    public override void Remove(string projectFilePath)
+    public override void Remove(ProjectKey projectKey)
     {
-        if (projectFilePath is null)
-        {
-            throw new ArgumentNullException(nameof(projectFilePath));
-        }
-
         lock (_mappingsLock)
         {
-            if (!_mappings.Remove(projectFilePath))
+            if (!_mappings.Remove(projectKey))
             {
                 // We weren't tracking the project file path, no-op.
                 return;
             }
         }
 
-        var args = new ProjectConfigurationFilePathChangedEventArgs(projectFilePath, configurationFilePath: null);
+        var args = new ProjectConfigurationFilePathChangedEventArgs(projectKey, configurationFilePath: null);
         Changed?.Invoke(this, args);
     }
 
-    public override bool TryGet(string projectFilePath, [NotNullWhen(returnValue: true)] out string? configurationFilePath)
+    public override bool TryGet(ProjectKey projectKey, [NotNullWhen(returnValue: true)] out string? configurationFilePath)
     {
-        if (projectFilePath is null)
-        {
-            throw new ArgumentNullException(nameof(projectFilePath));
-        }
-
         lock (_mappingsLock)
         {
-            return _mappings.TryGetValue(projectFilePath, out configurationFilePath);
+            return _mappings.TryGetValue(projectKey, out configurationFilePath);
         }
     }
 }

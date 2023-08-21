@@ -19,12 +19,11 @@ namespace NuGet.Common
         private readonly HashSet<T> _seen;
         private readonly IComparer<T> _orderingComparer;
         private readonly List<IEnumeratorAsync<T>> _asyncEnumerators = new List<IEnumeratorAsync<T>>();
-        private IEnumeratorAsync<T> _currentEnumeratorAsync;
-        private IEnumeratorAsync<T> _lastAwaitedEnumeratorAsync;
+        private IEnumeratorAsync<T>? _currentEnumeratorAsync;
+        private IEnumeratorAsync<T>? _lastAwaitedEnumeratorAsync;
         private bool firstPass = true;
 
-
-        public AggregateEnumeratorAsync(IList<IEnumerableAsync<T>> asyncEnumerables, IComparer<T> orderingComparer, IEqualityComparer<T> equalityComparer)
+        public AggregateEnumeratorAsync(IList<IEnumerableAsync<T>> asyncEnumerables, IComparer<T>? orderingComparer, IEqualityComparer<T>? equalityComparer)
         {
             if (asyncEnumerables == null)
             {
@@ -46,7 +45,8 @@ namespace NuGet.Common
             {
                 if (_currentEnumeratorAsync == null)
                 {
-                    return default(T);
+                    // From the interface definition, if MoveNextAsync hasn't yet been called, this property's behavior is undefined.
+                    return default(T)!;
                 }
                 return _currentEnumeratorAsync.Current;
             }
@@ -56,9 +56,9 @@ namespace NuGet.Common
         {
             while (_asyncEnumerators.Count > 0)
             {
-                T currentValue = default(T);
+                T? currentValue = default(T);
                 var hasValue = false;
-                List<IEnumeratorAsync<T>> completedEnums = null;
+                List<IEnumeratorAsync<T>>? completedEnums = null;
 
                 if (firstPass)
                 {
@@ -75,7 +75,7 @@ namespace NuGet.Common
                         }
                         else
                         {
-                            if (!hasValue || _orderingComparer.Compare(currentValue, enumerator.Current) > 0)
+                            if (!hasValue || _orderingComparer.Compare(currentValue!, enumerator.Current) > 0)
                             {
                                 hasValue = true;
                                 currentValue = enumerator.Current;
@@ -103,7 +103,7 @@ namespace NuGet.Common
                             }
                         }
 
-                        if (hasNext && (!hasValue || _orderingComparer.Compare(currentValue, enumerator.Current) > 0))
+                        if (hasNext && (!hasValue || _orderingComparer.Compare(currentValue!, enumerator.Current) > 0))
                         {
                             hasValue = true;
                             currentValue = enumerator.Current;
@@ -120,7 +120,7 @@ namespace NuGet.Common
 
                 if (hasValue)
                 {
-                    if (_seen.Add(currentValue))
+                    if (_seen.Add(currentValue!))
                     {
                         return true;
                     }

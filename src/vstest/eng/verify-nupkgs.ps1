@@ -18,7 +18,7 @@ function Verify-Nuget-Packages {
         "Microsoft.NET.Test.Sdk"                      = 16;
         "Microsoft.TestPlatform"                      = 608;
         "Microsoft.TestPlatform.Build"                = 21;
-        "Microsoft.TestPlatform.CLI"                  = 493;
+        "Microsoft.TestPlatform.CLI"                  = 472;
         "Microsoft.TestPlatform.Extensions.TrxLogger" = 35;
         "Microsoft.TestPlatform.ObjectModel"          = 93;
         "Microsoft.TestPlatform.AdapterUtilities"     = 34;
@@ -34,26 +34,26 @@ function Verify-Nuget-Packages {
     $pattern = "*.$versionPrefix*.nupkg"
     $nugetPackages = @(Get-ChildItem $packageDirectory -Filter $pattern -Recurse -File | Where-Object { $_.Name -notLike "*.symbols.nupkg"})
 
-    if (0 -eq $nugetPackages.Length) { 
+    if (0 -eq $nugetPackages.Length) {
         throw "No nuget packages matching $pattern were found in '$packageDirectory'."
     }
 
     $suffixes = @($nugetPackages -replace ".*?$([regex]::Escape($versionPrefix))(.*)\.nupkg", '$1' | Sort-Object -Unique)
-    if (1 -lt $suffixes.Length) { 
+    if (1 -lt $suffixes.Length) {
         Write-Host "There are two different suffixes matching the same version prefix: '$($suffixes -join "', '")'".
 
-        $latestNuget = $nugetPackages | 
-            Where-Object { $_.Name -like "Microsoft.TestPlatform.ObjectModel.*" } | 
-            Sort-Object -Property LastWriteTime -Descending | 
+        $latestNuget = $nugetPackages |
+            Where-Object { $_.Name -like "Microsoft.TestPlatform.ObjectModel.*" } |
+            Sort-Object -Property LastWriteTime -Descending |
             Select-Object -First 1
-        
+
         $suffix = $suffixes | Where { $latestNuget.Name.Contains("$versionPrefix$_.nupkg") }
         $version = "$versionPrefix$suffix"
         Write-Host "The most recently written Microsoft.TestPlatform.ObjectModel.* nuget, is $($latestNuget.Name), which has '$suffix' suffix. Selecting only packages with that suffix."
 
         $nugetPackages = $nugetPackages | Where-Object { $_.Name -like "*$version.nupkg" }
     }
-    else { 
+    else {
         $suffix = $suffixes[0]
         $version = "$versionPrefix$suffix"
     }

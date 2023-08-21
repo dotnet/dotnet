@@ -342,7 +342,7 @@ namespace NuGet.Common
         NU1803 = 1803,
 
         /// <summary>
-        /// Unknown package vulnerability issue
+        /// Server/package source vulnerability issue
         /// </summary>
         NU1900 = 1900,
 
@@ -352,17 +352,17 @@ namespace NuGet.Common
         NU1901 = 1901,
 
         /// <summary>
-        /// Package with known low severity vulnerability
+        /// Package with known moderate severity vulnerability
         /// </summary>
         NU1902 = 1902,
 
         /// <summary>
-        /// Package with known low severity vulnerability
+        /// Package with known high severity vulnerability
         /// </summary>
         NU1903 = 1903,
 
         /// <summary>
-        /// Package with known low severity vulnerability
+        /// Package with known critical severity vulnerability
         /// </summary>
         NU1904 = 1904,
 

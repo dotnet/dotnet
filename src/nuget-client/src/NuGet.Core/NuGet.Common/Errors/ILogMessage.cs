@@ -31,7 +31,7 @@ namespace NuGet.Common
         /// <summary>
         /// Indicates the project for which the error was thrown.
         /// </summary>
-        string ProjectPath { get; set; }
+        string? ProjectPath { get; set; }
 
         /// <summary>
         /// Indicates the date time at which the error occurred.

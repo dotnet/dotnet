@@ -23,7 +23,15 @@ namespace Test
 #line hidden
 #nullable disable
             )));
-            __builder.AddAttribute(2, "ValueChanged", (object)((global::System.Action<System.Int32>)(UpdateValue)));
+            __builder.AddAttribute(2, "ValueChanged", (object)((global::System.Action<System.Int32>)(
+#nullable restore
+#line 1 "x:\dir\subdir\Test\TestComponent.cshtml"
+                                                            UpdateValue
+
+#line default
+#line hidden
+#nullable disable
+            )));
             __builder.CloseComponent();
         }
         #pragma warning restore 1998

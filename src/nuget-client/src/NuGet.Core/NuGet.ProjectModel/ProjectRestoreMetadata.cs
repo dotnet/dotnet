@@ -129,49 +129,22 @@ namespace NuGet.ProjectModel
 
         public override int GetHashCode()
         {
+            StringComparer osStringComparer = PathUtility.GetStringComparerBasedOnOS();
+
             var hashCode = new HashCodeCombiner();
 
             hashCode.AddStruct(ProjectStyle);
-
-            StringComparer osStringComparer = PathUtility.GetStringComparerBasedOnOS();
-            if (ProjectPath != null)
-            {
-                hashCode.AddObject(osStringComparer.GetHashCode(ProjectPath));
-            }
-            if (ProjectJsonPath != null)
-            {
-                hashCode.AddObject(osStringComparer.GetHashCode(ProjectJsonPath));
-            }
-            if (OutputPath != null)
-            {
-                hashCode.AddObject(osStringComparer.GetHashCode(OutputPath));
-            }
-            if (ProjectName != null)
-            {
-                hashCode.AddObject(osStringComparer.GetHashCode(ProjectName));
-            }
-            if (ProjectUniqueName != null)
-            {
-                hashCode.AddObject(osStringComparer.GetHashCode(ProjectUniqueName));
-            }
-            hashCode.AddSequence(Sources.OrderBy(e => e.Source, StringComparer.OrdinalIgnoreCase));
-            if (PackagesPath != null)
-            {
-                hashCode.AddObject(osStringComparer.GetHashCode(PackagesPath));
-            }
-            foreach (var reference in ConfigFilePaths.OrderBy(s => s, osStringComparer))
-            {
-                hashCode.AddObject(osStringComparer.GetHashCode(reference));
-            }
-            foreach (var reference in FallbackFolders.OrderBy(s => s, osStringComparer))
-            {
-                hashCode.AddObject(osStringComparer.GetHashCode(reference));
-            }
-            hashCode.AddSequence(TargetFrameworks.OrderBy(dep => dep.TargetAlias, StringComparer.OrdinalIgnoreCase));
-            foreach (var reference in OriginalTargetFrameworks.OrderBy(s => s, StringComparer.OrdinalIgnoreCase))
-            {
-                hashCode.AddObject(StringComparer.OrdinalIgnoreCase.GetHashCode(reference));
-            }
+            hashCode.AddObject(ProjectPath, osStringComparer);
+            hashCode.AddObject(ProjectJsonPath, osStringComparer);
+            hashCode.AddObject(OutputPath, osStringComparer);
+            hashCode.AddObject(ProjectName, osStringComparer);
+            hashCode.AddObject(ProjectUniqueName, osStringComparer);
+            hashCode.AddUnorderedSequence(Sources);
+            hashCode.AddObject(PackagesPath, osStringComparer);
+            hashCode.AddUnorderedSequence(ConfigFilePaths, osStringComparer);
+            hashCode.AddUnorderedSequence(FallbackFolders, osStringComparer);
+            hashCode.AddUnorderedSequence(TargetFrameworks);
+            hashCode.AddUnorderedSequence(OriginalTargetFrameworks, StringComparer.OrdinalIgnoreCase);
             hashCode.AddObject(CrossTargeting);
             hashCode.AddObject(LegacyPackagesDirectory);
             hashCode.AddSequence(Files);

@@ -461,6 +461,11 @@ namespace Dotnet.Integration.Test
         {
             // Arrange
             using var pathContext = _fixture.CreateSimpleTestPathContext();
+            var emptyHttpCache = new Dictionary<string, string>
+                {
+                    { "NUGET_HTTP_CACHE_PATH", pathContext.HttpCacheFolder },
+                };
+
             var packageA100 = new SimpleTestPackageContext("A", "1.0.0");
             var packageA200 = new SimpleTestPackageContext("A", "2.0.0");
 

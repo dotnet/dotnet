@@ -18,8 +18,13 @@ namespace Microsoft.VisualStudio.Editor.Razor.Documents;
 // tracks the existence of projects/files and the the document manager watches for changes.
 //
 // This class forwards notifications in both directions.
-[Export(typeof(ProjectSnapshotChangeTrigger))]
-internal class EditorDocumentManagerListener : ProjectSnapshotChangeTrigger
+//
+// By implementing IPriorityProjectSnapshotChangeTrigger we're saying we're pretty important and should get initialized before
+// other triggers with lesser priority so we can attach to Changed sooner. We happen to be so important because we control the
+// open/close state of documents. If other triggers depend on a document being open/closed (some do) then we need to ensure we
+// can mark open/closed prior to them running.
+[Export(typeof(IProjectSnapshotChangeTrigger))]
+internal class EditorDocumentManagerListener : IPriorityProjectSnapshotChangeTrigger
 {
     private readonly ProjectSnapshotManagerDispatcher _projectSnapshotManagerDispatcher;
     private readonly JoinableTaskContext _joinableTaskContext;
@@ -74,19 +79,9 @@ internal class EditorDocumentManagerListener : ProjectSnapshotChangeTrigger
         _onClosed = onClosed;
     }
 
-    // InitializePriority controls when a snapshot change trigger gets initialized. By specifying 100 we're saying we're pretty important and should get initialized before
-    // other triggers with lesser priority so we can attach to Changed sooner. We happen to be so important because we control the open/close state of documents. If other triggers
-    // depend on a document being open/closed (some do) then we need to ensure we can mark open/closed prior to them running.
-    public override int InitializePriority => 100;
-
     [MemberNotNull(nameof(_documentManager), nameof(_projectManager))]
-    public override void Initialize(ProjectSnapshotManagerBase projectManager)
+    public void Initialize(ProjectSnapshotManagerBase projectManager)
     {
-        if (projectManager is null)
-        {
-            throw new ArgumentNullException(nameof(projectManager));
-        }
-
         _projectManager = projectManager;
         _documentManager = projectManager.Workspace.Services.GetRequiredService<EditorDocumentManager>();
 
@@ -113,13 +108,13 @@ internal class EditorDocumentManagerListener : ProjectSnapshotChangeTrigger
                         return;
                     }
 
-                    var key = new DocumentKey(e.ProjectFilePath.AssumeNotNull(), e.DocumentFilePath.AssumeNotNull());
+                    var key = new DocumentKey(e.ProjectKey, e.DocumentFilePath.AssumeNotNull());
 
                     // GetOrCreateDocument needs to be run on the UI thread
                     await _joinableTaskContext.Factory.SwitchToMainThreadAsync(cancellationToken);
 
                     var document = DocumentManager.GetOrCreateDocument(
-                        key, _onChangedOnDisk, _onChangedInEditor, _onOpened, _onClosed);
+                        key, e.ProjectFilePath, e.ProjectKey, _onChangedOnDisk, _onChangedInEditor, _onOpened, _onClosed);
                     if (document.IsOpenInEditor)
                     {
                         _onOpened(document, EventArgs.Empty);
@@ -136,7 +131,7 @@ internal class EditorDocumentManagerListener : ProjectSnapshotChangeTrigger
                     await _joinableTaskContext.Factory.SwitchToMainThreadAsync(cancellationToken);
 
                     if (DocumentManager.TryGetDocument(
-                        new DocumentKey(e.ProjectFilePath.AssumeNotNull(), e.DocumentFilePath.AssumeNotNull()), out var document))
+                        new DocumentKey(e.ProjectKey, e.DocumentFilePath.AssumeNotNull()), out var document))
                     {
                         // This class 'owns' the document entry so it's safe for us to dispose it.
                         document.Dispose();

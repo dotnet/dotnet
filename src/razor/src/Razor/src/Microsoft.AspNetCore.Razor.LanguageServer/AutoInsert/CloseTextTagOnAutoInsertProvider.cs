@@ -75,8 +75,7 @@ internal sealed class CloseTextTagOnAutoInsertProvider : IOnAutoInsertProvider
             return false;
         }
 
-        var change = new SourceChange(absoluteIndex - 1, 0, string.Empty);
-        var owner = syntaxTree.Root.LocateOwner(change);
+        var owner = syntaxTree.Root.FindToken(absoluteIndex - 1);
         // Make sure the end </text> tag doesn't already exist
         if (owner?.Parent is MarkupStartTagSyntax
             {

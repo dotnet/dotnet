@@ -1,0 +1,34 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/10/nuspec.xsd">
+  <metadata minClientVersion="2.12">
+    <id>xunit.extensibility.execution</id>
+    <version>$PackageVersion$</version>
+    <title>xUnit.net [Extensibility: Execution]</title>
+    <authors>jnewkirk,bradwilson</authors>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <license type="expression">Apache-2.0</license>
+    <licenseUrl>https://licenses.nuget.org/Apache-2.0</licenseUrl>
+    <icon>_content/logo-128-transparent.png</icon>
+    <description>Includes xunit.execution.*.dll for extensibility purposes. Supports .NET 4.5.2 or later, and .NET Standard 1.1.</description>
+    <copyright>Copyright (C) .NET Foundation</copyright>
+    <repository type="git" url="https://github.com/xunit/xunit" commit="$GitCommitId$" />
+    <dependencies>
+      <group targetFramework="net452">
+        <dependency id="xunit.extensibility.core" version="[$PackageVersion$]" />
+      </group>
+      <group targetFramework="netstandard1.1">
+        <dependency id="NETStandard.Library" version="1.6.1" />
+        <dependency id="xunit.extensibility.core" version="[$PackageVersion$]" />
+      </group>
+    </dependencies>
+  </metadata>
+  <files>
+    <file target="_content\" src="..\tools\media\logo-128-transparent.png" />
+
+    <file src="xunit.execution\bin\$Configuration$\net452\xunit.execution.desktop.dll" target="lib\net452\" />
+    <file src="xunit.execution\bin\$Configuration$\net452\xunit.execution.desktop.xml" target="lib\net452\" />
+
+    <file src="xunit.execution\bin\$Configuration$\netstandard1.1\xunit.execution.dotnet.dll" target="lib\netstandard1.1\" />
+    <file src="xunit.execution\bin\$Configuration$\netstandard1.1\xunit.execution.dotnet.xml" target="lib\netstandard1.1\" />
+  </files>
+</package>

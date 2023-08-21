@@ -32,7 +32,7 @@
     imported. This OK because we want to just have an obvious salt for a local build.
   -->
   <PropertyGroup>
-    <VsixVersionPrefix>17.8.1</VsixVersionPrefix>
+    <VsixVersionPrefix>17.8.2</VsixVersionPrefix>
     <AddinMajorVersion>17.8</AddinMajorVersion>
     <AddinVersion>$(AddinMajorVersion)</AddinVersion>
     <AddinVersion Condition="'$(OfficialBuildId)' != ''">$(AddinVersion).$(OfficialBuildId)</AddinVersion>
@@ -51,7 +51,7 @@
   <PropertyGroup Label="Automated">
     <MicrosoftNETCoreBrowserDebugHostTransportPackageVersion>6.0.2-servicing.22064.6</MicrosoftNETCoreBrowserDebugHostTransportPackageVersion>
     <MicrosoftNETCorePlatformsPackageVersion>6.0.1</MicrosoftNETCorePlatformsPackageVersion>
-    <MicrosoftSourceBuildIntermediatesourcebuildreferencepackagesPackageVersion>8.0.0-alpha.1.23356.4</MicrosoftSourceBuildIntermediatesourcebuildreferencepackagesPackageVersion>
+    <MicrosoftSourceBuildIntermediatesourcebuildreferencepackagesPackageVersion>8.0.0-alpha.1.23381.3</MicrosoftSourceBuildIntermediatesourcebuildreferencepackagesPackageVersion>
     <MicrosoftNetCompilersToolsetPackageVersion>4.7.0-3.23326.2</MicrosoftNetCompilersToolsetPackageVersion>
     <MicrosoftCommonLanguageServerProtocolFrameworkPackageVersion>4.7.0-3.23326.2</MicrosoftCommonLanguageServerProtocolFrameworkPackageVersion>
     <MicrosoftCodeAnalysisExternalAccessRazorPackageVersion>4.7.0-3.23326.2</MicrosoftCodeAnalysisExternalAccessRazorPackageVersion>
@@ -72,8 +72,7 @@
     <MicrosoftCodeAnalysisWorkspacesCommonPackageVersion>4.7.0-3.23326.2</MicrosoftCodeAnalysisWorkspacesCommonPackageVersion>
     <MicrosoftCodeAnalysisWorkspacesMSBuildPackageVersion>4.7.0-3.23326.2</MicrosoftCodeAnalysisWorkspacesMSBuildPackageVersion>
     <MicrosoftVisualStudioLanguageServicesPackageVersion>4.7.0-3.23326.2</MicrosoftVisualStudioLanguageServicesPackageVersion>
-    <MicrosoftSourceLinkGitHubPackageVersion>8.0.0-beta.23361.2</MicrosoftSourceLinkGitHubPackageVersion>
-    <MicrosoftDotNetXliffTasksPackageVersion>1.0.0-beta.23360.1</MicrosoftDotNetXliffTasksPackageVersion>
+    <MicrosoftDotNetXliffTasksPackageVersion>1.0.0-beta.23381.1</MicrosoftDotNetXliffTasksPackageVersion>
     <!--
       Exception - Microsoft.Extensions.ObjectPool and System.Collections.Immutable packages are not updated by automation,
       but are present in Version.Details.xml for source-build PVP flow. See the comment in Version.Details.xml for more information.
@@ -95,7 +94,7 @@
     <Tooling_HtmlEditorPackageVersion>17.5.101-preview-0002</Tooling_HtmlEditorPackageVersion>
     <MicrosoftVisualStudioShellPackagesVersion>17.7.35047-preview.1</MicrosoftVisualStudioShellPackagesVersion>
     <MicrosoftVisualStudioPackagesVersion>17.7.38-preview</MicrosoftVisualStudioPackagesVersion>
-    <VisualStudioLanguageServerProtocolVersion>17.7.8-preview-g8c33dc3a76</VisualStudioLanguageServerProtocolVersion>
+    <VisualStudioLanguageServerProtocolVersion>17.8.3-preview</VisualStudioLanguageServerProtocolVersion>
     <!-- dotnet/runtime packages -->
     <MicrosoftExtensionsPackageVersion>6.0.0</MicrosoftExtensionsPackageVersion>
     <SystemCompositionPackageVersion>7.0.0</SystemCompositionPackageVersion>
@@ -104,7 +103,7 @@
     <SystemTextEncodingsWebPackageVersion>6.0.0</SystemTextEncodingsWebPackageVersion>
     <SystemPrivateUriPackageVersion>4.3.2</SystemPrivateUriPackageVersion>
     <MicrosoftExtensionsNonCapturingTimerSourcesPackageVersion>5.0.0-preview.4.20205.1</MicrosoftExtensionsNonCapturingTimerSourcesPackageVersion>
-    <BenchmarkDotNetPackageVersion>0.13.2.2052</BenchmarkDotNetPackageVersion>
+    <BenchmarkDotNetPackageVersion>0.13.5.2136</BenchmarkDotNetPackageVersion>
     <MicrosoftBuildLocatorPackageVersion>1.2.6</MicrosoftBuildLocatorPackageVersion>
     <MicrosoftBuildPackageVersion>16.8.0</MicrosoftBuildPackageVersion>
     <MicrosoftDiaSymReaderVersion>2.0.0</MicrosoftDiaSymReaderVersion>
@@ -168,10 +167,9 @@
     <MicrosoftInternalVisualStudioShellFrameworkPackageVersion>$(MicrosoftVisualStudioShellPackagesVersion)</MicrosoftInternalVisualStudioShellFrameworkPackageVersion>
     <MicrosoftIORedistPackageVersion>6.0.0</MicrosoftIORedistPackageVersion>
     <!-- Compiler Deps -->
-    <BenchmarkDotNetVersion>0.13.2.1938</BenchmarkDotNetVersion>
     <DiffPlexVersion>1.5.0</DiffPlexVersion>
     <FluentAssertionsVersion>6.7.0</FluentAssertionsVersion>
-    <MicrosoftAspNetCoreAppVersion>7.0.7</MicrosoftAspNetCoreAppVersion>
+    <MicrosoftAspNetCoreAppVersion>7.0.9</MicrosoftAspNetCoreAppVersion>
     <MicrosoftBuildLocatorVersion>1.4.1</MicrosoftBuildLocatorVersion>
     <MicrosoftBuildVersion>17.3.0-preview-22364-05</MicrosoftBuildVersion>
     <MicrosoftBuildFrameworkVersion>$(MicrosoftBuildVersion)</MicrosoftBuildFrameworkVersion>

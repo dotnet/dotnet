@@ -66,7 +66,7 @@ namespace NuGet.PackageManagement.VisualStudio
             var hashCodeCombiner = new HashCodeCombiner();
             hashCodeCombiner.AddSequence(packageSources);
             hashCodeCombiner.AddStringIgnoreCase(packageId);
-            hashCodeCombiner.AddObject(includePrerelease.GetHashCode());
+            hashCodeCombiner.AddObject(includePrerelease);
             return hashCodeCombiner.CombinedHash.ToString(CultureInfo.InvariantCulture);
         }
 

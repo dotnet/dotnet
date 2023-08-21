@@ -13,7 +13,7 @@ namespace NuGet.VisualStudio.Common.Test
     {
         public class Constructor : OutputConsoleLoggerTests
         {
-            public Constructor (GlobalServiceProvider sp)
+            public Constructor(GlobalServiceProvider sp)
                 : base(sp)
             { }
 

@@ -9,7 +9,7 @@ Source Location: (100:2,7 [79] x:\dir\subdir\Test\TestComponent.cshtml)
 
     public void Update() { }
 |
-Generated Location: (1261:36,7 [79] )
+Generated Location: (1460:44,7 [79] )
 |
     public TParam ParentValue { get; set; }
 

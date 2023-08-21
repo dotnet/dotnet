@@ -92,6 +92,30 @@ internal partial class JsonDataWriter
         }
     }
 
+    public void Write(long value)
+    {
+        _writer.WriteValue(value);
+    }
+
+    public void Write(string propertyName, long value)
+    {
+        _writer.WritePropertyName(propertyName);
+        _writer.WriteValue(value);
+    }
+
+    public void WriteIfNotZero(string propertyName, long value)
+    {
+        WriteIfNotDefault(propertyName, value, defaultValue: 0);
+    }
+
+    public void WriteIfNotDefault(string propertyName, long value, long defaultValue)
+    {
+        if (value != defaultValue)
+        {
+            Write(propertyName, value);
+        }
+    }
+
     public void Write(string? value)
     {
         _writer.WriteValue(value);

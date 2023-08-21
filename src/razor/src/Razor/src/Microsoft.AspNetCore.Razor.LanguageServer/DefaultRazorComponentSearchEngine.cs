@@ -16,12 +16,10 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer;
 
 internal class DefaultRazorComponentSearchEngine : RazorComponentSearchEngine
 {
-    private readonly ProjectSnapshotManagerDispatcher _projectSnapshotManagerDispatcher;
     private readonly ProjectSnapshotManager _projectSnapshotManager;
     private readonly ILogger<DefaultRazorComponentSearchEngine> _logger;
 
     public DefaultRazorComponentSearchEngine(
-        ProjectSnapshotManagerDispatcher projectSnapshotManagerDispatcher,
         ProjectSnapshotManagerAccessor projectSnapshotManagerAccessor,
         ILoggerFactory loggerFactory)
     {
@@ -30,7 +28,6 @@ internal class DefaultRazorComponentSearchEngine : RazorComponentSearchEngine
             throw new ArgumentNullException(nameof(loggerFactory));
         }
 
-        _projectSnapshotManagerDispatcher = projectSnapshotManagerDispatcher ?? throw new ArgumentNullException(nameof(projectSnapshotManagerDispatcher));
         _projectSnapshotManager = projectSnapshotManagerAccessor?.Instance ?? throw new ArgumentNullException(nameof(projectSnapshotManagerAccessor));
         _logger = loggerFactory.CreateLogger<DefaultRazorComponentSearchEngine>();
     }
@@ -49,9 +46,7 @@ internal class DefaultRazorComponentSearchEngine : RazorComponentSearchEngine
             return null;
         }
 
-        var projects = await _projectSnapshotManagerDispatcher.RunOnDispatcherThreadAsync(
-             () => _projectSnapshotManager.Projects.ToArray(),
-             cancellationToken).ConfigureAwait(false);
+        var projects = _projectSnapshotManager.GetProjects();
 
         foreach (var project in projects)
         {
@@ -110,9 +105,7 @@ internal class DefaultRazorComponentSearchEngine : RazorComponentSearchEngine
 
         var lookupSymbolName = RemoveGenericContent(typeName.AsMemory());
 
-        var projects = await _projectSnapshotManagerDispatcher.RunOnDispatcherThreadAsync(
-            () => _projectSnapshotManager.Projects.ToArray(),
-            CancellationToken.None).ConfigureAwait(false);
+        var projects = _projectSnapshotManager.GetProjects();
 
         foreach (var project in projects)
         {

@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Threading;
 using Microsoft.AspNetCore.Razor.LanguageServer.Common;
 using Microsoft.AspNetCore.Razor.TextDifferencing;
@@ -17,8 +18,8 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer;
 
 internal class DefaultGeneratedDocumentPublisher : GeneratedDocumentPublisher
 {
-    private readonly Dictionary<string, PublishData> _publishedCSharpData;
-    private readonly Dictionary<string, PublishData> _publishedHtmlData;
+    private readonly Dictionary<DocumentKey, PublishData> _publishedCSharpData;
+    private readonly Dictionary<DocumentKey, PublishData> _publishedHtmlData;
     private readonly ClientNotifierServiceBase _server;
     private readonly LanguageServerFeatureOptions _languageServerFeatureOptions;
     private readonly ILogger _logger;
@@ -55,8 +56,8 @@ internal class DefaultGeneratedDocumentPublisher : GeneratedDocumentPublisher
         _server = server;
         _languageServerFeatureOptions = languageServerFeatureOptions;
         _logger = loggerFactory.CreateLogger<DefaultGeneratedDocumentPublisher>();
-        _publishedCSharpData = new Dictionary<string, PublishData>(FilePathComparer.Instance);
-        _publishedHtmlData = new Dictionary<string, PublishData>(FilePathComparer.Instance);
+        _publishedCSharpData = new Dictionary<DocumentKey, PublishData>();
+        _publishedHtmlData = new Dictionary<DocumentKey, PublishData>();
     }
 
     public override void Initialize(ProjectSnapshotManagerBase projectManager)
@@ -70,7 +71,7 @@ internal class DefaultGeneratedDocumentPublisher : GeneratedDocumentPublisher
         _projectSnapshotManager.Changed += ProjectSnapshotManager_Changed;
     }
 
-    public override void PublishCSharp(string filePath, SourceText sourceText, int hostDocumentVersion)
+    public override void PublishCSharp(ProjectKey projectKey, string filePath, SourceText sourceText, int hostDocumentVersion)
     {
         if (filePath is null)
         {
@@ -84,7 +85,8 @@ internal class DefaultGeneratedDocumentPublisher : GeneratedDocumentPublisher
 
         _projectSnapshotManagerDispatcher.AssertDispatcherThread();
 
-        if (!_publishedCSharpData.TryGetValue(filePath, out var previouslyPublishedData))
+        var key = new DocumentKey(projectKey, filePath);
+        if (!_publishedCSharpData.TryGetValue(key, out var previouslyPublishedData))
         {
             previouslyPublishedData = PublishData.Default;
         }
@@ -102,8 +104,9 @@ internal class DefaultGeneratedDocumentPublisher : GeneratedDocumentPublisher
             var currentDocumentLength = sourceText.Length;
             var documentLengthDelta = sourceText.Length - previousDocumentLength;
             _logger.LogTrace(
-                "Updating C# buffer of {0} to correspond with host document version {1}. {2} -> {3} = Change delta of {4} via {5} text changes.",
+                "Updating C# buffer of {0} for project {1} to correspond with host document version {2}. {3} -> {4} = Change delta of {5} via {6} text changes.",
                 filePath,
+                projectKey,
                 hostDocumentVersion,
                 previousDocumentLength,
                 currentDocumentLength,
@@ -111,19 +114,30 @@ internal class DefaultGeneratedDocumentPublisher : GeneratedDocumentPublisher
                 textChanges.Count);
         }
 
-        _publishedCSharpData[filePath] = new PublishData(sourceText, hostDocumentVersion);
+        _publishedCSharpData[key] = new PublishData(sourceText, hostDocumentVersion);
 
         var request = new UpdateBufferRequest()
         {
             HostDocumentFilePath = filePath,
+            ProjectKeyId = projectKey.Id,
             Changes = textChanges,
             HostDocumentVersion = hostDocumentVersion,
         };
 
-        _ = _server.SendNotificationAsync(RazorLanguageServerCustomMessageTargets.RazorUpdateCSharpBufferEndpoint, request, CancellationToken.None);
+        // HACK: We know about a document being in multiple projects, but despite having ProjectKeyId in the request, currently the other end
+        // of this LSP message only knows about a single document file path. To prevent confusing them, we just send an update for the first project
+        // in the list.
+        if (_projectSnapshotManager is { } projectSnapshotManager &&
+            projectSnapshotManager.GetLoadedProject(projectKey) is { } projectSnapshot &&
+            projectSnapshotManager.GetAllProjectKeys(projectSnapshot.FilePath).First() != projectKey)
+        {
+            return;
+        }
+
+        _ = _server.SendNotificationAsync(CustomMessageNames.RazorUpdateCSharpBufferEndpoint, request, CancellationToken.None);
     }
 
-    public override void PublishHtml(string filePath, SourceText sourceText, int hostDocumentVersion)
+    public override void PublishHtml(ProjectKey projectKey, string filePath, SourceText sourceText, int hostDocumentVersion)
     {
         if (filePath is null)
         {
@@ -137,7 +151,8 @@ internal class DefaultGeneratedDocumentPublisher : GeneratedDocumentPublisher
 
         _projectSnapshotManagerDispatcher.AssertDispatcherThread();
 
-        if (!_publishedHtmlData.TryGetValue(filePath, out var previouslyPublishedData))
+        var key = new DocumentKey(projectKey, filePath);
+        if (!_publishedHtmlData.TryGetValue(key, out var previouslyPublishedData))
         {
             previouslyPublishedData = PublishData.Default;
         }
@@ -164,16 +179,17 @@ internal class DefaultGeneratedDocumentPublisher : GeneratedDocumentPublisher
                 textChanges.Count);
         }
 
-        _publishedHtmlData[filePath] = new PublishData(sourceText, hostDocumentVersion);
+        _publishedHtmlData[key] = new PublishData(sourceText, hostDocumentVersion);
 
         var request = new UpdateBufferRequest()
         {
             HostDocumentFilePath = filePath,
+            ProjectKeyId = projectKey.Id,
             Changes = textChanges,
             HostDocumentVersion = hostDocumentVersion,
         };
 
-        _ = _server.SendNotificationAsync(RazorLanguageServerCustomMessageTargets.RazorUpdateHtmlBufferEndpoint, request, CancellationToken.None);
+        _ = _server.SendNotificationAsync(CustomMessageNames.RazorUpdateHtmlBufferEndpoint, request, CancellationToken.None);
     }
 
     private void ProjectSnapshotManager_Changed(object? sender, ProjectChangeEventArgs args)
@@ -194,6 +210,7 @@ internal class DefaultGeneratedDocumentPublisher : GeneratedDocumentPublisher
                 Assumes.NotNull(args.DocumentFilePath);
                 if (!_projectSnapshotManager.IsDocumentOpen(args.DocumentFilePath))
                 {
+                    var key = new DocumentKey(args.ProjectKey, args.DocumentFilePath);
                     // Document closed, evict published source text, unless the server doesn't want us to.
                     if (_languageServerFeatureOptions.UpdateBuffersForClosedDocuments)
                     {
@@ -202,9 +219,9 @@ internal class DefaultGeneratedDocumentPublisher : GeneratedDocumentPublisher
                         return;
                     }
 
-                    if (_publishedCSharpData.ContainsKey(args.DocumentFilePath))
+                    if (_publishedCSharpData.ContainsKey(key))
                     {
-                        var removed = _publishedCSharpData.Remove(args.DocumentFilePath);
+                        var removed = _publishedCSharpData.Remove(key);
                         if (!removed)
                         {
                             _logger.LogError("Published data should be protected by the project snapshot manager's thread and should never fail to remove.");
@@ -212,9 +229,9 @@ internal class DefaultGeneratedDocumentPublisher : GeneratedDocumentPublisher
                         }
                     }
 
-                    if (_publishedHtmlData.ContainsKey(args.DocumentFilePath))
+                    if (_publishedHtmlData.ContainsKey(key))
                     {
-                        var removed = _publishedHtmlData.Remove(args.DocumentFilePath);
+                        var removed = _publishedHtmlData.Remove(key);
                         if (!removed)
                         {
                             _logger.LogError("Published data should be protected by the project snapshot manager's thread and should never fail to remove.");

@@ -18,22 +18,22 @@ internal class TestProjectConfigurationFilePathStore : ProjectConfigurationFileP
 
     public override event EventHandler<ProjectConfigurationFilePathChangedEventArgs>? Changed;
 
-    public override IReadOnlyDictionary<string, string> GetMappings()
+    public override IReadOnlyDictionary<ProjectKey, string> GetMappings()
     {
         throw new NotImplementedException();
     }
 
-    public override void Remove(string projectFilePath)
+    public override void Remove(ProjectKey projectKey)
     {
-        Changed?.Invoke(this, new ProjectConfigurationFilePathChangedEventArgs(projectFilePath, configurationFilePath: null));
+        Changed?.Invoke(this, new ProjectConfigurationFilePathChangedEventArgs(projectKey, configurationFilePath: null));
     }
 
-    public override void Set(string projectFilePath, string configurationFilePath)
+    public override void Set(ProjectKey projectKey, string configurationFilePath)
     {
-        Changed?.Invoke(this, new ProjectConfigurationFilePathChangedEventArgs(projectFilePath, configurationFilePath));
+        Changed?.Invoke(this, new ProjectConfigurationFilePathChangedEventArgs(projectKey, configurationFilePath));
     }
 
-    public override bool TryGet(string projectFilePath, [NotNullWhen(returnValue: true)] out string? configurationFilePath)
+    public override bool TryGet(ProjectKey projectKey, [NotNullWhen(returnValue: true)] out string? configurationFilePath)
     {
         configurationFilePath = null;
         return false;

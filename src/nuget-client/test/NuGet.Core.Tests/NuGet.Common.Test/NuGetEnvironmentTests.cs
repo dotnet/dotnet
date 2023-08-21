@@ -20,5 +20,5 @@ namespace NuGet.Common.Test
             var nuGetTempDirectory = NuGetEnvironment.GetFolderPath(NuGetFolderPath.Temp);
             Assert.Equal("700", Migration1.GetPermissions(nuGetTempDirectory).ToString());
         }
-    }  
+    }
 }

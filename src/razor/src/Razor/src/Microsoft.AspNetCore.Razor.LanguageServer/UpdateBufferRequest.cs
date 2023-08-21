@@ -10,6 +10,8 @@ public class UpdateBufferRequest
 {
     public int? HostDocumentVersion { get; set; }
 
+    public string? ProjectKeyId { get; set; }
+
     public required string HostDocumentFilePath { get; set; }
 
     public required IReadOnlyList<TextChange> Changes { get; set; }

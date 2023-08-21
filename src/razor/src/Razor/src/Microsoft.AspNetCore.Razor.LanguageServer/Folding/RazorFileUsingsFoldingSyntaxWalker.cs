@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Language.Syntax;
 using Microsoft.AspNetCore.Razor.LanguageServer.Extensions;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
-using SyntaxNodeExtensions = Microsoft.AspNetCore.Razor.LanguageServer.Extensions.SyntaxNodeExtensions;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Folding;
 

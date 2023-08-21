@@ -716,6 +716,46 @@ public class DefaultFallbackCapabilitiesFilterResolverTest : TestBase
         Assert.True(result);
     }
 
+    [Fact]
+    public void Resolve_ProjectContexts_ReturnsTrue()
+    {
+        // Arrange
+        var methodName = VSMethods.GetProjectContextsName;
+        var capabilities = new VSInternalServerCapabilities()
+        {
+            ProjectContextProvider = true
+        };
+
+        var jobjectCapabilities = JObject.FromObject(capabilities);
+        var filter = s_resolver.Resolve(methodName);
+
+        // Act
+        var result = filter(jobjectCapabilities);
+
+        // Assert
+        Assert.True(result);
+    }
+
+    [Fact]
+    public void Resolve_DocumentSymbol_ReturnsTrue()
+    {
+        // Arrange
+        var methodName = Methods.TextDocumentDocumentSymbolName;
+        var capabilities = new ServerCapabilities()
+        {
+            DocumentSymbolProvider = true
+        };
+
+        var jobjectCapabilities = JObject.FromObject(capabilities);
+        var filter = s_resolver.Resolve(methodName);
+
+        // Act
+        var result = filter(jobjectCapabilities);
+
+        // Assert
+        Assert.True(result);
+    }
+
     [Theory]
     [InlineData(Methods.TextDocumentImplementationName)]
     [InlineData(Methods.TextDocumentTypeDefinitionName)]
@@ -737,7 +777,6 @@ public class DefaultFallbackCapabilitiesFilterResolverTest : TestBase
     [InlineData(Methods.TextDocumentDefinitionName)]
     [InlineData(Methods.TextDocumentDocumentHighlightName)]
     [InlineData(Methods.CodeActionResolveName)]
-    [InlineData(VSMethods.GetProjectContextsName)]
     [InlineData(VSInternalMethods.DocumentReferencesName)]
     [InlineData(VSInternalMethods.OnAutoInsertName)]
     [InlineData(VSInternalMethods.DocumentPullDiagnosticName)]

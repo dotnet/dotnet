@@ -11,6 +11,7 @@
       System.Collections.Concurrent;
       System.Console;
       System.Diagnostics.Debug;
+      System.Diagnostics.DiagnosticSource;
       System.Diagnostics.Tools;
       System.Diagnostics.Tracing;
       System.Globalization;
@@ -37,8 +38,10 @@
       System.Runtime.InteropServices.RuntimeInformation;
       System.Runtime.Numerics;
       System.Security.Cryptography.Algorithms;
+      System.Security.Cryptography.Cng;
       System.Security.Cryptography.Encoding;
       System.Security.Cryptography.Primitives;
+      System.Security.Cryptography.OpenSsl;
       System.Security.Cryptography.X509Certificates;
       System.Text.Encoding;
       System.Text.Encoding.Extensions;
@@ -56,7 +59,7 @@
     <When Condition="'$(ProjectTemplateVersion)' == '2'">
       <PropertyGroup>
         <!-- When the library targets netstandard1.x and is part of the .NET Standard 1.x dependency graph, disable the implicit framework references to avoid cyclic dependencies. -->
-        <DisableImplicitFrameworkReferences Condition="'$(DisableImplicitFrameworkReferences)' == '' and $(TargetFramework.StartsWith('netstandard1')) and $(NetStandard1xPackage.Contains('$(AssemblyName);'))">true</DisableImplicitFrameworkReferences>
+        <DisableImplicitFrameworkReferences Condition="'$(DisableImplicitFrameworkReferences)' == '' and ($(TargetFramework.StartsWith('netstandard1')) or '$(TargetFramework)' == 'netcoreapp1.1') and $(NetStandard1xPackage.Contains('$(AssemblyName);'))">true</DisableImplicitFrameworkReferences>
       </PropertyGroup>
 
       <ItemGroup>

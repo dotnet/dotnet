@@ -11,6 +11,18 @@ namespace Microsoft.AspNetCore.Razor.PooledObjects;
 
 internal static partial class PooledObjectExtensions
 {
+    public static PooledObject<T> GetPooledObject<T>(this ObjectPool<T> pool)
+        where T : class
+        => new(pool);
+
+    public static PooledObject<T> GetPooledObject<T>(this ObjectPool<T> pool, out T obj)
+        where T : class
+    {
+        var pooledObject = pool.GetPooledObject();
+        obj = pooledObject.Object;
+        return pooledObject;
+    }
+
     public static PooledObject<ImmutableArray<T>.Builder> GetPooledObject<T>(this ObjectPool<ImmutableArray<T>.Builder> pool)
         => new(pool);
 

@@ -34,15 +34,15 @@ public class OpenDocumentGeneratorTest : LanguageServerTestBase
             new HostDocument("c:/Test1/Components/Counter.cshtml", "Components/Counter.cshtml"),
         };
 
-        _hostProject1 = new HostProject("c:/Test1/Test1.csproj", RazorConfiguration.Default, "TestRootNamespace");
-        _hostProject2 = new HostProject("c:/Test2/Test2.csproj", RazorConfiguration.Default, "TestRootNamespace");
+        _hostProject1 = new HostProject("c:/Test1/Test1.csproj", "c:/Test1/obj", RazorConfiguration.Default, "TestRootNamespace");
+        _hostProject2 = new HostProject("c:/Test2/Test2.csproj", "c:/Test2/obj", RazorConfiguration.Default, "TestRootNamespace");
     }
 
     [Fact]
     public async Task DocumentAdded_IgnoresClosedDocument()
     {
         // Arrange
-        var projectManager = TestProjectSnapshotManager.Create(Dispatcher, ErrorReporter);
+        var projectManager = TestProjectSnapshotManager.Create(ErrorReporter);
         var listener = new TestDocumentProcessedListener();
         var queue = new TestOpenDocumentGenerator(Dispatcher, ErrorReporter, listener);
 
@@ -66,7 +66,7 @@ public class OpenDocumentGeneratorTest : LanguageServerTestBase
     public async Task DocumentChanged_IgnoresClosedDocument()
     {
         // Arrange
-        var projectManager = TestProjectSnapshotManager.Create(Dispatcher, ErrorReporter);
+        var projectManager = TestProjectSnapshotManager.Create(ErrorReporter);
         var listener = new TestDocumentProcessedListener();
         var queue = new TestOpenDocumentGenerator(Dispatcher, ErrorReporter, listener);
 
@@ -91,7 +91,7 @@ public class OpenDocumentGeneratorTest : LanguageServerTestBase
     public async Task DocumentChanged_ProcessesOpenDocument()
     {
         // Arrange
-        var projectManager = TestProjectSnapshotManager.Create(Dispatcher, ErrorReporter);
+        var projectManager = TestProjectSnapshotManager.Create(ErrorReporter);
         var listener = new TestDocumentProcessedListener();
         var queue = new TestOpenDocumentGenerator(Dispatcher, ErrorReporter, listener);
 
@@ -119,7 +119,7 @@ public class OpenDocumentGeneratorTest : LanguageServerTestBase
     public async Task ProjectChanged_IgnoresClosedDocument()
     {
         // Arrange
-        var projectManager = TestProjectSnapshotManager.Create(Dispatcher, ErrorReporter);
+        var projectManager = TestProjectSnapshotManager.Create(ErrorReporter);
         var listener = new TestDocumentProcessedListener();
         var queue = new TestOpenDocumentGenerator(Dispatcher, ErrorReporter, listener);
 
@@ -145,7 +145,7 @@ public class OpenDocumentGeneratorTest : LanguageServerTestBase
     public async Task ProjectChanged_ProcessesOpenDocument()
     {
         // Arrange
-        var projectManager = TestProjectSnapshotManager.Create(Dispatcher, ErrorReporter);
+        var projectManager = TestProjectSnapshotManager.Create(ErrorReporter);
         var listener = new TestDocumentProcessedListener();
         var queue = new TestOpenDocumentGenerator(Dispatcher, ErrorReporter, listener);
 

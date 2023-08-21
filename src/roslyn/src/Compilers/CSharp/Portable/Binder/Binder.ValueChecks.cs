@@ -416,7 +416,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                     }
                     break;
 
-                case BoundKind.UnconvertedCollectionLiteralExpression:
+                case BoundKind.UnconvertedCollectionExpression:
                     if (valueKind == BindValueKind.RValue)
                     {
                         return expr;
@@ -952,8 +952,8 @@ namespace Microsoft.CodeAnalysis.CSharp
             ParameterSymbol parameterSymbol = parameter.ParameterSymbol;
 
             // all parameters can be passed by ref/out or assigned to
-            // except "in" parameters, which are readonly
-            if (parameterSymbol.RefKind == RefKind.In && RequiresAssignableVariable(valueKind))
+            // except "in" and "ref readonly" parameters, which are readonly
+            if (parameterSymbol.RefKind is RefKind.In or RefKind.RefReadOnlyParameter && RequiresAssignableVariable(valueKind))
             {
                 ReportReadOnlyError(parameterSymbol, node, valueKind, checkingReceiver, diagnostics);
                 return false;
@@ -2185,9 +2185,9 @@ namespace Microsoft.CodeAnalysis.CSharp
                         refKind = argRefKindsOpt[argIndex];
                     }
                     if (refKind == RefKind.None &&
-                        parameter?.RefKind == RefKind.In)
+                        parameter?.RefKind is RefKind.In or RefKind.RefReadOnlyParameter)
                     {
-                        refKind = RefKind.In;
+                        refKind = parameter.RefKind;
                     }
 
                     escapeArguments.Add(new EscapeArgument(parameter, argument, refKind));
@@ -3959,7 +3959,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                     var switchExpr = (BoundSwitchExpression)expr;
                     return GetValEscape(switchExpr.SwitchArms.SelectAsArray(a => a.Value), scopeOfTheContainingExpression);
 
-                case BoundKind.CollectionLiteralExpression:
+                case BoundKind.CollectionExpression:
                     return CallingMethodScope;
 
                 default:
@@ -4488,7 +4488,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
                     return true;
 
-                case BoundKind.CollectionLiteralExpression:
+                case BoundKind.CollectionExpression:
                     return true;
 
                 default:
@@ -4946,7 +4946,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
                 case BoundKind.Parameter:
                     return IsAnyReadOnly(addressKind) ||
-                        ((BoundParameter)expression).ParameterSymbol.RefKind != RefKind.In;
+                        ((BoundParameter)expression).ParameterSymbol.RefKind is not (RefKind.In or RefKind.RefReadOnlyParameter);
 
                 case BoundKind.Local:
                     // locals have home unless they are byval stack locals or ref-readonly
@@ -4980,7 +4980,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                     }
                     var lhsRefKind = assignment.Left.GetRefKind();
                     return lhsRefKind == RefKind.Ref ||
-                        (IsAnyReadOnly(addressKind) && lhsRefKind == RefKind.RefReadOnly);
+                        (IsAnyReadOnly(addressKind) && lhsRefKind is RefKind.RefReadOnly or RefKind.RefReadOnlyParameter);
 
                 case BoundKind.ComplexConditionalReceiver:
                     Debug.Assert(HasHome(

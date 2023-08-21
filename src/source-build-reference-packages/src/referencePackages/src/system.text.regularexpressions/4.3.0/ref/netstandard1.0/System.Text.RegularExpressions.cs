@@ -4,160 +4,240 @@
 // ------------------------------------------------------------------------------
 // Changes to this file must follow the http://aka.ms/api-review process.
 // ------------------------------------------------------------------------------
-
-using System;
-using System.Diagnostics;
-using System.Reflection;
-using System.Runtime.CompilerServices;
-using System.Security;
-
-[assembly: Debuggable(DebuggableAttribute.DebuggingModes.IgnoreSymbolStoreSequencePoints)]
-[assembly: AllowPartiallyTrustedCallers]
-[assembly: ReferenceAssembly]
-[assembly: AssemblyTitle("System.Text.RegularExpressions")]
-[assembly: AssemblyDescription("System.Text.RegularExpressions")]
-[assembly: AssemblyDefaultAlias("System.Text.RegularExpressions")]
-[assembly: AssemblyCompany("Microsoft Corporation")]
-[assembly: AssemblyProduct("Microsoft® .NET Framework")]
-[assembly: AssemblyCopyright("© Microsoft Corporation.  All rights reserved.")]
-[assembly: AssemblyFileVersion("4.0.30319.17929")]
-[assembly: AssemblyInformationalVersion("4.0.30319.17929 built by: SOURCEBUILD")]
-[assembly: CLSCompliant(true)]
-[assembly: AssemblyMetadata("", "")]
-[assembly: AssemblyVersion("4.0.0.0")]
-
-
-
-
+[assembly: System.Reflection.AssemblyCopyright("© Microsoft Corporation.  All rights reserved.")]
+[assembly: System.Runtime.CompilerServices.RuntimeCompatibility(WrapNonExceptionThrows = true)]
+[assembly: System.Reflection.AssemblyTitle("System.Text.RegularExpressions.dll")]
+[assembly: System.Reflection.AssemblyDescription("System.Text.RegularExpressions.dll")]
+[assembly: System.Reflection.AssemblyDefaultAlias("System.Text.RegularExpressions.dll")]
+[assembly: System.Reflection.AssemblyCompany("Microsoft Corporation")]
+[assembly: System.Reflection.AssemblyProduct("Microsoft® .NET Framework")]
+[assembly: System.Reflection.AssemblyFileVersion("4.0.30319.17929")]
+[assembly: System.Reflection.AssemblyInformationalVersion("4.0.30319.17929")]
+[assembly: System.CLSCompliant(true)]
+[assembly: System.Security.AllowPartiallyTrustedCallers]
+[assembly: System.Runtime.CompilerServices.ReferenceAssembly]
+[assembly: System.Runtime.CompilerServices.CompilationRelaxations(8)]
+[assembly: System.Reflection.AssemblyVersionAttribute("4.0.0.0")]
+[assembly: System.Reflection.AssemblyFlagsAttribute((System.Reflection.AssemblyNameFlags)0x70)]
 namespace System.Text.RegularExpressions
 {
     public partial class Capture
     {
         internal Capture() { }
+
         public int Index { get { throw null; } }
+
         public int Length { get { throw null; } }
+
         public string Value { get { throw null; } }
+
         public override string ToString() { throw null; }
     }
-    public partial class CaptureCollection : System.Collections.ICollection, System.Collections.IEnumerable
+
+    public partial class CaptureCollection : Collections.ICollection, Collections.IEnumerable
     {
         internal CaptureCollection() { }
+
         public int Count { get { throw null; } }
-        public System.Text.RegularExpressions.Capture this[int i] { get { throw null; } }
-        bool System.Collections.ICollection.IsSynchronized { get { throw null; } }
-        object System.Collections.ICollection.SyncRoot { get { throw null; } }
-        public System.Collections.IEnumerator GetEnumerator() { throw null; }
-        void System.Collections.ICollection.CopyTo(System.Array array, int arrayIndex) { }
+
+        public Capture this[int i] { get { throw null; } }
+
+        bool Collections.ICollection.IsSynchronized { get { throw null; } }
+
+        object Collections.ICollection.SyncRoot { get { throw null; } }
+
+        public Collections.IEnumerator GetEnumerator() { throw null; }
+
+        void Collections.ICollection.CopyTo(Array array, int arrayIndex) { }
     }
-    public partial class Group : System.Text.RegularExpressions.Capture
+
+    public partial class Group : Capture
     {
         internal Group() { }
-        public System.Text.RegularExpressions.CaptureCollection Captures { get { throw null; } }
+
+        public CaptureCollection Captures { get { throw null; } }
+
         public bool Success { get { throw null; } }
     }
-    public partial class GroupCollection : System.Collections.ICollection, System.Collections.IEnumerable
+
+    public partial class GroupCollection : Collections.ICollection, Collections.IEnumerable
     {
         internal GroupCollection() { }
+
         public int Count { get { throw null; } }
-        public System.Text.RegularExpressions.Group this[int groupnum] { get { throw null; } }
-        public System.Text.RegularExpressions.Group this[string groupname] { get { throw null; } }
-        bool System.Collections.ICollection.IsSynchronized { get { throw null; } }
-        object System.Collections.ICollection.SyncRoot { get { throw null; } }
-        public System.Collections.IEnumerator GetEnumerator() { throw null; }
-        void System.Collections.ICollection.CopyTo(System.Array array, int arrayIndex) { }
+
+        public Group this[int groupnum] { get { throw null; } }
+
+        public Group this[string groupname] { get { throw null; } }
+
+        bool Collections.ICollection.IsSynchronized { get { throw null; } }
+
+        object Collections.ICollection.SyncRoot { get { throw null; } }
+
+        public Collections.IEnumerator GetEnumerator() { throw null; }
+
+        void Collections.ICollection.CopyTo(Array array, int arrayIndex) { }
     }
-    public partial class Match : System.Text.RegularExpressions.Group
+
+    public partial class Match : Group
     {
         internal Match() { }
-        public static System.Text.RegularExpressions.Match Empty { get { throw null; } }
-        public virtual System.Text.RegularExpressions.GroupCollection Groups { get { throw null; } }
-        public System.Text.RegularExpressions.Match NextMatch() { throw null; }
+
+        public static Match Empty { get { throw null; } }
+
+        public virtual GroupCollection Groups { get { throw null; } }
+
+        public Match NextMatch() { throw null; }
+
         public virtual string Result(string replacement) { throw null; }
     }
-    public partial class MatchCollection : System.Collections.ICollection, System.Collections.IEnumerable
+
+    public partial class MatchCollection : Collections.ICollection, Collections.IEnumerable
     {
         internal MatchCollection() { }
+
         public int Count { get { throw null; } }
-        public virtual System.Text.RegularExpressions.Match this[int i] { get { throw null; } }
-        bool System.Collections.ICollection.IsSynchronized { get { throw null; } }
-        object System.Collections.ICollection.SyncRoot { get { throw null; } }
-        public System.Collections.IEnumerator GetEnumerator() { throw null; }
-        void System.Collections.ICollection.CopyTo(System.Array array, int arrayIndex) { }
+
+        public virtual Match this[int i] { get { throw null; } }
+
+        bool Collections.ICollection.IsSynchronized { get { throw null; } }
+
+        object Collections.ICollection.SyncRoot { get { throw null; } }
+
+        public Collections.IEnumerator GetEnumerator() { throw null; }
+
+        void Collections.ICollection.CopyTo(Array array, int arrayIndex) { }
     }
-    public delegate string MatchEvaluator(System.Text.RegularExpressions.Match match);
+
+    public delegate string MatchEvaluator(Match match);
     public partial class Regex
     {
-        public static readonly System.TimeSpan InfiniteMatchTimeout;
+        public static readonly TimeSpan InfiniteMatchTimeout;
         protected Regex() { }
+
+        public Regex(string pattern, RegexOptions options, TimeSpan matchTimeout) { }
+
+        public Regex(string pattern, RegexOptions options) { }
+
         public Regex(string pattern) { }
-        public Regex(string pattern, System.Text.RegularExpressions.RegexOptions options) { }
-        public Regex(string pattern, System.Text.RegularExpressions.RegexOptions options, System.TimeSpan matchTimeout) { }
-        public System.TimeSpan MatchTimeout { get { throw null; } }
-        public System.Text.RegularExpressions.RegexOptions Options { get { throw null; } }
+
+        public TimeSpan MatchTimeout { get { throw null; } }
+
+        public RegexOptions Options { get { throw null; } }
+
         public bool RightToLeft { get { throw null; } }
+
         public static string Escape(string str) { throw null; }
+
         public string[] GetGroupNames() { throw null; }
+
         public int[] GetGroupNumbers() { throw null; }
+
         public string GroupNameFromNumber(int i) { throw null; }
+
         public int GroupNumberFromName(string name) { throw null; }
-        public bool IsMatch(string input) { throw null; }
+
         public bool IsMatch(string input, int startat) { throw null; }
+
+        public static bool IsMatch(string input, string pattern, RegexOptions options, TimeSpan matchTimeout) { throw null; }
+
+        public static bool IsMatch(string input, string pattern, RegexOptions options) { throw null; }
+
         public static bool IsMatch(string input, string pattern) { throw null; }
-        public static bool IsMatch(string input, string pattern, System.Text.RegularExpressions.RegexOptions options) { throw null; }
-        public static bool IsMatch(string input, string pattern, System.Text.RegularExpressions.RegexOptions options, System.TimeSpan matchTimeout) { throw null; }
-        public System.Text.RegularExpressions.Match Match(string input) { throw null; }
-        public System.Text.RegularExpressions.Match Match(string input, int startat) { throw null; }
-        public System.Text.RegularExpressions.Match Match(string input, int beginning, int length) { throw null; }
-        public static System.Text.RegularExpressions.Match Match(string input, string pattern) { throw null; }
-        public static System.Text.RegularExpressions.Match Match(string input, string pattern, System.Text.RegularExpressions.RegexOptions options) { throw null; }
-        public static System.Text.RegularExpressions.Match Match(string input, string pattern, System.Text.RegularExpressions.RegexOptions options, System.TimeSpan matchTimeout) { throw null; }
-        public System.Text.RegularExpressions.MatchCollection Matches(string input) { throw null; }
-        public System.Text.RegularExpressions.MatchCollection Matches(string input, int startat) { throw null; }
-        public static System.Text.RegularExpressions.MatchCollection Matches(string input, string pattern) { throw null; }
-        public static System.Text.RegularExpressions.MatchCollection Matches(string input, string pattern, System.Text.RegularExpressions.RegexOptions options) { throw null; }
-        public static System.Text.RegularExpressions.MatchCollection Matches(string input, string pattern, System.Text.RegularExpressions.RegexOptions options, System.TimeSpan matchTimeout) { throw null; }
-        public string Replace(string input, string replacement) { throw null; }
-        public string Replace(string input, string replacement, int count) { throw null; }
+
+        public bool IsMatch(string input) { throw null; }
+
+        public Match Match(string input, int beginning, int length) { throw null; }
+
+        public Match Match(string input, int startat) { throw null; }
+
+        public static Match Match(string input, string pattern, RegexOptions options, TimeSpan matchTimeout) { throw null; }
+
+        public static Match Match(string input, string pattern, RegexOptions options) { throw null; }
+
+        public static Match Match(string input, string pattern) { throw null; }
+
+        public Match Match(string input) { throw null; }
+
+        public MatchCollection Matches(string input, int startat) { throw null; }
+
+        public static MatchCollection Matches(string input, string pattern, RegexOptions options, TimeSpan matchTimeout) { throw null; }
+
+        public static MatchCollection Matches(string input, string pattern, RegexOptions options) { throw null; }
+
+        public static MatchCollection Matches(string input, string pattern) { throw null; }
+
+        public MatchCollection Matches(string input) { throw null; }
+
         public string Replace(string input, string replacement, int count, int startat) { throw null; }
+
+        public string Replace(string input, string replacement, int count) { throw null; }
+
+        public static string Replace(string input, string pattern, string replacement, RegexOptions options, TimeSpan matchTimeout) { throw null; }
+
+        public static string Replace(string input, string pattern, string replacement, RegexOptions options) { throw null; }
+
         public static string Replace(string input, string pattern, string replacement) { throw null; }
-        public static string Replace(string input, string pattern, string replacement, System.Text.RegularExpressions.RegexOptions options) { throw null; }
-        public static string Replace(string input, string pattern, string replacement, System.Text.RegularExpressions.RegexOptions options, System.TimeSpan matchTimeout) { throw null; }
-        public static string Replace(string input, string pattern, System.Text.RegularExpressions.MatchEvaluator evaluator) { throw null; }
-        public static string Replace(string input, string pattern, System.Text.RegularExpressions.MatchEvaluator evaluator, System.Text.RegularExpressions.RegexOptions options) { throw null; }
-        public static string Replace(string input, string pattern, System.Text.RegularExpressions.MatchEvaluator evaluator, System.Text.RegularExpressions.RegexOptions options, System.TimeSpan matchTimeout) { throw null; }
-        public string Replace(string input, System.Text.RegularExpressions.MatchEvaluator evaluator) { throw null; }
-        public string Replace(string input, System.Text.RegularExpressions.MatchEvaluator evaluator, int count) { throw null; }
-        public string Replace(string input, System.Text.RegularExpressions.MatchEvaluator evaluator, int count, int startat) { throw null; }
-        public string[] Split(string input) { throw null; }
-        public string[] Split(string input, int count) { throw null; }
+
+        public static string Replace(string input, string pattern, MatchEvaluator evaluator, RegexOptions options, TimeSpan matchTimeout) { throw null; }
+
+        public static string Replace(string input, string pattern, MatchEvaluator evaluator, RegexOptions options) { throw null; }
+
+        public static string Replace(string input, string pattern, MatchEvaluator evaluator) { throw null; }
+
+        public string Replace(string input, string replacement) { throw null; }
+
+        public string Replace(string input, MatchEvaluator evaluator, int count, int startat) { throw null; }
+
+        public string Replace(string input, MatchEvaluator evaluator, int count) { throw null; }
+
+        public string Replace(string input, MatchEvaluator evaluator) { throw null; }
+
         public string[] Split(string input, int count, int startat) { throw null; }
+
+        public string[] Split(string input, int count) { throw null; }
+
+        public static string[] Split(string input, string pattern, RegexOptions options, TimeSpan matchTimeout) { throw null; }
+
+        public static string[] Split(string input, string pattern, RegexOptions options) { throw null; }
+
         public static string[] Split(string input, string pattern) { throw null; }
-        public static string[] Split(string input, string pattern, System.Text.RegularExpressions.RegexOptions options) { throw null; }
-        public static string[] Split(string input, string pattern, System.Text.RegularExpressions.RegexOptions options, System.TimeSpan matchTimeout) { throw null; }
+
+        public string[] Split(string input) { throw null; }
+
         public override string ToString() { throw null; }
+
         public static string Unescape(string str) { throw null; }
     }
-    public partial class RegexMatchTimeoutException : System.TimeoutException
+
+    public partial class RegexMatchTimeoutException : TimeoutException
     {
         public RegexMatchTimeoutException() { }
+
+        public RegexMatchTimeoutException(string message, Exception inner) { }
+
+        public RegexMatchTimeoutException(string regexInput, string regexPattern, TimeSpan matchTimeout) { }
+
         public RegexMatchTimeoutException(string message) { }
-        public RegexMatchTimeoutException(string message, System.Exception inner) { }
-        public RegexMatchTimeoutException(string regexInput, string regexPattern, System.TimeSpan matchTimeout) { }
+
         public string Input { get { throw null; } }
-        public System.TimeSpan MatchTimeout { get { throw null; } }
+
+        public TimeSpan MatchTimeout { get { throw null; } }
+
         public string Pattern { get { throw null; } }
     }
-    [System.FlagsAttribute]
+
+    [Flags]
     public enum RegexOptions
     {
-        CultureInvariant = 512,
-        ECMAScript = 256,
-        ExplicitCapture = 4,
-        IgnoreCase = 1,
-        IgnorePatternWhitespace = 32,
-        Multiline = 2,
         None = 0,
-        RightToLeft = 64,
+        IgnoreCase = 1,
+        Multiline = 2,
+        ExplicitCapture = 4,
         Singleline = 16,
+        IgnorePatternWhitespace = 32,
+        RightToLeft = 64,
+        ECMAScript = 256,
+        CultureInvariant = 512
     }
 }

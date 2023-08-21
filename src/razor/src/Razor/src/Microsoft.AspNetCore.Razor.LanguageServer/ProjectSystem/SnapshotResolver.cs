@@ -27,7 +27,8 @@ internal class SnapshotResolver : ISnapshotResolver
         _logger = loggerFactory?.CreateLogger<SnapshotResolver>() ?? throw new ArgumentNullException(nameof(loggerFactory));
 
         var miscellaneousProjectPath = Path.Combine(TempDirectory.Instance.DirectoryPath, "__MISC_RAZOR_PROJECT__");
-        MiscellaneousHostProject = new HostProject(FilePathNormalizer.Normalize(miscellaneousProjectPath), RazorDefaults.Configuration, RazorDefaults.RootNamespace);
+        var normalizedPath = FilePathNormalizer.Normalize(miscellaneousProjectPath);
+        MiscellaneousHostProject = new HostProject(normalizedPath, normalizedPath, FallbackRazorConfiguration.Latest, rootNamespace: null);
     }
 
     /// <inheritdoc/>
@@ -38,7 +39,7 @@ internal class SnapshotResolver : ISnapshotResolver
             throw new ArgumentNullException(nameof(documentFilePath));
         }
 
-        var projects = _projectSnapshotManagerAccessor.Instance.Projects;
+        var projects = _projectSnapshotManagerAccessor.Instance.GetProjects();
         var normalizedDocumentPath = FilePathNormalizer.Normalize(documentFilePath);
         foreach (var projectSnapshot in projects)
         {
@@ -68,7 +69,7 @@ internal class SnapshotResolver : ISnapshotResolver
         return miscellaneousProject;
     }
 
-    public bool TryResolveDocument(string documentFilePath, [NotNullWhen(true)] out IDocumentSnapshot? documentSnapshot)
+    public bool TryResolveDocumentInAnyProject(string documentFilePath, [NotNullWhen(true)] out IDocumentSnapshot? documentSnapshot)
     {
         _logger.LogTrace("Looking for {documentFilePath}.", documentFilePath);
 
@@ -100,7 +101,7 @@ internal class SnapshotResolver : ISnapshotResolver
             return true;
         }
 
-        _logger.LogTrace("{documentFilePath} not found in {documents}", documentFilePath, _projectSnapshotManagerAccessor.Instance.Projects.SelectMany(p => p.DocumentFilePaths));
+        _logger.LogTrace("{documentFilePath} not found in {documents}", documentFilePath, _projectSnapshotManagerAccessor.Instance.GetProjects().SelectMany(p => p.DocumentFilePaths));
 
         documentSnapshot = null;
         return false;

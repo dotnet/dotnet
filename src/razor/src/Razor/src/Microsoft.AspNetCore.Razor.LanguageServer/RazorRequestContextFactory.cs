@@ -19,22 +19,24 @@ internal class RazorRequestContextFactory : IRequestContextFactory<RazorRequestC
         _lspServices = lspServices;
     }
 
-    public async Task<RazorRequestContext> CreateRequestContextAsync<TRequestParams>(IQueueItem<RazorRequestContext> queueItem, TRequestParams @params, CancellationToken cancellationToken)
+    public Task<RazorRequestContext> CreateRequestContextAsync<TRequestParams>(IQueueItem<RazorRequestContext> queueItem, TRequestParams @params, CancellationToken cancellationToken)
     {
         VersionedDocumentContext? documentContext = null;
         var textDocumentHandler = queueItem.MethodHandler as ITextDocumentIdentifierHandler;
 
         Uri? uri = null;
+        var documentContextFactory = _lspServices.GetRequiredService<DocumentContextFactory>();
         if (textDocumentHandler is not null)
         {
             if (textDocumentHandler is ITextDocumentIdentifierHandler<TRequestParams, TextDocumentIdentifier> tdiHandler)
             {
                 var textDocumentIdentifier = tdiHandler.GetTextDocumentIdentifier(@params);
-                uri = textDocumentIdentifier.Uri;
+                documentContext = documentContextFactory.TryCreateForOpenDocument(textDocumentIdentifier);
             }
             else if (textDocumentHandler is ITextDocumentIdentifierHandler<TRequestParams, Uri> uriHandler)
             {
                 uri = uriHandler.GetTextDocumentIdentifier(@params);
+                documentContext = documentContextFactory.TryCreateForOpenDocument(uri);
             }
             else
             {
@@ -42,16 +44,14 @@ internal class RazorRequestContextFactory : IRequestContextFactory<RazorRequestC
             }
         }
 
-        if (uri is not null)
-        {
-            var documentContextFactory = _lspServices.GetRequiredService<DocumentContextFactory>();
-            documentContext = await documentContextFactory.TryCreateForOpenDocumentAsync(uri, cancellationToken).ConfigureAwait(false);
-        }
-
         var loggerAdapter = _lspServices.GetRequiredService<LoggerAdapter>();
 
-        var requestContext = new RazorRequestContext(documentContext, loggerAdapter, _lspServices);
+        var requestContext = new RazorRequestContext(documentContext, loggerAdapter, _lspServices
+#if DEBUG
+            , queueItem.MethodName, uri
+#endif
+            );
 
-        return requestContext;
+        return Task.FromResult(requestContext);
     }
 }

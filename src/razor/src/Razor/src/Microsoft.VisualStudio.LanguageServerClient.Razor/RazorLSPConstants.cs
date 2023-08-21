@@ -1,8 +1,6 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
-using System;
-
 namespace Microsoft.VisualStudio.LanguageServerClient.Razor;
 
 internal static class RazorLSPConstants
@@ -23,11 +21,5 @@ internal static class RazorLSPConstants
 
     public const string HtmlLSPDelegationContentTypeName = "html-delegation";
 
-    public const string HtmlLSPContentTypeName = "htmlLSPClient";
-
-    public const string CssLSPContentTypeName = "cssLSPClient";
-
-    public const string TypeScriptLSPContentTypeName = "JavaScript";
-
-    public static readonly Guid RazorActiveUIContextGuid = new("3c5ded8f-72c7-4b1f-af2d-099ceeb935b8");
+    public const string RoslynSimplifyMethodEndpointName = "roslyn/simplifyMethod";
 }

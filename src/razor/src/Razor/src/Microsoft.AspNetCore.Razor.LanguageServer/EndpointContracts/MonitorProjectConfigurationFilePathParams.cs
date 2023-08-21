@@ -5,7 +5,7 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer.EndpointContracts;
 
 internal class MonitorProjectConfigurationFilePathParams
 {
-    public required string ProjectFilePath { get; set; }
+    public required string ProjectKeyId { get; set; }
 
     public required string ConfigurationFilePath { get; set; }
 }

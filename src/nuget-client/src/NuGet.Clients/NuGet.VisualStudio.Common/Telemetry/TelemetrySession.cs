@@ -1,6 +1,8 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+#nullable enable
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -35,17 +37,17 @@ namespace NuGet.VisualStudio.Telemetry
 
             var vsTelemetryEvent = new VsTelemetryEvent(VSEventNamePrefix + telemetryEvent.Name);
 
-            foreach (KeyValuePair<string, object> pair in telemetryEvent)
+            foreach (KeyValuePair<string, object?> pair in telemetryEvent)
             {
                 vsTelemetryEvent.Properties[VSPropertyNamePrefix + pair.Key] = pair.Value;
             }
 
-            foreach (KeyValuePair<string, object> pair in telemetryEvent.GetPiiData())
+            foreach (KeyValuePair<string, object?> pair in telemetryEvent.GetPiiData())
             {
                 vsTelemetryEvent.Properties[VSPropertyNamePrefix + pair.Key] = new VsTelemetryPiiProperty(pair.Value);
             }
 
-            foreach (KeyValuePair<string, object> pair in telemetryEvent.ComplexData)
+            foreach (KeyValuePair<string, object?> pair in telemetryEvent.ComplexData)
             {
                 vsTelemetryEvent.Properties[VSPropertyNamePrefix + pair.Key] = new VsTelemetryComplexProperty(ToComplexProperty(pair.Value));
             }
@@ -53,23 +55,23 @@ namespace NuGet.VisualStudio.Telemetry
             return vsTelemetryEvent;
         }
 
-        private static object ToComplexProperty(object value)
+        private static object? ToComplexProperty(object? value)
         {
             if (value is TelemetryEvent telemetryEvent)
             {
-                var dictionary = new Dictionary<string, object>();
+                var dictionary = new Dictionary<string, object?>();
 
-                foreach (KeyValuePair<string, object> pair in telemetryEvent)
+                foreach (KeyValuePair<string, object?> pair in telemetryEvent)
                 {
                     dictionary[pair.Key] = pair.Value;
                 }
 
-                foreach (KeyValuePair<string, object> pair in telemetryEvent.GetPiiData())
+                foreach (KeyValuePair<string, object?> pair in telemetryEvent.GetPiiData())
                 {
                     dictionary[pair.Key] = new VsTelemetryPiiProperty(pair.Value);
                 }
 
-                foreach (KeyValuePair<string, object> pair in telemetryEvent.ComplexData)
+                foreach (KeyValuePair<string, object?> pair in telemetryEvent.ComplexData)
                 {
                     dictionary[pair.Key] = ToComplexProperty(pair.Value);
                 }
@@ -78,7 +80,7 @@ namespace NuGet.VisualStudio.Telemetry
             }
             else if (value is IEnumerable enumerable)
             {
-                var list = new List<object>();
+                var list = new List<object?>();
 
                 foreach (var item in enumerable)
                 {

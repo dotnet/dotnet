@@ -1576,7 +1576,7 @@ namespace NuGet.Test
 
             // Assert
             Assert.True(sourceMappingConfiguration.IsEnabled);
-            Assert.Null(configuredSources);
+            Assert.Empty(configuredSources);
 
             // Assert log.
             Assert.Contains($"Package '{packageId} 1.0.0' is not found in the following primary source(s)", exception.Message);

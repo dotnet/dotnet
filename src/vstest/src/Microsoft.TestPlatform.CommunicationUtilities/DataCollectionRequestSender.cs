@@ -116,7 +116,10 @@ public sealed class DataCollectionRequestSender : IDataCollectionRequestSender
 
         while (!isDataCollectionStarted)
         {
-            var message = _communicationManager.ReceiveMessage();
+            var rawMessage = _communicationManager.ReceiveRawMessage();
+            TPDebug.Assert(rawMessage is not null, "rawMessage is null");
+
+            var message = !rawMessage.IsNullOrEmpty() ? _dataSerializer.DeserializeMessage(rawMessage) : null;
             TPDebug.Assert(message is not null, "message is null");
 
             EqtTrace.Verbose("DataCollectionRequestSender.SendBeforeTestRunStartAndGetResult: Received message: {0}", message);
@@ -131,6 +134,10 @@ public sealed class DataCollectionRequestSender : IDataCollectionRequestSender
             {
                 isDataCollectionStarted = true;
                 result = _dataSerializer.DeserializePayload<BeforeTestRunStartResult>(message);
+            }
+            else if (message.MessageType == MessageType.TelemetryEventMessage)
+            {
+                runEventsHandler?.HandleRawMessage(rawMessage);
             }
         }
 
@@ -151,7 +158,10 @@ public sealed class DataCollectionRequestSender : IDataCollectionRequestSender
         // Currently each of the operations are not separate tasks since they should not each take much time. This is just a notification.
         while (!isDataCollectionComplete && !isCancelled)
         {
-            var message = _communicationManager.ReceiveMessage();
+            var rawMessage = _communicationManager.ReceiveRawMessage();
+            TPDebug.Assert(rawMessage is not null, "rawMessage is null");
+
+            var message = !rawMessage.IsNullOrEmpty() ? _dataSerializer.DeserializeMessage(rawMessage) : null;
             TPDebug.Assert(message is not null, "message is null");
 
             EqtTrace.Verbose("DataCollectionRequestSender.SendAfterTestRunStartAndGetResult: Received message: {0}", message);
@@ -166,6 +176,10 @@ public sealed class DataCollectionRequestSender : IDataCollectionRequestSender
             {
                 result = _dataSerializer.DeserializePayload<AfterTestRunEndResult>(message);
                 isDataCollectionComplete = true;
+            }
+            else if (message.MessageType == MessageType.TelemetryEventMessage)
+            {
+                runEventsHandler?.HandleRawMessage(rawMessage);
             }
         }
 

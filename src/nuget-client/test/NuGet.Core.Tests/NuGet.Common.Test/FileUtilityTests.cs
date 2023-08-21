@@ -71,7 +71,7 @@ namespace NuGet.Common.Test
                     throw new Exception();
                 };
 
-                Exception exception = null;
+                Exception? exception = null;
 
                 // Act
                 try
@@ -361,7 +361,7 @@ namespace NuGet.Common.Test
                 // Arrange
                 var dest = Path.Combine(testDirectory, "b");
 
-                Exception exception = null;
+                Exception? exception = null;
 
                 // Act
                 try

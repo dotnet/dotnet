@@ -10,7 +10,7 @@ namespace NuGet.Common
     {
         public static IEnvironmentVariableReader Instance { get; } = new EnvironmentVariableWrapper();
 
-        public string GetEnvironmentVariable(string variable)
+        public string? GetEnvironmentVariable(string variable)
         {
             try
             {

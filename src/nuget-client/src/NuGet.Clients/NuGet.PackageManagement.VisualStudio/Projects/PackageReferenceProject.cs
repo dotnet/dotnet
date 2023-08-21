@@ -34,7 +34,7 @@ namespace NuGet.PackageManagement.VisualStudio
     /// <typeparam name="U">Type of the collection elements for Installed and Transitive packages</typeparam>
     public abstract class PackageReferenceProject<T, U> : BuildIntegratedNuGetProject, IPackageReferenceProject where T : ICollection<U>, new()
     {
-        private static readonly NuGetFrameworkSorter FrameworkSorter = new();
+        private static readonly NuGetFrameworkSorter FrameworkSorter = NuGetFrameworkSorter.Instance;
 
         private static readonly ProjectPackages EmptyProjectPackages = new(Array.Empty<PackageReference>(), Array.Empty<TransitivePackageReference>());
 
@@ -200,11 +200,10 @@ namespace NuGet.PackageManagement.VisualStudio
                     .Select(g => g.OrderBy(p => p.TargetFramework, FrameworkSorter).First());
             }
 
-            CounterfactualLoggers.TransitiveDependencies.EmitIfNeeded(); // Emit only one event per VS session
             IEnumerable<TransitivePackageReference> transitivePackagesWithOrigins = Enumerable.Empty<TransitivePackageReference>();
             if (includeTransitivePackages)
             {
-                if (includeTransitiveOrigins && await ExperimentUtility.IsTransitiveOriginExpEnabled.GetValueAsync(token))
+                if (includeTransitiveOrigins)
                 {
                     // Compute Transitive Origins
                     if (IsInstalledAndTransitiveComputationNeeded // Cache invalidation

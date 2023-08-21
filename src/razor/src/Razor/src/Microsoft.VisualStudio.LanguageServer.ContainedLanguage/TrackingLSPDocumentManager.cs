@@ -18,4 +18,15 @@ internal abstract class TrackingLSPDocumentManager : LSPDocumentManager
         IReadOnlyList<ITextChange> changes,
         int hostDocumentVersion,
         object? state) where TVirtualDocument : VirtualDocument;
+
+    public virtual void UpdateVirtualDocument<TVirtualDocument>(
+        Uri hostDocumentUri,
+        Uri virtualDocumentUri,
+        IReadOnlyList<ITextChange> changes,
+        int hostDocumentVersion,
+        object? state) where TVirtualDocument : VirtualDocument
+    {
+        // This is only virtual to prevent a binary breaking change. We don't expect anyone to call this method, without also implementing it
+        throw new NotImplementedException();
+    }
 }

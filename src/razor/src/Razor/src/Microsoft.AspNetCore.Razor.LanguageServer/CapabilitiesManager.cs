@@ -13,6 +13,8 @@ internal class CapabilitiesManager : IInitializeManager<InitializeParams, Initia
     private InitializeParams? _initializeParams;
     private readonly ILspServices _lspServices;
 
+    public bool HasInitialized => _initializeParams is not null;
+
     public CapabilitiesManager(ILspServices lspServices)
     {
         _lspServices = lspServices;

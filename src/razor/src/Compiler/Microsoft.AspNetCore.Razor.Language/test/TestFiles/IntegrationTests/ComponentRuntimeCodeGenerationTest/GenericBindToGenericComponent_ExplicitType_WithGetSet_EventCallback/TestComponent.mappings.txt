@@ -8,7 +8,7 @@ Source Location: (119:2,7 [118] x:\dir\subdir\Test\TestComponent.cshtml)
     public TParam ParentValue { get; set; } = default;
     public EventCallback<TParam> UpdateValue { get; set; }
 |
-Generated Location: (1720:39,7 [118] )
+Generated Location: (1932:47,7 [118] )
 |
     public TParam ParentValue { get; set; } = default;
     public EventCallback<TParam> UpdateValue { get; set; }

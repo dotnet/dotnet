@@ -11,7 +11,7 @@ namespace NuGet.VisualStudio.Common.Test
     {
         public class End : OutputConsoleLoggerTests
         {
-            public End (GlobalServiceProvider sp)
+            public End(GlobalServiceProvider sp)
                 : base(sp)
             {
                 _outputConsole.Reset();

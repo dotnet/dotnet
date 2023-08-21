@@ -2,10 +2,12 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System.Globalization;
+using System.Reflection;
 using System.Security.Claims;
 using Components.TestServer.RazorComponents;
 using Components.TestServer.RazorComponents.Pages.Forms;
 using Components.TestServer.Services;
+using Microsoft.AspNetCore.Components.WebAssembly.Server;
 
 namespace TestServer;
 
@@ -21,12 +23,14 @@ public class RazorComponentEndpointsStartup<TRootComponent>
     // This method gets called by the runtime. Use this method to add services to the container.
     public void ConfigureServices(IServiceCollection services)
     {
-        services.AddRazorComponents()
-            .AddServerComponents()
-            .AddWebAssemblyComponents(options =>
-            {
-                options.PathPrefix = "/WasmMinimal";
-            });
+        services.AddRazorComponents(options =>
+        {
+            options.MaxFormMappingErrorCount = 10;
+            options.MaxFormMappingRecursionDepth = 5;
+            options.MaxFormMappingCollectionSize = 100;
+        })
+            .AddWebAssemblyComponents()
+            .AddServerComponents();
         services.AddHttpContextAccessor();
         services.AddSingleton<AsyncOperationService>();
         services.AddCascadingAuthenticationState();
@@ -49,14 +53,20 @@ public class RazorComponentEndpointsStartup<TRootComponent>
             app.UseStaticFiles();
             app.UseRouting();
             UseFakeAuthState(app);
+            app.UseAntiforgery();
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapRazorComponents<TRootComponent>()
+                    .AddAdditionalAssemblies(Assembly.Load("Components.WasmMinimal"))
                     .AddServerRenderMode()
-                    .AddWebAssemblyRenderMode();
+                    .AddWebAssemblyRenderMode(new WebAssemblyComponentsEndpointOptions
+                    {
+                        PathPrefix = "/WasmMinimal"
+                    });
 
                 NotEnabledStreamingRenderingComponent.MapEndpoints(endpoints);
                 StreamingRenderingForm.MapEndpoints(endpoints);
+                InteractiveStreamingRenderingComponent.MapEndpoints(endpoints);
 
                 MapEnhancedNavigationEndpoints(endpoints);
             });

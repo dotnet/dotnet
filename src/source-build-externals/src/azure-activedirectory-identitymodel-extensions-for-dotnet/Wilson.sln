@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.29230.47
+# Visual Studio Version 17
+VisualStudioVersion = 17.7.33711.374
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{BD2706C5-6C57-484D-89C8-A0CF5F8E3D19}"
 EndProject
@@ -60,8 +60,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.IdentityModel.Tes
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.IdentityModel.Logging", "src\Microsoft.IdentityModel.Logging\Microsoft.IdentityModel.Logging.csproj", "{E4E6D0ED-12CB-4C01-A4C1-4F60D10E2304}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.IdentityModel.Net45.Tests", "test\Microsoft.IdentityModel.Net45.Tests\Microsoft.IdentityModel.Net45.Tests.csproj", "{CBBB1441-1704-4B2E-93BC-A163DD2CD222}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "CrossVersionTokenValidation.Test", "CrossVersionTokenValidation.Test", "{310A34D3-8685-4355-8590-84351B5223BC}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.IdentityModel.JsonWebTokens", "src\Microsoft.IdentityModel.JsonWebTokens\Microsoft.IdentityModel.JsonWebTokens.csproj", "{DBF58792-25DF-4B6E-866C-77A0BC5AB81B}"
@@ -99,8 +97,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.IdentityModel.Sam
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.IdentityModel.Abstractions", "src\Microsoft.IdentityModel.Abstractions\Microsoft.IdentityModel.Abstractions.csproj", "{8057C69A-3D1E-46A3-86E4-E6B26249DD25}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.IdentityModel.LoggingExtensions", "src\Microsoft.IdentityModel.LoggingExtensions\Microsoft.IdentityModel.LoggingExtensions.csproj", "{C1F5A997-FAA9-45E5-8D28-D4E92D4A034D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.IdentityModel.LoggingExtensions", "src\Microsoft.IdentityModel.LoggingExtensions\Microsoft.IdentityModel.LoggingExtensions.csproj", "{C1F5A997-FAA9-45E5-8D28-D4E92D4A034D}"
+EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.IdentityModel.Abstractions.Tests", "test\Microsoft.IdentityModel.Abstractions.Tests\Microsoft.IdentityModel.Abstractions.Tests.csproj", "{EF9A4431-6D2C-4DD1-BF6B-6F2CC619DEE1}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.IdentityModel.AotCompatibility.TestApp", "test\Microsoft.IdentityModel.AotCompatibility.TestApp\Microsoft.IdentityModel.AotCompatibility.TestApp.csproj", "{8105289F-3D54-4054-9738-5985F3B6CF2C}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.IdentityModel.AotCompatibility.Tests", "test\Microsoft.IdentityModel.AotCompatibility.Tests\Microsoft.IdentityModel.AotCompatibility.Tests.csproj", "{CD0EEF56-7221-4420-8181-48EE82E91306}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -180,10 +183,6 @@ Global
 		{E4E6D0ED-12CB-4C01-A4C1-4F60D10E2304}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E4E6D0ED-12CB-4C01-A4C1-4F60D10E2304}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E4E6D0ED-12CB-4C01-A4C1-4F60D10E2304}.Release|Any CPU.Build.0 = Release|Any CPU
-		{CBBB1441-1704-4B2E-93BC-A163DD2CD222}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{CBBB1441-1704-4B2E-93BC-A163DD2CD222}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{CBBB1441-1704-4B2E-93BC-A163DD2CD222}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{CBBB1441-1704-4B2E-93BC-A163DD2CD222}.Release|Any CPU.Build.0 = Release|Any CPU
 		{DBF58792-25DF-4B6E-866C-77A0BC5AB81B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{DBF58792-25DF-4B6E-866C-77A0BC5AB81B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DBF58792-25DF-4B6E-866C-77A0BC5AB81B}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -244,6 +243,14 @@ Global
 		{EF9A4431-6D2C-4DD1-BF6B-6F2CC619DEE1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EF9A4431-6D2C-4DD1-BF6B-6F2CC619DEE1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EF9A4431-6D2C-4DD1-BF6B-6F2CC619DEE1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8105289F-3D54-4054-9738-5985F3B6CF2C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8105289F-3D54-4054-9738-5985F3B6CF2C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8105289F-3D54-4054-9738-5985F3B6CF2C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8105289F-3D54-4054-9738-5985F3B6CF2C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CD0EEF56-7221-4420-8181-48EE82E91306}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CD0EEF56-7221-4420-8181-48EE82E91306}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CD0EEF56-7221-4420-8181-48EE82E91306}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CD0EEF56-7221-4420-8181-48EE82E91306}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -267,7 +274,6 @@ Global
 		{BDB0A526-FA17-44CF-80D6-4A64F7E6CD7E} = {8905D2E3-4499-4A86-BF3E-F098F228DD59}
 		{3C338E2D-C1D8-4517-8C52-A86A9F0C8281} = {8905D2E3-4499-4A86-BF3E-F098F228DD59}
 		{E4E6D0ED-12CB-4C01-A4C1-4F60D10E2304} = {BD2706C5-6C57-484D-89C8-A0CF5F8E3D19}
-		{CBBB1441-1704-4B2E-93BC-A163DD2CD222} = {8905D2E3-4499-4A86-BF3E-F098F228DD59}
 		{310A34D3-8685-4355-8590-84351B5223BC} = {8905D2E3-4499-4A86-BF3E-F098F228DD59}
 		{DBF58792-25DF-4B6E-866C-77A0BC5AB81B} = {BD2706C5-6C57-484D-89C8-A0CF5F8E3D19}
 		{7E7CCB59-541E-48DA-9044-2D6C4AD8E509} = {310A34D3-8685-4355-8590-84351B5223BC}
@@ -286,6 +292,8 @@ Global
 		{8057C69A-3D1E-46A3-86E4-E6B26249DD25} = {BD2706C5-6C57-484D-89C8-A0CF5F8E3D19}
 		{C1F5A997-FAA9-45E5-8D28-D4E92D4A034D} = {EB14B99B-2255-45BC-BF14-E488DCD4A4BA}
 		{EF9A4431-6D2C-4DD1-BF6B-6F2CC619DEE1} = {8905D2E3-4499-4A86-BF3E-F098F228DD59}
+		{8105289F-3D54-4054-9738-5985F3B6CF2C} = {8905D2E3-4499-4A86-BF3E-F098F228DD59}
+		{CD0EEF56-7221-4420-8181-48EE82E91306} = {8905D2E3-4499-4A86-BF3E-F098F228DD59}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {2F681326-7ED4-45F6-BD1D-1119EA388F42}

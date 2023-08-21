@@ -3,7 +3,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
@@ -68,7 +67,7 @@ internal class ProjectSnapshotSynchronizationService : ICollaborationService, IA
 
         await _joinableTaskFactory.SwitchToMainThreadAsync();
 
-        var projects = _projectSnapshotManager.Projects.ToArray();
+        var projects = _projectSnapshotManager.GetProjects();
         foreach (var project in projects)
         {
             try
@@ -88,7 +87,8 @@ internal class ProjectSnapshotSynchronizationService : ICollaborationService, IA
         if (args.Kind == ProjectProxyChangeKind.ProjectAdded)
         {
             var guestPath = ResolveGuestPath(args.ProjectFilePath);
-            var hostProject = new HostProject(guestPath, args.Newer!.Configuration, args.Newer.RootNamespace);
+            var guestIntermediateOutputPath = ResolveGuestPath(args.IntermediateOutputPath);
+            var hostProject = new HostProject(guestPath, guestIntermediateOutputPath, args.Newer!.Configuration, args.Newer.RootNamespace);
             _projectSnapshotManager.ProjectAdded(hostProject);
 
             if (args.Newer.ProjectWorkspaceState != null)
@@ -110,7 +110,8 @@ internal class ProjectSnapshotSynchronizationService : ICollaborationService, IA
             if (!args.Older!.Configuration.Equals(args.Newer!.Configuration))
             {
                 var guestPath = ResolveGuestPath(args.Newer.FilePath);
-                var hostProject = new HostProject(guestPath, args.Newer.Configuration, args.Newer.RootNamespace);
+                var guestIntermediateOutputPath = ResolveGuestPath(args.Newer.IntermediateOutputPath);
+                var hostProject = new HostProject(guestPath, guestIntermediateOutputPath, args.Newer.Configuration, args.Newer.RootNamespace);
                 _projectSnapshotManager.ProjectConfigurationChanged(hostProject);
             }
             else if (args.Older.ProjectWorkspaceState != args.Newer.ProjectWorkspaceState ||
@@ -135,7 +136,8 @@ internal class ProjectSnapshotSynchronizationService : ICollaborationService, IA
         foreach (var projectHandle in projectHandles)
         {
             var guestPath = ResolveGuestPath(projectHandle.FilePath);
-            var hostProject = new HostProject(guestPath, projectHandle.Configuration, projectHandle.RootNamespace);
+            var guestIntermediateOutputPath = ResolveGuestPath(projectHandle.IntermediateOutputPath);
+            var hostProject = new HostProject(guestPath, guestIntermediateOutputPath, projectHandle.Configuration, projectHandle.RootNamespace);
             _projectSnapshotManager.ProjectAdded(hostProject);
 
             if (projectHandle.ProjectWorkspaceState is not null)

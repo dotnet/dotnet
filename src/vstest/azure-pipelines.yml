@@ -38,6 +38,10 @@ parameters:
   displayName: "Produce RTM version?"
   type: boolean
   default: False
+- name: SDLEnabled
+  displayName: "Run SDL validation"
+  type: boolean
+  default: False
 
 variables:
   # Cannot use key:value syntax in root defined variables
@@ -58,11 +62,17 @@ variables:
     value: False
   - name: _InternalBuildArgs
     value: ' '
+  - name: _ReleaseVersionKind
+    value: ''
   # Arcade is using global cache of nugets in non-windows build
   # under some circumstances, but we don't respect that in our code and try to find them
   # in .packages. Force the location of packages to that folder.
   - name: NUGET_PACKAGES
     value: '$(Build.SourcesDirectory)/.packages/'
+
+  - ${{ if eq(parameters.isRTM, True) }}:
+    - name: _ReleaseVersionKind
+      value: release
 
   # Produce real signed binaries for Internal builds
   - ${{ if eq(variables._RunAsInternal, True) }}:
@@ -83,16 +93,13 @@ variables:
     - name: _InternalBuildArgs
       value: /p:DotNetSignType=$(_SignType)
         /p:TeamName=$(_TeamName)
+        /p:DotNetFinalVersionKind=$(_ReleaseVersionKind)
         /p:DotNetPublishUsingPipelines=true
         /p:DotNetSymbolServerTokenMsdl=$(microsoft-symbol-server-pat)
         /p:DotNetSymbolServerTokenSymWeb=$(symweb-symbol-server-pat)
         /p:OfficialBuildId=$(BUILD.BUILDNUMBER)
         /p:VisualStudioDropName=$(VisualStudioDropName)
         /p:GenerateSbom=true
-
-  - ${{ if eq(parameters.isRTM, True) }}:
-    - name: _InternalBuildArgs
-      value: $(_InternalBuildArgs) /p:DotNetFinalVersionKind=release
 
 stages:
 
@@ -316,3 +323,7 @@ stages:
   - template: eng\common\templates\post-build\post-build.yml
     parameters:
       publishingInfraVersion: 3
+      SDLValidationParameters:
+        enable: false
+        continueOnError: false
+        params: ' -SourceToolsList @("policheck","credscan")'

@@ -92,7 +92,12 @@ namespace NuGet.Common
                 throw new ArgumentNullException(nameof(destFilePath));
             }
 
-            var tempPath = GetTempFilePath(Path.GetDirectoryName(destFilePath));
+            string? destFileDirectory = Path.GetDirectoryName(destFilePath);
+            if (destFileDirectory is null)
+            {
+                throw new ArgumentException(paramName: destFilePath, message: "Path.GetDirectoryName(destFilePath) returned null");
+            }
+            var tempPath = GetTempFilePath(destFileDirectory);
 
             try
             {
@@ -125,7 +130,12 @@ namespace NuGet.Common
                 throw new ArgumentNullException(nameof(destFilePath));
             }
 
-            var tempPath = GetTempFilePath(Path.GetDirectoryName(destFilePath));
+            string? destFileDirectory = Path.GetDirectoryName(destFilePath);
+            if (destFileDirectory is null)
+            {
+                throw new ArgumentException(paramName: destFilePath, message: "Path.GetDirectoryName(destFilePath) returned null");
+            }
+            var tempPath = GetTempFilePath(destFileDirectory);
 
             try
             {
@@ -241,7 +251,7 @@ namespace NuGet.Common
                 }
             }
             // This will never reached, but the compiler can't detect that 
-            return default(T);
+            return default!;
         }
 
         public static async Task<T> SafeReadAsync<T>(string filePath, Func<FileStream, string, Task<T>> read)
@@ -263,7 +273,7 @@ namespace NuGet.Common
                 }
             }
             // This will never reached, but the compiler can't detect that 
-            return default(T);
+            return default!;
         }
 
 

@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using Microsoft.Test.Apex.VisualStudio;
 using NuGet.VisualStudio;

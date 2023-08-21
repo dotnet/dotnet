@@ -159,11 +159,12 @@ internal sealed class ParallelProxyExecutionManager : IParallelProxyExecutionMan
                 ? _runCompletedClients == _runStartedClients
                 : _runCompletedClients == _availableWorkloads;
 
-            EqtTrace.Verbose("ParallelProxyExecutionManager: HandlePartialRunComplete: Total completed clients = {0}, Run complete = {1}, Run canceled: {2}.", _runCompletedClients, allRunsCompleted, testRunCompleteArgs.IsCanceled);
+            EqtTrace.Verbose("ParallelProxyExecutionManager: HandlePartialRunComplete: Total workloads = {0}, Total started clients = {1} Total completed clients = {2}, Run complete = {3}, Run canceled: {4}.", _availableWorkloads, _runStartedClients, _runCompletedClients, allRunsCompleted, testRunCompleteArgs.IsCanceled);
         }
 
         if (allRunsCompleted)
         {
+            EqtTrace.Verbose("ParallelProxyExecutionManager: HandlePartialRunComplete: All runs completed stopping all managers.");
             _parallelOperationManager.StopAllManagers();
             return true;
         }
@@ -185,7 +186,12 @@ internal sealed class ParallelProxyExecutionManager : IParallelProxyExecutionMan
             // {
             //     return true;
             // }
+            EqtTrace.Verbose("ParallelProxyExecutionManager: HandlePartialRunComplete: Not cancelled or aborted, running next work.");
             var _ = _parallelOperationManager.RunNextWork(proxyExecutionManager);
+        }
+        else
+        {
+            EqtTrace.Verbose("ParallelProxyExecutionManager: HandlePartialRunComplete: Cancelled or aborted, not running next work.");
         }
 
         return false;
@@ -403,7 +409,7 @@ internal sealed class ParallelProxyExecutionManager : IParallelProxyExecutionMan
             // clients to be done running their workloads when aborting/cancelling and that doesn't
             // happen with an initialized workload that is never run.
             //
-            // Interlocked.Increment(ref _runStartedClients);
+            // Interlocked.Increment(ref _runStartedClients); <- BUG: Is this a bug waiting to happen for pre-started hosts?
             proxyExecutionManager.InitializeTestRun(testRunCriteria, eventHandler);
         });
     }
@@ -421,54 +427,60 @@ internal sealed class ParallelProxyExecutionManager : IParallelProxyExecutionMan
         bool initialized,
         Task? initTask)
     {
-        if (testRunCriteria != null)
+        // If we do the scheduling incorrectly this will get null. It should not happen, but it has happened before.
+        if (testRunCriteria == null)
         {
-            Task.Run(() =>
-                {
-                    if (!initialized)
-                    {
-                        if (!proxyExecutionManager.IsInitialized)
-                        {
-                            proxyExecutionManager.Initialize(_skipDefaultAdapters);
-                        }
-
-                        Interlocked.Increment(ref _runStartedClients);
-                        proxyExecutionManager.InitializeTestRun(testRunCriteria, eventHandler);
-                    }
-                    else
-                    {
-                        initTask!.Wait();
-                    }
-
-                    EqtTrace.Verbose("ParallelProxyExecutionManager: Execution started. Started clients: " + _runStartedClients);
-
-                    proxyExecutionManager.StartTestRun(testRunCriteria, eventHandler);
-                })
-                .ContinueWith(t =>
-                    {
-                        // Just in case, the actual execution couldn't start for an instance. Ensure that
-                        // we call execution complete since we have already fetched a source. Otherwise
-                        // execution will not terminate
-                        EqtTrace.Error("ParallelProxyExecutionManager: Failed to trigger execution. Exception: " + t.Exception);
-
-                        var handler = eventHandler;
-                        var exceptionToString = t.Exception?.ToString();
-                        var testMessagePayload = new TestMessagePayload { MessageLevel = TestMessageLevel.Error, Message = exceptionToString };
-                        handler.HandleRawMessage(_dataSerializer.SerializePayload(MessageType.TestMessage, testMessagePayload));
-                        handler.HandleLogMessage(TestMessageLevel.Error, exceptionToString);
-
-                        // Send a run complete to caller. Similar logic is also used in ProxyExecutionManager.StartTestRun
-                        // Differences:
-                        // Aborted is sent to allow the current execution manager replaced with another instance
-                        // Ensure that the test run aggregator in parallel run events handler doesn't add these statistics
-                        // (since the test run didn't even start)
-                        var completeArgs = new TestRunCompleteEventArgs(null, false, true, null, new Collection<AttachmentSet>(), new Collection<InvokedDataCollector>(), TimeSpan.Zero);
-                        handler.HandleTestRunComplete(completeArgs, null, null, null);
-                    },
-                    TaskContinuationOptions.OnlyOnFaulted);
+            throw new ArgumentNullException(nameof(testRunCriteria));
         }
 
-        EqtTrace.Verbose("ProxyParallelExecutionManager: No sources available for execution.");
+        Task.Run(() =>
+            {
+                if (!initialized)
+                {
+                    if (!proxyExecutionManager.IsInitialized)
+                    {
+                        EqtTrace.Verbose("ParallelProxyExecutionManager.StartTestRunOnConcurrentManager: Initializing uninitialized client. Started clients: " + _runStartedClients);
+                        proxyExecutionManager.Initialize(_skipDefaultAdapters);
+                    }
+
+                    EqtTrace.Verbose("ParallelProxyExecutionManager.StartTestRunOnConcurrentManager: Initializing test run. Started clients: " + _runStartedClients);
+                    Interlocked.Increment(ref _runStartedClients);
+                    proxyExecutionManager.InitializeTestRun(testRunCriteria, eventHandler);
+                }
+                else
+                {
+                    EqtTrace.Verbose("ParallelProxyExecutionManager.StartTestRunOnConcurrentManager: Waiting for pre-initialized client to finish initialization. Started clients: " + _runStartedClients);
+                    initTask!.Wait();
+                    EqtTrace.Verbose("ParallelProxyExecutionManager.StartTestRunOnConcurrentManager: Pre-initialized client finished initialization. Started clients: " + _runStartedClients);
+                }
+
+                EqtTrace.Verbose("ParallelProxyExecutionManager.StartTestRunOnConcurrentManager: Execution starting. Started clients: " + _runStartedClients);
+
+                proxyExecutionManager.StartTestRun(testRunCriteria, eventHandler);
+                EqtTrace.Verbose("ParallelProxyExecutionManager.StartTestRunOnConcurrentManager: Execution started. Started clients: " + _runStartedClients);
+            })
+            .ContinueWith(t =>
+                {
+                    // Just in case, the actual execution couldn't start for an instance. Ensure that
+                    // we call execution complete since we have already fetched a source. Otherwise
+                    // execution will not terminate
+                    EqtTrace.Error("ParallelProxyExecutionManager.StartTestRunOnConcurrentManager(continuation): Failed to trigger execution. Exception: " + t.Exception);
+
+                    var handler = eventHandler;
+                    var exceptionToString = t.Exception?.ToString();
+                    var testMessagePayload = new TestMessagePayload { MessageLevel = TestMessageLevel.Error, Message = exceptionToString };
+                    handler.HandleRawMessage(_dataSerializer.SerializePayload(MessageType.TestMessage, testMessagePayload));
+                    handler.HandleLogMessage(TestMessageLevel.Error, exceptionToString);
+
+                    // Send a run complete to caller. Similar logic is also used in ProxyExecutionManager.StartTestRun
+                    // Differences:
+                    // Aborted is sent to allow the current execution manager replaced with another instance
+                    // Ensure that the test run aggregator in parallel run events handler doesn't add these statistics
+                    // (since the test run didn't even start)
+                    var completeArgs = new TestRunCompleteEventArgs(null, false, true, null, new Collection<AttachmentSet>(), new Collection<InvokedDataCollector>(), TimeSpan.Zero);
+                    handler.HandleTestRunComplete(completeArgs, null, null, null);
+                },
+                TaskContinuationOptions.OnlyOnFaulted);
     }
 
     public void InitializeTestRun(TestRunCriteria testRunCriteria, IInternalTestRunEventsHandler eventHandler)

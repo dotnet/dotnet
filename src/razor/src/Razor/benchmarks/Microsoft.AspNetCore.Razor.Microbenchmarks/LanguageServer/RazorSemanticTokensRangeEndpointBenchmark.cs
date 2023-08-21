@@ -71,7 +71,7 @@ public class RazorSemanticTokensRangeEndpointBenchmark : RazorLanguageServerBenc
         var documentUri = new Uri(filePath);
         var documentSnapshot = GetDocumentSnapshot(ProjectFilePath, filePath, TargetPath);
         var version = 1;
-        DocumentContext = new VersionedDocumentContext(documentUri, documentSnapshot, version);
+        DocumentContext = new VersionedDocumentContext(documentUri, documentSnapshot, projectContext: null, version);
         Logger = new NoopLogger();
         SemanticTokensRangeEndpoint = new SemanticTokensRangeEndpoint(telemetryReporter: null);
         SemanticTokensRangeEndpoint.ApplyCapabilities(new(), new VSInternalClientCapabilities() { SupportsVisualStudioExtensions = true });
@@ -105,7 +105,7 @@ public class RazorSemanticTokensRangeEndpointBenchmark : RazorLanguageServerBenc
             PregeneratedRandomSemanticRanges.Add(
                 new SemanticRange(random.Next(),
                     new Range { Start = new Position(startLine, startChar), End = new Position(endLine, endChar) },
-                    0));
+                    0, fromRazor: false));
         }
     }
 
@@ -152,8 +152,9 @@ public class RazorSemanticTokensRangeEndpointBenchmark : RazorLanguageServerBenc
         public TestCustomizableRazorSemanticTokensInfoService(
             ClientNotifierServiceBase languageServer,
             IRazorDocumentMappingService documentMappingService,
+            RazorLSPOptionsMonitor razorLSPOptionsMonitor,
             ILoggerFactory loggerFactory)
-            : base(languageServer, documentMappingService, loggerFactory)
+            : base(languageServer, documentMappingService, razorLSPOptionsMonitor, loggerFactory)
         {
         }
 
@@ -162,6 +163,7 @@ public class RazorSemanticTokensRangeEndpointBenchmark : RazorLanguageServerBenc
             RazorCodeDocument codeDocument,
             TextDocumentIdentifier textDocumentIdentifier,
             Range razorRange,
+            RazorSemanticTokensLegend razorSemanticTokensLegend,
             long documentVersion,
             Guid correlationId,
             CancellationToken cancellationToken,

@@ -3,9 +3,11 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft;
 using Microsoft.ServiceHub.Framework;
 using Microsoft.VisualStudio.Sdk.TestFramework;
 using Microsoft.VisualStudio.Shell;
@@ -14,6 +16,7 @@ using NuGet.Common;
 using NuGet.Configuration;
 using NuGet.Frameworks;
 using NuGet.PackageManagement.Telemetry;
+using NuGet.PackageManagement.UI.Utility;
 using NuGet.PackageManagement.VisualStudio;
 using NuGet.Packaging.Core;
 using NuGet.ProjectManagement;
@@ -345,7 +348,15 @@ namespace NuGet.PackageManagement.UI.Test
                 new[] {
                     new TransitivePackageReferenceContextInfo(new PackageIdentity("transitiveA", NuGetVersion.Parse("1.0.0")), NuGetFramework.Parse("net472"))
                 });
+
+            var list = new List<IPackageReferenceContextInfo>();
+            list.AddRange(installedAndTransitive.InstalledPackages);
+            list.AddRange(installedAndTransitive.TransitivePackages);
+            var installedPackagesMergedWithTransitives = new ReadOnlyCollection<IPackageReferenceContextInfo>(list);
+
             var prjMgrSvc = new Mock<INuGetProjectManagerService>();
+            prjMgrSvc.Setup(mgr => mgr.GetInstalledPackagesAsync(It.IsAny<IReadOnlyCollection<string>>(), It.IsAny<CancellationToken>()))
+                .Returns(new ValueTask<IReadOnlyCollection<IPackageReferenceContextInfo>>(installedPackagesMergedWithTransitives));
             prjMgrSvc
                 .Setup(mgr => mgr.GetInstalledAndTransitivePackagesAsync(It.IsAny<IReadOnlyCollection<string>>(), It.IsAny<CancellationToken>()))
                 .Returns(new ValueTask<IInstalledAndTransitivePackages>(installedAndTransitive));
@@ -389,6 +400,409 @@ namespace NuGet.PackageManagement.UI.Test
             Assert.Equal(isSolutionLevel, lastTelemetryEvent[nameof(VSActionsTelemetryEvent.IsSolutionLevel)]);
             Assert.Equal(activeTab, lastTelemetryEvent[nameof(VSActionsTelemetryEvent.Tab)]);
             Assert.Equal(expectedPackageWasTransitive, lastTelemetryEvent[nameof(VSActionsTelemetryEvent.PackageToInstallWasTransitive)]);
+        }
+
+        [Fact]
+        public async Task PerformInstallOrUninstallAsync_TransitiveNotSourceMapped_Throws()
+        {
+            // Arrange
+            string localPackageSourceName = null;
+            string remotePackageSourceName = "sourceA";
+            var projectId = Guid.NewGuid().ToString();
+
+            // When checking remote sources, the Package Source Mapping object should be checked to see if it's enabled.
+            var timesSourceMappingCalled = Times.Once();
+            var throwOnShowError = true;
+
+            // Configure Package Source Mappings.
+            IReadOnlyDictionary<string, IReadOnlyList<string>> packageSourceMappingPatterns = new Dictionary<string, IReadOnlyList<string>>
+            {
+                { "anotherSource", new List<string>() { "a" } }
+            };
+
+            SetupUIServiceWithPackageSearchMetadata(
+                localPackageSourceName,
+                remotePackageSourceName,
+                projectId,
+                packageSourceMappingPatterns,
+                throwOnShowError,
+                out UIActionEngine uiActionEngine,
+                out Mock<INuGetUI> mockUIService,
+                out Mock<INuGetUIContext> mockNuGetUIContext);
+
+            var action = UserAction.CreateInstallAction(
+                packageId: "anotherPackage",
+                NuGetVersion.Parse("1.0.0"),
+                isSolutionLevel: false,
+                activeTab: ContractsItemFilter.All);
+
+            // Act
+            var ex = await Assert.ThrowsAsync<InvalidOperationException>(() => uiActionEngine.PerformInstallOrUninstallAsync(mockUIService.Object, action, CancellationToken.None));
+
+            // Assert
+            mockNuGetUIContext.Verify(_ => _.PackageSourceMapping, timesSourceMappingCalled);
+            Assert.Contains("Unable to find metadata of transitiveA.1.0.0", ex.Message);
+        }
+
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        public async Task PerformInstallOrUninstallAsync_TransitiveFoundOnRemoteSource_Succeeds(bool isSourceMappingEnabled)
+        {
+            // Arrange
+            string localPackageSourceName = null;
+            string remotePackageSourceName = "sourceA";
+            var projectId = Guid.NewGuid().ToString();
+
+            // When checking remote sources, the Package Source Mapping object should be checked to see if it's enabled.
+            var timesSourceMappingCalled = Times.Once();
+            var throwOnShowError = true;
+
+            // Configure Package Source Mappings.
+            IReadOnlyDictionary<string, IReadOnlyList<string>> packageSourceMappingPatterns = null;
+            if (isSourceMappingEnabled)
+            {
+                packageSourceMappingPatterns = new Dictionary<string, IReadOnlyList<string>>
+                {
+                    { remotePackageSourceName, new List<string>() { "transitiveA" } }
+                };
+            }
+
+            SetupUIServiceWithPackageSearchMetadata(
+                localPackageSourceName,
+                remotePackageSourceName,
+                projectId,
+                packageSourceMappingPatterns,
+                throwOnShowError,
+                out UIActionEngine uiActionEngine,
+                out Mock<INuGetUI> mockUIService,
+                out Mock<INuGetUIContext> mockNuGetUIContext);
+
+            var action = UserAction.CreateInstallAction(
+                packageId: "anotherPackage",
+                NuGetVersion.Parse("1.0.0"),
+                isSolutionLevel: false,
+                activeTab: ContractsItemFilter.All);
+
+            // Act
+            await uiActionEngine.PerformInstallOrUninstallAsync(mockUIService.Object, action, CancellationToken.None);
+
+            // Assert
+            mockNuGetUIContext.Verify(_ => _.PackageSourceMapping, timesSourceMappingCalled);
+        }
+
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        public async Task PerformInstallOrUninstallAsync_TransitiveFoundOnLocalSource_SucceedsWithoutRemoteSources(bool isSourceMappingEnabled)
+        {
+            string localPackageSourceName = "sourceA";
+            string remotePackageSourceName = "sourceB";
+
+            var projectId = Guid.NewGuid().ToString();
+            var timesSourceMappingCalled = Times.Never();
+            var throwOnShowError = true;
+
+            // Configure Package Source Mappings.
+            IReadOnlyDictionary<string, IReadOnlyList<string>> packageSourceMappingPatterns = null;
+            if (isSourceMappingEnabled)
+            {
+                packageSourceMappingPatterns = new Dictionary<string, IReadOnlyList<string>>
+                {
+                    { localPackageSourceName, new List<string>() { "transitiveA" } }
+                };
+            }
+
+            SetupUIServiceWithPackageSearchMetadata(
+                localPackageSourceName,
+                remotePackageSourceName,
+                projectId,
+                packageSourceMappingPatterns,
+                throwOnShowError,
+                out UIActionEngine uiActionEngine,
+                out Mock<INuGetUI> mockUIService,
+                out Mock<INuGetUIContext> mockNuGetUIContext);
+
+            var action = UserAction.CreateInstallAction(
+                packageId: "anotherPackage",
+                NuGetVersion.Parse("1.0.0"),
+                isSolutionLevel: false,
+                activeTab: ContractsItemFilter.All);
+
+            // Act
+            await uiActionEngine.PerformInstallOrUninstallAsync(mockUIService.Object, action, CancellationToken.None);
+
+            // Assert
+            mockNuGetUIContext.Verify(_ => _.PackageSourceMapping, timesSourceMappingCalled);
+        }
+
+        private void SetupUIServiceWithPackageSearchMetadata(
+            string localPackageSourceName,
+            string remotePackageSourceName,
+            string projectId,
+            IReadOnlyDictionary<string, IReadOnlyList<string>> packageSourceMappingPatterns,
+            bool throwOnShowError,
+            out UIActionEngine uiActionEngine,
+            out Mock<INuGetUI> uiService,
+            out Mock<INuGetUIContext> uiContext)
+        {
+            var mockUiService = new Mock<INuGetUI>();
+            uiContext = new Mock<INuGetUIContext>();
+            var projectContext = new Mock<INuGetProjectContext>();
+            var serviceBroker = new Mock<IServiceBroker>();
+            var settings = new Mock<ISettings>();
+            var lockService = new NuGetLockService(ThreadHelper.JoinableTaskContext);
+
+            // Configure installed & transitive packages.
+            PackageIdentity packageIdentityInstalledA = new("installedA", NuGetVersion.Parse("1.0.0"));
+            PackageIdentity packageIdentityTransitiveA = new("transitiveA", NuGetVersion.Parse("1.0.0"));
+            PackageReferenceContextInfo[] topLevelInstalledPackages = new[] {
+                    new PackageReferenceContextInfo(packageIdentityInstalledA, NuGetFramework.Parse("net472")),
+                    new PackageReferenceContextInfo(new PackageIdentity("installedB", NuGetVersion.Parse("1.0.0")), NuGetFramework.Parse("net472"))
+                };
+
+            TransitivePackageReferenceContextInfo[] transitiveInstalledPackages = new[] {
+                    new TransitivePackageReferenceContextInfo(packageIdentityTransitiveA, NuGetFramework.Parse("net472"))
+                };
+
+            ConfigureNuGetUIWithPackageSourceMapping(uiContext, packageSourceMappingPatterns);
+            SetupPackagesConfigProject(mockUiService, projectId);
+
+            PackageSource localPackageSource = localPackageSourceName != null ? new(localPackageSourceName) : null;
+            PackageSource remotePackageSource = remotePackageSourceName != null ? new(remotePackageSourceName) : null;
+            Mock<PackageMetadataResource> mockPackageMetadataResource = new();
+            ISourceRepositoryProvider sourceRepositoryProvider = SetupSourceRepositoryProvider(
+                localPackageSource,
+                remotePackageSource,
+                mockPackageMetadataResource,
+                out SourceRepository localSourceRepository,
+                out _);
+
+            PackageSource activePackageSource = remotePackageSource ?? localPackageSource;
+            SetupActivePackageSource(activePackageSource, mockUiService);
+
+            NuGetPackageManager packageManager = new(sourceRepositoryProvider, settings.Object, @"\packagesFolder");
+            uiActionEngine = new(sourceRepositoryProvider, packageManager, lockService);
+
+            SetupUIService(mockUiService, uiContext, projectContext, settings, throwOnShowError);
+            SetupProjectInstallAction(
+                projectId,
+                topLevelPackage: packageIdentityInstalledA,
+                implicitTransitivePackage: packageIdentityTransitiveA,
+                out List<ProjectAction> listProjectActions);
+
+            SetupProjectManagerService(serviceBroker, listProjectActions, topLevelInstalledPackages, transitiveInstalledPackages);
+            SetupPackageSearchMetadata(mockPackageMetadataResource, packageIdentityInstalledA);
+            SetupPackageSearchMetadata(mockPackageMetadataResource, packageIdentityTransitiveA);
+            SetupProjectUpgraderService(serviceBroker);
+            SetupUIContext(localSourceRepository, uiContext, serviceBroker);
+
+            uiService = mockUiService;
+        }
+
+        private static void SetupUIContext(SourceRepository localSourceRepository, Mock<INuGetUIContext> uiContext, Mock<IServiceBroker> serviceBroker)
+        {
+            Mock<IReconnectingNuGetSearchService> reconnectingNuGetSearchService = new Mock<IReconnectingNuGetSearchService>();
+
+            IReadOnlyList<SourceRepository> list = System.Collections.Immutable.ImmutableArray<SourceRepository>.Empty;
+            if (localSourceRepository != null)
+            {
+                list = new List<SourceRepository>() { localSourceRepository }.AsReadOnly();
+            }
+
+            reconnectingNuGetSearchService.Setup(svc => svc.GetAllPackageFoldersAsync(It.IsAny<IReadOnlyCollection<IProjectContextInfo>>(), It.IsAny<CancellationToken>()))
+                .Returns(new ValueTask<IReadOnlyList<SourceRepository>>(list).AsTask());
+
+            uiContext.Setup(ctx => ctx.ReconnectingSearchService).Returns(reconnectingNuGetSearchService.Object);
+            uiContext.Setup(ctx => ctx.ServiceBroker).Returns(serviceBroker.Object);
+        }
+
+        private static void SetupProjectUpgraderService(Mock<IServiceBroker> serviceBroker)
+        {
+            var projectUpgraderService = new Mock<INuGetProjectUpgraderService>();
+            projectUpgraderService.Setup(s => s.GetUpgradeableProjectsAsync(It.IsAny<IReadOnlyCollection<string>>(), It.IsAny<CancellationToken>()))
+                .Returns(new ValueTask<IReadOnlyCollection<IProjectContextInfo>>(Mock.Of<IReadOnlyCollection<IProjectContextInfo>>()));
+
+            _ = serviceBroker.Setup(sb => sb.GetProxyAsync<INuGetProjectUpgraderService>(
+                    It.Is<ServiceJsonRpcDescriptor>(s => s == NuGetServices.ProjectUpgraderService),
+                    It.IsAny<ServiceActivationOptions>(),
+                    It.IsAny<CancellationToken>()))
+                .Returns(new ValueTask<INuGetProjectUpgraderService>(projectUpgraderService.Object));
+        }
+
+        private static void SetupProjectInstallAction(string projectId, PackageIdentity topLevelPackage, PackageIdentity implicitTransitivePackage, out List<ProjectAction> listProjectActions)
+        {
+            var projectAction = new ProjectAction(
+                           id: Guid.NewGuid().ToString(),
+                           projectId,
+                           topLevelPackage,
+                           projectActionType: NuGetProjectActionType.Install,
+                           implicitActions: new[]
+                           {
+                    new ImplicitProjectAction(
+                        id: Guid.NewGuid().ToString(),
+                        implicitTransitivePackage,
+                        NuGetProjectActionType.Install),
+                           });
+
+            listProjectActions = new List<ProjectAction>
+            {
+                projectAction
+            };
+        }
+
+        private static void SetupUIService(Mock<INuGetUI> uiService, Mock<INuGetUIContext> uiContext, Mock<INuGetProjectContext> projectContext, Mock<ISettings> settings, bool throwOnShowError)
+        {
+            uiService.Setup(ui => ui.UIContext).Returns(uiContext.Object);
+            uiService.Setup(ui => ui.ProjectContext).Returns(projectContext.Object);
+            uiService.Setup(ui => ui.Settings).Returns(settings.Object);
+            if (throwOnShowError)
+            {
+                uiService.Setup(ui => ui.ShowError(It.IsAny<Exception>())).Callback((Exception exception) =>
+                {
+                    throw exception;
+                });
+            }
+
+            uiService.Setup(ui => ui.PromptForPackageManagementFormat(It.IsAny<PackageManagementFormat>())).Returns(true);
+        }
+
+        private static void SetupProjectManagerService(Mock<IServiceBroker> serviceBroker, List<ProjectAction> listProjectActions,
+            PackageReferenceContextInfo[] topLevelInstalledPackages, TransitivePackageReferenceContextInfo[] transitiveInstalledPackages)
+        {
+            var mockNuGetProjectManagerService = new Mock<INuGetProjectManagerService>();
+
+            InstalledAndTransitivePackages installedAndTransitive = new(topLevelInstalledPackages, transitiveInstalledPackages);
+
+            mockNuGetProjectManagerService
+                .Setup(mgr => mgr.GetInstalledAndTransitivePackagesAsync(It.IsAny<IReadOnlyCollection<string>>(), It.IsAny<CancellationToken>()))
+                .Returns(new ValueTask<IInstalledAndTransitivePackages>(installedAndTransitive));
+            mockNuGetProjectManagerService
+                .Setup(mgr => mgr.GetInstalledAndTransitivePackagesAsync(It.IsAny<IReadOnlyCollection<string>>(), It.IsAny<bool>(), It.IsAny<CancellationToken>()))
+                .Returns(new ValueTask<IInstalledAndTransitivePackages>(installedAndTransitive));
+
+            mockNuGetProjectManagerService
+                .Setup(mgr => mgr.GetInstallActionsAsync(It.IsAny<IReadOnlyCollection<string>>(),
+                It.IsAny<PackageIdentity>(),
+                It.IsAny<VersionConstraints>(),
+                It.IsAny<bool>(),
+                It.IsAny<Resolver.DependencyBehavior>(),
+                It.IsAny<IReadOnlyList<string>>(),
+                It.IsAny<VersionRange>(),
+                It.IsAny<string>(),
+                It.IsAny<string>(),
+                It.IsAny<CancellationToken>()))
+                .Returns(new ValueTask<IReadOnlyList<ProjectAction>>(listProjectActions));
+
+            var metadata = new Dictionary<string, object>
+            {
+                [NuGetProjectMetadataKeys.UniqueName] = "a",
+                [NuGetProjectMetadataKeys.ProjectId] = "a"
+            };
+
+            ProjectMetadataContextInfo projectMetadataContextInfo = ProjectMetadataContextInfo.Create(metadata);
+            mockNuGetProjectManagerService
+                .Setup(mgr => mgr.GetMetadataAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
+                .Returns(new ValueTask<IProjectMetadataContextInfo>(projectMetadataContextInfo));
+
+            List<IPackageReferenceContextInfo> installedAndTransitivePackageReferenceContextInfo =
+                new List<IPackageReferenceContextInfo>(capacity: topLevelInstalledPackages.Length + transitiveInstalledPackages.Length);
+            installedAndTransitivePackageReferenceContextInfo.AddRange(topLevelInstalledPackages);
+            installedAndTransitivePackageReferenceContextInfo.AddRange(transitiveInstalledPackages);
+
+            mockNuGetProjectManagerService.Setup(mgr => mgr.GetInstalledPackagesAsync(It.IsAny<IReadOnlyCollection<string>>(), It.IsAny<CancellationToken>()))
+                .Returns(new ValueTask<IReadOnlyCollection<IPackageReferenceContextInfo>>(installedAndTransitivePackageReferenceContextInfo));
+
+            _ = serviceBroker.Setup(sb => sb.GetProxyAsync<INuGetProjectManagerService>(
+                    It.Is<ServiceRpcDescriptor>(s => s == NuGetServices.ProjectManagerService),
+                    It.IsAny<ServiceActivationOptions>(),
+                    It.IsAny<CancellationToken>()))
+                .Returns(new ValueTask<INuGetProjectManagerService>(mockNuGetProjectManagerService.Object));
+        }
+
+        private static void SetupActivePackageSource(PackageSource packageSource, Mock<INuGetUI> uiService)
+        {
+            Assumes.NotNull(packageSource);
+
+            var packageSourceMoniker = new PackageSourceMoniker(
+                packageSource.Name,
+                packageSources: new List<PackageSourceContextInfo>() { PackageSourceContextInfo.Create(packageSource) },
+                priorityOrder: 0);
+            uiService.SetupGet(ui => ui.ActivePackageSourceMoniker).Returns(packageSourceMoniker);
+        }
+
+        private static ISourceRepositoryProvider SetupSourceRepositoryProvider(
+            PackageSource localPackageSource,
+            PackageSource remotePackageSource,
+            Mock<PackageMetadataResource> mockPackageMetadataResource,
+            out SourceRepository localSourceRepository,
+            out SourceRepository remoteSourceRepository)
+        {
+            var mockSourceRepositoryProvider = new Mock<ISourceRepositoryProvider>();
+            var packageMetadataResourceProvider = new Mock<INuGetResourceProvider>();
+            var sourceRepositories = new List<SourceRepository>();
+            localSourceRepository = null;
+            remoteSourceRepository = null;
+
+            packageMetadataResourceProvider
+                .Setup(x => x.TryCreate(It.IsAny<SourceRepository>(), It.IsAny<CancellationToken>()))
+                    .Returns(() => Task.FromResult(Tuple.Create(true, (INuGetResource)mockPackageMetadataResource.Object)));
+            packageMetadataResourceProvider
+                .Setup(x => x.ResourceType)
+                .Returns(typeof(PackageMetadataResource));
+
+            if (localPackageSource != null)
+            {
+                localSourceRepository = SetupSourceRepository(localPackageSource, mockPackageMetadataResource, packageMetadataResourceProvider);
+                sourceRepositories.Add(localSourceRepository);
+            }
+
+            if (remotePackageSource != null)
+            {
+                remoteSourceRepository = SetupSourceRepository(remotePackageSource, mockPackageMetadataResource, packageMetadataResourceProvider);
+                sourceRepositories.Add(remoteSourceRepository);
+            }
+
+            mockSourceRepositoryProvider.Setup(p => p.GetRepositories()).Returns(sourceRepositories);
+
+            return mockSourceRepositoryProvider.Object;
+        }
+
+        private static SourceRepository SetupSourceRepository(PackageSource remotePackageSource, Mock<PackageMetadataResource> mockPackageMetadataResource, Mock<INuGetResourceProvider> packageMetadataResourceProvider)
+        {
+            var mockRemoteSourceRepository = new Mock<SourceRepository>(remotePackageSource, new List<INuGetResourceProvider> { packageMetadataResourceProvider.Object });
+            mockRemoteSourceRepository.SetupGet(m => m.PackageSource).Returns(remotePackageSource);
+
+            // Required by UIActionEngine to check license metadata.
+            mockRemoteSourceRepository.Setup(m => m.GetResource<PackageMetadataResource>()).Returns(mockPackageMetadataResource.Object);
+            return mockRemoteSourceRepository.Object;
+        }
+
+        private static void SetupPackageSearchMetadata(Mock<PackageMetadataResource> mockPackageMetadataResource, PackageIdentity packageIdentity)
+        {
+            IPackageSearchMetadata packageMetadata = PackageSearchMetadataBuilder.FromIdentity(packageIdentity).Build();
+            mockPackageMetadataResource
+                    .Setup(x => x.GetMetadataAsync(It.Is<PackageIdentity>(p => p.Id == packageIdentity.Id), It.IsAny<SourceCacheContext>(), It.IsAny<Common.ILogger>(), It.IsAny<CancellationToken>()))
+                    .ReturnsAsync(packageMetadata);
+        }
+
+        private static void SetupPackagesConfigProject(Mock<INuGetUI> uiService, string projectId)
+        {
+            var projectContextInfo = new ProjectContextInfo(projectId, ProjectModel.ProjectStyle.PackagesConfig, NuGetProjectKind.PackagesConfig);
+            uiService.Setup(ui => ui.Projects).Returns(new[] { projectContextInfo });
+        }
+
+        protected void ConfigureNuGetUIWithPackageSourceMapping(
+            Mock<INuGetUIContext> mockNuGetUIContext,
+            IReadOnlyDictionary<string, IReadOnlyList<string>> packageSourceMappingPatterns)
+        {
+            if (packageSourceMappingPatterns is null)
+            {
+                packageSourceMappingPatterns = new Dictionary<string, IReadOnlyList<string>>();
+            }
+
+            var mockPackageSourceMapping = new Mock<PackageSourceMapping>(packageSourceMappingPatterns);
+            mockNuGetUIContext.Setup(_ => _.PackageSourceMapping).Returns(mockPackageSourceMapping.Object);
         }
 
         private sealed class PackageIdentitySubclass : PackageIdentity

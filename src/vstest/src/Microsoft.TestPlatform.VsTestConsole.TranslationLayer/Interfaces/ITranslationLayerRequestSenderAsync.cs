@@ -43,14 +43,16 @@ internal interface ITranslationLayerRequestSenderAsync : IDisposable
     ///     string,
     ///     TestPlatformOptions,
     ///     TestSessionInfo,
-    ///     ITestRunEventsHandler)"/>.
+    ///     ITestRunEventsHandler,
+    ///     ITelemetryEventsHandler)"/>.
     /// </summary>
     Task StartTestRunAsync(
         IEnumerable<string> sources,
         string? runSettings,
         TestPlatformOptions? options,
         TestSessionInfo? testSessionInfo,
-        ITestRunEventsHandler runEventsHandler);
+        ITestRunEventsHandler runEventsHandler,
+        ITelemetryEventsHandler telemetryEventsHandler);
 
     /// <summary>
     /// Asynchronous equivalent of <see cref="
@@ -59,14 +61,16 @@ internal interface ITranslationLayerRequestSenderAsync : IDisposable
     ///     string,
     ///     TestPlatformOptions,
     ///     TestSessionInfo,
-    ///     ITestRunEventsHandler)"/>.
+    ///     ITestRunEventsHandler,
+    ///     ITelemetryEventsHandler)"/>.
     /// </summary>
     Task StartTestRunAsync(
         IEnumerable<TestCase> testCases,
         string? runSettings,
         TestPlatformOptions? options,
         TestSessionInfo? testSessionInfo,
-        ITestRunEventsHandler runEventsHandler);
+        ITestRunEventsHandler runEventsHandler,
+        ITelemetryEventsHandler telemetryEventsHandler);
 
     /// <summary>
     /// Asynchronous equivalent of <see cref="
@@ -76,6 +80,7 @@ internal interface ITranslationLayerRequestSenderAsync : IDisposable
     ///     TestPlatformOptions,
     ///     TestSessionInfo,
     ///     ITestRunEventsHandler,
+    ///     ITelemetryEventsHandler,
     ///     ITestHostLauncher)"/>.
     /// </summary>
     Task StartTestRunWithCustomHostAsync(
@@ -84,6 +89,7 @@ internal interface ITranslationLayerRequestSenderAsync : IDisposable
         TestPlatformOptions? options,
         TestSessionInfo? testSessionInfo,
         ITestRunEventsHandler runEventsHandler,
+        ITelemetryEventsHandler telemetryEventsHandler,
         ITestHostLauncher customTestHostLauncher);
 
     /// <summary>
@@ -94,6 +100,7 @@ internal interface ITranslationLayerRequestSenderAsync : IDisposable
     ///     TestPlatformOptions,
     ///     TestSessionInfo,
     ///     ITestRunEventsHandler,
+    ///     ITelemetryEventsHandler,
     ///     ITestHostLauncher)"/>.
     /// </summary>
     Task StartTestRunWithCustomHostAsync(
@@ -102,6 +109,7 @@ internal interface ITranslationLayerRequestSenderAsync : IDisposable
         TestPlatformOptions? options,
         TestSessionInfo? testSessionInfo,
         ITestRunEventsHandler runEventsHandler,
+        ITelemetryEventsHandler telemetryEventsHandler,
         ITestHostLauncher customTestHostLauncher);
 
     /// <summary>

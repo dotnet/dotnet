@@ -1,39 +1,30 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard1.0;netstandard1.3;netstandard1.6;netcoreapp1.1</TargetFrameworks>
-    <NuspecFile>$(ArtifactsBinDir)system.text.regularexpressions/4.3.0/system.text.regularexpressions.nuspec</NuspecFile>
+    <TargetFrameworks>netcoreapp1.1;netstandard1.0;netstandard1.3;netstandard1.6</TargetFrameworks>
+    <AssemblyName>System.Text.RegularExpressions</AssemblyName>
+    <ProjectTemplateVersion>2</ProjectTemplateVersion>
   </PropertyGroup>
 
-  <PropertyGroup>
-    <OutputPath>$(ArtifactsBinDir)system.text.regularexpressions/4.3.0/ref/</OutputPath>
-    <IntermediateOutputPath>$(ArtifactsObjDir)system.text.regularexpressions/4.3.0</IntermediateOutputPath>
-  </PropertyGroup>
-
-  <ItemGroup>
-    <Compile Include="**/ref/$(TargetFramework)/*.cs" />
-    <Compile Include="**/lib/$(TargetFramework)/*.cs" />
-  </ItemGroup>
-
-  <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard1.0' ">
+  <ItemGroup Condition="'$(TargetFramework)' == 'netcoreapp1.1'">
     <PackageReference Include="System.Runtime" Version="4.3.0" />
   </ItemGroup>
 
-  <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard1.3' ">
+  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard1.0'">
     <PackageReference Include="System.Runtime" Version="4.3.0" />
   </ItemGroup>
 
-  <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard1.6' ">
+  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard1.3'">
+    <PackageReference Include="System.Runtime" Version="4.3.0" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard1.6'">
     <PackageReference Include="System.Collections" Version="4.3.0" />
     <PackageReference Include="System.Globalization" Version="4.3.0" />
     <PackageReference Include="System.Resources.ResourceManager" Version="4.3.0" />
     <PackageReference Include="System.Runtime" Version="4.3.0" />
     <PackageReference Include="System.Runtime.Extensions" Version="4.3.0" />
     <PackageReference Include="System.Threading" Version="4.3.0" />
-  </ItemGroup>
-
-  <ItemGroup Condition=" '$(TargetFramework)' == 'netcoreapp1.1' ">
-    <PackageReference Include="System.Runtime" Version="4.3.0" />
   </ItemGroup>
 
 </Project>

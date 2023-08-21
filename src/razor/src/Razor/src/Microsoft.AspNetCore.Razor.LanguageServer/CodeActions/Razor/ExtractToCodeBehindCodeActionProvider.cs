@@ -10,11 +10,11 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Language.Components;
 using Microsoft.AspNetCore.Razor.Language.Extensions;
-using Microsoft.AspNetCore.Razor.Language.Legacy;
 using Microsoft.AspNetCore.Razor.Language.Syntax;
 using Microsoft.AspNetCore.Razor.LanguageServer.CodeActions.Models;
 using Microsoft.AspNetCore.Razor.LanguageServer.CodeActions.Razor;
 using Microsoft.AspNetCore.Razor.LanguageServer.Common;
+using Microsoft.AspNetCore.Razor.LanguageServer.Extensions;
 using Microsoft.CodeAnalysis;
 using Microsoft.Extensions.Logging;
 
@@ -52,14 +52,13 @@ internal sealed class ExtractToCodeBehindCodeActionProvider : IRazorCodeActionPr
             return s_emptyResult;
         }
 
-        var change = new SourceChange(context.Location.AbsoluteIndex, length: 0, newText: string.Empty);
         var syntaxTree = context.CodeDocument.GetSyntaxTree();
         if (syntaxTree?.Root is null)
         {
             return s_emptyResult;
         }
 
-        var owner = syntaxTree.Root.LocateOwner(change);
+        var owner = syntaxTree.Root.FindInnermostNode(context.Location.AbsoluteIndex);
         if (owner is null)
         {
             _logger.LogWarning("Owner should never be null.");

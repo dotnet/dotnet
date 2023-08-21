@@ -129,7 +129,7 @@ namespace NuGet.PackageManagement.VisualStudio.Test.Utility.FileWatchers
             {
                 target.FileChanged += (s, e) => mre.Set();
             }
-            string nugetConfigBakPath = Path.Combine(testDirectory.Path, Settings.DefaultSettingsFileName+".bak");
+            string nugetConfigBakPath = Path.Combine(testDirectory.Path, Settings.DefaultSettingsFileName + ".bak");
             string otherConfigPath = Path.Combine(testDirectory.Path, "other.config");
             string customConfigBak = Path.Combine(testDirectory.Path, "config", "custom.config.bak");
 

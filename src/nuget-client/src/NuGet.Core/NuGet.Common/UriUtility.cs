@@ -27,11 +27,11 @@ namespace NuGet.Common
         /// <summary>
         /// Same as "Uri.TryCreate" except that it can handle UNIX style paths that start with '/'
         /// </summary>
-        public static Uri TryCreateSourceUri(string source, UriKind kind)
+        public static Uri? TryCreateSourceUri(string source, UriKind kind)
         {
             source = FixSourceUri(source);
 
-            Uri uri;
+            Uri? uri;
             return Uri.TryCreate(source, kind, out uri) ? uri : null;
         }
 
@@ -75,7 +75,7 @@ namespace NuGet.Common
                 && localOrUriPath.StartsWith(FilePrefix, StringComparison.OrdinalIgnoreCase))
             {
                 // convert to a uri and get the local path
-                Uri uri;
+                Uri? uri;
                 if (Uri.TryCreate(localOrUriPath, UriKind.RelativeOrAbsolute, out uri))
                 {
                     return uri.LocalPath;
@@ -89,14 +89,14 @@ namespace NuGet.Common
         /// <summary>
         /// Calls GetAbsolutePath with the directory of <paramref name="sourceFile"/>.
         /// </summary>
-        public static string GetAbsolutePathFromFile(string sourceFile, string path)
+        public static string GetAbsolutePathFromFile(string? sourceFile, string path)
         {
             if (string.IsNullOrEmpty(sourceFile))
             {
                 return path;
             }
 
-            return GetAbsolutePath(Path.GetDirectoryName(sourceFile), path);
+            return GetAbsolutePath(Path.GetDirectoryName(sourceFile!), path)!;
         }
 
         /// <summary>
@@ -107,7 +107,7 @@ namespace NuGet.Common
         /// <param name="rootDirectory">Directory to make the source relative to.</param>
         /// <param name="path">Source path.</param>
         /// <returns>The absolute source path or the original source. Noops for non-file paths.</returns>
-        public static string GetAbsolutePath(string rootDirectory, string path)
+        public static string? GetAbsolutePath(string? rootDirectory, string? path)
         {
             // return invalid data as-is.
             if (string.IsNullOrEmpty(rootDirectory) || string.IsNullOrEmpty(path))
@@ -116,7 +116,7 @@ namespace NuGet.Common
             }
 
             // Convert file:// to a path
-            var local = GetLocalPath(path);
+            var local = GetLocalPath(path!);
 
             // Check if the result is relative, in which case combine it.
             var relativeUri = TryCreateSourceUri(local, UriKind.Relative);
@@ -143,14 +143,14 @@ namespace NuGet.Common
         /// </summary>
         /// <param name="source">Package source url</param>
         /// <returns>True if the source is HTTP and has a *.nuget.org or nuget.org host otherwise false</returns>
-        public static bool IsNuGetOrg(string source)
+        public static bool IsNuGetOrg(string? source)
         {
             if (string.IsNullOrWhiteSpace(source))
             {
                 return false;
             }
 
-            var uri = TryCreateSourceUri(source, UriKind.Absolute);
+            var uri = TryCreateSourceUri(source!, UriKind.Absolute);
 
             if (uri == null || !IsHttpUrl(uri))
             {

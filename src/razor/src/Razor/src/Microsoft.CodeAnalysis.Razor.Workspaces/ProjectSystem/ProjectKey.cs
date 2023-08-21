@@ -3,7 +3,9 @@
 
 using System;
 using System.Diagnostics;
+using System.IO;
 using Microsoft.AspNetCore.Razor;
+using Microsoft.AspNetCore.Razor.Utilities;
 
 namespace Microsoft.CodeAnalysis.Razor.ProjectSystem;
 
@@ -11,24 +13,17 @@ namespace Microsoft.CodeAnalysis.Razor.ProjectSystem;
 /// A very light wrapper around a file path, used to ensure consistency across the code base for what constitutes the unique
 /// identifier for a project.
 /// </summary>
-internal sealed class ProjectKey
+[DebuggerDisplay("id: {Id}")]
+internal readonly record struct ProjectKey : IEquatable<ProjectKey>
 {
-    // ProjectKey represents the full path to the project file name. All creation logic is here in one place
-    // to ensure this is consistent.
-    public static ProjectKey From(HostProject hostProject) => new(hostProject.FilePath);
-    public static ProjectKey From(IProjectSnapshot project) => new(project.FilePath);
-    public static ProjectKey? From(Project project) => project.FilePath is null ? null : new(project.FilePath);
-    public static ProjectKey From(string projectFilePath)
+    // ProjectKey represents the path of the intermediate output path, which is where the project.razor.json file will
+    // end up. All creation logic is here in one place to ensure this is consistent.
+    public static ProjectKey From(HostProject hostProject) => new(hostProject.IntermediateOutputPath);
+    public static ProjectKey From(IProjectSnapshot project) => new(project.IntermediateOutputPath);
+    public static ProjectKey? From(Project project)
     {
-        // Right now, we expect this to be a project file path. This will change in future
-        Debug.Assert(projectFilePath.EndsWith(".csproj", StringComparison.OrdinalIgnoreCase));
-        return new(projectFilePath);
-    }
-    public static ProjectKey FromLegacy(string projectFilePath)
-    {
-        // In the legacy editor, we expect this to be a project file path.
-        Debug.Assert(projectFilePath.EndsWith(".csproj", StringComparison.OrdinalIgnoreCase));
-        return new(projectFilePath);
+        var intermediateOutputPath = Path.GetDirectoryName(project.CompilationOutputInfo.AssemblyPath);
+        return intermediateOutputPath is null ? null : new(intermediateOutputPath);
     }
 
     public string Id { get; }
@@ -36,17 +31,18 @@ internal sealed class ProjectKey
     private ProjectKey(string id)
     {
         Debug.Assert(id is not null, "Cannot create a key for null Id. Did you call ProjectKey.From(this) in a constructor, before initializing a property?");
+        Debug.Assert(!id!.EndsWith(".csproj", StringComparison.OrdinalIgnoreCase), "We expect the intermediate output path, not the project file");
         // The null check in the assert means the compiler thinks we're lying about id being non-nullable.. which is fair I suppose.
-        Id = id.AssumeNotNull();
+        Id = FilePathNormalizer.NormalizeDirectory(id).AssumeNotNull();
     }
 
     public override int GetHashCode()
     {
-        return FilePathComparer.Instance.GetHashCode(Id);
+        return Id is null ? 0 : FilePathComparer.Instance.GetHashCode(Id);
     }
 
-    public override bool Equals(object? other)
+    public bool Equals(ProjectKey other)
     {
-        return FilePathComparer.Instance.Equals(Id, (other as ProjectKey)?.Id);
+        return FilePathComparer.Instance.Equals(Id, other.Id);
     }
 }

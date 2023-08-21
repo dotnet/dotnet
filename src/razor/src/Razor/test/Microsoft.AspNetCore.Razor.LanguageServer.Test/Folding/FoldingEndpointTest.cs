@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Razor.LanguageServer.Extensions;
 using Microsoft.AspNetCore.Razor.LanguageServer.Folding;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Xunit;
@@ -49,12 +50,18 @@ public class FoldingEndpointTest : SingleServerDelegatingEndpointTestBase
 
         var request = new FoldingRangeParams()
         {
-            TextDocument = new TextDocumentIdentifier
+            TextDocument = new VSTextDocumentIdentifier
             {
-                Uri = new Uri(razorFilePath)
+                Uri = new Uri(razorFilePath),
+                ProjectContext = new VSProjectContext()
+                {
+                    Label = "test",
+                    Kind = VSProjectKind.CSharp,
+                    Id = "test"
+                }
             }
         };
-        var documentContext = await DocumentContextFactory.TryCreateForOpenDocumentAsync(request.TextDocument.Uri, DisposalToken);
+        var documentContext = DocumentContextFactory.TryCreateForOpenDocument(request.TextDocument);
         var requestContext = CreateRazorRequestContext(documentContext);
 
         // Act

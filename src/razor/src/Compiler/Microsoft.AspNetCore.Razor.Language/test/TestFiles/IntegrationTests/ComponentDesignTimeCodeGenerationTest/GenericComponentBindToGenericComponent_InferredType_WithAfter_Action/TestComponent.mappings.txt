@@ -8,14 +8,19 @@ Source Location: (49:1,30 [11] x:\dir\subdir\Test\TestComponent.cshtml)
 Generated Location: (1280:36,30 [11] )
 |ParentValue|
 
+Source Location: (81:1,62 [6] x:\dir\subdir\Test\TestComponent.cshtml)
+|Update|
+Generated Location: (1644:45,62 [6] )
+|Update|
+
 Source Location: (38:1,19 [5] x:\dir\subdir\Test\TestComponent.cshtml)
 |Value|
-Generated Location: (1706:47,19 [5] )
+Generated Location: (1905:55,19 [5] )
 |Value|
 
 Source Location: (68:1,49 [5] x:\dir\subdir\Test\TestComponent.cshtml)
 |Value|
-Generated Location: (1957:56,49 [5] )
+Generated Location: (2156:64,49 [5] )
 |Value|
 
 Source Location: (100:2,7 [79] x:\dir\subdir\Test\TestComponent.cshtml)
@@ -24,7 +29,7 @@ Source Location: (100:2,7 [79] x:\dir\subdir\Test\TestComponent.cshtml)
 
     public void Update() { }
 |
-Generated Location: (2372:74,7 [79] )
+Generated Location: (2571:82,7 [79] )
 |
     public TParam ParentValue { get; set; }
 

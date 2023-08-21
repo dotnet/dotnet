@@ -5,6 +5,7 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.CodeAnalysis.Host;
 using Microsoft.CodeAnalysis.Razor;
+using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 
 namespace Microsoft.VisualStudio.Editor.Razor.Documents;
 
@@ -12,6 +13,8 @@ internal abstract class EditorDocumentManager : IWorkspaceService
 {
     public abstract EditorDocument GetOrCreateDocument(
         DocumentKey key,
+        string projectFilePath,
+        ProjectKey projectKey,
         EventHandler? changedOnDisk,
         EventHandler? changedInEditor,
         EventHandler? opened,

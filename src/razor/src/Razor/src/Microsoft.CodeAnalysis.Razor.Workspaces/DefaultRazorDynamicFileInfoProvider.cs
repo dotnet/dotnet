@@ -21,7 +21,7 @@ namespace Microsoft.CodeAnalysis.Razor.Workspaces;
 [Shared]
 [Export(typeof(IRazorDynamicFileInfoProvider))]
 [Export(typeof(RazorDynamicFileInfoProvider))]
-[Export(typeof(ProjectSnapshotChangeTrigger))]
+[Export(typeof(IProjectSnapshotChangeTrigger))]
 internal class DefaultRazorDynamicFileInfoProvider : RazorDynamicFileInfoProvider, IRazorDynamicFileInfoProvider
 {
     private readonly ConcurrentDictionary<Key, Entry> _entries;
@@ -29,6 +29,8 @@ internal class DefaultRazorDynamicFileInfoProvider : RazorDynamicFileInfoProvide
     private readonly RazorDocumentServiceProviderFactory _factory;
     private readonly LSPEditorFeatureDetector _lspEditorFeatureDetector;
     private readonly LanguageServerFeatureOptions _languageServerFeatureOptions;
+
+    private ProjectSnapshotManagerBase _projectManager;
 
     [ImportingConstructor]
     public DefaultRazorDynamicFileInfoProvider(
@@ -63,6 +65,8 @@ internal class DefaultRazorDynamicFileInfoProvider : RazorDynamicFileInfoProvide
     public override void Initialize(ProjectSnapshotManagerBase projectManager)
     {
         projectManager.Changed += ProjectManager_Changed;
+
+        _projectManager = projectManager;
     }
 
     // Called by us to update LSP document entries
@@ -82,31 +86,31 @@ internal class DefaultRazorDynamicFileInfoProvider : RazorDynamicFileInfoProvide
         // We report diagnostics are supported to Roslyn in this case
         documentContainer.SupportsDiagnostics = true;
 
+        // TODO: This needs to use the project key somehow, rather than assuming all generated content is the same
         var filePath = GetProjectSystemFilePath(documentUri);
-        if (!TryGetKeyAndEntry(filePath, out var associatedKvp))
+
+        var foundAny = false;
+        foreach (var associatedKvp in GetAllKeysForPath(filePath))
         {
-            return;
+            foundAny = true;
+            var associatedKey = associatedKvp.Key;
+            var associatedEntry = associatedKvp.Value;
+
+            lock (associatedEntry.Lock)
+            {
+                associatedEntry.Current = CreateInfo(associatedKey, documentContainer);
+            }
         }
 
-        var associatedKey = associatedKvp.Value.Key;
-        var associatedEntry = associatedKvp.Value.Value;
-
-        lock (associatedEntry.Lock)
+        if (foundAny)
         {
-            associatedEntry.Current = CreateInfo(associatedKey, documentContainer);
+            Updated?.Invoke(this, filePath);
         }
-
-        Updated?.Invoke(this, filePath);
     }
 
     // Called by us to update entries
-    public override void UpdateFileInfo(string projectFilePath, DynamicDocumentContainer documentContainer)
+    public override void UpdateFileInfo(ProjectKey projectKey, DynamicDocumentContainer documentContainer)
     {
-        if (projectFilePath is null)
-        {
-            throw new ArgumentNullException(nameof(projectFilePath));
-        }
-
         if (documentContainer is null)
         {
             throw new ArgumentNullException(nameof(documentContainer));
@@ -121,7 +125,13 @@ internal class DefaultRazorDynamicFileInfoProvider : RazorDynamicFileInfoProvide
         // There's a possible race condition here where we're processing an update
         // and the project is getting unloaded. So if we don't find an entry we can
         // just ignore it.
-        var key = new Key(projectFilePath, documentContainer.FilePath);
+        var projectId = TryFindProjectIdForProjectKey(projectKey);
+        if (projectId is null)
+        {
+            return;
+        }
+
+        var key = new Key(projectId, documentContainer.FilePath);
         if (_entries.TryGetValue(key, out var entry))
         {
             lock (entry.Lock)
@@ -147,58 +157,48 @@ internal class DefaultRazorDynamicFileInfoProvider : RazorDynamicFileInfoProvide
             throw new ArgumentNullException(nameof(propertiesService));
         }
 
+        // TODO: This needs to use the project key somehow, rather than assuming all generated content is the same
         var filePath = GetProjectSystemFilePath(documentUri);
-        if (!TryGetKeyAndEntry(filePath, out var associatedKvp))
+        foreach (var associatedKvp in GetAllKeysForPath(filePath))
         {
-            return;
-        }
+            var associatedKey = associatedKvp.Key;
+            var associatedEntry = associatedKvp.Value;
 
-        var associatedKey = associatedKvp.Value.Key;
-        var associatedEntry = associatedKvp.Value.Value;
+            var filename = _languageServerFeatureOptions.GetRazorCSharpFilePath(associatedKey.FilePath);
 
-        var filename = _languageServerFeatureOptions.GetRazorCSharpFilePath(associatedKey.FilePath);
+            // To promote the background document, we just need to add the passed in properties service to
+            // the dynamic file info. The properties service contains the client name and allows the C#
+            // server to recognize the document.
+            var documentServiceProvider = associatedEntry.Current.DocumentServiceProvider;
+            var excerptService = documentServiceProvider.GetService<IRazorDocumentExcerptServiceImplementation>();
+            var mappingService = documentServiceProvider.GetService<IRazorSpanMappingService>();
+            var emptyContainer = new PromotedDynamicDocumentContainer(
+                documentUri, propertiesService, excerptService, mappingService, associatedEntry.Current.TextLoader);
 
-        // To promote the background document, we just need to add the passed in properties service to
-        // the dynamic file info. The properties service contains the client name and allows the C#
-        // server to recognize the document.
-        var documentServiceProvider = associatedEntry.Current.DocumentServiceProvider;
-        var excerptService = documentServiceProvider.GetService<IRazorDocumentExcerptServiceImplementation>();
-        var mappingService = documentServiceProvider.GetService<IRazorSpanMappingService>();
-        var emptyContainer = new PromotedDynamicDocumentContainer(
-            documentUri, propertiesService, excerptService, mappingService, associatedEntry.Current.TextLoader);
-
-        lock (associatedEntry.Lock)
-        {
-            associatedEntry.Current = new RazorDynamicFileInfo(
-                filename, associatedEntry.Current.SourceCodeKind, associatedEntry.Current.TextLoader, _factory.Create(emptyContainer));
+            lock (associatedEntry.Lock)
+            {
+                associatedEntry.Current = new RazorDynamicFileInfo(
+                    filename, associatedEntry.Current.SourceCodeKind, associatedEntry.Current.TextLoader, _factory.Create(emptyContainer));
+            }
         }
 
         Updated?.Invoke(this, filePath);
     }
 
-    private bool TryGetKeyAndEntry(string filePath, out KeyValuePair<Key, Entry>? associatedKvp)
+    private IEnumerable<KeyValuePair<Key, Entry>> GetAllKeysForPath(string filePath)
     {
-        associatedKvp = null;
         foreach (var entry in _entries)
         {
             if (FilePathComparer.Instance.Equals(filePath, entry.Key.FilePath))
             {
-                associatedKvp = entry;
-                return true;
+                yield return entry;
             }
         }
-
-        return false;
     }
 
     // Called by us when a document opens in the editor
-    public override void SuppressDocument(string projectFilePath, string documentFilePath)
+    public override void SuppressDocument(ProjectKey projectKey, string documentFilePath)
     {
-        if (projectFilePath is null)
-        {
-            throw new ArgumentNullException(nameof(projectFilePath));
-        }
-
         if (documentFilePath is null)
         {
             throw new ArgumentNullException(nameof(documentFilePath));
@@ -212,7 +212,13 @@ internal class DefaultRazorDynamicFileInfoProvider : RazorDynamicFileInfoProvide
         // There's a possible race condition here where we're processing an update
         // and the project is getting unloaded. So if we don't find an entry we can
         // just ignore it.
-        var key = new Key(projectFilePath, documentFilePath);
+        var projectId = TryFindProjectIdForProjectKey(projectKey);
+        if (projectId is null)
+        {
+            return;
+        }
+
+        var key = new Key(projectId, documentFilePath);
         if (_entries.TryGetValue(key, out var entry))
         {
             var updated = false;
@@ -244,7 +250,7 @@ internal class DefaultRazorDynamicFileInfoProvider : RazorDynamicFileInfoProvide
             throw new ArgumentNullException(nameof(filePath));
         }
 
-        var key = new Key(projectFilePath, filePath);
+        var key = new Key(projectId, filePath);
         var entry = _entries.GetOrAdd(key, _createEmptyEntry);
         return Task.FromResult(entry.Current);
     }
@@ -271,7 +277,7 @@ internal class DefaultRazorDynamicFileInfoProvider : RazorDynamicFileInfoProvide
         //
         // ----------------------------------------------------------------------------------------------------------------------------------------
 
-        var key = new Key(projectFilePath, filePath);
+        var key = new Key(projectId, filePath);
         _entries.TryRemove(key, out _);
         return Task.CompletedTask;
     }
@@ -291,15 +297,37 @@ internal class DefaultRazorDynamicFileInfoProvider : RazorDynamicFileInfoProvide
             case ProjectChangeKind.ProjectRemoved:
                 {
                     var removedProject = args.Older;
-                    foreach (var documentFilePath in removedProject.DocumentFilePaths)
+
+                    if (TryFindProjectIdForProjectKey(removedProject.Key) is { } projectId)
                     {
-                        var key = new Key(removedProject.FilePath, documentFilePath);
-                        _entries.TryRemove(key, out _);
+                        foreach (var documentFilePath in removedProject.DocumentFilePaths)
+                        {
+                            var key = new Key(projectId, documentFilePath);
+                            _entries.TryRemove(key, out _);
+                        }
                     }
 
                     break;
                 }
         }
+    }
+
+    private ProjectId TryFindProjectIdForProjectKey(ProjectKey key)
+    {
+        if (_projectManager?.Workspace is not { } workspace)
+        {
+            throw new InvalidOperationException("Can not map a ProjectKey to a ProjectId before the project is initialized");
+        }
+
+        foreach (var project in workspace.CurrentSolution.Projects)
+        {
+            if (key.Equals(ProjectKey.From(project)))
+            {
+                return project.Id;
+            }
+        }
+
+        return null;
     }
 
     private RazorDynamicFileInfo CreateEmptyInfo(Key key)
@@ -377,19 +405,19 @@ internal class DefaultRazorDynamicFileInfoProvider : RazorDynamicFileInfoProvide
 
     private readonly struct Key : IEquatable<Key>
     {
-        public readonly string ProjectFilePath;
+        public readonly ProjectId ProjectId;
         public readonly string FilePath;
 
-        public Key(string projectFilePath, string filePath)
+        public Key(ProjectId projectId, string filePath)
         {
-            ProjectFilePath = projectFilePath;
+            ProjectId = projectId;
             FilePath = filePath;
         }
 
         public bool Equals(Key other)
         {
             return
-                FilePathComparer.Instance.Equals(ProjectFilePath, other.ProjectFilePath) &&
+                ProjectId.Equals(other.ProjectId) &&
                 FilePathComparer.Instance.Equals(FilePath, other.FilePath);
         }
 
@@ -401,7 +429,7 @@ internal class DefaultRazorDynamicFileInfoProvider : RazorDynamicFileInfoProvide
         public override int GetHashCode()
         {
             var hash = HashCodeCombiner.Start();
-            hash.Add(ProjectFilePath, FilePathComparer.Instance);
+            hash.Add(ProjectId);
             hash.Add(FilePath, FilePathComparer.Instance);
             return hash;
         }
@@ -486,9 +514,9 @@ internal class DefaultRazorDynamicFileInfoProvider : RazorDynamicFileInfoProvide
             _provider = provider;
         }
 
-        public async Task<TestDynamicFileInfoResult> GetDynamicFileInfoAsync(string projectFilePath, string filePath, CancellationToken cancellationToken)
+        public async Task<TestDynamicFileInfoResult> GetDynamicFileInfoAsync(ProjectId projectId, string filePath, CancellationToken cancellationToken)
         {
-            var result = await _provider.GetDynamicFileInfoAsync(ProjectId.CreateNewId(), projectFilePath, filePath, cancellationToken).ConfigureAwait(false);
+            var result = await _provider.GetDynamicFileInfoAsync(projectId, projectFilePath: string.Empty, filePath, cancellationToken).ConfigureAwait(false);
             return new TestDynamicFileInfoResult(result.FilePath, result.TextLoader);
         }
 

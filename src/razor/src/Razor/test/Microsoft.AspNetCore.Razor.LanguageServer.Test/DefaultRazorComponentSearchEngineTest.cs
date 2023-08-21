@@ -4,6 +4,7 @@
 #nullable disable
 
 using System;
+using System.Collections.Immutable;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc.Razor.Extensions.Version2_X;
@@ -34,7 +35,7 @@ public class DefaultRazorComponentSearchEngineTest : LanguageServerTestBase
         // Arrange
         var tagHelperDescriptor1 = CreateRazorComponentTagHelperDescriptor("First", "First.Components", "Component1", typeName: "Component1<TItem>");
         var tagHelperDescriptor2 = CreateRazorComponentTagHelperDescriptor("Second", "Second.Components", "Component3", typeName: "Component3<TItem>");
-        var searchEngine = new DefaultRazorComponentSearchEngine(Dispatcher, s_projectSnapshotManager, LoggerFactory);
+        var searchEngine = new DefaultRazorComponentSearchEngine(s_projectSnapshotManager, LoggerFactory);
 
         // Act
         var documentSnapshot1 = await searchEngine.TryLocateComponentAsync(tagHelperDescriptor1);
@@ -51,7 +52,7 @@ public class DefaultRazorComponentSearchEngineTest : LanguageServerTestBase
         // Arrange
         var tagHelperDescriptor1 = CreateRazorComponentTagHelperDescriptor("First", "First.Components", "Component1");
         var tagHelperDescriptor2 = CreateRazorComponentTagHelperDescriptor("Second", "Second.Components", "Component3");
-        var searchEngine = new DefaultRazorComponentSearchEngine(Dispatcher, s_projectSnapshotManager, LoggerFactory);
+        var searchEngine = new DefaultRazorComponentSearchEngine(s_projectSnapshotManager, LoggerFactory);
 
         // Act
         var documentSnapshot1 = await searchEngine.TryLocateComponentAsync(tagHelperDescriptor1);
@@ -67,7 +68,7 @@ public class DefaultRazorComponentSearchEngineTest : LanguageServerTestBase
     {
         // Arrange
         var tagHelperDescriptor = CreateRazorComponentTagHelperDescriptor("First", "Test", "Component2");
-        var searchEngine = new DefaultRazorComponentSearchEngine(Dispatcher, s_projectSnapshotManager, LoggerFactory);
+        var searchEngine = new DefaultRazorComponentSearchEngine(s_projectSnapshotManager, LoggerFactory);
 
         // Act
         var documentSnapshot = await searchEngine.TryLocateComponentAsync(tagHelperDescriptor);
@@ -81,7 +82,7 @@ public class DefaultRazorComponentSearchEngineTest : LanguageServerTestBase
     {
         // Arrange
         var tagHelperDescriptor = CreateRazorComponentTagHelperDescriptor("Third", "First.Components", "Component3");
-        var searchEngine = new DefaultRazorComponentSearchEngine(Dispatcher, s_projectSnapshotManager, LoggerFactory);
+        var searchEngine = new DefaultRazorComponentSearchEngine(s_projectSnapshotManager, LoggerFactory);
 
         // Act
         var documentSnapshot = await searchEngine.TryLocateComponentAsync(tagHelperDescriptor);
@@ -95,7 +96,7 @@ public class DefaultRazorComponentSearchEngineTest : LanguageServerTestBase
     {
         // Arrange
         var tagHelperDescriptor = CreateRazorComponentTagHelperDescriptor("First", "First.Components", "Component2");
-        var searchEngine = new DefaultRazorComponentSearchEngine(Dispatcher, s_projectSnapshotManager, LoggerFactory);
+        var searchEngine = new DefaultRazorComponentSearchEngine(s_projectSnapshotManager, LoggerFactory);
 
         // Act
         var documentSnapshot = await searchEngine.TryLocateComponentAsync(tagHelperDescriptor);
@@ -109,7 +110,7 @@ public class DefaultRazorComponentSearchEngineTest : LanguageServerTestBase
     {
         // Arrange
         var tagHelperDescriptor = CreateRazorComponentTagHelperDescriptor("First", "First.Components", "Component3");
-        var searchEngine = new DefaultRazorComponentSearchEngine(Dispatcher, s_projectSnapshotManager, LoggerFactory);
+        var searchEngine = new DefaultRazorComponentSearchEngine(s_projectSnapshotManager, LoggerFactory);
 
         // Act
         var documentSnapshot = await searchEngine.TryLocateComponentAsync(tagHelperDescriptor);
@@ -123,7 +124,7 @@ public class DefaultRazorComponentSearchEngineTest : LanguageServerTestBase
     {
         // Arrange
         var tagHelperDescriptor = CreateRazorComponentTagHelperDescriptor("AssemblyName", "Test", "Component2");
-        var searchEngine = new DefaultRazorComponentSearchEngine(Dispatcher, s_projectSnapshotManager, LoggerFactory);
+        var searchEngine = new DefaultRazorComponentSearchEngine(s_projectSnapshotManager, LoggerFactory);
 
         // Act
         var documentSnapshot = await searchEngine.TryLocateComponentAsync(tagHelperDescriptor);
@@ -177,7 +178,7 @@ public class DefaultRazorComponentSearchEngineTest : LanguageServerTestBase
             p.DocumentFilePaths == new[] { "c:/Second/Component3.razor" } &&
             p.GetDocument("c:/Second/Component3.razor") == CreateRazorDocumentSnapshot("", "c:/Second/Component3.razor", "Second.Components"), MockBehavior.Strict);
 
-        var projectSnapshotManager = Mock.Of<ProjectSnapshotManagerBase>(p => p.Projects == new[] { firstProject, secondProject }, MockBehavior.Strict);
+        var projectSnapshotManager = Mock.Of<ProjectSnapshotManagerBase>(p => p.GetProjects() == new[] { firstProject, secondProject }.ToImmutableArray(), MockBehavior.Strict);
         return new TestProjectSnapshotManagerAccessor(projectSnapshotManager);
     }
 

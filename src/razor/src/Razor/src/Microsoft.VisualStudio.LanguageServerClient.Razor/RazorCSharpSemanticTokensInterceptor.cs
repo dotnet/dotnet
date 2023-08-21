@@ -38,7 +38,7 @@ internal class RazorCSharpSemanticTokensInterceptor : MessageInterceptor
     {
         var refreshParams = new SemanticTokensRefreshParams();
         await _requestInvoker.ReinvokeRequestOnServerAsync<SemanticTokensRefreshParams, Unit>(
-            RazorLanguageServerCustomMessageTargets.RazorSemanticTokensRefreshEndpoint,
+            CustomMessageNames.RazorSemanticTokensRefreshEndpoint,
             RazorLSPConstants.RazorLanguageServerName,
             refreshParams,
             cancellationToken).ConfigureAwait(false);

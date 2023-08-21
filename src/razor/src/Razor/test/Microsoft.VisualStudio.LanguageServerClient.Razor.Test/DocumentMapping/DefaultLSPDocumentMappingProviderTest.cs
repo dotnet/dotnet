@@ -6,7 +6,6 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Razor.LanguageServer;
 using Microsoft.AspNetCore.Razor.LanguageServer.Common;
 using Microsoft.AspNetCore.Razor.LanguageServer.Protocol;
 using Microsoft.AspNetCore.Razor.Test.Common;
@@ -26,23 +25,19 @@ public class DefaultLSPDocumentMappingProviderTest : TestBase
     private static readonly Uri s_razorFile = new("file:///some/folder/to/file.razor");
     private static readonly Uri s_razorVirtualCSharpFile = new("file:///some/folder/to/file.razor.ide.g.cs");
     private static readonly Uri s_anotherRazorFile = new("file:///some/folder/to/anotherfile.razor");
-    private static readonly Uri s_anotherRazorVirtualCSharpFile = new("file:///some/folder/to/anotherfile.razor.ide.g.cs");
-    private static readonly Uri s_csharpFile = new("file:///some/folder/to/csharpfile.cs");
 
-    private readonly RazorLSPConventions _razorLSPConventions;
     private readonly Lazy<LSPDocumentManager> _documentManager;
 
     public DefaultLSPDocumentMappingProviderTest(ITestOutputHelper testOutput)
         : base(testOutput)
     {
-        var csharpVirtualDocumentSnapshot = new CSharpVirtualDocumentSnapshot(s_razorVirtualCSharpFile, new StringTextSnapshot(string.Empty), hostDocumentSyncVersion: 0);
+        var csharpVirtualDocumentSnapshot = new CSharpVirtualDocumentSnapshot(projectKey: default, s_razorVirtualCSharpFile, new StringTextSnapshot(string.Empty), hostDocumentSyncVersion: 0);
         var documentSnapshot1 = new TestLSPDocumentSnapshot(s_razorFile, version: 1, "first doc", csharpVirtualDocumentSnapshot);
         var documentSnapshot2 = new TestLSPDocumentSnapshot(s_anotherRazorFile, version: 5, "second doc", csharpVirtualDocumentSnapshot);
         var documentManager = new TestDocumentManager();
         documentManager.AddDocument(s_razorFile, documentSnapshot1);
         documentManager.AddDocument(s_anotherRazorFile, documentSnapshot2);
         _documentManager = new Lazy<LSPDocumentManager>(() => documentManager);
-        _razorLSPConventions = new RazorLSPConventions(TestLanguageServerFeatureOptions.Instance);
     }
 
     [Fact]
@@ -73,7 +68,7 @@ public class DefaultLSPDocumentMappingProviderTest : TestBase
                 It.IsAny<CancellationToken>()))
             .ReturnsAsync(new ReinvocationResponse<RazorMapToDocumentRangesResponse>("TestLanguageClient", response));
 
-        var mappingProvider = new DefaultLSPDocumentMappingProvider(requestInvoker.Object, _documentManager, _razorLSPConventions);
+        var mappingProvider = new DefaultLSPDocumentMappingProvider(requestInvoker.Object, _documentManager);
         var projectedRange = new Range()
         {
             Start = new Position(10, 10),

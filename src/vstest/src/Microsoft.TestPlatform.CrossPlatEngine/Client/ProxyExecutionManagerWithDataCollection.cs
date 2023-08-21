@@ -141,6 +141,17 @@ internal class ProxyExecutionManagerWithDataCollection : ProxyExecutionManager
             DataCollectionRunEventsHandler.Messages.Clear();
         }
 
+        // Push all raw messages
+        if (DataCollectionRunEventsHandler.RawMessages.Count > 0)
+        {
+            foreach (var message in DataCollectionRunEventsHandler.RawMessages)
+            {
+                currentEventHandler.HandleRawMessage(message);
+            }
+
+            DataCollectionRunEventsHandler.RawMessages.Clear();
+        }
+
         return base.StartTestRun(testRunCriteria, currentEventHandler);
     }
 
@@ -190,7 +201,7 @@ internal class ProxyExecutionManagerWithDataCollection : ProxyExecutionManager
 }
 
 /// <summary>
-/// Handles Log events and stores them in list. Messages in the list will be logged after test execution begins.
+/// Handles Log and raw messages and stores them in list. Messages in the list will be logged after test execution begins.
 /// </summary>
 internal class DataCollectionRunEventsHandler : ITestMessageEventHandler
 {
@@ -200,12 +211,18 @@ internal class DataCollectionRunEventsHandler : ITestMessageEventHandler
     public DataCollectionRunEventsHandler()
     {
         Messages = new List<Tuple<TestMessageLevel, string?>>();
+        RawMessages = new List<string>();
     }
 
     /// <summary>
     /// Gets the cached messages.
     /// </summary>
     public List<Tuple<TestMessageLevel, string?>> Messages { get; private set; }
+
+    /// <summary>
+    /// Gets the cached raw messages.
+    /// </summary>
+    public List<string> RawMessages { get; private set; }
 
     /// <inheritdoc />
     public void HandleLogMessage(TestMessageLevel level, string? message)
@@ -216,6 +233,6 @@ internal class DataCollectionRunEventsHandler : ITestMessageEventHandler
     /// <inheritdoc />
     public void HandleRawMessage(string rawMessage)
     {
-        throw new NotImplementedException();
+        RawMessages.Add(rawMessage);
     }
 }

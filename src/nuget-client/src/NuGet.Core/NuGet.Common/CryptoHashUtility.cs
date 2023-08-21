@@ -49,7 +49,7 @@ namespace NuGet.Common
                 throw new ArgumentNullException(nameof(data));
             }
 
-            string hash = null;
+            string hash;
 
             try
             {
@@ -108,7 +108,7 @@ namespace NuGet.Common
                 throw new ArgumentNullException(nameof(data));
             }
 
-            byte[] hash = null;
+            byte[] hash;
 
             try
             {

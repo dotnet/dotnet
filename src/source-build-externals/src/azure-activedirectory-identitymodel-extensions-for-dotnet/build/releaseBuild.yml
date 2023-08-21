@@ -46,6 +46,13 @@ jobs:
     inputs:
       version: 6.0.x
 
+  - task: UseDotNet@2
+    displayName: 'Use .Net Core SDK 8'
+    inputs:
+      includePreviewVersions: true
+      version: 8.0.x
+    condition: eq(variables['TargetNet8'], 'True')
+
   - task: DotNetCoreCLI@2
     displayName: 'dotnet --list-sdks '
     inputs:
@@ -85,13 +92,20 @@ jobs:
         -apiCompatRoot: $(ApiCompatRootWilson)
         -nugetPackageProviderVersion: "2.8.5.208"
 
-  - task: MSBuild@1
+  # - task: MSBuild@1
+  #   displayName: Build
+  #   inputs:
+  #     solution: wilson.sln
+  #     msbuildArchitecture: x64
+  #     msbuildArguments: '/r:True /p:Configuration=$(BuildConfiguration) /p:Platform="Any CPU" /verbosity:m /p:SourceLinkCreate=true /p:RunApiCompat=true'
+
+  - task: DotNetCoreCLI@2
     displayName: Build
     inputs:
-      solution: wilson.sln
-      msbuildVersion: '17.0.0'
-      msbuildArchitecture: x64
-      msbuildArguments: '/r:True /p:Configuration=$(BuildConfiguration) /p:Platform="Any CPU" /verbosity:m /p:SourceLinkCreate=true /p:RunApiCompat=true'
+      command: 'custom'
+      projects: 'wilson.sln'
+      custom: 'msbuild'
+      arguments: '/r:True /p:Configuration=$(BuildConfiguration) /p:Platform="Any CPU" /verbosity:m /p:SourceLinkCreate=true /p:RunApiCompat=true'
 
   - task: PowerShell@2
     displayName: 'Run Tests'
@@ -127,6 +141,7 @@ jobs:
 
   - task: securedevelopmentteam.vss-secure-development-tools.build-task-roslynanalyzers.RoslynAnalyzers@2
     displayName: 'Run Roslyn Analyzers'
+    condition: eq(variables['TargetNet8'], 'False')
 
   - task: securedevelopmentteam.vss-secure-development-tools.build-task-binskim.BinSkim@3
     displayName: 'Run BinSkim'
@@ -149,6 +164,7 @@ jobs:
       PoliCheck: true
     continueOnError: true
 
+
   #Sign Wilson 6x task group
   - template: template-sign-wilson-6x.yaml
 
@@ -157,7 +173,7 @@ jobs:
     inputs:
       targetType: filePath
       filePath: ./pack.ps1
-      arguments: '-buildType $(BuildConfiguration)'
+      arguments: '-buildType $(BuildConfiguration) C:\hostedtoolcache\windows\dotnet'
 
   - task: SFP.build-tasks.custom-build-task-1.EsrpCodeSigning@1
     displayName: 'Sign Nuget Packages'

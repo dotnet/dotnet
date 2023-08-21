@@ -1,6 +1,6 @@
 {
   "sdk": {
-    "version": "8.0.100-preview.3.23178.7",
+    "version": "8.0.100-preview.6.23330.14",
     "rollForward": "minor",
     "allowPrerelease": false,
     "architecture": "x64"
@@ -29,10 +29,10 @@
       "allowPrerelease": false
     },
     "vswhere": "2.2.7",
-    "dotnet": "8.0.100-preview.3.23178.7"
+    "dotnet": "8.0.100-preview.6.23330.14"
   },
   "msbuild-sdks": {
-    "Microsoft.DotNet.Arcade.Sdk": "8.0.0-beta.23262.5",
+    "Microsoft.DotNet.Arcade.Sdk": "8.0.0-beta.23364.2",
     "Microsoft.DotNet.Helix.Sdk": "8.0.0-beta.23226.4"
   }
 }

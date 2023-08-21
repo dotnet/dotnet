@@ -31,7 +31,15 @@ TParam
 #line hidden
 #nullable disable
             ));
-            __builder.AddComponentParameter(2, "ValueChanged", (global::System.Action<TParam>)(__value => { ParentValue = __value; global::Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.InvokeSynchronousDelegate(Update); }));
+            __builder.AddComponentParameter(2, "ValueChanged", (global::System.Action<TParam>)( __value => { ParentValue = __value; global::Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.InvokeSynchronousDelegate(
+#nullable restore
+#line 2 "x:\dir\subdir\Test\TestComponent.cshtml"
+                                                                              Update
+
+#line default
+#line hidden
+#nullable disable
+            ); }));
             __builder.CloseComponent();
         }
         #pragma warning restore 1998

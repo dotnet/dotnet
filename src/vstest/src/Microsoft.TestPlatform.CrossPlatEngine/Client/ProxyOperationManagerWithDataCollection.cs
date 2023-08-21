@@ -120,6 +120,17 @@ public class ProxyOperationManagerWithDataCollection : ProxyOperationManager
             DataCollectionRunEventsHandler.Messages.Clear();
         }
 
+        // Push all raw messages
+        if (DataCollectionRunEventsHandler.RawMessages.Count > 0)
+        {
+            foreach (var message in DataCollectionRunEventsHandler.RawMessages)
+            {
+                eventHandler.HandleRawMessage(message);
+            }
+
+            DataCollectionRunEventsHandler.RawMessages.Clear();
+        }
+
         return base.SetupChannel(sources, runSettings);
     }
 

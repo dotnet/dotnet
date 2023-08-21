@@ -30,7 +30,14 @@ namespace Test
 #nullable disable
             );
             __o = new global::System.Action<System.Int32>(
-            value => ParentValue = value);
+#nullable restore
+#line 1 "x:\dir\subdir\Test\TestComponent.cshtml"
+                                                            value => ParentValue = value
+
+#line default
+#line hidden
+#nullable disable
+            );
             __builder.AddAttribute(-1, "ChildContent", (global::Microsoft.AspNetCore.Components.RenderFragment)((__builder2) => {
             }
             ));

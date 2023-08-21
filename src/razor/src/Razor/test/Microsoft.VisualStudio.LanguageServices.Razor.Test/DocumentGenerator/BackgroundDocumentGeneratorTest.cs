@@ -35,8 +35,8 @@ public class BackgroundDocumentGeneratorTest : ProjectSnapshotManagerDispatcherW
             TestProjectData.AnotherProjectFile1,
         };
 
-        _hostProject1 = new HostProject(TestProjectData.SomeProject.FilePath, FallbackRazorConfiguration.MVC_1_0, TestProjectData.SomeProject.RootNamespace);
-        _hostProject2 = new HostProject(TestProjectData.AnotherProject.FilePath, FallbackRazorConfiguration.MVC_1_0, TestProjectData.AnotherProject.RootNamespace);
+        _hostProject1 = new HostProject(TestProjectData.SomeProject.FilePath, TestProjectData.SomeProject.IntermediateOutputPath, FallbackRazorConfiguration.MVC_1_0, TestProjectData.SomeProject.RootNamespace);
+        _hostProject2 = new HostProject(TestProjectData.AnotherProject.FilePath, TestProjectData.AnotherProject.IntermediateOutputPath, FallbackRazorConfiguration.MVC_1_0, TestProjectData.AnotherProject.RootNamespace);
 
         _dynamicFileInfoProvider = new TestDynamicFileInfoProvider();
     }
@@ -50,7 +50,7 @@ public class BackgroundDocumentGeneratorTest : ProjectSnapshotManagerDispatcherW
     public async Task ProcessDocument_LongDocumentParse_DoesNotUpdateAfterSuppress()
     {
         // Arrange
-        var projectManager = new TestProjectSnapshotManager(Dispatcher, Workspace);
+        var projectManager = new TestProjectSnapshotManager(Workspace);
         projectManager.ProjectAdded(_hostProject1);
 
         // We utilize a task completion source here so we can "fake" a document parse taking a significant amount of time
@@ -96,7 +96,7 @@ public class BackgroundDocumentGeneratorTest : ProjectSnapshotManagerDispatcherW
     public async Task ProcessDocument_SwallowsIOExceptions()
     {
         // Arrange
-        var projectManager = new TestProjectSnapshotManager(Dispatcher, Workspace);
+        var projectManager = new TestProjectSnapshotManager(Workspace);
         projectManager.ProjectAdded(_hostProject1);
 
         var textLoader = new Mock<TextLoader>(MockBehavior.Strict);
@@ -127,7 +127,7 @@ public class BackgroundDocumentGeneratorTest : ProjectSnapshotManagerDispatcherW
     public async Task ProcessDocument_SwallowsUnauthorizedAccessExceptions()
     {
         // Arrange
-        var projectManager = new TestProjectSnapshotManager(Dispatcher, Workspace);
+        var projectManager = new TestProjectSnapshotManager(Workspace);
         projectManager.ProjectAdded(_hostProject1);
 
         var textLoader = new Mock<TextLoader>(MockBehavior.Strict);
@@ -158,7 +158,7 @@ public class BackgroundDocumentGeneratorTest : ProjectSnapshotManagerDispatcherW
     public async Task Queue_ProcessesNotifications_AndGoesBackToSleep()
     {
         // Arrange
-        var projectManager = new TestProjectSnapshotManager(Dispatcher, Workspace);
+        var projectManager = new TestProjectSnapshotManager(Workspace);
         projectManager.ProjectAdded(_hostProject1);
         projectManager.ProjectAdded(_hostProject2);
         projectManager.DocumentAdded(_hostProject1.Key, _documents[0], null);
@@ -197,7 +197,7 @@ public class BackgroundDocumentGeneratorTest : ProjectSnapshotManagerDispatcherW
     public async Task Queue_ProcessesNotifications_AndRestarts()
     {
         // Arrange
-        var projectManager = new TestProjectSnapshotManager(Dispatcher, Workspace);
+        var projectManager = new TestProjectSnapshotManager(Workspace);
         projectManager.ProjectAdded(_hostProject1);
         projectManager.ProjectAdded(_hostProject2);
         projectManager.DocumentAdded(_hostProject1.Key, _documents[0], null);
@@ -260,7 +260,7 @@ public class BackgroundDocumentGeneratorTest : ProjectSnapshotManagerDispatcherW
     public async Task DocumentChanged_ReparsesRelatedFiles()
     {
         // Arrange
-        var projectManager = new TestProjectSnapshotManager(Dispatcher, Workspace)
+        var projectManager = new TestProjectSnapshotManager(Workspace)
         {
             AllowNotifyListeners = true,
         };
@@ -296,7 +296,7 @@ public class BackgroundDocumentGeneratorTest : ProjectSnapshotManagerDispatcherW
 
         for (var i = 0; i < documents.Length; i++)
         {
-            var key = new DocumentKey(_hostProject1.FilePath, documents[i].FilePath);
+            var key = new DocumentKey(_hostProject1.Key, documents[i].FilePath);
             Assert.True(queue.Work.ContainsKey(key));
         }
 
@@ -323,7 +323,7 @@ public class BackgroundDocumentGeneratorTest : ProjectSnapshotManagerDispatcherW
     public async Task DocumentRemoved_ReparsesRelatedFiles()
     {
         // Arrange
-        var projectManager = new TestProjectSnapshotManager(Dispatcher, Workspace)
+        var projectManager = new TestProjectSnapshotManager(Workspace)
         {
             AllowNotifyListeners = true,
         };
@@ -350,7 +350,7 @@ public class BackgroundDocumentGeneratorTest : ProjectSnapshotManagerDispatcherW
         Assert.True(queue.HasPendingNotifications, "Queue should have a notification created during Enqueue");
 
         var kvp = Assert.Single(queue.Work);
-        var expectedKey = new DocumentKey(_hostProject1.FilePath, TestProjectData.SomeProjectComponentFile1.FilePath);
+        var expectedKey = new DocumentKey(_hostProject1.Key, TestProjectData.SomeProjectComponentFile1.FilePath);
         Assert.Equal(expectedKey, kvp.Key);
 
         // Allow the background work to start.
@@ -387,12 +387,12 @@ public class BackgroundDocumentGeneratorTest : ProjectSnapshotManagerDispatcherW
         {
         }
 
-        public override void SuppressDocument(string projectFilePath, string documentFilePath)
+        public override void SuppressDocument(ProjectKey projectFilePath, string documentFilePath)
         {
             _dynamicDocuments[documentFilePath] = null;
         }
 
-        public override void UpdateFileInfo(string projectFilePath, DynamicDocumentContainer documentContainer)
+        public override void UpdateFileInfo(ProjectKey projectKey, DynamicDocumentContainer documentContainer)
         {
             _dynamicDocuments[documentContainer.FilePath] = documentContainer;
         }

@@ -51,8 +51,12 @@ function getValueU64(ptr: number) {
 }
 
 export const monoPlatform: Platform = {
-  start: function start(options: Partial<WebAssemblyStartOptions>) {
-    return createRuntimeInstance(options);
+  load: function load(options: Partial<WebAssemblyStartOptions>, onConfigLoaded?: (loadedConfig: MonoConfig) => void) {
+    return createRuntimeInstance(options, onConfigLoaded);
+  },
+
+  start: function start() {
+    return configureRuntimeInstance();
   },
 
   callEntryPoint: async function callEntryPoint(): Promise<any> {
@@ -157,7 +161,7 @@ async function importDotnetJs(startOptions: Partial<WebAssemblyStartOptions>): P
   // Allow overriding the URI from which the dotnet.*.js file is loaded
   if (startOptions.loadBootResource) {
     const resourceType: WebAssemblyBootResourceType = 'dotnetjs';
-    const customSrc = startOptions.loadBootResource(resourceType, 'dotnet.js', src, '');
+    const customSrc = startOptions.loadBootResource(resourceType, 'dotnet.js', src, '', 'js-module-dotnet');
     if (typeof (customSrc) === 'string') {
       src = customSrc;
     } else if (customSrc) {
@@ -170,7 +174,7 @@ async function importDotnetJs(startOptions: Partial<WebAssemblyStartOptions>): P
   return await import(/* webpackIgnore: true */ absoluteSrc);
 }
 
-function prepareRuntimeConfig(options: Partial<WebAssemblyStartOptions>): DotnetModuleConfig {
+function prepareRuntimeConfig(options: Partial<WebAssemblyStartOptions>, onConfigLoadedCallback?: (loadedConfig: MonoConfig) => void): DotnetModuleConfig {
   const config: MonoConfig = {
     maxParallelDownloads: 1000000, // disable throttling parallel downloads
     enableDownloadRetry: false, // disable retry downloads
@@ -188,12 +192,13 @@ function prepareRuntimeConfig(options: Partial<WebAssemblyStartOptions>): Dotnet
 
     Blazor._internal.getApplicationEnvironment = () => loadedConfig.applicationEnvironment!;
 
+    onConfigLoadedCallback?.(loadedConfig);
+
     const initializerArguments = [options, loadedConfig.resources?.extensions ?? {}];
     await invokeLibraryInitializers('beforeStart', initializerArguments);
   };
 
   const moduleConfig = (window['Module'] || {}) as typeof Module;
-  // TODO (moduleConfig as any).preloadPlugins = []; // why do we need this ?
   const dotnetModuleConfig: DotnetModuleConfig = {
     ...moduleConfig,
     onConfigLoaded: (onConfigLoaded as (config: MonoConfig) => void | Promise<void>),
@@ -207,14 +212,37 @@ function prepareRuntimeConfig(options: Partial<WebAssemblyStartOptions>): Dotnet
   return dotnetModuleConfig;
 }
 
-async function createRuntimeInstance(options: Partial<WebAssemblyStartOptions>): Promise<PlatformApi> {
+async function createRuntimeInstance(options: Partial<WebAssemblyStartOptions>, onConfigLoaded?: (loadedConfig: MonoConfig) => void): Promise<void> {
   const { dotnet } = await importDotnetJs(options);
-  const moduleConfig = prepareRuntimeConfig(options);
-  const anyDotnet = (dotnet as any);
+  const moduleConfig = prepareRuntimeConfig(options, onConfigLoaded);
 
-  anyDotnet.withStartupOptions(options).withModuleConfig(moduleConfig);
+  if (options.applicationCulture) {
+    dotnet.withApplicationCulture(options.applicationCulture);
+  }
+
+  if (options.environment) {
+    dotnet.withApplicationEnvironment(options.environment);
+  }
+
+  if (options.loadBootResource) {
+    dotnet.withResourceLoader(options.loadBootResource);
+  }
+
+  const anyDotnet = (dotnet as any);
+  anyDotnet.withModuleConfig(moduleConfig);
+
+  if (options.configureRuntime) {
+    options.configureRuntime(dotnet);
+  }
 
   runtime = await dotnet.create();
+}
+
+async function configureRuntimeInstance(): Promise<PlatformApi> {
+  if (!runtime) {
+    throw new Error('The runtime must be loaded it gets configured.');
+  }
+
   const { MONO: mono, BINDING: binding, Module: module, setModuleImports, INTERNAL: mono_internal, getConfig, invokeLibraryInitializers } = runtime;
   Module = module;
   BINDING = binding;
@@ -223,6 +251,7 @@ async function createRuntimeInstance(options: Partial<WebAssemblyStartOptions>):
 
   attachDebuggerHotkey(getConfig());
 
+  Blazor.runtime = runtime;
   Blazor._internal.dotNetCriticalError = printErr;
   setModuleImports('blazor-internal', {
     Blazor: { _internal: Blazor._internal },

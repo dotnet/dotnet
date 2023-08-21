@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<VSTemplate Version="3.0.0" xmlns="http://schemas.microsoft.com/developer/vstemplate/2005" Type="Project">
+  <TemplateData>
+    <TemplateID>Microsoft.CSharp.Web.EdgeDriverTest</TemplateID>
+    <Name Package="{52CBD135-1F97-2580-011F-C7CD052E44DE}" ID="706"/>
+    <Description Package="{52CBD135-1F97-2580-011F-C7CD052E44DE}" ID="708"/>
+    <Icon Package="{52CBD135-1F97-2580-011F-C7CD052E44DE}" ID="531"/>
+    <ProjectType>CSharp</ProjectType>
+    <SortOrder>100</SortOrder>
+    <CreateNewFolder>true</CreateNewFolder>
+    <DefaultName>EdgeDriverTest</DefaultName>
+    <ProvideDefaultName>true</ProvideDefaultName>
+    <CreateInPlace>false</CreateInPlace>
+    <RequiredFrameworkVersion>4.5</RequiredFrameworkVersion>
+  </TemplateData>
+  <TemplateContent>
+    <Project TargetFileName="$safeprojectname$.csproj" File="EdgeDriverSample.csproj" ReplaceParameters="true">
+      <ProjectItem ReplaceParameters="true" TargetFileName="EdgeDriverTest.cs" OpenInEditor="true">EdgeDriverTest.cs</ProjectItem>
+      <ProjectItem ReplaceParameters="true" TargetFileName="Properties\AssemblyInfo.cs">AssemblyInfo.cs</ProjectItem>
+    </Project>
+  </TemplateContent>
+  <WizardExtension>
+    <Assembly>NuGet.VisualStudio.Interop, Version=1.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</Assembly>
+    <FullClassName>NuGet.VisualStudio.TemplateWizard</FullClassName>
+  </WizardExtension>
+  <WizardData>
+    <packages repository="extension" repositoryId="EdgeDriverTest.0b43ac6b-e6ff-4afc-a5f6-286d41c046a6" isPreunzipped="false">
+      <package id="MSTest.TestAdapter" version="2.2.10" skipAssemblyReferences="false"/>
+      <package id="MSTest.TestFramework" version="2.2.10" skipAssemblyReferences="false"/>
+    </packages>
+  </WizardData>
+</VSTemplate>

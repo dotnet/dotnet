@@ -199,7 +199,7 @@ public class DelegatedCompletionItemResolverTest : LanguageServerTestBase
             item, containingCompletionList, originalRequestContext, _clientCapabilities, DisposalToken);
 
         // Assert
-        Assert.Same(_htmlCompletionParams.HostDocument, server.DelegatedParams.HostDocument);
+        Assert.Same(_htmlCompletionParams.Identifier, server.DelegatedParams.Identifier);
         Assert.Equal(RazorLanguageKind.Html, server.DelegatedParams.OriginatingKind);
         Assert.Same(expectedResolvedItem, resolvedItem);
     }

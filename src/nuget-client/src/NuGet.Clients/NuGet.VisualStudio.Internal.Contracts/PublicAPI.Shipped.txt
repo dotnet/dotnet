@@ -71,7 +71,6 @@ NuGet.VisualStudio.Internal.Contracts.INuGetSourcesService.GetActivePackageSourc
 NuGet.VisualStudio.Internal.Contracts.INuGetSourcesService.GetPackageSourcesAsync(System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.ValueTask<System.Collections.Generic.IReadOnlyList<NuGet.VisualStudio.Internal.Contracts.PackageSourceContextInfo!>!>
 NuGet.VisualStudio.Internal.Contracts.INuGetSourcesService.PackageSourcesChanged -> System.EventHandler<System.Collections.Generic.IReadOnlyList<NuGet.VisualStudio.Internal.Contracts.PackageSourceContextInfo!>!>?
 NuGet.VisualStudio.Internal.Contracts.INuGetSourcesService.SavePackageSourceContextInfosAsync(System.Collections.Generic.IReadOnlyList<NuGet.VisualStudio.Internal.Contracts.PackageSourceContextInfo!>! sources, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.ValueTask
-NuGet.VisualStudio.Internal.Contracts.INuGetSourcesService.SavePackageSourcesAsync(System.Collections.Generic.IReadOnlyList<NuGet.Configuration.PackageSource!>! sources, NuGet.Configuration.PackageSourceUpdateOptions! packageSourceUpdateOptions, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.ValueTask
 NuGet.VisualStudio.Internal.Contracts.IPackageReferenceContextInfo
 NuGet.VisualStudio.Internal.Contracts.IPackageReferenceContextInfo.AllowedVersions.get -> NuGet.Versioning.VersionRange?
 NuGet.VisualStudio.Internal.Contracts.IPackageReferenceContextInfo.Framework.get -> NuGet.Frameworks.NuGetFramework?

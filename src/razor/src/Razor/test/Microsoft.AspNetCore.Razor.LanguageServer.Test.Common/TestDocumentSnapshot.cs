@@ -5,6 +5,7 @@ using System;
 using System.Collections.Immutable;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
+using Microsoft.AspNetCore.Razor.ProjectSystem;
 using Microsoft.AspNetCore.Razor.Utilities;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
@@ -25,8 +26,8 @@ internal class TestDocumentSnapshot : DocumentSnapshot
     public static TestDocumentSnapshot Create(string filePath, string text)
         => Create(filePath, text, VersionStamp.Default);
 
-    public static TestDocumentSnapshot Create(string filePath, string text, VersionStamp version)
-        => Create(filePath, text, version, TestProjectSnapshot.Create(filePath + ".csproj"));
+    public static TestDocumentSnapshot Create(string filePath, string text, VersionStamp version, ProjectWorkspaceState? projectWorkspaceState = null)
+        => Create(filePath, text, version, TestProjectSnapshot.Create(filePath + ".csproj", projectWorkspaceState));
 
     public static TestDocumentSnapshot Create(string filePath, string text, VersionStamp version, TestProjectSnapshot projectSnapshot)
     {

@@ -8,11 +8,13 @@ using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 
 namespace Microsoft.CodeAnalysis.Razor.Workspaces;
 
-internal abstract class RazorDynamicFileInfoProvider : ProjectSnapshotChangeTrigger
+internal abstract class RazorDynamicFileInfoProvider : IProjectSnapshotChangeTrigger
 {
+    public abstract void Initialize(ProjectSnapshotManagerBase projectManager);
+
     public abstract void UpdateLSPFileInfo(Uri documentUri, DynamicDocumentContainer documentContainer);
 
-    public abstract void UpdateFileInfo(string projectFilePath, DynamicDocumentContainer documentContainer);
+    public abstract void UpdateFileInfo(ProjectKey projectKey, DynamicDocumentContainer documentContainer);
 
-    public abstract void SuppressDocument(string projectFilePath, string documentFilePath);
+    public abstract void SuppressDocument(ProjectKey projectKey, string documentFilePath);
 }

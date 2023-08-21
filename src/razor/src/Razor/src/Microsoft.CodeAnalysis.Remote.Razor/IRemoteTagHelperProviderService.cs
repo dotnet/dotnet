@@ -10,16 +10,10 @@ namespace Microsoft.CodeAnalysis.Remote.Razor;
 
 internal interface IRemoteTagHelperProviderService
 {
-    ValueTask<TagHelperResolutionResult> GetTagHelpersAsync(
-        RazorPinnedSolutionInfoWrapper solutionInfo,
-        ProjectSnapshotHandle projectHandle,
-        string factoryTypeName,
-        CancellationToken cancellationToken);
-
     ValueTask<TagHelperDeltaResult> GetTagHelpersDeltaAsync(
         RazorPinnedSolutionInfoWrapper solutionInfo,
         ProjectSnapshotHandle projectHandle,
-        string? factoryTypeName,
+        string factoryTypeName,
         int lastResultId,
         CancellationToken cancellationToken);
 }

@@ -655,7 +655,7 @@ namespace NuGet.CommandLine.XPlat
         /// <param name="includeProjects">Include project references in top-level and transitive package lists</param>
         /// <returns>FrameworkPackages collection with top-level and transitive package/project
         /// references for each framework, or null on error</returns>
-        internal IEnumerable<FrameworkPackages> GetResolvedVersions(
+        internal List<FrameworkPackages> GetResolvedVersions(
             string projectPath, IEnumerable<string> userInputFrameworks, LockFile assetsFile, bool transitive, bool includeProjects)
         {
             if (userInputFrameworks == null)

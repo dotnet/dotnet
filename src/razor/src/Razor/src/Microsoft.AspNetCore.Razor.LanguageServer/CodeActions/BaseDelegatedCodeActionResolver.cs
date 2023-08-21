@@ -29,7 +29,7 @@ internal abstract class BaseDelegatedCodeActionResolver : ICodeActionResolver
         var resolveCodeActionParams = new RazorResolveCodeActionParams(razorFileUri, hostDocumentVersion, languageKind, codeAction);
 
         var resolvedCodeAction = await LanguageServer.SendRequestAsync<RazorResolveCodeActionParams, CodeAction?>(
-            RazorLanguageServerCustomMessageTargets.RazorResolveCodeActionsEndpoint,
+            CustomMessageNames.RazorResolveCodeActionsEndpoint,
             resolveCodeActionParams,
             cancellationToken).ConfigureAwait(false);
 

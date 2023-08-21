@@ -22,7 +22,7 @@ public class GeneratedDocumentSynchronizerTest : LanguageServerTestBase
     public GeneratedDocumentSynchronizerTest(ITestOutputHelper testOutput)
         : base(testOutput)
     {
-        _cache = new DefaultDocumentVersionCache(Dispatcher);
+        _cache = new DefaultDocumentVersionCache();
         _publisher = new TestGeneratedDocumentPublisher();
         _synchronizer = new GeneratedDocumentSynchronizer(_publisher, _cache, Dispatcher);
         _document = TestDocumentSnapshot.Create("C:/path/to/file.razor");
@@ -70,12 +70,12 @@ public class GeneratedDocumentSynchronizerTest : LanguageServerTestBase
 
         public bool PublishedHtml { get; private set; }
 
-        public override void PublishCSharp(string filePath, SourceText sourceText, int hostDocumentVersion)
+        public override void PublishCSharp(ProjectKey projectKey, string filePath, SourceText sourceText, int hostDocumentVersion)
         {
             PublishedCSharp = true;
         }
 
-        public override void PublishHtml(string filePath, SourceText sourceText, int hostDocumentVersion)
+        public override void PublishHtml(ProjectKey projectKey, string filePath, SourceText sourceText, int hostDocumentVersion)
         {
             PublishedHtml = true;
         }

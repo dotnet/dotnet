@@ -30,14 +30,14 @@
   },
   "onEnterRules": [
     {
-      "beforeText": "<(?!(?:area|base|br|col|embed|hr|img|input|keygen|link|menuitem|meta|param|source|track|wbr))([_:\\w][_:\\w-.\\d]*)([^/>]*(?!\\/)>)[^<]*$",
+      "beforeText": "<(?!(?:area|base|br|col|embed|hr|img|input|keygen|link|menuitem|meta|param|source|track|wbr))([_:\\w][_:\\w-.\\d]*)([^/>]*(=>)*[^/>]*(?<!=)(?!\\/)>)[^<]*$",
       "afterText": "^<\\/([_:\\w][_:\\w-.\\d]*)\\s*>",
       "action": {
         "indent": "indentOutdent"
       }
     },
     {
-      "beforeText": "<(?!(?:area|base|br|col|embed|hr|img|input|keygen|link|menuitem|meta|param|source|track|wbr))(\\w[\\w\\d]*)([^/>]*(?!\\/)>)[^<]*$",
+      "beforeText": "<(?!(?:area|base|br|col|embed|hr|img|input|keygen|link|menuitem|meta|param|source|track|wbr))(\\w[\\w\\d]*)([^/>]*(=>)*[^/>]*(?<!=)(?!\\/)>)[^<]*$",
       "action": {
         "indent": "indent"
       }

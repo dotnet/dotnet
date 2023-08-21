@@ -4,4 +4,14 @@
         <VersionPrefix>0.0.1</VersionPrefix>
         <VersionSuffix>preview</VersionSuffix>
     </PropertyGroup>
+
+    <!--Enables to create preview NuGet packages.-->
+    <PropertyGroup Condition=" '$(VersionSuffix)' == '' ">
+      <Version>$(VersionPrefix)</Version>
+    </PropertyGroup>
+
+    <PropertyGroup Condition=" '$(VersionSuffix)' != '' ">
+      <Version>$(VersionPrefix)-$(VersionSuffix)</Version>
+    </PropertyGroup>
+
 </Project>

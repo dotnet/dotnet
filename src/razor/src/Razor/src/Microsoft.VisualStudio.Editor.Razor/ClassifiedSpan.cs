@@ -7,16 +7,13 @@ namespace Microsoft.VisualStudio.Editor.Razor;
 
 public struct ClassifiedSpan
 {
-    public ClassifiedSpan(SourceSpan span, SourceSpan blockSpan, SpanKind spanKind, BlockKind blockKind, AcceptedCharacters acceptedCharacters)
+    public ClassifiedSpan(SourceSpan span, SourceSpan blockSpan, SpanKind spanKind, BlockKind blockKind)
     {
         Span = span;
         BlockSpan = blockSpan;
         SpanKind = spanKind;
         BlockKind = blockKind;
-        AcceptedCharacters = acceptedCharacters;
     }
-
-    public AcceptedCharacters AcceptedCharacters { get; }
 
     public BlockKind BlockKind { get; }
 

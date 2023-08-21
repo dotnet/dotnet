@@ -302,9 +302,11 @@ namespace Analyzer.Utilities
         public const string SystemRuntimeCompilerServicesCallerArgumentExpressionAttribute = "System.Runtime.CompilerServices.CallerArgumentExpressionAttribute";
         public const string SystemRuntimeCompilerServicesCompilerGeneratedAttribute = "System.Runtime.CompilerServices.CompilerGeneratedAttribute";
         public const string SystemRuntimeCompilerServicesConfiguredAsyncDisposable = "System.Runtime.CompilerServices.ConfiguredAsyncDisposable";
+        public const string SystemRuntimeCompilerServicesConfiguredValueTaskAwaitable = "System.Runtime.CompilerServices.ConfiguredValueTaskAwaitable";
         public const string SystemRuntimeCompilerServicesConfiguredValueTaskAwaitable1 = "System.Runtime.CompilerServices.ConfiguredValueTaskAwaitable`1";
         public const string SystemRuntimeCompilerServicesDisableRuntimeMarshallingAttribute = "System.Runtime.CompilerServices.DisableRuntimeMarshallingAttribute";
         public const string SystemRuntimeCompilerServicesICriticalNotifyCompletion = "System.Runtime.CompilerServices.ICriticalNotifyCompletion";
+        public const string SystemRuntimeCompilerServicesInlineArrayAttribute = "System.Runtime.CompilerServices.InlineArrayAttribute";
         public const string SystemRuntimeCompilerServicesINotifyCompletion = "System.Runtime.CompilerServices.INotifyCompletion";
         public const string SystemRuntimeCompilerServicesInternalsVisibleToAttribute = "System.Runtime.CompilerServices.InternalsVisibleToAttribute";
         public const string SystemRuntimeCompilerServicesMethodImplOptions = "System.Runtime.CompilerServices.MethodImplOptions";
@@ -400,6 +402,8 @@ namespace Analyzer.Utilities
         public const string SystemSystemException = "System.SystemException";
         public const string SystemTextCompositeFormat = "System.Text.CompositeFormat";
         public const string SystemTextEncoding = "System.Text.Encoding";
+        public const string SystemTextJsonJsonSerializerOptions = "System.Text.Json.JsonSerializerOptions";
+        public const string SystemTextJsonJsonSerializer = "System.Text.Json.JsonSerializer";
         public const string SystemTextRegularExpressionsRegex = "System.Text.RegularExpressions.Regex";
         public const string SystemTextStringBuilder = "System.Text.StringBuilder";
         public const string SystemThreadStaticAttribute = "System.ThreadStaticAttribute";
@@ -408,6 +412,7 @@ namespace Analyzer.Utilities
         public const string SystemThreadingMonitor = "System.Threading.Monitor";
         public const string SystemThreadingSpinLock = "System.Threading.SpinLock";
         public const string SystemThreadingTasksConfigureAwaitOptions = "System.Threading.Tasks.ConfigureAwaitOptions";
+        public const string SystemThreadingTasksTaskAsyncEnumerableExtensions = "System.Threading.Tasks.TaskAsyncEnumerableExtensions";
         public const string SystemThreadingTasksTask = "System.Threading.Tasks.Task";
         public const string SystemThreadingTasksTask1 = "System.Threading.Tasks.Task`1";
         public const string SystemThreadingTasksTaskCompletionSource = "System.Threading.Tasks.TaskCompletionSource";

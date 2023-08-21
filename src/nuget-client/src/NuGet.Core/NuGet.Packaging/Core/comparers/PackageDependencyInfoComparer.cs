@@ -86,13 +86,8 @@ namespace NuGet.Packaging.Core
 
             var combiner = new HashCodeCombiner();
 
-            combiner.AddObject(PackageIdentityComparer.Default.GetHashCode(obj));
-
-            // order the dependencies by hash code to make this consistent
-            foreach (int hash in obj.Dependencies.Select(e => _dependencyComparer.GetHashCode(e)).OrderBy(h => h))
-            {
-                combiner.AddObject(hash);
-            }
+            combiner.AddObject(obj, PackageIdentityComparer.Default);
+            combiner.AddUnorderedSequence(obj.Dependencies, _dependencyComparer);
 
             return combiner.CombinedHash;
         }

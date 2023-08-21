@@ -378,7 +378,7 @@ namespace NuGet.Packaging
 
             frameworks.UnionWith(GetFrameworkItems().Select(g => g.TargetFramework));
 
-            return frameworks.Where(f => !f.IsUnsupported).OrderBy(f => f, new NuGetFrameworkSorter());
+            return frameworks.Where(f => !f.IsUnsupported).OrderBy(f => f, NuGetFrameworkSorter.Instance);
         }
 
         /// <summary>
@@ -444,7 +444,7 @@ namespace NuGet.Packaging
             }
 
             // Sort the groups by framework, and the items by ordinal string compare to keep things deterministic
-            foreach ((var framework, var items) in groups.OrderBy(e => e.Key, new NuGetFrameworkSorter()))
+            foreach ((var framework, var items) in groups.OrderBy(e => e.Key, NuGetFrameworkSorter.Instance))
             {
                 yield return new FrameworkSpecificGroup(framework, items.OrderBy(e => e, StringComparer.OrdinalIgnoreCase));
             }

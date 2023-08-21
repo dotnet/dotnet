@@ -125,12 +125,12 @@ namespace NuGet.Configuration.Test
         }
 
         [Fact]
-        public void SourceItem_Equals_WithSameKeyDifferentProtocol_ReturnsFalse()
+        public void SourceItem_Equals_WithSameKeyDifferentProtocol_ReturnsTrue()
         {
             var source1 = new SourceItem("key1", "value1", "2");
             var source2 = new SourceItem("key1", "value1", "3");
 
-            source1.Equals(source2).Should().BeFalse();
+            source1.Equals(source2).Should().BeTrue();
         }
 
         [Fact]

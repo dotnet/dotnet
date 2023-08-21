@@ -1,0 +1,40 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/10/nuspec.xsd">
+  <metadata minClientVersion="2.12">
+    <id>xunit.extensibility.core</id>
+    <version>$PackageVersion$</version>
+    <authors>jnewkirk,bradwilson</authors>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <license type="expression">Apache-2.0</license>
+    <licenseUrl>https://licenses.nuget.org/Apache-2.0</licenseUrl>
+    <icon>_content/logo-128-transparent.png</icon>
+    <description>Includes xunit.core.dll for extensibility purposes. Supports .NET 4.5.2 or later, and .NET Standard 1.1.</description>
+    <copyright>Copyright (C) .NET Foundation</copyright>
+    <repository type="git" url="https://github.com/xunit/xunit" commit="$GitCommitId$" />
+    <references>
+      <reference file="xunit.core.dll" />
+      <reference file="xunit.core.xml" />
+    </references>
+    <dependencies>
+      <group targetFramework="net452">
+        <dependency id="xunit.abstractions" version="2.0.3" />
+      </group>
+      <group targetFramework="netstandard1.1">
+        <dependency id="NETStandard.Library" version="1.6.1" />
+        <dependency id="xunit.abstractions" version="2.0.3" />
+      </group>
+    </dependencies>
+  </metadata>
+  <files>
+    <file target="_content\" src="..\tools\media\logo-128-transparent.png" />
+
+    <file src="xunit.core\bin\$Configuration$\netstandard1.1\xunit.core.dll"                  target="lib\net452\" />
+    <file src="xunit.core\bin\$Configuration$\netstandard1.1\xunit.core.dll.tdnet"            target="lib\net452\" />
+    <file src="xunit.core\bin\$Configuration$\netstandard1.1\xunit.core.xml"                  target="lib\net452\" />
+    <file src="xunit.runner.tdnet\bin\$Configuration$\net452\xunit.runner.tdnet.dll"          target="lib\net452\" />
+    <file src="xunit.runner.tdnet\bin\$Configuration$\net452\xunit.runner.utility.net452.dll" target="lib\net452\" />
+
+    <file src="xunit.core\bin\$Configuration$\netstandard1.1\xunit.core.dll" target="lib\netstandard1.1\" />
+    <file src="xunit.core\bin\$Configuration$\netstandard1.1\xunit.core.xml" target="lib\netstandard1.1\" />
+  </files>
+</package>

@@ -58,7 +58,7 @@ internal class TestDocumentManager : TrackingLSPDocumentManager
             return;
         }
 
-        using var virtualDocument = new CSharpVirtualDocument(virtualDocumentSnapshot.Uri, virtualDocumentSnapshot.Snapshot.TextBuffer);
+        using var virtualDocument = new CSharpVirtualDocument(projectKey: default, virtualDocumentSnapshot.Uri, virtualDocumentSnapshot.Snapshot.TextBuffer);
         virtualDocument.Update(changes, hostDocumentVersion, state);
         _documents[hostDocumentUri] = new TestLSPDocumentSnapshot(hostDocumentUri, documentSnapshot.Version, new[] { virtualDocument.CurrentSnapshot });
 

@@ -24,55 +24,55 @@ public class DefaultDocumentContextFactoryTest : LanguageServerTestBase
     public DefaultDocumentContextFactoryTest(ITestOutputHelper testOutput)
         : base(testOutput)
     {
-        _documentVersionCache = new DefaultDocumentVersionCache(Dispatcher);
+        _documentVersionCache = new DefaultDocumentVersionCache();
     }
 
     [Fact]
-    public async Task TryCreateAsync_CanNotResolveDocument_ReturnsNull()
+    public void TryCreateAsync_CanNotResolveDocument_ReturnsNull()
     {
         // Arrange
         var uri = new Uri("C:/path/to/file.cshtml");
-        var factory = new DefaultDocumentContextFactory(Dispatcher, new TestDocumentResolver(), _documentVersionCache, LoggerFactory);
+        var factory = new DefaultDocumentContextFactory(new TestDocumentResolver(), _documentVersionCache, LoggerFactory);
 
         // Act
-        var documentContext = await factory.TryCreateAsync(uri, DisposalToken);
+        var documentContext = factory.TryCreate(uri);
 
         // Assert
         Assert.Null(documentContext);
     }
 
     [Fact]
-    public async Task TryCreateForOpenDocumentAsync_CanNotResolveDocument_ReturnsNull()
+    public void TryCreateForOpenDocumentAsync_CanNotResolveDocument_ReturnsNull()
     {
         // Arrange
         var uri = new Uri("C:/path/to/file.cshtml");
-        var factory = new DefaultDocumentContextFactory(Dispatcher, new TestDocumentResolver(), _documentVersionCache, LoggerFactory);
+        var factory = new DefaultDocumentContextFactory(new TestDocumentResolver(), _documentVersionCache, LoggerFactory);
 
         // Act
-        var documentContext = await factory.TryCreateForOpenDocumentAsync(uri, DisposalToken);
+        var documentContext = factory.TryCreateForOpenDocument(uri);
 
         // Assert
         Assert.Null(documentContext);
     }
 
     [Fact]
-    public async Task TryCreateForOpenDocumentAsync_CanNotResolveVersion_ReturnsNull()
+    public void TryCreateForOpenDocumentAsync_CanNotResolveVersion_ReturnsNull()
     {
         // Arrange
         var uri = new Uri("C:/path/to/file.cshtml");
         var documentSnapshot = TestDocumentSnapshot.Create(uri.GetAbsoluteOrUNCPath());
         var documentResolver = new TestDocumentResolver(documentSnapshot);
-        var factory = new DefaultDocumentContextFactory(Dispatcher, documentResolver, _documentVersionCache, LoggerFactory);
+        var factory = new DefaultDocumentContextFactory(documentResolver, _documentVersionCache, LoggerFactory);
 
         // Act
-        var documentContext = await factory.TryCreateForOpenDocumentAsync(uri, DisposalToken);
+        var documentContext = factory.TryCreateForOpenDocument(uri);
 
         // Assert
         Assert.Null(documentContext);
     }
 
     [Fact]
-    public async Task TryCreateAsync_ResolvesContent()
+    public void TryCreateAsync_ResolvesContent()
     {
         // Arrange
         var uri = new Uri("C:/path/to/file.cshtml");
@@ -80,10 +80,10 @@ public class DefaultDocumentContextFactoryTest : LanguageServerTestBase
         var codeDocument = RazorCodeDocument.Create(RazorSourceDocument.Create(string.Empty, documentSnapshot.FilePath));
         documentSnapshot.With(codeDocument);
         var documentResolver = new TestDocumentResolver(documentSnapshot);
-        var factory = new DefaultDocumentContextFactory(Dispatcher, documentResolver, _documentVersionCache, LoggerFactory);
+        var factory = new DefaultDocumentContextFactory(documentResolver, _documentVersionCache, LoggerFactory);
 
         // Act
-        var documentContext = await factory.TryCreateAsync(uri, DisposalToken);
+        var documentContext = factory.TryCreate(uri);
 
         // Assert
         Assert.NotNull(documentContext);
@@ -101,10 +101,10 @@ public class DefaultDocumentContextFactoryTest : LanguageServerTestBase
         documentSnapshot.With(codeDocument);
         var documentResolver = new TestDocumentResolver(documentSnapshot);
         await Dispatcher.RunOnDispatcherThreadAsync(() => _documentVersionCache.TrackDocumentVersion(documentSnapshot, version: 1337), DisposalToken);
-        var factory = new DefaultDocumentContextFactory(Dispatcher, documentResolver, _documentVersionCache, LoggerFactory);
+        var factory = new DefaultDocumentContextFactory(documentResolver, _documentVersionCache, LoggerFactory);
 
         // Act
-        var documentContext = await factory.TryCreateForOpenDocumentAsync(uri, DisposalToken);
+        var documentContext = factory.TryCreateForOpenDocument(uri);
 
         // Assert
         Assert.NotNull(documentContext);
@@ -136,7 +136,7 @@ public class DefaultDocumentContextFactoryTest : LanguageServerTestBase
             throw new NotImplementedException();
         }
 
-        public bool TryResolveDocument(string documentFilePath, [NotNullWhen(true)] out IDocumentSnapshot documentSnapshot)
+        public bool TryResolveDocumentInAnyProject(string documentFilePath, [NotNullWhen(true)] out IDocumentSnapshot documentSnapshot)
         {
             if (documentFilePath == _documentSnapshot?.FilePath)
             {

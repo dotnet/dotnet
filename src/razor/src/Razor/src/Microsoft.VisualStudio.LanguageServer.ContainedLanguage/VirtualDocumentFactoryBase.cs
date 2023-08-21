@@ -79,6 +79,14 @@ internal abstract class VirtualDocumentFactoryBase : VirtualDocumentFactory
         var virtualLanguageFilePath = hostDocumentUri.GetAbsoluteOrUNCPath() + LanguageFileNameSuffix;
         var virtualLanguageUri = new Uri(virtualLanguageFilePath);
 
+        var languageBuffer = CreateVirtualDocumentTextBuffer(virtualLanguageFilePath, virtualLanguageUri);
+
+        virtualDocument = CreateVirtualDocument(virtualLanguageUri, languageBuffer);
+        return true;
+    }
+
+    protected virtual ITextBuffer CreateVirtualDocumentTextBuffer(string virtualLanguageFilePath, Uri virtualLanguageUri)
+    {
         var languageBuffer = _textBufferFactory.CreateTextBuffer();
         _fileUriProvider.AddOrUpdate(languageBuffer, virtualLanguageUri);
 
@@ -97,9 +105,7 @@ internal abstract class VirtualDocumentFactoryBase : VirtualDocumentFactory
         _textDocumentFactory.CreateTextDocument(languageBuffer, virtualLanguageFilePath);
 
         languageBuffer.ChangeContentType(LanguageContentType, editTag: null);
-
-        virtualDocument = CreateVirtualDocument(virtualLanguageUri, languageBuffer);
-        return true;
+        return languageBuffer;
     }
 
     /// <summary>

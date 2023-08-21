@@ -71,7 +71,7 @@ namespace Microsoft.Deployment.DotNet.Releases
 
                 while (enumerator.MoveNext())
                 {
-                    ReleaseFile file = JsonSerializer.Deserialize<ReleaseFile>(enumerator.Current);
+                    ReleaseFile file = new(enumerator.Current);
 
                     // Trim out marketing files.
                     if (!string.IsNullOrEmpty(file.Name) && !file.Name.Contains("-gs") && !file.Name.Contains("-nj"))

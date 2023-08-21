@@ -3,18 +3,19 @@
 
 using System;
 using Microsoft.AspNetCore.Razor.Language;
+using Microsoft.CodeAnalysis;
 
 namespace Microsoft.AspNetCore.Razor.Serialization;
 
 internal sealed class ProjectSnapshotHandle
 {
-    public string FilePath { get; }
+    public ProjectId ProjectId { get; }
     public RazorConfiguration? Configuration { get; }
     public string? RootNamespace { get; }
 
-    public ProjectSnapshotHandle(string filePath, RazorConfiguration? configuration, string? rootNamespace)
+    public ProjectSnapshotHandle(ProjectId projectId, RazorConfiguration? configuration, string? rootNamespace)
     {
-        FilePath = filePath ?? throw new ArgumentNullException(nameof(filePath));
+        ProjectId = projectId ?? throw new ArgumentNullException(nameof(projectId));
         Configuration = configuration;
         RootNamespace = rootNamespace;
     }

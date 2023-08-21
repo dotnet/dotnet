@@ -57,6 +57,16 @@
         <target state="translated">Insertar automáticamente comillas de atributo</target>
         <note />
       </trans-unit>
+      <trans-unit id="Setting_ColorBackgroundDescription">
+        <source>If true, gives C# code in Razor files a background color</source>
+        <target state="translated">Si es true, da un color de fondo al código de C# de los archivos de Razor.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Setting_ColorBackgroundDisplayName">
+        <source>Background for C# Code</source>
+        <target state="translated">Fondo de código de C#</target>
+        <note />
+      </trans-unit>
       <trans-unit id="Setting_FormattingOnTypeDescription">
         <source>If true, formatting will be enabled while typing</source>
         <target state="translated">Si es true, el formato se habilitará al escribir</target>

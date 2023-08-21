@@ -13,7 +13,7 @@ using Microsoft.AspNetCore.Razor.LanguageServer.CodeActions;
 using Microsoft.AspNetCore.Razor.LanguageServer.CodeActions.Models;
 using Microsoft.AspNetCore.Razor.LanguageServer.Common;
 using Microsoft.AspNetCore.Razor.LanguageServer.Diagnostics;
-using Microsoft.AspNetCore.Razor.LanguageServer.EndpointContracts;
+using Microsoft.AspNetCore.Razor.LanguageServer.Extensions;
 using Microsoft.AspNetCore.Razor.LanguageServer.Folding;
 using Microsoft.AspNetCore.Razor.LanguageServer.Protocol;
 using Microsoft.AspNetCore.Razor.LanguageServer.Test.Common;
@@ -123,33 +123,83 @@ public abstract class SingleServerDelegatingEndpointTestBase : LanguageServerTes
             RequestCount++;
             object result = method switch
             {
-                RazorLanguageServerCustomMessageTargets.RazorDefinitionEndpointName => await HandleDefinitionAsync(@params),
-                RazorLanguageServerCustomMessageTargets.RazorImplementationEndpointName => await HandleImplementationAsync(@params),
-                RazorLanguageServerCustomMessageTargets.RazorSignatureHelpEndpointName => await HandleSignatureHelpAsync(@params),
-                RazorLanguageServerCustomMessageTargets.RazorRenameEndpointName => await HandleRenameAsync(@params),
-                RazorLanguageServerCustomMessageTargets.RazorOnAutoInsertEndpointName => await HandleOnAutoInsertAsync(@params),
-                RazorLanguageServerCustomMessageTargets.RazorValidateBreakpointRangeName => await HandleValidateBreakpointRangeAsync(@params),
-                RazorLanguageServerCustomMessageTargets.RazorReferencesEndpointName => await HandleReferencesAsync(@params),
-                RazorLanguageServerCustomMessageTargets.RazorProvideCodeActionsEndpoint => await HandleProvideCodeActionsAsync(@params),
-                RazorLanguageServerCustomMessageTargets.RazorResolveCodeActionsEndpoint => await HandleResolveCodeActionsAsync(@params),
-                RazorLanguageServerCustomMessageTargets.RazorPullDiagnosticEndpointName => await HandlePullDiagnosticsAsync(@params),
-                RazorLanguageServerCustomMessageTargets.RazorFoldingRangeEndpoint => await HandleFoldingRangeAsync(),
-                RazorLanguageServerCustomMessageTargets.RazorSpellCheckEndpoint => await HandleSpellCheckAsync(@params),
+                CustomMessageNames.RazorDefinitionEndpointName => await HandleDefinitionAsync(@params),
+                CustomMessageNames.RazorImplementationEndpointName => await HandleImplementationAsync(@params),
+                CustomMessageNames.RazorSignatureHelpEndpointName => await HandleSignatureHelpAsync(@params),
+                CustomMessageNames.RazorRenameEndpointName => await HandleRenameAsync(@params),
+                CustomMessageNames.RazorOnAutoInsertEndpointName => await HandleOnAutoInsertAsync(@params),
+                CustomMessageNames.RazorValidateBreakpointRangeName => await HandleValidateBreakpointRangeAsync(@params),
+                CustomMessageNames.RazorReferencesEndpointName => await HandleReferencesAsync(@params),
+                CustomMessageNames.RazorProvideCodeActionsEndpoint => await HandleProvideCodeActionsAsync(@params),
+                CustomMessageNames.RazorResolveCodeActionsEndpoint => await HandleResolveCodeActionsAsync(@params),
+                CustomMessageNames.RazorPullDiagnosticEndpointName => await HandlePullDiagnosticsAsync(@params),
+                CustomMessageNames.RazorFoldingRangeEndpoint => await HandleFoldingRangeAsync(),
+                CustomMessageNames.RazorSpellCheckEndpoint => await HandleSpellCheckAsync(@params),
+                CustomMessageNames.RazorDocumentSymbolEndpoint => await HandleDocumentSymbolAsync(@params),
+                CustomMessageNames.RazorProjectContextsEndpoint => await HandleProjectContextsAsync(@params),
+                CustomMessageNames.RazorSimplifyMethodEndpointName => HandleSimplifyMethod(@params),
                 _ => throw new NotImplementedException($"I don't know how to handle the '{method}' method.")
             };
 
             return (TResponse)result;
         }
 
-        private async Task<VSInternalSpellCheckableRangeReport[]> HandleSpellCheckAsync<TParams>(TParams @params)
+        private static TextEdit[] HandleSimplifyMethod<TParams>(TParams @params)
         {
-            Assert.IsType<DelegatedSpellCheckParams>(@params);
+            Assert.IsType<DelegatedSimplifyMethodParams>(@params);
+            return null;
+        }
 
-            var delegatedRequest = new VSInternalDocumentSpellCheckableParams
+        private async Task<VSProjectContextList> HandleProjectContextsAsync<TParams>(TParams @params)
+        {
+            Assert.IsType<DelegatedProjectContextsParams>(@params);
+
+            var delegatedRequest = new VSGetProjectContextsParams
+            {
+                TextDocument = new TextDocumentItem
+                {
+                    Uri = _csharpDocumentUri,
+                },
+            };
+
+            var result = await _csharpServer.ExecuteRequestAsync<VSGetProjectContextsParams, VSProjectContextList>(
+                VSMethods.GetProjectContextsName,
+                delegatedRequest,
+                _cancellationToken);
+
+            return result;
+        }
+
+        private async Task<SymbolInformation[]> HandleDocumentSymbolAsync<TParams>(TParams @params)
+        {
+            Assert.IsType<DelegatedDocumentSymbolParams>(@params);
+
+            var delegatedRequest = new DocumentSymbolParams
             {
                 TextDocument = new TextDocumentIdentifier
                 {
                     Uri = _csharpDocumentUri,
+                },
+            };
+
+            var result = await _csharpServer.ExecuteRequestAsync<DocumentSymbolParams, SymbolInformation[]>(
+                Methods.TextDocumentDocumentSymbolName,
+                delegatedRequest,
+                _cancellationToken);
+
+            return result;
+        }
+
+        private async Task<VSInternalSpellCheckableRangeReport[]> HandleSpellCheckAsync<TParams>(TParams @params)
+        {
+            var delegatedParams = Assert.IsType<DelegatedSpellCheckParams>(@params);
+
+            var delegatedRequest = new VSInternalDocumentSpellCheckableParams
+            {
+                TextDocument = new VSTextDocumentIdentifier
+                {
+                    Uri = _csharpDocumentUri,
+                    ProjectContext = delegatedParams.Identifier.TextDocumentIdentifier.GetProjectContext(),
                 },
             };
 
@@ -163,13 +213,14 @@ public abstract class SingleServerDelegatingEndpointTestBase : LanguageServerTes
 
         private async Task<RazorPullDiagnosticResponse> HandlePullDiagnosticsAsync<TParams>(TParams @params)
         {
-            Assert.IsType<DelegatedDiagnosticParams>(@params);
+            var delegatedParams = Assert.IsType<DelegatedDiagnosticParams>(@params);
 
             var delegatedRequest = new VSInternalDocumentDiagnosticsParams
             {
-                TextDocument = new TextDocumentIdentifier
+                TextDocument = new VSTextDocumentIdentifier
                 {
                     Uri = _csharpDocumentUri,
+                    ProjectContext = delegatedParams.Identifier.TextDocumentIdentifier.GetProjectContext(),
                 },
             };
 
@@ -220,9 +271,10 @@ public abstract class SingleServerDelegatingEndpointTestBase : LanguageServerTes
             var delegatedParams = Assert.IsType<DelegatedPositionParams>(@params);
             var delegatedRequest = new TextDocumentPositionParams()
             {
-                TextDocument = new TextDocumentIdentifier()
+                TextDocument = new VSTextDocumentIdentifier()
                 {
-                    Uri = _csharpDocumentUri
+                    Uri = _csharpDocumentUri,
+                    ProjectContext = delegatedParams.Identifier.TextDocumentIdentifier.GetProjectContext(),
                 },
                 Position = delegatedParams.ProjectedPosition
             };
@@ -240,9 +292,10 @@ public abstract class SingleServerDelegatingEndpointTestBase : LanguageServerTes
             var delegatedParams = Assert.IsType<DelegatedPositionParams>(@params);
             var delegatedRequest = new TextDocumentPositionParams()
             {
-                TextDocument = new TextDocumentIdentifier()
+                TextDocument = new VSTextDocumentIdentifier()
                 {
-                    Uri = _csharpDocumentUri
+                    Uri = _csharpDocumentUri,
+                    ProjectContext = delegatedParams.Identifier.TextDocumentIdentifier.GetProjectContext(),
                 },
                 Position = delegatedParams.ProjectedPosition
             };
@@ -260,9 +313,10 @@ public abstract class SingleServerDelegatingEndpointTestBase : LanguageServerTes
             var delegatedParams = Assert.IsType<DelegatedPositionParams>(@params);
             var delegatedRequest = new TextDocumentPositionParams()
             {
-                TextDocument = new TextDocumentIdentifier()
+                TextDocument = new VSTextDocumentIdentifier()
                 {
-                    Uri = _csharpDocumentUri
+                    Uri = _csharpDocumentUri,
+                    ProjectContext = delegatedParams.Identifier.TextDocumentIdentifier.GetProjectContext(),
                 },
                 Position = delegatedParams.ProjectedPosition
             };
@@ -280,9 +334,10 @@ public abstract class SingleServerDelegatingEndpointTestBase : LanguageServerTes
             var delegatedParams = Assert.IsType<DelegatedPositionParams>(@params);
             var delegatedRequest = new SignatureHelpParams()
             {
-                TextDocument = new TextDocumentIdentifier()
+                TextDocument = new VSTextDocumentIdentifier()
                 {
-                    Uri = _csharpDocumentUri
+                    Uri = _csharpDocumentUri,
+                    ProjectContext = delegatedParams.Identifier.TextDocumentIdentifier.GetProjectContext(),
                 },
                 Position = delegatedParams.ProjectedPosition,
             };
@@ -300,9 +355,10 @@ public abstract class SingleServerDelegatingEndpointTestBase : LanguageServerTes
             var delegatedParams = Assert.IsType<DelegatedRenameParams>(@params);
             var delegatedRequest = new RenameParams()
             {
-                TextDocument = new TextDocumentIdentifier()
+                TextDocument = new VSTextDocumentIdentifier()
                 {
-                    Uri = _csharpDocumentUri
+                    Uri = _csharpDocumentUri,
+                    ProjectContext = delegatedParams.Identifier.TextDocumentIdentifier.GetProjectContext(),
                 },
                 Position = delegatedParams.ProjectedPosition,
                 NewName = delegatedParams.NewName,
@@ -321,9 +377,10 @@ public abstract class SingleServerDelegatingEndpointTestBase : LanguageServerTes
             var delegatedParams = Assert.IsType<DelegatedOnAutoInsertParams>(@params);
             var delegatedRequest = new VSInternalDocumentOnAutoInsertParams()
             {
-                TextDocument = new TextDocumentIdentifier()
+                TextDocument = new VSTextDocumentIdentifier()
                 {
-                    Uri = _csharpDocumentUri
+                    Uri = _csharpDocumentUri,
+                    ProjectContext = delegatedParams.Identifier.TextDocumentIdentifier.GetProjectContext()
                 },
                 Position = delegatedParams.ProjectedPosition,
                 Character = delegatedParams.Character,
@@ -353,9 +410,10 @@ public abstract class SingleServerDelegatingEndpointTestBase : LanguageServerTes
             var delegatedParams = Assert.IsType<DelegatedValidateBreakpointRangeParams>(@params);
             var delegatedRequest = new VSInternalValidateBreakableRangeParams()
             {
-                TextDocument = new TextDocumentIdentifier()
+                TextDocument = new VSTextDocumentIdentifier()
                 {
-                    Uri = _csharpDocumentUri
+                    Uri = _csharpDocumentUri,
+                    ProjectContext = delegatedParams.Identifier.TextDocumentIdentifier.GetProjectContext(),
                 },
                 Range = delegatedParams.ProjectedRange,
             };

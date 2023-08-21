@@ -23,8 +23,7 @@
     <ProjectReference Include="..\Microsoft.IdentityModel.Tokens.Tests\Microsoft.IdentityModel.Tokens.Tests.csproj" />
   </ItemGroup>
 
-  <ItemGroup Condition=" '$(TargetFramework)' == 'net452' Or '$(TargetFramework)' == 'net461'  Or '$(TargetFramework)' == 'net472'">
-    <PackageReference Include="xunit.runner.console" Version="$(XunitVersion)" />
+  <ItemGroup Condition=" '$(TargetFramework)' == 'net461' Or '$(TargetFramework)' == 'net462' Or '$(TargetFramework)' == 'net472'">
     <Reference Include="System.Net.Http" />
   </ItemGroup>
 

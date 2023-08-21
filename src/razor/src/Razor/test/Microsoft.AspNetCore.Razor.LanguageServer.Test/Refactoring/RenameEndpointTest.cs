@@ -21,6 +21,7 @@ using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.AspNetCore.Razor.ProjectSystem;
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.AspNetCore.Razor.Test.Common.Mef;
+using Microsoft.AspNetCore.Razor.Utilities;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
@@ -61,7 +62,7 @@ public class RenameEndpointTest : LanguageServerTestBase
             Position = new Position(2, 1),
             NewName = "Component5"
         };
-        var documentContext = await GetDocumentContextAsync(uri);
+        var documentContext = GetDocumentContext(uri);
         var requestContext = CreateRazorRequestContext(documentContext);
 
         // Act
@@ -85,7 +86,7 @@ public class RenameEndpointTest : LanguageServerTestBase
             Position = new Position(2, 1),
             NewName = "Component5"
         };
-        var documentContext = await GetDocumentContextAsync(uri);
+        var documentContext = GetDocumentContext(uri);
         var requestContext = CreateRazorRequestContext(documentContext);
 
         // Act
@@ -136,7 +137,7 @@ public class RenameEndpointTest : LanguageServerTestBase
             Position = new Position(1, 14),
             NewName = "Test2"
         };
-        var documentContext = await GetDocumentContextAsync(uri);
+        var documentContext = GetDocumentContext(uri);
         var requestContext = CreateRazorRequestContext(documentContext);
 
         // Act
@@ -160,7 +161,7 @@ public class RenameEndpointTest : LanguageServerTestBase
             Position = new Position(1, 0),
             NewName = "Test2"
         };
-        var documentContext = await GetDocumentContextAsync(uri);
+        var documentContext = GetDocumentContext(uri);
         var requestContext = CreateRazorRequestContext(documentContext);
 
         // Act
@@ -184,7 +185,7 @@ public class RenameEndpointTest : LanguageServerTestBase
             Position = new Position(1, 1),
             NewName = "Test2"
         };
-        var documentContext = await GetDocumentContextAsync(uri);
+        var documentContext = GetDocumentContext(uri);
         var requestContext = CreateRazorRequestContext(documentContext);
 
         // Act
@@ -208,7 +209,7 @@ public class RenameEndpointTest : LanguageServerTestBase
             Position = new Position(1, 3),
             NewName = "Test2"
         };
-        var documentContext = await GetDocumentContextAsync(uri);
+        var documentContext = GetDocumentContext(uri);
         var requestContext = CreateRazorRequestContext(documentContext);
 
         // Act
@@ -232,7 +233,7 @@ public class RenameEndpointTest : LanguageServerTestBase
             Position = new Position(1, 10),
             NewName = "Test2"
         };
-        var documentContext = await GetDocumentContextAsync(uri);
+        var documentContext = GetDocumentContext(uri);
         var requestContext = CreateRazorRequestContext(documentContext);
 
         // Act
@@ -240,6 +241,64 @@ public class RenameEndpointTest : LanguageServerTestBase
 
         // Assert
         Assert.NotNull(result);
+    }
+
+    [Fact, WorkItem("https://github.com/dotnet/razor/issues/8541")]
+    public async Task Handle_Rename_ComponentInSameFile()
+    {
+        // Arrange
+        var uri = new Uri("file:///c:/Second/Component4.razor");
+        var request = new RenameParams
+        {
+            TextDocument = new TextDocumentIdentifier
+            {
+                Uri = uri,
+            },
+            Position = new Position(1, 1),
+            NewName = "Component5"
+        };
+        var documentContext = GetDocumentContext(uri);
+        var requestContext = CreateRazorRequestContext(documentContext);
+
+        // Act
+        var result = await _endpoint.HandleRequestAsync(request, requestContext, DisposalToken);
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.Equal(4, result.DocumentChanges.Value.Count());
+        var renameChange = result.DocumentChanges.Value.ElementAt(0);
+        Assert.True(renameChange.TryGetThird(out var renameFile));
+        Assert.Equal(new Uri("file:///c:/Second/Component3.razor"), renameFile.OldUri);
+        Assert.Equal(new Uri("file:///c:/Second/Component5.razor"), renameFile.NewUri);
+        var editChange1 = result.DocumentChanges.Value.ElementAt(1);
+        Assert.True(editChange1.TryGetFirst(out var textDocumentEdit1));
+        Assert.Equal("file:///c:/Second/Component4.razor", textDocumentEdit1.TextDocument.Uri.ToString());
+        Assert.Equal(2, textDocumentEdit1.Edits.Length);
+        var editChange2 = result.DocumentChanges.Value.ElementAt(2);
+        Assert.True(editChange2.TryGetFirst(out var textDocumentEdit2));
+        Assert.Equal("file:///c:/Second/Component4.razor", textDocumentEdit2.TextDocument.Uri.ToString());
+        Assert.Equal(2, textDocumentEdit2.Edits.Length);
+        var editChange3 = result.DocumentChanges.Value.ElementAt(3);
+        Assert.True(editChange3.TryGetFirst(out var textDocumentEdit3));
+        Assert.Equal("file:///c:/Second/Component5.razor", textDocumentEdit3.TextDocument.Uri.ToString());
+        Assert.Collection(
+            textDocumentEdit3.Edits,
+            edit =>
+            {
+                Assert.Equal("Component5", edit.NewText);
+                Assert.Equal(1, edit.Range.Start.Line);
+                Assert.Equal(1, edit.Range.Start.Character);
+                Assert.Equal(1, edit.Range.End.Line);
+                Assert.Equal(11, edit.Range.End.Character);
+            },
+            edit =>
+            {
+                Assert.Equal("Component5", edit.NewText);
+                Assert.Equal(1, edit.Range.Start.Line);
+                Assert.Equal(14, edit.Range.Start.Character);
+                Assert.Equal(1, edit.Range.End.Line);
+                Assert.Equal(24, edit.Range.End.Character);
+            });
     }
 
     [Fact]
@@ -256,7 +315,7 @@ public class RenameEndpointTest : LanguageServerTestBase
             Position = new Position(2, 1),
             NewName = "Component5"
         };
-        var documentContext = await GetDocumentContextAsync(uri);
+        var documentContext = GetDocumentContext(uri);
         var requestContext = CreateRazorRequestContext(documentContext);
 
         // Act
@@ -329,7 +388,7 @@ public class RenameEndpointTest : LanguageServerTestBase
             Position = new Position(1, 1),
             NewName = "Component5"
         };
-        var documentContext = await GetDocumentContextAsync(uri);
+        var documentContext = GetDocumentContext(uri);
         var requestContext = CreateRazorRequestContext(documentContext);
 
         // Act
@@ -344,7 +403,7 @@ public class RenameEndpointTest : LanguageServerTestBase
         Assert.Equal(new Uri("file:///c:/Second/Component5.razor"), renameFile.NewUri);
         var editChange1 = result.DocumentChanges.Value.ElementAt(1);
         Assert.True(editChange1.TryGetFirst(out var textDocumentEdit));
-        Assert.Equal("file:///c:/Second/Component3.razor", textDocumentEdit.TextDocument.Uri.ToString());
+        Assert.Equal("file:///c:/Second/Component5.razor", textDocumentEdit.TextDocument.Uri.ToString());
         Assert.Collection(
             textDocumentEdit.Edits,
             edit =>
@@ -383,7 +442,7 @@ public class RenameEndpointTest : LanguageServerTestBase
             Position = new Position(1, 1),
             NewName = "TestComponent"
         };
-        var documentContext = await GetDocumentContextAsync(uri);
+        var documentContext = GetDocumentContext(uri);
         var requestContext = CreateRazorRequestContext(documentContext);
 
         // Act
@@ -430,7 +489,7 @@ public class RenameEndpointTest : LanguageServerTestBase
 
         var languageServerMock = new Mock<ClientNotifierServiceBase>(MockBehavior.Strict);
         languageServerMock
-            .Setup(c => c.SendRequestAsync<IDelegatedParams, WorkspaceEdit>(RazorLanguageServerCustomMessageTargets.RazorRenameEndpointName, It.IsAny<DelegatedRenameParams>(), It.IsAny<CancellationToken>()))
+            .Setup(c => c.SendRequestAsync<IDelegatedParams, WorkspaceEdit>(CustomMessageNames.RazorRenameEndpointName, It.IsAny<DelegatedRenameParams>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(delegatedEdit);
 
         var documentMappingServiceMock = new Mock<IRazorDocumentMappingService>(MockBehavior.Strict);
@@ -458,7 +517,7 @@ public class RenameEndpointTest : LanguageServerTestBase
             NewName = "Test2"
         };
 
-        var documentContext = await GetDocumentContextAsync(uri);
+        var documentContext = GetDocumentContext(uri);
         var requestContext = CreateRazorRequestContext(documentContext);
 
         // Act
@@ -492,7 +551,7 @@ public class RenameEndpointTest : LanguageServerTestBase
             NewName = "Test2"
         };
 
-        var documentContext = await GetDocumentContextAsync(request.TextDocument.Uri);
+        var documentContext = GetDocumentContext(request.TextDocument.Uri);
         var requestContext = CreateRazorRequestContext(documentContext);
 
         // Act
@@ -502,9 +561,9 @@ public class RenameEndpointTest : LanguageServerTestBase
         Assert.Null(result);
     }
 
-    private Task<VersionedDocumentContext> GetDocumentContextAsync(Uri file)
+    private VersionedDocumentContext GetDocumentContext(Uri file)
     {
-        return _documentContextFactory.TryCreateForOpenDocumentAsync(file, DisposalToken);
+        return _documentContextFactory.TryCreateForOpenDocument(file);
     }
 
     private static IEnumerable<TagHelperDescriptor> CreateRazorComponentTagHelperDescriptors(string assemblyName, string namespaceName, string tagName)
@@ -558,7 +617,7 @@ public class RenameEndpointTest : LanguageServerTestBase
             d.GetTextAsync() == Task.FromResult(sourceText) &&
             d.Project == projectSnapshot, MockBehavior.Strict);
         var version = 1337;
-        var documentSnapshot = new VersionedDocumentContext(new Uri(item.FilePath), snapshot, version);
+        var documentSnapshot = new VersionedDocumentContext(new Uri(item.FilePath), snapshot, projectContext: null, version);
 
         return documentSnapshot;
     }
@@ -604,27 +663,19 @@ public class RenameEndpointTest : LanguageServerTestBase
         var directory1Component = CreateRazorDocumentContext(projectEngine, itemDirectory1, "Test.Components", tagHelperDescriptors);
         var directory2Component = CreateRazorDocumentContext(projectEngine, itemDirectory2, "Test.Components", tagHelperDescriptors);
 
-        // Normally, the document context factory would be able to retrieve the same document as either versioned or not. Due to the
-        // way mocks work, sadly we have to add each one twice 🤦‍
-        _documentContextFactory = Mock.Of<DocumentContextFactory>(d =>
-            d.TryCreateAsync(new Uri("c:/First/Component1.razor"), It.IsAny<CancellationToken>()) == Task.FromResult((DocumentContext)component1) &&
-            d.TryCreateAsync(new Uri("c:/First/Component2.razor"), It.IsAny<CancellationToken>()) == Task.FromResult((DocumentContext)component2) &&
-            d.TryCreateAsync(new Uri("c:/Second/Component3.razor"), It.IsAny<CancellationToken>()) == Task.FromResult((DocumentContext)component3) &&
-            d.TryCreateAsync(new Uri("c:/Second/Component4.razor"), It.IsAny<CancellationToken>()) == Task.FromResult((DocumentContext)component4) &&
-            d.TryCreateAsync(new Uri("c:/Second/ComponentWithParam.razor"), It.IsAny<CancellationToken>()) == Task.FromResult((DocumentContext)componentWithParam) &&
-            d.TryCreateAsync(new Uri(index.FilePath), It.IsAny<CancellationToken>()) == Task.FromResult((DocumentContext)index) &&
-            d.TryCreateAsync(new Uri(component1337.FilePath), It.IsAny<CancellationToken>()) == Task.FromResult((DocumentContext)component1337) &&
-            d.TryCreateAsync(new Uri(itemDirectory1.FilePath), It.IsAny<CancellationToken>()) == Task.FromResult((DocumentContext)directory1Component) &&
-            d.TryCreateAsync(new Uri(itemDirectory2.FilePath), It.IsAny<CancellationToken>()) == Task.FromResult((DocumentContext)directory2Component) &&
-            d.TryCreateForOpenDocumentAsync(new Uri("c:/First/Component1.razor"), It.IsAny<CancellationToken>()) == Task.FromResult(component1) &&
-            d.TryCreateForOpenDocumentAsync(new Uri("c:/First/Component2.razor"), It.IsAny<CancellationToken>()) == Task.FromResult(component2) &&
-            d.TryCreateForOpenDocumentAsync(new Uri("c:/Second/Component3.razor"), It.IsAny<CancellationToken>()) == Task.FromResult(component3) &&
-            d.TryCreateForOpenDocumentAsync(new Uri("c:/Second/Component4.razor"), It.IsAny<CancellationToken>()) == Task.FromResult(component4) &&
-            d.TryCreateForOpenDocumentAsync(new Uri("c:/Second/ComponentWithParam.razor"), It.IsAny<CancellationToken>()) == Task.FromResult(componentWithParam) &&
-            d.TryCreateForOpenDocumentAsync(new Uri(index.FilePath), It.IsAny<CancellationToken>()) == Task.FromResult(index) &&
-            d.TryCreateForOpenDocumentAsync(new Uri(component1337.FilePath), It.IsAny<CancellationToken>()) == Task.FromResult(component1337) &&
-            d.TryCreateForOpenDocumentAsync(new Uri(itemDirectory1.FilePath), It.IsAny<CancellationToken>()) == Task.FromResult(directory1Component) &&
-            d.TryCreateForOpenDocumentAsync(new Uri(itemDirectory2.FilePath), It.IsAny<CancellationToken>()) == Task.FromResult(directory2Component), MockBehavior.Strict);
+        _documentContextFactory = new TestDocumentContextFactory(
+            new Dictionary<string, DocumentContext>()
+            {
+                { "c:/First/Component1.razor", component1 },
+                { "c:/First/Component2.razor", component2 },
+                { "c:/Second/Component3.razor", component3 },
+                { "c:/Second/Component4.razor", component4 },
+                { "c:/Second/ComponentWithParam.razor", componentWithParam },
+                { index.FilePath, index },
+                { component1337.FilePath, component1337 },
+                { itemDirectory1.FilePath, directory1Component },
+                { itemDirectory2.FilePath, directory2Component },
+            });
 
         var firstProject = Mock.Of<IProjectSnapshot>(p =>
             p.FilePath == "c:/First/First.csproj" &&
@@ -643,12 +694,12 @@ public class RenameEndpointTest : LanguageServerTestBase
             p.GetDocument("c:/Second/ComponentWithParam.razor") == componentWithParam.Snapshot &&
             p.GetDocument(index.FilePath) == index.Snapshot, MockBehavior.Strict);
 
-        var projectSnapshotManager = Mock.Of<ProjectSnapshotManagerBase>(p => p.Projects == new[] { firstProject, secondProject }, MockBehavior.Strict);
+        var projectSnapshotManager = Mock.Of<ProjectSnapshotManagerBase>(p => p.GetProjects() == new[] { firstProject, secondProject }.ToImmutableArray(), MockBehavior.Strict);
         var projectSnapshotManagerAccessor = new TestProjectSnapshotManagerAccessor(projectSnapshotManager);
 
         var projectSnapshotManagerDispatcher = new LSPProjectSnapshotManagerDispatcher(LoggerFactory);
 
-        var searchEngine = new DefaultRazorComponentSearchEngine(Dispatcher, projectSnapshotManagerAccessor, LoggerFactory);
+        var searchEngine = new DefaultRazorComponentSearchEngine(projectSnapshotManagerAccessor, LoggerFactory);
         languageServerFeatureOptions ??= Mock.Of<LanguageServerFeatureOptions>(
             options => options.SupportsFileManipulation == true && options.SingleServerSupport == false && options.ReturnCodeActionAndRenamePathsWithPrefixedSlash == false, MockBehavior.Strict);
 
@@ -676,5 +727,22 @@ public class RenameEndpointTest : LanguageServerTestBase
             LoggerFactory);
 
         return endpoint;
+    }
+
+    private class TestDocumentContextFactory : DocumentContextFactory
+    {
+        private readonly ImmutableDictionary<string, DocumentContext> _pathToContextMap;
+
+        public TestDocumentContextFactory(Dictionary<string, DocumentContext> pathToContextMap)
+        {
+            _pathToContextMap = pathToContextMap.ToImmutableDictionary(kvp => FilePathNormalizer.Normalize(kvp.Key), kvp => kvp.Value);
+        }
+
+        protected override DocumentContext TryCreateCore(Uri documentUri, VSProjectContext projectContext, bool versioned)
+        {
+            var path = FilePathNormalizer.Normalize(documentUri.AbsolutePath);
+            _pathToContextMap.TryGetValue(path, out var context);
+            return context;
+        }
     }
 }

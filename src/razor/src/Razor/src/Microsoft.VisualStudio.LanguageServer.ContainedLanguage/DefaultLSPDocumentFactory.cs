@@ -57,7 +57,11 @@ internal class DefaultLSPDocumentFactory : LSPDocumentFactory
         {
             if (factory.Metadata.ContentTypes.Any(ct => hostDocumentBuffer.ContentType.IsOfType(ct)))
             {
-                if (factory.Value.TryCreateFor(hostDocumentBuffer, out var virtualDocument))
+                if (factory.Value.TryCreateMultipleFor(hostDocumentBuffer, out var newVirtualDocuments))
+                {
+                    virtualDocuments.AddRange(newVirtualDocuments);
+                }
+                else if (factory.Value.TryCreateFor(hostDocumentBuffer, out var virtualDocument))
                 {
                     virtualDocuments.Add(virtualDocument);
                 }

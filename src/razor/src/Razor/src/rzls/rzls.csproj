@@ -23,14 +23,6 @@
     </Content>
   </ItemGroup>
 
-  <Target Name="_IncludeOmniSharpPlugin" Condition="Exists('$(PublishDir)')">
-    <PropertyGroup>
-      <TargetPluginOutputPath>$(PublishDir)\OmniSharpPlugin</TargetPluginOutputPath>
-    </PropertyGroup>
-
-    <MSBuild Projects="..\Microsoft.AspNetCore.Razor.OmniSharpPlugin\Microsoft.AspNetCore.Razor.OmniSharpPlugin.csproj" Properties="PublishDir=$(TargetPluginOutputPath);RuntimeIdentifier=" RemoveProperties="TargetFramework" Targets="Publish" />
-  </Target>
-
   <!--
     Technique for publishing multiple RIDs from
     https://github.com/dotnet/cli/issues/9221#issuecomment-387512008
@@ -66,7 +58,7 @@
       </ProjectToPublish_PlatformAgnostic>
     </ItemGroup>
 
-    <MSBuild Projects="@(ProjectToPublish)" Targets="Publish;_IncludeOmniSharpPlugin" BuildInParallel="false" />
-    <MSBuild Projects="@(ProjectToPublish_PlatformAgnostic)" Targets="Publish;_IncludeOmniSharpPlugin" BuildInParallel="false" Condition="'$(OS)' == 'WINDOWS_NT'" />
+    <MSBuild Projects="@(ProjectToPublish)" Targets="Publish" BuildInParallel="false" />
+    <MSBuild Projects="@(ProjectToPublish_PlatformAgnostic)" Targets="Publish" BuildInParallel="false" Condition="'$(OS)' == 'WINDOWS_NT'" />
   </Target>
 </Project>

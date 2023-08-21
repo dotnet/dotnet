@@ -87,7 +87,7 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Swix
             // For drop publishing all the JSON manifests and payloads must reside in the same folder so we shorten the project names
             // and use a hashed filename to avoid path too long errors.
             string hashInputs = $"{Id},{Version.ToString(3)},{sdkFeatureBand},{Platform},{Chip},{machineArch}";
-            ProjectFile = $"{Utils.GetHash(hashInputs, HashAlgorithmName.MD5)}.swixproj";
+            ProjectFile = $"{Utils.GetTruncatedHash(hashInputs, HashAlgorithmName.SHA256)}.swixproj";
 
             ReplacementTokens[SwixTokens.__VS_PAYLOAD_SOURCE__] = msi.GetMetadata(Metadata.FullPath);
         }

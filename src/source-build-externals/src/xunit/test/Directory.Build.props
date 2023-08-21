@@ -1,0 +1,38 @@
+<Project>
+
+  <Import Condition=" '$(MSBuildProjectName)' != 'test.utility' and '$(MSBuildProjectName)' != 'test.harness.uwp' " Project="..\src\xunit.core\build\xunit.core.props" />
+
+  <Import Condition=" '$(_Xunit_ImportPropsFile)' != '' " Project="$(_Xunit_ImportPropsFile)" />
+
+  <PropertyGroup>
+    <CheckEolTargetFramework>false</CheckEolTargetFramework>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>portable</DebugType>
+    <GenerateAssemblyVersionAttribute>false</GenerateAssemblyVersionAttribute>
+    <LangVersion>latest</LangVersion>
+    <NoWarn>$(NoWarn);NU1603;CS1701;MSB3277</NoWarn>
+    <PackageId>$(MSBuildProjectName)</PackageId>
+    <SuppressNETCoreSdkPreviewMessage>true</SuppressNETCoreSdkPreviewMessage>
+    <WarningsAsErrors>true</WarningsAsErrors>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)GlobalTestAssemblyInfo.cs" LinkBase="Properties" />
+  </ItemGroup>
+
+  <ItemGroup Condition=" '$(MSBuildProjectName)' != 'test.utility' ">
+    <Content Include="$(MSBuildThisFileDirectory)xunit.runner.json" Link="xunit.runner.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <!-- Need this Choose/When for legacy projects (UWP) in the IDE -->
+  <Choose>
+    <When Condition=" '$(MSBuildProjectName)' != 'test.utility' AND '$(MSBuildProjectName)' != 'test.xunit1' and '$(MSBuildProjectName)' != 'test.harness.uwp'  ">
+      <ItemGroup>
+        <ProjectReference Include="$(MSBuildThisFileDirectory)test.utility\test.utility.csproj" />
+      </ItemGroup>
+    </When>
+  </Choose>
+
+</Project>

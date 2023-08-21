@@ -11,16 +11,16 @@ internal class TagHelperResultCache
 {
     private record Entry(int ResultId, ImmutableArray<TagHelperDescriptor> Descriptors);
 
-    private readonly MemoryCache<string, Entry> _projectResultCache;
+    private readonly MemoryCache<ProjectId, Entry> _projectResultCache;
 
     public TagHelperResultCache()
     {
-        _projectResultCache = new MemoryCache<string, Entry>(sizeLimit: 50);
+        _projectResultCache = new MemoryCache<ProjectId, Entry>(sizeLimit: 50);
     }
 
-    public bool TryGet(string projectFilePath, int resultId, out ImmutableArray<TagHelperDescriptor> cachedTagHelpers)
+    public bool TryGet(ProjectId projectKey, int resultId, out ImmutableArray<TagHelperDescriptor> cachedTagHelpers)
     {
-        if (!_projectResultCache.TryGetValue(projectFilePath, out var cachedResult))
+        if (!_projectResultCache.TryGetValue(projectKey, out var cachedResult))
         {
             cachedTagHelpers = default;
             return false;
@@ -36,9 +36,9 @@ internal class TagHelperResultCache
         return true;
     }
 
-    public bool TryGetId(string projectFilePath, out int resultId)
+    public bool TryGetId(ProjectId projectKey, out int resultId)
     {
-        if (!_projectResultCache.TryGetValue(projectFilePath, out var cachedResult))
+        if (!_projectResultCache.TryGetValue(projectKey, out var cachedResult))
         {
             resultId = -1;
             return false;
@@ -48,9 +48,9 @@ internal class TagHelperResultCache
         return true;
     }
 
-    public void Set(string projectFilePath, int resultId, ImmutableArray<TagHelperDescriptor> tagHelpers)
+    public void Set(ProjectId projectKey, int resultId, ImmutableArray<TagHelperDescriptor> tagHelpers)
     {
         var cacheEntry = new Entry(resultId, tagHelpers);
-        _projectResultCache.Set(projectFilePath, cacheEntry);
+        _projectResultCache.Set(projectKey, cacheEntry);
     }
 }

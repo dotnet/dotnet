@@ -126,6 +126,8 @@ namespace NuGet.Commands
                     // Exclude items
                     ExcludeItems(lockFileLib, dependencyType);
 
+                    lockFileLib.Freeze();
+
                     return (lockFileLib, fallbackUsed);
                 });
         }
@@ -648,6 +650,8 @@ namespace NuGet.Commands
 
             // Exclude items
             ExcludeItems(projectLib, dependencyType);
+
+            projectLib.Freeze();
 
             return projectLib;
         }

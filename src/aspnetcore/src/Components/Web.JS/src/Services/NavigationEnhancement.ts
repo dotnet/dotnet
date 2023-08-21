@@ -1,5 +1,8 @@
+// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
+
 import { synchronizeDomContent } from '../Rendering/DomMerging/DomSync';
-import { handleClickForNavigationInterception, hasInteractiveRouter } from './NavigationUtils';
+import { attachProgrammaticEnhancedNavigationHandler, handleClickForNavigationInterception, hasInteractiveRouter } from './NavigationUtils';
 
 /*
 In effect, we have two separate client-side navigation mechanisms:
@@ -29,10 +32,19 @@ different bundles that only contain minimal content.
 */
 
 let currentEnhancedNavigationAbortController: AbortController | null;
-let onDocumentUpdatedCallback: Function = () => {};
+let navigationEnhancementCallbacks: NavigationEnhancementCallbacks;
+let performingEnhancedPageLoad: boolean;
 
-export function attachProgressivelyEnhancedNavigationListener(onDocumentUpdated: Function) {
-  onDocumentUpdatedCallback = onDocumentUpdated;
+export interface NavigationEnhancementCallbacks {
+  documentUpdated: () => void;
+}
+
+export function isPerformingEnhancedPageLoad() {
+  return performingEnhancedPageLoad;
+}
+
+export function attachProgressivelyEnhancedNavigationListener(callbacks: NavigationEnhancementCallbacks) {
+  navigationEnhancementCallbacks = callbacks;
   document.addEventListener('click', onDocumentClick);
   document.addEventListener('submit', onDocumentSubmit);
   window.addEventListener('popstate', onPopState);
@@ -43,6 +55,22 @@ export function detachProgressivelyEnhancedNavigationListener() {
   document.removeEventListener('submit', onDocumentSubmit);
   window.removeEventListener('popstate', onPopState);
 }
+
+function performProgrammaticEnhancedNavigation(absoluteInternalHref: string, replace: boolean) {
+  if (hasInteractiveRouter()) {
+    return;
+  }
+
+  if (replace) {
+    history.replaceState(null, /* ignored title */ '', absoluteInternalHref);
+  } else {
+    history.pushState(null, /* ignored title */ '', absoluteInternalHref);
+  }
+
+  performEnhancedPageLoad(absoluteInternalHref);
+}
+
+attachProgrammaticEnhancedNavigationHandler(performProgrammaticEnhancedNavigation);
 
 function onDocumentClick(event: MouseEvent) {
   if (hasInteractiveRouter()) {
@@ -98,6 +126,8 @@ function onDocumentSubmit(event: SubmitEvent) {
 }
 
 export async function performEnhancedPageLoad(internalDestinationHref: string, fetchOptions?: RequestInit) {
+  performingEnhancedPageLoad = true;
+
   // First, stop any preceding enhanced page load
   currentEnhancedNavigationAbortController?.abort();
 
@@ -122,6 +152,7 @@ export async function performEnhancedPageLoad(internalDestinationHref: string, f
         // For HTML responses, regardless of the status code, display it
         const parsedHtml = new DOMParser().parseFromString(initialContent, 'text/html');
         synchronizeDomContent(document, parsedHtml);
+        navigationEnhancementCallbacks.documentUpdated();
       } else if (responseContentType?.startsWith('text/') && initialContent) {
         // For any other text-based content, we'll just display it, because that's what
         // would happen if this was a non-enhanced request.
@@ -153,13 +184,6 @@ export async function performEnhancedPageLoad(internalDestinationHref: string, f
     });
 
   if (!abortSignal.aborted) {
-    // TEMPORARY until https://github.com/dotnet/aspnetcore/issues/48763 is implemented
-    // We should really be doing this on the `onInitialDocument` callback *and* inside the <blazor-ssr> custom element logic
-    // so we can add interactive components immediately on each update. Until #48763 is implemented, the stopgap implementation
-    // is just to do it when the enhanced nav process completes entirely, and then if we do add any interactive components, we
-    // disable enhanced nav completely.
-    onDocumentUpdatedCallback();
-
     // The whole response including any streaming SSR is now finished, and it was not aborted (no other navigation
     // has since started). So finally, recreate the native "scroll to hash" behavior.
     const hashPosition = internalDestinationHref.indexOf('#');
@@ -168,6 +192,9 @@ export async function performEnhancedPageLoad(internalDestinationHref: string, f
       const targetElem = document.getElementById(hash);
       targetElem?.scrollIntoView();
     }
+
+    performingEnhancedPageLoad = false;
+    navigationEnhancementCallbacks.documentUpdated();
   }
 }
 

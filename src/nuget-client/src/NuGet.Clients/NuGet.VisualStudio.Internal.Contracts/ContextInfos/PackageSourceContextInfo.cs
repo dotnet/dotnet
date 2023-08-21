@@ -4,6 +4,7 @@
 using System;
 using Microsoft;
 using NuGet.Configuration;
+using NuGet.Shared;
 
 namespace NuGet.VisualStudio.Internal.Contracts
 {
@@ -22,6 +23,11 @@ namespace NuGet.VisualStudio.Internal.Contracts
         }
 
         public PackageSourceContextInfo(string source, string name, bool isEnabled)
+            : this(source, name, isEnabled, PackageSource.DefaultProtocolVersion)
+        {
+        }
+
+        public PackageSourceContextInfo(string source, string name, bool isEnabled, int protocolVersion)
         {
             Assumes.NotNullOrEmpty(name);
             Assumes.NotNullOrEmpty(source);
@@ -29,13 +35,19 @@ namespace NuGet.VisualStudio.Internal.Contracts
             Name = name;
             Source = source;
             IsEnabled = isEnabled;
+            ProtocolVersion = protocolVersion;
 
-            _hashCode = Name.ToUpperInvariant().GetHashCode() * 3137 + Source.ToUpperInvariant().GetHashCode();
+            var hash = new HashCodeCombiner();
+            hash.AddStringIgnoreCase(Name);
+            hash.AddStringIgnoreCase(Source);
+            hash.AddObject(ProtocolVersion);
+            _hashCode = hash.CombinedHash;
             OriginalHashCode = _hashCode;
         }
 
         public string Name { get; set; }
         public string Source { get; set; }
+        public int ProtocolVersion { get; set; }
         public bool IsMachineWide { get; internal set; }
         public bool IsEnabled { get; set; }
         public string? Description { get; internal set; }
@@ -74,17 +86,17 @@ namespace NuGet.VisualStudio.Internal.Contracts
 
         public PackageSourceContextInfo Clone()
         {
-            return new PackageSourceContextInfo(Source, Name, IsEnabled)
+            return new PackageSourceContextInfo(Source, Name, IsEnabled, ProtocolVersion)
             {
                 IsMachineWide = IsMachineWide,
                 Description = Description,
-                OriginalHashCode = OriginalHashCode,
+                OriginalHashCode = OriginalHashCode
             };
         }
 
         public static PackageSourceContextInfo Create(PackageSource packageSource)
         {
-            return new PackageSourceContextInfo(packageSource.Source, packageSource.Name, packageSource.IsEnabled)
+            return new PackageSourceContextInfo(packageSource.Source, packageSource.Name, packageSource.IsEnabled, packageSource.ProtocolVersion)
             {
                 IsMachineWide = packageSource.IsMachineWide,
                 Description = packageSource.Description,

@@ -30,7 +30,7 @@ namespace NuGet.Common.Test
         public async Task EnterAsync_WhenKeyIsNull_Throws()
         {
             var exception = await Assert.ThrowsAsync<ArgumentNullException>(
-                () => _mutex.EnterAsync(key: null, CancellationToken.None));
+                () => _mutex.EnterAsync(key: null!, CancellationToken.None));
 
             Assert.Equal("key", exception.ParamName);
         }
@@ -80,7 +80,7 @@ namespace NuGet.Common.Test
         [Fact]
         public void Enter_WhenKeyIsNull_Throws()
         {
-            var exception = Assert.Throws<ArgumentNullException>(() => _mutex.Enter(key: null));
+            var exception = Assert.Throws<ArgumentNullException>(() => _mutex.Enter(key: null!));
 
             Assert.Equal("key", exception.ParamName);
         }
@@ -126,7 +126,7 @@ namespace NuGet.Common.Test
         [Fact]
         public async Task ExitAsync_WhenKeyIsNull_Throws()
         {
-            var exception = await Assert.ThrowsAsync<ArgumentNullException>(() => _mutex.ExitAsync(key: null));
+            var exception = await Assert.ThrowsAsync<ArgumentNullException>(() => _mutex.ExitAsync(key: null!));
 
             Assert.Equal("key", exception.ParamName);
         }
@@ -162,7 +162,7 @@ namespace NuGet.Common.Test
         [Fact]
         public void Exit_WhenKeyIsNull_Throws()
         {
-            var exception = Assert.Throws<ArgumentNullException>(() => _mutex.Enter(key: null));
+            var exception = Assert.Throws<ArgumentNullException>(() => _mutex.Enter(key: null!));
 
             Assert.Equal("key", exception.ParamName);
         }

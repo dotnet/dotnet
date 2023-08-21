@@ -1,29 +1,5 @@
-﻿//------------------------------------------------------------------------------
-//
-// Copyright (c) Microsoft Corporation.
-// All rights reserved.
-//
-// This code is licensed under the MIT License.
-//
-// Permission is hereby granted, free of charge, to any person obtaining a copy
-// of this software and associated documentation files(the "Software"), to deal
-// in the Software without restriction, including without limitation the rights
-// to use, copy, modify, merge, publish, distribute, sublicense, and / or sell
-// copies of the Software, and to permit persons to whom the Software is
-// furnished to do so, subject to the following conditions :
-//
-// The above copyright notice and this permission notice shall be included in
-// all copies or substantial portions of the Software.
-//
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.IN NO EVENT SHALL THE
-// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-// THE SOFTWARE.
-//
-//------------------------------------------------------------------------------
+﻿// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System;
 using System.Collections.Concurrent;
@@ -31,6 +7,7 @@ using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Net.Http;
 using System.Threading;
+using System.Threading.Tasks;
 using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.Logging;
 using Microsoft.IdentityModel.Protocols;
@@ -44,6 +21,8 @@ namespace Microsoft.IdentityModel.Validators
     /// </summary>
     public class AadIssuerValidator
     {
+        private static readonly TimeSpan LastKnownGoodConfigurationLifetime = new TimeSpan(0, 24, 0, 0);
+
         internal const string V2EndpointSuffix = "/v2.0";
         internal const string TenantidTemplate = "{tenantid}";
 
@@ -145,6 +124,32 @@ namespace Microsoft.IdentityModel.Validators
             SecurityToken securityToken,
             TokenValidationParameters validationParameters)
         {
+            return ValidateAsync(issuer, securityToken, validationParameters).GetAwaiter().GetResult();
+        }
+
+        /// <summary>
+        /// Validate the issuer for single and multi-tenant applications of various audiences (Work and School accounts, or Work and School accounts +
+        /// Personal accounts) and the various clouds.
+        /// </summary>
+        /// <param name="issuer">Issuer to validate (will be tenanted).</param>
+        /// <param name="securityToken">Received security token.</param>
+        /// <param name="validationParameters">Token validation parameters.</param>
+        /// <example><code>
+        /// AadIssuerValidator aadIssuerValidator = AadIssuerValidator.GetAadIssuerValidator(authority, httpClient);
+        /// TokenValidationParameters.IssuerValidator = aadIssuerValidator.Validate;
+        /// </code></example>
+        /// <remarks>The issuer is considered as valid if it has the same HTTP scheme and authority as the
+        /// authority from the configuration file, has a tenant ID, and optionally v2.0 (if this web API
+        /// accepts both V1 and V2 tokens).</remarks>
+        /// <returns>The <c>issuer</c> if it's valid, or otherwise <c>SecurityTokenInvalidIssuerException</c> is thrown.</returns>
+        /// <exception cref="ArgumentNullException"> if <paramref name="securityToken"/> is null.</exception>
+        /// <exception cref="ArgumentNullException"> if <paramref name="validationParameters"/> is null.</exception>
+        /// <exception cref="SecurityTokenInvalidIssuerException">if the issuer is invalid or if there is a network issue. </exception>
+        internal async Task<string> ValidateAsync(
+            string issuer,
+            SecurityToken securityToken,
+            TokenValidationParameters validationParameters)
+        {
             _ = issuer ?? throw LogHelper.LogArgumentNullException(nameof(issuer));
             _ = securityToken ?? throw LogHelper.LogArgumentNullException(nameof(securityToken));
             _ = validationParameters ?? throw LogHelper.LogArgumentNullException(nameof(validationParameters));
@@ -171,11 +176,12 @@ namespace Microsoft.IdentityModel.Validators
 
             try
             {
-                var effectiveConfigurationManager = GetEffectiveConfigurationManager(securityToken);
+                BaseConfigurationManager effectiveConfigurationManager = GetEffectiveConfigurationManager(securityToken);
                 if (validationParameters.RefreshBeforeValidation)
                     effectiveConfigurationManager.RequestRefresh();
 
-                string aadIssuer = effectiveConfigurationManager.GetBaseConfigurationAsync(CancellationToken.None).ConfigureAwait(false).GetAwaiter().GetResult().Issuer;
+                BaseConfiguration configuration = await effectiveConfigurationManager.GetBaseConfigurationAsync(CancellationToken.None).ConfigureAwait(false);
+                string aadIssuer = configuration.Issuer;
 
                 if (!validationParameters.ValidateWithLKG)
                 {
@@ -194,11 +200,20 @@ namespace Microsoft.IdentityModel.Validators
             }
             catch (Exception ex)
             {
-                throw LogHelper.LogExceptionMessage(new SecurityTokenInvalidIssuerException(LogHelper.FormatInvariant(LogMessages.IDX40001, issuer), ex));
+                throw LogHelper.LogExceptionMessage(
+                    new SecurityTokenInvalidIssuerException(
+                        LogHelper.FormatInvariant(
+                            LogMessages.IDX40001,
+                            LogHelper.MarkAsNonPII(issuer)),
+                        ex));
             }
 
             // If a valid issuer is not found, throw
-            throw LogHelper.LogExceptionMessage(new SecurityTokenInvalidIssuerException(LogHelper.FormatInvariant(LogMessages.IDX40001, issuer)));
+            throw LogHelper.LogExceptionMessage(
+                new SecurityTokenInvalidIssuerException(
+                    LogHelper.FormatInvariant(
+                        LogMessages.IDX40001,
+                        LogHelper.MarkAsNonPII(issuer))));
         }
 
         /// <summary>
@@ -259,14 +274,16 @@ namespace Microsoft.IdentityModel.Validators
                  new ConfigurationManager<OpenIdConnectConfiguration>(
                      $"{aadAuthority}{AadIssuerValidatorConstants.OidcEndpoint}",
                      new OpenIdConnectConfigurationRetriever(),
-                     HttpClient);
+                     HttpClient)
+                 { LastKnownGoodLifetime = LastKnownGoodConfigurationLifetime };
             }
             else
             {
                 return
                 new ConfigurationManager<OpenIdConnectConfiguration>(
                     $"{aadAuthority}{AadIssuerValidatorConstants.OidcEndpoint}",
-                    new OpenIdConnectConfigurationRetriever());
+                    new OpenIdConnectConfigurationRetriever())
+                { LastKnownGoodLifetime = LastKnownGoodConfigurationLifetime };
             }
         }
 

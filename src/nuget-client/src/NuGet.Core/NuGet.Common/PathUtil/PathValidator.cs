@@ -17,6 +17,7 @@ namespace NuGet.Common
         /// <returns>True if valid, False if invalid.</returns>
         public static bool IsValidSource(string source)
         {
+            if (source is null) { throw new ArgumentNullException(nameof(source)); }
             return IsValidLocalPath(source) || IsValidUncPath(source) || IsValidUrl(source) || IsValidRelativePath(source);
         }
 
@@ -33,6 +34,8 @@ namespace NuGet.Common
         [SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes", Justification = "We don't want to throw during detection")]
         public static bool IsValidLocalPath(string path)
         {
+            if (path is null) { throw new ArgumentNullException(nameof(path)); }
+
             try
             {
                 if (RuntimeEnvironmentHelper.IsWindows)
@@ -68,7 +71,7 @@ namespace NuGet.Common
         {
             try
             {
-                Path.GetFullPath(path);
+                _ = Path.GetFullPath(path);
                 return path.StartsWith(@"\\", StringComparison.Ordinal);
             }
             catch
@@ -85,17 +88,15 @@ namespace NuGet.Common
         [SuppressMessage("Microsoft.Design", "CA1054:UriParametersShouldNotBeStrings", MessageId = "0#", Justification = "We're trying to validate that a stirng is infct a uri")]
         public static bool IsValidUrl(string url)
         {
-            Uri result;
-
             // Make sure url starts with protocol:// because Uri.TryCreate() returns true for local and UNC paths even if badly formed.
-            return Regex.IsMatch(url, @"^\w+://", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant) && Uri.TryCreate(url, UriKind.Absolute, out result);
+            return Regex.IsMatch(url, @"^\w+://", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant) && Uri.TryCreate(url, UriKind.Absolute, out _);
         }
 
         public static bool IsValidRelativePath(string path)
         {
             try
             {
-                Path.GetFullPath(path);
+                _ = Path.GetFullPath(path);
                 // Becasue IsPathRooted() returns false for Url path, so if path is not rooted and is not a Url, it's relative path. 
                 return !Regex.IsMatch(path, @"^\w+://", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant) && !Path.IsPathRooted(path);
             }

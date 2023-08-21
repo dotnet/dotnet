@@ -5,6 +5,27 @@ parameters:
   type: string
 
 steps:
+- task: MicroBuildLocalizationPlugin@1
+  displayName: "Install Localization Plugin"
+
+- task: MicroBuildSigningPlugin@1
+  inputs:
+    signType: "$(SigningType)"
+    esrpSigning: "true"
+  displayName: "Install Signing Plugin"
+
+- task: MicroBuildSwixPlugin@4
+  displayName: "Install Swix Plugin"
+
+- task: MicroBuildOptProfPlugin@6
+  displayName: 'OptProfV2:  install the plugin'
+  inputs:
+    getDropNameByDrop: true
+    optimizationInputsDropNamePrefix: OptimizationInputs/$(System.TeamProject)/$(Build.Repository.Name)
+    ShouldSkipOptimize: $(ShouldSkipOptimize)
+    AccessToken: $(System.AccessToken)
+  condition: "and(succeeded(), eq(variables['BuildRTM'], 'false'), eq(variables['IsOfficialBuild'], 'true'))"
+
 - task: PowerShell@1
   inputs:
     scriptName: "$(Build.Repository.LocalPath)\\configure.ps1"
@@ -31,27 +52,6 @@ steps:
     scriptType: "inlineScript"
     inlineScript: |
       Get-ChildItem Env: | Sort-Object Name | Format-Table -Wrap -AutoSize
-
-- task: MicroBuildLocalizationPlugin@1
-  displayName: "Install Localization Plugin"
-
-- task: MicroBuildSigningPlugin@1
-  inputs:
-    signType: "$(SigningType)"
-    esrpSigning: "true"
-  displayName: "Install Signing Plugin"
-
-- task: MicroBuildSwixPlugin@4
-  displayName: "Install Swix Plugin"
-
-- task: MicroBuildOptProfPlugin@6
-  displayName: 'OptProfV2:  install the plugin'
-  inputs:
-    getDropNameByDrop: true
-    optimizationInputsDropNamePrefix: OptimizationInputs/$(System.TeamProject)/$(Build.Repository.Name)
-    ShouldSkipOptimize: $(ShouldSkipOptimize)
-    AccessToken: $(System.AccessToken)
-  condition: "and(succeeded(), eq(variables['BuildRTM'], 'false'), eq(variables['IsOfficialBuild'], 'true'))"
 
 # NuGet.Client's official repo is on github, hence the source link metadata should use the github URL.
 # However, our official builds are built from a mirror in Azure DevOps, hence without any extra help, the SourceLink.GitHub package
@@ -120,7 +120,7 @@ steps:
   inputs:
     solution: "build\\build.proj"
     configuration: "$(BuildConfiguration)"
-    msbuildArguments: "/restore:false /target:BuildNoVSIX /property:BuildRTM=$(BuildRTM) /property:BuildNumber=$(BuildNumber) /property:SkipILMergeOfNuGetExe=true /property:GitRepositoryRemoteName=github /property:IncludeApex=$(IncludeApex) /binarylogger:$(Build.StagingDirectory)\\binlog\\02.Build.binlog"
+    msbuildArguments: "/restore:false /target:BuildNoVSIX /property:BuildRTM=$(BuildRTM) /property:BuildNumber=$(BuildNumber) /property:SkipILMergeOfNuGetExe=true /property:GitRepositoryRemoteName=github /property:IncludeApex=$(IncludeApex) /binarylogger:$(Build.StagingDirectory)\\binlog\\02.Build.binlog /property:MicroBuild_SigningEnabled=false"
 
 - task: CodeQL3000Finalize@0
   displayName: Finalize CodeQL
@@ -212,7 +212,7 @@ steps:
   inputs:
     solution: "build\\build.proj"
     configuration: "$(BuildConfiguration)"
-    msbuildArguments: "/restore:false /target:Pack /property:BuildRTM=$(BuildRTM) /property:ExcludeTestProjects=$(BuildRTM) /property:BuildNumber=$(BuildNumber) /binarylogger:$(Build.StagingDirectory)\\binlog\\09.Pack.binlog"
+    msbuildArguments: "/restore:false /target:Pack /property:BuildRTM=$(BuildRTM) /property:ExcludeTestProjects=$(BuildRTM) /property:BuildNumber=$(BuildNumber) /binarylogger:$(Build.StagingDirectory)\\binlog\\09.Pack.binlog /property:MicroBuild_SigningEnabled=false"
 
 - task: MSBuild@1
   displayName: "Ensure all Nupkgs and Symbols are created"

@@ -21,8 +21,8 @@ namespace Microsoft.VisualStudio.LanguageServerClient.Razor;
 /// Publishes project.razor.json files.
 /// </summary>
 [Shared]
-[Export(typeof(ProjectSnapshotChangeTrigger))]
-internal class ProjectRazorJsonPublisher : ProjectSnapshotChangeTrigger
+[Export(typeof(IProjectSnapshotChangeTrigger))]
+internal class ProjectRazorJsonPublisher : IProjectSnapshotChangeTrigger
 {
     internal readonly Dictionary<string, Task> DeferredPublishTasks;
 
@@ -33,7 +33,7 @@ internal class ProjectRazorJsonPublisher : ProjectSnapshotChangeTrigger
     private readonly RazorLogger _logger;
     private readonly LSPEditorFeatureDetector _lspEditorFeatureDetector;
     private readonly ProjectConfigurationFilePathStore _projectConfigurationFilePathStore;
-    private readonly Dictionary<string, IProjectSnapshot> _pendingProjectPublishes;
+    private readonly Dictionary<ProjectKey, IProjectSnapshot> _pendingProjectPublishes;
     private readonly object _pendingProjectPublishesLock;
     private readonly object _publishLock;
 
@@ -75,7 +75,7 @@ internal class ProjectRazorJsonPublisher : ProjectSnapshotChangeTrigger
         }
 
         DeferredPublishTasks = new Dictionary<string, Task>(FilePathComparer.Instance);
-        _pendingProjectPublishes = new Dictionary<string, IProjectSnapshot>(FilePathComparer.Instance);
+        _pendingProjectPublishes = new Dictionary<ProjectKey, IProjectSnapshot>();
         _pendingProjectPublishesLock = new();
         _publishLock = new object();
 
@@ -83,6 +83,9 @@ internal class ProjectRazorJsonPublisher : ProjectSnapshotChangeTrigger
         _projectConfigurationFilePathStore = projectConfigurationFilePathStore;
         _logger = logger;
 
+#if DEBUG
+        _serializer.Formatting = Formatting.Indented;
+#endif
         _serializer.Converters.Add(ProjectRazorJsonJsonConverter.Instance);
     }
 
@@ -90,7 +93,7 @@ internal class ProjectRazorJsonPublisher : ProjectSnapshotChangeTrigger
     // 3000ms between publishes to prevent bursts of changes yet still be responsive to changes.
     internal int EnqueueDelay { get; set; } = 3000;
 
-    public override void Initialize(ProjectSnapshotManagerBase projectManager)
+    public void Initialize(ProjectSnapshotManagerBase projectManager)
     {
         ProjectSnapshotManager = projectManager;
         ProjectSnapshotManager.Changed += ProjectSnapshotManager_Changed;
@@ -101,12 +104,12 @@ internal class ProjectRazorJsonPublisher : ProjectSnapshotChangeTrigger
     {
         lock (_pendingProjectPublishesLock)
         {
-            _pendingProjectPublishes[projectSnapshot.FilePath] = projectSnapshot;
+            _pendingProjectPublishes[projectSnapshot.Key] = projectSnapshot;
         }
 
         if (!DeferredPublishTasks.TryGetValue(projectSnapshot.FilePath, out var update) || update.IsCompleted)
         {
-            DeferredPublishTasks[projectSnapshot.FilePath] = PublishAfterDelayAsync(projectSnapshot.FilePath);
+            DeferredPublishTasks[projectSnapshot.FilePath] = PublishAfterDelayAsync(projectSnapshot.Key);
         }
     }
 
@@ -131,7 +134,7 @@ internal class ProjectRazorJsonPublisher : ProjectSnapshotChangeTrigger
         {
             // Not currently active, we need to decide if we should become active or if we should no-op.
 
-            if (ProjectSnapshotManager.OpenDocuments.Count > 0)
+            if (!ProjectSnapshotManager.GetOpenDocuments().IsEmpty)
             {
                 // A Razor document was just opened, we should become "active" which means we'll constantly be monitoring project state.
                 _active = true;
@@ -221,7 +224,7 @@ internal class ProjectRazorJsonPublisher : ProjectSnapshotChangeTrigger
             string? configurationFilePath = null;
             try
             {
-                if (!_projectConfigurationFilePathStore.TryGet(projectSnapshot.FilePath, out configurationFilePath))
+                if (!_projectConfigurationFilePathStore.TryGet(projectSnapshot.Key, out configurationFilePath))
                 {
                     return;
                 }
@@ -247,8 +250,7 @@ internal class ProjectRazorJsonPublisher : ProjectSnapshotChangeTrigger
     {
         lock (_publishLock)
         {
-            var oldProjectFilePath = projectSnapshot.FilePath;
-            if (!_projectConfigurationFilePathStore.TryGet(oldProjectFilePath, out var configurationFilePath))
+            if (!_projectConfigurationFilePathStore.TryGet(projectSnapshot.Key, out var configurationFilePath))
             {
                 // If we don't track the value in PublishFilePathMappings that means it's already been removed, do nothing.
                 return;
@@ -256,10 +258,10 @@ internal class ProjectRazorJsonPublisher : ProjectSnapshotChangeTrigger
 
             lock (_pendingProjectPublishesLock)
             {
-                if (_pendingProjectPublishes.TryGetValue(oldProjectFilePath, out _))
+                if (_pendingProjectPublishes.TryGetValue(projectSnapshot.Key, out _))
                 {
                     // Project was removed while a delayed publish was in flight. Clear the in-flight publish so it noops.
-                    _pendingProjectPublishes.Remove(oldProjectFilePath);
+                    _pendingProjectPublishes.Remove(projectSnapshot.Key);
                 }
             }
         }
@@ -345,26 +347,26 @@ internal class ProjectRazorJsonPublisher : ProjectSnapshotChangeTrigger
         lock (_pendingProjectPublishesLock)
         {
             // Clear any pending publish
-            _pendingProjectPublishes.Remove(projectSnapshot.FilePath);
+            _pendingProjectPublishes.Remove(projectSnapshot.Key);
         }
 
         Publish(projectSnapshot);
     }
 
-    private async Task PublishAfterDelayAsync(string projectFilePath)
+    private async Task PublishAfterDelayAsync(ProjectKey projectKey)
     {
         await Task.Delay(EnqueueDelay).ConfigureAwait(false);
 
         IProjectSnapshot projectSnapshot;
         lock (_pendingProjectPublishesLock)
         {
-            if (!_pendingProjectPublishes.TryGetValue(projectFilePath, out projectSnapshot))
+            if (!_pendingProjectPublishes.TryGetValue(projectKey, out projectSnapshot))
             {
                 // Project was removed while waiting for the publish delay.
                 return;
             }
 
-            _pendingProjectPublishes.Remove(projectFilePath);
+            _pendingProjectPublishes.Remove(projectKey);
         }
 
         Publish(projectSnapshot);

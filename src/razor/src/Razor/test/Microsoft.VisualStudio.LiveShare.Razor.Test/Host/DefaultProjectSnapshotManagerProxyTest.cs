@@ -37,7 +37,7 @@ public class DefaultProjectSnapshotManagerProxyTest : ProjectSnapshotManagerDisp
         _projectSnapshot1 = new ProjectSnapshot(
             ProjectState.Create(
                 _workspace.Services,
-                new HostProject("/host/path/to/project1.csproj", RazorConfiguration.Default, "project1"),
+                new HostProject("/host/path/to/project1.csproj", "/host/path/to/obj", RazorConfiguration.Default, "project1"),
                 projectWorkspaceState1));
 
         var projectWorkspaceState2 = new ProjectWorkspaceState(ImmutableArray.Create(
@@ -47,7 +47,7 @@ public class DefaultProjectSnapshotManagerProxyTest : ProjectSnapshotManagerDisp
         _projectSnapshot2 = new ProjectSnapshot(
             ProjectState.Create(
                 _workspace.Services,
-                new HostProject("/host/path/to/project2.csproj", RazorConfiguration.Default, "project2"),
+                new HostProject("/host/path/to/project2.csproj", "/host/path/to/obj", RazorConfiguration.Default, "project2"),
                 projectWorkspaceState2));
     }
 
@@ -63,7 +63,7 @@ public class DefaultProjectSnapshotManagerProxyTest : ProjectSnapshotManagerDisp
             JoinableTaskFactory);
 
         // Act
-        var state = await JoinableTaskFactory.RunAsync(() => proxy.CalculateUpdatedStateAsync(projectSnapshotManager.Projects));
+        var state = await JoinableTaskFactory.RunAsync(() => proxy.CalculateUpdatedStateAsync(projectSnapshotManager.GetProjects()));
 
         // Assert
         Assert.Collection(
@@ -198,12 +198,13 @@ public class DefaultProjectSnapshotManagerProxyTest : ProjectSnapshotManagerDisp
 
     private class TestProjectSnapshotManager : ProjectSnapshotManager
     {
+        private ImmutableArray<IProjectSnapshot> _projects;
         public TestProjectSnapshotManager(params IProjectSnapshot[] projects)
         {
-            Projects = projects;
+            _projects = projects.ToImmutableArray();
         }
 
-        public override IReadOnlyList<IProjectSnapshot> Projects { get; }
+        public override ImmutableArray<IProjectSnapshot> GetProjects() => _projects;
 
         public override event EventHandler<ProjectChangeEventArgs> Changed;
 

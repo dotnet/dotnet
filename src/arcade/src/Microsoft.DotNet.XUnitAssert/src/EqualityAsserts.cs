@@ -325,7 +325,7 @@ namespace Xunit
 		/// <param name="expected">The expected value</param>
 		/// <param name="actual">The value to be compared against</param>
 		/// <exception cref="EqualException">Thrown when the objects are not equal</exception>
-		public static void StrictEqual<T>(
+		public static void StrictEqual<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.Interfaces)] T>(
 #if XUNIT_NULLABLE
 			[AllowNull] T expected,
 			[AllowNull] T actual) =>

@@ -4,7 +4,7 @@
 using System;
 using System.IO;
 using System.Security.Cryptography;
-using System.Text.Json.Serialization;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace Microsoft.Deployment.DotNet.Releases
@@ -19,8 +19,6 @@ namespace Microsoft.Deployment.DotNet.Releases
         /// <summary>
         /// The URL from where to download the file.
         /// </summary>
-        [JsonPropertyName("url")]
-        [JsonInclude]
         public Uri Address
         {
             get;
@@ -35,8 +33,6 @@ namespace Microsoft.Deployment.DotNet.Releases
         /// <summary>
         /// The <see cref="SHA512"/> hash of the file.
         /// </summary>
-        [JsonPropertyName("hash")]
-        [JsonInclude]
         public string Hash
         {
             get;
@@ -46,8 +42,6 @@ namespace Microsoft.Deployment.DotNet.Releases
         /// <summary>
         /// The version agnostic name and extension of the file.
         /// </summary>
-        [JsonPropertyName("name")]
-        [JsonInclude]
         public string Name
         {
             get;
@@ -57,12 +51,37 @@ namespace Microsoft.Deployment.DotNet.Releases
         /// <summary>
         /// The runtime identifier associated with the file.
         /// </summary>
-        [JsonPropertyName("rid")]
-        [JsonInclude]
         public string Rid
         {
             get;
             private set;
+        }
+
+        /// <summary>
+        /// Creates a new <see cref="ReleaseFile"/> instance from a <see cref="JsonElement"/>.
+        /// </summary>
+        /// <param name="fileElement">The <see cref="JsonElement"/> to deserialize.</param>
+        internal ReleaseFile(JsonElement fileElement)
+        {
+            Address = fileElement.GetUriOrDefault("url");
+            Hash = fileElement.GetStringOrDefault("hash");
+            Name = fileElement.GetStringOrDefault("name");
+            Rid = fileElement.GetStringOrDefault("rid");
+        }
+
+        /// <summary>
+        /// Creates a new <see cref="ReleaseFile"/> instance.
+        /// </summary>
+        /// <param name="address">The URL of the file.</param>
+        /// <param name="hash">A string containing the SHA512 hash of the file.</param>
+        /// <param name="name">The name and extension of the file.</param>
+        /// <param name="rid">The RID associated with the file.</param>
+        internal ReleaseFile(Uri address, string hash, string name, string rid)
+        {
+            Address = address;
+            Hash = hash;
+            Name = name;
+            Rid = rid;
         }
 
         /// <summary>
@@ -141,6 +160,6 @@ namespace Microsoft.Deployment.DotNet.Releases
             Hash.GetHashCode() ^ Name.GetHashCode() ^ Rid.GetHashCode() ^ Address.GetHashCode();
 
         internal static ReleaseFile Create(string hash, string name, string rid, string address) =>
-            new ReleaseFile { Hash = hash, Name = name, Rid = rid, Address = new Uri(address) };
+            new ReleaseFile(new Uri(address), hash, name, rid);
     }
 }

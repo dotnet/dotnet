@@ -125,8 +125,10 @@ These considerations are also useful for smaller changes that might not require 
 
 #### Visual Studio UI considerations
 
-* Ensure screen-readers handles the change correctly
-* Validate all themes
+See [UI Guidelines](ui-guidelines.md) for detailed information. In summary:
+
+* Ensure assistive technologies (eg, screen-readers) handle the change correctly
+* Validate all themes and localizability
 * More complex changes should be reviewed by UX experts
 
 #### CLI (NuGet.exe & dotnet.exe) considerations

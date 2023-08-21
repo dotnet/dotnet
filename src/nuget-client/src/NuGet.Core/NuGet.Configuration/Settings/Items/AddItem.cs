@@ -99,7 +99,10 @@ namespace NuGet.Configuration
             }
         }
 
-        public override bool Equals(object other)
+        // Due to how settings AddOrUpdate is implemented, anything extending AddItem must only use the Key in GetHashCode and Equals
+        // otherwise existing items won't be updated and new duplicates will always be added.
+        // In other words, all sub-class properties must be ignored by these methods.
+        public sealed override bool Equals(object other)
         {
             var item = other as AddItem;
 
@@ -116,7 +119,10 @@ namespace NuGet.Configuration
             return string.Equals(Key, item.Key, StringComparison.Ordinal);
         }
 
-        public override int GetHashCode() => Key.GetHashCode();
+        // Due to how settings AddOrUpdate is implemented, anything extending AddItem must only use the Key in GetHashCode and Equals
+        // otherwise existing items won't be updated and new duplicates will always be added.
+        // In other words, all sub-class properties must be ignored by these methods.
+        public sealed override int GetHashCode() => Key.GetHashCode();
 
         public override SettingBase Clone()
         {

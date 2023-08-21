@@ -20,7 +20,9 @@
                             LazyIntermediateToken - (30:0,30 [11] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - ParentValue
                     ComponentAttribute - (30:0,30 [11] x:\dir\subdir\Test\TestComponent.cshtml) - ValueChanged - ValueChanged - AttributeStructure.DoubleQuotes
                         CSharpExpression - 
-                            IntermediateToken -  - CSharp - __value => { ParentValue = __value; global::Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.InvokeSynchronousDelegate(() => { }); }
+                            IntermediateToken -  - CSharp -  __value => { ParentValue = __value; global::Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.InvokeSynchronousDelegate(
+                            LazyIntermediateToken - (62:0,62 [9] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - () => { }
+                            IntermediateToken -  - CSharp - ); }
                     ComponentAttribute - (62:0,62 [9] x:\dir\subdir\Test\TestComponent.cshtml) - bind-Value - Value - AttributeStructure.DoubleQuotes
                         LazyIntermediateToken - (62:0,62 [9] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - () => { }
                 HtmlContent - (75:0,75 [2] x:\dir\subdir\Test\TestComponent.cshtml)

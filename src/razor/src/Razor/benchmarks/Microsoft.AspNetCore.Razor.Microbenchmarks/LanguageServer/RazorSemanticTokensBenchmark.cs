@@ -64,7 +64,7 @@ public class RazorSemanticTokensBenchmark : RazorLanguageServerBenchmarkBase
         var documentUri = new Uri(filePath);
         var documentSnapshot = GetDocumentSnapshot(ProjectFilePath, filePath, TargetPath);
         var version = 1;
-        DocumentContext = new VersionedDocumentContext(documentUri, documentSnapshot, version);
+        DocumentContext = new VersionedDocumentContext(documentUri, documentSnapshot, projectContext: null, version);
 
         var text = await DocumentContext.GetSourceTextAsync(CancellationToken.None).ConfigureAwait(false);
         Range = new Range
@@ -132,8 +132,9 @@ public class RazorSemanticTokensBenchmark : RazorLanguageServerBenchmarkBase
         public TestRazorSemanticTokensInfoService(
             ClientNotifierServiceBase languageServer,
             IRazorDocumentMappingService documentMappingService,
+            RazorLSPOptionsMonitor razorLSPOptionsMonitor,
             ILoggerFactory loggerFactory)
-            : base(languageServer, documentMappingService, loggerFactory)
+            : base(languageServer, documentMappingService, razorLSPOptionsMonitor, loggerFactory)
         {
         }
 
@@ -142,6 +143,7 @@ public class RazorSemanticTokensBenchmark : RazorLanguageServerBenchmarkBase
             RazorCodeDocument codeDocument,
             TextDocumentIdentifier textDocumentIdentifier,
             Range razorRange,
+            RazorSemanticTokensLegend razorSemanticTokensLegend,
             long documentVersion,
             Guid correlationId,
             CancellationToken cancellationToken,

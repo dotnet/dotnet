@@ -13,7 +13,6 @@ using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Language.Legacy;
 using Microsoft.AspNetCore.Razor.LanguageServer.Extensions;
 using Microsoft.AspNetCore.Razor.LanguageServer.Protocol;
-using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Razor.Workspaces.Extensions;
 using Microsoft.CodeAnalysis.Text;
@@ -471,7 +470,7 @@ internal sealed class RazorDocumentMappingService : IRazorDocumentMappingService
             return (generatedDocumentUri, generatedDocumentRange);
         }
 
-        var documentContext = await _documentContextFactory.TryCreateAsync(razorDocumentUri, cancellationToken).ConfigureAwait(false);
+        var documentContext = _documentContextFactory.TryCreate(razorDocumentUri);
         if (documentContext is null)
         {
             return (generatedDocumentUri, generatedDocumentRange);
@@ -833,7 +832,7 @@ internal sealed class RazorDocumentMappingService : IRazorDocumentMappingService
             }
 
             var razorDocumentUri = _languageServerFeatureOptions.GetRazorDocumentUri(generatedDocumentUri);
-            var documentContext = await _documentContextFactory.TryCreateForOpenDocumentAsync(razorDocumentUri, cancellationToken).ConfigureAwait(false);
+            var documentContext = _documentContextFactory.TryCreateForOpenDocument(razorDocumentUri, entry.TextDocument.GetProjectContext());
             if (documentContext is null)
             {
                 continue;
@@ -877,7 +876,7 @@ internal sealed class RazorDocumentMappingService : IRazorDocumentMappingService
                 continue;
             }
 
-            var documentContext = await _documentContextFactory.TryCreateAsync(uri, cancellationToken).ConfigureAwait(false);
+            var documentContext = _documentContextFactory.TryCreate(uri);
             if (documentContext is null)
             {
                 continue;

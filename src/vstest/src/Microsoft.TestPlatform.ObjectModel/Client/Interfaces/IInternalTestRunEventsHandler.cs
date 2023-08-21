@@ -8,7 +8,7 @@ using Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.Interfaces;
 namespace Microsoft.VisualStudio.TestPlatform.ObjectModel.Client;
 
 /// <summary>
-/// Interface contract for handling internal test run events during run. This interface should have methods similar to <see cref="ITestRunEventsHandler"/> <see cref="ITestRunEventsHandler2"/> <see cref="ITestRunEventsHandler3"/>,
+/// Interface contract for handling internal test run events during run. This interface should have methods similar to <see cref="ITestRunEventsHandler"/> <see cref="ITestRunEventsHandler2"/>,
 /// but only the newest (most broad) version of each method, so that we only operate on the latest interface in the internals, and adapt on the edges.
 /// </summary>
 public interface IInternalTestRunEventsHandler : ITestMessageEventHandler

@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Razor;
+using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Threading;
 
@@ -96,6 +97,8 @@ internal abstract class EditorDocumentManagerBase : EditorDocumentManager
 
     public sealed override EditorDocument GetOrCreateDocument(
         DocumentKey key,
+        string projectFilePath,
+        ProjectKey projectKey,
         EventHandler? changedOnDisk,
         EventHandler? changedInEditor,
         EventHandler? opened,
@@ -116,8 +119,9 @@ internal abstract class EditorDocumentManagerBase : EditorDocumentManager
                 this,
                 ProjectSnapshotManagerDispatcher,
                 JoinableTaskContext,
-                key.ProjectFilePath,
+                projectFilePath,
                 key.DocumentFilePath,
+                projectKey,
                 new FileTextLoader(key.DocumentFilePath, defaultEncoding: null),
                 _fileChangeTrackerFactory.Create(key.DocumentFilePath),
                 textBuffer,
@@ -212,7 +216,7 @@ internal abstract class EditorDocumentManagerBase : EditorDocumentManager
 
         lock (Lock)
         {
-            var key = new DocumentKey(document.ProjectFilePath, document.DocumentFilePath);
+            var key = new DocumentKey(document.ProjectKey, document.DocumentFilePath);
             if (_documentsByFilePath.TryGetValue(document.DocumentFilePath, out var documents))
             {
                 documents.Remove(key);

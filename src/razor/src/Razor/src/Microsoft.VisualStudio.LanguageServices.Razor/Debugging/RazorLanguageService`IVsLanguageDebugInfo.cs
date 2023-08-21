@@ -2,6 +2,7 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using System;
+using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.VisualStudio.Editor;
 using Microsoft.VisualStudio.Editor.Razor.Debugging;
 using Microsoft.VisualStudio.LanguageServices.Razor.Extensions;
@@ -17,6 +18,7 @@ internal partial class RazorLanguageService : IVsLanguageDebugInfo
 {
     private readonly RazorBreakpointResolver _breakpointResolver;
     private readonly RazorProximityExpressionResolver _proximityExpressionResolver;
+    private readonly ILspServerActivationTracker _lspServerActivationTracker;
     private readonly IUIThreadOperationExecutor _uiThreadOperationExecutor;
     private readonly IVsEditorAdaptersFactoryService _editorAdaptersFactory;
     private readonly JoinableTaskFactory _joinableTaskFactory;
@@ -24,6 +26,7 @@ internal partial class RazorLanguageService : IVsLanguageDebugInfo
     public RazorLanguageService(
         RazorBreakpointResolver breakpointResolver,
         RazorProximityExpressionResolver proximityExpressionResolver,
+        ILspServerActivationTracker lspServerActivationTracker,
         IUIThreadOperationExecutor uiThreadOperationExecutor,
         IVsEditorAdaptersFactoryService editorAdaptersFactory,
         JoinableTaskFactory joinableTaskFactory)
@@ -48,6 +51,11 @@ internal partial class RazorLanguageService : IVsLanguageDebugInfo
             throw new ArgumentNullException(nameof(editorAdaptersFactory));
         }
 
+        if (lspServerActivationTracker is null)
+        {
+            throw new ArgumentNullException(nameof(lspServerActivationTracker));
+        }
+
         if (joinableTaskFactory is null)
         {
             throw new ArgumentNullException(nameof(joinableTaskFactory));
@@ -55,6 +63,7 @@ internal partial class RazorLanguageService : IVsLanguageDebugInfo
 
         _breakpointResolver = breakpointResolver;
         _proximityExpressionResolver = proximityExpressionResolver;
+        _lspServerActivationTracker = lspServerActivationTracker;
         _uiThreadOperationExecutor = uiThreadOperationExecutor;
         _editorAdaptersFactory = editorAdaptersFactory;
         _joinableTaskFactory = joinableTaskFactory;
@@ -62,6 +71,15 @@ internal partial class RazorLanguageService : IVsLanguageDebugInfo
 
     public int GetProximityExpressions(IVsTextBuffer pBuffer, int iLine, int iCol, int cLines, out IVsEnumBSTR? ppEnum)
     {
+        if (!_lspServerActivationTracker.IsActive)
+        {
+            // We can't do anything if our LSP server isn't up and running, and can't initialize here due to UI thread dependency issues
+            // This method should only be called during a debugging sessions, so we should never hit this case, and if we do, we have much
+            // bigger problems.
+            ppEnum = null;
+            return VSConstants.E_NOTIMPL;
+        }
+
         var textBuffer = _editorAdaptersFactory.GetDataBuffer(pBuffer);
         if (textBuffer is null)
         {
@@ -97,6 +115,15 @@ internal partial class RazorLanguageService : IVsLanguageDebugInfo
 
     public int ValidateBreakpointLocation(IVsTextBuffer pBuffer, int iLine, int iCol, TextSpan[] pCodeSpan)
     {
+        if (!_lspServerActivationTracker.IsActive)
+        {
+            // We can't do anything if our LSP server isn't up and running, and can't initialize here due to UI thread dependency issues
+            // Returning like this means the debugger will place a breakpoint in the margin, but not highlight a span in the line.
+            // We trust that it will later validate the breakpoint location and remove it if it's not valid, and that validation
+            // happens via LSP anyway.
+            return VSConstants.E_NOTIMPL;
+        }
+
         var textBuffer = _editorAdaptersFactory.GetDataBuffer(pBuffer);
         if (textBuffer is null)
         {

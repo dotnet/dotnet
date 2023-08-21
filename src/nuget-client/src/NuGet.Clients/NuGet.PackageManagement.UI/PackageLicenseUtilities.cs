@@ -9,6 +9,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Documents;
 using Microsoft.ServiceHub.Framework;
+using NuGet.PackageManagement.VisualStudio;
 using NuGet.Packaging;
 using NuGet.Packaging.Core;
 using NuGet.Packaging.Licenses;
@@ -109,6 +110,9 @@ namespace NuGet.PackageManagement.UI
                     break;
 
                 case LicenseType.File:
+                    NuGetPackageFileService.AddLicenseToCache(
+                        packageIdentity,
+                        CreateEmbeddedLicenseUri(packagePath, metadata));
                     list.Add(new LicenseFileText(Resources.Text_ViewLicense, licenseFileHeader, packagePath, metadata.License, packageIdentity));
                     break;
 
@@ -117,6 +121,18 @@ namespace NuGet.PackageManagement.UI
             }
 
             return list;
+        }
+
+        private static Uri CreateEmbeddedLicenseUri(string packagePath, LicenseMetadata licenseMetadata)
+        {
+            Uri baseUri = new Uri(packagePath, UriKind.Absolute);
+
+            var builder = new UriBuilder(baseUri)
+            {
+                Fragment = licenseMetadata.License
+            };
+
+            return builder.Uri;
         }
 
         private static void PopulateLicenseIdentifiers(NuGetLicenseExpression expression, IList<string> identifiers)

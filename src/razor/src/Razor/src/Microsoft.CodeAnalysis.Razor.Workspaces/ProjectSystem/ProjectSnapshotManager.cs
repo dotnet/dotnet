@@ -4,7 +4,6 @@
 #nullable disable
 
 using System;
-using System.Collections.Generic;
 using System.Collections.Immutable;
 using Microsoft.CodeAnalysis.Host;
 
@@ -14,7 +13,7 @@ internal abstract class ProjectSnapshotManager : ILanguageService
 {
     public abstract event EventHandler<ProjectChangeEventArgs> Changed;
 
-    public abstract IReadOnlyList<IProjectSnapshot> Projects { get; }
+    public abstract ImmutableArray<IProjectSnapshot> GetProjects();
 
     public abstract bool IsDocumentOpen(string documentFilePath);
 

@@ -106,6 +106,11 @@ internal static class DirectoryHelper
             logger?.LogWarning("PathTooLong: {exception}", ex.Message);
             yield break;
         }
+        catch (IOException ex)
+        {
+            logger?.LogWarning("IOException: {exception}", ex.Message);
+            yield break;
+        }
 
         foreach (var path in directories)
         {

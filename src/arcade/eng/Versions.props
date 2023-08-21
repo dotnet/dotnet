@@ -8,12 +8,12 @@
   </PropertyGroup>
   <PropertyGroup>
     <!-- arcade -->
-    <MicrosoftDotNetBuildTasksFeedVersion>8.0.0-beta.23360.1</MicrosoftDotNetBuildTasksFeedVersion>
-    <MicrosoftDotNetSignToolVersion>8.0.0-beta.23360.1</MicrosoftDotNetSignToolVersion>
-    <MicrosoftDotNetSwaggerGeneratorMSBuildVersion>8.0.0-beta.23360.1</MicrosoftDotNetSwaggerGeneratorMSBuildVersion>
+    <MicrosoftDotNetBuildTasksFeedVersion>8.0.0-beta.23417.3</MicrosoftDotNetBuildTasksFeedVersion>
+    <MicrosoftDotNetSignToolVersion>8.0.0-beta.23417.3</MicrosoftDotNetSignToolVersion>
+    <MicrosoftDotNetSwaggerGeneratorMSBuildVersion>8.0.0-beta.23417.3</MicrosoftDotNetSwaggerGeneratorMSBuildVersion>
     <!-- arcade-services -->
-    <MicrosoftDotNetMaestroClientVersion>1.1.0-beta.21553.1</MicrosoftDotNetMaestroClientVersion>
-    <MicrosoftDotNetMaestroTasksVersion>1.1.0-beta.22076.4</MicrosoftDotNetMaestroTasksVersion>
+    <MicrosoftDotNetMaestroClientVersion>1.1.0-beta.23418.3</MicrosoftDotNetMaestroClientVersion>
+    <MicrosoftDotNetMaestroTasksVersion>1.1.0-beta.23418.3</MicrosoftDotNetMaestroTasksVersion>
     <!-- corefx -->
     <MicrosoftBclHashCodeVersion>1.1.1</MicrosoftBclHashCodeVersion>
     <SystemMemoryVersion>4.5.5</SystemMemoryVersion>
@@ -51,6 +51,7 @@
     <MicrosoftNETRuntimeEmscripten2023Pythonwin_x64>6.0.4</MicrosoftNETRuntimeEmscripten2023Pythonwin_x64>
     <MicrosoftNETRuntimeEmscripten2023Sdkwin_x64>6.0.4</MicrosoftNETRuntimeEmscripten2023Sdkwin_x64>
     <MicrosoftNETWorkloadEmscriptenManifest_60200Version>6.0.4</MicrosoftNETWorkloadEmscriptenManifest_60200Version>
+    <MicrosoftNETWorkloadEmscriptenManifest_80100Preview6Version>8.0.0-preview.6.23326.2</MicrosoftNETWorkloadEmscriptenManifest_80100Preview6Version>
     <MicrosoftNETWorkloadMonoToolChainManifest_60200Version>6.0.3</MicrosoftNETWorkloadMonoToolChainManifest_60200Version>
     <MicrosoftNETWorkloadMonoToolChainManifest_60200Version_604>6.0.4</MicrosoftNETWorkloadMonoToolChainManifest_60200Version_604>
     <MicrosoftiOSTemplatesVersion>15.2.302-preview.14.122</MicrosoftiOSTemplatesVersion>
@@ -63,19 +64,16 @@
     <SystemTextJsonVersion>7.0.2</SystemTextJsonVersion>
     <!-- sdk -->
     <MicrosoftNetSdkWorkloadManifestReaderVersion>8.0.100-preview.3.23178.3</MicrosoftNetSdkWorkloadManifestReaderVersion>
-    <!-- sourcelink -->
-    <MicrosoftSourceLinkGitHubVersion>8.0.0-beta.23360.2</MicrosoftSourceLinkGitHubVersion>
-    <MicrosoftSourceLinkAzureReposGitVersion>8.0.0-beta.23360.2</MicrosoftSourceLinkAzureReposGitVersion>
     <!-- symreader-converter -->
     <MicrosoftDiaSymReaderPdb2PdbVersion>1.1.0-beta2-19575-01</MicrosoftDiaSymReaderPdb2PdbVersion>
     <!-- templating -->
-    <MicrosoftTemplateEngineAuthoringTasksVersion>8.0.100-preview.7.23358.1</MicrosoftTemplateEngineAuthoringTasksVersion>
+    <MicrosoftTemplateEngineAuthoringTasksVersion>8.0.100-rc.1.23414.1</MicrosoftTemplateEngineAuthoringTasksVersion>
     <!-- vstest -->
     <MicrosoftNetTestSdkVersion>17.5.0</MicrosoftNetTestSdkVersion>
     <!-- xharness -->
-    <MicrosoftDotNetXHarnessCLIVersion>8.0.0-prerelease.23360.1</MicrosoftDotNetXHarnessCLIVersion>
+    <MicrosoftDotNetXHarnessCLIVersion>8.0.0-prerelease.23407.2</MicrosoftDotNetXHarnessCLIVersion>
     <!-- xliff-tasks -->
-    <MicrosoftDotNetXliffTasksVersion>1.0.0-beta.23326.1</MicrosoftDotNetXliffTasksVersion>
+    <MicrosoftDotNetXliffTasksVersion>1.0.0-beta.23418.1</MicrosoftDotNetXliffTasksVersion>
     <!-- external -->
     <AzureCoreVersion>1.31.0</AzureCoreVersion>
     <AzureStorageBlobsVersion>12.16.0</AzureStorageBlobsVersion>
@@ -86,6 +84,7 @@
     <JetBrainsAnnotationsVersion>2018.2.1</JetBrainsAnnotationsVersion>
     <LZMA_SDKVersion>19.0.0</LZMA_SDKVersion>
     <McMasterExtensionsCommandLineUtils>2.3.0</McMasterExtensionsCommandLineUtils>
+    <SystemCommandLineVersion>2.0.0-beta4.23307.1</SystemCommandLineVersion>
     <MicrosoftApplicationInsightsVersion>2.21.0</MicrosoftApplicationInsightsVersion>
     <MicrosoftCciVersion>4.0.0-rc3-24214-00</MicrosoftCciVersion>
     <MicrosoftDataODataVersion>5.8.4</MicrosoftDataODataVersion>

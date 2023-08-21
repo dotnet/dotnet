@@ -114,7 +114,7 @@ namespace NuGet.Common.Test.Logging
 
             public Mock<IEnvironmentVariableReader> EnvironmentVariableReader { get; }
             public Exception Exception { get; }
-            public ExceptionLogger Target { get; set; }
+            public ExceptionLogger? Target { get; set; }
 
             public void VerifyShouldShowStack(bool expected)
             {

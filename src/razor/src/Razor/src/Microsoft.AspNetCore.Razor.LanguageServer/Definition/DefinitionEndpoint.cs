@@ -49,7 +49,7 @@ internal sealed class DefinitionEndpoint : AbstractRazorDelegatingEndpoint<TextD
 
     protected override IDocumentPositionInfoStrategy DocumentPositionInfoStrategy => PreferAttributeNameDocumentPositionInfoStrategy.Instance;
 
-    protected override string CustomMessageTarget => RazorLanguageServerCustomMessageTargets.RazorDefinitionEndpointName;
+    protected override string CustomMessageTarget => CustomMessageNames.RazorDefinitionEndpointName;
 
     public void ApplyCapabilities(VSInternalServerCapabilities serverCapabilities, VSInternalClientCapabilities clientCapabilities)
     {
@@ -160,7 +160,7 @@ internal sealed class DefinitionEndpoint : AbstractRazorDelegatingEndpoint<TextD
             return (null, null);
         }
 
-        var node = owner.Ancestors().FirstOrDefault(n =>
+        var node = owner.Parent?.FirstAncestorOrSelf<SyntaxNode>(n =>
             n.Kind == SyntaxKind.MarkupTagHelperStartTag ||
             n.Kind == SyntaxKind.MarkupTagHelperEndTag);
         if (node is null)

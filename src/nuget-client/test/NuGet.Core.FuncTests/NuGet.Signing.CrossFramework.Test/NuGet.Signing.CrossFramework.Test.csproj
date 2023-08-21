@@ -2,7 +2,6 @@
   <PropertyGroup>
     <TargetFrameworks>$(TargetFrameworksLibraryForCrossVerificationTests)</TargetFrameworks>
     <TargetFrameworks Condition=" '$(IsXPlat)' == 'true' "></TargetFrameworks>
-    <TestProject>true</TestProject>
     <UseParallelXunit>true</UseParallelXunit>
     <Description>NuGet package signing cross framework test.</Description>
   </PropertyGroup>

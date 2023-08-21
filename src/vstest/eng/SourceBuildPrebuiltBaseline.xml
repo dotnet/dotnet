@@ -4,5 +4,6 @@
 <UsageData>
   <IgnorePatterns>
     <UsagePattern IdentityGlob="Microsoft.SourceBuild.Intermediate.*/*" />
+    <UsagePattern IdentityGlob="NuGet.Frameworks/6.5.0" />
   </IgnorePatterns>
 </UsageData>

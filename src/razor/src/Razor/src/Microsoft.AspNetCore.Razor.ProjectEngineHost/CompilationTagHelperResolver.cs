@@ -10,41 +10,40 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.Language;
-using Microsoft.AspNetCore.Razor.Serialization;
+using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.AspNetCore.Razor.Telemetry;
+using Microsoft.AspNetCore.Razor.Utilities;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Razor;
 
 namespace Microsoft.AspNetCore.Razor;
 
-internal class CompilationTagHelperResolver
+internal class CompilationTagHelperResolver(ITelemetryReporter? telemetryReporter)
 {
-    private readonly ITelemetryReporter? _telemetryReporter;
+    private readonly ITelemetryReporter? _telemetryReporter = telemetryReporter;
 
-    public CompilationTagHelperResolver(ITelemetryReporter? telemetryReporter)
-    {
-        _telemetryReporter = telemetryReporter;
-    }
-
-    public async Task<TagHelperResolutionResult> GetTagHelpersAsync(Project workspaceProject, RazorProjectEngine engine, CancellationToken cancellationToken)
+    public async ValueTask<ImmutableArray<TagHelperDescriptor>> GetTagHelpersAsync(
+        Project workspaceProject,
+        RazorProjectEngine projectEngine,
+        CancellationToken cancellationToken)
     {
         if (workspaceProject is null)
         {
             throw new ArgumentNullException(nameof(workspaceProject));
         }
 
-        if (engine is null)
+        if (projectEngine is null)
         {
-            throw new ArgumentNullException(nameof(engine));
+            throw new ArgumentNullException(nameof(projectEngine));
         }
 
-        var providers = engine.Engine.Features.OfType<ITagHelperDescriptorProvider>().OrderBy(f => f.Order).ToArray();
+        var providers = projectEngine.Engine.Features.OfType<ITagHelperDescriptorProvider>().OrderBy(f => f.Order).ToArray();
         if (providers.Length == 0)
         {
-            return TagHelperResolutionResult.Empty;
+            return ImmutableArray<TagHelperDescriptor>.Empty;
         }
 
-        var results = new HashSet<TagHelperDescriptor>();
+        var results = new HashSet<TagHelperDescriptor>(TagHelperChecksumComparer.Instance);
         var context = TagHelperDescriptorProviderContext.Create(results);
         context.ExcludeHidden = true;
         context.IncludeDocumentation = true;
@@ -55,22 +54,27 @@ internal class CompilationTagHelperResolver
             context.SetCompilation(compilation);
         }
 
-        var timingDictionary = new Dictionary<string, object?>();
-        for (var i = 0; i < providers.Length; i++)
+        ExecuteProviders(providers, context, _telemetryReporter);
+
+        return results.ToImmutableArray();
+
+        static void ExecuteProviders(ITagHelperDescriptorProvider[] providers, TagHelperDescriptorProviderContext context, ITelemetryReporter? telemetryReporter)
         {
-            var provider = providers[i];
-            var stopWatch = Stopwatch.StartNew();
+            using var _ = StopwatchPool.GetPooledObject(out var watch);
+            using var timingDictionary = new PooledDictionaryBuilder<string, object?>();
 
-            provider.Execute(context);
+            foreach (var provider in providers)
+            {
+                watch.Restart();
+                provider.Execute(context);
+                watch.Stop();
 
-            stopWatch.Stop();
-            var propertyName = $"{provider.GetType().Name}.elapsedtimems";
-            Debug.Assert(!timingDictionary.ContainsKey(propertyName));
-            timingDictionary[propertyName] = stopWatch.ElapsedMilliseconds;
+                var propertyName = $"{provider.GetType().Name}.elapsedtimems";
+                Debug.Assert(!timingDictionary.ContainsKey(propertyName));
+                timingDictionary.Add(propertyName, watch.ElapsedMilliseconds);
+            }
+
+            telemetryReporter?.ReportEvent("taghelperresolver/gettaghelpers", Severity.Normal, timingDictionary.ToImmutable());
         }
-
-        _telemetryReporter?.ReportEvent("taghelperresolver/gettaghelpers", Severity.Normal, timingDictionary.ToImmutableDictionary());
-
-        return new TagHelperResolutionResult(results.ToImmutableArray());
     }
 }

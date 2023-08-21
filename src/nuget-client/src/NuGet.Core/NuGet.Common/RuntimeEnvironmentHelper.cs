@@ -84,7 +84,7 @@ namespace NuGet.Common
         {
             using (var process = Process.GetCurrentProcess())
             {
-                return process.MainModule.FileName;
+                return process.MainModule!.FileName;
             }
         }
 

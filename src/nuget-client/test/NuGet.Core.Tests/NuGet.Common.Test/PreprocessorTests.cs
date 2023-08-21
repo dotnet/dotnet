@@ -16,7 +16,7 @@ namespace NuGet.Common.Test
         public void Process_ThrowsForNullStream()
         {
             var exception = Assert.Throws<ArgumentNullException>(
-                () => Preprocessor.Process(stream: null, tokenReplacement: t => t));
+                () => Preprocessor.Process(stream: null!, tokenReplacement: t => t));
 
             Assert.Equal("stream", exception.ParamName);
         }
@@ -25,7 +25,7 @@ namespace NuGet.Common.Test
         public void Process_ThrowsForNullTokenReplacement()
         {
             var exception = Assert.Throws<ArgumentNullException>(
-                () => Preprocessor.Process(Stream.Null, tokenReplacement: null));
+                () => Preprocessor.Process(Stream.Null, tokenReplacement: null!));
 
             Assert.Equal("tokenReplacement", exception.ParamName);
         }
@@ -87,7 +87,7 @@ namespace NuGet.Common.Test
         {
             var exception = await Assert.ThrowsAsync<ArgumentNullException>(
                 () => Preprocessor.ProcessAsync(
-                    streamTaskFactory: null,
+                    streamTaskFactory: null!,
                     tokenReplacement: t => t,
                     cancellationToken: CancellationToken.None));
 
@@ -100,7 +100,7 @@ namespace NuGet.Common.Test
             var exception = await Assert.ThrowsAsync<ArgumentNullException>(
                 () => Preprocessor.ProcessAsync(
                     () => Task.FromResult(Stream.Null),
-                    tokenReplacement: null,
+                    tokenReplacement: null!,
                     cancellationToken: CancellationToken.None));
 
             Assert.Equal("tokenReplacement", exception.ParamName);

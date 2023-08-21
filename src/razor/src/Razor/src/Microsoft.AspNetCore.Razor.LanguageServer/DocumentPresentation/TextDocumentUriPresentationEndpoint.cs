@@ -8,7 +8,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.LanguageServer.Common;
-using Microsoft.AspNetCore.Razor.LanguageServer.Extensions;
 using Microsoft.AspNetCore.Razor.LanguageServer.Protocol;
 using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.CodeAnalysis.Razor;
@@ -44,7 +43,7 @@ internal class TextDocumentUriPresentationEndpoint : AbstractTextDocumentPresent
         _logger = loggerFactory.CreateLogger<TextDocumentUriPresentationEndpoint>();
     }
 
-    public override string EndpointName => RazorLanguageServerCustomMessageTargets.RazorUriPresentationEndpoint;
+    public override string EndpointName => CustomMessageNames.RazorUriPresentationEndpoint;
 
     public override void ApplyCapabilities(VSInternalServerCapabilities serverCapabilities, VSInternalClientCapabilities clientCapabilities)
     {
@@ -130,7 +129,7 @@ internal class TextDocumentUriPresentationEndpoint : AbstractTextDocumentPresent
     {
         _logger.LogInformation("Trying to find document info for dropped uri {uri}.", uri);
 
-        var documentContext = await _documentContextFactory.TryCreateAsync(uri, cancellationToken).ConfigureAwait(false);
+        var documentContext = _documentContextFactory.TryCreate(uri);
         if (documentContext is null)
         {
             _logger.LogInformation("Failed to find document for component {uri}.", uri);
