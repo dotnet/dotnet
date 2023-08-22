@@ -136,6 +136,16 @@ You can download the .NET SDK as either an installer (MSI, PKG) or a zip (zip, t
 want to install the latest released versions, check out the [preceding section](#looking-for-released-versions-of-the-net-core-tooling).
 With development builds, internal NuGet feeds are necessary for some scenarios (for example, to acquire the runtime pack for self-contained apps). You can use the following NuGet.config to configure these feeds. See the following document [Configuring NuGet behavior](https://docs.microsoft.com/en-us/nuget/consume-packages/configuring-nuget-behavior) for more information on where to modify your NuGet.config to apply the changes.
 
+**For .NET 9 builds**
+
+```xml
+<configuration>
+  <packageSources>
+    <add key="dotnet9" value="https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet9/nuget/v3/index.json" />
+  </packageSources>
+</configuration>
+```
+
 **For .NET 8 builds**
 
 ```xml
