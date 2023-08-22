@@ -32,9 +32,6 @@ public abstract class AbstractIntegrationTest : AbstractIdeIntegrationTest
     protected const string ProjectName = "TestProj";
     protected const string SolutionName = "TestSolution";
 
-    private readonly static TimeSpan s_shortHangMitigatingTimeout = new(hours: 0, minutes: 1, seconds: 0);
-    private readonly CancellationTokenSource _shortHangMitigatingCancellationTokenSource = new(s_shortHangMitigatingTimeout);
-
     protected CancellationToken ControlledHangMitigatingCancellationToken => HangMitigatingCancellationToken;
 
     public override async Task InitializeAsync()
