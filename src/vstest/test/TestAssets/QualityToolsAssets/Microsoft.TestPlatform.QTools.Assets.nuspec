@@ -7,7 +7,7 @@
     <authors>Microsoft</authors>
     <owners>Microsoft</owners>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <license type="file">LICENSE_NET.txt</license>
+    <license type="file">LICENSE_MIT.txt</license>
     <iconUrl>http://go.microsoft.com/fwlink/?LinkID=288859</iconUrl>
     <description>MSDia typelib for reading debug symbols from managed code.</description>
     <copyright>Copyright © Microsoft Corporation</copyright>
@@ -17,7 +17,7 @@
     </contentFiles>
   </metadata>
   <files>
-    <file src="package\licenses\LICENSE_NET.txt" target="" />
+    <file src="package\licenses\LICENSE_MIT.txt" target="" />
     <file src="BingWebTest\bin\*.*" target="contentFiles\any\any\WebTestAssets" />
   </files>
 </package>
