@@ -12,13 +12,20 @@
     <AssemblyName>testhost.x86</AssemblyName>
     <TargetFrameworks>net7.0;$(NetCoreAppMinimum);$(NetFrameworkMinimum);net47;net471;net472;net48</TargetFrameworks>
     <PlatformTarget>AnyCPU</PlatformTarget>
+    <RuntimeIdentifier Condition="'$(DotNetBuildFromSource)' != 'true'">win7-x86</RuntimeIdentifier>
     <Prefer32Bit Condition=" $(TargetFramework.StartsWith('net4')) ">true</Prefer32Bit>
     <OutputType>Exe</OutputType>
     <IsTestProject>false</IsTestProject>
     <ApplicationManifest>app.manifest</ApplicationManifest>
+    <!--
+    NETSDK1201: For projects targeting .NET 8.0 and higher, specifying a RuntimeIdentifier will no longer produce a
+    self contained app by default. To continue building self-contained apps, set the SelfContained property to true
+    or use the -\-self-contained argument.
+    -->
+    <MSBuildWarningsAsMessages>NETSDK1201</MSBuildWarningsAsMessages>
+    <NoWarn>$(NoWarn);NETSDK1201</NoWarn>
   </PropertyGroup>
   <PropertyGroup Condition=" $(TargetFramework.StartsWith('net4')) ">
-    <RuntimeIdentifier Condition="'$(DotNetBuildFromSource)' != 'true'">win7-x86</RuntimeIdentifier>
     <AutoGenerateBindingRedirects>false</AutoGenerateBindingRedirects>
     <TargetName Condition="'$(TargetFramework)' != '$(NetFrameworkMinimum)'">$(AssemblyName.Replace('.x86', '')).$(TargetFramework).x86</TargetName>
   </PropertyGroup>
