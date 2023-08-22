@@ -3,10 +3,11 @@
 
 using System.Threading.Tasks;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace Microsoft.VisualStudio.Razor.IntegrationTests;
 
-public class RazorCodeActionsTests : AbstractRazorEditorTest
+public class RazorCodeActionsTests(ITestOutputHelper testOutputHelper) : AbstractRazorEditorTest(testOutputHelper)
 {
     [IdeFact]
     public async Task RazorCodeActions_AddUsing()

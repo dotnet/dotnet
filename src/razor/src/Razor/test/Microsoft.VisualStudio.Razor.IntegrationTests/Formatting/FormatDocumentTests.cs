@@ -8,10 +8,11 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace Microsoft.VisualStudio.Razor.IntegrationTests;
 
-public class FormatDocumentTests : AbstractRazorEditorTest
+public class FormatDocumentTests(ITestOutputHelper testOutputHelper) : AbstractRazorEditorTest(testOutputHelper)
 {
     private static readonly string s_projectPath = TestProject.GetProjectDirectory(typeof(FormatDocumentTests), useCurrentDirectory: true);
 

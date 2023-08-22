@@ -3,10 +3,11 @@
 
 using System.Threading.Tasks;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace Microsoft.VisualStudio.Razor.IntegrationTests;
 
-public class WrapWithTagTests : AbstractRazorEditorTest
+public class WrapWithTagTests(ITestOutputHelper testOutputHelper) : AbstractRazorEditorTest(testOutputHelper)
 {
     [IdeFact]
     public async Task WrapWithTag_RootLevelElement()

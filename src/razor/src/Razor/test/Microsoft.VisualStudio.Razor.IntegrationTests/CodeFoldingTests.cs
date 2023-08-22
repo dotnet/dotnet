@@ -9,10 +9,11 @@ using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
 using Microsoft.VisualStudio.Text.Outlining;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace Microsoft.VisualStudio.Razor.IntegrationTests;
 
-public class CodeFoldingTests : AbstractRazorEditorTest
+public class CodeFoldingTests(ITestOutputHelper testOutputHelper) : AbstractRazorEditorTest(testOutputHelper)
 {
     private struct CollapsibleBlock
     {
@@ -75,7 +76,7 @@ public class CodeFoldingTests : AbstractRazorEditorTest
 
             Assert.False(true, $"Missing Lines: {missingSpanText}Actual Lines: {linesText}");
         }
-        
+
         Assert.Empty(missingLines);
 
         static (ImmutableArray<CollapsibleBlock> missingSpans, ImmutableArray<CollapsibleBlock> extraSpans) GetOutlineDiff(ICollapsible[] outlines, ImmutableArray<Span> foldableSpans, ITextView textView)
