@@ -475,7 +475,7 @@ namespace NuGet.Commands {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Invalid NuGetAuditLevel value &apos;{0}&apos;. Expected values: {1}.
+        ///   Looks up a localized string similar to Invalid NuGetAuditLevel value &apos;{0}&apos;. Valid values: {1}.
         /// </summary>
         internal static string Error_InvalidNuGetAuditLevelValue {
             get {
@@ -484,11 +484,20 @@ namespace NuGet.Commands {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Invalid NuGetAuditMode value &apos;{0}&apos;. Expected values: {1}.
+        ///   Looks up a localized string similar to Invalid NuGetAuditMode value &apos;{0}&apos;. Valid values: {1}.
         /// </summary>
         internal static string Error_InvalidNuGetAuditModeValue {
             get {
                 return ResourceManager.GetString("Error_InvalidNuGetAuditModeValue", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Invalid NuGetAudit value &apos;{0}&apos;. Valid values: {1}.
+        /// </summary>
+        internal static string Error_InvalidNuGetAuditValue {
+            get {
+                return ResourceManager.GetString("Error_InvalidNuGetAuditValue", resourceCulture);
             }
         }
         

@@ -16,7 +16,12 @@ namespace Microsoft.VisualStudio.LanguageServices.Razor.Logging;
 [Export(typeof(IOutputWindowLogger))]
 internal class OutputWindowLogger : IOutputWindowLogger
 {
+#if DEBUG
+    private const LogLevel MinimumLogLevel = LogLevel.Debug;
+#else
     private const LogLevel MinimumLogLevel = LogLevel.Warning;
+#endif
+
     private readonly OutputPane _outputPane;
 
     [ImportingConstructor]
@@ -43,7 +48,7 @@ internal class OutputWindowLogger : IOutputWindowLogger
     {
         if (IsEnabled(logLevel))
         {
-            _outputPane.WriteLine(formatter(state, exception));
+            _outputPane.WriteLine(DateTime.Now.ToString("h:mm:ss.fff ") + formatter(state, exception));
             if (exception is not null)
             {
                 _outputPane.WriteLine(exception.ToString());

@@ -54,6 +54,7 @@ namespace NuGet.SolutionRestoreManager
         private RestoreOperationLogger _logger;
         private INuGetProjectContext _nuGetProjectContext;
         private PackageRestoreConsent _packageRestoreConsent;
+        private Lazy<IVulnerabilitiesNotificationService> _vulnerabilitiesFoundService;
 
         private NuGetOperationStatus _status;
         private int _packageCount;
@@ -129,6 +130,7 @@ namespace NuGet.SolutionRestoreManager
             SolutionRestoreJobContext jobContext,
             RestoreOperationLogger logger,
             Dictionary<string, object> trackingData,
+            Lazy<IVulnerabilitiesNotificationService> vulnerabilitiesFoundService,
             CancellationToken token)
         {
             if (request == null)
@@ -146,7 +148,13 @@ namespace NuGet.SolutionRestoreManager
                 throw new ArgumentNullException(nameof(logger));
             }
 
+            if (vulnerabilitiesFoundService == null)
+            {
+                throw new ArgumentNullException(nameof(vulnerabilitiesFoundService));
+            }
+
             _logger = logger;
+            _vulnerabilitiesFoundService = vulnerabilitiesFoundService;
 
             // update instance attributes with the shared context values
             _nuGetProjectContext = jobContext.NuGetProjectContext;
@@ -512,6 +520,10 @@ namespace NuGet.SolutionRestoreManager
                                     {
                                         _status = NuGetOperationStatus.Failed;
                                     }
+
+                                    // Display info bar in SolutionExplorer if there is a vulnerability during restore.
+                                    await _vulnerabilitiesFoundService.Value.ReportVulnerabilitiesAsync(AnyProjectHasVulnerablePackageWarning(restoreSummaries), t);
+
                                     _nuGetProgressReporter.EndSolutionRestore(projectList);
                                 }
                             },
@@ -523,6 +535,25 @@ namespace NuGet.SolutionRestoreManager
             {
                 await _logger.ShowErrorAsync(Resources.PackageRefNotRestoredBecauseOfNoConsent);
             }
+        }
+
+        private bool AnyProjectHasVulnerablePackageWarning(IReadOnlyList<RestoreSummary> restoreSummaries)
+        {
+            foreach (RestoreSummary restoreSummary in restoreSummaries)
+            {
+                foreach (IRestoreLogMessage restoreLogMessage in restoreSummary.Errors)
+                {
+                    if (restoreLogMessage.Code == NuGetLogCode.NU1901 ||
+                        restoreLogMessage.Code == NuGetLogCode.NU1902 ||
+                        restoreLogMessage.Code == NuGetLogCode.NU1903 ||
+                        restoreLogMessage.Code == NuGetLogCode.NU1904)
+                    {
+                        return true;
+                    }
+                }
+            }
+
+            return false;
         }
 
         // This event could be raised from multiple threads. Only perform thread-safe operations

@@ -3,11 +3,13 @@
 
   <PropertyGroup>
     <TargetFrameworks>net7.0;net6.0;$(NetFrameworkMinimum)</TargetFrameworks>
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <Prefer32Bit Condition="'$(TargetFramework)' == '$(NetFrameworkMinimum)'">false</Prefer32Bit>
     <OutputType>Exe</OutputType>
     <IsTestProject>false</IsTestProject>
     <RuntimeIdentifier Condition=" '$(DotNetBuildFromSource)' != 'true' ">win10-arm64</RuntimeIdentifier>
+    <!-- Setting both RuntimeIdentifier and PlatformTarget ends up building as AnyCPU and selecting the default x86 architecture, irregardless of RuntimeIdentifier,
+    so order here matters. -->
+    <PlatformTarget Condition=" '$(RuntimeIdentifier)' == '' ">AnyCPU</PlatformTarget>
     <AutoGenerateBindingRedirects>false</AutoGenerateBindingRedirects>
     <ExcludeFromSourceBuild>true</ExcludeFromSourceBuild>
     <!--

@@ -3,10 +3,11 @@
 
 using System.Threading.Tasks;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace Microsoft.VisualStudio.Razor.IntegrationTests;
 
-public class OnEnterRulesTests : AbstractRazorEditorTest
+public class OnEnterRulesTests(ITestOutputHelper testOutputHelper) : AbstractRazorEditorTest(testOutputHelper)
 {
     [IdeFact]
     public async Task OnEnterRules_BetweenStartAndEnd()

@@ -822,6 +822,88 @@ namespace NuGet.Configuration.Test
                     });
         }
 
+        [Theory]
+        [InlineData(true)]
+        [InlineData(false)]
+        public void LoadPackageSources_ReadsSourcesWithNullAllowInsecureConnectionsFromPackageSourceSections_LoadsDefault(bool useStaticMethod)
+        {
+            // Arrange
+            var settings = new Mock<ISettings>();
+            var sourceItem = new SourceItem("Source", "https://some-source.test", protocolVersion: null, allowInsecureConnections: null);
+
+            settings.Setup(s => s.GetSection("packageSources"))
+                .Returns(new VirtualSettingSection("packageSources",
+                    sourceItem));
+
+            settings.Setup(s => s.GetConfigFilePaths())
+                .Returns(new List<string>());
+
+            // Act
+            List<PackageSource> values = LoadPackageSources(useStaticMethod, settings.Object);
+
+            // Assert
+            var loadedSource = values.Single();
+            Assert.Equal("Source", loadedSource.Name);
+            Assert.Equal("https://some-source.test", loadedSource.Source);
+            Assert.Equal(PackageSource.DefaultAllowInsecureConnections, loadedSource.AllowInsecureConnections);
+        }
+
+        [Theory]
+        [InlineData(true)]
+        [InlineData(false)]
+        public void LoadPackageSources_ReadsSourcesWithInvalidAllowInsecureConnectionsFromPackageSourceSections_LoadsDefault(bool useStaticMethod)
+        {
+            // Arrange
+            var settings = new Mock<ISettings>();
+            var sourceItem = new SourceItem("Source", "https://some-source.test", protocolVersion: null, allowInsecureConnections: "invalidString");
+
+            settings.Setup(s => s.GetSection("packageSources"))
+                .Returns(new VirtualSettingSection("packageSources",
+                    sourceItem));
+
+            settings.Setup(s => s.GetConfigFilePaths())
+                .Returns(new List<string>());
+
+            // Act
+            List<PackageSource> values = LoadPackageSources(useStaticMethod, settings.Object);
+
+            // Assert
+            var loadedSource = values.Single();
+            Assert.Equal("Source", loadedSource.Name);
+            Assert.Equal("https://some-source.test", loadedSource.Source);
+            Assert.Equal(PackageSource.DefaultAllowInsecureConnections, loadedSource.AllowInsecureConnections);
+        }
+
+        [Theory]
+        [InlineData(true, "true")]
+        [InlineData(true, "TRUE")]
+        [InlineData(true, "false")]
+        [InlineData(false, "false")]
+        [InlineData(false, "fALSE")]
+        [InlineData(false, "true")]
+        public void LoadPackageSources_ReadsSourcesWithNotNullAllowInsecureConnectionsFromPackageSourceSections_LoadsValue(bool useStaticMethod, string allowInsecureConnections)
+        {
+            // Arrange
+            var settings = new Mock<ISettings>();
+            var sourceItem = new SourceItem("Source", "https://some-source.test", protocolVersion: null, allowInsecureConnections: allowInsecureConnections);
+
+            settings.Setup(s => s.GetSection("packageSources"))
+                .Returns(new VirtualSettingSection("packageSources",
+                    sourceItem));
+
+            settings.Setup(s => s.GetConfigFilePaths())
+                .Returns(new List<string>());
+
+            // Act
+            List<PackageSource> values = LoadPackageSources(useStaticMethod, settings.Object);
+
+            // Assert
+            var loadedSource = values.Single();
+            Assert.Equal("Source", loadedSource.Name);
+            Assert.Equal("https://some-source.test", loadedSource.Source);
+            Assert.Equal(bool.Parse(allowInsecureConnections), loadedSource.AllowInsecureConnections);
+        }
+
         [Fact]
         public void DisablePackageSourceAddEntryToSettings()
         {

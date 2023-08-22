@@ -4,10 +4,11 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace Microsoft.VisualStudio.Razor.IntegrationTests;
 
-public class RenameTests : AbstractRazorEditorTest
+public class RenameTests(ITestOutputHelper testOutputHelper) : AbstractRazorEditorTest(testOutputHelper)
 {
     [IdeFact(Skip = "https://github.com/dotnet/razor/issues/8121")]
     public async Task Rename_ComponentAttribute_FromRazor()

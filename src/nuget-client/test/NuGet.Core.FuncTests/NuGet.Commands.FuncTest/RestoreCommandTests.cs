@@ -2135,7 +2135,8 @@ namespace NuGet.Commands.FuncTest
                 }");
 
                 var specPath = Path.Combine(projectDir, "TestProject", "project.json");
-                var spec = JsonPackageSpecReader.GetPackageSpec(configJson.ToString(), "TestProject", specPath);
+                var spec = JsonPackageSpecReader.GetPackageSpec(configJson.ToString(), "TestProject", specPath)
+                    .EnsureProjectJsonRestoreMetadata();
 
                 var logger = new TestLogger();
                 using (var context = new SourceCacheContext())
@@ -2184,7 +2185,8 @@ namespace NuGet.Commands.FuncTest
                 }");
 
                 var specPath = Path.Combine(projectDir, "TestProject", "project.json");
-                var spec = JsonPackageSpecReader.GetPackageSpec(configJson.ToString(), "TestProject", specPath);
+                var spec = JsonPackageSpecReader.GetPackageSpec(configJson.ToString(), "TestProject", specPath)
+                    .EnsureProjectJsonRestoreMetadata();
 
                 var logger = new TestLogger();
                 using (var context = new SourceCacheContext())
@@ -2402,7 +2404,8 @@ namespace NuGet.Commands.FuncTest
                 }");
 
                 var specPath = Path.Combine(projectDir, "TestProject", "project.json");
-                var spec = JsonPackageSpecReader.GetPackageSpec(configJson.ToString(), "TestProject", specPath);
+                var spec = JsonPackageSpecReader.GetPackageSpec(configJson.ToString(), "TestProject", specPath)
+                    .EnsureProjectJsonRestoreMetadata();
 
                 var logger = new TestLogger();
                 using (var context = new SourceCacheContext())
@@ -2451,7 +2454,8 @@ namespace NuGet.Commands.FuncTest
                 }");
 
                 var specPath = Path.Combine(projectDir, "TestProject", "project.json");
-                var spec = JsonPackageSpecReader.GetPackageSpec(configJson.ToString(), "TestProject", specPath);
+                var spec = JsonPackageSpecReader.GetPackageSpec(configJson.ToString(), "TestProject", specPath)
+                    .EnsureProjectJsonRestoreMetadata();
 
                 var logger = new TestLogger();
                 using (var context = new SourceCacheContext())
@@ -2500,7 +2504,8 @@ namespace NuGet.Commands.FuncTest
                 }");
 
                 var specPath = Path.Combine(projectDir, "TestProject", "project.json");
-                var spec = JsonPackageSpecReader.GetPackageSpec(configJson.ToString(), "TestProject", specPath);
+                var spec = JsonPackageSpecReader.GetPackageSpec(configJson.ToString(), "TestProject", specPath)
+                    .EnsureProjectJsonRestoreMetadata();
 
                 var logger = new TestLogger();
                 using (var context = new SourceCacheContext())
@@ -2549,7 +2554,8 @@ namespace NuGet.Commands.FuncTest
                 }");
 
                 var specPath = Path.Combine(projectDir, "TestProject", "project.json");
-                var spec = JsonPackageSpecReader.GetPackageSpec(configJson.ToString(), "TestProject", specPath);
+                var spec = JsonPackageSpecReader.GetPackageSpec(configJson.ToString(), "TestProject", specPath)
+                    .EnsureProjectJsonRestoreMetadata();
 
                 var logger = new TestLogger();
                 using (var context = new SourceCacheContext())
@@ -2598,7 +2604,8 @@ namespace NuGet.Commands.FuncTest
                 }");
 
                 var specPath = Path.Combine(projectDir, "TestProject", "project.json");
-                var spec = JsonPackageSpecReader.GetPackageSpec(configJson.ToString(), "TestProject", specPath);
+                var spec = JsonPackageSpecReader.GetPackageSpec(configJson.ToString(), "TestProject", specPath)
+                    .EnsureProjectJsonRestoreMetadata();
 
                 var logger = new TestLogger();
                 using (var context = new SourceCacheContext())
@@ -2647,7 +2654,8 @@ namespace NuGet.Commands.FuncTest
                 }");
 
                 var specPath = Path.Combine(projectDir, "TestProject", "project.json");
-                var spec = JsonPackageSpecReader.GetPackageSpec(configJson.ToString(), "TestProject", specPath);
+                var spec = JsonPackageSpecReader.GetPackageSpec(configJson.ToString(), "TestProject", specPath)
+                    .EnsureProjectJsonRestoreMetadata();
 
                 var logger = new TestLogger();
                 using (var context = new SourceCacheContext())
