@@ -17,7 +17,8 @@ namespace NuGet.Configuration.Test
             var source = new PackageSource("Source", "SourceName", isEnabled: false)
             {
                 Credentials = credentials,
-                ProtocolVersion = 43
+                ProtocolVersion = 43,
+                AllowInsecureConnections = true
             };
 
             // Act
@@ -30,6 +31,7 @@ namespace NuGet.Configuration.Test
             Assert.Equal(source.Name, result.Name);
             Assert.Equal(source.IsEnabled, result.IsEnabled);
             Assert.Equal(source.ProtocolVersion, result.ProtocolVersion);
+            Assert.Equal(source.AllowInsecureConnections, result.AllowInsecureConnections);
 
             // source credential
             result.Credentials.Should().NotBeNull();
@@ -43,12 +45,14 @@ namespace NuGet.Configuration.Test
         {
             var source = new PackageSource("Source", "SourceName", isEnabled: false)
             {
-                ProtocolVersion = 43
+                ProtocolVersion = 43,
+                AllowInsecureConnections = true
             };
+            var result = source.AsSourceItem();
 
-            var expectedItem = new SourceItem("SourceName", "Source", "43");
+            var expectedItem = new SourceItem("SourceName", "Source", "43", "True");
 
-            SettingsTestUtils.DeepEquals(source.AsSourceItem(), expectedItem).Should().BeTrue();
+            SettingsTestUtils.DeepEquals(result, expectedItem).Should().BeTrue();
         }
 
         [Fact]

@@ -19,6 +19,8 @@ namespace NuGet.Configuration
         /// </summary>
         public const int DefaultProtocolVersion = 2;
 
+        internal const bool DefaultAllowInsecureConnections = false;
+
         private int _hashCode;
         private string _source;
         private bool _isHttp;
@@ -102,6 +104,11 @@ namespace NuGet.Configuration
         public int ProtocolVersion { get; set; } = DefaultProtocolVersion;
 
         /// <summary>
+        /// Gets or sets the allowInsecureConnections of the source. Defaults to false.
+        /// </summary>
+        public bool AllowInsecureConnections { get; set; } = DefaultAllowInsecureConnections;
+
+        /// <summary>
         /// Whether the source is using the HTTP protocol, including HTTPS.
         /// </summary>
         public bool IsHttp => _isHttp;
@@ -152,7 +159,13 @@ namespace NuGet.Configuration
             {
                 protocolVersion = $"{ProtocolVersion}";
             }
-            return new SourceItem(Name, Source, protocolVersion);
+
+            string? allowInsecureConnections = null;
+            if (AllowInsecureConnections != DefaultAllowInsecureConnections)
+            {
+                allowInsecureConnections = $"{AllowInsecureConnections}";
+            }
+            return new SourceItem(Name, Source, protocolVersion, allowInsecureConnections);
         }
 
         public bool Equals(PackageSource? other)
@@ -189,6 +202,7 @@ namespace NuGet.Configuration
                 ClientCertificates = ClientCertificates?.ToList(),
                 IsMachineWide = IsMachineWide,
                 ProtocolVersion = ProtocolVersion,
+                AllowInsecureConnections = AllowInsecureConnections,
             };
         }
     }

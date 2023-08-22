@@ -281,7 +281,7 @@ NuGet.Configuration.SettingsUtility
 NuGet.Configuration.SourceItem
 ~NuGet.Configuration.SourceItem.ProtocolVersion.get -> string
 ~NuGet.Configuration.SourceItem.ProtocolVersion.set -> void
-~NuGet.Configuration.SourceItem.SourceItem(string key, string value, string protocolVersion = "") -> void
+~NuGet.Configuration.SourceItem.SourceItem(string key, string value, string protocolVersion) -> void
 NuGet.Configuration.StoreClientCertItem
 NuGet.Configuration.StoreClientCertItem.FindType.get -> System.Security.Cryptography.X509Certificates.X509FindType
 ~NuGet.Configuration.StoreClientCertItem.FindValue.get -> string
