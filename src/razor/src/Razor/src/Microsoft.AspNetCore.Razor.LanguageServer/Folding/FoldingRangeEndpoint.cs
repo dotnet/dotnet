@@ -166,7 +166,7 @@ internal sealed class FoldingRangeEndpoint : IRazorRequestHandler<FoldingRangePa
         var sourceText = codeDocument.GetSourceText();
         var startLine = range.StartLine;
 
-        if (startLine > sourceText.Lines.Count)
+        if (startLine >= sourceText.Lines.Count)
         {
             // Sometimes VS Code seems to send us wildly out-of-range folding ranges for Html, so log a warning,
             // but prevent a toast from appearing from an exception.
