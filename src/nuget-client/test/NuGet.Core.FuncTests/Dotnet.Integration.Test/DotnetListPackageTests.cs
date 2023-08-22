@@ -5,7 +5,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Xml.Linq;
@@ -119,6 +118,70 @@ namespace Dotnet.Integration.Test
 
                 Assert.True(ContainsIgnoringSpaces(listResult.AllOutput, "packageY"));
 
+            }
+        }
+
+        [PlatformTheory(Platform.Windows)]
+        [InlineData("")]
+        [InlineData(" --outdated")]
+        [InlineData(" --vulnerable")]
+        [InlineData(" --deprecated")]
+        public async Task DotnetListPackage_DoesNotReturnProjects(string args)
+        {
+            using (var pathContext = _fixture.CreateSimpleTestPathContext())
+            {
+                string directDependencyProjectName = $"{ProjectName}Dependency";
+                string transitiveDependencyProjectName = $"{ProjectName}TransitiveDependency";
+                var projectA = XPlatTestUtils.CreateProject(ProjectName, pathContext, "net46");
+                var projectB = XPlatTestUtils.CreateProject(directDependencyProjectName, pathContext, "net46");
+                var projectC = XPlatTestUtils.CreateProject(transitiveDependencyProjectName, pathContext, "net46");
+
+                var packageX = XPlatTestUtils.CreatePackage(packageId: "packageX");
+                var packageY = XPlatTestUtils.CreatePackage(packageId: "packageY");
+                var packageZ = XPlatTestUtils.CreatePackage(packageId: "packageZ");
+                var packageT = XPlatTestUtils.CreatePackage(packageId: "packageT");
+                packageX.Dependencies.Add(packageT);
+                packageY.Dependencies.Add(packageT);
+                packageZ.Dependencies.Add(packageT);
+
+                // Generate Package
+                await SimpleTestPackageUtility.CreateFolderFeedV3Async(
+                    pathContext.PackageSource,
+                    PackageSaveMode.Defaultv3,
+                    packageX,
+                    packageY,
+                    packageZ,
+                    packageT);
+
+                _fixture.RunDotnetExpectSuccess(Directory.GetParent(projectA.ProjectPath).FullName,
+                    $"add {projectA.ProjectPath} reference {projectB.ProjectPath}");
+
+                _fixture.RunDotnetExpectSuccess(Directory.GetParent(projectA.ProjectPath).FullName,
+                    $"add {projectB.ProjectPath} reference {projectC.ProjectPath}");
+
+                _fixture.RunDotnetExpectSuccess(Directory.GetParent(projectB.ProjectPath).FullName,
+                    $"add {projectA.ProjectPath} package packageX --no-restore");
+
+                _fixture.RunDotnetExpectSuccess(Directory.GetParent(projectB.ProjectPath).FullName,
+                    $"add {projectB.ProjectPath} package packageY --no-restore");
+
+                _fixture.RunDotnetExpectSuccess(Directory.GetParent(projectB.ProjectPath).FullName,
+                    $"add {projectC.ProjectPath} package packageZ --no-restore");
+
+                _fixture.RunDotnetExpectSuccess(Directory.GetParent(projectA.ProjectPath).FullName,
+                    $"restore {projectA.ProjectName}.csproj");
+
+                CommandRunnerResult listResult = _fixture.RunDotnetExpectSuccess(Directory.GetParent(projectA.ProjectPath).FullName,
+                    $"list {projectA.ProjectPath} package{args}");
+
+                Assert.False(ContainsIgnoringSpaces(listResult.AllOutput, projectB.ProjectName));
+                Assert.False(ContainsIgnoringSpaces(listResult.AllOutput, projectC.ProjectName));
+
+                listResult = _fixture.RunDotnetExpectSuccess(Directory.GetParent(projectA.ProjectPath).FullName,
+                    $"list {projectA.ProjectPath} package{args} --include-transitive");
+
+                Assert.False(ContainsIgnoringSpaces(listResult.AllOutput, projectB.ProjectName));
+                Assert.False(ContainsIgnoringSpaces(listResult.AllOutput, projectC.ProjectName));
             }
         }
 
@@ -283,55 +346,6 @@ namespace Dotnet.Integration.Test
 
                 Assert.True(ContainsIgnoringSpaces(listResult.AllOutput, $"packageX{currentVersion}{currentVersion}{expectedVersion}"));
 
-            }
-        }
-
-        [PlatformTheory(Platform.Windows)]
-        [InlineData(false, false)]
-        [InlineData(true, false)]
-        [InlineData(false, true)]
-        [InlineData(true, true)]
-        public void DotnetListPackage_ProjectReference_Succeeds(bool includeTransitive, bool outdated)
-        {
-            // Arrange
-            using (var pathContext = _fixture.CreateSimpleTestPathContext())
-            {
-                var projectA = XPlatTestUtils.CreateProject("ProjectA", pathContext, "net46");
-                var projectB = XPlatTestUtils.CreateProject("ProjectB", pathContext, "net46");
-
-                _fixture.RunDotnetExpectSuccess(Directory.GetParent(projectA.ProjectPath).FullName,
-                    $"add {projectA.ProjectPath} reference {projectB.ProjectPath}");
-
-                _fixture.RunDotnetExpectSuccess(Directory.GetParent(projectA.ProjectPath).FullName,
-                    $"restore {projectA.ProjectName}.csproj");
-
-                var argsBuilder = new StringBuilder();
-                if (includeTransitive)
-                {
-                    argsBuilder.Append(" --include-transitive");
-                }
-                if (outdated)
-                {
-                    argsBuilder.Append(" --outdated");
-                }
-
-                // Act
-                CommandRunnerResult listResult = _fixture.RunDotnetExpectSuccess(Directory.GetParent(projectA.ProjectPath).FullName,
-                    $"list {projectA.ProjectPath} package {argsBuilder}");
-
-                // Assert
-                if (outdated)
-                {
-                    Assert.Contains("The given project `ProjectA` has no updates given the current sources.", listResult.AllOutput);
-                }
-                else if (includeTransitive)
-                {
-                    Assert.Contains("ProjectB", listResult.AllOutput);
-                }
-                else
-                {
-                    Assert.Contains("No packages were found for this framework.", listResult.AllOutput);
-                }
             }
         }
 

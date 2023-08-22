@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Dependencies>
   <ProductDependencies>
-    <Dependency Name="Microsoft.CodeAnalysis" Version="4.7.0-3.23373.1">
+    <Dependency Name="Microsoft.CodeAnalysis" Version="4.8.0-1.23378.8">
       <Uri>https://github.com/dotnet/roslyn</Uri>
-      <Sha>7829f6b85177e96de89bc67f32b61d74ac590f5a</Sha>
+      <Sha>f5b6c715a742c56b7cc672e47385508fb4df98cc</Sha>
       <SourceBuild RepoName="roslyn" ManagedOnly="true" />
     </Dependency>
     <Dependency Name="Microsoft.SourceBuild.Intermediate.source-build-externals" Version="8.0.0-alpha.1.23221.1">
@@ -25,6 +25,15 @@
       <Uri>https://github.com/dotnet/symreader</Uri>
       <Sha>27e584661980ee6d82c419a2a471ae505b7d122e</Sha>
     </Dependency>
+    <Dependency Name="Microsoft.Extensions.Logging" Version="8.0.0-rc.1.23408.3">
+      <Uri>https://github.com/dotnet/runtime</Uri>
+      <Sha>749b2d2f70d8d60834fd8628ed70c694a0a45403</Sha>
+      <SourceBuild RepoName="runtime" />
+    </Dependency>
+    <Dependency Name="Microsoft.Extensions.FileSystemGlobbing" Version="8.0.0-rc.1.23408.3">
+      <Uri>https://github.com/dotnet/runtime</Uri>
+      <Sha>749b2d2f70d8d60834fd8628ed70c694a0a45403</Sha>
+    </Dependency>
     <Dependency Name="Microsoft.SourceBuild.Intermediate.command-line-api" Version="0.1.430701">
       <Uri>https://github.com/dotnet/command-line-api</Uri>
       <Sha>02fe27cd6a9b001c8feb7938e6ef4b3799745759</Sha>
@@ -40,19 +49,14 @@
     </Dependency>
   </ProductDependencies>
   <ToolsetDependencies>
-    <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="8.0.0-beta.23361.1">
+    <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="8.0.0-beta.23417.3">
       <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>2d2482f9b6ccaaac02ef39adc06b3e30b29a5c13</Sha>
+      <Sha>7837a0b504ed9a598daebd50f20520ccda5fe2b1</Sha>
       <SourceBuild RepoName="arcade" ManagedOnly="true" />
     </Dependency>
-    <Dependency Name="Microsoft.SourceLink.GitHub" Version="8.0.0-beta.23360.2" CoherentParentDependency="Microsoft.DotNet.Arcade.Sdk">
-      <Uri>https://github.com/dotnet/sourcelink</Uri>
-      <Sha>a1eed1e0522f47f4fbf60ed5f8caef3679208d66</Sha>
-      <SourceBuild RepoName="sourcelink" ManagedOnly="true" />
-    </Dependency>
-    <Dependency Name="Microsoft.DotNet.XliffTasks" Version="1.0.0-beta.23326.1" CoherentParentDependency="Microsoft.DotNet.Arcade.Sdk">
+    <Dependency Name="Microsoft.DotNet.XliffTasks" Version="1.0.0-beta.23416.1" CoherentParentDependency="Microsoft.DotNet.Arcade.Sdk">
       <Uri>https://github.com/dotnet/xliff-tasks</Uri>
-      <Sha>10a822a79bde97ca45faa76dc4ec33b85533728a</Sha>
+      <Sha>1d688e4b21c1782d802beb1e9478535f647a28ec</Sha>
       <SourceBuild RepoName="xliff-tasks" ManagedOnly="true" />
     </Dependency>
   </ToolsetDependencies>

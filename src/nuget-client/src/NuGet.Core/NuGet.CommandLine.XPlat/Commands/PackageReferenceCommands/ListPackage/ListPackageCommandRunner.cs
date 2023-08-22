@@ -115,7 +115,7 @@ namespace NuGet.CommandLine.XPlat
                     List<FrameworkPackages> frameworks;
                     try
                     {
-                        frameworks = msBuild.GetResolvedVersions(project.FullPath, listPackageArgs.Frameworks, assetsFile, listPackageArgs.IncludeTransitive, includeProjects: listPackageArgs.ReportType == ReportType.Default);
+                        frameworks = msBuild.GetResolvedVersions(project.FullPath, listPackageArgs.Frameworks, assetsFile, listPackageArgs.IncludeTransitive);
                     }
                     catch (InvalidOperationException ex)
                     {

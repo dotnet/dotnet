@@ -4,7 +4,6 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
 using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 
@@ -15,7 +14,7 @@ internal class DefaultDocumentVersionCache : DocumentVersionCache
     internal const int MaxDocumentTrackingCount = 20;
 
     // Internal for testing
-    internal readonly Dictionary<DocumentKey, List<DocumentEntry>> DocumentLookup_NeedsLock;
+    internal readonly Dictionary<string, List<DocumentEntry>> DocumentLookup_NeedsLock;
     private readonly ReadWriterLocker _lock = new();
     private ProjectSnapshotManagerBase? _projectSnapshotManager;
 
@@ -24,7 +23,7 @@ internal class DefaultDocumentVersionCache : DocumentVersionCache
 
     public DefaultDocumentVersionCache()
     {
-        DocumentLookup_NeedsLock = new Dictionary<DocumentKey, List<DocumentEntry>>();
+        DocumentLookup_NeedsLock = new Dictionary<string, List<DocumentEntry>>(FilePathComparer.Instance);
     }
 
     public override void TrackDocumentVersion(IDocumentSnapshot documentSnapshot, int version)
@@ -43,7 +42,7 @@ internal class DefaultDocumentVersionCache : DocumentVersionCache
         // Need to ensure the write lock covers all uses of documentEntries, not just DocumentLookup
         using (upgradeableReadLock.EnterWriteLock())
         {
-            var key = new DocumentKey(documentSnapshot.Project.Key, documentSnapshot.FilePath.AssumeNotNull());
+            var key = documentSnapshot.FilePath.AssumeNotNull();
             if (!DocumentLookup_NeedsLock.TryGetValue(key, out var documentEntries))
             {
                 documentEntries = new List<DocumentEntry>();
@@ -73,7 +72,7 @@ internal class DefaultDocumentVersionCache : DocumentVersionCache
 
         using var _ = _lock.EnterReadLock();
 
-        var key = new DocumentKey(documentSnapshot.Project.Key, documentSnapshot.FilePath.AssumeNotNull());
+        var key = documentSnapshot.FilePath.AssumeNotNull();
         if (!DocumentLookup_NeedsLock.TryGetValue(key, out var documentEntries))
         {
             version = null;
@@ -127,20 +126,13 @@ internal class DefaultDocumentVersionCache : DocumentVersionCache
         {
             case ProjectChangeKind.DocumentChanged:
                 var documentFilePath = args.DocumentFilePath!;
-
-                if (!ProjectSnapshotManager.IsDocumentOpen(documentFilePath))
+                if (DocumentLookup_NeedsLock.ContainsKey(documentFilePath) &&
+                    !ProjectSnapshotManager.IsDocumentOpen(documentFilePath))
                 {
                     using (upgradeableLock.EnterWriteLock())
                     {
-                        // Document closed, evict all entries.
-                        var keys = DocumentLookup_NeedsLock.Keys.ToArray();
-                        foreach (var key in keys)
-                        {
-                            if (key.DocumentFilePath == documentFilePath)
-                            {
-                                DocumentLookup_NeedsLock.Remove(key);
-                            }
-                        }
+                        // Document closed, evict entry.
+                        DocumentLookup_NeedsLock.Remove(documentFilePath);
                     }
                 }
 
@@ -170,8 +162,7 @@ internal class DefaultDocumentVersionCache : DocumentVersionCache
     {
         foreach (var documentPath in projectSnapshot.DocumentFilePaths)
         {
-            var key = new DocumentKey(projectSnapshot.Key, documentPath);
-            if (DocumentLookup_NeedsLock.ContainsKey(key) &&
+            if (DocumentLookup_NeedsLock.ContainsKey(documentPath) &&
                 projectSnapshot.GetDocument(documentPath) is { } document)
             {
                 MarkAsLatestVersion(document, upgradeableReadLock);
@@ -181,8 +172,7 @@ internal class DefaultDocumentVersionCache : DocumentVersionCache
 
     private void MarkAsLatestVersion(IDocumentSnapshot document, ReadWriterLocker.UpgradeableReadLock upgradeableReadLock)
     {
-        var key = new DocumentKey(document.Project.Key, document.FilePath.AssumeNotNull());
-        if (!DocumentLookup_NeedsLock.TryGetValue(key, out var documentEntries))
+        if (!DocumentLookup_NeedsLock.TryGetValue(document.FilePath.AssumeNotNull(), out var documentEntries))
         {
             return;
         }

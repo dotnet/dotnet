@@ -88,6 +88,24 @@ namespace NuGet.SolutionRestoreManager {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Manage NuGet Packages.
+        /// </summary>
+        internal static string InfoBar_HyperlinkMessage {
+            get {
+                return ResourceManager.GetString("InfoBar_HyperlinkMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to This solution contains packages with vulnerabilities..
+        /// </summary>
+        internal static string InfoBar_TextMessage {
+            get {
+                return ResourceManager.GetString("InfoBar_TextMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to All packages are already installed and there is nothing to restore..
         /// </summary>
         internal static string NothingToRestore {
