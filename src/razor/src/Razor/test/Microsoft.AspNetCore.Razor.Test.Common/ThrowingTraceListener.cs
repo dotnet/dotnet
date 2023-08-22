@@ -49,7 +49,7 @@ public sealed class ThrowingTraceListener : TraceListener
 
     public override void Fail(string? message, string? detailMessage)
     {
-        throw new InvalidOperationException(
+        Environment.FailFast(
             (string.IsNullOrEmpty(message) ? "Assertion failed" : message) +
             (string.IsNullOrEmpty(detailMessage) ? "" : Environment.NewLine + detailMessage));
     }
