@@ -303,9 +303,12 @@ namespace NuGet.Commands
                     });
                 }
 
-                AuditUtility.EnabledValue enableAudit = AuditUtility.ParseEnableValue(_request.Project.RestoreMetadata?.RestoreAuditProperties?.EnableAudit);
+                AuditUtility.EnabledValue enableAudit = AuditUtility.ParseEnableValue(
+                    _request.Project.RestoreMetadata?.RestoreAuditProperties?.EnableAudit,
+                    _request.Project.FilePath,
+                    _logger);
                 telemetry.TelemetryEvent[AuditEnabled] = AuditUtility.GetString(enableAudit);
-                if (enableAudit == AuditUtility.EnabledValue.ImplicitOptIn || enableAudit == AuditUtility.EnabledValue.ExplicitOptIn)
+                if (enableAudit != AuditUtility.EnabledValue.ExplicitOptOut)
                 {
                     await PerformAuditAsync(enableAudit, graphs, telemetry, token);
                 }

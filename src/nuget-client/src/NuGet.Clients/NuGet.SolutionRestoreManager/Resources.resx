@@ -127,6 +127,12 @@
     <value>'{0}' is not an exact version like '[1.0.0]'. Only exact versions are allowed with PackageDownload.</value>
     <comment>0 - the version string that's not exact</comment>
   </data>
+  <data name="InfoBar_HyperlinkMessage" xml:space="preserve">
+    <value>Manage NuGet Packages</value>
+  </data>
+  <data name="InfoBar_TextMessage" xml:space="preserve">
+    <value>This solution contains packages with vulnerabilities.</value>
+  </data>
   <data name="NothingToRestore" xml:space="preserve">
     <value>All packages are already installed and there is nothing to restore.</value>
   </data>

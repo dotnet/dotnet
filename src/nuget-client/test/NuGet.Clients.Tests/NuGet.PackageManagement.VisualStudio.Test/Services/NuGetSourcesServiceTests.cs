@@ -130,5 +130,42 @@ namespace NuGet.PackageManagement.VisualStudio.Test
             savedSources!.Count.Should().Be(1);
             savedSources[0].ProtocolVersion.Should().Be(3);
         }
+
+        [Fact]
+        public async Task Save_SourceWithDifferentAllowInsecureConnections_SavesNewValue()
+        {
+            PackageSource packageSource = new(name: "Source-Name", source: "Source-Path")
+            {
+                ProtocolVersion = 3,
+                AllowInsecureConnections = false
+            };
+
+            Mock<IPackageSourceProvider> packageSourceProvider = new();
+            packageSourceProvider.Setup(psp => psp.LoadPackageSources())
+                .Returns(new[] { packageSource });
+
+            List<PackageSource>? savedSources = null;
+            packageSourceProvider.Setup(psp => psp.SavePackageSources(It.IsAny<IEnumerable<PackageSource>>()))
+                .Callback((IEnumerable<PackageSource> newSources) => { savedSources = newSources.ToList(); });
+
+            var target = new NuGetSourcesService(options: default,
+                Mock.Of<IServiceBroker>(),
+                new AuthorizationServiceClient(Mock.Of<IAuthorizationService>()),
+                packageSourceProvider.Object);
+
+            List<PackageSourceContextInfo> updatedSources = new(1)
+            {
+                new PackageSourceContextInfo(packageSource.Source, packageSource.Name, packageSource.IsEnabled, protocolVersion: 3, allowInsecureConnections: true)
+            };
+
+            // Act
+            await target.SavePackageSourceContextInfosAsync(updatedSources, CancellationToken.None);
+
+            // Assert
+            savedSources.Should().NotBeNull();
+            savedSources!.Count.Should().Be(1);
+            savedSources[0].ProtocolVersion.Should().Be(3);
+            savedSources[0].AllowInsecureConnections.Should().Be(true);
+        }
     }
 }

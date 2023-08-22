@@ -1069,7 +1069,7 @@ Non-HTTPS access will be removed in a future version. Consider migrating to 'HTT
 {3} - URL for more info on the known vulnerability</comment>
   </data>
   <data name="Error_InvalidNuGetAuditLevelValue" xml:space="preserve">
-    <value>Invalid NuGetAuditLevel value '{0}'. Expected values: {1}</value>
+    <value>Invalid NuGetAuditLevel value '{0}'. Valid values: {1}</value>
     <comment>Don't translate 'NuGetAuditLevel'
 {0} - is the value from the customer's project file
 {1} is the list of valid values "low, moderate, high, critical" (these should not be translated either)</comment>
@@ -1083,7 +1083,7 @@ Non-HTTPS access will be removed in a future version. Consider migrating to 'HTT
     <comment>{0} is the value supplied </comment>
   </data>
   <data name="Error_InvalidNuGetAuditModeValue" xml:space="preserve">
-    <value>Invalid NuGetAuditMode value '{0}'. Expected values: {1}</value>
+    <value>Invalid NuGetAuditMode value '{0}'. Valid values: {1}</value>
     <comment>Don't translate 'NuGetAuditMode'
 {0} - is the value from the customer's project file
 {1} is the list of valid values "direct, all"</comment>
@@ -1091,5 +1091,11 @@ Non-HTTPS access will be removed in a future version. Consider migrating to 'HTT
   <data name="Warning_NoVulnerabilityData" xml:space="preserve">
     <value>NuGetAudit is enabled, but no package sources contain known vulnerability data.</value>
     <comment>Do not translate NuGetAudit</comment>
+  </data>
+  <data name="Error_InvalidNuGetAuditValue" xml:space="preserve">
+    <value>Invalid NuGetAudit value '{0}'. Valid values: {1}</value>
+    <comment>Don't translate 'NuGetAudit'
+{0} - is the value from the customer's project file
+{1} is the list of valid values "true, false"</comment>
   </data>
 </root>

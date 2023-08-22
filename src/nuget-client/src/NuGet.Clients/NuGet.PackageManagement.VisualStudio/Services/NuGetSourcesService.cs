@@ -93,6 +93,7 @@ namespace NuGet.PackageManagement.VisualStudio
                     if (packageSource.Name.Equals(packageSourceContextInfo.Name, StringComparison.InvariantCulture)
                         && packageSource.Source.Equals(packageSourceContextInfo.Source, StringComparison.InvariantCulture)
                         && packageSource.ProtocolVersion == packageSourceContextInfo.ProtocolVersion
+                        && packageSource.AllowInsecureConnections == packageSourceContextInfo.AllowInsecureConnections
                         && packageSource.IsEnabled == packageSourceContextInfo.IsEnabled)
                     {
                         newPackageSources.Add(packageSource);
@@ -111,6 +112,7 @@ namespace NuGet.PackageManagement.VisualStudio
                             ClientCertificates = packageSource.ClientCertificates,
                             Description = packageSource.Description,
                             ProtocolVersion = packageSourceContextInfo.ProtocolVersion,
+                            AllowInsecureConnections = packageSourceContextInfo.AllowInsecureConnections,
                             MaxHttpRequestsPerSource = packageSource.MaxHttpRequestsPerSource,
                         };
 

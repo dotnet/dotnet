@@ -21,12 +21,40 @@ namespace NuGet.Configuration
             set => AddOrUpdateAttribute(ConfigurationConstants.ProtocolVersionAttribute, value);
         }
 
-        public SourceItem(string key, string value, string protocolVersion = "")
+        public string AllowInsecureConnections
+        {
+            get
+            {
+                if (Attributes.TryGetValue(ConfigurationConstants.AllowInsecureConnections, out var attribute))
+                {
+                    return Settings.ApplyEnvironmentTransform(attribute);
+                }
+
+                return null;
+            }
+            set => AddOrUpdateAttribute(ConfigurationConstants.AllowInsecureConnections, value);
+        }
+
+        public SourceItem(string key, string value)
+            : this(key, value, protocolVersion: "", allowInsecureConnections: "")
+        {
+        }
+
+        public SourceItem(string key, string value, string protocolVersion)
+            : this(key, value, protocolVersion, allowInsecureConnections: "")
+        {
+        }
+
+        public SourceItem(string key, string value, string protocolVersion, string allowInsecureConnections)
             : base(key, value)
         {
             if (!string.IsNullOrEmpty(protocolVersion))
             {
                 ProtocolVersion = protocolVersion;
+            }
+            if (!string.IsNullOrEmpty(allowInsecureConnections))
+            {
+                AllowInsecureConnections = allowInsecureConnections;
             }
         }
 
@@ -37,7 +65,7 @@ namespace NuGet.Configuration
 
         public override SettingBase Clone()
         {
-            var newSetting = new SourceItem(Key, Value, ProtocolVersion);
+            var newSetting = new SourceItem(Key, Value, ProtocolVersion, AllowInsecureConnections);
 
             if (Origin != null)
             {

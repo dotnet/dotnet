@@ -652,11 +652,10 @@ namespace NuGet.CommandLine.XPlat
         /// <param name="userInputFrameworks">A list of frameworks</param>
         /// <param name="assetsFile">Assets file for all targets and libraries</param>
         /// <param name="transitive">Include transitive packages/projects in the result</param>
-        /// <param name="includeProjects">Include project references in top-level and transitive package lists</param>
         /// <returns>FrameworkPackages collection with top-level and transitive package/project
         /// references for each framework, or null on error</returns>
         internal List<FrameworkPackages> GetResolvedVersions(
-            string projectPath, IEnumerable<string> userInputFrameworks, LockFile assetsFile, bool transitive, bool includeProjects)
+            string projectPath, IEnumerable<string> userInputFrameworks, LockFile assetsFile, bool transitive)
         {
             if (userInputFrameworks == null)
             {
@@ -773,7 +772,7 @@ namespace NuGet.CommandLine.XPlat
 
                         installedPackage.AutoReference = topLevelPackage.AutoReferenced;
 
-                        if (library.Type != "project" || includeProjects)
+                        if (library.Type != "project")
                         {
                             topLevelPackages.Add(installedPackage);
                         }
@@ -789,7 +788,7 @@ namespace NuGet.CommandLine.XPlat
                                 .Build()
                         };
 
-                        if (library.Type != "project" || includeProjects)
+                        if (library.Type != "project")
                         {
                             transitivePackages.Add(installedPackage);
                         }
