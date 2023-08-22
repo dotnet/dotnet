@@ -60,6 +60,9 @@ public class Program
             logger,
             NoOpTelemetryReporter.Instance,
             featureOptions: languageServerFeatureOptions);
+
+        logger.LogInformation("Razor Language Server started successfully.");
+
         await server.WaitForExitAsync().ConfigureAwait(true);
     }
 }
