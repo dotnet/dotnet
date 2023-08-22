@@ -23,14 +23,14 @@ variables:
     value: ${{ replace(parameters.vmrBranch, ' ', '') }}
 - ${{ else }}:
   - name: VmrBranch
-    value: ${{ replace(replace(variables['System.PullRequest.TargetBranch'], 'refs/heads/', ''), 'refs/pull/', '') }}
+    value: release/8.0.1xx-rc1
 
 resources:
   repositories:
   - repository: vmr
     type: git
     name: dotnet-dotnet
-    ref: ${{ variables.VmrBranch }}
+    ref: $(VmrBranch)
 
 stages:
 # You can temporarily disable the VMR Build stage by changing the default of disableVmrBuild
