@@ -60,13 +60,15 @@ override sealed Microsoft.AspNetCore.Razor.Language.MetadataCollection.GetHashCo
 static Microsoft.AspNetCore.Razor.Language.CommonMetadata.PropertyName(string! value) -> System.Collections.Generic.KeyValuePair<string!, string?>
 static Microsoft.AspNetCore.Razor.Language.CommonMetadata.TypeName(string! value) -> System.Collections.Generic.KeyValuePair<string!, string?>
 static Microsoft.AspNetCore.Razor.Language.MetadataCollection.Create(params System.Collections.Generic.KeyValuePair<string!, string?>[]! pairs) -> Microsoft.AspNetCore.Razor.Language.MetadataCollection!
+static Microsoft.AspNetCore.Razor.Language.MetadataCollection.Create(System.Collections.Generic.Dictionary<string!, string?>! map) -> Microsoft.AspNetCore.Razor.Language.MetadataCollection!
 static Microsoft.AspNetCore.Razor.Language.MetadataCollection.Create(System.Collections.Generic.IReadOnlyDictionary<string!, string?>! map) -> Microsoft.AspNetCore.Razor.Language.MetadataCollection!
-static Microsoft.AspNetCore.Razor.Language.MetadataCollection.Create(System.Collections.Generic.IReadOnlyList<System.Collections.Generic.KeyValuePair<string!, string?>>! pairs) -> Microsoft.AspNetCore.Razor.Language.MetadataCollection!
 static Microsoft.AspNetCore.Razor.Language.MetadataCollection.Create(System.Collections.Generic.KeyValuePair<string!, string?> pair) -> Microsoft.AspNetCore.Razor.Language.MetadataCollection!
 static Microsoft.AspNetCore.Razor.Language.MetadataCollection.Create(System.Collections.Generic.KeyValuePair<string!, string?> pair1, System.Collections.Generic.KeyValuePair<string!, string?> pair2) -> Microsoft.AspNetCore.Razor.Language.MetadataCollection!
 static Microsoft.AspNetCore.Razor.Language.MetadataCollection.Create(System.Collections.Generic.KeyValuePair<string!, string?> pair1, System.Collections.Generic.KeyValuePair<string!, string?> pair2, System.Collections.Generic.KeyValuePair<string!, string?> pair3) -> Microsoft.AspNetCore.Razor.Language.MetadataCollection!
+static Microsoft.AspNetCore.Razor.Language.MetadataCollection.Create<T>(T pairs) -> Microsoft.AspNetCore.Razor.Language.MetadataCollection!
+static Microsoft.AspNetCore.Razor.Language.MetadataCollection.CreateOrEmpty(System.Collections.Generic.Dictionary<string!, string?>? map) -> Microsoft.AspNetCore.Razor.Language.MetadataCollection!
 static Microsoft.AspNetCore.Razor.Language.MetadataCollection.CreateOrEmpty(System.Collections.Generic.IReadOnlyDictionary<string!, string?>? map) -> Microsoft.AspNetCore.Razor.Language.MetadataCollection!
-static Microsoft.AspNetCore.Razor.Language.MetadataCollection.CreateOrEmpty(System.Collections.Generic.IReadOnlyList<System.Collections.Generic.KeyValuePair<string!, string?>>? pairs) -> Microsoft.AspNetCore.Razor.Language.MetadataCollection!
+static Microsoft.AspNetCore.Razor.Language.MetadataCollection.CreateOrEmpty<T>(T? pairs) -> Microsoft.AspNetCore.Razor.Language.MetadataCollection!
 static Microsoft.AspNetCore.Razor.Language.RazorCodeDocumentExtensions.TryComputeClassName(this Microsoft.AspNetCore.Razor.Language.RazorCodeDocument! codeDocument, out string? className) -> bool
 static readonly Microsoft.AspNetCore.Razor.Language.MetadataCollection.Empty -> Microsoft.AspNetCore.Razor.Language.MetadataCollection!
 virtual Microsoft.AspNetCore.Razor.Language.BoundAttributeDescriptorBuilder.SetMetadata(Microsoft.AspNetCore.Razor.Language.MetadataCollection! metadata) -> void

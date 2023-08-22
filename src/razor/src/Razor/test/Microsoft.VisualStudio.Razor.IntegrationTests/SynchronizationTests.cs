@@ -4,10 +4,11 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace Microsoft.VisualStudio.Razor.IntegrationTests;
 
-public class SynchronizationTests : AbstractRazorEditorTest
+public class SynchronizationTests(ITestOutputHelper testOutputHelper) : AbstractRazorEditorTest(testOutputHelper)
 {
     [IdeFact(Skip = "https://github.com/dotnet/razor/issues/8114")]
     public async Task CSharpComponentBacking_UpdatesComponents()
