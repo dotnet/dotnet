@@ -156,7 +156,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/arcade`  
 *[dotnet/arcade@46ff142](https://github.com/dotnet/arcade/commit/46ff142f43e887d5f9a4d87ef39d72166f61db8d)*
 - `src/aspnetcore`  
-*[_git/dotnet-aspnetcore@3ddcd4d](https://dev.azure.com/dnceng/internal/_git/dotnet-aspnetcore/commit/3ddcd4d95491d68d398291a93605a1daf8b80efc)*
+*[_git/dotnet-aspnetcore@8ad0574](https://dev.azure.com/dnceng/internal/_git/dotnet-aspnetcore/commit/8ad057426fa6a27cd648b05684afddab9d97d3d9)*
     - `src/aspnetcore/src/submodules/googletest`  
     *[google/googletest@7e33b6a](https://github.com/google/googletest/commit/7e33b6a1c497ced1e98fc60175aeb4678419281c)*
     - `src/aspnetcore/src/submodules/MessagePack-CSharp`  
@@ -176,7 +176,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/fsharp`  
 *[dotnet/fsharp@711de17](https://github.com/dotnet/fsharp/commit/711de175bf0c7ddfda4005c3334606b90bb11146)*
 - `src/installer`  
-*[dotnet/installer@bddb83e](https://github.com/dotnet/installer/commit/bddb83e16b9f0a34988fd7dbf82cdb5d5f6fb158)*
+*[dotnet/installer@3bfdd9b](https://github.com/dotnet/installer/commit/3bfdd9b80bdb27f3e4a7dec5fffe16a49db54a3a)*
 - `src/msbuild`  
 *[dotnet/msbuild@0125fc9](https://github.com/dotnet/msbuild/commit/0125fc9fb838951c8750135c71336aa1f5e868a9)*
 - `src/nuget-client`  
@@ -192,7 +192,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/runtime`  
 *[_git/dotnet-runtime@9295993](https://dev.azure.com/dnceng/internal/_git/dotnet-runtime/commit/92959931a32a37a19d8e1b1684edc6db0857d7de)*
 - `src/sdk`  
-*[_git/dotnet-sdk@ad2dbea](https://dev.azure.com/dnceng/internal/_git/dotnet-sdk/commit/ad2dbeae65a1a7b33443bd05386fccf5c7928336)*
+*[_git/dotnet-sdk@a8ab70f](https://dev.azure.com/dnceng/internal/_git/dotnet-sdk/commit/a8ab70ff0f36fa9702f7d25ac7392d12017ce9e1)*
 - `src/source-build-externals`  
 *[dotnet/source-build-externals@72f5ac0](https://github.com/dotnet/source-build-externals/commit/72f5ac04ce80508c7a7d7aaba4ecf7df51c5eca2)*
     - `src/source-build-externals/src/application-insights`  
@@ -228,7 +228,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/test-templates`  
 *[dotnet/test-templates@1e5f360](https://github.com/dotnet/test-templates/commit/1e5f3603af2277910aad946736ee23283e7f3e16)*
 - `src/vstest`  
-*[microsoft/vstest@5e505c8](https://github.com/microsoft/vstest/commit/5e505c8698fc4707a15fadb1190e9cc080d7aac0)*
+*[microsoft/vstest@5672d0f](https://github.com/microsoft/vstest/commit/5672d0f0d9433a9e2d97b9b7575fb2cc48579519)*
 - `src/xdt`  
 *[dotnet/xdt@9a1c3e1](https://github.com/dotnet/xdt/commit/9a1c3e1b7f0c8763d4c96e593961a61a72679a7b)*
 - `src/xliff-tasks`  
