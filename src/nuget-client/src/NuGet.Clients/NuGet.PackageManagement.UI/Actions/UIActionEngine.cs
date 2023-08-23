@@ -1074,7 +1074,7 @@ namespace NuGet.PackageManagement.UI
             CancellationToken token)
         {
             var projects = (IReadOnlyCollection<IProjectContextInfo>)uiService.Projects;
-            var searchService = uiService.UIContext.ReconnectingSearchService;
+            var searchService = uiService.UIContext.NuGetSearchService;
             IReadOnlyList<SourceRepository> localSources = await searchService.GetAllPackageFoldersAsync(projects, token);
 
             IPackageSearchMetadata[] completed = await GetPackageMetadataThrottledAsync(localSources, sourceCacheContext, packages, token);

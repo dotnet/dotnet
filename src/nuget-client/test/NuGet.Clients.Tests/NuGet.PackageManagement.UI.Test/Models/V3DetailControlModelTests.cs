@@ -55,7 +55,7 @@ namespace NuGet.PackageManagement.UI.Test.Models
             _mockNuGetUIContext = new Mock<INuGetUIContext>();
             _mockNuGetUI.Setup(_ => _.UIContext).Returns(_mockNuGetUIContext.Object);
 
-            var searchService = new Mock<IReconnectingNuGetSearchService>();
+            var searchService = new Mock<INuGetSearchService>();
             _testViewModel = new PackageItemViewModel(searchService.Object)
             {
                 Id = "nuget.psm",
@@ -298,7 +298,7 @@ namespace NuGet.PackageManagement.UI.Test.Models
                 new VersionInfoContextInfo(new NuGetVersion("2.10.0")),
             };
 
-            var searchService = new Mock<IReconnectingNuGetSearchService>();
+            var searchService = new Mock<INuGetSearchService>();
             searchService.Setup(ss => ss.GetPackageVersionsAsync(It.IsAny<PackageIdentity>(), It.IsAny<IReadOnlyCollection<PackageSourceContextInfo>>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<IEnumerable<IProjectContextInfo>>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(testVersions);
 
@@ -348,7 +348,7 @@ namespace NuGet.PackageManagement.UI.Test.Models
                 new VersionInfoContextInfo(new NuGetVersion("0.0.1")),
             };
 
-            var searchService = new Mock<IReconnectingNuGetSearchService>();
+            var searchService = new Mock<INuGetSearchService>();
             searchService.Setup(ss => ss.GetPackageVersionsAsync(It.IsAny<PackageIdentity>(), It.IsAny<IReadOnlyCollection<PackageSourceContextInfo>>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<IEnumerable<IProjectContextInfo>>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(testVersions);
 
@@ -397,7 +397,7 @@ namespace NuGet.PackageManagement.UI.Test.Models
                 new VersionInfoContextInfo(new NuGetVersion("1.0.0")),
             };
 
-            var searchService = new Mock<IReconnectingNuGetSearchService>();
+            var searchService = new Mock<INuGetSearchService>();
             searchService.Setup(ss => ss.GetPackageVersionsAsync(It.IsAny<PackageIdentity>(), It.IsAny<IReadOnlyCollection<PackageSourceContextInfo>>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<IEnumerable<IProjectContextInfo>>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(testVersions);
 
@@ -434,7 +434,7 @@ namespace NuGet.PackageManagement.UI.Test.Models
             var mockPropertyChangedEventHandler = new Mock<IPropertyChangedEventHandler>();
             var wasVersionsListCleared = false;
 
-            var searchService = new Mock<IReconnectingNuGetSearchService>();
+            var searchService = new Mock<INuGetSearchService>();
             searchService.Setup(s => s.GetPackageVersionsAsync(It.IsAny<PackageIdentity>(), It.IsAny<IReadOnlyCollection<PackageSourceContextInfo>>(),
                 It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<IEnumerable<IProjectContextInfo>>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(testVersions);
@@ -659,7 +659,7 @@ namespace NuGet.PackageManagement.UI.Test.Models
             // Arrange
             List<VersionInfoContextInfo> testVersions = includePrerelease ? ExpectedVersionsList_IncludePrerelease() : ExpectedVersionsList();
 
-            Mock<IReconnectingNuGetSearchService> searchService = new Mock<IReconnectingNuGetSearchService>();
+            Mock<INuGetSearchService> searchService = new Mock<INuGetSearchService>();
             searchService.Setup(ss => ss.GetPackageVersionsAsync(It.IsAny<PackageIdentity>(), It.IsAny<IReadOnlyCollection<PackageSourceContextInfo>>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<IEnumerable<IProjectContextInfo>>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(testVersions);
 
@@ -768,7 +768,7 @@ namespace NuGet.PackageManagement.UI.Test.Models
             // Arrange
             List<VersionInfoContextInfo> testVersions = includePrerelease ? ExpectedVersionsList_IncludePrerelease() : ExpectedVersionsList();
 
-            Mock<IReconnectingNuGetSearchService> searchService = new Mock<IReconnectingNuGetSearchService>();
+            Mock<INuGetSearchService> searchService = new Mock<INuGetSearchService>();
             searchService.Setup(ss => ss.GetPackageVersionsAsync(It.IsAny<PackageIdentity>(), It.IsAny<IReadOnlyCollection<PackageSourceContextInfo>>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<IEnumerable<IProjectContextInfo>>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(testVersions);
 
@@ -890,7 +890,7 @@ namespace NuGet.PackageManagement.UI.Test.Models
             // Arrange
             List<VersionInfoContextInfo> testVersions = includePrerelease ? ExpectedVersionsList_IncludePrerelease() : ExpectedVersionsList();
 
-            Mock<IReconnectingNuGetSearchService> searchService = new Mock<IReconnectingNuGetSearchService>();
+            Mock<INuGetSearchService> searchService = new Mock<INuGetSearchService>();
             searchService.Setup(ss => ss.GetPackageVersionsAsync(It.IsAny<PackageIdentity>(), It.IsAny<IReadOnlyCollection<PackageSourceContextInfo>>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<IEnumerable<IProjectContextInfo>>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(testVersions);
 
@@ -1099,7 +1099,7 @@ namespace NuGet.PackageManagement.UI.Test.Models
             // Arrange
             List<VersionInfoContextInfo> testVersions = includePrerelease ? ExpectedVersionsList_IncludePrerelease() : ExpectedVersionsList();
 
-            Mock<IReconnectingNuGetSearchService> searchService = new Mock<IReconnectingNuGetSearchService>();
+            Mock<INuGetSearchService> searchService = new Mock<INuGetSearchService>();
             searchService.Setup(ss => ss.GetPackageVersionsAsync(It.IsAny<PackageIdentity>(), It.IsAny<IReadOnlyCollection<PackageSourceContextInfo>>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<IEnumerable<IProjectContextInfo>>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(testVersions);
 
@@ -1202,7 +1202,7 @@ namespace NuGet.PackageManagement.UI.Test.Models
             // Arrange
             List<VersionInfoContextInfo> testVersions = includePrerelease ? ExpectedVersionsList_IncludePrerelease() : ExpectedVersionsList();
 
-            Mock<IReconnectingNuGetSearchService> searchService = new Mock<IReconnectingNuGetSearchService>();
+            Mock<INuGetSearchService> searchService = new Mock<INuGetSearchService>();
             searchService.Setup(ss => ss.GetPackageVersionsAsync(It.IsAny<PackageIdentity>(), It.IsAny<IReadOnlyCollection<PackageSourceContextInfo>>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<IEnumerable<IProjectContextInfo>>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(testVersions);
 
@@ -1305,7 +1305,7 @@ namespace NuGet.PackageManagement.UI.Test.Models
             // Arrange
             List<VersionInfoContextInfo> testVersions = includePrerelease ? ExpectedVersionsList_IncludePrerelease() : ExpectedVersionsList();
 
-            Mock<IReconnectingNuGetSearchService> searchService = new Mock<IReconnectingNuGetSearchService>();
+            Mock<INuGetSearchService> searchService = new Mock<INuGetSearchService>();
             searchService.Setup(ss => ss.GetPackageVersionsAsync(It.IsAny<PackageIdentity>(), It.IsAny<IReadOnlyCollection<PackageSourceContextInfo>>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<IEnumerable<IProjectContextInfo>>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(testVersions);
 
@@ -1456,7 +1456,7 @@ namespace NuGet.PackageManagement.UI.Test.Models
                 new VersionInfoContextInfo(new NuGetVersion("2.10.0")),
             };
 
-            var searchService = new Mock<IReconnectingNuGetSearchService>();
+            var searchService = new Mock<INuGetSearchService>();
             searchService.Setup(ss => ss.GetPackageVersionsAsync(It.IsAny<PackageIdentity>(), It.IsAny<IReadOnlyCollection<PackageSourceContextInfo>>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<IEnumerable<IProjectContextInfo>>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(testVersions);
 
@@ -1509,7 +1509,7 @@ namespace NuGet.PackageManagement.UI.Test.Models
                 new VersionInfoContextInfo(new NuGetVersion("1.0.0")),
             };
 
-            var searchService = new Mock<IReconnectingNuGetSearchService>();
+            var searchService = new Mock<INuGetSearchService>();
             searchService.Setup(ss => ss.GetPackageVersionsAsync(It.IsAny<PackageIdentity>(), It.IsAny<IReadOnlyCollection<PackageSourceContextInfo>>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<IEnumerable<IProjectContextInfo>>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(testVersions);
 
@@ -1545,7 +1545,7 @@ namespace NuGet.PackageManagement.UI.Test.Models
             var mockPropertyChangedEventHandler = new Mock<IPropertyChangedEventHandler>();
             var wasVersionsListCleared = false;
 
-            var searchService = new Mock<IReconnectingNuGetSearchService>();
+            var searchService = new Mock<INuGetSearchService>();
             searchService.Setup(s => s.GetPackageVersionsAsync(It.IsAny<PackageIdentity>(), It.IsAny<IReadOnlyCollection<PackageSourceContextInfo>>(),
                 It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<IEnumerable<IProjectContextInfo>>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(testVersions);

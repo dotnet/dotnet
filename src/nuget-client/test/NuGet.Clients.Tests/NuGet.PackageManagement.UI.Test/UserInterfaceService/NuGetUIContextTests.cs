@@ -18,6 +18,7 @@ using NuGet.Protocol.Core.Types;
 using NuGet.Test.Utility;
 using NuGet.Versioning;
 using NuGet.VisualStudio;
+using NuGet.VisualStudio.Internal.Contracts;
 using Xunit;
 
 namespace NuGet.PackageManagement.UI.Test.UserInterfaceService
@@ -166,7 +167,7 @@ namespace NuGet.PackageManagement.UI.Test.UserInterfaceService
 
             return new NuGetUIContext(
                 Mock.Of<IServiceBroker>(),
-                Mock.Of<IReconnectingNuGetSearchService>(),
+                Mock.Of<INuGetSearchService>(),
                 _solutionManager.Object,
                 new NuGetSolutionManagerServiceWrapper(),
                 packageManager,

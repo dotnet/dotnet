@@ -4,6 +4,9 @@ IF ERRORLEVEL 1 (
   EXIT /B %ERRORLEVEL%
 )
 
+IF EXIST "%~dp0.test\ProcDump\procdump.exe" (
+    SET PROCDUMP_PATH=%~dp0.test\ProcDump
+)
 SET "DOTNET_ROOT=%~dp0cli"
 SET DOTNET_MULTILEVEL_LOOKUP=0
 SET "PATH=%~dp0cli;%PATH%"

@@ -399,6 +399,7 @@ namespace NuGet.Commands.Restore.Utility
 
         internal enum NuGetAuditMode { Unknown, Direct, All }
 
+        // Enum parsing and ToString are a magnitude of times slower than a naive implementation. 
         private NuGetAuditMode ParseAuditMode()
         {
             string? auditMode = _restoreAuditProperties?.AuditMode?.Trim();
@@ -431,6 +432,7 @@ namespace NuGet.Commands.Restore.Utility
             ExplicitOptOut
         }
 
+        // Enum parsing and ToString are a magnitude of times slower than a naive implementation.
         public static EnabledValue ParseEnableValue(string? value, string projectFullPath, ILogger logger)
         {
             if (string.IsNullOrEmpty(value) || string.Equals(value, "default", StringComparison.OrdinalIgnoreCase))
@@ -455,6 +457,7 @@ namespace NuGet.Commands.Restore.Utility
             return EnabledValue.Invalid;
         }
 
+        // Enum parsing and ToString are a magnitude of times slower than a naive implementation.
         internal static string GetString(EnabledValue enableAudit)
         {
             return enableAudit switch
@@ -467,6 +470,7 @@ namespace NuGet.Commands.Restore.Utility
             };
         }
 
+        // Enum parsing and ToString are a magnitude of times slower than a naive implementation.
         internal static string GetString(NuGetAuditMode auditMode)
         {
             return auditMode switch
