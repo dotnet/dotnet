@@ -104,9 +104,6 @@ Function Invoke-BuildStep {
             }
             $completed = $true
         }
-        catch {
-            Error-Log $_
-        }
         finally {
             $sw.Stop()
             Reset-Colors
@@ -120,7 +117,7 @@ Function Invoke-BuildStep {
                 Trace-Log "[STOPPED +$(Format-ElapsedTime $sw.Elapsed)] $BuildStep"
             }
             else {
-                Error-Log "[FAILED +$(Format-ElapsedTime $sw.Elapsed)] $BuildStep"
+                Trace-Log "[FAILED +$(Format-ElapsedTime $sw.Elapsed)] $BuildStep"
             }
         }
     }
@@ -279,6 +276,32 @@ Function Test-BuildEnvironment {
     $Installed = (Test-Path $DotNetExe)
     if (-not $Installed) {
         Error-Log 'Build environment is not configured. Please run configure.ps1 first.' -Fatal
+    }
+}
+
+Function Install-ProcDump {
+    [CmdletBinding()]
+    param()
+    if ($Env:OS -eq "Windows_NT")
+    {
+        Trace-Log "Downloading ProcDump..."
+        
+        $ProcDumpZip = Join-Path $env:TEMP 'ProcDump.zip'
+        $TestDir = Join-Path $NuGetClientRoot '.test'
+        $ProcDumpDir = Join-Path $TestDir 'ProcDump'
+
+        Invoke-WebRequest 'https://download.sysinternals.com/files/Procdump.zip' -OutFile $ProcDumpZip
+        if (Test-Path $ProcDumpDir) {
+            Remove-Item $ProcDumpDir -Recurse -Force | Out-Null
+        }
+        New-Item $ProcDumpDir -ItemType Directory -Force | Out-Null
+        Expand-Archive $ProcDumpZip -DestinationPath $ProcDumpDir
+
+        if ($env:CI -eq "true") {
+            Write-Host "##vso[task.setvariable variable=PROCDUMP_PATH;isOutput=false;issecret=false;]$ProcDumpDir"
+        } else {
+            $env:PROCDUMP_PATH=$ProcDumpDir
+        }
     }
 }
 

@@ -58,25 +58,25 @@
       "packageVersion": "8.0.100",
       "path": "installer",
       "remoteUri": "https://github.com/dotnet/installer",
-      "commitSha": "8eff809c4653889f8adb32af8442b510a7c1e4ae"
+      "commitSha": "56d8c6497cc8bd016282f86cfd0c1b1453bd77a0"
     },
     {
-      "packageVersion": "17.8.0-preview-23421-02",
+      "packageVersion": "17.8.0-preview-23422-03",
       "path": "msbuild",
       "remoteUri": "https://github.com/dotnet/msbuild",
-      "commitSha": "9ae833e5fc229f521fc017d0ece4b9353289d699"
+      "commitSha": "5f4646bee14c03f9637fd36a3001bc1ac23338d8"
     },
     {
-      "packageVersion": "6.8.0-preview.1.69",
+      "packageVersion": "6.8.0-preview.1.72",
       "path": "nuget-client",
       "remoteUri": "https://github.com/nuget/nuget.client",
-      "commitSha": "e873b496daa6839a86f4b820d15945a9aad98e3d"
+      "commitSha": "3e6afa75a6ae274840fbf00c857fb0cb646c5aad"
     },
     {
-      "packageVersion": "7.0.0-preview.23421.4",
+      "packageVersion": "7.0.0-preview.23422.1",
       "path": "razor",
       "remoteUri": "https://github.com/dotnet/razor",
-      "commitSha": "7530beab777ef0eb50fcd193a142e57276c39474"
+      "commitSha": "d4edd766b193b8bf12d6d844fb69be6379218023"
     },
     {
       "packageVersion": "4.8.0-1.23419.1",
@@ -97,10 +97,10 @@
       "commitSha": "90b92bb265a412592c4c152983d7b30c92236dbe"
     },
     {
-      "packageVersion": "8.0.100-rc.2.23422.20",
+      "packageVersion": "8.0.100-rc.2.23422.34",
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "ae268e6d233c27118fc4425a881ee49b7de2a3b2"
+      "commitSha": "1c557b59de839e782ceb27d1b2109d0522d9a6cf"
     },
     {
       "packageVersion": "8.0.0-alpha.1.23421.1",
