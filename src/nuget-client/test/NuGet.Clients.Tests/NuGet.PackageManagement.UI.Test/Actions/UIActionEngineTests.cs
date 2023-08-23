@@ -602,7 +602,7 @@ namespace NuGet.PackageManagement.UI.Test
 
         private static void SetupUIContext(SourceRepository localSourceRepository, Mock<INuGetUIContext> uiContext, Mock<IServiceBroker> serviceBroker)
         {
-            Mock<IReconnectingNuGetSearchService> reconnectingNuGetSearchService = new Mock<IReconnectingNuGetSearchService>();
+            Mock<INuGetSearchService> reconnectingNuGetSearchService = new Mock<INuGetSearchService>();
 
             IReadOnlyList<SourceRepository> list = System.Collections.Immutable.ImmutableArray<SourceRepository>.Empty;
             if (localSourceRepository != null)
@@ -613,7 +613,7 @@ namespace NuGet.PackageManagement.UI.Test
             reconnectingNuGetSearchService.Setup(svc => svc.GetAllPackageFoldersAsync(It.IsAny<IReadOnlyCollection<IProjectContextInfo>>(), It.IsAny<CancellationToken>()))
                 .Returns(new ValueTask<IReadOnlyList<SourceRepository>>(list).AsTask());
 
-            uiContext.Setup(ctx => ctx.ReconnectingSearchService).Returns(reconnectingNuGetSearchService.Object);
+            uiContext.Setup(ctx => ctx.NuGetSearchService).Returns(reconnectingNuGetSearchService.Object);
             uiContext.Setup(ctx => ctx.ServiceBroker).Returns(serviceBroker.Object);
         }
 

@@ -37,7 +37,7 @@ namespace NuGet.PackageManagement.UI.Test
         {
             var solutionManager = Mock.Of<INuGetSolutionManagerService>();
             var uiContext = new Mock<INuGetUIContext>();
-            var searchService = new Mock<IReconnectingNuGetSearchService>(MockBehavior.Strict);
+            var searchService = new Mock<INuGetSearchService>(MockBehavior.Strict);
 
             var packageSearchMetadata = new PackageSearchMetadataBuilder.ClonedPackageSearchMetadata()
             {
@@ -111,7 +111,7 @@ namespace NuGet.PackageManagement.UI.Test
 
             uiContext.Setup(x => x.SolutionManagerService)
                 .Returns(solutionManager);
-            var searchService = new Mock<IReconnectingNuGetSearchService>(MockBehavior.Strict);
+            var searchService = new Mock<INuGetSearchService>(MockBehavior.Strict);
 
             var packageSearchMetadata = new PackageSearchMetadataBuilder.ClonedPackageSearchMetadata()
             {
@@ -206,7 +206,7 @@ namespace NuGet.PackageManagement.UI.Test
 
             var serviceBroker = Mock.Of<IServiceBroker>();
             var packageFileService = new Mock<INuGetPackageFileService>();
-            var searchService = new Mock<IReconnectingNuGetSearchService>(MockBehavior.Strict);
+            var searchService = new Mock<INuGetSearchService>(MockBehavior.Strict);
             searchService.Setup(s => s.SearchAsync(It.IsAny<IReadOnlyCollection<IProjectContextInfo>>(),
                     It.IsAny<IReadOnlyCollection<PackageSourceContextInfo>>(),
                     It.IsAny<IReadOnlyCollection<string>>(),

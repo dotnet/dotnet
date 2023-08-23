@@ -13,7 +13,6 @@ using Microsoft.ServiceHub.Framework;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Threading;
 using NuGet.Common;
-using NuGet.PackageManagement.UI.Utility;
 using NuGet.PackageManagement.VisualStudio;
 using NuGet.Packaging.Core;
 using NuGet.Protocol.Core.Types;
@@ -38,7 +37,7 @@ namespace NuGet.PackageManagement.UI
         private IEnumerable<IPackageReferenceContextInfo> _packageReferences;
         private PackageFeedSearchState _state = new PackageFeedSearchState();
         private SearchFilter _searchFilter;
-        private IReconnectingNuGetSearchService _searchService;
+        private INuGetSearchService _searchService;
         public IItemLoaderState State => _state;
         private IServiceBroker _serviceBroker;
         private INuGetPackageFileService _packageFileService;
@@ -47,7 +46,7 @@ namespace NuGet.PackageManagement.UI
 
         private PackageItemLoader(
             IServiceBroker serviceBroker,
-            IReconnectingNuGetSearchService searchService,
+            INuGetSearchService searchService,
             PackageLoadContext context,
             IReadOnlyCollection<PackageSourceContextInfo> packageSources,
             ContractItemFilter itemFilter,
@@ -71,7 +70,7 @@ namespace NuGet.PackageManagement.UI
 
         public static async ValueTask<PackageItemLoader> CreateAsync(
             IServiceBroker serviceBroker,
-            IReconnectingNuGetSearchService searchService,
+            INuGetSearchService searchService,
             PackageLoadContext context,
             IReadOnlyCollection<PackageSourceContextInfo> packageSources,
             ContractItemFilter itemFilter,
@@ -100,7 +99,7 @@ namespace NuGet.PackageManagement.UI
             PackageLoadContext context,
             IReadOnlyCollection<PackageSourceContextInfo> packageSources,
             ContractItemFilter itemFilter,
-            IReconnectingNuGetSearchService searchService,
+            INuGetSearchService searchService,
             INuGetPackageFileService packageFileService,
             string searchText = null,
             bool includePrerelease = true,
