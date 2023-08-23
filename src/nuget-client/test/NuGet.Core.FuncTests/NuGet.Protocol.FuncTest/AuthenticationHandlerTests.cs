@@ -196,6 +196,11 @@ namespace NuGet.Protocol.FuncTest
                     {
                         // .NET 5 throws here, whereas .NET Framework triggers the callback where we can check IsListening == false
                     }
+                    catch (InvalidOperationException)
+                    {
+                        // Sometimes BeginGetContext throws when httpListener is stopped. Possibly race condition between this callback
+                        // handler and the test stopping the httpListener at the end of the test. Appears to be .NET Framework only.
+                    }
                 }
             }
 
