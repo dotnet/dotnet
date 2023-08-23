@@ -890,7 +890,7 @@ namespace NuGet.PackageManagement.UI
                 bool useRecommender = GetUseRecommendedPackages(loadContext, searchText);
                 var loader = await PackageItemLoader.CreateAsync(
                     Model.Context.ServiceBroker,
-                    Model.Context.ReconnectingSearchService,
+                    Model.Context.NuGetSearchService,
                     loadContext,
                     SelectedSource.PackageSources,
                     (NuGet.VisualStudio.Internal.Contracts.ItemFilter)_topPanel.Filter,
@@ -960,7 +960,7 @@ namespace NuGet.PackageManagement.UI
             var loadContext = new PackageLoadContext(Model.IsSolution, Model.Context);
             var loader = await PackageItemLoader.CreateAsync(
                 Model.Context.ServiceBroker,
-                Model.Context.ReconnectingSearchService,
+                Model.Context.NuGetSearchService,
                 loadContext,
                 SelectedSource.PackageSources,
                 NuGet.VisualStudio.Internal.Contracts.ItemFilter.UpdatesAvailable,
@@ -1031,7 +1031,7 @@ namespace NuGet.PackageManagement.UI
                 var loadContext = new PackageLoadContext(Model.IsSolution, Model.Context);
                 var loader = await PackageItemLoader.CreateAsync(
                     Model.Context.ServiceBroker,
-                    Model.Context.ReconnectingSearchService,
+                    Model.Context.NuGetSearchService,
                     loadContext,
                     SelectedSource.PackageSources,
                     NuGet.VisualStudio.Internal.Contracts.ItemFilter.Consolidate,

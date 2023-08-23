@@ -103,9 +103,9 @@ namespace NuGet.PackageManagement.UI.Utility
             _service?.Dispose();
         }
 
-        public IReconnectingNuGetSearchService Object => _object;
+        public INuGetSearchService Object => _object;
 
-        private class ManagedNuGetSearchService : IReconnectingNuGetSearchService
+        private class ManagedNuGetSearchService : INuGetSearchService
         {
             NuGetSearchServiceReconnector _parent;
 

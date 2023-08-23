@@ -34,7 +34,7 @@ namespace NuGet.PackageManagement.UI
 
         private readonly CancellationTokenSource _cancellationTokenSource;
 
-        public PackageItemViewModel(IReconnectingNuGetSearchService searchService)
+        public PackageItemViewModel(INuGetSearchService searchService)
         {
             _cancellationTokenSource = new CancellationTokenSource();
             _searchService = searchService;
@@ -47,7 +47,7 @@ namespace NuGet.PackageManagement.UI
 
         private static readonly ErrorFloodGate ErrorFloodGate = new ErrorFloodGate();
 
-        private IReconnectingNuGetSearchService _searchService;
+        private INuGetSearchService _searchService;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
