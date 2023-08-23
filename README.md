@@ -176,7 +176,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/fsharp`  
 *[dotnet/fsharp@7130537](https://github.com/dotnet/fsharp/commit/71305374662f6274bf47989de18df6084dbdb458)*
 - `src/installer`  
-*[dotnet/installer@adbe41c](https://github.com/dotnet/installer/commit/adbe41c2ea944a481efba29e1de6c4623692af23)*
+*[dotnet/installer@8eff809](https://github.com/dotnet/installer/commit/8eff809c4653889f8adb32af8442b510a7c1e4ae)*
 - `src/msbuild`  
 *[dotnet/msbuild@9ae833e](https://github.com/dotnet/msbuild/commit/9ae833e5fc229f521fc017d0ece4b9353289d699)*
 - `src/nuget-client`  
@@ -192,7 +192,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/runtime`  
 *[dotnet/runtime@90b92bb](https://github.com/dotnet/runtime/commit/90b92bb265a412592c4c152983d7b30c92236dbe)*
 - `src/sdk`  
-*[dotnet/sdk@0dd25f5](https://github.com/dotnet/sdk/commit/0dd25f5e8b24c6642c43e880855cad726d2883ca)*
+*[dotnet/sdk@ae268e6](https://github.com/dotnet/sdk/commit/ae268e6d233c27118fc4425a881ee49b7de2a3b2)*
 - `src/source-build-externals`  
 *[dotnet/source-build-externals@1bc73ad](https://github.com/dotnet/source-build-externals/commit/1bc73adce07951fc0931ebd2b93492db78c538df)*
     - `src/source-build-externals/src/application-insights`  
@@ -218,7 +218,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
     - `src/source-build-externals/src/xunit/tools/media`  
     *[xunit/media@5738b6e](https://github.com/xunit/media/commit/5738b6e86f08e0389c4392b939c20e3eca2d9822)*
 - `src/source-build-reference-packages`  
-*[dotnet/source-build-reference-packages@45f5554](https://github.com/dotnet/source-build-reference-packages/commit/45f5554ac6813e1e155c47fd80ec146c684f65e8)*
+*[dotnet/source-build-reference-packages@f4903e4](https://github.com/dotnet/source-build-reference-packages/commit/f4903e46459e0348e3793055dd8b68b8b0264034)*
 - `src/sourcelink`  
 *[dotnet/sourcelink@757cc4c](https://github.com/dotnet/sourcelink/commit/757cc4caca83175e3fb8e87c73cd5f34743cb143)*
 - `src/symreader`  
