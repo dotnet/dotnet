@@ -21,7 +21,7 @@ internal abstract class LanguageServerFeatureOptions
 
     public abstract bool SupportsDelegatedCodeActions { get; }
 
-    public abstract bool SupportsDelegatedDiagnostics { get; }
+    public abstract bool DelegateToCSharpOnDiagnosticPublish { get; }
 
     public abstract bool ShowAllCSharpCodeActions { get; }
 

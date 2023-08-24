@@ -29,9 +29,6 @@ namespace Microsoft.VisualStudio.Razor.IntegrationTests;
 [IdeSettings(MinVersion = VisualStudioVersion.VS2022, RootSuffix = "RoslynDev", MaxAttempts = 2)]
 public abstract class AbstractIntegrationTest : AbstractIdeIntegrationTest
 {
-    protected const string ProjectName = "TestProj";
-    protected const string SolutionName = "TestSolution";
-
     protected CancellationToken ControlledHangMitigatingCancellationToken => HangMitigatingCancellationToken;
 
     public override async Task InitializeAsync()
