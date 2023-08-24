@@ -39,7 +39,7 @@ internal class VisualStudioMacLanguageServerFeatureOptions : LanguageServerFeatu
 
     public override bool SupportsDelegatedCodeActions => true;
 
-    public override bool SupportsDelegatedDiagnostics => false;
+    public override bool DelegateToCSharpOnDiagnosticPublish => false;
 
     public override bool ShowAllCSharpCodeActions => false;
 

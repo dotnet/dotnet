@@ -17,7 +17,7 @@ internal class ConfigurableLanguageServerFeatureOptions : LanguageServerFeatureO
     private readonly bool? _singleServerCompletionSupport;
     private readonly bool? _singleServerSupport;
     private readonly bool? _supportsDelegatedCodeActions;
-    private readonly bool? _supportsDelegatedDiagnostics;
+    private readonly bool? _delegateToCSharpOnDiagnosticPublish;
     private readonly bool? _returnCodeActionAndRenamePathsWithPrefixedSlash;
     private readonly bool? _showAllCSharpCodeActions;
     private readonly bool? _updateBuffersForClosedDocuments;
@@ -29,7 +29,7 @@ internal class ConfigurableLanguageServerFeatureOptions : LanguageServerFeatureO
     public override bool SingleServerCompletionSupport => _singleServerCompletionSupport ?? _defaults.SingleServerCompletionSupport;
     public override bool SingleServerSupport => _singleServerSupport ?? _defaults.SingleServerSupport;
     public override bool SupportsDelegatedCodeActions => _supportsDelegatedCodeActions ?? _defaults.SupportsDelegatedCodeActions;
-    public override bool SupportsDelegatedDiagnostics => _supportsDelegatedDiagnostics ?? _defaults.SupportsDelegatedDiagnostics;
+    public override bool DelegateToCSharpOnDiagnosticPublish => _delegateToCSharpOnDiagnosticPublish ?? _defaults.DelegateToCSharpOnDiagnosticPublish;
     public override bool ReturnCodeActionAndRenamePathsWithPrefixedSlash => _returnCodeActionAndRenamePathsWithPrefixedSlash ?? _defaults.ReturnCodeActionAndRenamePathsWithPrefixedSlash;
     public override bool ShowAllCSharpCodeActions => _showAllCSharpCodeActions ?? _defaults.ShowAllCSharpCodeActions;
     public override bool UpdateBuffersForClosedDocuments => _updateBuffersForClosedDocuments ?? _defaults.UpdateBuffersForClosedDocuments;
@@ -50,7 +50,7 @@ internal class ConfigurableLanguageServerFeatureOptions : LanguageServerFeatureO
             TryProcessBoolOption(nameof(SingleServerCompletionSupport), ref _singleServerCompletionSupport, option, args, i);
             TryProcessBoolOption(nameof(SingleServerSupport), ref _singleServerSupport, option, args, i);
             TryProcessBoolOption(nameof(SupportsDelegatedCodeActions), ref _supportsDelegatedCodeActions, option, args, i);
-            TryProcessBoolOption(nameof(SupportsDelegatedDiagnostics), ref _supportsDelegatedDiagnostics, option, args, i);
+            TryProcessBoolOption(nameof(DelegateToCSharpOnDiagnosticPublish), ref _delegateToCSharpOnDiagnosticPublish, option, args, i);
             TryProcessBoolOption(nameof(ReturnCodeActionAndRenamePathsWithPrefixedSlash), ref _returnCodeActionAndRenamePathsWithPrefixedSlash, option, args, i);
             TryProcessBoolOption(nameof(ShowAllCSharpCodeActions), ref _showAllCSharpCodeActions, option, args, i);
             TryProcessBoolOption(nameof(UpdateBuffersForClosedDocuments), ref _updateBuffersForClosedDocuments, option, args, i);

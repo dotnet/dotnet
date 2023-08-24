@@ -71,6 +71,8 @@ public abstract class AbstractRazorEditorTest(ITestOutputHelper testOutputHelper
     {
         var paneContent = await TestServices.Output.GetRazorOutputPaneContentAsync(CancellationToken.None);
         _testOutputHelper.WriteLine($"Razor Output Pane Content:{Environment.NewLine}{paneContent}");
+
+        await base.DisposeAsync();
     }
 
     private static void EnsureLSPEditorEnabled()
