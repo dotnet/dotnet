@@ -5,8 +5,10 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Reflection;
-using Microsoft.IdentityModel.Json.Linq;
+using System.Text;
+using System.Text.Json;
 using Microsoft.IdentityModel.Logging;
+using JsonPrimitives = Microsoft.IdentityModel.Tokens.Json.JsonSerializerPrimitives;
 
 namespace Microsoft.IdentityModel.Protocols.OpenIdConnect
 {
@@ -15,6 +17,8 @@ namespace Microsoft.IdentityModel.Protocols.OpenIdConnect
     /// </summary>
     public class OpenIdConnectMessage : AuthenticationProtocolMessage
     {
+        internal const string ClassName = "Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectMessage";
+
         /// <summary>
         /// Initializes a new instance of the <see cref="OpenIdConnectMessage"/> class.
         /// </summary>
@@ -30,7 +34,7 @@ namespace Microsoft.IdentityModel.Protocols.OpenIdConnect
 
             try
             {
-                SetJsonParameters(JObject.Parse(json));
+                SetJsonParameters(json);
             }
             catch
             {
@@ -82,7 +86,7 @@ namespace Microsoft.IdentityModel.Protocols.OpenIdConnect
         /// <summary>
         /// Initializes a new instance of the <see cref="OpenIdConnectMessage"/> class.
         /// </summary>
-        /// <param name="parameters">Enumeration of key value pairs.</param>        
+        /// <param name="parameters">Enumeration of key value pairs.</param>
         public OpenIdConnectMessage(IEnumerable<KeyValuePair<string, string[]>> parameters)
         {
             if (parameters == null)
@@ -104,30 +108,20 @@ namespace Microsoft.IdentityModel.Protocols.OpenIdConnect
             }
         }
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="OpenIdConnectMessage"/> class.
-        /// </summary>
-        /// <param name="json">The JSON object from which the instance is created.</param>
-        [Obsolete("The 'OpenIdConnectMessage(object json)' constructor is obsolete. Please use 'OpenIdConnectMessage(string json)' instead.")]
-        public OpenIdConnectMessage(object json)
+        private void SetJsonParameters(string json)
         {
-            if (json == null)
-                throw LogHelper.LogArgumentNullException(nameof(json));
+            Utf8JsonReader reader = new(Encoding.UTF8.GetBytes(json).AsSpan());
 
-            var jObject = JObject.Parse(json.ToString());
-            SetJsonParameters(jObject);
-        }
-
-        private void SetJsonParameters(JObject json)
-        {
-            if (json == null)
-                throw LogHelper.LogArgumentNullException("json");
-
-            foreach (var pair in json)
+            while (reader.Read())
             {
-                if (json.TryGetValue(pair.Key, out JToken value))
+                if (reader.TokenType == JsonTokenType.PropertyName)
                 {
-                    SetParameter(pair.Key, value.ToString());
+                    string propertyName = JsonPrimitives.ReadPropertyName(ref reader, ClassName, true);
+                    string propertyValue = null;
+                    if (reader.TokenType == JsonTokenType.String)
+                        propertyValue = JsonPrimitives.ReadString(ref reader, propertyName, ClassName);
+
+                    SetParameter(propertyName, propertyValue);
                 }
             }
         }

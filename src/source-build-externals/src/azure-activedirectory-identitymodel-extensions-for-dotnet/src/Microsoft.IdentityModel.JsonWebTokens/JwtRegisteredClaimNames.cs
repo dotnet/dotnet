@@ -1,6 +1,9 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
+using System;
+using System.Text;
+
 namespace Microsoft.IdentityModel.JsonWebTokens
 {
     /// <summary>
@@ -10,6 +13,8 @@ namespace Microsoft.IdentityModel.JsonWebTokens
     /// </summary>
     public struct JwtRegisteredClaimNames
     {
+        // Please keep in alphabetical order
+
         /// <summary>
         /// </summary>
         public const string Actort = "actort";
@@ -149,5 +154,44 @@ namespace Microsoft.IdentityModel.JsonWebTokens
         /// <summary>
         /// </summary>
         public const string Website = "website";
+    }
+
+    /// <summary>
+    /// Parameter names for JsonWebToken  registered claim names in UTF8 bytes.
+    /// Used by UTF8JsonReader/Writer for performance gains.
+    /// </summary>
+    internal readonly struct JwtRegisteredClaimNamesUtf8Bytes
+    {
+        // Please keep in alphabetical order
+
+        public static ReadOnlySpan<byte> Actort => "actort"u8;
+        public static ReadOnlySpan<byte> Acr => "acr"u8;
+        public static ReadOnlySpan<byte> Amr => "amr"u8;
+        public static ReadOnlySpan<byte> AtHash => "at_hash"u8;
+        public static ReadOnlySpan<byte> Aud => "aud"u8;
+        public static ReadOnlySpan<byte> AuthTime => "auth_time"u8;
+        public static ReadOnlySpan<byte> Azp => "azp"u8;
+        public static ReadOnlySpan<byte> Birthdate => "birthdate"u8;
+        public static ReadOnlySpan<byte> CHash => "c_hash"u8;
+        public static ReadOnlySpan<byte> Email => "email"u8;
+        public static ReadOnlySpan<byte> Exp => "exp"u8;
+        public static ReadOnlySpan<byte> Gender => "gender"u8;
+        public static ReadOnlySpan<byte> FamilyName => "family_name"u8;
+        public static ReadOnlySpan<byte> GivenName => "given_name"u8;
+        public static ReadOnlySpan<byte> Iat => "iat"u8;
+        public static ReadOnlySpan<byte> Iss => "iss"u8;
+        public static ReadOnlySpan<byte> Jti => "jti"u8;
+        public static ReadOnlySpan<byte> Name => "name"u8;
+        public static ReadOnlySpan<byte> NameId => "nameid"u8;
+        public static ReadOnlySpan<byte> Nonce => "nonce"u8;
+        public static ReadOnlySpan<byte> Nbf => "nbf"u8;
+        public static ReadOnlySpan<byte> PhoneNumber => "phone_number"u8;
+        public static ReadOnlySpan<byte> PhoneNumberVerified => "phone_number_verified"u8;
+        public static ReadOnlySpan<byte> Prn => "prn"u8;
+        public static ReadOnlySpan<byte> Sid => "sid"u8;
+        public static ReadOnlySpan<byte> Sub => "sub"u8;
+        public static ReadOnlySpan<byte> Typ => "typ"u8;
+        public static ReadOnlySpan<byte> UniqueName => "unique_name"u8;
+        public static ReadOnlySpan<byte> Website => "website"u8;
     }
 }

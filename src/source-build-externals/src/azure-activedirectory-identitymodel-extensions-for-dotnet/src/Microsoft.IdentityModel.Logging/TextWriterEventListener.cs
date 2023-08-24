@@ -4,6 +4,7 @@
 using System;
 using System.Diagnostics.Tracing;
 using System.IO;
+using Microsoft.IdentityModel.Abstractions;
 
 namespace Microsoft.IdentityModel.Logging
 {
@@ -31,7 +32,7 @@ namespace Microsoft.IdentityModel.Logging
                 _streamWriter = new StreamWriter(fileStream);
                 _streamWriter.AutoFlush = true;
             }
-            catch (Exception ex)
+            catch (Exception ex) when (LogHelper.IsEnabled(EventLogLevel.Error))
             {
                 LogHelper.LogExceptionMessage(new InvalidOperationException(LogMessages.MIML10001, ex));
                 throw;
@@ -53,7 +54,7 @@ namespace Microsoft.IdentityModel.Logging
                 _streamWriter = new StreamWriter(fileStream);
                 _streamWriter.AutoFlush = true;
             }
-            catch (Exception ex)
+            catch (Exception ex) when (LogHelper.IsEnabled(EventLogLevel.Error))
             {
                 LogHelper.LogExceptionMessage(new InvalidOperationException(LogMessages.MIML10001, ex));
                 throw;

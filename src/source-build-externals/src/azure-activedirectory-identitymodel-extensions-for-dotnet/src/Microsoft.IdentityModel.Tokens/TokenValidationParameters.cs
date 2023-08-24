@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using Microsoft.IdentityModel.Abstractions;
 using Microsoft.IdentityModel.Logging;
 
 namespace Microsoft.IdentityModel.Tokens
@@ -189,6 +190,7 @@ namespace Microsoft.IdentityModel.Tokens
         private TimeSpan _clockSkew = DefaultClockSkew;
         private string _nameClaimType = ClaimsIdentity.DefaultNameClaimType;
         private string _roleClaimType = ClaimsIdentity.DefaultRoleClaimType;
+        private Dictionary<string, object> _instancePropertyBag;
 
         /// <summary>
         /// This is the default value of <see cref="ClaimsIdentity.AuthenticationType"/> when creating a <see cref="ClaimsIdentity"/>.
@@ -421,7 +423,9 @@ namespace Microsoft.IdentityModel.Tokens
                 roleClaimType = RoleClaimType;
             }
 
-            LogHelper.LogInformation(LogMessages.IDX10245, securityToken);
+            if (LogHelper.IsEnabled(EventLogLevel.Informational))
+                LogHelper.LogInformation(LogMessages.IDX10245, securityToken);
+
             return new ClaimsIdentity(authenticationType: AuthenticationType ?? DefaultAuthenticationType, nameType: nameClaimType ?? ClaimsIdentity.DefaultNameClaimType, roleType: roleClaimType ?? ClaimsIdentity.DefaultRoleClaimType);
         }
 
@@ -483,7 +487,7 @@ namespace Microsoft.IdentityModel.Tokens
         /// Gets a <see cref="IDictionary{String, Object}"/> that is unique to this instance.
         /// Calling <see cref="Clone"/> will result in a new instance of this IDictionary.
         /// </summary>
-        public IDictionary<string, object> InstancePropertyBag { get; } = new Dictionary<string, object>();
+        public IDictionary<string, object> InstancePropertyBag => _instancePropertyBag ??= new Dictionary<string, object>();
 
         /// <summary>
         /// Gets a value indicating if <see cref="Clone"/> was called to obtain this instance.

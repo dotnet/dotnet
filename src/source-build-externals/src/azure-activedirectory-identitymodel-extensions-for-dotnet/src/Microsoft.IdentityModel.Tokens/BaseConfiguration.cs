@@ -3,7 +3,7 @@
 
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using Microsoft.IdentityModel.Json;
+using System.Text.Json.Serialization;
 
 namespace Microsoft.IdentityModel.Tokens
 {

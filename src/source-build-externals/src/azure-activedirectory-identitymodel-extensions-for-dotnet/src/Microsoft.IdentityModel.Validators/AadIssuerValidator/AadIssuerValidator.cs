@@ -24,7 +24,7 @@ namespace Microsoft.IdentityModel.Validators
         private static readonly TimeSpan LastKnownGoodConfigurationLifetime = new TimeSpan(0, 24, 0, 0);
 
         internal const string V2EndpointSuffix = "/v2.0";
-        internal const string TenantidTemplate = "{tenantid}";
+        internal const string TenantIdTemplate = "{tenantid}";
 
         internal AadIssuerValidator(
             HttpClient httpClient,
@@ -292,9 +292,9 @@ namespace Microsoft.IdentityModel.Validators
             if (string.IsNullOrEmpty(validIssuerTemplate))
                 return false;
 
-            if (validIssuerTemplate.Contains(TenantidTemplate))
+            if (validIssuerTemplate.Contains(TenantIdTemplate))
             {
-                return validIssuerTemplate.Replace(TenantidTemplate, tenantId) == actualIssuer;
+                return validIssuerTemplate.Replace(TenantIdTemplate, tenantId) == actualIssuer;
             }
             else
             {
@@ -311,7 +311,7 @@ namespace Microsoft.IdentityModel.Validators
         /// <param name="securityToken">A JWT token.</param>
         /// <returns>A string containing the tenant ID, if found or <see cref="string.Empty"/>.</returns>
         /// <remarks>Only <see cref="JwtSecurityToken"/> and <see cref="JsonWebToken"/> are acceptable types.</remarks>
-        private static string GetTenantIdFromToken(SecurityToken securityToken)
+        internal static string GetTenantIdFromToken(SecurityToken securityToken)
         {
             if (securityToken is JwtSecurityToken jwtSecurityToken)
             {

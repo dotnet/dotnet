@@ -1,19 +1,20 @@
 ﻿// Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-using Microsoft.IdentityModel.Tokens;
 using System;
-using Xunit;
 using System.Collections.Generic;
-using System.Threading;
-using System.Net.Http;
-using System.Threading.Tasks;
-using Microsoft.IdentityModel.TestUtils;
-using System.Security.Cryptography;
-using Microsoft.IdentityModel.Json.Linq;
 using System.IdentityModel.Tokens.Jwt;
-using Microsoft.IdentityModel.Json;
+using System.Net.Http;
+using System.Security.Cryptography;
+using System.Text.Json;
+using System.Threading;
+using System.Threading.Tasks;
 using Microsoft.IdentityModel.Logging;
+using Microsoft.IdentityModel.TestUtils;
+using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using Xunit;
 
 #pragma warning disable CS3016 // Arrays as attribute arguments is not CLS-compliant
 
@@ -304,10 +305,10 @@ namespace Microsoft.IdentityModel.Protocols.SignedHttpRequest.Tests
                         TokenValidationParameters = SignedHttpRequestTestUtils.DefaultTokenValidationParameters,
                         HttpRequestData = httpRequestData,
                         AccessToken = SignedHttpRequestTestUtils.CreateAt(x509KeyCnfKeyId, false),
-                        CnfClaimValue = new JObject
-                        {
-                            { ConfirmationClaimTypes.Jwk, $@"{{""{JsonWebKeyParameterNames.Kid}"":""{KeyingMaterial.X509SecurityKeySelfSigned2048_SHA256.KeyId}"",""{JsonWebKeyParameterNames.Kty}"":""{JsonWebAlgorithmsKeyTypes.RSA}"",""{JsonWebKeyParameterNames.X5c}"":[""{Convert.ToBase64String(KeyingMaterial.X509SecurityKeySelfSigned2048_SHA256.Certificate.RawData)}""]}}" },
-                        }.ToString(Formatting.None),
+                        CnfClaimValue = $@"{{""{ConfirmationClaimTypes.Jwk}"":" +
+                                        $@"{{""{JsonWebKeyParameterNames.Kid}"":""{KeyingMaterial.X509SecurityKeySelfSigned2048_SHA256.KeyId}""," +
+                                        $@"""{JsonWebKeyParameterNames.Kty}"":""{JsonWebAlgorithmsKeyTypes.RSA}""," +
+                                        $@"""{JsonWebKeyParameterNames.X5c}"":[""{Convert.ToBase64String(KeyingMaterial.X509SecurityKeySelfSigned2048_SHA256.Certificate.RawData)}""]}}}}",
                         SigningCredentials = new SigningCredentials(KeyingMaterial.X509SecurityKeySelfSigned2048_SHA256, SecurityAlgorithms.RsaSha256){CryptoProviderFactory = CreateCryptoProviderFactory() },
                         TestId = "ValidX5cThumbprint",
                     },

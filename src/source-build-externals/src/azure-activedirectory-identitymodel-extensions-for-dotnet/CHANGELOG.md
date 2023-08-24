@@ -1,8 +1,140 @@
 See the [releases](https://github.com/AzureAD/azure-activedirectory-identitymodel-extensions-for-dotnet/releases) for details on bug fixes and added features.
 
+7.0.0-preview3
+=======
+## Performance improvements:
+- Replace Newtonsoft.Json with System.Text.Json, see [#2233](https://github.com/AzureAD/azure-activedirectory-identitymodel-extensions-for-dotnet/pull/2233), and as a result, ASP.NET's JwtBearer auth handler will now be fully AOT compatible.
+
+7.0.0-preview2
+=======
+## Performance improvements:
+- Series of perf improvements in collaboration with ASP .NET Core DevDiv team, results in improvements from 280K Request per second (RPS) in `7.0.0-preview` to 370K RPS in `7.0.0-preview2`, with more improvements to come in later versions: [#2195](https://github.com/AzureAD/azure-activedirectory-identitymodel-extensions-for-dotnet/pull/2195), [#2194](https://github.com/AzureAD/azure-activedirectory-identitymodel-extensions-for-dotnet/pull/2194), [#2193](https://github.com/AzureAD/azure-activedirectory-identitymodel-extensions-for-dotnet/pull/2193), [#2192](https://github.com/AzureAD/azure-activedirectory-identitymodel-extensions-for-dotnet/pull/2192), [#2190](https://github.com/AzureAD/azure-activedirectory-identitymodel-extensions-for-dotnet/pull/2190), [#2188](https://github.com/AzureAD/azure-activedirectory-identitymodel-extensions-for-dotnet/pull/2188), [#2184](https://github.com/AzureAD/azure-activedirectory-identitymodel-extensions-for-dotnet/pull/2184), [#2181](https://github.com/AzureAD/azure-activedirectory-identitymodel-extensions-for-dotnet/pull/2181), [#2180](https://github.com/AzureAD/azure-activedirectory-identitymodel-extensions-for-dotnet/pull/2180), [#2178](https://github.com/AzureAD/azure-activedirectory-identitymodel-extensions-for-dotnet/pull/2178), [#2175](https://github.com/AzureAD/azure-activedirectory-identitymodel-extensions-for-dotnet/pull/2175), [#2172](https://github.com/AzureAD/azure-activedirectory-identitymodel-extensions-for-dotnet/pull/2172), [#2171](https://github.com/AzureAD/azure-activedirectory-identitymodel-extensions-for-dotnet/pull/2171), [#2170](https://github.com/AzureAD/azure-activedirectory-identitymodel-extensions-for-dotnet/pull/2170), [#2169](https://github.com/AzureAD/azure-activedirectory-identitymodel-extensions-for-dotnet/pull/2169), [#2168](https://github.com/AzureAD/azure-activedirectory-identitymodel-extensions-for-dotnet/pull/2168), [#2167](https://github.com/AzureAD/azure-activedirectory-identitymodel-extensions-for-dotnet/pull/2167), [#2166](https://github.com/AzureAD/azure-activedirectory-identitymodel-extensions-for-dotnet/pull/2166), [#2164](https://github.com/AzureAD/azure-activedirectory-identitymodel-extensions-for-dotnet/pull/2164), [#2162](https://github.com/AzureAD/azure-activedirectory-identitymodel-extensions-for-dotnet/pull/2162), [#2161](https://github.com/AzureAD/azure-activedirectory-identitymodel-extensions-for-dotnet/pull/2161), [#2160](https://github.com/AzureAD/azure-activedirectory-identitymodel-extensions-for-dotnet/pull/2160), [#2159](https://github.com/AzureAD/azure-activedirectory-identitymodel-extensions-for-dotnet/pull/2159), [#2158](https://github.com/AzureAD/azure-activedirectory-identitymodel-extensions-for-dotnet/pull/2158), [#2221](https://github.com/AzureAD/azure-activedirectory-identitymodel-extensions-for-dotnet/pull/2221)
+
+- First increment in replacing newtonsoft with System.Text.Json, see [#2174](https://github.com/AzureAD/azure-activedirectory-identitymodel-extensions-for-dotnet/pull/2174)
+
+- Reading and writing JsonWebKey and JsonWebKeySet types now use System.Text.Json.Utf8JsonReaders/Writers for serialization. Seee PR [@2208](https://github.com/AzureAD/azure-activedirectory-identitymodel-extensions-for-dotnet/pull/2208) for details.
+
+- Remove the use of Newtonsoft from OpenIdConnectConfiguration and OpenIdConnectMessage. See PR [@2214](https://github.com/AzureAD/azure-activedirectory-identitymodel-extensions-for-dotnet/pull/2214) for details.
+
+
+## Engineering excellence:
+
+- Fix casing Properties directory in `updateAssemblyInfo.ps1` script see,
+[#2189](https://github.com/AzureAD/azure-activedirectory-identitymodel-extensions-for-dotnet/pull/2189)
+
+- Add code coverage in ADO, see [#2176](https://github.com/AzureAD/azure-activedirectory-identitymodel-extensions-for-dotnet/pull/2176)
+
+- Add codeQL scanning for compliance, see [#2151](https://github.com/AzureAD/azure-activedirectory-identitymodel-extensions-for-dotnet/pull/2151)
+
+- Start adding support for Nullables, see [#2139](https://github.com/AzureAD/azure-activedirectory-identitymodel-extensions-for-dotnet/pull/2139) and [#2203](https://github.com/AzureAD/azure-activedirectory-identitymodel-extensions-for-dotnet/pull/2203).
+
+7.1.0-preview
+=======
+_Delisted from NuGet due to versioning inconsistency_
+Include IdentityModel 6.32.0 release updates, including AAD specific signing key issuer validator and fix perf regression.
+
+7.0.0-preview
+=======
+Join the 7x [discussion](https://github.com/AzureAD/azure-activedirectory-identitymodel-extensions-for-dotnet/discussions/2092) and provide your feedback!
+
+Relevant PRs for supporting .NET 8:
+[#2108](https://github.com/AzureAD/azure-activedirectory-identitymodel-extensions-for-dotnet/pull/2108)
+[#2121](https://github.com/AzureAD/azure-activedirectory-identitymodel-extensions-for-dotnet/pull/2121)
+[#2122](https://github.com/AzureAD/azure-activedirectory-identitymodel-extensions-for-dotnet/pull/2122)
+
+Remove net45, see [#2123](https://github.com/AzureAD/azure-activedirectory-identitymodel-extensions-for-dotnet/pull/2123)
+
+JwtSecurityTokenConverter, see [#2117](https://github.com/AzureAD/azure-activedirectory-identitymodel-extensions-for-dotnet/pull/2117)
+
+6.32.0
+=======
+## New features:
+- Adding an AAD specific signing key issuer validator. See issue [#2134](https://github.com/AzureAD/azure-activedirectory-identitymodel-extensions-for-dotnet/issues/2134) for details.
+- Better support for WsFederation. See [PR](https://github.com/AzureAD/azure-activedirectory-identitymodel-extensions-for-dotnet/pull/2100) for details.
+
+## Bug fixes
+- Address perf regression introduced in 6.31.0. See [PR](https://github.com/AzureAD/azure-activedirectory-identitymodel-extensions-for-dotnet/pull/2131) for details.
+
+6.31.0
+========
+This release contains work from the following PRs and commits:
+
+- Introduce ConfigurationValidationException(#2076)
+- Disarm security artifacts(#2064)
+- Throw SecurityTokenMalformedTokenException on malformed tokens(#2080)
+- Add ClaimsMapping to [JsonWebTokenHandler](https://github.com/AzureAD/azure-activedirectory-identitymodel-extensions-for-dotnet/commit/8e7f07e859629a850e375518fcce2b6057380721)
+
+6.30.1
+=========
+This release contains work from the following PRs:
+- Modified token validation to be async throughout the call graph #2075 
+- Enforce key sizes when creating HMAC #2072
+- Fix AotCompatibilityTests #2066
+- Use up-to-date "now", in case take long time to get Metadata #2063
+
+This release addresses #1743 and, as such, going forward if the SymmetricKey is smaller than the required size for HMAC IdentityModel will throw an ArgumentOutOfRangeException which is the same exception when the SymmetricKey is smaller than the minimum key size for encryption.
+
+6.30.0
+=========
+Beginning in release [6.28.0](https://github.com/AzureAD/azure-activedirectory-identitymodel-extensions-for-dotnet/releases/tag/6.28.0) the library stopped throwing SecurityTokenUnableToValidateException. This version (6.30.0) marks the exception type as obsolete to make this change more discoverable. Not including it in the release notes explicitly for 6.28.0 was a mistake. This exception type will be removed completely in the next few months as the team moves towards a major version bump. More information on how to replace the usage going forward can be found here: https://aka.ms/SecurityTokenUnableToValidateException
+
+Indicate that a SecurityTokenDescriptor can create JWS or JWE
+https://github.com/AzureAD/azure-activedirectory-identitymodel-extensions-for-dotnet/pull/2055
+Specify 'UTC' in log messages
+https://github.com/AzureAD/azure-activedirectory-identitymodel-extensions-for-dotnet/commit/ceb10b10ad2edb97217e263915d407da1d957e03
+Fix order of log messages
+https://github.com/AzureAD/azure-activedirectory-identitymodel-extensions-for-dotnet/commit/05eeeb513e66a4236ae519ef9304bf2b6f26766f
+
+Fixed issues with matching Jwt.Kid with a X509SecurityKey.x5t
+https://github.com/AzureAD/azure-activedirectory-identitymodel-extensions-for-dotnet/pull/2057
+https://github.com/AzureAD/azure-activedirectory-identitymodel-extensions-for-dotnet/pull/2061
+
+Marked Exception that is no longer used as obsolete
+https://github.com/AzureAD/azure-activedirectory-identitymodel-extensions-for-dotnet/pull/2060
+
+Added support for AesGcm on .NET 6.0 or higher
+https://github.com/AzureAD/azure-activedirectory-identitymodel-extensions-for-dotnet/commit/85fa86af743e2b1a0078a9ecd956f34ee703acfc
+
+First round of triming analysis preperation for AOT
+https://github.com/AzureAD/azure-activedirectory-identitymodel-extensions-for-dotnet/pull/2042
+
+Added new API on TokenHandler.ValidateTokenAsync(SecurityToken ...) implemented only on JsonWebTokenHandler.
+https://github.com/AzureAD/azure-activedirectory-identitymodel-extensions-for-dotnet/pull/2056
+
+6.29.0
+=========
+- Add BootstrapRefreshInterval (#2052)
+- Added net462 target (#2049)
+- Create the configuration cache in the BaseConfigurationManager class (#2048)
+
+6.28.1
+=========
+- Add BootstrapRefreshInterval (#2052)
+- Added net462 target (#2049)
+- Create the configuration cache in the BaseConfigurationManager class (#2048)
+
+6.28.0
+========
+* Update Wilson logs with aka.ms pointers to known wikis in https://github.com/AzureAD/azure-activedirectory-identitymodel-extensions-for-dotnet/pull/2027
+* Fix typo in documentation https://github.com/AzureAD/azure-activedirectory-identitymodel-extensions-for-dotnet/pull/2034
+* Introduce a LKG configuration cache to store each valid base configuration instead of a single entry of configuration https://github.com/AzureAD/azure-activedirectory-identitymodel-extensions-for-dotnet/pull/2007
+* Add encryption keys to base configuration https://github.com/AzureAD/azure-activedirectory-identitymodel-extensions-for-dotnet/pull/2023
+* Updated CHANGELOG link https://github.com/AzureAD/azure-activedirectory-identitymodel-extensions-for-dotnet/pull/2026
+
+6.27.0
+========
+Servicing release
+Set maximum depth for Newtonsoft parsing.
+https://github.com/AzureAD/azure-activedirectory-identitymodel-extensions-for-dotnet/pull/2024
+Improve metadata failure message.
+https://github.com/AzureAD/azure-activedirectory-identitymodel-extensions-for-dotnet/pull/2010
+Validate size of symmetric signatures.
+https://github.com/AzureAD/azure-activedirectory-identitymodel-extensions-for-dotnet/pull/2008
+Added property TokenEndpoint to BaseConfiguration.
+https://github.com/AzureAD/azure-activedirectory-identitymodel-extensions-for-dotnet/pull/1998
+
 6.26.1
 =========
-
 ### Bug Fixes:
 
 Releasing a Hotfix for Wilson 6.26.0 that reverts async/await changes made in #1996 to address a performance reduction issue.

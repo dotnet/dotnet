@@ -1,8 +1,19 @@
 CannotRemoveAttribute : Attribute 'Newtonsoft.Json.JsonObjectAttribute' exists on 'Microsoft.IdentityModel.Tokens.JsonWebKey' in the contract but not the implementation.
 CannotRemoveAttribute : Attribute 'Newtonsoft.Json.JsonObjectAttribute' exists on 'Microsoft.IdentityModel.Tokens.JsonWebKeySet' in the contract but not the implementation.
 CannotRemoveAttribute : Attribute 'Newtonsoft.Json.JsonObjectAttribute' exists on 'Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectConfiguration' in the contract but not the implementation.
+CannotRemoveAttribute : Attribute 'Microsoft.IdentityModel.Json.JsonObjectAttribute' exists on 'Microsoft.IdentityModel.Tokens.JsonWebKey' in the contract but not the implementation.
 MembersMustExist : Member 'Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectMessage..ctor(Newtonsoft.Json.Linq.JObject)' does not exist in the implementation but it does exist in the contract.
 MembersMustExist : Member 'Microsoft.IdentityModel.Tokens.JsonWebKeySet..ctor(System.String, Newtonsoft.Json.JsonSerializerSettings)' does not exist in the implementation but it does exist in the contract.
 TypesMustExist : Type 'Microsoft.IdentityModel.JsonWebTokens.TokenValidationResult' does not exist in the implementation but it does exist in the contract. 
 MembersMustExist : Member 'Microsoft.IdentityModel.JsonWebTokens.JsonWebTokenHandler.ValidateToken(System.String, Microsoft.IdentityModel.Tokens.TokenValidationParameters)' does not exist in the implementation but it does exist in the contract.
+MembersMustExist : Member 'Microsoft.IdentityModel.Tokens.JsonWebKey.Oth.set(System.Collections.Generic.IList<System.String>)' does not exist in the implementation but it does exist in the contract.
+MembersMustExist : Member 'Microsoft.IdentityModel.Tokens.JsonWebKey.ShouldSerializeKeyOps()' does not exist in the implementation but it does exist in the contract.
+MembersMustExist : Member 'Microsoft.IdentityModel.Tokens.JsonWebKey.ShouldSerializeX5c()' does not exist in the implementation but it does exist in the contract.
+MembersMustExist : Member 'System.String Microsoft.IdentityModel.Tokens.JsonWebKeyParameterNames.R' does not exist in the implementation but it does exist in the contract.
+MembersMustExist : Member 'System.String Microsoft.IdentityModel.Tokens.JsonWebKeyParameterNames.T' does not exist in the implementation but it does exist in the contract.
 TypesMustExist : Type 'Microsoft.IdentityModel.Tokens.TokenContext' does not exist in the implementation but it does exist in the contract.
+CannotMakeMemberNonVirtual : Member 'Microsoft.IdentityModel.Tokens.JsonWebKey.AdditionalData' is non-virtual in the implementation but is virtual in the contract.
+CannotMakeMemberNonVirtual : Member 'Microsoft.IdentityModel.Tokens.JsonWebKey.AdditionalData.get()' is non-virtual in the implementation but is virtual in the contract.
+CannotMakeMemberNonVirtual : Member 'Microsoft.IdentityModel.Tokens.JsonWebKeySet.AdditionalData' is non-virtual in the implementation but is virtual in the contract.
+CannotMakeMemberNonVirtual : Member 'Microsoft.IdentityModel.Tokens.JsonWebKeySet.AdditionalData.get()' is non-virtual in the implementation but is virtual in the contract.
+CannotRemoveAttribute : Attribute 'Microsoft.IdentityModel.Json.JsonObjectAttribute' exists on 'Microsoft.IdentityModel.Tokens.JsonWebKeySet' in the contract but not the implementation.

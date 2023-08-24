@@ -6,9 +6,10 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Globalization;
 using System.Reflection;
-using Microsoft.IdentityModel.Json;
+using System.Text.Json;
 using Microsoft.IdentityModel.TestUtils;
 using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json;
 using Xunit;
 
 namespace Microsoft.IdentityModel.Protocols.OpenIdConnect.Tests
@@ -21,9 +22,25 @@ namespace Microsoft.IdentityModel.Protocols.OpenIdConnect.Tests
         public void Constructors()
         {
             var context = new CompareContext { Title = "OpenIdConnectConfigurationTests.Constructors" };
-            RunOpenIdConnectConfigurationTest((string)null, new OpenIdConnectConfiguration(), ExpectedException.ArgumentNullException(), context);
-            RunOpenIdConnectConfigurationTest(OpenIdConfigData.JsonAllValues, OpenIdConfigData.FullyPopulated, ExpectedException.NoExceptionExpected, context);
-            RunOpenIdConnectConfigurationTest(OpenIdConfigData.OpenIdConnectMetatadataBadJson, null, ExpectedException.ArgumentException(substringExpected: "IDX21815:", inner: typeof(JsonReaderException)), context);
+
+            RunOpenIdConnectConfigurationTest(
+                (string)null,
+                new OpenIdConnectConfiguration(),
+                ExpectedException.ArgumentNullException(),
+                context);
+
+            RunOpenIdConnectConfigurationTest(
+                OpenIdConfigData.JsonAllValues,
+                OpenIdConfigData.FullyPopulated,
+                ExpectedException.NoExceptionExpected,
+                context);
+
+            RunOpenIdConnectConfigurationTest(
+                OpenIdConfigData.OpenIdConnectMetatadataBadJson,
+                null,
+                new ExpectedException(typeof(ArgumentException), substringExpected: "IDX21815:", ignoreInnerException: true),
+                context);
+
             TestUtilities.AssertFailIfErrors(context);
         }
 
@@ -92,8 +109,9 @@ namespace Microsoft.IdentityModel.Protocols.OpenIdConnect.Tests
             TestUtilities.WriteHeader($"{this}.DeserializeOpenIdConnectConfigurationWithSigningKeys");
             var context = new CompareContext();
 
-            var config = OpenIdConnectConfiguration.Create(
-                OpenIdConnectConfiguration.Write(new OpenIdConnectConfiguration(OpenIdConfigData.JsonWithSigningKeys)));
+            string json = OpenIdConnectConfiguration.Write(new OpenIdConnectConfiguration(OpenIdConfigData.JsonWithSigningKeys));
+
+            var config = OpenIdConnectConfiguration.Create(json);
 
             // "SigningKeys" should be found in AdditionalData.
             if (!config.AdditionalData.ContainsKey("SigningKeys"))
@@ -230,7 +248,7 @@ namespace Microsoft.IdentityModel.Protocols.OpenIdConnect.Tests
             var oidcWithEmptyCollections = new OpenIdConnectConfiguration();
             var oidcWithEmptyCollectionsJson = OpenIdConnectConfiguration.Write(oidcWithEmptyCollections);
 
-            IdentityComparer.AreEqual(oidcWithEmptyCollectionsJson, "{\"JsonWebKeySet\":null}", context);
+            IdentityComparer.AreEqual(oidcWithEmptyCollectionsJson, "{}", context);
 
             TestUtilities.AssertFailIfErrors(context);
         }
