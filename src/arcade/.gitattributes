@@ -22,6 +22,7 @@
 *.csproj    		text
 *.groovy			text
 *.json      		text
+*.lss       		text
 *.md        		text
 *.nuspec			text
 *.pkgdef			text
