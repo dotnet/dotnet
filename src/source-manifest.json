@@ -7,16 +7,16 @@
       "commitSha": "4d9945d230fdd8324ce16a31c7dbd74e27a0fc9b"
     },
     {
-      "packageVersion": "8.0.0-rc.2.23423.7",
+      "packageVersion": "8.0.0-rc.2.23423.9",
       "path": "aspnetcore",
       "remoteUri": "https://github.com/dotnet/aspnetcore",
-      "commitSha": "03e75128931e7d27473831d6450807470b6efb64"
+      "commitSha": "08cde4d2df9e26f5fad9e13c50f23ab5800f3679"
     },
     {
-      "packageVersion": "0.11.4-alpha.23407.2",
+      "packageVersion": "0.11.4-alpha.23421.1",
       "path": "cecil",
       "remoteUri": "https://github.com/dotnet/cecil",
-      "commitSha": "2f4ef297939628143389ddeea569874ded0b1c1b"
+      "commitSha": "d412306c1514a26737574838900052d8758da5be"
     },
     {
       "packageVersion": "0.1.430701",
@@ -58,13 +58,13 @@
       "packageVersion": "8.0.100",
       "path": "installer",
       "remoteUri": "https://github.com/dotnet/installer",
-      "commitSha": "a37bcd19b57cbd8223c7065f3e6e2da7a680504a"
+      "commitSha": "01aabf59bec061e6962df6d9db594cccf34158fa"
     },
     {
-      "packageVersion": "17.8.0-preview-23424-01",
+      "packageVersion": "17.8.0-preview-23424-02",
       "path": "msbuild",
       "remoteUri": "https://github.com/dotnet/msbuild",
-      "commitSha": "068621018ef07ea9a44d6367846a456417af884e"
+      "commitSha": "13deecf6f922b63c5ec0216a464c6838b499bb73"
     },
     {
       "packageVersion": "6.8.0-preview.1.74",
@@ -91,16 +91,16 @@
       "commitSha": "76d99c5f3e11f0600fae074270c0d89042c360f0"
     },
     {
-      "packageVersion": "8.0.0-rc.2.23418.14",
+      "packageVersion": "8.0.0-rc.2.23423.11",
       "path": "runtime",
       "remoteUri": "https://github.com/dotnet/runtime",
-      "commitSha": "90b92bb265a412592c4c152983d7b30c92236dbe"
+      "commitSha": "3d1b2543593f0dc3fbbdc2b8cad9b1f8e7554af6"
     },
     {
-      "packageVersion": "8.0.100-rc.2.23423.14",
+      "packageVersion": "8.0.100-rc.2.23424.8",
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "ae578278e83e0180cd553a1f13bd3f4462fa8baa"
+      "commitSha": "24c1cc4e668b0ce0056131fb25a171ad6b92b6a8"
     },
     {
       "packageVersion": "8.0.0-alpha.1.23421.1",
