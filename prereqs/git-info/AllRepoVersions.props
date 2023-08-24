@@ -47,8 +47,8 @@
     <templatingOutputPackageVersion>8.0.100-rc.2.23418.9</templatingOutputPackageVersion>
     <testtemplatesGitCommitHash>1e5f3603af2277910aad946736ee23283e7f3e16</testtemplatesGitCommitHash>
     <testtemplatesOutputPackageVersion>1.1.0-rc.23410.2</testtemplatesOutputPackageVersion>
-    <vstestGitCommitHash>5672d0f0d9433a9e2d97b9b7575fb2cc48579519</vstestGitCommitHash>
-    <vstestOutputPackageVersion>17.8.0-preview-23421-06</vstestOutputPackageVersion>
+    <vstestGitCommitHash>7501fc73eb024865c22e213cf05a15b5bb8a8669</vstestGitCommitHash>
+    <vstestOutputPackageVersion>17.8.0-preview-23423-02</vstestOutputPackageVersion>
     <xdtGitCommitHash>9a1c3e1b7f0c8763d4c96e593961a61a72679a7b</xdtGitCommitHash>
     <xdtOutputPackageVersion>7.0.0-preview.22423.2</xdtOutputPackageVersion>
     <xlifftasksGitCommitHash>bb654cd4736e7e8cb99f1c355ce2b8f0a686ba74</xlifftasksGitCommitHash>
