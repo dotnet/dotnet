@@ -5,14 +5,16 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Globalization;
-using System.IO;
+using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
 using System.Text.RegularExpressions;
-using Microsoft.IdentityModel.Json.Linq;
+using Microsoft.IdentityModel.Abstractions;
 using Microsoft.IdentityModel.Logging;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.IdentityModel.Tokens.Json;
+
 using TokenLogMessages = Microsoft.IdentityModel.Tokens.LogMessages;
 
 namespace Microsoft.IdentityModel.JsonWebTokens
@@ -97,7 +99,9 @@ namespace Microsoft.IdentityModel.JsonWebTokens
 
             try
             {
-                LogHelper.LogVerbose(LogHelper.FormatInvariant(LogMessages.IDX14201, LogHelper.MarkAsNonPII(cacheProvider)));
+                if (LogHelper.IsEnabled(EventLogLevel.Verbose))
+                    LogHelper.LogVerbose(LogHelper.FormatInvariant(LogMessages.IDX14201, LogHelper.MarkAsNonPII(cacheProvider)));
+
                 return Base64UrlEncoder.Encode(signatureProvider.Sign(Encoding.UTF8.GetBytes(input)));
             }
             finally
@@ -157,15 +161,17 @@ namespace Microsoft.IdentityModel.JsonWebTokens
             byte[] decryptedTokenBytes = null;
 
             // keep track of exceptions thrown, keys that were tried
-            var exceptionStrings = new StringBuilder();
-            var keysAttempted = new StringBuilder();
+            StringBuilder exceptionStrings = null;
+            StringBuilder keysAttempted = null;
             string zipAlgorithm = null;
             foreach (SecurityKey key in decryptionParameters.Keys)
             {
                 var cryptoProviderFactory = validationParameters.CryptoProviderFactory ?? key.CryptoProviderFactory;
                 if (cryptoProviderFactory == null)
                 {
-                    LogHelper.LogWarning(TokenLogMessages.IDX10607, key);
+                    if (LogHelper.IsEnabled(EventLogLevel.Warning))
+                        LogHelper.LogWarning(TokenLogMessages.IDX10607, key);
+
                     continue;
                 }
 
@@ -179,8 +185,10 @@ namespace Microsoft.IdentityModel.JsonWebTokens
                     {
                         if (!cryptoProviderFactory.IsSupportedAlgorithm(jsonWebToken.Enc, key))
                         {
+                            if (LogHelper.IsEnabled(EventLogLevel.Warning))
+                                LogHelper.LogWarning(TokenLogMessages.IDX10611, LogHelper.MarkAsNonPII(decryptionParameters.Enc), key);
+
                             algorithmNotSupportedByCryptoProvider = true;
-                            LogHelper.LogWarning(TokenLogMessages.IDX10611, LogHelper.MarkAsNonPII(decryptionParameters.Enc), key);
                             continue;
                         }
 
@@ -203,8 +211,10 @@ namespace Microsoft.IdentityModel.JsonWebTokens
                     {
                         if (!cryptoProviderFactory.IsSupportedAlgorithm(decryptionParameters.Enc, key))
                         {
+                            if (LogHelper.IsEnabled(EventLogLevel.Warning))
+                                LogHelper.LogWarning(TokenLogMessages.IDX10611, LogHelper.MarkAsNonPII(decryptionParameters.Enc), key);
+
                             algorithmNotSupportedByCryptoProvider = true;
-                            LogHelper.LogWarning(TokenLogMessages.IDX10611, LogHelper.MarkAsNonPII(decryptionParameters.Enc), key);
                             continue;
                         }
 
@@ -225,11 +235,11 @@ namespace Microsoft.IdentityModel.JsonWebTokens
                 }
                 catch (Exception ex)
                 {
-                    exceptionStrings.AppendLine(ex.ToString());
+                    (exceptionStrings ??= new StringBuilder()).AppendLine(ex.ToString());
                 }
 
                 if (key != null)
-                    keysAttempted.AppendLine(key.ToString());
+                    (keysAttempted ??= new StringBuilder()).AppendLine(key.ToString());
             }
 
             ValidateDecryption(decryptionParameters, decryptionSucceeded, algorithmNotSupportedByCryptoProvider, exceptionStrings, keysAttempted);
@@ -248,8 +258,8 @@ namespace Microsoft.IdentityModel.JsonWebTokens
 
         private static void ValidateDecryption(JwtTokenDecryptionParameters decryptionParameters, bool decryptionSucceeded, bool algorithmNotSupportedByCryptoProvider, StringBuilder exceptionStrings, StringBuilder keysAttempted)
         {
-            if (!decryptionSucceeded && keysAttempted.Length > 0)
-                throw LogHelper.LogExceptionMessage(new SecurityTokenDecryptionFailedException(LogHelper.FormatInvariant(TokenLogMessages.IDX10603, keysAttempted, exceptionStrings, LogHelper.MarkAsSecurityArtifact(decryptionParameters.EncodedToken, SafeLogJwtToken))));
+            if (!decryptionSucceeded && keysAttempted is not null)
+                throw LogHelper.LogExceptionMessage(new SecurityTokenDecryptionFailedException(LogHelper.FormatInvariant(TokenLogMessages.IDX10603, keysAttempted, (object)exceptionStrings ?? "", LogHelper.MarkAsSecurityArtifact(decryptionParameters.EncodedToken, SafeLogJwtToken))));
 
             if (!decryptionSucceeded && algorithmNotSupportedByCryptoProvider)
                 throw LogHelper.LogExceptionMessage(new SecurityTokenDecryptionFailedException(LogHelper.FormatInvariant(TokenLogMessages.IDX10619, LogHelper.MarkAsNonPII(decryptionParameters.Alg), LogHelper.MarkAsNonPII(decryptionParameters.Enc))));
@@ -390,44 +400,6 @@ namespace Microsoft.IdentityModel.JsonWebTokens
 
         }
 
-        /// <summary>
-        /// Gets the <see cref="DateTime"/> using the number of seconds from 1970-01-01T0:0:0Z (UTC)
-        /// </summary>
-        /// <param name="key">Claim in the payload that should map to an integer, float, or string.</param>
-        /// <param name="payload">The payload that contains the desired claim value.</param>
-        /// <remarks>If the claim is not found, the function returns: <see cref="DateTime.MinValue"/>
-        /// </remarks>
-        /// <exception cref="FormatException">If the value of the claim cannot be parsed into a long.</exception>
-        /// <returns>The <see cref="DateTime"/> representation of a claim.</returns>
-        internal static DateTime GetDateTime(string key, JObject payload)
-        {
-            if (!payload.TryGetValue(key, out var jToken))
-                return DateTime.MinValue;
-
-            return EpochTime.DateTime(Convert.ToInt64(Math.Truncate(Convert.ToDouble(ParseTimeValue(jToken, key), CultureInfo.InvariantCulture))));
-        }
-
-        private static long ParseTimeValue(JToken jToken, string claimName)
-        {
-            if (jToken.Type == JTokenType.Integer || jToken.Type == JTokenType.Float)
-            {
-                return (long)jToken;
-            }
-            else if (jToken.Type == JTokenType.String)
-            {
-                if (long.TryParse((string)jToken, out long resultLong))
-                    return resultLong;
-
-                if (float.TryParse((string)jToken, out float resultFloat))
-                    return (long)resultFloat;
-
-                if (double.TryParse((string)jToken, out double resultDouble))
-                    return (long)resultDouble;
-            }
-
-            throw LogHelper.LogExceptionMessage(new FormatException(LogHelper.FormatInvariant(LogMessages.IDX14300, LogHelper.MarkAsNonPII(claimName), jToken.ToString(), LogHelper.MarkAsNonPII(typeof(long)))));
-        }
-
         internal static string SafeLogJwtToken(object obj)
         {
             if (obj == null)
@@ -498,6 +470,33 @@ namespace Microsoft.IdentityModel.JsonWebTokens
             return null;
         }
 
+        /// <summary>
+        /// Counts the number of Jwt Token segments.
+        /// </summary>
+        /// <param name="token">The Jwt Token.</param>
+        /// <param name="maxCount">The maximum number of segments to count up to.</param>
+        /// <returns>The number of segments up to <paramref name="maxCount"/>.</returns>
+        internal static int CountJwtTokenPart(string token, int maxCount)
+        {
+            var count = 1;
+            var index = 0;
+            while (index < token.Length)
+            {
+                var dotIndex = token.IndexOf('.', index);
+                if (dotIndex < 0)
+                {
+                    break;
+                }
+                count++;
+                index = dotIndex + 1;
+                if (count == maxCount)
+                {
+                    break;
+                }
+            }
+            return count;
+        }
+
         internal static IEnumerable<SecurityKey> ConcatSigningKeys(TokenValidationParameters tvp)
         {
             if (tvp == null)
@@ -513,12 +512,60 @@ namespace Microsoft.IdentityModel.JsonWebTokens
             }
         }
 
-        internal static JsonDocument ParseDocument(byte[] bytes, int length)
+        // If a string is in IS8061 format, assume a DateTime is in UTC
+        internal static string GetStringClaimValueType(string str)
         {
-            using (MemoryStream memoryStream = new MemoryStream(bytes, 0, length))
+            if (DateTime.TryParse(str, out DateTime dateTimeValue))
             {
-                return JsonDocument.Parse(memoryStream);
+                string dtUniversal = dateTimeValue.ToUniversalTime().ToString("o", CultureInfo.InvariantCulture);
+                if (dtUniversal.Equals(str, StringComparison.Ordinal))
+                    return ClaimValueTypes.DateTime;
+            }
+
+            return ClaimValueTypes.String;
+        }
+
+        // TODO - we need to support to ways of accessing json values.
+        // In a System.Security.Claims.Claim, JsonObjects and JsonArrays will need to be serialized as Json, and the ClaimValueType set to JsonArray or Json.
+        // A C# type can also be returned, we will return a List<objects> representing the JsonArray or an object representing the JsonObject.
+        // This will allow for constant time lookup for both scenarios if we store the results in dictionaries.
+        // We need to have the JwtPayload, JwtHeader, JsonClaimSet all share the same call graph for consistency.
+        // We need a shared model for adding claims from object for JsonWebToken and JwtSecurityToken
+        // From getting ClaimValueTypes to setting object types
+
+        internal static IDictionary<string, object> CreateClaimsDictionary(byte[] bytes, int length)
+        {
+            Dictionary<string, object> claims = new();
+            Span<byte> utf8Span = bytes;
+            Utf8JsonReader reader = new(utf8Span.Slice(0,length));
+
+            if (!JsonSerializerPrimitives.IsReaderAtTokenType(ref reader, JsonTokenType.StartObject, false))
+                throw LogHelper.LogExceptionMessage(
+                    new JsonException(
+                        LogHelper.FormatInvariant(
+                        Tokens.LogMessages.IDX11023,
+                        LogHelper.MarkAsNonPII("JsonTokenType.StartObject"),
+                        LogHelper.MarkAsNonPII(reader.TokenType),
+                        LogHelper.MarkAsNonPII(JsonClaimSet.ClassName),
+                        LogHelper.MarkAsNonPII(reader.TokenStartIndex),
+                        LogHelper.MarkAsNonPII(reader.CurrentDepth),
+                        LogHelper.MarkAsNonPII(reader.BytesConsumed))));
+
+            while (reader.Read())
+            {
+                if (reader.TokenType == JsonTokenType.PropertyName)
+                {
+                    string propertyName = reader.GetString();
+                    reader.Read();
+                    claims[propertyName] = JsonSerializerPrimitives.ReadPropertyValueAsObject(ref reader, propertyName, JsonClaimSet.ClassName);
+                }
+                else if (reader.TokenType == JsonTokenType.EndObject)
+                {
+                    break;
+                }
             };
+
+            return claims;
         }
 
         /// <summary>
@@ -528,9 +575,9 @@ namespace Microsoft.IdentityModel.JsonWebTokens
         /// <param name="startIndex"></param>
         /// <param name="length"></param>
         /// <returns></returns>
-        internal static JsonDocument GetJsonDocumentFromBase64UrlEncodedString(string rawString, int startIndex, int length)
+        internal static IDictionary<string,object> ParseJsonBytes(string rawString, int startIndex, int length)
         {
-            return Base64UrlEncoding.Decode<JsonDocument>(rawString, startIndex, length, ParseDocument);
+            return Base64UrlEncoding.Decode<IDictionary<string,object>>(rawString, startIndex, length, CreateClaimsDictionary);
         }
     }
 }

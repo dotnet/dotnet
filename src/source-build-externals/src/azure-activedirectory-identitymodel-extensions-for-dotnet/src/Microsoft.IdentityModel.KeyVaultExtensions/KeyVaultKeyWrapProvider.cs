@@ -39,14 +39,14 @@ namespace Microsoft.IdentityModel.KeyVaultExtensions
         /// <param name="key">The <see cref="SecurityKey"/> that will be used for key wrap operations.</param>
         /// <param name="algorithm">The key wrap algorithm to apply.</param>
         /// <param name="client">A mock <see cref="IKeyVaultClient"/> used for testing purposes.</param>
-        internal KeyVaultKeyWrapProvider(SecurityKey key, string algorithm, IKeyVaultClient client)
+        internal KeyVaultKeyWrapProvider(SecurityKey key, string algorithm, IKeyVaultClient? client)
         {
             _algorithm = string.IsNullOrEmpty(algorithm) ? throw LogHelper.LogArgumentNullException(nameof(algorithm)) : algorithm;
             if (key == null)
                 throw LogHelper.LogArgumentNullException(nameof(key));
 
             _key = key as KeyVaultSecurityKey ?? throw LogHelper.LogExceptionMessage(new NotSupportedException(key.GetType().ToString()));
-            _client = client ?? new KeyVaultClient(new KeyVaultClient.AuthenticationCallback(_key.Callback));
+            _client = client ?? new KeyVaultClient(new KeyVaultClient.AuthenticationCallback(_key.Callback!));
         }
 
         /// <summary>
@@ -58,7 +58,7 @@ namespace Microsoft.IdentityModel.KeyVaultExtensions
         /// Gets or sets a user context for a <see cref="KeyWrapProvider"/>.
         /// </summary>
         /// <remarks>This is null by default. This can be used by runtimes or for extensibility scenarios.</remarks>
-        public override string Context { get; set; }
+        public override string? Context { get; set; }
 
         /// <summary>
         /// Gets the <see cref="SecurityKey"/> that is being used.

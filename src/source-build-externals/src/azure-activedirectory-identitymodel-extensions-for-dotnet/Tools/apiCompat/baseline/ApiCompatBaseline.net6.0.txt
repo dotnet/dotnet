@@ -1,0 +1,17 @@
+CannotRemoveAttribute : Attribute 'Microsoft.IdentityModel.Json.JsonObjectAttribute' exists on 'Microsoft.IdentityModel.Tokens.JsonWebKey' in the contract but not the implementation.
+CannotMakeMemberNonVirtual : Member 'Microsoft.IdentityModel.Tokens.JsonWebKey.AdditionalData' is non-virtual in the implementation but is virtual in the contract.
+CannotMakeMemberNonVirtual : Member 'Microsoft.IdentityModel.Tokens.JsonWebKey.AdditionalData.get()' is non-virtual in the implementation but is virtual in the contract.
+MembersMustExist : Member 'Microsoft.IdentityModel.Tokens.JsonWebKey.Oth.set(System.Collections.Generic.IList<System.String>)' does not exist in the implementation but it does exist in the contract.
+MembersMustExist : Member 'Microsoft.IdentityModel.Tokens.JsonWebKey.ShouldSerializeKeyOps()' does not exist in the implementation but it does exist in the contract.
+MembersMustExist : Member 'Microsoft.IdentityModel.Tokens.JsonWebKey.ShouldSerializeX5c()' does not exist in the implementation but it does exist in the contract.
+MembersMustExist : Member 'System.String Microsoft.IdentityModel.Tokens.JsonWebKeyParameterNames.R' does not exist in the implementation but it does exist in the contract.
+MembersMustExist : Member 'System.String Microsoft.IdentityModel.Tokens.JsonWebKeyParameterNames.T' does not exist in the implementation but it does exist in the contract.
+CannotRemoveAttribute : Attribute 'Microsoft.IdentityModel.Json.JsonObjectAttribute' exists on 'Microsoft.IdentityModel.Tokens.JsonWebKeySet' in the contract but not the implementation.
+CannotMakeMemberNonVirtual : Member 'Microsoft.IdentityModel.Tokens.JsonWebKeySet.AdditionalData' is non-virtual in the implementation but is virtual in the contract.
+CannotMakeMemberNonVirtual : Member 'Microsoft.IdentityModel.Tokens.JsonWebKeySet.AdditionalData.get()' is non-virtual in the implementation but is virtual in the contract.
+CannotRemoveAttribute : Attribute 'Microsoft.IdentityModel.Json.JsonObjectAttribute' exists on 'Microsoft.IdentityModel.Tokens.JsonWebKey' in the contract but not the implementation.
+CannotMakeMemberNonVirtual : Member 'Microsoft.IdentityModel.Tokens.JsonWebKey.AdditionalData' is non-virtual in the implementation but is virtual in the contract.
+CannotMakeMemberNonVirtual : Member 'Microsoft.IdentityModel.Tokens.JsonWebKey.AdditionalData.get()' is non-virtual in the implementation but is virtual in the contract.
+MembersMustExist : Member 'Microsoft.IdentityModel.Tokens.JsonWebKey.Oth.set(System.Collections.Generic.IList<System.String>)' does not exist in the implementation but it does exist in the contract.
+MembersMustExist : Member 'Microsoft.IdentityModel.Tokens.JsonWebKey.ShouldSerializeKeyOps()' does not exist in the implementation but it does exist in the contract.
+MembersMustExist : Member 'Microsoft.IdentityModel.Tokens.JsonWebKey.ShouldSerializeX5c()' does not exist in the implementation but it does exist in the contract.

@@ -1,6 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
+using Microsoft.IdentityModel.Abstractions;
 using Microsoft.IdentityModel.Logging;
 using Microsoft.IdentityModel.Xml;
 using System;
@@ -34,7 +35,8 @@ namespace Microsoft.IdentityModel.Protocols.WsFederation
         /// <remarks>If 'queryString' is null or whitespace, a default <see cref="WsFederationMessage"/> is returned. Parameters are parsed from <see cref="Uri.Query"/>.</remarks>
         public static WsFederationMessage FromQueryString(string queryString)
         {
-            LogHelper.LogVerbose(FormatInvariant(LogMessages.IDX22900, queryString));
+            if (LogHelper.IsEnabled(EventLogLevel.Verbose))
+                LogHelper.LogVerbose(FormatInvariant(LogMessages.IDX22900, queryString));
 
             var wsFederationMessage = new WsFederationMessage();
             if (!string.IsNullOrWhiteSpace(queryString))
@@ -61,7 +63,9 @@ namespace Microsoft.IdentityModel.Protocols.WsFederation
         {
             if (uri != null && uri.Query.Length > 1)
             {
-                LogHelper.LogVerbose(FormatInvariant(LogMessages.IDX22901, uri.ToString()));
+                if (LogHelper.IsEnabled(EventLogLevel.Verbose))
+                    LogHelper.LogVerbose(FormatInvariant(LogMessages.IDX22901, uri.ToString()));
+
                 return FromQueryString(uri.Query.Substring(1));
             }
 
@@ -76,7 +80,9 @@ namespace Microsoft.IdentityModel.Protocols.WsFederation
         {
             if (wsFederationMessage == null)
             {
-                LogHelper.LogWarning(FormatInvariant(LogMessages.IDX22000, LogHelper.MarkAsNonPII(nameof(wsFederationMessage))));
+                if (LogHelper.IsEnabled(EventLogLevel.Warning))
+                    LogHelper.LogWarning(FormatInvariant(LogMessages.IDX22000, LogHelper.MarkAsNonPII(nameof(wsFederationMessage))));
+
                 return;
             }
 
@@ -94,7 +100,9 @@ namespace Microsoft.IdentityModel.Protocols.WsFederation
         {
             if (parameters == null)
             {
-                LogHelper.LogWarning(FormatInvariant(LogMessages.IDX22000, LogHelper.MarkAsNonPII(nameof(parameters))));
+                if (LogHelper.IsEnabled(EventLogLevel.Warning))
+                    LogHelper.LogWarning(FormatInvariant(LogMessages.IDX22000, LogHelper.MarkAsNonPII(nameof(parameters))));
+
                 return;
             }
 
@@ -137,7 +145,7 @@ namespace Microsoft.IdentityModel.Protocols.WsFederation
         /// </summary>
         /// <returns>the 'SecurityToken'.</returns>
         /// <exception cref="WsFederationException">if exception occurs while reading security token.</exception>
-        public virtual string GetToken()
+        public virtual string? GetToken()
         {
             return GetTokenUsingXmlReader();
         }
@@ -149,11 +157,13 @@ namespace Microsoft.IdentityModel.Protocols.WsFederation
         /// This is only called after it is determined the Wresult is well formed xml. A successful call the GetTokenUsingXmlReader should be made first.
         /// </summary>
         /// <returns>the string version of the security token.</returns>
-        internal static string GetToken(string wresult)
+        internal static string? GetToken(string wresult)
         {
             if (string.IsNullOrEmpty(wresult))
             {
-                LogHelper.LogWarning(FormatInvariant(LogMessages.IDX22000, LogHelper.MarkAsNonPII(nameof(wresult))));
+                if (LogHelper.IsEnabled(EventLogLevel.Warning))
+                    LogHelper.LogWarning(FormatInvariant(LogMessages.IDX22000, LogHelper.MarkAsNonPII(nameof(wresult))));
+
                 return null;
             }
 
@@ -217,15 +227,17 @@ namespace Microsoft.IdentityModel.Protocols.WsFederation
         /// </summary>
         /// <returns>the 'SecurityToken'.</returns>
         /// <exception cref="WsFederationException">if exception occurs while reading security token.</exception>
-        public virtual string GetTokenUsingXmlReader()
+        public virtual string? GetTokenUsingXmlReader()
         {
             if (Wresult == null)
             {
-                LogHelper.LogWarning(FormatInvariant(LogMessages.IDX22000, LogHelper.MarkAsNonPII(nameof(Wresult))));
+                if (LogHelper.IsEnabled(EventLogLevel.Warning))
+                    LogHelper.LogWarning(FormatInvariant(LogMessages.IDX22000, LogHelper.MarkAsNonPII(nameof(Wresult))));
+
                 return null;
             }
 
-            string token = null;
+            string? token = null;
             using (var sr = new StringReader(Wresult))
             using (var xmlReader = new XmlTextReader(sr) { DtdProcessing = DtdProcessing.Prohibit, XmlResolver = null })
             {

@@ -6,11 +6,9 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Reflection;
 using System.Security.Claims;
+using System.Text;
 using Microsoft.IdentityModel.TestUtils;
-using Microsoft.IdentityModel.Tokens;
 using Xunit;
-
-#pragma warning disable CS3016 // Arrays as attribute arguments is not CLS-compliant
 
 namespace Microsoft.IdentityModel.JsonWebTokens.Tests
 {
@@ -41,7 +39,7 @@ namespace Microsoft.IdentityModel.JsonWebTokens.Tests
             
             try
             {
-                JsonClaimSet jsonClaimSet = new JsonClaimSet(theoryData.Json);
+                JsonClaimSet jsonClaimSet = new JsonClaimSet(Encoding.UTF8.GetBytes(theoryData.Json));
                 var methods = typeof(JsonClaimSet).GetMethods(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance);
                 var method = typeof(JsonClaimSet).GetMethod("GetValue", BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance, null, CallingConventions.Standard, new Type[] { typeof(string) }, null);
                 var retval = method.MakeGenericMethod(theoryData.PropertyType).Invoke(jsonClaimSet, new object[] { theoryData.PropertyName });
@@ -82,15 +80,6 @@ namespace Microsoft.IdentityModel.JsonWebTokens.Tests
 
             #region datetime
             DateTime dateTime = new DateTime(2000, 01, 01, 0, 0, 0);
-            theoryData.Add(new JsonClaimSetTheoryData("datetime")
-            {
-                Json = $@"{{""datetime"":""{dateTime.ToString()}""}}",
-                PropertyName = "datetime",
-                PropertyType = typeof(DateTime),
-                PropertyValue = dateTime,
-                ShouldFind = true
-            });
-
             theoryData.Add(new JsonClaimSetTheoryData("datetimeAsString")
             {
                 Json = $@"{{""datetime"":""{dateTime.ToString()}""}}",
@@ -122,11 +111,10 @@ namespace Microsoft.IdentityModel.JsonWebTokens.Tests
 
             theoryData.Add(new JsonClaimSetTheoryData("IntegerAsIntArray")
             {
-                ExpectedException = new ExpectedException(typeof(TargetInvocationException), null, typeof(ArgumentException)) { InnerSubstringExpected = "IDX14305:" },
                 Json = $@"{{""IntegerAsIntArray"":1}}",
                 PropertyName = "IntegerAsIntArray",
                 PropertyType = typeof(int[]),
-                PropertyValue = (int) 1,
+                PropertyValue = new int[] { 1 },
                 ShouldFind = true
             });
 
@@ -135,7 +123,7 @@ namespace Microsoft.IdentityModel.JsonWebTokens.Tests
                 Json = $@"{{""IntegersAsIntArray"":[1,2,3]}}",
                 PropertyName = "IntegersAsIntArray",
                 PropertyType = typeof(int[]),
-                PropertyValue = new int[] {1,2,3},
+                PropertyValue = new int[] { 1, 2, 3 },
                 ShouldFind = true
             });
 
@@ -144,7 +132,7 @@ namespace Microsoft.IdentityModel.JsonWebTokens.Tests
                 Json = $@"{{""IntegersAsObjArray"":[1,2,3]}}",
                 PropertyName = "IntegersAsObjArray",
                 PropertyType = typeof(object[]),
-                PropertyValue = new object[] { (long)1, (long)2, (long)3 },
+                PropertyValue = new object[] { (int)1, (int)2, (int)3 },
                 ShouldFind = true
             });
 
@@ -153,7 +141,7 @@ namespace Microsoft.IdentityModel.JsonWebTokens.Tests
                 Json = $@"{{""IntegersAsObj"":[1,2,3]}}",
                 PropertyName = "IntegersAsObj",
                 PropertyType = typeof(object[]),
-                PropertyValue = new object[] { (long)1, (long)2, (long)3 },
+                PropertyValue = new object[] { (int)1, (int)2, (int)3 },
                 ShouldFind = true
             });
 
@@ -165,10 +153,10 @@ namespace Microsoft.IdentityModel.JsonWebTokens.Tests
                 Json = $@"{{""MixedArrayAsObjArray"":[1,""2"",3]}}",
                 PropertyName = "MixedArrayAsObjArray",
                 PropertyType = typeof(object[]),
-                PropertyValue = new object[] { (long)1, "2", (long)3},
+                PropertyValue = new object[] { (int)1, "2", (int)3},
                 ShouldFind = true
             });
-#endregion
+            #endregion
 
             #region strings
             theoryData.Add(new JsonClaimSetTheoryData("string")
@@ -219,7 +207,6 @@ namespace Microsoft.IdentityModel.JsonWebTokens.Tests
                 PropertyValue = (double)42.0,
                 ShouldFind = true
             });
-
             #endregion
 
             return theoryData;
