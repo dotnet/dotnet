@@ -82,7 +82,6 @@ namespace NuGet.Commands
             // Verify framework assets also as part of runtime assets validation.
             foreach (var node in graph.Flattened)
             {
-                await _log.LogAsync(LogLevel.Debug, string.Format(CultureInfo.CurrentCulture, Strings.Log_CheckingPackageCompatibility, node.Key.Name, node.Key.Version, graph.Name));
                 // Check project compatibility
                 if (node.Key.Type == LibraryType.Project)
                 {

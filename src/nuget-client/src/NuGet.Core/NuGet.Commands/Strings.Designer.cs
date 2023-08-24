@@ -1124,24 +1124,6 @@ namespace NuGet.Commands {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Checking compatibility of packages on {0}..
-        /// </summary>
-        internal static string Log_CheckingCompatibility {
-            get {
-                return ResourceManager.GetString("Log_CheckingCompatibility", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Checking compatibility for {0} {1} with {2}..
-        /// </summary>
-        internal static string Log_CheckingPackageCompatibility {
-            get {
-                return ResourceManager.GetString("Log_CheckingPackageCompatibility", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Committing restore....
         /// </summary>
         internal static string Log_Committing {
