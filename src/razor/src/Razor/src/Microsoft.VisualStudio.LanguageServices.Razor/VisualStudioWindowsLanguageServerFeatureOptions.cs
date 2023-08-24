@@ -51,7 +51,7 @@ internal class VisualStudioWindowsLanguageServerFeatureOptions : LanguageServerF
 
     public override bool SupportsDelegatedCodeActions => true;
 
-    public override bool SupportsDelegatedDiagnostics => false;
+    public override bool DelegateToCSharpOnDiagnosticPublish => false;
 
     public override bool ReturnCodeActionAndRenamePathsWithPrefixedSlash => false;
 

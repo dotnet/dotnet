@@ -93,7 +93,7 @@
     <ItemGroup>
       <MicrosoftCodeCoverageInstrumentationFiles Include="$(PkgMicrosoft_CodeCoverage_Instrumentation)\runtimes\win\native\*"></MicrosoftCodeCoverageInstrumentationFiles>
       <MicrosoftCodeCoverageIOFiles Include="$(PkgMicrosoft_CodeCoverage_IO)\lib\netstandard2.0\**\*"></MicrosoftCodeCoverageIOFiles>
-      <MicrosoftExtensionsDependencyModelFiles Include="$(PkgMicrosoft_Extensions_DependencyModel)\lib\netstandard2.0\*"></MicrosoftExtensionsDependencyModelFiles>
+      <MicrosoftExtensionsDependencyModelFiles Include="$(PkgMicrosoft_Extensions_DependencyModel)\lib\net451\*"></MicrosoftExtensionsDependencyModelFiles>
       <MicrosoftExtensionsFileSystemGlobbingFiles Include="$(PkgMicrosoft_Extensions_FileSystemGlobbing)\lib\netstandard2.0\*"></MicrosoftExtensionsFileSystemGlobbingFiles>
       <PlatformAbstractionsDepsJsonFiles Include="..\..\Microsoft.TestPlatform.PlatformAbstractions\bin\$(Configuration)\$(TargetFramework)\*.deps.json"></PlatformAbstractionsDepsJsonFiles>
       <PackageDepsJsonFiles Include="..\..\Microsoft.TestPlatform.PlatformAbstractions\bin\$(Configuration)\$(TargetFramework)\*.deps.json"></PackageDepsJsonFiles>

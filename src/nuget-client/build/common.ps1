@@ -161,7 +161,7 @@ Function Install-DotnetCLI {
 
         New-Item -ItemType Directory -Force -Path $CLIRoot | Out-Null
 
-        Invoke-WebRequest 'https://dot.net/v1/dotnet-install.ps1' -OutFile $DotNetInstall
+        Download-FileWithRetry 'https://dot.net/v1/dotnet-install.ps1' -OutFile $DotNetInstall
     }
 
     if (-not ([string]::IsNullOrEmpty($env:DOTNET_SDK_VERSIONS))) {
@@ -290,7 +290,7 @@ Function Install-ProcDump {
         $TestDir = Join-Path $NuGetClientRoot '.test'
         $ProcDumpDir = Join-Path $TestDir 'ProcDump'
 
-        Invoke-WebRequest 'https://download.sysinternals.com/files/Procdump.zip' -OutFile $ProcDumpZip
+        Download-FileWithRetry 'https://download.sysinternals.com/files/Procdump.zip' -OutFile $ProcDumpZip
         if (Test-Path $ProcDumpDir) {
             Remove-Item $ProcDumpDir -Recurse -Force | Out-Null
         }
@@ -328,5 +328,43 @@ Function Clear-Nupkgs {
     if (Test-Path $Nupkgs) {
         Trace-Log 'Cleaning nupkgs folder'
         Remove-Item $Nupkgs\*.nupkg -Force
+    }
+}
+
+Function Download-FileWithRetry {
+    param
+    (
+        [Parameter(Mandatory = $true)]
+        [string] $Uri,
+        [Parameter(Mandatory = $true)]
+        [string] $OutFile,
+        [Parameter(Mandatory = $false)]
+        [int] $Retries = 5
+    )
+
+    while($true)
+    {
+        try
+        {
+            Trace-Log "Downloading '$Uri' to '$OutFile'"
+            Invoke-WebRequest $Uri -OutFile $OutFile
+            break
+        }
+        catch
+        {
+            $exceptionMessage = $_.Exception.Message
+            Warning-Log "Failed to download '$Uri': $exceptionMessage"
+            if ($Retries -gt 0) {
+                $Retries--
+                Trace-Log "Waiting 10 seconds before retrying. Retries left: $Retries"
+                Start-Sleep -Seconds 10
+ 
+            }
+            else
+            {
+                $exception = $_.Exception
+                throw $exception
+            }
+        }
     }
 }
