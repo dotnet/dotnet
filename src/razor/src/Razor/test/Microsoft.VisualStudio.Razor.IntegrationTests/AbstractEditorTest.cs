@@ -40,7 +40,7 @@ public abstract class AbstractEditorTest : AbstractIntegrationTest
 
             await TestServices.SolutionExplorer.CreateSolutionAsync(_solutionName, ControlledHangMitigatingCancellationToken);
             await TestServices.SolutionExplorer.AddProjectAsync(_projectName, _projectTemplate, LanguageName, ControlledHangMitigatingCancellationToken);
-            await TestServices.SolutionExplorer.RestoreNuGetPackagesAsync(ProjectName, ControlledHangMitigatingCancellationToken);
+            await TestServices.SolutionExplorer.RestoreNuGetPackagesAsync(_projectName, ControlledHangMitigatingCancellationToken);
         }
     }
 }

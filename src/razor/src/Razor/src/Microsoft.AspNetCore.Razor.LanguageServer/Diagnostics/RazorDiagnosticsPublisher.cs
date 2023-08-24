@@ -35,11 +35,15 @@ internal class RazorDiagnosticsPublisher : DocumentProcessedListener
     private readonly ILogger<RazorDiagnosticsPublisher> _logger;
     private ProjectSnapshotManager? _projectManager;
     private readonly LanguageServerFeatureOptions _languageServerFeatureOptions;
+    private readonly Lazy<RazorTranslateDiagnosticsService> _razorTranslateDiagnosticsService;
+    private readonly Lazy<DocumentContextFactory> _documentContextFactory;
 
     public RazorDiagnosticsPublisher(
         ProjectSnapshotManagerDispatcher projectSnapshotManagerDispatcher,
         ClientNotifierServiceBase languageServer,
         LanguageServerFeatureOptions languageServerFeatureOptions,
+        Lazy<RazorTranslateDiagnosticsService> razorTranslateDiagnosticsService,
+        Lazy<DocumentContextFactory> documentContextFactory,
         ILoggerFactory loggerFactory)
     {
         if (projectSnapshotManagerDispatcher is null)
@@ -57,6 +61,16 @@ internal class RazorDiagnosticsPublisher : DocumentProcessedListener
             throw new ArgumentNullException(nameof(languageServerFeatureOptions));
         }
 
+        if (razorTranslateDiagnosticsService is null)
+        {
+            throw new ArgumentNullException(nameof(razorTranslateDiagnosticsService));
+        }
+
+        if (documentContextFactory is null)
+        {
+            throw new ArgumentNullException(nameof(documentContextFactory));
+        }
+
         if (loggerFactory is null)
         {
             throw new ArgumentNullException(nameof(loggerFactory));
@@ -65,6 +79,8 @@ internal class RazorDiagnosticsPublisher : DocumentProcessedListener
         _projectSnapshotManagerDispatcher = projectSnapshotManagerDispatcher;
         _languageServer = languageServer;
         _languageServerFeatureOptions = languageServerFeatureOptions;
+        _razorTranslateDiagnosticsService = razorTranslateDiagnosticsService;
+        _documentContextFactory = documentContextFactory;
         PublishedRazorDiagnostics = new Dictionary<string, IReadOnlyList<RazorDiagnostic>>(FilePathComparer.Instance);
         PublishedCSharpDiagnostics = new Dictionary<string, IReadOnlyList<Diagnostic>>(FilePathComparer.Instance);
         _work = new Dictionary<string, IDocumentSnapshot>(FilePathComparer.Instance);
@@ -193,8 +209,8 @@ internal class RazorDiagnosticsPublisher : DocumentProcessedListener
     {
         var result = await document.GetGeneratedOutputAsync().ConfigureAwait(false);
 
-        SumType<FullDocumentDiagnosticReport, UnchangedDocumentDiagnosticReport>? delegatedResponse = null;
-        if (_languageServerFeatureOptions.SupportsDelegatedDiagnostics)
+        Diagnostic[]? csharpDiagnostics = null;
+        if (_languageServerFeatureOptions.DelegateToCSharpOnDiagnosticPublish)
         {
             var uriBuilder = new UriBuilder()
             {
@@ -208,23 +224,26 @@ internal class RazorDiagnosticsPublisher : DocumentProcessedListener
                 TextDocument = new TextDocumentIdentifier { Uri = uriBuilder.Uri },
             };
 
-            delegatedResponse = await _languageServer.SendRequestAsync<DocumentDiagnosticParams, SumType<FullDocumentDiagnosticReport, UnchangedDocumentDiagnosticReport>?>(
-                CustomMessageNames.RazorPullDiagnosticEndpointName,
+            var delegatedResponse = await _languageServer.SendRequestAsync<DocumentDiagnosticParams, SumType<FullDocumentDiagnosticReport, UnchangedDocumentDiagnosticReport>?>(
+                CustomMessageNames.RazorCSharpPullDiagnosticsEndpointName,
                 delegatedParams,
                 CancellationToken.None).ConfigureAwait(false);
+
+            if (delegatedResponse.HasValue &&
+                delegatedResponse.Value.TryGetFirst(out var fullDiagnostics) &&
+                fullDiagnostics.Items is not null &&
+                _documentContextFactory.Value.TryCreate(delegatedParams.TextDocument.Uri, projectContext: null) is { } documentContext)
+            {
+                csharpDiagnostics = await _razorTranslateDiagnosticsService.Value.TranslateAsync(Protocol.RazorLanguageKind.CSharp, fullDiagnostics.Items, documentContext, CancellationToken.None).ConfigureAwait(false);
+            }
         }
 
         var razorDiagnostics = result.GetCSharpDocument().Diagnostics;
-        IReadOnlyList<Diagnostic>? csharpDiagnostics = null;
 
         lock (PublishedRazorDiagnostics)
         lock (PublishedCSharpDiagnostics)
         {
             var filePath = document.FilePath.AssumeNotNull();
-            if (delegatedResponse != null && delegatedResponse.Value.TryGetFirst(out var fullDocumentDiagnosticReport))
-            {
-                csharpDiagnostics = fullDocumentDiagnosticReport.Items;
-            }
 
             if (PublishedRazorDiagnostics.TryGetValue(filePath, out var previousRazorDiagnostics) && razorDiagnostics.SequenceEqual(previousRazorDiagnostics)
                 && (csharpDiagnostics == null || (PublishedCSharpDiagnostics.TryGetValue(filePath, out var previousCsharpDiagnostics) && csharpDiagnostics.SequenceEqual(previousCsharpDiagnostics))))
