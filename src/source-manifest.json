@@ -7,10 +7,10 @@
       "commitSha": "4d9945d230fdd8324ce16a31c7dbd74e27a0fc9b"
     },
     {
-      "packageVersion": "8.0.0-rc.2.23424.8",
+      "packageVersion": "8.0.0-rc.2.23424.11",
       "path": "aspnetcore",
       "remoteUri": "https://github.com/dotnet/aspnetcore",
-      "commitSha": "8c7a342c6754dabccd6a9540f5db4acd66c84241"
+      "commitSha": "b11467ec97308ef55fb460dfbebe77c31a5bf5b9"
     },
     {
       "packageVersion": "0.11.4-alpha.23421.1",
@@ -58,13 +58,13 @@
       "packageVersion": "8.0.100",
       "path": "installer",
       "remoteUri": "https://github.com/dotnet/installer",
-      "commitSha": "e37e1c3e4ea3cd61916be54d132bd60dd729caf5"
+      "commitSha": "25fb40c5f4d33520808055ae2bc7dd27e9d82e11"
     },
     {
-      "packageVersion": "17.8.0-preview-23424-03",
+      "packageVersion": "17.8.0-preview-23425-02",
       "path": "msbuild",
       "remoteUri": "https://github.com/dotnet/msbuild",
-      "commitSha": "415ba404676664e8a794e4000ddee929e797495d"
+      "commitSha": "3cb18c917252e18d8d310a86e6333ded0077fcb1"
     },
     {
       "packageVersion": "6.8.0-preview.1.75",
@@ -79,10 +79,10 @@
       "commitSha": "e5829d96c376650e66e91e7e47d1f6be19453c2d"
     },
     {
-      "packageVersion": "4.8.0-2.23423.10",
+      "packageVersion": "4.8.0-2.23424.9",
       "path": "roslyn",
       "remoteUri": "https://github.com/dotnet/roslyn",
-      "commitSha": "d83f0cc401672efe5afd5e9db4be43e9e06c5935"
+      "commitSha": "d7e010bbe5b1d37837417fc5e79ecb2fd9b7b487"
     },
     {
       "packageVersion": "3.11.0-beta1.23424.2",
@@ -97,10 +97,10 @@
       "commitSha": "3d1b2543593f0dc3fbbdc2b8cad9b1f8e7554af6"
     },
     {
-      "packageVersion": "8.0.100-rc.2.23424.23",
+      "packageVersion": "8.0.100-rc.2.23424.27",
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "b281701504d2ea20ee76387b7a146ba30ead17eb"
+      "commitSha": "ab723776a3ebc3f6b3f438d9550dfa7d38d76230"
     },
     {
       "packageVersion": "8.0.0-alpha.1.23424.1",
