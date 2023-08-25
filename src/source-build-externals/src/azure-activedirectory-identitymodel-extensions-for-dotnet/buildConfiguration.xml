@@ -3,7 +3,7 @@
   <nugetVersion>3.5.0-rc-1285</nugetVersion>
   <runtimes>net461,netstandard2.0</runtimes>
   <assemblyVersion>7.0.0</assemblyVersion>
-  <nugetSuffix>preview</nugetSuffix>
+  <nugetSuffix>preview3</nugetSuffix>
   <projects>
     <src>
       <project name="Microsoft.IdentityModel.Logging" />
@@ -24,7 +24,6 @@
       <project name="Microsoft.IdentityModel.LoggingExtensions" />
     </src>
     <test>
-      <project name="CrossVersionTokenValidation.Tests" test="yes"/>
       <project name="Microsoft.IdentityModel.Logging.Tests" test="yes"/>
       <project name="Microsoft.IdentityModel.TestUtils" test="no" />
       <project name="Microsoft.IdentityModel.JsonWebTokens.Tests" test="yes" />

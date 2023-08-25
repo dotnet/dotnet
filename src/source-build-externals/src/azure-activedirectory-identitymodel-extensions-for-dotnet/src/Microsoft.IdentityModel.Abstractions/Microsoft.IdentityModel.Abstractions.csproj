@@ -9,6 +9,7 @@
     <PackageId>Microsoft.IdentityModel.Abstractions</PackageId>
     <PackageTags>.NET;Windows;Authentication;Identity;Abstractions</PackageTags>
     <IsTrimmable>true</IsTrimmable>
+    <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)'=='Debug'">

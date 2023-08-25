@@ -6,6 +6,7 @@ using System.ComponentModel;
 using System.IO;
 using System.Text;
 using System.Xml;
+using Microsoft.IdentityModel.Abstractions;
 using Microsoft.IdentityModel.Logging;
 using Microsoft.IdentityModel.Tokens;
 using static Microsoft.IdentityModel.Logging.LogHelper;
@@ -110,19 +111,26 @@ namespace Microsoft.IdentityModel.Xml
                     else if (reader.IsStartElement(XmlSignatureConstants.Elements.KeyValue, XmlSignatureConstants.Namespace))
                     {
                         reader.ReadStartElement(XmlSignatureConstants.Elements.KeyValue, XmlSignatureConstants.Namespace);
-                            if (reader.IsStartElement(XmlSignatureConstants.Elements.RSAKeyValue, XmlSignatureConstants.Namespace))
-                            {
-                                // Multiple RSAKeyValues were found
-                                if (keyInfo.RSAKeyValue != null)
-                                    throw XmlUtil.LogReadException(LogMessages.IDX30015, XmlSignatureConstants.Elements.RSAKeyValue);
+                        if (reader.IsStartElement(XmlSignatureConstants.Elements.RSAKeyValue, XmlSignatureConstants.Namespace))
+                        {
+                            // Multiple RSAKeyValues were found
+                            if (keyInfo.RSAKeyValue != null)
+                                throw XmlUtil.LogReadException(LogMessages.IDX30015, XmlSignatureConstants.Elements.RSAKeyValue);
 
-                                keyInfo.RSAKeyValue = ReadRSAKeyValue(reader);
+                            keyInfo.RSAKeyValue = ReadRSAKeyValue(reader);
+                        }
+                        else
+                        {
+                            // Skip the element since it is not an <RSAKeyValue>
+                            if (LogHelper.IsEnabled(EventLogLevel.Warning))
+                            {
+                                LogHelper.LogWarning(LogMessages.IDX30300, reader.ReadOuterXml());
                             }
                             else
                             {
-                                // Skip the element since it is not an <RSAKeyValue>
-                                LogHelper.LogWarning(LogMessages.IDX30300, reader.ReadOuterXml());
+                                reader.Skip();
                             }
+                        }
 
                         // </KeyValue>
                         reader.ReadEndElement();
@@ -130,7 +138,14 @@ namespace Microsoft.IdentityModel.Xml
                     else
                     {
                         // Skip the element since it is not one of  <RetrievalMethod>, <X509Data>, <KeyValue>
-                        LogHelper.LogWarning(LogMessages.IDX30300, reader.ReadOuterXml());
+                        if (LogHelper.IsEnabled(EventLogLevel.Warning))
+                        {
+                            LogHelper.LogWarning(LogMessages.IDX30300, reader.ReadOuterXml());
+                        }
+                        else
+                        {
+                            reader.Skip();
+                        }
                     }
                 }
 
@@ -195,7 +210,14 @@ namespace Microsoft.IdentityModel.Xml
                 else
                 {
                     // Skip the element since it is not one of  <X509Certificate>, <X509IssuerSerial>, <X509SKI>, <X509SubjectName>, <X509CRL>
-                    LogHelper.LogWarning(LogMessages.IDX30300, reader.ReadOuterXml());
+                    if (LogHelper.IsEnabled(EventLogLevel.Warning))
+                    {
+                        LogHelper.LogWarning(LogMessages.IDX30300, reader.ReadOuterXml());
+                    }
+                    else
+                    {
+                        reader.Skip();
+                    }
                 }
             }
 

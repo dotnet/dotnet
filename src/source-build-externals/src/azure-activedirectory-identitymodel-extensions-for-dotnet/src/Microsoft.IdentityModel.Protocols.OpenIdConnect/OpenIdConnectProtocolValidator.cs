@@ -8,6 +8,7 @@ using System.Globalization;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Cryptography;
 using System.Text;
+using Microsoft.IdentityModel.Abstractions;
 using Microsoft.IdentityModel.Logging;
 using Microsoft.IdentityModel.Tokens;
 
@@ -457,7 +458,9 @@ namespace Microsoft.IdentityModel.Protocols.OpenIdConnect
         /// <exception cref="OpenIdConnectProtocolException">If expected value does not equal the hashed value.</exception>
         private void ValidateHash(string expectedValue, string hashItem, string algorithm)
         {
-            LogHelper.LogInformation(LogMessages.IDX21303, expectedValue);
+            if (LogHelper.IsEnabled(EventLogLevel.Informational))
+                LogHelper.LogInformation(LogMessages.IDX21303, expectedValue);
+
             HashAlgorithm hashAlgorithm = null;
             try
             {

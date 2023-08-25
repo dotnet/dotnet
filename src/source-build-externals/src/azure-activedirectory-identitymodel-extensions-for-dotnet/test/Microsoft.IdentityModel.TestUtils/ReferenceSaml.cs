@@ -1321,8 +1321,8 @@ namespace Microsoft.IdentityModel.TestUtils
                 identity2.AddClaim(claim1);
 
                 var claim2 = new Claim(ClaimTypes.NameIdentifier, Default.AttributeName, ClaimValueTypes.String, Default.Issuer);
-                claim2.Properties[ClaimProperties.SamlNameIdentifierFormat] = Default.NameIdentifierFormat;
-                claim2.Properties[ClaimProperties.SamlNameIdentifierNameQualifier] = Default.NameQualifier;
+                claim2.Properties[Tokens.Saml.ClaimProperties.SamlNameIdentifierFormat] = Default.NameIdentifierFormat;
+                claim2.Properties[Tokens.Saml.ClaimProperties.SamlNameIdentifierNameQualifier] = Default.NameQualifier;
                 identity2.AddClaim(claim2);
 
                 var claim3 = new Claim(ClaimTypes.AuthenticationMethod, Default.AuthenticationMethod, ClaimValueTypes.String, Default.Issuer);

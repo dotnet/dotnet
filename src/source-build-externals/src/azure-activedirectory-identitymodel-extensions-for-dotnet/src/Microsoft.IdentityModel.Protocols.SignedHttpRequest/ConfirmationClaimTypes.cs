@@ -1,6 +1,8 @@
 ﻿// Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
+using System;
+
 namespace Microsoft.IdentityModel.Protocols.SignedHttpRequest
 {
     /// <summary>
@@ -34,4 +36,14 @@ namespace Microsoft.IdentityModel.Protocols.SignedHttpRequest
         /// </summary>
         public const string Kid = "kid";
     }
+
+    internal static class ConfirmationClaimTypesUtf8Bytes
+    {
+        public static ReadOnlySpan<byte> Cnf => "cnf"u8;
+        public static ReadOnlySpan<byte> Jwk => "jwk"u8;
+        public static ReadOnlySpan<byte> Jwe => "jwe"u8;
+        public static ReadOnlySpan<byte> Jku => "jku"u8;
+        public static ReadOnlySpan<byte> Kid => "kid"u8;
+    }
+
 }

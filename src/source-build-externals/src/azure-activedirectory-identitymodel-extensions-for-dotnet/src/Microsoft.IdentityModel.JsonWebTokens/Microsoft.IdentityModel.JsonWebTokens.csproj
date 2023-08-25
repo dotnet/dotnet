@@ -1,6 +1,5 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-
   <Import Project="..\..\build\common.props" />
 
   <PropertyGroup>
@@ -9,6 +8,7 @@
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <PackageId>Microsoft.IdentityModel.JsonWebTokens</PackageId>
     <PackageTags>.NET;Windows;Authentication;Identity;Json Web Token</PackageTags>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)'=='Debug'">
@@ -27,13 +27,12 @@
     <ProjectReference Include="..\Microsoft.IdentityModel.Tokens\Microsoft.IdentityModel.Tokens.csproj" />
   </ItemGroup>
 
-  <ItemGroup Condition=" '$(TargetFramework)' == 'net461' Or '$(TargetFramework)' == 'net462' Or '$(TargetFramework)' == 'net472' Or '$(TargetFramework)' == 'netstandard2.0' Or '$(TargetFramework)' == 'net6.0' Or '$(TargetFramework)' == 'net8.0'">
-    <PackageReference Include="System.Text.Encoding" Version="$(SystemTextEncoding)" />
-	<PackageReference Include="System.Text.Encodings.Web" Version="$(SystemTextEncodingsWeb)" />
+  <ItemGroup Condition="'$(TargetFrameworkIdentifier)' != '.NETCoreApp'">
+  	<PackageReference Include="System.Text.Encodings.Web" Version="$(SystemTextEncodingsWeb)" />
     <PackageReference Include="System.Text.Json" Version="$(SystemTextJson)" />
   </ItemGroup>
 
-  <ItemGroup Condition=" '$(TargetFramework)' == 'net461' Or '$(TargetFramework)' == 'net462' Or '$(TargetFramework)' == 'net472'">
+  <ItemGroup Condition="'$(TargetFrameworkIdentifier)' == '.NETFramework'">
     <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
 

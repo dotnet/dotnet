@@ -7,16 +7,12 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
-using Microsoft.IdentityModel.Json.Linq;
 using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.TestUtils;
 using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json.Linq;
 using Xunit;
-
-
 using KEY = Microsoft.IdentityModel.TestUtils.KeyingMaterial;
-
-#pragma warning disable CS3016 // Arrays as attribute arguments is not CLS-compliant
 
 namespace Microsoft.IdentityModel.Tokens.Tests
 {
@@ -305,5 +301,4 @@ namespace Microsoft.IdentityModel.Tokens.Tests
     }
 }
 
-#pragma warning restore CS3016 // Arrays as attribute arguments is not CLS-compliant
-#endif 
+#endif

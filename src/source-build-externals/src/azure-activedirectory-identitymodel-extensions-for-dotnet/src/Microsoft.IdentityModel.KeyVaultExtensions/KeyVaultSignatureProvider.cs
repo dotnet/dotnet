@@ -41,11 +41,11 @@ namespace Microsoft.IdentityModel.KeyVaultExtensions
         /// <param name="algorithm">The signature algorithm to apply.</param>
         /// <param name="willCreateSignatures">Whether this <see cref="KeyVaultSignatureProvider"/> is required to create signatures then set this to true.</param>
         /// <param name="client">A mock <see cref="IKeyVaultClient"/> used for testing purposes.</param>
-        internal KeyVaultSignatureProvider(SecurityKey key, string algorithm, bool willCreateSignatures, IKeyVaultClient client)
+        internal KeyVaultSignatureProvider(SecurityKey key, string algorithm, bool willCreateSignatures, IKeyVaultClient? client)
             : base(key, algorithm)
         {
             _key = key as KeyVaultSecurityKey ?? throw LogHelper.LogArgumentNullException(nameof(key));
-            _client = client ?? new KeyVaultClient(new KeyVaultClient.AuthenticationCallback(_key.Callback));
+            _client = client ?? new KeyVaultClient(new KeyVaultClient.AuthenticationCallback(_key.Callback!));
             WillCreateSignatures = willCreateSignatures;
 
             switch (algorithm)

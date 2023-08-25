@@ -7,13 +7,13 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
 using System.Security.Cryptography.X509Certificates;
-using Microsoft.IdentityModel.Json.Linq;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using Microsoft.IdentityModel.Protocols.WsFederation;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.IdentityModel.Tokens.Saml;
 using Microsoft.IdentityModel.Tokens.Saml2;
 using Microsoft.IdentityModel.Xml;
+using Newtonsoft.Json.Linq;
 using Xunit;
 using ClaimProperties = Microsoft.IdentityModel.Tokens.Saml.ClaimProperties;
 
@@ -575,9 +575,9 @@ namespace Microsoft.IdentityModel.TestUtils
             var string2 = "goodbye";
             IdentityComparer.AreEqual(string1, string2, context);
 
-            Assert.True(context.Diffs.Count(s => s == $"'{string1}'") == 1);
-            Assert.True(context.Diffs.Count(s => s == "!=") == 1);
-            Assert.True(context.Diffs.Count(s => s == $"'{string2}'") == 1);
+            Assert.True(context.Diffs.Count(s => s == "str1 != str2, StringComparison: 'Ordinal'") == 1);
+            Assert.True(context.Diffs[1] == string1);
+            Assert.True(context.Diffs[2] == string2);
         }
 
         [Fact]

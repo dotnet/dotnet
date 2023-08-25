@@ -20,9 +20,9 @@ namespace Microsoft.IdentityModel.Tokens.Tests
     public class SecurityTokenExceptionTests
     {
         [Theory, MemberData(nameof(ExceptionTestData))]
-        public void SecurityTokenInvalidIssuerExceptionSerializesValues(SecurityTokenExceptionTheoryData theoryData)
+        public void SecurityTokenExceptionSerializationTests(SecurityTokenExceptionTheoryData theoryData)
         {
-            var context = TestUtilities.WriteHeader($"{this}.{nameof(SecurityTokenInvalidIssuerExceptionSerializesValues)}", theoryData);
+            var context = TestUtilities.WriteHeader($"{this}.{nameof(SecurityTokenExceptionSerializationTests)}", theoryData);
 
             try
             {
