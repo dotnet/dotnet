@@ -2,16 +2,15 @@
 // Licensed under the MIT License.
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
-using Microsoft.IdentityModel.Json.Linq;
 using Microsoft.IdentityModel.TestUtils;
 using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json.Linq;
 using Xunit;
 
 #pragma warning disable CS3016 // Arrays as attribute arguments is not CLS-compliant
@@ -40,7 +39,7 @@ namespace Microsoft.IdentityModel.Protocols.SignedHttpRequest.Tests
                 };
 
                 httpRequestData.AppendHeaders(theoryData.HttpHeaders);
-                IdentityComparer.AreStingEnumDictionariesEqual(httpRequestData.Headers, theoryData.ExpectedHttpRequestHeaders, context);
+                IdentityComparer.AreStringEnumDictionariesEqual(httpRequestData.Headers, theoryData.ExpectedHttpRequestHeaders, context);
                 theoryData.ExpectedException.ProcessNoException(context);
             }
             catch (Exception ex)
@@ -260,7 +259,7 @@ namespace Microsoft.IdentityModel.Protocols.SignedHttpRequest.Tests
                 IdentityComparer.AreStringsEqual(httpRequestData.Method, theoryData.ExpectedHttpRequestData.Method, context);
                 IdentityComparer.AreUrisEqual(httpRequestData.Uri, theoryData.ExpectedHttpRequestData.Uri, context);
                 IdentityComparer.AreBytesEqual(httpRequestData.Body, theoryData.ExpectedHttpRequestData.Body, context);
-                IdentityComparer.AreStingEnumDictionariesEqual(httpRequestData.Headers, theoryData.ExpectedHttpRequestData.Headers, context);
+                IdentityComparer.AreStringEnumDictionariesEqual(httpRequestData.Headers, theoryData.ExpectedHttpRequestData.Headers, context);
 
                 theoryData.ExpectedException.ProcessNoException(context);
             }

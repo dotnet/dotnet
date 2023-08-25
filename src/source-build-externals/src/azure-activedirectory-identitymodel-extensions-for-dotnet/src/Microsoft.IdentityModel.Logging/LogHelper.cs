@@ -2,12 +2,10 @@
 // Licensed under the MIT License.
 
 using System;
-using System.Data;
 using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Tracing;
 using System.Globalization;
 using System.Linq;
-using System.Text.RegularExpressions;
 using Microsoft.IdentityModel.Abstractions;
 
 namespace Microsoft.IdentityModel.Logging
@@ -43,6 +41,15 @@ namespace Microsoft.IdentityModel.Logging
             get { return _isHeaderWritten; }
             set { _isHeaderWritten = value; }
         }
+
+        /// <summary>
+        /// Gets whether logging is enabled at the specified <see cref="EventLogLevel"/>."/>
+        /// </summary>
+        /// <param name="level">The log level</param>
+        /// <returns><see langword="true"/> if logging is enabled at the specified level; otherwise, <see langword="false"/>.</returns>
+        public static bool IsEnabled(EventLogLevel level) =>
+            Logger.IsEnabled(level) ||
+            IdentityModelEventSource.Logger.IsEnabled(EventLogLevelToEventLevel(level), EventKeywords.All);
 
         /// <summary>
         /// Logs an exception using the event source logger and returns new <see cref="ArgumentNullException"/> exception.
@@ -257,12 +264,12 @@ namespace Microsoft.IdentityModel.Logging
             if (exception == null)
                 return null;
 
-            if (IdentityModelEventSource.Logger.IsEnabled() && IdentityModelEventSource.Logger.LogLevel >= eventLevel)
+            if (IdentityModelEventSource.Logger.IsEnabled(eventLevel, EventKeywords.All))
                 IdentityModelEventSource.Logger.Write(eventLevel, exception.InnerException, exception.Message);
 
-            EventLogLevel eventLogLevel = Enum.IsDefined(typeof(EventLogLevel), (int)eventLevel) ? (EventLogLevel)eventLevel : EventLogLevel.Error;
+            EventLogLevel eventLogLevel = EventLevelToEventLogLevel(eventLevel);
             if (Logger.IsEnabled(eventLogLevel))
-                Logger.Log(WriteEntry((EventLogLevel)eventLevel, exception.InnerException, exception.Message, null));
+                Logger.Log(WriteEntry(eventLogLevel, exception.InnerException, exception.Message, null));
 
             return exception;
         }
@@ -274,11 +281,11 @@ namespace Microsoft.IdentityModel.Logging
         /// <param name="args">An object array that contains zero or more objects to format.</param>
         public static void LogInformation(string message, params object[] args)
         {
-            if (IdentityModelEventSource.Logger.IsEnabled() && IdentityModelEventSource.Logger.LogLevel >= EventLevel.Informational)
+            if (IdentityModelEventSource.Logger.IsEnabled(EventLevel.Informational, EventKeywords.All))
                 IdentityModelEventSource.Logger.WriteInformation(message, args);
 
-            if (Enum.IsDefined(typeof(EventLogLevel), (int)EventLevel.Informational) && Logger.IsEnabled((EventLogLevel)EventLevel.Informational))
-                Logger.Log(WriteEntry((EventLogLevel)EventLevel.Informational, null, message, args));
+            if (Logger.IsEnabled(EventLogLevel.Informational))
+                Logger.Log(WriteEntry(EventLogLevel.Informational, null, message, args));
         }
 
         /// <summary>
@@ -288,11 +295,11 @@ namespace Microsoft.IdentityModel.Logging
         /// <param name="args">An object array that contains zero or more objects to format.</param>
         public static void LogVerbose(string message, params object[] args)
         {
-            if (IdentityModelEventSource.Logger.IsEnabled())
-                IdentityModelEventSource.Logger.WriteVerbose(message, args);
+            if (IdentityModelEventSource.Logger.IsEnabled(EventLevel.Verbose, EventKeywords.All))
+                    IdentityModelEventSource.Logger.WriteVerbose(message, args);
 
-            if (Enum.IsDefined(typeof(EventLogLevel), (int)EventLevel.Verbose) && Logger.IsEnabled((EventLogLevel)EventLevel.Verbose))
-                Logger.Log(WriteEntry((EventLogLevel)EventLevel.Verbose, null, message, args));
+            if (Logger.IsEnabled(EventLogLevel.Verbose))
+                Logger.Log(WriteEntry(EventLogLevel.Verbose, null, message, args));
         }
 
         /// <summary>
@@ -302,11 +309,11 @@ namespace Microsoft.IdentityModel.Logging
         /// <param name="args">An object array that contains zero or more objects to format.</param>
         public static void LogWarning(string message, params object[] args)
         {
-            if (IdentityModelEventSource.Logger.IsEnabled())
-                IdentityModelEventSource.Logger.WriteWarning(message, args);
+            if (IdentityModelEventSource.Logger.IsEnabled(EventLevel.Warning, EventKeywords.All))
+                    IdentityModelEventSource.Logger.WriteWarning(message, args);
 
-            if (Enum.IsDefined(typeof(EventLogLevel), (int)EventLevel.Warning) && Logger.IsEnabled((EventLogLevel)EventLevel.Warning))
-                Logger.Log(WriteEntry((EventLogLevel)EventLevel.Warning, null, message, args));
+            if (Logger.IsEnabled(EventLogLevel.Warning))
+                Logger.Log(WriteEntry(EventLogLevel.Warning, null, message, args));
         }
 
         /// <summary>
@@ -319,19 +326,18 @@ namespace Microsoft.IdentityModel.Logging
         /// <param name="args">An object array that contains zero or more objects to format.</param>
         private static T LogExceptionImpl<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] T>(EventLevel eventLevel, string argumentName, Exception innerException, string format, params object[] args) where T : Exception 
         {
-            string message = null;
-
+            string message;
             if (args != null)
                 message = string.Format(CultureInfo.InvariantCulture, format, args);
             else
                 message = format;
 
-            if (IdentityModelEventSource.Logger.IsEnabled() && IdentityModelEventSource.Logger.LogLevel >= eventLevel)
+            if (IdentityModelEventSource.Logger.IsEnabled(eventLevel, EventKeywords.All))
                 IdentityModelEventSource.Logger.Write(eventLevel, innerException, message);
 
-            EventLogLevel eventLogLevel = Enum.IsDefined(typeof(EventLogLevel), (int)eventLevel) ? (EventLogLevel)eventLevel : EventLogLevel.Error;
+            EventLogLevel eventLogLevel = EventLevelToEventLogLevel(eventLevel);
             if (Logger.IsEnabled(eventLogLevel))
-                Logger.Log(WriteEntry((EventLogLevel)eventLevel, innerException, message, null));
+                Logger.Log(WriteEntry(eventLogLevel, innerException, message, null));
 
             if (innerException != null) 
                 if (string.IsNullOrEmpty(argumentName))
@@ -344,6 +350,12 @@ namespace Microsoft.IdentityModel.Logging
                 else
                     return (T)Activator.CreateInstance(typeof(T), argumentName, message);
         }
+
+        private static EventLogLevel EventLevelToEventLogLevel(EventLevel eventLevel) =>
+            (uint)(int)eventLevel <= 5 ? (EventLogLevel)eventLevel : EventLogLevel.Error;
+
+        private static EventLevel EventLogLevelToEventLevel(EventLogLevel eventLevel) =>
+            (uint)(int)eventLevel <= 5 ? (EventLevel)eventLevel : EventLevel.Error;
 
         /// <summary>
         /// Formats the string using InvariantCulture
@@ -365,15 +377,15 @@ namespace Microsoft.IdentityModel.Logging
                 return string.Format(CultureInfo.InvariantCulture, format, args.Select(SanitizeSecurityArtifact).ToArray());
         }
 
-        private static string SanitizeSecurityArtifact(object arg)
+        private static object SanitizeSecurityArtifact(object arg)
         {
             if (arg == null)
                 return "null";
 
-            if (arg is ISafeLogSecurityArtifact && IdentityModelEventSource.LogCompleteSecurityArtifact)
+            if (IdentityModelEventSource.LogCompleteSecurityArtifact && arg is ISafeLogSecurityArtifact)
                 return (arg as ISafeLogSecurityArtifact).UnsafeToString();
 
-            return arg.ToString();
+            return arg;
         }
 
         private static string RemovePII(object arg)

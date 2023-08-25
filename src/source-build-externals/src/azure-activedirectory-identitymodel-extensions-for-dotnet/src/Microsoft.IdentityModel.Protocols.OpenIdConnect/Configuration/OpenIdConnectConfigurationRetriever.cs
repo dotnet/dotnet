@@ -4,7 +4,7 @@
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.IdentityModel.Json;
+using Microsoft.IdentityModel.Abstractions;
 using Microsoft.IdentityModel.Logging;
 using Microsoft.IdentityModel.Tokens;
 
@@ -64,15 +64,21 @@ namespace Microsoft.IdentityModel.Protocols.OpenIdConnect
 
             string doc = await retriever.GetDocumentAsync(address, cancel).ConfigureAwait(false);
 
-            LogHelper.LogVerbose(LogMessages.IDX21811, doc);
-            OpenIdConnectConfiguration openIdConnectConfiguration = JsonConvert.DeserializeObject<OpenIdConnectConfiguration>(doc);
+            if (LogHelper.IsEnabled(EventLogLevel.Verbose))
+                LogHelper.LogVerbose(LogMessages.IDX21811, doc);
+
+            OpenIdConnectConfiguration openIdConnectConfiguration = OpenIdConnectConfigurationSerializer.Read(doc);
             if (!string.IsNullOrEmpty(openIdConnectConfiguration.JwksUri))
             {
-                LogHelper.LogVerbose(LogMessages.IDX21812, openIdConnectConfiguration.JwksUri);
+                if (LogHelper.IsEnabled(EventLogLevel.Verbose))
+                    LogHelper.LogVerbose(LogMessages.IDX21812, openIdConnectConfiguration.JwksUri);
+
                 string keys = await retriever.GetDocumentAsync(openIdConnectConfiguration.JwksUri, cancel).ConfigureAwait(false);
 
-                LogHelper.LogVerbose(LogMessages.IDX21813, openIdConnectConfiguration.JwksUri);
-                openIdConnectConfiguration.JsonWebKeySet = JsonConvert.DeserializeObject<JsonWebKeySet>(keys);
+                if (LogHelper.IsEnabled(EventLogLevel.Verbose))
+                    LogHelper.LogVerbose(LogMessages.IDX21813, openIdConnectConfiguration.JwksUri);
+
+                openIdConnectConfiguration.JsonWebKeySet = new JsonWebKeySet(keys);
                 foreach (SecurityKey key in openIdConnectConfiguration.JsonWebKeySet.GetSigningKeys())
                 {
                     openIdConnectConfiguration.SigningKeys.Add(key);

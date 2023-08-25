@@ -6,8 +6,8 @@ using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.IdentityModel.TestUtils;
+using Newtonsoft.Json;
 using Xunit;
-using Microsoft.IdentityModel.Json;
 
 #pragma warning disable CS3016 // Arrays as attribute arguments is not CLS-compliant
 

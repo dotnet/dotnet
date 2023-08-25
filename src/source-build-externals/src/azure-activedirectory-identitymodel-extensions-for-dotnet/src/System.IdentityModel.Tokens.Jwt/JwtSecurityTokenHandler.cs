@@ -11,6 +11,7 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Xml;
+using Microsoft.IdentityModel.Abstractions;
 using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.Logging;
 using Microsoft.IdentityModel.Tokens;
@@ -281,19 +282,21 @@ namespace System.IdentityModel.Tokens.Jwt
 
             if (token.Length > MaximumTokenSizeInBytes)
             {
-                LogHelper.LogInformation(TokenLogMessages.IDX10209, LogHelper.MarkAsNonPII(token.Length), LogHelper.MarkAsNonPII(MaximumTokenSizeInBytes));
+                if (LogHelper.IsEnabled(EventLogLevel.Informational))
+                    LogHelper.LogInformation(TokenLogMessages.IDX10209, LogHelper.MarkAsNonPII(token.Length), LogHelper.MarkAsNonPII(MaximumTokenSizeInBytes));
+
                 return false;
             }
 
             // Set the maximum number of segments to MaxJwtSegmentCount + 1. This controls the number of splits and allows detecting the number of segments is too large.
             // For example: "a.b.c.d.e.f.g.h" => [a], [b], [c], [d], [e], [f.g.h]. 6 segments.
             // If just MaxJwtSegmentCount was used, then [a], [b], [c], [d], [e.f.g.h] would be returned. 5 segments.
-            string[] tokenParts = token.Split(new char[] { '.' }, JwtConstants.MaxJwtSegmentCount + 1);
-            if (tokenParts.Length == JwtConstants.JwsSegmentCount)
+            int tokenPartCount = JwtTokenUtilities.CountJwtTokenPart(token, JwtConstants.MaxJwtSegmentCount + 1);
+            if (tokenPartCount == JwtConstants.JwsSegmentCount)
             {
                 return JwtTokenUtilities.RegexJws.IsMatch(token);
             }
-            else if (tokenParts.Length == JwtConstants.JweSegmentCount)
+            else if (tokenPartCount == JwtConstants.JweSegmentCount)
             {
                 return JwtTokenUtilities.RegexJwe.IsMatch(token);
             }
@@ -639,7 +642,9 @@ namespace System.IdentityModel.Tokens.Jwt
                     notBefore = now;
             }
 
-            LogHelper.LogVerbose(LogMessages.IDX12721, LogHelper.MarkAsNonPII(issuer ?? "null"), LogHelper.MarkAsNonPII(audience ?? "null"));
+            if (LogHelper.IsEnabled(EventLogLevel.Verbose))
+                LogHelper.LogVerbose(LogMessages.IDX12721, LogHelper.MarkAsNonPII(issuer ?? "null"), LogHelper.MarkAsNonPII(audience ?? "null"));
+
             JwtPayload payload = new JwtPayload(issuer, audience, (subject == null ? null : OutboundClaimTypeTransform(subject.Claims)), (claimCollection == null ? null : OutboundClaimTypeTransform(claimCollection)), notBefore, expires, issuedAt);
             JwtHeader header = new JwtHeader(signingCredentials, OutboundAlgorithmMap, tokenType, additionalInnerHeaderClaims);
 
@@ -648,10 +653,15 @@ namespace System.IdentityModel.Tokens.Jwt
 
             string rawHeader = header.Base64UrlEncode();
             string rawPayload = payload.Base64UrlEncode();
-            string message = string.Concat(header.Base64UrlEncode(), ".", payload.Base64UrlEncode());
-            string rawSignature = signingCredentials == null ? string.Empty : JwtTokenUtilities.CreateEncodedSignature(message, signingCredentials);
+            string rawSignature = string.Empty;
+            if (signingCredentials != null)
+            {
+                string message = string.Concat(rawHeader, ".", rawPayload);
+                rawSignature = JwtTokenUtilities.CreateEncodedSignature(message, signingCredentials);
+            }
 
-            LogHelper.LogInformation(LogMessages.IDX12722, rawHeader, rawPayload, rawSignature);
+            if (LogHelper.IsEnabled(EventLogLevel.Informational))
+                LogHelper.LogInformation(LogMessages.IDX12722, rawHeader, rawPayload, rawSignature);
 
             if (encryptingCredentials != null)
             {
@@ -688,12 +698,13 @@ namespace System.IdentityModel.Tokens.Jwt
                 try
                 {
                     var header = new JwtHeader(encryptingCredentials, OutboundAlgorithmMap, tokenType, additionalHeaderClaims);
-                    AuthenticatedEncryptionResult encryptionResult = encryptionProvider.Encrypt(Encoding.UTF8.GetBytes(innerJwt.RawData), Encoding.ASCII.GetBytes(header.Base64UrlEncode()));
+                    var encodedHeader = header.Base64UrlEncode();
+                    AuthenticatedEncryptionResult encryptionResult = encryptionProvider.Encrypt(Encoding.UTF8.GetBytes(innerJwt.RawData), Encoding.ASCII.GetBytes(encodedHeader));
                     return JwtConstants.DirectKeyUseAlg.Equals(encryptingCredentials.Alg) ?
                         new JwtSecurityToken(
                             header,
                             innerJwt,
-                            header.Base64UrlEncode(),
+                            encodedHeader,
                             string.Empty,
                             Base64UrlEncoder.Encode(encryptionResult.IV),
                             Base64UrlEncoder.Encode(encryptionResult.Ciphertext),
@@ -701,7 +712,7 @@ namespace System.IdentityModel.Tokens.Jwt
                         new JwtSecurityToken(
                             header,
                             innerJwt,
-                            header.Base64UrlEncode(),
+                            encodedHeader,
                             Base64UrlEncoder.Encode(wrappedKey),
                             Base64UrlEncoder.Encode(encryptionResult.IV),
                             Base64UrlEncoder.Encode(encryptionResult.Ciphertext),
@@ -842,12 +853,12 @@ namespace System.IdentityModel.Tokens.Jwt
             if (token.Length > MaximumTokenSizeInBytes)
                 throw LogHelper.LogExceptionMessage(new ArgumentException(LogHelper.FormatInvariant(TokenLogMessages.IDX10209, LogHelper.MarkAsNonPII(token.Length), LogHelper.MarkAsNonPII(MaximumTokenSizeInBytes))));
 
-            var tokenParts = token.Split(new char[] { '.' }, JwtConstants.MaxJwtSegmentCount + 1);
+            int tokenPartCount = JwtTokenUtilities.CountJwtTokenPart(token, JwtConstants.MaxJwtSegmentCount + 1);
 
-            if (tokenParts.Length != JwtConstants.JwsSegmentCount && tokenParts.Length != JwtConstants.JweSegmentCount)
+            if (tokenPartCount != JwtConstants.JwsSegmentCount && tokenPartCount != JwtConstants.JweSegmentCount)
                 throw LogHelper.LogExceptionMessage(new SecurityTokenMalformedException(LogHelper.FormatInvariant(LogMessages.IDX12741, token)));
 
-            if (tokenParts.Length == JwtConstants.JweSegmentCount)
+            if (tokenPartCount == JwtConstants.JweSegmentCount)
             {
                 var jwtToken = ReadJwtToken(token);
                 var decryptedJwt = DecryptToken(jwtToken, validationParameters);
@@ -884,7 +895,8 @@ namespace System.IdentityModel.Tokens.Jwt
                 {
                     // The exception is not re-thrown as the TokenValidationParameters may have the issuer and signing key set
                     // directly on them, allowing the library to continue with token validation.
-                    LogHelper.LogWarning(LogHelper.FormatInvariant(TokenLogMessages.IDX10261, LogHelper.MarkAsNonPII(validationParameters.ConfigurationManager.MetadataAddress), ex.ToString()));
+                    if (LogHelper.IsEnabled(EventLogLevel.Warning))
+                        LogHelper.LogWarning(LogHelper.FormatInvariant(TokenLogMessages.IDX10261, LogHelper.MarkAsNonPII(validationParameters.ConfigurationManager.MetadataAddress), ex.ToString()));
                 }
             }
 
@@ -1158,7 +1170,9 @@ namespace System.IdentityModel.Tokens.Jwt
             if (validationParameters.SaveSigninToken)
                 identity.BootstrapContext = jwtToken.RawData;
 
-            LogHelper.LogInformation(TokenLogMessages.IDX10241, jwtToken);
+            if (LogHelper.IsEnabled(EventLogLevel.Informational))
+                LogHelper.LogInformation(TokenLogMessages.IDX10241, jwtToken);
+
             return new ClaimsPrincipal(identity);
         }
 
@@ -1168,7 +1182,9 @@ namespace System.IdentityModel.Tokens.Jwt
             if (validationParameters.SaveSigninToken)
                 identity.BootstrapContext = jwtToken.RawData;
 
-            LogHelper.LogInformation(TokenLogMessages.IDX10241, jwtToken);
+            if (LogHelper.IsEnabled(EventLogLevel.Informational))
+                LogHelper.LogInformation(TokenLogMessages.IDX10241, jwtToken);
+
             return new ClaimsPrincipal(identity);
         }
 
@@ -1338,7 +1354,7 @@ namespace System.IdentityModel.Tokens.Jwt
                 // 1. User specified delegate: IssuerSigningKeyResolver returned null
                 // 2. ResolveIssuerSigningKey returned null
                 // Try all the keys. This is the degenerate case, not concerned about perf.
-                keys = TokenUtilities.GetAllSigningKeys(validationParameters, configuration);
+                keys = TokenUtilities.GetAllSigningKeys(configuration, validationParameters);
             }
 
             // keep track of exceptions thrown, keys that were tried
@@ -1364,7 +1380,9 @@ namespace System.IdentityModel.Tokens.Jwt
                     {
                         if (ValidateSignature(encodedBytes, signatureBytes, key, jwtToken.Header.Alg, jwtToken, validationParameters))
                         {
-                            LogHelper.LogInformation(TokenLogMessages.IDX10242, jwtToken);
+                            if (LogHelper.IsEnabled(EventLogLevel.Informational))
+                                LogHelper.LogInformation(TokenLogMessages.IDX10242, jwtToken);
+
                             jwtToken.SigningKey = key;
                             return jwtToken;
                         }
@@ -1385,7 +1403,7 @@ namespace System.IdentityModel.Tokens.Jwt
             }
 
             // Get information on where keys used during token validation came from for debugging purposes.
-            var keysInTokenValidationParameters = TokenUtilities.GetAllSigningKeys(validationParameters);
+            var keysInTokenValidationParameters = TokenUtilities.GetAllSigningKeys(validationParameters: validationParameters);
             var keysInConfiguration = TokenUtilities.GetAllSigningKeys(configuration);
             var numKeysInTokenValidationParameters = keysInTokenValidationParameters.Count();
             var numKeysInConfiguration = keysInConfiguration.Count();
@@ -1460,7 +1478,9 @@ namespace System.IdentityModel.Tokens.Jwt
             var actualIssuer = issuer;
             if (string.IsNullOrWhiteSpace(issuer))
             {
-                LogHelper.LogVerbose(TokenLogMessages.IDX10244, LogHelper.MarkAsNonPII(ClaimsIdentity.DefaultIssuer));
+                if (LogHelper.IsEnabled(EventLogLevel.Verbose))
+                    LogHelper.LogVerbose(TokenLogMessages.IDX10244, LogHelper.MarkAsNonPII(ClaimsIdentity.DefaultIssuer));
+
                 actualIssuer = ClaimsIdentity.DefaultIssuer;
             }
             

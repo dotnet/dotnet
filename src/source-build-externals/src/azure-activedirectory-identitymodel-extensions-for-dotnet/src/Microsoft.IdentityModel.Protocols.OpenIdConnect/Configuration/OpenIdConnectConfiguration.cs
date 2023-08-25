@@ -5,7 +5,9 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using Microsoft.IdentityModel.Json;
+using System.Text.Json.Serialization;
+using System.Threading;
+using Microsoft.IdentityModel.Abstractions;
 using Microsoft.IdentityModel.Logging;
 using Microsoft.IdentityModel.Tokens;
 
@@ -14,10 +16,36 @@ namespace Microsoft.IdentityModel.Protocols.OpenIdConnect
     /// <summary>
     /// Contains OpenIdConnect configuration that can be populated from a json string.
     /// </summary>
-    [JsonObject]
     public class OpenIdConnectConfiguration : BaseConfiguration
     {
-        private const string _className = "Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectConfiguration";
+        internal const string ClassName = "Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectConfiguration";
+
+        // these are used to lazy create
+        private Dictionary<string, object> _additionalData;
+        private ICollection<string> _acrValuesSupported;
+        private ICollection<string> _claimsSupported;
+        private ICollection<string> _claimsLocalesSupported;
+        private ICollection<string> _claimTypesSupported;
+        private ICollection<string> _displayValuesSupported;
+        private ICollection<string> _grantTypesSupported;
+        private ICollection<string> _idTokenEncryptionAlgValuesSupported;
+        private ICollection<string> _idTokenEncryptionEncValuesSupported;
+        private ICollection<string> _idTokenSigningAlgValuesSupported;
+        private ICollection<string> _introspectionEndpointAuthMethodsSupported;
+        private ICollection<string> _introspectionEndpointAuthSigningAlgValuesSupported;
+        private ICollection<string> _requestObjectEncryptionAlgValuesSupported;
+        private ICollection<string> _requestObjectEncryptionEncValuesSupported;
+        private ICollection<string> _requestObjectSigningAlgValuesSupported;
+        private ICollection<string> _responseModesSupported;
+        private ICollection<string> _responseTypesSupported;
+        private ICollection<string> _scopesSupported;
+        private ICollection<string> _subjectTypesSupported;
+        private ICollection<string> _tokenEndpointAuthMethodsSupported;
+        private ICollection<string> _tokenEndpointAuthSigningAlgValuesSupported;
+        private ICollection<string> _uILocalesSupported;
+        private ICollection<string> _userInfoEndpointEncryptionAlgValuesSupported;
+        private ICollection<string> _userInfoEndpointEncryptionEncValuesSupported;
+        private ICollection<string> _userInfoEndpointSigningAlgValuesSupported;
 
         /// <summary>
         /// Deserializes the json string into an <see cref="OpenIdConnectConfiguration"/> object.
@@ -31,7 +59,9 @@ namespace Microsoft.IdentityModel.Protocols.OpenIdConnect
             if (string.IsNullOrEmpty(json))
                 throw LogHelper.LogArgumentNullException(nameof(json));
 
-            LogHelper.LogVerbose(LogMessages.IDX21808, json);
+            if (LogHelper.IsEnabled(EventLogLevel.Verbose))
+                LogHelper.LogVerbose(LogMessages.IDX21808, json);
+
             return new OpenIdConnectConfiguration(json);
         }
 
@@ -46,8 +76,10 @@ namespace Microsoft.IdentityModel.Protocols.OpenIdConnect
             if (configuration == null)
                 throw LogHelper.LogArgumentNullException(nameof(configuration));
 
-            LogHelper.LogVerbose(LogMessages.IDX21809);
-            return JsonConvert.SerializeObject(configuration);
+            if (LogHelper.IsEnabled(EventLogLevel.Verbose))
+                LogHelper.LogVerbose(LogMessages.IDX21809);
+
+            return OpenIdConnectConfigurationSerializer.Write(configuration);
         }
 
         /// <summary>
@@ -64,17 +96,19 @@ namespace Microsoft.IdentityModel.Protocols.OpenIdConnect
         /// <exception cref="ArgumentNullException">If 'json' is null or empty.</exception>
         public OpenIdConnectConfiguration(string json)
         {
-            if(string.IsNullOrEmpty(json))
+            if (string.IsNullOrEmpty(json))
                 throw LogHelper.LogArgumentNullException(nameof(json));
 
             try
             {
-                LogHelper.LogVerbose(LogMessages.IDX21806, json, LogHelper.MarkAsNonPII(_className));
-                JsonConvert.PopulateObject(json, this);
+                if (LogHelper.IsEnabled(EventLogLevel.Verbose))
+                    LogHelper.LogVerbose(LogMessages.IDX21806, json, LogHelper.MarkAsNonPII(ClassName));
+
+                OpenIdConnectConfigurationSerializer.Read(json, this);
             }
             catch (Exception ex)
             {
-                throw LogHelper.LogExceptionMessage(new ArgumentException(LogHelper.FormatInvariant(LogMessages.IDX21815, json, LogHelper.MarkAsNonPII(_className)), ex));
+                throw LogHelper.LogExceptionMessage(new ArgumentException(LogHelper.FormatInvariant(LogMessages.IDX21815, json, LogHelper.MarkAsNonPII(ClassName)), ex));
             }
         }
 
@@ -82,222 +116,330 @@ namespace Microsoft.IdentityModel.Protocols.OpenIdConnect
         /// When deserializing from JSON any properties that are not defined will be placed here.
         /// </summary>
         [JsonExtensionData]
-        public virtual IDictionary<string, object> AdditionalData { get; } = new Dictionary<string, object>();
+        public IDictionary<string, object> AdditionalData =>
+            _additionalData ??
+            Interlocked.CompareExchange(ref _additionalData, new Dictionary<string, object>(StringComparer.Ordinal), null) ??
+            _additionalData;
 
         /// <summary>
         /// Gets the collection of 'acr_values_supported'
         /// </summary>
-        [JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore, NullValueHandling = NullValueHandling.Ignore, PropertyName = OpenIdProviderMetadataNames.AcrValuesSupported, Required = Required.Default)]
-        public ICollection<string> AcrValuesSupported { get; } = new Collection<string>();
+        [JsonPropertyName(OpenIdProviderMetadataNames.AcrValuesSupported)]
+        public ICollection<string> AcrValuesSupported =>
+            _acrValuesSupported ??
+            Interlocked.CompareExchange(ref _acrValuesSupported, new Collection<string>(), null) ??
+            _acrValuesSupported;
 
         /// <summary>
         /// Gets or sets the 'authorization_endpoint'.
         /// </summary>
-        [JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore, NullValueHandling = NullValueHandling.Ignore, PropertyName = OpenIdProviderMetadataNames.AuthorizationEndpoint, Required = Required.Default)]
+        [JsonPropertyName(OpenIdProviderMetadataNames.AuthorizationEndpoint)]
+#if NET6_0_OR_GREATER
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+#endif
         public string AuthorizationEndpoint { get; set; }
 
         /// <summary>
         /// Gets or sets the 'check_session_iframe'.
         /// </summary>
-        [JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore, NullValueHandling = NullValueHandling.Ignore, PropertyName = OpenIdProviderMetadataNames.CheckSessionIframe, Required = Required.Default)]
+        [JsonPropertyName(OpenIdProviderMetadataNames.CheckSessionIframe)]
+#if NET6_0_OR_GREATER
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+#endif
         public string CheckSessionIframe { get; set; }
 
         /// <summary>
         /// Gets the collection of 'claims_supported'
         /// </summary>
-        [JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore, NullValueHandling = NullValueHandling.Ignore, PropertyName = OpenIdProviderMetadataNames.ClaimsSupported, Required = Required.Default)]
-        public ICollection<string> ClaimsSupported { get; } = new Collection<string>();
+        [JsonPropertyName(OpenIdProviderMetadataNames.ClaimsSupported)]
+        public ICollection<string> ClaimsSupported =>
+            _claimsSupported ??
+            Interlocked.CompareExchange(ref _claimsSupported, new Collection<string>(), null) ??
+            _claimsSupported;
 
         /// <summary>
         /// Gets the collection of 'claims_locales_supported'
         /// </summary>
-        [JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore, NullValueHandling = NullValueHandling.Ignore, PropertyName = OpenIdProviderMetadataNames.ClaimsLocalesSupported, Required = Required.Default)]
-        public ICollection<string> ClaimsLocalesSupported { get; } = new Collection<string>();
+        [JsonPropertyName(OpenIdProviderMetadataNames.ClaimsLocalesSupported)]
+        public ICollection<string> ClaimsLocalesSupported =>
+            _claimsLocalesSupported ??
+            Interlocked.CompareExchange(ref _claimsLocalesSupported, new Collection<string>(), null) ??
+            _claimsLocalesSupported;
 
         /// <summary>
         /// Gets or sets the 'claims_parameter_supported'
         /// </summary>
-        [JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore, NullValueHandling = NullValueHandling.Ignore, PropertyName = OpenIdProviderMetadataNames.ClaimsParameterSupported, Required = Required.Default)]
+        [JsonPropertyName(OpenIdProviderMetadataNames.ClaimsParameterSupported)]
+#if NET6_0_OR_GREATER
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+#endif
         public bool ClaimsParameterSupported { get; set; }
 
         /// <summary>
         /// Gets the collection of 'claim_types_supported'
         /// </summary>
-        [JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore, NullValueHandling = NullValueHandling.Ignore, PropertyName = OpenIdProviderMetadataNames.ClaimTypesSupported, Required = Required.Default)]
-        public ICollection<string> ClaimTypesSupported { get; } = new Collection<string>();
+        [JsonPropertyName(OpenIdProviderMetadataNames.ClaimsSupported)]
+        public ICollection<string> ClaimTypesSupported =>
+            _claimTypesSupported ??
+            Interlocked.CompareExchange(ref _claimTypesSupported, new Collection<string>(), null) ??
+            _claimTypesSupported;
 
         /// <summary>
         /// Gets the collection of 'display_values_supported'
         /// </summary>
-        [JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore, NullValueHandling = NullValueHandling.Ignore, PropertyName = OpenIdProviderMetadataNames.DisplayValuesSupported, Required = Required.Default)]
-        public ICollection<string> DisplayValuesSupported { get; } = new Collection<string>();
+        [JsonPropertyName(OpenIdProviderMetadataNames.DisplayValuesSupported)]
+        public ICollection<string> DisplayValuesSupported =>
+            _displayValuesSupported ??
+            Interlocked.CompareExchange(ref _displayValuesSupported, new Collection<string>(), null) ??
+            _displayValuesSupported;
 
         /// <summary>
         /// Gets or sets the 'end_session_endpoint'.
         /// </summary>
-        [JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore, NullValueHandling = NullValueHandling.Ignore, PropertyName = OpenIdProviderMetadataNames.EndSessionEndpoint, Required = Required.Default)]
+        [JsonPropertyName(OpenIdProviderMetadataNames.EndSessionEndpoint)]
+#if NET6_0_OR_GREATER
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+#endif
         public string EndSessionEndpoint { get; set; }
 
         /// <summary>
         /// Gets or sets the 'frontchannel_logout_session_supported'.
         /// </summary>
-        [JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore, NullValueHandling = NullValueHandling.Ignore, PropertyName = OpenIdProviderMetadataNames.FrontchannelLogoutSessionSupported, Required = Required.Default)]
+        /// <remarks>Would be breaking to change, in 6x it was string, spec says bool.
+        /// TODO - add another property, obsolete and drop in 8x?
+        /// see: https://openid.net/specs/openid-connect-frontchannel-1_0.html
+        /// </remarks>
+        [JsonPropertyName(OpenIdProviderMetadataNames.FrontchannelLogoutSessionSupported)]
         public string FrontchannelLogoutSessionSupported { get; set; }
 
         /// <summary>
         /// Gets or sets the 'frontchannel_logout_supported'.
         /// </summary>
-        [JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore, NullValueHandling = NullValueHandling.Ignore, PropertyName = OpenIdProviderMetadataNames.FrontchannelLogoutSupported, Required = Required.Default)]
+        /// <remarks>Would be breaking to change, in 6x it was string, spec says bool.
+        /// TODO - add another property, obsolete and drop in 8x?
+        /// see: https://openid.net/specs/openid-connect-frontchannel-1_0.html
+        /// </remarks>
+        [JsonPropertyName(OpenIdProviderMetadataNames.FrontchannelLogoutSupported)]
         public string FrontchannelLogoutSupported { get; set; }
 
         /// <summary>
         /// Gets the collection of 'grant_types_supported'
         /// </summary>
-        [JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore, NullValueHandling = NullValueHandling.Ignore, PropertyName = OpenIdProviderMetadataNames.GrantTypesSupported, Required = Required.Default)]
-        public ICollection<string> GrantTypesSupported { get; } = new Collection<string>();
+        [JsonPropertyName(OpenIdProviderMetadataNames.GrantTypesSupported)]
+        public ICollection<string> GrantTypesSupported =>
+            _grantTypesSupported ??
+            Interlocked.CompareExchange(ref _grantTypesSupported, new Collection<string>(), null) ??
+            _grantTypesSupported;
 
         /// <summary>
         /// Boolean value specifying whether the OP supports HTTP-based logout. Default is false.
         /// </summary>
-        [JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore, NullValueHandling = NullValueHandling.Ignore, PropertyName = OpenIdProviderMetadataNames.HttpLogoutSupported, Required = Required.Default)]
+        [JsonPropertyName(OpenIdProviderMetadataNames.HttpLogoutSupported)]
+#if NET6_0_OR_GREATER
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+#endif
         public bool HttpLogoutSupported { get; set; }
 
         /// <summary>
         /// Gets the collection of 'id_token_encryption_alg_values_supported'.
         /// </summary>
-        [JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore, NullValueHandling = NullValueHandling.Ignore, PropertyName = OpenIdProviderMetadataNames.IdTokenEncryptionAlgValuesSupported, Required = Required.Default)]
-        public ICollection<string> IdTokenEncryptionAlgValuesSupported { get; } = new Collection<string>();
+        [JsonPropertyName(OpenIdProviderMetadataNames.IdTokenEncryptionAlgValuesSupported)]
+        public ICollection<string> IdTokenEncryptionAlgValuesSupported =>
+            _idTokenEncryptionAlgValuesSupported ??
+            Interlocked.CompareExchange(ref _idTokenEncryptionAlgValuesSupported, new Collection<string>(), null) ??
+            _idTokenEncryptionAlgValuesSupported;
 
         /// <summary>
         /// Gets the collection of 'id_token_encryption_enc_values_supported'.
         /// </summary>
-        [JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore, NullValueHandling = NullValueHandling.Ignore, PropertyName = OpenIdProviderMetadataNames.IdTokenEncryptionEncValuesSupported, Required = Required.Default)]
-        public ICollection<string> IdTokenEncryptionEncValuesSupported { get; } = new Collection<string>();
+        [JsonPropertyName(OpenIdProviderMetadataNames.IdTokenEncryptionEncValuesSupported)]
+        public ICollection<string> IdTokenEncryptionEncValuesSupported =>
+            _idTokenEncryptionEncValuesSupported ??
+            Interlocked.CompareExchange(ref _idTokenEncryptionEncValuesSupported, new Collection<string>(), null) ??
+            _idTokenEncryptionEncValuesSupported;
 
         /// <summary>
         /// Gets the collection of 'id_token_signing_alg_values_supported'.
         /// </summary>
-        [JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore, NullValueHandling = NullValueHandling.Ignore, PropertyName = OpenIdProviderMetadataNames.IdTokenSigningAlgValuesSupported, Required = Required.Default)]
-        public ICollection<string> IdTokenSigningAlgValuesSupported { get; } = new Collection<string>();
+        [JsonPropertyName(OpenIdProviderMetadataNames.IdTokenSigningAlgValuesSupported)]
+        public ICollection<string> IdTokenSigningAlgValuesSupported =>
+            _idTokenSigningAlgValuesSupported ??
+            Interlocked.CompareExchange(ref _idTokenSigningAlgValuesSupported, new Collection<string>(), null) ??
+            _idTokenSigningAlgValuesSupported;
 
         /// <summary>
         /// Gets or sets the 'introspection_endpoint'.
         /// </summary>
-        [JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore, NullValueHandling = NullValueHandling.Ignore, PropertyName = OpenIdProviderMetadataNames.IntrospectionEndpoint, Required = Required.Default)]
+        [JsonPropertyName(OpenIdProviderMetadataNames.IntrospectionEndpoint)]
+#if NET6_0_OR_GREATER
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+#endif
         public string IntrospectionEndpoint { get; set; }
 
         /// <summary>
         /// Gets the collection of 'introspection_endpoint_auth_methods_supported'.
         /// </summary>
-        [JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore, NullValueHandling = NullValueHandling.Ignore, PropertyName = OpenIdProviderMetadataNames.IntrospectionEndpointAuthMethodsSupported, Required = Required.Default)]
-        public ICollection<string> IntrospectionEndpointAuthMethodsSupported { get; } = new Collection<string>();
+        [JsonPropertyName(OpenIdProviderMetadataNames.IntrospectionEndpointAuthMethodsSupported)]
+        public ICollection<string> IntrospectionEndpointAuthMethodsSupported =>
+            _introspectionEndpointAuthMethodsSupported ??
+            Interlocked.CompareExchange(ref _introspectionEndpointAuthMethodsSupported, new Collection<string>(), null) ??
+            _introspectionEndpointAuthMethodsSupported;
 
         /// <summary>
         /// Gets the collection of 'introspection_endpoint_auth_signing_alg_values_supported'.
         /// </summary>
-        [JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore, NullValueHandling = NullValueHandling.Ignore, PropertyName = OpenIdProviderMetadataNames.IntrospectionEndpointAuthSigningAlgValuesSupported, Required = Required.Default)]
-        public ICollection<string> IntrospectionEndpointAuthSigningAlgValuesSupported { get; } = new Collection<string>();
+        [JsonPropertyName(OpenIdProviderMetadataNames.IntrospectionEndpointAuthSigningAlgValuesSupported)]
+        public ICollection<string> IntrospectionEndpointAuthSigningAlgValuesSupported =>
+            _introspectionEndpointAuthSigningAlgValuesSupported ??
+            Interlocked.CompareExchange(ref _introspectionEndpointAuthSigningAlgValuesSupported, new Collection<string>(), null) ??
+            _introspectionEndpointAuthSigningAlgValuesSupported;
 
         /// <summary>
         /// Gets or sets the 'issuer'.
         /// </summary>
-        [JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore, NullValueHandling = NullValueHandling.Ignore, PropertyName = OpenIdProviderMetadataNames.Issuer, Required = Required.Default)]
+        [JsonPropertyName(OpenIdProviderMetadataNames.Issuer)]
+#if NET6_0_OR_GREATER
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+#endif
         public override string Issuer { get; set; }
 
         /// <summary>
         /// Gets or sets the 'jwks_uri'
         /// </summary>
-        [JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore, NullValueHandling = NullValueHandling.Ignore, PropertyName = OpenIdProviderMetadataNames.JwksUri, Required = Required.Default)]
+        [JsonPropertyName(OpenIdProviderMetadataNames.JwksUri)]
+#if NET6_0_OR_GREATER
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+#endif
         public string JwksUri { get; set; }
 
         /// <summary>
         /// Gets or sets the <see cref="JsonWebKeySet"/>
         /// </summary>
+        [JsonIgnore]
         public JsonWebKeySet JsonWebKeySet {get; set;}
 
         /// <summary>
         /// Boolean value specifying whether the OP can pass a sid (session ID) query parameter to identify the RP session at the OP when the logout_uri is used. Dafault Value is false.
         /// </summary>
-        [JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore, NullValueHandling = NullValueHandling.Ignore, PropertyName = OpenIdProviderMetadataNames.LogoutSessionSupported, Required = Required.Default)]
+        [JsonPropertyName(OpenIdProviderMetadataNames.LogoutSessionSupported)]
         public bool LogoutSessionSupported { get; set; }
 
         /// <summary>
         /// Gets or sets the 'op_policy_uri'
         /// </summary>
-        [JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore, NullValueHandling = NullValueHandling.Ignore, PropertyName = OpenIdProviderMetadataNames.OpPolicyUri, Required = Required.Default)]
+        [JsonPropertyName(OpenIdProviderMetadataNames.OpPolicyUri)]
+#if NET6_0_OR_GREATER
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+#endif
         public string OpPolicyUri { get; set; }
 
         /// <summary>
         /// Gets or sets the 'op_tos_uri'
         /// </summary>
-        [JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore, NullValueHandling = NullValueHandling.Ignore, PropertyName = OpenIdProviderMetadataNames.OpTosUri, Required = Required.Default)]
+        [JsonPropertyName(OpenIdProviderMetadataNames.OpTosUri)]
+#if NET6_0_OR_GREATER
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+#endif
         public string OpTosUri { get; set; }
 
         /// <summary>
         /// Gets or sets the 'registration_endpoint'
         /// </summary>
-        [JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore, NullValueHandling = NullValueHandling.Ignore, PropertyName = OpenIdProviderMetadataNames.RegistrationEndpoint, Required = Required.Default)]
+        [JsonPropertyName(OpenIdProviderMetadataNames.RegistrationEndpoint)]
+#if NET6_0_OR_GREATER
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+#endif
         public string RegistrationEndpoint { get; set; }
 
         /// <summary>
         /// Gets the collection of 'request_object_encryption_alg_values_supported'.
         /// </summary>
-        [JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore, NullValueHandling = NullValueHandling.Ignore, PropertyName = OpenIdProviderMetadataNames.RequestObjectEncryptionAlgValuesSupported, Required = Required.Default)]
-        public ICollection<string> RequestObjectEncryptionAlgValuesSupported { get; } = new Collection<string>();
+        [JsonPropertyName(OpenIdProviderMetadataNames.RequestObjectEncryptionAlgValuesSupported)]
+        public ICollection<string> RequestObjectEncryptionAlgValuesSupported =>
+            _requestObjectEncryptionAlgValuesSupported ??
+            Interlocked.CompareExchange(ref _requestObjectEncryptionAlgValuesSupported, new Collection<string>(), null) ??
+            _requestObjectEncryptionAlgValuesSupported;
 
         /// <summary>
         /// Gets the collection of 'request_object_encryption_enc_values_supported'.
         /// </summary>
-        [JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore, NullValueHandling = NullValueHandling.Ignore, PropertyName = OpenIdProviderMetadataNames.RequestObjectEncryptionEncValuesSupported, Required = Required.Default)]
-        public ICollection<string> RequestObjectEncryptionEncValuesSupported { get; } = new Collection<string>();
+        [JsonPropertyName(OpenIdProviderMetadataNames.RequestObjectEncryptionEncValuesSupported)]
+        public ICollection<string> RequestObjectEncryptionEncValuesSupported =>
+            _requestObjectEncryptionEncValuesSupported ??
+            Interlocked.CompareExchange(ref _requestObjectEncryptionEncValuesSupported, new Collection<string>(), null) ??
+            _requestObjectEncryptionEncValuesSupported;
 
         /// <summary>
         /// Gets the collection of 'request_object_signing_alg_values_supported'.
         /// </summary>
-        [JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore, NullValueHandling = NullValueHandling.Ignore, PropertyName = OpenIdProviderMetadataNames.RequestObjectSigningAlgValuesSupported, Required = Required.Default)]
-        public ICollection<string> RequestObjectSigningAlgValuesSupported { get; } = new Collection<string>();
+        [JsonPropertyName(OpenIdProviderMetadataNames.RequestObjectSigningAlgValuesSupported)]
+        public ICollection<string> RequestObjectSigningAlgValuesSupported =>
+            _requestObjectSigningAlgValuesSupported ??
+            Interlocked.CompareExchange(ref _requestObjectSigningAlgValuesSupported, new Collection<string>(), null) ??
+            _requestObjectSigningAlgValuesSupported;
 
         /// <summary>
         /// Gets or sets the 'request_parameter_supported'
         /// </summary>
-        [JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore, NullValueHandling = NullValueHandling.Ignore, PropertyName = OpenIdProviderMetadataNames.RequestParameterSupported, Required = Required.Default)]
+        [JsonPropertyName(OpenIdProviderMetadataNames.RequestParameterSupported)]
+#if NET6_0_OR_GREATER
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+#endif
         public bool RequestParameterSupported { get; set; }
 
         /// <summary>
         /// Gets or sets the 'request_uri_parameter_supported'
         /// </summary>
-        [JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore, NullValueHandling = NullValueHandling.Ignore, PropertyName = OpenIdProviderMetadataNames.RequestUriParameterSupported, Required = Required.Default)]
+        [JsonPropertyName(OpenIdProviderMetadataNames.RequestUriParameterSupported)]
+#if NET6_0_OR_GREATER
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+#endif
         public bool RequestUriParameterSupported { get; set; }
 
         /// <summary>
         /// Gets or sets the 'require_request_uri_registration'
         /// </summary>
-        [JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore, NullValueHandling = NullValueHandling.Ignore, PropertyName = OpenIdProviderMetadataNames.RequireRequestUriRegistration, Required = Required.Default)]
+        [JsonPropertyName(OpenIdProviderMetadataNames.RequireRequestUriRegistration)]
+#if NET6_0_OR_GREATER
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+#endif
         public bool RequireRequestUriRegistration { get; set; }
 
         /// <summary>
         /// Gets the collection of 'response_modes_supported'.
         /// </summary>
-        [JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore, NullValueHandling = NullValueHandling.Ignore, PropertyName = OpenIdProviderMetadataNames.ResponseModesSupported, Required = Required.Default)]
-        public ICollection<string> ResponseModesSupported { get; } = new Collection<string>();
+        [JsonPropertyName(OpenIdProviderMetadataNames.ResponseModesSupported)]
+        public ICollection<string> ResponseModesSupported =>
+            _responseModesSupported ??
+            Interlocked.CompareExchange(ref _responseModesSupported, new Collection<string>(), null) ??
+            _responseModesSupported;
 
         /// <summary>
         /// Gets the collection of 'response_types_supported'.
         /// </summary>
-        [JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore, NullValueHandling = NullValueHandling.Ignore, PropertyName = OpenIdProviderMetadataNames.ResponseTypesSupported, Required = Required.Default)]
-        public ICollection<string> ResponseTypesSupported { get; } = new Collection<string>();
+        [JsonPropertyName(OpenIdProviderMetadataNames.ResponseTypesSupported)]
+        public ICollection<string> ResponseTypesSupported =>
+            _responseTypesSupported ??
+            Interlocked.CompareExchange(ref _responseTypesSupported, new Collection<string>(), null) ??
+            _responseTypesSupported;
 
         /// <summary>
         /// Gets or sets the 'service_documentation'
         /// </summary>
-        [JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore, NullValueHandling = NullValueHandling.Ignore, PropertyName = OpenIdProviderMetadataNames.ServiceDocumentation, Required = Required.Default)]
+        [JsonPropertyName(OpenIdProviderMetadataNames.ServiceDocumentation)]
+#if NET6_0_OR_GREATER
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+#endif
         public string ServiceDocumentation { get; set; }
 
         /// <summary>
         /// Gets the collection of 'scopes_supported'
         /// </summary>
-        [JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore, NullValueHandling = NullValueHandling.Ignore, PropertyName = OpenIdProviderMetadataNames.ScopesSupported, Required = Required.Default)]
-        public ICollection<string> ScopesSupported { get; } = new Collection<string>();
+        [JsonPropertyName(OpenIdProviderMetadataNames.ScopesSupported)]
+        public ICollection<string> ScopesSupported =>
+            _scopesSupported ??
+            Interlocked.CompareExchange(ref _scopesSupported, new Collection<string>(), null) ??
+            _scopesSupported;
 
         /// <summary>
         /// Gets the <see cref="ICollection{SecurityKey}"/> that the IdentityProvider indicates are to be used signing tokens.
@@ -308,13 +450,19 @@ namespace Microsoft.IdentityModel.Protocols.OpenIdConnect
         /// <summary>
         /// Gets the collection of 'subject_types_supported'.
         /// </summary>
-        [JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore, NullValueHandling = NullValueHandling.Ignore, PropertyName = OpenIdProviderMetadataNames.SubjectTypesSupported, Required = Required.Default)]
-        public ICollection<string> SubjectTypesSupported { get; } = new Collection<string>();
+        [JsonPropertyName(OpenIdProviderMetadataNames.SubjectTypesSupported)]
+        public ICollection<string> SubjectTypesSupported =>
+            _subjectTypesSupported ??
+            Interlocked.CompareExchange(ref _subjectTypesSupported, new Collection<string>(), null) ??
+            _subjectTypesSupported;
 
         /// <summary>
         /// Gets or sets the 'token_endpoint'.
         /// </summary>
-        [JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore, NullValueHandling = NullValueHandling.Ignore, PropertyName = OpenIdProviderMetadataNames.TokenEndpoint, Required = Required.Default)]
+        [JsonPropertyName(OpenIdProviderMetadataNames.TokenEndpoint)]
+#if NET6_0_OR_GREATER
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+#endif
         public override string TokenEndpoint { get; set; }
 
         /// <summary>
@@ -326,46 +474,69 @@ namespace Microsoft.IdentityModel.Protocols.OpenIdConnect
         /// <summary>
         /// Gets the collection of 'token_endpoint_auth_methods_supported'.
         /// </summary>
-        [JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore, NullValueHandling = NullValueHandling.Ignore, PropertyName = OpenIdProviderMetadataNames.TokenEndpointAuthMethodsSupported, Required = Required.Default)]
-        public ICollection<string> TokenEndpointAuthMethodsSupported { get; } = new Collection<string>();
+        [JsonPropertyName(OpenIdProviderMetadataNames.TokenEndpointAuthMethodsSupported)]
+        public ICollection<string> TokenEndpointAuthMethodsSupported =>
+            _tokenEndpointAuthMethodsSupported ??
+            Interlocked.CompareExchange(ref _tokenEndpointAuthMethodsSupported, new Collection<string>(), null) ??
+            _tokenEndpointAuthMethodsSupported;
 
         /// <summary>
         /// Gets the collection of 'token_endpoint_auth_signing_alg_values_supported'.
         /// </summary>
-        [JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore, NullValueHandling = NullValueHandling.Ignore, PropertyName = OpenIdProviderMetadataNames.TokenEndpointAuthSigningAlgValuesSupported, Required = Required.Default)]
-        public ICollection<string> TokenEndpointAuthSigningAlgValuesSupported { get; } = new Collection<string>();
+        [JsonPropertyName(OpenIdProviderMetadataNames.TokenEndpointAuthSigningAlgValuesSupported)]
+        public ICollection<string> TokenEndpointAuthSigningAlgValuesSupported =>
+            _tokenEndpointAuthSigningAlgValuesSupported ??
+            Interlocked.CompareExchange(ref _tokenEndpointAuthSigningAlgValuesSupported, new Collection<string>(), null) ??
+            _tokenEndpointAuthSigningAlgValuesSupported;
 
         /// <summary>
         /// Gets the collection of 'ui_locales_supported'
         /// </summary>
-        [JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore, NullValueHandling = NullValueHandling.Ignore, PropertyName = OpenIdProviderMetadataNames.UILocalesSupported, Required = Required.Default)]
-        public ICollection<string> UILocalesSupported { get; } = new Collection<string>();
+        [JsonPropertyName(OpenIdProviderMetadataNames.UILocalesSupported)]
+        public ICollection<string> UILocalesSupported =>
+            _uILocalesSupported ??
+            Interlocked.CompareExchange(ref _uILocalesSupported, new Collection<string>(), null) ??
+            _uILocalesSupported;
 
         /// <summary>
         /// Gets or sets the 'user_info_endpoint'.
         /// </summary>
-        [JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore, NullValueHandling = NullValueHandling.Ignore, PropertyName = OpenIdProviderMetadataNames.UserInfoEndpoint, Required = Required.Default)]
+        [JsonPropertyName(OpenIdProviderMetadataNames.UserInfoEndpoint)]
+#if NET6_0_OR_GREATER
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+#endif
         public string UserInfoEndpoint { get; set; }
 
         /// <summary>
         /// Gets the collection of 'userinfo_encryption_alg_values_supported'
         /// </summary>
-        [JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore, NullValueHandling = NullValueHandling.Ignore, PropertyName = OpenIdProviderMetadataNames.UserInfoEncryptionAlgValuesSupported, Required = Required.Default)]
-        public ICollection<string> UserInfoEndpointEncryptionAlgValuesSupported { get; } = new Collection<string>();
+        [JsonPropertyName(OpenIdProviderMetadataNames.UserInfoEncryptionAlgValuesSupported)]
+        public ICollection<string> UserInfoEndpointEncryptionAlgValuesSupported =>
+            _userInfoEndpointEncryptionAlgValuesSupported ??
+            Interlocked.CompareExchange(ref _userInfoEndpointEncryptionAlgValuesSupported, new Collection<string>(), null) ??
+            _userInfoEndpointEncryptionAlgValuesSupported;
 
         /// <summary>
         /// Gets the collection of 'userinfo_encryption_enc_values_supported'
         /// </summary>
-        [JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore, NullValueHandling = NullValueHandling.Ignore, PropertyName = OpenIdProviderMetadataNames.UserInfoEncryptionEncValuesSupported, Required = Required.Default)]
-        public ICollection<string> UserInfoEndpointEncryptionEncValuesSupported { get; } = new Collection<string>();
+        [JsonPropertyName(OpenIdProviderMetadataNames.UserInfoEncryptionEncValuesSupported)]
+        public ICollection<string> UserInfoEndpointEncryptionEncValuesSupported =>
+            _userInfoEndpointEncryptionEncValuesSupported ??
+            Interlocked.CompareExchange(ref _userInfoEndpointEncryptionEncValuesSupported, new Collection<string>(), null) ??
+            _userInfoEndpointEncryptionEncValuesSupported;
 
         /// <summary>
         /// Gets the collection of 'userinfo_signing_alg_values_supported'
         /// </summary>
-        [JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore, NullValueHandling = NullValueHandling.Ignore, PropertyName = OpenIdProviderMetadataNames.UserInfoSigningAlgValuesSupported, Required = Required.Default)]
-        public ICollection<string> UserInfoEndpointSigningAlgValuesSupported { get; } = new Collection<string>();
+        [JsonPropertyName(OpenIdProviderMetadataNames.UserInfoSigningAlgValuesSupported)]
+        public ICollection<string> UserInfoEndpointSigningAlgValuesSupported =>
+            _userInfoEndpointSigningAlgValuesSupported ??
+            Interlocked.CompareExchange(ref _userInfoEndpointSigningAlgValuesSupported, new Collection<string>(), null) ??
+            _userInfoEndpointSigningAlgValuesSupported;
 
-#region shouldserialize
+        #region shouldserialize
+        // TODO - should we keep these, they were used by Newtonsoft to control serialization of collections.
+        // May help users to keep them hanging around.
         /// <summary>
         /// Gets a bool that determines if the 'acr_values_supported' (AcrValuesSupported) property should be serialized.
         /// This is used by Json.NET in order to conditionally serialize properties.

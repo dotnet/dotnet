@@ -10,30 +10,32 @@ using System.Linq;
 using System.Security.Claims;
 using Microsoft.IdentityModel.TestUtils;
 using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using Xunit;
-using Microsoft.IdentityModel.Json;
-using Microsoft.IdentityModel.Json.Linq;
 
 using JsonReaderException = System.Text.Json.JsonException;
-
-#pragma warning disable CS3016 // Arrays as attribute arguments is not CLS-compliant
 
 namespace Microsoft.IdentityModel.JsonWebTokens.Tests
 {
     public class JsonWebTokenTests
     {
         private static DateTime dateTime = new DateTime(2000, 01, 01, 0, 0, 0);
-        private string jsonString = $@"{{""intarray"":[1,2,3], ""array"":[1,""2"",3], ""jobject"": {{""string1"":""string1value"",""string2"":""string2value""}},""string"":""bob"", ""float"":42.0, ""integer"":42, ""nill"": null, ""bool"" : true, ""dateTime"": ""{dateTime}"", ""dateTimeIso8061"": ""{dateTime.ToUniversalTime().ToString("o", CultureInfo.InvariantCulture)}"" }}";
+        private static DateTime dateTimeUtc = new DateTime(2000, 01, 01, 0, 0, 0).ToUniversalTime();
+        private string jsonString = $@"{{""intarray"":[1,2,3], ""array"":[1,""2"",3], ""jobject"": {{""string1"":""string1value"",""string2"":""string2value""}},""string"":""bob"", ""float"":42, ""integer"":42, ""nill"": null, ""bool"" : true, ""dateTime"": ""{dateTime}"", ""dateTimeIso8061"": ""{dateTime.ToUniversalTime().ToString("o", CultureInfo.InvariantCulture)}"" }}";
+        // Note: We need to do some work with doubles and floats.
+        // If we serialize 42.0 as a double, then when deserialized, reading as Utf8JsonReader.GetDouble() will return 42.
+        // While we figure this out, the ClaimValueType for float was set to Integer32.
         private List<Claim> payloadClaims = new List<Claim>()
         {
-            new Claim("intarray", @"[1,2,3]", JsonClaimValueTypes.JsonArray, "LOCAL AUTHORITY", "LOCAL AUTHORITY"),
-            new Claim("array", @"[1,""2"",3]", JsonClaimValueTypes.JsonArray, "LOCAL AUTHORITY", "LOCAL AUTHORITY"),
+            new Claim("intarray", @"1", "http://www.w3.org/2001/XMLSchema#integer32", "LOCAL AUTHORITY", "LOCAL AUTHORITY"),
+            new Claim("array", @"1", "http://www.w3.org/2001/XMLSchema#integer32", "LOCAL AUTHORITY", "LOCAL AUTHORITY"),
             new Claim("jobject", @"{""string1"":""string1value"",""string2"":""string2value""}", JsonClaimValueTypes.Json, "LOCAL AUTHORITY", "LOCAL AUTHORITY"),
             new Claim("string", "bob", ClaimValueTypes.String, "LOCAL AUTHORITY", "LOCAL AUTHORITY"),
-            new Claim("float", "42.0", ClaimValueTypes.Double, "LOCAL AUTHORITY", "LOCAL AUTHORITY"),
-            new Claim("integer", "42", ClaimValueTypes.Integer, "LOCAL AUTHORITY", "LOCAL AUTHORITY"),
+            new Claim("float", "42", ClaimValueTypes.Integer32, "LOCAL AUTHORITY", "LOCAL AUTHORITY"),
+            new Claim("integer", "42", ClaimValueTypes.Integer32, "LOCAL AUTHORITY", "LOCAL AUTHORITY"),
             new Claim("nill", "", JsonClaimValueTypes.JsonNull, "LOCAL AUTHORITY", "LOCAL AUTHORITY"),
-            new Claim("bool", "true", ClaimValueTypes.Boolean, "LOCAL AUTHORITY", "LOCAL AUTHORITY"),
+            new Claim("bool", "True", ClaimValueTypes.Boolean, "LOCAL AUTHORITY", "LOCAL AUTHORITY"),
             new Claim("dateTime", dateTime.ToString(), ClaimValueTypes.String, "LOCAL AUTHORITY", "LOCAL AUTHORITY"),
             new Claim("dateTimeIso8061", dateTime.ToUniversalTime().ToString("o", CultureInfo.InvariantCulture), ClaimValueTypes.DateTime, "LOCAL AUTHORITY", "LOCAL AUTHORITY"),
         };
@@ -140,7 +142,10 @@ namespace Microsoft.IdentityModel.JsonWebTokens.Tests
             foreach (var claim in payloadClaims)
             {
                 var claimToCompare = jsonWebToken.GetClaim(claim.Type);
-                IdentityComparer.AreEqual(claim, claimToCompare, context);
+                if (!IdentityComparer.AreEqual(claim, claimToCompare, context))
+                {
+                    context.AddDiff($"claim.Type: '{claim.Type}'");
+                }
             }
 
             try // Try to retrieve a value that doesn't exist in the payload.
@@ -171,7 +176,11 @@ namespace Microsoft.IdentityModel.JsonWebTokens.Tests
             foreach (var claim in payloadClaims)
             {
                 success = jsonWebToken.TryGetClaim(claim.Type, out var claimToCompare);
-                IdentityComparer.AreEqual(claim, claimToCompare, context);
+                if (!IdentityComparer.AreEqual(claim, claimToCompare, context))
+                {
+                    context.AddDiff($"claim.Type: '{claim.Type}'");
+                }
+
                 IdentityComparer.AreEqual(true, success, context);
             }
 
@@ -263,9 +272,6 @@ namespace Microsoft.IdentityModel.JsonWebTokens.Tests
 
             var token = new JsonWebToken("{}", jsonString);
 
-//        private string jsonString = $@"{""array"":[1,""2"",3], ""jobject"": {{""string1"":""string1value"",""string2"":""string2value""}},""string"":""bob"", ""float"":42.0, ""integer"":42, ""nill"": null, ""bool"" : true, ""dateTime"": ""{dateTime}"", ""dateTimeIso8061"": ""{dateTime.ToUniversalTime().ToString("o", CultureInfo.InvariantCulture)}"" }}";
-
-
             try // Try to retrieve a value that doesn't exist in the header.
             {
                 token.GetPayloadValue<int>("doesnotexist");
@@ -281,7 +287,7 @@ namespace Microsoft.IdentityModel.JsonWebTokens.Tests
             }
             catch (Exception ex)
             {
-                ExpectedException.ArgumentException("IDX14305:", typeof(System.Text.Json.JsonException)).ProcessException(ex, context);
+                ExpectedException.ArgumentException("IDX14305:").ProcessException(ex, context);
             }
 
             TestUtilities.AssertFailIfErrors(context);
@@ -329,7 +335,7 @@ namespace Microsoft.IdentityModel.JsonWebTokens.Tests
             IdentityComparer.AreEqual(true, success, context);
 
             var dateTimeIso8061Value = token.GetPayloadValue<DateTime>("dateTimeIso8061");
-            IdentityComparer.AreEqual(dateTimeIso8061Value, dateTime.ToUniversalTime(), context);
+            IdentityComparer.AreEqual(dateTimeIso8061Value, dateTimeUtc, context);
             IdentityComparer.AreEqual(true, success, context);
 
             success = token.TryGetPayloadValue("doesnotexist", out int doesNotExist);

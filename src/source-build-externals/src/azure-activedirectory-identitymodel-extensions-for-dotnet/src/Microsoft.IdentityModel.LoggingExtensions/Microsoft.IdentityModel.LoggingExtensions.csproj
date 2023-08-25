@@ -9,6 +9,7 @@
     <PackageId>Microsoft.IdentityModel.LoggingExtensions</PackageId>
     <PackageTags>.NET;Windows;Authentication;Identity;Extensions;Logging</PackageTags>
     <TargetFrameworks>netstandard2.0</TargetFrameworks>
+    <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)'=='Debug'">
@@ -27,7 +28,7 @@
     <ProjectReference Include="..\Microsoft.IdentityModel.Abstractions\Microsoft.IdentityModel.Abstractions.csproj" />
   </ItemGroup>
 
-  <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.0' ">
+  <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="$(AspNetCoreMinSupportedVersion)" />
   </ItemGroup>
 

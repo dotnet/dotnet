@@ -2,9 +2,15 @@
 // Licensed under the MIT License.
 
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Text;
+using System.Text.Encodings.Web;
+using System.Text.Json;
 using Microsoft.IdentityModel.Logging;
 using Microsoft.IdentityModel.Tokens;
+
+using JsonPrimitives = Microsoft.IdentityModel.Tokens.Json.JsonSerializerPrimitives;
 
 namespace System.IdentityModel.Tokens.Jwt
 {
@@ -16,12 +22,76 @@ namespace System.IdentityModel.Tokens.Jwt
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2237:MarkISerializableTypesWithSerializable"), System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1600:ElementsMustBeDocumented", Justification = "Serialize not really supported.")]
     public class JwtHeader : Dictionary<string, object>
     {
+        internal string ClassName = "System.IdentityModel.Tokens.Jwt.JwtHeader";
+
         /// <summary>
         /// Initializes a new instance of the <see cref="JwtHeader"/> class. Default string comparer <see cref="StringComparer.Ordinal"/>.
         /// </summary>
         public JwtHeader()
             : base(StringComparer.Ordinal)
         {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="JwtHeader"/> class. Default string comparer <see cref="StringComparer.Ordinal"/>.
+        /// </summary>
+        internal JwtHeader(string json)
+        {
+            _ = json ?? throw LogHelper.LogArgumentNullException(nameof(json));
+
+            Utf8JsonReader reader = new(Encoding.UTF8.GetBytes(json));
+
+            if (!JsonPrimitives.IsReaderAtTokenType(ref reader, JsonTokenType.StartObject, false))
+                throw LogHelper.LogExceptionMessage(
+                    new JsonException(
+                        LogHelper.FormatInvariant(
+                        Microsoft.IdentityModel.Tokens.LogMessages.IDX11023,
+                        LogHelper.MarkAsNonPII("JsonTokenType.StartObject"),
+                        LogHelper.MarkAsNonPII(reader.TokenType),
+                        LogHelper.MarkAsNonPII(ClassName),
+                        LogHelper.MarkAsNonPII(reader.TokenStartIndex),
+                        LogHelper.MarkAsNonPII(reader.CurrentDepth),
+                        LogHelper.MarkAsNonPII(reader.BytesConsumed))));
+
+            while (reader.Read())
+            {
+                if (reader.TokenType == JsonTokenType.PropertyName)
+                {
+                    string propertyName = JsonPrimitives.ReadPropertyName(ref reader, ClassName, true);
+                    object obj;
+                    if (reader.TokenType == JsonTokenType.StartArray)
+                        obj = JsonPrimitives.ReadArrayOfObjects(ref reader, propertyName, ClassName);
+                    else
+                        obj = JsonPrimitives.ReadPropertyValueAsObject(ref reader, propertyName, ClassName);
+
+                    if (TryGetValue(propertyName, out object existingValue))
+                    {
+                        if (existingValue is not IList<object> claimValues)
+                        {
+                            claimValues = new List<object>
+                            {
+                                existingValue
+                            };
+
+                            this[propertyName] = claimValues;
+                        }
+
+                        if (obj is IList<object> objectList)
+                        {
+                            foreach (object item in objectList)
+                                claimValues.Add(item);
+                        }
+                        else
+                        {
+                            claimValues.Add(obj);
+                        }
+                    }
+                    else
+                    {
+                        this[propertyName] = obj;
+                    }
+                }
+            }
         }
 
         /// <summary>
@@ -314,32 +384,22 @@ namespace System.IdentityModel.Tokens.Jwt
         /// </summary>
         /// <param name="base64UrlEncodedJsonString">Base64url encoded JSON to deserialize.</param>
         /// <returns>An instance of <see cref="JwtHeader"/>.</returns>
-        /// <remarks>Use <see cref="JsonExtensions.Deserializer"/> to customize JSON serialization.</remarks>
         public static JwtHeader Base64UrlDeserialize(string base64UrlEncodedJsonString)
         {
-            return JsonExtensions.DeserializeJwtHeader(Base64UrlEncoder.Decode(base64UrlEncodedJsonString));
+            _ = base64UrlEncodedJsonString ?? throw LogHelper.LogArgumentNullException(nameof(base64UrlEncodedJsonString));
+
+            return new JwtHeader(Base64UrlEncoder.Decode(base64UrlEncodedJsonString));
         }
 
         /// <summary>
         /// Encodes this instance as Base64UrlEncoded JSON.
         /// </summary>
         /// <returns>Base64UrlEncoded JSON.</returns>
-        /// <remarks>Use <see cref="JsonExtensions.Serializer"/> to customize JSON serialization.</remarks>
         public virtual string Base64UrlEncode()
         {
             return Base64UrlEncoder.Encode(SerializeToJson());
         }
 
-        /// <summary>
-        /// Deserialzes JSON into a <see cref="JwtHeader"/> instance.
-        /// </summary>
-        /// <param name="jsonString"> The JSON to deserialize.</param>
-        /// <returns>An instance of <see cref="JwtHeader"/>.</returns>
-        /// <remarks>Use <see cref="JsonExtensions.Deserializer"/> to customize JSON serialization.</remarks>
-        public static JwtHeader Deserialize(string jsonString)
-        {
-            return JsonExtensions.DeserializeJwtHeader(jsonString);
-        }
         /// <summary>
         /// Gets a standard claim from the header.
         /// A standard claim is either a string or a value of another type serialized in JSON format.
@@ -356,7 +416,8 @@ namespace System.IdentityModel.Tokens.Jwt
                 if (value is string str)
                     return str;
 
-                return JsonExtensions.SerializeToJson(value);
+                // TODO - review dev
+                return string.Empty;
             }
 
             return null;
@@ -392,10 +453,29 @@ namespace System.IdentityModel.Tokens.Jwt
         /// Serializes this instance to JSON.
         /// </summary>
         /// <returns>This instance as JSON.</returns>
-        /// <remarks>Use <see cref="JsonExtensions.Serializer"/> to customize JSON serialization.</remarks>
         public virtual string SerializeToJson()
         {
-            return JsonExtensions.SerializeToJson(this as IDictionary<string, object>);
+            // TODO - common method for JwtPayload and JwtHeader
+            using (MemoryStream memoryStream = new MemoryStream())
+            {
+                Utf8JsonWriter writer = null;
+
+                try
+                {
+                    writer = new Utf8JsonWriter(memoryStream, new JsonWriterOptions { Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping });
+                    writer.WriteStartObject();
+
+                    JsonPrimitives.WriteObjects(ref writer, this);
+
+                    writer.WriteEndObject();
+                    writer.Flush();
+                    return Encoding.UTF8.GetString(memoryStream.GetBuffer(), 0, (int)memoryStream.Length);
+                }
+                finally
+                {
+                    writer?.Dispose();
+                }
+            }
         }
     }
 }

@@ -264,7 +264,7 @@ namespace Microsoft.IdentityModel.Protocols.WsFederation
         /// <param name="reader"><see cref="XmlReader"/> used to read SecurityTokenServiceEndpoint.</param>
         /// <returns>Active token endpoint string</returns>
         /// <exception cref="XmlReadException">If an error occurs while reading the SecurityTokenServiceEndpoint</exception>
-        protected virtual string ReadSecurityTokenServiceEndpoint(XmlReader reader)
+        protected virtual string? ReadSecurityTokenServiceEndpoint(XmlReader reader)
         {
             XmlUtil.CheckReaderOnEntry(reader, Elements.SecurityTokenServiceEndpoint, Namespace);
 
@@ -286,7 +286,7 @@ namespace Microsoft.IdentityModel.Protocols.WsFederation
             if (reader.IsEmptyElement)
                 throw XmlUtil.LogReadException(LogMessages.IDX22814);
 
-            string tokenEndpoint = null;
+            string? tokenEndpoint = null;
 
             while (reader.IsStartElement())
             {

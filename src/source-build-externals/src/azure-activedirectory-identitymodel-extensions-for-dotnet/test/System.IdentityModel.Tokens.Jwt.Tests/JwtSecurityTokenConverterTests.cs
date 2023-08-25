@@ -6,11 +6,12 @@ using System.Linq;
 using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.TestUtils;
 using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using Xunit;
 
 namespace System.IdentityModel.Tokens.Jwt.Tests
 {
-#pragma warning disable CS3016 // Arrays as attribute arguments is not CLS-compliant
     public class JwtSecurityTokenConverterTests
     {
         [Fact]
@@ -63,12 +64,12 @@ namespace System.IdentityModel.Tokens.Jwt.Tests
 
             var jwsTokenFromHeaderAndPayload = new JsonWebToken(
                 Default.PayloadString,
-                new Microsoft.IdentityModel.Json.Linq.JObject
+                new JObject
                 {
                     { JwtHeaderParameterNames.Alg, SecurityAlgorithms.Sha512  },
                     { JwtHeaderParameterNames.Kid, Default.AsymmetricSigningKey.KeyId },
                     { JwtHeaderParameterNames.Typ, JwtConstants.HeaderType }
-                }.ToString(Microsoft.IdentityModel.Json.Formatting.None));
+                }.ToString(Formatting.None));
 
             return new TheoryData<JwtSecurityTokenConverterTheoryData>
             {
@@ -172,6 +173,5 @@ namespace System.IdentityModel.Tokens.Jwt.Tests
 
             public Action<JwtSecurityToken> Validator { get; set; }
         }
-#pragma warning restore CS3016 // Arrays as attribute arguments is not CLS-compliant
     }
 }

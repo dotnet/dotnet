@@ -4,30 +4,13 @@
 // a specific target and scoped to a namespace, type, member, etc.
 
 using System.Diagnostics.CodeAnalysis;
-
-[assembly: SuppressMessage("Documentation", "CA1200:Avoid using cref tags with a prefix", Justification = "Vendored component", Scope = "namespaceanddescendants", Target = "Microsoft.IdentityModel.Json")]
-[assembly: SuppressMessage("Usage", "CA2213:Disposable fields should be disposed", Justification = "Vendored component", Scope = "namespaceanddescendants", Target = "Microsoft.IdentityModel.Json")]
-[assembly: SuppressMessage("Reliability", "CA2000:Dispose objects before losing scope", Justification = "Vendored component", Scope = "namespaceanddescendants", Target = "Microsoft.IdentityModel.Json")]
-[assembly: SuppressMessage("Performance", "CA1822:Mark members as static", Justification = "Vendored component", Scope = "namespaceanddescendants", Target = "Microsoft.IdentityModel.Json")]
-[assembly: SuppressMessage("Design", "CA1064:Exceptions should be public", Justification = "Vendored component", Scope = "namespaceanddescendants", Target = "Microsoft.IdentityModel.Json")]
-[assembly: SuppressMessage("Performance", "CA1802:Use literals where appropriate", Justification = "Vendored component", Scope = "namespaceanddescendants", Target = "Microsoft.IdentityModel.Json")]
-[assembly: SuppressMessage("Usage", "CA2208:Instantiate argument exceptions correctly", Justification = "Vendored component", Scope = "namespaceanddescendants", Target = "Microsoft.IdentityModel.Json")]
-[assembly: SuppressMessage("Usage", "CA1801:Review unused parameters", Justification = "Vendored component", Scope = "namespaceanddescendants", Target = "Microsoft.IdentityModel.Json")]
-[assembly: SuppressMessage("Globalization", "CA1308:Normalize strings to uppercase", Justification = "Vendored component", Scope = "namespaceanddescendants", Target = "Microsoft.IdentityModel.Json")]
-[assembly: SuppressMessage("Usage", "CA2207:Initialize value type static fields inline", Justification = "Vendored component", Scope = "namespaceanddescendants", Target = "Microsoft.IdentityModel.Json")]
-[assembly: SuppressMessage("Performance", "CA1810:Initialize reference type static fields inline", Justification = "Vendored component", Scope = "namespaceanddescendants", Target = "Microsoft.IdentityModel.Json")]
-[assembly: SuppressMessage("Performance", "CA1825:Avoid zero-length array allocations.", Justification = "vendored", Scope = "namespaceanddescendants", Target = "Microsoft.IdentityModel.Json")]
 [assembly: SuppressMessage("Globalization", "CA1307:Specify StringComparison", Justification = "Vendored component", Scope = "module")]
-[assembly: SuppressMessage("Performance", "CA1820:Test for empty strings using string length", Justification = "Vendored component", Scope = "namespaceanddescendants", Target = "Microsoft.IdentityModel.Json")]
-[assembly: SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "Vendored component", Scope = "namespaceanddescendants", Target = "Microsoft.IdentityModel.Json")]
-
 [assembly: SuppressMessage("Usage", "CA2227:Collection properties should be read only", Justification = "Breaking change", Scope = "member", Target = "~P:Microsoft.IdentityModel.Tokens.SecurityTokenDescriptor.AdditionalHeaderClaims")]
 [assembly: SuppressMessage("Usage", "CA2227:Collection properties should be read only", Justification = "Breaking change", Scope = "member", Target = "~P:Microsoft.IdentityModel.Tokens.SecurityTokenDescriptor.Claims")]
 [assembly: SuppressMessage("Usage", "CA2227:Collection properties should be read only", Justification = "Breaking change", Scope = "member", Target = "~P:Microsoft.IdentityModel.Tokens.JsonWebKey.Oth")]
 [assembly: SuppressMessage("Usage", "CA2227:Collection properties should be read only", Justification = "Breaking chnage", Scope = "member", Target = "~P:Microsoft.IdentityModel.Tokens.TokenValidationParameters.PropertyBag")]
 [assembly: SuppressMessage("Usage", "CA2214:Do not call overridable methods in constructors", Justification = "Current design", Scope = "member", Target = "~M:Microsoft.IdentityModel.Tokens.TokenValidationParameters.#ctor(Microsoft.IdentityModel.Tokens.TokenValidationParameters)")]
 [assembly: SuppressMessage("Usage", "CA2213:Disposable fields should be disposed", Justification = "Disposed through ReleaseSignatureProvider", Scope = "member", Target = "~F:Microsoft.IdentityModel.Tokens.AuthenticatedEncryptionProvider._symmetricSignatureProvider")]
-[assembly: SuppressMessage("Reliability", "CA2002:Do not lock on objects with weak identity", Justification = "Listener doesn't have a sync lock", Scope = "member", Target = "~M:Microsoft.IdentityModel.Json.Serialization.DiagnosticsTraceWriter.Trace(System.Diagnostics.TraceLevel,System.String,System.Exception)")]
 [assembly: SuppressMessage("Reliability", "CA2000:Dispose objects before losing scope", Justification = "Ownership is transfered", Scope = "member", Target = "~M:Microsoft.IdentityModel.Tokens.AsymmetricAdapter.InitializeUsingRsaSecurityKey(Microsoft.IdentityModel.Tokens.RsaSecurityKey,System.String)")]
 [assembly: SuppressMessage("Reliability", "CA2000:Dispose objects before losing scope", Justification = "Ownership is transfered", Scope = "member", Target = "~M:Microsoft.IdentityModel.Tokens.CryptoProviderFactory.CreateSignatureProvider(Microsoft.IdentityModel.Tokens.SecurityKey,System.String,System.Boolean,System.Boolean)~Microsoft.IdentityModel.Tokens.SignatureProvider")]
 [assembly: SuppressMessage("Reliability", "CA2000:Dispose objects before losing scope", Justification = "Doesn't own object", Scope = "member", Target = "~M:Microsoft.IdentityModel.Tokens.InMemoryCryptoProviderCache.TryRemove(Microsoft.IdentityModel.Tokens.SignatureProvider)~System.Boolean")]

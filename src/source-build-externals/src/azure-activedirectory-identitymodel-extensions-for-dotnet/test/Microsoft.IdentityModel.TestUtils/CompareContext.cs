@@ -19,10 +19,16 @@ namespace Microsoft.IdentityModel.TestUtils
             Title = title;
         }
 
+        public CompareContext(TheoryDataBase theoryData)
+        {
+            PropertiesToIgnoreWhenComparing = new Dictionary<Type, List<string>>(theoryData.PropertiesToIgnoreWhenComparing);
+            Title = theoryData.TestId;
+        }
+
         public CompareContext(string testName, TheoryDataBase theoryData)
         {
             Title = testName;
-            PropertiesToIgnoreWhenComparing = theoryData.PropertiesToIgnoreWhenComparing;
+            PropertiesToIgnoreWhenComparing = new Dictionary<Type, List<string>>(theoryData.PropertiesToIgnoreWhenComparing);
         }
 
         public CompareContext(CompareContext other)
