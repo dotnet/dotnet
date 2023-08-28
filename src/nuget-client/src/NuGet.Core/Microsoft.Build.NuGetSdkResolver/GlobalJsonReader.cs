@@ -24,14 +24,21 @@ namespace Microsoft.Build.NuGetSdkResolver
         public const string GlobalJsonFileName = "global.json";
 
         /// <summary>
-        /// Tthe section of global.json contains MSBuild project SDK versions.
+        /// The name of the section in global.json that contains MSBuild project SDK versions.
         /// </summary>
         public const string MSBuildSdksPropertyName = "msbuild-sdks";
 
         /// <summary>
         /// Represents a thread-safe cache for files based on their full path and last write time.
         /// </summary>
-        private readonly ConcurrentDictionary<FileInfo, (DateTime LastWriteTime, Lazy<Dictionary<string, string>> Lazy)> _fileCache = new ConcurrentDictionary<FileInfo, (DateTime, Lazy<Dictionary<string, string>>)>(FileSystemInfoFullNameEqualityComparer.Instance);
+        private static readonly ConcurrentDictionary<FileInfo, (DateTime LastWriteTime, Lazy<Dictionary<string, string>> Lazy)> FileCache = new ConcurrentDictionary<FileInfo, (DateTime, Lazy<Dictionary<string, string>>)>(FileSystemInfoFullNameEqualityComparer.Instance);
+
+
+        private GlobalJsonReader()
+        {
+        }
+
+        public static GlobalJsonReader Instance { get; } = new GlobalJsonReader();
 
         /// <summary>
         /// Occurs when a file is read.
@@ -70,7 +77,7 @@ namespace Microsoft.Build.NuGetSdkResolver
             }
 
             // Add a new file to the cache if it doesn't exist.  If the file is already in the cache, read it again if the file has changed
-            (DateTime _, Lazy<Dictionary<string, string>> Lazy) cacheEntry = _fileCache.AddOrUpdate(
+            (DateTime _, Lazy<Dictionary<string, string>> Lazy) cacheEntry = FileCache.AddOrUpdate(
                 globalJsonPath,
                 key => (key.LastWriteTime, new Lazy<Dictionary<string, string>>(() => ParseMSBuildSdkVersions(key.FullName, context))),
                 (key, item) =>

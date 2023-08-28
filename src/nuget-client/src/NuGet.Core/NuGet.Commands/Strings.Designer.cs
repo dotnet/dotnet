@@ -2123,6 +2123,15 @@ namespace NuGet.Commands {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The protocol version specified is invalid. Valid protocol versions are from {0} to {1}..
+        /// </summary>
+        internal static string SourcesCommandValidProtocolVersion {
+            get {
+                return ResourceManager.GetString("SourcesCommandValidProtocolVersion", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The original target frameworks value must match the aliases. Original target frameworks: {0}, aliases: {1}..
         /// </summary>
         internal static string SpecValidation_OriginalTargetFrameworksMustMatchAliases {

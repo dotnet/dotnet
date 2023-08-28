@@ -48,7 +48,6 @@ namespace Dotnet.Integration.Test
             }
         }
 
-        // https://github.com/NuGet/Home/issues/11178
         [PlatformFact(Platform.Windows, Platform.Linux)]
         public void Verify_AuthorSignedAndTimestampedPackageWithOptionAll_Succeeds()
         {
@@ -89,7 +88,6 @@ namespace Dotnet.Integration.Test
             }
         }
 
-        // https://github.com/NuGet/Home/issues/11178
         [PlatformFact(Platform.Windows, Platform.Linux)]
         public void Verify_SignedPackageWithAllowedCertificate_Succeeds()
         {
@@ -108,7 +106,6 @@ namespace Dotnet.Integration.Test
             }
         }
 
-        // https://github.com/NuGet/Home/issues/11178
         [PlatformFact(Platform.Windows, Platform.Linux)]
         public void Verify_MultipleSignedPackagesWithWildCardAndDetailedVerbosity_MixedResults()
         {
