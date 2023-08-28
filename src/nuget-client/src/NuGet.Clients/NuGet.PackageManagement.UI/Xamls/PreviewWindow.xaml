@@ -71,7 +71,6 @@
               <StackPanel
                 Margin="6, 6">
                 <TextBlock
-                  x:Name="_changeName"
                   AutomationProperties.Name="{Binding Text}"
                   FontSize="{Binding ElementName=_self,Path=FontSize,Converter={StaticResource Font122PercentSizeConverter}}"
                   Text="{Binding Path=Name}" />
@@ -81,7 +80,6 @@
                   Margin="0,8"
                   Visibility="{Binding Path=Deleted,Converter={StaticResource EnumerableToVisibilityConverter}}">
                   <TextBlock
-                    x:Name="_uninstalledPackages"
                     AutomationProperties.Name="{Binding Text}"
                     FontWeight="Bold"
                     Text="{x:Static nuget:Resources.Label_UninstalledPackages}" />
@@ -102,7 +100,6 @@
                   Margin="0,8"
                   Visibility="{Binding Path=Updated,Converter={StaticResource EnumerableToVisibilityConverter}}">
                   <TextBlock
-                    x:Name="_updatedPackages"
                     AutomationProperties.Name="{Binding Text}"
                     FontWeight="Bold"
                     Text="{x:Static nuget:Resources.Label_UpdatedPackages}" />
@@ -123,7 +120,6 @@
                   Margin="0,8"
                   Visibility="{Binding Path=Added,Converter={StaticResource EnumerableToVisibilityConverter}}">
                   <TextBlock
-                    x:Name="_installedPackages"
                     AutomationProperties.Name="{Binding Text}"
                     FontWeight="Bold"
                     Text="{x:Static nuget:Resources.Label_InstalledPackages}" />
@@ -134,6 +130,40 @@
                     <ItemsControl.ItemTemplate>
                       <DataTemplate>
                         <TextBlock Text="{Binding}" AutomationProperties.Name="{Binding AutomationName}" />
+                      </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                  </ItemsControl>
+                </StackPanel>
+
+                <!-- New Source Mappings for added packages -->
+                <StackPanel
+                  Margin="0,8"
+                  Visibility="{Binding Path=NewSourceMappings,Converter={StaticResource EnumerableToVisibilityConverter}}">
+                  <ItemsControl
+                    Margin="10,0,0,0"
+                    ItemsSource="{Binding Path=NewSourceMappings}"
+                    IsTabStop="False">
+                    <ItemsControl.ItemTemplate>
+                      <DataTemplate>
+                        <StackPanel>
+                          <!-- New Source Mapping with Source Name -->
+                          <TextBlock
+                            FontWeight="Bold"
+                            Text="{Binding Key, Mode=OneWay, StringFormat={x:Static nuget:Resources.Label_CreatingSourceMappings}}">
+                          </TextBlock>
+
+                          <!-- New Source Mapping Package IDs -->
+                          <ItemsControl ItemsSource="{Binding Value}"
+                            IsTabStop="False">
+                            <ItemsControl.ItemTemplate>
+                              <DataTemplate>
+                                <StackPanel>
+                                  <TextBlock Text="{Binding}" />
+                                </StackPanel>
+                              </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                          </ItemsControl>
+                        </StackPanel>
                       </DataTemplate>
                     </ItemsControl.ItemTemplate>
                   </ItemsControl>

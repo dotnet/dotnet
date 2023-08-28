@@ -3,10 +3,10 @@
 
 #nullable enable
 
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using NuGet.Configuration;
+using NuGet.PackageManagement.VisualStudio;
 
 namespace NuGet.PackageManagement.UI
 {
@@ -18,7 +18,7 @@ namespace NuGet.PackageManagement.UI
             PackageSourceMappingProvider sourceMappingProvider,
             IReadOnlyList<PackageSourceMappingSourceItem> existingPackageSourceMappingSourceItems)
         {
-            if (userAction?.SourceMappingSourceName is null || addedPackageIds is null)
+            if (userAction?.SelectedSourceName is null || addedPackageIds is null)
             {
                 return;
             }
@@ -46,7 +46,7 @@ namespace NuGet.PackageManagement.UI
                 .ToArray();
 
             CreateAndSavePackageSourceMappings(
-                userAction.SourceMappingSourceName,
+                userAction.SelectedSourceName,
                 packageIdsNeedingNewSourceMappings,
                 sourceMappingProvider,
                 existingPackageSourceMappingSourceItems);
@@ -90,6 +90,49 @@ namespace NuGet.PackageManagement.UI
             }
 
             mappingProvider.SavePackageSourceMappings(newAndExistingPackageSourceMappingItems);
+        }
+
+        internal static string? GetNewSourceMappingSourceName(PackageSourceMapping packageSourceMapping, PackageSourceMoniker activePackageSourceMoniker)
+        {
+            string? sourceMappingSourceName = packageSourceMapping.IsEnabled
+                && !activePackageSourceMoniker.IsAggregateSource
+                ? activePackageSourceMoniker.PackageSourceNames.First() : null;
+
+            return sourceMappingSourceName;
+        }
+
+        internal static void AddNewSourceMappingsFromAddedPackages(ref Dictionary<string, SortedSet<string>>? newSourceMappings, string newMappingSourceName, List<AccessiblePackageIdentity> added, PackageSourceMapping packageSourceMapping)
+        {
+            if (newMappingSourceName is null || added.Count == 0 || packageSourceMapping is null)
+            {
+                return;
+            }
+
+            foreach (AccessiblePackageIdentity addedPackage in added)
+            {
+                IReadOnlyList<string> configuredSources = packageSourceMapping.GetConfiguredPackageSources(packageId: addedPackage.Id);
+
+                if (configuredSources.Count > 0)
+                {
+                    continue;
+                }
+
+                if (newSourceMappings is null)
+                {
+                    newSourceMappings = new Dictionary<string, SortedSet<string>>(capacity: 1)
+                    {
+                        { newMappingSourceName, new SortedSet<string>(new List<string>(capacity: added.Count) { addedPackage.Id }) }
+                    };
+                }
+                else if (newSourceMappings.TryGetValue(newMappingSourceName, out SortedSet<string>? newMappingPackageIds))
+                {
+                    newMappingPackageIds.Add(addedPackage.Id);
+                }
+                else
+                {
+                    newSourceMappings.Add(newMappingSourceName, new SortedSet<string>(new List<string>(capacity: added.Count) { addedPackage.Id }));
+                }
+            }
         }
     }
 }

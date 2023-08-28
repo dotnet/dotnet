@@ -269,6 +269,57 @@ namespace NuGet.Configuration.Test
         }
 
         [Fact]
+        public void Update_WithDuplicatePatterns_WritesSinglePattern()
+        {
+            // Arrange
+            var config = @"
+<configuration>
+    <packageSourceMapping>
+        <packageSource key=""nuget.org"">
+            <package pattern=""first"" />
+            <package pattern=""first"" />
+            <package pattern=""second"" />
+        </packageSource>
+    </packageSourceMapping>
+</configuration>";
+            var nugetConfigPath = "NuGet.Config";
+            using var mockBaseDirectory = TestDirectory.Create();
+            SettingsTestUtils.CreateConfigurationFile(nugetConfigPath, mockBaseDirectory, config);
+
+            // Act and Assert
+            var settingsFile = new SettingsFile(mockBaseDirectory);
+            settingsFile.TryGetSection("packageSourceMapping", out var section).Should().BeTrue();
+            section.Should().NotBeNull();
+
+            section.Items.Count.Should().Be(1);
+            var packageSourceMappingSourceItem = section.Items.First() as PackageSourceMappingSourceItem;
+            packageSourceMappingSourceItem.Patterns.Should().HaveCount(3);
+
+            var clone = packageSourceMappingSourceItem.Clone() as PackageSourceMappingSourceItem;
+            clone.Patterns.Add(new PackagePatternItem("third"));
+            clone.Patterns.Add(new PackagePatternItem("third")); // Add a duplicate pattern to ensure it's handled without exception.
+
+            packageSourceMappingSourceItem.Update(clone);
+            settingsFile.SaveToDisk();
+
+            // Assert
+            var result = @"<?xml version=""1.0"" encoding=""utf-8""?>
+<configuration>
+    <packageSourceMapping>
+        <packageSource key=""nuget.org"">
+            <package pattern=""first"" />
+            <package pattern=""second"" />
+            <package pattern=""third"" />
+        </packageSource>
+    </packageSourceMapping>
+</configuration>";
+
+            result.Replace("\r\n", "\n")
+                .Should().BeEquivalentTo(
+                File.ReadAllText(Path.Combine(mockBaseDirectory, nugetConfigPath)).Replace("\r\n", "\n"));
+        }
+
+        [Fact]
         public void Update_WithRemovedPattern_RemovesPattern()
         {
             // Arrange

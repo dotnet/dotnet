@@ -1065,7 +1065,7 @@ namespace NuGet.PackageManagement.VisualStudio.Test
         }
 
         [Fact]
-        public async Task TestPacMan_InstallPackageAsync_LegacyPackageRefProjects_Duality()
+        public async Task InstallPackageAsync_LegacyPackageRefProjects_Duality()
         {
             using (var packageSource = TestDirectory.Create())
             {
@@ -1165,7 +1165,7 @@ namespace NuGet.PackageManagement.VisualStudio.Test
         }
 
         [Fact]
-        public async Task TestPacMan_InstallPackageAsync_LegacyPackageRefProjects_developmentDependency()
+        public async Task InstallPackageAsync_LegacyPackageRefProjects_developmentDependency()
         {
             using (var packageSource = TestDirectory.Create())
             {
@@ -1260,7 +1260,7 @@ namespace NuGet.PackageManagement.VisualStudio.Test
         }
 
         [Fact]
-        public async Task TestPacMan_LegacyPackageRefProjects_UpdatePackage_KeepExistingMetadata()
+        public async Task LegacyPackageRefProjects_UpdatePackage_KeepExistingMetadata()
         {
             using (var packageSource = TestDirectory.Create())
             {

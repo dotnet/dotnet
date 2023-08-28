@@ -1678,6 +1678,13 @@ namespace NuGet.PackageManagement
 
             if (buildIntegratedProjectsToUpdate.Count != 0)
             {
+                // Only automatically create Source Mappings when there's exclusively BuildIntegratedProjects.
+                if (otherTargetProjectsToUpdate.Count > 0)
+                {
+                    newMappingID = null;
+                    newMappingSource = null;
+                }
+
                 // Run build integrated project preview for all projects at the same time
                 var resolvedActions = await PreviewBuildIntegratedProjectsActionsAsync(
                     buildIntegratedProjectsToUpdate,

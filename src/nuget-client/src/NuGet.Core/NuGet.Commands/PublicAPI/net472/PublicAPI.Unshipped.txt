@@ -3,3 +3,7 @@
 ~NuGet.Commands.SourceRepositoryDependencyProvider.SourceRepository.get -> NuGet.Protocol.Core.Types.SourceRepository
 ~static NuGet.Commands.MSBuildRestoreUtility.GetRestoreAuditProperties(NuGet.Commands.IMSBuildItem specItem) -> NuGet.ProjectModel.RestoreAuditProperties
 ~static NuGet.Commands.MSBuildProjectFrameworkUtility.GetProjectFramework(string projectFilePath, string targetFrameworkMoniker, string targetPlatformMoniker, string targetPlatformMinVersion, string clrSupport, string windowsTargetPlatformMinVersion) -> NuGet.Frameworks.NuGetFramework
+~NuGet.Commands.AddSourceArgs.ProtocolVersion.get -> string
+~NuGet.Commands.AddSourceArgs.ProtocolVersion.set -> void
+~NuGet.Commands.UpdateSourceArgs.ProtocolVersion.get -> string
+~NuGet.Commands.UpdateSourceArgs.ProtocolVersion.set -> void

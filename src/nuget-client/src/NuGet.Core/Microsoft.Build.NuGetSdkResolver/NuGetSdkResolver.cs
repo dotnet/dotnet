@@ -40,7 +40,7 @@ namespace Microsoft.Build.NuGetSdkResolver
         /// Initializes a new instance of the NuGetSdkResolver class.
         /// </summary>
         public NuGetSdkResolver()
-            : this(new GlobalJsonReader())
+            : this(GlobalJsonReader.Instance)
         {
         }
 
