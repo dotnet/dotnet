@@ -83,7 +83,6 @@ stages:
       buildFromArchive: false            # 🚫
       enablePoison: false                # 🚫
       excludeOmniSharpTests: true        # ✅
-      excludeDotnetFormatTests: false    # 🚫
       runOnline: true                    # ✅
       useMonoRuntime: false              # 🚫
       withPreviousSDK: false             # 🚫
@@ -102,7 +101,6 @@ stages:
       buildFromArchive: true             # ✅
       enablePoison: false                # 🚫
       excludeOmniSharpTests: true        # ✅
-      excludeDotnetFormatTests: false    # 🚫
       runOnline: false                   # 🚫
       useMonoRuntime: false              # 🚫
       withPreviousSDK: false             # 🚫
@@ -125,7 +123,6 @@ stages:
         buildFromArchive: false            # ✅
         enablePoison: false                # 🚫
         excludeOmniSharpTests: true        # ✅
-        excludeDotnetFormatTests: true     # ✅ - https://github.com/dotnet/format/issues/1945
         runOnline: false                   # 🚫
         useMonoRuntime: false              # 🚫
         withPreviousSDK: false             # 🚫
@@ -144,7 +141,6 @@ stages:
         buildFromArchive: false            # 🚫
         enablePoison: false                # 🚫
         excludeOmniSharpTests: true        # ✅
-        excludeDotnetFormatTests: false    # 🚫
         runOnline: true                    # ✅
         useMonoRuntime: false              # 🚫
         withPreviousSDK: true              # ✅
@@ -163,7 +159,6 @@ stages:
         buildFromArchive: false            # 🚫
         enablePoison: false                # 🚫
         excludeOmniSharpTests: true        # ✅
-        excludeDotnetFormatTests: false    # 🚫
         runOnline: false                   # 🚫
         useMonoRuntime: false              # 🚫
         withPreviousSDK: true              # ✅
@@ -182,7 +177,6 @@ stages:
         buildFromArchive: true             # ✅
         enablePoison: false                # 🚫
         excludeOmniSharpTests: true        # ✅
-        excludeDotnetFormatTests: false    # 🚫
         runOnline: false                   # 🚫
         useMonoRuntime: true               # ✅
         withPreviousSDK: false             # 🚫
@@ -201,7 +195,6 @@ stages:
         buildFromArchive: true             # ✅
         enablePoison: false                # 🚫
         excludeOmniSharpTests: false       # 🚫
-        excludeDotnetFormatTests: false    # 🚫
         runOnline: false                   # 🚫
         useMonoRuntime: false              # 🚫
         withPreviousSDK: false             # 🚫
@@ -220,7 +213,6 @@ stages:
         buildFromArchive: true             # ✅
         enablePoison: true                 # ✅
         excludeOmniSharpTests: false       # 🚫
-        excludeDotnetFormatTests: false    # 🚫
         runOnline: false                   # 🚫
         useMonoRuntime: false              # 🚫
         withPreviousSDK: false             # 🚫
@@ -239,7 +231,6 @@ stages:
         buildFromArchive: false            # 🚫
         enablePoison: false                # 🚫
         excludeOmniSharpTests: false       # 🚫
-        excludeDotnetFormatTests: false    # 🚫
         runOnline: false                   # 🚫
         useMonoRuntime: false              # 🚫
         withPreviousSDK: false             # 🚫
@@ -258,7 +249,6 @@ stages:
         buildFromArchive: false            # 🚫
         enablePoison: false                # 🚫
         excludeOmniSharpTests: false       # 🚫
-        excludeDotnetFormatTests: false    # 🚫
         runOnline: false                   # 🚫
         useMonoRuntime: false              # 🚫
         withPreviousSDK: false             # 🚫
@@ -279,7 +269,6 @@ stages:
         buildFromArchive: false            # 🚫
         enablePoison: false                # 🚫
         excludeOmniSharpTests: true        # ✅
-        excludeDotnetFormatTests: false    # 🚫
         runOnline: false                   # 🚫
         useMonoRuntime: false              # 🚫
         withPreviousSDK: false             # 🚫
@@ -299,7 +288,6 @@ stages:
         buildFromArchive: false            # 🚫
         enablePoison: false                # 🚫
         excludeOmniSharpTests: false       # 🚫
-        excludeDotnetFormatTests: false    # 🚫
         runOnline: false                   # 🚫
         useMonoRuntime: false              # 🚫
         withPreviousSDK: false             # 🚫
