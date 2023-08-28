@@ -40,9 +40,6 @@ parameters:
 - name: excludeOmniSharpTests
   type: boolean
 
-- name: excludeDotnetFormatTests
-  type: boolean
-
 - name: enablePoison
   type: boolean
 
@@ -221,7 +218,7 @@ jobs:
       set -x
 
       dockerVolumeArgs="-v $(sourcesPath):/vmr"
-      dockerEnvArgs="-e SMOKE_TESTS_EXCLUDE_OMNISHARP=${{ parameters.excludeOmniSharpTests }} -e SMOKE_TESTS_EXCLUDE_DOTNETFORMAT=${{ parameters.excludeDotnetFormatTests }} -e SMOKE_TESTS_WARN_SDK_CONTENT_DIFFS=true -e SMOKE_TESTS_RUNNING_IN_CI=true"
+      dockerEnvArgs="-e SMOKE_TESTS_EXCLUDE_OMNISHARP=${{ parameters.excludeOmniSharpTests }} -e SMOKE_TESTS_WARN_SDK_CONTENT_DIFFS=true -e SMOKE_TESTS_RUNNING_IN_CI=true"
       poisonArg=''
 
       if [[ '${{ parameters.enablePoison }}' == 'True' ]]; then
