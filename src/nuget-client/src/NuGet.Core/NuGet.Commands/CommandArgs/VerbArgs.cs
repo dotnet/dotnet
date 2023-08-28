@@ -19,6 +19,7 @@ namespace NuGet.Commands
         public string Password { get; set; }
         public bool StorePasswordInClearText { get; set; }
         public string ValidAuthenticationTypes { get; set; }
+        public string ProtocolVersion { get; set; }
         public string Configfile { get; set; }
     }
 
@@ -79,6 +80,7 @@ namespace NuGet.Commands
         public string Password { get; set; }
         public bool StorePasswordInClearText { get; set; }
         public string ValidAuthenticationTypes { get; set; }
+        public string ProtocolVersion { get; set; }
         public string Configfile { get; set; }
     }
 

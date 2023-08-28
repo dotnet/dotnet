@@ -812,4 +812,10 @@ Non-HTTPS access will be removed in a future version. Consider migrating to 'HTT
     <value>The package reference {0} specifies a VersionOverride but the ability to override a centrally defined version is currently disabled.</value>
     <comment>0 - packagereference name</comment>
   </data>
+  <data name="SourcesCommandProtocolVersionDescription" xml:space="preserve">
+    <value>The NuGet server protocol version to be used. Currently supported versions are 2 and 3. See https://learn.microsoft.com/nuget/api/overview for information about the version 3 protocol. Defaults to 2 if not specified.</value>
+  </data>
+  <data name="SourcesCommandValidProtocolVersion" xml:space="preserve">
+    <value>The protocol version specified is invalid. Provide a valid protocol version.</value>
+  </data>
 </root>

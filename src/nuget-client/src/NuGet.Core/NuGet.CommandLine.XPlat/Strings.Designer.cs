@@ -394,15 +394,6 @@ namespace NuGet.CommandLine.XPlat {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Invalid culture identifier in {0} environment variable. Value read is &apos;{1}&apos;.
-        /// </summary>
-        internal static string Error_InvalidCultureInfo {
-            get {
-                return ResourceManager.GetString("Error_InvalidCultureInfo", resourceCulture);
-            }
-        }
-
-        /// <summary>
         ///   Looks up a localized string similar to The packages {0} are implicitly referenced. You do not typically need to reference them from your project or in your central package versions management file. For more information, see https://aka.ms/sdkimplicitrefs.
         /// </summary>
         internal static string Error_CentralPackageVersions_AutoreferencedReferencesNotAllowed {
@@ -444,6 +435,15 @@ namespace NuGet.CommandLine.XPlat {
         internal static string Error_CentralPackageVersions_VersionsNotAllowed {
             get {
                 return ResourceManager.GetString("Error_CentralPackageVersions_VersionsNotAllowed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Invalid culture identifier in {0} environment variable. Value read is &apos;{1}&apos;.
+        /// </summary>
+        internal static string Error_InvalidCultureInfo {
+            get {
+                return ResourceManager.GetString("Error_InvalidCultureInfo", resourceCulture);
             }
         }
         
@@ -1602,6 +1602,15 @@ namespace NuGet.CommandLine.XPlat {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The NuGet server protocol version to be used. Currently supported versions are 2 and 3. See https://learn.microsoft.com/nuget/api/overview for information about the version 3 protocol. Defaults to 2 if not specified..
+        /// </summary>
+        internal static string SourcesCommandProtocolVersionDescription {
+            get {
+                return ResourceManager.GetString("SourcesCommandProtocolVersionDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Path to the package source..
         /// </summary>
         internal static string SourcesCommandSourceDescription {
@@ -1634,6 +1643,15 @@ namespace NuGet.CommandLine.XPlat {
         internal static string SourcesCommandValidAuthenticationTypesDescription {
             get {
                 return ResourceManager.GetString("SourcesCommandValidAuthenticationTypesDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The protocol version specified is invalid. Provide a valid protocol version..
+        /// </summary>
+        internal static string SourcesCommandValidProtocolVersion {
+            get {
+                return ResourceManager.GetString("SourcesCommandValidProtocolVersion", resourceCulture);
             }
         }
         

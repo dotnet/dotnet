@@ -9,3 +9,4 @@ NuGet.Configuration.PackageSourceMapping.SearchForPattern(string! packageId) -> 
 ~NuGet.Configuration.SourceItem.SourceItem(string key, string value) -> void
 ~NuGet.Configuration.SourceItem.SourceItem(string key, string value, string protocolVersion, string allowInsecureConnections) -> void
 ~static readonly NuGet.Configuration.ConfigurationConstants.AllowInsecureConnections -> string
+const NuGet.Configuration.PackageSource.MaxProtocolVersion = 3 -> int

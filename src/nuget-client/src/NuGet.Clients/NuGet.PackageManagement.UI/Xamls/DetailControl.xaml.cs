@@ -110,12 +110,15 @@ namespace NuGet.PackageManagement.UI
 
             if (model != null && model.SelectedVersion != null)
             {
+                var sourceMappingSourceName = PackageSourceMappingUtility.GetNewSourceMappingSourceName(Control.Model.UIController.UIContext.PackageSourceMapping, Control.Model.UIController.ActivePackageSourceMoniker);
+
                 var userAction = UserAction.CreateInstallAction(
-                    model.Id,
+                    packageId: model.Id,
                     model.SelectedVersion.Version,
                     Control.Model.IsSolution,
                     UIUtility.ToContractsItemFilter(Control._topPanel.Filter),
-                    model.SelectedVersion.Range);
+                    model.SelectedVersion.Range,
+                    sourceMappingSourceName);
 
                 ExecuteUserAction(userAction, NuGetActionType.Install);
             }
@@ -138,11 +141,14 @@ namespace NuGet.PackageManagement.UI
 
             if (model != null && model.SelectedVersion != null)
             {
+                var sourceMappingSourceName = PackageSourceMappingUtility.GetNewSourceMappingSourceName(Control.Model.UIController.UIContext.PackageSourceMapping, Control.Model.UIController.ActivePackageSourceMoniker);
+
                 var userAction = UserAction.CreateInstallAction(
-                    model.Id,
+                    packageId: model.Id,
                     model.SelectedVersion.Version,
                     Control.Model.IsSolution,
-                    UIUtility.ToContractsItemFilter(Control._topPanel.Filter));
+                    UIUtility.ToContractsItemFilter(Control._topPanel.Filter),
+                    sourceMappingSourceName);
 
                 ExecuteUserAction(userAction, NuGetActionType.Install);
             }
