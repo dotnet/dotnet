@@ -154,9 +154,9 @@ To enable full offline source-building of the VMR, we have no other choice than 
 
 <!-- component list beginning -->
 - `src/arcade`  
-*[dotnet/arcade@4d9945d](https://github.com/dotnet/arcade/commit/4d9945d230fdd8324ce16a31c7dbd74e27a0fc9b)*
+*[dotnet/arcade@90c167d](https://github.com/dotnet/arcade/commit/90c167d5c57de4a8bced566379dbd893556c94e8)*
 - `src/aspnetcore`  
-*[dotnet/aspnetcore@9781991](https://github.com/dotnet/aspnetcore/commit/9781991a2402d10e6a94f804907bafecf7852b67)*
+*[dotnet/aspnetcore@fcc98f5](https://github.com/dotnet/aspnetcore/commit/fcc98f5c65ed50bfc024dbb0df1a2fa61a0790a3)*
     - `src/aspnetcore/src/submodules/googletest`  
     *[google/googletest@7e33b6a](https://github.com/google/googletest/commit/7e33b6a1c497ced1e98fc60175aeb4678419281c)*
     - `src/aspnetcore/src/submodules/MessagePack-CSharp`  
@@ -176,7 +176,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/fsharp`  
 *[dotnet/fsharp@0d3549f](https://github.com/dotnet/fsharp/commit/0d3549fa5b8b6387ade191d76768405cefed8229)*
 - `src/installer`  
-*[dotnet/installer@3bc1227](https://github.com/dotnet/installer/commit/3bc122703fb368baf7e0b6633b30e64772363a48)*
+*[dotnet/installer@c5e45fd](https://github.com/dotnet/installer/commit/c5e45fd659da4a8adfee8176ad7b6e4b3ac62ab8)*
 - `src/msbuild`  
 *[dotnet/msbuild@be26b4c](https://github.com/dotnet/msbuild/commit/be26b4c6697f551c822129cc1534297e921ca298)*
 - `src/nuget-client`  
@@ -186,13 +186,13 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/razor`  
 *[dotnet/razor@e5829d9](https://github.com/dotnet/razor/commit/e5829d96c376650e66e91e7e47d1f6be19453c2d)*
 - `src/roslyn`  
-*[dotnet/roslyn@d7e010b](https://github.com/dotnet/roslyn/commit/d7e010bbe5b1d37837417fc5e79ecb2fd9b7b487)*
+*[dotnet/roslyn@34268d1](https://github.com/dotnet/roslyn/commit/34268d1bb9370c7b01c742303a895a99daf10d6a)*
 - `src/roslyn-analyzers`  
 *[dotnet/roslyn-analyzers@546d9ed](https://github.com/dotnet/roslyn-analyzers/commit/546d9ed731872c72279735c55f140ab8967f5656)*
 - `src/runtime`  
 *[dotnet/runtime@4122c63](https://github.com/dotnet/runtime/commit/4122c63a13cfe40e97ac1f9ef01d8110a66943f4)*
 - `src/sdk`  
-*[dotnet/sdk@51b5cbd](https://github.com/dotnet/sdk/commit/51b5cbd76e3f7770aeb81e90d015ca41389cc40d)*
+*[dotnet/sdk@fc0256b](https://github.com/dotnet/sdk/commit/fc0256b3a82d72c4db2b7b2b83066aa9081a5493)*
 - `src/source-build-externals`  
 *[dotnet/source-build-externals@e3cc6c7](https://github.com/dotnet/source-build-externals/commit/e3cc6c792114ebdfe6627742d2820dbe1ae5bc47)*
     - `src/source-build-externals/src/application-insights`  
@@ -220,7 +220,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/source-build-reference-packages`  
 *[dotnet/source-build-reference-packages@f4903e4](https://github.com/dotnet/source-build-reference-packages/commit/f4903e46459e0348e3793055dd8b68b8b0264034)*
 - `src/sourcelink`  
-*[dotnet/sourcelink@29651f6](https://github.com/dotnet/sourcelink/commit/29651f6757ba867d14165ebbe9a7e431291daf08)*
+*[dotnet/sourcelink@1d1739c](https://github.com/dotnet/sourcelink/commit/1d1739c52b2d5a238727bbce10b3d15c5bf5e3cc)*
 - `src/symreader`  
 *[dotnet/symreader@2c8079e](https://github.com/dotnet/symreader/commit/2c8079e2e8e78c0cd11ac75a32014756136ecdb9)*
 - `src/templating`  
@@ -232,7 +232,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/xdt`  
 *[dotnet/xdt@9a1c3e1](https://github.com/dotnet/xdt/commit/9a1c3e1b7f0c8763d4c96e593961a61a72679a7b)*
 - `src/xliff-tasks`  
-*[dotnet/xliff-tasks@bb654cd](https://github.com/dotnet/xliff-tasks/commit/bb654cd4736e7e8cb99f1c355ce2b8f0a686ba74)*
+*[dotnet/xliff-tasks@ed9a835](https://github.com/dotnet/xliff-tasks/commit/ed9a83526483c094fb51e7000b6f816ce6cb0325)*
 <!-- component list end -->
 
 The repository also contains a [JSON manifest](https://github.com/dotnet/dotnet/blob/main/src/source-manifest.json) listing all components in a machine-readable format.
