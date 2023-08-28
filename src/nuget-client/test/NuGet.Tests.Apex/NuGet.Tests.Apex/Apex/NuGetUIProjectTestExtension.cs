@@ -101,5 +101,10 @@ namespace NuGet.Tests.Apex
         {
             _uiproject.SetPackageSourceOptionToAll();
         }
+
+        public void SetPackageSourceOptionToSource(string sourceName)
+        {
+            _uiproject.SetPackageSourceOptionToSource(sourceName);
+        }
     }
 }

@@ -47,7 +47,7 @@ namespace Microsoft.Build.NuGetSdkResolver.Test
 
                 var context = new MockSdkResolverContext(testDirectory);
 
-                var globalJsonReader = new GlobalJsonReader();
+                var globalJsonReader = GlobalJsonReader.Instance;
 
                 string actualGlobalJsonPath = null;
 
@@ -94,7 +94,7 @@ namespace Microsoft.Build.NuGetSdkResolver.Test
 }}
 }}");
 
-                var globalJsonReader = new GlobalJsonReader();
+                var globalJsonReader = GlobalJsonReader.Instance;
 
                 string actualGlobalJsonPath = null;
 
@@ -127,7 +127,7 @@ namespace Microsoft.Build.NuGetSdkResolver.Test
 
                 var context = new MockSdkResolverContext(testDirectory);
 
-                var globalJsonReader = new GlobalJsonReader();
+                var globalJsonReader = GlobalJsonReader.Instance;
 
                 string actualGlobalJsonPath = null;
 
@@ -164,7 +164,7 @@ namespace Microsoft.Build.NuGetSdkResolver.Test
 
                 var context = new MockSdkResolverContext(testDirectory);
 
-                var globalJsonReader = new GlobalJsonReader();
+                var globalJsonReader = GlobalJsonReader.Instance;
 
                 string actualGlobalJsonPath = null;
 
@@ -197,7 +197,7 @@ namespace Microsoft.Build.NuGetSdkResolver.Test
 
                 var context = new MockSdkResolverContext(testDirectory);
 
-                var globalJsonReader = new GlobalJsonReader();
+                var globalJsonReader = GlobalJsonReader.Instance;
 
                 Dictionary<string, int> globalJsonReadCountByPath = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
 
@@ -258,7 +258,7 @@ namespace Microsoft.Build.NuGetSdkResolver.Test
             {
                 var context = new MockSdkResolverContext(testDirectory);
 
-                var globalJsonReader = new GlobalJsonReader();
+                var globalJsonReader = GlobalJsonReader.Instance;
 
                 bool wasGlobalJsonRead = false;
 
@@ -289,7 +289,7 @@ namespace Microsoft.Build.NuGetSdkResolver.Test
 
                 var context = new MockSdkResolverContext(testDirectory);
 
-                var globalJsonReader = new GlobalJsonReader();
+                var globalJsonReader = GlobalJsonReader.Instance;
 
                 bool wasGlobalJsonRead = false;
 
@@ -325,7 +325,7 @@ namespace Microsoft.Build.NuGetSdkResolver.Test
   ""msbuild-sdks"": {msbuildSdksSection}
 }}");
 
-                var globalJsonReader = new GlobalJsonReader();
+                var globalJsonReader = GlobalJsonReader.Instance;
 
                 bool wasGlobalJsonRead = false;
 
@@ -348,7 +348,7 @@ namespace Microsoft.Build.NuGetSdkResolver.Test
         {
             var context = new MockSdkResolverContext(projectPath: null, solutionPath: null);
 
-            var globalJsonReader = new GlobalJsonReader();
+            var globalJsonReader = GlobalJsonReader.Instance;
 
             bool wasGlobalJsonRead = false;
 
@@ -404,7 +404,7 @@ namespace Microsoft.Build.NuGetSdkResolver.Test
 
                 var context = new MockSdkResolverContext(testDirectory);
 
-                var globalJsonReader = new GlobalJsonReader();
+                var globalJsonReader = GlobalJsonReader.Instance;
 
                 bool wasGlobalJsonRead = false;
 

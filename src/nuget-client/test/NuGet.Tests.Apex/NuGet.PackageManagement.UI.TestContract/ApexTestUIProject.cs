@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using NuGet.PackageManagement.VisualStudio;
 using NuGet.Packaging.Core;
 using NuGet.Versioning;
 using NuGet.VisualStudio;
@@ -46,6 +47,14 @@ namespace NuGet.PackageManagement.UI.TestContract
             set
             {
                 UIInvoke(() => _packageManagerControl.ActiveFilter = value);
+            }
+        }
+
+        public PackageSourceMoniker SelectedSource
+        {
+            get
+            {
+                return UIInvoke(() => _packageManagerControl.SelectedSource);
             }
         }
 
@@ -155,6 +164,15 @@ namespace NuGet.PackageManagement.UI.TestContract
         {
             // First one is always 'All' option
             _packageManagerControl.SelectedSource = _packageManagerControl.PackageSources.First();
+        });
+
+        /// <summary>
+        /// Used for package source mapping Apex tests which require a specific package source to be selected.
+        /// </summary>
+        public void SetPackageSourceOptionToSource(string sourceName) => UIInvoke(() =>
+        {
+            _packageManagerControl.SelectedSource = _packageManagerControl.PackageSources.Single(
+                p => StringComparer.OrdinalIgnoreCase.Equals(p.SourceName, sourceName));
         });
 
         private void UIInvoke(Action action)

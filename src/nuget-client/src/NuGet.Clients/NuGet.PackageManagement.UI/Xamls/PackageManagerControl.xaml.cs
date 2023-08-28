@@ -1179,6 +1179,8 @@ namespace NuGet.PackageManagement.UI
         {
             var timeSpan = GetTimeSinceLastRefreshAndRestart();
 
+            _detailModel.PackageSourceMappingViewModel.SettingsChanged();
+
             if (_dontStartNewSearch || !_initialized)
             {
                 EmitRefreshEvent(timeSpan, RefreshOperationSource.SourceSelectionChanged, RefreshOperationStatus.NoOp);
@@ -1680,7 +1682,8 @@ namespace NuGet.PackageManagement.UI
         /// <param name="packagesInfo">Corresponding Package ViewModels from PM UI. Only needed for vulnerability telemetry counts. Can be <c>null</c></param>
         internal void InstallPackage(string packageId, NuGetVersion version, IEnumerable<PackageItemViewModel> packagesInfo)
         {
-            var action = UserAction.CreateInstallAction(packageId, version, Model.IsSolution, UIUtility.ToContractsItemFilter(_topPanel.Filter));
+            var sourceMappingSourceName = PackageSourceMappingUtility.GetNewSourceMappingSourceName(Model.UIController.UIContext.PackageSourceMapping, Model.UIController.ActivePackageSourceMoniker);
+            UserAction action = UserAction.CreateInstallAction(packageId, version, Model.IsSolution, UIUtility.ToContractsItemFilter(_topPanel.Filter), sourceMappingSourceName);
 
             ExecuteAction(
                 () =>
