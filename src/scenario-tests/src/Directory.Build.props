@@ -1,0 +1,30 @@
+<Project>
+
+  <Import Project="Sdk.props" Sdk="Microsoft.DotNet.Arcade.Sdk" />
+
+  <PropertyGroup>
+    <Copyright>$(CopyrightMicrosoft)</Copyright>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <LangVersion>latest</LangVersion>
+  </PropertyGroup>
+
+  <!-- Common properties for the test projects -->
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <UseAppHost>true</UseAppHost>
+    <IsPackable>true</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- Include the test runner and common files -->
+    <Compile Include="$(RepoRoot)src\Microsoft.DotNet.ScenarioTests.Common\*.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="System.CommandLine" Version="$(SystemCommandlineVersion)" />
+    <PackageReference Include="xunit.extensibility.core" Version="$(XunitVersion)" />
+    <PackageReference Include="xunit.extensibility.execution" Version="$(XunitVersion)" />
+    <PackageReference Include="xunit.runner.utility" Version="$(XunitVersion)" />
+  </ItemGroup>
+</Project>

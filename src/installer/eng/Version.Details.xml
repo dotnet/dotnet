@@ -241,5 +241,10 @@
       <Sha>ed9a83526483c094fb51e7000b6f816ce6cb0325</Sha>
       <SourceBuild RepoName="xliff-tasks" ManagedOnly="true" />
     </Dependency>
+    <Dependency Name="Microsoft.DotNet.ScenarioTests.SdkTemplateTests" Version="8.0.0-preview.23424.2">
+      <Uri>https://github.com/dotnet/scenario-tests</Uri>
+      <Sha>8af694a5e3986a27ccfee1a638ba311c7e9bc55d</Sha>
+      <SourceBuild RepoName="scenario-tests" ManagedOnly="true" />
+    </Dependency>
   </ToolsetDependencies>
 </Dependencies>

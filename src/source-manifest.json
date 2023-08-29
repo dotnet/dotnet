@@ -58,7 +58,7 @@
       "packageVersion": "8.0.100",
       "path": "installer",
       "remoteUri": "https://github.com/dotnet/installer",
-      "commitSha": "8b6d1ff76fb530a208f95839a06588b6f0c3e5aa"
+      "commitSha": "f131f2644c902fc3aa46d9da2392dd83bfbdf219"
     },
     {
       "packageVersion": "17.8.0-preview-23414-01",
@@ -95,6 +95,12 @@
       "path": "runtime",
       "remoteUri": "https://github.com/dotnet/runtime",
       "commitSha": "e89794659669cb7bb967db73a7ea6889c3891727"
+    },
+    {
+      "packageVersion": "8.0.0-preview.23424.2",
+      "path": "scenario-tests",
+      "remoteUri": "https://github.com/dotnet/scenario-tests",
+      "commitSha": "8af694a5e3986a27ccfee1a638ba311c7e9bc55d"
     },
     {
       "packageVersion": "8.0.100-rc.1.23414.10",
