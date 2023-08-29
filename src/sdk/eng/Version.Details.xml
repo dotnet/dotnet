@@ -48,26 +48,26 @@
       <Sha>66dbaefff04250dc72849f0172e0c53bcfb3ab38</Sha>
       <SourceBuild RepoName="emsdk" ManagedOnly="true" />
     </Dependency>
-    <Dependency Name="Microsoft.Build" Version="17.8.0-preview-23428-04">
+    <Dependency Name="Microsoft.Build" Version="17.8.0-preview-23428-09">
       <Uri>https://github.com/dotnet/msbuild</Uri>
-      <Sha>5d24a7bd9a7537f5388f4f56405394c004cf1ad0</Sha>
+      <Sha>99059059cbef13af6c2cb47d3476afff28b354f5</Sha>
       <SourceBuild RepoName="msbuild" ManagedOnly="true" />
     </Dependency>
-    <Dependency Name="Microsoft.Build.Localization" Version="17.8.0-preview-23428-04">
+    <Dependency Name="Microsoft.Build.Localization" Version="17.8.0-preview-23428-09">
       <Uri>https://github.com/dotnet/msbuild</Uri>
-      <Sha>5d24a7bd9a7537f5388f4f56405394c004cf1ad0</Sha>
+      <Sha>99059059cbef13af6c2cb47d3476afff28b354f5</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.SourceBuild.Intermediate.msbuild" Version="17.8.0-preview-23428-04">
+    <Dependency Name="Microsoft.SourceBuild.Intermediate.msbuild" Version="17.8.0-preview-23428-09">
       <Uri>https://github.com/dotnet/msbuild</Uri>
-      <Sha>5d24a7bd9a7537f5388f4f56405394c004cf1ad0</Sha>
+      <Sha>99059059cbef13af6c2cb47d3476afff28b354f5</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.FSharp.Compiler" Version="12.8.0-beta.23425.10">
+    <Dependency Name="Microsoft.FSharp.Compiler" Version="12.8.0-beta.23428.6">
       <Uri>https://github.com/dotnet/fsharp</Uri>
-      <Sha>0d3549fa5b8b6387ade191d76768405cefed8229</Sha>
+      <Sha>77b9081be26ac2dc48c71cff90765bca16177650</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.SourceBuild.Intermediate.fsharp" Version="8.0.100-beta.23425.10">
+    <Dependency Name="Microsoft.SourceBuild.Intermediate.fsharp" Version="8.0.100-beta.23428.6">
       <Uri>https://github.com/dotnet/fsharp</Uri>
-      <Sha>0d3549fa5b8b6387ade191d76768405cefed8229</Sha>
+      <Sha>77b9081be26ac2dc48c71cff90765bca16177650</Sha>
       <SourceBuild RepoName="fsharp" ManagedOnly="true" />
     </Dependency>
     <Dependency Name="dotnet-format" Version="8.0.441801">
@@ -176,18 +176,18 @@
       <Uri>https://github.com/nuget/nuget.client</Uri>
       <Sha>7bb6ca5f6930d23fd93820dfc9c6a4373c8fd691</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.NET.Test.Sdk" Version="17.8.0-preview-23425-02">
+    <Dependency Name="Microsoft.NET.Test.Sdk" Version="17.8.0-preview-23428-02">
       <Uri>https://github.com/microsoft/vstest</Uri>
-      <Sha>9c3a6326139638abb414448aa37780e196d29342</Sha>
+      <Sha>a246af4aa8c20372c19db51016d392032893b556</Sha>
       <SourceBuild RepoName="vstest" ManagedOnly="true" />
     </Dependency>
-    <Dependency Name="Microsoft.TestPlatform.CLI" Version="17.8.0-preview-23425-02">
+    <Dependency Name="Microsoft.TestPlatform.CLI" Version="17.8.0-preview-23428-02">
       <Uri>https://github.com/microsoft/vstest</Uri>
-      <Sha>9c3a6326139638abb414448aa37780e196d29342</Sha>
+      <Sha>a246af4aa8c20372c19db51016d392032893b556</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.TestPlatform.Build" Version="17.8.0-preview-23425-02">
+    <Dependency Name="Microsoft.TestPlatform.Build" Version="17.8.0-preview-23428-02">
       <Uri>https://github.com/microsoft/vstest</Uri>
-      <Sha>9c3a6326139638abb414448aa37780e196d29342</Sha>
+      <Sha>a246af4aa8c20372c19db51016d392032893b556</Sha>
     </Dependency>
     <Dependency Name="Microsoft.NET.ILLink.Tasks" Version="8.0.0-rc.2.23426.4">
       <Uri>https://github.com/dotnet/runtime</Uri>
@@ -330,9 +330,9 @@
       <Sha>02fe27cd6a9b001c8feb7938e6ef4b3799745759</Sha>
       <SourceBuild RepoName="command-line-api" ManagedOnly="true" />
     </Dependency>
-    <Dependency Name="Microsoft.SourceBuild.Intermediate.source-build-externals" Version="8.0.0-alpha.1.23424.1">
+    <Dependency Name="Microsoft.SourceBuild.Intermediate.source-build-externals" Version="8.0.0-alpha.1.23428.2">
       <Uri>https://github.com/dotnet/source-build-externals</Uri>
-      <Sha>e3cc6c792114ebdfe6627742d2820dbe1ae5bc47</Sha>
+      <Sha>13370d763ada41a7eacae2b19ad1b2e35dd78ae6</Sha>
       <SourceBuild RepoName="source-build-externals" ManagedOnly="true" />
     </Dependency>
     <Dependency Name="Microsoft.SourceBuild.Intermediate.source-build-reference-packages" Version="8.0.0-alpha.1.23424.1">

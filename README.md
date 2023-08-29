@@ -174,11 +174,11 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/format`  
 *[dotnet/format@1a9a3b6](https://github.com/dotnet/format/commit/1a9a3b61b7ed91ea17e69ceb1f954d431f0a1415)*
 - `src/fsharp`  
-*[dotnet/fsharp@0d3549f](https://github.com/dotnet/fsharp/commit/0d3549fa5b8b6387ade191d76768405cefed8229)*
+*[dotnet/fsharp@77b9081](https://github.com/dotnet/fsharp/commit/77b9081be26ac2dc48c71cff90765bca16177650)*
 - `src/installer`  
-*[dotnet/installer@61f9950](https://github.com/dotnet/installer/commit/61f9950f1418ae993c4023f3f5b3bda152f9b3de)*
+*[dotnet/installer@b0336e3](https://github.com/dotnet/installer/commit/b0336e3edced5e33645867652a3db9b7eefd376b)*
 - `src/msbuild`  
-*[dotnet/msbuild@5d24a7b](https://github.com/dotnet/msbuild/commit/5d24a7bd9a7537f5388f4f56405394c004cf1ad0)*
+*[dotnet/msbuild@9905905](https://github.com/dotnet/msbuild/commit/99059059cbef13af6c2cb47d3476afff28b354f5)*
 - `src/nuget-client`  
 *[nuget/nuget.client@7bb6ca5](https://github.com/nuget/nuget.client/commit/7bb6ca5f6930d23fd93820dfc9c6a4373c8fd691)*
     - `src/nuget-client/submodules/NuGet.Build.Localization`  
@@ -192,7 +192,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/runtime`  
 *[dotnet/runtime@4122c63](https://github.com/dotnet/runtime/commit/4122c63a13cfe40e97ac1f9ef01d8110a66943f4)*
 - `src/sdk`  
-*[dotnet/sdk@27d358b](https://github.com/dotnet/sdk/commit/27d358ba108d9e3a66a603c0ca378e45e1faccd4)*
+*[dotnet/sdk@3c165db](https://github.com/dotnet/sdk/commit/3c165dbc7100f18a6c0b38443d75b414a4e10cb9)*
 - `src/source-build-externals`  
 *[dotnet/source-build-externals@e3cc6c7](https://github.com/dotnet/source-build-externals/commit/e3cc6c792114ebdfe6627742d2820dbe1ae5bc47)*
     - `src/source-build-externals/src/application-insights`  
@@ -228,7 +228,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/test-templates`  
 *[dotnet/test-templates@1e5f360](https://github.com/dotnet/test-templates/commit/1e5f3603af2277910aad946736ee23283e7f3e16)*
 - `src/vstest`  
-*[microsoft/vstest@9c3a632](https://github.com/microsoft/vstest/commit/9c3a6326139638abb414448aa37780e196d29342)*
+*[microsoft/vstest@a246af4](https://github.com/microsoft/vstest/commit/a246af4aa8c20372c19db51016d392032893b556)*
 - `src/xdt`  
 *[dotnet/xdt@9a1c3e1](https://github.com/dotnet/xdt/commit/9a1c3e1b7f0c8763d4c96e593961a61a72679a7b)*
 - `src/xliff-tasks`  
