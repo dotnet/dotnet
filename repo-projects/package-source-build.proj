@@ -53,4 +53,8 @@
     <Message Importance="High" Text="Packaged source-built artifacts to $(SourceBuiltTarballName)" />
   </Target>
 
+  <ItemGroup>
+    <RepositoryReference Include="installer" />
+  </ItemGroup>
+
 </Project>
