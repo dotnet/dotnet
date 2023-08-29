@@ -1,9 +1,10 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
+    <RepositoryReference Include="source-build-reference-packages" Condition="'$(DotNetBuildSourceOnly)' == 'true'" />
     <RepositoryReference Include="arcade" />
-    <RepositoryReference Include="runtime" />
-    <RepositoryReference Include="aspnetcore" />
+    <RepositoryReference Include="roslyn" />
+    <RepositoryReference Include="xliff-tasks" />
   </ItemGroup>
 
 </Project>

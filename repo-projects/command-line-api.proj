@@ -7,7 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <RepositoryReference Include="source-build-reference-packages" Condition="'$(DotNetBuildFromSource)' == 'true'" />
     <RepositoryReference Include="arcade" />
+    <RepositoryReference Include="sourcelink" />
+    <RepositoryReference Include="xliff-tasks" />
   </ItemGroup>
 
 </Project>

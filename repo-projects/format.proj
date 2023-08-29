@@ -3,8 +3,12 @@
   <ItemGroup>
     <RepositoryReference Include="arcade" />
     <RepositoryReference Include="roslyn" />
-    <RepositoryReference Include="roslyn-analyzers" />
     <RepositoryReference Include="source-build-externals" Condition="'$(DotNetBuildSourceOnly)' == 'true'" />
+    <RepositoryReference Include="source-build-reference-packages" Condition="'$(DotNetBuildSourceOnly)' == 'true'" />
+    <RepositoryReference Include="symreader" />
+    <RepositoryReference Include="command-line-api" />
+    <RepositoryReference Include="sourcelink" />
+    <RepositoryReference Include="xliff-tasks" />
   </ItemGroup>
 
 </Project>

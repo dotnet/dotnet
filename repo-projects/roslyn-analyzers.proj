@@ -8,8 +8,9 @@
 
   <ItemGroup>
     <RepositoryReference Include="arcade" />
-    <RepositoryReference Include="runtime" />
-    <RepositoryReference Include="roslyn" />
+    <RepositoryReference Include="source-build-reference-packages" Condition="'$(DotNetBuildSourceOnly)' == 'true'" />
+    <RepositoryReference Include="source-build-externals" Condition="'$(DotNetBuildSourceOnly)' == 'true'" />
+    <RepositoryReference Include="xliff-tasks" />
   </ItemGroup>
 
 </Project>

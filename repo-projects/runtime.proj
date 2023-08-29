@@ -36,9 +36,16 @@
 
   <ItemGroup>
     <RepositoryReference Include="arcade" />
-    <RepositoryReference Include="cecil" />
-    <RepositoryReference Include="symreader" />
+    <RepositoryReference Include="source-build-reference-packages" Condition="'$(DotNetBuildSourceOnly)' == 'true'" />
     <RepositoryReference Include="source-build-externals" Condition="'$(DotNetBuildSourceOnly)' == 'true'" />
+    <RepositoryReference Include="command-line-api" />
+    <RepositoryReference Include="cecil" />
+    <RepositoryReference Include="xliff-tasks" />
+  </ItemGroup>
+
+  <!-- Environment Variables -->
+  <ItemGroup>
+    <EnvironmentVariables Include="BuildInParallel=true" />
   </ItemGroup>
 
   <ItemGroup>

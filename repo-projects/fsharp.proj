@@ -19,9 +19,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <RepositoryReference Include="source-build-reference-packages" Condition="'$(DotNetBuildSourceOnly)' == 'true'" />
     <RepositoryReference Include="arcade" />
-    <RepositoryReference Include="msbuild" /> 
-    <RepositoryReference Include="source-build-externals" Condition="'$(DotNetBuildSourceOnly)' == 'true'" />
+    <RepositoryReference Include="msbuild" />
+    <RepositoryReference Include="sourcelink" />
   </ItemGroup>
 
 </Project>

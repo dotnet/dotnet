@@ -11,8 +11,9 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <RepositoryReference Include="source-build-reference-packages" Condition="'$(DotNetBuildSourceOnly)' == 'true'" />
     <RepositoryReference Include="arcade" />
-    <RepositoryReference Include="runtime" />
+    <RepositoryReference Include="xliff-tasks" />
     <RepositoryReference Include="roslyn" />
   </ItemGroup>
 

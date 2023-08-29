@@ -264,7 +264,7 @@
 
     <MSBuild Projects="@(_DependentProject)"
              Targets="Build"
-             BuildInParallel="$(BuildInParallel)"
+             BuildInParallel="true"
              StopOnFirstFailure="true" />
   </Target>
 

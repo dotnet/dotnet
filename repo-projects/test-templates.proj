@@ -5,8 +5,9 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <RepositoryReference Include="source-build-reference-packages" Condition="'$(DotNetBuildSourceOnly)' == 'true'" />
     <RepositoryReference Include="arcade" />
-    <RepositoryReference Include="templating" />
+    <RepositoryReference Include="xliff-tasks" />
   </ItemGroup>
 
 </Project>
