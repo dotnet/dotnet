@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Dependencies>
   <ProductDependencies>
-    <Dependency Name="Microsoft.Internal.CodeCoverage" Version="17.8.5-beta.23425.2">
+    <Dependency Name="Microsoft.Internal.CodeCoverage" Version="17.8.5-beta.23428.2">
       <Uri>https://dev.azure.com/devdiv/DevDiv/_git/vs-code-coverage</Uri>
-      <Sha>269ba276abf0f6c65dba4f41fc1591047c776fd2</Sha>
+      <Sha>c028e2dd94abaf661965ae8838af0aeaa6a85dd9</Sha>
     </Dependency>
     <Dependency Name="Microsoft.Diagnostics.NETCore.Client" Version="0.2.0-preview.23211.1">
       <Uri>https://github.com/dotnet/diagnostics</Uri>

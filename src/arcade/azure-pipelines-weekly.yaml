@@ -14,7 +14,8 @@ stages:
     jobs:
     - job: Synchronize
       pool:
-        vmImage: windows-latest
+        name: NetCore1ESPool-Internal-NoMSI
+        demands: ImageOverride -equals 1es-windows-2022
 
       steps:
       - task: UseDotNet@2
