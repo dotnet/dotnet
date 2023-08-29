@@ -1,0 +1,8 @@
+<Project>
+
+  <PropertyGroup>
+    <GitHubRepositoryName>scenario-tests</GitHubRepositoryName>
+    <SourceBuildManagedOnly>true</SourceBuildManagedOnly>
+  </PropertyGroup>
+
+</Project>
