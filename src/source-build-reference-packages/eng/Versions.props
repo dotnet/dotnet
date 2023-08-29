@@ -20,6 +20,6 @@
     <MicrosoftNETCoreILAsmVersion>6.0.0-preview.6.21352.12</MicrosoftNETCoreILAsmVersion>
     <MicrosoftNETCoreILDAsmVersion>6.0.0-preview.6.21352.12</MicrosoftNETCoreILDAsmVersion>
     <!-- SDK dependencies -->
-    <MicrosoftDotNetGenAPITaskPackageVersion>8.0.100-rc.2.23420.18</MicrosoftDotNetGenAPITaskPackageVersion>
+    <MicrosoftDotNetGenAPITaskPackageVersion>8.0.100-rc.2.23428.1</MicrosoftDotNetGenAPITaskPackageVersion>
   </PropertyGroup>
 </Project>
