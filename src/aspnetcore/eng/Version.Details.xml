@@ -9,37 +9,37 @@
 -->
 <Dependencies>
   <ProductDependencies>
-    <Dependency Name="dotnet-ef" Version="8.0.0-rc.2.23428.4">
+    <Dependency Name="dotnet-ef" Version="8.0.0-rc.2.23429.3">
       <Uri>https://github.com/dotnet/efcore</Uri>
-      <Sha>affd44045f41a2dd58c5667ce3938e42568fbe84</Sha>
+      <Sha>59389e5b86b5cd49a919939d3192e5df1e08d502</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.EntityFrameworkCore.InMemory" Version="8.0.0-rc.2.23428.4">
+    <Dependency Name="Microsoft.EntityFrameworkCore.InMemory" Version="8.0.0-rc.2.23429.3">
       <Uri>https://github.com/dotnet/efcore</Uri>
-      <Sha>affd44045f41a2dd58c5667ce3938e42568fbe84</Sha>
+      <Sha>59389e5b86b5cd49a919939d3192e5df1e08d502</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.EntityFrameworkCore.Relational" Version="8.0.0-rc.2.23428.4">
+    <Dependency Name="Microsoft.EntityFrameworkCore.Relational" Version="8.0.0-rc.2.23429.3">
       <Uri>https://github.com/dotnet/efcore</Uri>
-      <Sha>affd44045f41a2dd58c5667ce3938e42568fbe84</Sha>
+      <Sha>59389e5b86b5cd49a919939d3192e5df1e08d502</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.EntityFrameworkCore.Sqlite" Version="8.0.0-rc.2.23428.4">
+    <Dependency Name="Microsoft.EntityFrameworkCore.Sqlite" Version="8.0.0-rc.2.23429.3">
       <Uri>https://github.com/dotnet/efcore</Uri>
-      <Sha>affd44045f41a2dd58c5667ce3938e42568fbe84</Sha>
+      <Sha>59389e5b86b5cd49a919939d3192e5df1e08d502</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.0-rc.2.23428.4">
+    <Dependency Name="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.0-rc.2.23429.3">
       <Uri>https://github.com/dotnet/efcore</Uri>
-      <Sha>affd44045f41a2dd58c5667ce3938e42568fbe84</Sha>
+      <Sha>59389e5b86b5cd49a919939d3192e5df1e08d502</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.EntityFrameworkCore.Tools" Version="8.0.0-rc.2.23428.4">
+    <Dependency Name="Microsoft.EntityFrameworkCore.Tools" Version="8.0.0-rc.2.23429.3">
       <Uri>https://github.com/dotnet/efcore</Uri>
-      <Sha>affd44045f41a2dd58c5667ce3938e42568fbe84</Sha>
+      <Sha>59389e5b86b5cd49a919939d3192e5df1e08d502</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.EntityFrameworkCore" Version="8.0.0-rc.2.23428.4">
+    <Dependency Name="Microsoft.EntityFrameworkCore" Version="8.0.0-rc.2.23429.3">
       <Uri>https://github.com/dotnet/efcore</Uri>
-      <Sha>affd44045f41a2dd58c5667ce3938e42568fbe84</Sha>
+      <Sha>59389e5b86b5cd49a919939d3192e5df1e08d502</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.EntityFrameworkCore.Design" Version="8.0.0-rc.2.23428.4">
+    <Dependency Name="Microsoft.EntityFrameworkCore.Design" Version="8.0.0-rc.2.23429.3">
       <Uri>https://github.com/dotnet/efcore</Uri>
-      <Sha>affd44045f41a2dd58c5667ce3938e42568fbe84</Sha>
+      <Sha>59389e5b86b5cd49a919939d3192e5df1e08d502</Sha>
     </Dependency>
     <Dependency Name="Microsoft.Extensions.Caching.Abstractions" Version="8.0.0-rc.2.23426.4">
       <Uri>https://github.com/dotnet/runtime</Uri>
@@ -189,9 +189,9 @@
       <Uri>https://github.com/dotnet/runtime</Uri>
       <Sha>4122c63a13cfe40e97ac1f9ef01d8110a66943f4</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.SourceBuild.Intermediate.source-build-externals" Version="8.0.0-alpha.1.23428.2">
+    <Dependency Name="Microsoft.SourceBuild.Intermediate.source-build-externals" Version="8.0.0-alpha.1.23430.3">
       <Uri>https://github.com/dotnet/source-build-externals</Uri>
-      <Sha>13370d763ada41a7eacae2b19ad1b2e35dd78ae6</Sha>
+      <Sha>c88d8d75ed6b8d426b7fad50eadd7f6fec46a7e4</Sha>
       <SourceBuild RepoName="source-build-externals" ManagedOnly="true" />
     </Dependency>
     <Dependency Name="Microsoft.SourceBuild.Intermediate.symreader" Version="2.0.0-beta-23228-03">
@@ -334,9 +334,9 @@
       <Sha>9a1c3e1b7f0c8763d4c96e593961a61a72679a7b</Sha>
       <SourceBuild RepoName="xdt" ManagedOnly="true" />
     </Dependency>
-    <Dependency Name="Microsoft.SourceBuild.Intermediate.source-build-reference-packages" Version="8.0.0-alpha.1.23424.1">
+    <Dependency Name="Microsoft.SourceBuild.Intermediate.source-build-reference-packages" Version="8.0.0-alpha.1.23428.2">
       <Uri>https://github.com/dotnet/source-build-reference-packages</Uri>
-      <Sha>93c23409e630c4f267234540b0e3557b76a53ef4</Sha>
+      <Sha>26ce96327dd346534926c4551f8b8d62a6fc724f</Sha>
       <SourceBuild RepoName="source-build-reference-packages" ManagedOnly="true" />
     </Dependency>
     <!-- Not updated automatically -->
@@ -393,9 +393,9 @@
       <Uri>https://github.com/dotnet/arcade</Uri>
       <Sha>385129cbc980a515ddee2fa56f6b16f3183ed9bc</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.Extensions.Telemetry.Testing" Version="8.0.0-rc.2.23427.2">
+    <Dependency Name="Microsoft.Extensions.Telemetry.Testing" Version="8.0.0-rc.2.23428.2">
       <Uri>https://github.com/dotnet/extensions</Uri>
-      <Sha>03d4f611bc8204d0e2f027f5c9c60a96aec3250b</Sha>
+      <Sha>c7f3469dc74a9d5ad728db8ae623353a27347d2c</Sha>
     </Dependency>
     <Dependency Name="NuGet.Frameworks" Version="6.2.4">
       <Uri>https://github.com/nuget/nuget.client</Uri>
