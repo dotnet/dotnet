@@ -6,9 +6,11 @@ NuGet.Versioning.FloatRange.FloatRange(NuGet.Versioning.NuGetVersionFloatBehavio
 NuGet.Versioning.FloatRange.FloatRange(NuGet.Versioning.NuGetVersionFloatBehavior floatBehavior, NuGet.Versioning.NuGetVersion! minVersion) -> void
 NuGet.Versioning.FloatRange.FloatRange(NuGet.Versioning.NuGetVersionFloatBehavior floatBehavior, NuGet.Versioning.NuGetVersion! minVersion, string? releasePrefix) -> void
 NuGet.Versioning.FloatRange.HasMinVersion.get -> bool
+NuGet.Versioning.FloatRange.IncludePrerelease.get -> bool
 NuGet.Versioning.FloatRange.MinVersion.get -> NuGet.Versioning.NuGetVersion!
 NuGet.Versioning.FloatRange.OriginalReleasePrefix.get -> string?
 NuGet.Versioning.FloatRange.Satisfies(NuGet.Versioning.NuGetVersion! version) -> bool
+NuGet.Versioning.FloatRange.ToString(System.Text.StringBuilder! sb) -> void
 NuGet.Versioning.INuGetVersionable
 NuGet.Versioning.INuGetVersionable.Version.get -> NuGet.Versioning.NuGetVersion!
 NuGet.Versioning.IVersionComparer
@@ -79,16 +81,23 @@ NuGet.Versioning.VersionRange
 NuGet.Versioning.VersionRange.Equals(NuGet.Versioning.VersionRange? other) -> bool
 NuGet.Versioning.VersionRange.FindBestMatch(System.Collections.Generic.IEnumerable<NuGet.Versioning.NuGetVersion!>? versions) -> NuGet.Versioning.NuGetVersion?
 NuGet.Versioning.VersionRange.Float.get -> NuGet.Versioning.FloatRange?
+NuGet.Versioning.VersionRange.HasLowerAndUpperBounds.get -> bool
+NuGet.Versioning.VersionRange.HasLowerBound.get -> bool
+NuGet.Versioning.VersionRange.HasUpperBound.get -> bool
 NuGet.Versioning.VersionRange.IsBetter(NuGet.Versioning.NuGetVersion? current, NuGet.Versioning.NuGetVersion! considering) -> bool
 NuGet.Versioning.VersionRange.IsFloating.get -> bool
+NuGet.Versioning.VersionRange.IsMaxInclusive.get -> bool
+NuGet.Versioning.VersionRange.IsMinInclusive.get -> bool
+NuGet.Versioning.VersionRange.MaxVersion.get -> NuGet.Versioning.NuGetVersion?
+NuGet.Versioning.VersionRange.MinVersion.get -> NuGet.Versioning.NuGetVersion?
 NuGet.Versioning.VersionRange.OriginalString.get -> string?
 NuGet.Versioning.VersionRange.PrettyPrint() -> string!
 NuGet.Versioning.VersionRange.ToNonSnapshotRange() -> NuGet.Versioning.VersionRange!
 NuGet.Versioning.VersionRange.ToString(string? format, System.IFormatProvider? formatProvider) -> string!
 NuGet.Versioning.VersionRange.TryFormatter(string? format, System.IFormatProvider! formatProvider, out string? formattedString) -> bool
-NuGet.Versioning.VersionRange.VersionRange(NuGet.Versioning.NuGetVersion? minVersion = null, bool includeMinVersion = true, NuGet.Versioning.NuGetVersion? maxVersion = null, bool includeMaxVersion = false, NuGet.Versioning.FloatRange? floatRange = null, string? originalString = null) -> void
 NuGet.Versioning.VersionRange.VersionRange(NuGet.Versioning.NuGetVersion! minVersion) -> void
 NuGet.Versioning.VersionRange.VersionRange(NuGet.Versioning.NuGetVersion! minVersion, NuGet.Versioning.FloatRange? floatRange) -> void
+NuGet.Versioning.VersionRange.VersionRange(NuGet.Versioning.NuGetVersion? minVersion = null, bool includeMinVersion = true, NuGet.Versioning.NuGetVersion? maxVersion = null, bool includeMaxVersion = false, NuGet.Versioning.FloatRange? floatRange = null, string? originalString = null) -> void
 NuGet.Versioning.VersionRange.VersionRange(NuGet.Versioning.VersionRange! range, NuGet.Versioning.FloatRange! floatRange) -> void
 NuGet.Versioning.VersionRangeBase
 NuGet.Versioning.VersionRangeBase.Equals(NuGet.Versioning.VersionRangeBase? other) -> bool

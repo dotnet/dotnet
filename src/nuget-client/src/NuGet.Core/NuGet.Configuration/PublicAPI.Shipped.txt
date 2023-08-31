@@ -172,10 +172,13 @@ NuGet.Configuration.PackageSourceMapping
 NuGet.Configuration.PackageSourceMapping.GetConfiguredPackageSources(string! packageId) -> System.Collections.Generic.IReadOnlyList<string!>!
 NuGet.Configuration.PackageSourceMapping.IsEnabled.get -> bool
 NuGet.Configuration.PackageSourceMapping.PackageSourceMapping(System.Collections.Generic.IReadOnlyDictionary<string!, System.Collections.Generic.IReadOnlyList<string!>!>! patterns) -> void
+NuGet.Configuration.PackageSourceMapping.SearchForPattern(string! packageId) -> string?
 NuGet.Configuration.PackageSourceMappingProvider
 ~NuGet.Configuration.PackageSourceMappingProvider.GetPackageSourceMappingItems() -> System.Collections.Generic.IReadOnlyList<NuGet.Configuration.PackageSourceMappingSourceItem>
 ~NuGet.Configuration.PackageSourceMappingProvider.PackageSourceMappingProvider(NuGet.Configuration.ISettings settings) -> void
+~NuGet.Configuration.PackageSourceMappingProvider.PackageSourceMappingProvider(NuGet.Configuration.ISettings settings, bool shouldSkipSave) -> void
 ~NuGet.Configuration.PackageSourceMappingProvider.SavePackageSourceMappings(System.Collections.Generic.IReadOnlyList<NuGet.Configuration.PackageSourceMappingSourceItem> packageSourceMappingsSourceItems) -> void
+NuGet.Configuration.PackageSourceMappingProvider.ShouldSkipSave.get -> bool
 NuGet.Configuration.PackageSourceMappingSourceItem
 ~NuGet.Configuration.PackageSourceMappingSourceItem.PackageSourceMappingSourceItem(string name, System.Collections.Generic.IEnumerable<NuGet.Configuration.PackagePatternItem> packagePatternItems) -> void
 ~NuGet.Configuration.PackageSourceMappingSourceItem.Patterns.get -> System.Collections.Generic.IList<NuGet.Configuration.PackagePatternItem>

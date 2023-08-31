@@ -432,4 +432,14 @@
   <data name="Warning_HttpServerUsage" xml:space="preserve">
     <value>You are running the '{0}' operation with an 'http' source, '{1}'. Support for 'http' sources will be removed in a future version.</value>
   </data>
+  <data name="Error_VulnerabilityDataFetch" xml:space="preserve">
+    <value>Error occurred while getting package vulnerability data: {0}</value>
+  </data>
+  <data name="Warning_PackageWithKnownVulnerability" xml:space="preserve">
+    <value>Package '{0}' {1} has a known {2} severity vulnerability, {3}</value>
+    <comment>{0} - package id
+{1} - package version
+{2} - severity, for example low, moderate, high, or critical
+{3} - URL for more info on the known vulnerability</comment>
+  </data>
 </root>

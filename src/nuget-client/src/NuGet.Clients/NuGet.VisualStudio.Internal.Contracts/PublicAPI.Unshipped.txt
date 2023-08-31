@@ -1,12 +1,8 @@
 #nullable enable
-NuGet.VisualStudio.Internal.Contracts.INuGetProjectManagerService.GetInstallActionsAsync(System.Collections.Generic.IReadOnlyCollection<string!>! projectIds, NuGet.Packaging.Core.PackageIdentity! packageIdentity, NuGet.PackageManagement.VersionConstraints versionConstraints, bool includePrelease, NuGet.Resolver.DependencyBehavior dependencyBehavior, System.Collections.Generic.IReadOnlyList<string!>! packageSourceNames, NuGet.Versioning.VersionRange? versionRange, string? newMappingID, string? newMappingSource, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.ValueTask<System.Collections.Generic.IReadOnlyList<NuGet.VisualStudio.Internal.Contracts.ProjectAction!>!>
 NuGet.VisualStudio.Internal.Contracts.INuGetSearchService.GetAllPackageFoldersAsync(System.Collections.Generic.IReadOnlyCollection<NuGet.VisualStudio.Internal.Contracts.IProjectContextInfo!>! projectContextInfos, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<System.Collections.Generic.IReadOnlyList<NuGet.Protocol.Core.Types.SourceRepository!>!>!
-NuGet.VisualStudio.Internal.Contracts.IPackageReferenceContextInfo.VersionOverride.get -> NuGet.Versioning.VersionRange?
-NuGet.VisualStudio.Internal.Contracts.PackageReferenceContextInfo.VersionOverride.get -> NuGet.Versioning.VersionRange?
 NuGet.VisualStudio.Internal.Contracts.PackageSourceContextInfo.AllowInsecureConnections.get -> bool
 NuGet.VisualStudio.Internal.Contracts.PackageSourceContextInfo.AllowInsecureConnections.set -> void
 NuGet.VisualStudio.Internal.Contracts.PackageSourceContextInfo.PackageSourceContextInfo(string! source, string! name, bool isEnabled, int protocolVersion) -> void
 NuGet.VisualStudio.Internal.Contracts.PackageSourceContextInfo.PackageSourceContextInfo(string! source, string! name, bool isEnabled, int protocolVersion, bool allowInsecureConnections) -> void
 NuGet.VisualStudio.Internal.Contracts.PackageSourceContextInfo.ProtocolVersion.get -> int
 NuGet.VisualStudio.Internal.Contracts.PackageSourceContextInfo.ProtocolVersion.set -> void
-NuGet.VisualStudio.Internal.Contracts.TransitivePackageReferenceContextInfo.VersionOverride.get -> NuGet.Versioning.VersionRange?

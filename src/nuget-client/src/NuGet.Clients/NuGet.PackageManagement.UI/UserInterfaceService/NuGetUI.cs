@@ -383,6 +383,10 @@ namespace NuGet.PackageManagement.UI
 
         public IEnumerable<int> TopLevelVulnerablePackagesMaxSeverities { get; set; }
 
+        public int TransitiveVulnerablePackagesCount { get; set; }
+
+        public IEnumerable<int> TransitiveVulnerablePackagesMaxSeverities { get; set; }
+
         public PackageSourceMoniker ActivePackageSourceMoniker
         {
             get

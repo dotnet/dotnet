@@ -364,6 +364,9 @@ namespace NuGet.PackageManagement.UI
 
             await _lockService.ExecuteNuGetOperationAsync(async () =>
             {
+                int? countCreatedTopLevelSourceMappings = null;
+                int? countCreatedTransitiveSourceMappings = null;
+
                 try
                 {
                     uiService.BeginOperation();
@@ -466,7 +469,7 @@ namespace NuGet.PackageManagement.UI
                     if (!cancellationToken.IsCancellationRequested)
                     {
                         List<string>? addedPackageIds = addedPackages != null ? addedPackages.Select(pair => pair.Item1).Distinct().ToList() : null;
-                        PackageSourceMappingUtility.ConfigureNewPackageSourceMapping(userAction, addedPackageIds, sourceMappingProvider, existingPackageSourceMappingSourceItems);
+                        PackageSourceMappingUtility.ConfigureNewPackageSourceMapping(userAction, addedPackageIds, sourceMappingProvider, existingPackageSourceMappingSourceItems, out countCreatedTopLevelSourceMappings, out countCreatedTransitiveSourceMappings);
 
                         await projectManagerService.ExecuteActionsAsync(
                             actions,
@@ -554,12 +557,16 @@ namespace NuGet.PackageManagement.UI
                         nuGetUI?.RecommenderVersion,
                         nuGetUI?.TopLevelVulnerablePackagesCount ?? 0,
                         nuGetUI?.TopLevelVulnerablePackagesMaxSeverities?.ToList() ?? new List<int>(),
+                        nuGetUI?.TransitiveVulnerablePackagesCount ?? 0,
+                        nuGetUI?.TransitiveVulnerablePackagesMaxSeverities?.ToList() ?? new List<int>(),
                         existingPackages,
                         addedPackages,
                         removedPackages,
                         updatedPackagesOld,
                         updatedPackagesNew,
-                        frameworks);
+                        frameworks,
+                        countCreatedTopLevelSourceMappings,
+                        countCreatedTransitiveSourceMappings);
 
                     if (packageToInstallWasTransitive.HasValue)
                     {
@@ -604,12 +611,16 @@ namespace NuGet.PackageManagement.UI
             (string modelVersion, string vsixVersion)? recommenderVersion,
             int topLevelVulnerablePackagesCount,
             List<int> topLevelVulnerablePackagesMaxSeverities,
+            int transitiveVulnerablePackagesCount,
+            List<int> transitiveVulnerablePackagesMaxSeverities,
             HashSet<Tuple<string, string, string?>>? existingPackages,
             List<Tuple<string, string>>? addedPackages,
             List<string>? removedPackages,
             List<Tuple<string, string>>? updatedPackagesOld,
             List<Tuple<string, string>>? updatedPackagesNew,
-            IReadOnlyCollection<string> targetFrameworks)
+            IReadOnlyCollection<string> targetFrameworks,
+            int? countCreatedTopLevelSourceMappings,
+            int? countCreatedTransitiveSourceMappings)
         {
             // log possible cancel reasons
             if (!continueAfterPreview)
@@ -638,6 +649,8 @@ namespace NuGet.PackageManagement.UI
 
             actionTelemetryEvent["TopLevelVulnerablePackagesCount"] = topLevelVulnerablePackagesCount;
             actionTelemetryEvent.ComplexData["TopLevelVulnerablePackagesMaxSeverities"] = topLevelVulnerablePackagesMaxSeverities;
+            actionTelemetryEvent["TransitiveVulnerablePackagesCount"] = transitiveVulnerablePackagesCount;
+            actionTelemetryEvent.ComplexData["TransitiveVulnerablePackagesMaxSeverities"] = transitiveVulnerablePackagesMaxSeverities;
 
             // log the installed package state
             if (existingPackages?.Count > 0)
@@ -714,6 +727,16 @@ namespace NuGet.PackageManagement.UI
             if (targetFrameworks?.Count > 0)
             {
                 actionTelemetryEvent["TargetFrameworks"] = string.Join(";", targetFrameworks);
+            }
+
+            if (countCreatedTopLevelSourceMappings.HasValue)
+            {
+                actionTelemetryEvent["CreatedTopLevelSourceMappingsCount"] = countCreatedTopLevelSourceMappings.Value;
+            }
+
+            if (countCreatedTransitiveSourceMappings.HasValue)
+            {
+                actionTelemetryEvent["CreatedTransitiveSourceMappingsCount"] = countCreatedTransitiveSourceMappings.Value;
             }
         }
 
