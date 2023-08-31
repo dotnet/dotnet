@@ -33,11 +33,13 @@ namespace NuGet.PackageManagement.UI
         internal const int DecodePixelWidth = 32;
 
         private readonly CancellationTokenSource _cancellationTokenSource;
+        private readonly IPackageVulnerabilityService _vulnerabilityService;
 
-        public PackageItemViewModel(INuGetSearchService searchService)
+        public PackageItemViewModel(INuGetSearchService searchService, IPackageVulnerabilityService vulnerabilityService = default)
         {
             _cancellationTokenSource = new CancellationTokenSource();
             _searchService = searchService;
+            _vulnerabilityService = vulnerabilityService;
         }
 
         // same URIs can reuse the bitmapImage that we've already used.
@@ -746,15 +748,27 @@ namespace NuGet.PackageManagement.UI
             try
             {
                 var identity = new PackageIdentity(Id, Version);
-                (PackageSearchMetadataContextInfo packageMetadata, PackageDeprecationMetadataContextInfo deprecationMetadata) =
-                    await _searchService.GetPackageMetadataAsync(identity, Sources, IncludePrerelease, cancellationToken);
 
-                await NuGetUIThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync(cancellationToken);
-                cancellationToken.ThrowIfCancellationRequested();
+                if (PackageLevel == PackageLevel.TopLevel)
+                {
+                    (PackageSearchMetadataContextInfo packageMetadata, PackageDeprecationMetadataContextInfo deprecationMetadata) =
+                        await _searchService.GetPackageMetadataAsync(identity, Sources, IncludePrerelease, cancellationToken);
 
-                DeprecationMetadata = deprecationMetadata;
-                IsPackageDeprecated = deprecationMetadata != null;
-                VulnerabilityMaxSeverity = packageMetadata?.Vulnerabilities?.FirstOrDefault()?.Severity ?? -1;
+                    await NuGetUIThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync(cancellationToken);
+                    cancellationToken.ThrowIfCancellationRequested();
+
+                    DeprecationMetadata = deprecationMetadata;
+                    IsPackageDeprecated = deprecationMetadata != null;
+                    VulnerabilityMaxSeverity = packageMetadata?.Vulnerabilities?.FirstOrDefault()?.Severity ?? -1;
+                }
+                else if (PackageLevel == PackageLevel.Transitive && _vulnerabilityService != null)
+                {
+                    IEnumerable<PackageVulnerabilityMetadataContextInfo> vulnerabilityInfoList =
+                        await _vulnerabilityService.GetVulnerabilityInfoAsync(identity, cancellationToken);
+                    cancellationToken.ThrowIfCancellationRequested();
+
+                    VulnerabilityMaxSeverity = vulnerabilityInfoList?.FirstOrDefault()?.Severity ?? -1;
+                }
             }
             catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
             {
@@ -802,6 +816,10 @@ namespace NuGet.PackageManagement.UI
 
             // Transitive packages cannot be updated and can only be installed as top-level packages with their currently installed version.
             LatestVersion = installedVersion;
+
+            NuGetUIThreadHelper.JoinableTaskFactory
+                .RunAsync(ReloadPackageMetadataAsync)
+                .PostOnFailure(nameof(PackageItemViewModel), nameof(ReloadPackageMetadataAsync));
 
             OnPropertyChanged(nameof(Status));
         }

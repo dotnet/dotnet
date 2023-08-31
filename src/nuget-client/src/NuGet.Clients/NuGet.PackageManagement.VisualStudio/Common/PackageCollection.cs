@@ -66,5 +66,32 @@ namespace NuGet.PackageManagement.VisualStudio
 
             return new PackageCollection(packages);
         }
+
+        public static async ValueTask<IInstalledAndTransitivePackages> GetInstalledAndTransitivePackagesAsync(IServiceBroker serviceBroker, IReadOnlyCollection<IProjectContextInfo> projectContextInfos, bool includeTransitiveOrigins, CancellationToken cancellationToken)
+        {
+            IEnumerable<Task<IInstalledAndTransitivePackages>> tasks = projectContextInfos
+                .Select(project => project.GetInstalledAndTransitivePackagesAsync(serviceBroker, includeTransitiveOrigins, cancellationToken).AsTask());
+            IInstalledAndTransitivePackages[] installedAndTransitivePackagesArray = await Task.WhenAll(tasks);
+            if (installedAndTransitivePackagesArray.Length == 1)
+            {
+                return installedAndTransitivePackagesArray[0];
+            }
+            else if (installedAndTransitivePackagesArray.Length > 1)
+            {
+                List<IPackageReferenceContextInfo> installedPackages = new List<IPackageReferenceContextInfo>();
+                List<ITransitivePackageReferenceContextInfo> transitivePackages = new List<ITransitivePackageReferenceContextInfo>();
+                foreach (var installedAndTransitivePackages in installedAndTransitivePackagesArray)
+                {
+                    installedPackages.AddRange(installedAndTransitivePackages.InstalledPackages);
+                    transitivePackages.AddRange(installedAndTransitivePackages.TransitivePackages);
+                }
+                InstalledAndTransitivePackages collectAllPackagesHere = new InstalledAndTransitivePackages(installedPackages, transitivePackages);
+                return collectAllPackagesHere;
+            }
+            else
+            {
+                return new InstalledAndTransitivePackages(new List<IPackageReferenceContextInfo>(), new List<ITransitivePackageReferenceContextInfo>());
+            }
+        }
     }
 }

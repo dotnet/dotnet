@@ -1,8 +1,3 @@
 #nullable enable
-~const NuGet.ProjectManagement.ProjectBuildProperties.NuGetAudit = "NuGetAudit" -> string
-~const NuGet.ProjectManagement.ProjectBuildProperties.NuGetAuditLevel = "NuGetAuditLevel" -> string
-~NuGet.PackageManagement.NuGetPackageManager.PreviewProjectsInstallPackageAsync(System.Collections.Generic.IReadOnlyCollection<NuGet.ProjectManagement.NuGetProject> nuGetProjects, NuGet.Packaging.Core.PackageIdentity packageIdentity, NuGet.PackageManagement.ResolutionContext resolutionContext, NuGet.ProjectManagement.INuGetProjectContext nuGetProjectContext, System.Collections.Generic.IReadOnlyCollection<NuGet.Protocol.Core.Types.SourceRepository> activeSources, NuGet.Versioning.VersionRange versionRange, string newMappingID, string newMappingSource, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<NuGet.PackageManagement.ResolvedAction>>
-~const NuGet.ProjectManagement.ProjectBuildProperties.WindowsTargetPlatformMinVersion = "WindowsTargetPlatformMinVersion" -> string
-~const NuGet.ProjectManagement.ProjectBuildProperties.NuGetAuditMode = "NuGetAuditMode" -> string
 ~static NuGet.PackageManagement.PackageReferenceComparer.Instance.get -> NuGet.PackageManagement.PackageReferenceComparer
 ~static NuGet.PackageManagement.SourceRepositoryComparer.Instance.get -> NuGet.PackageManagement.SourceRepositoryComparer

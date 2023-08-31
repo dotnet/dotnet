@@ -250,6 +250,15 @@ namespace NuGet.PackageManagement.VisualStudio {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Error occurred while getting package vulnerability data: {0}.
+        /// </summary>
+        public static string Error_VulnerabilityDataFetch {
+            get {
+                return ResourceManager.GetString("Error_VulnerabilityDataFetch", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Failed to load &apos;{0}&apos;, while updating binding redirects. {1}.
         /// </summary>
         public static string Error_WhileLoadingConfigForBindingRedirects {
