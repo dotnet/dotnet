@@ -44,8 +44,8 @@ namespace Microsoft.IdentityModel.Tokens.Tests
                 string jsonJwe = jsonWebTokenHandler.CreateToken(securityTokenDescriptor);
                 string jwtJwe = jwtSecurityTokenHandler.CreateEncodedJwt(securityTokenDescriptor);
 
-                TokenValidationResult tokenValidationResult1 = jsonWebTokenHandler.ValidateToken(jsonJwe, theoryData.TokenValidationParameters);
-                TokenValidationResult tokenValidationResult2 = jsonWebTokenHandler.ValidateToken(jwtJwe, theoryData.TokenValidationParameters);
+                TokenValidationResult tokenValidationResult1 = jsonWebTokenHandler.ValidateTokenAsync(jsonJwe, theoryData.TokenValidationParameters).Result;
+                TokenValidationResult tokenValidationResult2 = jsonWebTokenHandler.ValidateTokenAsync(jwtJwe, theoryData.TokenValidationParameters).Result;
                 TokenValidationResult tokenValidationResult3 = jwtSecurityTokenHandler.ValidateTokenAsync(jsonJwe, theoryData.TokenValidationParameters).GetAwaiter().GetResult();
                 TokenValidationResult tokenValidationResult4 = jwtSecurityTokenHandler.ValidateTokenAsync(jwtJwe, theoryData.TokenValidationParameters).GetAwaiter().GetResult();
 
@@ -274,7 +274,7 @@ namespace Microsoft.IdentityModel.Tokens.Tests
             testData.AdditionalHeaderParams = new Dictionary<string, object>();
             testData.AdditionalHeaderParams.Add(JsonWebTokens.JwtHeaderParameterNames.Apu, testData.ApuSender);
             testData.AdditionalHeaderParams.Add(JsonWebTokens.JwtHeaderParameterNames.Apv, testData.ApvSender);
-            testData.AdditionalHeaderParams.Add(JsonWebTokens.JwtHeaderParameterNames.Epk, epkJObject);
+            testData.AdditionalHeaderParams.Add(JsonWebTokens.JwtHeaderParameterNames.Epk, epkJObject.ToString(Newtonsoft.Json.Formatting.None));
 
             return testData;
         }

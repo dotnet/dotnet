@@ -3,17 +3,33 @@
 
 using System.Collections.Generic;
 using System.Security.Claims;
+using System.Text;
 using Microsoft.IdentityModel.Logging;
 using Microsoft.IdentityModel.TestUtils;
 using Microsoft.IdentityModel.Tokens;
 using Xunit;
 
-#pragma warning disable CS3016 // Arrays as attribute arguments is not CLS-compliant
-
 namespace System.IdentityModel.Tokens.Jwt.Tests
 {
     public class JwtSecurityTokenTests
     {
+        [Fact]
+        public void DateTime2038Issue()
+        {
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(new string('a', 128)));
+            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+
+            var claims = new[] { new Claim(ClaimTypes.NameIdentifier, "Bob") };
+            var token = new JwtSecurityToken(
+                issuer: "issuer.contoso.com",
+                audience: "audience.contoso.com",
+                claims: claims,
+                expires: (new DateTime(2038, 1, 20)).ToUniversalTime(),
+                signingCredentials: creds);
+
+            Assert.Equal(token.ValidTo, (new DateTime(2038,1,20)).ToUniversalTime());
+        }
+
         [Fact]
         public void Defaults()
         {
@@ -414,5 +430,3 @@ namespace System.IdentityModel.Tokens.Jwt.Tests
         }
     }
 }
-
-#pragma warning restore CS3016 // Arrays as attribute arguments is not CLS-compliant

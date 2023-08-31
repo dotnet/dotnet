@@ -28,6 +28,40 @@ namespace Microsoft.IdentityModel.JsonWebTokens.Tests
 {
     public class JsonWebTokenHandlerTests
     {
+        [Fact]
+        public void JsonWebTokenHandler_CreateToken_SameTypeMultipleValues()
+        {
+            var identity = new ClaimsIdentity("Test");
+
+            var claimValues = new List<string> { "value1", "value2", "value3", "value4" };
+
+            foreach (var value in claimValues)
+                identity.AddClaim(new Claim("a", value));
+
+            var descriptor = new SecurityTokenDescriptor
+            {
+                SigningCredentials = new SigningCredentials(Default.AsymmetricSigningKey, SecurityAlgorithms.RsaSsaPssSha256),
+                Subject = identity
+            };
+
+            var handler = new JsonWebTokenHandler();
+
+            var token = handler.CreateToken(descriptor);
+
+            var jwt = new JsonWebToken(token);
+            var claims = jwt.Claims.ToList();
+
+            int defaultClaimsCount = 3;
+
+            Assert.Equal(defaultClaimsCount + claimValues.Count, claims.Count);
+
+            var aTypeClaims = claims.Where(c => c.Type == "a").ToList();
+
+            Assert.Equal(4, aTypeClaims.Count);
+
+            foreach (var value in claimValues)
+                Assert.NotNull(aTypeClaims.SingleOrDefault(c => c.Value == value));
+        }
 
         // This test checks to make sure that the value of JsonWebTokenHandler.Base64UrlEncodedUnsignedJWSHeader has remained unchanged.
         [Fact]
@@ -61,7 +95,7 @@ namespace Microsoft.IdentityModel.JsonWebTokens.Tests
         public void ValidateTokenValidationResult(JsonWebTokenTheoryData theoryData)
         {
             TestUtilities.WriteHeader($"{this}.ValidateTokenValidationResult");
-            var tokenValidationResult = theoryData.TokenHandler.ValidateToken(theoryData.AccessToken, theoryData.ValidationParameters);
+            var tokenValidationResult = theoryData.TokenHandler.ValidateTokenAsync(theoryData.AccessToken, theoryData.ValidationParameters).Result;
             Assert.Equal(tokenValidationResult.Claims, TokenUtilities.CreateDictionaryFromClaims(tokenValidationResult.ClaimsIdentity.Claims));
         }
 
@@ -70,8 +104,8 @@ namespace Microsoft.IdentityModel.JsonWebTokens.Tests
         {
             var context = TestUtilities.WriteHeader($"{this}.ValidateTokenDerivedHandlerValidationResult", theoryData);
             var derivedJsonWebTokenHandler = new DerivedJsonWebTokenHandler();
-            var tokenValidationResult = theoryData.TokenHandler.ValidateToken(theoryData.AccessToken, theoryData.ValidationParameters);
-            var tokenValidationDerivedResult = derivedJsonWebTokenHandler.ValidateToken(theoryData.AccessToken, theoryData.ValidationParameters);
+            var tokenValidationResult = theoryData.TokenHandler.ValidateTokenAsync(theoryData.AccessToken, theoryData.ValidationParameters).Result;
+            var tokenValidationDerivedResult = derivedJsonWebTokenHandler.ValidateTokenAsync(theoryData.AccessToken, theoryData.ValidationParameters).Result;
             IdentityComparer.AreEqual(tokenValidationResult.Claims, TokenUtilities.CreateDictionaryFromClaims(tokenValidationResult.ClaimsIdentity.Claims), context);
             IdentityComparer.AreEqual(tokenValidationDerivedResult.Claims, TokenUtilities.CreateDictionaryFromClaims(tokenValidationDerivedResult.ClaimsIdentity.Claims), context);
             IdentityComparer.AreEqual(tokenValidationResult.Claims, tokenValidationDerivedResult.Claims, context);
@@ -133,7 +167,7 @@ namespace Microsoft.IdentityModel.JsonWebTokens.Tests
             SampleListener listener = SampleListener.CreateLoggerListener(EventLevel.Warning);
 
             //validate token
-            var tokenValidationResult = theoryData.TokenHandler.ValidateToken(theoryData.AccessToken, theoryData.ValidationParameters);
+            var tokenValidationResult = theoryData.TokenHandler.ValidateTokenAsync(theoryData.AccessToken, theoryData.ValidationParameters).Result;
 
             //access claims without checking IsValid or Exception
             var claims = tokenValidationResult.Claims;
@@ -152,7 +186,7 @@ namespace Microsoft.IdentityModel.JsonWebTokens.Tests
             SampleListener listener = SampleListener.CreateLoggerListener(EventLevel.Warning);
 
             //validate token
-            var tokenValidationResult = theoryData.TokenHandler.ValidateToken(theoryData.AccessToken, theoryData.ValidationParameters);
+            var tokenValidationResult = theoryData.TokenHandler.ValidateTokenAsync(theoryData.AccessToken, theoryData.ValidationParameters).Result;
 
             //checking IsValid first, then access claims
             var isValid = tokenValidationResult.IsValid;
@@ -172,7 +206,7 @@ namespace Microsoft.IdentityModel.JsonWebTokens.Tests
             SampleListener listener = SampleListener.CreateLoggerListener(EventLevel.Warning);
 
             //validate token
-            var tokenValidationResult = theoryData.TokenHandler.ValidateToken(theoryData.AccessToken, theoryData.ValidationParameters);
+            var tokenValidationResult = theoryData.TokenHandler.ValidateTokenAsync(theoryData.AccessToken, theoryData.ValidationParameters).Result;
 
             //checking exception first, then access claims
             var exception = tokenValidationResult.Exception;
@@ -255,7 +289,7 @@ namespace Microsoft.IdentityModel.JsonWebTokens.Tests
             try
             {
                 string jwtFromSecurityTokenDescriptor = theoryData.JsonWebTokenHandler.CreateToken(theoryData.TokenDescriptor);
-                var tokenValidationResultFromSecurityTokenDescriptor = theoryData.JsonWebTokenHandler.ValidateToken(jwtFromSecurityTokenDescriptor, theoryData.ValidationParameters);
+                var tokenValidationResultFromSecurityTokenDescriptor = theoryData.JsonWebTokenHandler.ValidateTokenAsync(jwtFromSecurityTokenDescriptor, theoryData.ValidationParameters).Result;
                 IdentityComparer.AreEqual(tokenValidationResultFromSecurityTokenDescriptor.IsValid, theoryData.IsValid, context);
                 var jwsTokenFromSecurityTokenDescriptor = new JsonWebToken(jwtFromSecurityTokenDescriptor);
 
@@ -410,7 +444,7 @@ namespace Microsoft.IdentityModel.JsonWebTokens.Tests
 
                 theoryData.ValidationParameters.ValidateLifetime = false;
                 var claimsPrincipal = theoryData.JwtSecurityTokenHandler.ValidateToken(jweFromJwtHandler, theoryData.ValidationParameters, out SecurityToken validatedTokenFromJwtHandler);
-                var validationResult = theoryData.JsonWebTokenHandler.ValidateToken(jweFromJsonHandler, theoryData.ValidationParameters);
+                var validationResult = theoryData.JsonWebTokenHandler.ValidateTokenAsync(jweFromJsonHandler, theoryData.ValidationParameters).Result;
                 IdentityComparer.AreEqual(validationResult.IsValid, theoryData.IsValid, context);
                 var validatedTokenFromJsonHandler = validationResult.SecurityToken;
                 IdentityComparer.AreEqual(validationResult.IsValid, theoryData.IsValid, context);
@@ -514,11 +548,11 @@ namespace Microsoft.IdentityModel.JsonWebTokens.Tests
                 string jweFromJsonHandler = theoryData.JsonWebTokenHandler.CreateToken(theoryData.TokenDescriptor);
 
                 var claimsPrincipalFromJwtHandler = theoryData.JwtSecurityTokenHandler.ValidateToken(jweFromJwtHandler, theoryData.ValidationParameters, out SecurityToken validatedTokenFromJwtHandler);
-                var validationResultFromJsonHandler = theoryData.JsonWebTokenHandler.ValidateToken(jweFromJsonHandler, theoryData.ValidationParameters);
+                var validationResultFromJsonHandler = theoryData.JsonWebTokenHandler.ValidateTokenAsync(jweFromJsonHandler, theoryData.ValidationParameters).Result;
                 IdentityComparer.AreEqual(validationResultFromJsonHandler.IsValid, theoryData.IsValid, context);
 
                 var validatedTokenFromJsonHandler = validationResultFromJsonHandler.SecurityToken;
-                var validationResultFromJwtJsonHandler = theoryData.JsonWebTokenHandler.ValidateToken(jweFromJwtHandler, theoryData.ValidationParameters);
+                var validationResultFromJwtJsonHandler = theoryData.JsonWebTokenHandler.ValidateTokenAsync(jweFromJwtHandler, theoryData.ValidationParameters).Result;
                 IdentityComparer.AreEqual(validationResultFromJwtJsonHandler.IsValid, theoryData.IsValid, context);
                 IdentityComparer.AreEqual(claimsPrincipalFromJwtHandler.Identity, validationResultFromJsonHandler.ClaimsIdentity, context);
                 IEnumerable<Claim> jwtHandlerClaims = (validatedTokenFromJwtHandler as JwtSecurityToken).Claims;
@@ -775,8 +809,8 @@ namespace Microsoft.IdentityModel.JsonWebTokens.Tests
                 else
                     jweFromString = theoryData.JsonWebTokenHandler.CreateToken(theoryData.Payload, theoryData.TokenDescriptor.SigningCredentials, theoryData.TokenDescriptor.EncryptingCredentials);
 
-                var validationResultFromSecurityTokenDescriptor = theoryData.JsonWebTokenHandler.ValidateToken(jweFromSecurityTokenDescriptor, theoryData.ValidationParameters);
-                var validationResultFromString = theoryData.JsonWebTokenHandler.ValidateToken(jweFromString, theoryData.ValidationParameters);
+                var validationResultFromSecurityTokenDescriptor = theoryData.JsonWebTokenHandler.ValidateTokenAsync(jweFromSecurityTokenDescriptor, theoryData.ValidationParameters).Result;
+                var validationResultFromString = theoryData.JsonWebTokenHandler.ValidateTokenAsync(jweFromString, theoryData.ValidationParameters).Result;
 
                 IdentityComparer.AreEqual(validationResultFromSecurityTokenDescriptor.IsValid, theoryData.IsValid, context);
                 IdentityComparer.AreEqual(validationResultFromString.IsValid, theoryData.IsValid, context);
@@ -992,13 +1026,15 @@ namespace Microsoft.IdentityModel.JsonWebTokens.Tests
                         TestId = "UseSecurityTokenDescriptorProperties",
                         Payload = new JObject()
                         {
-                            { JwtRegisteredClaimNames.Email, "Bob@contoso.com" },
-                            { JwtRegisteredClaimNames.GivenName, "Bob" },
-                            { JwtRegisteredClaimNames.Iss, "Issuer" },
+                            { JwtRegisteredClaimNames.Azp, Default.Azp },
                             { JwtRegisteredClaimNames.Aud, "Audience" },
-                            { JwtRegisteredClaimNames.Iat, EpochTime.GetIntDate(DateTime.Parse("2018-03-17T18:33:37.080Z")) },
-                            { JwtRegisteredClaimNames.Nbf, EpochTime.GetIntDate(DateTime.Parse("2018-03-17T18:33:37.080Z")) },
+                            { JwtRegisteredClaimNames.Email, "Bob@contoso.com" },
                             { JwtRegisteredClaimNames.Exp, EpochTime.GetIntDate(DateTime.Parse("2023-03-17T18:33:37.080Z")) },
+                            { JwtRegisteredClaimNames.GivenName, "Bob" },
+                            { JwtRegisteredClaimNames.Iat, EpochTime.GetIntDate(DateTime.Parse("2038-03-17T18:33:37.080Z")) },
+                            { JwtRegisteredClaimNames.Iss, "Issuer" },
+                            { JwtRegisteredClaimNames.Jti, Default.Jti },
+                            { JwtRegisteredClaimNames.Nbf, EpochTime.GetIntDate(DateTime.Parse("2018-03-17T18:33:37.080Z")) },
                         }.ToString(Formatting.None),
                         TokenDescriptor =  new SecurityTokenDescriptor
                         {
@@ -1007,7 +1043,7 @@ namespace Microsoft.IdentityModel.JsonWebTokens.Tests
                             Claims = Default.PayloadDictionary,
                             Issuer = "Issuer",
                             Audience = "Audience",
-                            IssuedAt = DateTime.Parse("2018-03-17T18:33:37.080Z"),
+                            IssuedAt = DateTime.Parse("2038-03-17T18:33:37.080Z"),
                             NotBefore = DateTime.Parse("2018-03-17T18:33:37.080Z"),
                             Expires = DateTime.Parse("2023-03-17T18:33:37.080Z")
                         },
@@ -1123,7 +1159,7 @@ namespace Microsoft.IdentityModel.JsonWebTokens.Tests
                 string jwsFromJsonHandler = theoryData.JsonWebTokenHandler.CreateToken(theoryData.TokenDescriptor);
 
                 var claimsPrincipal = theoryData.JwtSecurityTokenHandler.ValidateToken(jwsFromJwtHandler, theoryData.ValidationParameters, out SecurityToken validatedToken);
-                var tokenValidationResult = theoryData.JsonWebTokenHandler.ValidateToken(jwsFromJsonHandler, theoryData.ValidationParameters);
+                var tokenValidationResult = theoryData.JsonWebTokenHandler.ValidateTokenAsync(jwsFromJsonHandler, theoryData.ValidationParameters).Result;
                 IdentityComparer.AreEqual(tokenValidationResult.IsValid, theoryData.IsValid, context);
                 IdentityComparer.AreEqual(claimsPrincipal.Identity, tokenValidationResult.ClaimsIdentity, context);
 
@@ -1276,7 +1312,7 @@ namespace Microsoft.IdentityModel.JsonWebTokens.Tests
                        TokenDescriptor =  new SecurityTokenDescriptor
                        {
                             SigningCredentials = KeyingMaterial.JsonWebKeyRsa256SigningCredentials,
-                            Claims = Default.PayloadDictionary,
+                            Claims = ReferenceTokens.PayloadDictionary,
                             AdditionalHeaderClaims = new Dictionary<string, object> () { { JwtHeaderParameterNames.Typ, "TEST" } }
                        },
                        JwtToken = ReferenceTokens.JWSWithDifferentTyp
@@ -1287,7 +1323,7 @@ namespace Microsoft.IdentityModel.JsonWebTokens.Tests
                         TestId = "MultipleAdditionalHeaderClaims",
                         TokenDescriptor =  new SecurityTokenDescriptor
                         {
-                            Claims = Default.PayloadDictionary,
+                            Claims = ReferenceTokens.PayloadDictionary,
                             SigningCredentials = KeyingMaterial.JsonWebKeyRsa256SigningCredentials,
                             AdditionalHeaderClaims = new Dictionary<string, object>() { { "int", 123 }, { "string", "string" } }
                         },
@@ -1299,7 +1335,7 @@ namespace Microsoft.IdentityModel.JsonWebTokens.Tests
                        TokenDescriptor =  new SecurityTokenDescriptor
                        {
                             SigningCredentials = KeyingMaterial.JsonWebKeyRsa256SigningCredentials,
-                            Claims = Default.PayloadDictionary,
+                            Claims = ReferenceTokens.PayloadDictionary,
                             AdditionalHeaderClaims = new Dictionary<string, object> () { { "int", 123 } }
                        },
                        JwtToken = ReferenceTokens.JWSWithSingleAdditionalHeaderClaim
@@ -1310,17 +1346,17 @@ namespace Microsoft.IdentityModel.JsonWebTokens.Tests
                        TokenDescriptor =  new SecurityTokenDescriptor
                        {
                             SigningCredentials = KeyingMaterial.JsonWebKeyRsa256SigningCredentials,
-                            Claims = Default.PayloadDictionary,
+                            Claims = ReferenceTokens.PayloadDictionary,
                             AdditionalHeaderClaims = new Dictionary<string, object>()
                        },
-                       JwtToken = new JsonWebTokenHandler().CreateToken(Default.PayloadString, KeyingMaterial.JsonWebKeyRsa256SigningCredentials)
+                       JwtToken = new JsonWebTokenHandler().CreateToken(ReferenceTokens.PayloadString, KeyingMaterial.JsonWebKeyRsa256SigningCredentials)
                     },
                     new CreateTokenTheoryData
                     {
                        TestId = "UnsignedJWS",
                        TokenDescriptor =  new SecurityTokenDescriptor
                        {
-                            Claims = Default.PayloadDictionary,
+                            Claims = ReferenceTokens.PayloadDictionary,
                             AdditionalHeaderClaims = new Dictionary<string, object> () { { "int", 123 } }
                        },
                        JwtToken = ReferenceTokens.UnsignedJWSWithSingleAdditionalHeaderClaim
@@ -1377,7 +1413,7 @@ namespace Microsoft.IdentityModel.JsonWebTokens.Tests
                 if (theoryData.TokenDescriptor.AdditionalInnerHeaderClaims != null)
                 {
                     theoryData.ValidationParameters.ValidateLifetime = false;
-                    var result = handler.ValidateToken(jwtTokenWithSigning, theoryData.ValidationParameters);
+                    var result = handler.ValidateTokenAsync(jwtTokenWithSigning, theoryData.ValidationParameters).Result;
                     var token = result.SecurityToken as JsonWebToken;
                     if (theoryData.TokenDescriptor.AdditionalInnerHeaderClaims.TryGetValue(JwtHeaderParameterNames.Cty, out object innerCtyValue))
                     {
@@ -1520,8 +1556,8 @@ namespace Microsoft.IdentityModel.JsonWebTokens.Tests
             theoryData.ValidationParameters.ValidateLifetime = false;
 
             var jwtTokenFromDescriptor = handler.CreateToken(theoryData.TokenDescriptor);
-            var validatedJwtTokenFromDescriptor = handler.ValidateToken(jwtTokenFromDescriptor, theoryData.ValidationParameters).SecurityToken as JsonWebToken;
-            var jwtTokenToCompare = handler.ValidateToken(theoryData.JwtToken, theoryData.ValidationParameters).SecurityToken as JsonWebToken;
+            var validatedJwtTokenFromDescriptor = handler.ValidateTokenAsync(jwtTokenFromDescriptor, theoryData.ValidationParameters).Result.SecurityToken as JsonWebToken;
+            var jwtTokenToCompare = handler.ValidateTokenAsync(theoryData.JwtToken, theoryData.ValidationParameters).Result.SecurityToken as JsonWebToken;
 
             context.PropertiesToIgnoreWhenComparing = new Dictionary<Type, List<string>>
             {
@@ -1554,10 +1590,10 @@ namespace Microsoft.IdentityModel.JsonWebTokens.Tests
                     {
                         First = true,
                         TestId = "JWEDirectEncryption",
-                        Payload = Default.PayloadString,
+                        Payload = ReferenceTokens.PayloadString,
                         TokenDescriptor =  new SecurityTokenDescriptor
                         {
-                            Claims = Default.PayloadDictionary,
+                            Claims = ReferenceTokens.PayloadDictionary,
                             SigningCredentials = Default.SymmetricSigningCredentials,
                             EncryptingCredentials = Default.SymmetricEncryptingCredentials,
                             AdditionalHeaderClaims = new Dictionary<string, object>() { { "int", 123 }, { "string", "string" } }
@@ -1566,18 +1602,18 @@ namespace Microsoft.IdentityModel.JsonWebTokens.Tests
                         {
                             IssuerSigningKey = Default.SymmetricSigningCredentials.Key,
                             TokenDecryptionKey = Default.SymmetricEncryptingCredentials.Key,
-                            ValidAudience = Default.Audience,
-                            ValidIssuer = Default.Issuer
+                            ValidAudience = ReferenceTokens.Audience,
+                            ValidIssuer = ReferenceTokens.Issuer
                         },
                         JwtToken = ReferenceTokens.JWEDirectEcryptionWithAdditionalHeaderClaims
                     },
                     new CreateTokenTheoryData
                     {
                         TestId = "JWEDirectEncryptionWithCty",
-                        Payload = Default.PayloadString,
+                        Payload = ReferenceTokens.PayloadString,
                         TokenDescriptor =  new SecurityTokenDescriptor
                         {
-                            Claims = Default.PayloadDictionary,
+                            Claims = ReferenceTokens.PayloadDictionary,
                             SigningCredentials = Default.SymmetricSigningCredentials,
                             EncryptingCredentials = Default.SymmetricEncryptingCredentials,
                             AdditionalHeaderClaims = new Dictionary<string, object>() { { JwtHeaderParameterNames.Cty, JwtConstants.HeaderType} }
@@ -1586,18 +1622,18 @@ namespace Microsoft.IdentityModel.JsonWebTokens.Tests
                         {
                             IssuerSigningKey = Default.SymmetricSigningCredentials.Key,
                             TokenDecryptionKey = Default.SymmetricEncryptingCredentials.Key,
-                            ValidAudience = Default.Audience,
-                            ValidIssuer = Default.Issuer
+                            ValidAudience = ReferenceTokens.Audience,
+                            ValidIssuer = ReferenceTokens.Issuer
                         },
                         JwtToken = ReferenceTokens.JWEDirectEcryptionWithCtyInAdditionalHeaderClaims
                     },
                     new CreateTokenTheoryData
                     {
                         TestId = "JWEDirectEncryptionWithDifferentTyp",
-                        Payload = Default.PayloadString,
+                        Payload = ReferenceTokens.PayloadString,
                         TokenDescriptor =  new SecurityTokenDescriptor
                         {
-                            Claims = Default.PayloadDictionary,
+                            Claims = ReferenceTokens.PayloadDictionary,
                             SigningCredentials = Default.SymmetricSigningCredentials,
                             EncryptingCredentials = Default.SymmetricEncryptingCredentials,
                             AdditionalHeaderClaims = new Dictionary<string, object>() { { JwtHeaderParameterNames.Typ, "TEST" } }
@@ -1606,66 +1642,66 @@ namespace Microsoft.IdentityModel.JsonWebTokens.Tests
                         {
                             IssuerSigningKey = Default.SymmetricSigningCredentials.Key,
                             TokenDecryptionKey = Default.SymmetricEncryptingCredentials.Key,
-                            ValidAudience = Default.Audience,
-                            ValidIssuer = Default.Issuer
+                            ValidAudience = ReferenceTokens.Audience,
+                            ValidIssuer = ReferenceTokens.Issuer
                         },
                         JwtToken = ReferenceTokens.JWEDirectEcryptionWithDifferentTyp
                     },
                     new CreateTokenTheoryData
                     {
                        TestId = "JWEKeyWrapping",
-                       Payload = Default.PayloadString,
+                       Payload = ReferenceTokens.PayloadString,
                        TokenDescriptor =  new SecurityTokenDescriptor
                        {
                             SigningCredentials = Default.SymmetricSigningCredentials,
                             EncryptingCredentials = new EncryptingCredentials(KeyingMaterial.RsaSecurityKey_2048, SecurityAlgorithms.RsaPKCS1, SecurityAlgorithms.Aes128CbcHmacSha256),
-                            Claims = Default.PayloadDictionary,
+                            Claims = ReferenceTokens.PayloadDictionary,
                             AdditionalHeaderClaims = new Dictionary<string, object>() { { "int", 123 }, { "string", "string" } }
                        },
                        ValidationParameters = new TokenValidationParameters
                        {
                             IssuerSigningKey = Default.SymmetricSigningCredentials.Key,
                             TokenDecryptionKey = KeyingMaterial.RsaSecurityKey_2048,
-                            ValidAudience = Default.Audience,
-                            ValidIssuer = Default.Issuer
+                            ValidAudience = ReferenceTokens.Audience,
+                            ValidIssuer = ReferenceTokens.Issuer
                        },
                        JwtToken = ReferenceTokens.JWEKeyWrappingWithAdditionalHeaderClaims
                     },
                     new CreateTokenTheoryData
                     {
                        TestId = "JWEKeyWrappingDifferentTyp",
-                       Payload = Default.PayloadString,
+                       Payload = ReferenceTokens.PayloadString,
                        TokenDescriptor =  new SecurityTokenDescriptor
                        {
                             SigningCredentials = Default.SymmetricSigningCredentials,
                             EncryptingCredentials = new EncryptingCredentials(KeyingMaterial.RsaSecurityKey_2048, SecurityAlgorithms.RsaPKCS1, SecurityAlgorithms.Aes128CbcHmacSha256),
-                            Claims = Default.PayloadDictionary,
+                            Claims = ReferenceTokens.PayloadDictionary,
                             AdditionalHeaderClaims = new Dictionary<string, object>() { { JwtHeaderParameterNames.Typ, "TEST" } }
                        },
                        ValidationParameters = new TokenValidationParameters
                        {
                             IssuerSigningKey = Default.SymmetricSigningCredentials.Key,
                             TokenDecryptionKey = KeyingMaterial.RsaSecurityKey_2048,
-                            ValidAudience = Default.Audience,
-                            ValidIssuer = Default.Issuer
+                            ValidAudience = ReferenceTokens.Audience,
+                            ValidIssuer = ReferenceTokens.Issuer
                        },
                        JwtToken = ReferenceTokens.JWEKeyWrappingWithDifferentTyp
                     },
                     new CreateTokenTheoryData
                     {
                        TestId = "JWEKeyWrappingUnsignedInnerJwt",
-                       Payload = Default.PayloadString,
+                       Payload = ReferenceTokens.PayloadString,
                        TokenDescriptor =  new SecurityTokenDescriptor
                        {
                             EncryptingCredentials = new EncryptingCredentials(KeyingMaterial.RsaSecurityKey_2048, SecurityAlgorithms.RsaPKCS1, SecurityAlgorithms.Aes128CbcHmacSha256),
-                            Claims = Default.PayloadDictionary,
+                            Claims = ReferenceTokens.PayloadDictionary,
                             AdditionalHeaderClaims = new Dictionary<string, object>() { { "int", 123 }, { "string", "string" } }
                        },
                        ValidationParameters = new TokenValidationParameters
                        {
                             TokenDecryptionKey = KeyingMaterial.RsaSecurityKey_2048,
-                            ValidAudience = Default.Audience,
-                            ValidIssuer = Default.Issuer,
+                            ValidAudience = ReferenceTokens.Audience,
+                            ValidIssuer = ReferenceTokens.Issuer,
                             RequireSignedTokens = false
                        },
                        JwtToken = ReferenceTokens.JWEKeyWrappingUnsignedInnerJWTWithAdditionalHeaderClaims
@@ -1673,18 +1709,18 @@ namespace Microsoft.IdentityModel.JsonWebTokens.Tests
                     new CreateTokenTheoryData
                     {
                         TestId = "JWEDirectEncryptionUnsignedInnerJWT",
-                        Payload = Default.PayloadString,
+                        Payload = ReferenceTokens.PayloadString,
                         TokenDescriptor =  new SecurityTokenDescriptor
                         {
-                            Claims = Default.PayloadDictionary,
+                            Claims = ReferenceTokens.PayloadDictionary,
                             EncryptingCredentials = Default.SymmetricEncryptingCredentials,
                             AdditionalHeaderClaims = new Dictionary<string, object>() { { "int", 123 }, { "string", "string" } }
                         },
                         ValidationParameters = new TokenValidationParameters
                         {
                             TokenDecryptionKey = Default.SymmetricEncryptingCredentials.Key,
-                            ValidAudience = Default.Audience,
-                            ValidIssuer = Default.Issuer,
+                            ValidAudience = ReferenceTokens.Audience,
+                            ValidIssuer = ReferenceTokens.Issuer,
                             RequireSignedTokens = false
                         },
                         JwtToken = ReferenceTokens.JWEDirectEncryptionUnsignedInnerJWTWithAdditionalHeaderClaims
@@ -1719,8 +1755,8 @@ namespace Microsoft.IdentityModel.JsonWebTokens.Tests
                 var jwsTokenFromSecurityTokenDescriptor6x = new JsonWebToken(jwtFromSecurityTokenDescriptor6x);
                 var jwsTokenFromString = new JsonWebToken(jwtPayloadAsString);
 
-                var tokenValidationResultFromSecurityTokenDescriptor = theoryData.JsonWebTokenHandler.ValidateToken(jwtFromSecurityTokenDescriptor, theoryData.ValidationParameters);
-                var tokenValidationResultFromString = theoryData.JsonWebTokenHandler.ValidateToken(jwtPayloadAsString, theoryData.ValidationParameters);
+                var tokenValidationResultFromSecurityTokenDescriptor = theoryData.JsonWebTokenHandler.ValidateTokenAsync(jwtFromSecurityTokenDescriptor, theoryData.ValidationParameters).Result;
+                var tokenValidationResultFromString = theoryData.JsonWebTokenHandler.ValidateTokenAsync(jwtPayloadAsString, theoryData.ValidationParameters).Result;
 
                 IdentityComparer.AreEqual(tokenValidationResultFromSecurityTokenDescriptor.IsValid, theoryData.IsValid, context);
                 IdentityComparer.AreEqual(tokenValidationResultFromString.IsValid, theoryData.IsValid, context);
@@ -2048,13 +2084,15 @@ namespace Microsoft.IdentityModel.JsonWebTokens.Tests
                     {
                         Payload = new JObject()
                         {
+                            { JwtRegisteredClaimNames.Aud, "Audience" },
+                            { JwtRegisteredClaimNames.Azp, Default.Azp },
                             { JwtRegisteredClaimNames.Email, "Bob@contoso.com" },
+                            { JwtRegisteredClaimNames.Exp, EpochTime.GetIntDate(DateTime.Parse("2023-03-17T18:33:37.080Z")) },
                             { JwtRegisteredClaimNames.GivenName, "Bob" },
                             { JwtRegisteredClaimNames.Iss, "Issuer" },
-                            { JwtRegisteredClaimNames.Aud, "Audience" },
                             { JwtRegisteredClaimNames.Iat, EpochTime.GetIntDate(DateTime.Parse("2018-03-17T18:33:37.080Z")) },
-                            { JwtRegisteredClaimNames.Nbf, EpochTime.GetIntDate(DateTime.Parse("2018-03-17T18:33:37.080Z")) },
-                            { JwtRegisteredClaimNames.Exp, EpochTime.GetIntDate(DateTime.Parse("2023-03-17T18:33:37.080Z")) },
+                            { JwtRegisteredClaimNames.Jti, Default.Jti },
+                            { JwtRegisteredClaimNames.Nbf, EpochTime.GetIntDate(DateTime.Parse("2038-03-17T18:33:37.080Z")) },
                         }.ToString(Formatting.None),
                         TokenDescriptor =  new SecurityTokenDescriptor
                         {
@@ -2063,7 +2101,7 @@ namespace Microsoft.IdentityModel.JsonWebTokens.Tests
                             Issuer = "Issuer",
                             Audience = "Audience",
                             IssuedAt = DateTime.Parse("2018-03-17T18:33:37.080Z"),
-                            NotBefore = DateTime.Parse("2018-03-17T18:33:37.080Z"),
+                            NotBefore = DateTime.Parse("2038-03-17T18:33:37.080Z"),
                             Expires = DateTime.Parse("2023-03-17T18:33:37.080Z")
                         },
                         JsonWebTokenHandler = new JsonWebTokenHandler(),
@@ -2201,10 +2239,10 @@ namespace Microsoft.IdentityModel.JsonWebTokens.Tests
                 new Claim(JwtRegisteredClaimNames.Iss, Default.Issuer, ClaimValueTypes.String, Default.Issuer, Default.Issuer),
                 new Claim(JwtRegisteredClaimNames.Aud, Default.Audience, ClaimValueTypes.String, Default.Issuer, Default.Issuer),
                 new Claim(JwtRegisteredClaimNames.Aud.ToUpper(), "Audience", ClaimValueTypes.String, Default.Issuer, Default.Issuer),
-                new Claim(JwtRegisteredClaimNames.Iat, EpochTime.GetIntDate(Default.IssueInstant).ToString(), ClaimValueTypes.String, Default.Issuer, Default.Issuer),
+                new Claim(JwtRegisteredClaimNames.Iat, EpochTime.GetIntDate(Default.IssueInstant).ToString(), ClaimValueTypes.Integer64, Default.Issuer, Default.Issuer),
                 new Claim(JwtRegisteredClaimNames.Iat.ToUpper(), EpochTime.GetIntDate(utcNow).ToString(), ClaimValueTypes.String, Default.Issuer, Default.Issuer),
-                new Claim(JwtRegisteredClaimNames.Nbf, EpochTime.GetIntDate(Default.NotBefore).ToString(), ClaimValueTypes.String, Default.Issuer, Default.Issuer),
-                new Claim(JwtRegisteredClaimNames.Exp, EpochTime.GetIntDate(Default.Expires).ToString(), ClaimValueTypes.String, Default.Issuer, Default.Issuer),
+                new Claim(JwtRegisteredClaimNames.Nbf, EpochTime.GetIntDate(Default.NotBefore).ToString(), ClaimValueTypes.Integer64, Default.Issuer, Default.Issuer),
+                new Claim(JwtRegisteredClaimNames.Exp, EpochTime.GetIntDate(Default.Expires).ToString(), ClaimValueTypes.Integer64, Default.Issuer, Default.Issuer),
             });
 
             var securityTokenDescriptor = new SecurityTokenDescriptor()
@@ -2270,7 +2308,7 @@ namespace Microsoft.IdentityModel.JsonWebTokens.Tests
             };
 
             string jwtString = tokenHandler.CreateToken(Default.PayloadString, KeyingMaterial.JsonWebKeyRsa256SigningCredentials);
-            var tokenValidationResult = tokenHandler.ValidateToken(jwtString, tokenValidationParameters);
+            var tokenValidationResult = tokenHandler.ValidateTokenAsync(jwtString, tokenValidationParameters).Result;
             var validatedToken = tokenValidationResult.SecurityToken as JsonWebToken;
             var claimsIdentity = tokenValidationResult.ClaimsIdentity;
             IdentityComparer.AreEqual(Default.PayloadClaimsIdentity, claimsIdentity, context);
@@ -2288,7 +2326,7 @@ namespace Microsoft.IdentityModel.JsonWebTokens.Tests
             theoryData.ValidationParameters.ValidateLifetime = false;
             try
             {
-                var tokenValidationResult = jsonWebTokenHandler.ValidateToken(jweCreatedInMemory, theoryData.ValidationParameters);
+                var tokenValidationResult = jsonWebTokenHandler.ValidateTokenAsync(jweCreatedInMemory, theoryData.ValidationParameters).Result;
                 IdentityComparer.AreEqual(tokenValidationResult.IsValid, theoryData.IsValid, context);
                 if (tokenValidationResult.Exception != null)
                     throw tokenValidationResult.Exception;
@@ -2322,7 +2360,7 @@ namespace Microsoft.IdentityModel.JsonWebTokens.Tests
             theoryData.ValidationParameters.ValidateLifetime = false;
             try
             {
-                var tokenValidationResult = jsonWebTokenHandler.ValidateToken(jweCreatedInMemory, theoryData.ValidationParameters);
+                var tokenValidationResult = jsonWebTokenHandler.ValidateTokenAsync(jweCreatedInMemory, theoryData.ValidationParameters).Result;
                 IdentityComparer.AreEqual(tokenValidationResult.IsValid, theoryData.IsValid, context);
                 if (tokenValidationResult.Exception != null)
                     throw tokenValidationResult.Exception;
@@ -2420,7 +2458,7 @@ namespace Microsoft.IdentityModel.JsonWebTokens.Tests
             try
             {
                 var jweCreatedInMemory = jsonWebTokenHandler.EncryptToken(innerJws, theoryData.EncryptingCredentials);
-                var tokenValidationResult = jsonWebTokenHandler.ValidateToken(jweCreatedInMemory, theoryData.ValidationParameters);
+                var tokenValidationResult = jsonWebTokenHandler.ValidateTokenAsync(jweCreatedInMemory, theoryData.ValidationParameters).Result;
                 IdentityComparer.AreEqual(tokenValidationResult.IsValid, theoryData.IsValid, context);
                 if (tokenValidationResult.Exception != null)
                     throw tokenValidationResult.Exception;
@@ -2454,7 +2492,7 @@ namespace Microsoft.IdentityModel.JsonWebTokens.Tests
             try
             {
                 var jweCreatedInMemory = jsonWebTokenHandler.CreateToken(theoryData.Payload, theoryData.SigningCredentials, theoryData.EncryptingCredentials);
-                var tokenValidationResult = jsonWebTokenHandler.ValidateToken(jweCreatedInMemory, theoryData.ValidationParameters);
+                var tokenValidationResult = jsonWebTokenHandler.ValidateTokenAsync(jweCreatedInMemory, theoryData.ValidationParameters).Result;
                 IdentityComparer.AreEqual(tokenValidationResult.IsValid, theoryData.IsValid, context);
                 if (tokenValidationResult.Exception != null)
                     throw tokenValidationResult.Exception;
@@ -2665,7 +2703,7 @@ namespace Microsoft.IdentityModel.JsonWebTokens.Tests
                 ValidIssuer = "http://Default.Issuer.com",
                 IssuerSigningKey = KeyingMaterial.JsonWebKeyRsa256SigningCredentials.Key,
             };
-            var tokenValidationResult = tokenHandler.ValidateToken(accessToken, tokenValidationParameters);
+            var tokenValidationResult = tokenHandler.ValidateTokenAsync(accessToken, tokenValidationParameters).Result;
             var jsonWebToken = tokenValidationResult.SecurityToken as JsonWebToken;
             var email = jsonWebToken.GetPayloadValue<string>(JwtRegisteredClaimNames.Email);
 
@@ -2679,7 +2717,7 @@ namespace Microsoft.IdentityModel.JsonWebTokens.Tests
         {
             TestUtilities.WriteHeader($"{this}.ValidateType", theoryData);
 
-            var tokenValidationResult = new JsonWebTokenHandler().ValidateToken(theoryData.Token, theoryData.ValidationParameters);
+            var tokenValidationResult = new JsonWebTokenHandler().ValidateTokenAsync(theoryData.Token, theoryData.ValidationParameters).Result;
             if (tokenValidationResult.Exception != null)
                 theoryData.ExpectedException.ProcessException(tokenValidationResult.Exception);
             else
@@ -2698,7 +2736,7 @@ namespace Microsoft.IdentityModel.JsonWebTokens.Tests
             try
             {
                 var handler = new JsonWebTokenHandler();
-                var validationResult = handler.ValidateToken(theoryData.Token, theoryData.ValidationParameters);
+                var validationResult = handler.ValidateTokenAsync(theoryData.Token, theoryData.ValidationParameters).Result;
                 if (validationResult.Exception != null)
                 {
                     if (validationResult.IsValid)
@@ -2962,8 +3000,8 @@ namespace Microsoft.IdentityModel.JsonWebTokens.Tests
             try
             {
                 var handler = new JsonWebTokenHandler();
-                var validationResult = handler.ValidateToken(theoryData.Token, theoryData.ValidationParameters);
-                var rawTokenValidationResult = handler.ValidateToken(theoryData.Token, theoryData.ValidationParameters);
+                var validationResult = handler.ValidateTokenAsync(theoryData.Token, theoryData.ValidationParameters).Result;
+                var rawTokenValidationResult = handler.ValidateTokenAsync(theoryData.Token, theoryData.ValidationParameters).Result;
                 IdentityComparer.AreEqual(validationResult, rawTokenValidationResult, context);
 
                 if (validationResult.Exception != null)
@@ -2992,7 +3030,7 @@ namespace Microsoft.IdentityModel.JsonWebTokens.Tests
             try
             {
                 var handler = new JsonWebTokenHandler();
-                var validationResult = handler.ValidateToken(theoryData.Token, theoryData.ValidationParameters);
+                var validationResult =handler.ValidateTokenAsync(theoryData.Token, theoryData.ValidationParameters).Result;
                 if (validationResult.Exception != null)
                 {
                     if (validationResult.IsValid)
@@ -3221,7 +3259,7 @@ namespace Microsoft.IdentityModel.JsonWebTokens.Tests
             {
                 var handler = new JsonWebTokenHandler();
                 AadIssuerValidator.GetAadIssuerValidator(Default.AadV1Authority).ConfigurationManagerV1 = theoryData.ValidationParameters.ConfigurationManager;
-                var validationResult = handler.ValidateToken(theoryData.Token, theoryData.ValidationParameters);
+                var validationResult = handler.ValidateTokenAsync(theoryData.Token, theoryData.ValidationParameters).Result;
                 if (validationResult.IsValid)
                 {
                     if (theoryData.ShouldSetLastKnownConfiguration && theoryData.ValidationParameters.ConfigurationManager.LastKnownGoodConfiguration == null)
@@ -3318,7 +3356,7 @@ namespace Microsoft.IdentityModel.JsonWebTokens.Tests
             {
                 var handler = new JsonWebTokenHandler();
                 AadIssuerValidator.GetAadIssuerValidator(Default.AadV1Authority).ConfigurationManagerV1 = theoryData.ValidationParameters.ConfigurationManager;
-                var validationResult = handler.ValidateToken(theoryData.Token, theoryData.ValidationParameters);
+                var validationResult = handler.ValidateTokenAsync(theoryData.Token, theoryData.ValidationParameters).Result;
                 if (validationResult.Exception != null)
                 {
                     if (validationResult.IsValid)
@@ -3347,7 +3385,7 @@ namespace Microsoft.IdentityModel.JsonWebTokens.Tests
             {
                 var handler = new JsonWebTokenHandler();
                 AadIssuerValidator.GetAadIssuerValidator(Default.AadV1Authority).ConfigurationManagerV1 = theoryData.ValidationParameters.ConfigurationManager;
-                var validationResult = handler.ValidateToken(theoryData.Token, theoryData.ValidationParameters);
+                var validationResult = handler.ValidateTokenAsync(theoryData.Token, theoryData.ValidationParameters).Result;
                 if (validationResult.Exception != null)
                 {
                     if (validationResult.IsValid)
@@ -3384,7 +3422,7 @@ namespace Microsoft.IdentityModel.JsonWebTokens.Tests
                     innerJwt = handler.CreateToken(theoryData.Payload);
 
                 var jwtToken = handler.EncryptToken(innerJwt, theoryData.EncryptingCredentials, theoryData.CompressionAlgorithm);
-                var validationResult = handler.ValidateToken(jwtToken, theoryData.ValidationParameters);
+                var validationResult = handler.ValidateTokenAsync(jwtToken, theoryData.ValidationParameters).Result;
                 if (validationResult.Exception != null)
                     throw validationResult.Exception;
 
@@ -3417,7 +3455,7 @@ namespace Microsoft.IdentityModel.JsonWebTokens.Tests
                 else
                     jwtToken = handler.CreateToken(theoryData.Payload, theoryData.SigningCredentials, theoryData.EncryptingCredentials, theoryData.CompressionAlgorithm);
 
-                var validationResult = handler.ValidateToken(jwtToken, theoryData.ValidationParameters);
+                var validationResult = handler.ValidateTokenAsync(jwtToken, theoryData.ValidationParameters).Result;
                 if (validationResult.Exception != null)
                     throw validationResult.Exception;
 
@@ -3550,7 +3588,7 @@ namespace Microsoft.IdentityModel.JsonWebTokens.Tests
             {
                 var handler = new JsonWebTokenHandler();
                 CompressionProviderFactory.Default = theoryData.CompressionProviderFactory;
-                var validationResult = handler.ValidateToken(theoryData.JWECompressionString, theoryData.ValidationParameters);
+                var validationResult = handler.ValidateTokenAsync(theoryData.JWECompressionString, theoryData.ValidationParameters).Result;
                 var validatedToken = validationResult.SecurityToken as JsonWebToken;
                 if (validationResult.Exception != null)
                 {
@@ -3669,7 +3707,7 @@ namespace Microsoft.IdentityModel.JsonWebTokens.Tests
             {
                 var handler = new JsonWebTokenHandler();
                 var token = handler.CreateToken(theoryData.TokenDescriptor);
-                var validationResult = handler.ValidateToken(token, theoryData.ValidationParameters);
+                var validationResult = handler.ValidateTokenAsync(token, theoryData.ValidationParameters).Result;
                 if (validationResult.Exception != null)
                 {
                     if (validationResult.IsValid)
@@ -3768,7 +3806,7 @@ namespace Microsoft.IdentityModel.JsonWebTokens.Tests
             {
                 var handler = new JsonWebTokenHandler();
                 var token = handler.CreateToken(theoryData.TokenDescriptor);
-                var validationResult = handler.ValidateToken(token, theoryData.ValidationParameters);
+                var validationResult = handler.ValidateTokenAsync(token, theoryData.ValidationParameters).Result;
                 if (theoryData.ValidationParameters.IncludeTokenOnFailedValidation)
                 {
                     Assert.NotNull(validationResult.TokenOnFailedValidation);

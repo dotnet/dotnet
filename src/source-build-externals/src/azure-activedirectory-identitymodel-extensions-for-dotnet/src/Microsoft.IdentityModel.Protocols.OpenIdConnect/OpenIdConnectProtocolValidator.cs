@@ -27,7 +27,7 @@ namespace Microsoft.IdentityModel.Protocols.OpenIdConnect
     /// </summary>
     public class OpenIdConnectProtocolValidator
     {
-        private IDictionary<string, string> _hashAlgorithmMap =
+        private readonly Dictionary<string, string> _hashAlgorithmMap =
             new Dictionary<string, string>
             {
                 { SecurityAlgorithms.EcdsaSha256, "SHA256" },

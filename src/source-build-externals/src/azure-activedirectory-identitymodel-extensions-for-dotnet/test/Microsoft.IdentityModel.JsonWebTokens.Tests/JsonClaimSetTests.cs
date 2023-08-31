@@ -7,7 +7,9 @@ using System.Globalization;
 using System.Reflection;
 using System.Security.Claims;
 using System.Text;
+using System.Text.Json;
 using Microsoft.IdentityModel.TestUtils;
+using Microsoft.IdentityModel.Tokens;
 using Xunit;
 
 namespace Microsoft.IdentityModel.JsonWebTokens.Tests
@@ -31,6 +33,50 @@ namespace Microsoft.IdentityModel.JsonWebTokens.Tests
             new Claim("dateTimeIso8061", _dateTime.ToUniversalTime().ToString("o", CultureInfo.InvariantCulture), ClaimValueTypes.DateTime, "LOCAL AUTHORITY", "LOCAL AUTHORITY"),
         };
 
+        [Theory, MemberData(nameof(DirectClaimSetTestCases))]
+        public void DirectClaimSetTests(JsonClaimSetTheoryData theoryData)
+        {
+            CompareContext context = TestUtilities.WriteHeader($"{this}.ClaimSetTests", theoryData);
+            context.IgnoreType = false;
+
+            try
+            {
+                JsonWebToken jwt = new JsonWebToken("{}", $@"{{""true"":true}}");
+                JsonClaimSet claimSet = jwt.CreatePayloadClaimSet(theoryData.Utf8Bytes, theoryData.Utf8Bytes.Length);
+                theoryData.ExpectedException.ProcessNoException(context);
+            }
+            catch (JsonException ex)
+            {
+                theoryData.ExpectedException.ProcessException(ex, context);
+            }
+            catch (Exception ex)
+            {
+                theoryData.ExpectedException.ProcessException(ex, context);
+            }
+
+            TestUtilities.AssertFailIfErrors(context);
+        }
+
+        public static TheoryData<JsonClaimSetTheoryData> DirectClaimSetTestCases()
+        {
+            var theoryData = new TheoryData<JsonClaimSetTheoryData>();
+            theoryData.Add(new JsonClaimSetTheoryData("NotOnStartObject")
+            {
+                ExpectedException = new ExpectedException(typeof(JsonException)),
+                Utf8Bytes = Encoding.UTF8.GetBytes($@"[""a""]")
+            });
+
+            // ignore exception as a System.Text.Json.JsonReaderException is thrown
+            // which is internal to System.Text.Json so we can't define it.
+            theoryData.Add(new JsonClaimSetTheoryData("badJson")
+            {
+                ExpectedException = new ExpectedException(typeof(JsonException)) { IgnoreExceptionType = true },
+                Utf8Bytes = Encoding.UTF8.GetBytes("badJson")
+            });
+
+            return theoryData;
+        }
+
         [Theory, MemberData(nameof(ClaimSetTestCases))]
         public void ClaimSetGetValueTests(JsonClaimSetTheoryData theoryData)
         {
@@ -39,7 +85,8 @@ namespace Microsoft.IdentityModel.JsonWebTokens.Tests
             
             try
             {
-                JsonClaimSet jsonClaimSet = new JsonClaimSet(Encoding.UTF8.GetBytes(theoryData.Json));
+                JsonWebToken jwt = new JsonWebToken("{}", theoryData.Json);
+                JsonClaimSet jsonClaimSet = jwt.Payload;
                 var methods = typeof(JsonClaimSet).GetMethods(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance);
                 var method = typeof(JsonClaimSet).GetMethod("GetValue", BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance, null, CallingConventions.Standard, new Type[] { typeof(string) }, null);
                 var retval = method.MakeGenericMethod(theoryData.PropertyType).Invoke(jsonClaimSet, new object[] { theoryData.PropertyName });
@@ -57,6 +104,24 @@ namespace Microsoft.IdentityModel.JsonWebTokens.Tests
         public static TheoryData<JsonClaimSetTheoryData> ClaimSetTestCases()
         {
             var theoryData = new TheoryData<JsonClaimSetTheoryData>();
+
+            theoryData.Add(new JsonClaimSetTheoryData("uint")
+            {
+                Json = $@"{{""uint"":1}}",
+                PropertyName = "uint",
+                PropertyType = typeof(uint),
+                PropertyValue = (uint)1,
+                ShouldFind = true
+            });
+
+            theoryData.Add(new JsonClaimSetTheoryData("decimal")
+            {
+                Json = $@"{{""decimal"":1}}",
+                PropertyName = "decimal",
+                PropertyType = typeof(decimal),
+                PropertyValue = (decimal)1,
+                ShouldFind = true
+            });
 
             #region bool
             theoryData.Add(new JsonClaimSetTheoryData("true")
@@ -147,6 +212,26 @@ namespace Microsoft.IdentityModel.JsonWebTokens.Tests
 
             #endregion
 
+            #region long
+            theoryData.Add(new JsonClaimSetTheoryData("long")
+            {
+                Json = $@"{{""long"":1}}",
+                PropertyName = "long",
+                PropertyType = typeof(long),
+                PropertyValue = (long)1,
+                ShouldFind = true
+            });
+
+            theoryData.Add(new JsonClaimSetTheoryData("long[]")
+            {
+                Json = $@"{{""long[]"":1}}",
+                PropertyName = "long[]",
+                PropertyType = typeof(long[]),
+                PropertyValue = new long[] { 1 },
+                ShouldFind = true
+            });
+            #endregion
+
             #region mixed arrays
             theoryData.Add(new JsonClaimSetTheoryData("MixedArrayAsObjArray")
             {
@@ -212,6 +297,66 @@ namespace Microsoft.IdentityModel.JsonWebTokens.Tests
             return theoryData;
         }
 
+        [Theory, MemberData(nameof(GetClaimAsTypeTheoryData))]
+        public void GetClaimAsType(JsonClaimSetTheoryData theoryData)
+        {
+            CompareContext context = TestUtilities.WriteHeader($"{this}.GetClaimAsType", theoryData);
+            try
+            {
+                JsonWebToken token = new JsonWebToken(theoryData.Json);
+
+                var methods = typeof(JsonWebToken).GetMethods(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance);
+                var method = typeof(JsonWebToken).GetMethod("GetPayloadValue", BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance, null, CallingConventions.Standard, new Type[] { typeof(string) }, null);
+                var retval = method.MakeGenericMethod(theoryData.PropertyType).Invoke(token, new object[] { theoryData.PropertyName });
+                theoryData.ExpectedException.ProcessNoException(context);
+                IdentityComparer.AreEqual(retval, theoryData.PropertyValue, context);
+            }
+            catch (Exception ex)
+            {
+                theoryData.ExpectedException.ProcessException(ex, context);
+            }
+
+            TestUtilities.AssertFailIfErrors(context);
+        }
+
+        public static TheoryData<JsonClaimSetTheoryData> GetClaimAsTypeTheoryData()
+        {
+            var theoryData = new TheoryData<JsonClaimSetTheoryData>();
+
+            string header = Base64UrlEncoder.Encode("{}");
+            string payload = Base64UrlEncoder.Encode(@"{""a"":{""prop1"":""value1""},""b"":{""prop1"":[""value1"",""value2""]}, ""exp"": 1692706803,""iat"": 1692703203,""nbf"": 1692703203}");
+
+            theoryData.Add(
+                new JsonClaimSetTheoryData("DictionaryWithListOfStrings")
+                {
+                    Json = header + "." + payload + ".",
+                    PropertyName = "b",
+                    PropertyType = typeof(Dictionary<string, List<string>>),
+                    PropertyValue = new Dictionary<string, List<string>> { { "prop1", new List<string> { "value1", "value2" } } }
+                });
+
+            theoryData.Add(
+                new JsonClaimSetTheoryData("DictionaryWithArrayOfStrings")
+                {
+                    Json = header + "." + payload + ".",
+                    PropertyName = "b",
+                    PropertyType = typeof(Dictionary<string, string[]>),
+                    PropertyValue = new Dictionary<string, string[]> {{"prop1", new string[]{"value1","value2"}}}
+                });
+
+            theoryData.Add(
+                new JsonClaimSetTheoryData("DictionaryOfStrings")
+                {
+                    Json = header + "." + payload + ".",
+                    PropertyName = "a",
+                    PropertyType = typeof(Dictionary<string, string>),
+                    PropertyValue = new Dictionary<string, string> {{"prop1","value1"}}
+                });
+
+
+            return theoryData;
+        }
+
         // Test checks to make sure that claim values of various types can be successfully retrieved from the payload.
         [Fact]
         public void TryGetPayloadValues()
@@ -226,7 +371,7 @@ namespace Microsoft.IdentityModel.JsonWebTokens.Tests
             IdentityComparer.AreEqual(true, success, context);
 
             success = token.TryGetPayloadValue("array", out object[] array);
-            IdentityComparer.AreEqual(new object[] { 1L, "2", 3L }, array, context);
+            IdentityComparer.AreEqual(new object[] { 1, "2", 3 }, array, context);
             IdentityComparer.AreEqual(true, success, context);
 
             success = token.TryGetPayloadValue("string", out string name);
@@ -234,15 +379,12 @@ namespace Microsoft.IdentityModel.JsonWebTokens.Tests
             IdentityComparer.AreEqual(true, success, context);
 
             success = token.TryGetPayloadValue("float", out float floatingPoint);
-            IdentityComparer.AreEqual(42.0, floatingPoint, context);
+            IdentityComparer.AreEqual((float)42.0, floatingPoint, context);
             IdentityComparer.AreEqual(true, success, context);
 
             success = token.TryGetPayloadValue("integer", out int integer);
             IdentityComparer.AreEqual(42, integer, context);
             IdentityComparer.AreEqual(true, success, context);
-
-            success = token.TryGetPayloadValue("nill", out bool b);
-            IdentityComparer.AreEqual(false, success, context);
 
             success = token.TryGetPayloadValue("nill", out bool? bb);
             if (bb != null)

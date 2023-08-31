@@ -19,9 +19,9 @@ namespace Microsoft.IdentityModel.Tokens
     {
         internal const string ClassName = "Microsoft.IdentityModel.Tokens.JsonWebKey";
         private Dictionary<string, object> _additionalData;
-        private IList<string> _keyOps;
-        private IList<string> _oth;
-        private IList<string> _x5c;
+        private List<string> _keyOps;
+        private List<string> _oth;
+        private List<string> _x5c;
         private string _kid;
 
         /// <summary>
@@ -291,7 +291,7 @@ namespace Microsoft.IdentityModel.Tokens
         public string X5t { get; set; }
 
         /// <summary>
-        /// Gets or sets the 'x5t#S256' (X.509 Certificate SHA-1 thumbprint)..
+        /// Gets or sets the 'x5t#S256' (X.509 Certificate SHA-256 thumbprint)..
         /// </summary>
         [JsonPropertyName(JsonWebKeyParameterNames.X5tS256)]
 #if NET6_0_OR_GREATER

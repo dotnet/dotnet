@@ -64,32 +64,7 @@ namespace System.IdentityModel.Tokens.Jwt
                     else
                         obj = JsonPrimitives.ReadPropertyValueAsObject(ref reader, propertyName, ClassName);
 
-                    if (TryGetValue(propertyName, out object existingValue))
-                    {
-                        if (existingValue is not IList<object> claimValues)
-                        {
-                            claimValues = new List<object>
-                            {
-                                existingValue
-                            };
-
-                            this[propertyName] = claimValues;
-                        }
-
-                        if (obj is IList<object> objectList)
-                        {
-                            foreach (object item in objectList)
-                                claimValues.Add(item);
-                        }
-                        else
-                        {
-                            claimValues.Add(obj);
-                        }
-                    }
-                    else
-                    {
-                        this[propertyName] = obj;
-                    }
+                     this[propertyName] = obj;
                 }
             }
         }

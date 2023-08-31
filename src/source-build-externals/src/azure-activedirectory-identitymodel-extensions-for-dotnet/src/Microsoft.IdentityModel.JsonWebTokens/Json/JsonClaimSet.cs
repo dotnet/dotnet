@@ -4,12 +4,13 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Globalization;
 using System.Security.Claims;
-using System.Text;
 using System.Text.Json;
 using Microsoft.IdentityModel.Logging;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.IdentityModel.Tokens.Json;
 
 namespace Microsoft.IdentityModel.JsonWebTokens
 {
@@ -21,21 +22,18 @@ namespace Microsoft.IdentityModel.JsonWebTokens
     {
         internal const string ClassName = "Microsoft.IdentityModel.JsonWebTokens.JsonClaimSet";
 
-        internal static JsonClaimSet Empty { get; } = new JsonClaimSet("{}"u8.ToArray());
         internal object _claimsLock = new();
-        internal IDictionary<string, object> _jsonClaims;
-        private IList<Claim> _claims;
+        internal readonly Dictionary<string, object> _jsonClaims;
+        private List<Claim> _claims;
 
-        internal JsonClaimSet(IDictionary<string, object> jsonClaims)
+        internal JsonClaimSet() { _jsonClaims = new Dictionary<string, object>(); }
+
+        internal JsonClaimSet(Dictionary<string, object> jsonClaims)
         {
             _jsonClaims = jsonClaims;
         }
-        internal JsonClaimSet(byte[] jsonUtf8Bytes)
-        {
-            _jsonClaims = JwtTokenUtilities.CreateClaimsDictionary(jsonUtf8Bytes, jsonUtf8Bytes.Length);
-        }
 
-        internal IList<Claim> Claims(string issuer)
+        internal List<Claim> Claims(string issuer)
         {
             if (_claims == null)
                 lock (_claimsLock)
@@ -44,16 +42,16 @@ namespace Microsoft.IdentityModel.JsonWebTokens
             return _claims;
         }
 
-        internal IList<Claim> CreateClaims(string issuer)
+        internal List<Claim> CreateClaims(string issuer)
         {
-            IList<Claim> claims = new List<Claim>();
+            var claims = new List<Claim>();
             foreach (KeyValuePair<string, object> kvp in _jsonClaims)
                 CreateClaimFromObject(claims, kvp.Key, kvp.Value, issuer);
 
             return claims;
         }
 
-        internal static void CreateClaimFromObject(IList<Claim> claims, string claimType, object value, string issuer)
+        internal static void CreateClaimFromObject(List<Claim> claims, string claimType, object value, string issuer)
         {
             // Json.net recognized DateTime by default.
             if (value is string str)
@@ -97,94 +95,45 @@ namespace Microsoft.IdentityModel.JsonWebTokens
                 }
         }
 
-        internal static Claim CreateClaimFromJsonElement(string claimType, string issuer, JsonElement value)
+        internal static Claim CreateClaimFromJsonElement(string claimType, string issuer, JsonElement jsonElement)
         {
             // Json.net recognized DateTime by default.
-            if (value.ValueKind == JsonValueKind.String)
+            if (jsonElement.ValueKind == JsonValueKind.String)
             {
-                string claimValue = value.ToString();
+                string claimValue = jsonElement.ToString();
                 return new Claim(claimType, claimValue, JwtTokenUtilities.GetStringClaimValueType(claimValue), issuer, issuer);
             }
-            else if (value.ValueKind == JsonValueKind.Null)
+            else if (jsonElement.ValueKind == JsonValueKind.Null)
                 return new Claim(claimType, string.Empty, JsonClaimValueTypes.JsonNull, issuer, issuer);
-            else if (value.ValueKind == JsonValueKind.Object)
-                return new Claim(claimType, value.ToString(), JsonClaimValueTypes.Json, issuer, issuer);
-            else if (value.ValueKind == JsonValueKind.False)
+            else if (jsonElement.ValueKind == JsonValueKind.Object)
+                return new Claim(claimType, jsonElement.ToString(), JsonClaimValueTypes.Json, issuer, issuer);
+            else if (jsonElement.ValueKind == JsonValueKind.False)
                 return new Claim(claimType, "False", ClaimValueTypes.Boolean, issuer, issuer);
-            else if (value.ValueKind == JsonValueKind.True)
+            else if (jsonElement.ValueKind == JsonValueKind.True)
                 return new Claim(claimType, "True", ClaimValueTypes.Boolean, issuer, issuer);
-            else if (value.ValueKind == JsonValueKind.Number)
+            else if (jsonElement.ValueKind == JsonValueKind.Number)
             {
-                if (value.TryGetInt32(out int i))
-                    return new Claim(claimType, i.ToString(CultureInfo.InvariantCulture), ClaimValueTypes.Integer, issuer, issuer);
-                else if (value.TryGetInt64(out long l))
+                if (jsonElement.TryGetInt32(out int i))
+                    return new Claim(claimType, i.ToString(CultureInfo.InvariantCulture), ClaimValueTypes.Integer32, issuer, issuer);
+                else if (jsonElement.TryGetInt64(out long l))
                     return new Claim(claimType, l.ToString(CultureInfo.InvariantCulture), ClaimValueTypes.Integer64, issuer, issuer);
-                else if (value.TryGetUInt32(out uint u))
-                    return new Claim(claimType, u.ToString(CultureInfo.InvariantCulture), ClaimValueTypes.UInteger32, issuer, issuer);
-                else if (value.TryGetDouble(out double d))
+                else if (jsonElement.TryGetDouble(out double d))
                     return new Claim(claimType, d.ToString(CultureInfo.InvariantCulture), ClaimValueTypes.Double, issuer, issuer);
-                else if (value.TryGetDecimal(out decimal m))
-                    return new Claim(claimType, m.ToString(CultureInfo.InvariantCulture), ClaimValueTypes.Double, issuer, issuer);
-                else if (value.TryGetUInt64(out ulong ul))
+                else if (jsonElement.TryGetUInt32(out uint u))
+                    return new Claim(claimType, u.ToString(CultureInfo.InvariantCulture), ClaimValueTypes.UInteger32, issuer, issuer);
+                else if (jsonElement.TryGetUInt64(out ulong ul))
                     return new Claim(claimType, ul.ToString(CultureInfo.InvariantCulture), ClaimValueTypes.UInteger64, issuer, issuer);
+                else if (jsonElement.TryGetSingle(out float f))
+                    return new Claim(claimType, f.ToString(CultureInfo.InvariantCulture), ClaimValueTypes.Double, issuer, issuer);
+                else if (jsonElement.TryGetDecimal(out decimal m))
+                    return new Claim(claimType, m.ToString(CultureInfo.InvariantCulture), ClaimValueTypes.Double, issuer, issuer);
             }
-            else if (value.ValueKind == JsonValueKind.Array)
+            else if (jsonElement.ValueKind == JsonValueKind.Array)
             {
-                return new Claim(claimType, value.ToString(), JsonClaimValueTypes.JsonArray, issuer, issuer);
+                return new Claim(claimType, jsonElement.ToString(), JsonClaimValueTypes.JsonArray, issuer, issuer);
             }
 
             return null;
-        }
-
-        internal static object CreateObjectFromJsonElement(JsonElement jsonElement)
-        {
-            if (jsonElement.ValueKind == JsonValueKind.Array)
-            {
-                int numberOfElements = 0;
-                // is this an array of properties
-                foreach (JsonElement element in jsonElement.EnumerateArray())
-                    numberOfElements++;
-
-                object[] objects = new object[numberOfElements];
-
-                int index = 0;
-                foreach (JsonElement element in jsonElement.EnumerateArray())
-                    objects[index++] = CreateObjectFromJsonElement(element);
-
-                return (object)objects;
-            }
-            else if (jsonElement.ValueKind == JsonValueKind.String)
-            {
-                if (DateTime.TryParse(jsonElement.GetString(), CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind, out DateTime dateTime))
-                    return (object)dateTime;
-
-                return jsonElement.GetString();
-            }
-            else if (jsonElement.ValueKind == JsonValueKind.Null)
-                return (object)null;
-            else if (jsonElement.ValueKind == JsonValueKind.Object)
-                return jsonElement.ToString();
-            else if (jsonElement.ValueKind == JsonValueKind.False)
-                return (object)false;
-            else if (jsonElement.ValueKind == JsonValueKind.True)
-                return (object)true;
-            else if (jsonElement.ValueKind == JsonValueKind.Number)
-            {
-                if (jsonElement.TryGetInt64(out long longValue))
-                    return longValue;
-                else if (jsonElement.TryGetInt32(out int intValue))
-                    return intValue;
-                else if (jsonElement.TryGetDecimal(out decimal decimalValue))
-                    return decimalValue;
-                else if (jsonElement.TryGetDouble(out double doubleValue))
-                    return doubleValue;
-                else if (jsonElement.TryGetUInt32(out uint uintValue))
-                    return uintValue;
-                else if (jsonElement.TryGetUInt64(out ulong ulongValue))
-                    return ulongValue;
-            }
-
-            return jsonElement.GetString();
         }
 
         internal Claim GetClaim(string key, string issuer)
@@ -212,16 +161,16 @@ namespace Microsoft.IdentityModel.JsonWebTokens
 
         internal DateTime GetDateTime(string key)
         {
-            if (!_jsonClaims.TryGetValue(key, out object value))
-                return DateTime.MinValue;
+            long l = GetValue<long>(key, false, out bool found);
+            if (found)
+                return EpochTime.DateTime(l);
 
-            return EpochTime.DateTime(Convert.ToInt64(Math.Truncate((double)GetValueAsLong(key, value))));
+            return DateTime.MinValue;
         }
 
         internal T GetValue<T>(string key)
         {
-            T retval = GetValue<T>(key, true, out bool _);
-            return retval;
+            return GetValue<T>(key, true, out bool _);
         }
 
         /// <summary>
@@ -232,7 +181,7 @@ namespace Microsoft.IdentityModel.JsonWebTokens
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="key"></param>
-        /// <param name="throwEx"></param>
+        /// <param name="throwEx">if this is called from TryGetValue then we don't want to throw.</param>
         /// <param name="found"></param>
         /// <returns></returns>
         internal T GetValue<T>(string key, bool throwEx, out bool found)
@@ -240,134 +189,161 @@ namespace Microsoft.IdentityModel.JsonWebTokens
             found = _jsonClaims.TryGetValue(key, out object obj);
 
             if (!found)
-            {
-                if (throwEx)
-                    throw LogHelper.LogExceptionMessage(new ArgumentException(LogHelper.FormatInvariant(LogMessages.IDX14304, key)));
-                else
-                    return default;
-            }
+                return throwEx ? throw LogHelper.LogExceptionMessage(new ArgumentException(LogHelper.FormatInvariant(LogMessages.IDX14304, key))) : default;
 
             if (obj == null)
                 if (typeof(T) == typeof(object) || typeof(T).IsClass || Nullable.GetUnderlyingType(typeof(T)) != null)
-                {
                     return (T)(object)null;
-                }
                 else
-                {
-                    found = false;
                     return default;
-                }
 
             Type objType = obj.GetType();
-
             if (typeof(T) == objType)
                 return (T)(obj);
 
             if (typeof(T) == typeof(object))
                 return (T)obj;
 
-            if (typeof(T) == typeof(string))
+            // When the JsonClaimSet is created JsonArray and JsonObject are stored as JsonElement's
+            if (obj is JsonElement jsonElement)
+            {
+                if (JsonSerializerPrimitives.TryCreateTypeFromJsonElement<T>(jsonElement, out T t))
+                    return t;
+            }
+            // the below here should only be simple types, string, int, ...
+            else if (typeof(T) == typeof(string))
+            {
                 return (T)((object)obj.ToString());
-
-            if (typeof(T) == typeof(IList<string>))
+            }
+            else if (typeof(T) == typeof(int))
             {
-                List<string> list = new();
-                if (obj is IList iList)
-                {
-                    foreach (object item in iList)
-                        list.Add(item?.ToString());
+                if (objType == typeof(int))
+                    return (T)obj;
 
-                    return (T)((object)list);
-                }
-                else
-                {
-                    list.Add(obj.ToString());
-                }
-                return (T)(object)list;
+                if (int.TryParse(obj.ToString(), out int value))
+                    return (T)(object)value;
+            }
+            else if (typeof(T) == typeof(long))
+            {
+                if (objType == typeof(long))
+                    return (T)obj;
+
+                if (objType == typeof(int))
+                    return (T)(object)(long)(int)obj;
+
+                if (long.TryParse(obj.ToString(), out long value))
+                    return (T)(object)value;
+            }
+            else if (typeof(T) == typeof(string[]))
+            {
+                if (objType == typeof(string))
+                    return (T)(object)new string[] { (string)obj };
+
+                return (T)(object)new string[] { obj.ToString() };
+            }
+            else if (typeof(T) == typeof(List<string>))
+            {
+                if (objType == typeof(string))
+                    return (T)(object)new List<string> { (string)obj };
+
+                return (T)(object)new List<string> { obj.ToString() };
+            }
+            else if (typeof(T) == typeof(Collection<string>))
+            {
+                if (objType == typeof(string))
+                    return (T)(object)new Collection<string> { (string)obj };
+
+                return (T)(object)new Collection<string> { obj.ToString() };
             }
 
-            if (typeof(T) == typeof(int) && int.TryParse(obj.ToString(), out int i))
-                return (T)(object)i;
+            else if (typeof(T) == typeof(object[]))
+                return (T)(object)new object[] { obj };
 
-            if (typeof(T) == typeof(long) && long.TryParse(obj.ToString(), out long l))
-                return (T)(object)l;
+            else if (typeof(T) == typeof(List<object>))
+                return (T)(object)new List<object> { obj };
 
-            if (typeof(T) == typeof(double) && double.TryParse(obj.ToString(), out double d))
-                return (T)(object)d;
+            else if (typeof(T) == typeof(Collection<object>))
+                return (T)(object)new Collection<object> { obj };
 
-            if (typeof(T) == typeof(DateTime) && DateTime.TryParse(obj.ToString(), out DateTime dt))
-                return (T)(object)dt;
-
-            if (typeof(T) == typeof(uint) && uint.TryParse(obj.ToString(), out uint u))
-                return (T)(object)u;
-
-            if (typeof(T) == typeof(float) && float.TryParse(obj.ToString(), out float f))
-                return (T)(object)f;
-
-            if (typeof(T) == typeof(decimal) && decimal.TryParse(obj.ToString(), out decimal m))
-                return (T)(object)m;
-
-            if (typeof(T) == typeof(IList<object>))
+            else if (typeof(T) == typeof(DateTime))
             {
-                List<object> list = new();
-                if (obj is IList items)
-                {
-                    foreach (object item in items)
-                        list.Add(item);
-                }
-                else
-                {
-                    list.Add(obj);
-                }
-                return (T)((object)list);
-            }
+                if (objType == typeof(DateTime))
+                    return (T)obj;
 
-            if (typeof(T) == typeof(int[]))
+                if (DateTime.TryParse(obj.ToString(), out DateTime value))
+                    return (T)(object)value;
+            }
+            else if (typeof(T) == typeof(int[]))
             {
-                int[] ints;
-                if (obj is IList ilist)
-                {
-                    ints = new int[ilist.Count];
-                    int index = 0;
-                    foreach (object item in ilist)
-                    {
-                        if (typeof(int) == item.GetType())
-                            ints[index++] = (int)item;
-                    }
+                if (objType == typeof(int))
+                    return (T)(object)new int[] { (int)obj };
 
-                    // all items must be int
-                    if (index == ilist.Count)
-                        return (T)(object)(int[])ints;
-                }
-                else if (objType == typeof(int))
-                {
-                    ints = new int[]{(int)obj};
-                    return (T)(object)(int[])ints;
-                }
+                if (int.TryParse(obj.ToString(), out int value))
+                    return (T)(object)new int[] { value };
             }
-
-            if (typeof(T) == typeof(object[]))
+            else if (typeof(T) == typeof(long[]))
             {
-                object[] objects;
-                if (obj is IList ilist)
-                {
-                    objects = new object[ilist.Count];
-                    int index = 0;
-                    foreach (object item in ilist)
-                        objects[index++] = item;
-                }
-                else
-                {
-                    objects = new object[] { obj };
-                }
+                if (objType == typeof(long))
+                    return (T)(object)new long[] { (long)obj };
 
-                return (T)(object)(object[])objects;
+                if(objType == typeof(int))
+                    return (T)(object)new long[] { (int)obj };
+
+                if (long.TryParse(obj.ToString(), out long value))
+                    return (T)(object)new long[] { value };
             }
+            else if (typeof(T) == typeof(double))
+            {
+                if (objType == typeof(double))
+                    return (T)obj;
 
+                if(double.TryParse(obj.ToString(), out double value))
+                    return (T)(object)value;
+            }
+            else if (typeof(T) == typeof(uint))
+            {
+                if (objType == typeof(uint))
+                    return (T)obj;
+
+                if (uint.TryParse(obj.ToString(), out uint value))
+                    return (T)(object)value;
+            }
+            else if (typeof(T) == typeof(float))
+            {
+                if (objType == typeof(float))
+                    return (T)obj;
+
+                if (float.TryParse(obj.ToString(), out float value))
+                    return (T)(object)value;
+            }
+            else if (typeof(T) == typeof(decimal))
+            {
+                if (objType == typeof(decimal))
+                    return (T)obj;
+
+                if (decimal.TryParse(obj.ToString(), out decimal value))
+                    return (T)(object)value;
+            }
 
             found = false;
             if (throwEx)
-                throw LogHelper.LogExceptionMessage(new ArgumentException(LogHelper.FormatInvariant(LogMessages.IDX14305, key, typeof(T), objType, obj.ToString())));
+                throw LogHelper.LogExceptionMessage(
+                    new ArgumentException(
+                        LogHelper.FormatInvariant(
+                            LogMessages.IDX14305,
+                            LogHelper.MarkAsNonPII(key),
+                            LogHelper.MarkAsNonPII(typeof(T)),
+                            LogHelper.MarkAsNonPII(objType),
+                            obj.ToString())));
+            else
+                LogHelper.LogExceptionMessage(
+                    new ArgumentException(
+                        LogHelper.FormatInvariant(
+                            LogMessages.IDX14305,
+                            LogHelper.MarkAsNonPII(key),
+                            LogHelper.MarkAsNonPII(typeof(T)),
+                            LogHelper.MarkAsNonPII(objType),
+                            obj.ToString())));
 
             return default;
         }
@@ -407,50 +383,6 @@ namespace Microsoft.IdentityModel.JsonWebTokens
         internal bool HasClaim(string claimName)
         {
             return _jsonClaims.TryGetValue(claimName, out _);
-        }
-
-        private static long GetValueAsLong(string claimName, object obj)
-        {
-            if (obj is int i)
-                return (long)i;
-
-            if (obj is long)
-                return (long)(obj);
-
-            if (obj is double d)
-                return (long)d;
-
-            if (obj is uint u)
-                return (long)u;
-
-            if (obj is float f)
-                return (long)f;
-
-            if (obj is decimal m)
-                return (long) m;
-
-            if (obj is string str)
-            {
-                if (int.TryParse(str, out int ii))
-                    return (long)ii;
-
-                if (long.TryParse(str, out long l))
-                    return l;
-
-                if (double.TryParse(str, out double dd))
-                    return (long)dd;
-
-                if (uint.TryParse(str, out uint uu))
-                    return (long)uu;
-
-                if (float.TryParse(str, out float ff))
-                    return (long)ff;
-
-                if (decimal.TryParse(str, out decimal mm))
-                    return (long)mm;
-            }
-
-            throw LogHelper.LogExceptionMessage(new FormatException(LogHelper.FormatInvariant(LogMessages.IDX14300, claimName, obj?.ToString(), typeof(long))));
         }
     }
 }

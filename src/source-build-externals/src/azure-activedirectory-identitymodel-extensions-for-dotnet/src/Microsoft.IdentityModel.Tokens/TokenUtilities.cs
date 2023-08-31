@@ -41,7 +41,7 @@ namespace Microsoft.IdentityModel.Tokens
         /// </summary>
         /// <param name="claims"> A list of claims.</param>
         /// <returns> A Dictionary representing claims.</returns>
-        internal static IDictionary<string, object> CreateDictionaryFromClaims(IEnumerable<Claim> claims)
+        internal static Dictionary<string, object> CreateDictionaryFromClaims(IEnumerable<Claim> claims)
         {
             var payload = new Dictionary<string, object>();
 
@@ -128,13 +128,17 @@ namespace Microsoft.IdentityModel.Tokens
                 // When the creating the JWT and a list is found, a JsonArray will be created.
                 if (payload.TryGetValue(claim.Type, out object existingValue))
                 {
-                    if (existingValue is not IList<object>)
+                    if (existingValue is IList<object> existingList)
+                    {
+                        existingList.Add(jsonClaimValue);
+                    }
+                    else
                     {
                         payload[claim.Type] = new List<object>
                         {
                             existingValue,
                             jsonClaimValue
-                        }; 
+                        };
                     }
                 }
                 else

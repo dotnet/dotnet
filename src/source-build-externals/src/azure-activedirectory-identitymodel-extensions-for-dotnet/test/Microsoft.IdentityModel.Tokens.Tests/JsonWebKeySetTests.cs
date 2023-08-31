@@ -186,7 +186,7 @@ namespace Microsoft.IdentityModel.Tokens.Json.Tests
                     ValidateLifetime = false,
                 };
 
-                var tokenValidationResult = new JsonWebTokens.JsonWebTokenHandler().ValidateToken(Default.AsymmetricJwt, tokenValidationParameters);
+                var tokenValidationResult = new JsonWebTokens.JsonWebTokenHandler().ValidateTokenAsync(Default.AsymmetricJwt, tokenValidationParameters).Result;
 
                 if (tokenValidationResult.IsValid != true)
                     context.Diffs.Add("tokenValidationResult.IsValid != true");
