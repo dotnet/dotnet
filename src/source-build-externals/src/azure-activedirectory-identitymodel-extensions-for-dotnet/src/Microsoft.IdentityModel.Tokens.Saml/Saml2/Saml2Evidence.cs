@@ -18,9 +18,9 @@ namespace Microsoft.IdentityModel.Tokens.Saml2
     /// </remarks>
     public class Saml2Evidence
     {
-        private ICollection<Saml2Id> _assertionIdReferences = new List<Saml2Id>();
-        private ICollection<Saml2Assertion> _assertions = new List<Saml2Assertion>();
-        private AbsoluteUriCollection _assertionUriReferences = new AbsoluteUriCollection();
+        private readonly List<Saml2Id> _assertionIdReferences = new List<Saml2Id>();
+        private readonly List<Saml2Assertion> _assertions = new List<Saml2Assertion>();
+        private readonly AbsoluteUriCollection _assertionUriReferences = new AbsoluteUriCollection();
 
         /// <summary>
         /// Initializes a new instance of <see cref="Saml2Evidence"/> class.

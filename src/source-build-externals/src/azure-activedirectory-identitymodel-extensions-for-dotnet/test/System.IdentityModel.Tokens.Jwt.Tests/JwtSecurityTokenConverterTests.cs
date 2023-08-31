@@ -56,10 +56,10 @@ namespace System.IdentityModel.Tokens.Jwt.Tests
                 IssuerSigningKey = KeyingMaterial.JsonWebKeyRsa256SigningCredentials.Key
             };
 
-            var result = handler.ValidateToken(jweTokenString, validationParameters);
+            var result = handler.ValidateTokenAsync(jweTokenString, validationParameters).Result;
             var jweToken = result.SecurityToken as JsonWebToken;
 
-            result = handler.ValidateToken(jwsTokenString, validationParameters);
+            result = handler.ValidateTokenAsync(jwsTokenString, validationParameters).Result;
             var jwsTokenFromString = result.SecurityToken as JsonWebToken;
 
             var jwsTokenFromHeaderAndPayload = new JsonWebToken(

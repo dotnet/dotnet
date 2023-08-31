@@ -830,21 +830,21 @@ namespace Microsoft.IdentityModel.Protocols.SignedHttpRequest
             if (httpRequestUri == null)
                 throw LogHelper.LogArgumentNullException(nameof(httpRequestUri));
 
-            if (!signedHttpRequest.TryGetPayloadValue(SignedHttpRequestClaimTypes.Q, out IList<object> qClaim) || qClaim == null)
+            if (!signedHttpRequest.TryGetPayloadValue(SignedHttpRequestClaimTypes.Q, out List<object> qClaim) || qClaim == null)
                 throw LogHelper.LogExceptionMessage(new SignedHttpRequestInvalidQClaimException(LogHelper.FormatInvariant(LogMessages.IDX23003, LogHelper.MarkAsNonPII(SignedHttpRequestClaimTypes.Q))));
 
             httpRequestUri = EnsureAbsoluteUri(httpRequestUri);
             var sanitizedQueryParams = SanitizeQueryParams(httpRequestUri);
             string qClaimBase64UrlEncodedHash = string.Empty;
             string calculatedBase64UrlEncodedHash = string.Empty;
-            IList<object> qClaimQueryParamNames;
+            object[] qClaimQueryParamNames;
 
             try
             {
                 // "q": [["queryParamName1", "queryParamName2",... "queryParamNameN"], "base64UrlEncodedHashValue"]]
-                // deserialzed as IList<object> with q[0] is an IList<obj>, q[1] an object
+                // deserialzed as List<object> with q[0] is an List<obj>, q[1] an object
                 qClaimBase64UrlEncodedHash = (string)qClaim[1];
-                qClaimQueryParamNames = qClaim[0] as IList<object>;
+                qClaimQueryParamNames = qClaim[0] as object[];
             }
             catch (Exception e)
             {
@@ -900,20 +900,20 @@ namespace Microsoft.IdentityModel.Protocols.SignedHttpRequest
         /// </remarks>
         internal virtual void ValidateHClaim(JsonWebToken signedHttpRequest, SignedHttpRequestValidationContext signedHttpRequestValidationContext)
         {
-            if (!signedHttpRequest.TryGetPayloadValue(SignedHttpRequestClaimTypes.H, out IList<object> hClaim) || hClaim == null)
+            if (!signedHttpRequest.TryGetPayloadValue(SignedHttpRequestClaimTypes.H, out List<object> hClaim) || hClaim == null)
                 throw LogHelper.LogExceptionMessage(new SignedHttpRequestInvalidHClaimException(LogHelper.FormatInvariant(LogMessages.IDX23003, LogHelper.MarkAsNonPII(SignedHttpRequestClaimTypes.H))));
 
             var sanitizedHeaders = SanitizeHeaders(signedHttpRequestValidationContext.HttpRequestData.Headers);
 
             string hClaimBase64UrlEncodedHash = string.Empty;
             string calculatedBase64UrlEncodedHash = string.Empty;
-            IList<object> hClaimHeaderNames;
+            object[] hClaimHeaderNames;
             try
             {
                 // "h": [["headerName1", "headerName2",... "headerNameN"], "base64UrlEncodedHashValue"]]
-                // deserialzed as IList<object> with h[0] is an IList<obj>, h[1] an object
+                // deserialzed as List<object> with h[0] is an List<obj>, h[1] an object
                 hClaimBase64UrlEncodedHash = (string)hClaim[1];
-                hClaimHeaderNames = hClaim[0] as IList<object>;
+                hClaimHeaderNames = hClaim[0] as object[];
             }
             catch (Exception e)
             {

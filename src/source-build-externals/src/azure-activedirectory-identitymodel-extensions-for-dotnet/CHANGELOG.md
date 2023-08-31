@@ -1,5 +1,25 @@
 See the [releases](https://github.com/AzureAD/azure-activedirectory-identitymodel-extensions-for-dotnet/releases) for details on bug fixes and added features.
 
+7.0.0-preview4
+=======
+### Bug fixes:
+- Add nullables to the properties in `WsFederationMessage`. See issue [#2240](https://github.com/AzureAD/azure-activedirectory-identitymodel-extensions-for-dotnet/issues/2240) for details.
+- Fix regression where `JsonWebToken.TryGetPayloadValue()` was not compatible with dictionary types. See issue [#2246](https://github.com/AzureAD/azure-activedirectory-identitymodel-extensions-for-dotnet/issues/2246) for details.
+- Fix regression where dictionary claims added to `SecurityTokenDescriptor.Claims` are no longer correctly serialized. See issue [#2245](https://github.com/AzureAD/azure-activedirectory-identitymodel-extensions-for-dotnet/issues/2245) for details.
+- Fix regression with a Y2038 bug. See issue [#2261](https://github.com/AzureAD/azure-activedirectory-identitymodel-extensions-for-dotnet/issues/2261) for details.
+
+## Performance improvements:
+- Remove sync-over-async pattern with `JsonWebTokens.ValidateToken`, which when in the hot path can lead to threadpool starvation. See issue [#2253](https://github.com/AzureAD/azure-activedirectory-identitymodel-extensions-for-dotnet/issues/2253) for details.
+- Perf testing using brenchmark dotnet and crank, similar to aspnetcore, to better gauge requests per second perf impacts. See issue [#2232](https://github.com/AzureAD/azure-activedirectory-identitymodel-extensions-for-dotnet/issues/2232) for details.
+- Use optimistic synchronization in `JsonWebToken.Audiences`. See [PR](https://github.com/AzureAD/azure-activedirectory-identitymodel-extensions-for-dotnet/pull/2243) for details.
+- Reduce allocations when enumerating over collections. See [PR](https://github.com/AzureAD/azure-activedirectory-identitymodel-extensions-for-dotnet/pull/2242) for details.
+
+## Documentation:
+- Fix description for [JWT X5tS256 field](https://github.com/AzureAD/azure-activedirectory-identitymodel-extensions-for-dotnet/pull/2252).
+
+## Fundamentals:
+- Improvements to the build script to accommodate .NET's source-build requirements. See [PR](https://github.com/AzureAD/azure-activedirectory-identitymodel-extensions-for-dotnet/pull/2211) for details.
+
 7.0.0-preview3
 =======
 ## Performance improvements:

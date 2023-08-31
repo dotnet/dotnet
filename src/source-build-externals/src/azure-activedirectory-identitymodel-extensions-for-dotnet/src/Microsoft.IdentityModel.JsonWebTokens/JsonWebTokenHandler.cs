@@ -34,7 +34,7 @@ namespace Microsoft.IdentityModel.JsonWebTokens
         /// <summary>
         /// Default claim type mapping for inbound claims.
         /// </summary>
-        public static IDictionary<string, string> DefaultInboundClaimTypeMap = new Dictionary<string, string>(ClaimTypeMapping.InboundClaimTypeMap);
+        public static readonly Dictionary<string, string> DefaultInboundClaimTypeMap = new Dictionary<string, string>(ClaimTypeMapping.InboundClaimTypeMap);
 
         /// <summary>
         /// Default value for the flag that determines whether or not the InboundClaimTypeMap is used.
@@ -124,19 +124,6 @@ namespace Microsoft.IdentityModel.JsonWebTokens
             {
                 _inboundClaimTypeMap = value ?? throw LogHelper.LogArgumentNullException(nameof(value));
             }
-        }
-
-        internal static IDictionary<string, object> AddCtyClaimDefaultValue(IDictionary<string, object> additionalClaims, bool setDefaultCtyClaim)
-        {
-            if (!setDefaultCtyClaim)
-                return additionalClaims;
-
-            if (additionalClaims == null)
-                additionalClaims = new Dictionary<string, object> { { JwtHeaderParameterNames.Cty, JwtConstants.HeaderType } };
-            else if (!additionalClaims.TryGetValue(JwtHeaderParameterNames.Cty, out _))
-                additionalClaims.Add(JwtHeaderParameterNames.Cty, JwtConstants.HeaderType);
-
-            return additionalClaims;
         }
 
         /// <summary>
@@ -1470,6 +1457,7 @@ namespace Microsoft.IdentityModel.JsonWebTokens
         /// <param name="token">A 'JSON Web Token' (JWT) in JWS or JWE Compact Serialization Format.</param>
         /// <param name="validationParameters">A <see cref="TokenValidationParameters"/>  required for validation.</param>
         /// <returns>A <see cref="TokenValidationResult"/></returns>
+        [Obsolete("`JsonWebTokens.ValidateToken(string, TokenValidationParameters)` has been deprecated and will be removed in a future release. Use `JsonWebTokens.ValidateTokenAsync(string, TokenValidationParameters)` instead. For more information, see https://aka.ms/IdentityModel/7-breaking-changes", false)]
         public virtual TokenValidationResult ValidateToken(string token, TokenValidationParameters validationParameters)
         {
             return ValidateTokenAsync(token, validationParameters).ConfigureAwait(false).GetAwaiter().GetResult();
@@ -1936,15 +1924,12 @@ namespace Microsoft.IdentityModel.JsonWebTokens
                         jwtToken)));
                 }
 
-                var expires = jwtToken.TryGetClaim(JwtRegisteredClaimNames.Exp, out var _) ? (DateTime?)jwtToken.ValidTo : null;
-                var notBefore = jwtToken.TryGetClaim(JwtRegisteredClaimNames.Nbf, out var _) ? (DateTime?)jwtToken.ValidFrom : null;
-
                 if (!validationParameters.ValidateSignatureLast)
                 {
                     InternalValidators.ValidateAfterSignatureFailed(
                         jwtToken,
-                        notBefore,
-                        expires,
+                        jwtToken.ValidFromNullable,
+                        jwtToken.ValidToNullable,
                         jwtToken.Audiences,
                         validationParameters,
                         configuration);
@@ -1960,43 +1945,6 @@ namespace Microsoft.IdentityModel.JsonWebTokens
                     jwtToken)));
 
             throw LogHelper.LogExceptionMessage(new SecurityTokenSignatureKeyNotFoundException(TokenLogMessages.IDX10500));
-        }
-
-        /// <summary>
-        /// Obtains a <see cref="SignatureProvider "/> and validates the signature.
-        /// </summary>
-        /// <param name="encodedBytes">Bytes to validate.</param>
-        /// <param name="signature">Signature to compare against.</param>
-        /// <param name="key"><See cref="SecurityKey"/> to use.</param>
-        /// <param name="algorithm">Crypto algorithm to use.</param>
-        /// <param name="securityToken">The <see cref="SecurityToken"/> being validated.</param>
-        /// <param name="validationParameters">Priority will be given to <see cref="TokenValidationParameters.CryptoProviderFactory"/> over <see cref="SecurityKey.CryptoProviderFactory"/>.</param>
-        /// <returns>'true' if signature is valid.</returns>
-        internal static bool ValidateSignature(byte[] encodedBytes, byte[] signature, SecurityKey key, string algorithm, SecurityToken securityToken, TokenValidationParameters validationParameters)
-        {
-            var cryptoProviderFactory = validationParameters.CryptoProviderFactory ?? key.CryptoProviderFactory;
-            if (!cryptoProviderFactory.IsSupportedAlgorithm(algorithm, key))
-            {
-                if (LogHelper.IsEnabled(EventLogLevel.Informational))
-                    LogHelper.LogInformation(LogMessages.IDX14000, LogHelper.MarkAsNonPII(algorithm), key);
-
-                return false;
-            }
-
-            Validators.ValidateAlgorithm(algorithm, key, securityToken, validationParameters);
-
-            var signatureProvider = cryptoProviderFactory.CreateForVerifying(key, algorithm);
-            if (signatureProvider == null)
-                throw LogHelper.LogExceptionMessage(new InvalidOperationException(LogHelper.FormatInvariant(TokenLogMessages.IDX10636, key == null ? "Null" : key.ToString(), LogHelper.MarkAsNonPII(algorithm))));
-
-            try
-            {
-                return signatureProvider.Verify(encodedBytes, signature);
-            }
-            finally
-            {
-                cryptoProviderFactory.ReleaseSignatureProvider(signatureProvider);
-            }
         }
 
         internal static bool IsSignatureValid(byte[] signatureBytes, int signatureBytesLength, SignatureProvider signatureProvider, byte[] dataToVerify, int dataToVerifyLength)

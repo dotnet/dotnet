@@ -187,12 +187,12 @@ namespace Newtonsoft.Json.Linq
             base.WritePropertyName(name);
         }
 
-        private void AddValue(object? value, JsonToken token)
+        private void AddRawValue(object? value, JTokenType type, JsonToken token)
         {
-            AddValue(new JValue(value), token);
+            AddJValue(new JValue(value, type), token);
         }
 
-        internal void AddValue(JValue? value, JsonToken token)
+        internal void AddJValue(JValue? value, JsonToken token)
         {
             if (_parent != null)
             {
@@ -228,7 +228,7 @@ namespace Newtonsoft.Json.Linq
             if (value is BigInteger)
             {
                 InternalWriteValue(JsonToken.Integer);
-                AddValue(value, JsonToken.Integer);
+                AddRawValue(value, JTokenType.Integer, JsonToken.Integer);
             }
             else
 #endif
@@ -243,7 +243,7 @@ namespace Newtonsoft.Json.Linq
         public override void WriteNull()
         {
             base.WriteNull();
-            AddValue(null, JsonToken.Null);
+            AddJValue(JValue.CreateNull(), JsonToken.Null);
         }
 
         /// <summary>
@@ -252,7 +252,7 @@ namespace Newtonsoft.Json.Linq
         public override void WriteUndefined()
         {
             base.WriteUndefined();
-            AddValue(null, JsonToken.Undefined);
+            AddJValue(JValue.CreateUndefined(), JsonToken.Undefined);
         }
 
         /// <summary>
@@ -262,7 +262,7 @@ namespace Newtonsoft.Json.Linq
         public override void WriteRaw(string? json)
         {
             base.WriteRaw(json);
-            AddValue(new JRaw(json), JsonToken.Raw);
+            AddJValue(new JRaw(json), JsonToken.Raw);
         }
 
         /// <summary>
@@ -272,7 +272,7 @@ namespace Newtonsoft.Json.Linq
         public override void WriteComment(string? text)
         {
             base.WriteComment(text);
-            AddValue(JValue.CreateComment(text), JsonToken.Comment);
+            AddJValue(JValue.CreateComment(text), JsonToken.Comment);
         }
 
         /// <summary>
@@ -281,8 +281,14 @@ namespace Newtonsoft.Json.Linq
         /// <param name="value">The <see cref="String"/> value to write.</param>
         public override void WriteValue(string? value)
         {
+            if (value == null)
+            {
+                WriteNull();
+                return;
+            }
+            
             base.WriteValue(value);
-            AddValue(value, JsonToken.String);
+            AddJValue(new JValue(value), JsonToken.String);
         }
 
         /// <summary>
@@ -292,7 +298,7 @@ namespace Newtonsoft.Json.Linq
         public override void WriteValue(int value)
         {
             base.WriteValue(value);
-            AddValue(value, JsonToken.Integer);
+            AddRawValue(value, JTokenType.Integer, JsonToken.Integer);
         }
 
         /// <summary>
@@ -303,7 +309,7 @@ namespace Newtonsoft.Json.Linq
         public override void WriteValue(uint value)
         {
             base.WriteValue(value);
-            AddValue(value, JsonToken.Integer);
+            AddRawValue(value, JTokenType.Integer, JsonToken.Integer);
         }
 
         /// <summary>
@@ -313,7 +319,7 @@ namespace Newtonsoft.Json.Linq
         public override void WriteValue(long value)
         {
             base.WriteValue(value);
-            AddValue(value, JsonToken.Integer);
+            AddJValue(new JValue(value), JsonToken.Integer);
         }
 
         /// <summary>
@@ -324,7 +330,7 @@ namespace Newtonsoft.Json.Linq
         public override void WriteValue(ulong value)
         {
             base.WriteValue(value);
-            AddValue(value, JsonToken.Integer);
+            AddJValue(new JValue(value), JsonToken.Integer);
         }
 
         /// <summary>
@@ -334,7 +340,7 @@ namespace Newtonsoft.Json.Linq
         public override void WriteValue(float value)
         {
             base.WriteValue(value);
-            AddValue(value, JsonToken.Float);
+            AddJValue(new JValue(value), JsonToken.Float);
         }
 
         /// <summary>
@@ -344,7 +350,7 @@ namespace Newtonsoft.Json.Linq
         public override void WriteValue(double value)
         {
             base.WriteValue(value);
-            AddValue(value, JsonToken.Float);
+            AddJValue(new JValue(value), JsonToken.Float);
         }
 
         /// <summary>
@@ -354,7 +360,7 @@ namespace Newtonsoft.Json.Linq
         public override void WriteValue(bool value)
         {
             base.WriteValue(value);
-            AddValue(value, JsonToken.Boolean);
+            AddJValue(new JValue(value), JsonToken.Boolean);
         }
 
         /// <summary>
@@ -364,7 +370,7 @@ namespace Newtonsoft.Json.Linq
         public override void WriteValue(short value)
         {
             base.WriteValue(value);
-            AddValue(value, JsonToken.Integer);
+            AddRawValue(value, JTokenType.Integer, JsonToken.Integer);
         }
 
         /// <summary>
@@ -375,7 +381,7 @@ namespace Newtonsoft.Json.Linq
         public override void WriteValue(ushort value)
         {
             base.WriteValue(value);
-            AddValue(value, JsonToken.Integer);
+            AddRawValue(value, JTokenType.Integer, JsonToken.Integer);
         }
 
         /// <summary>
@@ -391,7 +397,7 @@ namespace Newtonsoft.Json.Linq
 #else
             s = value.ToString();
 #endif
-            AddValue(s, JsonToken.String);
+            AddJValue(new JValue(s), JsonToken.String);
         }
 
         /// <summary>
@@ -401,7 +407,7 @@ namespace Newtonsoft.Json.Linq
         public override void WriteValue(byte value)
         {
             base.WriteValue(value);
-            AddValue(value, JsonToken.Integer);
+            AddRawValue(value, JTokenType.Integer, JsonToken.Integer);
         }
 
         /// <summary>
@@ -412,7 +418,7 @@ namespace Newtonsoft.Json.Linq
         public override void WriteValue(sbyte value)
         {
             base.WriteValue(value);
-            AddValue(value, JsonToken.Integer);
+            AddRawValue(value, JTokenType.Integer, JsonToken.Integer);
         }
 
         /// <summary>
@@ -422,7 +428,7 @@ namespace Newtonsoft.Json.Linq
         public override void WriteValue(decimal value)
         {
             base.WriteValue(value);
-            AddValue(value, JsonToken.Float);
+            AddJValue(new JValue(value), JsonToken.Float);
         }
 
         /// <summary>
@@ -433,7 +439,7 @@ namespace Newtonsoft.Json.Linq
         {
             base.WriteValue(value);
             value = DateTimeUtils.EnsureDateTime(value, DateTimeZoneHandling);
-            AddValue(value, JsonToken.Date);
+            AddJValue(new JValue(value), JsonToken.Date);
         }
 
 #if HAVE_DATE_TIME_OFFSET
@@ -444,7 +450,7 @@ namespace Newtonsoft.Json.Linq
         public override void WriteValue(DateTimeOffset value)
         {
             base.WriteValue(value);
-            AddValue(value, JsonToken.Date);
+            AddJValue(new JValue(value), JsonToken.Date);
         }
 #endif
 
@@ -455,7 +461,7 @@ namespace Newtonsoft.Json.Linq
         public override void WriteValue(byte[]? value)
         {
             base.WriteValue(value);
-            AddValue(value, JsonToken.Bytes);
+            AddJValue(new JValue(value, JTokenType.Bytes), JsonToken.Bytes);
         }
 
         /// <summary>
@@ -465,7 +471,7 @@ namespace Newtonsoft.Json.Linq
         public override void WriteValue(TimeSpan value)
         {
             base.WriteValue(value);
-            AddValue(value, JsonToken.String);
+            AddJValue(new JValue(value), JsonToken.String);
         }
 
         /// <summary>
@@ -475,7 +481,7 @@ namespace Newtonsoft.Json.Linq
         public override void WriteValue(Guid value)
         {
             base.WriteValue(value);
-            AddValue(value, JsonToken.String);
+            AddJValue(new JValue(value), JsonToken.String);
         }
 
         /// <summary>
@@ -485,7 +491,7 @@ namespace Newtonsoft.Json.Linq
         public override void WriteValue(Uri? value)
         {
             base.WriteValue(value);
-            AddValue(value, JsonToken.String);
+            AddJValue(new JValue(value), JsonToken.String);
         }
         #endregion
 
@@ -502,7 +508,7 @@ namespace Newtonsoft.Json.Linq
                     }
                 }
 
-                JToken value = tokenReader.CurrentToken!.CloneToken();
+                JToken value = tokenReader.CurrentToken!.CloneToken(settings: null);
 
                 if (_parent != null)
                 {

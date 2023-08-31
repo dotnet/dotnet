@@ -20,7 +20,7 @@ namespace Microsoft.IdentityModel.Protocols
         private string _scriptButtonText = "Submit";
         private string _scriptDisabledText = "Script is disabled. Click Submit to continue.";
 
-        private IDictionary<string, string> _parameters = new Dictionary<string, string>();
+        private readonly Dictionary<string, string> _parameters = new Dictionary<string, string>();
         private string _issuerAddress = string.Empty;
 
         /// <summary>

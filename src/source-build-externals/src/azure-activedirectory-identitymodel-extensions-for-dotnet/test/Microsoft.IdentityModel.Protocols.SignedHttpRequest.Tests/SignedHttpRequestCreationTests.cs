@@ -45,7 +45,7 @@ namespace Microsoft.IdentityModel.Protocols.SignedHttpRequest.Tests
                 IssuerSigningKey = SignedHttpRequestTestUtils.DefaultSigningCredentials.Key
             };
 
-            var result = new JsonWebTokenHandler().ValidateToken(signedHttpRequestString, tvp);
+            var result = new JsonWebTokenHandler().ValidateTokenAsync(signedHttpRequestString, tvp).Result;
             if (result.IsValid == false)
                 context.AddDiff($"Not able to create and validate signed http request token");
 
@@ -83,7 +83,7 @@ namespace Microsoft.IdentityModel.Protocols.SignedHttpRequest.Tests
                 IssuerSigningKey = SignedHttpRequestTestUtils.DefaultSigningCredentials.Key
             };
 
-            var result = new JsonWebTokenHandler().ValidateToken(signedHttpRequestString, tvp);
+            var result = new JsonWebTokenHandler().ValidateTokenAsync(signedHttpRequestString, tvp).Result;
 
             if (result.IsValid == false)
                 context.AddDiff($"Not able to create and validate signed http request token");

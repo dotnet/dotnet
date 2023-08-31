@@ -194,11 +194,11 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/sdk`  
 *[dotnet/sdk@f8b678d](https://github.com/dotnet/sdk/commit/f8b678d39c28d5f561a937bbb341b502337a39c4)*
 - `src/source-build-externals`  
-*[dotnet/source-build-externals@e3cc6c7](https://github.com/dotnet/source-build-externals/commit/e3cc6c792114ebdfe6627742d2820dbe1ae5bc47)*
+*[dotnet/source-build-externals@c88d8d7](https://github.com/dotnet/source-build-externals/commit/c88d8d75ed6b8d426b7fad50eadd7f6fec46a7e4)*
     - `src/source-build-externals/src/application-insights`  
     *[Microsoft/ApplicationInsights-dotnet@5e2e7dd](https://github.com/Microsoft/ApplicationInsights-dotnet/commit/5e2e7ddda961ec0e16a75b1ae0a37f6a13c777f5)*
     - `src/source-build-externals/src/azure-activedirectory-identitymodel-extensions-for-dotnet`  
-    *[AzureAD/azure-activedirectory-identitymodel-extensions-for-dotnet@6602db2](https://github.com/AzureAD/azure-activedirectory-identitymodel-extensions-for-dotnet/commit/6602db21ac1cb76aae7fe38557d2502cbf33e69f)*
+    *[AzureAD/azure-activedirectory-identitymodel-extensions-for-dotnet@d9d4d95](https://github.com/AzureAD/azure-activedirectory-identitymodel-extensions-for-dotnet/commit/d9d4d95fb90e6f434ce3bcbf5f740aba81ddfca2)*
     - `src/source-build-externals/src/cssparser`  
     *[dotnet/cssparser@0d59611](https://github.com/dotnet/cssparser/commit/0d59611784841735a7778a67aa6e9d8d000c861f)*
     - `src/source-build-externals/src/docker-creds-provider`  
@@ -208,7 +208,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
     - `src/source-build-externals/src/MSBuildLocator`  
     *[microsoft/MSBuildLocator@5484ae4](https://github.com/microsoft/MSBuildLocator/commit/5484ae4729a60a01724987a4e6658ea506ef279d)*
     - `src/source-build-externals/src/newtonsoft-json`  
-    *[JamesNK/Newtonsoft.Json@ae9fe44](https://github.com/JamesNK/Newtonsoft.Json/commit/ae9fe44e1323e91bcbd185ca1a14099fba7c021f)*
+    *[JamesNK/Newtonsoft.Json@0a2e291](https://github.com/JamesNK/Newtonsoft.Json/commit/0a2e291c0d9c0c7675d445703e51750363a549ef)*
     - `src/source-build-externals/src/xunit`  
     *[xunit/xunit@f110e5b](https://github.com/xunit/xunit/commit/f110e5bee5dfd4c08339587c9c3df9292fcb597c)*
     - `src/source-build-externals/src/xunit/src/xunit.assert/Asserts`  

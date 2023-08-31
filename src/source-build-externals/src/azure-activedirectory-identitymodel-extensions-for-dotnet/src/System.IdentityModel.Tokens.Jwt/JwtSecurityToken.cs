@@ -495,17 +495,21 @@ namespace System.IdentityModel.Tokens.Jwt
             if (tokenParts.Length == JwtConstants.JweSegmentCount)
                 DecodeJwe(tokenParts);
             else
-                DecodeJws(tokenParts);
+            {
+                DecodeJws(tokenParts[1]);
+                RawHeader = tokenParts[0];
+                RawPayload = tokenParts[1];
+                RawSignature = tokenParts[2];
+            }
 
             RawData = rawData;
         }
 
         /// <summary>
-        /// Decodes the payload and signature from the JWS parts.
+        /// Decodes the base64url encoded payload.
         /// </summary>
-        /// <param name="tokenParts">Parts of the JWS including the header.</param>
-        /// <remarks>Assumes Header has already been set.</remarks>
-        private void DecodeJws(string[] tokenParts)
+        /// <param name="payload">the encoded payload.</param>
+        private void DecodeJws(string payload)
         {
             // Log if CTY is set, assume compact JWS
             if (Header.Cty != null && LogHelper.IsEnabled(EventLogLevel.Verbose))
@@ -513,16 +517,13 @@ namespace System.IdentityModel.Tokens.Jwt
 
             try
             {
-                Payload = JwtPayload.Base64UrlDeserialize(tokenParts[1]);
+                Payload = Base64UrlEncoding.Decode(payload, 0, payload.Length, JwtPayload.CreatePayload);
             }
             catch (Exception ex)
             {
-                throw LogHelper.LogExceptionMessage(new ArgumentException(LogHelper.FormatInvariant(LogMessages.IDX12723, tokenParts[1], RawData), ex));
+                throw LogHelper.LogExceptionMessage(new ArgumentException(LogHelper.FormatInvariant(LogMessages.IDX12723, payload, RawData), ex));
             }
 
-            RawHeader = tokenParts[0];
-            RawPayload = tokenParts[1];
-            RawSignature = tokenParts[2];
         }
 
         /// <summary>

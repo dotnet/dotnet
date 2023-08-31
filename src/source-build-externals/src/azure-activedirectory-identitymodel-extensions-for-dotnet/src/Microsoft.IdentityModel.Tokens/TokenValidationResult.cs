@@ -35,8 +35,8 @@ namespace Microsoft.IdentityModel.Tokens
         private volatile bool _claimsIdentityInitialized;
         private object _claimsIdentitySyncObj;
         private ClaimsIdentity _claimsIdentity;
-        private IDictionary<string, object> _claims;
-        private IDictionary<string, object> _propertyBag;
+        private Dictionary<string, object> _claims;
+        private Dictionary<string, object> _propertyBag;
 
         /// <summary>
         /// Creates an instance of <see cref="TokenValidationResult"/>
