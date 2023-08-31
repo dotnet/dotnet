@@ -92,7 +92,7 @@ namespace Microsoft.IdentityModel.Tokens.Json.Tests
                 theoryData.Add(
                     new JsonSerializerTheoryData("Dictionary<string,object>Level3")
                     {
-                        Json = $@"{{""key"":{{""l1_1"":1,""l1_2"":""level1"",""l2_dict"":{{""l2_1"":1,""l2_2"":""level2"",""l3_dict"":""System.Collections.Generic.Dictionary`2[System.String,System.Object]""}}}}}}",
+                        Json = $@"{{""key"":{{""l1_1"":1,""l1_2"":""level1"",""l2_dict"":{{""l2_1"":1,""l2_2"":""level2"",""l3_dict"":{{""l3_1"":1,""l3_2"":""level3""}}}}}}}}",
                         PropertyName = "key",
                         Object = new Dictionary<string, object> { { "l1_1", 1 }, { "l1_2", "level1" },
                                         { "l2_dict", new Dictionary<string, object> { { "l2_1", 1 }, { "l2_2", "level2" },
@@ -108,29 +108,29 @@ namespace Microsoft.IdentityModel.Tokens.Json.Tests
                     });
 
                 theoryData.Add(
-                    new JsonSerializerTheoryData("List<object>Level3")
+                    new JsonSerializerTheoryData("List<object>Level1")
                     {
-                        Json = $@"{{""key"":[1,""string"",1.23,[3,""stringLevel2"",6.52,""System.Collections.Generic.List`1[System.Object]""]]}}",
+                        Json = @$"{{""key"":[1,""stringLevel1"",1.11]}}",
                         PropertyName = "key",
-                        Object = new List<object> { 1, "string", 1.23,
-                                    new List<object> { 3, "stringLevel2", 6.52,
-                                        new List<object> { 3, "stringLevel2", 6.52 } } }
+                        Object = new List<object> { 1, "stringLevel1", 1.11 },
                     });
 
                 theoryData.Add(
                     new JsonSerializerTheoryData("List<object>Level2")
                     {
-                        Json = @$"{{""key"":[1,""string"",1.23,[3,""stringLevel2"",6.52]]}}",
+                        Json = @$"{{""key"":[1,""string"",1.11,[2,""stringLevel2"",2.22]]}}",
                         PropertyName = "key",
-                        Object = new List<object> { 1, "string", 1.23, new List<object> { 3, "stringLevel2", 6.52 } },
+                        Object = new List<object> { 1, "string", 1.11, new List<object> { 2, "stringLevel2", 2.22 } },
                     });
 
                 theoryData.Add(
-                    new JsonSerializerTheoryData("List<object>Level1")
+                    new JsonSerializerTheoryData("List<object>Level3")
                     {
-                        Json = @$"{{""key"":[1,""string"",1.23]}}",
+                        Json = $@"{{""key"":[1,""string"",1.11,[2,""stringLevel2"",2.22,[3,""stringLevel3"",3.33]]]}}",
                         PropertyName = "key",
-                        Object = new List<object> { 1, "string", 1.23 },
+                        Object = new List<object> { 1, "string", 1.11,
+                                                    new List<object> { 2, "stringLevel2", 2.22,
+                                                        new List<object> { 3, "stringLevel3", 3.33 } } }
                     });
 
                 return theoryData;

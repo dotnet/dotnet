@@ -28,7 +28,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using Newtonsoft.Json.Linq;
-#if !(NET20 || NET35 || PORTABLE40 || PORTABLE) || NETSTANDARD1_3 || NETSTANDARD2_0
+#if !(NET20 || NET35 || PORTABLE40 || PORTABLE) || NETSTANDARD1_3 || NETSTANDARD2_0 || NET6_0_OR_GREATER
 using System.Numerics;
 #endif
 using System.Text;
@@ -94,7 +94,7 @@ namespace Newtonsoft.Json.Tests.JsonTextReaderTests
             );
         }
 
-#if !(NET20 || NET35 || PORTABLE40 || PORTABLE) || NETSTANDARD1_3 || NETSTANDARD2_0
+#if !(NET20 || NET35 || PORTABLE40 || PORTABLE) || NETSTANDARD1_3 || NETSTANDARD2_0 || NET6_0_OR_GREATER
         [Test]
         public void ReadAsInt32_BigIntegerValue_Success()
         {
@@ -137,7 +137,7 @@ namespace Newtonsoft.Json.Tests.JsonTextReaderTests
                 "Unexpected character encountered while parsing value: u. Path '', line 1, position 1.");
         }
 
-#if !(PORTABLE || PORTABLE40 || NET35 || NET20) || NETSTANDARD1_3 || NETSTANDARD2_0
+#if !(PORTABLE || PORTABLE40 || NET35 || NET20) || NETSTANDARD1_3 || NETSTANDARD2_0 || NET6_0_OR_GREATER
         [Test]
         public void ReadAsBoolean()
         {
@@ -1264,7 +1264,7 @@ third line", jsonTextReader.Value);
 
 
 
-#if !(NET20 || NET35 || PORTABLE40 || PORTABLE) || NETSTANDARD1_3 || NETSTANDARD2_0
+#if !(NET20 || NET35 || PORTABLE40 || PORTABLE) || NETSTANDARD1_3 || NETSTANDARD2_0 || NET6_0_OR_GREATER
         [Test]
         public void ReadBigInteger()
         {
@@ -1769,6 +1769,45 @@ third line", jsonTextReader.Value);
             {
                 JToken.ReadFrom(reader, settings);
             });
+        }
+
+        [Test]
+        public void MaxDepth_GreaterThanDefault()
+        {
+            string json = GetNestedJson(150);
+
+            JsonTextReader reader = new JsonTextReader(new StringReader(json));
+            reader.MaxDepth = 150;
+
+            while (reader.Read())
+            {
+            }
+        }
+
+        [Test]
+        public void MaxDepth_Null()
+        {
+            string json = GetNestedJson(150);
+
+            JsonTextReader reader = new JsonTextReader(new StringReader(json));
+            reader.MaxDepth = null;
+
+            while (reader.Read())
+            {
+            }
+        }
+
+        [Test]
+        public void MaxDepth_MaxValue()
+        {
+            string json = GetNestedJson(150);
+
+            JsonTextReader reader = new JsonTextReader(new StringReader(json));
+            reader.MaxDepth = int.MaxValue;
+
+            while (reader.Read())
+            {
+            }
         }
     }
 }

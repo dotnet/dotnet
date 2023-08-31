@@ -77,7 +77,7 @@ namespace Microsoft.IdentityModel.SampleTests
         /// </param>
         public void ValidateTokenShim(string token, TokenValidationParameters tokenValidationParameters)
         {
-            var result = JsonWebTokenHandler.ValidateToken(token, tokenValidationParameters);
+            var result = JsonWebTokenHandler.ValidateTokenAsync(token, tokenValidationParameters).Result;
 
             if (!result.IsValid)
             {

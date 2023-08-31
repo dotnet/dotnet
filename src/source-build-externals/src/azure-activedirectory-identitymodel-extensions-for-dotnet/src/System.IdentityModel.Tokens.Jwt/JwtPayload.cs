@@ -9,11 +9,11 @@ using System.Security.Claims;
 using System.Text;
 using System.Text.Encodings.Web;
 using System.Text.Json;
+using System.Threading;
 using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.Logging;
 using Microsoft.IdentityModel.Tokens;
-
-using JsonPrimitives = Microsoft.IdentityModel.Tokens.Json.JsonSerializerPrimitives;
+using Microsoft.IdentityModel.Tokens.Json;
 
 namespace System.IdentityModel.Tokens.Jwt
 {
@@ -25,6 +25,20 @@ namespace System.IdentityModel.Tokens.Jwt
     {
         internal const string ClassName = "System.IdentityModel.Tokens.Jwt.JwtPayload";
 
+        internal List<string> _audiences;
+        internal string _azp;
+        internal long? _exp;
+        internal DateTime? _expDateTime;
+        internal long? _iat;
+        internal DateTime? _iatDateTime;
+        internal string _id;
+        internal string _iss;
+        internal string _jti;
+        internal long? _nbf;
+        internal DateTime? _nbfDateTime;
+        internal string _sub;
+        internal string _tid;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="JwtPayload"/> class with no claims. Default string comparer <see cref="StringComparer.Ordinal"/>. 
         /// Creates a empty <see cref="JwtPayload"/>
@@ -34,76 +48,107 @@ namespace System.IdentityModel.Tokens.Jwt
         {
         }
 
-        internal JwtPayload (string json)
+        internal static JwtPayload CreatePayload(byte[] bytes, int length)
         {
-            Utf8JsonReader reader = new(Encoding.UTF8.GetBytes(json));
+            JwtPayload payload = new();
+            Utf8JsonReader reader = new(bytes.AsSpan().Slice(0, length));
 
-            try
-            {
-                if (!JsonPrimitives.IsReaderAtTokenType(ref reader, JsonTokenType.StartObject, false))
-                    throw LogHelper.LogExceptionMessage(
-                        new JsonException(
-                            LogHelper.FormatInvariant(
-                            Microsoft.IdentityModel.Tokens.LogMessages.IDX11023,
-                            LogHelper.MarkAsNonPII("JsonTokenType.StartObject"),
-                            LogHelper.MarkAsNonPII(reader.TokenType),
-                            LogHelper.MarkAsNonPII(ClassName),
-                            LogHelper.MarkAsNonPII(reader.TokenStartIndex),
-                            LogHelper.MarkAsNonPII(reader.CurrentDepth),
-                            LogHelper.MarkAsNonPII(reader.BytesConsumed))));
-
-                while (reader.Read())
-                {
-                    if (reader.TokenType == JsonTokenType.PropertyName)
-                    {
-                        string propertyName = JsonPrimitives.ReadPropertyName(ref reader, ClassName, true);
-                        object obj;
-                        if (reader.TokenType == JsonTokenType.StartArray)
-                            obj = JsonPrimitives.ReadArrayOfObjects(ref reader, propertyName, ClassName);
-                        else
-                            obj = JsonPrimitives.ReadPropertyValueAsObject(ref reader, propertyName, ClassName);
-
-                        if (TryGetValue(propertyName, out object existingValue))
-                        {
-                            if (existingValue is not IList<object> claimValues)
-                            {
-                                claimValues = new List<object>
-                            {
-                                existingValue
-                            };
-
-                                this[propertyName] = claimValues;
-                            }
-
-                            if (obj is IList<object> objectList)
-                            {
-                                foreach (object item in objectList)
-                                    claimValues.Add(item);
-                            }
-                            else
-                            {
-                                claimValues.Add(obj);
-                            }
-                        }
-                        else
-                        {
-                            this[propertyName] = obj;
-                        }
-                    }
-                }
-            }
-            catch (JsonException ex)
-            {
-                if (ex.GetType() == typeof(JsonException))
-                    throw;
-
+            if (!JsonSerializerPrimitives.IsReaderAtTokenType(ref reader, JsonTokenType.StartObject, false))
                 throw LogHelper.LogExceptionMessage(
                     new JsonException(
                         LogHelper.FormatInvariant(
-                            Microsoft.IdentityModel.Tokens.LogMessages.IDX10805,
-                            LogHelper.MarkAsNonPII(json),
-                            LogHelper.MarkAsNonPII(ClassName))));
+                        Microsoft.IdentityModel.Tokens.LogMessages.IDX11023,
+                        LogHelper.MarkAsNonPII("JsonTokenType.StartObject"),
+                        LogHelper.MarkAsNonPII(reader.TokenType),
+                        LogHelper.MarkAsNonPII(ClassName),
+                        LogHelper.MarkAsNonPII(reader.TokenStartIndex),
+                        LogHelper.MarkAsNonPII(reader.CurrentDepth),
+                        LogHelper.MarkAsNonPII(reader.BytesConsumed))));
+
+            while (reader.Read())
+            {
+                if (reader.TokenType == JsonTokenType.PropertyName)
+                {
+                    if (reader.ValueTextEquals(JwtPayloadUtf8Bytes.Aud))
+                    {
+                        reader.Read();
+                        payload._audiences = new List<string>();
+                        if (reader.TokenType == JsonTokenType.StartArray)
+                        {
+                            JsonSerializerPrimitives.ReadStrings(ref reader, payload._audiences, JwtRegisteredClaimNames.Aud, ClassName, false);
+                            payload[JwtRegisteredClaimNames.Aud] = payload._audiences;
+                        }
+                        else
+                        {
+                            payload._audiences.Add(JsonSerializerPrimitives.ReadString(ref reader, JwtRegisteredClaimNames.Aud, ClassName, false));
+                            payload[JwtRegisteredClaimNames.Aud] = payload._audiences[0];
+                        }
+                    }
+                    else if (reader.ValueTextEquals(JwtPayloadUtf8Bytes.Exp))
+                    {
+                        payload._exp = JsonSerializerPrimitives.ReadLong(ref reader, JwtRegisteredClaimNames.Exp, ClassName, true);
+                        payload[JwtRegisteredClaimNames.Exp] = payload._exp;
+                        payload._expDateTime = EpochTime.DateTime(payload._exp.Value);
+                    }
+                    else if (reader.ValueTextEquals(JwtPayloadUtf8Bytes.Iat))
+                    {
+                        payload._iat = JsonSerializerPrimitives.ReadLong(ref reader, JwtRegisteredClaimNames.Iat, ClassName, true);
+                        payload[JwtRegisteredClaimNames.Iat] = payload._iat;
+                        payload._iatDateTime = EpochTime.DateTime(payload._iat.Value);
+                    }
+                    else if (reader.ValueTextEquals(JwtPayloadUtf8Bytes.Iss))
+                    {
+                        payload._iss = JsonSerializerPrimitives.ReadString(ref reader, JwtRegisteredClaimNames.Iss, ClassName, true);
+                        payload[JwtRegisteredClaimNames.Iss] = payload._iss;
+                    }
+                    else if (reader.ValueTextEquals(JwtPayloadUtf8Bytes.Jti))
+                    {
+                        payload._jti = JsonSerializerPrimitives.ReadString(ref reader, JwtRegisteredClaimNames.Jti, ClassName, true);
+                        payload[JwtRegisteredClaimNames.Jti] = payload._jti;
+                    }
+                    else if (reader.ValueTextEquals(JwtPayloadUtf8Bytes.Nbf))
+                    {
+                        payload._nbf = JsonSerializerPrimitives.ReadLong(ref reader, JwtRegisteredClaimNames.Nbf, ClassName, true);
+                        payload._nbfDateTime = EpochTime.DateTime(payload._nbf.Value);
+                        payload[JwtRegisteredClaimNames.Nbf] = payload._nbf;
+                    }
+                    else if (reader.ValueTextEquals(JwtPayloadUtf8Bytes.Sub))
+                    {
+                        reader.Read();
+                        if (reader.TokenType == JsonTokenType.String)
+                        {
+                            payload._sub = JsonSerializerPrimitives.ReadString(ref reader, JwtRegisteredClaimNames.Sub, ClassName, false);
+                            payload[JwtRegisteredClaimNames.Sub] = payload._sub;
+                        }
+                        else if (reader.TokenType == JsonTokenType.StartArray)
+                        {
+                            payload._audiences = new List<string>();
+                            JsonSerializerPrimitives.ReadStrings(ref reader, payload._audiences, JwtRegisteredClaimNames.Sub, ClassName, false);
+                            payload[JwtRegisteredClaimNames.Sub] = payload._audiences;
+                        }
+                        else
+                        {
+                            throw LogHelper.LogExceptionMessage(
+                                new JsonException(
+                                    LogHelper.FormatInvariant(
+                                        Microsoft.IdentityModel.Tokens.LogMessages.IDX11023,
+                                        LogHelper.MarkAsNonPII("JsonTokenType.String or JsonTokenType.StartArray"),
+                                        LogHelper.MarkAsNonPII(reader.TokenType),
+                                        LogHelper.MarkAsNonPII(ClassName),
+                                        LogHelper.MarkAsNonPII(reader.TokenStartIndex),
+                                        LogHelper.MarkAsNonPII(reader.CurrentDepth),
+                                        LogHelper.MarkAsNonPII(reader.BytesConsumed))));
+                        }
+                    }
+                    else
+                    {
+                        string propertyName = JsonSerializerPrimitives.ReadPropertyName(ref reader, ClassName, true);
+                        payload[propertyName] = JsonSerializerPrimitives.ReadPropertyValueAsObject(ref reader, propertyName, ClassName);
+                    }
+                }
             }
+
+            return payload;
         }
 
         /// <summary>
@@ -194,14 +239,14 @@ namespace System.IdentityModel.Tokens.Jwt
                         throw LogHelper.LogExceptionMessage(new ArgumentException(LogHelper.FormatInvariant(LogMessages.IDX12401, LogHelper.MarkAsNonPII(expires.Value), LogHelper.MarkAsNonPII(notBefore.Value))));
                     }
 
-                    this[JwtRegisteredClaimNames.Nbf] = (int)EpochTime.GetIntDate(notBefore.Value.ToUniversalTime());
+                    this[JwtRegisteredClaimNames.Nbf] = EpochTime.GetIntDate(notBefore.Value.ToUniversalTime());
                 }
 
-                this[JwtRegisteredClaimNames.Exp] = (int)EpochTime.GetIntDate(expires.Value.ToUniversalTime());
+                this[JwtRegisteredClaimNames.Exp] = EpochTime.GetIntDate(expires.Value.ToUniversalTime());
             }
 
             if (issuedAt.HasValue)
-                this[JwtRegisteredClaimNames.Iat] = (int)EpochTime.GetIntDate(issuedAt.Value.ToUniversalTime());
+                this[JwtRegisteredClaimNames.Iat] = EpochTime.GetIntDate(issuedAt.Value.ToUniversalTime());
 
             if (!string.IsNullOrEmpty(issuer))
                 this[JwtRegisteredClaimNames.Iss] = issuer;
@@ -243,7 +288,7 @@ namespace System.IdentityModel.Tokens.Jwt
         {
             get
             {
-                return this.GetIListClaims(JwtRegisteredClaimNames.Amr);
+                return this.GetListOfClaims(JwtRegisteredClaimNames.Amr);
             }
         }
 
@@ -267,7 +312,13 @@ namespace System.IdentityModel.Tokens.Jwt
         {
             get
             {
-                return this.GetIListClaims(JwtRegisteredClaimNames.Aud);
+                if (_audiences == null)
+                {
+                    List<string> tmp = GetListOfClaims(JwtRegisteredClaimNames.Aud);
+                    Interlocked.CompareExchange(ref _audiences, tmp, null);
+                }
+
+                return _audiences;
             }
         }
 
@@ -301,7 +352,7 @@ namespace System.IdentityModel.Tokens.Jwt
         /// <remarks>If the 'expiration' claim is not found OR could not be converted to <see cref="Int32"/>, null is returned.</remarks>
         public int? Exp
         {
-            get { return this.GetIntClaim(JwtRegisteredClaimNames.Exp); }
+            get => GetIntClaim(JwtRegisteredClaimNames.Exp);
         }
 
         /// <summary>
@@ -312,7 +363,8 @@ namespace System.IdentityModel.Tokens.Jwt
         {
             get
             {
-                return this.GetStandardClaim(JwtRegisteredClaimNames.Jti);
+                _jti ??= GetStandardClaim(JwtRegisteredClaimNames.Jti);
+                return _jti;
             }
         }
 
@@ -333,7 +385,8 @@ namespace System.IdentityModel.Tokens.Jwt
         {
             get
             {
-                return this.GetStandardClaim(JwtRegisteredClaimNames.Iss);
+                _iss ??= GetStandardClaim(JwtRegisteredClaimNames.Iss);
+                return _iss;
             }
         }
 
@@ -366,7 +419,8 @@ namespace System.IdentityModel.Tokens.Jwt
         {
             get
             {
-                return this.GetStandardClaim(JwtRegisteredClaimNames.Sub);
+                _sub ??= GetStandardClaim(JwtRegisteredClaimNames.Sub);
+                return _sub;
             }
         }
 
@@ -378,7 +432,16 @@ namespace System.IdentityModel.Tokens.Jwt
         {
             get
             {
-                return this.GetDateTime(JwtRegisteredClaimNames.Nbf);
+                if (_nbfDateTime.HasValue)
+                    return _nbfDateTime.Value;
+
+                long? l = GetLongClaim(JwtRegisteredClaimNames.Nbf);
+                if (l.HasValue)
+                    return EpochTime.DateTime(l.Value);
+
+                _nbfDateTime = DateTime.MinValue;
+
+                return _nbfDateTime.Value;
             }
         }
 
@@ -390,7 +453,16 @@ namespace System.IdentityModel.Tokens.Jwt
         {
             get
             {
-                return this.GetDateTime(JwtRegisteredClaimNames.Exp);
+                if (_expDateTime.HasValue)
+                    return _expDateTime.Value;
+
+                long? l = GetLongClaim(JwtRegisteredClaimNames.Exp);
+                if (l.HasValue)
+                    return EpochTime.DateTime(l.Value);
+
+                _expDateTime = DateTime.MinValue;
+
+                return _expDateTime.Value;
             }
         }
 
@@ -402,7 +474,16 @@ namespace System.IdentityModel.Tokens.Jwt
         {
             get
             {
-                return this.GetDateTime(JwtRegisteredClaimNames.Iat);
+                if (_iatDateTime.HasValue)
+                    return _iatDateTime.Value;
+
+                long? l = GetLongClaim(JwtRegisteredClaimNames.Iat);
+                if (l.HasValue)
+                    return EpochTime.DateTime(l.Value);
+
+                _iatDateTime = DateTime.MinValue;
+
+                return _iatDateTime.Value;
             }
         }
 
@@ -603,21 +684,21 @@ namespace System.IdentityModel.Tokens.Jwt
         {
             if (TryGetValue(claimType, out object claimValue))
             {
-                if (claimValue is IList<object> objects)
-                {
-                    foreach (object obj in objects)
-                    {
-                        int i = default;
-                        if (TryConvertToInt(obj, ref i))
-                            return i;
-                    }
-                }
-                else
-                {
-                    int i = default;
-                    if (TryConvertToInt(claimValue, ref i))
-                        return i;
-                }
+                int i = default;
+                if (TryConvertToInt(claimValue, ref i))
+                    return i;
+            }
+
+            return null;
+        }
+
+        internal long? GetLongClaim(string claimType)
+        {
+            if (TryGetValue(claimType, out object claimValue))
+            {
+                long l = default;
+                if (TryConvertToLong(claimValue, ref l))
+                    return l;
             }
 
             return null;
@@ -641,7 +722,6 @@ namespace System.IdentityModel.Tokens.Jwt
                         return true;
                     }
 
-
                 outVal = Convert.ToInt32(Math.Truncate(Convert.ToDouble(value, CultureInfo.InvariantCulture)));
                 return true;
             }
@@ -663,91 +743,67 @@ namespace System.IdentityModel.Tokens.Jwt
 #pragma warning restore CS0162 // Unreachable code detected
         }
 
-        internal IList<string> GetIListClaims(string claimType)
+        private static bool TryConvertToLong(object value, ref long outVal)
         {
-            List<string> claimValues = new List<string>();
-
-            object value = null;
-            if (!TryGetValue(claimType, out value))
-            {
-                return claimValues;
-            }
-
-            string str = value as string;
-            if (str != null)
-            {
-                claimValues.Add(str);
-                return claimValues;
-            }
-
-            // values must be an enumeration of strings;
-            IEnumerable<object> values = value as IEnumerable<object>;
-            if (values != null)
-            {
-                foreach (var item in values)
-                {
-                    claimValues.Add(item.ToString());
-                }
-            }
-            else
-            {
-                // TODO - do we need to do anything else
-            }
-
-            return claimValues;
-        }
-
-        /// <summary>
-        /// Gets the DateTime using the number of seconds from 1970-01-01T0:0:0Z (UTC)
-        /// </summary>
-        /// <param name="key">Claim in the payload that should map to an integer.</param>
-        /// <remarks>If the claim is not found, the function returns: DateTime.MinValue
-        /// </remarks>
-        /// <exception cref="SecurityTokenException">If an overflow exception is thrown by the runtime.</exception>
-        /// <returns>The DateTime representation of a claim.</returns>
-        private DateTime GetDateTime(string key)
-        {
-            object dateValue;
-            if (!TryGetValue(key, out dateValue))
-            {
-                return DateTime.MinValue;
-            }
-
-            // if there are multiple dates, take the first one.
+            outVal = default;
             try
             {
-                long secondsAfterBaseTime;
-                IList<object> dateValues = dateValue as IList<object>;
-                if (dateValues != null)
+                if (value is long l)
                 {
-                    if (dateValues.Count == 0)
-                    {
-                        return DateTime.MinValue;
-                    }
-                    else
-                    {
-                        dateValue = dateValues[0];
-                    }
+                    outVal = l;
+                    return true;
                 }
 
-                // null converts to 0.
-                secondsAfterBaseTime = Convert.ToInt64(Math.Truncate(Convert.ToDouble(dateValue, CultureInfo.InvariantCulture)));
-                return EpochTime.DateTime(secondsAfterBaseTime);
+                if (value is string str)
+                    if (long.TryParse(str, out long result))
+                    {
+                        outVal = result;
+                        return true;
+                    }
+
+                outVal = Convert.ToInt64(Math.Truncate(Convert.ToDouble(value, CultureInfo.InvariantCulture)));
+
+                return true;
             }
-            catch (Exception ex)
+            catch (FormatException)
             {
-                if (ex is FormatException || ex is ArgumentException || ex is InvalidCastException)
-                {
-                    throw LogHelper.LogExceptionMessage(new SecurityTokenException(LogHelper.FormatInvariant(LogMessages.IDX12700, key, LogHelper.MarkAsNonPII((dateValue ?? "Null"))), ex));
-                }
-
-                if (ex is OverflowException)
-                {
-                    throw LogHelper.LogExceptionMessage(new SecurityTokenException(LogHelper.FormatInvariant(LogMessages.IDX12701, key, LogHelper.MarkAsNonPII((dateValue ?? "Null"))), ex));
-                }
-
-                throw;
+                return false;
             }
+            catch (OverflowException)
+            {
+                return false;
+            }
+            catch (InvalidCastException)
+            {
+                return false;
+            }
+        }
+
+        internal List<string> GetListOfClaims(string claimType)
+        {
+            List<string> claimValues = new();
+            if (!TryGetValue(claimType, out object value))
+                return claimValues;
+
+            // JsonArray and JsonObject are stored in the dictionary as JsonElement
+            if (value is JsonElement jsonElement)
+            {
+                if (JsonSerializerPrimitives.TryCreateTypeFromJsonElement(jsonElement, out List<string> list))
+                    return list;
+            }
+            else if (value is string str)
+                claimValues.Add(str);
+
+            // value may not be a string, use ToString();
+            else if (value is IEnumerable<object> values)
+            {
+                foreach (object item in values)
+                    claimValues.Add(item.ToString());
+            }
+            else
+                claimValues.Add(value.ToString());
+
+            return claimValues;
         }
 
         /// <summary>
@@ -759,13 +815,12 @@ namespace System.IdentityModel.Tokens.Jwt
             using (MemoryStream memoryStream = new MemoryStream())
             {
                 Utf8JsonWriter writer = null;
-
                 try
                 {
                     writer = new Utf8JsonWriter(memoryStream, new JsonWriterOptions { Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping });
                     writer.WriteStartObject();
 
-                    JsonPrimitives.WriteObjects(ref writer, this);
+                    JsonSerializerPrimitives.WriteObjects(ref writer, this);
 
                     writer.WriteEndObject();
                     writer.Flush();
@@ -779,16 +834,15 @@ namespace System.IdentityModel.Tokens.Jwt
         }
 
         /// <summary>
-        /// Deserializes Base64UrlEncoded JSON into a <see cref="JwtHeader"/> instance.
+        /// Deserializes Base64UrlEncoded JSON into a <see cref="JwtPayload"/>.
         /// </summary>
         /// <param name="base64UrlEncodedJsonString">Base64url encoded JSON to deserialize.</param>
-        /// <returns>An instance of <see cref="JwtHeader"/>.</returns>
+        /// <returns>An instance of <see cref="JwtPayload"/>.</returns>
         public static JwtPayload Base64UrlDeserialize(string base64UrlEncodedJsonString)
         {
             _ = base64UrlEncodedJsonString ?? throw LogHelper.LogArgumentNullException(nameof(base64UrlEncodedJsonString));
-            return new JwtPayload(Base64UrlEncoder.Decode(base64UrlEncodedJsonString));
+            return Base64UrlEncoding.Decode(base64UrlEncodedJsonString, 0, base64UrlEncodedJsonString.Length, CreatePayload);
         }
-
 
         /// <summary>
         /// Encodes this instance as Base64UrlEncoded JSON.
@@ -806,9 +860,9 @@ namespace System.IdentityModel.Tokens.Jwt
         /// <returns>An instance of <see cref="JwtPayload"/>.</returns>
         public static JwtPayload Deserialize(string jsonString)
         {
-            return new JwtPayload(jsonString);
+            _ = jsonString ?? throw LogHelper.LogArgumentNullException(nameof(jsonString));
+            byte[] bytes = Encoding.UTF8.GetBytes(jsonString);
+            return CreatePayload(bytes, bytes.Length);
         }
-
-        internal JsonClaimSet ClaimSet { get; set; }
     }
 }

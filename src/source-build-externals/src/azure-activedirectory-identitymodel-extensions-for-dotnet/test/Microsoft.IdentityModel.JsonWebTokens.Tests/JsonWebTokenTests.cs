@@ -2,12 +2,16 @@
 // Licensed under the MIT License.
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Globalization;
 using System.IdentityModel.Tokens.Jwt;
 using System.IdentityModel.Tokens.Jwt.Tests;
 using System.Linq;
+using System.Reflection;
 using System.Security.Claims;
+using System.Text;
 using Microsoft.IdentityModel.TestUtils;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
@@ -40,6 +44,26 @@ namespace Microsoft.IdentityModel.JsonWebTokens.Tests
             new Claim("dateTimeIso8061", dateTime.ToUniversalTime().ToString("o", CultureInfo.InvariantCulture), ClaimValueTypes.DateTime, "LOCAL AUTHORITY", "LOCAL AUTHORITY"),
         };
 
+        [Fact]
+        public void DateTime2038Issue()
+        {
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(new string('a', 128)));
+            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+
+            var claims = new[] { new Claim(ClaimTypes.NameIdentifier, "Bob") };
+            SecurityTokenDescriptor tokenDescriptor = new SecurityTokenDescriptor
+            {
+                SigningCredentials = creds,
+                Subject = new ClaimsIdentity(claims),
+                Expires = (new DateTime(2038, 1, 20)).ToUniversalTime(),
+            };
+
+            JsonWebTokenHandler handler = new();
+            string jwt = handler.CreateToken(tokenDescriptor);
+            JsonWebToken jsonWebToken = new JsonWebToken(jwt);
+
+            Assert.Equal(jsonWebToken.ValidTo, (new DateTime(2038, 1, 20)).ToUniversalTime());
+        }
 
         // This test is designed to test that all properties of a JWE can be accessed.
         // Some properties rely on an inner token and the Payload can be null.
@@ -229,7 +253,7 @@ namespace Microsoft.IdentityModel.JsonWebTokens.Tests
             IdentityComparer.AreEqual(true, success, context);
 
             success = token.TryGetHeaderValue("array", out object[] array);
-            IdentityComparer.AreEqual(new object[] { 1L, "2", 3L }, array, context);
+            IdentityComparer.AreEqual(new object[] { 1, "2", 3 }, array, context);
             IdentityComparer.AreEqual(true, success, context);
 
             success = token.TryGetHeaderValue("string", out string name);
@@ -237,7 +261,7 @@ namespace Microsoft.IdentityModel.JsonWebTokens.Tests
             IdentityComparer.AreEqual(true, success, context);
 
             success = token.TryGetHeaderValue("float", out float floatingPoint);
-            IdentityComparer.AreEqual(42.0, floatingPoint, context);
+            IdentityComparer.AreEqual((float)42, floatingPoint, context);
             IdentityComparer.AreEqual(true, success, context);
 
             success = token.TryGetHeaderValue("integer", out int integer);
@@ -307,7 +331,7 @@ namespace Microsoft.IdentityModel.JsonWebTokens.Tests
             IdentityComparer.AreEqual(true, success, context);
 
             success = token.TryGetPayloadValue("array", out object[] array);
-            IdentityComparer.AreEqual(new object[] { 1L, "2", 3L }, array, context);
+            IdentityComparer.AreEqual(new object[] { 1, "2", 3 }, array, context);
             IdentityComparer.AreEqual(true, success, context);
 
             success = token.TryGetPayloadValue("string", out string name);
@@ -315,7 +339,7 @@ namespace Microsoft.IdentityModel.JsonWebTokens.Tests
             IdentityComparer.AreEqual(true, success, context);
 
             success = token.TryGetPayloadValue("float", out float floatingPoint);
-            IdentityComparer.AreEqual(42.0, floatingPoint, context);
+            IdentityComparer.AreEqual((float)42, floatingPoint, context);
             IdentityComparer.AreEqual(true, success, context);
 
             success = token.TryGetPayloadValue("integer", out int integer);
@@ -347,6 +371,312 @@ namespace Microsoft.IdentityModel.JsonWebTokens.Tests
             IdentityComparer.AreEqual(false, success, context);
 
             TestUtilities.AssertFailIfErrors(context);
+        }
+
+        // Time values can be floats, ints, or strings.
+        // This test checks to make sure that parsing does not fault in any of the above cases.
+        [Theory, MemberData(nameof(GetPayloadValueTheoryData))]
+        public void GetPayloadValue(GetPayloadValueTheoryData theoryData)
+        {
+            CompareContext context = TestUtilities.WriteHeader($"{this}.GetPayloadValue", theoryData);
+            try
+            {
+                JsonWebTokenHandler jsonWebTokenHandler = new JsonWebTokenHandler { SetDefaultTimesOnTokenCreation = false };
+                string jwt = jsonWebTokenHandler.CreateToken(theoryData.SecurityTokenDescriptor);
+                JsonWebToken jsonWebToken = new JsonWebToken(jwt);
+                string payload = Base64UrlEncoder.Decode(jsonWebToken.EncodedPayload);
+
+                var methods = typeof(JsonWebToken).GetMethods(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance);
+                var method = typeof(JsonWebToken).GetMethod("GetPayloadValue", BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance, null, CallingConventions.Standard, new Type[] { typeof(string) }, null);
+                var retval = method.MakeGenericMethod(theoryData.PropertyType).Invoke(jsonWebToken, new object[] { theoryData.PropertyName });
+                theoryData.ExpectedException.ProcessNoException(context);
+                IdentityComparer.AreEqual(retval, theoryData.PropertyValue, context);
+            }
+            catch (Exception ex)
+            {
+                theoryData.ExpectedException.ProcessException(ex.InnerException, context);
+            }
+
+            TestUtilities.AssertFailIfErrors(context);
+        }
+
+        public static TheoryData<GetPayloadValueTheoryData> GetPayloadValueTheoryData
+        {
+            get
+            {
+                var theoryData = new TheoryData<GetPayloadValueTheoryData>();
+
+                List<string> listStrings = new List<string> { "list1", "list1" };
+                List<object> listObjects = new List<object> { "list1", "list1" };
+                Collection<string> collectionStrings = new Collection<string> { "collections1", "collections2" };
+                Collection<object> collectionObjects = new Collection<object> { "collections1", "collections2" };
+                string[] arrayStrings = new string[] { "array1", "arrray2" };
+                object[] arrayObjects = new object[] { "array1", "arrray2" };
+                int[] arrayInts = new int[] { 1,2,3 };
+                object[] arrayMixed = new object[] { 1, "2", 3 };
+
+                theoryData.Add(new GetPayloadValueTheoryData("DictionaryWithArrayOfStrings")
+                {
+                    PropertyName = "a",
+                    PropertyType = typeof(Dictionary<string, string[]>),
+                    PropertyValue = new Dictionary<string, string[]>
+                    {
+                        ["prop1"] = arrayStrings
+                    },
+                    SecurityTokenDescriptor = new SecurityTokenDescriptor
+                    {
+                        Claims = new Dictionary<string, object>
+                        {
+                            ["a"] = new Dictionary<string, string[]>
+                            {
+                                ["prop1"] = arrayStrings
+                            }
+                        }
+                    }
+                });
+
+                theoryData.Add(new GetPayloadValueTheoryData("DictionaryWithListOfStrings")
+                {
+                    PropertyName = "a",
+                    PropertyType = typeof(Dictionary<string, List<string>>),
+                    PropertyValue = new Dictionary<string, List<string>>
+                    {
+                        ["prop1"] = listStrings
+                    },
+                    SecurityTokenDescriptor = new SecurityTokenDescriptor
+                    {
+                        Claims = new Dictionary<string, object>
+                        {
+                            ["a"] = new Dictionary<string, List<string>>
+                            {
+                                ["prop1"] = listStrings
+                            }
+                        }
+                    }
+                });
+
+                theoryData.Add(new GetPayloadValueTheoryData("DictionaryWithCollectionOfStrings")
+                {
+                    PropertyName = "a",
+                    PropertyType = typeof(Dictionary<string, Collection<string>>),
+                    PropertyValue = new Dictionary<string, Collection<string>>
+                    {
+                        ["prop1"] = collectionStrings
+                    },
+                    SecurityTokenDescriptor = new SecurityTokenDescriptor
+                    {
+                        Claims = new Dictionary<string, object>
+                        {
+                            ["a"] = new Dictionary<string, Collection<string>>
+                            {
+                                ["prop1"] = collectionStrings
+                            }
+                        }
+                    }
+                });
+
+                theoryData.Add(new GetPayloadValueTheoryData("ArrayOfStrings")
+                {
+                    PropertyName = "c",
+                    PropertyType = typeof(string[]),
+                    PropertyValue = arrayStrings,
+                    SecurityTokenDescriptor = new SecurityTokenDescriptor
+                    {
+                        Claims = new Dictionary<string, object>
+                        {
+                            ["c"] = arrayStrings
+                        }
+                    }
+                });
+
+                theoryData.Add(new GetPayloadValueTheoryData("ArrayOfObjects")
+                {
+                    PropertyName = "c",
+                    PropertyType = typeof(object[]),
+                    PropertyValue = arrayObjects,
+                    SecurityTokenDescriptor = new SecurityTokenDescriptor
+                    {
+                        Claims = new Dictionary<string, object>
+                        {
+                            ["c"] = arrayObjects
+                        }
+                    }
+                });
+
+                theoryData.Add(new GetPayloadValueTheoryData("ListOfStrings")
+                {
+                    PropertyName = "c",
+                    PropertyType = typeof(List<string>),
+                    PropertyValue = listStrings,
+                    SecurityTokenDescriptor = new SecurityTokenDescriptor
+                    {
+                        Claims = new Dictionary<string, object>
+                        {
+                            ["c"] = listStrings
+                        }
+                    }
+                });
+
+                theoryData.Add(new GetPayloadValueTheoryData("ListOfObjects")
+                {
+                    PropertyName = "c",
+                    PropertyType = typeof(List<object>),
+                    PropertyValue = listObjects,
+                    SecurityTokenDescriptor = new SecurityTokenDescriptor
+                    {
+                        Claims = new Dictionary<string, object>
+                        {
+                            ["c"] = listObjects
+                        }
+                    }
+                });
+
+                theoryData.Add(new GetPayloadValueTheoryData("CollectionOfStrings")
+                {
+                    PropertyName = "c",
+                    PropertyType = typeof(Collection<string>),
+                    PropertyValue = collectionStrings,
+                    SecurityTokenDescriptor = new SecurityTokenDescriptor
+                    {
+                        Claims = new Dictionary<string, object>
+                        {
+                            ["c"] = collectionStrings
+                        }
+                    }
+                });
+
+                theoryData.Add(new GetPayloadValueTheoryData("CollectionOfObjects")
+                {
+                    PropertyName = "c",
+                    PropertyType = typeof(Collection<object>),
+                    PropertyValue = collectionObjects,
+                    SecurityTokenDescriptor = new SecurityTokenDescriptor
+                    {
+                        Claims = new Dictionary<string, object>
+                        {
+                            ["c"] = collectionStrings
+                        }
+                    }
+                });
+
+                theoryData.Add(new GetPayloadValueTheoryData("ArrayOfMixedTypesAsObject")
+                {
+                    PropertyName = "c",
+                    PropertyType = typeof(object[]),
+                    PropertyValue = new object[] { 1, "2", 3 },
+                    SecurityTokenDescriptor = new SecurityTokenDescriptor
+                    {
+                        Claims = new Dictionary<string, object>
+                        {
+                            ["c"] = arrayMixed
+                        }
+                    }
+                });
+
+                theoryData.Add(new GetPayloadValueTheoryData("ArrayOfIntAsObject")
+                {
+                    PropertyName = "c",
+                    PropertyType = typeof(object[]),
+                    PropertyValue = new object[] { 1, 2, 3 },
+                    SecurityTokenDescriptor = new SecurityTokenDescriptor
+                    {
+                        Claims = new Dictionary<string, object>
+                        {
+                            ["c"] = arrayInts
+                        }
+                    }
+                });
+
+                theoryData.Add(new GetPayloadValueTheoryData("ArrayOfIntAsStrings")
+                {
+                    PropertyName = "c",
+                    PropertyType = typeof(string[]),
+                    PropertyValue = new string[] { "1", "2", "3" },
+                    SecurityTokenDescriptor = new SecurityTokenDescriptor
+                    {
+                        Claims = new Dictionary<string, object>
+                        {
+                            ["c"] = arrayInts
+                        }
+                    }
+                });
+
+                theoryData.Add(new GetPayloadValueTheoryData("NotSupportedArray")
+                {
+                    ExpectedException = ExpectedException.ArgumentException("IDX14305:"),
+                    PropertyName = "c",
+                    PropertyType = typeof(Array),
+                    PropertyValue = new string[] { "1", "2", "3" },
+                    SecurityTokenDescriptor = new SecurityTokenDescriptor
+                    {
+                        Claims = new Dictionary<string, object>
+                        {
+                            ["c"] = arrayInts
+                        }
+                    }
+                });
+
+                theoryData.Add(new GetPayloadValueTheoryData("NotSupportedIList")
+                {
+                    ExpectedException = ExpectedException.ArgumentException("IDX14305:"),
+                    PropertyName = "c",
+                    PropertyType = typeof(IList),
+                    PropertyValue = new string[] { "1", "2", "3" },
+                    SecurityTokenDescriptor = new SecurityTokenDescriptor
+                    {
+                        Claims = new Dictionary<string, object>
+                        {
+                            ["c"] = arrayInts
+                        }
+                    }
+                });
+
+                theoryData.Add(new GetPayloadValueTheoryData("NotSupportedICollection")
+                {
+                    ExpectedException = ExpectedException.ArgumentException("IDX14305:"),
+                    PropertyName = "c",
+                    PropertyType = typeof(ICollection),
+                    PropertyValue = new string[] { "1", "2", "3" },
+                    SecurityTokenDescriptor = new SecurityTokenDescriptor
+                    {
+                        Claims = new Dictionary<string, object>
+                        {
+                            ["c"] = arrayInts
+                        }
+                    }
+                });
+
+                theoryData.Add(new GetPayloadValueTheoryData("NotAbleToConvert")
+                {
+                    ExpectedException = ExpectedException.ArgumentException("IDX14305:"),
+                    PropertyName = "dic",
+                    PropertyType = typeof(Dictionary<string, string[]>),
+                    PropertyValue = new string[] { "1", "2", "3" },
+                    SecurityTokenDescriptor = new SecurityTokenDescriptor
+                    {
+                        Claims = new Dictionary<string, object>
+                        {
+                            ["dic"] = arrayInts
+                        }
+                    }
+                });
+
+                theoryData.Add(new GetPayloadValueTheoryData("NotAbleToConvertToInt")
+                {
+                    ExpectedException = ExpectedException.ArgumentException("IDX14305:"),
+                    PropertyName = "int",
+                    PropertyType = typeof(int),
+                    PropertyValue = "string",
+                    SecurityTokenDescriptor = new SecurityTokenDescriptor
+                    {
+                        Claims = new Dictionary<string, object>
+                        {
+                            ["int"] = "string"
+                        }
+                    }
+                });
+                return theoryData;
+            }
         }
 
         // Time values can be floats, ints, or strings.

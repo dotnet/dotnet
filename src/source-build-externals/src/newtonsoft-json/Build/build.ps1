@@ -1,7 +1,7 @@
 ﻿properties {
   $zipFileName = "Json130r3.zip"
   $majorVersion = "13.0"
-  $majorWithReleaseVersion = "13.0.1"
+  $majorWithReleaseVersion = "13.0.3"
   $nugetPrerelease = $null
   $version = GetVersion $majorWithReleaseVersion
   $packageId = "Newtonsoft.Json"
@@ -14,7 +14,7 @@
   $workingName = if ($workingName) {$workingName} else {"Working"}
   $assemblyVersion = if ($assemblyVersion) {$assemblyVersion} else {$majorVersion + '.0.0'}
   $netCliChannel = "Current"
-  $netCliVersion = "5.0.200"
+  $netCliVersion = "6.0.400"
   $nugetUrl = "https://dist.nuget.org/win-x86-commandline/latest/nuget.exe"
   $ensureNetCliSdk = $true
 
@@ -32,6 +32,7 @@
   $nunitConsolePath = "$buildDir\Temp\NUnit.ConsoleRunner.$nunitConsoleVersion"
 
   $builds = @(
+    @{Framework = "net6.0"; TestsFunction = "NetCliTests"; TestFramework = "net6.0"; Enabled=$true},
     @{Framework = "netstandard2.0"; TestsFunction = "NetCliTests"; TestFramework = "net5.0"; Enabled=$true},
     @{Framework = "netstandard1.3"; TestsFunction = "NetCliTests"; TestFramework = "netcoreapp3.1"; Enabled=$true},
     @{Framework = "netstandard1.0"; TestsFunction = "NetCliTests"; TestFramework = "netcoreapp2.1"; Enabled=$true},

@@ -32,7 +32,7 @@ namespace System.IdentityModel.Tokens.Jwt
         private const string _namespace = "http://schemas.xmlsoap.org/ws/2005/05/identity/claimproperties";
         private const string _className = "System.IdentityModel.Tokens.Jwt.JwtSecurityTokenHandler";
         private IDictionary<string, string> _outboundClaimTypeMap;
-        private IDictionary<string, string> _outboundAlgorithmMap = null;
+        private Dictionary<string, string> _outboundAlgorithmMap = null;
         private static string _shortClaimType = _namespace + "/ShortTypeName";
         private bool _mapInboundClaims = DefaultMapInboundClaims;
 
@@ -741,7 +741,7 @@ namespace System.IdentityModel.Tokens.Jwt
             }
         }
 
-        private IDictionary<string, object> OutboundClaimTypeTransform(IDictionary<string, object> claimCollection)
+        private Dictionary<string, object> OutboundClaimTypeTransform(IDictionary<string, object> claimCollection)
         {
             var claims = new Dictionary<string, object>();
 

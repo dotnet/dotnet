@@ -157,10 +157,10 @@ namespace Microsoft.IdentityModel.JsonWebTokens
     }
 
     /// <summary>
-    /// Parameter names for JsonWebToken  registered claim names in UTF8 bytes.
+    /// Parameter names for JsonWebToken registered claim names in UTF8 bytes.
     /// Used by UTF8JsonReader/Writer for performance gains.
     /// </summary>
-    internal readonly struct JwtRegisteredClaimNamesUtf8Bytes
+    internal readonly struct JwtPayloadUtf8Bytes
     {
         // Please keep in alphabetical order
 

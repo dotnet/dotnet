@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Security.Claims;
 using System.Text;
+using System.Threading;
 using Microsoft.IdentityModel.Logging;
 using Microsoft.IdentityModel.Tokens;
 
@@ -13,36 +14,50 @@ namespace Microsoft.IdentityModel.JsonWebTokens
     /// <summary>
     /// A <see cref="SecurityToken"/> designed for representing a JSON Web Token (JWT). 
     /// </summary>
-    public class JsonWebToken : SecurityToken
+    public partial class JsonWebToken : SecurityToken
     {
-        internal object _audiencesLock = new();
+        internal const string ClassName = "Microsoft.IdentityModel.JsonWebTokens.JsonWebToken";
+
         private ClaimsIdentity _claimsIdentity;
         private bool _wasClaimsIdentitySet;
 
-        // When System.Text.Json reads a value from the JsonDocument a new string will be created.
-        // Some of the common values are cached in local variables.
         private string _act;
-        private string _alg;
-        private IList<string> _audiences;
         private string _authenticationTag;
         private string _ciphertext;
-        private string _cty;
-        private string _enc;
         private string _encodedHeader;
         private string _encodedPayload;
         private string _encodedSignature;
         private string _encryptedKey;
-        private DateTime? _iat;
-        private string _id;
         private string _initializationVector;
-        private string _iss;
-        private string _kid;
-        private string _sub;
-        private string _typ;
-        private DateTime? _validFrom;
-        private DateTime? _validTo;
-        private string _x5t;
-        private string _zip;
+        private List<string> _audiences;
+
+        #region properties relating to the header
+        // when constructing a JWT, these properties, when found, will be set
+        internal string _alg;
+        internal string _cty;
+        internal string _enc;
+        internal string _kid;
+        internal string _typ;
+        internal string _x5t;
+        internal string _zip;
+        #endregion
+
+        #region properties relating to the payload
+        // when constructing a JWT, these properties, when found, will be set
+        internal string _azp;
+        internal long? _exp;
+        internal DateTime? _expDateTime;
+        internal long? _iat;
+        internal DateTime? _iatDateTime;
+        internal string _id;
+        internal string _iss;
+        internal string _jti;
+        internal string _sub;
+        internal long? _nbf;
+        internal DateTime? _nbfDateTime;
+        internal DateTime? _validFrom;
+        internal DateTime? _validTo;
+        #endregion
 
         /// <summary>
         /// Initializes a new instance of <see cref="JsonWebToken"/> from a string in JWS or JWE Compact serialized format.
@@ -114,9 +129,7 @@ namespace Microsoft.IdentityModel.JsonWebTokens
         {
             get
             {
-                if (_authenticationTag == null)
-                    _authenticationTag = AuthenticationTagBytes == null ? string.Empty : UTF8Encoding.UTF8.GetString(AuthenticationTagBytes);
-
+                _authenticationTag ??= AuthenticationTagBytes == null ? string.Empty : UTF8Encoding.UTF8.GetString(AuthenticationTagBytes);
                 return _authenticationTag;
             }
         }
@@ -144,9 +157,7 @@ namespace Microsoft.IdentityModel.JsonWebTokens
         {
             get
             {
-                if (_ciphertext == null)
-                    _ciphertext = CipherTextBytes == null ? string.Empty : UTF8Encoding.UTF8.GetString(CipherTextBytes);
-
+                _ciphertext ??= CipherTextBytes == null ? string.Empty : UTF8Encoding.UTF8.GetString(CipherTextBytes);
                 return _ciphertext;
             }
         }
@@ -158,61 +169,6 @@ namespace Microsoft.IdentityModel.JsonWebTokens
         {
             get;
             set;
-        }
-
-        internal ClaimsIdentity ClaimsIdentity
-        {
-            get
-            {
-                if (!_wasClaimsIdentitySet)
-                {
-                    _wasClaimsIdentitySet = true;
-                    string actualIssuer = ActualIssuer ?? Issuer;
-
-                    foreach (Claim claim in Claims)
-                    {
-                        string claimType = claim.Type;
-                        if (claimType == ClaimTypes.Actor)
-                        {
-                            if (_claimsIdentity.Actor != null)
-                                throw LogHelper.LogExceptionMessage(new InvalidOperationException(LogHelper.FormatInvariant(LogMessages.IDX14112, LogHelper.MarkAsNonPII(JwtRegisteredClaimNames.Actort), claim.Value)));
-
-#pragma warning disable CA1031 // Do not catch general exception types
-                            try
-                            {
-                                JsonWebToken actorToken = new JsonWebToken(claim.Value);
-                                _claimsIdentity.Actor = ActorClaimsIdentity;
-                            }
-                            catch
-                            {
-
-                            }
-#pragma warning restore CA1031 // Do not catch general exception types
-                        }
-
-                        if (claim.Properties.Count == 0)
-                        {
-                            _claimsIdentity.AddClaim(new Claim(claimType, claim.Value, claim.ValueType, actualIssuer, actualIssuer, _claimsIdentity));
-                        }
-                        else
-                        {
-                            Claim newClaim = new Claim(claimType, claim.Value, claim.ValueType, actualIssuer, actualIssuer, _claimsIdentity);
-
-                            foreach (var kv in claim.Properties)
-                                newClaim.Properties[kv.Key] = kv.Value;
-
-                            _claimsIdentity.AddClaim(newClaim);
-                        }
-                    }
-                }
-
-                return _claimsIdentity;
-            }
-
-            set
-            {
-                _claimsIdentity = value;
-            }
         }
 
         internal int Dot1 { get; set; }
@@ -322,11 +278,6 @@ namespace Microsoft.IdentityModel.JsonWebTokens
         /// </remarks>
         public string EncodedToken { get; private set; }
 
-        internal bool HasPayloadClaim(string claimName)
-        {
-            return Payload.HasClaim(claimName);
-        }
-
         internal JsonClaimSet Header { get; set; }
 
         internal byte[] HeaderAsciiBytes { get; set; }
@@ -402,7 +353,7 @@ namespace Microsoft.IdentityModel.JsonWebTokens
         /// <exception cref="SecurityTokenMalformedException">if <paramref name="encodedJson"/> is malformed, a valid JWT should have either 2 dots (JWS) or 4 dots (JWE).</exception>
         /// <exception cref="SecurityTokenMalformedException">if <paramref name="encodedJson"/> does not have an non-empty authentication tag after the 4th dot for a JWE.</exception>
         /// <exception cref="SecurityTokenMalformedException">if <paramref name="encodedJson"/> has more than 4 dots.</exception>
-        private void ReadToken(string encodedJson)
+        internal void ReadToken(string encodedJson)
         {
             // JWT must have 2 dots
             Dot1 = encodedJson.IndexOf('.');
@@ -427,7 +378,7 @@ namespace Microsoft.IdentityModel.JsonWebTokens
                 IsSigned = !(Dot2 + 1 == encodedJson.Length);
                 try
                 {
-                    Header = new JsonClaimSet(JwtTokenUtilities.ParseJsonBytes(encodedJson, 0, Dot1));
+                    Header = CreateClaimSet(encodedJson, 0, Dot1, CreateHeaderClaimSet);
                 }
                 catch (Exception ex)
                 {
@@ -436,7 +387,7 @@ namespace Microsoft.IdentityModel.JsonWebTokens
 
                 try
                 {
-                    Payload = new JsonClaimSet(JwtTokenUtilities.ParseJsonBytes(encodedJson, Dot1 + 1, Dot2 - Dot1 - 1));
+                    Payload = CreateClaimSet(encodedJson, Dot1 + 1, Dot2 - Dot1 - 1, CreatePayloadClaimSet);
                 }
                 catch (Exception ex)
                 {
@@ -448,7 +399,7 @@ namespace Microsoft.IdentityModel.JsonWebTokens
                 // JWE: https://www.rfc-editor.org/rfc/rfc7516
                 // Format: https://www.rfc-editor.org/rfc/rfc7516#page-8
                 // empty payload for JWE's {encrypted tokens}.
-                Payload = JsonClaimSet.Empty;
+                Payload = new JsonClaimSet();
 
                 if (Dot3 == encodedJson.Length)
                     throw LogHelper.LogExceptionMessage(new ArgumentException(LogHelper.FormatInvariant(LogMessages.IDX14121, encodedJson)));
@@ -491,7 +442,7 @@ namespace Microsoft.IdentityModel.JsonWebTokens
 
                 try
                 {
-                    Header = new JsonClaimSet(Base64UrlEncoder.UnsafeDecode(hChars));
+                    Header = CreateHeaderClaimSet(Base64UrlEncoder.UnsafeDecode(hChars));
                 }
                 catch (Exception ex)
                 {
@@ -553,85 +504,24 @@ namespace Microsoft.IdentityModel.JsonWebTokens
             EncodedToken = encodedJson;
         }
 
+        internal static JsonClaimSet CreateClaimSet(string rawString, int startIndex, int length, Func<byte[], int, JsonClaimSet> action)
+        {
+            return Base64UrlEncoding.Decode(rawString, startIndex, length, action);
+        }
+
+        /// <summary>
+        /// Returns the encoded token without signature or authentication tag.
+        /// </summary>
+        /// <returns>Encoded token string without signature or authentication tag.</returns>
+        public override string ToString()
+        {
+            return EncodedToken.Substring(0, EncodedToken.LastIndexOf("."));
+        }
+
         /// <inheritdoc/>
         public override string UnsafeToString() => EncodedToken;
 
-        #region Claims
-        /// <summary>
-        /// Gets the 'value' of the 'actort' claim the payload.
-        /// </summary>
-        /// <remarks>
-        /// If the 'actort' claim is not found, an empty string is returned.
-        /// </remarks>
-        public string Actor
-        {
-            get
-            {
-                if (_act == null)
-                    _act = Payload.GetStringValue(JwtRegisteredClaimNames.Actort);
-
-                return _act;
-            }
-        }
-
-        /// <summary>
-        /// Gets the 'value' of the 'alg' claim from the header.
-        /// </summary>
-        /// <remarks>
-        /// Identifies the cryptographic algorithm used to encrypt or determine the value of the Content Encryption Key.
-        /// Applicable to an encrypted JWT {JWE}.
-        /// see: https://datatracker.ietf.org/doc/html/rfc7516#section-4-1-1
-        /// <para>
-        /// If the 'alg' claim is not found, an empty string is returned.
-        /// </para>
-        /// </remarks>
-        public string Alg
-        {
-            get
-            {
-                if (_alg == null)
-                    _alg = Header.GetStringValue(JwtHeaderParameterNames.Alg);
-
-                return _alg;
-            }
-        }
-
-        /// <summary>
-        /// Gets the list of 'aud' claims from the payload.
-        /// </summary>
-        /// <remarks>
-        /// Identifies the recipients that the JWT is intended for.
-        /// see: https://datatracker.ietf.org/doc/html/rfc7519#section-4-1-3
-        /// <para>
-        /// If the 'aud' claim is not found, enumeration will be empty.
-        /// </para>
-        /// </remarks>
-        public IEnumerable<string> Audiences
-        {
-            get
-            {
-                if (_audiences == null)
-                {
-                    lock (_audiencesLock)
-                    {
-                        if (_audiences == null)
-                        {
-                            List<string> tmp = new List<string>();
-                            if (Payload.TryGetValue(JwtRegisteredClaimNames.Aud, out IList<string> audiences))
-                            {
-                                foreach (string str in audiences)
-                                    tmp.Add(str);
-                            }
-
-                            _audiences = tmp;
-                        }
-                    }
-                }
-
-                return _audiences;
-            }
-        }
-
+        #region System.Security.Claims.Claim methods
         /// <summary>
         /// Gets a <see cref="IEnumerable{Claim}"/> where each claim in the JWT { name, value } is returned as a <see cref="Claim"/>.
         /// </summary>
@@ -648,47 +538,6 @@ namespace Microsoft.IdentityModel.JsonWebTokens
         }
 
         /// <summary>
-        /// Gets the 'value' of the 'cty' claim from the header.
-        /// </summary>
-        /// <remarks>
-        /// Used by JWS applications to declare the media type[IANA.MediaTypes] of the secured content (the payload).
-        /// see: https://datatracker.ietf.org/doc/html/rfc7516#section-4.1.12 (JWE)
-        /// see: https://datatracker.ietf.org/doc/html/rfc7515#section-4.1.10 (JWS)
-        /// <para>
-        /// If the 'cty' claim is not found, an empty string is returned.
-        /// </para>
-        /// </remarks>
-        public string Cty
-        {
-            get
-            {
-                if (_cty == null)
-                    _cty = Header.GetStringValue(JwtHeaderParameterNames.Cty);
-
-                return _cty;
-            }
-        }
-
-        /// <summary>
-        /// Gets the 'value' of the 'enc' claim from the header.
-        /// </summary>
-        /// <remarks>
-        /// Identifies the content encryption algorithm used to perform authenticated encryption
-        /// on the plaintext to produce the ciphertext and the Authentication Tag.
-        /// see: https://datatracker.ietf.org/doc/html/rfc7516#section-4.1.2
-        /// </remarks>
-        public string Enc
-        {
-            get
-            {
-                if (_enc == null)
-                    _enc = Header.GetStringValue(JwtHeaderParameterNames.Enc);
-
-                return _enc;
-            }
-        }
-
-        /// <summary>
         /// Gets a <see cref="Claim"/> representing the { key, 'value' } pair corresponding to the provided <paramref name="key"/>.
         /// </summary>
         /// <remarks>
@@ -701,6 +550,82 @@ namespace Microsoft.IdentityModel.JsonWebTokens
         public Claim GetClaim(string key)
         {
             return Payload.GetClaim(key, Issuer ?? ClaimsIdentity.DefaultIssuer);
+        }
+
+        internal ClaimsIdentity ClaimsIdentity
+        {
+            get
+            {
+                if (!_wasClaimsIdentitySet)
+                {
+                    _wasClaimsIdentitySet = true;
+                    string actualIssuer = ActualIssuer ?? Issuer;
+
+                    foreach (Claim claim in Claims)
+                    {
+                        string claimType = claim.Type;
+                        if (claimType == ClaimTypes.Actor)
+                        {
+                            if (_claimsIdentity.Actor != null)
+                                throw LogHelper.LogExceptionMessage(new InvalidOperationException(LogHelper.FormatInvariant(LogMessages.IDX14112, LogHelper.MarkAsNonPII(JwtRegisteredClaimNames.Actort), claim.Value)));
+
+#pragma warning disable CA1031 // Do not catch general exception types
+                            try
+                            {
+                                JsonWebToken actorToken = new JsonWebToken(claim.Value);
+                                _claimsIdentity.Actor = ActorClaimsIdentity;
+                            }
+                            catch
+                            {
+
+                            }
+#pragma warning restore CA1031 // Do not catch general exception types
+                        }
+
+                        if (claim.Properties.Count == 0)
+                        {
+                            _claimsIdentity.AddClaim(new Claim(claimType, claim.Value, claim.ValueType, actualIssuer, actualIssuer, _claimsIdentity));
+                        }
+                        else
+                        {
+                            Claim newClaim = new Claim(claimType, claim.Value, claim.ValueType, actualIssuer, actualIssuer, _claimsIdentity);
+
+                            foreach (var kv in claim.Properties)
+                                newClaim.Properties[kv.Key] = kv.Value;
+
+                            _claimsIdentity.AddClaim(newClaim);
+                        }
+                    }
+                }
+
+                return _claimsIdentity;
+            }
+
+            set
+            {
+                _claimsIdentity = value;
+            }
+        }
+
+        /// <summary>
+        /// Try to get a <see cref="Claim"/> representing the { key, 'value' } pair corresponding to the provided <paramref name="key"/>.
+        /// The value is obtained from the Payload.
+        /// </summary>
+        /// <remarks>
+        /// A <see cref="Claim"/> requires each value to be represented as a string. If the value was not a string, then <see cref="Claim.Type"/> contains the json type.
+        /// <see cref="JsonClaimValueTypes"/> and <see cref="ClaimValueTypes"/> to determine the json type.
+        /// </remarks>
+        /// <returns>true if successful, false otherwise.</returns>
+        public bool TryGetClaim(string key, out Claim value)
+        {
+            return Payload.TryGetClaim(key, Issuer ?? ClaimsIdentity.DefaultIssuer, out value);
+        }
+        #endregion
+
+        #region Get Claims from the JWT Header and Payload
+        internal bool HasPayloadClaim(string claimName)
+        {
+            return Payload.HasClaim(claimName);
         }
 
         /// <summary>
@@ -743,139 +668,10 @@ namespace Microsoft.IdentityModel.JsonWebTokens
         }
 
         /// <summary>
-        /// Gets the 'value' of the 'jti' claim from the payload.
+        /// Tries to get the claim from the JWT payload.
         /// </summary>
         /// <remarks>
-        /// Provides a unique identifier for the JWT.
-        /// see: https://datatracker.ietf.org/doc/html/rfc7519#section-4.1.7
-        /// <para>
-        /// If the 'jti' claim is not found, an empty string is returned.
-        /// </para>
-        /// </remarks>
-        public override string Id
-        {
-            get
-            {
-                if (_id == null)
-                    _id = Payload.GetStringValue(JwtRegisteredClaimNames.Jti);
-
-                return _id;
-            }
-        }
-
-        /// <summary>
-        /// Gets the 'value' of the 'iat' claim converted to a <see cref="DateTime"/> from the payload.
-        /// </summary>
-        /// <remarks>
-        /// Identifies the time at which the JWT was issued.
-        /// see: https://datatracker.ietf.org/doc/html/rfc7519#section-4.1.6
-        /// <para>
-        /// If the 'iat' claim is not found, then <see cref="DateTime.MinValue"/> is returned.
-        /// </para>
-        /// </remarks>
-        public DateTime IssuedAt
-        {
-            get
-            {
-                if (_iat == null)
-                    _iat = Payload.GetDateTime(JwtRegisteredClaimNames.Iat);
-
-                return _iat.Value;
-            }
-        }
-
-        /// <summary>
-        /// Gets the 'value' of the 'iss' claim from the payload.
-        /// </summary>
-        /// <remarks>
-        /// Identifies the principal that issued the JWT.
-        /// see: https://datatracker.ietf.org/doc/html/rfc7519#section-4.1.1
-        /// <para>
-        /// If the 'iss' claim is not found, an empty string is returned.
-        /// </para>
-        /// </remarks>
-        public override string Issuer
-        {
-            get
-            {
-                if (_iss == null)
-                    _iss = Payload.GetStringValue(JwtRegisteredClaimNames.Iss);
-
-                return _iss;
-            }
-        }
-
-        /// <summary>
-        /// Gets the 'value' of the 'kid' claim from the header.
-        /// </summary>
-        /// <remarks>
-        /// 'kid'is a hint indicating which key was used to secure the JWS.
-        /// see: https://datatracker.ietf.org/doc/html/rfc7515#section-4.1.4 (JWS)
-        /// see: https://datatracker.ietf.org/doc/html/rfc7516#section-4.1.6 (JWE)
-        /// <para>
-        /// If the 'kid' claim is not found, an empty string is returned.
-        /// </para>
-        /// </remarks>
-        public string Kid
-        {
-            get
-            {
-                if (_kid == null)
-                    _kid = Header.GetStringValue(JwtHeaderParameterNames.Kid);
-
-                return _kid;
-            }
-        }
-
-        /// <summary>
-        /// Gets the 'value' of the 'sub' claim from the payload.
-        /// </summary>
-        /// <remarks>
-        /// see: https://datatracker.ietf.org/doc/html/rfc7519#section-4.1.2
-        /// Identifies the principal that is the subject of the JWT.
-        /// <para>
-        /// If the 'sub' claim is not found, an empty string is returned.
-        /// </para>
-        /// </remarks>
-        public string Subject
-        {
-            get
-            {
-                if (_sub == null)
-                    _sub = Payload.GetStringValue(JwtRegisteredClaimNames.Sub);
-
-                return _sub;
-            }
-        }
-
-        /// <summary>
-        /// Returns the encoded token without signature or authentication tag.
-        /// </summary>
-        /// <returns>Encoded token string without signature or authentication tag.</returns>
-        public override string ToString()
-        {
-            return EncodedToken.Substring(0, EncodedToken.LastIndexOf("."));
-        }
-
-        /// <summary>
-        /// Try to get a <see cref="Claim"/> representing the { key, 'value' } pair corresponding to the provided <paramref name="key"/>.
-        /// The value is obtained from the Payload.
-        /// </summary>
-        /// <remarks>
-        /// A <see cref="Claim"/> requires each value to be represented as a string. If the value was not a string, then <see cref="Claim.Type"/> contains the json type.
-        /// <see cref="JsonClaimValueTypes"/> and <see cref="ClaimValueTypes"/> to determine the json type.
-        /// </remarks>
-        /// <returns>true if successful, false otherwise.</returns>
-        public bool TryGetClaim(string key, out Claim value)
-        {
-            return Payload.TryGetClaim(key, Issuer ?? ClaimsIdentity.DefaultIssuer, out value);
-        }
-
-        /// <summary>
-        /// Tries to get the value
-        /// </summary>
-        /// <remarks>
-        /// The expectation is that the 'value' corresponds to a type expected in a JWT token.
+        /// The 'value' a type T if possible.
         /// </remarks>
         /// <returns>true if successful, false otherwise.</returns>
         public bool TryGetValue<T>(string key, out T value)
@@ -935,6 +731,85 @@ namespace Microsoft.IdentityModel.JsonWebTokens
 
             return Payload.TryGetValue(key, out value);
         }
+        #endregion
+
+        #region Header Properties
+        /// <summary>
+        /// Gets the 'value' of the 'alg' claim from the header.
+        /// </summary>
+        /// <remarks>
+        /// Identifies the cryptographic algorithm used to encrypt or determine the value of the Content Encryption Key.
+        /// Applicable to an encrypted JWT {JWE}.
+        /// see: https://datatracker.ietf.org/doc/html/rfc7516#section-4-1-1
+        /// <para>
+        /// If the 'alg' claim is not found, an empty string is returned.
+        /// </para>
+        /// </remarks>
+        public string Alg
+        {
+            get
+            {
+                _alg ??= Header.GetStringValue(JwtHeaderParameterNames.Alg);
+                return _alg;
+            }
+        }
+
+        /// <summary>
+        /// Gets the 'value' of the 'cty' claim from the header.
+        /// </summary>
+        /// <remarks>
+        /// Used by JWS applications to declare the media type[IANA.MediaTypes] of the secured content (the payload).
+        /// see: https://datatracker.ietf.org/doc/html/rfc7516#section-4.1.12 (JWE)
+        /// see: https://datatracker.ietf.org/doc/html/rfc7515#section-4.1.10 (JWS)
+        /// <para>
+        /// If the 'cty' claim is not found, an empty string is returned.
+        /// </para>
+        /// </remarks>
+        public string Cty
+        {
+            get
+            {
+                _cty ??= Header.GetStringValue(JwtHeaderParameterNames.Cty);
+                return _cty;
+            }
+        }
+
+        /// <summary>
+        /// Gets the 'value' of the 'enc' claim from the header.
+        /// </summary>
+        /// <remarks>
+        /// Identifies the content encryption algorithm used to perform authenticated encryption
+        /// on the plaintext to produce the ciphertext and the Authentication Tag.
+        /// see: https://datatracker.ietf.org/doc/html/rfc7516#section-4.1.2
+        /// </remarks>
+        public string Enc
+        {
+            get
+            {
+                _enc ??= Header.GetStringValue(JwtHeaderParameterNames.Enc);
+                return _enc;
+            }
+        }
+
+        /// <summary>
+        /// Gets the 'value' of the 'kid' claim from the header.
+        /// </summary>
+        /// <remarks>
+        /// 'kid'is a hint indicating which key was used to secure the JWS.
+        /// see: https://datatracker.ietf.org/doc/html/rfc7515#section-4.1.4 (JWS)
+        /// see: https://datatracker.ietf.org/doc/html/rfc7516#section-4.1.6 (JWE)
+        /// <para>
+        /// If the 'kid' claim is not found, an empty string is returned.
+        /// </para>
+        /// </remarks>
+        public string Kid
+        {
+            get
+            {
+                _kid ??= Header.GetStringValue(JwtHeaderParameterNames.Kid);
+                return _kid;
+            }
+        }
 
         /// <summary>
         /// Gets the 'value' of the 'typ' claim from the header.
@@ -950,11 +825,11 @@ namespace Microsoft.IdentityModel.JsonWebTokens
         {
             get
             {
-                if (_typ == null)
-                    _typ = Header.GetStringValue(JwtHeaderParameterNames.Typ);
-
+                _typ ??= Header.GetStringValue(JwtHeaderParameterNames.Typ);
                 return _typ;
             }
+
+            internal set => _typ = value;
         }
 
         /// <summary>
@@ -971,52 +846,8 @@ namespace Microsoft.IdentityModel.JsonWebTokens
         {
             get
             {
-                if (_x5t == null)
-                    _x5t = Header.GetStringValue(JwtHeaderParameterNames.X5t);
-
+                _x5t ??= Header.GetStringValue(JwtHeaderParameterNames.X5t);
                 return _x5t;
-            }
-        }
-
-        /// <summary>
-        /// Gets the 'value' of the 'nbf' claim converted to a <see cref="DateTime"/> from the payload.
-        /// </summary>
-        /// <remarks>
-        /// Identifies the time before which the JWT MUST NOT be accepted for processing.
-        /// see: https://datatracker.ietf.org/doc/html/rfc7519#section-4.1.5
-        /// <para>
-        /// If the 'nbf' claim is not found, then <see cref="DateTime.MinValue"/> is returned.
-        /// </para>
-        /// </remarks>
-        public override DateTime ValidFrom
-        {
-            get
-            {
-                if (_validFrom == null)
-                    _validFrom = Payload.GetDateTime(JwtRegisteredClaimNames.Nbf);
-
-                return _validFrom.Value;
-            }
-        }
-
-        /// <summary>
-        /// Gets the 'value' of the 'exp' claim converted to a <see cref="DateTime"/> from the payload.
-        /// </summary>
-        /// <remarks>
-        /// Identifies the expiration time on or after which the JWT MUST NOT be accepted for processing.
-        /// see: https://datatracker.ietf.org/doc/html/rfc7519#section-4.1.4
-        /// <para>
-        /// If the 'exp' claim is not found, then <see cref="DateTime.MinValue"/> is returned.
-        /// </para>
-        /// </remarks>
-        public override DateTime ValidTo
-        {
-            get
-            {
-                if (_validTo == null)
-                    _validTo = Payload.GetDateTime(JwtRegisteredClaimNames.Exp);
-
-                return _validTo.Value;
             }
         }
 
@@ -1034,13 +865,199 @@ namespace Microsoft.IdentityModel.JsonWebTokens
         {
             get
             {
-                if (_zip == null)
-                    _zip = Header.GetStringValue(JwtHeaderParameterNames.Zip);
-
+                _zip ??= Header.GetStringValue(JwtHeaderParameterNames.Zip);
                 return _zip;
             }
         }
+        #endregion
 
-#endregion
+        #region Payload Properties
+        /// <summary>
+        /// Gets the 'value' of the 'actort' claim the payload.
+        /// </summary>
+        /// <remarks>
+        /// If the 'actort' claim is not found, an empty string is returned.
+        /// </remarks>
+        public string Actor
+            {
+                get
+                {
+                    _act ??= Payload.GetStringValue(JwtRegisteredClaimNames.Actort);
+                    return _act;
+                }
+            }
+
+        /// <summary>
+        /// Gets the list of 'aud' claims from the payload.
+        /// </summary>
+        /// <remarks>
+        /// Identifies the recipients that the JWT is intended for.
+        /// see: https://datatracker.ietf.org/doc/html/rfc7519#section-4-1-3
+        /// <para>
+        /// If the 'aud' claim is not found, enumeration will be empty.
+        /// </para>
+        /// </remarks>
+        public IEnumerable<string> Audiences
+        {
+            get
+            {
+                if (_audiences == null)
+                {
+                    List<string> tmp = TryGetValue(JwtRegisteredClaimNames.Aud, out List<string> audiences) ? audiences : new List<string>();
+                    Interlocked.CompareExchange(ref _audiences, tmp, null);
+                }
+
+                return _audiences;
+            }
+        }
+
+        /// <summary>
+        /// Gets the 'azp' claim from the payload.
+        /// </summary>
+        /// <remarks>
+        /// Identifies the authorized party for the id_token.
+        /// see: https://openid.net/specs/openid-connect-core-1_0.html
+        /// </remarks>
+        public string Azp
+        {
+            get
+            {
+                _azp ??= Payload.GetStringValue(JwtRegisteredClaimNames.Azp);
+                return _azp;
+            }
+        }
+
+        /// <summary>
+        /// Gets the 'value' of the 'iat' claim converted to a <see cref="DateTime"/> from the payload.
+        /// </summary>
+        /// <remarks>
+        /// Identifies the time at which the JWT was issued.
+        /// see: https://datatracker.ietf.org/doc/html/rfc7519#section-4.1.6
+        /// <para>
+        /// If the 'iat' claim is not found, then <see cref="DateTime.MinValue"/> is returned.
+        /// </para>
+        /// </remarks>
+        public DateTime IssuedAt
+        {
+            get
+            {
+                _iatDateTime ??= Payload.GetDateTime(JwtRegisteredClaimNames.Iat);
+                return _iatDateTime.Value;
+            }
+        }
+
+        /// <summary>
+        /// Gets the 'value' of the 'iss' claim from the payload.
+        /// </summary>
+        /// <remarks>
+        /// Identifies the principal that issued the JWT.
+        /// see: https://datatracker.ietf.org/doc/html/rfc7519#section-4.1.1
+        /// <para>
+        /// If the 'iss' claim is not found, an empty string is returned.
+        /// </para>
+        /// </remarks>
+        public override string Issuer
+        {
+            get
+            {
+                _iss ??= Payload.GetStringValue(JwtRegisteredClaimNames.Iss);
+                return _iss;
+            }
+        }
+
+        /// <summary>
+        /// Gets the 'value' of the 'jti' claim from the payload.
+        /// </summary>
+        /// <remarks>
+        /// Provides a unique identifier for the JWT.
+        /// see: https://datatracker.ietf.org/doc/html/rfc7519#section-4.1.7
+        /// <para>
+        /// If the 'jti' claim is not found, an empty string is returned.
+        /// </para>
+        /// </remarks>
+        public override string Id
+        {
+            get
+            {
+                _jti ??= Payload.GetStringValue(JwtRegisteredClaimNames.Jti);
+                return _jti;
+            }
+        }
+
+        /// <summary>
+        /// Gets the 'value' of the 'sub' claim from the payload.
+        /// </summary>
+        /// <remarks>
+        /// see: https://datatracker.ietf.org/doc/html/rfc7519#section-4.1.2
+        /// Identifies the principal that is the subject of the JWT.
+        /// <para>
+        /// If the 'sub' claim is not found, an empty string is returned.
+        /// </para>
+        /// </remarks>
+        public string Subject
+        {
+            get
+            {
+                _sub ??= Payload.GetStringValue(JwtRegisteredClaimNames.Sub);
+                return _sub;
+            }
+        }
+
+        /// <summary>
+        /// Gets the 'value' of the 'nbf' claim converted to a <see cref="DateTime"/> from the payload.
+        /// </summary>
+        /// <remarks>
+        /// Identifies the time before which the JWT MUST NOT be accepted for processing.
+        /// see: https://datatracker.ietf.org/doc/html/rfc7519#section-4.1.5
+        /// <para>
+        /// If the 'nbf' claim is not found, then <see cref="DateTime.MinValue"/> is returned.
+        /// </para>
+        /// </remarks>
+        public override DateTime ValidFrom
+        {
+            get
+            {
+                _validFrom ??= Payload.GetDateTime(JwtRegisteredClaimNames.Nbf);
+                return _validFrom.Value;
+            }
+        }
+
+        internal DateTime? ValidFromNullable
+        {
+            get
+            {
+                _validFrom ??= Payload.GetDateTime(JwtRegisteredClaimNames.Nbf);
+                return _validFrom;
+            }
+        }
+
+        /// <summary>
+        /// Gets the 'value' of the 'exp' claim converted to a <see cref="DateTime"/> from the payload.
+        /// </summary>
+        /// <remarks>
+        /// Identifies the expiration time on or after which the JWT MUST NOT be accepted for processing.
+        /// see: https://datatracker.ietf.org/doc/html/rfc7519#section-4.1.4
+        /// <para>
+        /// If the 'exp' claim is not found, then <see cref="DateTime.MinValue"/> is returned.
+        /// </para>
+        /// </remarks>
+        public override DateTime ValidTo
+        {
+            get
+            {
+                _validTo ??= Payload.GetDateTime(JwtRegisteredClaimNames.Exp);
+                return _validTo.Value;
+            }
+        }
+
+        internal DateTime? ValidToNullable
+        {
+            get
+            {
+                _validTo ??= Payload.GetDateTime(JwtRegisteredClaimNames.Exp);
+                return _validTo;
+            }
+        }
+        #endregion
     }
 }

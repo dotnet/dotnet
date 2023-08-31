@@ -20,6 +20,40 @@ namespace System.IdentityModel.Tokens.Jwt.Tests
     public class JwtSecurityTokenHandlerTests
     {
 
+        [Fact]
+        public void JwtSecurityTokenHandler_CreateToken_SameTypeMultipleValues()
+        {
+            var identity = new ClaimsIdentity("Test");
+
+            var claimValues = new List<string> { "value1", "value2", "value3", "value4" };
+
+            foreach (var value in claimValues)
+                identity.AddClaim(new Claim("a", value));
+
+            var descriptor = new SecurityTokenDescriptor
+            {
+                SigningCredentials = new SigningCredentials(Default.AsymmetricSigningKey, SecurityAlgorithms.RsaSsaPssSha256),
+                Subject = identity
+            };
+
+            var handler = new JwtSecurityTokenHandler();
+
+            var jwt = (JwtSecurityToken)handler.CreateToken(descriptor);
+
+            var claims = jwt.Claims.ToList();
+
+            int defaultClaimsCount = 3;
+
+            Assert.Equal(defaultClaimsCount + claimValues.Count, claims.Count);
+
+            var aTypeClaims = claims.Where(c => c.Type == "a").ToList();
+
+            Assert.Equal(4, aTypeClaims.Count);
+
+            foreach (var value in claimValues)
+                Assert.NotNull(aTypeClaims.SingleOrDefault(c => c.Value == value));
+        }
+
         [Theory, MemberData(nameof(CreateJWEWithPayloadStringTheoryData))]
         public void CreateJWEWithAdditionalHeaderClaims(CreateTokenTheoryData theoryData)
         {
@@ -237,7 +271,7 @@ namespace System.IdentityModel.Tokens.Jwt.Tests
                 string jweFromJsonHandler = theoryData.JsonWebTokenHandler.CreateToken(theoryData.TokenDescriptor);
 
                 var claimsPrincipalJwt = theoryData.JwtSecurityTokenHandler.ValidateToken(tokenFromTokenDescriptor, theoryData.ValidationParameters, out SecurityToken validatedTokenFromJwtHandler);
-                var validationResultJson = theoryData.JsonWebTokenHandler.ValidateToken(jweFromJsonHandler, theoryData.ValidationParameters);
+                var validationResultJson = theoryData.JsonWebTokenHandler.ValidateTokenAsync(jweFromJsonHandler, theoryData.ValidationParameters).Result;
 
                 if (validationResultJson.Exception != null && validationResultJson.IsValid)
                     context.Diffs.Add("validationResultJson.IsValid, validationResultJson.Exception != null");
@@ -245,7 +279,7 @@ namespace System.IdentityModel.Tokens.Jwt.Tests
                 IdentityComparer.AreEqual(validationResultJson.IsValid, theoryData.IsValid, context);
 
                 var validatedTokenFromJsonHandler = validationResultJson.SecurityToken;
-                var validationResult2 = theoryData.JsonWebTokenHandler.ValidateToken(tokenFromTokenDescriptor, theoryData.ValidationParameters);
+                var validationResult2 = theoryData.JsonWebTokenHandler.ValidateTokenAsync(tokenFromTokenDescriptor, theoryData.ValidationParameters).Result;
 
                 if (validationResult2.Exception != null && validationResult2.IsValid)
                 {

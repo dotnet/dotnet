@@ -94,7 +94,7 @@ namespace Microsoft.IdentityModel.Tokens
         /// Gets all valid last known good configurations.
         /// </summary>
         /// <returns>A collection of all valid last known good configurations.</returns>
-        internal ICollection<BaseConfiguration> GetValidLkgConfigurations()
+        internal BaseConfiguration[] GetValidLkgConfigurations()
         {
             return _lastKnownGoodConfigurationCache.ToArray().Where(x => x.Value.Value > DateTime.UtcNow).Select(x => x.Key).ToArray();
         }
