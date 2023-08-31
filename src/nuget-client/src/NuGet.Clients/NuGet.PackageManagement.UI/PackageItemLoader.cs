@@ -33,6 +33,7 @@ namespace NuGet.PackageManagement.UI
         private readonly IReadOnlyCollection<PackageSourceContextInfo> _packageSources;
         private readonly ContractItemFilter _itemFilter;
         private readonly bool _useRecommender;
+        private readonly IPackageVulnerabilityService _packageVulnerabilityService;
         private PackageCollection _installedPackages;
         private IEnumerable<IPackageReferenceContextInfo> _packageReferences;
         private PackageFeedSearchState _state = new PackageFeedSearchState();
@@ -52,7 +53,8 @@ namespace NuGet.PackageManagement.UI
             ContractItemFilter itemFilter,
             string searchText,
             bool includePrerelease,
-            bool useRecommender)
+            bool useRecommender,
+            IPackageVulnerabilityService vulnerabilityService = default)
         {
             Assumes.NotNull(serviceBroker);
             Assumes.NotNull(context);
@@ -66,6 +68,7 @@ namespace NuGet.PackageManagement.UI
             _packageSources = packageSources;
             _itemFilter = itemFilter;
             _useRecommender = useRecommender;
+            _packageVulnerabilityService = vulnerabilityService;
         }
 
         public static async ValueTask<PackageItemLoader> CreateAsync(
@@ -76,7 +79,8 @@ namespace NuGet.PackageManagement.UI
             ContractItemFilter itemFilter,
             string searchText = null,
             bool includePrerelease = true,
-            bool useRecommender = false)
+            bool useRecommender = false,
+            IPackageVulnerabilityService vulnerabilityService = default)
         {
             var itemLoader = new PackageItemLoader(
                 serviceBroker,
@@ -86,7 +90,8 @@ namespace NuGet.PackageManagement.UI
                 itemFilter,
                 searchText,
                 includePrerelease,
-                useRecommender);
+                useRecommender,
+                vulnerabilityService);
 
             await itemLoader.InitializeAsync();
 
@@ -103,7 +108,8 @@ namespace NuGet.PackageManagement.UI
             INuGetPackageFileService packageFileService,
             string searchText = null,
             bool includePrerelease = true,
-            bool useRecommender = false)
+            bool useRecommender = false,
+            IPackageVulnerabilityService vulnerabilityService = default)
         {
             var itemLoader = new PackageItemLoader(
                 serviceBroker,
@@ -113,7 +119,8 @@ namespace NuGet.PackageManagement.UI
                 itemFilter,
                 searchText,
                 includePrerelease,
-                useRecommender);
+                useRecommender,
+                vulnerabilityService);
 
             await itemLoader.InitializeAsync(packageFileService);
 
@@ -288,7 +295,7 @@ namespace NuGet.PackageManagement.UI
                     transitiveToolTipMessage = string.Format(CultureInfo.CurrentCulture, Resources.PackageVersionWithTransitiveOrigins, metadata.Identity.Version, string.Join(", ", metadata.TransitiveOrigins));
                 }
 
-                var listItem = new PackageItemViewModel(_searchService)
+                var listItem = new PackageItemViewModel(_searchService, _packageVulnerabilityService)
                 {
                     Id = metadata.Identity.Id,
                     Version = metadata.Identity.Version,

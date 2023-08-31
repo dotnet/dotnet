@@ -23,6 +23,7 @@ using NuGet.PackageManagement.UI.ViewModels;
 using NuGet.PackageManagement.VisualStudio;
 using NuGet.Packaging.Core;
 using NuGet.ProjectManagement;
+using NuGet.Protocol.Core.Types;
 using NuGet.Resolver;
 using NuGet.Versioning;
 using NuGet.VisualStudio;
@@ -64,6 +65,7 @@ namespace NuGet.PackageManagement.UI
         private string _settingsKey;
         private IServiceBroker _serviceBroker;
         private bool _disposed = false;
+        private IPackageVulnerabilityService _packageVulnerabilityService;
 
         private PackageManagerInstalledTabData _installedTabTelemetryData;
 
@@ -158,6 +160,10 @@ namespace NuGet.PackageManagement.UI
             {
                 controller.PackageManagerControl = this;
             }
+
+            ISourceRepositoryProvider sourceRepositoryProvider = await ServiceLocator.GetComponentModelServiceAsync<ISourceRepositoryProvider>();
+            var sourceRepositories = sourceRepositoryProvider.GetRepositories();
+            _packageVulnerabilityService = new PackageVulnerabilityService(sourceRepositories, _uiLogger);
 
             var solutionManager = Model.Context.SolutionManagerService;
             solutionManager.ProjectAdded += OnProjectChanged;
@@ -896,7 +902,8 @@ namespace NuGet.PackageManagement.UI
                     (NuGet.VisualStudio.Internal.Contracts.ItemFilter)_topPanel.Filter,
                     searchText: searchText,
                     includePrerelease: IncludePrerelease,
-                    useRecommender: useRecommender);
+                    useRecommender: useRecommender,
+                    _packageVulnerabilityService);
 
                 var loadingMessage = string.IsNullOrWhiteSpace(searchText)
                     ? Resx.Resources.Text_Loading
@@ -991,13 +998,33 @@ namespace NuGet.PackageManagement.UI
             // Switch off the UI thread before fetching installed packages and deprecation metadata.
             await TaskScheduler.Default;
 
-            PackageCollection installedPackages = await loadContext.GetInstalledPackagesAsync();
-
-            var installedPackageMetadata = await Task.WhenAll(
-                installedPackages.Select(p => GetPackageMetadataAsync(p, packageSources, token)));
-
             int vulnerablePackagesCount = 0;
             int deprecatedPackagesCount = 0;
+            PackageCollection installedPackageCollection = null;
+
+            // Transitive dependencies are only displayed in Project-level PM UI.
+            if (Model.IsSolution)
+            {
+                installedPackageCollection = await loadContext.GetInstalledPackagesAsync();
+            }
+            else
+            {
+                IInstalledAndTransitivePackages installedAndTransitivePackages = await PackageCollection.GetInstalledAndTransitivePackagesAsync(loadContext.ServiceBroker, loadContext.Projects, includeTransitiveOrigins: false, token);
+                installedPackageCollection = PackageCollection.FromPackageReferences(installedAndTransitivePackages.InstalledPackages);
+                PackageCollection transitivePackageCollection = PackageCollection.FromPackageReferences(installedAndTransitivePackages.TransitivePackages);
+                IEnumerable<PackageVulnerabilityMetadataContextInfo>[] transitivePackageVulnerabilities = await Task.WhenAll(transitivePackageCollection.Select(p => _packageVulnerabilityService.GetVulnerabilityInfoAsync(p, token)));
+
+                foreach (IEnumerable<PackageVulnerabilityMetadataContextInfo> vulnerabilityInfo in transitivePackageVulnerabilities)
+                {
+                    if (vulnerabilityInfo != null && vulnerabilityInfo.Any())
+                    {
+                        vulnerablePackagesCount++;
+                    }
+                }
+            }
+
+            var installedPackageMetadata = await Task.WhenAll(installedPackageCollection.Select(p => GetPackageMetadataAsync(p, packageSources, token)));
+
             foreach ((PackageSearchMetadataContextInfo s, PackageDeprecationMetadataContextInfo d) in installedPackageMetadata)
             {
                 if (s.Vulnerabilities != null && s.Vulnerabilities.Any())
@@ -1589,12 +1616,27 @@ namespace NuGet.PackageManagement.UI
         private void SetOptions(NuGetUI nugetUi, NuGetActionType actionType, IEnumerable<PackageItemViewModel> packages)
         {
             var options = _detailModel.Options;
-            IEnumerable<PackageItemViewModel> vulnerablePkgs = packages?
-                .Where(x => x.Vulnerabilities?.Any() ?? false) ??
-                Enumerable.Empty<PackageItemViewModel>();
-            int vulnerablePkgsCount = vulnerablePkgs.Count();
-            IEnumerable<int> vulnerablePkgsMaxSeverities = vulnerablePkgs
-                .Select(pkg => pkg.Vulnerabilities.Max(v => v.Severity));
+
+            int topLevelVulnerablePackagesCount = 0;
+            List<int> topLevelVulnerablePackagesMaxSeverities = new();
+            int transitiveVulnerablePackagesCount = 0;
+            List<int> transitiveVulnerablePackagesMaxSeverities = new();
+            if (packages != null)
+            {
+                foreach (PackageItemViewModel package in packages)
+                {
+                    if (package.PackageLevel == PackageLevel.TopLevel && package.IsPackageVulnerable)
+                    {
+                        topLevelVulnerablePackagesCount++;
+                        topLevelVulnerablePackagesMaxSeverities.Add(package.VulnerabilityMaxSeverity);
+                    }
+                    else if (package.PackageLevel == PackageLevel.Transitive && package.IsPackageVulnerable)
+                    {
+                        transitiveVulnerablePackagesCount++;
+                        transitiveVulnerablePackagesMaxSeverities.Add(package.VulnerabilityMaxSeverity);
+                    }
+                }
+            }
 
             nugetUi.FileConflictAction = options.SelectedFileConflictAction.Action;
             nugetUi.DependencyBehavior = options.SelectedDependencyBehavior.Behavior;
@@ -1604,8 +1646,10 @@ namespace NuGet.PackageManagement.UI
             nugetUi.DisplayDeprecatedFrameworkWindow = options.ShowDeprecatedFrameworkWindow;
             nugetUi.Projects = Model.Context.Projects;
             nugetUi.ProjectContext.ActionType = actionType;
-            nugetUi.TopLevelVulnerablePackagesCount = vulnerablePkgsCount;
-            nugetUi.TopLevelVulnerablePackagesMaxSeverities = vulnerablePkgsMaxSeverities.ToList();
+            nugetUi.TopLevelVulnerablePackagesCount = topLevelVulnerablePackagesCount;
+            nugetUi.TopLevelVulnerablePackagesMaxSeverities = topLevelVulnerablePackagesMaxSeverities;
+            nugetUi.TransitiveVulnerablePackagesCount = transitiveVulnerablePackagesCount;
+            nugetUi.TransitiveVulnerablePackagesMaxSeverities = transitiveVulnerablePackagesMaxSeverities;
         }
 
         private void ExecuteInstallPackageCommand(object sender, ExecutedRoutedEventArgs e)

@@ -13,6 +13,7 @@ NuGet.VisualStudio.Internal.Contracts.INuGetProjectManagerService
 NuGet.VisualStudio.Internal.Contracts.INuGetProjectManagerService.BeginOperationAsync(System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.ValueTask
 NuGet.VisualStudio.Internal.Contracts.INuGetProjectManagerService.EndOperationAsync(System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.ValueTask
 NuGet.VisualStudio.Internal.Contracts.INuGetProjectManagerService.ExecuteActionsAsync(System.Collections.Generic.IReadOnlyList<NuGet.VisualStudio.Internal.Contracts.ProjectAction!>! actions, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.ValueTask
+NuGet.VisualStudio.Internal.Contracts.INuGetProjectManagerService.GetInstallActionsAsync(System.Collections.Generic.IReadOnlyCollection<string!>! projectIds, NuGet.Packaging.Core.PackageIdentity! packageIdentity, NuGet.PackageManagement.VersionConstraints versionConstraints, bool includePrelease, NuGet.Resolver.DependencyBehavior dependencyBehavior, System.Collections.Generic.IReadOnlyList<string!>! packageSourceNames, NuGet.Versioning.VersionRange? versionRange, string? newMappingID, string? newMappingSource, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.ValueTask<System.Collections.Generic.IReadOnlyList<NuGet.VisualStudio.Internal.Contracts.ProjectAction!>!>
 NuGet.VisualStudio.Internal.Contracts.INuGetProjectManagerService.GetInstallActionsAsync(System.Collections.Generic.IReadOnlyCollection<string!>! projectIds, NuGet.Packaging.Core.PackageIdentity! packageIdentity, NuGet.PackageManagement.VersionConstraints versionConstraints, bool includePrelease, NuGet.Resolver.DependencyBehavior dependencyBehavior, System.Collections.Generic.IReadOnlyList<string!>! packageSourceNames, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.ValueTask<System.Collections.Generic.IReadOnlyList<NuGet.VisualStudio.Internal.Contracts.ProjectAction!>!>
 NuGet.VisualStudio.Internal.Contracts.INuGetProjectManagerService.GetInstalledAndTransitivePackagesAsync(System.Collections.Generic.IReadOnlyCollection<string!>! projectIds, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.ValueTask<NuGet.VisualStudio.Internal.Contracts.IInstalledAndTransitivePackages!>
 NuGet.VisualStudio.Internal.Contracts.INuGetProjectManagerService.GetInstalledAndTransitivePackagesAsync(System.Collections.Generic.IReadOnlyCollection<string!>! projectIds, bool includeTransitiveOrigins, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.ValueTask<NuGet.VisualStudio.Internal.Contracts.IInstalledAndTransitivePackages!>
@@ -78,6 +79,7 @@ NuGet.VisualStudio.Internal.Contracts.IPackageReferenceContextInfo.Identity.get 
 NuGet.VisualStudio.Internal.Contracts.IPackageReferenceContextInfo.IsAutoReferenced.get -> bool
 NuGet.VisualStudio.Internal.Contracts.IPackageReferenceContextInfo.IsDevelopmentDependency.get -> bool
 NuGet.VisualStudio.Internal.Contracts.IPackageReferenceContextInfo.IsUserInstalled.get -> bool
+NuGet.VisualStudio.Internal.Contracts.IPackageReferenceContextInfo.VersionOverride.get -> NuGet.Versioning.VersionRange?
 NuGet.VisualStudio.Internal.Contracts.IProjectContextInfo
 NuGet.VisualStudio.Internal.Contracts.IProjectContextInfo.ProjectId.get -> string!
 NuGet.VisualStudio.Internal.Contracts.IProjectContextInfo.ProjectKind.get -> NuGet.VisualStudio.Internal.Contracts.NuGetProjectKind
@@ -133,6 +135,7 @@ NuGet.VisualStudio.Internal.Contracts.PackageReferenceContextInfo.IsAutoReferenc
 NuGet.VisualStudio.Internal.Contracts.PackageReferenceContextInfo.IsDevelopmentDependency.get -> bool
 NuGet.VisualStudio.Internal.Contracts.PackageReferenceContextInfo.IsUserInstalled.get -> bool
 NuGet.VisualStudio.Internal.Contracts.PackageReferenceContextInfo.PackageReferenceContextInfo(NuGet.Packaging.Core.PackageIdentity! identity, NuGet.Frameworks.NuGetFramework? framework) -> void
+NuGet.VisualStudio.Internal.Contracts.PackageReferenceContextInfo.VersionOverride.get -> NuGet.Versioning.VersionRange?
 NuGet.VisualStudio.Internal.Contracts.PackageSearchMetadataContextInfo
 NuGet.VisualStudio.Internal.Contracts.PackageSearchMetadataContextInfo.Authors.get -> string?
 NuGet.VisualStudio.Internal.Contracts.PackageSearchMetadataContextInfo.DependencySets.get -> System.Collections.Generic.IReadOnlyCollection<NuGet.Packaging.PackageDependencyGroup!>?
@@ -232,6 +235,7 @@ NuGet.VisualStudio.Internal.Contracts.TransitivePackageReferenceContextInfo.IsDe
 NuGet.VisualStudio.Internal.Contracts.TransitivePackageReferenceContextInfo.IsUserInstalled.get -> bool
 NuGet.VisualStudio.Internal.Contracts.TransitivePackageReferenceContextInfo.TransitiveOrigins.get -> System.Collections.Generic.IEnumerable<NuGet.VisualStudio.Internal.Contracts.IPackageReferenceContextInfo!>!
 NuGet.VisualStudio.Internal.Contracts.TransitivePackageReferenceContextInfo.TransitivePackageReferenceContextInfo(NuGet.Packaging.Core.PackageIdentity! identity, NuGet.Frameworks.NuGetFramework? framework) -> void
+NuGet.VisualStudio.Internal.Contracts.TransitivePackageReferenceContextInfo.VersionOverride.get -> NuGet.Versioning.VersionRange?
 NuGet.VisualStudio.Internal.Contracts.TransitivePackageSearchMetadata
 NuGet.VisualStudio.Internal.Contracts.TransitivePackageSearchMetadata.Authors.get -> string!
 NuGet.VisualStudio.Internal.Contracts.TransitivePackageSearchMetadata.DependencySets.get -> System.Collections.Generic.IEnumerable<NuGet.Packaging.PackageDependencyGroup!>!

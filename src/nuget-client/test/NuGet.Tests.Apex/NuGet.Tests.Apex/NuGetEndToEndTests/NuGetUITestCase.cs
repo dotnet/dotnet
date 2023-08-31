@@ -623,14 +623,96 @@ namespace NuGet.Tests.Apex
             uiwindow.UninstallPackageFromUI(packageName);
 
             // Assert
-            if (projectTemplate.Equals(ProjectTemplate.ClassLibrary))
-            {
-                CommonUtility.AssertPackageNotInPackagesConfig(VisualStudio, project, packageName, XunitLogger);
-            }
-            else
-            {
-                CommonUtility.AssertPackageReferenceDoesNotExist(VisualStudio, project, packageName, XunitLogger);
-            }
+            CommonUtility.AssertUninstalledPackageByProjectType(VisualStudio, projectTemplate, project, packageName, XunitLogger);
+        }
+
+        [NuGetWpfTheory]
+        [InlineData(ProjectTemplate.ClassLibrary, "jquery", "3.5.0")]
+        [InlineData(ProjectTemplate.NetCoreClassLib, "jquery", "3.5.0")]
+        public void InstallDeprecatedPackageFromUI(ProjectTemplate projectTemplate, string packageName, string packageVersion)
+        {
+            // Arrange
+            EnsureVisualStudioHost();
+            var solutionService = VisualStudio.Get<SolutionService>();
+            solutionService.CreateEmptySolution();
+            var project = solutionService.AddProject(ProjectLanguage.CSharp, projectTemplate, "TestProject");
+            VisualStudio.ClearOutputWindow();
+            solutionService.SaveAll();
+
+            // Act
+            CommonUtility.OpenNuGetPackageManagerWithDte(VisualStudio, XunitLogger);
+            var nugetTestService = GetNuGetTestService();
+            var uiwindow = nugetTestService.GetUIWindowfromProject(project);
+            uiwindow.InstallPackageFromUI(packageName, packageVersion);
+            solutionService.Build();
+
+            // Assert
+            CommonUtility.AssertInstalledPackageByProjectType(VisualStudio, projectTemplate, project, packageName, packageVersion, XunitLogger);
+            uiwindow.AssertInstalledPackageDeprecated();
+        }
+
+        [NuGetWpfTheory]
+        [InlineData(ProjectTemplate.ClassLibrary, "jQuery", "3.5.0", "3.6.0")]
+        [InlineData(ProjectTemplate.NetCoreClassLib, "jQuery", "3.5.0", "3.6.3")]
+        public void UpdateDeprecatedPackageFromUI(ProjectTemplate projectTemplate, string packageName, string packageVersion1, string packageVersion2)
+        {
+            // Arrange
+            EnsureVisualStudioHost();
+            var solutionService = VisualStudio.Get<SolutionService>();
+            solutionService.CreateEmptySolution();
+            var project = solutionService.AddProject(ProjectLanguage.CSharp, projectTemplate, "TestProject");
+            VisualStudio.ClearOutputWindow();
+            solutionService.SaveAll();
+
+            // Act
+            CommonUtility.OpenNuGetPackageManagerWithDte(VisualStudio, XunitLogger);
+            var nugetTestService = GetNuGetTestService();
+            var uiwindow = nugetTestService.GetUIWindowfromProject(project);
+            uiwindow.InstallPackageFromUI(packageName, packageVersion1);
+            solutionService.Build();
+
+            // Assert
+            CommonUtility.AssertInstalledPackageByProjectType(VisualStudio, projectTemplate, project, packageName, packageVersion1, XunitLogger);
+            uiwindow.AssertInstalledPackageDeprecated();
+
+            // Act
+            uiwindow.UpdatePackageFromUI(packageName, packageVersion2);
+
+            // Assert
+            CommonUtility.AssertInstalledPackageByProjectType(VisualStudio, projectTemplate, project, packageName, packageVersion2, XunitLogger);
+            uiwindow.AssertInstalledPackageNotDeprecated();
+        }
+
+        [NuGetWpfTheory]
+        [InlineData(ProjectTemplate.ClassLibrary, "jQuery", "3.5.0")]
+        [InlineData(ProjectTemplate.NetCoreClassLib, "jQuery", "3.5.0")]
+        public void UninstallDeprecatedPackageFromUI(ProjectTemplate projectTemplate, string packageName, string packageVersion)
+        {
+            // Arrange
+            EnsureVisualStudioHost();
+            var solutionService = VisualStudio.Get<SolutionService>();
+            solutionService.CreateEmptySolution();
+            var project = solutionService.AddProject(ProjectLanguage.CSharp, projectTemplate, "Testproject");
+            VisualStudio.ClearOutputWindow();
+            solutionService.SaveAll();
+
+            // Act
+            CommonUtility.OpenNuGetPackageManagerWithDte(VisualStudio, XunitLogger);
+            var nugetTestService = GetNuGetTestService();
+            var uiwindow = nugetTestService.GetUIWindowfromProject(project);
+            uiwindow.InstallPackageFromUI(packageName, packageVersion);
+            solutionService.Build();
+
+            // Assert
+            CommonUtility.AssertInstalledPackageByProjectType(VisualStudio, projectTemplate, project, packageName, packageVersion, XunitLogger);
+            uiwindow.AssertInstalledPackageDeprecated();
+
+            // Act
+            VisualStudio.ClearWindows();
+            uiwindow.UninstallPackageFromUI(packageName);
+
+            // Assert
+            CommonUtility.AssertUninstalledPackageByProjectType(VisualStudio, projectTemplate, project, packageName, XunitLogger);
         }
     }
 }

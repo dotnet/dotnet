@@ -97,11 +97,7 @@ namespace NuGet.Commands.Restore.Utility
 
             bool AnyVulnerabilityDataFound(IReadOnlyList<IReadOnlyDictionary<string, IReadOnlyList<PackageVulnerabilityInfo>>>? knownVulnerabilities)
             {
-                if (knownVulnerabilities is null)
-                {
-                    return false;
-                }
-                if (knownVulnerabilities.Count == 0)
+                if (knownVulnerabilities is null || knownVulnerabilities.Count == 0)
                 {
                     return false;
                 }
@@ -129,8 +125,7 @@ namespace NuGet.Commands.Restore.Utility
         private void CheckPackageVulnerabilities(IReadOnlyList<IReadOnlyDictionary<string, IReadOnlyList<PackageVulnerabilityInfo>>> knownVulnerabilities)
         {
             Stopwatch stopwatch = Stopwatch.StartNew();
-            Dictionary<PackageIdentity, PackageAuditInfo>? packagesWithKnownVulnerabilities =
-                FindPackagesWithKnownVulnerabilities(knownVulnerabilities);
+            Dictionary<PackageIdentity, PackageAuditInfo>? packagesWithKnownVulnerabilities = FindPackagesWithKnownVulnerabilities(knownVulnerabilities);
             stopwatch.Stop();
             CheckPackagesDurationSeconds = stopwatch.Elapsed.TotalSeconds;
 
@@ -143,12 +138,8 @@ namespace NuGet.Commands.Restore.Utility
             TransitivePackagesWithAdvisory = new(capacity: packagesWithKnownVulnerabilities.Count - directPackageCount);
 
             // no-op checks DGSpec hash, which means the order of everything must be deterministic.
-            // .NET Framework and .NET Standard don't have Deconstructor methods for KeyValuePair
-            foreach (var kvp1 in packagesWithKnownVulnerabilities.OrderBy(p => p.Key.Id))
+            foreach ((PackageIdentity package, PackageAuditInfo auditInfo) in packagesWithKnownVulnerabilities.OrderBy(p => p.Key.Id))
             {
-                PackageIdentity package = kvp1.Key;
-                PackageAuditInfo auditInfo = kvp1.Value;
-
                 if (auditInfo.IsDirect || AuditMode == NuGetAuditMode.All)
                 {
                     foreach (var kvp2 in auditInfo.GraphsPerVulnerability.OrderBy(v => v.Key.Url.OriginalString))
@@ -208,11 +199,9 @@ namespace NuGet.Commands.Restore.Utility
         private static List<PackageVulnerabilityInfo>? GetKnownVulnerabilities(
             string name,
             NuGetVersion version,
-            IReadOnlyList<IReadOnlyDictionary<string, IReadOnlyList<PackageVulnerabilityInfo>>>? knownVulnerabilities)
+            IReadOnlyList<IReadOnlyDictionary<string, IReadOnlyList<PackageVulnerabilityInfo>>> knownVulnerabilities)
         {
             HashSet<PackageVulnerabilityInfo>? vulnerabilities = null;
-
-            if (knownVulnerabilities == null) return null;
 
             foreach (var file in knownVulnerabilities)
             {
@@ -222,17 +211,14 @@ namespace NuGet.Commands.Restore.Utility
                     {
                         if (vulnInfo.Versions.Satisfies(version))
                         {
-                            if (vulnerabilities == null)
-                            {
-                                vulnerabilities = new();
-                            }
+                            vulnerabilities ??= new();
                             vulnerabilities.Add(vulnInfo);
                         }
                     }
                 }
             }
 
-            return vulnerabilities != null ? vulnerabilities.ToList() : null;
+            return vulnerabilities?.ToList();
         }
 
         private static (string severityLabel, NuGetLogCode code) GetSeverityLabelAndCode(PackageVulnerabilitySeverity severity)
@@ -278,10 +264,7 @@ namespace NuGet.Commands.Restore.Utility
                                 continue;
                             }
 
-                            if (result == null)
-                            {
-                                result = new();
-                            }
+                            result ??= new();
 
                             if (!result.TryGetValue(packageIdentity, out PackageAuditInfo? auditInfo))
                             {

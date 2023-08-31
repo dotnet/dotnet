@@ -89,6 +89,12 @@ namespace NuGet.PackageManagement.UI.TestContract
             return result?.IsPackageVulnerable == true;
         }
 
+        public bool VerifyDeprecatedPackageOnTopOfInstalledTab()
+        {
+            var result = UIInvoke(() => _packageManagerControl.PackageList.PackageItems.FirstOrDefault());
+            return result?.IsPackageDeprecated == true;
+        }
+
         public void InstallPackage(string packageId, string version)
         {
             UIInvoke(() => _packageManagerControl.InstallPackage(packageId, NuGetVersion.Parse(version), null));

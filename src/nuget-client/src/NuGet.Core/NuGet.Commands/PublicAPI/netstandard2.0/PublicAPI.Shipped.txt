@@ -90,6 +90,7 @@ NuGet.Commands.DependencyGraphFileRequestProvider
 NuGet.Commands.DependencyGraphSpecRequestProvider
 ~NuGet.Commands.DependencyGraphSpecRequestProvider.CreateRequests(NuGet.Commands.RestoreArgs restoreContext) -> System.Threading.Tasks.Task<System.Collections.Generic.IReadOnlyList<NuGet.Commands.RestoreSummaryRequest>>
 ~NuGet.Commands.DependencyGraphSpecRequestProvider.DependencyGraphSpecRequestProvider(NuGet.Commands.RestoreCommandProvidersCache providerCache, NuGet.ProjectModel.DependencyGraphSpec dgFile) -> void
+~NuGet.Commands.DependencyGraphSpecRequestProvider.DependencyGraphSpecRequestProvider(NuGet.Commands.RestoreCommandProvidersCache providerCache, NuGet.ProjectModel.DependencyGraphSpec dgFile, NuGet.Configuration.ISettings settings) -> void
 NuGet.Commands.DiagnosticUtility
 NuGet.Commands.DisableSourceArgs
 ~NuGet.Commands.DisableSourceArgs.Configfile.get -> string
@@ -696,6 +697,7 @@ NuGet.Commands.SourceRepositoryDependencyProvider
 ~NuGet.Commands.SourceRepositoryDependencyProvider.GetPackageDownloaderAsync(NuGet.Packaging.Core.PackageIdentity packageIdentity, NuGet.Protocol.Core.Types.SourceCacheContext cacheContext, NuGet.Common.ILogger logger, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<NuGet.Packaging.IPackageDownloader>
 NuGet.Commands.SourceRepositoryDependencyProvider.IsHttp.get -> bool
 ~NuGet.Commands.SourceRepositoryDependencyProvider.Source.get -> NuGet.Configuration.PackageSource
+~NuGet.Commands.SourceRepositoryDependencyProvider.SourceRepository.get -> NuGet.Protocol.Core.Types.SourceRepository
 ~NuGet.Commands.SourceRepositoryDependencyProvider.SourceRepositoryDependencyProvider(NuGet.Protocol.Core.Types.SourceRepository sourceRepository, NuGet.Common.ILogger logger, NuGet.Protocol.Core.Types.SourceCacheContext cacheContext, bool ignoreFailedSources, bool ignoreWarning) -> void
 ~NuGet.Commands.SourceRepositoryDependencyProvider.SourceRepositoryDependencyProvider(NuGet.Protocol.Core.Types.SourceRepository sourceRepository, NuGet.Common.ILogger logger, NuGet.Protocol.Core.Types.SourceCacheContext cacheContext, bool ignoreFailedSources, bool ignoreWarning, NuGet.Protocol.LocalPackageFileCache fileCache, bool isFallbackFolderSource) -> void
 NuGet.Commands.SourcesAction
@@ -926,6 +928,7 @@ override NuGet.Commands.WarningPropertiesCollection.GetHashCode() -> int
 ~static NuGet.Commands.MSBuildProjectFactory.ProjectCreator(NuGet.Commands.PackArgs packArgs, string path) -> NuGet.Commands.IProjectFactory
 ~static NuGet.Commands.MSBuildProjectFrameworkUtility.GetProjectFramework(string projectFilePath, string targetFrameworkMoniker, string targetPlatformMoniker, string targetPlatformMinVersion) -> NuGet.Frameworks.NuGetFramework
 ~static NuGet.Commands.MSBuildProjectFrameworkUtility.GetProjectFramework(string projectFilePath, string targetFrameworkMoniker, string targetPlatformMoniker, string targetPlatformMinVersion, string clrSupport) -> NuGet.Frameworks.NuGetFramework
+~static NuGet.Commands.MSBuildProjectFrameworkUtility.GetProjectFramework(string projectFilePath, string targetFrameworkMoniker, string targetPlatformMoniker, string targetPlatformMinVersion, string clrSupport, string windowsTargetPlatformMinVersion) -> NuGet.Frameworks.NuGetFramework
 ~static NuGet.Commands.MSBuildProjectFrameworkUtility.GetProjectFrameworkReplacement(NuGet.Frameworks.NuGetFramework framework) -> NuGet.Frameworks.NuGetFramework
 ~static NuGet.Commands.MSBuildProjectFrameworkUtility.GetProjectFrameworkStrings(string projectFilePath, string targetFrameworks, string targetFramework, string targetFrameworkMoniker, string targetPlatformIdentifier, string targetPlatformVersion, string targetPlatformMinVersion) -> System.Collections.Generic.IEnumerable<string>
 ~static NuGet.Commands.MSBuildProjectFrameworkUtility.GetProjectFrameworkStrings(string projectFilePath, string targetFrameworks, string targetFramework, string targetFrameworkMoniker, string targetPlatformIdentifier, string targetPlatformVersion, string targetPlatformMinVersion, bool isXnaWindowsPhoneProject, bool isManagementPackProject) -> System.Collections.Generic.IEnumerable<string>
@@ -939,6 +942,7 @@ override NuGet.Commands.WarningPropertiesCollection.GetHashCode() -> int
 ~static NuGet.Commands.MSBuildRestoreUtility.FixSourcePath(string s) -> string
 ~static NuGet.Commands.MSBuildRestoreUtility.GetDependencySpec(System.Collections.Generic.IEnumerable<NuGet.Commands.IMSBuildItem> items) -> NuGet.ProjectModel.DependencyGraphSpec
 ~static NuGet.Commands.MSBuildRestoreUtility.GetPackageSpec(System.Collections.Generic.IEnumerable<NuGet.Commands.IMSBuildItem> items) -> NuGet.ProjectModel.PackageSpec
+~static NuGet.Commands.MSBuildRestoreUtility.GetRestoreAuditProperties(NuGet.Commands.IMSBuildItem specItem) -> NuGet.ProjectModel.RestoreAuditProperties
 ~static NuGet.Commands.MSBuildRestoreUtility.GetWarningForUnsupportedProject(string path) -> NuGet.Common.RestoreLogMessage
 ~static NuGet.Commands.MSBuildRestoreUtility.HasInvalidClear(System.Collections.Generic.IEnumerable<string> values) -> bool
 ~static NuGet.Commands.MSBuildRestoreUtility.LogErrorForClearIfInvalid(System.Collections.Generic.IEnumerable<string> values, string projectPath, NuGet.Common.ILogger logger) -> bool
