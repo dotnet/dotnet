@@ -16,7 +16,6 @@ using NuGet.Common;
 using NuGet.Configuration;
 using NuGet.Frameworks;
 using NuGet.PackageManagement.Telemetry;
-using NuGet.PackageManagement.UI.Utility;
 using NuGet.PackageManagement.VisualStudio;
 using NuGet.Packaging.Core;
 using NuGet.ProjectManagement;
@@ -269,12 +268,16 @@ namespace NuGet.PackageManagement.UI.Test
                 recommenderVersion: null,
                 topLevelVulnerablePackagesCount: 3,
                 topLevelVulnerablePackagesMaxSeverities: new List<int> { 1, 1, 3 }, // each package has its own max severity
+                transitiveVulnerablePackagesCount: 2,
+                transitiveVulnerablePackagesMaxSeverities: new List<int> { 2, 3 }, // each package has its own max severity
                 existingPackages: null,
                 addedPackages: null,
                 removedPackages: null,
                 updatedPackagesOld: null,
                 updatedPackagesNew: null,
-                targetFrameworks: null);
+                targetFrameworks: null,
+                countCreatedTopLevelSourceMappings: null,
+                countCreatedTransitiveSourceMappings: null);
 
             // Act
             var service = new NuGetVSTelemetryService(telemetrySession.Object);
@@ -283,13 +286,81 @@ namespace NuGet.PackageManagement.UI.Test
             // Assert
             Assert.NotNull(lastTelemetryEvent);
             Assert.NotNull(lastTelemetryEvent.ComplexData["TopLevelVulnerablePackagesMaxSeverities"] as List<int>);
-            var pkgSeverities = lastTelemetryEvent.ComplexData["TopLevelVulnerablePackagesMaxSeverities"] as List<int>;
-            Assert.Equal(lastTelemetryEvent["TopLevelVulnerablePackagesCount"], pkgSeverities.Count());
-            Assert.Collection(pkgSeverities,
+            var topLevelPkgSeverities = lastTelemetryEvent.ComplexData["TopLevelVulnerablePackagesMaxSeverities"] as List<int>;
+            Assert.Equal(lastTelemetryEvent["TopLevelVulnerablePackagesCount"], topLevelPkgSeverities.Count());
+            Assert.Collection(topLevelPkgSeverities,
                 item => Assert.Equal(1, item),
                 item => Assert.Equal(1, item),
                 item => Assert.Equal(3, item));
-            Assert.Equal(3, pkgSeverities.Count());
+            Assert.Equal(3, topLevelPkgSeverities.Count());
+
+            var transitivePkgSeverities = lastTelemetryEvent.ComplexData["TransitiveVulnerablePackagesMaxSeverities"] as List<int>;
+            Assert.Equal(lastTelemetryEvent["TransitiveVulnerablePackagesCount"], transitivePkgSeverities.Count());
+            Assert.Equal(lastTelemetryEvent["TransitiveVulnerablePackagesCount"], transitivePkgSeverities.Count());
+            Assert.Collection(transitivePkgSeverities,
+                item => Assert.Equal(2, item),
+                item => Assert.Equal(3, item));
+            Assert.Equal(2, transitivePkgSeverities.Count());
+
+            Assert.Null(lastTelemetryEvent["CreatedTopLevelSourceMappingsCount"]);
+            Assert.Null(lastTelemetryEvent["CreatedTransitiveSourceMappingsCount"]);
+        }
+
+        [Fact]
+        public void ActionCreatingSourceMappings_TopLevelCountAndTransitiveCount_AddsValue()
+        {
+            // Arrange
+            int expectedCountCreatedTopLevelSourceMappings = 42;
+            int expectedCountCreatedTransitiveSourceMappings = 24;
+            var telemetrySession = new Mock<ITelemetrySession>();
+            TelemetryEvent lastTelemetryEvent = null;
+            telemetrySession
+                .Setup(x => x.PostEvent(It.IsAny<TelemetryEvent>()))
+                .Callback<TelemetryEvent>(x => lastTelemetryEvent = x);
+
+            var operationId = Guid.NewGuid().ToString();
+
+            var actionTelemetryData = new VSActionsTelemetryEvent(
+                operationId,
+                projectIds: new[] { Guid.NewGuid().ToString() },
+                operationType: NuGetOperationType.Install,
+                source: OperationSource.PMC,
+                startTime: DateTimeOffset.Now.AddSeconds(-1),
+                status: NuGetOperationStatus.NoOp,
+                packageCount: 1,
+                endTime: DateTimeOffset.Now,
+                duration: .40,
+                isPackageSourceMappingEnabled: false);
+
+            UIActionEngine.AddUiActionEngineTelemetryProperties(
+                actionTelemetryEvent: actionTelemetryData,
+                continueAfterPreview: true,
+                acceptedLicense: true,
+                userAction: null,
+                selectedIndex: 0,
+                recommendedCount: 0,
+                recommendPackages: false,
+                recommenderVersion: null,
+                topLevelVulnerablePackagesCount: 3,
+                topLevelVulnerablePackagesMaxSeverities: new List<int> { 1, 1, 3 }, // each package has its own max severity
+                transitiveVulnerablePackagesCount: 2,
+                transitiveVulnerablePackagesMaxSeverities: new List<int> { 2, 3 }, // each package has its own max severity
+                existingPackages: null,
+                addedPackages: null,
+                removedPackages: null,
+                updatedPackagesOld: null,
+                updatedPackagesNew: null,
+                targetFrameworks: null,
+                countCreatedTopLevelSourceMappings: expectedCountCreatedTopLevelSourceMappings,
+                countCreatedTransitiveSourceMappings: expectedCountCreatedTransitiveSourceMappings);
+
+            // Act
+            var service = new NuGetVSTelemetryService(telemetrySession.Object);
+            service.EmitTelemetryEvent(actionTelemetryData);
+
+            // Assert
+            Assert.Equal(expectedCountCreatedTopLevelSourceMappings, (int)lastTelemetryEvent["CreatedTopLevelSourceMappingsCount"]);
+            Assert.Equal(expectedCountCreatedTransitiveSourceMappings, (int)lastTelemetryEvent["CreatedTransitiveSourceMappingsCount"]);
         }
 
         [Theory]

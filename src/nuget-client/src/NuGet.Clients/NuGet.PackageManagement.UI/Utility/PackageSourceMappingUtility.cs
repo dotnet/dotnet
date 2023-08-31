@@ -12,53 +12,80 @@ namespace NuGet.PackageManagement.UI
 {
     internal static class PackageSourceMappingUtility
     {
+        /// <summary>
+        /// Determines if new package source mappings should be written to the <paramref name="sourceMappingProvider"/> which is returned as a count.
+        /// </summary>
+        /// <param name="userAction"></param>
+        /// <param name="addedPackageIds"></param>
+        /// <param name="sourceMappingProvider"></param>
+        /// <param name="existingPackageSourceMappingSourceItems"></param>
+        /// <param name="countCreatedTopLevelSourceMappings">For Top-Level packages: <c>null</c> if not applicable; 0 if none needed to be added; > 0 is the count of new package source mappings added.</param>
+        /// <param name="countCreatedTransitiveSourceMappings">For Transitive packages: <c>null</c> if not applicable; 0 if none needed to be added; > 0 is the count of new package source mappings added.</param>
         internal static void ConfigureNewPackageSourceMapping(
             UserAction? userAction,
             IReadOnlyList<string>? addedPackageIds,
             PackageSourceMappingProvider sourceMappingProvider,
-            IReadOnlyList<PackageSourceMappingSourceItem> existingPackageSourceMappingSourceItems)
+            IReadOnlyList<PackageSourceMappingSourceItem> existingPackageSourceMappingSourceItems,
+            out int? countCreatedTopLevelSourceMappings,
+            out int? countCreatedTransitiveSourceMappings)
         {
+            countCreatedTopLevelSourceMappings = null;
+            countCreatedTransitiveSourceMappings = null;
+
             if (userAction?.SelectedSourceName is null || addedPackageIds is null)
             {
                 return;
             }
 
+            countCreatedTopLevelSourceMappings = 0;
+            countCreatedTransitiveSourceMappings = 0;
+
+            string topLevelPackageId = userAction.PackageId;
             Dictionary<string, IReadOnlyList<string>> patternsReadOnly = existingPackageSourceMappingSourceItems
                 .ToDictionary(pair => pair.Key, pair => (IReadOnlyList<string>)(pair.Patterns.Select(p => p.Pattern).ToList()));
 
             PackageSourceMapping packageSourceMapping = new(patternsReadOnly);
 
             // Expand all patterns/globs so we can later check if this package ID was already mapped.
-            List<string> addedPackageIdsWithoutExistingMappings = new();
+            List<string> addedPackageIdsWithoutExistingMappings = new(capacity: addedPackageIds.Count + 1);
+
             foreach (string addedPackageId in addedPackageIds)
             {
                 IReadOnlyList<string> configuredSource = packageSourceMapping.GetConfiguredPackageSources(addedPackageId);
-                if (configuredSource.Count == 0)
+
+                // Top-level package was looked up.
+                if (addedPackageId == topLevelPackageId)
+                {
+                    // The top-level package is not already mapped to the selected source.
+                    if (configuredSource.Count == 0 || !configuredSource.Contains(userAction.SelectedSourceName))
+                    {
+                        countCreatedTopLevelSourceMappings = 1;
+                        addedPackageIdsWithoutExistingMappings.Add(topLevelPackageId);
+                    }
+                }
+                // Transitive package was looked up.
+                else if (configuredSource.Count == 0)
                 {
                     addedPackageIdsWithoutExistingMappings.Add(addedPackageId);
                 }
             }
 
-            // Get all newly added package IDs that were not previously Source Mapped.
-            // Always include the Package ID being installed since it takes precedence over any globbing.
-            string[] packageIdsNeedingNewSourceMappings = addedPackageIdsWithoutExistingMappings
-                .Append(userAction.PackageId)
-                .ToArray();
+            countCreatedTransitiveSourceMappings = addedPackageIdsWithoutExistingMappings.Count - countCreatedTopLevelSourceMappings;
 
             CreateAndSavePackageSourceMappings(
                 userAction.SelectedSourceName,
-                packageIdsNeedingNewSourceMappings,
+                addedPackageIdsWithoutExistingMappings,
                 sourceMappingProvider,
                 existingPackageSourceMappingSourceItems);
         }
 
         private static void CreateAndSavePackageSourceMappings(
             string sourceName,
-            string[] newPackageIdsToSourceMap,
+            List<string> newPackageIdsToSourceMap,
             PackageSourceMappingProvider mappingProvider,
             IReadOnlyList<PackageSourceMappingSourceItem> existingPackageSourceMappingSourceItems)
         {
-            if (string.IsNullOrWhiteSpace(sourceName) || newPackageIdsToSourceMap is null || newPackageIdsToSourceMap.Length == 0)
+            if (string.IsNullOrWhiteSpace(sourceName) || newPackageIdsToSourceMap is null || newPackageIdsToSourceMap.Count == 0)
             {
                 return;
             }

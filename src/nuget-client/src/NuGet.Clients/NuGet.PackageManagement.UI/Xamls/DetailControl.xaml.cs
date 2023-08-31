@@ -192,8 +192,16 @@ namespace NuGet.PackageManagement.UI
                     nugetUi.RecommendedCount = model.RecommendedCount;
                     nugetUi.RecommendPackages = model.RecommendPackages;
                     nugetUi.RecommenderVersion = model.RecommenderVersion;
-                    nugetUi.TopLevelVulnerablePackagesCount = model.IsPackageVulnerable ? 1 : 0;
-                    nugetUi.TopLevelVulnerablePackagesMaxSeverities = new List<int>() { model.PackageVulnerabilityMaxSeverity };
+                    if (model is PackageDetailControlModel packageModel && packageModel.PackageLevel == PackageLevel.Transitive)
+                    {
+                        nugetUi.TransitiveVulnerablePackagesCount = model.IsPackageVulnerable ? 1 : 0;
+                        nugetUi.TransitiveVulnerablePackagesMaxSeverities = new List<int>() { model.PackageVulnerabilityMaxSeverity };
+                    }
+                    else
+                    {
+                        nugetUi.TopLevelVulnerablePackagesCount = model.IsPackageVulnerable ? 1 : 0;
+                        nugetUi.TopLevelVulnerablePackagesMaxSeverities = new List<int>() { model.PackageVulnerabilityMaxSeverity };
+                    }
                 });
         }
     }
