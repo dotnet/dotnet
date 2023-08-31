@@ -205,7 +205,7 @@ namespace Microsoft.IdentityModel.Protocols.SignedHttpRequest.Tests
             if (token.ContainsKey(newProperty.Name))
                 token.Property(newProperty.Name).Remove();
 
-            if (newProperty.Value != null)
+            if (newProperty.Value.Type != JTokenType.Null)
                 token.Add(newProperty);
 
             return CreateDefaultSignedHttpRequestToken(token.ToString(Formatting.None));

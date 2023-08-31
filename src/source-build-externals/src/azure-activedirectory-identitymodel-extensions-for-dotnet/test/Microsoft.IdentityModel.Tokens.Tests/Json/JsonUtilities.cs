@@ -137,7 +137,7 @@ namespace Microsoft.IdentityModel.Tokens.Json.Tests
             SetAdditionalDataNumbers(dictionary);
             SetAdditionalDataValues(dictionary);
             dictionary["Object"] = CreateJsonElement(_objectData);
-            dictionary["Array"] = _arrayDataAsObjectList;
+            dictionary["Array"] = CreateJsonElement(_arrayData);
             if (key != null)
                 dictionary[key] = obj;
         }

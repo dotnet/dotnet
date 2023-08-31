@@ -3,7 +3,9 @@
 // See the LICENSE file in the project root for more information.
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
@@ -16,8 +18,6 @@ namespace Microsoft.IdentityModel.Tokens.Json
 {
     internal static class JsonSerializerPrimitives
     {
-        internal const int MaxDepth = 2;
-
         /// <summary>
         /// Creates a JsonException that provides information on what went wrong
         /// </summary>
@@ -73,7 +73,7 @@ namespace Microsoft.IdentityModel.Tokens.Json
                     LogHelper.MarkAsNonPII(reader.BytesConsumed)));
         }
 
-        public static JsonElement CreateJsonElement(IList<string> strings)
+        public static JsonElement CreateJsonElement(List<string> strings)
         {
             using (MemoryStream memoryStream = new())
             {
@@ -119,6 +119,305 @@ namespace Microsoft.IdentityModel.Tokens.Json
 #endif
         }
 
+        internal static object CreateObjectFromJsonElement(JsonElement jsonElement)
+        {
+            if (jsonElement.ValueKind == JsonValueKind.String)
+            {
+                if (DateTime.TryParse(jsonElement.GetString(), CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind, out DateTime dateTime))
+                    return dateTime;
+
+                return jsonElement.GetString();
+            }
+            else if (jsonElement.ValueKind == JsonValueKind.False)
+                return false;
+            else if (jsonElement.ValueKind == JsonValueKind.True)
+                return true;
+            else if (jsonElement.ValueKind == JsonValueKind.Number)
+            {
+                if (jsonElement.TryGetInt32(out int intValue))
+                    return intValue;
+                else if (jsonElement.TryGetInt64(out long longValue))
+                    return longValue;
+                else if (jsonElement.TryGetDecimal(out decimal decimalValue))
+                    return decimalValue;
+                else if (jsonElement.TryGetDouble(out double doubleValue))
+                    return doubleValue;
+                else if (jsonElement.TryGetUInt32(out uint uintValue))
+                    return uintValue;
+                else if (jsonElement.TryGetUInt64(out ulong ulongValue))
+                    return ulongValue;
+            }
+            else if (jsonElement.ValueKind == JsonValueKind.Null)
+                return null;
+            else if (jsonElement.ValueKind == JsonValueKind.Array)
+            {
+                int numItems = 0;
+                foreach (JsonElement j in jsonElement.EnumerateArray())
+                    numItems++;
+
+                object[] items = new object[numItems];
+
+                int index = 0;
+                foreach (JsonElement j in jsonElement.EnumerateArray())
+                    items[index++] = CreateObjectFromJsonElement(j);
+
+                return items;
+            }
+            else if (jsonElement.ValueKind == JsonValueKind.Object)
+            {
+                int numItems = 0;
+                foreach (JsonProperty property in jsonElement.EnumerateObject())
+                    numItems++;
+
+                KeyValuePair<string, object>[] kvps = new KeyValuePair<string, object>[numItems];
+                foreach (JsonProperty property in jsonElement.EnumerateObject())
+                    kvps[numItems++] = new KeyValuePair<string, object>(property.Name, CreateObjectFromJsonElement(property.Value));
+
+                return kvps;
+            }
+
+            return jsonElement.GetString();
+        }
+
+        public static bool TryCreateTypeFromJsonElement<T>(JsonElement jsonElement, out T t)
+        {
+            if (typeof(T) == typeof(string))
+            {
+                t = (T)(object)jsonElement.ToString();
+                return true;
+            }
+            else if (jsonElement.ValueKind == JsonValueKind.Object)
+            {
+                if (typeof(T) == typeof(Dictionary<string, string>))
+                {
+                    Dictionary<string, string> dictionary = new();
+                    foreach (JsonProperty property in jsonElement.EnumerateObject())
+                        if (property.Value.ValueKind == JsonValueKind.String)
+                            dictionary[property.Name] = property.Value.GetString();
+                        else
+                            dictionary[property.Name] = property.Value.GetRawText();
+
+                    t = (T)(object)dictionary;
+                    return true;
+                }
+                else if (typeof(T) == typeof(Dictionary<string, string[]>))
+                {
+                    Dictionary<string, string[]> dictionary = new();
+                    foreach (JsonProperty property in jsonElement.EnumerateObject())
+                    {
+                        if (property.Value.ValueKind != JsonValueKind.Array)
+                            dictionary[property.Name] = new string[] { property.Value.GetRawText() };
+
+                        int numItems = 0;
+                        foreach (JsonElement j in property.Value.EnumerateArray())
+                            numItems++;
+
+                        string[] items = new string[numItems];
+                        numItems = 0;
+                        foreach (JsonElement j in property.Value.EnumerateArray())
+                            if (j.ValueKind == JsonValueKind.String)
+                                items[numItems++] = j.GetString();
+                            else
+                                items[numItems++] = j.GetRawText();
+
+                        dictionary[property.Name] = items;
+                    }
+
+                    t = (T)(object)dictionary;
+                    return true;
+                }
+                else if (typeof(T) == typeof(Dictionary<string, List<string>>))
+                {
+                    Dictionary<string, List<string>> dictionary = new();
+                    foreach (JsonProperty property in jsonElement.EnumerateObject())
+                    {
+                        if (property.Value.ValueKind != JsonValueKind.Array)
+                            dictionary[property.Name] = new List<string> { property.Value.GetRawText() };
+
+                        List<string> items = new();
+                        foreach (JsonElement j in property.Value.EnumerateArray())
+                            if (j.ValueKind == JsonValueKind.String)
+                                items.Add(j.GetString());
+                            else
+                                items.Add(j.GetRawText());
+
+                        dictionary[property.Name] = items;
+                    }
+
+                    t = (T)(object)dictionary;
+                    return true;
+                }
+                else if (typeof(T) == typeof(Dictionary<string, Collection<string>>))
+                {
+                    Dictionary<string, Collection<string>> dictionary = new();
+                    foreach (JsonProperty property in jsonElement.EnumerateObject())
+                    {
+                        if (property.Value.ValueKind != JsonValueKind.Array)
+                            dictionary[property.Name] = new Collection<string> { property.Value.GetRawText() };
+
+                        Collection<string> items = new();
+                        foreach (JsonElement j in property.Value.EnumerateArray())
+                            if (j.ValueKind == JsonValueKind.String)
+                                items.Add(j.GetString());
+                            else
+                                items.Add(j.GetRawText());
+
+                        dictionary[property.Name] = items;
+                    }
+
+                    t = (T)(object)dictionary;
+                    return true;
+                }
+                else if (typeof(T) == typeof(Dictionary<string, object>))
+                {
+                    Dictionary<string, object> dictionary = new();
+                    foreach (JsonProperty property in jsonElement.EnumerateObject())
+                        dictionary[property.Name] = CreateObjectFromJsonElement(property.Value);
+
+                    t = (T)(object)dictionary;
+                    return true;
+                }
+            }
+            else if (jsonElement.ValueKind == JsonValueKind.Array)
+            {
+                if (typeof(T) == typeof(string[]))
+                {
+                    int numItems = 0;
+                    // is this an array of properties
+                    foreach (JsonElement j in jsonElement.EnumerateArray())
+                        numItems++;
+
+                    string[] items = new string[numItems];
+                    numItems = 0;
+                    foreach (JsonElement j in jsonElement.EnumerateArray())
+                        if (j.ValueKind == JsonValueKind.String)
+                            items[numItems++] = j.GetString();
+                        else
+                            items[numItems++] = j.GetRawText();
+
+                    t = (T)(object)items;
+                    return true;
+                }
+                else if (typeof(T) == typeof(List<string>))
+                {
+                    List<string> items = new();
+                    foreach (JsonElement j in jsonElement.EnumerateArray())
+                        if (j.ValueKind == JsonValueKind.String)
+                            items.Add(j.GetString());
+                        else
+                            items.Add(j.GetRawText());
+
+                    t = (T)(object)items;
+                    return true;
+                }
+                else if (typeof(T) == typeof(Collection<string>))
+                {
+                    Collection<string> items = new();
+                    foreach (JsonElement j in jsonElement.EnumerateArray())
+                        if (j.ValueKind == JsonValueKind.String)
+                            items.Add(j.GetString());
+                        else
+                            items.Add(j.GetRawText());
+
+                    t = (T)(object)items;
+                    return true;
+                }
+                else if (typeof(T) == typeof(object[]))
+                {
+                    int numItems = 0;
+                    // is this an array of properties
+                    foreach (JsonElement j in jsonElement.EnumerateArray())
+                        numItems++;
+
+                    object[] items = new object[numItems];
+                    numItems = 0;
+                    foreach (JsonElement j in jsonElement.EnumerateArray())
+                        items[numItems++] = CreateObjectFromJsonElement(j);
+
+                    t = (T)(object)items;
+                    return true;
+                }
+                else if (typeof(T) == typeof(List<object>))
+                {
+                    List<object> items = new();
+                    foreach (JsonElement j in jsonElement.EnumerateArray())
+                        items.Add(CreateObjectFromJsonElement(j));
+
+                    t = (T)(object)items;
+                    return true;
+                }
+                else if (typeof(T) == typeof(Collection<object>))
+                {
+                    Collection<object> items = new();
+                    foreach (JsonElement j in jsonElement.EnumerateArray())
+                        items.Add(CreateObjectFromJsonElement(j));
+
+                    t = (T)(object)items;
+                    return true;
+                }
+                else if (typeof(T) == typeof(int[]))
+                {
+                    int numItems = 0;
+                    // is this an array of properties
+                    foreach (JsonElement j in jsonElement.EnumerateArray())
+                        numItems++;
+
+                    int[] items = new int[numItems];
+                    numItems = 0;
+
+                    foreach (JsonElement j in jsonElement.EnumerateArray())
+                        if (j.TryGetInt32(out int i))
+                            items[numItems++] = i;
+                        else if (int.TryParse(j.GetRawText(), out int value))
+                            items[numItems++] = value;
+                        else
+                        {
+                            t = default;
+                            return false;
+                        }
+
+                    t = (T)(object)items;
+                    return true;
+                }
+                else if (typeof(T) == typeof(long[]))
+                {
+                    int numItems = 0;
+                    foreach (JsonElement j in jsonElement.EnumerateArray())
+                        numItems++;
+
+                    long[] items = new long[numItems];
+                    numItems = 0;
+                    foreach (JsonElement j in jsonElement.EnumerateArray())
+                    {
+                        if (j.TryGetInt64(out long l))
+                            items[numItems++] = l;
+                        else if (long.TryParse(j.GetRawText(), out long value))
+                            items[numItems++] = value;
+                        else
+                        {
+                            t = default;
+                            return false;
+                        }
+                    }
+
+                    t = (T)(object)items;
+                    return true;
+                }
+            }
+            else if (typeof(T) == typeof(string))
+            {
+                if (jsonElement.ValueKind == JsonValueKind.String)
+                    t = (T)(object)jsonElement.GetString();
+                else
+                    t = (T)(object)jsonElement.GetRawText();
+
+                return true;
+            }
+
+            t = default;
+            return false;
+        }
+
         #region Read
         internal static bool IsReaderAtTokenType(ref Utf8JsonReader reader, JsonTokenType tokenType, bool advanceReader)
         {
@@ -146,6 +445,32 @@ namespace Microsoft.IdentityModel.Tokens.Json
                 CreateJsonReaderException(ref reader, "JsonTokenType.False or JsonTokenType.True", className, propertyName));
         }
 
+        internal static long ReadLong(ref Utf8JsonReader reader, string propertyName, string className, bool read = false)
+        {
+            if (read)
+                reader.Read();
+
+            if (reader.TokenType == JsonTokenType.Number)
+            {
+                if (reader.TryGetInt64(out long l))
+                    return l;
+
+                if (reader.TryGetDouble(out double d))
+                    return Convert.ToInt64(d);
+            }
+            else if (reader.TokenType == JsonTokenType.String)
+            {
+                if (long.TryParse(reader.GetString(), out long value))
+                    return value;
+
+                if (double.TryParse(reader.GetString(), out double d))
+                    return Convert.ToInt64(d);
+            }
+
+            throw LogHelper.LogExceptionMessage(
+                CreateJsonReaderException(ref reader, "JsonTokenType.Number", className, propertyName));
+        }
+
         internal static double ReadDouble(ref Utf8JsonReader reader, string propertyName, string className, bool read = false)
         {
             if (read)
@@ -162,6 +487,11 @@ namespace Microsoft.IdentityModel.Tokens.Json
                     throw LogHelper.LogExceptionMessage(
                         CreateJsonReaderException(ref reader, typeof(double).ToString(), className, propertyName, ex));
                 }
+            }
+            else if (reader.TokenType == JsonTokenType.String)
+            {
+                if (double.TryParse(reader.GetString(), out double value))
+                    return value;
             }
 
             throw LogHelper.LogExceptionMessage(
@@ -205,30 +535,7 @@ namespace Microsoft.IdentityModel.Tokens.Json
 #endif
         }
 
-        internal static object ReadNumber(ref Utf8JsonReader reader)
-        {
-
-            if (reader.TryGetInt32(out int i))
-                return i;
-            else if (reader.TryGetInt64(out long l))
-                return l;
-            else if (reader.TryGetDouble(out double d))
-                return d;
-            else if (reader.TryGetUInt32(out uint u))
-                return u;
-            else if (reader.TryGetUInt64(out ulong ul))
-                return ul;
-            else if (reader.TryGetSingle(out float f))
-                return f;
-            else if (reader.TryGetDecimal(out decimal m))
-                return m;
-
-            Debug.Assert(false, "expected to read a number, but none of the Utf8JsonReader.TryGet... methods returned true.");
-
-            return ReadJsonElement(ref reader);
-        }
-
-        internal static IList<object> ReadArrayOfObjects(ref Utf8JsonReader reader, string propertyName, string className)
+        internal static List<object> ReadArrayOfObjects(ref Utf8JsonReader reader, string propertyName, string className)
         {
             // returning null keeps the same logic as JsonSerialization.ReadObject
             if (reader.TokenType == JsonTokenType.Null)
@@ -381,12 +688,16 @@ namespace Microsoft.IdentityModel.Tokens.Json
         /// This method is called when deserializing a property value as an object.
         /// Normally we put the object into a Dictionary[string, object].
         /// </summary>
-        /// <param name="reader"></param>
-        /// <param name="propertyName"></param>
-        /// <param name="className"></param>
+        /// <param name="reader">the <see cref="Utf8JsonReader"/></param>
+        /// <param name="propertyName">the property name that is being read</param>
+        /// <param name="className">the type that is being deserialized</param>
+        /// <param name="read">if true reader.Read() will be called.</param>
         /// <returns></returns>
-        internal static object ReadPropertyValueAsObject(ref Utf8JsonReader reader, string propertyName, string className)
+        internal static object ReadPropertyValueAsObject(ref Utf8JsonReader reader, string propertyName, string className, bool read = false)
         {
+            if (read)
+                reader.Read();
+
             switch (reader.TokenType)
             {
                 case JsonTokenType.False:
@@ -402,7 +713,7 @@ namespace Microsoft.IdentityModel.Tokens.Json
                 case JsonTokenType.StartObject:
                     return ReadJsonElement(ref reader);
                 case JsonTokenType.StartArray:
-                    return ReadArrayOfObjects(ref reader, propertyName, className);
+                    return ReadJsonElement(ref reader);
                 default:
                     // There is something broken here as this was called when the reader is pointing at a property.
                     // It must be a known Json type.
@@ -410,8 +721,30 @@ namespace Microsoft.IdentityModel.Tokens.Json
                     return null;
             }
         }
-        #endregion
 
+        internal static object ReadNumber(ref Utf8JsonReader reader)
+        {
+            if (reader.TryGetInt32(out int i))
+                return i;
+            else if (reader.TryGetInt64(out long l))
+                return l;
+            else if (reader.TryGetDouble(out double d))
+                return d;
+            else if (reader.TryGetUInt32(out uint u))
+                return u;
+            else if (reader.TryGetUInt64(out ulong ul))
+                return ul;
+            else if (reader.TryGetSingle(out float f))
+                return f;
+            else if (reader.TryGetDecimal(out decimal m))
+                return m;
+
+            Debug.Assert(false, "expected to read a number, but none of the Utf8JsonReader.TryGet... methods returned true.");
+
+            return ReadJsonElement(ref reader);
+        }
+        #endregion
+    
         #region Write
         public static void WriteAsJsonElement(ref Utf8JsonWriter writer, string json)
         {
@@ -442,80 +775,64 @@ namespace Microsoft.IdentityModel.Tokens.Json
         /// <param name="writer"></param>
         /// <param name="key"></param>
         /// <param name="obj"></param>
-        /// <param name="depth">The current depth of recursive call for objects.
-        /// Maximum is 2.</param>
-        public static void WriteObject(ref Utf8JsonWriter writer, string key, object obj, int depth = 0)
+        public static void WriteObject(ref Utf8JsonWriter writer, string key, object obj)
         {
+            if (obj is null)
+            {
+                writer.WriteNull(key);
+                return;
+            }
+
+            Type objType = obj.GetType();
+
             if (obj is string str)
                 writer.WriteString(key, str);
-            else if (obj is DateTime dt)
-                writer.WriteString(key, dt.ToUniversalTime());
+            else if (obj is long l)
+                writer.WriteNumber(key, l);
             else if (obj is int i)
                 writer.WriteNumber(key, i);
             else if (obj is bool b)
                 writer.WriteBoolean(key, b);
-            else if (obj is decimal d)
-                writer.WriteNumber(key, d);
-            else if (obj is double dub)
-                writer.WriteNumber(key, dub);
-            else if (obj is float f)
-                writer.WriteNumber(key, f);
-            else if (obj is long l)
-                writer.WriteNumber(key, l);
-            else if (obj is null)
-                writer.WriteNull(key);
-            else if (obj is List<string> strs)
+            else if (obj is DateTime dt)
+                writer.WriteString(key, dt.ToUniversalTime());
+            else if (typeof(IDictionary).IsAssignableFrom(objType))
             {
+                IDictionary dictionary = (IDictionary)obj;
+                writer.WritePropertyName(key);
+
+                writer.WriteStartObject();
+                foreach (var k in dictionary.Keys)
+                    WriteObject(ref writer, k.ToString(), dictionary[k]);
+
+                writer.WriteEndObject();
+            }
+            else if (typeof(IList).IsAssignableFrom(objType))
+            {
+                IList list = (IList)obj;
                 writer.WriteStartArray(key);
-                foreach (string item in strs)
-                    writer.WriteStringValue(item);
+                foreach (var k in list)
+                    WriteObjectValue(ref writer, k);
 
                 writer.WriteEndArray();
-            }
-            else if (depth < MaxDepth && obj is List<object> objs)
-            {
-                depth++;
-                writer.WriteStartArray(key);
-                foreach (object item in objs)
-                    WriteObjectValue(ref writer, item, depth);
-
-                writer.WriteEndArray();
-            }
-            else if (obj is IDictionary<string, string> idics)
-            {
-                writer.WriteStartObject(key);
-                foreach (KeyValuePair<string, string> kvp in idics)
-                    writer.WriteString(kvp.Key, kvp.Value);
-
-                writer.WriteEndObject();
-            }
-            else if (depth < MaxDepth && obj is IDictionary<string, object> idic)
-            {
-                depth++;
-                writer.WriteStartObject(key);
-                foreach (KeyValuePair<string, object> kvp in idic)
-                    WriteObject(ref writer, kvp.Key, kvp.Value, depth);
-
-                writer.WriteEndObject();
-            }
-            else if (depth < MaxDepth && obj is Dictionary<string, object> dic)
-            {
-                depth++;
-                writer.WriteStartObject(key);
-                foreach (KeyValuePair<string, object> kvp in dic)
-                    WriteObject(ref writer, kvp.Key, kvp.Value, depth);
-
-                writer.WriteEndObject();
             }
             else if (obj is JsonElement j)
             {
                 writer.WritePropertyName(key);
                 j.WriteTo(writer);
             }
+            else if (obj is double dub)
+                writer.WriteNumber(key, dub);
+            else if (obj is decimal d)
+                writer.WriteNumber(key, d);
+            else if (obj is float f)
+                writer.WriteNumber(key, f);
             else
-            {
-                writer.WriteString(key, obj.ToString());
-            }
+                throw LogHelper.LogExceptionMessage(
+                    new ArgumentException(
+                        LogHelper.FormatInvariant(
+                            LogMessages.IDX11025,
+                            LogHelper.MarkAsNonPII(objType.ToString()),
+                            LogHelper.MarkAsNonPII(key))));
         }
 
         /// <summary>
@@ -524,10 +841,10 @@ namespace Microsoft.IdentityModel.Tokens.Json
         /// </summary>
         /// <param name="writer"></param>
         /// <param name="obj"></param>
-        /// <param name="depth">The current depth of recursive call for objects.
-        /// Maximum is 2.</param>
-        public static void WriteObjectValue(ref Utf8JsonWriter writer, object obj, int depth = 0)
+        public static void WriteObjectValue(ref Utf8JsonWriter writer, object obj)
         {
+            Type objType = obj.GetType();
+
             if (obj is string str)
                 writer.WriteStringValue(str);
             else if (obj is DateTime dt)
@@ -536,35 +853,36 @@ namespace Microsoft.IdentityModel.Tokens.Json
                 writer.WriteNumberValue(i);
             else if (obj is bool b)
                 writer.WriteBooleanValue(b);
-            else if (obj is double d)
-                writer.WriteNumberValue((decimal)d);
-            else if (obj is decimal m)
-                writer.WriteNumberValue(m);
-            else if (obj is float f)
-                writer.WriteNumberValue(f);
             else if (obj is long l)
                 writer.WriteNumberValue(l);
             else if (obj is null)
                 writer.WriteNullValue();
+            else if (obj is double d)
+                writer.WriteNumberValue((decimal)d);
             else if (obj is JsonElement j)
                 j.WriteTo(writer);
-            else if (obj is List<string> strings)
+            else if (typeof(IDictionary).IsAssignableFrom(objType))
             {
+                IDictionary dictionary = (IDictionary)obj;
+                writer.WriteStartObject();
+                foreach (var k in dictionary.Keys)
+                    WriteObject(ref writer, k.ToString(), dictionary[k]);
+
+                writer.WriteEndObject();
+            }
+            else if (typeof(IList).IsAssignableFrom(objType))
+            {
+                IList list = (IList)obj;
                 writer.WriteStartArray();
-                foreach (string strValue in strings)
-                    writer.WriteStringValue(strValue);
+                foreach (var k in list)
+                    WriteObjectValue(ref writer, k);
 
                 writer.WriteEndArray();
             }
-            else if (depth < MaxDepth && obj is List<object> objs)
-            {
-                depth++;
-                writer.WriteStartArray();
-                foreach (object item in objs)
-                    WriteObjectValue(ref writer, item, depth);
-
-                writer.WriteEndArray();
-            }
+            else if (obj is decimal m)
+                writer.WriteNumberValue(m);
+            else if (obj is float f)
+                writer.WriteNumberValue(f);
             else
                 writer.WriteStringValue(obj.ToString());
         }
@@ -586,15 +904,6 @@ namespace Microsoft.IdentityModel.Tokens.Json
 
             writer.WriteEndArray();
         }
-
-        public static void WriteStrings(ref Utf8JsonWriter writer, JsonEncodedText propertyName, IList<string> strings)
-        {
-            writer.WriteStartArray(propertyName);
-            foreach (string str in strings)
-                writer.WriteStringValue(str);
-
-            writer.WriteEndArray();
-        }
-#endregion
+        #endregion
     }
 }

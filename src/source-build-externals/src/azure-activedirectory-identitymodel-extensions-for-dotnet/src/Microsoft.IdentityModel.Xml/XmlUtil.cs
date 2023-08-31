@@ -14,7 +14,7 @@ namespace Microsoft.IdentityModel.Xml
     /// </summary>
     public static class XmlUtil
     {
-        private static Dictionary<byte, string> _hexDictionary = new Dictionary<byte, string>
+        private static readonly Dictionary<byte, string> _hexDictionary = new Dictionary<byte, string>
         {
             { 0, "0" },
             { 1, "1" },

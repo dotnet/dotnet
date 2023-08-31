@@ -300,6 +300,8 @@ namespace Microsoft.IdentityModel.TestUtils
                 "http://Default.Issuer3.com" };
         }
 
+        public static string Jti => "Jti";
+
         public static string Jwt(SecurityTokenDescriptor tokenDescriptor)
         {
             return (new JwtSecurityTokenHandler()).CreateEncodedJwt(tokenDescriptor);
@@ -390,13 +392,15 @@ namespace Microsoft.IdentityModel.TestUtils
         {
             get => new JObject()
             {
+                { JwtRegisteredClaimNames.Aud, Audience },
+                { JwtRegisteredClaimNames.Azp, Azp },
                 { JwtRegisteredClaimNames.Email, "Bob@contoso.com" },
+                { JwtRegisteredClaimNames.Exp, EpochTime.GetIntDate(Expires).ToString() },
                 { JwtRegisteredClaimNames.GivenName, "Bob" },
                 { JwtRegisteredClaimNames.Iss, Issuer },
-                { JwtRegisteredClaimNames.Aud, Audience },
                 { JwtRegisteredClaimNames.Iat, EpochTime.GetIntDate(IssueInstant).ToString() },
+                { JwtRegisteredClaimNames.Jti, Jti },
                 { JwtRegisteredClaimNames.Nbf, EpochTime.GetIntDate(NotBefore).ToString()},
-                { JwtRegisteredClaimNames.Exp, EpochTime.GetIntDate(Expires).ToString() },
             }.ToString(Formatting.None);
         }
 
@@ -404,13 +408,15 @@ namespace Microsoft.IdentityModel.TestUtils
         {
             get => new List<Claim>()
             {
+                new Claim(JwtRegisteredClaimNames.Exp, EpochTime.GetIntDate(Expires).ToString(), ClaimValueTypes.Integer64, Issuer, Issuer),
+                new Claim(JwtRegisteredClaimNames.Aud, Audience, ClaimValueTypes.String, Issuer, Issuer),
+                new Claim(JwtRegisteredClaimNames.Azp, Azp, ClaimValueTypes.String, Issuer, Issuer),
                 new Claim(JwtRegisteredClaimNames.Email, "Bob@contoso.com", ClaimValueTypes.String, Issuer, Issuer),
                 new Claim(JwtRegisteredClaimNames.GivenName, "Bob", ClaimValueTypes.String, Issuer, Issuer),
                 new Claim(JwtRegisteredClaimNames.Iss, Issuer, ClaimValueTypes.String, Issuer, Issuer),
-                new Claim(JwtRegisteredClaimNames.Aud, Audience, ClaimValueTypes.String, Issuer, Issuer),
-                new Claim(JwtRegisteredClaimNames.Iat, EpochTime.GetIntDate(IssueInstant).ToString(), ClaimValueTypes.String, Issuer, Issuer),
-                new Claim(JwtRegisteredClaimNames.Nbf, EpochTime.GetIntDate(NotBefore).ToString(), ClaimValueTypes.String, Issuer, Issuer),
-                new Claim(JwtRegisteredClaimNames.Exp, EpochTime.GetIntDate(Expires).ToString(), ClaimValueTypes.String, Issuer, Issuer),
+                new Claim(JwtRegisteredClaimNames.Iat, EpochTime.GetIntDate(IssueInstant).ToString(), ClaimValueTypes.Integer64, Issuer, Issuer),
+                new Claim(JwtRegisteredClaimNames.Jti, Jti, ClaimValueTypes.String, Issuer, Issuer),
+                new Claim(JwtRegisteredClaimNames.Nbf, EpochTime.GetIntDate(NotBefore).ToString(), ClaimValueTypes.Integer64, Issuer, Issuer),
             };
         }
 
@@ -481,13 +487,15 @@ namespace Microsoft.IdentityModel.TestUtils
         {
             get => new Dictionary<string, object>()
             {
+                { JwtRegisteredClaimNames.Aud, Audience },
+                { JwtRegisteredClaimNames.Azp, Azp },
                 { JwtRegisteredClaimNames.Email, "Bob@contoso.com" },
+                { JwtRegisteredClaimNames.Exp, EpochTime.GetIntDate(Expires).ToString() },
                 { JwtRegisteredClaimNames.GivenName, "Bob" },
                 { JwtRegisteredClaimNames.Iss, Issuer },
-                { JwtRegisteredClaimNames.Aud, Audience },
                 { JwtRegisteredClaimNames.Iat, EpochTime.GetIntDate(IssueInstant).ToString() },
+                { JwtRegisteredClaimNames.Jti, Jti },
                 { JwtRegisteredClaimNames.Nbf, EpochTime.GetIntDate(NotBefore).ToString()},
-                { JwtRegisteredClaimNames.Exp, EpochTime.GetIntDate(Expires).ToString() }
             };
         }
 

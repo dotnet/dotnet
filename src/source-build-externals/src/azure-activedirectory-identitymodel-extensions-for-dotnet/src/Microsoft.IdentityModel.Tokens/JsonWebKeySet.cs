@@ -19,7 +19,7 @@ namespace Microsoft.IdentityModel.Tokens
     public class JsonWebKeySet
     {
         internal const string ClassName = "Microsoft.IdentityModel.Tokens.JsonWebKeySet";
-        private IDictionary<string, object> _additionalData;
+        private Dictionary<string, object> _additionalData;
 
         /// <summary>
         /// Returns a new instance of <see cref="JsonWebKeySet"/>.

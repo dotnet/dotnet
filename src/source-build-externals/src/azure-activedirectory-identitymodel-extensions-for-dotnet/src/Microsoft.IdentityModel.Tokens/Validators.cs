@@ -215,7 +215,10 @@ namespace Microsoft.IdentityModel.Tokens
         /// <remarks>An EXACT match is required.</remarks>
         internal static string ValidateIssuer(string issuer, SecurityToken securityToken, TokenValidationParameters validationParameters, BaseConfiguration configuration)
         {
-            return ValidateIssuerAsync(issuer, securityToken, validationParameters, configuration).GetAwaiter().GetResult();
+            ValueTask<string> vt = ValidateIssuerAsync(issuer, securityToken, validationParameters, configuration);
+            return vt.IsCompletedSuccessfully ?
+                vt.Result :
+                vt.AsTask().GetAwaiter().GetResult();
         }
 
         /// <summary>
@@ -232,7 +235,7 @@ namespace Microsoft.IdentityModel.Tokens
         /// <exception cref="SecurityTokenInvalidIssuerException">If <see cref="TokenValidationParameters.ValidIssuer"/> is null or whitespace and <see cref="TokenValidationParameters.ValidIssuers"/> is null and <see cref="BaseConfiguration.Issuer"/> is null.</exception>
         /// <exception cref="SecurityTokenInvalidIssuerException">If 'issuer' failed to matched either <see cref="TokenValidationParameters.ValidIssuer"/> or one of <see cref="TokenValidationParameters.ValidIssuers"/> or <see cref="BaseConfiguration.Issuer"/>.</exception>
         /// <remarks>An EXACT match is required.</remarks>
-        internal static async Task<string> ValidateIssuerAsync(
+        internal static async ValueTask<string> ValidateIssuerAsync(
             string issuer,
             SecurityToken securityToken,
             TokenValidationParameters validationParameters,

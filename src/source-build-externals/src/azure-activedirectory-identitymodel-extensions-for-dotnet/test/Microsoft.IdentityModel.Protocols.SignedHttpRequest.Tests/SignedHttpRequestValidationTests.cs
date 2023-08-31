@@ -1407,7 +1407,7 @@ namespace Microsoft.IdentityModel.Protocols.SignedHttpRequest.Tests
                 var signedHttpRequestWithNullAt = SignedHttpRequestTestUtils.ReplaceOrAddPropertyAndCreateDefaultSignedHttpRequest(new JProperty(SignedHttpRequestClaimTypes.At, null));
                 var signedHttpRequestWithEmptyAt = SignedHttpRequestTestUtils.ReplaceOrAddPropertyAndCreateDefaultSignedHttpRequest(new JProperty(SignedHttpRequestClaimTypes.At, string.Empty));
 
-                var validationResult = new JsonWebTokenHandler().ValidateToken(encodedAccessToken, SignedHttpRequestTestUtils.DefaultTokenValidationParameters);
+                var validationResult = new JsonWebTokenHandler().ValidateTokenAsync(encodedAccessToken, SignedHttpRequestTestUtils.DefaultTokenValidationParameters).Result;
                 var resultingClaimsIdentity = validationResult.ClaimsIdentity;
                 var validatedToken = validationResult.SecurityToken;
 

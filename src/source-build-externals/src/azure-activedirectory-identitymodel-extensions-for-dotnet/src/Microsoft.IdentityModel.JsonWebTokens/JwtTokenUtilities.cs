@@ -524,61 +524,6 @@ namespace Microsoft.IdentityModel.JsonWebTokens
 
             return ClaimValueTypes.String;
         }
-
-        // TODO - we need to support to ways of accessing json values.
-        // In a System.Security.Claims.Claim, JsonObjects and JsonArrays will need to be serialized as Json, and the ClaimValueType set to JsonArray or Json.
-        // A C# type can also be returned, we will return a List<objects> representing the JsonArray or an object representing the JsonObject.
-        // This will allow for constant time lookup for both scenarios if we store the results in dictionaries.
-        // We need to have the JwtPayload, JwtHeader, JsonClaimSet all share the same call graph for consistency.
-        // We need a shared model for adding claims from object for JsonWebToken and JwtSecurityToken
-        // From getting ClaimValueTypes to setting object types
-
-        internal static IDictionary<string, object> CreateClaimsDictionary(byte[] bytes, int length)
-        {
-            Dictionary<string, object> claims = new();
-            Span<byte> utf8Span = bytes;
-            Utf8JsonReader reader = new(utf8Span.Slice(0,length));
-
-            if (!JsonSerializerPrimitives.IsReaderAtTokenType(ref reader, JsonTokenType.StartObject, false))
-                throw LogHelper.LogExceptionMessage(
-                    new JsonException(
-                        LogHelper.FormatInvariant(
-                        Tokens.LogMessages.IDX11023,
-                        LogHelper.MarkAsNonPII("JsonTokenType.StartObject"),
-                        LogHelper.MarkAsNonPII(reader.TokenType),
-                        LogHelper.MarkAsNonPII(JsonClaimSet.ClassName),
-                        LogHelper.MarkAsNonPII(reader.TokenStartIndex),
-                        LogHelper.MarkAsNonPII(reader.CurrentDepth),
-                        LogHelper.MarkAsNonPII(reader.BytesConsumed))));
-
-            while (reader.Read())
-            {
-                if (reader.TokenType == JsonTokenType.PropertyName)
-                {
-                    string propertyName = reader.GetString();
-                    reader.Read();
-                    claims[propertyName] = JsonSerializerPrimitives.ReadPropertyValueAsObject(ref reader, propertyName, JsonClaimSet.ClassName);
-                }
-                else if (reader.TokenType == JsonTokenType.EndObject)
-                {
-                    break;
-                }
-            };
-
-            return claims;
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="rawString"></param>
-        /// <param name="startIndex"></param>
-        /// <param name="length"></param>
-        /// <returns></returns>
-        internal static IDictionary<string,object> ParseJsonBytes(string rawString, int startIndex, int length)
-        {
-            return Base64UrlEncoding.Decode<IDictionary<string,object>>(rawString, startIndex, length, CreateClaimsDictionary);
-        }
     }
 }
 

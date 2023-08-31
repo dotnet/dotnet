@@ -16,9 +16,8 @@ namespace Microsoft.IdentityModel.Tokens
         private DisposableObjectPool<AsymmetricAdapter> _asymmetricAdapterObjectPool;
         private CryptoProviderFactory _cryptoProviderFactory;
         private bool _disposed;
-        private Lazy<bool> _keySizeIsValid;
-        private IReadOnlyDictionary<string, int> _minimumAsymmetricKeySizeInBitsForSigningMap;
-        private IReadOnlyDictionary<string, int> _minimumAsymmetricKeySizeInBitsForVerifyingMap;
+        private Dictionary<string, int> _minimumAsymmetricKeySizeInBitsForSigningMap;
+        private Dictionary<string, int> _minimumAsymmetricKeySizeInBitsForVerifyingMap;
 
         /// <summary>
         /// Mapping from algorithm to minimum <see cref="AsymmetricSecurityKey"/>.KeySize when creating signatures.
@@ -131,7 +130,6 @@ namespace Microsoft.IdentityModel.Tokens
                 throw LogHelper.LogExceptionMessage(new NotSupportedException(LogHelper.FormatInvariant(LogMessages.IDX10634, LogHelper.MarkAsNonPII((algorithm)), key)));
 
             WillCreateSignatures = willCreateSignatures;
-            _keySizeIsValid = new Lazy<bool>(ValidKeySize);
             _asymmetricAdapterObjectPool = new DisposableObjectPool<AsymmetricAdapter>(CreateAsymmetricAdapter, _cryptoProviderFactory.SignatureProviderObjectPoolCacheSize);
         }
 

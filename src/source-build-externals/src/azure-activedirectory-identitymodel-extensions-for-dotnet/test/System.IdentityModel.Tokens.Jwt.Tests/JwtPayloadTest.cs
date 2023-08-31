@@ -6,6 +6,7 @@ using System.Globalization;
 using System.Linq;
 using System.Reflection;
 using System.Security.Claims;
+using System.Text;
 using Microsoft.IdentityModel.TestUtils;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.IdentityModel.Tokens.Json;
@@ -87,6 +88,7 @@ namespace System.IdentityModel.Tokens.Jwt.Tests
         [Fact]
         public void JwtPayloadUnicodeMapping()
         {
+
             string issuer = "a\\b";
             List<Claim> claims = new List<Claim>();
             JwtPayload unicodePayload = new JwtPayload("a\u005Cb", "", claims, null, null);
@@ -95,7 +97,8 @@ namespace System.IdentityModel.Tokens.Jwt.Tests
             string json2 = payload.SerializeToJson();
             Assert.Equal(json, json2);
 
-            JwtPayload retrievePayload = new JwtPayload(json);
+            byte[] bytes = Encoding.UTF8.GetBytes(json);
+            JwtPayload retrievePayload = JwtPayload.CreatePayload(bytes, bytes.Length);
             Assert.Equal(retrievePayload.Iss, issuer);
 
             json = unicodePayload.Base64UrlEncode();
@@ -190,7 +193,8 @@ namespace System.IdentityModel.Tokens.Jwt.Tests
             var context = new CompareContext();
             var payload = new JwtPayload(claims);
             var payloadAsJson = payload.SerializeToJson();
-            var payloadDeserialized = new JwtPayload(payloadAsJson);
+            byte[] payloadAsBytes = Encoding.UTF8.GetBytes(payloadAsJson);
+            JwtPayload payloadDeserialized = JwtPayload.CreatePayload(payloadAsBytes, payloadAsBytes.Length);
             var instanceContext = new CompareContext
             {
                 PropertiesToIgnoreWhenComparing = new Dictionary<Type, List<string>>
@@ -204,7 +208,7 @@ namespace System.IdentityModel.Tokens.Jwt.Tests
 
             if (!IdentityComparer.AreEqual(payload, payloadDeserialized, instanceContext))
             {
-                instanceContext.AddDiff("payload != payloadUsingNewtonsoft");
+                instanceContext.AddDiff("payload != payloadDeserialized");
                 instanceContext.AddDiff("******************************");
             }
 
@@ -271,7 +275,7 @@ namespace System.IdentityModel.Tokens.Jwt.Tests
                     new List<Claim>
                     {
                         new Claim("aud", "http://test.local/api/", ClaimValueTypes.String, "http://test.local/api/"),
-                        new Claim("exp", "1460647835", ClaimValueTypes.Integer32, "http://test.local/api/"),
+                        new Claim("exp", "1460647835", ClaimValueTypes.Integer64, "http://test.local/api/"),
                         new Claim("emailaddress", "user1@contoso.com", ClaimValueTypes.String, "http://test.local/api/"),
                         new Claim("emailaddress", "user2@contoso.com", ClaimValueTypes.String, "http://test.local/api/"),
                         new Claim("name", "user", ClaimValueTypes.String, "http://test.local/api/"),
