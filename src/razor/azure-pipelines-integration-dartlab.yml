@@ -33,6 +33,8 @@ variables:
   value: 'true'
 - name: LogLevel
   value: 'Verbose'
+- name: RAZOR_TRACE
+  value: 'Verbose'
 
 stages:
 - template: \stages\visual-studio\agent.yml@DartLabTemplates

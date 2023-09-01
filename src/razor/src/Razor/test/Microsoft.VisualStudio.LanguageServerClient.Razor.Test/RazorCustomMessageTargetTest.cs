@@ -69,8 +69,7 @@ public class RazorCustomMessageTargetTest : TestBase
             new CSharpVirtualDocumentAddListener(outputWindowLogger),
             Mock.Of<ITelemetryReporter>(MockBehavior.Strict),
             TestLanguageServerFeatureOptions.Instance,
-            Mock.Of<ProjectSnapshotManagerAccessor>(MockBehavior.Strict),
-            outputWindowLogger);
+            Mock.Of<ProjectSnapshotManagerAccessor>(MockBehavior.Strict));
         var request = new UpdateBufferRequest()
         {
             HostDocumentFilePath = "C:/path/to/file.razor",
@@ -110,8 +109,7 @@ public class RazorCustomMessageTargetTest : TestBase
             new CSharpVirtualDocumentAddListener(outputWindowLogger),
             Mock.Of<ITelemetryReporter>(MockBehavior.Strict),
             TestLanguageServerFeatureOptions.Instance,
-            Mock.Of<ProjectSnapshotManagerAccessor>(MockBehavior.Strict),
-            outputWindowLogger);
+            Mock.Of<ProjectSnapshotManagerAccessor>(MockBehavior.Strict));
         var request = new UpdateBufferRequest()
         {
             HostDocumentFilePath = "C:/path/to/file.razor",
@@ -162,8 +160,7 @@ public class RazorCustomMessageTargetTest : TestBase
             new CSharpVirtualDocumentAddListener(outputWindowLogger),
             Mock.Of<ITelemetryReporter>(MockBehavior.Strict),
             new TestLanguageServerFeatureOptions(includeProjectKeyInGeneratedFilePath: true),
-            Mock.Of<ProjectSnapshotManagerAccessor>(MockBehavior.Strict),
-            outputWindowLogger);
+            Mock.Of<ProjectSnapshotManagerAccessor>(MockBehavior.Strict));
         var request = new UpdateBufferRequest()
         {
             ProjectKeyId = projectKey2.Id,
@@ -201,8 +198,7 @@ public class RazorCustomMessageTargetTest : TestBase
             new CSharpVirtualDocumentAddListener(outputWindowLogger),
             Mock.Of<ITelemetryReporter>(MockBehavior.Strict),
             TestLanguageServerFeatureOptions.Instance,
-            Mock.Of<ProjectSnapshotManagerAccessor>(MockBehavior.Strict),
-            outputWindowLogger);
+            Mock.Of<ProjectSnapshotManagerAccessor>(MockBehavior.Strict));
         var request = new DelegatedCodeActionParams()
         {
             HostDocumentVersion = 1,
@@ -272,7 +268,7 @@ public class RazorCustomMessageTargetTest : TestBase
 
         var target = new RazorCustomMessageTarget(
                 documentManager.Object, JoinableTaskContext, requestInvoker.Object,
-                TestFormattingOptionsProvider.Default, _editorSettingsManager, documentSynchronizer, csharpVirtualDocumentAddListener, telemetryReporter.Object, TestLanguageServerFeatureOptions.Instance, Mock.Of<ProjectSnapshotManagerAccessor>(MockBehavior.Strict), outputWindowLogger);
+                TestFormattingOptionsProvider.Default, _editorSettingsManager, documentSynchronizer, csharpVirtualDocumentAddListener, telemetryReporter.Object, TestLanguageServerFeatureOptions.Instance, Mock.Of<ProjectSnapshotManagerAccessor>(MockBehavior.Strict));
 
         var request = new DelegatedCodeActionParams()
         {
@@ -349,7 +345,7 @@ public class RazorCustomMessageTargetTest : TestBase
 
         var target = new RazorCustomMessageTarget(
             documentManager, JoinableTaskContext, requestInvoker.Object,
-            TestFormattingOptionsProvider.Default, _editorSettingsManager, documentSynchronizer.Object, csharpVirtualDocumentAddListener, telemetryReporter.Object, TestLanguageServerFeatureOptions.Instance, Mock.Of<ProjectSnapshotManagerAccessor>(MockBehavior.Strict), outputWindowLogger);
+            TestFormattingOptionsProvider.Default, _editorSettingsManager, documentSynchronizer.Object, csharpVirtualDocumentAddListener, telemetryReporter.Object, TestLanguageServerFeatureOptions.Instance, Mock.Of<ProjectSnapshotManagerAccessor>(MockBehavior.Strict));
 
         var codeAction = new VSInternalCodeAction()
         {
@@ -386,8 +382,7 @@ public class RazorCustomMessageTargetTest : TestBase
             new CSharpVirtualDocumentAddListener(outputWindowLogger),
             Mock.Of<ITelemetryReporter>(MockBehavior.Strict),
             TestLanguageServerFeatureOptions.Instance,
-            Mock.Of<ProjectSnapshotManagerAccessor>(MockBehavior.Strict),
-            outputWindowLogger);
+            Mock.Of<ProjectSnapshotManagerAccessor>(MockBehavior.Strict));
         var request = new ProvideSemanticTokensRangeParams(
             textDocument: new TextDocumentIdentifier()
             {
@@ -428,8 +423,7 @@ public class RazorCustomMessageTargetTest : TestBase
             new CSharpVirtualDocumentAddListener(outputWindowLogger),
             Mock.Of<ITelemetryReporter>(MockBehavior.Strict),
             TestLanguageServerFeatureOptions.Instance,
-            Mock.Of<ProjectSnapshotManagerAccessor>(MockBehavior.Strict),
-            outputWindowLogger);
+            Mock.Of<ProjectSnapshotManagerAccessor>(MockBehavior.Strict));
         var request = new ProvideSemanticTokensRangeParams(
             textDocument: new TextDocumentIdentifier()
             {
@@ -490,7 +484,7 @@ public class RazorCustomMessageTargetTest : TestBase
 
         var target = new RazorCustomMessageTarget(
             documentManager.Object, JoinableTaskContext, requestInvoker.Object,
-            TestFormattingOptionsProvider.Default, _editorSettingsManager, documentSynchronizer.Object, csharpVirtualDocumentAddListener, telemetryReporter.Object, TestLanguageServerFeatureOptions.Instance, Mock.Of<ProjectSnapshotManagerAccessor>(MockBehavior.Strict), outputWindowLogger);
+            TestFormattingOptionsProvider.Default, _editorSettingsManager, documentSynchronizer.Object, csharpVirtualDocumentAddListener, telemetryReporter.Object, TestLanguageServerFeatureOptions.Instance, Mock.Of<ProjectSnapshotManagerAccessor>(MockBehavior.Strict));
         var request = new ProvideSemanticTokensRangeParams(
             textDocument: new TextDocumentIdentifier()
             {
@@ -560,6 +554,10 @@ public class RazorCustomMessageTargetTest : TestBase
         }
 
         public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception exception, Func<TState, Exception, string> formatter)
+        {
+        }
+
+        public void SetTestLogger(ILogger testOutputLogger)
         {
         }
     }

@@ -1011,50 +1011,6 @@ public class DefaultRazorProjectServiceTest : LanguageServerTestBase
     }
 
     [Fact]
-    public void RemoveProject_RemovesProject()
-    {
-        // Arrange
-        var projectFilePath = "C:/path/to/project.csproj";
-        var ownerProject = TestProjectSnapshot.Create("C:/path/to/obj");
-        var miscellaneousProject = TestProjectSnapshot.Create("C:/__MISC_PROJECT__");
-        var projectResolver = new TestSnapshotResolver(new Dictionary<string, IProjectSnapshot>(), miscellaneousProject);
-        var projectSnapshotManager = new Mock<ProjectSnapshotManagerBase>(MockBehavior.Strict);
-        projectSnapshotManager.Setup(manager => manager.GetLoadedProject(ownerProject.Key))
-            .Returns(ownerProject);
-        projectSnapshotManager
-            .Setup(p => p.GetAllProjectKeys(projectFilePath))
-            .Returns(ImmutableArray.Create(ownerProject.Key));
-        projectSnapshotManager.Setup(manager => manager.ProjectRemoved(ownerProject.Key))
-            .Callback<ProjectKey>((projectKey) => Assert.Equal(projectKey, ownerProject.Key));
-        var projectService = CreateProjectService(projectResolver, projectSnapshotManager.Object);
-
-        // Act
-        projectService.RemoveProject(projectFilePath);
-
-        // Assert
-        projectSnapshotManager.VerifyAll();
-    }
-
-    [Fact]
-    public void RemoveProject_NoopsIfProjectIsNotLoaded()
-    {
-        // Arrange
-        var projectFilePath = "C:/path/to/project.csproj";
-        var miscellaneousProject = TestProjectSnapshot.Create("C:/__MISC_PROJECT__");
-        var projectResolver = new TestSnapshotResolver(new Dictionary<string, IProjectSnapshot>(), miscellaneousProject);
-        var projectSnapshotManager = new Mock<ProjectSnapshotManagerBase>(MockBehavior.Strict);
-        projectSnapshotManager.Setup(manager => manager.ProjectRemoved(It.IsAny<ProjectKey>()))
-            .Throws(new InvalidOperationException("Should not have been called."));
-        projectSnapshotManager
-            .Setup(p => p.GetAllProjectKeys(projectFilePath))
-            .Returns(ImmutableArray<ProjectKey>.Empty);
-        var projectService = CreateProjectService(projectResolver, projectSnapshotManager.Object);
-
-        // Act & Assert
-        projectService.RemoveProject(projectFilePath);
-    }
-
-    [Fact]
     public void TryMigrateDocumentsFromRemovedProject_MigratesDocumentsToNonMiscProject()
     {
         // Arrange
