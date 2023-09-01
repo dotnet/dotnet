@@ -7,14 +7,9 @@ using Microsoft.AspNetCore.Razor.Language.Syntax;
 
 namespace Microsoft.VisualStudio.Editor.Razor.SyntaxVisualizer;
 
-internal class RazorSyntaxNodeList : IEnumerable<RazorSyntaxNode>
+internal class RazorSyntaxNodeList(ChildSyntaxList childSyntaxList) : IEnumerable<RazorSyntaxNode>
 {
-    private readonly ChildSyntaxList _childSyntaxList;
-
-    public RazorSyntaxNodeList(ChildSyntaxList childSyntaxList)
-    {
-        _childSyntaxList = childSyntaxList;
-    }
+    private readonly ChildSyntaxList _childSyntaxList = childSyntaxList;
 
     public IEnumerator<RazorSyntaxNode> GetEnumerator()
     {

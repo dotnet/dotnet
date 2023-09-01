@@ -5,16 +5,18 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Composition;
 using System.Linq;
 using Microsoft.AspNetCore.Razor.Language;
+using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.CodeAnalysis.Razor.Tooltip;
 using Microsoft.VisualStudio.Editor.Razor;
 
 namespace Microsoft.CodeAnalysis.Razor.Completion;
 
 [Shared]
-[Export(typeof(RazorCompletionItemProvider))]
+[Export(typeof(IRazorCompletionItemProvider))]
 internal class DirectiveAttributeParameterCompletionItemProvider : DirectiveAttributeCompletionItemProviderBase
 {
     private readonly TagHelperFactsService _tagHelperFactsService;
@@ -30,7 +32,7 @@ internal class DirectiveAttributeParameterCompletionItemProvider : DirectiveAttr
         _tagHelperFactsService = tagHelperFactsService;
     }
 
-    public override IReadOnlyList<RazorCompletionItem> GetCompletionItems(RazorCompletionContext context)
+    public override ImmutableArray<RazorCompletionItem> GetCompletionItems(RazorCompletionContext context)
     {
         if (context is null)
         {
@@ -45,39 +47,38 @@ internal class DirectiveAttributeParameterCompletionItemProvider : DirectiveAttr
         if (!FileKinds.IsComponent(context.SyntaxTree.Options.FileKind))
         {
             // Directive attribute parameters are only supported in components
-            return Array.Empty<RazorCompletionItem>();
+            return ImmutableArray<RazorCompletionItem>.Empty;
         }
 
         var owner = context.Owner;
         if (owner is null)
         {
-            return Array.Empty<RazorCompletionItem>();
+            return ImmutableArray<RazorCompletionItem>.Empty;
         }
 
         if (!TryGetAttributeInfo(owner, out _, out var attributeName, out _, out var parameterName, out var parameterNameLocation))
         {
             // Either we're not in an attribute or the attribute is so malformed that we can't provide proper completions.
-            return Array.Empty<RazorCompletionItem>();
+            return ImmutableArray<RazorCompletionItem>.Empty;
         }
 
         if (!parameterNameLocation.IntersectsWith(context.AbsoluteIndex))
         {
             // We're trying to retrieve completions on a portion of the name that is not supported (such as the name, i.e., |@bind|:format).
-            return Array.Empty<RazorCompletionItem>();
+            return ImmutableArray<RazorCompletionItem>.Empty;
         }
 
         if (!TryGetElementInfo(owner.Parent.Parent, out var containingTagName, out var attributes))
         {
             // This should never be the case, it means that we're operating on an attribute that doesn't have a tag.
-            return Array.Empty<RazorCompletionItem>();
+            return ImmutableArray<RazorCompletionItem>.Empty;
         }
 
-        var completions = GetAttributeParameterCompletions(attributeName, parameterName, containingTagName, attributes, context.TagHelperDocumentContext);
-        return completions;
+        return GetAttributeParameterCompletions(attributeName, parameterName, containingTagName, attributes, context.TagHelperDocumentContext);
     }
 
     // Internal for testing
-    internal IReadOnlyList<RazorCompletionItem> GetAttributeParameterCompletions(
+    internal ImmutableArray<RazorCompletionItem> GetAttributeParameterCompletions(
         string attributeName,
         string parameterName,
         string containingTagName,
@@ -88,7 +89,7 @@ internal class DirectiveAttributeParameterCompletionItemProvider : DirectiveAttr
         if (descriptorsForTag.Count == 0)
         {
             // If the current tag has no possible descriptors then we can't have any additional attributes.
-            return Array.Empty<RazorCompletionItem>();
+            return ImmutableArray<RazorCompletionItem>.Empty;
         }
 
         // Attribute parameters are case sensitive when matching
@@ -130,7 +131,8 @@ internal class DirectiveAttributeParameterCompletionItemProvider : DirectiveAttr
             }
         }
 
-        var completionItems = new List<RazorCompletionItem>();
+        using var completionItems = new PooledArrayBuilder<RazorCompletionItem>();
+
         foreach (var completion in attributeCompletions)
         {
             if (string.Equals(completion.Key, parameterName, StringComparison.Ordinal))
@@ -150,6 +152,6 @@ internal class DirectiveAttributeParameterCompletionItemProvider : DirectiveAttr
             completionItems.Add(razorCompletionItem);
         }
 
-        return completionItems;
+        return completionItems.DrainToImmutable();
     }
 }

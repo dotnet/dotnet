@@ -6,25 +6,15 @@ using Microsoft.AspNetCore.Razor.Language;
 
 namespace Microsoft.AspNetCore.Razor.ProjectEngineHost;
 
-public static class UnsupportedRazorConfiguration
+internal static class UnsupportedRazorConfiguration
 {
     public static readonly RazorConfiguration Instance = RazorConfiguration.Create(
         RazorLanguageVersion.Version_1_0,
         "UnsupportedRazor",
         new[] { new UnsupportedRazorExtension("UnsupportedRazorExtension"), });
 
-    private class UnsupportedRazorExtension : RazorExtension
+    private class UnsupportedRazorExtension(string extensionName) : RazorExtension
     {
-        public UnsupportedRazorExtension(string extensionName)
-        {
-            if (extensionName is null)
-            {
-                throw new ArgumentNullException(nameof(extensionName));
-            }
-
-            ExtensionName = extensionName;
-        }
-
-        public override string ExtensionName { get; }
+        public override string ExtensionName { get; } = extensionName ?? throw new ArgumentNullException(nameof(extensionName));
     }
 }

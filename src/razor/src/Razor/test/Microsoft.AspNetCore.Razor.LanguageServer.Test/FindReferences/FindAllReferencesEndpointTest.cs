@@ -55,7 +55,7 @@ public class FindAllReferencesEndpointTest : SingleServerDelegatingEndpointTestB
         await CreateLanguageServerAsync(codeDocument, razorFilePath);
 
         var endpoint = new FindAllReferencesEndpoint(
-            LanguageServerFeatureOptions, DocumentMappingService, LanguageServer, LoggerFactory, LanguageServerFeatureOptions);
+            LanguageServerFeatureOptions, DocumentMappingService, LanguageServer, LoggerFactory, FilePathService);
 
         var sourceText = codeDocument.GetSourceText();
         sourceText.GetLineAndOffset(cursorPosition, out var line, out var offset);

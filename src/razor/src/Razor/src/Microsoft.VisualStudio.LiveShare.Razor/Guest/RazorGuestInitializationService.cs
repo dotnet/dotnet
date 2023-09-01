@@ -101,19 +101,9 @@ internal class RazorGuestInitializationService : ICollaborationServiceFactory
     }
 }
 
-public class SessionActiveDetector : ICollaborationService, IDisposable
+internal class SessionActiveDetector(Action onDispose) : ICollaborationService, IDisposable
 {
-    private readonly Action _onDispose;
-
-    public SessionActiveDetector(Action onDispose)
-    {
-        if (onDispose is null)
-        {
-            throw new ArgumentNullException(nameof(onDispose));
-        }
-
-        _onDispose = onDispose;
-    }
+    private readonly Action _onDispose = onDispose ?? throw new ArgumentNullException(nameof(onDispose));
 
     [SuppressMessage("Usage", "CA1816:Dispose methods should call SuppressFinalize", Justification = "https://github.com/dotnet/roslyn-analyzers/issues/4801")]
     public virtual void Dispose()

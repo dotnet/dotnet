@@ -27,7 +27,7 @@ public class DocumentOnTypeFormattingEndpointTest : FormattingLanguageServerTest
         // Arrange
         var uri = new Uri("file://path/test.razor");
         var formattingService = new DummyRazorFormattingService();
-        var documentMappingService = new RazorDocumentMappingService(TestLanguageServerFeatureOptions.Instance, new TestDocumentContextFactory(), LoggerFactory);
+        var documentMappingService = new RazorDocumentMappingService(FilePathService, new TestDocumentContextFactory(), LoggerFactory);
 
         var optionsMonitor = GetOptionsMonitor(enableFormatting: false);
         var endpoint = new DocumentOnTypeFormattingEndpoint(
@@ -56,7 +56,7 @@ public class DocumentOnTypeFormattingEndpointTest : FormattingLanguageServerTest
 
         var documentContext = CreateDocumentContext(new Uri("file://path/testDifferentFile.razor"), codeDocument);
         var formattingService = new DummyRazorFormattingService();
-        var documentMappingService = new RazorDocumentMappingService(TestLanguageServerFeatureOptions.Instance, new TestDocumentContextFactory(), LoggerFactory);
+        var documentMappingService = new RazorDocumentMappingService(FilePathService, new TestDocumentContextFactory(), LoggerFactory);
 
         var optionsMonitor = GetOptionsMonitor(enableFormatting: true);
         var endpoint = new DocumentOnTypeFormattingEndpoint(
@@ -91,7 +91,7 @@ public class DocumentOnTypeFormattingEndpointTest : FormattingLanguageServerTest
 
         var documentContext = CreateDocumentContext(uri, codeDocument);
         var formattingService = new DummyRazorFormattingService();
-        var documentMappingService = new RazorDocumentMappingService(TestLanguageServerFeatureOptions.Instance, new TestDocumentContextFactory(), LoggerFactory);
+        var documentMappingService = new RazorDocumentMappingService(FilePathService, new TestDocumentContextFactory(), LoggerFactory);
 
         var optionsMonitor = GetOptionsMonitor(enableFormatting: true);
         var endpoint = new DocumentOnTypeFormattingEndpoint(
@@ -198,7 +198,7 @@ public class DocumentOnTypeFormattingEndpointTest : FormattingLanguageServerTest
 
         var documentResolver = CreateDocumentContextFactory(uri, codeDocument);
         var formattingService = new DummyRazorFormattingService();
-        var documentMappingService = new RazorDocumentMappingService(TestLanguageServerFeatureOptions.Instance, documentResolver, LoggerFactory);
+        var documentMappingService = new RazorDocumentMappingService(FilePathService, documentResolver, LoggerFactory);
 
         var optionsMonitor = GetOptionsMonitor(enableFormatting: true);
         var endpoint = new DocumentOnTypeFormattingEndpoint(

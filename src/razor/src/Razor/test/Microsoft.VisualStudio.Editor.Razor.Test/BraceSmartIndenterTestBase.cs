@@ -1,8 +1,6 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using Microsoft.VisualStudio.Test;
 using Microsoft.VisualStudio.Text;
@@ -14,14 +12,9 @@ using Xunit.Abstractions;
 
 namespace Microsoft.VisualStudio.Editor.Razor;
 
-public class BraceSmartIndenterTestBase : ProjectSnapshotManagerDispatcherTestBase
+public class BraceSmartIndenterTestBase(ITestOutputHelper testOutput) : ProjectSnapshotManagerDispatcherTestBase(testOutput)
 {
-    public BraceSmartIndenterTestBase(ITestOutputHelper testOutput)
-        : base(testOutput)
-    {
-    }
-
-    protected static VisualStudioDocumentTracker CreateDocumentTracker(Func<ITextBuffer> bufferAccessor, ITextView focusedTextView)
+    private protected static VisualStudioDocumentTracker CreateDocumentTracker(Func<ITextBuffer> bufferAccessor, ITextView focusedTextView)
     {
         var tracker = new Mock<VisualStudioDocumentTracker>(MockBehavior.Strict);
         tracker.Setup(t => t.TextBuffer)
@@ -32,7 +25,7 @@ public class BraceSmartIndenterTestBase : ProjectSnapshotManagerDispatcherTestBa
         return tracker.Object;
     }
 
-    protected static ITextView CreateFocusedTextView(Func<ITextBuffer> textBufferAccessor = null, ITextCaret caret = null)
+    protected static ITextView CreateFocusedTextView(Func<ITextBuffer>? textBufferAccessor = null, ITextCaret? caret = null)
     {
         var focusedTextView = new Mock<ITextView>(MockBehavior.Strict);
         focusedTextView.Setup(textView => textView.HasAggregateFocus)
@@ -76,7 +69,7 @@ public class BraceSmartIndenterTestBase : ProjectSnapshotManagerDispatcherTestBa
         return editorOperationsFactory.Object;
     }
 
-    protected static TestTextBuffer CreateTextBuffer(ITextSnapshot initialSnapshot, VisualStudioDocumentTracker documentTracker)
+    private protected static TestTextBuffer CreateTextBuffer(ITextSnapshot initialSnapshot, VisualStudioDocumentTracker documentTracker)
     {
         var textBuffer = new TestTextBuffer(initialSnapshot);
         textBuffer.Properties.AddProperty(typeof(VisualStudioDocumentTracker), documentTracker);

@@ -3,20 +3,19 @@
 
 using System;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.CommonLanguageServerProtocol.Framework;
 using Microsoft.AspNetCore.Razor.LanguageServer.EndpointContracts;
-using Microsoft.AspNetCore.Razor.LanguageServer.Semantic;
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
+using Microsoft.CommonLanguageServerProtocol.Framework;
+using Microsoft.Extensions.Options;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Moq;
 using Xunit;
 using Xunit.Abstractions;
-using Microsoft.Extensions.Options;
-using System.Threading;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Semantic;
 

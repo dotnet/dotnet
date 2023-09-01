@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Razor.LanguageServer.Common;
 using Microsoft.AspNetCore.Razor.LanguageServer.Protocol;
 using Microsoft.AspNetCore.Razor.LanguageServer.Test;
 using Microsoft.AspNetCore.Razor.LanguageServer.Test.Common;
+using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 
@@ -26,7 +27,7 @@ internal class TestDelegatedCompletionListProvider : DelegatedCompletionListProv
         ILoggerFactory loggerFactory)
         : base(
             responseRewriters,
-            new RazorDocumentMappingService(TestLanguageServerFeatureOptions.Instance, new TestDocumentContextFactory(), loggerFactory),
+            new RazorDocumentMappingService(new FilePathService(TestLanguageServerFeatureOptions.Instance), new TestDocumentContextFactory(), loggerFactory),
             new TestLanguageServer(new Dictionary<string, Func<object, Task<object>>>()
             {
                 [LanguageServerConstants.RazorCompletionEndpointName] = completionFactory.OnDelegationAsync,

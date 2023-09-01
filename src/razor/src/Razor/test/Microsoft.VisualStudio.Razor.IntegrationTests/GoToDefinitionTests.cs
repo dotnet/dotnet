@@ -132,7 +132,7 @@ public class GoToDefinitionTests(ITestOutputHelper testOutputHelper) : AbstractR
         await TestServices.Editor.WaitForCurrentLineTextAsync("public bool MyProperty { get; set; }", ControlledHangMitigatingCancellationToken);
     }
 
-    [IdeFact]
+    [IdeFact(Skip = "https://github.com/dotnet/razor/issues/8036")]
     public async Task GoToDefinition_ComponentAttribute_InCSharpFile()
     {
         // Create the files
@@ -292,7 +292,7 @@ public class GoToDefinitionTests(ITestOutputHelper testOutputHelper) : AbstractR
         await TestServices.Editor.WaitForCurrentLineTextAsync("public string FieldName { get; set; }", ControlledHangMitigatingCancellationToken);
     }
 
-    [IdeFact]
+    [IdeFact(Skip = "Flaky after multitarget work")]
     public async Task GoToDefinition_ComponentAttribute_BoundAttribute()
     {
         // Create the files

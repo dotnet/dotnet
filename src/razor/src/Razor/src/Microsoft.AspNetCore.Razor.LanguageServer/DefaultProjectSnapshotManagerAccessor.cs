@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
+using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.Extensions.Options;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer;

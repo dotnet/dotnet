@@ -26,6 +26,8 @@ internal readonly record struct ProjectKey : IEquatable<ProjectKey>
         return intermediateOutputPath is null ? null : new(intermediateOutputPath);
     }
 
+    internal static ProjectKey FromString(string projectKeyId) => new(projectKeyId);
+
     public string Id { get; }
 
     private ProjectKey(string id)

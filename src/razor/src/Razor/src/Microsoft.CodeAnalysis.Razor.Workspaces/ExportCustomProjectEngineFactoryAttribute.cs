@@ -8,17 +8,12 @@ namespace Microsoft.CodeAnalysis.Razor;
 
 [MetadataAttribute]
 [AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = true)]
-public class ExportCustomProjectEngineFactoryAttribute : ExportAttribute, ICustomProjectEngineFactoryMetadata
+internal sealed class ExportCustomProjectEngineFactoryAttribute : ExportAttribute, ICustomProjectEngineFactoryMetadata
 {
     public ExportCustomProjectEngineFactoryAttribute(string configurationName)
         : base(typeof(IProjectEngineFactory))
     {
-        if (configurationName is null)
-        {
-            throw new ArgumentNullException(nameof(configurationName));
-        }
-
-        ConfigurationName = configurationName;
+        ConfigurationName = configurationName ?? throw new ArgumentNullException(nameof(configurationName));
     }
 
     public string ConfigurationName { get; }

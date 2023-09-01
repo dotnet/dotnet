@@ -7,10 +7,11 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Composition;
-using System.Runtime.InteropServices;
+using System.Diagnostics;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Razor;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Text;
@@ -28,34 +29,21 @@ internal class DefaultRazorDynamicFileInfoProvider : RazorDynamicFileInfoProvide
     private readonly Func<Key, Entry> _createEmptyEntry;
     private readonly RazorDocumentServiceProviderFactory _factory;
     private readonly LSPEditorFeatureDetector _lspEditorFeatureDetector;
-    private readonly LanguageServerFeatureOptions _languageServerFeatureOptions;
-
-    private ProjectSnapshotManagerBase _projectManager;
+    private readonly FilePathService _filePathService;
+    private readonly ProjectSnapshotManagerAccessor _projectSnapshotManagerAccessor;
 
     [ImportingConstructor]
     public DefaultRazorDynamicFileInfoProvider(
         RazorDocumentServiceProviderFactory factory,
         LSPEditorFeatureDetector lspEditorFeatureDetector,
-        LanguageServerFeatureOptions languageServerFeatureOptions)
+        FilePathService filePathService,
+        ProjectSnapshotManagerAccessor projectSnapshotManagerAccessor)
     {
-        if (factory is null)
-        {
-            throw new ArgumentNullException(nameof(factory));
-        }
+        _factory = factory ?? throw new ArgumentNullException(nameof(factory));
+        _lspEditorFeatureDetector = lspEditorFeatureDetector ?? throw new ArgumentNullException(nameof(lspEditorFeatureDetector));
+        _filePathService = filePathService ?? throw new ArgumentNullException(nameof(filePathService));
+        _projectSnapshotManagerAccessor = projectSnapshotManagerAccessor ?? throw new ArgumentNullException(nameof(projectSnapshotManagerAccessor));
 
-        if (lspEditorFeatureDetector is null)
-        {
-            throw new ArgumentNullException(nameof(lspEditorFeatureDetector));
-        }
-
-        if (languageServerFeatureOptions is null)
-        {
-            throw new ArgumentNullException(nameof(languageServerFeatureOptions));
-        }
-
-        _factory = factory;
-        _lspEditorFeatureDetector = lspEditorFeatureDetector;
-        _languageServerFeatureOptions = languageServerFeatureOptions;
         _entries = new ConcurrentDictionary<Key, Entry>();
         _createEmptyEntry = (key) => new Entry(CreateEmptyInfo(key));
     }
@@ -65,8 +53,6 @@ internal class DefaultRazorDynamicFileInfoProvider : RazorDynamicFileInfoProvide
     public override void Initialize(ProjectSnapshotManagerBase projectManager)
     {
         projectManager.Changed += ProjectManager_Changed;
-
-        _projectManager = projectManager;
     }
 
     // Called by us to update LSP document entries
@@ -87,7 +73,7 @@ internal class DefaultRazorDynamicFileInfoProvider : RazorDynamicFileInfoProvide
         documentContainer.SupportsDiagnostics = true;
 
         // TODO: This needs to use the project key somehow, rather than assuming all generated content is the same
-        var filePath = GetProjectSystemFilePath(documentUri);
+        var filePath = FilePathService.GetProjectSystemFilePath(documentUri);
 
         var foundAny = false;
         foreach (var associatedKvp in GetAllKeysForPath(filePath))
@@ -157,14 +143,21 @@ internal class DefaultRazorDynamicFileInfoProvider : RazorDynamicFileInfoProvide
             throw new ArgumentNullException(nameof(propertiesService));
         }
 
-        // TODO: This needs to use the project key somehow, rather than assuming all generated content is the same
-        var filePath = GetProjectSystemFilePath(documentUri);
+        var filePath = FilePathService.GetProjectSystemFilePath(documentUri);
         foreach (var associatedKvp in GetAllKeysForPath(filePath))
         {
             var associatedKey = associatedKvp.Key;
             var associatedEntry = associatedKvp.Value;
 
-            var filename = _languageServerFeatureOptions.GetRazorCSharpFilePath(associatedKey.FilePath);
+            var projectId = associatedKey.ProjectId;
+            var projectKey = TryFindProjectKeyForProjectId(projectId);
+            if (projectKey is not ProjectKey key)
+            {
+                Debug.Fail("Could not find project key for project id. This should never happen.");
+                continue;
+            }
+
+            var filename = _filePathService.GetRazorCSharpFilePath(key, associatedKey.FilePath);
 
             // To promote the background document, we just need to add the passed in properties service to
             // the dynamic file info. The properties service contains the client name and allows the C#
@@ -314,7 +307,7 @@ internal class DefaultRazorDynamicFileInfoProvider : RazorDynamicFileInfoProvide
 
     private ProjectId TryFindProjectIdForProjectKey(ProjectKey key)
     {
-        if (_projectManager?.Workspace is not { } workspace)
+        if (_projectSnapshotManagerAccessor.Instance.Workspace is not { } workspace)
         {
             throw new InvalidOperationException("Can not map a ProjectKey to a ProjectId before the project is initialized");
         }
@@ -330,34 +323,38 @@ internal class DefaultRazorDynamicFileInfoProvider : RazorDynamicFileInfoProvide
         return null;
     }
 
+    public ProjectKey? TryFindProjectKeyForProjectId(ProjectId projectId)
+    {
+        if (_projectSnapshotManagerAccessor.Instance.Workspace is not { } workspace)
+        {
+            throw new InvalidOperationException("Can not map a ProjectId to a ProjectKey before the project is initialized");
+        }
+
+        var project = workspace.CurrentSolution.GetProject(projectId);
+        if (project is null)
+        {
+            return null;
+        }
+
+        var projectKey = ProjectKey.From(project);
+
+        return projectKey;
+    }
+
     private RazorDynamicFileInfo CreateEmptyInfo(Key key)
     {
-        var filename = _languageServerFeatureOptions.GetRazorCSharpFilePath(key.FilePath);
+        var projectKey = TryFindProjectKeyForProjectId(key.ProjectId).AssumeNotNull();
+        var filename = _filePathService.GetRazorCSharpFilePath(projectKey, key.FilePath);
         var textLoader = new EmptyTextLoader(filename);
         return new RazorDynamicFileInfo(filename, SourceCodeKind.Regular, textLoader, _factory.CreateEmpty());
     }
 
     private RazorDynamicFileInfo CreateInfo(Key key, DynamicDocumentContainer document)
     {
-        var filename = _languageServerFeatureOptions.GetRazorCSharpFilePath(key.FilePath);
+        var projectKey = TryFindProjectKeyForProjectId(key.ProjectId).AssumeNotNull();
+        var filename = _filePathService.GetRazorCSharpFilePath(projectKey, key.FilePath);
         var textLoader = document.GetTextLoader(filename);
         return new RazorDynamicFileInfo(filename, SourceCodeKind.Regular, textLoader, _factory.Create(document));
-    }
-
-    private static string GetProjectSystemFilePath(Uri uri)
-    {
-        // In VS Windows project system file paths always utilize `\`. In VSMac they don't. This is a bit of a hack
-        // however, it's the only way to get the correct file path for a document to map to a corresponding project
-        // system.
-
-        if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-        {
-            // VSWin
-            return uri.GetAbsoluteOrUNCPath().Replace('/', '\\');
-        }
-
-        // VSMac
-        return uri.AbsolutePath;
     }
 
     // Using a separate handle to the 'current' file info so that can allow Roslyn to send

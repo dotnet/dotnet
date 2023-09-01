@@ -66,7 +66,7 @@ internal class FallbackWindowsRazorProjectHost : WindowsRazorProjectHostBase
 
     protected override ImmutableHashSet<string> GetRuleNames() => s_ruleNames;
 
-    protected override async Task HandleProjectChangeAsync(IProjectVersionedValue<IProjectSubscriptionUpdate> update)
+    protected override async Task HandleProjectChangeAsync(string sliceDimensions, IProjectVersionedValue<IProjectSubscriptionUpdate> update)
     {
         string? mvcReferenceFullPath = null;
         if (update.Value.CurrentState.ContainsKey(ResolvedCompilationReference.SchemaName))
@@ -132,7 +132,7 @@ internal class FallbackWindowsRazorProjectHost : WindowsRazorProjectHostBase
         await UpdateAsync(() =>
         {
             var configuration = FallbackRazorConfiguration.SelectConfiguration(version);
-            var hostProject = new HostProject(CommonServices.UnconfiguredProject.FullPath, intermediatePath, configuration, rootNamespace: null);
+            var hostProject = new HostProject(CommonServices.UnconfiguredProject.FullPath, intermediatePath, configuration, rootNamespace: null, displayName: sliceDimensions);
 
             if (_languageServerFeatureOptions is not null)
             {

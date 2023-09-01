@@ -4,6 +4,7 @@
 using System;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Language.Syntax;
 using Microsoft.AspNetCore.Razor.LanguageServer.Formatting;
@@ -328,5 +329,60 @@ internal static class SyntaxNodeExtensions
     }
 
     public static SyntaxNode? FindInnermostNode(this SyntaxNode node, int index, bool includeWhitespace = false)
-        => node.FindToken(index, includeWhitespace)?.Parent;
+    {
+        var token = node.FindToken(index, includeWhitespace);
+
+        // If the index is EOF but the node has index-1,
+        // then try to get a token to the left of the index.
+        // patterns like
+        // <button></button>$$
+        // should get the button node instead of the razor document (which is the parent
+        // of the EOF token)
+        if (token.Kind == SyntaxKind.EndOfFile && node.Span.Contains(index - 1))
+        {
+            token = node.FindToken(index - 1, includeWhitespace);
+        }
+
+        return token.Parent;
+    }
+
+    public static SyntaxNode? FindNode(this SyntaxNode @this, Language.Syntax.TextSpan span, bool includeWhitespace = false, bool getInnermostNodeForTie = false)
+    {
+        if (!@this.FullSpan.Contains(span))
+        {
+            throw new ArgumentOutOfRangeException(nameof(span));
+        }
+
+        var node = @this.FindToken(span.Start, includeWhitespace)
+            .Parent
+            !.FirstAncestorOrSelf<SyntaxNode>(a => a.FullSpan.Contains(span));
+
+        node.AssumeNotNull();
+
+        // Tie-breaking.
+        if (!getInnermostNodeForTie)
+        {
+            var cuRoot = node.Ancestors().Last();
+
+            while (true)
+            {
+                var parent = node.Parent;
+                // NOTE: We care about FullSpan equality, but FullWidth is cheaper and equivalent.
+                if (parent == null || parent.FullWidth != node.FullWidth)
+                {
+                    break;
+                }
+
+                // prefer child over compilation unit
+                if (parent == cuRoot)
+                {
+                    break;
+                }
+
+                node = parent;
+            }
+        }
+
+        return node;
+    }
 }

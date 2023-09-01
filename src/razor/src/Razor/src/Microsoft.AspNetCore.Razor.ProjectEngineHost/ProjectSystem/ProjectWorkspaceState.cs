@@ -10,7 +10,7 @@ using Microsoft.Extensions.Internal;
 
 namespace Microsoft.AspNetCore.Razor.ProjectSystem;
 
-public sealed class ProjectWorkspaceState : IEquatable<ProjectWorkspaceState>
+internal sealed class ProjectWorkspaceState : IEquatable<ProjectWorkspaceState>
 {
     public static readonly ProjectWorkspaceState Default = new(ImmutableArray<TagHelperDescriptor>.Empty, LanguageVersion.Default);
 

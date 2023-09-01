@@ -13,7 +13,13 @@ using Microsoft.VisualStudio.LanguageServer.Protocol;
 namespace Microsoft.AspNetCore.Razor.LanguageServer.ProjectContexts;
 
 [LanguageServerEndpoint(VSMethods.GetProjectContextsName)]
-internal class ProjectContextsEndpoint : IRazorRequestHandler<VSGetProjectContextsParams, VSProjectContextList>, ICapabilitiesProvider
+// Using a documentless handler here because:
+//   a. We don't need any extra info than just the Uri
+//   b. If we say we have a document, then our RequestContextFactory will try to get a DocumentContext for us
+//      but as the ProjectContexts endpoint, the request won't have a project context, so it won't be able to
+//      get the "right" one anyway. But as I said we don't need it to.
+//   c. This gets called a lot, so may as well save some work
+internal class ProjectContextsEndpoint : IRazorDocumentlessRequestHandler<VSGetProjectContextsParams, VSProjectContextList>, ICapabilitiesProvider
 {
     private readonly ClientNotifierServiceBase _languageServer;
 
@@ -29,12 +35,6 @@ internal class ProjectContextsEndpoint : IRazorRequestHandler<VSGetProjectContex
         serverCapabilities.ProjectContextProvider = true;
     }
 
-    public TextDocumentIdentifier GetTextDocumentIdentifier(VSGetProjectContextsParams request)
-        => new()
-        {
-            Uri = request.TextDocument.Uri
-        };
-
     public async Task<VSProjectContextList> HandleRequestAsync(VSGetProjectContextsParams request, RazorRequestContext context, CancellationToken cancellationToken)
     {
         if (request is null)
@@ -42,8 +42,7 @@ internal class ProjectContextsEndpoint : IRazorRequestHandler<VSGetProjectContex
             throw new ArgumentNullException(nameof(request));
         }
 
-        var documentContext = context.GetRequiredDocumentContext();
-        var delegatedParams = new DelegatedProjectContextsParams(documentContext.Identifier);
+        var delegatedParams = new DelegatedProjectContextsParams(request.TextDocument.Uri);
 
         var response = await _languageServer.SendRequestAsync<DelegatedProjectContextsParams, VSProjectContextList>(
             CustomMessageNames.RazorProjectContextsEndpoint,

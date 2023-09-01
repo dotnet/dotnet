@@ -101,9 +101,21 @@ internal sealed class HoverEndpoint : AbstractRazorDelegatingEndpoint<TextDocume
             var sourceText = await documentContext.GetSourceTextAsync(cancellationToken).ConfigureAwait(false);
             response.Range = originalAttributeRange.AsRange(sourceText);
         }
-        else if (_documentMappingService.TryMapToHostDocumentRange(codeDocument.GetCSharpDocument(), response.Range, out var projectedRange))
+        else if (positionInfo.LanguageKind == RazorLanguageKind.CSharp)
         {
-            response.Range = projectedRange;
+            if (_documentMappingService.TryMapToHostDocumentRange(codeDocument.GetCSharpDocument(), response.Range, out var projectedRange))
+            {
+                response.Range = projectedRange;
+            }
+            else
+            {
+                // We couldn't remap the range back from Roslyn, but we have to do something with it, because it definitely won't
+                // be correct, and if the Razor document is small, will be completely outside the valid range for the file, which
+                // would cause the client to error.
+                // Returning null here will still show the hover, just there won't be any extra visual indication, like
+                // a background color, applied by the client.
+                response.Range = null;
+            }
         }
 
         return response;

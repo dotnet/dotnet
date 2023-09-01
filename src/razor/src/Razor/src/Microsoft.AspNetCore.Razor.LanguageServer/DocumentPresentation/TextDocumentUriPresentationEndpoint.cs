@@ -28,13 +28,11 @@ internal class TextDocumentUriPresentationEndpoint : AbstractTextDocumentPresent
         IRazorDocumentMappingService razorDocumentMappingService,
         RazorComponentSearchEngine razorComponentSearchEngine,
         ClientNotifierServiceBase languageServer,
-        LanguageServerFeatureOptions languageServerFeatureOptions,
+        FilePathService filePathService,
         DocumentContextFactory documentContextFactory,
         ProjectSnapshotManagerDispatcher projectSnapshotManagerDispatcher,
         ILoggerFactory loggerFactory)
-        : base(razorDocumentMappingService,
-             languageServer,
-             languageServerFeatureOptions)
+        : base(razorDocumentMappingService, languageServer, filePathService)
     {
         _razorComponentSearchEngine = razorComponentSearchEngine ?? throw new ArgumentNullException(nameof(razorComponentSearchEngine));
         _documentContextFactory = documentContextFactory ?? throw new ArgumentNullException(nameof(documentContextFactory));

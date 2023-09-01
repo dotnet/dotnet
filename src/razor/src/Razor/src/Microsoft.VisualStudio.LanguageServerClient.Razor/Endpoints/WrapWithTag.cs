@@ -7,7 +7,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.LanguageServer.Common;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
-using Microsoft.VisualStudio.LanguageServerClient.Razor.Extensions;
 using Microsoft.VisualStudio.LanguageServerClient.Razor.WrapWithTag;
 using StreamJsonRpc;
 
@@ -24,8 +23,7 @@ internal partial class RazorCustomMessageTarget
 
         var response = new VSInternalWrapWithTagResponse(wrapWithParams.Range, Array.Empty<TextEdit>());
 
-        var (synchronized, htmlDocument) = await _documentSynchronizer.TrySynchronizeVirtualDocumentAsync<HtmlVirtualDocumentSnapshot>(
-            _documentManager,
+        var (synchronized, htmlDocument) = await TrySynchronizeVirtualDocumentAsync<HtmlVirtualDocumentSnapshot>(
             wrapWithParams.TextDocument.Version,
             wrapWithParams.TextDocument,
             cancellationToken);
