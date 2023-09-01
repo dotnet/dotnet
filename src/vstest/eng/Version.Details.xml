@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Dependencies>
   <ProductDependencies>
-    <Dependency Name="Microsoft.Internal.CodeCoverage" Version="17.8.5-beta.23428.2">
+    <Dependency Name="Microsoft.Internal.CodeCoverage" Version="17.8.5-beta.23430.1">
       <Uri>https://dev.azure.com/devdiv/DevDiv/_git/vs-code-coverage</Uri>
-      <Sha>c028e2dd94abaf661965ae8838af0aeaa6a85dd9</Sha>
+      <Sha>1855f8fe16e76d06d239b2da824d5f3670efeb0d</Sha>
     </Dependency>
     <Dependency Name="Microsoft.Diagnostics.NETCore.Client" Version="0.2.0-preview.23211.1">
       <Uri>https://github.com/dotnet/diagnostics</Uri>
@@ -27,6 +27,11 @@
     <Dependency Name="NuGet.Frameworks" Version="6.5.0">
       <Uri>https://github.com/nuget/nuget.client</Uri>
       <Sha>4ba7bfa82f894ec32a554ca8d2df143675c85735</Sha>
+    </Dependency>
+    <!-- Necessary for source-build. This allows the live version of the package to be used by source-build. -->
+    <Dependency Name="System.ComponentModel.Composition" Version="4.5.0">
+      <Uri>https://github.com/dotnet/corefx</Uri>
+      <Sha>30ab651fcb4354552bd4891619a0bdd81e0ebdbf</Sha>
     </Dependency>
   </ProductDependencies>
   <ToolsetDependencies>
