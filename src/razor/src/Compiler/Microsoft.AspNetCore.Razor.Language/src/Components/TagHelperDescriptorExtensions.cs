@@ -32,6 +32,13 @@ internal static class TagHelperDescriptorExtensions
             string.Equals(bool.TrueString, fallback);
     }
 
+    public static bool IsFormNameTagHelper(this TagHelperDescriptor tagHelper)
+    {
+        return
+            tagHelper.Metadata.TryGetValue(ComponentMetadata.SpecialKindKey, out var kind) &&
+            kind == ComponentMetadata.FormName.TagHelperKind;
+    }
+
     public static bool IsGenericTypedComponent(this TagHelperDescriptor tagHelper)
     {
         return

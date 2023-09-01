@@ -55,6 +55,7 @@ public class RazorProjectEngineTest
             feature => Assert.IsType<ComponentCssScopePass>(feature),
             feature => Assert.IsType<ComponentDocumentClassifierPass>(feature),
             feature => Assert.IsType<ComponentEventHandlerLoweringPass>(feature),
+            feature => Assert.IsType<ComponentFormNameLoweringPass>(feature),
             feature => Assert.IsType<ComponentGenericTypePass>(feature),
             feature => Assert.IsType<ComponentInjectDirectivePass>(feature),
             feature => Assert.IsType<ComponentKeyLoweringPass>(feature),

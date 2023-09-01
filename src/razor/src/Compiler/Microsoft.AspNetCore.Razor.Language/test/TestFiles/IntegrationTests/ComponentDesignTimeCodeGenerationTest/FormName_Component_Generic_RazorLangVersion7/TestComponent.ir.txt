@@ -1,0 +1,51 @@
+﻿Document - 
+    NamespaceDeclaration -  - Test
+        UsingDirective - (3:1,1 [20] ) - global::System
+        UsingDirective - (26:2,1 [40] ) - global::System.Collections.Generic
+        UsingDirective - (69:3,1 [25] ) - global::System.Linq
+        UsingDirective - (97:4,1 [36] ) - global::System.Threading.Tasks
+        UsingDirective - (136:5,1 [45] ) - global::Microsoft.AspNetCore.Components
+        ClassDeclaration -  - public partial - TestComponent - global::Microsoft.AspNetCore.Components.ComponentBase -  - T
+            DesignTimeDirective - 
+                DirectiveToken - (11:0,11 [1] x:\dir\subdir\Test\TestComponent.cshtml) - T
+            CSharpCode - 
+                IntermediateToken -  - CSharp - #pragma warning disable 0414
+            CSharpCode - 
+                IntermediateToken -  - CSharp - private static object __o = null;
+            CSharpCode - 
+                IntermediateToken -  - CSharp - #pragma warning restore 0414
+            MethodDeclaration -  - protected override - void - BuildRenderTree
+                Component - (14:1,0 [98] x:\dir\subdir\Test\TestComponent.cshtml) - TestComponent
+                    ComponentAttribute -  - method -  - AttributeStructure.DoubleQuotes
+                        HtmlContent - (37:1,23 [4] x:\dir\subdir\Test\TestComponent.cshtml)
+                            LazyIntermediateToken - (37:1,23 [4] x:\dir\subdir\Test\TestComponent.cshtml) - Html - post
+                    ComponentAttribute -  - @onsubmit -  - AttributeStructure.DoubleQuotes
+                        HtmlContent - (54:1,40 [9] x:\dir\subdir\Test\TestComponent.cshtml)
+                            LazyIntermediateToken - (54:1,40 [9] x:\dir\subdir\Test\TestComponent.cshtml) - Html - () => { }
+                    ComponentAttribute -  - @formname -  - AttributeStructure.DoubleQuotes
+                        HtmlContent - (76:1,62 [18] x:\dir\subdir\Test\TestComponent.cshtml)
+                            LazyIntermediateToken - (76:1,62 [18] x:\dir\subdir\Test\TestComponent.cshtml) - Html - named-form-handler
+                    ComponentAttribute - (107:1,93 [1] x:\dir\subdir\Test\TestComponent.cshtml) - Parameter - Parameter - AttributeStructure.DoubleQuotes
+                        LazyIntermediateToken - (107:1,93 [1] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - 1
+                HtmlContent - (112:1,98 [2] x:\dir\subdir\Test\TestComponent.cshtml)
+                    LazyIntermediateToken - (112:1,98 [2] x:\dir\subdir\Test\TestComponent.cshtml) - Html - \n
+                Component - (114:2,0 [103] x:\dir\subdir\Test\TestComponent.cshtml) - TestComponent
+                    ComponentAttribute -  - method -  - AttributeStructure.DoubleQuotes
+                        HtmlContent - (137:2,23 [4] x:\dir\subdir\Test\TestComponent.cshtml)
+                            LazyIntermediateToken - (137:2,23 [4] x:\dir\subdir\Test\TestComponent.cshtml) - Html - post
+                    ComponentAttribute -  - @onsubmit -  - AttributeStructure.DoubleQuotes
+                        HtmlContent - (154:2,40 [9] x:\dir\subdir\Test\TestComponent.cshtml)
+                            LazyIntermediateToken - (154:2,40 [9] x:\dir\subdir\Test\TestComponent.cshtml) - Html - () => { }
+                    ComponentAttribute -  - @formname -  - AttributeStructure.DoubleQuotes
+                        CSharpExpression - (176:2,62 [23] x:\dir\subdir\Test\TestComponent.cshtml)
+                            LazyIntermediateToken - (178:2,64 [20] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - "named-form-handler"
+                    ComponentAttribute - (212:2,98 [1] x:\dir\subdir\Test\TestComponent.cshtml) - Parameter - Parameter - AttributeStructure.DoubleQuotes
+                        LazyIntermediateToken - (212:2,98 [1] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - 2
+                HtmlContent - (217:2,103 [2] x:\dir\subdir\Test\TestComponent.cshtml)
+                    LazyIntermediateToken - (217:2,103 [2] x:\dir\subdir\Test\TestComponent.cshtml) - Html - \n
+            CSharpCode - (226:3,7 [52] x:\dir\subdir\Test\TestComponent.cshtml)
+                LazyIntermediateToken - (226:3,7 [52] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - \n    [Parameter] public T Parameter { get; set; }\n
+    NamespaceDeclaration -  - __Blazor.Test.TestComponent
+        ClassDeclaration -  - internal static - TypeInference -  - 
+            ComponentTypeInferenceMethod -  - __Blazor.Test.TestComponent.TypeInference - CreateTestComponent_0
+            ComponentTypeInferenceMethod -  - __Blazor.Test.TestComponent.TypeInference - CreateTestComponent_1

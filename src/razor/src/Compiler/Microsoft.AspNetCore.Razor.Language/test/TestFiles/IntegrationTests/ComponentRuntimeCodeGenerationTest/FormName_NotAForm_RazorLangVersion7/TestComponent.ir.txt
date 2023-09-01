@@ -1,0 +1,26 @@
+﻿Document - 
+    NamespaceDeclaration -  - Test
+        UsingDirective - (3:1,1 [22] ) - global::System
+        UsingDirective - (26:2,1 [42] ) - global::System.Collections.Generic
+        UsingDirective - (69:3,1 [27] ) - global::System.Linq
+        UsingDirective - (97:4,1 [38] ) - global::System.Threading.Tasks
+        UsingDirective - (136:5,1 [47] ) - global::Microsoft.AspNetCore.Components
+        ClassDeclaration -  - public partial - TestComponent - global::Microsoft.AspNetCore.Components.ComponentBase - 
+            MethodDeclaration -  - protected override - void - BuildRenderTree
+                MarkupBlock -  - <div method="post" @onsubmit="() => { }" @formname="named-form-handler"></div>\n
+                MarkupElement - (80:1,0 [83] x:\dir\subdir\Test\TestComponent.cshtml) - div
+                    HtmlAttribute - (84:1,4 [14] x:\dir\subdir\Test\TestComponent.cshtml) -  method=" - "
+                        HtmlAttributeValue - (93:1,13 [4] x:\dir\subdir\Test\TestComponent.cshtml) - 
+                            LazyIntermediateToken - (93:1,13 [4] x:\dir\subdir\Test\TestComponent.cshtml) - Html - post
+                    HtmlAttribute - (98:1,18 [22] x:\dir\subdir\Test\TestComponent.cshtml) -  @onsubmit=" - "
+                        HtmlAttributeValue - (110:1,30 [2] x:\dir\subdir\Test\TestComponent.cshtml) - 
+                            LazyIntermediateToken - (110:1,30 [2] x:\dir\subdir\Test\TestComponent.cshtml) - Html - ()
+                        HtmlAttributeValue - (112:1,32 [3] x:\dir\subdir\Test\TestComponent.cshtml) -  
+                            LazyIntermediateToken - (113:1,33 [2] x:\dir\subdir\Test\TestComponent.cshtml) - Html - =>
+                        HtmlAttributeValue - (115:1,35 [2] x:\dir\subdir\Test\TestComponent.cshtml) -  
+                            LazyIntermediateToken - (116:1,36 [1] x:\dir\subdir\Test\TestComponent.cshtml) - Html - {
+                        HtmlAttributeValue - (117:1,37 [2] x:\dir\subdir\Test\TestComponent.cshtml) -  
+                            LazyIntermediateToken - (118:1,38 [1] x:\dir\subdir\Test\TestComponent.cshtml) - Html - }
+                    HtmlAttribute - (120:1,40 [36] x:\dir\subdir\Test\TestComponent.cshtml) -  @formname=" - "
+                        CSharpExpressionAttributeValue - (132:1,52 [23] x:\dir\subdir\Test\TestComponent.cshtml) - 
+                            LazyIntermediateToken - (134:1,54 [20] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - "named-form-handler"

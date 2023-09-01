@@ -446,6 +446,7 @@ namespace Microsoft.AspNetCore.Components.Rendering
         public void AddElementReferenceCapture(int sequence, System.Action<Microsoft.AspNetCore.Components.ElementReference> elementReferenceCaptureAction) { }
         public void AddMarkupContent(int sequence, string markupContent) { }
         public void AddMultipleAttributes(int sequence, System.Collections.Generic.IEnumerable<System.Collections.Generic.KeyValuePair<string, object>> attributes) { }
+        public void AddNamedEvent(string eventType, string assignedName) { }
         public void Clear() { }
         public void CloseComponent() { }
         public void CloseElement() { }
