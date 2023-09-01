@@ -14,7 +14,7 @@ namespace Microsoft.AspNetCore.Razor.PooledObjects;
 ///  it's needed. Note: Dispose this to ensure that the pooled array builder is returned
 ///  to the pool.
 /// </summary>
-internal ref struct PooledArrayBuilder<T>
+internal ref partial struct PooledArrayBuilder<T>
 {
     private readonly ObjectPool<ImmutableArray<T>.Builder> _pool;
     private readonly int? _capacity;
@@ -94,6 +94,11 @@ internal ref struct PooledArrayBuilder<T>
         _builder ??= GetBuilder();
         _builder.AddRange(items);
     }
+
+    public readonly Enumerator GetEnumerator()
+        => _builder is { } builder
+            ? new Enumerator(builder)
+            : default;
 
     public void ClearAndFree()
     {

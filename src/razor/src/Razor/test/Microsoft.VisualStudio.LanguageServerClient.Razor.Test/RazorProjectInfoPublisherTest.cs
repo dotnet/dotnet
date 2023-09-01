@@ -122,7 +122,7 @@ public class RazorProjectInfoPublisherTest : LanguageServerTestBase
     }
 
     [Fact]
-    public void ProjectManager_Changed_DocumentOpened_InitializedProject_NotActive_Publishes()
+    public async Task ProjectManager_Changed_DocumentOpened_InitializedProject_NotActive_Publishes()
     {
         // Arrange
         var serializationSuccessful = false;
@@ -147,7 +147,11 @@ public class RazorProjectInfoPublisherTest : LanguageServerTestBase
         publisher.Initialize(_projectSnapshotManager);
 
         // Act
-        _projectSnapshotManager.DocumentOpened(hostProject.Key, hostDocument.FilePath, SourceText.From(string.Empty));
+        await RunOnDispatcherThreadAsync(() =>
+        {
+            _projectSnapshotManager.DocumentOpened(hostProject.Key, hostDocument.FilePath, SourceText.From(string.Empty));
+        }).ConfigureAwait(false);
+        
 
         // Assert
         Assert.Empty(publisher.DeferredPublishTasks);
@@ -553,24 +557,24 @@ public class RazorProjectInfoPublisherTest : LanguageServerTestBase
 
     internal ProjectSnapshotManagerBase CreateProjectSnapshotManager(bool allowNotifyListeners = false)
     {
-        var snapshotManager = TestProjectSnapshotManager.Create(ErrorReporter);
+        var snapshotManager = TestProjectSnapshotManager.Create(ErrorReporter, Dispatcher);
         snapshotManager.AllowNotifyListeners = allowNotifyListeners;
 
         return snapshotManager;
     }
 
     protected Task RunOnDispatcherThreadAsync(Action action)
-        => LegacyDispatcher.RunOnDispatcherThreadAsync(
+        => Dispatcher.RunOnDispatcherThreadAsync(
             action,
             DisposalToken);
 
     protected Task<TReturn> RunOnDispatcherThreadAsync<TReturn>(Func<TReturn> func)
-        => LegacyDispatcher.RunOnDispatcherThreadAsync(
+        => Dispatcher.RunOnDispatcherThreadAsync(
             func,
             DisposalToken);
 
     protected Task RunOnDispatcherThreadAsync(Func<Task> func)
-        => LegacyDispatcher.RunOnDispatcherThreadAsync(
+        => Dispatcher.RunOnDispatcherThreadAsync(
             func,
             DisposalToken);
 

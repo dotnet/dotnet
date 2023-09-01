@@ -19,10 +19,10 @@ namespace Microsoft.CodeAnalysis.Razor.Completion;
 [Export(typeof(IRazorCompletionItemProvider))]
 internal class DirectiveAttributeParameterCompletionItemProvider : DirectiveAttributeCompletionItemProviderBase
 {
-    private readonly TagHelperFactsService _tagHelperFactsService;
+    private readonly ITagHelperFactsService _tagHelperFactsService;
 
     [ImportingConstructor]
-    public DirectiveAttributeParameterCompletionItemProvider(TagHelperFactsService tagHelperFactsService)
+    public DirectiveAttributeParameterCompletionItemProvider(ITagHelperFactsService tagHelperFactsService)
     {
         if (tagHelperFactsService is null)
         {
@@ -86,7 +86,7 @@ internal class DirectiveAttributeParameterCompletionItemProvider : DirectiveAttr
         TagHelperDocumentContext tagHelperDocumentContext)
     {
         var descriptorsForTag = _tagHelperFactsService.GetTagHelpersGivenTag(tagHelperDocumentContext, containingTagName, parentTag: null);
-        if (descriptorsForTag.Count == 0)
+        if (descriptorsForTag.Length == 0)
         {
             // If the current tag has no possible descriptors then we can't have any additional attributes.
             return ImmutableArray<RazorCompletionItem>.Empty;
@@ -94,6 +94,7 @@ internal class DirectiveAttributeParameterCompletionItemProvider : DirectiveAttr
 
         // Attribute parameters are case sensitive when matching
         var attributeCompletions = new Dictionary<string, HashSet<BoundAttributeDescriptionInfo>>(StringComparer.Ordinal);
+
         foreach (var descriptor in descriptorsForTag)
         {
             for (var i = 0; i < descriptor.BoundAttributes.Count; i++)
@@ -146,7 +147,7 @@ internal class DirectiveAttributeParameterCompletionItemProvider : DirectiveAttr
                 completion.Key,
                 completion.Key,
                 RazorCompletionItemKind.DirectiveAttributeParameter);
-            var completionDescription = new AggregateBoundAttributeDescription(completion.Value.ToArray());
+            var completionDescription = new AggregateBoundAttributeDescription(completion.Value.ToImmutableArray());
             razorCompletionItem.SetAttributeCompletionDescription(completionDescription);
 
             completionItems.Add(razorCompletionItem);

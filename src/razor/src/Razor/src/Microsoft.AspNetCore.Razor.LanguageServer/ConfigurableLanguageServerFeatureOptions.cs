@@ -16,7 +16,6 @@ internal class ConfigurableLanguageServerFeatureOptions : LanguageServerFeatureO
     private readonly string? _htmlVirtualDocumentSuffix;
     private readonly bool? _singleServerCompletionSupport;
     private readonly bool? _singleServerSupport;
-    private readonly bool? _supportsDelegatedCodeActions;
     private readonly bool? _delegateToCSharpOnDiagnosticPublish;
     private readonly bool? _returnCodeActionAndRenamePathsWithPrefixedSlash;
     private readonly bool? _showAllCSharpCodeActions;
@@ -29,7 +28,6 @@ internal class ConfigurableLanguageServerFeatureOptions : LanguageServerFeatureO
     public override string HtmlVirtualDocumentSuffix => _htmlVirtualDocumentSuffix ?? DefaultLanguageServerFeatureOptions.DefaultHtmlVirtualDocumentSuffix;
     public override bool SingleServerCompletionSupport => _singleServerCompletionSupport ?? _defaults.SingleServerCompletionSupport;
     public override bool SingleServerSupport => _singleServerSupport ?? _defaults.SingleServerSupport;
-    public override bool SupportsDelegatedCodeActions => _supportsDelegatedCodeActions ?? _defaults.SupportsDelegatedCodeActions;
     public override bool DelegateToCSharpOnDiagnosticPublish => _delegateToCSharpOnDiagnosticPublish ?? _defaults.DelegateToCSharpOnDiagnosticPublish;
     public override bool ReturnCodeActionAndRenamePathsWithPrefixedSlash => _returnCodeActionAndRenamePathsWithPrefixedSlash ?? _defaults.ReturnCodeActionAndRenamePathsWithPrefixedSlash;
     public override bool ShowAllCSharpCodeActions => _showAllCSharpCodeActions ?? _defaults.ShowAllCSharpCodeActions;
@@ -51,7 +49,6 @@ internal class ConfigurableLanguageServerFeatureOptions : LanguageServerFeatureO
             TryProcessStringOption(nameof(HtmlVirtualDocumentSuffix), ref _htmlVirtualDocumentSuffix, option, args, i);
             TryProcessBoolOption(nameof(SingleServerCompletionSupport), ref _singleServerCompletionSupport, option, args, i);
             TryProcessBoolOption(nameof(SingleServerSupport), ref _singleServerSupport, option, args, i);
-            TryProcessBoolOption(nameof(SupportsDelegatedCodeActions), ref _supportsDelegatedCodeActions, option, args, i);
             TryProcessBoolOption(nameof(DelegateToCSharpOnDiagnosticPublish), ref _delegateToCSharpOnDiagnosticPublish, option, args, i);
             TryProcessBoolOption(nameof(ReturnCodeActionAndRenamePathsWithPrefixedSlash), ref _returnCodeActionAndRenamePathsWithPrefixedSlash, option, args, i);
             TryProcessBoolOption(nameof(ShowAllCSharpCodeActions), ref _showAllCSharpCodeActions, option, args, i);

@@ -2,8 +2,10 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Test.Common;
+using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Text;
 using Xunit;
@@ -23,7 +25,7 @@ public class DefaultGeneratedDocumentPublisherTest : LanguageServerTestBase
         : base(testOutput)
     {
         _serverClient = new TestClient();
-        _projectManager = TestProjectSnapshotManager.Create(ErrorReporter);
+        _projectManager = TestProjectSnapshotManager.Create(ErrorReporter, new TestDispatcher());
         _projectManager.AllowNotifyListeners = true;
         _hostProject = new HostProject("/path/to/project.csproj", "/path/to/obj", RazorConfiguration.Default, "TestRootNamespace");
         _hostProject2 = new HostProject("/path/to/project2.csproj", "/path/to/obj2", RazorConfiguration.Default, "TestRootNamespace");
@@ -346,5 +348,14 @@ public class DefaultGeneratedDocumentPublisherTest : LanguageServerTestBase
         var textChange = Assert.Single(updateRequest.Changes);
         Assert.Equal("// some new code here", textChange.NewText!.Trim());
         Assert.Equal(124, updateRequest.HostDocumentVersion);
+    }
+
+    private class TestDispatcher : ProjectSnapshotManagerDispatcher
+    {
+        // The tests run synchronously without the dispatcher, so just assert that
+        // we're always on the right thread
+        public override bool IsDispatcherThread => true;
+
+        public override TaskScheduler DispatcherScheduler => TaskScheduler.Default;
     }
 }

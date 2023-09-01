@@ -126,6 +126,20 @@ global::System.Object __typeHelper = ";
         public async System.Threading.Tasks.Task ExecuteAsync()
         {
 #nullable restore
+#line 15 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/IncompleteDirectives.cshtml"
+         
+
+#line default
+#line hidden
+#nullable disable
+#nullable restore
+#line 21 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/IncompleteDirectives.cshtml"
+        
+
+#line default
+#line hidden
+#nullable disable
+#nullable restore
 #line 25 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/IncompleteDirectives.cshtml"
             
 

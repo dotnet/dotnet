@@ -26,9 +26,9 @@ internal sealed class ComponentAccessibilityCodeActionProvider : IRazorCodeActio
 {
     private static readonly Task<IReadOnlyList<RazorVSInternalCodeAction>?> s_emptyResult = Task.FromResult<IReadOnlyList<RazorVSInternalCodeAction>?>(null);
 
-    private readonly TagHelperFactsService _tagHelperFactsService;
+    private readonly ITagHelperFactsService _tagHelperFactsService;
 
-    public ComponentAccessibilityCodeActionProvider(TagHelperFactsService tagHelperFactsService)
+    public ComponentAccessibilityCodeActionProvider(ITagHelperFactsService tagHelperFactsService)
     {
         _tagHelperFactsService = tagHelperFactsService ?? throw new ArgumentNullException(nameof(tagHelperFactsService));
     }

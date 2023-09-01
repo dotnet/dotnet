@@ -23,8 +23,8 @@ internal class DefaultLSPTagHelperTooltipFactory : LSPTagHelperTooltipFactory
             throw new ArgumentNullException(nameof(elementDescriptionInfo));
         }
 
-        var associatedTagHelperInfos = elementDescriptionInfo.AssociatedTagHelperDescriptions;
-        if (associatedTagHelperInfos.Count == 0)
+        var associatedTagHelperInfos = elementDescriptionInfo.DescriptionInfos;
+        if (associatedTagHelperInfos.Length == 0)
         {
             tooltipContent = null;
             return false;
@@ -39,10 +39,8 @@ internal class DefaultLSPTagHelperTooltipFactory : LSPTagHelperTooltipFactory
 
         using var _ = StringBuilderPool.GetPooledObject(out var descriptionBuilder);
 
-        for (var i = 0; i < associatedTagHelperInfos.Count; i++)
+        foreach (var descriptionInfo in associatedTagHelperInfos)
         {
-            var descriptionInfo = associatedTagHelperInfos[i];
-
             if (descriptionBuilder.Length > 0)
             {
                 descriptionBuilder.AppendLine();
@@ -87,7 +85,7 @@ internal class DefaultLSPTagHelperTooltipFactory : LSPTagHelperTooltipFactory
         }
 
         var associatedAttributeInfos = attributeDescriptionInfo.DescriptionInfos;
-        if (associatedAttributeInfos.Count == 0)
+        if (associatedAttributeInfos.Length == 0)
         {
             tooltipContent = null;
             return false;
@@ -102,10 +100,8 @@ internal class DefaultLSPTagHelperTooltipFactory : LSPTagHelperTooltipFactory
 
         using var _ = StringBuilderPool.GetPooledObject(out var descriptionBuilder);
 
-        for (var i = 0; i < associatedAttributeInfos.Count; i++)
+        foreach (var descriptionInfo in associatedAttributeInfos)
         {
-            var descriptionInfo = associatedAttributeInfos[i];
-
             if (descriptionBuilder.Length > 0)
             {
                 descriptionBuilder.AppendLine();

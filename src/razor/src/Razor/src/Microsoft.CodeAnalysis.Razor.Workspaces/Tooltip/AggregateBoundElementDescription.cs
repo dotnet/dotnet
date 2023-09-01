@@ -1,24 +1,11 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
-using System;
-using System.Collections.Generic;
+using System.Collections.Immutable;
 
 namespace Microsoft.CodeAnalysis.Razor.Tooltip;
 
-internal class AggregateBoundElementDescription
+internal sealed record AggregateBoundElementDescription(ImmutableArray<BoundElementDescriptionInfo> DescriptionInfos)
 {
-    public static readonly AggregateBoundElementDescription Default = new(Array.Empty<BoundElementDescriptionInfo>());
-
-    public AggregateBoundElementDescription(IReadOnlyList<BoundElementDescriptionInfo> associatedTagHelperDescriptions)
-    {
-        if (associatedTagHelperDescriptions is null)
-        {
-            throw new ArgumentNullException(nameof(associatedTagHelperDescriptions));
-        }
-
-        AssociatedTagHelperDescriptions = associatedTagHelperDescriptions;
-    }
-
-    public IReadOnlyList<BoundElementDescriptionInfo> AssociatedTagHelperDescriptions { get; }
+    public static readonly AggregateBoundElementDescription Empty = new(ImmutableArray<BoundElementDescriptionInfo>.Empty);
 }

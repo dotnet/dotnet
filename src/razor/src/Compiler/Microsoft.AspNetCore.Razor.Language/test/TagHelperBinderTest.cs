@@ -5,6 +5,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 using Xunit;
 using static Microsoft.AspNetCore.Razor.Language.CommonMetadata;
@@ -21,10 +22,8 @@ public class TagHelperBinderTest
             .TagMatchingRuleDescriptor(rule => rule.RequireTagName("div"))
             .Build();
         var expectedDescriptors = new[] { divTagHelper };
-        var expectedAttributes = new[]
-        {
-            new KeyValuePair<string, string>("class", "something")
-        };
+        var expectedAttributes = ImmutableArray.Create(
+            new KeyValuePair<string, string>("class", "something"));
         var tagHelperBinder = new TagHelperBinder("th:", expectedDescriptors);
 
         // Act
@@ -66,7 +65,7 @@ public class TagHelperBinderTest
             var bindingResult = tagHelperBinder.GetBinding(
 
                 tagName: tagName,
-                attributes: Array.Empty<KeyValuePair<string, string>>(),
+                attributes: ImmutableArray<KeyValuePair<string, string>>.Empty,
                 parentTagName: "body",
                 parentIsTagHelper: false);
 
@@ -106,12 +105,12 @@ public class TagHelperBinderTest
 
         var tagHelperBinder = new TagHelperBinder("", new[] { multiTagHelper1, multiTagHelper2 });
 
-        TestTagName("div",   new[] { multiTagHelper1, multiTagHelper2 }, new[] { multiTagHelper1.TagMatchingRules[0], multiTagHelper2.TagMatchingRules[0] });
-        TestTagName("a",     new[] { multiTagHelper1 },                  new[] { multiTagHelper1.TagMatchingRules[1] });
-        TestTagName("img",   new[] { multiTagHelper1 },                  new[] { multiTagHelper1.TagMatchingRules[2] });
-        TestTagName("p",     new[] { multiTagHelper2 },                  new[] { multiTagHelper2.TagMatchingRules[1] });
-        TestTagName("table", new[] { multiTagHelper2 },                  new[] { multiTagHelper2.TagMatchingRules[2] });
-        TestTagName("*",     null,                                       null);
+        TestTagName("div", new[] { multiTagHelper1, multiTagHelper2 }, new[] { multiTagHelper1.TagMatchingRules[0], multiTagHelper2.TagMatchingRules[0] });
+        TestTagName("a", new[] { multiTagHelper1 }, new[] { multiTagHelper1.TagMatchingRules[1] });
+        TestTagName("img", new[] { multiTagHelper1 }, new[] { multiTagHelper1.TagMatchingRules[2] });
+        TestTagName("p", new[] { multiTagHelper2 }, new[] { multiTagHelper2.TagMatchingRules[1] });
+        TestTagName("table", new[] { multiTagHelper2 }, new[] { multiTagHelper2.TagMatchingRules[2] });
+        TestTagName("*", null, null);
 
 
         void TestTagName(string tagName, TagHelperDescriptor[] expectedDescriptors, TagMatchingRuleDescriptor[] expectedBindingResults)
@@ -119,7 +118,7 @@ public class TagHelperBinderTest
             // Act
             var bindingResult = tagHelperBinder.GetBinding(
                 tagName: tagName,
-                attributes: Array.Empty<KeyValuePair<string, string>>(),
+                attributes: ImmutableArray<KeyValuePair<string, string>>.Empty,
                 parentTagName: "body",
                 parentIsTagHelper: false);
 
@@ -135,7 +134,7 @@ public class TagHelperBinderTest
 
                 Assert.Equal(tagName, bindingResult.TagName);
 
-                for(int i = 0; i < expectedDescriptors.Length; i++)
+                for (int i = 0; i < expectedDescriptors.Length; i++)
                 {
                     var mapping = Assert.Single(bindingResult.Mappings[expectedDescriptors[i]]);
                     Assert.Equal(expectedBindingResults[i], mapping, TagMatchingRuleDescriptorComparer.Default);
@@ -213,7 +212,7 @@ public class TagHelperBinderTest
         // Act
         var bindingResult = tagHelperBinder.GetBinding(
             tagName,
-            attributes: Array.Empty<KeyValuePair<string, string>>(),
+            attributes: ImmutableArray<KeyValuePair<string, string>>.Empty,
             parentTagName: parentTagName,
             parentIsTagHelper: false);
 
@@ -278,87 +277,87 @@ public class TagHelperBinderTest
 
             return new TheoryData<
                 string, // tagName
-                IReadOnlyList<KeyValuePair<string, string>>, // providedAttributes
+                ImmutableArray<KeyValuePair<string, string>>, // providedAttributes
                 IEnumerable<TagHelperDescriptor>, // availableDescriptors
                 IEnumerable<TagHelperDescriptor>> // expectedDescriptors
                 {
                     {
                         "div",
-                        new[] { kvp("custom") },
+                        ImmutableArray.Create(kvp("custom")),
                         defaultAvailableDescriptors,
                         null
                     },
-                    { "div", new[] { kvp("style") }, defaultAvailableDescriptors, new[] { divDescriptor } },
-                    { "div", new[] { kvp("class") }, defaultAvailableDescriptors, new[] { catchAllDescriptor } },
+                    { "div", ImmutableArray.Create(kvp("style")), defaultAvailableDescriptors, new[] { divDescriptor } },
+                    { "div", ImmutableArray.Create(kvp("class")), defaultAvailableDescriptors, new[] { catchAllDescriptor } },
                     {
                         "div",
-                        new[] { kvp("class"), kvp("style") },
+                        ImmutableArray.Create(kvp("class"), kvp("style")),
                         defaultAvailableDescriptors,
                         new[] { divDescriptor, catchAllDescriptor }
                     },
                     {
                         "div",
-                        new[] { kvp("class"), kvp("style"), kvp("custom") },
+                        ImmutableArray.Create(kvp("class"), kvp("style"), kvp("custom")),
                         defaultAvailableDescriptors,
                         new[] { divDescriptor, catchAllDescriptor, catchAllDescriptor2 }
                     },
                     {
                         "input",
-                        new[] { kvp("class"), kvp("style") },
+                        ImmutableArray.Create(kvp("class"), kvp("style")),
                         defaultAvailableDescriptors,
                         new[] { inputDescriptor, catchAllDescriptor }
                     },
                     {
                         "input",
-                        new[] { kvp("nodashprefixA") },
+                        ImmutableArray.Create(kvp("nodashprefixA")),
                         defaultWildcardDescriptors,
                         new[] { inputWildcardPrefixDescriptor }
                     },
                     {
                         "input",
-                        new[] { kvp("nodashprefix-ABC-DEF"), kvp("random") },
+                        ImmutableArray.Create(kvp("nodashprefix-ABC-DEF"), kvp("random")),
                         defaultWildcardDescriptors,
                         new[] { inputWildcardPrefixDescriptor }
                     },
                     {
                         "input",
-                        new[] { kvp("prefixABCnodashprefix") },
+                        ImmutableArray.Create(kvp("prefixABCnodashprefix")),
                         defaultWildcardDescriptors,
                         null
                     },
                     {
                         "input",
-                        new[] { kvp("prefix-") },
+                        ImmutableArray.Create(kvp("prefix-")),
                         defaultWildcardDescriptors,
                         null
                     },
                     {
                         "input",
-                        new[] { kvp("nodashprefix") },
+                        ImmutableArray.Create(kvp("nodashprefix")),
                         defaultWildcardDescriptors,
                         null
                     },
                     {
                         "input",
-                        new[] { kvp("prefix-A") },
+                        ImmutableArray.Create(kvp("prefix-A")),
                         defaultWildcardDescriptors,
                         new[] { catchAllWildcardPrefixDescriptor }
                     },
                     {
                         "input",
-                        new[] { kvp("prefix-ABC-DEF"), kvp("random") },
+                        ImmutableArray.Create(kvp("prefix-ABC-DEF"), kvp("random")),
                         defaultWildcardDescriptors,
                         new[] { catchAllWildcardPrefixDescriptor }
                     },
                     {
                         "input",
-                        new[] { kvp("prefix-abc"), kvp("nodashprefix-def") },
+                        ImmutableArray.Create(kvp("prefix-abc"), kvp("nodashprefix-def")),
                         defaultWildcardDescriptors,
                         new[] { inputWildcardPrefixDescriptor, catchAllWildcardPrefixDescriptor }
                     },
                     {
                         "input",
-                        new[] { kvp("class"), kvp("prefix-abc"), kvp("onclick"), kvp("nodashprefix-def"), kvp("style") },
+                        ImmutableArray.Create(kvp("class"), kvp("prefix-abc"), kvp("onclick"), kvp("nodashprefix-def"), kvp("style")),
                         defaultWildcardDescriptors,
                         new[] { inputWildcardPrefixDescriptor, catchAllWildcardPrefixDescriptor }
                     },
@@ -370,7 +369,7 @@ public class TagHelperBinderTest
     [MemberData(nameof(RequiredAttributeData))]
     public void GetBinding_ReturnsBindingResultDescriptorsWithRequiredAttributes(
         string tagName,
-        IReadOnlyList<KeyValuePair<string, string>> providedAttributes,
+        ImmutableArray<KeyValuePair<string, string>> providedAttributes,
         object availableDescriptors,
         object expectedDescriptors)
     {
@@ -397,7 +396,7 @@ public class TagHelperBinderTest
         // Act
         var bindingResult = tagHelperBinder.GetBinding(
             tagName: "th",
-            attributes: Array.Empty<KeyValuePair<string, string>>(),
+            attributes: ImmutableArray<KeyValuePair<string, string>>.Empty,
             parentTagName: "p",
             parentIsTagHelper: false);
 
@@ -418,12 +417,12 @@ public class TagHelperBinderTest
         // Act
         var bindingResultDiv = tagHelperBinder.GetBinding(
             tagName: "th:div",
-            attributes: Array.Empty<KeyValuePair<string, string>>(),
+            attributes: ImmutableArray<KeyValuePair<string, string>>.Empty,
             parentTagName: "p",
             parentIsTagHelper: false);
         var bindingResultSpan = tagHelperBinder.GetBinding(
             tagName: "th:span",
-            attributes: Array.Empty<KeyValuePair<string, string>>(),
+            attributes: ImmutableArray<KeyValuePair<string, string>>.Empty,
             parentTagName: "p",
             parentIsTagHelper: false);
 
@@ -447,7 +446,7 @@ public class TagHelperBinderTest
         // Act
         var bindingResult = tagHelperBinder.GetBinding(
             tagName: "th:div",
-            attributes: Array.Empty<KeyValuePair<string, string>>(),
+            attributes: ImmutableArray<KeyValuePair<string, string>>.Empty,
             parentTagName: "p",
             parentIsTagHelper: false);
 
@@ -471,7 +470,7 @@ public class TagHelperBinderTest
         // Act
         var bindingResult = tagHelperBinder.GetBinding(
             tagName: "div",
-            attributes: Array.Empty<KeyValuePair<string, string>>(),
+            attributes: ImmutableArray<KeyValuePair<string, string>>.Empty,
             parentTagName: "p",
             parentIsTagHelper: false);
 
@@ -495,7 +494,7 @@ public class TagHelperBinderTest
         // Act
         var tagHelperBinding = tagHelperBinder.GetBinding(
             tagName: "foo",
-            attributes: Array.Empty<KeyValuePair<string, string>>(),
+            attributes: ImmutableArray<KeyValuePair<string, string>>.Empty,
             parentTagName: "p",
             parentIsTagHelper: false);
 
@@ -522,12 +521,12 @@ public class TagHelperBinderTest
         // Act
         var divBinding = tagHelperBinder.GetBinding(
             tagName: "div",
-            attributes: Array.Empty<KeyValuePair<string, string>>(),
+            attributes: ImmutableArray<KeyValuePair<string, string>>.Empty,
             parentTagName: "p",
             parentIsTagHelper: false);
         var spanBinding = tagHelperBinder.GetBinding(
             tagName: "span",
-            attributes: Array.Empty<KeyValuePair<string, string>>(),
+            attributes: ImmutableArray<KeyValuePair<string, string>>.Empty,
             parentTagName: "p",
             parentIsTagHelper: false);
 
@@ -556,7 +555,7 @@ public class TagHelperBinderTest
         // Act
         var bindingResult = tagHelperBinder.GetBinding(
             tagName: "div",
-            attributes: Array.Empty<KeyValuePair<string, string>>(),
+            attributes: ImmutableArray<KeyValuePair<string, string>>.Empty,
             parentTagName: "p",
             parentIsTagHelper: false);
 
@@ -584,7 +583,7 @@ public class TagHelperBinderTest
         // Act
         var binding = tagHelperBinder.GetBinding(
             tagName: "div",
-            attributes: Array.Empty<KeyValuePair<string, string>>(),
+            attributes: ImmutableArray<KeyValuePair<string, string>>.Empty,
             parentTagName: "p",
             parentIsTagHelper: false);
 
@@ -612,7 +611,7 @@ public class TagHelperBinderTest
         // Act
         var bindingResult = tagHelperBinder.GetBinding(
             tagName: "th:div",
-            attributes: Array.Empty<KeyValuePair<string, string>>(),
+            attributes: ImmutableArray<KeyValuePair<string, string>>.Empty,
             parentTagName: "th:p",
             parentIsTagHelper: true);
 
@@ -640,7 +639,7 @@ public class TagHelperBinderTest
         // Act
         var bindingResult = tagHelperBinder.GetBinding(
             tagName: "div",
-            attributes: Array.Empty<KeyValuePair<string, string>>(),
+            attributes: ImmutableArray<KeyValuePair<string, string>>.Empty,
             parentTagName: "p",
             parentIsTagHelper: false);
 
@@ -668,7 +667,7 @@ public class TagHelperBinderTest
         // Act
         var bindingResult = tagHelperBinder.GetBinding(
             tagName: "div",
-            attributes: Array.Empty<KeyValuePair<string, string>>(),
+            attributes: ImmutableArray<KeyValuePair<string, string>>.Empty,
             parentTagName: "p",
             parentIsTagHelper: false);
 
@@ -695,7 +694,7 @@ public class TagHelperBinderTest
         // Act
         var bindingResult = tagHelperBinder.GetBinding(
             tagName: "div",
-            attributes: Array.Empty<KeyValuePair<string, string>>(),
+            attributes: ImmutableArray<KeyValuePair<string, string>>.Empty,
             parentTagName: "p",
             parentIsTagHelper: false);
 
@@ -712,10 +711,8 @@ public class TagHelperBinderTest
             .SetCaseSensitive()
             .Build();
         var expectedDescriptors = new[] { divTagHelper };
-        var expectedAttributes = new[]
-        {
-                new KeyValuePair<string, string>("class", "something")
-            };
+        var expectedAttributes = ImmutableArray.Create(
+            new KeyValuePair<string, string>("class", "something"));
         var tagHelperBinder = new TagHelperBinder("th:", expectedDescriptors);
 
         // Act
@@ -740,10 +737,8 @@ public class TagHelperBinderTest
             .SetCaseSensitive()
             .Build();
         var expectedDescriptors = new[] { divTagHelper };
-        var expectedAttributes = new[]
-        {
-                new KeyValuePair<string, string>("CLASS", "something")
-            };
+        var expectedAttributes = ImmutableArray.Create(
+            new KeyValuePair<string, string>("CLASS", "something"));
         var tagHelperBinder = new TagHelperBinder(null, expectedDescriptors);
 
         // Act

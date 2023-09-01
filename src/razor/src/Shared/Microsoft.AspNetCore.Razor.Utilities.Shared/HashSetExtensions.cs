@@ -1,11 +1,11 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
-using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 
-namespace Microsoft.AspNetCore.Razor;
+namespace System.Collections.Generic;
 
 internal static class HashSetExtensions
 {
@@ -15,4 +15,12 @@ internal static class HashSetExtensions
         => set.Count == 0
             ? Array.Empty<T>()
             : ((IEnumerable<T>)set).ToArray();
+
+    public static void AddRange<T>(this HashSet<T> set, ImmutableArray<T> array)
+    {
+        foreach (var item in array)
+        {
+            set.Add(item);
+        }
+    }
 }
