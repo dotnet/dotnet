@@ -1,0 +1,368 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<doc>
+  <assembly>
+    <name>Microsoft.Extensions.Resilience</name>
+  </assembly>
+  <members>
+    <member name="T:Microsoft.Extensions.Resilience.FailureResultContext">
+      <summary>
+            Object model capturing the dimensions metered for a transient failure result.</summary>
+    </member>
+    <member name="M:Microsoft.Extensions.Resilience.FailureResultContext.Create(System.String,System.String,System.String)">
+      <summary>
+            Initializes a new instance of the <see cref="T:Microsoft.Extensions.Resilience.FailureResultContext" /> structure.</summary>
+      <param name="failureSource">The source of the failure.</param>
+      <param name="failureReason">The reason of the failure.</param>
+      <param name="additionalInformation">Additional information for the failure.</param>
+      <returns>
+        <see cref="T:Microsoft.Extensions.Resilience.FailureResultContext" /> object.</returns>
+    </member>
+    <member name="P:Microsoft.Extensions.Resilience.FailureResultContext.AdditionalInformation">
+      <summary>
+            Gets additional information of the failure presented in delegate result.</summary>
+    </member>
+    <member name="P:Microsoft.Extensions.Resilience.FailureResultContext.FailureReason">
+      <summary>
+            Gets the reason of the failure presented in delegate result.</summary>
+    </member>
+    <member name="P:Microsoft.Extensions.Resilience.FailureResultContext.FailureSource">
+      <summary>
+            Gets the source of the failure presented in delegate result.</summary>
+    </member>
+    <member name="T:Microsoft.Extensions.Resilience.FaultInjection.ChaosPolicyOptionsBase">
+      <summary>
+            Chaos policy options base class.</summary>
+    </member>
+    <member name="M:Microsoft.Extensions.Resilience.FaultInjection.ChaosPolicyOptionsBase.#ctor">
+      <summary>
+            Initializes a new instance of the <see cref="T:Microsoft.Extensions.Resilience.FaultInjection.ChaosPolicyOptionsBase" /> class.</summary>
+    </member>
+    <member name="P:Microsoft.Extensions.Resilience.FaultInjection.ChaosPolicyOptionsBase.Enabled">
+      <summary>
+            Gets or sets a value indicating whether
+            a chaos policy should be enabled or not.</summary>
+      <returns>
+            The default value is <see langword="false" />.</returns>
+    </member>
+    <member name="P:Microsoft.Extensions.Resilience.FaultInjection.ChaosPolicyOptionsBase.FaultInjectionRate">
+      <summary>
+            Gets or sets the injection rate.</summary>
+    </member>
+    <member name="T:Microsoft.Extensions.Resilience.FaultInjection.ChaosPolicyOptionsGroup">
+      <summary>
+            Class for chaos policy options group.</summary>
+    </member>
+    <member name="M:Microsoft.Extensions.Resilience.FaultInjection.ChaosPolicyOptionsGroup.#ctor" />
+    <member name="P:Microsoft.Extensions.Resilience.FaultInjection.ChaosPolicyOptionsGroup.CustomResultPolicyOptions">
+      <summary>
+            Gets or sets the custom result policy options of the chaos policy options group.</summary>
+    </member>
+    <member name="P:Microsoft.Extensions.Resilience.FaultInjection.ChaosPolicyOptionsGroup.ExceptionPolicyOptions">
+      <summary>
+            Gets or sets the exception policy options of the chaos policy options group.</summary>
+      <returns>
+            The default value is <see langword="null" />.</returns>
+    </member>
+    <member name="P:Microsoft.Extensions.Resilience.FaultInjection.ChaosPolicyOptionsGroup.HttpResponseInjectionPolicyOptions">
+      <summary>
+            Gets or sets the http response injection policy options of the chaos policy options group.</summary>
+      <returns>
+            The default value is <see langword="null" />.</returns>
+    </member>
+    <member name="P:Microsoft.Extensions.Resilience.FaultInjection.ChaosPolicyOptionsGroup.LatencyPolicyOptions">
+      <summary>
+            Gets or sets the latency policy options of the chaos policy options group.</summary>
+      <returns>
+            The default value is <see langword="null" />.</returns>
+    </member>
+    <member name="T:Microsoft.Extensions.Resilience.FaultInjection.CustomResultPolicyOptions">
+      <summary>
+            Custom Result chaos policy options definition.</summary>
+    </member>
+    <member name="M:Microsoft.Extensions.Resilience.FaultInjection.CustomResultPolicyOptions.#ctor" />
+    <member name="P:Microsoft.Extensions.Resilience.FaultInjection.CustomResultPolicyOptions.CustomResultKey">
+      <summary>
+            Gets or sets the custom result key.</summary>
+    </member>
+    <member name="T:Microsoft.Extensions.Resilience.FaultInjection.ExceptionPolicyOptions">
+      <summary>
+            Class for exception policy options definition.</summary>
+    </member>
+    <member name="M:Microsoft.Extensions.Resilience.FaultInjection.ExceptionPolicyOptions.#ctor" />
+    <member name="P:Microsoft.Extensions.Resilience.FaultInjection.ExceptionPolicyOptions.ExceptionKey">
+      <summary>
+            Gets or sets the exception key.</summary>
+    </member>
+    <member name="T:Microsoft.Extensions.Resilience.FaultInjection.FaultInjectionExtensions">
+      <summary>
+            Provides extension methods for Fault-Injection library.</summary>
+    </member>
+    <member name="M:Microsoft.Extensions.Resilience.FaultInjection.FaultInjectionExtensions.AddFaultInjection(Microsoft.Extensions.DependencyInjection.IServiceCollection)">
+      <summary>
+            Registers default implementations for <see cref="T:Microsoft.Extensions.Resilience.FaultInjection.IFaultInjectionOptionsProvider" /> and <see cref="T:Microsoft.Extensions.Resilience.FaultInjection.IChaosPolicyFactory" />.</summary>
+      <param name="services">The services collection.</param>
+      <exception cref="T:System.ArgumentNullException">
+            Any parameter is <see langword="null" />.</exception>
+      <returns>
+            The <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" /> so that additional calls can be chained.</returns>
+    </member>
+    <member name="M:Microsoft.Extensions.Resilience.FaultInjection.FaultInjectionExtensions.AddFaultInjection(Microsoft.Extensions.DependencyInjection.IServiceCollection,Microsoft.Extensions.Configuration.IConfiguration)">
+      <summary>
+            Configures <see cref="T:Microsoft.Extensions.Resilience.FaultInjection.FaultInjectionOptions" /> and registers default implementations for
+            <see cref="T:Microsoft.Extensions.Resilience.FaultInjection.IFaultInjectionOptionsProvider" /> and <see cref="T:Microsoft.Extensions.Resilience.FaultInjection.IChaosPolicyFactory" />.</summary>
+      <param name="services">The services collection.</param>
+      <param name="section">
+            The configuration section to bind to <see cref="T:Microsoft.Extensions.Resilience.FaultInjection.FaultInjectionOptions" />.</param>
+      <exception cref="T:System.ArgumentNullException">
+            Any parameter is <see langword="null" />.</exception>
+      <returns>
+            The <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" /> so that additional calls can be chained.</returns>
+    </member>
+    <member name="M:Microsoft.Extensions.Resilience.FaultInjection.FaultInjectionExtensions.AddFaultInjection(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.Action{Microsoft.Extensions.Resilience.FaultInjection.FaultInjectionOptionsBuilder})">
+      <summary>
+            Calls the given action to configure <see cref="T:Microsoft.Extensions.Resilience.FaultInjection.FaultInjectionOptions" /> and registers default implementations for
+            <see cref="T:Microsoft.Extensions.Resilience.FaultInjection.IFaultInjectionOptionsProvider" /> and <see cref="T:Microsoft.Extensions.Resilience.FaultInjection.IChaosPolicyFactory" />.</summary>
+      <param name="services">The services collection.</param>
+      <param name="configure">Function to configure <see cref="T:Microsoft.Extensions.Resilience.FaultInjection.FaultInjectionOptions" />.</param>
+      <exception cref="T:System.ArgumentNullException">
+            Any parameter is <see langword="null" />.</exception>
+      <returns>
+            The <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" /> so that additional calls can be chained.</returns>
+    </member>
+    <member name="M:Microsoft.Extensions.Resilience.FaultInjection.FaultInjectionExtensions.GetFaultInjectionGroupName(Polly.Context)">
+      <summary>
+            Gets the name of the registered <see cref="T:Microsoft.Extensions.Resilience.FaultInjection.ChaosPolicyOptionsGroup" /> from <see cref="T:Polly.Context" />.</summary>
+      <param name="context">The context instance.</param>
+      <exception cref="T:System.ArgumentNullException">
+            Any argument is <see langword="null" />.</exception>
+      <returns>
+            The <see cref="T:Microsoft.Extensions.Resilience.FaultInjection.ChaosPolicyOptionsGroup" /> if registered; <see langword="null" /> if it isn't.</returns>
+    </member>
+    <member name="M:Microsoft.Extensions.Resilience.FaultInjection.FaultInjectionExtensions.WithFaultInjection(Polly.Context,Microsoft.Extensions.Resilience.FaultInjection.FaultPolicyWeightAssignmentsOptions)">
+      <summary>
+            Associates <paramref name="weightAssignments" /> to the calling <see cref="T:Polly.Context" /> instance, where <paramref name="weightAssignments" />
+            will be used to determine which <see cref="T:Microsoft.Extensions.Resilience.FaultInjection.ChaosPolicyOptionsGroup" /> to use at each fault-injection run.</summary>
+      <param name="context">The context instance.</param>
+      <param name="weightAssignments">The fault policy weight assignment.</param>
+      <exception cref="T:System.ArgumentNullException">
+            Any argument is <see langword="null" />.</exception>
+      <returns>
+            The <see cref="T:Polly.Context" /> so that additional calls can be chained.</returns>
+    </member>
+    <member name="M:Microsoft.Extensions.Resilience.FaultInjection.FaultInjectionExtensions.WithFaultInjection(Polly.Context,System.String)">
+      <summary>
+            Associates the given <see cref="T:Polly.Context" /> instance to the given identifier name
+            for an <see cref="T:Microsoft.Extensions.Resilience.FaultInjection.ChaosPolicyOptionsGroup" /> registered at <see cref="T:Microsoft.Extensions.Resilience.FaultInjection.IFaultInjectionOptionsProvider" />.</summary>
+      <param name="context">The context instance.</param>
+      <param name="groupName">The identifier name for an <see cref="T:Microsoft.Extensions.Resilience.FaultInjection.ChaosPolicyOptionsGroup" />.</param>
+      <exception cref="T:System.ArgumentNullException">
+            Any argument is <see langword="null" />.</exception>
+      <returns>
+            The <see cref="T:Polly.Context" /> so that additional calls can be chained.</returns>
+    </member>
+    <member name="T:Microsoft.Extensions.Resilience.FaultInjection.FaultInjectionOptions">
+      <summary>
+            Class to contain fault injection options provider option values loaded from configuration sources.</summary>
+    </member>
+    <member name="M:Microsoft.Extensions.Resilience.FaultInjection.FaultInjectionOptions.#ctor" />
+    <member name="P:Microsoft.Extensions.Resilience.FaultInjection.FaultInjectionOptions.ChaosPolicyOptionsGroups">
+      <summary>
+            Gets or sets the dictionary that stores <see cref="T:Microsoft.Extensions.Resilience.FaultInjection.ChaosPolicyOptionsGroup" />.</summary>
+    </member>
+    <member name="T:Microsoft.Extensions.Resilience.FaultInjection.FaultInjectionOptionsBuilder">
+      <summary>
+            Builder class to provide options configuration methods for
+            <see cref="T:Microsoft.Extensions.Resilience.FaultInjection.FaultInjectionOptions" /> and <see cref="T:Microsoft.Extensions.Resilience.FaultInjection.FaultInjectionExceptionOptions" />.</summary>
+    </member>
+    <member name="M:Microsoft.Extensions.Resilience.FaultInjection.FaultInjectionOptionsBuilder.#ctor(Microsoft.Extensions.DependencyInjection.IServiceCollection)">
+      <summary>
+            Initializes a new instance of the <see cref="T:Microsoft.Extensions.Resilience.FaultInjection.FaultInjectionOptionsBuilder" /> class.</summary>
+      <param name="services">The services collection.</param>
+      <exception cref="T:System.ArgumentNullException">
+            Any parameter is <see langword="null" />.</exception>
+    </member>
+    <member name="M:Microsoft.Extensions.Resilience.FaultInjection.FaultInjectionOptionsBuilder.AddCustomResult(System.String,System.Object)">
+      <summary>
+            Add a custom result object instance to <see cref="T:Microsoft.Extensions.Resilience.FaultInjection.FaultInjectionCustomResultOptions" />.</summary>
+      <param name="key">The identifier for the custom result object instance to be added.</param>
+      <param name="customResult">The custom result object instance to be added.</param>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="customResult" /> is <see langword="null" />.</exception>
+      <exception cref="T:System.ArgumentException">
+        <paramref name="key" /> is an empty string or <see langword="null" />.</exception>
+      <returns>The builder object itself so that additional calls can be chained.</returns>
+    </member>
+    <member name="M:Microsoft.Extensions.Resilience.FaultInjection.FaultInjectionOptionsBuilder.AddException(System.String,System.Exception)">
+      <summary>
+            Add an exception instance to <see cref="T:Microsoft.Extensions.Resilience.FaultInjection.FaultInjectionExceptionOptions" />.</summary>
+      <param name="key">The identifier for the exception instance to be added.</param>
+      <param name="exception">The exception instance to be added.</param>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="exception" /> is <see langword="null" />.</exception>
+      <exception cref="T:System.ArgumentException">
+        <paramref name="key" /> is an empty string or <see langword="null" />.</exception>
+      <returns>The builder object itself so that additional calls can be chained.</returns>
+    </member>
+    <member name="M:Microsoft.Extensions.Resilience.FaultInjection.FaultInjectionOptionsBuilder.Configure">
+      <summary>
+            Configures default <see cref="T:Microsoft.Extensions.Resilience.FaultInjection.FaultInjectionOptions" />.</summary>
+      <returns>
+            The builder object itself so that additional calls can be chained.</returns>
+    </member>
+    <member name="M:Microsoft.Extensions.Resilience.FaultInjection.FaultInjectionOptionsBuilder.Configure(Microsoft.Extensions.Configuration.IConfiguration)">
+      <summary>
+            Configures <see cref="T:Microsoft.Extensions.Resilience.FaultInjection.FaultInjectionOptions" /> through
+            the provided <see cref="T:Microsoft.Extensions.Configuration.IConfigurationSection" />.</summary>
+      <param name="section">
+            The configuration section to bind to <see cref="T:Microsoft.Extensions.Resilience.FaultInjection.FaultInjectionOptions" />.</param>
+      <exception cref="T:System.ArgumentNullException">
+            Any parameter is <see langword="null" />.</exception>
+      <returns>The builder object itself so that additional calls can be chained.</returns>
+    </member>
+    <member name="M:Microsoft.Extensions.Resilience.FaultInjection.FaultInjectionOptionsBuilder.Configure(System.Action{Microsoft.Extensions.Resilience.FaultInjection.FaultInjectionOptions})">
+      <summary>
+            Configures <see cref="T:Microsoft.Extensions.Resilience.FaultInjection.FaultInjectionOptions" /> through
+            the provided configure.</summary>
+      <param name="configureOptions">
+            The function to be registered to configure <see cref="T:Microsoft.Extensions.Resilience.FaultInjection.FaultInjectionOptions" />.</param>
+      <exception cref="T:System.ArgumentNullException">
+            Any parameter is <see langword="null" />.</exception>
+      <returns>The builder object itself so that additional calls can be chained.</returns>
+    </member>
+    <member name="T:Microsoft.Extensions.Resilience.FaultInjection.FaultPolicyWeightAssignmentsOptions">
+      <summary>
+            Class to contain fault-injection policy weight assignments.</summary>
+    </member>
+    <member name="M:Microsoft.Extensions.Resilience.FaultInjection.FaultPolicyWeightAssignmentsOptions.#ctor" />
+    <member name="P:Microsoft.Extensions.Resilience.FaultInjection.FaultPolicyWeightAssignmentsOptions.WeightAssignments">
+      <summary>
+            Gets or sets the dictionary that defines fault policy weight assignments.</summary>
+    </member>
+    <member name="T:Microsoft.Extensions.Resilience.FaultInjection.HttpResponseInjectionPolicyOptions">
+      <summary>
+            Class for http response injection policy options definition.</summary>
+    </member>
+    <member name="M:Microsoft.Extensions.Resilience.FaultInjection.HttpResponseInjectionPolicyOptions.#ctor" />
+    <member name="P:Microsoft.Extensions.Resilience.FaultInjection.HttpResponseInjectionPolicyOptions.HttpContentKey">
+      <summary>
+            Gets or sets the key to retrieve custom response settings.</summary>
+    </member>
+    <member name="P:Microsoft.Extensions.Resilience.FaultInjection.HttpResponseInjectionPolicyOptions.StatusCode">
+      <summary>
+            Gets or sets the status code to inject.</summary>
+    </member>
+    <member name="T:Microsoft.Extensions.Resilience.FaultInjection.IChaosPolicyFactory">
+      <summary>
+            Factory for chaos policy creation.</summary>
+    </member>
+    <member name="M:Microsoft.Extensions.Resilience.FaultInjection.IChaosPolicyFactory.CreateCustomResultPolicy``1">
+      <summary>
+            Creates an async custom result policy with delegate functions to fetch
+            fault injection settings from <see cref="T:Polly.Context" />.</summary>
+      <typeparam name="TResult">The type of value policies created by this method will inject.</typeparam>
+      <returns>A custom result policy, an instance of <see cref="T:Polly.Contrib.Simmy.Outcomes.AsyncInjectOutcomePolicy`1" />.</returns>
+    </member>
+    <member name="M:Microsoft.Extensions.Resilience.FaultInjection.IChaosPolicyFactory.CreateExceptionPolicy">
+      <summary>
+            Creates an async exception policy with delegate functions to fetch
+            fault injection settings from <see cref="T:Polly.Context" />.</summary>
+      <returns>
+            An exception policy,
+            an instance of <see cref="T:Polly.Contrib.Simmy.Outcomes.AsyncInjectOutcomePolicy" />.</returns>
+    </member>
+    <member name="M:Microsoft.Extensions.Resilience.FaultInjection.IChaosPolicyFactory.CreateLatencyPolicy``1">
+      <summary>
+            Creates an async latency policy with delegate functions to fetch fault injection
+            settings from <see cref="T:Polly.Context" />.</summary>
+      <typeparam name="TResult">The type of value policies created by this method will inject.</typeparam>
+      <returns>
+            A latency policy,
+            an instance of <see cref="T:Polly.Contrib.Simmy.Latency.AsyncInjectLatencyPolicy`1" />.</returns>
+    </member>
+    <member name="T:Microsoft.Extensions.Resilience.FaultInjection.IFaultInjectionOptionsProvider">
+      <summary>
+            Interface for fault-injection options provider implementations.</summary>
+    </member>
+    <member name="M:Microsoft.Extensions.Resilience.FaultInjection.IFaultInjectionOptionsProvider.TryGetChaosPolicyOptionsGroup(System.String,Microsoft.Extensions.Resilience.FaultInjection.ChaosPolicyOptionsGroup@)">
+      <summary>
+            Get an instance of <see cref="T:Microsoft.Extensions.Resilience.FaultInjection.ChaosPolicyOptionsGroup" /> from the provider by the options group name.</summary>
+      <param name="optionsGroupName">The chaos policy options group name.</param>
+      <param name="optionsGroup">
+            The <see cref="T:Microsoft.Extensions.Resilience.FaultInjection.ChaosPolicyOptionsGroup" /> associated with the options group name if it is found; otherwise, <see langword="null" />.</param>
+      <returns>
+            True if the <see cref="T:Microsoft.Extensions.Resilience.FaultInjection.ChaosPolicyOptionsGroup" /> associated with the options group name if it is found; otherwise, false.</returns>
+    </member>
+    <member name="T:Microsoft.Extensions.Resilience.FaultInjection.InjectedFaultException">
+      <summary>
+            An exception class that should only be used for fault injection purposes.</summary>
+    </member>
+    <member name="M:Microsoft.Extensions.Resilience.FaultInjection.InjectedFaultException.#ctor">
+      <summary>
+            Initializes a new instance of the <see cref="T:Microsoft.Extensions.Resilience.FaultInjection.InjectedFaultException" /> class.</summary>
+    </member>
+    <member name="M:Microsoft.Extensions.Resilience.FaultInjection.InjectedFaultException.#ctor(System.String)">
+      <summary>
+            Initializes a new instance of the <see cref="T:Microsoft.Extensions.Resilience.FaultInjection.InjectedFaultException" /> class.</summary>
+      <param name="message">The error message that explains the reason for the exception.</param>
+    </member>
+    <member name="M:Microsoft.Extensions.Resilience.FaultInjection.InjectedFaultException.#ctor(System.String,System.Exception)">
+      <summary>
+            Initializes a new instance of the <see cref="T:Microsoft.Extensions.Resilience.FaultInjection.InjectedFaultException" /> class.</summary>
+      <param name="message">The error message that explains the reason for the exception.</param>
+      <param name="innerException">
+            The exception that is the cause of the current exception,
+            or a <see langword="null" /> reference (Nothing in Visual Basic) if no inner exception is specified.</param>
+    </member>
+    <member name="T:Microsoft.Extensions.Resilience.FaultInjection.LatencyPolicyOptions">
+      <summary>
+            Class for latency policy options definition.</summary>
+    </member>
+    <member name="M:Microsoft.Extensions.Resilience.FaultInjection.LatencyPolicyOptions.#ctor" />
+    <member name="P:Microsoft.Extensions.Resilience.FaultInjection.LatencyPolicyOptions.Latency">
+      <summary>
+            Gets or sets the latency value to inject.</summary>
+    </member>
+    <member name="T:Microsoft.Extensions.Resilience.Resilience.ResilienceContextExtensions">
+      <summary>
+            Extensions for <see cref="T:Polly.ResilienceContext" />.</summary>
+    </member>
+    <member name="M:Microsoft.Extensions.Resilience.Resilience.ResilienceContextExtensions.GetRequestMetadata(Polly.ResilienceContext)">
+      <summary>
+            Gets the <see cref="T:Microsoft.Extensions.Http.Telemetry.RequestMetadata" /> from the <see cref="T:Polly.ResilienceContext" />.</summary>
+      <param name="context">The context instance.</param>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="context" /> is <see langword="null" />.</exception>
+      <returns>The instance of <see cref="T:Microsoft.Extensions.Http.Telemetry.RequestMetadata" /> or <see langword="null" />.</returns>
+    </member>
+    <member name="M:Microsoft.Extensions.Resilience.Resilience.ResilienceContextExtensions.SetRequestMetadata(Polly.ResilienceContext,Microsoft.Extensions.Http.Telemetry.RequestMetadata)">
+      <summary>
+            Sets the <see cref="T:Microsoft.Extensions.Http.Telemetry.RequestMetadata" /> to the <see cref="T:Polly.ResilienceContext" />.</summary>
+      <param name="context">The context instance.</param>
+      <param name="requestMetadata">The request metadata.</param>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="context" /> or <paramref name="requestMetadata" /> is <see langword="null" />.</exception>
+    </member>
+    <member name="T:Microsoft.Extensions.Resilience.ResilienceServiceCollectionExtensions">
+      <summary>
+            Extension class for the Service Collection DI container.</summary>
+    </member>
+    <member name="M:Microsoft.Extensions.Resilience.ResilienceServiceCollectionExtensions.AddResilienceEnrichment(Microsoft.Extensions.DependencyInjection.IServiceCollection)">
+      <summary>
+            Adds resilience enrichers.</summary>
+      <param name="services">The services.</param>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="services" /> is <see langword="null" />.</exception>
+      <returns>The input <paramref name="services" />.</returns>
+    </member>
+    <member name="M:Microsoft.Extensions.Resilience.ResilienceServiceCollectionExtensions.ConfigureFailureResultContext``1(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.Func{``0,Microsoft.Extensions.Resilience.FailureResultContext})">
+      <summary>
+            Configures the failure result dimensions.</summary>
+      <param name="services">The services.</param>
+      <param name="configure">The configure result dimensions.</param>
+      <typeparam name="TResult">The type of the policy result.</typeparam>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="services" /> is <see langword="null" /> or <paramref name="configure" /> is <see langword="null" />.</exception>
+      <returns>The input <paramref name="services" />.</returns>
+    </member>
+  </members>
+</doc>

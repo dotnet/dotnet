@@ -1,0 +1,18 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<doc>
+  <assembly>
+    <name>Microsoft.Extensions.Diagnostics</name>
+  </assembly>
+  <members>
+    <member name="T:Microsoft.Extensions.DependencyInjection.MetricsServiceExtensions">
+      <summary>
+            Extension methods for setting up metrics services in an <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" />.</summary>
+    </member>
+    <member name="M:Microsoft.Extensions.DependencyInjection.MetricsServiceExtensions.AddMetrics(Microsoft.Extensions.DependencyInjection.IServiceCollection)">
+      <summary>
+            Adds metrics services to the specified <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" />.</summary>
+      <param name="services">The <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" /> to add services to.</param>
+      <returns>The <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" /> so that additional calls can be chained.</returns>
+    </member>
+  </members>
+</doc>
