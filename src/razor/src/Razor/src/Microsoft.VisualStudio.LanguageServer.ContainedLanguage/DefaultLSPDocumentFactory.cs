@@ -50,6 +50,28 @@ internal class DefaultLSPDocumentFactory : LSPDocumentFactory
         return lspDocument;
     }
 
+    internal override bool TryRefreshVirtualDocuments(LSPDocument document)
+    {
+        var result = false;
+        foreach (var factory in _virtualDocumentFactories)
+        {
+            if (factory.Metadata.ContentTypes.Any(ct => document.TextBuffer.ContentType.IsOfType(ct)))
+            {
+                // The contract for TryRefreshVirtualDocuments is that factories shouldn't touch virtual
+                // documents they don't own so calling it multiple times, and repeatedly setting the virtual
+                // documents is fine. We might create a few intermediate snapshots, but change triggers are
+                // sent by the caller of this method, so consumers see one set of new virtual documents.
+                if (factory.Value.TryRefreshVirtualDocuments(document, out var newVirtualDocuments))
+                {
+                    document.SetVirtualDocuments(newVirtualDocuments);
+                    result |= true;
+                }
+            }
+        }
+
+        return result;
+    }
+        
     private IReadOnlyList<VirtualDocument> CreateVirtualDocuments(ITextBuffer hostDocumentBuffer)
     {
         var virtualDocuments = new List<VirtualDocument>();

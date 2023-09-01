@@ -6,7 +6,7 @@ using System.Collections.Immutable;
 
 namespace Microsoft.AspNetCore.Razor.Telemetry;
 
-public interface ITelemetryReporter
+internal interface ITelemetryReporter
 {
     IDisposable BeginBlock(string name, Severity severity);
     IDisposable BeginBlock(string name, Severity severity, ImmutableDictionary<string, object?> values);

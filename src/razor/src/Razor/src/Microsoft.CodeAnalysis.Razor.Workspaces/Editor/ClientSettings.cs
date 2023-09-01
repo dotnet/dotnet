@@ -13,19 +13,19 @@ namespace Microsoft.CodeAnalysis.Razor.Editor;
 /// </summary>
 /// <param name="ClientSpaceSettings"></param>
 /// <param name="AdvancedSettings"></param>
-public record ClientSettings(ClientSpaceSettings ClientSpaceSettings, ClientAdvancedSettings AdvancedSettings)
+internal record ClientSettings(ClientSpaceSettings ClientSpaceSettings, ClientAdvancedSettings AdvancedSettings)
 {
     public static readonly ClientSettings Default = new(ClientSpaceSettings.Default, ClientAdvancedSettings.Default);
 }
 
-public sealed record ClientSpaceSettings(bool IndentWithTabs, int IndentSize)
+internal sealed record ClientSpaceSettings(bool IndentWithTabs, int IndentSize)
 {
     public static readonly ClientSpaceSettings Default = new(IndentWithTabs: false, IndentSize: 4);
 
     public int IndentSize { get; } = IndentSize >= 0 ? IndentSize : throw new ArgumentOutOfRangeException(nameof(IndentSize));
 }
 
-public sealed record ClientAdvancedSettings(bool FormatOnType, bool AutoClosingTags, bool AutoInsertAttributeQuotes, bool ColorBackground)
+internal sealed record ClientAdvancedSettings(bool FormatOnType, bool AutoClosingTags, bool AutoInsertAttributeQuotes, bool ColorBackground)
 {
     public static readonly ClientAdvancedSettings Default = new(FormatOnType: true, AutoClosingTags: true, AutoInsertAttributeQuotes: true, ColorBackground: false);
 }

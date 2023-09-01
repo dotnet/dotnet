@@ -9,7 +9,7 @@ using System.Text;
 using Microsoft.AspNetCore.Mvc.Razor.Extensions;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Serialization;
-using Microsoft.AspNetCore.Razor.Serialization.Converters;
+using Microsoft.AspNetCore.Razor.Serialization.Json.Converters;
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Newtonsoft.Json;
 using Xunit;
@@ -24,16 +24,7 @@ public class TagHelperDeltaResultSerializationTest(ITestOutputHelper testOutput)
     public void TagHelperResolutionResult_DefaultBlazorServerProject_RoundTrips()
     {
         // Arrange
-        var bytes = RazorTestResources.GetResourceBytes(RazorTestResources.BlazorServerAppTagHelpersJson);
-
-        ImmutableArray<TagHelperDescriptor> tagHelpers;
-        using (var stream = new MemoryStream(bytes))
-        using (var reader = new StreamReader(stream))
-        {
-            tagHelpers = JsonDataConvert.DeserializeData(reader,
-                static r => r.ReadImmutableArray(
-                    static r => ObjectReaders.ReadTagHelper(r, useCache: false)));
-        }
+        var tagHelpers = RazorTestResources.BlazorServerAppTagHelpers;
 
         var expectedResult = new TagHelperDeltaResult(
             Delta: true,

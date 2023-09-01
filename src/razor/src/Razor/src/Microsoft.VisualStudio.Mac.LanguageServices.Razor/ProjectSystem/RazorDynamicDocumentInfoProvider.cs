@@ -4,9 +4,11 @@
 using System;
 using System.Collections.Concurrent;
 using System.ComponentModel.Composition;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
+using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.VisualStudio.Editor.Razor;
 using MonoDevelop.Ide.TypeSystem;
 
@@ -55,13 +57,22 @@ internal class RazorDynamicDocumentInfoProvider : IProjectSnapshotChangeTrigger,
             throw new ArgumentNullException(nameof(filePath));
         }
 
+        var razorProjectKey = ((DefaultRazorDynamicFileInfoProvider)_dynamicFileInfoProvider).TryFindProjectKeyForProjectId(projectId);
+
+        if (razorProjectKey is not ProjectKey projectKey)
+        {
+            Debug.Fail("Could not find project key for project id.");
+            // The class that calls this method in VS Mac handles null just fine.
+            return null!;
+        }
+
         // The underlying method doesn't actually do anything truly asynchronous which allows us to synchronously call it.
 #pragma warning disable VSTHRD002 // Avoid problematic synchronous waits
         _ = _dynamicFileInfoProvider.GetDynamicFileInfoAsync(projectId, projectFilePath, filePath, CancellationToken.None).Result;
 #pragma warning restore VSTHRD002 // Avoid problematic synchronous waits
 
         var key = new Key(projectId, projectFilePath, filePath);
-        var entry = _entries.GetOrAdd(key, k => new Entry(_documentInfoFactory.CreateEmpty(k.FilePath, projectId)));
+        var entry = _entries.GetOrAdd(key, k => new Entry(_documentInfoFactory.CreateEmpty(k.FilePath, projectId, projectKey)));
         return entry.Current;
     }
 

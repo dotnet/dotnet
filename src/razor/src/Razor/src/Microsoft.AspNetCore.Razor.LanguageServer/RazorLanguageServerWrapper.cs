@@ -5,7 +5,7 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Razor.Serialization.Converters;
+using Microsoft.AspNetCore.Razor.Serialization.Json;
 using Microsoft.AspNetCore.Razor.Telemetry;
 using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.Workspaces;

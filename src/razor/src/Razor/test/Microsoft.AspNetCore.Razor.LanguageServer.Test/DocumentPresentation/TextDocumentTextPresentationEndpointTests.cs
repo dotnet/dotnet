@@ -43,7 +43,7 @@ public class TextDocumentTextPresentationEndpointTests : LanguageServerTestBase
         var endpoint = new TextDocumentTextPresentationEndpoint(
             documentMappingService,
             languageServer.Object,
-            TestLanguageServerFeatureOptions.Instance);
+            FilePathService);
 
         var parameters = new TextPresentationParams()
         {
@@ -90,7 +90,7 @@ public class TextDocumentTextPresentationEndpointTests : LanguageServerTestBase
         var endpoint = new TextDocumentTextPresentationEndpoint(
             documentMappingService,
             languageServer.Object,
-            TestLanguageServerFeatureOptions.Instance);
+            FilePathService);
 
         var parameters = new TextPresentationParams()
         {
@@ -134,7 +134,7 @@ public class TextDocumentTextPresentationEndpointTests : LanguageServerTestBase
         var endpoint = new TextDocumentTextPresentationEndpoint(
             documentMappingService,
             languageServer.Object,
-            TestLanguageServerFeatureOptions.Instance);
+            FilePathService);
 
         var parameters = new TextPresentationParams()
         {
@@ -179,7 +179,7 @@ public class TextDocumentTextPresentationEndpointTests : LanguageServerTestBase
         var endpoint = new TextDocumentTextPresentationEndpoint(
             documentMappingService,
             languageServer.Object,
-            TestLanguageServerFeatureOptions.Instance);
+            FilePathService);
 
         var parameters = new TextPresentationParams()
         {

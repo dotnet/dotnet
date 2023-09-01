@@ -510,7 +510,7 @@ internal sealed class TagHelperSemanticRangeVisitor : SyntaxWalker
 
         var source = _razorCodeDocument.Source;
         var range = node.GetRange(source);
-        var tokenModifier = _addRazorCodeModifier ? (int)RazorSemanticTokensLegend.RazorTokenModifiers.RazorCode : 0;
+        var tokenModifier = _addRazorCodeModifier ? (int)RazorSemanticTokensLegend.RazorTokenModifiers.razorCode : 0;
 
         // LSP spec forbids multi-line tokens, so we need to split this up.
         if (range.Start.Line != range.End.Line)

@@ -12,7 +12,6 @@ using Microsoft.AspNetCore.Razor.LanguageServer.Common;
 using Microsoft.AspNetCore.Razor.LanguageServer.Protocol;
 using Microsoft.VisualStudio.LanguageServer.ContainedLanguage;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
-using Microsoft.VisualStudio.LanguageServerClient.Razor.Extensions;
 using Microsoft.VisualStudio.Threading;
 using Newtonsoft.Json.Linq;
 using StreamJsonRpc;
@@ -35,8 +34,7 @@ internal partial class RazorCustomMessageTarget
         string languageServerName;
         if (codeActionParams.LanguageKind == RazorLanguageKind.Html)
         {
-            (synchronized, virtualDocumentSnapshot) = await _documentSynchronizer.TrySynchronizeVirtualDocumentAsync<HtmlVirtualDocumentSnapshot>(
-                _documentManager,
+            (synchronized, virtualDocumentSnapshot) = await TrySynchronizeVirtualDocumentAsync<HtmlVirtualDocumentSnapshot>(
                 codeActionParams.HostDocumentVersion,
                 codeActionParams.CodeActionParams.TextDocument,
                 cancellationToken);
@@ -44,8 +42,7 @@ internal partial class RazorCustomMessageTarget
         }
         else if (codeActionParams.LanguageKind == RazorLanguageKind.CSharp)
         {
-            (synchronized, virtualDocumentSnapshot) = await _documentSynchronizer.TrySynchronizeVirtualDocumentAsync<CSharpVirtualDocumentSnapshot>(
-                _documentManager,
+            (synchronized, virtualDocumentSnapshot) = await TrySynchronizeVirtualDocumentAsync<CSharpVirtualDocumentSnapshot>(
                 codeActionParams.HostDocumentVersion,
                 codeActionParams.CodeActionParams.TextDocument,
                 cancellationToken);

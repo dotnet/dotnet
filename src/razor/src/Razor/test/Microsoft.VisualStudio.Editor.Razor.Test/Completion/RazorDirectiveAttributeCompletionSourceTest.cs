@@ -46,11 +46,11 @@ public class RazorDirectiveAttributeCompletionSourceTest : ProjectSnapshotManage
         // Arrange
         var expectedResult = new ContainerElement(ContainerElementStyle.Wrapped);
         var description = new AggregateBoundAttributeDescription(Array.Empty<BoundAttributeDescriptionInfo>());
-        var descriptionFactory = Mock.Of<VisualStudioDescriptionFactory>(factory => factory.CreateClassifiedDescription(description) == expectedResult, MockBehavior.Strict);
+        var descriptionFactory = Mock.Of<IVisualStudioDescriptionFactory>(factory => factory.CreateClassifiedDescription(description) == expectedResult, MockBehavior.Strict);
         var source = new RazorDirectiveAttributeCompletionSource(
             Dispatcher,
             Mock.Of<VisualStudioRazorParser>(MockBehavior.Strict),
-            Mock.Of<RazorCompletionFactsService>(MockBehavior.Strict),
+            Mock.Of<IRazorCompletionFactsService>(MockBehavior.Strict),
             Mock.Of<ICompletionBroker>(MockBehavior.Strict),
             descriptionFactory,
             JoinableTaskFactory);
@@ -240,9 +240,9 @@ public class RazorDirectiveAttributeCompletionSourceTest : ProjectSnapshotManage
         var source = new RazorDirectiveAttributeCompletionSource(
             Dispatcher,
             Mock.Of<VisualStudioRazorParser>(MockBehavior.Strict),
-            Mock.Of<RazorCompletionFactsService>(MockBehavior.Strict),
+            Mock.Of<IRazorCompletionFactsService>(MockBehavior.Strict),
             Mock.Of<ICompletionBroker>(MockBehavior.Strict),
-            Mock.Of<VisualStudioDescriptionFactory>(MockBehavior.Strict),
+            Mock.Of<IVisualStudioDescriptionFactory>(MockBehavior.Strict),
             JoinableTaskFactory);
         return source;
     }

@@ -6,7 +6,7 @@ using Microsoft.Extensions.Internal;
 
 namespace Microsoft.CodeAnalysis.Razor.Editor;
 
-public sealed class EditorSettings : IEquatable<EditorSettings>
+internal sealed class EditorSettings : IEquatable<EditorSettings>
 {
     public static readonly EditorSettings Default = new(indentWithTabs: false, indentSize: 4);
 

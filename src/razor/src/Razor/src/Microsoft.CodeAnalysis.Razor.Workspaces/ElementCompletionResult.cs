@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Razor.Language;
 
 namespace Microsoft.VisualStudio.Editor.Razor;
 
-public sealed class ElementCompletionResult
+internal sealed class ElementCompletionResult
 {
     public IReadOnlyDictionary<string, IEnumerable<TagHelperDescriptor>> Completions { get; }
 

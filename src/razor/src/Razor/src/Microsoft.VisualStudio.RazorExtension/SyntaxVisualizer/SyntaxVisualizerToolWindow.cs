@@ -20,7 +20,7 @@ namespace Microsoft.VisualStudio.RazorExtension.SyntaxVisualizer;
 /// implementation of the IVsUIElementPane interface.
 /// </summary>
 [Guid("28080d9c-0842-4155-9e7d-3b9e6d64bb29")]
-public class SyntaxVisualizerToolWindow : ToolWindowPane
+internal class SyntaxVisualizerToolWindow : ToolWindowPane
 {
     // Values from SyntaxVisualizerMenu.vsct
     private static readonly Guid CmdSet = new Guid("a3a603a2-2b17-4ce2-bd21-cbb8ccc084ec");

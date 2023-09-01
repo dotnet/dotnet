@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Microsoft.VisualStudio.LiveShare.Razor;
 
-public interface IProjectHierarchyProxy
+internal interface IProjectHierarchyProxy
 {
     Task<Uri?> GetProjectPathAsync(Uri documentFilePath, CancellationToken cancellationToken);
 }

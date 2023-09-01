@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Language.Legacy;
 using Microsoft.AspNetCore.Razor.LanguageServer.Extensions;
+using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.CodeAnalysis.Razor.Completion;
 using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
@@ -20,7 +21,7 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer.Completion;
 
 internal class RazorCompletionListProvider
 {
-    private readonly RazorCompletionFactsService _completionFactsService;
+    private readonly IRazorCompletionFactsService _completionFactsService;
     private readonly CompletionListCache _completionListCache;
     private readonly ILogger<RazorCompletionListProvider> _logger;
     private static readonly Command s_retriggerCompletionCommand = new()
@@ -30,7 +31,7 @@ internal class RazorCompletionListProvider
     };
 
     public RazorCompletionListProvider(
-        RazorCompletionFactsService completionFactsService,
+        IRazorCompletionFactsService completionFactsService,
         CompletionListCache completionListCache,
         ILoggerFactory loggerFactory)
     {
@@ -63,6 +64,7 @@ internal class RazorCompletionListProvider
             CompletionTriggerKind.TriggerCharacter => CompletionReason.Typing,
             _ => CompletionReason.Typing,
         };
+
         var completionOptions = new RazorCompletionOptions(SnippetsSupported: true);
         var syntaxTree = await documentContext.GetSyntaxTreeAsync(cancellationToken).ConfigureAwait(false);
         var tagHelperContext = await documentContext.GetTagHelperContextAsync(cancellationToken).ConfigureAwait(false);
@@ -79,7 +81,7 @@ internal class RazorCompletionListProvider
 
         var razorCompletionItems = _completionFactsService.GetCompletionItems(razorCompletionContext);
 
-        _logger.LogTrace("Resolved {razorCompletionItemsCount} completion items.", razorCompletionItems.Count);
+        _logger.LogTrace("Resolved {razorCompletionItemsCount} completion items.", razorCompletionItems.Length);
 
         var completionList = CreateLSPCompletionList(razorCompletionItems, clientCapabilities);
 
@@ -94,27 +96,28 @@ internal class RazorCompletionListProvider
 
     // Internal for benchmarking and testing
     internal static VSInternalCompletionList CreateLSPCompletionList(
-        IReadOnlyList<RazorCompletionItem> razorCompletionItems,
+        ImmutableArray<RazorCompletionItem> razorCompletionItems,
         VSInternalClientCapabilities clientCapabilities)
     {
-        var completionItems = new List<CompletionItem>();
+        using var items = new PooledArrayBuilder<CompletionItem>();
+
         foreach (var razorCompletionItem in razorCompletionItems)
         {
             if (TryConvert(razorCompletionItem, clientCapabilities, out var completionItem))
             {
-                completionItems.Add(completionItem);
+                items.Add(completionItem);
             }
         }
 
         var completionList = new VSInternalCompletionList()
         {
-            Items = completionItems.ToArray(),
+            Items = items.ToArray(),
             IsIncomplete = false,
         };
 
         var completionCapability = clientCapabilities.TextDocument?.Completion as VSInternalCompletionSetting;
-        var optimizedCompletionList = CompletionListOptimizer.Optimize(completionList, completionCapability);
-        return optimizedCompletionList;
+
+        return CompletionListOptimizer.Optimize(completionList, completionCapability);
     }
 
     // Internal for testing

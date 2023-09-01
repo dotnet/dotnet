@@ -47,6 +47,8 @@ internal class VisualStudioMacLanguageServerFeatureOptions : LanguageServerFeatu
 
     public override bool UpdateBuffersForClosedDocuments => false;
 
+    public override bool IncludeProjectKeyInGeneratedFilePath => false;
+
     private bool IsCodespacesOrLiveshare => _lspEditorFeatureDetector.IsRemoteClient() || _lspEditorFeatureDetector.IsLiveShareHost();
 
 }

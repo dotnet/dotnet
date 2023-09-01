@@ -17,8 +17,7 @@ internal partial class RazorCustomMessageTarget
     public async Task<SumType<DocumentSymbol[], SymbolInformation[]>?> DocumentSymbolsAsync(DelegatedDocumentSymbolParams request, CancellationToken cancellationToken)
     {
         var hostDocument = request.Identifier.TextDocumentIdentifier;
-        var (synchronized, virtualDocument) = await _documentSynchronizer.TrySynchronizeVirtualDocumentAsync<CSharpVirtualDocumentSnapshot>(
-            _documentManager,
+        var (synchronized, virtualDocument) = await TrySynchronizeVirtualDocumentAsync<CSharpVirtualDocumentSnapshot>(
             request.Identifier.Version,
             hostDocument,
             cancellationToken).ConfigureAwait(false);

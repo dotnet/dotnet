@@ -13,9 +13,11 @@ namespace Microsoft.VisualStudio.Editor.Razor;
 internal class VisualStudioWindowsLanguageServerFeatureOptions : LanguageServerFeatureOptions
 {
     private const string ShowAllCSharpCodeActionsFeatureFlag = "Razor.LSP.ShowAllCSharpCodeActions";
+    private const string IncludeProjectKeyInGeneratedFilePathFeatureFlag = "Razor.LSP.IncludeProjectKeyInGeneratedFilePath";
 
     private readonly LSPEditorFeatureDetector _lspEditorFeatureDetector;
     private readonly Lazy<bool> _showAllCSharpCodeActions;
+    private readonly Lazy<bool> _includeProjectKeyInGeneratedFilePath;
 
     [ImportingConstructor]
     public VisualStudioWindowsLanguageServerFeatureOptions(LSPEditorFeatureDetector lspEditorFeatureDetector)
@@ -32,6 +34,13 @@ internal class VisualStudioWindowsLanguageServerFeatureOptions : LanguageServerF
             var featureFlags = (IVsFeatureFlags)AsyncPackage.GetGlobalService(typeof(SVsFeatureFlags));
             var showAllCSharpCodeActions = featureFlags.IsFeatureEnabled(ShowAllCSharpCodeActionsFeatureFlag, defaultValue: false);
             return showAllCSharpCodeActions;
+        });
+
+        _includeProjectKeyInGeneratedFilePath = new Lazy<bool>(() =>
+        {
+            var featureFlags = (IVsFeatureFlags)AsyncPackage.GetGlobalService(typeof(SVsFeatureFlags));
+            var includeProjectKeyInGeneratedFilePath = featureFlags.IsFeatureEnabled(IncludeProjectKeyInGeneratedFilePathFeatureFlag, defaultValue: true);
+            return includeProjectKeyInGeneratedFilePath;
         });
     }
 
@@ -60,4 +69,6 @@ internal class VisualStudioWindowsLanguageServerFeatureOptions : LanguageServerF
     private bool IsCodespacesOrLiveshare => _lspEditorFeatureDetector.IsRemoteClient() || _lspEditorFeatureDetector.IsLiveShareHost();
 
     public override bool ShowAllCSharpCodeActions => _showAllCSharpCodeActions.Value;
+
+    public override bool IncludeProjectKeyInGeneratedFilePath => _includeProjectKeyInGeneratedFilePath.Value;
 }
