@@ -4,7 +4,7 @@
 namespace Microsoft.AspNetCore.Razor.LanguageServer;
 
 // We need to keep this in sync with the client definitions like Trace.ts
-public enum Trace
+internal enum Trace
 {
     Off = 0,
     Messages = 1,

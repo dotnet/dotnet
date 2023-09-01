@@ -6,7 +6,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer;
 
-public record RazorLSPOptions(
+internal record RazorLSPOptions(
     Trace Trace,
     bool EnableFormatting,
     bool AutoClosingTags,

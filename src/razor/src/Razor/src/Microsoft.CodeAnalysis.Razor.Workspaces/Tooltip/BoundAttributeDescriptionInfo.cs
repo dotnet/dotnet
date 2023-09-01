@@ -3,66 +3,22 @@
 
 using System;
 using Microsoft.AspNetCore.Razor.Language;
-using Microsoft.Extensions.Internal;
 
 namespace Microsoft.CodeAnalysis.Razor.Tooltip;
 
-internal sealed class BoundAttributeDescriptionInfo : IEquatable<BoundAttributeDescriptionInfo>
+internal record BoundAttributeDescriptionInfo
 {
-    public BoundAttributeDescriptionInfo(
-        string returnTypeName,
-        string typeName,
-        string propertyName,
-        string documentation)
-    {
-        if (returnTypeName is null)
-        {
-            throw new ArgumentNullException(nameof(returnTypeName));
-        }
-
-        if (typeName is null)
-        {
-            throw new ArgumentNullException(nameof(typeName));
-        }
-
-        if (propertyName is null)
-        {
-            throw new ArgumentNullException(nameof(propertyName));
-        }
-
-        ReturnTypeName = returnTypeName;
-        TypeName = typeName;
-        PropertyName = propertyName;
-        Documentation = documentation ?? string.Empty;
-    }
-
     public string ReturnTypeName { get; }
-
     public string TypeName { get; }
-
     public string PropertyName { get; }
-
     public string Documentation { get; }
 
-    public override bool Equals(object? obj)
-        => Equals(obj as BoundAttributeDescriptionInfo);
-
-    public bool Equals(BoundAttributeDescriptionInfo? other)
-        => other is not null &&
-           ReturnTypeName == other.ReturnTypeName &&
-           TypeName == other.TypeName &&
-           PropertyName == other.PropertyName &&
-           Documentation == other.Documentation;
-
-    public override int GetHashCode()
+    public BoundAttributeDescriptionInfo(string returnTypeName, string typeName, string propertyName, string documentation)
     {
-        var combiner = HashCodeCombiner.Start();
-        combiner.Add(ReturnTypeName);
-        combiner.Add(TypeName);
-        combiner.Add(PropertyName);
-        combiner.Add(Documentation);
-
-        return combiner.CombinedHash;
+        ReturnTypeName = returnTypeName ?? throw new ArgumentNullException(nameof(returnTypeName));
+        TypeName = typeName ?? throw new ArgumentNullException(nameof(typeName));
+        PropertyName = propertyName ?? throw new ArgumentNullException(nameof(propertyName));
+        Documentation = documentation ?? string.Empty;
     }
 
     public static BoundAttributeDescriptionInfo From(BoundAttributeParameterDescriptor parameterAttribute, string parentTagHelperTypeName)
@@ -78,15 +34,16 @@ internal sealed class BoundAttributeDescriptionInfo : IEquatable<BoundAttributeD
         }
 
         var propertyName = parameterAttribute.GetPropertyName();
-        var descriptionInfo = new BoundAttributeDescriptionInfo(
+
+        return new BoundAttributeDescriptionInfo(
             parameterAttribute.TypeName,
             parentTagHelperTypeName,
             propertyName,
             parameterAttribute.Documentation);
-        return descriptionInfo;
     }
 
-    public static BoundAttributeDescriptionInfo From(BoundAttributeDescriptor boundAttribute, bool indexer) => From(boundAttribute, indexer, parentTagHelperTypeName: null);
+    public static BoundAttributeDescriptionInfo From(BoundAttributeDescriptor boundAttribute, bool indexer)
+        => From(boundAttribute, indexer, parentTagHelperTypeName: null);
 
     public static BoundAttributeDescriptionInfo From(BoundAttributeDescriptor boundAttribute, bool indexer, string? parentTagHelperTypeName)
     {
@@ -97,23 +54,20 @@ internal sealed class BoundAttributeDescriptionInfo : IEquatable<BoundAttributeD
 
         var returnTypeName = indexer ? boundAttribute.IndexerTypeName : boundAttribute.TypeName;
         var propertyName = boundAttribute.GetPropertyName();
-        if (parentTagHelperTypeName is null)
-        {
 
-            // The BoundAttributeDescriptor does not directly have the TagHelperTypeName information available. Because of this we need to resolve it from other parts of it.
-            parentTagHelperTypeName = ResolveTagHelperTypeName(returnTypeName, propertyName, boundAttribute.DisplayName);
-        }
+        // The BoundAttributeDescriptor does not directly have the TagHelperTypeName information available.
+        // Because of this we need to resolve it from other parts of it.
+        parentTagHelperTypeName ??= ResolveTagHelperTypeName(propertyName, boundAttribute.DisplayName);
 
-        var descriptionInfo = new BoundAttributeDescriptionInfo(
+        return new BoundAttributeDescriptionInfo(
             returnTypeName,
             parentTagHelperTypeName,
             propertyName,
             boundAttribute.Documentation);
-        return descriptionInfo;
     }
 
     // Internal for testing
-    internal static string ResolveTagHelperTypeName(string returnTypeName, string propertyName, string displayName)
+    internal static string ResolveTagHelperTypeName(string propertyName, string displayName)
     {
         // A BoundAttributeDescriptor does not have a direct reference to its parent TagHelper.
         // However, when it was constructed the parent TagHelper's type name was embedded into
@@ -122,23 +76,35 @@ internal sealed class BoundAttributeDescriptionInfo : IEquatable<BoundAttributeD
         // to break it apart and then reconstruct it in a reduced format.
         // i.e. this is the format the display name comes in:
         // ReturnTypeName SomeTypeName.SomePropertyName
+        //
+        // See DefaultBoundAttributeDescriptorBuilder.GetDisplayName() for added detail.
 
-        // We must simplify the return type name before using it to determine the type name prefix
-        // because that is how the display name was originally built (a little hacky).
-        if (!TypeNameStringResolver.TryGetSimpleName(returnTypeName, out var simpleReturnType))
+        var displayNameSpan = displayName.AsSpanOrDefault();
+
+        // Search for the first space, which should be immediately after the return type.
+        var spaceIndex = displayNameSpan.IndexOf(' ');
+        if (spaceIndex < 0)
         {
-            simpleReturnType = returnTypeName;
+            return string.Empty;
         }
 
-        // "ReturnTypeName "
-        var typeNamePrefixLength = simpleReturnType.Length + 1 /* space */;
+        // Increment by one to skip over the space.
+        displayNameSpan = displayNameSpan[(spaceIndex + 1)..];
 
-        // ".SomePropertyName"
-        var typeNameSuffixLength = /* . */ 1 + propertyName.Length;
+        var propertyNameSpan = propertyName.AsSpanOrDefault();
 
-        // "SomeTypeName"
-        var typeNameLength = displayName.Length - typeNamePrefixLength - typeNameSuffixLength;
-        var tagHelperTypeName = displayName.Substring(typeNamePrefixLength, typeNameLength);
-        return tagHelperTypeName;
+        // Strip off the trailing property name.
+        if (displayNameSpan.EndsWith(propertyNameSpan, StringComparison.Ordinal))
+        {
+            displayNameSpan = displayNameSpan[..^propertyNameSpan.Length];
+        }
+
+        // Strip off the trailing '.'
+        if (displayNameSpan is [ .. var start, '.'])
+        {
+            displayNameSpan = start;
+        }
+
+        return displayNameSpan.ToString();
     }
 }

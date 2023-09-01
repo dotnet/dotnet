@@ -14,7 +14,7 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer;
 internal class ProjectConfigurationFileChangeEventArgs
 {
     private readonly JsonFileDeserializer _jsonFileDeserializer;
-    private ProjectRazorJson? _projectRazorJson;
+    private RazorProjectInfo? _projectInfo;
     private readonly object _projectSnapshotHandleLock;
     private bool _deserialized;
 
@@ -50,12 +50,12 @@ internal class ProjectConfigurationFileChangeEventArgs
 
     public RazorFileChangeKind Kind { get; }
 
-    public bool TryDeserialize([NotNullWhen(true)] out ProjectRazorJson? projectRazorJson)
+    public bool TryDeserialize([NotNullWhen(true)] out RazorProjectInfo? projectInfo)
     {
         if (Kind == RazorFileChangeKind.Removed)
         {
             // There's no file to represent the snapshot handle.
-            projectRazorJson = null;
+            projectInfo = null;
             return false;
         }
 
@@ -66,31 +66,31 @@ internal class ProjectConfigurationFileChangeEventArgs
                 // We use a deserialized flag instead of checking if _projectSnapshotHandle is null because if we're reading an old snapshot
                 // handle that doesn't deserialize properly it could be expected that it would be null.
                 _deserialized = true;
-                var deserializedProjectRazorJson = _jsonFileDeserializer.Deserialize<ProjectRazorJson>(ConfigurationFilePath);
-                if (deserializedProjectRazorJson is null)
+                var deserializedProjectInfo = _jsonFileDeserializer.Deserialize<RazorProjectInfo>(ConfigurationFilePath);
+                if (deserializedProjectInfo is null)
                 {
-                    projectRazorJson = null;
+                    projectInfo = null;
                     return false;
                 }
 
-                var normalizedSerializedFilePath = FilePathNormalizer.Normalize(deserializedProjectRazorJson.SerializedFilePath);
+                var normalizedSerializedFilePath = FilePathNormalizer.Normalize(deserializedProjectInfo.SerializedFilePath);
                 var normalizedDetectedFilePath = FilePathNormalizer.Normalize(ConfigurationFilePath);
                 if (string.Equals(normalizedSerializedFilePath, normalizedDetectedFilePath, FilePathComparison.Instance))
                 {
-                    _projectRazorJson = deserializedProjectRazorJson;
+                    _projectInfo = deserializedProjectInfo;
                 }
                 else
                 {
                     // Stale project configuration file, most likely a user copy & pasted the project configuration file and it hasn't
                     // been re-computed yet. Fail deserialization.
-                    projectRazorJson = null;
+                    projectInfo = null;
                     return false;
                 }
             }
         }
 
-        projectRazorJson = _projectRazorJson;
-        if (projectRazorJson is null)
+        projectInfo = _projectInfo;
+        if (projectInfo is null)
         {
             // Deserialization failed
             return false;

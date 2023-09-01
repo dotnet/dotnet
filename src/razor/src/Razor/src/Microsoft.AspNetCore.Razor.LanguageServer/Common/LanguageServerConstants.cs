@@ -3,7 +3,7 @@
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Common;
 
-public static class LanguageServerConstants
+internal static class LanguageServerConstants
 {
     public const int VSCompletionItemKindOffset = 118115;
 

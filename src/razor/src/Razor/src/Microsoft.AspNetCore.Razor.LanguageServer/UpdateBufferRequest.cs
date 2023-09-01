@@ -6,7 +6,7 @@ using Microsoft.CodeAnalysis.Text;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer;
 
-public class UpdateBufferRequest
+internal class UpdateBufferRequest
 {
     public int? HostDocumentVersion { get; set; }
 

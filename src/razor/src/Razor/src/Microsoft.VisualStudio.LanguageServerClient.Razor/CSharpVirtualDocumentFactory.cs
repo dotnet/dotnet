@@ -9,7 +9,9 @@ using System.Linq;
 using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
+using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.Editor.Razor;
+using Microsoft.VisualStudio.Editor.Razor.Logging;
 using Microsoft.VisualStudio.LanguageServer.Client;
 using Microsoft.VisualStudio.LanguageServer.ContainedLanguage;
 using Microsoft.VisualStudio.Text;
@@ -29,7 +31,10 @@ internal class CSharpVirtualDocumentFactory : VirtualDocumentFactoryBase
 
     private static IContentType? s_csharpContentType;
     private readonly FileUriProvider _fileUriProvider;
+    private readonly FilePathService _filePathService;
+    private readonly ProjectSnapshotManagerAccessor _projectSnapshotManagerAccessor;
     private readonly LanguageServerFeatureOptions _languageServerFeatureOptions;
+    private readonly IOutputWindowLogger _logger;
 
     [ImportingConstructor]
     public CSharpVirtualDocumentFactory(
@@ -37,11 +42,17 @@ internal class CSharpVirtualDocumentFactory : VirtualDocumentFactoryBase
         ITextBufferFactoryService textBufferFactory,
         ITextDocumentFactoryService textDocumentFactory,
         FileUriProvider fileUriProvider,
-        LanguageServerFeatureOptions languageServerFeatureOptions)
+        FilePathService filePathService,
+        ProjectSnapshotManagerAccessor projectSnapshotManagerAccessor,
+        LanguageServerFeatureOptions languageServerFeatureOptions,
+        IOutputWindowLogger logger)
         : base(contentTypeRegistry, textBufferFactory, textDocumentFactory, fileUriProvider)
     {
         _fileUriProvider = fileUriProvider;
+        _filePathService = filePathService;
+        _projectSnapshotManagerAccessor = projectSnapshotManagerAccessor;
         _languageServerFeatureOptions = languageServerFeatureOptions;
+        _logger = logger;
     }
 
     protected override IContentType LanguageContentType
@@ -86,7 +97,7 @@ internal class CSharpVirtualDocumentFactory : VirtualDocumentFactoryBase
             virtualDocuments = null;
             return false;
         }
-        
+
         var newVirtualDocuments = new List<VirtualDocument>();
 
         var hostDocumentUri = _fileUriProvider.GetOrCreate(hostDocumentBuffer);
@@ -94,6 +105,7 @@ internal class CSharpVirtualDocumentFactory : VirtualDocumentFactoryBase
         foreach (var projectKey in GetProjectKeys(hostDocumentUri))
         {
             // We just call the base class here, it will call back into us to produce the virtual document uri
+            _logger.LogDebug("Creating C# virtual document for {projectKey} for {uri}", projectKey, hostDocumentUri);
             newVirtualDocuments.Add(CreateVirtualDocument(projectKey, hostDocumentUri));
         }
 
@@ -101,18 +113,107 @@ internal class CSharpVirtualDocumentFactory : VirtualDocumentFactoryBase
         return virtualDocuments.Length > 0;
     }
 
-#pragma warning disable IDE0060 // Remove unused parameter
+    internal override bool TryRefreshVirtualDocuments(LSPDocument document, [NotNullWhen(true)] out IReadOnlyList<VirtualDocument>? newVirtualDocuments)
+    {
+        newVirtualDocuments = null;
+
+        // If generated file paths are not unique, then there is nothing to refresh
+        if (!_languageServerFeatureOptions.IncludeProjectKeyInGeneratedFilePath)
+        {
+            return false;
+        }
+
+        var projectKeys = GetProjectKeys(document.Uri).ToList();
+
+        // If the document is in no projects, we don't do anything, as it means we probably got a notification about the project being added
+        // before the document was added. If we didn't know about any projects, we would have gotten one project key back, and if the
+        // host document has been removed completely from all projects, we assume the document manager will clean it up soon anyway.
+        if (projectKeys.Count == 0)
+        {
+            _logger.LogWarning("Can't refresh C# virtual documents because no projects found for {uri}", document.Uri);
+            return false;
+        }
+
+        var virtualDocuments = new List<VirtualDocument>();
+
+        var didWork = false;
+        foreach (var virtualDocument in document.VirtualDocuments)
+        {
+            if (virtualDocument is not CSharpVirtualDocument csharpVirtualDocument)
+            {
+                // We only care about CSharpVirtualDocuments
+                virtualDocuments.Add(virtualDocument);
+                continue;
+            }
+
+            var index = projectKeys.IndexOf(csharpVirtualDocument.ProjectKey);
+            if (index > -1)
+            {
+                // No change to our virtual document, remove this key from the list so we don't add a duplicate later
+                projectKeys.RemoveAt(index);
+                virtualDocuments.Add(virtualDocument);
+            }
+            else
+            {
+                // Project has been removed, or document is no longer in it. Dispose the old virtual document
+                didWork = true;
+                _logger.LogDebug("Disposing C# virtual document for {projectKey} for {uri}", csharpVirtualDocument.ProjectKey, csharpVirtualDocument.Uri);
+                virtualDocument.Dispose();
+            }
+        }
+
+        // Any keys left mean new documents we need to create and add
+        foreach (var key in projectKeys)
+        {
+            // We just call the base class here, it will call back into us to produce the virtual document uri
+            didWork = true;
+            _logger.LogDebug("Creating C# virtual document for {projectKey} for {uri}", key, document.Uri);
+            virtualDocuments.Add(CreateVirtualDocument(key, document.Uri));
+        }
+
+        if (didWork)
+        {
+            newVirtualDocuments = virtualDocuments.AsReadOnly();
+        }
+
+        return didWork;
+    }
+
     private IEnumerable<ProjectKey> GetProjectKeys(Uri hostDocumentUri)
     {
-        // TODO: Actually return all of the projects that the host document is in
-        return new ProjectKey[] { default };
+        // If generated file paths are not unique, then we just act as though we're in one unknown project
+        if (!_languageServerFeatureOptions.IncludeProjectKeyInGeneratedFilePath)
+        {
+            yield return default;
+            yield break;
+        }
+
+        var projects = _projectSnapshotManagerAccessor.Instance.GetProjects();
+
+        var inAny = false;
+        var normalizedDocumentPath = FilePathService.GetProjectSystemFilePath(hostDocumentUri);
+        foreach (var projectSnapshot in projects)
+        {
+            if (projectSnapshot.GetDocument(normalizedDocumentPath) is not null)
+            {
+                inAny = true;
+                yield return projectSnapshot.Key;
+            }
+        }
+
+        if (!inAny)
+        {
+            // We got called before we know about any projects. Probably just a .razor document being restored in VS from a previous session.
+            // All we can do is return a default key and hope for the best.
+            // TODO: Do we need to create some sort of Misc Files project on this (VS) side so the nav bar looks nicer?
+            _logger.LogDebug("Could not find any documents in projects for {uri}", hostDocumentUri);
+            yield return default;
+        }
     }
-#pragma warning restore IDE0060 // Remove unused parameter
 
     private CSharpVirtualDocument CreateVirtualDocument(ProjectKey projectKey, Uri hostDocumentUri)
     {
-        // TODO: Calculate the correct virtual document uri using project information
-        var virtualLanguageFilePath = hostDocumentUri.GetAbsoluteOrUNCPath() + _languageServerFeatureOptions.CSharpVirtualDocumentSuffix;
+        var virtualLanguageFilePath = _filePathService.GetRazorCSharpFilePath(projectKey, hostDocumentUri.GetAbsoluteOrUNCPath());
         var virtualLanguageUri = new Uri(virtualLanguageFilePath);
 
         var languageBuffer = CreateVirtualDocumentTextBuffer(virtualLanguageFilePath, virtualLanguageUri);

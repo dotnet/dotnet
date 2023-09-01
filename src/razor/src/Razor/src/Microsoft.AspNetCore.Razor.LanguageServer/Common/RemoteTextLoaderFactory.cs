@@ -5,7 +5,7 @@ using Microsoft.CodeAnalysis;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Common;
 
-public abstract class RemoteTextLoaderFactory
+internal abstract class RemoteTextLoaderFactory
 {
     public abstract TextLoader Create(string filePath);
 }

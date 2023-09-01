@@ -2,6 +2,7 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 
 namespace Microsoft.VisualStudio.Editor.Razor;
 
@@ -10,5 +11,5 @@ namespace Microsoft.VisualStudio.Editor.Razor;
 /// </summary>
 internal abstract class VisualStudioMacDocumentInfoFactory
 {
-    public abstract DocumentInfo CreateEmpty(string razorFilePath, ProjectId projectId);
+    public abstract DocumentInfo CreateEmpty(string razorFilePath, ProjectId projectId, ProjectKey projectKey);
 }

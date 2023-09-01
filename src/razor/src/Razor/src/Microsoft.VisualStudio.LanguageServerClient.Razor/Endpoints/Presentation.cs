@@ -9,7 +9,6 @@ using Microsoft.AspNetCore.Razor.LanguageServer.DocumentPresentation;
 using Microsoft.AspNetCore.Razor.LanguageServer.Protocol;
 using Microsoft.VisualStudio.LanguageServer.ContainedLanguage;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
-using Microsoft.VisualStudio.LanguageServerClient.Razor.Extensions;
 using StreamJsonRpc;
 
 namespace Microsoft.VisualStudio.LanguageServerClient.Razor;
@@ -35,8 +34,7 @@ internal partial class RazorCustomMessageTarget
         VirtualDocumentSnapshot document;
         if (kind == RazorLanguageKind.CSharp)
         {
-            var syncResult = await _documentSynchronizer.TrySynchronizeVirtualDocumentAsync<CSharpVirtualDocumentSnapshot>(
-                _documentManager,
+            var syncResult = await TrySynchronizeVirtualDocumentAsync<CSharpVirtualDocumentSnapshot>(
                 hostDocumentVersion,
                 presentationParams.TextDocument,
                 cancellationToken);
@@ -49,8 +47,7 @@ internal partial class RazorCustomMessageTarget
         }
         else if (kind == RazorLanguageKind.Html)
         {
-            var syncResult = await _documentSynchronizer.TrySynchronizeVirtualDocumentAsync<HtmlVirtualDocumentSnapshot>(
-                _documentManager,
+            var syncResult = await TrySynchronizeVirtualDocumentAsync<HtmlVirtualDocumentSnapshot>(
                 hostDocumentVersion,
                 presentationParams.TextDocument,
                 cancellationToken);

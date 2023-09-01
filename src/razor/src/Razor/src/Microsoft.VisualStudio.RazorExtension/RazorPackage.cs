@@ -36,7 +36,7 @@ namespace Microsoft.VisualStudio.RazorExtension;
 [ProvideToolWindow(typeof(SyntaxVisualizerToolWindow))]
 [ProvideLanguageEditorOptionPage(typeof(AdvancedOptionPage), RazorConstants.RazorLSPContentTypeName, category: null, "Advanced", pageNameResourceId: "#1050", keywordListResourceId: 1060)]
 [Guid(PackageGuidString)]
-public sealed class RazorPackage : AsyncPackage
+internal sealed class RazorPackage : AsyncPackage
 {
     public const string PackageGuidString = "13b72f58-279e-49e0-a56d-296be02f0805";
 

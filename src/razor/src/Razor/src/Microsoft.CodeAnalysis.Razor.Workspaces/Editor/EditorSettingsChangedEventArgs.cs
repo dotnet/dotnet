@@ -5,17 +5,7 @@ using System;
 
 namespace Microsoft.CodeAnalysis.Razor.Editor;
 
-public sealed class EditorSettingsChangedEventArgs : EventArgs
+internal sealed class EditorSettingsChangedEventArgs(EditorSettings settings) : EventArgs
 {
-    public EditorSettingsChangedEventArgs(EditorSettings settings)
-    {
-        if (settings is null)
-        {
-            throw new ArgumentNullException(nameof(settings));
-        }
-
-        Settings = settings;
-    }
-
-    public EditorSettings Settings { get; }
+    public EditorSettings Settings { get; } = settings ?? throw new ArgumentNullException(nameof(settings));
 }

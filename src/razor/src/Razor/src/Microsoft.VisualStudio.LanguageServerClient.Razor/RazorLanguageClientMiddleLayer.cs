@@ -8,7 +8,7 @@ using Newtonsoft.Json.Linq;
 
 namespace Microsoft.VisualStudio.LanguageServerClient.Razor;
 
-public abstract class RazorLanguageClientMiddleLayer : ILanguageClientMiddleLayer
+internal abstract class RazorLanguageClientMiddleLayer : ILanguageClientMiddleLayer
 {
     public abstract bool CanHandle(string methodName);
 

@@ -72,8 +72,7 @@ internal partial class RazorCustomMessageTarget
         VirtualDocumentSnapshot virtualDocumentSnapshot;
         if (request.ProjectedKind == RazorLanguageKind.Html)
         {
-            (synchronized, virtualDocumentSnapshot) = await _documentSynchronizer.TrySynchronizeVirtualDocumentAsync<HtmlVirtualDocumentSnapshot>(
-                _documentManager,
+            (synchronized, virtualDocumentSnapshot) = await TrySynchronizeVirtualDocumentAsync<HtmlVirtualDocumentSnapshot>(
                 request.Identifier.Version,
                 request.Identifier.TextDocumentIdentifier,
                 cancellationToken);
@@ -82,8 +81,7 @@ internal partial class RazorCustomMessageTarget
         }
         else if (request.ProjectedKind == RazorLanguageKind.CSharp)
         {
-            (synchronized, virtualDocumentSnapshot) = await _documentSynchronizer.TrySynchronizeVirtualDocumentAsync<CSharpVirtualDocumentSnapshot>(
-                _documentManager,
+            (synchronized, virtualDocumentSnapshot) = await TrySynchronizeVirtualDocumentAsync<CSharpVirtualDocumentSnapshot>(
                 request.Identifier.Version,
                 request.Identifier.TextDocumentIdentifier,
                 cancellationToken);
@@ -217,8 +215,7 @@ internal partial class RazorCustomMessageTarget
         VirtualDocumentSnapshot virtualDocumentSnapshot;
         if (request.OriginatingKind == RazorLanguageKind.Html)
         {
-            (synchronized, virtualDocumentSnapshot) = await _documentSynchronizer.TrySynchronizeVirtualDocumentAsync<HtmlVirtualDocumentSnapshot>(
-                _documentManager,
+            (synchronized, virtualDocumentSnapshot) = await TrySynchronizeVirtualDocumentAsync<HtmlVirtualDocumentSnapshot>(
                 request.Identifier.Version,
                 request.Identifier.TextDocumentIdentifier,
                 cancellationToken);
@@ -229,23 +226,17 @@ internal partial class RazorCustomMessageTarget
             // TODO this is a partial workaround to fix prefix completion by avoiding sync (which times out during resolve endpoint) if we are currently at a higher version value
             // this does not fix postfix completion and should be superseded by eventual synchronization fix
 
-            var futureDataSyncResult =
-                (_documentSynchronizer as DefaultLSPDocumentSynchronizer)?.TryReturnPossiblyFutureSnapshot<CSharpVirtualDocumentSnapshot>(
-                    _documentManager,
-                    request.Identifier.Version,
-                    request.Identifier.TextDocumentIdentifier);
+            var futureDataSyncResult = TryReturnPossiblyFutureSnapshot<CSharpVirtualDocumentSnapshot>(request.Identifier.Version, request.Identifier.TextDocumentIdentifier);
             if (futureDataSyncResult?.Synchronized == true)
             {
                 (synchronized, virtualDocumentSnapshot) = futureDataSyncResult;
             }
             else
             {
-                (synchronized, virtualDocumentSnapshot) = await _documentSynchronizer
-                        .TrySynchronizeVirtualDocumentAsync<CSharpVirtualDocumentSnapshot>(
-                            _documentManager,
-                            request.Identifier.Version,
-                            request.Identifier.TextDocumentIdentifier,
-                            cancellationToken);
+                (synchronized, virtualDocumentSnapshot) = await TrySynchronizeVirtualDocumentAsync<CSharpVirtualDocumentSnapshot>(
+                    request.Identifier.Version,
+                    request.Identifier.TextDocumentIdentifier,
+                    cancellationToken);
             }
 
             languageServerName = RazorLSPConstants.RazorCSharpLanguageServerName;

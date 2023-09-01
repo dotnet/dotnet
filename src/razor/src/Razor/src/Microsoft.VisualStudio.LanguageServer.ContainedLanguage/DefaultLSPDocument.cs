@@ -10,6 +10,7 @@ namespace Microsoft.VisualStudio.LanguageServer.ContainedLanguage;
 internal class DefaultLSPDocument : LSPDocument
 {
     private LSPDocumentSnapshot? _currentSnapshot;
+    private IReadOnlyList<VirtualDocument> _virtualDocuments;
 
     public DefaultLSPDocument(
         Uri uri,
@@ -33,7 +34,7 @@ internal class DefaultLSPDocument : LSPDocument
 
         Uri = uri;
         TextBuffer = textBuffer;
-        VirtualDocuments = virtualDocuments;
+        _virtualDocuments = virtualDocuments;
     }
 
     public override int Version => TextBuffer.CurrentSnapshot.Version.VersionNumber;
@@ -42,7 +43,7 @@ internal class DefaultLSPDocument : LSPDocument
 
     public override ITextBuffer TextBuffer { get; }
 
-    public override IReadOnlyList<VirtualDocument> VirtualDocuments { get; }
+    public override IReadOnlyList<VirtualDocument> VirtualDocuments => _virtualDocuments;
 
     public override LSPDocumentSnapshot CurrentSnapshot
     {
@@ -62,6 +63,13 @@ internal class DefaultLSPDocument : LSPDocument
 
             return _currentSnapshot;
         }
+    }
+
+    internal override void SetVirtualDocuments(IReadOnlyList<VirtualDocument> virtualDocuments)
+    {
+        _virtualDocuments = virtualDocuments;
+
+        _currentSnapshot = UpdateSnapshot();
     }
 
     public override LSPDocumentSnapshot UpdateVirtualDocument<TVirtualDocument>(IReadOnlyList<ITextChange> changes, int hostDocumentVersion, object? state)

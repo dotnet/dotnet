@@ -3,7 +3,7 @@
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Common;
 
-public enum RazorFileChangeKind
+internal enum RazorFileChangeKind
 {
     Added,
     Removed,

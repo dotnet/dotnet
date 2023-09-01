@@ -121,7 +121,7 @@ public abstract class SemanticTokenTestBase : TagHelperServiceTestBase
     protected Range? GetMappedCSharpRange(RazorCodeDocument codeDocument, Range razorRange)
     {
         var documentMappingService = new RazorDocumentMappingService(
-            TestLanguageServerFeatureOptions.Instance, new TestDocumentContextFactory(), LoggerFactory);
+            FilePathService, new TestDocumentContextFactory(), LoggerFactory);
         if (!documentMappingService.TryMapToGeneratedDocumentRange(codeDocument.GetCSharpDocument(), razorRange, out var csharpRange) &&
             !RazorSemanticTokensInfoService.TryGetMinimalCSharpRange(codeDocument, razorRange, out csharpRange))
         {

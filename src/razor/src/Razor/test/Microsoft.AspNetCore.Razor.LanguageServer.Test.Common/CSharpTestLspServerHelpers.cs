@@ -128,7 +128,9 @@ internal class CSharpTestLspServerHelpers
         var documentCount = 0;
         foreach (var (documentUri, csharpSourceText) in files)
         {
-            var documentFilePath = documentUri.AbsolutePath;
+            // File path logic here has to match https://github.com/dotnet/roslyn/blob/3db75baf44332efd490bc0d166983103552370a3/src/Features/LanguageServer/Protocol/Extensions/ProtocolConversions.cs#L163
+            // or the Roslyn side won't see the file in the project/solution
+            var documentFilePath = documentUri.IsFile ? documentUri.LocalPath : documentUri.AbsolutePath;
             var textAndVersion = TextAndVersion.Create(csharpSourceText, VersionStamp.Default, documentFilePath);
 
             foreach (var projectInfo in projectInfos)

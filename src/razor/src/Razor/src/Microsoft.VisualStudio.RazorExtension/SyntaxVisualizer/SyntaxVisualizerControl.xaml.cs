@@ -23,7 +23,7 @@ using Microsoft.VisualStudio.Threading;
 
 namespace Microsoft.VisualStudio.RazorExtension.SyntaxVisualizer;
 
-public partial class SyntaxVisualizerControl : UserControl, IVsRunningDocTableEvents, IDisposable
+internal partial class SyntaxVisualizerControl : UserControl, IVsRunningDocTableEvents, IDisposable
 {
     private static string s_baseTempPath = Path.Combine(Path.GetTempPath(), "RazorDevTools");
 

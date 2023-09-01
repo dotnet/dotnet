@@ -36,8 +36,6 @@ internal partial class RazorCustomMessageTarget
             return;
         }
 
-        // TODO: Use request.ProjectKeyId somehow
-
         var hostDocumentUri = new Uri(request.HostDocumentFilePath);
         _documentManager.UpdateVirtualDocument<HtmlVirtualDocument>(
             hostDocumentUri,

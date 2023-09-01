@@ -58,6 +58,7 @@ internal class ProjectConfigurationFileChangeDetector : IFileChangeDetector
         workspaceDirectory = FilePathNormalizer.Normalize(workspaceDirectory);
         var existingConfigurationFiles = GetExistingConfigurationFiles(workspaceDirectory);
 
+        _logger.LogDebug("Triggering events for existing project configuration files");
         await _dispatcher.RunOnDispatcherThreadAsync(() =>
         {
             foreach (var configurationFilePath in existingConfigurationFiles)
@@ -140,6 +141,7 @@ internal class ProjectConfigurationFileChangeDetector : IFileChangeDetector
         var args = new ProjectConfigurationFileChangeEventArgs(physicalFilePath, kind);
         foreach (var listener in _listeners)
         {
+            _logger.LogDebug("Notifying listener '{Listener}' of config file path '{PhysicalFilePath}' change with kind '{Kind}'", listener, physicalFilePath, kind);
             listener.ProjectConfigurationFileChanged(args);
         }
     }

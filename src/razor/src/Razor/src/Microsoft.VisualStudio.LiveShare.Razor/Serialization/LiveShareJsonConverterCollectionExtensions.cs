@@ -3,7 +3,7 @@
 
 using System;
 using Newtonsoft.Json;
-using Microsoft.AspNetCore.Razor.Serialization.Converters;
+using Microsoft.AspNetCore.Razor.Serialization.Json;
 
 namespace Microsoft.VisualStudio.LiveShare.Razor.Serialization;
 

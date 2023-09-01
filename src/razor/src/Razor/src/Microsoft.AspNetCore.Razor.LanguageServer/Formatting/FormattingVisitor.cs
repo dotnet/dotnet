@@ -393,7 +393,16 @@ internal class FormattingVisitor : SyntaxWalker
 
     public override void VisitRazorMetaCode(RazorMetaCodeSyntax node)
     {
-        WriteSpan(node, FormattingSpanKind.MetaCode);
+        if (node.Parent is MarkupTagHelperDirectiveAttributeSyntax { TagHelperAttributeInfo: { Bound: true } })
+        {
+            // For @bind attributes we want to pretend that we're in a Html context, so write this span as markup
+            WriteSpan(node, FormattingSpanKind.Markup);
+        }
+        else
+        {
+            WriteSpan(node, FormattingSpanKind.MetaCode);
+        }
+
         base.VisitRazorMetaCode(node);
     }
 

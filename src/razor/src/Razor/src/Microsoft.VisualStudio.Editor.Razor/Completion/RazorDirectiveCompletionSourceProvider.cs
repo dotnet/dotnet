@@ -20,10 +20,10 @@ namespace Microsoft.VisualStudio.Editor.Razor.Completion;
 [ContentType(RazorConstants.LegacyCoreContentType)]
 internal class RazorDirectiveCompletionSourceProvider : IAsyncCompletionSourceProvider
 {
-    private readonly RazorCompletionFactsService _completionFactsService;
+    private readonly IRazorCompletionFactsService _completionFactsService;
 
     [ImportingConstructor]
-    public RazorDirectiveCompletionSourceProvider(RazorCompletionFactsService completionFactsService)
+    public RazorDirectiveCompletionSourceProvider(IRazorCompletionFactsService completionFactsService)
     {
         if (completionFactsService is null)
         {

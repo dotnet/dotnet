@@ -6,14 +6,19 @@ using System.Composition;
 using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Razor.LanguageServer.Extensions;
 using Microsoft.AspNetCore.Razor.LanguageServer.Protocol;
 using Microsoft.AspNetCore.Razor.Telemetry;
+using Microsoft.CodeAnalysis.Razor.ProjectSystem;
+using Microsoft.CodeAnalysis.Razor.Workspaces;
+using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.Editor.Razor;
 using Microsoft.VisualStudio.Editor.Razor.Logging;
 using Microsoft.VisualStudio.LanguageServer.ContainedLanguage;
-using Microsoft.VisualStudio.LanguageServerClient.Razor.Extensions;
+using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Threading;
+using static Microsoft.VisualStudio.LanguageServer.ContainedLanguage.DefaultLSPDocumentSynchronizer;
 
 namespace Microsoft.VisualStudio.LanguageServerClient.Razor;
 
@@ -24,9 +29,12 @@ internal partial class RazorCustomMessageTarget
     private readonly JoinableTaskFactory _joinableTaskFactory;
     private readonly LSPRequestInvoker _requestInvoker;
     private readonly ITelemetryReporter _telemetryReporter;
+    private readonly LanguageServerFeatureOptions _languageServerFeatureOptions;
+    private readonly ProjectSnapshotManagerAccessor _projectSnapshotManagerAccessor;
     private readonly FormattingOptionsProvider _formattingOptionsProvider;
     private readonly IClientSettingsManager _editorSettingsManager;
     private readonly LSPDocumentSynchronizer _documentSynchronizer;
+    private readonly CSharpVirtualDocumentAddListener _csharpVirtualDocumentAddListener;
     private readonly IOutputWindowLogger? _outputWindowLogger;
 
     [ImportingConstructor]
@@ -37,7 +45,10 @@ internal partial class RazorCustomMessageTarget
         FormattingOptionsProvider formattingOptionsProvider,
         IClientSettingsManager editorSettingsManager,
         LSPDocumentSynchronizer documentSynchronizer,
+        CSharpVirtualDocumentAddListener csharpVirtualDocumentAddListener,
         ITelemetryReporter telemetryReporter,
+        LanguageServerFeatureOptions languageServerFeatureOptions,
+        ProjectSnapshotManagerAccessor projectSnapshotManagerAccessor,
         [Import(AllowDefault = true)] IOutputWindowLogger? outputWindowLogger)
     {
         if (documentManager is null)
@@ -70,6 +81,11 @@ internal partial class RazorCustomMessageTarget
             throw new ArgumentNullException(nameof(documentSynchronizer));
         }
 
+        if (csharpVirtualDocumentAddListener is null)
+        {
+            throw new ArgumentNullException(nameof(csharpVirtualDocumentAddListener));
+        }
+
         _documentManager = (TrackingLSPDocumentManager)documentManager;
 
         if (_documentManager is null)
@@ -82,24 +98,27 @@ internal partial class RazorCustomMessageTarget
             throw new ArgumentNullException(nameof(telemetryReporter));
         }
 
+        if (languageServerFeatureOptions is null)
+        {
+            throw new ArgumentNullException(nameof(languageServerFeatureOptions));
+        }
+
+        if (projectSnapshotManagerAccessor is null)
+        {
+            throw new ArgumentNullException(nameof(projectSnapshotManagerAccessor));
+        }
+
         _joinableTaskFactory = joinableTaskContext.Factory;
 
         _requestInvoker = requestInvoker;
         _formattingOptionsProvider = formattingOptionsProvider;
         _editorSettingsManager = editorSettingsManager;
         _documentSynchronizer = documentSynchronizer;
+        _csharpVirtualDocumentAddListener = csharpVirtualDocumentAddListener;
         _telemetryReporter = telemetryReporter;
+        _languageServerFeatureOptions = languageServerFeatureOptions;
+        _projectSnapshotManagerAccessor = projectSnapshotManagerAccessor;
         _outputWindowLogger = outputWindowLogger;
-    }
-
-    // Testing constructor
-#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
-    internal RazorCustomMessageTarget(TrackingLSPDocumentManager documentManager,
-        LSPDocumentSynchronizer documentSynchronizer)
-#pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
-    {
-        _documentManager = documentManager;
-        _documentSynchronizer = documentSynchronizer;
     }
 
     private async Task<DelegationRequestDetails?> GetProjectedRequestDetailsAsync(IDelegatedParams request, CancellationToken cancellationToken)
@@ -110,8 +129,7 @@ internal partial class RazorCustomMessageTarget
         VirtualDocumentSnapshot virtualDocumentSnapshot;
         if (request.ProjectedKind == RazorLanguageKind.Html)
         {
-            (synchronized, virtualDocumentSnapshot) = await _documentSynchronizer.TrySynchronizeVirtualDocumentAsync<HtmlVirtualDocumentSnapshot>(
-                _documentManager,
+            (synchronized, virtualDocumentSnapshot) = await TrySynchronizeVirtualDocumentAsync<HtmlVirtualDocumentSnapshot>(
                 request.Identifier.Version,
                 request.Identifier.TextDocumentIdentifier,
                 cancellationToken,
@@ -120,8 +138,7 @@ internal partial class RazorCustomMessageTarget
         }
         else if (request.ProjectedKind == RazorLanguageKind.CSharp)
         {
-            (synchronized, virtualDocumentSnapshot) = await _documentSynchronizer.TrySynchronizeVirtualDocumentAsync<CSharpVirtualDocumentSnapshot>(
-                _documentManager,
+            (synchronized, virtualDocumentSnapshot) = await TrySynchronizeVirtualDocumentAsync<CSharpVirtualDocumentSnapshot>(
                 request.Identifier.Version,
                 request.Identifier.TextDocumentIdentifier,
                 cancellationToken,
@@ -143,4 +160,127 @@ internal partial class RazorCustomMessageTarget
     }
 
     private record struct DelegationRequestDetails(string LanguageServerName, Uri ProjectedUri, ITextBuffer TextBuffer);
+
+    private async Task<SynchronizedResult<TVirtualDocumentSnapshot>> TrySynchronizeVirtualDocumentAsync<TVirtualDocumentSnapshot>(
+       int requiredHostDocumentVersion,
+       TextDocumentIdentifier hostDocument,
+       CancellationToken cancellationToken,
+       bool rejectOnNewerParallelRequest = true)
+       where TVirtualDocumentSnapshot : VirtualDocumentSnapshot
+    {
+        // For Html documents we don't do anything fancy, just call the standard service
+        // If we're not generating unique document file names, then we can treat C# documents the same way
+        if (!_languageServerFeatureOptions.IncludeProjectKeyInGeneratedFilePath ||
+            typeof(TVirtualDocumentSnapshot) == typeof(HtmlVirtualDocumentSnapshot))
+        {
+            return await _documentSynchronizer.TrySynchronizeVirtualDocumentAsync<TVirtualDocumentSnapshot>(requiredHostDocumentVersion, hostDocument.Uri, cancellationToken).ConfigureAwait(false);
+        }
+
+        var virtualDocument = FindVirtualDocument<TVirtualDocumentSnapshot>(hostDocument.Uri, hostDocument.GetProjectContext());
+
+        if (virtualDocument is { ProjectKey.Id: null })
+        {
+            _outputWindowLogger?.LogDebug("Trying to sync to a doc with no project Id. Waiting for document add.");
+            if (await _csharpVirtualDocumentAddListener.WaitForDocumentAddAsync(cancellationToken).ConfigureAwait(false))
+            {
+                _outputWindowLogger?.LogDebug("Wait successful!");
+                virtualDocument = FindVirtualDocument<TVirtualDocumentSnapshot>(hostDocument.Uri, hostDocument.GetProjectContext());
+            }
+            else
+            {
+                _outputWindowLogger?.LogDebug("Timed out :(");
+            }
+        }
+
+        if (virtualDocument is null)
+        {
+            _outputWindowLogger?.LogDebug("No virtual document found, falling back to old code.");
+            return await _documentSynchronizer.TrySynchronizeVirtualDocumentAsync<TVirtualDocumentSnapshot>(requiredHostDocumentVersion, hostDocument.Uri, cancellationToken).ConfigureAwait(false);
+        }
+
+        var result = await _documentSynchronizer.TrySynchronizeVirtualDocumentAsync<TVirtualDocumentSnapshot>(requiredHostDocumentVersion, hostDocument.Uri, virtualDocument.Uri, rejectOnNewerParallelRequest, cancellationToken).ConfigureAwait(false);
+
+        // If we failed to sync on version 1, then it could be that we got new information while waiting, so try again
+        if (requiredHostDocumentVersion == 1 && !result.Synchronized)
+        {
+            _outputWindowLogger?.LogDebug("Sync failed for v1 document. Trying to get virtual document again.");
+            virtualDocument = FindVirtualDocument<TVirtualDocumentSnapshot>(hostDocument.Uri, hostDocument.GetProjectContext());
+
+            if (virtualDocument is null)
+            {
+                _outputWindowLogger?.LogDebug("No virtual document found, falling back to old code.");
+                return await _documentSynchronizer.TrySynchronizeVirtualDocumentAsync<TVirtualDocumentSnapshot>(requiredHostDocumentVersion, hostDocument.Uri, cancellationToken).ConfigureAwait(false);
+            }
+
+            _outputWindowLogger?.LogDebug("Got virtual document after trying again {uri}. Trying to synchronize again.", virtualDocument.Uri);
+
+            // try again
+            result = await _documentSynchronizer.TrySynchronizeVirtualDocumentAsync<TVirtualDocumentSnapshot>(requiredHostDocumentVersion, hostDocument.Uri, virtualDocument.Uri, rejectOnNewerParallelRequest, cancellationToken).ConfigureAwait(false);
+        }
+
+        return result;
+    }
+
+    private SynchronizedResult<TVirtualDocumentSnapshot>? TryReturnPossiblyFutureSnapshot<TVirtualDocumentSnapshot>(
+        int requiredHostDocumentVersion,
+        TextDocumentIdentifier hostDocument) where TVirtualDocumentSnapshot : VirtualDocumentSnapshot
+    {
+        if (_documentSynchronizer is not DefaultLSPDocumentSynchronizer documentSynchronizer)
+        {
+            Debug.Fail("Got an LSP document synchronizer I don't know how to handle.");
+            throw new InvalidOperationException("Got an LSP document synchronizer I don't know how to handle.");
+        }
+
+        // If we're not generating unique document file names, then we don't need to ensure we find the right virtual document
+        // as there can only be one anyway
+        if (_languageServerFeatureOptions.IncludeProjectKeyInGeneratedFilePath &&
+            hostDocument.GetProjectContext() is { } projectContext &&
+            FindVirtualDocument<TVirtualDocumentSnapshot>(hostDocument.Uri, projectContext) is { } virtualDocument)
+        {
+            return documentSynchronizer.TryReturnPossiblyFutureSnapshot<TVirtualDocumentSnapshot>(requiredHostDocumentVersion, hostDocument.Uri, virtualDocument.Uri);
+        }
+
+        return documentSynchronizer.TryReturnPossiblyFutureSnapshot<TVirtualDocumentSnapshot>(requiredHostDocumentVersion, hostDocument.Uri);
+    }
+
+    private CSharpVirtualDocumentSnapshot? FindVirtualDocument<TVirtualDocumentSnapshot>(
+        Uri hostDocumentUri,
+        VSProjectContext? projectContext) where TVirtualDocumentSnapshot : VirtualDocumentSnapshot
+    {
+        if (!_documentManager.TryGetDocument(hostDocumentUri, out var documentSnapshot) ||
+            !documentSnapshot.TryGetAllVirtualDocuments<TVirtualDocumentSnapshot>(out var virtualDocuments))
+        {
+            return null;
+        }
+
+        foreach (var virtualDocument in virtualDocuments)
+        {
+            // NOTE: This is _NOT_ the right snapshot, or at least cannot be assumed to be, we just need the Uri
+            // to pass to the synchronizer, so it can get the right snapshot
+            if (virtualDocument is not CSharpVirtualDocumentSnapshot csharpVirtualDocument)
+            {
+                Debug.Fail("FindVirtualDocumentUri should only be called for C# documents, as those are the only ones that have multiple virtual documents");
+                return null;
+            }
+
+            if (IsMatch(csharpVirtualDocument.ProjectKey, projectContext))
+            {
+                return csharpVirtualDocument;
+            }
+        }
+
+        return null;
+
+        static bool IsMatch(ProjectKey projectKey, VSProjectContext? projectContext)
+        {
+            // If we don't have a project key on our virtual document, then it means we don't know about project info
+            // yet, so there would only be one virtual document, so return true.
+            // If the request doesn't have project context, then we can't reason about which project we're asked about
+            // so return true.
+            // In both cases we'll just return the first virtual document we find.
+            return projectKey.Id is null ||
+                projectContext is null ||
+                projectKey.Equals(projectContext.ToProjectKey());
+        }
+    }
 }

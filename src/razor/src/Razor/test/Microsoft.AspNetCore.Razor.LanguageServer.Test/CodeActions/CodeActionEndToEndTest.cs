@@ -51,7 +51,7 @@ public class CodeActionEndToEndTest : SingleServerDelegatingEndpointTestBase
                     new GenerateMethodResolverDocumentContextFactory(filePath, codeDocument),
                     optionsMonitor ?? TestRazorLSPOptionsMonitor.Create(),
                     LanguageServer,
-                    new RazorDocumentMappingService(TestLanguageServerFeatureOptions.Instance, new TestDocumentContextFactory(), LoggerFactory),
+                    new RazorDocumentMappingService(FilePathService, new TestDocumentContextFactory(), LoggerFactory),
                     razorFormattingService)
             };
 

@@ -7,28 +7,9 @@ using Microsoft.VisualStudio.Editor.Razor.Documents;
 
 namespace Microsoft.VisualStudio.Editor.Razor;
 
-internal class ImportChangedEventArgs : EventArgs
+internal class ImportChangedEventArgs(string filePath, FileChangeKind kind, IEnumerable<string> associatedDocuments) : EventArgs
 {
-    public ImportChangedEventArgs(string filePath, FileChangeKind kind, IEnumerable<string> associatedDocuments)
-    {
-        if (filePath is null)
-        {
-            throw new ArgumentNullException(nameof(filePath));
-        }
-
-        if (associatedDocuments is null)
-        {
-            throw new ArgumentNullException(nameof(associatedDocuments));
-        }
-
-        FilePath = filePath;
-        Kind = kind;
-        AssociatedDocuments = associatedDocuments;
-    }
-
-    public string FilePath { get; }
-
-    public FileChangeKind Kind { get; }
-
-    public IEnumerable<string> AssociatedDocuments { get; }
+    public string FilePath { get; } = filePath ?? throw new ArgumentNullException(nameof(filePath));
+    public FileChangeKind Kind { get; } = kind;
+    public IEnumerable<string> AssociatedDocuments { get; } = associatedDocuments ?? throw new ArgumentNullException(nameof(associatedDocuments));
 }

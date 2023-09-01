@@ -33,12 +33,12 @@ public class RazorDirectiveCompletionSourceTest : ProjectSnapshotManagerDispatch
         CSharpCodeParser.TagHelperPrefixDirectiveDescriptor,
     };
 
-    private readonly RazorCompletionFactsService _completionFactsService;
+    private readonly IRazorCompletionFactsService _completionFactsService;
 
     public RazorDirectiveCompletionSourceTest(ITestOutputHelper testOutput)
         : base(testOutput)
     {
-        _completionFactsService = new DefaultRazorCompletionFactsService(new[] { new DirectiveCompletionItemProvider() });
+        _completionFactsService = new RazorCompletionFactsService(new[] { new DirectiveCompletionItemProvider() });
     }
 
     [UIFact]

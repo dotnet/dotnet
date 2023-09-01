@@ -93,7 +93,7 @@ public class DirectiveAttributeParameterCompletionItemProviderTest : RazorIntegr
         var completions = _provider.GetCompletionItems(context);
 
         // Assert
-        Assert.Equal(6, completions.Count);
+        Assert.Equal(6, completions.Length);
         AssertContains(completions, "culture");
         AssertContains(completions, "event");
         AssertContains(completions, "format");
