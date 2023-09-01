@@ -1,0 +1,14 @@
+﻿Source Location: (54:0,54 [1] x:\dir\subdir\Test\TestComponent.cshtml)
+|x|
+Generated Location: (1059:25,54 [1] )
+|x|
+
+Source Location: (73:1,7 [18] x:\dir\subdir\Test\TestComponent.cshtml)
+|
+    int x = 1;
+|
+Generated Location: (1254:35,7 [18] )
+|
+    int x = 1;
+|
+

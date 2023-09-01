@@ -177,6 +177,9 @@
   <data name="EventHandlerTagHelper_StopPropagation_Documentation" xml:space="preserve">
     <value>Specifies whether to prevent further propagation of the '{0}' event in the capturing and bubbling phases.</value>
   </data>
+  <data name="FormNameTagHelper_Documentation" xml:space="preserve">
+    <value>Name used to match the form handler on the server.</value>
+  </data>
   <data name="ImplementsDirective_Description" xml:space="preserve">
     <value>Declares an interface implementation for the current class.</value>
   </data>
