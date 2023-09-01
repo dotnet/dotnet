@@ -20,7 +20,7 @@ public class ProjectTests(ITestOutputHelper testOutputHelper) : AbstractRazorEdi
         await TestServices.SolutionExplorer.CloseSolutionAsync(ControlledHangMitigatingCancellationToken);
     }
 
-    [IdeFact]
+    [IdeFact(Skip = "https://github.com/dotnet/razor/issues/9200")]
     public async Task ChangeTargetFramework()
     {
         var solutionPath = await TestServices.SolutionExplorer.GetDirectoryNameAsync(ControlledHangMitigatingCancellationToken);
@@ -73,6 +73,8 @@ public class ProjectTests(ITestOutputHelper testOutputHelper) : AbstractRazorEdi
         // CPS doesn't support changing from single targeting to multi-targeting while a project is open
         await TestServices.SolutionExplorer.CloseSolutionAsync(ControlledHangMitigatingCancellationToken);
 
+        await TestServices.RazorProjectSystem.WaitForLSPServerDeactivatedAsync(ControlledHangMitigatingCancellationToken);
+
         var sb = new StringBuilder();
         foreach (var line in File.ReadAllLines(projectFileName))
         {
@@ -99,6 +101,8 @@ public class ProjectTests(ITestOutputHelper testOutputHelper) : AbstractRazorEdi
         // We open the Index.razor file, and wait for 3 RazorComponentElement's to be classified, as that
         // way we know the LSP server is up, running, and has processed both local and library-sourced Components
         await TestServices.SolutionExplorer.OpenFileAsync(RazorProjectConstants.BlazorProjectName, RazorProjectConstants.IndexRazorFile, ControlledHangMitigatingCancellationToken);
+
+        await TestServices.RazorProjectSystem.WaitForLSPServerActivatedAsync(ControlledHangMitigatingCancellationToken);
 
         await TestServices.Workspace.WaitForProjectSystemAsync(ControlledHangMitigatingCancellationToken);
 

@@ -84,7 +84,7 @@ public static class LightBulbHelper
         // Calling PopulateWithDataAsync ensures the underlying session will call SuggestedActionsUpdated at least once
         // with the latest data computed.  This is needed so that if the lightbulb computation is already complete
         // that we hear about the results.
-        await asyncSession.PopulateWithDataAsync(overrideRequestedActionCategories: null, operationContext: null).ConfigureAwait(false);
+        await asyncSession.PopulateWithDataAsync(overrideRequestedActionCategories: null, operationContext: null).WithCancellation(cancellationToken).ConfigureAwait(false);
 
         return await tcs.Task.WithCancellation(cancellationToken);
     }

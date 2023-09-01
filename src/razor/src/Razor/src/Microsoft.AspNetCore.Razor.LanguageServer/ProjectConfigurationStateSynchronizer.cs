@@ -139,6 +139,8 @@ internal class ProjectConfigurationStateSynchronizer : IProjectConfigurationFile
                 return;
             }
 
+            _logger.LogInformation("Actually updating {project} with a real projectInfo", projectKey);
+
             var projectWorkspaceState = projectInfo.ProjectWorkspaceState ?? ProjectWorkspaceState.Default;
             var documents = projectInfo.Documents;
             _projectService.UpdateProject(

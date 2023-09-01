@@ -26,6 +26,8 @@ internal class OutputWindowLogger : IOutputWindowLogger, IDisposable
 
     private readonly OutputPane _outputPane;
 
+    private ILogger? _testLogger;
+
     [ImportingConstructor]
     public OutputWindowLogger(JoinableTaskContext joinableTaskContext)
     {
@@ -33,6 +35,11 @@ internal class OutputWindowLogger : IOutputWindowLogger, IDisposable
     }
 
     public IDisposable BeginScope<TState>(TState state) => Scope.Instance;
+
+    public void SetTestLogger(ILogger? testLogger)
+    {
+        _testLogger = testLogger;
+    }
 
     public void Dispose()
     {
@@ -46,6 +53,8 @@ internal class OutputWindowLogger : IOutputWindowLogger, IDisposable
 
     public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception? exception, Func<TState, Exception?, string> formatter)
     {
+        _testLogger?.Log(logLevel, eventId, state, exception, formatter);
+
         if (IsEnabled(logLevel))
         {
             _outputPane.WriteLine(DateTime.Now.ToString("h:mm:ss.fff ") + formatter(state, exception));

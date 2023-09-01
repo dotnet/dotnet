@@ -4,9 +4,7 @@
 using System;
 using System.Collections.Immutable;
 using System.Diagnostics.CodeAnalysis;
-using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.ProjectSystem;
-using Microsoft.CodeAnalysis.Razor.Workspaces.ProjectSystem;
 using Microsoft.CodeAnalysis.Text;
 
 namespace Microsoft.CodeAnalysis.Razor.ProjectSystem;
@@ -55,11 +53,4 @@ internal abstract class ProjectSnapshotManagerBase : ProjectSnapshotManager
     internal abstract IProjectSnapshot GetOrAddLoadedProject(ProjectKey projectKey, Func<HostProject> createHostProjectFunc);
 
     internal abstract bool TryRemoveLoadedProject(ProjectKey projectKey, [NotNullWhen(true)] out IProjectSnapshot? project);
-
-    internal abstract void UpdateProject(
-        ProjectKey projectKey,
-        RazorConfiguration configuration,
-        ProjectWorkspaceState projectWorkspaceState,
-        string? rootNamespace,
-        Func<IProjectSnapshot, ImmutableArray<IUpdateProjectAction>> calculateUpdates);
 }

@@ -4,6 +4,7 @@
 using System;
 using System.Composition;
 using System.Diagnostics;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.LanguageServer.Extensions;
@@ -13,7 +14,6 @@ using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.Editor.Razor;
-using Microsoft.VisualStudio.Editor.Razor.Logging;
 using Microsoft.VisualStudio.LanguageServer.ContainedLanguage;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Microsoft.VisualStudio.Text;
@@ -35,7 +35,7 @@ internal partial class RazorCustomMessageTarget
     private readonly IClientSettingsManager _editorSettingsManager;
     private readonly LSPDocumentSynchronizer _documentSynchronizer;
     private readonly CSharpVirtualDocumentAddListener _csharpVirtualDocumentAddListener;
-    private readonly IOutputWindowLogger? _outputWindowLogger;
+    private ILogger? _logger;
 
     [ImportingConstructor]
     public RazorCustomMessageTarget(
@@ -48,8 +48,7 @@ internal partial class RazorCustomMessageTarget
         CSharpVirtualDocumentAddListener csharpVirtualDocumentAddListener,
         ITelemetryReporter telemetryReporter,
         LanguageServerFeatureOptions languageServerFeatureOptions,
-        ProjectSnapshotManagerAccessor projectSnapshotManagerAccessor,
-        [Import(AllowDefault = true)] IOutputWindowLogger? outputWindowLogger)
+        ProjectSnapshotManagerAccessor projectSnapshotManagerAccessor)
     {
         if (documentManager is null)
         {
@@ -118,7 +117,11 @@ internal partial class RazorCustomMessageTarget
         _telemetryReporter = telemetryReporter;
         _languageServerFeatureOptions = languageServerFeatureOptions;
         _projectSnapshotManagerAccessor = projectSnapshotManagerAccessor;
-        _outputWindowLogger = outputWindowLogger;
+    }
+
+    internal void SetLogger(ILogger? logger)
+    {
+        _logger = logger;
     }
 
     private async Task<DelegationRequestDetails?> GetProjectedRequestDetailsAsync(IDelegatedParams request, CancellationToken cancellationToken)
@@ -165,7 +168,8 @@ internal partial class RazorCustomMessageTarget
        int requiredHostDocumentVersion,
        TextDocumentIdentifier hostDocument,
        CancellationToken cancellationToken,
-       bool rejectOnNewerParallelRequest = true)
+       bool rejectOnNewerParallelRequest = true,
+       [CallerMemberName]string? caller = null)
        where TVirtualDocumentSnapshot : VirtualDocumentSnapshot
     {
         // For Html documents we don't do anything fancy, just call the standard service
@@ -176,25 +180,27 @@ internal partial class RazorCustomMessageTarget
             return await _documentSynchronizer.TrySynchronizeVirtualDocumentAsync<TVirtualDocumentSnapshot>(requiredHostDocumentVersion, hostDocument.Uri, cancellationToken).ConfigureAwait(false);
         }
 
+        _logger?.LogDebug("Trying to synchronize for {caller} to version {version} of {doc} for {project}", caller, requiredHostDocumentVersion, hostDocument.Uri, hostDocument.GetProjectContext()?.Id ?? "(no project context)");
+
         var virtualDocument = FindVirtualDocument<TVirtualDocumentSnapshot>(hostDocument.Uri, hostDocument.GetProjectContext());
 
         if (virtualDocument is { ProjectKey.Id: null })
         {
-            _outputWindowLogger?.LogDebug("Trying to sync to a doc with no project Id. Waiting for document add.");
+            _logger?.LogDebug("Trying to sync to a doc with no project Id. Waiting for document add.");
             if (await _csharpVirtualDocumentAddListener.WaitForDocumentAddAsync(cancellationToken).ConfigureAwait(false))
             {
-                _outputWindowLogger?.LogDebug("Wait successful!");
+                _logger?.LogDebug("Wait successful!");
                 virtualDocument = FindVirtualDocument<TVirtualDocumentSnapshot>(hostDocument.Uri, hostDocument.GetProjectContext());
             }
             else
             {
-                _outputWindowLogger?.LogDebug("Timed out :(");
+                _logger?.LogDebug("Timed out :(");
             }
         }
 
         if (virtualDocument is null)
         {
-            _outputWindowLogger?.LogDebug("No virtual document found, falling back to old code.");
+            _logger?.LogDebug("No virtual document found, falling back to old code.");
             return await _documentSynchronizer.TrySynchronizeVirtualDocumentAsync<TVirtualDocumentSnapshot>(requiredHostDocumentVersion, hostDocument.Uri, cancellationToken).ConfigureAwait(false);
         }
 
@@ -203,16 +209,16 @@ internal partial class RazorCustomMessageTarget
         // If we failed to sync on version 1, then it could be that we got new information while waiting, so try again
         if (requiredHostDocumentVersion == 1 && !result.Synchronized)
         {
-            _outputWindowLogger?.LogDebug("Sync failed for v1 document. Trying to get virtual document again.");
+            _logger?.LogDebug("Sync failed for v1 document. Trying to get virtual document again.");
             virtualDocument = FindVirtualDocument<TVirtualDocumentSnapshot>(hostDocument.Uri, hostDocument.GetProjectContext());
 
             if (virtualDocument is null)
             {
-                _outputWindowLogger?.LogDebug("No virtual document found, falling back to old code.");
+                _logger?.LogDebug("No virtual document found, falling back to old code.");
                 return await _documentSynchronizer.TrySynchronizeVirtualDocumentAsync<TVirtualDocumentSnapshot>(requiredHostDocumentVersion, hostDocument.Uri, cancellationToken).ConfigureAwait(false);
             }
 
-            _outputWindowLogger?.LogDebug("Got virtual document after trying again {uri}. Trying to synchronize again.", virtualDocument.Uri);
+            _logger?.LogDebug("Got virtual document after trying again {uri}. Trying to synchronize again.", virtualDocument.Uri);
 
             // try again
             result = await _documentSynchronizer.TrySynchronizeVirtualDocumentAsync<TVirtualDocumentSnapshot>(requiredHostDocumentVersion, hostDocument.Uri, virtualDocument.Uri, rejectOnNewerParallelRequest, cancellationToken).ConfigureAwait(false);
