@@ -1,0 +1,254 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<doc>
+  <assembly>
+    <name>System.ServiceModel.Federation</name>
+  </assembly>
+  <members>
+    <member name="T:System.IdentityModel.Tokens.Saml2AssertionKeyIdentifierClause">
+      <summary>Represents a <see cref="T:System.IdentityModel.Tokens.SecurityKeyIdentifierClause" /> implementation for referencing SAML2-based security tokens.</summary>
+    </member>
+    <member name="M:System.IdentityModel.Tokens.Saml2AssertionKeyIdentifierClause.#ctor(System.String)">
+      <summary>Initializes a new instance of the <see cref="T:System.IdentityModel.Tokens.Saml2AssertionKeyIdentifierClause" /> class for the specified ID.</summary>
+      <param name="assertionId" />
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="id" /> is <see langword="null" /> or an empty string.</exception>
+    </member>
+    <member name="M:System.IdentityModel.Tokens.Saml2AssertionKeyIdentifierClause.Matches(System.IdentityModel.Tokens.SecurityKeyIdentifierClause)">
+      <summary>Returns a value that indicates whether the key identifier for this instance is equivalent to the specified key identifier clause.</summary>
+      <param name="keyIdentifierClause">A <see cref="T:System.IdentityModel.Tokens.SecurityKeyIdentifierClause" /> to compare to.</param>
+      <returns>
+        <see langword="true" /> if <paramref name="keyIdentifierClause" /> is the same instance as the current instance; otherwise, <see langword="false" />.</returns>
+    </member>
+    <member name="M:System.IdentityModel.Tokens.Saml2AssertionKeyIdentifierClause.Matches(System.String,System.IdentityModel.Tokens.SecurityKeyIdentifierClause)">
+      <summary>Returns a value that indicates whether the key identifier for an assertion is equivalent to the specified key identifier clause.</summary>
+      <param name="assertionId">The ID of the assertion.</param>
+      <param name="keyIdentifierClause">A <see cref="T:System.IdentityModel.Tokens.SecurityKeyIdentifierClause" /> to compare to.</param>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="assertionId" /> is <see langword="null" /> or an empty string.</exception>
+      <returns>
+        <see langword="true" /> if <paramref name="assertionId" /> matches the <see cref="P:System.IdentityModel.Tokens.SecurityKeyIdentifierClause.Id" /> property of <paramref name="keyIdentifierClause" />; otherwise, <see langword="false" />.</returns>
+    </member>
+    <member name="M:System.IdentityModel.Tokens.Saml2AssertionKeyIdentifierClause.ToString">
+      <summary>Returns a string that represents the current instance.</summary>
+      <returns>A string representation of the current instance.</returns>
+    </member>
+    <member name="T:System.IdentityModel.Tokens.SamlAssertionKeyIdentifierClause">
+      <summary>Represents a <see langword="&lt;KeyIdentifier&gt;" /> element that references a <see langword="&lt;saml:Assertion&gt;" /> element in a SOAP message.</summary>
+    </member>
+    <member name="M:System.IdentityModel.Tokens.SamlAssertionKeyIdentifierClause.#ctor(System.String)">
+      <summary>Initializes a new instance of the <see cref="T:System.IdentityModel.Tokens.SamlAssertionKeyIdentifierClause" /> class using the specified SAML assertion identifier.</summary>
+      <param name="assertionId">The identifier of the <see cref="T:System.IdentityModel.Tokens.SamlAssertion" /> that contains the key identifier.</param>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="assertionId" /> is <see langword="null" />.</exception>
+    </member>
+    <member name="M:System.IdentityModel.Tokens.SamlAssertionKeyIdentifierClause.Matches(System.IdentityModel.Tokens.SecurityKeyIdentifierClause)">
+      <summary>Determines whether the specified key identifier is the same as the current instance.</summary>
+      <param name="keyIdentifierClause">A <see cref="T:System.IdentityModel.Tokens.SecurityKeyIdentifierClause" /> to be compared.</param>
+      <returns>
+        <see langword="true" /> when the specified key identifier is the same as the current instance; otherwise, <see langword="false" />.</returns>
+    </member>
+    <member name="M:System.IdentityModel.Tokens.SamlAssertionKeyIdentifierClause.Matches(System.String,System.IdentityModel.Tokens.SecurityKeyIdentifierClause)">
+      <param name="assertionId" />
+      <param name="keyIdentifierClause" />
+    </member>
+    <member name="M:System.IdentityModel.Tokens.SamlAssertionKeyIdentifierClause.ToString">
+      <summary>Returns a <see cref="T:System.String" /> that includes the SAML assertion identifier that represents the current key identifier clause.</summary>
+      <returns>A <see cref="T:System.String" /> that includes the SAML assertion identifier that represents the current <see cref="T:System.IdentityModel.Tokens.SamlAssertionKeyIdentifierClause" /> instance.</returns>
+    </member>
+    <member name="T:System.ServiceModel.Federation.IWSTrustChannelContract" />
+    <member name="M:System.ServiceModel.Federation.IWSTrustChannelContract.IssueAsync(Microsoft.IdentityModel.Protocols.WsTrust.WsTrustRequest)">
+      <param name="request" />
+    </member>
+    <member name="T:System.ServiceModel.Federation.WSFederationHttpBinding" />
+    <member name="M:System.ServiceModel.Federation.WSFederationHttpBinding.#ctor(System.ServiceModel.Federation.WSTrustTokenParameters)">
+      <param name="wsTrustTokenParameters" />
+    </member>
+    <member name="M:System.ServiceModel.Federation.WSFederationHttpBinding.CreateBindingElements" />
+    <member name="M:System.ServiceModel.Federation.WSFederationHttpBinding.CreateMessageSecurity" />
+    <member name="P:System.ServiceModel.Federation.WSFederationHttpBinding.WSTrustTokenParameters" />
+    <member name="T:System.ServiceModel.Federation.WSTrustChannel" />
+    <member name="E:System.ServiceModel.Federation.WSTrustChannel.System#ServiceModel#ICommunicationObject#Closed" />
+    <member name="E:System.ServiceModel.Federation.WSTrustChannel.System#ServiceModel#ICommunicationObject#Closing" />
+    <member name="E:System.ServiceModel.Federation.WSTrustChannel.System#ServiceModel#ICommunicationObject#Faulted" />
+    <member name="E:System.ServiceModel.Federation.WSTrustChannel.System#ServiceModel#ICommunicationObject#Opened" />
+    <member name="E:System.ServiceModel.Federation.WSTrustChannel.System#ServiceModel#ICommunicationObject#Opening" />
+    <member name="M:System.ServiceModel.Federation.WSTrustChannel.#ctor(System.ServiceModel.Channels.IRequestChannel)">
+      <param name="requestChannel" />
+    </member>
+    <member name="M:System.ServiceModel.Federation.WSTrustChannel.CreateRequest(Microsoft.IdentityModel.Protocols.WsTrust.WsTrustRequest)">
+      <param name="trustRequest" />
+    </member>
+    <member name="M:System.ServiceModel.Federation.WSTrustChannel.GetProperty``1">
+      <typeparam name="T" />
+    </member>
+    <member name="M:System.ServiceModel.Federation.WSTrustChannel.GetRequestAction(Microsoft.IdentityModel.Protocols.WsTrust.WsTrustRequest)">
+      <param name="trustRequest" />
+    </member>
+    <member name="M:System.ServiceModel.Federation.WSTrustChannel.IssueAsync(Microsoft.IdentityModel.Protocols.WsTrust.WsTrustRequest)">
+      <param name="trustRequest" />
+    </member>
+    <member name="M:System.ServiceModel.Federation.WSTrustChannel.System#ServiceModel#ICommunicationObject#Abort" />
+    <member name="M:System.ServiceModel.Federation.WSTrustChannel.System#ServiceModel#ICommunicationObject#BeginClose(System.AsyncCallback,System.Object)">
+      <param name="callback" />
+      <param name="state" />
+    </member>
+    <member name="M:System.ServiceModel.Federation.WSTrustChannel.System#ServiceModel#ICommunicationObject#BeginClose(System.TimeSpan,System.AsyncCallback,System.Object)">
+      <param name="timeout" />
+      <param name="callback" />
+      <param name="state" />
+    </member>
+    <member name="M:System.ServiceModel.Federation.WSTrustChannel.System#ServiceModel#ICommunicationObject#BeginOpen(System.AsyncCallback,System.Object)">
+      <param name="callback" />
+      <param name="state" />
+    </member>
+    <member name="M:System.ServiceModel.Federation.WSTrustChannel.System#ServiceModel#ICommunicationObject#BeginOpen(System.TimeSpan,System.AsyncCallback,System.Object)">
+      <param name="timeout" />
+      <param name="callback" />
+      <param name="state" />
+    </member>
+    <member name="M:System.ServiceModel.Federation.WSTrustChannel.System#ServiceModel#ICommunicationObject#Close" />
+    <member name="M:System.ServiceModel.Federation.WSTrustChannel.System#ServiceModel#ICommunicationObject#Close(System.TimeSpan)">
+      <param name="timeout" />
+    </member>
+    <member name="M:System.ServiceModel.Federation.WSTrustChannel.System#ServiceModel#ICommunicationObject#EndClose(System.IAsyncResult)">
+      <param name="result" />
+    </member>
+    <member name="M:System.ServiceModel.Federation.WSTrustChannel.System#ServiceModel#ICommunicationObject#EndOpen(System.IAsyncResult)">
+      <param name="result" />
+    </member>
+    <member name="M:System.ServiceModel.Federation.WSTrustChannel.System#ServiceModel#ICommunicationObject#Open" />
+    <member name="M:System.ServiceModel.Federation.WSTrustChannel.System#ServiceModel#ICommunicationObject#Open(System.TimeSpan)">
+      <param name="timeout" />
+    </member>
+    <member name="P:System.ServiceModel.Federation.WSTrustChannel.System#ServiceModel#ICommunicationObject#State" />
+    <member name="T:System.ServiceModel.Federation.WSTrustChannelClientCredentials" />
+    <member name="M:System.ServiceModel.Federation.WSTrustChannelClientCredentials.#ctor" />
+    <member name="M:System.ServiceModel.Federation.WSTrustChannelClientCredentials.#ctor(System.ServiceModel.Description.ClientCredentials)">
+      <param name="clientCredentials" />
+    </member>
+    <member name="M:System.ServiceModel.Federation.WSTrustChannelClientCredentials.#ctor(System.ServiceModel.Federation.WSTrustChannelClientCredentials)">
+      <param name="other" />
+    </member>
+    <member name="M:System.ServiceModel.Federation.WSTrustChannelClientCredentials.CloneCore" />
+    <member name="M:System.ServiceModel.Federation.WSTrustChannelClientCredentials.CreateSecurityTokenManager" />
+    <member name="P:System.ServiceModel.Federation.WSTrustChannelClientCredentials.ClientCredentials" />
+    <member name="T:System.ServiceModel.Federation.WSTrustChannelFactory" />
+    <member name="M:System.ServiceModel.Federation.WSTrustChannelFactory.#ctor(System.ServiceModel.Channels.Binding,System.ServiceModel.EndpointAddress)">
+      <param name="binding" />
+      <param name="endpointAddress" />
+    </member>
+    <member name="M:System.ServiceModel.Federation.WSTrustChannelFactory.#ctor(System.ServiceModel.Description.ServiceEndpoint)">
+      <param name="serviceEndpoint" />
+    </member>
+    <member name="M:System.ServiceModel.Federation.WSTrustChannelFactory.CreateChannel(System.ServiceModel.EndpointAddress,System.Uri)">
+      <param name="endpointAddress" />
+      <param name="via" />
+    </member>
+    <member name="M:System.ServiceModel.Federation.WSTrustChannelFactory.CreateTrustChannel" />
+    <member name="T:System.ServiceModel.Federation.WSTrustChannelSecurityTokenManager" />
+    <member name="M:System.ServiceModel.Federation.WSTrustChannelSecurityTokenManager.#ctor(System.ServiceModel.Federation.WSTrustChannelClientCredentials)">
+      <param name="wsTrustChannelClientCredentials" />
+    </member>
+    <member name="M:System.ServiceModel.Federation.WSTrustChannelSecurityTokenManager.CreateSecurityTokenProvider(System.IdentityModel.Selectors.SecurityTokenRequirement)">
+      <param name="tokenRequirement" />
+    </member>
+    <member name="T:System.ServiceModel.Federation.WSTrustChannelSecurityTokenProvider" />
+    <member name="E:System.ServiceModel.Federation.WSTrustChannelSecurityTokenProvider.System#ServiceModel#ICommunicationObject#Closed" />
+    <member name="E:System.ServiceModel.Federation.WSTrustChannelSecurityTokenProvider.System#ServiceModel#ICommunicationObject#Closing" />
+    <member name="E:System.ServiceModel.Federation.WSTrustChannelSecurityTokenProvider.System#ServiceModel#ICommunicationObject#Faulted" />
+    <member name="E:System.ServiceModel.Federation.WSTrustChannelSecurityTokenProvider.System#ServiceModel#ICommunicationObject#Opened" />
+    <member name="E:System.ServiceModel.Federation.WSTrustChannelSecurityTokenProvider.System#ServiceModel#ICommunicationObject#Opening" />
+    <member name="M:System.ServiceModel.Federation.WSTrustChannelSecurityTokenProvider.#ctor(System.IdentityModel.Selectors.SecurityTokenRequirement)">
+      <param name="tokenRequirement" />
+    </member>
+    <member name="M:System.ServiceModel.Federation.WSTrustChannelSecurityTokenProvider.BeginGetTokenCore(System.TimeSpan,System.AsyncCallback,System.Object)">
+      <param name="timeout" />
+      <param name="callback" />
+      <param name="state" />
+    </member>
+    <member name="M:System.ServiceModel.Federation.WSTrustChannelSecurityTokenProvider.CreateWsTrustRequest" />
+    <member name="M:System.ServiceModel.Federation.WSTrustChannelSecurityTokenProvider.EndGetTokenCore(System.IAsyncResult)">
+      <param name="result" />
+    </member>
+    <member name="M:System.ServiceModel.Federation.WSTrustChannelSecurityTokenProvider.GetTokenCore(System.TimeSpan)">
+      <param name="timeout" />
+    </member>
+    <member name="M:System.ServiceModel.Federation.WSTrustChannelSecurityTokenProvider.System#ServiceModel#ICommunicationObject#Abort" />
+    <member name="M:System.ServiceModel.Federation.WSTrustChannelSecurityTokenProvider.System#ServiceModel#ICommunicationObject#BeginClose(System.AsyncCallback,System.Object)">
+      <param name="callback" />
+      <param name="state" />
+    </member>
+    <member name="M:System.ServiceModel.Federation.WSTrustChannelSecurityTokenProvider.System#ServiceModel#ICommunicationObject#BeginClose(System.TimeSpan,System.AsyncCallback,System.Object)">
+      <param name="timeout" />
+      <param name="callback" />
+      <param name="state" />
+    </member>
+    <member name="M:System.ServiceModel.Federation.WSTrustChannelSecurityTokenProvider.System#ServiceModel#ICommunicationObject#BeginOpen(System.AsyncCallback,System.Object)">
+      <param name="callback" />
+      <param name="state" />
+    </member>
+    <member name="M:System.ServiceModel.Federation.WSTrustChannelSecurityTokenProvider.System#ServiceModel#ICommunicationObject#BeginOpen(System.TimeSpan,System.AsyncCallback,System.Object)">
+      <param name="timeout" />
+      <param name="callback" />
+      <param name="state" />
+    </member>
+    <member name="M:System.ServiceModel.Federation.WSTrustChannelSecurityTokenProvider.System#ServiceModel#ICommunicationObject#Close" />
+    <member name="M:System.ServiceModel.Federation.WSTrustChannelSecurityTokenProvider.System#ServiceModel#ICommunicationObject#Close(System.TimeSpan)">
+      <param name="timeout" />
+    </member>
+    <member name="M:System.ServiceModel.Federation.WSTrustChannelSecurityTokenProvider.System#ServiceModel#ICommunicationObject#EndClose(System.IAsyncResult)">
+      <param name="result" />
+    </member>
+    <member name="M:System.ServiceModel.Federation.WSTrustChannelSecurityTokenProvider.System#ServiceModel#ICommunicationObject#EndOpen(System.IAsyncResult)">
+      <param name="result" />
+    </member>
+    <member name="M:System.ServiceModel.Federation.WSTrustChannelSecurityTokenProvider.System#ServiceModel#ICommunicationObject#Open" />
+    <member name="M:System.ServiceModel.Federation.WSTrustChannelSecurityTokenProvider.System#ServiceModel#ICommunicationObject#Open(System.TimeSpan)">
+      <param name="timeout" />
+    </member>
+    <member name="M:System.ServiceModel.Federation.WSTrustChannelSecurityTokenProvider.System#ServiceModel#Security#ISecurityCommunicationObject#OnAbort" />
+    <member name="M:System.ServiceModel.Federation.WSTrustChannelSecurityTokenProvider.System#ServiceModel#Security#ISecurityCommunicationObject#OnCloseAsync(System.TimeSpan)">
+      <param name="timeout" />
+    </member>
+    <member name="M:System.ServiceModel.Federation.WSTrustChannelSecurityTokenProvider.System#ServiceModel#Security#ISecurityCommunicationObject#OnClosed" />
+    <member name="M:System.ServiceModel.Federation.WSTrustChannelSecurityTokenProvider.System#ServiceModel#Security#ISecurityCommunicationObject#OnClosing" />
+    <member name="M:System.ServiceModel.Federation.WSTrustChannelSecurityTokenProvider.System#ServiceModel#Security#ISecurityCommunicationObject#OnFaulted" />
+    <member name="M:System.ServiceModel.Federation.WSTrustChannelSecurityTokenProvider.System#ServiceModel#Security#ISecurityCommunicationObject#OnOpenAsync(System.TimeSpan)">
+      <param name="timeout" />
+    </member>
+    <member name="M:System.ServiceModel.Federation.WSTrustChannelSecurityTokenProvider.System#ServiceModel#Security#ISecurityCommunicationObject#OnOpened" />
+    <member name="M:System.ServiceModel.Federation.WSTrustChannelSecurityTokenProvider.System#ServiceModel#Security#ISecurityCommunicationObject#OnOpening" />
+    <member name="P:System.ServiceModel.Federation.WSTrustChannelSecurityTokenProvider.ClientCredentials" />
+    <member name="P:System.ServiceModel.Federation.WSTrustChannelSecurityTokenProvider.SupportsTokenCancellation" />
+    <member name="P:System.ServiceModel.Federation.WSTrustChannelSecurityTokenProvider.SupportsTokenRenewal" />
+    <member name="P:System.ServiceModel.Federation.WSTrustChannelSecurityTokenProvider.System#ServiceModel#ICommunicationObject#State" />
+    <member name="P:System.ServiceModel.Federation.WSTrustChannelSecurityTokenProvider.System#ServiceModel#Security#ISecurityCommunicationObject#DefaultCloseTimeout" />
+    <member name="P:System.ServiceModel.Federation.WSTrustChannelSecurityTokenProvider.System#ServiceModel#Security#ISecurityCommunicationObject#DefaultOpenTimeout" />
+    <member name="T:System.ServiceModel.Federation.WSTrustTokenParameters" />
+    <member name="F:System.ServiceModel.Federation.WSTrustTokenParameters.DefaultCacheIssuedTokens" />
+    <member name="F:System.ServiceModel.Federation.WSTrustTokenParameters.DefaultIssuedTokenRenewalThresholdPercentage" />
+    <member name="F:System.ServiceModel.Federation.WSTrustTokenParameters.DefaultMaxIssuedTokenCachingTime" />
+    <member name="F:System.ServiceModel.Federation.WSTrustTokenParameters.DefaultSecurityKeyType" />
+    <member name="M:System.ServiceModel.Federation.WSTrustTokenParameters.#ctor" />
+    <member name="M:System.ServiceModel.Federation.WSTrustTokenParameters.#ctor(System.ServiceModel.Federation.WSTrustTokenParameters)">
+      <param name="other" />
+    </member>
+    <member name="M:System.ServiceModel.Federation.WSTrustTokenParameters.CloneCore" />
+    <member name="M:System.ServiceModel.Federation.WSTrustTokenParameters.CreateWS2007FederationTokenParameters(System.ServiceModel.Channels.Binding,System.ServiceModel.EndpointAddress)">
+      <param name="issuerBinding" />
+      <param name="issuerAddress" />
+    </member>
+    <member name="M:System.ServiceModel.Federation.WSTrustTokenParameters.CreateWSFederationTokenParameters(System.ServiceModel.Channels.Binding,System.ServiceModel.EndpointAddress)">
+      <param name="issuerBinding" />
+      <param name="issuerAddress" />
+    </member>
+    <member name="P:System.ServiceModel.Federation.WSTrustTokenParameters.AdditionalRequestParameters" />
+    <member name="P:System.ServiceModel.Federation.WSTrustTokenParameters.CacheIssuedTokens" />
+    <member name="P:System.ServiceModel.Federation.WSTrustTokenParameters.Claims" />
+    <member name="P:System.ServiceModel.Federation.WSTrustTokenParameters.IssuedTokenRenewalThresholdPercentage" />
+    <member name="P:System.ServiceModel.Federation.WSTrustTokenParameters.KeySize" />
+    <member name="P:System.ServiceModel.Federation.WSTrustTokenParameters.MaxIssuedTokenCachingTime" />
+    <member name="P:System.ServiceModel.Federation.WSTrustTokenParameters.MessageSecurityVersion" />
+    <member name="P:System.ServiceModel.Federation.WSTrustTokenParameters.RequestContext" />
+  </members>
+</doc>
