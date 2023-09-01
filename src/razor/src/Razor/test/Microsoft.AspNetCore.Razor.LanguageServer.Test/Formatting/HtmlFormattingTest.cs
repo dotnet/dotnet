@@ -1044,7 +1044,7 @@ public class HtmlFormattingTest : FormattingTestBase
     }
 
     [Fact]
-    [WorkItem("https://github.com/dotnet/razor-tooling/issues/5749")]
+    [WorkItem("https://github.com/dotnet/razor/issues/5749")]
     public async Task FormatRenderFragmentInCSharpCodeBlock()
     {
         // Sadly the first thing the HTML formatter does with this input
@@ -1086,7 +1086,7 @@ public class HtmlFormattingTest : FormattingTestBase
     }
 
     [Fact]
-    [WorkItem("https://github.com/dotnet/razor-tooling/issues/6090")]
+    [WorkItem("https://github.com/dotnet/razor/issues/6090")]
     public async Task FormatHtmlCommentsInsideCSharp1()
     {
         await RunFormattingTestAsync(
@@ -1121,7 +1121,7 @@ public class HtmlFormattingTest : FormattingTestBase
     }
 
     [Fact]
-    [WorkItem("https://github.com/dotnet/razor-tooling/issues/6090")]
+    [WorkItem("https://github.com/dotnet/razor/issues/6090")]
     public async Task FormatHtmlCommentsInsideCSharp2()
     {
         await RunFormattingTestAsync(
@@ -1148,7 +1148,7 @@ public class HtmlFormattingTest : FormattingTestBase
     }
 
     [Fact]
-    [WorkItem("https://github.com/dotnet/razor-tooling/issues/6001")]
+    [WorkItem("https://github.com/dotnet/razor/issues/6001")]
     public async Task FormatNestedCascadingValue()
     {
         await RunFormattingTestAsync(
@@ -1210,7 +1210,7 @@ public class HtmlFormattingTest : FormattingTestBase
     }
 
     [Fact]
-    [WorkItem("https://github.com/dotnet/razor-tooling/issues/6001")]
+    [WorkItem("https://github.com/dotnet/razor/issues/6001")]
     public async Task FormatNestedCascadingValue2()
     {
         await RunFormattingTestAsync(
@@ -1268,7 +1268,7 @@ public class HtmlFormattingTest : FormattingTestBase
     }
 
     [Fact]
-    [WorkItem("https://github.com/dotnet/razor-tooling/issues/6001")]
+    [WorkItem("https://github.com/dotnet/razor/issues/6001")]
     public async Task FormatNestedCascadingValue3()
     {
         await RunFormattingTestAsync(
@@ -1328,7 +1328,7 @@ public class HtmlFormattingTest : FormattingTestBase
     }
 
     [Fact]
-    [WorkItem("https://github.com/dotnet/razor-tooling/issues/6001")]
+    [WorkItem("https://github.com/dotnet/razor/issues/6001")]
     public async Task FormatNestedCascadingValue4()
     {
         await RunFormattingTestAsync(
@@ -1380,7 +1380,7 @@ public class HtmlFormattingTest : FormattingTestBase
     }
 
     [Fact]
-    [WorkItem("https://github.com/dotnet/razor-tooling/issues/6001")]
+    [WorkItem("https://github.com/dotnet/razor/issues/6001")]
     public async Task FormatNestedCascadingValue5()
     {
         await RunFormattingTestAsync(
@@ -1438,7 +1438,7 @@ public class HtmlFormattingTest : FormattingTestBase
     }
 
     [Fact]
-    [WorkItem("https://github.com/dotnet/razor-tooling/issues/5676")]
+    [WorkItem("https://github.com/dotnet/razor/issues/5676")]
     public async Task FormatInputSelect()
     {
         await RunFormattingTestAsync(
@@ -1488,7 +1488,7 @@ public class HtmlFormattingTest : FormattingTestBase
     }
 
     [Fact]
-    [WorkItem("https://github.com/dotnet/razor-tooling/issues/5676")]
+    [WorkItem("https://github.com/dotnet/razor/issues/5676")]
     public async Task FormatInputSelect2()
     {
         await RunFormattingTestAsync(
@@ -1532,7 +1532,7 @@ public class HtmlFormattingTest : FormattingTestBase
     }
 
     [Fact]
-    [WorkItem("https://github.com/dotnet/razor-tooling/issues/5676")]
+    [WorkItem("https://github.com/dotnet/razor/issues/5676")]
     public async Task FormatInputSelect3()
     {
         await RunFormattingTestAsync(
@@ -1570,7 +1570,7 @@ public class HtmlFormattingTest : FormattingTestBase
     }
 
     [Fact]
-    [WorkItem("https://github.com/dotnet/razor-tooling/issues/5676")]
+    [WorkItem("https://github.com/dotnet/razor/issues/5676")]
     public async Task FormatInputSelect4()
     {
         await RunFormattingTestAsync(
@@ -1614,7 +1614,57 @@ public class HtmlFormattingTest : FormattingTestBase
     }
 
     [Fact]
-    [WorkItem("https://github.com/dotnet/razor-tooling/issues/6211")]
+    [WorkItem("https://github.com/dotnet/razor/issues/8606")]
+    public async Task FormatAttributesWithTransition()
+    {
+        await RunFormattingTestAsync(
+            input: """
+                    @using Microsoft.AspNetCore.Components.Forms;
+
+                    @code {
+                        private string _id {get;set;}
+                    }
+
+                    <div>
+                        @if (true)
+                        {
+                            <div>
+                                <InputSelect CssClass="goo"
+                                     @bind-Value="_id"
+                                   @ref="elem"
+                                    CurrentValue="boo">
+                                        <option>goo</option>
+                                </InputSelect>
+                            </div>
+                        }
+                    </div>
+                    """,
+            expected: """
+                    @using Microsoft.AspNetCore.Components.Forms;
+
+                    @code {
+                        private string _id { get; set; }
+                    }
+
+                    <div>
+                        @if (true)
+                        {
+                            <div>
+                                <InputSelect CssClass="goo"
+                                             @bind-Value="_id"
+                                             @ref="elem"
+                                             CurrentValue="boo">
+                                    <option>goo</option>
+                                </InputSelect>
+                            </div>
+                        }
+                    </div>
+                    """,
+            fileKind: FileKinds.Component);
+    }
+
+    [Fact]
+    [WorkItem("https://github.com/dotnet/razor/issues/6211")]
     public async Task FormatCascadingValueWithCascadingTypeParameter()
     {
         await RunFormattingTestAsync(
@@ -1691,7 +1741,7 @@ public class HtmlFormattingTest : FormattingTestBase
     }
 
     [Fact]
-    [WorkItem("https://github.com/dotnet/razor-tooling/issues/6110")]
+    [WorkItem("https://github.com/dotnet/razor/issues/6110")]
     public async Task FormatExplicitCSharpInsideHtml()
     {
         await RunFormattingTestAsync(

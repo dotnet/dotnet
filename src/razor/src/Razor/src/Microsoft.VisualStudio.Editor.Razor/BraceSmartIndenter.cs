@@ -29,6 +29,8 @@ namespace Microsoft.VisualStudio.Editor.Razor;
 /// </example>
 internal class BraceSmartIndenter : IDisposable
 {
+    internal record BraceIndentationContext(ITextView FocusedTextView, int ChangePosition);
+
     private readonly ITextBuffer _textBuffer;
     private readonly JoinableTaskContext _joinableTaskContext;
     private readonly VisualStudioDocumentTracker _documentTracker;
@@ -338,18 +340,5 @@ internal class BraceSmartIndenter : IDisposable
 
         var afterClosingBrace = linePosition >= 0 && lineText[linePosition] == '{';
         return afterClosingBrace;
-    }
-
-    internal class BraceIndentationContext
-    {
-        public BraceIndentationContext(ITextView focusedTextView, int changePosition)
-        {
-            FocusedTextView = focusedTextView;
-            ChangePosition = changePosition;
-        }
-
-        public ITextView FocusedTextView { get; }
-
-        public int ChangePosition { get; }
     }
 }

@@ -6,17 +6,7 @@ using System.Collections.Generic;
 
 namespace Microsoft.VisualStudio.LiveShare.Razor;
 
-public sealed class ProjectSnapshotManagerProxyState
+internal sealed class ProjectSnapshotManagerProxyState(IReadOnlyList<ProjectSnapshotHandleProxy> projectHandles)
 {
-    public ProjectSnapshotManagerProxyState(IReadOnlyList<ProjectSnapshotHandleProxy> projectHandles)
-    {
-        if (projectHandles is null)
-        {
-            throw new ArgumentNullException(nameof(projectHandles));
-        }
-
-        ProjectHandles = projectHandles;
-    }
-
-    public IReadOnlyList<ProjectSnapshotHandleProxy> ProjectHandles { get; }
+    public IReadOnlyList<ProjectSnapshotHandleProxy> ProjectHandles { get; } = projectHandles ?? throw new ArgumentNullException(nameof(projectHandles));
 }

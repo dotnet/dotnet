@@ -13,7 +13,7 @@ public class RazorWorkspaceListener : IDisposable
 
     private readonly ILogger _logger;
 
-    private string? _projectRazorJsonFileName;
+    private string? _projectInfoFileName;
     private Workspace? _workspace;
     private ImmutableDictionary<ProjectId, TaskDelayScheduler> _workQueues = ImmutableDictionary<ProjectId, TaskDelayScheduler>.Empty;
 
@@ -22,15 +22,15 @@ public class RazorWorkspaceListener : IDisposable
         _logger = loggerFactory.CreateLogger(nameof(RazorWorkspaceListener));
     }
 
-    public void EnsureInitialized(Workspace workspace, string projectRazorJsonFileName)
+    public void EnsureInitialized(Workspace workspace, string projectInfoFileName)
     {
         // Make sure we don't hook up the event handler multiple times
-        if (_projectRazorJsonFileName is not null)
+        if (_projectInfoFileName is not null)
         {
             return;
         }
 
-        _projectRazorJsonFileName = projectRazorJsonFileName;
+        _projectInfoFileName = projectInfoFileName;
         _workspace = workspace;
         _workspace.WorkspaceChanged += Workspace_WorkspaceChanged;
     }
@@ -140,7 +140,7 @@ public class RazorWorkspaceListener : IDisposable
 
     private void EnqueueUpdate(Project? project)
     {
-        if (_projectRazorJsonFileName is null ||
+        if (_projectInfoFileName is null ||
             project is not
             {
                 Language: LanguageNames.CSharp
@@ -161,7 +161,7 @@ public class RazorWorkspaceListener : IDisposable
     // Protected for testing
     protected virtual Task SerializeProjectAsync(ProjectId projectId, CancellationToken ct)
     {
-        if (_projectRazorJsonFileName is null || _workspace is null)
+        if (_projectInfoFileName is null || _workspace is null)
         {
             return Task.CompletedTask;
         }
@@ -173,7 +173,7 @@ public class RazorWorkspaceListener : IDisposable
         }
 
         _logger.LogTrace("{projectId} writing json file", projectId);
-        return RazorProjectJsonSerializer.SerializeAsync(project, _projectRazorJsonFileName, ct);
+        return RazorProjectInfoSerializer.SerializeAsync(project, _projectInfoFileName, ct);
     }
 
     public void Dispose()

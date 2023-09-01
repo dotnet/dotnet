@@ -9,7 +9,6 @@ using Microsoft.AspNetCore.Razor.LanguageServer.ColorPresentation;
 using Microsoft.AspNetCore.Razor.LanguageServer.Common;
 using Microsoft.AspNetCore.Razor.LanguageServer.DocumentColor;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
-using Microsoft.VisualStudio.LanguageServerClient.Razor.Extensions;
 using Microsoft.VisualStudio.Threading;
 using Newtonsoft.Json.Linq;
 using StreamJsonRpc;
@@ -27,8 +26,7 @@ internal partial class RazorCustomMessageTarget
             throw new ArgumentNullException(nameof(documentColorParams));
         }
 
-        var (synchronized, htmlDoc) = await _documentSynchronizer.TrySynchronizeVirtualDocumentAsync<HtmlVirtualDocumentSnapshot>(
-            _documentManager, documentColorParams.HostDocumentVersion, documentColorParams.TextDocument, cancellationToken);
+        var (synchronized, htmlDoc) = await TrySynchronizeVirtualDocumentAsync<HtmlVirtualDocumentSnapshot>(documentColorParams.HostDocumentVersion, documentColorParams.TextDocument, cancellationToken);
         if (!synchronized)
         {
             return new List<ColorInformation>();
@@ -64,8 +62,7 @@ internal partial class RazorCustomMessageTarget
             throw new ArgumentNullException(nameof(colorPresentationParams));
         }
 
-        var (synchronized, htmlDoc) = await _documentSynchronizer.TrySynchronizeVirtualDocumentAsync<HtmlVirtualDocumentSnapshot>(
-            _documentManager, colorPresentationParams.RequiredHostDocumentVersion, colorPresentationParams.TextDocument, cancellationToken);
+        var (synchronized, htmlDoc) = await TrySynchronizeVirtualDocumentAsync<HtmlVirtualDocumentSnapshot>(colorPresentationParams.RequiredHostDocumentVersion, colorPresentationParams.TextDocument, cancellationToken);
         if (!synchronized)
         {
             return new List<ColorPresentation>();

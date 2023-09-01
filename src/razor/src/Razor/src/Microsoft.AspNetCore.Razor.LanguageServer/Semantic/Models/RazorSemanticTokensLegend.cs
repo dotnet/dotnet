@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Linq;
 using System.Reflection;
 using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
@@ -99,15 +100,7 @@ internal class RazorSemanticTokensLegend
         return builder.ToImmutable();
     }
 
-    private static readonly string[] s_tokenModifiers = new string[] {
-        // TODO: These two should come from Roslyn once an available version is inserted
-        // Razor
-        "static",
-        // C# Modifiers
-        "ReassignedVariable",
-        // Razor background
-        "razorCode" // Not using nameof() because the convention is for modifiers to start with a lowercase letter. Yes I am aware of what the line above this says.
-    };
+    private static readonly string[] s_tokenModifiers = RazorSemanticTokensAccessor.GetTokenModifiers().Concat(Enum.GetNames(typeof(RazorTokenModifiers))).ToArray();
 
     [Flags]
     public enum RazorTokenModifiers
@@ -116,7 +109,9 @@ internal class RazorSemanticTokensLegend
         // Static, from Roslyn = 1
         // ReassignedVariable, from Roslyn = 1 << 1
 
+        // By convention, all LSP token modifiers start with a lowercase letter
+
         // Must start after the last Roslyn modifier
-        RazorCode = 1 << 2
+        razorCode = 1 << 2
     }
 }

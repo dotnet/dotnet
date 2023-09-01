@@ -659,7 +659,7 @@ public class DefaultWindowsRazorProjectHostTest : ProjectSnapshotManagerDispatch
         await Task.Run(async () => await host.LoadAsync());
         Assert.Empty(_projectManager.GetProjects());
 
-        await Task.Run(async () => await host.OnProjectChangedAsync(services.CreateUpdate(changes)));
+        await Task.Run(async () => await host.OnProjectChangedAsync(string.Empty, services.CreateUpdate(changes)));
         Assert.Empty(_projectManager.GetProjects());
     }
 
@@ -704,7 +704,7 @@ public class DefaultWindowsRazorProjectHostTest : ProjectSnapshotManagerDispatch
         Assert.Empty(_projectManager.GetProjects());
 
         // Act
-        await Task.Run(async () => await host.OnProjectChangedAsync(services.CreateUpdate(changes)));
+        await Task.Run(async () => await host.OnProjectChangedAsync(string.Empty, services.CreateUpdate(changes)));
 
         // Assert
         var snapshot = Assert.Single(_projectManager.GetProjects());
@@ -767,7 +767,7 @@ public class DefaultWindowsRazorProjectHostTest : ProjectSnapshotManagerDispatch
         Assert.Empty(_projectManager.GetProjects());
 
         // Act
-        await Task.Run(async () => await host.OnProjectChangedAsync(services.CreateUpdate(changes)));
+        await Task.Run(async () => await host.OnProjectChangedAsync(string.Empty, services.CreateUpdate(changes)));
 
         // Assert
         Assert.Empty(_projectManager.GetProjects());
@@ -821,7 +821,7 @@ public class DefaultWindowsRazorProjectHostTest : ProjectSnapshotManagerDispatch
         // Act - 1
         _projectManager.SolutionClosed();
 
-        await Task.Run(async () => await host.OnProjectChangedAsync(services.CreateUpdate(changes)));
+        await Task.Run(async () => await host.OnProjectChangedAsync(string.Empty, services.CreateUpdate(changes)));
 
         // Assert - 1
         Assert.False(_projectManager.IsSolutionClosing);
@@ -870,7 +870,7 @@ public class DefaultWindowsRazorProjectHostTest : ProjectSnapshotManagerDispatch
         Assert.Empty(_projectManager.GetProjects());
 
         // Act - 1
-        await Task.Run(async () => await host.OnProjectChangedAsync(services.CreateUpdate(changes)));
+        await Task.Run(async () => await host.OnProjectChangedAsync(string.Empty, services.CreateUpdate(changes)));
 
         // Assert - 1
         var snapshot = Assert.Single(_projectManager.GetProjects());
@@ -931,7 +931,7 @@ public class DefaultWindowsRazorProjectHostTest : ProjectSnapshotManagerDispatch
              _configurationGeneral.ToChange(changes[5].After),
         };
 
-        await Task.Run(async () => await host.OnProjectChangedAsync(services.CreateUpdate(changes)));
+        await Task.Run(async () => await host.OnProjectChangedAsync(string.Empty, services.CreateUpdate(changes)));
 
         // Assert - 2
         snapshot = Assert.Single(_projectManager.GetProjects());
@@ -1026,7 +1026,7 @@ public class DefaultWindowsRazorProjectHostTest : ProjectSnapshotManagerDispatch
         Assert.Empty(_projectManager.GetProjects());
 
         // Act - 1
-        await Task.Run(async () => await host.OnProjectChangedAsync(services.CreateUpdate(changes)));
+        await Task.Run(async () => await host.OnProjectChangedAsync(string.Empty, services.CreateUpdate(changes)));
 
         // Assert - 1
         var snapshot = Assert.Single(_projectManager.GetProjects());
@@ -1052,7 +1052,7 @@ public class DefaultWindowsRazorProjectHostTest : ProjectSnapshotManagerDispatch
              _razorGenerateWithTargetPathItems.ToChange(changes[4].After),
         };
 
-        await Task.Run(async () => await host.OnProjectChangedAsync(services.CreateUpdate(changes)));
+        await Task.Run(async () => await host.OnProjectChangedAsync(string.Empty, services.CreateUpdate(changes)));
 
         // Assert - 2
         Assert.Empty(_projectManager.GetProjects());
@@ -1101,7 +1101,7 @@ public class DefaultWindowsRazorProjectHostTest : ProjectSnapshotManagerDispatch
         Assert.Empty(_projectManager.GetProjects());
 
         // Act - 1
-        await Task.Run(async () => await host.OnProjectChangedAsync(services.CreateUpdate(changes)));
+        await Task.Run(async () => await host.OnProjectChangedAsync(string.Empty, services.CreateUpdate(changes)));
 
         // Assert - 1
         var snapshot = Assert.Single(_projectManager.GetProjects());
@@ -1134,7 +1134,7 @@ public class DefaultWindowsRazorProjectHostTest : ProjectSnapshotManagerDispatch
              _razorGenerateWithTargetPathItems.ToChange(changes[4].After),
         };
 
-        await Task.Run(async () => await host.OnProjectChangedAsync(services.CreateUpdate(changes)));
+        await Task.Run(async () => await host.OnProjectChangedAsync(string.Empty, services.CreateUpdate(changes)));
 
         // Assert - 3
         Assert.Empty(_projectManager.GetProjects());
@@ -1181,7 +1181,7 @@ public class DefaultWindowsRazorProjectHostTest : ProjectSnapshotManagerDispatch
         Assert.Empty(_projectManager.GetProjects());
 
         // Act - 1
-        await Task.Run(async () => await host.OnProjectChangedAsync(services.CreateUpdate(changes)));
+        await Task.Run(async () => await host.OnProjectChangedAsync(string.Empty, services.CreateUpdate(changes)));
 
         // Assert - 1
         var snapshot = Assert.Single(_projectManager.GetProjects());

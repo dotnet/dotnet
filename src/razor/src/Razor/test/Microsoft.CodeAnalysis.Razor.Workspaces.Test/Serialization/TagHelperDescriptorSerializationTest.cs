@@ -3,10 +3,11 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.IO;
 using System.Text;
 using Microsoft.AspNetCore.Razor.Language;
-using Microsoft.AspNetCore.Razor.Serialization;
+using Microsoft.AspNetCore.Razor.Serialization.Json;
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Xunit;
 using Xunit.Abstractions;
@@ -25,21 +26,9 @@ public class TagHelperDescriptorSerializationTest : TestBase
     public void TagHelperDescriptor_DefaultBlazorServerProject_RoundTrips()
     {
         // Arrange
-        var bytes = RazorTestResources.GetResourceBytes(RazorTestResources.BlazorServerAppTagHelpersJson);
+        var expectedTagHelpers = RazorTestResources.BlazorServerAppTagHelpers;
 
         // Act
-
-        // Read in the tag helpers
-        IReadOnlyList<TagHelperDescriptor> expectedTagHelpers;
-
-        using (var stream = new MemoryStream(bytes))
-        using (var reader = new StreamReader(stream))
-        {
-            expectedTagHelpers = JsonDataConvert.DeserializeData(reader,
-                static r => r.ReadArray(
-                    static r => ObjectReaders.ReadTagHelper(r, useCache: false)))
-                ?? Array.Empty<TagHelperDescriptor>();
-        }
 
         using var writeStream = new MemoryStream();
 
@@ -53,14 +42,13 @@ public class TagHelperDescriptorSerializationTest : TestBase
         // Deserialize the tag helpers from the stream we just serialized to.
         writeStream.Seek(0, SeekOrigin.Begin);
 
-        IReadOnlyList<TagHelperDescriptor> actualTagHelpers;
+        ImmutableArray<TagHelperDescriptor> actualTagHelpers;
 
         using (var reader = new StreamReader(writeStream, Encoding.UTF8, detectEncodingFromByteOrderMarks: true, bufferSize: 4096, leaveOpen: true))
         {
             actualTagHelpers = JsonDataConvert.DeserializeData(reader,
-                static r => r.ReadArray(
-                    static r => ObjectReaders.ReadTagHelper(r, useCache: false)))
-                ?? Array.Empty<TagHelperDescriptor>();
+                static r => r.ReadImmutableArray(
+                    static r => ObjectReaders.ReadTagHelper(r, useCache: false)));
         }
 
         // Assert

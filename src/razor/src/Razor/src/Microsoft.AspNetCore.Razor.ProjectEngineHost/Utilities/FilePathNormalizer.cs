@@ -8,7 +8,7 @@ using Microsoft.CodeAnalysis.Razor;
 
 namespace Microsoft.AspNetCore.Razor.Utilities;
 
-public static class FilePathNormalizer
+internal static class FilePathNormalizer
 {
     public static string NormalizeDirectory(string? directoryFilePath)
     {

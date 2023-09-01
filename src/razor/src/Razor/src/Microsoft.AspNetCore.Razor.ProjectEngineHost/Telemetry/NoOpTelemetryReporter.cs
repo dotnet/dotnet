@@ -6,7 +6,7 @@ using System.Collections.Immutable;
 
 namespace Microsoft.AspNetCore.Razor.Telemetry;
 
-public class NoOpTelemetryReporter : ITelemetryReporter
+internal class NoOpTelemetryReporter : ITelemetryReporter
 {
     public static readonly NoOpTelemetryReporter Instance = new();
 

@@ -3,7 +3,7 @@
 
 using System;
 using Microsoft.AspNetCore.Razor.LanguageServer.Serialization;
-using Microsoft.AspNetCore.Razor.Serialization.Converters;
+using Microsoft.AspNetCore.Razor.Serialization.Json;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Newtonsoft.Json;
 

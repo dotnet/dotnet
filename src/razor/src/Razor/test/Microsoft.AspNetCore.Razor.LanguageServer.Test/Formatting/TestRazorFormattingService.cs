@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.LanguageServer.Test;
 using Microsoft.AspNetCore.Razor.LanguageServer.Test.Common;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
+using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
@@ -26,7 +27,8 @@ internal static class TestRazorFormattingService
         codeDocument ??= TestRazorCodeDocument.CreateEmpty();
         loggerFactory ??= NullLoggerFactory.Instance;
 
-        var mappingService = new RazorDocumentMappingService(TestLanguageServerFeatureOptions.Instance, new TestDocumentContextFactory(), loggerFactory);
+        var filePathService = new FilePathService(TestLanguageServerFeatureOptions.Instance);
+        var mappingService = new RazorDocumentMappingService(filePathService, new TestDocumentContextFactory(), loggerFactory);
 
         var dispatcher = new LSPProjectSnapshotManagerDispatcher(loggerFactory);
         var versionCache = new DefaultDocumentVersionCache();

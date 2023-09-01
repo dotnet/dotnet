@@ -135,6 +135,8 @@ internal class RazorLanguageServer : AbstractLanguageServer<RazorRequestContext>
         var featureOptions = _featureOptions ?? new DefaultLanguageServerFeatureOptions();
         services.AddSingleton(featureOptions);
 
+        services.AddSingleton<FilePathService>();
+
         services.AddLifeCycleServices(this, serverManager, _lspServerActivationTracker);
 
         services.AddDiagnosticServices();

@@ -123,7 +123,9 @@ internal class DefaultLSPDocumentSynchronizer : LSPDocumentSynchronizer
 
         var onSynchronizedResult = await onSynchronizedTask.ConfigureAwait(false);
 
-        var virtualDocumentSnapshot = GetVirtualDocumentSnapshot<TVirtualDocumentSnapshot>(hostDocumentUri, specificVirtualDocumentUri);
+        // If we couldn't synchronize, there might not be a virtual document with the specific Uri, so we just get whichever one we can
+        // so the caller can use it if they want to. Since the result is false, they hopefully don't use it for much!
+        var virtualDocumentSnapshot = GetVirtualDocumentSnapshot<TVirtualDocumentSnapshot>(hostDocumentUri, onSynchronizedResult ? specificVirtualDocumentUri : null);
 
         return new SynchronizedResult<TVirtualDocumentSnapshot>(onSynchronizedResult, virtualDocumentSnapshot);
     }

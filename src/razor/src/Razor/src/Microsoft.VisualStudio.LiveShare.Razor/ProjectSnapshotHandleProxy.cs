@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Razor.ProjectSystem;
 
 namespace Microsoft.VisualStudio.LiveShare.Razor;
 
-public sealed class ProjectSnapshotHandleProxy
+internal sealed class ProjectSnapshotHandleProxy
 {
     public Uri FilePath { get; }
     public Uri IntermediateOutputPath { get; }

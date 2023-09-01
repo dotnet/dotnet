@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Razor.Language.Syntax;
 
 namespace Microsoft.VisualStudio.Editor.Razor;
 
-public abstract class TagHelperFactsService
+internal abstract class TagHelperFactsService
 {
     public abstract TagHelperBinding? GetTagHelperBinding(TagHelperDocumentContext documentContext, string? tagName, IEnumerable<KeyValuePair<string, string>> attributes, string? parentTag, bool parentIsTagHelper);
 

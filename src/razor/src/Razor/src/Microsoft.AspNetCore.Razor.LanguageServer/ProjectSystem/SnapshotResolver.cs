@@ -9,6 +9,7 @@ using System.Linq;
 using Microsoft.AspNetCore.Razor.Utilities;
 using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
+using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.Extensions.Logging;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.ProjectSystem;

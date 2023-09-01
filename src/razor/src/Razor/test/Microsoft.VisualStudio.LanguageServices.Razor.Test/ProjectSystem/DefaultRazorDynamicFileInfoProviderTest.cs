@@ -52,7 +52,11 @@ public class DefaultRazorDynamicFileInfoProviderTest : WorkspaceTestBase
         _document1 = (DocumentSnapshot)_project.GetDocument(hostDocument1.FilePath);
         _document2 = (DocumentSnapshot)_project.GetDocument(hostDocument2.FilePath);
 
-        _provider = new DefaultRazorDynamicFileInfoProvider(_documentServiceFactory, _editorFeatureDetector, TestLanguageServerFeatureOptions.Instance);
+        var languageServerFeatureOptions = new TestLanguageServerFeatureOptions(includeProjectKeyInGeneratedFilePath: true);
+        var filePathService = new FilePathService(languageServerFeatureOptions);
+        var projectSnapshotManagerAccessor = Mock.Of<ProjectSnapshotManagerAccessor>(a => a.Instance == _projectSnapshotManager, MockBehavior.Strict);
+
+        _provider = new DefaultRazorDynamicFileInfoProvider(_documentServiceFactory, _editorFeatureDetector, filePathService, projectSnapshotManagerAccessor);
         _testAccessor = _provider.GetTestAccessor();
         _provider.Initialize(_projectSnapshotManager);
 
@@ -81,6 +85,15 @@ public class DefaultRazorDynamicFileInfoProviderTest : WorkspaceTestBase
         var documentContainer = new Mock<DynamicDocumentContainer>(MockBehavior.Strict);
         documentContainer.SetupSet(c => c.SupportsDiagnostics = true).Verifiable();
         _provider.UpdateLSPFileInfo(new Uri("C:/this/does/not/exist.razor"), documentContainer.Object);
+    }
+
+    [Fact]
+    public async Task GetDynamicFileInfoAsync_IncludesProjectToken()
+    {
+        // Arrange
+        var info = await _testAccessor.GetDynamicFileInfoAsync(_projectId, _document1.FilePath, DisposalToken);
+
+        Assert.Equal(@"C:\document1.razor.fJcYlbdqjCXiWYY1.ide.g.cs", info.FilePath);
     }
 
     [Fact]

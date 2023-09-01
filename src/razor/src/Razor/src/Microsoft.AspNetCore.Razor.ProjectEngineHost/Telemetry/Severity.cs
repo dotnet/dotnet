@@ -3,7 +3,7 @@
 
 namespace Microsoft.AspNetCore.Razor.Telemetry;
 
-public enum Severity
+internal enum Severity
 {
     Normal,
     Low,

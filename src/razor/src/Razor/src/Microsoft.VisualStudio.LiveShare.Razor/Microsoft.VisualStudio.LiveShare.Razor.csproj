@@ -38,4 +38,9 @@
     <PackageReference Include="Nerdbank.Streams" Version="$(NerdbankStreamsPackageVersion)" />
   </ItemGroup>
 
+  <ItemGroup>
+    <AdditionalFiles Include="PublicAPI\PublicAPI.Shipped.txt" />
+    <AdditionalFiles Include="PublicAPI\PublicAPI.Unshipped.txt" />
+  </ItemGroup>
+
 </Project>

@@ -28,10 +28,14 @@ public class RazorDocumentInfoProviderTest : WorkspaceTestBase
     public RazorDocumentInfoProviderTest(ITestOutputHelper testOutput)
         : base(testOutput)
     {
+        _projectSnapshotManager = new TestProjectSnapshotManager(Workspace);
+
         var serviceProviderFactory = new DefaultRazorDocumentServiceProviderFactory();
         var lspEditorEnabledFeatureDetector = Mock.Of<LSPEditorFeatureDetector>(detector => detector.IsLSPEditorAvailable() == true, MockBehavior.Strict);
-        _innerDynamicDocumentInfoProvider = new DefaultRazorDynamicFileInfoProvider(serviceProviderFactory, lspEditorEnabledFeatureDetector, TestLanguageServerFeatureOptions.Instance);
-        _projectSnapshotManager = new TestProjectSnapshotManager(Workspace);
+        var projectSnapshotManagerAccessor = Mock.Of<ProjectSnapshotManagerAccessor>(a => a.Instance == _projectSnapshotManager, MockBehavior.Strict);
+
+        var filePathService = new FilePathService(TestLanguageServerFeatureOptions.Instance);
+        _innerDynamicDocumentInfoProvider = new DefaultRazorDynamicFileInfoProvider(serviceProviderFactory, lspEditorEnabledFeatureDetector, filePathService, projectSnapshotManagerAccessor);
 
         var hostProject = new HostProject("C:/path/to/project.csproj", "C:/path/to/obj", RazorConfiguration.Default, "RootNamespace");
         _projectSnapshotManager.ProjectAdded(hostProject);
@@ -45,8 +49,8 @@ public class RazorDocumentInfoProviderTest : WorkspaceTestBase
         _documentSnapshot = _projectSnapshot.GetDocument(hostDocument.FilePath);
 
         var factory = new Mock<VisualStudioMacDocumentInfoFactory>(MockBehavior.Strict);
-        factory.Setup(f => f.CreateEmpty(It.IsAny<string>(), It.IsAny<ProjectId>()))
-            .Returns<string, ProjectId>((razorFilePath, projectId) =>
+        factory.Setup(f => f.CreateEmpty(It.IsAny<string>(), It.IsAny<ProjectId>(), It.IsAny<ProjectKey>()))
+            .Returns<string, ProjectId, ProjectKey>((razorFilePath, projectId, projectKey) =>
             {
                 var documentId = DocumentId.CreateNewId(projectId);
                 var documentInfo = DocumentInfo.Create(documentId, "testDoc", filePath: razorFilePath);

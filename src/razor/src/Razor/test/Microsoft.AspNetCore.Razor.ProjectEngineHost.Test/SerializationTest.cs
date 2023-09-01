@@ -6,7 +6,8 @@ using System.Linq;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.ProjectSystem;
 using Microsoft.AspNetCore.Razor.Serialization;
-using Microsoft.AspNetCore.Razor.Serialization.Converters;
+using Microsoft.AspNetCore.Razor.Serialization.Json;
+using Microsoft.AspNetCore.Razor.Serialization.Json.Converters;
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.CodeAnalysis.CSharp;
 using Newtonsoft.Json;
@@ -37,10 +38,10 @@ public class SerializationTest : TestBase
     }
 
     [Fact]
-    public void ProjectRazorJson_InvalidVersionThrows()
+    public void RazorProjectInfo_InvalidVersionThrows()
     {
         // Arrange
-        var projectRazorJson = new ProjectRazorJson(
+        var projectInfo = new RazorProjectInfo(
             "/path/to/obj/project.razor.json",
             "/path/to/project.csproj",
             _configuration,
@@ -48,7 +49,7 @@ public class SerializationTest : TestBase
             _projectWorkspaceState,
             ImmutableArray<DocumentSnapshotHandle>.Empty);
 
-        var jsonText = JsonConvert.SerializeObject(projectRazorJson, ProjectRazorJsonJsonConverter.Instance);
+        var jsonText = JsonConvert.SerializeObject(projectInfo, RazorProjectInfoJsonConverter.Instance);
         Assert.NotNull(jsonText);
 
         var serializedJObject = JObject.Parse(jsonText);
@@ -58,21 +59,21 @@ public class SerializationTest : TestBase
         Assert.NotNull(updatedJsonText);
 
         // Act
-        ProjectRazorJson? deserializedProjectRazorJson = null;
-        Assert.Throws<ProjectRazorJsonSerializationException>(() =>
+        RazorProjectInfo? deserializedProjectInfo = null;
+        Assert.Throws<RazorProjectInfoSerializationException>(() =>
         {
-            deserializedProjectRazorJson = JsonConvert.DeserializeObject<ProjectRazorJson>(updatedJsonText, ProjectRazorJsonJsonConverter.Instance);
+            deserializedProjectInfo = JsonConvert.DeserializeObject<RazorProjectInfo>(updatedJsonText, RazorProjectInfoJsonConverter.Instance);
         });
 
         // Assert
-        Assert.Null(deserializedProjectRazorJson);
+        Assert.Null(deserializedProjectInfo);
     }
 
     [Fact]
-    public void ProjectRazorJson_MissingVersionThrows()
+    public void RazorProjectInfo_MissingVersionThrows()
     {
         // Arrange
-        var projectRazorJson = new ProjectRazorJson(
+        var projectInfo = new RazorProjectInfo(
             "/path/to/obj/project.razor.json",
             "/path/to/project.csproj",
             _configuration,
@@ -80,7 +81,7 @@ public class SerializationTest : TestBase
             _projectWorkspaceState,
             ImmutableArray<DocumentSnapshotHandle>.Empty);
 
-        var jsonText = JsonConvert.SerializeObject(projectRazorJson, ProjectRazorJsonJsonConverter.Instance);
+        var jsonText = JsonConvert.SerializeObject(projectInfo, RazorProjectInfoJsonConverter.Instance);
         Assert.NotNull(jsonText);
 
         var serializedJObject = JObject.Parse(jsonText);
@@ -90,23 +91,23 @@ public class SerializationTest : TestBase
         Assert.NotNull(updatedJsonText);
 
         // Act
-        ProjectRazorJson? deserializedProjectRazorJson = null;
-        Assert.Throws<ProjectRazorJsonSerializationException>(() =>
+        RazorProjectInfo? deserializedProjectInfo = null;
+        Assert.Throws<RazorProjectInfoSerializationException>(() =>
         {
-            deserializedProjectRazorJson = JsonConvert.DeserializeObject<ProjectRazorJson>(updatedJsonText, ProjectRazorJsonJsonConverter.Instance);
+            deserializedProjectInfo = JsonConvert.DeserializeObject<RazorProjectInfo>(updatedJsonText, RazorProjectInfoJsonConverter.Instance);
         });
 
         // Assert
-        Assert.Null(deserializedProjectRazorJson);
+        Assert.Null(deserializedProjectInfo);
     }
 
     [Fact]
-    public void ProjectRazorJson_CanRoundTrip()
+    public void RazorProjectInfo_CanRoundTrip()
     {
         // Arrange
         var legacyDocument = new DocumentSnapshotHandle("/path/to/file.cshtml", "file.cshtml", FileKinds.Legacy);
         var componentDocument = new DocumentSnapshotHandle("/path/to/otherfile.razor", "otherfile.razor", FileKinds.Component);
-        var projectRazorJson = new ProjectRazorJson(
+        var projectInfo = new RazorProjectInfo(
             "/path/to/obj/project.razor.json",
             "/path/to/project.csproj",
             _configuration,
@@ -114,19 +115,19 @@ public class SerializationTest : TestBase
             _projectWorkspaceState,
             ImmutableArray.Create(legacyDocument, componentDocument));
 
-        var jsonText = JsonConvert.SerializeObject(projectRazorJson, ProjectRazorJsonJsonConverter.Instance);
+        var jsonText = JsonConvert.SerializeObject(projectInfo, RazorProjectInfoJsonConverter.Instance);
         Assert.NotNull(jsonText);
 
         // Act
-        var deserializedProjectRazorJson = JsonConvert.DeserializeObject<ProjectRazorJson>(jsonText, ProjectRazorJsonJsonConverter.Instance);
-        Assert.NotNull(deserializedProjectRazorJson);
+        var deserializedProjectInfo = JsonConvert.DeserializeObject<RazorProjectInfo>(jsonText, RazorProjectInfoJsonConverter.Instance);
+        Assert.NotNull(deserializedProjectInfo);
 
         // Assert
-        Assert.Equal(projectRazorJson.FilePath, deserializedProjectRazorJson.FilePath);
-        Assert.Equal(projectRazorJson.Configuration, deserializedProjectRazorJson.Configuration);
-        Assert.Equal(projectRazorJson.RootNamespace, deserializedProjectRazorJson.RootNamespace);
-        Assert.Equal(projectRazorJson.ProjectWorkspaceState, deserializedProjectRazorJson.ProjectWorkspaceState);
-        Assert.Collection(projectRazorJson.Documents.OrderBy(doc => doc.FilePath),
+        Assert.Equal(projectInfo.FilePath, deserializedProjectInfo.FilePath);
+        Assert.Equal(projectInfo.Configuration, deserializedProjectInfo.Configuration);
+        Assert.Equal(projectInfo.RootNamespace, deserializedProjectInfo.RootNamespace);
+        Assert.Equal(projectInfo.ProjectWorkspaceState, deserializedProjectInfo.ProjectWorkspaceState);
+        Assert.Collection(projectInfo.Documents.OrderBy(doc => doc.FilePath),
             document =>
             {
                 Assert.Equal(legacyDocument.FilePath, document.FilePath);

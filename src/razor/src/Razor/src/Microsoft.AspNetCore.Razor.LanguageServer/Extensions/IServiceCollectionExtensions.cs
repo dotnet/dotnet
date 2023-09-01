@@ -93,13 +93,13 @@ internal static class IServiceCollectionExtensions
         services.AddSingleton<CompletionItemResolver, RazorCompletionItemResolver>();
         services.AddSingleton<CompletionItemResolver, DelegatedCompletionItemResolver>();
         services.AddSingleton<TagHelperCompletionService, LanguageServerTagHelperCompletionService>();
-        services.AddSingleton<RazorCompletionFactsService, DefaultRazorCompletionFactsService>();
-        services.AddSingleton<RazorCompletionItemProvider, DirectiveCompletionItemProvider>();
-        services.AddSingleton<RazorCompletionItemProvider, DirectiveAttributeCompletionItemProvider>();
-        services.AddSingleton<RazorCompletionItemProvider, DirectiveAttributeParameterCompletionItemProvider>();
-        services.AddSingleton<RazorCompletionItemProvider, DirectiveAttributeTransitionCompletionItemProvider>();
-        services.AddSingleton<RazorCompletionItemProvider, MarkupTransitionCompletionItemProvider>();
-        services.AddSingleton<RazorCompletionItemProvider, TagHelperCompletionProvider>();
+        services.AddSingleton<IRazorCompletionFactsService, RazorCompletionFactsService>();
+        services.AddSingleton<IRazorCompletionItemProvider, DirectiveCompletionItemProvider>();
+        services.AddSingleton<IRazorCompletionItemProvider, DirectiveAttributeCompletionItemProvider>();
+        services.AddSingleton<IRazorCompletionItemProvider, DirectiveAttributeParameterCompletionItemProvider>();
+        services.AddSingleton<IRazorCompletionItemProvider, DirectiveAttributeTransitionCompletionItemProvider>();
+        services.AddSingleton<IRazorCompletionItemProvider, MarkupTransitionCompletionItemProvider>();
+        services.AddSingleton<IRazorCompletionItemProvider, TagHelperCompletionProvider>();
     }
 
     public static void AddDiagnosticServices(this IServiceCollection services)

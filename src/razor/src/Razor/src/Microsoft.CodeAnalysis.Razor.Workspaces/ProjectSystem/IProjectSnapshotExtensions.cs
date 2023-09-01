@@ -10,7 +10,7 @@ namespace Microsoft.CodeAnalysis.Razor.Workspaces.ProjectSystem;
 
 internal static class IProjectSnapshotExtensions
 {
-    public static ProjectRazorJson ToProjectRazorJson(this IProjectSnapshot project, string serializedFilePath)
+    public static RazorProjectInfo ToRazorProjectInfo(this IProjectSnapshot project, string serializedFilePath)
     {
         using var documents = new PooledArrayBuilder<DocumentSnapshotHandle>();
 
@@ -24,7 +24,7 @@ internal static class IProjectSnapshotExtensions
             }
         }
 
-        return new ProjectRazorJson(
+        return new RazorProjectInfo(
             serializedFilePath: serializedFilePath,
             filePath: project.FilePath,
             configuration: project.Configuration,

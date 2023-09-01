@@ -2,12 +2,12 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using System;
-using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Language.Legacy;
+using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.CodeAnalysis.Razor.Completion;
 using Microsoft.VisualStudio.Core.Imaging;
 using Microsoft.VisualStudio.Language.Intellisense.AsyncCompletion;
@@ -33,11 +33,11 @@ internal class RazorDirectiveCompletionSource : IAsyncCompletionSource
 
     // Internal for testing
     internal readonly VisualStudioRazorParser Parser;
-    private readonly RazorCompletionFactsService _completionFactsService;
+    private readonly IRazorCompletionFactsService _completionFactsService;
 
     public RazorDirectiveCompletionSource(
         VisualStudioRazorParser parser,
-        RazorCompletionFactsService completionFactsService)
+        IRazorCompletionFactsService completionFactsService)
     {
         if (parser is null)
         {
@@ -77,7 +77,8 @@ internal class RazorDirectiveCompletionSource : IAsyncCompletionSource
             var razorCompletionContext = new RazorCompletionContext(absoluteIndex, owner, syntaxTree, tagHelperDocumentContext);
             var razorCompletionItems = _completionFactsService.GetCompletionItems(razorCompletionContext);
 
-            var completionItems = new List<CompletionItem>();
+            using var _ = ArrayBuilderPool<CompletionItem>.GetPooledObject(out var completionItems);
+
             foreach (var razorCompletionItem in razorCompletionItems)
             {
                 if (razorCompletionItem.Kind != RazorCompletionItemKind.Directive)
@@ -96,13 +97,13 @@ internal class RazorDirectiveCompletionSource : IAsyncCompletionSource
                     suffix: string.Empty,
                     sortText: razorCompletionItem.DisplayText,
                     attributeIcons: ImmutableArray<ImageElement>.Empty);
+
                 var completionDescription = razorCompletionItem.GetDirectiveCompletionDescription();
                 completionItem.Properties.AddProperty(DescriptionKey, completionDescription);
                 completionItems.Add(completionItem);
             }
 
-            var context = new CompletionContext(completionItems.ToImmutableArray());
-            return context;
+            return new CompletionContext(completionItems.ToImmutable());
         }
         catch (OperationCanceledException)
         {

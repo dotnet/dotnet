@@ -9,18 +9,13 @@ using Xunit.Abstractions;
 
 namespace Microsoft.CodeAnalysis.Razor.Tooltip;
 
-public class BoundAttributeDescriptionInfoTest : TestBase
+public class BoundAttributeDescriptionInfoTest(ITestOutputHelper testOutput) : TestBase(testOutput)
 {
-    public BoundAttributeDescriptionInfoTest(ITestOutputHelper testOutput)
-        : base(testOutput)
-    {
-    }
-
     [Fact]
     public void ResolveTagHelperTypeName_ExtractsTypeName_SimpleReturnType()
     {
         // Arrange & Act
-        var typeName = BoundAttributeDescriptionInfo.ResolveTagHelperTypeName("System.String", "SomePropertyName", "string SomeTypeName.SomePropertyName");
+        var typeName = BoundAttributeDescriptionInfo.ResolveTagHelperTypeName("SomePropertyName", "string SomeTypeName.SomePropertyName");
 
         // Assert
         Assert.Equal("SomeTypeName", typeName);
@@ -30,7 +25,7 @@ public class BoundAttributeDescriptionInfoTest : TestBase
     public void ResolveTagHelperTypeName_ExtractsTypeName_ComplexReturnType()
     {
         // Arrange & Act
-        var typeName = BoundAttributeDescriptionInfo.ResolveTagHelperTypeName("SomeReturnTypeName", "SomePropertyName", "SomeReturnTypeName SomeTypeName.SomePropertyName");
+        var typeName = BoundAttributeDescriptionInfo.ResolveTagHelperTypeName("SomePropertyName", "SomeReturnTypeName SomeTypeName.SomePropertyName");
 
         // Assert
         Assert.Equal("SomeTypeName", typeName);

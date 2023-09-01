@@ -1,6 +1,7 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.VisualStudio.Text;
 
@@ -35,6 +36,17 @@ public abstract class VirtualDocumentFactory
     public virtual bool TryCreateMultipleFor(ITextBuffer hostDocumentBuffer, [NotNullWhen(returnValue: true)] out VirtualDocument[]? virtualDocuments)
     {
         virtualDocuments = null;
+        return false;
+    }
+
+    /// <summary>
+    /// Refreshes the virtual documents for a given <see cref="LSPDocument"/>. This method is called to allow for factories that support
+    /// multiple virtual documents to also have a dynamic number of virtual documents. Only virtual documents owned by the factory should
+    /// be refreshed, anything else should be ignored, and added to <paramref name="newVirtualDocuments" /> as-is.
+    /// </summary>
+    internal virtual bool TryRefreshVirtualDocuments(LSPDocument document, [NotNullWhen(returnValue:true)] out IReadOnlyList<VirtualDocument>? newVirtualDocuments)
+    {
+        newVirtualDocuments = null;
         return false;
     }
 }

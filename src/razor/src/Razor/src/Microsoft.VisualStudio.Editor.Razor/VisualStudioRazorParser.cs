@@ -9,7 +9,7 @@ using Microsoft.VisualStudio.Text;
 
 namespace Microsoft.VisualStudio.Editor.Razor;
 
-public abstract class VisualStudioRazorParser
+internal abstract class VisualStudioRazorParser
 {
     public abstract event EventHandler<DocumentStructureChangedEventArgs> DocumentStructureChanged;
 

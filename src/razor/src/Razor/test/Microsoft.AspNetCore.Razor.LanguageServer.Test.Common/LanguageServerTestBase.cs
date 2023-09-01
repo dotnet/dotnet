@@ -4,7 +4,6 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -14,12 +13,12 @@ using Microsoft.AspNetCore.Razor.LanguageServer;
 using Microsoft.AspNetCore.Razor.LanguageServer.EndpointContracts;
 using Microsoft.AspNetCore.Razor.LanguageServer.Serialization;
 using Microsoft.AspNetCore.Razor.LanguageServer.Test.Common;
-using Microsoft.AspNetCore.Razor.Serialization;
-using Microsoft.AspNetCore.Razor.Serialization.Converters;
+using Microsoft.AspNetCore.Razor.Serialization.Json;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
 using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
+using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Text;
 using Microsoft.CommonLanguageServerProtocol.Framework;
 using Microsoft.Extensions.Options;
@@ -40,6 +39,7 @@ public abstract class LanguageServerTestBase : TestBase
     private protected ProjectSnapshotManagerDispatcher LegacyDispatcher { get; }
     private protected ProjectSnapshotManagerDispatcher Dispatcher { get; }
     private protected IRazorSpanMappingService SpanMappingService { get; }
+    private protected FilePathService FilePathService { get; }
 
     protected JsonSerializer Serializer { get; }
 
@@ -59,6 +59,8 @@ public abstract class LanguageServerTestBase : TestBase
         Serializer.Converters.RegisterRazorConverters();
         Serializer.AddVSInternalExtensionConverters();
         Serializer.AddVSExtensionConverters();
+
+        FilePathService = new FilePathService(TestLanguageServerFeatureOptions.Instance);
     }
 
     internal RazorRequestContext CreateRazorRequestContext(VersionedDocumentContext? documentContext, ILspServices? lspServices = null)
@@ -70,13 +72,14 @@ public abstract class LanguageServerTestBase : TestBase
         return requestContext;
     }
 
-    protected static RazorCodeDocument CreateCodeDocument(string text, IReadOnlyList<TagHelperDescriptor>? tagHelpers = null, string? filePath = null)
+    protected static RazorCodeDocument CreateCodeDocument(string text, ImmutableArray<TagHelperDescriptor> tagHelpers = default, string? filePath = null)
     {
         var fileKind = FileKinds.GetFileKindFromFilePath(filePath ?? "test.cshtml");
-        tagHelpers ??= Array.Empty<TagHelperDescriptor>();
+        tagHelpers = tagHelpers.NullToEmpty();
+
         if (fileKind == FileKinds.Component)
         {
-            tagHelpers = tagHelpers.Concat(GetDefaultRuntimeComponents()).ToArray();
+            tagHelpers = tagHelpers.AddRange(RazorTestResources.BlazorServerAppTagHelpers);
         }
 
         var sourceDocument = TestRazorSourceDocument.Create(text, filePath: filePath);
@@ -139,19 +142,6 @@ public abstract class LanguageServerTestBase : TestBase
         var monitor = new Mock<IOptionsMonitor<RazorLSPOptions>>(MockBehavior.Strict);
         monitor.SetupGet(m => m.CurrentValue).Returns(new RazorLSPOptions(default, enableFormatting, true, InsertSpaces: true, TabSize: 4, formatOnType, autoInsertAttributeQuotes, colorBackground));
         return monitor.Object;
-    }
-
-    private static IReadOnlyList<TagHelperDescriptor> GetDefaultRuntimeComponents()
-    {
-        var bytes = RazorTestResources.GetResourceBytes(RazorTestResources.BlazorServerAppTagHelpersJson);
-
-        using var stream = new MemoryStream(bytes);
-        using var reader = new StreamReader(stream);
-
-        return JsonDataConvert.DeserializeData(reader,
-            static r => r.ReadArray(
-                static r => ObjectReaders.ReadTagHelper(r, useCache: false)))
-            ?? Array.Empty<TagHelperDescriptor>();
     }
 
     [Obsolete("Use " + nameof(LSPProjectSnapshotManagerDispatcher))]

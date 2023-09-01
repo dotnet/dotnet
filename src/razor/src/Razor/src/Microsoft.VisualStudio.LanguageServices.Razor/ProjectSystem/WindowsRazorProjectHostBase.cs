@@ -95,7 +95,7 @@ internal abstract class WindowsRazorProjectHostBase : OnceInitializedOnceDispose
 
     protected abstract ImmutableHashSet<string> GetRuleNames();
 
-    protected abstract Task HandleProjectChangeAsync(IProjectVersionedValue<IProjectSubscriptionUpdate> update);
+    protected abstract Task HandleProjectChangeAsync(string sliceDimensions, IProjectVersionedValue<IProjectSubscriptionUpdate> update);
 
     protected IUnconfiguredProjectCommonServices CommonServices { get; }
 
@@ -161,13 +161,15 @@ internal abstract class WindowsRazorProjectHostBase : OnceInitializedOnceDispose
             {
                 Assumes.False(current.ContainsKey(slice));
 
+                var dimensions = string.Join(";", slice.Dimensions.Values);
+
                 // This is a new slice that we didn't previously know about, either because its a new target framework, or how dimensions
                 // are calculated has changed. We simply subscribe to updates for it, and let our action block code handle whether the
                 // distinction is important. To put it another way, we may end up having multiple subscriptions and events that would be
                 // affect about the same project.razor.json file, but our event handling code ensures we don't handle them more than
                 // necessary.
                 var subscription = source.JointRuleSource.SourceBlock.LinkTo(
-                    DataflowBlockSlim.CreateActionBlock<IProjectVersionedValue<IProjectSubscriptionUpdate>>(OnProjectChangedAsync, nameFormat: "OnProjectChanged {1}"),
+                    DataflowBlockSlim.CreateActionBlock<IProjectVersionedValue<IProjectSubscriptionUpdate>>(v => OnProjectChangedAsync(dimensions, v), nameFormat: "OnProjectChanged {1}"),
                     initialDataAsNew: true,
                     suppressVersionOnlyUpdates: true,
                     ruleNames: GetRuleNames(),
@@ -192,7 +194,7 @@ internal abstract class WindowsRazorProjectHostBase : OnceInitializedOnceDispose
     }
 
     // Internal for testing
-    internal Task OnProjectChangedAsync(IProjectVersionedValue<IProjectSubscriptionUpdate> update)
+    internal Task OnProjectChangedAsync(string sliceDimensions, IProjectVersionedValue<IProjectSubscriptionUpdate> update)
     {
         if (IsDisposing || IsDisposed)
         {
@@ -201,7 +203,7 @@ internal abstract class WindowsRazorProjectHostBase : OnceInitializedOnceDispose
 
         return CommonServices.TasksService.LoadedProjectAsync(() => ExecuteWithLockAsync(() =>
         {
-            return HandleProjectChangeAsync(update);
+            return HandleProjectChangeAsync(sliceDimensions, update);
         }), registerFaultHandler: true).Task;
     }
 

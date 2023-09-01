@@ -83,7 +83,7 @@ internal sealed class DefaultCSharpCodeActionProvider : ICSharpCodeActionProvide
         }
 
         var tree = context.CodeDocument.GetSyntaxTree();
-        var node = tree.GetOwner(context.Location.AbsoluteIndex);
+        var node = tree.Root.FindInnermostNode(context.Location.AbsoluteIndex);
         var isInImplicitExpression = node?.AncestorsAndSelf().Any(n => n is CSharpImplicitExpressionSyntax) ?? false;
 
         var allowList = isInImplicitExpression

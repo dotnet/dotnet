@@ -65,8 +65,7 @@ internal partial class RazorCustomMessageTarget
     private async Task<VSInternalDiagnosticReport[]?> GetVirtualDocumentPullDiagnosticsAsync<TVirtualDocumentSnapshot>(TextDocumentIdentifier hostDocument, int hostDocumentVersion, TextDocumentIdentifier identifierFromOriginalRequest, Guid correlationId, string delegatedLanguageServerName, CancellationToken cancellationToken)
         where TVirtualDocumentSnapshot : VirtualDocumentSnapshot
     {
-        var (synchronized, virtualDocument) = await _documentSynchronizer.TrySynchronizeVirtualDocumentAsync<TVirtualDocumentSnapshot>(
-            _documentManager,
+        var (synchronized, virtualDocument) = await TrySynchronizeVirtualDocumentAsync<TVirtualDocumentSnapshot>(
             hostDocumentVersion,
             hostDocument,
             cancellationToken).ConfigureAwait(false);

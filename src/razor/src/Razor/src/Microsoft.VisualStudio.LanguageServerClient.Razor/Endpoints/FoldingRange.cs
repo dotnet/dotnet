@@ -42,8 +42,7 @@ internal partial class RazorCustomMessageTarget
         var csharpRanges = new List<FoldingRange>();
         var csharpTask = Task.Run(async () =>
         {
-            var (synchronized, csharpSnapshot) = await _documentSynchronizer.TrySynchronizeVirtualDocumentAsync<CSharpVirtualDocumentSnapshot>(
-                _documentManager, foldingRangeParams.HostDocumentVersion, hostDocument, cancellationToken);
+            var (synchronized, csharpSnapshot) = await TrySynchronizeVirtualDocumentAsync<CSharpVirtualDocumentSnapshot>(foldingRangeParams.HostDocumentVersion, hostDocument, cancellationToken);
 
             if (synchronized)
             {
@@ -76,8 +75,7 @@ internal partial class RazorCustomMessageTarget
         var htmlTask = Task.CompletedTask;
         htmlTask = Task.Run(async () =>
         {
-            var (synchronized, htmlDocument) = await _documentSynchronizer.TrySynchronizeVirtualDocumentAsync<HtmlVirtualDocumentSnapshot>(
-                _documentManager, foldingRangeParams.HostDocumentVersion, hostDocument, cancellationToken);
+            var (synchronized, htmlDocument) = await TrySynchronizeVirtualDocumentAsync<HtmlVirtualDocumentSnapshot>(foldingRangeParams.HostDocumentVersion, hostDocument, cancellationToken);
 
             if (synchronized)
             {

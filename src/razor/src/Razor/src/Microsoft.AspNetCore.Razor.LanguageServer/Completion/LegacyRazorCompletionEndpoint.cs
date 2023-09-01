@@ -2,7 +2,7 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using System;
-using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Language.Legacy;
 using Microsoft.AspNetCore.Razor.LanguageServer.EndpointContracts;
 using Microsoft.AspNetCore.Razor.LanguageServer.Extensions;
+using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.CodeAnalysis.Razor.Completion;
 using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
@@ -23,7 +24,7 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer.Completion;
 // for this legacy version.
 internal class LegacyRazorCompletionEndpoint : IVSCompletionEndpoint
 {
-    private readonly RazorCompletionFactsService _completionFactsService;
+    private readonly IRazorCompletionFactsService _completionFactsService;
     private readonly CompletionListCache _completionListCache;
     private static readonly Command s_retriggerCompletionCommand = new()
     {
@@ -34,22 +35,10 @@ internal class LegacyRazorCompletionEndpoint : IVSCompletionEndpoint
 
     public bool MutatesSolutionState => false;
 
-    public LegacyRazorCompletionEndpoint(
-        RazorCompletionFactsService completionFactsService,
-        CompletionListCache completionListCache)
+    public LegacyRazorCompletionEndpoint(IRazorCompletionFactsService completionFactsService, CompletionListCache completionListCache)
     {
-        if (completionFactsService is null)
-        {
-            throw new ArgumentNullException(nameof(completionFactsService));
-        }
-
-        if (completionListCache is null)
-        {
-            throw new ArgumentNullException(nameof(completionListCache));
-        }
-
-        _completionFactsService = completionFactsService;
-        _completionListCache = completionListCache;
+        _completionFactsService = completionFactsService ?? throw new ArgumentNullException(nameof(completionFactsService));
+        _completionListCache = completionListCache ?? throw new ArgumentNullException(nameof(completionListCache));
     }
 
     public void ApplyCapabilities(VSInternalServerCapabilities serverCapabilities, VSInternalClientCapabilities clientCapabilities)
@@ -107,7 +96,7 @@ internal class LegacyRazorCompletionEndpoint : IVSCompletionEndpoint
 
         var razorCompletionItems = _completionFactsService.GetCompletionItems(completionContext);
 
-        requestContext.Logger.LogTrace("Resolved {razorCompletionItemsCount} completion items.", razorCompletionItems.Count);
+        requestContext.Logger.LogTrace("Resolved {razorCompletionItemsCount} completion items.", razorCompletionItems.Length);
 
         var completionList = CreateLSPCompletionList(razorCompletionItems);
         var completionCapability = _clientCapabilities?.TextDocument?.Completion as VSInternalCompletionSetting;
@@ -140,31 +129,33 @@ internal class LegacyRazorCompletionEndpoint : IVSCompletionEndpoint
     }
 
     // Internal for testing
-    internal VSInternalCompletionList CreateLSPCompletionList(IReadOnlyList<RazorCompletionItem> razorCompletionItems) => CreateLSPCompletionList(razorCompletionItems, _clientCapabilities!);
+    internal VSInternalCompletionList CreateLSPCompletionList(ImmutableArray<RazorCompletionItem> razorCompletionItems)
+        => CreateLSPCompletionList(razorCompletionItems, _clientCapabilities!);
 
     // Internal for benchmarking and testing
     internal static VSInternalCompletionList CreateLSPCompletionList(
-        IReadOnlyList<RazorCompletionItem> razorCompletionItems,
+        ImmutableArray<RazorCompletionItem> razorCompletionItems,
         VSInternalClientCapabilities clientCapabilities)
     {
-        var completionItems = new List<CompletionItem>();
+        using var items = new PooledArrayBuilder<CompletionItem>();
+
         foreach (var razorCompletionItem in razorCompletionItems)
         {
             if (TryConvert(razorCompletionItem, clientCapabilities, out var completionItem))
             {
-                completionItems.Add(completionItem);
+                items.Add(completionItem);
             }
         }
 
         var completionList = new VSInternalCompletionList()
         {
-            Items = completionItems.ToArray(),
+            Items = items.ToArray(),
             IsIncomplete = false,
         };
 
         var completionCapability = clientCapabilities?.TextDocument?.Completion as VSInternalCompletionSetting;
-        var optimizedCompletionList = CompletionListOptimizer.Optimize(completionList, completionCapability);
-        return optimizedCompletionList;
+
+        return CompletionListOptimizer.Optimize(completionList, completionCapability);
     }
 
     // Internal for testing

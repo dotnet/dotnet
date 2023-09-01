@@ -29,9 +29,9 @@ public abstract class TagHelperServiceTestBase : LanguageServerTestBase
     protected const string RazorFile = "test.razor";
 
     protected ImmutableArray<TagHelperDescriptor> DefaultTagHelpers { get; }
-    protected RazorTagHelperCompletionService RazorTagHelperCompletionService { get; }
+    private protected RazorTagHelperCompletionService RazorTagHelperCompletionService { get; }
     internal HtmlFactsService HtmlFactsService { get; }
-    protected TagHelperFactsService TagHelperFactsService { get; }
+    private protected TagHelperFactsService TagHelperFactsService { get; }
 
     public TagHelperServiceTestBase(ITestOutputHelper testOutput)
         : base(testOutput)

@@ -11,7 +11,7 @@ using Microsoft.CodeAnalysis.Text;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Common;
 
-public class DefaultRemoteTextLoaderFactory : RemoteTextLoaderFactory
+internal class DefaultRemoteTextLoaderFactory : RemoteTextLoaderFactory
 {
     public override TextLoader Create(string filePath)
     {

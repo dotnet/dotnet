@@ -7,7 +7,7 @@ using Microsoft.VisualStudio.Text;
 
 namespace Microsoft.VisualStudio.Editor.Razor;
 
-public abstract class RazorIndentationFactsService : ILanguageService
+internal abstract class RazorIndentationFactsService : ILanguageService
 {
     public abstract int? GetDesiredIndentation(RazorSyntaxTree syntaxTree, ITextSnapshot syntaxTreeSnapshot, ITextSnapshotLine line, int indentSize, int tabSize);
 }

@@ -22,31 +22,16 @@ internal abstract class AbstractTextDocumentPresentationEndpointBase<TParams> : 
 {
     private readonly IRazorDocumentMappingService _razorDocumentMappingService;
     private readonly ClientNotifierServiceBase _languageServer;
-    private readonly LanguageServerFeatureOptions _languageServerFeatureOptions;
+    private readonly FilePathService _filePathService;
 
     protected AbstractTextDocumentPresentationEndpointBase(
         IRazorDocumentMappingService razorDocumentMappingService,
         ClientNotifierServiceBase languageServer,
-        LanguageServerFeatureOptions languageServerFeatureOptions)
+        FilePathService filePathService)
     {
-        if (razorDocumentMappingService is null)
-        {
-            throw new ArgumentNullException(nameof(razorDocumentMappingService));
-        }
-
-        if (languageServer is null)
-        {
-            throw new ArgumentNullException(nameof(languageServer));
-        }
-
-        if (languageServerFeatureOptions is null)
-        {
-            throw new ArgumentNullException(nameof(languageServerFeatureOptions));
-        }
-
-        _razorDocumentMappingService = razorDocumentMappingService;
-        _languageServer = languageServer;
-        _languageServerFeatureOptions = languageServerFeatureOptions;
+        _razorDocumentMappingService = razorDocumentMappingService ?? throw new ArgumentNullException(nameof(razorDocumentMappingService));
+        _languageServer = languageServer ?? throw new ArgumentNullException(nameof(languageServer));
+        _filePathService = filePathService ?? throw new ArgumentNullException(nameof(filePathService));
     }
 
     public abstract string EndpointName { get; }
@@ -165,7 +150,7 @@ internal abstract class AbstractTextDocumentPresentationEndpointBase<TParams> : 
             var uri = new Uri(entry.Key);
             var edits = entry.Value;
 
-            if (!_languageServerFeatureOptions.IsVirtualDocumentUri(uri))
+            if (!_filePathService.IsVirtualDocumentUri(uri))
             {
                 // This location doesn't point to a background razor file. No need to remap.
                 remappedChanges[entry.Key] = entry.Value;
@@ -179,7 +164,7 @@ internal abstract class AbstractTextDocumentPresentationEndpointBase<TParams> : 
                 continue;
             }
 
-            var razorDocumentUri = _languageServerFeatureOptions.GetRazorDocumentUri(uri);
+            var razorDocumentUri = _filePathService.GetRazorDocumentUri(uri);
             remappedChanges[razorDocumentUri.AbsoluteUri] = remappedEdits;
         }
 
@@ -192,7 +177,7 @@ internal abstract class AbstractTextDocumentPresentationEndpointBase<TParams> : 
         foreach (var entry in documentEdits)
         {
             var uri = entry.TextDocument.Uri;
-            if (!_languageServerFeatureOptions.IsVirtualDocumentUri(uri))
+            if (!_filePathService.IsVirtualDocumentUri(uri))
             {
                 // This location doesn't point to a background razor file. No need to remap.
                 remappedDocumentEdits.Add(entry);
@@ -208,7 +193,7 @@ internal abstract class AbstractTextDocumentPresentationEndpointBase<TParams> : 
                 continue;
             }
 
-            var razorDocumentUri = _languageServerFeatureOptions.GetRazorDocumentUri(uri);
+            var razorDocumentUri = _filePathService.GetRazorDocumentUri(uri);
             remappedDocumentEdits.Add(new TextDocumentEdit()
             {
                 TextDocument = new OptionalVersionedTextDocumentIdentifier()

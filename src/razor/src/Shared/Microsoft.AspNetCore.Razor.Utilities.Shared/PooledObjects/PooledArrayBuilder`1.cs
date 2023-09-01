@@ -67,6 +67,17 @@ internal ref struct PooledArrayBuilder<T>
         _builder.Add(item);
     }
 
+    public void AddRange(ImmutableArray<T> items)
+    {
+        if (items.Length == 0)
+        {
+            return;
+        }
+
+        _builder ??= GetBuilder();
+        _builder.AddRange(items);
+    }
+
     public void AddRange(IReadOnlyList<T> items)
     {
         if (items.Count == 0)

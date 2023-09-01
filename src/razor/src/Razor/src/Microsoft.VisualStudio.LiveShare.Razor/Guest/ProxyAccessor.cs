@@ -3,7 +3,7 @@
 
 namespace Microsoft.VisualStudio.LiveShare.Razor.Guest;
 
-public abstract class ProxyAccessor
+internal abstract class ProxyAccessor
 {
     public abstract IProjectHierarchyProxy GetProjectHierarchyProxy();
 }
