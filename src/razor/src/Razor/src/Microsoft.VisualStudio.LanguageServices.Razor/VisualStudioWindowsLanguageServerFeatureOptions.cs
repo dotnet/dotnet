@@ -58,8 +58,6 @@ internal class VisualStudioWindowsLanguageServerFeatureOptions : LanguageServerF
 
     public override bool SingleServerSupport => true;
 
-    public override bool SupportsDelegatedCodeActions => true;
-
     public override bool DelegateToCSharpOnDiagnosticPublish => false;
 
     public override bool ReturnCodeActionAndRenamePathsWithPrefixedSlash => false;

@@ -5,6 +5,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.CodeAnalysis.Razor.Tooltip;
@@ -15,13 +16,8 @@ using static Microsoft.AspNetCore.Razor.LanguageServer.Tooltip.DefaultVSLSPTagHe
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Tooltip;
 
-public class DefaultVSLSPTagHelperTooltipFactoryTest : TestBase
+public class DefaultVSLSPTagHelperTooltipFactoryTest(ITestOutputHelper testOutput) : TestBase(testOutput)
 {
-    public DefaultVSLSPTagHelperTooltipFactoryTest(ITestOutputHelper testOutput)
-        : base(testOutput)
-    {
-    }
-
     [Fact]
     public void CleanAndClassifySummaryContent_ClassifiedTextElement_ReplacesSeeCrefs()
     {
@@ -170,7 +166,7 @@ End summary description.";
     {
         // Arrange
         var descriptionFactory = new DefaultVSLSPTagHelperTooltipFactory();
-        var elementDescription = AggregateBoundElementDescription.Default;
+        var elementDescription = AggregateBoundElementDescription.Empty;
 
         // Act
         var result = descriptionFactory.TryCreateTooltip(elementDescription, out ClassifiedTextElement classifiedTextElement);
@@ -191,7 +187,7 @@ End summary description.";
                 "Microsoft.AspNetCore.SomeTagHelper",
                 "<summary>Uses <see cref=\"T:System.Collections.List{System.Collections.List{System.String}}\" />s</summary>"),
         };
-        var elementDescription = new AggregateBoundElementDescription(associatedTagHelperInfos);
+        var elementDescription = new AggregateBoundElementDescription(associatedTagHelperInfos.ToImmutableArray());
 
         // Act
         var result = descriptionFactory.TryCreateTooltip(elementDescription, out ClassifiedTextElement classifiedTextElement);
@@ -231,7 +227,7 @@ End summary description.";
                 "Microsoft.AspNetCore.SomeTagHelper.SomeTagHelper",
                 "<summary>Uses <see cref=\"T:A.B.C{C.B}\" />s</summary>"),
         };
-        var elementDescription = new AggregateBoundElementDescription(associatedTagHelperInfos);
+        var elementDescription = new AggregateBoundElementDescription(associatedTagHelperInfos.ToImmutableArray());
 
         // Act
         var result = descriptionFactory.TryCreateTooltip(elementDescription, out ClassifiedTextElement classifiedTextElement);
@@ -269,7 +265,7 @@ End summary description.";
             new BoundElementDescriptionInfo("Microsoft.AspNetCore.SomeTagHelper", "<summary>\nUses <see cref=\"T:System.Collections.List{System.String}\" />s\n</summary>"),
             new BoundElementDescriptionInfo("Microsoft.AspNetCore.OtherTagHelper", "<summary>\nAlso uses <see cref=\"T:System.Collections.List{System.String}\" />s\n\r\n\r\r</summary>"),
         };
-        var elementDescription = new AggregateBoundElementDescription(associatedTagHelperInfos);
+        var elementDescription = new AggregateBoundElementDescription(associatedTagHelperInfos.ToImmutableArray());
 
         // Act
         var result = descriptionFactory.TryCreateTooltip(elementDescription, out ClassifiedTextElement classifiedTextElement);
@@ -317,7 +313,7 @@ End summary description.";
     {
         // Arrange
         var descriptionFactory = new DefaultVSLSPTagHelperTooltipFactory();
-        var elementDescription = AggregateBoundAttributeDescription.Default;
+        var elementDescription = AggregateBoundAttributeDescription.Empty;
 
         // Act
         var result = descriptionFactory.TryCreateTooltip(elementDescription, out ClassifiedTextElement classifiedTextElement);
@@ -335,12 +331,12 @@ End summary description.";
         var associatedAttributeDescriptions = new[]
         {
             new BoundAttributeDescriptionInfo(
-                returnTypeName: "System.String",
-                typeName: "Microsoft.AspNetCore.SomeTagHelpers.SomeTypeName",
-                propertyName: "SomeProperty",
-                documentation: "<summary>Uses <see cref=\"T:System.Collections.List{System.Collections.List{System.String}}\" />s</summary>")
+                ReturnTypeName: "System.String",
+                TypeName: "Microsoft.AspNetCore.SomeTagHelpers.SomeTypeName",
+                PropertyName: "SomeProperty",
+                Documentation: "<summary>Uses <see cref=\"T:System.Collections.List{System.Collections.List{System.String}}\" />s</summary>")
         };
-        var attributeDescription = new AggregateBoundAttributeDescription(associatedAttributeDescriptions);
+        var attributeDescription = new AggregateBoundAttributeDescription(associatedAttributeDescriptions.ToImmutableArray());
 
         // Act
         var result = descriptionFactory.TryCreateTooltip(attributeDescription, out ClassifiedTextElement classifiedTextElement);
@@ -383,17 +379,17 @@ End summary description.";
         var associatedAttributeDescriptions = new[]
         {
             new BoundAttributeDescriptionInfo(
-                returnTypeName: "System.String",
-                typeName: "Microsoft.AspNetCore.SomeTagHelpers.SomeTypeName",
-                propertyName: "SomeProperty",
-                documentation: "<summary>Uses <see cref=\"T:System.Collections.List{System.String}\" />s</summary>"),
+                ReturnTypeName: "System.String",
+                TypeName: "Microsoft.AspNetCore.SomeTagHelpers.SomeTypeName",
+                PropertyName: "SomeProperty",
+                Documentation: "<summary>Uses <see cref=\"T:System.Collections.List{System.String}\" />s</summary>"),
             new BoundAttributeDescriptionInfo(
-                propertyName: "AnotherProperty",
-                typeName: "Microsoft.AspNetCore.SomeTagHelpers.AnotherTypeName",
-                returnTypeName: "System.Boolean?",
-                documentation: "<summary>\nUses <see cref=\"T:System.Collections.List{System.String}\" />s\n</summary>"),
+                PropertyName: "AnotherProperty",
+                TypeName: "Microsoft.AspNetCore.SomeTagHelpers.AnotherTypeName",
+                ReturnTypeName: "System.Boolean?",
+                Documentation: "<summary>\nUses <see cref=\"T:System.Collections.List{System.String}\" />s\n</summary>"),
         };
-        var attributeDescription = new AggregateBoundAttributeDescription(associatedAttributeDescriptions);
+        var attributeDescription = new AggregateBoundAttributeDescription(associatedAttributeDescriptions.ToImmutableArray());
 
         // Act
         var result = descriptionFactory.TryCreateTooltip(attributeDescription, out ClassifiedTextElement classifiedTextElement);
@@ -454,7 +450,7 @@ End summary description.";
     {
         // Arrange
         var descriptionFactory = new DefaultVSLSPTagHelperTooltipFactory();
-        var elementDescription = AggregateBoundElementDescription.Default;
+        var elementDescription = AggregateBoundElementDescription.Empty;
 
         // Act
         var result = descriptionFactory.TryCreateTooltip(elementDescription, out ContainerElement containerElement);
@@ -474,7 +470,7 @@ End summary description.";
             new BoundElementDescriptionInfo("Microsoft.AspNetCore.SomeTagHelper", "<summary>\nUses <see cref=\"T:System.Collections.List{System.String}\" />s\n</summary>"),
             new BoundElementDescriptionInfo("Microsoft.AspNetCore.OtherTagHelper", "<summary>\nAlso uses <see cref=\"T:System.Collections.List{System.String}\" />s\n\r\n\r\r</summary>"),
         };
-        var elementDescription = new AggregateBoundElementDescription(associatedTagHelperInfos);
+        var elementDescription = new AggregateBoundElementDescription(associatedTagHelperInfos.ToImmutableArray());
 
         // Act
         var result = descriptionFactory.TryCreateTooltip(elementDescription, out ContainerElement container);
@@ -552,7 +548,7 @@ End summary description.";
     {
         // Arrange
         var descriptionFactory = new DefaultVSLSPTagHelperTooltipFactory();
-        var elementDescription = AggregateBoundAttributeDescription.Default;
+        var elementDescription = AggregateBoundAttributeDescription.Empty;
 
         // Act
         var result = descriptionFactory.TryCreateTooltip(elementDescription, out ContainerElement containerElement);
@@ -570,17 +566,17 @@ End summary description.";
         var associatedAttributeDescriptions = new[]
         {
             new BoundAttributeDescriptionInfo(
-                returnTypeName: "System.String",
-                typeName: "Microsoft.AspNetCore.SomeTagHelpers.SomeTypeName",
-                propertyName: "SomeProperty",
-                documentation: "<summary>Uses <see cref=\"T:System.Collections.List{System.String}\" />s</summary>"),
+                ReturnTypeName: "System.String",
+                TypeName: "Microsoft.AspNetCore.SomeTagHelpers.SomeTypeName",
+                PropertyName: "SomeProperty",
+                Documentation: "<summary>Uses <see cref=\"T:System.Collections.List{System.String}\" />s</summary>"),
             new BoundAttributeDescriptionInfo(
-                propertyName: "AnotherProperty",
-                typeName: "Microsoft.AspNetCore.SomeTagHelpers.AnotherTypeName",
-                returnTypeName: "System.Boolean?",
-                documentation: "<summary>\nUses <see cref=\"T:System.Collections.List{System.String}\" />s\n</summary>"),
+                PropertyName: "AnotherProperty",
+                TypeName: "Microsoft.AspNetCore.SomeTagHelpers.AnotherTypeName",
+                ReturnTypeName: "System.Boolean?",
+                Documentation: "<summary>\nUses <see cref=\"T:System.Collections.List{System.String}\" />s\n</summary>"),
         };
-        var attributeDescription = new AggregateBoundAttributeDescription(associatedAttributeDescriptions);
+        var attributeDescription = new AggregateBoundAttributeDescription(associatedAttributeDescriptions.ToImmutableArray());
 
         // Act
         var result = descriptionFactory.TryCreateTooltip(attributeDescription, out ContainerElement container);

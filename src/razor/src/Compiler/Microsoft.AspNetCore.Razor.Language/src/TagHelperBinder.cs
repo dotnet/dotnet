@@ -5,6 +5,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 
 namespace Microsoft.AspNetCore.Razor.Language;
@@ -47,7 +48,7 @@ internal sealed class TagHelperBinder
     /// Will return <c>null</c> if no <see cref="TagHelperDescriptor"/>s are a match.</returns>
     public TagHelperBinding GetBinding(
         string tagName,
-        IReadOnlyList<KeyValuePair<string, string>> attributes,
+        ImmutableArray<KeyValuePair<string, string>> attributes,
         string parentTagName,
         bool parentIsTagHelper)
     {

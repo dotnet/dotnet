@@ -39,7 +39,7 @@ public class TagHelperCompletionProviderTest : TagHelperServiceTestBase
                 """,
             isRazorFile: false);
         var element = context.Owner.FirstAncestorOrSelf<MarkupElementSyntax>();
-        var service = new DefaultTagHelperFactsService();
+        var service = new TagHelperFactsService();
 
         // Act
         var (ancestorName, ancestorIsTagHelper) = service.GetNearestAncestorTagInfo(element.Ancestors());
@@ -61,7 +61,7 @@ public class TagHelperCompletionProviderTest : TagHelperServiceTestBase
             isRazorFile: false,
             tagHelpers: DefaultTagHelpers);
         var element = context.Owner.FirstAncestorOrSelf<MarkupTagHelperElementSyntax>();
-        var service = new DefaultTagHelperFactsService();
+        var service = new TagHelperFactsService();
 
         // Act
         var (ancestorName, ancestorIsTagHelper) = service.GetNearestAncestorTagInfo(element.Ancestors());

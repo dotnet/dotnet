@@ -10,6 +10,8 @@
                     RazorMetaCode - [1..6)::5 - Gen<None> - SpanEditHandler;Accepts:None
                         Keyword;[class];
                     CSharpCodeBlock - [6..6)::0
+                        CSharpStatementLiteral - [6..6)::0 - [] - Gen<None>
+                            Identifier;[<Missing>];
         MarkupTextLiteral - [6..6)::0 - [] - Gen<Markup> - SpanEditHandler;Accepts:Any
             Marker;[];
     EndOfFile;[];

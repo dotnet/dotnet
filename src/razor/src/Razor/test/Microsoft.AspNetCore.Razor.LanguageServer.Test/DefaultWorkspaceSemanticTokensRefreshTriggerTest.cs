@@ -2,6 +2,7 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using System;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.CodeAnalysis;
@@ -22,7 +23,7 @@ public class DefaultWorkspaceSemanticTokensRefreshTriggerTest : LanguageServerTe
     public DefaultWorkspaceSemanticTokensRefreshTriggerTest(ITestOutputHelper testOutput)
         : base(testOutput)
     {
-        _projectManager = TestProjectSnapshotManager.Create(ErrorReporter);
+        _projectManager = TestProjectSnapshotManager.Create(ErrorReporter, new TestDispatcher());
         _projectManager.AllowNotifyListeners = true;
         _hostProject = new HostProject("/path/to/project.csproj", "/path/to/obj", RazorConfiguration.Default, "TestRootNamespace");
         _projectManager.ProjectAdded(_hostProject);
@@ -60,5 +61,14 @@ public class DefaultWorkspaceSemanticTokensRefreshTriggerTest : LanguageServerTe
         public void ReportError(Exception exception) => throw new NotImplementedException();
         public void ReportError(Exception exception, IProjectSnapshot? project) => throw new NotImplementedException();
         public void ReportError(Exception exception, Project workspaceProject) => throw new NotImplementedException();
+    }
+
+    private class TestDispatcher : ProjectSnapshotManagerDispatcher
+    {
+        // The tests run synchronously without the dispatcher, so just assert that
+        // we're always on the right thread
+        public override bool IsDispatcherThread => true;
+
+        public override TaskScheduler DispatcherScheduler => TaskScheduler.Default;
     }
 }

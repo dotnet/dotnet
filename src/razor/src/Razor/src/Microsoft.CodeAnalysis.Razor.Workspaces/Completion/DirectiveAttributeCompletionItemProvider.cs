@@ -19,10 +19,10 @@ namespace Microsoft.CodeAnalysis.Razor.Completion;
 [Export(typeof(IRazorCompletionItemProvider))]
 internal class DirectiveAttributeCompletionItemProvider : DirectiveAttributeCompletionItemProviderBase
 {
-    private readonly TagHelperFactsService _tagHelperFactsService;
+    private readonly ITagHelperFactsService _tagHelperFactsService;
 
     [ImportingConstructor]
-    public DirectiveAttributeCompletionItemProvider(TagHelperFactsService tagHelperFactsService)
+    public DirectiveAttributeCompletionItemProvider(ITagHelperFactsService tagHelperFactsService)
     {
         if (tagHelperFactsService is null)
         {
@@ -97,7 +97,7 @@ internal class DirectiveAttributeCompletionItemProvider : DirectiveAttributeComp
         TagHelperDocumentContext tagHelperDocumentContext)
     {
         var descriptorsForTag = _tagHelperFactsService.GetTagHelpersGivenTag(tagHelperDocumentContext, containingTagName, parentTag: null);
-        if (descriptorsForTag.Count == 0)
+        if (descriptorsForTag.Length == 0)
         {
             // If the current tag has no possible descriptors then we can't have any directive attributes.
             return ImmutableArray<RazorCompletionItem>.Empty;
@@ -105,10 +105,9 @@ internal class DirectiveAttributeCompletionItemProvider : DirectiveAttributeComp
 
         // Attributes are case sensitive when matching
         var attributeCompletions = new Dictionary<string, (HashSet<BoundAttributeDescriptionInfo>, HashSet<string>)>(StringComparer.Ordinal);
-        for (var i = 0; i < descriptorsForTag.Count; i++)
-        {
-            var descriptor = descriptorsForTag[i];
 
+        foreach (var descriptor in descriptorsForTag)
+        {
             foreach (var attributeDescriptor in descriptor.BoundAttributes)
             {
                 if (!attributeDescriptor.IsDirectiveAttribute())
@@ -168,7 +167,7 @@ internal class DirectiveAttributeCompletionItemProvider : DirectiveAttributeComp
                 insertText,
                 RazorCompletionItemKind.DirectiveAttribute,
                 commitCharacters: razorCommitCharacters);
-            var completionDescription = new AggregateBoundAttributeDescription(attributeDescriptionInfos.ToArray());
+            var completionDescription = new AggregateBoundAttributeDescription(attributeDescriptionInfos.ToImmutableArray());
             razorCompletionItem.SetAttributeCompletionDescription(completionDescription);
 
             completionItems.Add(razorCompletionItem);
@@ -202,7 +201,7 @@ internal class DirectiveAttributeCompletionItemProvider : DirectiveAttributeComp
 
             var indexerCompletion = attributeName.EndsWith("...", StringComparison.Ordinal);
             var tagHelperTypeName = tagHelperDescriptor.GetTypeName();
-            var descriptionInfo = BoundAttributeDescriptionInfo.From(boundAttributeDescriptor, indexer: indexerCompletion, tagHelperTypeName);
+            var descriptionInfo = BoundAttributeDescriptionInfo.From(boundAttributeDescriptor, isIndexer: indexerCompletion, tagHelperTypeName);
             attributeDescriptionInfos.Add(descriptionInfo);
 
             if (indexerCompletion)

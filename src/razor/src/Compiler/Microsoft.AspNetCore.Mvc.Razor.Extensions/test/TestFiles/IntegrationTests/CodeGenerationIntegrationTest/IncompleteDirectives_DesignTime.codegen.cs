@@ -67,6 +67,27 @@ MyService<TModel> __typeHelper = default!;
         #pragma warning disable 1998
         public async override global::System.Threading.Tasks.Task ExecuteAsync()
         {
+#nullable restore
+#line 7 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/IncompleteDirectives.cshtml"
+      
+
+#line default
+#line hidden
+#nullable disable
+#nullable restore
+#line 10 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/IncompleteDirectives.cshtml"
+       
+
+#line default
+#line hidden
+#nullable disable
+#nullable restore
+#line 14 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/IncompleteDirectives.cshtml"
+          
+
+#line default
+#line hidden
+#nullable disable
         }
         #pragma warning restore 1998
         #nullable restore

@@ -28,7 +28,7 @@ public class RazorDocumentInfoProviderTest : WorkspaceTestBase
     public RazorDocumentInfoProviderTest(ITestOutputHelper testOutput)
         : base(testOutput)
     {
-        _projectSnapshotManager = new TestProjectSnapshotManager(Workspace);
+        _projectSnapshotManager = new TestProjectSnapshotManager(Workspace, new TestProjectSnapshotManagerDispatcher());
 
         var serviceProviderFactory = new DefaultRazorDocumentServiceProviderFactory();
         var lspEditorEnabledFeatureDetector = Mock.Of<LSPEditorFeatureDetector>(detector => detector.IsLSPEditorAvailable() == true, MockBehavior.Strict);

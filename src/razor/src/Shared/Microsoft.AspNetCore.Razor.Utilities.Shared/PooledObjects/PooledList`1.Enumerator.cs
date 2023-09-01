@@ -14,7 +14,7 @@ internal ref partial struct PooledList<T>
         private int _index;
         private T? _current;
 
-        public Enumerator(List<T>? list)
+        public Enumerator(List<T> list)
         {
             _list = list;
             _index = 0;

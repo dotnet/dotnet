@@ -58,9 +58,9 @@ public class RazorCompletionItemResolverTest : LanguageServerTestBase
         };
 
         var attributeDescriptionInfo = new BoundAttributeDescriptionInfo("System.DateTime", "System.DateTime", "DateTime", "Returns the time.");
-        _attributeDescription = new AggregateBoundAttributeDescription(new[] { attributeDescriptionInfo });
+        _attributeDescription = new AggregateBoundAttributeDescription(ImmutableArray.Create(attributeDescriptionInfo));
         var elementDescriptionInfo = new BoundElementDescriptionInfo("System.SomeTagHelper", "This is some TagHelper.");
-        _elementDescription = new AggregateBoundElementDescription(new[] { elementDescriptionInfo });
+        _elementDescription = new AggregateBoundElementDescription(ImmutableArray.Create(elementDescriptionInfo));
     }
 
     [Fact]

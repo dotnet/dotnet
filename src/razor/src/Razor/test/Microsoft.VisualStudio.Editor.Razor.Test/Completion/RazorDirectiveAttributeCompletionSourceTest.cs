@@ -3,7 +3,6 @@
 
 #nullable disable
 
-using System;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Razor.Completion;
 using Microsoft.CodeAnalysis.Razor.Tooltip;
@@ -18,13 +17,8 @@ using Xunit.Abstractions;
 
 namespace Microsoft.VisualStudio.Editor.Razor.Completion;
 
-public class RazorDirectiveAttributeCompletionSourceTest : ProjectSnapshotManagerDispatcherTestBase
+public class RazorDirectiveAttributeCompletionSourceTest(ITestOutputHelper testOutput) : ProjectSnapshotManagerDispatcherTestBase(testOutput)
 {
-    public RazorDirectiveAttributeCompletionSourceTest(ITestOutputHelper testOutput)
-        : base(testOutput)
-    {
-    }
-
     [Fact]
     public async Task GetDescriptionAsync_NoDescriptionData_ReturnsEmptyString()
     {
@@ -45,7 +39,7 @@ public class RazorDirectiveAttributeCompletionSourceTest : ProjectSnapshotManage
     {
         // Arrange
         var expectedResult = new ContainerElement(ContainerElementStyle.Wrapped);
-        var description = new AggregateBoundAttributeDescription(Array.Empty<BoundAttributeDescriptionInfo>());
+        var description = AggregateBoundAttributeDescription.Empty;
         var descriptionFactory = Mock.Of<IVisualStudioDescriptionFactory>(factory => factory.CreateClassifiedDescription(description) == expectedResult, MockBehavior.Strict);
         var source = new RazorDirectiveAttributeCompletionSource(
             Dispatcher,
