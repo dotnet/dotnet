@@ -41,7 +41,7 @@ public class CodeActionEndpointTest : LanguageServerTestBase
             MockBehavior.Strict);
 
         _languageServerFeatureOptions = Mock.Of<LanguageServerFeatureOptions>(
-            l => l.SupportsFileManipulation == true && l.SupportsDelegatedCodeActions == true,
+            l => l.SupportsFileManipulation == true,
             MockBehavior.Strict);
 
         _languageServer = Mock.Of<ClientNotifierServiceBase>(MockBehavior.Strict);

@@ -5,6 +5,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
@@ -57,7 +58,7 @@ internal static class TagHelperParseTreeRewriter
 
         private readonly RazorSourceDocument _source;
         private readonly string _tagHelperPrefix;
-        private readonly List<KeyValuePair<string, string>> _htmlAttributeTracker;
+        private readonly ImmutableArray<KeyValuePair<string, string>>.Builder _htmlAttributeTracker;
         private readonly StringBuilder _attributeValueBuilder;
         private readonly TagHelperBinder _tagHelperBinder;
         private readonly Stack<TagTracker> _trackerStack;
@@ -77,7 +78,7 @@ internal static class TagHelperParseTreeRewriter
             _tagHelperBinder = new TagHelperBinder(tagHelperPrefix, descriptors);
             _trackerStack = new Stack<TagTracker>();
             _attributeValueBuilder = new StringBuilder();
-            _htmlAttributeTracker = new List<KeyValuePair<string, string>>();
+            _htmlAttributeTracker = ImmutableArray.CreateBuilder<KeyValuePair<string, string>>();
             _featureFlags = featureFlags;
             _usedDescriptors = new HashSet<TagHelperDescriptor>();
             _errorSink = errorSink;
@@ -338,7 +339,7 @@ internal static class TagHelperParseTreeRewriter
             {
                 var tagHelperBinding = _tagHelperBinder.GetBinding(
                     tagName,
-                    attributes: Array.Empty<KeyValuePair<string, string>>(),
+                    attributes: ImmutableArray<KeyValuePair<string, string>>.Empty,
                     parentTagName: CurrentParentTagName,
                     parentIsTagHelper: CurrentParentIsTagHelper);
 
@@ -376,11 +377,11 @@ internal static class TagHelperParseTreeRewriter
         }
 
         // Internal for testing
-        internal IReadOnlyList<KeyValuePair<string, string>> GetAttributeNameValuePairs(MarkupStartTagSyntax tagBlock)
+        internal ImmutableArray<KeyValuePair<string, string>> GetAttributeNameValuePairs(MarkupStartTagSyntax tagBlock)
         {
             if (tagBlock.Attributes.Count == 0)
             {
-                return Array.Empty<KeyValuePair<string, string>>();
+                return ImmutableArray<KeyValuePair<string, string>>.Empty;
             }
 
             _htmlAttributeTracker.Clear();
@@ -445,7 +446,7 @@ internal static class TagHelperParseTreeRewriter
                 _attributeValueBuilder.Clear();
             }
 
-            return attributes;
+            return attributes.DrainToImmutable();
         }
 
         private void ValidateParentAllowsTagHelper(string tagName, MarkupStartTagSyntax tagBlock)
@@ -601,7 +602,7 @@ internal static class TagHelperParseTreeRewriter
 
             var tagHelperBinding = _tagHelperBinder.GetBinding(
                 tagName,
-                attributes: Array.Empty<KeyValuePair<string, string>>(),
+                attributes: ImmutableArray<KeyValuePair<string, string>>.Empty,
                 parentTagName: CurrentParentTagName,
                 parentIsTagHelper: CurrentParentIsTagHelper);
 
@@ -634,7 +635,7 @@ internal static class TagHelperParseTreeRewriter
 
             var tagHelperBinding = _tagHelperBinder.GetBinding(
                 tagName,
-                attributes: Array.Empty<KeyValuePair<string, string>>(),
+                attributes: ImmutableArray<KeyValuePair<string, string>>.Empty,
                 parentTagName: CurrentParentTagName,
                 parentIsTagHelper: CurrentParentIsTagHelper);
 

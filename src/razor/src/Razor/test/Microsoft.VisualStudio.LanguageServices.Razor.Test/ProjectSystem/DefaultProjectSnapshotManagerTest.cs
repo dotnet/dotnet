@@ -58,7 +58,7 @@ public class DefaultProjectSnapshotManagerTest : ProjectSnapshotManagerDispatche
         _hostProject2 = new HostProject(TestProjectData.AnotherProject.FilePath, TestProjectData.AnotherProject.IntermediateOutputPath, FallbackRazorConfiguration.MVC_2_1, TestProjectData.AnotherProject.RootNamespace);
         _hostProjectWithConfigurationChange = new HostProject(TestProjectData.SomeProject.FilePath, TestProjectData.SomeProject.IntermediateOutputPath, FallbackRazorConfiguration.MVC_1_0, TestProjectData.SomeProject.RootNamespace);
 
-        _projectManager = new TestProjectSnapshotManager(Enumerable.Empty<IProjectSnapshotChangeTrigger>(), Workspace);
+        _projectManager = new TestProjectSnapshotManager(Enumerable.Empty<IProjectSnapshotChangeTrigger>(), Workspace, Dispatcher);
 
         _projectWorkspaceStateWithTagHelpers = new ProjectWorkspaceState(_tagHelperResolver.TagHelpers, default);
 
@@ -87,7 +87,7 @@ public class DefaultProjectSnapshotManagerTest : ProjectSnapshotManagerDispatche
         var triggers = new[] { defaultPriorityTrigger, highPriorityTrigger };
 
         // Act
-        var projectManager = new TestProjectSnapshotManager(triggers, Workspace);
+        var projectManager = new TestProjectSnapshotManager(triggers, Workspace, Dispatcher);
 
         // Assert
         Assert.Equal(new[] { "highPriority", "lowPriority" }, initializedOrder);
@@ -852,8 +852,8 @@ public class DefaultProjectSnapshotManagerTest : ProjectSnapshotManagerDispatche
 
     private class TestProjectSnapshotManager : DefaultProjectSnapshotManager
     {
-        public TestProjectSnapshotManager(IEnumerable<IProjectSnapshotChangeTrigger> triggers, Workspace workspace)
-            : base(Mock.Of<IErrorReporter>(MockBehavior.Strict), triggers, workspace)
+        public TestProjectSnapshotManager(IEnumerable<IProjectSnapshotChangeTrigger> triggers, Workspace workspace, ProjectSnapshotManagerDispatcher dispatcher)
+            : base(Mock.Of<IErrorReporter>(MockBehavior.Strict), triggers, workspace, dispatcher)
         {
         }
 

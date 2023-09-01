@@ -25,7 +25,7 @@ public class CodeDocumentReferenceHolderTest : LanguageServerTestBase
     public CodeDocumentReferenceHolderTest(ITestOutputHelper testOutput)
         : base(testOutput)
     {
-        _projectManager = TestProjectSnapshotManager.Create(ErrorReporter);
+        _projectManager = TestProjectSnapshotManager.Create(ErrorReporter, Dispatcher);
         _projectManager.AllowNotifyListeners = true;
         _referenceHolder = new CodeDocumentReferenceHolder();
         _referenceHolder.Initialize(_projectManager);
@@ -89,6 +89,7 @@ public class CodeDocumentReferenceHolderTest : LanguageServerTestBase
         var codeDocumentReference = await ProcessDocumentAndRetrieveOutputAsync(documentSnapshot, DisposalToken);
 
         // Act
+
         await Dispatcher.RunOnDispatcherThreadAsync(() =>
         {
             _projectManager.DocumentChanged(_hostProject.Key, _hostDocument.FilePath, SourceText.From(string.Empty));

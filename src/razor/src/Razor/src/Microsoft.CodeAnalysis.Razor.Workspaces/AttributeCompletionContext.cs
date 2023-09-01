@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using Microsoft.AspNetCore.Razor.Language;
 
 namespace Microsoft.VisualStudio.Editor.Razor;
@@ -13,7 +14,7 @@ internal sealed class AttributeCompletionContext
     public IEnumerable<string> ExistingCompletions { get; }
     public string CurrentTagName { get; }
     public string? CurrentAttributeName { get; }
-    public IEnumerable<KeyValuePair<string, string>> Attributes { get; }
+    public ImmutableArray<KeyValuePair<string, string>> Attributes { get; }
     public string? CurrentParentTagName { get; }
     public bool CurrentParentIsTagHelper { get; }
     public Func<string, bool> InHTMLSchema { get; }
@@ -23,7 +24,7 @@ internal sealed class AttributeCompletionContext
         IEnumerable<string> existingCompletions,
         string currentTagName,
         string? currentAttributeName,
-        IEnumerable<KeyValuePair<string, string>> attributes,
+        ImmutableArray<KeyValuePair<string, string>> attributes,
         string? currentParentTagName,
         bool currentParentIsTagHelper,
         Func<string, bool> inHTMLSchema)
@@ -32,7 +33,7 @@ internal sealed class AttributeCompletionContext
         ExistingCompletions = existingCompletions ?? throw new ArgumentNullException(nameof(existingCompletions));
         CurrentTagName = currentTagName ?? throw new ArgumentNullException(nameof(currentTagName));
         CurrentAttributeName = currentAttributeName;
-        Attributes = attributes ?? throw new ArgumentNullException(nameof(attributes));
+        Attributes = attributes.IsDefault ? throw new ArgumentNullException(nameof(attributes)) : attributes;
         CurrentParentTagName = currentParentTagName;
         CurrentParentIsTagHelper = currentParentIsTagHelper;
         InHTMLSchema = inHTMLSchema ?? throw new ArgumentNullException(nameof(inHTMLSchema));

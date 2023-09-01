@@ -30,7 +30,7 @@ public class BackgroundDocumentGeneratorTest(ITestOutputHelper testOutput) : Lan
     public async Task Queue_ProcessesNotifications_AndGoesBackToSleep()
     {
         // Arrange
-        var projectManager = TestProjectSnapshotManager.Create(ErrorReporter);
+        var projectManager = TestProjectSnapshotManager.Create(ErrorReporter, Dispatcher);
         await Dispatcher.RunOnDispatcherThreadAsync(() =>
         {
             projectManager.ProjectAdded(_hostProject1);
@@ -74,7 +74,7 @@ public class BackgroundDocumentGeneratorTest(ITestOutputHelper testOutput) : Lan
     public async Task Queue_ProcessesNotifications_AndRestarts()
     {
         // Arrange
-        var projectManager = TestProjectSnapshotManager.Create(ErrorReporter);
+        var projectManager = TestProjectSnapshotManager.Create(ErrorReporter, Dispatcher);
         await Dispatcher.RunOnDispatcherThreadAsync(() =>
         {
             projectManager.ProjectAdded(_hostProject1);

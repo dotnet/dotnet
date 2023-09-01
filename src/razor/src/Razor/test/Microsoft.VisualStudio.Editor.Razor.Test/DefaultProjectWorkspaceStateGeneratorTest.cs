@@ -113,7 +113,7 @@ public class DefaultProjectWorkspaceStateGeneratorTest : ProjectSnapshotManagerD
         using (var stateGenerator = new DefaultProjectWorkspaceStateGenerator(Dispatcher))
         {
             stateGenerator.NotifyBackgroundWorkCompleted = new ManualResetEventSlim(initialState: false);
-            var projectManager = new TestProjectSnapshotManager(_workspace);
+            var projectManager = new TestProjectSnapshotManager(_workspace, Dispatcher);
             stateGenerator.Initialize(projectManager);
             projectManager.ProjectAdded(_projectSnapshot.HostProject);
             projectManager.ProjectWorkspaceStateChanged(_projectSnapshot.Key, _projectWorkspaceStateWithTagHelpers);
@@ -137,7 +137,7 @@ public class DefaultProjectWorkspaceStateGeneratorTest : ProjectSnapshotManagerD
         using (var stateGenerator = new DefaultProjectWorkspaceStateGenerator(Dispatcher))
         {
             stateGenerator.NotifyBackgroundWorkCompleted = new ManualResetEventSlim(initialState: false);
-            var projectManager = new TestProjectSnapshotManager(_workspace);
+            var projectManager = new TestProjectSnapshotManager(_workspace, Dispatcher);
             stateGenerator.Initialize(projectManager);
             projectManager.ProjectAdded(_projectSnapshot.HostProject);
 

@@ -13,3 +13,13 @@ Source Location: (133:7,8 [17] TestFiles/IntegrationTests/CodeGenerationIntegrat
 Generated Location: (1180:35,0 [17] )
 |MyService<TModel>|
 
+Source Location: (93:2,6 [0] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/IncompleteDirectives.cshtml)
+||
+Generated Location: (1680:50,6 [0] )
+||
+
+Source Location: (113:5,7 [0] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/IncompleteDirectives.cshtml)
+||
+Generated Location: (1816:55,7 [0] )
+||
+

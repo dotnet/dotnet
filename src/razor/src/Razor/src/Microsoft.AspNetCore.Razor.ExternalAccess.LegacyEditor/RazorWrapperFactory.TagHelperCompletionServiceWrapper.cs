@@ -17,7 +17,7 @@ internal static partial class RazorWrapperFactory
                     Unwrap(tagHelperContext),
                     existingCompletions,
                     containingTagName,
-                    attributes,
+                    attributes.ToImmutableArray(),
                     containingParentTagName,
                     containingParentIsTagHelper,
                     inHTMLSchema));

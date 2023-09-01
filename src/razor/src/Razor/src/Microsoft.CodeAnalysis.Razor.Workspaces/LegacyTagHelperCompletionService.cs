@@ -3,11 +3,14 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Composition;
 using System.Diagnostics;
 using System.Linq;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Language.Components;
+using Microsoft.AspNetCore.Razor.PooledObjects;
+using Microsoft.AspNetCore.Razor.Utilities;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 
 namespace Microsoft.VisualStudio.Editor.Razor;
@@ -18,11 +21,11 @@ namespace Microsoft.VisualStudio.Editor.Razor;
 [Export(typeof(TagHelperCompletionService))]
 internal class LegacyTagHelperCompletionService : TagHelperCompletionService
 {
-    private readonly TagHelperFactsService _tagHelperFactsService;
+    private readonly ITagHelperFactsService _tagHelperFactsService;
     private static readonly HashSet<TagHelperDescriptor> s_emptyHashSet = new();
 
     [ImportingConstructor]
-    public LegacyTagHelperCompletionService(TagHelperFactsService tagHelperFactsService)
+    public LegacyTagHelperCompletionService(ITagHelperFactsService tagHelperFactsService)
     {
         if (tagHelperFactsService is null)
         {
@@ -56,11 +59,10 @@ internal class LegacyTagHelperCompletionService : TagHelperCompletionService
 
         var documentContext = completionContext.DocumentContext;
         var descriptorsForTag = _tagHelperFactsService.GetTagHelpersGivenTag(documentContext, completionContext.CurrentTagName, completionContext.CurrentParentTagName);
-        if (descriptorsForTag.Count == 0)
+        if (descriptorsForTag.Length == 0)
         {
             // If the current tag has no possible descriptors then we can't have any additional attributes.
-            var defaultResult = AttributeCompletionResult.Create(attributeCompletions);
-            return defaultResult;
+            return AttributeCompletionResult.Create(attributeCompletions);
         }
 
         var prefix = documentContext.Prefix ?? string.Empty;
@@ -73,7 +75,13 @@ internal class LegacyTagHelperCompletionService : TagHelperCompletionService
             completionContext.CurrentParentTagName,
             completionContext.CurrentParentIsTagHelper);
 
-        var applicableDescriptors = applicableTagHelperBinding?.Descriptors ?? Enumerable.Empty<TagHelperDescriptor>();
+        var applicableDescriptors = new HashSet<TagHelperDescriptor>(TagHelperChecksumComparer.Instance);
+
+        if (applicableTagHelperBinding is { Descriptors: var descriptors })
+        {
+            applicableDescriptors.UnionWith(descriptors);
+        }
+
         var unprefixedTagName = completionContext.CurrentTagName[prefix.Length..];
 
         if (!completionContext.InHTMLSchema(unprefixedTagName) &&
@@ -83,10 +91,8 @@ internal class LegacyTagHelperCompletionService : TagHelperCompletionService
             attributeCompletions.Clear();
         }
 
-        for (var i = 0; i < descriptorsForTag.Count; i++)
+        foreach (var descriptor in descriptorsForTag)
         {
-            var descriptor = descriptorsForTag[i];
-
             if (applicableDescriptors.Contains(descriptor))
             {
                 foreach (var attributeDescriptor in descriptor.BoundAttributes)
@@ -151,7 +157,7 @@ internal class LegacyTagHelperCompletionService : TagHelperCompletionService
 
             if (!attributeCompletions.TryGetValue(attributeName, out var rules))
             {
-                rules = new HashSet<BoundAttributeDescriptor>();
+                rules = new HashSet<BoundAttributeDescriptor>(BoundAttributeChecksumComparer.Instance);
                 attributeCompletions[attributeName] = rules;
             }
 
@@ -307,7 +313,7 @@ internal class LegacyTagHelperCompletionService : TagHelperCompletionService
                     prefixedName,
                     completionContext.ContainingTagName);
 
-                if (descriptors.Count == 0)
+                if (descriptors.Length == 0)
                 {
                     if (!elementCompletions.ContainsKey(prefixedName))
                     {
@@ -319,24 +325,23 @@ internal class LegacyTagHelperCompletionService : TagHelperCompletionService
 
                 if (!elementCompletions.TryGetValue(prefixedName, out var existingRuleDescriptors))
                 {
-                    existingRuleDescriptors = new HashSet<TagHelperDescriptor>();
+                    existingRuleDescriptors = new HashSet<TagHelperDescriptor>(TagHelperChecksumComparer.Instance);
                     elementCompletions[prefixedName] = existingRuleDescriptors;
                 }
 
-                existingRuleDescriptors.UnionWith(descriptors);
+                existingRuleDescriptors.AddRange(descriptors);
             }
         }
     }
 
-    private static IReadOnlyList<TagHelperDescriptor> FilterFullyQualifiedCompletions(IReadOnlyList<TagHelperDescriptor> possibleChildDescriptors)
+    private static ImmutableArray<TagHelperDescriptor> FilterFullyQualifiedCompletions(ImmutableArray<TagHelperDescriptor> possibleChildDescriptors)
     {
         // Iterate once through the list to tease apart fully qualified and short name TagHelpers
-        var fullyQualifiedTagHelpers = new List<TagHelperDescriptor>();
+        using var fullyQualifiedTagHelpers = new PooledArrayBuilder<TagHelperDescriptor>();
         var shortNameTagHelpers = new HashSet<TagHelperDescriptor>(ShortNameToFullyQualifiedComparer.Instance);
-        for (var i = 0; i < possibleChildDescriptors.Count; i++)
-        {
-            var descriptor = possibleChildDescriptors[i];
 
+        foreach (var descriptor in possibleChildDescriptors)
+        {
             if (descriptor.IsComponentFullyQualifiedNameMatch())
             {
                 fullyQualifiedTagHelpers.Add(descriptor);
@@ -349,11 +354,11 @@ internal class LegacyTagHelperCompletionService : TagHelperCompletionService
 
         // Re-combine the short named & fully qualified TagHelpers but filter out any fully qualified TagHelpers that have a short
         // named representation already.
-        var filteredList = new List<TagHelperDescriptor>(shortNameTagHelpers);
-        for (var i = 0; i < fullyQualifiedTagHelpers.Count; i++)
-        {
-            var fullyQualifiedTagHelper = fullyQualifiedTagHelpers[i];
+        using var filteredList = new PooledArrayBuilder<TagHelperDescriptor>(capacity: shortNameTagHelpers.Count);
+        filteredList.AddRange(shortNameTagHelpers);
 
+        foreach (var fullyQualifiedTagHelper in fullyQualifiedTagHelpers)
+        {
             if (!shortNameTagHelpers.Contains(fullyQualifiedTagHelper))
             {
                 // Unimported completion item that isn't represented in a short named form.
@@ -365,6 +370,6 @@ internal class LegacyTagHelperCompletionService : TagHelperCompletionService
             }
         }
 
-        return filteredList;
+        return filteredList.DrainToImmutable();
     }
 }

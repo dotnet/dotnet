@@ -86,7 +86,6 @@ public abstract class SingleServerDelegatingEndpointTestBase : LanguageServerTes
         DocumentContextFactory = new TestDocumentContextFactory(razorFilePath, codeDocument, version: 1337);
         LanguageServerFeatureOptions = Mock.Of<LanguageServerFeatureOptions>(options =>
             options.SupportsFileManipulation == true &&
-            options.SupportsDelegatedCodeActions == true &&
             options.SingleServerSupport == true &&
             options.CSharpVirtualDocumentSuffix == DefaultLanguageServerFeatureOptions.DefaultCSharpVirtualDocumentSuffix &&
             options.HtmlVirtualDocumentSuffix == DefaultLanguageServerFeatureOptions.DefaultHtmlVirtualDocumentSuffix,

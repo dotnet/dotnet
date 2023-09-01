@@ -13,18 +13,16 @@ namespace Microsoft.CodeAnalysis.Razor.ProjectSystem;
 [ExportLanguageServiceFactory(typeof(ProjectSnapshotManager), RazorLanguage.Name)]
 internal class DefaultProjectSnapshotManagerFactory : ILanguageServiceFactory
 {
+    private readonly ProjectSnapshotManagerDispatcher _projectSnapshotManagerDispatcher;
     private readonly IEnumerable<IProjectSnapshotChangeTrigger> _triggers;
 
     [ImportingConstructor]
     public DefaultProjectSnapshotManagerFactory(
+        ProjectSnapshotManagerDispatcher projectSnapshotManagerDispatcher,
         [ImportMany] IEnumerable<IProjectSnapshotChangeTrigger> triggers)
     {
-        if (triggers is null)
-        {
-            throw new ArgumentNullException(nameof(triggers));
-        }
-
-        _triggers = triggers;
+        _projectSnapshotManagerDispatcher = projectSnapshotManagerDispatcher ?? throw new ArgumentNullException(nameof(projectSnapshotManagerDispatcher));
+        _triggers = triggers ?? throw new ArgumentNullException(nameof(triggers));
     }
 
     public ILanguageService CreateLanguageService(HostLanguageServices languageServices)
@@ -37,6 +35,7 @@ internal class DefaultProjectSnapshotManagerFactory : ILanguageServiceFactory
         return new DefaultProjectSnapshotManager(
             languageServices.WorkspaceServices.GetRequiredService<IErrorReporter>(),
             _triggers,
-            languageServices.WorkspaceServices.Workspace);
+            languageServices.WorkspaceServices.Workspace,
+            _projectSnapshotManagerDispatcher);
     }
 }

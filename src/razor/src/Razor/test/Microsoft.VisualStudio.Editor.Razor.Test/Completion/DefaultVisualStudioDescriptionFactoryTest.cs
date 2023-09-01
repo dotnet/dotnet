@@ -4,6 +4,7 @@
 #nullable disable
 
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.CodeAnalysis.Razor.Tooltip;
 using Microsoft.VisualStudio.Text.Adornments;
@@ -24,10 +25,8 @@ public class DefaultVisualStudioDescriptionFactoryTest : TestBase
     {
         // Arrange
         var factory = new VisualStudioDescriptionFactory();
-        var description = new AggregateBoundAttributeDescription(new[]
-        {
-            new BoundAttributeDescriptionInfo("TheReturnType", "TheTypeName", "ThePropertyName", "The documentation"),
-        });
+        var description = new AggregateBoundAttributeDescription(ImmutableArray.Create(
+            new BoundAttributeDescriptionInfo("TheReturnType", "TheTypeName", "ThePropertyName", "The documentation")));
 
         // Act
         var result = factory.CreateClassifiedDescription(description);
@@ -41,11 +40,9 @@ public class DefaultVisualStudioDescriptionFactoryTest : TestBase
     {
         // Arrange
         var factory = new VisualStudioDescriptionFactory();
-        var description = new AggregateBoundAttributeDescription(new[]
-        {
+        var description = new AggregateBoundAttributeDescription(ImmutableArray.Create(
             new BoundAttributeDescriptionInfo("TheReturnType", "TheTypeName", "ThePropertyName", "The documentation"),
-            new BoundAttributeDescriptionInfo("TheReturnType2", "TheTypeName2", "ThePropertyName2", "The documentation2"),
-        });
+            new BoundAttributeDescriptionInfo("TheReturnType2", "TheTypeName2", "ThePropertyName2", "The documentation2")));
 
         // Act
         var result = factory.CreateClassifiedDescription(description);
@@ -59,10 +56,8 @@ public class DefaultVisualStudioDescriptionFactoryTest : TestBase
     {
         // Arrange
         var factory = new VisualStudioDescriptionFactory();
-        var description = new AggregateBoundAttributeDescription(new[]
-        {
-            new BoundAttributeDescriptionInfo("TheReturnType", "TheTypeName", "ThePropertyName", "The documentation"),
-        });
+        var description = new AggregateBoundAttributeDescription(ImmutableArray.Create(
+            new BoundAttributeDescriptionInfo("TheReturnType", "TheTypeName", "ThePropertyName", "The documentation")));
 
         // Act
         var result = factory.CreateClassifiedDescription(description);
@@ -77,10 +72,8 @@ public class DefaultVisualStudioDescriptionFactoryTest : TestBase
     {
         // Arrange
         var factory = new VisualStudioDescriptionFactory();
-        var description = new AggregateBoundAttributeDescription(new[]
-        {
-            new BoundAttributeDescriptionInfo("TheReturnType", "TheTypeName", "ThePropertyName", "The documentation"),
-        });
+        var description = new AggregateBoundAttributeDescription(ImmutableArray.Create(
+            new BoundAttributeDescriptionInfo("TheReturnType", "TheTypeName", "ThePropertyName", "The documentation")));
 
         // Act
         var result = factory.CreateClassifiedDescription(description);
@@ -95,10 +88,8 @@ public class DefaultVisualStudioDescriptionFactoryTest : TestBase
     {
         // Arrange
         var factory = new VisualStudioDescriptionFactory();
-        var description = new AggregateBoundAttributeDescription(new[]
-        {
-            new BoundAttributeDescriptionInfo("TheReturnType", "TheTypeName", "ThePropertyName", "The documentation"),
-        });
+        var description = new AggregateBoundAttributeDescription(ImmutableArray.Create(
+            new BoundAttributeDescriptionInfo("TheReturnType", "TheTypeName", "ThePropertyName", "The documentation")));
 
         // Act
         var result = factory.CreateClassifiedDescription(description);
@@ -113,10 +104,8 @@ public class DefaultVisualStudioDescriptionFactoryTest : TestBase
     {
         // Arrange
         var factory = new VisualStudioDescriptionFactory();
-        var description = new AggregateBoundAttributeDescription(new[]
-        {
-            new BoundAttributeDescriptionInfo("TheReturnType", "TheTypeName", "ThePropertyName", "The documentation"),
-        });
+        var description = new AggregateBoundAttributeDescription(ImmutableArray.Create(
+            new BoundAttributeDescriptionInfo("TheReturnType", "TheTypeName", "ThePropertyName", "The documentation")));
 
         // Act
         var result = factory.CreateClassifiedDescription(description);
@@ -131,10 +120,8 @@ public class DefaultVisualStudioDescriptionFactoryTest : TestBase
     {
         // Arrange
         var factory = new VisualStudioDescriptionFactory();
-        var description = new AggregateBoundAttributeDescription(new[]
-        {
-            new BoundAttributeDescriptionInfo("System.String", "TheTypeName", "ThePropertyName", "The documentation"),
-        });
+        var description = new AggregateBoundAttributeDescription(ImmutableArray.Create(
+            new BoundAttributeDescriptionInfo("System.String", "TheTypeName", "ThePropertyName", "The documentation")));
 
         // Act
         var result = factory.CreateClassifiedDescription(description);
@@ -150,11 +137,9 @@ public class DefaultVisualStudioDescriptionFactoryTest : TestBase
     {
         // Arrange
         var factory = new VisualStudioDescriptionFactory();
-        var description = new AggregateBoundAttributeDescription(new[]
-        {
+        var description = new AggregateBoundAttributeDescription(ImmutableArray.Create(
             new BoundAttributeDescriptionInfo("System.String", "TheTypeName", "ThePropertyName", "The documentation"),
-            new BoundAttributeDescriptionInfo("System.Int32", "TheSecondTypeName", "TheSecondPropertyName", "The second documentation"),
-        });
+            new BoundAttributeDescriptionInfo("System.Int32", "TheSecondTypeName", "TheSecondPropertyName", "The second documentation")));
 
         // Act
         var result = factory.CreateClassifiedDescription(description);

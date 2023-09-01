@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using Microsoft.AspNetCore.Razor.Language;
 
 namespace Microsoft.VisualStudio.Editor.Razor;
@@ -12,7 +13,7 @@ internal sealed class ElementCompletionContext
     public TagHelperDocumentContext DocumentContext { get; }
     public IEnumerable<string> ExistingCompletions { get; }
     public string? ContainingTagName { get; }
-    public IEnumerable<KeyValuePair<string, string>> Attributes { get; }
+    public ImmutableArray<KeyValuePair<string, string>> Attributes { get; }
     public string? ContainingParentTagName { get; }
     public bool ContainingParentIsTagHelper { get; }
     public Func<string, bool> InHTMLSchema { get; }
@@ -21,7 +22,7 @@ internal sealed class ElementCompletionContext
         TagHelperDocumentContext documentContext,
         IEnumerable<string>? existingCompletions,
         string? containingTagName,
-        IEnumerable<KeyValuePair<string, string>> attributes,
+        ImmutableArray<KeyValuePair<string, string>> attributes,
         string? containingParentTagName,
         bool containingParentIsTagHelper,
         Func<string, bool> inHTMLSchema)

@@ -4,15 +4,14 @@
 #nullable disable
 
 using System.Linq;
-using System.Threading.Tasks;
 using Moq;
 
 namespace Microsoft.CodeAnalysis.Razor.ProjectSystem;
 
 internal class TestProjectSnapshotManager : DefaultProjectSnapshotManager
 {
-    public TestProjectSnapshotManager(Workspace workspace)
-        : base(Mock.Of<IErrorReporter>(MockBehavior.Strict), Enumerable.Empty<IProjectSnapshotChangeTrigger>(), workspace)
+    public TestProjectSnapshotManager(Workspace workspace, ProjectSnapshotManagerDispatcher dispatcher)
+        : base(Mock.Of<IErrorReporter>(MockBehavior.Strict), Enumerable.Empty<IProjectSnapshotChangeTrigger>(), workspace, dispatcher)
     {
     }
 

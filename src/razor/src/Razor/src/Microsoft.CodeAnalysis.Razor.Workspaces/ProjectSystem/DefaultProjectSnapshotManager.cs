@@ -37,14 +37,17 @@ internal class DefaultProjectSnapshotManager : ProjectSnapshotManagerBase
 
     // We have a queue for changes because if one change results in another change aka, add -> open we want to make sure the "add" finishes running first before "open" is notified.
     private readonly Queue<ProjectChangeEventArgs> _notificationWork = new();
+    private readonly ProjectSnapshotManagerDispatcher _dispatcher;
 
     public DefaultProjectSnapshotManager(
         IErrorReporter errorReporter,
         IEnumerable<IProjectSnapshotChangeTrigger> triggers,
-        Workspace workspace)
+        Workspace workspace,
+        ProjectSnapshotManagerDispatcher dispatcher)
     {
-        Workspace = workspace ?? throw new ArgumentNullException(nameof(workspace));
         ErrorReporter = errorReporter ?? throw new ArgumentNullException(nameof(errorReporter));
+        Workspace = workspace ?? throw new ArgumentNullException(nameof(workspace));
+        _dispatcher = dispatcher ?? throw new ArgumentException(nameof(dispatcher));
 
         using (_rwLocker.EnterReadLock())
         {
@@ -423,6 +426,24 @@ internal class DefaultProjectSnapshotManager : ProjectSnapshotManagerBase
 
     // virtual so it can be overridden in tests
     protected virtual void NotifyListeners(ProjectChangeEventArgs e)
+    {
+        // For now, consumers of the Changed event often assume the threaded
+        // behavior and can error. Once that is fixed we can remove this.
+        // https://github.com/dotnet/razor/issues/9162
+        if (_dispatcher.IsDispatcherThread)
+        {
+            NotifyListenersCore(e);
+        }
+        else
+        {
+            _ = _dispatcher.RunOnDispatcherThreadAsync(() =>
+            {
+                NotifyListenersCore(e);
+            }, CancellationToken.None);
+        }
+    }
+
+    private void NotifyListenersCore(ProjectChangeEventArgs e)
     {
         _notificationWork.Enqueue(e);
 

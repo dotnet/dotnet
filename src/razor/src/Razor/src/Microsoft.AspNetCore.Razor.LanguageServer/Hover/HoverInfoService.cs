@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Composition;
 using System.Diagnostics;
 using System.Linq;
@@ -20,14 +21,14 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer.Hover;
 
 internal sealed class HoverInfoService : IHoverInfoService
 {
-    private readonly TagHelperFactsService _tagHelperFactsService;
+    private readonly ITagHelperFactsService _tagHelperFactsService;
     private readonly LSPTagHelperTooltipFactory _lspTagHelperTooltipFactory;
     private readonly VSLSPTagHelperTooltipFactory _vsLspTagHelperTooltipFactory;
     private readonly HtmlFactsService _htmlFactsService;
 
     [ImportingConstructor]
     public HoverInfoService(
-        TagHelperFactsService tagHelperFactsService,
+        ITagHelperFactsService tagHelperFactsService,
         LSPTagHelperTooltipFactory lspTagHelperTooltipFactory,
         VSLSPTagHelperTooltipFactory vsLspTagHelperTooltipFactory,
         HtmlFactsService htmlFactsService)
@@ -187,14 +188,14 @@ internal sealed class HoverInfoService : IHoverInfoService
         return null;
     }
 
-    private VSInternalHover? AttributeInfoToHover(IEnumerable<BoundAttributeDescriptor> descriptors, Range range, string attributeName, VSInternalClientCapabilities clientCapabilities)
+    private VSInternalHover? AttributeInfoToHover(ImmutableArray<BoundAttributeDescriptor> boundAttributes, Range range, string attributeName, VSInternalClientCapabilities clientCapabilities)
     {
-        var descriptionInfos = descriptors.Select(boundAttribute =>
+        var descriptionInfos = boundAttributes.SelectAsArray(boundAttribute =>
         {
-            var indexer = TagHelperMatchingConventions.SatisfiesBoundAttributeIndexer(attributeName.AsSpan(), boundAttribute);
-            var descriptionInfo = BoundAttributeDescriptionInfo.From(boundAttribute, indexer);
-            return descriptionInfo;
-        }).ToList().AsReadOnly();
+            var isIndexer = TagHelperMatchingConventions.SatisfiesBoundAttributeIndexer(attributeName.AsSpan(), boundAttribute);
+            return BoundAttributeDescriptionInfo.From(boundAttribute, isIndexer);
+        });
+
         var attrDescriptionInfo = new AggregateBoundAttributeDescription(descriptionInfos);
 
         var isVSClient = clientCapabilities.SupportsVisualStudioExtensions;
@@ -236,9 +237,7 @@ internal sealed class HoverInfoService : IHoverInfoService
 
     private VSInternalHover? ElementInfoToHover(IEnumerable<TagHelperDescriptor> descriptors, Range range, VSInternalClientCapabilities clientCapabilities)
     {
-        var descriptionInfos = descriptors.Select(descriptor => BoundElementDescriptionInfo.From(descriptor))
-            .ToList()
-            .AsReadOnly();
+        var descriptionInfos = descriptors.SelectAsArray(BoundElementDescriptionInfo.From);
         var elementDescriptionInfo = new AggregateBoundElementDescription(descriptionInfos);
 
         var isVSClient = clientCapabilities.SupportsVisualStudioExtensions;

@@ -77,7 +77,8 @@ public abstract partial class ProjectSnapshotManagerBenchmarkBase
             new TestErrorReporter(),
             Array.Empty<IProjectSnapshotChangeTrigger>(),
 #pragma warning disable CA2000 // Dispose objects before losing scope
-            new AdhocWorkspace(services));
+            new AdhocWorkspace(services),
+            new TestProjectSnapshotManagerDispatcher());
 #pragma warning restore CA2000 // Dispose objects before losing scope
     }
 }

@@ -30,7 +30,7 @@ public class FallbackWindowsRazorProjectHostTest : ProjectSnapshotManagerDispatc
     public FallbackWindowsRazorProjectHostTest(ITestOutputHelper testOutput)
         : base(testOutput)
     {
-        _projectManager = new TestProjectSnapshotManager(Workspace);
+        _projectManager = new TestProjectSnapshotManager(Workspace, Dispatcher);
 
         var projectConfigurationFilePathStore = new Mock<ProjectConfigurationFilePathStore>(MockBehavior.Strict);
         projectConfigurationFilePathStore.Setup(s => s.Remove(It.IsAny<ProjectKey>())).Verifiable();
@@ -664,8 +664,8 @@ public class FallbackWindowsRazorProjectHostTest : ProjectSnapshotManagerDispatc
 
     private class TestProjectSnapshotManager : DefaultProjectSnapshotManager
     {
-        public TestProjectSnapshotManager(Workspace workspace)
-            : base(Mock.Of<IErrorReporter>(MockBehavior.Strict), Array.Empty<IProjectSnapshotChangeTrigger>(), workspace)
+        public TestProjectSnapshotManager(Workspace workspace, ProjectSnapshotManagerDispatcher dispatcher)
+            : base(Mock.Of<IErrorReporter>(MockBehavior.Strict), Array.Empty<IProjectSnapshotChangeTrigger>(), workspace, dispatcher)
         {
         }
     }
