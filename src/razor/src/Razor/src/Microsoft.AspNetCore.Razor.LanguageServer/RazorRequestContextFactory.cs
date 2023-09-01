@@ -5,6 +5,7 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.LanguageServer.EndpointContracts;
+using Microsoft.AspNetCore.Razor.LanguageServer.Extensions;
 using Microsoft.CommonLanguageServerProtocol.Framework;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 
@@ -35,7 +36,7 @@ internal class RazorRequestContextFactory : IRequestContextFactory<RazorRequestC
                 var textDocumentIdentifier = tdiHandler.GetTextDocumentIdentifier(@params);
                 uri = textDocumentIdentifier.Uri;
 
-                logger.LogDebug("Trying to create DocumentContext for {methodName} for {uri}", queueItem.MethodName, uri);
+                logger.LogDebug("Trying to create DocumentContext for {methodName} for {projectContext} for {uri}", queueItem.MethodName, textDocumentIdentifier.GetProjectContext()?.Id ?? "(no project context)", uri);
 
                 documentContext = documentContextFactory.TryCreateForOpenDocument(textDocumentIdentifier);
             }
@@ -43,7 +44,7 @@ internal class RazorRequestContextFactory : IRequestContextFactory<RazorRequestC
             {
                 uri = uriHandler.GetTextDocumentIdentifier(@params);
 
-                logger.LogDebug("Trying to create DocumentContext for {methodName} for {uri}", queueItem.MethodName, uri);
+                logger.LogDebug("Trying to create DocumentContext for {methodName}, with no project context, for {uri}", queueItem.MethodName, uri);
 
                 documentContext = documentContextFactory.TryCreateForOpenDocument(uri);
             }

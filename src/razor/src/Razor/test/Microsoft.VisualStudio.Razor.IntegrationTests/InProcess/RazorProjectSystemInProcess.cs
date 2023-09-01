@@ -15,6 +15,25 @@ namespace Microsoft.VisualStudio.Extensibility.Testing;
 [TestService]
 internal partial class RazorProjectSystemInProcess
 {
+    public async Task WaitForLSPServerActivatedAsync(CancellationToken cancellationToken)
+    {
+        await WaitForLSPServerActivationStatusAsync(active: true, cancellationToken);
+    }
+
+    public async Task WaitForLSPServerDeactivatedAsync(CancellationToken cancellationToken)
+    {
+        await WaitForLSPServerActivationStatusAsync(active: false, cancellationToken);
+    }
+
+    private async Task WaitForLSPServerActivationStatusAsync(bool active, CancellationToken cancellationToken)
+    {
+        var tracker = await TestServices.Shell.GetComponentModelServiceAsync<ILspServerActivationTracker>(cancellationToken);
+        await Helper.RetryAsync(ct =>
+        {
+            return Task.FromResult(tracker.IsActive == active);
+        }, TimeSpan.FromMilliseconds(50), cancellationToken);
+    }
+
     public async Task WaitForProjectFileAsync(string projectFilePath, CancellationToken cancellationToken)
     {
         var accessor = await TestServices.Shell.GetComponentModelServiceAsync<ProjectSnapshotManagerAccessor>(cancellationToken);

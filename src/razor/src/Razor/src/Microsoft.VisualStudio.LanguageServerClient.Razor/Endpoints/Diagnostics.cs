@@ -44,7 +44,7 @@ internal partial class RazorCustomMessageTarget
         {
             if (e is not OperationCanceledException)
             {
-                _outputWindowLogger?.LogError(e, "Exception thrown in PullDiagnostic delegation");
+                _logger?.LogError(e, "Exception thrown in PullDiagnostic delegation");
             }
             // Return null if any of the tasks getting diagnostics results in an error
             return null;
