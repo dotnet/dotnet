@@ -110,7 +110,7 @@ public class VsSolutionUpdatesProjectSnapshotChangeTriggerTest : TestBase
     public async Task SolutionClosing_CancelsActiveWork()
     {
         // Arrange
-        var projectManager = new TestProjectSnapshotManager(_workspace)
+        var projectManager = new TestProjectSnapshotManager(_workspace, s_dispatcher)
         {
             AllowNotifyListeners = true,
         };
@@ -150,7 +150,7 @@ public class VsSolutionUpdatesProjectSnapshotChangeTriggerTest : TestBase
     public async Task OnProjectBuiltAsync_KnownProject_EnqueuesProjectStateUpdate()
     {
         // Arrange
-        var projectManager = new TestProjectSnapshotManager(_workspace);
+        var projectManager = new TestProjectSnapshotManager(_workspace, s_dispatcher);
         var expectedProjectPath = _someProject.FilePath;
         var expectedProjectSnapshot = await s_dispatcher.RunOnDispatcherThreadAsync(() =>
         {

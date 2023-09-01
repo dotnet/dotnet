@@ -107,7 +107,6 @@ public class RazorDiagnosticsBenchmark : RazorLanguageServerBenchmarkBase
     {
         return Mock.Of<LanguageServerFeatureOptions>(options =>
             options.SupportsFileManipulation == true &&
-            options.SupportsDelegatedCodeActions == true &&
             options.SingleServerSupport == true &&
             options.SingleServerCompletionSupport == true &&
             options.CSharpVirtualDocumentSuffix == ".ide.g.cs" &&

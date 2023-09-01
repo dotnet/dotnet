@@ -3,10 +3,9 @@
 
 #nullable disable
 
-using System.Collections;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Language.Components;
@@ -17,7 +16,6 @@ using Microsoft.CodeAnalysis.Razor.Tooltip;
 using Microsoft.Extensions.Options;
 using Microsoft.VisualStudio.Editor.Razor;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
-using Moq;
 using Newtonsoft.Json;
 using Xunit;
 using Xunit.Abstractions;
@@ -62,7 +60,7 @@ public class RazorCompletionListProvierTest : LanguageServerTestBase
     private static IEnumerable<IRazorCompletionItemProvider> GetCompletionProviders(IOptionsMonitor<RazorLSPOptions> optionsMonitor = null)
     {
         // Working around strong naming restriction.
-        var tagHelperFactsService = new DefaultTagHelperFactsService();
+        var tagHelperFactsService = new TagHelperFactsService();
         var tagHelperCompletionService = new LanguageServerTagHelperCompletionService(tagHelperFactsService);
 
         optionsMonitor ??= TestRazorLSPOptionsMonitor.Create();
@@ -289,9 +287,8 @@ public class RazorCompletionListProvierTest : LanguageServerTestBase
     {
         // Arrange
         var completionItem = new RazorCompletionItem("format", "format", RazorCompletionItemKind.TagHelperAttribute);
-        var attributeCompletionDescription = new AggregateBoundAttributeDescription(new[] {
-            new BoundAttributeDescriptionInfo("System.Boolean", "Stuff", "format", "SomeDocs")
-        });
+        var attributeCompletionDescription = new AggregateBoundAttributeDescription(ImmutableArray.Create(
+            new BoundAttributeDescriptionInfo("System.Boolean", "Stuff", "format", "SomeDocs")));
         completionItem.SetAttributeCompletionDescription(attributeCompletionDescription);
 
         // Act
@@ -314,7 +311,7 @@ public class RazorCompletionListProvierTest : LanguageServerTestBase
     {
         // Arrange
         var completionItem = new RazorCompletionItem("format", "format=\"$0\"", RazorCompletionItemKind.TagHelperAttribute, isSnippet: true);
-        var attributeCompletionDescription = new AggregateBoundAttributeDescription(new BoundAttributeDescriptionInfo[] { });
+        var attributeCompletionDescription = AggregateBoundAttributeDescription.Empty;
         completionItem.SetAttributeCompletionDescription(attributeCompletionDescription);
 
         // Act

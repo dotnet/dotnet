@@ -3,8 +3,8 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Diagnostics;
-using Microsoft.AspNetCore.Razor.Language.Extensions;
 
 namespace Microsoft.AspNetCore.Razor.Language;
 
@@ -17,7 +17,7 @@ internal static class TagHelperMatchingConventions
     public static bool SatisfiesRule(
         ReadOnlySpan<char> tagNameWithoutPrefix,
         ReadOnlySpan<char> parentTagNameWithoutPrefix,
-        IReadOnlyList<KeyValuePair<string, string>> tagAttributes,
+        ImmutableArray<KeyValuePair<string, string>> tagAttributes,
         TagMatchingRuleDescriptor rule)
     {
         return SatisfiesTagName(tagNameWithoutPrefix, rule) &&
@@ -58,15 +58,29 @@ internal static class TagHelperMatchingConventions
         return true;
     }
 
-    public static bool SatisfiesAttributes(IReadOnlyList<KeyValuePair<string, string>> tagAttributes, TagMatchingRuleDescriptor rule)
+    public static bool SatisfiesAttributes(ImmutableArray<KeyValuePair<string, string>> tagAttributes, TagMatchingRuleDescriptor rule)
     {
-        if (!rule.Attributes.All(
-            static (requiredAttribute, tagAttributes) => tagAttributes.Any(
-                static (attribute, requiredAttribute) => SatisfiesRequiredAttribute(attribute.Key, attribute.Value, requiredAttribute),
-                requiredAttribute),
-            tagAttributes))
+        var requiredAttributes = rule.Attributes;
+        var count = requiredAttributes.Count;
+
+        for (var i = 0; i < count; i++)
         {
-            return false;
+            var requiredAttribute = requiredAttributes[i];
+            var satisfied = false;
+
+            foreach (var (attributeName, attributeValue) in tagAttributes)
+            {
+                if (SatisfiesRequiredAttribute(attributeName, attributeValue, requiredAttribute))
+                {
+                    satisfied = true;
+                    break;
+                }
+            }
+
+            if (!satisfied)
+            {
+                return false;
+            }
         }
 
         return true;

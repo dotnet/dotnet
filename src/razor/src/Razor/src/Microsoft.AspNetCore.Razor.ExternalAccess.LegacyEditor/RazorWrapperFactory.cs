@@ -41,6 +41,20 @@ internal static partial class RazorWrapperFactory
         return wrapper;
     }
 
+    private static ImmutableArray<TResult> WrapAll<TInner, TResult>(ImmutableArray<TInner> array, Func<TInner, TResult> createWrapper)
+        where TInner : class
+        where TResult : class
+    {
+        using var builder = new PooledArrayBuilder<TResult>(capacity: array.Length);
+
+        foreach (var item in array)
+        {
+            builder.Add(createWrapper(item));
+        }
+
+        return builder.DrainToImmutable();
+    }
+
     private static ImmutableArray<TResult> WrapAll<TInner, TResult>(IReadOnlyList<TInner> list, Func<TInner, TResult> createWrapper)
         where TInner : class
         where TResult : class
@@ -167,7 +181,7 @@ internal static partial class RazorWrapperFactory
         => Wrap<TagHelperCompletionService, TagHelperCompletionServiceWrapper, IRazorTagHelperCompletionService>(obj, static obj => new TagHelperCompletionServiceWrapper(obj));
 
     internal static IRazorTagHelperFactsService WrapTagHelperFactsService(object obj)
-        => Wrap<TagHelperFactsService, TagHelperFactsServiceWrapper, IRazorTagHelperFactsService>(obj, static obj => new TagHelperFactsServiceWrapper(obj));
+        => Wrap<ITagHelperFactsService, TagHelperFactsServiceWrapper, IRazorTagHelperFactsService>(obj, static obj => new TagHelperFactsServiceWrapper(obj));
 
     internal static IRazorTagMatchingRuleDescriptor WrapTagMatchingRuleDescriptor(object obj)
         => Wrap<TagMatchingRuleDescriptor, TagMatchingRuleDescriptorWrapper, IRazorTagMatchingRuleDescriptor>(obj, static obj => new TagMatchingRuleDescriptorWrapper(obj));

@@ -3,20 +3,21 @@
 
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 
 namespace Microsoft.AspNetCore.Razor.PooledObjects;
 
-internal ref partial struct PooledList<T>
+internal ref partial struct PooledArrayBuilder<T>
 {
     public struct Enumerator : IEnumerator<T>
     {
-        private readonly List<T>? _list;
+        private readonly ImmutableArray<T>.Builder? _builder;
         private int _index;
         private T? _current;
 
-        public Enumerator(List<T> list)
+        public Enumerator(ImmutableArray<T>.Builder builder)
         {
-            _list = list;
+            _builder = builder;
             _index = 0;
             _current = default;
         }
@@ -31,9 +32,9 @@ internal ref partial struct PooledList<T>
 
         public bool MoveNext()
         {
-            if (_list is { } list && _index < list.Count)
+            if (_builder is { } builder && _index < builder.Count)
             {
-                _current = list[_index];
+                _current = builder[_index];
                 _index++;
                 return true;
             }

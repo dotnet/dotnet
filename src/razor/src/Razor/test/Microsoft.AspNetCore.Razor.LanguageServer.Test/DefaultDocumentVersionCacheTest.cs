@@ -5,9 +5,12 @@
 
 using System;
 using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.Razor;
+using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -59,7 +62,7 @@ public class DefaultDocumentVersionCacheTest : LanguageServerTestBase
     {
         // Arrange
         var documentVersionCache = new DefaultDocumentVersionCache();
-        var projectSnapshotManager = TestProjectSnapshotManager.Create(ErrorReporter);
+        var projectSnapshotManager = GetSnapshotManager();
         projectSnapshotManager.AllowNotifyListeners = true;
         documentVersionCache.Initialize(projectSnapshotManager);
         var document = TestDocumentSnapshot.Create("C:/file.cshtml");
@@ -89,7 +92,7 @@ public class DefaultDocumentVersionCacheTest : LanguageServerTestBase
     {
         // Arrange
         var documentVersionCache = new DefaultDocumentVersionCache();
-        var projectSnapshotManager = TestProjectSnapshotManager.Create(ErrorReporter);
+        var projectSnapshotManager = GetSnapshotManager();
         projectSnapshotManager.AllowNotifyListeners = true;
         documentVersionCache.Initialize(projectSnapshotManager);
         var document = TestDocumentSnapshot.Create("C:/file.cshtml");
@@ -121,7 +124,7 @@ public class DefaultDocumentVersionCacheTest : LanguageServerTestBase
     {
         // Arrange
         var documentVersionCache = new DefaultDocumentVersionCache();
-        var projectSnapshotManager = TestProjectSnapshotManager.Create(ErrorReporter);
+        var projectSnapshotManager = GetSnapshotManager();
         projectSnapshotManager.AllowNotifyListeners = true;
         documentVersionCache.Initialize(projectSnapshotManager);
         var document = TestDocumentSnapshot.Create("C:/file.cshtml");
@@ -241,7 +244,7 @@ public class DefaultDocumentVersionCacheTest : LanguageServerTestBase
     {
         // Arrange
         var documentVersionCache = new DefaultDocumentVersionCache();
-        var projectSnapshotManager = TestProjectSnapshotManager.Create(ErrorReporter);
+        var projectSnapshotManager = GetSnapshotManager();
         projectSnapshotManager.AllowNotifyListeners = true;
         documentVersionCache.Initialize(projectSnapshotManager);
 
@@ -280,5 +283,17 @@ public class DefaultDocumentVersionCacheTest : LanguageServerTestBase
         Assert.True(kvp.Value[1].Document.TryGetTarget(out actualDocument));
         Assert.Same(document2, actualDocument);
         Assert.Equal(1337, kvp.Value[1].Version);
+    }
+
+    private TestProjectSnapshotManager GetSnapshotManager()
+        => TestProjectSnapshotManager.Create(ErrorReporter, new TestDispatcher());
+
+    private class TestDispatcher : ProjectSnapshotManagerDispatcher
+    {
+        // The tests run synchronously without the dispatcher, so just assert that
+        // we're always on the right thread
+        public override bool IsDispatcherThread => true;
+
+        public override TaskScheduler DispatcherScheduler => TaskScheduler.Default;
     }
 }

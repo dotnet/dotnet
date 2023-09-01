@@ -41,6 +41,8 @@
                 HtmlContent - (108:4,6 [5] IncompleteDirectives.cshtml)
                     LazyIntermediateToken - (108:4,6 [5] IncompleteDirectives.cshtml) - Html - "\n\n
                 MalformedDirective - (113:6,0 [6] IncompleteDirectives.cshtml) - model
+                    CSharpCode - (119:6,6 [0] IncompleteDirectives.cshtml)
+                        LazyIntermediateToken - (119:6,6 [0] IncompleteDirectives.cshtml) - CSharp - 
                 HtmlContent - (119:6,6 [2] IncompleteDirectives.cshtml)
                     LazyIntermediateToken - (119:6,6 [2] IncompleteDirectives.cshtml) - Html - \n
                 MalformedDirective - (121:7,0 [7] IncompleteDirectives.cshtml) - model
@@ -48,6 +50,8 @@
                 HtmlContent - (128:7,7 [4] IncompleteDirectives.cshtml)
                     LazyIntermediateToken - (128:7,7 [4] IncompleteDirectives.cshtml) - Html - \n\n
                 MalformedDirective - (132:9,0 [7] IncompleteDirectives.cshtml) - inject
+                    CSharpCode - (139:9,7 [0] IncompleteDirectives.cshtml)
+                        LazyIntermediateToken - (139:9,7 [0] IncompleteDirectives.cshtml) - CSharp - 
                 HtmlContent - (139:9,7 [2] IncompleteDirectives.cshtml)
                     LazyIntermediateToken - (139:9,7 [2] IncompleteDirectives.cshtml) - Html - \n
                 MalformedDirective - (141:10,0 [8] IncompleteDirectives.cshtml) - inject
@@ -59,6 +63,8 @@
                 HtmlContent - (176:11,25 [4] IncompleteDirectives.cshtml)
                     LazyIntermediateToken - (176:11,25 [4] IncompleteDirectives.cshtml) - Html - \n\n
                 MalformedDirective - (180:13,0 [10] IncompleteDirectives.cshtml) - namespace
+                    CSharpCode - (190:13,10 [0] IncompleteDirectives.cshtml)
+                        LazyIntermediateToken - (190:13,10 [0] IncompleteDirectives.cshtml) - CSharp - 
                 HtmlContent - (190:13,10 [2] IncompleteDirectives.cshtml)
                     LazyIntermediateToken - (190:13,10 [2] IncompleteDirectives.cshtml) - Html - \n
                 MalformedDirective - (192:14,0 [11] IncompleteDirectives.cshtml) - namespace

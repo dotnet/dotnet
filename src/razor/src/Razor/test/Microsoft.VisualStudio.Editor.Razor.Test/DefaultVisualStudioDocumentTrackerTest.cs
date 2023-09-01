@@ -60,7 +60,7 @@ public class DefaultVisualStudioDocumentTrackerTest : ProjectSnapshotManagerDisp
             TagHelperDescriptorBuilder.Create("test", "test").Build(),
         };
 
-        _projectManager = new TestProjectSnapshotManager(Workspace) { AllowNotifyListeners = true };
+        _projectManager = new TestProjectSnapshotManager(Workspace, Dispatcher) { AllowNotifyListeners = true };
 
         _hostProject = new HostProject(_projectPath, TestProjectData.SomeProject.IntermediateOutputPath, FallbackRazorConfiguration.MVC_2_1, _rootNamespace);
         _updatedHostProject = new HostProject(_projectPath, TestProjectData.SomeProject.IntermediateOutputPath, FallbackRazorConfiguration.MVC_2_0, _rootNamespace);

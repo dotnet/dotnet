@@ -5,6 +5,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Language.Components;
@@ -15,13 +16,8 @@ using static Microsoft.AspNetCore.Razor.Language.CommonMetadata;
 
 namespace Microsoft.VisualStudio.Editor.Razor;
 
-public class LanguageServerTagHelperCompletionServiceTest : TestBase
+public class LanguageServerTagHelperCompletionServiceTest(ITestOutputHelper testOutput) : TestBase(testOutput)
 {
-    public LanguageServerTagHelperCompletionServiceTest(ITestOutputHelper testOutput)
-        : base(testOutput)
-    {
-    }
-
     [Fact]
     [WorkItem("https://devdiv.visualstudio.com/DevDiv/_workitems/edit/1452432")]
     public void GetAttributeCompletions_OnlyIndexerNamePrefix()
@@ -49,7 +45,7 @@ public class LanguageServerTagHelperCompletionServiceTest : TestBase
         var completionContext = BuildAttributeCompletionContext(
             documentDescriptors,
             Array.Empty<string>(),
-            attributes: new Dictionary<string, string>(),
+            attributes: ImmutableArray<KeyValuePair<string, string>>.Empty,
             currentTagName: "form");
         var service = CreateTagHelperCompletionFactsService();
 
@@ -91,7 +87,7 @@ public class LanguageServerTagHelperCompletionServiceTest : TestBase
         var completionContext = BuildAttributeCompletionContext(
             documentDescriptors,
             Array.Empty<string>(),
-            attributes: new Dictionary<string, string>(),
+            attributes: ImmutableArray<KeyValuePair<string, string>>.Empty,
             currentTagName: "form");
         var service = CreateTagHelperCompletionFactsService();
 
@@ -141,7 +137,7 @@ public class LanguageServerTagHelperCompletionServiceTest : TestBase
         var completionContext = BuildAttributeCompletionContext(
             documentDescriptors,
             Array.Empty<string>(),
-            attributes: new Dictionary<string, string>(),
+            attributes: ImmutableArray<KeyValuePair<string, string>>.Empty,
             currentTagName: "form");
         var service = CreateTagHelperCompletionFactsService();
 
@@ -188,11 +184,9 @@ public class LanguageServerTagHelperCompletionServiceTest : TestBase
         var completionContext = BuildAttributeCompletionContext(
             documentDescriptors,
             existingCompletions,
-            attributes: new Dictionary<string, string>()
-            {
-                ["class"] = "something",
-                ["repeat"] = "4"
-            },
+            attributes: ImmutableArray.Create(
+                KeyValuePair.Create("class", "something"),
+                KeyValuePair.Create("repeat", "4")),
             currentTagName: "div");
         var service = CreateTagHelperCompletionFactsService();
 
@@ -239,12 +233,10 @@ public class LanguageServerTagHelperCompletionServiceTest : TestBase
         var completionContext = BuildAttributeCompletionContext(
             documentDescriptors,
             existingCompletions,
-            attributes: new Dictionary<string, string>()
-            {
-                ["class"] = "something",
-                ["repeat"] = "4",
-                ["visible"] = "false",
-            },
+            attributes: ImmutableArray.Create(
+                KeyValuePair.Create("class", "something"),
+                KeyValuePair.Create("repeat", "4"),
+                KeyValuePair.Create("visible", "false")),
             currentTagName: "div",
             currentAttributeName: "visible");
         var service = CreateTagHelperCompletionFactsService();
@@ -288,12 +280,10 @@ public class LanguageServerTagHelperCompletionServiceTest : TestBase
         var completionContext = BuildAttributeCompletionContext(
             documentDescriptors,
             existingCompletions,
-            attributes: new Dictionary<string, string>()
-            {
-                ["class"] = "something",
-                ["repeat"] = "4",
-                ["visible"] = "false",
-            },
+            attributes: ImmutableArray.Create(
+                KeyValuePair.Create("class", "something"),
+                KeyValuePair.Create("repeat", "4"),
+                KeyValuePair.Create("visible", "false")),
             currentTagName: "div",
             currentAttributeName: "repeat");
         var service = CreateTagHelperCompletionFactsService();
@@ -1362,10 +1352,8 @@ public class LanguageServerTagHelperCompletionServiceTest : TestBase
             ["form"] = new HashSet<TagHelperDescriptor> { documentDescriptors[0] }
         });
 
-        var attributes = new Dictionary<string, string>
-        {
-            { "asp-route-id", "123" }
-        };
+        var attributes = ImmutableArray.Create(
+            KeyValuePair.Create("asp-route-id", "123"));
 
         var completionContext = BuildElementCompletionContext(documentDescriptors, Enumerable.Empty<string>(), containingTagName: "", containingParentTagName: "div", attributes: attributes);
         var service = CreateTagHelperCompletionFactsService();
@@ -1407,7 +1395,7 @@ public class LanguageServerTagHelperCompletionServiceTest : TestBase
 
     private static LanguageServerTagHelperCompletionService CreateTagHelperCompletionFactsService()
     {
-        var tagHelperFactsService = new DefaultTagHelperFactsService();
+        var tagHelperFactsService = new TagHelperFactsService();
         var completionFactService = new LanguageServerTagHelperCompletionService(tagHelperFactsService);
 
         return completionFactService;
@@ -1444,9 +1432,9 @@ public class LanguageServerTagHelperCompletionServiceTest : TestBase
         string containingParentTagName = "body",
         bool containingParentIsTagHelper = false,
         string tagHelperPrefix = "",
-        IEnumerable<KeyValuePair<string, string>> attributes = null)
+        ImmutableArray<KeyValuePair<string, string>> attributes = default)
     {
-        attributes ??= Enumerable.Empty<KeyValuePair<string, string>>();
+        attributes = attributes.NullToEmpty();
 
         var documentContext = TagHelperDocumentContext.Create(tagHelperPrefix, descriptors);
         var completionContext = new ElementCompletionContext(
@@ -1466,10 +1454,11 @@ public class LanguageServerTagHelperCompletionServiceTest : TestBase
         IEnumerable<string> existingCompletions,
         string currentTagName,
         string currentAttributeName = null,
-        IEnumerable<KeyValuePair<string, string>> attributes = null,
+        ImmutableArray<KeyValuePair<string, string>> attributes = default,
         string tagHelperPrefix = "")
     {
-        attributes ??= Enumerable.Empty<KeyValuePair<string, string>>();
+        attributes = attributes.NullToEmpty();
+
         var documentContext = TagHelperDocumentContext.Create(tagHelperPrefix, descriptors);
         var completionContext = new AttributeCompletionContext(
             documentContext,

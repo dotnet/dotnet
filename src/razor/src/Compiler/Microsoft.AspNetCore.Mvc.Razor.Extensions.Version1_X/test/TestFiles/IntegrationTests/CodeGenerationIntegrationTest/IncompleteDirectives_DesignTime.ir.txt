@@ -34,6 +34,8 @@
                 HtmlContent - (85:1,0 [2] IncompleteDirectives.cshtml)
                     LazyIntermediateToken - (85:1,0 [2] IncompleteDirectives.cshtml) - Html - \n
                 MalformedDirective - (87:2,0 [6] IncompleteDirectives.cshtml) - model
+                    CSharpCode - (93:2,6 [0] IncompleteDirectives.cshtml)
+                        LazyIntermediateToken - (93:2,6 [0] IncompleteDirectives.cshtml) - CSharp - 
                 HtmlContent - (93:2,6 [2] IncompleteDirectives.cshtml)
                     LazyIntermediateToken - (93:2,6 [2] IncompleteDirectives.cshtml) - Html - \n
                 MalformedDirective - (95:3,0 [7] IncompleteDirectives.cshtml) - model
@@ -41,6 +43,8 @@
                 HtmlContent - (102:3,7 [4] IncompleteDirectives.cshtml)
                     LazyIntermediateToken - (102:3,7 [4] IncompleteDirectives.cshtml) - Html - \n\n
                 MalformedDirective - (106:5,0 [7] IncompleteDirectives.cshtml) - inject
+                    CSharpCode - (113:5,7 [0] IncompleteDirectives.cshtml)
+                        LazyIntermediateToken - (113:5,7 [0] IncompleteDirectives.cshtml) - CSharp - 
                 HtmlContent - (113:5,7 [2] IncompleteDirectives.cshtml)
                     LazyIntermediateToken - (113:5,7 [2] IncompleteDirectives.cshtml) - Html - \n
                 MalformedDirective - (115:6,0 [8] IncompleteDirectives.cshtml) - inject

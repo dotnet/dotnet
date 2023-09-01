@@ -3,7 +3,6 @@
 
 #nullable disable
 
-using System;
 using System.Collections.Immutable;
 using System.IO;
 using System.Linq;
@@ -106,7 +105,7 @@ public class LegacyRazorCompletionResolveEndpointTest : LanguageServerTestBase
         var endpoint = new LegacyRazorCompletionResolveEndpoint(lspDescriptionFactory.Object, _vsLspTagHelperTooltipFactory, _completionListCache, LoggerFactory);
         endpoint.ApplyCapabilities(new(), _defaultClientCapability);
         var razorCompletionItem = new RazorCompletionItem("TestItem", "TestItem", RazorCompletionItemKind.DirectiveAttribute);
-        razorCompletionItem.SetAttributeCompletionDescription(new AggregateBoundAttributeDescription(Array.Empty<BoundAttributeDescriptionInfo>()));
+        razorCompletionItem.SetAttributeCompletionDescription(AggregateBoundAttributeDescription.Empty);
         var completionList = CreateLSPCompletionList(razorCompletionItem);
         var completionItem = completionList.Items.Single();
         var parameters = ConvertToBridgedItem(completionItem);
@@ -134,7 +133,7 @@ public class LegacyRazorCompletionResolveEndpointTest : LanguageServerTestBase
         var endpoint = new LegacyRazorCompletionResolveEndpoint(descriptionFactory.Object, _vsLspTagHelperTooltipFactory, _completionListCache, LoggerFactory);
         endpoint.ApplyCapabilities(new(), _defaultClientCapability);
         var razorCompletionItem = new RazorCompletionItem("TestItem", "TestItem", RazorCompletionItemKind.DirectiveAttributeParameter);
-        razorCompletionItem.SetAttributeCompletionDescription(new AggregateBoundAttributeDescription(Array.Empty<BoundAttributeDescriptionInfo>()));
+        razorCompletionItem.SetAttributeCompletionDescription(AggregateBoundAttributeDescription.Empty);
         var completionList = CreateLSPCompletionList(razorCompletionItem);
         var completionItem = completionList.Items.Single();
         var parameters = ConvertToBridgedItem(completionItem);
@@ -162,7 +161,7 @@ public class LegacyRazorCompletionResolveEndpointTest : LanguageServerTestBase
         var endpoint = new LegacyRazorCompletionResolveEndpoint(lspDescriptionFactory.Object, _vsLspTagHelperTooltipFactory, _completionListCache, LoggerFactory);
         endpoint.ApplyCapabilities(new(), _defaultClientCapability);
         var razorCompletionItem = new RazorCompletionItem("TestItem", "TestItem", RazorCompletionItemKind.TagHelperElement);
-        razorCompletionItem.SetTagHelperElementDescriptionInfo(new AggregateBoundElementDescription(Array.Empty<BoundElementDescriptionInfo>()));
+        razorCompletionItem.SetTagHelperElementDescriptionInfo(AggregateBoundElementDescription.Empty);
         var completionList = CreateLSPCompletionList(razorCompletionItem);
         var completionItem = completionList.Items.Single();
         var parameters = ConvertToBridgedItem(completionItem);
@@ -190,7 +189,7 @@ public class LegacyRazorCompletionResolveEndpointTest : LanguageServerTestBase
         var endpoint = new LegacyRazorCompletionResolveEndpoint(lspDescriptionFactory.Object, _vsLspTagHelperTooltipFactory, _completionListCache, LoggerFactory);
         endpoint.ApplyCapabilities(new(), _defaultClientCapability);
         var razorCompletionItem = new RazorCompletionItem("TestItem", "TestItem", RazorCompletionItemKind.TagHelperAttribute);
-        razorCompletionItem.SetAttributeCompletionDescription(new AggregateBoundAttributeDescription(Array.Empty<BoundAttributeDescriptionInfo>()));
+        razorCompletionItem.SetAttributeCompletionDescription(AggregateBoundAttributeDescription.Empty);
         var completionList = CreateLSPCompletionList(razorCompletionItem);
         var completionItem = completionList.Items.Single();
         var parameters = ConvertToBridgedItem(completionItem);
