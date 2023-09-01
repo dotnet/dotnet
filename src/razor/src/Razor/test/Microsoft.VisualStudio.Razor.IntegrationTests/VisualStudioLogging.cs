@@ -61,7 +61,7 @@ internal static class VisualStudioLogging
 
     private static void RazorLogHubLogger(string filePath)
     {
-        FeedbackLoggerInternal(filePath, "LogHub");
+        FeedbackLoggerInternal(filePath, "LogHub", "Razor");
     }
 
     private static void RazorServiceHubLogger(string filePath)
@@ -74,7 +74,7 @@ internal static class VisualStudioLogging
         FeedbackLoggerInternal(filePath, "ComponentModelCache");
     }
 
-    private static void FeedbackLoggerInternal(string filePath, string expectedFilePart)
+    private static void FeedbackLoggerInternal(string filePath, params string[] expectedFileParts)
     {
         var componentModel = GlobalServiceProvider.ServiceProvider.GetService<SComponentModel, IComponentModel>();
         if (componentModel is null)
@@ -92,7 +92,7 @@ internal static class VisualStudioLogging
             files.AddRange(feedbackFileProvider.GetFiles());
         }
 
-        _ = CollectFeedbackItemsAsync(files, filePath, expectedFilePart);
+        _ = CollectFeedbackItemsAsync(files, filePath, expectedFileParts);
     }
 
     private static void RazorExtensionExplorerLogger(string filePath)
@@ -181,7 +181,7 @@ internal static class VisualStudioLogging
         });
     }
 
-    private static async Task CollectFeedbackItemsAsync(IEnumerable<string> files, string destination, string expectedFilePart)
+    private static async Task CollectFeedbackItemsAsync(IEnumerable<string> files, string destination, string[] expectedFileParts)
     {
         // What's important in this weird threading stuff is ensuring we vacate the thread RazorLogHubLogger was called on
         // because if we don't it ends up blocking the thread that creates the zip file we need.
@@ -191,18 +191,25 @@ internal static class VisualStudioLogging
             {
                 var name = Path.GetFileName(file);
 
-                // Only capture LogHub
-                if (name.Contains(expectedFilePart) && Path.GetExtension(file) == ".zip")
+                if (!Path.GetExtension(file).Equals(".zip", StringComparison.OrdinalIgnoreCase))
                 {
-                    await Task.Run(() =>
-                    {
-                        WaitForFileExists(file);
-                        if (File.Exists(file))
-                        {
-                            File.Copy(file, destination);
-                        }
-                    });
+                    continue;
                 }
+
+                if (expectedFileParts.All(part => name.IndexOf(part, StringComparison.OrdinalIgnoreCase) == -1))
+                {
+                    continue;
+                }
+
+                await Task.Run(() =>
+                {
+                    WaitForFileExists(file);
+                    WaitForFileFinishedWriting(file);
+                    if (File.Exists(file))
+                    {
+                        File.Copy(file, destination);
+                    }
+                });
             }
         });
     }
@@ -219,5 +226,45 @@ internal static class VisualStudioLogging
             // Wait a bit
             Thread.Sleep(100);
         }
+    }
+
+    private static void WaitForFileFinishedWriting(string file)
+    {
+        const int MaxRetries = 50;
+        var retries = 0;
+        while (IsFileLocked(file) && retries < MaxRetries)
+        {
+            retries++;
+            // Free your thread
+            Thread.Yield();
+            // Wait a bit
+            Thread.Sleep(100);
+        }
+    }
+
+    private static bool IsFileLocked(string file)
+    {
+        FileStream? stream = null;
+
+        try
+        {
+            stream = File.Open(file, FileMode.Open, FileAccess.ReadWrite, FileShare.None);
+        }
+        catch (IOException)
+        {
+            //the file is unavailable because it is:
+            //still being written to
+            //or being processed by another thread
+            //or does not exist (has already been processed)
+            return true;
+        }
+        finally
+        {
+            if (stream != null)
+                stream.Close();
+        }
+
+        //file is not locked
+        return false;
     }
 }

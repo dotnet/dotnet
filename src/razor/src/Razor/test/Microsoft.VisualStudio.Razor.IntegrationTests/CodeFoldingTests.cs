@@ -123,7 +123,7 @@ public class CodeFoldingTests(ITestOutputHelper testOutputHelper) : AbstractRazo
         }
     }
 
-    [IdeFact(Skip = "Flaky after multitarget work")]
+    [IdeFact]
     public async Task CodeFolding_CodeBlock()
     {
         await TestServices.SolutionExplorer.AddFileAsync(
@@ -146,6 +146,10 @@ public class CodeFoldingTests(ITestOutputHelper testOutputHelper) : AbstractRazo
 }",
             open: true,
             ControlledHangMitigatingCancellationToken);
+
+        await TestServices.Editor.WaitForComponentClassificationAsync(ControlledHangMitigatingCancellationToken);
+
+        TestServices.Input.Send("{ENTER}");
 
         await AssertFoldableBlocksAsync(
 @"@code {
@@ -190,6 +194,10 @@ public class CodeFoldingTests(ITestOutputHelper testOutputHelper) : AbstractRazo
             open: true,
             ControlledHangMitigatingCancellationToken);
 
+        await TestServices.Editor.WaitForComponentClassificationAsync(ControlledHangMitigatingCancellationToken);
+
+        TestServices.Input.Send("{ENTER}");
+
         await AssertFoldableBlocksAsync(
 @"@if(true)
 {
@@ -232,6 +240,10 @@ public class CodeFoldingTests(ITestOutputHelper testOutputHelper) : AbstractRazo
             open: true,
             ControlledHangMitigatingCancellationToken);
 
+        await TestServices.Editor.WaitForComponentClassificationAsync(ControlledHangMitigatingCancellationToken);
+
+        TestServices.Input.Send("{ENTER}");
+
         await AssertFoldableBlocksAsync(
 @"@foreach (var s in GetStuff())
 {
@@ -264,6 +276,10 @@ public class CodeFoldingTests(ITestOutputHelper testOutputHelper) : AbstractRazo
 ",
             open: true,
             ControlledHangMitigatingCancellationToken);
+
+        await TestServices.Editor.WaitForComponentClassificationAsync(ControlledHangMitigatingCancellationToken);
+
+        TestServices.Input.Send("{ENTER}");
 
         await AssertFoldableBlocksAsync(
 @"#region Methods

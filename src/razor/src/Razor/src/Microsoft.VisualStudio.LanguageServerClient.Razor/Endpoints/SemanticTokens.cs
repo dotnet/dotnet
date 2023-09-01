@@ -49,13 +49,15 @@ internal partial class RazorCustomMessageTarget
         var newParams = new SemanticTokensRangeParams
         {
             TextDocument = semanticTokensParams.TextDocument,
-            PartialResultToken = semanticTokensParams.PartialResultToken,
             Range = semanticTokensParams.Range,
         };
 
         var textBuffer = csharpDoc.Snapshot.TextBuffer;
         var languageServerName = RazorLSPConstants.RazorCSharpLanguageServerName;
         var lspMethodName = Methods.TextDocumentSemanticTokensRangeName;
+
+        cancellationToken.ThrowIfCancellationRequested();
+
         using var _ = _telemetryReporter.TrackLspRequest(lspMethodName, languageServerName, semanticTokensParams.CorrelationId);
         var csharpResults = await _requestInvoker.ReinvokeRequestOnServerAsync<SemanticTokensRangeParams, VSSemanticTokensResponse>(
             textBuffer,

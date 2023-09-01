@@ -12,6 +12,10 @@ variables:
   value: true
 - name: Codeql.Enabled
   value: true
+- name: LogLevel
+  value: 'Verbose'
+- name: RAZOR_TRACE
+  value: 'Verbose'
 - ${{ if ne(variables['System.TeamProject'], 'public') }}:
   - group: DotNetBuilds storage account read tokens
   - name: _InternalRuntimeDownloadArgs

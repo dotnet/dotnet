@@ -40,7 +40,7 @@ internal partial class RazorCustomMessageTarget
 
         var hostDocumentUri = new Uri(request.HostDocumentFilePath);
 
-        _outputWindowLogger?.LogDebug("UpdateCSharpBuffer for {version} of {uri} in {projectKey}", request.HostDocumentVersion.Value, hostDocumentUri, request.ProjectKeyId);
+        _logger?.LogDebug("UpdateCSharpBuffer for {version} of {uri} in {projectKey}", request.HostDocumentVersion.Value, hostDocumentUri, request.ProjectKeyId);
 
         // If we're generating unique file paths for virtual documents, then we have to take a different path here, and do more work
         if (_languageServerFeatureOptions.IncludeProjectKeyInGeneratedFilePath &&
@@ -54,7 +54,7 @@ internal partial class RazorCustomMessageTarget
                 // but the server clearly knows about it in a real project. That means its probably new, as Visual Studio opens a buffer
                 // for a document before we get the notifications about it being added to any projects. Lets try refreshing before
                 // we worry.
-                _outputWindowLogger?.LogDebug("Refreshing virtual documents, and waiting for them, (for {hostDocumentUri})", hostDocumentUri);
+                _logger?.LogDebug("Refreshing virtual documents, and waiting for them, (for {hostDocumentUri})", hostDocumentUri);
 
                 var task = _csharpVirtualDocumentAddListener.WaitForDocumentAddAsync(cancellationToken);
                 _documentManager.RefreshVirtualDocuments();
@@ -70,7 +70,7 @@ internal partial class RazorCustomMessageTarget
                     // sync with their understanding of the document contents, and since changes come in as a list of changes,
                     // the user experience is broken. All we can do is hope the user closes and re-opens the document.
                     Debug.Fail($"Server wants to update {hostDocumentUri} in {request.ProjectKeyId} but we don't know about the document being in any projects");
-                    _outputWindowLogger?.LogError("Server wants to update {hostDocumentUri} in {projectKeyId} by we only know about that document in misc files. Server and client are now out of sync.", hostDocumentUri, request.ProjectKeyId);
+                    _logger?.LogError("Server wants to update {hostDocumentUri} in {projectKeyId} by we only know about that document in misc files. Server and client are now out of sync.", hostDocumentUri, request.ProjectKeyId);
                     return;
                 }
             }
@@ -79,7 +79,7 @@ internal partial class RazorCustomMessageTarget
             {
                 if (virtualDocument.ProjectKey.Equals(ProjectKey.FromString(request.ProjectKeyId)))
                 {
-                    _outputWindowLogger?.LogDebug("UpdateCSharpBuffer virtual doc for {version} of {uri}", request.HostDocumentVersion.Value, virtualDocument.Uri);
+                    _logger?.LogDebug("UpdateCSharpBuffer virtual doc for {version} of {uri}", request.HostDocumentVersion.Value, virtualDocument.Uri);
 
                     _documentManager.UpdateVirtualDocument<CSharpVirtualDocument>(
                         hostDocumentUri,
@@ -99,14 +99,14 @@ internal partial class RazorCustomMessageTarget
                 Debug.Fail("Multiple virtual documents seem to be supported, but none were updated, which is not impossible, but surprising.");
             }
 
-            _outputWindowLogger?.LogDebug("UpdateCSharpBuffer couldn't find any virtual docs for {version} of {uri}", request.HostDocumentVersion.Value, hostDocumentUri);
+            _logger?.LogDebug("UpdateCSharpBuffer couldn't find any virtual docs for {version} of {uri}", request.HostDocumentVersion.Value, hostDocumentUri);
 
             // Don't know about document, no-op. This can happen if the language server found a project.razor.json from an old build
             // and is sending us updates.
             return;
         }
 
-        _outputWindowLogger?.LogDebug("UpdateCSharpBuffer fallback for {version} of {uri}", request.HostDocumentVersion.Value, hostDocumentUri);
+        _logger?.LogDebug("UpdateCSharpBuffer fallback for {version} of {uri}", request.HostDocumentVersion.Value, hostDocumentUri);
 
         _documentManager.UpdateVirtualDocument<CSharpVirtualDocument>(
             hostDocumentUri,
