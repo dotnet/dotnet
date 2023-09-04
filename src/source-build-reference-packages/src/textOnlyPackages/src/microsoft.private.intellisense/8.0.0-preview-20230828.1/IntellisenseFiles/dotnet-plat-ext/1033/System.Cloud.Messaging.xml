@@ -1,0 +1,611 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<doc>
+  <assembly>
+    <name>System.Cloud.Messaging</name>
+  </assembly>
+  <members>
+    <member name="T:System.Cloud.Messaging.AsyncProcessingPipelineBuilderExtensions">
+      <summary>
+            Provides extension methods for <see cref="T:System.Cloud.Messaging.IAsyncProcessingPipelineBuilder" /> to register:
+              1. singletons,
+              2. <see cref="T:System.Cloud.Messaging.IMessageSource" />,
+              3. <see cref="T:System.Cloud.Messaging.IMessageDestination" />,
+              4. <see cref="T:System.Cloud.Messaging.IMessageMiddleware" />,
+              5. <see cref="T:System.Cloud.Messaging.MessageDelegate" />,
+              6. <see cref="T:System.Cloud.Messaging.MessageConsumer" />.</summary>
+    </member>
+    <member name="M:System.Cloud.Messaging.AsyncProcessingPipelineBuilderExtensions.AddMessageMiddleware``1(System.Cloud.Messaging.IAsyncProcessingPipelineBuilder)">
+      <summary>
+            Adds the <see cref="T:System.Cloud.Messaging.IMessageMiddleware" /> to the async processing pipeline.</summary>
+      <param name="pipelineBuilder">The builder for async processing pipeline.</param>
+      <typeparam name="TMiddleware">Type of <see cref="T:System.Cloud.Messaging.IMessageMiddleware" /> implementation.</typeparam>
+      <exception cref="T:System.ArgumentNullException">Any argument is <see langword="null" />.</exception>
+      <returns>
+        <see cref="T:System.Cloud.Messaging.IAsyncProcessingPipelineBuilder" /> to chain additional calls.</returns>
+    </member>
+    <member name="M:System.Cloud.Messaging.AsyncProcessingPipelineBuilderExtensions.AddMessageMiddleware``1(System.Cloud.Messaging.IAsyncProcessingPipelineBuilder,System.Func{System.IServiceProvider,``0})">
+      <summary>
+            Adds the <see cref="T:System.Cloud.Messaging.IMessageMiddleware" /> to the async processing pipeline with the provided implementation factory.</summary>
+      <param name="pipelineBuilder">The builder for async processing pipeline.</param>
+      <param name="implementationFactory">The implementation factory for <see cref="T:System.Cloud.Messaging.IMessageMiddleware" />.</param>
+      <typeparam name="TMiddleware">Type of <see cref="T:System.Cloud.Messaging.IMessageMiddleware" /> implementation.</typeparam>
+      <exception cref="T:System.ArgumentNullException">Any argument is <see langword="null" />.</exception>
+      <returns>
+        <see cref="T:System.Cloud.Messaging.IAsyncProcessingPipelineBuilder" /> to chain additional calls.</returns>
+    </member>
+    <member name="M:System.Cloud.Messaging.AsyncProcessingPipelineBuilderExtensions.AddNamedSingleton``1(System.Cloud.Messaging.IAsyncProcessingPipelineBuilder)">
+      <summary>
+            Adds any singletons required for the async processing pipeline.</summary>
+      <param name="pipelineBuilder">The builder for async processing pipeline.</param>
+      <typeparam name="T">Type of singleton.</typeparam>
+      <exception cref="T:System.ArgumentNullException">Any argument is <see langword="null" />.</exception>
+      <returns>
+        <see cref="T:System.Cloud.Messaging.IAsyncProcessingPipelineBuilder" /> to chain additional calls.</returns>
+    </member>
+    <member name="M:System.Cloud.Messaging.AsyncProcessingPipelineBuilderExtensions.AddNamedSingleton``1(System.Cloud.Messaging.IAsyncProcessingPipelineBuilder,System.Func{System.IServiceProvider,``0})">
+      <summary>
+            Adds any singletons required for the async processing pipeline with the provided <paramref name="implementationFactory" />.</summary>
+      <param name="pipelineBuilder">The builder for async processing pipeline.</param>
+      <param name="implementationFactory">The implementation factory for the singleton type.</param>
+      <typeparam name="T">Type of singleton.</typeparam>
+      <exception cref="T:System.ArgumentNullException">Any argument is <see langword="null" />.</exception>
+      <returns>
+        <see cref="T:System.Cloud.Messaging.IAsyncProcessingPipelineBuilder" /> to chain additional calls.</returns>
+    </member>
+    <member name="M:System.Cloud.Messaging.AsyncProcessingPipelineBuilderExtensions.AddNamedSingleton``1(System.Cloud.Messaging.IAsyncProcessingPipelineBuilder,System.String,System.Func{System.IServiceProvider,``0})">
+      <summary>
+            Adds any singletons required for the async processing pipeline with the provided <paramref name="implementationFactory" /> against the provided <paramref name="name" />.</summary>
+      <param name="pipelineBuilder">The builder for async processing pipeline.</param>
+      <param name="name">The name with which the singleton is registered.</param>
+      <param name="implementationFactory">The implementation factory for the singleton type.</param>
+      <typeparam name="T">Type of singleton.</typeparam>
+      <exception cref="T:System.ArgumentNullException">Any argument is <see langword="null" />.</exception>
+      <returns>
+        <see cref="T:System.Cloud.Messaging.IAsyncProcessingPipelineBuilder" /> to chain additional calls.</returns>
+    </member>
+    <member name="M:System.Cloud.Messaging.AsyncProcessingPipelineBuilderExtensions.ConfigureMessageConsumer``1(System.Cloud.Messaging.IAsyncProcessingPipelineBuilder)">
+      <summary>
+            Configures the <see cref="T:System.Cloud.Messaging.MessageConsumer" /> for the async processing pipeline.</summary>
+      <param name="pipelineBuilder">The builder for async processing pipeline.</param>
+      <typeparam name="TConsumer">Type of <see cref="T:System.Cloud.Messaging.MessageConsumer" /> implementation.</typeparam>
+      <exception cref="T:System.ArgumentNullException">Any argument is <see langword="null" />.</exception>
+      <returns>
+        <see cref="T:System.Cloud.Messaging.IAsyncProcessingPipelineBuilder" /> to chain additional calls.</returns>
+    </member>
+    <member name="M:System.Cloud.Messaging.AsyncProcessingPipelineBuilderExtensions.ConfigureMessageConsumer``1(System.Cloud.Messaging.IAsyncProcessingPipelineBuilder,System.Func{System.IServiceProvider,``0})">
+      <summary>
+            Configures the <see cref="T:System.Cloud.Messaging.MessageConsumer" /> for the async processing pipeline with the provided implementation factory.</summary>
+      <param name="pipelineBuilder">The builder for async processing pipeline.</param>
+      <param name="implementationFactory">The implementation factory for <see cref="T:System.Cloud.Messaging.MessageConsumer" />.</param>
+      <typeparam name="TConsumer">Type of <see cref="T:System.Cloud.Messaging.MessageConsumer" /> implementation.</typeparam>
+      <exception cref="T:System.ArgumentNullException">Any argument is <see langword="null" />.</exception>
+      <returns>
+        <see cref="T:System.Cloud.Messaging.IAsyncProcessingPipelineBuilder" /> to chain additional calls.</returns>
+    </member>
+    <member name="M:System.Cloud.Messaging.AsyncProcessingPipelineBuilderExtensions.ConfigureMessageDestination``1(System.Cloud.Messaging.IAsyncProcessingPipelineBuilder)">
+      <summary>
+            Configures the <see cref="T:System.Cloud.Messaging.IMessageDestination" /> for the async processing pipeline.</summary>
+      <param name="pipelineBuilder">The builder for async processing pipeline.</param>
+      <typeparam name="TDestination">Type of <see cref="T:System.Cloud.Messaging.IMessageDestination" /> implementation.</typeparam>
+      <exception cref="T:System.ArgumentNullException">Any argument is <see langword="null" />.</exception>
+      <returns>
+        <see cref="T:System.Cloud.Messaging.IAsyncProcessingPipelineBuilder" /> to chain additional calls.</returns>
+    </member>
+    <member name="M:System.Cloud.Messaging.AsyncProcessingPipelineBuilderExtensions.ConfigureMessageDestination``1(System.Cloud.Messaging.IAsyncProcessingPipelineBuilder,System.Func{System.IServiceProvider,``0})">
+      <summary>
+            Configures the <see cref="T:System.Cloud.Messaging.IMessageDestination" /> for the async processing pipeline with the provided implementation factory.</summary>
+      <param name="pipelineBuilder">The builder for async processing pipeline.</param>
+      <param name="implementationFactory">The implementation factory for <see cref="T:System.Cloud.Messaging.IMessageDestination" />.</param>
+      <typeparam name="TDestination">Type of <see cref="T:System.Cloud.Messaging.IMessageDestination" /> implementation.</typeparam>
+      <exception cref="T:System.ArgumentNullException">Any argument is <see langword="null" />.</exception>
+      <returns>
+        <see cref="T:System.Cloud.Messaging.IAsyncProcessingPipelineBuilder" /> to chain additional calls.</returns>
+    </member>
+    <member name="M:System.Cloud.Messaging.AsyncProcessingPipelineBuilderExtensions.ConfigureMessageDestination``1(System.Cloud.Messaging.IAsyncProcessingPipelineBuilder,System.String,System.Func{System.IServiceProvider,``0})">
+      <summary>
+            Configures the <see cref="T:System.Cloud.Messaging.IMessageDestination" /> for the async processing pipeline with the provided name and implementation factory.</summary>
+      <param name="pipelineBuilder">The builder for async processing pipeline.</param>
+      <param name="name">The name with which the <see cref="T:System.Cloud.Messaging.IMessageDestination" /> is registered with.</param>
+      <param name="implementationFactory">The implementation factory for <see cref="T:System.Cloud.Messaging.IMessageDestination" />.</param>
+      <typeparam name="TDestination">Type of <see cref="T:System.Cloud.Messaging.IMessageDestination" /> implementation.</typeparam>
+      <exception cref="T:System.ArgumentNullException">Any argument is <see langword="null" />.</exception>
+      <returns>
+        <see cref="T:System.Cloud.Messaging.IAsyncProcessingPipelineBuilder" /> to chain additional calls.</returns>
+    </member>
+    <member name="M:System.Cloud.Messaging.AsyncProcessingPipelineBuilderExtensions.ConfigureMessageSource``1(System.Cloud.Messaging.IAsyncProcessingPipelineBuilder)">
+      <summary>
+            Configures the <see cref="T:System.Cloud.Messaging.IMessageSource" /> for the async processing pipeline.</summary>
+      <param name="pipelineBuilder">The builder for async processing pipeline.</param>
+      <typeparam name="TSource">Type of <see cref="T:System.Cloud.Messaging.IMessageSource" /> implementation.</typeparam>
+      <exception cref="T:System.ArgumentNullException">Any argument is <see langword="null" />.</exception>
+      <returns>
+        <see cref="T:System.Cloud.Messaging.IAsyncProcessingPipelineBuilder" /> to chain additional calls.</returns>
+    </member>
+    <member name="M:System.Cloud.Messaging.AsyncProcessingPipelineBuilderExtensions.ConfigureMessageSource``1(System.Cloud.Messaging.IAsyncProcessingPipelineBuilder,System.Func{System.IServiceProvider,``0})">
+      <summary>
+            Configures the <see cref="T:System.Cloud.Messaging.IMessageSource" /> for the async processing pipeline with the provided implementation factory.</summary>
+      <param name="pipelineBuilder">The builder for async processing pipeline.</param>
+      <param name="implementationFactory">The implementation factory for <see cref="T:System.Cloud.Messaging.IMessageSource" />.</param>
+      <typeparam name="TSource">Type of <see cref="T:System.Cloud.Messaging.IMessageSource" /> implementation.</typeparam>
+      <exception cref="T:System.ArgumentNullException">Any argument is <see langword="null" />.</exception>
+      <returns>
+        <see cref="T:System.Cloud.Messaging.IAsyncProcessingPipelineBuilder" /> to chain additional calls.</returns>
+    </member>
+    <member name="M:System.Cloud.Messaging.AsyncProcessingPipelineBuilderExtensions.ConfigureTerminalMessageDelegate(System.Cloud.Messaging.IAsyncProcessingPipelineBuilder)">
+      <summary>
+            Configures the terminal <see cref="T:System.Cloud.Messaging.MessageDelegate" /> for the async processing pipeline.</summary>
+      <param name="pipelineBuilder">The builder for async processing pipeline.</param>
+      <exception cref="T:System.ArgumentNullException">Any argument is <see langword="null" />.</exception>
+      <returns>
+        <see cref="T:System.Cloud.Messaging.IAsyncProcessingPipelineBuilder" /> to chain additional calls.</returns>
+    </member>
+    <member name="M:System.Cloud.Messaging.AsyncProcessingPipelineBuilderExtensions.ConfigureTerminalMessageDelegate(System.Cloud.Messaging.IAsyncProcessingPipelineBuilder,System.Func{System.IServiceProvider,System.Cloud.Messaging.MessageDelegate})">
+      <summary>
+            Configures the terminal <see cref="T:System.Cloud.Messaging.MessageDelegate" /> for the async processing pipeline with the provided implementation factory.</summary>
+      <param name="pipelineBuilder">The builder for async processing pipeline.</param>
+      <param name="implementationFactory">The implementation factory for <see cref="T:System.Cloud.Messaging.MessageDelegate" />.</param>
+      <exception cref="T:System.ArgumentNullException">Any argument is <see langword="null" />.</exception>
+      <returns>
+        <see cref="T:System.Cloud.Messaging.IAsyncProcessingPipelineBuilder" /> to chain additional calls.</returns>
+    </member>
+    <member name="M:System.Cloud.Messaging.AsyncProcessingPipelineBuilderExtensions.RunConsumerAsBackgroundService(System.Cloud.Messaging.IAsyncProcessingPipelineBuilder)">
+      <summary>
+            Configures the previously registered <see cref="T:System.Cloud.Messaging.MessageConsumer" /> for the async processing pipeline as a <see cref="T:Microsoft.Extensions.Hosting.BackgroundService" />.</summary>
+      <param name="pipelineBuilder">The builder for async processing pipeline.</param>
+      <exception cref="T:System.ArgumentNullException">Any argument is <see langword="null" />.</exception>
+    </member>
+    <member name="T:System.Cloud.Messaging.DefaultMessageConsumer">
+      <summary>
+            Provides default implementation to <see cref="T:System.Cloud.Messaging.MessageConsumer" />.</summary>
+    </member>
+    <member name="M:System.Cloud.Messaging.DefaultMessageConsumer.#ctor(System.Cloud.Messaging.IMessageSource,System.Collections.Generic.IReadOnlyList{System.Cloud.Messaging.IMessageMiddleware},System.Cloud.Messaging.MessageDelegate,Microsoft.Extensions.Logging.ILogger)">
+      <summary>
+            Initializes a new instance of the <see cref="T:System.Cloud.Messaging.DefaultMessageConsumer" /> class.</summary>
+      <param name="messageSource">The message source.</param>
+      <param name="middlewares">The list of middlewares.</param>
+      <param name="messageDelegate">The terminal message delegate.</param>
+      <param name="logger">Logger.</param>
+    </member>
+    <member name="T:System.Cloud.Messaging.IAsyncProcessingPipelineBuilder">
+      <summary>
+            Interface to register services for the async processing pipeline.</summary>
+    </member>
+    <member name="P:System.Cloud.Messaging.IAsyncProcessingPipelineBuilder.PipelineName">
+      <summary>
+            Gets the name of the message pipeline.</summary>
+    </member>
+    <member name="P:System.Cloud.Messaging.IAsyncProcessingPipelineBuilder.Services">
+      <summary>
+            Gets the <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" />.</summary>
+    </member>
+    <member name="T:System.Cloud.Messaging.IMessageDestination">
+      <summary>
+            Interface for writing message to a destination.</summary>
+    </member>
+    <member name="M:System.Cloud.Messaging.IMessageDestination.WriteAsync(System.Cloud.Messaging.MessageContext)">
+      <summary>
+            Write message asynchronously.</summary>
+      <param name="context">The message context.</param>
+      <returns>
+        <see cref="T:System.Threading.Tasks.ValueTask" />.</returns>
+    </member>
+    <member name="T:System.Cloud.Messaging.IMessageMiddleware">
+      <summary>
+            Interface for a middleware that uses <see cref="T:System.Cloud.Messaging.MessageContext" /> and the next <see cref="T:System.Cloud.Messaging.MessageDelegate" /> in the pipeline to process the message.</summary>
+    </member>
+    <member name="M:System.Cloud.Messaging.IMessageMiddleware.InvokeAsync(System.Cloud.Messaging.MessageContext,System.Cloud.Messaging.MessageDelegate)">
+      <summary>
+            Handles the message.</summary>
+      <param name="context">The message context.</param>
+      <param name="nextHandler">The next handler in the async processing pipeline.</param>
+      <returns>
+        <see cref="T:System.Threading.Tasks.ValueTask" />.</returns>
+    </member>
+    <member name="T:System.Cloud.Messaging.IMessagePostponeFeature">
+      <summary>
+            Feature interface for postponing the message processing.</summary>
+    </member>
+    <member name="M:System.Cloud.Messaging.IMessagePostponeFeature.PostponeAsync(System.TimeSpan,System.Threading.CancellationToken)">
+      <summary>
+            Postpones the message processing asynchronously.</summary>
+      <param name="delay">The time span by which message processing is to be postponed.</param>
+      <param name="cancellationToken">The cancellation token for the operation.</param>
+      <returns>
+        <see cref="T:System.Threading.Tasks.ValueTask" />.</returns>
+    </member>
+    <member name="T:System.Cloud.Messaging.IMessageSource">
+      <summary>
+            Interface for a message source.</summary>
+    </member>
+    <member name="M:System.Cloud.Messaging.IMessageSource.ReadAsync(System.Threading.CancellationToken)">
+      <summary>
+            Reads message asynchronously.</summary>
+      <param name="cancellationToken">The cancellation token for reading message.</param>
+      <returns>
+        <see cref="T:System.Threading.Tasks.ValueTask`1" />.</returns>
+    </member>
+    <member name="M:System.Cloud.Messaging.IMessageSource.Release(System.Cloud.Messaging.MessageContext)">
+      <summary>
+            Release the message context.</summary>
+      <param name="context">
+        <see cref="T:System.Cloud.Messaging.MessageContext" />.</param>
+    </member>
+    <member name="T:System.Cloud.Messaging.IMessageVisibilityDelayFeature">
+      <summary>
+            Feature interface for setting/retrieving the visibility delay.</summary>
+    </member>
+    <member name="P:System.Cloud.Messaging.IMessageVisibilityDelayFeature.VisibilityDelay">
+      <summary>
+            Gets the visibility delay which represents the delay after which the message is available for other <see cref="T:System.Cloud.Messaging.MessageConsumer" /> to process.</summary>
+    </member>
+    <member name="T:System.Cloud.Messaging.ISerializedMessagePayloadFeature`1">
+      <summary>
+            Feature interface for setting/retrieving the serialized message payload.</summary>
+      <typeparam name="T">Type of the message payload.</typeparam>
+    </member>
+    <member name="P:System.Cloud.Messaging.ISerializedMessagePayloadFeature`1.Payload">
+      <summary>
+            Gets the serialized message payload.</summary>
+    </member>
+    <member name="T:System.Cloud.Messaging.LatencyRecorderMiddlewareExtensions">
+      <summary>
+            Provides extension methods for <see cref="T:System.Cloud.Messaging.IAsyncProcessingPipelineBuilder" /> to add support for the <see cref="T:System.Cloud.Messaging.IMessageMiddleware" /> implementation to record latency.</summary>
+    </member>
+    <member name="M:System.Cloud.Messaging.LatencyRecorderMiddlewareExtensions.AddLatencyContextMiddleware(System.Cloud.Messaging.IAsyncProcessingPipelineBuilder)">
+      <summary>
+            Adds the <see cref="T:System.Cloud.Messaging.IMessageMiddleware" /> to register the <see cref="T:Microsoft.Extensions.Telemetry.Latency.ILatencyContextProvider" /> in <see cref="T:System.Cloud.Messaging.IMessageMiddleware" /> pipeline to
+            create and set <see cref="T:Microsoft.Extensions.Telemetry.Latency.ILatencyContext" /> with the <see cref="T:System.Cloud.Messaging.MessageContext" />.</summary>
+      <param name="pipelineBuilder">The builder for async processing pipeline.</param>
+      <exception cref="T:System.ArgumentNullException">Any argument is <see langword="null" />.</exception>
+      <returns>
+        <see cref="T:System.Cloud.Messaging.IAsyncProcessingPipelineBuilder" /> to chain additional calls.</returns>
+    </member>
+    <member name="M:System.Cloud.Messaging.LatencyRecorderMiddlewareExtensions.AddLatencyContextMiddleware``1(System.Cloud.Messaging.IAsyncProcessingPipelineBuilder,System.Func{System.IServiceProvider,``0})">
+      <summary>
+            Adds the <see cref="T:System.Cloud.Messaging.IMessageMiddleware" /> to reuse the existing <see cref="T:Microsoft.Extensions.Telemetry.Latency.ILatencyContext" /> registered with the ASP.NET pipeline and set it in the <see cref="T:System.Cloud.Messaging.MessageContext" />.</summary>
+      <param name="pipelineBuilder">The builder for async processing pipeline.</param>
+      <param name="implementationFactory">The <see cref="T:Microsoft.Extensions.Telemetry.Latency.ILatencyContext" /> implementation factory.</param>
+      <typeparam name="T">The type of <see cref="T:Microsoft.Extensions.Telemetry.Latency.ILatencyContext" /> implementation.</typeparam>
+      <exception cref="T:System.ArgumentNullException">Any argument is <see langword="null" />.</exception>
+      <returns>
+        <see cref="T:System.Cloud.Messaging.IAsyncProcessingPipelineBuilder" /> to chain additional calls.</returns>
+    </member>
+    <member name="M:System.Cloud.Messaging.LatencyRecorderMiddlewareExtensions.AddLatencyContextMiddleware``1(System.Cloud.Messaging.IAsyncProcessingPipelineBuilder,System.Func{System.IServiceProvider,``0},System.Func{System.IServiceProvider,System.Collections.Generic.IEnumerable{Microsoft.Extensions.Telemetry.Latency.ILatencyDataExporter}})">
+      <summary>
+            Adds the <see cref="T:System.Cloud.Messaging.IMessageMiddleware" /> to register the provided <see cref="T:Microsoft.Extensions.Telemetry.Latency.ILatencyContextProvider" /> in the <see cref="T:System.Cloud.Messaging.IMessageMiddleware" /> pipeline to
+            create and set <see cref="T:Microsoft.Extensions.Telemetry.Latency.ILatencyContext" /> with the <see cref="T:System.Cloud.Messaging.MessageContext" />.</summary>
+      <param name="pipelineBuilder">The builder for async processing pipeline.</param>
+      <param name="implementationFactory">The <see cref="T:Microsoft.Extensions.Telemetry.Latency.ILatencyContextProvider" /> implementation factory.</param>
+      <param name="exporterFactory">The factory for exporting capture latency context.</param>
+      <typeparam name="T">The type of <see cref="T:Microsoft.Extensions.Telemetry.Latency.ILatencyContextProvider" /> implementation.</typeparam>
+      <exception cref="T:System.ArgumentNullException">Any argument is <see langword="null" />.</exception>
+      <returns>
+        <see cref="T:System.Cloud.Messaging.IAsyncProcessingPipelineBuilder" /> to chain additional calls.</returns>
+    </member>
+    <member name="M:System.Cloud.Messaging.LatencyRecorderMiddlewareExtensions.AddLatencyRecorderMessageMiddleware(System.Cloud.Messaging.IAsyncProcessingPipelineBuilder,Microsoft.Extensions.Telemetry.Latency.MeasureToken,Microsoft.Extensions.Telemetry.Latency.MeasureToken)">
+      <summary>
+            Adds the <see cref="T:System.Cloud.Messaging.IMessageMiddleware" /> for recording latency of the underlying <see cref="T:System.Cloud.Messaging.IMessageMiddleware" /> pipeline
+            by obtaining the <see cref="T:Microsoft.Extensions.Telemetry.Latency.ILatencyContext" /> associated with <see cref="T:System.Cloud.Messaging.MessageContext" />.</summary>
+      <param name="pipelineBuilder">The builder for async processing pipeline.</param>
+      <param name="successMeasureToken">The success token.</param>
+      <param name="failureMeasureToken">The failure token.</param>
+      <exception cref="T:System.ArgumentNullException">Any argument is <see langword="null" />.</exception>
+      <returns>
+        <see cref="T:System.Cloud.Messaging.IAsyncProcessingPipelineBuilder" /> to chain additional calls.</returns>
+    </member>
+    <member name="T:System.Cloud.Messaging.MessageConsumer">
+      <summary>
+            Base class implementation for consuming and processing messages.</summary>
+    </member>
+    <member name="M:System.Cloud.Messaging.MessageConsumer.#ctor(System.Cloud.Messaging.IMessageSource,System.Collections.Generic.IReadOnlyList{System.Cloud.Messaging.IMessageMiddleware},System.Cloud.Messaging.MessageDelegate,Microsoft.Extensions.Logging.ILogger)">
+      <summary>
+            Initializes a new instance of the <see cref="T:System.Cloud.Messaging.MessageConsumer" /> class.</summary>
+      <param name="messageSource">
+        <see cref="P:System.Cloud.Messaging.MessageConsumer.MessageSource" />.</param>
+      <param name="messageMiddlewares">List of middleware in the async processing pipeline.</param>
+      <param name="terminalDelegate">Terminal message delegate.</param>
+      <param name="logger">
+        <see cref="P:System.Cloud.Messaging.MessageConsumer.Logger" />.</param>
+      <exception cref="T:System.ArgumentNullException">Any argument is <see langword="null" />.</exception>
+    </member>
+    <member name="M:System.Cloud.Messaging.MessageConsumer.ExecuteAsync(System.Threading.CancellationToken)">
+      <summary>
+            Start processing the messages.</summary>
+      <param name="cancellationToken">The cancellation token to stop processing messages.</param>
+      <returns>
+        <see cref="T:System.Threading.Tasks.ValueTask" />.</returns>
+    </member>
+    <member name="M:System.Cloud.Messaging.MessageConsumer.FetchAndProcessMessageAsync(System.Threading.CancellationToken)">
+      <summary>
+            Fetches a <see cref="T:System.Cloud.Messaging.MessageContext" /> via the <see cref="M:System.Cloud.Messaging.MessageConsumer.FetchMessageAsync(System.Threading.CancellationToken)" /> and processes it asynchronously via <see cref="M:System.Cloud.Messaging.MessageConsumer.ProcessMessageAsync(System.Cloud.Messaging.MessageContext)" />.</summary>
+      <param name="cancellationToken">The cancellation token for retrieving and processing message.</param>
+      <exception cref="T:System.Exception">An exception is thrown during <see cref="M:System.Cloud.Messaging.MessageConsumer.HandleMessageProcessingFailureAsync(System.Cloud.Messaging.MessageContext,System.Exception)" />.</exception>
+      <returns>Swallows any exception during retrieving or processing message and returns a non-faulted <see cref="T:System.Threading.Tasks.ValueTask" />.</returns>
+    </member>
+    <member name="M:System.Cloud.Messaging.MessageConsumer.FetchMessageAsync(System.Threading.CancellationToken)">
+      <summary>
+            Fetches message from the message source.</summary>
+      <param name="cancellationToken">The cancellation token for fetching the message.</param>
+      <returns>
+        <see cref="T:System.Threading.Tasks.ValueTask" /> of nullable <see cref="T:System.Cloud.Messaging.MessageContext" />.</returns>
+    </member>
+    <member name="M:System.Cloud.Messaging.MessageConsumer.HandleMessageProcessingCompletionAsync(System.Cloud.Messaging.MessageContext)">
+      <summary>
+            Handles the completion of the message processing.</summary>
+      <param name="context">The message context.</param>
+      <returns>
+        <see cref="T:System.Threading.Tasks.ValueTask" />.</returns>
+    </member>
+    <member name="M:System.Cloud.Messaging.MessageConsumer.HandleMessageProcessingFailureAsync(System.Cloud.Messaging.MessageContext,System.Exception)">
+      <summary>
+            Handles failures that occur during the message processing.</summary>
+      <param name="context">The message context.</param>
+      <param name="exception">The exception during the processing of the message.</param>
+      <returns>
+        <see cref="T:System.Threading.Tasks.ValueTask" />.</returns>
+    </member>
+    <member name="M:System.Cloud.Messaging.MessageConsumer.ProcessingStepAsync(System.Threading.CancellationToken)">
+      <summary>
+            Represents processing steps for message(s).</summary>
+      <param name="cancellationToken">The cancellation token for the processing step.</param>
+      <returns>
+        <see cref="T:System.Threading.Tasks.ValueTask" />.</returns>
+    </member>
+    <member name="M:System.Cloud.Messaging.MessageConsumer.ProcessMessageAsync(System.Cloud.Messaging.MessageContext)">
+      <summary>
+            Processes a message asynchronously.</summary>
+      <param name="context">The message context.</param>
+      <returns>
+        <see cref="T:System.Threading.Tasks.ValueTask" />.</returns>
+    </member>
+    <member name="M:System.Cloud.Messaging.MessageConsumer.ReleaseContext(System.Cloud.Messaging.MessageContext)">
+      <summary>
+            Releases the message context.</summary>
+      <param name="messageContext">The message context.</param>
+    </member>
+    <member name="M:System.Cloud.Messaging.MessageConsumer.ShouldStopConsumer(System.Cloud.Messaging.MessageContext)">
+      <summary>
+            Determines if the consumer should stop processing.</summary>
+      <param name="messageContext">The message context.</param>
+      <returns>
+        <see cref="T:System.Boolean" /> value indicating if consumer should stop processing.</returns>
+    </member>
+    <member name="P:System.Cloud.Messaging.MessageConsumer.Logger">
+      <summary>
+            Gets the logger.</summary>
+    </member>
+    <member name="P:System.Cloud.Messaging.MessageConsumer.MessageSource">
+      <summary>
+            Gets the underlying message source.</summary>
+    </member>
+    <member name="P:System.Cloud.Messaging.MessageConsumer.PipelineDelegate">
+      <summary>
+            Gets the message delegate composed from the pipeline of <see cref="T:System.Cloud.Messaging.IMessageMiddleware" /> implementations and a terminal <see cref="T:System.Cloud.Messaging.MessageDelegate" />.</summary>
+    </member>
+    <member name="T:System.Cloud.Messaging.MessageContext">
+      <summary>
+            Represents the context for storing different <see cref="P:System.Cloud.Messaging.MessageContext.Features" /> required for the processing of message(s).</summary>
+    </member>
+    <member name="M:System.Cloud.Messaging.MessageContext.#ctor(Microsoft.AspNetCore.Http.Features.IFeatureCollection,System.ReadOnlyMemory{System.Byte})">
+      <summary>
+            Initializes a new instance of the <see cref="T:System.Cloud.Messaging.MessageContext" /> class.</summary>
+      <param name="features">The feature collection.</param>
+      <param name="sourcePayload">The source payload.</param>
+      <exception cref="T:System.ArgumentNullException">Any of the arguments is <see langword="null" />.</exception>
+    </member>
+    <member name="M:System.Cloud.Messaging.MessageContext.AddDestinationFeature``1(``0)">
+      <summary>
+            Sets the feature for the <see cref="T:System.Cloud.Messaging.IMessageDestination" /> in the <see cref="P:System.Cloud.Messaging.MessageContext.DestinationFeatures" />.</summary>
+      <param name="feature">The feature to be added to the <see cref="P:System.Cloud.Messaging.MessageContext.DestinationFeatures" />.</param>
+      <typeparam name="T">The type of the feature to be added to the <see cref="P:System.Cloud.Messaging.MessageContext.DestinationFeatures" />.</typeparam>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="feature" /> is <see langword="null" />.</exception>
+    </member>
+    <member name="M:System.Cloud.Messaging.MessageContext.AddFeature``1(``0)">
+      <summary>
+            Sets the feature of the <see cref="T:System.Cloud.Messaging.IMessageSource" /> in the <see cref="P:System.Cloud.Messaging.MessageContext.Features" />.</summary>
+      <param name="feature">The feature to be added to the <see cref="P:System.Cloud.Messaging.MessageContext.Features" />.</param>
+      <typeparam name="T">The type of the feature to be added to the <see cref="P:System.Cloud.Messaging.MessageContext.Features" />.</typeparam>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="feature" /> is <see langword="null" />.</exception>
+    </member>
+    <member name="M:System.Cloud.Messaging.MessageContext.AddSourceFeature``1(``0)">
+      <summary>
+            Sets the feature of the <see cref="T:System.Cloud.Messaging.IMessageSource" /> in the <see cref="P:System.Cloud.Messaging.MessageContext.SourceFeatures" />.</summary>
+      <param name="feature">The feature to be added to the <see cref="P:System.Cloud.Messaging.MessageContext.SourceFeatures" />.</param>
+      <typeparam name="T">The type of the feature to be added to the <see cref="P:System.Cloud.Messaging.MessageContext.SourceFeatures" />.</typeparam>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="feature" /> is <see langword="null" />.</exception>
+    </member>
+    <member name="M:System.Cloud.Messaging.MessageContext.GetUTF8SourcePayloadAsString">
+      <summary>
+            Gets the <see cref="P:System.Cloud.Messaging.MessageContext.SourcePayload" /> as <see cref="P:System.Text.Encoding.UTF8" /> encoded <see cref="T:System.String" />.</summary>
+      <returns>The <see cref="P:System.Cloud.Messaging.MessageContext.SourcePayload" /> in <see cref="P:System.Text.Encoding.UTF8" /> encoding.</returns>
+    </member>
+    <member name="M:System.Cloud.Messaging.MessageContext.MarkCompleteAsync(System.Threading.CancellationToken)">
+      <summary>
+            Marks the message processing to be completed asynchronously.</summary>
+      <param name="cancellationToken">The cancellation token for the operation.</param>
+      <returns>
+        <see cref="T:System.Threading.Tasks.ValueTask" />.</returns>
+    </member>
+    <member name="M:System.Cloud.Messaging.MessageContext.SetDestinationPayload(System.ReadOnlyMemory{System.Byte})">
+      <summary>
+            Sets the payload in the <see cref="T:System.Cloud.Messaging.MessageContext" /> for the <see cref="T:System.Cloud.Messaging.IMessageDestination" /> message.</summary>
+      <param name="payload">The payload for destination message.</param>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="payload" /> is <see langword="null" />.</exception>
+    </member>
+    <member name="M:System.Cloud.Messaging.MessageContext.TryGetUTF8DestinationPayloadAsString(System.String@)">
+      <summary>
+            Try to get the <see cref="P:System.Cloud.Messaging.MessageContext.DestinationPayload" /> message registered with <see cref="T:System.Cloud.Messaging.MessageContext" /> as a <see cref="T:System.String" /> in the <see cref="P:System.Text.Encoding.UTF8" /> encoding.</summary>
+      <param name="payload">The optional payload for the destination message in <see cref="P:System.Text.Encoding.UTF8" /> encoding.</param>
+      <returns>
+        <see cref="T:System.Boolean" /> and if <see langword="true" />, a corresponding payload for the destination message as a <see cref="P:System.Text.Encoding.UTF8" /> encoded <see cref="T:System.String" />.</returns>
+    </member>
+    <member name="P:System.Cloud.Messaging.MessageContext.DestinationFeatures">
+      <summary>
+            Gets the feature collection to register implementation for different types for sending message to <see cref="T:System.Cloud.Messaging.IMessageDestination" />.</summary>
+    </member>
+    <member name="P:System.Cloud.Messaging.MessageContext.DestinationPayload">
+      <summary>
+            Gets the message payload to be sent to <see cref="T:System.Cloud.Messaging.IMessageDestination" />.</summary>
+    </member>
+    <member name="P:System.Cloud.Messaging.MessageContext.Features">
+      <summary>
+            Gets the feature collection to register implementation for different types which will be helpful to process the message.</summary>
+    </member>
+    <member name="P:System.Cloud.Messaging.MessageContext.MessageCancelledToken">
+      <summary>
+            Gets or sets the cancellation token for the cancelling the message processing.</summary>
+    </member>
+    <member name="P:System.Cloud.Messaging.MessageContext.SourceFeatures">
+      <summary>
+            Gets the feature collection to register implementation for different types for the message obtained from the <see cref="T:System.Cloud.Messaging.IMessageSource" />.</summary>
+    </member>
+    <member name="P:System.Cloud.Messaging.MessageContext.SourcePayload">
+      <summary>
+            Gets the message payload obtained from the <see cref="T:System.Cloud.Messaging.IMessageSource" />.</summary>
+    </member>
+    <member name="T:System.Cloud.Messaging.MessageDelegate">
+      <summary>
+            The message delegate called by <see cref="T:System.Cloud.Messaging.IMessageMiddleware" /> to continue processing the message in the pipeline chain.</summary>
+      <param name="context">The message context.</param>
+      <returns>
+        <see cref="T:System.Threading.Tasks.ValueTask" />.</returns>
+    </member>
+    <member name="T:System.Cloud.Messaging.MessageLatencyContextFeatureExtensions">
+      <summary>
+            Provides extension methods for <see cref="T:System.Cloud.Messaging.MessageContext" /> class to add support for setting/retrieving <see cref="T:Microsoft.Extensions.Telemetry.Latency.ILatencyContext" />.</summary>
+    </member>
+    <member name="M:System.Cloud.Messaging.MessageLatencyContextFeatureExtensions.SetLatencyContext(System.Cloud.Messaging.MessageContext,Microsoft.Extensions.Telemetry.Latency.ILatencyContext)">
+      <summary>
+            Sets the <see cref="T:Microsoft.Extensions.Telemetry.Latency.ILatencyContext" /> in <see cref="T:System.Cloud.Messaging.MessageContext" />.</summary>
+      <param name="context">The message context.</param>
+      <param name="latencyContext">The latency context to store fine-grained latency for different processing steps.</param>
+      <exception cref="T:System.ArgumentNullException">Any argument is <see langword="null" />.</exception>
+    </member>
+    <member name="M:System.Cloud.Messaging.MessageLatencyContextFeatureExtensions.TryGetLatencyContext(System.Cloud.Messaging.MessageContext,Microsoft.Extensions.Telemetry.Latency.ILatencyContext@)">
+      <summary>
+            Try to get the <see cref="T:Microsoft.Extensions.Telemetry.Latency.ILatencyContext" /> from the <see cref="T:System.Cloud.Messaging.MessageContext" />.</summary>
+      <param name="context">The message context.</param>
+      <param name="latencyContext">The optional latency context registered with the <paramref name="context" />.</param>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="context" /> is <see langword="null" />.</exception>
+      <returns>
+        <see cref="T:System.Boolean" /> and if <see langword="true" />, a corresponding <see cref="T:Microsoft.Extensions.Telemetry.Latency.ILatencyContext" />.</returns>
+    </member>
+    <member name="T:System.Cloud.Messaging.MessagePostponeFeatureExtensions">
+      <summary>
+            Provides extension methods for <see cref="T:System.Cloud.Messaging.MessageContext" /> class to add support for <see cref="T:System.Cloud.Messaging.IMessagePostponeFeature" />.</summary>
+    </member>
+    <member name="M:System.Cloud.Messaging.MessagePostponeFeatureExtensions.PostponeAsync(System.Cloud.Messaging.MessageContext,System.TimeSpan,System.Threading.CancellationToken)">
+      <summary>
+            Postpones the message processing asynchronously.</summary>
+      <param name="context">The message context.</param>
+      <param name="delay">The time by which the message processing is to be postponed.</param>
+      <param name="cancellationToken">The cancellation token for the postpone operation.</param>
+      <exception cref="T:System.ArgumentNullException">Any argument is <see langword="null" />.</exception>
+      <exception cref="T:System.InvalidOperationException">There is no <see cref="T:System.Cloud.Messaging.IMessagePostponeFeature" /> added to <paramref name="context" />.</exception>
+    </member>
+    <member name="M:System.Cloud.Messaging.MessagePostponeFeatureExtensions.SetMessagePostponeFeature(System.Cloud.Messaging.MessageContext,System.Cloud.Messaging.IMessagePostponeFeature)">
+      <summary>
+            Sets the <see cref="T:System.Cloud.Messaging.IMessagePostponeFeature" /> in the <see cref="T:System.Cloud.Messaging.MessageContext" />.</summary>
+      <param name="context">The message context.</param>
+      <param name="messagePostponeFeature">The feature to postpone message processing.</param>
+      <exception cref="T:System.ArgumentNullException">Any argument is <see langword="null" />.</exception>
+    </member>
+    <member name="T:System.Cloud.Messaging.MessageVisibilityDelayFeatureExtensions">
+      <summary>
+            Provides extension methods for <see cref="T:System.Cloud.Messaging.MessageContext" /> to add support for <see cref="T:System.Cloud.Messaging.IMessageVisibilityDelayFeature" />.</summary>
+    </member>
+    <member name="M:System.Cloud.Messaging.MessageVisibilityDelayFeatureExtensions.SetVisibilityDelay(System.Cloud.Messaging.MessageContext,System.TimeSpan)">
+      <summary>
+            Sets <see cref="T:System.Cloud.Messaging.IMessageVisibilityDelayFeature" /> with the provided <paramref name="visibilityDelay" /> in the <see cref="T:System.Cloud.Messaging.MessageContext" />.</summary>
+      <param name="context">The message context.</param>
+      <param name="visibilityDelay">The time span representing when the message should be next visible for processing via a different <see cref="T:System.Cloud.Messaging.MessageConsumer" />.</param>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="context" /> is <see langword="null" />.</exception>
+    </member>
+    <member name="M:System.Cloud.Messaging.MessageVisibilityDelayFeatureExtensions.TryGetVisibilityDelay(System.Cloud.Messaging.MessageContext,System.Cloud.Messaging.IMessageVisibilityDelayFeature@)">
+      <summary>
+            Tries to get <see cref="T:System.Cloud.Messaging.IMessageVisibilityDelayFeature" /> in the provided <paramref name="visibilityDelay" /> from the <see cref="T:System.Cloud.Messaging.MessageContext" />.</summary>
+      <param name="context">The message context.</param>
+      <param name="visibilityDelay">The optional feature to delay the message visibility.</param>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="context" /> is <see langword="null" />.</exception>
+      <exception cref="T:System.InvalidOperationException">No source <see cref="T:Microsoft.AspNetCore.Http.Features.IFeatureCollection" /> is added to <paramref name="context" />.</exception>
+      <returns>
+        <see cref="T:System.Boolean" /> and if <see langword="true" />, a corresponding <see cref="T:System.Cloud.Messaging.IMessageVisibilityDelayFeature" />.</returns>
+    </member>
+    <member name="T:System.Cloud.Messaging.SerializedMessagePayloadFeatureExtensions">
+      <summary>
+            Provides extension methods for <see cref="T:System.Cloud.Messaging.MessageContext" /> class to add support for <see cref="T:System.Cloud.Messaging.ISerializedMessagePayloadFeature`1" />.</summary>
+    </member>
+    <member name="M:System.Cloud.Messaging.SerializedMessagePayloadFeatureExtensions.GetSerializedPayload``1(System.Cloud.Messaging.MessageContext)">
+      <summary>
+            Gets the message payload as a serialized <typeparamref name="T" /> type.</summary>
+      <param name="context">The message context.</param>
+      <typeparam name="T">Type of the serialized message payload.</typeparam>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="context" /> is <see langword="null" />.</exception>
+      <exception cref="T:System.InvalidOperationException">No <see cref="T:System.Cloud.Messaging.ISerializedMessagePayloadFeature`1" /> is set in the <paramref name="context" />.</exception>
+      <returns>The serialized message payload.</returns>
+    </member>
+    <member name="M:System.Cloud.Messaging.SerializedMessagePayloadFeatureExtensions.SetSerializedPayload``1(System.Cloud.Messaging.MessageContext,``0)">
+      <summary>
+            Sets the message payload in the <see cref="T:System.Cloud.Messaging.MessageContext" /> as a serialized <typeparamref name="T" /> type.</summary>
+      <param name="context">The message context.</param>
+      <param name="payload">The serialized message payload.</param>
+      <typeparam name="T">Type of the serialized message payload.</typeparam>
+      <exception cref="T:System.ArgumentNullException">Any argument is <see langword="null" />.</exception>
+    </member>
+    <member name="M:System.Cloud.Messaging.SerializedMessagePayloadFeatureExtensions.TryGetSerializedPayload``1(System.Cloud.Messaging.MessageContext,``0@)">
+      <summary>
+            Try to get the serialized message payload of <typeparamref name="T" /> type from the <see cref="T:System.Cloud.Messaging.MessageContext" />.</summary>
+      <param name="context">The message context.</param>
+      <param name="payload">The optional serialized message payload.</param>
+      <typeparam name="T">Type of the serialized message.</typeparam>
+      <exception cref="T:System.ArgumentNullException">Any argument is <see langword="null" />.</exception>
+      <returns>
+        <see cref="T:System.Boolean" /> and if <see langword="true" />, a corresponding <typeparamref name="T" /> representing the serialized message payload.</returns>
+    </member>
+    <member name="T:System.Cloud.Messaging.ServiceCollectionExtensions">
+      <summary>
+            Extension methods for <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" /> to create async processing pipeline.</summary>
+    </member>
+    <member name="M:System.Cloud.Messaging.ServiceCollectionExtensions.AddAsyncPipeline(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.String)">
+      <summary>
+            Create an async processing pipeline with the provided <paramref name="pipelineName" />.</summary>
+      <param name="services">The service collection.</param>
+      <param name="pipelineName">The name of the async processing pipeline.</param>
+      <exception cref="T:System.ArgumentNullException">Any argument is <see langword="null" />.</exception>
+      <returns>The builder for async processing pipeline.</returns>
+    </member>
+    <member name="T:System.Cloud.Messaging.ServiceProviderExtensions">
+      <summary>
+            Provides extension methods to <see cref="T:System.IServiceProvider" /> to get <see cref="T:System.Cloud.Messaging.IMessageSource" />, <see cref="T:System.Collections.Generic.IReadOnlyList`1" /> and <see cref="T:System.Cloud.Messaging.MessageDelegate" />.</summary>
+    </member>
+    <member name="M:System.Cloud.Messaging.ServiceProviderExtensions.GetMessageDelegate(System.IServiceProvider,System.String)">
+      <summary>
+            Gets the terminal message delegate for the provided async processing pipeline.</summary>
+      <param name="serviceProvider">The service provider.</param>
+      <param name="pipelineName">The name of the async processing pipeline.</param>
+      <returns>The terminal message delegate.</returns>
+    </member>
+    <member name="M:System.Cloud.Messaging.ServiceProviderExtensions.GetMessageMiddlewares(System.IServiceProvider,System.String)">
+      <summary>
+            Gets the list of message middleware for the provided async processing pipeline.</summary>
+      <param name="serviceProvider">The service provider.</param>
+      <param name="pipelineName">The name of the async processing pipeline.</param>
+      <returns>The list of message middleware.</returns>
+    </member>
+    <member name="M:System.Cloud.Messaging.ServiceProviderExtensions.GetMessageSource(System.IServiceProvider,System.String)">
+      <summary>
+            Gets the message source for the provided async processing pipeline.</summary>
+      <param name="serviceProvider">The service provider.</param>
+      <param name="pipelineName">The name of the async processing pipeline.</param>
+      <returns>The message source.</returns>
+    </member>
+  </members>
+</doc>

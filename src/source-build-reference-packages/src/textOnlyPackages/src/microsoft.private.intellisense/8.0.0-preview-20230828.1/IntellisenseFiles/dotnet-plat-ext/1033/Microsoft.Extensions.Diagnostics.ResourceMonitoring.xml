@@ -1,0 +1,299 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<doc>
+  <assembly>
+    <name>Microsoft.Extensions.Diagnostics.ResourceMonitoring</name>
+  </assembly>
+  <members>
+    <member name="T:Microsoft.Extensions.Diagnostics.ResourceMonitoring.CountersSetup">
+      <summary>
+            A static class for performance counters preparation.</summary>
+    </member>
+    <member name="M:Microsoft.Extensions.Diagnostics.ResourceMonitoring.CountersSetup.PreparePerformanceCounters">
+      <summary>
+            Setup Category function.</summary>
+    </member>
+    <member name="T:Microsoft.Extensions.Diagnostics.ResourceMonitoring.IResourceMonitor">
+      <summary>
+            Provides the ability to sample the system for current resource utilization.</summary>
+    </member>
+    <member name="M:Microsoft.Extensions.Diagnostics.ResourceMonitoring.IResourceMonitor.GetUtilization(System.TimeSpan)">
+      <summary>
+            Gets utilization for the specified time window.</summary>
+      <param name="window">A <see cref="T:System.TimeSpan" /> representing the time window for which utilization is requested.</param>
+      <exception cref="T:System.ArgumentOutOfRangeException">
+            Thrown when <paramref name="window" /> is greater than the maximum window size configured while adding the service to the services collection.</exception>
+      <returns>The utilization during the time window specified by <paramref name="window" />.</returns>
+    </member>
+    <member name="T:Microsoft.Extensions.Diagnostics.ResourceMonitoring.IResourceMonitorBuilder">
+      <summary>
+            Helps building resource monitoring infra.</summary>
+    </member>
+    <member name="M:Microsoft.Extensions.Diagnostics.ResourceMonitoring.IResourceMonitorBuilder.AddPublisher``1">
+      <summary>
+            Adds implementation of the utilization data publisher.</summary>
+      <typeparam name="T">An implementation of <see cref="T:Microsoft.Extensions.Diagnostics.ResourceMonitoring.IResourceUtilizationPublisher" /> that is used by the tracker to publish <see cref="T:Microsoft.Extensions.Diagnostics.ResourceMonitoring.Utilization" /> to 3rd parties.</typeparam>
+      <returns>Instance of <see cref="T:Microsoft.Extensions.Diagnostics.ResourceMonitoring.IResourceMonitorBuilder" /> for further configurations.</returns>
+    </member>
+    <member name="P:Microsoft.Extensions.Diagnostics.ResourceMonitoring.IResourceMonitorBuilder.Services">
+      <summary>
+            Gets the service collection being manipulated by the builder.</summary>
+    </member>
+    <member name="T:Microsoft.Extensions.Diagnostics.ResourceMonitoring.IResourceUtilizationPublisher">
+      <summary>
+            An interface for utilization publisher.</summary>
+    </member>
+    <member name="M:Microsoft.Extensions.Diagnostics.ResourceMonitoring.IResourceUtilizationPublisher.PublishAsync(Microsoft.Extensions.Diagnostics.ResourceMonitoring.Utilization,System.Threading.CancellationToken)">
+      <summary>
+            This method is called to update subscribers when new utilization state has been computed.</summary>
+      <param name="utilization">The utilization struct to be published.</param>
+      <param name="cancellationToken">A <see cref="T:System.Threading.CancellationToken" /> used to cancel the publish operation.</param>
+      <returns>ValueTask because operation can finish synchronously.</returns>
+    </member>
+    <member name="T:Microsoft.Extensions.Diagnostics.ResourceMonitoring.LinuxResourceUtilizationCounters">
+      <summary>
+            The names of instruments published by this package.</summary>
+    </member>
+    <member name="P:Microsoft.Extensions.Diagnostics.ResourceMonitoring.LinuxResourceUtilizationCounters.CpuConsumptionPercentage">
+      <summary>
+            Gets CPU consumption by running application in percentages.</summary>
+    </member>
+    <member name="P:Microsoft.Extensions.Diagnostics.ResourceMonitoring.LinuxResourceUtilizationCounters.MemoryConsumptionPercentage">
+      <summary>
+            Gets memory consumption by running application in percentages.</summary>
+    </member>
+    <member name="T:Microsoft.Extensions.Diagnostics.ResourceMonitoring.LinuxResourceUtilizationProviderOptions">
+      <summary>
+            Options for Linux resource utilization provider.</summary>
+    </member>
+    <member name="M:Microsoft.Extensions.Diagnostics.ResourceMonitoring.LinuxResourceUtilizationProviderOptions.#ctor" />
+    <member name="P:Microsoft.Extensions.Diagnostics.ResourceMonitoring.LinuxResourceUtilizationProviderOptions.CpuConsumptionRefreshInterval">
+      <summary>
+            Gets or sets the default interval used for refreshing values reported by <see cref="P:Microsoft.Extensions.Diagnostics.ResourceMonitoring.LinuxResourceUtilizationCounters.CpuConsumptionPercentage" />.</summary>
+      <returns>
+            The default value is 5 seconds.</returns>
+    </member>
+    <member name="P:Microsoft.Extensions.Diagnostics.ResourceMonitoring.LinuxResourceUtilizationProviderOptions.MemoryConsumptionRefreshInterval">
+      <summary>
+            Gets or sets the default interval used for refreshing values reported by <see cref="P:Microsoft.Extensions.Diagnostics.ResourceMonitoring.LinuxResourceUtilizationCounters.MemoryConsumptionPercentage" />.</summary>
+      <returns>
+            The default value is 5 seconds.</returns>
+    </member>
+    <member name="T:Microsoft.Extensions.Diagnostics.ResourceMonitoring.LinuxUtilizationExtensions">
+      <summary>
+            Extensions for adding the Linux resource utilization provider.</summary>
+    </member>
+    <member name="M:Microsoft.Extensions.Diagnostics.ResourceMonitoring.LinuxUtilizationExtensions.AddLinuxProvider(Microsoft.Extensions.Diagnostics.ResourceMonitoring.IResourceMonitorBuilder)">
+      <summary>
+            An extension method to configure and add the Linux utilization provider to services collection.</summary>
+      <param name="builder">The tracker builder instance used to add the provider.</param>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="builder" /> is <see langword="null" />.</exception>
+      <returns>Returns the input tracker builder for call chaining.</returns>
+    </member>
+    <member name="M:Microsoft.Extensions.Diagnostics.ResourceMonitoring.LinuxUtilizationExtensions.AddLinuxProvider(Microsoft.Extensions.Diagnostics.ResourceMonitoring.IResourceMonitorBuilder,Microsoft.Extensions.Configuration.IConfigurationSection)">
+      <summary>
+            An extension method to configure and add the Linux utilization provider to services collection.</summary>
+      <param name="builder">The builder.</param>
+      <param name="section">The <see cref="T:Microsoft.Extensions.Configuration.IConfigurationSection" /> to use for configuring of <see cref="T:Microsoft.Extensions.Diagnostics.ResourceMonitoring.LinuxResourceUtilizationProviderOptions" />.</param>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="builder" /> is <see langword="null" />.</exception>
+      <returns>Returns the builder.</returns>
+    </member>
+    <member name="M:Microsoft.Extensions.Diagnostics.ResourceMonitoring.LinuxUtilizationExtensions.AddLinuxProvider(Microsoft.Extensions.Diagnostics.ResourceMonitoring.IResourceMonitorBuilder,System.Action{Microsoft.Extensions.Diagnostics.ResourceMonitoring.LinuxResourceUtilizationProviderOptions})">
+      <summary>
+            An extension method to configure and add the Linux utilization provider to services collection.</summary>
+      <param name="builder">The builder.</param>
+      <param name="configure">The delegate for configuring of <see cref="T:Microsoft.Extensions.Diagnostics.ResourceMonitoring.LinuxResourceUtilizationProviderOptions" />.</param>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="builder" /> or <paramref name="configure" /> is <see langword="null" />.</exception>
+      <returns>Returns the builder.</returns>
+    </member>
+    <member name="T:Microsoft.Extensions.Diagnostics.ResourceMonitoring.NullUtilizationExtensions">
+      <summary>
+            Extensions for adding the <see langword="null" /> resource utilization provider.</summary>
+    </member>
+    <member name="M:Microsoft.Extensions.Diagnostics.ResourceMonitoring.NullUtilizationExtensions.AddNullProvider(Microsoft.Extensions.Diagnostics.ResourceMonitoring.IResourceMonitorBuilder)">
+      <summary>
+            Adds a platform independent and non-operational provider to the service collection.</summary>
+      <param name="builder">The builder instance used to configure the tracker.</param>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="builder" /> is <see langword="null" />.</exception>
+      <returns>The value of <paramref name="builder" />.</returns>
+    </member>
+    <member name="T:Microsoft.Extensions.Diagnostics.ResourceMonitoring.ResourceMonitoringExtensions">
+      <summary>
+            Lets you configure and register resource monitoring components.</summary>
+    </member>
+    <member name="M:Microsoft.Extensions.Diagnostics.ResourceMonitoring.ResourceMonitoringExtensions.AddResourceMonitoring(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.Action{Microsoft.Extensions.Diagnostics.ResourceMonitoring.IResourceMonitorBuilder})">
+      <summary>
+            Configures and adds an <see cref="T:Microsoft.Extensions.Diagnostics.ResourceMonitoring.IResourceMonitor" /> implementation to a service collection.</summary>
+      <param name="services">The dependency injection container to add the monitor to.</param>
+      <param name="configure">Delegate to configure <see cref="T:Microsoft.Extensions.Diagnostics.ResourceMonitoring.IResourceMonitorBuilder" />.</param>
+      <exception cref="T:System.ArgumentNullException">Either <paramref name="services" /> or <paramref name="configure" /> is <see langword="null" />.</exception>
+      <returns>The value of <paramref name="services" />.</returns>
+    </member>
+    <member name="M:Microsoft.Extensions.Diagnostics.ResourceMonitoring.ResourceMonitoringExtensions.ConfigureMonitor(Microsoft.Extensions.Diagnostics.ResourceMonitoring.IResourceMonitorBuilder,Microsoft.Extensions.Configuration.IConfigurationSection)">
+      <summary>
+            Configures the resource utilization tracker.</summary>
+      <param name="builder">The builder instance used to configure the tracker.</param>
+      <param name="section">The <see cref="T:Microsoft.Extensions.Configuration.IConfigurationSection" /> to use for configuring <see cref="T:Microsoft.Extensions.Diagnostics.ResourceMonitoring.ResourceMonitoringOptions" />.</param>
+      <exception cref="T:System.ArgumentNullException">Either <paramref name="builder" /> or <paramref name="section" /> is <see langword="null" />.</exception>
+      <returns>The value of <paramref name="builder" />.</returns>
+    </member>
+    <member name="M:Microsoft.Extensions.Diagnostics.ResourceMonitoring.ResourceMonitoringExtensions.ConfigureMonitor(Microsoft.Extensions.Diagnostics.ResourceMonitoring.IResourceMonitorBuilder,System.Action{Microsoft.Extensions.Diagnostics.ResourceMonitoring.ResourceMonitoringOptions})">
+      <summary>
+            Configures the resource utilization tracker.</summary>
+      <param name="builder">The builder instance used to configure the tracker.</param>
+      <param name="configure">Delegate to configure <see cref="T:Microsoft.Extensions.Diagnostics.ResourceMonitoring.ResourceMonitoringOptions" />.</param>
+      <exception cref="T:System.ArgumentNullException">Either <paramref name="builder" /> or <paramref name="configure" /> is <see langword="null" />.</exception>
+      <returns>The value of <paramref name="builder" />.</returns>
+    </member>
+    <member name="M:Microsoft.Extensions.Diagnostics.ResourceMonitoring.ResourceMonitoringExtensions.ConfigureResourceMonitoring(Microsoft.Extensions.Hosting.IHostBuilder,System.Action{Microsoft.Extensions.Diagnostics.ResourceMonitoring.IResourceMonitorBuilder})">
+      <summary>
+            Configures and adds an <see cref="T:Microsoft.Extensions.Diagnostics.ResourceMonitoring.IResourceMonitor" /> implementation to a host.</summary>
+      <param name="builder">The host builder to bind to.</param>
+      <param name="configure">Delegate to configure <see cref="T:Microsoft.Extensions.Diagnostics.ResourceMonitoring.IResourceMonitorBuilder" />.</param>
+      <exception cref="T:System.ArgumentNullException">Either <paramref name="builder" /> or <paramref name="configure" /> is <see langword="null" />.</exception>
+      <returns>The value of <paramref name="builder" />.</returns>
+    </member>
+    <member name="T:Microsoft.Extensions.Diagnostics.ResourceMonitoring.ResourceMonitoringOptions">
+      <summary>
+            Options for <see cref="T:Microsoft.Extensions.Diagnostics.ResourceMonitoring.IResourceMonitor" />.</summary>
+    </member>
+    <member name="M:Microsoft.Extensions.Diagnostics.ResourceMonitoring.ResourceMonitoringOptions.#ctor" />
+    <member name="P:Microsoft.Extensions.Diagnostics.ResourceMonitoring.ResourceMonitoringOptions.CalculationPeriod">
+      <summary>
+            Gets or sets the default period used for utilization calculation.</summary>
+      <returns>
+            The default value is 5 seconds.</returns>
+    </member>
+    <member name="P:Microsoft.Extensions.Diagnostics.ResourceMonitoring.ResourceMonitoringOptions.CollectionWindow">
+      <summary>
+            Gets or sets the maximum time window for which utilization can be requested.</summary>
+      <returns>
+            The default value is 5 seconds.</returns>
+    </member>
+    <member name="P:Microsoft.Extensions.Diagnostics.ResourceMonitoring.ResourceMonitoringOptions.SamplingInterval">
+      <summary>
+            Gets or sets the interval at which a new utilization sample is captured.</summary>
+      <returns>
+            The default value is 1 second.</returns>
+    </member>
+    <member name="T:Microsoft.Extensions.Diagnostics.ResourceMonitoring.SystemResources">
+      <summary>
+            CPU and memory limits defined by the underlying system.</summary>
+    </member>
+    <member name="M:Microsoft.Extensions.Diagnostics.ResourceMonitoring.SystemResources.#ctor(System.Double,System.Double,System.UInt64,System.UInt64)">
+      <summary>
+            Initializes a new instance of the <see cref="T:Microsoft.Extensions.Diagnostics.ResourceMonitoring.SystemResources" /> struct.</summary>
+      <param name="guaranteedCpuUnits">The CPU units available in the system.</param>
+      <param name="maximumCpuUnits">The maximum CPU units available in the system.</param>
+      <param name="guaranteedMemoryInBytes">The memory allocated to the system in bytes.</param>
+      <param name="maximumMemoryInBytes">The maximum memory allocated to the system in bytes.</param>
+    </member>
+    <member name="P:Microsoft.Extensions.Diagnostics.ResourceMonitoring.SystemResources.GuaranteedCpuUnits">
+      <summary>
+            Gets the CPU units available in the system.</summary>
+    </member>
+    <member name="P:Microsoft.Extensions.Diagnostics.ResourceMonitoring.SystemResources.GuaranteedMemoryInBytes">
+      <summary>
+            Gets the memory allocated to the system in bytes.</summary>
+    </member>
+    <member name="P:Microsoft.Extensions.Diagnostics.ResourceMonitoring.SystemResources.MaximumCpuUnits">
+      <summary>
+            Gets the maximum CPU units available in the system.</summary>
+    </member>
+    <member name="P:Microsoft.Extensions.Diagnostics.ResourceMonitoring.SystemResources.MaximumMemoryInBytes">
+      <summary>
+            Gets the maximum memory allocated to the system in bytes.</summary>
+    </member>
+    <member name="T:Microsoft.Extensions.Diagnostics.ResourceMonitoring.Utilization">
+      <summary>
+            Captures resource usage at a given point in time.</summary>
+    </member>
+    <member name="M:Microsoft.Extensions.Diagnostics.ResourceMonitoring.Utilization.#ctor(System.Double,System.UInt64,Microsoft.Extensions.Diagnostics.ResourceMonitoring.SystemResources)">
+      <summary>
+            Initializes a new instance of the <see cref="T:Microsoft.Extensions.Diagnostics.ResourceMonitoring.Utilization" /> struct.</summary>
+      <param name="cpuUsedPercentage">CPU utilization.</param>
+      <param name="memoryUsedInBytes">Memory used in bytes (instantaneous).</param>
+      <param name="systemResources">CPU and memory limits.</param>
+    </member>
+    <member name="P:Microsoft.Extensions.Diagnostics.ResourceMonitoring.Utilization.CpuUsedPercentage">
+      <summary>
+            Gets the CPU utilization percentage.</summary>
+    </member>
+    <member name="P:Microsoft.Extensions.Diagnostics.ResourceMonitoring.Utilization.MemoryUsedInBytes">
+      <summary>
+            Gets the total memory used.</summary>
+    </member>
+    <member name="P:Microsoft.Extensions.Diagnostics.ResourceMonitoring.Utilization.MemoryUsedPercentage">
+      <summary>
+            Gets the memory utilization percentage.</summary>
+    </member>
+    <member name="P:Microsoft.Extensions.Diagnostics.ResourceMonitoring.Utilization.SystemResources">
+      <summary>
+            Gets the CPU and memory limits defined by the underlying system.</summary>
+    </member>
+    <member name="T:Microsoft.Extensions.Diagnostics.ResourceMonitoring.WindowsCountersOptions">
+      <summary>
+            Options for WindowsCounters.</summary>
+    </member>
+    <member name="M:Microsoft.Extensions.Diagnostics.ResourceMonitoring.WindowsCountersOptions.#ctor" />
+    <member name="P:Microsoft.Extensions.Diagnostics.ResourceMonitoring.WindowsCountersOptions.CachingInterval">
+      <summary>
+            Gets or sets the default interval used for freshing TcpStateInfo Cache.</summary>
+      <returns>
+            The default value is 5 seconds.</returns>
+    </member>
+    <member name="P:Microsoft.Extensions.Diagnostics.ResourceMonitoring.WindowsCountersOptions.InstanceIpAddresses">
+      <summary>
+            Gets or sets the list of source IPv4 addresses to track the connections for in telemetry.</summary>
+    </member>
+    <member name="T:Microsoft.Extensions.Diagnostics.ResourceMonitoring.WindowsUtilizationExtensions">
+      <summary>
+            Extensions for adding the Windows resource utilization provider.</summary>
+    </member>
+    <member name="M:Microsoft.Extensions.Diagnostics.ResourceMonitoring.WindowsUtilizationExtensions.AddWindowsCounters(Microsoft.Extensions.Diagnostics.ResourceMonitoring.IResourceMonitorBuilder)">
+      <summary>
+            An extension method that creates a few OpenTelemetry instruments for system counters.</summary>
+      <param name="builder">The builder.</param>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="builder" /> is <see langword="null" />.</exception>
+      <returns>The value of <paramref name="builder" />.</returns>
+    </member>
+    <member name="M:Microsoft.Extensions.Diagnostics.ResourceMonitoring.WindowsUtilizationExtensions.AddWindowsCounters(Microsoft.Extensions.Diagnostics.ResourceMonitoring.IResourceMonitorBuilder,Microsoft.Extensions.Configuration.IConfigurationSection)">
+      <summary>
+            An extension method that creates a few OpenTelemetry instruments for system counters.</summary>
+      <param name="builder">The builder.</param>
+      <param name="section">The <see cref="T:Microsoft.Extensions.Configuration.IConfigurationSection" /> to use for configuring <see cref="T:Microsoft.Extensions.Diagnostics.ResourceMonitoring.WindowsCountersOptions" />.</param>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="builder" /> is <see langword="null" />.</exception>
+      <returns>The value of <paramref name="builder" />.</returns>
+    </member>
+    <member name="M:Microsoft.Extensions.Diagnostics.ResourceMonitoring.WindowsUtilizationExtensions.AddWindowsCounters(Microsoft.Extensions.Diagnostics.ResourceMonitoring.IResourceMonitorBuilder,System.Action{Microsoft.Extensions.Diagnostics.ResourceMonitoring.WindowsCountersOptions})">
+      <summary>
+            An extension method that creates a few OpenTelemetry instruments for system counters.</summary>
+      <param name="builder">The builder.</param>
+      <param name="configure">The delegate for configuration of <see cref="T:Microsoft.Extensions.Diagnostics.ResourceMonitoring.WindowsCountersOptions" />.</param>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="builder" /> is <see langword="null" />.</exception>
+      <returns>The value of <paramref name="builder" />.</returns>
+    </member>
+    <member name="M:Microsoft.Extensions.Diagnostics.ResourceMonitoring.WindowsUtilizationExtensions.AddWindowsPerfCounterPublisher(Microsoft.Extensions.Diagnostics.ResourceMonitoring.IResourceMonitorBuilder)">
+      <summary>
+            An extension method to configure and add the default windows performance counters publisher to services collection.</summary>
+      <param name="builder">The tracker builder instance used to add the publisher.</param>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="builder" /> is <see langword="null" />.</exception>
+      <returns>Returns the input tracker builder for call chaining.</returns>
+    </member>
+    <member name="M:Microsoft.Extensions.Diagnostics.ResourceMonitoring.WindowsUtilizationExtensions.AddWindowsProvider(Microsoft.Extensions.Diagnostics.ResourceMonitoring.IResourceMonitorBuilder)">
+      <summary>
+            An extension method to configure and add the default windows utilization provider to services collection.</summary>
+      <param name="builder">The tracker builder instance used to add the provider.</param>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="builder" /> is <see langword="null" />.</exception>
+      <returns>Returns the input tracker builder for call chaining.</returns>
+    </member>
+  </members>
+</doc>

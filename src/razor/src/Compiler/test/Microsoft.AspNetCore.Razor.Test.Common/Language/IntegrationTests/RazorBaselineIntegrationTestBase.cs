@@ -88,7 +88,7 @@ public abstract class RazorBaselineIntegrationTestBase : RazorIntegrationTestBas
         IntermediateNodeVerifier.Verify(document, baseline);
     }
 
-    protected void AssertCSharpDocumentMatchesBaseline(RazorCodeDocument codeDocument)
+    protected void AssertCSharpDocumentMatchesBaseline(RazorCodeDocument codeDocument, bool verifyLinePragmas = true)
     {
         var document = codeDocument.GetCSharpDocument();
 
@@ -162,7 +162,10 @@ public abstract class RazorBaselineIntegrationTestBase : RazorIntegrationTestBas
         actualMappings = actualMappings.Replace("\r", "").Replace("\n", "\r\n");
         Assert.Equal(baselineMappings, actualMappings);
 
-        AssertLinePragmas(codeDocument);
+        if (verifyLinePragmas)
+        {
+            AssertLinePragmas(codeDocument);
+        }
     }
 
     protected void AssertLinePragmas(RazorCodeDocument codeDocument)

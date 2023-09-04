@@ -16,8 +16,8 @@
       to the source-build package cache when building with source-build to allow them to be
       considered in prebuilt reporting.
 
-      All newly added packages should be grouped together at the end of the list. The reason this is 
-      important is that when previous source-built artifacts are updated, the entries for the new projects 
+      All newly added packages should be grouped together at the end of the list. The reason this is
+      important is that when previous source-built artifacts are updated, the entries for the new projects
       it includes can be removed. New PRs may miss that cut and if they are not grouped at the bottom,
       this management becomes more difficult.
 
@@ -27,6 +27,8 @@
     <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\System.Text.Json.7.0.3.csproj" />
 
     <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\xunit.abstractions.2.0.3.csproj" />
+
+    <DependencyPackageProjects Include="$(RepoRoot)src\textOnlyPackages\src\microsoft.private.intellisense\8.0.0-preview-20230828.1\Microsoft.Private.Intellisense.8.0.0-preview-20230828.1.csproj" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(BuildDependencyPackageProjects)' == 'true'">

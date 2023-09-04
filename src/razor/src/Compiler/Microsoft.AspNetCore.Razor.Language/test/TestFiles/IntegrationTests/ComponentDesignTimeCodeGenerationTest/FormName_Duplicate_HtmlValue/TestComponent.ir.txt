@@ -1,0 +1,29 @@
+﻿Document - 
+    NamespaceDeclaration -  - Test
+        UsingDirective - (3:1,1 [20] ) - global::System
+        UsingDirective - (26:2,1 [40] ) - global::System.Collections.Generic
+        UsingDirective - (69:3,1 [25] ) - global::System.Linq
+        UsingDirective - (97:4,1 [36] ) - global::System.Threading.Tasks
+        UsingDirective - (136:5,1 [45] ) - global::Microsoft.AspNetCore.Components
+        ClassDeclaration -  - public partial - TestComponent - global::Microsoft.AspNetCore.Components.ComponentBase - 
+            DesignTimeDirective - 
+            CSharpCode - 
+                IntermediateToken -  - CSharp - #pragma warning disable 0414
+            CSharpCode - 
+                IntermediateToken -  - CSharp - private static object __o = null;
+            CSharpCode - 
+                IntermediateToken -  - CSharp - #pragma warning restore 0414
+            MethodDeclaration -  - protected override - void - BuildRenderTree
+                MarkupElement - (0:0,0 [77] x:\dir\subdir\Test\TestComponent.cshtml) - form
+                    HtmlAttribute -  - method=" - "
+                        HtmlAttributeValue - (14:0,14 [4] x:\dir\subdir\Test\TestComponent.cshtml) - 
+                            LazyIntermediateToken - (14:0,14 [4] x:\dir\subdir\Test\TestComponent.cshtml) - Html - post
+                    HtmlAttribute -  - @onsubmit=" - "
+                        HtmlAttributeValue - (31:0,31 [9] x:\dir\subdir\Test\TestComponent.cshtml) - 
+                            LazyIntermediateToken - (31:0,31 [9] x:\dir\subdir\Test\TestComponent.cshtml) - Html - () => { }
+                    FormName - (53:0,53 [1] x:\dir\subdir\Test\TestComponent.cshtml)
+                        HtmlContent - (53:0,53 [1] x:\dir\subdir\Test\TestComponent.cshtml)
+                            LazyIntermediateToken - (53:0,53 [1] x:\dir\subdir\Test\TestComponent.cshtml) - Html - x
+                    HtmlAttribute -  - @formname=" - "
+                        HtmlAttributeValue - (67:0,67 [1] x:\dir\subdir\Test\TestComponent.cshtml) - 
+                            LazyIntermediateToken - (67:0,67 [1] x:\dir\subdir\Test\TestComponent.cshtml) - Html - y

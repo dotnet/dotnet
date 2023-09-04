@@ -135,6 +135,12 @@ internal static class ComponentMetadata
         public const string TagHelperKind = "Components.EventHandler";
     }
 
+    public static class FormName
+    {
+        public const string TagHelperKind = "Components.FormName";
+        public const string RuntimeName = "Components.None";
+    }
+
     public static class Key
     {
         public const string TagHelperKind = "Components.Key";

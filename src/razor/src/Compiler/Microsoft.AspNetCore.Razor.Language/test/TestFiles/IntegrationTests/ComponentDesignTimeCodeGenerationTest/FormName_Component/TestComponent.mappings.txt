@@ -1,0 +1,5 @@
+﻿Source Location: (150:1,64 [20] x:\dir\subdir\Test\TestComponent.cshtml)
+|"named-form-handler"|
+Generated Location: (1426:40,64 [20] )
+|"named-form-handler"|
+

@@ -23,6 +23,11 @@ internal class ScopeStack
             ? ComponentsApi.RenderTreeBuilder.BuilderParameter
             : $"{ComponentsApi.RenderTreeBuilder.BuilderParameter}{Current.BuilderVarNumber}";
 
+    public string FormNameVarName =>
+       Current.BuilderVarNumber == 1 && Current.FormNameCount == 0
+            ? ComponentsApi.RenderTreeBuilder.FormNameVariableName
+            : $"{ComponentsApi.RenderTreeBuilder.FormNameVariableName}{Current.BuilderVarNumber}_{Current.FormNameCount}";
+
     public int Depth => _stack.Count - 1;
 
     private ScopeEntry Current => _stack.Peek();
@@ -62,8 +67,14 @@ internal class ScopeStack
         currentScope.LambdaScope.Dispose();
     }
 
+    public void IncrementFormName()
+    {
+        Current.FormNameCount++;
+    }
+
     private class ScopeEntry
     {
+        public int FormNameCount;
         public int BuilderVarNumber;
         public IDisposable LambdaScope;
     }

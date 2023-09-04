@@ -1,0 +1,19 @@
+﻿Document - 
+    NamespaceDeclaration -  - Test
+        UsingDirective - (3:1,1 [22] ) - global::System
+        UsingDirective - (26:2,1 [42] ) - global::System.Collections.Generic
+        UsingDirective - (69:3,1 [27] ) - global::System.Linq
+        UsingDirective - (97:4,1 [38] ) - global::System.Threading.Tasks
+        UsingDirective - (136:5,1 [47] ) - global::Microsoft.AspNetCore.Components
+        ClassDeclaration -  - public partial - TestComponent - global::Microsoft.AspNetCore.Components.ComponentBase - 
+            MethodDeclaration -  - protected override - void - BuildRenderTree
+                MarkupElement - (0:0,0 [67] x:\dir\subdir\Test\TestComponent.cshtml) - form
+                    HtmlAttribute -  - method=" - "
+                        HtmlAttributeValue - (14:0,14 [4] x:\dir\subdir\Test\TestComponent.cshtml) - 
+                            LazyIntermediateToken - (14:0,14 [4] x:\dir\subdir\Test\TestComponent.cshtml) - Html - post
+                    HtmlAttribute -  - @onsubmit=" - "
+                        HtmlAttributeValue - (31:0,31 [9] x:\dir\subdir\Test\TestComponent.cshtml) - 
+                            LazyIntermediateToken - (31:0,31 [9] x:\dir\subdir\Test\TestComponent.cshtml) - Html - () => { }
+                    FormName - (53:0,53 [5] x:\dir\subdir\Test\TestComponent.cshtml)
+                        CSharpExpression - (54:0,54 [4] x:\dir\subdir\Test\TestComponent.cshtml)
+                            LazyIntermediateToken - (54:0,54 [4] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - null

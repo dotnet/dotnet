@@ -1,0 +1,2 @@
+﻿x:\dir\subdir\Test\TestComponent.cshtml(1,44): Warning RZ10021: Attribute '@formname' can only be used when '@onsubmit' event handler is also present.
+x:\dir\subdir\Test\TestComponent.cshtml(2,44): Warning RZ10021: Attribute '@formname' can only be used when '@onsubmit' event handler is also present.

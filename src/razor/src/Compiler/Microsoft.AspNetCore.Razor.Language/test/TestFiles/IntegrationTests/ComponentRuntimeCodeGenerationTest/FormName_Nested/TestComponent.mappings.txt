@@ -1,0 +1,9 @@
+﻿Source Location: (361:8,7 [68] x:\dir\subdir\Test\TestComponent.cshtml)
+|
+    [Parameter] public RenderFragment ChildContent { get; set; }
+|
+Generated Location: (3179:56,7 [68] )
+|
+    [Parameter] public RenderFragment ChildContent { get; set; }
+|
+
