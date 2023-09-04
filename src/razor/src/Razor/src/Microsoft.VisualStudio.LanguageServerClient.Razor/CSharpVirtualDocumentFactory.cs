@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using Microsoft.AspNetCore.Razor.Telemetry;
 using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
@@ -35,6 +36,7 @@ internal class CSharpVirtualDocumentFactory : VirtualDocumentFactoryBase
     private readonly ProjectSnapshotManagerAccessor _projectSnapshotManagerAccessor;
     private readonly LanguageServerFeatureOptions _languageServerFeatureOptions;
     private readonly IOutputWindowLogger _logger;
+    private readonly ITelemetryReporter _telemetryReporter;
 
     [ImportingConstructor]
     public CSharpVirtualDocumentFactory(
@@ -45,7 +47,8 @@ internal class CSharpVirtualDocumentFactory : VirtualDocumentFactoryBase
         FilePathService filePathService,
         ProjectSnapshotManagerAccessor projectSnapshotManagerAccessor,
         LanguageServerFeatureOptions languageServerFeatureOptions,
-        IOutputWindowLogger logger)
+        IOutputWindowLogger logger,
+        ITelemetryReporter telemetryReporter)
         : base(contentTypeRegistry, textBufferFactory, textDocumentFactory, fileUriProvider)
     {
         _fileUriProvider = fileUriProvider;
@@ -53,6 +56,7 @@ internal class CSharpVirtualDocumentFactory : VirtualDocumentFactoryBase
         _projectSnapshotManagerAccessor = projectSnapshotManagerAccessor;
         _languageServerFeatureOptions = languageServerFeatureOptions;
         _logger = logger;
+        _telemetryReporter = telemetryReporter;
     }
 
     protected override IContentType LanguageContentType
@@ -218,7 +222,7 @@ internal class CSharpVirtualDocumentFactory : VirtualDocumentFactoryBase
 
         var languageBuffer = CreateVirtualDocumentTextBuffer(virtualLanguageFilePath, virtualLanguageUri);
 
-        return new CSharpVirtualDocument(projectKey, virtualLanguageUri, languageBuffer);
+        return new CSharpVirtualDocument(projectKey, virtualLanguageUri, languageBuffer, _telemetryReporter);
     }
 
     private class RemoteContentDefinitionType : IContentType

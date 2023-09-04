@@ -2,16 +2,13 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using System;
-using Microsoft.VisualStudio.LanguageServer.ContainedLanguage;
+using Microsoft.AspNetCore.Razor.Telemetry;
 using Microsoft.VisualStudio.Text;
 
 namespace Microsoft.VisualStudio.LanguageServerClient.Razor;
 
-internal class HtmlVirtualDocument : VirtualDocumentBase<HtmlVirtualDocumentSnapshot>
+internal class HtmlVirtualDocument(Uri uri, ITextBuffer textBuffer, ITelemetryReporter telemetryReporter)
+    : GeneratedVirtualDocument<HtmlVirtualDocumentSnapshot>(uri, textBuffer, telemetryReporter)
 {
-    public HtmlVirtualDocument(Uri uri, ITextBuffer textBuffer) : base(uri, textBuffer)
-    {
-    }
-
     protected override HtmlVirtualDocumentSnapshot GetUpdatedSnapshot(object? state) => new(Uri, TextBuffer.CurrentSnapshot, HostDocumentVersion);
 }

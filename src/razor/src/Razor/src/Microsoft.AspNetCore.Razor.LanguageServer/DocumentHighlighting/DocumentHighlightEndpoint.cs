@@ -4,9 +4,9 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.LanguageServer.Common;
 using Microsoft.AspNetCore.Razor.LanguageServer.EndpointContracts;
+using Microsoft.AspNetCore.Razor.LanguageServer.Extensions;
 using Microsoft.AspNetCore.Razor.LanguageServer.Protocol;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CommonLanguageServerProtocol.Framework;
@@ -57,18 +57,18 @@ internal class DocumentHighlightEndpoint : AbstractRazorDelegatingEndpoint<Docum
 
     protected override async Task<DocumentHighlight[]?> HandleDelegatedResponseAsync(DocumentHighlight[]? response, DocumentHighlightParams request, RazorRequestContext requestContext, DocumentPositionInfo positionInfo, CancellationToken cancellationToken)
     {
-        var documentContext = requestContext.GetRequiredDocumentContext();
-        var codeDocument = await documentContext.GetCodeDocumentAsync(cancellationToken).ConfigureAwait(false);
-
         if (response is null)
         {
             return null;
         }
 
-        var csharpDocument = codeDocument.GetCSharpDocument();
+        var documentContext = requestContext.GetRequiredDocumentContext();
+        var codeDocument = await documentContext.GetCodeDocumentAsync(cancellationToken).ConfigureAwait(false);
+
+        var generatedDocument = codeDocument.GetGeneratedDocument(positionInfo.LanguageKind);
         foreach (var highlight in response)
         {
-            if (_documentMappingService.TryMapToHostDocumentRange(csharpDocument, highlight.Range, out var mappedRange))
+            if (_documentMappingService.TryMapToHostDocumentRange(generatedDocument, highlight.Range, out var mappedRange))
             {
                 highlight.Range = mappedRange;
             }

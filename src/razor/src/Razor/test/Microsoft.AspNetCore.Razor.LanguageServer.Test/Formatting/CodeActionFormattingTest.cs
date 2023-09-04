@@ -38,7 +38,7 @@ Edit(72, 5, 72, 5, "\r\n            private string GetDebuggerDisplay()\r\n     
 Edit(73, 0, 73, 0, "                return ToString();\r\n            }\r\n"),
 Edit(73, 8, 74, 4, "")
 },
-expected: @"@using System.Diagnostics;
+expected: @"@using System.Diagnostics
 
 @functions {
     [DebuggerDisplay($""{{{nameof(GetDebuggerDisplay)}(),nq}}"")]  

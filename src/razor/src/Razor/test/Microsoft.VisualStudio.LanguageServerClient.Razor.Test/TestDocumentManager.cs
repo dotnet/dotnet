@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Razor.LanguageServer.Test.Common;
+using Microsoft.AspNetCore.Razor.Telemetry;
 using Microsoft.CodeAnalysis.Text;
 using Microsoft.VisualStudio.LanguageServer.ContainedLanguage;
 using Microsoft.VisualStudio.LanguageServer.ContainedLanguage.Test.Common.Extensions;
@@ -58,7 +59,7 @@ internal class TestDocumentManager : TrackingLSPDocumentManager
             return;
         }
 
-        using var virtualDocument = new CSharpVirtualDocument(projectKey: default, virtualDocumentSnapshot.Uri, virtualDocumentSnapshot.Snapshot.TextBuffer);
+        using var virtualDocument = new CSharpVirtualDocument(projectKey: default, virtualDocumentSnapshot.Uri, virtualDocumentSnapshot.Snapshot.TextBuffer, NoOpTelemetryReporter.Instance);
         virtualDocument.Update(changes, hostDocumentVersion, state);
         _documents[hostDocumentUri] = new TestLSPDocumentSnapshot(hostDocumentUri, documentSnapshot.Version, new[] { virtualDocument.CurrentSnapshot });
 

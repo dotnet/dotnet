@@ -3,6 +3,7 @@
 
 using System;
 using System.ComponentModel.Composition;
+using Microsoft.AspNetCore.Razor.Telemetry;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.VisualStudio.Editor.Razor;
 using Microsoft.VisualStudio.LanguageServer.ContainedLanguage;
@@ -17,6 +18,7 @@ internal class HtmlVirtualDocumentFactory : VirtualDocumentFactoryBase
 {
     private static IContentType? s_htmlLSPContentType;
     private readonly LanguageServerFeatureOptions _languageServerFeatureOptions;
+    private readonly ITelemetryReporter _telemetryReporter;
 
     [ImportingConstructor]
     public HtmlVirtualDocumentFactory(
@@ -24,10 +26,12 @@ internal class HtmlVirtualDocumentFactory : VirtualDocumentFactoryBase
         ITextBufferFactoryService textBufferFactory,
         ITextDocumentFactoryService textDocumentFactory,
         FileUriProvider filePathProvider,
-        LanguageServerFeatureOptions languageServerFeatureOptions)
+        LanguageServerFeatureOptions languageServerFeatureOptions,
+        ITelemetryReporter telemetryReporter)
         : base(contentTypeRegistry, textBufferFactory, textDocumentFactory, filePathProvider)
     {
         _languageServerFeatureOptions = languageServerFeatureOptions;
+        _telemetryReporter = telemetryReporter;
     }
 
     protected override IContentType LanguageContentType
@@ -42,5 +46,5 @@ internal class HtmlVirtualDocumentFactory : VirtualDocumentFactoryBase
 
     protected override string HostDocumentContentTypeName => RazorConstants.RazorLSPContentTypeName;
     protected override string LanguageFileNameSuffix => _languageServerFeatureOptions.HtmlVirtualDocumentSuffix;
-    protected override VirtualDocument CreateVirtualDocument(Uri uri, ITextBuffer textBuffer) => new HtmlVirtualDocument(uri, textBuffer);
+    protected override VirtualDocument CreateVirtualDocument(Uri uri, ITextBuffer textBuffer) => new HtmlVirtualDocument(uri, textBuffer, _telemetryReporter);
 }
