@@ -1,0 +1,956 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<doc>
+  <assembly>
+    <name>Microsoft.Extensions.Telemetry.Abstractions</name>
+  </assembly>
+  <members>
+    <member name="T:Microsoft.Extensions.Http.Telemetry.HttpRouteParameterRedactionMode">
+      <summary>
+            Strategy to decide how HTTP request path parameters are redacted.</summary>
+    </member>
+    <member name="F:Microsoft.Extensions.Http.Telemetry.HttpRouteParameterRedactionMode.Loose">
+      <summary>
+            All parameters are considered as non-sensitive and included as-is by default.</summary>
+    </member>
+    <member name="F:Microsoft.Extensions.Http.Telemetry.HttpRouteParameterRedactionMode.None">
+      <summary>
+            Route parameters are not redacted regardless of the presence of data classification annotations.</summary>
+    </member>
+    <member name="F:Microsoft.Extensions.Http.Telemetry.HttpRouteParameterRedactionMode.Strict">
+      <summary>
+            All parameters are considered as sensitive and are required to be explicitly annotated with a data classification.</summary>
+    </member>
+    <member name="T:Microsoft.Extensions.Http.Telemetry.IDownstreamDependencyMetadata">
+      <summary>
+            Interface for passing dependency metadata.</summary>
+    </member>
+    <member name="P:Microsoft.Extensions.Http.Telemetry.IDownstreamDependencyMetadata.DependencyName">
+      <summary>
+            Gets the name of the dependent service.</summary>
+    </member>
+    <member name="P:Microsoft.Extensions.Http.Telemetry.IDownstreamDependencyMetadata.RequestMetadata">
+      <summary>
+            Gets the list of all metadata for all routes to the dependency service.</summary>
+    </member>
+    <member name="P:Microsoft.Extensions.Http.Telemetry.IDownstreamDependencyMetadata.UniqueHostNameSuffixes">
+      <summary>
+            Gets the list of host name suffixes that can uniquely identify a host as this dependency.</summary>
+    </member>
+    <member name="T:Microsoft.Extensions.Http.Telemetry.IOutgoingRequestContext">
+      <summary>
+            Interface to represent outgoing request context.</summary>
+    </member>
+    <member name="M:Microsoft.Extensions.Http.Telemetry.IOutgoingRequestContext.SetRequestMetadata(Microsoft.Extensions.Http.Telemetry.RequestMetadata)">
+      <summary>
+            Sets metadata for outgoing requests to be used for telemetry purposes.</summary>
+      <param name="metadata">Metadata for the request.</param>
+    </member>
+    <member name="P:Microsoft.Extensions.Http.Telemetry.IOutgoingRequestContext.RequestMetadata">
+      <summary>
+            Gets metadata for outgoing requests to be used for telemetry purposes.</summary>
+      <returns>request metadata.</returns>
+    </member>
+    <member name="T:Microsoft.Extensions.Http.Telemetry.RequestMetadata">
+      <summary>
+            Holds request metadata for use by the telemetry system.</summary>
+    </member>
+    <member name="M:Microsoft.Extensions.Http.Telemetry.RequestMetadata.#ctor">
+      <summary>
+            Initializes a new instance of the <see cref="T:Microsoft.Extensions.Http.Telemetry.RequestMetadata" /> class.</summary>
+    </member>
+    <member name="M:Microsoft.Extensions.Http.Telemetry.RequestMetadata.#ctor(System.String,System.String,System.String)">
+      <summary>
+            Initializes a new instance of the <see cref="T:Microsoft.Extensions.Http.Telemetry.RequestMetadata" /> class.</summary>
+      <param name="methodType">Http method type of the request.</param>
+      <param name="requestRoute">Route of the request.</param>
+      <param name="requestName">Name of the request.</param>
+      <exception cref="T:System.ArgumentNullException">Any argument is <see langword="null" />.</exception>
+    </member>
+    <member name="P:Microsoft.Extensions.Http.Telemetry.RequestMetadata.DependencyName">
+      <summary>
+            Gets or sets name of the dependency to which the outgoing request is being made.</summary>
+    </member>
+    <member name="P:Microsoft.Extensions.Http.Telemetry.RequestMetadata.MethodType">
+      <summary>
+            Gets or sets the http method type of the request.</summary>
+    </member>
+    <member name="P:Microsoft.Extensions.Http.Telemetry.RequestMetadata.RequestName">
+      <summary>
+            Gets or sets name to be logged for the request.</summary>
+    </member>
+    <member name="P:Microsoft.Extensions.Http.Telemetry.RequestMetadata.RequestRoute">
+      <summary>
+            Gets or sets request's route template.</summary>
+    </member>
+    <member name="T:Microsoft.Extensions.Http.Telemetry.TelemetryConstants">
+      <summary>
+            Common telemetry constants used by various telemetry libraries.</summary>
+    </member>
+    <member name="F:Microsoft.Extensions.Http.Telemetry.TelemetryConstants.ClientApplicationNameHeader">
+      <summary>
+            Header for client application name, sent on an outgoing http call.</summary>
+    </member>
+    <member name="F:Microsoft.Extensions.Http.Telemetry.TelemetryConstants.Redacted">
+      <summary>
+            Placeholder string used for redacted data where needed.</summary>
+    </member>
+    <member name="F:Microsoft.Extensions.Http.Telemetry.TelemetryConstants.RequestMetadataKey">
+      <summary>
+            Request metadata key that is used when storing request metadata object.</summary>
+    </member>
+    <member name="F:Microsoft.Extensions.Http.Telemetry.TelemetryConstants.ServerApplicationNameHeader">
+      <summary>
+            Header for server application name, sent on a http request.</summary>
+    </member>
+    <member name="F:Microsoft.Extensions.Http.Telemetry.TelemetryConstants.Unknown">
+      <summary>
+            Placeholder string for unknown request name, dependency name etc. in telemetry.</summary>
+    </member>
+    <member name="T:Microsoft.Extensions.Telemetry.Enrichment.EnricherExtensions">
+      <summary>
+            Lets you register telemetry enrichers in a dependency injection container.</summary>
+    </member>
+    <member name="M:Microsoft.Extensions.Telemetry.Enrichment.EnricherExtensions.AddLogEnricher(Microsoft.Extensions.DependencyInjection.IServiceCollection,Microsoft.Extensions.Telemetry.Enrichment.ILogEnricher)">
+      <summary>
+            Registers a log enricher instance.</summary>
+      <param name="services">The dependency injection container to add the enricher instance to.</param>
+      <param name="enricher">The enricher instance to add.</param>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="services" /> or <paramref name="enricher" /> are <see langword="null" />.</exception>
+      <returns>The value of <paramref name="services" />.</returns>
+    </member>
+    <member name="M:Microsoft.Extensions.Telemetry.Enrichment.EnricherExtensions.AddLogEnricher``1(Microsoft.Extensions.DependencyInjection.IServiceCollection)">
+      <summary>
+            Registers a log enricher type.</summary>
+      <param name="services">The dependency injection container to add the enricher type to.</param>
+      <typeparam name="T">Enricher type.</typeparam>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="services" /> is <see langword="null" />.</exception>
+      <returns>The value of <paramref name="services" />.</returns>
+    </member>
+    <member name="M:Microsoft.Extensions.Telemetry.Enrichment.EnricherExtensions.AddMetricEnricher(Microsoft.Extensions.DependencyInjection.IServiceCollection,Microsoft.Extensions.Telemetry.Enrichment.IMetricEnricher)">
+      <summary>
+            Registers a metric enricher instance.</summary>
+      <param name="services">The dependency injection container to add the enricher instance to.</param>
+      <param name="enricher">The enricher instance to add.</param>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="services" /> or <paramref name="enricher" /> are <see langword="null" />.</exception>
+      <returns>The value of <paramref name="services" />.</returns>
+    </member>
+    <member name="M:Microsoft.Extensions.Telemetry.Enrichment.EnricherExtensions.AddMetricEnricher``1(Microsoft.Extensions.DependencyInjection.IServiceCollection)">
+      <summary>
+            Registers a metric enricher type.</summary>
+      <param name="services">The dependency injection container to add the enricher type to.</param>
+      <typeparam name="T">Enricher type.</typeparam>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="services" /> is <see langword="null" />.</exception>
+      <returns>The value of <paramref name="services" />.</returns>
+    </member>
+    <member name="T:Microsoft.Extensions.Telemetry.Enrichment.IEnrichmentPropertyBag">
+      <summary>
+            Allows enrichers to report enrichment properties.</summary>
+    </member>
+    <member name="M:Microsoft.Extensions.Telemetry.Enrichment.IEnrichmentPropertyBag.Add(System.ReadOnlySpan{System.Collections.Generic.KeyValuePair{System.String,System.Object}})">
+      <summary>
+            Adds a series of properties to the bag of enrichment properties.</summary>
+      <param name="properties">The properties to add.</param>
+    </member>
+    <member name="M:Microsoft.Extensions.Telemetry.Enrichment.IEnrichmentPropertyBag.Add(System.ReadOnlySpan{System.Collections.Generic.KeyValuePair{System.String,System.String}})">
+      <summary>
+            Adds a series of properties to the bag of enrichment properties.</summary>
+      <param name="properties">The properties to add.</param>
+    </member>
+    <member name="M:Microsoft.Extensions.Telemetry.Enrichment.IEnrichmentPropertyBag.Add(System.String,System.Object)">
+      <summary>
+            Add a property in form of a key/value pair to the bag of enrichment properties.</summary>
+      <param name="key">Enrichment property key.</param>
+      <param name="value">Enrichment property value.</param>
+      <exception cref="T:System.ArgumentException">
+        <paramref name="key" /> is an empty string.</exception>
+      <exception cref="T:System.ArgumentNullException">
+            Either <paramref name="key" /> or <paramref name="value" /> is <see langword="null" />.</exception>
+    </member>
+    <member name="M:Microsoft.Extensions.Telemetry.Enrichment.IEnrichmentPropertyBag.Add(System.String,System.String)">
+      <summary>
+            Add a property in form of a key/value pair to the bag of enrichment properties.</summary>
+      <param name="key">Enrichment property key.</param>
+      <param name="value">Enrichment property value.</param>
+      <exception cref="T:System.ArgumentException">
+        <paramref name="key" /> is an empty string.</exception>
+      <exception cref="T:System.ArgumentNullException">
+            Either <paramref name="key" /> or <paramref name="value" /> is <see langword="null" />.</exception>
+    </member>
+    <member name="T:Microsoft.Extensions.Telemetry.Enrichment.ILogEnricher">
+      <summary>
+            A component that augments log records with additional properties.</summary>
+    </member>
+    <member name="M:Microsoft.Extensions.Telemetry.Enrichment.ILogEnricher.Enrich(Microsoft.Extensions.Telemetry.Enrichment.IEnrichmentPropertyBag)">
+      <summary>
+            Called to generate properties for a log record.</summary>
+      <param name="bag">Where the enricher puts the properties it is producing.</param>
+    </member>
+    <member name="T:Microsoft.Extensions.Telemetry.Enrichment.IMetricEnricher">
+      <summary>
+            A component that augments metric state with additional properties.</summary>
+    </member>
+    <member name="M:Microsoft.Extensions.Telemetry.Enrichment.IMetricEnricher.Enrich(Microsoft.Extensions.Telemetry.Enrichment.IEnrichmentPropertyBag)">
+      <summary>
+            Called to generate properties for metrics.</summary>
+      <param name="bag">Where the enricher puts the properties it is producing.</param>
+    </member>
+    <member name="T:Microsoft.Extensions.Telemetry.Enrichment.ITraceEnricher">
+      <summary>
+            A component that augments tracing state with additional tags.</summary>
+    </member>
+    <member name="M:Microsoft.Extensions.Telemetry.Enrichment.ITraceEnricher.Enrich(System.Diagnostics.Activity)">
+      <summary>
+            Called to let the component add tags to a tracing activity.</summary>
+      <param name="activity">The activity to add the tags to.</param>
+    </member>
+    <member name="M:Microsoft.Extensions.Telemetry.Enrichment.ITraceEnricher.EnrichOnActivityStart(System.Diagnostics.Activity)">
+      <summary>
+            Called to let the component add tags to the start event of a tracing activity.</summary>
+      <param name="activity">The activity to add the tags to.</param>
+    </member>
+    <member name="T:Microsoft.Extensions.Telemetry.Latency.Checkpoint">
+      <summary>
+            Represents an event and the time it occurred relative to a well-known starting point.</summary>
+    </member>
+    <member name="M:Microsoft.Extensions.Telemetry.Latency.Checkpoint.#ctor(System.String,System.Int64,System.Int64)">
+      <summary>
+            Initializes a new instance of the <see cref="T:Microsoft.Extensions.Telemetry.Latency.Checkpoint" /> struct.</summary>
+      <param name="name">Name of the checkpoint.</param>
+      <param name="elapsed">Elapsed time since start.</param>
+      <param name="frequency">Frequency of the elapsed time.</param>
+    </member>
+    <member name="M:Microsoft.Extensions.Telemetry.Latency.Checkpoint.Equals(Microsoft.Extensions.Telemetry.Latency.Checkpoint)">
+      <summary>
+            Determines whether this and a specified checkpoint are identical.</summary>
+      <param name="other">The other checkpoint.</param>
+      <returns>
+        <see langword="true" /> if identical;<see langword="false" /> otherwise.</returns>
+    </member>
+    <member name="M:Microsoft.Extensions.Telemetry.Latency.Checkpoint.Equals(System.Object)">
+      <summary>
+            Determines whether this and a specified object are identical.</summary>
+      <param name="obj">The object to compare.</param>
+      <returns>
+        <see langword="true" /> if identical;<see langword="false" /> otherwise.</returns>
+    </member>
+    <member name="M:Microsoft.Extensions.Telemetry.Latency.Checkpoint.GetHashCode">
+      <summary>
+            Gets a hash code for this object.</summary>
+      <returns>A hash code for the current object.</returns>
+    </member>
+    <member name="M:Microsoft.Extensions.Telemetry.Latency.Checkpoint.op_Equality(Microsoft.Extensions.Telemetry.Latency.Checkpoint,Microsoft.Extensions.Telemetry.Latency.Checkpoint)">
+      <summary>
+            Equality operator.</summary>
+      <param name="left">First value.</param>
+      <param name="right">Second value.</param>
+      <returns>
+        <see langword="true" /> if the operands are equal, <see langword="false" /> otherwise.</returns>
+    </member>
+    <member name="M:Microsoft.Extensions.Telemetry.Latency.Checkpoint.op_Inequality(Microsoft.Extensions.Telemetry.Latency.Checkpoint,Microsoft.Extensions.Telemetry.Latency.Checkpoint)">
+      <summary>
+            Inequality operator.</summary>
+      <param name="left">First value.</param>
+      <param name="right">Second value.</param>
+      <returns>
+        <see langword="true" /> if the operands are unequal, <see langword="false" /> otherwise.</returns>
+    </member>
+    <member name="P:Microsoft.Extensions.Telemetry.Latency.Checkpoint.Elapsed">
+      <summary>
+            Gets the relative time since the beginning of the associated operation at which the checkpoint was created.</summary>
+    </member>
+    <member name="P:Microsoft.Extensions.Telemetry.Latency.Checkpoint.Frequency">
+      <summary>
+            Gets the frequency of the timestamp value.</summary>
+    </member>
+    <member name="P:Microsoft.Extensions.Telemetry.Latency.Checkpoint.Name">
+      <summary>
+            Gets the name of the checkpoint.</summary>
+    </member>
+    <member name="T:Microsoft.Extensions.Telemetry.Latency.CheckpointToken">
+      <summary>
+            Token representing a registered checkpoint.</summary>
+    </member>
+    <member name="M:Microsoft.Extensions.Telemetry.Latency.CheckpointToken.#ctor(System.String,System.Int32)">
+      <summary>
+            Initializes a new instance of the <see cref="T:Microsoft.Extensions.Telemetry.Latency.CheckpointToken" /> struct.</summary>
+      <param name="name">Name of the checkpoint.</param>
+      <param name="position">Position of the token in the token table.</param>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="name" /> is <see langword="null" />.</exception>
+    </member>
+    <member name="P:Microsoft.Extensions.Telemetry.Latency.CheckpointToken.Name">
+      <summary>
+            Gets the name of the checkpoint.</summary>
+    </member>
+    <member name="P:Microsoft.Extensions.Telemetry.Latency.CheckpointToken.Position">
+      <summary>
+            Gets the position of token in the token table.</summary>
+    </member>
+    <member name="T:Microsoft.Extensions.Telemetry.Latency.ILatencyContext">
+      <summary>
+            Abstraction that provides the context for latency measurement and diagnostics.</summary>
+    </member>
+    <member name="M:Microsoft.Extensions.Telemetry.Latency.ILatencyContext.AddCheckpoint(Microsoft.Extensions.Telemetry.Latency.CheckpointToken)">
+      <summary>
+            Adds a checkpoint to the context.</summary>
+      <param name="token">Checkpoint token.</param>
+    </member>
+    <member name="M:Microsoft.Extensions.Telemetry.Latency.ILatencyContext.AddMeasure(Microsoft.Extensions.Telemetry.Latency.MeasureToken,System.Int64)">
+      <summary>
+            Adds to a measure.</summary>
+      <param name="token">Measure token.</param>
+      <param name="value">Value to add.</param>
+    </member>
+    <member name="M:Microsoft.Extensions.Telemetry.Latency.ILatencyContext.Freeze">
+      <summary>
+            Stops the latency measurement.</summary>
+    </member>
+    <member name="M:Microsoft.Extensions.Telemetry.Latency.ILatencyContext.RecordMeasure(Microsoft.Extensions.Telemetry.Latency.MeasureToken,System.Int64)">
+      <summary>
+            Sets a measure to an absolute value.</summary>
+      <param name="token">Measure token.</param>
+      <param name="value">Value to set.</param>
+    </member>
+    <member name="M:Microsoft.Extensions.Telemetry.Latency.ILatencyContext.SetTag(Microsoft.Extensions.Telemetry.Latency.TagToken,System.String)">
+      <summary>
+            Adds a tag to the context.</summary>
+      <param name="token">Tag token.</param>
+      <param name="value">Value of the tag.</param>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="value" /> is <see langword="null" />.</exception>
+    </member>
+    <member name="P:Microsoft.Extensions.Telemetry.Latency.ILatencyContext.LatencyData">
+      <summary>
+            Gets the accumulated latency data.</summary>
+    </member>
+    <member name="T:Microsoft.Extensions.Telemetry.Latency.ILatencyContextProvider">
+      <summary>
+            A factory of latency contextts.</summary>
+    </member>
+    <member name="M:Microsoft.Extensions.Telemetry.Latency.ILatencyContextProvider.CreateContext">
+      <summary>
+            Creates a new <see cref="T:Microsoft.Extensions.Telemetry.Latency.ILatencyContext" />.</summary>
+      <returns>A new latency context.</returns>
+    </member>
+    <member name="T:Microsoft.Extensions.Telemetry.Latency.ILatencyContextTokenIssuer">
+      <summary>
+            Issues tokens for various object types.</summary>
+    </member>
+    <member name="M:Microsoft.Extensions.Telemetry.Latency.ILatencyContextTokenIssuer.GetCheckpointToken(System.String)">
+      <summary>
+            Gets a token for a named checkpoint.</summary>
+      <param name="name">Name of the checkpoint.</param>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="name" /> is <see langword="null" />.</exception>
+      <returns>Token to use with <see cref="M:Microsoft.Extensions.Telemetry.Latency.ILatencyContext.AddCheckpoint(Microsoft.Extensions.Telemetry.Latency.CheckpointToken)" />.</returns>
+    </member>
+    <member name="M:Microsoft.Extensions.Telemetry.Latency.ILatencyContextTokenIssuer.GetMeasureToken(System.String)">
+      <summary>
+            Gets a token for a named measure.</summary>
+      <param name="name">Name of the measure.</param>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="name" /> is <see langword="null" />.</exception>
+      <returns>Token to use with <see cref="M:Microsoft.Extensions.Telemetry.Latency.ILatencyContext.AddMeasure(Microsoft.Extensions.Telemetry.Latency.MeasureToken,System.Int64)" />
+            and <see cref="M:Microsoft.Extensions.Telemetry.Latency.ILatencyContext.RecordMeasure(Microsoft.Extensions.Telemetry.Latency.MeasureToken,System.Int64)" />.</returns>
+    </member>
+    <member name="M:Microsoft.Extensions.Telemetry.Latency.ILatencyContextTokenIssuer.GetTagToken(System.String)">
+      <summary>
+            Gets a token for a named tag.</summary>
+      <param name="name">Name of the tag.</param>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="name" /> is <see langword="null" />.</exception>
+      <returns>Token to use with <see cref="M:Microsoft.Extensions.Telemetry.Latency.ILatencyContext.SetTag(Microsoft.Extensions.Telemetry.Latency.TagToken,System.String)" />.</returns>
+    </member>
+    <member name="T:Microsoft.Extensions.Telemetry.Latency.ILatencyDataExporter">
+      <summary>
+            Abstraction that is used to export latency data.</summary>
+    </member>
+    <member name="M:Microsoft.Extensions.Telemetry.Latency.ILatencyDataExporter.ExportAsync(Microsoft.Extensions.Telemetry.Latency.LatencyData,System.Threading.CancellationToken)">
+      <summary>
+            Function called to export latency data.</summary>
+      <param name="data">A latency context's latency data.</param>
+      <param name="cancellationToken">Cancellation token.</param>
+      <returns>A <see cref="T:System.Threading.Tasks.Task" /> that represents the export operation.</returns>
+    </member>
+    <member name="T:Microsoft.Extensions.Telemetry.Latency.LatencyContextRegistrationOptions">
+      <summary>
+            Registered names for <see cref="T:Microsoft.Extensions.Telemetry.Latency.ILatencyContext" />.</summary>
+    </member>
+    <member name="M:Microsoft.Extensions.Telemetry.Latency.LatencyContextRegistrationOptions.#ctor" />
+    <member name="P:Microsoft.Extensions.Telemetry.Latency.LatencyContextRegistrationOptions.CheckpointNames">
+      <summary>
+            Gets or sets the list of registered checkpoint names.</summary>
+    </member>
+    <member name="P:Microsoft.Extensions.Telemetry.Latency.LatencyContextRegistrationOptions.MeasureNames">
+      <summary>
+            Gets or sets the list of registered measure names.</summary>
+    </member>
+    <member name="P:Microsoft.Extensions.Telemetry.Latency.LatencyContextRegistrationOptions.TagNames">
+      <summary>
+            Gets or sets the list of registered tag names.</summary>
+    </member>
+    <member name="T:Microsoft.Extensions.Telemetry.Latency.LatencyData">
+      <summary>
+            Encapsulates the state accumulated while measuring the latency of an operaiton.</summary>
+    </member>
+    <member name="M:Microsoft.Extensions.Telemetry.Latency.LatencyData.#ctor(System.ArraySegment{Microsoft.Extensions.Telemetry.Latency.Tag},System.ArraySegment{Microsoft.Extensions.Telemetry.Latency.Checkpoint},System.ArraySegment{Microsoft.Extensions.Telemetry.Latency.Measure},System.Int64,System.Int64)">
+      <summary>
+            Initializes a new instance of the <see cref="T:Microsoft.Extensions.Telemetry.Latency.LatencyData" /> struct.</summary>
+      <param name="tags">List of tags.</param>
+      <param name="checkpoints">List of checkpoints.</param>
+      <param name="measures">List of measures.</param>
+      <param name="durationTimestamp">Total duration of the operation that is represented by this data.</param>
+      <param name="durationTimestampFrequency">Frequency of the duration timestamp.</param>
+    </member>
+    <member name="P:Microsoft.Extensions.Telemetry.Latency.LatencyData.Checkpoints">
+      <summary>
+            Gets the list of checkpoints added while measuring the operation's latency.</summary>
+    </member>
+    <member name="P:Microsoft.Extensions.Telemetry.Latency.LatencyData.DurationTimestamp">
+      <summary>
+            Gets the total time measured by the latency context.</summary>
+    </member>
+    <member name="P:Microsoft.Extensions.Telemetry.Latency.LatencyData.DurationTimestampFrequency">
+      <summary>
+            Gets the frequency of the duration timestamp.</summary>
+    </member>
+    <member name="P:Microsoft.Extensions.Telemetry.Latency.LatencyData.Measures">
+      <summary>
+            Gets the list of measures added.</summary>
+    </member>
+    <member name="P:Microsoft.Extensions.Telemetry.Latency.LatencyData.Tags">
+      <summary>
+            Gets the list of tags added to provide metadata about the operation being measured.</summary>
+    </member>
+    <member name="T:Microsoft.Extensions.Telemetry.Latency.LatencyRegistryExtensions">
+      <summary>
+            Extensions to configure a latency context.</summary>
+    </member>
+    <member name="M:Microsoft.Extensions.Telemetry.Latency.LatencyRegistryExtensions.RegisterCheckpointNames(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.String[])">
+      <summary>
+            Registers a set of checkpoint names for a latency context.</summary>
+      <param name="services">The dependency injection container to add the names to.</param>
+      <param name="names">Set of checkpoint names.</param>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="services" /> or <paramref name="names" /> are <see langword="null" />.</exception>
+      <returns>The value of <paramref name="services" />.</returns>
+    </member>
+    <member name="M:Microsoft.Extensions.Telemetry.Latency.LatencyRegistryExtensions.RegisterMeasureNames(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.String[])">
+      <summary>
+            Registers a set of measure names for a latency context.</summary>
+      <param name="services">The dependency injection container to add the names to.</param>
+      <param name="names">Set of measure names.</param>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="services" /> or <paramref name="names" /> are <see langword="null" />.</exception>
+      <returns>Provided service collection.</returns>
+    </member>
+    <member name="M:Microsoft.Extensions.Telemetry.Latency.LatencyRegistryExtensions.RegisterTagNames(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.String[])">
+      <summary>
+            Registers a set of tag names for a latency context.</summary>
+      <param name="services">The dependency injection container to add the names to.</param>
+      <param name="names">Set of tag names.</param>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="services" /> or <paramref name="names" /> are <see langword="null" />.</exception>
+      <returns>Provided service collection.</returns>
+    </member>
+    <member name="T:Microsoft.Extensions.Telemetry.Latency.Measure">
+      <summary>
+            Represents a measure.</summary>
+    </member>
+    <member name="M:Microsoft.Extensions.Telemetry.Latency.Measure.#ctor(System.String,System.Int64)">
+      <summary>
+            Initializes a new instance of the <see cref="T:Microsoft.Extensions.Telemetry.Latency.Measure" /> struct.</summary>
+      <param name="name">Name of the counter.</param>
+      <param name="value">Value of the counter.</param>
+    </member>
+    <member name="M:Microsoft.Extensions.Telemetry.Latency.Measure.Equals(Microsoft.Extensions.Telemetry.Latency.Measure)">
+      <summary>
+            Determines whether this and a specified measure are identical.</summary>
+      <param name="other">The other measure.</param>
+      <returns>
+        <see langword="true" /> if identical;<see langword="false" /> otherwise.</returns>
+    </member>
+    <member name="M:Microsoft.Extensions.Telemetry.Latency.Measure.Equals(System.Object)">
+      <summary>
+            Determines whether this and a specified object are identical.</summary>
+      <param name="obj">The object to compare.</param>
+      <returns>
+        <see langword="true" /> if identical;<see langword="false" /> otherwise.</returns>
+    </member>
+    <member name="M:Microsoft.Extensions.Telemetry.Latency.Measure.GetHashCode">
+      <summary>
+            Gets a hash code for this object.</summary>
+      <returns>A hash code for the current object.</returns>
+    </member>
+    <member name="M:Microsoft.Extensions.Telemetry.Latency.Measure.op_Equality(Microsoft.Extensions.Telemetry.Latency.Measure,Microsoft.Extensions.Telemetry.Latency.Measure)">
+      <summary>
+            Equality operator.</summary>
+      <param name="left">First value.</param>
+      <param name="right">Second value.</param>
+      <returns>
+        <see langword="true" /> if the operands are equal, <see langword="false" /> otherwise.</returns>
+    </member>
+    <member name="M:Microsoft.Extensions.Telemetry.Latency.Measure.op_Inequality(Microsoft.Extensions.Telemetry.Latency.Measure,Microsoft.Extensions.Telemetry.Latency.Measure)">
+      <summary>
+            Inequality operator.</summary>
+      <param name="left">First value.</param>
+      <param name="right">Second value.</param>
+      <returns>
+        <see langword="true" /> if the operands are unequal, <see langword="false" /> otherwise.</returns>
+    </member>
+    <member name="P:Microsoft.Extensions.Telemetry.Latency.Measure.Name">
+      <summary>
+            Gets the name of the measure.</summary>
+    </member>
+    <member name="P:Microsoft.Extensions.Telemetry.Latency.Measure.Value">
+      <summary>
+            Gets the value of the measure.</summary>
+    </member>
+    <member name="T:Microsoft.Extensions.Telemetry.Latency.MeasureToken">
+      <summary>
+            Token representing a registered measure.</summary>
+    </member>
+    <member name="M:Microsoft.Extensions.Telemetry.Latency.MeasureToken.#ctor(System.String,System.Int32)">
+      <summary>
+            Initializes a new instance of the <see cref="T:Microsoft.Extensions.Telemetry.Latency.MeasureToken" /> struct.</summary>
+      <param name="name">Name of the measure.</param>
+      <param name="position">Position of the token in the token table.</param>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="name" /> is <see langword="null" />.</exception>
+    </member>
+    <member name="P:Microsoft.Extensions.Telemetry.Latency.MeasureToken.Name">
+      <summary>
+            Gets the name of the measure.</summary>
+    </member>
+    <member name="P:Microsoft.Extensions.Telemetry.Latency.MeasureToken.Position">
+      <summary>
+            Gets the position of the token in the token table.</summary>
+    </member>
+    <member name="T:Microsoft.Extensions.Telemetry.Latency.NullLatencyContextExtensions">
+      <summary>
+            Extensions to add a no-op latency context.</summary>
+    </member>
+    <member name="M:Microsoft.Extensions.Telemetry.Latency.NullLatencyContextExtensions.AddNullLatencyContext(Microsoft.Extensions.DependencyInjection.IServiceCollection)">
+      <summary>
+            Add a no-op latency context to a dependency injection container.</summary>
+      <param name="services">The dependency injection container to add the context to.</param>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="services" /> is <see langword="null" />.</exception>
+      <returns>The value of <paramref name="services" />.</returns>
+    </member>
+    <member name="T:Microsoft.Extensions.Telemetry.Latency.Tag">
+      <summary>
+            Name and value pair to provide metadata about a operation being measured.</summary>
+    </member>
+    <member name="M:Microsoft.Extensions.Telemetry.Latency.Tag.#ctor(System.String,System.String)">
+      <summary>
+            Initializes a new instance of the <see cref="T:Microsoft.Extensions.Telemetry.Latency.Tag" /> struct.</summary>
+      <param name="name">Name of the tag.</param>
+      <param name="value">Value of the tag.</param>
+    </member>
+    <member name="P:Microsoft.Extensions.Telemetry.Latency.Tag.Name">
+      <summary>
+            Gets the name of the tag.</summary>
+    </member>
+    <member name="P:Microsoft.Extensions.Telemetry.Latency.Tag.Value">
+      <summary>
+            Gets the value of the tag.</summary>
+    </member>
+    <member name="T:Microsoft.Extensions.Telemetry.Latency.TagToken">
+      <summary>
+            Token representing a registered tag.</summary>
+    </member>
+    <member name="M:Microsoft.Extensions.Telemetry.Latency.TagToken.#ctor(System.String,System.Int32)">
+      <summary>
+            Initializes a new instance of the <see cref="T:Microsoft.Extensions.Telemetry.Latency.TagToken" /> struct.</summary>
+      <param name="name">Name of the tag.</param>
+      <param name="position">Position of the token in the token table.</param>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="name" /> is <see langword="null" />.</exception>
+    </member>
+    <member name="P:Microsoft.Extensions.Telemetry.Latency.TagToken.Name">
+      <summary>
+            Gets the name of the tag.</summary>
+    </member>
+    <member name="P:Microsoft.Extensions.Telemetry.Latency.TagToken.Position">
+      <summary>
+            Gets the position of the token in the token table.</summary>
+    </member>
+    <member name="T:Microsoft.Extensions.Telemetry.Logging.ILogPropertyCollector">
+      <summary>
+            Interface enabling custom providers of logging properties to report properties.</summary>
+    </member>
+    <member name="M:Microsoft.Extensions.Telemetry.Logging.ILogPropertyCollector.Add(System.String,System.Object)">
+      <summary>
+            Adds a property to the current log record.</summary>
+      <param name="propertyName">The name of the property to add.</param>
+      <param name="propertyValue">The value of the property to add.</param>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="propertyName" /> is <see langword="null" />.</exception>
+      <exception cref="T:System.ArgumentException">
+        <paramref name="propertyName" /> is empty or contains exclusively whitespace,
+            or when a property of the same name has already been added.</exception>
+    </member>
+    <member name="T:Microsoft.Extensions.Telemetry.Logging.LogMethodAttribute">
+      <summary>
+            Provides information to guide the production of a strongly-typed logging method.</summary>
+    </member>
+    <member name="M:Microsoft.Extensions.Telemetry.Logging.LogMethodAttribute.#ctor">
+      <summary>
+             Initializes a new instance of the <see cref="T:Microsoft.Extensions.Telemetry.Logging.LogMethodAttribute" /> class
+             which is used to guide the production of a strongly-typed logging method.</summary>
+    </member>
+    <member name="M:Microsoft.Extensions.Telemetry.Logging.LogMethodAttribute.#ctor(Microsoft.Extensions.Logging.LogLevel)">
+      <summary>
+             Initializes a new instance of the <see cref="T:Microsoft.Extensions.Telemetry.Logging.LogMethodAttribute" /> class
+             which is used to guide the production of a strongly-typed logging method.</summary>
+      <param name="level">The logging level produced when invoking the strongly-typed logging method.</param>
+    </member>
+    <member name="M:Microsoft.Extensions.Telemetry.Logging.LogMethodAttribute.#ctor(Microsoft.Extensions.Logging.LogLevel,System.String)">
+      <summary>
+             Initializes a new instance of the <see cref="T:Microsoft.Extensions.Telemetry.Logging.LogMethodAttribute" /> class
+             which is used to guide the production of a strongly-typed logging method.</summary>
+      <param name="level">The logging level produced when invoking the strongly-typed logging method.</param>
+      <param name="message">The message text output by the logging method. This string is a template that can contain any of the method's parameters. Defaults to empty.</param>
+    </member>
+    <member name="M:Microsoft.Extensions.Telemetry.Logging.LogMethodAttribute.#ctor(System.Int32)">
+      <summary>
+             Initializes a new instance of the <see cref="T:Microsoft.Extensions.Telemetry.Logging.LogMethodAttribute" /> class
+             which is used to guide the production of a strongly-typed logging method.</summary>
+      <param name="eventId">The stable event id for this log message.</param>
+    </member>
+    <member name="M:Microsoft.Extensions.Telemetry.Logging.LogMethodAttribute.#ctor(System.Int32,Microsoft.Extensions.Logging.LogLevel)">
+      <summary>
+            Initializes a new instance of the <see cref="T:Microsoft.Extensions.Telemetry.Logging.LogMethodAttribute" /> class
+            which is used to guide the production of a strongly-typed logging method.</summary>
+      <param name="eventId">The stable event id for this log message.</param>
+      <param name="level">The logging level produced when invoking the strongly-typed logging method.</param>
+    </member>
+    <member name="M:Microsoft.Extensions.Telemetry.Logging.LogMethodAttribute.#ctor(System.Int32,Microsoft.Extensions.Logging.LogLevel,System.String)">
+      <summary>
+            Initializes a new instance of the <see cref="T:Microsoft.Extensions.Telemetry.Logging.LogMethodAttribute" /> class
+            which is used to guide the production of a strongly-typed logging method.</summary>
+      <param name="eventId">The stable event id for this log message.</param>
+      <param name="level">The logging level produced when invoking the strongly-typed logging method.</param>
+      <param name="message">The message text output by the logging method. This string is a template that can contain any of the method's parameters.</param>
+    </member>
+    <member name="M:Microsoft.Extensions.Telemetry.Logging.LogMethodAttribute.#ctor(System.Int32,System.String)">
+      <summary>
+             Initializes a new instance of the <see cref="T:Microsoft.Extensions.Telemetry.Logging.LogMethodAttribute" /> class
+             which is used to guide the production of a strongly-typed logging method.</summary>
+      <param name="eventId">The stable event id for this log message.</param>
+      <param name="message">The message text output by the logging method. This string is a template that can contain any of the method's parameters.</param>
+    </member>
+    <member name="M:Microsoft.Extensions.Telemetry.Logging.LogMethodAttribute.#ctor(System.String)">
+      <summary>
+             Initializes a new instance of the <see cref="T:Microsoft.Extensions.Telemetry.Logging.LogMethodAttribute" /> class
+             which is used to guide the production of a strongly-typed logging method.</summary>
+      <param name="message">The message text output by the logging method. This string is a template that can contain any of the method's parameters. Defaults to empty.</param>
+    </member>
+    <member name="P:Microsoft.Extensions.Telemetry.Logging.LogMethodAttribute.EventId">
+      <summary>
+            Gets the logging event id for the logging method.</summary>
+    </member>
+    <member name="P:Microsoft.Extensions.Telemetry.Logging.LogMethodAttribute.EventName">
+      <summary>
+            Gets or sets the logging event name for the logging method.</summary>
+    </member>
+    <member name="P:Microsoft.Extensions.Telemetry.Logging.LogMethodAttribute.Level">
+      <summary>
+            Gets the logging level for the logging method.</summary>
+    </member>
+    <member name="P:Microsoft.Extensions.Telemetry.Logging.LogMethodAttribute.Message">
+      <summary>
+            Gets the message text for the logging method.</summary>
+    </member>
+    <member name="P:Microsoft.Extensions.Telemetry.Logging.LogMethodAttribute.SkipEnabledCheck">
+      <summary>
+            Gets or sets a value indicating whether the generated code should omit the logic to check whether a log level is enabled.</summary>
+      <returns>
+            The default value is <see langword="true" /> if the log method's logging level is Error or Critical; otherwise the default value is <see langword="false" />.</returns>
+    </member>
+    <member name="T:Microsoft.Extensions.Telemetry.Logging.LogMethodHelper">
+      <summary>
+            Utility type to support generated logging methods.</summary>
+    </member>
+    <member name="M:Microsoft.Extensions.Telemetry.Logging.LogMethodHelper.#ctor" />
+    <member name="M:Microsoft.Extensions.Telemetry.Logging.LogMethodHelper.Add(System.String,System.Object)">
+      <summary>Adds a property to the current log record.</summary>
+      <param name="propertyName">The name of the property to add.</param>
+      <param name="propertyValue">The value of the property to add.</param>
+    </member>
+    <member name="M:Microsoft.Extensions.Telemetry.Logging.LogMethodHelper.GetHelper">
+      <summary>
+            Gets an instance of a helper from the global pool.</summary>
+      <returns>A usable instance.</returns>
+    </member>
+    <member name="M:Microsoft.Extensions.Telemetry.Logging.LogMethodHelper.Microsoft#Extensions#Telemetry#Enrichment#IEnrichmentPropertyBag#Add(System.ReadOnlySpan{System.Collections.Generic.KeyValuePair{System.String,System.Object}})">
+      <summary>Adds a series of properties to the bag of enrichment properties.</summary>
+      <param name="properties">The properties to add.</param>
+    </member>
+    <member name="M:Microsoft.Extensions.Telemetry.Logging.LogMethodHelper.Microsoft#Extensions#Telemetry#Enrichment#IEnrichmentPropertyBag#Add(System.ReadOnlySpan{System.Collections.Generic.KeyValuePair{System.String,System.String}})">
+      <summary>Adds a series of properties to the bag of enrichment properties.</summary>
+      <param name="properties">The properties to add.</param>
+    </member>
+    <member name="M:Microsoft.Extensions.Telemetry.Logging.LogMethodHelper.Microsoft#Extensions#Telemetry#Enrichment#IEnrichmentPropertyBag#Add(System.String,System.Object)">
+      <summary>Add a property in form of a key/value pair to the bag of enrichment properties.</summary>
+      <param name="key">Enrichment property key.</param>
+      <param name="value">Enrichment property value.</param>
+    </member>
+    <member name="M:Microsoft.Extensions.Telemetry.Logging.LogMethodHelper.Microsoft#Extensions#Telemetry#Enrichment#IEnrichmentPropertyBag#Add(System.String,System.String)">
+      <summary>Add a property in form of a key/value pair to the bag of enrichment properties.</summary>
+      <param name="key">Enrichment property key.</param>
+      <param name="value">Enrichment property value.</param>
+    </member>
+    <member name="M:Microsoft.Extensions.Telemetry.Logging.LogMethodHelper.ReturnHelper(Microsoft.Extensions.Telemetry.Logging.LogMethodHelper)">
+      <summary>
+            Returns a helper instance to the global pool.</summary>
+      <param name="helper">The helper instance.</param>
+    </member>
+    <member name="M:Microsoft.Extensions.Telemetry.Logging.LogMethodHelper.Stringify(System.Collections.IEnumerable)">
+      <summary>
+            Enumerates an enumerable into a string.</summary>
+      <param name="enumerable">The enumerable object.</param>
+      <returns>
+            A string representation of the enumerable.</returns>
+    </member>
+    <member name="M:Microsoft.Extensions.Telemetry.Logging.LogMethodHelper.Stringify``2(System.Collections.Generic.IEnumerable{System.Collections.Generic.KeyValuePair{``0,``1}})">
+      <summary>
+            Enumerates an enumerable of key/value pairs into a string.</summary>
+      <param name="enumerable">The enumerable object.</param>
+      <typeparam name="TKey">Type of keys.</typeparam>
+      <typeparam name="TValue">Type of values.</typeparam>
+      <returns>
+            A string representation of the enumerable.</returns>
+    </member>
+    <member name="M:Microsoft.Extensions.Telemetry.Logging.LogMethodHelper.TryReset">
+      <summary>
+            Resets state of this container as described in <see cref="M:Microsoft.Extensions.ObjectPool.IResettable.TryReset" />.</summary>
+      <returns>
+        <see langword="true" /> if the object successfully reset and can be reused.</returns>
+    </member>
+    <member name="P:Microsoft.Extensions.Telemetry.Logging.LogMethodHelper.ParameterName">
+      <summary>
+            Gets or sets the name of the logging method parameter for which to collect properties.</summary>
+    </member>
+    <member name="P:Microsoft.Extensions.Telemetry.Logging.LogMethodHelper.SkipEnabledCheckOptions">
+      <summary>
+            Gets log define options configured to skip the log level enablement check.</summary>
+    </member>
+    <member name="T:Microsoft.Extensions.Telemetry.Logging.LogPropertiesAttribute">
+      <summary>
+            Marks a logging method parameter whose public properties need to be logged.</summary>
+    </member>
+    <member name="M:Microsoft.Extensions.Telemetry.Logging.LogPropertiesAttribute.#ctor">
+      <summary>
+            Initializes a new instance of the <see cref="T:Microsoft.Extensions.Telemetry.Logging.LogPropertiesAttribute" /> class.</summary>
+    </member>
+    <member name="M:Microsoft.Extensions.Telemetry.Logging.LogPropertiesAttribute.#ctor(System.Type,System.String)">
+      <summary>
+             Initializes a new instance of the <see cref="T:Microsoft.Extensions.Telemetry.Logging.LogPropertiesAttribute" /> class with custom properties provider.</summary>
+      <param name="providerType">A type containing a method that provides a custom set of properties to log.</param>
+      <param name="providerMethod">The name of a method on the provider type which generates a custom set of properties to log.</param>
+      <exception cref="T:System.ArgumentNullException">
+             When <paramref name="providerMethod" /> or <paramref name="providerType" /> are <see langword="null" />.</exception>
+      <exception cref="T:System.ArgumentException">
+             When <paramref name="providerMethod" /> is either an empty string or contains only whitespace.</exception>
+    </member>
+    <member name="P:Microsoft.Extensions.Telemetry.Logging.LogPropertiesAttribute.OmitParameterName">
+      <summary>
+            Gets or sets a value indicating whether to prefix the name of the logging method parameter to the generated name of each property being logged.</summary>
+      <returns>
+            Defaults to <see langword="false" />.</returns>
+    </member>
+    <member name="P:Microsoft.Extensions.Telemetry.Logging.LogPropertiesAttribute.ProviderMethod">
+      <summary>
+            Gets the name of the method that provides properties to be logged.</summary>
+    </member>
+    <member name="P:Microsoft.Extensions.Telemetry.Logging.LogPropertiesAttribute.ProviderType">
+      <summary>
+            Gets the <see cref="T:System.Type" /> containing the method that provides properties to be logged.</summary>
+    </member>
+    <member name="P:Microsoft.Extensions.Telemetry.Logging.LogPropertiesAttribute.SkipNullProperties">
+      <summary>
+            Gets or sets a value indicating whether <see langword="null" /> properties are logged.</summary>
+      <returns>
+            Defaults to <see langword="false" />.</returns>
+    </member>
+    <member name="T:Microsoft.Extensions.Telemetry.Logging.LogPropertyIgnoreAttribute">
+      <summary>
+            Indicates that a property should not be logged.</summary>
+    </member>
+    <member name="M:Microsoft.Extensions.Telemetry.Logging.LogPropertyIgnoreAttribute.#ctor" />
+    <member name="T:Microsoft.Extensions.Telemetry.Metering.CounterAttribute">
+      <summary>
+            Provides information to guide the production of a strongly-typed 64 bit integer counter metric factory method and associated type.</summary>
+    </member>
+    <member name="M:Microsoft.Extensions.Telemetry.Metering.CounterAttribute.#ctor(System.String[])">
+      <summary>
+            Initializes a new instance of the <see cref="T:Microsoft.Extensions.Telemetry.Metering.CounterAttribute" /> class.</summary>
+      <param name="dimensions">Dimension names.</param>
+    </member>
+    <member name="M:Microsoft.Extensions.Telemetry.Metering.CounterAttribute.#ctor(System.Type)">
+      <summary>
+            Initializes a new instance of the <see cref="T:Microsoft.Extensions.Telemetry.Metering.CounterAttribute" /> class.</summary>
+      <param name="type">A type providing the metric dimensions. The dimensions are taken from the type's public fields and properties.</param>
+    </member>
+    <member name="P:Microsoft.Extensions.Telemetry.Metering.CounterAttribute.Dimensions">
+      <summary>
+            Gets the metric's dimensions.</summary>
+    </member>
+    <member name="P:Microsoft.Extensions.Telemetry.Metering.CounterAttribute.Name">
+      <summary>
+            Gets or sets the name of the metric.</summary>
+    </member>
+    <member name="P:Microsoft.Extensions.Telemetry.Metering.CounterAttribute.Type">
+      <summary>
+            Gets the type that supplies metric dimensions.</summary>
+    </member>
+    <member name="T:Microsoft.Extensions.Telemetry.Metering.CounterAttribute`1">
+      <summary>
+            Provides information to guide the production of a strongly-typed 64 bit integer counter metric factory method and associated type.</summary>
+      <typeparam name="T">
+            The type of value the counter will hold, which is limited to <see cref="T:System.Byte" />, <see cref="T:System.Int16" />, <see cref="T:System.Int32" />, <see cref="T:System.Int64" />,
+            <see cref="T:System.Single" />, <see cref="T:System.Double" />, or <see cref="T:System.Decimal" />.</typeparam>
+    </member>
+    <member name="M:Microsoft.Extensions.Telemetry.Metering.CounterAttribute`1.#ctor(System.String[])">
+      <summary>
+            Initializes a new instance of the <see cref="T:Microsoft.Extensions.Telemetry.Metering.CounterAttribute`1" /> class.</summary>
+      <param name="dimensions">variable array of dimension names.</param>
+    </member>
+    <member name="M:Microsoft.Extensions.Telemetry.Metering.CounterAttribute`1.#ctor(System.Type)">
+      <summary>
+            Initializes a new instance of the <see cref="T:Microsoft.Extensions.Telemetry.Metering.CounterAttribute`1" /> class.</summary>
+      <param name="type">A type providing the metric dimensions. The dimensions are taken from the type's public fields and properties.</param>
+    </member>
+    <member name="P:Microsoft.Extensions.Telemetry.Metering.CounterAttribute`1.Dimensions">
+      <summary>
+            Gets the metric's dimensions.</summary>
+    </member>
+    <member name="P:Microsoft.Extensions.Telemetry.Metering.CounterAttribute`1.Name">
+      <summary>
+            Gets or sets the name of the metric.</summary>
+    </member>
+    <member name="P:Microsoft.Extensions.Telemetry.Metering.CounterAttribute`1.Type">
+      <summary>
+            Gets the type that supplies metric dimensions.</summary>
+    </member>
+    <member name="T:Microsoft.Extensions.Telemetry.Metering.DimensionAttribute">
+      <summary>
+             Provides dimension information for strongly-typed metrics.</summary>
+    </member>
+    <member name="M:Microsoft.Extensions.Telemetry.Metering.DimensionAttribute.#ctor(System.String)">
+      <summary>
+            Initializes a new instance of the <see cref="T:Microsoft.Extensions.Telemetry.Metering.DimensionAttribute" /> class.</summary>
+      <param name="name">Dimension name.</param>
+    </member>
+    <member name="P:Microsoft.Extensions.Telemetry.Metering.DimensionAttribute.Name">
+      <summary>
+            Gets the name of the dimension.</summary>
+    </member>
+    <member name="T:Microsoft.Extensions.Telemetry.Metering.GaugeAttribute">
+      <summary>
+            Provides information to guide the production of a strongly-typed gauge metric factory method and associated type.</summary>
+    </member>
+    <member name="M:Microsoft.Extensions.Telemetry.Metering.GaugeAttribute.#ctor(System.String[])">
+      <summary>
+            Initializes a new instance of the <see cref="T:Microsoft.Extensions.Telemetry.Metering.GaugeAttribute" /> class.</summary>
+      <param name="dimensions">Variable array of dimension names.</param>
+    </member>
+    <member name="M:Microsoft.Extensions.Telemetry.Metering.GaugeAttribute.#ctor(System.Type)">
+      <summary>
+            Initializes a new instance of the <see cref="T:Microsoft.Extensions.Telemetry.Metering.GaugeAttribute" /> class.</summary>
+      <param name="type">A type providing the metric dimensions. The dimensions are taken from the type's public fields and properties.</param>
+    </member>
+    <member name="P:Microsoft.Extensions.Telemetry.Metering.GaugeAttribute.Dimensions">
+      <summary>
+            Gets the metric's dimensions.</summary>
+    </member>
+    <member name="P:Microsoft.Extensions.Telemetry.Metering.GaugeAttribute.Name">
+      <summary>
+            Gets or sets the name of the metric.</summary>
+    </member>
+    <member name="P:Microsoft.Extensions.Telemetry.Metering.GaugeAttribute.Type">
+      <summary>
+            Gets the type that supplies metric dimensions.</summary>
+    </member>
+    <member name="T:Microsoft.Extensions.Telemetry.Metering.HistogramAttribute">
+      <summary>
+            Provides information to guide the production of a strongly-typed histogram metric factory method and associated type.</summary>
+    </member>
+    <member name="M:Microsoft.Extensions.Telemetry.Metering.HistogramAttribute.#ctor(System.String[])">
+      <summary>
+            Initializes a new instance of the <see cref="T:Microsoft.Extensions.Telemetry.Metering.HistogramAttribute" /> class.</summary>
+      <param name="dimensions">variable array of dimension names.</param>
+    </member>
+    <member name="M:Microsoft.Extensions.Telemetry.Metering.HistogramAttribute.#ctor(System.Type)">
+      <summary>
+            Initializes a new instance of the <see cref="T:Microsoft.Extensions.Telemetry.Metering.HistogramAttribute" /> class.</summary>
+      <param name="type">A type providing the metric dimensions. The dimensions are taken from the type's public fields and properties.</param>
+    </member>
+    <member name="P:Microsoft.Extensions.Telemetry.Metering.HistogramAttribute.Dimensions">
+      <summary>
+            Gets the metric's dimensions.</summary>
+    </member>
+    <member name="P:Microsoft.Extensions.Telemetry.Metering.HistogramAttribute.Name">
+      <summary>
+            Gets or sets the name of the metric.</summary>
+    </member>
+    <member name="P:Microsoft.Extensions.Telemetry.Metering.HistogramAttribute.Type">
+      <summary>
+            Gets the type that supplies metric dimensions.</summary>
+    </member>
+    <member name="T:Microsoft.Extensions.Telemetry.Metering.HistogramAttribute`1">
+      <summary>
+            Provides information to guide the production of a strongly-typed histogram metric factory method and associated type.</summary>
+      <typeparam name="T">
+            The type of value the histogram will hold, which is limited to <see cref="T:System.Byte" />, <see cref="T:System.Int16" />, <see cref="T:System.Int32" />, <see cref="T:System.Int64" />,
+            <see cref="T:System.Single" />, <see cref="T:System.Double" />, or <see cref="T:System.Decimal" />.</typeparam>
+    </member>
+    <member name="M:Microsoft.Extensions.Telemetry.Metering.HistogramAttribute`1.#ctor(System.String[])">
+      <summary>
+            Initializes a new instance of the <see cref="T:Microsoft.Extensions.Telemetry.Metering.HistogramAttribute`1" /> class.</summary>
+      <param name="dimensions">variable array of dimension names.</param>
+    </member>
+    <member name="M:Microsoft.Extensions.Telemetry.Metering.HistogramAttribute`1.#ctor(System.Type)">
+      <summary>
+            Initializes a new instance of the <see cref="T:Microsoft.Extensions.Telemetry.Metering.HistogramAttribute`1" /> class.</summary>
+      <param name="type">A type providing the metric dimensions. The dimensions are taken from the type's public fields and properties.</param>
+    </member>
+    <member name="P:Microsoft.Extensions.Telemetry.Metering.HistogramAttribute`1.Dimensions">
+      <summary>
+            Gets the metric's dimensions.</summary>
+    </member>
+    <member name="P:Microsoft.Extensions.Telemetry.Metering.HistogramAttribute`1.Name">
+      <summary>
+            Gets or sets the name of the metric.</summary>
+    </member>
+    <member name="P:Microsoft.Extensions.Telemetry.Metering.HistogramAttribute`1.Type">
+      <summary>
+            Gets the type that supplies metric dimensions.</summary>
+    </member>
+    <member name="T:Microsoft.Extensions.Telemetry.Metering.Meter`1">
+      <summary>
+            A meter class where the meter name is derived from the specified <typeparamref name="TMeterName" /> type name.</summary>
+      <typeparam name="TMeterName">The type whose name is used as the meter name.</typeparam>
+    </member>
+    <member name="M:Microsoft.Extensions.Telemetry.Metering.Meter`1.#ctor">
+      <summary>
+            Initializes a new instance of the <see cref="T:Microsoft.Extensions.Telemetry.Metering.Meter`1" /> class.</summary>
+    </member>
+    <member name="T:Microsoft.Extensions.Telemetry.Metering.MeteringExtensions">
+      <summary>
+            Extensions to control metering integration.</summary>
+    </member>
+    <member name="M:Microsoft.Extensions.Telemetry.Metering.MeteringExtensions.RegisterMetering(Microsoft.Extensions.DependencyInjection.IServiceCollection)">
+      <summary>
+            Registers <see cref="T:Microsoft.Extensions.Telemetry.Metering.Meter`1" /> to a dependency injection container.</summary>
+      <param name="services">The dependency injection container to register metering into.</param>
+      <returns>The value of <paramref name="services" />.</returns>
+    </member>
+  </members>
+</doc>

@@ -1151,6 +1151,32 @@ internal class ComponentDesignTimeNodeWriter : ComponentNodeWriter
         }
     }
 
+    public sealed override void WriteFormName(CodeRenderingContext context, FormNameIntermediateNode node)
+    {
+        var tokens = node.FindDescendantNodes<IntermediateToken>();
+        if (tokens.Count == 0)
+        {
+            return;
+        }
+
+        // Either all tokens should be C# or none of them.
+        if (tokens[0].IsCSharp)
+        {
+            context.CodeWriter.Write(ComponentsApi.RuntimeHelpers.TypeCheck);
+            context.CodeWriter.Write("<string>(");
+            foreach (var token in tokens)
+            {
+                Debug.Assert(token.IsCSharp);
+                WriteCSharpToken(context, token);
+            }
+            context.CodeWriter.Write(");");
+        }
+        else
+        {
+            Debug.Assert(!tokens.Any(t => t.IsCSharp));
+        }
+    }
+
     public override void WriteReferenceCapture(CodeRenderingContext context, ReferenceCaptureIntermediateNode node)
     {
         if (context == null)

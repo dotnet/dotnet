@@ -32,6 +32,7 @@ namespace Microsoft.DotNet.XUnitExtensions
                 (platforms.HasFlag(TestPlatforms.Android) && RuntimeInformation.IsOSPlatform(OSPlatform.Create("ANDROID"))) ||
                 (platforms.HasFlag(TestPlatforms.Browser) && RuntimeInformation.IsOSPlatform(OSPlatform.Create("BROWSER"))) ||
                 (platforms.HasFlag(TestPlatforms.Wasi) && RuntimeInformation.IsOSPlatform(OSPlatform.Create("WASI"))) ||
+                (platforms.HasFlag(TestPlatforms.Haiku) && RuntimeInformation.IsOSPlatform(OSPlatform.Create("HAIKU"))) ||
                 (platforms.HasFlag(TestPlatforms.Windows) && RuntimeInformation.IsOSPlatform(OSPlatform.Windows));
 
         public static bool TestRuntimeApplies(TestRuntimes runtimes) =>
@@ -70,7 +71,7 @@ namespace Microsoft.DotNet.XUnitExtensions
             TestRuntimes runtimes = TestRuntimes.Any;
             Type calleeType = null;
             string[] conditionMemberNames = null;
-            
+
             foreach (object arg in ctorArgs.Skip(skipFirst)) // First argument is the issue number or reason.
             {
                 if (arg is TestPlatforms)

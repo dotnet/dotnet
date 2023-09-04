@@ -1,0 +1,78 @@
+﻿Document - 
+    NamespaceDeclaration -  - Test
+        UsingDirective - (3:1,1 [20] ) - global::System
+        UsingDirective - (26:2,1 [40] ) - global::System.Collections.Generic
+        UsingDirective - (69:3,1 [25] ) - global::System.Linq
+        UsingDirective - (97:4,1 [36] ) - global::System.Threading.Tasks
+        UsingDirective - (136:5,1 [45] ) - global::Microsoft.AspNetCore.Components
+        ClassDeclaration -  - public partial - TestComponent - global::Microsoft.AspNetCore.Components.ComponentBase - 
+            DesignTimeDirective - 
+            CSharpCode - 
+                IntermediateToken -  - CSharp - #pragma warning disable 0414
+            CSharpCode - 
+                IntermediateToken -  - CSharp - private static object __o = null;
+            CSharpCode - 
+                IntermediateToken -  - CSharp - #pragma warning restore 0414
+            MethodDeclaration -  - protected override - void - BuildRenderTree
+                MarkupElement - (0:0,0 [63] x:\dir\subdir\Test\TestComponent.cshtml) - form
+                    HtmlAttribute -  - method=" - "
+                        HtmlAttributeValue - (14:0,14 [4] x:\dir\subdir\Test\TestComponent.cshtml) - 
+                            LazyIntermediateToken - (14:0,14 [4] x:\dir\subdir\Test\TestComponent.cshtml) - Html - post
+                    HtmlAttribute -  - @onsubmit=" - "
+                        HtmlAttributeValue - (31:0,31 [9] x:\dir\subdir\Test\TestComponent.cshtml) - 
+                            LazyIntermediateToken - (31:0,31 [9] x:\dir\subdir\Test\TestComponent.cshtml) - Html - () => { }
+                    FormName - (53:0,53 [1] x:\dir\subdir\Test\TestComponent.cshtml)
+                        HtmlContent - (53:0,53 [1] x:\dir\subdir\Test\TestComponent.cshtml)
+                            LazyIntermediateToken - (53:0,53 [1] x:\dir\subdir\Test\TestComponent.cshtml) - Html - 1
+                HtmlContent - (63:0,63 [2] x:\dir\subdir\Test\TestComponent.cshtml)
+                    LazyIntermediateToken - (63:0,63 [2] x:\dir\subdir\Test\TestComponent.cshtml) - Html - \n
+                Component - (65:1,0 [287] x:\dir\subdir\Test\TestComponent.cshtml) - TestComponent
+                    ComponentChildContent -  - ChildContent - context
+                        HtmlContent - (80:1,15 [6] x:\dir\subdir\Test\TestComponent.cshtml)
+                            LazyIntermediateToken - (80:1,15 [6] x:\dir\subdir\Test\TestComponent.cshtml) - Html - \n    
+                        MarkupElement - (86:2,4 [63] x:\dir\subdir\Test\TestComponent.cshtml) - form
+                            HtmlAttribute -  - method=" - "
+                                HtmlAttributeValue - (100:2,18 [4] x:\dir\subdir\Test\TestComponent.cshtml) - 
+                                    LazyIntermediateToken - (100:2,18 [4] x:\dir\subdir\Test\TestComponent.cshtml) - Html - post
+                            HtmlAttribute -  - @onsubmit=" - "
+                                HtmlAttributeValue - (117:2,35 [9] x:\dir\subdir\Test\TestComponent.cshtml) - 
+                                    LazyIntermediateToken - (117:2,35 [9] x:\dir\subdir\Test\TestComponent.cshtml) - Html - () => { }
+                            FormName - (139:2,57 [1] x:\dir\subdir\Test\TestComponent.cshtml)
+                                HtmlContent - (139:2,57 [1] x:\dir\subdir\Test\TestComponent.cshtml)
+                                    LazyIntermediateToken - (139:2,57 [1] x:\dir\subdir\Test\TestComponent.cshtml) - Html - 2
+                        HtmlContent - (149:2,67 [6] x:\dir\subdir\Test\TestComponent.cshtml)
+                            LazyIntermediateToken - (149:2,67 [6] x:\dir\subdir\Test\TestComponent.cshtml) - Html - \n    
+                        Component - (155:3,4 [110] x:\dir\subdir\Test\TestComponent.cshtml) - TestComponent
+                            ComponentChildContent -  - ChildContent - context
+                                HtmlContent - (170:3,19 [10] x:\dir\subdir\Test\TestComponent.cshtml)
+                                    LazyIntermediateToken - (170:3,19 [10] x:\dir\subdir\Test\TestComponent.cshtml) - Html - \n        
+                                MarkupElement - (180:4,8 [63] x:\dir\subdir\Test\TestComponent.cshtml) - form
+                                    HtmlAttribute -  - method=" - "
+                                        HtmlAttributeValue - (194:4,22 [4] x:\dir\subdir\Test\TestComponent.cshtml) - 
+                                            LazyIntermediateToken - (194:4,22 [4] x:\dir\subdir\Test\TestComponent.cshtml) - Html - post
+                                    HtmlAttribute -  - @onsubmit=" - "
+                                        HtmlAttributeValue - (211:4,39 [9] x:\dir\subdir\Test\TestComponent.cshtml) - 
+                                            LazyIntermediateToken - (211:4,39 [9] x:\dir\subdir\Test\TestComponent.cshtml) - Html - () => { }
+                                    FormName - (233:4,61 [1] x:\dir\subdir\Test\TestComponent.cshtml)
+                                        HtmlContent - (233:4,61 [1] x:\dir\subdir\Test\TestComponent.cshtml)
+                                            LazyIntermediateToken - (233:4,61 [1] x:\dir\subdir\Test\TestComponent.cshtml) - Html - 3
+                                HtmlContent - (243:4,71 [6] x:\dir\subdir\Test\TestComponent.cshtml)
+                                    LazyIntermediateToken - (243:4,71 [6] x:\dir\subdir\Test\TestComponent.cshtml) - Html - \n    
+                        HtmlContent - (265:5,20 [6] x:\dir\subdir\Test\TestComponent.cshtml)
+                            LazyIntermediateToken - (265:5,20 [6] x:\dir\subdir\Test\TestComponent.cshtml) - Html - \n    
+                        MarkupElement - (271:6,4 [63] x:\dir\subdir\Test\TestComponent.cshtml) - form
+                            HtmlAttribute -  - method=" - "
+                                HtmlAttributeValue - (285:6,18 [4] x:\dir\subdir\Test\TestComponent.cshtml) - 
+                                    LazyIntermediateToken - (285:6,18 [4] x:\dir\subdir\Test\TestComponent.cshtml) - Html - post
+                            HtmlAttribute -  - @onsubmit=" - "
+                                HtmlAttributeValue - (302:6,35 [9] x:\dir\subdir\Test\TestComponent.cshtml) - 
+                                    LazyIntermediateToken - (302:6,35 [9] x:\dir\subdir\Test\TestComponent.cshtml) - Html - () => { }
+                            FormName - (324:6,57 [1] x:\dir\subdir\Test\TestComponent.cshtml)
+                                HtmlContent - (324:6,57 [1] x:\dir\subdir\Test\TestComponent.cshtml)
+                                    LazyIntermediateToken - (324:6,57 [1] x:\dir\subdir\Test\TestComponent.cshtml) - Html - 4
+                        HtmlContent - (334:6,67 [2] x:\dir\subdir\Test\TestComponent.cshtml)
+                            LazyIntermediateToken - (334:6,67 [2] x:\dir\subdir\Test\TestComponent.cshtml) - Html - \n
+                HtmlContent - (352:7,16 [2] x:\dir\subdir\Test\TestComponent.cshtml)
+                    LazyIntermediateToken - (352:7,16 [2] x:\dir\subdir\Test\TestComponent.cshtml) - Html - \n
+            CSharpCode - (361:8,7 [68] x:\dir\subdir\Test\TestComponent.cshtml)
+                LazyIntermediateToken - (361:8,7 [68] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - \n    [Parameter] public RenderFragment ChildContent { get; set; }\n
