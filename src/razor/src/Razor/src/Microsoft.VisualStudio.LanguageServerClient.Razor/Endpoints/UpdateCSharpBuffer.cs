@@ -86,7 +86,7 @@ internal partial class RazorCustomMessageTarget
                         virtualDocument.Uri,
                         request.Changes.Select(change => change.ToVisualStudioTextChange()).ToArray(),
                         request.HostDocumentVersion.Value,
-                        state: null);
+                        state: request.PreviousWasEmpty);
                     return;
                 }
             }
@@ -112,6 +112,6 @@ internal partial class RazorCustomMessageTarget
             hostDocumentUri,
             request.Changes.Select(change => change.ToVisualStudioTextChange()).ToArray(),
             request.HostDocumentVersion.Value,
-            state: null);
+            state: request.PreviousWasEmpty);
     }
 }

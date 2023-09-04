@@ -24,7 +24,7 @@ namespace Microsoft.VisualStudio.LanguageServices.Razor;
 
 public class VsSolutionUpdatesProjectSnapshotChangeTriggerTest : TestBase
 {
-    private static readonly ProjectSnapshotManagerDispatcher s_dispatcher = new TestProjectSnapshotManagerDispatcher();
+    private static readonly ProjectSnapshotManagerDispatcher s_dispatcher = new TestDispatcher();
 
     private readonly HostProject _someProject;
     private readonly HostProject _someOtherProject;
@@ -264,5 +264,12 @@ public class VsSolutionUpdatesProjectSnapshotChangeTriggerTest : TestBase
         {
             return null;
         }
+    }
+
+    private class TestDispatcher : ProjectSnapshotManagerDispatcher
+    {
+        public override bool IsDispatcherThread => true;
+
+        public override TaskScheduler DispatcherScheduler => TaskScheduler.Default;
     }
 }
