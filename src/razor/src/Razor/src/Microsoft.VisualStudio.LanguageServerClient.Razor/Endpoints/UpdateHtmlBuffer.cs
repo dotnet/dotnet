@@ -41,6 +41,6 @@ internal partial class RazorCustomMessageTarget
             hostDocumentUri,
             request.Changes.Select(change => change.ToVisualStudioTextChange()).ToArray(),
             request.HostDocumentVersion.Value,
-            state: null);
+            state: request.PreviousWasEmpty);
     }
 }

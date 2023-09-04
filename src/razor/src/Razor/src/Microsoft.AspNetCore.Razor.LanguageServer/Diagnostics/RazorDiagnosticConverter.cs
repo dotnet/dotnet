@@ -70,7 +70,7 @@ internal static class RazorDiagnosticConverter
             return null;
         }
 
-        var spanStartIndex = NormalizeIndex(sourceSpan.AbsoluteIndex);
+        var spanStartIndex = Math.Min(sourceSpan.AbsoluteIndex, sourceText.Length);
         var startPosition = sourceText.Lines.GetLinePosition(spanStartIndex);
         var start = new Position()
         {
@@ -78,7 +78,7 @@ internal static class RazorDiagnosticConverter
             Character = startPosition.Character,
         };
 
-        var spanEndIndex = NormalizeIndex(sourceSpan.AbsoluteIndex + sourceSpan.Length);
+        var spanEndIndex = Math.Min(sourceSpan.AbsoluteIndex + sourceSpan.Length, sourceText.Length);
         var endPosition = sourceText.Lines.GetLinePosition(spanEndIndex);
         var end = new Position()
         {
@@ -92,17 +92,5 @@ internal static class RazorDiagnosticConverter
         };
 
         return range;
-
-        int NormalizeIndex(int index)
-        {
-            if (index >= sourceText.Length)
-            {
-                // Span start index is past the end of the document. Roslyn and VSCode don't support
-                // virtual positions that don't exist on the document; normalize to the last character.
-                index = sourceText.Length - 1;
-            }
-
-            return Math.Max(index, 0);
-        }
     }
 }
