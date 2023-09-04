@@ -2,6 +2,9 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using System;
+using System.Collections.Generic;
+using System.Collections.Immutable;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Razor.Editor;
@@ -9,9 +12,11 @@ using Microsoft.VisualStudio.Editor.Razor;
 using Microsoft.VisualStudio.Language.Intellisense.AsyncCompletion;
 using Microsoft.VisualStudio.OLE.Interop;
 using Microsoft.VisualStudio.Razor.IntegrationTests.Extensions;
+using Microsoft.VisualStudio.Razor.IntegrationTests.InProcess;
 using Microsoft.VisualStudio.Shell.Interop;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
+using Microsoft.VisualStudio.Text.Tagging;
 
 namespace Microsoft.VisualStudio.Extensibility.Testing;
 
@@ -97,5 +102,38 @@ internal partial class EditorInProcess
         var clientSettingsManager = await GetComponentModelServiceAsync<IClientSettingsManager>(cancellationToken);
 
         clientSettingsManager.Update(clientAdvancedSettings);
+    }
+
+    public async Task<ImmutableArray<TagSpan<TTag>>> WaitForTagsAsync<TTag>(CancellationToken cancellationToken)
+        where TTag : ITag
+    {
+        await JoinableTaskFactory.SwitchToMainThreadAsync(cancellationToken);
+
+        return await Helper.RetryAsync(async ct =>
+        {
+            var tags = await GetTagsAsync<TTag>(cancellationToken);
+            if (tags.Length == 0)
+            {
+                return default;
+            }
+
+            return tags;
+        }, TimeSpan.FromMilliseconds(50), cancellationToken);
+    }
+
+    public async Task<ImmutableArray<TagSpan<TTag>>> GetTagsAsync<TTag>(CancellationToken cancellationToken)
+        where TTag : ITag
+    {
+        await JoinableTaskFactory.SwitchToMainThreadAsync(cancellationToken);
+
+        var view = await GetActiveTextViewAsync(cancellationToken);
+        var viewTagAggregatorFactory = await GetComponentModelServiceAsync<IViewTagAggregatorFactoryService>(cancellationToken);
+
+        var aggregator = viewTagAggregatorFactory.CreateTagAggregator<TTag>(view);
+        var tags = aggregator
+            .GetTags(new SnapshotSpan(view.TextSnapshot, 0, view.TextSnapshot.Length))
+            .Cast<IMappingTagSpan<ITag>>();
+
+        return tags.SelectAsArray(tag => (new TagSpan<TTag>(tag.Span.GetSpans(view.TextBuffer).Single(), (TTag)tag.Tag)));
     }
 }

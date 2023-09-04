@@ -374,6 +374,8 @@ internal sealed class RazorDocumentMappingService : IRazorDocumentMappingService
             }
             else if (nextCSharpPositionOnFailure)
             {
+                Debug.Assert(generatedDocument is RazorCSharpDocument);
+
                 // The "next" C# location is only valid if it is on the same line in the source document
                 // as the requested position.
                 codeDocument.GetSourceText().GetLineAndOffset(hostDocumentIndex, out var hostDocumentLine, out _);
@@ -577,20 +579,20 @@ internal sealed class RazorDocumentMappingService : IRazorDocumentMappingService
     {
         hostDocumentRange = default;
 
-        var csharpSourceText = GetGeneratedSourceText(generatedDocument);
+        var generatedSourceText = GetGeneratedSourceText(generatedDocument);
         var range = generatedDocumentRange;
-        if (!IsRangeWithinDocument(range, csharpSourceText))
+        if (!IsRangeWithinDocument(range, generatedSourceText))
         {
             return false;
         }
 
-        if (!range.Start.TryGetAbsoluteIndex(csharpSourceText, _logger, out var startIndex) ||
+        if (!range.Start.TryGetAbsoluteIndex(generatedSourceText, _logger, out var startIndex) ||
             !TryMapToHostDocumentPosition(generatedDocument, startIndex, out var hostDocumentStart, out _))
         {
             return false;
         }
 
-        if (!range.End.TryGetAbsoluteIndex(csharpSourceText, _logger, out var endIndex) ||
+        if (!range.End.TryGetAbsoluteIndex(generatedSourceText, _logger, out var endIndex) ||
             !TryMapToHostDocumentPosition(generatedDocument, endIndex, out var hostDocumentEnd, out _))
         {
             return false;
@@ -614,14 +616,14 @@ internal sealed class RazorDocumentMappingService : IRazorDocumentMappingService
 
         hostDocumentRange = default;
 
-        var csharpSourceText = GetGeneratedSourceText(generatedDocument);
+        var generatedSourceText = GetGeneratedSourceText(generatedDocument);
 
-        if (!IsRangeWithinDocument(generatedDocumentRange, csharpSourceText))
+        if (!IsRangeWithinDocument(generatedDocumentRange, generatedSourceText))
         {
             return false;
         }
 
-        var generatedRangeAsSpan = generatedDocumentRange.AsTextSpan(csharpSourceText);
+        var generatedRangeAsSpan = generatedDocumentRange.AsTextSpan(generatedSourceText);
         var range = generatedDocumentRange;
         var startIndex = generatedRangeAsSpan.Start;
         var startMappedDirectly = TryMapToHostDocumentPosition(generatedDocument, startIndex, out var hostDocumentStart, out _);
@@ -713,14 +715,14 @@ internal sealed class RazorDocumentMappingService : IRazorDocumentMappingService
         // Doesn't map so lets try and infer some mappings
 
         hostDocumentRange = default;
-        var csharpSourceText = GetGeneratedSourceText(generatedDocument);
+        var generatedSourceText = GetGeneratedSourceText(generatedDocument);
 
-        if (!IsRangeWithinDocument(generatedDocumentRange, csharpSourceText))
+        if (!IsRangeWithinDocument(generatedDocumentRange, generatedSourceText))
         {
             return false;
         }
 
-        var generatedRangeAsSpan = generatedDocumentRange.AsTextSpan(csharpSourceText);
+        var generatedRangeAsSpan = generatedDocumentRange.AsTextSpan(generatedSourceText);
         SourceMapping? mappingBeforeGeneratedRange = null;
         SourceMapping? mappingAfterGeneratedRange = null;
 

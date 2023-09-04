@@ -136,6 +136,7 @@ internal class DefaultGeneratedDocumentPublisher : GeneratedDocumentPublisher
             ProjectKeyId = projectKey.Id,
             Changes = textChanges,
             HostDocumentVersion = hostDocumentVersion,
+            PreviousWasEmpty = previouslyPublishedData.SourceText.Length == 0
         };
 
         _ = _server.SendNotificationAsync(CustomMessageNames.RazorUpdateCSharpBufferEndpoint, request, CancellationToken.None);
@@ -190,6 +191,7 @@ internal class DefaultGeneratedDocumentPublisher : GeneratedDocumentPublisher
             ProjectKeyId = projectKey.Id,
             Changes = textChanges,
             HostDocumentVersion = hostDocumentVersion,
+            PreviousWasEmpty = previouslyPublishedData.SourceText.Length == 0
         };
 
         _ = _server.SendNotificationAsync(CustomMessageNames.RazorUpdateHtmlBufferEndpoint, request, CancellationToken.None);
