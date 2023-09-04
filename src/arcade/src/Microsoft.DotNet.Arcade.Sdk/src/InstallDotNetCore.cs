@@ -107,8 +107,12 @@ namespace Microsoft.DotNet.Arcade.Sdk
                                         var propertyName = item.Key.Trim('$', '(', ')');
 
                                         // Unable to parse version, try to find the corresponding identifier from the MSBuild loaded MSBuild properties
-                                        string evaluatedValue = properties[propertyName].First().EvaluatedValue;
-                                        if (!SemanticVersion.TryParse(evaluatedValue, out version))
+                                        ProjectProperty property = properties[propertyName].FirstOrDefault();
+                                        if (property == null)
+                                        {
+                                            Log.LogError($"Unable to find '{item.Key}' in properties defined in '{VersionsPropsPath}'");
+                                        }
+                                        else if (!SemanticVersion.TryParse(property.EvaluatedValue, out version))
                                         {
                                             Log.LogError($"Unable to parse '{item.Key}' from properties defined in '{VersionsPropsPath}'");
                                         }

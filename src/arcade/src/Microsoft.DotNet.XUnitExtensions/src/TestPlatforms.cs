@@ -22,7 +22,8 @@ namespace Xunit
         MacCatalyst = 2048,
         LinuxBionic = 4096,
         Wasi = 8192,
-        AnyUnix = FreeBSD | Linux | NetBSD | OSX | illumos | Solaris | iOS | tvOS | MacCatalyst | Android | Browser | LinuxBionic | Wasi,
+        Haiku = 16384,
+        AnyUnix = FreeBSD | Linux | NetBSD | OSX | illumos | Solaris | iOS | tvOS | MacCatalyst | Android | Browser | LinuxBionic | Wasi | Haiku,
         Any = ~0
     }
 }
