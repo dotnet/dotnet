@@ -26,8 +26,25 @@ internal class RemoteTagHelperDeltaProvider
             cachedTagHelpers = ImmutableArray<TagHelperDescriptor>.Empty;
         }
 
-        var added = TagHelperDelta.Compute(cachedTagHelpers, currentTagHelpers);
-        var removed = TagHelperDelta.Compute(currentTagHelpers, cachedTagHelpers);
+        ImmutableArray<TagHelperDescriptor> added;
+        ImmutableArray<TagHelperDescriptor> removed;
+
+        if (cachedTagHelpers.Length < currentTagHelpers.Length)
+        {
+            added = TagHelperDelta.Compute(cachedTagHelpers, currentTagHelpers);
+
+            // No need to call TagHelperDelta.Compute again if we know there aren't any removed
+            var anyRemoved = currentTagHelpers.Length - cachedTagHelpers.Length != added.Length;
+            removed = anyRemoved ? TagHelperDelta.Compute(currentTagHelpers, cachedTagHelpers) : ImmutableArray<TagHelperDescriptor>.Empty;
+        }
+        else
+        {
+            removed = TagHelperDelta.Compute(currentTagHelpers, cachedTagHelpers);
+
+            // No need to call TagHelperDelta.Compute again if we know there aren't any added
+            var anyAdded = cachedTagHelpers.Length - currentTagHelpers.Length != removed.Length;
+            added = anyAdded ? TagHelperDelta.Compute(cachedTagHelpers, currentTagHelpers) : ImmutableArray<TagHelperDescriptor>.Empty;
+        }
 
         lock (_gate)
         {

@@ -169,7 +169,7 @@ internal partial class RazorCustomMessageTarget
        TextDocumentIdentifier hostDocument,
        CancellationToken cancellationToken,
        bool rejectOnNewerParallelRequest = true,
-       [CallerMemberName]string? caller = null)
+       [CallerMemberName] string? caller = null)
        where TVirtualDocumentSnapshot : VirtualDocumentSnapshot
     {
         // For Html documents we don't do anything fancy, just call the standard service
@@ -205,6 +205,7 @@ internal partial class RazorCustomMessageTarget
         }
 
         var result = await _documentSynchronizer.TrySynchronizeVirtualDocumentAsync<TVirtualDocumentSnapshot>(requiredHostDocumentVersion, hostDocument.Uri, virtualDocument.Uri, rejectOnNewerParallelRequest, cancellationToken).ConfigureAwait(false);
+        _logger?.LogDebug("{result} synchronize for {caller}: Version {version} for {document}", result.Synchronized ? "Did" : "Did NOT", caller, requiredHostDocumentVersion, result.VirtualSnapshot.Uri);
 
         // If we failed to sync on version 1, then it could be that we got new information while waiting, so try again
         if (requiredHostDocumentVersion == 1 && !result.Synchronized)
@@ -222,6 +223,7 @@ internal partial class RazorCustomMessageTarget
 
             // try again
             result = await _documentSynchronizer.TrySynchronizeVirtualDocumentAsync<TVirtualDocumentSnapshot>(requiredHostDocumentVersion, hostDocument.Uri, virtualDocument.Uri, rejectOnNewerParallelRequest, cancellationToken).ConfigureAwait(false);
+            _logger?.LogDebug("{result} synchronize for {caller}: Version {version} for {document}", result.Synchronized ? "Did" : "Did NOT", caller, requiredHostDocumentVersion, result.VirtualSnapshot.Uri);
         }
 
         return result;

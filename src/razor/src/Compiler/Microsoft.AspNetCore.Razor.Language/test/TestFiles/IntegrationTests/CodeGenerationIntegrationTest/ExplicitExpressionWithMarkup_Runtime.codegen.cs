@@ -13,7 +13,7 @@ namespace Microsoft.AspNetCore.Razor.Language.IntegrationTests.TestFiles
         {
             WriteLiteral("<div>");
 #nullable restore
-#line (1,9)-(1,15) 6 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/ExplicitExpressionWithMarkup.cshtml"
+#line (1,8)-(1,14) 6 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/ExplicitExpressionWithMarkup.cshtml"
 Write(item => new Template(async(__razor_template_writer) => {
     PushWriter(__razor_template_writer);
     WriteLiteral("</div>");

@@ -26,7 +26,7 @@ namespace Test
                 global::__Blazor.Test.TestComponent.TypeInference.CreateGrid_0(__builder, 0, 1, __typeInferenceArg_0___arg0, 2, (__builder2) => {
                     global::__Blazor.Test.TestComponent.TypeInference.CreateColumn_1(__builder2, 3, __typeInferenceArg_0___arg0, 4, (context) => (__builder3) => {
 #nullable restore
-#line (1,51)-(1,63) 25 "x:\dir\subdir\Test\TestComponent.cshtml"
+#line (1,50)-(1,62) 25 "x:\dir\subdir\Test\TestComponent.cshtml"
 __builder3.AddContent(5, context.Year);
 
 #line default

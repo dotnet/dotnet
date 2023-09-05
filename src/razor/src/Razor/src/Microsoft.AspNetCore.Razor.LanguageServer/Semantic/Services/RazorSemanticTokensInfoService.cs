@@ -70,16 +70,15 @@ internal class RazorSemanticTokensInfoService : IRazorSemanticTokensInfoService
             _logger.LogError(ex, "Error thrown while retrieving CSharp semantic range.");
         }
 
-        var combinedSemanticRanges = CombineSemanticRanges(razorSemanticRanges, csharpSemanticRanges);
-
-        // We return null when we have an incomplete view of the document.
-        // Likely CSharp ahead of us in terms of document versions.
+        // Didn't get any C# tokens, likely because the user kept typing and a future semantic tokens request will occur.
         // We return null (which to the LSP is a no-op) to prevent flashing of CSharp elements.
-        if (combinedSemanticRanges is null)
+        if (csharpSemanticRanges is null)
         {
-            _logger.LogWarning("Incomplete view of document. C# may be ahead of us in document versions.");
+            _logger.LogDebug("Couldn't get C# tokens for version {version} of {doc}. Returning null", documentContext.Version, textDocumentIdentifier.Uri);
             return null;
         }
+
+        var combinedSemanticRanges = CombineSemanticRanges(razorSemanticRanges, csharpSemanticRanges);
 
         var data = ConvertSemanticRangesToSemanticTokensData(combinedSemanticRanges, codeDocument);
         var tokens = new SemanticTokens { Data = data };
@@ -87,14 +86,8 @@ internal class RazorSemanticTokensInfoService : IRazorSemanticTokensInfoService
         return tokens;
     }
 
-    private static List<SemanticRange>? CombineSemanticRanges(List<SemanticRange>? ranges1, List<SemanticRange>? ranges2)
+    private static List<SemanticRange> CombineSemanticRanges(List<SemanticRange> ranges1, List<SemanticRange> ranges2)
     {
-        if (ranges1 is null || ranges2 is null)
-        {
-            // If we have an incomplete view of the situation we should return null so we avoid flashing.
-            return null;
-        }
-
         var newList = new List<SemanticRange>(ranges1.Count + ranges2.Count);
         newList.AddRange(ranges1);
         newList.AddRange(ranges2);
@@ -135,7 +128,6 @@ internal class RazorSemanticTokensInfoService : IRazorSemanticTokensInfoService
         // `GetMatchingCSharpResponseAsync` that will cause us to retry in a bit.
         if (csharpResponse is null)
         {
-            _logger.LogWarning("Issue with retrieving C# response for Razor range: ({startLine},{startChar})-({endLine},{endChar})", razorRange.Start.Line, razorRange.Start.Character, razorRange.End.Line, razorRange.End.Character);
             return null;
         }
 
@@ -289,11 +281,25 @@ internal class RazorSemanticTokensInfoService : IRazorSemanticTokensInfoService
             // C# isn't ready yet, don't make Razor wait for it. Once C# is ready they'll send a refresh notification.
             return Array.Empty<int>();
         }
-        else if (csharpResponse.HostDocumentSyncVersion != null && csharpResponse.HostDocumentSyncVersion != documentVersion)
+
+        var csharpVersion = csharpResponse.HostDocumentSyncVersion;
+        if (csharpVersion != documentVersion)
         {
             // No C# response or C# is out of sync with us. Unrecoverable, return null to indicate no change.
             // Once C# syncs up they'll send a refresh notification.
-            _logger.LogWarning("C# is out of sync. We are wanting {documentVersion} but C# is at {csharpResponse.HostDocumentSyncVersion}.", documentVersion, csharpResponse.HostDocumentSyncVersion);
+            if (csharpVersion == -1)
+            {
+                _logger.LogWarning("Didn't get C# tokens because the virtual document wasn't found, or other problem. We were wanting {documentVersion} but C# could not get any version.", documentVersion);
+            }
+            else if (csharpVersion < documentVersion)
+            {
+                _logger.LogDebug("Didn't wait for Roslyn to get the C# version we were expecting. We are wanting {documentVersion} but C# is at {csharpVersion}.", documentVersion, csharpVersion);
+            }
+            else
+            {
+                _logger.LogWarning("We are behind the C# version which is surprising. Could be an old request that wasn't cancelled, but if not, expect most future requests to fail. We were wanting {documentVersion} but C# is at {csharpVersion}.", documentVersion, csharpVersion);
+            }
+
             return null;
         }
 

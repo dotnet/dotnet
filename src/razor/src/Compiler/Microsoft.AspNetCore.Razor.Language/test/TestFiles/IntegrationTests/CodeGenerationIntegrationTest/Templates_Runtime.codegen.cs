@@ -24,7 +24,7 @@ namespace Microsoft.AspNetCore.Razor.Language.IntegrationTests.TestFiles
                 PushWriter(__razor_template_writer);
                 WriteLiteral("This works ");
 #nullable restore
-#line (12,52)-(12,56) 6 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Templates.cshtml"
+#line (12,51)-(12,55) 6 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Templates.cshtml"
 Write(item);
 
 #line default
@@ -43,7 +43,7 @@ Write(item);
 #line hidden
 #nullable disable
 #nullable restore
-#line (13,6)-(13,13) 6 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Templates.cshtml"
+#line (13,5)-(13,12) 6 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Templates.cshtml"
 Write(foo(""));
 
 #line default
@@ -63,7 +63,7 @@ Write(foo(""));
                 WriteLiteral("<p");
                 BeginWriteAttribute("class", " class=\"", 411, "\"", 424, 1);
 #nullable restore
-#line (17,44)-(17,49) 29 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Templates.cshtml"
+#line (17,43)-(17,48) 29 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Templates.cshtml"
 WriteAttributeValue("", 419, item, 419, 5, false);
 
 #line default
@@ -83,7 +83,7 @@ WriteAttributeValue("", 419, item, 419, 5, false);
 #line hidden
 #nullable disable
 #nullable restore
-#line (18,6)-(18,20) 6 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Templates.cshtml"
+#line (18,5)-(18,19) 6 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Templates.cshtml"
 Write(bar("myclass"));
 
 #line default
@@ -91,12 +91,12 @@ Write(bar("myclass"));
 #nullable disable
             WriteLiteral("\r\n<ul>\r\n");
 #nullable restore
-#line (22,3)-(22,14) 6 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Templates.cshtml"
+#line (22,2)-(22,13) 6 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Templates.cshtml"
 Write(Repeat(10, item => new Template(async(__razor_template_writer) => {
     PushWriter(__razor_template_writer);
     WriteLiteral("<li>Item #");
 #nullable restore
-#line (22,26)-(22,30) 6 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Templates.cshtml"
+#line (22,25)-(22,29) 6 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Templates.cshtml"
 Write(item);
 
 #line default
@@ -112,13 +112,13 @@ Write(item);
 #nullable disable
             WriteLiteral("\r\n</ul>\r\n\r\n<p>\r\n");
 #nullable restore
-#line (26,2)-(27,5) 6 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Templates.cshtml"
+#line (26,1)-(27,4) 6 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Templates.cshtml"
 Write(Repeat(10,
     item => new Template(async(__razor_template_writer) => {
     PushWriter(__razor_template_writer);
     WriteLiteral(" This is line#");
 #nullable restore
-#line (27,22)-(27,26) 6 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Templates.cshtml"
+#line (27,21)-(27,25) 6 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Templates.cshtml"
 Write(item);
 
 #line default
@@ -134,13 +134,13 @@ Write(item);
 #nullable disable
             WriteLiteral("\r\n</p>\r\n\r\n<p>\r\n");
 #nullable restore
-#line (32,2)-(33,5) 6 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Templates.cshtml"
+#line (32,1)-(33,4) 6 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Templates.cshtml"
 Write(Repeat(10,
     item => new Template(async(__razor_template_writer) => {
     PushWriter(__razor_template_writer);
     WriteLiteral(": This is line#");
 #nullable restore
-#line (33,23)-(33,27) 6 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Templates.cshtml"
+#line (33,22)-(33,26) 6 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Templates.cshtml"
 Write(item);
 
 #line default
@@ -156,13 +156,13 @@ Write(item);
 #nullable disable
             WriteLiteral("\r\n</p>\r\n\r\n<p>\r\n");
 #nullable restore
-#line (38,2)-(39,5) 6 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Templates.cshtml"
+#line (38,1)-(39,4) 6 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Templates.cshtml"
 Write(Repeat(10,
     item => new Template(async(__razor_template_writer) => {
     PushWriter(__razor_template_writer);
     WriteLiteral(":: This is line#");
 #nullable restore
-#line (39,24)-(39,28) 6 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Templates.cshtml"
+#line (39,23)-(39,27) 6 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Templates.cshtml"
 Write(item);
 
 #line default
@@ -178,12 +178,12 @@ Write(item);
 #nullable disable
             WriteLiteral("\r\n</p>\r\n\r\n\r\n<ul>\r\n    ");
 #nullable restore
-#line (45,6)-(45,17) 6 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Templates.cshtml"
+#line (45,5)-(45,16) 6 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Templates.cshtml"
 Write(Repeat(10, item => new Template(async(__razor_template_writer) => {
     PushWriter(__razor_template_writer);
     WriteLiteral("<li>\r\n        Item #");
 #nullable restore
-#line (46,16)-(46,20) 6 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Templates.cshtml"
+#line (46,15)-(46,19) 6 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Templates.cshtml"
 Write(item);
 
 #line default

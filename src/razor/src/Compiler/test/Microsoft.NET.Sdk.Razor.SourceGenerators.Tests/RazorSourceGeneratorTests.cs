@@ -833,7 +833,7 @@ namespace MyApp.Pages
             __builder.OpenElement(1, ""h3"");
             __builder.AddContent(2, ""Current count: "");
 #nullable restore
-#line (3,21)-(3,26) 24 ""Pages/Counter.razor""
+#line (3,20)-(3,25) 24 ""Pages/Counter.razor""
 __builder.AddContent(3, count);
 
 #line default
@@ -993,7 +993,7 @@ namespace MyApp.Pages
             __builder.OpenElement(1, ""h3"");
             __builder.AddContent(2, ""Current count: "");
 #nullable restore
-#line (3,21)-(3,26) 24 ""Pages/Counter.razor""
+#line (3,20)-(3,25) 24 ""Pages/Counter.razor""
 __builder.AddContent(3, count);
 
 #line default

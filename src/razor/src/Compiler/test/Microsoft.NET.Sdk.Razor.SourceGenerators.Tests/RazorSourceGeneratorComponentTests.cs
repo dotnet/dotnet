@@ -5,6 +5,7 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.Text;
 using Roslyn.Test.Utilities;
 using Xunit;
 
@@ -512,5 +513,69 @@ public sealed class RazorSourceGeneratorComponentTests : RazorSourceGeneratorTes
         result.Diagnostics.Verify();
         Assert.Single(result.GeneratedSources);
         await VerifyRazorPageMatchesBaselineAsync(compilation, "Views_Home_Index");
+    }
+
+    [Fact, WorkItem("https://github.com/dotnet/razor/issues/9051")]
+    public async Task LineMapping()
+    {
+        // Arrange
+        var source = """
+            <p>The solution to all problems is: @(RaiseHere())</p>
+            @code
+            {
+                private int magicNumber = RaiseHere();
+                private static int RaiseHere()
+                {
+                    return 42;
+                }
+            }
+            """;
+        var project = CreateTestProject(new()
+        {
+            ["Shared/Component1.razor"] = source,
+        });
+        var compilation = await project.GetCompilationAsync();
+        var driver = await GetDriverAsync(project);
+
+        // Act
+        var result = RunGenerator(compilation!, ref driver);
+
+        // Assert
+        result.Diagnostics.Verify();
+
+        var original = project.AdditionalDocuments.Single();
+        var originalText = await original.GetTextAsync();
+        Assert.Equal(source, originalText.ToString());
+        var generated = result.GeneratedSources.Single();
+        var generatedText = generated.SourceText;
+        var generatedTextString = generatedText.ToString();
+        var snippet = "RaiseHere()";
+
+        // Find the snippet three times (at line 0, 3, and 4).
+        var expectedLines = new[] { 0, 3, 4 };
+        var originalIndex = -1;
+        var generatedIndex = -1;
+        for (var count = 0; ; count++)
+        {
+            originalIndex = source.IndexOf(snippet, originalIndex + 1, StringComparison.Ordinal);
+            generatedIndex = generatedTextString.IndexOf(snippet, generatedIndex + 1, StringComparison.Ordinal);
+
+            if (count == 3)
+            {
+                Assert.True(originalIndex < 0);
+                Assert.True(generatedIndex < 0);
+                break;
+            }
+
+            var mapped = generated.SyntaxTree.GetMappedLineSpan(new TextSpan(generatedIndex, snippet.Length));
+            Assert.True(mapped.IsValid);
+            Assert.True(mapped.HasMappedPath);
+            Assert.Equal("Shared/Component1.razor", mapped.Path);
+            var expectedLine = expectedLines[count];
+            Assert.Equal(expectedLine, mapped.StartLinePosition.Line);
+            Assert.Equal(expectedLine, mapped.EndLinePosition.Line);
+            var mappedSpan = originalText.Lines.GetTextSpan(mapped.Span);
+            Assert.Equal(new TextSpan(originalIndex, snippet.Length), mappedSpan);
+        }
     }
 }

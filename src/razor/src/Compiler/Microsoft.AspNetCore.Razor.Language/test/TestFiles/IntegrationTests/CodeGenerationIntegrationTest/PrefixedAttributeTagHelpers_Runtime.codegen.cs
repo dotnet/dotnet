@@ -210,7 +210,7 @@ __TestNamespace_InputTagHelper1.IntDictionaryProperty["pepper"] = 98;
             BeginWriteTagHelperAttribute();
             WriteLiteral("literate ");
 #nullable restore
-#line (21,43)-(21,51) 13 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/PrefixedAttributeTagHelpers.cshtml"
+#line (21,42)-(21,50) 13 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/PrefixedAttributeTagHelpers.cshtml"
 WriteLiteral(literate);
 
 #line default

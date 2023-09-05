@@ -42,7 +42,7 @@ using Microsoft.AspNetCore.Components.Rendering;
 #nullable disable
         __builder.OpenElement(1, "li");
 #nullable restore
-#line (9,22)-(9,23) 24 "x:\dir\subdir\Test\TestComponent.cshtml"
+#line (9,21)-(9,22) 24 "x:\dir\subdir\Test\TestComponent.cshtml"
 __builder.AddContent(2, i);
 
 #line default
