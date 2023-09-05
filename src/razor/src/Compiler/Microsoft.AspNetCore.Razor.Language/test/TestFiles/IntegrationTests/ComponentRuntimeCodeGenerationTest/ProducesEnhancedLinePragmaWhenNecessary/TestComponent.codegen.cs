@@ -15,7 +15,7 @@ namespace Test
         {
             __builder.AddMarkupContent(0, "<h1>Single line statement</h1>\r\n\r\nTime: ");
 #nullable restore
-#line (3,8)-(3,20) 24 "x:\dir\subdir\Test\TestComponent.cshtml"
+#line (3,7)-(3,19) 24 "x:\dir\subdir\Test\TestComponent.cshtml"
 __builder.AddContent(1, DateTime.Now);
 
 #line default
@@ -24,7 +24,7 @@ __builder.AddContent(1, DateTime.Now);
             __builder.AddMarkupContent(2, "\r\n\r\n");
             __builder.AddMarkupContent(3, "<h1>Multiline block statement</h1>\r\n\r\n");
 #nullable restore
-#line (7,2)-(10,4) 24 "x:\dir\subdir\Test\TestComponent.cshtml"
+#line (7,1)-(10,3) 24 "x:\dir\subdir\Test\TestComponent.cshtml"
 __builder.AddContent(4, JsonToHtml(@"{
   'key1': 'value1'
   'key2': 'value2'

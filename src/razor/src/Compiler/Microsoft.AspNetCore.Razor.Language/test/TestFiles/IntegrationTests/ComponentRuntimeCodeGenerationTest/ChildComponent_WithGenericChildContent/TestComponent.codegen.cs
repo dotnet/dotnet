@@ -20,7 +20,7 @@ namespace Test
                 __builder2.OpenElement(4, "some-child");
                 __builder2.AddAttribute(5, "a", "1");
 #nullable restore
-#line (1,55)-(1,81) 25 "x:\dir\subdir\Test\TestComponent.cshtml"
+#line (1,54)-(1,80) 25 "x:\dir\subdir\Test\TestComponent.cshtml"
 __builder2.AddContent(6, context.ToLowerInvariant());
 
 #line default

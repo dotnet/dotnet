@@ -34,7 +34,7 @@ namespace Test
             , value: ParentValue), ParentValue));
             __builder.SetUpdatesAttributeName("myvalue");
 #nullable restore
-#line (1,39)-(1,50) 24 "x:\dir\subdir\Test\TestComponent.cshtml"
+#line (1,38)-(1,49) 24 "x:\dir\subdir\Test\TestComponent.cshtml"
 __builder.AddContent(3, ParentValue);
 
 #line default

@@ -24,7 +24,7 @@ namespace Test
                 __builder2.OpenElement(0, "li");
                 __builder2.AddContent(1, "#");
 #nullable restore
-#line (1,64)-(1,77) 25 "x:\dir\subdir\Test\TestComponent.cshtml"
+#line (1,63)-(1,76) 25 "x:\dir\subdir\Test\TestComponent.cshtml"
 __builder2.AddContent(2, context.Index);
 
 #line default
@@ -32,7 +32,7 @@ __builder2.AddContent(2, context.Index);
 #nullable disable
                 __builder2.AddContent(3, " - ");
 #nullable restore
-#line (1,81)-(1,103) 25 "x:\dir\subdir\Test\TestComponent.cshtml"
+#line (1,80)-(1,102) 25 "x:\dir\subdir\Test\TestComponent.cshtml"
 __builder2.AddContent(4, context.Item.ToLower());
 
 #line default

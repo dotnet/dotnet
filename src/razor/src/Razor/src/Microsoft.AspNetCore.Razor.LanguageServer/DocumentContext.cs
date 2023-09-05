@@ -5,8 +5,8 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
-using Microsoft.AspNetCore.Razor.Language.Legacy;
 using Microsoft.AspNetCore.Razor.Language.Syntax;
+using Microsoft.AspNetCore.Razor.LanguageServer.Extensions;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Workspaces.Extensions;
 using Microsoft.CodeAnalysis.Text;
@@ -108,13 +108,12 @@ internal class DocumentContext
 
     public async Task<SyntaxNode?> GetSyntaxNodeAsync(int absoluteIndex, CancellationToken cancellationToken)
     {
-        var change = new SourceChange(absoluteIndex, length: 0, newText: string.Empty);
         var syntaxTree = await GetSyntaxTreeAsync(cancellationToken).ConfigureAwait(false);
         if (syntaxTree.Root is null)
         {
             return null;
         }
 
-        return syntaxTree.Root.LocateOwner(change);
+        return syntaxTree.Root.FindInnermostNode(absoluteIndex);
     }
 }

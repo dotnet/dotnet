@@ -36,7 +36,7 @@ public class LiteralRuntimeNodeWriterTest
         Assert.Equal(
 @"
 #nullable restore
-#line (1,1)-(1,4) 13 ""test.cshtml""
+#line (1,0)-(1,3) 13 ""test.cshtml""
 WriteLiteral(i++);
 
 #line default
