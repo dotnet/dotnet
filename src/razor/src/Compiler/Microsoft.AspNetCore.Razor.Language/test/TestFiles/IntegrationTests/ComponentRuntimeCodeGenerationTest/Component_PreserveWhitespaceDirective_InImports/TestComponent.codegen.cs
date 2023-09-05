@@ -18,7 +18,7 @@ namespace Test
             __builder.OpenElement(2, "child");
             __builder.AddContent(3, " ");
 #nullable restore
-#line (2,14)-(2,26) 24 "x:\dir\subdir\Test\TestComponent.cshtml"
+#line (2,13)-(2,25) 24 "x:\dir\subdir\Test\TestComponent.cshtml"
 __builder.AddContent(4, DateTime.Now);
 
 #line default

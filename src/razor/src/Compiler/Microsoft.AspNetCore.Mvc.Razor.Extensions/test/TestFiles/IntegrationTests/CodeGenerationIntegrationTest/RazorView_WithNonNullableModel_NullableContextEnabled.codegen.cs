@@ -32,7 +32,7 @@ using TestNamespace;
             WriteLiteral("\r\n");
             WriteLiteral("\r\n<h1>");
 #nullable restore
-#line (5,6)-(5,16) 6 "TestFiles\IntegrationTests\CodeGenerationIntegrationTest\test.cshtml"
+#line (5,5)-(5,15) 6 "TestFiles\IntegrationTests\CodeGenerationIntegrationTest\test.cshtml"
 Write(Model.Name);
 
 #line default
@@ -40,7 +40,7 @@ Write(Model.Name);
 #nullable disable
             WriteLiteral("</h1>\r\n\r\n<h2>");
 #nullable restore
-#line (7,6)-(7,19) 6 "TestFiles\IntegrationTests\CodeGenerationIntegrationTest\test.cshtml"
+#line (7,5)-(7,18) 6 "TestFiles\IntegrationTests\CodeGenerationIntegrationTest\test.cshtml"
 Write(Model.Address);
 
 #line default

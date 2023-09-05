@@ -54,7 +54,7 @@ namespace Microsoft.AspNetCore.Razor.Language.IntegrationTests.TestFiles
 #nullable disable
             WriteLiteral("    <p>\r\n        Here\'s a very unique number: ");
 #nullable restore
-#line (24,40)-(24,102) 6 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/CSharp7.cshtml"
+#line (24,39)-(24,101) 6 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/CSharp7.cshtml"
 Write(1.618_033_988_749_894_848_204_586_834_365_638_117_720_309_179M);
 
 #line default
@@ -62,7 +62,7 @@ Write(1.618_033_988_749_894_848_204_586_834_365_638_117_720_309_179M);
 #nullable disable
             WriteLiteral("\r\n    </p>\r\n\r\n    <div>\r\n        ");
 #nullable restore
-#line (28,11)-(28,45) 6 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/CSharp7.cshtml"
+#line (28,10)-(28,44) 6 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/CSharp7.cshtml"
 Write((First: "John", Last: "Doe").First);
 
 #line default

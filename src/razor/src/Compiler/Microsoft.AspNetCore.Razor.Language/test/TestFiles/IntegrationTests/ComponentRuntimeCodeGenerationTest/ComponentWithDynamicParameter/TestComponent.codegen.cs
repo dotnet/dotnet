@@ -15,7 +15,7 @@ namespace Test
         {
             __builder.OpenElement(0, "strong");
 #nullable restore
-#line (1,10)-(1,21) 24 "x:\dir\subdir\Test\TestComponent.cshtml"
+#line (1,9)-(1,20) 24 "x:\dir\subdir\Test\TestComponent.cshtml"
 __builder.AddContent(1, TestDynamic);
 
 #line default

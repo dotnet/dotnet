@@ -26,7 +26,7 @@ namespace Test
             __builder.AddAttribute(2, "ChildContent", (global::Microsoft.AspNetCore.Components.RenderFragment<string>)((context) => (__builder2) => {
                 __builder2.OpenElement(3, "div");
 #nullable restore
-#line (2,9)-(2,26) 25 "x:\dir\subdir\Test\TestComponent.cshtml"
+#line (2,8)-(2,25) 25 "x:\dir\subdir\Test\TestComponent.cshtml"
 __builder2.AddContent(4, context.ToLower());
 
 #line default

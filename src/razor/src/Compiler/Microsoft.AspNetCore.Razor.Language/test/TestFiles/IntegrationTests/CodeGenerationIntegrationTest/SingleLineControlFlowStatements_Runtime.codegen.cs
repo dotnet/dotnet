@@ -21,7 +21,7 @@ namespace Microsoft.AspNetCore.Razor.Language.IntegrationTests.TestFiles
 #line hidden
 #nullable disable
 #nullable restore
-#line (4,45)-(4,77) 6 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/SingleLineControlFlowStatements.cshtml"
+#line (4,44)-(4,76) 6 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/SingleLineControlFlowStatements.cshtml"
 Write("Current time is divisible by 2");
 
 #line default
@@ -35,7 +35,7 @@ Write("Current time is divisible by 2");
 #line hidden
 #nullable disable
 #nullable restore
-#line (4,85)-(4,97) 6 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/SingleLineControlFlowStatements.cshtml"
+#line (4,84)-(4,96) 6 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/SingleLineControlFlowStatements.cshtml"
 Write(DateTime.Now);
 
 #line default
@@ -73,7 +73,7 @@ Write(DateTime.Now);
 #line hidden
 #nullable disable
 #nullable restore
-#line (21,10)-(21,14) 6 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/SingleLineControlFlowStatements.cshtml"
+#line (21,9)-(21,13) 6 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/SingleLineControlFlowStatements.cshtml"
 Write(item);
 
 #line default
@@ -90,7 +90,7 @@ Write(item);
 #line hidden
 #nullable disable
 #nullable restore
-#line (24,10)-(24,22) 6 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/SingleLineControlFlowStatements.cshtml"
+#line (24,9)-(24,21) 6 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/SingleLineControlFlowStatements.cshtml"
 Write(currentCount);
 
 #line default
@@ -111,7 +111,7 @@ Write(currentCount);
 #line hidden
 #nullable disable
 #nullable restore
-#line (31,10)-(31,28) 6 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/SingleLineControlFlowStatements.cshtml"
+#line (31,9)-(31,27) 6 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/SingleLineControlFlowStatements.cshtml"
 Write(reader.ReadToEnd());
 
 #line default
@@ -136,7 +136,7 @@ Write(reader.ReadToEnd());
 #line hidden
 #nullable disable
 #nullable restore
-#line (78,6)-(78,7) 6 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/SingleLineControlFlowStatements.cshtml"
+#line (78,5)-(78,6) 6 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/SingleLineControlFlowStatements.cshtml"
 Write(i);
 
 #line default
@@ -152,7 +152,7 @@ Write(i);
 #line hidden
 #nullable disable
 #nullable restore
-#line (81,6)-(81,10) 6 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/SingleLineControlFlowStatements.cshtml"
+#line (81,5)-(81,9) 6 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/SingleLineControlFlowStatements.cshtml"
 Write(item);
 
 #line default
@@ -168,7 +168,7 @@ Write(item);
 #line hidden
 #nullable disable
 #nullable restore
-#line (84,6)-(84,18) 6 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/SingleLineControlFlowStatements.cshtml"
+#line (84,5)-(84,17) 6 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/SingleLineControlFlowStatements.cshtml"
 Write(currentCount);
 
 #line default
@@ -202,7 +202,7 @@ while (--currentCount >= 0);
 #line hidden
 #nullable disable
 #nullable restore
-#line (92,6)-(92,24) 6 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/SingleLineControlFlowStatements.cshtml"
+#line (92,5)-(92,23) 6 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/SingleLineControlFlowStatements.cshtml"
 Write(reader.ReadToEnd());
 
 #line default
@@ -243,7 +243,7 @@ Write(reader.ReadToEnd());
 #nullable disable
             WriteLiteral(" <p>The time is ");
 #nullable restore
-#line (100,24)-(100,36) 6 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/SingleLineControlFlowStatements.cshtml"
+#line (100,23)-(100,35) 6 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/SingleLineControlFlowStatements.cshtml"
 Write(DateTime.Now);
 
 #line default
@@ -276,7 +276,7 @@ Write(DateTime.Now);
 #line hidden
 #nullable disable
 #nullable restore
-#line (52,14)-(52,18) 6 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/SingleLineControlFlowStatements.cshtml"
+#line (52,13)-(52,17) 6 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/SingleLineControlFlowStatements.cshtml"
 Write(item);
 
 #line default
@@ -293,7 +293,7 @@ Write(item);
 #line hidden
 #nullable disable
 #nullable restore
-#line (55,14)-(55,26) 6 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/SingleLineControlFlowStatements.cshtml"
+#line (55,13)-(55,25) 6 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/SingleLineControlFlowStatements.cshtml"
 Write(currentCount);
 
 #line default
@@ -314,7 +314,7 @@ Write(currentCount);
 #line hidden
 #nullable disable
 #nullable restore
-#line (62,14)-(62,32) 6 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/SingleLineControlFlowStatements.cshtml"
+#line (62,13)-(62,31) 6 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/SingleLineControlFlowStatements.cshtml"
 Write(reader.ReadToEnd());
 
 #line default

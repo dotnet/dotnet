@@ -134,7 +134,7 @@ using System;
         Assert.Equal(
 @"
 #nullable restore
-#line (1,1)-(1,4) 5 ""test.cshtml""
+#line (1,0)-(1,3) 5 ""test.cshtml""
 Test(i++);
 
 #line default
@@ -219,7 +219,7 @@ Test(i++);
         Assert.Equal(
 @"
 #nullable restore
-#line (1,9)-(1,12) 5 ""test.cshtml""
+#line (1,8)-(1,11) 5 ""test.cshtml""
 Test(iRender Children
 ++);
 
@@ -574,7 +574,7 @@ EndWriteAttribute();
         Assert.Equal(
 @"
 #nullable restore
-#line (1,28)-(1,35) 29 ""test.cshtml""
+#line (1,27)-(1,34) 29 ""test.cshtml""
 WriteAttributeValue("" "", 27, false, 28, 6, false);
 
 #line default

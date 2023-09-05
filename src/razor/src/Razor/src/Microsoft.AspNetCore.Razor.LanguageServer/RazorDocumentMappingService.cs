@@ -799,7 +799,7 @@ internal sealed class RazorDocumentMappingService : IRazorDocumentMappingService
         {
             s_haveAsserted = true;
             var sourceTextLinesCount = sourceText.Lines.Count;
-            _logger.LogWarning("Attempted to map a range {range} outside of the Source (line count {sourceTextLinesCount}.) This could happen if the Roslyn and Razor LSP servers are not in sync.", range, sourceTextLinesCount);
+            _logger.LogWarning("Attempted to map a range ({startLine},{startChar})-({endLine},{endChar}) outside of the Source (line count {sourceTextLinesCount}.) This could happen if the Roslyn and Razor LSP servers are not in sync.", range.Start.Line, range.Start.Character, range.End.Line, range.End.Character, sourceTextLinesCount);
         }
 
         return result;
