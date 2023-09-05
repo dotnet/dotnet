@@ -66,7 +66,7 @@ namespace Microsoft.AspNetCore.Razor.Language.IntegrationTests.TestFiles
                 BeginWriteTagHelperAttribute();
                 WriteLiteral("2000 + ");
 #nullable restore
-#line (6,39)-(6,62) 6 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/BasicTagHelpers.cshtml"
+#line (6,38)-(6,61) 6 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/BasicTagHelpers.cshtml"
 Write(ViewBag.DefaultInterval);
 
 #line default

@@ -58,7 +58,7 @@ public class TagHelperHtmlAttributeRuntimeNodeWriterTest : RazorProjectEngineTes
         Assert.Equal(
 @"
 #nullable restore
-#line (1,28)-(1,35) 31 ""test.cshtml""
+#line (1,27)-(1,34) 31 ""test.cshtml""
 AddHtmlAttributeValue("" "", 27, false, 28, 6, false);
 
 #line default

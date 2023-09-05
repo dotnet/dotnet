@@ -26,7 +26,7 @@ namespace Test
 #nullable disable
             );
 #nullable restore
-#line (1,70)-(1,71) 24 "x:\dir\subdir\Test\TestComponent.cshtml"
+#line (1,69)-(1,70) 24 "x:\dir\subdir\Test\TestComponent.cshtml"
 __builder.AddContent(3, y);
 
 #line default

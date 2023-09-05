@@ -26,7 +26,7 @@ namespace __GeneratedComponent
             );
             __builder.AddMarkupContent(2, "\r\n    Hello world\r\n    ");
 #nullable restore
-#line (4,6)-(4,35) 24 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/BasicComponent.cshtml"
+#line (4,5)-(4,34) 24 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/BasicComponent.cshtml"
 __builder.AddContent(3, string.Format("{0}", "Hello"));
 
 #line default

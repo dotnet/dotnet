@@ -46,7 +46,7 @@ TItem2
 #nullable disable
             __builder.OpenElement(1, "p");
 #nullable restore
-#line (9,6)-(9,25) 24 "x:\dir\subdir\Test\TestComponent.cshtml"
+#line (9,5)-(9,24) 24 "x:\dir\subdir\Test\TestComponent.cshtml"
 __builder.AddContent(2, ChildContent(item2));
 
 #line default

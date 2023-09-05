@@ -30,7 +30,7 @@ namespace Microsoft.AspNetCore.Razor.Language.IntegrationTests.TestFiles
 #nullable disable
             WriteLiteral("bar ");
 #nullable restore
-#line (3,30)-(3,33) 6 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/CodeBlockWithTextElement.cshtml"
+#line (3,29)-(3,32) 6 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/CodeBlockWithTextElement.cshtml"
 Write(a+b);
 
 #line default

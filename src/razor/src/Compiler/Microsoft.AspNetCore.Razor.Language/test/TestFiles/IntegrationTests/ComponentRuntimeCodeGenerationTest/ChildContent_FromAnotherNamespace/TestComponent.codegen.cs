@@ -30,7 +30,7 @@ using AnotherTest;
             __builder.OpenComponent<global::AnotherTest.FooterComponent>(4);
             __builder.AddAttribute(5, "Footer", (global::Microsoft.AspNetCore.Components.RenderFragment<System.DateTime>)((context) => (__builder2) => {
 #nullable restore
-#line (7,14)-(7,21) 25 "x:\dir\subdir\Test\TestComponent.cshtml"
+#line (7,13)-(7,20) 25 "x:\dir\subdir\Test\TestComponent.cshtml"
 __builder2.AddContent(6, context);
 
 #line default
@@ -50,7 +50,7 @@ __builder2.AddContent(6, context);
             __builder.OpenComponent<global::AnotherTest.FooterComponent>(12);
             __builder.AddAttribute(13, "Footer", (global::Microsoft.AspNetCore.Components.RenderFragment<System.DateTime>)((context) => (__builder2) => {
 #nullable restore
-#line (13,14)-(13,21) 26 "x:\dir\subdir\Test\TestComponent.cshtml"
+#line (13,13)-(13,20) 26 "x:\dir\subdir\Test\TestComponent.cshtml"
 __builder2.AddContent(14, context);
 
 #line default
