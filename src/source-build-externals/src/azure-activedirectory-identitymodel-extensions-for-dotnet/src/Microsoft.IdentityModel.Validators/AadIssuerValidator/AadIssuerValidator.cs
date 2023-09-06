@@ -124,7 +124,10 @@ namespace Microsoft.IdentityModel.Validators
             SecurityToken securityToken,
             TokenValidationParameters validationParameters)
         {
-            return ValidateAsync(issuer, securityToken, validationParameters).GetAwaiter().GetResult();
+            ValueTask<string> vt = ValidateAsync(issuer, securityToken, validationParameters);
+            return vt.IsCompletedSuccessfully ?
+                vt.Result :
+                vt.AsTask().GetAwaiter().GetResult();
         }
 
         /// <summary>
@@ -145,7 +148,7 @@ namespace Microsoft.IdentityModel.Validators
         /// <exception cref="ArgumentNullException"> if <paramref name="securityToken"/> is null.</exception>
         /// <exception cref="ArgumentNullException"> if <paramref name="validationParameters"/> is null.</exception>
         /// <exception cref="SecurityTokenInvalidIssuerException">if the issuer is invalid or if there is a network issue. </exception>
-        internal async Task<string> ValidateAsync(
+        internal async ValueTask<string> ValidateAsync(
             string issuer,
             SecurityToken securityToken,
             TokenValidationParameters validationParameters)

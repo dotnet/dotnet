@@ -9,6 +9,7 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace Microsoft.IdentityModel.Benchmarks
 {
+    [HideColumns("Type", "Job", "WarmupCount", "LaunchCount")]
     public class CreateTokenTests
     {
         JsonWebTokenHandler jsonWebTokenHandler;

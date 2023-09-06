@@ -311,21 +311,8 @@ internal abstract class CSharpFormattingPassBase : FormattingPassBase
             return true;
         }
 
-        var sourceText = context.SourceText;
-        var absoluteIndex = mappingSpan.Start;
-
-        if (mappingSpan.Length > 0)
-        {
-            // Slightly ugly hack to get around the behavior of LocateOwner.
-            // In some cases, using the start of a mapping doesn't work well
-            // because LocateOwner returns the previous node due to it owning the edge.
-            // So, if we can try to find the owner using a position that fully belongs to the current mapping.
-            absoluteIndex = mappingSpan.Start + 1;
-        }
-
-        var change = new SourceChange(absoluteIndex, 0, string.Empty);
         var syntaxTree = context.CodeDocument.GetSyntaxTree();
-        var owner = syntaxTree.Root.LocateOwner(change);
+        var owner = syntaxTree.Root.FindInnermostNode(mappingSpan.Start, includeWhitespace: true);
         if (owner is null)
         {
             // Can't determine owner of this position. Optimistically allow formatting.
@@ -333,7 +320,6 @@ internal abstract class CSharpFormattingPassBase : FormattingPassBase
             return true;
         }
 
-        owner = FixOwnerToWorkaroundCompilerQuirks(owner);
         foundOwner = owner;
 
         // Special case: If we're formatting implicit statements, we want to treat the `@attribute` directive and
@@ -347,23 +333,58 @@ internal abstract class CSharpFormattingPassBase : FormattingPassBase
             return true;
         }
 
-        if (IsRazorComment() ||
-            IsInBoundComponentAttributeName() ||
-            IsInHtmlAttributeValue() ||
-            IsInDirectiveWithNoKind() ||
-            IsInSingleLineDirective() ||
-            IsImplicitExpression() ||
-            IsInSectionDirectiveCloseBrace() ||
-            (!allowImplicitStatements && IsImplicitStatementStart()))
+        if (IsInsideRazorComment())
+        {
+            return false;
+        }
+
+        if (IsInBoundComponentAttributeName())
+        {
+            return false;
+        }
+
+        if (IsInHtmlAttributeValue())
+        {
+            return false;
+        }
+
+        if (IsInDirectiveWithNoKind())
+        {
+            return false;
+        }
+
+        if (IsInSingleLineDirective())
+        {
+            return false;
+        }
+
+        if (!allowImplicitStatements && IsImplicitExpression())
+        {
+            return false;
+        }
+
+        if (IsInSectionDirectiveCloseBrace())
+        {
+            return false;
+        }
+
+        if (!allowImplicitStatements && IsImplicitStatementStart())
+        {
+            return false;
+        }
+
+        if (IsInTemplateBlock())
         {
             return false;
         }
 
         return true;
 
-        bool IsRazorComment()
+        bool IsInsideRazorComment()
         {
-            if (owner.IsCommentSpanKind())
+            // We don't want to format _in_ comments, but we do want to move the start `@*` to the right position
+            if (owner is RazorCommentBlockSyntax &&
+                mappingSpan.Start != owner.SpanStart)
             {
                 return true;
             }
@@ -486,6 +507,15 @@ internal abstract class CSharpFormattingPassBase : FormattingPassBase
             return owner.AncestorsAndSelf().Any(n => n is CSharpImplicitExpressionSyntax);
         }
 
+        bool IsInTemplateBlock()
+        {
+            // E.g, (| is position)
+            //
+            // `RenderFragment(|@<Component>);` - true
+            //
+            return owner.AncestorsAndSelf().Any(n => n is CSharpTemplateBlockSyntax);
+        }
+
         bool IsInSectionDirectiveCloseBrace()
         {
             // @section Scripts {
@@ -508,26 +538,6 @@ internal abstract class CSharpFormattingPassBase : FormattingPassBase
 
             return false;
         }
-    }
-
-    private static SyntaxNode FixOwnerToWorkaroundCompilerQuirks(SyntaxNode owner)
-    {
-        // Workaround for https://github.com/dotnet/aspnetcore/issues/36689
-        // A tags owner comes back as itself if it is preceeded by a HTML comment,
-        // because the whitespace between the comment and the tag is reported as not editable
-
-        // Get to the outermost node first. eg in "<span" we might be on the node for the "<", which is parented
-        // by some other intermediate node, which is parented by the actual start tag node. We need to get out to
-        // the start tag node, in order to reason about its siblings. The siblings of the "<" are not helpful :)
-        var outerNode = owner.GetOutermostNode();
-        if (outerNode is not null &&
-            outerNode.TryGetPreviousSibling(out var whiteSpace) && whiteSpace.ContainsOnlyWhitespace() &&
-            whiteSpace.TryGetPreviousSibling(out var comment) && comment is MarkupCommentBlockSyntax)
-        {
-            return whiteSpace;
-        }
-
-        return owner;
     }
 
     private class IndentationData

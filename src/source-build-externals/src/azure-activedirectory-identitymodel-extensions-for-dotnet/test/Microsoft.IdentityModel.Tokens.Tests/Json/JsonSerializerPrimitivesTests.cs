@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Text.Encodings.Web;
 using System.Text.Json;
@@ -16,12 +17,105 @@ namespace Microsoft.IdentityModel.Tokens.Json.Tests
 {
     public class JsonSerializerPrimitivesTests
     {
+        [Fact]
+        public void CheckMaxDepthReading()
+        {
+            var document = JsonDocument.Parse(@"{""key"":" + new string('[', 62) +  @"""value""" + new string(']', 62) + "}");
+
+            Dictionary<string, object> value;
+            JsonSerializerPrimitives.TryCreateTypeFromJsonElement(document.RootElement, out value);
+            Assert.NotNull(value);
+
+            document = JsonDocument.Parse(@"{""key"":" + new string('[', 63) + @"""value""" + new string(']', 63) + "}");
+            Assert.Throws<InvalidOperationException>(() => JsonSerializerPrimitives.TryCreateTypeFromJsonElement(document.RootElement, out value));
+
+            JsonDocument GenerateJson(int depth)
+            {
+                var json = new StringBuilder();
+
+                json.Append(@"{""root"":");
+
+                foreach (var idx in Enumerable.Range(0, depth))
+                {
+                    if (idx != depth - 1)
+                        json.Append($@"{{""key-{idx}"":");
+                    else
+                        json.Append(@"""value""");
+                }
+
+                json.Append(new string('}', depth - 1));
+                json.Append('}');
+
+                var jsonStr = json.ToString();
+
+                return JsonDocument.Parse(jsonStr);
+            }
+
+            document = GenerateJson(63);
+
+            JsonSerializerPrimitives.TryCreateTypeFromJsonElement(document.RootElement, out value);
+            Assert.NotNull(value);
+
+            document = GenerateJson(64);
+            Assert.Throws<InvalidOperationException>(() => JsonSerializerPrimitives.TryCreateTypeFromJsonElement(document.RootElement, out value));
+
+            document = GenerateJson(50);
+            var document2 = GenerateJson(50);
+
+            var mergedJson = @$"{{ ""root1"": {document.RootElement} , ""root2"": {document2.RootElement}}}";
+            var doc = JsonDocument.Parse(mergedJson);
+
+            JsonSerializerPrimitives.TryCreateTypeFromJsonElement(doc.RootElement, out value);
+            Assert.NotNull(value);
+        }
+
+        [Fact]
+        public void CheckNumberOfProperties()
+        {
+            var json = new StringBuilder();
+
+            json.Append('{');
+
+            foreach(var i in Enumerable.Range(0, 100))
+            {
+                json.Append($@"""key-{i}"":""value-{i}""");
+                if (i != 99)
+                    json.Append(',');
+            }
+
+            json.Append('}');
+
+            var document = JsonDocument.Parse(json.ToString());
+
+            Dictionary<string, object> value;
+            JsonSerializerPrimitives.TryCreateTypeFromJsonElement(document.RootElement, out value);
+            Assert.NotNull(value);
+
+            json = new StringBuilder();
+
+            json.Append('{');
+
+            foreach (var i in Enumerable.Range(0, 100))
+            {
+                json.Append($@"""key-{i}"":{{""inner-key-{i}"":""value-{i}""}}");
+                if (i != 99)
+                    json.Append(',');
+            }
+
+            json.Append('}');
+
+            document = JsonDocument.Parse(json.ToString());
+
+            JsonSerializerPrimitives.TryCreateTypeFromJsonElement(document.RootElement, out value);
+            Assert.NotNull(value);
+        }
+
         /// <summary>
-        /// This test is designed to ensure that JsonSerializationPrimitives maximize depth of arrays of arrays to two.
+        /// This test is designed to ensure that JsonSerializationPrimitives maximize depth of arrays of arrays.
         /// </summary>
         /// <param name="theoryData"></param>
-        [Theory, MemberData(nameof(CheckMaximumDepthTheoryData))]
-        public void CheckMaximumDepth(JsonSerializerTheoryData theoryData)
+        [Theory, MemberData(nameof(CheckMaximumDepthWritingTheoryData))]
+        public void CheckMaximumDepthWriting(JsonSerializerTheoryData theoryData)
         {
             CompareContext context = new CompareContext(theoryData);
             using (MemoryStream memoryStream = new MemoryStream())
@@ -39,17 +133,22 @@ namespace Microsoft.IdentityModel.Tokens.Json.Tests
 
                     string json = Encoding.UTF8.GetString(memoryStream.GetBuffer(), 0, (int)memoryStream.Length);
                     IdentityComparer.AreEqual(json, theoryData.Json, context);
+                    theoryData.ExpectedException.ProcessNoException(context);
+                }
+                catch (Exception ex )
+                {
+                    theoryData.ExpectedException.ProcessException(ex, context);
                 }
                 finally
                 {
                     writer?.Dispose();
                 }
-            }
 
-            TestUtilities.AssertFailIfErrors(context);
+                TestUtilities.AssertFailIfErrors(context);
+            }
         }
 
-        public static TheoryData<JsonSerializerTheoryData> CheckMaximumDepthTheoryData
+        public static TheoryData<JsonSerializerTheoryData> CheckMaximumDepthWritingTheoryData
         {
             get
             {
@@ -58,14 +157,14 @@ namespace Microsoft.IdentityModel.Tokens.Json.Tests
                 theoryData.Add(
                     new JsonSerializerTheoryData("ObjectWithDictionary<string,string>")
                     {
-                        Json = $@"{{""_claim_sources"":{{"+
-                                    $@"""src1"":{{"+
-                                    $@"""endpoint"":""https://graph.windows.net/5803816d-c4ab-4601-a128-e2576e5d6910/users/0c9545d0-a670-4628-8c1f-e90618a3b940/getMemberObjects"","+
-                                    $@"""access_token"":""ksj3n283dke"""+
-                                    $@"}},"+
-                                    $@"""src2"":{{"+
-                                    $@"""endpoint2"":""https://graph.windows.net/5803816d-c4ab-4601-a128-e2576e5d6910/users/0c9545d0-a670-4628-8c1f-e90618a3b940/getMemberObjects"","+
-                                    $@"""access_token2"":""ksj3n283dke"""+
+                        Json = $@"{{""_claim_sources"":{{" +
+                                    $@"""src1"":{{" +
+                                    $@"""endpoint"":""https://graph.windows.net/5803816d-c4ab-4601-a128-e2576e5d6910/users/0c9545d0-a670-4628-8c1f-e90618a3b940/getMemberObjects""," +
+                                    $@"""access_token"":""ksj3n283dke""" +
+                                    $@"}}," +
+                                    $@"""src2"":{{" +
+                                    $@"""endpoint2"":""https://graph.windows.net/5803816d-c4ab-4601-a128-e2576e5d6910/users/0c9545d0-a670-4628-8c1f-e90618a3b940/getMemberObjects""," +
+                                    $@"""access_token2"":""ksj3n283dke""" +
                                $@"}}}}}}",
                         PropertyName = "_claim_sources",
                         Object = new Dictionary<string, object>
@@ -133,8 +232,91 @@ namespace Microsoft.IdentityModel.Tokens.Json.Tests
                                                         new List<object> { 3, "stringLevel3", 3.33 } } }
                     });
 
+                (var json, var result) = CreateJsonSerializerTheoryData(61);
+
+                theoryData.Add(new JsonSerializerTheoryData($"ListObject64Depth")
+                {
+                    Json = json,
+                    PropertyName = "key",
+                    Object = result,
+                });
+
+                (json, result) = CreateJsonSerializerTheoryData(63);
+
+                theoryData.Add(new JsonSerializerTheoryData($"ListObject65Depth")
+                {
+                    Json = json,
+                    PropertyName = "key",
+                    Object = result,
+                    ExpectedException = new ExpectedException(typeExpected:typeof(InvalidOperationException))
+                });
+
+                (json, result) = CreateJsonSerializerTheoryData(50);
+                (var json2, var result2) = CreateJsonSerializerTheoryData(50);
+
+                // merge
+                var mergedJson = @$"{{""key"":{{""key1"":{json},""key2"":{json2}}}}}";
+                var mergedObjects = new Dictionary<string, object>
+                {
+                    ["key1"] = new Dictionary<string, object> { ["key"] = result },
+                    ["key2"] = new Dictionary<string, object> { ["key"] =  result2 },
+                };
+
+                theoryData.Add(new JsonSerializerTheoryData($"MultipleObjects")
+                {
+                    Json = mergedJson,
+                    PropertyName = "key",
+                    Object = mergedObjects,
+                });
+
+                var jsonBuilder = new StringBuilder();
+
+                var innerObject = new Dictionary<string, object>();
+
+                jsonBuilder.Append(@"{""key"":{");
+
+                foreach (var i in Enumerable.Range(0, 100))
+                {
+                    innerObject.Add($"key-{i}", new Dictionary<string, string> { [$"inner-key-{i}"] = $"value-{i}" });
+                    jsonBuilder.Append($@"""key-{i}"":{{""inner-key-{i}"":""value-{i}""}}");
+                    if (i != 99)
+                        jsonBuilder.Append(',');
+                }
+
+                jsonBuilder.Append("}}");
+
+                theoryData.Add(new JsonSerializerTheoryData("MultipleProperties")
+                {
+                    PropertyName = "key",
+                    Json = jsonBuilder.ToString(),
+                    Object = innerObject,
+                });
+
                 return theoryData;
             }
+        }
+
+        private static (string, object) CreateJsonSerializerTheoryData(int depth)
+        {
+            var runningJson = new StringBuilder();
+            var runningExpectedObject = new List<object>();
+            var resultObject = runningExpectedObject;
+
+            runningJson.Append($@"{{""key"":[");
+
+            for (int i = 0; i < depth; i++)
+            {
+                var toAdd = new List<object> { $"key-{i}" };
+                runningExpectedObject.Add(toAdd);
+                runningExpectedObject = toAdd;
+                runningJson.Append($@"[""key-{i}"",");
+            }
+
+            runningJson.Remove(runningJson.Length - 1, 1);
+            runningJson.Append(new string(']', depth));
+            runningJson.Append("]}");
+
+            return (runningJson.ToString(), resultObject);
         }
 
         /// <summary>

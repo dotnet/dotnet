@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 namespace Microsoft.IdentityModel.Benchmarks
 {
     [Config(typeof(AntiVirusFriendlyConfig))]
+    [HideColumns("Type", "Job", "WarmupCount", "LaunchCount")]
     public class ValidateTokenAsyncTests
     {
         JsonWebTokenHandler jsonWebTokenHandler;

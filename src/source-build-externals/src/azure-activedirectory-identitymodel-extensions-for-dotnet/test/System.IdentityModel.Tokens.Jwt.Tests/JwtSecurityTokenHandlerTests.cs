@@ -1248,9 +1248,9 @@ namespace System.IdentityModel.Tokens.Jwt.Tests
             var token = tokenHandler.CreateJwtSecurityToken(descriptorNoTimeValues);
             var jwt = token as JwtSecurityToken;
 
-            Assert.NotNull(jwt.Payload.Iat);
-            Assert.NotNull(jwt.Payload.Nbf);
-            Assert.NotNull(jwt.Payload.Exp);
+            Assert.NotEqual(jwt.Payload.IssuedAt, DateTime.MinValue);
+            Assert.NotNull(jwt.Payload.NotBefore);
+            Assert.NotNull(jwt.Payload.Expiration);
         }
 
         [Fact]
