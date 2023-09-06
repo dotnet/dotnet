@@ -18,6 +18,13 @@ namespace Microsoft.IdentityModel.Tokens.Json
 {
     internal static class JsonSerializerPrimitives
     {
+        // This is not a general purpose JSON serializer. It is specifically
+        // made for the use in the IdentityModel libraries. As such, we can take a
+        // lower limit to both our reading and writing max depth.
+        // This number is the min between System.Text.Jsons default for
+        // writing and reading max depth.
+        const int MaxDepth = 64;
+
         /// <summary>
         /// Creates a JsonException that provides information on what went wrong
         /// </summary>
@@ -119,8 +126,14 @@ namespace Microsoft.IdentityModel.Tokens.Json
 #endif
         }
 
-        internal static object CreateObjectFromJsonElement(JsonElement jsonElement)
+        internal static object CreateObjectFromJsonElement(JsonElement jsonElement, int currentDepth)
         {
+            if (currentDepth >= MaxDepth)
+                throw new InvalidOperationException(LogHelper.FormatInvariant(
+                    LogMessages.IDX10815,
+                    LogHelper.MarkAsNonPII(currentDepth),
+                    LogHelper.MarkAsNonPII(MaxDepth)));
+
             if (jsonElement.ValueKind == JsonValueKind.String)
             {
                 if (DateTime.TryParse(jsonElement.GetString(), CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind, out DateTime dateTime))
@@ -159,7 +172,9 @@ namespace Microsoft.IdentityModel.Tokens.Json
 
                 int index = 0;
                 foreach (JsonElement j in jsonElement.EnumerateArray())
-                    items[index++] = CreateObjectFromJsonElement(j);
+                {
+                    items[index++] = CreateObjectFromJsonElement(j, currentDepth + 1);
+                }
 
                 return items;
             }
@@ -169,9 +184,12 @@ namespace Microsoft.IdentityModel.Tokens.Json
                 foreach (JsonProperty property in jsonElement.EnumerateObject())
                     numItems++;
 
+                int index = 0;
                 KeyValuePair<string, object>[] kvps = new KeyValuePair<string, object>[numItems];
                 foreach (JsonProperty property in jsonElement.EnumerateObject())
-                    kvps[numItems++] = new KeyValuePair<string, object>(property.Name, CreateObjectFromJsonElement(property.Value));
+                {
+                    kvps[index++] = new KeyValuePair<string, object>(property.Name, CreateObjectFromJsonElement(property.Value, currentDepth + 1));
+                }
 
                 return kvps;
             }
@@ -181,6 +199,8 @@ namespace Microsoft.IdentityModel.Tokens.Json
 
         public static bool TryCreateTypeFromJsonElement<T>(JsonElement jsonElement, out T t)
         {
+            int currentDepth = 0;
+
             if (typeof(T) == typeof(string))
             {
                 t = (T)(object)jsonElement.ToString();
@@ -272,7 +292,9 @@ namespace Microsoft.IdentityModel.Tokens.Json
                 {
                     Dictionary<string, object> dictionary = new();
                     foreach (JsonProperty property in jsonElement.EnumerateObject())
-                        dictionary[property.Name] = CreateObjectFromJsonElement(property.Value);
+                    {
+                        dictionary[property.Name] = CreateObjectFromJsonElement(property.Value, currentDepth + 1);
+                    }
 
                     t = (T)(object)dictionary;
                     return true;
@@ -332,7 +354,9 @@ namespace Microsoft.IdentityModel.Tokens.Json
                     object[] items = new object[numItems];
                     numItems = 0;
                     foreach (JsonElement j in jsonElement.EnumerateArray())
-                        items[numItems++] = CreateObjectFromJsonElement(j);
+                    {
+                        items[numItems++] = CreateObjectFromJsonElement(j, currentDepth + 1);
+                    }
 
                     t = (T)(object)items;
                     return true;
@@ -341,7 +365,9 @@ namespace Microsoft.IdentityModel.Tokens.Json
                 {
                     List<object> items = new();
                     foreach (JsonElement j in jsonElement.EnumerateArray())
-                        items.Add(CreateObjectFromJsonElement(j));
+                    {
+                        items.Add(CreateObjectFromJsonElement(j, currentDepth + 1));
+                    }
 
                     t = (T)(object)items;
                     return true;
@@ -350,7 +376,9 @@ namespace Microsoft.IdentityModel.Tokens.Json
                 {
                     Collection<object> items = new();
                     foreach (JsonElement j in jsonElement.EnumerateArray())
-                        items.Add(CreateObjectFromJsonElement(j));
+                    {
+                        items.Add(CreateObjectFromJsonElement(j, currentDepth + 1));
+                    }
 
                     t = (T)(object)items;
                     return true;
@@ -772,11 +800,14 @@ namespace Microsoft.IdentityModel.Tokens.Json
         /// general object serializer.
         /// If a user needs to serialize a special value, then serialize the value into a JsonElement.
         /// </summary>
-        /// <param name="writer"></param>
-        /// <param name="key"></param>
-        /// <param name="obj"></param>
         public static void WriteObject(ref Utf8JsonWriter writer, string key, object obj)
         {
+            if (writer.CurrentDepth >= MaxDepth)
+                throw new InvalidOperationException(LogHelper.FormatInvariant(
+                    LogMessages.IDX10815,
+                    LogHelper.MarkAsNonPII(writer.CurrentDepth),
+                    LogHelper.MarkAsNonPII(MaxDepth)));
+
             if (obj is null)
             {
                 writer.WriteNull(key);
@@ -794,7 +825,7 @@ namespace Microsoft.IdentityModel.Tokens.Json
             else if (obj is bool b)
                 writer.WriteBoolean(key, b);
             else if (obj is DateTime dt)
-                writer.WriteString(key, dt.ToUniversalTime());
+                writer.WriteString(key, dt.ToUniversalTime().ToString("o", CultureInfo.InvariantCulture));
             else if (typeof(IDictionary).IsAssignableFrom(objType))
             {
                 IDictionary dictionary = (IDictionary)obj;
@@ -843,6 +874,12 @@ namespace Microsoft.IdentityModel.Tokens.Json
         /// <param name="obj"></param>
         public static void WriteObjectValue(ref Utf8JsonWriter writer, object obj)
         {
+            if (writer.CurrentDepth >= MaxDepth)
+                throw new InvalidOperationException(LogHelper.FormatInvariant(
+                    LogMessages.IDX10815,
+                    LogHelper.MarkAsNonPII(writer.CurrentDepth),
+                    LogHelper.MarkAsNonPII(MaxDepth)));
+
             Type objType = obj.GetType();
 
             if (obj is string str)

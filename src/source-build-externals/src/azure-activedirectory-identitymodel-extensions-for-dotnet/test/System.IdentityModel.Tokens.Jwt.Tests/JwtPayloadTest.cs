@@ -58,8 +58,8 @@ namespace System.IdentityModel.Tokens.Jwt.Tests
             JwtPayload jwtPayload = new JwtPayload();
             Type type = typeof(JwtPayload);
             PropertyInfo[] properties = type.GetProperties();
-            if (properties.Length != 23)
-                Assert.True(false, "Number of properties has changed from 23 to: " + properties.Length + ", adjust tests");
+            if (properties.Length != 25)
+                Assert.True(false, "Number of properties has changed from 25 to: " + properties.Length + ", adjust tests");
 
             GetSetContext context =
                 new GetSetContext
@@ -71,11 +71,13 @@ namespace System.IdentityModel.Tokens.Jwt.Tests
                         new KeyValuePair<string, List<object>>("AuthTime", new List<object>{(string)null, 10, 12 }),
                         new KeyValuePair<string, List<object>>("Azp", new List<object>{(string)null, Guid.NewGuid().ToString(), Guid.NewGuid().ToString()}),
                         new KeyValuePair<string, List<object>>("CHash", new List<object>{(string)null, Guid.NewGuid().ToString(), Guid.NewGuid().ToString()}),
-                        new KeyValuePair<string, List<object>>("Exp", new List<object>{(string)null, 1, 0 }),
+                        new KeyValuePair<string, List<object>>("Exp", new List<object>{(string)null, 1, 0}),
+                        new KeyValuePair<string, List<object>>("Expiration", new List<object>{(string)null, 1, 0 }),
                         new KeyValuePair<string, List<object>>("Jti", new List<object>{(string)null, Guid.NewGuid().ToString(), Guid.NewGuid().ToString()}),
-                        new KeyValuePair<string, List<object>>("Iat", new List<object>{(string)null, 10, 0}),
+                        new KeyValuePair<string, List<object>>("IssuedAt", new List<object>{DateTime.MinValue, 10, 0}),
                         new KeyValuePair<string, List<object>>("Iss", new List<object>{(string)null, Guid.NewGuid().ToString(), Guid.NewGuid().ToString()}),
-                        new KeyValuePair<string, List<object>>("Nbf", new List<object>{(string)null, 1, 0 }),
+                        new KeyValuePair<string, List<object>>("Nbf", new List<object>{(string)null, 1, 0}),
+                        new KeyValuePair<string, List<object>>("NotBefore", new List<object>{(string)null, 1, 0 }),
                         new KeyValuePair<string, List<object>>("Nonce", new List<object>{(string)null, Guid.NewGuid().ToString(), Guid.NewGuid().ToString()}),
                         new KeyValuePair<string, List<object>>("Sub", new List<object>{(string)null, Guid.NewGuid().ToString(), Guid.NewGuid().ToString()}),
                     },
@@ -132,14 +134,14 @@ namespace System.IdentityModel.Tokens.Jwt.Tests
             var context = new CompareContext();
 
             JwtPayload jwtPayload = new JwtPayload();
-            int? time = 10000;
+            long? time = 10000;
             jwtPayload.Add("exp", time);
             DateTime payloadTime = EpochTime.DateTime(time.Value);
             DateTime payloadValidTo = jwtPayload.ValidTo;
 
             Assert.True(EpochTime.DateTime(time.Value) == jwtPayload.ValidTo, "EpochTime.DateTime( time ) != jwtPayload.ValidTo");
 
-            int? expirationTime = jwtPayload.Exp;
+            long? expirationTime = jwtPayload.Expiration;
             Assert.True(expirationTime == time, "expirationTime != time");
 
             TestUtilities.AssertFailIfErrors(GetType().ToString() + ".Claims", context.Diffs);

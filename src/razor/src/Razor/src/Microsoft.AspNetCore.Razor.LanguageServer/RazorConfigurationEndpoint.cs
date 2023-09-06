@@ -9,7 +9,7 @@ using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer;
 
-internal class RazorConfigurationEndpoint : IDidChangeConfigurationEndpoint
+internal class RazorConfigurationEndpoint : IDidChangeConfigurationEndpoint, IOnInitialized
 {
     private readonly RazorLSPOptionsMonitor _optionsMonitor;
 
@@ -30,5 +30,13 @@ internal class RazorConfigurationEndpoint : IDidChangeConfigurationEndpoint
         requestContext.Logger.LogInformation("Settings changed. Updating the server.");
 
         await _optionsMonitor.UpdateAsync(cancellationToken).ConfigureAwait(false);
+    }
+
+    public async Task OnInitializedAsync(VSInternalClientCapabilities clientCapabilities, CancellationToken cancellationToken)
+    {
+        if (clientCapabilities.Workspace?.Configuration == true)
+        {
+            await _optionsMonitor.UpdateAsync(cancellationToken).ConfigureAwait(false);
+        }
     }
 }

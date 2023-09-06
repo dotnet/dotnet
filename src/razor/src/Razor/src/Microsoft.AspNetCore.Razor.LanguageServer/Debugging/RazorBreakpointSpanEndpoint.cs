@@ -98,8 +98,21 @@ internal class RazorBreakpointSpanEndpoint : IRazorDocumentlessRequestHandler<Ra
         };
 
         // Now map that new C# location back to the host document
-        var mappingBehavior = GetMappingBehavior(documentContext);
-        if (!_documentMappingService.TryMapToHostDocumentRange(codeDocument.GetCSharpDocument(), projectedRange, mappingBehavior, out var hostDocumentRange))
+        // Razor files generate code in a "loosely" debuggable way. For instance if you were to do the following in a razor or cshtml file:
+        //
+        //      @DateTime.Now
+        //
+        // This would render as:
+        //
+        //      #line 123 "C:/path/to/abc.cshtml"
+        //      __o = DateTime.Now;
+        //
+        //      #line default
+        //
+        // This in turn results in a breakpoint span encompassing `|__o = DateTime.Now;|`. Problem is that if we're doing "strict" mapping
+        // Razor only maps `DateTime.Now` so mapping would fail. Therefore we use inclusive mapping which allows C# mappings that intersect
+        // to be acceptable mapping locations
+        if (!_documentMappingService.TryMapToHostDocumentRange(codeDocument.GetCSharpDocument(), projectedRange, MappingBehavior.Inclusive, out var hostDocumentRange))
         {
             return null;
         }
@@ -113,42 +126,5 @@ internal class RazorBreakpointSpanEndpoint : IRazorDocumentlessRequestHandler<Ra
         {
             Range = hostDocumentRange
         };
-    }
-
-    // Internal for testing
-    internal static MappingBehavior GetMappingBehavior(DocumentContext documentContext)
-    {
-        if (documentContext.FileKind == FileKinds.Legacy)
-        {
-            // Razor files generate code in a "loosely" debuggable way. For instance if you were to do the following in a cshtml file:
-            //
-            //      @DateTime.Now
-            //
-            // This would render as:
-            //
-            //      #line 123 "C:/path/to/abc.cshtml"
-            //      __o = DateTime.Now;
-            //
-            //      #line default
-            //
-            // This in turn results in a breakpoint span encompassing `|__o = DateTime.Now;|`. Problem is that if we're doing "strict" mapping
-            // Razor only maps `DateTime.Now` so mapping would fail. Therefore in cshtml scenarios we fall back to inclusive mapping which allows
-            // C# mappings that intersect to be acceptable mapping locations
-            //
-            // In Blazor this isn't an issue because the above renders as:
-            //
-            //      __o =
-            //      #line 123 "C:/path/to/abc.razor"
-            //      DateTime.Now
-            //
-            //      #line default
-            //      ;
-            //
-            // Which results in a proper mapping
-
-            return MappingBehavior.Inclusive;
-        }
-
-        return MappingBehavior.Strict;
     }
 }
