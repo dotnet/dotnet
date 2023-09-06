@@ -6,9 +6,8 @@ using System.Runtime.Serialization;
 using Microsoft.AspNetCore.Razor.LanguageServer.Protocol;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 
-namespace Microsoft.AspNetCore.Razor.LanguageServer.EndpointContracts;
+namespace Microsoft.AspNetCore.Razor.LanguageServer.Mapping;
 
-// Note: This type should be kept in sync with the one in Razor.HtmlCSharp assembly.
 [DataContract]
 internal class RazorMapToDocumentEditsParams
 {
