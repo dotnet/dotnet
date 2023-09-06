@@ -6,7 +6,6 @@ using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
-using Microsoft.AspNetCore.Razor.Language.Legacy;
 using Microsoft.AspNetCore.Razor.Language.Syntax;
 using Microsoft.AspNetCore.Razor.LanguageServer.EndpointContracts;
 using Microsoft.AspNetCore.Razor.LanguageServer.Extensions;
@@ -111,8 +110,7 @@ internal class LinkedEditingRangeEndpoint : IRazorRequestHandler<LinkedEditingRa
             [NotNullWhen(true)] out SyntaxToken? startTagNameToken,
             [NotNullWhen(true)] out SyntaxToken? endTagNameToken)
         {
-            var change = new SourceChange(location.AbsoluteIndex, length: 0, newText: "");
-            var owner = syntaxTree.Root.LocateOwner(change);
+            var owner = syntaxTree.Root.FindInnermostNode(location.AbsoluteIndex);
             var element = owner?.FirstAncestorOrSelf<MarkupSyntaxNode>(
                 a => a.Kind is SyntaxKind.MarkupTagHelperElement || a.Kind is SyntaxKind.MarkupElement);
 
