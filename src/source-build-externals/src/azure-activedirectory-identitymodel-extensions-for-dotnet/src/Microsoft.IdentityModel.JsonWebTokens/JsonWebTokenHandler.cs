@@ -1519,7 +1519,7 @@ namespace Microsoft.IdentityModel.JsonWebTokens
 
             var jwt = token as JsonWebToken;
             if (jwt == null)
-                return new TokenValidationResult { Exception = LogHelper.LogExceptionMessage(new SecurityTokenMalformedException(LogHelper.FormatInvariant(LogMessages.IDX14100, token))), IsValid = false };
+                return new TokenValidationResult { Exception = LogHelper.LogExceptionMessage(new SecurityTokenMalformedException(LogMessages.IDX14100)), IsValid = false };
 
             try
             {
@@ -1567,7 +1567,7 @@ namespace Microsoft.IdentityModel.JsonWebTokens
                 {
                     return new TokenValidationResult
                     {
-                        Exception = LogHelper.LogExceptionMessage(new SecurityTokenMalformedException(LogHelper.FormatInvariant(LogMessages.IDX14100, LogHelper.MarkAsSecurityArtifact(token, JwtTokenUtilities.SafeLogJwtToken), ex))),
+                        Exception = LogHelper.LogExceptionMessage(new SecurityTokenMalformedException(LogMessages.IDX14100, ex)),
                         IsValid = false
                     };
                 }

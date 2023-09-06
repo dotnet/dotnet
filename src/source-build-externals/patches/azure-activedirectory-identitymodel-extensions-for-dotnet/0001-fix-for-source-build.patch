@@ -1,6 +1,6 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Eric Erhardt <eric.erhardt@microsoft.com>
-Date: Tue, 29 Aug 2023 18:17:01 -0500
+Date: Wed, 6 Sep 2023 07:04:54 -0500
 Subject: [PATCH] fix for source build
 
 ---
@@ -22,7 +22,7 @@ Subject: [PATCH] fix for source build
  15 files changed, 7 insertions(+), 89 deletions(-)
 
 diff --git a/build/common.props b/build/common.props
-index 001d7daa..0f87f8b6 100644
+index 001d7daa..77c12525 100644
 --- a/build/common.props
 +++ b/build/common.props
 @@ -1,6 +1,5 @@
@@ -32,14 +32,15 @@ index 001d7daa..0f87f8b6 100644
    <Import Project="dependencies.props" />
    <Import Project="targets.props" />
    <Import Project="version.props" />
-@@ -44,8 +43,4 @@
+@@ -43,9 +42,5 @@
+     <NoWarn>$(NoWarn);SYSLIB0050</NoWarn>
      <NoWarn>$(NoWarn);SYSLIB0051</NoWarn>
    </PropertyGroup>
-   
+-  
 -  <ItemGroup Condition="'$(TargetFramework)' != 'net8.0'">
 -    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="$(MicrosoftSourceLinkGitHubVersion)" PrivateAssets="All"/>
 -  </ItemGroup>
--
+ 
  </Project>
 diff --git a/build/dependencies.props b/build/dependencies.props
 index 23e1b910..254f709e 100644
@@ -79,7 +80,7 @@ index f020b59b..934aae74 100644
    </PropertyGroup>
  </Project>
 diff --git a/buildConfiguration.xml b/buildConfiguration.xml
-index 80088c70..e2392c02 100644
+index 574d39f8..ab394035 100644
 --- a/buildConfiguration.xml
 +++ b/buildConfiguration.xml
 @@ -1,7 +1,7 @@
@@ -89,7 +90,7 @@ index 80088c70..e2392c02 100644
 -  <runtimes>net461,netstandard2.0</runtimes>
 +  <runtimes>netstandard2.0</runtimes>
    <assemblyVersion>7.0.0</assemblyVersion>
-   <nugetSuffix>preview4</nugetSuffix>
+   <nugetSuffix>preview5</nugetSuffix>
    <projects>
 diff --git a/src/Microsoft.IdentityModel.Abstractions/Microsoft.IdentityModel.Abstractions.csproj b/src/Microsoft.IdentityModel.Abstractions/Microsoft.IdentityModel.Abstractions.csproj
 index f7a11afe..4a87af91 100644

@@ -359,10 +359,10 @@ namespace Microsoft.IdentityModel.Protocols.OpenIdConnect
                 if (idToken.Payload.Aud.Count == 0)
                     throw LogHelper.LogExceptionMessage(new OpenIdConnectProtocolException(LogHelper.FormatInvariant(LogMessages.IDX21314, LogHelper.MarkAsNonPII(JwtRegisteredClaimNames.Aud.ToLowerInvariant()), idToken)));
 
-                if (!idToken.Payload.Exp.HasValue)
+                if (!idToken.Payload.Expiration.HasValue)
                     throw LogHelper.LogExceptionMessage(new OpenIdConnectProtocolException(LogHelper.FormatInvariant(LogMessages.IDX21314, LogHelper.MarkAsNonPII(JwtRegisteredClaimNames.Exp.ToLowerInvariant()), idToken)));
 
-                if (!idToken.Payload.Iat.HasValue)
+                if (idToken.Payload.IssuedAt.Equals(DateTime.MinValue))
                     throw LogHelper.LogExceptionMessage(new OpenIdConnectProtocolException(LogHelper.FormatInvariant(LogMessages.IDX21314, LogHelper.MarkAsNonPII(JwtRegisteredClaimNames.Iat.ToLowerInvariant()), idToken)));
 
                 if (idToken.Payload.Iss == null)

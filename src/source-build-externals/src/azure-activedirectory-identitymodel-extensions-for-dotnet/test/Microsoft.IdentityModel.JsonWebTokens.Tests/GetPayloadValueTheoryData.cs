@@ -21,5 +21,7 @@ namespace Microsoft.IdentityModel.JsonWebTokens.Tests
         public Type PropertyType { get; set; }
 
         public object PropertyValue { get; set; }
+
+        public string Json { get; set; }
     }
 }

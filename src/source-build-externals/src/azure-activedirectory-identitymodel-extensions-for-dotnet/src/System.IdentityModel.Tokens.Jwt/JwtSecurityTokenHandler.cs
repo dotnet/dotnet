@@ -661,7 +661,7 @@ namespace System.IdentityModel.Tokens.Jwt
             }
 
             if (LogHelper.IsEnabled(EventLogLevel.Informational))
-                LogHelper.LogInformation(LogMessages.IDX12722, rawHeader, rawPayload, rawSignature);
+                LogHelper.LogInformation(LogMessages.IDX12722, rawHeader, rawPayload);
 
             if (encryptingCredentials != null)
             {
@@ -778,7 +778,7 @@ namespace System.IdentityModel.Tokens.Jwt
                 throw LogHelper.LogExceptionMessage(new ArgumentException(LogHelper.FormatInvariant(TokenLogMessages.IDX10209, LogHelper.MarkAsNonPII(token.Length), LogHelper.MarkAsNonPII(MaximumTokenSizeInBytes))));
 
             if (!CanReadToken(token))
-                throw LogHelper.LogExceptionMessage(new SecurityTokenMalformedException(LogHelper.FormatInvariant(LogMessages.IDX12709, token)));
+                throw LogHelper.LogExceptionMessage(new SecurityTokenMalformedException(LogMessages.IDX12709));
 
             var jwtToken = new JwtSecurityToken();
             jwtToken.Decode(token.Split('.'), token);
@@ -856,7 +856,7 @@ namespace System.IdentityModel.Tokens.Jwt
             int tokenPartCount = JwtTokenUtilities.CountJwtTokenPart(token, JwtConstants.MaxJwtSegmentCount + 1);
 
             if (tokenPartCount != JwtConstants.JwsSegmentCount && tokenPartCount != JwtConstants.JweSegmentCount)
-                throw LogHelper.LogExceptionMessage(new SecurityTokenMalformedException(LogHelper.FormatInvariant(LogMessages.IDX12741, token)));
+                throw LogHelper.LogExceptionMessage(new SecurityTokenMalformedException(LogMessages.IDX12741));
 
             if (tokenPartCount == JwtConstants.JweSegmentCount)
             {
@@ -1148,8 +1148,8 @@ namespace System.IdentityModel.Tokens.Jwt
             if (validationParameters is null)
                 throw LogHelper.LogArgumentNullException(nameof(validationParameters));
 
-            DateTime? expires = (jwtToken.Payload.Exp == null) ? null : new DateTime?(jwtToken.ValidTo);
-            DateTime? notBefore = (jwtToken.Payload.Nbf == null) ? null : new DateTime?(jwtToken.ValidFrom);
+            DateTime? expires = (jwtToken.Payload.Expiration == null) ? null : new DateTime?(jwtToken.ValidTo);
+            DateTime? notBefore = (jwtToken.Payload.NotBefore == null) ? null : new DateTime?(jwtToken.ValidFrom);
 
             ValidateLifetime(notBefore, expires, jwtToken, validationParameters);
             ValidateAudience(jwtToken.Audiences, jwtToken, validationParameters);
@@ -1424,8 +1424,8 @@ namespace System.IdentityModel.Tokens.Jwt
                         jwtToken)));
                 }
 
-                DateTime? expires = (jwtToken.Payload.Exp == null) ? null : new DateTime?(jwtToken.ValidTo);
-                DateTime? notBefore = (jwtToken.Payload.Nbf == null) ? null : new DateTime?(jwtToken.ValidFrom);
+                DateTime? expires = (jwtToken.Payload.Expiration == null) ? null : new DateTime?(jwtToken.ValidTo);
+                DateTime? notBefore = (jwtToken.Payload.NotBefore == null) ? null : new DateTime?(jwtToken.ValidFrom);
 
                 if (!validationParameters.ValidateSignatureLast)
                 {

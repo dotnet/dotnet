@@ -238,6 +238,7 @@ namespace Microsoft.IdentityModel.Tokens
         public const string IDX10812 = "IDX10812: Unable to create a {0} from the properties found in the JsonWebKey: '{1}'.";
         public const string IDX10813 = "IDX10813: Unable to create a {0} from the properties found in the JsonWebKey: '{1}', Exception '{2}'.";
         public const string IDX10814 = "IDX10814: Unable to create a {0} from the properties found in the JsonWebKey: '{1}'. Missing: '{2}'.";
+        public const string IDX10815 = "IDX10815: Depth of JSON: '{0}' exceeds max depth of '{1}'.";
 
         // Base64UrlEncoding
         public const string IDX10820 = "IDX10820: Invalid character found in Base64UrlEncoding. Character: '{0}', Encoding: '{1}'.";

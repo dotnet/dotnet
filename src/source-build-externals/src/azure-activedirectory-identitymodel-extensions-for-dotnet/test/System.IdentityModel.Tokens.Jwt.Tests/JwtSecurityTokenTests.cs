@@ -314,12 +314,12 @@ namespace System.IdentityModel.Tokens.Jwt.Tests
             Assert.Equal(token1.Payload.Aud, token2.Payload.Aud);
             Assert.Equal(token1.Payload.AuthTime, token2.Payload.AuthTime);
             Assert.Equal(token1.Payload.CHash, token2.Payload.CHash);
-            Assert.Equal(token1.Payload.Exp, token2.Payload.Exp);
-            Assert.Equal(token1.Payload.Iat, token2.Payload.Iat);
+            Assert.Equal(token1.Payload.Expiration, token2.Payload.Expiration);
+            Assert.Equal(token1.Payload.IssuedAt, token2.Payload.IssuedAt);
             Assert.Equal(token1.Payload.Iss, token2.Payload.Iss);
             Assert.Equal(token1.Payload.Jti, token2.Payload.Jti);
             Assert.Equal(token1.Payload.Keys, token2.Payload.Keys);
-            Assert.Equal(token1.Payload.Nbf, token2.Payload.Nbf);
+            Assert.Equal(token1.Payload.NotBefore, token2.Payload.NotBefore);
             Assert.Equal(token1.Payload.Nonce, token2.Payload.Nonce);
             Assert.Equal(token1.Payload.Sub, token2.Payload.Sub);
             Assert.Equal(token1.Payload.ValidFrom, token2.Payload.ValidFrom);
