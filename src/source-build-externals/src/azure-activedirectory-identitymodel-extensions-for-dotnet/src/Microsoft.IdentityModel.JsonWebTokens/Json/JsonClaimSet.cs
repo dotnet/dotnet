@@ -213,21 +213,23 @@ namespace Microsoft.IdentityModel.JsonWebTokens
             // the below here should only be simple types, string, int, ...
             else if (typeof(T) == typeof(string))
             {
-                return (T)((object)obj.ToString());
+                if (objType == typeof(DateTime))
+                    return (T)((object)((DateTime)obj).ToString("o", CultureInfo.InvariantCulture));
+
+               return (T)((object)obj.ToString());
+            }
+            else if (typeof(T) == typeof(bool))
+            {
+                if (bool.TryParse(obj.ToString(), out bool value))
+                    return (T)(object)value;
             }
             else if (typeof(T) == typeof(int))
             {
-                if (objType == typeof(int))
-                    return (T)obj;
-
                 if (int.TryParse(obj.ToString(), out int value))
                     return (T)(object)value;
             }
             else if (typeof(T) == typeof(long))
             {
-                if (objType == typeof(long))
-                    return (T)obj;
-
                 if (objType == typeof(int))
                     return (T)(object)(long)(int)obj;
 
@@ -255,7 +257,6 @@ namespace Microsoft.IdentityModel.JsonWebTokens
 
                 return (T)(object)new Collection<string> { obj.ToString() };
             }
-
             else if (typeof(T) == typeof(object[]))
                 return (T)(object)new object[] { obj };
 
@@ -267,9 +268,6 @@ namespace Microsoft.IdentityModel.JsonWebTokens
 
             else if (typeof(T) == typeof(DateTime))
             {
-                if (objType == typeof(DateTime))
-                    return (T)obj;
-
                 if (DateTime.TryParse(obj.ToString(), out DateTime value))
                     return (T)(object)value;
             }
@@ -294,33 +292,26 @@ namespace Microsoft.IdentityModel.JsonWebTokens
             }
             else if (typeof(T) == typeof(double))
             {
-                if (objType == typeof(double))
-                    return (T)obj;
-
                 if(double.TryParse(obj.ToString(), out double value))
                     return (T)(object)value;
             }
             else if (typeof(T) == typeof(uint))
             {
-                if (objType == typeof(uint))
-                    return (T)obj;
-
                 if (uint.TryParse(obj.ToString(), out uint value))
+                    return (T)(object)value;
+            }
+            else if (typeof(T) == typeof(ulong))
+            {
+                if (ulong.TryParse(obj.ToString(), out ulong value))
                     return (T)(object)value;
             }
             else if (typeof(T) == typeof(float))
             {
-                if (objType == typeof(float))
-                    return (T)obj;
-
                 if (float.TryParse(obj.ToString(), out float value))
                     return (T)(object)value;
             }
             else if (typeof(T) == typeof(decimal))
             {
-                if (objType == typeof(decimal))
-                    return (T)obj;
-
                 if (decimal.TryParse(obj.ToString(), out decimal value))
                     return (T)(object)value;
             }

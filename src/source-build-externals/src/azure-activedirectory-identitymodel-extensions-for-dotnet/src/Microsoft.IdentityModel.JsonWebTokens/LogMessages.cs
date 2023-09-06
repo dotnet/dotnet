@@ -17,9 +17,9 @@ namespace Microsoft.IdentityModel.JsonWebTokens
         internal const string IDX14000 = "IDX14000: Signature validation of this JWT is not supported for: Algorithm: '{0}', SecurityKey: '{1}'.";
 
         // JWT messages
-        internal const string IDX14100 = "IDX14100: JWT is not well formed: '{0}', there are no dots (.).\nThe token needs to be in JWS or JWE Compact Serialization Format. (JWS): 'EncodedHeader.EndcodedPayload.EncodedSignature'. (JWE): 'EncodedProtectedHeader.EncodedEncryptedKey.EncodedInitializationVector.EncodedCiphertext.EncodedAuthenticationTag'.";
-        internal const string IDX14101 = "IDX14101: Unable to decode the payload '{0}' as Base64Url encoded string. jwtEncodedString: '{1}'.";
-        internal const string IDX14102 = "IDX14102: Unable to decode the header '{0}' as Base64Url encoded string. jwtEncodedString: '{1}'.";
+        internal const string IDX14100 = "IDX14100: JWT is not well formed, there are no dots (.).\nThe token needs to be in JWS or JWE Compact Serialization Format. (JWS): 'EncodedHeader.EndcodedPayload.EncodedSignature'. (JWE): 'EncodedProtectedHeader.EncodedEncryptedKey.EncodedInitializationVector.EncodedCiphertext.EncodedAuthenticationTag'.";
+        internal const string IDX14101 = "IDX14101: Unable to decode the payload '{0}' as Base64Url encoded string.";
+        internal const string IDX14102 = "IDX14102: Unable to decode the header '{0}' as Base64Url encoded string.";
         internal const string IDX14103 = "IDX14103: Failed to create the token encryption provider.";
         //internal const string IDX14105 = "IDX14105:";
         // internal const string IDX14106 = "IDX14106:";
@@ -31,9 +31,9 @@ namespace Microsoft.IdentityModel.JsonWebTokens
         // internal const string IDX14115 = "IDX14115:";
         internal const string IDX14116 = "IDX14116: '{0}' cannot contain the following claims: '{1}'. These values are added by default (if necessary) during security token creation.";
         // number of sections 'dots' is not correct
-        internal const string IDX14120 = "IDX14120: JWT is not well formed, there is only one dot (.): '{0}'.\nThe token needs to be in JWS or JWE Compact Serialization Format. (JWS): 'EncodedHeader.EndcodedPayload.EncodedSignature'. (JWE): 'EncodedProtectedHeader.EncodedEncryptedKey.EncodedInitializationVector.EncodedCiphertext.EncodedAuthenticationTag'.";
-        internal const string IDX14121 = "IDX14121: JWT is not a well formed JWE, there are there must be four dots (.): '{0}'.\nThe token needs to be in JWS or JWE Compact Serialization Format. (JWS): 'EncodedHeader.EndcodedPayload.EncodedSignature'. (JWE): 'EncodedProtectedHeader.EncodedEncryptedKey.EncodedInitializationVector.EncodedCiphertext.EncodedAuthenticationTag'.";
-        internal const string IDX14122 = "IDX14122: JWT is not a well formed JWE, there are more than four dots (.) a JWE can have at most 4 dots: '{0}'.\nThe token needs to be in JWS or JWE Compact Serialization Format. (JWS): 'EncodedHeader.EndcodedPayload.EncodedSignature'. (JWE): 'EncodedProtectedHeader.EncodedEncryptedKey.EncodedInitializationVector.EncodedCiphertext.EncodedAuthenticationTag'.";
+        internal const string IDX14120 = "IDX14120: JWT is not well formed, there is only one dot (.).\nThe token needs to be in JWS or JWE Compact Serialization Format. (JWS): 'EncodedHeader.EndcodedPayload.EncodedSignature'. (JWE): 'EncodedProtectedHeader.EncodedEncryptedKey.EncodedInitializationVector.EncodedCiphertext.EncodedAuthenticationTag'.";
+        internal const string IDX14121 = "IDX14121: JWT is not a well formed JWE, there are there must be four dots (.).\nThe token needs to be in JWS or JWE Compact Serialization Format. (JWS): 'EncodedHeader.EndcodedPayload.EncodedSignature'. (JWE): 'EncodedProtectedHeader.EncodedEncryptedKey.EncodedInitializationVector.EncodedCiphertext.EncodedAuthenticationTag'.";
+        internal const string IDX14122 = "IDX14122: JWT is not a well formed JWE, there are more than four dots (.) a JWE can have at most 4 dots.\nThe token needs to be in JWS or JWE Compact Serialization Format. (JWS): 'EncodedHeader.EndcodedPayload.EncodedSignature'. (JWE): 'EncodedProtectedHeader.EncodedEncryptedKey.EncodedInitializationVector.EncodedCiphertext.EncodedAuthenticationTag'.";
 
         // logging
         internal const string IDX14200 = "IDX14200: Creating raw signature using the signature credentials.";
@@ -47,13 +47,13 @@ namespace Microsoft.IdentityModel.JsonWebTokens
         //internal const string IDX14303 = "IDX14303: Claim with name '{0}' does not exist in the header.";
         internal const string IDX14304 = "IDX14304: Claim with name '{0}' does not exist in the JsonClaimSet.";
         internal const string IDX14305 = "IDX14305: Unable to convert the '{0}' json property to the following type: '{1}'. Property type was: '{2}'. Value: '{3}'.";
-        internal const string IDX14306 = "IDX14306: JWE Ciphertext cannot be an empty string. jwtEncodedString: '{0}'.";
-        internal const string IDX14307 = "IDX14307: JWE header is missing. jwtEncodedString: '{0}'.";
-        internal const string IDX14308 = "IDX14308: JWE initialization vector is missing. jwtEncodedString: '{0}'.";
-        internal const string IDX14309 = "IDX14309: Unable to decode the initialization vector as Base64Url encoded string. jwtEncodedString: '{0}'.";
-        internal const string IDX14310 = "IDX14310: JWE authentication tag is missing. jwtEncodedString: '{0}'.";
-        internal const string IDX14311 = "IDX14311: Unable to decode the authentication tag as a Base64Url encoded string. jwtEncodedString: '{0}'.";
-        internal const string IDX14312 = "IDX14312: Unable to decode the cipher text as a Base64Url encoded string. jwtEncodedString: '{0}'.";
+        internal const string IDX14306 = "IDX14306: JWE Ciphertext cannot be an empty string.";
+        internal const string IDX14307 = "IDX14307: JWE header is missing.";
+        internal const string IDX14308 = "IDX14308: JWE initialization vector is missing.";
+        internal const string IDX14309 = "IDX14309: Unable to decode the initialization vector as Base64Url encoded string.";
+        internal const string IDX14310 = "IDX14310: JWE authentication tag is missing.";
+        internal const string IDX14311 = "IDX14311: Unable to decode the authentication tag as a Base64Url encoded string.";
+        internal const string IDX14312 = "IDX14312: Unable to decode the cipher text as a Base64Url encoded string.";
 
         #pragma warning restore 1591
     }

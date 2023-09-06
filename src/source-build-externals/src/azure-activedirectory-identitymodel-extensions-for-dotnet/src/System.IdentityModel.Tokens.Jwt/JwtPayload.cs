@@ -350,9 +350,19 @@ namespace System.IdentityModel.Tokens.Jwt
         /// Gets the 'value' of the 'expiration' claim { exp, 'value' }.
         /// </summary>
         /// <remarks>If the 'expiration' claim is not found OR could not be converted to <see cref="Int32"/>, null is returned.</remarks>
+        [Obsolete("`int? JwtPayload.Exp` is deprecated and will be removed in a future release. Use `long? JwtPayload.Expiration` instead. For more information, see https://aka.ms/IdentityModel/7-breaking-changes")]
         public int? Exp
         {
             get => GetIntClaim(JwtRegisteredClaimNames.Exp);
+        }
+
+        /// <summary>
+        /// Gets the 'value' of the 'expiration' claim { exp, 'value' }.
+        /// </summary>
+        /// <remarks>If the 'expiration' claim is not found OR could not be converted to <see cref="long"/>, null is returned.</remarks>
+        public long? Expiration
+        {
+            get => GetLongClaim(JwtRegisteredClaimNames.Exp);
         }
 
         /// <summary>
@@ -372,6 +382,7 @@ namespace System.IdentityModel.Tokens.Jwt
         /// Gets the 'value' of the 'Issued At' claim { iat, 'value' }.
         /// </summary>
         /// <remarks>If the 'Issued At' claim is not found OR cannot be converted to <see cref="Int32"/> null is returned.</remarks>
+        [Obsolete("`int? JwtPayload.Iat` is deprecated and will be removed in a future release. Use `DateTime JwtPayload.IssuedAt` instead. For more information, see https://aka.ms/IdentityModel/7-breaking-changes")]
         public int? Iat
         {
             get { return this.GetIntClaim(JwtRegisteredClaimNames.Iat); }
@@ -394,6 +405,7 @@ namespace System.IdentityModel.Tokens.Jwt
         /// Gets the 'value' of the 'expiration' claim { nbf, 'value' }.
         /// </summary>
         /// <remarks>If the 'notbefore' claim is not found OR could not be converted to <see cref="Int32"/>, null is returned.</remarks>
+        [Obsolete("`int? JwtPayload.Nbf` is deprecated and will be removed in a future release. Use `long? JwtPayload.NotBefore` instead. For more information, see https://aka.ms/IdentityModel/7-breaking-changes")]
         public int? Nbf
         {
             get { return this.GetIntClaim(JwtRegisteredClaimNames.Nbf); }
@@ -409,6 +421,15 @@ namespace System.IdentityModel.Tokens.Jwt
             {
                 return this.GetStandardClaim(JwtRegisteredClaimNames.Nonce);
             }
+        }
+
+        /// <summary>
+        /// Gets the 'value' of the 'notebefore' claim { nbf, 'value' }.
+        /// </summary>
+        /// <remarks>If the 'notbefore' claim is not found OR could not be converted to <see cref="long"/>, null is returned.</remarks>
+        public long? NotBefore
+        {
+            get => GetLongClaim(JwtRegisteredClaimNames.Nbf); 
         }
 
         /// <summary>

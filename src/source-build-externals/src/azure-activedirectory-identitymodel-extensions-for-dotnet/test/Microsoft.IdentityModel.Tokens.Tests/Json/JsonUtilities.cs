@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Text;
 using System.Text.Json;
 using Newtonsoft.Json.Linq;
@@ -11,6 +12,8 @@ namespace Microsoft.IdentityModel.Tokens.Json.Tests
 {
     public class JsonUtilities
     {
+        static string EmptyHeader = Base64UrlEncoder.Encode("{}");
+
         static IList<object> _arrayDataAsObjectList = new List<object> { "value1", "value2" };
         static string _arrayData = @"[""value1"",""value2""]";
         static string _objectData = @"{""Object"":""string""}";
@@ -163,6 +166,30 @@ namespace Microsoft.IdentityModel.Tokens.Json.Tests
             dictionary["string"] = "string";
             dictionary["false"] = false;
             dictionary["true"] = true;
+        }
+
+        public static string CreateUnsignedToken(string key, object value)
+        {
+            Utf8JsonWriter writer = null;
+            using (MemoryStream memoryStream = new MemoryStream())
+            {
+                try
+                {
+                    writer = new Utf8JsonWriter(memoryStream);
+                    writer.WriteStartObject();
+
+                    JsonSerializerPrimitives.WriteObject(ref writer, key, value);
+
+                    writer.WriteEndObject();
+                    writer.Flush();
+
+                    return EmptyHeader + "." + Base64UrlEncoder.Encode(memoryStream.GetBuffer(), 0, (int)memoryStream.Length) + ".";
+                }
+                finally
+                {
+                    writer?.Dispose();
+                }
+            }
         }
     }
 }
