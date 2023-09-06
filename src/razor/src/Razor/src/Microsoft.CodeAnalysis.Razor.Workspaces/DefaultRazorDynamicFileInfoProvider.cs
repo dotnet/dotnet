@@ -343,7 +343,10 @@ internal class DefaultRazorDynamicFileInfoProvider : RazorDynamicFileInfoProvide
 
     private RazorDynamicFileInfo CreateEmptyInfo(Key key)
     {
-        var projectKey = TryFindProjectKeyForProjectId(key.ProjectId).AssumeNotNull();
+        // We have to allow null here, because we are activated for all Roslyn projects that have a .cshtml or .razor file
+        // and our Roslyn EA doesn't allow null returns, so we need to return something. In these situations we end up
+        // reporting a dynamic file of Foo.cshtml.p.cs, which is never updated with any content. Not ideal, but best we can do.
+        var projectKey = TryFindProjectKeyForProjectId(key.ProjectId) ?? default;
         var filename = _filePathService.GetRazorCSharpFilePath(projectKey, key.FilePath);
         var textLoader = new EmptyTextLoader(filename);
         return new RazorDynamicFileInfo(filename, SourceCodeKind.Regular, textLoader, _factory.CreateEmpty());
