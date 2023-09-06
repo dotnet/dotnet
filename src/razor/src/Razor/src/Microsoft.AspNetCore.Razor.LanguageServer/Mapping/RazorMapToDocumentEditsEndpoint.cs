@@ -6,14 +6,17 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
+using Microsoft.AspNetCore.Razor.LanguageServer.Common;
 using Microsoft.AspNetCore.Razor.LanguageServer.EndpointContracts;
 using Microsoft.AspNetCore.Razor.LanguageServer.Formatting;
 using Microsoft.AspNetCore.Razor.LanguageServer.Protocol;
+using Microsoft.CommonLanguageServerProtocol.Framework;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 
-namespace Microsoft.AspNetCore.Razor.LanguageServer;
+namespace Microsoft.AspNetCore.Razor.LanguageServer.Mapping;
 
-internal class RazorMapToDocumentEditsEndpoint : IRazorMapToDocumentEditsHandler
+[LanguageServerEndpoint(LanguageServerConstants.RazorMapToDocumentEditsEndpoint)]
+internal sealed class RazorMapToDocumentEditsEndpoint : IRazorRequestHandler<RazorMapToDocumentEditsParams, RazorMapToDocumentEditsResponse>
 {
     public bool MutatesSolutionState { get; } = false;
 

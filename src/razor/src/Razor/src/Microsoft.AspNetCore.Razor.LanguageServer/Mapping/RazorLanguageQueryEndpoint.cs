@@ -4,14 +4,17 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
+using Microsoft.AspNetCore.Razor.LanguageServer.Common;
 using Microsoft.AspNetCore.Razor.LanguageServer.EndpointContracts;
 using Microsoft.AspNetCore.Razor.LanguageServer.Protocol;
 using Microsoft.CodeAnalysis.Text;
+using Microsoft.CommonLanguageServerProtocol.Framework;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 
-namespace Microsoft.AspNetCore.Razor.LanguageServer;
+namespace Microsoft.AspNetCore.Razor.LanguageServer.Mapping;
 
-internal class RazorLanguageQueryEndpoint : IRazorLanguageQueryHandler
+[LanguageServerEndpoint(LanguageServerConstants.RazorLanguageQueryEndpoint)]
+internal sealed class RazorLanguageQueryEndpoint : IRazorRequestHandler<RazorLanguageQueryParams, RazorLanguageQueryResponse>
 {
     public bool MutatesSolutionState { get; } = false;
 
