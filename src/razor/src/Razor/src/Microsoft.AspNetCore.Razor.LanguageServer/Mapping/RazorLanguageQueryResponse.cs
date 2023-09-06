@@ -5,7 +5,7 @@ using System.Runtime.Serialization;
 using Microsoft.AspNetCore.Razor.LanguageServer.Protocol;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 
-namespace Microsoft.AspNetCore.Razor.LanguageServer;
+namespace Microsoft.AspNetCore.Razor.LanguageServer.Mapping;
 
 [DataContract]
 internal class RazorLanguageQueryResponse
