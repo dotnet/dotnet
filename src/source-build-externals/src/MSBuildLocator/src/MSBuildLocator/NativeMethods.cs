@@ -8,6 +8,8 @@ namespace Microsoft.Build.Locator
 {
     internal class NativeMethods
     {
+        internal const string HostFxrName = "hostfxr";
+
         internal enum hostfxr_resolve_sdk2_flags_t
         {
             disallow_prerelease = 0x1,
@@ -30,14 +32,14 @@ namespace Microsoft.Build.Locator
                 [MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 0)]
                 string[] value);
 
-        [DllImport("hostfxr", CharSet = CharSet.Auto, ExactSpelling = true, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(HostFxrName, CharSet = CharSet.Auto, ExactSpelling = true, CallingConvention = CallingConvention.Cdecl)]
         internal static extern int hostfxr_resolve_sdk2(
             string exe_dir,
             string working_dir,
             hostfxr_resolve_sdk2_flags_t flags,
             hostfxr_resolve_sdk2_result_fn result);
 
-        [DllImport("hostfxr", CharSet = CharSet.Auto, ExactSpelling = true, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(HostFxrName, CharSet = CharSet.Auto, ExactSpelling = true, CallingConvention = CallingConvention.Cdecl)]
         internal static extern int hostfxr_get_available_sdks(string exe_dir, hostfxr_get_available_sdks_result_fn result);
 
         [DllImport("libc", ExactSpelling = true, CallingConvention = CallingConvention.Cdecl)]
