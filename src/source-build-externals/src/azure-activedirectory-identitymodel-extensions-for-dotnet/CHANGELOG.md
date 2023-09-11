@@ -1,11 +1,15 @@
 See the [releases](https://github.com/AzureAD/azure-activedirectory-identitymodel-extensions-for-dotnet/releases) for details on bug fixes and added features.
 
+7.0.0
+======
+See [IdentityModel7x](https://github.com/AzureAD/azure-activedirectory-identitymodel-extensions-for-dotnet/wiki/IdentityModel-7x-breaking-changes) for the updates on this much anticipated release.
+
 7.0.0-preview5
 =======
 ### Bug fixes:
 - Improve log messages. See PR [#2289](https://github.com/AzureAD/azure-activedirectory-identitymodel-extensions-for-dotnet/pull/2289) for details.
 - In `AadIssuerValidator` return a `ValueTask<string>` instead of a `Task<string>`. See Issue [#2286](https://github.com/AzureAD/azure-activedirectory-identitymodel-extensions-for-dotnet/issues/2286) and PR [https://github.com/AzureAD/azure-activedirectory-identitymodel-extensions-for-dotnet/pull/2287] for details.
-- Deprecate `int? JwtPayload.Exp`, `.Iat`, and `.Nbf`. See issue [#2266](https://github.com/AzureAD/azure-activedirectory-identitymodel-extensions-for-dotnet/issues/2266) for details.
+- Deprecate `int? JwtPayload.Exp`, `.Iat`, and `.Nbf`. See issue [#2266](https://github.com/AzureAD/azure-activedirectory-identitymodel-extensions-for-dotnet/issues/2266) for details, [#92](https://github.com/AzureAD/azure-activedirectory-identitymodel-extensions-for-dotnet/issues/92), and [#1525](https://github.com/AzureAD/azure-activedirectory-identitymodel-extensions-for-dotnet/issues/1525).
 - General clean-up. See PR [#2285](https://github.com/AzureAD/azure-activedirectory-identitymodel-extensions-for-dotnet/pull/2285).
 
 7.0.0-preview4
@@ -74,6 +78,21 @@ Relevant PRs for supporting .NET 8:
 Remove net45, see [#2123](https://github.com/AzureAD/azure-activedirectory-identitymodel-extensions-for-dotnet/pull/2123)
 
 JwtSecurityTokenConverter, see [#2117](https://github.com/AzureAD/azure-activedirectory-identitymodel-extensions-for-dotnet/pull/2117)
+
+6.32.3
+=======
+## Bug fixes:
+- Fix logging messages. See [#2288](https://github.com/AzureAD/azure-activedirectory-identitymodel-extensions-for-dotnet/pull/2288) for details.
+  
+6.32.2
+=======
+## Bug fixes:
+- Underlying JsonDocument is never disposed, causing high latency in large scale services. See [#2258](https://github.com/AzureAD/azure-activedirectory-identitymodel-extensions-for-dotnet/pull/2258) for details.
+
+6.32.1
+=======
+## Bug fixes:
+- Fix thread safety for `JsonClaimSet` Claims and `JsonWebToken` Audiences. See [#2185](https://github.com/AzureAD/azure-activedirectory-identitymodel-extensions-for-dotnet/pull/2185) for details.
 
 6.32.0
 =======
