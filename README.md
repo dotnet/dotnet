@@ -29,6 +29,8 @@ See also [dotnet/source-build](https://github.com/dotnet/source-build) for more 
     - Enable developers to make and test changes spanning multiple repositories.
     - More efficient pipeline for security fixes during the CVE pre-disclosure process.
 
+We will achieve these goals while keeping active coding work in the separate repos where it happens today. For example: ASP.NET features will continue to be developed in `dotnet/aspnetcore` and CLR features will be continue to be developed in `dotnet/runtime`. Each of these repos have their own distinct communities and processes, and aggregating development into a true mono-repo would work against that. Hence, the "virtual" monolithic repo: the VMR gives us the simplicity of a mono-repo for building and servicing the product, while active development of components of that product stays in its various existing repos. The day to day experience for typical contributors will not change.
+
 ## Limitations
 
 **This is a work-in-progress.**
@@ -176,7 +178,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/fsharp`  
 *[dotnet/fsharp@f3f18c6](https://github.com/dotnet/fsharp/commit/f3f18c65e6f2bfb42d1f4fb154678fbf7265f4f0)*
 - `src/installer`  
-*[dotnet/installer@8bdf61a](https://github.com/dotnet/installer/commit/8bdf61a9a44596be3d6830ea6af7c843e10799cb)*
+*[dotnet/installer@17e03b1](https://github.com/dotnet/installer/commit/17e03b1271e474a5750d38620027bb152e06feea)*
 - `src/msbuild`  
 *[dotnet/msbuild@0cf89d3](https://github.com/dotnet/msbuild/commit/0cf89d3b27af71d0e065e4c69ee030cfe26b90c5)*
 - `src/nuget-client`  
