@@ -15,7 +15,7 @@
       <BuildCommandArgs>$(BuildCommandArgs) $(RedirectRepoOutputToLog)</BuildCommandArgs>
       <BuildCommandArgs>$(BuildCommandArgs) /p:DelaySign=$(DelaySign)</BuildCommandArgs>
       <BuildCommandArgs>$(BuildCommandArgs) /p:PublicSign=$(PublicSign)</BuildCommandArgs>
-      <BuildCommandArgs>$(BuildCommandArgs) /p:Version=1.5.5</BuildCommandArgs>
+      <BuildCommandArgs>$(BuildCommandArgs) /p:Version=1.6.1</BuildCommandArgs>
     </PropertyGroup>
 
     <Exec Command="$(DotnetToolCommand) restore /bl:restore.binlog $(BuildCommandArgs)"
@@ -23,12 +23,12 @@
           WorkingDirectory="$(ProjectDirectory)"
           IgnoreStandardErrorWarningFormat="true" />
 
-    <Exec Command="$(DotnetToolCommand) build /bl:build.binlog $(BuildCommandArgs)"
+    <Exec Command="$(DotnetToolCommand) build --no-restore /bl:build.binlog $(BuildCommandArgs)"
           EnvironmentVariables="@(EnvironmentVariables)"
           WorkingDirectory="$(ProjectDirectory)"
           IgnoreStandardErrorWarningFormat="true" />
 
-    <Exec Command="$(DotnetToolCommand) pack /bl:pack.binlog $(BuildCommandArgs)"
+    <Exec Command="$(DotnetToolCommand) pack --no-build /bl:pack.binlog $(BuildCommandArgs)"
           EnvironmentVariables="@(EnvironmentVariables)"
           WorkingDirectory="$(ProjectDirectory)"
           IgnoreStandardErrorWarningFormat="true" />
