@@ -38,12 +38,14 @@ namespace Microsoft.IdentityModel.JsonWebTokens
                         reader.Read();
                         if (reader.TokenType == JsonTokenType.StartArray)
                         {
-                            JsonSerializerPrimitives.ReadStrings(ref reader, _audiences, JwtRegisteredClaimNames.Aud, ClassName, false);
+                            JsonSerializerPrimitives.ReadStringsSkipNulls(ref reader, _audiences, JwtRegisteredClaimNames.Aud, ClassName);
                             claims[JwtRegisteredClaimNames.Aud] = _audiences;
                         }
                         else
                         {
-                            _audiences.Add(JsonSerializerPrimitives.ReadString(ref reader, JwtRegisteredClaimNames.Aud, ClassName, false));
+                            if (reader.TokenType != JsonTokenType.Null)
+                                _audiences.Add(JsonSerializerPrimitives.ReadString(ref reader, JwtRegisteredClaimNames.Aud, ClassName));
+
                             claims[JwtRegisteredClaimNames.Aud] = _audiences;
                         }
                     }

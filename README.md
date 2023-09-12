@@ -176,7 +176,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/fsharp`  
 *[dotnet/fsharp@14e0fd5](https://github.com/dotnet/fsharp/commit/14e0fd5687ff76b7a8a3b68276d610c48399be70)*
 - `src/installer`  
-*[dotnet/installer@08290c4](https://github.com/dotnet/installer/commit/08290c44e80912cdfb1902a69dcf486b73317fca)*
+*[dotnet/installer@a6b9030](https://github.com/dotnet/installer/commit/a6b903004774fb1b4e638f47c602fc968b43a8c0)*
 - `src/msbuild`  
 *[dotnet/msbuild@3c910ba](https://github.com/dotnet/msbuild/commit/3c910ba83fc9dbd8e12f50dddc8c381404f928c4)*
 - `src/nuget-client`  
@@ -194,11 +194,11 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/sdk`  
 *[dotnet/sdk@1ec35b7](https://github.com/dotnet/sdk/commit/1ec35b7c1ba24a8c7eefd9d6010b6c55ca8505d7)*
 - `src/source-build-externals`  
-*[dotnet/source-build-externals@69af500](https://github.com/dotnet/source-build-externals/commit/69af50008e3396606071c024379acc563258fd29)*
+*[dotnet/source-build-externals@f379c33](https://github.com/dotnet/source-build-externals/commit/f379c3367804237751f13311b5dddbfafc86be40)*
     - `src/source-build-externals/src/application-insights`  
     *[Microsoft/ApplicationInsights-dotnet@5e2e7dd](https://github.com/Microsoft/ApplicationInsights-dotnet/commit/5e2e7ddda961ec0e16a75b1ae0a37f6a13c777f5)*
     - `src/source-build-externals/src/azure-activedirectory-identitymodel-extensions-for-dotnet`  
-    *[AzureAD/azure-activedirectory-identitymodel-extensions-for-dotnet@4c14904](https://github.com/AzureAD/azure-activedirectory-identitymodel-extensions-for-dotnet/commit/4c14904c4c48c5f9d521254ef3b4532627f7bbec)*
+    *[AzureAD/azure-activedirectory-identitymodel-extensions-for-dotnet@bf4cb25](https://github.com/AzureAD/azure-activedirectory-identitymodel-extensions-for-dotnet/commit/bf4cb251a85f1b27bbb208c703f6f3105bdb24ca)*
     - `src/source-build-externals/src/cssparser`  
     *[dotnet/cssparser@0d59611](https://github.com/dotnet/cssparser/commit/0d59611784841735a7778a67aa6e9d8d000c861f)*
     - `src/source-build-externals/src/docker-creds-provider`  

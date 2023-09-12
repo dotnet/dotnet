@@ -3,7 +3,7 @@ name: .NET Core
 on:
   push:
     branches:
-      - dev7
+      - dev
   pull_request:
     types:
       - opened
@@ -11,7 +11,7 @@ on:
       - reopened
       - ready_for_review
     branches:
-      - dev7
+      - dev
 
 env:
   TargetNet8: True

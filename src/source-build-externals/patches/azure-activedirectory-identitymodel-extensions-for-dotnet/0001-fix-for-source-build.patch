@@ -1,6 +1,6 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Eric Erhardt <eric.erhardt@microsoft.com>
-Date: Wed, 6 Sep 2023 07:04:54 -0500
+Date: Mon, 11 Sep 2023 11:09:12 -0500
 Subject: [PATCH] fix for source build
 
 ---
@@ -80,7 +80,7 @@ index f020b59b..934aae74 100644
    </PropertyGroup>
  </Project>
 diff --git a/buildConfiguration.xml b/buildConfiguration.xml
-index 574d39f8..ab394035 100644
+index 8920a438..1cf387b1 100644
 --- a/buildConfiguration.xml
 +++ b/buildConfiguration.xml
 @@ -1,7 +1,7 @@
@@ -90,7 +90,7 @@ index 574d39f8..ab394035 100644
 -  <runtimes>net461,netstandard2.0</runtimes>
 +  <runtimes>netstandard2.0</runtimes>
    <assemblyVersion>7.0.0</assemblyVersion>
-   <nugetSuffix>preview5</nugetSuffix>
+   <nugetSuffix></nugetSuffix>
    <projects>
 diff --git a/src/Microsoft.IdentityModel.Abstractions/Microsoft.IdentityModel.Abstractions.csproj b/src/Microsoft.IdentityModel.Abstractions/Microsoft.IdentityModel.Abstractions.csproj
 index f7a11afe..4a87af91 100644

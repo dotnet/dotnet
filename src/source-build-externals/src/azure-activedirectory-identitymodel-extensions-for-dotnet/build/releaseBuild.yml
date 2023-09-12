@@ -166,8 +166,8 @@ jobs:
     continueOnError: true
 
 
-  #Sign Wilson 6x task group
-  - template: template-sign-wilson-6x.yaml
+  #Sign Wilson 7x task group
+  - template: template-sign-wilson-7x.yaml
 
   - task: PowerShell@2
     displayName: Pack

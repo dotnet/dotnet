@@ -5,7 +5,7 @@ jobs:
   benchmarks:
     source:
       repository: https://github.com/AzureAD/azure-activedirectory-identitymodel-extensions-for-dotnet
-      branchOrCommit: dev7
+      branchOrCommit: dev
       project: benchmark\Microsoft.IdentityModel.Benchmarks\Microsoft.IdentityModel.Benchmarks.csproj
     variables:
       filterArg: "*"
