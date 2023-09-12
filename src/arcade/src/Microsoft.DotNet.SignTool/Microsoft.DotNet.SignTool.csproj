@@ -28,8 +28,7 @@
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFrameworkIdentifier)' == '.NETFramework'">
-    <!-- TODO: Change version back to repo defined $(SystemReflectionMetadataVersion) when VS used is >= 17.6. -->
-    <PackageReference Include="System.Reflection.Metadata" Version="6.0.1" />
+    <PackageReference Include="System.Reflection.Metadata" Version="$(SystemReflectionMetadataVersion)" />
     <Reference Include="WindowsBase" />
   </ItemGroup>
 
