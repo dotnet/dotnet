@@ -1,4 +1,4 @@
-#template sign-wilson-6x
+#template sign-wilson-7x
 
 parameters:
   BuildConfiguration: 'release'
