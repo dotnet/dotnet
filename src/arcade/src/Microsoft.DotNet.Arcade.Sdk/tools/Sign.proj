@@ -71,6 +71,7 @@
         MSBuildPath="$(_DesktopMSBuildPath)"
         SNBinaryPath="$(NuGetPackageRoot)sn\$(SNVersion)\sn.exe"
         MicroBuildCorePath="$(NuGetPackageRoot)microbuild.core\$(MicroBuildCoreVersion)"
-        WixToolsPath="$(WixInstallPath)"/>
+        WixToolsPath="$(WixInstallPath)"
+        TarToolPath="$(NuGetPackageRoot)microsoft.dotnet.tar\$(MicrosoftDotNetSignToolVersion)\tools\net8.0\any\Microsoft.Dotnet.Tar.dll"/>
   </Target>
 </Project>
