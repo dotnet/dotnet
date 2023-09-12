@@ -58,34 +58,33 @@ namespace Microsoft.DotNet.SignTool
             }
             return isSigned;
         }
+
         internal static bool VerifySignedVSIXByFileMarker(string filePath)
         {
             return filePath.StartsWith("package/services/digital-signature/", StringComparison.OrdinalIgnoreCase);
         }
-        internal static bool IsSignedContainer(string fullPath)
+
+        internal static bool IsSignedContainer(string fullPath, string tempDir, string tarToolPath)
         {
             if (FileSignInfo.IsZipContainer(fullPath))
             {
                 bool signedContainer = false;
 
-                using (var archive = new ZipArchive(File.OpenRead(fullPath), ZipArchiveMode.Read))
+                foreach (var (relativePath, _, _) in ZipData.ReadEntries(fullPath, tempDir, tarToolPath, ignoreContent: false))
                 {
-                    foreach (ZipArchiveEntry entry in archive.Entries)
+                    if (FileSignInfo.IsNupkg(fullPath) && VerifySignedNupkgByFileMarker(relativePath))
                     {
-                        if (FileSignInfo.IsNupkg(fullPath) && VerifySignedNupkgByFileMarker(entry.FullName))
+                        if (!VerifySignedNupkgIntegrity(fullPath))
                         {
-                            if (!VerifySignedNupkgIntegrity(fullPath))
-                            {
-                                return false;
-                            }
-                            signedContainer = true;
-                            break;
+                            return false;
                         }
-                        else if (FileSignInfo.IsVsix(fullPath) && VerifySignedVSIXByFileMarker(entry.FullName))
-                        {
-                            signedContainer = true;
-                            break;
-                        }
+                        signedContainer = true;
+                        break;
+                    }
+                    else if (FileSignInfo.IsVsix(fullPath) && VerifySignedVSIXByFileMarker(relativePath))
+                    {
+                        signedContainer = true;
+                        break;
                     }
                 }
 
@@ -96,6 +95,7 @@ namespace Microsoft.DotNet.SignTool
             }
             return true;
         }
+
         internal static bool IsDigitallySigned(string fullPath)
         {
             X509Certificate2 certificate;

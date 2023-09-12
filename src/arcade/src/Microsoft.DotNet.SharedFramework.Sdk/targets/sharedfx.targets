@@ -194,7 +194,7 @@
                                      Files="@(_FilesForDepsFile)"
                                      IntermediateOutputPath="$(IntermediateOutputPath)"
                                      SharedFrameworkDepsNameOverride="$(SharedFrameworkHostFileNameOverride)"
-                                     RuntimeIdentifierGraph="$(BundledRuntimeIdentifierGraphFile)"
+                                     RuntimeIdentifierGraph="$([MSBuild]::ValueOrDefault('$(RuntimeIdentifierGraphPath)', '$(BundledRuntimeIdentifierGraphFile)'))"
                                      IncludeFallbacksInDepsFile="$(IncludeFallbacksInDepsFile)">
       <Output TaskParameter="GeneratedDepsFile" ItemName="_SharedFrameworkDepsFile" />
     </GenerateSharedFrameworkDepsFile>
