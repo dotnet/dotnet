@@ -145,13 +145,15 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{6DA9F58A-34D
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Microsoft.DotNet.XUnitAssert", "Microsoft.DotNet.XUnitAssert", "{3C542789-2576-48C8-9772-C9D7575F7E42}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.DotNet.XUnitAssert", "src\Microsoft.DotNet.XUnitAssert\src\Microsoft.DotNet.XUnitAssert.csproj", "{AB8D5F86-60FA-416A-B047-83B1E9118425}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.DotNet.XUnitAssert", "src\Microsoft.DotNet.XUnitAssert\src\Microsoft.DotNet.XUnitAssert.csproj", "{AB8D5F86-60FA-416A-B047-83B1E9118425}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.DotNet.XUnitAssert.Tests", "src\Microsoft.DotNet.XUnitAssert\tests\Microsoft.DotNet.XUnitAssert.Tests.csproj", "{14462553-E4E1-4F67-B954-4BF24B1DAAFE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.DotNet.XUnitAssert.Tests", "src\Microsoft.DotNet.XUnitAssert\tests\Microsoft.DotNet.XUnitAssert.Tests.csproj", "{14462553-E4E1-4F67-B954-4BF24B1DAAFE}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.DotNet.VersionTools.Cli", "src\Microsoft.DotNet.VersionTools\tools\Microsoft.DotNet.VersionTools.Cli\Microsoft.DotNet.VersionTools.Cli.csproj", "{2B5044A5-FD64-4071-913A-6AF0AC8FF25C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.DotNet.VersionTools.Cli.Tests", "src\Microsoft.DotNet.VersionTools\tools\Microsoft.DotNet.VersionTools.Cli.Tests\Microsoft.DotNet.VersionTools.Cli.Tests.csproj", "{650B7526-7B8A-45B5-B14E-C16D828891B2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.DotNet.VersionTools.Cli.Tests", "src\Microsoft.DotNet.VersionTools\tools\Microsoft.DotNet.VersionTools.Cli.Tests\Microsoft.DotNet.VersionTools.Cli.Tests.csproj", "{650B7526-7B8A-45B5-B14E-C16D828891B2}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.DotNet.Tar", "src\Microsoft.DotNet.Tar\Microsoft.DotNet.Tar.csproj", "{B7489F31-1C2D-4FD9-BB42-6F8EF1340BAC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -951,6 +953,18 @@ Global
 		{650B7526-7B8A-45B5-B14E-C16D828891B2}.Release|x64.Build.0 = Release|Any CPU
 		{650B7526-7B8A-45B5-B14E-C16D828891B2}.Release|x86.ActiveCfg = Release|Any CPU
 		{650B7526-7B8A-45B5-B14E-C16D828891B2}.Release|x86.Build.0 = Release|Any CPU
+		{B7489F31-1C2D-4FD9-BB42-6F8EF1340BAC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B7489F31-1C2D-4FD9-BB42-6F8EF1340BAC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B7489F31-1C2D-4FD9-BB42-6F8EF1340BAC}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{B7489F31-1C2D-4FD9-BB42-6F8EF1340BAC}.Debug|x64.Build.0 = Debug|Any CPU
+		{B7489F31-1C2D-4FD9-BB42-6F8EF1340BAC}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{B7489F31-1C2D-4FD9-BB42-6F8EF1340BAC}.Debug|x86.Build.0 = Debug|Any CPU
+		{B7489F31-1C2D-4FD9-BB42-6F8EF1340BAC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B7489F31-1C2D-4FD9-BB42-6F8EF1340BAC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B7489F31-1C2D-4FD9-BB42-6F8EF1340BAC}.Release|x64.ActiveCfg = Release|Any CPU
+		{B7489F31-1C2D-4FD9-BB42-6F8EF1340BAC}.Release|x64.Build.0 = Release|Any CPU
+		{B7489F31-1C2D-4FD9-BB42-6F8EF1340BAC}.Release|x86.ActiveCfg = Release|Any CPU
+		{B7489F31-1C2D-4FD9-BB42-6F8EF1340BAC}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
