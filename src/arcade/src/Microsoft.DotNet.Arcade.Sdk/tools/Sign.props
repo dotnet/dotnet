@@ -40,6 +40,7 @@
     <FileExtensionSignInfo Include=".nupkg" CertificateName="NuGet" />
     <FileExtensionSignInfo Include=".vsix" CertificateName="VsixSHA2" />
     <FileExtensionSignInfo Include=".zip" CertificateName="None" />
+    <FileExtensionSignInfo Include=".tgz" CertificateName="None" />
   </ItemGroup>
 
   <!-- The name of the .NET specific certificate, which is a general replacement for Microsoft400

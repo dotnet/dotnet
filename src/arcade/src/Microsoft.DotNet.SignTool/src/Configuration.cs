@@ -98,6 +98,8 @@ namespace Microsoft.DotNet.SignTool
 
         private Telemetry _telemetry;
 
+        private string _tarToolPath;
+
         public Configuration(
             string tempDir,
             ITaskItem[] itemsToSign,
@@ -105,6 +107,7 @@ namespace Microsoft.DotNet.SignTool
             Dictionary<ExplicitCertificateKey, string> fileSignInfo,
             Dictionary<string, List<SignInfo>> extensionSignInfo,
             ITaskItem[] dualCertificates,
+            string tarToolPath,
             TaskLoggingHelper log,
             bool useHashInExtractionPath = false,
             Telemetry telemetry = null)
@@ -132,6 +135,7 @@ namespace Microsoft.DotNet.SignTool
             _wixPacks = _itemsToSign.Where(w => WixPackInfo.IsWixPack(w.ItemSpec))?.Select(s => new WixPackInfo(s.ItemSpec)).ToList();
             _hashToCollisionIdMap = new Dictionary<SignedFileContentKey, string>();
             _telemetry = telemetry;
+            _tarToolPath = tarToolPath;
         }
 
         internal BatchSignInput GenerateListOfFiles()
@@ -390,9 +394,9 @@ namespace Microsoft.DotNet.SignTool
                 fileSpec = matchedNameTokenFramework ? $" (PublicKeyToken = {peInfo.PublicKeyToken}, Framework = {peInfo.TargetFramework})" :
                         matchedNameToken ? $" (PublicKeyToken = {peInfo.PublicKeyToken})" : string.Empty;
             }
-            else if (FileSignInfo.IsNupkg(file.FullPath) || FileSignInfo.IsVsix(file.FullPath))
+            else if (FileSignInfo.IsPackage(file.FullPath))
             {
-                isAlreadySigned = VerifySignatures.IsSignedContainer(file.FullPath);
+                isAlreadySigned = VerifySignatures.IsSignedContainer(file.FullPath, _pathToContainerUnpackingDirectory, _tarToolPath);
                 if(!isAlreadySigned)
                 {
                     _log.LogMessage(MessageImportance.Low, $"Container {file.FullPath} does not have a signature marker.");
@@ -669,71 +673,61 @@ namespace Microsoft.DotNet.SignTool
 
             try
             {
-                using (var archive = new ZipArchive(File.OpenRead(archivePath), ZipArchiveMode.Read))
+                var nestedParts = new Dictionary<string, ZipPart>();
+                
+                foreach (var (relativePath, contentStream, contentSize) in ZipData.ReadEntries(archivePath, _pathToContainerUnpackingDirectory, _tarToolPath))
                 {
-                    var nestedParts = new Dictionary<string, ZipPart>();
-
-
-                    foreach (ZipArchiveEntry entry in archive.Entries)
+                    if (contentStream == null)
                     {
-                        string relativePath = entry.FullName; // lgtm [cs/zipslip] Archive from trusted source
+                        continue;
+                    }
+                    
+                    using var entryMemoryStream = new MemoryStream((int)contentSize);
+                    contentStream.CopyTo(entryMemoryStream);
+                    entryMemoryStream.Position = 0;
+                    ImmutableArray<byte> contentHash = ContentUtil.GetContentHash(entryMemoryStream);
 
-                        // `entry` might be just a pointer to a folder. We skip those.
-                        if (relativePath.EndsWith("/") && entry.Name == "")
-                        {
-                            continue;
-                        }
+                    var fileUniqueKey = new SignedFileContentKey(contentHash, Path.GetFileName(relativePath));
 
-                        using (var entryStream = entry.Open())
-                        using (MemoryStream entryMemoryStream = new MemoryStream((int)entry.Length))
-                        {
-                            entryStream.CopyTo(entryMemoryStream);
-                            entryMemoryStream.Position = 0;
-                            ImmutableArray<byte> contentHash = ContentUtil.GetContentHash(entryMemoryStream);
-
-                            var fileUniqueKey = new SignedFileContentKey(contentHash, Path.GetFileName(relativePath));
-
-                            if (!_whichPackagesTheFileIsIn.TryGetValue(fileUniqueKey, out var packages))
-                            {
-                                packages = new HashSet<string>();
-                            }
-
-                            packages.Add(Path.GetFileName(archivePath));
-
-                            _whichPackagesTheFileIsIn[fileUniqueKey] = packages;
-
-                            // if we already encountered file that has the same content we can reuse its signed version when repackaging the container.
-                            var fileName = Path.GetFileName(relativePath);
-                            if (!_filesByContentKey.TryGetValue(fileUniqueKey, out var fileSignInfo))
-                            {
-                                string extractPathRoot = _useHashInExtractionPath ? fileUniqueKey.StringHash : _filesByContentKey.Count().ToString();
-                                string tempPath = Path.Combine(_pathToContainerUnpackingDirectory, extractPathRoot, relativePath);
-                                _log.LogMessage($"Extracting file '{fileName}' from '{archivePath}' to '{tempPath}'.");
-
-                                Directory.CreateDirectory(Path.GetDirectoryName(tempPath));
-
-                                entryMemoryStream.Position = 0;
-                                using (var tempFileStream = File.OpenWrite(tempPath))
-                                {
-                                    entryMemoryStream.CopyTo(tempFileStream);
-                                }
-
-                                _hashToCollisionIdMap.TryGetValue(fileUniqueKey, out string collisionPriorityId);
-                                PathWithHash nestedFile = new PathWithHash(tempPath, contentHash);
-                                fileSignInfo = TrackFile(nestedFile, zipFileSignInfo.File, collisionPriorityId);
-                            }
-
-                            if (fileSignInfo.ShouldTrack)
-                            {
-                                nestedParts.Add(relativePath, new ZipPart(relativePath, fileSignInfo));
-                            }
-                        }
+                    if (!_whichPackagesTheFileIsIn.TryGetValue(fileUniqueKey, out var packages))
+                    {
+                        packages = new HashSet<string>();
                     }
 
-                    zipData = new ZipData(zipFileSignInfo, nestedParts.ToImmutableDictionary());
+                    packages.Add(Path.GetFileName(archivePath));
 
-                    return true;
+                    _whichPackagesTheFileIsIn[fileUniqueKey] = packages;
+
+                    // if we already encountered file that has the same content we can reuse its signed version when repackaging the container.
+                    var fileName = Path.GetFileName(relativePath);
+                    if (!_filesByContentKey.TryGetValue(fileUniqueKey, out var fileSignInfo))
+                    {
+                        string extractPathRoot = _useHashInExtractionPath ? fileUniqueKey.StringHash : _filesByContentKey.Count().ToString();
+                        string tempPath = Path.Combine(_pathToContainerUnpackingDirectory, extractPathRoot, relativePath);
+                        _log.LogMessage($"Extracting file '{fileName}' from '{archivePath}' to '{tempPath}'.");
+
+                        Directory.CreateDirectory(Path.GetDirectoryName(tempPath));
+
+                        entryMemoryStream.Position = 0;
+                        using (var tempFileStream = File.OpenWrite(tempPath))
+                        {
+                            entryMemoryStream.CopyTo(tempFileStream);
+                        }
+
+                        _hashToCollisionIdMap.TryGetValue(fileUniqueKey, out string collisionPriorityId);
+                        PathWithHash nestedFile = new PathWithHash(tempPath, contentHash);
+                        fileSignInfo = TrackFile(nestedFile, zipFileSignInfo.File, collisionPriorityId);
+                    }
+
+                    if (fileSignInfo.ShouldTrack)
+                    {
+                        nestedParts.Add(relativePath, new ZipPart(relativePath, fileSignInfo));
+                    }
                 }
+
+                zipData = new ZipData(zipFileSignInfo, nestedParts.ToImmutableDictionary());
+
+                return true;
             }
             catch (Exception e)
             {
