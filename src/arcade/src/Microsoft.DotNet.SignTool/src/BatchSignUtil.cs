@@ -273,12 +273,12 @@ namespace Microsoft.DotNet.SignTool
                 if (file.IsZipContainer())
                 {
                     _log.LogMessage($"Repacking container: '{file.FileName}'");
-                    _batchData.ZipDataMap[file.FileContentKey].Repack(_log);
+                    _batchData.ZipDataMap[file.FileContentKey].Repack(_log, _signTool.TempDir, _signTool.WixToolsPath, _signTool.TarToolPath);
                 }
                 else if (file.IsWixContainer())
                 {
                     _log.LogMessage($"Packing wix container: '{file.FileName}'");
-                    _batchData.ZipDataMap[file.FileContentKey].Repack(_log, _signTool.TempDir, _signTool.WixToolsPath);
+                    _batchData.ZipDataMap[file.FileContentKey].Repack(_log, _signTool.TempDir, _signTool.WixToolsPath, _signTool.TarToolPath);
                 }
                 else
                 {
@@ -557,32 +557,27 @@ namespace Microsoft.DotNet.SignTool
                 var zipData = _batchData.ZipDataMap[file.FileContentKey];
                 bool signedContainer = false;
 
-                using (var archive = new ZipArchive(File.OpenRead(file.FullPath), ZipArchiveMode.Read))
+                foreach (var (relativeName, _, _) in ZipData.ReadEntries(file.FullPath, _signTool.TempDir, _signTool.TarToolPath, ignoreContent: true))
                 {
-                    foreach (ZipArchiveEntry entry in archive.Entries)
+                    if (!SkipZipContainerSignatureMarkerCheck)
                     {
-                        string relativeName = entry.FullName;
-
-                        if (!SkipZipContainerSignatureMarkerCheck)
+                        if (file.IsNupkg() && _signTool.VerifySignedNugetFileMarker(relativeName))
                         {
-                            if (file.IsNupkg() && _signTool.VerifySignedNugetFileMarker(relativeName))
-                            {
-                                signedContainer = true;
-                            }
-                            else if (file.IsVsix() && _signTool.VerifySignedVSIXFileMarker(relativeName))
-                            {
-                                signedContainer = true;
-                            }
+                            signedContainer = true;
                         }
-
-                        var zipPart = zipData.FindNestedPart(relativeName);
-                        if (!zipPart.HasValue)
+                        else if (file.IsVsix() && _signTool.VerifySignedVSIXFileMarker(relativeName))
                         {
-                            continue;
+                            signedContainer = true;
                         }
-
-                        VerifyAfterSign(zipPart.Value.FileSignInfo);
                     }
+
+                    var zipPart = zipData.FindNestedPart(relativeName);
+                    if (!zipPart.HasValue)
+                    {
+                        continue;
+                    }
+
+                    VerifyAfterSign(zipPart.Value.FileSignInfo);
                 }
 
                 if (!SkipZipContainerSignatureMarkerCheck)
