@@ -3,6 +3,7 @@
 
 using System.Collections.Generic;
 using System.Security.Claims;
+using Microsoft.IdentityModel.Abstractions;
 using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.Logging;
 using Microsoft.IdentityModel.Tokens;
@@ -39,15 +40,15 @@ namespace System.IdentityModel.Tokens.Jwt
             if (tokenParts.Length == JwtConstants.JwsSegmentCount)
             {
                 if (!JwtTokenUtilities.RegexJws.IsMatch(jwtEncodedString))
-                    throw LogHelper.LogExceptionMessage(new SecurityTokenMalformedException(LogHelper.FormatInvariant(LogMessages.IDX12739, jwtEncodedString)));
+                    throw LogHelper.LogExceptionMessage(new SecurityTokenMalformedException(LogMessages.IDX12739));
             }
             else if (tokenParts.Length == JwtConstants.JweSegmentCount)
             {
                 if (!JwtTokenUtilities.RegexJwe.IsMatch(jwtEncodedString))
-                    throw LogHelper.LogExceptionMessage(new SecurityTokenMalformedException(LogHelper.FormatInvariant(LogMessages.IDX12740, jwtEncodedString)));
+                    throw LogHelper.LogExceptionMessage(new SecurityTokenMalformedException(LogMessages.IDX12740));
             }
             else
-                throw LogHelper.LogExceptionMessage(new SecurityTokenMalformedException(LogHelper.FormatInvariant(LogMessages.IDX12741, jwtEncodedString)));
+                throw LogHelper.LogExceptionMessage(new SecurityTokenMalformedException(LogMessages.IDX12741));
 
             Decode(tokenParts, jwtEncodedString);
         }
@@ -196,7 +197,7 @@ namespace System.IdentityModel.Tokens.Jwt
             {
                 if (Payload != null)
                     return Payload.Actort;
-                return String.Empty;
+                return string.Empty;
             }
         }
 
@@ -206,7 +207,8 @@ namespace System.IdentityModel.Tokens.Jwt
         /// <remarks>If the 'audience' claim is not found, enumeration will be empty.</remarks>
         public IEnumerable<string> Audiences
         {
-            get {
+            get
+            {
                 if (Payload != null)
                     return Payload.Aud;
                 return new List<string>();
@@ -221,7 +223,8 @@ namespace System.IdentityModel.Tokens.Jwt
         /// <remarks><para><see cref="Claim"/>(s) returned will NOT have the <see cref="Claim.Type"/> translated according to <see cref="JwtSecurityTokenHandler.InboundClaimTypeMap"/></para></remarks>
         public IEnumerable<Claim> Claims
         {
-            get {
+            get
+            {
                 if (Payload != null)
                     return Payload.Claims;
                 return new List<Claim>();
@@ -245,7 +248,7 @@ namespace System.IdentityModel.Tokens.Jwt
             {
                 if (Payload != null)
                     return Payload.Base64UrlEncode();
-                return String.Empty;
+                return string.Empty;
             }
         }
 
@@ -264,7 +267,7 @@ namespace System.IdentityModel.Tokens.Jwt
             {
                 if (Payload != null)
                     return Payload.Jti;
-                return String.Empty;
+                return string.Empty;
 
             }
         }
@@ -279,7 +282,7 @@ namespace System.IdentityModel.Tokens.Jwt
             {
                 if (Payload != null)
                     return Payload.Iss;
-                return String.Empty;
+                return string.Empty;
             }
         }
 
@@ -412,7 +415,7 @@ namespace System.IdentityModel.Tokens.Jwt
             {
                 if (Payload != null)
                     return Payload.Sub;
-                return String.Empty;
+                return string.Empty;
             }
         }
 
@@ -486,40 +489,41 @@ namespace System.IdentityModel.Tokens.Jwt
             }
             catch (Exception ex)
             {
-                throw LogHelper.LogExceptionMessage(new ArgumentException(LogHelper.FormatInvariant(LogMessages.IDX12729, tokenParts[0], rawData), ex));
+                throw LogHelper.LogExceptionMessage(new ArgumentException(LogHelper.FormatInvariant(LogMessages.IDX12729, tokenParts[0]), ex));
             }
 
             if (tokenParts.Length == JwtConstants.JweSegmentCount)
                 DecodeJwe(tokenParts);
             else
-                DecodeJws(tokenParts);
+            {
+                DecodeJws(tokenParts[1]);
+                RawHeader = tokenParts[0];
+                RawPayload = tokenParts[1];
+                RawSignature = tokenParts[2];
+            }
 
             RawData = rawData;
         }
 
         /// <summary>
-        /// Decodes the payload and signature from the JWS parts.
+        /// Decodes the base64url encoded payload.
         /// </summary>
-        /// <param name="tokenParts">Parts of the JWS including the header.</param>
-        /// <remarks>Assumes Header has already been set.</remarks>
-        private void DecodeJws(string[] tokenParts)
+        /// <param name="payload">the encoded payload.</param>
+        private void DecodeJws(string payload)
         {
             // Log if CTY is set, assume compact JWS
-            if (Header.Cty != null)
+            if (Header.Cty != null && LogHelper.IsEnabled(EventLogLevel.Verbose))
                 LogHelper.LogVerbose(LogHelper.FormatInvariant(LogMessages.IDX12738, Header.Cty));
 
             try
             {
-                Payload = JwtPayload.Base64UrlDeserialize(tokenParts[1]);
+                Payload = Base64UrlEncoding.Decode(payload, 0, payload.Length, JwtPayload.CreatePayload);
             }
             catch (Exception ex)
             {
-                throw LogHelper.LogExceptionMessage(new ArgumentException(LogHelper.FormatInvariant(LogMessages.IDX12723, tokenParts[1], RawData), ex));
+                throw LogHelper.LogExceptionMessage(new ArgumentException(LogHelper.FormatInvariant(LogMessages.IDX12723, payload), ex));
             }
 
-            RawHeader = tokenParts[0];
-            RawPayload = tokenParts[1];
-            RawSignature = tokenParts[2];
         }
 
         /// <summary>

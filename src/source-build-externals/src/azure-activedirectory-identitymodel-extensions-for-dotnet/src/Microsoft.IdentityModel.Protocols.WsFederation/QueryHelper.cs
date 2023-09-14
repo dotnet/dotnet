@@ -34,7 +34,7 @@ namespace Microsoft.IdentityModel.Protocols.WsFederation
         /// </summary>
         /// <param name="queryString">The raw query string value, with or without the leading '?'.</param>
         /// <returns>A collection of parsed keys and values, null if there are no entries.</returns>
-        public static IDictionary<string, IList<string>> ParseNullableQuery(string queryString)
+        public static IDictionary<string, IList<string>>? ParseNullableQuery(string queryString)
         {
             var accumulator = new KeyValueAccumulator();
 

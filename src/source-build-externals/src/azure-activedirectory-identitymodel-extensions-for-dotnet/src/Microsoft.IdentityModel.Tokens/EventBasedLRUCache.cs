@@ -8,6 +8,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.IdentityModel.Abstractions;
 using Microsoft.IdentityModel.Logging;
 
 namespace Microsoft.IdentityModel.Tokens
@@ -227,7 +228,8 @@ namespace Microsoft.IdentityModel.Tokens
                 }
                 catch (Exception ex)
                 {
-                    LogHelper.LogWarning(LogHelper.FormatInvariant(LogMessages.IDX10900, ex));
+                    if (LogHelper.IsEnabled(EventLogLevel.Warning))
+                        LogHelper.LogWarning(LogHelper.FormatInvariant(LogMessages.IDX10900, ex));
                 }
             }
 
@@ -261,7 +263,8 @@ namespace Microsoft.IdentityModel.Tokens
             }
             catch (ObjectDisposedException ex)
             {
-                LogHelper.LogWarning(LogHelper.FormatInvariant(LogMessages.IDX10902, LogHelper.MarkAsNonPII(nameof(RemoveExpiredValuesLRU)), ex));
+                if (LogHelper.IsEnabled(EventLogLevel.Warning))
+                    LogHelper.LogWarning(LogHelper.FormatInvariant(LogMessages.IDX10902, LogHelper.MarkAsNonPII(nameof(RemoveExpiredValuesLRU)), ex));
             }
 
             return numItemsRemoved;
@@ -290,7 +293,8 @@ namespace Microsoft.IdentityModel.Tokens
             }
             catch (ObjectDisposedException ex)
             {
-                LogHelper.LogWarning(LogHelper.FormatInvariant(LogMessages.IDX10902, LogHelper.MarkAsNonPII(nameof(RemoveExpiredValues)), ex));
+                if (LogHelper.IsEnabled(EventLogLevel.Warning))
+                    LogHelper.LogWarning(LogHelper.FormatInvariant(LogMessages.IDX10902, LogHelper.MarkAsNonPII(nameof(RemoveExpiredValues)), ex));
             }
 
             return numItemsRemoved;
@@ -390,10 +394,12 @@ namespace Microsoft.IdentityModel.Tokens
                 cacheItem.ExpirationTime = expirationTime;
                 if (_maintainLRU)
                 {
+                    var localCacheItem = cacheItem; // avoid closure when !_maintainLRU
+                    var localThis = this;
                     AddActionToEventQueue(() =>
                     {
-                        _doubleLinkedList.Remove(cacheItem);
-                        _doubleLinkedList.AddFirst(cacheItem);
+                        localThis._doubleLinkedList.Remove(localCacheItem);
+                        localThis._doubleLinkedList.AddFirst(localCacheItem);
                     });
                 }
             }
@@ -416,11 +422,13 @@ namespace Microsoft.IdentityModel.Tokens
                 // add the new node to the _doubleLinkedList if _maintainLRU == true
                 if (_maintainLRU)
                 {
+                    var localNewCacheItem = newCacheItem; // avoid closure when !_maintainLRU
+                    var localThis = this;
                     AddActionToEventQueue(() =>
                     {
                         // Add a remove operation in case two threads are trying to add the same value. Only the second remove will succeed in this case.
-                        _doubleLinkedList.Remove(newCacheItem);
-                        _doubleLinkedList.AddFirst(newCacheItem);
+                        localThis._doubleLinkedList.Remove(localNewCacheItem);
+                        localThis._doubleLinkedList.AddFirst(localNewCacheItem);
                     });
                 }
 
@@ -492,10 +500,12 @@ namespace Microsoft.IdentityModel.Tokens
             // make sure node hasn't been removed by a different thread
             if (_maintainLRU)
             {
+                var localCacheItem = cacheItem; // avoid closure on fast path or when !_maintainLRU
+                var localThis = this;
                 AddActionToEventQueue(() =>
                 {
-                    _doubleLinkedList.Remove(cacheItem);
-                    _doubleLinkedList.AddFirst(cacheItem);
+                    localThis._doubleLinkedList.Remove(localCacheItem);
+                    localThis._doubleLinkedList.AddFirst(localCacheItem);
                 });
             }
 
@@ -516,7 +526,11 @@ namespace Microsoft.IdentityModel.Tokens
             }
 
             if (_maintainLRU)
-                AddActionToEventQueue(() => _doubleLinkedList.Remove(cacheItem));
+            {
+                var localCacheItem = cacheItem; // avoid closure on fast path or when !_maintainLRU
+                var localThis = this;
+                AddActionToEventQueue(() => localThis._doubleLinkedList.Remove(localCacheItem));
+            }
 
             value = cacheItem.Value;
             OnItemRemoved?.Invoke(cacheItem.Value);

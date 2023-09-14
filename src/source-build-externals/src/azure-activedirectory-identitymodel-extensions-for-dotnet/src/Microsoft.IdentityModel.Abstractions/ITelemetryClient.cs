@@ -68,11 +68,11 @@ namespace Microsoft.IdentityModel.Abstractions
         /// <param name="guidProperties">Key value pair of Guids to long with the event.</param>
         void TrackEvent(
             string eventName,
-            IDictionary<string, string> stringProperties = null,
-            IDictionary<string, long> longProperties = null,
-            IDictionary<string, bool> boolProperties = null,
-            IDictionary<string, DateTime> dateTimeProperties = null,
-            IDictionary<string, double> doubleProperties = null,
-            IDictionary<string, Guid> guidProperties = null);
+            IDictionary<string, string>? stringProperties = null,
+            IDictionary<string, long>? longProperties = null,
+            IDictionary<string, bool>? boolProperties = null,
+            IDictionary<string, DateTime>? dateTimeProperties = null,
+            IDictionary<string, double>? doubleProperties = null,
+            IDictionary<string, Guid>? guidProperties = null);
     }
 }

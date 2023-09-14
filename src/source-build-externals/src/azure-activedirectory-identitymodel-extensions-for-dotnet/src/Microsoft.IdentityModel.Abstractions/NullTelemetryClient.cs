@@ -25,7 +25,9 @@ namespace Microsoft.IdentityModel.Abstractions
         /// <remarks>
         /// Private constructor to prevent the default constructor being exposed.
         /// </remarks>
+#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
         private NullTelemetryClient() { }
+#pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
 
         /// <inheritdoc />
         public bool IsEnabled() => false;
@@ -48,12 +50,12 @@ namespace Microsoft.IdentityModel.Abstractions
         /// <inheritdoc/>
         public void TrackEvent(
             string eventName,
-            IDictionary<string, string> stringProperties = null,
-            IDictionary<string, long> longProperties = null,
-            IDictionary<string, bool> boolProperties = null,
-            IDictionary<string, DateTime> dateTimeProperties = null,
-            IDictionary<string, double> doubleProperties = null,
-            IDictionary<string, Guid> guidProperties = null)
+            IDictionary<string, string>? stringProperties = null,
+            IDictionary<string, long>? longProperties = null,
+            IDictionary<string, bool>? boolProperties = null,
+            IDictionary<string, DateTime>? dateTimeProperties = null,
+            IDictionary<string, double>? doubleProperties = null,
+            IDictionary<string, Guid>? guidProperties = null)
         {
             // no-op
         }

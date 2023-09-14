@@ -5,6 +5,7 @@ pool:
 variables:
   BuildConfiguration: 'Release'
   BuildPlatform: ''
+  Codeql.Enabled: true
 
 steps:
 - task: MicroBuildSigningPlugin@1

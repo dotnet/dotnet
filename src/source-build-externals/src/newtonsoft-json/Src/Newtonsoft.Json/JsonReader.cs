@@ -228,7 +228,7 @@ namespace Newtonsoft.Json
         /// <summary>
         /// Gets or sets the maximum depth allowed when reading JSON. Reading past this depth will throw a <see cref="JsonReaderException"/>.
         /// A null value means there is no maximum. 
-        /// The default value is <c>128</c>.
+        /// The default value is <c>64</c>.
         /// </summary>
         public int? MaxDepth
         {
@@ -496,7 +496,7 @@ namespace Newtonsoft.Json
                     }
                     else
                     {
-                        s = v is Uri uri ? uri.OriginalString : v.ToString();
+                        s = v is Uri uri ? uri.OriginalString : v.ToString()!;
                     }
 
                     SetToken(JsonToken.String, s, false);
@@ -940,7 +940,7 @@ namespace Newtonsoft.Json
             if (Value != null && Value.ToString() == JsonTypeReflector.TypePropertyName)
             {
                 ReaderReadAndAssert();
-                if (Value != null && Value.ToString().StartsWith("System.Byte[]", StringComparison.Ordinal))
+                if (Value != null && Value.ToString()!.StartsWith("System.Byte[]", StringComparison.Ordinal))
                 {
                     ReaderReadAndAssert();
                     if (Value.ToString() == JsonTypeReflector.ValuePropertyName)

@@ -443,19 +443,19 @@ namespace Microsoft.IdentityModel.Protocols.OpenIdConnect.Tests
             configWithSameKidDiffKeyMaterial.SigningKeys.Add(new SymmetricSecurityKey(KeyingMaterial.DefaultSymmetricSecurityKey_128.Key) { KeyId = KeyingMaterial.DefaultSymmetricSecurityKey_256.KeyId });
 
             var configurationManager = new MockConfigurationManager<OpenIdConnectConfiguration>(config, config);
-            IdentityComparer.AreEqual(configurationManager.GetValidLkgConfigurations().Count, 1, context);
+            IdentityComparer.AreEqual(configurationManager.GetValidLkgConfigurations().Length, 1, context);
 
             configurationManager.LastKnownGoodConfiguration = configWithSameKeysDiffOrder;
-            IdentityComparer.AreEqual(configurationManager.GetValidLkgConfigurations().Count, 1, context);
+            IdentityComparer.AreEqual(configurationManager.GetValidLkgConfigurations().Length, 1, context);
 
             configurationManager.LastKnownGoodConfiguration = configWithOverlappingKey;
-            IdentityComparer.AreEqual(configurationManager.GetValidLkgConfigurations().Count, 2, context);
+            IdentityComparer.AreEqual(configurationManager.GetValidLkgConfigurations().Length, 2, context);
 
             configurationManager.LastKnownGoodConfiguration = configWithOverlappingKeyDiffissuer;
-            IdentityComparer.AreEqual(configurationManager.GetValidLkgConfigurations().Count, 3, context);
+            IdentityComparer.AreEqual(configurationManager.GetValidLkgConfigurations().Length, 3, context);
 
             configurationManager.LastKnownGoodConfiguration = configWithSameKidDiffKeyMaterial;
-            IdentityComparer.AreEqual(configurationManager.GetValidLkgConfigurations().Count, 4, context);
+            IdentityComparer.AreEqual(configurationManager.GetValidLkgConfigurations().Length, 4, context);
 
             TestUtilities.AssertFailIfErrors(context);
         }

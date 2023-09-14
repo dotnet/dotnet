@@ -185,9 +185,9 @@
       <Sha>850f61abed37b617a41fd59b63a37c284af6801d</Sha>
       <SourceBuild RepoName="deployment-tools" ManagedOnly="true" />
     </Dependency>
-    <Dependency Name="Microsoft.SourceBuild.Intermediate.source-build-externals" Version="8.0.0-alpha.1.23414.2">
+    <Dependency Name="Microsoft.SourceBuild.Intermediate.source-build-externals" Version="9.0.0-alpha.1.23462.2">
       <Uri>https://github.com/dotnet/source-build-externals</Uri>
-      <Sha>72f5ac04ce80508c7a7d7aaba4ecf7df51c5eca2</Sha>
+      <Sha>8bfc83caa5ac779edbfe8c23544b5cae8044402a</Sha>
       <SourceBuild RepoName="source-build-externals" ManagedOnly="true" />
     </Dependency>
     <Dependency Name="Microsoft.SourceBuild.Intermediate.symreader" Version="2.1.0-beta.23253.1">

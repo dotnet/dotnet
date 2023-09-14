@@ -3,7 +3,7 @@
 
 using System;
 using Microsoft.IdentityModel.Logging;
-using Microsoft.IdentityModel.Json;
+using System.Text.Json.Serialization;
 
 namespace Microsoft.IdentityModel.Tokens
 {
@@ -13,13 +13,13 @@ namespace Microsoft.IdentityModel.Tokens
     public abstract class SecurityKey
     {
         private CryptoProviderFactory _cryptoProviderFactory;
-        private Lazy<string> _internalId;
+        private object _internalIdLock = new object();
+        private string _internalId;
 
         internal SecurityKey(SecurityKey key)
         {
             _cryptoProviderFactory = key._cryptoProviderFactory;
             KeyId = key.KeyId;
-            SetInternalId();
         }
 
         /// <summary>
@@ -28,11 +28,30 @@ namespace Microsoft.IdentityModel.Tokens
         public SecurityKey()
         {
             _cryptoProviderFactory = CryptoProviderFactory.Default;
-            SetInternalId();
         }
 
         [JsonIgnore]
-        internal virtual string InternalId { get => _internalId.Value; }
+        internal virtual string InternalId
+        {
+            get
+            {
+                if (_internalId == null)
+                {
+                    lock (_internalIdLock)
+                    {
+                        if (_internalId == null)
+                        {
+                            if (CanComputeJwkThumbprint())
+                                _internalId = Base64UrlEncoder.Encode(ComputeJwkThumbprint());
+                            else
+                                _internalId = string.Empty;
+                        }
+                    }
+                }
+
+                return _internalId;
+            }
+        }
 
         /// <summary>
         /// This must be overridden to get the size of this <see cref="SecurityKey"/>.
@@ -99,20 +118,6 @@ namespace Microsoft.IdentityModel.Tokens
         {
             // do not throw if algorithm is null or empty to stay in sync with CryptoProviderFactory.IsSupportedAlgorithm.
             return CryptoProviderFactory.IsSupportedAlgorithm(algorithm, this);
-        }
-
-        /// <summary>
-        /// Sets the <see cref="InternalId"/> to value of <see cref="SecurityKey"/>'s JWK thumbprint if it can be computed, otherwise sets the <see cref="InternalId"/> to <see cref="string.Empty"/>.
-        /// </summary>
-        private void SetInternalId()
-        {
-            _internalId = new Lazy<string>(() =>
-            {
-                if (CanComputeJwkThumbprint())
-                    return Base64UrlEncoder.Encode(ComputeJwkThumbprint());
-                else
-                    return string.Empty;
-            });
         }
     }
 }

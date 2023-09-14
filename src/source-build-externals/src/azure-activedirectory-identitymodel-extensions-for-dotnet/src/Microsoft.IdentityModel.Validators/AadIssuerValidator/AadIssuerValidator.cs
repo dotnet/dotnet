@@ -24,7 +24,7 @@ namespace Microsoft.IdentityModel.Validators
         private static readonly TimeSpan LastKnownGoodConfigurationLifetime = new TimeSpan(0, 24, 0, 0);
 
         internal const string V2EndpointSuffix = "/v2.0";
-        internal const string TenantidTemplate = "{tenantid}";
+        internal const string TenantIdTemplate = "{tenantid}";
 
         internal AadIssuerValidator(
             HttpClient httpClient,
@@ -124,7 +124,10 @@ namespace Microsoft.IdentityModel.Validators
             SecurityToken securityToken,
             TokenValidationParameters validationParameters)
         {
-            return ValidateAsync(issuer, securityToken, validationParameters).GetAwaiter().GetResult();
+            ValueTask<string> vt = ValidateAsync(issuer, securityToken, validationParameters);
+            return vt.IsCompletedSuccessfully ?
+                vt.Result :
+                vt.AsTask().GetAwaiter().GetResult();
         }
 
         /// <summary>
@@ -145,7 +148,7 @@ namespace Microsoft.IdentityModel.Validators
         /// <exception cref="ArgumentNullException"> if <paramref name="securityToken"/> is null.</exception>
         /// <exception cref="ArgumentNullException"> if <paramref name="validationParameters"/> is null.</exception>
         /// <exception cref="SecurityTokenInvalidIssuerException">if the issuer is invalid or if there is a network issue. </exception>
-        internal async Task<string> ValidateAsync(
+        internal async ValueTask<string> ValidateAsync(
             string issuer,
             SecurityToken securityToken,
             TokenValidationParameters validationParameters)
@@ -292,9 +295,9 @@ namespace Microsoft.IdentityModel.Validators
             if (string.IsNullOrEmpty(validIssuerTemplate))
                 return false;
 
-            if (validIssuerTemplate.Contains(TenantidTemplate))
+            if (validIssuerTemplate.Contains(TenantIdTemplate))
             {
-                return validIssuerTemplate.Replace(TenantidTemplate, tenantId) == actualIssuer;
+                return validIssuerTemplate.Replace(TenantIdTemplate, tenantId) == actualIssuer;
             }
             else
             {
@@ -311,7 +314,7 @@ namespace Microsoft.IdentityModel.Validators
         /// <param name="securityToken">A JWT token.</param>
         /// <returns>A string containing the tenant ID, if found or <see cref="string.Empty"/>.</returns>
         /// <remarks>Only <see cref="JwtSecurityToken"/> and <see cref="JsonWebToken"/> are acceptable types.</remarks>
-        private static string GetTenantIdFromToken(SecurityToken securityToken)
+        internal static string GetTenantIdFromToken(SecurityToken securityToken)
         {
             if (securityToken is JwtSecurityToken jwtSecurityToken)
             {

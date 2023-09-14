@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -15,6 +16,9 @@ using System.Runtime.Loader;
 
 namespace Microsoft.Build.Locator
 {
+    /// <summary>
+    /// Allows enumerating installed MSBuild instances and preparing MSBuild APIs for use. See <see href="/visualstudio/msbuild/find-and-use-msbuild-versions">Find and use a version of MSBuild</see>.
+    /// </summary>
     public static class MSBuildLocator
     {
         private const string MSBuildPublicKeyToken = "b03f5f7f11d50a3a";
@@ -280,33 +284,18 @@ namespace Microsoft.Build.Locator
         }
 
         /// <summary>
-        ///     Remove assembly resolution previously registered via <see cref="RegisterInstance" />, <see cref="RegisterMSBuildPath" />, or <see cref="RegisterDefaults" />.
+        ///     This has no effect and exists only for backwards compatibility. Calling it is unnecessary.
         /// </summary>
-        /// <remarks>
-        ///     This will automatically be called once all supported assemblies are loaded into the current AppDomain and so generally is not necessary to call directly.
-        /// </remarks>
+        [EditorBrowsable(EditorBrowsableState.Never)]
         public static void Unregister()
         {
-            if (!IsRegistered)
-            {
-                var error = $"{typeof(MSBuildLocator)}.{nameof(Unregister)} was called, but no MSBuild instance is registered." + Environment.NewLine +
-                            $"Ensure that {nameof(RegisterInstance)}, {nameof(RegisterMSBuildPath)}, or {nameof(RegisterDefaults)} is called before calling this method." + Environment.NewLine +
-                            $"{nameof(IsRegistered)} should be used to determine whether calling {nameof(Unregister)} is a valid operation.";
-                throw new InvalidOperationException(error);
-            }
-
-#if NET46
-            AppDomain.CurrentDomain.AssemblyResolve -= s_registeredHandler;
-#else
-            AssemblyLoadContext.Default.Resolving -= s_registeredHandler;
-#endif
         }
 
         /// <summary>
         ///     Ensures the proper MSBuild environment variables are populated for DotNet SDK.
         /// </summary>
-        /// <param name="msbuildPath">
-        ///     Path to the directory containing the DotNet SDK.
+        /// <param name="dotNetSdkPath">
+        ///     Path to the directory containing the .NET SDK.
         /// </param>
         private static void ApplyDotNetSdkEnvironmentVariables(string dotNetSdkPath)
         {

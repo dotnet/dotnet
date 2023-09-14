@@ -22,7 +22,7 @@ namespace Microsoft.IdentityModel.Protocols.WsFederation
         /// <summary>
         /// The <see cref="Xml.Signature"/> element that was found when reading metadata.
         /// </summary>
-        public Signature Signature
+        public Signature? Signature
         {
             get;
             set;
@@ -31,7 +31,7 @@ namespace Microsoft.IdentityModel.Protocols.WsFederation
         /// <summary>
         /// The <see cref="Tokens.SigningCredentials"/> that was used to sign the metadata.
         /// </summary>
-        public SigningCredentials SigningCredentials
+        public SigningCredentials? SigningCredentials
         {
             get;
             set;

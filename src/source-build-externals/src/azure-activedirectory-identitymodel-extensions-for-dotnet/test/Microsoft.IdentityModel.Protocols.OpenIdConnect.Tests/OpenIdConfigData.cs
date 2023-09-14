@@ -145,10 +145,6 @@ namespace Microsoft.IdentityModel.Protocols.OpenIdConnect.Tests
         public static string OpenIdConnectMetadataPingLabsJWKSString = @"{""jwks_uri"":""PingLabsJWKS.json""}";
         public static string OpenIdConnectMetatadataBadJson = @"{...";
 
-        // interop
-        public static string GoogleCertsFile = "google-certs.json";
-        public static JsonWebKeySet GoogleCertsExpected;
-
         static OpenIdConfigData()
         {
             PingLabs = new OpenIdConnectConfiguration()

@@ -15,8 +15,8 @@ namespace Microsoft.IdentityModel.Tokens
         private static readonly byte[] _defaultIV = new byte[] { 0xA6, 0xA6, 0xA6, 0xA6, 0xA6, 0xA6, 0xA6, 0xA6 };
         private const int _blockSizeInBits = 64;
         private const int _blockSizeInBytes = _blockSizeInBits >> 3;
-        private static object _encryptorLock = new object();
-        private static object _decryptorLock = new object();
+        private static readonly object _encryptorLock = new object();
+        private static readonly object _decryptorLock = new object();
 
         private Lazy<SymmetricAlgorithm> _symmetricAlgorithm;
         private ICryptoTransform _symmetricAlgorithmEncryptor;

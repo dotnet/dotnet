@@ -7,8 +7,8 @@ using System.Net.Http;
 using System.Security.Cryptography;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.IdentityModel.Json;
 using Microsoft.IdentityModel.TestUtils;
+using Newtonsoft.Json;
 using Xunit;
 
 namespace Microsoft.IdentityModel.Protocols.OpenIdConnect.Tests
@@ -31,13 +31,23 @@ namespace Microsoft.IdentityModel.Protocols.OpenIdConnect.Tests
         public async Task FromFile()
         {
             var context = new CompareContext();
-            var configuration = await GetConfigurationAsync(OpenIdConfigData.JsonFile, ExpectedException.NoExceptionExpected, OpenIdConfigData.FullyPopulatedWithKeys, context);
+            var configuration = await GetConfigurationAsync(
+                OpenIdConfigData.JsonFile,
+                ExpectedException.NoExceptionExpected,
+                OpenIdConfigData.FullyPopulatedWithKeys,
+                context);
 
             // jwt_uri points to bad formated JSON
-            configuration = await GetConfigurationAsync(OpenIdConfigData.JsonWebKeySetBadUriFile, ExpectedException.IOException(inner: typeof(FileNotFoundException)), null, context);
+            configuration = await GetConfigurationAsync(
+                OpenIdConfigData.JsonWebKeySetBadUriFile,
+                ExpectedException.IOException(inner: typeof(FileNotFoundException)),
+                null,
+                context);
 
             // reading form a file that does not exist
-            configuration = await GetConfigurationAsync("FileDoesNotExist.json", ExpectedException.IOException(inner: typeof(FileNotFoundException)), null, context);
+            configuration = await GetConfigurationAsync(
+                "FileDoesNotExist.json",
+                ExpectedException.IOException(inner: typeof(FileNotFoundException)), null, context);
             TestUtilities.AssertFailIfErrors(context);
         }
 
@@ -45,21 +55,35 @@ namespace Microsoft.IdentityModel.Protocols.OpenIdConnect.Tests
         public async Task FromJson()
         {
             var context = new CompareContext();
-            var configuration = await GetConfigurationFromMixedAsync(OpenIdConfigData.OpenIdConnectMetadataPingString, expectedException: ExpectedException.NoExceptionExpected);
+            var configuration = await GetConfigurationFromMixedAsync(
+                OpenIdConfigData.OpenIdConnectMetadataPingString,
+                expectedException: ExpectedException.NoExceptionExpected);
 
-            configuration = await GetConfigurationFromMixedAsync(OpenIdConfigData.OpenIdConnectMetadataPingLabsJWKSString, expectedException: ExpectedException.NoExceptionExpected);
+            configuration = await GetConfigurationFromMixedAsync(
+                OpenIdConfigData.OpenIdConnectMetadataPingLabsJWKSString,
+                expectedException: ExpectedException.NoExceptionExpected);
             IdentityComparer.AreEqual(configuration, OpenIdConfigData.PingLabs, context);
 
-            configuration = await GetConfigurationFromMixedAsync(OpenIdConfigData.JsonAllValues, expectedException: ExpectedException.NoExceptionExpected);
+            configuration = await GetConfigurationFromMixedAsync(
+                OpenIdConfigData.JsonAllValues,
+                expectedException: ExpectedException.NoExceptionExpected);
             IdentityComparer.AreEqual(configuration, OpenIdConfigData.FullyPopulatedWithKeys, context);
 
             // jwt_uri is not reachable
-            await GetConfigurationFromTextAsync(OpenIdConfigData.OpenIdConnectMetadataBadUriKeysString, string.Empty, expectedException: ExpectedException.IOException());
+            await GetConfigurationFromTextAsync(
+                OpenIdConfigData.OpenIdConnectMetadataBadUriKeysString,
+                string.Empty,
+                expectedException: ExpectedException.IOException());
 
             // stream is not well formated
-            await GetConfigurationFromTextAsync(OpenIdConfigData.OpenIdConnectMetadataBadFormatString, string.Empty, expectedException: new ExpectedException(typeExpected: typeof(JsonReaderException)));
+            await GetConfigurationFromTextAsync(
+                OpenIdConfigData.OpenIdConnectMetadataBadFormatString,
+                string.Empty,
+                expectedException: new ExpectedException(typeExpected: typeof(System.Text.Json.JsonException), ignoreInnerException: true));
 
-            configuration = await GetConfigurationFromMixedAsync(OpenIdConfigData.OpenIdConnectMetadataSingleX509DataString, expectedException: ExpectedException.NoExceptionExpected);
+            configuration = await GetConfigurationFromMixedAsync(
+                OpenIdConfigData.OpenIdConnectMetadataSingleX509DataString,
+                expectedException: ExpectedException.NoExceptionExpected);
             IdentityComparer.AreEqual(configuration, OpenIdConfigData.SingleX509Data, context);
 
             // dnx 5.0 throws a different exception
@@ -69,8 +93,13 @@ namespace Microsoft.IdentityModel.Protocols.OpenIdConnect.Tests
             var ee = ExpectedException.InvalidOperationException(inner: typeof(CryptographicException));
             ee.IgnoreInnerException = true;
 
-            await GetConfigurationFromMixedAsync(OpenIdConfigData.OpenIdConnectMetadataBadX509DataString, expectedException: ExpectedException.NoExceptionExpected);
-            await GetConfigurationFromMixedAsync(OpenIdConfigData.OpenIdConnectMetadataBadBase64DataString, expectedException: ExpectedException.NoExceptionExpected);
+            await GetConfigurationFromMixedAsync(
+                OpenIdConfigData.OpenIdConnectMetadataBadX509DataString,
+                expectedException: ExpectedException.NoExceptionExpected);
+
+            await GetConfigurationFromMixedAsync(
+                OpenIdConfigData.OpenIdConnectMetadataBadBase64DataString,
+                expectedException: ExpectedException.NoExceptionExpected);
 
             TestUtilities.AssertFailIfErrors(context);
         }

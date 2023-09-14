@@ -6,8 +6,9 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Security.Claims;
-using Microsoft.IdentityModel.Json.Linq;
 using Microsoft.IdentityModel.Logging;
+
+using JsonPrimitives = Microsoft.IdentityModel.Tokens.Json.JsonSerializerPrimitives;
 using TokenLogMessages = Microsoft.IdentityModel.Tokens.LogMessages;
 
 namespace Microsoft.IdentityModel.Tokens
@@ -40,7 +41,7 @@ namespace Microsoft.IdentityModel.Tokens
         /// </summary>
         /// <param name="claims"> A list of claims.</param>
         /// <returns> A Dictionary representing claims.</returns>
-        internal static IDictionary<string, object> CreateDictionaryFromClaims(IEnumerable<Claim> claims)
+        internal static Dictionary<string, object> CreateDictionaryFromClaims(IEnumerable<Claim> claims)
         {
             var payload = new Dictionary<string, object>();
 
@@ -63,8 +64,11 @@ namespace Microsoft.IdentityModel.Tokens
                     IList<object> claimValues = existingValue as IList<object>;
                     if (claimValues == null)
                     {
-                        claimValues = new List<object>();
-                        claimValues.Add(existingValue);
+                        claimValues = new List<object>
+                        {
+                            existingValue
+                        };
+
                         payload[jsonClaimType] = claimValues;
                     }
 
@@ -73,6 +77,73 @@ namespace Microsoft.IdentityModel.Tokens
                 else
                 {
                     payload[jsonClaimType] = jsonClaimValue;
+                }
+            }
+
+            return payload;
+        }
+
+        internal static IDictionary<string, object> CreateDictionaryFromClaims(
+            IEnumerable<Claim> claims,
+            SecurityTokenDescriptor tokenDescriptor,
+            bool audienceSet,
+            bool issuerSet)
+        {
+            var payload = new Dictionary<string, object>();
+
+            if (claims == null)
+                return payload;
+
+            bool checkClaims = tokenDescriptor.Claims != null && tokenDescriptor.Claims.Count > 0;
+
+            foreach (Claim claim in claims)
+            {
+                if (claim == null)
+                    continue;
+
+                // skipping these as they will be added once by the caller
+                // why add them if we are going to replace them later
+                if (checkClaims && tokenDescriptor.Claims.ContainsKey(claim.Type))
+                    continue;
+
+                if (audienceSet && claim.Type.Equals("aud", StringComparison.Ordinal))
+                    continue;
+
+                if (issuerSet && claim.Type.Equals("iss", StringComparison.Ordinal))
+                    continue;
+
+                if (tokenDescriptor.Expires.HasValue && claim.Type.Equals("exp", StringComparison.Ordinal))
+                    continue;
+
+                if (tokenDescriptor.IssuedAt.HasValue && claim.Type.Equals("iat", StringComparison.Ordinal))
+                    continue;
+
+                if (tokenDescriptor.NotBefore.HasValue && claim.Type.Equals("nbf", StringComparison.Ordinal))
+                    continue;
+
+                object jsonClaimValue = claim.ValueType.Equals(ClaimValueTypes.String) ? claim.Value : GetClaimValueUsingValueType(claim);
+
+                // The enumeration is from ClaimsIdentity.Claims, there can be duplicates.
+                // When a duplicate is detected, we create a List and add both to a list.
+                // When the creating the JWT and a list is found, a JsonArray will be created.
+                if (payload.TryGetValue(claim.Type, out object existingValue))
+                {
+                    if (existingValue is IList<object> existingList)
+                    {
+                        existingList.Add(jsonClaimValue);
+                    }
+                    else
+                    {
+                        payload[claim.Type] = new List<object>
+                        {
+                            existingValue,
+                            jsonClaimValue
+                        };
+                    }
+                }
+                else
+                {
+                    payload[claim.Type] = jsonClaimValue;
                 }
             }
 
@@ -97,13 +168,13 @@ namespace Microsoft.IdentityModel.Tokens
                 return longValue;
 
             if (claim.ValueType == ClaimValueTypes.DateTime && DateTime.TryParse(claim.Value, out DateTime dateTimeValue))
-                return dateTimeValue;
+                return dateTimeValue.ToUniversalTime();
 
             if (claim.ValueType == Json)
-                return JObject.Parse(claim.Value);
+                return JsonPrimitives.CreateJsonElement(claim.Value);
 
             if (claim.ValueType == JsonArray)
-                return JArray.Parse(claim.Value);
+                return JsonPrimitives.CreateJsonElement(claim.Value);
 
             if (claim.ValueType == JsonNull)
                 return string.Empty;
@@ -112,47 +183,39 @@ namespace Microsoft.IdentityModel.Tokens
         }
 
         /// <summary>
-        /// Returns all <see cref="SecurityKey"/> provided in validationParameters.
-        /// </summary>
-        /// <param name="validationParameters">A <see cref="TokenValidationParameters"/> required for validation.</param>
-        /// <returns>Returns all <see cref="SecurityKey"/> provided in validationParameters.</returns>
-        internal static IEnumerable<SecurityKey> GetAllSigningKeys(TokenValidationParameters validationParameters)
-        {
-            LogHelper.LogInformation(TokenLogMessages.IDX10243);
-            if (validationParameters.IssuerSigningKey != null)
-                yield return validationParameters.IssuerSigningKey;
-
-            if (validationParameters.IssuerSigningKeys != null)
-                foreach (SecurityKey key in validationParameters.IssuerSigningKeys)
-                    yield return key;
-        }
-
-
-        /// <summary>
-        /// Returns all <see cref="SecurityKey"/> provided in <paramref name="configuration"/>.
-        /// </summary>
-        /// <param name="configuration">The <see cref="BaseConfiguration"/> that contains signing keys used for validation.</param>
-        /// <returns>Returns all <see cref="SecurityKey"/> provided in provided in <paramref name="configuration"/>.</returns>
-        internal static IEnumerable<SecurityKey> GetAllSigningKeys(BaseConfiguration configuration)
-        {
-            LogHelper.LogInformation(TokenLogMessages.IDX10265);
-
-            if (configuration?.SigningKeys != null)
-                foreach (SecurityKey key in configuration.SigningKeys)
-                    yield return key;
-        }
-
-        /// <summary>
         /// Returns all <see cref="SecurityKey"/> provided in <paramref name="configuration"/> and <paramref name="validationParameters"/>.
         /// </summary>
         /// <param name="configuration">The <see cref="BaseConfiguration"/> that contains signing keys used for validation.</param>
         /// <param name="validationParameters">A <see cref="TokenValidationParameters"/> required for validation.</param>
         /// <returns>Returns all <see cref="SecurityKey"/> provided in provided in <paramref name="configuration"/> and <paramref name="validationParameters"/>.</returns>
-        internal static IEnumerable<SecurityKey> GetAllSigningKeys(TokenValidationParameters validationParameters, BaseConfiguration configuration)
+        internal static IEnumerable<SecurityKey> GetAllSigningKeys(BaseConfiguration configuration = null, TokenValidationParameters validationParameters = null)
         {
-            LogHelper.LogInformation(TokenLogMessages.IDX10264);
+            if (configuration is not null)
+            {
+                if (validationParameters is not null)
+                {
+                    LogHelper.LogInformation(TokenLogMessages.IDX10264);
+                }
 
-            return GetAllSigningKeys(configuration).Concat(GetAllSigningKeys(validationParameters));
+                LogHelper.LogInformation(TokenLogMessages.IDX10265);
+
+                if (configuration?.SigningKeys != null)
+                    foreach (SecurityKey key in configuration.SigningKeys)
+                        yield return key;
+            }
+
+            // TODO - do not use yield
+            if (validationParameters is not null)
+            {
+                LogHelper.LogInformation(TokenLogMessages.IDX10243);
+
+                if (validationParameters.IssuerSigningKey != null)
+                    yield return validationParameters.IssuerSigningKey;
+
+                if (validationParameters.IssuerSigningKeys != null)
+                    foreach (SecurityKey key in validationParameters.IssuerSigningKeys)
+                        yield return key;
+            }
         }
 
         /// <summary>

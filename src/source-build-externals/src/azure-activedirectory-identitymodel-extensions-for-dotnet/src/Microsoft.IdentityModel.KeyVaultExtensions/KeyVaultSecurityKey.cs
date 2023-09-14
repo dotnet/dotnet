@@ -17,7 +17,7 @@ namespace Microsoft.IdentityModel.KeyVaultExtensions
     public class KeyVaultSecurityKey : SecurityKey
     {
         private int? _keySize;
-        private string _keyId;
+        private string? _keyId;
 
         /// <summary>
         /// The authentication callback delegate which is to be implemented by the client code.
@@ -58,14 +58,14 @@ namespace Microsoft.IdentityModel.KeyVaultExtensions
         /// <summary>
         /// The authentication callback delegate that retrieves an access token for the KeyVault.
         /// </summary>
-        public AuthenticationCallback Callback { get; protected set; }
+        public AuthenticationCallback? Callback { get; protected set; }
 
         /// <summary>
         /// The uniform resource identifier of the security key.
         /// </summary>
         public override string KeyId
         {
-            get => _keyId;
+            get => _keyId!;
             set
             {
                 if (string.IsNullOrEmpty(value))
@@ -90,7 +90,7 @@ namespace Microsoft.IdentityModel.KeyVaultExtensions
                 if (!_keySize.HasValue)
                     Initialize();
 
-                return _keySize.Value;
+                return _keySize!.Value;
             }
         }
 
@@ -99,7 +99,7 @@ namespace Microsoft.IdentityModel.KeyVaultExtensions
         /// </summary>
         private void Initialize()
         {
-            using (var client = new KeyVaultClient(new KeyVaultClient.AuthenticationCallback(Callback)))
+            using (var client = new KeyVaultClient(new KeyVaultClient.AuthenticationCallback(Callback!)))
             {
                 var bundle = client.GetKeyAsync(_keyId, CancellationToken.None).ConfigureAwait(false).GetAwaiter().GetResult();
                 _keySize = new BitArray(bundle.Key.N).Length;

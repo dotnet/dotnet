@@ -75,7 +75,7 @@ namespace Microsoft.IdentityModel.Tokens.Saml
                     keyMatched = false;
                     if (validationParameters.TryAllIssuerSigningKeys)
                     {
-                        return TokenUtilities.GetAllSigningKeys(validationParameters);
+                        return TokenUtilities.GetAllSigningKeys(validationParameters: validationParameters);
                     }
                 }
             }

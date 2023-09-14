@@ -3,53 +3,71 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.Tracing;
-using System.Security.Cryptography;
-using System.Text;
-using Microsoft.IdentityModel.Json;
 using Microsoft.IdentityModel.TestUtils;
 using Xunit;
 
-#pragma warning disable CS3016 // Arrays as attribute arguments is not CLS-compliant
-
-namespace Microsoft.IdentityModel.Tokens.Tests
+namespace Microsoft.IdentityModel.Tokens.Json.Tests
 {
     public class JsonWebKeyTests
     {
-        [Theory, MemberData(nameof(JsonWebKeyDataSet))]
-        public void Constructors(string json, JsonWebKey compareTo, ExpectedException ee)
+        [Theory, MemberData(nameof(ConstructorDataSet))]
+        public void Constructors(JsonWebKeyTheoryData theoryData)
         {
             var context = new CompareContext();
             try
             {
-                var jsonWebKey = new JsonWebKey(json);
-                ee.ProcessNoException(context);
-                if (compareTo != null)
-                    IdentityComparer.AreEqual(jsonWebKey, compareTo, context);
+                var jsonWebKey = new JsonWebKey(theoryData.Json);
+                theoryData.ExpectedException.ProcessNoException(context);
+                if (theoryData.JsonWebKey != null)
+                {
+                    IdentityComparer.AreEqual(jsonWebKey, theoryData.JsonWebKey, context);
+                    JsonWebKey6x jsonWebKey6x = new JsonWebKey6x(theoryData.Json);
+                    IdentityComparer.AreEqual(jsonWebKey6x, jsonWebKey, context);
+                }
             }
             catch (Exception ex)
             {
-                ee.ProcessException(ex, context.Diffs);
+                theoryData.ExpectedException.ProcessException(ex, context.Diffs);
             }
 
             TestUtilities.AssertFailIfErrors(context);
         }
 
-        public static TheoryData<string, JsonWebKey, ExpectedException> JsonWebKeyDataSet
+        public static TheoryData<JsonWebKeyTheoryData> ConstructorDataSet
         {
             get
             {
-                var dataset = new TheoryData<string, JsonWebKey, ExpectedException>();
+                var theoryData = new TheoryData<JsonWebKeyTheoryData>();
+                theoryData.Add(new JsonWebKeyTheoryData("Null_Json")
+                {
+                    ExpectedException = ExpectedException.ArgumentNullException(substringExpected: "json")
+                });
 
-                dataset.Add(null, null, ExpectedException.ArgumentNullException(substringExpected: "json"));
-                dataset.Add(DataSets.JsonWebKeyFromPingString1, DataSets.JsonWebKeyFromPing1, ExpectedException.NoExceptionExpected);
-                dataset.Add(DataSets.JsonWebKeyString1, DataSets.JsonWebKey1, ExpectedException.NoExceptionExpected);
-                dataset.Add(DataSets.JsonWebKeyString2, DataSets.JsonWebKey2, ExpectedException.NoExceptionExpected);
-                dataset.Add(DataSets.JsonWebKeyBadFormatString1, null, ExpectedException.ArgumentException(inner: typeof(JsonReaderException)));
-                dataset.Add(DataSets.JsonWebKeyBadFormatString2, null, ExpectedException.ArgumentException(inner: typeof(JsonSerializationException)));
-                dataset.Add(DataSets.JsonWebKeyBadX509String, DataSets.JsonWebKeyBadX509Data, ExpectedException.NoExceptionExpected);
+                theoryData.Add(new JsonWebKeyTheoryData("JsonWebKeyString")
+                {
+                    JsonWebKey = DataSets.JsonWebKey1,
+                    Json = DataSets.JsonWebKeyString
+                });
 
-                return dataset;
+                theoryData.Add(new JsonWebKeyTheoryData("JsonWebKeyBadFormatString1")
+                {
+                    ExpectedException = ExpectedException.ArgumentException(substringExpected: "IDX10805:", inner: typeof(System.Text.Json.JsonException)),
+                    Json = DataSets.JsonWebKeyBadFormatString1
+                });
+
+                theoryData.Add(new JsonWebKeyTheoryData("JsonWebKeyBadFormatString2")
+                {
+                    ExpectedException = ExpectedException.ArgumentException(substringExpected: "IDX10805:", inner: typeof(System.Text.Json.JsonException)),
+                    Json = DataSets.JsonWebKeyBadFormatString2
+                });
+
+                theoryData.Add(new JsonWebKeyTheoryData("JsonWebKeyBadX509String")
+                {
+                    JsonWebKey = DataSets.JsonWebKeyBadX509Data,
+                    Json = DataSets.JsonWebKeyBadX509DataString
+                });
+
+                return theoryData;
             }
         }
 
@@ -116,11 +134,6 @@ namespace Microsoft.IdentityModel.Tokens.Tests
             TestUtilities.AssertFailIfErrors("JsonWebKey_GetSets", errors);
         }
 
-        [Fact]
-        public void Publics()
-        {
-        }
-
         // Tests to make sure conditional property serialization for JsonWebKeys is working properly.
         [Fact]
         public void ConditionalPropertySerialization()
@@ -138,18 +151,20 @@ namespace Microsoft.IdentityModel.Tokens.Tests
                 Use = "sig",
             };
 
-            var jsonString1 = JsonConvert.SerializeObject(jsonWebKeyEmptyCollections);
+            var jsonString1 = JsonWebKeySerializer.Write(jsonWebKeyEmptyCollections);
             if (jsonString1.Contains("key_ops"))
                 context.Diffs.Add("key_ops is empty and should not be present in serialized JsonWebKey");
+
             if (jsonString1.Contains("x5c"))
                 context.Diffs.Add("x5c is empty and should not be present in serialized JsonWebKey");
 
             var jsonWebKeyWithCollections = new JsonWebKey();
             jsonWebKeyWithCollections.X5c.Add("MIIDPjCCAiqgAwIBAgIQVWmXY/+9RqFA/OG9kFulHDAJBgUrDgMCHQUAMC0xKzApBgNVBAMTImFjY291bnRzLmFjY2Vzc2NvbnRyb2wud2luZG93cy5uZXQwHhcNMTIwNjA3MDcwMDAwWhcNMTQwNjA3MDcwMDAwWjAtMSswKQYDVQQDEyJhY2NvdW50cy5hY2Nlc3Njb250cm9sLndpbmRvd3MubmV0MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEArCz8Sn3GGXmikH2MdTeGY1D711EORX/lVXpr+ecGgqfUWF8MPB07XkYuJ54DAuYT318+2XrzMjOtqkT94VkXmxv6dFGhG8YZ8vNMPd4tdj9c0lpvWQdqXtL1TlFRpD/P6UMEigfN0c9oWDg9U7Ilymgei0UXtf1gtcQbc5sSQU0S4vr9YJp2gLFIGK11Iqg4XSGdcI0QWLLkkC6cBukhVnd6BCYbLjTYy3fNs4DzNdemJlxGl8sLexFytBF6YApvSdus3nFXaMCtBGx16HzkK9ne3lobAwL2o79bP4imEGqg+ibvyNmbrwFGnQrBc1jTF9LyQX9q+louxVfHs6ZiVwIDAQABo2IwYDBeBgNVHQEEVzBVgBCxDDsLd8xkfOLKm4Q/SzjtoS8wLTErMCkGA1UEAxMiYWNjb3VudHMuYWNjZXNzY29udHJvbC53aW5kb3dzLm5ldIIQVWmXY/+9RqFA/OG9kFulHDAJBgUrDgMCHQUAA4IBAQAkJtxxm/ErgySlNk69+1odTMP8Oy6L0H17z7XGG3w4TqvTUSWaxD4hSFJ0e7mHLQLQD7oV/erACXwSZn2pMoZ89MBDjOMQA+e6QzGB7jmSzPTNmQgMLA8fWCfqPrz6zgH+1F1gNp8hJY57kfeVPBiyjuBmlTEBsBlzolY9dd/55qqfQk6cgSeCbHCy/RU/iep0+UsRMlSgPNNmqhj5gmN2AFVCN96zF694LwuPae5CeR2ZcVknexOWHYjFM0MgUSw0ubnGl0h9AJgGyhvNGcjQqu9vd1xkupFgaN+f7P3p3EVN5csBg5H94jEcQZT7EKeTiZ6bTrpDAnrr8tDCy8ng");
             jsonWebKeyWithCollections.KeyOps.Add("signing");
-            var jsonString2 = JsonConvert.SerializeObject(jsonWebKeyWithCollections);
+            var jsonString2 = JsonWebKeySerializer.Write(jsonWebKeyWithCollections);
             if (!jsonString2.Contains("key_ops"))
                 context.Diffs.Add("key_ops is non-empty and should be present in serialized JsonWebKey");
+
             if (!jsonString2.Contains("x5c"))
                 context.Diffs.Add("x5c is non-empty and should be present in serialized JsonWebKey");
 
@@ -159,7 +174,7 @@ namespace Microsoft.IdentityModel.Tokens.Tests
         [Fact]
         public void ComputeJwkThumbprintSpec()
         {
-            // https://datatracker.ietf.org/doc/html/rfc7638#section-3.1
+            // https://datatracker.ietf.org/doc/html/rfc7638#section-3-1
             var context = TestUtilities.WriteHeader($"{this}.ComputeJwkThumbprintSpec", "", true);
 
             var jwk = new JsonWebKey()
@@ -362,5 +377,3 @@ namespace Microsoft.IdentityModel.Tokens.Tests
         }
     }
 }
-
-#pragma warning restore CS3016 // Arrays as attribute arguments is not CLS-compliant

@@ -12,3 +12,4 @@ using System.Diagnostics.CodeAnalysis;
 [assembly: SuppressMessage("Globalization", "CA1307:Specify StringComparison", Justification = "Vendored component", Scope = "module")]
 [assembly: SuppressMessage("Design", "CA1001:Types that own disposable fields should be disposable", Justification = "Breaking change", Scope = "type", Target = "~T:Microsoft.IdentityModel.Protocols.SignedHttpRequest.SignedHttpRequestHandler")]
 [assembly: SuppressMessage("Usage", "CA2227:Collection properties should be read only", Justification = "Previously released as read / write", Scope = "member", Target = "~P:Microsoft.IdentityModel.Protocols.SignedHttpRequest.SignedHttpRequestInvalidNonceClaimException.PropertyBag")]
+[assembly: SuppressMessage("Globalization", "CA1305:Specify IFormatProvider", Justification = "Breaking Change", Scope = "member", Target = "~T:Microsoft.IdentityModel.Protocols.SignedHttpRequest.SignedHttpRequestHandler)")]
