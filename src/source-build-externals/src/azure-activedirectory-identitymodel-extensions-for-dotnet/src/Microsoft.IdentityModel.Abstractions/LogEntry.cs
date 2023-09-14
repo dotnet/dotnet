@@ -16,7 +16,7 @@ namespace Microsoft.IdentityModel.Abstractions
         /// <summary>
         /// Message to be logged.
         /// </summary>
-        public string Message { get; set; }
+        public string? Message { get; set; }
 
         /// <summary>
         /// A unique identifier for a request that can help with diagnostics across components.
@@ -24,6 +24,6 @@ namespace Microsoft.IdentityModel.Abstractions
         /// <remarks>
         /// Also referred to as ActivityId in Microsoft.IdentityModel.Tokens.CallContext.
         /// </remarks>
-        public string CorrelationId { get; set; }
+        public string? CorrelationId { get; set; }
     }
 }

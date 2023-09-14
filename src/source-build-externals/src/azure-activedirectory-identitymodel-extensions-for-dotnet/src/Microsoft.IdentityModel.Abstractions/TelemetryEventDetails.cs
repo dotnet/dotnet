@@ -23,7 +23,7 @@ namespace Microsoft.IdentityModel.Abstractions
         /// <summary>
         /// Name of the telemetry event, should be unique between events.
         /// </summary>
-        public virtual string Name { get; set; }
+        public virtual string? Name { get; set; }
 
         /// <summary>
         /// Properties which describe the event.

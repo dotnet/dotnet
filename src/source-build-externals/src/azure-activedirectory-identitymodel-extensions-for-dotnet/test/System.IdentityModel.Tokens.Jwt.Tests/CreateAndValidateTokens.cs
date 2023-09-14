@@ -5,12 +5,11 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using Microsoft.IdentityModel.Json.Linq;
+using System.Text.Json;
 using Microsoft.IdentityModel.TestUtils;
 using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json.Linq;
 using Xunit;
-
-#pragma warning disable CS3016 // Arrays as attribute arguments is not CLS-compliant
 
 namespace System.IdentityModel.Tokens.Jwt.Tests
 {
@@ -1049,6 +1048,7 @@ namespace System.IdentityModel.Tokens.Jwt.Tests
             payload.Add(claimNames, JsonClaims.ClaimNamesAsDictionary);
             payload.Add("iss", Default.Issuer);
 
+            string payloadString = payload.SerializeToJson();
             JwtSecurityToken jwtToken = new JwtSecurityToken(new JwtHeader(), payload);
             JwtSecurityTokenHandler jwtHandler = new JwtSecurityTokenHandler();
             string encodedJwt = jwtHandler.WriteToken(new JwtSecurityToken(new JwtHeader(), payload));
@@ -1075,7 +1075,7 @@ namespace System.IdentityModel.Tokens.Jwt.Tests
             var cp = jwtHandler.ValidateToken(encodedJwt, validationParameters, out validatedToken);
             IdentityComparer.AreEqual(
                 cp.FindFirst(typeof(Entity).ToString()),
-                new Claim(typeof(Entity).ToString(), JsonExtensions.SerializeToJson(Entity.Default), JsonClaimValueTypes.Json, Default.Issuer, Default.Issuer, cp.Identity as ClaimsIdentity ),
+                new Claim(typeof(Entity).ToString(), JsonSerializer.Serialize(Entity.Default), JsonClaimValueTypes.Json, Default.Issuer, Default.Issuer, cp.Identity as ClaimsIdentity ),
                 context);
             TestUtilities.AssertFailIfErrors(context.Diffs);
         }
@@ -1107,9 +1107,9 @@ namespace System.IdentityModel.Tokens.Jwt.Tests
 
             expectedIdentity.AddClaim(new Claim(JwtRegisteredClaimNames.Iss, Default.Issuer, ClaimValueTypes.String, Default.Issuer));
             expectedIdentity.AddClaim(new Claim(JwtRegisteredClaimNames.Aud, Default.Audience, ClaimValueTypes.String, Default.Issuer));
-            expectedIdentity.AddClaim(new Claim(JwtRegisteredClaimNames.Exp, EpochTime.GetIntDate(expire).ToString(), ClaimValueTypes.Integer, Default.Issuer));
-            expectedIdentity.AddClaim(new Claim(JwtRegisteredClaimNames.Nbf, EpochTime.GetIntDate(utcNow).ToString(), ClaimValueTypes.Integer, Default.Issuer));
-            expectedIdentity.AddClaim(new Claim(JwtRegisteredClaimNames.Iat, EpochTime.GetIntDate(utcNow).ToString(), ClaimValueTypes.Integer, Default.Issuer));
+            expectedIdentity.AddClaim(new Claim(JwtRegisteredClaimNames.Exp, EpochTime.GetIntDate(expire).ToString(), ClaimValueTypes.Integer64, Default.Issuer));
+            expectedIdentity.AddClaim(new Claim(JwtRegisteredClaimNames.Nbf, EpochTime.GetIntDate(utcNow).ToString(), ClaimValueTypes.Integer64, Default.Issuer));
+            expectedIdentity.AddClaim(new Claim(JwtRegisteredClaimNames.Iat, EpochTime.GetIntDate(utcNow).ToString(), ClaimValueTypes.Integer64, Default.Issuer));
 
             CompareContext context = new CompareContext { IgnoreType = true };
             IdentityComparer.AreEqual(principal.Claims, expectedIdentity.Claims, context);
@@ -1264,5 +1264,3 @@ namespace System.IdentityModel.Tokens.Jwt.Tests
         }
     }
 }
-
-#pragma warning restore CS3016 // Arrays as attribute arguments is not CLS-compliant

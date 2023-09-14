@@ -3,12 +3,17 @@
 
 using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Security.Claims;
-using Microsoft.IdentityModel.Json;
-using Microsoft.IdentityModel.Json.Linq;
+using System.Text;
+using System.Text.Encodings.Web;
+using System.Text.Json;
+using System.Threading;
+using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.Logging;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.IdentityModel.Tokens.Json;
 
 namespace System.IdentityModel.Tokens.Jwt
 {
@@ -18,6 +23,22 @@ namespace System.IdentityModel.Tokens.Jwt
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2237:MarkISerializableTypesWithSerializable"), System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1600:ElementsMustBeDocumented", Justification = "Serialize not really supported.")]
     public class JwtPayload : Dictionary<string, object>
     {
+        internal const string ClassName = "System.IdentityModel.Tokens.Jwt.JwtPayload";
+
+        internal List<string> _audiences;
+        internal string _azp;
+        internal long? _exp;
+        internal DateTime? _expDateTime;
+        internal long? _iat;
+        internal DateTime? _iatDateTime;
+        internal string _id;
+        internal string _iss;
+        internal string _jti;
+        internal long? _nbf;
+        internal DateTime? _nbfDateTime;
+        internal string _sub;
+        internal string _tid;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="JwtPayload"/> class with no claims. Default string comparer <see cref="StringComparer.Ordinal"/>. 
         /// Creates a empty <see cref="JwtPayload"/>
@@ -25,6 +46,109 @@ namespace System.IdentityModel.Tokens.Jwt
         public JwtPayload()
             : this(issuer: null, audience: null, claims: null, notBefore: null, expires: null)
         {
+        }
+
+        internal static JwtPayload CreatePayload(byte[] bytes, int length)
+        {
+            JwtPayload payload = new();
+            Utf8JsonReader reader = new(bytes.AsSpan().Slice(0, length));
+
+            if (!JsonSerializerPrimitives.IsReaderAtTokenType(ref reader, JsonTokenType.StartObject, false))
+                throw LogHelper.LogExceptionMessage(
+                    new JsonException(
+                        LogHelper.FormatInvariant(
+                        Microsoft.IdentityModel.Tokens.LogMessages.IDX11023,
+                        LogHelper.MarkAsNonPII("JsonTokenType.StartObject"),
+                        LogHelper.MarkAsNonPII(reader.TokenType),
+                        LogHelper.MarkAsNonPII(ClassName),
+                        LogHelper.MarkAsNonPII(reader.TokenStartIndex),
+                        LogHelper.MarkAsNonPII(reader.CurrentDepth),
+                        LogHelper.MarkAsNonPII(reader.BytesConsumed))));
+
+            while (reader.Read())
+            {
+                if (reader.TokenType == JsonTokenType.PropertyName)
+                {
+                    if (reader.ValueTextEquals(JwtPayloadUtf8Bytes.Aud))
+                    {
+                        reader.Read();
+                        payload._audiences = new List<string>();
+                        if (reader.TokenType == JsonTokenType.StartArray)
+                        {
+                            JsonSerializerPrimitives.ReadStrings(ref reader, payload._audiences, JwtRegisteredClaimNames.Aud, ClassName, false);
+                            payload[JwtRegisteredClaimNames.Aud] = payload._audiences;
+                        }
+                        else
+                        {
+                            payload._audiences.Add(JsonSerializerPrimitives.ReadString(ref reader, JwtRegisteredClaimNames.Aud, ClassName, false));
+                            payload[JwtRegisteredClaimNames.Aud] = payload._audiences[0];
+                        }
+                    }
+                    else if (reader.ValueTextEquals(JwtPayloadUtf8Bytes.Exp))
+                    {
+                        payload._exp = JsonSerializerPrimitives.ReadLong(ref reader, JwtRegisteredClaimNames.Exp, ClassName, true);
+                        payload[JwtRegisteredClaimNames.Exp] = payload._exp;
+                        payload._expDateTime = EpochTime.DateTime(payload._exp.Value);
+                    }
+                    else if (reader.ValueTextEquals(JwtPayloadUtf8Bytes.Iat))
+                    {
+                        payload._iat = JsonSerializerPrimitives.ReadLong(ref reader, JwtRegisteredClaimNames.Iat, ClassName, true);
+                        payload[JwtRegisteredClaimNames.Iat] = payload._iat;
+                        payload._iatDateTime = EpochTime.DateTime(payload._iat.Value);
+                    }
+                    else if (reader.ValueTextEquals(JwtPayloadUtf8Bytes.Iss))
+                    {
+                        payload._iss = JsonSerializerPrimitives.ReadString(ref reader, JwtRegisteredClaimNames.Iss, ClassName, true);
+                        payload[JwtRegisteredClaimNames.Iss] = payload._iss;
+                    }
+                    else if (reader.ValueTextEquals(JwtPayloadUtf8Bytes.Jti))
+                    {
+                        payload._jti = JsonSerializerPrimitives.ReadString(ref reader, JwtRegisteredClaimNames.Jti, ClassName, true);
+                        payload[JwtRegisteredClaimNames.Jti] = payload._jti;
+                    }
+                    else if (reader.ValueTextEquals(JwtPayloadUtf8Bytes.Nbf))
+                    {
+                        payload._nbf = JsonSerializerPrimitives.ReadLong(ref reader, JwtRegisteredClaimNames.Nbf, ClassName, true);
+                        payload._nbfDateTime = EpochTime.DateTime(payload._nbf.Value);
+                        payload[JwtRegisteredClaimNames.Nbf] = payload._nbf;
+                    }
+                    else if (reader.ValueTextEquals(JwtPayloadUtf8Bytes.Sub))
+                    {
+                        reader.Read();
+                        if (reader.TokenType == JsonTokenType.String)
+                        {
+                            payload._sub = JsonSerializerPrimitives.ReadString(ref reader, JwtRegisteredClaimNames.Sub, ClassName, false);
+                            payload[JwtRegisteredClaimNames.Sub] = payload._sub;
+                        }
+                        else if (reader.TokenType == JsonTokenType.StartArray)
+                        {
+                            payload._audiences = new List<string>();
+                            JsonSerializerPrimitives.ReadStrings(ref reader, payload._audiences, JwtRegisteredClaimNames.Sub, ClassName, false);
+                            payload[JwtRegisteredClaimNames.Sub] = payload._audiences;
+                        }
+                        else
+                        {
+                            throw LogHelper.LogExceptionMessage(
+                                new JsonException(
+                                    LogHelper.FormatInvariant(
+                                        Microsoft.IdentityModel.Tokens.LogMessages.IDX11023,
+                                        LogHelper.MarkAsNonPII("JsonTokenType.String or JsonTokenType.StartArray"),
+                                        LogHelper.MarkAsNonPII(reader.TokenType),
+                                        LogHelper.MarkAsNonPII(ClassName),
+                                        LogHelper.MarkAsNonPII(reader.TokenStartIndex),
+                                        LogHelper.MarkAsNonPII(reader.CurrentDepth),
+                                        LogHelper.MarkAsNonPII(reader.BytesConsumed))));
+                        }
+                    }
+                    else
+                    {
+                        string propertyName = JsonSerializerPrimitives.ReadPropertyName(ref reader, ClassName, true);
+                        payload[propertyName] = JsonSerializerPrimitives.ReadPropertyValueAsObject(ref reader, propertyName, ClassName);
+                    }
+                }
+            }
+
+            return payload;
         }
 
         /// <summary>
@@ -164,7 +288,7 @@ namespace System.IdentityModel.Tokens.Jwt
         {
             get
             {
-                return this.GetIListClaims(JwtRegisteredClaimNames.Amr);
+                return this.GetListOfClaims(JwtRegisteredClaimNames.Amr);
             }
         }
 
@@ -188,7 +312,13 @@ namespace System.IdentityModel.Tokens.Jwt
         {
             get
             {
-                return this.GetIListClaims(JwtRegisteredClaimNames.Aud);
+                if (_audiences == null)
+                {
+                    List<string> tmp = GetListOfClaims(JwtRegisteredClaimNames.Aud);
+                    Interlocked.CompareExchange(ref _audiences, tmp, null);
+                }
+
+                return _audiences;
             }
         }
 
@@ -215,14 +345,24 @@ namespace System.IdentityModel.Tokens.Jwt
                 return this.GetStandardClaim(JwtRegisteredClaimNames.CHash);
             }
         }
-        
+
         /// <summary>
         /// Gets the 'value' of the 'expiration' claim { exp, 'value' }.
         /// </summary>
         /// <remarks>If the 'expiration' claim is not found OR could not be converted to <see cref="Int32"/>, null is returned.</remarks>
+        [Obsolete("`int? JwtPayload.Exp` is deprecated and will be removed in a future release. Use `long? JwtPayload.Expiration` instead. For more information, see https://aka.ms/IdentityModel/7-breaking-changes")]
         public int? Exp
         {
-            get { return this.GetIntClaim(JwtRegisteredClaimNames.Exp); }
+            get => GetIntClaim(JwtRegisteredClaimNames.Exp);
+        }
+
+        /// <summary>
+        /// Gets the 'value' of the 'expiration' claim { exp, 'value' }.
+        /// </summary>
+        /// <remarks>If the 'expiration' claim is not found OR could not be converted to <see cref="long"/>, null is returned.</remarks>
+        public long? Expiration
+        {
+            get => GetLongClaim(JwtRegisteredClaimNames.Exp);
         }
 
         /// <summary>
@@ -233,7 +373,8 @@ namespace System.IdentityModel.Tokens.Jwt
         {
             get
             {
-                return this.GetStandardClaim(JwtRegisteredClaimNames.Jti);
+                _jti ??= GetStandardClaim(JwtRegisteredClaimNames.Jti);
+                return _jti;
             }
         }
 
@@ -241,6 +382,7 @@ namespace System.IdentityModel.Tokens.Jwt
         /// Gets the 'value' of the 'Issued At' claim { iat, 'value' }.
         /// </summary>
         /// <remarks>If the 'Issued At' claim is not found OR cannot be converted to <see cref="Int32"/> null is returned.</remarks>
+        [Obsolete("`int? JwtPayload.Iat` is deprecated and will be removed in a future release. Use `DateTime JwtPayload.IssuedAt` instead. For more information, see https://aka.ms/IdentityModel/7-breaking-changes")]
         public int? Iat
         {
             get { return this.GetIntClaim(JwtRegisteredClaimNames.Iat); }
@@ -254,7 +396,8 @@ namespace System.IdentityModel.Tokens.Jwt
         {
             get
             {
-                return this.GetStandardClaim(JwtRegisteredClaimNames.Iss);
+                _iss ??= GetStandardClaim(JwtRegisteredClaimNames.Iss);
+                return _iss;
             }
         }
 
@@ -262,6 +405,7 @@ namespace System.IdentityModel.Tokens.Jwt
         /// Gets the 'value' of the 'expiration' claim { nbf, 'value' }.
         /// </summary>
         /// <remarks>If the 'notbefore' claim is not found OR could not be converted to <see cref="Int32"/>, null is returned.</remarks>
+        [Obsolete("`int? JwtPayload.Nbf` is deprecated and will be removed in a future release. Use `long? JwtPayload.NotBefore` instead. For more information, see https://aka.ms/IdentityModel/7-breaking-changes")]
         public int? Nbf
         {
             get { return this.GetIntClaim(JwtRegisteredClaimNames.Nbf); }
@@ -278,7 +422,16 @@ namespace System.IdentityModel.Tokens.Jwt
                 return this.GetStandardClaim(JwtRegisteredClaimNames.Nonce);
             }
         }
-        
+
+        /// <summary>
+        /// Gets the 'value' of the 'notebefore' claim { nbf, 'value' }.
+        /// </summary>
+        /// <remarks>If the 'notbefore' claim is not found OR could not be converted to <see cref="long"/>, null is returned.</remarks>
+        public long? NotBefore
+        {
+            get => GetLongClaim(JwtRegisteredClaimNames.Nbf); 
+        }
+
         /// <summary>
         /// Gets the 'value' of the 'subject' claim { sub, 'value' }.
         /// </summary>
@@ -287,7 +440,8 @@ namespace System.IdentityModel.Tokens.Jwt
         {
             get
             {
-                return this.GetStandardClaim(JwtRegisteredClaimNames.Sub);
+                _sub ??= GetStandardClaim(JwtRegisteredClaimNames.Sub);
+                return _sub;
             }
         }
 
@@ -299,7 +453,16 @@ namespace System.IdentityModel.Tokens.Jwt
         {
             get
             {
-                return this.GetDateTime(JwtRegisteredClaimNames.Nbf);
+                if (_nbfDateTime.HasValue)
+                    return _nbfDateTime.Value;
+
+                long? l = GetLongClaim(JwtRegisteredClaimNames.Nbf);
+                if (l.HasValue)
+                    return EpochTime.DateTime(l.Value);
+
+                _nbfDateTime = DateTime.MinValue;
+
+                return _nbfDateTime.Value;
             }
         }
 
@@ -311,7 +474,16 @@ namespace System.IdentityModel.Tokens.Jwt
         {
             get
             {
-                return this.GetDateTime(JwtRegisteredClaimNames.Exp);
+                if (_expDateTime.HasValue)
+                    return _expDateTime.Value;
+
+                long? l = GetLongClaim(JwtRegisteredClaimNames.Exp);
+                if (l.HasValue)
+                    return EpochTime.DateTime(l.Value);
+
+                _expDateTime = DateTime.MinValue;
+
+                return _expDateTime.Value;
             }
         }
 
@@ -323,10 +495,19 @@ namespace System.IdentityModel.Tokens.Jwt
         {
             get
             {
-                return this.GetDateTime(JwtRegisteredClaimNames.Iat);
+                if (_iatDateTime.HasValue)
+                    return _iatDateTime.Value;
+
+                long? l = GetLongClaim(JwtRegisteredClaimNames.Iat);
+                if (l.HasValue)
+                    return EpochTime.DateTime(l.Value);
+
+                _iatDateTime = DateTime.MinValue;
+
+                return _iatDateTime.Value;
             }
         }
-		
+
         /// <summary>
         /// Gets a <see cref="IEnumerable{Claim}"/><see cref="Claim"/> for each JSON { name, value }.
         /// </summary>
@@ -337,132 +518,68 @@ namespace System.IdentityModel.Tokens.Jwt
             get
             {
                 List<Claim> claims = new List<Claim>();
-                string issuer = this.Iss ?? ClaimsIdentity.DefaultIssuer;
+                string issuer = Iss ?? ClaimsIdentity.DefaultIssuer;
 
-                // there is some code redundancy here that was not factored as this is a high use method. Each identity received from the host will pass through here.
                 foreach (KeyValuePair<string, object> keyValuePair in this)
                 {
                     if (keyValuePair.Value == null)
-                    {
                         claims.Add(new Claim(keyValuePair.Key, string.Empty, JsonClaimValueTypes.JsonNull, issuer, issuer));
-                        continue;
-                    }
 
-                    var claimValue = keyValuePair.Value as string;
-                    if (claimValue != null)
-                    {
-                        claims.Add(new Claim(keyValuePair.Key, claimValue, ClaimValueTypes.String, issuer, issuer));
-                        continue;
-                    }
+                    else if (keyValuePair.Value is string str)
+                        claims.Add(new Claim(keyValuePair.Key, str, GetClaimValueType(str), issuer, issuer));
 
-                    var jtoken = keyValuePair.Value as JToken;
-                    if (jtoken != null)
-                    {
-                        AddClaimsFromJToken(claims, keyValuePair.Key, jtoken, issuer);
-                        continue;
-                    }
+                    else if (keyValuePair.Value is JsonElement j)
+                        AddClaimsFromJsonElement(keyValuePair.Key, issuer, j, claims);
 
                     // in this case, the payload was most likely never serialized.
-                    var objects = keyValuePair.Value as IEnumerable<object>;
-                    if (objects != null)
-                    {
-                        foreach (var obj in objects)
-                        {
-                            claimValue = obj as string;
-                            if (claimValue != null)
-                            {
-                                claims.Add(new Claim(keyValuePair.Key, claimValue, ClaimValueTypes.String, issuer, issuer));
-                                continue;
-                            }
+                    else if (keyValuePair.Value is IEnumerable<object> objects)
+                        AddListofObjects(keyValuePair.Key, objects, claims, issuer);
 
-                            jtoken = obj as JToken;
-                            if (jtoken != null)
-                            {
-                                AddDefaultClaimFromJToken(claims, keyValuePair.Key, jtoken, issuer);
-                                continue;
-                            }
-
-                            // DateTime claims require special processing. JsonConvert.SerializeObject(obj) will result in "\"dateTimeValue\"". The quotes will be added.
-                            if (obj is DateTime dateTimeValue)
-                                claims.Add(new Claim(keyValuePair.Key, dateTimeValue.ToUniversalTime().ToString("o", CultureInfo.InvariantCulture), ClaimValueTypes.DateTime, issuer, issuer));
-                            else
-                                claims.Add(new Claim(keyValuePair.Key, JsonConvert.SerializeObject(obj), GetClaimValueType(obj), issuer, issuer));
-                        }
-
-                        continue;
-                    }
-
-                    IDictionary<string, object> dictionary = keyValuePair.Value as IDictionary<string, object>;
-                    if (dictionary != null)
+                    else if (keyValuePair.Value is IDictionary<string, object> dictionary)
                     {
                         foreach (var item in dictionary)
-                            claims.Add(new Claim(keyValuePair.Key, "{" + item.Key + ":" + JsonConvert.SerializeObject(item.Value) + "}", GetClaimValueType(item.Value), issuer, issuer));
-
-                        continue;
+                            if (item.Value != null)
+                                claims.Add(new Claim(keyValuePair.Key, "{" + item.Key + ":" + item.Value.ToString() + "}", GetClaimValueType(item.Value), issuer, issuer));
                     }
-
-                    // DateTime claims require special processing. JsonConvert.SerializeObject(keyValuePair.Value) will result in "\"dateTimeValue\"". The quotes will be added.
-                    if (keyValuePair.Value is DateTime dateTime)
-                        claims.Add(new Claim(keyValuePair.Key, dateTime.ToUniversalTime().ToString("o", CultureInfo.InvariantCulture), ClaimValueTypes.DateTime, issuer, issuer));
-                    else
-                        claims.Add(new Claim(keyValuePair.Key, JsonConvert.SerializeObject(keyValuePair.Value), GetClaimValueType(keyValuePair.Value), issuer, issuer));
+                    else if (keyValuePair.Value is DateTime dateTime)
+                        claims.Add(new Claim(keyValuePair.Key, dateTime.ToString("o", CultureInfo.InvariantCulture), ClaimValueTypes.DateTime, issuer, issuer));
+                    else if (keyValuePair.Value != null)
+                        claims.Add(new Claim(keyValuePair.Key, keyValuePair.Value.ToString(), GetClaimValueType(keyValuePair.Value), issuer, issuer));
                 }
 
                 return claims;
             }
         }
 
-        private static void AddClaimsFromJToken(List<Claim> claims, string claimType, JToken jtoken, string issuer)
+        private void AddListofObjects(string key, IEnumerable<object> objects, List<Claim> claims, string issuer)
         {
-            if (jtoken.Type == JTokenType.Object)
+            foreach (var obj in objects)
             {
-                claims.Add(new Claim(claimType, jtoken.ToString(Formatting.None), JsonClaimValueTypes.Json, issuer, issuer));
-            }
-            else if (jtoken.Type == JTokenType.Array)
-            {
-                var jarray = jtoken as JArray;
-                foreach (var item in jarray)
-                {
-                    switch (item.Type)
-                    {
-                        case JTokenType.Object:
-                            claims.Add(new Claim(claimType, item.ToString(Formatting.None), JsonClaimValueTypes.Json, issuer, issuer));
-                            break;
-
-                        // only go one level deep on arrays.
-                        case JTokenType.Array:
-                            claims.Add(new Claim(claimType, item.ToString(Formatting.None), JsonClaimValueTypes.JsonArray, issuer, issuer));
-                            break;
-
-                        default:
-                            AddDefaultClaimFromJToken(claims, claimType, item, issuer);
-                            break;
-                    }
-                }
-            }
-            else
-            {
-                AddDefaultClaimFromJToken(claims, claimType, jtoken, issuer);
+                if (obj is string claimValue)
+                    claims.Add(new Claim(key, claimValue, ClaimValueTypes.String, issuer, issuer));
+                else if (obj is DateTime dateTimeValue)
+                    claims.Add(new Claim(key, dateTimeValue.ToString("o", CultureInfo.InvariantCulture), ClaimValueTypes.DateTime, issuer, issuer));
+                else if (obj is JsonElement jsonElement)
+                    claims.Add(JsonClaimSet.CreateClaimFromJsonElement(key, issuer, jsonElement));
+                else if (obj is IEnumerable<object> innerObjects)
+                    AddListofObjects(key, innerObjects, claims, issuer);
+                else
+                    claims.Add(new Claim(key, obj.ToString(), GetClaimValueType(obj), issuer, issuer));
             }
         }
 
-        private static void AddDefaultClaimFromJToken(List<Claim> claims, string claimType, JToken jtoken, string issuer)
+        internal static void AddClaimsFromJsonElement(string claimType, string issuer, JsonElement jsonElement, List<Claim> claims)
         {
-            JValue jvalue = jtoken as JValue;
-            if (jvalue != null)
+            // handle arrays to a single level
+            if (jsonElement.ValueKind == JsonValueKind.Array)
             {
-                // String is special because item.ToString(Formatting.None) will result in "/"string/"". The quotes will be added.
-                // Boolean needs item.ToString otherwise 'true' => 'True'
-                if (jvalue.Type == JTokenType.String)
-                    claims.Add(new Claim(claimType, jvalue.Value.ToString(), ClaimValueTypes.String, issuer, issuer));
-                // DateTime claims require special processing. jtoken.ToString(Formatting.None) will result in "\"dateTimeValue\"". The quotes will be added.
-                else if (jvalue.Value is DateTime dateTimeValue)
-                    claims.Add(new Claim(claimType, dateTimeValue.ToUniversalTime().ToString("o", CultureInfo.InvariantCulture), ClaimValueTypes.DateTime, issuer, issuer));
-                else
-                    claims.Add(new Claim(claimType, jtoken.ToString(Formatting.None), GetClaimValueType(jvalue.Value), issuer, issuer));
+                foreach (JsonElement element in jsonElement.EnumerateArray())
+                    claims.Add(JsonClaimSet.CreateClaimFromJsonElement(claimType, issuer, element));
             }
             else
-                claims.Add(new Claim(claimType, jtoken.ToString(Formatting.None), GetClaimValueType(jtoken), issuer, issuer));
+            {
+                claims.Add(JsonClaimSet.CreateClaimFromJsonElement(claimType, issuer, jsonElement));
+            }
         }
 
         /// <summary>
@@ -527,52 +644,43 @@ namespace System.IdentityModel.Tokens.Jwt
         /// Adds claims from dictionary.
         /// </summary>
         /// <param name="claimsCollection"> A dictionary of claims.</param>
-        /// <remark> If a key is already present in target dictionary, its value is overridden by the value of the key in claimsCollection.</remark>
+        /// <remark> If a key is already present in target dictionary, its claimValue is overridden by the claimValue of the key in claimsCollection.</remark>
         internal void AddDictionaryClaims(IDictionary<string, object> claimsCollection)
         {
             if (claimsCollection == null)
                 throw LogHelper.LogExceptionMessage(new ArgumentNullException(nameof(claimsCollection)));
 
-            foreach (string type in claimsCollection.Keys)
-                this[type] = claimsCollection[type];
+            foreach (KeyValuePair<string, object> kvp in claimsCollection)
+                this[kvp.Key] = kvp.Value;
         }
 
-        internal static string GetClaimValueType(object obj)
+        internal static string GetClaimValueType(object value)
         {
-            if (obj == null)
+            if (value == null)
                 return JsonClaimValueTypes.JsonNull;
 
-            var objType = obj.GetType();
+            Type objType = value.GetType();
 
-            if (objType == typeof(string))
-                return ClaimValueTypes.String;
-
-            if (objType == typeof(int))
-                return ClaimValueTypes.Integer;
-
-            if (objType == typeof(bool))
-                return ClaimValueTypes.Boolean;
-
-            if (objType == typeof(double))
-                return ClaimValueTypes.Double;
-
-            if (objType == typeof(long))
-            {
-                long l = (long)obj;
-                if (l >= int.MinValue && l <= int.MaxValue)
-                    return ClaimValueTypes.Integer;
-
+            if (value is string str)
+                return JwtTokenUtilities.GetStringClaimValueType(str);
+            else if (objType == typeof(int))
+                return ClaimValueTypes.Integer32;
+            else if (objType == typeof(long))
                 return ClaimValueTypes.Integer64;
-            }
-
-            if (objType == typeof(DateTime))
+            else if (objType == typeof(bool))
+                return ClaimValueTypes.Boolean;
+            else if (objType == typeof(double))
+                return ClaimValueTypes.Double;
+            else if (objType == typeof(DateTime))
                 return ClaimValueTypes.DateTime;
-
-            if (objType == typeof(JObject))
+            else if (objType == typeof(float))
+                return ClaimValueTypes.Double;
+            else if (objType == typeof(decimal))
+                return ClaimValueTypes.Double;
+            else if (value is null)
+                return JsonClaimValueTypes.JsonNull;
+            else if (objType == typeof(JsonElement))
                 return JsonClaimValueTypes.Json;
-
-            if (objType == typeof(JArray))
-                return JsonClaimValueTypes.JsonArray;
 
             return objType.ToString();
         }
@@ -587,7 +695,7 @@ namespace System.IdentityModel.Tokens.Jwt
                 if (value is string str)
                     return str;
 
-                return JsonExtensions.SerializeToJson(value);
+                return string.Empty;
             }
 
             return null;
@@ -595,183 +703,175 @@ namespace System.IdentityModel.Tokens.Jwt
 
         internal int? GetIntClaim(string claimType)
         {
-            int? retval = null;
-
-            object value;
-            if (TryGetValue(claimType, out value))
+            if (TryGetValue(claimType, out object claimValue))
             {
-                IList<object> claimValues = value as IList<object>;
-                if (claimValues != null)
-                {
-                    foreach (object obj in claimValues)
-                    {
-                        retval = null;
-                        if (obj == null)
-                        {
-                            continue;
-                        }
-
-                        try
-                        {
-                            retval = Convert.ToInt32(Math.Truncate(Convert.ToDouble(obj, CultureInfo.InvariantCulture)));
-                        }
-                        catch (System.FormatException)
-                        {
-                            retval = null;
-                        }
-                        catch (System.InvalidCastException)
-                        {
-                            retval = null;
-                        }
-                        catch (OverflowException)
-                        {
-                            retval = null;
-                        }
-
-                        if (retval != null)
-                        {
-                            return retval;
-                        }
-                    }
-                }
-                else
-                {
-                    try
-                    {
-                        retval = Convert.ToInt32(Math.Truncate(Convert.ToDouble(value, CultureInfo.InvariantCulture)));
-                    }
-                    catch (System.FormatException)
-                    {
-                        retval = null;
-                    }
-                    catch (OverflowException)
-                    {
-                        retval = null;
-                    }
-                }
-
-                return retval;
+                int i = default;
+                if (TryConvertToInt(claimValue, ref i))
+                    return i;
             }
 
-            return retval;
+            return null;
         }
 
-        internal IList<string> GetIListClaims(string claimType)
+        internal long? GetLongClaim(string claimType)
         {
-            List<string> claimValues = new List<string>();
-
-            object value = null;
-            if (!TryGetValue(claimType, out value))
+            if (TryGetValue(claimType, out object claimValue))
             {
-                return claimValues;
+                long l = default;
+                if (TryConvertToLong(claimValue, ref l))
+                    return l;
             }
 
-            string str = value as string;
-            if (str != null)
-            {
-                claimValues.Add(str);
-                return claimValues;
-            }
-
-            // values must be an enumeration of strings;
-            IEnumerable<object> values = value as IEnumerable<object>;
-            if (values != null)
-            {
-                foreach (var item in values)
-                {
-                    claimValues.Add(item.ToString());
-                }
-            }
-            else
-            {
-                claimValues.Add(JsonExtensions.SerializeToJson(value));
-            }
-
-            return claimValues;
+            return null;
         }
 
-        /// <summary>
-        /// Gets the DateTime using the number of seconds from 1970-01-01T0:0:0Z (UTC)
-        /// </summary>
-        /// <param name="key">Claim in the payload that should map to an integer.</param>
-        /// <remarks>If the claim is not found, the function returns: DateTime.MinValue
-        /// </remarks>
-        /// <exception cref="SecurityTokenException">If an overflow exception is thrown by the runtime.</exception>
-        /// <returns>The DateTime representation of a claim.</returns>
-        private DateTime GetDateTime(string key)
+        private static bool TryConvertToInt(object value, ref int outVal)
         {
-            object dateValue;
-            if (!TryGetValue(key, out dateValue))
-            {
-                return DateTime.MinValue;
-            }
-
-            // if there are multiple dates, take the first one.
+            outVal = default;
             try
             {
-                long secondsAfterBaseTime;
-                IList<object> dateValues = dateValue as IList<object>;
-                if (dateValues != null)
+                if (value is int i)
                 {
-                    if (dateValues.Count == 0)
-                    {
-                        return DateTime.MinValue;
-                    }
-                    else
-                    {
-                        dateValue = dateValues[0];
-                    }
+                    outVal = i;
+                    return true;
                 }
 
-                // null converts to 0.
-                secondsAfterBaseTime = Convert.ToInt64(Math.Truncate(Convert.ToDouble(dateValue, CultureInfo.InvariantCulture)));
-                return EpochTime.DateTime(secondsAfterBaseTime);
+                if (value is string str)
+                    if (int.TryParse(str, out int result))
+                    {
+                        outVal = result;
+                        return true;
+                    }
+
+                outVal = Convert.ToInt32(Math.Truncate(Convert.ToDouble(value, CultureInfo.InvariantCulture)));
+                return true;
             }
-            catch (Exception ex)
+            catch (FormatException)
             {
-                if (ex is FormatException || ex is ArgumentException || ex is InvalidCastException)
-                {
-                    throw LogHelper.LogExceptionMessage(new SecurityTokenException(LogHelper.FormatInvariant(LogMessages.IDX12700, key, LogHelper.MarkAsNonPII((dateValue ?? "Null"))), ex));
-                }
-
-                if (ex is OverflowException)
-                {
-                    throw LogHelper.LogExceptionMessage(new SecurityTokenException(LogHelper.FormatInvariant(LogMessages.IDX12701, key, LogHelper.MarkAsNonPII((dateValue ?? "Null"))), ex));
-                }
-
-                throw;
+                return false;
             }
+            catch (OverflowException)
+            {
+                return false;
+            }
+            catch (InvalidCastException)
+            {
+                return false;
+            }
+
+#pragma warning disable CS0162 // Unreachable code detected
+            return false;
+#pragma warning restore CS0162 // Unreachable code detected
+        }
+
+        private static bool TryConvertToLong(object value, ref long outVal)
+        {
+            outVal = default;
+            try
+            {
+                if (value is long l)
+                {
+                    outVal = l;
+                    return true;
+                }
+
+                if (value is string str)
+                    if (long.TryParse(str, out long result))
+                    {
+                        outVal = result;
+                        return true;
+                    }
+
+                outVal = Convert.ToInt64(Math.Truncate(Convert.ToDouble(value, CultureInfo.InvariantCulture)));
+
+                return true;
+            }
+            catch (FormatException)
+            {
+                return false;
+            }
+            catch (OverflowException)
+            {
+                return false;
+            }
+            catch (InvalidCastException)
+            {
+                return false;
+            }
+        }
+
+        internal List<string> GetListOfClaims(string claimType)
+        {
+            List<string> claimValues = new();
+            if (!TryGetValue(claimType, out object value))
+                return claimValues;
+
+            // JsonArray and JsonObject are stored in the dictionary as JsonElement
+            if (value is JsonElement jsonElement)
+            {
+                if (JsonSerializerPrimitives.TryCreateTypeFromJsonElement(jsonElement, out List<string> list))
+                    return list;
+            }
+            else if (value is string str)
+                claimValues.Add(str);
+
+            // value may not be a string, use ToString();
+            else if (value is IEnumerable<object> values)
+            {
+                foreach (object item in values)
+                    claimValues.Add(item.ToString());
+            }
+            else
+                claimValues.Add(value.ToString());
+
+            return claimValues;
         }
 
         /// <summary>
         /// Serializes this instance to JSON.
         /// </summary>
         /// <returns>This instance as JSON.</returns>
-        /// <remarks>Use <see cref="JsonExtensions.Serializer"/> to customize JSON serialization.</remarks>
         public virtual string SerializeToJson()
         {
-            return JsonExtensions.SerializeToJson(this as IDictionary<string, object>);
+            using (MemoryStream memoryStream = new MemoryStream())
+            {
+                Utf8JsonWriter writer = null;
+                try
+                {
+                    writer = new Utf8JsonWriter(memoryStream, new JsonWriterOptions { Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping });
+                    writer.WriteStartObject();
+
+                    JsonSerializerPrimitives.WriteObjects(ref writer, this);
+
+                    writer.WriteEndObject();
+                    writer.Flush();
+                    return Encoding.UTF8.GetString(memoryStream.GetBuffer(), 0, (int)memoryStream.Length);
+                }
+                finally
+                {
+                    writer?.Dispose();
+                }
+            }
+        }
+
+        /// <summary>
+        /// Deserializes Base64UrlEncoded JSON into a <see cref="JwtPayload"/>.
+        /// </summary>
+        /// <param name="base64UrlEncodedJsonString">Base64url encoded JSON to deserialize.</param>
+        /// <returns>An instance of <see cref="JwtPayload"/>.</returns>
+        public static JwtPayload Base64UrlDeserialize(string base64UrlEncodedJsonString)
+        {
+            _ = base64UrlEncodedJsonString ?? throw LogHelper.LogArgumentNullException(nameof(base64UrlEncodedJsonString));
+            return Base64UrlEncoding.Decode(base64UrlEncodedJsonString, 0, base64UrlEncodedJsonString.Length, CreatePayload);
         }
 
         /// <summary>
         /// Encodes this instance as Base64UrlEncoded JSON.
         /// </summary>
         /// <returns>Base64UrlEncoded JSON.</returns>
-        /// <remarks>Use <see cref="JsonExtensions.Serializer"/> to customize JSON serialization.</remarks>
         public virtual string Base64UrlEncode()
         {
             return Base64UrlEncoder.Encode(SerializeToJson());
-        }
-
-        /// <summary>
-        /// Deserializes Base64UrlEncoded JSON into a <see cref="JwtPayload"/> instance.
-        /// </summary>
-        /// <param name="base64UrlEncodedJsonString">base64url encoded JSON to deserialize.</param>
-        /// <returns>An instance of <see cref="JwtPayload"/>.</returns>
-        /// <remarks>Use <see cref="JsonExtensions.Deserializer"/> to customize JSON serialization.</remarks>
-        public static JwtPayload Base64UrlDeserialize(string base64UrlEncodedJsonString)
-        {
-            return JsonExtensions.DeserializeJwtPayload(Base64UrlEncoder.Decode(base64UrlEncodedJsonString));
         }
 
         /// <summary>
@@ -779,10 +879,11 @@ namespace System.IdentityModel.Tokens.Jwt
         /// </summary>
         /// <param name="jsonString">The JSON to deserialize.</param>
         /// <returns>An instance of <see cref="JwtPayload"/>.</returns>
-        /// <remarks>Use <see cref="JsonExtensions.Deserializer"/> to customize JSON serialization.</remarks>
         public static JwtPayload Deserialize(string jsonString)
         {
-            return JsonExtensions.DeserializeJwtPayload(jsonString);
+            _ = jsonString ?? throw LogHelper.LogArgumentNullException(nameof(jsonString));
+            byte[] bytes = Encoding.UTF8.GetBytes(jsonString);
+            return CreatePayload(bytes, bytes.Length);
         }
     }
 }

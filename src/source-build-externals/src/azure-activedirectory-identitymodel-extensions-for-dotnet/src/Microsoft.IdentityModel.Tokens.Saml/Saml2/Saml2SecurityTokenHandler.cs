@@ -10,6 +10,7 @@ using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
+using Microsoft.IdentityModel.Abstractions;
 using Microsoft.IdentityModel.Logging;
 using Microsoft.IdentityModel.Tokens.Saml;
 using static Microsoft.IdentityModel.Logging.LogHelper;
@@ -267,7 +268,8 @@ namespace Microsoft.IdentityModel.Tokens.Saml2
             if (validationParameters.SaveSigninToken)
                 identity.BootstrapContext = samlToken.Assertion.CanonicalString;
 
-            LogHelper.LogInformation(TokenLogMessages.IDX10241, token);
+            if (LogHelper.IsEnabled(EventLogLevel.Informational))
+                LogHelper.LogInformation(TokenLogMessages.IDX10241, token);
 
             return new ClaimsPrincipal(identity);
         }
@@ -423,7 +425,7 @@ namespace Microsoft.IdentityModel.Tokens.Saml2
                 // 1. User specified delegate: IssuerSigningKeyResolver returned null
                 // 2. ResolveIssuerSigningKey returned null
                 // Try all the keys. This is the degenerate case, not concerned about perf.
-                keys = TokenUtilities.GetAllSigningKeys(validationParameters);
+                keys = TokenUtilities.GetAllSigningKeys(validationParameters: validationParameters);
             }
 
             // keep track of exceptions thrown, keys that were tried
@@ -440,7 +442,10 @@ namespace Microsoft.IdentityModel.Tokens.Saml2
                         Validators.ValidateAlgorithm(samlToken.Assertion.Signature.SignedInfo.SignatureMethod, key, samlToken, validationParameters);
 
                         samlToken.Assertion.Signature.Verify(key, validationParameters.CryptoProviderFactory ?? key.CryptoProviderFactory);
-                        LogHelper.LogInformation(TokenLogMessages.IDX10242, token);
+
+                        if (LogHelper.IsEnabled(EventLogLevel.Informational))
+                            LogHelper.LogInformation(TokenLogMessages.IDX10242, token);
+
                         samlToken.SigningKey = key;
                         return samlToken;
                     }
@@ -1125,7 +1130,7 @@ namespace Microsoft.IdentityModel.Tokens.Saml2
                     ProcessAuthenticationStatement(authnStatement, identity, issuer);
                 else if (statement is Saml2AuthorizationDecisionStatement authzStatement)
                     ProcessAuthorizationDecisionStatement(authzStatement, identity, issuer);
-                else
+                else if (LogHelper.IsEnabled(EventLogLevel.Warning))
                     LogWarning(LogMessages.IDX13516, LogHelper.MarkAsNonPII(statement.GetType()));
             }
         }
@@ -1281,7 +1286,9 @@ namespace Microsoft.IdentityModel.Tokens.Saml2
             var actualIssuer = issuer;
             if (string.IsNullOrWhiteSpace(issuer))
             {
-                LogHelper.LogVerbose(TokenLogMessages.IDX10244, LogHelper.MarkAsNonPII(ClaimsIdentity.DefaultIssuer));
+                if (LogHelper.IsEnabled(EventLogLevel.Verbose))
+                    LogHelper.LogVerbose(TokenLogMessages.IDX10244, LogHelper.MarkAsNonPII(ClaimsIdentity.DefaultIssuer));
+
                 actualIssuer = ClaimsIdentity.DefaultIssuer;
             }
 

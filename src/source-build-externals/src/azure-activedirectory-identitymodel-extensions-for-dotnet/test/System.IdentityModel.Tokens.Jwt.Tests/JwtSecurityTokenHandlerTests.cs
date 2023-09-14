@@ -5,22 +5,54 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Security.Claims;
-using Microsoft.IdentityModel.Json.Linq;
 using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.Protocols;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using Microsoft.IdentityModel.TestUtils;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.IdentityModel.Validators;
+using Newtonsoft.Json.Linq;
 using Xunit;
 using TokenLogMessages = Microsoft.IdentityModel.Tokens.LogMessages;
-
-#pragma warning disable CS3016 // Arrays as attribute arguments is not CLS-compliant
 
 namespace System.IdentityModel.Tokens.Jwt.Tests
 {
     public class JwtSecurityTokenHandlerTests
     {
+
+        [Fact]
+        public void JwtSecurityTokenHandler_CreateToken_SameTypeMultipleValues()
+        {
+            var identity = new ClaimsIdentity("Test");
+
+            var claimValues = new List<string> { "value1", "value2", "value3", "value4" };
+
+            foreach (var value in claimValues)
+                identity.AddClaim(new Claim("a", value));
+
+            var descriptor = new SecurityTokenDescriptor
+            {
+                SigningCredentials = new SigningCredentials(Default.AsymmetricSigningKey, SecurityAlgorithms.RsaSsaPssSha256),
+                Subject = identity
+            };
+
+            var handler = new JwtSecurityTokenHandler();
+
+            var jwt = (JwtSecurityToken)handler.CreateToken(descriptor);
+
+            var claims = jwt.Claims.ToList();
+
+            int defaultClaimsCount = 3;
+
+            Assert.Equal(defaultClaimsCount + claimValues.Count, claims.Count);
+
+            var aTypeClaims = claims.Where(c => c.Type == "a").ToList();
+
+            Assert.Equal(4, aTypeClaims.Count);
+
+            foreach (var value in claimValues)
+                Assert.NotNull(aTypeClaims.SingleOrDefault(c => c.Value == value));
+        }
 
         [Theory, MemberData(nameof(CreateJWEWithPayloadStringTheoryData))]
         public void CreateJWEWithAdditionalHeaderClaims(CreateTokenTheoryData theoryData)
@@ -229,7 +261,7 @@ namespace System.IdentityModel.Tokens.Jwt.Tests
         [Theory, MemberData(nameof(CreateJWEUsingSecurityTokenDescriptorTheoryData))]
         public void CreateJWEUsingSecurityTokenDescriptor(CreateTokenTheoryData theoryData)
         {
-            var context = TestUtilities.WriteHeader($"{this}.CreateJWEUsingSecurityTokenDescriptor", theoryData);
+            CompareContext context = TestUtilities.WriteHeader($"{this}.CreateJWEUsingSecurityTokenDescriptor", theoryData);
             theoryData.ValidationParameters.ValidateLifetime = false;
             try
             {
@@ -238,22 +270,36 @@ namespace System.IdentityModel.Tokens.Jwt.Tests
 
                 string jweFromJsonHandler = theoryData.JsonWebTokenHandler.CreateToken(theoryData.TokenDescriptor);
 
-                var claimsPrincipal = theoryData.JwtSecurityTokenHandler.ValidateToken(tokenFromTokenDescriptor, theoryData.ValidationParameters, out SecurityToken validatedTokenFromJwtHandler);
-                var validationResult = theoryData.JsonWebTokenHandler.ValidateToken(jweFromJsonHandler, theoryData.ValidationParameters);
+                var claimsPrincipalJwt = theoryData.JwtSecurityTokenHandler.ValidateToken(tokenFromTokenDescriptor, theoryData.ValidationParameters, out SecurityToken validatedTokenFromJwtHandler);
+                var validationResultJson = theoryData.JsonWebTokenHandler.ValidateTokenAsync(jweFromJsonHandler, theoryData.ValidationParameters).Result;
 
-                if (validationResult.Exception != null && validationResult.IsValid)
-                    context.Diffs.Add("validationResult.IsValid, validationResult.Exception != null");
+                if (validationResultJson.Exception != null && validationResultJson.IsValid)
+                    context.Diffs.Add("validationResultJson.IsValid, validationResultJson.Exception != null");
 
-                IdentityComparer.AreEqual(validationResult.IsValid, theoryData.IsValid, context);
-                var validatedTokenFromJsonHandler = validationResult.SecurityToken;
-                var validationResult2 = theoryData.JsonWebTokenHandler.ValidateToken(tokenFromTokenDescriptor, theoryData.ValidationParameters);
+                IdentityComparer.AreEqual(validationResultJson.IsValid, theoryData.IsValid, context);
+
+                var validatedTokenFromJsonHandler = validationResultJson.SecurityToken;
+                var validationResult2 = theoryData.JsonWebTokenHandler.ValidateTokenAsync(tokenFromTokenDescriptor, theoryData.ValidationParameters).Result;
 
                 if (validationResult2.Exception != null && validationResult2.IsValid)
+                {
                     context.Diffs.Add("validationResult2.IsValid, validationResult2.Exception != null");
+                    context.AddDiff("****************************************************************");
+                }
 
                 IdentityComparer.AreEqual(validationResult2.IsValid, theoryData.IsValid, context);
-                IdentityComparer.AreEqual(claimsPrincipal.Identity, validationResult.ClaimsIdentity, context);
-                IdentityComparer.AreEqual((validatedTokenFromJwtHandler as JwtSecurityToken).Claims, (validatedTokenFromJsonHandler as JsonWebToken).Claims, context);
+
+                if (!IdentityComparer.AreEqual(claimsPrincipalJwt.Identity, validationResultJson.ClaimsIdentity, context))
+                {
+                    context.Diffs.Add("claimsPrincipalJwt.Identity !=  validationResultJson.ClaimsIdentity");
+                    context.Diffs.Add("*******************************************************************");
+                }
+
+                if (!IdentityComparer.AreEqual((validatedTokenFromJwtHandler as JwtSecurityToken).Claims, (validatedTokenFromJsonHandler as JsonWebToken).Claims, context))
+                {
+                    context.AddDiff("validatedTokenFromJwtHandler as JwtSecurityToken).Claims != (validatedTokenFromJsonHandler as JsonWebToken).Claims");
+                    context.AddDiff("******************************************************************************************************************");
+                }
 
                 theoryData.ExpectedException.ProcessNoException(context);
                 context.PropertiesToIgnoreWhenComparing = new Dictionary<Type, List<string>>
@@ -261,7 +307,7 @@ namespace System.IdentityModel.Tokens.Jwt.Tests
                     { typeof(JsonWebToken), new List<string> { "EncodedToken", "AuthenticationTag", "Ciphertext", "InitializationVector" } },
                 };
 
-                IdentityComparer.AreEqual(validationResult2.SecurityToken as JwtSecurityToken, validationResult.SecurityToken as JwtSecurityToken, context);
+                IdentityComparer.AreEqual(validationResult2.SecurityToken as JwtSecurityToken, validationResultJson.SecurityToken as JwtSecurityToken, context);
                 theoryData.ExpectedException.ProcessNoException(context);
             }
             catch (Exception ex)
@@ -1082,7 +1128,7 @@ namespace System.IdentityModel.Tokens.Jwt.Tests
                 var claimsPrincipal = handler.ValidateToken(theoryData.JWECompressionString, theoryData.ValidationParameters, out var validatedToken);
 
                 if (!claimsPrincipal.Claims.Any())
-                    context.Diffs.Add("claimsPrincipal.Claims is empty.");
+                    context.Diffs.Add("claimsPrincipalJwt.Claims is empty.");
 
                 theoryData.ExpectedException.ProcessNoException(context);
             }
@@ -1202,9 +1248,9 @@ namespace System.IdentityModel.Tokens.Jwt.Tests
             var token = tokenHandler.CreateJwtSecurityToken(descriptorNoTimeValues);
             var jwt = token as JwtSecurityToken;
 
-            Assert.NotNull(jwt.Payload.Iat);
-            Assert.NotNull(jwt.Payload.Nbf);
-            Assert.NotNull(jwt.Payload.Exp);
+            Assert.NotEqual(jwt.Payload.IssuedAt, DateTime.MinValue);
+            Assert.NotNull(jwt.Payload.NotBefore);
+            Assert.NotNull(jwt.Payload.Expiration);
         }
 
         [Fact]
@@ -2058,7 +2104,7 @@ namespace System.IdentityModel.Tokens.Jwt.Tests
                 AadIssuerValidator.GetAadIssuerValidator(Default.AadV1Authority).ConfigurationManagerV1 = theoryData.ValidationParameters.ConfigurationManager;
                 new JwtSecurityTokenHandler().ValidateToken(theoryData.Token, theoryData.ValidationParameters, out _);
                 if (theoryData.ShouldSetLastKnownConfiguration && theoryData.ValidationParameters.ConfigurationManager.LastKnownGoodConfiguration == null)
-                    context.AddDiff("validationResult.IsValid, but the configuration was not set as the LastKnownGoodConfiguration");
+                    context.AddDiff("validationResultJson.IsValid, but the configuration was not set as the LastKnownGoodConfiguration");
                 theoryData.ExpectedException.ProcessNoException(context);
             }
             catch (Exception ex)
@@ -2909,5 +2955,3 @@ namespace System.IdentityModel.Tokens.Jwt.Tests
         public IEnumerable<SecurityKey> ExpectedDecryptionKeys { get; set; }
     }
 }
-
-#pragma warning restore CS3016 // Arrays as attribute arguments is not CLS-compliant

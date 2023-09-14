@@ -7,11 +7,11 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.IdentityModel.Json;
-using Microsoft.IdentityModel.Json.Linq;
 using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.TestUtils;
 using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using Xunit;
 
 #pragma warning disable CS3016 // Arrays as attribute arguments is not CLS-compliant
@@ -90,9 +90,9 @@ namespace Microsoft.IdentityModel.Protocols.SignedHttpRequest.Tests
             var context = TestUtilities.WriteHeader($"{this}.ValidateTsClaim", theoryData);
             try
             {
-                var handler = new SignedHttpRequestHandlerPublic();
+                var handler = new SignedHttpRequestHandler();
                 var signedHttpRequestValidationContext = theoryData.BuildSignedHttpRequestValidationContext();
-                handler.ValidateTsClaimPublic(theoryData.SignedHttpRequestToken, signedHttpRequestValidationContext);
+                handler.ValidateTsClaim(theoryData.SignedHttpRequestToken, signedHttpRequestValidationContext);
                 theoryData.ExpectedException.ProcessNoException(context);
             }
             catch (Exception ex)
@@ -148,9 +148,9 @@ namespace Microsoft.IdentityModel.Protocols.SignedHttpRequest.Tests
             var context = TestUtilities.WriteHeader($"{this}.ValidateMClaim", theoryData);
             try
             {
-                var handler = new SignedHttpRequestHandlerPublic();
+                var handler = new SignedHttpRequestHandler();
                 var signedHttpRequestValidationContext = theoryData.BuildSignedHttpRequestValidationContext();
-                handler.ValidateMClaimPublic(theoryData.SignedHttpRequestToken, signedHttpRequestValidationContext);
+                handler.ValidateMClaim(theoryData.SignedHttpRequestToken, signedHttpRequestValidationContext);
                 theoryData.ExpectedException.ProcessNoException(context);
             }
             catch (Exception ex)
@@ -230,9 +230,9 @@ namespace Microsoft.IdentityModel.Protocols.SignedHttpRequest.Tests
             var context = TestUtilities.WriteHeader($"{this}.ValidateUClaim", theoryData);
             try
             {
-                var handler = new SignedHttpRequestHandlerPublic();
+                var handler = new SignedHttpRequestHandler();
                 var signedHttpRequestValidationContext = theoryData.BuildSignedHttpRequestValidationContext();
-                handler.ValidateUClaimPublic(theoryData.SignedHttpRequestToken, signedHttpRequestValidationContext);
+                handler.ValidateUClaim(theoryData.SignedHttpRequestToken, signedHttpRequestValidationContext);
                 theoryData.ExpectedException.ProcessNoException(context);
             }
             catch (Exception ex)
@@ -324,9 +324,9 @@ namespace Microsoft.IdentityModel.Protocols.SignedHttpRequest.Tests
             var context = TestUtilities.WriteHeader($"{this}.ValidatePClaim", theoryData);
             try
             {
-                var handler = new SignedHttpRequestHandlerPublic();
+                var handler = new SignedHttpRequestHandler();
                 var signedHttpRequestValidationContext = theoryData.BuildSignedHttpRequestValidationContext();
-                handler.ValidatePClaimPublic(theoryData.SignedHttpRequestToken, signedHttpRequestValidationContext);
+                handler.ValidatePClaim(theoryData.SignedHttpRequestToken, signedHttpRequestValidationContext);
                 theoryData.ExpectedException.ProcessNoException(context);
             }
             catch (Exception ex)
@@ -435,9 +435,9 @@ namespace Microsoft.IdentityModel.Protocols.SignedHttpRequest.Tests
             var context = TestUtilities.WriteHeader($"{this}.ValidateHClaim", theoryData);
             try
             {
-                var handler = new SignedHttpRequestHandlerPublic();
+                var handler = new SignedHttpRequestHandler();
                 var signedHttpRequestValidationContext = theoryData.BuildSignedHttpRequestValidationContext();
-                handler.ValidateHClaimPublic(theoryData.SignedHttpRequestToken, signedHttpRequestValidationContext);
+                handler.ValidateHClaim(theoryData.SignedHttpRequestToken, signedHttpRequestValidationContext);
                 theoryData.ExpectedException.ProcessNoException(context);
             }
             catch (Exception ex)
@@ -666,7 +666,7 @@ namespace Microsoft.IdentityModel.Protocols.SignedHttpRequest.Tests
                     {
                         HttpRequestHeaders = new Dictionary<string, IEnumerable<string>>(),
                         SignedHttpRequestToken = SignedHttpRequestTestUtils.ReplaceOrAddPropertyAndCreateDefaultSignedHttpRequest(new JProperty(SignedHttpRequestClaimTypes.H, "notAnArray")),
-                        ExpectedException = new ExpectedException(typeof(SignedHttpRequestInvalidHClaimException), "IDX23003"),
+                        ExpectedException = new ExpectedException(typeof(SignedHttpRequestInvalidHClaimException), "IDX23024", innerTypeExpected: typeof(ArgumentOutOfRangeException)),
                         TestId = "InvalidClaimType",
                     },
                     new ValidateSignedHttpRequestTheoryData
@@ -686,9 +686,9 @@ namespace Microsoft.IdentityModel.Protocols.SignedHttpRequest.Tests
             var context = TestUtilities.WriteHeader($"{this}.ValidateQClaim", theoryData);
             try
             {
-                var handler = new SignedHttpRequestHandlerPublic();
+                var handler = new SignedHttpRequestHandler();
                 var signedHttpRequestValidationContext = theoryData.BuildSignedHttpRequestValidationContext();
-                handler.ValidateQClaimPublic(theoryData.SignedHttpRequestToken, signedHttpRequestValidationContext);
+                handler.ValidateQClaim(theoryData.SignedHttpRequestToken, signedHttpRequestValidationContext);
                 theoryData.ExpectedException.ProcessNoException(context);
             }
             catch (Exception ex)
@@ -841,7 +841,7 @@ namespace Microsoft.IdentityModel.Protocols.SignedHttpRequest.Tests
                     {
                         HttpRequestUri = new Uri("https://www.contoso.com"),
                         SignedHttpRequestToken = SignedHttpRequestTestUtils.ReplaceOrAddPropertyAndCreateDefaultSignedHttpRequest(new JProperty(SignedHttpRequestClaimTypes.Q,  "notAnArray")),
-                        ExpectedException = new ExpectedException(typeof(SignedHttpRequestInvalidQClaimException), "IDX23003"),
+                        ExpectedException = new ExpectedException(typeof(SignedHttpRequestInvalidQClaimException), "IDX23024", innerTypeExpected: typeof(ArgumentOutOfRangeException)),
                         TestId = "InvalidClaimType",
                     },
                     new ValidateSignedHttpRequestTheoryData
@@ -861,9 +861,9 @@ namespace Microsoft.IdentityModel.Protocols.SignedHttpRequest.Tests
             var context = TestUtilities.WriteHeader($"{this}.ValidateBClaim", theoryData);
             try
             {
-                var handler = new SignedHttpRequestHandlerPublic();
+                var handler = new SignedHttpRequestHandler();
                 var signedHttpRequestValidationContext = theoryData.BuildSignedHttpRequestValidationContext();
-                handler.ValidateBClaimPublic(theoryData.SignedHttpRequestToken, signedHttpRequestValidationContext);
+                handler.ValidateBClaim(theoryData.SignedHttpRequestToken, signedHttpRequestValidationContext);
                 theoryData.ExpectedException.ProcessNoException(context);
             }
             catch (Exception ex)
@@ -925,7 +925,7 @@ namespace Microsoft.IdentityModel.Protocols.SignedHttpRequest.Tests
             var signedHttpRequestValidationContext = theoryData.BuildSignedHttpRequestValidationContext();
 
             var handler = new SignedHttpRequestHandlerPublic();
-            var signedHttpRequest = await handler.ValidateSignedHttpRequestPayloadPublicAsync(theoryData.SignedHttpRequestToken, signedHttpRequestValidationContext, CancellationToken.None).ConfigureAwait(false);
+            var signedHttpRequest = await handler.ValidateSignedHttpRequestPayloadAsync(theoryData.SignedHttpRequestToken, signedHttpRequestValidationContext, CancellationToken.None).ConfigureAwait(false);
 
             var methodCalledStatus = (bool)signedHttpRequestValidationContext.CallContext.PropertyBag["onlyTrack_ValidateTsClaimCall"];
             if (methodCalledStatus != signedHttpRequestValidationContext.SignedHttpRequestValidationParameters.ValidateTs &&
@@ -1265,9 +1265,9 @@ namespace Microsoft.IdentityModel.Protocols.SignedHttpRequest.Tests
             var context = TestUtilities.WriteHeader($"{this}.ValidateSignedHttpRequestSignature", theoryData);
             try
             {
-                var handler = new SignedHttpRequestHandlerPublic();
+                var handler = new SignedHttpRequestHandler();
                 var signedHttpRequestValidationContext = theoryData.BuildSignedHttpRequestValidationContext();
-                var signingKey = await handler.ValidateSignaturePublicAsync(theoryData.SignedHttpRequestToken, theoryData.PopKey, signedHttpRequestValidationContext, CancellationToken.None).ConfigureAwait(false);
+                var signingKey = await handler.ValidateSignatureAsync(theoryData.SignedHttpRequestToken, theoryData.PopKey, signedHttpRequestValidationContext, CancellationToken.None).ConfigureAwait(false);
                 IdentityComparer.AreSecurityKeysEqual(signingKey, theoryData.ExpectedPopKey, context);
                 theoryData.ExpectedException.ProcessNoException(context);
             }
@@ -1407,7 +1407,7 @@ namespace Microsoft.IdentityModel.Protocols.SignedHttpRequest.Tests
                 var signedHttpRequestWithNullAt = SignedHttpRequestTestUtils.ReplaceOrAddPropertyAndCreateDefaultSignedHttpRequest(new JProperty(SignedHttpRequestClaimTypes.At, null));
                 var signedHttpRequestWithEmptyAt = SignedHttpRequestTestUtils.ReplaceOrAddPropertyAndCreateDefaultSignedHttpRequest(new JProperty(SignedHttpRequestClaimTypes.At, string.Empty));
 
-                var validationResult = new JsonWebTokenHandler().ValidateToken(encodedAccessToken, SignedHttpRequestTestUtils.DefaultTokenValidationParameters);
+                var validationResult = new JsonWebTokenHandler().ValidateTokenAsync(encodedAccessToken, SignedHttpRequestTestUtils.DefaultTokenValidationParameters).Result;
                 var resultingClaimsIdentity = validationResult.ClaimsIdentity;
                 var validatedToken = validationResult.SecurityToken;
 

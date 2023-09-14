@@ -3,6 +3,7 @@
 
 using System;
 using Microsoft.IdentityModel.TestUtils;
+using Microsoft.IdentityModel.Tokens.Json.Tests;
 using Xunit;
 
 using KEY = Microsoft.IdentityModel.TestUtils.KeyingMaterial;
@@ -160,19 +161,6 @@ namespace Microsoft.IdentityModel.Tokens.Tests
                     TestId = "successfulCall",
                 },
             };
-        }
-
-        public class JsonWebKeyTheoryData : TheoryDataBase
-        {
-            public string Crv { get; set; }
-
-            public string D { get; set; }
-
-            public bool UsePrivateKey { get; set; }
-
-            public string X { get; set; }
-
-            public string Y { get; set; }
         }
     }
 }

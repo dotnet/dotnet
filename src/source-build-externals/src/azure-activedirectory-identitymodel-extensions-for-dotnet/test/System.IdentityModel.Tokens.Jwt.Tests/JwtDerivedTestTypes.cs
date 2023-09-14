@@ -13,8 +13,6 @@ namespace System.IdentityModel.Tokens.Jwt.Tests
     /// </summary>
     public class DerivedJwtSecurityToken : JwtSecurityToken
     {
-        // TODO - need to add tests for delegates.
-
         public DerivedJwtSecurityToken(string encodedJwt)
             : base(encodedJwt)
         {

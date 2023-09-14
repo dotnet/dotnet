@@ -4,20 +4,32 @@
 using System;
 using System.Collections.Generic;
 using System.Security.Cryptography;
-using Microsoft.IdentityModel.Json;
-using Microsoft.IdentityModel.Json.Linq;
+using System.Text.Json.Serialization;
+using System.Threading;
+using Microsoft.IdentityModel.Abstractions;
 using Microsoft.IdentityModel.Logging;
+using Microsoft.IdentityModel.Tokens.Json;
 
 namespace Microsoft.IdentityModel.Tokens
 {
     /// <summary>
     /// Represents a JSON Web Key as defined in https://datatracker.ietf.org/doc/html/rfc7517.
     /// </summary>
-    [JsonObject]
     public class JsonWebKey : SecurityKey
     {
+        internal const string ClassName = "Microsoft.IdentityModel.Tokens.JsonWebKey";
+        private Dictionary<string, object> _additionalData;
+        private List<string> _keyOps;
+        private List<string> _oth;
+        private List<string> _x5c;
         private string _kid;
-        private const string _className = "Microsoft.IdentityModel.Tokens.JsonWebKey";
+
+        /// <summary>
+        /// Initializes an new instance of <see cref="JsonWebKey"/>.
+        /// </summary>
+        public JsonWebKey()
+        {
+        }
 
         /// <summary>
         /// Returns a new instance of <see cref="JsonWebKey"/>.
@@ -26,19 +38,12 @@ namespace Microsoft.IdentityModel.Tokens
         /// <returns><see cref="JsonWebKey"/></returns>
         /// <exception cref="ArgumentNullException">If 'json' is null or empty.</exception>
         /// <exception cref="ArgumentException">If 'json' fails to deserialize.</exception>
-        static public JsonWebKey Create(string json)
+        public static JsonWebKey Create(string json)
         {
             if (string.IsNullOrEmpty(json))
                 throw LogHelper.LogArgumentNullException(nameof(json));
 
             return new JsonWebKey(json);
-        }
-
-        /// <summary>
-        /// Initializes an new instance of <see cref="JsonWebKey"/>.
-        /// </summary>
-        public JsonWebKey()
-        {
         }
 
         /// <summary>
@@ -54,12 +59,14 @@ namespace Microsoft.IdentityModel.Tokens
 
             try
             {
-                LogHelper.LogVerbose(LogMessages.IDX10806, json, LogHelper.MarkAsNonPII(_className));
-                JsonConvert.PopulateObject(json, this);
+                if (LogHelper.IsEnabled(EventLogLevel.Verbose))
+                    LogHelper.LogVerbose(LogMessages.IDX10806, json, LogHelper.MarkAsNonPII(ClassName));
+
+                JsonWebKeySerializer.Read(json, this);
             }
             catch (Exception ex)
             {
-                throw LogHelper.LogExceptionMessage(new ArgumentException(LogHelper.FormatInvariant(LogMessages.IDX10805, json, LogHelper.MarkAsNonPII(_className)), ex));
+                throw LogHelper.LogExceptionMessage(new ArgumentException(LogHelper.FormatInvariant(LogMessages.IDX10805, json, LogHelper.MarkAsNonPII(ClassName)), ex));
             }
         }
 
@@ -79,52 +86,75 @@ namespace Microsoft.IdentityModel.Tokens
         /// When deserializing from JSON any properties that are not defined will be placed here.
         /// </summary>
         [JsonExtensionData]
-        public virtual IDictionary<string, object> AdditionalData { get; } = new Dictionary<string, object>();
+        public IDictionary<string, object> AdditionalData => _additionalData ??
+            Interlocked.CompareExchange(ref _additionalData, new Dictionary<string, object>(StringComparer.Ordinal), null) ??
+            _additionalData;
 
         /// <summary>
-        /// Gets or sets the 'alg' (KeyType)..
+        /// Gets or sets the 'alg' (KeyType).
         /// </summary>
-        [JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore, NullValueHandling = NullValueHandling.Ignore, PropertyName = JsonWebKeyParameterNames.Alg, Required = Required.Default)]
+        [JsonPropertyName(JsonWebKeyParameterNames.Alg)]
+#if NET6_0_OR_GREATER
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+#endif
         public string Alg { get; set; }
 
         /// <summary>
-        /// Gets or sets the 'crv' (ECC - Curve)..
+        /// Gets or sets the 'crv' (ECC - Curve).
         /// </summary>
-        [JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore, NullValueHandling = NullValueHandling.Ignore, PropertyName = JsonWebKeyParameterNames.Crv, Required = Required.Default)]
+        [JsonPropertyName(JsonWebKeyParameterNames.Crv)]
+#if NET6_0_OR_GREATER
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+#endif
         public string Crv { get; set; }
 
         /// <summary>
-        /// Gets or sets the 'd' (ECC - Private Key OR RSA - Private Exponent)..
+        /// Gets or sets the 'd' (ECC - Private Key OR RSA - Private Exponent).
         /// </summary>
         /// <remarks>Value is formated as: Base64urlUInt</remarks>
-        [JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore, NullValueHandling = NullValueHandling.Ignore, PropertyName = JsonWebKeyParameterNames.D, Required = Required.Default)]
+        [JsonPropertyName(JsonWebKeyParameterNames.D)]
+#if NET6_0_OR_GREATER
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+#endif
         public string D { get; set; }
 
         /// <summary>
-        /// Gets or sets the 'dp' (RSA - First Factor CRT Exponent)..
+        /// Gets or sets the 'dp' (RSA - First Factor CRT Exponent).
         /// </summary>
         /// <remarks>Value is formated as: Base64urlUInt</remarks>
-        [JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore, NullValueHandling = NullValueHandling.Ignore, PropertyName = JsonWebKeyParameterNames.DP, Required = Required.Default)]
+        [JsonPropertyName(JsonWebKeyParameterNames.DP)]
+#if NET6_0_OR_GREATER
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+#endif
         public string DP { get; set; }
 
         /// <summary>
-        /// Gets or sets the 'dq' (RSA - Second Factor CRT Exponent)..
+        /// Gets or sets the 'dq' (RSA - Second Factor CRT Exponent).
         /// </summary>
         /// <remarks>Value is formated as: Base64urlUInt</remarks>
-        [JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore, NullValueHandling = NullValueHandling.Ignore, PropertyName = JsonWebKeyParameterNames.DQ, Required = Required.Default)]
+        [JsonPropertyName(JsonWebKeyParameterNames.DQ)]
+#if NET6_0_OR_GREATER
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+#endif
         public string DQ { get; set; }
 
         /// <summary>
-        /// Gets or sets the 'e' (RSA - Exponent)..
+        /// Gets or sets the 'e' (RSA - Exponent).
         /// </summary>
-        [JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore, NullValueHandling = NullValueHandling.Ignore, PropertyName = JsonWebKeyParameterNames.E, Required = Required.Default)]
+        [JsonPropertyName(JsonWebKeyParameterNames.E)]
+#if NET6_0_OR_GREATER
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+#endif
         public string E { get; set; }
 
         /// <summary>
-        /// Gets or sets the 'k' (Symmetric - Key Value)..
+        /// Gets or sets the 'k' (Symmetric - Key Value).
         /// </summary>
         /// Base64urlEncoding
-        [JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore, NullValueHandling = NullValueHandling.Ignore, PropertyName = JsonWebKeyParameterNames.K, Required = Required.Default)]
+        [JsonPropertyName(JsonWebKeyParameterNames.K)]
+#if NET6_0_OR_GREATER
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+#endif
         public string K { get; set; }
 
         /// <summary>
@@ -138,15 +168,23 @@ namespace Microsoft.IdentityModel.Tokens
         }
 
         /// <summary>
-        /// Gets the 'key_ops' (Key Operations)..
+        /// Gets the 'key_ops' (Key Operations).
         /// </summary>
-        [JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore, NullValueHandling = NullValueHandling.Ignore, PropertyName = JsonWebKeyParameterNames.KeyOps, Required = Required.Default)]
-        public IList<string> KeyOps { get; private set; } = new List<string>();
+        [JsonPropertyName(JsonWebKeyParameterNames.KeyOps)]
+#if NET6_0_OR_GREATER
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+#endif
+        public IList<string> KeyOps => _keyOps ??
+            Interlocked.CompareExchange(ref _keyOps, new List<string>(), null) ??
+            _keyOps;
 
         /// <summary>
         /// Gets or sets the 'kid' (Key ID)..
         /// </summary>
-        [JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore, NullValueHandling = NullValueHandling.Ignore, PropertyName = JsonWebKeyParameterNames.Kid, Required = Required.Default)]
+        [JsonPropertyName(JsonWebKeyParameterNames.Kid)]
+#if NET6_0_OR_GREATER
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+#endif
         public string Kid
         {
             get { return _kid; }
@@ -154,87 +192,130 @@ namespace Microsoft.IdentityModel.Tokens
         }
 
         /// <summary>
-        /// Gets or sets the 'kty' (Key Type)..
+        /// Gets or sets the 'kty' (Key Type).
         /// </summary>
-        [JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore, NullValueHandling = NullValueHandling.Ignore, PropertyName = JsonWebKeyParameterNames.Kty, Required = Required.Default)]
+        [JsonPropertyName(JsonWebKeyParameterNames.Kty)]
+#if NET6_0_OR_GREATER
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+#endif
         public string Kty { get; set; }
 
         /// <summary>
-        /// Gets or sets the 'n' (RSA - Modulus)..
+        /// Gets or sets the 'n' (RSA - Modulus).
         /// </summary>
-        /// <remarks>Value is formated as: Base64urlEncoding</remarks>
-        [JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore, NullValueHandling = NullValueHandling.Ignore, PropertyName = JsonWebKeyParameterNames.N, Required = Required.Default)]
+        /// <remarks>Value is formatted as: Base64urlEncoding</remarks>
+        [JsonPropertyName(JsonWebKeyParameterNames.N)]
+#if NET6_0_OR_GREATER
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+#endif
         public string N { get; set; }
 
         /// <summary>
-        /// Gets or sets the 'oth' (RSA - Other Primes Info)..
+        /// Gets or sets the 'oth' (RSA - Other Primes Info).
         /// </summary>
-        [JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore, NullValueHandling = NullValueHandling.Ignore, PropertyName = JsonWebKeyParameterNames.Oth, Required = Required.Default)]
-        public IList<string> Oth { get; set; }
+        [JsonPropertyName(JsonWebKeyParameterNames.Oth)]
+#if NET6_0_OR_GREATER
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+#endif
+        public IList<string> Oth => _oth ??
+            Interlocked.CompareExchange(ref _oth, new List<string>(), null) ??
+            _oth;
 
         /// <summary>
         /// Gets or sets the 'p' (RSA - First Prime Factor)..
         /// </summary>
-        /// <remarks>Value is formated as: Base64urlUInt</remarks>
-        [JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore, NullValueHandling = NullValueHandling.Ignore, PropertyName = JsonWebKeyParameterNames.P, Required = Required.Default)]
+        /// <remarks>Value is formatted as: Base64urlUInt</remarks>
+        [JsonPropertyName(JsonWebKeyParameterNames.P)]
+#if NET6_0_OR_GREATER
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+#endif
         public string P { get; set; }
 
         /// <summary>
         /// Gets or sets the 'q' (RSA - Second  Prime Factor)..
         /// </summary>
-        /// <remarks>Value is formated as: Base64urlUInt</remarks>
-        [JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore, NullValueHandling = NullValueHandling.Ignore, PropertyName = JsonWebKeyParameterNames.Q, Required = Required.Default)]
+        /// <remarks>Value is formatted as: Base64urlUInt</remarks>
+        [JsonPropertyName(JsonWebKeyParameterNames.Q)]
+#if NET6_0_OR_GREATER
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+#endif
         public string Q { get; set; }
 
         /// <summary>
         /// Gets or sets the 'qi' (RSA - First CRT Coefficient)..
         /// </summary>
-        /// <remarks>Value is formated as: Base64urlUInt</remarks>
-        [JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore, NullValueHandling = NullValueHandling.Ignore, PropertyName = JsonWebKeyParameterNames.QI, Required = Required.Default)]
+        /// <remarks>Value is formatted as: Base64urlUInt</remarks>
+        [JsonPropertyName(JsonWebKeyParameterNames.QI)]
+#if NET6_0_OR_GREATER
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+#endif
         public string QI { get; set; }
 
         /// <summary>
         /// Gets or sets the 'use' (Public Key Use)..
         /// </summary>
-        [JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore, NullValueHandling = NullValueHandling.Ignore, PropertyName = JsonWebKeyParameterNames.Use, Required = Required.Default)]
+        [JsonPropertyName(JsonWebKeyParameterNames.Use)]
+#if NET6_0_OR_GREATER
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+#endif
         public string Use { get; set; }
 
         /// <summary>
         /// Gets or sets the 'x' (ECC - X Coordinate)..
         /// </summary>
-        /// <remarks>Value is formated as: Base64urlEncoding</remarks>
-        [JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore, NullValueHandling = NullValueHandling.Ignore, PropertyName = JsonWebKeyParameterNames.X, Required = Required.Default)]
+        /// <remarks>Value is formatted as: Base64urlEncoding</remarks>
+        [JsonPropertyName(JsonWebKeyParameterNames.X)]
+#if NET6_0_OR_GREATER
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+#endif
         public string X { get; set; }
 
         /// <summary>
         /// Gets the 'x5c' collection (X.509 Certificate Chain)..
         /// </summary>
-        [JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore, NullValueHandling = NullValueHandling.Ignore, PropertyName = JsonWebKeyParameterNames.X5c, Required = Required.Default)]
-        public IList<string> X5c { get; private set; } = new List<string>();
+        [JsonPropertyName(JsonWebKeyParameterNames.X5c)]
+#if NET6_0_OR_GREATER
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+#endif
+        public IList<string> X5c => _x5c ??
+            Interlocked.CompareExchange(ref _x5c, new List<string>(), null) ??
+            _x5c;
 
         /// <summary>
         /// Gets or sets the 'x5t' (X.509 Certificate SHA-1 thumbprint)..
         /// </summary>
-        [JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore, NullValueHandling = NullValueHandling.Ignore, PropertyName = JsonWebKeyParameterNames.X5t, Required = Required.Default)]
+        [JsonPropertyName(JsonWebKeyParameterNames.X5t)]
+#if NET6_0_OR_GREATER
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+#endif
         public string X5t { get; set; }
 
         /// <summary>
-        /// Gets or sets the 'x5t#S256' (X.509 Certificate SHA-1 thumbprint)..
+        /// Gets or sets the 'x5t#S256' (X.509 Certificate SHA-256 thumbprint)..
         /// </summary>
-        [JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore, NullValueHandling = NullValueHandling.Ignore, PropertyName = JsonWebKeyParameterNames.X5tS256, Required = Required.Default)]
+        [JsonPropertyName(JsonWebKeyParameterNames.X5tS256)]
+#if NET6_0_OR_GREATER
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+#endif
         public string X5tS256 { get; set; }
 
         /// <summary>
         /// Gets or sets the 'x5u' (X.509 URL)..
         /// </summary>
-        [JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore, NullValueHandling = NullValueHandling.Ignore, PropertyName = JsonWebKeyParameterNames.X5u, Required = Required.Default)]
+        [JsonPropertyName(JsonWebKeyParameterNames.X5u)]
+#if NET6_0_OR_GREATER
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+#endif
         public string X5u { get; set; }
 
         /// <summary>
         /// Gets or sets the 'y' (ECC - Y Coordinate)..
         /// </summary>
-        /// <remarks>Value is formated as: Base64urlEncoding</remarks>
-        [JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore, NullValueHandling = NullValueHandling.Ignore, PropertyName = JsonWebKeyParameterNames.Y, Required = Required.Default)]
+        /// <remarks>Value is formatted as: Base64urlEncoding</remarks>
+        [JsonPropertyName(JsonWebKeyParameterNames.Y)]
+#if NET6_0_OR_GREATER
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+#endif
         public string Y { get; set; }
 
         /// <summary>
@@ -274,33 +355,13 @@ namespace Microsoft.IdentityModel.Tokens
             }
         }
 
-        /// <summary>
-        /// Gets a bool that determines if the 'key_ops' (Key Operations) property should be serialized.
-        /// This is used by Json.NET in order to conditionally serialize properties.
-        /// </summary>
-        /// <return>true if 'key_ops' (Key Operations) is not empty; otherwise, false.</return>
-        public bool ShouldSerializeKeyOps()
-        {
-            return KeyOps.Count > 0;
-        }
-
-        /// <summary>
-        /// Gets a bool that determines if the 'x5c' collection (X.509 Certificate Chain) property should be serialized.
-        /// This is used by Json.NET in order to conditionally serialize properties.
-        ///</summary>
-        /// <return>true if 'x5c' collection (X.509 Certificate Chain) is not empty; otherwise, false.</return>
-        public bool ShouldSerializeX5c()
-        {
-            return X5c.Count > 0;
-        }
-
         internal RSAParameters CreateRsaParameters()
         {
             if (string.IsNullOrEmpty(N))
-                throw LogHelper.LogExceptionMessage(new ArgumentException(LogHelper.FormatInvariant(LogMessages.IDX10700, LogHelper.MarkAsNonPII(_className), LogHelper.MarkAsNonPII("Modulus"))));
+                throw LogHelper.LogExceptionMessage(new ArgumentException(LogHelper.FormatInvariant(LogMessages.IDX10700, LogHelper.MarkAsNonPII(ClassName), LogHelper.MarkAsNonPII("Modulus"))));
 
             if (string.IsNullOrEmpty(E))
-                throw LogHelper.LogExceptionMessage(new ArgumentException(LogHelper.FormatInvariant(LogMessages.IDX10700, LogHelper.MarkAsNonPII(_className), LogHelper.MarkAsNonPII("Exponent"))));
+                throw LogHelper.LogExceptionMessage(new ArgumentException(LogHelper.FormatInvariant(LogMessages.IDX10700, LogHelper.MarkAsNonPII(ClassName), LogHelper.MarkAsNonPII("Exponent"))));
 
             return new RSAParameters
             {
@@ -336,10 +397,9 @@ namespace Microsoft.IdentityModel.Tokens
         }
 
         /// <summary>
-        /// Computes a sha256 hash over the <see cref="JsonWebKey"/>.
+        /// Computes the JWK thumprint per spec: https://datatracker.ietf.org/doc/html/rfc7638 />.
         /// </summary>
-        /// <returns>A JWK thumbprint.</returns>
-        /// <remarks>https://datatracker.ietf.org/doc/html/rfc7638</remarks>
+        /// <returns>A the JWK thumbprint.</returns>
         public override byte[] ComputeJwkThumbprint()
         {
             if (string.IsNullOrEmpty(Kty))
@@ -413,49 +473,41 @@ namespace Microsoft.IdentityModel.Tokens
         /// <remarks>https://datatracker.ietf.org/doc/html/rfc7800#section-3.2</remarks>
         internal string RepresentAsAsymmetricPublicJwk()
         {
-            JObject jwk = new JObject();
-
-            if (!string.IsNullOrEmpty(Kid))
-                jwk.Add(JsonWebKeyParameterNames.Kid, Kid);
+            string kid = string.IsNullOrEmpty(Kid) ? "{" : $@"{{""{JsonWebKeyParameterNames.Kid}"":""{Kid}"",";
 
             if (string.Equals(Kty, JsonWebAlgorithmsKeyTypes.EllipticCurve))
-                PopulateWithPublicEcParams(jwk);
+            {
+                if (string.IsNullOrEmpty(Crv))
+                    throw LogHelper.LogExceptionMessage(new ArgumentException(LogHelper.FormatInvariant(LogMessages.IDX10708, LogHelper.MarkAsNonPII(nameof(Crv)))));
+
+                if (string.IsNullOrEmpty(X))
+                    throw LogHelper.LogExceptionMessage(new ArgumentException(LogHelper.FormatInvariant(LogMessages.IDX10708, LogHelper.MarkAsNonPII(nameof(X)))));
+
+                if (string.IsNullOrEmpty(Y))
+                    throw LogHelper.LogExceptionMessage(new ArgumentException(LogHelper.FormatInvariant(LogMessages.IDX10708, LogHelper.MarkAsNonPII(nameof(Y)))));
+
+                return  $@"{kid}" +
+                        $@"""{JsonWebKeyParameterNames.Crv}"":""{Crv}""," +
+                        $@"""{JsonWebKeyParameterNames.Kty}"":""{Kty}""," +
+                        $@"""{JsonWebKeyParameterNames.X}"":""{X}""," +
+                        $@"""{JsonWebKeyParameterNames.Y}"":""{Y}""}}";
+            }
             else if (string.Equals(Kty, JsonWebAlgorithmsKeyTypes.RSA))
-                PopulateWithPublicRsaParams(jwk);
+            {
+                if (string.IsNullOrEmpty(E))
+                    throw LogHelper.LogExceptionMessage(new ArgumentException(LogHelper.FormatInvariant(LogMessages.IDX10709, LogHelper.MarkAsNonPII(nameof(E)))));
+
+                if (string.IsNullOrEmpty(N))
+                    throw LogHelper.LogExceptionMessage(new ArgumentException(LogHelper.FormatInvariant(LogMessages.IDX10709, LogHelper.MarkAsNonPII(nameof(N)))));
+
+                return  $@"{kid}" +
+                        $@"""{JsonWebKeyParameterNames.E}"":""{E}""," +
+                        $@"""{JsonWebKeyParameterNames.Kty}"":""{Kty}""," +
+                        $@"""{JsonWebKeyParameterNames.N}"":""{N}""}}";
+            }
             else
                 throw LogHelper.LogExceptionMessage(new ArgumentException(LogHelper.FormatInvariant(LogMessages.IDX10707, LogHelper.MarkAsNonPII(nameof(Kty)), LogHelper.MarkAsNonPII(string.Join(", ", JsonWebAlgorithmsKeyTypes.EllipticCurve, JsonWebAlgorithmsKeyTypes.RSA)), LogHelper.MarkAsNonPII(nameof(Kty)))));
 
-            return jwk.ToString(Formatting.None);
-        }
-
-        private void PopulateWithPublicEcParams(JObject jwk)
-        {
-            if (string.IsNullOrEmpty(Crv))
-                throw LogHelper.LogExceptionMessage(new ArgumentException(LogHelper.FormatInvariant(LogMessages.IDX10708, LogHelper.MarkAsNonPII(nameof(Crv)))));
-
-            if (string.IsNullOrEmpty(X))
-                throw LogHelper.LogExceptionMessage(new ArgumentException(LogHelper.FormatInvariant(LogMessages.IDX10708, LogHelper.MarkAsNonPII(nameof(X)))));
-
-            if (string.IsNullOrEmpty(Y))
-                throw LogHelper.LogExceptionMessage(new ArgumentException(LogHelper.FormatInvariant(LogMessages.IDX10708, LogHelper.MarkAsNonPII(nameof(Y)))));
-
-            jwk.Add(JsonWebKeyParameterNames.Crv, Crv);
-            jwk.Add(JsonWebKeyParameterNames.Kty, Kty);
-            jwk.Add(JsonWebKeyParameterNames.X, X);
-            jwk.Add(JsonWebKeyParameterNames.Y, Y);
-        }
-
-        private void PopulateWithPublicRsaParams(JObject jwk)
-        {
-            if (string.IsNullOrEmpty(E))
-                throw LogHelper.LogExceptionMessage(new ArgumentException(LogHelper.FormatInvariant(LogMessages.IDX10709, LogHelper.MarkAsNonPII(nameof(E)))));
-
-            if (string.IsNullOrEmpty(N))
-                throw LogHelper.LogExceptionMessage(new ArgumentException(LogHelper.FormatInvariant(LogMessages.IDX10709, LogHelper.MarkAsNonPII(nameof(N)))));
-
-            jwk.Add(JsonWebKeyParameterNames.E, E);
-            jwk.Add(JsonWebKeyParameterNames.Kty, Kty);
-            jwk.Add(JsonWebKeyParameterNames.N, N);
         }
 
         /// <summary>
@@ -468,3 +520,4 @@ namespace Microsoft.IdentityModel.Tokens
         }
     }
 }
+

@@ -5,7 +5,7 @@ using System;
 using System.Runtime.InteropServices;
 using Xunit;
 
-[assembly: CLSCompliant(true)]
+[assembly: CLSCompliant(false)]
 [assembly: CollectionBehavior(CollectionBehavior.CollectionPerAssembly)]
 [assembly: ComVisible(false)]
 

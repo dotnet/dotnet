@@ -1,15 +1,14 @@
-From 8dea9f48af22684ef26b83ad141b5a1cf0789632 Mon Sep 17 00:00:00 2001
-From: Matt Mitchell <mmitche@microsoft.com>
-Date: Tue, 18 Jul 2023 12:28:00 -0700
-Subject: [PATCH] Eliminate prebuilts
+From c74b360ba5a3290cdd99e7dac203a6a2de750a3c Mon Sep 17 00:00:00 2001
+From: Rainer Sigwald <raines@microsoft.com>
+Date: Fri, 8 Sep 2023 19:41:06 +0000
+Subject: [PATCH 1/2] Eliminate prebuilts
 
 ---
- Directory.Build.props                             | 5 -----
- src/MSBuildLocator/Microsoft.Build.Locator.csproj | 2 +-
- 2 files changed, 1 insertion(+), 6 deletions(-)
+ Directory.Build.props | 5 -----
+ 1 file changed, 5 deletions(-)
 
 diff --git a/Directory.Build.props b/Directory.Build.props
-index 95ec511..f075a6a 100644
+index b7aa431..f075a6a 100644
 --- a/Directory.Build.props
 +++ b/Directory.Build.props
 @@ -27,11 +27,6 @@
@@ -18,25 +17,12 @@ index 95ec511..f075a6a 100644
  
 -  <ItemGroup>
 -    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1" PrivateAssets="All"/>
--    <PackageReference Include="Nerdbank.GitVersioning" Version="3.5.107" PrivateAssets="all" />
+-    <PackageReference Include="Nerdbank.GitVersioning" Version="3.6.133" PrivateAssets="all" />
 -  </ItemGroup>
 -
    <ItemGroup>
      <None Include="$(MSBuildThisFileDirectory)\branding\MSBuild-NuGet-Icon.png"
            Pack="true"
-diff --git a/src/MSBuildLocator/Microsoft.Build.Locator.csproj b/src/MSBuildLocator/Microsoft.Build.Locator.csproj
-index a3977cd..921c8c0 100644
---- a/src/MSBuildLocator/Microsoft.Build.Locator.csproj
-+++ b/src/MSBuildLocator/Microsoft.Build.Locator.csproj
-@@ -2,7 +2,7 @@
- 
-   <PropertyGroup>
-     <OutputType>Library</OutputType>
--    <TargetFrameworks>net46;netcoreapp3.1</TargetFrameworks>
-+    <TargetFrameworks>netcoreapp3.1</TargetFrameworks>
-     <DebugType>full</DebugType>
- 
-     <CopyLocalLockFileAssemblies>false</CopyLocalLockFileAssemblies>
 -- 
-2.41.0.windows.2
+2.42.0
 

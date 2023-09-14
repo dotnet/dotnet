@@ -4,8 +4,11 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Text.Json.Serialization;
+using System.Threading;
+using Microsoft.IdentityModel.Abstractions;
 using Microsoft.IdentityModel.Logging;
-using Microsoft.IdentityModel.Json;
+using Microsoft.IdentityModel.Tokens.Json;
 
 namespace Microsoft.IdentityModel.Tokens
 {
@@ -13,10 +16,10 @@ namespace Microsoft.IdentityModel.Tokens
     /// Contains a collection of <see cref="JsonWebKey"/> that can be populated from a json string.
     /// </summary>
     /// <remarks>provides support for https://datatracker.ietf.org/doc/html/rfc7517.</remarks>
-    [JsonObject]
     public class JsonWebKeySet
     {
-        private const string _className = "Microsoft.IdentityModel.Tokens.JsonWebKeySet";
+        internal const string ClassName = "Microsoft.IdentityModel.Tokens.JsonWebKeySet";
+        private Dictionary<string, object> _additionalData;
 
         /// <summary>
         /// Returns a new instance of <see cref="JsonWebKeySet"/>.
@@ -53,12 +56,14 @@ namespace Microsoft.IdentityModel.Tokens
 
             try
             {
-                LogHelper.LogVerbose(LogMessages.IDX10806, json, LogHelper.MarkAsNonPII(_className));
-                JsonConvert.PopulateObject(json, this);
+                if (LogHelper.IsEnabled(EventLogLevel.Verbose))
+                    LogHelper.LogVerbose(LogMessages.IDX10806, json, LogHelper.MarkAsNonPII(ClassName));
+
+                JsonWebKeySetSerializer.Read(json, this);
             }
             catch (Exception ex)
             {
-                throw LogHelper.LogExceptionMessage(new ArgumentException(LogHelper.FormatInvariant(LogMessages.IDX10805, json, LogHelper.MarkAsNonPII(_className)), ex));
+                throw LogHelper.LogExceptionMessage(new ArgumentException(LogHelper.FormatInvariant(LogMessages.IDX10805, json, LogHelper.MarkAsNonPII(ClassName)), ex));
             }
         }
 
@@ -66,13 +71,15 @@ namespace Microsoft.IdentityModel.Tokens
         /// When deserializing from JSON any properties that are not defined will be placed here.
         /// </summary>
         [JsonExtensionData]
-        public virtual IDictionary<string, object> AdditionalData { get; } = new Dictionary<string, object>();
+        public IDictionary<string, object> AdditionalData => _additionalData ??
+            Interlocked.CompareExchange(ref _additionalData, new Dictionary<string, object>(StringComparer.Ordinal), null) ??
+            _additionalData;
 
         /// <summary>
         /// Gets the <see cref="IList{JsonWebKey}"/>.
-        /// </summary>       
-        [JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore, NullValueHandling = NullValueHandling.Ignore, PropertyName = JsonWebKeySetParameterNames.Keys, Required = Required.Default)]
-        public IList<JsonWebKey> Keys { get; private set; } = new List<JsonWebKey>();
+        /// </summary>
+        [JsonPropertyName(JsonWebKeySetParameterNames.Keys)]
+        public IList<JsonWebKey> Keys { get; } = new List<JsonWebKey>();
 
         /// <summary>
         /// Default value for the flag that controls whether unresolved JsonWebKeys will be included in the resulting collection of <see cref="GetSigningKeys"/> method.
@@ -84,6 +91,7 @@ namespace Microsoft.IdentityModel.Tokens
         /// Flag that controls whether unresolved JsonWebKeys will be included in the resulting collection of <see cref="GetSigningKeys"/> method.
         /// </summary>
         [DefaultValue(true)]
+        [JsonIgnore]
         public bool SkipUnresolvedJsonWebKeys { get; set; } = DefaultSkipUnresolvedJsonWebKeys;
 
         /// <summary>

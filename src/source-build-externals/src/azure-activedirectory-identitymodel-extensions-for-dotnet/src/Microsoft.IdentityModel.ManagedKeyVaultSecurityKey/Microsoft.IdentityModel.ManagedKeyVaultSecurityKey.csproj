@@ -7,10 +7,10 @@
     <Description>Includes types that provide support for signing and encrypting tokens with Azure Key Vault for 
     Applications that are using Managed identities for Azure resources.</Description>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <LangVersion>latest</LangVersion>
     <PackageId>Microsoft.IdentityModel.ManagedKeyVaultSecurityKey</PackageId>
     <TargetFrameworks>netstandard2.0</TargetFrameworks>
     <PackageTags>.NET;Windows;Authentication;Identity;Azure;Key;Vault;Extensions</PackageTags>
+    <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)'=='Debug'">
@@ -25,7 +25,6 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
   </ItemGroup>
 
   <ItemGroup>

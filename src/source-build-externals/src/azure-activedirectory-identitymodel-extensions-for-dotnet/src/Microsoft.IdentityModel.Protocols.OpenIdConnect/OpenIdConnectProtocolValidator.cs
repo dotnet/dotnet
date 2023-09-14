@@ -8,6 +8,7 @@ using System.Globalization;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Cryptography;
 using System.Text;
+using Microsoft.IdentityModel.Abstractions;
 using Microsoft.IdentityModel.Logging;
 using Microsoft.IdentityModel.Tokens;
 
@@ -26,7 +27,7 @@ namespace Microsoft.IdentityModel.Protocols.OpenIdConnect
     /// </summary>
     public class OpenIdConnectProtocolValidator
     {
-        private IDictionary<string, string> _hashAlgorithmMap =
+        private readonly Dictionary<string, string> _hashAlgorithmMap =
             new Dictionary<string, string>
             {
                 { SecurityAlgorithms.EcdsaSha256, "SHA256" },
@@ -358,10 +359,10 @@ namespace Microsoft.IdentityModel.Protocols.OpenIdConnect
                 if (idToken.Payload.Aud.Count == 0)
                     throw LogHelper.LogExceptionMessage(new OpenIdConnectProtocolException(LogHelper.FormatInvariant(LogMessages.IDX21314, LogHelper.MarkAsNonPII(JwtRegisteredClaimNames.Aud.ToLowerInvariant()), idToken)));
 
-                if (!idToken.Payload.Exp.HasValue)
+                if (!idToken.Payload.Expiration.HasValue)
                     throw LogHelper.LogExceptionMessage(new OpenIdConnectProtocolException(LogHelper.FormatInvariant(LogMessages.IDX21314, LogHelper.MarkAsNonPII(JwtRegisteredClaimNames.Exp.ToLowerInvariant()), idToken)));
 
-                if (!idToken.Payload.Iat.HasValue)
+                if (idToken.Payload.IssuedAt.Equals(DateTime.MinValue))
                     throw LogHelper.LogExceptionMessage(new OpenIdConnectProtocolException(LogHelper.FormatInvariant(LogMessages.IDX21314, LogHelper.MarkAsNonPII(JwtRegisteredClaimNames.Iat.ToLowerInvariant()), idToken)));
 
                 if (idToken.Payload.Iss == null)
@@ -457,7 +458,9 @@ namespace Microsoft.IdentityModel.Protocols.OpenIdConnect
         /// <exception cref="OpenIdConnectProtocolException">If expected value does not equal the hashed value.</exception>
         private void ValidateHash(string expectedValue, string hashItem, string algorithm)
         {
-            LogHelper.LogInformation(LogMessages.IDX21303, expectedValue);
+            if (LogHelper.IsEnabled(EventLogLevel.Informational))
+                LogHelper.LogInformation(LogMessages.IDX21303, expectedValue);
+
             HashAlgorithm hashAlgorithm = null;
             try
             {

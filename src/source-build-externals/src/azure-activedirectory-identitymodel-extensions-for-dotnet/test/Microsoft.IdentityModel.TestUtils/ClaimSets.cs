@@ -3,11 +3,11 @@
 
 using System;
 using System.Collections.Generic;
-#if !CrossVersionTokenValidation
 using System.IdentityModel.Tokens.Jwt;
-#endif
 using System.Security.Claims;
 using Microsoft.IdentityModel.Tokens;
+using System.Text.Json;
+using JwtRegisteredClaimNames = Microsoft.IdentityModel.JsonWebTokens.JwtRegisteredClaimNames;
 
 namespace Microsoft.IdentityModel.TestUtils
 {
@@ -26,7 +26,6 @@ namespace Microsoft.IdentityModel.TestUtils
     {
         static ClaimSets()
         {
-#if !CrossVersionTokenValidation
             AllReserved = new List<Claim>()
             {
                 new Claim(JwtRegisteredClaimNames.Actort, "TOKEN"),
@@ -43,7 +42,6 @@ namespace Microsoft.IdentityModel.TestUtils
                 new Claim(JwtRegisteredClaimNames.Sub, "Subject.Value"),
                 new Claim(JwtRegisteredClaimNames.Typ, "Type.Value"),
             };
-#endif
 
             AadClaims = new List<Claim>
             {
@@ -224,7 +222,6 @@ namespace Microsoft.IdentityModel.TestUtils
             get { return new List<Claim>(); }
         }
 
-#if !CrossVersionTokenValidation
         public static List<Claim> MultipleAudiences()
         {
             return MultipleAudiences(Default.Issuer, Default.Issuer);
@@ -403,11 +400,16 @@ namespace Microsoft.IdentityModel.TestUtils
             };
         }
 
-        public static List<Claim> EntityAsJsonClaim( string issuer, string orginalIssuer )
+        public static List<Claim> EntityAsJsonClaim( string issuer, string originalIssuer )
         {
-            return new List<Claim> { new Claim(typeof(Entity).ToString(), JsonExtensions.SerializeToJson(Entity.Default), JsonClaimValueTypes.Json, issuer ?? Default.Issuer, orginalIssuer) };
+            return new List<Claim> {
+                new Claim(
+                    typeof(Entity).ToString(),
+                    JsonSerializer.Serialize(Entity.Default),
+                    JsonClaimValueTypes.Json,
+                    issuer ?? Default.Issuer,
+                    originalIssuer) };
         }
-#endif
     }
 
     /// <summary>

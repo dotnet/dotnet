@@ -6,13 +6,13 @@ using System.Globalization;
 using System.Linq;
 using System.Reflection;
 using System.Security.Claims;
-using Microsoft.IdentityModel.Json;
-using Microsoft.IdentityModel.Json.Linq;
+using System.Text;
 using Microsoft.IdentityModel.TestUtils;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.IdentityModel.Tokens.Json;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using Xunit;
-
-#pragma warning disable CS3016 // Arrays as attribute arguments is not CLS-compliant
 
 namespace System.IdentityModel.Tokens.Jwt.Tests
 {
@@ -58,8 +58,8 @@ namespace System.IdentityModel.Tokens.Jwt.Tests
             JwtPayload jwtPayload = new JwtPayload();
             Type type = typeof(JwtPayload);
             PropertyInfo[] properties = type.GetProperties();
-            if (properties.Length != 23)
-                Assert.True(false, "Number of properties has changed from 23 to: " + properties.Length + ", adjust tests");
+            if (properties.Length != 25)
+                Assert.True(false, "Number of properties has changed from 25 to: " + properties.Length + ", adjust tests");
 
             GetSetContext context =
                 new GetSetContext
@@ -71,11 +71,13 @@ namespace System.IdentityModel.Tokens.Jwt.Tests
                         new KeyValuePair<string, List<object>>("AuthTime", new List<object>{(string)null, 10, 12 }),
                         new KeyValuePair<string, List<object>>("Azp", new List<object>{(string)null, Guid.NewGuid().ToString(), Guid.NewGuid().ToString()}),
                         new KeyValuePair<string, List<object>>("CHash", new List<object>{(string)null, Guid.NewGuid().ToString(), Guid.NewGuid().ToString()}),
-                        new KeyValuePair<string, List<object>>("Exp", new List<object>{(string)null, 1, 0 }),
+                        new KeyValuePair<string, List<object>>("Exp", new List<object>{(string)null, 1, 0}),
+                        new KeyValuePair<string, List<object>>("Expiration", new List<object>{(string)null, 1, 0 }),
                         new KeyValuePair<string, List<object>>("Jti", new List<object>{(string)null, Guid.NewGuid().ToString(), Guid.NewGuid().ToString()}),
-                        new KeyValuePair<string, List<object>>("Iat", new List<object>{(string)null, 10, 0}),
+                        new KeyValuePair<string, List<object>>("IssuedAt", new List<object>{DateTime.MinValue, 10, 0}),
                         new KeyValuePair<string, List<object>>("Iss", new List<object>{(string)null, Guid.NewGuid().ToString(), Guid.NewGuid().ToString()}),
-                        new KeyValuePair<string, List<object>>("Nbf", new List<object>{(string)null, 1, 0 }),
+                        new KeyValuePair<string, List<object>>("Nbf", new List<object>{(string)null, 1, 0}),
+                        new KeyValuePair<string, List<object>>("NotBefore", new List<object>{(string)null, 1, 0 }),
                         new KeyValuePair<string, List<object>>("Nonce", new List<object>{(string)null, Guid.NewGuid().ToString(), Guid.NewGuid().ToString()}),
                         new KeyValuePair<string, List<object>>("Sub", new List<object>{(string)null, Guid.NewGuid().ToString(), Guid.NewGuid().ToString()}),
                     },
@@ -88,6 +90,7 @@ namespace System.IdentityModel.Tokens.Jwt.Tests
         [Fact]
         public void JwtPayloadUnicodeMapping()
         {
+
             string issuer = "a\\b";
             List<Claim> claims = new List<Claim>();
             JwtPayload unicodePayload = new JwtPayload("a\u005Cb", "", claims, null, null);
@@ -96,7 +99,8 @@ namespace System.IdentityModel.Tokens.Jwt.Tests
             string json2 = payload.SerializeToJson();
             Assert.Equal(json, json2);
 
-            JwtPayload retrievePayload = JwtPayload.Deserialize(json);
+            byte[] bytes = Encoding.UTF8.GetBytes(json);
+            JwtPayload retrievePayload = JwtPayload.CreatePayload(bytes, bytes.Length);
             Assert.Equal(retrievePayload.Iss, issuer);
 
             json = unicodePayload.Base64UrlEncode();
@@ -130,14 +134,14 @@ namespace System.IdentityModel.Tokens.Jwt.Tests
             var context = new CompareContext();
 
             JwtPayload jwtPayload = new JwtPayload();
-            int? time = 10000;
+            long? time = 10000;
             jwtPayload.Add("exp", time);
             DateTime payloadTime = EpochTime.DateTime(time.Value);
             DateTime payloadValidTo = jwtPayload.ValidTo;
 
             Assert.True(EpochTime.DateTime(time.Value) == jwtPayload.ValidTo, "EpochTime.DateTime( time ) != jwtPayload.ValidTo");
 
-            int? expirationTime = jwtPayload.Exp;
+            long? expirationTime = jwtPayload.Expiration;
             Assert.True(expirationTime == time, "expirationTime != time");
 
             TestUtilities.AssertFailIfErrors(GetType().ToString() + ".Claims", context.Diffs);
@@ -167,7 +171,7 @@ namespace System.IdentityModel.Tokens.Jwt.Tests
         {
             JwtPayload jwtPayload = new JwtPayload();
             var dateTime = new DateTime(2020, 1, 1, 1, 1, 1, 1);
-            jwtPayload.Add("dateTime", dateTime);
+            jwtPayload.Add("dateTime", dateTime.ToUniversalTime());
             var dateTimeClaim = jwtPayload.Claims.First();
 
             Assert.True(string.Equals(dateTimeClaim.ValueType, ClaimValueTypes.DateTime), "dateTimeClaim.Type != ClaimValueTypes.DateTime");
@@ -184,12 +188,15 @@ namespace System.IdentityModel.Tokens.Jwt.Tests
         }
 
         [Theory, MemberData(nameof(PayloadDataSet))]
-        public void RoundTrip(List<Claim> claims, JwtPayload payloadSetDirect, JwtPayload payloadSetUsingDeserialize)
+#pragma warning disable xUnit1026 // Theory methods should use all of their parameters
+        public void RoundTrip(string name, List<Claim> claims, JwtPayload payloadDirect, JwtPayload payloadUsingNewtonsoft)
+#pragma warning restore xUnit1026 // Theory methods should use all of their parameters
         {
             var context = new CompareContext();
             var payload = new JwtPayload(claims);
-            var encodedPayload = payload.SerializeToJson();
-            var payloadDeserialized = JwtPayload.Deserialize(encodedPayload);
+            var payloadAsJson = payload.SerializeToJson();
+            byte[] payloadAsBytes = Encoding.UTF8.GetBytes(payloadAsJson);
+            JwtPayload payloadDeserialized = JwtPayload.CreatePayload(payloadAsBytes, payloadAsBytes.Length);
             var instanceContext = new CompareContext
             {
                 PropertiesToIgnoreWhenComparing = new Dictionary<Type, List<string>>
@@ -198,20 +205,29 @@ namespace System.IdentityModel.Tokens.Jwt.Tests
                 }
             };
 
-            IdentityComparer.AreEqual(payload, payloadDeserialized, instanceContext);
+            IEnumerable<Claim> payloadDeserializedClaims = payloadDeserialized.Claims;
+            IEnumerable<Claim> payloadClaims = payload.Claims;
+
+            if (!IdentityComparer.AreEqual(payload, payloadDeserialized, instanceContext))
+            {
+                instanceContext.AddDiff("payload != payloadDeserialized");
+                instanceContext.AddDiff("******************************");
+            }
+
             context.Merge(string.Format(CultureInfo.InvariantCulture, "AreEqual({0}, {1})", nameof(payload), nameof(payloadDeserialized)), instanceContext);
 
             instanceContext.Diffs.Clear();
-            IdentityComparer.AreEqual(payload, payloadSetDirect, instanceContext);
-            context.Merge(string.Format(CultureInfo.InvariantCulture, "AreEqual({0}, {1})", nameof(payload), nameof(payloadSetDirect)), instanceContext);
+            IdentityComparer.AreEqual(payload, payloadDirect, instanceContext);
+            context.Merge(string.Format(CultureInfo.InvariantCulture, "AreEqual({0}, {1})", nameof(payload), nameof(payloadDirect)), instanceContext);
 
-            instanceContext.Diffs.Clear();
-            IdentityComparer.AreEqual(payload, payloadSetUsingDeserialize, instanceContext);
-            context.Merge(string.Format(CultureInfo.InvariantCulture, "AreEqual({0}, {1})", nameof(payload), nameof(payloadSetUsingDeserialize)), instanceContext);
+            // skipping as Newtonsoft doesn't understand how to work with a JsonElement
+            //instanceContext.Diffs.Clear();
+            //IdentityComparer.AreEqual(payload, payloadUsingNewtonsoft, instanceContext);
+            //context.Merge(string.Format(CultureInfo.InvariantCulture, "AreEqual({0}, {1})", nameof(payload), nameof(payloadUsingNewtonsoft)), instanceContext);
 
             instanceContext.Diffs.Clear();
             IdentityComparer.AreEqual(payload.Claims, claims, instanceContext);
-            context.Merge(string.Format(CultureInfo.InvariantCulture, "AreEqual({0}, {1})", nameof(payload.Claims), nameof(claims)), instanceContext);
+            context.Merge(string.Format(CultureInfo.InvariantCulture, "AreEqual({0}, {1})", "payload.Claims", "claims, parameter"), instanceContext);
 
             instanceContext.Diffs.Clear();
             CheckClaimsTypeParsing(payload.Claims, instanceContext);
@@ -224,7 +240,7 @@ namespace System.IdentityModel.Tokens.Jwt.Tests
             TestUtilities.AssertFailIfErrors(context);
         }
 
-        public static TheoryData<List<Claim>, JwtPayload, JwtPayload> PayloadDataSet
+        public static TheoryData<string, List<Claim>, JwtPayload, JwtPayload> PayloadDataSet
         {
             get
             {
@@ -234,32 +250,34 @@ namespace System.IdentityModel.Tokens.Jwt.Tests
                 var longMinValue = long.MinValue.ToString();
                 var longValue = ((long)int.MaxValue + 100).ToString();
 
-                var dataset = new TheoryData<List<Claim>, JwtPayload, JwtPayload>();
+                var dataset = new TheoryData<string, List<Claim>, JwtPayload, JwtPayload>();
                 SetDataSet(
+                    "Test1",
                     new List<Claim>
                     {
                         new Claim("ClaimValueTypes.String", "ClaimValueTypes.String.Value", ClaimValueTypes.String),
-                        new Claim("ClaimValueTypes.Boolean.true", "true", ClaimValueTypes.Boolean),
-                        new Claim("ClaimValueTypes.Boolean.false", "false", ClaimValueTypes.Boolean),
+                        new Claim("ClaimValueTypes.Boolean.true", "True", ClaimValueTypes.Boolean),
+                        new Claim("ClaimValueTypes.Boolean.false", "False", ClaimValueTypes.Boolean),
                         new Claim("ClaimValueTypes.Double", "123.4", ClaimValueTypes.Double),
-                        new Claim("ClaimValueTypes.int.MaxValue", intMaxValue, ClaimValueTypes.Integer),
-                        new Claim("ClaimValueTypes.int.MinValue", intMinValue, ClaimValueTypes.Integer),
+                        new Claim("ClaimValueTypes.int.MaxValue", intMaxValue, ClaimValueTypes.Integer32),
+                        new Claim("ClaimValueTypes.int.MinValue", intMinValue, ClaimValueTypes.Integer32),
                         new Claim("ClaimValueTypes.long.MaxValue", longMaxValue, ClaimValueTypes.Integer64),
                         new Claim("ClaimValueTypes.long.MinValue", longMinValue, ClaimValueTypes.Integer64),
                         new Claim("ClaimValueTypes.DateTime.IS8061", "2019-11-15T14:31:21.6101326Z", ClaimValueTypes.DateTime),
                         new Claim("ClaimValueTypes.DateTime", "2019-11-15", ClaimValueTypes.String),
                         new Claim("ClaimValueTypes.JsonClaimValueTypes.Json1", @"{""jsonProperty1"":""jsonvalue1""}", JsonClaimValueTypes.Json),
                         new Claim("ClaimValueTypes.JsonClaimValueTypes.Json2", @"{""jsonProperty2"":""jsonvalue2""}", JsonClaimValueTypes.Json),
-                        new Claim("ClaimValueTypes.JsonClaimValueTypes.JsonArray", "1", ClaimValueTypes.Integer),
-                        new Claim("ClaimValueTypes.JsonClaimValueTypes.JsonArray", "2", ClaimValueTypes.Integer),
+                        new Claim("ClaimValueTypes.JsonClaimValueTypes.JsonArray", "1", ClaimValueTypes.Integer32),
+                        new Claim("ClaimValueTypes.JsonClaimValueTypes.JsonArray", "2", ClaimValueTypes.Integer32),
                     },
                     dataset);
 
                 SetDataSet(
+                    "Test2",
                     new List<Claim>
                     {
                         new Claim("aud", "http://test.local/api/", ClaimValueTypes.String, "http://test.local/api/"),
-                        new Claim("exp", "1460647835", ClaimValueTypes.Integer, "http://test.local/api/"),
+                        new Claim("exp", "1460647835", ClaimValueTypes.Integer64, "http://test.local/api/"),
                         new Claim("emailaddress", "user1@contoso.com", ClaimValueTypes.String, "http://test.local/api/"),
                         new Claim("emailaddress", "user2@contoso.com", ClaimValueTypes.String, "http://test.local/api/"),
                         new Claim("name", "user", ClaimValueTypes.String, "http://test.local/api/"),
@@ -269,28 +287,31 @@ namespace System.IdentityModel.Tokens.Jwt.Tests
                     dataset);
 
                 SetDataSet(
+                    "Test3",
                     new List<Claim>
                     {
-                        new Claim("ClaimValueTypes", "0", ClaimValueTypes.Integer),
-                        new Claim("ClaimValueTypes", "100", ClaimValueTypes.Integer),
-                        new Claim("ClaimValueTypes", "132", ClaimValueTypes.Integer),
-                        new Claim("ClaimValueTypes", "164", ClaimValueTypes.Integer),
-                        new Claim("ClaimValueTypes", "-100", ClaimValueTypes.Integer),
-                        new Claim("ClaimValueTypes", "-132", ClaimValueTypes.Integer),
-                        new Claim("ClaimValueTypes", "-164", ClaimValueTypes.Integer),
+                        new Claim("ClaimValueTypes", "0", ClaimValueTypes.Integer32),
+                        new Claim("ClaimValueTypes", "100", ClaimValueTypes.Integer32),
+                        new Claim("ClaimValueTypes", "132", ClaimValueTypes.Integer32),
+                        new Claim("ClaimValueTypes", "164", ClaimValueTypes.Integer32),
+                        new Claim("ClaimValueTypes", "-100", ClaimValueTypes.Integer32),
+                        new Claim("ClaimValueTypes", "-132", ClaimValueTypes.Integer32),
+                        new Claim("ClaimValueTypes", "-164", ClaimValueTypes.Integer32),
                         new Claim("ClaimValueTypes", longValue, ClaimValueTypes.Integer64),
                         new Claim("ClaimValueTypes", "132.64", ClaimValueTypes.Double),
                         new Claim("ClaimValueTypes", "-132.64", ClaimValueTypes.Double),
-                        new Claim("ClaimValueTypes", "true", ClaimValueTypes.Boolean),
-                        new Claim("ClaimValueTypes", "false", ClaimValueTypes.Boolean),
+                        new Claim("ClaimValueTypes", "True", ClaimValueTypes.Boolean),
+                        new Claim("ClaimValueTypes", "False", ClaimValueTypes.Boolean),
                         new Claim("ClaimValueTypes", "2019-11-15T14:31:21.6101326Z", ClaimValueTypes.DateTime),
                         new Claim("ClaimValueTypes", "2019-11-15", ClaimValueTypes.String),
                         new Claim("ClaimValueTypes", @"{""name3.1"":""value3.1""}", JsonClaimValueTypes.Json),
-                        new Claim("ClaimValueTypes", @"[""status"",""feed""]", JsonClaimValueTypes.JsonArray),
+                        new Claim("ClaimValueTypes", "status", ClaimValueTypes.String),
+                        new Claim("ClaimValueTypes", "feed", ClaimValueTypes.String),
                     },
                     dataset);
 
                 SetDataSet(
+                    "Test4",
                     new List<Claim>
                     {
                         new Claim("json3", @"{""name3.1"":""value3.1""}", JsonClaimValueTypes.Json),
@@ -309,7 +330,7 @@ namespace System.IdentityModel.Tokens.Jwt.Tests
             }
         }
 
-        private static void SetDataSet(List<Claim> claims, TheoryData<List<Claim>, JwtPayload, JwtPayload> dataset)
+        private static void SetDataSet(string name, List<Claim> claims, TheoryData<string, List<Claim>, JwtPayload, JwtPayload> dataset)
         {
             var payloadDirect = new JwtPayload();
             var jobj = new JObject();
@@ -341,15 +362,15 @@ namespace System.IdentityModel.Tokens.Jwt.Tests
                         break;
 
                     case ClaimValueTypes.DateTime:
-                        jsonValue = DateTime.Parse(claim.Value);
+                        jsonValue = DateTime.Parse(claim.Value).ToUniversalTime();
                         break;
 
                     case JsonClaimValueTypes.Json:
-                        jsonValue = JObject.Parse(claim.Value);
+                        jsonValue = JsonSerializerPrimitives.CreateJsonElement(claim.Value);
                         break;
 
                     case JsonClaimValueTypes.JsonArray:
-                        jsonValue = JArray.Parse(claim.Value);
+                        jsonValue = JsonSerializerPrimitives.CreateJsonElement(claim.Value);
                         break;
                 }
 
@@ -391,8 +412,9 @@ namespace System.IdentityModel.Tokens.Jwt.Tests
             }
 
             var j = jobj.ToString(Formatting.None);
-            var payloadDeserialized = JwtPayload.Deserialize(j);
-            dataset.Add(claims, payloadDirect, payloadDeserialized);
+            var payloadUsingNewtonsoft = JwtPayload.Deserialize(j);
+
+            dataset.Add(name, claims, payloadDirect, payloadUsingNewtonsoft);
         }
 
         private void CheckClaimsTypeParsing(IEnumerable<Claim> claims, CompareContext context)
@@ -449,6 +471,7 @@ namespace System.IdentityModel.Tokens.Jwt.Tests
                     case JsonClaimValueTypes.Json:
                         try
                         {
+                            object obj = Text.Json.JsonSerializer.Deserialize<object>(claim.Value);
                             JObject.Parse(claim.Value);
                         }
                         catch (Exception ex)
@@ -462,6 +485,7 @@ namespace System.IdentityModel.Tokens.Jwt.Tests
                         try
                         {
                             JArray.Parse(claim.Value);
+                            object obj = Text.Json.JsonSerializer.Deserialize<List<object>>(claim.Value);
                         }
                         catch (Exception ex)
                         {
@@ -499,5 +523,3 @@ namespace System.IdentityModel.Tokens.Jwt.Tests
         }
     }
 }
-
-#pragma warning restore CS3016 // Arrays as attribute arguments is not CLS-compliant

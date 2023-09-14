@@ -8,7 +8,6 @@
     <DelaySign>true</DelaySign>
     <Description>Tests for Microsoft.IdentityModel.KeyVaultExtensions</Description>
     <GenerateRuntimeConfigurationFiles>true</GenerateRuntimeConfigurationFiles>
-    <LangVersion>latest</LangVersion>
     <PackageId>Microsoft.IdentityModel.KeyVaultExtensions.Tests</PackageId>
     <SignAssembly>true</SignAssembly>
   </PropertyGroup>

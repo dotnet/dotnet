@@ -324,7 +324,7 @@ namespace Newtonsoft.Json.Tests.Serialization
 ]";
 
             JToken t1 = JToken.Parse(json);
-            JToken t2 = t1.CloneToken();
+            JToken t2 = t1.DeepClone();
 
             List<EmployeeReference> employees = t1.ToObject<List<EmployeeReference>>(JsonSerializer.Create(new JsonSerializerSettings
             {
@@ -339,7 +339,7 @@ namespace Newtonsoft.Json.Tests.Serialization
             Assert.IsTrue(JToken.DeepEquals(t1, t2));
         }
 
-#if !(PORTABLE || DNXCORE50 || PORTABLE40) || NETSTANDARD2_0
+#if !(PORTABLE || DNXCORE50 || PORTABLE40) || NETSTANDARD2_0 || NET6_0_OR_GREATER
         [Test]
         public void DeserializeGenericObjectListWithTypeName()
         {

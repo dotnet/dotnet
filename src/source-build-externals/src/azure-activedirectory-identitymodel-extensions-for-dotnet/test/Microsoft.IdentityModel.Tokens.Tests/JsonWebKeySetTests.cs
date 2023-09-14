@@ -7,62 +7,141 @@ using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
+using System.Text.Json;
 using Microsoft.IdentityModel.TestUtils;
-using Microsoft.IdentityModel.Json;
+using Newtonsoft.Json;
 using Xunit;
 
-#pragma warning disable CS3016 // Arrays as attribute arguments is not CLS-compliant
-
-namespace Microsoft.IdentityModel.Tokens.Tests
+namespace Microsoft.IdentityModel.Tokens.Json.Tests
 {
     public class JsonWebKeySetTests
     {
-        [Theory, MemberData(nameof(JsonWebKeySetDataSet))]
-        private void Constructors(
-            string testId,
-            string json,
-            JsonWebKeySet compareTo,
-            ExpectedException ee)
+        [Theory, MemberData(nameof(ConstructorDataSet))]
+        public void Constructors(JsonWebKeySetTheoryData theoryData)
         {
-            var context = new CompareContext($"{this}.{testId}");
+            var context = new CompareContext(theoryData);
             context.PropertiesToIgnoreWhenComparing.Add(typeof(JsonWebKeySet), new List<string>() { "SkipUnresolvedJsonWebKeys" });
+
             try
             {
-                var jsonWebKeys = new JsonWebKeySet(json);
+                var jsonWebKeys = new JsonWebKeySet(theoryData.Json);
                 var keys = jsonWebKeys.GetSigningKeys();
-                ee.ProcessNoException(context);
-                if (compareTo != null)
-                    IdentityComparer.AreEqual(jsonWebKeys, compareTo, context);
+                theoryData.ExpectedException.ProcessNoException(context);
+                if (theoryData.JsonWebKeySet != null)
+                    IdentityComparer.AreEqual(jsonWebKeys, theoryData.JsonWebKeySet, context);
+
+                if (theoryData.ExpectedSigningKeys != null)
+                    IdentityComparer.AreEqual(keys, theoryData.ExpectedSigningKeys, context);
             }
             catch (Exception ex)
             {
-                ee.ProcessException(ex, context.Diffs);
+                theoryData.ExpectedException.ProcessException(ex, context);
             }
 
             TestUtilities.AssertFailIfErrors(context);
         }
 
-        public static TheoryData<string, string, JsonWebKeySet, ExpectedException> JsonWebKeySetDataSet
+        public static TheoryData<JsonWebKeySetTheoryData> ConstructorDataSet
         {
             get
             {
-                var dataset = new TheoryData<string, string, JsonWebKeySet, ExpectedException>();
-                dataset.Add("Test1", DataSets.JsonWebKeySetAdditionalDataString1, DataSets.JsonWebKeySetAdditionalData1, ExpectedException.NoExceptionExpected);
-                dataset.Add("Test2", null, null, ExpectedException.ArgumentNullException());
-                dataset.Add("Test3", DataSets.JsonWebKeySetString1, DataSets.JsonWebKeySet1, ExpectedException.NoExceptionExpected);
-                dataset.Add("Test4", DataSets.JsonWebKeySetBadFormatingString, null, ExpectedException.ArgumentException(substringExpected: "IDX10805:", inner: typeof(JsonReaderException)));
-                dataset.Add("Test5", File.ReadAllText(DataSets.GoogleCertsFile), DataSets.GoogleCertsExpected, ExpectedException.NoExceptionExpected);
-                dataset.Add("Test6", DataSets.JsonWebKeySetBadRsaExponentString, null, ExpectedException.NoExceptionExpected);
-                dataset.Add("Test7", DataSets.JsonWebKeySetBadRsaModulusString, null, ExpectedException.NoExceptionExpected);
-                dataset.Add("Test8", DataSets.JsonWebKeySetKtyNotRsaString, null, ExpectedException.NoExceptionExpected);
-                dataset.Add("Test9", DataSets.JsonWebKeySetUseNotSigString, null, ExpectedException.NoExceptionExpected);
-                dataset.Add("Test10", DataSets.JsonWebKeySetBadX509String, null, ExpectedException.NoExceptionExpected);
-                dataset.Add("Test11", DataSets.JsonWebKeySetECCString, DataSets.JsonWebKeySetEC, ExpectedException.NoExceptionExpected);
-                dataset.Add("Test12", DataSets.JsonWebKeySetBadECCurveString, null, ExpectedException.NoExceptionExpected);
-                dataset.Add("Test13", DataSets.JsonWebKeySetOnlyX5tString, DataSets.JsonWebKeySetOnlyX5t, ExpectedException.NoExceptionExpected);
-                dataset.Add("Test14", DataSets.JsonWebKeySetX509DataString, DataSets.JsonWebKeySetX509Data, ExpectedException.NoExceptionExpected);
+                var theoryData = new TheoryData<JsonWebKeySetTheoryData>();
 
-                return dataset;
+                theoryData.Add(
+                    new JsonWebKeySetTheoryData("JsonWebKeySet1")
+                    {
+                        Json = DataSets.JsonWebKeySetString1,
+                        JsonWebKeySet = DataSets.JsonWebKeySet1
+                    });
+
+                theoryData.Add(
+                    new JsonWebKeySetTheoryData("Null")
+                    {
+                        ExpectedException = ExpectedException.ArgumentNullException()
+                    });
+
+                theoryData.Add(
+                    new JsonWebKeySetTheoryData("JsonWebKeySetBadFormatingString")
+                    {
+                        ExpectedException = ExpectedException.ArgumentException(substringExpected: "IDX10805:", inner: typeof(System.Text.Json.JsonException)),
+                        Json = DataSets.JsonWebKeySetBadFormatingString
+                    });
+
+                theoryData.Add(
+                    new JsonWebKeySetTheoryData("GoogleCertsExpected")
+                    {
+                        Json = File.ReadAllText(DataSets.GoogleCertsFile),
+                        JsonWebKeySet = DataSets.GoogleCertsExpected
+                    });
+
+                theoryData.Add(
+                    new JsonWebKeySetTheoryData("JsonWebKeySetBadRsaExponentString")
+                    {
+                        Json = DataSets.JsonWebKeySetBadRsaExponentString,
+                        ExpectedSigningKeys = new List<SecurityKey>()
+                    });
+
+                theoryData.Add(
+                    new JsonWebKeySetTheoryData("JsonWebKeySetBadRsaModulusString")
+                    {
+                        Json = DataSets.JsonWebKeySetBadRsaModulusString,
+                        ExpectedSigningKeys = new List<SecurityKey>()
+                    });
+
+                theoryData.Add(
+                    new JsonWebKeySetTheoryData("JsonWebKeySetKtyNotRsaString")
+                    {
+                        Json = DataSets.JsonWebKeySetKtyNotRsaString,
+                        ExpectedSigningKeys = new List<SecurityKey>()
+                    });
+
+                theoryData.Add(
+                    new JsonWebKeySetTheoryData("JsonWebKeySetUseNotSigString")
+                    {
+                        Json = DataSets.JsonWebKeySetUseNotSigString,
+                        ExpectedSigningKeys = new List<SecurityKey>()
+                    });
+
+                List<SecurityKey> keys = new List<SecurityKey>();
+                if (JsonWebKeyConverter.TryCreateToRsaSecurityKey(DataSets.JsonWebKeyBadX509Data, out SecurityKey securityKey))
+                    keys.Add(securityKey);
+
+                theoryData.Add(
+                    new JsonWebKeySetTheoryData("JsonWebKeySetBadX509String")
+                    {
+                        Json = DataSets.JsonWebKeySetBadX509String,
+                        ExpectedSigningKeys = keys
+                    });
+
+                theoryData.Add(
+                    new JsonWebKeySetTheoryData("JsonWebKeySetECCString")
+                    {
+                        Json = DataSets.JsonWebKeySetECCString,
+                        JsonWebKeySet = DataSets.JsonWebKeySetEC
+                    });
+
+                theoryData.Add(
+                    new JsonWebKeySetTheoryData("JsonWebKeySetBadECCurveString")
+                    {
+                        Json = DataSets.JsonWebKeySetBadECCurveString,
+                        ExpectedSigningKeys = new List<SecurityKey>()
+                    });
+
+                theoryData.Add(
+                    new JsonWebKeySetTheoryData("JsonWebKeySetOnlyX5tString")
+                    {
+                        Json = DataSets.JsonWebKeySetOnlyX5tString,
+                        JsonWebKeySet = DataSets.JsonWebKeySetOnlyX5t
+                    });
+
+                theoryData.Add(
+                    new JsonWebKeySetTheoryData("JsonWebKeySetX509DataString")
+                    {
+                        Json = DataSets.JsonWebKeySetX509DataString,
+                        JsonWebKeySet = DataSets.JsonWebKeySetX509Data
+                    });
+
+                return theoryData;
             }
         }
 
@@ -83,16 +162,6 @@ namespace Microsoft.IdentityModel.Tokens.Tests
                 context.Diffs.Add("jsonWebKeys.AdditionalData.Count != 0");
 
             TestUtilities.AssertFailIfErrors(context);
-        }
-
-        [Fact]
-        public void GetSets()
-        {
-        }
-
-        [Fact]
-        public void Publics()
-        {
         }
 
         [Fact]
@@ -117,7 +186,7 @@ namespace Microsoft.IdentityModel.Tokens.Tests
                     ValidateLifetime = false,
                 };
 
-                var tokenValidationResult = new JsonWebTokens.JsonWebTokenHandler().ValidateToken(Default.AsymmetricJwt, tokenValidationParameters);
+                var tokenValidationResult = new JsonWebTokens.JsonWebTokenHandler().ValidateTokenAsync(Default.AsymmetricJwt, tokenValidationParameters).Result;
 
                 if (tokenValidationResult.IsValid != true)
                     context.Diffs.Add("tokenValidationResult.IsValid != true");
@@ -383,14 +452,5 @@ namespace Microsoft.IdentityModel.Tokens.Tests
                 KeyId = webKey.KeyId
             };
         }
-
-        public class JsonWebKeySetTheoryData : TheoryDataBase
-        {
-            public JsonWebKeySet JsonWebKeySet { get; set; }
-
-            public List<SecurityKey> ExpectedSigningKeys { get; set; }
-         }
     }
 }
-
-#pragma warning restore CS3016 // Arrays as attribute arguments is not CLS-compliant

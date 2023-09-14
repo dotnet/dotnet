@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <Import Project="..\..\build\commonTest.props" />
 
@@ -8,7 +8,6 @@
     <DelaySign>true</DelaySign>
     <Description>Tests for Microsoft.IdentityModel.ManagedKeyVaultSecurityKey</Description>
     <GenerateRuntimeConfigurationFiles>true</GenerateRuntimeConfigurationFiles>
-    <LangVersion>latest</LangVersion>
     <PackageId>Microsoft.IdentityModel.ManagedKeyVaultSecurityKey.Tests</PackageId>
     <SignAssembly>true</SignAssembly>
   </PropertyGroup>

@@ -1,4 +1,5 @@
 <Project>
+
   <Import Project="apiCompat.props" />
   <Import Project="dependencies.props" />
   <Import Project="targets.props" />
@@ -31,7 +32,7 @@
     <TargetFrameworks Condition=" '$(OS)' == 'Windows_NT' ">$(SrcTargets)</TargetFrameworks>
     <TargetFrameworks Condition=" '$(OS)' != 'Windows_NT' ">$(SrcStandardTargets)</TargetFrameworks>
     <NetStandardImplicitPackageVersion>$(NetStandardVersion)</NetStandardImplicitPackageVersion>
-    <LangVersion>7.3</LangVersion>
+    <LangVersion>11</LangVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(TF_BUILD)' == 'true'">

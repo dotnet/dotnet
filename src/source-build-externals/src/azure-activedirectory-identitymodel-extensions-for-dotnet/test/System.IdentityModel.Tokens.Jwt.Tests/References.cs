@@ -4,9 +4,9 @@
 using System.Collections.Generic;
 using System.Security.Claims;
 using System.Text;
-using Microsoft.IdentityModel.Json;
 using Microsoft.IdentityModel.TestUtils;
 using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json;
 
 namespace System.IdentityModel.Tokens.Jwt.Tests
 {
