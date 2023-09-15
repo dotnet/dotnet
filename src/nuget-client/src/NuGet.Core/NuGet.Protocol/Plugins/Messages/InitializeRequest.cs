@@ -35,9 +35,9 @@ namespace NuGet.Protocol.Plugins
         /// <param name="clientVersion">The requestor's NuGet client version.</param>
         /// <param name="culture">The requestor's current culture.</param>
         /// <param name="requestTimeout">The default request timeout.</param>
-        /// <exception cref="ArgumentException">Thrown if <paramref name="clientVersion" /> is either <c>null</c>
+        /// <exception cref="ArgumentException">Thrown if <paramref name="clientVersion" /> is either <see langword="null" />
         /// or an empty string.</exception>
-        /// <exception cref="ArgumentException">Thrown if <paramref name="culture" /> is either <c>null</c>
+        /// <exception cref="ArgumentException">Thrown if <paramref name="culture" /> is either <see langword="null" />
         /// or an empty string.</exception>
         /// <exception cref="ArgumentOutOfRangeException">Thrown if <paramref name="requestTimeout" />
         /// is either less than <see cref="ProtocolConstants.MinTimeout" /> or greater than

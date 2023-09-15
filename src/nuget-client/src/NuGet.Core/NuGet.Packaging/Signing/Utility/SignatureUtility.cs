@@ -30,7 +30,7 @@ namespace NuGet.Packaging.Signing
         /// </summary>
         /// <param name="primarySignature">The primary signature.</param>
         /// <returns>A non-empty, read-only list of X.509 certificates ordered from signing certificate to root.</returns>
-        /// <exception cref="ArgumentNullException">Thrown if <paramref name="primarySignature" /> is <c>null</c>.</exception>
+        /// <exception cref="ArgumentNullException">Thrown if <paramref name="primarySignature" /> is <see langword="null" />.</exception>
         /// <remarks>
         /// WARNING:  This method does not perform revocation, trust, or certificate validity checking.
         /// </remarks>
@@ -55,8 +55,8 @@ namespace NuGet.Packaging.Signing
         /// <param name="primarySignature">The primary signature.</param>
         /// <param name="repositoryCountersignature">The repository countersignature.</param>
         /// <returns>A non-empty, read-only list of X.509 certificates ordered from signing certificate to root.</returns>
-        /// <exception cref="ArgumentNullException">Thrown if <paramref name="primarySignature" /> is <c>null</c>.</exception>
-        /// <exception cref="ArgumentNullException">Thrown if <paramref name="repositoryCountersignature" /> is <c>null</c>.</exception>
+        /// <exception cref="ArgumentNullException">Thrown if <paramref name="primarySignature" /> is <see langword="null" />.</exception>
+        /// <exception cref="ArgumentNullException">Thrown if <paramref name="repositoryCountersignature" /> is <see langword="null" />.</exception>
         /// <exception cref="ArgumentException">Thrown if <paramref name="repositoryCountersignature" /> is
         /// unrelated to <paramref name="primarySignature" />.</exception>
         /// <remarks>
@@ -154,7 +154,7 @@ namespace NuGet.Packaging.Signing
         /// </summary>
         /// <param name="primarySignature">The primary signature.</param>
         /// <returns>A non-empty, read-only list of X.509 certificates ordered from signing certificate to root.</returns>
-        /// <exception cref="ArgumentNullException">Thrown if <paramref name="primarySignature" /> is <c>null</c>.</exception>
+        /// <exception cref="ArgumentNullException">Thrown if <paramref name="primarySignature" /> is <see langword="null" />.</exception>
         /// <exception cref="SignatureException">Thrown if <paramref name="primarySignature" /> does not have a valid
         /// timestamp.</exception>
         /// <remarks>
@@ -188,8 +188,8 @@ namespace NuGet.Packaging.Signing
         /// <param name="primarySignature">The primary signature.</param>
         /// <param name="repositoryCountersignature">The repository countersignature.</param>
         /// <returns>A non-empty, read-only list of X.509 certificates ordered from signing certificate to root.</returns>
-        /// <exception cref="ArgumentNullException">Thrown if <paramref name="primarySignature" /> is <c>null</c>.</exception>
-        /// <exception cref="ArgumentNullException">Thrown if <paramref name="repositoryCountersignature" /> is <c>null</c>.</exception>
+        /// <exception cref="ArgumentNullException">Thrown if <paramref name="primarySignature" /> is <see langword="null" />.</exception>
+        /// <exception cref="ArgumentNullException">Thrown if <paramref name="repositoryCountersignature" /> is <see langword="null" />.</exception>
         /// <exception cref="SignatureException">Thrown if <paramref name="repositoryCountersignature" /> does not have a valid
         /// timestamp.</exception>
         /// <remarks>

@@ -25,7 +25,7 @@ namespace NuGet.Protocol.Plugins
         /// Instantiates a new <see cref="StandardInputReceiver" /> class.
         /// </summary>
         /// <param name="reader">A text reader.</param>
-        /// <exception cref="ArgumentNullException">Thrown if <paramref name="reader" /> is <c>null</c>.</exception>
+        /// <exception cref="ArgumentNullException">Thrown if <paramref name="reader" /> is <see langword="null" />.</exception>
         public StandardInputReceiver(TextReader reader)
         {
             if (reader == null)

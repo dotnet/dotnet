@@ -43,13 +43,13 @@ namespace NuGet.Protocol.Plugins
         /// <param name="packageVersion">The package version.</param>
         /// <param name="hashAlgorithm">The hash algorithm.</param>
         /// <exception cref="ArgumentException">Thrown if <paramref name="packageSourceRepository" />
-        /// is either <c>null</c> or an empty string.</exception>
+        /// is either <see langword="null" /> or an empty string.</exception>
         /// <exception cref="ArgumentException">Thrown if <paramref name="packageId" />
-        /// is either <c>null</c> or an empty string.</exception>
+        /// is either <see langword="null" /> or an empty string.</exception>
         /// <exception cref="ArgumentException">Thrown if <paramref name="packageVersion" />
-        /// is either <c>null</c> or an empty string.</exception>
+        /// is either <see langword="null" /> or an empty string.</exception>
         /// <exception cref="ArgumentException">Thrown if <paramref name="hashAlgorithm" />
-        /// is either <c>null</c> or an empty string.</exception>
+        /// is either <see langword="null" /> or an empty string.</exception>
         [JsonConstructor]
         public GetPackageHashRequest(
             string packageSourceRepository,

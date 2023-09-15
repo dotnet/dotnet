@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using FluentAssertions;
@@ -110,13 +111,14 @@ namespace NuGet.Build.Tasks.Console.Test
         {
             using (var testDirectory = TestDirectory.Create())
             {
+                string packageName = "PackageA";
                 var project = new MockMSBuildProject(testDirectory)
                 {
                     Items = new Dictionary<string, IList<IMSBuildItem>>
                     {
                         ["PackageDownload"] = new List<IMSBuildItem>
                         {
-                            new MSBuildItem("PackageA", new Dictionary<string, string> { ["Version"] = version }),
+                            new MSBuildItem(packageName, new Dictionary<string, string> { ["Version"] = version }),
                         }
                     }
                 };
@@ -125,9 +127,33 @@ namespace NuGet.Build.Tasks.Console.Test
                 {
                     var _ = MSBuildStaticGraphRestore.GetPackageDownloads(project).ToList();
                 };
-
-                act.Should().Throw<ArgumentException>().WithMessage($"'{expected ?? VersionRange.Parse(version).OriginalString}' is not an exact version like '[1.0.0]'. Only exact versions are allowed with PackageDownload.");
+                string expectedMessage = string.Format(Strings.Error_PackageDownload_OnlyExactVersionsAreAllowed, packageName, expected ?? version);
+                act.Should().Throw<ArgumentException>().WithMessage(expectedMessage);
             }
+        }
+
+        [Fact]
+        public void GetPackageDownloads_NoVersion_ThrowsException()
+        {
+            string packageName = "PackageA";
+            using var testDirectory = TestDirectory.Create();
+            var project = new MockMSBuildProject(testDirectory)
+            {
+                Items = new Dictionary<string, IList<IMSBuildItem>>
+                {
+                    ["PackageDownload"] = new List<IMSBuildItem>
+                        {
+                            new MSBuildItem(packageName, new Dictionary<string, string> { ["Version"] = null }),
+                        }
+                }
+            };
+
+            Action action = () =>
+            {
+                var _ = MSBuildStaticGraphRestore.GetPackageDownloads(project).ToList();
+            };
+
+            action.Should().Throw<ArgumentException>().WithMessage(string.Format(CultureInfo.CurrentCulture, Strings.Error_PackageDownload_NoVersion, packageName));
         }
 
         [Fact]

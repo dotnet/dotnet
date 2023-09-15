@@ -260,6 +260,7 @@
           AutomationProperties.Name="{x:Static nuget:Resources.Label_Repository}"
           SelectionChanged="_sourceRepoList_SelectionChanged"
           HorizontalAlignment="Right"
+          PreviewKeyDown="SourceRepoList_PreviewKeyDown"
           ItemsSource="{Binding Source={StaticResource cvsPackageSources}}">
           <ComboBox.ItemTemplate>
             <DataTemplate>

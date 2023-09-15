@@ -25,8 +25,8 @@ namespace NuGet.Protocol.Plugins
         /// </summary>
         /// <param name="plugin">A plugin.</param>
         /// <param name="exception">An exception.</param>
-        /// <exception cref="ArgumentNullException">Thrown if <paramref name="plugin" /> is <c>null</c>.</exception>
-        /// <exception cref="ArgumentNullException">Thrown if <paramref name="exception" /> is <c>null</c>.</exception>
+        /// <exception cref="ArgumentNullException">Thrown if <paramref name="plugin" /> is <see langword="null" />.</exception>
+        /// <exception cref="ArgumentNullException">Thrown if <paramref name="exception" /> is <see langword="null" />.</exception>
         public FaultedPluginEventArgs(IPlugin plugin, Exception exception)
         {
             if (plugin == null)

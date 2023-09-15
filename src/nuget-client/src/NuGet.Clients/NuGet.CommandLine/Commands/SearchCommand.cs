@@ -131,7 +131,7 @@ namespace NuGet.CommandLine
             List<PackageSource> httpPackageSources = null;
             foreach (PackageSource packageSource in packageSources)
             {
-                if (packageSource.IsHttp && !packageSource.IsHttps)
+                if (packageSource.IsHttp && !packageSource.IsHttps && !packageSource.AllowInsecureConnections)
                 {
                     if (httpPackageSources == null)
                     {

@@ -185,7 +185,7 @@ namespace NuGet.Packaging
         /// <returns>A task that represents the asynchronous operation.
         /// The task result (<see cref="Task{TResult}.Result" />) returns a <see cref="string" />.</returns>
         /// <exception cref="ArgumentException">Thrown if <paramref name="nupkgFilePath" />
-        /// is either <c>null</c> or an empty string.</exception>
+        /// is either <see langword="null" /> or an empty string.</exception>
         /// <exception cref="OperationCanceledException">Thrown if <paramref name="cancellationToken" />
         /// is cancelled.</exception>
         public override async Task<string> CopyNupkgAsync(

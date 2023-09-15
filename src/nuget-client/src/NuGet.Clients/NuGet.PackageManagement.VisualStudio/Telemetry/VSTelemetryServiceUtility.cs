@@ -41,7 +41,7 @@ namespace NuGet.PackageManagement.Telemetry
         public static VSActionsTelemetryEvent GetActionTelemetryEvent(
             string operationId,
             IEnumerable<NuGetProject> projects,
-            NuGetOperationType operationType,
+            NuGetProjectActionType operationType,
             OperationSource source,
             DateTimeOffset startTime,
             NuGetOperationStatus status,

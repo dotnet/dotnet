@@ -34,7 +34,7 @@ namespace NuGet.Protocol.Plugins
         /// <returns>A task that represents the asynchronous operation.</returns>
         /// <exception cref="ObjectDisposedException">Thrown if this object is disposed.</exception>
         /// <exception cref="InvalidOperationException">Thrown if <see cref="Connect" /> has not been called.</exception>
-        /// <exception cref="ArgumentNullException">Thrown if <paramref name="message" /> is <c>null</c>.</exception>
+        /// <exception cref="ArgumentNullException">Thrown if <paramref name="message" /> is <see langword="null" />.</exception>
         /// <exception cref="OperationCanceledException">Thrown if <paramref name="cancellationToken" />
         /// is cancelled.</exception>
         Task SendAsync(Message message, CancellationToken cancellationToken);

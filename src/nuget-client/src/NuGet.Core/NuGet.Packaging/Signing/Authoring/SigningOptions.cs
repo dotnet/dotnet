@@ -71,10 +71,10 @@ namespace NuGet.Packaging.Signing
         /// <param name="logger">A logger.</param>
         /// <remarks>Signing operations cannot be done in place; therefore, <paramref name="inputPackageStream"/>
         /// and <paramref name="outputPackageStream" /> should be different streams.</remarks>
-        /// <exception cref="ArgumentNullException">Thrown if <paramref name="inputPackageStream" /> is <c>null</c>.</exception>
-        /// <exception cref="ArgumentNullException">Thrown if <paramref name="outputPackageStream" /> is <c>null</c>.</exception>
-        /// <exception cref="ArgumentNullException">Thrown if <paramref name="signatureProvider" /> is <c>null</c>.</exception>
-        /// <exception cref="ArgumentNullException">Thrown if <paramref name="logger" /> is <c>null</c>.</exception>
+        /// <exception cref="ArgumentNullException">Thrown if <paramref name="inputPackageStream" /> is <see langword="null" />.</exception>
+        /// <exception cref="ArgumentNullException">Thrown if <paramref name="outputPackageStream" /> is <see langword="null" />.</exception>
+        /// <exception cref="ArgumentNullException">Thrown if <paramref name="signatureProvider" /> is <see langword="null" />.</exception>
+        /// <exception cref="ArgumentNullException">Thrown if <paramref name="logger" /> is <see langword="null" />.</exception>
         /// <exception cref="ArgumentException">Thrown if <paramref name="inputPackageStream" /> and
         /// <paramref name="outputPackageStream"/> are the same object.</exception>
         public SigningOptions(
@@ -101,12 +101,12 @@ namespace NuGet.Packaging.Signing
         /// <param name="logger">A logger.</param>
         /// <remarks>Signing operations cannot be done in place; therefore, <paramref name="inputPackageFilePath"/>
         /// and <paramref name="outputPackageFilePath" /> should be different file paths.</remarks>
-        /// <exception cref="ArgumentException">Thrown if <paramref name="inputPackageFilePath" /> is <c>null</c>,
+        /// <exception cref="ArgumentException">Thrown if <paramref name="inputPackageFilePath" /> is <see langword="null" />,
         /// an empty string, or equivalent to <paramref name="outputPackageFilePath" />.</exception>
-        /// <exception cref="ArgumentException">Thrown if <paramref name="inputPackageFilePath" /> is <c>null</c>,
+        /// <exception cref="ArgumentException">Thrown if <paramref name="inputPackageFilePath" /> is <see langword="null" />,
         /// an empty string, or equivalent to <paramref name="outputPackageFilePath" />.</exception>
-        /// <exception cref="ArgumentNullException">Thrown if <paramref name="signatureProvider" /> is <c>null</c>.</exception>
-        /// <exception cref="ArgumentNullException">Thrown if <paramref name="logger" /> is <c>null</c>.</exception>
+        /// <exception cref="ArgumentNullException">Thrown if <paramref name="signatureProvider" /> is <see langword="null" />.</exception>
+        /// <exception cref="ArgumentNullException">Thrown if <paramref name="logger" /> is <see langword="null" />.</exception>
         public static SigningOptions CreateFromFilePaths(
             string inputPackageFilePath,
             string outputPackageFilePath,

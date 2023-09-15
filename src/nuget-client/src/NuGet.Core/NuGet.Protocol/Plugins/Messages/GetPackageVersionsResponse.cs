@@ -34,7 +34,7 @@ namespace NuGet.Protocol.Plugins
         /// is an undefined <see cref="MessageResponseCode" /> value.</exception>
         /// <exception cref="ArgumentException">Thrown if <paramref name="responseCode" /> 
         /// is <see cref="MessageResponseCode.Success" /> and <paramref name="versions" />
-        /// is either <c>null</c> or empty.</exception>
+        /// is either <see langword="null" /> or empty.</exception>
         [JsonConstructor]
         public GetPackageVersionsResponse(MessageResponseCode responseCode, IEnumerable<string> versions)
         {

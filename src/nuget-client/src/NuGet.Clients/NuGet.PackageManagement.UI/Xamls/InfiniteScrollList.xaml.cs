@@ -477,7 +477,7 @@ namespace NuGet.PackageManagement.UI
         /// Appends <c>packages</c> to the internal <see cref="Items"> list
         /// </summary>
         /// <param name="packages">Packages collection to add</param>
-        /// <param name="refresh">Clears <see cref="Items"> list if set to <c>true</c></param>
+        /// <param name="refresh">Clears <see cref="Items"> list if set to <see langword="true" /></param>
         private void UpdatePackageList(IEnumerable<PackageItemViewModel> packages, bool refresh)
         {
             _joinableTaskFactory.Value.Run(async () =>

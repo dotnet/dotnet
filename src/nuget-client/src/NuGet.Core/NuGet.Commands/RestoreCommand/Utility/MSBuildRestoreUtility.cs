@@ -676,6 +676,11 @@ namespace NuGet.Commands
             {
                 var id = item.GetProperty("Id");
                 var versionString = item.GetProperty("VersionRange");
+                if (string.IsNullOrEmpty(versionString))
+                {
+                    throw new ArgumentException(string.Format(CultureInfo.CurrentCulture, Strings.Error_PackageDownload_NoVersion, id));
+                }
+
                 var versions = versionString.Split(splitChars, StringSplitOptions.RemoveEmptyEntries);
 
                 foreach (var version in versions)
@@ -684,7 +689,7 @@ namespace NuGet.Commands
 
                     if (!(versionRange.HasLowerAndUpperBounds && versionRange.MinVersion.Equals(versionRange.MaxVersion)))
                     {
-                        throw new ArgumentException(string.Format(CultureInfo.CurrentCulture, Strings.Error_PackageDownload_OnlyExactVersionsAreAllowed, versionRange.OriginalString));
+                        throw new ArgumentException(string.Format(CultureInfo.CurrentCulture, Strings.Error_PackageDownload_OnlyExactVersionsAreAllowed, id, versionRange.OriginalString));
                     }
 
                     var downloadDependency = new DownloadDependency(id, versionRange);

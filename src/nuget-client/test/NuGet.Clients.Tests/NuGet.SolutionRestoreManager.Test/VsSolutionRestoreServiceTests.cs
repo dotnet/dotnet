@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -2386,6 +2387,36 @@ namespace NuGet.SolutionRestoreManager.Test
 
         private delegate void TryGetProjectNamesCallback(string projectPath, out ProjectNames projectNames);
         private delegate bool TryGetProjectNamesReturns(string projectPath, out ProjectNames projectNames);
+
+        [Fact]
+        public void ToPackageSpec_PackageDownloadWithNoVersion_ThrowsException()
+        {
+            // Arrange
+            string packageName = "package";
+            ProjectNames projectName = new ProjectNames(@"n:\path\to\current\project.csproj", "project", "project.csproj", "project", Guid.NewGuid().ToString());
+            var emptyReferenceItems = Array.Empty<VsReferenceItem>();
+            var targetFrameworks = new VsTargetFrameworkInfo2[]
+            {
+                new VsTargetFrameworkInfo2(
+                    targetFrameworkMoniker: "net5.0",
+                    packageReferences: emptyReferenceItems,
+                    projectReferences: emptyReferenceItems,
+                    packageDownloads: new List<IVsReferenceItem>
+                    {
+                        new VsReferenceItem(
+                            packageName,
+                            new VsReferenceProperties(new [] { new VsReferenceProperty("Version", null) }))
+                    },
+                    frameworkReferences: emptyReferenceItems,
+                    projectProperties: Array.Empty<IVsProjectProperty>())
+            };
+
+            string expected = string.Format(CultureInfo.CurrentCulture, Resources.Error_PackageDownload_NoVersion, packageName);
+
+            // Assert
+            ArgumentException exception = Assert.Throws<ArgumentException>(() => VsSolutionRestoreService.ToPackageSpec(projectName, targetFrameworks, originalTargetFrameworkstr: string.Empty, msbuildProjectExtensionsPath: string.Empty));
+            Assert.Equal(expected, exception.Message);
+        }
 
         private async Task<DependencyGraphSpec> CaptureNominateResultAsync(
             string projectFullPath,

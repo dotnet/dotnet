@@ -78,15 +78,9 @@ namespace NuGet.Commands.Restore.Utility
                 ReplayErrors(allVulnerabilityData.Exceptions);
             }
 
+            // Performance: Early exit if there's no vulnerability data to check packages against.
             if (allVulnerabilityData is null || !AnyVulnerabilityDataFound(allVulnerabilityData.KnownVulnerabilities))
             {
-                if (_auditEnabled == EnabledValue.ExplicitOptIn)
-                {
-                    RestoreLogMessage restoreLogMessage = RestoreLogMessage.CreateWarning(NuGetLogCode.NU1905, Strings.Warning_NoVulnerabilityData);
-                    restoreLogMessage.ProjectPath = _projectFullPath;
-                    _logger.Log(restoreLogMessage);
-                }
-
                 return;
             }
 

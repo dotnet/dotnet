@@ -92,7 +92,7 @@ namespace NuGet.PackageManagement.PowerShellCmdlets
             var actionTelemetryEvent = VSTelemetryServiceUtility.GetActionTelemetryEvent(
                 OperationId.ToString(),
                 new[] { Project },
-                NuGetOperationType.Install,
+                NuGetProjectActionType.Install,
                 OperationSource.PMC,
                 startTime,
                 _status,

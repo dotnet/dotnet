@@ -76,7 +76,7 @@ namespace NuGet.PackageManagement.VisualStudio
         }
 
         /// <summary>
-        /// Gets the directories marked for deletion. Returns empty is <see cref="PackagesFolderPath"/> is <c>null</c> >
+        /// Gets the directories marked for deletion. Returns empty is <see cref="PackagesFolderPath"/> is <see langword="null" /> >
         /// </summary>
         public IReadOnlyList<string> GetPackageDirectoriesMarkedForDeletion()
         {

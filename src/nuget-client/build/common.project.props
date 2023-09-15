@@ -48,6 +48,7 @@
     <NoWarn>$(NoWarn);NU5105;MSB3277;NETSDK1138</NoWarn>
     <!-- additional warnings new in .NET 6 that we need to disable when building with source-build -->
     <NoWarn Condition="'$(DotNetBuildFromSource)' == 'true'">$(NoWarn);CS1998;CA1416;CS0618;CS1574</NoWarn>
+    <SuppressTfmSupportBuildWarnings>true</SuppressTfmSupportBuildWarnings>
   </PropertyGroup>
 
   <!-- Defaults -->

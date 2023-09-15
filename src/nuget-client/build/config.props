@@ -19,7 +19,7 @@
 
     <!-- ** Change for each new preview/rc -->
     <!-- Check the VS schedule and manually enter a preview number here that makes sense. -->
-    <ReleaseLabel Condition=" '$(ReleaseLabel)' == '' ">preview.1</ReleaseLabel>
+    <ReleaseLabel Condition=" '$(ReleaseLabel)' == '' ">rc</ReleaseLabel>
 
     <IsEscrowMode>false</IsEscrowMode>
 
@@ -27,7 +27,7 @@
     <VsTargetMajorVersion>$([MSBuild]::Add(11, $(MajorNuGetVersion)))</VsTargetMajorVersion>
     <VsTargetBranch>main</VsTargetBranch>
     <VsTargetChannel>int.$(VsTargetBranch)</VsTargetChannel>
-    <VsTargetChannelForTests>int.d17.7</VsTargetChannelForTests>
+    <VsTargetChannelForTests>int.$(VsTargetBranch)</VsTargetChannelForTests>
 
     <!-- NuGet SDK VS package Semantic Version -->
     <NuGetSdkVsSemanticVersion>$(VsTargetMajorVersion).$(MinorNuGetVersion).$(PatchNuGetVersion)</NuGetSdkVsSemanticVersion>
@@ -65,7 +65,7 @@
   <PropertyGroup Condition=" '$(Version)' == '' ">
     <Version>$(SemanticVersion)$(PreReleaseInformationVersion)</Version>
   </PropertyGroup>
-  
+
   <PropertyGroup Condition=" '$(NuGetVsVersion)' == '' ">
     <NuGetVsVersion>$(NuGetSdkVsSemanticVersion)$(PreReleaseInformationVersion)</NuGetVsVersion>
   </PropertyGroup>

@@ -22,7 +22,7 @@ namespace NuGet.Packaging.Signing
         /// If initialization has already happened, a call to this method will have no effect.
         /// </summary>
         /// <param name="logger">A logger.</param>
-        /// <exception cref="ArgumentNullException">Thrown if <paramref name="logger" /> is <c>null</c>.</exception>
+        /// <exception cref="ArgumentNullException">Thrown if <paramref name="logger" /> is <see langword="null" />.</exception>
         public static void InitializeForDotNetSdk(ILogger logger)
         {
             _ = GetX509ChainFactory(X509StorePurpose.CodeSigning, logger, CreateX509ChainFactoryForDotNetSdk);

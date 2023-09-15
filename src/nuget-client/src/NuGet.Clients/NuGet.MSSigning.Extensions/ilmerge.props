@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="15.0">
   <ItemGroup>
+    <MergeInclude Include="$(OutputPath)Microsoft.Bcl.AsyncInterfaces.dll"/>
     <MergeInclude Include="$(OutputPath)Microsoft.Extensions.FileProviders.Abstractions.dll"/>
     <MergeInclude Include="$(OutputPath)Microsoft.Extensions.FileSystemGlobbing.dll"/>
     <MergeInclude Include="$(OutputPath)Microsoft.Extensions.Primitives.dll"/>
@@ -25,7 +26,11 @@
     <MergeInclude Include="$(OutputPath)System.Memory.dll"/>
     <MergeInclude Include="$(OutputPath)System.Numerics.Vectors.dll"/>
     <MergeInclude Include="$(OutputPath)System.Runtime.CompilerServices.Unsafe.dll"/>
+    <MergeInclude Include="$(OutputPath)System.Text.Encodings.Web.dll"/>
+    <MergeInclude Include="$(OutputPath)System.Text.Json.dll"/>
     <MergeInclude Include="$(OutputPath)System.Threading.Tasks.Dataflow.dll"/>
+    <MergeInclude Include="$(OutputPath)System.Threading.Tasks.Extensions.dll"/>
+    <MergeInclude Include="$(OutputPath)System.ValueTuple.dll"/>
 
     <MergeExclude Include="$(OutputPath)Microsoft.VisualStudio.Setup.Configuration.Interop.dll"/>
     <MergeExclude Include="$(OutputPath)Microsoft.CSharp.dll"/>

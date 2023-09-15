@@ -17,7 +17,7 @@ namespace NuGet.PackageManagement.VisualStudio.Test
             var actionTelemetryData = new VSActionsTelemetryEvent(
                Guid.NewGuid().ToString(),
                projectIds: new[] { Guid.NewGuid().ToString() },
-               operationType: NuGetOperationType.Install,
+               operationType: NuGetProjectActionType.Install,
                source: OperationSource.UI,
                startTime: DateTimeOffset.Now.AddSeconds(-2),
                status: NuGetOperationStatus.Failed,
