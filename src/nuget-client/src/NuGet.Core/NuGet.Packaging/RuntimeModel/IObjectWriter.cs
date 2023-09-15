@@ -32,7 +32,7 @@ namespace NuGet.RuntimeModel
         /// Every call to WriteObjectStart must be balanced by a corresponding call to WriteObjectEnd.
         /// </summary>
         /// <param name="name">The name of the object.</param>
-        /// <exception cref="ArgumentNullException">Thrown if <paramref name="name" /> is <c>null</c>.</exception>
+        /// <exception cref="ArgumentNullException">Thrown if <paramref name="name" /> is <see langword="null" />.</exception>
         /// <exception cref="ObjectDisposedException">Thrown if this object is disposed.</exception>
         void WriteObjectStart(string name);
 
@@ -52,7 +52,7 @@ namespace NuGet.RuntimeModel
         /// </summary>
         /// <param name="name">The name of the datum.</param>
         /// <param name="value">The datum.</param>
-        /// <exception cref="ArgumentNullException">Thrown if <paramref name="name" /> is <c>null</c>.</exception>
+        /// <exception cref="ArgumentNullException">Thrown if <paramref name="name" /> is <see langword="null" />.</exception>
         /// <exception cref="ObjectDisposedException">Thrown if this object is disposed.</exception>
         void WriteNameValue(string name, int value);
 
@@ -61,7 +61,7 @@ namespace NuGet.RuntimeModel
         /// </summary>
         /// <param name="name">The name of the datum.</param>
         /// <param name="value">The datum.</param>
-        /// <exception cref="ArgumentNullException">Thrown if <paramref name="name" /> is <c>null</c>.</exception>
+        /// <exception cref="ArgumentNullException">Thrown if <paramref name="name" /> is <see langword="null" />.</exception>
         /// <exception cref="ObjectDisposedException">Thrown if this object is disposed.</exception>
         void WriteNameValue(string name, bool value);
 
@@ -70,7 +70,7 @@ namespace NuGet.RuntimeModel
         /// </summary>
         /// <param name="name">The name of the datum.</param>
         /// <param name="value">The datum.</param>
-        /// <exception cref="ArgumentNullException">Thrown if <paramref name="name" /> is <c>null</c>.</exception>
+        /// <exception cref="ArgumentNullException">Thrown if <paramref name="name" /> is <see langword="null" />.</exception>
         /// <exception cref="ObjectDisposedException">Thrown if this object is disposed.</exception>
         void WriteNameValue(string name, string value);
 
@@ -79,7 +79,7 @@ namespace NuGet.RuntimeModel
         /// </summary>
         /// <param name="name">The name of the data.</param>
         /// <param name="values">The data.</param>
-        /// <exception cref="ArgumentNullException">Thrown if <paramref name="name" /> is <c>null</c>.</exception>
+        /// <exception cref="ArgumentNullException">Thrown if <paramref name="name" /> is <see langword="null" />.</exception>
         /// <exception cref="ObjectDisposedException">Thrown if this object is disposed.</exception>
         void WriteNameArray(string name, IEnumerable<string> values);
 
@@ -89,7 +89,7 @@ namespace NuGet.RuntimeModel
         /// Every call to WriteArrayStart needs to be balanced with a corresponding call to WriteArrayEnd and not WriteObjectEnd.
         /// </summary>
         /// <param name="name">The array name</param>
-        /// <exception cref="ArgumentNullException">Thrown if <paramref name="name" /> is <c>null</c>.</exception>
+        /// <exception cref="ArgumentNullException">Thrown if <paramref name="name" /> is <see langword="null" />.</exception>
         /// <exception cref="ObjectDisposedException">Thrown if this object is disposed.</exception>
         void WriteArrayStart(string name);
 

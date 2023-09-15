@@ -430,7 +430,8 @@
     <comment>{0} - package id</comment>
   </data>
   <data name="Warning_HttpServerUsage" xml:space="preserve">
-    <value>You are running the '{0}' operation with an 'http' source, '{1}'. Support for 'http' sources will be removed in a future version.</value>
+    <value>You are running the '{0}' operation with an 'HTTP' source, '{1}'. Non-HTTPS access will be removed in a future version. Consider migrating to an 'HTTPS' source.</value>
+    <comment>0 - The command name. Ex. Push/Delete. 1 - server uri.</comment>
   </data>
   <data name="Error_VulnerabilityDataFetch" xml:space="preserve">
     <value>Error occurred while getting package vulnerability data: {0}</value>

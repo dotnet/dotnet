@@ -33,7 +33,7 @@ namespace NuGet.Packaging
         /// Instantiates a new <see cref="PackageReaderBase" /> class.
         /// </summary>
         /// <param name="frameworkProvider">A framework mapping provider.</param>
-        /// <exception cref="ArgumentNullException">Thrown if <paramref name="frameworkProvider" /> is <c>null</c>.</exception>
+        /// <exception cref="ArgumentNullException">Thrown if <paramref name="frameworkProvider" /> is <see langword="null" />.</exception>
         public PackageReaderBase(IFrameworkNameProvider frameworkProvider)
             : this(frameworkProvider, new CompatibilityProvider(frameworkProvider))
         {
@@ -44,8 +44,8 @@ namespace NuGet.Packaging
         /// </summary>
         /// <param name="frameworkProvider">A framework mapping provider.</param>
         /// <param name="compatibilityProvider">A framework compatibility provider.</param>
-        /// <exception cref="ArgumentNullException">Thrown if <paramref name="frameworkProvider" /> is <c>null</c>.</exception>
-        /// <exception cref="ArgumentNullException">Thrown if <paramref name="compatibilityProvider" /> is <c>null</c>.</exception>
+        /// <exception cref="ArgumentNullException">Thrown if <paramref name="frameworkProvider" /> is <see langword="null" />.</exception>
+        /// <exception cref="ArgumentNullException">Thrown if <paramref name="compatibilityProvider" /> is <see langword="null" />.</exception>
         public PackageReaderBase(IFrameworkNameProvider frameworkProvider, IFrameworkCompatibilityProvider compatibilityProvider)
         {
             if (frameworkProvider == null)

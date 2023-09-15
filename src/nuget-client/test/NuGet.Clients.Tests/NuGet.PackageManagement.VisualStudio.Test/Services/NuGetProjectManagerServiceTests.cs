@@ -187,7 +187,7 @@ namespace NuGet.PackageManagement.VisualStudio.Test
                     nuGetProjectServices.Object,
                     projectId);
 
-                DependencyGraphSpec projectRestoreInfo = ProjectTestHelpers.GetDGSpecFromPackageSpecs(packageSpec);
+                DependencyGraphSpec projectRestoreInfo = ProjectTestHelpers.GetDGSpecForAllProjects(packageSpec);
                 projectRestoreInfo.AddProject(packageSpec);
                 var projectNames = new ProjectNames(
                     fullName: projectFullPath,
@@ -469,7 +469,7 @@ namespace NuGet.PackageManagement.VisualStudio.Test
                     projectId);
 
 
-                DependencyGraphSpec projectRestoreInfo = ProjectTestHelpers.GetDGSpecFromPackageSpecs(packageSpec);
+                DependencyGraphSpec projectRestoreInfo = ProjectTestHelpers.GetDGSpecForAllProjects(packageSpec);
                 projectRestoreInfo.AddProject(packageSpec);
                 var projectNames = new ProjectNames(
                     fullName: projectFullPath,
@@ -654,7 +654,7 @@ namespace NuGet.PackageManagement.VisualStudio.Test
             await SimpleTestPackageUtility.CreateFullPackageAsync(pathContext.PackageSource, "packageB", "2.0.0");
 
             // Restore info
-            DependencyGraphSpec projectRestoreInfo = ProjectTestHelpers.GetDGSpecFromPackageSpecs(packageSpec);
+            DependencyGraphSpec projectRestoreInfo = ProjectTestHelpers.GetDGSpecForAllProjects(packageSpec);
             projectSystemCache.AddProjectRestoreInfo(projectNames, projectRestoreInfo, new List<IAssetsLogMessage>());
             projectSystemCache.AddProject(projectNames, projectAdapter, prProject).Should().BeTrue();
 
@@ -672,7 +672,7 @@ namespace NuGet.PackageManagement.VisualStudio.Test
 
             // Now, make a NuGet-Restore
             var pajFilepath = Path.Combine(Path.GetDirectoryName(projectFullPath), "project.assets.json");
-            TestRestoreRequest restoreRequest = ProjectTestHelpers.CreateRestoreRequest(packageSpec, pathContext, _logger);
+            TestRestoreRequest restoreRequest = ProjectTestHelpers.CreateRestoreRequest(pathContext, _logger, packageSpec);
             restoreRequest.LockFilePath = pajFilepath;
             restoreRequest.ProjectStyle = ProjectStyle.PackageReference;
             var command = new RestoreCommand(restoreRequest);
@@ -810,7 +810,7 @@ namespace NuGet.PackageManagement.VisualStudio.Test
             PackageSpec packageSpec = GetPackageSpec(projectName, projectFullPath, "[2.0.0, )");
 
             // Restore info
-            DependencyGraphSpec projectRestoreInfo = ProjectTestHelpers.GetDGSpecFromPackageSpecs(packageSpec);
+            DependencyGraphSpec projectRestoreInfo = ProjectTestHelpers.GetDGSpecForAllProjects(packageSpec);
             projectSystemCache.AddProjectRestoreInfo(projectNames, projectRestoreInfo, new List<IAssetsLogMessage>());
             projectSystemCache.AddProject(projectNames, projectAdapter, prProject).Should().BeTrue();
 
@@ -921,7 +921,7 @@ namespace NuGet.PackageManagement.VisualStudio.Test
             PackageSpec packageSpec = JsonPackageSpecReader.GetPackageSpec(referenceSpec, projectName, projectFullPath).WithTestRestoreMetadata();
 
             // Restore info
-            DependencyGraphSpec projectRestoreInfo = ProjectTestHelpers.GetDGSpecFromPackageSpecs(packageSpec);
+            DependencyGraphSpec projectRestoreInfo = ProjectTestHelpers.GetDGSpecForAllProjects(packageSpec);
             projectSystemCache.AddProjectRestoreInfo(projectNames, projectRestoreInfo, new List<IAssetsLogMessage>());
             projectSystemCache.AddProject(projectNames, projectAdapter, prProject).Should().BeTrue();
 
@@ -1077,7 +1077,7 @@ namespace NuGet.PackageManagement.VisualStudio.Test
             PackageSpec packageSpec = JsonPackageSpecReader.GetPackageSpec(referenceSpec, projectName, projectFullPath).WithTestRestoreMetadata();
 
             // Restore info
-            DependencyGraphSpec projectRestoreInfo = ProjectTestHelpers.GetDGSpecFromPackageSpecs(packageSpec);
+            DependencyGraphSpec projectRestoreInfo = ProjectTestHelpers.GetDGSpecForAllProjects(packageSpec);
             projectSystemCache.AddProjectRestoreInfo(projectNames, projectRestoreInfo, new List<IAssetsLogMessage>());
             projectSystemCache.AddProject(projectNames, projectAdapter, prProject).Should().BeTrue();
 
@@ -1262,7 +1262,7 @@ namespace NuGet.PackageManagement.VisualStudio.Test
             PackageSpec packageSpec = JsonPackageSpecReader.GetPackageSpec(referenceSpec, projectName, projectFullPath).WithTestRestoreMetadata();
 
             // Restore info
-            DependencyGraphSpec projectRestoreInfo = ProjectTestHelpers.GetDGSpecFromPackageSpecs(packageSpec);
+            DependencyGraphSpec projectRestoreInfo = ProjectTestHelpers.GetDGSpecForAllProjects(packageSpec);
             projectSystemCache.AddProjectRestoreInfo(projectNames, projectRestoreInfo, new List<IAssetsLogMessage>());
             projectSystemCache.AddProject(projectNames, projectAdapter, prProject).Should().BeTrue();
 
@@ -1395,7 +1395,7 @@ namespace NuGet.PackageManagement.VisualStudio.Test
             PackageSpec packageSpec = JsonPackageSpecReader.GetPackageSpec(referenceSpec, projectName, projectFullPath).WithTestRestoreMetadata();
 
             // Restore info
-            DependencyGraphSpec projectRestoreInfo = ProjectTestHelpers.GetDGSpecFromPackageSpecs(packageSpec);
+            DependencyGraphSpec projectRestoreInfo = ProjectTestHelpers.GetDGSpecForAllProjects(packageSpec);
             projectSystemCache.AddProjectRestoreInfo(projectNames, projectRestoreInfo, new List<IAssetsLogMessage>());
             projectSystemCache.AddProject(projectNames, projectAdapter, prProject).Should().BeTrue();
 
@@ -1403,7 +1403,7 @@ namespace NuGet.PackageManagement.VisualStudio.Test
 
             // Perform NuGet restore
             var pajFilepath = Path.Combine(Path.GetDirectoryName(projectFullPath), "project.assets.json");
-            TestRestoreRequest restoreRequest = ProjectTestHelpers.CreateRestoreRequest(packageSpec, pathContext, _logger); // Adds 1 source
+            TestRestoreRequest restoreRequest = ProjectTestHelpers.CreateRestoreRequest(pathContext, _logger, packageSpec); // Adds 1 source
             restoreRequest.LockFilePath = pajFilepath;
             restoreRequest.ProjectStyle = ProjectStyle.PackageReference;
             var command = new RestoreCommand(restoreRequest);
@@ -1546,7 +1546,7 @@ namespace NuGet.PackageManagement.VisualStudio.Test
             packageSpec.RestoreMetadata.CentralPackageVersionsEnabled = isCentralPackageVersionsEnabled;
 
             // Restore info
-            DependencyGraphSpec projectRestoreInfo = ProjectTestHelpers.GetDGSpecFromPackageSpecs(packageSpec);
+            DependencyGraphSpec projectRestoreInfo = ProjectTestHelpers.GetDGSpecForAllProjects(packageSpec);
             projectSystemCache.AddProjectRestoreInfo(projectNames, projectRestoreInfo, new List<IAssetsLogMessage>());
             projectSystemCache.AddProject(projectNames, projectAdapter, prProject).Should().BeTrue();
 
@@ -1591,7 +1591,7 @@ namespace NuGet.PackageManagement.VisualStudio.Test
             PackageSpec packageSpec = JsonPackageSpecReader.GetPackageSpec(referenceSpec, projectName, projectFullPath).WithTestRestoreMetadata();
 
             // Restore info
-            DependencyGraphSpec projectRestoreInfo = ProjectTestHelpers.GetDGSpecFromPackageSpecs(packageSpec);
+            DependencyGraphSpec projectRestoreInfo = ProjectTestHelpers.GetDGSpecForAllProjects(packageSpec);
             projectSystemCache.AddProjectRestoreInfo(projectNames, projectRestoreInfo, new List<IAssetsLogMessage>());
             projectSystemCache.AddProject(projectNames, projectAdapter, prProject).Should().BeTrue();
 
@@ -1641,7 +1641,7 @@ namespace NuGet.PackageManagement.VisualStudio.Test
             };
 
             packageSpec.TargetFrameworks.First().Dependencies.Add(dependency);
-            DependencyGraphSpec projectRestoreInfo = ProjectTestHelpers.GetDGSpecFromPackageSpecs(packageSpec);
+            DependencyGraphSpec projectRestoreInfo = ProjectTestHelpers.GetDGSpecForAllProjects(packageSpec);
             projectSystemCache.AddProjectRestoreInfo(projectNames, projectRestoreInfo, Array.Empty<IAssetsLogMessage>());
         }
 

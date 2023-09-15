@@ -28,9 +28,9 @@ namespace NuGet.Protocol.Core.Types
         /// </summary>
         /// <param name="pluginCreationResults">Plugin creation results.</param>
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="pluginCreationResults" />
-        /// is <c>null</c>.</exception>
+        /// is <see langword="null" />.</exception>
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="packageSource" />
-        /// is <c>null</c>.</exception>
+        /// is <see langword="null" />.</exception>
         public PluginResource(
             IEnumerable<PluginCreationResult> pluginCreationResults,
             PackageSource packageSource,

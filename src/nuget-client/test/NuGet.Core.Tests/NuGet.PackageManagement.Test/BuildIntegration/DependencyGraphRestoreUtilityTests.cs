@@ -159,7 +159,7 @@ namespace NuGet.PackageManagement.Test
 
             // Act
             IReadOnlyList<RestoreSummary> result = await DependencyGraphRestoreUtility.RestoreAsync(
-                ProjectTestHelpers.GetDGSpecFromPackageSpecs(packageSpec),
+                ProjectTestHelpers.GetDGSpecForAllProjects(packageSpec),
                 new DependencyGraphCacheContext(),
                 new RestoreCommandProvidersCache(),
                 cacheContextModifier: _ => { },
@@ -205,7 +205,7 @@ namespace NuGet.PackageManagement.Test
             using var pathContext = new SimpleTestPathContext();
             var settings = Settings.LoadDefaultSettings(pathContext.SolutionRoot);
             var packageSpec = ProjectTestHelpers.GetPackageSpec(settings, projectName: "projectName", rootPath: pathContext.SolutionRoot);
-            var dgSpec = ProjectTestHelpers.GetDGSpecFromPackageSpecs(packageSpec);
+            var dgSpec = ProjectTestHelpers.GetDGSpecForAllProjects(packageSpec);
             var progressReporter = new Mock<IRestoreProgressReporter>();
 
             // Pre-Conditions
@@ -287,7 +287,7 @@ namespace NuGet.PackageManagement.Test
 
             // Pre-Conditions
             IReadOnlyList<RestoreSummary> result = await DependencyGraphRestoreUtility.RestoreAsync(
-                ProjectTestHelpers.GetDGSpecFromPackageSpecs(project1, project2),
+                ProjectTestHelpers.GetDGSpecForAllProjects(project1, project2),
                 new DependencyGraphCacheContext(),
                 new RestoreCommandProvidersCache(),
                 cacheContextModifier: _ => { },
@@ -345,7 +345,7 @@ namespace NuGet.PackageManagement.Test
 
             // Act
             result = await DependencyGraphRestoreUtility.RestoreAsync(
-               ProjectTestHelpers.GetDGSpecFromPackageSpecs(project1.WithTestProjectReference(project2), project2),
+               ProjectTestHelpers.GetDGSpecForAllProjects(project1.WithTestProjectReference(project2), project2),
                new DependencyGraphCacheContext(),
                new RestoreCommandProvidersCache(),
                cacheContextModifier: _ => { },
@@ -402,7 +402,7 @@ namespace NuGet.PackageManagement.Test
 
             var projectName = "project";
             PackageSpec packageSpec = ProjectTestHelpers.GetPackageSpec(settings, projectName, rootPath: pathContext.SolutionRoot);
-            var dependencyGraphSpec = ProjectTestHelpers.GetDGSpecFromPackageSpecs(packageSpec);
+            var dependencyGraphSpec = ProjectTestHelpers.GetDGSpecForAllProjects(packageSpec);
             mockProjectCache.Setup(pc => pc.TryGetProjectRestoreInfo(It.IsAny<string>(), out dependencyGraphSpec, out It.Ref<IReadOnlyList<IAssetsLogMessage>>.IsAny)).Returns(true);
 
             var projectCache = mockProjectCache.Object;
@@ -471,7 +471,7 @@ namespace NuGet.PackageManagement.Test
 
             var projectName = "project";
             PackageSpec packageSpec = ProjectTestHelpers.GetPackageSpec(settings, projectName, rootPath: pathContext.SolutionRoot);
-            var dependencyGraphSpec = ProjectTestHelpers.GetDGSpecFromPackageSpecs(packageSpec);
+            var dependencyGraphSpec = ProjectTestHelpers.GetDGSpecForAllProjects(packageSpec);
             mockProjectCache.Setup(pc => pc.TryGetProjectRestoreInfo(It.IsAny<string>(), out dependencyGraphSpec, out It.Ref<IReadOnlyList<IAssetsLogMessage>>.IsAny)).Returns(true);
 
             var projectCache = mockProjectCache.Object;

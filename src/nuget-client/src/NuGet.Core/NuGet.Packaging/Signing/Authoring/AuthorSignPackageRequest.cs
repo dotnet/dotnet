@@ -20,7 +20,7 @@ namespace NuGet.Packaging.Signing
         /// <param name="certificate">The signing certificate.</param>
         /// <param name="hashAlgorithm">The signature and timestamp hash algorithm.</param>
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="certificate" />
-        /// is <c>null</c>.</exception>
+        /// is <see langword="null" />.</exception>
         /// <exception cref="ArgumentException">Thrown if <paramref name="hashAlgorithm" />
         /// is invalid.</exception>
         public AuthorSignPackageRequest(
@@ -40,7 +40,7 @@ namespace NuGet.Packaging.Signing
         /// <param name="signatureHashAlgorithm">The signature hash algorithm.</param>
         /// <param name="timestampHashAlgorithm">The timestamp hash algorithm.</param>
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="certificate" />
-        /// is <c>null</c>.</exception>
+        /// is <see langword="null" />.</exception>
         /// <exception cref="ArgumentException">Thrown if <paramref name="signatureHashAlgorithm" />
         /// is invalid.</exception>
         /// <exception cref="ArgumentException">Thrown if <paramref name="timestampHashAlgorithm" />

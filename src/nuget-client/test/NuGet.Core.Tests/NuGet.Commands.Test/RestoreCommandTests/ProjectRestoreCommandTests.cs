@@ -42,7 +42,7 @@ namespace NuGet.Commands.Test.RestoreCommandTests
                     .WithPackagesLockFile()
                     .Build();
 
-                var restoreRequest = ProjectTestHelpers.CreateRestoreRequest(packageSpec, pathContext, _logger);
+                var restoreRequest = ProjectTestHelpers.CreateRestoreRequest(pathContext, _logger, packageSpec);
 
                 var projectRestoreRequest = new ProjectRestoreRequest(restoreRequest, packageSpec, restoreRequest.ExistingLockFile, _collector); ;
 

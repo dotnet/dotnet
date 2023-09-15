@@ -214,14 +214,20 @@ namespace NuGet.Build.Tasks.Console
                 string id = projectItemInstance.Identity;
 
                 // PackageDownload items can contain multiple versions
-                foreach (var version in MSBuildStringUtility.Split(projectItemInstance.GetProperty("Version")))
+                string versionRanges = projectItemInstance.GetProperty("Version");
+                if (string.IsNullOrEmpty(versionRanges))
+                {
+                    throw new ArgumentException(string.Format(CultureInfo.CurrentCulture, Strings.Error_PackageDownload_NoVersion, id));
+                }
+
+                foreach (var version in MSBuildStringUtility.Split(versionRanges))
                 {
                     // Validate the version range
                     VersionRange versionRange = !string.IsNullOrWhiteSpace(version) ? VersionRange.Parse(version) : VersionRange.All;
 
                     if (!(versionRange.HasLowerAndUpperBounds && versionRange.MinVersion.Equals(versionRange.MaxVersion)))
                     {
-                        throw new ArgumentException(string.Format(CultureInfo.CurrentCulture, Strings.Error_PackageDownload_OnlyExactVersionsAreAllowed, versionRange.OriginalString));
+                        throw new ArgumentException(string.Format(CultureInfo.CurrentCulture, Strings.Error_PackageDownload_OnlyExactVersionsAreAllowed, id, versionRange.OriginalString));
                     }
 
                     yield return new DownloadDependency(id, versionRange);
@@ -1016,7 +1022,7 @@ namespace NuGet.Build.Tasks.Console
         /// Determines the current settings for central package management for the specified project.
         /// </summary>
         /// <param name="project">The <see cref="IMSBuildProject" /> to get the central package management settings for.</param>
-        /// <param name="projectStyle">The <see cref="ProjectStyle?" /> of the specified project.  Specify <c>null</c> when the project does not define a restore style.</param>
+        /// <param name="projectStyle">The <see cref="ProjectStyle?" /> of the specified project.  Specify <see langword="null" /> when the project does not define a restore style.</param>
         /// <returns>A <see cref="Tuple{T1, T2}" /> containing values indicating whether or not central package management is enabled and if the ability to override a package version is disabled.</returns>
         internal static (bool IsEnabled, bool IsVersionOverrideDisabled, bool IsCentralPackageTransitivePinningEnabled) GetCentralPackageManagementSettings(IMSBuildProject project, ProjectStyle? projectStyle)
         {

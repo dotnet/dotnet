@@ -45,7 +45,7 @@ namespace NuGet.Test.Utility
         /// Creates a new central package management file (Directory.Packages.props) in the specified directory.
         /// </summary>
         /// <param name="directoryPath">The path to a directory to create the central package management in.</param>
-        /// <param name="managePackageVersionsCentrally"><c>true</c> to enable central package management (default), or <c>false</c> to disable it.</param>
+        /// <param name="managePackageVersionsCentrally"><see langword="true" /> to enable central package management (default), or <see langword="false" /> to disable it.</param>
         /// <returns></returns>
         public static CentralPackageVersionsManagementFile Create(string directoryPath, bool managePackageVersionsCentrally = true)
         {

@@ -60,16 +60,10 @@ namespace NuGet.PackageManagement.UI
             UserAction userAction,
             CancellationToken cancellationToken)
         {
-            var operationType = NuGetOperationType.Install;
-            if (userAction.Action == NuGetProjectActionType.Uninstall)
-            {
-                operationType = NuGetOperationType.Uninstall;
-            }
-
             await PerformActionAsync(
                 uiService,
                 userAction,
-                operationType,
+                userAction.Action,
                 (projectManagerService) => GetActionsAsync(
                     projectManagerService,
                     uiService,
@@ -215,7 +209,7 @@ namespace NuGet.PackageManagement.UI
                 await PerformActionAsync(
                     uiService,
                     userAction: null,
-                    NuGetOperationType.Update,
+                    NuGetProjectActionType.Update,
                     (projectManagerService) =>
                         ResolveActionsForUpdateAsync(projectManagerService, uiService, packagesToUpdate, cancellationToken),
                     cancellationToken);
@@ -251,7 +245,7 @@ namespace NuGet.PackageManagement.UI
         private async Task PerformActionAsync(
             INuGetUI uiService,
             UserAction? userAction,
-            NuGetOperationType operationType,
+            NuGetProjectActionType operationType,
             ResolveActionsAsync resolveActionsAsync,
             CancellationToken cancellationToken)
         {
@@ -294,7 +288,7 @@ namespace NuGet.PackageManagement.UI
             INuGetProjectManagerService projectManagerService,
             INuGetUI uiService,
             ResolveActionsAsync resolveActionsAsync,
-            NuGetOperationType operationType,
+            NuGetProjectActionType operationType,
             UserAction? userAction,
             CancellationToken cancellationToken)
         {
@@ -388,7 +382,7 @@ namespace NuGet.PackageManagement.UI
                     IReadOnlyList<ProjectAction> actions = await resolveActionsAsync(projectManagerService);
                     IReadOnlyList<PreviewResult> results = await GetPreviewResultsAsync(projectManagerService, actions, userAction, uiService, cancellationToken);
 
-                    if (operationType == NuGetOperationType.Uninstall)
+                    if (operationType == NuGetProjectActionType.Uninstall)
                     {
                         // removed packages don't have version info
                         removedPackages = results.SelectMany(result => result.Deleted)
@@ -423,7 +417,7 @@ namespace NuGet.PackageManagement.UI
                         if (updateCount > 0)
                         {
                             // set operation type to update when there are packages being updated
-                            operationType = NuGetOperationType.Update;
+                            operationType = NuGetProjectActionType.Update;
                         }
                     }
 

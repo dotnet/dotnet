@@ -336,5 +336,19 @@ namespace NuGet.PackageManagement.UI
                 oldValue ? ToggleState.On : ToggleState.Off,
                 newValue ? ToggleState.On : ToggleState.Off);
         }
+
+        private void Versions_PreviewKeyDown(object sender, KeyEventArgs e)
+        {
+            switch (e.Key)
+            {
+                case Key.Tab:
+                    _versions.IsDropDownOpen = false;
+                    base.OnPreviewKeyDown(e);
+                    break;
+                default:
+                    base.OnPreviewKeyDown(e);
+                    break;
+            }
+        }
     }
 }

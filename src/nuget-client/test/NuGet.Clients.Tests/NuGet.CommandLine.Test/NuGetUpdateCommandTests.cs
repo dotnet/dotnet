@@ -1907,7 +1907,82 @@ namespace NuGet.CommandLine.Test
 
             // Assert
             r.Success.Should().BeTrue(r.AllOutput);
-            r.AllOutput.Should().Contain("You are running the 'update' operation with an 'http' source");
+            r.AllOutput.Should().Contain("You are running the 'update' operation with an 'HTTP' source");
         }
+
+        [Theory]
+        [InlineData("false", true)]
+        [InlineData("FALSE", true)]
+        [InlineData("invalidString", true)]
+        [InlineData("", true)]
+        [InlineData("true", false)]
+        [InlineData("TRUE", false)]
+        public async Task UpdateCommand_WithHttpSourceAndAllowInsecureConnections_WarnsCorrectly(string allowInsecureConnections, bool hasHttpWarning)
+        {
+            //Arrange
+            using var pathContext = new SimpleTestPathContext();
+            var solution = new SimpleTestSolutionContext(pathContext.SolutionRoot);
+            var httpSourceDirectory = Path.Combine(pathContext.WorkingDirectory, "http-source");
+            var packageA100 = new SimpleTestPackageContext("a", "1.0.0");
+            var packageA200 = new SimpleTestPackageContext("a", "2.0.0");
+            await SimpleTestPackageUtility.CreatePackagesAsync(httpSourceDirectory, packageA100, packageA200);
+            var packageA100FileInfo = new FileInfo(Path.Combine(httpSourceDirectory, packageA100.PackageName));
+            var packageA200FileInfo = new FileInfo(Path.Combine(httpSourceDirectory, packageA200.PackageName));
+
+            using var server = Util.CreateMockServer(new[] { packageA100FileInfo, packageA200FileInfo });
+            server.Start();
+
+            var sourceUri = $"{server.Uri}nuget";
+            pathContext.Settings.AddSource("http-feed", $"{server.Uri}nuget", allowInsecureConnections);
+
+            var projectB = new SimpleTestProjectContext(
+                  "b",
+                  ProjectStyle.PackagesConfig,
+                  pathContext.SolutionRoot);
+
+            Util.CreateFile(Path.GetDirectoryName(projectB.ProjectPath), "packages.config",
+@"<packages>
+  <package id=""A"" version=""1.0.0"" targetFramework=""net461"" />
+</packages>");
+
+            solution.Projects.Add(projectB);
+            solution.Create(pathContext.SolutionRoot);
+
+            var args = new[]
+            {
+                    "restore",
+                    solution.SolutionPath
+            };
+
+            CommandRunnerResult restoreResult = CommandRunner.Run(
+                Util.GetNuGetExePath(),
+                pathContext.WorkingDirectory,
+                string.Join(" ", args));
+            restoreResult.Success.Should().BeTrue(restoreResult.AllOutput);
+            args = new[]
+            {
+                    "update",
+                    solution.SolutionPath,
+            };
+
+            // Act
+            CommandRunnerResult r = CommandRunner.Run(
+                Util.GetNuGetExePath(),
+                pathContext.WorkingDirectory,
+                string.Join(" ", args));
+            server.Stop();
+
+            // Assert
+            r.Success.Should().BeTrue(r.AllOutput);
+            if (hasHttpWarning)
+            {
+                r.AllOutput.Should().Contain("You are running the 'update' operation with an 'HTTP' source", because: r.AllOutput);
+            }
+            else
+            {
+                r.AllOutput.Should().NotContain("You are running the 'update' operation with an 'HTTP' source", because: r.AllOutput);
+            }
+        }
+
     }
 }

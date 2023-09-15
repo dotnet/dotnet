@@ -23,9 +23,9 @@ namespace NuGet.Packaging.Signing
         /// <returns>A certificate chain.</returns>
         /// <remarks>This is intended to be used only during signing and timestamping operations,
         /// not verification.</remarks>
-        /// <exception cref="ArgumentNullException">Thrown if <paramref name="certificate" /> is <c>null</c>.</exception>
-        /// <exception cref="ArgumentNullException">Thrown if <paramref name="extraStore" /> is <c>null</c>.</exception>
-        /// <exception cref="ArgumentNullException">Thrown if <paramref name="logger" /> is <c>null</c>.</exception>
+        /// <exception cref="ArgumentNullException">Thrown if <paramref name="certificate" /> is <see langword="null" />.</exception>
+        /// <exception cref="ArgumentNullException">Thrown if <paramref name="extraStore" /> is <see langword="null" />.</exception>
+        /// <exception cref="ArgumentNullException">Thrown if <paramref name="logger" /> is <see langword="null" />.</exception>
         /// <exception cref="ArgumentException">Thrown if <paramref name="certificateType" /> is undefined.</exception>
         public static IX509CertificateChain GetCertificateChain(
             X509Certificate2 certificate,

@@ -721,9 +721,9 @@ namespace NuGet.ProjectModel.Test.ProjectLockFile
             // Arrange
             var framework = CommonFrameworks.Net50;
             var frameworkShortName = framework.GetShortFolderName();
-            var projectA = ProjectTestHelpers.GetPackageSpec("A", framework: frameworkShortName);
-            var projectB = ProjectTestHelpers.GetPackageSpec("B", framework: frameworkShortName);
-            var projectC = ProjectTestHelpers.GetPackageSpec("C", framework: frameworkShortName);
+            var projectA = ProjectTestHelpers.GetPackageSpec("A", framework: frameworkShortName).WithTestRestoreMetadata();
+            var projectB = ProjectTestHelpers.GetPackageSpec("B", framework: frameworkShortName).WithTestRestoreMetadata();
+            var projectC = ProjectTestHelpers.GetPackageSpec("C", framework: frameworkShortName).WithTestRestoreMetadata();
 
             // A -> B
             projectA = projectA.WithTestProjectReference(projectB);
@@ -731,7 +731,7 @@ namespace NuGet.ProjectModel.Test.ProjectLockFile
             // A -> C
             projectA = projectA.WithTestProjectReference(projectC);
 
-            var dgSpec = ProjectTestHelpers.GetDGSpec(projectA, projectB, projectC);
+            var dgSpec = ProjectTestHelpers.GetDGSpecForFirstProject(projectA, projectB, projectC);
 
             var lockFile = new PackagesLockFileBuilder()
                         .WithTarget(target => target
@@ -754,9 +754,9 @@ namespace NuGet.ProjectModel.Test.ProjectLockFile
             // Arrange
             var framework = CommonFrameworks.Net50;
             var frameworkShortName = framework.GetShortFolderName();
-            var projectA = ProjectTestHelpers.GetPackageSpec("A", framework: frameworkShortName);
-            var projectB = ProjectTestHelpers.GetPackageSpec("B", framework: frameworkShortName);
-            var projectC = ProjectTestHelpers.GetPackageSpec("C", framework: frameworkShortName);
+            var projectA = ProjectTestHelpers.GetPackageSpec("A", framework: frameworkShortName).WithTestRestoreMetadata();
+            var projectB = ProjectTestHelpers.GetPackageSpec("B", framework: frameworkShortName).WithTestRestoreMetadata();
+            var projectC = ProjectTestHelpers.GetPackageSpec("C", framework: frameworkShortName).WithTestRestoreMetadata();
 
             // B -> C
             projectB = projectB.WithTestProjectReference(projectC);
@@ -764,7 +764,7 @@ namespace NuGet.ProjectModel.Test.ProjectLockFile
             // A -> B
             projectA = projectA.WithTestProjectReference(projectB);
 
-            var dgSpec = ProjectTestHelpers.GetDGSpec(projectA, projectB, projectC);
+            var dgSpec = ProjectTestHelpers.GetDGSpecForFirstProject(projectA, projectB, projectC);
 
             var lockFile = new PackagesLockFileBuilder()
                         .WithTarget(target => target
@@ -787,9 +787,9 @@ namespace NuGet.ProjectModel.Test.ProjectLockFile
             // Arrange
             var framework = CommonFrameworks.Net50;
             var frameworkShortName = framework.GetShortFolderName();
-            var projectA = ProjectTestHelpers.GetPackageSpec("A", framework: frameworkShortName);
-            var projectB = ProjectTestHelpers.GetPackageSpec("B", framework: frameworkShortName);
-            var projectD = ProjectTestHelpers.GetPackageSpec("D", framework: frameworkShortName);
+            var projectA = ProjectTestHelpers.GetPackageSpec("A", framework: frameworkShortName).WithTestRestoreMetadata();
+            var projectB = ProjectTestHelpers.GetPackageSpec("B", framework: frameworkShortName).WithTestRestoreMetadata();
+            var projectD = ProjectTestHelpers.GetPackageSpec("D", framework: frameworkShortName).WithTestRestoreMetadata();
 
             // B -> D
             projectB = projectB.WithTestProjectReference(projectD);
@@ -797,7 +797,7 @@ namespace NuGet.ProjectModel.Test.ProjectLockFile
             // A -> B
             projectA = projectA.WithTestProjectReference(projectB);
 
-            var dgSpec = ProjectTestHelpers.GetDGSpec(projectA, projectB, projectD);
+            var dgSpec = ProjectTestHelpers.GetDGSpecForFirstProject(projectA, projectB, projectD);
 
             var lockFile = new PackagesLockFileBuilder()
                         .WithTarget(target => target
@@ -824,8 +824,8 @@ namespace NuGet.ProjectModel.Test.ProjectLockFile
             // Arrange
             var framework = CommonFrameworks.Net50;
             var frameworkShortName = framework.GetShortFolderName();
-            var projectA = ProjectTestHelpers.GetPackageSpec("A", framework: frameworkShortName);
-            var projectB = ProjectTestHelpers.GetPackageSpec("B", framework: frameworkShortName);
+            var projectA = ProjectTestHelpers.GetPackageSpec("A", framework: frameworkShortName).WithTestRestoreMetadata();
+            var projectB = ProjectTestHelpers.GetPackageSpec("B", framework: frameworkShortName).WithTestRestoreMetadata();
 
             // A -> B
             projectA = projectA.WithTestProjectReference(projectB);
@@ -844,7 +844,7 @@ namespace NuGet.ProjectModel.Test.ProjectLockFile
 
             projectB.TargetFrameworks.First().Dependencies.Add(packageC);
 
-            var dgSpec = ProjectTestHelpers.GetDGSpec(projectA, projectB);
+            var dgSpec = ProjectTestHelpers.GetDGSpecForFirstProject(projectA, projectB);
 
             var lockFile = new PackagesLockFileBuilder()
                         .WithTarget(target => target
@@ -876,9 +876,9 @@ namespace NuGet.ProjectModel.Test.ProjectLockFile
             // Arrange
             var framework = CommonFrameworks.Net50;
             var frameworkShortName = framework.GetShortFolderName();
-            var projectA = ProjectTestHelpers.GetPackageSpec("A", framework: frameworkShortName);
-            var projectB = ProjectTestHelpers.GetPackageSpec("B", framework: frameworkShortName);
-            var projectC = ProjectTestHelpers.GetPackageSpec("C", framework: frameworkShortName);
+            var projectA = ProjectTestHelpers.GetPackageSpec("A", framework: frameworkShortName).WithTestRestoreMetadata();
+            var projectB = ProjectTestHelpers.GetPackageSpec("B", framework: frameworkShortName).WithTestRestoreMetadata();
+            var projectC = ProjectTestHelpers.GetPackageSpec("C", framework: frameworkShortName).WithTestRestoreMetadata();
 
             // B (PrivateAssets.All) -> C 
             projectB = projectB.WithTestProjectReference(projectC, privateAssets: LibraryIncludeFlags.All);
@@ -886,7 +886,7 @@ namespace NuGet.ProjectModel.Test.ProjectLockFile
             // A -> B
             projectA = projectA.WithTestProjectReference(projectB);
 
-            var dgSpec = ProjectTestHelpers.GetDGSpec(projectA, projectB, projectC);
+            var dgSpec = ProjectTestHelpers.GetDGSpecForFirstProject(projectA, projectB, projectC);
 
             var lockFile = new PackagesLockFileBuilder()
                         .WithTarget(target => target
@@ -913,10 +913,10 @@ namespace NuGet.ProjectModel.Test.ProjectLockFile
             // Arrange
             var framework = CommonFrameworks.Net50;
             var frameworkShortName = framework.GetShortFolderName();
-            var projectA = ProjectTestHelpers.GetPackageSpec("A", framework: frameworkShortName);
-            var projectB = ProjectTestHelpers.GetPackageSpec("B", framework: frameworkShortName);
-            var projectC = ProjectTestHelpers.GetPackageSpec("C", framework: frameworkShortName);
-            var projectD = ProjectTestHelpers.GetPackageSpec("D", framework: frameworkShortName);
+            var projectA = ProjectTestHelpers.GetPackageSpec("A", framework: frameworkShortName).WithTestRestoreMetadata();
+            var projectB = ProjectTestHelpers.GetPackageSpec("B", framework: frameworkShortName).WithTestRestoreMetadata();
+            var projectC = ProjectTestHelpers.GetPackageSpec("C", framework: frameworkShortName).WithTestRestoreMetadata();
+            var projectD = ProjectTestHelpers.GetPackageSpec("D", framework: frameworkShortName).WithTestRestoreMetadata();
 
             var packageC = new LibraryDependency(
                 new LibraryRange("packageC", versionRange: VersionRange.Parse("2.0.0"), LibraryDependencyTarget.Package),
@@ -945,7 +945,7 @@ namespace NuGet.ProjectModel.Test.ProjectLockFile
             // C -> PackageC
             projectC.TargetFrameworks.First().Dependencies.Add(packageC);
 
-            var dgSpec = ProjectTestHelpers.GetDGSpec(projectA, projectB, projectC, projectD);
+            var dgSpec = ProjectTestHelpers.GetDGSpecForFirstProject(projectA, projectB, projectC, projectD);
 
             var lockFile = new PackagesLockFileBuilder()
                         .WithTarget(target => target
@@ -987,9 +987,9 @@ namespace NuGet.ProjectModel.Test.ProjectLockFile
             // Arrange
             var framework = CommonFrameworks.Net50;
             var frameworkShortName = framework.GetShortFolderName();
-            var projectA = ProjectTestHelpers.GetPackageSpec("A", framework: frameworkShortName);
+            var projectA = ProjectTestHelpers.GetPackageSpec("A", framework: frameworkShortName).WithTestRestoreMetadata();
             var projectB = ProjectTestHelpers.GetPackagesConfigPackageSpec("B");
-            var projectC = ProjectTestHelpers.GetPackageSpec("C", framework: frameworkShortName);
+            var projectC = ProjectTestHelpers.GetPackageSpec("C", framework: frameworkShortName).WithTestRestoreMetadata();
 
             var packageC = new LibraryDependency(
                 new LibraryRange("packageC", versionRange: VersionRange.Parse("2.0.0"), LibraryDependencyTarget.Package),
@@ -1012,7 +1012,7 @@ namespace NuGet.ProjectModel.Test.ProjectLockFile
             // C -> PackageC
             projectC.TargetFrameworks.First().Dependencies.Add(packageC);
 
-            var dgSpec = ProjectTestHelpers.GetDGSpec(projectA, projectB, projectC);
+            var dgSpec = ProjectTestHelpers.GetDGSpecForFirstProject(projectA, projectB, projectC);
 
             var lockFile = new PackagesLockFileBuilder()
                         .WithTarget(target => target
@@ -1051,13 +1051,13 @@ namespace NuGet.ProjectModel.Test.ProjectLockFile
             var framework = CommonFrameworks.NetStandard;
             var frameworkShortName = framework.GetShortFolderName();
             var incompatibleFramework = CommonFrameworks.Net46;
-            var projectA = ProjectTestHelpers.GetPackageSpec("A", framework: frameworkShortName);
+            var projectA = ProjectTestHelpers.GetPackageSpec("A", framework: frameworkShortName).WithTestRestoreMetadata();
             var projectB = ProjectTestHelpers.GetPackagesConfigPackageSpec("B", framework: incompatibleFramework.GetShortFolderName());
 
             // A -> B
             projectA = projectA.WithTestProjectReference(projectB);
 
-            var dgSpec = ProjectTestHelpers.GetDGSpec(projectA, projectB);
+            var dgSpec = ProjectTestHelpers.GetDGSpecForFirstProject(projectA, projectB);
 
             var lockFile = new PackagesLockFileBuilder()
                         .WithTarget(target => target

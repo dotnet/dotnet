@@ -32,7 +32,7 @@ namespace NuGet.Protocol.Plugins
         /// <param name="message">The message to be logged.</param>
         /// <exception cref="ArgumentException">Thrown if <paramref name="logLevel" /> is an undefined
         /// <see cref="LogLevel" /> value.</exception>
-        /// <exception cref="ArgumentException">Thrown if <paramref name="message" /> is either <c>null</c>
+        /// <exception cref="ArgumentException">Thrown if <paramref name="message" /> is either <see langword="null" />
         /// or an empty string.</exception>
         [JsonConstructor]
         public LogRequest(LogLevel logLevel, string message)

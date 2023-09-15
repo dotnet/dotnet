@@ -42,7 +42,7 @@ namespace NuGet.Commands
             var packageUpdateResource = await CommandRunnerUtility.GetPackageUpdateResource(sourceProvider, packageSource);
 
             // Only warn for V3 style sources because they have a service index which is different from the final push url.
-            if (packageSource.IsHttp && !packageSource.IsHttps &&
+            if (packageSource.IsHttp && !packageSource.IsHttps && !packageSource.AllowInsecureConnections &&
                 (packageSource.ProtocolVersion == 3 || packageSource.Source.EndsWith("json", StringComparison.OrdinalIgnoreCase)))
             {
                 logger.LogWarning(string.Format(CultureInfo.CurrentCulture, Strings.Warning_HttpServerUsage, "push", packageSource.Source));
@@ -90,6 +90,7 @@ namespace NuGet.Commands
                 noServiceEndpoint,
                 skipDuplicate,
                 symbolPackageUpdateResource,
+                packageSource.AllowInsecureConnections,
                 logger);
         }
 

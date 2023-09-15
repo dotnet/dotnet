@@ -160,7 +160,7 @@ namespace NuGet.Packaging.Signing
         /// <summary>
         /// Default settings.
         /// </summary>
-        /// <param name="environmentVariableReader">An <see cref="IEnvironmentVariableReader" /> instance or <c>null</c> for the default environment variable reader.</param>
+        /// <param name="environmentVariableReader">An <see cref="IEnvironmentVariableReader" /> instance or <see langword="null" /> for the default environment variable reader.</param>
         /// <returns>A <see cref="SignedPackageVerifierSettings" /> instance.</returns>
         public static SignedPackageVerifierSettings GetDefault(IEnvironmentVariableReader environmentVariableReader = null)
         {
@@ -182,7 +182,7 @@ namespace NuGet.Packaging.Signing
         /// <summary>
         /// The accept mode policy.
         /// </summary>
-        /// <param name="environmentVariableReader">An <see cref="IEnvironmentVariableReader" /> instance or <c>null</c> for the default environment variable reader.</param>
+        /// <param name="environmentVariableReader">An <see cref="IEnvironmentVariableReader" /> instance or <see langword="null" /> for the default environment variable reader.</param>
         /// <returns>A <see cref="SignedPackageVerifierSettings" /> instance.</returns>
         public static SignedPackageVerifierSettings GetAcceptModeDefaultPolicy(IEnvironmentVariableReader environmentVariableReader = null)
         {
@@ -204,7 +204,7 @@ namespace NuGet.Packaging.Signing
         /// <summary>
         /// The require mode policy.
         /// </summary>
-        /// <param name="environmentVariableReader">An <see cref="IEnvironmentVariableReader" /> instance or <c>null</c> for the default environment variable reader.</param>
+        /// <param name="environmentVariableReader">An <see cref="IEnvironmentVariableReader" /> instance or <see langword="null" /> for the default environment variable reader.</param>
         /// <returns>A <see cref="SignedPackageVerifierSettings" /> instance.</returns>
         public static SignedPackageVerifierSettings GetRequireModeDefaultPolicy(IEnvironmentVariableReader environmentVariableReader = null)
         {
@@ -226,7 +226,7 @@ namespace NuGet.Packaging.Signing
         /// <summary>
         /// Default policy for nuget.exe verify --signatures command.
         /// </summary>
-        /// <param name="environmentVariableReader">An <see cref="IEnvironmentVariableReader" /> instance or <c>null</c> for the default environment variable reader.</param>
+        /// <param name="environmentVariableReader">An <see cref="IEnvironmentVariableReader" /> instance or <see langword="null" /> for the default environment variable reader.</param>
         /// <returns>A <see cref="SignedPackageVerifierSettings" /> instance.</returns>
         public static SignedPackageVerifierSettings GetVerifyCommandDefaultPolicy(IEnvironmentVariableReader environmentVariableReader = null)
         {

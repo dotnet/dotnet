@@ -725,8 +725,8 @@ namespace NuGet.Build.Tasks
         /// Gets the path to a packages.config for the specified project if one exists.
         /// </summary>
         /// <param name="projectFullPath">The full path to the project.</param>
-        /// <returns>The path to the packages.config file if one exists, otherwise <c>null</c>.</returns>
-        /// <exception cref="ArgumentNullException"><paramref name="projectFullPath" /> is <c>null</c>.</exception>
+        /// <returns>The path to the packages.config file if one exists, otherwise <see langword="null" />.</returns>
+        /// <exception cref="ArgumentNullException"><paramref name="projectFullPath" /> is <see langword="null" />.</exception>
         public static string GetPackagesConfigFilePath(string projectFullPath)
         {
             if (string.IsNullOrWhiteSpace(projectFullPath))
@@ -742,8 +742,8 @@ namespace NuGet.Build.Tasks
         /// </summary>
         /// <param name="projectFullPath">The full path to the project directory.</param>
         /// <param name="projectName">The name of the project file.</param>
-        /// <returns>The path to the packages.config file if one exists, otherwise <c>null</c>.</returns>
-        /// <exception cref="ArgumentNullException"><paramref name="projectDirectory" /> -or- <paramref name="projectName" /> is <c>null</c>.</exception>
+        /// <returns>The path to the packages.config file if one exists, otherwise <see langword="null" />.</returns>
+        /// <exception cref="ArgumentNullException"><paramref name="projectDirectory" /> -or- <paramref name="projectName" /> is <see langword="null" />.</exception>
         public static string GetPackagesConfigFilePath(string projectDirectory, string projectName)
         {
             if (string.IsNullOrWhiteSpace(projectDirectory))

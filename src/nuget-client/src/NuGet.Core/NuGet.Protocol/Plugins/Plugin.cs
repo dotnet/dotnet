@@ -72,13 +72,13 @@ namespace NuGet.Protocol.Plugins
         /// <param name="filePath">The plugin file path.</param>
         /// <param name="connection">The plugin connection.</param>
         /// <param name="process">The plugin process.</param>
-        /// <param name="isOwnProcess"><c>true</c> if <paramref name="process" /> is the current process;
-        /// otherwise, <c>false</c>.</param>
+        /// <param name="isOwnProcess"><see langword="true" /> if <paramref name="process" /> is the current process;
+        /// otherwise, <see langword="false" />.</param>
         /// <param name="idleTimeout">The plugin idle timeout.  Can be <see cref="Timeout.InfiniteTimeSpan" />.</param>
-        /// <exception cref="ArgumentException">Thrown if <paramref name="filePath" /> is either <c>null</c>
+        /// <exception cref="ArgumentException">Thrown if <paramref name="filePath" /> is either <see langword="null" />
         /// or an empty string.</exception>
-        /// <exception cref="ArgumentNullException">Thrown if <paramref name="connection" /> is <c>null</c>.</exception>
-        /// <exception cref="ArgumentNullException">Thrown if <paramref name="process" /> is <c>null</c>.</exception>
+        /// <exception cref="ArgumentNullException">Thrown if <paramref name="connection" /> is <see langword="null" />.</exception>
+        /// <exception cref="ArgumentNullException">Thrown if <paramref name="process" /> is <see langword="null" />.</exception>
         /// <exception cref="ArgumentOutOfRangeException">Thrown if <paramref name="idleTimeout" /> is smaller than
         /// <see cref="Timeout.InfiniteTimeSpan" />.</exception>
         public Plugin(string filePath, IConnection connection, IPluginProcess process, bool isOwnProcess, TimeSpan idleTimeout)
