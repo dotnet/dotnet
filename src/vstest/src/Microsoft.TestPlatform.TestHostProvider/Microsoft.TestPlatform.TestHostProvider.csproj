@@ -24,7 +24,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Newtonsoft.Json" Version="$(JsonNetVersion)" />
+    <PackageReference Include="Newtonsoft.Json" Version="$(NewtonsoftJsonVersion)" />
     <PackageReference Include="Microsoft.Extensions.DependencyModel" Version="$(MicrosoftExtensionsDependencyModelPackageVersion)" />
     <PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="4.7.1" Condition=" '$(DotNetBuildFromSource)' != 'true' " />
   </ItemGroup>
