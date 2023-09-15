@@ -105,8 +105,8 @@ namespace __Blazor.Test.TestComponent
         public static global::Test.TestComponent<TParam> CreateTestComponent_0<TParam>(global::Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder, int seq, int __seq0, TParam __arg0, int __seq1, global::Microsoft.AspNetCore.Components.RenderFragment<(global::N.MyClass I1, global::N.MyStruct I2, TParam P)> __arg1)
         {
         __builder.OpenComponent<global::Test.TestComponent<TParam>>(seq);
-        __builder.AddComponentParameter(__seq0, "InferParam", __arg0);
-        __builder.AddComponentParameter(__seq1, "Template", __arg1);
+        __builder.AddAttribute(__seq0, "InferParam", (object)__arg0);
+        __builder.AddAttribute(__seq1, "Template", (object)__arg1);
         __builder.CloseComponent();
         return default;
         }

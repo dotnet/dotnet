@@ -108,7 +108,7 @@ public class ValidateBreakpointRangeEndpointTest : SingleServerDelegatingEndpoin
         Assert.True(spans.TryGetValue("expected", out var expectedSpans), "Expected at least one span named 'expected'.");
         Assert.True(expectedSpans.Length == 1, "Expected only one 'expected' span.");
 
-        var expectedRange = expectedSpans[0].AsRange(codeDocument.GetSourceText());
+        var expectedRange = expectedSpans[0].ToRange(codeDocument.GetSourceText());
         Assert.Equal(expectedRange, result);
     }
 
@@ -124,7 +124,7 @@ public class ValidateBreakpointRangeEndpointTest : SingleServerDelegatingEndpoin
             {
                 Uri = new Uri(razorFilePath)
             },
-            Range = breakpointSpan.AsRange(codeDocument.GetSourceText())
+            Range = breakpointSpan.ToRange(codeDocument.GetSourceText())
         };
 
         var documentContext = DocumentContextFactory.TryCreateForOpenDocument(request.TextDocument);

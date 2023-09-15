@@ -90,36 +90,21 @@ public class AuditUtilityTests
         context.Log.LogMessages.All(m => m.Level == LogLevel.Warning).Should().BeTrue();
     }
 
-    [Theory]
-    [InlineData("", false)]
-    [InlineData("true", true)]
-    public async Task Check_WithNoVulnerabilitySources_NU1905Warning(string enable, bool expectWarning)
+    [Fact]
+    public async Task Check_WithNoVulnerabilitySources_EarlyExitPerformance()
     {
         // Arrange
         var context = new AuditTestContext();
-        context.Enabled = enable;
-
         context.WithRestoreTarget();
 
         // Act
         var auditUtility = await context.CheckPackageVulnerabilitiesAsync(CancellationToken.None);
 
         // Assert
-        if (expectWarning)
-        {
-            context.Log.LogMessages.Count.Should().Be(1);
-            var message = (RestoreLogMessage)context.Log.LogMessages.Single();
-            message.Code.Should().Be(NuGetLogCode.NU1905);
-            message.ProjectPath.Should().Be(context.ProjectFullPath);
-            message.Level.Should().Be(LogLevel.Warning);
-        }
-        else
-        {
-            context.Log.LogMessages.Count.Should().Be(0);
-        }
+        context.Log.LogMessages.Count.Should().Be(0);
+        auditUtility.DownloadDurationSeconds.Should().NotBeNull();
 
         // for perf, when we don't have data to check, we shouldn't waste time checking
-        auditUtility.DownloadDurationSeconds.Should().NotBeNull();
         auditUtility.CheckPackagesDurationSeconds.Should().BeNull();
         auditUtility.GenerateOutputDurationSeconds.Should().BeNull();
     }

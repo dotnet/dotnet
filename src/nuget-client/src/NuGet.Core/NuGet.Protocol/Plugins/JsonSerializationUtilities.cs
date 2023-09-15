@@ -41,7 +41,7 @@ namespace NuGet.Protocol.Plugins
         /// <param name="json">JSON to deserialize.</param>
         /// <returns>An instance of <typeparamref name="T" />.</returns>
         /// <exception cref="ArgumentException">Thrown if <paramref name="json" />
-        /// is either <c>null</c> or an empty string.</exception>
+        /// is either <see langword="null" /> or an empty string.</exception>
         public static T Deserialize<T>(string json)
             where T : class
         {
@@ -62,7 +62,7 @@ namespace NuGet.Protocol.Plugins
         /// </summary>
         /// <param name="value">An object to serialize.</param>
         /// <returns>A <see cref="JObject" />.</returns>
-        /// <exception cref="ArgumentNullException">Thrown if <paramref name="value" /> is <c>null</c>.</exception>
+        /// <exception cref="ArgumentNullException">Thrown if <paramref name="value" /> is <see langword="null" />.</exception>
         public static JObject FromObject(object value)
         {
             if (value == null)
@@ -78,7 +78,7 @@ namespace NuGet.Protocol.Plugins
         /// </summary>
         /// <param name="writer">A JSON writer.</param>
         /// <param name="value">The value to serialize.</param>
-        /// <exception cref="ArgumentNullException">Thrown if <paramref name="value" /> is <c>null</c>.</exception>
+        /// <exception cref="ArgumentNullException">Thrown if <paramref name="value" /> is <see langword="null" />.</exception>
         public static void Serialize(JsonWriter writer, object value)
         {
             if (writer == null)
@@ -95,7 +95,7 @@ namespace NuGet.Protocol.Plugins
         /// <typeparam name="T">The deserialization type.</typeparam>
         /// <param name="jObject">A JSON object.</param>
         /// <returns>An instance of <typeparamref name="T" />.</returns>
-        /// <exception cref="ArgumentNullException">Thrown if <paramref name="jObject" /> is <c>null</c>.</exception>
+        /// <exception cref="ArgumentNullException">Thrown if <paramref name="jObject" /> is <see langword="null" />.</exception>
         public static T ToObject<T>(JObject jObject)
         {
             if (jObject == null)

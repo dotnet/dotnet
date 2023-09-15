@@ -79,7 +79,7 @@ internal class LinkedEditingRangeEndpoint : IRazorRequestHandler<LinkedEditingRa
         {
             var startSpan = startTagNameToken.GetLinePositionSpan(codeDocument.Source);
             var endSpan = endTagNameToken.GetLinePositionSpan(codeDocument.Source);
-            var ranges = new Range[2] { startSpan.AsRange(), endSpan.AsRange() };
+            var ranges = new Range[2] { startSpan.ToRange(), endSpan.ToRange() };
 
             return new LinkedEditingRanges
             {

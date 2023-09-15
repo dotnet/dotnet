@@ -9,7 +9,7 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer.Extensions;
 
 internal static class SourceSpanExtensions
 {
-    public static Range AsRange(this SourceSpan sourceSpan, SourceText sourceText)
+    public static Range ToRange(this SourceSpan sourceSpan, SourceText sourceText)
     {
         sourceText.GetLinesAndOffsets(sourceSpan, out var startLine, out var startChar, out var endLine, out var endChar);
 

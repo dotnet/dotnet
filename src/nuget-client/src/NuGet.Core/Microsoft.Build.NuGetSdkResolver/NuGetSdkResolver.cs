@@ -65,7 +65,7 @@ namespace Microsoft.Build.NuGetSdkResolver
         /// <param name="factory">Factory class to create an <see cref="T:Microsoft.Build.Framework.SdkResult" /></param>
         /// <returns>
         ///     An <see cref="T:Microsoft.Build.Framework.SdkResult" /> containing the resolved SDKs or associated error / reason
-        ///     the SDK could not be resolved.  Return <c>null</c> if the resolver is not
+        ///     the SDK could not be resolved.  Return <see langword="null" /> if the resolver is not
         ///     applicable for a particular <see cref="T:Microsoft.Build.Framework.SdkReference" />.
         /// </returns>
         public override SdkResult Resolve(SdkReference sdkReference, SdkResolverContext resolverContext, SdkResultFactory factory)

@@ -338,7 +338,7 @@ namespace NuGet.PackageManagement.VisualStudio
         /// <param name="ct">Cancellation Token</param>
         /// <returns>A dictionary, indexed by Framework/Runtime-ID with all top (installed)
         /// packages that depends on given transitive package</returns>
-        /// <remarks>Computes all transitive origins for each Framework/Runtime-ID combiation. Runtime-ID can be <c>null</c>.
+        /// <remarks>Computes all transitive origins for each Framework/Runtime-ID combiation. Runtime-ID can be <see langword="null" />.
         /// Transitive origins are calculated using a Depth First Search algorithm on all direct dependencies exhaustively</remarks>
         internal static Dictionary<string, TransitiveEntry> ComputeTransitivePackageOrigins(List<PackageReference> installedPackages, IList<LockFileTarget> targetsList, CancellationToken ct)
         {

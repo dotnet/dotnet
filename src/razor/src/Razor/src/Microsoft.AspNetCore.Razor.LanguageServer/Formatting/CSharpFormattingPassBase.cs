@@ -38,7 +38,7 @@ internal abstract class CSharpFormattingPassBase : FormattingPassBase
         // 2. The indentation due to Razor and HTML constructs
 
         var text = context.SourceText;
-        range ??= TextSpan.FromBounds(0, text.Length).AsRange(text);
+        range ??= TextSpan.FromBounds(0, text.Length).ToRange(text);
 
         // To help with figuring out the correct indentation, first we will need the indentation
         // that the C# formatter wants to apply in the following locations,
@@ -69,7 +69,7 @@ internal abstract class CSharpFormattingPassBase : FormattingPassBase
             // loop will find them. Sadly the ShouldFormat method is used in too many places, for too many
             // different purposes, to put this check there.
             if (owner is { Parent.Parent.Parent: CSharpExplicitExpressionSyntax explicitExpression } &&
-                explicitExpression.Span.AsRange(text) is { } exprRange &&
+                explicitExpression.Span.ToRange(text) is { } exprRange &&
                 exprRange.Start.Line == exprRange.End.Line)
             {
                 continue;
@@ -363,7 +363,7 @@ internal abstract class CSharpFormattingPassBase : FormattingPassBase
             return false;
         }
 
-        if (IsInSectionDirectiveCloseBrace())
+        if (IsInSectionDirectiveBrace())
         {
             return false;
         }
@@ -516,19 +516,33 @@ internal abstract class CSharpFormattingPassBase : FormattingPassBase
             return owner.AncestorsAndSelf().Any(n => n is CSharpTemplateBlockSyntax);
         }
 
-        bool IsInSectionDirectiveCloseBrace()
+        bool IsInSectionDirectiveBrace()
         {
             // @section Scripts {
             //     <script></script>
             // }
             //
-            // We are fine to format these, but due to how they are generated (inside a multi-line lambda)
-            // we want to exlude the final close brace from being formatted, or it will be indented by one
-            // level due to the lambda. The rest we don't need to worry about, because the one level indent
-            // is actually desirable.
+            // Due to how sections are generated (inside a multi-line lambda), we want to exclude the braces
+            // from being formatted, or it will be indented by one level due to the lambda. The rest we don't
+            // need to worry about, because the one level indent is actually desirable.
+
+            // Due to the Razor tree being so odd, the checks for open and close are surprisingly different
+
+            // Open brace is a child of the C# code block that is the directive itself
+            if (owner is RazorMetaCodeSyntax &&
+                owner.Parent is CSharpCodeBlockSyntax codeBlock &&
+                owner == codeBlock.Children[3] &&
+                // CSharpCodeBlock -> RazorDirectiveBody -> RazorDirective
+                codeBlock.Parent?.Parent is RazorDirectiveSyntax directive2 &&
+                directive2.DirectiveDescriptor.Directive == SectionDirective.Directive.Directive)
+            {
+                return true;
+            }
+
+            // Close brace is a child of the section content, which is a MarkupBlock
             if (owner is MarkupTextLiteralSyntax &&
                 owner.Parent is MarkupBlockSyntax block &&
-                owner == block.Children[block.Children.Count - 1] &&
+                owner == block.Children[^1] &&
                 // MarkupBlock -> CSharpCodeBlock -> RazorDirectiveBody -> RazorDirective
                 block.Parent?.Parent?.Parent is RazorDirectiveSyntax directive &&
                 directive.DirectiveDescriptor.Directive == SectionDirective.Directive.Directive)

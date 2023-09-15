@@ -195,7 +195,7 @@ internal class DefaultRazorProjectService : RazorProjectService
 
             // If the document is open, we can't remove it, because we could still get a request for it, and that
             // request would fail. Instead we move it to the miscellaneous project, just like if we got notified of
-            // a remove via the project.razor.json
+            // a remove via the project.razor.bin
             if (_projectSnapshotManagerAccessor.Instance.IsDocumentOpen(textDocumentPath))
             {
                 _logger.LogInformation("Moving document '{textDocumentPath}' from project '{projectKey}' to misc files because it is open.", textDocumentPath, projectSnapshot.Key);

@@ -35,6 +35,18 @@ namespace NuGet.Protocol
 
         internal static readonly JsonSerializer JsonObjectSerializer = JsonSerializer.Create(ObjectSerializationSettings);
 
+        internal static readonly System.Text.Json.JsonSerializerOptions JsonSerializerOptions = CreateJsonSerializerOptions();
+
+        private static System.Text.Json.JsonSerializerOptions CreateJsonSerializerOptions()
+        {
+            var options = new System.Text.Json.JsonSerializerOptions()
+            {
+                PropertyNamingPolicy = System.Text.Json.JsonNamingPolicy.CamelCase
+            };
+            options.Converters.Add(new VersionRangeStjConverter());
+            return options;
+        }
+
         /// <summary>
         /// Serialize object to the JSON.
         /// </summary>

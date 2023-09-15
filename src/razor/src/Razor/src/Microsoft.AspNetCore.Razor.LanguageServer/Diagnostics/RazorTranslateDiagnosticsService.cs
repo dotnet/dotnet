@@ -171,7 +171,7 @@ internal class RazorTranslateDiagnosticsService
         }
 
         
-        var owner = syntaxTree.Root.FindNode(d.Range.AsRazorTextSpan(sourceText), getInnermostNodeForTie: true);
+        var owner = syntaxTree.Root.FindNode(d.Range.ToRazorTextSpan(sourceText), getInnermostNodeForTie: true);
         if (IsCsharpKind(owner))
         {
             return true;
@@ -509,7 +509,7 @@ internal class RazorTranslateDiagnosticsService
         // semi-intelligent way.
 
         var syntaxTree = codeDocument.GetSyntaxTree();
-        var span = diagnosticRange.AsRazorTextSpan(codeDocument.GetSourceText());
+        var span = diagnosticRange.ToRazorTextSpan(codeDocument.GetSourceText());
         var owner = syntaxTree.Root.FindNode(span, getInnermostNodeForTie: true);
 
         switch (owner?.Kind)

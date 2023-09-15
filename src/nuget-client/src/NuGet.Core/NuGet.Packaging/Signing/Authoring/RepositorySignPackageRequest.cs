@@ -35,13 +35,13 @@ namespace NuGet.Packaging.Signing
         /// <param name="v3ServiceIndexUrl">The V3 service index URL.</param>
         /// <param name="packageOwners">A read-only list of package owners.</param>
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="certificate" />
-        /// is <c>null</c>.</exception>
+        /// is <see langword="null" />.</exception>
         /// <exception cref="ArgumentException">Thrown if <paramref name="signatureHashAlgorithm" />
         /// is invalid.</exception>
         /// <exception cref="ArgumentException">Thrown if <paramref name="timestampHashAlgorithm" />
         /// is invalid.</exception>
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="v3ServiceIndexUrl" />
-        /// is <c>null</c>.</exception>
+        /// is <see langword="null" />.</exception>
         /// <exception cref="ArgumentException">Thrown if <paramref name="v3ServiceIndexUrl" />
         /// is neither absolute nor HTTPS.</exception>
         /// <exception cref="ArgumentException">Thrown if <paramref name="packageOwners" />

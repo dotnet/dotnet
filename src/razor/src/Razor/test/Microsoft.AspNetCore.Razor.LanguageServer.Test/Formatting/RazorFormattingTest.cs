@@ -19,6 +19,42 @@ public class RazorFormattingTest : FormattingTestBase
     }
 
     [Fact]
+    public async Task Section_BraceOnNextLine()
+    {
+        await RunFormattingTestAsync(
+            input: """
+                    @section    Scripts
+                        {
+                    <meta property="a" content="b">
+                    }
+                    """,
+            expected: """
+                    @section Scripts
+                    {
+                        <meta property="a" content="b">
+                    }
+                    """,
+            fileKind: FileKinds.Legacy);
+    }
+
+    [Fact]
+    public async Task Section_BraceOnSameLine()
+    {
+        await RunFormattingTestAsync(
+            input: """
+                    @section        Scripts                         {
+                    <meta property="a" content="b">
+                    }
+                    """,
+            expected: """
+                    @section Scripts {
+                        <meta property="a" content="b">
+                    }
+                    """,
+            fileKind: FileKinds.Legacy);
+    }
+
+    [Fact]
     public async Task CodeBlock_SpansMultipleLines()
     {
         await RunFormattingTestAsync(

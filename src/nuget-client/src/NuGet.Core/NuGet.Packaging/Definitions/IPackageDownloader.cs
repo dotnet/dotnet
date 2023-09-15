@@ -40,7 +40,7 @@ namespace NuGet.Packaging
         /// indicating whether or not the copy was successful.</returns>
         /// <exception cref="ObjectDisposedException">Thrown if this object is disposed.</exception>
         /// <exception cref="ArgumentException">Thrown if <paramref name="destinationFilePath" />
-        /// is either <c>null</c> or empty.</exception>
+        /// is either <see langword="null" /> or empty.</exception>
         /// <exception cref="OperationCanceledException">Thrown if <paramref name="cancellationToken" />
         /// is cancelled.</exception>
         Task<bool> CopyNupkgFileToAsync(string destinationFilePath, CancellationToken cancellationToken);
@@ -55,7 +55,7 @@ namespace NuGet.Packaging
         /// representing the package hash.</returns>
         /// <exception cref="ObjectDisposedException">Thrown if this object is disposed.</exception>
         /// <exception cref="ArgumentException">Thrown if <paramref name="hashAlgorithm" />
-        /// is either <c>null</c> or empty.</exception>
+        /// is either <see langword="null" /> or empty.</exception>
         /// <exception cref="OperationCanceledException">Thrown if <paramref name="cancellationToken" />
         /// is cancelled.</exception>
         Task<string> GetPackageHashAsync(string hashAlgorithm, CancellationToken cancellationToken);
@@ -66,16 +66,16 @@ namespace NuGet.Packaging
         /// <remarks>The exception handler returns a task that represents the asynchronous operation.
         /// The task result (<see cref="Task{TResult}.Result" />) returns a <see cref="bool" />
         /// indicating whether or not the exception was handled.  To handle an exception and stop its
-        /// propagation, the task should return <c>true</c>.  Otherwise, the exception will be rethrown.</remarks>
+        /// propagation, the task should return <see langword="true" />.  Otherwise, the exception will be rethrown.</remarks>
         /// <param name="handleExceptionAsync">An exception handler.</param>
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="handleExceptionAsync" />
-        /// is <c>null</c>.</exception>
+        /// is <see langword="null" />.</exception>
         void SetExceptionHandler(Func<Exception, Task<bool>> handleExceptionAsync);
 
         /// <summary>
         /// Sets a throttle for package downloads.
         /// </summary>
-        /// <param name="throttle">A throttle.  Can be <c>null</c>.</param>
+        /// <param name="throttle">A throttle.  Can be <see langword="null" />.</param>
         void SetThrottle(SemaphoreSlim throttle);
     }
 }

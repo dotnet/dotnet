@@ -28,7 +28,7 @@ namespace NuGet.Protocol.Plugins
         /// Initializes a new <see cref="GetServiceIndexRequestHandler" /> class.
         /// </summary>
         /// <param name="plugin">A plugin.</param>
-        /// <exception cref="ArgumentNullException">Thrown if <paramref name="plugin" /> is <c>null</c>.</exception>
+        /// <exception cref="ArgumentNullException">Thrown if <paramref name="plugin" /> is <see langword="null" />.</exception>
         public GetServiceIndexRequestHandler(IPlugin plugin)
         {
             if (plugin == null)
@@ -60,7 +60,7 @@ namespace NuGet.Protocol.Plugins
         /// </summary>
         /// <param name="sourceRepository">A source repository.</param>
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="sourceRepository" />
-        /// is <c>null</c>.</exception>
+        /// is <see langword="null" />.</exception>
         public void AddOrUpdateSourceRepository(SourceRepository sourceRepository)
         {
             if (sourceRepository == null)
@@ -86,10 +86,10 @@ namespace NuGet.Protocol.Plugins
         /// <param name="cancellationToken">A cancellation token.</param>
         /// <returns>A task that represents the asynchronous operation.</returns>
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="connection" />
-        /// is <c>null</c>.</exception>
-        /// <exception cref="ArgumentNullException">Thrown if <paramref name="request" /> is <c>null</c>.</exception>
+        /// is <see langword="null" />.</exception>
+        /// <exception cref="ArgumentNullException">Thrown if <paramref name="request" /> is <see langword="null" />.</exception>
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="responseHandler" />
-        /// is <c>null</c>.</exception>
+        /// is <see langword="null" />.</exception>
         /// <exception cref="OperationCanceledException">Thrown if <paramref name="cancellationToken" />
         /// is cancelled.</exception>
         public async Task HandleResponseAsync(

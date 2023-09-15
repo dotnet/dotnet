@@ -1,0 +1,13 @@
+//line,characterPos,length,tokenType,modifier,text
+0 0 1 razorTransition 0 [@]
+0 1 5 keyword 0 [using]
+0 6 6 namespace name 0 [System]
+1 0 1 razorTransition 0 [@]
+0 1 12 razorDirective 0 [addTagHelper]
+0 13 15 string 0 [*, TestAssembly]
+1 0 1 razorTransition 0 [@]
+0 1 1 razorTransition 0 [(]
+0 1 8 struct name 0 [DateTime]
+0 8 1 operator 0 [.]
+0 1 3 property name 1 [Now]
+0 3 1 razorTransition 0 [)]

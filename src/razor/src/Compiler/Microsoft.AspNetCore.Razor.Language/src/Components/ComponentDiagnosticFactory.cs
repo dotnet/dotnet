@@ -571,4 +571,34 @@ internal static class ComponentDiagnosticFactory
     {
         return RazorDiagnostic.Create(FormName_NotAForm, source ?? SourceSpan.Undefined);
     }
+
+    public static readonly RazorDiagnosticDescriptor Attribute_ValidOnlyOnComponent =
+        new RazorDiagnosticDescriptor(
+        $"{DiagnosticPrefix}10023",
+        () => "Attribute '{0}' is only valid when used on a component.",
+        RazorDiagnosticSeverity.Error);
+
+    public static RazorDiagnostic CreateAttribute_ValidOnlyOnComponent(SourceSpan? source, string attribute)
+    {
+        var diagnostic = RazorDiagnostic.Create(
+            Attribute_ValidOnlyOnComponent,
+            source ?? SourceSpan.Undefined,
+            attribute);
+        return diagnostic;
+    }
+
+    public static readonly RazorDiagnosticDescriptor RenderModeAttribute_ComponentDeclaredRenderMode =
+        new RazorDiagnosticDescriptor(
+        $"{DiagnosticPrefix}10024",
+        () => "Cannot override render mode for component '{0}' as it explicitly declares one.",
+        RazorDiagnosticSeverity.Error);
+
+    public static RazorDiagnostic CreateRenderModeAttribute_ComponentDeclaredRenderMode(SourceSpan? source, string component)
+    {
+        var diagnostic = RazorDiagnostic.Create(
+            RenderModeAttribute_ComponentDeclaredRenderMode,
+            source ?? SourceSpan.Undefined,
+            component);
+        return diagnostic;
+    }
 }
