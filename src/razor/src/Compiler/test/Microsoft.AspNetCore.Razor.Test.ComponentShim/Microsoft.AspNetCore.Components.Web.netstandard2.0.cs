@@ -370,6 +370,13 @@ namespace Microsoft.AspNetCore.Components.Web
         public long Total { [System.Runtime.CompilerServices.CompilerGeneratedAttribute]get { throw null; } [System.Runtime.CompilerServices.CompilerGeneratedAttribute]set { } }
         public string Type { [System.Runtime.CompilerServices.CompilerGeneratedAttribute]get { throw null; } [System.Runtime.CompilerServices.CompilerGeneratedAttribute]set { } }
     }
+    public static partial class RenderMode
+    {
+        public static ServerRenderMode Server { get; } = new();
+    }
+    public partial class ServerRenderMode : IComponentRenderMode
+    {
+    }
     public partial class TouchEventArgs : System.EventArgs
     {
         public TouchEventArgs() { }

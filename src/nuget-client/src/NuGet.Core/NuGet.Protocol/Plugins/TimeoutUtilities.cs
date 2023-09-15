@@ -52,7 +52,7 @@ namespace NuGet.Protocol.Plugins
         /// Determines if a timeout is valid.
         /// </summary>
         /// <param name="timeout">A timeout.</param>
-        /// <returns><c>true</c> if the timeout is valid; otherwise, <c>false</c>.</returns>
+        /// <returns><see langword="true" /> if the timeout is valid; otherwise, <see langword="false" />.</returns>
         public static bool IsValid(TimeSpan timeout)
         {
             if (ProtocolConstants.MinTimeout <= timeout && timeout <= ProtocolConstants.MaxTimeout)

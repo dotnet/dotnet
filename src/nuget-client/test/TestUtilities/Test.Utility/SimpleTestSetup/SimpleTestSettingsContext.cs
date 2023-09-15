@@ -200,6 +200,13 @@ namespace NuGet.Test.Utility
             Save();
         }
 
+        public void AddSource(string sourceName, string sourceUri, string allowInsecureConnectionsValue)
+        {
+            var section = GetOrAddSection(XML, "packageSources");
+            AddEntry(section, sourceName, sourceUri, "allowInsecureConnections", allowInsecureConnectionsValue);
+            Save();
+        }
+
         public void AddPackageSourceMapping(string sourceName, params string[] patterns)
         {
             XElement packageSourceMappingSection = GetOrAddSection(XML, "packageSourceMapping");

@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using FluentAssertions;
@@ -3400,6 +3401,27 @@ namespace NuGet.Commands.Test
         }
 
         [Fact]
+        public void MSBuildRestoreUtility_AddPackageDownloads_NoVersion_ThrowsException()
+        {
+            // Arrange
+            PackageSpec spec = MSBuildRestoreUtility.GetPackageSpec(new[] { CreateItems(new Dictionary<string, string>()) });
+            Mock<IMSBuildItem> packageX = new Mock<IMSBuildItem>();
+            const string packageId = "x";
+            packageX.Setup(p => p.GetProperty("Type")).Returns("DownloadDependency");
+            packageX.Setup(p => p.GetProperty("Id")).Returns(packageId);
+
+            IMSBuildItem[] msbuildItems = new[]
+            {
+                packageX.Object
+            };
+
+            // Act & Assert
+            ArgumentException exception = Assert.Throws<ArgumentException>(() => MSBuildRestoreUtility.AddPackageDownloads(spec, msbuildItems));
+            string expectedMessage = string.Format(CultureInfo.CurrentCulture, Strings.Error_PackageDownload_NoVersion, packageId);
+            Assert.Equal(expectedMessage, exception.Message);
+        }
+
+        [Fact]
         public void MSBuildRestoreUtility_GetDependencySpec_CentralVersionIsMergedWhenCPVMEnabled()
         {
             var projectName = "acpvm";
@@ -4060,7 +4082,7 @@ namespace NuGet.Commands.Test
         /// <summary>
         /// Verifies that <see cref="MSBuildRestoreUtility.GetDependencySpec(IEnumerable{IMSBuildItem})" /> applies version overrides correctly depending on whether or not central package management is enabled.
         /// </summary>
-        /// <param name="isCentralPackageManagementEnabled"><c>true</c> if central package management is enabled, otherwise <c>false</c>.</param>
+        /// <param name="isCentralPackageManagementEnabled"><see langword="true" /> if central package management is enabled, otherwise <see langword="false" />.</param>
         [Theory]
         [InlineData(true)]
         [InlineData(false)]

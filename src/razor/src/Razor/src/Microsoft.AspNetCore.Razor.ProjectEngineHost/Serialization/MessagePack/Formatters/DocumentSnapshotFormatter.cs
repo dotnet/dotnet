@@ -5,27 +5,31 @@ using MessagePack;
 
 namespace Microsoft.AspNetCore.Razor.Serialization.MessagePack.Formatters;
 
-internal sealed class DocumentSnapshotHandleFormatter : MessagePackFormatter<DocumentSnapshotHandle>
+internal sealed class DocumentSnapshotHandleFormatter : ValueFormatter<DocumentSnapshotHandle>
 {
-    public static readonly MessagePackFormatter<DocumentSnapshotHandle> Instance = new DocumentSnapshotHandleFormatter();
+    public static readonly ValueFormatter<DocumentSnapshotHandle> Instance = new DocumentSnapshotHandleFormatter();
 
     private DocumentSnapshotHandleFormatter()
     {
     }
 
-    public override DocumentSnapshotHandle Deserialize(ref MessagePackReader reader, MessagePackSerializerOptions options)
+    public override DocumentSnapshotHandle Deserialize(ref MessagePackReader reader, SerializerCachingOptions options)
     {
-        var filePath = DeserializeString(ref reader, options);
-        var targetPath = DeserializeString(ref reader, options);
-        var fileKind = DeserializeString(ref reader, options);
+        reader.ReadArrayHeaderAndVerify(3);
+
+        var filePath = CachedStringFormatter.Instance.Deserialize(ref reader, options).AssumeNotNull();
+        var targetPath = CachedStringFormatter.Instance.Deserialize(ref reader, options).AssumeNotNull();
+        var fileKind = CachedStringFormatter.Instance.Deserialize(ref reader, options).AssumeNotNull();
 
         return new DocumentSnapshotHandle(filePath, targetPath, fileKind);
     }
 
-    public override void Serialize(ref MessagePackWriter writer, DocumentSnapshotHandle value, MessagePackSerializerOptions options)
+    public override void Serialize(ref MessagePackWriter writer, DocumentSnapshotHandle value, SerializerCachingOptions options)
     {
-        writer.Write(value.FilePath);
-        writer.Write(value.TargetPath);
-        writer.Write(value.FileKind);
+        writer.WriteArrayHeader(3);
+
+        CachedStringFormatter.Instance.Serialize(ref writer, value.FilePath, options);
+        CachedStringFormatter.Instance.Serialize(ref writer, value.TargetPath, options);
+        CachedStringFormatter.Instance.Serialize(ref writer, value.FileKind, options);
     }
 }

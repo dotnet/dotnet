@@ -325,7 +325,7 @@ namespace NuGet.Shared
         /// Determines if the current string contains a value equal "false".  Leading and trailing whitespace are trimmed and the comparison is case-insensitive
         /// </summary>
         /// <param name="value">The string to compare.</param>
-        /// <returns><c>true</c> if the current string is equal to a value of "false", otherwise <c>false></c>.</returns>
+        /// <returns><see langword="true" /> if the current string is equal to a value of "false", otherwise <see langword="false" />.</returns>
         internal static bool EqualsFalse(this string value)
         {
             return !string.IsNullOrWhiteSpace(value) && bool.FalseString.Equals(value.Trim(), StringComparison.OrdinalIgnoreCase);

@@ -26,7 +26,7 @@ namespace NuGet.VisualStudio.Internal.Contracts
         /// Obtains the installed and transitive packages from all given projects, optionally including transitive origins for transitive packages.
         /// </summary>
         /// <param name="projectIds">Projects to retrieve installed and transitive packages</param>
-        /// <param name="includeTransitiveOrigins">Set it to <c>true</c> to get transitive origins of each transitive package</param>
+        /// <param name="includeTransitiveOrigins">Set it to <see langword="true" /> to get transitive origins of each transitive package</param>
         /// <param name="cancellationToken">Cancellation token</param>
         /// <returns>An object with two lists: installed and transitive packages from all projects</returns>
         ValueTask<IInstalledAndTransitivePackages> GetInstalledAndTransitivePackagesAsync(
@@ -98,7 +98,7 @@ namespace NuGet.VisualStudio.Internal.Contracts
         /// <param name="projectIds">A collection of project ID's</param>
         /// <param name="cancellationToken">Cancellation Token</param>
         /// <returns>A collection with all package folders found in each project assets file, deduplicated</returns>
-        /// <exception cref="ArgumentNullException">If <paramref name="projectIds"/> is <c>null</c></exception>
+        /// <exception cref="ArgumentNullException">If <paramref name="projectIds"/> is <see langword="null" /></exception>
         /// <remarks><see cref="PackageManagement.VisualStudio.IPackageReferenceProject.GetPackageFoldersAsync(CancellationToken)"/></remarks>
         ValueTask<IReadOnlyCollection<string>> GetPackageFoldersAsync(
             IReadOnlyCollection<string> projectIds,

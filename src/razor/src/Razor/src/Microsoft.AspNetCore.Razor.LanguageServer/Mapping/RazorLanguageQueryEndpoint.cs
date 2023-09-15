@@ -63,7 +63,7 @@ internal sealed class RazorLanguageQueryEndpoint : IRazorRequestHandler<RazorLan
         var languageKind = _documentMappingService.GetLanguageKind(codeDocument, hostDocumentIndex, rightAssociative: false);
         if (languageKind == RazorLanguageKind.CSharp)
         {
-            if (_documentMappingService.TryMapToGeneratedDocumentPosition(codeDocument.GetCSharpDocument(), hostDocumentIndex, out var projectedPosition, out var projectedIndex))
+            if (_documentMappingService.TryMapToGeneratedDocumentPosition(codeDocument.GetCSharpDocument(), hostDocumentIndex, out Position? projectedPosition, out var projectedIndex))
             {
                 // For C# locations, we attempt to return the corresponding position
                 // within the projected document

@@ -8,7 +8,9 @@ namespace NuGet.Packaging.Signing
 {
     internal static class X509ChainBuildPolicyFactory
     {
+        private const string DefaultValue = "3,1000";
         // These fields are non-private only to facilitate testing.
+        internal const string DisabledValue = "0";
         internal const string EnvironmentVariableName = "NUGET_EXPERIMENTAL_CHAIN_BUILD_RETRY_POLICY";
         internal const char ValueDelimiter = ',';
 
@@ -45,9 +47,9 @@ namespace NuGet.Packaging.Signing
 
             if (RuntimeEnvironmentHelper.IsWindows)
             {
-                string value = reader.GetEnvironmentVariable(EnvironmentVariableName);
+                string value = reader.GetEnvironmentVariable(EnvironmentVariableName) ?? DefaultValue;
 
-                if (string.IsNullOrWhiteSpace(value))
+                if (string.Equals(value, DisabledValue, StringComparison.Ordinal))
                 {
                     return DefaultX509ChainBuildPolicy.Instance;
                 }

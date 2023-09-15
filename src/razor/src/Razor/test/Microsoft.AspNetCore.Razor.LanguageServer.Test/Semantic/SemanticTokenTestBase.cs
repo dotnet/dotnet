@@ -51,10 +51,12 @@ public abstract class SemanticTokenTestBase : TagHelperServiceTestBase
 
     protected int BaselineTestCount { get; set; }
     protected int BaselineEditTestCount { get; set; }
+    protected bool UsePreciseSemanticTokenRanges { get; set; }
 
-    protected SemanticTokenTestBase(ITestOutputHelper testOutput)
+    protected SemanticTokenTestBase(ITestOutputHelper testOutput, bool usePreciseSemanticTokenRanges)
         : base(testOutput)
     {
+        UsePreciseSemanticTokenRanges = usePreciseSemanticTokenRanges;
     }
 
     protected void AssertSemanticTokensMatchesBaseline(SourceText sourceText, int[]? actualSemanticTokens)
@@ -96,40 +98,53 @@ public abstract class SemanticTokenTestBase : TagHelperServiceTestBase
         string documentText, Range razorRange, bool isRazorFile, int hostDocumentSyncVersion = 0)
     {
         var codeDocument = CreateCodeDocument(documentText, isRazorFile, DefaultTagHelpers);
-        var csharpRange = GetMappedCSharpRange(codeDocument, razorRange);
-        var csharpTokens = Array.Empty<int>();
+        var csharpDocumentUri = new Uri("C:\\TestSolution\\TestProject\\TestDocument.cs");
+        var csharpSourceText = codeDocument.GetCSharpSourceText();
 
-        if (csharpRange is not null)
+        await using var csharpServer = await CSharpTestLspServerHelpers.CreateCSharpLspServerAsync(
+            csharpSourceText, csharpDocumentUri, SemanticTokensServerCapabilities, SpanMappingService, DisposalToken);
+
+        var csharpRanges = GetMappedCSharpRanges(codeDocument, razorRange);
+
+        var responses = new SemanticTokens[csharpRanges.Length];
+        for (var i = 0; i < csharpRanges.Length; i++)
         {
-            var csharpDocumentUri = new Uri("C:\\TestSolution\\TestProject\\TestDocument.cs");
-            var csharpSourceText = codeDocument.GetCSharpSourceText();
-
-            await using var csharpServer = await CSharpTestLspServerHelpers.CreateCSharpLspServerAsync(
-                csharpSourceText, csharpDocumentUri, SemanticTokensServerCapabilities, SpanMappingService, DisposalToken);
+            var range = csharpRanges[i];
             var result = await csharpServer.ExecuteRequestAsync<SemanticTokensRangeParams, SemanticTokens>(
                 Methods.TextDocumentSemanticTokensRangeName,
-                CreateVSSemanticTokensRangeParams(csharpRange, csharpDocumentUri),
+                CreateVSSemanticTokensRangeParams(range, csharpDocumentUri),
                 DisposalToken);
 
-            csharpTokens = result?.Data;
+            responses[i] = result;
         }
 
-        var csharpResponse = new ProvideSemanticTokensResponse(tokens: csharpTokens, hostDocumentSyncVersion);
-        return csharpResponse;
+        var csharpTokens = responses.Select(r => r.Data).WithoutNull().ToArray();
+        return new ProvideSemanticTokensResponse(tokens: csharpTokens, hostDocumentSyncVersion);
     }
 
-    protected Range? GetMappedCSharpRange(RazorCodeDocument codeDocument, Range razorRange)
+    protected Range[] GetMappedCSharpRanges(RazorCodeDocument codeDocument, Range razorRange)
     {
         var documentMappingService = new RazorDocumentMappingService(
             FilePathService, new TestDocumentContextFactory(), LoggerFactory);
+        if (UsePreciseSemanticTokenRanges)
+        {
+            if (!RazorSemanticTokensInfoService.TryGetSortedCSharpRanges(codeDocument, razorRange, out var csharpRanges))
+            {
+                // No C# in the range.
+                return Array.Empty<Range>();
+            }
+
+            return csharpRanges;
+        }
+
         if (!documentMappingService.TryMapToGeneratedDocumentRange(codeDocument.GetCSharpDocument(), razorRange, out var csharpRange) &&
             !RazorSemanticTokensInfoService.TryGetMinimalCSharpRange(codeDocument, razorRange, out csharpRange))
         {
             // No C# in the range.
-            return null;
+            return Array.Empty<Range>();
         }
 
-        return csharpRange;
+        return new Range[] { csharpRange };
     }
 
     internal static SemanticTokensRangeParams CreateVSSemanticTokensRangeParams(Range range, Uri uri)

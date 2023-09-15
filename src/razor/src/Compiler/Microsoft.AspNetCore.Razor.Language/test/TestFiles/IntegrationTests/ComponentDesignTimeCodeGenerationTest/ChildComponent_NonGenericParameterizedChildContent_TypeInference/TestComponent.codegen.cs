@@ -77,9 +77,9 @@ namespace __Blazor.Test.TestComponent
         public static global::Test.MyComponent<TItem> CreateMyComponent_0<TItem>(global::Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder, int seq, int __seq0, TItem __arg0, int __seq1, global::Microsoft.AspNetCore.Components.RenderFragment<TItem> __arg1, int __seq2, global::Microsoft.AspNetCore.Components.RenderFragment<global::System.Int32> __arg2)
         {
         __builder.OpenComponent<global::Test.MyComponent<TItem>>(seq);
-        __builder.AddComponentParameter(__seq0, "Item", __arg0);
-        __builder.AddComponentParameter(__seq1, "GenericFragment", __arg1);
-        __builder.AddComponentParameter(__seq2, "IntFragment", __arg2);
+        __builder.AddAttribute(__seq0, "Item", (object)__arg0);
+        __builder.AddAttribute(__seq1, "GenericFragment", (object)__arg1);
+        __builder.AddAttribute(__seq2, "IntFragment", (object)__arg2);
         __builder.CloseComponent();
         return default;
         }

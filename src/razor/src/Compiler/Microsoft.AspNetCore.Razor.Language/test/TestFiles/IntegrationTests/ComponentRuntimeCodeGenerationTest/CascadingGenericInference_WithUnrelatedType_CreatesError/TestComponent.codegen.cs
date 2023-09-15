@@ -24,7 +24,6 @@ namespace Test
 #nullable disable
                 , out var __typeInferenceArg_0___arg0);
                 global::__Blazor.Test.TestComponent.TypeInference.CreateGrid_0(__builder, 0, 1, __typeInferenceArg_0___arg0, 2, (__builder2) => {
-                    global::__Blazor.Test.TestComponent.TypeInference.CreateColumn_1(__builder2, 3);
                 }
                 );
                 __typeInferenceArg_0___arg0 = default;

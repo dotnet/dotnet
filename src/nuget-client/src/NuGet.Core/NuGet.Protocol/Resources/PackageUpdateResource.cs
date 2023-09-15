@@ -53,6 +53,21 @@ namespace NuGet.Protocol.Core.Types
         }
 
         public async Task Push(
+           IList<string> packagePaths,
+           string symbolSource, // empty to not push symbols
+           int timeoutInSecond,
+           bool disableBuffering,
+           Func<string, string> getApiKey,
+           Func<string, string> getSymbolApiKey,
+           bool noServiceEndpoint,
+           bool skipDuplicate,
+           SymbolPackageUpdateResourceV3 symbolPackageUpdateResource,
+           ILogger log)
+        {
+            await Push(packagePaths, symbolSource, timeoutInSecond, disableBuffering, getApiKey, getSymbolApiKey, noServiceEndpoint, skipDuplicate, symbolPackageUpdateResource, allowInsecureConnections: false, log);
+        }
+
+        public async Task Push(
             IList<string> packagePaths,
             string symbolSource, // empty to not push symbols
             int timeoutInSecond,
@@ -62,6 +77,7 @@ namespace NuGet.Protocol.Core.Types
             bool noServiceEndpoint,
             bool skipDuplicate,
             SymbolPackageUpdateResourceV3 symbolPackageUpdateResource,
+            bool allowInsecureConnections,
             ILogger log)
         {
             // TODO: Figure out how to hook this up with the HTTP request
@@ -78,7 +94,7 @@ namespace NuGet.Protocol.Core.Types
                 {
                     // Push nupkgs and possibly the corresponding snupkgs.
                     await PushPackagePath(packagePath, _source, symbolSource, apiKey, getSymbolApiKey, noServiceEndpoint, skipDuplicate,
-                        symbolPackageUpdateResource, requestTimeout, log, tokenSource.Token);
+                        symbolPackageUpdateResource, allowInsecureConnections, requestTimeout, log, tokenSource.Token);
                 }
                 else // Explicit snupkg push
                 {
@@ -90,7 +106,7 @@ namespace NuGet.Protocol.Core.Types
                         string symbolApiKey = getSymbolApiKey(symbolSource);
 
                         await PushSymbolsPath(packagePath, symbolSource, symbolApiKey,
-                            noServiceEndpoint, skipDuplicate, symbolPackageUpdateResource,
+                            noServiceEndpoint, skipDuplicate, symbolPackageUpdateResource, allowInsecureConnections,
                             requestTimeout, log, tokenSource.Token);
                     }
                 }
@@ -145,6 +161,17 @@ namespace NuGet.Protocol.Core.Types
             bool noServiceEndpoint,
             ILogger log)
         {
+            await Delete(packageId, packageVersion, getApiKey, confirm, noServiceEndpoint, allowInsecureConnections: false, log);
+        }
+
+        public async Task Delete(string packageId,
+            string packageVersion,
+            Func<string, string> getApiKey,
+            Func<string, bool> confirm,
+            bool noServiceEndpoint,
+            bool allowInsecureConnections,
+            ILogger log)
+        {
             var sourceDisplayName = GetSourceDisplayName(_source);
             var apiKey = getApiKey(_source);
             if (string.IsNullOrEmpty(apiKey) && !IsFileSource())
@@ -163,7 +190,7 @@ namespace NuGet.Protocol.Core.Types
                     packageVersion,
                     sourceDisplayName
                     ));
-                await DeletePackage(_source, apiKey, packageId, packageVersion, noServiceEndpoint, log, CancellationToken.None);
+                await DeletePackage(_source, apiKey, packageId, packageVersion, noServiceEndpoint, allowInsecureConnections, log, CancellationToken.None);
                 log.LogInformation(string.Format(CultureInfo.CurrentCulture,
                     Strings.DeleteCommandDeletedPackage,
                     packageId,
@@ -181,6 +208,7 @@ namespace NuGet.Protocol.Core.Types
             bool noServiceEndpoint,
             bool skipDuplicate,
             SymbolPackageUpdateResourceV3 symbolPackageUpdateResource,
+            bool allowInsecureConnections,
             TimeSpan requestTimeout,
             ILogger log,
             CancellationToken token)
@@ -214,7 +242,7 @@ namespace NuGet.Protocol.Core.Types
                 bool warnForHttpSources = true;
                 foreach (string packageToPush in symbolsToPush)
                 {
-                    await PushPackageCore(symbolSource, apiKey, packageToPush, noServiceEndpoint, skipDuplicate, requestTimeout, warnForHttpSources, log, token);
+                    await PushPackageCore(symbolSource, apiKey, packageToPush, noServiceEndpoint, skipDuplicate, requestTimeout, warnForHttpSources, allowInsecureConnections, log, token);
                     warnForHttpSources = false;
                 }
             }
@@ -232,6 +260,7 @@ namespace NuGet.Protocol.Core.Types
             bool noServiceEndpoint,
             bool skipDuplicate,
             SymbolPackageUpdateResourceV3 symbolPackageUpdateResource,
+            bool allowInsecureConnections,
             TimeSpan requestTimeout,
             ILogger log,
             CancellationToken token)
@@ -257,7 +286,7 @@ namespace NuGet.Protocol.Core.Types
             bool warnForHttpSources = true;
             foreach (string nupkgToPush in nupkgsToPush)
             {
-                bool packageWasPushed = await PushPackageCore(source, apiKey, nupkgToPush, noServiceEndpoint, skipDuplicate, requestTimeout, warnForHttpSources, log, token);
+                bool packageWasPushed = await PushPackageCore(source, apiKey, nupkgToPush, noServiceEndpoint, skipDuplicate, requestTimeout, warnForHttpSources, allowInsecureConnections, log, token);
                 // Push corresponding symbols, if successful.
                 if (packageWasPushed && !string.IsNullOrEmpty(symbolSource))
                 {
@@ -287,7 +316,7 @@ namespace NuGet.Protocol.Core.Types
                     }
 
                     string symbolApiKey = getSymbolApiKey(symbolSource);
-                    await PushPackageCore(symbolSource, symbolApiKey, symbolPackagePath, noServiceEndpoint, skipDuplicate, requestTimeout, warnForHttpSources, log, token);
+                    await PushPackageCore(symbolSource, symbolApiKey, symbolPackagePath, noServiceEndpoint, skipDuplicate, requestTimeout, warnForHttpSources, allowInsecureConnections, log, token);
                 }
                 warnForHttpSources = false;
             }
@@ -300,6 +329,7 @@ namespace NuGet.Protocol.Core.Types
             bool skipDuplicate,
             TimeSpan requestTimeout,
             bool warnForHttpSources,
+            bool allowInsecureConnections,
             ILogger log,
             CancellationToken token)
         {
@@ -320,7 +350,7 @@ namespace NuGet.Protocol.Core.Types
             else
             {
                 wasPackagePushed = await PushPackageToServer(source, apiKey, packageToPush, noServiceEndpoint, skipDuplicate,
-                    requestTimeout, warnForHttpSources, log, token);
+                    requestTimeout, warnForHttpSources, allowInsecureConnections, log, token);
             }
 
             if (wasPackagePushed)
@@ -370,6 +400,7 @@ namespace NuGet.Protocol.Core.Types
             bool skipDuplicate,
             TimeSpan requestTimeout,
             bool warnForHttpSources,
+            bool allowInsecureConnections,
             ILogger logger,
             CancellationToken token)
         {
@@ -377,7 +408,7 @@ namespace NuGet.Protocol.Core.Types
             bool useTempApiKey = IsSourceNuGetSymbolServer(source);
             HttpStatusCode? codeNotToThrow = ConvertSkipDuplicateParamToHttpStatusCode(skipDuplicate);
             bool showPushCommandPackagePushed = true;
-            if (warnForHttpSources && serviceEndpointUrl.Scheme == Uri.UriSchemeHttp)
+            if (warnForHttpSources && serviceEndpointUrl.Scheme == Uri.UriSchemeHttp && !allowInsecureConnections)
             {
                 logger.LogWarning(string.Format(CultureInfo.CurrentCulture, Strings.Warning_HttpServerUsage, "push", serviceEndpointUrl));
             }
@@ -668,6 +699,7 @@ namespace NuGet.Protocol.Core.Types
             string packageId,
             string packageVersion,
             bool noServiceEndpoint,
+            bool allowInsecureConnections,
             ILogger logger,
             CancellationToken token)
         {
@@ -678,7 +710,7 @@ namespace NuGet.Protocol.Core.Types
             }
             else
             {
-                if (sourceUri.Scheme == Uri.UriSchemeHttp)
+                if (sourceUri.Scheme == Uri.UriSchemeHttp && !allowInsecureConnections)
                 {
                     logger.LogWarning(string.Format(CultureInfo.CurrentCulture, Strings.Warning_HttpServerUsage, "delete", sourceUri));
                 }

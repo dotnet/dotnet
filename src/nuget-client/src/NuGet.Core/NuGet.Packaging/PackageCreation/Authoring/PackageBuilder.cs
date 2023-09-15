@@ -657,7 +657,7 @@ namespace NuGet.Packaging
         /// <param name="filePath">The file path to search for</param>
         /// <param name="packageFiles">The list of files to search within</param>
         /// <param name="filePathIncorrectCase">If the file was not found, this will be a path which almost matched but had the incorrect case</param>
-        /// <returns>An <see cref="IPackageFile"/> matching the specified path or <c>null</c></returns>
+        /// <returns>An <see cref="IPackageFile"/> matching the specified path or <see langword="null" /></returns>
         private static IPackageFile FindFileInPackage(string filePath, IEnumerable<IPackageFile> packageFiles, out string filePathIncorrectCase)
         {
             filePathIncorrectCase = null;

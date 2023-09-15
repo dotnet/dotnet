@@ -41,11 +41,11 @@ namespace NuGet.Protocol.Plugins
         /// <param name="handshakeTimeout">The plugin handshake timeout.</param>
         /// <param name="requestTimeout">The plugin request timeout.</param>
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="protocolVersion" />
-        /// is <c>null</c>.</exception>
+        /// is <see langword="null" />.</exception>
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="minimumProtocolVersion" />
-        /// is <c>null</c>.</exception>
+        /// is <see langword="null" />.</exception>
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="protocolVersion" />
-        /// is <c>null</c>.</exception>
+        /// is <see langword="null" />.</exception>
         /// <exception cref="ArgumentOutOfRangeException">Thrown if <paramref name="protocolVersion" />
         /// is less than <paramref name="minimumProtocolVersion" />.</exception>
         /// <exception cref="ArgumentOutOfRangeException">Thrown if <paramref name="handshakeTimeout" />

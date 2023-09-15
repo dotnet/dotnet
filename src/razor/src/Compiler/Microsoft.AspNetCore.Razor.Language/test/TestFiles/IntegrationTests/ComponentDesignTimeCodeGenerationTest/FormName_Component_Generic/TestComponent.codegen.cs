@@ -113,20 +113,20 @@ namespace __Blazor.Test.TestComponent
         public static global::Test.TestComponent<T> CreateTestComponent_0<T>(global::Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder, int seq, int __seq0, global::System.Object __arg0, int __seq1, global::System.Object __arg1, int __seq2, global::System.Object __arg2, int __seq3, T __arg3)
         {
         __builder.OpenComponent<global::Test.TestComponent<T>>(seq);
-        __builder.AddComponentParameter(__seq0, "method", __arg0);
-        __builder.AddComponentParameter(__seq1, "@onsubmit", __arg1);
-        __builder.AddComponentParameter(__seq2, "@formname", __arg2);
-        __builder.AddComponentParameter(__seq3, "Parameter", __arg3);
+        __builder.AddAttribute(__seq0, "method", (object)__arg0);
+        __builder.AddAttribute(__seq1, "@onsubmit", (object)__arg1);
+        __builder.AddAttribute(__seq2, "@formname", (object)__arg2);
+        __builder.AddAttribute(__seq3, "Parameter", (object)__arg3);
         __builder.CloseComponent();
         return default;
         }
         public static global::Test.TestComponent<T> CreateTestComponent_1<T>(global::Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder, int seq, int __seq0, global::System.Object __arg0, int __seq1, global::System.Object __arg1, int __seq2, global::System.Object __arg2, int __seq3, T __arg3)
         {
         __builder.OpenComponent<global::Test.TestComponent<T>>(seq);
-        __builder.AddComponentParameter(__seq0, "method", __arg0);
-        __builder.AddComponentParameter(__seq1, "@onsubmit", __arg1);
-        __builder.AddComponentParameter(__seq2, "@formname", __arg2);
-        __builder.AddComponentParameter(__seq3, "Parameter", __arg3);
+        __builder.AddAttribute(__seq0, "method", (object)__arg0);
+        __builder.AddAttribute(__seq1, "@onsubmit", (object)__arg1);
+        __builder.AddAttribute(__seq2, "@formname", (object)__arg2);
+        __builder.AddAttribute(__seq3, "Parameter", (object)__arg3);
         __builder.CloseComponent();
         return default;
         }

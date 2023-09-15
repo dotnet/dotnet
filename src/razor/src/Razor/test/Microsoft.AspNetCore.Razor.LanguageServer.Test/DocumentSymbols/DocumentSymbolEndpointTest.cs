@@ -106,7 +106,7 @@ public class DocumentSymbolEndpointTest : SingleServerDelegatingEndpointTestBase
         {
             Assert.True(spansDict.TryGetValue(symbolInformation.Name, out var spans), $"Expected {symbolInformation.Name} to be in test provided markers");
             Assert.Single(spans);
-            var expectedRange = spans.Single().AsRange(sourceText);
+            var expectedRange = spans.Single().ToRange(sourceText);
             Assert.Equal(expectedRange, symbolInformation.Location.Range);
         }
     }

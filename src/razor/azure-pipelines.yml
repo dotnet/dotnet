@@ -273,11 +273,6 @@ stages:
           displayName: Publish VSSetup
           condition: and(succeeded(), eq(variables['system.pullrequest.isfork'], false), eq(variables['_BuildConfig'], 'Release'))
 
-        - publish: artifacts\MPack\$(_BuildConfig)
-          artifact: MPack_$(Agent.Os)_$(_BuildConfig)
-          displayName: Publish VS for Mac Artifacts
-          condition: and(succeeded(), eq(variables['system.pullrequest.isfork'], false), eq(variables['_BuildConfig'], 'Release'))
-
         - publish: artifacts\packages\$(_BuildConfig)
           artifact: Packages_$(Agent.Os)_$(_BuildConfig)
           displayName: Publish package artifacts

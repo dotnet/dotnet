@@ -18,8 +18,6 @@ NuGet.PackageManagement.ActionsExecutedEventArgs
 ~NuGet.PackageManagement.ActionsExecutedEventArgs.Actions.get -> System.Collections.Generic.IEnumerable<NuGet.PackageManagement.ResolvedAction>
 ~NuGet.PackageManagement.ActionsExecutedEventArgs.ActionsExecutedEventArgs(System.Collections.Generic.IEnumerable<NuGet.PackageManagement.ResolvedAction> actions) -> void
 NuGet.PackageManagement.ActionsTelemetryEvent
-~NuGet.PackageManagement.ActionsTelemetryEvent.ActionsTelemetryEvent(string operationId, string[] projectIds, NuGet.PackageManagement.NuGetOperationType operationType, System.DateTimeOffset startTime, NuGet.Common.NuGetOperationStatus status, int packageCount, System.DateTimeOffset endTime, double duration) -> void
-NuGet.PackageManagement.ActionsTelemetryEvent.OperationType.get -> NuGet.PackageManagement.NuGetOperationType
 NuGet.PackageManagement.AssetsFileMissingStatusChanged
 NuGet.PackageManagement.BuildIntegratedProjectAction
 ~NuGet.PackageManagement.BuildIntegratedProjectAction.BuildIntegratedProjectAction(NuGet.ProjectManagement.NuGetProject project, NuGet.Packaging.Core.PackageIdentity packageIdentity, NuGet.PackageManagement.NuGetProjectActionType nuGetProjectActionType, NuGet.ProjectModel.LockFile originalLockFile, NuGet.Commands.RestoreResultPair restoreResultPair, System.Collections.Generic.IReadOnlyList<NuGet.Protocol.Core.Types.SourceRepository> sources, System.Collections.Generic.IReadOnlyList<NuGet.PackageManagement.NuGetProjectAction> originalActions, NuGet.ProjectManagement.BuildIntegratedInstallationContext installationContext) -> void
@@ -143,10 +141,6 @@ NuGet.PackageManagement.LogUtility
 ~NuGet.PackageManagement.NuGetEventArgs<T>
 ~NuGet.PackageManagement.NuGetEventArgs<T>.Arg.get -> T
 ~NuGet.PackageManagement.NuGetEventArgs<T>.NuGetEventArgs(T arg) -> void
-NuGet.PackageManagement.NuGetOperationType
-NuGet.PackageManagement.NuGetOperationType.Install = 0 -> NuGet.PackageManagement.NuGetOperationType
-NuGet.PackageManagement.NuGetOperationType.Uninstall = 2 -> NuGet.PackageManagement.NuGetOperationType
-NuGet.PackageManagement.NuGetOperationType.Update = 1 -> NuGet.PackageManagement.NuGetOperationType
 NuGet.PackageManagement.NuGetPackageManager
 NuGet.PackageManagement.NuGetPackageManager.BatchEnd -> System.EventHandler<NuGet.PackageManagement.PackageProjectEventArgs>
 NuGet.PackageManagement.NuGetPackageManager.BatchStart -> System.EventHandler<NuGet.PackageManagement.PackageProjectEventArgs>

@@ -25,7 +25,7 @@ namespace NuGet.Protocol.Plugins
         /// Instantiates a new instance of the <see cref="LogRequestHandler" /> class.
         /// </summary>
         /// <param name="logger">A logger.</param>
-        /// <exception cref="ArgumentNullException">Thrown if <paramref name="logger" /> is <c>null</c>.</exception>
+        /// <exception cref="ArgumentNullException">Thrown if <paramref name="logger" /> is <see langword="null" />.</exception>
         public LogRequestHandler(ILogger logger)
         {
             if (logger == null)
@@ -45,10 +45,10 @@ namespace NuGet.Protocol.Plugins
         /// <param name="cancellationToken">A cancellation token.</param>
         /// <returns>A task that represents the asynchronous operation.</returns>
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="connection" />
-        /// is <c>null</c>.</exception>
-        /// <exception cref="ArgumentNullException">Thrown if <paramref name="request" /> is <c>null</c>.</exception>
+        /// is <see langword="null" />.</exception>
+        /// <exception cref="ArgumentNullException">Thrown if <paramref name="request" /> is <see langword="null" />.</exception>
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="responseHandler" />
-        /// is <c>null</c>.</exception>
+        /// is <see langword="null" />.</exception>
         /// <exception cref="OperationCanceledException">Thrown if <paramref name="cancellationToken" />
         /// is cancelled.</exception>
         public async Task HandleResponseAsync(
@@ -97,7 +97,7 @@ namespace NuGet.Protocol.Plugins
         /// Sets the logger.
         /// </summary>
         /// <param name="logger">A logger.</param>
-        /// <exception cref="ArgumentNullException">Thrown if <paramref name="logger" /> is <c>null</c>.</exception>
+        /// <exception cref="ArgumentNullException">Thrown if <paramref name="logger" /> is <see langword="null" />.</exception>
         public void SetLogger(ILogger logger)
         {
             if (logger == null)
@@ -119,7 +119,7 @@ namespace NuGet.Protocol.Plugins
         /// </summary>
         /// <param name="logger">A logger.</param>
         /// <returns>A log level.</returns>
-        /// <exception cref="ArgumentNullException">Thrown if <paramref name="logger" /> is <c>null</c>.</exception>
+        /// <exception cref="ArgumentNullException">Thrown if <paramref name="logger" /> is <see langword="null" />.</exception>
         public static LogLevel GetLogLevel(ILogger logger)
         {
             if (logger == null)

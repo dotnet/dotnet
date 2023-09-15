@@ -5,6 +5,7 @@ using System;
 using System.Collections.Immutable;
 using System.Linq;
 using Microsoft.AspNetCore.Razor.Language;
+using Microsoft.AspNetCore.Razor.Utilities;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.Extensions.Internal;
 
@@ -30,18 +31,14 @@ internal sealed class ProjectWorkspaceState : IEquatable<ProjectWorkspaceState>
 
     public bool Equals(ProjectWorkspaceState? other)
         => other is not null &&
-           TagHelpers.SequenceEqual(other.TagHelpers) &&
+           TagHelpers.SequenceEqual(other.TagHelpers, TagHelperChecksumComparer.Instance) &&
            CSharpLanguageVersion == other.CSharpLanguageVersion;
 
     public override int GetHashCode()
     {
         var hash = HashCodeCombiner.Start();
 
-        foreach (var tagHelper in TagHelpers)
-        {
-            hash.Add(tagHelper.GetHashCode());
-        }
-
+        hash.Add(TagHelpers, TagHelperChecksumComparer.Instance);
         hash.Add(CSharpLanguageVersion);
 
         return hash.CombinedHash;

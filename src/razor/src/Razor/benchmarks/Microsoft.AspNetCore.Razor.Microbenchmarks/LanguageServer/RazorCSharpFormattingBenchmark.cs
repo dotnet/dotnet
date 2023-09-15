@@ -124,7 +124,7 @@ public class RazorCSharpFormattingBenchmark : RazorLanguageServerBenchmarkBase
 
 #if DEBUG
         // For debugging purposes only.
-        var changedText = DocumentText.WithChanges(edits.Select(e => e.AsTextChange(DocumentText)));
+        var changedText = DocumentText.WithChanges(edits.Select(e => e.ToTextChange(DocumentText)));
         _ = changedText.ToString();
 #endif
     }

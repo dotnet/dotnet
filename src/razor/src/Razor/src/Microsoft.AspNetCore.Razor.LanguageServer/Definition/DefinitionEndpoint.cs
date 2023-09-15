@@ -295,7 +295,7 @@ internal sealed class DefinitionEndpoint : AbstractRazorDelegatingEndpoint<TextD
                 return null;
             }
 
-            var range = property.Identifier.Span.AsRange(csharpText);
+            var range = property.Identifier.Span.ToRange(csharpText);
             if (documentMappingService.TryMapToHostDocumentRange(codeDocument.GetCSharpDocument(), range, out var originalRange))
             {
                 return originalRange;

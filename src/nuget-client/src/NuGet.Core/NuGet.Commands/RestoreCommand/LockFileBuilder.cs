@@ -669,7 +669,7 @@ namespace NuGet.Commands
             /// </summary>
             /// <param name="x">The first <see cref="LockFileTargetLibrary" /> to compare.</param>
             /// <param name="y">The second <see cref="LockFileTargetLibrary" /> to compare.</param>
-            /// <returns><c>true</c> if the specified <see cref="LockFileTargetLibrary" /> objects' <see cref="LockFileTargetLibrary.Name" /> and <see cref="LockFileTargetLibrary.Version" /> properties are equal, otherwise <c>false</c>.</returns>
+            /// <returns><see langword="true" /> if the specified <see cref="LockFileTargetLibrary" /> objects' <see cref="LockFileTargetLibrary.Name" /> and <see cref="LockFileTargetLibrary.Version" /> properties are equal, otherwise <see langword="false" />.</returns>
             public bool Equals(LockFileTargetLibrary x, LockFileTargetLibrary y)
             {
                 return string.Equals(x.Name, y.Name, StringComparison.Ordinal) && x.Version.Equals(y.Version);

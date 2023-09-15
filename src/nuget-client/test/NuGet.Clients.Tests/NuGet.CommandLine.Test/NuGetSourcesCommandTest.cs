@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using NuGet.Common;
 using NuGet.Configuration;
+using NuGet.Configuration.Test;
 using NuGet.Test.Utility;
 using Xunit;
 
@@ -255,6 +256,62 @@ namespace NuGet.CommandLine.Test
                 // test to ensure detailed format is the default
                 Assert.True(result.Output.StartsWith("Registered Sources:"));
                 Assert.Equal(shouldWarn, result.Output.Contains(warningMessage));
+            }
+        }
+
+        [Fact]
+        public void SourcesList_WithAllowInsecureConnections_WarnsCorrectly()
+        {
+            // Arrange
+            string nugetexe = Util.GetNuGetExePath();
+
+            using (TestDirectory configFileDirectory = TestDirectory.Create())
+            {
+                string configFileName = "nuget.config";
+                string configFilePath = Path.Combine(configFileDirectory, configFileName);
+
+                Util.CreateFile(configFileDirectory, configFileName,
+                    @"<?xml version=""1.0"" encoding=""utf-8""?>
+<configuration>
+  <packageSources>
+    <add key=""source1"" value=""http://source.test1"" />
+    <add key=""source2"" value=""http://source.test2"" allowInsecureConnections=""""/>
+    <add key=""source3"" value=""http://source.test3"" allowInsecureConnections=""false""/>
+    <add key=""source4"" value=""http://source.test4"" allowInsecureConnections=""FASLE""/>
+    <add key=""source5"" value=""http://source.test5"" allowInsecureConnections=""invalidString""/>
+    <add key=""source6"" value=""http://source.test6"" allowInsecureConnections=""true""/>
+    <add key=""source7"" value=""http://source.test7"" allowInsecureConnections=""TRUE""/>
+    <add key=""source8"" value=""https://source.test8"" allowInsecureConnections=""true""/>
+    <add key=""source9"" value=""https://source.test9"" allowInsecureConnections=""false""/>
+  </packageSources>
+</configuration>");
+
+                var args = new string[] {
+                    "sources",
+                    "list",
+                    "-ConfigFile",
+                    configFilePath
+                };
+
+                // Main Act
+                CommandRunnerResult result = CommandRunner.Run(
+                    nugetexe,
+                    Directory.GetCurrentDirectory(),
+                    string.Join(" ", args));
+
+                // Assert
+                Util.VerifyResultSuccess(result);
+
+                // http source with false allowInsecureConnections have warnings.
+                string expectedWarning = SettingsTestUtils.RemoveWhitespace(@"
+WARNING: You are running the 'list source' operation with 'HTTP' sources: 
+source1
+source2
+source3
+source4
+source5
+Non-HTTPS access will be removed in a future version. Consider migrating to 'HTTPS' sources.");
+                Assert.Contains(expectedWarning, SettingsTestUtils.RemoveWhitespace(result.Output));
             }
         }
 

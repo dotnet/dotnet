@@ -156,9 +156,9 @@ namespace NuGet.CommandLine.Test
                 var logger = new TestLogger();
                 // Set-up command.
                 var request = ProjectTestHelpers.CreateRestoreRequest(
-                        ProjectTestHelpers.GetPackageSpec("Project1", pathContext.SolutionRoot, framework: "net5.0", dependencyName: packageX.Id),
                         pathContext,
-                        logger);
+                        logger,
+                        ProjectTestHelpers.GetPackageSpec("Project1", pathContext.SolutionRoot, framework: "net5.0", dependencyName: packageX.Id));
                 var command = new NuGet.Commands.RestoreCommand(request);
 
                 // Act

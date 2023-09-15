@@ -85,7 +85,7 @@ namespace NuGet.PackageManagement.UI
             }
         }
 
-        protected override void OnPreviewKeyDown(KeyEventArgs e)
+        private void Versions_PreviewKeyDown(object sender, KeyEventArgs e)
         {
             if (PackageDetailControlModel.IsProjectPackageReference)
             {
@@ -140,11 +140,19 @@ namespace NuGet.PackageManagement.UI
             }
             else
             {
-                base.OnPreviewKeyDown(e);
+                switch (e.Key)
+                {
+                    case Key.Tab:
+                        _versions.IsDropDownOpen = false;
+                        break;
+                    default:
+                        base.OnPreviewKeyDown(e);
+                        break;
+                }
             }
         }
 
-        protected override void OnKeyUp(KeyEventArgs e)
+        private void Versions_KeyUp(object sender, KeyEventArgs e)
         {
             if (PackageDetailControlModel.IsProjectPackageReference)
             {
@@ -228,7 +236,15 @@ namespace NuGet.PackageManagement.UI
             }
             else
             {
-                base.OnKeyUp(e);
+                switch (e.Key)
+                {
+                    case Key.Tab:
+                        e.Handled = true;
+                        break;
+                    default:
+                        base.OnKeyUp(e);
+                        break;
+                }
             }
         }
 

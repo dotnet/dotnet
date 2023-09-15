@@ -28,13 +28,13 @@ namespace NuGet.DependencyResolver
         /// <summary>
         /// Gets the package source.
         /// </summary>
-        /// <remarks>Optional. This will be <c>null</c> for project providers.</remarks>
+        /// <remarks>Optional. This will be <see langword="null" /> for project providers.</remarks>
         PackageSource Source { get; }
 
         /// <summary>
         /// Gets the source repository.
         /// </summary>
-        /// <remarks>Optional. This will be <c>null</c> for project providers.</remarks>
+        /// <remarks>Optional. This will be <see langword="null" /> for project providers.</remarks>
         SourceRepository SourceRepository { get; }
 
         /// <summary>
@@ -50,13 +50,13 @@ namespace NuGet.DependencyResolver
         /// The task result (<see cref="Task{TResult}.Result" />) returns a <see cref="LibraryIdentity" />
         /// instance.</returns>
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="libraryRange" />
-        /// is either <c>null</c> or empty.</exception>
+        /// is either <see langword="null" /> or empty.</exception>
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="targetFramework" />
-        /// is either <c>null</c> or empty.</exception>
+        /// is either <see langword="null" /> or empty.</exception>
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="cacheContext" />
-        /// is either <c>null</c> or empty.</exception>
+        /// is either <see langword="null" /> or empty.</exception>
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="logger" />
-        /// is either <c>null</c> or empty.</exception>
+        /// is either <see langword="null" /> or empty.</exception>
         /// <exception cref="OperationCanceledException">Thrown if <paramref name="cancellationToken" />
         /// is cancelled.</exception>
         Task<LibraryIdentity> FindLibraryAsync(
@@ -78,13 +78,13 @@ namespace NuGet.DependencyResolver
         /// The task result (<see cref="Task{TResult}.Result" />) returns a <see cref="LibraryDependencyInfo" />
         /// instance.</returns>
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="libraryIdentity" />
-        /// is either <c>null</c> or empty.</exception>
+        /// is either <see langword="null" /> or empty.</exception>
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="targetFramework" />
-        /// is either <c>null</c> or empty.</exception>
+        /// is either <see langword="null" /> or empty.</exception>
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="cacheContext" />
-        /// is either <c>null</c> or empty.</exception>
+        /// is either <see langword="null" /> or empty.</exception>
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="logger" />
-        /// is either <c>null</c> or empty.</exception>
+        /// is either <see langword="null" /> or empty.</exception>
         /// <exception cref="OperationCanceledException">Thrown if <paramref name="cancellationToken" />
         /// is cancelled.</exception>
         Task<LibraryDependencyInfo> GetDependenciesAsync(
@@ -105,11 +105,11 @@ namespace NuGet.DependencyResolver
         /// The task result (<see cref="Task{TResult}.Result" />) returns a <see cref="IPackageDownloader" />
         /// instance.</returns>
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="packageIdentity" />
-        /// is either <c>null</c> or empty.</exception>
+        /// is either <see langword="null" /> or empty.</exception>
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="cacheContext" />
-        /// is either <c>null</c> or empty.</exception>
+        /// is either <see langword="null" /> or empty.</exception>
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="logger" />
-        /// is either <c>null</c> or empty.</exception>
+        /// is either <see langword="null" /> or empty.</exception>
         /// <exception cref="OperationCanceledException">Thrown if <paramref name="cancellationToken" />
         /// is cancelled.</exception>
         Task<IPackageDownloader> GetPackageDownloaderAsync(

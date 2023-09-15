@@ -8,3 +8,5 @@ NuGet.Protocol.PackageVulnerabilitySeverity.Low = 0 -> NuGet.Protocol.PackageVul
 NuGet.Protocol.PackageVulnerabilitySeverity.Moderate = 1 -> NuGet.Protocol.PackageVulnerabilitySeverity
 NuGet.Protocol.PackageVulnerabilitySeverity.Unknown = -1 -> NuGet.Protocol.PackageVulnerabilitySeverity
 ~const NuGet.Protocol.JsonProperties.Url = "url" -> string
+~NuGet.Protocol.Core.Types.PackageUpdateResource.Delete(string packageId, string packageVersion, System.Func<string, string> getApiKey, System.Func<string, bool> confirm, bool noServiceEndpoint, bool allowInsecureConnections, NuGet.Common.ILogger log) -> System.Threading.Tasks.Task
+~NuGet.Protocol.Core.Types.PackageUpdateResource.Push(System.Collections.Generic.IList<string> packagePaths, string symbolSource, int timeoutInSecond, bool disableBuffering, System.Func<string, string> getApiKey, System.Func<string, string> getSymbolApiKey, bool noServiceEndpoint, bool skipDuplicate, NuGet.Protocol.Core.Types.SymbolPackageUpdateResourceV3 symbolPackageUpdateResource, bool allowInsecureConnections, NuGet.Common.ILogger log) -> System.Threading.Tasks.Task

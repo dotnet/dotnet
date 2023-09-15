@@ -14,9 +14,9 @@ namespace NuGet.Protocol.Plugins
         /// Checks if a file has a valid embedded signature.
         /// </summary>
         /// <param name="filePath">The path of a file to be checked.</param>
-        /// <returns><c>true</c> if the file has a valid signature; otherwise, <c>false</c>.</returns>
+        /// <returns><see langword="true" /> if the file has a valid signature; otherwise, <see langword="false" />.</returns>
         /// <exception cref="ArgumentException">Thrown if <paramref name="filePath" />
-        /// is either <c>null</c> or an empty string.</exception>
+        /// is either <see langword="null" /> or an empty string.</exception>
         /// <exception cref="PlatformNotSupportedException">Thrown if the current platform is unsupported.</exception>
         public override bool IsValid(string filePath)
         {

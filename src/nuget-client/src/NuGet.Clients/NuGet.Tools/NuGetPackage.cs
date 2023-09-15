@@ -762,7 +762,7 @@ namespace NuGetVSExtension
         /// A string array containing the list of selected packages in the same hierarchy.
         /// If only one package is selected, the array will contain one package name, otherwise, it will be a list of package names.
         /// If the selected packages are across multiple hierarchies or if no packages are selected, an empty array will be returned.
-        /// This method will return <c>null</c> if it fails to retrieve the selected hierarchy.
+        /// This method will return <see langword="null" /> if it fails to retrieve the selected hierarchy.
         /// </returns>
         private string[] GetSelectedPackages()
         {

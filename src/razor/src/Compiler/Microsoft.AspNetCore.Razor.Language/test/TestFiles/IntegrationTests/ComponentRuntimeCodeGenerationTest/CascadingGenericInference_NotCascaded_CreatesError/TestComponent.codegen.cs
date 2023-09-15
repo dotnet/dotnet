@@ -22,7 +22,6 @@ namespace Test
 #line hidden
 #nullable disable
             , 2, (__builder2) => {
-                global::__Blazor.Test.TestComponent.TypeInference.CreateColumn_1(__builder2, 3);
             }
             );
         }

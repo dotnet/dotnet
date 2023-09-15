@@ -63,7 +63,7 @@ namespace NuGet.Commands
 
             var newPackageSource = new Configuration.PackageSource(args.Source, args.Name);
 
-            if (newPackageSource.IsHttp && !newPackageSource.IsHttps)
+            if (newPackageSource.IsHttp && !newPackageSource.IsHttps && !newPackageSource.AllowInsecureConnections)
             {
                 getLogger().LogWarning(
                     string.Format(CultureInfo.CurrentCulture,
@@ -202,7 +202,7 @@ namespace NuGet.Commands
             List<PackageSource> httpPackageSources = null;
             foreach (PackageSource packageSource in sources)
             {
-                if (packageSource.IsHttp && !packageSource.IsHttps)
+                if (packageSource.IsHttp && !packageSource.IsHttps && !packageSource.AllowInsecureConnections)
                 {
                     if (httpPackageSources == null)
                     {
@@ -284,7 +284,7 @@ namespace NuGet.Commands
                 existingSource = new Configuration.PackageSource(args.Source, existingSource.Name);
 
                 // If the existing source is not http, warn the user
-                if (existingSource.IsHttp && !existingSource.IsHttps)
+                if (existingSource.IsHttp && !existingSource.IsHttps && !existingSource.AllowInsecureConnections)
                 {
                     getLogger().LogWarning(string.Format(CultureInfo.CurrentCulture, Strings.Warning_HttpServerUsage, "update source", args.Source));
                 }
@@ -378,7 +378,7 @@ namespace NuGet.Commands
             {
                 getLogger().LogMinimal(string.Format(CultureInfo.CurrentCulture,
                     Strings.SourcesCommandSourceEnabledSuccessfully, name));
-                if (packageSource.IsHttp && !packageSource.IsHttps)
+                if (packageSource.IsHttp && !packageSource.IsHttps && !packageSource.AllowInsecureConnections)
                 {
                     getLogger().LogWarning(string.Format(CultureInfo.CurrentCulture, Strings.Warning_HttpServerUsage, "enable source", packageSource.Source));
                 }

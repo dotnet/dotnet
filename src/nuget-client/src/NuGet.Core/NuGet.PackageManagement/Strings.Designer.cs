@@ -925,7 +925,7 @@ namespace NuGet.PackageManagement {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to You are running the &apos;{0}&apos; operation with an &apos;http&apos; source, &apos;{1}&apos;. Support for &apos;http&apos; sources will be removed in a future version..
+        ///   Looks up a localized string similar to You are running the &apos;{0}&apos; operation with an &apos;HTTP&apos; source, &apos;{1}&apos;. Non-HTTPS access will be removed in a future version. Consider migrating to an &apos;HTTPS&apos; source..
         /// </summary>
         internal static string Warning_HttpServerUsage {
             get {
