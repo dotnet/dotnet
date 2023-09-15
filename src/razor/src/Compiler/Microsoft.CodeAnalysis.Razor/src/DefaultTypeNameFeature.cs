@@ -5,6 +5,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.CodeAnalysis.CSharp;
@@ -22,24 +23,45 @@ internal class DefaultTypeNameFeature : TypeNameFeature
         }
 
         var parsed = SyntaxFactory.ParseTypeName(typeName);
+
         if (parsed is IdentifierNameSyntax identifier)
         {
             return Array.Empty<string>();
         }
-        else if (parsed is ArrayTypeSyntax array)
+
+        if (TryParseCore(parsed) is { IsDefault: false } list)
         {
-            return new[] { array.ElementType.ToString() };
+            return list;
         }
-        else if (parsed is TupleTypeSyntax tuple)
+
+        return parsed.DescendantNodesAndSelf()
+            .OfType<TypeArgumentListSyntax>()
+            .SelectMany(arg => arg.Arguments)
+            .SelectMany(t => ParseCore(t)).ToArray();
+
+        static ImmutableArray<string> TryParseCore(TypeSyntax parsed)
         {
-            return tuple.Elements.Select(a => a.ToString()).ToList();
+            if (parsed is ArrayTypeSyntax array)
+            {
+                return ParseCore(array.ElementType);
+            }
+
+            if (parsed is TupleTypeSyntax tuple)
+            {
+                return tuple.Elements.SelectManyAsArray(a => ParseCore(a.Type));
+            }
+
+            return default;
         }
-        else
+
+        static ImmutableArray<string> ParseCore(TypeSyntax parsed)
         {
-            return parsed.DescendantNodesAndSelf()
-                .OfType<TypeArgumentListSyntax>()
-                .SelectMany(arg => arg.Arguments)
-                .Select(a => a.ToString()).ToList();
+            if (TryParseCore(parsed) is { IsDefault: false } list)
+            {
+                return list;
+            }
+
+            return ImmutableArray.Create(parsed.ToString());
         }
     }
 

@@ -7,7 +7,7 @@ using Microsoft.CodeAnalysis;
 
 namespace Microsoft.AspNetCore.Razor.Serialization;
 
-internal sealed class ProjectSnapshotHandle
+internal record ProjectSnapshotHandle
 {
     public ProjectId ProjectId { get; }
     public RazorConfiguration? Configuration { get; }

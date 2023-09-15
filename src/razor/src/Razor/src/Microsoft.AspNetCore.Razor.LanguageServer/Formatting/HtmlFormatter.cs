@@ -98,12 +98,12 @@ internal class HtmlFormatter
             return edits;
 
         // First we apply the edits that the Html language server wanted, to the Html document
-        var textChanges = edits.Select(e => e.AsTextChange(htmlSourceText));
+        var textChanges = edits.Select(e => e.ToTextChange(htmlSourceText));
         var changedText = htmlSourceText.WithChanges(textChanges);
 
         // Now we use our minimal text differ algorithm to get the bare minimum of edits
         var minimalChanges = SourceTextDiffer.GetMinimalTextChanges(htmlSourceText, changedText, DiffKind.Char);
-        var minimalEdits = minimalChanges.Select(f => f.AsTextEdit(htmlSourceText)).ToArray();
+        var minimalEdits = minimalChanges.Select(f => f.ToTextEdit(htmlSourceText)).ToArray();
 
         return minimalEdits;
     }

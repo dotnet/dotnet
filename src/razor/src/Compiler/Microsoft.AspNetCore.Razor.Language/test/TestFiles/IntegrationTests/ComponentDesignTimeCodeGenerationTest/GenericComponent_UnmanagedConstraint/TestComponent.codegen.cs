@@ -67,7 +67,7 @@ namespace __Blazor.Test.TestComponent
             where T : unmanaged
         {
         __builder.OpenComponent<global::Test.MyComponent<T>>(seq);
-        __builder.AddComponentParameter(__seq0, "Parameter", __arg0);
+        __builder.AddAttribute(__seq0, "Parameter", (object)__arg0);
         __builder.CloseComponent();
         return default;
         }

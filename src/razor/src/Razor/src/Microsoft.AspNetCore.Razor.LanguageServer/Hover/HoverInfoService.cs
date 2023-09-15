@@ -86,7 +86,12 @@ internal sealed class HoverInfoService : IHoverInfoService
         var position = new Position(location.LineIndex, location.CharacterIndex);
         var tagHelperDocumentContext = codeDocument.GetTagHelperContext();
 
-        var ancestors = owner.Ancestors();
+        // We want to find the parent tag, but looking up ancestors in the tree can find other things,
+        // for example when hovering over a start tag, the first ancestor is actually the element it
+        // belongs to, or in other words, the exact same tag! To work around this we just make sure we
+        // only check nodes that are at a different location in the file.
+        var ownerStart = owner.SpanStart;
+        var ancestors = owner.Ancestors().Where(n => n.SpanStart != ownerStart);
         var (parentTag, parentIsTagHelper) = _tagHelperFactsService.GetNearestAncestorTagInfo(ancestors);
 
         if (_htmlFactsService.TryGetElementInfo(owner, out var containingTagNameToken, out var attributes) &&

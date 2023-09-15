@@ -91,8 +91,8 @@ namespace __Blazor.Test.TestComponent
         public static global::Test.Grid<TItem> CreateGrid_0<TItem>(global::Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder, int seq, int __seq0, global::System.Collections.Generic.IEnumerable<TItem> __arg0, int __seq1, global::Microsoft.AspNetCore.Components.RenderFragment __arg1)
         {
         __builder.OpenComponent<global::Test.Grid<TItem>>(seq);
-        __builder.AddComponentParameter(__seq0, "Items", __arg0);
-        __builder.AddComponentParameter(__seq1, "ChildContent", __arg1);
+        __builder.AddAttribute(__seq0, "Items", (object)__arg0);
+        __builder.AddAttribute(__seq1, "ChildContent", (object)__arg1);
         __builder.CloseComponent();
         return default;
         }
@@ -104,7 +104,7 @@ namespace __Blazor.Test.TestComponent
         public static global::Test.Column<TItem, TOutput> CreateColumn_1<TItem, TOutput>(global::Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder, int seq, global::System.Collections.Generic.IEnumerable<TItem> __syntheticArg0, int __seq0, global::System.Func<TItem, TOutput> __arg0)
         {
         __builder.OpenComponent<global::Test.Column<TItem, TOutput>>(seq);
-        __builder.AddComponentParameter(__seq0, "SomeLambda", __arg0);
+        __builder.AddAttribute(__seq0, "SomeLambda", (object)__arg0);
         __builder.CloseComponent();
         return default;
         }

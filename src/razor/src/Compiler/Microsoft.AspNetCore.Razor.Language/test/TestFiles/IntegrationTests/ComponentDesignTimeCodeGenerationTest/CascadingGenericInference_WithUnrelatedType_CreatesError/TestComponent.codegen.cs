@@ -31,7 +31,6 @@ namespace Test
 #nullable disable
                 , out var __typeInferenceArg_0___arg0);
                 var __typeInference_CreateGrid_0 = global::__Blazor.Test.TestComponent.TypeInference.CreateGrid_0(__builder, -1, -1, __typeInferenceArg_0___arg0, -1, (__builder2) => {
-                    var __typeInference_CreateColumn_1 = global::__Blazor.Test.TestComponent.TypeInference.CreateColumn_1(__builder2, -1);
 #nullable restore
 #line 1 "x:\dir\subdir\Test\TestComponent.cshtml"
 __o = typeof(global::Test.Column<>);
@@ -72,8 +71,8 @@ namespace __Blazor.Test.TestComponent
         public static global::Test.Grid<TItem, TUnrelated> CreateGrid_0<TItem, TUnrelated>(global::Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder, int seq, int __seq0, global::System.Collections.Generic.Dictionary<TItem, TUnrelated> __arg0, int __seq1, global::Microsoft.AspNetCore.Components.RenderFragment __arg1)
         {
         __builder.OpenComponent<global::Test.Grid<TItem, TUnrelated>>(seq);
-        __builder.AddComponentParameter(__seq0, "Items", __arg0);
-        __builder.AddComponentParameter(__seq1, "ChildContent", __arg1);
+        __builder.AddAttribute(__seq0, "Items", (object)__arg0);
+        __builder.AddAttribute(__seq1, "ChildContent", (object)__arg1);
         __builder.CloseComponent();
         return default;
         }

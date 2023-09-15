@@ -89,7 +89,7 @@ internal sealed class InlineCompletionEndpoint : IRazorRequestHandler<VSInternal
 
         // Map to the location in the C# document.
         if (languageKind != RazorLanguageKind.CSharp ||
-            !_documentMappingService.TryMapToGeneratedDocumentPosition(codeDocument.GetCSharpDocument(), hostDocumentIndex, out var projectedPosition, out _))
+            !_documentMappingService.TryMapToGeneratedDocumentPosition(codeDocument.GetCSharpDocument(), hostDocumentIndex, out Position? projectedPosition, out _))
         {
             requestContext.Logger.LogInformation("Unsupported location for {textDocumentUri}.", request.TextDocument.Uri);
             return null;

@@ -314,6 +314,11 @@ internal class DefaultDocumentWriter : DocumentWriter
             Context.NodeWriter.WriteSplat(Context, node);
         }
 
+        public override void VisitRenderMode(RenderModeIntermediateNode node)
+        {
+            Context.NodeWriter.WriteRenderMode(Context, node);
+        }
+
         public override void VisitFormName(FormNameIntermediateNode node)
         {
             Context.NodeWriter.WriteFormName(Context, node);

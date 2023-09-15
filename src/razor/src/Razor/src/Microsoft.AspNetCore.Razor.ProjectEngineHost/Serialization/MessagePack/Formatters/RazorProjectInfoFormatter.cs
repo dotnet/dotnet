@@ -1,25 +1,24 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
+using System.Collections.Immutable;
 using MessagePack;
+using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.ProjectSystem;
 
 namespace Microsoft.AspNetCore.Razor.Serialization.MessagePack.Formatters;
 
-internal sealed class RazorProjectInfoFormatter : MessagePackFormatter<RazorProjectInfo>
+internal sealed class RazorProjectInfoFormatter : TopLevelFormatter<RazorProjectInfo>
 {
-    public static readonly MessagePackFormatter<RazorProjectInfo> Instance = new RazorProjectInfoFormatter();
+    public static readonly TopLevelFormatter<RazorProjectInfo> Instance = new RazorProjectInfoFormatter();
 
     private RazorProjectInfoFormatter()
     {
     }
 
-    public override RazorProjectInfo Deserialize(ref MessagePackReader reader, MessagePackSerializerOptions options)
+    public override RazorProjectInfo Deserialize(ref MessagePackReader reader, SerializerCachingOptions options)
     {
-        if (reader.NextMessagePackType != MessagePackType.Integer)
-        {
-            throw new RazorProjectInfoSerializationException(SR.Unsupported_razor_project_info_version_encountered);
-        }
+        reader.ReadArrayHeaderAndVerify(7);
 
         var version = reader.ReadInt32();
 
@@ -28,24 +27,26 @@ internal sealed class RazorProjectInfoFormatter : MessagePackFormatter<RazorProj
             throw new RazorProjectInfoSerializationException(SR.Unsupported_razor_project_info_version_encountered);
         }
 
-        var serializedFilePath = DeserializeString(ref reader, options);
-        var filePath = DeserializeString(ref reader, options);
-        var configuration = RazorConfigurationFormatter.Instance.AllowNull.Deserialize(ref reader, options);
-        var projectWorkspaceState = ProjectWorkspaceStateFormatter.Instance.AllowNull.Deserialize(ref reader, options);
-        var rootNamespace = AllowNull.DeserializeString(ref reader, options);
-        var documents = DocumentSnapshotHandleFormatter.Instance.DeserializeImmutableArray(ref reader, options);
+        var serializedFilePath = CachedStringFormatter.Instance.Deserialize(ref reader, options).AssumeNotNull();
+        var filePath = CachedStringFormatter.Instance.Deserialize(ref reader, options).AssumeNotNull();
+        var configuration = reader.DeserializeOrNull<RazorConfiguration>(options);
+        var projectWorkspaceState = reader.DeserializeOrNull<ProjectWorkspaceState>(options);
+        var rootNamespace = CachedStringFormatter.Instance.Deserialize(ref reader, options);
+        var documents = reader.Deserialize<ImmutableArray<DocumentSnapshotHandle>>(options);
 
         return new RazorProjectInfo(serializedFilePath, filePath, configuration, rootNamespace, projectWorkspaceState, documents);
     }
 
-    public override void Serialize(ref MessagePackWriter writer, RazorProjectInfo value, MessagePackSerializerOptions options)
+    public override void Serialize(ref MessagePackWriter writer, RazorProjectInfo value, SerializerCachingOptions options)
     {
+        writer.WriteArrayHeader(7);
+
         writer.Write(SerializationFormat.Version);
-        writer.Write(value.SerializedFilePath);
-        writer.Write(value.FilePath);
-        RazorConfigurationFormatter.Instance.AllowNull.Serialize(ref writer, value.Configuration, options);
-        ProjectWorkspaceStateFormatter.Instance.AllowNull.Serialize(ref writer, value.ProjectWorkspaceState, options);
-        writer.Write(value.RootNamespace);
-        DocumentSnapshotHandleFormatter.Instance.SerializeArray(ref writer, value.Documents, options);
+        CachedStringFormatter.Instance.Serialize(ref writer, value.SerializedFilePath, options);
+        CachedStringFormatter.Instance.Serialize(ref writer, value.FilePath, options);
+        writer.Serialize(value.Configuration, options);
+        writer.Serialize(value.ProjectWorkspaceState, options);
+        CachedStringFormatter.Instance.Serialize(ref writer, value.RootNamespace, options);
+        writer.Serialize(value.Documents, options);
     }
 }

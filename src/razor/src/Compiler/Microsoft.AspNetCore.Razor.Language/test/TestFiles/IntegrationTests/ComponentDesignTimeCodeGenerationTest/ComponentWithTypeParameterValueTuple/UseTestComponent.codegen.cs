@@ -102,9 +102,9 @@ namespace __Blazor.Test.UseTestComponent
         public static global::Test.TestComponent<TItem1, TItem2> CreateTestComponent_0<TItem1, TItem2>(global::Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder, int seq, int __seq0, (TItem1, TItem2) __arg0, int __seq1, global::System.Collections.Generic.List<(TItem1, TItem2)> __arg1, int __seq2, global::Microsoft.AspNetCore.Components.RenderFragment<(TItem1, TItem2)> __arg2)
         {
         __builder.OpenComponent<global::Test.TestComponent<TItem1, TItem2>>(seq);
-        __builder.AddComponentParameter(__seq0, "Item1", __arg0);
-        __builder.AddComponentParameter(__seq1, "Items2", __arg1);
-        __builder.AddComponentParameter(__seq2, "ChildContent", __arg2);
+        __builder.AddAttribute(__seq0, "Item1", (object)__arg0);
+        __builder.AddAttribute(__seq1, "Items2", (object)__arg1);
+        __builder.AddAttribute(__seq2, "ChildContent", (object)__arg2);
         __builder.CloseComponent();
         return default;
         }
