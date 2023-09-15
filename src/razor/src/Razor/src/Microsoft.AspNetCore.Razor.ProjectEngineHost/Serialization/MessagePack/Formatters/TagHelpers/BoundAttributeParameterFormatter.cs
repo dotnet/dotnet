@@ -6,26 +6,28 @@ using Microsoft.AspNetCore.Razor.Language;
 
 namespace Microsoft.AspNetCore.Razor.Serialization.MessagePack.Formatters.TagHelpers;
 
-internal sealed class BoundAttributeParameterFormatter : TagHelperObjectFormatter<BoundAttributeParameterDescriptor>
+internal sealed class BoundAttributeParameterFormatter : ValueFormatter<BoundAttributeParameterDescriptor>
 {
-    public static readonly TagHelperObjectFormatter<BoundAttributeParameterDescriptor> Instance = new BoundAttributeParameterFormatter();
+    public static readonly ValueFormatter<BoundAttributeParameterDescriptor> Instance = new BoundAttributeParameterFormatter();
 
     private BoundAttributeParameterFormatter()
     {
     }
 
-    public override BoundAttributeParameterDescriptor Deserialize(ref MessagePackReader reader, MessagePackSerializerOptions options, TagHelperSerializationCache? cache)
+    public override BoundAttributeParameterDescriptor Deserialize(ref MessagePackReader reader, SerializerCachingOptions options)
     {
-        var kind = reader.ReadString(cache).AssumeNotNull();
-        var name = reader.ReadString(cache);
-        var typeName = reader.ReadString(cache);
+        reader.ReadArrayHeaderAndVerify(9);
+
+        var kind = CachedStringFormatter.Instance.Deserialize(ref reader, options).AssumeNotNull();
+        var name = CachedStringFormatter.Instance.Deserialize(ref reader, options);
+        var typeName = CachedStringFormatter.Instance.Deserialize(ref reader, options);
         var isEnum = reader.ReadBoolean();
-        var displayName = reader.ReadString(cache);
-        var documentationObject = DocumentationObjectFormatter.Instance.Deserialize(ref reader, options, cache);
+        var displayName = CachedStringFormatter.Instance.Deserialize(ref reader, options);
+        var documentationObject = reader.Deserialize<DocumentationObject>(options);
         var caseSensitive = reader.ReadBoolean();
 
-        var metadata = MetadataCollectionFormatter.Instance.Deserialize(ref reader, options, cache);
-        var diagnostics = RazorDiagnosticFormatter.Instance.DeserializeArray(ref reader, options);
+        var metadata = reader.Deserialize<MetadataCollection>(options);
+        var diagnostics = reader.Deserialize<RazorDiagnostic[]>(options);
 
         return new DefaultBoundAttributeParameterDescriptor(
             kind, name, typeName,
@@ -33,17 +35,35 @@ internal sealed class BoundAttributeParameterFormatter : TagHelperObjectFormatte
             metadata, diagnostics);
     }
 
-    public override void Serialize(ref MessagePackWriter writer, BoundAttributeParameterDescriptor value, MessagePackSerializerOptions options, TagHelperSerializationCache? cache)
+    public override void Serialize(ref MessagePackWriter writer, BoundAttributeParameterDescriptor value, SerializerCachingOptions options)
     {
-        writer.Write(value.Kind, cache);
-        writer.Write(value.Name, cache);
-        writer.Write(value.TypeName, cache);
+        writer.WriteArrayHeader(9);
+
+        CachedStringFormatter.Instance.Serialize(ref writer, value.Kind, options);
+        CachedStringFormatter.Instance.Serialize(ref writer, value.Name, options);
+        CachedStringFormatter.Instance.Serialize(ref writer, value.TypeName, options);
         writer.Write(value.IsEnum);
-        writer.Write(value.DisplayName, cache);
-        DocumentationObjectFormatter.Instance.Serialize(ref writer, value.DocumentationObject, options, cache);
+        CachedStringFormatter.Instance.Serialize(ref writer, value.DisplayName, options);
+        writer.Serialize(value.DocumentationObject, options);
         writer.Write(value.CaseSensitive);
 
-        MetadataCollectionFormatter.Instance.Serialize(ref writer, (MetadataCollection)value.Metadata, options, cache);
-        RazorDiagnosticFormatter.Instance.SerializeArray(ref writer, value.Diagnostics, options);
+        writer.Serialize((MetadataCollection)value.Metadata, options);
+        writer.Serialize((RazorDiagnostic[])value.Diagnostics, options);
+    }
+
+    public override void Skim(ref MessagePackReader reader, SerializerCachingOptions options)
+    {
+        reader.ReadArrayHeaderAndVerify(9);
+
+        CachedStringFormatter.Instance.Skim(ref reader, options); // Kind
+        CachedStringFormatter.Instance.Skim(ref reader, options); // Name
+        CachedStringFormatter.Instance.Skim(ref reader, options); // TypeName
+        reader.Skip(); // IsEnum
+        CachedStringFormatter.Instance.Skim(ref reader, options); // DisplayName
+        DocumentationObjectFormatter.Instance.Skim(ref reader, options); // DocumentationObject
+        reader.Skip(); // CaseSensitive
+
+        MetadataCollectionFormatter.Instance.Skim(ref reader, options); // Metadata
+        RazorDiagnosticFormatter.Instance.SkimArray(ref reader, options); // Diagnostics
     }
 }

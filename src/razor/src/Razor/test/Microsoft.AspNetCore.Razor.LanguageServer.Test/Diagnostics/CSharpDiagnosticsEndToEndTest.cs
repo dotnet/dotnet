@@ -85,7 +85,7 @@ public class CSharpDiagnosticsEndToEndTest : SingleServerDelegatingEndpointTestB
         {
             // If any future test requires multiple diagnostics of the same type, please change this code :)
             var diagnostic = Assert.Single(actual, d => d.Code == code);
-            Assert.Equal(span.First(), diagnostic.Range.AsTextSpan(sourceText));
+            Assert.Equal(span.First(), diagnostic.Range.ToTextSpan(sourceText));
         }
     }
 }

@@ -511,6 +511,52 @@ public class CodeDirectiveFormattingTest : FormattingTestBase
     }
 
     [Fact]
+    public async Task Format_SectionDirectiveBlock7()
+    {
+        await RunFormattingTestAsync(
+            input: """
+                    @functions {
+                     public class Foo{
+                    void Method() {  }
+                        }
+                    }
+
+                    @section Scripts
+                    {
+                    <meta property="a" content="b">
+                    <meta property="a" content="b"/>
+                    <meta property="a" content="b">
+
+                    @if(true)
+                    {
+                    <p>this is a paragraph</p>
+                    }
+                    }
+                    """,
+            expected: """
+                    @functions {
+                        public class Foo
+                        {
+                            void Method() { }
+                        }
+                    }
+
+                    @section Scripts
+                    {
+                        <meta property="a" content="b">
+                        <meta property="a" content="b" />
+                        <meta property="a" content="b">
+
+                        @if (true)
+                        {
+                            <p>this is a paragraph</p>
+                        }
+                    }
+                    """,
+            fileKind: FileKinds.Legacy);
+    }
+
+    [Fact]
     public async Task Formats_CodeBlockDirectiveWithRazorComments()
     {
         await RunFormattingTestAsync(
@@ -1161,6 +1207,39 @@ public class CodeDirectiveFormattingTest : FormattingTestBase
     }
 
     [Fact]
+    [WorkItem("https://github.com/dotnet/razor/issues/7058")]
+    public async Task CodeBlock_ImplicitArrayInitializers()
+    {
+        await RunFormattingTestAsync(
+            input: """
+                    @code {
+                        private void M()
+                        {
+                            var entries = new[]
+                            {
+                                "a",
+                                "b",
+                                "c"
+                            };
+                        }
+                    }
+                    """,
+            expected: """
+                    @code {
+                        private void M()
+                        {
+                            var entries = new[]
+                            {
+                                "a",
+                                "b",
+                                "c"
+                            };
+                        }
+                    }
+                    """);
+    }
+
+    [Fact]
     [WorkItem("https://github.com/dotnet/razor-tooling/issues/6092")]
     public async Task CodeBlock_ArrayInitializers()
     {
@@ -1667,6 +1746,58 @@ public class CodeDirectiveFormattingTest : FormattingTestBase
                     }
                     """,
             tagHelpers: GetComponentWithTwoCascadingTypeParameter());
+    }
+
+    [Fact]
+    public async Task Formats_MultilineExpressions()
+    {
+        await RunFormattingTestAsync(
+            input: """
+                    @{
+                        var icon = "/images/bootstrap-icons.svg#"
+                            + GetIconName(login.ProviderDisplayName!);
+
+                        var x = DateTime
+                                .Now
+                            .ToString();
+                    }
+
+                    @code
+                    {
+                        public void M()
+                        {
+                            var icon2 = "/images/bootstrap-icons.svg#"
+                                + GetIconName(login.ProviderDisplayName!);
+                    
+                            var x2 = DateTime
+                                    .Now
+                                .ToString();
+                        }
+                    }
+                    """,
+            expected: """
+                    @{
+                        var icon = "/images/bootstrap-icons.svg#"
+                            + GetIconName(login.ProviderDisplayName!);
+
+                        var x = DateTime
+                                .Now
+                            .ToString();
+                    }
+                    
+                    @code
+                    {
+                        public void M()
+                        {
+                            var icon2 = "/images/bootstrap-icons.svg#"
+                                + GetIconName(login.ProviderDisplayName!);
+                    
+                            var x2 = DateTime
+                                    .Now
+                                .ToString();
+                        }
+                    }
+                    """);
     }
 
     [Fact]

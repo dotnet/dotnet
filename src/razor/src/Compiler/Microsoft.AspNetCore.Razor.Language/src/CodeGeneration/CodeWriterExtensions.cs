@@ -68,12 +68,9 @@ internal static class CodeWriterExtensions
                 {
                     break;
                 }
-                else if (@char == '\t')
-                {
-                    spaceCount += writer.TabSize;
-                }
                 else
                 {
+                    // Note that a tab is also replaced with a single space so character indices match.
                     spaceCount++;
                 }
             }

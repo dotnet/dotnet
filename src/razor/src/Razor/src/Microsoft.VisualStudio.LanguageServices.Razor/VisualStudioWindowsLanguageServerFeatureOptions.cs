@@ -14,10 +14,12 @@ internal class VisualStudioWindowsLanguageServerFeatureOptions : LanguageServerF
 {
     private const string ShowAllCSharpCodeActionsFeatureFlag = "Razor.LSP.ShowAllCSharpCodeActions";
     private const string IncludeProjectKeyInGeneratedFilePathFeatureFlag = "Razor.LSP.IncludeProjectKeyInGeneratedFilePath";
+    private const string UsePreciseSemanticTokenRangesFeatureFlag = "Razor.LSP.UsePreciseSemanticTokenRanges";
 
     private readonly LSPEditorFeatureDetector _lspEditorFeatureDetector;
     private readonly Lazy<bool> _showAllCSharpCodeActions;
     private readonly Lazy<bool> _includeProjectKeyInGeneratedFilePath;
+    private readonly Lazy<bool> _usePreciseSemanticTokenRanges;
 
     [ImportingConstructor]
     public VisualStudioWindowsLanguageServerFeatureOptions(LSPEditorFeatureDetector lspEditorFeatureDetector)
@@ -42,13 +44,20 @@ internal class VisualStudioWindowsLanguageServerFeatureOptions : LanguageServerF
             var includeProjectKeyInGeneratedFilePath = featureFlags.IsFeatureEnabled(IncludeProjectKeyInGeneratedFilePathFeatureFlag, defaultValue: true);
             return includeProjectKeyInGeneratedFilePath;
         });
+
+        _usePreciseSemanticTokenRanges = new Lazy<bool>(() =>
+        {
+            var featureFlags = (IVsFeatureFlags)AsyncPackage.GetGlobalService(typeof(SVsFeatureFlags));
+            var usePreciseSemanticTokenRanges = featureFlags.IsFeatureEnabled(UsePreciseSemanticTokenRangesFeatureFlag, defaultValue: false);
+            return usePreciseSemanticTokenRanges;
+        });
     }
 
     // We don't currently support file creation operations on VS Codespaces or VS Liveshare
     public override bool SupportsFileManipulation => !IsCodespacesOrLiveshare;
 
     // In VS we override the project configuration file name because we don't want our serialized state to clash with other platforms (VSCode)
-    public override string ProjectConfigurationFileName => "project.razor.vs.json";
+    public override string ProjectConfigurationFileName => "project.razor.vs.bin";
 
     public override string CSharpVirtualDocumentSuffix => ".ide.g.cs";
 
@@ -69,4 +78,6 @@ internal class VisualStudioWindowsLanguageServerFeatureOptions : LanguageServerF
     public override bool ShowAllCSharpCodeActions => _showAllCSharpCodeActions.Value;
 
     public override bool IncludeProjectKeyInGeneratedFilePath => _includeProjectKeyInGeneratedFilePath.Value;
+
+    public override bool UsePreciseSemanticTokenRanges => _usePreciseSemanticTokenRanges.Value;
 }

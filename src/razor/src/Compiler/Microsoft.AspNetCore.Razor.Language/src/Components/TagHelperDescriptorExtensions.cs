@@ -156,6 +156,13 @@ internal static class TagHelperDescriptorExtensions
             string.Equals(ComponentMetadata.Ref.TagHelperKind, kind);
     }
 
+    public static bool IsRenderModeTagHelper(this TagHelperDescriptor tagHelper)
+    {
+        return
+            tagHelper.Metadata.TryGetValue(ComponentMetadata.SpecialKindKey, out var kind) &&
+            string.Equals(ComponentMetadata.RenderMode.TagHelperKind, kind);
+    }
+
     /// <summary>
     /// Gets whether the component matches a tag with a fully qualified name.
     /// </summary>

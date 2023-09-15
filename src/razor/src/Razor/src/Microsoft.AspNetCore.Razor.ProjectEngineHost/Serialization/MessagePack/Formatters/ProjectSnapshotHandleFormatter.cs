@@ -1,45 +1,40 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
-using System;
 using MessagePack;
+using MessagePack.Formatters;
+using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.CodeAnalysis;
 
 namespace Microsoft.AspNetCore.Razor.Serialization.MessagePack.Formatters;
 
-internal sealed class ProjectSnapshotHandleFormatter : MessagePackFormatter<ProjectSnapshotHandle>
+internal sealed class ProjectSnapshotHandleFormatter : TopLevelFormatter<ProjectSnapshotHandle>
 {
-    public static readonly MessagePackFormatter<ProjectSnapshotHandle> Instance = new ProjectSnapshotHandleFormatter();
+    public static readonly TopLevelFormatter<ProjectSnapshotHandle> Instance = new ProjectSnapshotHandleFormatter();
 
     private ProjectSnapshotHandleFormatter()
     {
     }
 
-    public override ProjectSnapshotHandle Deserialize(ref MessagePackReader reader, MessagePackSerializerOptions options)
+    public override ProjectSnapshotHandle Deserialize(ref MessagePackReader reader, SerializerCachingOptions options)
     {
-        var projectIdString = DeserializeString(ref reader, options);
-        var configuration = RazorConfigurationFormatter.Instance.AllowNull.Deserialize(ref reader, options);
+        reader.ReadArrayHeaderAndVerify(3);
 
-        var rootNamespace = AllowNull.DeserializeString(ref reader, options);
+        var id = GuidFormatter.Instance.Deserialize(ref reader, options);
+        var projectId = ProjectId.CreateFromSerialized(id);
 
-        var projectId = ProjectId.CreateFromSerialized(Guid.Parse(projectIdString));
+        var configuration = reader.DeserializeOrNull<RazorConfiguration>(options);
+        var rootNamespace = CachedStringFormatter.Instance.Deserialize(ref reader, options);
 
         return new(projectId, configuration, rootNamespace);
     }
 
-    public override void Serialize(ref MessagePackWriter writer, ProjectSnapshotHandle value, MessagePackSerializerOptions options)
+    public override void Serialize(ref MessagePackWriter writer, ProjectSnapshotHandle value, SerializerCachingOptions options)
     {
-        writer.Write(value.ProjectId.Id.ToString());
+        writer.WriteArrayHeader(3);
 
-        if (value.Configuration is { } configuration)
-        {
-            RazorConfigurationFormatter.Instance.Serialize(ref writer, configuration, options);
-        }
-        else
-        {
-            writer.WriteNil();
-        }
-
-        writer.Write(value.RootNamespace);
+        GuidFormatter.Instance.Serialize(ref writer, value.ProjectId.Id, options);
+        writer.Serialize(value.Configuration, options);
+        CachedStringFormatter.Instance.Serialize(ref writer, value.RootNamespace, options);
     }
 }

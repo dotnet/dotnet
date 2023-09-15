@@ -868,11 +868,11 @@ public class CodeActionEndToEndTest : SingleServerDelegatingEndpointTestBase
             {
                 if (FilePathNormalizer.Normalize(change.TextDocument.Uri.GetAbsoluteOrUNCPath()) == codeBehindFilePath)
                 {
-                    codeBehindEdits.AddRange(change.Edits.Select(e => e.AsTextChange(codeBehindSourceText)));
+                    codeBehindEdits.AddRange(change.Edits.Select(e => e.ToTextChange(codeBehindSourceText)));
                 }
                 else
                 {
-                    razorEdits.AddRange(change.Edits.Select(e => e.AsTextChange(razorSourceText)));
+                    razorEdits.AddRange(change.Edits.Select(e => e.ToTextChange(razorSourceText)));
                 }
             }
 
@@ -919,7 +919,7 @@ public class CodeActionEndToEndTest : SingleServerDelegatingEndpointTestBase
         var edits = new List<TextChange>();
         foreach (var change in changes)
         {
-            edits.AddRange(change.Edits.Select(e => e.AsTextChange(sourceText)));
+            edits.AddRange(change.Edits.Select(e => e.ToTextChange(sourceText)));
         }
 
         var actual = sourceText.WithChanges(edits).ToString();
@@ -957,7 +957,7 @@ public class CodeActionEndToEndTest : SingleServerDelegatingEndpointTestBase
         var @params = new VSCodeActionParams
         {
             TextDocument = new VSTextDocumentIdentifier { Uri = uri },
-            Range = textSpan.AsRange(sourceText),
+            Range = textSpan.ToRange(sourceText),
             Context = new VSInternalCodeActionContext() { Diagnostics = diagnostics ?? Array.Empty<Diagnostic>() }
         };
 

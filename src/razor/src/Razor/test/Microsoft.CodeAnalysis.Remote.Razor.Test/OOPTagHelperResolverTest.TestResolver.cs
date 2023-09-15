@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Razor.Telemetry;
 using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Xunit;
+using Checksum = Microsoft.AspNetCore.Razor.Utilities.Checksum;
 
 namespace Microsoft.CodeAnalysis.Remote.Razor;
 
@@ -39,10 +40,10 @@ public partial class OOPTagHelperResolverTest
             return OnResolveInProcess(projectSnapshot);
         }
 
-        public ImmutableArray<TagHelperDescriptor> PublicProduceTagHelpersFromDelta(ProjectId projectId, int lastResultId, TagHelperDeltaResult deltaResult)
-            => ProduceTagHelpersFromDelta(projectId, lastResultId, deltaResult);
+        public ImmutableArray<Checksum> PublicProduceChecksumsFromDelta(ProjectId projectId, int lastResultId, TagHelperDeltaResult deltaResult)
+            => ProduceChecksumsFromDelta(projectId, lastResultId, deltaResult);
 
-        protected override ImmutableArray<TagHelperDescriptor> ProduceTagHelpersFromDelta(ProjectId projectId, int lastResultId, TagHelperDeltaResult deltaResult)
-            => base.ProduceTagHelpersFromDelta(projectId, lastResultId, deltaResult);
+        protected override ImmutableArray<Checksum> ProduceChecksumsFromDelta(ProjectId projectId, int lastResultId, TagHelperDeltaResult deltaResult)
+            => base.ProduceChecksumsFromDelta(projectId, lastResultId, deltaResult);
     }
 }

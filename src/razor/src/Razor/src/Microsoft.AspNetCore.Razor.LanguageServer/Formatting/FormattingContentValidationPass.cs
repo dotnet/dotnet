@@ -49,7 +49,7 @@ internal class FormattingContentValidationPass : FormattingPassBase
 
         var text = context.SourceText;
         var edits = result.Edits;
-        var changes = edits.Select(e => e.AsTextChange(text));
+        var changes = edits.Select(e => e.ToTextChange(text));
         var changedText = text.WithChanges(changes);
 
         if (!text.NonWhitespaceContentEquals(changedText))

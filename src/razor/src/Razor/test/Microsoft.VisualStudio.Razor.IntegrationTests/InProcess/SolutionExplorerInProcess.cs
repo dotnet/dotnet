@@ -163,7 +163,7 @@ internal partial class SolutionExplorerInProcess
         var style = "Debug";
         var framework = "net6.0";
 
-        var razorJsonPath = Path.Combine(localPath, "obj", style, framework, "project.razor.vs.json");
+        var razorJsonPath = Path.Combine(localPath, "obj", style, framework, "project.razor.vs.bin");
 
         await Helper.RetryAsync(ct =>
         {

@@ -34,6 +34,8 @@ internal static class CustomMessageNames
     public const string RazorFoldingRangeEndpoint = "razor/foldingRange";
     public const string RazorHtmlFormattingEndpoint = "razor/htmlFormatting";
     public const string RazorHtmlOnTypeFormattingEndpoint = "razor/htmlOnTypeFormatting";
+    public const string RazorSimplifyMethodEndpointName = "razor/simplifyMethod";
+    public const string RazorFormatNewFileEndpointName = "razor/formatNewFile";
 
     // VS Windows only at the moment, but could/should be migrated
     public const string RazorDocumentSymbolEndpoint = "razor/documentSymbol";
@@ -51,8 +53,6 @@ internal static class CustomMessageNames
     public const string RazorImplementationEndpointName = "razor/implementation";
 
     public const string RazorReferencesEndpointName = "razor/references";
-
-    public const string RazorSimplifyMethodEndpointName = "razor/simplifyMethod";
 
     // Called to get C# diagnostics from Roslyn when publishing diagnostics for VS Code
     public const string RazorCSharpPullDiagnosticsEndpointName = "razor/csharpPullDiagnostics";

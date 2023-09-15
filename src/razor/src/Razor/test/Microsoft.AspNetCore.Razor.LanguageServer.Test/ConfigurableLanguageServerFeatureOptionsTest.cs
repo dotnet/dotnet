@@ -29,12 +29,12 @@ public class ConfigurableLanguageServerFeatureOptionsTest
     {
         var expected = new DefaultLanguageServerFeatureOptions();
 
-        var projectRazorJsonFilename = "project.razor.test.only.file.json";
-        var args = new[] { "--projectConfigurationFilename", projectRazorJsonFilename };
+        var projectRazorBinFilename = "project.razor.test.only.file.bin";
+        var args = new[] { "--projectConfigurationFilename", projectRazorBinFilename };
 
         var actual = new ConfigurableLanguageServerFeatureOptions(args);
 
-        Assert.Equal(projectRazorJsonFilename, actual.ProjectConfigurationFileName);
+        Assert.Equal(projectRazorBinFilename, actual.ProjectConfigurationFileName);
 
         Assert.Equal(expected.SupportsFileManipulation, actual.SupportsFileManipulation);
         Assert.Equal(expected.CSharpVirtualDocumentSuffix, actual.CSharpVirtualDocumentSuffix);
@@ -49,12 +49,12 @@ public class ConfigurableLanguageServerFeatureOptionsTest
     {
         var expected = new DefaultLanguageServerFeatureOptions();
 
-        var projectRazorJsonFilename = "project.razor.test.only.file.json";
-        var args = new[] { "noise", "--projectConfigurationFilename", projectRazorJsonFilename, "ignore", "this" };
+        var projectRazorBinFilename = "project.razor.test.only.file.bin";
+        var args = new[] { "noise", "--projectConfigurationFilename", projectRazorBinFilename, "ignore", "this" };
 
         var actual = new ConfigurableLanguageServerFeatureOptions(args);
 
-        Assert.Equal(projectRazorJsonFilename, actual.ProjectConfigurationFileName);
+        Assert.Equal(projectRazorBinFilename, actual.ProjectConfigurationFileName);
 
         Assert.Equal(expected.SupportsFileManipulation, actual.SupportsFileManipulation);
         Assert.Equal(expected.CSharpVirtualDocumentSuffix, actual.CSharpVirtualDocumentSuffix);

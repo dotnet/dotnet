@@ -6,31 +6,33 @@ using Microsoft.AspNetCore.Razor.Language;
 
 namespace Microsoft.AspNetCore.Razor.Serialization.MessagePack.Formatters.TagHelpers;
 
-internal sealed class BoundAttributeFormatter : TagHelperObjectFormatter<BoundAttributeDescriptor>
+internal sealed class BoundAttributeFormatter : ValueFormatter<BoundAttributeDescriptor>
 {
-    public static readonly TagHelperObjectFormatter<BoundAttributeDescriptor> Instance = new BoundAttributeFormatter();
+    public static readonly ValueFormatter<BoundAttributeDescriptor> Instance = new BoundAttributeFormatter();
 
     private BoundAttributeFormatter()
     {
     }
 
-    public override BoundAttributeDescriptor Deserialize(ref MessagePackReader reader, MessagePackSerializerOptions options, TagHelperSerializationCache? cache)
+    public override BoundAttributeDescriptor Deserialize(ref MessagePackReader reader, SerializerCachingOptions options)
     {
-        var kind = reader.ReadString(cache).AssumeNotNull();
-        var name = reader.ReadString(cache);
-        var typeName = reader.ReadString(cache);
+        reader.ReadArrayHeaderAndVerify(14);
+
+        var kind = CachedStringFormatter.Instance.Deserialize(ref reader, options).AssumeNotNull();
+        var name = CachedStringFormatter.Instance.Deserialize(ref reader, options);
+        var typeName = CachedStringFormatter.Instance.Deserialize(ref reader, options);
         var isEnum = reader.ReadBoolean();
         var hasIndexer = reader.ReadBoolean();
-        var indexerNamePrefix = reader.ReadString(cache);
-        var indexerTypeName = reader.ReadString(cache);
-        var displayName = reader.ReadString(cache);
-        var documentationObject = DocumentationObjectFormatter.Instance.Deserialize(ref reader, options, cache);
+        var indexerNamePrefix = CachedStringFormatter.Instance.Deserialize(ref reader, options);
+        var indexerTypeName = CachedStringFormatter.Instance.Deserialize(ref reader, options);
+        var displayName = CachedStringFormatter.Instance.Deserialize(ref reader, options);
+        var documentationObject = reader.Deserialize<DocumentationObject>(options);
         var caseSensitive = reader.ReadBoolean();
         var isEditorRequired = reader.ReadBoolean();
-        var parameters = BoundAttributeParameterFormatter.Instance.DeserializeArray(ref reader, options, cache);
+        var parameters = reader.Deserialize<BoundAttributeParameterDescriptor[]>(options);
 
-        var metadata = MetadataCollectionFormatter.Instance.Deserialize(ref reader, options, cache);
-        var diagnostics = RazorDiagnosticFormatter.Instance.DeserializeArray(ref reader, options);
+        var metadata = reader.Deserialize<MetadataCollection>(options);
+        var diagnostics = reader.Deserialize<RazorDiagnostic[]>(options);
 
         return new DefaultBoundAttributeDescriptor(
             kind, name, typeName, isEnum,
@@ -39,22 +41,45 @@ internal sealed class BoundAttributeFormatter : TagHelperObjectFormatter<BoundAt
             parameters, metadata, diagnostics);
     }
 
-    public override void Serialize(ref MessagePackWriter writer, BoundAttributeDescriptor value, MessagePackSerializerOptions options, TagHelperSerializationCache? cache)
+    public override void Serialize(ref MessagePackWriter writer, BoundAttributeDescriptor value, SerializerCachingOptions options)
     {
-        writer.Write(value.Kind, cache);
-        writer.Write(value.Name, cache);
-        writer.Write(value.TypeName, cache);
+        writer.WriteArrayHeader(14);
+
+        CachedStringFormatter.Instance.Serialize(ref writer, value.Kind, options);
+        CachedStringFormatter.Instance.Serialize(ref writer, value.Name, options);
+        CachedStringFormatter.Instance.Serialize(ref writer, value.TypeName, options);
         writer.Write(value.IsEnum);
         writer.Write(value.HasIndexer);
-        writer.Write(value.IndexerNamePrefix, cache);
-        writer.Write(value.IndexerTypeName, cache);
-        writer.Write(value.DisplayName, cache);
-        DocumentationObjectFormatter.Instance.Serialize(ref writer, value.DocumentationObject, options, cache);
+        CachedStringFormatter.Instance.Serialize(ref writer, value.IndexerNamePrefix, options);
+        CachedStringFormatter.Instance.Serialize(ref writer, value.IndexerTypeName, options);
+        CachedStringFormatter.Instance.Serialize(ref writer, value.DisplayName, options);
+        writer.Serialize(value.DocumentationObject, options);
         writer.Write(value.CaseSensitive);
         writer.Write(value.IsEditorRequired);
-        BoundAttributeParameterFormatter.Instance.SerializeArray(ref writer, value.BoundAttributeParameters, options, cache);
+        writer.Serialize(value.BoundAttributeParameters, options);
 
-        MetadataCollectionFormatter.Instance.Serialize(ref writer, (MetadataCollection)value.Metadata, options, cache);
-        RazorDiagnosticFormatter.Instance.SerializeArray(ref writer, value.Diagnostics, options);
+        writer.Serialize((MetadataCollection)value.Metadata, options);
+        writer.Serialize((RazorDiagnostic[])value.Diagnostics, options);
+    }
+
+    public override void Skim(ref MessagePackReader reader, SerializerCachingOptions options)
+    {
+        reader.ReadArrayHeaderAndVerify(14);
+
+        CachedStringFormatter.Instance.Skim(ref reader, options); // Kind;
+        CachedStringFormatter.Instance.Skim(ref reader, options); // Name
+        CachedStringFormatter.Instance.Skim(ref reader, options); // TypeName
+        reader.Skip(); // IsEnum
+        reader.Skip(); // HasIndexer
+        CachedStringFormatter.Instance.Skim(ref reader, options); // IndexerNamePrefix
+        CachedStringFormatter.Instance.Skim(ref reader, options); // IndexerTypeName
+        CachedStringFormatter.Instance.Skim(ref reader, options); // DisplayName
+        DocumentationObjectFormatter.Instance.Skim(ref reader, options); // DocumentationObject
+        reader.Skip(); // CaseSenstive
+        reader.Skip(); // IsEditorRequired
+        BoundAttributeParameterFormatter.Instance.SkimArray(ref reader, options); // BoundAttributeParameters
+
+        MetadataCollectionFormatter.Instance.Skim(ref reader, options); // Metadata
+        RazorDiagnosticFormatter.Instance.SkimArray(ref reader, options); // Diagnostics
     }
 }

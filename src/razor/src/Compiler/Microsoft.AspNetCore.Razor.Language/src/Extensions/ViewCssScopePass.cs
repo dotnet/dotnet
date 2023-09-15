@@ -56,29 +56,28 @@ internal class ViewCssScopePass : IntermediateNodePassBase, IRazorOptimizationPa
             }
         }
 
-        bool IsValidElement(IntermediateToken token)
+        static bool IsValidElement(IntermediateToken token)
         {
             var content = token.Content;
-            var isValidToken = content.StartsWith("<", StringComparison.Ordinal)
-                && !content.StartsWith("</", StringComparison.Ordinal)
-                && !content.StartsWith("<!", StringComparison.Ordinal);
             /// <remarks>
             /// We want to avoid adding the CSS scope to elements that do not appear
             /// within the body element of the document. When this pass executes over the
-            /// nodes, we don't have the ability to store whether we are a descandant of a
+            /// nodes, we don't have the ability to store whether we are a descendant of a
             /// `head` or `body` element so it is not possible to discern whether the tag
             /// is valid this way. Instead, we go for a straight-forward check on the tag
             /// name that we are currently inspecting.
             /// </remarks>
-            var isInvalidTag = content.IndexOf("head", StringComparison.OrdinalIgnoreCase) >= 0
-                || content.IndexOf("meta", StringComparison.OrdinalIgnoreCase) >= 0
-                || content.IndexOf("title", StringComparison.OrdinalIgnoreCase) >= 0
-                || content.IndexOf("link", StringComparison.OrdinalIgnoreCase) >= 0
-                || content.IndexOf("base", StringComparison.OrdinalIgnoreCase) >= 0
-                || content.IndexOf("script", StringComparison.OrdinalIgnoreCase) >= 0
-                || content.IndexOf("style", StringComparison.OrdinalIgnoreCase) >= 0
-                || content.IndexOf("html", StringComparison.OrdinalIgnoreCase) >= 0;
-            return isValidToken && !isInvalidTag;
+            return content.StartsWith("<", StringComparison.Ordinal)
+                && !content.StartsWith("</", StringComparison.Ordinal)
+                && !content.StartsWith("<!", StringComparison.Ordinal)
+                && !content.Equals("<head", StringComparison.OrdinalIgnoreCase)
+                && !content.Equals("<meta", StringComparison.OrdinalIgnoreCase)
+                && !content.Equals("<title", StringComparison.OrdinalIgnoreCase)
+                && !content.Equals("<link", StringComparison.OrdinalIgnoreCase)
+                && !content.Equals("<base", StringComparison.OrdinalIgnoreCase)
+                && !content.Equals("<script", StringComparison.OrdinalIgnoreCase)
+                && !content.Equals("<style", StringComparison.OrdinalIgnoreCase)
+                && !content.Equals("<html", StringComparison.OrdinalIgnoreCase);
         }
     }
 }

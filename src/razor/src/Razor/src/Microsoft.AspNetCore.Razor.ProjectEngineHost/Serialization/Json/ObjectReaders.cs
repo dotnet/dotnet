@@ -114,13 +114,20 @@ internal static partial class ObjectReaders
 
     public static TagHelperDescriptor ReadTagHelperFromProperties(JsonDataReader reader, bool useCache)
     {
-        // Try reading the optional hashcode
-        var hashWasRead = reader.TryReadInt32(WellKnownPropertyNames.HashCode, out var hash);
-        if (useCache && hashWasRead &&
-            TagHelperDescriptorCache.TryGetDescriptor(hash, out var descriptor))
+        TagHelperDescriptor? tagHelper;
+        var checksumWasRead = false;
+
+        // Try reading the optional checksum
+        if (reader.TryReadPropertyName(WellKnownPropertyNames.Checksum))
         {
-            reader.ReadToEndOfCurrentObject();
-            return descriptor;
+            var checksum = ReadChecksum(reader);
+            checksumWasRead = true;
+
+            if (useCache && TagHelperCache.Default.TryGet(checksum, out tagHelper))
+            {
+                reader.ReadToEndOfCurrentObject();
+                return tagHelper;
+            }
         }
 
         var kind = reader.ReadNonNullString(nameof(TagHelperDescriptor.Kind));
@@ -139,19 +146,19 @@ internal static partial class ObjectReaders
         var metadata = ReadMetadata(reader, nameof(TagHelperDescriptor.Metadata));
         var diagnostics = reader.ReadArrayOrEmpty(nameof(TagHelperDescriptor.Diagnostics), ReadDiagnostic);
 
-        descriptor = new DefaultTagHelperDescriptor(
+        tagHelper = new DefaultTagHelperDescriptor(
             Cached(kind), Cached(name), Cached(assemblyName),
             Cached(displayName)!, documentationObject,
             Cached(tagOutputHint), caseSensitive,
             tagMatchingRules, boundAttributes, allowedChildTags,
             metadata, diagnostics);
 
-        if (useCache && hashWasRead)
+        if (useCache && checksumWasRead)
         {
-            TagHelperDescriptorCache.Set(hash, descriptor);
+            TagHelperCache.Default.TryAdd(tagHelper.GetChecksum(), tagHelper);
         }
 
-        return descriptor;
+        return tagHelper;
 
         static TagMatchingRuleDescriptor ReadTagMatchingRule(JsonDataReader reader)
         {
@@ -331,7 +338,7 @@ internal static partial class ObjectReaders
         }
     }
 
-    public static RazorProjectInfo ReadRazorProjectInfoFromProperties(JsonDataReader reader)
+    public static RazorProjectInfo ReadProjectInfoFromProperties(JsonDataReader reader)
     {
         if (!reader.TryReadInt32(WellKnownPropertyNames.Version, out var version) || version != SerializationFormat.Version)
         {

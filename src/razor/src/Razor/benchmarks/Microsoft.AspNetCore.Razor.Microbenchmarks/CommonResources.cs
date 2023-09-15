@@ -39,6 +39,6 @@ internal static class CommonResources
         using var reader = new StreamReader(stream);
 
         return JsonDataConvert.DeserializeData(reader,
-            static r => r.ReadNonNullObject(ObjectReaders.ReadRazorProjectInfoFromProperties));
+            static r => r.ReadNonNullObject(ObjectReaders.ReadProjectInfoFromProperties));
     }
 }

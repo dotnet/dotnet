@@ -129,7 +129,7 @@ public class ImplementationEndpointTest : SingleServerDelegatingEndpointTestBase
         {
             Assert.Equal(new Uri(razorFilePath), location.Uri);
 
-            var expectedRange = expectedSpans[i].AsRange(codeDocument.GetSourceText());
+            var expectedRange = expectedSpans[i].ToRange(codeDocument.GetSourceText());
             Assert.Equal(expectedRange, location.Range);
 
             i++;

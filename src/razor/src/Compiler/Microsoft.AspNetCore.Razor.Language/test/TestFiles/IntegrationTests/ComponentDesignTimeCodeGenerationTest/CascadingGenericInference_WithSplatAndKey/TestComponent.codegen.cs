@@ -103,8 +103,8 @@ namespace __Blazor.Test.TestComponent
         public static global::Test.Grid<TItem> CreateGrid_0<TItem>(global::Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder, int seq, int __seq0, global::System.Collections.Generic.IEnumerable<TItem> __arg0, int __seq1, global::Microsoft.AspNetCore.Components.RenderFragment __arg1, int __seq2, object __arg2)
         {
         __builder.OpenComponent<global::Test.Grid<TItem>>(seq);
-        __builder.AddComponentParameter(__seq0, "Items", __arg0);
-        __builder.AddComponentParameter(__seq1, "ChildContent", __arg1);
+        __builder.AddAttribute(__seq0, "Items", (object)__arg0);
+        __builder.AddAttribute(__seq1, "ChildContent", (object)__arg1);
         __builder.SetKey(__arg2);
         __builder.CloseComponent();
         return default;
@@ -117,8 +117,8 @@ namespace __Blazor.Test.TestComponent
         public static global::Test.Column<TItem> CreateColumn_1<TItem>(global::Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder, int seq, global::System.Collections.Generic.IEnumerable<TItem> __syntheticArg0, int __seq0, global::System.Object __arg0, int __seq1, global::System.Object __arg1, int __seq2, object __arg2)
         {
         __builder.OpenComponent<global::Test.Column<TItem>>(seq);
-        __builder.AddComponentParameter(__seq0, "Title", __arg0);
-        __builder.AddComponentParameter(__seq1, "Another", __arg1);
+        __builder.AddAttribute(__seq0, "Title", (object)__arg0);
+        __builder.AddAttribute(__seq1, "Another", (object)__arg1);
         __builder.SetKey(__arg2);
         __builder.CloseComponent();
         return default;

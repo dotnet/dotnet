@@ -121,6 +121,8 @@ internal static class ComponentMetadata
 
         public const string NameMatchKey = "Components.NameMatch";
 
+        public const string HasRenderModeDirectiveKey = "Components.HasRenderModeDirective";
+
         public const string FullyQualifiedNameMatch = "Components.FullyQualifiedNameMatch";
 
         public const string InitOnlyProperty = "Components.InitOnlyProperty";
@@ -158,6 +160,13 @@ internal static class ComponentMetadata
     public static class Ref
     {
         public const string TagHelperKind = "Components.Ref";
+
+        public const string RuntimeName = "Components.None";
+    }
+
+    public static class RenderMode
+    {
+        public const string TagHelperKind = "Components.RenderMode";
 
         public const string RuntimeName = "Components.None";
     }

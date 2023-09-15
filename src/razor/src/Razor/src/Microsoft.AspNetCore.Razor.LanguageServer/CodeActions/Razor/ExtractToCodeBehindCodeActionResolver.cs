@@ -2,41 +2,44 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using System;
-using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Language.Intermediate;
 using Microsoft.AspNetCore.Razor.LanguageServer.CodeActions.Models;
+using Microsoft.AspNetCore.Razor.LanguageServer.CodeActions.Razor;
 using Microsoft.AspNetCore.Razor.LanguageServer.Common;
 using Microsoft.AspNetCore.Razor.LanguageServer.Extensions;
+using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.AspNetCore.Razor.Utilities;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.CodeAnalysis.Formatting;
 using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Newtonsoft.Json.Linq;
-using CSharpSyntaxFactory = Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
-using CSharpSyntaxKind = Microsoft.CodeAnalysis.CSharp.SyntaxKind;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.CodeActions;
 
 internal sealed class ExtractToCodeBehindCodeActionResolver : IRazorCodeActionResolver
 {
+    private static readonly Workspace s_workspace = new AdhocWorkspace();
+
     private readonly DocumentContextFactory _documentContextFactory;
     private readonly LanguageServerFeatureOptions _languageServerFeatureOptions;
+    private readonly ClientNotifierServiceBase _languageServer;
 
     public ExtractToCodeBehindCodeActionResolver(
         DocumentContextFactory documentContextFactory,
-        LanguageServerFeatureOptions languageServerFeatureOptions)
+        LanguageServerFeatureOptions languageServerFeatureOptions,
+        ClientNotifierServiceBase languageServer)
     {
         _documentContextFactory = documentContextFactory ?? throw new ArgumentNullException(nameof(documentContextFactory));
-        _languageServerFeatureOptions = languageServerFeatureOptions;
+        _languageServerFeatureOptions = languageServerFeatureOptions ?? throw new ArgumentNullException(nameof(languageServerFeatureOptions));
+        _languageServer = languageServer ?? throw new ArgumentNullException(nameof(languageServer));
     }
 
     public string Action => LanguageServerConstants.CodeActions.ExtractToCodeBehindAction;
@@ -94,8 +97,8 @@ internal sealed class ExtractToCodeBehindCodeActionResolver : IRazorCodeActionRe
         }
 
         var className = Path.GetFileNameWithoutExtension(path);
-        var codeBlockContent = text.GetSubTextString(new CodeAnalysis.Text.TextSpan(actionParams.ExtractStart, actionParams.ExtractEnd - actionParams.ExtractStart));
-        var codeBehindContent = GenerateCodeBehindClass(className, actionParams.Namespace, codeBlockContent, codeDocument);
+        var codeBlockContent = text.GetSubTextString(new CodeAnalysis.Text.TextSpan(actionParams.ExtractStart, actionParams.ExtractEnd - actionParams.ExtractStart)).Trim();
+        var codeBehindContent = await GenerateCodeBehindClassAsync(documentContext.Project, codeBehindUri, className, actionParams.Namespace, codeBlockContent, codeDocument, cancellationToken).ConfigureAwait(false);
 
         var start = codeDocument.Source.Lines.GetLocation(actionParams.RemoveStart);
         var end = codeDocument.Source.Lines.GetLocation(actionParams.RemoveEnd);
@@ -170,51 +173,63 @@ internal sealed class ExtractToCodeBehindCodeActionResolver : IRazorCodeActionRe
         return codeBehindPath;
     }
 
-    /// <summary>
-    /// Determine all explicit and implicit using statements in the code
-    /// document using the intermediate node.
-    /// </summary>
-    /// <param name="razorCodeDocument">The code document to analyze.</param>
-    /// <returns>An enumerable of the qualified namespaces.</returns>
-    private static IEnumerable<string> FindUsings(RazorCodeDocument razorCodeDocument)
+    private async Task<string> GenerateCodeBehindClassAsync(CodeAnalysis.Razor.ProjectSystem.IProjectSnapshot project, Uri codeBehindUri, string className, string namespaceName, string contents, RazorCodeDocument razorCodeDocument, CancellationToken cancellationToken)
     {
-        return razorCodeDocument
+        using var _ = StringBuilderPool.GetPooledObject(out var builder);
+
+        var usingDirectives = razorCodeDocument
             .GetDocumentIntermediateNode()
-            .FindDescendantNodes<UsingDirectiveIntermediateNode>()
-            .Select(n => n.Content);
-    }
+            .FindDescendantNodes<UsingDirectiveIntermediateNode>();
+        foreach (var usingDirective in usingDirectives)
+        {
+            builder.Append("using ");
 
-    /// <summary>
-    /// Generate a complete C# compilation unit containing a partial class
-    /// with the given name, body contents, and the namespace and all
-    /// usings from the existing code document.
-    /// </summary>
-    /// <param name="className">Name of the resultant partial class.</param>
-    /// <param name="namespaceName">Name of the namespace to put the resultant class in.</param>
-    /// <param name="contents">Class body contents.</param>
-    /// <param name="razorCodeDocument">Existing code document we're extracting from.</param>
-    /// <returns></returns>
-    private static string GenerateCodeBehindClass(string className, string namespaceName, string contents, RazorCodeDocument razorCodeDocument)
-    {
-        var mock = (ClassDeclarationSyntax)CSharpSyntaxFactory.ParseMemberDeclaration($"class Class {contents}")!;
-        var @class = CSharpSyntaxFactory
-            .ClassDeclaration(className)
-            .AddModifiers(CSharpSyntaxFactory.Token(CSharpSyntaxKind.PublicKeyword), CSharpSyntaxFactory.Token(CSharpSyntaxKind.PartialKeyword))
-            .AddMembers(mock.Members.ToArray())
-            .WithCloseBraceToken(mock.CloseBraceToken);
+            var content = usingDirective.Content;
+            var startIndex = content.StartsWith("global::", StringComparison.Ordinal)
+                ? 8
+                : 0;
 
-        var @namespace = CSharpSyntaxFactory
-            .NamespaceDeclaration(CSharpSyntaxFactory.ParseName(namespaceName))
-            .AddMembers(@class);
+            builder.Append(content, startIndex, content.Length - startIndex);
+            builder.Append(';');
+            builder.AppendLine();
+        }
 
-        var usings = FindUsings(razorCodeDocument)
-            .Select(u => CSharpSyntaxFactory.UsingDirective(CSharpSyntaxFactory.ParseName(u)))
-            .ToArray();
-        var compilationUnit = CSharpSyntaxFactory
-            .CompilationUnit()
-            .AddUsings(usings)
-            .AddMembers(@namespace);
+        builder.AppendLine();
+        builder.Append("namespace ");
+        builder.AppendLine(namespaceName);
+        builder.Append('{');
+        builder.AppendLine();
+        builder.Append("public partial class ");
+        builder.AppendLine(className);
+        builder.AppendLine(contents);
+        builder.Append('}');
 
-        return compilationUnit.NormalizeWhitespace().ToFullString();
+        var newFileContent = builder.ToString();
+
+        var parameters = new FormatNewFileParams()
+        {
+            Project = new TextDocumentIdentifier
+            {
+                Uri = new Uri(project.FilePath, UriKind.Absolute)
+            },
+            Document = new TextDocumentIdentifier
+            {
+                Uri = codeBehindUri
+            },
+            Contents = newFileContent
+        };
+        var fixedContent = await _languageServer.SendRequestAsync<FormatNewFileParams, string?>(CustomMessageNames.RazorFormatNewFileEndpointName, parameters, cancellationToken).ConfigureAwait(false);
+
+        if (fixedContent is null)
+        {
+            // Sadly we can't use a "real" workspace here, because we don't have access. If we use our workspace, it wouldn't have the right settings
+            // for C# formatting, only Razor formatting, and we have no access to Roslyn's real workspace, since it could be in another process.
+            var node = await CSharpSyntaxTree.ParseText(newFileContent).GetRootAsync(cancellationToken).ConfigureAwait(false);
+            node = Formatter.Format(node, s_workspace);
+
+            return node.ToFullString();
+        }
+
+        return fixedContent;
     }
 }

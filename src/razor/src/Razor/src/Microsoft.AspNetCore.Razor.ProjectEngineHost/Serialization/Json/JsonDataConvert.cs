@@ -3,7 +3,7 @@
 
 using System;
 using System.IO;
-using System.Text;
+using Microsoft.AspNetCore.Razor.PooledObjects;
 using Newtonsoft.Json;
 
 namespace Microsoft.AspNetCore.Razor.Serialization.Json;
@@ -25,6 +25,18 @@ internal static class JsonDataConvert
         }
     }
 
+    public static string SerializeData(Action<JsonDataWriter> writeData)
+    {
+        using var _ = StringBuilderPool.GetPooledObject(out var builder);
+
+        using (var writer = new StringWriter(builder))
+        {
+            SerializeData(writer, writeData);
+        }
+
+        return builder.ToString();
+    }
+
     public static void SerializeObject<T>(TextWriter writer, T? value, WriteProperties<T> writeProperties)
     {
         SerializeData(writer, dataWriter => dataWriter.WriteObject(value, writeProperties));
@@ -32,7 +44,7 @@ internal static class JsonDataConvert
 
     public static string SerializeObject<T>(T? value, WriteProperties<T> writeProperties)
     {
-        var builder = new StringBuilder();
+        using var _ = StringBuilderPool.GetPooledObject(out var builder);
 
         using (var writer = new StringWriter(builder))
         {
@@ -57,6 +69,13 @@ internal static class JsonDataConvert
         {
             JsonDataReader.Return(dataReader);
         }
+    }
+
+    public static T DeserializeData<T>(string json, Func<JsonDataReader, T> readData)
+    {
+        using var reader = new StringReader(json);
+
+        return DeserializeData(reader, readData);
     }
 
     public static T? DeserializeObject<T>(TextReader reader, ReadProperties<T> readProperties)

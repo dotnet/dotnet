@@ -541,7 +541,7 @@ public class OnAutoInsertEndpointTest : SingleServerDelegatingEndpointTestBase
         Assert.False(insertProvider.Called);
         Assert.Equal(1, LanguageServer.RequestCount);
 
-        var edits = new[] { result!.TextEdit.AsTextChange(codeDocument.GetSourceText()) };
+        var edits = new[] { result!.TextEdit.ToTextChange(codeDocument.GetSourceText()) };
         var newText = codeDocument.GetSourceText().WithChanges(edits).ToString();
         Assert.Equal(expected, newText);
     }
