@@ -19,4 +19,11 @@ internal static class SourceSpanExtensions
             End = new Position(endLine, endChar),
         };
     }
+
+    public static LinePositionSpan ToLinePositionSpan(this SourceSpan sourceSpan, SourceText sourceText)
+    {
+        sourceText.GetLinesAndOffsets(sourceSpan, out var startLine, out var startChar, out var endLine, out var endChar);
+
+        return new LinePositionSpan(new(startLine, startChar), new(endLine, endChar));
+    }
 }
