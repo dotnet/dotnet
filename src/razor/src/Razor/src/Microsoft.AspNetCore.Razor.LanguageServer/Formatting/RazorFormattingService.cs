@@ -56,10 +56,13 @@ internal class RazorFormattingService : IRazorFormattingService
 
         // Despite what it looks like, codeDocument.GetCSharpDocument().Diagnostics is actually the
         // Razor diagnostics, not the C# diagnostics 🤦‍
-        if (range is not null &&
-            codeDocument.GetCSharpDocument().Diagnostics.Any(d => range.OverlapsWith(d.Span.ToRange(codeDocument.GetSourceText()))))
+        if (range is not null)
         {
-            return Array.Empty<TextEdit>();
+            var sourceText = codeDocument.GetSourceText();
+            if (codeDocument.GetCSharpDocument().Diagnostics.Any(d => d.Span != SourceSpan.Undefined && range.ToLinePositionSpan().OverlapsWith(d.Span.ToLinePositionSpan(sourceText))))
+            {
+                return Array.Empty<TextEdit>();
+            }
         }
 
         var uri = documentContext.Uri;
