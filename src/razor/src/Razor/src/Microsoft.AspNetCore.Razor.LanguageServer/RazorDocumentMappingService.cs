@@ -297,26 +297,43 @@ internal sealed class RazorDocumentMappingService : IRazorDocumentMappingService
             throw new InvalidOperationException("Cannot use document mapping service on a generated document that has a null CodeDocument.");
         }
 
-        for (var i = 0; i < generatedDocument.SourceMappings.Count; i++)
+        // We expect source mappings to be ordered by their generated document absolute index, because that is how the compiler creates them: As it
+        // outputs the generated file to the text write.
+        Debug.Assert(generatedDocument.SourceMappings.SequenceEqual(generatedDocument.SourceMappings.OrderBy(s => s.GeneratedSpan.AbsoluteIndex)));
+
+        // We can't change the compiler API type for SourceMappings (yet!), but its always an array: The constructor for DefaultRazorCSharpDocument literally
+        // takes an array and just exposes it as an IReadOnlyList to satisfy the interface.
+        var arr = (SourceMapping[])generatedDocument.SourceMappings;
+
+        var index = arr.BinarySearchBy(generatedDocumentIndex, static (mapping, generatedDocumentIndex) =>
         {
-            var mapping = generatedDocument.SourceMappings[i];
             var generatedSpan = mapping.GeneratedSpan;
             var generatedAbsoluteIndex = generatedSpan.AbsoluteIndex;
             if (generatedAbsoluteIndex <= generatedDocumentIndex)
             {
-                // Treat the mapping as owning the edge at its end (hence <= originalSpan.Length),
-                // otherwise we wouldn't handle the cursor being right after the final C# char
                 var distanceIntoGeneratedSpan = generatedDocumentIndex - generatedAbsoluteIndex;
                 if (distanceIntoGeneratedSpan <= generatedSpan.Length)
                 {
-                    // Found the generated span that contains the generated absolute index
-
-                    hostDocumentIndex = mapping.OriginalSpan.AbsoluteIndex + distanceIntoGeneratedSpan;
-                    var originalLocation = codeDocument.Source.Lines.GetLocation(hostDocumentIndex);
-                    hostDocumentPosition = new LinePosition(originalLocation.LineIndex, originalLocation.CharacterIndex);
-                    return true;
+                    return 0;
                 }
+
+                return -1;
             }
+
+            return 1;
+        });
+
+        if (index >= 0)
+        {
+            var mapping = arr[index];
+
+            var generatedAbsoluteIndex = mapping.GeneratedSpan.AbsoluteIndex;
+            var distanceIntoGeneratedSpan = generatedDocumentIndex - generatedAbsoluteIndex;
+
+            hostDocumentIndex = mapping.OriginalSpan.AbsoluteIndex + distanceIntoGeneratedSpan;
+            var originalLocation = codeDocument.Source.Lines.GetLocation(hostDocumentIndex);
+            hostDocumentPosition = new LinePosition(originalLocation.LineIndex, originalLocation.CharacterIndex);
+            return true;
         }
 
         hostDocumentPosition = default;
