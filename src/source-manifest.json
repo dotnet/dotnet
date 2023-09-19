@@ -103,10 +103,10 @@
       "commitSha": "1b1dd4fe88903afed0bc4ac78872885c45588f5a"
     },
     {
-      "packageVersion": "8.0.0-alpha.1.23468.1",
+      "packageVersion": "8.0.0-alpha.1.23469.1",
       "path": "source-build-externals",
       "remoteUri": "https://github.com/dotnet/source-build-externals",
-      "commitSha": "e9d6489787a5ea5400a31dfa34aa6ad6b590de9b"
+      "commitSha": "c42a7ce3b6fa02957e7b4ef995c5c2a9a23d294c"
     },
     {
       "packageVersion": "8.0.0-alpha.1.23463.1",
@@ -172,6 +172,11 @@
       "path": "nuget-client/submodules/NuGet.Build.Localization",
       "remoteUri": "https://github.com/NuGet/NuGet.Build.Localization.git",
       "commitSha": "f15db7b7c6f5affbea268632ef8333d2687c8031"
+    },
+    {
+      "path": "source-build-externals/src/abstractions-xunit",
+      "remoteUri": "https://github.com/xunit/abstractions.xunit",
+      "commitSha": "b75d54d73b141709f805c2001b16f3dd4d71539d"
     },
     {
       "path": "source-build-externals/src/application-insights",

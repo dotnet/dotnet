@@ -7,6 +7,8 @@
     <NuGetConfigFile Condition="'$(NuGetConfigFile)' == '' and Exists('$(ProjectDirectory)src\NuGet.Config')">$(ProjectDirectory)src\NuGet.Config</NuGetConfigFile>
   </PropertyGroup>
 
+  <UsingTask TaskName="Microsoft.DotNet.Arcade.Sdk.SourceBuild.AddSourceToNuGetConfig" AssemblyFile="$(ArcadeSdkBuildTasksAssembly)" />
+
   <Target Name="BuildRepoReferences" Condition="'@(RepositoryReference)' != '' and '$(SkipRepoReferences)' != 'true'">
     <Message Importance="High" Text="Building dependencies [@(RepositoryReference)] needed by '$(RepositoryName)'." />
     <ItemGroup>
@@ -47,16 +49,64 @@
     found instead. This lets the subrepo use the incoming intermediate nupkg contents and avoids the
     need to do subrepo-specific fixups like removing internet sources.
   -->
-  <Target Name="UpdateNuGetConfig"
-          BeforeTargets="Build"
-          Condition="'$(NuGetConfigFile)' != '' OR '@(NuGetConfigFiles)' != ''"
-          Inputs="$(MSBuildProjectFullPath)"
-          Outputs="$(RepoCompletedSemaphorePath)UpdateNuGetConfig.complete">
+  <Target Name="RemoveNuGetConfig"
+          Condition="'$(NuGetConfigFile)' != '' OR '@(NuGetConfigFiles)' != ''">
+
     <ItemGroup>
       <NuGetConfigFiles Include="$(NuGetConfigFile)" />
     </ItemGroup>
 
     <Delete Files="@(NuGetConfigFiles)" />
+  </Target>
+
+  <!--
+    Add a new nuget config file at the root of the component that includes sources for its dependencies'
+    outputs.
+  -->
+  <Target Name="AddNewNuGetConfigForDependencies"
+          Condition="'@(RepositoryReference)' != ''">
+
+    <PropertyGroup>
+      <NewNuGetConfigFile>$(ProjectDirectory)NuGet.config</NewNuGetConfigFile>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <_DependentProjectSources Include="@(RepositoryReference -> '%(Identity).proj')">
+        <RepositoryName>%(Identity)</RepositoryName>
+      </_DependentProjectSources>
+    </ItemGroup>
+
+    <MSBuild Projects="@(_DependentProjectSources)"
+          Targets="GetPackagesOutput">
+      <Output TaskParameter="TargetOutputs" ItemName="_DependencyProjectsPackagesOutput" />
+    </MSBuild>
+
+    <PropertyGroup>
+      <NewNuGetConfigContent>
+<![CDATA[
+<configuration>
+  <packageSources>
+    <clear />
+  </packageSources>
+</configuration>
+]]>
+      </NewNuGetConfigContent>
+    </PropertyGroup>
+    <WriteLinesToFile Lines="$(NewNuGetConfigContent)" File="$(NewNuGetConfigFile)" />
+
+    <AddSourceToNuGetConfig NuGetConfigFile="$(NewNuGetConfigFile)"
+                            SourceName="%(_DependencyProjectsPackagesOutput.RepositoryName)"
+                            SourcePath="%(_DependencyProjectsPackagesOutput.Identity)" />
+  </Target>
+
+  <!-- Root target for nuget updates. Removes the existing nuget config files, then adds a new one for dependencies
+       if necessary. -->
+  <Target Name="UpdateNuGetConfig"
+          DependsOnTargets="RemoveNuGetConfig;AddNewNuGetConfigForDependencies"
+          BeforeTargets="Build"
+          Condition="'$(NuGetConfigFile)' != '' OR '@(NuGetConfigFiles)' != '' OR '@(RepositoryReference)' != ''"
+          Inputs="$(MSBuildProjectFullPath)"
+          Outputs="$(RepoCompletedSemaphorePath)UpdateNuGetConfig.complete">
 
     <WriteLinesToFile File="$(RepoCompletedSemaphorePath)UpdateNuGetConfig.complete" Overwrite="true" />
   </Target>
@@ -185,6 +235,7 @@
   </Target>
 
   <Target Name="GetRepositoryReferences" Outputs="@(RepositoryReference)" />
+  <Target Name="GetPackagesOutput" Outputs="$(PackagesOutput)" />
 
   <Import Project="$([MSBuild]::GetPathOfFileAbove(Directory.Build.targets, $(MSBuildThisFileDirectory)..))" />
 </Project>
