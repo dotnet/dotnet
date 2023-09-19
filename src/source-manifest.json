@@ -7,10 +7,10 @@
       "commitSha": "1d451c32dda2314c721adbf8829e1c0cd4e681ff"
     },
     {
-      "packageVersion": "8.0.0-rc.2.23465.17",
+      "packageVersion": "8.0.0-rc.2.23468.15",
       "path": "aspnetcore",
       "remoteUri": "https://github.com/dotnet/aspnetcore",
-      "commitSha": "468ff785bc251d5a9c7ea82ebe8572a4cdcbeb39"
+      "commitSha": "263ee71b43978cda625ea52ec49ce33cdc1c8d0c"
     },
     {
       "packageVersion": "0.11.4-alpha.23461.1",
@@ -49,22 +49,22 @@
       "commitSha": "39484cca79fb827fb81ae8ea24ec3542000db080"
     },
     {
-      "packageVersion": "8.0.100-beta.23464.2",
+      "packageVersion": "8.0.100-beta.23468.6",
       "path": "fsharp",
       "remoteUri": "https://github.com/dotnet/fsharp",
-      "commitSha": "d28c79e337157c38bc716ae51eb7d487676b2129"
+      "commitSha": "6fac58b8cbc070f02e8682337dc12b4fd72fd39f"
     },
     {
       "packageVersion": "8.0.100",
       "path": "installer",
       "remoteUri": "https://github.com/dotnet/installer",
-      "commitSha": "b4c43de5619cc67f7951e55c0ab854da28470433"
+      "commitSha": "51e2d3a2f3ff5eb39592590e01b67dc1cdf4e425"
     },
     {
-      "packageVersion": "17.8.0-preview-23462-02",
+      "packageVersion": "17.8.0-preview-23468-06",
       "path": "msbuild",
       "remoteUri": "https://github.com/dotnet/msbuild",
-      "commitSha": "caf06d19326f9e7dcc06d4d4f4b04f1c6ddae5f0"
+      "commitSha": "1b84c9b5c6d264bab83114c6749def66d5656e6b"
     },
     {
       "packageVersion": "6.8.0-rc.112",
@@ -79,16 +79,16 @@
       "commitSha": "a464b979def496bcb042aa624830db228017d465"
     },
     {
-      "packageVersion": "4.8.0-3.23465.5",
+      "packageVersion": "4.8.0-3.23468.1",
       "path": "roslyn",
       "remoteUri": "https://github.com/dotnet/roslyn",
-      "commitSha": "dc3d0694a4b31b8e27038431888cd4e8dd5b6cb6"
+      "commitSha": "ce677a52cd2093e772c83a92ffd1ee1cb7975c2e"
     },
     {
-      "packageVersion": "3.11.0-beta1.23466.2",
+      "packageVersion": "3.11.0-beta1.23468.1",
       "path": "roslyn-analyzers",
       "remoteUri": "https://github.com/dotnet/roslyn-analyzers",
-      "commitSha": "1fa050b1a9660810e3287eccc89ca1e76a90da5e"
+      "commitSha": "2c9a20b6706b8a9ad650b41bff30980cf5af67ed"
     },
     {
       "packageVersion": "8.0.0-rc.2.23466.4",
@@ -97,10 +97,10 @@
       "commitSha": "287c10d2539d47268a1083c4d533cf84124900cf"
     },
     {
-      "packageVersion": "8.0.100-rc.2.23468.2",
+      "packageVersion": "8.0.100-rc.2.23469.1",
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "fdc31e7fcaeb105e9988a564c8cce5ccc304ed36"
+      "commitSha": "026b16fd25f4741bf98e5b1b7ec103a7efe41375"
     },
     {
       "packageVersion": "8.0.0-alpha.1.23468.1",
@@ -115,10 +115,10 @@
       "commitSha": "3dd2c0ef203db8fe0e849557960b4cd009afbaac"
     },
     {
-      "packageVersion": "8.0.0-beta.23466.2",
+      "packageVersion": "8.0.0-beta.23468.2",
       "path": "sourcelink",
       "remoteUri": "https://github.com/dotnet/sourcelink",
-      "commitSha": "66faef44601d69aaffd775a66dd052ec1cc5902a"
+      "commitSha": "9614c1622825102d108b1ac25f73d21d495f05a1"
     },
     {
       "packageVersion": "2.1.0-beta.23253.1",
@@ -127,10 +127,10 @@
       "commitSha": "2c8079e2e8e78c0cd11ac75a32014756136ecdb9"
     },
     {
-      "packageVersion": "8.0.100-rc.2.23467.5",
+      "packageVersion": "8.0.100-rc.2.23468.2",
       "path": "templating",
       "remoteUri": "https://github.com/dotnet/templating",
-      "commitSha": "3fc2040729510851da63b01ec6ffa00fa5587b7d"
+      "commitSha": "63165401705fa7c7404ec7317c4178ff9769c484"
     },
     {
       "packageVersion": "1.1.0-rc.23410.2",
@@ -139,10 +139,10 @@
       "commitSha": "1e5f3603af2277910aad946736ee23283e7f3e16"
     },
     {
-      "packageVersion": "17.8.0-preview-23456-01",
+      "packageVersion": "17.8.0-release-23468-02",
       "path": "vstest",
       "remoteUri": "https://github.com/microsoft/vstest",
-      "commitSha": "bb99e3ea07aaecd62d5c59568524133317d081b4"
+      "commitSha": "cf7d549fc0197abaabec19d61d2c20d7a7b089f8"
     },
     {
       "packageVersion": "7.0.0-preview.22423.2",

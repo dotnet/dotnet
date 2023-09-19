@@ -112,7 +112,7 @@
     <SystemDiagnosticsDiagnosticSourceVersion>8.0.0-rc.2.23464.16</SystemDiagnosticsDiagnosticSourceVersion>
     <SystemDiagnosticsEventLogVersion>8.0.0-rc.2.23464.16</SystemDiagnosticsEventLogVersion>
     <SystemDirectoryServicesProtocolsVersion>8.0.0-rc.2.23464.16</SystemDirectoryServicesProtocolsVersion>
-    <SystemDrawingCommonVersion>8.0.0-rc.2.23457.7</SystemDrawingCommonVersion>
+    <SystemDrawingCommonVersion>8.0.0-rc.2.23465.2</SystemDrawingCommonVersion>
     <SystemIOPipelinesVersion>8.0.0-rc.2.23464.16</SystemIOPipelinesVersion>
     <SystemNetHttpJsonVersion>8.0.0-rc.2.23464.16</SystemNetHttpJsonVersion>
     <SystemNetHttpWinHttpHandlerVersion>8.0.0-rc.2.23464.16</SystemNetHttpWinHttpHandlerVersion>
@@ -127,6 +127,7 @@
     <SystemThreadingAccessControlVersion>8.0.0-rc.2.23464.16</SystemThreadingAccessControlVersion>
     <SystemThreadingChannelsVersion>8.0.0-rc.2.23464.16</SystemThreadingChannelsVersion>
     <SystemThreadingRateLimitingVersion>8.0.0-rc.2.23464.16</SystemThreadingRateLimitingVersion>
+    <MicrosoftSourceBuildIntermediateruntimelinuxx64Version>8.0.0-rc.2.23464.16</MicrosoftSourceBuildIntermediateruntimelinuxx64Version>
     <!-- Only listed explicitly to workaround https://github.com/dotnet/cli/issues/10528 -->
     <MicrosoftNETCorePlatformsVersion>8.0.0-rc.2.23464.16</MicrosoftNETCorePlatformsVersion>
     <MicrosoftBclAsyncInterfacesVersion>8.0.0-rc.2.23464.16</MicrosoftBclAsyncInterfacesVersion>
@@ -163,7 +164,7 @@
     <MicrosoftDotNetBuildTasksTemplatingVersion>8.0.0-beta.23451.1</MicrosoftDotNetBuildTasksTemplatingVersion>
     <MicrosoftDotNetRemoteExecutorVersion>8.0.0-beta.23451.1</MicrosoftDotNetRemoteExecutorVersion>
     <!-- Packages from dotnet/source-build-externals -->
-    <MicrosoftSourceBuildIntermediatesourcebuildexternalsVersion>8.0.0-alpha.1.23462.1</MicrosoftSourceBuildIntermediatesourcebuildexternalsVersion>
+    <MicrosoftSourceBuildIntermediatesourcebuildexternalsVersion>8.0.0-alpha.1.23468.1</MicrosoftSourceBuildIntermediatesourcebuildexternalsVersion>
     <!-- Packages from dotnet/source-build-reference-packages -->
     <MicrosoftSourceBuildIntermediatesourcebuildreferencepackagesVersion>8.0.0-alpha.1.23463.1</MicrosoftSourceBuildIntermediatesourcebuildreferencepackagesVersion>
     <!-- Packages from dotnet/symreader -->
@@ -307,7 +308,7 @@
     <NewtonsoftJsonBsonVersion>1.0.2</NewtonsoftJsonBsonVersion>
     <NewtonsoftJsonVersion>13.0.3</NewtonsoftJsonVersion>
     <NSwagApiDescriptionClientVersion>13.0.4</NSwagApiDescriptionClientVersion>
-    <PhotinoNETVersion>1.1.6</PhotinoNETVersion>
+    <PhotinoNETVersion>2.4.0</PhotinoNETVersion>
     <MicrosoftPlaywrightVersion>1.28.0</MicrosoftPlaywrightVersion>
     <PollyExtensionsHttpVersion>3.0.0</PollyExtensionsHttpVersion>
     <PollyVersion>7.2.4</PollyVersion>
