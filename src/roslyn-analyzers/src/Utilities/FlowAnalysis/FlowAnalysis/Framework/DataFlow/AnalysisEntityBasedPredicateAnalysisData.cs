@@ -6,7 +6,6 @@ using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using Analyzer.Utilities.PooledObjects;
 
 namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow
 {
@@ -171,11 +170,6 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow
                 return;
             }
 
-            // Collect all the overlapping indexed entities whose value needs to be updated into a builder.
-            // Ensure that we perform these state updates after the foreach loop to avoid modifying the
-            // underlying CoreAnalysisData within the loop.
-            // See https://github.com/dotnet/roslyn-analyzers/issues/6929 for more details.
-            using var builder = ArrayBuilder<(AnalysisEntity, TValue)>.GetInstance(CoreAnalysisData.Count);
             foreach (var entity in CoreAnalysisData.Keys)
             {
                 if (entity.Indices.Length != analysisEntity.Indices.Length ||
@@ -203,14 +197,9 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow
                     var mergedValue = ValueDomain.Merge(value, existingValue);
                     if (!existingValue!.Equals(mergedValue))
                     {
-                        builder.Add((entity, mergedValue));
+                        SetAbstractValue(entity, mergedValue);
                     }
                 }
-            }
-
-            foreach (var (entity, newValue) in builder.AsEnumerable())
-            {
-                SetAbstractValue(entity, newValue);
             }
         }
 

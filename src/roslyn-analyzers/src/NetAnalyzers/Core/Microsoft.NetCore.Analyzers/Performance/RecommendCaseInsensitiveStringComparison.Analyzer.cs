@@ -38,8 +38,10 @@ namespace Microsoft.NetCore.Analyzers.Performance
         internal const string StringEqualsMethodName = "Equals";
         internal const string StringParameterName = "value";
         internal const string StringComparisonParameterName = "comparisonType";
-        internal const string LeftOffendingMethodName = "LeftOffendingMethod";
-        internal const string RightOffendingMethodName = "RightOffendingMethod";
+        internal const string CaseChangingApproachName = "CaseChangingApproach";
+        internal const string OffendingMethodName = "OffendingMethodName";
+        internal const string LeftOffendingMethodName = "LeftOffendingMethodName";
+        internal const string RightOffendingMethodName = "RightOffendingMethodName";
 
         internal static readonly DiagnosticDescriptor RecommendCaseInsensitiveStringComparisonRule = DiagnosticDescriptorHelper.Create(
             RuleId,
@@ -211,11 +213,11 @@ namespace Microsoft.NetCore.Analyzers.Performance
                 return;
             }
 
-            // a.ToLower().Method(b.ToLower())
+            // a.ToLower().Method()
             context.RegisterOperationAction(context =>
             {
-                IInvocationOperation invocation = (IInvocationOperation)context.Operation;
-                AnalyzeInvocation(context, invocation, stringType,
+                IInvocationOperation caseChangingInvocation = (IInvocationOperation)context.Operation;
+                AnalyzeInvocation(context, caseChangingInvocation, stringType,
                     containsStringMethod, startsWithStringMethod, compareToStringMethod,
                     indexOfStringMethod, indexOfStringInt32Method, indexOfStringInt32Int32Method);
             }, OperationKind.Invocation);
@@ -229,63 +231,41 @@ namespace Microsoft.NetCore.Analyzers.Performance
             }, OperationKind.Binary);
         }
 
-        private static void AnalyzeInvocation(OperationAnalysisContext context, IInvocationOperation invocation, INamedTypeSymbol stringType,
+        private static void AnalyzeInvocation(OperationAnalysisContext context, IInvocationOperation caseChangingInvocation, INamedTypeSymbol stringType,
             IMethodSymbol containsStringMethod, IMethodSymbol startsWithStringMethod, IMethodSymbol compareToStringMethod,
             IMethodSymbol indexOfStringMethod, IMethodSymbol indexOfStringInt32Method, IMethodSymbol indexOfStringInt32Int32Method)
         {
-            IMethodSymbol diagnosableMethod = invocation.TargetMethod;
+            if (!IsOffendingMethod(caseChangingInvocation, stringType, out string? offendingMethodName))
+            {
+                return;
+            }
 
-            DiagnosticDescriptor? chosenRule;
+            if (!TryGetInvocationWithoutParentheses(caseChangingInvocation, out IInvocationOperation? diagnosableInvocation))
+            {
+                return;
+            }
+
+            string caseChangingApproach = GetCaseChangingApproach(offendingMethodName);
+
+            ImmutableDictionary<string, string?> dict = new Dictionary<string, string?>()
+            {
+                { CaseChangingApproachName, caseChangingApproach }
+            }.ToImmutableDictionary();
+
+            IMethodSymbol diagnosableMethod = diagnosableInvocation.TargetMethod;
+
             if (diagnosableMethod.Equals(containsStringMethod) ||
                 diagnosableMethod.Equals(startsWithStringMethod) ||
                 diagnosableMethod.Equals(indexOfStringMethod) ||
                 diagnosableMethod.Equals(indexOfStringInt32Method) ||
                 diagnosableMethod.Equals(indexOfStringInt32Int32Method))
             {
-                chosenRule = RecommendCaseInsensitiveStringComparisonRule;
+                context.ReportDiagnostic(diagnosableInvocation.CreateDiagnostic(RecommendCaseInsensitiveStringComparisonRule, dict, diagnosableMethod.Name));
             }
             else if (diagnosableMethod.Equals(compareToStringMethod))
             {
-                chosenRule = RecommendCaseInsensitiveStringComparerRule;
+                context.ReportDiagnostic(diagnosableInvocation.CreateDiagnostic(RecommendCaseInsensitiveStringComparerRule, dict));
             }
-            else
-            {
-                return;
-            }
-
-            bool atLeastOneOffendingInvocation = false;
-
-            // First check if this is a case where the instance is a string that resulted from an offending
-            // invocation, like {a.ToLower()}.Contains(), in which case we can collect the left side.
-            string? leftOffendingMethodName = null;
-            if (TryGetInvocationWithoutParentheses(invocation.Instance, out IInvocationOperation? maybeLeftOffendingInvocation))
-            {
-                atLeastOneOffendingInvocation = IsOffendingMethod(maybeLeftOffendingInvocation, stringType, out leftOffendingMethodName);
-            }
-
-            // Now check if the first argument of Contains|StartsWith|IndexOf is an invocation on a string
-            // instance of one of the offending methods, in which case, we can collect the right side.
-            Debug.Assert(!invocation.Arguments.IsEmpty);
-            string? rightOffendingMethodName = null;
-            if (TryGetInvocationWithoutParentheses(invocation.Arguments[0].Value, out IInvocationOperation? maybeRightOffendingInvocation))
-            {
-                atLeastOneOffendingInvocation |= IsOffendingMethod(maybeRightOffendingInvocation, stringType, out rightOffendingMethodName);
-            }
-
-            if (!atLeastOneOffendingInvocation)
-            {
-                // For a diagnosis on an invocation operation, either the instance of the invocation
-                //  or the string instance of the first argument need to be an offending method.
-                return;
-            }
-
-            ImmutableDictionary<string, string?> dict = new Dictionary<string, string?>()
-            {
-                { LeftOffendingMethodName, leftOffendingMethodName },
-                { RightOffendingMethodName, rightOffendingMethodName }
-            }.ToImmutableDictionary();
-
-            context.ReportDiagnostic(invocation.CreateDiagnostic(chosenRule, dict, diagnosableMethod));
         }
 
         private static void AnalyzeBinaryOperation(OperationAnalysisContext context, IBinaryOperation binaryOperation, INamedTypeSymbol stringType)
@@ -306,43 +286,44 @@ namespace Microsoft.NetCore.Analyzers.Performance
             string? rightOffendingMethodName = null;
             if (TryGetInvocationWithoutParentheses(binaryOperation.RightOperand, out IInvocationOperation? rightInvocation))
             {
-                atLeastOneOffendingInvocation |= IsOffendingMethod(rightInvocation, stringType, out rightOffendingMethodName);
+                atLeastOneOffendingInvocation = IsOffendingMethod(rightInvocation, stringType, out rightOffendingMethodName);
             }
 
-            if (!atLeastOneOffendingInvocation)
+            if (atLeastOneOffendingInvocation)
             {
-                // For a diagnosis on a binary operation, at least one of the two sides needs to
-                // be an invocation of an offending method over a string instance.
-                return;
-            }
+                string caseChangingApproachValue = GetPreferredCaseChangingApproach(leftOffendingMethodName, rightOffendingMethodName);
 
-            ImmutableDictionary<string, string?> dict = new Dictionary<string, string?>()
+                ImmutableDictionary<string, string?> dict = new Dictionary<string, string?>()
                 {
-                    { LeftOffendingMethodName, leftOffendingMethodName },
-                    { RightOffendingMethodName, rightOffendingMethodName }
+                    { CaseChangingApproachName, caseChangingApproachValue }
                 }.ToImmutableDictionary();
 
-            context.ReportDiagnostic(binaryOperation.CreateDiagnostic(RecommendCaseInsensitiveStringEqualsRule, dict));
+                context.ReportDiagnostic(binaryOperation.CreateDiagnostic(RecommendCaseInsensitiveStringEqualsRule, dict));
+            }
         }
 
-        private static bool TryGetInvocationWithoutParentheses(IOperation? operation,
+        private static bool TryGetInvocationWithoutParentheses(IOperation operation,
             [NotNullWhen(returnValue: true)] out IInvocationOperation? diagnosableInvocation)
         {
             diagnosableInvocation = null;
-
-            IOperation? descendant = operation;
-            while (descendant is IParenthesizedOperation parenthesizedOperation)
+            if (operation is not IInvocationOperation invocationOperation)
             {
-                descendant = parenthesizedOperation.Operand;
+                return false;
             }
 
-            if (descendant is IInvocationOperation invocationDescendant)
+            IOperation? ancestor = invocationOperation.WalkUpParentheses().WalkUpConversion().Parent;
+
+            if (ancestor is IInvocationOperation invocationAncestor)
             {
-                diagnosableInvocation = invocationDescendant;
+                diagnosableInvocation = invocationAncestor;
             }
-            else if (descendant is IArgumentOperation argumentDescendant && argumentDescendant.Value is IInvocationOperation argumentInvocationDescendant)
+            else if (ancestor is IArgumentOperation argumentAncestor && argumentAncestor.Parent is IInvocationOperation argumentInvocationAncestor)
             {
-                diagnosableInvocation = argumentInvocationDescendant;
+                diagnosableInvocation = argumentInvocationAncestor;
+            }
+            else
+            {
+                diagnosableInvocation = invocationOperation;
             }
 
             return diagnosableInvocation != null;
@@ -373,6 +354,30 @@ namespace Microsoft.NetCore.Analyzers.Performance
 
             offendingMethodName = invocation.TargetMethod.Name;
             return true;
+        }
+
+        private static string GetCaseChangingApproach(string methodName)
+        {
+            if (methodName is StringToLowerMethodName or StringToUpperMethodName)
+            {
+                return StringComparisonCurrentCultureIgnoreCaseName;
+            }
+
+            Debug.Assert(methodName is StringToLowerInvariantMethodName or StringToUpperInvariantMethodName);
+            return StringComparisonInvariantCultureIgnoreCaseName;
+        }
+
+        private static string GetPreferredCaseChangingApproach(string? leftOffendingMethodName, string? rightOffendingMethodName)
+        {
+            if (leftOffendingMethodName is StringToLowerMethodName or StringToUpperMethodName ||
+                rightOffendingMethodName is StringToLowerMethodName or StringToUpperMethodName)
+            {
+                return StringComparisonCurrentCultureIgnoreCaseName;
+            }
+
+            Debug.Assert(leftOffendingMethodName is StringToLowerInvariantMethodName or StringToUpperInvariantMethodName ||
+                         rightOffendingMethodName is StringToLowerInvariantMethodName or StringToUpperInvariantMethodName);
+            return StringComparisonInvariantCultureIgnoreCaseName;
         }
     }
 }
