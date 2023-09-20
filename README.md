@@ -192,7 +192,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/runtime`  
 *[dotnet/runtime@287c10d](https://github.com/dotnet/runtime/commit/287c10d2539d47268a1083c4d533cf84124900cf)*
 - `src/sdk`  
-*[dotnet/sdk@94abff6](https://github.com/dotnet/sdk/commit/94abff6461cc40f9ba75b0a91a2b5a2690c49dbc)*
+*[dotnet/sdk@1b1dd4f](https://github.com/dotnet/sdk/commit/1b1dd4fe88903afed0bc4ac78872885c45588f5a)*
 - `src/source-build-externals`  
 *[dotnet/source-build-externals@1b64d3c](https://github.com/dotnet/source-build-externals/commit/1b64d3c0fad8af67da8f42927ce7306730224c15)*
     - `src/source-build-externals/src/application-insights`  
