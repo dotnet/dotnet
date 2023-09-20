@@ -35,8 +35,7 @@ namespace ManifestReaderTests
             }
         }
 
-        public string GetSdkFeatureBand() => "8.0.100";
-        public Dictionary<string, WorkloadSet> GetAvailableWorkloadSets() => throw new NotImplementedException();
+        public string GetSdkFeatureBand() => throw new NotImplementedException();
     }
 
     internal class InMemoryFakeManifestProvider : IWorkloadManifestProvider, IEnumerable<(string id, string content)>
@@ -58,7 +57,6 @@ namespace ManifestReaderTests
         // these are just so the collection initializer works
         public IEnumerator<(string id, string content)> GetEnumerator() => throw new NotImplementedException();
         IEnumerator IEnumerable.GetEnumerator() => throw new NotImplementedException();
-        public string GetSdkFeatureBand() => "8.0.100";
-        public Dictionary<string, WorkloadSet> GetAvailableWorkloadSets() => throw new NotImplementedException();
+        public string GetSdkFeatureBand() => throw new NotImplementedException();
     }
 }

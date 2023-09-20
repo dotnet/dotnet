@@ -201,7 +201,8 @@ namespace Microsoft.DotNet.Cli
                 return Array.Empty<string>();
             }
 
-            return ResolveRidShorthandOptions(null, arg);
+            var selfContainedSpecified = (parseResult.GetResult(SelfContainedOption) ?? parseResult.GetResult(NoSelfContainedOption)) is not null;
+            return ResolveRidShorthandOptions(null, arg, selfContainedSpecified);
         }
 
         internal static IEnumerable<string> ResolveOsOptionToRuntimeIdentifier(string arg, ParseResult parseResult)
@@ -211,12 +212,24 @@ namespace Microsoft.DotNet.Cli
                 throw new GracefulException(CommonLocalizableStrings.CannotSpecifyBothRuntimeAndOsOptions);
             }
 
-            var arch = parseResult.BothArchAndOsOptionsSpecified() ? ArchOptionValue(parseResult) : null;
-            return ResolveRidShorthandOptions(arg, arch);
+            var selfContainedSpecified = (parseResult.GetResult(SelfContainedOption) ?? parseResult.GetResult(NoSelfContainedOption)) is not null;
+            if (parseResult.BothArchAndOsOptionsSpecified())
+            {
+                return ResolveRidShorthandOptions(arg, ArchOptionValue(parseResult), selfContainedSpecified);
+            }
+
+            return ResolveRidShorthandOptions(arg, null, selfContainedSpecified);
         }
 
-        private static IEnumerable<string> ResolveRidShorthandOptions(string os, string arch) =>
-            new string[] { $"-property:RuntimeIdentifier={ResolveRidShorthandOptionsToRuntimeIdentifier(os, arch)}" };
+        private static IEnumerable<string> ResolveRidShorthandOptions(string os, string arch, bool userSpecifiedSelfContainedOption)
+        {
+            var properties = new string[] { $"-property:RuntimeIdentifier={ResolveRidShorthandOptionsToRuntimeIdentifier(os, arch)}" };
+            if (!userSpecifiedSelfContainedOption)
+            {
+                properties = properties.Append("-property:SelfContained=false").ToArray();
+            }
+            return properties;
+        }
 
         internal static string ResolveRidShorthandOptionsToRuntimeIdentifier(string os, string arch)
         {

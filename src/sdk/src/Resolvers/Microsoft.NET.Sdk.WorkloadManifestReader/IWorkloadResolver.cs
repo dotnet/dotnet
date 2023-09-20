@@ -43,7 +43,5 @@ namespace Microsoft.NET.Sdk.WorkloadManifestReader
         /// Derives a resolver from this resolver by overlaying a set of updated manifests and recomposing.
         /// </summary>
         WorkloadResolver CreateOverlayResolver(IWorkloadManifestProvider overlayManifestProvider);
-
-        IWorkloadManifestProvider GetWorkloadManifestProvider();
     }
 }

@@ -29,7 +29,7 @@ namespace Microsoft.NET.Sdk.WorkloadManifestReader
 
         public override int GetHashCode()
         {
-            return _id.GetHashCode();
+            return ToString().GetHashCode();
         }
 
         public override string ToString()

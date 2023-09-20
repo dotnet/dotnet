@@ -169,8 +169,6 @@ namespace Microsoft.NET.Sdk.Razor.Tool
                 }
             }
 
-            DiscoverCommand.PatchExtensions(ExtensionNames, ExtensionFilePaths, Error);
-
             return true;
         }
 

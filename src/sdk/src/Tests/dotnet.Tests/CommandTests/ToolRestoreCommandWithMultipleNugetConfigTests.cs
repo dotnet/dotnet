@@ -19,7 +19,7 @@ namespace Microsoft.DotNet.Tests.Commands.Tool
     public class ToolRestoreCommandWithMultipleNugetConfigTests
     {
         private readonly IFileSystem _fileSystem;
-        private ToolPackageDownloaderMock _toolPackageDownloaderMock;
+        private ToolPackageInstallerMock _toolPackageInstallerMock;
         private readonly ParseResult _parseResult;
         private readonly BufferedReporter _reporter;
         private readonly ILocalToolsResolverCache _localToolsResolverCache;
@@ -69,42 +69,44 @@ namespace Microsoft.DotNet.Tests.Commands.Tool
             _nugetConfigUnderSubDir = Path.Combine(subDir, "nuget.config");
             _fileSystem.File.CreateEmptyFile(_nugetConfigUnderSubDir);
 
-            _toolPackageDownloaderMock = new ToolPackageDownloaderMock(
-                toolPackageStoreMock,
+            _toolPackageInstallerMock = new ToolPackageInstallerMock(
                 _fileSystem,
-                _reporter,
-                new List<MockFeed>
-                {
-                    new MockFeed
+                toolPackageStoreMock,
+                new ProjectRestorerMock(
+                    _fileSystem,
+                    _reporter,
+                    new List<MockFeed>
                     {
-                        Type = MockFeedType.FeedFromLookUpNugetConfig,
-                        Uri = _nugetConfigUnderTestRoot,
-                        Packages = new List<MockFeedPackage>
+                        new MockFeed
                         {
-                            new MockFeedPackage
+                            Type = MockFeedType.FeedFromLookUpNugetConfig,
+                            Uri = _nugetConfigUnderTestRoot,
+                            Packages = new List<MockFeedPackage>
                             {
-                                PackageId = _packageIdA.ToString(),
-                                Version = _packageVersionA.ToNormalizedString(),
-                                ToolCommandName = _toolCommandNameA.ToString()
-                            },
-                        }
-                    },
+                                new MockFeedPackage
+                                {
+                                    PackageId = _packageIdA.ToString(),
+                                    Version = _packageVersionA.ToNormalizedString(),
+                                    ToolCommandName = _toolCommandNameA.ToString()
+                                },
+                            }
+                        },
 
-                    new MockFeed
-                    {
-                        Type = MockFeedType.FeedFromLookUpNugetConfig,
-                        Uri = _nugetConfigUnderSubDir,
-                        Packages = new List<MockFeedPackage>
+                        new MockFeed
                         {
-                            new MockFeedPackage
+                            Type = MockFeedType.FeedFromLookUpNugetConfig,
+                            Uri = _nugetConfigUnderSubDir,
+                            Packages = new List<MockFeedPackage>
                             {
-                                PackageId = _packageIdB.ToString(),
-                                Version = _packageVersionB.ToNormalizedString(),
-                                ToolCommandName = _toolCommandNameB.ToString()
-                            },
+                                new MockFeedPackage
+                                {
+                                    PackageId = _packageIdB.ToString(),
+                                    Version = _packageVersionB.ToNormalizedString(),
+                                    ToolCommandName = _toolCommandNameB.ToString()
+                                },
+                            }
                         }
-                    }
-                });
+                    }));
         }
 
         [Fact]
@@ -122,7 +124,7 @@ namespace Microsoft.DotNet.Tests.Commands.Tool
                 });
 
             ToolRestoreCommand toolRestoreCommand = new ToolRestoreCommand(_parseResult,
-                _toolPackageDownloaderMock,
+                _toolPackageInstallerMock,
                 manifestFinder,
                 _localToolsResolverCache,
                 _fileSystem,
@@ -180,4 +182,3 @@ namespace Microsoft.DotNet.Tests.Commands.Tool
         }
     }
 }
-

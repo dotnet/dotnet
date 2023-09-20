@@ -7,7 +7,6 @@ using Microsoft.DotNet.Cli.Utils;
 using Microsoft.DotNet.ToolPackage;
 using Microsoft.Extensions.EnvironmentAbstractions;
 using NuGet.Frameworks;
-using NuGet.Versioning;
 using LocalizableStrings = Microsoft.DotNet.Tools.Tool.Install.LocalizableStrings;
 
 namespace Microsoft.DotNet.ShellShim
@@ -58,8 +57,7 @@ namespace Microsoft.DotNet.ShellShim
             }
 
             var packageId = new PackageId($"microsoft.netcore.app.host.{rid}");
-            NuGetVersion packageVersion = null;
-            var packagePath = await _nugetPackageDownloader.DownloadPackageAsync(packageId, packageVersion, packageSourceLocation: _packageSourceLocation);
+            var packagePath = await _nugetPackageDownloader.DownloadPackageAsync(packageId, packageSourceLocation: _packageSourceLocation);
             var content = await _nugetPackageDownloader.ExtractPackageAsync(packagePath, _tempDir);
 
             return Path.Combine(_tempDir.Value, "runtimes", rid, "native");

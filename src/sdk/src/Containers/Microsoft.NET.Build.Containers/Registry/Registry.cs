@@ -361,13 +361,10 @@ internal sealed class Registry
 
     }
 
-    public Task PushAsync(BuiltImage builtImage, SourceImageReference source, DestinationImageReference destination, CancellationToken cancellationToken)
-        => PushAsync(builtImage, source, destination, pushTags: true, cancellationToken);
-
-    private async Task PushAsync(BuiltImage builtImage, SourceImageReference source, DestinationImageReference destination, bool pushTags, CancellationToken cancellationToken)
+    public async Task PushAsync(BuiltImage builtImage, SourceImageReference source, DestinationImageReference destination, CancellationToken cancellationToken)
     {
         cancellationToken.ThrowIfCancellationRequested();
-        Registry destinationRegistry = destination.RemoteRegistry!;
+        Registry destinationRegistry = destination.Registry!;
 
         Func<Descriptor, Task> uploadLayerFunc = async (descriptor) =>
         {
@@ -421,25 +418,18 @@ internal sealed class Registry
             _logger.LogInformation(Strings.Registry_ConfigUploaded);
         }
 
-        // Tags can refer to an image manifest or an image manifest list.
-        // In the first case, we push tags to the registry.
-        // In the second case, we push the manifest digest so the manifest list can refer to it.
-        if (pushTags)
+        //manifest upload
+        string manifestDigest = builtImage.Manifest.GetDigest();
+        _logger.LogInformation(Strings.Registry_ManifestUploadStarted, RegistryName, manifestDigest);
+        await _registryAPI.Manifest.PutAsync(destination.Repository, manifestDigest, builtImage.Manifest, cancellationToken).ConfigureAwait(false);
+        _logger.LogInformation(Strings.Registry_ManifestUploaded, RegistryName);
+
+        //tag upload
+        foreach (string tag in destination.Tags)
         {
-            Debug.Assert(destination.Tags.Length > 0);
-            foreach (string tag in destination.Tags)
-            {
-                _logger.LogInformation(Strings.Registry_TagUploadStarted, tag, RegistryName);
-                await _registryAPI.Manifest.PutAsync(destination.Repository, tag, builtImage.Manifest, cancellationToken).ConfigureAwait(false);
-                _logger.LogInformation(Strings.Registry_TagUploaded, tag, RegistryName);
-            }
-        }
-        else
-        {
-            string manifestDigest = builtImage.Manifest.GetDigest();
-            _logger.LogInformation(Strings.Registry_ManifestUploadStarted, RegistryName, manifestDigest);
-            await _registryAPI.Manifest.PutAsync(destination.Repository, manifestDigest, builtImage.Manifest, cancellationToken).ConfigureAwait(false);
-            _logger.LogInformation(Strings.Registry_ManifestUploaded, RegistryName);
+            _logger.LogInformation(Strings.Registry_TagUploadStarted, tag, RegistryName);
+            await _registryAPI.Manifest.PutAsync(destination.Repository, tag, builtImage.Manifest, cancellationToken).ConfigureAwait(false);
+            _logger.LogInformation(Strings.Registry_TagUploaded, tag, RegistryName);
         }
     }
 }
