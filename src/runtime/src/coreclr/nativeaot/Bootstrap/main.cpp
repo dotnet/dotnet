@@ -93,7 +93,7 @@ static char& __unbox_z = __stop___unbox;
 
 #endif // _MSC_VER
 
-extern "C" bool RhInitialize(bool isDll);
+extern "C" bool RhInitialize();
 extern "C" void RhSetRuntimeInitializationCallback(int (*fPtr)());
 
 extern "C" bool RhRegisterOSModule(void * pModule,
@@ -164,13 +164,7 @@ extern "C" void __managed__Startup();
 
 static int InitializeRuntime()
 {
-    if (!RhInitialize(
-#ifdef NATIVEAOT_DLL
-        /* isDll */ true
-#else
-        /* isDll */ false
-#endif
-        ))
+    if (!RhInitialize())
         return -1;
 
     void * osModule = PalGetModuleHandleFromPointer((void*)&NATIVEAOT_ENTRYPOINT);

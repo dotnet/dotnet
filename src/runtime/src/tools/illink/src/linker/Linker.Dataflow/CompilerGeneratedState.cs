@@ -180,8 +180,7 @@ namespace Mono.Linker.Dataflow
 
 						case OperandType.InlineField: {
 								// Same as above, but stsfld instead of a call to the constructor
-								// Ldsfld may also trigger a cctor that creates a closure environment
-								if (instruction.OpCode.Code is not (Code.Stsfld or Code.Ldsfld))
+								if (instruction.OpCode.Code is not Code.Stsfld)
 									continue;
 
 								FieldDefinition? field = _context.TryResolve ((FieldReference) instruction.Operand);
@@ -391,8 +390,7 @@ namespace Mono.Linker.Dataflow
 							handled = true;
 						}
 						break;
-					case Code.Stsfld:
-					case Code.Ldsfld: {
+					case Code.Stsfld: {
 							if (instr.Operand is FieldReference { DeclaringType: GenericInstanceType typeRef }
 								&& compilerGeneratedType == context.TryResolve (typeRef)) {
 								return typeRef;

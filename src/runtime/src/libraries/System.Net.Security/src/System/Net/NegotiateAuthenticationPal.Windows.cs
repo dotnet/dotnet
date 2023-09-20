@@ -421,32 +421,28 @@ namespace System.Net
                 Debug.Assert(success);
 
                 // alloc new output buffer if not supplied or too small
-                int resultSize = input.Length + sizes.cbSecurityTrailer + sizes.cbBlockSize;
+                int resultSize = input.Length + sizes.cbMaxSignature;
                 Span<byte> outputBuffer = outputWriter.GetSpan(resultSize);
 
                 // make a copy of user data for in-place encryption
-                input.CopyTo(outputBuffer.Slice(sizes.cbSecurityTrailer, input.Length));
+                input.CopyTo(outputBuffer.Slice(sizes.cbMaxSignature, input.Length));
 
                 isEncrypted = requestEncryption;
 
                 fixed (byte* outputPtr = outputBuffer)
                 {
                     // Prepare buffers TOKEN(signature), DATA and Padding.
-                    Interop.SspiCli.SecBuffer* unmanagedBuffer = stackalloc Interop.SspiCli.SecBuffer[3];
+                    Interop.SspiCli.SecBuffer* unmanagedBuffer = stackalloc Interop.SspiCli.SecBuffer[2];
                     Interop.SspiCli.SecBuffer* tokenBuffer = &unmanagedBuffer[0];
                     Interop.SspiCli.SecBuffer* dataBuffer = &unmanagedBuffer[1];
-                    Interop.SspiCli.SecBuffer* paddingBuffer = &unmanagedBuffer[2];
                     tokenBuffer->BufferType = SecurityBufferType.SECBUFFER_TOKEN;
                     tokenBuffer->pvBuffer = (IntPtr)(outputPtr);
-                    tokenBuffer->cbBuffer = sizes.cbSecurityTrailer;
+                    tokenBuffer->cbBuffer = sizes.cbMaxSignature;
                     dataBuffer->BufferType = SecurityBufferType.SECBUFFER_DATA;
-                    dataBuffer->pvBuffer = (IntPtr)(outputPtr + sizes.cbSecurityTrailer);
+                    dataBuffer->pvBuffer = (IntPtr)(outputPtr + sizes.cbMaxSignature);
                     dataBuffer->cbBuffer = input.Length;
-                    paddingBuffer->BufferType = SecurityBufferType.SECBUFFER_PADDING;
-                    paddingBuffer->pvBuffer = (IntPtr)(outputPtr + sizes.cbSecurityTrailer + input.Length);
-                    paddingBuffer->cbBuffer = sizes.cbBlockSize;
 
-                    Interop.SspiCli.SecBufferDesc sdcInOut = new Interop.SspiCli.SecBufferDesc(3)
+                    Interop.SspiCli.SecBufferDesc sdcInOut = new Interop.SspiCli.SecBufferDesc(2)
                     {
                         pBuffers = unmanagedBuffer
                     };
@@ -464,20 +460,7 @@ namespace System.Net
                         };
                     }
 
-                    // Compact the result
-                    if (tokenBuffer->cbBuffer != sizes.cbSecurityTrailer)
-                    {
-                        outputBuffer.Slice(sizes.cbSecurityTrailer, dataBuffer->cbBuffer).CopyTo(
-                            outputBuffer.Slice(tokenBuffer->cbBuffer, dataBuffer->cbBuffer));
-                    }
-                    if (tokenBuffer->cbBuffer != sizes.cbSecurityTrailer ||
-                        paddingBuffer->cbBuffer != sizes.cbBlockSize)
-                    {
-                        outputBuffer.Slice(sizes.cbSecurityTrailer + input.Length, paddingBuffer->cbBuffer).CopyTo(
-                            outputBuffer.Slice(tokenBuffer->cbBuffer + dataBuffer->cbBuffer, paddingBuffer->cbBuffer));
-                    }
-
-                    outputWriter.Advance(tokenBuffer->cbBuffer + dataBuffer->cbBuffer + paddingBuffer->cbBuffer);
+                    outputWriter.Advance(tokenBuffer->cbBuffer + dataBuffer->cbBuffer);
                     return NegotiateAuthenticationStatusCode.Completed;
                 }
             }

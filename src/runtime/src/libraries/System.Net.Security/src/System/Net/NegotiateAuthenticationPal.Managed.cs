@@ -9,23 +9,16 @@ namespace System.Net
     {
         public static NegotiateAuthenticationPal Create(NegotiateAuthenticationClientOptions clientOptions)
         {
-            try
+            switch (clientOptions.Package)
             {
-                switch (clientOptions.Package)
-                {
-                    case NegotiationInfoClass.NTLM:
-                        return new ManagedNtlmNegotiateAuthenticationPal(clientOptions);
+                case NegotiationInfoClass.NTLM:
+                    return new ManagedNtlmNegotiateAuthenticationPal(clientOptions);
 
-                    case NegotiationInfoClass.Negotiate:
-                        return new ManagedSpnegoNegotiateAuthenticationPal(clientOptions);
+                case NegotiationInfoClass.Negotiate:
+                    return new ManagedSpnegoNegotiateAuthenticationPal(clientOptions);
 
-                    default:
-                        return new UnsupportedNegotiateAuthenticationPal(clientOptions);
-                }
-            }
-            catch (PlatformNotSupportedException)
-            {
-                return new UnsupportedNegotiateAuthenticationPal(clientOptions);
+                default:
+                    return new UnsupportedNegotiateAuthenticationPal(clientOptions);
             }
         }
 

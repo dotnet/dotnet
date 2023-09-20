@@ -180,11 +180,7 @@ STDAPI DLLEXPORT OpenVirtualProcessImpl2(
     IUnknown ** ppInstance,
     CLR_DEBUGGING_PROCESS_FLAGS* pFlagsOut)
 {
-#ifdef TARGET_WINDOWS
-    HMODULE hDac = LoadLibraryExW(pDacModulePath, NULL, LOAD_WITH_ALTERED_SEARCH_PATH);
-#else
     HMODULE hDac = LoadLibraryW(pDacModulePath);
-#endif // !TARGET_WINDOWS
     if (hDac == NULL)
     {
         return HRESULT_FROM_WIN32(GetLastError());

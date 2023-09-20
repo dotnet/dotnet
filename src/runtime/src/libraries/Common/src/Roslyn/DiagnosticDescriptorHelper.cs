@@ -17,7 +17,7 @@ namespace Microsoft.CodeAnalysis.DotnetRuntime.Extensions
             LocalizableString? description = null,
             params string[] customTags)
         {
-            string helpLink = $"https://learn.microsoft.com/dotnet/fundamentals/syslib-diagnostics/{id.ToLowerInvariant()}";
+            string helpLink = $"https://learn.microsoft.com/dotnet/fundamentals/syslib-diagnostics/{id.ToLowerInvariant()}.md";
 
             return new DiagnosticDescriptor(id, title, messageFormat, category, defaultSeverity, isEnabledByDefault, description, helpLink, customTags);
         }

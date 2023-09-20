@@ -9031,9 +9031,9 @@ void Compiler::optRemoveRedundantZeroInits()
     CompAllocator   allocator(getAllocator(CMK_ZeroInit));
     LclVarRefCounts refCounts(allocator);
     BitVecTraits    bitVecTraits(lvaCount, this);
-    BitVec          zeroInitLocals         = BitVecOps::MakeEmpty(&bitVecTraits);
-    bool            hasGCSafePoint         = false;
-    bool            hasImplicitControlFlow = false;
+    BitVec          zeroInitLocals = BitVecOps::MakeEmpty(&bitVecTraits);
+    bool            hasGCSafePoint = false;
+    bool            canThrow       = false;
 
     assert(fgNodeThreading == NodeThreading::AllTrees);
 
@@ -9044,8 +9044,6 @@ void Compiler::optRemoveRedundantZeroInits()
         CompAllocator   allocator(getAllocator(CMK_ZeroInit));
         LclVarRefCounts defsInBlock(allocator);
         bool            removedTrackedDefs = false;
-        bool            hasEHSuccs         = block->HasPotentialEHSuccs(this);
-
         for (Statement* stmt = block->FirstNonPhiDef(); stmt != nullptr;)
         {
             Statement* next = stmt->GetNextStmt();
@@ -9056,7 +9054,10 @@ void Compiler::optRemoveRedundantZeroInits()
                     hasGCSafePoint = true;
                 }
 
-                hasImplicitControlFlow |= hasEHSuccs && ((tree->gtFlags & GTF_EXCEPT) != 0);
+                if ((tree->gtFlags & GTF_EXCEPT) != 0)
+                {
+                    canThrow = true;
+                }
 
                 switch (tree->gtOper)
                 {
@@ -9202,8 +9203,7 @@ void Compiler::optRemoveRedundantZeroInits()
                             }
                         }
 
-                        if (!removedExplicitZeroInit && isEntire &&
-                            (!hasImplicitControlFlow || (lclDsc->lvTracked && !lclDsc->lvLiveInOutOfHndlr)))
+                        if (!removedExplicitZeroInit && isEntire && (!canThrow || !lclDsc->lvLiveInOutOfHndlr))
                         {
                             // If compMethodRequiresPInvokeFrame() returns true, lower may later
                             // insert a call to CORINFO_HELP_INIT_PINVOKE_FRAME which is a gc-safe point.

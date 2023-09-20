@@ -11,7 +11,6 @@ using System.Threading;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-using SourceGenerators;
 
 namespace System.Text.Json.SourceGeneration
 {
@@ -1610,12 +1609,9 @@ namespace System.Text.Json.SourceGeneration
 
                 sb.Append(name);
 
-                if (namedType.GetAllTypeArgumentsInScope() is List<ITypeSymbol> typeArgsInScope)
+                foreach (ITypeSymbol genericArg in namedType.GetAllTypeArgumentsInScope())
                 {
-                    foreach (ITypeSymbol genericArg in typeArgsInScope)
-                    {
-                        sb.Append(GetTypeInfoPropertyName(genericArg));
-                    }
+                    sb.Append(GetTypeInfoPropertyName(genericArg));
                 }
 
                 return sb.ToString();

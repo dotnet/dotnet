@@ -37,9 +37,6 @@ namespace Microsoft.Extensions.DependencyInjection
         internal static bool VerifyOpenGenericServiceTrimmability { get; } =
             AppContext.TryGetSwitch("Microsoft.Extensions.DependencyInjection.VerifyOpenGenericServiceTrimmability", out bool verifyOpenGenerics) ? verifyOpenGenerics : false;
 
-        internal static bool DisableDynamicEngine { get; } =
-            AppContext.TryGetSwitch("Microsoft.Extensions.DependencyInjection.DisableDynamicEngine", out bool disableDynamicEngine) ? disableDynamicEngine : false;
-
         internal static bool VerifyAotCompatibility =>
 #if NETFRAMEWORK || NETSTANDARD2_0
             false;
@@ -249,7 +246,7 @@ namespace Microsoft.Extensions.DependencyInjection
 #if NETFRAMEWORK || NETSTANDARD2_0
             engine = CreateDynamicEngine();
 #else
-            if (RuntimeFeature.IsDynamicCodeCompiled && !DisableDynamicEngine)
+            if (RuntimeFeature.IsDynamicCodeCompiled)
             {
                 engine = CreateDynamicEngine();
             }
