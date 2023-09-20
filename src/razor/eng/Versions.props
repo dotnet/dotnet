@@ -110,7 +110,9 @@
     <MicrosoftNETSdkRazorPackageVersion>6.0.0-alpha.1.21072.5</MicrosoftNETSdkRazorPackageVersion>
     <!-- Packages from dotnet/roslyn -->
     <MicrosoftNetCompilersToolsetVersion>$(MicrosoftNetCompilersToolsetPackageVersion)</MicrosoftNetCompilersToolsetVersion>
-    <MicrosoftCodeAnalysisAnalyzerTestingPackageVersion>1.1.2-beta1.23323.1</MicrosoftCodeAnalysisAnalyzerTestingPackageVersion>
+    <MicrosoftCodeAnalysisAnalyzerTestingPackageVersion>1.1.2-beta1.23431.1</MicrosoftCodeAnalysisAnalyzerTestingPackageVersion>
+    <MicrosoftCodeAnalysisCSharpAnalyzerTestingXUnitPackageVersion>1.1.2-beta1.23431.1</MicrosoftCodeAnalysisCSharpAnalyzerTestingXUnitPackageVersion>
+    <MicrosoftCodeAnalysisTestingVerifiersXUnitPackageVersion>1.1.2-beta1.23431.1</MicrosoftCodeAnalysisTestingVerifiersXUnitPackageVersion>
     <MicrosoftVisualStudioEditorPackageVersion>$(MicrosoftVisualStudioPackagesVersion)</MicrosoftVisualStudioEditorPackageVersion>
     <MicrosoftVisualStudioExtensibilityTestingXunitVersion>0.1.169-beta</MicrosoftVisualStudioExtensibilityTestingXunitVersion>
     <MicrosoftVisualStudioExtensibilityTestingSourceGeneratorVersion>$(MicrosoftVisualStudioExtensibilityTestingXunitVersion)</MicrosoftVisualStudioExtensibilityTestingSourceGeneratorVersion>

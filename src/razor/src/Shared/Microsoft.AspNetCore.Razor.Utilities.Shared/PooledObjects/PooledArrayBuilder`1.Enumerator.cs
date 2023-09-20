@@ -1,51 +1,32 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
-using System.Collections;
-using System.Collections.Generic;
-using System.Collections.Immutable;
+using Microsoft.AspNetCore.Razor.Utilities;
 
 namespace Microsoft.AspNetCore.Razor.PooledObjects;
 
-internal ref partial struct PooledArrayBuilder<T>
+internal partial struct PooledArrayBuilder<T>
 {
-    public struct Enumerator : IEnumerator<T>
+    [NonCopyable]
+    public struct Enumerator(in PooledArrayBuilder<T> builder)
     {
-        private readonly ImmutableArray<T>.Builder? _builder;
-        private int _index;
-        private T? _current;
+        // Enumerate a copy of the original.
+        private readonly PooledArrayBuilder<T> _builder = new(builder);
+        private int _index = 0;
+        private T _current = default!;
 
-        public Enumerator(ImmutableArray<T>.Builder builder)
-        {
-            _builder = builder;
-            _index = 0;
-            _current = default;
-        }
-
-        public T Current => _current!;
-
-        object? IEnumerator.Current => Current;
-
-        public readonly void Dispose()
-        {
-        }
+        public readonly T Current => _current;
 
         public bool MoveNext()
         {
-            if (_builder is { } builder && _index < builder.Count)
+            if (_index >= _builder.Count)
             {
-                _current = builder[_index];
-                _index++;
-                return true;
+                return false;
             }
 
-            return false;
-        }
-
-        void IEnumerator.Reset()
-        {
-            _index = 0;
-            _current = default;
+            _current = _builder[_index];
+            _index++;
+            return true;
         }
     }
 }
