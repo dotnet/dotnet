@@ -194,13 +194,11 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/sdk`  
 *[dotnet/sdk@94abff6](https://github.com/dotnet/sdk/commit/94abff6461cc40f9ba75b0a91a2b5a2690c49dbc)*
 - `src/source-build-externals`  
-*[dotnet/source-build-externals@c42a7ce](https://github.com/dotnet/source-build-externals/commit/c42a7ce3b6fa02957e7b4ef995c5c2a9a23d294c)*
-    - `src/source-build-externals/src/abstractions-xunit`  
-    *[xunit/abstractions.xunit@b75d54d](https://github.com/xunit/abstractions.xunit/commit/b75d54d73b141709f805c2001b16f3dd4d71539d)*
+*[dotnet/source-build-externals@1b64d3c](https://github.com/dotnet/source-build-externals/commit/1b64d3c0fad8af67da8f42927ce7306730224c15)*
     - `src/source-build-externals/src/application-insights`  
     *[Microsoft/ApplicationInsights-dotnet@5e2e7dd](https://github.com/Microsoft/ApplicationInsights-dotnet/commit/5e2e7ddda961ec0e16a75b1ae0a37f6a13c777f5)*
     - `src/source-build-externals/src/azure-activedirectory-identitymodel-extensions-for-dotnet`  
-    *[AzureAD/azure-activedirectory-identitymodel-extensions-for-dotnet@bf4cb25](https://github.com/AzureAD/azure-activedirectory-identitymodel-extensions-for-dotnet/commit/bf4cb251a85f1b27bbb208c703f6f3105bdb24ca)*
+    *[AzureAD/azure-activedirectory-identitymodel-extensions-for-dotnet@4c14904](https://github.com/AzureAD/azure-activedirectory-identitymodel-extensions-for-dotnet/commit/4c14904c4c48c5f9d521254ef3b4532627f7bbec)*
     - `src/source-build-externals/src/cssparser`  
     *[dotnet/cssparser@0d59611](https://github.com/dotnet/cssparser/commit/0d59611784841735a7778a67aa6e9d8d000c861f)*
     - `src/source-build-externals/src/docker-creds-provider`  
@@ -208,7 +206,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
     - `src/source-build-externals/src/humanizer`  
     *[Humanizr/Humanizer@3ebc38d](https://github.com/Humanizr/Humanizer/commit/3ebc38de585fc641a04b0e78ed69468453b0f8a1)*
     - `src/source-build-externals/src/MSBuildLocator`  
-    *[microsoft/MSBuildLocator@4507992](https://github.com/microsoft/MSBuildLocator/commit/450799210a4856fc099889684bfb131844f766ff)*
+    *[microsoft/MSBuildLocator@5484ae4](https://github.com/microsoft/MSBuildLocator/commit/5484ae4729a60a01724987a4e6658ea506ef279d)*
     - `src/source-build-externals/src/newtonsoft-json`  
     *[JamesNK/Newtonsoft.Json@0a2e291](https://github.com/JamesNK/Newtonsoft.Json/commit/0a2e291c0d9c0c7675d445703e51750363a549ef)*
     - `src/source-build-externals/src/xunit`  
