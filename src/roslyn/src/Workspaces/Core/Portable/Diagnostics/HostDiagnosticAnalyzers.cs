@@ -8,7 +8,6 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using Microsoft.CodeAnalysis.PooledObjects;
 using Roslyn.Utilities;
 
 namespace Microsoft.CodeAnalysis.Diagnostics
@@ -221,8 +220,7 @@ namespace Microsoft.CodeAnalysis.Diagnostics
         {
             var builder = ImmutableDictionary.CreateBuilder<object, ImmutableArray<DiagnosticAnalyzer>>();
 
-            // Randomize the order we process analyzer references to minimize static constructor/JIT contention during analyzer instantiation.
-            foreach (var reference in Shuffle(analyzerReferencesMap))
+            foreach (var reference in analyzerReferencesMap)
             {
                 var analyzers = language == null ? reference.Value.GetAnalyzersForAllLanguages() : reference.Value.GetAnalyzers(language);
                 if (analyzers.Length == 0)
@@ -235,26 +233,6 @@ namespace Microsoft.CodeAnalysis.Diagnostics
             }
 
             return builder.ToImmutable();
-
-            static IEnumerable<KeyValuePair<object, AnalyzerReference>> Shuffle(IDictionary<object, AnalyzerReference> source)
-            {
-                var random =
-#if NET6_0_OR_GREATER
-                        Random.Shared;
-#else
-                        new Random();
-#endif
-
-                using var _ = ArrayBuilder<KeyValuePair<object, AnalyzerReference>>.GetInstance(source.Count, out var builder);
-                builder.AddRange(source);
-
-                for (var i = builder.Count - 1; i >= 0; i--)
-                {
-                    var swapIndex = random.Next(i + 1);
-                    yield return builder[swapIndex];
-                    builder[swapIndex] = builder[i];
-                }
-            }
         }
 
         private static ImmutableDictionary<object, AnalyzerReference> CreateAnalyzerReferencesMap(IEnumerable<AnalyzerReference> analyzerReferences)

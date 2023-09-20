@@ -5,18 +5,11 @@ using System.Collections.Concurrent;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq.Expressions;
 using System.Reflection;
-using System.Runtime.Serialization;
-using Microsoft.AspNetCore.Components.HotReload;
 
 namespace Microsoft.AspNetCore.Components.Forms;
 
 internal static class ExpressionFormatter
 {
-    static ExpressionFormatter()
-    {
-        HotReloadManager.Default.OnDeltaApplied += ClearCache;
-    }
-
     internal const int StackAllocBufferSize = 128;
 
     private delegate void CapturedValueFormatter(object closure, ref ReverseStringBuilder builder);
@@ -112,7 +105,7 @@ internal static class ExpressionFormatter
                     wasLastExpressionMemberAccess = true;
                     wasLastExpressionIndexer = false;
 
-                    var name = memberExpression.Member.GetCustomAttribute<DataMemberAttribute>()?.Name ?? memberExpression.Member.Name;
+                    var name = memberExpression.Member.Name;
                     builder.InsertFront(name);
 
                     break;

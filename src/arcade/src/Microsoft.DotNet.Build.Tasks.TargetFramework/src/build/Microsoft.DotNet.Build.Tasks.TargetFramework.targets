@@ -55,7 +55,7 @@
     <ChooseBestP2PTargetFrameworkTask AnnotatedProjectReferences="@(_ProjectReferenceWithTargetFrameworks)"
                                       CurrentProjectTargetFramework="$(ReferringTargetFrameworkForProjectReferences)"
                                       CurrentProjectTargetPlatform="$(TargetPlatformMoniker)"
-                                      RuntimeGraph="$([MSBuild]::ValueOrDefault('$(RuntimeIdentifierGraphPath)', '$(BundledRuntimeIdentifierGraphFile)'))"
+                                      RuntimeGraph="$(BundledRuntimeIdentifierGraphFile)"
                                       OmitIncompatibleProjectReferences="$(OmitIncompatibleProjectReferences)">
       <Output TaskParameter="AssignedProjects" ItemName="AnnotatedProjects" />
     </ChooseBestP2PTargetFrameworkTask>

@@ -14,7 +14,7 @@ namespace NuGet.PackageManagement
         public ActionsTelemetryEvent(
             string operationId,
             string[] projectIds,
-            NuGetProjectActionType operationType,
+            NuGetOperationType operationType,
             DateTimeOffset startTime,
             NuGetOperationStatus status,
             int packageCount,
@@ -26,6 +26,27 @@ namespace NuGet.PackageManagement
 
         public const string NugetActionEventName = "NugetAction";
 
-        public NuGetProjectActionType OperationType => (NuGetProjectActionType)base[nameof(OperationType)];
+        public NuGetOperationType OperationType => (NuGetOperationType)base[nameof(OperationType)];
+    }
+
+    /// <summary>
+    /// Define nuget operation type values.
+    /// </summary>
+    public enum NuGetOperationType
+    {
+        /// <summary>
+        /// Install package action.
+        /// </summary>
+        Install = 0,
+
+        /// <summary>
+        /// Update package action.
+        /// </summary>
+        Update = 1,
+
+        /// <summary>
+        /// Uninstall package action.
+        /// </summary>
+        Uninstall = 2,
     }
 }

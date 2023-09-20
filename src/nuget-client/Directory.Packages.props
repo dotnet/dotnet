@@ -3,8 +3,7 @@
     <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
 
     <MicrosoftCodeAnalysisPublicApiAnalyzersVersion Condition="'$(MicrosoftCodeAnalysisPublicApiAnalyzersVersion)' == ''">3.3.4</MicrosoftCodeAnalysisPublicApiAnalyzersVersion>
-    <NewtonsoftJsonPackageVersion Condition="'$(NewtonsoftJsonPackageVersion)' == ''">13.0.3</NewtonsoftJsonPackageVersion>
-    <SystemTextJsonVersion Condition="'$(SystemTextJsonVersion)' == ''">7.0.3</SystemTextJsonVersion>
+    <NewtonsoftJsonPackageVersion Condition="'$(NewtonsoftJsonPackageVersion)' == ''">13.0.1</NewtonsoftJsonPackageVersion>
     <SystemPackagesVersion Condition="'$(SystemPackagesVersion)' == ''">4.3.0</SystemPackagesVersion>
     <VSFrameworkVersion Condition="'$(VSFrameworkVersion)' == ''">17.4.33103.184</VSFrameworkVersion>
     <VSServicesVersion Condition="'$(VSServicesVersion)' == ''">16.153.0</VSServicesVersion>
@@ -100,7 +99,6 @@
     <PackageVersion Include="System.Security.Cryptography.ProtectedData" Version="4.4.0" />
     <PackageVersion Include="System.Security.Cryptography.Xml" Version="$(SystemSecurityCryptographyXmlVersion)" />
     <PackageVersion Include="System.Text.Encoding.Extensions" Version="$(SystemPackagesVersion)" />
-    <PackageVersion Include="System.Text.Json" Version="$(SystemTextJsonVersion)" />
     <PackageVersion Include="System.Threading" Version="$(SystemPackagesVersion)" />
     <PackageVersion Include="System.Threading.Tasks" Version="$(SystemPackagesVersion)" />
     <!--
@@ -189,7 +187,6 @@
       <_allowBuildFromSourcePackage Include="System.Security.Cryptography.Pkcs" />
       <_allowBuildFromSourcePackage Include="System.Security.Cryptography.ProtectedData" />
       <_allowBuildFromSourcePackage Include="System.Security.Cryptography.Xml" />
-      <_allowBuildFromSourcePackage Include="System.Text.Json" />
 
       <_sourceBuildUnexpectedPackage Include="@(PackageReference)" Exclude="@(_allowBuildFromSourcePackage)" />
     </ItemGroup>

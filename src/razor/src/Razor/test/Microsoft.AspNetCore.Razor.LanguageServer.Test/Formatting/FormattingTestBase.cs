@@ -76,7 +76,7 @@ public class FormattingTestBase : RazorIntegrationTestBase
         var source = SourceText.From(input);
         var range = spans.IsEmpty
             ? null
-            : spans.Single().ToRange(source);
+            : spans.Single().AsRange(source);
 
         var path = "file:///path/to/Document." + fileKind;
         var uri = new Uri(path);
@@ -228,7 +228,7 @@ public class FormattingTestBase : RazorIntegrationTestBase
 
     private static SourceText ApplyEdits(SourceText source, TextEdit[] edits)
     {
-        var changes = edits.Select(e => e.ToTextChange(source));
+        var changes = edits.Select(e => e.AsTextChange(source));
         return source.WithChanges(changes);
     }
 

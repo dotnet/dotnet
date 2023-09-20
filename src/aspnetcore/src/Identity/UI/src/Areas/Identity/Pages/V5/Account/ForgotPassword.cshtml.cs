@@ -5,6 +5,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Text;
 using System.Text.Encodings.Web;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
@@ -51,9 +52,9 @@ public abstract class ForgotPasswordModel : PageModel
 internal sealed class ForgotPasswordModel<TUser> : ForgotPasswordModel where TUser : class
 {
     private readonly UserManager<TUser> _userManager;
-    private readonly IEmailSender<TUser> _emailSender;
+    private readonly IEmailSender _emailSender;
 
-    public ForgotPasswordModel(UserManager<TUser> userManager, IEmailSender<TUser> emailSender)
+    public ForgotPasswordModel(UserManager<TUser> userManager, IEmailSender emailSender)
     {
         _userManager = userManager;
         _emailSender = emailSender;
@@ -80,7 +81,10 @@ internal sealed class ForgotPasswordModel<TUser> : ForgotPasswordModel where TUs
                 values: new { area = "Identity", code },
                 protocol: Request.Scheme)!;
 
-            await _emailSender.SendPasswordResetLinkAsync(user, Input.Email, HtmlEncoder.Default.Encode(callbackUrl));
+            await _emailSender.SendEmailAsync(
+                Input.Email,
+                "Reset Password",
+                $"Please reset your password by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
 
             return RedirectToPage("./ForgotPasswordConfirmation");
         }

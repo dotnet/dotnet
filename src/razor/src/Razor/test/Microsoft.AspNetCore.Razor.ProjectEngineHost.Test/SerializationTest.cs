@@ -7,8 +7,10 @@ using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.ProjectSystem;
 using Microsoft.AspNetCore.Razor.Serialization;
 using Microsoft.AspNetCore.Razor.Serialization.Json;
+using Microsoft.AspNetCore.Razor.Serialization.Json.Converters;
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.CodeAnalysis.CSharp;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Xunit;
 using Xunit.Abstractions;
@@ -40,27 +42,27 @@ public class SerializationTest : TestBase
     {
         // Arrange
         var projectInfo = new RazorProjectInfo(
-            "/path/to/obj/project.razor.bin",
+            "/path/to/obj/project.razor.json",
             "/path/to/project.csproj",
             _configuration,
             rootNamespace: "TestProject",
             _projectWorkspaceState,
             ImmutableArray<DocumentSnapshotHandle>.Empty);
 
-        var jsonText = JsonDataConvert.SerializeObject(projectInfo, ObjectWriters.WriteProperties);
+        var jsonText = JsonConvert.SerializeObject(projectInfo, RazorProjectInfoJsonConverter.Instance);
         Assert.NotNull(jsonText);
 
         var serializedJObject = JObject.Parse(jsonText);
         serializedJObject[WellKnownPropertyNames.Version] = -1;
 
-        var updatedJsonText = serializedJObject.ToString();
+        var updatedJsonText = JsonConvert.SerializeObject(serializedJObject);
         Assert.NotNull(updatedJsonText);
 
         // Act
         RazorProjectInfo? deserializedProjectInfo = null;
         Assert.Throws<RazorProjectInfoSerializationException>(() =>
         {
-            deserializedProjectInfo = JsonDataConvert.DeserializeObject(updatedJsonText, ObjectReaders.ReadProjectInfoFromProperties);
+            deserializedProjectInfo = JsonConvert.DeserializeObject<RazorProjectInfo>(updatedJsonText, RazorProjectInfoJsonConverter.Instance);
         });
 
         // Assert
@@ -72,27 +74,27 @@ public class SerializationTest : TestBase
     {
         // Arrange
         var projectInfo = new RazorProjectInfo(
-            "/path/to/obj/project.razor.bin",
+            "/path/to/obj/project.razor.json",
             "/path/to/project.csproj",
             _configuration,
             rootNamespace: "TestProject",
             _projectWorkspaceState,
             ImmutableArray<DocumentSnapshotHandle>.Empty);
 
-        var jsonText = JsonDataConvert.SerializeObject(projectInfo, ObjectWriters.WriteProperties);
+        var jsonText = JsonConvert.SerializeObject(projectInfo, RazorProjectInfoJsonConverter.Instance);
         Assert.NotNull(jsonText);
 
         var serializedJObject = JObject.Parse(jsonText);
         serializedJObject.Remove(WellKnownPropertyNames.Version);
 
-        var updatedJsonText = serializedJObject.ToString();
+        var updatedJsonText = JsonConvert.SerializeObject(serializedJObject);
         Assert.NotNull(updatedJsonText);
 
         // Act
         RazorProjectInfo? deserializedProjectInfo = null;
         Assert.Throws<RazorProjectInfoSerializationException>(() =>
         {
-            deserializedProjectInfo = JsonDataConvert.DeserializeObject(updatedJsonText, ObjectReaders.ReadProjectInfoFromProperties);
+            deserializedProjectInfo = JsonConvert.DeserializeObject<RazorProjectInfo>(updatedJsonText, RazorProjectInfoJsonConverter.Instance);
         });
 
         // Assert
@@ -106,18 +108,18 @@ public class SerializationTest : TestBase
         var legacyDocument = new DocumentSnapshotHandle("/path/to/file.cshtml", "file.cshtml", FileKinds.Legacy);
         var componentDocument = new DocumentSnapshotHandle("/path/to/otherfile.razor", "otherfile.razor", FileKinds.Component);
         var projectInfo = new RazorProjectInfo(
-            "/path/to/obj/project.razor.bin",
+            "/path/to/obj/project.razor.json",
             "/path/to/project.csproj",
             _configuration,
             rootNamespace: "TestProject",
             _projectWorkspaceState,
             ImmutableArray.Create(legacyDocument, componentDocument));
 
-        var jsonText = JsonDataConvert.SerializeObject(projectInfo, ObjectWriters.WriteProperties);
+        var jsonText = JsonConvert.SerializeObject(projectInfo, RazorProjectInfoJsonConverter.Instance);
         Assert.NotNull(jsonText);
 
         // Act
-        var deserializedProjectInfo = JsonDataConvert.DeserializeObject(jsonText, ObjectReaders.ReadProjectInfoFromProperties);
+        var deserializedProjectInfo = JsonConvert.DeserializeObject<RazorProjectInfo>(jsonText, RazorProjectInfoJsonConverter.Instance);
         Assert.NotNull(deserializedProjectInfo);
 
         // Assert

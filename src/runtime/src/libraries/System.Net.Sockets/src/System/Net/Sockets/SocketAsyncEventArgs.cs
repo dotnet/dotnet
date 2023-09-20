@@ -927,13 +927,13 @@ namespace System.Net.Sockets
                     {
                         try
                         {
-                            if (_remoteEndPoint!.AddressFamily == AddressFamily.InterNetworkV6 && _socketAddress!.Family == AddressFamily.InterNetwork)
+                            if (_remoteEndPoint!.AddressFamily == _socketAddress!.Family)
+                            {
+                                _remoteEndPoint = _remoteEndPoint!.Create(_socketAddress);
+                            }
+                            else if (_remoteEndPoint!.AddressFamily == AddressFamily.InterNetworkV6 && _socketAddress.Family == AddressFamily.InterNetwork)
                             {
                                 _remoteEndPoint = new IPEndPoint(_socketAddress.GetIPAddress().MapToIPv6(), _socketAddress.GetPort());
-                            }
-                            else
-                            {
-                                _remoteEndPoint = _remoteEndPoint!.Create(_socketAddress!);
                             }
                         }
                         catch
@@ -949,14 +949,7 @@ namespace System.Net.Sockets
                     {
                         try
                         {
-                            if (_remoteEndPoint!.AddressFamily == AddressFamily.InterNetworkV6 && _socketAddress!.Family == AddressFamily.InterNetwork)
-                            {
-                                _remoteEndPoint = new IPEndPoint(_socketAddress.GetIPAddress().MapToIPv6(), _socketAddress.GetPort());
-                            }
-                            else
-                            {
-                                _remoteEndPoint = _remoteEndPoint!.Create(_socketAddress!);
-                            }
+                            _remoteEndPoint = _remoteEndPoint!.Create(_socketAddress!);
                         }
                         catch
                         {

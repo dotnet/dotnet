@@ -27,7 +27,6 @@ using Microsoft.VisualStudio.LanguageServices.Utilities;
 using Microsoft.VisualStudio.OLE.Interop;
 using Microsoft.VisualStudio.Shell.Interop;
 using Microsoft.VisualStudio.Text;
-using Microsoft.VisualStudio.Text.Outlining;
 using Microsoft.VisualStudio.TextManager.Interop;
 using Roslyn.Utilities;
 
@@ -265,7 +264,6 @@ namespace Microsoft.VisualStudio.LanguageServices.Implementation.LanguageService
                 var asyncListenerProvider = _languageService.Package.ComponentModel.GetService<IAsynchronousOperationListenerProvider>();
                 var asyncListener = asyncListenerProvider.GetListener(FeatureAttribute.DocumentOutline);
                 var editorAdaptersFactoryService = _languageService.Package.ComponentModel.GetService<IVsEditorAdaptersFactoryService>();
-                var outliningManagerService = _languageService.Package.ComponentModel.GetService<IOutliningManagerService>();
 
                 // Assert that the previous Document Outline Control and host have been freed. 
                 Contract.ThrowIfFalse(_documentOutlineView is null);
@@ -273,7 +271,7 @@ namespace Microsoft.VisualStudio.LanguageServices.Implementation.LanguageService
 
                 var viewTracker = new VsCodeWindowViewTracker(_codeWindow, threadingContext, editorAdaptersFactoryService);
                 _documentOutlineView = new DocumentOutlineView(
-                    uiShell, windowSearchHostFactory, threadingContext, _globalOptions, outliningManagerService, viewTracker,
+                    uiShell, windowSearchHostFactory, threadingContext, _globalOptions, viewTracker,
                     new DocumentOutlineViewModel(threadingContext, viewTracker, languageServiceBroker, asyncListener));
 
                 _documentOutlineViewHost = new ElementHost

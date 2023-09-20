@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>$(DefaultNetCoreTargetFramework)</TargetFramework>
-    <OutputType>Exe</OutputType>
+    <OutputType>WinExe</OutputType>
     <IsShippingPackage>false</IsShippingPackage>
     <SignAssembly>false</SignAssembly>
   </PropertyGroup>

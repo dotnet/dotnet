@@ -7,16 +7,14 @@ namespace Microsoft.AspNetCore.Http.RequestDelegateGenerator;
 
 internal static class DiagnosticDescriptors
 {
-    private static string GetHelpLinkUrl(string id) => $"https://learn.microsoft.com/aspnet/core/fundamentals/aot/request-delegate-generator/diagnostics/{id}";
-
     public static DiagnosticDescriptor UnableToResolveRoutePattern { get; } = new(
         "RDG001",
         new LocalizableResourceString(nameof(Resources.UnableToResolveRoutePattern_Title), Resources.ResourceManager, typeof(Resources)),
         new LocalizableResourceString(nameof(Resources.UnableToResolveRoutePattern_Message), Resources.ResourceManager, typeof(Resources)),
         "Usage",
         DiagnosticSeverity.Warning,
-        isEnabledByDefault: true,
-        helpLinkUri: GetHelpLinkUrl("RDG001"));
+        isEnabledByDefault: true
+    );
 
     public static DiagnosticDescriptor UnableToResolveMethod { get; } = new(
         "RDG002",
@@ -24,17 +22,18 @@ internal static class DiagnosticDescriptors
         new LocalizableResourceString(nameof(Resources.UnableToResolveMethod_Message), Resources.ResourceManager, typeof(Resources)),
         "Usage",
         DiagnosticSeverity.Warning,
-        isEnabledByDefault: true,
-        helpLinkUri: GetHelpLinkUrl("RDG002"));
+        isEnabledByDefault: true
+    );
 
+    // This is temporary. The plan is to be able to resolve all parameters to a known EndpointParameterSource.
+    // For now, we emit a warning for the unsupported set.
     public static DiagnosticDescriptor UnableToResolveParameterDescriptor { get; } = new(
         "RDG003",
         new LocalizableResourceString(nameof(Resources.UnableToResolveParameter_Title), Resources.ResourceManager, typeof(Resources)),
         new LocalizableResourceString(nameof(Resources.UnableToResolveParameter_Message), Resources.ResourceManager, typeof(Resources)),
         "Usage",
         DiagnosticSeverity.Warning,
-        isEnabledByDefault: true,
-        helpLinkUri: GetHelpLinkUrl("RDG003"));
+        isEnabledByDefault: true);
 
     public static DiagnosticDescriptor UnableToResolveAnonymousReturnType { get; } = new(
         "RDG004",
@@ -42,8 +41,7 @@ internal static class DiagnosticDescriptors
         new LocalizableResourceString(nameof(Resources.UnableToResolveAnonymousReturnType_Message), Resources.ResourceManager, typeof(Resources)),
         "Usage",
         DiagnosticSeverity.Warning,
-        isEnabledByDefault: true,
-        helpLinkUri: GetHelpLinkUrl("RDG004"));
+        isEnabledByDefault: true);
 
     public static DiagnosticDescriptor InvalidAsParametersAbstractType { get; } = new(
         "RDG005",
@@ -51,8 +49,7 @@ internal static class DiagnosticDescriptors
         new LocalizableResourceString(nameof(Resources.InvalidAsParametersAbstractType_Message), Resources.ResourceManager, typeof(Resources)),
         "Usage",
         DiagnosticSeverity.Warning,
-        isEnabledByDefault: true,
-        helpLinkUri: GetHelpLinkUrl("RDG005"));
+        isEnabledByDefault: true);
 
     public static DiagnosticDescriptor InvalidAsParametersSignature { get; } = new(
         "RDG006",
@@ -60,8 +57,7 @@ internal static class DiagnosticDescriptors
         new LocalizableResourceString(nameof(Resources.InvalidAsParametersSignature_Message), Resources.ResourceManager, typeof(Resources)),
         "Usage",
         DiagnosticSeverity.Warning,
-        isEnabledByDefault: true,
-        helpLinkUri: GetHelpLinkUrl("RDG006"));
+        isEnabledByDefault: true);
 
     public static DiagnosticDescriptor InvalidAsParametersNoConstructorFound { get; } = new(
         "RDG007",
@@ -69,8 +65,7 @@ internal static class DiagnosticDescriptors
         new LocalizableResourceString(nameof(Resources.InvalidAsParametersNoConstructorFound_Message), Resources.ResourceManager, typeof(Resources)),
         "Usage",
         DiagnosticSeverity.Warning,
-        isEnabledByDefault: true,
-        helpLinkUri: GetHelpLinkUrl("RDG007"));
+        isEnabledByDefault: true);
 
     public static DiagnosticDescriptor InvalidAsParametersSingleConstructorOnly { get; } = new(
         "RDG008",
@@ -78,8 +73,7 @@ internal static class DiagnosticDescriptors
         new LocalizableResourceString(nameof(Resources.InvalidAsParametersSingleConstructorOnly_Message), Resources.ResourceManager, typeof(Resources)),
         "Usage",
         DiagnosticSeverity.Warning,
-        isEnabledByDefault: true,
-        helpLinkUri: GetHelpLinkUrl("RDG008"));
+        isEnabledByDefault: true);
 
     public static DiagnosticDescriptor InvalidAsParametersNested { get; } = new(
         "RDG009",
@@ -87,8 +81,7 @@ internal static class DiagnosticDescriptors
         new LocalizableResourceString(nameof(Resources.InvalidAsParametersNested_Message), Resources.ResourceManager, typeof(Resources)),
         "Usage",
         DiagnosticSeverity.Warning,
-        isEnabledByDefault: true,
-        helpLinkUri: GetHelpLinkUrl("RDG009"));
+        isEnabledByDefault: true);
 
     public static DiagnosticDescriptor InvalidAsParametersNullable { get; } = new(
         "RDG010",
@@ -96,8 +89,7 @@ internal static class DiagnosticDescriptors
         new LocalizableResourceString(nameof(Resources.InvalidAsParametersNullable_Message), Resources.ResourceManager, typeof(Resources)),
         "Usage",
         DiagnosticSeverity.Warning,
-        isEnabledByDefault: true,
-        helpLinkUri: GetHelpLinkUrl("RDG010"));
+        isEnabledByDefault: true);
 
     public static DiagnosticDescriptor TypeParametersNotSupported { get; } = new(
         "RDG011",
@@ -105,8 +97,7 @@ internal static class DiagnosticDescriptors
         new LocalizableResourceString(nameof(Resources.TypeParametersNotSupported_Message), Resources.ResourceManager, typeof(Resources)),
         "Usage",
         DiagnosticSeverity.Warning,
-        isEnabledByDefault: true,
-        helpLinkUri: GetHelpLinkUrl("RDG011"));
+        isEnabledByDefault: true);
 
     public static DiagnosticDescriptor InaccessibleTypesNotSupported { get; } = new(
         "RDG012",
@@ -114,8 +105,7 @@ internal static class DiagnosticDescriptors
         new LocalizableResourceString(nameof(Resources.InaccessibleTypesNotSupported_Message), Resources.ResourceManager, typeof(Resources)),
         "Usage",
         DiagnosticSeverity.Warning,
-        isEnabledByDefault: true,
-        helpLinkUri: GetHelpLinkUrl("RDG012"));
+        isEnabledByDefault: true);
 
     public static DiagnosticDescriptor KeyedAndNotKeyedServiceAttributesNotSupported { get; } = new(
         "RDG013",
@@ -123,6 +113,5 @@ internal static class DiagnosticDescriptors
         new LocalizableResourceString(nameof(Resources.KeyedAndNotKeyedServiceAttributesNotSupported_Message), Resources.ResourceManager, typeof(Resources)),
         "Usage",
         DiagnosticSeverity.Warning,
-        isEnabledByDefault: true,
-        helpLinkUri: GetHelpLinkUrl("RDG013"));
+        isEnabledByDefault: true);
 }

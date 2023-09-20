@@ -120,7 +120,7 @@ namespace NuGet.Commands
             var vulnerabilityInformationProviders = new List<IVulnerabilityInformationProvider>(sources.Count);
             foreach (SourceRepository source in sources)
             {
-                IVulnerabilityInformationProvider provider = _vulnerabilityInformationProviders.GetOrAdd(source, s => new VulnerabilityInformationProvider(s, log));
+                IVulnerabilityInformationProvider provider = _vulnerabilityInformationProviders.GetOrAdd(source, s => new VulnerabilityInformationProvider(s, cacheContext, log));
                 vulnerabilityInformationProviders.Add(provider);
             }
 

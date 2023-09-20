@@ -150,12 +150,6 @@ namespace ILLink.RoslynAnalyzer.Tests
 		}
 
 		[Fact]
-		public Task InlineArrayDataflow ()
-		{
-			return RunTest ();
-		}
-
-		[Fact]
 		public Task MakeGenericDataFlow ()
 		{
 			return RunTest ();

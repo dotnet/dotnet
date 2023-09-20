@@ -2,6 +2,7 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using System;
+using System.Runtime.CompilerServices;
 using Microsoft.CodeAnalysis.Text;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 
@@ -48,7 +49,20 @@ internal static class RangeExtensions
             throw new ArgumentNullException(nameof(other));
         }
 
-        return range.ToLinePositionSpan().OverlapsWith(other.ToLinePositionSpan());
+        var overlapStart = range.Start;
+        if (range.Start.CompareTo(other.Start) < 0)
+        {
+            overlapStart = other.Start;
+        }
+
+        var overlapEnd = range.End;
+        if (range.End.CompareTo(other.End) > 0)
+        {
+            overlapEnd = other.End;
+        }
+
+        // Empty ranges do not overlap with any range.
+        return overlapStart.CompareTo(overlapEnd) < 0;
     }
 
     public static bool LineOverlapsWith(this Range range, Range other)
@@ -103,17 +117,55 @@ internal static class RangeExtensions
         return range.Start.Line != range.End.Line;
     }
 
-    public static TextSpan ToTextSpan(this Range range, SourceText sourceText)
-        => sourceText.GetTextSpan(range.Start.Line, range.Start.Character, range.End.Line, range.End.Character);
-
-    public static Language.Syntax.TextSpan ToRazorTextSpan(this Range range, SourceText sourceText)
+    public static TextSpan AsTextSpan(this Range range, SourceText sourceText)
     {
-        var span = range.ToTextSpan(sourceText);
-        return new Language.Syntax.TextSpan(span.Start, span.Length);
+        if (range is null)
+        {
+            throw new ArgumentNullException(nameof(range));
+        }
+
+        if (sourceText is null)
+        {
+            throw new ArgumentNullException(nameof(sourceText));
+        }
+
+        var start = GetAbsolutePosition(range.Start, sourceText);
+        var end = GetAbsolutePosition(range.End, sourceText);
+
+        var length = end - start;
+        if (length < 0)
+        {
+            throw new ArgumentOutOfRangeException($"{range} resolved to zero or negative length.");
+        }
+
+        return new TextSpan(start, length);
+
+        static int GetAbsolutePosition(Position position, SourceText sourceText, [CallerArgumentExpression(nameof(position))] string? argName = null)
+        {
+            var line = position.Line;
+            var character = position.Character;
+            var lineCount = sourceText.Lines.Count;
+            if (line > lineCount ||
+                (line == lineCount && character > 0))
+            {
+                throw new ArgumentOutOfRangeException($"{argName} ({line},{character}) matches or exceeds SourceText boundary {lineCount}.");
+            }
+
+            // LSP spec allowed a Range to end one line past the end, and character 0. SourceText does not, so we adjust to the final char position
+            if (line == lineCount)
+            {
+                return sourceText.Length;
+            }
+
+            return sourceText.Lines[line].Start + character;
+        }
     }
 
-    public static LinePositionSpan ToLinePositionSpan(this Range range)
-        => new LinePositionSpan(range.Start.ToLinePosition(), range.End.ToLinePosition());
+    public static Language.Syntax.TextSpan AsRazorTextSpan(this Range range, SourceText sourceText)
+    {
+        var span = range.AsTextSpan(sourceText);
+        return new Language.Syntax.TextSpan(span.Start, span.Length);
+    }
 
     public static bool IsUndefined(this Range range)
     {
@@ -123,17 +175,5 @@ internal static class RangeExtensions
         }
 
         return range == UndefinedRange;
-    }
-
-    public static int CompareTo(this Range range1, Range range2)
-    {
-        var result = range1.Start.CompareTo(range2.Start);
-
-        if (result == 0)
-        {
-            result = range1.End.CompareTo(range2.End);
-        }
-
-        return result;
     }
 }

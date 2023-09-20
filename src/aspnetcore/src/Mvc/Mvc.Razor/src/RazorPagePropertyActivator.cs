@@ -35,9 +35,11 @@ internal sealed class RazorPagePropertyActivator
         _viewDataDictionaryType = typeof(ViewDataDictionary<>).MakeGenericType(viewDataDictionaryModelType);
         _rootFactory = ViewDataDictionaryFactory.CreateFactory(viewDataDictionaryModelType);
         _nestedFactory = ViewDataDictionaryFactory.CreateNestedFactory(viewDataDictionaryModelType);
-        _propertyActivators = PropertyActivator<ViewContext>.GetPropertiesToActivate<RazorInjectAttribute>(
+
+        _propertyActivators = PropertyActivator<ViewContext>.GetPropertiesToActivate(
             pageType,
-            (propertyInfo, attribute) => CreateActivateInfo(propertyInfo, attribute, propertyValueAccessors),
+            typeof(RazorInjectAttribute),
+            propertyInfo => CreateActivateInfo(propertyInfo, propertyValueAccessors),
             includeNonPublic: true);
     }
 
@@ -74,22 +76,10 @@ internal sealed class RazorPagePropertyActivator
 
     private static PropertyActivator<ViewContext> CreateActivateInfo(
         PropertyInfo property,
-        RazorInjectAttribute attribute,
         PropertyValueAccessors valueAccessors)
     {
         Func<ViewContext, object> valueAccessor;
-        if (attribute.Key is { } key)
-        {
-            valueAccessor = context =>
-            {
-                var serviceProvider = context.HttpContext.RequestServices;
-                var value = serviceProvider.GetRequiredKeyedService(property.PropertyType, key);
-                (value as IViewContextAware)?.Contextualize(context);
-
-                return value;
-            };
-        }
-        else if (typeof(ViewDataDictionary).IsAssignableFrom(property.PropertyType))
+        if (typeof(ViewDataDictionary).IsAssignableFrom(property.PropertyType))
         {
             // Logic looks reversed in condition above but is OK. Support only properties of base
             // ViewDataDictionary type and activationInfo.ViewDataDictionaryType. VDD<AnotherType> will fail when

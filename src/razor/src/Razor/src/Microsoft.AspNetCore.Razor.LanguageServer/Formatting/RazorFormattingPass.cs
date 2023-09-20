@@ -8,7 +8,6 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
-using Microsoft.AspNetCore.Razor.Language.Extensions;
 using Microsoft.AspNetCore.Razor.Language.Syntax;
 using Microsoft.AspNetCore.Razor.LanguageServer.Extensions;
 using Microsoft.Extensions.Logging;
@@ -53,7 +52,7 @@ internal class RazorFormattingPass : FormattingPassBase
         var changedContext = context;
         if (result.Edits.Length > 0)
         {
-            var changes = result.Edits.Select(e => e.ToTextChange(originalText)).ToArray();
+            var changes = result.Edits.Select(e => e.AsTextChange(originalText)).ToArray();
             changedText = changedText.WithChanges(changes);
             changedContext = await context.WithTextAsync(changedText).ConfigureAwait(false);
 
@@ -65,11 +64,11 @@ internal class RazorFormattingPass : FormattingPassBase
         var edits = FormatRazor(changedContext, syntaxTree);
 
         // Compute the final combined set of edits
-        var formattingChanges = edits.Select(e => e.ToTextChange(changedText));
+        var formattingChanges = edits.Select(e => e.AsTextChange(changedText));
         changedText = changedText.WithChanges(formattingChanges);
 
         var finalChanges = changedText.GetTextChanges(originalText);
-        var finalEdits = finalChanges.Select(f => f.ToTextEdit(originalText)).ToArray();
+        var finalEdits = finalChanges.Select(f => f.AsTextEdit(originalText)).ToArray();
 
         return new FormattingResult(finalEdits);
     }
@@ -91,76 +90,12 @@ internal class RazorFormattingPass : FormattingPassBase
         return edits;
     }
 
-    private static void TryFormatBlocks(FormattingContext context, List<TextEdit> edits, RazorSourceDocument source, SyntaxNode node)
+    private static bool TryFormatBlocks(FormattingContext context, IList<TextEdit> edits, RazorSourceDocument source, SyntaxNode node)
     {
-        // We only want to run one of these
-        _ = TryFormatFunctionsBlock(context, edits, source, node) ||
+        return TryFormatFunctionsBlock(context, edits, source, node) ||
             TryFormatCSharpExplicitTransition(context, edits, source, node) ||
             TryFormatHtmlInCSharp(context, edits, source, node) ||
-            TryFormatComplexCSharpBlock(context, edits, source, node) ||
-            TryFormatSectionBlock(context, edits, source, node);
-    }
-
-    private static bool TryFormatSectionBlock(FormattingContext context, List<TextEdit> edits, RazorSourceDocument source, SyntaxNode node)
-    {
-        // @section Goo {
-        // }
-        //
-        // or
-        //
-        // @section Goo
-        // {
-        // }
-        if (node is CSharpCodeBlockSyntax directiveCode &&
-            directiveCode.Children is [RazorDirectiveSyntax directive] &&
-            directive.DirectiveDescriptor?.Directive == SectionDirective.Directive.Directive &&
-            directive.Body is RazorDirectiveBodySyntax { CSharpCode: { } code })
-        {
-            var children = code.Children;
-            if (TryGetWhitespace(children, out var whitespaceBeforeSectionName, out var whitespaceAfterSectionName))
-            {
-                // For whitespace we normalize it differently depending on if its multi-line or not
-                FormatWhitespaceBetweenDirectiveAndBrace(whitespaceBeforeSectionName, directive, edits, source, context);
-                FormatWhitespaceBetweenDirectiveAndBrace(whitespaceAfterSectionName, directive, edits, source, context);
-
-                return true;
-            }
-            else if (children.TryGetOpenBraceToken(out var brace))
-            {
-                // If there is no whitespace at all we normalize to a single space
-                var start = brace.GetRange(source).Start;
-                var edit = new TextEdit
-                {
-                    Range = new Range { Start = start, End = start },
-                    NewText = " "
-                };
-                edits.Add(edit);
-
-                return true;
-            }
-        }
-
-        return false;
-
-        static bool TryGetWhitespace(SyntaxList<RazorSyntaxNode> children, [NotNullWhen(true)] out CSharpStatementLiteralSyntax? whitespaceBeforeSectionName, [NotNullWhen(true)] out UnclassifiedTextLiteralSyntax? whitespaceAfterSectionName)
-        {
-            // If there is whitespace between the directive and the section name, and the section name and the brace, they will be in the first child
-            // and third child of the 6 total children
-            whitespaceBeforeSectionName = null;
-            whitespaceAfterSectionName = null;
-            if (children.Count == 6 &&
-                children[0] is CSharpStatementLiteralSyntax before &&
-                before.ContainsOnlyWhitespace() &&
-                children[2] is UnclassifiedTextLiteralSyntax after &&
-                after.ContainsOnlyWhitespace())
-            {
-                whitespaceBeforeSectionName = before;
-                whitespaceAfterSectionName = after;
-
-            }
-
-            return whitespaceBeforeSectionName != null;
-        }
+            TryFormatComplexCSharpBlock(context, edits, source, node);
     }
 
     private static bool TryFormatFunctionsBlock(FormattingContext context, IList<TextEdit> edits, RazorSourceDocument source, SyntaxNode node)
@@ -205,8 +140,8 @@ internal class RazorFormattingPass : FormattingPassBase
         // @{
         //     var x = 1;
         // }
-        if (node is CSharpCodeBlockSyntax explicitCode &&
-            explicitCode.Children.FirstOrDefault() is CSharpStatementSyntax statement &&
+        if (node is CSharpCodeBlockSyntax expliciteCode &&
+            expliciteCode.Children.FirstOrDefault() is CSharpStatementSyntax statement &&
             statement.Body is CSharpStatementBodySyntax csharpStatementBody)
         {
             var openBraceNode = csharpStatementBody.OpenBrace;

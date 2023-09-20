@@ -320,6 +320,7 @@ namespace System
             return new System.Collections.Generic.Dictionary<string, object>();
         }
 
+        [System.Runtime.Versioning.RequiresPreviewFeaturesAttribute("RefreshMemoryLimit is in preview.")]
         public static void RefreshMemoryLimit()
         {
             throw new PlatformNotSupportedException();

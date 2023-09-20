@@ -6,40 +6,28 @@ using Microsoft.AspNetCore.Razor.Language;
 
 namespace Microsoft.AspNetCore.Razor.Serialization.MessagePack.Formatters.TagHelpers;
 
-internal sealed class AllowedChildTagFormatter : ValueFormatter<AllowedChildTagDescriptor>
+internal sealed class AllowedChildTagFormatter : TagHelperObjectFormatter<AllowedChildTagDescriptor>
 {
-    public static readonly ValueFormatter<AllowedChildTagDescriptor> Instance = new AllowedChildTagFormatter();
+    public static readonly TagHelperObjectFormatter<AllowedChildTagDescriptor> Instance = new AllowedChildTagFormatter();
 
     private AllowedChildTagFormatter()
     {
     }
 
-    public override AllowedChildTagDescriptor Deserialize(ref MessagePackReader reader, SerializerCachingOptions options)
+    public override AllowedChildTagDescriptor Deserialize(ref MessagePackReader reader, MessagePackSerializerOptions options, TagHelperSerializationCache? cache)
     {
-        reader.ReadArrayHeaderAndVerify(3);
-
-        var name = CachedStringFormatter.Instance.Deserialize(ref reader, options);
-        var displayName = CachedStringFormatter.Instance.Deserialize(ref reader, options);
-        var diagnostics = reader.Deserialize<RazorDiagnostic[]>(options);
+        var name = reader.ReadString(cache);
+        var displayName = reader.ReadString(cache);
+        var diagnostics = RazorDiagnosticFormatter.Instance.DeserializeArray(ref reader, options);
 
         return new DefaultAllowedChildTagDescriptor(name, displayName, diagnostics);
     }
 
-    public override void Serialize(ref MessagePackWriter writer, AllowedChildTagDescriptor value, SerializerCachingOptions options)
+    public override void Serialize(ref MessagePackWriter writer, AllowedChildTagDescriptor value, MessagePackSerializerOptions options, TagHelperSerializationCache? cache)
     {
-        writer.WriteArrayHeader(3);
+        writer.Write(value.Name, cache);
+        writer.Write(value.DisplayName, cache);
 
-        CachedStringFormatter.Instance.Serialize(ref writer, value.Name, options);
-        CachedStringFormatter.Instance.Serialize(ref writer, value.DisplayName, options);
-        writer.Serialize(value.Diagnostics, options);
-    }
-
-    public override void Skim(ref MessagePackReader reader, SerializerCachingOptions options)
-    {
-        reader.ReadArrayHeaderAndVerify(3);
-
-        CachedStringFormatter.Instance.Skim(ref reader, options); // Name
-        CachedStringFormatter.Instance.Skim(ref reader, options); // DisplayName
-        RazorDiagnosticFormatter.Instance.SkimArray(ref reader, options); // Diagnostics
+        RazorDiagnosticFormatter.Instance.SerializeArray(ref writer, value.Diagnostics, options);
     }
 }

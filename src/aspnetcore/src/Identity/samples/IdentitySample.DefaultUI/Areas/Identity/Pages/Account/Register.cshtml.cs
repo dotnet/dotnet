@@ -17,13 +17,13 @@ public class RegisterModel : PageModel
     private readonly SignInManager<ApplicationUser> _signInManager;
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly ILogger<RegisterModel> _logger;
-    private readonly IEmailSender<ApplicationUser> _emailSender;
+    private readonly IEmailSender _emailSender;
 
     public RegisterModel(
         UserManager<ApplicationUser> userManager,
         SignInManager<ApplicationUser> signInManager,
         ILogger<RegisterModel> logger,
-        IEmailSender<ApplicationUser> emailSender)
+        IEmailSender emailSender)
     {
         _userManager = userManager;
         _signInManager = signInManager;
@@ -99,7 +99,8 @@ public class RegisterModel : PageModel
                     values: new { userId = user.Id, code = code },
                     protocol: Request.Scheme);
 
-                await _emailSender.SendConfirmationLinkAsync(user, Input.Email, HtmlEncoder.Default.Encode(callbackUrl));
+                await _emailSender.SendEmailAsync(Input.Email, "Confirm your email",
+                    $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
 
                 if (_userManager.Options.SignIn.RequireConfirmedAccount)
                 {

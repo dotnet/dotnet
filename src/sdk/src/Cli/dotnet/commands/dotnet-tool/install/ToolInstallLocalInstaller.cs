@@ -2,9 +2,7 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System.CommandLine;
-using System.IO;
 using Microsoft.DotNet.Cli;
-using Microsoft.DotNet.Cli.ToolPackage;
 using Microsoft.DotNet.Cli.Utils;
 using Microsoft.DotNet.ToolPackage;
 using Microsoft.Extensions.EnvironmentAbstractions;
@@ -17,34 +15,38 @@ namespace Microsoft.DotNet.Tools.Tool.Install
         private readonly ParseResult _parseResult;
         public string TargetFrameworkToInstall { get; private set; }
 
-        private readonly IToolPackageStore _toolPackageStore;
-        private readonly IToolPackageDownloader _toolPackageDownloader;
+        private readonly IToolPackageInstaller _toolPackageInstaller;
         private readonly PackageId _packageId;
         private readonly string _packageVersion;
         private readonly string _configFilePath;
         private readonly string[] _sources;
-        private readonly VerbosityOptions _verbosity;
+        private readonly string _verbosity;
 
         public ToolInstallLocalInstaller(
             ParseResult parseResult,
-            IToolPackageDownloader toolPackageDownloader = null)
+            IToolPackageInstaller toolPackageInstaller = null)
         {
             _parseResult = parseResult;
             _packageId = new PackageId(parseResult.GetValue(ToolInstallCommandParser.PackageIdArgument));
             _packageVersion = parseResult.GetValue(ToolInstallCommandParser.VersionOption);
             _configFilePath = parseResult.GetValue(ToolInstallCommandParser.ConfigOption);
             _sources = parseResult.GetValue(ToolInstallCommandParser.AddSourceOption);
-            _verbosity = parseResult.GetValue(ToolInstallCommandParser.VerbosityOption);
+            _verbosity = Enum.GetName(parseResult.GetValue(ToolInstallCommandParser.VerbosityOption));
 
-            (IToolPackageStore store,
-                IToolPackageStoreQuery,
-                IToolPackageDownloader downloader) toolPackageStoresAndDownloader
-                    = ToolPackageFactory.CreateToolPackageStoresAndDownloader(
-                        additionalRestoreArguments: parseResult.OptionValuesToBeForwarded(ToolInstallCommandParser.GetCommand()));
-            _toolPackageStore = toolPackageStoresAndDownloader.store;
-            _toolPackageDownloader = toolPackageDownloader?? toolPackageStoresAndDownloader.downloader;
-            
-            
+            if (toolPackageInstaller == null)
+            {
+                (IToolPackageStore,
+                    IToolPackageStoreQuery,
+                    IToolPackageInstaller installer) toolPackageStoresAndInstaller
+                        = ToolPackageFactory.CreateToolPackageStoresAndInstaller(
+                            additionalRestoreArguments: parseResult.OptionValuesToBeForwarded(ToolInstallCommandParser.GetCommand()));
+                _toolPackageInstaller = toolPackageStoresAndInstaller.installer;
+            }
+            else
+            {
+                _toolPackageInstaller = toolPackageInstaller;
+            }
+
             TargetFrameworkToInstall = BundledTargetFramework.GetTargetFrameworkMoniker();
         }
 
@@ -68,16 +70,17 @@ namespace Microsoft.DotNet.Tools.Tool.Install
 
             try
             {
-                IToolPackage toolDownloadedPackage = _toolPackageDownloader.InstallPackage(
+                IToolPackage toolDownloadedPackage =
+                    _toolPackageInstaller.InstallPackageToExternalManagedLocation(
                         new PackageLocation(
                             nugetConfig: configFile,
                             additionalFeeds: _sources,
+                            // Fix https://github.com/dotnet/sdk/issues/23135
                             rootConfigDirectory: manifestFile.GetDirectoryPath().GetParentPath()),
                         _packageId,
-                        verbosity: _verbosity,
                         versionRange,
-                        TargetFrameworkToInstall
-                        );
+                        TargetFrameworkToInstall,
+                        verbosity: _verbosity);
 
                 return toolDownloadedPackage;
             }

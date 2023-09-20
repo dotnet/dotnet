@@ -2,32 +2,36 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using System.Linq;
-using MessagePack;
-using MessagePack.Resolvers;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Serialization;
-using Microsoft.AspNetCore.Razor.Serialization.MessagePack.Resolvers;
+using Microsoft.AspNetCore.Razor.Serialization.Json;
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
+using Newtonsoft.Json;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace Microsoft.AspNetCore.Razor.ProjectEngineHost.Test.Serialization;
+namespace Microsoft.VisualStudio.LanguageServices.Razor.Serialization;
 
-public class ProjectSnapshotHandleSerializationTest(ITestOutputHelper testOutput) : TestBase(testOutput)
+public class ProjectSnapshotHandleSerializationTest : TestBase
 {
-    private static readonly MessagePackSerializerOptions s_options = MessagePackSerializerOptions.Standard
-        .WithResolver(CompositeResolver.Create(
-            ProjectSnapshotHandleResolver.Instance,
-            StandardResolver.Instance));
+    private readonly JsonConverter[] _converters;
+
+    public ProjectSnapshotHandleSerializationTest(ITestOutputHelper testOutput)
+        : base(testOutput)
+    {
+        var converters = new JsonConverterCollection();
+        converters.RegisterRazorConverters();
+        _converters = converters.ToArray();
+    }
 
     [Fact]
     public void ProjectSnapshotHandleJsonConverter_Serialization_CanKindaRoundTrip()
     {
         // Arrange
         var projectId = ProjectId.CreateNewId();
-        var expectedSnapshot = new ProjectSnapshotHandle(
+        var snapshot = new ProjectSnapshotHandle(
             projectId,
             new ProjectSystemRazorConfiguration(
                 RazorLanguageVersion.Version_1_1,
@@ -40,21 +44,21 @@ public class ProjectSnapshotHandleSerializationTest(ITestOutputHelper testOutput
             "Test");
 
         // Act
-        var bytes = MessagePackConvert.Serialize(expectedSnapshot, s_options);
-        var actualSnapshot = MessagePackConvert.Deserialize<ProjectSnapshotHandle>(bytes, s_options);
+        var json = JsonConvert.SerializeObject(snapshot, _converters);
+        var obj = JsonConvert.DeserializeObject<ProjectSnapshotHandle>(json, _converters);
 
         // Assert
-        Assert.NotNull(actualSnapshot);
-        Assert.Equal(expectedSnapshot.ProjectId, actualSnapshot.ProjectId);
-        Assert.NotNull(expectedSnapshot.Configuration);
-        Assert.NotNull(actualSnapshot.Configuration);
-        Assert.Equal(expectedSnapshot.Configuration.ConfigurationName, actualSnapshot.Configuration.ConfigurationName);
+        Assert.NotNull(obj);
+        Assert.Equal(snapshot.ProjectId, obj.ProjectId);
+        Assert.NotNull(snapshot.Configuration);
+        Assert.NotNull(obj.Configuration);
+        Assert.Equal(snapshot.Configuration.ConfigurationName, obj.Configuration.ConfigurationName);
         Assert.Collection(
-            expectedSnapshot.Configuration.Extensions.OrderBy(e => e.ExtensionName),
+            snapshot.Configuration.Extensions.OrderBy(e => e.ExtensionName),
             e => Assert.Equal("Test-Extension1", e.ExtensionName),
             e => Assert.Equal("Test-Extension2", e.ExtensionName));
-        Assert.Equal(expectedSnapshot.Configuration.LanguageVersion, actualSnapshot.Configuration.LanguageVersion);
-        Assert.Equal(expectedSnapshot.RootNamespace, actualSnapshot.RootNamespace);
+        Assert.Equal(snapshot.Configuration.LanguageVersion, obj.Configuration.LanguageVersion);
+        Assert.Equal(snapshot.RootNamespace, obj.RootNamespace);
     }
 
     [Fact]
@@ -62,16 +66,16 @@ public class ProjectSnapshotHandleSerializationTest(ITestOutputHelper testOutput
     {
         // Arrange
         var projectId = ProjectId.CreateNewId();
-        var expectedSnapshot = new ProjectSnapshotHandle(projectId, null, null);
+        var snapshot = new ProjectSnapshotHandle(projectId, null, null);
 
         // Act
-        var bytes = MessagePackConvert.Serialize(expectedSnapshot, s_options);
-        var actualSnapshot = MessagePackConvert.Deserialize<ProjectSnapshotHandle>(bytes, s_options);
+        var json = JsonConvert.SerializeObject(snapshot, _converters);
+        var obj = JsonConvert.DeserializeObject<ProjectSnapshotHandle>(json, _converters);
 
         // Assert
-        Assert.NotNull(actualSnapshot);
-        Assert.Equal(expectedSnapshot.ProjectId, actualSnapshot.ProjectId);
-        Assert.Null(actualSnapshot.Configuration);
-        Assert.Null(actualSnapshot.RootNamespace);
+        Assert.NotNull(obj);
+        Assert.Equal(snapshot.ProjectId, obj.ProjectId);
+        Assert.Null(obj.Configuration);
+        Assert.Null(obj.RootNamespace);
     }
 }

@@ -48,8 +48,7 @@ namespace Microsoft.DotNet.ShellShim
                                          appHostDestinationFilePath: appHostDestinationFilePath,
                                          appBinaryFilePath: appBinaryFilePath,
                                          windowsGraphicalUserInterface: (windowsGraphicalUserInterfaceBit == WindowsGUISubsystem) && OperatingSystem.IsWindows(),
-                                         assemblyToCopyResourcesFrom: entryPointFullPath,
-                                         enableMacOSCodeSign: OperatingSystem.IsMacOS());
+                                         assemblyToCopyResourcesFrom: entryPointFullPath);
             }
             else
             {

@@ -35,8 +35,7 @@ namespace Microsoft.NET.Sdk.WorkloadManifestReader
 
         public override int GetHashCode()
         {
-            //  FXVersion doesn't define its own hashcode, so convert to string and get its hashcode
-            return ToString().GetHashCode();
+            return _version.GetHashCode();
         }
 
         public override string ToString()

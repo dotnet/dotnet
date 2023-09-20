@@ -7,7 +7,6 @@
 using System.Collections.Immutable;
 using System.Reflection;
 using System.Threading;
-using Microsoft.CodeAnalysis.MSBuild.Build;
 
 namespace Microsoft.CodeAnalysis.Host.Mef
 {
@@ -45,8 +44,7 @@ namespace Microsoft.CodeAnalysis.Host.Mef
         {
             var assemblyNames = new string[]
             {
-                // All of our MEF types are actually in Microsoft.CodeAnalysis.Workspaces.MSBuild.BuildHost
-                typeof(ProjectBuildManager).Assembly.GetName().Name,
+                typeof(MSBuildMefHostServices).Assembly.GetName().Name,
             };
 
             return MefHostServices.DefaultAssemblies.Concat(

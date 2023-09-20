@@ -459,7 +459,6 @@ namespace Microsoft.CodeAnalysis.EditAndContinue
 
             // assume changes until we determine there are none so that EnC is blocked on unexpected exception:
             var hasChanges = true;
-            var analysisStopwatch = SharedStopwatch.StartNew();
 
             try
             {
@@ -505,7 +504,7 @@ namespace Microsoft.CodeAnalysis.EditAndContinue
                     // Bail, since we can't do syntax diffing on broken trees (it would not produce useful results anyways).
                     // If we needed to do so for some reason, we'd need to harden the syntax tree comparers.
                     Log.Write("Syntax errors found in '{0}'", filePath);
-                    return DocumentAnalysisResults.SyntaxErrors(newDocument.Id, filePath, ImmutableArray<RudeEditDiagnostic>.Empty, syntaxError, analysisStopwatch.Elapsed, hasChanges);
+                    return DocumentAnalysisResults.SyntaxErrors(newDocument.Id, filePath, ImmutableArray<RudeEditDiagnostic>.Empty, syntaxError, hasChanges);
                 }
 
                 if (!hasChanges)
@@ -516,7 +515,7 @@ namespace Microsoft.CodeAnalysis.EditAndContinue
                     // b) we need to ignore errors in unchanged documents
 
                     Log.Write("Document unchanged: '{0}'", filePath);
-                    return DocumentAnalysisResults.Unchanged(newDocument.Id, filePath, analysisStopwatch.Elapsed);
+                    return DocumentAnalysisResults.Unchanged(newDocument.Id, filePath);
                 }
 
                 // Disallow modification of a file with experimental features enabled.
@@ -526,7 +525,7 @@ namespace Microsoft.CodeAnalysis.EditAndContinue
                     Log.Write("Experimental features enabled in '{0}'", filePath);
 
                     return DocumentAnalysisResults.SyntaxErrors(newDocument.Id, filePath, ImmutableArray.Create(
-                        new RudeEditDiagnostic(RudeEditKind.ExperimentalFeaturesEnabled, default)), syntaxError: null, analysisStopwatch.Elapsed, hasChanges);
+                        new RudeEditDiagnostic(RudeEditKind.ExperimentalFeaturesEnabled, default)), syntaxError: null, hasChanges);
                 }
 
                 var capabilities = new EditAndContinueCapabilitiesGrantor(await lazyCapabilities.GetValueAsync(cancellationToken).ConfigureAwait(false));
@@ -536,7 +535,7 @@ namespace Microsoft.CodeAnalysis.EditAndContinue
                 if (!capabilities.Grant(EditAndContinueCapabilities.Baseline))
                 {
                     return DocumentAnalysisResults.SyntaxErrors(newDocument.Id, filePath, ImmutableArray.Create(
-                       new RudeEditDiagnostic(RudeEditKind.NotSupportedByRuntime, default)), syntaxError: null, analysisStopwatch.Elapsed, hasChanges);
+                       new RudeEditDiagnostic(RudeEditKind.NotSupportedByRuntime, default)), syntaxError: null, hasChanges);
                 }
 
                 // We are in break state when there are no active statements.
@@ -623,7 +622,6 @@ namespace Microsoft.CodeAnalysis.EditAndContinue
                     hasRudeEdits ? default : newExceptionRegions.MoveToImmutable(),
                     hasRudeEdits ? default : lineEdits.ToImmutable(),
                     hasRudeEdits ? default : capabilities.GrantedCapabilities,
-                    analysisStopwatch.Elapsed,
                     hasChanges: true,
                     hasSyntaxErrors: false);
             }
@@ -638,7 +636,7 @@ namespace Microsoft.CodeAnalysis.EditAndContinue
                     : new RudeEditDiagnostic(RudeEditKind.InternalError, span: default, arguments: new[] { newDocument.FilePath, e.ToString() });
 
                 // Report as "syntax error" - we can't analyze the document
-                return DocumentAnalysisResults.SyntaxErrors(newDocument.Id, filePath, ImmutableArray.Create(diagnostic), syntaxError: null, analysisStopwatch.Elapsed, hasChanges);
+                return DocumentAnalysisResults.SyntaxErrors(newDocument.Id, filePath, ImmutableArray.Create(diagnostic), syntaxError: null, hasChanges);
             }
 
             static void LogRudeEdits(ArrayBuilder<RudeEditDiagnostic> diagnostics, SourceText text, string filePath)

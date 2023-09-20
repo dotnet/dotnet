@@ -34,7 +34,7 @@ namespace Microsoft.IdentityModel.JsonWebTokens
         /// <summary>
         /// Default claim type mapping for inbound claims.
         /// </summary>
-        public static IDictionary<string, string> DefaultInboundClaimTypeMap = new Dictionary<string, string>(ClaimTypeMapping.InboundClaimTypeMap);
+        public static readonly Dictionary<string, string> DefaultInboundClaimTypeMap = new Dictionary<string, string>(ClaimTypeMapping.InboundClaimTypeMap);
 
         /// <summary>
         /// Default value for the flag that determines whether or not the InboundClaimTypeMap is used.

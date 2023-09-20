@@ -73,12 +73,12 @@ internal static class SolutionCrawlerOptionsStorage
     {
         if (LowMemoryForcedMinimalBackgroundAnalysis)
         {
-            return CompilerDiagnosticsScope.VisibleFilesAndOpenFilesWithPreviouslyReportedDiagnostics;
+            return CompilerDiagnosticsScope.VisibleFilesAndFilesWithPreviouslyReportedDiagnostics;
         }
 
         return globalOptions.GetOption(SolutionBackgroundAnalysisScopeOption) switch
         {
-            BackgroundAnalysisScope.VisibleFilesAndOpenFilesWithPreviouslyReportedDiagnostics => CompilerDiagnosticsScope.VisibleFilesAndOpenFilesWithPreviouslyReportedDiagnostics,
+            BackgroundAnalysisScope.ActiveFile => CompilerDiagnosticsScope.VisibleFilesAndFilesWithPreviouslyReportedDiagnostics,
             BackgroundAnalysisScope.OpenFiles => CompilerDiagnosticsScope.OpenFiles,
             BackgroundAnalysisScope.FullSolution => CompilerDiagnosticsScope.FullSolution,
             BackgroundAnalysisScope.None => CompilerDiagnosticsScope.None,

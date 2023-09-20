@@ -10,16 +10,12 @@ namespace Microsoft.AspNetCore.Server.IntegrationTesting.IIS;
 public class IISDeploymentResult : DeploymentResult
 {
     public ILogger Logger { get; set; }
-
     public Process HostProcess { get; }
-
-    public string AppPoolName { get; }
 
     public IISDeploymentResult(ILoggerFactory loggerFactory,
         IISDeploymentParameters deploymentParameters,
         string applicationBaseUri,
         string contentRoot,
-        string appPoolName,
         CancellationToken hostShutdownToken,
         Process hostProcess)
         : base(loggerFactory,
@@ -28,7 +24,6 @@ public class IISDeploymentResult : DeploymentResult
               contentRoot,
               hostShutdownToken)
     {
-        AppPoolName = appPoolName;
         HostProcess = hostProcess;
         Logger = loggerFactory.CreateLogger(deploymentParameters.SiteName);
         HttpClient = CreateClient(new HttpClientHandler());

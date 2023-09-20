@@ -3,6 +3,7 @@
 
 using System;
 using Microsoft.IdentityModel.TestUtils;
+using Microsoft.IdentityModel.Tokens;
 
 namespace Microsoft.IdentityModel.JsonWebTokens.Tests
 {
@@ -11,9 +12,11 @@ namespace Microsoft.IdentityModel.JsonWebTokens.Tests
         public GetPayloadValueTheoryData(string testId) : base(testId)
         { }
 
-        public object ClaimValue { get; set; }
+        public SecurityTokenDescriptor SecurityTokenDescriptor { get; set; }
 
         public string PropertyName { get; set; }
+
+        public Type PropertyOut { get; set; }
 
         public Type PropertyType { get; set; }
 

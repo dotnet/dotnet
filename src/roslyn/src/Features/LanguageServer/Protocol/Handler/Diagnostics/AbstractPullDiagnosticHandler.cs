@@ -396,6 +396,7 @@ namespace Microsoft.CodeAnalysis.LanguageServer.Handler.Diagnostics
                 // would get automatically serialized.
                 var diagnostic = new LSP.VSDiagnostic
                 {
+                    Source = "Roslyn",
                     Code = diagnosticData.Id,
                     CodeDescription = ProtocolConversions.HelpLinkToCodeDescription(diagnosticData.GetValidHelpLinkUri()),
                     Message = diagnosticData.Message,

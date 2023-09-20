@@ -15,7 +15,6 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
         [MemberData(nameof(DiagnosedAndFixedData))]
         [MemberData(nameof(DiagnosedAndFixedInvertedData))]
         [MemberData(nameof(VisualBasicDiagnosedAndFixedNamedData))]
-        [MemberData(nameof(VisualBasicDiagnosedAndFixedInvertedNamedData))]
         public async Task Diagnostic_Assign(string diagnosedLine, string fixedLine)
         {
             string originalCode = $@"Imports System
@@ -44,7 +43,7 @@ End Class
         [Theory]
         [MemberData(nameof(DiagnosedAndFixedData))]
         [MemberData(nameof(DiagnosedAndFixedInvertedData))]
-        [MemberData(nameof(VisualBasicDiagnosedAndFixedInvertedNamedData))]
+        [MemberData(nameof(VisualBasicDiagnosedAndFixedNamedData))]
         public async Task Diagnostic_Return(string diagnosedLine, string fixedLine)
         {
             string originalCode = $@"Imports System
@@ -69,19 +68,22 @@ End Class
         }
 
         [Theory]
-        [MemberData(nameof(DiagnosedAndFixedImplicitBooleanData))]
-        [MemberData(nameof(DiagnosedAndFixedWithAppendedMethodData))]
-        [MemberData(nameof(DiagnosedAndFixedWithAppendedMethodInvertedData))]
-        [MemberData(nameof(VisualBasicDiagnosedAndFixedWithAppendedMethodNamedData))]
-        public async Task Diagnostic_If(string diagnosedLine, string fixedLine, string appendedMethod)
+        [MemberData(nameof(DiagnosedAndFixedWithEqualsToData))]
+        [MemberData(nameof(DiagnosedAndFixedWithEqualsToInvertedData))]
+        [MemberData(nameof(VisualBasicDiagnosedAndFixedWithEqualsToNamedData))]
+        public async Task Diagnostic_If(string diagnosedLine, string fixedLine, string equalsTo)
         {
+            if (equalsTo == " == -1")
+            {
+                equalsTo = " = -1"; // VB syntax
+            }
+
             string originalCode = $@"Imports System
 Class C
     Private Function M() As Integer
         Dim a As String = ""aBc""
         Dim b As String = ""bc""
-        Dim myBoolean As Boolean = False
-        If [|{diagnosedLine}|]{appendedMethod} Then
+        If [|{diagnosedLine}|]{equalsTo} Then
             Return 5
         End If
         Return 4
@@ -93,8 +95,7 @@ Class C
     Private Function M() As Integer
         Dim a As String = ""aBc""
         Dim b As String = ""bc""
-        Dim myBoolean As Boolean = False
-        If {fixedLine}{appendedMethod} Then
+        If {fixedLine}{equalsTo} Then
             Return 5
         End If
         Return 4
@@ -107,7 +108,7 @@ End Class
         [Theory]
         [MemberData(nameof(DiagnosedAndFixedData))]
         [MemberData(nameof(DiagnosedAndFixedInvertedData))]
-        [MemberData(nameof(VisualBasicDiagnosedAndFixedInvertedNamedData))]
+        [MemberData(nameof(VisualBasicDiagnosedAndFixedNamedData))]
         public async Task Diagnostic_IgnoreResult(string diagnosedLine, string fixedLine)
         {
             string originalCode = $@"Imports System
@@ -135,7 +136,6 @@ End Class
         [MemberData(nameof(DiagnosedAndFixedStringLiteralsData))]
         [MemberData(nameof(DiagnosedAndFixedStringLiteralsInvertedData))]
         [MemberData(nameof(VisualBasicDiagnosedAndFixedStringLiteralsNamedData))]
-        [MemberData(nameof(VisualBasicDiagnosedAndFixedStringLiteralsInvertedNamedData))]
         public async Task Diagnostic_StringLiterals_Return(string diagnosedLine, string fixedLine)
         {
             string originalCode = $@"Imports System
@@ -159,7 +159,6 @@ End Class
         [MemberData(nameof(DiagnosedAndFixedStringReturningMethodsData))]
         [MemberData(nameof(DiagnosedAndFixedStringReturningMethodsInvertedData))]
         [MemberData(nameof(VisualBasicDiagnosedAndFixedStringReturningMethodsNamedData))]
-        [MemberData(nameof(VisualBasicDiagnosedAndFixedStringReturningMethodsInvertedNamedData))]
         public async Task Diagnostic_StringReturningMethods_Discard(string diagnosedLine, string fixedLine)
         {
             string originalCode = $@"Imports System
@@ -196,7 +195,6 @@ End Class
         [MemberData(nameof(DiagnosedAndFixedParenthesizedInvertedData))]
         [MemberData(nameof(VisualBasicDiagnosedAndFixedParenthesizedNamedData))]
         [MemberData(nameof(VisualBasicDiagnosedAndFixedParenthesizedNamedInvertedData))]
-        [MemberData(nameof(VisualBasicDiagnosedAndFixedParenthesizedComplexCasesData))]
         public async Task Diagnostic_Parenthesized_ReturnCastedToString(string diagnosedLine, string fixedLine)
         {
             string originalCode = $@"Imports System
@@ -205,8 +203,6 @@ Class C
         Return ""AbC""
     End Function
     Public Function M() As Object
-        Dim a As String = ""AbC""
-        Dim b As String = ""CdE""
         Return ([|{diagnosedLine}|]).ToString()
     End Function
 End Class";
@@ -216,8 +212,6 @@ Class C
         Return ""AbC""
     End Function
     Public Function M() As Object
-        Dim a As String = ""AbC""
-        Dim b As String = ""CdE""
         Return ({fixedLine}).ToString()
     End Function
 End Class";
@@ -264,9 +258,9 @@ End Class";
 Class C
     Function M(a As String, b As String) As Boolean
         ' Trivia1
-        Dim result As Boolean = [|a.ToLowerInvariant() = b.ToLowerInvariant()|] ' Trivia2
+        Dim result As Boolean = [|a.ToLower() = b.ToLowerInvariant()|] ' Trivia2
         ' Trivia3
-        If [|a.ToLower() <> b.ToLower()|] Then ' Trivia4
+        If [|a.ToLowerInvariant() <> b.ToLower()|] Then ' Trivia4
             ' Trivia5
             Return [|b <> a.ToLowerInvariant()|] ' Trivia6
             ' Trivia7
@@ -280,7 +274,7 @@ End Class";
 Class C
     Function M(a As String, b As String) As Boolean
         ' Trivia1
-        Dim result As Boolean = a.Equals(b, StringComparison.InvariantCultureIgnoreCase) ' Trivia2
+        Dim result As Boolean = a.Equals(b, StringComparison.CurrentCultureIgnoreCase) ' Trivia2
         ' Trivia3
         If Not a.Equals(b, StringComparison.CurrentCultureIgnoreCase) Then ' Trivia4
             ' Trivia5
@@ -316,31 +310,9 @@ End Class";
         }
 
         [Theory]
-        [MemberData(nameof(DiagnosticNoFixStartsWithContainsIndexOfData))]
-        public async Task Diagnostic_NoFix_StartsWithContainsIndexOf(string diagnosedLine)
-        {
-            string originalCode = $@"Imports System
-Class C
-    Public Function GetStringA() As String
-        Return ""aBc""
-    End Function
-    Public Function GetStringB() As String
-        Return ""cDe""
-    End Function
-    Public Function M() As Object
-        Dim a As String = ""AbC""
-        Dim b As String = ""CdE""
-        Return [|{diagnosedLine}|]
-    End Function
-End Class";
-            await VerifyFixVisualBasicAsync(originalCode, originalCode);
-        }
-
-        [Theory]
         [MemberData(nameof(DiagnosticNoFixCompareToData))]
         [MemberData(nameof(DiagnosticNoFixCompareToInvertedData))]
         [MemberData(nameof(VisualBasicDiagnosticNoFixCompareToNamedData))]
-        [MemberData(nameof(VisualBasicDiagnosticNoFixCompareToInvertedNamedData))]
         public async Task Diagnostic_NoFix_CompareTo(string diagnosedLine)
         {
             string originalCode = $@"Imports System
@@ -357,7 +329,7 @@ Class C
         Return [|{diagnosedLine}|]
     End Function
 End Class";
-            await VerifyFixVisualBasicAsync(originalCode, originalCode);
+            await VerifyDiagnosticOnlyVisualBasicAsync(originalCode);
         }
 
         [Theory]
@@ -366,17 +338,12 @@ End Class";
         {
             string originalCode = $@"Imports System
 Class C
-    Public Function GetString() As String
-        Return String.Empty
-    End Function
     Public Function M() As Boolean
-        Dim a As String = ""aBc""
-        Dim b As String = ""dEf""
         Return [|{diagnosedLine}|]
     End Function
 End Class";
 
-            await VerifyFixVisualBasicAsync(originalCode, originalCode);
+            await VerifyDiagnosticOnlyVisualBasicAsync(originalCode);
         }
 
         private async Task VerifyNoDiagnosticVisualBasicAsync(string originalSource)
@@ -385,6 +352,17 @@ End Class";
             {
                 TestCode = originalSource,
                 FixedCode = originalSource
+            };
+
+            await test.RunAsync();
+        }
+
+        private async Task VerifyDiagnosticOnlyVisualBasicAsync(string originalSource)
+        {
+            VerifyVB.Test test = new()
+            {
+                TestCode = originalSource,
+                MarkupOptions = MarkupOptions.UseFirstDescriptor
             };
 
             await test.RunAsync();

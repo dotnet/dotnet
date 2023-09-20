@@ -6,7 +6,6 @@ namespace Microsoft.AspNetCore.Components.Endpoints.FormMapping.Metadata;
 internal enum FormDataTypeKind
 {
     Primitive,
-    File,
     Collection,
     Dictionary,
     Object,

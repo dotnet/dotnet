@@ -88,11 +88,11 @@ namespace NuGet.PackageManagement
         /// <param name="cancellationToken">A cancellation token.</param>.
         /// <returns>A task that represents the asynchronous operation.</returns>
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="nuGetProject" />
-        /// is <see langword="null" />.</exception>
+        /// is <c>null</c>.</exception>
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="packageIdentity" />
-        /// is <see langword="null" />.</exception>
+        /// is <c>null</c>.</exception>
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="resourceResult" />
-        /// is <see langword="null" />.</exception>
+        /// is <c>null</c>.</exception>
         /// <exception cref="OperationCanceledException">Thrown if <paramref name="cancellationToken" />
         /// is cancelled.</exception>
         public async Task EnsurePackageCompatibilityAsync(

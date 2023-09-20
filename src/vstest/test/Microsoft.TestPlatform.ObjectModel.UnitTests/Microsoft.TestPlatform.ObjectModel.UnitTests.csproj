@@ -12,7 +12,7 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json">
-      <Version>$(NewtonsoftJsonVersion)</Version>
+      <Version>$(JsonNetVersion)</Version>
     </PackageReference>
   </ItemGroup>
   <ItemGroup Condition=" '$(TargetFramework)' == 'net48' ">

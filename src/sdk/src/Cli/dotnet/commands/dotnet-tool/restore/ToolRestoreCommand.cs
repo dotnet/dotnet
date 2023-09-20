@@ -3,7 +3,6 @@
 
 using System.CommandLine;
 using Microsoft.DotNet.Cli;
-using Microsoft.DotNet.Cli.ToolPackage;
 using Microsoft.DotNet.Cli.Utils;
 using Microsoft.DotNet.ToolManifest;
 using Microsoft.DotNet.ToolPackage;
@@ -22,30 +21,30 @@ namespace Microsoft.DotNet.Tools.Tool.Restore
         private readonly IFileSystem _fileSystem;
         private readonly IReporter _reporter;
         private readonly string[] _sources;
-        private readonly IToolPackageDownloader _toolPackageDownloader;
-        private readonly VerbosityOptions _verbosity;
+        private readonly IToolPackageInstaller _toolPackageInstaller;
+        private readonly string _verbosity;
 
         public ToolRestoreCommand(
             ParseResult result,
-            IToolPackageDownloader toolPackageDownloader = null,
+            IToolPackageInstaller toolPackageInstaller = null,
             IToolManifestFinder toolManifestFinder = null,
             ILocalToolsResolverCache localToolsResolverCache = null,
             IFileSystem fileSystem = null,
             IReporter reporter = null)
             : base(result)
         {
-            if (toolPackageDownloader == null)
+            if (toolPackageInstaller == null)
             {
                 (IToolPackageStore,
                     IToolPackageStoreQuery,
-                    IToolPackageDownloader downloader) toolPackageStoresAndInstaller
-                        = ToolPackageFactory.CreateToolPackageStoresAndDownloader(
+                    IToolPackageInstaller installer) toolPackageStoresAndInstaller
+                        = ToolPackageFactory.CreateToolPackageStoresAndInstaller(
                             additionalRestoreArguments: result.OptionValuesToBeForwarded(ToolRestoreCommandParser.GetCommand()));
-                _toolPackageDownloader = toolPackageStoresAndInstaller.downloader;
+                _toolPackageInstaller = toolPackageStoresAndInstaller.installer;
             }
             else
             {
-                _toolPackageDownloader = toolPackageDownloader;
+                _toolPackageInstaller = toolPackageInstaller;
             }
 
             _toolManifestFinder
@@ -60,7 +59,7 @@ namespace Microsoft.DotNet.Tools.Tool.Restore
 
             _configFilePath = result.GetValue(ToolRestoreCommandParser.ConfigOption);
             _sources = result.GetValue(ToolRestoreCommandParser.AddSourceOption);
-            _verbosity = result.GetValue(ToolRestoreCommandParser.VerbosityOption);
+            _verbosity = Enum.GetName(result.GetValue(ToolRestoreCommandParser.VerbosityOption));
         }
 
         public override int Execute()
@@ -125,13 +124,13 @@ namespace Microsoft.DotNet.Tools.Tool.Restore
             try
             {
                 IToolPackage toolPackage =
-                    _toolPackageDownloader.InstallPackage(
+                    _toolPackageInstaller.InstallPackageToExternalManagedLocation(
                         new PackageLocation(
                             nugetConfig: configFile,
                             additionalFeeds: _sources,
                             rootConfigDirectory: package.FirstEffectDirectory),
-                        package.PackageId, verbosity: _verbosity, ToVersionRangeWithOnlyOneVersion(package.Version), targetFramework
-                        );
+                        package.PackageId, ToVersionRangeWithOnlyOneVersion(package.Version), targetFramework,
+                        verbosity: _verbosity);
 
                 if (!ManifestCommandMatchesActualInPackage(package.CommandNames, toolPackage.Commands))
                 {

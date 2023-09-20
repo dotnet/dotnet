@@ -20,7 +20,7 @@ namespace NuGet.Protocol.Plugins
 
         /// <summary>
         /// Gets a message if <see cref="PluginFile.State" /> is not <see cref="PluginFileState.Valid" />;
-        /// otherwise, <see langword="null" />.
+        /// otherwise, <c>null</c>.
         /// </summary>
         public string Message
         {
@@ -66,9 +66,9 @@ namespace NuGet.Protocol.Plugins
         /// Instantiates a new <see cref="PluginDiscoveryResult" /> class.
         /// </summary>
         /// <param name="pluginFile">A plugin file.</param>
-        /// <see cref="PluginFileState.Valid" />; otherwise, <see langword="null" />
+        /// <see cref="PluginFileState.Valid" />; otherwise, <c>null</c>
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="pluginFile" />
-        /// is <see langword="null" />.</exception>
+        /// is <c>null</c>.</exception>
         public PluginDiscoveryResult(PluginFile pluginFile)
         {
             PluginFile = pluginFile ?? throw new ArgumentNullException(nameof(pluginFile));

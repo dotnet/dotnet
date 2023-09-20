@@ -7,7 +7,6 @@ using System.Globalization;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
-using System.Windows.Input;
 using NuGet.PackageManagement.VisualStudio;
 using Resx = NuGet.PackageManagement.UI.Resources;
 
@@ -311,20 +310,6 @@ namespace NuGet.PackageManagement.UI
         private static ItemFilter GetItemFilter(TabItem item)
         {
             return (ItemFilter)item.Tag;
-        }
-
-        private void SourceRepoList_PreviewKeyDown(object sender, KeyEventArgs e)
-        {
-            switch (e.Key)
-            {
-                case Key.Tab:
-                    _sourceRepoList.IsDropDownOpen = false;
-                    base.OnPreviewKeyDown(e);
-                    break;
-                default:
-                    base.OnPreviewKeyDown(e);
-                    break;
-            }
         }
     }
 

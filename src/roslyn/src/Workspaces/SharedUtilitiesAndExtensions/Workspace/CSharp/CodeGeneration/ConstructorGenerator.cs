@@ -61,19 +61,19 @@ namespace Microsoft.CodeAnalysis.CSharp.CodeGeneration
                 body: hasNoBody ? null : GenerateBlock(constructor),
                 semicolonToken: hasNoBody ? SyntaxFactory.Token(SyntaxKind.SemicolonToken) : default);
 
-            declaration = UseExpressionBodyIfDesired(info, declaration, cancellationToken);
+            declaration = UseExpressionBodyIfDesired(info, declaration);
 
             return AddFormatterAndCodeGeneratorAnnotationsTo(
                 ConditionallyAddDocumentationCommentTo(declaration, constructor, info, cancellationToken));
         }
 
         private static ConstructorDeclarationSyntax UseExpressionBodyIfDesired(
-            CSharpCodeGenerationContextInfo info, ConstructorDeclarationSyntax declaration, CancellationToken cancellationToken)
+            CSharpCodeGenerationContextInfo info, ConstructorDeclarationSyntax declaration)
         {
             if (declaration.ExpressionBody == null)
             {
                 if (declaration.Body?.TryConvertToArrowExpressionBody(
-                    declaration.Kind(), info.LanguageVersion, info.Options.PreferExpressionBodiedConstructors.Value, cancellationToken,
+                    declaration.Kind(), info.LanguageVersion, info.Options.PreferExpressionBodiedConstructors.Value,
                     out var expressionBody, out var semicolonToken) == true)
                 {
                     return declaration.WithBody(null)

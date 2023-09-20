@@ -19,11 +19,8 @@ namespace Microsoft.Build.Logging.SimpleErrorLogger
     /// </summary>
     public sealed class SimpleErrorLogger : INodeLogger
     {
-        private readonly bool acceptAnsiColorCodes;
-        private readonly uint? originalConsoleMode;
         public SimpleErrorLogger()
         {
-            (acceptAnsiColorCodes, _, originalConsoleMode) = NativeMethods.QueryIsScreenAndTryEnableAnsiColorCodes(NativeMethods.StreamHandleType.StdErr);
         }
 
         public bool HasLoggedErrors { get; private set; } = false;
@@ -49,26 +46,16 @@ namespace Microsoft.Build.Logging.SimpleErrorLogger
         private void HandleErrorEvent(object sender, BuildErrorEventArgs e)
         {
             HasLoggedErrors = true;
-            LogErrorEvent(EventArgsFormatting.FormatEventMessage(e, showProjectFile: true), "\x1b[31;1m");
+            Console.Error.Write("\x1b[31;1m");
+            Console.Error.Write(EventArgsFormatting.FormatEventMessage(e, showProjectFile: true));
+            Console.Error.WriteLine("\x1b[m");
         }
 
         private void HandleWarningEvent(object sender, BuildWarningEventArgs e)
         {
-            LogErrorEvent(EventArgsFormatting.FormatEventMessage(e, showProjectFile: true), "\x1b[33;1m");
-        }
-
-        private void LogErrorEvent(string s, string color)
-        {
-            if (acceptAnsiColorCodes)
-            {
-                Console.Error.Write(color);
-                Console.Error.Write(s);
-                Console.Error.WriteLine("\x1b[m");
-            }
-            else
-            {
-                Console.Error.Write(s);
-            }
+            Console.Error.Write("\x1b[33;1m");
+            Console.Error.Write(EventArgsFormatting.FormatEventMessage(e, showProjectFile: true));
+            Console.Error.WriteLine("\x1b[m");
         }
 
         public void Initialize(IEventSource eventSource)
@@ -78,7 +65,6 @@ namespace Microsoft.Build.Logging.SimpleErrorLogger
 
         public void Shutdown()
         {
-            NativeMethods.RestoreConsoleMode(originalConsoleMode, NativeMethods.StreamHandleType.StdErr);
         }
     }
 }

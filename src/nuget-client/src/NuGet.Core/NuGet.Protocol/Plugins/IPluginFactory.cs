@@ -25,13 +25,13 @@ namespace NuGet.Protocol.Plugins
         /// The task result (<see cref="Task{TResult}.Result" />) returns a <see cref="Plugin" />
         /// instance.</returns>
         /// <exception cref="ArgumentException">Thrown if <paramref name="filePath" />
-        /// is either <see langword="null" /> or empty.</exception>
+        /// is either <c>null</c> or empty.</exception>
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="arguments" />
-        /// is <see langword="null" />.</exception>
+        /// is <c>null</c>.</exception>
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="requestHandlers" />
-        /// is <see langword="null" />.</exception>
+        /// is <c>null</c>.</exception>
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="options" />
-        /// is <see langword="null" />.</exception>
+        /// is <c>null</c>.</exception>
         /// <exception cref="OperationCanceledException">Thrown if <paramref name="sessionCancellationToken" />
         /// is cancelled.</exception>
         /// <exception cref="ObjectDisposedException">Thrown if this object is disposed.</exception>

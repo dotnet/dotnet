@@ -184,7 +184,7 @@ let decls =
 
 // Print the names of available items
 for item in decls.Items do
-    printfn " - %s" item.NameInList
+    printfn " - %s" item.Name
 
 (**
 

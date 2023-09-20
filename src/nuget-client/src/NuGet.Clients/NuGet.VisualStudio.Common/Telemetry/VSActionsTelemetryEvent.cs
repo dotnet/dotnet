@@ -17,7 +17,7 @@ namespace NuGet.VisualStudio
         public VSActionsTelemetryEvent(
            string operationId,
            string[] projectIds,
-           NuGetProjectActionType operationType,
+           NuGetOperationType operationType,
            OperationSource source,
            DateTimeOffset startTime,
            NuGetOperationStatus status,

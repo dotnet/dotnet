@@ -7,8 +7,6 @@ using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.SignalR.Internal;
 using Microsoft.AspNetCore.SignalR.Protocol;
 using Microsoft.AspNetCore.Testing;
-using Microsoft.Extensions.Logging.Abstractions;
-using Microsoft.Extensions.Time.Testing;
 
 namespace Microsoft.AspNetCore.SignalR.Tests.Internal;
 
@@ -21,11 +19,11 @@ public class MessageBufferTests
         var connection = new TestConnectionContext();
         var pipes = DuplexPipe.CreateConnectionPair(new PipeOptions(), new PipeOptions());
         connection.Transport = pipes.Transport;
-        using var messageBuffer = new MessageBuffer(connection, protocol, bufferLimit: 1, NullLogger.Instance);
+        using var messageBuffer = new MessageBuffer(connection, protocol, bufferLimit: 1);
 
         for (var i = 0; i < 100; i++)
         {
-            await messageBuffer.WriteAsync(PingMessage.Instance, default).DefaultTimeout();
+            await messageBuffer.WriteAsync(new SerializedHubMessage(PingMessage.Instance), default).DefaultTimeout();
         }
 
         var count = 0;
@@ -43,13 +41,13 @@ public class MessageBufferTests
     }
 
     [Fact]
-    public async Task WriteBlocksOnAckWhenMessageBufferFull()
+    public async Task WriteBlocksOnAckWhenBufferFull()
     {
         var protocol = new JsonHubProtocol();
         var connection = new TestConnectionContext();
         var pipes = DuplexPipe.CreateConnectionPair(new PipeOptions(), new PipeOptions(pauseWriterThreshold: 200000, resumeWriterThreshold: 100000));
         connection.Transport = pipes.Transport;
-        using var messageBuffer = new MessageBuffer(connection, protocol, bufferLimit: 100_000, NullLogger.Instance);
+        using var messageBuffer = new MessageBuffer(connection, protocol, bufferLimit: 100_000);
 
         await messageBuffer.WriteAsync(new SerializedHubMessage(new InvocationMessage("t", new object[] { new byte[100000] })), default);
 
@@ -67,7 +65,7 @@ public class MessageBufferTests
         // Write not unblocked by read, only unblocked after ack received
         Assert.False(writeTask.IsCompleted);
 
-        await messageBuffer.AckAsync(new AckMessage(1));
+        messageBuffer.Ack(new AckMessage(1));
         await writeTask.DefaultTimeout();
 
         res = await pipes.Application.Input.ReadAsync().DefaultTimeout();
@@ -80,56 +78,15 @@ public class MessageBufferTests
     }
 
     [Fact]
-    public async Task BackpressureWriteMessageSurvivesReconnect()
-    {
-        var protocol = new JsonHubProtocol();
-        var connection = new TestConnectionContext();
-        var pipeOptions = new PipeOptions(pauseWriterThreshold: 100, resumeWriterThreshold: 50);
-        var pipes = DuplexPipe.CreateConnectionPair(new PipeOptions(), pipeOptions);
-        connection.Transport = pipes.Transport;
-        using var messageBuffer = new MessageBuffer(connection, protocol, bufferLimit: 100_000, NullLogger.Instance);
-
-        await messageBuffer.WriteAsync(new SerializedHubMessage(new InvocationMessage("t", new object[] { new byte[40] })), default);
-
-        // Write will hit pipe backpressure
-        var writeTask = messageBuffer.WriteAsync(new SerializedHubMessage(new InvocationMessage("t", new object[] { new byte[40] })), default);
-        Assert.False(writeTask.IsCompleted);
-
-        DuplexPipe.UpdateConnectionPair(ref pipes, connection, pipeOptions);
-        var resendTask = messageBuffer.ResendAsync(pipes.Transport.Output);
-
-        var res = await pipes.Application.Input.ReadAsync();
-        var buffer = res.Buffer;
-        Assert.True(protocol.TryParseMessage(ref buffer, new TestBinder(), out var message));
-        Assert.IsType<SequenceMessage>(message);
-
-        pipes.Application.Input.AdvanceTo(buffer.Start);
-
-        for (var i = 0; i < 2; i++)
-        {
-            res = await pipes.Application.Input.ReadAsync();
-            buffer = res.Buffer;
-            Assert.True(protocol.TryParseMessage(ref buffer, new TestBinder(), out message));
-            Assert.IsType<InvocationMessage>(message);
-
-            pipes.Application.Input.AdvanceTo(buffer.Start);
-        }
-
-        Assert.False(pipes.Application.Input.TryRead(out res));
-
-        await resendTask;
-    }
-
-    [Fact]
     public async Task UnAckedMessageResentOnReconnect()
     {
         var protocol = new JsonHubProtocol();
         var connection = new TestConnectionContext();
         var pipes = DuplexPipe.CreateConnectionPair(new PipeOptions(), new PipeOptions());
         connection.Transport = pipes.Transport;
-        using var messageBuffer = new MessageBuffer(connection, protocol, bufferLimit: 1000, NullLogger.Instance);
+        using var messageBuffer = new MessageBuffer(connection, protocol, bufferLimit: 1000);
 
-        await messageBuffer.WriteAsync(new StreamItemMessage("id", null), default);
+        await messageBuffer.WriteAsync(new SerializedHubMessage(new StreamItemMessage("id", null)), default);
 
         var res = await pipes.Application.Input.ReadAsync();
 
@@ -142,8 +99,9 @@ public class MessageBufferTests
         DuplexPipe.UpdateConnectionPair(ref pipes, connection);
         await messageBuffer.ResendAsync(pipes.Transport.Output);
 
-        Assert.True(messageBuffer.ShouldProcessMessage(PingMessage.Instance));
-        Assert.True(messageBuffer.ShouldProcessMessage(CompletionMessage.WithResult("1", null)));
+        // Any message except SequenceMessage will be ignored until a SequenceMessage is received
+        Assert.False(messageBuffer.ShouldProcessMessage(PingMessage.Instance));
+        Assert.False(messageBuffer.ShouldProcessMessage(CompletionMessage.WithResult("1", null)));
         Assert.True(messageBuffer.ShouldProcessMessage(new SequenceMessage(1)));
 
         res = await pipes.Application.Input.ReadAsync();
@@ -163,10 +121,10 @@ public class MessageBufferTests
 
         pipes.Application.Input.AdvanceTo(buffer.Start);
 
-        messageBuffer.ShouldProcessMessage(new SequenceMessage(1));
+        messageBuffer.ResetSequence(new SequenceMessage(1));
 
         Assert.True(messageBuffer.ShouldProcessMessage(PingMessage.Instance));
-        Assert.False(messageBuffer.ShouldProcessMessage(CompletionMessage.WithResult("1", null)));
+        Assert.True(messageBuffer.ShouldProcessMessage(CompletionMessage.WithResult("1", null)));
     }
 
     [Fact]
@@ -176,9 +134,9 @@ public class MessageBufferTests
         var connection = new TestConnectionContext();
         var pipes = DuplexPipe.CreateConnectionPair(new PipeOptions(), new PipeOptions());
         connection.Transport = pipes.Transport;
-        using var messageBuffer = new MessageBuffer(connection, protocol, bufferLimit: 1000, NullLogger.Instance);
+        using var messageBuffer = new MessageBuffer(connection, protocol, bufferLimit: 1000);
 
-        await messageBuffer.WriteAsync(new StreamItemMessage("id", null), default);
+        await messageBuffer.WriteAsync(new SerializedHubMessage(new StreamItemMessage("id", null)), default);
 
         var res = await pipes.Application.Input.ReadAsync();
 
@@ -188,7 +146,7 @@ public class MessageBufferTests
 
         pipes.Application.Input.AdvanceTo(buffer.Start);
 
-        await messageBuffer.AckAsync(new AckMessage(1));
+        messageBuffer.Ack(new AckMessage(1));
 
         DuplexPipe.UpdateConnectionPair(ref pipes, connection);
         await messageBuffer.ResendAsync(pipes.Transport.Output);
@@ -202,7 +160,7 @@ public class MessageBufferTests
 
         pipes.Application.Input.AdvanceTo(buffer.Start);
 
-        await messageBuffer.WriteAsync(CompletionMessage.WithResult("1", null), default);
+        await messageBuffer.WriteAsync(new SerializedHubMessage(CompletionMessage.WithResult("1", null)), default);
 
         res = await pipes.Application.Input.ReadAsync();
 
@@ -220,7 +178,7 @@ public class MessageBufferTests
         var connection = new TestConnectionContext();
         var pipes = DuplexPipe.CreateConnectionPair(new PipeOptions(), new PipeOptions());
         connection.Transport = pipes.Transport;
-        using var messageBuffer = new MessageBuffer(connection, protocol, bufferLimit: 1000, NullLogger.Instance);
+        using var messageBuffer = new MessageBuffer(connection, protocol, bufferLimit: 1000);
 
         DuplexPipe.UpdateConnectionPair(ref pipes, connection);
         await messageBuffer.ResendAsync(pipes.Transport.Output);
@@ -234,7 +192,7 @@ public class MessageBufferTests
 
         pipes.Application.Input.AdvanceTo(buffer.Start);
 
-        Assert.Throws<InvalidOperationException>(() => messageBuffer.ShouldProcessMessage(new SequenceMessage(2)));
+        Assert.Throws<InvalidOperationException>(() => messageBuffer.ResetSequence(new SequenceMessage(2)));
     }
 
     [Fact]
@@ -244,15 +202,15 @@ public class MessageBufferTests
         var connection = new TestConnectionContext();
         var pipes = DuplexPipe.CreateConnectionPair(new PipeOptions(), new PipeOptions());
         connection.Transport = pipes.Transport;
-        using var messageBuffer = new MessageBuffer(connection, protocol, bufferLimit: 100_000, NullLogger.Instance);
+        using var messageBuffer = new MessageBuffer(connection, protocol, bufferLimit: 100_000);
 
         for (var i = 0; i < 1000; i++)
         {
-            await messageBuffer.WriteAsync(new StreamItemMessage("1", null), default).DefaultTimeout();
+            await messageBuffer.WriteAsync(new SerializedHubMessage(new StreamItemMessage("1", null)), default).DefaultTimeout();
         }
 
         var ackNum = Random.Shared.Next(0, 1000);
-        await messageBuffer.AckAsync(new AckMessage(ackNum));
+        messageBuffer.Ack(new AckMessage(ackNum));
 
         DuplexPipe.UpdateConnectionPair(ref pipes, connection);
         await messageBuffer.ResendAsync(pipes.Transport.Output);
@@ -276,8 +234,6 @@ public class MessageBufferTests
 
             pipes.Application.Input.AdvanceTo(buffer.Start);
         }
-
-        Assert.False(pipes.Application.Input.TryRead(out res));
     }
 
     [Fact]
@@ -287,7 +243,7 @@ public class MessageBufferTests
         var connection = new TestConnectionContext();
         var pipes = DuplexPipe.CreateConnectionPair(new PipeOptions(), new PipeOptions());
         connection.Transport = pipes.Transport;
-        using var messageBuffer = new MessageBuffer(connection, protocol, bufferLimit: 1, NullLogger.Instance);
+        using var messageBuffer = new MessageBuffer(connection, protocol, bufferLimit: 1);
 
         await messageBuffer.WriteAsync(new SerializedHubMessage(new InvocationMessage("t", new object[] { 1 })), default);
 
@@ -305,7 +261,7 @@ public class MessageBufferTests
         // Write not unblocked by read, only unblocked after ack received
         Assert.False(writeTask.IsCompleted);
 
-        await messageBuffer.AckAsync(new AckMessage(1));
+        messageBuffer.Ack(new AckMessage(1));
         await writeTask.DefaultTimeout();
 
         res = await pipes.Application.Input.ReadAsync().DefaultTimeout();
@@ -315,183 +271,6 @@ public class MessageBufferTests
         Assert.IsType<StreamItemMessage>(message);
 
         pipes.Application.Input.AdvanceTo(buffer.Start);
-    }
-
-    [Fact]
-    public async Task CanSendMessagesWhilePipeClosed()
-    {
-        var protocol = new JsonHubProtocol();
-        var connection = new TestConnectionContext();
-        var pipes = DuplexPipe.CreateConnectionPair(new PipeOptions(), new PipeOptions());
-        connection.Transport = pipes.Transport;
-        using var messageBuffer = new MessageBuffer(connection, protocol, bufferLimit: 100_000, NullLogger.Instance);
-
-        await messageBuffer.WriteAsync(new StreamItemMessage("1", null), default);
-
-        // simulate connection closing
-        pipes.Application.Input.Complete();
-
-        // send while connection down
-        await messageBuffer.WriteAsync(new StreamItemMessage("1", null), default);
-        await messageBuffer.WriteAsync(new StreamItemMessage("1", null), default);
-
-        // simulate reconnect
-        DuplexPipe.UpdateConnectionPair(ref pipes, connection);
-        await messageBuffer.ResendAsync(pipes.Transport.Output);
-
-        var res = await pipes.Application.Input.ReadAsync();
-        var buffer = res.Buffer;
-        Assert.True(protocol.TryParseMessage(ref buffer, new TestBinder(), out var message));
-        Assert.IsType<SequenceMessage>(message);
-
-        pipes.Application.Input.AdvanceTo(buffer.Start);
-
-        for (var i = 0; i < 3; i++)
-        {
-            res = await pipes.Application.Input.ReadAsync();
-            buffer = res.Buffer;
-            Assert.True(protocol.TryParseMessage(ref buffer, new TestBinder(), out message));
-            Assert.IsType<StreamItemMessage>(message);
-
-            pipes.Application.Input.AdvanceTo(buffer.Start);
-        }
-
-        Assert.False(pipes.Application.Input.TryRead(out res));
-    }
-
-    [Fact]
-    public async Task AckMessagesSentAutomatically()
-    {
-        var protocol = new JsonHubProtocol();
-        var connection = new TestConnectionContext();
-        var pipes = DuplexPipe.CreateConnectionPair(new PipeOptions(), new PipeOptions());
-        connection.Transport = pipes.Transport;
-        var timeProvider = new FakeTimeProvider();
-        using var messageBuffer = new MessageBuffer(connection, protocol, bufferLimit: 100_000, NullLogger.Instance, timeProvider);
-
-        // Simulate receiving messages
-        Assert.True(messageBuffer.ShouldProcessMessage(new StreamItemMessage("1", null)));
-        Assert.True(messageBuffer.ShouldProcessMessage(new StreamItemMessage("1", null)));
-
-        timeProvider.Advance(MessageBuffer.AckRate);
-
-        var res = await pipes.Application.Input.ReadAsync();
-        var buffer = res.Buffer;
-        Assert.True(protocol.TryParseMessage(ref buffer, new TestBinder(), out var message));
-        var ackMessage = Assert.IsType<AckMessage>(message);
-        pipes.Application.Input.AdvanceTo(buffer.Start);
-
-        Assert.Equal(2, ackMessage.SequenceId);
-
-        Assert.True(messageBuffer.ShouldProcessMessage(new StreamItemMessage("1", null)));
-
-        timeProvider.Advance(MessageBuffer.AckRate);
-
-        res = await pipes.Application.Input.ReadAsync();
-        buffer = res.Buffer;
-        Assert.True(protocol.TryParseMessage(ref buffer, new TestBinder(), out message));
-        ackMessage = Assert.IsType<AckMessage>(message);
-        pipes.Application.Input.AdvanceTo(buffer.Start);
-
-        Assert.Equal(3, ackMessage.SequenceId);
-    }
-
-    [Fact]
-    public async Task ReceiveAckDuringResendStillSendsAllMessages()
-    {
-        var protocol = new JsonHubProtocol();
-        var connection = new TestConnectionContext();
-        var pipeOptions = new PipeOptions(pauseWriterThreshold: 250, resumeWriterThreshold: 120);
-        var pipes = DuplexPipe.CreateConnectionPair(new PipeOptions(), pipeOptions);
-        connection.Transport = pipes.Transport;
-        using var messageBuffer = new MessageBuffer(connection, protocol, bufferLimit: 100_000, NullLogger.Instance);
-
-        await messageBuffer.WriteAsync(new SerializedHubMessage(new InvocationMessage("t", new object[] { new byte[10] })), default);
-        await messageBuffer.WriteAsync(new SerializedHubMessage(new InvocationMessage("t", new object[] { new byte[100] })), default).DefaultTimeout();
-        var writeTask = messageBuffer.WriteAsync(new SerializedHubMessage(new InvocationMessage("t", new object[] { new byte[100] })), default);
-
-        // simulate reconnect
-        // Smaller PipeOptions on reconnect to force the Resend loop to pause on sending the 2nd message
-        DuplexPipe.UpdateConnectionPair(ref pipes, connection, new PipeOptions(pauseWriterThreshold: 100, resumeWriterThreshold: 50));
-        var resendTask = messageBuffer.ResendAsync(pipes.Transport.Output);
-
-        Assert.True(messageBuffer.ShouldProcessMessage(new SequenceMessage(1)));
-        // Ack all 3 messages while the Resend loop is running, Resend should continue sending all messages
-        var ackTask = messageBuffer.AckAsync(new AckMessage(3));
-
-        var res = await pipes.Application.Input.ReadAsync();
-        var buffer = res.Buffer;
-        Assert.True(protocol.TryParseMessage(ref buffer, new TestBinder(), out var message));
-        Assert.IsType<SequenceMessage>(message);
-        pipes.Application.Input.AdvanceTo(buffer.Start);
-
-        for (var i = 0; i < 3; i++)
-        {
-            res = await pipes.Application.Input.ReadAsync();
-            buffer = res.Buffer;
-            Assert.True(protocol.TryParseMessage(ref buffer, new TestBinder(), out message));
-            Assert.IsType<InvocationMessage>(message);
-            pipes.Application.Input.AdvanceTo(buffer.Start);
-        }
-
-        await resendTask;
-        await ackTask;
-    }
-
-    [Fact]
-    public async Task SendingAckMessageDelayedDuringResend()
-    {
-        var protocol = new JsonHubProtocol();
-        var connection = new TestConnectionContext();
-        var pipeOptions = new PipeOptions(pauseWriterThreshold: 100, resumeWriterThreshold: 50);
-        var pipes = DuplexPipe.CreateConnectionPair(new PipeOptions(), pipeOptions);
-        connection.Transport = pipes.Transport;
-        var timeProvider = new FakeTimeProvider();
-        using var messageBuffer = new MessageBuffer(connection, protocol, bufferLimit: 100_000, NullLogger.Instance, timeProvider);
-
-        await messageBuffer.WriteAsync(new SerializedHubMessage(new InvocationMessage("t", new object[] { new byte[10] })), default);
-        var writeTask = messageBuffer.WriteAsync(new SerializedHubMessage(new InvocationMessage("t", new object[] { new byte[100] })), default).DefaultTimeout();
-
-        // simulate reconnect
-        DuplexPipe.UpdateConnectionPair(ref pipes, connection, pipeOptions);
-        var resendTask = messageBuffer.ResendAsync(pipes.Transport.Output);
-
-        // Simulate receiving messages
-        Assert.True(messageBuffer.ShouldProcessMessage(new SequenceMessage(1)));
-        Assert.True(messageBuffer.ShouldProcessMessage(new StreamItemMessage("1", null)));
-        Assert.True(messageBuffer.ShouldProcessMessage(new StreamItemMessage("1", null)));
-
-        Assert.False(resendTask.IsCompleted);
-
-        // Trigger sending an AckMessage while Resend is running
-        timeProvider.Advance(MessageBuffer.AckRate);
-
-        var res = await pipes.Application.Input.ReadAsync();
-        var buffer = res.Buffer;
-        Assert.True(protocol.TryParseMessage(ref buffer, new TestBinder(), out var message));
-        Assert.IsType<SequenceMessage>(message);
-        pipes.Application.Input.AdvanceTo(buffer.Start);
-
-        timeProvider.Advance(MessageBuffer.AckRate);
-
-        for (var i = 0; i < 2; i++)
-        {
-            res = await pipes.Application.Input.ReadAsync();
-            buffer = res.Buffer;
-            Assert.True(protocol.TryParseMessage(ref buffer, new TestBinder(), out message));
-            Assert.IsType<InvocationMessage>(message);
-            pipes.Application.Input.AdvanceTo(buffer.Start);
-        }
-
-        await resendTask;
-
-        res = await pipes.Application.Input.ReadAsync();
-        buffer = res.Buffer;
-        Assert.True(protocol.TryParseMessage(ref buffer, new TestBinder(), out message));
-        Assert.IsType<AckMessage>(message);
-        pipes.Application.Input.AdvanceTo(buffer.Start);
-
-        Assert.False(pipes.Application.Input.TryRead(out res));
     }
 }
 
@@ -539,9 +318,9 @@ internal sealed class DuplexPipe : IDuplexPipe
         }
     }
 
-    public static void UpdateConnectionPair(ref DuplexPipePair duplexPipePair, ConnectionContext connection, PipeOptions pipeOptions = null)
+    public static void UpdateConnectionPair(ref DuplexPipePair duplexPipePair, ConnectionContext connection)
     {
-        var input = new Pipe(pipeOptions ?? new PipeOptions());
+        var input = new Pipe();
 
         // Add new pipe for reading from and writing to transport from app code
         var transportToApplication = new DuplexPipe(duplexPipePair.Transport.Input, input.Writer);

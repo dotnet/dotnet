@@ -1093,7 +1093,7 @@ namespace ILCompiler
                 string internalValue = GetAttribute(nav, "internal");
                 if (!string.IsNullOrEmpty(internalValue))
                 {
-                    if (!IsRemoveAttributeInstances(internalValue))
+                    if (!IsRemoveAttributeInstances(internalValue) || !nav.IsEmptyElement)
                     {
                         LogWarning(nav, DiagnosticId.UnrecognizedInternalAttribute, internalValue);
                     }

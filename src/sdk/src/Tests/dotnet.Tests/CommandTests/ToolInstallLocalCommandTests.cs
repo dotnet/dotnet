@@ -1,27 +1,18 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using FluentAssertions;
-using System.CommandLine;
 using Microsoft.DotNet.Cli;
-using Microsoft.DotNet.Cli.ToolPackage;
 using Microsoft.DotNet.Cli.Utils;
-using Microsoft.DotNet.ToolManifest;
 using Microsoft.DotNet.ToolPackage;
-using Microsoft.DotNet.Tools.Tests.ComponentMocks;
 using Microsoft.DotNet.Tools.Tool.Install;
+using Microsoft.DotNet.Tools.Tests.ComponentMocks;
 using Microsoft.Extensions.DependencyModel.Tests;
 using Microsoft.Extensions.EnvironmentAbstractions;
-using Xunit;
 using NuGet.Versioning;
 using LocalizableStrings = Microsoft.DotNet.Tools.Tool.Install.LocalizableStrings;
-using Microsoft.NET.TestFramework.Utilities;
-using System.CommandLine.Parsing;
+using Microsoft.DotNet.ToolManifest;
 using NuGet.Frameworks;
+using System.CommandLine;
 using Parser = Microsoft.DotNet.Cli.Parser;
 
 namespace Microsoft.DotNet.Tests.Commands.Tool
@@ -30,7 +21,7 @@ namespace Microsoft.DotNet.Tests.Commands.Tool
     {
         private readonly IFileSystem _fileSystem;
         private readonly IToolPackageStore _toolPackageStore;
-        private readonly ToolPackageDownloaderMock _toolPackageDownloaderMock;
+        private readonly ToolPackageInstallerMock _toolPackageInstallerMock;
         private readonly ParseResult _parseResult;
         private readonly BufferedReporter _reporter;
         private readonly string _temporaryDirectory;
@@ -54,27 +45,28 @@ namespace Microsoft.DotNet.Tests.Commands.Tool
             ToolPackageStoreMock toolPackageStoreMock =
                 new ToolPackageStoreMock(new DirectoryPath(_pathToPlacePackages), _fileSystem);
             _toolPackageStore = toolPackageStoreMock;
-            
-            _toolPackageDownloaderMock = new ToolPackageDownloaderMock(
-                store: _toolPackageStore,
-                fileSystem: _fileSystem,
-                reporter: _reporter,
-                new List<MockFeed>
-                {
-                    new MockFeed
+            _toolPackageInstallerMock = new ToolPackageInstallerMock(
+                _fileSystem,
+                _toolPackageStore,
+                new ProjectRestorerMock(
+                    _fileSystem,
+                    _reporter,
+                    new List<MockFeed>
                     {
-                        Type = MockFeedType.ImplicitAdditionalFeed,
-                        Packages = new List<MockFeedPackage>
+                        new MockFeed
                         {
-                            new MockFeedPackage
+                            Type = MockFeedType.ImplicitAdditionalFeed,
+                            Packages = new List<MockFeedPackage>
                             {
-                                PackageId = _packageIdA.ToString(),
-                                Version = _packageVersionA.ToNormalizedString(),
-                                ToolCommandName = _toolCommandNameA.ToString()
+                                new MockFeedPackage
+                                {
+                                    PackageId = _packageIdA.ToString(),
+                                    Version = _packageVersionA.ToNormalizedString(),
+                                    ToolCommandName = _toolCommandNameA.ToString()
+                                }
                             }
                         }
-                    }
-                });
+                    }));
 
             _localToolsResolverCache
                 = new LocalToolsResolverCache(
@@ -151,7 +143,7 @@ namespace Microsoft.DotNet.Tests.Commands.Tool
 
             var installLocalCommand = new ToolInstallLocalCommand(
                 parseResult,
-                _toolPackageDownloaderMock,
+                _toolPackageInstallerMock,
                 _toolManifestFinder,
                 _toolManifestEditor,
                 _localToolsResolverCache,
@@ -197,7 +189,7 @@ namespace Microsoft.DotNet.Tests.Commands.Tool
 
             var installLocalCommand = new ToolInstallLocalCommand(
                 result,
-                _toolPackageDownloaderMock,
+                _toolPackageInstallerMock,
                 _toolManifestFinder,
                 _toolManifestEditor,
                 _localToolsResolverCache,
@@ -241,7 +233,7 @@ namespace Microsoft.DotNet.Tests.Commands.Tool
         {
             return new ToolInstallLocalCommand(
                 _parseResult,
-                _toolPackageDownloaderMock,
+                _toolPackageInstallerMock,
                 _toolManifestFinder,
                 _toolManifestEditor,
                 _localToolsResolverCache,
@@ -256,7 +248,7 @@ namespace Microsoft.DotNet.Tests.Commands.Tool
 
             var installLocalCommand = new ToolInstallLocalCommand(
                 result,
-                _toolPackageDownloaderMock,
+                _toolPackageInstallerMock,
                 _toolManifestFinder,
                 _toolManifestEditor,
                 _localToolsResolverCache,
@@ -274,7 +266,7 @@ namespace Microsoft.DotNet.Tests.Commands.Tool
 
             var installLocalCommand = new ToolInstallLocalCommand(
                 result,
-                _toolPackageDownloaderMock,
+                _toolPackageInstallerMock,
                 _toolManifestFinder,
                 _toolManifestEditor,
                 _localToolsResolverCache,
@@ -328,7 +320,7 @@ namespace Microsoft.DotNet.Tests.Commands.Tool
 
             var installLocalCommand = new ToolInstallLocalCommand(
                 parseResult,
-                _toolPackageDownloaderMock,
+                _toolPackageInstallerMock,
                 _toolManifestFinder,
                 _toolManifestEditor,
                 _localToolsResolverCache,
@@ -352,7 +344,7 @@ namespace Microsoft.DotNet.Tests.Commands.Tool
 
             var installLocalCommand = new ToolInstallLocalCommand(
                 parseResult,
-                _toolPackageDownloaderMock,
+                _toolPackageInstallerMock,
                 _toolManifestFinder,
                 _toolManifestEditor,
                 _localToolsResolverCache,
@@ -373,7 +365,7 @@ namespace Microsoft.DotNet.Tests.Commands.Tool
             
             var installLocalCommand = new ToolInstallLocalCommand(
                 parseResult,
-                _toolPackageDownloaderMock,
+                _toolPackageInstallerMock,
                 _toolManifestFinder,
                 _toolManifestEditor,
                 _localToolsResolverCache,
@@ -383,7 +375,7 @@ namespace Microsoft.DotNet.Tests.Commands.Tool
             _fileSystem.File.Exists(Path.Combine(_temporaryDirectory, ".config", "dotnet-tools.json")).Should().BeTrue();
         }
 
-        private IToolPackageDownloader GetToolToolPackageInstallerWithPreviewInFeed()
+        private IToolPackageInstaller GetToolToolPackageInstallerWithPreviewInFeed()
         {
             List<MockFeed> feeds = new List<MockFeed>
             {
@@ -407,14 +399,15 @@ namespace Microsoft.DotNet.Tests.Commands.Tool
                     }
                 }
             };
-
-            var toolToolPackageDownloader = (IToolPackageDownloader)new ToolPackageDownloaderMock(
+            var toolToolPackageInstaller = (IToolPackageInstaller)new ToolPackageInstallerMock(
                 fileSystem: _fileSystem,
                 store: _toolPackageStore,
-                reporter: _reporter,
-                feeds: feeds,
-                downloadCallback: null);
-            return toolToolPackageDownloader;
+                projectRestorer: new ProjectRestorerMock(
+                    fileSystem: _fileSystem,
+                    reporter: _reporter,
+                    feeds: feeds),
+                installCallback: null);
+            return toolToolPackageInstaller;
         }
 
         private void AssertDefaultInstallSuccess()

@@ -137,9 +137,6 @@ internal sealed class CodeLensHandler : ILspServiceDocumentRequestHandler<LSP.Co
         var testContainerMembers = members.Where(member => testContainerNodes.Contains(member.Node));
 
         // Create code lenses for all test methods.
-
-        // The client will fill this in if applicable.
-        string? runSettingsPath = null;
         foreach (var member in testMethodMembers)
         {
             var range = ProtocolConversions.TextSpanToRange(member.Span, text);
@@ -149,7 +146,7 @@ internal sealed class CodeLensHandler : ILspServiceDocumentRequestHandler<LSP.Co
                 Command = new LSP.Command
                 {
                     CommandIdentifier = RunTestsCommandIdentifier,
-                    Arguments = new object[] { new RunTestsParams(textDocumentIdentifier, range, AttachDebugger: false, runSettingsPath) },
+                    Arguments = new object[] { new RunTestsParams(textDocumentIdentifier, range, AttachDebugger: false) },
                     Title = FeaturesResources.Run_Test
                 }
             };
@@ -160,7 +157,7 @@ internal sealed class CodeLensHandler : ILspServiceDocumentRequestHandler<LSP.Co
                 Command = new LSP.Command
                 {
                     CommandIdentifier = RunTestsCommandIdentifier,
-                    Arguments = new object[] { new RunTestsParams(textDocumentIdentifier, range, AttachDebugger: true, runSettingsPath) },
+                    Arguments = new object[] { new RunTestsParams(textDocumentIdentifier, range, AttachDebugger: true) },
                     Title = FeaturesResources.Debug_Test
                 }
             };
@@ -179,7 +176,7 @@ internal sealed class CodeLensHandler : ILspServiceDocumentRequestHandler<LSP.Co
                 Command = new LSP.Command
                 {
                     CommandIdentifier = RunTestsCommandIdentifier,
-                    Arguments = new object[] { new RunTestsParams(textDocumentIdentifier, range, AttachDebugger: false, runSettingsPath) },
+                    Arguments = new object[] { new RunTestsParams(textDocumentIdentifier, range, AttachDebugger: false) },
                     Title = FeaturesResources.Run_All_Tests
                 }
             };
@@ -190,7 +187,7 @@ internal sealed class CodeLensHandler : ILspServiceDocumentRequestHandler<LSP.Co
                 Command = new LSP.Command
                 {
                     CommandIdentifier = RunTestsCommandIdentifier,
-                    Arguments = new object[] { new RunTestsParams(textDocumentIdentifier, range, AttachDebugger: true, runSettingsPath) },
+                    Arguments = new object[] { new RunTestsParams(textDocumentIdentifier, range, AttachDebugger: true) },
                     Title = FeaturesResources.Debug_All_Tests
                 }
             };

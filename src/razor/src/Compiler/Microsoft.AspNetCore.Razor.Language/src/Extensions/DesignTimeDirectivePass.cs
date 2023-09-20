@@ -3,7 +3,6 @@
 
 #nullable disable
 
-using System.Collections.Generic;
 using Microsoft.AspNetCore.Razor.Language.Intermediate;
 
 namespace Microsoft.AspNetCore.Razor.Language.Extensions;
@@ -31,7 +30,7 @@ internal class DesignTimeDirectivePass : IntermediateNodePassBase, IRazorDirecti
 
     internal class DesignTimeHelperWalker : IntermediateNodeWalker
     {
-        private readonly Stack<DesignTimeDirectiveIntermediateNode> _directiveNodes = new();
+        private DesignTimeDirectiveIntermediateNode _directiveNode;
 
         public override void VisitClassDeclaration(ClassDeclarationIntermediateNode node)
         {
@@ -69,16 +68,16 @@ internal class DesignTimeDirectivePass : IntermediateNodePassBase, IRazorDirecti
                     }
             });
 
-            _directiveNodes.Push(new DesignTimeDirectiveIntermediateNode());
+            _directiveNode = new DesignTimeDirectiveIntermediateNode();
 
             VisitDefault(node);
 
-            node.Children.Insert(0, _directiveNodes.Pop());
+            node.Children.Insert(0, _directiveNode);
         }
 
         public override void VisitDirectiveToken(DirectiveTokenIntermediateNode node)
         {
-            _directiveNodes.Peek().Children.Add(node);
+            _directiveNode.Children.Add(node);
         }
     }
 }

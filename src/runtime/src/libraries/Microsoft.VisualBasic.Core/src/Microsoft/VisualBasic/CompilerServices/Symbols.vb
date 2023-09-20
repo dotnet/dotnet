@@ -823,12 +823,6 @@ Namespace Microsoft.VisualBasic.CompilerServices
                 End Get
             End Property
 
-            Friend ReadOnly Property IsCOMObject() As Boolean
-                Get
-                    Return _type.IsCOMObject
-                End Get
-            End Property
-
             Friend ReadOnly Property VBFriendlyName() As String
                 Get
                     Return Utils.VBFriendlyName(_type, _instance)

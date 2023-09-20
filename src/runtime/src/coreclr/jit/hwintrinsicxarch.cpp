@@ -3602,19 +3602,17 @@ GenTree* Compiler::impSpecialIntrinsic(NamedIntrinsic        intrinsic,
                     op2 = impSIMDPopStack();
                     op1 = impSIMDPopStack();
 
-                    // Consume operands we won't use, in case they have side effects.
-                    //
-                    if (unusedVal1 && !(*val1)->IsVectorZero())
+                    if (unusedVal1)
                     {
                         impAppendTree(gtUnusedValNode(*val1), CHECK_SPILL_ALL, impCurStmtDI);
                     }
 
-                    if (unusedVal2 && !(*val2)->IsVectorZero())
+                    if (unusedVal2)
                     {
                         impAppendTree(gtUnusedValNode(*val2), CHECK_SPILL_ALL, impCurStmtDI);
                     }
 
-                    if (unusedVal3 && !(*val3)->IsVectorZero())
+                    if (unusedVal3)
                     {
                         impAppendTree(gtUnusedValNode(*val3), CHECK_SPILL_ALL, impCurStmtDI);
                     }

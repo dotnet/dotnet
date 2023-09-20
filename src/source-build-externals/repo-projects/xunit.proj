@@ -6,10 +6,6 @@
     </PropertyGroup>
   
     <Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk" />
-
-    <ItemGroup>
-      <RepositoryReference Include="abstractions-xunit" />
-    </ItemGroup>
   
     <Target Name="RepoBuild">
       <PropertyGroup>

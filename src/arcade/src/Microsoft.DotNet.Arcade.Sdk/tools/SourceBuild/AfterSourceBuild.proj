@@ -52,7 +52,7 @@
   <Target Name="ReportPrebuiltUsage"
           DependsOnTargets="WritePrebuiltUsageData">
     <PropertyGroup>
-      <FailOnPrebuiltBaselineError Condition="'$(FailOnPrebuiltBaselineError)' == ''">true</FailOnPrebuiltBaselineError>
+      <FailOnPrebuiltBaselineError Condition="'$(FailOnPrebuiltBaselineError)' == ''">false</FailOnPrebuiltBaselineError>
     </PropertyGroup>
 
     <WriteUsageReports

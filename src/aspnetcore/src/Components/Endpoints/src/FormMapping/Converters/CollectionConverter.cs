@@ -58,7 +58,7 @@ internal class CollectionConverter<TCollection, TCollectionPolicy, TBuffer, TEle
         out bool found)
     {
         TElement currentElement;
-        TBuffer? buffer = default;
+        TBuffer buffer;
         bool foundCurrentElement;
         bool currentElementSuccess;
         bool succeded;
@@ -73,10 +73,10 @@ internal class CollectionConverter<TCollection, TCollectionPolicy, TBuffer, TEle
         {
             context.PopPrefix("[0]");
         }
-
         if (!found)
         {
-            return TryReadSingleValueCollection(ref context, out result, ref found, ref buffer, ref succeded);
+            result = default;
+            return succeded;
         }
 
         // We already know we found an element;
@@ -91,15 +91,6 @@ internal class CollectionConverter<TCollection, TCollectionPolicy, TBuffer, TEle
             context.PushPrefix("[1]");
             currentElementSuccess = _elementConverter.TryRead(ref context, _elementType, options, out currentElement!, out foundCurrentElement);
             succeded = succeded && currentElementSuccess;
-        }
-        catch
-        {
-            if (buffer != null)
-            {
-                // Ensure the buffer is cleaned up if we fail.
-                result = TCollectionPolicy.ToResult(buffer);
-            }
-            throw;
         }
         finally
         {
@@ -128,15 +119,6 @@ internal class CollectionConverter<TCollection, TCollectionPolicy, TBuffer, TEle
                 context.PushPrefix(prefix);
                 currentElementSuccess = _elementConverter.TryRead(ref context, _elementType, options, out currentElement!, out foundCurrentElement);
                 succeded = succeded && currentElementSuccess;
-            }
-            catch
-            {
-                if (buffer != null)
-                {
-                    // Ensure the buffer is cleaned up if we fail.
-                    result = TCollectionPolicy.ToResult(buffer);
-                }
-                throw;
             }
             finally
             {
@@ -181,15 +163,6 @@ internal class CollectionConverter<TCollection, TCollectionPolicy, TBuffer, TEle
                 currentElementSuccess = _elementConverter.TryRead(ref context, _elementType, options, out currentElement!, out foundCurrentElement);
                 succeded = succeded && currentElementSuccess;
             }
-            catch
-            {
-                if (buffer != null)
-                {
-                    // Ensure the buffer is cleaned up if we fail.
-                    result = TCollectionPolicy.ToResult(buffer);
-                }
-                throw;
-            }
             finally
             {
                 context.PopPrefix(computedPrefix[..(charsWritten + 2)]);
@@ -215,45 +188,5 @@ internal class CollectionConverter<TCollection, TCollectionPolicy, TBuffer, TEle
             }
             return succeded;
         }
-    }
-
-    private bool TryReadSingleValueCollection(ref FormDataReader context, out TCollection? result, ref bool found, ref TBuffer? buffer, ref bool succeded)
-    {
-        if (_elementConverter is ISingleValueConverter<TElement> singleValueConverter &&
-            singleValueConverter.CanConvertSingleValue() &&
-            context.TryGetValues(out var values))
-        {
-            found = true;
-            buffer = TCollectionPolicy.CreateBuffer();
-
-            for (var i = 0; i < values.Count; i++)
-            {
-                var value = values[i];
-                try
-                {
-                    if (!singleValueConverter.TryConvertValue(ref context, value!, out var elementValue))
-                    {
-                        succeded = false;
-                    }
-                    else
-                    {
-                        buffer = TCollectionPolicy.Add(ref buffer, elementValue);
-                    }
-                }
-                catch (Exception ex)
-                {
-                    succeded = false;
-                    context.AddMappingError(ex, value);
-                }
-            };
-
-            result = TCollectionPolicy.ToResult(buffer);
-        }
-        else
-        {
-            result = default;
-        }
-
-        return succeded;
     }
 }

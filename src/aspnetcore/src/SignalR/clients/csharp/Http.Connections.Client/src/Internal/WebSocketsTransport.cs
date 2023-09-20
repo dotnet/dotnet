@@ -372,9 +372,6 @@ internal sealed partial class WebSocketsTransport : ITransport, IStatefulReconne
 
                     // Abort the websocket if we're stuck in a pending send to the client
                     socket.Abort();
-
-                    // Should not throw
-                    await sending.ConfigureAwait(false);
                 }
             }
             else
@@ -393,40 +390,18 @@ internal sealed partial class WebSocketsTransport : ITransport, IStatefulReconne
                 {
                     _application.Output.CancelPendingFlush();
                 }
-
-                // Should not throw
-                await receiving.ConfigureAwait(false);
             }
         }
 
-        var cleanup = true;
-        try
+        if (_useStatefulReconnect && !_gracefulClose)
         {
-            if (!_gracefulClose && UpdateConnectionPair())
+            if (!UpdateConnectionPair())
             {
-                try
-                {
-                    await StartAsync(url, _webSocketMessageType == WebSocketMessageType.Binary ? TransferFormat.Binary : TransferFormat.Text,
-                        cancellationToken: default).ConfigureAwait(false);
-                    cleanup = false;
-                }
-                catch (Exception ex)
-                {
-                    throw new InvalidOperationException("Reconnect attempt failed.", innerException: ex);
-                }
+                return;
             }
-        }
-        finally
-        {
-            if (cleanup)
-            {
-                // Pipes will usually already be completed.
-                // If stateful reconnect fails we want to make sure the Pipes are cleaned up.
-                // And in rare cases where the websocket is closing at the same time StopAsync is called
-                // It's possible a Pipe won't be completed so let's be safe and call Complete again.
-                _application.Output.Complete();
-                _application.Input.Complete();
-            }
+
+            await StartAsync(url, _webSocketMessageType == WebSocketMessageType.Binary ? TransferFormat.Binary : TransferFormat.Text,
+                cancellationToken: default).ConfigureAwait(false);
         }
     }
 
@@ -504,7 +479,7 @@ internal sealed partial class WebSocketsTransport : ITransport, IStatefulReconne
         {
             if (!_aborted)
             {
-                if (_gracefulClose || !_useStatefulReconnect)
+                if (_gracefulClose)
                 {
                     _application.Output.Complete(ex);
                 }
@@ -518,7 +493,7 @@ internal sealed partial class WebSocketsTransport : ITransport, IStatefulReconne
         finally
         {
             // We're done writing
-            if (_gracefulClose || !_useStatefulReconnect)
+            if (_gracefulClose)
             {
                 _application.Output.Complete();
             }
@@ -614,9 +589,9 @@ internal sealed partial class WebSocketsTransport : ITransport, IStatefulReconne
                 }
             }
 
-            if (_gracefulClose || !_useStatefulReconnect)
+            if (_gracefulClose)
             {
-                _application.Input.Complete();
+                _application.Input.Complete(error);
             }
             else
             {

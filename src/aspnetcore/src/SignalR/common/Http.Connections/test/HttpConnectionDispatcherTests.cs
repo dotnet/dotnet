@@ -41,7 +41,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Testing;
 using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Primitives;
-using Microsoft.Extensions.Telemetry.Testing.Metrics;
+using Microsoft.Extensions.Telemetry.Testing.Metering;
 using Microsoft.IdentityModel.Tokens;
 using Moq;
 using Newtonsoft.Json;
@@ -450,6 +450,7 @@ public class HttpConnectionDispatcherTests : VerifiableLoggedTest
             var manager = CreateConnectionManager(LoggerFactory);
             var dispatcher = CreateDispatcher(manager, LoggerFactory);
             var connection = manager.CreateConnection();
+            connection.TransportType = transportType;
 
             using (var strm = new MemoryStream())
             {
@@ -1000,6 +1001,7 @@ public class HttpConnectionDispatcherTests : VerifiableLoggedTest
         {
             var manager = CreateConnectionManager(LoggerFactory);
             var connection = manager.CreateConnection();
+            connection.TransportType = HttpTransportType.ServerSentEvents;
 
             var dispatcher = CreateDispatcher(manager, LoggerFactory);
 
@@ -1034,6 +1036,7 @@ public class HttpConnectionDispatcherTests : VerifiableLoggedTest
         {
             var manager = CreateConnectionManager(LoggerFactory);
             var connection = manager.CreateConnection();
+            connection.TransportType = HttpTransportType.ServerSentEvents;
 
             var dispatcher = CreateDispatcher(manager, LoggerFactory);
             var services = new ServiceCollection();
@@ -1312,11 +1315,12 @@ public class HttpConnectionDispatcherTests : VerifiableLoggedTest
         {
             var manager = CreateConnectionManager(LoggerFactory);
             var connection = manager.CreateConnection();
+            connection.TransportType = HttpTransportType.ServerSentEvents;
             var dispatcher = CreateDispatcher(manager, LoggerFactory);
             var services = new ServiceCollection();
             services.AddSingleton<TestConnectionHandler>();
             var context = MakeRequest("/foo", connection, services);
-            SetTransport(context, HttpTransportType.ServerSentEvents);
+            SetTransport(context, connection.TransportType);
             var builder = new ConnectionBuilder(services.BuildServiceProvider());
             builder.UseConnectionHandler<TestConnectionHandler>();
             var app = builder.Build();
@@ -1348,12 +1352,13 @@ public class HttpConnectionDispatcherTests : VerifiableLoggedTest
         {
             var manager = CreateConnectionManager(LoggerFactory);
             var connection = manager.CreateConnection();
+            connection.TransportType = HttpTransportType.WebSockets;
             var dispatcher = CreateDispatcher(manager, LoggerFactory);
             var sync = new SyncPoint();
             var services = new ServiceCollection();
             services.AddSingleton<TestConnectionHandler>();
             var context = MakeRequest("/foo", connection, services);
-            SetTransport(context, HttpTransportType.WebSockets, sync);
+            SetTransport(context, connection.TransportType, sync);
             var builder = new ConnectionBuilder(services.BuildServiceProvider());
             builder.UseConnectionHandler<TestConnectionHandler>();
             var app = builder.Build();
@@ -1409,6 +1414,7 @@ public class HttpConnectionDispatcherTests : VerifiableLoggedTest
         {
             var manager = CreateConnectionManager(LoggerFactory);
             var connection = manager.CreateConnection();
+            connection.TransportType = transportType;
 
             var dispatcher = CreateDispatcher(manager, LoggerFactory);
 
@@ -1428,10 +1434,7 @@ public class HttpConnectionDispatcherTests : VerifiableLoggedTest
 
             await dispatcher.ExecuteAsync(context2, options, app).DefaultTimeout();
 
-            Assert.False(request1.IsCompleted);
-
             Assert.Equal(StatusCodes.Status409Conflict, context2.Response.StatusCode);
-            Assert.NotSame(connection.HttpContext, context2);
 
             var webSocketTask = Task.CompletedTask;
 
@@ -1583,6 +1586,7 @@ public class HttpConnectionDispatcherTests : VerifiableLoggedTest
         {
             var manager = CreateConnectionManager(LoggerFactory);
             var connection = manager.CreateConnection();
+            connection.TransportType = transportType;
             connection.Status = HttpConnectionStatus.Disposed;
 
             var dispatcher = CreateDispatcher(manager, LoggerFactory);
@@ -1649,6 +1653,7 @@ public class HttpConnectionDispatcherTests : VerifiableLoggedTest
         {
             var manager = CreateConnectionManager(LoggerFactory);
             var connection = manager.CreateConnection();
+            connection.TransportType = HttpTransportType.ServerSentEvents;
 
             var dispatcher = CreateDispatcher(manager, LoggerFactory);
 
@@ -1772,6 +1777,7 @@ public class HttpConnectionDispatcherTests : VerifiableLoggedTest
         {
             var manager = CreateConnectionManager(LoggerFactory);
             var connection = manager.CreateConnection();
+            connection.TransportType = transportType;
 
             var dispatcher = CreateDispatcher(manager, LoggerFactory);
 
@@ -2257,7 +2263,7 @@ public class HttpConnectionDispatcherTests : VerifiableLoggedTest
     }
 
     [Fact]
-    public async Task NegotiateDoesNotReturnUseStatefulReconnectWhenNotEnabledOnServer()
+    public async Task NegotiateDoesNotReturnUseAckWhenNotEnabledOnServer()
     {
         using (StartVerifiableLog())
         {
@@ -2272,11 +2278,11 @@ public class HttpConnectionDispatcherTests : VerifiableLoggedTest
             context.Request.Path = "/foo";
             context.Request.Method = "POST";
             context.Response.Body = ms;
-            context.Request.QueryString = new QueryString("?negotiateVersion=1&UseStatefulReconnect=true");
+            context.Request.QueryString = new QueryString("?negotiateVersion=1&UseAck=true");
             await dispatcher.ExecuteNegotiateAsync(context, new HttpConnectionDispatcherOptions { AllowStatefulReconnects = false });
 
             var negotiateResponse = JsonConvert.DeserializeObject<JObject>(Encoding.UTF8.GetString(ms.ToArray()));
-            Assert.False(negotiateResponse.TryGetValue("useStatefulReconnect", out _));
+            Assert.False(negotiateResponse.TryGetValue("useAck", out _));
 
             Assert.True(manager.TryGetConnection(negotiateResponse["connectionToken"].ToString(), out var connection));
 #pragma warning disable CA2252 // This API requires opting into preview features
@@ -2286,7 +2292,7 @@ public class HttpConnectionDispatcherTests : VerifiableLoggedTest
     }
 
     [Fact]
-    public async Task NegotiateDoesNotReturnUseStatefulReconnectWhenEnabledOnServerButNotRequestedByClient()
+    public async Task NegotiateDoesNotReturnUseAckWhenEnabledOnServerButNotRequestedByClient()
     {
         using (StartVerifiableLog())
         {
@@ -2305,7 +2311,7 @@ public class HttpConnectionDispatcherTests : VerifiableLoggedTest
             await dispatcher.ExecuteNegotiateAsync(context, new HttpConnectionDispatcherOptions { AllowStatefulReconnects = true });
 
             var negotiateResponse = JsonConvert.DeserializeObject<JObject>(Encoding.UTF8.GetString(ms.ToArray()));
-            Assert.False(negotiateResponse.TryGetValue("useStatefulReconnect", out _));
+            Assert.False(negotiateResponse.TryGetValue("useAck", out _));
 
             Assert.True(manager.TryGetConnection(negotiateResponse["connectionToken"].ToString(), out var connection));
 #pragma warning disable CA2252 // This API requires opting into preview features
@@ -2315,7 +2321,7 @@ public class HttpConnectionDispatcherTests : VerifiableLoggedTest
     }
 
     [Fact]
-    public async Task NegotiateReturnsUseStatefulReconnectWhenEnabledOnServerAndRequestedByClient()
+    public async Task NegotiateReturnsUseAckWhenEnabledOnServerAndRequestedByClient()
     {
         using (StartVerifiableLog())
         {
@@ -2330,11 +2336,11 @@ public class HttpConnectionDispatcherTests : VerifiableLoggedTest
             context.Request.Path = "/foo";
             context.Request.Method = "POST";
             context.Response.Body = ms;
-            context.Request.QueryString = new QueryString("?negotiateVersion=1&UseStatefulReconnect=true");
+            context.Request.QueryString = new QueryString("?negotiateVersion=1&UseAck=true");
             await dispatcher.ExecuteNegotiateAsync(context, new HttpConnectionDispatcherOptions { AllowStatefulReconnects = true });
 
             var negotiateResponse = JsonConvert.DeserializeObject<JObject>(Encoding.UTF8.GetString(ms.ToArray()));
-            Assert.True((bool)negotiateResponse["useStatefulReconnect"]);
+            Assert.True((bool)negotiateResponse["useAck"]);
 
             Assert.True(manager.TryGetConnection(negotiateResponse["connectionToken"].ToString(), out var connection));
 #pragma warning disable CA2252 // This API requires opting into preview features
@@ -2352,7 +2358,7 @@ public class HttpConnectionDispatcherTests : VerifiableLoggedTest
             var options = new HttpConnectionDispatcherOptions() { AllowStatefulReconnects = true };
             options.WebSockets.CloseTimeout = TimeSpan.FromMilliseconds(1);
             // pretend negotiate occurred
-            var connection = manager.CreateConnection(options, negotiateVersion: 1, useStatefulReconnect: true);
+            var connection = manager.CreateConnection(options, negotiateVersion: 1, useAck: true);
             connection.TransportType = HttpTransportType.WebSockets;
 
             var dispatcher = CreateDispatcher(manager, LoggerFactory);
@@ -2427,7 +2433,8 @@ public class HttpConnectionDispatcherTests : VerifiableLoggedTest
             var options = new HttpConnectionDispatcherOptions() { AllowStatefulReconnects = true };
             options.WebSockets.CloseTimeout = TimeSpan.FromMilliseconds(1);
             // pretend negotiate occurred
-            var connection = manager.CreateConnection(options, negotiateVersion: 1, useStatefulReconnect: true);
+            var connection = manager.CreateConnection(options, negotiateVersion: 1, useAck: true);
+            connection.TransportType = HttpTransportType.WebSockets;
 
             var dispatcher = CreateDispatcher(manager, LoggerFactory);
             var services = new ServiceCollection();
@@ -2793,11 +2800,12 @@ public class HttpConnectionDispatcherTests : VerifiableLoggedTest
         {
             var manager = CreateConnectionManager(LoggerFactory);
             var connection = manager.CreateConnection();
+            connection.TransportType = HttpTransportType.ServerSentEvents;
             var dispatcher = CreateDispatcher(manager, LoggerFactory);
             var services = new ServiceCollection();
             services.AddSingleton<NeverEndingConnectionHandler>();
             var context = MakeRequest("/foo", connection, services);
-            SetTransport(context, HttpTransportType.ServerSentEvents);
+            SetTransport(context, connection.TransportType);
 
             var builder = new ConnectionBuilder(services.BuildServiceProvider());
             builder.UseConnectionHandler<NeverEndingConnectionHandler>();
@@ -2819,6 +2827,7 @@ public class HttpConnectionDispatcherTests : VerifiableLoggedTest
         {
             var manager = CreateConnectionManager(LoggerFactory);
             var connection = manager.CreateConnection();
+            connection.TransportType = HttpTransportType.WebSockets;
 
             var dispatcher = CreateDispatcher(manager, LoggerFactory);
             var services = new ServiceCollection();
@@ -2866,13 +2875,14 @@ public class HttpConnectionDispatcherTests : VerifiableLoggedTest
         {
             var manager = CreateConnectionManager(LoggerFactory);
             var connection = manager.CreateConnection();
+            connection.TransportType = HttpTransportType.ServerSentEvents;
             var dispatcher = CreateDispatcher(manager, LoggerFactory);
             var services = new ServiceCollection();
             services.AddSingleton<NeverEndingConnectionHandler>();
             var context = MakeRequest("/foo", connection, services);
             var lifetimeFeature = new CustomHttpRequestLifetimeFeature();
             context.Features.Set<IHttpRequestLifetimeFeature>(lifetimeFeature);
-            SetTransport(context, HttpTransportType.ServerSentEvents);
+            SetTransport(context, connection.TransportType);
 
             var builder = new ConnectionBuilder(services.BuildServiceProvider());
             builder.UseConnectionHandler<NeverEndingConnectionHandler>();
@@ -3052,6 +3062,7 @@ public class HttpConnectionDispatcherTests : VerifiableLoggedTest
         {
             var manager = CreateConnectionManager(LoggerFactory);
             var connection = manager.CreateConnection();
+            connection.TransportType = HttpTransportType.ServerSentEvents;
 
             var dispatcher = CreateDispatcher(manager, LoggerFactory);
             var services = new ServiceCollection();
@@ -3302,56 +3313,56 @@ public class HttpConnectionDispatcherTests : VerifiableLoggedTest
         var JwtTokenHandler = new JwtSecurityTokenHandler();
 
         using var host = CreateHost(services =>
-        {
-            // Set default to Cookie auth but use JWT auth for the endpoint
-            // This makes sure we take the scheme into account when grabbing the token expiration
-            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-            .AddCookie()
-            .AddJwtBearer(options =>
             {
-                options.TokenValidationParameters =
-                    new TokenValidationParameters
-                    {
-                        LifetimeValidator = (before, expires, token, parameters) => expires > DateTime.UtcNow,
-                        ValidateAudience = false,
-                        ValidateIssuer = false,
-                        ValidateActor = false,
-                        ValidateLifetime = true,
-                        IssuerSigningKey = SecurityKey
-                    };
-
-                options.Events = new JwtBearerEvents
+                // Set default to Cookie auth but use JWT auth for the endpoint
+                // This makes sure we take the scheme into account when grabbing the token expiration
+                services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+                .AddCookie()
+                .AddJwtBearer(options =>
                 {
-                    OnMessageReceived = context =>
-                    {
-                        var accessToken = context.Request.Query["access_token"];
-
-                        if (!string.IsNullOrEmpty(accessToken) &&
-                            (context.HttpContext.WebSockets.IsWebSocketRequest || context.Request.Headers["Accept"] == "text/event-stream"))
+                    options.TokenValidationParameters =
+                        new TokenValidationParameters
                         {
-                            context.Token = context.Request.Query["access_token"];
+                            LifetimeValidator = (before, expires, token, parameters) => expires > DateTime.UtcNow,
+                            ValidateAudience = false,
+                            ValidateIssuer = false,
+                            ValidateActor = false,
+                            ValidateLifetime = true,
+                            IssuerSigningKey = SecurityKey
+                        };
+
+                    options.Events = new JwtBearerEvents
+                    {
+                        OnMessageReceived = context =>
+                        {
+                            var accessToken = context.Request.Query["access_token"];
+
+                            if (!string.IsNullOrEmpty(accessToken) &&
+                                (context.HttpContext.WebSockets.IsWebSocketRequest || context.Request.Headers["Accept"] == "text/event-stream"))
+                            {
+                                context.Token = context.Request.Query["access_token"];
+                            }
+                            return Task.CompletedTask;
                         }
-                        return Task.CompletedTask;
-                    }
-                };
-            });
-        }, endpoints =>
-        {
-            endpoints.MapConnectionHandler<JwtConnectionHandler>("/foo", o => o.CloseOnAuthenticationExpiration = true);
-
-            endpoints.MapGet("/generatetoken", context =>
+                    };
+                });
+            }, endpoints =>
             {
-                return context.Response.WriteAsync(GenerateToken(context));
-            });
+                endpoints.MapConnectionHandler<JwtConnectionHandler>("/foo", o => o.CloseOnAuthenticationExpiration = true);
 
-            string GenerateToken(HttpContext httpContext)
-            {
-                var claims = new[] { new Claim(ClaimTypes.NameIdentifier, httpContext.Request.Query["user"]) };
-                var credentials = new SigningCredentials(SecurityKey, SecurityAlgorithms.HmacSha256);
-                var token = new JwtSecurityToken("SignalRTestServer", "SignalRTests", claims, expires: DateTime.UtcNow.AddMinutes(1), signingCredentials: credentials);
-                return JwtTokenHandler.WriteToken(token);
-            }
-        }, LoggerFactory);
+                endpoints.MapGet("/generatetoken", context =>
+                {
+                    return context.Response.WriteAsync(GenerateToken(context));
+                });
+
+                string GenerateToken(HttpContext httpContext)
+                {
+                    var claims = new[] { new Claim(ClaimTypes.NameIdentifier, httpContext.Request.Query["user"]) };
+                    var credentials = new SigningCredentials(SecurityKey, SecurityAlgorithms.HmacSha256);
+                    var token = new JwtSecurityToken("SignalRTestServer", "SignalRTests", claims, expires: DateTime.UtcNow.AddMinutes(1), signingCredentials: credentials);
+                    return JwtTokenHandler.WriteToken(token);
+                }
+            }, LoggerFactory);
 
         host.Start();
 
@@ -3628,6 +3639,7 @@ public class HttpConnectionDispatcherTests : VerifiableLoggedTest
     {
         var manager = CreateConnectionManager(loggerFactory);
         var connection = manager.CreateConnection();
+        connection.TransportType = transportType;
 
         var dispatcher = CreateDispatcher(manager, loggerFactory);
         using (var strm = new MemoryStream())

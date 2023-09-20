@@ -37,7 +37,7 @@ namespace NuGet.Commands.Test
             ILogger log)
             : this(
                   project,
-                  sources.Select(source => Repository.Factory.GetCoreV3(source)),
+                  sources.Select(source => Repository.Factory.GetCoreV3(source.Source)),
                   packagesDirectory,
                   new List<string>(),
                   new TestSourceCacheContext(),
@@ -73,7 +73,7 @@ namespace NuGet.Commands.Test
                 RestoreCommandProviders.Create(
                     packagesDirectory,
                     fallbackPackageFolderPaths: new List<string>(),
-                    sources: sources.Select(source => Repository.Factory.GetCoreV3(source)),
+                    sources: sources.Select(source => Repository.Factory.GetCoreV3(source.Source)),
                     cacheContext: cacheContext,
                     packageFileCache: new LocalPackageFileCache(),
                     log: log),
@@ -110,7 +110,7 @@ namespace NuGet.Commands.Test
             ILogger log)
             : this(
                   project,
-                  sources.Select(source => Repository.Factory.GetCoreV3(source)),
+                  sources.Select(source => Repository.Factory.GetCoreV3(source.Source)),
                   packagesDirectory,
                   fallbackPackageFolders,
                   cacheContext,
@@ -165,7 +165,7 @@ namespace NuGet.Commands.Test
                 RestoreCommandProviders.Create(
                     packagesDirectory,
                     Enumerable.Empty<string>(),
-                    sources: sources.Select(source => Repository.Factory.GetCoreV3(source)),
+                    sources: sources.Select(source => Repository.Factory.GetCoreV3(source.Source)),
                     cacheContext: cacheContext,
                     packageFileCache: new LocalPackageFileCache(),
                     log: log),

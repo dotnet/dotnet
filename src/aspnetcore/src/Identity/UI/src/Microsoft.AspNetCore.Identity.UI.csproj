@@ -21,10 +21,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="$(SharedSourceRoot)DefaultMessageEmailSender.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
     <None Include="@(Content)" />
     <Content Remove="@(Content)" />
     <None Include="build\*" Pack="true" PackagePath="build\" />

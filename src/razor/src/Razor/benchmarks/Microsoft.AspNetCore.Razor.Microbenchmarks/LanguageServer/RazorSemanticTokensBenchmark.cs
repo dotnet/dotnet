@@ -5,7 +5,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Collections.Immutable;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -16,7 +15,6 @@ using Microsoft.AspNetCore.Razor.LanguageServer;
 using Microsoft.AspNetCore.Razor.LanguageServer.Semantic;
 using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
-using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
@@ -133,16 +131,15 @@ public class RazorSemanticTokensBenchmark : RazorLanguageServerBenchmarkBase
     {
         public TestRazorSemanticTokensInfoService(
             ClientNotifierServiceBase languageServer,
-            LanguageServerFeatureOptions languageServerFeatureOptions,
             IRazorDocumentMappingService documentMappingService,
             RazorLSPOptionsMonitor razorLSPOptionsMonitor,
             ILoggerFactory loggerFactory)
-            : base(languageServer, documentMappingService, razorLSPOptionsMonitor, languageServerFeatureOptions, loggerFactory)
+            : base(languageServer, documentMappingService, razorLSPOptionsMonitor, loggerFactory)
         {
         }
 
         // We can't get C# responses without significant amounts of extra work, so let's just shim it for now, any non-Null result is fine.
-        internal override Task<ImmutableArray<SemanticRange>?> GetCSharpSemanticRangesAsync(
+        internal override Task<List<SemanticRange>> GetCSharpSemanticRangesAsync(
             RazorCodeDocument codeDocument,
             TextDocumentIdentifier textDocumentIdentifier,
             Range razorRange,
@@ -152,7 +149,7 @@ public class RazorSemanticTokensBenchmark : RazorLanguageServerBenchmarkBase
             CancellationToken cancellationToken,
             string previousResultId = null)
         {
-            return Task.FromResult<ImmutableArray<SemanticRange>?>(ImmutableArray<SemanticRange>.Empty);
+            return Task.FromResult(new List<SemanticRange>());
         }
     }
 }

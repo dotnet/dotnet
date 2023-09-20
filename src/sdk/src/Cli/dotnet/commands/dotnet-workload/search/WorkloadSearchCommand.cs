@@ -19,18 +19,25 @@ namespace Microsoft.DotNet.Workloads.Workload.Search
         public WorkloadSearchCommand(
             ParseResult result,
             IReporter reporter = null,
-            IWorkloadResolverFactory workloadResolverFactory = null) : base(result, CommonOptions.HiddenVerbosityOption, reporter)
+            IWorkloadResolver workloadResolver = null,
+            string version = null,
+            string userProfileDir = null) : base(result, CommonOptions.HiddenVerbosityOption, reporter)
         {
             _workloadIdStub = result.GetValue(WorkloadSearchCommandParser.WorkloadIdStubArgument);
 
-            workloadResolverFactory = workloadResolverFactory ?? new WorkloadResolverFactory();
-
-            if (!string.IsNullOrEmpty(result.GetValue(WorkloadSearchCommandParser.VersionOption)))
+            var creationParameters = new WorkloadResolverFactory.CreationParameters()
             {
-                throw new GracefulException(Install.LocalizableStrings.SdkVersionOptionNotSupported);
-            }
+                DotnetPath = null,
+                UserProfileDir = userProfileDir,
+                GlobalJsonStartDir = null,
+                SdkVersionFromOption = result.GetValue(WorkloadSearchCommandParser.VersionOption),
+                VersionForTesting = version,
+                CheckIfFeatureBandManifestExists = true,
+                WorkloadResolverForTesting = workloadResolver,
+                UseInstalledSdkVersionForResolver = true
+            };
 
-            var creationResult = workloadResolverFactory.Create();
+            var creationResult = WorkloadResolverFactory.Create(creationParameters);
 
             _sdkVersion = creationResult.SdkVersion;
             _workloadResolver = creationResult.WorkloadResolver;

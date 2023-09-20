@@ -869,6 +869,7 @@ namespace System
             return new TimeSpan(RuntimeImports.RhGetTotalPauseDuration());
         }
 
+        [System.Runtime.Versioning.RequiresPreviewFeaturesAttribute("RefreshMemoryLimit is in preview.")]
         public static void RefreshMemoryLimit()
         {
             ulong heapHardLimit = (AppContext.GetData("GCHeapHardLimit") as ulong?) ?? ulong.MaxValue;

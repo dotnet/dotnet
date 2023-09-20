@@ -84,161 +84,6 @@ namespace Dotnet.Integration.Test
         }
 
         [PlatformFact(Platform.Windows)]
-        public async Task DotnetListPackage_VersionRanges_WithCPM()
-        {
-            using (var pathContext = _fixture.CreateSimpleTestPathContext())
-            {
-                var projectA = XPlatTestUtils.CreateProject(ProjectName, pathContext, "net7.0");
-
-                var packageX = XPlatTestUtils.CreatePackage("X", "1.0.0");
-
-                // Generate Package
-                await SimpleTestPackageUtility.CreateFolderFeedV3Async(
-                    pathContext.PackageSource,
-                    PackageSaveMode.Defaultv3,
-                    packageX);
-
-                var propsFile =
-@$"<Project>
-    <PropertyGroup>
-        <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
-    </PropertyGroup>
-    <ItemGroup>
-        <PackageVersion Include=""X"" Version=""[0.1.0,)"" />
-    </ItemGroup>
-</Project>";
-
-                File.WriteAllText(Path.Combine(pathContext.SolutionRoot, "Directory.Packages.props"), propsFile);
-
-                string projectContent =
-@$"<Project  Sdk=""Microsoft.NET.Sdk"">
-<PropertyGroup>                   
-	<TargetFramework>net46</TargetFramework>
-	</PropertyGroup>
-    <ItemGroup>
-        <PackageReference Include=""X""/>
-    </ItemGroup>
-</Project>";
-                File.WriteAllText(Path.Combine(pathContext.SolutionRoot, ProjectName, string.Concat(ProjectName, ".csproj")), projectContent);
-
-                _fixture.RunDotnetExpectSuccess(Path.Combine(pathContext.SolutionRoot, projectA.ProjectName),
-                    $"restore {projectA.ProjectName}.csproj");
-
-                CommandRunnerResult listResult = _fixture.RunDotnetExpectSuccess(Directory.GetParent(projectA.ProjectPath).FullName,
-                    $"list {projectA.ProjectPath} package");
-
-                // Assert Requested version is [0.1.0,), but 1.0.0 was resolved
-                Assert.True(ContainsIgnoringSpaces(listResult.AllOutput, "[0.1.0,)"));
-                Assert.True(ContainsIgnoringSpaces(listResult.AllOutput, "1.0.0"));
-            }
-        }
-
-        [PlatformFact(Platform.Windows)]
-        public async Task DotnetListPackage_WithCPM_WithVersionOverride()
-        {
-            using (var pathContext = _fixture.CreateSimpleTestPathContext())
-            {
-                var projectA = XPlatTestUtils.CreateProject(ProjectName, pathContext, "net7.0");
-
-                var packageX = XPlatTestUtils.CreatePackage("X", "1.0.0");
-                var packageX2 = XPlatTestUtils.CreatePackage("X", "2.0.0");
-
-                // Generate Package
-                await SimpleTestPackageUtility.CreateFolderFeedV3Async(
-                    pathContext.PackageSource,
-                    PackageSaveMode.Defaultv3,
-                    packageX,
-                    packageX2);
-
-                var propsFile =
-@$"<Project>
-    <PropertyGroup>
-        <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
-    </PropertyGroup>
-    <ItemGroup>
-        <PackageVersion Include=""X"" Version=""2.0.0"" />
-    </ItemGroup>
-</Project>";
-
-                File.WriteAllText(Path.Combine(pathContext.SolutionRoot, "Directory.Packages.props"), propsFile);
-
-                string projectContent =
-@$"<Project  Sdk=""Microsoft.NET.Sdk"">
-<PropertyGroup>                   
-	<TargetFramework>net46</TargetFramework>
-	</PropertyGroup>
-    <ItemGroup>
-        <PackageReference Include=""X"" VersionOverride=""1.0.0""/>
-    </ItemGroup>
-</Project>";
-                File.WriteAllText(Path.Combine(pathContext.SolutionRoot, ProjectName, string.Concat(ProjectName, ".csproj")), projectContent);
-
-                _fixture.RunDotnetExpectSuccess(Path.Combine(pathContext.SolutionRoot, projectA.ProjectName),
-                    $"restore {projectA.ProjectName}.csproj");
-
-                CommandRunnerResult listResult = _fixture.RunDotnetExpectSuccess(Directory.GetParent(projectA.ProjectPath).FullName,
-                    $"list {projectA.ProjectPath} package");
-
-                // Assert Resolved version is 1.0.0 and Requested version is 1.0.0, since it was overridden by VersionOverride tag
-                Assert.False(ContainsIgnoringSpaces(listResult.AllOutput, "2.0.0"));
-                Assert.True(ContainsIgnoringSpaces(listResult.AllOutput, "1.0.0"));
-            }
-        }
-
-        [PlatformFact(Platform.Windows)]
-        public async Task DotnetListPackage_WithCPM_GlobalPackageReference()
-        {
-            using (var pathContext = _fixture.CreateSimpleTestPathContext())
-            {
-                var projectA = XPlatTestUtils.CreateProject(ProjectName, pathContext, "net7.0");
-
-                var packageX = XPlatTestUtils.CreatePackage("X", "1.0.0");
-
-                // Generate Package
-                await SimpleTestPackageUtility.CreateFolderFeedV3Async(
-                    pathContext.PackageSource,
-                    PackageSaveMode.Defaultv3,
-                    packageX);
-
-                var propsFile =
-@$"<Project>
-    <PropertyGroup>
-        <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
-    </PropertyGroup>
-    <ItemGroup>
-        <GlobalPackageReference Include=""X"" Version=""0.1.0"" />
-    </ItemGroup>
-</Project>";
-
-                File.WriteAllText(Path.Combine(pathContext.SolutionRoot, "Directory.Packages.props"), propsFile);
-
-                string projectContent =
-@$"<Project  Sdk=""Microsoft.NET.Sdk"">
-<PropertyGroup>                   
-	<TargetFramework>net46</TargetFramework>
-	</PropertyGroup>
-    <ItemGroup>
-        <PackageReference Include=""X""/>
-    </ItemGroup>
-</Project>";
-                File.WriteAllText(Path.Combine(pathContext.SolutionRoot, ProjectName, string.Concat(ProjectName, ".csproj")), projectContent);
-
-                var projectDirectory = Path.Combine(pathContext.SolutionRoot, ProjectName);
-                var projectFilePath = Path.Combine(projectDirectory, $"{ProjectName}.csproj");
-
-                _fixture.RunDotnetExpectSuccess(projectDirectory,
-                    $"restore {projectFilePath}");
-
-                CommandRunnerResult listResult = _fixture.RunDotnetExpectSuccess(Directory.GetParent(projectA.ProjectPath).FullName,
-                    $"list {projectA.ProjectPath} package");
-
-                // Assert Requested version is 0.1.0, but the resolved version is 1.0.0
-                Assert.True(ContainsIgnoringSpaces(listResult.AllOutput, "0.1.0"));
-                Assert.True(ContainsIgnoringSpaces(listResult.AllOutput, "1.0.0"));
-            }
-        }
-
-        [PlatformFact(Platform.Windows)]
         public async Task DotnetListPackage_Transitive()
         {
             using (var pathContext = _fixture.CreateSimpleTestPathContext())
@@ -625,10 +470,8 @@ namespace Dotnet.Integration.Test
             }
         }
 
-        [PlatformTheory(Platform.Windows)]
-        [InlineData("true", false)]
-        [InlineData("false", true)]
-        public async Task ListPackage_WithHttpSourceAndAllowInsecureConnections_WarnsCorrectly(string allowInsecureConnections, bool isHttpWarningExpected)
+        [PlatformFact(Platform.Windows)]
+        public async Task ListPackage_WithHttpSource_Warns()
         {
             // Arrange
             using var pathContext = _fixture.CreateSimpleTestPathContext();
@@ -649,7 +492,7 @@ namespace Dotnet.Integration.Test
 
             using var mockServer = new FileSystemBackedV3MockServer(pathContext.PackageSource);
             mockServer.Start();
-            pathContext.Settings.AddSource("http-source", mockServer.ServiceIndexUri, allowInsecureConnections);
+            pathContext.Settings.AddSource("http-source", mockServer.ServiceIndexUri);
 
             _fixture.RunDotnetExpectSuccess(Directory.GetParent(projectA.ProjectPath).FullName, $"add package A --version 1.0.0");
 
@@ -660,14 +503,7 @@ namespace Dotnet.Integration.Test
             // Assert
             var lines = listResult.AllOutput.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
             Assert.True(lines.Any(l => l.Contains("> A                    1.0.0       1.0.0      2.0.0")), listResult.AllOutput);
-            if (isHttpWarningExpected)
-            {
-                Assert.Contains("warn : You are running the 'list package' operation with an 'HTTP' source", listResult.AllOutput);
-            }
-            else
-            {
-                Assert.DoesNotContain("warn : You are running the 'list package' operation with an 'HTTP' source", listResult.AllOutput);
-            }
+            Assert.True(lines.Any(l => l.Contains("warn : You are running the 'list package' operation with an 'HTTP' source")), listResult.AllOutput);
         }
 
         private static string CollapseSpaces(string input)

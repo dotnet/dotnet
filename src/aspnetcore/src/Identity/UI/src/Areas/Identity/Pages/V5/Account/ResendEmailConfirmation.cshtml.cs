@@ -5,6 +5,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Text;
 using System.Text.Encodings.Web;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
@@ -57,9 +58,9 @@ public class ResendEmailConfirmationModel : PageModel
 internal sealed class ResendEmailConfirmationModel<TUser> : ResendEmailConfirmationModel where TUser : class
 {
     private readonly UserManager<TUser> _userManager;
-    private readonly IEmailSender<TUser> _emailSender;
+    private readonly IEmailSender _emailSender;
 
-    public ResendEmailConfirmationModel(UserManager<TUser> userManager, IEmailSender<TUser> emailSender)
+    public ResendEmailConfirmationModel(UserManager<TUser> userManager, IEmailSender emailSender)
     {
         _userManager = userManager;
         _emailSender = emailSender;
@@ -91,7 +92,10 @@ internal sealed class ResendEmailConfirmationModel<TUser> : ResendEmailConfirmat
             pageHandler: null,
             values: new { userId = userId, code = code },
             protocol: Request.Scheme)!;
-        await _emailSender.SendConfirmationLinkAsync(user, Input.Email, HtmlEncoder.Default.Encode(callbackUrl));
+        await _emailSender.SendEmailAsync(
+            Input.Email,
+            "Confirm your email",
+            $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
 
         ModelState.AddModelError(string.Empty, "Verification email sent. Please check your email.");
         return Page();

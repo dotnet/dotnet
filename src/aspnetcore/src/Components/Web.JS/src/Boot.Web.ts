@@ -15,11 +15,10 @@ import { shouldAutoStart } from './BootCommon';
 import { Blazor } from './GlobalExports';
 import { WebStartOptions } from './Platform/WebStartOptions';
 import { attachStreamingRenderingListener } from './Rendering/StreamingRendering';
-import { NavigationEnhancementCallbacks, attachProgressivelyEnhancedNavigationListener } from './Services/NavigationEnhancement';
+import { attachProgressivelyEnhancedNavigationListener } from './Services/NavigationEnhancement';
 import { WebRootComponentManager } from './Services/WebRootComponentManager';
-import { hasProgrammaticEnhancedNavigationHandler, performProgrammaticEnhancedNavigation } from './Services/NavigationUtils';
 import { attachComponentDescriptorHandler, registerAllComponentDescriptors } from './Rendering/DomMerging/DomSync';
-import { JSEventRegistry } from './Services/JSEventRegistry';
+import { hasProgrammaticEnhancedNavigationHandler, performProgrammaticEnhancedNavigation } from './Services/NavigationUtils';
 
 let started = false;
 let rootComponentManager: WebRootComponentManager;
@@ -32,53 +31,31 @@ function boot(options?: Partial<WebStartOptions>) : Promise<void> {
   started = true;
 
   Blazor._internal.loadWebAssemblyQuicklyTimeout = 3000;
-
   // Defined here to avoid inadvertently imported enhanced navigation
   // related APIs in WebAssembly or Blazor Server contexts.
   Blazor._internal.hotReloadApplied = () => {
-    if (hasProgrammaticEnhancedNavigationHandler()) {
+    if (hasProgrammaticEnhancedNavigationHandler())
+    {
       performProgrammaticEnhancedNavigation(location.href, true);
     }
-  };
+  }
 
   setCircuitOptions(options?.circuit);
   setWebAssemblyOptions(options?.webAssembly);
 
   rootComponentManager = new WebRootComponentManager(options?.ssr?.circuitInactivityTimeoutMs ?? 2000);
-  const jsEventRegistry = JSEventRegistry.create(Blazor);
-
-  const navigationEnhancementCallbacks: NavigationEnhancementCallbacks = {
-    documentUpdated: () => {
-      rootComponentManager.onDocumentUpdated();
-      jsEventRegistry.dispatchEvent('enhancedload', {});
-    },
-    enhancedNavigationCompleted() {
-      rootComponentManager.onEnhancedNavigationCompleted();
-    },
-  };
 
   attachComponentDescriptorHandler(rootComponentManager);
-  attachStreamingRenderingListener(options?.ssr, navigationEnhancementCallbacks);
+  attachStreamingRenderingListener(options?.ssr, rootComponentManager);
 
   if (!options?.ssr?.disableDomPreservation) {
-    attachProgressivelyEnhancedNavigationListener(navigationEnhancementCallbacks);
+    attachProgressivelyEnhancedNavigationListener(rootComponentManager);
   }
 
-  // Wait until the initial page response completes before activating interactive components.
-  // If stream rendering is used, this helps to ensure that only the final set of interactive
-  // components produced by the stream render actually get activated for interactivity.
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', onInitialDomContentLoaded);
-  } else {
-    onInitialDomContentLoaded();
-  }
+  registerAllComponentDescriptors(document);
+  rootComponentManager.documentUpdated();
 
   return Promise.resolve();
-}
-
-function onInitialDomContentLoaded() {
-  registerAllComponentDescriptors(document);
-  rootComponentManager.onDocumentUpdated();
 }
 
 Blazor.start = boot;

@@ -5781,9 +5781,8 @@ namespace Microsoft.CodeAnalysis.CSharp
         public override BoundNode? VisitCall(BoundCall node)
         {
             // Note: we analyze even omitted calls
-            if (tryGetReceiver(node, out BoundCall? receiver))
+            if (node.ReceiverOpt is BoundCall receiver)
             {
-                // Handle long call chain of both instance and extension method invocations.
                 var calls = ArrayBuilder<BoundCall>.GetInstance();
 
                 calls.Push(node);
@@ -5792,7 +5791,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 bool originalExpressionIsRead = _expressionIsRead;
                 _expressionIsRead = true;
 
-                while (tryGetReceiver(node, out BoundCall? receiver2))
+                while (node.ReceiverOpt is BoundCall receiver2)
                 {
                     TakeIncrementalSnapshot(node); // Visit does this before visiting each node
                     calls.Push(node);
@@ -5802,10 +5801,9 @@ namespace Microsoft.CodeAnalysis.CSharp
                 TakeIncrementalSnapshot(node); // Visit does this before visiting each node
                 TypeWithState receiverType = visitAndCheckReceiver(node);
 
-                VisitArgumentResult? extensionReceiverResult = null;
                 while (true)
                 {
-                    ReinferMethodAndVisitArguments(node, receiverType, firstArgumentResult: extensionReceiverResult);
+                    ReinferMethodAndVisitArguments(node, receiverType);
 
                     receiver = node;
                     if (!calls.TryPop(out node!))
@@ -5814,23 +5812,10 @@ namespace Microsoft.CodeAnalysis.CSharp
                     }
 
                     VisitExpressionWithoutStackGuardEpilogue(receiver); // VisitExpressionWithoutStackGuard does this after visiting each node
+                    VisitRvalueEpilogue(receiver); // VisitRvalue does this after visiting each node
 
-                    // Only instance receivers go through VisitRvalue; arguments go through VisitArgumentEvaluate.
-                    if (node.ReceiverOpt is not null)
-                    {
-                        VisitRvalueEpilogue(receiver); // VisitRvalue does this after visiting each node
-                        receiverType = ResultType;
-                        CheckCallReceiver(receiver, receiverType, node.Method);
-                        extensionReceiverResult = null;
-                    }
-                    else
-                    {
-                        Debug.Assert(node.InvokedAsExtensionMethod);
-                        var refKind = GetRefKind(node.ArgumentRefKindsOpt, 0);
-                        var annotations = GetCorrespondingParameter(0, node.Method.Parameters, node.ArgsToParamsOpt, node.Expanded).Annotations;
-                        extensionReceiverResult = VisitArgumentEvaluateEpilogue(receiver, default, refKind, annotations);
-                        receiverType = default;
-                    }
+                    receiverType = ResultType;
+                    CheckCallReceiver(receiver, receiverType, node.Method);
                 }
 
                 _expressionIsRead = originalExpressionIsRead;
@@ -5844,28 +5829,6 @@ namespace Microsoft.CodeAnalysis.CSharp
             }
 
             return null;
-
-            // Gets the instance or extension invocation receiver if any.
-            bool tryGetReceiver(BoundCall node, [MaybeNullWhen(returnValue: false)] out BoundCall receiver)
-            {
-                if (node.ReceiverOpt is BoundCall instanceReceiver)
-                {
-                    receiver = instanceReceiver;
-                    return true;
-                }
-
-                if (node.InvokedAsExtensionMethod && node.Arguments is [BoundCall extensionReceiver, ..] &&
-                    // Exclude arguments that need saving state before visiting (only lambdas currently).
-                    !VisitArgumentEvaluateNeedsCloningState(extensionReceiver))
-                {
-                    Debug.Assert(node.ReceiverOpt is null);
-                    receiver = extensionReceiver;
-                    return true;
-                }
-
-                receiver = null;
-                return false;
-            }
 
             TypeWithState visitAndCheckReceiver(BoundCall node)
             {
@@ -5881,7 +5844,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             }
         }
 
-        private void ReinferMethodAndVisitArguments(BoundCall node, TypeWithState receiverType, VisitArgumentResult? firstArgumentResult = null)
+        private void ReinferMethodAndVisitArguments(BoundCall node, TypeWithState receiverType)
         {
             var method = node.Method;
             ImmutableArray<RefKind> refKindsOpt = node.ArgumentRefKindsOpt;
@@ -5894,7 +5857,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             ImmutableArray<VisitArgumentResult> results;
             bool returnNotNull;
             (method, results, returnNotNull) = VisitArguments(node, node.Arguments, refKindsOpt, method!.Parameters, node.ArgsToParamsOpt, node.DefaultArguments,
-                node.Expanded, node.InvokedAsExtensionMethod, method, firstArgumentResult: firstArgumentResult);
+                node.Expanded, node.InvokedAsExtensionMethod, method);
 
             ApplyMemberPostConditions(node.ReceiverOpt, method);
 
@@ -6330,10 +6293,9 @@ namespace Microsoft.CodeAnalysis.CSharp
             BitVector defaultArguments,
             bool expanded,
             bool invokedAsExtensionMethod,
-            MethodSymbol? method = null,
-            VisitArgumentResult? firstArgumentResult = null)
+            MethodSymbol? method = null)
         {
-            var result = VisitArguments(node, arguments, refKindsOpt, parametersOpt, argsToParamsOpt, defaultArguments, expanded, invokedAsExtensionMethod, method, delayCompletionForTargetMember: false, firstArgumentResult: firstArgumentResult);
+            var result = VisitArguments(node, arguments, refKindsOpt, parametersOpt, argsToParamsOpt, defaultArguments, expanded, invokedAsExtensionMethod, method, delayCompletionForTargetMember: false);
             Debug.Assert(result.completion is null);
 
             return (result.method, result.results, result.returnNotNull);
@@ -6352,14 +6314,13 @@ namespace Microsoft.CodeAnalysis.CSharp
             bool expanded,
             bool invokedAsExtensionMethod,
             MethodSymbol? method,
-            bool delayCompletionForTargetMember,
-            VisitArgumentResult? firstArgumentResult = null)
+            bool delayCompletionForTargetMember)
         {
             Debug.Assert(!arguments.IsDefault);
             (ImmutableArray<BoundExpression> argumentsNoConversions, ImmutableArray<Conversion> conversions) = RemoveArgumentConversions(arguments, refKindsOpt);
 
             // Visit the arguments and collect results
-            ImmutableArray<VisitArgumentResult> results = VisitArgumentsEvaluate(argumentsNoConversions, refKindsOpt, GetParametersAnnotations(arguments, parametersOpt, argsToParamsOpt, expanded), defaultArguments, firstArgumentResult: firstArgumentResult);
+            ImmutableArray<VisitArgumentResult> results = VisitArgumentsEvaluate(argumentsNoConversions, refKindsOpt, GetParametersAnnotations(arguments, parametersOpt, argsToParamsOpt, expanded), defaultArguments);
 
             return visitArguments(
                 node, arguments, argumentsNoConversions, conversions, results, refKindsOpt,
@@ -6643,8 +6604,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             ImmutableArray<BoundExpression> arguments,
             ImmutableArray<RefKind> refKindsOpt,
             ImmutableArray<FlowAnalysisAnnotations> parameterAnnotationsOpt,
-            BitVector defaultArguments,
-            VisitArgumentResult? firstArgumentResult = null)
+            BitVector defaultArguments)
         {
             Debug.Assert(!IsConditionalState);
             int n = arguments.Length;
@@ -6659,14 +6619,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             {
                 // we disable nullable warnings on default arguments
                 _disableDiagnostics = defaultArguments[i] || previousDisableDiagnostics;
-                if (i == 0 && firstArgumentResult is { } result)
-                {
-                    resultsBuilder.Add(result);
-                }
-                else
-                {
-                    resultsBuilder.Add(VisitArgumentEvaluate(arguments[i], GetRefKind(refKindsOpt, i), parameterAnnotationsOpt.IsDefault ? default : parameterAnnotationsOpt[i]));
-                }
+                resultsBuilder.Add(VisitArgumentEvaluate(arguments[i], GetRefKind(refKindsOpt, i), parameterAnnotationsOpt.IsDefault ? default : parameterAnnotationsOpt[i]));
             }
             _disableDiagnostics = previousDisableDiagnostics;
 
@@ -6690,24 +6643,14 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         private VisitArgumentResult VisitArgumentEvaluate(BoundExpression argument, RefKind refKind, FlowAnalysisAnnotations annotations)
         {
-            var savedState = VisitArgumentEvaluateNeedsCloningState(argument) ? this.State.Clone() : default(Optional<LocalState>);
-            Visit(argument);
-            return VisitArgumentEvaluateEpilogue(argument, savedState, refKind, annotations);
-        }
-
-        private bool VisitArgumentEvaluateNeedsCloningState(BoundExpression argument)
-        {
             Debug.Assert(!IsConditionalState);
-            return (argument.Kind == BoundKind.Lambda);
-        }
-
-        private VisitArgumentResult VisitArgumentEvaluateEpilogue(BoundExpression argument, Optional<LocalState> savedState, RefKind refKind, FlowAnalysisAnnotations annotations)
-        {
+            var savedState = (argument.Kind == BoundKind.Lambda) ? this.State.Clone() : default(Optional<LocalState>);
             // Note: DoesNotReturnIf is ineffective on ref/out parameters
 
             switch (refKind)
             {
                 case RefKind.Ref:
+                    Visit(argument);
                     Unsplit();
                     break;
                 case RefKind.None:
@@ -6715,6 +6658,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                     switch (annotations & (FlowAnalysisAnnotations.DoesNotReturnIfTrue | FlowAnalysisAnnotations.DoesNotReturnIfFalse))
                     {
                         case FlowAnalysisAnnotations.DoesNotReturnIfTrue:
+                            Visit(argument);
                             if (IsConditionalState)
                             {
                                 SetState(StateWhenFalse);
@@ -6722,6 +6666,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                             break;
 
                         case FlowAnalysisAnnotations.DoesNotReturnIfFalse:
+                            Visit(argument);
                             if (IsConditionalState)
                             {
                                 SetState(StateWhenTrue);
@@ -6729,20 +6674,19 @@ namespace Microsoft.CodeAnalysis.CSharp
                             break;
 
                         default:
-                            VisitRvalueEpilogue(argument);
+                            VisitRvalue(argument);
                             break;
                     }
                     break;
                 case RefKind.Out:
                     // As far as we can tell, there is no scenario relevant to nullability analysis
                     // where splitting an L-value (for instance with a ref conditional) would affect the result.
+                    Visit(argument);
                     Unsplit();
 
                     // We'll want to use the l-value type, rather than the result type, for method re-inference
                     UseLvalueOnly(argument);
                     break;
-                default:
-                    throw ExceptionUtilities.UnexpectedValue(refKind);
             }
 
             Debug.Assert(!IsConditionalState);

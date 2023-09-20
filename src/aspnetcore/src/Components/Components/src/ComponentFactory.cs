@@ -6,7 +6,6 @@ using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using Microsoft.AspNetCore.Components.Reflection;
 using Microsoft.AspNetCore.Components.RenderTree;
-using Microsoft.Extensions.DependencyInjection;
 using static Microsoft.AspNetCore.Internal.LinkerFlags;
 
 namespace Microsoft.AspNetCore.Components;
@@ -96,17 +95,16 @@ internal sealed class ComponentFactory
     private static Action<IServiceProvider, IComponent> CreatePropertyInjector([DynamicallyAccessedMembers(Component)] Type type)
     {
         // Do all the reflection up front
-        List<(string name, Type propertyType, PropertySetter setter, object? serviceKey)>? injectables = null;
+        List<(string name, Type propertyType, PropertySetter setter)>? injectables = null;
         foreach (var property in MemberAssignment.GetPropertiesIncludingInherited(type, _injectablePropertyBindingFlags))
         {
-            var injectAttribute = property.GetCustomAttribute<InjectAttribute>();
-            if (injectAttribute is null)
+            if (!property.IsDefined(typeof(InjectAttribute)))
             {
                 continue;
             }
 
             injectables ??= new();
-            injectables.Add((property.Name, property.PropertyType, new PropertySetter(type, property), injectAttribute.Key));
+            injectables.Add((property.Name, property.PropertyType, new PropertySetter(type, property)));
         }
 
         if (injectables is null)
@@ -120,29 +118,12 @@ internal sealed class ComponentFactory
         // without any further reflection calls (just typecasts)
         void Initialize(IServiceProvider serviceProvider, IComponent component)
         {
-            foreach (var (propertyName, propertyType, setter, serviceKey) in injectables)
+            foreach (var (propertyName, propertyType, setter) in injectables)
             {
-                object? serviceInstance;
-
-                if (serviceKey is not null)
+                var serviceInstance = serviceProvider.GetService(propertyType);
+                if (serviceInstance == null)
                 {
-                    if (serviceProvider is not IKeyedServiceProvider keyedServiceProvider)
-                    {
-                        throw new InvalidOperationException($"Cannot provide a value for property " +
-                            $"'{propertyName}' on type '{type.FullName}'. The service provider " +
-                            $"does not implement '{nameof(IKeyedServiceProvider)}' and therefore " +
-                            $"cannot provide keyed services.");
-                    }
-
-                    serviceInstance = keyedServiceProvider.GetKeyedService(propertyType, serviceKey)
-                        ?? throw new InvalidOperationException($"Cannot provide a value for property " +
-                        $"'{propertyName}' on type '{type.FullName}'. There is no " +
-                        $"registered keyed service of type '{propertyType}' with key '{serviceKey}'.");
-                }
-                else
-                {
-                    serviceInstance = serviceProvider.GetService(propertyType)
-                        ?? throw new InvalidOperationException($"Cannot provide a value for property " +
+                    throw new InvalidOperationException($"Cannot provide a value for property " +
                         $"'{propertyName}' on type '{type.FullName}'. There is no " +
                         $"registered service of type '{propertyType}'.");
                 }

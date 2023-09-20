@@ -11,7 +11,7 @@ namespace Microsoft.CodeAnalysis.ExternalAccess.AspNetCore.EmbeddedLanguages
     /// Use this attribute to export a <see cref="IAspNetCoreEmbeddedLanguageBraceMatcher"/>.
     /// </summary>
     [MetadataAttribute]
-    [AttributeUsage(AttributeTargets.Class, Inherited = false)]
+    [AttributeUsage(AttributeTargets.Class)]
     internal sealed class ExportAspNetCoreEmbeddedLanguageBraceMatcherAttribute : ExportAttribute
     {
         /// <summary>

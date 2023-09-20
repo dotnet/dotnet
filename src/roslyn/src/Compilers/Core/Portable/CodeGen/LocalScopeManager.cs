@@ -603,8 +603,6 @@ namespace Microsoft.CodeAnalysis.CodeGen
                 _lastFilterConditionBlock = builder.FinishFilterCondition();
             }
 
-            public BasicBlock LastFilterConditionBlock => _lastFilterConditionBlock;
-
             public override void ClosingScope(ILBuilder builder)
             {
                 switch (_type)

@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Internal;
 using Microsoft.AspNetCore.Testing;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging.Abstractions;
-using Microsoft.Extensions.Telemetry.Testing.Metrics;
+using Microsoft.Extensions.Telemetry.Testing.Metering;
 
 namespace Microsoft.AspNetCore.Hosting.Tests;
 

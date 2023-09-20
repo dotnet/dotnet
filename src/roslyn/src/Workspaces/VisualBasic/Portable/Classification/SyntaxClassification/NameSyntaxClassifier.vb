@@ -8,7 +8,6 @@ Imports Microsoft.CodeAnalysis.Classification
 Imports Microsoft.CodeAnalysis.Classification.Classifiers
 Imports Microsoft.CodeAnalysis.Collections
 Imports Microsoft.CodeAnalysis.PooledObjects
-Imports Microsoft.CodeAnalysis.Text
 Imports Microsoft.CodeAnalysis.VisualBasic.Extensions.ContextQuery
 Imports Microsoft.CodeAnalysis.VisualBasic.Syntax
 
@@ -24,7 +23,6 @@ Namespace Microsoft.CodeAnalysis.VisualBasic.Classification.Classifiers
 
         Public Overrides Sub AddClassifications(
                 syntax As SyntaxNode,
-                textSpan As TextSpan,
                 semanticModel As SemanticModel,
                 options As ClassificationOptions,
                 result As SegmentedList(Of ClassifiedSpan),

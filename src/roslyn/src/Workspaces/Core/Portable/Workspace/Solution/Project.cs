@@ -271,7 +271,9 @@ namespace Microsoft.CodeAnalysis
         {
             var document = GetDocument(documentId) ?? GetAdditionalDocument(documentId) ?? GetAnalyzerConfigDocument(documentId);
             if (document != null)
+            {
                 return document;
+            }
 
             return await GetSourceGeneratedDocumentAsync(documentId, cancellationToken).ConfigureAwait(false);
         }
@@ -295,26 +297,21 @@ namespace Microsoft.CodeAnalysis
 
         public async ValueTask<SourceGeneratedDocument?> GetSourceGeneratedDocumentAsync(DocumentId documentId, CancellationToken cancellationToken = default)
         {
-            // Immediately shortcircuit out if we know this is not a doc-id corresponding to an SG document.
-            if (!documentId.IsSourceGenerated)
-                return null;
-
-            // User incorrect called into us with a doc id for a different project.  Ideally we'd throw here, but we've
-            // always been resilient to this misuse since the start of roslyn, so we just quick-bail instead.
-            if (this.Id != documentId.ProjectId)
-                return null;
-
             // Quick check first: if we already have created a SourceGeneratedDocument wrapper, we're good
             if (_idToSourceGeneratedDocumentMap.TryGetValue(documentId, out var sourceGeneratedDocument))
+            {
                 return sourceGeneratedDocument;
+            }
 
             // We'll have to run generators if we haven't already and now try to find it.
             var generatedDocumentStates = await _solution.State.GetSourceGeneratedDocumentStatesAsync(State, cancellationToken).ConfigureAwait(false);
             var generatedDocumentState = generatedDocumentStates.GetState(documentId);
-            if (generatedDocumentState is null)
-                return null;
+            if (generatedDocumentState != null)
+            {
+                return GetOrCreateSourceGeneratedDocument(generatedDocumentState);
+            }
 
-            return GetOrCreateSourceGeneratedDocument(generatedDocumentState);
+            return null;
         }
 
         internal SourceGeneratedDocument GetOrCreateSourceGeneratedDocument(SourceGeneratedDocumentState state)
@@ -330,24 +327,20 @@ namespace Microsoft.CodeAnalysis
         /// </remarks>
         internal SourceGeneratedDocument? TryGetSourceGeneratedDocumentForAlreadyGeneratedId(DocumentId documentId)
         {
-            // Immediately shortcircuit out if we know this is not a doc-id corresponding to an SG document.
-            if (!documentId.IsSourceGenerated)
-                return null;
-
-            // User incorrect called into us with a doc id for a different project.  Ideally we'd throw here, but we've
-            // always been resilient to this misuse since the start of roslyn, so we just quick-bail instead.
-            if (this.Id != documentId.ProjectId)
-                return null;
-
             // Easy case: do we already have the SourceGeneratedDocument created?
             if (_idToSourceGeneratedDocumentMap.TryGetValue(documentId, out var document))
+            {
                 return document;
+            }
 
             // Trickier case now: it's possible we generated this, but we don't actually have the SourceGeneratedDocument for it, so let's go
             // try to fetch the state.
             var documentState = _solution.State.TryGetSourceGeneratedDocumentStateForAlreadyGeneratedId(documentId);
+
             if (documentState == null)
+            {
                 return null;
+            }
 
             return ImmutableHashMapExtensions.GetOrAdd(ref _idToSourceGeneratedDocumentMap, documentId, s_createSourceGeneratedDocumentFunction, (documentState, this));
         }

@@ -25,7 +25,7 @@ namespace Microsoft.IdentityModel.JsonWebTokens
         // internal const string IDX14106 = "IDX14106:";
         internal const string IDX14107 = "IDX14107: Token string does not match the token formats: JWE (header.encryptedKey.iv.ciphertext.tag) or JWS (header.payload.signature)";
         //internal const string IDX14111 = "IDX14111: JWT: '{0}' must have three segments (JWS) or five segments (JWE).";
-        internal const string IDX14112 = "IDX14112: Only a single 'Actor' is supported. Found second claim of type: '{0}'";
+        internal const string IDX14112 = "IDX14112: Only a single 'Actor' is supported. Found second claim of type: '{0}', value: '{1}'";
         internal const string IDX14113 = "IDX14113: A duplicate value for 'SecurityTokenDescriptor.{0}' exists in 'SecurityTokenDescriptor.Claims'. \nThe value of 'SecurityTokenDescriptor.{0}' is used.";
         internal const string IDX14114 = "IDX14114: Both '{0}.{1}' and '{0}.{2}' are null or empty.";
         // internal const string IDX14115 = "IDX14115:";

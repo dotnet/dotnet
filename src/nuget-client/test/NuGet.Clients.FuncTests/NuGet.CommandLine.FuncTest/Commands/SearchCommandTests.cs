@@ -1,9 +1,7 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-using System.IO;
 using NuGet.CommandLine.Test;
-using NuGet.Configuration.Test;
 using NuGet.Test.Utility;
 using Test.Utility;
 using Xunit;
@@ -992,10 +990,8 @@ namespace NuGet.CommandLine.FuncTest.Commands
             Assert.Contains("WARNING: You are running the 'search' operation with an 'HTTP' source", result.AllOutput);
         }
 
-        [Theory]
-        [InlineData("true", false)]
-        [InlineData("false", true)]
-        public void SearchCommand_WhenSearchWithHttpSourcesWithAllowInsecureConnections_WarnsCorrectly(string allowInsecureConnections, bool isHttpWarningExpected)
+        [Fact]
+        public void SearchCommand_WhenSearchWithHttpSources_Warns()
         {
             // Arrange
             string nugetexe = Util.GetNuGetExePath();
@@ -1003,17 +999,15 @@ namespace NuGet.CommandLine.FuncTest.Commands
             using MockServer server1 = new MockServer();
             using MockServer server2 = new MockServer();
             using SimpleTestPathContext config = new SimpleTestPathContext();
+            CommandRunner.Run(
+                nugetexe,
+                config.WorkingDirectory,
+                $"source add -name mockSource -source {server1.Uri}v3/index.json -configfile {config.NuGetConfig}");
 
-            // Arrange the NuGet.Config file
-            string nugetConfigContent =
-$@"<configuration>
-    <packageSources>
-        <clear />
-        <add key='http-feed1' value='{server1.Uri}v3/index.json' allowInsecureConnections=""{allowInsecureConnections}"" />
-        <add key='http-feed2' value='{server2.Uri}v3/index.json' allowInsecureConnections=""{allowInsecureConnections}"" />
-    </packageSources>
-</configuration>";
-            File.WriteAllText(config.NuGetConfig, nugetConfigContent);
+            CommandRunner.Run(
+                nugetexe,
+                config.WorkingDirectory,
+                $"source add -name mockSource -source {server2.Uri}v3/index.json -configfile {config.NuGetConfig}");
 
             string index = $@"
                 {{
@@ -1091,7 +1085,6 @@ $@"<configuration>
             {
                 "search",
                 "json",
-                ""
             };
 
             CommandRunnerResult result = CommandRunner.Run(
@@ -1106,21 +1099,7 @@ $@"<configuration>
             Assert.True(result.Success, $"{result.AllOutput}");
             Assert.Contains("No results found.", $"{result.AllOutput}");
             Assert.DoesNotContain(">", $"{result.AllOutput}");
-
-            string actualOutputWithoutSpace = SettingsTestUtils.RemoveWhitespace(result.Output);
-            string expectedWarningWithoutSpace = SettingsTestUtils.RemoveWhitespace($@"
-WARNING: You are running the 'search' operation with 'HTTP' sources:  
-http-feed1
-http-feed2
-Non-HTTPS access will be removed in a future version. Consider migrating to 'HTTPS' sources.");
-            if (isHttpWarningExpected)
-            {
-                Assert.Contains(expectedWarningWithoutSpace, actualOutputWithoutSpace);
-            }
-            else
-            {
-                Assert.DoesNotContain(expectedWarningWithoutSpace, actualOutputWithoutSpace);
-            }
+            Assert.Contains("WARNING: You are running the 'search' operation with an 'HTTP' source", result.AllOutput);
         }
     }
 }

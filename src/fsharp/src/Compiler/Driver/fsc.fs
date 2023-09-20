@@ -908,8 +908,7 @@ let main3
                     use s = ilResource.GetBytes().AsStream()
                     let sha256 = System.Security.Cryptography.SHA256.Create()
                     sha256.ComputeHash s)
-                |> List.sumBy (hash >> int64)
-                |> hash
+                |> List.sumBy hash
 
             try
                 Fsharp.Compiler.SignatureHash.calculateSignatureHashOfFiles typedImplFiles tcGlobals observer

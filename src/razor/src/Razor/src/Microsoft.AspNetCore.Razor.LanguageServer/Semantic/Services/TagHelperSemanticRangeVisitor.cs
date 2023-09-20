@@ -2,51 +2,49 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using System;
-using System.Collections.Immutable;
+using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Language.Components;
 using Microsoft.AspNetCore.Razor.Language.Syntax;
 using Microsoft.AspNetCore.Razor.LanguageServer.Extensions;
-using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.CodeAnalysis.Razor.Workspaces.Extensions;
+using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Semantic;
 
 internal sealed class TagHelperSemanticRangeVisitor : SyntaxWalker
 {
-    private readonly ImmutableArray<SemanticRange>.Builder _semanticRanges;
+    private readonly List<SemanticRange> _semanticRanges;
     private readonly RazorCodeDocument _razorCodeDocument;
     private readonly RazorSemanticTokensLegend _razorSemanticTokensLegend;
     private readonly bool _colorCodeBackground;
 
     private bool _addRazorCodeModifier;
 
-    private TagHelperSemanticRangeVisitor(ImmutableArray<SemanticRange>.Builder semanticRanges, RazorCodeDocument razorCodeDocument, TextSpan? range, RazorSemanticTokensLegend razorSemanticTokensLegend, bool colorCodeBackground)
+    private TagHelperSemanticRangeVisitor(RazorCodeDocument razorCodeDocument, TextSpan? range, RazorSemanticTokensLegend razorSemanticTokensLegend, bool colorCodeBackground)
         : base(range)
     {
-        _semanticRanges = semanticRanges;
+        _semanticRanges = new List<SemanticRange>();
         _razorCodeDocument = razorCodeDocument;
         _razorSemanticTokensLegend = razorSemanticTokensLegend;
         _colorCodeBackground = colorCodeBackground;
     }
 
-    public static ImmutableArray<SemanticRange> VisitAllNodes(RazorCodeDocument razorCodeDocument, Range? range, RazorSemanticTokensLegend razorSemanticTokensLegend, bool colorCodeBackground)
+    public static List<SemanticRange> VisitAllNodes(RazorCodeDocument razorCodeDocument, Range? range, RazorSemanticTokensLegend razorSemanticTokensLegend, bool colorCodeBackground)
     {
         TextSpan? rangeAsTextSpan = null;
         if (range is not null)
         {
             var sourceText = razorCodeDocument.GetSourceText();
-            rangeAsTextSpan = range.ToRazorTextSpan(sourceText);
+            rangeAsTextSpan = range.AsRazorTextSpan(sourceText);
         }
 
-        using var _ = ArrayBuilderPool<SemanticRange>.GetPooledObject(out var builder);
-
-        var visitor = new TagHelperSemanticRangeVisitor(builder, razorCodeDocument, rangeAsTextSpan, razorSemanticTokensLegend, colorCodeBackground);
+        var visitor = new TagHelperSemanticRangeVisitor(razorCodeDocument, rangeAsTextSpan, razorSemanticTokensLegend, colorCodeBackground);
 
         visitor.Visit(razorCodeDocument.GetSyntaxTree().Root);
 
-        return builder.DrainToImmutable();
+        return visitor._semanticRanges;
     }
 
     private void Visit(SyntaxList<RazorSyntaxNode> syntaxNodes)
@@ -511,7 +509,7 @@ internal sealed class TagHelperSemanticRangeVisitor : SyntaxWalker
         }
 
         var source = _razorCodeDocument.Source;
-        var range = node.GetLinePositionSpan(source);
+        var range = node.GetRange(source);
         var tokenModifier = _addRazorCodeModifier ? (int)RazorSemanticTokensLegend.RazorTokenModifiers.razorCode : 0;
 
         // LSP spec forbids multi-line tokens, so we need to split this up.
@@ -524,7 +522,8 @@ internal sealed class TagHelperSemanticRangeVisitor : SyntaxWalker
                 var lineStartAbsoluteIndex = node.SpanStart - charPosition;
                 for (var lineNumber = range.Start.Line; lineNumber <= range.End.Line; lineNumber++)
                 {
-                    var originalCharPosition = charPosition;
+                    var startPosition = new Position(lineNumber, charPosition);
+
                     // NOTE: GetLineLength includes newlines but we don't report tokens for newlines so
                     // need to account for them.
                     var lineLength = source.Lines.GetLineLength(lineNumber);
@@ -545,7 +544,13 @@ internal sealed class TagHelperSemanticRangeVisitor : SyntaxWalker
                         continue;
                     }
 
-                    var semantic = new SemanticRange(semanticKind, lineNumber, originalCharPosition, lineNumber, endChar, tokenModifier, fromRazor: true);
+                    var endPosition = new Position(lineNumber, endChar);
+                    var lineRange = new Range
+                    {
+                        Start = startPosition,
+                        End = endPosition
+                    };
+                    var semantic = new SemanticRange(semanticKind, lineRange, tokenModifier, fromRazor: true);
                     AddRange(semantic);
                 }
             }
@@ -559,8 +564,9 @@ internal sealed class TagHelperSemanticRangeVisitor : SyntaxWalker
                     // This also stops us from returning data for " ", which seems like a nice side-effect as it's not likely to have any colorization anyway.
                     if (!token.ContainsOnlyWhitespace())
                     {
-                        var lineSpan = token.GetLinePositionSpan(source);
-                        var semantic = new SemanticRange(semanticKind, lineSpan.Start.Line, lineSpan.Start.Character, lineSpan.End.Line, lineSpan.End.Character, tokenModifier, fromRazor: true);
+                        var tokenRange = token.GetRange(source);
+
+                        var semantic = new SemanticRange(semanticKind, tokenRange, tokenModifier, fromRazor: true);
                         AddRange(semantic);
                     }
                 }
@@ -568,19 +574,16 @@ internal sealed class TagHelperSemanticRangeVisitor : SyntaxWalker
         }
         else
         {
-            var semanticRange = new SemanticRange(semanticKind, range.Start.Line, range.Start.Character, range.End.Line, range.End.Character, tokenModifier, fromRazor: true);
+            var semanticRange = new SemanticRange(semanticKind, range, tokenModifier, fromRazor: true);
             AddRange(semanticRange);
         }
 
         void AddRange(SemanticRange semanticRange)
         {
-            if (semanticRange.StartLine == semanticRange.EndLine &&
-                semanticRange.StartCharacter == semanticRange.EndCharacter)
+            if (semanticRange.Range.Start != semanticRange.Range.End)
             {
-                return;
+                _semanticRanges.Add(semanticRange);
             }
-
-            _semanticRanges.Add(semanticRange);
         }
 
         static int GetLastNonWhitespaceCharacterOffset(RazorSourceDocument source, int lineStartAbsoluteIndex, int lineLength)
@@ -605,9 +608,9 @@ internal sealed class TagHelperSemanticRangeVisitor : SyntaxWalker
         return new BackgroundColorDisposable(this);
     }
 
-    private readonly struct BackgroundColorDisposable : IDisposable
+    private struct BackgroundColorDisposable : IDisposable
     {
-        private readonly TagHelperSemanticRangeVisitor _visitor;
+        private TagHelperSemanticRangeVisitor _visitor;
 
         public BackgroundColorDisposable(TagHelperSemanticRangeVisitor tagHelperSemanticRangeVisitor)
         {

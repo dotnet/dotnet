@@ -291,15 +291,14 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             BoundExpression rewrittenCall;
 
-            if (tryGetReceiver(node, out BoundCall? receiver1))
+            if (node.ReceiverOpt is BoundCall receiver1)
             {
-                // Handle long call chain of both instance and extension method invocations.
                 var calls = ArrayBuilder<BoundCall>.GetInstance();
 
                 calls.Push(node);
                 node = receiver1;
 
-                while (tryGetReceiver(node, out BoundCall? receiver2))
+                while (node.ReceiverOpt is BoundCall receiver2)
                 {
                     calls.Push(node);
                     node = receiver2;
@@ -326,54 +325,23 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             return rewrittenCall;
 
-            // Gets the instance or extension invocation receiver if any.
-            static bool tryGetReceiver(BoundCall node, [MaybeNullWhen(returnValue: false)] out BoundCall receiver)
-            {
-                if (node.ReceiverOpt is BoundCall instanceReceiver)
-                {
-                    receiver = instanceReceiver;
-                    return true;
-                }
-
-                if (node.InvokedAsExtensionMethod && node.Arguments is [BoundCall extensionReceiver, ..])
-                {
-                    Debug.Assert(node.ReceiverOpt is null);
-                    receiver = extensionReceiver;
-                    return true;
-                }
-
-                receiver = null;
-                return false;
-            }
-
             BoundExpression visitArgumentsAndFinishRewrite(BoundCall node, BoundExpression? rewrittenReceiver)
             {
                 MethodSymbol method = node.Method;
                 ImmutableArray<int> argsToParamsOpt = node.ArgsToParamsOpt;
                 ImmutableArray<RefKind> argRefKindsOpt = node.ArgumentRefKindsOpt;
-                ImmutableArray<BoundExpression> arguments = node.Arguments;
                 bool invokedAsExtensionMethod = node.InvokedAsExtensionMethod;
-
-                // Rewritten receiver can be actually the first argument of an extension invocation.
-                BoundExpression? firstRewrittenArgument = null;
-                if (rewrittenReceiver is not null && node.ReceiverOpt is null)
-                {
-                    Debug.Assert(invokedAsExtensionMethod && !arguments.IsEmpty);
-                    firstRewrittenArgument = rewrittenReceiver;
-                    rewrittenReceiver = null;
-                }
 
                 ArrayBuilder<LocalSymbol>? temps = null;
                 var rewrittenArguments = VisitArgumentsAndCaptureReceiverIfNeeded(
                     ref rewrittenReceiver,
                     captureReceiverMode: ReceiverCaptureMode.Default,
-                    arguments,
+                    node.Arguments,
                     method,
                     argsToParamsOpt,
                     argRefKindsOpt,
                     storesOpt: null,
-                    ref temps,
-                    firstRewrittenArgument: firstRewrittenArgument);
+                    ref temps);
 
                 rewrittenArguments = MakeArguments(
                     node.Syntax,
@@ -648,8 +616,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             ImmutableArray<int> argsToParamsOpt,
             ImmutableArray<RefKind> argumentRefKindsOpt,
             ArrayBuilder<BoundExpression>? storesOpt,
-            ref ArrayBuilder<LocalSymbol>? tempsOpt,
-            BoundExpression? firstRewrittenArgument = null)
+            ref ArrayBuilder<LocalSymbol>? tempsOpt)
         {
             Debug.Assert(argumentRefKindsOpt.IsDefault || argumentRefKindsOpt.Length == arguments.Length);
             var requiresInstanceReceiver = methodOrIndexer.RequiresInstanceReceiver() && methodOrIndexer is not MethodSymbol { MethodKind: MethodKind.Constructor } and not FunctionPointerMethodSymbol;
@@ -737,9 +704,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                         ref tempsOpt,
                         ref argumentsAssignedToTemp);
 
-                    visitedArgumentsBuilder.Add(i == 0 && firstRewrittenArgument is not null
-                        ? firstRewrittenArgument
-                        : VisitExpression(argument));
+                    visitedArgumentsBuilder.Add(VisitExpression(argument));
 
                     foreach (var placeholder in argumentPlaceholders)
                     {

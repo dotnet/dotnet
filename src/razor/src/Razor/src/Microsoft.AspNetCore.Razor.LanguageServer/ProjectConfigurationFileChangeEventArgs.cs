@@ -11,26 +11,44 @@ using Microsoft.CodeAnalysis.Razor;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer;
 
-internal sealed class ProjectConfigurationFileChangeEventArgs : EventArgs
+internal class ProjectConfigurationFileChangeEventArgs
 {
-    public string ConfigurationFilePath { get; }
-    public RazorFileChangeKind Kind { get; }
-
-    private readonly IRazorProjectInfoDeserializer _deserializer;
+    private readonly JsonFileDeserializer _jsonFileDeserializer;
     private RazorProjectInfo? _projectInfo;
-    private readonly object _gate;
+    private readonly object _projectSnapshotHandleLock;
     private bool _deserialized;
 
     public ProjectConfigurationFileChangeEventArgs(
         string configurationFilePath,
-        RazorFileChangeKind kind,
-        IRazorProjectInfoDeserializer? projectInfoDeserializer = null)
+        RazorFileChangeKind kind) : this(configurationFilePath, kind, JsonFileDeserializer.Instance)
     {
-        ConfigurationFilePath = configurationFilePath ?? throw new ArgumentNullException(nameof(configurationFilePath));
-        Kind = kind;
-        _deserializer = projectInfoDeserializer ?? RazorProjectInfoDeserializer.Instance;
-        _gate = new object();
     }
+
+    // Internal for testing
+    internal ProjectConfigurationFileChangeEventArgs(
+        string configurationFilePath,
+        RazorFileChangeKind kind,
+        JsonFileDeserializer jsonFileDeserializer)
+    {
+        if (configurationFilePath is null)
+        {
+            throw new ArgumentNullException(nameof(configurationFilePath));
+        }
+
+        if (jsonFileDeserializer is null)
+        {
+            throw new ArgumentNullException(nameof(jsonFileDeserializer));
+        }
+
+        ConfigurationFilePath = configurationFilePath;
+        Kind = kind;
+        _jsonFileDeserializer = jsonFileDeserializer;
+        _projectSnapshotHandleLock = new object();
+    }
+
+    public string ConfigurationFilePath { get; }
+
+    public RazorFileChangeKind Kind { get; }
 
     public bool TryDeserialize([NotNullWhen(true)] out RazorProjectInfo? projectInfo)
     {
@@ -41,14 +59,14 @@ internal sealed class ProjectConfigurationFileChangeEventArgs : EventArgs
             return false;
         }
 
-        lock (_gate)
+        lock (_projectSnapshotHandleLock)
         {
             if (!_deserialized)
             {
                 // We use a deserialized flag instead of checking if _projectSnapshotHandle is null because if we're reading an old snapshot
                 // handle that doesn't deserialize properly it could be expected that it would be null.
                 _deserialized = true;
-                var deserializedProjectInfo = _deserializer.DeserializeFromFile(ConfigurationFilePath);
+                var deserializedProjectInfo = _jsonFileDeserializer.Deserialize<RazorProjectInfo>(ConfigurationFilePath);
                 if (deserializedProjectInfo is null)
                 {
                     projectInfo = null;

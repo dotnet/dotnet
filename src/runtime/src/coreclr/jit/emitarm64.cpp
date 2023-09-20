@@ -8886,7 +8886,6 @@ void emitter::emitIns_Call(EmitCallType          callType,
 
     dispIns(id);
     appendToCurIG(id);
-    emitLastMemBarrier = nullptr; // Cannot optimize away future memory barriers
 }
 
 /*****************************************************************************

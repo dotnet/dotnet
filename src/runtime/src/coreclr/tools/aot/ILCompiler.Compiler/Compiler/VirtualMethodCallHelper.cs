@@ -93,8 +93,9 @@ namespace ILCompiler
         {
             if (implType.IsInterface)
             {
-                // Interface types don't have physically assigned virtual slots, so the number of slots
-                // is always 0. They may have sealed slots.
+                // We normally don't need to ask about vtable slots of interfaces. It's not wrong to ask
+                // that question, but we currently only ask it for IDynamicInterfaceCastable implementations.
+                Debug.Assert(((MetadataType)implType).IsDynamicInterfaceCastableImplementation());
                 return (implType.HasGenericDictionarySlot() && countDictionarySlots) ? 1 : 0;
             }
 

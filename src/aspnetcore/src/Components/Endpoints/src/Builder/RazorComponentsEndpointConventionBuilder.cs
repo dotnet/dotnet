@@ -4,6 +4,7 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Discovery;
 using Microsoft.AspNetCore.Components.Endpoints;
+using Microsoft.AspNetCore.Components.Web;
 
 namespace Microsoft.AspNetCore.Builder;
 
@@ -37,6 +38,17 @@ public sealed class RazorComponentsEndpointConventionBuilder : IEndpointConventi
     /// </summary>
     internal ComponentApplicationBuilder ApplicationBuilder => _builder;
 
+    /// <summary>
+    /// Configures the <see cref="RenderMode.Server"/> for this application.
+    /// </summary>
+    /// <returns>The <see cref="RazorComponentsEndpointConventionBuilder"/>.</returns>
+    public RazorComponentsEndpointConventionBuilder AddServerRenderMode()
+    {
+        _options.ConfiguredRenderModes.Add(RenderMode.Server);
+
+        return this;
+    }
+
     /// <inheritdoc/>
     public void Add(Action<EndpointBuilder> convention)
     {
@@ -61,9 +73,12 @@ public sealed class RazorComponentsEndpointConventionBuilder : IEndpointConventi
         }
     }
 
-    internal void AddRenderMode(IComponentRenderMode renderMode)
+    /// <summary>
+    /// Adds the given <paramref name="renderMode"/> to the list of configured render modes if not present.
+    /// </summary>
+    /// <param name="renderMode">The <see cref="IComponentRenderMode"/> to add.</param>
+    public void AddRenderMode(IComponentRenderMode renderMode)
     {
         _options.ConfiguredRenderModes.Add(renderMode);
     }
 }
-

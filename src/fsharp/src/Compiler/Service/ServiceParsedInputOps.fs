@@ -1313,7 +1313,7 @@ module ParsedInput =
             | _ ->
                 pats
                 |> List.tryPick (fun pat -> TryGetCompletionContextInPattern false pat None pos)
-        | SynPat.Record (fieldPats = pats; range = m) when rangeContainsPos m pos ->
+        | SynPat.Record (fieldPats = pats) ->
             pats
             |> List.tryPick (fun ((_, fieldId), _, pat) ->
                 if rangeContainsPos fieldId.idRange pos then
@@ -1328,16 +1328,15 @@ module ParsedInput =
                 // That is, pos is after the last field and still within braces
                 if
                     pats
-                    |> List.forall (fun (_, mEquals, pat) ->
-                        match mEquals, pat with
-                        | Some mEquals, SynPat.Wild mPat -> rangeBeforePos mEquals pos && mPat.StartColumn <> mPat.EndColumn
-                        | Some mEquals, _ -> rangeBeforePos mEquals pos
-                        | _ -> false)
+                    |> List.forall (fun (_, m, _) ->
+                        match m with
+                        | Some m -> rangeBeforePos m pos
+                        | None -> false)
                 then
                     let referencedFields = pats |> List.map (fun ((_, x), _, _) -> x.idText, x.idRange)
                     Some(CompletionContext.Pattern(PatternContext.RecordFieldIdentifier referencedFields))
                 else
-                    Some(CompletionContext.Pattern PatternContext.Other))
+                    None)
         | SynPat.Ands (pats = pats)
         | SynPat.ArrayOrList (elementPats = pats) ->
             pats

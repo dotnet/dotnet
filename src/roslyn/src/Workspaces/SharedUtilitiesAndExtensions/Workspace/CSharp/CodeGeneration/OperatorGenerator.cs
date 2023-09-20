@@ -43,20 +43,20 @@ namespace Microsoft.CodeAnalysis.CSharp.CodeGeneration
                 return reusableSyntax;
             }
 
-            var declaration = GenerateOperatorDeclarationWorker(method, destination, info, cancellationToken);
-            declaration = UseExpressionBodyIfDesired(info, declaration, cancellationToken);
+            var declaration = GenerateOperatorDeclarationWorker(method, destination, info);
+            declaration = UseExpressionBodyIfDesired(info, declaration);
 
             return AddAnnotationsTo(method,
                 ConditionallyAddDocumentationCommentTo(declaration, method, info, cancellationToken));
         }
 
         private static OperatorDeclarationSyntax UseExpressionBodyIfDesired(
-            CSharpCodeGenerationContextInfo info, OperatorDeclarationSyntax declaration, CancellationToken cancellationToken)
+            CSharpCodeGenerationContextInfo info, OperatorDeclarationSyntax declaration)
         {
             if (declaration.ExpressionBody == null)
             {
                 if (declaration.Body?.TryConvertToArrowExpressionBody(
-                    declaration.Kind(), info.LanguageVersion, info.Options.PreferExpressionBodiedOperators.Value, cancellationToken,
+                    declaration.Kind(), info.LanguageVersion, info.Options.PreferExpressionBodiedOperators.Value,
                     out var expressionBody, out var semicolonToken) == true)
                 {
                     return declaration.WithBody(null)
@@ -71,8 +71,7 @@ namespace Microsoft.CodeAnalysis.CSharp.CodeGeneration
         private static OperatorDeclarationSyntax GenerateOperatorDeclarationWorker(
             IMethodSymbol method,
             CodeGenerationDestination destination,
-            CSharpCodeGenerationContextInfo info,
-            CancellationToken cancellationToken)
+            CSharpCodeGenerationContextInfo info)
         {
             var hasNoBody = !info.Context.GenerateMethodBodies || method.IsExtern || method.IsAbstract;
 
@@ -100,7 +99,7 @@ namespace Microsoft.CodeAnalysis.CSharp.CodeGeneration
                 expressionBody: null,
                 semicolonToken: hasNoBody ? SyntaxFactory.Token(SyntaxKind.SemicolonToken) : new SyntaxToken());
 
-            operatorDecl = UseExpressionBodyIfDesired(info, operatorDecl, cancellationToken);
+            operatorDecl = UseExpressionBodyIfDesired(info, operatorDecl);
             return operatorDecl;
         }
 

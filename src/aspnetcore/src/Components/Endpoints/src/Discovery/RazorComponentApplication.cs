@@ -42,15 +42,15 @@ internal class RazorComponentApplication
             var component = Components[i];
             switch (component.RenderMode)
             {
-                case InteractiveServerRenderMode:
-                    set.Add(RenderMode.InteractiveServer);
+                case ServerRenderMode:
+                    set.Add(RenderMode.Server);
                     break;
-                case InteractiveWebAssemblyRenderMode:
-                    set.Add(RenderMode.InteractiveWebAssembly);
+                case WebAssemblyRenderMode:
+                    set.Add(RenderMode.WebAssembly);
                     break;
-                case InteractiveAutoRenderMode:
-                    set.Add(RenderMode.InteractiveServer);
-                    set.Add(RenderMode.InteractiveWebAssembly);
+                case AutoRenderMode:
+                    set.Add(RenderMode.Server);
+                    set.Add(RenderMode.WebAssembly);
                     break;
                 default:
                     break;

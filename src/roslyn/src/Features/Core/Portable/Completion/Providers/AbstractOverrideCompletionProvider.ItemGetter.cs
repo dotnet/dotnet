@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Editing;
 using Microsoft.CodeAnalysis.Shared.Extensions;
 using Microsoft.CodeAnalysis.Text;
+using Roslyn.Utilities;
 
 namespace Microsoft.CodeAnalysis.Completion.Providers
 {
@@ -110,11 +111,7 @@ namespace Microsoft.CodeAnalysis.Completion.Providers
                 out ImmutableArray<ISymbol> overridableMembers)
             {
                 var containingType = semanticModel.GetEnclosingSymbol<INamedTypeSymbol>(startToken.SpanStart, _cancellationToken);
-                if (containingType is null)
-                {
-                    overridableMembers = default;
-                    return false;
-                }
+                Contract.ThrowIfNull(containingType);
 
                 var result = containingType.GetOverridableMembers(_cancellationToken);
 

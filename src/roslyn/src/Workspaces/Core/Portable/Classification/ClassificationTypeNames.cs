@@ -11,7 +11,7 @@ namespace Microsoft.CodeAnalysis.Classification
         /// <summary>
         /// Additive classifications types supply additional context to other classifications.
         /// </summary>
-        public static ImmutableArray<string> AdditiveTypeNames { get; } = ImmutableArray.Create(StaticSymbol, ReassignedVariable, TestCode);
+        public static ImmutableArray<string> AdditiveTypeNames { get; } = ImmutableArray.Create(StaticSymbol, ReassignedVariable);
 
         public static ImmutableArray<string> AllTypeNames { get; } = ImmutableArray.Create(
             Comment,
@@ -92,9 +92,7 @@ namespace Microsoft.CodeAnalysis.Classification
             JsonArray,
             JsonObject,
             JsonPropertyName,
-            JsonConstructorName,
-            TestCode,
-            TestCodeMarkdown);
+            JsonConstructorName);
 
         public const string Comment = "comment";
         public const string ExcludedCode = "excluded code";
@@ -126,9 +124,6 @@ namespace Microsoft.CodeAnalysis.Classification
         public const string StructName = "struct name";
         public const string RecordStructName = "record struct name";
         public const string TypeParameterName = "type parameter name";
-
-        internal const string TestCode = "roslyn test code";
-        internal const string TestCodeMarkdown = "roslyn test code markdown";
 
         public const string FieldName = "field name";
         public const string EnumMemberName = "enum member name";

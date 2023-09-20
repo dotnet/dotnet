@@ -21,7 +21,7 @@ namespace NuGet.Protocol.Plugins
 
         /// <summary>
         /// Gets the handshake responder's plugin protocol version if the handshake was successful;
-        /// otherwise, <see langword="null" />.
+        /// otherwise, <c>null</c>.
         /// </summary>
         public SemanticVersion ProtocolVersion { get; }
 
@@ -30,15 +30,15 @@ namespace NuGet.Protocol.Plugins
         /// </summary>
         /// <param name="responseCode">The handshake responder's handshake response code.</param>
         /// <param name="protocolVersion">The handshake responder's plugin protocol version
-        /// if the handshake was successful; otherwise, <see langword="null" />.</param>
+        /// if the handshake was successful; otherwise, <c>null</c>.</param>
         /// <exception cref="ArgumentException">Thrown if <paramref name="responseCode" />
         /// is an undefined <see cref="MessageResponseCode" /> value.</exception>
         /// <exception cref="ArgumentException">Thrown if <paramref name="responseCode" />
         /// is <see cref="MessageResponseCode.Success" /> and <paramref name="protocolVersion" />
-        /// is <see langword="null" />.</exception>
+        /// is <c>null</c>.</exception>
         /// <exception cref="ArgumentException">Thrown if <paramref name="responseCode" />
         /// is not <see cref="MessageResponseCode.Success" /> and <paramref name="protocolVersion" />
-        /// is not <see langword="null" />.</exception>
+        /// is not <c>null</c>.</exception>
         [JsonConstructor]
         public HandshakeResponse(MessageResponseCode responseCode, SemanticVersion protocolVersion)
         {

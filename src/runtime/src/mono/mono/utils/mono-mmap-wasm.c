@@ -90,8 +90,8 @@ mono_setmmapjit (int flag)
 	/* Ignored on HOST_WASM */
 }
 
-static void*
-valloc_impl (void *addr, size_t size, int flags, MonoMemAccountType type)
+void*
+mono_valloc (void *addr, size_t size, int flags, MonoMemAccountType type)
 {
 	void *ptr;
 	int mflags = 0;
@@ -119,19 +119,6 @@ valloc_impl (void *addr, size_t size, int flags, MonoMemAccountType type)
 	return ptr;
 }
 
-void*
-mono_valloc (void *addr, size_t size, int flags, MonoMemAccountType type)
-{
-#if HOST_WASI
-	// WASI implements mmap using malloc, so the returned address is not page aligned
-	// and our code depends on it
-	g_assert (!addr);
-	return mono_valloc_aligned (size, mono_pagesize (), flags, type);
-#else
-	return valloc_impl (addr, size, flags, type);
-#endif
-}
-
 static GHashTable *valloc_hash;
 
 typedef struct {
@@ -143,7 +130,7 @@ void*
 mono_valloc_aligned (size_t size, size_t alignment, int flags, MonoMemAccountType type)
 {
 	/* Allocate twice the memory to be able to put the block on an aligned address */
-	char *mem = (char *) valloc_impl (NULL, size + alignment, flags, type);
+	char *mem = (char *) mono_valloc (NULL, size + alignment, flags, type);
 	char *aligned;
 
 	if (!mem)

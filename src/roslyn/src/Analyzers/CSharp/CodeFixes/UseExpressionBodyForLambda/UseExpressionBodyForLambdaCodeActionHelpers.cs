@@ -3,7 +3,6 @@
 // See the LICENSE file in the project root for more information.
 
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.CodeStyle;
 using Microsoft.CodeAnalysis.CSharp.Extensions;
@@ -16,22 +15,21 @@ namespace Microsoft.CodeAnalysis.CSharp.CodeFixes.UseExpressionBodyForLambda
 {
     internal static class UseExpressionBodyForLambdaCodeActionHelpers
     {
-        internal static LambdaExpressionSyntax Update(SemanticModel semanticModel, LambdaExpressionSyntax originalDeclaration, LambdaExpressionSyntax currentDeclaration, CancellationToken cancellationToken)
-            => UpdateWorker(semanticModel, originalDeclaration, currentDeclaration, cancellationToken).WithAdditionalAnnotations(Formatter.Annotation);
+        internal static LambdaExpressionSyntax Update(SemanticModel semanticModel, LambdaExpressionSyntax originalDeclaration, LambdaExpressionSyntax currentDeclaration)
+            => UpdateWorker(semanticModel, originalDeclaration, currentDeclaration).WithAdditionalAnnotations(Formatter.Annotation);
 
         private static LambdaExpressionSyntax UpdateWorker(
-            SemanticModel semanticModel, LambdaExpressionSyntax originalDeclaration, LambdaExpressionSyntax currentDeclaration, CancellationToken cancellationToken)
+            SemanticModel semanticModel, LambdaExpressionSyntax originalDeclaration, LambdaExpressionSyntax currentDeclaration)
         {
             var expressionBody = UseExpressionBodyForLambdaHelpers.GetBodyAsExpression(currentDeclaration);
             return expressionBody == null
-                ? WithExpressionBody(currentDeclaration, originalDeclaration.GetLanguageVersion(), cancellationToken)
+                ? WithExpressionBody(currentDeclaration, originalDeclaration.GetLanguageVersion())
                 : WithBlockBody(semanticModel, originalDeclaration, currentDeclaration, expressionBody);
         }
 
-        private static LambdaExpressionSyntax WithExpressionBody(LambdaExpressionSyntax declaration, LanguageVersion languageVersion, CancellationToken cancellationToken)
+        private static LambdaExpressionSyntax WithExpressionBody(LambdaExpressionSyntax declaration, LanguageVersion languageVersion)
         {
-            if (!UseExpressionBodyForLambdaHelpers.TryConvertToExpressionBody(
-                    declaration, languageVersion, ExpressionBodyPreference.WhenPossible, cancellationToken, out var expressionBody))
+            if (!UseExpressionBodyForLambdaHelpers.TryConvertToExpressionBody(declaration, languageVersion, ExpressionBodyPreference.WhenPossible, out var expressionBody))
             {
                 return declaration;
             }

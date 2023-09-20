@@ -5,7 +5,6 @@ namespace FSharp.Compiler.CodeAnalysis
 open System
 open FSharp.Compiler.NameResolution
 open FSharp.Compiler.Text
-open FSharp.Compiler.TcGlobals
 
 /// Stores a list of item key strings and their ranges in a memory mapped file.
 [<Sealed>]
@@ -18,7 +17,7 @@ type internal ItemKeyStore =
 [<Sealed>]
 type internal ItemKeyStoreBuilder =
 
-    new: TcGlobals -> ItemKeyStoreBuilder
+    new: unit -> ItemKeyStoreBuilder
 
     member Write: range * Item -> unit
 

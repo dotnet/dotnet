@@ -152,7 +152,7 @@ public class DocumentHighlightEndpointTest : LanguageServerTestBase
         // Assert
         var sourceText = codeDocument.GetSourceText();
         var expected = spans
-            .Select(s => s.ToRange(sourceText))
+            .Select(s => s.AsRange(sourceText))
             .OrderBy(s => s.Start.Line)
             .ThenBy(s => s.Start.Character)
             .ToArray();

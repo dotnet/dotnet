@@ -1,4 +1,3 @@
-/*#if (SampleContent)*/
 html, body {
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
 }
@@ -25,7 +24,6 @@ a, .btn-link {
     padding-top: 1.1rem;
 }
 
-/*#endif*/
 .valid.modified:not([type=checkbox]) {
     outline: 1px solid #26b050;
 }
@@ -99,7 +97,3 @@ a, .btn-link {
     .loading-progress-text:after {
         content: var(--blazor-load-percentage-text, "Loading");
     }
-
-code {
-    color: #c02d76;
-}

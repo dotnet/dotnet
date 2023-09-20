@@ -80,7 +80,7 @@ namespace Microsoft.CodeAnalysis.CSharp.CodeGeneration
             }
 
             var declaration = GenerateMethodDeclarationWorker(
-                method, destination, info, cancellationToken);
+                method, destination, info);
 
             return AddAnnotationsTo(method,
                 ConditionallyAddDocumentationCommentTo(declaration, method, info, cancellationToken));
@@ -99,7 +99,7 @@ namespace Microsoft.CodeAnalysis.CSharp.CodeGeneration
             }
 
             var declaration = GenerateLocalFunctionDeclarationWorker(
-                method, destination, info, cancellationToken);
+                method, destination, info);
 
             return AddAnnotationsTo(method,
                 ConditionallyAddDocumentationCommentTo(declaration, method, info, cancellationToken));
@@ -107,7 +107,7 @@ namespace Microsoft.CodeAnalysis.CSharp.CodeGeneration
 
         private static MethodDeclarationSyntax GenerateMethodDeclarationWorker(
             IMethodSymbol method, CodeGenerationDestination destination,
-            CSharpCodeGenerationContextInfo info, CancellationToken cancellationToken)
+            CSharpCodeGenerationContextInfo info)
         {
             // Don't rely on destination to decide if method body should be generated.
             // Users of this service need to express their intention explicitly, either by  
@@ -130,13 +130,13 @@ namespace Microsoft.CodeAnalysis.CSharp.CodeGeneration
                 expressionBody: null,
                 semicolonToken: hasNoBody ? SyntaxFactory.Token(SyntaxKind.SemicolonToken) : default);
 
-            methodDeclaration = UseExpressionBodyIfDesired(info, methodDeclaration, cancellationToken);
+            methodDeclaration = UseExpressionBodyIfDesired(info, methodDeclaration);
             return AddFormatterAndCodeGeneratorAnnotationsTo(methodDeclaration);
         }
 
         private static LocalFunctionStatementSyntax GenerateLocalFunctionDeclarationWorker(
             IMethodSymbol method, CodeGenerationDestination destination,
-            CSharpCodeGenerationContextInfo info, CancellationToken cancellationToken)
+            CSharpCodeGenerationContextInfo info)
         {
             var localFunctionDeclaration = SyntaxFactory.LocalFunctionStatement(
                 modifiers: GenerateModifiers(method, destination, info),
@@ -149,17 +149,17 @@ namespace Microsoft.CodeAnalysis.CSharp.CodeGeneration
                 expressionBody: null,
                 semicolonToken: default);
 
-            localFunctionDeclaration = UseExpressionBodyIfDesired(info, localFunctionDeclaration, cancellationToken);
+            localFunctionDeclaration = UseExpressionBodyIfDesired(info, localFunctionDeclaration);
             return AddFormatterAndCodeGeneratorAnnotationsTo(localFunctionDeclaration);
         }
 
         private static MethodDeclarationSyntax UseExpressionBodyIfDesired(
-            CSharpCodeGenerationContextInfo info, MethodDeclarationSyntax methodDeclaration, CancellationToken cancellationToken)
+            CSharpCodeGenerationContextInfo info, MethodDeclarationSyntax methodDeclaration)
         {
             if (methodDeclaration.ExpressionBody == null)
             {
                 if (methodDeclaration.Body?.TryConvertToArrowExpressionBody(
-                    methodDeclaration.Kind(), info.LanguageVersion, info.Options.PreferExpressionBodiedMethods.Value, cancellationToken,
+                    methodDeclaration.Kind(), info.LanguageVersion, info.Options.PreferExpressionBodiedMethods.Value,
                     out var expressionBody, out var semicolonToken) == true)
                 {
                     return methodDeclaration.WithBody(null)
@@ -172,12 +172,12 @@ namespace Microsoft.CodeAnalysis.CSharp.CodeGeneration
         }
 
         private static LocalFunctionStatementSyntax UseExpressionBodyIfDesired(
-            CSharpCodeGenerationContextInfo info, LocalFunctionStatementSyntax localFunctionDeclaration, CancellationToken cancellationToken)
+            CSharpCodeGenerationContextInfo info, LocalFunctionStatementSyntax localFunctionDeclaration)
         {
             if (localFunctionDeclaration.ExpressionBody == null)
             {
                 if (localFunctionDeclaration.Body?.TryConvertToArrowExpressionBody(
-                    localFunctionDeclaration.Kind(), info.LanguageVersion, info.Options.PreferExpressionBodiedLocalFunctions.Value, cancellationToken,
+                    localFunctionDeclaration.Kind(), info.LanguageVersion, info.Options.PreferExpressionBodiedLocalFunctions.Value,
                     out var expressionBody, out var semicolonToken) == true)
                 {
                     return localFunctionDeclaration.WithBody(null)
