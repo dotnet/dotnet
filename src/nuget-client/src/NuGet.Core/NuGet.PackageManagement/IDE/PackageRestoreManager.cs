@@ -379,7 +379,7 @@ namespace NuGet.PackageManagement
             foreach (SourceRepository enabledSource in packageRestoreContext.SourceRepositories)
             {
                 PackageSource source = enabledSource.PackageSource;
-                if (source.IsHttp && !source.IsHttps && !source.AllowInsecureConnections)
+                if (source.IsHttp && !source.IsHttps)
                 {
                     packageRestoreContext.Logger.Log(LogLevel.Warning, string.Format(CultureInfo.CurrentCulture, Strings.Warning_HttpServerUsage, "restore", source.Source));
                 }

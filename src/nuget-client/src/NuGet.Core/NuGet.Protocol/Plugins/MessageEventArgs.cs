@@ -19,7 +19,7 @@ namespace NuGet.Protocol.Plugins
         /// Instantiates a new <see cref="MessageEventArgs" /> class.
         /// </summary>
         /// <param name="message">A message.</param>
-        /// <exception cref="ArgumentNullException">Thrown if <paramref name="message" /> is <see langword="null" />.</exception>
+        /// <exception cref="ArgumentNullException">Thrown if <paramref name="message" /> is <c>null</c>.</exception>
         public MessageEventArgs(Message message)
         {
             if (message == null)

@@ -86,14 +86,14 @@ namespace NuGet.Protocol
         /// Initializes a new instance of the <see cref="EnhancedHttpRetryHelper" /> class.
         /// </summary>
         /// <param name="environmentVariableReader">A <see cref="IEnvironmentVariableReader" /> to use when reading environment variables.</param>
-        /// <exception cref="ArgumentNullException"><paramref name="environmentVariableReader" /> is <see langword="null" />.</exception>
+        /// <exception cref="ArgumentNullException"><paramref name="environmentVariableReader" /> is <c>null</c>.</exception>
         public EnhancedHttpRetryHelper(IEnvironmentVariableReader environmentVariableReader)
         {
             _environmentVariableReader = environmentVariableReader ?? throw new ArgumentNullException(nameof(environmentVariableReader));
         }
 
         /// <summary>
-        /// Gets a value indicating whether or not enhanced HTTP retry should be enabled.  The default value is <see langword="true" />.
+        /// Gets a value indicating whether or not enhanced HTTP retry should be enabled.  The default value is <c>true</c>.
         /// </summary>
         internal bool IsEnabled => _isEnabled ??= GetBoolFromEnvironmentVariable(IsEnabledEnvironmentVariableName, defaultValue: DefaultEnabled, _environmentVariableReader);
 

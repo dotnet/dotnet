@@ -648,23 +648,23 @@ namespace NuGet.CommandLine.XPlat
         /// Prepares the dictionary that maps frameworks to packages top-level
         /// and transitive.
         /// </summary>
-        /// <param name="project">Project to get the resoled versions from</param>
+        /// <param name="projectPath"> Path to the project to get versions for its packages </param>
         /// <param name="userInputFrameworks">A list of frameworks</param>
         /// <param name="assetsFile">Assets file for all targets and libraries</param>
         /// <param name="transitive">Include transitive packages/projects in the result</param>
         /// <returns>FrameworkPackages collection with top-level and transitive package/project
         /// references for each framework, or null on error</returns>
         internal List<FrameworkPackages> GetResolvedVersions(
-            Project project, IEnumerable<string> userInputFrameworks, LockFile assetsFile, bool transitive)
+            string projectPath, IEnumerable<string> userInputFrameworks, LockFile assetsFile, bool transitive)
         {
             if (userInputFrameworks == null)
             {
                 throw new ArgumentNullException(nameof(userInputFrameworks));
             }
 
-            if (project == null)
+            if (projectPath == null)
             {
-                throw new ArgumentNullException(nameof(project));
+                throw new ArgumentNullException(nameof(projectPath));
             }
 
             if (assetsFile == null)
@@ -672,7 +672,6 @@ namespace NuGet.CommandLine.XPlat
                 throw new ArgumentNullException(nameof(assetsFile));
             }
 
-            var projectPath = project.FullPath;
             var resultPackages = new List<FrameworkPackages>();
             var requestedTargetFrameworks = assetsFile.PackageSpec.TargetFrameworks;
             var requestedTargets = assetsFile.Targets;
@@ -728,7 +727,7 @@ namespace NuGet.CommandLine.XPlat
 
                 //The packages for the framework that were retrieved with GetRequestedVersions
                 var frameworkDependencies = tfmInformation.Dependencies;
-                var projectPackages = GetPackageReferencesFromTargets(projectPath, tfmInformation.ToString());
+                var projPackages = GetPackageReferencesFromTargets(projectPath, tfmInformation.ToString());
                 var topLevelPackages = new List<InstalledPackageReference>();
                 var transitivePackages = new List<InstalledPackageReference>();
 
@@ -744,30 +743,14 @@ namespace NuGet.CommandLine.XPlat
                     if (matchingPackages.Any())
                     {
                         var topLevelPackage = matchingPackages.Single();
-                        InstalledPackageReference installedPackage = default;
+                        InstalledPackageReference installedPackage;
 
                         //If the package is not auto-referenced, get the version from the project file. Otherwise fall back on the assets file
                         if (!topLevelPackage.AutoReferenced)
                         {
                             try
                             { // In case proj and assets file are not in sync and some refs were deleted
-                                var projectPackage = projectPackages.Where(p => p.Name.Equals(topLevelPackage.Name, StringComparison.Ordinal)).First();
-
-                                // If the project is using CPM and it's not using VersionOverride, get the version from Directory.Package.props file
-                                if (assetsFile.PackageSpec.RestoreMetadata.CentralPackageVersionsEnabled && !projectPackage.IsVersionOverride)
-                                {
-                                    ProjectRootElement directoryBuildPropsRootElement = GetDirectoryBuildPropsRootElement(project);
-                                    ProjectItemElement packageInCPM = directoryBuildPropsRootElement.Items.Where(i => (i.ItemType == PACKAGE_VERSION_TYPE_TAG || i.ItemType.Equals("GlobalPackageReference")) && i.Include.Equals(topLevelPackage.Name, StringComparison.OrdinalIgnoreCase)).FirstOrDefault();
-
-                                    installedPackage = new InstalledPackageReference(topLevelPackage.Name)
-                                    {
-                                        OriginalRequestedVersion = packageInCPM.Metadata.FirstOrDefault(i => i.Name.Equals("Version", StringComparison.OrdinalIgnoreCase)).Value,
-                                    };
-                                }
-                                else
-                                {
-                                    installedPackage = projectPackage;
-                                }
+                                installedPackage = projPackages.Where(p => p.Name.Equals(topLevelPackage.Name, StringComparison.Ordinal)).First();
                             }
                             catch (Exception)
                             {
@@ -875,15 +858,10 @@ namespace NuGet.CommandLine.XPlat
             newProject.Build(new[] { CollectPackageReferences }, new List<Microsoft.Build.Framework.ILogger> { }, out var targetOutputs);
 
             return targetOutputs.First(e => e.Key.Equals(CollectPackageReferences, StringComparison.OrdinalIgnoreCase)).Value.Items.Select(p =>
-            {
-                var isVersionOverride = p.GetMetadata("VersionOverride") != string.Empty;
-                var originalRequestedVersion = isVersionOverride ? p.GetMetadata("VersionOverride") : p.GetMetadata("version");
-                return new InstalledPackageReference(p.ItemSpec)
+                new InstalledPackageReference(p.ItemSpec)
                 {
-                    OriginalRequestedVersion = originalRequestedVersion,
-                    IsVersionOverride = isVersionOverride,
-                };
-            });
+                    OriginalRequestedVersion = p.GetMetadata("version"),
+                });
         }
 
         /// <summary>

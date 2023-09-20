@@ -22,7 +22,6 @@ namespace NuGet.CommandLine.XPlat
         internal IPackageSearchMetadata LatestPackageMetadata { get; set; }
         internal bool AutoReference { get; set; }
         internal UpdateLevel UpdateLevel { get; set; }
-        internal bool IsVersionOverride { get; set; }
 
         /// <summary>
         /// A constructor that takes a name of a package

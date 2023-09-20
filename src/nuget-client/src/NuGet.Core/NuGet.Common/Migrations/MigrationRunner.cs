@@ -14,12 +14,6 @@ namespace NuGet.Common.Migrations
         public static void Run()
         {
             string migrationsDirectory = GetMigrationsDirectory();
-
-            Run(migrationsDirectory);
-        }
-
-        internal static void Run(string migrationsDirectory)
-        {
             var expectedMigrationFilename = Path.Combine(migrationsDirectory, MaxMigrationFilename);
 
             if (!File.Exists(expectedMigrationFilename))
@@ -32,8 +26,6 @@ namespace NuGet.Common.Migrations
                     {
                         try
                         {
-                            Directory.CreateDirectory(migrationsDirectory);
-
                             // Only run migrations that have not already been run
                             if (!File.Exists(expectedMigrationFilename))
                             {
@@ -70,16 +62,20 @@ namespace NuGet.Common.Migrations
 
         internal static string GetMigrationsDirectory()
         {
+            string migrationsDirectory;
             if (RuntimeEnvironmentHelper.IsWindows)
             {
-                return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "NuGet", "Migrations");
+                migrationsDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "NuGet", "Migrations");
             }
-
-            var XdgDataHome = Environment.GetEnvironmentVariable("XDG_DATA_HOME");
-
-            return string.IsNullOrEmpty(XdgDataHome)
-                ? Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".local", "share", "NuGet", "Migrations")
-                : Path.Combine(XdgDataHome, "NuGet", "Migrations");
+            else
+            {
+                var XdgDataHome = Environment.GetEnvironmentVariable("XDG_DATA_HOME");
+                migrationsDirectory = string.IsNullOrEmpty(XdgDataHome)
+                    ? Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".local", "share", "NuGet", "Migrations")
+                    : Path.Combine(XdgDataHome, "NuGet", "Migrations");
+            }
+            Directory.CreateDirectory(migrationsDirectory);
+            return migrationsDirectory;
         }
     }
 }

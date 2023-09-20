@@ -9,7 +9,6 @@ using System.Net;
 using System.Text;
 using FluentAssertions;
 using NuGet.Common;
-using NuGet.Configuration.Test;
 using NuGet.Packaging;
 using NuGet.Test.Utility;
 using Test.Utility;
@@ -1129,10 +1128,8 @@ namespace NuGet.CommandLine.Test
             }
         }
 
-        [PlatformTheory(Platform.Windows)]
-        [InlineData("true", false)]
-        [InlineData("false", true)]
-        public void ListCommand_WhenListWithHttpSourceAndAllowInsecureConnections_WarnsCorrectly(string allowInsecureConnections, bool isHttpWarningExpected)
+        [Fact]
+        public void ListCommand_WhenListWithHttpSource_Warns()
         {
             var nugetexe = Util.GetNuGetExePath();
 
@@ -1155,17 +1152,8 @@ namespace NuGet.CommandLine.Test
 
             server.Start();
 
-            // create the config file
-            Util.CreateFile(packageDirectory, "nuget.config", $@"
-<configuration>
-    <packageSources>
-        <add key='http-feed' value='{server.Uri}nuget' allowInsecureConnections=""{allowInsecureConnections}"" />
-    </packageSources>
-</configuration>");
-            var configFile = Path.Combine(packageDirectory, "nuget.config");
-
             // Act
-            var args = "list test -ConfigFile " + configFile;
+            var args = "list test -Source " + server.Uri + "nuget";
             var result = CommandRunner.Run(
                 nugetexe,
                 packageDirectory,
@@ -1178,14 +1166,7 @@ namespace NuGet.CommandLine.Test
             // verify that only package id & version is displayed
             var expectedOutput = "testPackage1 1.1.0";
             Assert.Contains(expectedOutput, result.Output);
-            if (isHttpWarningExpected)
-            {
-                Assert.Contains("WARNING: You are running the 'list' operation with an 'HTTP' source", result.AllOutput);
-            }
-            else
-            {
-                Assert.DoesNotContain("WARNING: You are running the 'list' operation with an 'HTTP' source", result.AllOutput);
-            }
+            Assert.Contains("WARNING: You are running the 'list' operation with an 'HTTP' source", result.AllOutput);
         }
 
         [Fact]

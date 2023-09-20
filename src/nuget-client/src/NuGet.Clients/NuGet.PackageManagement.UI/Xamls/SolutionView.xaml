@@ -193,6 +193,7 @@
       Background="{DynamicResource {x:Static local:Brushes.ListPaneBackground}}"
       Foreground="{DynamicResource {x:Static local:Brushes.UIText}}"
       AutomationProperties.LabeledBy="{Binding ElementName=_installedVersionsCount}"
+      KeyboardNavigation.TabNavigation="Local"
       SelectionMode="Single">
 
       <ListView.Style>
@@ -395,7 +396,6 @@
         Grid.Column="2"
         MinWidth="150"
         MinHeight="22"
-        PreviewKeyDown="Versions_PreviewKeyDown"
         AutomationProperties.Name="{x:Static local:Resources.Label_Version}"
         ItemsSource="{Binding Path=Versions}"
         SelectedItem="{Binding Path=SelectedVersion}">

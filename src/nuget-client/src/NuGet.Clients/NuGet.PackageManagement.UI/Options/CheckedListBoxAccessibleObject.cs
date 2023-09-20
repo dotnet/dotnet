@@ -34,7 +34,7 @@ namespace NuGet.PackageManagement.UI.Options
             {
                 var item = (PackageSourceContextInfo)CheckedListBox.Items[index];
                 PackageSource packageSource = new PackageSource(item.Source, item.Name);
-                if (packageSource.IsHttp && !packageSource.IsHttps && !packageSource.AllowInsecureConnections)
+                if (packageSource.IsHttp && !packageSource.IsHttps)
                 {
                     var sourceMessage = string.Concat(
                         Resources.Warning_HTTPSource,

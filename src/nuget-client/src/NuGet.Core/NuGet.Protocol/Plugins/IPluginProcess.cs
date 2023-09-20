@@ -22,12 +22,12 @@ namespace NuGet.Protocol.Plugins
         event EventHandler<IPluginProcess> Exited;
 
         /// <summary>
-        /// Gets the exit code if the process has exited; otherwise, <see langword="null" />.
+        /// Gets the exit code if the process has exited; otherwise, <c>null</c>.
         /// </summary>
         int? ExitCode { get; }
 
         /// <summary>
-        /// Gets the process ID if the process was started; otherwise, <see langword="null" />.
+        /// Gets the process ID if the process was started; otherwise, <c>null</c>.
         /// </summary>
         int? Id { get; }
 

@@ -30,31 +30,8 @@ namespace NuGet.Packaging.Test
             Assert.Same(policy0, policy1);
         }
 
-        [PlatformFact(Platform.Windows)]
-        public void CreateWithoutCaching_OnWindowsWhenEnvironmentVariableIsNotDefined_ReturnsRetriablePolicy()
-        {
-            Mock<IEnvironmentVariableReader> reader = CreateMockEnvironmentVariableReader(variableValue: null);
-
-            IX509ChainBuildPolicy policy = X509ChainBuildPolicyFactory.CreateWithoutCaching(reader.Object);
-
-            Assert.IsType<RetriableX509ChainBuildPolicy>(policy);
-
-            reader.VerifyAll();
-        }
-
-        [PlatformFact(Platform.Windows)]
-        public void CreateWithoutCaching_OnWindowsWhenEnvironmentVariableIsDisabled_ReturnsDefaultPolicy()
-        {
-            Mock<IEnvironmentVariableReader> reader = CreateMockEnvironmentVariableReader(variableValue: X509ChainBuildPolicyFactory.DisabledValue);
-
-            IX509ChainBuildPolicy policy = X509ChainBuildPolicyFactory.CreateWithoutCaching(reader.Object);
-
-            Assert.IsType<DefaultX509ChainBuildPolicy>(policy);
-
-            reader.VerifyAll();
-        }
-
         [PlatformTheory(Platform.Windows)]
+        [InlineData(null)]
         [InlineData("")]
         [InlineData(" ")]
         [InlineData(",")]
@@ -63,7 +40,7 @@ namespace NuGet.Packaging.Test
         [InlineData("0,1")]
         [InlineData("1,-2")]
         [InlineData("1,2,3")]
-        public void CreateWithoutCaching_OnWindowsWhenEnvironmentVariableValueIsInvalid_ReturnsDefaultPolicy(string value)
+        public void CreateWithoutCaching_OnWindowsWhenEnvironmentVariableIsInvalid_ReturnsDefaultPolicy(string value)
         {
             Mock<IEnvironmentVariableReader> reader = CreateMockEnvironmentVariableReader(value);
 
@@ -78,7 +55,7 @@ namespace NuGet.Packaging.Test
         [InlineData("1,0")]
         [InlineData("3,7")]
         [InlineData(" 5 , 9 ")]
-        public void CreateWithoutCaching_OnWindowsWhenEnvironmentVariableValueIsValid_ReturnsRetriablePolicy(string value)
+        public void CreateWithoutCaching_OnWindowsWhenEnvironmentVariableIsValid_ReturnsRetriablePolicy(string value)
         {
             Mock<IEnvironmentVariableReader> reader = CreateMockEnvironmentVariableReader(value);
 

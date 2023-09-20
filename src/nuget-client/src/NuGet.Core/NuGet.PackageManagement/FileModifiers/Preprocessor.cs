@@ -23,9 +23,9 @@ namespace NuGet.ProjectManagement
         /// <param name="cancellationToken">A cancellation token.</param>
         /// <returns>A task that represents the asynchronous operation.</returns>
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="streamTaskFactory" />
-        /// is <see langword="null" />.</exception>
+        /// is <c>null</c>.</exception>
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="projectSystem" />
-        /// is <see langword="null" />.</exception>
+        /// is <c>null</c>.</exception>
         /// <exception cref="OperationCanceledException">Thrown if <paramref name="cancellationToken" />
         /// is cancelled.</exception>
         public async Task TransformFileAsync(
@@ -63,9 +63,9 @@ namespace NuGet.ProjectManagement
         /// <param name="cancellationToken">A cancellation token.</param>
         /// <returns>A task that represents the asynchronous operation.</returns>
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="streamTaskFactory" />
-        /// is <see langword="null" />.</exception>
+        /// is <c>null</c>.</exception>
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="projectSystem" />
-        /// is <see langword="null" />.</exception>
+        /// is <c>null</c>.</exception>
         /// <exception cref="OperationCanceledException">Thrown if <paramref name="cancellationToken" />
         /// is cancelled.</exception>
         public async Task RevertFileAsync(

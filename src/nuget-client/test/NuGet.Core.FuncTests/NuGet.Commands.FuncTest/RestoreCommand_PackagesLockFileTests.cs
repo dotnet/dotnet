@@ -1,6 +1,7 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -44,7 +45,7 @@ namespace NuGet.Commands.FuncTest
                 PackageSpecOperations.AddOrUpdateDependency(packageSpec, packageA.Identity, packageSpec.TargetFrameworks.Select(e => e.FrameworkName));
 
                 // Preconditions.
-                var result = await new RestoreCommand(ProjectTestHelpers.CreateRestoreRequest(pathContext, logger, packageSpec)).ExecuteAsync();
+                var result = await new RestoreCommand(ProjectTestHelpers.CreateRestoreRequest(packageSpec, pathContext, logger)).ExecuteAsync();
                 await result.CommitAsync(logger, CancellationToken.None);
                 result.Success.Should().BeTrue();
 
@@ -56,7 +57,7 @@ namespace NuGet.Commands.FuncTest
                 PackageSpecOperations.RemoveDependency(packageSpec, packageA.Identity.Id);
                 logger.Clear();
                 // Act.
-                result = await new RestoreCommand(ProjectTestHelpers.CreateRestoreRequest(pathContext, logger, packageSpec)).ExecuteAsync();
+                result = await new RestoreCommand(ProjectTestHelpers.CreateRestoreRequest(packageSpec, pathContext, logger)).ExecuteAsync();
 
                 // Assert.
                 result.Success.Should().BeFalse();
@@ -89,7 +90,7 @@ namespace NuGet.Commands.FuncTest
                 PackageSpecOperations.AddOrUpdateDependency(packageSpec, packageA.Identity, packageSpec.TargetFrameworks.Select(e => e.FrameworkName));
 
                 // Preconditions.
-                var result = await (new RestoreCommand(ProjectTestHelpers.CreateRestoreRequest(pathContext, logger, packageSpec))).ExecuteAsync();
+                var result = await (new RestoreCommand(ProjectTestHelpers.CreateRestoreRequest(packageSpec, pathContext, logger))).ExecuteAsync();
                 await result.CommitAsync(logger, CancellationToken.None);
                 result.Success.Should().BeTrue();
 
@@ -101,7 +102,7 @@ namespace NuGet.Commands.FuncTest
                 PackageSpecOperationsUtility.AddTargetFramework(packageSpec, "net48");
                 logger.Clear();
                 // Act.
-                result = await new RestoreCommand(ProjectTestHelpers.CreateRestoreRequest(pathContext, logger, packageSpec)).ExecuteAsync();
+                result = await new RestoreCommand(ProjectTestHelpers.CreateRestoreRequest(packageSpec, pathContext, logger)).ExecuteAsync();
 
                 // Assert.
                 result.Success.Should().BeFalse();
@@ -134,7 +135,7 @@ namespace NuGet.Commands.FuncTest
                 PackageSpecOperations.AddOrUpdateDependency(packageSpec, packageA.Identity, packageSpec.TargetFrameworks.Select(e => e.FrameworkName));
 
                 // Preconditions.
-                var result = await (new RestoreCommand(ProjectTestHelpers.CreateRestoreRequest(pathContext, logger, packageSpec))).ExecuteAsync();
+                var result = await (new RestoreCommand(ProjectTestHelpers.CreateRestoreRequest(packageSpec, pathContext, logger))).ExecuteAsync();
                 await result.CommitAsync(logger, CancellationToken.None);
                 result.Success.Should().BeTrue();
 
@@ -147,7 +148,7 @@ namespace NuGet.Commands.FuncTest
                 PackageSpecOperationsUtility.AddTargetFramework(packageSpec, "net48");
                 logger.Clear();
                 // Act.
-                result = await new RestoreCommand(ProjectTestHelpers.CreateRestoreRequest(pathContext, logger, packageSpec)).ExecuteAsync();
+                result = await new RestoreCommand(ProjectTestHelpers.CreateRestoreRequest(packageSpec, pathContext, logger)).ExecuteAsync();
 
                 // Assert.
                 result.Success.Should().BeFalse();
@@ -183,7 +184,7 @@ namespace NuGet.Commands.FuncTest
                 PackageSpecOperations.AddOrUpdateDependency(packageSpec, packageA.Identity, packageSpec.TargetFrameworks.Select(e => e.FrameworkName));
 
                 // Preconditions.
-                var result = await (new RestoreCommand(ProjectTestHelpers.CreateRestoreRequest(pathContext, logger, packageSpec))).ExecuteAsync();
+                var result = await (new RestoreCommand(ProjectTestHelpers.CreateRestoreRequest(packageSpec, pathContext, logger))).ExecuteAsync();
                 await result.CommitAsync(logger, CancellationToken.None);
                 result.Success.Should().BeTrue();
 
@@ -196,7 +197,7 @@ namespace NuGet.Commands.FuncTest
 
                 logger.Clear();
                 // Act.
-                result = await new RestoreCommand(ProjectTestHelpers.CreateRestoreRequest(pathContext, logger, packageSpec)).ExecuteAsync();
+                result = await new RestoreCommand(ProjectTestHelpers.CreateRestoreRequest(packageSpec, pathContext, logger)).ExecuteAsync();
 
                 // Assert.
                 result.Success.Should().BeFalse();
@@ -234,7 +235,7 @@ namespace NuGet.Commands.FuncTest
                 PackageSpecOperations.AddOrUpdateDependency(packageSpec, packageB.Identity, packageSpec.TargetFrameworks.Select(e => e.FrameworkName));
 
                 // Preconditions.
-                var result = await (new RestoreCommand(ProjectTestHelpers.CreateRestoreRequest(pathContext, logger, packageSpec))).ExecuteAsync();
+                var result = await (new RestoreCommand(ProjectTestHelpers.CreateRestoreRequest(packageSpec, pathContext, logger))).ExecuteAsync();
                 await result.CommitAsync(logger, CancellationToken.None);
                 result.Success.Should().BeTrue();
 
@@ -247,7 +248,7 @@ namespace NuGet.Commands.FuncTest
 
                 logger.Clear();
                 // Act.
-                result = await new RestoreCommand(ProjectTestHelpers.CreateRestoreRequest(pathContext, logger, packageSpec)).ExecuteAsync();
+                result = await new RestoreCommand(ProjectTestHelpers.CreateRestoreRequest(packageSpec, pathContext, logger)).ExecuteAsync();
 
                 // Assert.
                 result.Success.Should().BeFalse();
@@ -285,7 +286,7 @@ namespace NuGet.Commands.FuncTest
                 PackageSpecOperations.AddOrUpdateDependency(packageSpec, packageB.Identity, packageSpec.TargetFrameworks.Select(e => e.FrameworkName));
 
                 // Preconditions.
-                var result = await (new RestoreCommand(ProjectTestHelpers.CreateRestoreRequest(pathContext, logger, packageSpec))).ExecuteAsync();
+                var result = await (new RestoreCommand(ProjectTestHelpers.CreateRestoreRequest(packageSpec, pathContext, logger))).ExecuteAsync();
                 await result.CommitAsync(logger, CancellationToken.None);
                 result.Success.Should().BeTrue();
 
@@ -299,7 +300,7 @@ namespace NuGet.Commands.FuncTest
 
                 logger.Clear();
                 // Act.
-                result = await new RestoreCommand(ProjectTestHelpers.CreateRestoreRequest(pathContext, logger, packageSpec)).ExecuteAsync();
+                result = await new RestoreCommand(ProjectTestHelpers.CreateRestoreRequest(packageSpec, pathContext, logger)).ExecuteAsync();
 
                 // Assert.
                 result.Success.Should().BeFalse();
@@ -335,7 +336,7 @@ namespace NuGet.Commands.FuncTest
                 PackageSpecOperations.AddOrUpdateDependency(packageSpec, packageA.Identity, packageSpec.TargetFrameworks.Select(e => e.FrameworkName));
 
                 // Preconditions.
-                var result = await (new RestoreCommand(ProjectTestHelpers.CreateRestoreRequest(pathContext, logger, packageSpec))).ExecuteAsync();
+                var result = await (new RestoreCommand(ProjectTestHelpers.CreateRestoreRequest(packageSpec, pathContext, logger))).ExecuteAsync();
                 await result.CommitAsync(logger, CancellationToken.None);
                 result.Success.Should().BeTrue();
 
@@ -347,7 +348,7 @@ namespace NuGet.Commands.FuncTest
                 packageSpec.RuntimeGraph = ProjectTestHelpers.GetRuntimeGraph(runtimeIdentifiers: new string[] { "win", "unix", "ios" }, runtimeSupports: new string[] { });
                 logger.Clear();
                 // Act.
-                result = await new RestoreCommand(ProjectTestHelpers.CreateRestoreRequest(pathContext, logger, packageSpec)).ExecuteAsync();
+                result = await new RestoreCommand(ProjectTestHelpers.CreateRestoreRequest(packageSpec, pathContext, logger)).ExecuteAsync();
 
                 // Assert.
                 result.Success.Should().BeFalse();
@@ -383,18 +384,21 @@ namespace NuGet.Commands.FuncTest
                     .WithTargetFrameworks(new string[] { targetFramework.GetShortFolderName() })
                     .WithPackagesLockFile()
                     .Build();
+                allPackageSpecs.Add(rootPackageSpec);
 
                 projectName = "IntermediateProject1";
                 projectDirectory = Path.Combine(pathContext.SolutionRoot, projectName);
                 var intermediateProject1PackageSpec = PackageReferenceSpecBuilder.Create(projectName, projectDirectory)
                     .WithTargetFrameworks(new string[] { targetFramework.GetShortFolderName() })
                     .Build();
+                allPackageSpecs.Add(intermediateProject1PackageSpec);
 
                 projectName = "LeafProject";
                 projectDirectory = Path.Combine(pathContext.SolutionRoot, projectName);
                 var leafProjectPackageSpec = PackageReferenceSpecBuilder.Create(projectName, projectDirectory)
                     .WithTargetFrameworks(new string[] { targetFramework.GetShortFolderName() })
                     .Build();
+                allPackageSpecs.Add(leafProjectPackageSpec);
 
                 // Add the dependency to all frameworks
                 PackageSpecOperations.AddOrUpdateDependency(rootPackageSpec, packageA.Identity, rootPackageSpec.TargetFrameworks.Select(e => e.FrameworkName));
@@ -404,7 +408,7 @@ namespace NuGet.Commands.FuncTest
                 PackageSpecOperationsUtility.AddProjectReference(intermediateProject1PackageSpec, leafProjectPackageSpec, targetFramework);
 
                 // Preconditions.
-                var result = await new RestoreCommand(ProjectTestHelpers.CreateRestoreRequest(pathContext, logger, rootPackageSpec, intermediateProject1PackageSpec, leafProjectPackageSpec)).ExecuteAsync();
+                var result = await new RestoreCommand(ProjectTestHelpers.CreateRestoreRequest(rootPackageSpec, allPackageSpecs, pathContext, logger)).ExecuteAsync();
                 await result.CommitAsync(logger, CancellationToken.None);
                 result.Success.Should().BeTrue();
 
@@ -421,9 +425,10 @@ namespace NuGet.Commands.FuncTest
                     .WithTargetFrameworks(new string[] { targetFramework.GetShortFolderName() })
                     .Build();
                 PackageSpecOperationsUtility.AddProjectReference(rootPackageSpec, intermediateProject2PackageSpec, targetFramework);
+                allPackageSpecs.Add(intermediateProject2PackageSpec);
 
                 // Act.
-                result = await new RestoreCommand(ProjectTestHelpers.CreateRestoreRequest(pathContext, logger, rootPackageSpec, intermediateProject1PackageSpec, leafProjectPackageSpec, intermediateProject2PackageSpec)).ExecuteAsync();
+                result = await new RestoreCommand(ProjectTestHelpers.CreateRestoreRequest(rootPackageSpec, allPackageSpecs, pathContext, logger)).ExecuteAsync();
 
                 // Assert.
                 result.Success.Should().BeFalse();
@@ -451,6 +456,7 @@ namespace NuGet.Commands.FuncTest
                     packageC);
 
                 var targetFramework = CommonFrameworks.Net46;
+                var allPackageSpecs = new List<PackageSpec>();
 
                 var projectName = "RootProject";
                 var projectDirectory = Path.Combine(pathContext.SolutionRoot, projectName);
@@ -458,18 +464,21 @@ namespace NuGet.Commands.FuncTest
                     .WithTargetFrameworks(new string[] { targetFramework.GetShortFolderName() })
                     .WithPackagesLockFile()
                     .Build();
+                allPackageSpecs.Add(rootPackageSpec);
 
                 projectName = "IntermediateProject";
                 projectDirectory = Path.Combine(pathContext.SolutionRoot, projectName);
                 var intermediatePackageSpec = PackageReferenceSpecBuilder.Create(projectName, projectDirectory)
                     .WithTargetFrameworks(new string[] { targetFramework.GetShortFolderName() })
                     .Build();
+                allPackageSpecs.Add(intermediatePackageSpec);
 
                 projectName = "LeafProject1";
                 projectDirectory = Path.Combine(pathContext.SolutionRoot, projectName);
                 var leafProject1PackageSpec = PackageReferenceSpecBuilder.Create(projectName, projectDirectory)
                     .WithTargetFrameworks(new string[] { targetFramework.GetShortFolderName() })
                     .Build();
+                allPackageSpecs.Add(leafProject1PackageSpec);
 
                 // Add the dependency to all frameworks
                 PackageSpecOperations.AddOrUpdateDependency(rootPackageSpec, packageA.Identity, rootPackageSpec.TargetFrameworks.Select(e => e.FrameworkName));
@@ -479,7 +488,7 @@ namespace NuGet.Commands.FuncTest
                 PackageSpecOperationsUtility.AddProjectReference(intermediatePackageSpec, leafProject1PackageSpec, targetFramework);
 
                 // Preconditions.
-                var result = await new RestoreCommand(ProjectTestHelpers.CreateRestoreRequest(pathContext, logger, rootPackageSpec, intermediatePackageSpec, leafProject1PackageSpec)).ExecuteAsync();
+                var result = await new RestoreCommand(ProjectTestHelpers.CreateRestoreRequest(rootPackageSpec, allPackageSpecs, pathContext, logger)).ExecuteAsync();
                 await result.CommitAsync(logger, CancellationToken.None);
                 result.Success.Should().BeTrue();
 
@@ -496,9 +505,10 @@ namespace NuGet.Commands.FuncTest
                     .WithTargetFrameworks(new string[] { targetFramework.GetShortFolderName() })
                     .Build();
                 PackageSpecOperationsUtility.AddProjectReference(intermediatePackageSpec, leafProject2PackageSpec, targetFramework);
+                allPackageSpecs.Add(leafProject2PackageSpec);
 
                 // Act.
-                result = await new RestoreCommand(ProjectTestHelpers.CreateRestoreRequest(pathContext, logger, rootPackageSpec, intermediatePackageSpec, leafProject1PackageSpec, leafProject2PackageSpec)).ExecuteAsync();
+                result = await new RestoreCommand(ProjectTestHelpers.CreateRestoreRequest(rootPackageSpec, allPackageSpecs, pathContext, logger)).ExecuteAsync();
 
                 // Assert.
                 result.Success.Should().BeFalse();
@@ -523,6 +533,7 @@ namespace NuGet.Commands.FuncTest
                     packageA);
 
                 var targetFramework = CommonFrameworks.Net46;
+                var allPackageSpecs = new List<PackageSpec>();
 
                 var projectName = "RootProject";
                 var projectDirectory = Path.Combine(pathContext.SolutionRoot, projectName);
@@ -530,19 +541,21 @@ namespace NuGet.Commands.FuncTest
                     .WithTargetFrameworks(new string[] { "net46" })
                     .WithPackagesLockFile()
                     .Build();
+                allPackageSpecs.Add(rootPackageSpec);
 
                 projectName = "IntermediateProject";
                 projectDirectory = Path.Combine(pathContext.SolutionRoot, projectName);
                 var projectReferenceSpec = PackageReferenceSpecBuilder.Create(projectName, projectDirectory)
                     .WithTargetFrameworks(new string[] { targetFramework.GetShortFolderName() })
                     .Build();
+                allPackageSpecs.Add(projectReferenceSpec);
 
                 // Add the dependency to all frameworks
                 PackageSpecOperations.AddOrUpdateDependency(rootPackageSpec, packageA.Identity, rootPackageSpec.TargetFrameworks.Select(e => e.FrameworkName));
                 PackageSpecOperationsUtility.AddProjectReference(rootPackageSpec, projectReferenceSpec, targetFramework);
 
                 // Preconditions.
-                var result = await new RestoreCommand(ProjectTestHelpers.CreateRestoreRequest(pathContext, logger, rootPackageSpec, projectReferenceSpec)).ExecuteAsync();
+                var result = await new RestoreCommand(ProjectTestHelpers.CreateRestoreRequest(rootPackageSpec, allPackageSpecs, pathContext, logger)).ExecuteAsync();
                 await result.CommitAsync(logger, CancellationToken.None);
                 result.Success.Should().BeTrue();
 
@@ -557,7 +570,7 @@ namespace NuGet.Commands.FuncTest
                 PackageSpecOperationsUtility.AddTargetFramework(projectReferenceSpec, "net47");
 
                 // Act.
-                result = await new RestoreCommand(ProjectTestHelpers.CreateRestoreRequest(pathContext, logger, rootPackageSpec, projectReferenceSpec)).ExecuteAsync();
+                result = await new RestoreCommand(ProjectTestHelpers.CreateRestoreRequest(rootPackageSpec, allPackageSpecs, pathContext, logger)).ExecuteAsync();
 
                 // Assert.
                 result.Success.Should().BeFalse();
@@ -582,6 +595,7 @@ namespace NuGet.Commands.FuncTest
                     packageA);
 
                 var targetFramework = CommonFrameworks.Net46;
+                var allPackageSpecs = new List<PackageSpec>();
 
                 var projectName = "RootProject";
                 var projectDirectory = Path.Combine(pathContext.SolutionRoot, projectName);
@@ -589,18 +603,22 @@ namespace NuGet.Commands.FuncTest
                     .WithTargetFrameworks(new string[] { "net46" })
                     .WithPackagesLockFile()
                     .Build();
+                allPackageSpecs.Add(rootPackageSpec);
 
                 projectName = "IntermediateProject";
                 projectDirectory = Path.Combine(pathContext.SolutionRoot, projectName);
                 var intermediateProjectReferenceSpec = PackageReferenceSpecBuilder.Create(projectName, projectDirectory)
                     .WithTargetFrameworks(new string[] { targetFramework.GetShortFolderName() })
                     .Build();
+                allPackageSpecs.Add(intermediateProjectReferenceSpec);
+
 
                 projectName = "LeafProject";
                 projectDirectory = Path.Combine(pathContext.SolutionRoot, projectName);
                 var leafProjectReferenceSpec = PackageReferenceSpecBuilder.Create(projectName, projectDirectory)
                     .WithTargetFrameworks(new string[] { targetFramework.GetShortFolderName() })
                     .Build();
+                allPackageSpecs.Add(leafProjectReferenceSpec);
 
                 // Add the dependency to all frameworks
                 PackageSpecOperations.AddOrUpdateDependency(rootPackageSpec, packageA.Identity, rootPackageSpec.TargetFrameworks.Select(e => e.FrameworkName));
@@ -608,7 +626,7 @@ namespace NuGet.Commands.FuncTest
                 PackageSpecOperationsUtility.AddProjectReference(intermediateProjectReferenceSpec, leafProjectReferenceSpec, targetFramework);
 
                 // Preconditions.
-                var result = await new RestoreCommand(ProjectTestHelpers.CreateRestoreRequest(pathContext, logger, rootPackageSpec, intermediateProjectReferenceSpec, leafProjectReferenceSpec)).ExecuteAsync();
+                var result = await new RestoreCommand(ProjectTestHelpers.CreateRestoreRequest(rootPackageSpec, allPackageSpecs, pathContext, logger)).ExecuteAsync();
                 await result.CommitAsync(logger, CancellationToken.None);
                 result.Success.Should().BeTrue();
 
@@ -623,7 +641,7 @@ namespace NuGet.Commands.FuncTest
                 PackageSpecOperationsUtility.AddTargetFramework(leafProjectReferenceSpec, "net47");
 
                 // Act.
-                result = await new RestoreCommand(ProjectTestHelpers.CreateRestoreRequest(pathContext, logger, rootPackageSpec, intermediateProjectReferenceSpec, leafProjectReferenceSpec)).ExecuteAsync();
+                result = await new RestoreCommand(ProjectTestHelpers.CreateRestoreRequest(rootPackageSpec, allPackageSpecs, pathContext, logger)).ExecuteAsync();
 
                 // Assert.
                 result.Success.Should().BeFalse();
@@ -647,6 +665,7 @@ namespace NuGet.Commands.FuncTest
                     packageA);
 
                 var targetFramework = CommonFrameworks.Net46;
+                var allPackageSpecs = new List<PackageSpec>();
 
                 var projectName = "childProject";
                 var projectDirectory = Path.Combine(pathContext.SolutionRoot, projectName);
@@ -654,6 +673,7 @@ namespace NuGet.Commands.FuncTest
                     .WithTargetFrameworks(new string[] { "net46" })
                     .WithPackagesLockFile()
                     .Build();
+                allPackageSpecs.Add(childProject);
 
                 // Add the dependency
                 var dependency = new LibraryDependency
@@ -669,7 +689,7 @@ namespace NuGet.Commands.FuncTest
                    childProject.RestoreMetadata.RestoreLockProperties.NuGetLockFilePath,
                    restoreLockedMode: false);
 
-                var result = await new RestoreCommand(ProjectTestHelpers.CreateRestoreRequest(pathContext, logger, childProject)).ExecuteAsync();
+                var result = await new RestoreCommand(ProjectTestHelpers.CreateRestoreRequest(childProject, pathContext, logger)).ExecuteAsync();
                 await result.CommitAsync(logger, CancellationToken.None);
                 result.Success.Should().BeTrue();
 
@@ -679,6 +699,7 @@ namespace NuGet.Commands.FuncTest
                     .WithTargetFrameworks(new string[] { targetFramework.GetShortFolderName() })
                     .WithPackagesLockFile()
                     .Build();
+                allPackageSpecs.Add(parentProject);
 
                 PackageSpecOperationsUtility.AddProjectReference(parentProject, childProject, targetFramework);
 
@@ -688,7 +709,7 @@ namespace NuGet.Commands.FuncTest
                    parentProject.RestoreMetadata.RestoreLockProperties.NuGetLockFilePath,
                    restoreLockedMode: false);
 
-                result = await new RestoreCommand(ProjectTestHelpers.CreateRestoreRequest(pathContext, logger, parentProject, childProject)).ExecuteAsync();
+                result = await new RestoreCommand(ProjectTestHelpers.CreateRestoreRequest(parentProject, allPackageSpecs, pathContext, logger)).ExecuteAsync();
                 await result.CommitAsync(logger, CancellationToken.None);
                 result.Success.Should().BeTrue();
 
@@ -699,7 +720,7 @@ namespace NuGet.Commands.FuncTest
                    parentProject.RestoreMetadata.RestoreLockProperties.NuGetLockFilePath,
                    restoreLockedMode: true);
 
-                result = await new RestoreCommand(ProjectTestHelpers.CreateRestoreRequest(pathContext, logger, parentProject, childProject)).ExecuteAsync();
+                result = await new RestoreCommand(ProjectTestHelpers.CreateRestoreRequest(parentProject, allPackageSpecs, pathContext, logger)).ExecuteAsync();
                 await result.CommitAsync(logger, CancellationToken.None);
 
                 // Assert.
@@ -725,6 +746,7 @@ namespace NuGet.Commands.FuncTest
                     packageC);
 
                 var targetFramework = CommonFrameworks.Net46;
+                var allPackageSpecs = new List<PackageSpec>();
 
                 var projectName = "RootProject";
                 var projectDirectory = Path.Combine(pathContext.SolutionRoot, projectName);
@@ -732,12 +754,14 @@ namespace NuGet.Commands.FuncTest
                     .WithTargetFrameworks(new string[] { "net46" })
                     .WithPackagesLockFile()
                     .Build();
+                allPackageSpecs.Add(rootPackageSpec);
 
                 projectName = "IntermediateProject";
                 projectDirectory = Path.Combine(pathContext.SolutionRoot, projectName);
                 var intermediateProjectReferenceSpec = PackageReferenceSpecBuilder.Create(projectName, projectDirectory)
                     .WithTargetFrameworks(new string[] { targetFramework.GetShortFolderName() })
                     .Build();
+                allPackageSpecs.Add(intermediateProjectReferenceSpec);
 
 
                 projectName = "LeafProject";
@@ -745,6 +769,7 @@ namespace NuGet.Commands.FuncTest
                 var leafProjectReferenceSpec = PackageReferenceSpecBuilder.Create(projectName, projectDirectory)
                     .WithTargetFrameworks(new string[] { targetFramework.GetShortFolderName() })
                     .Build();
+                allPackageSpecs.Add(leafProjectReferenceSpec);
 
                 // Add the dependency to all frameworks
                 PackageSpecOperations.AddOrUpdateDependency(rootPackageSpec, packageA.Identity, rootPackageSpec.TargetFrameworks.Select(e => e.FrameworkName));
@@ -753,7 +778,7 @@ namespace NuGet.Commands.FuncTest
                 PackageSpecOperationsUtility.AddProjectReference(intermediateProjectReferenceSpec, leafProjectReferenceSpec, targetFramework);
 
                 // Preconditions.
-                var result = await new RestoreCommand(ProjectTestHelpers.CreateRestoreRequest(pathContext, logger, rootPackageSpec, intermediateProjectReferenceSpec, leafProjectReferenceSpec)).ExecuteAsync();
+                var result = await new RestoreCommand(ProjectTestHelpers.CreateRestoreRequest(rootPackageSpec, allPackageSpecs, pathContext, logger)).ExecuteAsync();
                 await result.CommitAsync(logger, CancellationToken.None);
                 result.Success.Should().BeTrue();
 
@@ -767,7 +792,7 @@ namespace NuGet.Commands.FuncTest
                 PackageSpecOperations.AddOrUpdateDependency(intermediateProjectReferenceSpec, packageC.Identity, rootPackageSpec.TargetFrameworks.Select(e => e.FrameworkName));
 
                 // Act.
-                result = await new RestoreCommand(ProjectTestHelpers.CreateRestoreRequest(pathContext, logger, rootPackageSpec, intermediateProjectReferenceSpec, leafProjectReferenceSpec)).ExecuteAsync();
+                result = await new RestoreCommand(ProjectTestHelpers.CreateRestoreRequest(rootPackageSpec, allPackageSpecs, pathContext, logger)).ExecuteAsync();
 
                 // Assert.
                 result.Success.Should().BeFalse();
@@ -797,6 +822,7 @@ namespace NuGet.Commands.FuncTest
                     packageD);
 
                 var targetFramework = CommonFrameworks.Net46;
+                var allPackageSpecs = new List<PackageSpec>();
 
                 var projectName = "RootProject";
                 var projectDirectory = Path.Combine(pathContext.SolutionRoot, projectName);
@@ -804,18 +830,22 @@ namespace NuGet.Commands.FuncTest
                     .WithTargetFrameworks(new string[] { "net46" })
                     .WithPackagesLockFile()
                     .Build();
+                allPackageSpecs.Add(rootPackageSpec);
 
                 projectName = "IntermediateProject";
                 projectDirectory = Path.Combine(pathContext.SolutionRoot, projectName);
                 var intermediateProjectReferenceSpec = PackageReferenceSpecBuilder.Create(projectName, projectDirectory)
                     .WithTargetFrameworks(new string[] { targetFramework.GetShortFolderName() })
                     .Build();
+                allPackageSpecs.Add(intermediateProjectReferenceSpec);
+
 
                 projectName = "LeafProject";
                 projectDirectory = Path.Combine(pathContext.SolutionRoot, projectName);
                 var leafProjectReferenceSpec = PackageReferenceSpecBuilder.Create(projectName, projectDirectory)
                     .WithTargetFrameworks(new string[] { targetFramework.GetShortFolderName() })
                     .Build();
+                allPackageSpecs.Add(leafProjectReferenceSpec);
 
                 // Add the dependency to all frameworks
                 PackageSpecOperations.AddOrUpdateDependency(rootPackageSpec, packageA.Identity, rootPackageSpec.TargetFrameworks.Select(e => e.FrameworkName));
@@ -825,7 +855,7 @@ namespace NuGet.Commands.FuncTest
                 PackageSpecOperationsUtility.AddProjectReference(intermediateProjectReferenceSpec, leafProjectReferenceSpec, targetFramework);
 
                 // Preconditions.
-                var result = await new RestoreCommand(ProjectTestHelpers.CreateRestoreRequest(pathContext, logger, rootPackageSpec, intermediateProjectReferenceSpec, leafProjectReferenceSpec)).ExecuteAsync();
+                var result = await new RestoreCommand(ProjectTestHelpers.CreateRestoreRequest(rootPackageSpec, allPackageSpecs, pathContext, logger)).ExecuteAsync();
                 await result.CommitAsync(logger, CancellationToken.None);
                 result.Success.Should().BeTrue();
 
@@ -839,7 +869,7 @@ namespace NuGet.Commands.FuncTest
                 PackageSpecOperations.AddOrUpdateDependency(leafProjectReferenceSpec, packageD.Identity, rootPackageSpec.TargetFrameworks.Select(e => e.FrameworkName));
 
                 // Act.
-                result = await new RestoreCommand(ProjectTestHelpers.CreateRestoreRequest(pathContext, logger, rootPackageSpec, intermediateProjectReferenceSpec, leafProjectReferenceSpec)).ExecuteAsync();
+                result = await new RestoreCommand(ProjectTestHelpers.CreateRestoreRequest(rootPackageSpec, allPackageSpecs, pathContext, logger)).ExecuteAsync();
 
                 // Assert.
                 result.Success.Should().BeFalse();
@@ -869,6 +899,7 @@ namespace NuGet.Commands.FuncTest
                     packageC);
 
                 var targetFramework = CommonFrameworks.Net46;
+                var allPackageSpecs = new List<PackageSpec>();
 
                 var projectName = "RootProject";
                 var projectDirectory = Path.Combine(pathContext.SolutionRoot, projectName);
@@ -876,18 +907,22 @@ namespace NuGet.Commands.FuncTest
                     .WithTargetFrameworks(new string[] { targetFramework.GetShortFolderName() })
                     .WithPackagesLockFile()
                     .Build();
+                allPackageSpecs.Add(rootPackageSpec);
 
                 projectName = "IntermediateProject";
                 projectDirectory = Path.Combine(pathContext.SolutionRoot, projectName);
                 var intermediateProjectReferenceSpec = PackageReferenceSpecBuilder.Create(projectName, projectDirectory)
                     .WithTargetFrameworks(new string[] { targetFramework.GetShortFolderName() })
                     .Build();
+                allPackageSpecs.Add(intermediateProjectReferenceSpec);
+
 
                 projectName = "LeafProject";
                 projectDirectory = Path.Combine(pathContext.SolutionRoot, projectName);
                 var leafProjectReferenceSpec = PackageReferenceSpecBuilder.Create(projectName, projectDirectory)
                     .WithTargetFrameworks(new string[] { targetFramework.GetShortFolderName() })
                     .Build();
+                allPackageSpecs.Add(leafProjectReferenceSpec);
 
                 // Add the dependency to all frameworks
                 PackageSpecOperations.AddOrUpdateDependency(rootPackageSpec, packageB.Identity, rootPackageSpec.TargetFrameworks.Select(e => e.FrameworkName));
@@ -896,7 +931,7 @@ namespace NuGet.Commands.FuncTest
                 PackageSpecOperationsUtility.AddProjectReference(intermediateProjectReferenceSpec, leafProjectReferenceSpec, targetFramework);
 
                 // Preconditions.
-                var result = await new RestoreCommand(ProjectTestHelpers.CreateRestoreRequest(pathContext, logger, rootPackageSpec, intermediateProjectReferenceSpec, leafProjectReferenceSpec)).ExecuteAsync();
+                var result = await new RestoreCommand(ProjectTestHelpers.CreateRestoreRequest(rootPackageSpec, allPackageSpecs, pathContext, logger)).ExecuteAsync();
                 await result.CommitAsync(logger, CancellationToken.None);
                 result.Success.Should().BeTrue();
 
@@ -910,7 +945,7 @@ namespace NuGet.Commands.FuncTest
                 PackageSpecOperations.AddOrUpdateDependency(intermediateProjectReferenceSpec, packageA200.Identity, rootPackageSpec.TargetFrameworks.Select(e => e.FrameworkName));
 
                 // Act.
-                result = await new RestoreCommand(ProjectTestHelpers.CreateRestoreRequest(pathContext, logger, rootPackageSpec, intermediateProjectReferenceSpec, leafProjectReferenceSpec)).ExecuteAsync();
+                result = await new RestoreCommand(ProjectTestHelpers.CreateRestoreRequest(rootPackageSpec, allPackageSpecs, pathContext, logger)).ExecuteAsync();
 
                 // Assert.
                 result.Success.Should().BeFalse();
@@ -938,6 +973,7 @@ namespace NuGet.Commands.FuncTest
                     packageC);
 
                 var targetFramework = CommonFrameworks.Net46;
+                var allPackageSpecs = new List<PackageSpec>();
 
                 var projectName = "RootProject";
                 var projectDirectory = Path.Combine(pathContext.SolutionRoot, projectName);
@@ -945,18 +981,22 @@ namespace NuGet.Commands.FuncTest
                     .WithTargetFrameworks(new string[] { targetFramework.GetShortFolderName() })
                     .WithPackagesLockFile()
                     .Build();
+                allPackageSpecs.Add(rootPackageSpec);
 
                 projectName = "IntermediateProject";
                 projectDirectory = Path.Combine(pathContext.SolutionRoot, projectName);
                 var intermediateProjectReferenceSpec = PackageReferenceSpecBuilder.Create(projectName, projectDirectory)
                     .WithTargetFrameworks(new string[] { targetFramework.GetShortFolderName() })
                     .Build();
+                allPackageSpecs.Add(intermediateProjectReferenceSpec);
+
 
                 projectName = "LeafProject";
                 projectDirectory = Path.Combine(pathContext.SolutionRoot, projectName);
                 var leafProjectReferenceSpec = PackageReferenceSpecBuilder.Create(projectName, projectDirectory)
                     .WithTargetFrameworks(new string[] { targetFramework.GetShortFolderName() })
                     .Build();
+                allPackageSpecs.Add(leafProjectReferenceSpec);
 
                 // Add the dependency to all frameworks
                 PackageSpecOperations.AddOrUpdateDependency(rootPackageSpec, packageB.Identity, rootPackageSpec.TargetFrameworks.Select(e => e.FrameworkName));
@@ -964,7 +1004,7 @@ namespace NuGet.Commands.FuncTest
                 PackageSpecOperationsUtility.AddProjectReference(rootPackageSpec, intermediateProjectReferenceSpec, targetFramework);
 
                 // Preconditions.
-                var result = await new RestoreCommand(ProjectTestHelpers.CreateRestoreRequest(pathContext, logger, rootPackageSpec, intermediateProjectReferenceSpec, leafProjectReferenceSpec)).ExecuteAsync();
+                var result = await new RestoreCommand(ProjectTestHelpers.CreateRestoreRequest(rootPackageSpec, allPackageSpecs, pathContext, logger)).ExecuteAsync();
                 await result.CommitAsync(logger, CancellationToken.None);
                 result.Success.Should().BeTrue();
 
@@ -978,7 +1018,7 @@ namespace NuGet.Commands.FuncTest
                 PackageSpecOperations.RemoveDependency(intermediateProjectReferenceSpec, packageA100.Identity.Id);
                 PackageSpecOperationsUtility.AddProjectReference(intermediateProjectReferenceSpec, leafProjectReferenceSpec, targetFramework);
                 // Act.
-                result = await new RestoreCommand(ProjectTestHelpers.CreateRestoreRequest(pathContext, logger, rootPackageSpec, intermediateProjectReferenceSpec, leafProjectReferenceSpec)).ExecuteAsync();
+                result = await new RestoreCommand(ProjectTestHelpers.CreateRestoreRequest(rootPackageSpec, allPackageSpecs, pathContext, logger)).ExecuteAsync();
 
                 // Assert.
                 result.Success.Should().BeFalse();

@@ -414,10 +414,8 @@ namespace NuGet.CommandLine.Test
             Util.TestCommandInvalidArguments(args);
         }
 
-        [Theory]
-        [InlineData("true", false)]
-        [InlineData("false", true)]
-        public void DeleteCommand_WhenDeleteWithHttpSourceAndAllowInsecureConnections_WarnsCorrectly(string allowInsecureConnections, bool isHttpWarningExpected)
+        [Fact]
+        public void DeleteCommand_WhenDeleteWithHttpSource_Warns()
         {
             var nugetexe = Util.GetNuGetExePath();
 
@@ -433,23 +431,10 @@ namespace NuGet.CommandLine.Test
                     return HttpStatusCode.OK;
                 });
 
-                using SimpleTestPathContext config = new SimpleTestPathContext();
-
-                // Arrange the NuGet.Config file
-                string nugetConfigContent =
-    $@"<configuration>
-    <packageSources>
-        <clear />
-        <add key='http-feed' value='{server.Uri}nuget' protocalVersion=""3"" allowInsecureConnections=""{allowInsecureConnections}"" />
-    </packageSources>
-</configuration>";
-                File.WriteAllText(config.NuGetConfig, nugetConfigContent);
-
                 // Act
                 string[] args = new string[] {
                     "delete", "testPackage1", "1.1.0",
-                    "-Source", server.Uri + "nuget",
-                    "-ConfigFile", config.NuGetConfig, "-NonInteractive" };
+                    "-Source", server.Uri + "nuget", "-NonInteractive" };
 
                 var r = CommandRunner.Run(
                     nugetexe,
@@ -459,16 +444,7 @@ namespace NuGet.CommandLine.Test
                 // Assert
                 Assert.Equal(0, r.ExitCode);
                 Assert.True(deleteRequestIsCalled);
-
-                string expectedWarning = "WARNING: You are running the 'delete' operation with an 'HTTP' source";
-                if (isHttpWarningExpected)
-                {
-                    Assert.Contains(expectedWarning, r.AllOutput);
-                }
-                else
-                {
-                    Assert.DoesNotContain(expectedWarning, r.AllOutput);
-                }
+                Assert.Contains("WARNING: You are running the 'delete' operation with an 'HTTP' source", r.AllOutput);
             }
         }
 

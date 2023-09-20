@@ -1,13 +1,13 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using FluentAssertions;
 using NuGet.PackageManagement;
 using NuGet.Packaging.Core;
 using NuGet.Protocol.Core.Types;
@@ -65,15 +65,18 @@ namespace NuGet.Test
                 var packagesFromSolutionList = packagesFromSolution.ToList();
                 var missingPackagesFromSolutionList = packagesFromSolution.Where(p => p.IsMissing).ToList();
 
-                packagesFromSolutionList.Should().ContainSingle();
-                missingPackagesFromSolutionList.Should().BeEmpty();
+                Assert.Equal(1, packagesFromSolutionList.Count);
+                Assert.Equal(0, missingPackagesFromSolutionList.Count);
 
                 // Delete packages folder
                 TestFileSystemUtility.DeleteRandomTestFolder(Path.Combine(testSolutionManager.SolutionDirectory, "packages"));
 
                 packagesFromSolution = (await packageRestoreManager.GetPackagesInSolutionAsync(testSolutionManager.SolutionDirectory, token));
 
-                packagesFromSolution.Where(p => p.IsMissing).Should().ContainSingle();
+                packagesFromSolutionList = packagesFromSolution.ToList();
+                missingPackagesFromSolutionList = packagesFromSolution.Where(p => p.IsMissing).ToList();
+
+                Assert.Equal(1, missingPackagesFromSolutionList.Count);
             }
         }
 
@@ -100,7 +103,7 @@ namespace NuGet.Test
                 // Act
                 var packagesFromSolution = (await packageRestoreManager.GetPackagesInSolutionAsync(testSolutionManager.SolutionDirectory, token));
 
-                packagesFromSolution.Any().Should().BeFalse();
+                Assert.False(packagesFromSolution.Any());
             }
         }
 
@@ -145,12 +148,12 @@ namespace NuGet.Test
                         }
                     };
 
-                nuGetPackageManager.PackageExistsInPackagesFolder(packageIdentity).Should().BeTrue();
+                Assert.True(nuGetPackageManager.PackageExistsInPackagesFolder(packageIdentity));
 
                 // Delete packages folder
                 TestFileSystemUtility.DeleteRandomTestFolder(Path.Combine(testSolutionManager.SolutionDirectory, "packages"));
 
-                nuGetPackageManager.PackageExistsInPackagesFolder((packageIdentity)).Should().BeFalse();
+                Assert.False(nuGetPackageManager.PackageExistsInPackagesFolder((packageIdentity)));
 
                 // Act
                 await packageRestoreManager.RestoreMissingPackagesInSolutionAsync(testSolutionManager.SolutionDirectory,
@@ -158,8 +161,8 @@ namespace NuGet.Test
                     new TestLogger(),
                     CancellationToken.None);
 
-                restoredPackages.Should().ContainSingle();
-                nuGetPackageManager.PackageExistsInPackagesFolder((packageIdentity)).Should().BeTrue();
+                Assert.Equal(1, restoredPackages.Count);
+                Assert.True(nuGetPackageManager.PackageExistsInPackagesFolder((packageIdentity)));
             }
         }
 
@@ -206,8 +209,8 @@ namespace NuGet.Test
                 await packageRestoreManager.RaisePackagesMissingEventForSolutionAsync(testSolutionManager.SolutionDirectory, token);
 
                 // Assert
-                packagesMissingEventCount.Should().Be(1);
-                packagesMissing.Should().BeFalse();
+                Assert.Equal(1, packagesMissingEventCount);
+                Assert.False(packagesMissing);
 
                 // Delete packages folder
                 TestFileSystemUtility.DeleteRandomTestFolder(Path.Combine(testSolutionManager.SolutionDirectory, "packages"));
@@ -216,8 +219,8 @@ namespace NuGet.Test
                 await packageRestoreManager.RaisePackagesMissingEventForSolutionAsync(testSolutionManager.SolutionDirectory, token);
 
                 // Assert
-                packagesMissingEventCount.Should().Be(2);
-                packagesMissing.Should().BeTrue();
+                Assert.Equal(2, packagesMissingEventCount);
+                Assert.True(packagesMissing);
             }
         }
 
@@ -253,12 +256,12 @@ namespace NuGet.Test
                     sourceRepositoryProvider,
                     testSettings,
                     testSolutionManager);
-                nuGetPackageManager.PackageExistsInPackagesFolder(packageIdentity).Should().BeTrue();
+                Assert.True(nuGetPackageManager.PackageExistsInPackagesFolder(packageIdentity));
 
                 // Delete packages folder
                 TestFileSystemUtility.DeleteRandomTestFolder(Path.Combine(testSolutionManager.SolutionDirectory, "packages"));
 
-                nuGetPackageManager.PackageExistsInPackagesFolder((packageIdentity)).Should().BeFalse();
+                Assert.False(nuGetPackageManager.PackageExistsInPackagesFolder((packageIdentity)));
 
                 // Act
                 await packageRestoreManager.RestoreMissingPackagesInSolutionAsync(testSolutionManager.SolutionDirectory,
@@ -266,7 +269,7 @@ namespace NuGet.Test
                     new TestLogger(),
                     CancellationToken.None);
 
-                nuGetPackageManager.PackageExistsInPackagesFolder((packageIdentity)).Should().BeTrue();
+                Assert.True(nuGetPackageManager.PackageExistsInPackagesFolder((packageIdentity)));
             }
         }
 
@@ -342,15 +345,15 @@ namespace NuGet.Test
                         (Packaging.PackageReference packageReference, IEnumerable<string> oldValue) => { return oldValue; });
                 };
 
-                nuGetPackageManager.PackageExistsInPackagesFolder(jQueryValidation).Should().BeTrue();
+                Assert.True(nuGetPackageManager.PackageExistsInPackagesFolder(jQueryValidation));
 
                 // Delete packages folder
                 TestFileSystemUtility.DeleteRandomTestFolder(Path.Combine(testSolutionManager.SolutionDirectory, "packages"));
 
-                nuGetPackageManager.PackageExistsInPackagesFolder(jQuery144).Should().BeFalse();
-                nuGetPackageManager.PackageExistsInPackagesFolder(jQueryValidation).Should().BeFalse();
-                nuGetPackageManager.PackageExistsInPackagesFolder(testPackage1).Should().BeFalse();
-                nuGetPackageManager.PackageExistsInPackagesFolder(testPackage2).Should().BeFalse();
+                Assert.False(nuGetPackageManager.PackageExistsInPackagesFolder(jQuery144));
+                Assert.False(nuGetPackageManager.PackageExistsInPackagesFolder(jQueryValidation));
+                Assert.False(nuGetPackageManager.PackageExistsInPackagesFolder(testPackage1));
+                Assert.False(nuGetPackageManager.PackageExistsInPackagesFolder(testPackage2));
 
                 // Act
                 await packageRestoreManager.RestoreMissingPackagesInSolutionAsync(testSolutionManager.SolutionDirectory,
@@ -359,18 +362,35 @@ namespace NuGet.Test
                     CancellationToken.None);
 
                 // Assert
-                nuGetPackageManager.PackageExistsInPackagesFolder(jQuery144).Should().BeTrue();
-                nuGetPackageManager.PackageExistsInPackagesFolder(jQueryValidation).Should().BeTrue();
-                nuGetPackageManager.PackageExistsInPackagesFolder(testPackage1).Should().BeFalse();
-                nuGetPackageManager.PackageExistsInPackagesFolder(testPackage2).Should().BeFalse();
+                Assert.True(nuGetPackageManager.PackageExistsInPackagesFolder(jQuery144));
+                Assert.True(nuGetPackageManager.PackageExistsInPackagesFolder(jQueryValidation));
+                Assert.False(nuGetPackageManager.PackageExistsInPackagesFolder(testPackage1));
+                Assert.False(nuGetPackageManager.PackageExistsInPackagesFolder(testPackage2));
 
-                restoredPackages.Should().BeEquivalentTo(new[] { jQuery144, jQueryValidation, testPackage1, testPackage2 }, (options) => options.WithoutStrictOrdering());
+                Assert.Equal(4, restoredPackages.Count);
+                // The ordering is not guaranteed and can vary. Do not assert based on that
+                Assert.True(restoredPackages.Contains(jQuery144));
+                Assert.True(restoredPackages.Contains(jQueryValidation));
+                Assert.True(restoredPackages.Contains(testPackage1));
+                Assert.True(restoredPackages.Contains(testPackage2));
 
-                restoreFailedPackages.Select(i => i.Key.PackageIdentity).Should().BeEquivalentTo(new[] { testPackage1, testPackage2 });
+                Assert.Equal(2, restoreFailedPackages.Count);
 
-                restoreFailedPackages[restoreFailedPackages.Keys.Where(r => r.PackageIdentity.Equals(testPackage1)).First()].Should().BeEquivalentTo(new[] { "projectB", "projectC" });
+                // The ordering is not guaranteed and can vary. Do not assert based on that
+                var restoreFailedPackageKeys = restoreFailedPackages.Keys;
+                var testPackage1Key = restoreFailedPackageKeys.Where(r => r.PackageIdentity.Equals(testPackage1)).First();
+                var testPackage1ProjectNames = restoreFailedPackages[testPackage1Key].ToList();
 
-                restoreFailedPackages[restoreFailedPackages.Keys.Where(r => r.PackageIdentity.Equals(testPackage2)).First()].Should().BeEquivalentTo(new[] { "projectA", "projectC" });
+                Assert.Equal(2, testPackage1ProjectNames.Count);
+                Assert.True(testPackage1ProjectNames.Contains("projectB", StringComparer.OrdinalIgnoreCase));
+                Assert.True(testPackage1ProjectNames.Contains("projectC", StringComparer.OrdinalIgnoreCase));
+
+                var testPackage2Key = restoreFailedPackageKeys.Where(r => r.PackageIdentity.Equals(testPackage2)).First();
+                var testPackage2ProjectNames = restoreFailedPackages[testPackage2Key].ToList();
+
+                Assert.Equal(2, testPackage2ProjectNames.Count);
+                Assert.True(testPackage2ProjectNames.Contains("projectA", StringComparer.OrdinalIgnoreCase));
+                Assert.True(testPackage2ProjectNames.Contains("projectC", StringComparer.OrdinalIgnoreCase));
             }
         }
 

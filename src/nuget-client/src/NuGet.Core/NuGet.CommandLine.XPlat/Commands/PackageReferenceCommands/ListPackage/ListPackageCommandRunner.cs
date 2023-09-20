@@ -115,7 +115,7 @@ namespace NuGet.CommandLine.XPlat
                     List<FrameworkPackages> frameworks;
                     try
                     {
-                        frameworks = msBuild.GetResolvedVersions(project, listPackageArgs.Frameworks, assetsFile, listPackageArgs.IncludeTransitive);
+                        frameworks = msBuild.GetResolvedVersions(project.FullPath, listPackageArgs.Frameworks, assetsFile, listPackageArgs.IncludeTransitive);
                     }
                     catch (InvalidOperationException ex)
                     {
@@ -164,7 +164,7 @@ namespace NuGet.CommandLine.XPlat
             List<PackageSource> httpPackageSources = null;
             foreach (PackageSource packageSource in listPackageArgs.PackageSources)
             {
-                if (packageSource.IsHttp && !packageSource.IsHttps && !packageSource.AllowInsecureConnections)
+                if (packageSource.IsHttp && !packageSource.IsHttps)
                 {
                     if (httpPackageSources == null)
                     {

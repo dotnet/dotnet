@@ -33,7 +33,7 @@ namespace NuGet.Protocol.Plugins
         /// is an undefined <see cref="MessageResponseCode" /> value.</exception>
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="responseCode" /> 
         /// is <see cref="MessageResponseCode.Success" /> and <paramref name="serviceIndex" />
-        /// is <see langword="null" />.</exception>
+        /// is <c>null</c>.</exception>
         [JsonConstructor]
         public GetServiceIndexResponse(MessageResponseCode responseCode, JObject serviceIndex)
         {
