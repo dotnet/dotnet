@@ -198,7 +198,7 @@ public class DefinitionEndpointDelegationTest : SingleServerDelegatingEndpointTe
 
         // We can still expect the character to be correct, even if the line won't match
         var surveyPromptSourceText = SourceText.From(surveyPrompt);
-        var range = expectedSpan.AsRange(surveyPromptSourceText);
+        var range = expectedSpan.ToRange(surveyPromptSourceText);
         Assert.Equal(range.Start.Character, location.Range.Start.Character);
     }
 
@@ -219,7 +219,7 @@ public class DefinitionEndpointDelegationTest : SingleServerDelegatingEndpointTe
         var location = Assert.Single(locations);
         Assert.Equal(new Uri(razorFilePath), location.Uri);
 
-        var expectedRange = expectedSpan.AsRange(codeDocument.GetSourceText());
+        var expectedRange = expectedSpan.ToRange(codeDocument.GetSourceText());
         Assert.Equal(expectedRange, location.Range);
     }
 

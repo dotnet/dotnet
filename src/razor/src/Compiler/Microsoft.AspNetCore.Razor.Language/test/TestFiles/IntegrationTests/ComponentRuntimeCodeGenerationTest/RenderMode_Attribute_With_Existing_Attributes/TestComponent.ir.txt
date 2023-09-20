@@ -1,0 +1,20 @@
+﻿Document - 
+    NamespaceDeclaration -  - Test
+        UsingDirective - (3:1,1 [22] ) - global::System
+        UsingDirective - (26:2,1 [42] ) - global::System.Collections.Generic
+        UsingDirective - (69:3,1 [27] ) - global::System.Linq
+        UsingDirective - (97:4,1 [38] ) - global::System.Threading.Tasks
+        UsingDirective - (136:5,1 [47] ) - global::Microsoft.AspNetCore.Components
+        ClassDeclaration -  - public partial - TestComponent - global::Microsoft.AspNetCore.Components.ComponentBase - 
+            MethodDeclaration -  - protected override - void - BuildRenderTree
+                Component - (0:0,0 [103] x:\dir\subdir\Test\TestComponent.cshtml) - TestComponent
+                    ComponentAttribute - (19:0,19 [3] x:\dir\subdir\Test\TestComponent.cshtml) - P2 - P2 - AttributeStructure.DoubleQuotes
+                        HtmlContent - (19:0,19 [3] x:\dir\subdir\Test\TestComponent.cshtml)
+                            LazyIntermediateToken - (19:0,19 [3] x:\dir\subdir\Test\TestComponent.cshtml) - Html - abc
+                    RenderMode - (37:0,37 [53] x:\dir\subdir\Test\TestComponent.cshtml)
+                        LazyIntermediateToken - (37:0,37 [53] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - Microsoft.AspNetCore.Components.Web.RenderMode.Server
+                    ComponentAttribute - (96:0,96 [3] x:\dir\subdir\Test\TestComponent.cshtml) - P1 - P1 - AttributeStructure.DoubleQuotes
+                        HtmlContent - (96:0,96 [3] x:\dir\subdir\Test\TestComponent.cshtml)
+                            LazyIntermediateToken - (96:0,96 [3] x:\dir\subdir\Test\TestComponent.cshtml) - Html - def
+            CSharpCode - (115:3,1 [94] x:\dir\subdir\Test\TestComponent.cshtml)
+                LazyIntermediateToken - (115:3,1 [94] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - \n    [Parameter]public string P1 {get; set;}\n\n    [Parameter]public string P2 {get; set;}\n

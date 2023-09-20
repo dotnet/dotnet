@@ -27,6 +27,7 @@ internal abstract partial class DocumentationDescriptor : IEquatable<Documentati
     public static readonly DocumentationDescriptor KeyTagHelper = new SimpleDescriptor(DocumentationId.KeyTagHelper);
     public static readonly DocumentationDescriptor RefTagHelper = new SimpleDescriptor(DocumentationId.RefTagHelper);
     public static readonly DocumentationDescriptor SplatTagHelper = new SimpleDescriptor(DocumentationId.SplatTagHelper);
+    public static readonly DocumentationDescriptor RenderModeTagHelper = new SimpleDescriptor(DocumentationId.RenderModeTagHelper);
     public static readonly DocumentationDescriptor FormNameTagHelper = new SimpleDescriptor(DocumentationId.FormNameTagHelper);
 
     public static DocumentationDescriptor From(DocumentationId id, params object?[]? args)
@@ -61,6 +62,7 @@ internal abstract partial class DocumentationDescriptor : IEquatable<Documentati
                 DocumentationId.KeyTagHelper => KeyTagHelper,
                 DocumentationId.RefTagHelper => RefTagHelper,
                 DocumentationId.SplatTagHelper => SplatTagHelper,
+                DocumentationId.RenderModeTagHelper => RenderModeTagHelper,
                 DocumentationId.FormNameTagHelper => FormNameTagHelper,
 
                 // If this exception is thrown, there are two potential problems:
@@ -122,6 +124,7 @@ internal abstract partial class DocumentationDescriptor : IEquatable<Documentati
             DocumentationId.KeyTagHelper => ComponentResources.KeyTagHelper_Documentation,
             DocumentationId.RefTagHelper => ComponentResources.RefTagHelper_Documentation,
             DocumentationId.SplatTagHelper => ComponentResources.SplatTagHelper_Documentation,
+            DocumentationId.RenderModeTagHelper => ComponentResources.RenderModeTagHelper_Documentation,
             DocumentationId.FormNameTagHelper => ComponentResources.FormNameTagHelper_Documentation,
 
             // If this exception is thrown, a new DocumentationId was added that needs an entry added in

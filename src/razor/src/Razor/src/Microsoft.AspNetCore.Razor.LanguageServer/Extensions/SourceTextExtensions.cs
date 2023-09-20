@@ -4,6 +4,7 @@
 using System;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.CodeAnalysis.Text;
+using Microsoft.Extensions.Logging;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Extensions;
 
@@ -200,5 +201,82 @@ internal static class SourceTextExtensions
         }
 
         return null;
+    }
+
+    public static bool TryGetAbsoluteIndex(this SourceText sourceText, int line, int character, out int absoluteIndex)
+    {
+        absoluteIndex = 0;
+        var lineCount = sourceText.Lines.Count;
+        if (line > lineCount ||
+            (line == lineCount && character > 0))
+        {
+            return false;
+        }
+
+        // LSP spec allowed a Range to end one line past the end, and character 0. SourceText does not, so we adjust to the final char position
+        if (line == lineCount)
+        {
+            absoluteIndex = sourceText.Length;
+        }
+        else
+        {
+            absoluteIndex = sourceText.Lines[line].Start + character;
+        }
+
+        return true;
+    }
+
+    public static bool TryGetAbsoluteIndex(this SourceText sourceText, int line, int character, ILogger? logger, out int absoluteIndex)
+    {
+        if (!TryGetAbsoluteIndex(sourceText, line, character, out absoluteIndex))
+        {
+#pragma warning disable CA2254 // Template should be a static expression.
+            // This is actually static, the compiler just doesn't know it.
+            logger?.LogError(SR.FormatPositionIndex_Outside_Range(line, nameof(sourceText), sourceText.Lines.Count));
+#pragma warning restore CA2254 // Template should be a static expression
+            absoluteIndex = -1;
+            return false;
+        }
+
+        return true;
+    }
+
+    public static int GetRequiredAbsoluteIndex(this SourceText sourceText, int line, int character, ILogger? logger = null)
+    {
+        if (!sourceText.TryGetAbsoluteIndex(line, character, logger, out var absolutePosition))
+        {
+            throw new ArgumentOutOfRangeException($"({line},{character}) matches or exceeds SourceText boundary {sourceText.Lines.Count}.");
+        }
+
+        return absolutePosition;
+    }
+
+    public static TextSpan GetTextSpan(this SourceText sourceText, int startLine, int startCharacter, int endLine, int endCharacter)
+    {
+        if (sourceText is null)
+        {
+            throw new ArgumentNullException(nameof(sourceText));
+        }
+
+        var start = GetAbsoluteIndex(startLine, startCharacter, sourceText, "Start");
+        var end = GetAbsoluteIndex(endLine, endCharacter, sourceText, "End");
+
+        var length = end - start;
+        if (length < 0)
+        {
+            throw new ArgumentOutOfRangeException($"({startLine},{startCharacter})-({endLine},{endCharacter}) resolved to zero or negative length.");
+        }
+
+        return new TextSpan(start, length);
+
+        static int GetAbsoluteIndex(int line, int character, SourceText sourceText, string argName)
+        {
+            if (!sourceText.TryGetAbsoluteIndex(line, character, out var absolutePosition))
+            {
+                throw new ArgumentOutOfRangeException($"{argName} ({line},{character}) matches or exceeds SourceText boundary {sourceText.Lines.Count}.");
+            }
+
+            return absolutePosition;
+        }
     }
 }

@@ -99,7 +99,7 @@ internal sealed class HoverEndpoint : AbstractRazorDelegatingEndpoint<TextDocume
         if (RazorSyntaxFacts.TryGetFullAttributeNameSpan(codeDocument, positionInfo.HostDocumentIndex, out var originalAttributeRange))
         {
             var sourceText = await documentContext.GetSourceTextAsync(cancellationToken).ConfigureAwait(false);
-            response.Range = originalAttributeRange.AsRange(sourceText);
+            response.Range = originalAttributeRange.ToRange(sourceText);
         }
         else if (positionInfo.LanguageKind == RazorLanguageKind.CSharp)
         {

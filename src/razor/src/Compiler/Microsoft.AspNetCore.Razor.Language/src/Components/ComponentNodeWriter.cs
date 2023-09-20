@@ -21,7 +21,7 @@ internal abstract class ComponentNodeWriter : IntermediateNodeWriter, ITemplateT
         _version = version;
     }
 
-    protected bool CanUseAddComponentParameter(CodeRenderingContext context)
+    protected virtual bool CanUseAddComponentParameter(CodeRenderingContext context)
     {
         return !context.Options.SuppressAddComponentParameter && _version.CompareTo(RazorLanguageVersion.Version_8_0) >= 0;
     }
@@ -66,6 +66,13 @@ internal abstract class ComponentNodeWriter : IntermediateNodeWriter, ITemplateT
     public override void WriteComponentTypeInferenceMethod(CodeRenderingContext context, ComponentTypeInferenceMethodIntermediateNode node)
     {
         WriteComponentTypeInferenceMethod(context, node, returnComponentType: false);
+    }
+
+    protected bool ShouldSuppressTypeInferenceCall(ComponentIntermediateNode node)
+    {
+        // When RZ10001 (type of component cannot be inferred) is reported, we want to suppress the equivalent CS0411 errors,
+        // so we don't generate the call to TypeInference.CreateComponent.
+        return node.Diagnostics.Any(d => d.Id == ComponentDiagnosticFactory.GenericComponentTypeInferenceUnderspecified.Id);
     }
 
     protected void WriteComponentTypeInferenceMethod(CodeRenderingContext context, ComponentTypeInferenceMethodIntermediateNode node, bool returnComponentType)
@@ -179,6 +186,7 @@ internal abstract class ComponentNodeWriter : IntermediateNodeWriter, ITemplateT
         context.CodeWriter.Write(");");
         context.CodeWriter.WriteLine();
 
+        string renderModeParameterName = null;
         foreach (var parameter in parameters)
         {
             switch (parameter.Source)
@@ -246,9 +254,18 @@ internal abstract class ComponentNodeWriter : IntermediateNodeWriter, ITemplateT
                     // We only use the synthetic cascading parameters for type inference
                     break;
 
+                case RenderModeIntermediateNode:
+                    renderModeParameterName = parameter.ParameterName;
+                    break;
+
                 default:
                     throw new InvalidOperationException($"Not implemented: type inference method parameter from source {parameter.Source}");
             }
+        }
+
+        if (renderModeParameterName is not null)
+        {
+            WriteAddComponentRenderMode(context, ComponentsApi.RenderTreeBuilder.BuilderParameter, renderModeParameterName);
         }
 
         context.CodeWriter.WriteInstanceMethodInvocation(ComponentsApi.RenderTreeBuilder.BuilderParameter, ComponentsApi.RenderTreeBuilder.CloseComponent);
@@ -359,6 +376,11 @@ internal abstract class ComponentNodeWriter : IntermediateNodeWriter, ITemplateT
                 var typeName = ComponentsApi.AddMultipleAttributesTypeFullName;
                 p.Add(new TypeInferenceMethodParameter($"__seq{p.Count}", typeName, $"__arg{p.Count}", usedForTypeInference: false, splat));
             }
+            else if (child is RenderModeIntermediateNode renderMode)
+            {
+                var typeName = ComponentsApi.IComponentRenderMode.FullTypeName;
+                p.Add(new TypeInferenceMethodParameter($"__seq{p.Count}", typeName, $"__arg{p.Count}", usedForTypeInference: false, renderMode));
+            }
         }
 
         foreach (var childContent in node.Component.ChildContents)
@@ -420,6 +442,17 @@ internal abstract class ComponentNodeWriter : IntermediateNodeWriter, ITemplateT
     protected static bool IsDefaultExpression(string expression)
     {
         return expression == "default" || expression.StartsWith("default(", StringComparison.Ordinal);
+    }
+
+    protected static void WriteAddComponentRenderMode(CodeRenderingContext context, string builderName, string variableName)
+    {
+        context.CodeWriter.Write(builderName);
+        context.CodeWriter.Write(".");
+        context.CodeWriter.Write(ComponentsApi.RenderTreeBuilder.AddComponentRenderMode);
+        context.CodeWriter.Write("(");
+        context.CodeWriter.Write(variableName);
+        context.CodeWriter.Write(");");
+        context.CodeWriter.WriteLine();
     }
 
     protected class TypeInferenceMethodParameter

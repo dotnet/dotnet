@@ -399,7 +399,7 @@ public class DefinitionEndpointTest : TagHelperServiceTestBase
         TestFileMarkupParser.GetSpan(content, out content, out var selection);
 
         SetupDocument(out var codeDocument, out _, content);
-        var expectedRange = selection.AsRange(codeDocument.GetSourceText());
+        var expectedRange = selection.ToRange(codeDocument.GetSourceText());
 
         var mappingService = new RazorDocumentMappingService(FilePathService, new TestDocumentContextFactory(), LoggerFactory);
 

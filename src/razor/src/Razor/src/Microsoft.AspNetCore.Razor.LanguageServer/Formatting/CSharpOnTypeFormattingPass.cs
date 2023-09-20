@@ -92,7 +92,7 @@ internal class CSharpOnTypeFormattingPass : CSharpFormattingPassBase
                 return result;
             }
 
-            textEdits = formattingChanges.Select(change => change.AsTextEdit(csharpText)).ToArray();
+            textEdits = formattingChanges.Select(change => change.ToTextEdit(csharpText)).ToArray();
             _logger.LogInformation("Received {textEditsLength} results from C#.", textEdits.Length);
         }
 
@@ -129,12 +129,12 @@ internal class CSharpOnTypeFormattingPass : CSharpFormattingPassBase
 
         // Find the lines that were affected by these edits.
         var originalText = codeDocument.GetSourceText();
-        var changes = filteredEdits.Select(e => e.AsTextChange(originalText));
+        var changes = filteredEdits.Select(e => e.ToTextChange(originalText));
 
         // Apply the format on type edits sent over by the client.
         var formattedText = ApplyChangesAndTrackChange(originalText, changes, out _, out var spanAfterFormatting);
         var changedContext = await context.WithTextAsync(formattedText).ConfigureAwait(false);
-        var rangeAfterFormatting = spanAfterFormatting.AsRange(formattedText);
+        var rangeAfterFormatting = spanAfterFormatting.ToRange(formattedText);
 
         cancellationToken.ThrowIfCancellationRequested();
 
@@ -212,7 +212,7 @@ internal class CSharpOnTypeFormattingPass : CSharpFormattingPassBase
 
         // Now that we have made all the necessary changes to the document. Let's diff the original vs final version and return the diff.
         var finalChanges = cleanedText.GetTextChanges(originalText);
-        var finalEdits = finalChanges.Select(f => f.AsTextEdit(originalText)).ToArray();
+        var finalEdits = finalChanges.Select(f => f.ToTextEdit(originalText)).ToArray();
 
         finalEdits = await AddUsingStatementEditsIfNecessaryAsync(context, codeDocument, csharpText, textEdits, originalTextWithChanges, finalEdits, cancellationToken).ConfigureAwait(false);
 
@@ -250,7 +250,7 @@ internal class CSharpOnTypeFormattingPass : CSharpFormattingPassBase
     {
         var filteredEdits = edits.Where(e =>
         {
-            var span = e.Range.AsTextSpan(context.SourceText);
+            var span = e.Range.ToTextSpan(context.SourceText);
             return ShouldFormat(context, span, allowImplicitStatements: false);
         }).ToArray();
 
@@ -269,7 +269,7 @@ internal class CSharpOnTypeFormattingPass : CSharpFormattingPassBase
         {
             var newLineCount = change.NewText is null ? 0 : change.NewText.Split('\n').Length - 1;
 
-            var range = change.Span.AsRange(text);
+            var range = change.Span.ToRange(text);
             Debug.Assert(range.Start.Line <= range.End.Line, "Invalid range.");
 
             // For convenience, since we're already iterating through things, we also find the extremes
@@ -295,14 +295,14 @@ internal class CSharpOnTypeFormattingPass : CSharpFormattingPassBase
     private static List<TextChange> CleanupDocument(FormattingContext context, Range? range = null)
     {
         var text = context.SourceText;
-        range ??= TextSpan.FromBounds(0, text.Length).AsRange(text);
+        range ??= TextSpan.FromBounds(0, text.Length).ToRange(text);
         var csharpDocument = context.CodeDocument.GetCSharpDocument();
 
         var changes = new List<TextChange>();
         foreach (var mapping in csharpDocument.SourceMappings)
         {
             var mappingSpan = new TextSpan(mapping.OriginalSpan.AbsoluteIndex, mapping.OriginalSpan.Length);
-            var mappingRange = mappingSpan.AsRange(text);
+            var mappingRange = mappingSpan.ToRange(text);
             if (!range.LineOverlapsWith(mappingRange))
             {
                 // We don't care about this range. It didn't change.
@@ -338,7 +338,7 @@ internal class CSharpOnTypeFormattingPass : CSharpFormattingPassBase
         //
 
         var text = context.SourceText;
-        var sourceMappingSpan = sourceMappingRange.AsTextSpan(text);
+        var sourceMappingSpan = sourceMappingRange.ToTextSpan(text);
         if (!ShouldFormat(context, sourceMappingSpan, allowImplicitStatements: false, out var owner))
         {
             // We don't want to run cleanup on this range.
@@ -466,7 +466,7 @@ internal class CSharpOnTypeFormattingPass : CSharpFormattingPassBase
         //
 
         var text = context.SourceText;
-        var sourceMappingSpan = sourceMappingRange.AsTextSpan(text);
+        var sourceMappingSpan = sourceMappingRange.ToTextSpan(text);
         var mappingEndLineIndex = sourceMappingRange.End.Line;
 
         var indentations = context.GetIndentations();
@@ -548,10 +548,10 @@ internal class CSharpOnTypeFormattingPass : CSharpFormattingPassBase
 
     private static TextEdit[] NormalizeTextEdits(SourceText originalText, TextEdit[] edits, out SourceText originalTextWithChanges)
     {
-        var changes = edits.Select(e => e.AsTextChange(originalText));
+        var changes = edits.Select(e => e.ToTextChange(originalText));
         originalTextWithChanges = originalText.WithChanges(changes);
         var cleanChanges = SourceTextDiffer.GetMinimalTextChanges(originalText, originalTextWithChanges, DiffKind.Char);
-        var cleanEdits = cleanChanges.Select(c => c.AsTextEdit(originalText)).ToArray();
+        var cleanEdits = cleanChanges.Select(c => c.ToTextEdit(originalText)).ToArray();
         return cleanEdits;
     }
 }

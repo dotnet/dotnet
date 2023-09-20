@@ -66,6 +66,8 @@ public class RazorProjectEngineTest
             feature => Assert.IsType<ComponentMarkupEncodingPass>(feature),
             feature => Assert.IsType<ComponentPageDirectivePass>(feature),
             feature => Assert.IsType<ComponentReferenceCaptureLoweringPass>(feature),
+            feature => Assert.IsType<ComponentRenderModeDirectivePass>(feature),
+            feature => Assert.IsType<ComponentRenderModeLoweringPass>(feature),
             feature => Assert.IsType<ComponentSplatLoweringPass>(feature),
             feature => Assert.IsType<ComponentTemplateDiagnosticPass>(feature),
             feature => Assert.IsType<ComponentWhitespacePass>(feature),

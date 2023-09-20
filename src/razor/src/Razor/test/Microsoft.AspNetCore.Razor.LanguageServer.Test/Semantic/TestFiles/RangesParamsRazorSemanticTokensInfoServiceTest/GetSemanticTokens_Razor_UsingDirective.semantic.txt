@@ -1,0 +1,6 @@
+//line,characterPos,length,tokenType,modifier,text
+0 0 1 razorTransition 0 [@]
+0 1 5 keyword 0 [using]
+0 6 6 namespace name 0 [System]
+0 6 1 operator 0 [.]
+0 1 9 namespace name 0 [Threading]

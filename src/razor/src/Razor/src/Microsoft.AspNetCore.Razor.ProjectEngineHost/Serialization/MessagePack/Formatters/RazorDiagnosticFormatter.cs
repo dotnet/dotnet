@@ -8,21 +8,23 @@ using Microsoft.AspNetCore.Razor.Language;
 
 namespace Microsoft.AspNetCore.Razor.Serialization.MessagePack.Formatters;
 
-internal sealed class RazorDiagnosticFormatter : MessagePackFormatter<RazorDiagnostic>
+internal sealed class RazorDiagnosticFormatter : ValueFormatter<RazorDiagnostic>
 {
-    public static readonly MessagePackFormatter<RazorDiagnostic> Instance = new RazorDiagnosticFormatter();
+    public static readonly ValueFormatter<RazorDiagnostic> Instance = new RazorDiagnosticFormatter();
 
     private RazorDiagnosticFormatter()
     {
     }
 
-    public override RazorDiagnostic Deserialize(ref MessagePackReader reader, MessagePackSerializerOptions options)
+    public override RazorDiagnostic Deserialize(ref MessagePackReader reader, SerializerCachingOptions options)
     {
-        var id = DeserializeString(ref reader, options);
-        var severity = (RazorDiagnosticSeverity)reader.ReadInt32();
-        var message = DeserializeString(ref reader, options);
+        reader.ReadArrayHeaderAndVerify(8);
 
-        var filePath = AllowNull.DeserializeString(ref reader, options);
+        var id = CachedStringFormatter.Instance.Deserialize(ref reader, options).AssumeNotNull();
+        var severity = (RazorDiagnosticSeverity)reader.ReadInt32();
+        var message = CachedStringFormatter.Instance.Deserialize(ref reader, options).AssumeNotNull();
+
+        var filePath = CachedStringFormatter.Instance.Deserialize(ref reader, options);
         var absoluteIndex = reader.ReadInt32();
         var lineIndex = reader.ReadInt32();
         var characterIndex = reader.ReadInt32();
@@ -39,17 +41,34 @@ internal sealed class RazorDiagnosticFormatter : MessagePackFormatter<RazorDiagn
         }
     }
 
-    public override void Serialize(ref MessagePackWriter writer, RazorDiagnostic value, MessagePackSerializerOptions options)
+    public override void Serialize(ref MessagePackWriter writer, RazorDiagnostic value, SerializerCachingOptions options)
     {
-        writer.Write(value.Id);
+        writer.WriteArrayHeader(8);
+
+        CachedStringFormatter.Instance.Serialize(ref writer, value.Id, options);
         writer.Write((int)value.Severity);
-        writer.Write(value.GetMessage(CultureInfo.CurrentCulture));
+        CachedStringFormatter.Instance.Serialize(ref writer, value.GetMessage(CultureInfo.CurrentCulture), options);
 
         var span = value.Span;
-        writer.Write(span.FilePath);
+        CachedStringFormatter.Instance.Serialize(ref writer, span.FilePath, options);
         writer.Write(span.AbsoluteIndex);
         writer.Write(span.LineIndex);
         writer.Write(span.CharacterIndex);
         writer.Write(span.Length);
+    }
+
+    public override void Skim(ref MessagePackReader reader, SerializerCachingOptions options)
+    {
+        reader.ReadArrayHeaderAndVerify(8);
+
+        CachedStringFormatter.Instance.Skim(ref reader, options); // Id
+        reader.Skip(); // Severity
+        CachedStringFormatter.Instance.Skim(ref reader, options); // Message
+
+        CachedStringFormatter.Instance.Skim(ref reader, options); // FilePath
+        reader.Skip(); // AbsoluteIndex
+        reader.Skip(); // LineIndex
+        reader.Skip(); // CharacterIndex
+        reader.Skip(); // Length
     }
 }

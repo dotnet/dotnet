@@ -6,31 +6,33 @@ using Microsoft.AspNetCore.Razor.Language;
 
 namespace Microsoft.AspNetCore.Razor.Serialization.MessagePack.Formatters.TagHelpers;
 
-internal sealed class TagHelperFormatter : TagHelperObjectFormatter<TagHelperDescriptor>
+internal sealed class TagHelperFormatter : ValueFormatter<TagHelperDescriptor>
 {
-    public static readonly TagHelperObjectFormatter<TagHelperDescriptor> Instance = new TagHelperFormatter();
+    public static readonly ValueFormatter<TagHelperDescriptor> Instance = new TagHelperFormatter();
 
     private TagHelperFormatter()
     {
     }
 
-    public override TagHelperDescriptor Deserialize(ref MessagePackReader reader, MessagePackSerializerOptions options, TagHelperSerializationCache? cache)
+    public override TagHelperDescriptor Deserialize(ref MessagePackReader reader, SerializerCachingOptions options)
     {
-        var kind = reader.ReadString(cache).AssumeNotNull();
-        var name = reader.ReadString(cache).AssumeNotNull();
-        var assemblyName = reader.ReadString(cache).AssumeNotNull();
+        reader.ReadArrayHeaderAndVerify(12);
 
-        var displayName = reader.ReadString(cache);
-        var documentationObject = DocumentationObjectFormatter.Instance.Deserialize(ref reader, options, cache);
-        var tagOutputHint = reader.ReadString(cache);
+        var kind = CachedStringFormatter.Instance.Deserialize(ref reader, options).AssumeNotNull();
+        var name = CachedStringFormatter.Instance.Deserialize(ref reader, options).AssumeNotNull();
+        var assemblyName = CachedStringFormatter.Instance.Deserialize(ref reader, options).AssumeNotNull();
+
+        var displayName = CachedStringFormatter.Instance.Deserialize(ref reader, options);
+        var documentationObject = reader.Deserialize<DocumentationObject>(options);
+        var tagOutputHint = CachedStringFormatter.Instance.Deserialize(ref reader, options);
         var caseSensitive = reader.ReadBoolean();
 
-        var tagMatchingRules = TagMatchingRuleFormatter.Instance.DeserializeArray(ref reader, options, cache);
-        var boundAttributes = BoundAttributeFormatter.Instance.DeserializeArray(ref reader, options, cache);
-        var allowedChildTags = AllowedChildTagFormatter.Instance.DeserializeArray(ref reader, options, cache);
+        var tagMatchingRules = reader.Deserialize<TagMatchingRuleDescriptor[]>(options);
+        var boundAttributes = reader.Deserialize<BoundAttributeDescriptor[]>(options);
+        var allowedChildTags = reader.Deserialize<AllowedChildTagDescriptor[]>(options);
 
-        var metadata = MetadataCollectionFormatter.Instance.Deserialize(ref reader, options, cache);
-        var diagnostics = RazorDiagnosticFormatter.Instance.DeserializeArray(ref reader, options);
+        var metadata = reader.Deserialize<MetadataCollection>(options);
+        var diagnostics = reader.Deserialize<RazorDiagnostic[]>(options);
 
         return new DefaultTagHelperDescriptor(
             kind, name, assemblyName,
@@ -40,19 +42,45 @@ internal sealed class TagHelperFormatter : TagHelperObjectFormatter<TagHelperDes
             metadata, diagnostics);
     }
 
-    public override void Serialize(ref MessagePackWriter writer, TagHelperDescriptor value, MessagePackSerializerOptions options, TagHelperSerializationCache? cache)
+    public override void Serialize(ref MessagePackWriter writer, TagHelperDescriptor value, SerializerCachingOptions options)
     {
-        writer.Write(value.Kind, cache);
-        writer.Write(value.Name, cache);
-        writer.Write(value.AssemblyName, cache);
-        writer.Write(value.DisplayName, cache);
-        DocumentationObjectFormatter.Instance.Serialize(ref writer, value.DocumentationObject, options, cache);
-        writer.Write(value.TagOutputHint, cache);
+        writer.WriteArrayHeader(12);
+
+        CachedStringFormatter.Instance.Serialize(ref writer, value.Kind, options);
+        CachedStringFormatter.Instance.Serialize(ref writer, value.Name, options);
+        CachedStringFormatter.Instance.Serialize(ref writer, value.AssemblyName, options);
+
+        CachedStringFormatter.Instance.Serialize(ref writer, value.DisplayName, options);
+        writer.Serialize(value.DocumentationObject, options);
+        CachedStringFormatter.Instance.Serialize(ref writer, value.TagOutputHint, options);
         writer.Write(value.CaseSensitive);
-        TagMatchingRuleFormatter.Instance.SerializeArray(ref writer, value.TagMatchingRules, options, cache);
-        BoundAttributeFormatter.Instance.SerializeArray(ref writer, value.BoundAttributes, options, cache);
-        AllowedChildTagFormatter.Instance.SerializeArray(ref writer, value.AllowedChildTags, options, cache);
-        MetadataCollectionFormatter.Instance.Serialize(ref writer, (MetadataCollection)value.Metadata, options, cache);
-        RazorDiagnosticFormatter.Instance.SerializeArray(ref writer, value.Diagnostics, options);
+
+        writer.Serialize((TagMatchingRuleDescriptor[])value.TagMatchingRules, options);
+        writer.Serialize((BoundAttributeDescriptor[])value.BoundAttributes, options);
+        writer.Serialize((AllowedChildTagDescriptor[])value.AllowedChildTags, options);
+
+        writer.Serialize((MetadataCollection)value.Metadata, options);
+        writer.Serialize((RazorDiagnostic[])value.Diagnostics, options);
+    }
+
+    public override void Skim(ref MessagePackReader reader, SerializerCachingOptions options)
+    {
+        reader.ReadArrayHeaderAndVerify(12);
+
+        CachedStringFormatter.Instance.Skim(ref reader, options); // Kind
+        CachedStringFormatter.Instance.Skim(ref reader, options); // Name
+        CachedStringFormatter.Instance.Skim(ref reader, options); // AssemblyName
+
+        CachedStringFormatter.Instance.Skim(ref reader, options); // DisplayName
+        DocumentationObjectFormatter.Instance.Skim(ref reader, options); // DocumentationObject
+        CachedStringFormatter.Instance.Skim(ref reader, options); // TagOutputHint
+        reader.Skip(); // CaseSensitive
+
+        TagMatchingRuleFormatter.Instance.SkimArray(ref reader, options); // TagMatchingRules
+        BoundAttributeFormatter.Instance.SkimArray(ref reader, options); // BoundAttributes
+        AllowedChildTagFormatter.Instance.SkimArray(ref reader, options); // AllowedChildTags
+
+        MetadataCollectionFormatter.Instance.Skim(ref reader, options); // Metadata
+        RazorDiagnosticFormatter.Instance.SkimArray(ref reader, options); // Diagnostics
     }
 }

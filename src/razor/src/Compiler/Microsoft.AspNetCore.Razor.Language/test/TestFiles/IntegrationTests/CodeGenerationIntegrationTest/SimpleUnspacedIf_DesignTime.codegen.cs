@@ -26,7 +26,7 @@ namespace Microsoft.AspNetCore.Razor.Language.IntegrationTests.TestFiles
 #nullable disable
 #nullable restore
 #line 3 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/SimpleUnspacedIf.cshtml"
-               
+            
 }
 
 #line default

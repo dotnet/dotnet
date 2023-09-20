@@ -39,7 +39,6 @@ namespace Test
 #nullable disable
             );
             __builder.AddAttribute(-1, "ChildContent", (global::Microsoft.AspNetCore.Components.RenderFragment)((__builder2) => {
-                var __typeInference_CreateColumn_0 = global::__Blazor.Test.TestComponent.TypeInference.CreateColumn_0(__builder2, -1);
 #nullable restore
 #line 1 "x:\dir\subdir\Test\TestComponent.cshtml"
 __o = typeof(global::Test.Column<>);
