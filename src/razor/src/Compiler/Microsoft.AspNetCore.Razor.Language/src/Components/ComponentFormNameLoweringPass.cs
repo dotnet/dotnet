@@ -33,13 +33,6 @@ internal sealed class ComponentFormNameLoweringPass : ComponentIntermediateNodeP
                     continue;
                 }
 
-                if (!parent.Children.Any(c => c is HtmlAttributeIntermediateNode { AttributeName: "@onsubmit" }))
-                {
-                    node.Diagnostics.Add(ComponentDiagnosticFactory.CreateFormName_MissingOnSubmit(node.Source));
-                    reference.Replace(RewriteForErrorRecovery(node, parent));
-                    continue;
-                }
-
                 reference.Replace(Rewrite(node));
             }
         }
