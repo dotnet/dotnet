@@ -90,7 +90,7 @@ internal static class ObjectWriters
 
     public static void WriteProperties(JsonDataWriter writer, TagHelperDescriptor value)
     {
-        writer.WriteObject(WellKnownPropertyNames.Checksum, value.GetChecksum(), WriteProperties);
+        writer.Write(WellKnownPropertyNames.HashCode, TagHelperDescriptorCache.GetTagHelperDescriptorCacheId(value));
         writer.Write(nameof(value.Kind), value.Kind);
         writer.Write(nameof(value.Name), value.Name);
         writer.Write(nameof(value.AssemblyName), value.AssemblyName);

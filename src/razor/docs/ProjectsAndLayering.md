@@ -106,6 +106,13 @@ target the broadest set of frameworks.
   - Microsoft.VisualStudio.RazorExtension.Dependencies
   - RazorDeployment
 
+### Visual Studio (Mac)
+
+- Target Framework: `net472`
+- Projects:
+  - Microsoft.VisualStudio.Mac.LanguageServices.Razor
+  - Microsoft.VisualStudio.Mac.RazorAddin
+
 ### Miscellaneous / Test hosting
 
 - Target Framework: net7.0
@@ -151,3 +158,7 @@ target the broadest set of frameworks.
 - Microsoft.VisualStudio.LanguageServices.Razor.Test (`net472`)
 - Microsoft.VisualStudio.LiveShare.Razor.Test (`net472`)
 - Microsoft.VisualStudio.Razor.IntegrationTests (`net472`)
+
+### Visual Studio (Mac) Tests
+
+- Microsoft.VisualStudio.Mac.LanguageServices.Razor.Test (`net472`)

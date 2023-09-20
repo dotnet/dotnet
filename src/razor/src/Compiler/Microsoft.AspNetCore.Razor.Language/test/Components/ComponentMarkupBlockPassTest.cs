@@ -303,8 +303,7 @@ public class ComponentMarkupBlockPassTest
         Pass.Execute(document, documentNode);
 
         // Assert
-        var block = documentNode.FindDescendantNodes<MarkupBlockIntermediateNode>().Single();
-        Assert.Equal("""<head cool="beans"><script>...</script></head>""", block.Content);
+        Assert.Empty(documentNode.FindDescendantNodes<MarkupBlockIntermediateNode>());
     }
 
     [Fact]

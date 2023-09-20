@@ -2,29 +2,23 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using System;
-using Microsoft.CodeAnalysis.Text;
+using Microsoft.AspNetCore.Razor.LanguageServer.Extensions;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Semantic;
 
-internal readonly struct SemanticRange : IComparable<SemanticRange>
+internal sealed class SemanticRange : IComparable<SemanticRange>
 {
-    public SemanticRange(int kind, int startLine, int startCharacter, int endLine, int endCharacter, int modifier, bool fromRazor)
+    public SemanticRange(int kind, Range range, int modifier, bool fromRazor)
     {
         Kind = kind;
-        StartLine = startLine;
-        StartCharacter = startCharacter;
-        EndLine = endLine;
-        EndCharacter = endCharacter;
         Modifier = modifier;
+        Range = range;
         FromRazor = fromRazor;
     }
 
-    public int Kind { get; }
+    public Range Range { get; }
 
-    public int StartLine { get; }
-    public int EndLine { get; }
-    public int StartCharacter { get; }
-    public int EndCharacter { get; }
+    public int Kind { get; }
 
     public int Modifier { get; }
 
@@ -35,33 +29,23 @@ internal readonly struct SemanticRange : IComparable<SemanticRange>
     /// </summary>
     public bool FromRazor { get; }
 
-    public LinePositionSpan AsLinePositionSpan()
-        => new(new(StartLine, StartCharacter), new(EndLine, EndCharacter));
-
-    public int CompareTo(SemanticRange other)
+    public int CompareTo(SemanticRange? other)
     {
-        var result = StartLine.CompareTo(other.StartLine);
-        if (result != 0)
+        if (other is null)
         {
-            return result;
+            return 1;
         }
 
-        result = StartCharacter.CompareTo(other.StartCharacter);
-        if (result != 0)
+        var startCompare = Range.Start.CompareTo(other.Range.Start);
+        if (startCompare != 0)
         {
-            return result;
+            return startCompare;
         }
 
-        result = EndLine.CompareTo(other.EndLine);
-        if (result != 0)
+        var endCompare = Range.End.CompareTo(other.Range.End);
+        if (endCompare != 0)
         {
-            return result;
-        }
-
-        result = EndCharacter.CompareTo(other.EndCharacter);
-        if (result != 0)
-        {
-            return result;
+            return endCompare;
         }
 
         // If we have ranges that are the same, we want a Razor produced token to win over a non-Razor produced token
@@ -78,5 +62,5 @@ internal readonly struct SemanticRange : IComparable<SemanticRange>
     }
 
     public override string ToString()
-        => $"[Kind: {Kind}, StartLine: {StartLine}, StartCharacter: {StartCharacter}, EndLine: {EndLine}, EndCharacter: {EndCharacter}]";
+        => $"[Kind: {Kind}, Range: {Range}]";
 }

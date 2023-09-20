@@ -11,7 +11,9 @@ using Microsoft.AspNetCore.Mvc.Razor.Extensions;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.LanguageServer;
 using Microsoft.AspNetCore.Razor.LanguageServer.EndpointContracts;
+using Microsoft.AspNetCore.Razor.LanguageServer.Serialization;
 using Microsoft.AspNetCore.Razor.LanguageServer.Test.Common;
+using Microsoft.AspNetCore.Razor.Serialization.Json;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
 using Microsoft.CodeAnalysis.Razor;
@@ -54,6 +56,7 @@ public abstract class LanguageServerTestBase : TestBase
         SpanMappingService = new ThrowingRazorSpanMappingService();
 
         Serializer = new JsonSerializer();
+        Serializer.Converters.RegisterRazorConverters();
         Serializer.AddVSInternalExtensionConverters();
         Serializer.AddVSExtensionConverters();
 

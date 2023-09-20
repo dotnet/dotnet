@@ -2,6 +2,7 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using System.Collections.Immutable;
+using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Serialization;
 using Microsoft.AspNetCore.Razor.Utilities;
 
@@ -16,33 +17,33 @@ internal class RemoteTagHelperDeltaProvider
     public TagHelperDeltaResult GetTagHelpersDelta(
         ProjectId projectId,
         int lastResultId,
-        ImmutableArray<Checksum> currentChecksums)
+        ImmutableArray<TagHelperDescriptor> currentTagHelpers)
     {
-        var cacheHit = _resultCache.TryGet(projectId, lastResultId, out var cachedChecksums);
+        var cacheHit = _resultCache.TryGet(projectId, lastResultId, out var cachedTagHelpers);
 
         if (!cacheHit)
         {
-            cachedChecksums = ImmutableArray<Checksum>.Empty;
+            cachedTagHelpers = ImmutableArray<TagHelperDescriptor>.Empty;
         }
 
-        ImmutableArray<Checksum> added;
-        ImmutableArray<Checksum> removed;
+        ImmutableArray<TagHelperDescriptor> added;
+        ImmutableArray<TagHelperDescriptor> removed;
 
-        if (cachedChecksums.Length < currentChecksums.Length)
+        if (cachedTagHelpers.Length < currentTagHelpers.Length)
         {
-            added = Delta.Compute(cachedChecksums, currentChecksums);
+            added = TagHelperDelta.Compute(cachedTagHelpers, currentTagHelpers);
 
             // No need to call TagHelperDelta.Compute again if we know there aren't any removed
-            var anyRemoved = currentChecksums.Length - cachedChecksums.Length != added.Length;
-            removed = anyRemoved ? Delta.Compute(currentChecksums, cachedChecksums) : ImmutableArray<Checksum>.Empty;
+            var anyRemoved = currentTagHelpers.Length - cachedTagHelpers.Length != added.Length;
+            removed = anyRemoved ? TagHelperDelta.Compute(currentTagHelpers, cachedTagHelpers) : ImmutableArray<TagHelperDescriptor>.Empty;
         }
         else
         {
-            removed = Delta.Compute(currentChecksums, cachedChecksums);
+            removed = TagHelperDelta.Compute(currentTagHelpers, cachedTagHelpers);
 
             // No need to call TagHelperDelta.Compute again if we know there aren't any added
-            var anyAdded = cachedChecksums.Length - currentChecksums.Length != removed.Length;
-            added = anyAdded ? Delta.Compute(cachedChecksums, currentChecksums) : ImmutableArray<Checksum>.Empty;
+            var anyAdded = cachedTagHelpers.Length - currentTagHelpers.Length != removed.Length;
+            added = anyAdded ? TagHelperDelta.Compute(cachedTagHelpers, currentTagHelpers) : ImmutableArray<TagHelperDescriptor>.Empty;
         }
 
         lock (_gate)
@@ -52,7 +53,7 @@ internal class RemoteTagHelperDeltaProvider
             {
                 // The result actually changed, lets generate & cache a new result
                 resultId = ++_currentResultId;
-                _resultCache.Set(projectId, resultId, currentChecksums);
+                _resultCache.Set(projectId, resultId, currentTagHelpers);
             }
             else if (cacheHit)
             {
@@ -60,7 +61,8 @@ internal class RemoteTagHelperDeltaProvider
                 resultId = lastResultId;
             }
 
-            return new TagHelperDeltaResult(cacheHit, resultId, added, removed);
+            var result = new TagHelperDeltaResult(cacheHit, resultId, added, removed);
+            return result;
         }
     }
 }

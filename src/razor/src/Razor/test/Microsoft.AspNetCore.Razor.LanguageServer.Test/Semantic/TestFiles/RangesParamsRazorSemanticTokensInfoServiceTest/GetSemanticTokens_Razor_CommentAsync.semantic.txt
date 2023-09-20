@@ -1,6 +1,0 @@
-//line,characterPos,length,tokenType,modifier,text
-0 0 1 razorCommentTransition 0 [@]
-0 1 1 razorCommentStar 0 [*]
-0 1 11 razorComment 0 [ A comment ]
-0 11 1 razorCommentStar 0 [*]
-0 1 1 razorCommentTransition 0 [@]

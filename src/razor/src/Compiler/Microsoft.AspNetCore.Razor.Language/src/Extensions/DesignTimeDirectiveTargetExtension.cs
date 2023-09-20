@@ -129,8 +129,7 @@ internal class DesignTimeDirectiveTargetExtension : IDesignTimeDirectiveTargetEx
                     }
                     break;
 
-                case DirectiveTokenKind.Namespace
-                or DirectiveTokenKind.IdentifierOrExpression:
+                case DirectiveTokenKind.Namespace:
 
                     if (string.IsNullOrEmpty(node.Content))
                     {

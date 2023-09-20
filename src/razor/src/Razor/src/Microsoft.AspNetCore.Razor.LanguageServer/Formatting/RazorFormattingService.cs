@@ -56,13 +56,10 @@ internal class RazorFormattingService : IRazorFormattingService
 
         // Despite what it looks like, codeDocument.GetCSharpDocument().Diagnostics is actually the
         // Razor diagnostics, not the C# diagnostics 🤦‍
-        if (range is not null)
+        if (range is not null &&
+            codeDocument.GetCSharpDocument().Diagnostics.Any(d => range.OverlapsWith(d.Span.AsRange(codeDocument.GetSourceText()))))
         {
-            var sourceText = codeDocument.GetSourceText();
-            if (codeDocument.GetCSharpDocument().Diagnostics.Any(d => d.Span != SourceSpan.Undefined && range.ToLinePositionSpan().OverlapsWith(d.Span.ToLinePositionSpan(sourceText))))
-            {
-                return Array.Empty<TextEdit>();
-            }
+            return Array.Empty<TextEdit>();
         }
 
         var uri = documentContext.Uri;
@@ -88,7 +85,7 @@ internal class RazorFormattingService : IRazorFormattingService
     private static TextEdit[] GetMinimalEdits(SourceText originalText, IEnumerable<TextEdit> filteredEdits)
     {
         // Make sure the edits actually change something, or its not worth responding
-        var textChanges = filteredEdits.Select(e => e.ToTextChange(originalText));
+        var textChanges = filteredEdits.Select(e => e.AsTextChange(originalText));
         var changedText = originalText.WithChanges(textChanges);
         if (changedText.ContentEquals(originalText))
         {
@@ -97,7 +94,7 @@ internal class RazorFormattingService : IRazorFormattingService
 
         // Only send back the minimum edits
         var minimalChanges = SourceTextDiffer.GetMinimalTextChanges(originalText, changedText, DiffKind.Char);
-        var finalEdits = minimalChanges.Select(f => f.ToTextEdit(originalText)).ToArray();
+        var finalEdits = minimalChanges.Select(f => f.AsTextEdit(originalText)).ToArray();
 
         return finalEdits;
     }
@@ -198,7 +195,7 @@ internal class RazorFormattingService : IRazorFormattingService
         var textChanges = new List<TextChange>();
         foreach (var edit in edits)
         {
-            var change = new TextChange(edit.Range.ToTextSpan(sourceText), edit.NewText);
+            var change = new TextChange(edit.Range.AsTextSpan(sourceText), edit.NewText);
             textChanges.Add(change);
         }
 
@@ -210,7 +207,7 @@ internal class RazorFormattingService : IRazorFormattingService
 
         var encompassingChange = new TextChange(spanBeforeChange, newText);
 
-        return encompassingChange.ToTextEdit(sourceText);
+        return encompassingChange.AsTextEdit(sourceText);
     }
 
     private static void WrapCSharpSnippets(TextEdit[] snippetEdits)

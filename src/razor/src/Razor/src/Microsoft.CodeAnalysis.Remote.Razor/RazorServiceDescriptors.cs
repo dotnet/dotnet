@@ -3,9 +3,9 @@
 
 using System;
 using System.Collections.Immutable;
-using MessagePack.Formatters;
-using Microsoft.AspNetCore.Razor.Serialization.MessagePack.Resolvers;
+using Microsoft.AspNetCore.Razor.Serialization.Json;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
+using Newtonsoft.Json;
 
 namespace Microsoft.CodeAnalysis.Remote.Razor;
 
@@ -13,10 +13,20 @@ internal static class RazorServiceDescriptors
 {
     private const string ComponentName = "Razor";
 
+    private static readonly ImmutableArray<JsonConverter> s_jsonConverters = GetJsonConverters();
+
+    private static ImmutableArray<JsonConverter> GetJsonConverters()
+    {
+        var builder = ImmutableArray.CreateBuilder<JsonConverter>();
+
+        builder.RegisterRazorConverters();
+
+        return builder.ToImmutableArray();
+    }
+
     public static readonly RazorServiceDescriptorsWrapper TagHelperProviderServiceDescriptors = new(
         ComponentName,
         featureDisplayNameProvider: _ => "Razor TagHelper Provider",
-        additionalFormatters: ImmutableArray<IMessagePackFormatter>.Empty,
-        additionalResolvers: TopLevelResolvers.All,
+        s_jsonConverters,
         interfaces: new (Type, Type?)[] { (typeof(IRemoteTagHelperProviderService), null) });
 }

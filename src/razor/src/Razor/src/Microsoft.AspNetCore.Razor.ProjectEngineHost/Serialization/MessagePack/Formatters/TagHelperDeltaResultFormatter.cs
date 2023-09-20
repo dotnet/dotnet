@@ -1,39 +1,39 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
-using System.Collections.Immutable;
 using MessagePack;
-using Microsoft.AspNetCore.Razor.Utilities;
+using Microsoft.AspNetCore.Razor.PooledObjects;
+using Microsoft.AspNetCore.Razor.Serialization.MessagePack.Formatters.TagHelpers;
 
 namespace Microsoft.AspNetCore.Razor.Serialization.MessagePack.Formatters;
 
-internal sealed class TagHelperDeltaResultFormatter : TopLevelFormatter<TagHelperDeltaResult>
+internal sealed class TagHelperDeltaResultFormatter : MessagePackFormatter<TagHelperDeltaResult>
 {
-    public static readonly TopLevelFormatter<TagHelperDeltaResult> Instance = new TagHelperDeltaResultFormatter();
+    public static readonly MessagePackFormatter<TagHelperDeltaResult> Instance = new TagHelperDeltaResultFormatter();
 
     private TagHelperDeltaResultFormatter()
     {
     }
 
-    public override TagHelperDeltaResult Deserialize(ref MessagePackReader reader, SerializerCachingOptions options)
+    public override TagHelperDeltaResult Deserialize(ref MessagePackReader reader, MessagePackSerializerOptions options)
     {
-        reader.ReadArrayHeaderAndVerify(4);
+        using var _ = TagHelperSerializationCache.Pool.GetPooledObject(out var cache);
 
-        var isDelta = reader.ReadBoolean();
+        var delta = reader.ReadBoolean();
         var resultId = reader.ReadInt32();
-        var added = reader.Deserialize<ImmutableArray<Checksum>>(options);
-        var removed = reader.Deserialize<ImmutableArray<Checksum>>(options);
+        var added = TagHelperFormatter.Instance.DeserializeImmutableArray(ref reader, options, cache);
+        var removed = TagHelperFormatter.Instance.DeserializeImmutableArray(ref reader, options, cache);
 
-        return new(isDelta, resultId, added, removed);
+        return new(delta, resultId, added, removed);
     }
 
-    public override void Serialize(ref MessagePackWriter writer, TagHelperDeltaResult value, SerializerCachingOptions options)
+    public override void Serialize(ref MessagePackWriter writer, TagHelperDeltaResult value, MessagePackSerializerOptions options)
     {
-        writer.WriteArrayHeader(4);
+        using var _ = TagHelperSerializationCache.Pool.GetPooledObject(out var cache);
 
-        writer.Write(value.IsDelta);
+        writer.Write(value.Delta);
         writer.Write(value.ResultId);
-        writer.Serialize(value.Added, options);
-        writer.Serialize(value.Removed, options);
+        TagHelperFormatter.Instance.SerializeArray(ref writer, value.Added, options, cache);
+        TagHelperFormatter.Instance.SerializeArray(ref writer, value.Removed, options, cache);
     }
 }

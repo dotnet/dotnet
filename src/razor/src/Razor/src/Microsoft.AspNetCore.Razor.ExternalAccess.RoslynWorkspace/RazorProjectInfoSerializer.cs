@@ -9,23 +9,33 @@ using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.AspNetCore.Razor.ProjectEngineHost;
 using Microsoft.AspNetCore.Razor.ProjectSystem;
 using Microsoft.AspNetCore.Razor.Serialization;
+using Microsoft.AspNetCore.Razor.Serialization.Json;
 using Microsoft.AspNetCore.Razor.Telemetry;
 using Microsoft.AspNetCore.Razor.Utilities;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Razor;
+using Newtonsoft.Json;
 
 namespace Microsoft.AspNetCore.Razor.ExternalAccess.RoslynWorkspace;
 
 internal static class RazorProjectInfoSerializer
 {
+    private static readonly JsonSerializer s_serializer;
     private static readonly EmptyProjectEngineFactory s_fallbackProjectEngineFactory;
     private static readonly StringComparison s_stringComparison;
     private static readonly (IProjectEngineFactory Value, ICustomProjectEngineFactoryMetadata)[] s_projectEngineFactories;
 
     static RazorProjectInfoSerializer()
     {
+        s_serializer = new JsonSerializer()
+        {
+            Formatting = Formatting.Indented
+        };
+
+        s_serializer.Converters.RegisterRazorConverters();
+
         s_fallbackProjectEngineFactory = new EmptyProjectEngineFactory();
         s_stringComparison = RuntimeInformation.IsOSPlatform(OSPlatform.Linux)
             ? StringComparison.Ordinal
@@ -34,7 +44,7 @@ internal static class RazorProjectInfoSerializer
         s_projectEngineFactories = ProjectEngineFactories.Factories.Select(f => (f.Item1.Value, f.Item2)).ToArray();
     }
 
-    public static async Task SerializeAsync(Project project, string configurationFileName, CancellationToken cancellationToken)
+    public static async Task SerializeAsync(Project project, string projectRazorJsonFileName, CancellationToken cancellationToken)
     {
         var projectPath = Path.GetDirectoryName(project.FilePath);
         if (projectPath is null)
@@ -87,17 +97,17 @@ internal static class RazorProjectInfoSerializer
 
         var projectWorkspaceState = new ProjectWorkspaceState(tagHelpers, csharpLanguageVersion);
 
-        var configurationFilePath = Path.Combine(intermediateOutputPath, configurationFileName);
+        var jsonFilePath = Path.Combine(intermediateOutputPath, projectRazorJsonFileName);
 
         var projectInfo = new RazorProjectInfo(
-            serializedFilePath: configurationFilePath,
+            serializedFilePath: jsonFilePath,
             filePath: project.FilePath!,
             configuration: configuration,
             rootNamespace: defaultNamespace,
             projectWorkspaceState: projectWorkspaceState,
             documents: documents);
 
-        WriteToFile(configurationFilePath, projectInfo);
+        WriteJsonFile(jsonFilePath, projectInfo);
     }
 
     private static RazorConfiguration ComputeRazorConfigurationOptions(AnalyzerConfigOptionsProvider options, out string defaultNamespace)
@@ -125,11 +135,11 @@ internal static class RazorProjectInfoSerializer
         return razorConfiguration;
     }
 
-    private static void WriteToFile(string configurationFilePath, RazorProjectInfo projectInfo)
+    private static void WriteJsonFile(string publishFilePath, RazorProjectInfo projectInfo)
     {
         // We need to avoid having an incomplete file at any point, but our
         // project configuration is large enough that it will be written as multiple operations.
-        var tempFilePath = string.Concat(configurationFilePath, ".temp");
+        var tempFilePath = string.Concat(publishFilePath, ".temp");
         var tempFileInfo = new FileInfo(tempFilePath);
 
         if (tempFileInfo.Exists)
@@ -140,18 +150,18 @@ internal static class RazorProjectInfoSerializer
 
         // This needs to be in explicit brackets because the operation needs to be completed
         // by the time we move the temp file into its place
-        using (var stream = tempFileInfo.Create())
+        using (var writer = tempFileInfo.CreateText())
         {
-            projectInfo.SerializeTo(stream);
+            s_serializer.Serialize(writer, projectInfo);
         }
 
-        var fileInfo = new FileInfo(configurationFilePath);
+        var fileInfo = new FileInfo(publishFilePath);
         if (fileInfo.Exists)
         {
             fileInfo.Delete();
         }
 
-        File.Move(tempFileInfo.FullName, configurationFilePath);
+        File.Move(tempFileInfo.FullName, publishFilePath);
     }
 
     private static ImmutableArray<DocumentSnapshotHandle> GetDocuments(Project project, string projectPath)

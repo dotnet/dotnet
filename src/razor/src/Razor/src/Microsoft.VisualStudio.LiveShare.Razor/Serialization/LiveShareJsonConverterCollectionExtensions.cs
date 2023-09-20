@@ -3,6 +3,7 @@
 
 using System;
 using Newtonsoft.Json;
+using Microsoft.AspNetCore.Razor.Serialization.Json;
 
 namespace Microsoft.VisualStudio.LiveShare.Razor.Serialization;
 
@@ -15,9 +16,13 @@ internal static class LiveShareJsonConverterCollectionExtensions
             throw new ArgumentNullException(nameof(collection));
         }
 
-        if (!collection.Contains(ProjectSnapshotHandleProxyJsonConverter.Instance))
+        if (collection.Contains(ProjectSnapshotHandleProxyJsonConverter.Instance))
         {
-            collection.Add(ProjectSnapshotHandleProxyJsonConverter.Instance);
+            // Already registered.
+            return;
         }
+
+        collection.Add(ProjectSnapshotHandleProxyJsonConverter.Instance);
+        collection.RegisterRazorConverters();
     }
 }

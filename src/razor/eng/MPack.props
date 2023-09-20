@@ -1,0 +1,5 @@
+﻿<Project>
+  <PropertyGroup>
+    <ArtifactsMPackDir>$(ArtifactsDir)MPack\$(Configuration)\</ArtifactsMPackDir>
+  </PropertyGroup>
+</Project>

@@ -25,16 +25,16 @@ public class DirectoryHelperTest : TagHelperServiceTestBase
     public void GetFilteredFiles_FindsFiles()
     {
         // Arrange
-        var firstProjectRazorJson = @"HigherDirectory\project.razor.bin";
-        var secondProjectRazorJson = @"HigherDirectory\RealDirectory\project.razor.bin";
+        var firstProjectRazorJson = @"HigherDirectory\project.razor.json";
+        var secondProjectRazorJson = @"HigherDirectory\RealDirectory\project.razor.json";
 
         var workspaceDirectory = Path.Combine("LowerDirectory");
-        var searchPattern = "project.razor.bin";
+        var searchPattern = "project.razor.json";
         var ignoredDirectories = new[] { "node_modules" };
         var fileResults = new Dictionary<string, IEnumerable<string>>() {
             { "HigherDirectory", new []{ firstProjectRazorJson } },
             { "RealDirectory", new []{ secondProjectRazorJson } },
-            { "LongDirectory", new[]{ "LONGPATH", "LONGPATH\\project.razor.bin" } },
+            { "LongDirectory", new[]{ "LONGPATH", "LONGPATH\\project.razor.json"} },
             { "node_modules", null },
         };
         var directoryResults = new Dictionary<string, IEnumerable<string>>() {
