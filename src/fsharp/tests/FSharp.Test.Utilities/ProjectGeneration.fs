@@ -441,9 +441,6 @@ let private renderFsProj (p: SyntheticProject) =
             let version = reference.Version |> Option.map (fun v -> $" Version=\"{v}\"") |> Option.defaultValue ""
             $"<PackageReference Include=\"{reference.Name}\"{version}/>"
 
-        for project in p.DependsOn do
-            $"<ProjectReference Include=\"{project.ProjectFileName}\" />"
-
         for f in p.SourceFiles do
             if f.HasSignatureFile then
                 $"<Compile Include=\"{f.SignatureFileName}\" />"
@@ -1022,10 +1019,10 @@ type ProjectWorkflowBuilder
 
     member this.FindSymbolUse(ctx: WorkflowContext, fileId, symbolName: string) =
         async {
-            let project, file = ctx.Project.FindInAllProjects fileId
-            let fileName = project.ProjectDir ++ file.FileName
-            let source = renderSourceFile project file
-            let options= project.GetProjectOptions checker
+            let file = ctx.Project.Find fileId
+            let fileName = ctx.Project.ProjectDir ++ file.FileName
+            let source = renderSourceFile ctx.Project file
+            let options= ctx.Project.GetProjectOptions checker
             return! getSymbolUse fileName source symbolName options checker
         }
 
@@ -1075,6 +1072,7 @@ type ProjectWorkflowBuilder
     member this.FindAllReferences(workflow: Async<WorkflowContext>, processResults) =
         async {
             let! ctx = workflow
+            let options = ctx.Project.GetProjectOptions checker
 
             let symbolUse =
                 ctx.Cursor
@@ -1082,10 +1080,8 @@ type ProjectWorkflowBuilder
                     failwith $"Please place cursor at a valid location via placeCursor first")
 
             let! results =
-                [ for p, f in ctx.Project.GetAllFiles() do
-                    let options = p.GetProjectOptions checker
-                    for fileName in [getFilePath p f; if f.SignatureFile <> No then getSignatureFilePath p f] do
-                        checker.FindBackgroundReferencesInFile(fileName, options, symbolUse.Symbol, fastCheck = true) ]
+                [ for f in options.SourceFiles do
+                      checker.FindBackgroundReferencesInFile(f, options, symbolUse.Symbol, fastCheck = true) ]
                 |> Async.Parallel
 
             results |> Seq.collect id |> Seq.toList |> processResults

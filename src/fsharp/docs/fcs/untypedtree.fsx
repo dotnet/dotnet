@@ -111,11 +111,11 @@ used more often):
 /// Walk over a pattern - this is for example used in 
 /// let <pat> = <expr> or in the 'match' expression
 let rec visitPattern = function
-  | SynPat.Wild _ -> 
+  | SynPat.Wild(_) -> 
       printfn "  .. underscore pattern"
-  | SynPat.Named(ident = SynIdent(ident = name)) ->
+  | SynPat.Named(name, _, _, _) ->
       printfn "  .. named as '%s'" name.idText
-  | SynPat.LongIdent(longDotId = SynLongIdent(id = ident)) ->
+  | SynPat.LongIdent(LongIdentWithDots(ident, _), _, _, _, _, _, _) ->
       let names = String.concat "." [ for i in ident -> i.idText ]
       printfn "  .. identifier: %s" names
   | pat -> printfn "  .. other pattern: %A" pat
@@ -145,7 +145,9 @@ let rec visitExpression e =
       // for 'let .. = .. and .. = .. in ...'
       printfn "LetOrUse with the following bindings:"
       for binding in bindings do
-        let (SynBinding(headPat = headPat; expr = init)) = binding
+        let (SynBinding(
+          access, kind, isInline, isMutable, attrs, xmlDoc, data,
+          headPat, retInfo, init, equalsRange, debugPoint, trivia)) = binding
         visitPattern headPat
         visitExpression init
       // Visit the body expression
@@ -175,7 +177,9 @@ let visitDeclarations decls =
         // Let binding as a declaration is similar to let binding
         // as an expression (in visitExpression), but has no body
         for binding in bindings do
-          let (SynBinding(headPat = pat; expr = body)) = binding
+          let (SynBinding(
+            access, kind, isInline, isMutable, attrs, xmlDoc, 
+            valData, pat, retInfo, body, equalsRange, debugPoint, trivia)) = binding
           visitPattern pat 
           visitExpression body         
     | _ -> printfn " - not supported declaration: %A" declaration
@@ -190,7 +194,7 @@ with multiple `namespace Foo` declarations:
 /// does not explicitly define it..
 let visitModulesAndNamespaces modulesOrNss =
   for moduleOrNs in modulesOrNss do
-    let (SynModuleOrNamespace(longId = lid; decls = decls)) = moduleOrNs
+    let (SynModuleOrNamespace(lid, isRec, isMod, decls, xml, attrs, accessibility, range)) = moduleOrNs
     printfn "Namespace or module: %A" lid
     visitDeclarations decls
 (**
@@ -234,7 +238,7 @@ in the previous step:
 match tree with
 | ParsedInput.ImplFile(implFile) ->
     // Extract declarations and walk over them
-    let (ParsedImplFileInput(contents = modules)) = implFile
+    let (ParsedImplFileInput(fn, script, name, _, _, modules, _, _)) = implFile
     visitModulesAndNamespaces modules
 | _ -> failwith "F# Interface file (*.fsi) not supported."
 (**
