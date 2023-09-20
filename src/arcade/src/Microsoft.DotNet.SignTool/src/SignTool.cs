@@ -20,7 +20,6 @@ namespace Microsoft.DotNet.SignTool
         internal string MicroBuildCorePath => _args.MicroBuildCorePath;
 
         internal string WixToolsPath => _args.WixToolsPath;
-        internal string TarToolPath => _args.TarToolPath;
 
         internal SignTool(SignToolArgs args, TaskLoggingHelper log)
         {

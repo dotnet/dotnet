@@ -76,7 +76,7 @@
          for each binplace targetFramework. -->
     <ChooseBestTargetFrameworksTask BuildTargetFrameworks="@(BinPlaceTargetFrameworks)"
                                     SupportedTargetFrameworks="@(_supportedTargetFramework)"
-                                    RuntimeGraph="$([MSBuild]::ValueOrDefault('$(RuntimeIdentifierGraphPath)', '$(BundledRuntimeIdentifierGraphFile)'))">
+                                    RuntimeGraph="$(BundledRuntimeIdentifierGraphFile)">
       <Output TaskParameter="BestTargetFrameworks" ItemName="_bestBinPlaceTargetFrameworks" />
     </ChooseBestTargetFrameworksTask>
     

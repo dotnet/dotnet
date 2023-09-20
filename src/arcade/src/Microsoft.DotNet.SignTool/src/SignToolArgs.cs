@@ -13,9 +13,7 @@ namespace Microsoft.DotNet.SignTool
         internal string LogDir { get; }
         internal string EnclosingDir { get; }
         internal string WixToolsPath { get; }
-        internal string TarToolPath { get; }
-
-        internal SignToolArgs(string tempPath, string microBuildCorePath, bool testSign, string msBuildPath, string logDir, string enclosingDir, string snBinaryPath, string wixToolsPath, string tarToolPath)
+        internal SignToolArgs(string tempPath, string microBuildCorePath, bool testSign, string msBuildPath, string logDir, string enclosingDir, string snBinaryPath, string wixToolsPath = null)
         {
             TempDir = tempPath;
             MicroBuildCorePath = microBuildCorePath;
@@ -25,7 +23,6 @@ namespace Microsoft.DotNet.SignTool
             EnclosingDir = enclosingDir;
             SNBinaryPath = snBinaryPath;
             WixToolsPath = wixToolsPath;
-            TarToolPath = tarToolPath;
         }
     }
 }
