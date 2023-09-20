@@ -272,7 +272,12 @@ namespace Microsoft.Build.BackEnd.Logging
         /// </summary>
         internal void IsRunningWithCharacterFileType()
         {
-            runningWithCharacterFileType = NativeMethodsShared.IsWindows && ConsoleConfiguration.OutputIsScreen;
+            runningWithCharacterFileType = false;
+
+            if (NativeMethodsShared.IsWindows)
+            {
+                runningWithCharacterFileType = ConsoleConfiguration.OutputIsScreen;
+            }
         }
 
         /// <summary>
