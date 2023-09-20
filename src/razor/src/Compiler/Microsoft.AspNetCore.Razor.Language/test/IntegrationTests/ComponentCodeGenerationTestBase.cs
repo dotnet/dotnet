@@ -10309,6 +10309,7 @@ Time: @DateTime.Now
     {
         // Act
         var generated = CompileToCSharp("""
+            @using Microsoft.AspNetCore.Components.Web
             <form method="post" @onsubmit="() => { }" @formname="named-form-handler"></form>
             """);
 
@@ -10323,6 +10324,7 @@ Time: @DateTime.Now
     {
         // Act
         var generated = CompileToCSharp("""
+            @using Microsoft.AspNetCore.Components.Web
             <form method="post" @onsubmit="() => { }" @formname="@("named-form-handler")"></form>
             """);
 
@@ -10337,6 +10339,7 @@ Time: @DateTime.Now
     {
         // Act
         var generated = CompileToCSharp("""
+            @using Microsoft.AspNetCore.Components.Web
             <form method="post" @onsubmit="() => { }" @formname="@x"></form>
             @code {
                 int x = 1;
@@ -10348,9 +10351,9 @@ Time: @DateTime.Now
         AssertCSharpDocumentMatchesBaseline(generated.CodeDocument);
         var result = CompileToAssembly(generated, throwOnFailure: false);
         result.Diagnostics.Verify(
-            // x:\dir\subdir\Test\TestComponent.cshtml(1,55): error CS1503: Argument 1: cannot convert from 'int' to 'string'
+            // x:\dir\subdir\Test\TestComponent.cshtml(2,55): error CS1503: Argument 1: cannot convert from 'int' to 'string'
             //                                                       x
-            Diagnostic(ErrorCode.ERR_BadArgType, "x").WithArguments("1", "int", "string").WithLocation(1, 55));
+            Diagnostic(ErrorCode.ERR_BadArgType, "x").WithArguments("1", "int", "string").WithLocation(2, 55));
     }
 
     [Fact, WorkItem("https://github.com/dotnet/razor/issues/9077")]
@@ -10358,6 +10361,7 @@ Time: @DateTime.Now
     {
         // Act
         var generated = CompileToCSharp("""
+            @using Microsoft.AspNetCore.Components.Web
             <form method="post" @onsubmit="() => { }" @formname="start @("literal") @x end"></form>
             @code {
                 int x = 1;
@@ -10377,6 +10381,7 @@ Time: @DateTime.Now
 
         // Act
         var generated = CompileToCSharp("""
+            @using Microsoft.AspNetCore.Components.Web
             <form method="post" @onsubmit="() => { }" @formname="@null"></form>
             """,
             nullableEnable: true);
@@ -10392,6 +10397,7 @@ Time: @DateTime.Now
     {
         // Act
         var generated = CompileToCSharp("""
+            @using Microsoft.AspNetCore.Components.Web
             <form method="post" @onsubmit="() => { }" @formname="@x"></form>
             """);
 
@@ -10400,9 +10406,9 @@ Time: @DateTime.Now
         AssertCSharpDocumentMatchesBaseline(generated.CodeDocument);
         var result = CompileToAssembly(generated, throwOnFailure: false);
         result.Diagnostics.Verify(
-            // x:\dir\subdir\Test\TestComponent.cshtml(1,55): error CS0103: The name 'x' does not exist in the current context
+            // x:\dir\subdir\Test\TestComponent.cshtml(2,55): error CS0103: The name 'x' does not exist in the current context
             //                                                       x
-            Diagnostic(ErrorCode.ERR_NameNotInContext, "x").WithArguments("x").WithLocation(1, 55));
+            Diagnostic(ErrorCode.ERR_NameNotInContext, "x").WithArguments("x").WithLocation(2, 55));
     }
 
     [Fact, WorkItem("https://github.com/dotnet/razor/issues/9077")]
@@ -10410,6 +10416,7 @@ Time: @DateTime.Now
     {
         // Act
         var generated = CompileToCSharp("""
+            @using Microsoft.AspNetCore.Components.Web
             <form method="post" @onsubmit="() => { }" @formname="@{ }"></form>
             """);
 
@@ -10423,8 +10430,23 @@ Time: @DateTime.Now
     {
         // Act
         var generated = CompileToCSharp("""
+            @using Microsoft.AspNetCore.Components.Web
             <div method="post" @onsubmit="() => { }" @formname="named-form-handler"></div>
             <div method="post" @onsubmit="() => { }" @formname="@("named-form-handler")"></div>
+            """);
+
+        // Assert
+        AssertDocumentNodeMatchesBaseline(generated.CodeDocument);
+        AssertCSharpDocumentMatchesBaseline(generated.CodeDocument);
+    }
+
+    [Fact, WorkItem("https://github.com/dotnet/razor/issues/9077")]
+    public void FormName_MissingUsing()
+    {
+        // Act
+        var generated = CompileToCSharp("""
+            <form method="post" @onsubmit="() => { }" @formname="named-form-handler"></form>
+            <form method="post" @onsubmit="() => { }" @formname="@("named-form-handler")"></form>
             """);
 
         // Assert
@@ -10437,6 +10459,7 @@ Time: @DateTime.Now
     {
         // Act
         var generated = CompileToCSharp("""
+            @using Microsoft.AspNetCore.Components.Web
             <div method="post" @onsubmit="() => { }" @formname="named-form-handler"></div>
             <div method="post" @onsubmit="() => { }" @formname="@("named-form-handler")"></div>
             """,
@@ -10453,6 +10476,7 @@ Time: @DateTime.Now
     {
         // Act
         var generated = CompileToCSharp("""
+            @using Microsoft.AspNetCore.Components.Web
             <form method="post" @formname="named-form-handler"></form>
             <form method="post" @formname="@("named-form-handler")"></form>
             """);
@@ -10467,6 +10491,7 @@ Time: @DateTime.Now
     {
         // Act
         var generated = CompileToCSharp("""
+            @using Microsoft.AspNetCore.Components.Web
             <form method="post" onsubmit="" @formname="named-form-handler"></form>
             <form method="post" onsubmit="" @formname="@("named-form-handler")"></form>
             """);
@@ -10481,6 +10506,7 @@ Time: @DateTime.Now
     {
         // Act
         var generated = CompileToCSharp("""
+            @using Microsoft.AspNetCore.Components.Web
             <TestComponent method="post" @onsubmit="() => { }" @formname="named-form-handler" />
             <TestComponent method="post" @onsubmit="() => { }" @formname="@("named-form-handler")" />
             """);
@@ -10495,6 +10521,7 @@ Time: @DateTime.Now
     {
         // Act
         var generated = CompileToCSharp("""
+            @using Microsoft.AspNetCore.Components.Web
             <TestComponent method="post" @onsubmit="() => { }" @formname="named-form-handler" />
             <TestComponent method="post" @onsubmit="() => { }" @formname="@("named-form-handler")" />
             """,
@@ -10511,6 +10538,7 @@ Time: @DateTime.Now
     {
         // Act
         var generated = CompileToCSharp("""
+            @using Microsoft.AspNetCore.Components.Web
             @typeparam T
             <TestComponent method="post" @onsubmit="() => { }" @formname="named-form-handler" Parameter="1" />
             <TestComponent method="post" @onsubmit="() => { }" @formname="@("named-form-handler")" Parameter="2" />
@@ -10529,6 +10557,7 @@ Time: @DateTime.Now
     {
         // Act
         var generated = CompileToCSharp("""
+            @using Microsoft.AspNetCore.Components.Web
             @typeparam T
             <TestComponent method="post" @onsubmit="() => { }" @formname="named-form-handler" Parameter="1" />
             <TestComponent method="post" @onsubmit="() => { }" @formname="@("named-form-handler")" Parameter="2" />
@@ -10549,6 +10578,7 @@ Time: @DateTime.Now
     {
         // Act
         var generated = CompileToCSharp("""
+            @using Microsoft.AspNetCore.Components.Web
             <form method="post" @onsubmit="() => { }" @formname="x" @formname="y"></form>
             """);
 
@@ -10571,6 +10601,7 @@ Time: @DateTime.Now
 
         // Act
         var generated = CompileToCSharp("""
+            @using Microsoft.AspNetCore.Components.Web
             <form method="post" @onsubmit="() => { }" @formname="@x" @formname="@y"></form>
             @code {
                 string x = "a";
@@ -10589,6 +10620,7 @@ Time: @DateTime.Now
     {
         // Act
         var generated = CompileToCSharp("""
+            @using Microsoft.AspNetCore.Components.Web
             <form method="post" @onsubmit="() => { }" @formname="x"></form>
             <form method="post" @onsubmit="() => { }" @formname="y"></form>
             """);
@@ -10604,6 +10636,7 @@ Time: @DateTime.Now
     {
         // Act
         var generated = CompileToCSharp("""
+            @using Microsoft.AspNetCore.Components.Web
             <form method="post" @onsubmit="() => { }" @formname="@x"></form>
             <form method="post" @onsubmit="() => { }" @formname="@y"></form>
             @code {
@@ -10623,6 +10656,7 @@ Time: @DateTime.Now
     {
         // Act
         var generated = CompileToCSharp("""
+            @using Microsoft.AspNetCore.Components.Web
             <form method="post" @onsubmit="() => { }" @formname="1"></form>
             <TestComponent>
                 <form method="post" @onsubmit="() => { }" @formname="2"></form>
@@ -10661,6 +10695,7 @@ Time: @DateTime.Now
                         public void AddMarkupContent(int sequence, string markupContent) { }
                         public void OpenElement(int sequence, string elementName) { }
                         public void AddAttribute(int sequence, string name, string value) { }
+                        public void AddAttribute<TArgument>(int sequence, string name, EventCallback<TArgument> value) { }
                         public void CloseElement() { }
                     }
                 }
@@ -10670,6 +10705,27 @@ Time: @DateTime.Now
                     {
                         public static T TypeCheck<T>(T value) => throw null;
                     }
+                }
+                namespace Web
+                {
+                    [EventHandler("onsubmit", typeof(System.EventArgs), true, true)]
+                    public static class EventHandlers
+                    {
+                    }
+                }
+                [System.AttributeUsage(System.AttributeTargets.Class, AllowMultiple = true, Inherited = true)]
+                public sealed class EventHandlerAttribute : System.Attribute
+                {
+                    public EventHandlerAttribute(string attributeName, System.Type eventArgsType, bool enableStopPropagation, bool enablePreventDefault) { }
+                }
+                public readonly struct EventCallback
+                {
+                    public static readonly EventCallbackFactory Factory;
+                }
+                public readonly struct EventCallback<TValue> { }
+                public sealed class EventCallbackFactory
+                {
+                    public EventCallback<TValue> Create<TValue>(object receiver, System.Action callback) => throw null;
                 }
             }
             """;
@@ -10683,6 +10739,7 @@ Time: @DateTime.Now
 
         // Act
         var generated = CompileToCSharp("""
+            @using Microsoft.AspNetCore.Components.Web
             <form method="post" @onsubmit="() => { }" @formname="named-form-handler"></form>
             """,
             baseCompilation: baseCompilation);
@@ -10698,6 +10755,7 @@ Time: @DateTime.Now
     {
         // Act
         var generated = CompileToCSharp("""
+            @using Microsoft.AspNetCore.Components.Web
             <form method="post" @onsubmit="() => { }" @formname="named-form-handler"></form>
             """,
             configuration: Configuration.WithVersion(RazorLanguageVersion.Version_7_0));

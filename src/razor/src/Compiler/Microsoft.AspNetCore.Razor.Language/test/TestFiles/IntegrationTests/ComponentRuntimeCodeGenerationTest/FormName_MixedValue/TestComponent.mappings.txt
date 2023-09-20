@@ -1,8 +1,8 @@
-﻿Source Location: (96:1,7 [18] x:\dir\subdir\Test\TestComponent.cshtml)
+﻿Source Location: (140:2,7 [18] x:\dir\subdir\Test\TestComponent.cshtml)
 |
     int x = 1;
 |
-Generated Location: (906:23,7 [18] )
+Generated Location: (1336:38,7 [18] )
 |
     int x = 1;
 |
