@@ -12,21 +12,12 @@ export function discoverComponents(root: Node, type: 'webassembly' | 'server' | 
   }
 }
 
-const blazorServerStateCommentRegularExpression = /^\s*Blazor-Server-Component-State:(?<state>[a-zA-Z0-9+/=]+)$/;
-const blazorWebAssemblyStateCommentRegularExpression = /^\s*Blazor-WebAssembly-Component-State:(?<state>[a-zA-Z0-9+/=]+)$/;
+const blazorStateCommentRegularExpression = /^\s*Blazor-Component-State:(?<state>[a-zA-Z0-9+/=]+)$/;
 
-export function discoverServerPersistedState(node: Node): string | null | undefined {
-  return discoverPersistedState(node, blazorServerStateCommentRegularExpression);
-}
-
-export function discoverWebAssemblyPersistedState(node: Node): string | null | undefined {
-  return discoverPersistedState(node, blazorWebAssemblyStateCommentRegularExpression);
-}
-
-function discoverPersistedState(node: Node, comment: RegExp): string | null | undefined {
+export function discoverPersistedState(node: Node): string | null | undefined {
   if (node.nodeType === Node.COMMENT_NODE) {
     const content = node.textContent || '';
-    const parsedState = comment.exec(content);
+    const parsedState = blazorStateCommentRegularExpression.exec(content);
     const value = parsedState && parsedState.groups && parsedState.groups['state'];
     if (value){
       node.parentNode?.removeChild(node);
@@ -41,7 +32,7 @@ function discoverPersistedState(node: Node, comment: RegExp): string | null | un
   const nodes = node.childNodes;
   for (let index = 0; index < nodes.length; index++) {
     const candidate = nodes[index];
-    const result = discoverPersistedState(candidate, comment);
+    const result = discoverPersistedState(candidate);
     if (result){
       return result;
     }

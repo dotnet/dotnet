@@ -19,7 +19,6 @@ BOOL                g_fRecycleProcessCalled = FALSE;
 BOOL                g_fInShutdown = FALSE;
 BOOL                g_fInAppOfflineShutdown = FALSE;
 HINSTANCE           g_hServerModule;
-DWORD               g_dwIISServerVersion;
 
 VOID
 StaticCleanup()
@@ -91,7 +90,7 @@ HRESULT
 
 --*/
 {
-    g_dwIISServerVersion = dwServerVersion;
+    UNREFERENCED_PARAMETER(dwServerVersion);
 
     if (pHttpServer->IsCommandLineLaunch())
     {

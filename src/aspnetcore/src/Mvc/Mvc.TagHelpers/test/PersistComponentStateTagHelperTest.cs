@@ -19,7 +19,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Moq;
-using RenderMode = Microsoft.AspNetCore.Components.Web.RenderMode;
 
 namespace Microsoft.AspNetCore.Mvc.TagHelpers;
 
@@ -52,28 +51,6 @@ public class PersistComponentStateTagHelperTest
     }
 
     [Fact]
-    public async Task ExecuteAsync_DoesNotRenderWebAssemblyStateWhenStateWasNotPersisted()
-    {
-        // Arrange
-        var tagHelper = new PersistComponentStateTagHelper
-        {
-            ViewContext = GetViewContext(),
-            PersistenceMode = PersistenceMode.WebAssembly
-        };
-
-        var context = GetTagHelperContext();
-        var output = GetTagHelperOutput();
-
-        // Act
-        await tagHelper.ProcessAsync(context, output);
-
-        // Assert
-        var content = HtmlContentUtilities.HtmlContentToString(output.Content);
-        Assert.Empty(content);
-        Assert.Null(output.TagName);
-    }
-
-    [Fact]
     public async Task ExecuteAsync_RendersWebAssemblyStateExplicitly()
     {
         // Arrange
@@ -85,21 +62,14 @@ public class PersistComponentStateTagHelperTest
 
         var context = GetTagHelperContext();
         var output = GetTagHelperOutput();
-        var manager = tagHelper.ViewContext.HttpContext.RequestServices.GetRequiredService<ComponentStatePersistenceManager>();
 
         // Act
-        manager.State.RegisterOnPersisting(() =>
-        {
-            manager.State.PersistAsJson("state", "state value");
-            return Task.CompletedTask;
-        }, RenderMode.InteractiveWebAssembly);
         await tagHelper.ProcessAsync(context, output);
 
         // Assert
         var content = HtmlContentUtilities.HtmlContentToString(output.Content);
+        Assert.Equal("<!--Blazor-Component-State:e30=-->", content);
         Assert.Null(output.TagName);
-        var message = content["<!--Blazor-WebAssembly-Component-State:".Length..^"-->".Length];
-        Assert.True(message.Length > 0);
     }
 
     [Fact]
@@ -111,25 +81,18 @@ public class PersistComponentStateTagHelperTest
             ViewContext = GetViewContext()
         };
 
-        EndpointHtmlRenderer.UpdateSaveStateRenderMode(tagHelper.ViewContext.HttpContext, RenderMode.InteractiveWebAssembly);
+        EndpointHtmlRenderer.UpdateSaveStateRenderMode(tagHelper.ViewContext.HttpContext, Components.Web.RenderMode.WebAssembly);
 
         var context = GetTagHelperContext();
         var output = GetTagHelperOutput();
-        var manager = tagHelper.ViewContext.HttpContext.RequestServices.GetRequiredService<ComponentStatePersistenceManager>();
 
         // Act
-        manager.State.RegisterOnPersisting(() =>
-        {
-            manager.State.PersistAsJson("state", "state value");
-            return Task.CompletedTask;
-        }, RenderMode.InteractiveWebAssembly);
         await tagHelper.ProcessAsync(context, output);
 
         // Assert
         var content = HtmlContentUtilities.HtmlContentToString(output.Content);
+        Assert.Equal("<!--Blazor-Component-State:e30=-->", content);
         Assert.Null(output.TagName);
-        var message = content["<!--Blazor-WebAssembly-Component-State:".Length..^"-->".Length];
-        Assert.True(message.Length > 0);
     }
 
     [Fact]
@@ -144,44 +107,17 @@ public class PersistComponentStateTagHelperTest
 
         var context = GetTagHelperContext();
         var output = GetTagHelperOutput();
-        var manager = tagHelper.ViewContext.HttpContext.RequestServices.GetRequiredService<ComponentStatePersistenceManager>();
 
         // Act
-        manager.State.RegisterOnPersisting(() =>
-        {
-            manager.State.PersistAsJson("state", "state value");
-            return Task.CompletedTask;
-        }, RenderMode.InteractiveServer);
-
         await tagHelper.ProcessAsync(context, output);
 
         // Assert
         var content = HtmlContentUtilities.HtmlContentToString(output.Content);
         Assert.NotEmpty(content);
-        var payload = content["<!--Blazor-Server-Component-State:".Length..^"-->".Length];
+        var payload = content["<!--Blazor-Component-State:".Length..^"-->".Length];
         var message = _protector.Unprotect(payload);
-        Assert.True(message.Length > 0);
-    }
-
-    [Fact]
-    public async Task ExecuteAsync_DoesNotRenderServerStateWhenStateWasNotPersisted()
-    {
-        // Arrange
-        var tagHelper = new PersistComponentStateTagHelper
-        {
-            ViewContext = GetViewContext(),
-            PersistenceMode = PersistenceMode.Server
-        };
-
-        var context = GetTagHelperContext();
-        var output = GetTagHelperOutput();
-
-        // Act
-        await tagHelper.ProcessAsync(context, output);
-
-        // Assert
-        var content = HtmlContentUtilities.HtmlContentToString(output.Content);
-        Assert.Empty(content);
+        Assert.Equal("{}", message);
+        Assert.Null(output.TagName);
     }
 
     [Fact]
@@ -193,27 +129,20 @@ public class PersistComponentStateTagHelperTest
             ViewContext = GetViewContext()
         };
 
-        EndpointHtmlRenderer.UpdateSaveStateRenderMode(tagHelper.ViewContext.HttpContext, Components.Web.RenderMode.InteractiveServer);
+        EndpointHtmlRenderer.UpdateSaveStateRenderMode(tagHelper.ViewContext.HttpContext, Components.Web.RenderMode.Server);
 
         var context = GetTagHelperContext();
         var output = GetTagHelperOutput();
-        var manager = tagHelper.ViewContext.HttpContext.RequestServices.GetRequiredService<ComponentStatePersistenceManager>();
 
         // Act
-        manager.State.RegisterOnPersisting(() =>
-        {
-            manager.State.PersistAsJson("state", "state value");
-            return Task.CompletedTask;
-        }, RenderMode.InteractiveServer);
-
         await tagHelper.ProcessAsync(context, output);
 
         // Assert
         var content = HtmlContentUtilities.HtmlContentToString(output.Content);
         Assert.NotEmpty(content);
-        var payload = content["<!--Blazor-Server-Component-State:".Length..^"-->".Length];
+        var payload = content["<!--Blazor-Component-State:".Length..^"-->".Length];
         var message = _protector.Unprotect(payload);
-        Assert.True(message.Length > 0);
+        Assert.Equal("{}", message);
     }
 
     [Fact]
@@ -225,8 +154,8 @@ public class PersistComponentStateTagHelperTest
             ViewContext = GetViewContext()
         };
 
-        EndpointHtmlRenderer.UpdateSaveStateRenderMode(tagHelper.ViewContext.HttpContext, Components.Web.RenderMode.InteractiveServer);
-        EndpointHtmlRenderer.UpdateSaveStateRenderMode(tagHelper.ViewContext.HttpContext, Components.Web.RenderMode.InteractiveWebAssembly);
+        EndpointHtmlRenderer.UpdateSaveStateRenderMode(tagHelper.ViewContext.HttpContext, Components.Web.RenderMode.Server);
+        EndpointHtmlRenderer.UpdateSaveStateRenderMode(tagHelper.ViewContext.HttpContext, Components.Web.RenderMode.WebAssembly);
 
         var context = GetTagHelperContext();
         var output = GetTagHelperOutput();

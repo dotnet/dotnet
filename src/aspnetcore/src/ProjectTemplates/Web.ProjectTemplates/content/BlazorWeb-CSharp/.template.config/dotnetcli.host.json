@@ -5,15 +5,11 @@
       "longName": "no-restore",
       "shortName": ""
     },
-    "InteractivityPlatform": {
-      "longName": "interactivity",
-      "shortName": "int"
+    "UseServer": {
+      "longName": "use-server"
     },
-    "AllInteractive": {
-      "longName": "all-interactive"
-    },
-    "InteractivityLocation": {
-      "isHidden": true
+    "UseWebAssembly": {
+      "longName": "use-wasm"
     },
     "Empty": {
       "longName": "empty"

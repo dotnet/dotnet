@@ -31,7 +31,6 @@ public static class RazorComponentsEndpointRouteBuilderExtensions
 
         EnsureRazorComponentServices(endpoints);
         AddBlazorWebJsEndpoint(endpoints);
-        OpaqueRedirection.AddBlazorOpaqueRedirectionEndpoint(endpoints);
 
         return GetOrCreateDataSource<TRootComponent>(endpoints).DefaultBuilder;
     }

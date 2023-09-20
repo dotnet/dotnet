@@ -1,7 +1,6 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Primitives;
@@ -35,9 +34,9 @@ public class HttpContextFormValueMapperTest
     public void CanMap_MatchesOnScopeAndFormName(bool expectedResult, string incomingFormName, string scopeName, string formNameOrNull)
     {
         var formData = new HttpContextFormDataProvider();
-        formData.SetFormData(incomingFormName, new Dictionary<string, StringValues>(), new FormFileCollection());
+        formData.SetFormData(incomingFormName, new Dictionary<string, StringValues>());
 
-        var mapper = new HttpContextFormValueMapper(formData, Options.Create<RazorComponentsServiceOptions>(new()));
+        var mapper = new HttpContextFormValueMapper(formData, Options.Create<RazorComponentsOptions>(new()));
 
         var canMap = mapper.CanMap(typeof(string), scopeName, formNameOrNull);
         Assert.Equal(expectedResult, canMap);

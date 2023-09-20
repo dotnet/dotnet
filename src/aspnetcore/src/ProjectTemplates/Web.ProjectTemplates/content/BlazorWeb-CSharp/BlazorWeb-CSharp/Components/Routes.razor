@@ -1,7 +1,7 @@
-﻿@*#if (UseWebAssembly && !InteractiveAtRoot)
-<Router AppAssembly="@typeof(Program).Assembly" AdditionalAssemblies="new[] { typeof(Client._Imports).Assembly }">
+﻿@*#if (UseWebAssembly) -->
+<Router AppAssembly="@typeof(App).Assembly" AdditionalAssemblies="new[] { typeof(Client._Imports).Assembly }">
 ##else
-<Router AppAssembly="@typeof(Program).Assembly">
+<Router AppAssembly="@typeof(App).Assembly">
 ##endif*@
     <Found Context="routeData">
         <RouteView RouteData="@routeData" DefaultLayout="@typeof(Layout.MainLayout)" />

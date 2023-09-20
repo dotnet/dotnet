@@ -1,5 +1,5 @@
 ﻿@using Microsoft.AspNetCore.Components.Forms
-<EditForm Enhance EditContext="_editContext" method="POST" OnValidSubmit="() => _submitted = true" FormName="someform">
+<EditForm EditContext="_editContext" method="POST" OnValidSubmit="() => _submitted = true" FormName="someform">
     @if(BindingContext == null)
     {
         <AntiforgeryToken />

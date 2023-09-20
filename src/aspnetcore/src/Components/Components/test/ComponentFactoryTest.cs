@@ -86,7 +86,6 @@ public class ComponentFactoryTest
         Assert.NotNull(component.Property1);
         Assert.NotNull(component.GetProperty2());
         Assert.NotNull(component.Property3);
-        Assert.NotNull(component.KeyedProperty);
 
         // Property on derived type without [Inject] should not be assigned
         Assert.Null(component.Property4);
@@ -220,14 +219,11 @@ public class ComponentFactoryTest
         Assert.Equal($"The component type '{componentType}' has a fixed rendermode of '{typeof(TestRenderMode)}', so it is not valid to specify any rendermode when using this component.", ex.Message);
     }
 
-    private const string KeyedServiceKey = "my-keyed-service";
-
     private static IServiceProvider GetServiceProvider()
     {
         return new ServiceCollection()
             .AddTransient<TestService1>()
             .AddTransient<TestService2>()
-            .AddKeyedTransient<TestService3>(KeyedServiceKey)
             .BuildServiceProvider();
     }
 
@@ -257,9 +253,6 @@ public class ComponentFactoryTest
 
         [Inject]
         public TestService1 Property4 { get; set; }
-
-        [Inject(Key = KeyedServiceKey)]
-        public TestService3 KeyedProperty { get; set; }
 
         public TestService2 GetProperty2() => Property2;
 
@@ -302,7 +295,6 @@ public class ComponentFactoryTest
 
     public class TestService1 { }
     public class TestService2 { }
-    public class TestService3 { }
 
     private class CustomComponentActivator<TResult> : IComponentActivator where TResult : IComponent, new()
     {

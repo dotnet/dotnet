@@ -1,6 +1,3 @@
-#if (UseWebAssembly)
-using BlazorWeb_CSharp.Client.Pages;
-#endif
 using BlazorWeb_CSharp.Components;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -11,12 +8,12 @@ builder.Services.AddRazorComponents();
 #else
 builder.Services.AddRazorComponents()
     #if (UseServer && UseWebAssembly)
-    .AddInteractiveServerComponents()
-    .AddInteractiveWebAssemblyComponents();
+    .AddServerComponents()
+    .AddWebAssemblyComponents();
     #elif(UseServer)
-    .AddInteractiveServerComponents();
+    .AddServerComponents();
     #elif(UseWebAssembly)
-    .AddInteractiveWebAssemblyComponents();
+    .AddWebAssemblyComponents();
     #endif
 #endif
 
@@ -48,16 +45,14 @@ app.UseStaticFiles();
 
 #if (UseServer && UseWebAssembly)
 app.MapRazorComponents<App>()
-    .AddInteractiveServerRenderMode()
-    .AddInteractiveWebAssemblyRenderMode()
-    .AddAdditionalAssemblies(typeof(Counter).Assembly);
+    .AddServerRenderMode()
+    .AddWebAssemblyRenderMode();
 #elif (UseServer)
 app.MapRazorComponents<App>()
-    .AddInteractiveServerRenderMode();
+    .AddServerRenderMode();
 #elif (UseWebAssembly)
 app.MapRazorComponents<App>()
-    .AddInteractiveWebAssemblyRenderMode()
-    .AddAdditionalAssemblies(typeof(Counter).Assembly);
+    .AddWebAssemblyRenderMode();
 #else
 app.MapRazorComponents<App>();
 #endif

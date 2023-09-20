@@ -35,7 +35,6 @@ internal partial class RazorComponentEndpointInvoker : IRazorComponentEndpointIn
     {
         context.Response.ContentType = RazorComponentResultExecutor.DefaultContentType;
         _renderer.InitializeStreamingRenderingFraming(context);
-        EndpointHtmlRenderer.MarkAsAllowingEnhancedNavigation(context);
 
         var endpoint = context.GetEndpoint() ?? throw new InvalidOperationException($"An endpoint must be set on the '{nameof(HttpContext)}'.");
 
@@ -120,10 +119,6 @@ internal partial class RazorComponentEndpointInvoker : IRazorComponentEndpointIn
         {
             await _renderer.SendStreamingUpdatesAsync(context, quiesceTask, bufferWriter);
         }
-
-        // Emit comment containing state.
-        var componentStateHtmlContent = await _renderer.PrerenderPersistedStateAsync(context);
-        componentStateHtmlContent.WriteTo(bufferWriter, HtmlEncoder.Default);
 
         // Invoke FlushAsync to ensure any buffered content is asynchronously written to the underlying
         // response asynchronously. In the absence of this line, the buffer gets synchronously written to the

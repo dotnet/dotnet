@@ -25,9 +25,7 @@ class Program
 
         AppDomain.CurrentDomain.UnhandledException += (sender, error) =>
         {
-            Console.Write(
-                "Fatal exception" + Environment.NewLine +
-                error.ExceptionObject.ToString() + Environment.NewLine);
+            mainWindow.Photino.OpenAlertWindow("Fatal exception", error.ExceptionObject.ToString());
         };
 
         mainWindow.RootComponents.Add<BasicTestApp.Index>("root");

@@ -16,7 +16,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.Metrics;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Telemetry.Testing.Metrics;
+using Microsoft.Extensions.Telemetry.Testing.Metering;
 
 namespace Interop.FunctionalTests.Http2;
 

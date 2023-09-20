@@ -162,7 +162,6 @@ public class MvcServiceCollectionExtensionsTest
     {
         // Arrange
         var services = new ServiceCollection();
-        services.AddSingleton<IConfiguration>(new ConfigurationBuilder().AddInMemoryCollection().Build());
         services.AddLogging();
         services.AddSingleton<IWebHostEnvironment>(GetHostingEnvironment());
 
@@ -179,7 +178,6 @@ public class MvcServiceCollectionExtensionsTest
     {
         // Arrange
         var services = new ServiceCollection();
-        services.AddSingleton<IConfiguration>(new ConfigurationBuilder().AddInMemoryCollection().Build());
         services.AddLogging();
         services.AddSingleton<IWebHostEnvironment>(GetHostingEnvironment());
 
@@ -198,7 +196,6 @@ public class MvcServiceCollectionExtensionsTest
     {
         // Arrange
         var services = new ServiceCollection();
-        services.AddSingleton<IConfiguration>(new ConfigurationBuilder().AddInMemoryCollection().Build());
         services.AddLogging();
         services.AddSingleton<IWebHostEnvironment>(GetHostingEnvironment());
 
@@ -215,7 +212,6 @@ public class MvcServiceCollectionExtensionsTest
     {
         // Arrange
         var services = new ServiceCollection();
-        services.AddSingleton<IConfiguration>(new ConfigurationBuilder().AddInMemoryCollection().Build());
         services.AddLogging();
         services.AddSingleton<IWebHostEnvironment>(GetHostingEnvironment());
 

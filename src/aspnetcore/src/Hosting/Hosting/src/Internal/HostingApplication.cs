@@ -144,8 +144,7 @@ internal sealed class HostingApplication : IHttpApplication<HostingApplication.C
 
         public long StartTimestamp { get; set; }
         internal bool HasDiagnosticListener { get; set; }
-        public bool MetricsEnabled { get; set; }
-        public bool EventLogEnabled { get; set; }
+        public bool EventLogOrMetricsEnabled { get; set; }
 
         internal HttpActivityFeature? HttpActivityFeature;
         internal HttpMetricsTagsFeature? MetricsTagsFeature;
@@ -160,8 +159,7 @@ internal sealed class HostingApplication : IHttpApplication<HostingApplication.C
 
             StartTimestamp = 0;
             HasDiagnosticListener = false;
-            MetricsEnabled = false;
-            EventLogEnabled = false;
+            EventLogOrMetricsEnabled = false;
             MetricsTagsFeature?.TagsList.Clear();
         }
     }

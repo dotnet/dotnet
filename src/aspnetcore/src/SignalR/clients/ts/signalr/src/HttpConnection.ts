@@ -31,7 +31,7 @@ export interface INegotiateResponse {
     url?: string;
     accessToken?: string;
     error?: string;
-    useStatefulReconnect?: boolean;
+    useAck?: boolean;
 }
 
 /** @private */
@@ -333,7 +333,7 @@ export class HttpConnection implements IConnection {
                 negotiateResponse.connectionToken = negotiateResponse.connectionId;
             }
 
-            if (negotiateResponse.useStatefulReconnect && this._options._useStatefulReconnect !== true) {
+            if (negotiateResponse.useAck && this._options._useStatefulReconnect !== true) {
                 return Promise.reject(new FailedToNegotiateWithServerError("Client didn't negotiate Stateful Reconnect but the server did."));
             }
 
@@ -374,8 +374,7 @@ export class HttpConnection implements IConnection {
         const transports = negotiateResponse.availableTransports || [];
         let negotiate: INegotiateResponse | undefined = negotiateResponse;
         for (const endpoint of transports) {
-            const transportOrError = this._resolveTransportOrError(endpoint, requestedTransport, requestedTransferFormat,
-                negotiate?.useStatefulReconnect === true);
+            const transportOrError = this._resolveTransportOrError(endpoint, requestedTransport, requestedTransferFormat, negotiate?.useAck === true);
             if (transportOrError instanceof Error) {
                 // Store the error and continue, we don't want to cause a re-negotiate in these cases
                 transportExceptions.push(`${endpoint.transport} failed:`);
@@ -439,7 +438,7 @@ export class HttpConnection implements IConnection {
         if (this.features.reconnect) {
             this.transport!.onclose = async (e) => {
                 let callStop = false;
-                if (this.features.reconnect) {
+                if (this.features.resend) {
                     try {
                         this.features.disconnected();
                         await this.transport!.connect(url, transferFormat);
@@ -463,7 +462,7 @@ export class HttpConnection implements IConnection {
     }
 
     private _resolveTransportOrError(endpoint: IAvailableTransport, requestedTransport: HttpTransportType | undefined,
-        requestedTransferFormat: TransferFormat, useStatefulReconnect: boolean): ITransport | Error | unknown {
+        requestedTransferFormat: TransferFormat, useAcks: boolean): ITransport | Error | unknown {
         const transport = HttpTransportType[endpoint.transport];
         if (transport === null || transport === undefined) {
             this._logger.log(LogLevel.Debug, `Skipping transport '${endpoint.transport}' because it is not supported by this client.`);
@@ -479,7 +478,7 @@ export class HttpConnection implements IConnection {
                     } else {
                         this._logger.log(LogLevel.Debug, `Selecting transport '${HttpTransportType[transport]}'.`);
                         try {
-                            this.features.reconnect = transport === HttpTransportType.WebSockets ? useStatefulReconnect : undefined;
+                            this.features.reconnect = transport === HttpTransportType.WebSockets ? useAcks : undefined;
                             return this._constructTransport(transport);
                         } catch (ex) {
                             return ex;
@@ -589,12 +588,12 @@ export class HttpConnection implements IConnection {
             searchParams.append("negotiateVersion", this._negotiateVersion.toString());
         }
 
-        if (searchParams.has("useStatefulReconnect")) {
-            if (searchParams.get("useStatefulReconnect") === "true") {
+        if (searchParams.has("useAck")) {
+            if (searchParams.get("useAck") === "true") {
                 this._options._useStatefulReconnect = true;
             }
         } else if (this._options._useStatefulReconnect === true) {
-            searchParams.append("useStatefulReconnect", "true");
+            searchParams.append("useAck", "true");
         }
 
         negotiateUrl.search = searchParams.toString();

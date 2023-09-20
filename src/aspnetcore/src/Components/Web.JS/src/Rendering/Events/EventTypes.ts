@@ -160,7 +160,7 @@ registerBuiltInEventType(['wheel', 'mousewheel'], {
   createEventArgs: e => parseWheelEvent(e as WheelEvent),
 });
 
-registerBuiltInEventType(['cancel', 'close', 'toggle'], createBlankEventArgsOptions);
+registerBuiltInEventType(['toggle'], createBlankEventArgsOptions);
 
 function parseChangeEvent(event: Event): ChangeEventArgs {
   const element = event.target as Element;

@@ -1,8 +1,6 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-using System.Runtime.Serialization;
-
 namespace Microsoft.AspNetCore.Components.Forms;
 
 public sealed class ExpressionFormatterTest : IDisposable
@@ -18,19 +16,6 @@ public sealed class ExpressionFormatterTest : IDisposable
 
         // Assert
         Assert.Equal("person.Parent.Name", result);
-    }
-
-    [Fact]
-    public void Works_MemberAccessDataAnnotation()
-    {
-        // Arrange
-        var person = new Person();
-
-        // Act
-        var result = ExpressionFormatter.FormatLambda(() => person.Region);
-
-        // Assert
-        Assert.Equal("person.Country", result);
     }
 
     [Fact]
@@ -181,9 +166,6 @@ public sealed class ExpressionFormatterTest : IDisposable
         public string Name { get; init; }
 
         public int Age { get; init; }
-
-        [DataMember(Name = "Country")]
-        public string Region { get; set; }
 
         public Person Parent { get; init; }
 

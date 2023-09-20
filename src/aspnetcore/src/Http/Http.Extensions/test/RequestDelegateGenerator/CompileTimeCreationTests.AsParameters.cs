@@ -39,16 +39,16 @@ app.MapGet("/", TestAction);
         get
         {
             static string GetAbstractTypeError(Type type)
-                => $"The abstract type '{TypeNameHelper.GetTypeDisplayName(type, fullName: false)}' is not supported. For more information, please see https://aka.ms/aspnet/rdg-known-issues";
+                => $"The abstract type '{TypeNameHelper.GetTypeDisplayName(type, fullName: false)}' is not supported.";
 
             static string GetMultipleContructorsError(Type type)
-                => $"Only a single public parameterized constructor is allowed for type '{TypeNameHelper.GetTypeDisplayName(type, fullName: false)}'. For more information, please see https://aka.ms/aspnet/rdg-known-issues";
+                => $"Only a single public parameterized constructor is allowed for type '{TypeNameHelper.GetTypeDisplayName(type, fullName: false)}'.";
 
             static string GetNoContructorsError(Type type)
-                => $"No public parameterless constructor found for type '{TypeNameHelper.GetTypeDisplayName(type, fullName: false)}'. For more information, please see https://aka.ms/aspnet/rdg-known-issues";
+                => $"No public parameterless constructor found for type '{TypeNameHelper.GetTypeDisplayName(type, fullName: false)}'.";
 
             static string GetInvalidConstructorError(Type type)
-                => $"The public parameterized constructor must contain only parameters that match the declared public properties for type '{TypeNameHelper.GetTypeDisplayName(type, fullName: false)}'. For more information, please see https://aka.ms/aspnet/rdg-known-issues";
+                => $"The public parameterized constructor must contain only parameters that match the declared public properties for type '{TypeNameHelper.GetTypeDisplayName(type, fullName: false)}'.";
 
             return new []
             {

@@ -35,6 +35,7 @@ internal class PhotinoSynchronizationContext : SynchronizationContext
 
     private readonly PhotinoWindow _window;
     private readonly int _uiThreadId;
+    private readonly MethodInfo _invokeMethodInfo;
 
     public PhotinoSynchronizationContext(PhotinoWindow window)
         : this(window, new State())
@@ -50,6 +51,9 @@ internal class PhotinoSynchronizationContext : SynchronizationContext
         _uiThreadId = (int)_window.GetType()
             .GetField("_managedThreadId", BindingFlags.NonPublic | BindingFlags.Instance)!
             .GetValue(_window)!;
+
+        _invokeMethodInfo = _window.GetType()
+            .GetMethod("Invoke", BindingFlags.NonPublic | BindingFlags.Instance)!;
     }
 
     private readonly State _state;
@@ -247,23 +251,23 @@ internal class PhotinoSynchronizationContext : SynchronizationContext
     {
         // Anything run on the sync context should actually be dispatched as far as Photino
         // is concerned, so that it's safe to interact with the native window/WebView.
-        _window.Invoke(() =>
-        {
-            var original = Current;
-            try
+        _invokeMethodInfo.Invoke(_window, new Action[] { () =>
             {
-                _state.IsBusy = true;
-                SetSynchronizationContext(this);
-                d(state);
-            }
-            finally
-            {
-                _state.IsBusy = false;
-                SetSynchronizationContext(original);
+                var original = Current;
+                try
+                {
+                    _state.IsBusy = true;
+                    SetSynchronizationContext(this);
+                    d(state);
+                }
+                finally
+                {
+                    _state.IsBusy = false;
+                    SetSynchronizationContext(original);
 
-                completion?.SetResult();
-            }
-        });
+                    completion?.SetResult();
+                }
+            }});
     }
 
     private void ExecuteBackground(WorkItem item)

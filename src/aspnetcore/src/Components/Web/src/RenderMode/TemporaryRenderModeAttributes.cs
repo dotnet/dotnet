@@ -7,22 +7,22 @@ namespace Microsoft.AspNetCore.Components.Web;
 /// Temporary attribute for indicating that a component should render interactively on the server.
 /// This will later be replaced by a @rendermode directive.
 /// </summary>
-public class RenderModeInteractiveServerAttribute : RenderModeAttribute
+public class RenderModeServerAttribute : RenderModeAttribute
 {
     /// <summary>
-    /// Constructs an instance of <see cref="RenderModeInteractiveServerAttribute"/>.
+    /// Constructs an instance of <see cref="RenderModeServerAttribute"/>.
     /// </summary>
-    public RenderModeInteractiveServerAttribute() : this(true)
+    public RenderModeServerAttribute() : this(true)
     {
     }
 
     /// <summary>
-    /// Constructs an instance of <see cref="RenderModeInteractiveServerAttribute"/>.
+    /// Constructs an instance of <see cref="RenderModeServerAttribute"/>.
     /// </summary>
     /// <param name="prerender">A flag indicating whether to prerender the component on the server. The default value is true.</param>
-    public RenderModeInteractiveServerAttribute(bool prerender)
+    public RenderModeServerAttribute(bool prerender)
     {
-        Mode = new InteractiveServerRenderMode(prerender);
+        Mode = new ServerRenderMode(prerender);
     }
 
     /// <inheritdoc />
@@ -33,22 +33,22 @@ public class RenderModeInteractiveServerAttribute : RenderModeAttribute
 /// Temporary attribute for indicating that a component should render interactively using WebAssembly.
 /// This will later be replaced by a @rendermode directive.
 /// </summary>
-public class RenderModeInteractiveWebAssemblyAttribute : RenderModeAttribute
+public class RenderModeWebAssemblyAttribute : RenderModeAttribute
 {
     /// <summary>
-    /// Constructs an instance of <see cref="RenderModeInteractiveWebAssemblyAttribute"/>.
+    /// Constructs an instance of <see cref="RenderModeWebAssemblyAttribute"/>.
     /// </summary>
-    public RenderModeInteractiveWebAssemblyAttribute() : this(true)
+    public RenderModeWebAssemblyAttribute() : this(true)
     {
     }
 
     /// <summary>
-    /// Constructs an instance of <see cref="RenderModeInteractiveWebAssemblyAttribute"/>.
+    /// Constructs an instance of <see cref="RenderModeWebAssemblyAttribute"/>.
     /// </summary>
     /// <param name="prerender">A flag indicating whether to prerender the component on the server. The default value is true.</param>
-    public RenderModeInteractiveWebAssemblyAttribute(bool prerender)
+    public RenderModeWebAssemblyAttribute(bool prerender)
     {
-        Mode = new InteractiveWebAssemblyRenderMode(prerender);
+        Mode = new WebAssemblyRenderMode(prerender);
     }
 
     /// <inheritdoc />
@@ -60,22 +60,22 @@ public class RenderModeInteractiveWebAssemblyAttribute : RenderModeAttribute
 /// a mode automatically determined.
 /// This will later be replaced by a @rendermode directive.
 /// </summary>
-public class RenderModeInteractiveAutoAttribute : RenderModeAttribute
+public class RenderModeAutoAttribute : RenderModeAttribute
 {
     /// <summary>
-    /// Constructs an instance of <see cref="RenderModeInteractiveAutoAttribute"/>.
+    /// Constructs an instance of <see cref="RenderModeAutoAttribute"/>.
     /// </summary>
-    public RenderModeInteractiveAutoAttribute() : this(true)
+    public RenderModeAutoAttribute() : this(true)
     {
     }
 
     /// <summary>
-    /// Constructs an instance of <see cref="RenderModeInteractiveAutoAttribute"/>.
+    /// Constructs an instance of <see cref="RenderModeAutoAttribute"/>.
     /// </summary>
     /// <param name="prerender">A flag indicating whether to prerender the component on the server. The default value is true.</param>
-    public RenderModeInteractiveAutoAttribute(bool prerender)
+    public RenderModeAutoAttribute(bool prerender)
     {
-        Mode = new InteractiveAutoRenderMode(prerender);
+        Mode = new AutoRenderMode(prerender);
     }
 
     /// <inheritdoc />

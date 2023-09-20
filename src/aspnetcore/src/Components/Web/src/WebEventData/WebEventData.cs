@@ -185,8 +185,6 @@ internal sealed class WebEventData
                 eventArgs = WheelEventArgsReader.Read(eventArgsJson);
                 return true;
 
-            case "cancel":
-            case "close":
             case "toggle":
                 eventArgs = EventArgs.Empty;
                 return true;

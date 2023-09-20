@@ -313,7 +313,7 @@ public partial class HttpConnection : ConnectionContext, IConnectionInherentKeep
             if (_httpConnectionOptions.Transports == HttpTransportType.WebSockets)
             {
                 Log.StartingTransport(_logger, _httpConnectionOptions.Transports, uri);
-                await StartTransport(uri, _httpConnectionOptions.Transports, transferFormat, cancellationToken, useStatefulReconnect: false).ConfigureAwait(false);
+                await StartTransport(uri, _httpConnectionOptions.Transports, transferFormat, cancellationToken, useAck: false).ConfigureAwait(false);
             }
             else
             {
@@ -459,7 +459,7 @@ public partial class HttpConnection : ConnectionContext, IConnectionInherentKeep
 
             if (_httpConnectionOptions.UseStatefulReconnect)
             {
-                uri = Utils.AppendQueryString(uri, "useStatefulReconnect=true");
+                uri = Utils.AppendQueryString(uri, "useAck=true");
             }
 
             using (var request = new HttpRequestMessage(HttpMethod.Post, uri))
@@ -507,11 +507,10 @@ public partial class HttpConnection : ConnectionContext, IConnectionInherentKeep
         return Utils.AppendQueryString(url, $"id={connectionId}");
     }
 
-    private async Task StartTransport(Uri connectUrl, HttpTransportType transportType, TransferFormat transferFormat,
-        CancellationToken cancellationToken, bool useStatefulReconnect)
+    private async Task StartTransport(Uri connectUrl, HttpTransportType transportType, TransferFormat transferFormat, CancellationToken cancellationToken, bool useAck)
     {
         // Construct the transport
-        var transport = _transportFactory.CreateTransport(transportType, useStatefulReconnect);
+        var transport = _transportFactory.CreateTransport(transportType, useAck);
 
         // Start the transport, giving it one end of the pipe
         try
@@ -532,7 +531,7 @@ public partial class HttpConnection : ConnectionContext, IConnectionInherentKeep
         // We successfully started, set the transport properties (we don't want to set these until the transport is definitely running).
         _transport = transport;
 
-        if (useStatefulReconnect && _transport is IStatefulReconnectFeature reconnectFeature)
+        if (useAck && _transport is IStatefulReconnectFeature reconnectFeature)
         {
 #pragma warning disable CA2252 // This API requires opting into preview features
             Features.Set(reconnectFeature);

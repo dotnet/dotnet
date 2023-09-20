@@ -9,7 +9,6 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting.Server;
 using Microsoft.AspNetCore.Hosting.Server.Features;
 using Microsoft.AspNetCore.Http.Features;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -59,7 +58,6 @@ internal sealed class IISHttpServer : IServer
         IISNativeApplication nativeApplication,
         IHostApplicationLifetime applicationLifetime,
         IAuthenticationSchemeProvider authentication,
-        IConfiguration configuration,
         IOptions<IISServerOptions> options,
         ILogger<IISHttpServer> logger
         )
@@ -78,11 +76,6 @@ internal sealed class IISHttpServer : IServer
         }
 
         Features.Set<IServerAddressesFeature>(_serverAddressesFeature);
-
-        if (IISEnvironmentFeature.TryCreate(configuration, out var iisEnvFeature))
-        {
-            Features.Set<IIISEnvironmentFeature>(iisEnvFeature);
-        }
 
         if (_options.MaxRequestBodySize > _options.IisMaxRequestSizeLimit)
         {

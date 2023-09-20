@@ -8,7 +8,6 @@ using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using Microsoft.AspNetCore.Components.Endpoints.FormMapping;
 using Microsoft.AspNetCore.Components.Forms.Mapping;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Primitives;
 
@@ -22,7 +21,7 @@ internal sealed class HttpContextFormValueMapper : IFormValueMapper
 
     public HttpContextFormValueMapper(
         HttpContextFormDataProvider formData,
-        IOptions<RazorComponentsServiceOptions> options)
+        IOptions<RazorComponentsOptions> options)
     {
         _formData = formData;
         _options = options.Value._formMappingOptions;
@@ -86,7 +85,7 @@ internal sealed class HttpContextFormValueMapper : IFormValueMapper
 
         var deserializer = _cache.GetOrAdd(context.ValueType, CreateDeserializer);
         Debug.Assert(deserializer != null);
-        deserializer.Deserialize(context, _options, _formData.Entries, _formData.FormFiles);
+        deserializer.Deserialize(context, _options, _formData.Entries);
     }
 
     private FormValueSupplier CreateDeserializer(Type type) =>
@@ -100,8 +99,7 @@ internal sealed class HttpContextFormValueMapper : IFormValueMapper
         public abstract void Deserialize(
             FormValueMappingContext context,
             FormDataMapperOptions options,
-            IReadOnlyDictionary<string, StringValues> form,
-            IFormFileCollection formFiles);
+            IReadOnlyDictionary<string, StringValues> form);
     }
 
     internal class FormValueSupplier<T> : FormValueSupplier
@@ -111,8 +109,7 @@ internal sealed class HttpContextFormValueMapper : IFormValueMapper
         public override void Deserialize(
             FormValueMappingContext context,
             FormDataMapperOptions options,
-            IReadOnlyDictionary<string, StringValues> form,
-            IFormFileCollection formFiles)
+            IReadOnlyDictionary<string, StringValues> form)
         {
             if (form.Count == 0)
             {
@@ -131,9 +128,8 @@ internal sealed class HttpContextFormValueMapper : IFormValueMapper
 
                 using var reader = new FormDataReader(
                     dictionary,
-                    CultureInfo.InvariantCulture,
-                    buffer.AsMemory(0, options.MaxKeyBufferSize),
-                    formFiles)
+                    options.UseCurrentCulture ? CultureInfo.CurrentCulture : CultureInfo.InvariantCulture,
+                    buffer.AsMemory(0, options.MaxKeyBufferSize))
                 {
                     ErrorHandler = context.OnError,
                     AttachInstanceToErrorsHandler = context.MapErrorToContainer,

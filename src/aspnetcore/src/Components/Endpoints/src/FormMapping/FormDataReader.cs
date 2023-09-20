@@ -6,19 +6,17 @@ using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Runtime.CompilerServices;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Primitives;
 
 namespace Microsoft.AspNetCore.Components.Endpoints.FormMapping;
 
-[DebuggerDisplay($"{{{nameof(DebuggerDisplay)}(),nq}}")]
 internal struct FormDataReader : IDisposable
 {
     private readonly IReadOnlyDictionary<FormKey, StringValues> _readOnlyMemoryKeys;
     private readonly Memory<char> _prefixBuffer;
     private Memory<char> _currentPrefixBuffer;
-    private int _currentDepth;
-    private int _errorCount;
+    private int _currentDepth = 0;
+    private int _errorCount = 0;
 
     // As an implementation detail, reuse FormKey for the values.
     // It's just a thin wrapper over ReadOnlyMemory<char> that caches
@@ -34,25 +32,16 @@ internal struct FormDataReader : IDisposable
         _prefixBuffer = buffer;
     }
 
-    public FormDataReader(IReadOnlyDictionary<FormKey, StringValues> formCollection, CultureInfo culture, Memory<char> buffer, IFormFileCollection formFileCollection)
-        : this(formCollection, culture, buffer)
-    {
-        FormFileCollection = formFileCollection;
-    }
-
     internal ReadOnlyMemory<char> CurrentPrefix => _currentPrefixBuffer;
 
-    public IFormatProvider Culture { get; }
-
-    public IFormFileCollection? FormFileCollection { get; internal set; }
+    public IFormatProvider Culture { get; internal set; }
 
     public int MaxRecursionDepth { get; set; } = 64;
 
     public Action<string, FormattableString, string?>? ErrorHandler { get; set; }
 
     public Action<string, object>? AttachInstanceToErrorsHandler { get; set; }
-
-    public int MaxErrorCount { get; set; } = 200;
+    public int MaxErrorCount { get; set; } = 100;
 
     public void AddMappingError(FormattableString errorMessage, string? attemptedValue)
     {
@@ -256,9 +245,6 @@ internal struct FormDataReader : IDisposable
         return foundSingleValue;
     }
 
-    internal readonly bool TryGetValues(out StringValues values) =>
-        _readOnlyMemoryKeys.TryGetValue(new FormKey(_currentPrefixBuffer), out values);
-
     internal string GetPrefix() => _currentPrefixBuffer.ToString();
 
     internal string GetLastPrefixSegment()
@@ -319,7 +305,4 @@ internal struct FormDataReader : IDisposable
             void IEnumerator.Reset() { }
         }
     }
-
-    private readonly string DebuggerDisplay =>
-        $"Key count = {_readOnlyMemoryKeys.Count}, Prefix = {_currentPrefixBuffer}, Error count = {_errorCount}, Current depth = {_currentDepth}";
 }

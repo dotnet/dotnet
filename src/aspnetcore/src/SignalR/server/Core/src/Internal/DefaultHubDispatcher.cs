@@ -132,7 +132,7 @@ internal sealed partial class DefaultHubDispatcher<THub> : HubDispatcher<THub> w
 
         if (!connection.ShouldProcessMessage(hubMessage))
         {
-            Log.DroppingMessage(_logger, hubMessage.GetType().Name, (hubMessage as HubInvocationMessage)?.InvocationId ?? "(null)");
+            Log.DroppingMessage(_logger, ((HubInvocationMessage)hubMessage).GetType().Name, ((HubInvocationMessage)hubMessage).InvocationId);
             return Task.CompletedTask;
         }
 
@@ -194,10 +194,12 @@ internal sealed partial class DefaultHubDispatcher<THub> : HubDispatcher<THub> w
 
             case AckMessage ackMessage:
                 Log.ReceivedAckMessage(_logger, ackMessage.SequenceId);
-                return connection.AckAsync(ackMessage);
+                connection.Ack(ackMessage);
+                break;
 
             case SequenceMessage sequenceMessage:
                 Log.ReceivedSequenceMessage(_logger, sequenceMessage.SequenceId);
+                connection.ResetSequence(sequenceMessage);
                 break;
 
             case CloseMessage closeMessage:
