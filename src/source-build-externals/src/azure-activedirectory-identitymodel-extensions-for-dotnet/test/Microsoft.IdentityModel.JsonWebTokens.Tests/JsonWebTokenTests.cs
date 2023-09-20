@@ -239,9 +239,122 @@ namespace Microsoft.IdentityModel.JsonWebTokens.Tests
             TestUtilities.AssertFailIfErrors(context);
         }
 
+        // This test ensures audience values are skipping nulls as expected.
+        [Theory, MemberData(nameof(CheckAudienceValuesTheoryData), DisableDiscoveryEnumeration = true)]
+        public void CheckAudienceValues(GetPayloadValueTheoryData theoryData)
+        {
+            CompareContext context = TestUtilities.WriteHeader($"{this}.CheckAudienceValues", theoryData);
+            try
+            {
+                JsonWebToken jsonWebToken = new JsonWebToken(theoryData.Json);
+                MethodInfo method = typeof(JsonWebToken).GetMethod("GetPayloadValue");
+                MethodInfo generic = method.MakeGenericMethod(theoryData.PropertyType);
+                object[] parameters = new object[] { theoryData.PropertyName };
+                var audiences = generic.Invoke(jsonWebToken, parameters);
+
+                if (!IdentityComparer.AreEqual(jsonWebToken.Audiences, theoryData.PropertyValue, context))
+                    context.AddDiff($"jsonWebToken.Audiences != theoryData.PropertyValue: '{jsonWebToken.Audiences}' != '{theoryData.PropertyValue}'.");
+
+                if (theoryData.ClaimValue != null)
+                    if (!IdentityComparer.AreEqual(audiences, theoryData.ClaimValue, context))
+                        context.AddDiff($"audiences != theoryData.ClaimValue: '{audiences}' != '{theoryData.ClaimValue}'.");
+
+                theoryData.ExpectedException.ProcessNoException(context);
+            }
+            catch (Exception ex)
+            {
+                theoryData.ExpectedException.ProcessException(ex.InnerException, context);
+            }
+
+            TestUtilities.AssertFailIfErrors(context);
+        }
+
+        public static TheoryData<GetPayloadValueTheoryData> CheckAudienceValuesTheoryData
+        {
+            get
+            {
+                var theoryData = new TheoryData<GetPayloadValueTheoryData>();
+
+                theoryData.Add(new GetPayloadValueTheoryData("stringFromSingleInList")
+                {
+                    ClaimValue = "audience",
+                    PropertyName = "aud",
+                    PropertyType = typeof(string),
+                    PropertyValue = new List<string> { "audience" },
+                    Json = JsonUtilities.CreateUnsignedToken("aud", new List<string> { "audience" })
+                });
+
+                theoryData.Add(new GetPayloadValueTheoryData("stringFromMultipeInList")
+                {
+                    ClaimValue = "audience",
+                    ExpectedException = ExpectedException.ArgumentException("IDX14305:"),
+                    PropertyName = "aud",
+                    PropertyValue = new List<string> { "audience", "audience2" },
+                    PropertyType = typeof(string),
+                    Json = JsonUtilities.CreateUnsignedToken("aud", new List<string> { "audience", "audience2" })
+                });
+
+                theoryData.Add(new GetPayloadValueTheoryData("stringTwoNulloneNonNull")
+                {
+                    ClaimValue = "audience1",
+                    PropertyName = "aud",
+                    PropertyValue = new List<string> { "audience1" },
+                    PropertyType = typeof(string),
+                    Json = JsonUtilities.CreateUnsignedToken("aud", new List<string> { null, "audience1", null })
+                });
+
+                theoryData.Add(new GetPayloadValueTheoryData("stringFromCollection")
+                {
+                    ClaimValue = "audience",
+                    PropertyName = "aud",
+                    PropertyType = typeof(string),
+                    PropertyValue = new Collection<string> { "audience" },
+                    Json = JsonUtilities.CreateUnsignedToken("aud", new Collection<string> { "audience" })
+                });
+
+                theoryData.Add(new GetPayloadValueTheoryData("singleNull")
+                {
+                    ClaimValue = new List<string>(),
+                    PropertyName = "aud",
+                    PropertyValue = new List<string>(),
+                    PropertyType = typeof(List<string>),
+                    Json = JsonUtilities.CreateUnsignedToken("aud", null)
+                });
+
+                theoryData.Add(new GetPayloadValueTheoryData("twoNull")
+                {
+                    ClaimValue = new List<string>(),
+                    PropertyName = "aud",
+                    PropertyValue = new List<string>(),
+                    PropertyType = typeof(List<string>),
+                    Json = JsonUtilities.CreateUnsignedToken("aud", new List<string>{ null, null })
+                });
+
+                theoryData.Add(new GetPayloadValueTheoryData("singleNonNull")
+                {
+                    ClaimValue = new List<string> { "audience" },
+                    PropertyName = "aud",
+                    PropertyValue = new List<string> { "audience"},
+                    PropertyType = typeof(List<string>),
+                    Json = JsonUtilities.CreateUnsignedToken("aud", "audience")
+                });
+
+                theoryData.Add(new GetPayloadValueTheoryData("twoNulloneNonNull")
+                {
+                    ClaimValue = new List<string> { "audience1" },
+                    PropertyName = "aud",
+                    PropertyValue = new List<string> { "audience1"},
+                    PropertyType = typeof(List<string>),
+                    Json = JsonUtilities.CreateUnsignedToken("aud", new List<string> { null, "audience1", null })
+                });
+
+                return theoryData;
+            }
+        }
+
         // This test ensures that TryGetPayloadValue does not throw
         // No need to check for equal as GetPayloadValue does that
-        [Theory, MemberData(nameof(GetPayloadValueTheoryData))]
+        [Theory, MemberData(nameof(GetPayloadValueTheoryData), DisableDiscoveryEnumeration = true)]
         public void TryGetPayloadValue(GetPayloadValueTheoryData theoryData)
         {
             CompareContext context = TestUtilities.WriteHeader($"{this}.TryGetPayloadValue", theoryData);
@@ -264,7 +377,7 @@ namespace Microsoft.IdentityModel.JsonWebTokens.Tests
         }
 
         // This test ensures that our roundtripping works as expected.
-        [Theory, MemberData(nameof(GetPayloadValueTheoryData))]
+        [Theory, MemberData(nameof(GetPayloadValueTheoryData), DisableDiscoveryEnumeration = true)]
         public void GetPayloadValue(GetPayloadValueTheoryData theoryData)
         {
             CompareContext context = TestUtilities.WriteHeader($"{this}.GetPayloadValue", theoryData);
@@ -484,6 +597,260 @@ namespace Microsoft.IdentityModel.JsonWebTokens.Tests
                 });
                 #endregion
 
+                #region collection of strings from simple types
+
+                #region string[]
+                theoryData.Add(new GetPayloadValueTheoryData("string[]dateTime")
+                {
+                    PropertyName = "dateTime",
+                    PropertyType = typeof(string[]),
+                    PropertyValue = new string[] {dateTime.ToString("o", CultureInfo.InvariantCulture)},
+                    Json = JsonUtilities.CreateUnsignedToken("dateTime", dateTime)
+                });
+
+                theoryData.Add(new GetPayloadValueTheoryData("string[]true")
+                {
+                    PropertyName = "true",
+                    PropertyType = typeof(string[]),
+                    PropertyValue = new string[] { "True" },
+                    Json = JsonUtilities.CreateUnsignedToken("true", true)
+                });
+
+                theoryData.Add(new GetPayloadValueTheoryData("string[]double")
+                {
+                    PropertyName = "double",
+                    PropertyType = typeof(string[]),
+                    PropertyValue = new string[] { "422.101" },
+                    Json = JsonUtilities.CreateUnsignedToken("double", 422.101)
+                });
+
+                theoryData.Add(new GetPayloadValueTheoryData("string[]integer")
+                {
+                    PropertyName = "integer",
+                    PropertyType = typeof(string[]),
+                    PropertyValue = new string[] { "42" },
+                    Json = JsonUtilities.CreateUnsignedToken("integer", 42)
+                });
+
+                theoryData.Add(new GetPayloadValueTheoryData("string[]ulong")
+                {
+                    PropertyName = "ulong",
+                    PropertyType = typeof(string[]),
+                    PropertyValue = new string[] { "42" },
+                    Json = JsonUtilities.CreateUnsignedToken("ulong", 42)
+                });
+
+                theoryData.Add(new GetPayloadValueTheoryData("string[]string")
+                {
+                    PropertyName = "string",
+                    PropertyType = typeof(string[]),
+                    PropertyValue = new string[] { "property" },
+                    Json = JsonUtilities.CreateUnsignedToken("string", "property")
+                });
+                #endregion
+
+                #region List:string
+                theoryData.Add(new GetPayloadValueTheoryData("List<string>dateTime")
+                {
+                    PropertyName = "dateTime",
+                    PropertyType = typeof(List<string>),
+                    PropertyValue = new List<string> { dateTime.ToString("o", CultureInfo.InvariantCulture) },
+                    Json = JsonUtilities.CreateUnsignedToken("dateTime", dateTime)
+                });
+
+                theoryData.Add(new GetPayloadValueTheoryData("List<string>true")
+                {
+                    PropertyName = "true",
+                    PropertyType = typeof(List<string>),
+                    PropertyValue = new List<string> { "True" },
+                    Json = JsonUtilities.CreateUnsignedToken("true", true)
+                });
+
+                theoryData.Add(new GetPayloadValueTheoryData("List<string>double")
+                {
+                    PropertyName = "double",
+                    PropertyType = typeof(List<string>),
+                    PropertyValue = new List<string> { "422.101" },
+                    Json = JsonUtilities.CreateUnsignedToken("double", 422.101)
+                });
+
+                theoryData.Add(new GetPayloadValueTheoryData("List<string>integer")
+                {
+                    PropertyName = "integer",
+                    PropertyType = typeof(List<string>),
+                    PropertyValue = new List<string> { "42" },
+                    Json = JsonUtilities.CreateUnsignedToken("integer", 42)
+                });
+
+                theoryData.Add(new GetPayloadValueTheoryData("List<string>ulong")
+                {
+                    PropertyName = "ulong",
+                    PropertyType = typeof(List<string>),
+                    PropertyValue = new List<string> { "42" },
+                    Json = JsonUtilities.CreateUnsignedToken("ulong", 42)
+                });
+
+                theoryData.Add(new GetPayloadValueTheoryData("List<string>string")
+                {
+                    PropertyName = "string",
+                    PropertyType = typeof(List<string>),
+                    PropertyValue = new List<string> { "property" },
+                    Json = JsonUtilities.CreateUnsignedToken("string", "property")
+                });
+                #endregion
+
+                #region Collection:string
+                theoryData.Add(new GetPayloadValueTheoryData("Collection<string>dateTime")
+                {
+                    PropertyName = "dateTime",
+                    PropertyType = typeof(Collection<string>),
+                    PropertyValue = new Collection<string> { dateTime.ToString("o", CultureInfo.InvariantCulture) },
+                    Json = JsonUtilities.CreateUnsignedToken("dateTime", dateTime)
+                });
+
+                theoryData.Add(new GetPayloadValueTheoryData("Collection<string>true")
+                {
+                    PropertyName = "true",
+                    PropertyType = typeof(Collection<string>),
+                    PropertyValue = new Collection<string> { "True" },
+                    Json = JsonUtilities.CreateUnsignedToken("true", true)
+                });
+
+                theoryData.Add(new GetPayloadValueTheoryData("Collection<string>double")
+                {
+                    PropertyName = "double",
+                    PropertyType = typeof(Collection<string>),
+                    PropertyValue = new Collection<string> { "422.101" },
+                    Json = JsonUtilities.CreateUnsignedToken("double", 422.101)
+                });
+
+                theoryData.Add(new GetPayloadValueTheoryData("Collection<string>integer")
+                {
+                    PropertyName = "integer",
+                    PropertyType = typeof(Collection<string>),
+                    PropertyValue = new Collection<string> { "42" },
+                    Json = JsonUtilities.CreateUnsignedToken("integer", 42)
+                });
+
+                theoryData.Add(new GetPayloadValueTheoryData("Collection<string>ulong")
+                {
+                    PropertyName = "ulong",
+                    PropertyType = typeof(Collection<string>),
+                    PropertyValue = new Collection<string> { "42" },
+                    Json = JsonUtilities.CreateUnsignedToken("ulong", 42)
+                });
+
+                theoryData.Add(new GetPayloadValueTheoryData("Collection<string>string")
+                {
+                    PropertyName = "string",
+                    PropertyType = typeof(Collection<string>),
+                    PropertyValue = new Collection<string> { "property" },
+                    Json = JsonUtilities.CreateUnsignedToken("string", "property")
+                });
+                #endregion
+
+                #region IList:string
+                theoryData.Add(new GetPayloadValueTheoryData("IList<string>dateTime")
+                {
+                    PropertyName = "dateTime",
+                    PropertyType = typeof(IList<string>),
+                    PropertyValue = new List<string> { dateTime.ToString("o", CultureInfo.InvariantCulture) },
+                    Json = JsonUtilities.CreateUnsignedToken("dateTime", dateTime)
+                });
+
+                theoryData.Add(new GetPayloadValueTheoryData("IList<string>true")
+                {
+                    PropertyName = "true",
+                    PropertyType = typeof(IList<string>),
+                    PropertyValue = new List<string> { "True" },
+                    Json = JsonUtilities.CreateUnsignedToken("true", true)
+                });
+
+                theoryData.Add(new GetPayloadValueTheoryData("IList<string>double")
+                {
+                    PropertyName = "double",
+                    PropertyType = typeof(IList<string>),
+                    PropertyValue = new List<string> { "422.101" },
+                    Json = JsonUtilities.CreateUnsignedToken("double", 422.101)
+                });
+
+                theoryData.Add(new GetPayloadValueTheoryData("IList<string>integer")
+                {
+                    PropertyName = "integer",
+                    PropertyType = typeof(IList<string>),
+                    PropertyValue = new List<string> { "42" },
+                    Json = JsonUtilities.CreateUnsignedToken("integer", 42)
+                });
+
+                theoryData.Add(new GetPayloadValueTheoryData("IList<string>ulong")
+                {
+                    PropertyName = "ulong",
+                    PropertyType = typeof(IList<string>),
+                    PropertyValue = new List<string> { "42" },
+                    Json = JsonUtilities.CreateUnsignedToken("ulong", 42)
+                });
+
+                theoryData.Add(new GetPayloadValueTheoryData("IList<string>string")
+                {
+                    PropertyName = "string",
+                    PropertyType = typeof(IList<string>),
+                    PropertyValue = new List<string> { "property" },
+                    Json = JsonUtilities.CreateUnsignedToken("string", "property")
+                });
+                #endregion
+
+                #region ICollection:string
+                theoryData.Add(new GetPayloadValueTheoryData("ICollection<string>dateTime")
+                {
+                    PropertyName = "dateTime",
+                    PropertyType = typeof(ICollection<string>),
+                    PropertyValue = new Collection<string> { dateTime.ToString("o", CultureInfo.InvariantCulture) },
+                    Json = JsonUtilities.CreateUnsignedToken("dateTime", dateTime)
+                });
+
+                theoryData.Add(new GetPayloadValueTheoryData("ICollection<string>true")
+                {
+                    PropertyName = "true",
+                    PropertyType = typeof(ICollection<string>),
+                    PropertyValue = new Collection<string> { "True" },
+                    Json = JsonUtilities.CreateUnsignedToken("true", true)
+                });
+
+                theoryData.Add(new GetPayloadValueTheoryData("ICollection<string>double")
+                {
+                    PropertyName = "double",
+                    PropertyType = typeof(ICollection<string>),
+                    PropertyValue = new Collection<string> { "422.101" },
+                    Json = JsonUtilities.CreateUnsignedToken("double", 422.101)
+                });
+
+                theoryData.Add(new GetPayloadValueTheoryData("ICollection<string>integer")
+                {
+                    PropertyName = "integer",
+                    PropertyType = typeof(ICollection<string>),
+                    PropertyValue = new Collection<string> { "42" },
+                    Json = JsonUtilities.CreateUnsignedToken("integer", 42)
+                });
+
+                theoryData.Add(new GetPayloadValueTheoryData("ICollection<string>ulong")
+                {
+                    PropertyName = "ulong",
+                    PropertyType = typeof(ICollection<string>),
+                    PropertyValue = new Collection<string> { "42" },
+                    Json = JsonUtilities.CreateUnsignedToken("ulong", 42)
+                });
+
+                theoryData.Add(new GetPayloadValueTheoryData("ICollection<string>string")
+                {
+                    PropertyName = "string",
+                    PropertyType = typeof(ICollection<string>),
+                    PropertyValue = new Collection<string> { "property" },
+                    Json = JsonUtilities.CreateUnsignedToken("string", "property")
+                });
+                #endregion
+
+                #endregion
+
                 #region complex types, dictionary, list, array, collection
                 List<string> listStrings = new List<string> { "listValue1", "listValue2" };
                 List<object> listObjects = new List<object> { "listValue1", "listValue2" };
@@ -559,6 +926,14 @@ namespace Microsoft.IdentityModel.JsonWebTokens.Tests
                     Json = JsonUtilities.CreateUnsignedToken("c", listStrings)
                 });
 
+                theoryData.Add(new GetPayloadValueTheoryData("IListOfStrings")
+                {
+                    PropertyName = "c",
+                    PropertyType = typeof(IList<string>),
+                    PropertyValue = listStrings,
+                    Json = JsonUtilities.CreateUnsignedToken("c", listStrings)
+                });
+
                 theoryData.Add(new GetPayloadValueTheoryData("ListOfObjects")
                 {
                     PropertyName = "c",
@@ -571,6 +946,14 @@ namespace Microsoft.IdentityModel.JsonWebTokens.Tests
                 {
                     PropertyName = "c",
                     PropertyType = typeof(Collection<string>),
+                    PropertyValue = collectionStrings,
+                    Json = JsonUtilities.CreateUnsignedToken("c", collectionStrings)
+                });
+
+                theoryData.Add(new GetPayloadValueTheoryData("ICollectionOfStrings")
+                {
+                    PropertyName = "c",
+                    PropertyType = typeof(ICollection<string>),
                     PropertyValue = collectionStrings,
                     Json = JsonUtilities.CreateUnsignedToken("c", collectionStrings)
                 });

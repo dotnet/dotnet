@@ -9,10 +9,11 @@ using System.IO;
 using System.Text;
 using BenchmarkDotNet.Attributes;
 using MessagePack;
+using MessagePack.Resolvers;
 using Microsoft.AspNetCore.Razor.Language;
-using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.AspNetCore.Razor.Serialization.Json;
-using Microsoft.AspNetCore.Razor.Serialization.MessagePack.Formatters.TagHelpers;
+using Microsoft.AspNetCore.Razor.Serialization.MessagePack.Formatters;
+using Microsoft.AspNetCore.Razor.Serialization.MessagePack.Resolvers;
 
 namespace Microsoft.AspNetCore.Razor.Microbenchmarks.Serialization;
 
@@ -21,6 +22,11 @@ public class TagHelperSerializationBenchmark
     [AllowNull]
     private ArrayBufferWriter<byte> _buffer;
     private ReadOnlyMemory<byte> _tagHelperMessagePackBytes;
+
+    private static readonly MessagePackSerializerOptions s_options = MessagePackSerializerOptions.Standard
+        .WithResolver(CompositeResolver.Create(
+            TagHelperDeltaResultResolver.Instance,
+            StandardResolver.Instance));
 
     [ParamsAllValues]
     public ResourceSet ResourceSet { get; set; }
@@ -105,20 +111,16 @@ public class TagHelperSerializationBenchmark
 
     private static ImmutableArray<TagHelperDescriptor> DeserializeTagHelpers_MessagePack(ReadOnlyMemory<byte> bytes)
     {
-        var reader = new MessagePackReader(bytes);
+        using var cachingOptions = new SerializerCachingOptions(s_options);
 
-        using var _ = TagHelperSerializationCache.Pool.GetPooledObject(out var cache);
-        return TagHelperFormatter.Instance.DeserializeImmutableArray(ref reader, MessagePackSerializerOptions.Standard, cache);
+        return MessagePackSerializer.Deserialize<ImmutableArray<TagHelperDescriptor>>(bytes, cachingOptions);
     }
 
     private ReadOnlyMemory<byte> SerializeTagHelpers_MessagePack(ImmutableArray<TagHelperDescriptor> tagHelpers)
     {
-        var writer = new MessagePackWriter(_buffer);
+        using var cachingOptions = new SerializerCachingOptions(s_options);
 
-        using var _ = TagHelperSerializationCache.Pool.GetPooledObject(out var cache);
-
-        TagHelperFormatter.Instance.SerializeArray(ref writer, tagHelpers, MessagePackSerializerOptions.Standard, cache);
-        writer.Flush();
+        MessagePackSerializer.Serialize(_buffer, tagHelpers, cachingOptions);
 
         return _buffer.WrittenMemory;
     }

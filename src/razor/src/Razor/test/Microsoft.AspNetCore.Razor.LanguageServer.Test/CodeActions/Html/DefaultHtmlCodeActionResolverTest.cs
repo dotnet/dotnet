@@ -46,7 +46,7 @@ public class DefaultHtmlCodeActionResolverTest : LanguageServerTestBase
                     TextDocument = new OptionalVersionedTextDocumentIdentifier { Uri= documentUri, Version = 1 },
                     Edits = new TextEdit[]
                     {
-                        new TextEdit { NewText = "Goo ~~~~~~~~~~~~~~~ Bar", Range = span.AsRange(sourceText) }
+                        new TextEdit { NewText = "Goo ~~~~~~~~~~~~~~~ Bar", Range = span.ToRange(sourceText) }
                     }
                 }
            }

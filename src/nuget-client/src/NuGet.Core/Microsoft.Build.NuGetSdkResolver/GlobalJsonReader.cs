@@ -122,8 +122,8 @@ namespace Microsoft.Build.NuGetSdkResolver
         /// </summary>
         /// <param name="file">The name of the file to search for.</param>
         /// <param name="startingDirectory">The <see cref="DirectoryInfo" /> to look in first and then search the parent directories of.</param>
-        /// <param name="fullPath">Receives a <see cref="FileInfo" /> of the file if one is found, otherwise <c>null</c>.</param>
-        /// <returns><c>true</c> if the specified file was found in the directory or one of its parents, otherwise <c>false</c>.</returns>
+        /// <param name="fullPath">Receives a <see cref="FileInfo" /> of the file if one is found, otherwise <see langword="null" />.</param>
+        /// <returns><see langword="true" /> if the specified file was found in the directory or one of its parents, otherwise <see langword="false" />.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal static bool TryGetPathOfFileAbove(string file, DirectoryInfo startingDirectory, out FileInfo fullPath)
         {
@@ -160,7 +160,7 @@ namespace Microsoft.Build.NuGetSdkResolver
         /// Parses the <c>msbuild-sdks</c> section of the specified JSON string.
         /// </summary>
         /// <param name="json">The JSON to parse as a string.</param>
-        /// <returns>A <see cref="Dictionary{TKey, TValue}" /> containing MSBuild project SDK versions if any were found, otherwise <c>null</c>.</returns>
+        /// <returns>A <see cref="Dictionary{TKey, TValue}" /> containing MSBuild project SDK versions if any were found, otherwise <see langword="null" />.</returns>
         [MethodImpl(MethodImplOptions.NoInlining)]
         private static Dictionary<string, string> ParseMSBuildSdkVersionsFromJson(string json)
         {
@@ -231,7 +231,7 @@ namespace Microsoft.Build.NuGetSdkResolver
         /// </summary>
         /// <param name="globalJsonPath"></param>
         /// <param name="sdkResolverContext">The current <see cref="SdkResolverContext" /> to use.</param>
-        /// <returns>A <see cref="Dictionary{TKey, TValue}" /> containing MSBuild project SDK versions if any were found, otherwise <c>null</c>.</returns>
+        /// <returns>A <see cref="Dictionary{TKey, TValue}" /> containing MSBuild project SDK versions if any were found, otherwise <see langword="null" />.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private Dictionary<string, string> ParseMSBuildSdkVersions(string globalJsonPath, SdkResolverContext sdkResolverContext)
         {

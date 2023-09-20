@@ -7,6 +7,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Net.Sockets;
 using System.Security.Principal;
 using System.Text;
 using System.Threading;
@@ -26,9 +27,10 @@ namespace Test.Utility
     {
         private Task _listenerTask;
         private bool _disposed = false;
+        private AuthenticationSchemes _authenticationSchemes;
+        private HttpListener _listener;
 
         public string BasePath { get; }
-        public HttpListener Listener { get; }
         private PortReserverOfMockServer PortReserver { get; }
         public RouteTable Get { get; }
         public RouteTable Put { get; }
@@ -43,19 +45,13 @@ namespace Test.Utility
         /// <summary>
         /// Initializes an instance of MockServer.
         /// </summary>
-        public MockServer()
+        /// <param name="authenticationSchemes">The optional <see cref="AuthenticationSchemes" /> to use.</param>
+        public MockServer(AuthenticationSchemes authenticationSchemes = AuthenticationSchemes.Anonymous)
         {
+            _authenticationSchemes = authenticationSchemes;
             BasePath = $"/{Guid.NewGuid().ToString("D")}";
 
             PortReserver = new PortReserverOfMockServer(BasePath);
-
-            // tests that cancel downloads and exit will cause the mock server to throw, this should be ignored.
-            Listener = new HttpListener()
-            {
-                IgnoreWriteExceptions = true
-            };
-
-            Listener.Prefixes.Add(PortReserver.BaseUri);
 
             Get = new RouteTable(BasePath);
             Put = new RouteTable(BasePath);
@@ -69,7 +65,35 @@ namespace Test.Utility
         /// </summary>
         public void Start()
         {
-            Listener.Start();
+            int attempts = 1;
+            do
+            {
+                try
+                {
+                    // tests that cancel downloads and exit will cause the mock server to throw, this should be ignored.
+                    _listener = new HttpListener()
+                    {
+                        IgnoreWriteExceptions = true
+                    };
+
+                    _listener.Prefixes.Add(PortReserver.BaseUri);
+                    _listener.AuthenticationSchemes = _authenticationSchemes;
+                    _listener.Start();
+                }
+                catch (Exception)
+                {
+                    _listener = null;
+
+                    if (attempts++ >= 5)
+                    {
+                        throw;
+                    }
+
+                    Thread.Sleep(200);
+                }
+            }
+            while (_listener == null);
+
             _listenerTask = Task.Factory.StartNew(() => HandleRequest());
         }
 
@@ -80,7 +104,7 @@ namespace Test.Utility
         {
             try
             {
-                Listener.Abort();
+                _listener.Abort();
 
                 var task = _listenerTask;
                 _listenerTask = null;
@@ -336,7 +360,12 @@ namespace Test.Utility
             {
                 try
                 {
-                    var context = Listener.GetContext();
+                    if (_listener == null)
+                    {
+                        return;
+                    }
+
+                    var context = _listener.GetContext();
 
                     GenerateResponse(context);
 
@@ -478,6 +507,16 @@ namespace Test.Utility
             {
                 // Closing the http listener
                 Stop();
+
+                try
+                {
+                    _listener?.Close();
+                }
+                catch (SocketException)
+                {
+                }
+
+                _listener = null;
 
                 // Disposing the PortReserver
                 PortReserver.Dispose();

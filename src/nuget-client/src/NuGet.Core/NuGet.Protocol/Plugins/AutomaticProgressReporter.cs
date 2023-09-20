@@ -101,9 +101,9 @@ namespace NuGet.Protocol.Plugins
         /// <param name="interval">A progress interval.</param>
         /// <param name="cancellationToken">A cancellation token.</param>
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="connection" />
-        /// is <c>null</c>.</exception>
+        /// is <see langword="null" />.</exception>
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="request" />
-        /// is <c>null</c>.</exception>
+        /// is <see langword="null" />.</exception>
         /// <exception cref="ArgumentOutOfRangeException">Thrown if <paramref name="interval" />
         /// is either less than <see cref="ProtocolConstants.MinTimeout" /> or greater than
         /// <see cref="ProtocolConstants.MaxTimeout" />.</exception>

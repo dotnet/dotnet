@@ -225,7 +225,7 @@ namespace NuGet.PackageManagement.UI.Test
             Assert.NotNull(lastTelemetryEvent);
             // expect cancelled action because we mocked just enough objects to emit telemetry
             Assert.Equal(NuGetOperationStatus.Cancelled, lastTelemetryEvent[nameof(ActionEventBase.Status)]);
-            Assert.Equal(NuGetOperationType.Install, lastTelemetryEvent[nameof(ActionsTelemetryEvent.OperationType)]);
+            Assert.Equal(NuGetProjectActionType.Install, lastTelemetryEvent[nameof(ActionsTelemetryEvent.OperationType)]);
             Assert.Equal(isSolutionLevel, lastTelemetryEvent[nameof(VSActionsTelemetryEvent.IsSolutionLevel)]);
             Assert.Equal(activeTab, lastTelemetryEvent[nameof(VSActionsTelemetryEvent.Tab)]);
             Assert.Equal(expectedPackageWasTransitive, lastTelemetryEvent[nameof(VSActionsTelemetryEvent.PackageToInstallWasTransitive)]);
@@ -248,7 +248,7 @@ namespace NuGet.PackageManagement.UI.Test
             var actionTelemetryData = new VSActionsTelemetryEvent(
                 operationId,
                 projectIds: new[] { Guid.NewGuid().ToString() },
-                operationType: NuGetOperationType.Install,
+                operationType: NuGetProjectActionType.Install,
                 source: OperationSource.PMC,
                 startTime: DateTimeOffset.Now.AddSeconds(-1),
                 status: NuGetOperationStatus.NoOp,
@@ -323,7 +323,7 @@ namespace NuGet.PackageManagement.UI.Test
             var actionTelemetryData = new VSActionsTelemetryEvent(
                 operationId,
                 projectIds: new[] { Guid.NewGuid().ToString() },
-                operationType: NuGetOperationType.Install,
+                operationType: NuGetProjectActionType.Install,
                 source: OperationSource.PMC,
                 startTime: DateTimeOffset.Now.AddSeconds(-1),
                 status: NuGetOperationStatus.NoOp,
@@ -483,7 +483,7 @@ namespace NuGet.PackageManagement.UI.Test
             Assert.NotNull(lastTelemetryEvent);
             // expect cancelled action because we mocked just enough objects to emit telemetry
             Assert.Equal(NuGetOperationStatus.Cancelled, lastTelemetryEvent[nameof(ActionEventBase.Status)]);
-            Assert.Equal(NuGetOperationType.Install, lastTelemetryEvent[nameof(ActionsTelemetryEvent.OperationType)]);
+            Assert.Equal(NuGetProjectActionType.Install, lastTelemetryEvent[nameof(ActionsTelemetryEvent.OperationType)]);
             Assert.Equal(isSolutionLevel, lastTelemetryEvent[nameof(VSActionsTelemetryEvent.IsSolutionLevel)]);
             Assert.Equal(activeTab, lastTelemetryEvent[nameof(VSActionsTelemetryEvent.Tab)]);
             Assert.Equal(expectedPackageWasTransitive, lastTelemetryEvent[nameof(VSActionsTelemetryEvent.PackageToInstallWasTransitive)]);

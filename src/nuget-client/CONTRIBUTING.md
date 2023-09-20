@@ -2,18 +2,8 @@
 
 ## Prerequisites
 
-- [Visual Studio 2022 17.4 or above](https://www.visualstudio.com)
-  with following workloads:
-  - .NET Core Cross Platform Development
-  - .NET desktop development
-  - Visual Studio extension development.
-  - Desktop development with C++
-- [Windows 10 SDK](https://developer.microsoft.com/windows/downloads/windows-10-sdk/)
-- [.NET 7.0 SDK](https://dotnet.microsoft.com/download/dotnet/7.0)
-- Git
+- [Visual Studio 2022 17.4 or above](https://www.visualstudio.com) with the workloads and components specified in [vsconfig](.vsconfig).
 - Windows Powershell v3.0+
-
-> Note that you can work on the NuGet.Client repo with Visual Studio 2017, but you will be unable to test the Visual Studio extension.
 
 ## Contributing step-by-step
 
@@ -117,6 +107,7 @@ NuGet members may contribute directly to the main remote.
 
 - [Workflow](docs/workflow.md)
 - [Coding Guidelines](docs/coding-guidelines.md)
+- [Localizability](docs/localizability.md)
 - [UI Guidelines](docs/ui-guidelines.md)
 - [Project Overview](docs/project-overview.md)
 - [Debugging](docs/debugging.md)

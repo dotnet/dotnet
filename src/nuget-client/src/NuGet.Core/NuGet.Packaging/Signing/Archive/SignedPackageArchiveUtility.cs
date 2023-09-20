@@ -76,7 +76,7 @@ namespace NuGet.Packaging.Signing
         /// <remarks>Callers should first verify that a package is signed before calling this method.</remarks>
         /// <param name="reader">A binary reader for a signed package.</param>
         /// <returns>A readable stream.</returns>
-        /// <exception cref="ArgumentNullException">Thrown if <paramref name="reader" /> is <c>null</c>.</exception>
+        /// <exception cref="ArgumentNullException">Thrown if <paramref name="reader" /> is <see langword="null" />.</exception>
         /// <exception cref="SignatureException">Thrown if a package signature file is invalid or missing.</exception>
         public static Stream OpenPackageSignatureFileStream(BinaryReader reader)
         {

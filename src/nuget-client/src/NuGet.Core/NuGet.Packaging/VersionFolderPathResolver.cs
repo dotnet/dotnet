@@ -34,8 +34,8 @@ namespace NuGet.Packaging
         /// Initializes a new <see cref="VersionFolderPathResolver" /> class.
         /// </summary>
         /// <param name="rootPath">The packages directory root folder.</param>
-        /// <param name="isLowercase"><c>true</c> if package ID's and versions are made lowercase;
-        /// otherwise <c>false</c>.</param>
+        /// <param name="isLowercase"><see langword="true" /> if package ID's and versions are made lowercase;
+        /// otherwise <see langword="false" />.</param>
         public VersionFolderPathResolver(string rootPath, bool isLowercase)
         {
             RootPath = rootPath;

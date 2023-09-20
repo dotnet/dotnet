@@ -1,0 +1,18 @@
+﻿Source Location: (37:0,37 [53] x:\dir\subdir\Test\TestComponent.cshtml)
+|Microsoft.AspNetCore.Components.Web.RenderMode.Server|
+Generated Location: (884:19,113 [53] )
+|Microsoft.AspNetCore.Components.Web.RenderMode.Server|
+
+Source Location: (115:3,1 [94] x:\dir\subdir\Test\TestComponent.cshtml)
+|
+    [Parameter]public string P1 {get; set;}
+
+    [Parameter]public string P2 {get; set;}
+|
+Generated Location: (1274:31,1 [94] )
+|
+    [Parameter]public string P1 {get; set;}
+
+    [Parameter]public string P2 {get; set;}
+|
+

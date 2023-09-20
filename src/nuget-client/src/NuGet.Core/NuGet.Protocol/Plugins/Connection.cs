@@ -46,7 +46,7 @@ namespace NuGet.Protocol.Plugins
         public ConnectionOptions Options { get; }
 
         /// <summary>
-        /// Gets the negotiated protocol version, or <c>null</c> if not yet connected.
+        /// Gets the negotiated protocol version, or <see langword="null" /> if not yet connected.
         /// </summary>
         public SemanticVersion ProtocolVersion { get; private set; }
 
@@ -57,10 +57,10 @@ namespace NuGet.Protocol.Plugins
         /// <param name="sender">A sender.</param>
         /// <param name="receiver">A receiver.</param>
         /// <param name="options">Connection options.</param>
-        /// <exception cref="ArgumentNullException">Thrown if <paramref name="dispatcher" /> is <c>null</c>.</exception>
-        /// <exception cref="ArgumentNullException">Thrown if <paramref name="sender" /> is <c>null</c>.</exception>
-        /// <exception cref="ArgumentNullException">Thrown if <paramref name="receiver" /> is <c>null</c>.</exception>
-        /// <exception cref="ArgumentNullException">Thrown if <paramref name="options" /> is <c>null</c>.</exception>
+        /// <exception cref="ArgumentNullException">Thrown if <paramref name="dispatcher" /> is <see langword="null" />.</exception>
+        /// <exception cref="ArgumentNullException">Thrown if <paramref name="sender" /> is <see langword="null" />.</exception>
+        /// <exception cref="ArgumentNullException">Thrown if <paramref name="receiver" /> is <see langword="null" />.</exception>
+        /// <exception cref="ArgumentNullException">Thrown if <paramref name="options" /> is <see langword="null" />.</exception>
         public Connection(IMessageDispatcher dispatcher, ISender sender, IReceiver receiver, ConnectionOptions options)
             : this(dispatcher, sender, receiver, options, PluginLogger.DefaultInstance)
         {
@@ -74,11 +74,11 @@ namespace NuGet.Protocol.Plugins
         /// <param name="receiver">A receiver.</param>
         /// <param name="options">Connection options.</param>
         /// <param name="logger">A plugin logger.</param>
-        /// <exception cref="ArgumentNullException">Thrown if <paramref name="dispatcher" /> is <c>null</c>.</exception>
-        /// <exception cref="ArgumentNullException">Thrown if <paramref name="sender" /> is <c>null</c>.</exception>
-        /// <exception cref="ArgumentNullException">Thrown if <paramref name="receiver" /> is <c>null</c>.</exception>
-        /// <exception cref="ArgumentNullException">Thrown if <paramref name="options" /> is <c>null</c>.</exception>
-        /// <exception cref="ArgumentNullException">Thrown if <paramref name="logger" /> is <c>null</c>.</exception>
+        /// <exception cref="ArgumentNullException">Thrown if <paramref name="dispatcher" /> is <see langword="null" />.</exception>
+        /// <exception cref="ArgumentNullException">Thrown if <paramref name="sender" /> is <see langword="null" />.</exception>
+        /// <exception cref="ArgumentNullException">Thrown if <paramref name="receiver" /> is <see langword="null" />.</exception>
+        /// <exception cref="ArgumentNullException">Thrown if <paramref name="options" /> is <see langword="null" />.</exception>
+        /// <exception cref="ArgumentNullException">Thrown if <paramref name="logger" /> is <see langword="null" />.</exception>
         internal Connection(IMessageDispatcher dispatcher, ISender sender, IReceiver receiver, ConnectionOptions options, IPluginLogger logger)
         {
             if (dispatcher == null)
@@ -218,7 +218,7 @@ namespace NuGet.Protocol.Plugins
         /// <param name="message">The message to be sent.</param>
         /// <param name="cancellationToken">A cancellation token.</param>
         /// <returns>A task that represents the asynchronous operation.</returns>
-        /// <exception cref="ArgumentNullException">Thrown if <paramref name="message" /> is <c>null</c>.</exception>
+        /// <exception cref="ArgumentNullException">Thrown if <paramref name="message" /> is <see langword="null" />.</exception>
         /// <exception cref="OperationCanceledException">Thrown if <paramref name="cancellationToken" />
         /// is cancelled.</exception>
         /// <exception cref="InvalidOperationException">Thrown if not connected.</exception>

@@ -1,0 +1,91 @@
+#template sign-wilson-7x
+
+parameters:
+  BuildConfiguration: 'release'
+
+steps:
+- template: template-sign-binary.yml
+  parameters:
+    LibraryName: 'System.IdentityModel.Tokens.Jwt'
+    BuildConfiguration: ${{ parameters.BuildConfiguration }}
+
+- template: template-sign-binary.yml
+  parameters:
+    LibraryName: 'Microsoft.IdentityModel.JsonWebTokens'
+    BuildConfiguration: ${{ parameters.BuildConfiguration }}
+
+- template: template-sign-binary.yml
+  parameters:
+    LibraryName: 'Microsoft.IdentityModel.Logging'
+    BuildConfiguration: ${{ parameters.BuildConfiguration }}
+
+- template: template-sign-binary.yml
+  parameters:
+    LibraryName: 'Microsoft.IdentityModel.Protocols'
+    BuildConfiguration: ${{ parameters.BuildConfiguration }}
+
+- template: template-sign-binary.yml
+  parameters:
+    LibraryName: 'Microsoft.IdentityModel.Protocols.WsFederation'
+    BuildConfiguration: ${{ parameters.BuildConfiguration }}
+
+- template: template-sign-binary.yml
+  parameters:
+    LibraryName: 'Microsoft.IdentityModel.Tokens'
+    BuildConfiguration: ${{ parameters.BuildConfiguration }}
+
+- template: template-sign-binary.yml
+  parameters:
+    LibraryName: 'Microsoft.IdentityModel.Tokens.Saml'
+    BuildConfiguration: ${{ parameters.BuildConfiguration }}
+
+- template: template-sign-binary.yml
+  parameters:
+    LibraryName: 'Microsoft.IdentityModel.Xml'
+    BuildConfiguration: ${{ parameters.BuildConfiguration }}
+
+- template: template-sign-binary.yml
+  parameters:
+    LibraryName: 'Microsoft.IdentityModel.Protocols.OpenIdConnect'
+    BuildConfiguration: ${{ parameters.BuildConfiguration }}
+
+- template: template-sign-binary.yml
+  parameters:
+    LibraryName: 'Microsoft.IdentityModel.Protocols.SignedHttpRequest'
+    BuildConfiguration: ${{ parameters.BuildConfiguration }}
+
+- template: template-sign-binary.yml
+  parameters:
+    LibraryName: 'Microsoft.IdentityModel.KeyVaultExtensions'
+    BuildConfiguration: ${{ parameters.BuildConfiguration }}
+
+- template: template-sign-binary.yml
+  parameters:
+    LibraryName: 'Microsoft.IdentityModel.ManagedKeyVaultSecurityKey'
+    BuildConfiguration: ${{ parameters.BuildConfiguration }}
+
+- template: template-sign-binary.yml
+  parameters:
+    LibraryName: 'Microsoft.IdentityModel.Validators'
+    BuildConfiguration: ${{ parameters.BuildConfiguration }}
+
+- template: template-sign-binary.yml
+  parameters:
+    LibraryName: 'Microsoft.IdentityModel.Abstractions'
+    BuildConfiguration: ${{ parameters.BuildConfiguration }}
+
+- template: template-sign-binary.yml
+  parameters:
+    LibraryName: 'Microsoft.IdentityModel.LoggingExtensions'
+    BuildConfiguration: ${{ parameters.BuildConfiguration }}
+
+- template: template-sign-binary.yml
+  parameters:
+    LibraryName: 'Microsoft.IdentityModel.TestExtensions'
+    BuildConfiguration: ${{ parameters.BuildConfiguration }}
+
+- task: PowerShell@1
+  displayName: 'Verify Signing'
+  inputs:
+    scriptName: build/VerifySigning.ps1
+    arguments: '-buildType ${{ parameters.BuildConfiguration }}'

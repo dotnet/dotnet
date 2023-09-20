@@ -41,21 +41,21 @@ namespace NuGet.Protocol.Plugins
         /// Handles progress notifications for the outbound request.
         /// </summary>
         /// <param name="progress">A progress notification.</param>
-        /// <exception cref="ArgumentNullException">Thrown if <paramref name="progress" /> is <c>null</c>.</exception>
+        /// <exception cref="ArgumentNullException">Thrown if <paramref name="progress" /> is <see langword="null" />.</exception>
         public abstract void HandleProgress(Message progress);
 
         /// <summary>
         /// Handles a response for the outbound request.
         /// </summary>
         /// <param name="response">A response.</param>
-        /// <exception cref="ArgumentNullException">Thrown if <paramref name="response" /> is <c>null</c>.</exception>
+        /// <exception cref="ArgumentNullException">Thrown if <paramref name="response" /> is <see langword="null" />.</exception>
         public abstract void HandleResponse(Message response);
 
         /// <summary>
         /// Handles a fault response for the outbound request.
         /// </summary>
         /// <param name="fault">A fault response.</param>
-        /// <exception cref="ArgumentNullException">Thrown if <paramref name="fault" /> is <c>null</c>.</exception>
+        /// <exception cref="ArgumentNullException">Thrown if <paramref name="fault" /> is <see langword="null" />.</exception>
         public abstract void HandleFault(Message fault);
     }
 }

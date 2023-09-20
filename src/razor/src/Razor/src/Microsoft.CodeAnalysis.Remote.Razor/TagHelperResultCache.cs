@@ -2,14 +2,13 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using System.Collections.Immutable;
-using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Utilities;
 
 namespace Microsoft.CodeAnalysis.Remote.Razor;
 
 internal class TagHelperResultCache
 {
-    private record Entry(int ResultId, ImmutableArray<TagHelperDescriptor> Descriptors);
+    private record Entry(int ResultId, ImmutableArray<Checksum> Checksums);
 
     private readonly MemoryCache<ProjectId, Entry> _projectResultCache;
 
@@ -18,7 +17,7 @@ internal class TagHelperResultCache
         _projectResultCache = new MemoryCache<ProjectId, Entry>(sizeLimit: 50);
     }
 
-    public bool TryGet(ProjectId projectKey, int resultId, out ImmutableArray<TagHelperDescriptor> cachedTagHelpers)
+    public bool TryGet(ProjectId projectKey, int resultId, out ImmutableArray<Checksum> cachedTagHelpers)
     {
         if (!_projectResultCache.TryGetValue(projectKey, out var cachedResult))
         {
@@ -32,7 +31,7 @@ internal class TagHelperResultCache
             return false;
         }
 
-        cachedTagHelpers = cachedResult.Descriptors;
+        cachedTagHelpers = cachedResult.Checksums;
         return true;
     }
 
@@ -48,7 +47,7 @@ internal class TagHelperResultCache
         return true;
     }
 
-    public void Set(ProjectId projectKey, int resultId, ImmutableArray<TagHelperDescriptor> tagHelpers)
+    public void Set(ProjectId projectKey, int resultId, ImmutableArray<Checksum> tagHelpers)
     {
         var cacheEntry = new Entry(resultId, tagHelpers);
         _projectResultCache.Set(projectKey, cacheEntry);

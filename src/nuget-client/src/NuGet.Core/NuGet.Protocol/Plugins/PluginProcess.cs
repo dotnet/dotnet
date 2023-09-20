@@ -42,7 +42,7 @@ namespace NuGet.Protocol.Plugins
         internal string FilePath => _process.MainModule.FileName;
 
         /// <summary>
-        /// Gets the process ID if the process was started; otherwise, <c>null</c>.
+        /// Gets the process ID if the process was started; otherwise, <see langword="null" />.
         /// </summary>
         public int? Id
         {
@@ -69,7 +69,7 @@ namespace NuGet.Protocol.Plugins
         /// Instantiates a new <see cref="PluginProcess" /> class.
         /// </summary>
         /// <param name="startInfo">A plugin process.</param>
-        /// <exception cref="ArgumentNullException">Thrown if <paramref name="startInfo" /> is <c>null</c>.</exception>
+        /// <exception cref="ArgumentNullException">Thrown if <paramref name="startInfo" /> is <see langword="null" />.</exception>
         public PluginProcess(ProcessStartInfo startInfo)
         {
             if (startInfo == null)

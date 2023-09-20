@@ -54,11 +54,11 @@ public class ProjectTests(ITestOutputHelper testOutputHelper) : AbstractRazorEdi
         await TestServices.Editor.WaitForComponentClassificationAsync(ControlledHangMitigatingCancellationToken, count: 3);
 
         // This is a little odd, but there is no "real" way to check this via VS, and one of the most important things this test can do
-        // is ensure that each target framework gets its own project.razor.json file, and doesn't share one from a cache or anything.
+        // is ensure that each target framework gets its own project.razor.bin file, and doesn't share one from a cache or anything.
         Assert.Equal(2, GetProjectRazorJsonFileCount());
 
         int GetProjectRazorJsonFileCount()
-            => Directory.EnumerateFiles(solutionPath, "project.razor.*.json", SearchOption.AllDirectories).Count();
+            => Directory.EnumerateFiles(solutionPath, "project.razor.*.bin", SearchOption.AllDirectories).Count();
     }
 
     [IdeFact]
@@ -110,11 +110,11 @@ public class ProjectTests(ITestOutputHelper testOutputHelper) : AbstractRazorEdi
         await TestServices.Editor.WaitForComponentClassificationAsync(ControlledHangMitigatingCancellationToken, count: 3);
 
         // This is a little odd, but there is no "real" way to check this via VS, and one of the most important things this test can do
-        // is ensure that each target framework gets its own project.razor.json file, and doesn't share one from a cache or anything.
+        // is ensure that each target framework gets its own project.razor.bin file, and doesn't share one from a cache or anything.
         Assert.Equal(2, GetProjectRazorJsonFileCount());
 
         int GetProjectRazorJsonFileCount()
-            => Directory.EnumerateFiles(solutionPath, "project.razor.*.json", SearchOption.AllDirectories).Count();
+            => Directory.EnumerateFiles(solutionPath, "project.razor.*.bin", SearchOption.AllDirectories).Count();
     }
 
     [IdeFact]
@@ -184,8 +184,8 @@ public class ProjectTests(ITestOutputHelper testOutputHelper) : AbstractRazorEdi
 
         await TestServices.SolutionExplorer.CloseSolutionAsync(ControlledHangMitigatingCancellationToken);
 
-        // Clear out the project.razor.json file which ensures our restored file will have to be in the Misc Project
-        var projectRazorJsonFileName = Directory.EnumerateFiles(solutionPath, "project.razor.*.json", SearchOption.AllDirectories).First();
+        // Clear out the project.razor.bin file which ensures our restored file will have to be in the Misc Project
+        var projectRazorJsonFileName = Directory.EnumerateFiles(solutionPath, "project.razor.*.bin", SearchOption.AllDirectories).First();
         File.Delete(projectRazorJsonFileName);
 
         var solutionFileName = Path.Combine(solutionPath, RazorProjectConstants.BlazorSolutionName + ".sln");

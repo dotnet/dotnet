@@ -19,8 +19,8 @@ namespace NuGet.PackageManagement.UI
         /// <param name="addedPackageIds"></param>
         /// <param name="sourceMappingProvider"></param>
         /// <param name="existingPackageSourceMappingSourceItems"></param>
-        /// <param name="countCreatedTopLevelSourceMappings">For Top-Level packages: <c>null</c> if not applicable; 0 if none needed to be added; > 0 is the count of new package source mappings added.</param>
-        /// <param name="countCreatedTransitiveSourceMappings">For Transitive packages: <c>null</c> if not applicable; 0 if none needed to be added; > 0 is the count of new package source mappings added.</param>
+        /// <param name="countCreatedTopLevelSourceMappings">For Top-Level packages: <see langword="null" /> if not applicable; 0 if none needed to be added; > 0 is the count of new package source mappings added.</param>
+        /// <param name="countCreatedTransitiveSourceMappings">For Transitive packages: <see langword="null" /> if not applicable; 0 if none needed to be added; > 0 is the count of new package source mappings added.</param>
         internal static void ConfigureNewPackageSourceMapping(
             UserAction? userAction,
             IReadOnlyList<string>? addedPackageIds,

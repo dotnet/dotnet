@@ -44,7 +44,7 @@ public class RazorProjectInfoPublisherTest : LanguageServerTestBase
 
         var initialProjectSnapshot = CreateProjectSnapshot(@"C:\path\to\project.csproj", new ProjectWorkspaceState(tagHelpers, CodeAnalysis.CSharp.LanguageVersion.Preview));
         var expectedProjectSnapshot = CreateProjectSnapshot(@"C:\path\to\project.csproj", new ProjectWorkspaceState(ImmutableArray<TagHelperDescriptor>.Empty, CodeAnalysis.CSharp.LanguageVersion.Preview));
-        var expectedConfigurationFilePath = @"C:\path\to\obj\bin\Debug\project.razor.json";
+        var expectedConfigurationFilePath = @"C:\path\to\obj\bin\Debug\project.razor.bin";
         var publisher = new TestRazorProjectInfoPublisher(
             _projectConfigurationFilePathStore,
             onSerializeToFile: (snapshot, configurationFilePath) =>
@@ -132,7 +132,7 @@ public class RazorProjectInfoPublisherTest : LanguageServerTestBase
         _projectSnapshotManager.ProjectWorkspaceStateChanged(hostProject.Key, ProjectWorkspaceState.Default);
         _projectSnapshotManager.DocumentAdded(hostProject.Key, hostDocument, new EmptyTextLoader(hostDocument.FilePath));
         var projectSnapshot = _projectSnapshotManager.GetProjects()[0];
-        var expectedConfigurationFilePath = @"C:\path\to\obj\bin\Debug\project.razor.json";
+        var expectedConfigurationFilePath = @"C:\path\to\obj\bin\Debug\project.razor.bin";
         _projectConfigurationFilePathStore.Set(projectSnapshot.Key, expectedConfigurationFilePath);
         var publisher = new TestRazorProjectInfoPublisher(
             _projectConfigurationFilePathStore,
@@ -167,7 +167,7 @@ public class RazorProjectInfoPublisherTest : LanguageServerTestBase
         // Arrange
         var serializationSuccessful = false;
         var projectSnapshot = CreateProjectSnapshot(@"C:\path\to\project.csproj", new ProjectWorkspaceState(ImmutableArray<TagHelperDescriptor>.Empty, CodeAnalysis.CSharp.LanguageVersion.CSharp7_3));
-        var expectedConfigurationFilePath = @"C:\path\to\obj\bin\Debug\project.razor.json";
+        var expectedConfigurationFilePath = @"C:\path\to\obj\bin\Debug\project.razor.bin";
         var publisher = new TestRazorProjectInfoPublisher(
             _projectConfigurationFilePathStore,
             onSerializeToFile: (snapshot, configurationFilePath) =>
@@ -200,7 +200,7 @@ public class RazorProjectInfoPublisherTest : LanguageServerTestBase
         var serializationSuccessful = false;
         var projectSnapshot = CreateProjectSnapshot(@"C:\path\to\project.csproj", new ProjectWorkspaceState(ImmutableArray<TagHelperDescriptor>.Empty, CodeAnalysis.CSharp.LanguageVersion.Default));
         var changedProjectSnapshot = CreateProjectSnapshot(@"C:\path\to\project.csproj", new ProjectWorkspaceState(ImmutableArray<TagHelperDescriptor>.Empty, CodeAnalysis.CSharp.LanguageVersion.CSharp8));
-        var expectedConfigurationFilePath = @"C:\path\to\obj\bin\Debug\project.razor.json";
+        var expectedConfigurationFilePath = @"C:\path\to\obj\bin\Debug\project.razor.bin";
         var aboutToChange = false;
         var publisher = new TestRazorProjectInfoPublisher(
             _projectConfigurationFilePathStore,
@@ -246,7 +246,7 @@ public class RazorProjectInfoPublisherTest : LanguageServerTestBase
         // Arrange
         var attemptedToSerialize = false;
         var projectSnapshot = CreateProjectSnapshot(@"C:\path\to\project.csproj");
-        var expectedConfigurationFilePath = @"C:\path\to\obj\bin\Debug\project.razor.json";
+        var expectedConfigurationFilePath = @"C:\path\to\obj\bin\Debug\project.razor.bin";
         var publisher = new TestRazorProjectInfoPublisher(
             _projectConfigurationFilePathStore,
             onSerializeToFile: (snapshot, configurationFilePath) => attemptedToSerialize = true)
@@ -276,7 +276,7 @@ public class RazorProjectInfoPublisherTest : LanguageServerTestBase
         var serializationSuccessful = false;
         var firstSnapshot = CreateProjectSnapshot(@"C:\path\to\project.csproj");
         var secondSnapshot = CreateProjectSnapshot(@"C:\path\to\project.csproj", new[] { @"C:\path\to\file.cshtml" });
-        var expectedConfigurationFilePath = @"C:\path\to\obj\bin\Debug\project.razor.json";
+        var expectedConfigurationFilePath = @"C:\path\to\obj\bin\Debug\project.razor.bin";
         var publisher = new TestRazorProjectInfoPublisher(
             _projectConfigurationFilePathStore,
             onSerializeToFile: (snapshot, configurationFilePath) =>
@@ -309,7 +309,7 @@ public class RazorProjectInfoPublisherTest : LanguageServerTestBase
         var serializationSuccessful = false;
         var firstSnapshot = CreateProjectSnapshot(@"C:\path\to\project.csproj");
         var secondSnapshot = CreateProjectSnapshot(@"C:\path\to\project.csproj", new[] { @"C:\path\to\file.cshtml" });
-        var expectedConfigurationFilePath = @"C:\path\to\objbin\Debug\project.razor.json";
+        var expectedConfigurationFilePath = @"C:\path\to\objbin\Debug\project.razor.bin";
         var publisher = new TestRazorProjectInfoPublisher(
             _projectConfigurationFilePathStore,
             onSerializeToFile: (snapshot, configurationFilePath) =>
@@ -348,7 +348,7 @@ public class RazorProjectInfoPublisherTest : LanguageServerTestBase
         var secondSnapshot = CreateProjectSnapshot(@"C:\path\to\project.csproj", new ProjectWorkspaceState(tagHelpers, CodeAnalysis.CSharp.LanguageVersion.CSharp8), new string[]{
             "FileName.razor"
         });
-        var expectedConfigurationFilePath = @"C:\path\to\obj\bin\Debug\project.razor.json";
+        var expectedConfigurationFilePath = @"C:\path\to\obj\bin\Debug\project.razor.bin";
         var publisher = new TestRazorProjectInfoPublisher(
             _projectConfigurationFilePathStore,
             onSerializeToFile: (snapshot, configurationFilePath) =>
@@ -396,7 +396,7 @@ public class RazorProjectInfoPublisherTest : LanguageServerTestBase
         // Arrange
         var serializationSuccessful = false;
         var omniSharpProjectSnapshot = CreateProjectSnapshot(@"C:\path\to\project.csproj");
-        var expectedConfigurationFilePath = @"C:\path\to\obj\bin\Debug\project.razor.json";
+        var expectedConfigurationFilePath = @"C:\path\to\obj\bin\Debug\project.razor.bin";
         var publisher = new TestRazorProjectInfoPublisher(
             _projectConfigurationFilePathStore,
             onSerializeToFile: (snapshot, configurationFilePath) =>
@@ -423,7 +423,7 @@ public class RazorProjectInfoPublisherTest : LanguageServerTestBase
     {
         // Arrange
         var serializationSuccessful = false;
-        var expectedConfigurationFilePath = @"C:\path\to\obj\bin\Debug\project.razor.json";
+        var expectedConfigurationFilePath = @"C:\path\to\obj\bin\Debug\project.razor.bin";
 
         var publisher = new TestRazorProjectInfoPublisher(
             _projectConfigurationFilePathStore,
@@ -457,7 +457,7 @@ public class RazorProjectInfoPublisherTest : LanguageServerTestBase
     {
         // Arrange
         var serializationSuccessful = false;
-        var expectedConfigurationFilePath = @"C:\path\to\obj\bin\Debug\project.razor.json";
+        var expectedConfigurationFilePath = @"C:\path\to\obj\bin\Debug\project.razor.bin";
 
         var publisher = new TestRazorProjectInfoPublisher(
             _projectConfigurationFilePathStore,
@@ -506,7 +506,7 @@ public class RazorProjectInfoPublisherTest : LanguageServerTestBase
     {
         // Arrange
         var serializationSuccessful = false;
-        var expectedConfigurationFilePath = @"C:\path\to\obj\bin\Debug\project.razor.json";
+        var expectedConfigurationFilePath = @"C:\path\to\obj\bin\Debug\project.razor.bin";
 
         var publisher = new TestRazorProjectInfoPublisher(
             _projectConfigurationFilePathStore,

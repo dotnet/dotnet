@@ -42,9 +42,9 @@ namespace NuGet.Protocol.Plugins
         /// to reset the request timeout.</param>
         /// <param name="cancellationToken">A cancellation token.</param>
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="connection" />
-        /// is <c>null</c>.</exception>
+        /// is <see langword="null" />.</exception>
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="request" />
-        /// is <c>null</c>.</exception>
+        /// is <see langword="null" />.</exception>
         /// <exception cref="OperationCanceledException">Thrown if <paramref name="cancellationToken" />
         /// is cancelled.</exception>
         public OutboundRequestContext(
@@ -68,13 +68,13 @@ namespace NuGet.Protocol.Plugins
         /// <param name="cancellationToken">A cancellation token.</param>
         /// <param name="logger">A plugin logger.</param>
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="connection" />
-        /// is <c>null</c>.</exception>
+        /// is <see langword="null" />.</exception>
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="request" />
-        /// is <c>null</c>.</exception>
+        /// is <see langword="null" />.</exception>
         /// <exception cref="OperationCanceledException">Thrown if <paramref name="cancellationToken" />
         /// is cancelled.</exception>
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="logger" />
-        /// is <c>null</c>.</exception>
+        /// is <see langword="null" />.</exception>
         internal OutboundRequestContext(
             IConnection connection,
             Message request,
@@ -146,7 +146,7 @@ namespace NuGet.Protocol.Plugins
         /// Handles progress notifications for the outbound request.
         /// </summary>
         /// <param name="progress">A progress notification.</param>
-        /// <exception cref="ArgumentNullException">Thrown if <paramref name="progress" /> is <c>null</c>.</exception>
+        /// <exception cref="ArgumentNullException">Thrown if <paramref name="progress" /> is <see langword="null" />.</exception>
         public override void HandleProgress(Message progress)
         {
             if (progress == null)
@@ -166,7 +166,7 @@ namespace NuGet.Protocol.Plugins
         /// Handles a response for the outbound request.
         /// </summary>
         /// <param name="response">A response.</param>
-        /// <exception cref="ArgumentNullException">Thrown if <paramref name="response" /> is <c>null</c>.</exception>
+        /// <exception cref="ArgumentNullException">Thrown if <paramref name="response" /> is <see langword="null" />.</exception>
         public override void HandleResponse(Message response)
         {
             if (response == null)
@@ -183,7 +183,7 @@ namespace NuGet.Protocol.Plugins
         /// Handles a fault response for the outbound request.
         /// </summary>
         /// <param name="fault">A fault response.</param>
-        /// <exception cref="ArgumentNullException">Thrown if <paramref name="fault" /> is <c>null</c>.</exception>
+        /// <exception cref="ArgumentNullException">Thrown if <paramref name="fault" /> is <see langword="null" />.</exception>
         public override void HandleFault(Message fault)
         {
             if (fault == null)

@@ -39,12 +39,11 @@ namespace NuGet.Commands
         private static IReadOnlyList<IVulnerabilityInformationProvider> CreateVulnerabilityInfoProviders(IReadOnlyList<IRemoteDependencyProvider> remoteProviders)
         {
             List<IVulnerabilityInformationProvider> providers = new(remoteProviders.Count);
-            using var sourceCacheContext = new SourceCacheContext();
             for (int i = 0; i < remoteProviders.Count; i++)
             {
                 if (remoteProviders[i].SourceRepository != null)
                 {
-                    providers.Add(new VulnerabilityInformationProvider(remoteProviders[i].SourceRepository, sourceCacheContext, NullLogger.Instance));
+                    providers.Add(new VulnerabilityInformationProvider(remoteProviders[i].SourceRepository, NullLogger.Instance));
                 }
             }
             return providers;
@@ -151,7 +150,7 @@ namespace NuGet.Commands
             var vulnerabilityInfoProviders = new List<IVulnerabilityInformationProvider>(remoteProviders.Count);
             foreach (SourceRepository source in sources)
             {
-                var provider = new VulnerabilityInformationProvider(source, cacheContext, log);
+                var provider = new VulnerabilityInformationProvider(source, log);
                 vulnerabilityInfoProviders.Add(provider);
             }
 

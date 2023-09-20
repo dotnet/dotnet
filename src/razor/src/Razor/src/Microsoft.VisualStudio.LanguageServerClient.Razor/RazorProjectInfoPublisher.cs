@@ -7,18 +7,16 @@ using System.ComponentModel.Composition;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Razor.Serialization.Json.Converters;
 using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Razor.Workspaces.ProjectSystem;
-using Newtonsoft.Json;
 using Shared = System.Composition.SharedAttribute;
 
 namespace Microsoft.VisualStudio.LanguageServerClient.Razor;
 
 /// <summary>
-/// Publishes project.razor.json files.
+/// Publishes project.razor.bin files.
 /// </summary>
 [Shared]
 [Export(typeof(IProjectSnapshotChangeTrigger))]
@@ -37,7 +35,6 @@ internal class RazorProjectInfoPublisher : IProjectSnapshotChangeTrigger
     private readonly object _pendingProjectPublishesLock;
     private readonly object _publishLock;
 
-    private readonly JsonSerializer _serializer = new();
     private ProjectSnapshotManagerBase? _projectSnapshotManager;
     private bool _documentsProcessed = false;
 
@@ -82,11 +79,6 @@ internal class RazorProjectInfoPublisher : IProjectSnapshotChangeTrigger
         _lspEditorFeatureDetector = lSPEditorFeatureDetector;
         _projectConfigurationFilePathStore = projectConfigurationFilePathStore;
         _logger = logger;
-
-#if DEBUG
-        _serializer.Formatting = Formatting.Indented;
-#endif
-        _serializer.Converters.Add(RazorProjectInfoJsonConverter.Instance);
     }
 
     // Internal settable for testing
@@ -267,11 +259,11 @@ internal class RazorProjectInfoPublisher : IProjectSnapshotChangeTrigger
         }
     }
 
-    protected virtual void SerializeToFile(IProjectSnapshot projectSnapshot, string publishFilePath)
+    protected virtual void SerializeToFile(IProjectSnapshot projectSnapshot, string configurationFilePath)
     {
         // We need to avoid having an incomplete file at any point, but our
         // project configuration file is large enough that it will be written as multiple operations.
-        var tempFilePath = string.Concat(publishFilePath, TempFileExt);
+        var tempFilePath = string.Concat(configurationFilePath, TempFileExt);
         var tempFileInfo = new FileInfo(tempFilePath);
 
         if (tempFileInfo.Exists)
@@ -282,19 +274,19 @@ internal class RazorProjectInfoPublisher : IProjectSnapshotChangeTrigger
 
         // This needs to be in explicit brackets because the operation needs to be completed
         // by the time we move the tempfile into its place
-        using (var writer = tempFileInfo.CreateText())
+        using (var stream = tempFileInfo.Create())
         {
-            var projectInfo = projectSnapshot.ToRazorProjectInfo(publishFilePath);
-            _serializer.Serialize(writer, projectInfo);
+            var projectInfo = projectSnapshot.ToRazorProjectInfo(configurationFilePath);
+            projectInfo.SerializeTo(stream);
         }
 
-        var fileInfo = new FileInfo(publishFilePath);
+        var fileInfo = new FileInfo(configurationFilePath);
         if (fileInfo.Exists)
         {
             fileInfo.Delete();
         }
 
-        File.Move(tempFilePath, publishFilePath);
+        File.Move(tempFilePath, configurationFilePath);
     }
 
     protected virtual bool FileExists(string file)

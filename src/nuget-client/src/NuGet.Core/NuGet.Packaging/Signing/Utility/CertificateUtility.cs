@@ -302,8 +302,8 @@ namespace NuGet.Packaging.Signing
         /// additional information (e.g.:  the issuer's certificate).  This method is not a guaranteed offline
         /// check.</remarks>
         /// <param name="certificate">The certificate to check.</param>
-        /// <returns><c>true</c> if the certificate is self-issued; otherwise, <c>false</c>.</returns>
-        /// <exception cref="ArgumentNullException">Thrown if <paramref name="certificate" /> is <c>null</c>.</exception>
+        /// <returns><see langword="true" /> if the certificate is self-issued; otherwise, <see langword="false" />.</returns>
+        /// <exception cref="ArgumentNullException">Thrown if <paramref name="certificate" /> is <see langword="null" />.</exception>
         public static bool IsSelfIssued(X509Certificate2 certificate)
         {
             if (certificate == null)

@@ -63,6 +63,12 @@ internal ref struct HashCodeCombiner
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public void Add<T>(ImmutableArray<T> array)
+    {
+        Add(array, EqualityComparer<T>.Default);
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static HashCodeCombiner Start()
     {
         return new HashCodeCombiner(0x1505L);

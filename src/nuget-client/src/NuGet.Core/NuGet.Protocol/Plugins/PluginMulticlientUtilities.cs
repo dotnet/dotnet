@@ -31,9 +31,9 @@ namespace NuGet.Protocol.Plugins
         /// <param name="cancellationToken">A cancellation token.</param>
         /// <returns>A task that represents the asynchronous operation.</returns>
         /// <exception cref="ArgumentException">Thrown if <paramref name="key" />
-        /// is either <c>null</c> or an empty string.</exception>
+        /// is either <see langword="null" /> or an empty string.</exception>
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="taskFunc" />
-        /// is either <c>null</c>.</exception>
+        /// is either <see langword="null" />.</exception>
         /// <exception cref="OperationCanceledException">Thrown if <paramref name="cancellationToken" />
         /// is cancelled.</exception>
         public async Task DoOncePerPluginLifetimeAsync(

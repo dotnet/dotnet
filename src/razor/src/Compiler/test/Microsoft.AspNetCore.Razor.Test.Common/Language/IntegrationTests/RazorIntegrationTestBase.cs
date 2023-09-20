@@ -225,6 +225,8 @@ public class RazorIntegrationTestBase
             baseCompilation = baseCompilation.WithOptions(baseCompilation.Options.WithNullableContextOptions(NullableContextOptions.Enable));
         }
 
+        configuration = configuration ?? this.Configuration;
+
         if (UseTwoPhaseCompilation)
         {
             // The first phase won't include any metadata references for component discovery. This mirrors

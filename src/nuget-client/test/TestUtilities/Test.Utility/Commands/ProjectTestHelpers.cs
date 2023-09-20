@@ -25,7 +25,7 @@ namespace NuGet.Commands.Test
             RestoreArgs restoreContext,
             params PackageSpec[] projects)
         {
-            var dgSpec = GetDGSpec(projects);
+            var dgSpec = GetDGSpecForFirstProject(projects);
 
             var dgProvider = new DependencyGraphSpecRequestProvider(
                 new RestoreCommandProvidersCache(),
@@ -38,20 +38,14 @@ namespace NuGet.Commands.Test
         /// <summary>
         /// Create a dg file for the specs. Restore only the first one.
         /// </summary>
-        public static DependencyGraphSpec GetDGSpec(params PackageSpec[] projects)
+        public static DependencyGraphSpec GetDGSpecForFirstProject(params PackageSpec[] projects)
         {
             var dgSpec = new DependencyGraphSpec();
-
-            var project = EnsureRestoreMetadata(projects.First());
-
-            dgSpec.AddProject(project);
-            dgSpec.AddRestore(project.RestoreMetadata.ProjectUniqueName);
-
-            foreach (var child in projects.Skip(1))
+            foreach (var project in projects)
             {
-                dgSpec.AddProject(EnsureRestoreMetadata(child));
+                dgSpec.AddProject(project);
             }
-
+            dgSpec.AddRestore(projects[0].RestoreMetadata.ProjectUniqueName);
             return dgSpec;
         }
 
@@ -60,7 +54,7 @@ namespace NuGet.Commands.Test
         /// </summary>
         /// <param name="projects"></param>
         /// <returns></returns>
-        public static DependencyGraphSpec GetDGSpecFromPackageSpecs(params PackageSpec[] projects)
+        public static DependencyGraphSpec GetDGSpecForAllProjects(params PackageSpec[] projects)
         {
             var dgSpec = new DependencyGraphSpec();
             foreach (var project in projects)
@@ -73,20 +67,6 @@ namespace NuGet.Commands.Test
                 }
             }
             return dgSpec;
-        }
-
-        /// <summary>
-        /// Add restore metadata only if not already set.
-        /// Sets the project style to PackageReference.
-        /// </summary>
-        public static PackageSpec EnsureRestoreMetadata(this PackageSpec spec)
-        {
-            if (string.IsNullOrEmpty(spec.RestoreMetadata?.ProjectUniqueName))
-            {
-                return spec.WithTestRestoreMetadata();
-            }
-
-            return spec;
         }
 
         /// <summary>
@@ -212,37 +192,15 @@ namespace NuGet.Commands.Test
         }
 
         /// <summary>
-        /// Creates a restore request, with the only source being the source from the <paramref name="pathContext"/>.
+        /// Creates a restore request for the first project in the <paramref name="projects"/> list. If <see cref="ProjectRestoreMetadata.Sources"/> has any values, it is used for creating the providers, otherwise <see cref="SimpleTestPathContext.PackageSource"/> from <paramref name="pathContext"/> will be used.
         /// </summary>
-        /// <param name="spec"></param>
-        /// <param name="pathContext"></param>
-        /// <param name="logger"></param>
-        /// <returns></returns>
-        public static TestRestoreRequest CreateRestoreRequest(PackageSpec spec, SimpleTestPathContext pathContext, ILogger logger)
+        public static TestRestoreRequest CreateRestoreRequest(SimpleTestPathContext pathContext, ILogger logger, params PackageSpec[] projects)
         {
-            var sources = new List<PackageSource> { new PackageSource(pathContext.PackageSource) };
-            var dgSpec = new DependencyGraphSpec();
-            dgSpec.AddProject(spec);
-            dgSpec.AddRestore(spec.RestoreMetadata.ProjectUniqueName);
-
-            return new TestRestoreRequest(spec, sources, pathContext.UserPackagesFolder, logger)
-            {
-                LockFilePath = Path.Combine(spec.FilePath, LockFileFormat.AssetsFileName),
-                DependencyGraphSpec = dgSpec,
-            };
-        }
-
-        public static TestRestoreRequest CreateRestoreRequest(PackageSpec projectToRestore, IEnumerable<PackageSpec> packageSpecsClosure, SimpleTestPathContext pathContext, ILogger logger)
-        {
-            var sources = new List<PackageSource> { new PackageSource(pathContext.PackageSource) };
-            var dgSpec = new DependencyGraphSpec();
-            dgSpec.AddProject(projectToRestore);
-            dgSpec.AddRestore(projectToRestore.RestoreMetadata.ProjectUniqueName);
-
-            foreach (var spec in packageSpecsClosure)
-            {
-                dgSpec.AddProject(spec);
-            }
+            DependencyGraphSpec dgSpec = GetDGSpecForFirstProject(projects);
+            var projectToRestore = projects[0];
+            var sources = projectToRestore.RestoreMetadata.Sources.Any() ?
+                       projectToRestore.RestoreMetadata.Sources.ToList() :
+                       new List<PackageSource> { new PackageSource(pathContext.PackageSource) };
 
             var externalClosure = DependencyGraphSpecRequestProvider.GetExternalClosure(dgSpec, projectToRestore.RestoreMetadata.ProjectUniqueName).ToList();
 
@@ -269,31 +227,6 @@ namespace NuGet.Commands.Test
                 ?? Enumerable.Empty<CompatibilityProfile>();
 
             return new RuntimeGraph(runtimes, supports);
-        }
-
-        public static PackageSpec WithPackagesConfigRestoreMetadata(this PackageSpec spec)
-        {
-            var updated = spec.Clone();
-            var packageSpecFile = new FileInfo(spec.FilePath);
-            var projectDir = packageSpecFile.Directory.FullName;
-
-            var projectPath = Path.Combine(projectDir, spec.Name + ".csproj");
-            updated.FilePath = projectPath;
-
-            updated.RestoreMetadata = new PackagesConfigProjectRestoreMetadata();
-            updated.RestoreMetadata.OutputPath = projectDir;
-            updated.RestoreMetadata.ProjectStyle = ProjectStyle.PackagesConfig;
-            updated.RestoreMetadata.ProjectName = spec.Name;
-            updated.RestoreMetadata.ProjectUniqueName = projectPath;
-            updated.RestoreMetadata.ProjectPath = projectPath;
-            updated.RestoreMetadata.ConfigFilePaths = new List<string>();
-            (updated.RestoreMetadata as PackagesConfigProjectRestoreMetadata).PackagesConfigPath = Path.GetFullPath(Path.Combine(projectDir, "../packages"));
-
-            foreach (var framework in updated.TargetFrameworks)
-            {
-                updated.RestoreMetadata.TargetFrameworks.Add(new ProjectRestoreMetadataFrameworkInfo(framework.FrameworkName));
-            }
-            return updated;
         }
 
         /// <summary>
@@ -380,10 +313,9 @@ namespace NuGet.Commands.Test
             return actualAssetTargetFallback;
         }
 
-        private static PackageSpec GetPackageSpecWithProjectNameAndSpec(string projectName, string rootPath, string spec)
+        public static PackageSpec GetPackageSpecWithProjectNameAndSpec(string projectName, string rootPath, string spec)
         {
-            var packageSpec = JsonPackageSpecReader.GetPackageSpec(spec, projectName, Path.Combine(rootPath, projectName, projectName)).WithTestRestoreMetadata();
-            return packageSpec;
+            return JsonPackageSpecReader.GetPackageSpec(spec, projectName, Path.Combine(rootPath, projectName, projectName)).WithTestRestoreMetadata();
         }
 
         public static PackageSpec GetPackagesConfigPackageSpec(string projectName, string rootPath = @"C:\", string framework = "net472")
@@ -399,7 +331,28 @@ namespace NuGet.Commands.Test
                 }";
 
             var spec = referenceSpec.Replace("TARGET_FRAMEWORK", framework);
-            return JsonPackageSpecReader.GetPackageSpec(spec, projectName, Path.Combine(rootPath, projectName, projectName)).WithPackagesConfigRestoreMetadata();
+            var packageSpec = JsonPackageSpecReader.GetPackageSpec(spec, projectName, Path.Combine(rootPath, projectName, projectName));
+
+            var packageSpecFile = new FileInfo(packageSpec.FilePath);
+            var projectDir = packageSpecFile.Directory.FullName;
+
+            var projectPath = Path.Combine(projectDir, packageSpec.Name + ".csproj");
+            packageSpec.FilePath = projectPath;
+
+            packageSpec.RestoreMetadata = new PackagesConfigProjectRestoreMetadata();
+            packageSpec.RestoreMetadata.OutputPath = projectDir;
+            packageSpec.RestoreMetadata.ProjectStyle = ProjectStyle.PackagesConfig;
+            packageSpec.RestoreMetadata.ProjectName = packageSpec.Name;
+            packageSpec.RestoreMetadata.ProjectUniqueName = projectPath;
+            packageSpec.RestoreMetadata.ProjectPath = projectPath;
+            packageSpec.RestoreMetadata.ConfigFilePaths = new List<string>();
+            (packageSpec.RestoreMetadata as PackagesConfigProjectRestoreMetadata).PackagesConfigPath = Path.GetFullPath(Path.Combine(projectDir, "../packages"));
+
+            foreach (var targetFramework in packageSpec.TargetFrameworks)
+            {
+                packageSpec.RestoreMetadata.TargetFrameworks.Add(new ProjectRestoreMetadataFrameworkInfo(targetFramework.FrameworkName));
+            }
+            return packageSpec;
         }
     }
 }

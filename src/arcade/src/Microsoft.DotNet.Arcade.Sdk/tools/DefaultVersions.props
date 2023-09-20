@@ -85,6 +85,7 @@
     <MicrosoftVSSDKBuildToolsVersion Condition="'$(MicrosoftVSSDKBuildToolsVersion)' == ''">16.9.1050</MicrosoftVSSDKBuildToolsVersion>
     <MicrosoftDotnetNuGetRepackTasksVersion Condition="'$(MicrosoftDotnetNuGetRepackTasksVersion)' == ''">$(ArcadeSdkVersion)</MicrosoftDotnetNuGetRepackTasksVersion>
     <MicrosoftDotNetSignToolVersion Condition="'$(MicrosoftDotNetSignToolVersion)' == ''">$(ArcadeSdkVersion)</MicrosoftDotNetSignToolVersion>
+    <MicrosoftDotNetTarVersion Condition="'$(MicrosoftDotNetTarVersion)' == ''">$(ArcadeSdkVersion)</MicrosoftDotNetTarVersion>
     <MicrosoftTestPlatformVersion Condition="'$(MicrosoftTestPlatformVersion)' == ''">16.5.0</MicrosoftTestPlatformVersion>
     <XUnitVersion Condition="'$(XUnitVersion)' == ''">2.4.2</XUnitVersion>
     <XUnitAnalyzersVersion Condition="'$(XUnitAnalyzersVersion)' == ''">1.1.0</XUnitAnalyzersVersion>

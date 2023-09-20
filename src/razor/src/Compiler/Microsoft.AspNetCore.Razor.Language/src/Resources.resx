@@ -595,4 +595,7 @@
   <data name="Cannot_add_item_with_key_0_to_an_existing_1" xml:space="preserve">
     <value>Cannot add item with key '{0}' to an existing '{1}'.</value>
   </data>
+  <data name="DirectiveExpectsIdentifierOrExpression" xml:space="preserve">
+    <value>The '{0}' directive expects an identifier or explicit razor expression ("@()").</value>
+  </data>
 </root>

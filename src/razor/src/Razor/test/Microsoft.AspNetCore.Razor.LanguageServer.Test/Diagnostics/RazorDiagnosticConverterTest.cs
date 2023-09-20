@@ -73,7 +73,7 @@ public class RazorDiagnosticConverterTest
         var range = RazorDiagnosticConverter.ConvertSpanToRange(sourceSpan, sourceText);
 
         // Assert
-        Assert.Equal("lo W", sourceText.GetSubTextString(range.AsTextSpan(sourceText)));
+        Assert.Equal("lo W", sourceText.GetSubTextString(range.ToTextSpan(sourceText)));
         Assert.Equal(expectedRange, range);
     }
 
@@ -93,7 +93,7 @@ public class RazorDiagnosticConverterTest
         var range = RazorDiagnosticConverter.ConvertSpanToRange(sourceSpan, sourceText);
 
         // Assert
-        Assert.Equal("", sourceText.GetSubTextString(range.AsTextSpan(sourceText)));
+        Assert.Equal("", sourceText.GetSubTextString(range.ToTextSpan(sourceText)));
         Assert.Equal(expectedRange, range);
     }
 
@@ -113,7 +113,7 @@ public class RazorDiagnosticConverterTest
         var range = RazorDiagnosticConverter.ConvertSpanToRange(sourceSpan, sourceText);
 
         // Assert
-        Assert.Equal("", sourceText.GetSubTextString(range.AsTextSpan(sourceText)));
+        Assert.Equal("", sourceText.GetSubTextString(range.ToTextSpan(sourceText)));
         Assert.Equal(expectedRange, range);
     }
 
@@ -133,7 +133,7 @@ public class RazorDiagnosticConverterTest
         var range = RazorDiagnosticConverter.ConvertSpanToRange(sourceSpan, sourceText);
 
         // Assert
-        Assert.Equal("World", sourceText.GetSubTextString(range.AsTextSpan(sourceText)));
+        Assert.Equal("World", sourceText.GetSubTextString(range.ToTextSpan(sourceText)));
         Assert.Equal(expectedRange, range);
     }
 

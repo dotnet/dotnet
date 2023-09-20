@@ -459,6 +459,17 @@ internal static class RazorDiagnosticFactory
     {
         return RazorDiagnostic.Create(Parsing_UnexpectedIdentifier, location, content, string.Join(", ", options));
     }
+
+    internal static readonly RazorDiagnosticDescriptor Parsing_DirectiveExpectsIdentifierOrExpression =
+        new RazorDiagnosticDescriptor(
+            $"{DiagnosticPrefix}1041",
+            () => Resources.DirectiveExpectsIdentifierOrExpression,
+            RazorDiagnosticSeverity.Error);
+    public static RazorDiagnostic CreateParsing_DirectiveExpectsIdentifierOrExpression(SourceSpan location, string directiveName)
+    {
+        return RazorDiagnostic.Create(Parsing_DirectiveExpectsIdentifierOrExpression, location, directiveName);
+    }
+
     #endregion
 
     #region Semantic Errors

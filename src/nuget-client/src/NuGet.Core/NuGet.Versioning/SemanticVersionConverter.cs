@@ -18,7 +18,7 @@ namespace NuGet.Versioning
         /// </summary>
         /// <param name="context">An <see cref="ITypeDescriptorContext"/> that provides a format context.</param>
         /// <param name="sourceType">A <see cref="Type"/> that represents the type you wish to convert from.</param>
-        /// <returns><c>true</c> if this object can perform the conversion; otherwise, <c>false</c>.</returns>
+        /// <returns><see langword="true" /> if this object can perform the conversion; otherwise, <see langword="false" />.</returns>
         public override bool CanConvertFrom(ITypeDescriptorContext? context, Type sourceType)
         {
             return sourceType == typeof(string) || base.CanConvertFrom(context, sourceType);
@@ -53,7 +53,7 @@ namespace NuGet.Versioning
         /// </summary>
         /// <param name="context">An <see cref="ITypeDescriptorContext"/> that provides a format context.</param>
         /// <param name="destinationType">A <see cref="Type"/> that represents the type you wish to convert to.</param>
-        /// <returns><c>true</c> if this object can perform the conversion; otherwise, <c>false</c>.</returns>
+        /// <returns><see langword="true" /> if this object can perform the conversion; otherwise, <see langword="false" />.</returns>
         public override bool CanConvertTo(ITypeDescriptorContext? context, Type? destinationType)
         {
             return destinationType == typeof(string) || base.CanConvertTo(context, destinationType);
