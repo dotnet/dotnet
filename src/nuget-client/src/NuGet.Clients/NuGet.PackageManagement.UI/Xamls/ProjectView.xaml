@@ -98,6 +98,8 @@
     <Label Name="SubscriptionsLabel" Content="{x:Static local:Resources.Label_Version}" Visibility="Collapsed"/>
     <ComboBox
       x:Name="_versions"
+      PreviewKeyDown="Versions_PreviewKeyDown"
+      KeyUp="Versions_KeyUp"
       Grid.Row="1"
       Grid.Column="2"
       MinHeight="22"

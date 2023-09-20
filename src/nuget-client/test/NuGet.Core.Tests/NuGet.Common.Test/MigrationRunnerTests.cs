@@ -5,62 +5,57 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading;
+using FluentAssertions;
 using NuGet.Common.Migrations;
+using NuGet.Test.Utility;
 using Xunit;
 
 namespace NuGet.Common.Test
 {
-    [CollectionDefinition("MigrationRunner", DisableParallelization = true)]
     public class MigrationRunnerTests
     {
         [Fact]
         public void Run_WhenExecutedOnSingleThreadThenOneMigrationFileIsCreated_Success()
         {
             // Arrange
-            string directory = MigrationRunner.GetMigrationsDirectory();
-            if (Directory.Exists(directory))
-                Directory.Delete(path: directory, recursive: true);
+            using var testDirectory = TestDirectory.Create();
+
+            string migrationsDirectory = Path.Combine(testDirectory, "migrations");
 
             // Act
-            MigrationRunner.Run();
+            MigrationRunner.Run(migrationsDirectory);
 
             // Assert
-            Assert.True(Directory.Exists(directory));
-            var files = Directory.GetFiles(directory);
-            Assert.Equal(1, files.Length);
-            Assert.Equal(Path.Combine(directory, "1"), files[0]);
+            AssertSingleMigrationDirectory(migrationsDirectory);
         }
 
         [Fact]
         public void Run_WhenExecutedInParallelThenOnlyOneMigrationFileIsCreated_Success()
         {
             var threads = new List<Thread>();
-            int numThreads = 5;
-            int timeoutInSeconds = 90;
+            const int numThreads = 5;
+            TimeSpan timeout = TimeSpan.FromSeconds(90);
 
             // Arrange
-            string directory = MigrationRunner.GetMigrationsDirectory();
-            if (Directory.Exists(directory))
-                Directory.Delete(path: directory, recursive: true);
+            using var testDirectory = TestDirectory.Create();
+
+            string migrationsDirectory = Path.Combine(testDirectory, "migrations");
 
             // Act
             for (int i = 0; i < numThreads; i++)
             {
-                var thread = new Thread(MigrationRunner.Run);
+                var thread = new Thread(() => MigrationRunner.Run(migrationsDirectory));
                 thread.Start();
                 threads.Add(thread);
             }
 
             foreach (var thread in threads)
             {
-                thread.Join(timeout: TimeSpan.FromSeconds(timeoutInSeconds));
+                thread.Join(timeout);
             }
 
             // Assert
-            Assert.True(Directory.Exists(directory));
-            var files = Directory.GetFiles(directory);
-            Assert.Equal(1, files.Length);
-            Assert.Equal(Path.Combine(directory, "1"), files[0]);
+            AssertSingleMigrationDirectory(migrationsDirectory);
         }
 
         [Fact]
@@ -70,23 +65,20 @@ namespace NuGet.Common.Test
             bool signal = false;
 
             // Arrange
+            using var testDirectory = TestDirectory.Create();
+
+            string migrationsDirectory = Path.Combine(testDirectory, "migrations");
+
             Thread t = new Thread(new ThreadStart(AbandonMutex));
             t.Start();
             t.Join();
-            Assert.True(signal, userMessage: "Failed to acquire the mutex.");
-
-            string directory = MigrationRunner.GetMigrationsDirectory();
-            if (Directory.Exists(directory))
-                Directory.Delete(path: directory, recursive: true);
+            signal.Should().BeTrue(because: "A mutex should have been acquired.");
 
             // Act
-            MigrationRunner.Run();
+            MigrationRunner.Run(migrationsDirectory);
 
             // Assert
-            Assert.True(Directory.Exists(directory));
-            var files = Directory.GetFiles(directory);
-            Assert.Equal(1, files.Length);
-            Assert.Equal(Path.Combine(directory, "1"), files[0]);
+            AssertSingleMigrationDirectory(migrationsDirectory);
 
 
             void AbandonMutex()
@@ -94,6 +86,14 @@ namespace NuGet.Common.Test
                 signal = _orphan.WaitOne(TimeSpan.FromMinutes(1), false);
                 // Abandon the mutex by exiting the method without releasing
             }
+        }
+
+        private void AssertSingleMigrationDirectory(string migrationsDirectory)
+        {
+            Directory.Exists(migrationsDirectory).Should().BeTrue();
+            string[] files = Directory.GetFiles(migrationsDirectory);
+            files.Length.Should().Be(1);
+            files[0].Should().Be(Path.Combine(migrationsDirectory, "1"));
         }
     }
 }

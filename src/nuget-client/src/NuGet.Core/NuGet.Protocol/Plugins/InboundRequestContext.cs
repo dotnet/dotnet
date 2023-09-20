@@ -31,9 +31,9 @@ namespace NuGet.Protocol.Plugins
         /// <param name="requestId">A request ID.</param>
         /// <param name="cancellationToken">A cancellation token.</param>
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="connection" />
-        /// is <c>null</c>.</exception>
+        /// is <see langword="null" />.</exception>
         /// <exception cref="ArgumentException">Thrown if <paramref name="requestId" />
-        /// is either <c>null</c> or an empty string.</exception>
+        /// is either <see langword="null" /> or an empty string.</exception>
         public InboundRequestContext(
             IConnection connection,
             string requestId,
@@ -50,13 +50,13 @@ namespace NuGet.Protocol.Plugins
         /// <param name="cancellationToken">A cancellation token.</param>
         /// <param name="logger">A plugin logger.</param>
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="connection" />
-        /// is <c>null</c>.</exception>
+        /// is <see langword="null" />.</exception>
         /// <exception cref="ArgumentException">Thrown if <paramref name="requestId" />
-        /// is either <c>null</c> or an empty string.</exception>
+        /// is either <see langword="null" /> or an empty string.</exception>
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="inboundRequestProcessingHandler" />
-        /// is <c>null</c>.</exception>
+        /// is <see langword="null" />.</exception>
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="logger" />
-        /// is <c>null</c>.</exception>
+        /// is <see langword="null" />.</exception>
         internal InboundRequestContext(
             IConnection connection,
             string requestId,
@@ -165,9 +165,9 @@ namespace NuGet.Protocol.Plugins
         /// <param name="request">The request.</param>
         /// <param name="exception">An exception.</param>
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="request" />
-        /// is either <c>null</c>.</exception>
+        /// is either <see langword="null" />.</exception>
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="exception" />
-        /// is <c>null</c>.</exception>
+        /// is <see langword="null" />.</exception>
         public void BeginFaultAsync(Message request, Exception exception)
         {
             if (request == null)
@@ -225,11 +225,11 @@ namespace NuGet.Protocol.Plugins
         /// <param name="requestHandler">A request handler.</param>
         /// <param name="responseHandler">A response handler.</param>
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="request" />
-        /// is <c>null</c>.</exception>
+        /// is <see langword="null" />.</exception>
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="requestHandler" />
-        /// is <c>null</c>.</exception>
+        /// is <see langword="null" />.</exception>
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="responseHandler" />
-        /// is <c>null</c>.</exception>
+        /// is <see langword="null" />.</exception>
         public void BeginResponseAsync(
             Message request,
             IRequestHandler requestHandler,

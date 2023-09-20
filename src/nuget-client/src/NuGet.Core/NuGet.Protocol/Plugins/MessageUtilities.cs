@@ -18,7 +18,7 @@ namespace NuGet.Protocol.Plugins
         /// <param name="method">The message method.</param>
         /// <returns>a <see cref="Message" /> instance.</returns>
         /// <exception cref="ArgumentException">Thrown if <paramref name="requestId" />
-        /// is either <c>null</c> or an empty string.</exception>
+        /// is either <see langword="null" /> or an empty string.</exception>
         public static Message Create(
             string requestId,
             MessageType type,
@@ -42,8 +42,8 @@ namespace NuGet.Protocol.Plugins
         /// <param name="payload">The message payload.</param>
         /// <returns>a <see cref="Message" /> instance.</returns>
         /// <exception cref="ArgumentException">Thrown if <paramref name="requestId" />
-        /// is either <c>null</c> or an empty string.</exception>
-        /// <exception cref="ArgumentNullException">Thrown if <paramref name="payload" /> is <c>null</c>.</exception>
+        /// is either <see langword="null" /> or an empty string.</exception>
+        /// <exception cref="ArgumentNullException">Thrown if <paramref name="payload" /> is <see langword="null" />.</exception>
         public static Message Create<TPayload>(
             string requestId,
             MessageType type,
@@ -72,8 +72,8 @@ namespace NuGet.Protocol.Plugins
         /// <typeparam name="TPayload">The message payload type.</typeparam>
         /// <param name="message">The message.</param>
         /// <returns>The deserialized message payload of type <typeparamref name="TPayload" />
-        /// or <c>null</c> if no payload exists.</returns>
-        /// <exception cref="ArgumentNullException">Thrown if <paramref name="message" /> is <c>null</c>.</exception>
+        /// or <see langword="null" /> if no payload exists.</returns>
+        /// <exception cref="ArgumentNullException">Thrown if <paramref name="message" /> is <see langword="null" />.</exception>
         public static TPayload DeserializePayload<TPayload>(Message message)
         {
             if (message == null)

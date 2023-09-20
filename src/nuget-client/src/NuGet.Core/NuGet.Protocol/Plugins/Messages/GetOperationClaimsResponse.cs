@@ -24,7 +24,7 @@ namespace NuGet.Protocol.Plugins
         /// Initializes a new instance of the <see cref="GetOperationClaimsResponse" /> class.
         /// </summary>
         /// <param name="claims">The operation claims.</param>
-        /// <exception cref="ArgumentNullException">Thrown if <paramref name="claims" /> is <c>null</c>.</exception>
+        /// <exception cref="ArgumentNullException">Thrown if <paramref name="claims" /> is <see langword="null" />.</exception>
         /// <exception cref="ArgumentException">Thrown if <paramref name="claims" /> contains
         /// undefined <see cref="OperationClaim" /> values.</exception>
         [JsonConstructor]

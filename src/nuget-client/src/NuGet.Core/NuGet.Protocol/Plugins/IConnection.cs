@@ -34,7 +34,7 @@ namespace NuGet.Protocol.Plugins
         ConnectionOptions Options { get; }
 
         /// <summary>
-        /// Gets the negotiated protocol version, or <c>null</c> if not yet connected.
+        /// Gets the negotiated protocol version, or <see langword="null" /> if not yet connected.
         /// </summary>
         SemanticVersion ProtocolVersion { get; }
 
@@ -50,7 +50,7 @@ namespace NuGet.Protocol.Plugins
         /// <param name="message">The message to be sent.</param>
         /// <param name="cancellationToken">A cancellation token.</param>
         /// <returns>A task that represents the asynchronous operation.</returns>
-        /// <exception cref="ArgumentNullException">Thrown if <paramref name="message" /> is <c>null</c>.</exception>
+        /// <exception cref="ArgumentNullException">Thrown if <paramref name="message" /> is <see langword="null" />.</exception>
         /// <exception cref="OperationCanceledException">Thrown if <paramref name="cancellationToken" />
         /// is cancelled.</exception>
         /// <exception cref="InvalidOperationException">Thrown if not connected.</exception>

@@ -17,9 +17,9 @@ namespace NuGet.Protocol.Plugins
         /// <param name="addHandlerFunc">An add request handler function.</param>
         /// <param name="updateHandlerFunc">An update request handler function.</param>
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="addHandlerFunc" />
-        /// is <c>null</c>.</exception>
+        /// is <see langword="null" />.</exception>
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="updateHandlerFunc" />
-        /// is <c>null</c>.</exception>
+        /// is <see langword="null" />.</exception>
         void AddOrUpdate(
             MessageMethod method,
             Func<IRequestHandler> addHandlerFunc,
@@ -30,8 +30,8 @@ namespace NuGet.Protocol.Plugins
         /// </summary>
         /// <param name="method">A message method.</param>
         /// <param name="handler">A request handler.</param>
-        /// <returns><c>true</c> if added; otherwise, <c>false</c>.</returns>
-        /// <exception cref="ArgumentNullException">Thrown if <paramref name="handler" /> is <c>null</c>.</exception>
+        /// <returns><see langword="true" /> if added; otherwise, <see langword="false" />.</returns>
+        /// <exception cref="ArgumentNullException">Thrown if <paramref name="handler" /> is <see langword="null" />.</exception>
         bool TryAdd(MessageMethod method, IRequestHandler handler);
 
         /// <summary>
@@ -39,14 +39,14 @@ namespace NuGet.Protocol.Plugins
         /// </summary>
         /// <param name="method">A message method.</param>
         /// <param name="handler">A request handler.</param>
-        /// <returns><c>true</c> if the request handler exists; otherwise, <c>false</c>.</returns>
+        /// <returns><see langword="true" /> if the request handler exists; otherwise, <see langword="false" />.</returns>
         bool TryGet(MessageMethod method, out IRequestHandler handler);
 
         /// <summary>
         /// Attempts to remove a request handler for the specified message method.
         /// </summary>
         /// <param name="method">A message method.</param>
-        /// <returns><c>true</c> if a request handler was removed; otherwise, <c>false</c>.</returns>
+        /// <returns><see langword="true" /> if a request handler was removed; otherwise, <see langword="false" />.</returns>
         bool TryRemove(MessageMethod method);
     }
 }

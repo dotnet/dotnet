@@ -23,7 +23,7 @@ namespace NuGet.Protocol.Plugins
         /// Instantiates a new <see cref="StandardOutputReceiver" /> class.
         /// </summary>
         /// <param name="process">A plugin process.</param>
-        /// <exception cref="ArgumentNullException">Thrown if <paramref name="process" /> is <c>null</c>.</exception>
+        /// <exception cref="ArgumentNullException">Thrown if <paramref name="process" /> is <see langword="null" />.</exception>
         public StandardOutputReceiver(IPluginProcess process)
         {
             if (process == null)

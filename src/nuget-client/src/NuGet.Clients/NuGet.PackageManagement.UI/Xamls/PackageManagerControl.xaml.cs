@@ -1723,7 +1723,7 @@ namespace NuGet.PackageManagement.UI
         /// </summary>
         /// <param name="packageId">Package ID to install</param>
         /// <param name="version">Package Version to install</param>
-        /// <param name="packagesInfo">Corresponding Package ViewModels from PM UI. Only needed for vulnerability telemetry counts. Can be <c>null</c></param>
+        /// <param name="packagesInfo">Corresponding Package ViewModels from PM UI. Only needed for vulnerability telemetry counts. Can be <see langword="null" /></param>
         internal void InstallPackage(string packageId, NuGetVersion version, IEnumerable<PackageItemViewModel> packagesInfo)
         {
             var sourceMappingSourceName = PackageSourceMappingUtility.GetNewSourceMappingSourceName(Model.UIController.UIContext.PackageSourceMapping, Model.UIController.ActivePackageSourceMoniker);
@@ -1744,7 +1744,7 @@ namespace NuGet.PackageManagement.UI
         /// Uninstall a package in open project(s)
         /// </summary>
         /// <param name="packageId">Package ID to uninstall</param>
-        /// <param name="packagesInfo">Corresponding Package ViewModels from PM UI. Only needed for vulnerability telemetry counts. Can be <c>null</c></param>
+        /// <param name="packagesInfo">Corresponding Package ViewModels from PM UI. Only needed for vulnerability telemetry counts. Can be <see langword="null" /></param>
         internal void UninstallPackage(string packageId, IEnumerable<PackageItemViewModel> packagesInfo)
         {
             var action = UserAction.CreateUnInstallAction(packageId, Model.IsSolution, UIUtility.ToContractsItemFilter(_topPanel.Filter));
@@ -1764,7 +1764,7 @@ namespace NuGet.PackageManagement.UI
         /// Updates packages in open project(s)
         /// </summary>
         /// <param name="packages">Packages identities to update</param>
-        /// <param name="packagesInfo">Corresponding Package ViewModels from PM UI. Only needed for vulnerability telemetry counts. Can be <c>null</c></param>
+        /// <param name="packagesInfo">Corresponding Package ViewModels from PM UI. Only needed for vulnerability telemetry counts. Can be <see langword="null" /></param>
         internal void UpdatePackage(List<PackageIdentity> packages, IEnumerable<PackageItemViewModel> packagesInfo)
         {
             if (packages.Count == 0)

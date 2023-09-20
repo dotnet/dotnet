@@ -31,11 +31,11 @@ namespace NuGet.Protocol
         /// <param name="utilities">A plugin multiclient utilities.</param>
         /// <param name="packageSource">A package source.</param>
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="plugin" />
-        /// is <c>null</c>.</exception>
+        /// is <see langword="null" />.</exception>
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="utilities" />
-        /// is <c>null</c>.</exception>
+        /// is <see langword="null" />.</exception>
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="packageSource" />
-        /// is <c>null</c>.</exception>
+        /// is <see langword="null" />.</exception>
         public DownloadResourcePlugin(
             IPlugin plugin,
             IPluginMulticlientUtilities utilities,
@@ -72,10 +72,10 @@ namespace NuGet.Protocol
         /// <returns>A task that represents the asynchronous operation.
         /// The task result (<see cref="Task{TResult}.Result" />) returns
         /// a <see cref="DownloadResourceResult" />.</returns>
-        /// <exception cref="ArgumentNullException">Thrown if <paramref name="identity" /> is <c>null</c>.</exception>
+        /// <exception cref="ArgumentNullException">Thrown if <paramref name="identity" /> is <see langword="null" />.</exception>
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="downloadContext" />
-        /// is <c>null</c>.</exception>
-        /// <exception cref="ArgumentNullException">Thrown if <paramref name="logger" /> is <c>null</c>.</exception>
+        /// is <see langword="null" />.</exception>
+        /// <exception cref="ArgumentNullException">Thrown if <paramref name="logger" /> is <see langword="null" />.</exception>
         /// <exception cref="OperationCanceledException">Thrown if <paramref name="cancellationToken" />
         /// is cancelled.</exception>
         public async override Task<DownloadResourceResult> GetDownloadResourceResultAsync(

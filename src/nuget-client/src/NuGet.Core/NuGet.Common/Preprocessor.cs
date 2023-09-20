@@ -23,9 +23,9 @@ namespace NuGet.Common
         /// <returns>A task that represents the asynchronous operation.
         /// The task result (<see cref="Task{TResult}.Result" />) returns a <see cref="string" />.</returns>
         /// <exception cref="ArgumentException">Thrown if <paramref name="streamTaskFactory" />
-        /// is either <c>null</c> or empty.</exception>
+        /// is either <see langword="null" /> or empty.</exception>
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="tokenReplacement" />
-        /// is <c>null</c>.</exception>
+        /// is <see langword="null" />.</exception>
         /// <exception cref="OperationCanceledException">Thrown if <paramref name="cancellationToken" />
         /// is cancelled.</exception>
         public static async Task<string> ProcessAsync(
@@ -58,9 +58,9 @@ namespace NuGet.Common
         /// <param name="tokenReplacement">A token replacement funciton.</param>
         /// <returns>The token-replaced stream content.</returns>
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="stream" />
-        /// is <c>null</c>.</exception>
+        /// is <see langword="null" />.</exception>
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="tokenReplacement" />
-        /// is <c>null</c>.</exception>
+        /// is <see langword="null" />.</exception>
         public static string Process(Stream stream, Func<string, string> tokenReplacement)
         {
             if (stream == null)

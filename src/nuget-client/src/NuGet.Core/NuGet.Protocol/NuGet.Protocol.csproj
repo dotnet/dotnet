@@ -21,6 +21,10 @@
     <ProjectReference Include="..\NuGet.Packaging\NuGet.Packaging.csproj" />
   </ItemGroup>
 
+  <ItemGroup Condition=" '$(TargetFrameworkIdentifier)' == '.NETFramework' OR '$(TargetFrameworkIdentifier)' == '.NETStandard' ">
+    <PackageReference Include="System.Text.Json" />
+  </ItemGroup>
+
   <ItemGroup>
     <Compile Update="Strings.Designer.cs">
       <DesignTime>True</DesignTime>

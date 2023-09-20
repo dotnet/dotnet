@@ -1,5 +1,5 @@
 # Each line represents arguments for the .NET SDK installer script (https://learn.microsoft.com/dotnet/core/tools/dotnet-install-script)
--Channel 8.0 -Version 8.0.100-preview.6.23330.14
+-Channel 8.0 -Version 8.0.100-rc.1.23455.8
 -Channel 7.0
 -Channel 6.0 -Runtime dotnet
 -Channel 5.0

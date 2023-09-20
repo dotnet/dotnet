@@ -97,7 +97,7 @@ namespace NuGet.PackageManagement.VisualStudio
         /// </summary>
         /// <param name="simpleAssemblyName">The simple assembly name (e.g.:  System.Runtime) without file extension.</param>
         /// <param name="targetFrameworkName">The target .NET Framework.</param>
-        /// <returns><c>true</c> if the assembly is a .NET Framework facade assembly; otherwise, <c>false</c>.</returns>
+        /// <returns><see langword="true" /> if the assembly is a .NET Framework facade assembly; otherwise, <see langword="false" />.</returns>
         public static bool IsFrameworkFacade(string simpleAssemblyName, FrameworkName targetFrameworkName)
         {
             return IsFrameworkFacade(simpleAssemblyName, targetFrameworkName,
@@ -113,7 +113,7 @@ namespace NuGet.PackageManagement.VisualStudio
         /// <param name="getPathToReferenceAssembliesFunc">A function that returns .NET Framework reference assemblies directories.</param>
         /// <param name="frameworkAssembliesDictionary">A dictionary mapping frameworks to lists of assemblies.
         /// The dictionary may be mutated by this function.</param>
-        /// <returns><c>true</c> if the assembly is a .NET Framework facade assembly; otherwise, <c>false</c>.</returns>
+        /// <returns><see langword="true" /> if the assembly is a .NET Framework facade assembly; otherwise, <see langword="false" />.</returns>
         internal static bool IsFrameworkFacade(string simpleAssemblyName,
             FrameworkName targetFrameworkName,
             Func<FrameworkName, IList<string>> getPathToReferenceAssembliesFunc,

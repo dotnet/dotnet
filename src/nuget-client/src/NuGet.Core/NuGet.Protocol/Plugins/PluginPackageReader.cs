@@ -40,11 +40,11 @@ namespace NuGet.Protocol.Plugins
         /// <param name="plugin">A plugin.</param>
         /// <param name="packageIdentity">A package identity.</param>
         /// <param name="packageSourceRepository">A package source repository location.</param>
-        /// <exception cref="ArgumentNullException">Thrown if <paramref name="plugin" /> is <c>null</c>.</exception>
+        /// <exception cref="ArgumentNullException">Thrown if <paramref name="plugin" /> is <see langword="null" />.</exception>
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="packageIdentity" />
-        /// is <c>null</c>.</exception>
+        /// is <see langword="null" />.</exception>
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="packageSourceRepository" />
-        /// is either <c>null</c> or an empty string.</exception>
+        /// is either <see langword="null" /> or an empty string.</exception>
         public PluginPackageReader(IPlugin plugin, PackageIdentity packageIdentity, string packageSourceRepository)
             : base(DefaultFrameworkNameProvider.Instance, DefaultCompatibilityProvider.Instance)
         {
@@ -91,7 +91,7 @@ namespace NuGet.Protocol.Plugins
         /// <returns>A task that represents the asynchronous operation.
         /// The task result (<see cref="Task{TResult}.Result" />) returns a <see cref="Stream" />.</returns>
         /// <exception cref="ArgumentException">Thrown if <paramref name="path" />
-        /// is either <c>null</c> or an empty string.</exception>
+        /// is either <see langword="null" /> or an empty string.</exception>
         /// <exception cref="OperationCanceledException">Thrown if <paramref name="cancellationToken" />
         /// is cancelled.</exception>
         public override async Task<Stream> GetStreamAsync(string path, CancellationToken cancellationToken)
@@ -184,7 +184,7 @@ namespace NuGet.Protocol.Plugins
         /// <returns>A task that represents the asynchronous operation.
         /// The task result (<see cref="Task{TResult}.Result" />) returns an
         /// <see cref="IEnumerable{String}" />.</returns>
-        /// <exception cref="ArgumentNullException">Thrown if <paramref name="folder" /> is <c>null</c>.</exception>
+        /// <exception cref="ArgumentNullException">Thrown if <paramref name="folder" /> is <see langword="null" />.</exception>
         /// <exception cref="OperationCanceledException">Thrown if <paramref name="cancellationToken" />
         /// is cancelled.</exception>
         public override async Task<IEnumerable<string>> GetFilesAsync(
@@ -233,10 +233,10 @@ namespace NuGet.Protocol.Plugins
         /// The task result (<see cref="Task{TResult}.Result" />) returns an
         /// <see cref="IEnumerable{String}" />.</returns>
         /// <exception cref="ArgumentException">Thrown if <paramref name="destination" />
-        /// is either <c>null</c> or an empty string.</exception>
+        /// is either <see langword="null" /> or an empty string.</exception>
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="packageFiles" />
-        /// is <c>null</c>.</exception>
-        /// <exception cref="ArgumentNullException">Thrown if <paramref name="logger" /> is <c>null</c>.</exception>
+        /// is <see langword="null" />.</exception>
+        /// <exception cref="ArgumentNullException">Thrown if <paramref name="logger" /> is <see langword="null" />.</exception>
         /// <exception cref="OperationCanceledException">Thrown if <paramref name="cancellationToken" />
         /// is cancelled.</exception>
         public override async Task<IEnumerable<string>> CopyFilesAsync(
@@ -711,7 +711,7 @@ namespace NuGet.Protocol.Plugins
         /// <returns>A task that represents the asynchronous operation.
         /// The task result (<see cref="Task{TResult}.Result" />) returns an
         /// <see cref="IEnumerable{FrameworkSpecificGroup}" />.</returns>
-        /// <exception cref="ArgumentNullException">Thrown if <paramref name="folderName" /> is <c>null</c>.</exception>
+        /// <exception cref="ArgumentNullException">Thrown if <paramref name="folderName" /> is <see langword="null" />.</exception>
         /// <exception cref="OperationCanceledException">Thrown if <paramref name="cancellationToken" />
         /// is cancelled.</exception>
         public override Task<IEnumerable<FrameworkSpecificGroup>> GetItemsAsync(
@@ -908,7 +908,7 @@ namespace NuGet.Protocol.Plugins
         /// <returns>A task that represents the asynchronous operation.
         /// The task result (<see cref="Task{TResult}.Result" />) returns a <see cref="string" />.</returns>
         /// <exception cref="ArgumentException">Thrown if <paramref name="nupkgFilePath" />
-        /// is either <c>null</c> or an empty string.</exception>
+        /// is either <see langword="null" /> or an empty string.</exception>
         /// <exception cref="OperationCanceledException">Thrown if <paramref name="cancellationToken" />
         /// is cancelled.</exception>
         public override async Task<string> CopyNupkgAsync(

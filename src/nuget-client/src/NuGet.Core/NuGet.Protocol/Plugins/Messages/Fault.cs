@@ -22,7 +22,7 @@ namespace NuGet.Protocol.Plugins
         /// </summary>
         /// <param name="message">The fault message.</param>
         /// <exception cref="ArgumentException">Thrown if <paramref name="message" />
-        /// is either <c>null</c> or an empty string.</exception>
+        /// is either <see langword="null" /> or an empty string.</exception>
         [JsonConstructor]
         public Fault(string message)
         {

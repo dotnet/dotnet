@@ -177,7 +177,7 @@ namespace NuGet.PackageManagement.VisualStudio.Test
         internal static void UpdateProjectSystemCache(IProjectSystemCache projectCache, PackageSpec packageSpec, NuGetProject project)
         {
             ProjectNames projectNames = GetTestProjectNames(packageSpec.FilePath, packageSpec.Name);
-            DependencyGraphSpec dgSpec = ProjectTestHelpers.GetDGSpecFromPackageSpecs(packageSpec);
+            DependencyGraphSpec dgSpec = ProjectTestHelpers.GetDGSpecForAllProjects(packageSpec);
             projectCache.AddProjectRestoreInfo(projectNames, dgSpec, new List<IAssetsLogMessage>());
             projectCache.AddProject(projectNames, Mock.Of<IVsProjectAdapter>(), project);
         }
@@ -193,7 +193,7 @@ namespace NuGet.PackageManagement.VisualStudio.Test
                 CacheContext = new SourceCacheContext(),
             };
 
-            DependencyGraphSpec dgSpec = ProjectTestHelpers.GetDGSpecFromPackageSpecs(packageSpecs);
+            DependencyGraphSpec dgSpec = ProjectTestHelpers.GetDGSpecForAllProjects(packageSpecs);
             var dgProvider = new DependencyGraphSpecRequestProvider(new RestoreCommandProvidersCache(), dgSpec);
 
             foreach (RestoreSummaryRequest request in await dgProvider.CreateRequests(restoreContext))

@@ -690,9 +690,8 @@ namespace NuGet.CommandLine.Test
                 var packageFileName = Util.CreateTestPackage("testPackage1", "1.1.0", packageDirectory);
                 string outputFileName = Path.Combine(packageDirectory, "t1.nupkg");
 
-                using (var server = new MockServer())
+                using (var server = new MockServer(AuthenticationSchemes.Basic))
                 {
-                    server.Listener.AuthenticationSchemes = AuthenticationSchemes.Basic;
                     server.Put.Add("/nuget", r => new Action<HttpListenerResponse>(res =>
                     {
                         var h = r.Headers["Authorization"];
@@ -769,9 +768,8 @@ namespace NuGet.CommandLine.Test
                 var packageFileName = Util.CreateTestPackage("testPackage1", "1.1.0", packageDirectory);
                 string outputFileName = Path.Combine(packageDirectory, "t1.nupkg");
 
-                using (var server = new MockServer())
+                using (var server = new MockServer(AuthenticationSchemes.Basic))
                 {
-                    server.Listener.AuthenticationSchemes = AuthenticationSchemes.Basic;
                     server.Put.Add("/nuget", r => new Action<HttpListenerResponse>(res =>
                     {
                         var h = r.Headers["Authorization"];
@@ -847,9 +845,8 @@ namespace NuGet.CommandLine.Test
                 var packageFileName = Util.CreateTestPackage("testPackage1", "1.1.0", packageDirectory);
                 string outputFileName = Path.Combine(packageDirectory, "t1.nupkg");
 
-                using (var server = new MockServer())
+                using (var server = new MockServer(AuthenticationSchemes.IntegratedWindowsAuthentication))
                 {
-                    server.Listener.AuthenticationSchemes = AuthenticationSchemes.IntegratedWindowsAuthentication;
                     server.Put.Add("/nuget", r => new Action<HttpListenerResponse, IPrincipal>((res, user) =>
                     {
                         putUser = user;
@@ -890,9 +887,8 @@ namespace NuGet.CommandLine.Test
                 var packageFileName = Util.CreateTestPackage("testPackage1", "1.1.0", packageDirectory);
                 string outputFileName = Path.Combine(packageDirectory, "t1.nupkg");
 
-                using (var server = new MockServer())
+                using (var server = new MockServer(AuthenticationSchemes.IntegratedWindowsAuthentication))
                 {
-                    server.Listener.AuthenticationSchemes = AuthenticationSchemes.IntegratedWindowsAuthentication;
                     server.Put.Add("/nuget", r => new Action<HttpListenerResponse, IPrincipal>((res, user) =>
                     {
                         putUser = user;
@@ -936,10 +932,9 @@ namespace NuGet.CommandLine.Test
                 var packageFileName = Util.CreateTestPackage("testPackage1", "1.1.0", packageDirectory);
                 string outputFileName = Path.Combine(packageDirectory, "t1.nupkg");
 
-                using (var server = new MockServer())
+                using (var server = new MockServer(AuthenticationSchemes.Basic))
                 {
                     var credentialForPutRequest = new List<string>();
-                    server.Listener.AuthenticationSchemes = AuthenticationSchemes.Basic;
                     server.Put.Add("/nuget", r => new Action<HttpListenerResponse>(res =>
                     {
                         var h = r.Headers["Authorization"];
@@ -1001,10 +996,9 @@ namespace NuGet.CommandLine.Test
                 var packageFileName = Util.CreateTestPackage("testPackage1", "1.1.0", packageDirectory);
                 string outputFileName = Path.Combine(packageDirectory, "t1.nupkg");
 
-                using (var server = new MockServer())
+                using (var server = new MockServer(AuthenticationSchemes.Basic))
                 {
                     var credentialForPutRequest = new List<string>();
-                    server.Listener.AuthenticationSchemes = AuthenticationSchemes.Basic;
                     server.Put.Add("/nuget", r => new Action<HttpListenerResponse>(res =>
                     {
                         var h = r.Headers["Authorization"];
@@ -1068,9 +1062,8 @@ namespace NuGet.CommandLine.Test
                 var packageFileName = Util.CreateTestPackage("testPackage1", "1.1.0", packageDirectory);
                 string outputFileName = Path.Combine(packageDirectory, "t1.nupkg");
 
-                using (var server = new MockServer())
+                using (var server = new MockServer(AuthenticationSchemes.Basic))
                 {
-                    server.Listener.AuthenticationSchemes = AuthenticationSchemes.Basic;
                     server.Put.Add("/nuget", r => new Action<HttpListenerResponse>(res =>
                     {
                         var h = r.Headers["Authorization"];
@@ -1133,9 +1126,8 @@ namespace NuGet.CommandLine.Test
                 var packageFileName = Util.CreateTestPackage("testPackage1", "1.1.0", packageDirectory);
                 string outputFileName = Path.Combine(packageDirectory, "t1.nupkg");
 
-                using (var server = new MockServer())
+                using (var server = new MockServer(AuthenticationSchemes.Basic))
                 {
-                    server.Listener.AuthenticationSchemes = AuthenticationSchemes.Basic;
                     server.Get.Add("/nuget", r =>
                     {
                         var h = r.Headers["Authorization"];
@@ -1204,9 +1196,8 @@ namespace NuGet.CommandLine.Test
                 var packageFileName = Util.CreateTestPackage("testPackage1", "1.1.0", packageDirectory);
                 string outputFileName = Path.Combine(packageDirectory, "t1.nupkg");
 
-                using (var server = new MockServer())
+                using (var server = new MockServer(AuthenticationSchemes.Basic))
                 {
-                    server.Listener.AuthenticationSchemes = AuthenticationSchemes.Basic;
                     server.Get.Add("/nuget", r =>
                     {
                         var h = r.Headers["Authorization"];
@@ -2465,8 +2456,10 @@ namespace NuGet.CommandLine.Test
             Util.TestCommandInvalidArguments(cmd);
         }
 
-        [Fact]
-        public void PushCommand_WhenPushingToAnHttpServer_Warns()
+        [Theory]
+        [InlineData("true", false)]
+        [InlineData("false", true)]
+        public void PushCommand_WhenPushingToAnHttpServerWithAllowInsecureConnections_WarnsCorrectly(string allowInsecureConnections, bool isHttpWarningExpected)
         {
             var nugetexe = Util.GetNuGetExePath();
 
@@ -2486,20 +2479,43 @@ namespace NuGet.CommandLine.Test
 
                 return HttpStatusCode.Created;
             });
+
+            // Arrange the NuGet.Config file
+            string nugetConfigContent =
+$@"<configuration>
+    <packageSources>
+        <clear />
+        <add key='http-feed' value='{server.Uri}push' protocalVersion=""3"" allowInsecureConnections=""{allowInsecureConnections}"" />
+    </packageSources>
+</configuration>";
+            string configPath = Path.Combine(packageDirectory, "NuGet.Config");
+            File.WriteAllText(configPath, nugetConfigContent);
+
             server.Start();
 
             // Act
             var result = CommandRunner.Run(
                             nugetexe,
                             Directory.GetCurrentDirectory(),
-                            $"push {packageFileName} -Source {server.Uri}push");
+                            $"push {packageFileName} -ConfigFile {configPath} -Source {server.Uri}push");
+
             // Assert
             result.Success.Should().BeTrue(result.AllOutput);
-            result.AllOutput.Should().Contain("WARNING: You are running the 'push' operation with an 'HTTP' source");
+            string expectedWarning = "WARNING: You are running the 'push' operation with an 'HTTP' source";
+            if (isHttpWarningExpected)
+            {
+                Assert.Contains(expectedWarning, result.AllOutput);
+            }
+            else
+            {
+                Assert.DoesNotContain(expectedWarning, result.AllOutput);
+            }
         }
 
-        [Fact]
-        public void PushCommand_WhenPushingToAnHttpServerWithSymbols_Warns()
+        [Theory]
+        [InlineData("true", false)]
+        [InlineData("false", true)]
+        public void PushCommand_WhenPushingToAnHttpServerWithSymbolsAndAllowInsecureConnections_WarnsCorrectly(string allowInsecureConnections, bool isHttpWarningExpected)
         {
             using var packageDirectory = TestDirectory.Create();
             using var server = new MockServer();
@@ -2524,6 +2540,17 @@ namespace NuGet.CommandLine.Test
                     : HttpStatusCode.Unauthorized;
             });
 
+            // Arrange the NuGet.Config file
+            string nugetConfigContent =
+$@"<configuration>
+    <packageSources>
+        <clear />
+        <add key='http-feed' value='{server.Uri}push' protocalVersion=""3"" allowInsecureConnections=""{allowInsecureConnections}"" />
+    </packageSources>
+</configuration>";
+            string configPath = Path.Combine(packageDirectory, "NuGet.Config");
+            File.WriteAllText(configPath, nugetConfigContent);
+
             server.Start();
 
             var pushUri = $"{server.Uri}push";
@@ -2533,7 +2560,7 @@ namespace NuGet.CommandLine.Test
             CommandRunnerResult result = CommandRunner.Run(
                 Util.GetNuGetExePath(),
                 Directory.GetCurrentDirectory(),
-                $"push {packageFileName} -Source {pushUri} -SymbolSource {pushSymbolsUri} -ApiKey PushKey -SymbolApiKey PushSymbolsKey");
+                $"push {packageFileName} -Source {pushUri} -SymbolSource {pushSymbolsUri} -ConfigFile {configPath} -ApiKey PushKey -SymbolApiKey PushSymbolsKey");
 
             // Assert
             result.Success.Should().BeTrue(because: result.AllOutput);
@@ -2542,10 +2569,21 @@ namespace NuGet.CommandLine.Test
             Assert.Contains($"Pushing testPackage1.1.1.0.symbols.nupkg to '{pushSymbolsUri}'", result.Output);
             Assert.Contains($"Created {pushSymbolsUri}", result.Output);
             Assert.Contains("Your package was pushed.", result.Output);
-            Assert.Contains($"WARNING: You are running the 'push' operation with an 'HTTP' source, '{pushUri}/'", result.AllOutput);
-            Assert.Contains($"WARNING: You are running the 'push' operation with an 'HTTP' source, '{pushSymbolsUri}/'", result.AllOutput);
-        }
 
+            string expectedWarning = $"WARNING: You are running the 'push' operation with an 'HTTP' source, '{pushUri}/'";
+            string expectedSymbolWarning = $"WARNING: You are running the 'push' operation with an 'HTTP' source, '{pushSymbolsUri}/'";
+
+            if (isHttpWarningExpected)
+            {
+                Assert.Contains(expectedWarning, result.AllOutput);
+                Assert.Contains(expectedSymbolWarning, result.AllOutput);
+            }
+            else
+            {
+                Assert.DoesNotContain(expectedWarning, result.AllOutput);
+                Assert.DoesNotContain(expectedSymbolWarning, result.AllOutput);
+            }
+        }
         [Fact]
         public void PushCommand_WhenPushingToAnHttpServerV3_Warns()
         {
