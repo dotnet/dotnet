@@ -8,6 +8,13 @@ namespace Test
     using global::System.Linq;
     using global::System.Threading.Tasks;
     using global::Microsoft.AspNetCore.Components;
+#nullable restore
+#line 1 "x:\dir\subdir\Test\TestComponent.cshtml"
+using Microsoft.AspNetCore.Components.Web;
+
+#line default
+#line hidden
+#nullable disable
     public partial class TestComponent : global::Microsoft.AspNetCore.Components.ComponentBase
     {
         #pragma warning disable 219
@@ -20,21 +27,57 @@ namespace Test
         #pragma warning disable 1998
         protected override void BuildRenderTree(global::Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder)
         {
+            __o = global::Microsoft.AspNetCore.Components.EventCallback.Factory.Create<global::System.EventArgs>(this, 
+#nullable restore
+#line 2 "x:\dir\subdir\Test\TestComponent.cshtml"
+                               () => { }
+
+#line default
+#line hidden
+#nullable disable
+            );
             __builder.AddAttribute(-1, "ChildContent", (global::Microsoft.AspNetCore.Components.RenderFragment)((__builder2) => {
+                __o = global::Microsoft.AspNetCore.Components.EventCallback.Factory.Create<global::System.EventArgs>(this, 
+#nullable restore
+#line 4 "x:\dir\subdir\Test\TestComponent.cshtml"
+                                   () => { }
+
+#line default
+#line hidden
+#nullable disable
+                );
                 __builder2.AddAttribute(-1, "ChildContent", (global::Microsoft.AspNetCore.Components.RenderFragment)((__builder3) => {
+                    __o = global::Microsoft.AspNetCore.Components.EventCallback.Factory.Create<global::System.EventArgs>(this, 
+#nullable restore
+#line 6 "x:\dir\subdir\Test\TestComponent.cshtml"
+                                       () => { }
+
+#line default
+#line hidden
+#nullable disable
+                    );
                 }
                 ));
 #nullable restore
-#line 4 "x:\dir\subdir\Test\TestComponent.cshtml"
+#line 5 "x:\dir\subdir\Test\TestComponent.cshtml"
 __o = typeof(global::Test.TestComponent);
 
 #line default
 #line hidden
 #nullable disable
+                __o = global::Microsoft.AspNetCore.Components.EventCallback.Factory.Create<global::System.EventArgs>(this, 
+#nullable restore
+#line 8 "x:\dir\subdir\Test\TestComponent.cshtml"
+                                   () => { }
+
+#line default
+#line hidden
+#nullable disable
+                );
             }
             ));
 #nullable restore
-#line 2 "x:\dir\subdir\Test\TestComponent.cshtml"
+#line 3 "x:\dir\subdir\Test\TestComponent.cshtml"
 __o = typeof(global::Test.TestComponent);
 
 #line default
@@ -43,7 +86,7 @@ __o = typeof(global::Test.TestComponent);
         }
         #pragma warning restore 1998
 #nullable restore
-#line 9 "x:\dir\subdir\Test\TestComponent.cshtml"
+#line 10 "x:\dir\subdir\Test\TestComponent.cshtml"
        
     [Parameter] public RenderFragment ChildContent { get; set; }
 
