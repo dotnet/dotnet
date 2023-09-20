@@ -3,11 +3,16 @@
 // See the LICENSE file in the project root for more information.
 
 using System;
+using System.Collections.Immutable;
 using System.Diagnostics;
+using System.IO.Pipelines;
+using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.ErrorReporting;
+using Microsoft.CodeAnalysis.Extensions;
+using Microsoft.CodeAnalysis.Internal.Log;
 using Microsoft.CodeAnalysis.Telemetry;
 using Microsoft.ServiceHub.Framework;
 using Microsoft.VisualStudio.Threading;
@@ -162,7 +167,7 @@ namespace Microsoft.CodeAnalysis.Remote
 
         // solution, no callback
 
-        public override async ValueTask<bool> TryInvokeAsync(SolutionState solution, Func<TService, Checksum, CancellationToken, ValueTask> invocation, CancellationToken cancellationToken)
+        public override async ValueTask<bool> TryInvokeAsync(Solution solution, Func<TService, Checksum, CancellationToken, ValueTask> invocation, CancellationToken cancellationToken)
         {
             try
             {
@@ -178,7 +183,7 @@ namespace Microsoft.CodeAnalysis.Remote
             }
         }
 
-        public override async ValueTask<Optional<TResult>> TryInvokeAsync<TResult>(SolutionState solution, Func<TService, Checksum, CancellationToken, ValueTask<TResult>> invocation, CancellationToken cancellationToken)
+        public override async ValueTask<Optional<TResult>> TryInvokeAsync<TResult>(Solution solution, Func<TService, Checksum, CancellationToken, ValueTask<TResult>> invocation, CancellationToken cancellationToken)
         {
             try
             {
@@ -195,11 +200,11 @@ namespace Microsoft.CodeAnalysis.Remote
 
         // project, no callback
 
-        public override async ValueTask<bool> TryInvokeAsync(SolutionState solution, ProjectId projectId, Func<TService, Checksum, CancellationToken, ValueTask> invocation, CancellationToken cancellationToken)
+        public override async ValueTask<bool> TryInvokeAsync(Project project, Func<TService, Checksum, CancellationToken, ValueTask> invocation, CancellationToken cancellationToken)
         {
             try
             {
-                using var scope = await _solutionAssetStorage.StoreAssetsAsync(solution, projectId, cancellationToken).ConfigureAwait(false);
+                using var scope = await _solutionAssetStorage.StoreAssetsAsync(project, cancellationToken).ConfigureAwait(false);
                 using var rental = await RentServiceAsync(cancellationToken).ConfigureAwait(false);
                 await invocation(rental.Service, scope.SolutionChecksum, cancellationToken).ConfigureAwait(false);
                 return true;
@@ -211,11 +216,11 @@ namespace Microsoft.CodeAnalysis.Remote
             }
         }
 
-        public override async ValueTask<Optional<TResult>> TryInvokeAsync<TResult>(SolutionState solution, ProjectId projectId, Func<TService, Checksum, CancellationToken, ValueTask<TResult>> invocation, CancellationToken cancellationToken)
+        public override async ValueTask<Optional<TResult>> TryInvokeAsync<TResult>(Project project, Func<TService, Checksum, CancellationToken, ValueTask<TResult>> invocation, CancellationToken cancellationToken)
         {
             try
             {
-                using var scope = await _solutionAssetStorage.StoreAssetsAsync(solution, projectId, cancellationToken).ConfigureAwait(false);
+                using var scope = await _solutionAssetStorage.StoreAssetsAsync(project, cancellationToken).ConfigureAwait(false);
                 using var rental = await RentServiceAsync(cancellationToken).ConfigureAwait(false);
                 return await invocation(rental.Service, scope.SolutionChecksum, cancellationToken).ConfigureAwait(false);
             }
@@ -228,7 +233,7 @@ namespace Microsoft.CodeAnalysis.Remote
 
         // solution, callback
 
-        public override async ValueTask<bool> TryInvokeAsync(SolutionState solution, Func<TService, Checksum, RemoteServiceCallbackId, CancellationToken, ValueTask> invocation, CancellationToken cancellationToken)
+        public override async ValueTask<bool> TryInvokeAsync(Solution solution, Func<TService, Checksum, RemoteServiceCallbackId, CancellationToken, ValueTask> invocation, CancellationToken cancellationToken)
         {
             Contract.ThrowIfFalse(_callbackDispatcher is not null);
 
@@ -247,7 +252,7 @@ namespace Microsoft.CodeAnalysis.Remote
             }
         }
 
-        public override async ValueTask<Optional<TResult>> TryInvokeAsync<TResult>(SolutionState solution, Func<TService, Checksum, RemoteServiceCallbackId, CancellationToken, ValueTask<TResult>> invocation, CancellationToken cancellationToken)
+        public override async ValueTask<Optional<TResult>> TryInvokeAsync<TResult>(Solution solution, Func<TService, Checksum, RemoteServiceCallbackId, CancellationToken, ValueTask<TResult>> invocation, CancellationToken cancellationToken)
         {
             Contract.ThrowIfFalse(_callbackDispatcher is not null);
 
@@ -266,13 +271,13 @@ namespace Microsoft.CodeAnalysis.Remote
 
         // project, callback
 
-        public override async ValueTask<bool> TryInvokeAsync(SolutionState solution, ProjectId projectId, Func<TService, Checksum, RemoteServiceCallbackId, CancellationToken, ValueTask> invocation, CancellationToken cancellationToken)
+        public override async ValueTask<bool> TryInvokeAsync(Project project, Func<TService, Checksum, RemoteServiceCallbackId, CancellationToken, ValueTask> invocation, CancellationToken cancellationToken)
         {
             Contract.ThrowIfFalse(_callbackDispatcher is not null);
 
             try
             {
-                using var scope = await _solutionAssetStorage.StoreAssetsAsync(solution, projectId, cancellationToken).ConfigureAwait(false);
+                using var scope = await _solutionAssetStorage.StoreAssetsAsync(project, cancellationToken).ConfigureAwait(false);
                 using var rental = await RentServiceAsync(cancellationToken).ConfigureAwait(false);
                 await invocation(rental.Service, scope.SolutionChecksum, _callbackHandle.Id, cancellationToken).ConfigureAwait(false);
 
@@ -285,13 +290,13 @@ namespace Microsoft.CodeAnalysis.Remote
             }
         }
 
-        public override async ValueTask<Optional<TResult>> TryInvokeAsync<TResult>(SolutionState solution, ProjectId projectId, Func<TService, Checksum, RemoteServiceCallbackId, CancellationToken, ValueTask<TResult>> invocation, CancellationToken cancellationToken)
+        public override async ValueTask<Optional<TResult>> TryInvokeAsync<TResult>(Project project, Func<TService, Checksum, RemoteServiceCallbackId, CancellationToken, ValueTask<TResult>> invocation, CancellationToken cancellationToken)
         {
             Contract.ThrowIfFalse(_callbackDispatcher is not null);
 
             try
             {
-                using var scope = await _solutionAssetStorage.StoreAssetsAsync(solution, projectId, cancellationToken).ConfigureAwait(false);
+                using var scope = await _solutionAssetStorage.StoreAssetsAsync(project, cancellationToken).ConfigureAwait(false);
                 using var rental = await RentServiceAsync(cancellationToken).ConfigureAwait(false);
                 return await invocation(rental.Service, scope.SolutionChecksum, _callbackHandle.Id, cancellationToken).ConfigureAwait(false);
             }
@@ -304,7 +309,7 @@ namespace Microsoft.CodeAnalysis.Remote
 
         // multi-solution, no callback
 
-        public override async ValueTask<bool> TryInvokeAsync(SolutionState solution1, SolutionState solution2, Func<TService, Checksum, Checksum, CancellationToken, ValueTask> invocation, CancellationToken cancellationToken)
+        public override async ValueTask<bool> TryInvokeAsync(Solution solution1, Solution solution2, Func<TService, Checksum, Checksum, CancellationToken, ValueTask> invocation, CancellationToken cancellationToken)
         {
             try
             {

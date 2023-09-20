@@ -5,7 +5,6 @@
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics;
-using Microsoft.CodeAnalysis.Collections;
 using Microsoft.CodeAnalysis.PooledObjects;
 using Microsoft.CodeAnalysis.Symbols;
 using Roslyn.Utilities;
@@ -62,10 +61,9 @@ namespace Microsoft.CodeAnalysis.Emit
                 stringStreamLengthAdded: baseline.StringStreamLengthAdded,
                 userStringStreamLengthAdded: baseline.UserStringStreamLengthAdded,
                 guidStreamLengthAdded: baseline.GuidStreamLengthAdded,
-                synthesizedTypes: new SynthesizedTypeMaps(
-                    MapAnonymousTypes(baseline.SynthesizedTypes.AnonymousTypes),
-                    MapAnonymousDelegates(baseline.SynthesizedTypes.AnonymousDelegates),
-                    MapAnonymousDelegatesWithIndexedNames(baseline.SynthesizedTypes.AnonymousDelegatesWithIndexedNames)),
+                anonymousTypeMap: MapAnonymousTypes(baseline.AnonymousTypeMap),
+                anonymousDelegates: MapAnonymousDelegates(baseline.AnonymousDelegates),
+                anonymousDelegatesWithIndexedNames: MapAnonymousDelegatesWithIndexedNames(baseline.AnonymousDelegatesWithIndexedNames),
                 synthesizedMembers: mappedSynthesizedMembers,
                 deletedMembers: mappedDeletedMembers,
                 addedOrChangedMethods: MapAddedOrChangedMethods(baseline.AddedOrChangedMethods),
@@ -105,46 +103,46 @@ namespace Microsoft.CodeAnalysis.Emit
             return result;
         }
 
-        private ImmutableSegmentedDictionary<AnonymousTypeKey, AnonymousTypeValue> MapAnonymousTypes(IReadOnlyDictionary<AnonymousTypeKey, AnonymousTypeValue> anonymousTypeMap)
+        private IReadOnlyDictionary<AnonymousTypeKey, AnonymousTypeValue> MapAnonymousTypes(IReadOnlyDictionary<AnonymousTypeKey, AnonymousTypeValue> anonymousTypeMap)
         {
-            var builder = ImmutableSegmentedDictionary.CreateBuilder<AnonymousTypeKey, AnonymousTypeValue>();
+            var result = new Dictionary<AnonymousTypeKey, AnonymousTypeValue>();
 
             foreach (var (key, value) in anonymousTypeMap)
             {
                 var type = (Cci.ITypeDefinition?)MapDefinition(value.Type);
-                Debug.Assert(type != null);
-                builder.Add(key, new AnonymousTypeValue(value.Name, value.UniqueIndex, type));
+                RoslynDebug.Assert(type != null);
+                result.Add(key, new AnonymousTypeValue(value.Name, value.UniqueIndex, type));
             }
 
-            return builder.ToImmutable();
+            return result;
         }
 
-        private ImmutableSegmentedDictionary<SynthesizedDelegateKey, SynthesizedDelegateValue> MapAnonymousDelegates(IReadOnlyDictionary<SynthesizedDelegateKey, SynthesizedDelegateValue> anonymousDelegates)
+        private IReadOnlyDictionary<SynthesizedDelegateKey, SynthesizedDelegateValue> MapAnonymousDelegates(IReadOnlyDictionary<SynthesizedDelegateKey, SynthesizedDelegateValue> anonymousDelegates)
         {
-            var builder = ImmutableSegmentedDictionary.CreateBuilder<SynthesizedDelegateKey, SynthesizedDelegateValue>();
+            var result = new Dictionary<SynthesizedDelegateKey, SynthesizedDelegateValue>();
 
             foreach (var (key, value) in anonymousDelegates)
             {
                 var delegateTypeDef = (Cci.ITypeDefinition?)MapDefinition(value.Delegate);
-                Debug.Assert(delegateTypeDef != null);
-                builder.Add(key, new SynthesizedDelegateValue(delegateTypeDef));
+                RoslynDebug.Assert(delegateTypeDef != null);
+                result.Add(key, new SynthesizedDelegateValue(delegateTypeDef));
             }
 
-            return builder.ToImmutable();
+            return result;
         }
 
-        private ImmutableSegmentedDictionary<string, AnonymousTypeValue> MapAnonymousDelegatesWithIndexedNames(IReadOnlyDictionary<string, AnonymousTypeValue> anonymousDelegates)
+        private IReadOnlyDictionary<string, AnonymousTypeValue> MapAnonymousDelegatesWithIndexedNames(IReadOnlyDictionary<string, AnonymousTypeValue> anonymousDelegates)
         {
-            var builder = ImmutableSegmentedDictionary.CreateBuilder<string, AnonymousTypeValue>();
+            var result = new Dictionary<string, AnonymousTypeValue>();
 
             foreach (var (key, value) in anonymousDelegates)
             {
                 var type = (Cci.ITypeDefinition?)MapDefinition(value.Type);
-                Debug.Assert(type != null);
-                builder.Add(key, new AnonymousTypeValue(value.Name, value.UniqueIndex, type));
+                RoslynDebug.Assert(type != null);
+                result.Add(key, new AnonymousTypeValue(value.Name, value.UniqueIndex, type));
             }
 
-            return builder.ToImmutable();
+            return result;
         }
 
         /// <summary>

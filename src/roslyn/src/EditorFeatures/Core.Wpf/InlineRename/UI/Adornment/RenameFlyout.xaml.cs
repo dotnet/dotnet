@@ -209,12 +209,6 @@ namespace Microsoft.CodeAnalysis.Editor.Implementation.InlineRename
         /// </summary>
         private void IdentifierTextBox_SelectionChanged(object sender, RoutedEventArgs e)
         {
-            // When user is editing the text or make selection change in the text box, sync the selection with text view
-            if (!this.IdentifierTextBox.IsFocused)
-            {
-                return;
-            }
-
             var start = IdentifierTextBox.SelectionStart;
             var length = IdentifierTextBox.SelectionLength;
 

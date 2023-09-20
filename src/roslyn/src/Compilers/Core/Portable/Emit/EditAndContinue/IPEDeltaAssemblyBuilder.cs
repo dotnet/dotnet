@@ -2,10 +2,15 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-namespace Microsoft.CodeAnalysis.Emit;
+using System.Collections.Generic;
 
-internal interface IPEDeltaAssemblyBuilder
+namespace Microsoft.CodeAnalysis.Emit
 {
-    void OnCreatedIndices(DiagnosticBag diagnostics);
-    SynthesizedTypeMaps GetSynthesizedTypes();
+    internal interface IPEDeltaAssemblyBuilder
+    {
+        void OnCreatedIndices(DiagnosticBag diagnostics);
+        IReadOnlyDictionary<AnonymousTypeKey, AnonymousTypeValue> GetAnonymousTypeMap();
+        IReadOnlyDictionary<SynthesizedDelegateKey, SynthesizedDelegateValue> GetAnonymousDelegates();
+        IReadOnlyDictionary<string, AnonymousTypeValue> GetAnonymousDelegatesWithIndexedNames();
+    }
 }

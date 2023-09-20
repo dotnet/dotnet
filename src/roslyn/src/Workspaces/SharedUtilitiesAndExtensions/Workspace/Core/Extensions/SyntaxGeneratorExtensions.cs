@@ -4,7 +4,6 @@
 
 #nullable disable
 
-using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using Microsoft.CodeAnalysis.Editing;
@@ -23,26 +22,20 @@ namespace Microsoft.CodeAnalysis.Shared.Extensions
             this SyntaxGenerator codeDefinitionFactory, Compilation compilation)
         {
             return codeDefinitionFactory.ThrowStatement(
-               CreateNewNotImplementedException(codeDefinitionFactory, compilation));
+               CreateNotImplementedException(codeDefinitionFactory, compilation));
         }
 
         public static SyntaxNode CreateThrowNotImplementedExpression(
             this SyntaxGenerator codeDefinitionFactory, Compilation compilation)
         {
             return codeDefinitionFactory.ThrowExpression(
-               CreateNewNotImplementedException(codeDefinitionFactory, compilation));
+               CreateNotImplementedException(codeDefinitionFactory, compilation));
         }
 
-        private static SyntaxNode CreateNewNotImplementedException(SyntaxGenerator codeDefinitionFactory, Compilation compilation)
-        {
-            var notImplementedExceptionTypeSyntax = compilation.NotImplementedExceptionType() is INamedTypeSymbol symbol
-                ? codeDefinitionFactory.TypeExpression(symbol, addImport: false)
-                : codeDefinitionFactory.QualifiedName(codeDefinitionFactory.IdentifierName(nameof(System)), codeDefinitionFactory.IdentifierName(nameof(NotImplementedException)));
-
-            return codeDefinitionFactory.ObjectCreationExpression(
-                            notImplementedExceptionTypeSyntax,
-                            SpecializedCollections.EmptyList<SyntaxNode>());
-        }
+        private static SyntaxNode CreateNotImplementedException(SyntaxGenerator codeDefinitionFactory, Compilation compilation)
+            => codeDefinitionFactory.ObjectCreationExpression(
+                    codeDefinitionFactory.TypeExpression(compilation.NotImplementedExceptionType(), addImport: false),
+                    SpecializedCollections.EmptyList<SyntaxNode>());
 
         public static ImmutableArray<SyntaxNode> CreateThrowNotImplementedStatementBlock(
             this SyntaxGenerator codeDefinitionFactory, Compilation compilation)

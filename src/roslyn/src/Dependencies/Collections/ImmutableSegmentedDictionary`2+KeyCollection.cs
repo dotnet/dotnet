@@ -53,19 +53,6 @@ namespace Microsoft.CodeAnalysis.Collections
 
             bool ICollection<TKey>.Remove(TKey item)
                 => throw new NotSupportedException();
-
-            public bool All<TArg>(Func<TKey, TArg, bool> predicate, TArg arg)
-            {
-                foreach (var item in this)
-                {
-                    if (!predicate(item, arg))
-                    {
-                        return false;
-                    }
-                }
-
-                return true;
-            }
         }
     }
 }

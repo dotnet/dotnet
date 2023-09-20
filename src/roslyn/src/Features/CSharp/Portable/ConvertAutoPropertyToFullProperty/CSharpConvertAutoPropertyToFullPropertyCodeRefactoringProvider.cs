@@ -47,7 +47,7 @@ namespace Microsoft.CodeAnalysis.CSharp.ConvertAutoPropertyToFullProperty
 
         protected override (SyntaxNode newGetAccessor, SyntaxNode newSetAccessor) GetNewAccessors(
             CSharpCodeGenerationContextInfo info, SyntaxNode property,
-            string fieldName, SyntaxGenerator generator, CancellationToken cancellationToken)
+            string fieldName, SyntaxGenerator generator)
         {
             // C# might have trivia with the accessors that needs to be preserved.  
             // so we will update the existing accessors instead of creating new ones
@@ -55,7 +55,7 @@ namespace Microsoft.CodeAnalysis.CSharp.ConvertAutoPropertyToFullProperty
             var (getAccessor, setAccessor) = GetExistingAccessors(accessorListSyntax);
 
             var getAccessorStatement = generator.ReturnStatement(generator.IdentifierName(fieldName));
-            var newGetter = GetUpdatedAccessor(info, getAccessor, getAccessorStatement, cancellationToken);
+            var newGetter = GetUpdatedAccessor(info, getAccessor, getAccessorStatement);
 
             SyntaxNode newSetter = null;
             if (setAccessor != null)
@@ -63,7 +63,7 @@ namespace Microsoft.CodeAnalysis.CSharp.ConvertAutoPropertyToFullProperty
                 var setAccessorStatement = generator.ExpressionStatement(generator.AssignmentStatement(
                     generator.IdentifierName(fieldName),
                     generator.IdentifierName("value")));
-                newSetter = GetUpdatedAccessor(info, setAccessor, setAccessorStatement, cancellationToken);
+                newSetter = GetUpdatedAccessor(info, setAccessor, setAccessorStatement);
             }
 
             return (newGetAccessor: newGetter, newSetAccessor: newSetter);
@@ -75,7 +75,7 @@ namespace Microsoft.CodeAnalysis.CSharp.ConvertAutoPropertyToFullProperty
                 accessorListSyntax.Accessors.FirstOrDefault(a => a.Kind() is SyntaxKind.SetAccessorDeclaration or SyntaxKind.InitAccessorDeclaration));
 
         private static SyntaxNode GetUpdatedAccessor(CSharpCodeGenerationContextInfo info,
-            SyntaxNode accessor, SyntaxNode statement, CancellationToken cancellationToken)
+            SyntaxNode accessor, SyntaxNode statement)
         {
             var newAccessor = AddStatement(accessor, statement);
             var accessorDeclarationSyntax = (AccessorDeclarationSyntax)newAccessor;
@@ -87,7 +87,7 @@ namespace Microsoft.CodeAnalysis.CSharp.ConvertAutoPropertyToFullProperty
             }
 
             if (!accessorDeclarationSyntax.Body.TryConvertToArrowExpressionBody(
-                    accessorDeclarationSyntax.Kind(), info.LanguageVersion, preference, cancellationToken,
+                    accessorDeclarationSyntax.Kind(), info.LanguageVersion, preference,
                     out var arrowExpression, out _))
             {
                 return accessorDeclarationSyntax.WithSemicolonToken(default);

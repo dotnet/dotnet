@@ -197,7 +197,7 @@ namespace Microsoft.CodeAnalysis.MSBuild
                     _diagnosticReporter.Report(projectFile.Log);
 
                     return ImmutableArray.Create(
-                        ProjectFileInfo.CreateEmpty(loader.Language, projectPath));
+                        ProjectFileInfo.CreateEmpty(loader.Language, projectPath, projectFile.Log));
                 }
 
                 var projectFileInfos = await DoOperationAndReportProgressAsync(
@@ -212,8 +212,10 @@ namespace Microsoft.CodeAnalysis.MSBuild
                 foreach (var projectFileInfo in projectFileInfos)
                 {
                     // If any diagnostics were logged during build, we'll carry on and try to produce a meaningful project.
-                    // Note: any diagnostics would have been logged to the original project file's log.
-                    _diagnosticReporter.Report(projectFile.Log);
+                    if (!projectFileInfo.Log.IsEmpty)
+                    {
+                        _diagnosticReporter.Report(projectFileInfo.Log);
+                    }
 
                     results.Add(projectFileInfo);
                 }
@@ -257,7 +259,7 @@ namespace Microsoft.CodeAnalysis.MSBuild
                     _projectIdToFileInfoMap.Add(projectId, projectFileInfo);
                 }
 
-                // If this project resulted in more than a single project, a discriminator (e.g. TFM) should be
+                // If this project resulted in more than a single project, a discrimator (e.g. TFM) should be
                 // added to the project name.
                 var addDiscriminator = idsAndFileInfos.Count > 1;
 

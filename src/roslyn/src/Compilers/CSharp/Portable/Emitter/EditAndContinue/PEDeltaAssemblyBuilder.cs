@@ -11,11 +11,11 @@ using System.Globalization;
 using System.Linq;
 using System.Reflection.Metadata;
 using Microsoft.CodeAnalysis.CodeGen;
-using Microsoft.CodeAnalysis.Collections;
 using Microsoft.CodeAnalysis.CSharp.Symbols;
 using Microsoft.CodeAnalysis.CSharp.Symbols.Metadata.PE;
 using Microsoft.CodeAnalysis.Emit;
 using Microsoft.CodeAnalysis.PooledObjects;
+using Microsoft.CodeAnalysis.Symbols;
 using Roslyn.Utilities;
 
 namespace Microsoft.CodeAnalysis.CSharp.Emit
@@ -48,7 +48,9 @@ namespace Microsoft.CodeAnalysis.CSharp.Emit
             var metadataAssembly = (PEAssemblySymbol)metadataDecoder.ModuleSymbol.ContainingAssembly;
 
             var matchToMetadata = new CSharpSymbolMatcher(
-                metadataSymbols.SynthesizedTypes,
+                metadataSymbols.AnonymousTypes,
+                metadataSymbols.AnonymousDelegates,
+                metadataSymbols.AnonymousDelegatesWithIndexedNames,
                 sourceAssembly,
                 context,
                 metadataAssembly);
@@ -63,11 +65,13 @@ namespace Microsoft.CodeAnalysis.CSharp.Emit
                 var previousContext = new EmitContext((PEModuleBuilder)previousGeneration.PEModuleBuilder, null, new DiagnosticBag(), metadataOnly: false, includePrivateMembers: true);
 
                 matchToPrevious = new CSharpSymbolMatcher(
+                    previousGeneration.AnonymousTypeMap,
+                    previousGeneration.AnonymousDelegates,
+                    previousGeneration.AnonymousDelegatesWithIndexedNames,
                     sourceAssembly: sourceAssembly,
                     sourceContext: context,
                     otherAssembly: previousAssembly,
                     otherContext: previousContext,
-                    previousGeneration.SynthesizedTypes,
                     otherSynthesizedMembers: previousGeneration.SynthesizedMembers,
                     otherDeletedMembers: previousGeneration.DeletedMembers);
             }
@@ -120,19 +124,28 @@ namespace Microsoft.CodeAnalysis.CSharp.Emit
             ImmutableDictionary<AssemblyIdentity, AssemblyIdentity> assemblyReferenceIdentityMap;
             var metadataAssembly = metadataCompilation.GetBoundReferenceManager().CreatePEAssemblyForAssemblyMetadata(AssemblyMetadata.Create(originalMetadata), MetadataImportOptions.All, out assemblyReferenceIdentityMap);
             var metadataDecoder = new MetadataDecoder(metadataAssembly.PrimaryModule);
-
-            var synthesizedTypes = GetSynthesizedTypesFromMetadata(originalMetadata.MetadataReader, metadataDecoder);
-            var metadataSymbols = new EmitBaseline.MetadataSymbols(synthesizedTypes, metadataDecoder, assemblyReferenceIdentityMap);
+            GetAnonymousTypeMapFromMetadata(originalMetadata.MetadataReader, metadataDecoder, out var metadataAnonymousTypes, out var metadataAnonymousDelegatesWithIndexedNames);
+            var metadataAnonymousDelegates = GetAnonymousDelegateMapFromMetadata(originalMetadata.MetadataReader, metadataDecoder);
+            var metadataSymbols = new EmitBaseline.MetadataSymbols(metadataAnonymousTypes, metadataAnonymousDelegates, metadataAnonymousDelegatesWithIndexedNames, metadataDecoder, assemblyReferenceIdentityMap);
 
             return InterlockedOperations.Initialize(ref initialBaseline.LazyMetadataSymbols, metadataSymbols);
         }
 
         // internal for testing
-        internal static SynthesizedTypeMaps GetSynthesizedTypesFromMetadata(MetadataReader reader, MetadataDecoder metadataDecoder)
+        internal static void GetAnonymousTypeMapFromMetadata(
+            MetadataReader reader,
+            MetadataDecoder metadataDecoder,
+            out IReadOnlyDictionary<AnonymousTypeKey, AnonymousTypeValue> anonymousTypes,
+            out IReadOnlyDictionary<string, AnonymousTypeValue> anonymousDelegatesWithIndexedNames)
         {
-            var anonymousTypes = ImmutableSegmentedDictionary.CreateBuilder<AnonymousTypeKey, AnonymousTypeValue>();
-            var anonymousDelegatesWithIndexedNames = ImmutableSegmentedDictionary.CreateBuilder<string, AnonymousTypeValue>();
-            var anonymousDelegates = ImmutableSegmentedDictionary.CreateBuilder<SynthesizedDelegateKey, SynthesizedDelegateValue>();
+            // In general, the anonymous type name is "<{module-id}>f__AnonymousType{index}#{submission-index}",
+            // but EnC is not supported for modules nor submissions. Hence we only look for type names with no module id and no submission index.
+            const string AnonymousTypeOrDelegateNamePrefix = "<>f__Anonymous";
+            const string AnonymousTypeNameWithoutModulePrefix = AnonymousTypeOrDelegateNamePrefix + "Type";
+            const string AnonymousDelegateNameWithoutModulePrefix = AnonymousTypeOrDelegateNamePrefix + "Delegate";
+
+            var types = new Dictionary<AnonymousTypeKey, AnonymousTypeValue>();
+            var delegates = new Dictionary<string, AnonymousTypeValue>();
 
             foreach (var handle in reader.TypeDefinitions)
             {
@@ -142,25 +155,17 @@ namespace Microsoft.CodeAnalysis.CSharp.Emit
                     continue;
                 }
 
-                if (reader.StringComparer.StartsWith(def.Name, GeneratedNames.ActionDelegateNamePrefix) ||
-                    reader.StringComparer.StartsWith(def.Name, GeneratedNames.FuncDelegateNamePrefix))
+                if (!reader.StringComparer.StartsWith(def.Name, AnonymousTypeOrDelegateNamePrefix))
                 {
-                    // The name of a synthesized delegate neatly encodes everything we need to identify it, either
-                    // in the prefix (return void or not) or the name (ref kinds and arity) so we don't need anything
-                    // fancy for a key.
-                    var key = new SynthesizedDelegateKey(reader.GetString(def.Name));
-                    var type = (NamedTypeSymbol)metadataDecoder.GetTypeOfToken(handle);
-                    var value = new SynthesizedDelegateValue(type.GetCciAdapter());
-                    anonymousDelegates.Add(key, value);
                     continue;
                 }
 
-                // In general, the anonymous type name is "<{module-id}>f__AnonymousType{index}#{submission-index}",
-                // but EnC is not supported for modules nor submissions. Hence we only look for type names with no module id and no submission index.
-                if (reader.StringComparer.StartsWith(def.Name, GeneratedNames.AnonymousTypeNameWithoutModulePrefix))
+                var metadataName = reader.GetString(def.Name);
+                var name = MetadataHelpers.InferTypeArityAndUnmangleMetadataName(metadataName, out _);
+
+                if (name.StartsWith(AnonymousTypeNameWithoutModulePrefix, StringComparison.Ordinal))
                 {
-                    var name = MetadataHelpers.InferTypeArityAndUnmangleMetadataName(reader.GetString(def.Name), out _);
-                    if (int.TryParse(name.Substring(GeneratedNames.AnonymousTypeNameWithoutModulePrefix.Length), NumberStyles.None, CultureInfo.InvariantCulture, out int index))
+                    if (int.TryParse(name.Substring(AnonymousTypeNameWithoutModulePrefix.Length), NumberStyles.None, CultureInfo.InvariantCulture, out int index))
                     {
                         var builder = ArrayBuilder<AnonymousTypeKeyField>.GetInstance();
                         if (TryGetAnonymousTypeKey(reader, def, builder))
@@ -168,31 +173,55 @@ namespace Microsoft.CodeAnalysis.CSharp.Emit
                             var type = (NamedTypeSymbol)metadataDecoder.GetTypeOfToken(handle);
                             var key = new AnonymousTypeKey(builder.ToImmutable());
                             var value = new AnonymousTypeValue(name, index, type.GetCciAdapter());
-                            anonymousTypes.Add(key, value);
+                            types.Add(key, value);
                         }
                         builder.Free();
                     }
-
-                    continue;
                 }
-
-                // In general, the anonymous delegate name is "<{module-id}>f__AnonymousDelegate{index}#{submission-index}",
-                // but EnC is not supported for modules nor submissions. Hence we only look for type names with no module id and no submission index.
-                if (reader.StringComparer.StartsWith(def.Name, GeneratedNames.AnonymousDelegateNameWithoutModulePrefix))
+                else if (name.StartsWith(AnonymousDelegateNameWithoutModulePrefix, StringComparison.Ordinal))
                 {
-                    var name = MetadataHelpers.InferTypeArityAndUnmangleMetadataName(reader.GetString(def.Name), out _);
-                    if (int.TryParse(name.Substring(GeneratedNames.AnonymousDelegateNameWithoutModulePrefix.Length), NumberStyles.None, CultureInfo.InvariantCulture, out int index))
+                    if (int.TryParse(name.Substring(AnonymousDelegateNameWithoutModulePrefix.Length), NumberStyles.None, CultureInfo.InvariantCulture, out int index))
                     {
                         var type = (NamedTypeSymbol)metadataDecoder.GetTypeOfToken(handle);
                         var value = new AnonymousTypeValue(name, index, type.GetCciAdapter());
-                        anonymousDelegatesWithIndexedNames.Add(name, value);
+                        delegates.Add(name, value);
                     }
-
-                    continue;
                 }
             }
 
-            return new SynthesizedTypeMaps(anonymousTypes.ToImmutable(), anonymousDelegates.ToImmutable(), anonymousDelegatesWithIndexedNames.ToImmutable());
+            anonymousTypes = types;
+            anonymousDelegatesWithIndexedNames = delegates;
+        }
+
+        // internal for testing
+        internal static IReadOnlyDictionary<SynthesizedDelegateKey, SynthesizedDelegateValue> GetAnonymousDelegateMapFromMetadata(MetadataReader reader, MetadataDecoder metadataDecoder)
+        {
+            var result = new Dictionary<SynthesizedDelegateKey, SynthesizedDelegateValue>();
+            foreach (var handle in reader.TypeDefinitions)
+            {
+                var def = reader.GetTypeDefinition(handle);
+                if (!def.Namespace.IsNil)
+                {
+                    continue;
+                }
+
+                if (!reader.StringComparer.StartsWith(def.Name, GeneratedNames.ActionDelegateNamePrefix) &&
+                    !reader.StringComparer.StartsWith(def.Name, GeneratedNames.FuncDelegateNamePrefix))
+                {
+                    continue;
+                }
+
+                // The name of a synthesized delegate neatly encodes everything we need to identify it, either
+                // in the prefix (return void or not) or the name (ref kinds and arity) so we don't need anything
+                // fancy for a key.
+                var metadataName = reader.GetString(def.Name);
+                var key = new SynthesizedDelegateKey(metadataName);
+
+                var type = (NamedTypeSymbol)metadataDecoder.GetTypeOfToken(handle);
+                var value = new SynthesizedDelegateValue(type.GetCciAdapter());
+                result.Add(key, value);
+            }
+            return result;
         }
 
         private static bool TryGetAnonymousTypeKey(
@@ -218,17 +247,28 @@ namespace Microsoft.CodeAnalysis.CSharp.Emit
             get { return _previousDefinitions; }
         }
 
-        public SynthesizedTypeMaps GetSynthesizedTypes()
+        public IReadOnlyDictionary<AnonymousTypeKey, AnonymousTypeValue> GetAnonymousTypeMap()
         {
-            var result = new SynthesizedTypeMaps(
-                Compilation.AnonymousTypeManager.GetAnonymousTypeMap(),
-                Compilation.AnonymousTypeManager.GetAnonymousDelegates(),
-                Compilation.AnonymousTypeManager.GetAnonymousDelegatesWithIndexedNames());
-
+            var anonymousTypes = this.Compilation.AnonymousTypeManager.GetAnonymousTypeMap();
             // Should contain all entries in previous generation.
-            Debug.Assert(_previousGeneration.SynthesizedTypes.IsSubsetOf(result));
+            Debug.Assert(_previousGeneration.AnonymousTypeMap.All(p => anonymousTypes.ContainsKey(p.Key)));
+            return anonymousTypes;
+        }
 
-            return result;
+        public IReadOnlyDictionary<SynthesizedDelegateKey, SynthesizedDelegateValue> GetAnonymousDelegates()
+        {
+            var anonymousDelegates = this.Compilation.AnonymousTypeManager.GetAnonymousDelegates();
+            // Should contain all entries in previous generation.
+            Debug.Assert(_previousGeneration.AnonymousDelegates.All(p => anonymousDelegates.ContainsKey(p.Key)));
+            return anonymousDelegates;
+        }
+
+        public IReadOnlyDictionary<string, AnonymousTypeValue> GetAnonymousDelegatesWithIndexedNames()
+        {
+            var anonymousDelegates = this.Compilation.AnonymousTypeManager.GetAnonymousDelegatesWithIndexedNames();
+            // Should contain all entries in previous generation.
+            Debug.Assert(_previousGeneration.AnonymousDelegatesWithIndexedNames.All(p => anonymousDelegates.ContainsKey(p.Key)));
+            return anonymousDelegates;
         }
 
         public override IEnumerable<Cci.INamespaceTypeDefinition> GetTopLevelTypeDefinitions(EmitContext context)
@@ -254,12 +294,12 @@ namespace Microsoft.CodeAnalysis.CSharp.Emit
 
         internal override ImmutableArray<AnonymousTypeKey> GetPreviousAnonymousTypes()
         {
-            return ImmutableArray.CreateRange(_previousGeneration.SynthesizedTypes.AnonymousTypes.Keys);
+            return ImmutableArray.CreateRange(_previousGeneration.AnonymousTypeMap.Keys);
         }
 
         internal override ImmutableArray<SynthesizedDelegateKey> GetPreviousAnonymousDelegates()
         {
-            return ImmutableArray.CreateRange(_previousGeneration.SynthesizedTypes.AnonymousDelegates.Keys);
+            return ImmutableArray.CreateRange(_previousGeneration.AnonymousDelegates.Keys);
         }
 
         internal override int GetNextAnonymousTypeIndex()

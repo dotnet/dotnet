@@ -82,21 +82,16 @@ namespace Microsoft.VisualStudio.Extensibility.Testing
                 new CodeStyleOption2<NamespaceDeclarationPreference>(value ? NamespaceDeclarationPreference.FileScoped : NamespaceDeclarationPreference.BlockScoped, NotificationOption2.Suggestion));
         }
 
-        public Task SetFullSolutionAnalysisAsync(bool value, CancellationToken cancellationToken)
-        {
-            var analyzerScope = value ? BackgroundAnalysisScope.FullSolution : BackgroundAnalysisScope.Default;
-            var compilerScope = value ? CompilerDiagnosticsScope.FullSolution : CompilerDiagnosticsScope.OpenFiles;
-            return SetBackgroundAnalysisOptionsAsync(analyzerScope, compilerScope, cancellationToken);
-        }
-
-        public async Task SetBackgroundAnalysisOptionsAsync(BackgroundAnalysisScope analyzerScope, CompilerDiagnosticsScope compilerScope, CancellationToken cancellationToken)
+        public async Task SetFullSolutionAnalysisAsync(bool value, CancellationToken cancellationToken)
         {
             await JoinableTaskFactory.SwitchToMainThreadAsync(cancellationToken);
             var globalOptions = await TestServices.Shell.GetComponentModelServiceAsync<IGlobalOptionService>(cancellationToken);
 
-            globalOptions.SetGlobalOption(SolutionCrawlerOptionsStorage.BackgroundAnalysisScopeOption, LanguageNames.CSharp, analyzerScope);
-            globalOptions.SetGlobalOption(SolutionCrawlerOptionsStorage.BackgroundAnalysisScopeOption, LanguageNames.VisualBasic, analyzerScope);
+            var scope = value ? BackgroundAnalysisScope.FullSolution : BackgroundAnalysisScope.Default;
+            globalOptions.SetGlobalOption(SolutionCrawlerOptionsStorage.BackgroundAnalysisScopeOption, LanguageNames.CSharp, scope);
+            globalOptions.SetGlobalOption(SolutionCrawlerOptionsStorage.BackgroundAnalysisScopeOption, LanguageNames.VisualBasic, scope);
 
+            var compilerScope = value ? CompilerDiagnosticsScope.FullSolution : CompilerDiagnosticsScope.OpenFiles;
             globalOptions.SetGlobalOption(SolutionCrawlerOptionsStorage.CompilerDiagnosticsScopeOption, LanguageNames.CSharp, compilerScope);
             globalOptions.SetGlobalOption(SolutionCrawlerOptionsStorage.CompilerDiagnosticsScopeOption, LanguageNames.VisualBasic, compilerScope);
         }

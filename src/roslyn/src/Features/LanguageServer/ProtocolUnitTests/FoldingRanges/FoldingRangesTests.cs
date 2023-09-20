@@ -52,7 +52,7 @@ comment */|}";
             AssertJsonEquals(expected, results);
         }
 
-        [Theory, CombinatorialData]
+        [Theory(Skip = "GetFoldingRangeAsync does not yet support regions."), CombinatorialData]
         public async Task TestGetFoldingRangeAsync_Regions(bool mutatingLspWorkspace)
         {
             var markup =

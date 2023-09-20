@@ -9,7 +9,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Host;
 using Microsoft.CodeAnalysis.Options;
-using Microsoft.CodeAnalysis.PooledObjects;
 using Microsoft.CodeAnalysis.Shared.Extensions;
 using Microsoft.CodeAnalysis.Simplification;
 using Microsoft.CodeAnalysis.SolutionCrawler;
@@ -200,17 +199,12 @@ namespace Microsoft.CodeAnalysis.Diagnostics.EngineV2
 
                 RemoveInMemoryCache(_lastResult);
 
-                using var _ = PooledHashSet<DocumentId>.GetInstance(out var documentIdsToProcess);
-                documentIdsToProcess.AddRange(_lastResult.DocumentIdsOrEmpty);
-                documentIdsToProcess.AddRange(result.DocumentIdsOrEmpty);
-
                 // save last aggregated form of analysis result
                 _lastResult = result.ToAggregatedForm();
 
                 // serialization can't be canceled.
                 var serializerVersion = result.Version;
-
-                foreach (var documentId in documentIdsToProcess)
+                foreach (var documentId in result.DocumentIds)
                 {
                     var document = project.GetTextDocument(documentId);
 

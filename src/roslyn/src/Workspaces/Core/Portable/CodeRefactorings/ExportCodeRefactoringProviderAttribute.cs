@@ -13,7 +13,7 @@ namespace Microsoft.CodeAnalysis.CodeRefactorings
     /// Use this attribute to declare a <see cref="CodeRefactoringProvider"/> implementation so that it can be discovered by the host.
     /// </summary>
     [MetadataAttribute]
-    [AttributeUsage(AttributeTargets.Class, Inherited = false)]
+    [AttributeUsage(AttributeTargets.Class)]
     public sealed class ExportCodeRefactoringProviderAttribute : ExportAttribute
     {
         private static readonly string[] s_defaultDocumentKinds = new[] { nameof(TextDocumentKind.Document) };

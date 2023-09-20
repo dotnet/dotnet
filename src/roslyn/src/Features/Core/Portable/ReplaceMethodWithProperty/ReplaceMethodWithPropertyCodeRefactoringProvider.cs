@@ -377,7 +377,7 @@ namespace Microsoft.CodeAnalysis.ReplaceMethodWithProperty
 
                 service.ReplaceGetMethodWithProperty(
                     codeGenerationOptions, parseOptions, editor, semanticModel,
-                    getSetPair, propertyName, nameChanged, cancellationToken);
+                    getSetPair, propertyName, nameChanged);
             }
 
             // Then remove all the set methods.

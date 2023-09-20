@@ -69,7 +69,7 @@ namespace Microsoft.CodeAnalysis.Diagnostics.EngineV2
             private readonly TextDocument _document;
             private readonly SourceText _text;
 
-            private readonly ImmutableArray<StateSet> _stateSets;
+            private readonly IEnumerable<StateSet> _stateSets;
             private readonly CompilationWithAnalyzers? _compilationWithAnalyzers;
 
             private readonly TextSpan? _range;
@@ -79,6 +79,7 @@ namespace Microsoft.CodeAnalysis.Diagnostics.EngineV2
             private readonly Func<string, bool>? _shouldIncludeDiagnostic;
             private readonly bool _includeCompilerDiagnostics;
             private readonly Func<string, IDisposable?>? _addOperationScope;
+            private readonly bool _cacheFullDocumentDiagnostics;
             private readonly bool _isExplicit;
             private readonly bool _logPerformanceInfo;
             private readonly bool _incrementalAnalysis;
@@ -102,11 +103,15 @@ namespace Microsoft.CodeAnalysis.Diagnostics.EngineV2
             {
                 var text = await document.GetValueTextAsync(cancellationToken).ConfigureAwait(false);
                 var stateSets = owner._stateManager
-                    .GetOrCreateStateSets(document.Project)
-                    .Where(s => DocumentAnalysisExecutor.IsAnalyzerEnabledForProject(s.Analyzer, document.Project, owner.GlobalOptions))
-                    .ToImmutableArray();
+                                     .GetOrCreateStateSets(document.Project).Where(s => DocumentAnalysisExecutor.IsAnalyzerEnabledForProject(s.Analyzer, document.Project, owner.GlobalOptions));
 
                 var ideOptions = owner.AnalyzerService.GlobalOptions.GetIdeAnalyzerOptions(document.Project);
+
+                // We want to cache computed full document diagnostics in LatestDiagnosticsForSpanGetter
+                // only in LSP pull diagnostics mode. In LSP push diagnostics mode,
+                // the background analysis from solution crawler handles caching these diagnostics and
+                // updating the error list simultaneously.
+                var cacheFullDocumentDiagnostics = owner.AnalyzerService.GlobalOptions.IsLspPullDiagnostics();
 
                 // Note that some callers, such as diagnostic tagger, might pass in a range equal to the entire document span.
                 // We clear out range for such cases as we are computing full document diagnostics.
@@ -127,14 +132,14 @@ namespace Microsoft.CodeAnalysis.Diagnostics.EngineV2
 
                 return new LatestDiagnosticsForSpanGetter(
                     owner, compilationWithAnalyzers, document, text, stateSets, shouldIncludeDiagnostic, includeCompilerDiagnostics,
-                    range, blockForData, addOperationScope, includeSuppressedDiagnostics, priorityProvider,
+                    range, blockForData, addOperationScope, includeSuppressedDiagnostics, priorityProvider, cacheFullDocumentDiagnostics,
                     isExplicit, logPerformanceInfo, incrementalAnalysis, diagnosticKinds);
             }
 
             private static async Task<CompilationWithAnalyzers?> GetOrCreateCompilationWithAnalyzersAsync(
                 Project project,
                 IdeAnalyzerOptions ideOptions,
-                ImmutableArray<StateSet> stateSets,
+                IEnumerable<StateSet> stateSets,
                 bool includeSuppressedDiagnostics,
                 CancellationToken cancellationToken)
             {
@@ -174,7 +179,7 @@ namespace Microsoft.CodeAnalysis.Diagnostics.EngineV2
                 CompilationWithAnalyzers? compilationWithAnalyzers,
                 TextDocument document,
                 SourceText text,
-                ImmutableArray<StateSet> stateSets,
+                IEnumerable<StateSet> stateSets,
                 Func<string, bool>? shouldIncludeDiagnostic,
                 bool includeCompilerDiagnostics,
                 TextSpan? range,
@@ -182,6 +187,7 @@ namespace Microsoft.CodeAnalysis.Diagnostics.EngineV2
                 Func<string, IDisposable?>? addOperationScope,
                 bool includeSuppressedDiagnostics,
                 ICodeActionRequestPriorityProvider priorityProvider,
+                bool cacheFullDocumentDiagnostics,
                 bool isExplicit,
                 bool logPerformanceInfo,
                 bool incrementalAnalysis,
@@ -199,6 +205,7 @@ namespace Microsoft.CodeAnalysis.Diagnostics.EngineV2
                 _addOperationScope = addOperationScope;
                 _includeSuppressedDiagnostics = includeSuppressedDiagnostics;
                 _priorityProvider = priorityProvider;
+                _cacheFullDocumentDiagnostics = cacheFullDocumentDiagnostics;
                 _isExplicit = isExplicit;
                 _logPerformanceInfo = logPerformanceInfo;
                 _incrementalAnalysis = incrementalAnalysis;
@@ -449,6 +456,13 @@ namespace Microsoft.CodeAnalysis.Diagnostics.EngineV2
                 {
                     var diagnostics = diagnosticsMap[analyzerWithState.Analyzer];
                     builder.AddRange(diagnostics.Where(ShouldInclude));
+
+                    // Save the computed diagnostics if caching is enabled and diagnostics were computed for the entire document.
+                    if (_cacheFullDocumentDiagnostics && !span.HasValue)
+                    {
+                        var data = new DocumentAnalysisData(version, _text.Lines.Count, diagnostics);
+                        analyzerWithState.State.Save(executor.AnalysisScope.Kind, data);
+                    }
                 }
 
                 if (incrementalAnalysis)
