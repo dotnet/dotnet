@@ -3,6 +3,7 @@
 
 using System.Collections.ObjectModel;
 using System.Net.Http;
+using System.Text;
 using Components.TestServer.RazorComponents;
 using Microsoft.AspNetCore.Components.E2ETest.Infrastructure;
 using Microsoft.AspNetCore.Components.E2ETest.Infrastructure.ServerFixtures;
@@ -15,6 +16,8 @@ namespace Microsoft.AspNetCore.Components.E2ETests.ServerRenderingTests.FormHand
 
 public class FormWithParentBindingContextTest : ServerTestBase<BasicTestAppServerSiteFixture<RazorComponentEndpointsStartup<App>>>
 {
+    private string _tempDirectory;
+
     public FormWithParentBindingContextTest(
         BrowserFixture browserFixture,
         BasicTestAppServerSiteFixture<RazorComponentEndpointsStartup<App>> serverFixture,
@@ -24,7 +27,12 @@ public class FormWithParentBindingContextTest : ServerTestBase<BasicTestAppServe
     }
 
     public override Task InitializeAsync()
-        => InitializeAsync(BrowserFixture.StreamingContext);
+    {
+        _tempDirectory = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString("N"));
+        Directory.CreateDirectory(_tempDirectory);
+
+        return InitializeAsync(BrowserFixture.StreamingContext);
+    }
 
     [Theory]
     [InlineData(true)]
@@ -36,6 +44,30 @@ public class FormWithParentBindingContextTest : ServerTestBase<BasicTestAppServe
             Url = "forms/default-form",
             FormCssSelector = "form",
             SuppressEnhancedNavigation = suppressEnhancedNavigation,
+        };
+        DispatchToFormCore(dispatchToForm);
+    }
+
+    [Fact]
+    public void PlainFormIsNotEnhancedByDefault()
+    {
+        var dispatchToForm = new DispatchToForm(this)
+        {
+            Url = $"forms/non-enhanced-plainform",
+            FormCssSelector = "form",
+            FormIsEnhanced = false,
+        };
+        DispatchToFormCore(dispatchToForm);
+    }
+
+    [Fact]
+    public void EditFormIsNotEnhancedByDefault()
+    {
+        var dispatchToForm = new DispatchToForm(this)
+        {
+            Url = $"forms/non-enhanced-editform",
+            FormCssSelector = "form",
+            FormIsEnhanced = false,
         };
         DispatchToFormCore(dispatchToForm);
     }
@@ -55,6 +87,50 @@ public class FormWithParentBindingContextTest : ServerTestBase<BasicTestAppServe
             SuppressEnhancedNavigation = suppressEnhancedNavigation,
         };
         DispatchToFormCore(dispatchToForm);
+    }
+
+    [Theory]
+    [InlineData(true)]
+    [InlineData(false)]
+    public void DataAnnotationsWorkForForms(bool suppressEnhancedNavigation)
+    {
+        var dispatchToForm = new DispatchToForm(this)
+        {
+            Url = "forms/default-form-bound-parameter-annotations",
+            FormCssSelector = "form",
+            InputFieldId = "Parameter.FirstName",
+            InputFieldCssSelector = "input[name='Parameter.FirstName']",
+            InputFieldValue = "John",
+            SuppressEnhancedNavigation = suppressEnhancedNavigation,
+            ErrorSelector = "ul.validation-errors li.validation-message",
+            AssertErrors = errors =>
+            {
+                var error = Assert.Single(errors);
+                Assert.Equal("Name is too long", error.Text);
+                Assert.Equal("John", Browser.FindElement(By.CssSelector("input[name='Parameter.FirstName']")).GetAttribute("value"));
+            },
+        };
+        DispatchToFormCore(dispatchToForm);
+    }
+
+    [Theory]
+    [InlineData(true)]
+    [InlineData(false)]
+    public void DataContractAttributesWorkForForms(bool suppressEnhancedNavigation)
+    {
+        var dispatchToForm = new DispatchToForm(this)
+        {
+            Url = "forms/default-form-bound-parameter-annotations",
+            FormCssSelector = "form",
+            InputFieldId = "Parameter.FirstName",
+            InputFieldCssSelector = "input[name='Parameter.FirstName']",
+            InputFieldValue = "Jon",
+            SuppressEnhancedNavigation = suppressEnhancedNavigation
+        };
+        DispatchToFormCore(dispatchToForm);
+
+        var text = Browser.Exists(By.Id("pass-id")).Text;
+        Assert.Equal("0", text);
     }
 
     [Theory]
@@ -1148,6 +1224,41 @@ public class FormWithParentBindingContextTest : ServerTestBase<BasicTestAppServe
         DispatchToFormCore(dispatchToForm);
     }
 
+    [Fact]
+    public void CanBindToFormWithFiles()
+    {
+        var profilePicture = TempFile.Create(_tempDirectory, "txt", "This is a profile picture.");
+        var headerPhoto = TempFile.Create(_tempDirectory, "txt", "This is a header picture.");
+        var file1 = TempFile.Create(_tempDirectory, "txt", "This is file 1.");
+        var file2 = TempFile.Create(_tempDirectory, "txt", "This is file 2.");
+        var file3 = TempFile.Create(_tempDirectory, "txt", "This is file 3.");
+        var file4 = TempFile.Create(_tempDirectory, "txt", "This is file 4.");
+        var file5 = TempFile.Create(_tempDirectory, "txt", "This is file 5.");
+        var dispatchToForm = new DispatchToForm(this)
+        {
+            Url = "forms/with-files",
+            FormCssSelector = "form",
+            FormIsEnhanced = false,
+            UpdateFormAction = () =>
+            {
+                Browser.Exists(By.CssSelector("input[name='Model.ProfilePicture']")).SendKeys(profilePicture.Path);
+                Browser.Exists(By.CssSelector("input[name='Model.Documents']")).SendKeys(file1.Path);
+                Browser.Exists(By.CssSelector("input[name='Model.Documents']")).SendKeys(file2.Path);
+                Browser.Exists(By.CssSelector("input[name='Model.Images']")).SendKeys(file3.Path);
+                Browser.Exists(By.CssSelector("input[name='Model.Images']")).SendKeys(file4.Path);
+                Browser.Exists(By.CssSelector("input[name='Model.Images']")).SendKeys(file5.Path);
+                Browser.Exists(By.CssSelector("input[name='Model.HeaderPhoto']")).SendKeys(headerPhoto.Path);
+            }
+        };
+        DispatchToFormCore(dispatchToForm);
+
+        Assert.Equal($"Profile Picture: {profilePicture.Name}", Browser.Exists(By.Id("profile-picture")).Text);
+        Assert.Equal("Documents: 2", Browser.Exists(By.Id("documents")).Text);
+        Assert.Equal("Images: 3", Browser.Exists(By.Id("images")).Text);
+        Assert.Equal("Header Photo: Model.HeaderPhoto", Browser.Exists(By.Id("header-photo")).Text);
+        Assert.Equal("Total: 7", Browser.Exists(By.Id("form-collection")).Text);
+    }
+
     private void DispatchToFormCore(DispatchToForm dispatch)
     {
         SuppressEnhancedNavigation(dispatch.SuppressEnhancedNavigation);
@@ -1223,7 +1334,12 @@ public class FormWithParentBindingContextTest : ServerTestBase<BasicTestAppServe
                 }
             }
 
-            if (!dispatch.SuppressEnhancedNavigation)
+            if (!dispatch.FormIsEnhanced)
+            {
+                // Verify the same form element is *not* still in the page
+                Assert.Throws<StaleElementReferenceException>(() => form.GetAttribute("method"));
+            }
+            else if (!dispatch.SuppressEnhancedNavigation)
             {
                 // Verify the same form element is still in the page
                 // We wouldn't be allowed to read the attribute if the element is stale
@@ -1262,6 +1378,7 @@ public class FormWithParentBindingContextTest : ServerTestBase<BasicTestAppServe
         public Action UpdateFormAction { get; internal set; }
         public Action<ReadOnlyCollection<IWebElement>> AssertErrors { get; internal set; }
         public string ErrorSelector { get; internal set; } = "#errors > li";
+        public bool FormIsEnhanced { get; internal set; } = true; // Default to true because that's the case for almost all test cases
     }
 
     private string GetExpectedTarget(FormWithParentBindingContextTest test, string expectedActionValue, string url)
@@ -1270,5 +1387,27 @@ public class FormWithParentBindingContextTest : ServerTestBase<BasicTestAppServe
     private void GoTo(string relativePath)
     {
         Navigate($"{ServerPathBase}/{relativePath}");
+    }
+
+    private struct TempFile
+    {
+        public string Name { get; }
+        public string Path { get; }
+        public byte[] Contents { get; }
+        public string Text => Encoding.ASCII.GetString(Contents);
+        private TempFile(string tempDirectory, string extension, byte[] contents)
+        {
+            Name = $"{Guid.NewGuid():N}.{extension}";
+            Path = System.IO.Path.Combine(tempDirectory, Name);
+            Contents = contents;
+        }
+        public static TempFile Create(string tempDirectory, string extension, byte[] contents)
+        {
+            var file = new TempFile(tempDirectory, extension, contents);
+            File.WriteAllBytes(file.Path, contents);
+            return file;
+        }
+        public static TempFile Create(string tempDirectory, string extension, string text)
+            => Create(tempDirectory, extension, Encoding.ASCII.GetBytes(text));
     }
 }
