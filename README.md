@@ -194,7 +194,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/sdk`  
 *[dotnet/sdk@65f1143](https://github.com/dotnet/sdk/commit/65f11437c0ea592862f214027151f09f690759f9)*
 - `src/source-build-externals`  
-*[dotnet/source-build-externals@c42a7ce](https://github.com/dotnet/source-build-externals/commit/c42a7ce3b6fa02957e7b4ef995c5c2a9a23d294c)*
+*[dotnet/source-build-externals@6dbf3aa](https://github.com/dotnet/source-build-externals/commit/6dbf3aaa0fc9664df86462f5c70b99800934fccd)*
     - `src/source-build-externals/src/abstractions-xunit`  
     *[xunit/abstractions.xunit@b75d54d](https://github.com/xunit/abstractions.xunit/commit/b75d54d73b141709f805c2001b16f3dd4d71539d)*
     - `src/source-build-externals/src/application-insights`  
@@ -208,7 +208,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
     - `src/source-build-externals/src/humanizer`  
     *[Humanizr/Humanizer@3ebc38d](https://github.com/Humanizr/Humanizer/commit/3ebc38de585fc641a04b0e78ed69468453b0f8a1)*
     - `src/source-build-externals/src/MSBuildLocator`  
-    *[microsoft/MSBuildLocator@4507992](https://github.com/microsoft/MSBuildLocator/commit/450799210a4856fc099889684bfb131844f766ff)*
+    *[microsoft/MSBuildLocator@e0281df](https://github.com/microsoft/MSBuildLocator/commit/e0281df33274ac3c3e22acc9b07dcb4b31d57dc0)*
     - `src/source-build-externals/src/newtonsoft-json`  
     *[JamesNK/Newtonsoft.Json@0a2e291](https://github.com/JamesNK/Newtonsoft.Json/commit/0a2e291c0d9c0c7675d445703e51750363a549ef)*
     - `src/source-build-externals/src/xunit`  
