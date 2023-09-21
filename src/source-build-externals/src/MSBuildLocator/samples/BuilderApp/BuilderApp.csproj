@@ -28,4 +28,6 @@
        Not necessary if you use the package! -->
   <Import Project="..\..\src\MSBuildLocator\build\Microsoft.Build.Locator.props"/>
 
+  <Import Project="..\..\src\MSBuildLocator\build\Microsoft.Build.Locator.targets"/>
+
 </Project>
