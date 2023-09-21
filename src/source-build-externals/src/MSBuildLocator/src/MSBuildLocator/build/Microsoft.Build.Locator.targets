@@ -3,8 +3,7 @@
     <ItemGroup>
       <MSBuildPackagesWithoutPrivateAssets
         Include="@(PackageReference)"
-        Condition="
-          '%(PackageReference.ExcludeAssets)' != 'runtime' and
+        Condition="!$([MSBuild]::ValueOrDefault('%(PackageReference.ExcludeAssets)', '').ToLower().Contains('runtime')) and
           (
             '%(PackageReference.Identity)' == 'Microsoft.Build' or
             '%(PackageReference.Identity)' == 'Microsoft.Build.Framework' or
