@@ -58,7 +58,7 @@
       "packageVersion": "8.0.100",
       "path": "installer",
       "remoteUri": "https://github.com/dotnet/installer",
-      "commitSha": "a2a4c251efa33c04c64a7ba2479333db36077eee"
+      "commitSha": "311951cc58cbc63626b15c858c6f678542a33bc0"
     },
     {
       "packageVersion": "17.8.0-preview-23414-01",
@@ -109,10 +109,10 @@
       "commitSha": "9e5ed21803179f9bfa4dd179c621f9d7bd4f2104"
     },
     {
-      "packageVersion": "9.0.0-alpha.1.23468.2",
+      "packageVersion": "9.0.0-alpha.1.23471.3",
       "path": "source-build-externals",
       "remoteUri": "https://github.com/dotnet/source-build-externals",
-      "commitSha": "57102f65c7bfffc8ce50818cb7066942edfcaefd"
+      "commitSha": "fb896b0f1c716ae84e4e4787d0a02a0002988508"
     },
     {
       "packageVersion": "8.0.0-alpha.1.23428.2",
@@ -180,6 +180,11 @@
       "commitSha": "f15db7b7c6f5affbea268632ef8333d2687c8031"
     },
     {
+      "path": "source-build-externals/src/abstractions-xunit",
+      "remoteUri": "https://github.com/xunit/abstractions.xunit",
+      "commitSha": "b75d54d73b141709f805c2001b16f3dd4d71539d"
+    },
+    {
       "path": "source-build-externals/src/application-insights",
       "remoteUri": "https://github.com/Microsoft/ApplicationInsights-dotnet",
       "commitSha": "5e2e7ddda961ec0e16a75b1ae0a37f6a13c777f5"
@@ -207,7 +212,7 @@
     {
       "path": "source-build-externals/src/MSBuildLocator",
       "remoteUri": "https://github.com/microsoft/MSBuildLocator",
-      "commitSha": "450799210a4856fc099889684bfb131844f766ff"
+      "commitSha": "e0281df33274ac3c3e22acc9b07dcb4b31d57dc0"
     },
     {
       "path": "source-build-externals/src/newtonsoft-json",
