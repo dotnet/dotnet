@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<doc>
+  <assembly>
+    <name>Microsoft.Extensions.Diagnostics.HealthChecks.EntityFrameworkCore</name>
+  </assembly>
+  <members>
+    <member name="T:Microsoft.Extensions.DependencyInjection.EntityFrameworkCoreHealthChecksBuilderExtensions" />
+    <member name="M:Microsoft.Extensions.DependencyInjection.EntityFrameworkCoreHealthChecksBuilderExtensions.AddDbContextCheck``1(Microsoft.Extensions.DependencyInjection.IHealthChecksBuilder,System.String,System.Nullable{Microsoft.Extensions.Diagnostics.HealthChecks.HealthStatus},System.Collections.Generic.IEnumerable{System.String},System.Func{``0,System.Threading.CancellationToken,System.Threading.Tasks.Task{System.Boolean}})">
+      <param name="builder" />
+      <param name="name" />
+      <param name="failureStatus" />
+      <param name="tags" />
+      <param name="customTestQuery" />
+      <typeparam name="TContext" />
+    </member>
+  </members>
+</doc>

@@ -1,0 +1,45 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<doc>
+  <assembly>
+    <name>Microsoft.Extensions.EnumStrings</name>
+  </assembly>
+  <members>
+    <member name="T:Microsoft.Extensions.EnumStrings.EnumStringsAttribute">
+      <summary>
+            Provides information to guide the production of an extension method to efficiently convert an enum value into string form.</summary>
+    </member>
+    <member name="M:Microsoft.Extensions.EnumStrings.EnumStringsAttribute.#ctor">
+      <summary>
+            Initializes a new instance of the <see cref="T:Microsoft.Extensions.EnumStrings.EnumStringsAttribute" /> class.</summary>
+    </member>
+    <member name="M:Microsoft.Extensions.EnumStrings.EnumStringsAttribute.#ctor(System.Type)">
+      <summary>
+            Initializes a new instance of the <see cref="T:Microsoft.Extensions.EnumStrings.EnumStringsAttribute" /> class.</summary>
+      <param name="enumType">The type of the enum to work with.</param>
+    </member>
+    <member name="P:Microsoft.Extensions.EnumStrings.EnumStringsAttribute.EnumType">
+      <summary>
+            Gets the type of the enum to annotate.</summary>
+    </member>
+    <member name="P:Microsoft.Extensions.EnumStrings.EnumStringsAttribute.ExtensionClassModifiers">
+      <summary>
+            Gets or sets the modifiers to apply to the generated class.</summary>
+      <returns>The default is <c>internal static</c>.</returns>
+    </member>
+    <member name="P:Microsoft.Extensions.EnumStrings.EnumStringsAttribute.ExtensionClassName">
+      <summary>
+            Gets or sets the name of the generated class.</summary>
+      <returns>The default is <see langword="null" />.</returns>
+    </member>
+    <member name="P:Microsoft.Extensions.EnumStrings.EnumStringsAttribute.ExtensionMethodName">
+      <summary>
+            Gets or sets the name of the generated extension method.</summary>
+      <returns>The default is <c>ToInvariantString</c>.</returns>
+    </member>
+    <member name="P:Microsoft.Extensions.EnumStrings.EnumStringsAttribute.ExtensionNamespace">
+      <summary>
+            Gets or sets the namespace of the generated class.</summary>
+      <returns>The default is <see langword="null" />.</returns>
+    </member>
+  </members>
+</doc>
