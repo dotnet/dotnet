@@ -2,10 +2,13 @@
 
   <Target Name="_PublishLanguageServerRids" AfterTargets="Pack" Condition="'$(DotNetBuildFromSource)' != 'true'">
     <PropertyGroup>
+      <BuildAnalyzersSolutionPath>$(MSBuildThisFileDirectory)..\BuildAnalyzers.sln</BuildAnalyzersSolutionPath>
       <LanguageServerProject>$(MSBuildThisFileDirectory)..\src\Razor\src\rzls\rzls.csproj</LanguageServerProject>
       <RazorSolutionPath>$(MSBuildThisFileDirectory)..\Razor.sln</RazorSolutionPath>
     </PropertyGroup>
 
+    <MSBuild Projects="$(BuildAnalyzersSolutionPath)"
+             Targets="Restore" />
     <MSBuild Projects="$(RazorSolutionPath)"
              Targets="Restore" />
     <MSBuild Projects="$(LanguageServerProject)"
