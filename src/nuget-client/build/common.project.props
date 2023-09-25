@@ -13,8 +13,7 @@
     <NETFXTargetFramework>net472</NETFXTargetFramework>
     <NETCoreTargetFramework>netcoreapp3.1</NETCoreTargetFramework>
     <NETCoreTargetFramework Condition="'$(DotNetBuildFromSource)' == 'true'">net8.0</NETCoreTargetFramework>
-    <NETCoreTestTargetFrameworks>net7.0</NETCoreTestTargetFrameworks>
-    <NETCoreTestTargetFrameworks Condition=" ('$(CI)' == 'true' AND '$(BUILD_NET8)' != 'false') OR '$(BUILD_NET8)' == 'true' ">net7.0;net8.0</NETCoreTestTargetFrameworks>
+    <NETCoreTestTargetFrameworks>net8.0</NETCoreTestTargetFrameworks>
     <NetStandardVersion>netstandard2.0</NetStandardVersion>
     <TargetFrameworksExe>$(NETFXTargetFramework);$(NETCoreTargetFramework)</TargetFrameworksExe>
     <TargetFrameworksExe Condition="'$(IsXPlat)' == 'true'">$(NETCoreTargetFramework)</TargetFrameworksExe>
