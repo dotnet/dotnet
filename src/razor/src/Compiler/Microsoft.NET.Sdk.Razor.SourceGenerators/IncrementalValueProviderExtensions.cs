@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Razor;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.Diagnostics;
 
 namespace Microsoft.NET.Sdk.Razor.SourceGenerators
 {
@@ -49,6 +50,18 @@ namespace Microsoft.NET.Sdk.Razor.SourceGenerators
             });
 
             return source.Select((pair, ct) => pair.Item1!);
+        }
+
+        internal static IncrementalValuesProvider<T> EmptyWhen<T>(this IncrementalValuesProvider<T> provider, IncrementalValueProvider<bool> checkProvider, bool check)
+        {
+            return provider.Combine(checkProvider)
+                .Where(pair => pair.Right != check)
+                .Select((pair, _) => pair.Left);
+        }
+
+        internal static IncrementalValueProvider<bool> CheckGlobalFlagSet(this IncrementalValueProvider<AnalyzerConfigOptionsProvider> optionsProvider, string flagName)
+        {
+            return optionsProvider.Select((provider, _) => provider.GlobalOptions.TryGetValue($"build_property.{flagName}", out var flagValue) && flagValue == "true");
         }
     }
 
