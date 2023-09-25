@@ -8,8 +8,8 @@
 
   <ItemGroup>
     <!-- Prepare for _UpdatePublishItems target. -->
-    <_ItemsToPublish Include="$(ArtifactsPackagesDir)**\*.tgz" Condition="'$(OS)' == 'Windows_NT'" />
     <_ItemsToPublish Include="$(ArtifactsDir)LanguageServer\**\*.zip" />
+    <_ItemsToPublish Include="$(ArtifactsDir)DevKitTelemetry\**\*.zip" />
   </ItemGroup>
 
 <Target Name="_UpdatePublishItems">
@@ -28,7 +28,7 @@
       <!-- Packages can be built on all platforms, but are only published on Windows to avoid collisions from the other
            platforms. This does not affect the SB intermediate package. -->
       <ItemsToPushToBlobFeed Remove="$(ArtifactsDir)**\*.nupkg" Condition="'$(OS)' != 'Windows_NT' and '$(ArcadeBuildFromSource)' != 'true'" />
-      
+
       <ItemsToPushToBlobFeed Include="@(_ItemsToPublish)">
         <IsShipping>false</IsShipping>
         <ManifestArtifactData>ShipInstaller=dotnetcli;NonShipping=true</ManifestArtifactData>

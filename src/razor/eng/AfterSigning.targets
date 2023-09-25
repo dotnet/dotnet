@@ -41,4 +41,35 @@
     <!-- Build a .zip file from each platform's directory and write it to 'artifacts' -->
     <ZipDirectory SourceDirectory="%(LanguageServiceBinary.SourceDir)" DestinationFile="%(LanguageServiceBinary.ZipFile)" />
   </Target>
+
+  <Target Name="_ZipDevKitTelemetryBinaries" AfterTargets="_ZipLanguageServerBinaries" Condition="'$(ArcadeBuildFromSource)' != 'true'">
+    <!-- This target is defined in eng/targets/Packaging.targets and included in every project. -->
+    <MSBuild Projects="$(RepoRoot)src\Razor\src\Microsoft.VisualStudio.DevKit.Razor\Microsoft.VisualStudio.DevKit.Razor.csproj"
+        Targets="_GetPackageVersionInfo"
+        SkipNonexistentProjects="false">
+      <Output TaskParameter="TargetOutputs" ItemName="_ResolvedPackageVersionInfo" />
+    </MSBuild>
+
+    <!-- Build a .zip file from each platform's directory and write it to 'artifacts' -->
+    <PropertyGroup>
+      <RidsPublishDir>$(ArtifactsDir)DevKitTelemetry\$(Configuration)\</RidsPublishDir>
+      <ZipOutputDir>$(RidsPublishDir)</ZipOutputDir>
+      <_DotNetPath>$(DOTNET_HOST_PATH)</_DotNetPath>
+      <_DotNetPath Condition="'$(_DotNetPath)' == ''">dotnet</_DotNetPath>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <DevKitTelemetryBinaryDir Include="$([System.IO.Directory]::GetDirectories(&quot;$(RidsPublishDir)&quot;))" />
+      <DevKitTelemetryBinary Include="@(DevKitTelemetryBinaryDir)">
+        <SourceDir>%(DevKitTelemetryBinaryDir.Identity)</SourceDir>
+        <ZipFile>$(ZipOutputDir)DevKitTelemetry-%(DevKitTelemetryBinaryDir.Filename)-$(_PackageVersion).zip</ZipFile>
+      </DevKitTelemetryBinary>
+    </ItemGroup>
+
+    <MakeDir Directories="$(ZipOutputDir)" />
+    <Delete Files="%(DevKitTelemetryBinary.ZipFile)" />
+
+    <!-- Build a .zip file from each platform's directory and write it to 'artifacts' -->
+    <ZipDirectory SourceDirectory="%(DevKitTelemetryBinary.SourceDir)" DestinationFile="%(DevKitTelemetryBinary.ZipFile)" />
+  </Target>
 </Project>
