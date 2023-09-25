@@ -14,6 +14,10 @@ internal class NoOpTelemetryReporter : ITelemetryReporter
     {
     }
 
+    public void InitializeSession(string telemetryLevel, string? sessionId, bool isDefaultSession)
+    {
+    }
+
     public void ReportEvent(string name, Severity severity)
     {
     }

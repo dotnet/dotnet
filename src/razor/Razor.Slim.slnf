@@ -27,6 +27,7 @@
       "src\\Compiler\\tools\\Microsoft.CodeAnalysis.Razor.Tooling.Internal\\Microsoft.CodeAnalysis.Razor.Tooling.Internal.csproj",
       "src\\Razor\\src\\Microsoft.CodeAnalysis.Razor.Workspaces\\Microsoft.CodeAnalysis.Razor.Workspaces.csproj",
       "src\\Razor\\src\\Microsoft.CodeAnalysis.Remote.Razor\\Microsoft.CodeAnalysis.Remote.Razor.csproj",
+      "src\\Razor\\src\\Microsoft.VisualStudio.DevKit.Razor\\Microsoft.VisualStudio.DevKit.Razor.csproj",
       "src\\Razor\\src\\Microsoft.VisualStudio.Editor.Razor\\Microsoft.VisualStudio.Editor.Razor.csproj",
       "src\\Razor\\src\\Microsoft.VisualStudio.LanguageServer.ContainedLanguage\\Microsoft.VisualStudio.LanguageServer.ContainedLanguage.csproj",
       "src\\Razor\\src\\Microsoft.VisualStudio.LanguageServices.Razor\\Microsoft.VisualStudio.LanguageServices.Razor.csproj",
