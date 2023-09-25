@@ -8,6 +8,7 @@ namespace Microsoft.AspNetCore.Razor.Telemetry;
 
 internal interface ITelemetryReporter
 {
+    void InitializeSession(string telemetryLevel, string? sessionId, bool isDefaultSession);
     IDisposable BeginBlock(string name, Severity severity);
     IDisposable BeginBlock(string name, Severity severity, ImmutableDictionary<string, object?> values);
     IDisposable TrackLspRequest(string lspMethodName, string lspServerName, Guid correlationId);
