@@ -21,7 +21,7 @@ namespace NuGet.Tests.Apex
         {
         }
 
-        [NuGetWpfTheory(Skip = "https://github.com/NuGet/Home/issues/11308")]
+        [NuGetWpfTheory]
         [MemberData(nameof(GetPackageReferenceTemplates))]
         public async Task InstallPackageFromPMCWithNoAutoRestoreVerifyAssetsFileAsync(ProjectTemplate projectTemplate)
         {
@@ -199,7 +199,7 @@ namespace NuGet.Tests.Apex
             }
         }
 
-        [NuGetWpfTheory(Skip = "https://github.com/NuGet/Home/issues/8469")]
+        [NuGetWpfTheory]
         [MemberData(nameof(GetNetCoreTemplates))]
         public async Task NetCoreTransitivePackageReferenceLimitAsync(ProjectTemplate projectTemplate)
         {
@@ -242,7 +242,7 @@ namespace NuGet.Tests.Apex
             }
         }
 
-        [NuGetWpfTheory(Skip = "https://github.com/NuGet/Home/issues/8386")]
+        [NuGetWpfTheory]
         [InlineData(ProjectTemplate.ClassLibrary, false)]
         [InlineData(ProjectTemplate.NetCoreConsoleApp, true)]
         [InlineData(ProjectTemplate.NetStandardClassLib, true)]
@@ -293,7 +293,7 @@ namespace NuGet.Tests.Apex
             }
         }
 
-        [NuGetWpfTheory(Skip = "https://github.com/NuGet/Home/issues/11308")]
+        [NuGetWpfTheory]
         [MemberData(nameof(GetPackagesConfigTemplates))]
         public async Task InstallPackageForPC_PackageSourceMapping_WithSingleFeed(ProjectTemplate projectTemplate)
         {
@@ -338,7 +338,7 @@ namespace NuGet.Tests.Apex
             }
         }
 
-        [NuGetWpfTheory(Skip = "https://github.com/NuGet/Home/issues/11308")]
+        [NuGetWpfTheory]
         [MemberData(nameof(GetPackagesConfigTemplates))]
         public async Task UpdatePackageForPC_PackageSourceMapping_WithSingleFeed(ProjectTemplate projectTemplate)
         {
@@ -386,7 +386,7 @@ namespace NuGet.Tests.Apex
             }
         }
 
-        [NuGetWpfTheory(Skip = "https://github.com/NuGet/Home/issues/11308")]
+        [NuGetWpfTheory]
         [MemberData(nameof(GetPackagesConfigTemplates))]
         public async Task InstallPackageForPC_PackageSourceMapping_WithMultipleFeedsWithIdenticalPackages_InstallsCorrectPackage(ProjectTemplate projectTemplate)
         {
@@ -449,7 +449,7 @@ namespace NuGet.Tests.Apex
             }
         }
 
-        [NuGetWpfTheory(Skip = "https://github.com/NuGet/Home/issues/11308")]
+        [NuGetWpfTheory]
         [MemberData(nameof(GetPackagesConfigTemplates))]
         public async Task UpdatePackageForPC_PackageSourceMapping_WithMultipleFeedsWithIdenticalPackages_UpdatesCorrectPackage(ProjectTemplate projectTemplate)
         {
@@ -513,7 +513,7 @@ namespace NuGet.Tests.Apex
             }
         }
 
-        [NuGetWpfTheory(Skip = "https://github.com/NuGet/Home/issues/8386")]
+        [NuGetWpfTheory(Skip = "https://github.com/NuGet/Home/issues/12899")]
         [InlineData(ProjectTemplate.ClassLibrary, false)]
         [InlineData(ProjectTemplate.NetStandardClassLib, true)]
         public async Task UpdateAllReinstall_WithPackageReferenceProject_WarnsAsync(ProjectTemplate projectTemplate, bool warns)
@@ -610,7 +610,7 @@ namespace NuGet.Tests.Apex
             Assert.True(VisualStudio.HasNoErrorsInOutputWindows());
         }
 
-        [NuGetWpfTheory(Skip = "https://github.com/NuGet/Home/issues/11308")]
+        [NuGetWpfTheory]
         [MemberData(nameof(GetPackageReferenceTemplates))]
         public async Task UpdatePackageForPR_PackageNamespace_WithMultipleFeedsWithIdenticalPackages_InstallsCorrectPackage(ProjectTemplate projectTemplate)
         {
