@@ -60,3 +60,4 @@
 "Value"=dword:00000000
 "Title"="Use precise semantic token ranges when requesting semantic token information on Razor files (requires restart)"
 "PreviewPaneChannels"="*"
+"VisibleToInternalUsersOnlyChannels"="*"

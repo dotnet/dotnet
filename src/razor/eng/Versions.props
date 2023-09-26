@@ -32,7 +32,7 @@
     imported. This OK because we want to just have an obvious salt for a local build.
   -->
   <PropertyGroup>
-    <VsixVersionPrefix>17.8.2</VsixVersionPrefix>
+    <VsixVersionPrefix>17.8.3</VsixVersionPrefix>
     <AddinMajorVersion>17.8</AddinMajorVersion>
     <AddinVersion>$(AddinMajorVersion)</AddinVersion>
     <AddinVersion Condition="'$(OfficialBuildId)' != ''">$(AddinVersion).$(OfficialBuildId)</AddinVersion>
@@ -52,26 +52,26 @@
     <MicrosoftNETCoreBrowserDebugHostTransportPackageVersion>6.0.2-servicing.22064.6</MicrosoftNETCoreBrowserDebugHostTransportPackageVersion>
     <MicrosoftNETCorePlatformsPackageVersion>6.0.1</MicrosoftNETCorePlatformsPackageVersion>
     <MicrosoftSourceBuildIntermediatesourcebuildreferencepackagesPackageVersion>9.0.0-alpha.1.23465.1</MicrosoftSourceBuildIntermediatesourcebuildreferencepackagesPackageVersion>
-    <MicrosoftNetCompilersToolsetPackageVersion>4.8.0-2.23469.5</MicrosoftNetCompilersToolsetPackageVersion>
-    <MicrosoftCommonLanguageServerProtocolFrameworkPackageVersion>4.8.0-2.23469.5</MicrosoftCommonLanguageServerProtocolFrameworkPackageVersion>
-    <MicrosoftCodeAnalysisExternalAccessRazorPackageVersion>4.8.0-2.23469.5</MicrosoftCodeAnalysisExternalAccessRazorPackageVersion>
-    <MicrosoftCodeAnalysisExternalAccessRazorCompilerPackageVersion>4.8.0-2.23469.5</MicrosoftCodeAnalysisExternalAccessRazorCompilerPackageVersion>
-    <MicrosoftCodeAnalysisExternalAccessOmniSharpCSharpPackageVersion>4.8.0-2.23469.5</MicrosoftCodeAnalysisExternalAccessOmniSharpCSharpPackageVersion>
-    <MicrosoftCodeAnalysisCommonPackageVersion>4.8.0-2.23469.5</MicrosoftCodeAnalysisCommonPackageVersion>
-    <MicrosoftCodeAnalysisCSharpPackageVersion>4.8.0-2.23469.5</MicrosoftCodeAnalysisCSharpPackageVersion>
-    <MicrosoftCodeAnalysisCSharpEditorFeaturesPackageVersion>4.8.0-2.23469.5</MicrosoftCodeAnalysisCSharpEditorFeaturesPackageVersion>
-    <MicrosoftCodeAnalysisCSharpFeaturesPackageVersion>4.8.0-2.23469.5</MicrosoftCodeAnalysisCSharpFeaturesPackageVersion>
-    <MicrosoftCodeAnalysisCSharpWorkspacesPackageVersion>4.8.0-2.23469.5</MicrosoftCodeAnalysisCSharpWorkspacesPackageVersion>
-    <MicrosoftCodeAnalysisEditorFeaturesPackageVersion>4.8.0-2.23469.5</MicrosoftCodeAnalysisEditorFeaturesPackageVersion>
-    <MicrosoftCodeAnalysisEditorFeaturesCommonPackageVersion>4.8.0-2.23469.5</MicrosoftCodeAnalysisEditorFeaturesCommonPackageVersion>
-    <MicrosoftCodeAnalysisEditorFeaturesTextPackageVersion>4.8.0-2.23469.5</MicrosoftCodeAnalysisEditorFeaturesTextPackageVersion>
-    <MicrosoftCodeAnalysisEditorFeaturesWpfPackageVersion>4.8.0-2.23469.5</MicrosoftCodeAnalysisEditorFeaturesWpfPackageVersion>
-    <MicrosoftCodeAnalysisRemoteServiceHubPackageVersion>4.8.0-2.23469.5</MicrosoftCodeAnalysisRemoteServiceHubPackageVersion>
-    <MicrosoftCodeAnalysisTestUtilitiesPackageVersion>4.8.0-2.23469.5</MicrosoftCodeAnalysisTestUtilitiesPackageVersion>
-    <MicrosoftCodeAnalysisVisualBasicWorkspacesPackageVersion>4.8.0-2.23469.5</MicrosoftCodeAnalysisVisualBasicWorkspacesPackageVersion>
-    <MicrosoftCodeAnalysisWorkspacesCommonPackageVersion>4.8.0-2.23469.5</MicrosoftCodeAnalysisWorkspacesCommonPackageVersion>
-    <MicrosoftCodeAnalysisWorkspacesMSBuildPackageVersion>4.8.0-2.23469.5</MicrosoftCodeAnalysisWorkspacesMSBuildPackageVersion>
-    <MicrosoftVisualStudioLanguageServicesPackageVersion>4.8.0-2.23469.5</MicrosoftVisualStudioLanguageServicesPackageVersion>
+    <MicrosoftNetCompilersToolsetPackageVersion>4.8.0-3.23475.1</MicrosoftNetCompilersToolsetPackageVersion>
+    <MicrosoftCommonLanguageServerProtocolFrameworkPackageVersion>4.8.0-3.23475.1</MicrosoftCommonLanguageServerProtocolFrameworkPackageVersion>
+    <MicrosoftCodeAnalysisExternalAccessRazorPackageVersion>4.8.0-3.23475.1</MicrosoftCodeAnalysisExternalAccessRazorPackageVersion>
+    <MicrosoftCodeAnalysisExternalAccessRazorCompilerPackageVersion>4.8.0-3.23475.1</MicrosoftCodeAnalysisExternalAccessRazorCompilerPackageVersion>
+    <MicrosoftCodeAnalysisExternalAccessOmniSharpCSharpPackageVersion>4.8.0-3.23475.1</MicrosoftCodeAnalysisExternalAccessOmniSharpCSharpPackageVersion>
+    <MicrosoftCodeAnalysisCommonPackageVersion>4.8.0-3.23475.1</MicrosoftCodeAnalysisCommonPackageVersion>
+    <MicrosoftCodeAnalysisCSharpPackageVersion>4.8.0-3.23475.1</MicrosoftCodeAnalysisCSharpPackageVersion>
+    <MicrosoftCodeAnalysisCSharpEditorFeaturesPackageVersion>4.8.0-3.23475.1</MicrosoftCodeAnalysisCSharpEditorFeaturesPackageVersion>
+    <MicrosoftCodeAnalysisCSharpFeaturesPackageVersion>4.8.0-3.23475.1</MicrosoftCodeAnalysisCSharpFeaturesPackageVersion>
+    <MicrosoftCodeAnalysisCSharpWorkspacesPackageVersion>4.8.0-3.23475.1</MicrosoftCodeAnalysisCSharpWorkspacesPackageVersion>
+    <MicrosoftCodeAnalysisEditorFeaturesPackageVersion>4.8.0-3.23475.1</MicrosoftCodeAnalysisEditorFeaturesPackageVersion>
+    <MicrosoftCodeAnalysisEditorFeaturesCommonPackageVersion>4.8.0-3.23475.1</MicrosoftCodeAnalysisEditorFeaturesCommonPackageVersion>
+    <MicrosoftCodeAnalysisEditorFeaturesTextPackageVersion>4.8.0-3.23475.1</MicrosoftCodeAnalysisEditorFeaturesTextPackageVersion>
+    <MicrosoftCodeAnalysisEditorFeaturesWpfPackageVersion>4.8.0-3.23475.1</MicrosoftCodeAnalysisEditorFeaturesWpfPackageVersion>
+    <MicrosoftCodeAnalysisRemoteServiceHubPackageVersion>4.8.0-3.23475.1</MicrosoftCodeAnalysisRemoteServiceHubPackageVersion>
+    <MicrosoftCodeAnalysisTestUtilitiesPackageVersion>4.8.0-3.23475.1</MicrosoftCodeAnalysisTestUtilitiesPackageVersion>
+    <MicrosoftCodeAnalysisVisualBasicWorkspacesPackageVersion>4.8.0-3.23475.1</MicrosoftCodeAnalysisVisualBasicWorkspacesPackageVersion>
+    <MicrosoftCodeAnalysisWorkspacesCommonPackageVersion>4.8.0-3.23475.1</MicrosoftCodeAnalysisWorkspacesCommonPackageVersion>
+    <MicrosoftCodeAnalysisWorkspacesMSBuildPackageVersion>4.8.0-3.23475.1</MicrosoftCodeAnalysisWorkspacesMSBuildPackageVersion>
+    <MicrosoftVisualStudioLanguageServicesPackageVersion>4.8.0-3.23475.1</MicrosoftVisualStudioLanguageServicesPackageVersion>
     <MicrosoftDotNetXliffTasksPackageVersion>1.0.0-beta.23426.1</MicrosoftDotNetXliffTasksPackageVersion>
     <!--
       Exception - Microsoft.Extensions.ObjectPool and System.Collections.Immutable packages are not updated by automation,
