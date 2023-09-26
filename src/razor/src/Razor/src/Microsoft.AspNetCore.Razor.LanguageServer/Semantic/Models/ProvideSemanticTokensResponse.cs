@@ -8,13 +8,13 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer.Semantic;
 /// </summary>
 internal class ProvideSemanticTokensResponse
 {
-    public ProvideSemanticTokensResponse(int[][]? tokens, long hostDocumentSyncVersion)
+    public ProvideSemanticTokensResponse(int[]? tokens, long hostDocumentSyncVersion)
     {
         Tokens = tokens;
         HostDocumentSyncVersion = hostDocumentSyncVersion;
     }
 
-    public int[][]? Tokens { get; }
+    public int[]? Tokens { get; }
 
     public long HostDocumentSyncVersion { get; }
 }
