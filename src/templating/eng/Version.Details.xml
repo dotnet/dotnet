@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Dependencies>
   <ProductDependencies>
-    <Dependency Name="Microsoft.SourceBuild.Intermediate.source-build-externals" Version="8.0.0-alpha.1.23471.2">
+    <Dependency Name="Microsoft.SourceBuild.Intermediate.source-build-externals" Version="8.0.0-alpha.1.23475.1">
       <Uri>https://github.com/dotnet/source-build-externals</Uri>
-      <Sha>6dbf3aaa0fc9664df86462f5c70b99800934fccd</Sha>
+      <Sha>e04156dbe14f882a80d4499dbebd45ab156b6c3c</Sha>
       <SourceBuild RepoName="source-build-externals" ManagedOnly="true" />
     </Dependency>
     <Dependency Name="Microsoft.SourceBuild.Intermediate.source-build-reference-packages" Version="8.0.0-alpha.1.23471.1">
@@ -11,17 +11,17 @@
       <Sha>7b55da982fc6e71c1776c4de89111aee0eecb45a</Sha>
       <SourceBuild RepoName="source-build-reference-packages" ManagedOnly="true" />
     </Dependency>
-    <Dependency Name="Microsoft.NETCore.App.Runtime.win-x64" Version="8.0.0-rtm.23472.12">
+    <Dependency Name="Microsoft.NETCore.App.Runtime.win-x64" Version="8.0.0-rtm.23475.7">
       <Uri>https://github.com/dotnet/runtime</Uri>
-      <Sha>e95228dbcf7a69f87b00da969b0cabf2e62ab207</Sha>
+      <Sha>a3d5300baee03169bf737cfc4e9b1f7dbece4d05</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.NETCore.App.Ref" Version="8.0.0-rtm.23472.12">
+    <Dependency Name="Microsoft.NETCore.App.Ref" Version="8.0.0-rtm.23475.7">
       <Uri>https://github.com/dotnet/runtime</Uri>
-      <Sha>e95228dbcf7a69f87b00da969b0cabf2e62ab207</Sha>
+      <Sha>a3d5300baee03169bf737cfc4e9b1f7dbece4d05</Sha>
     </Dependency>
-    <Dependency Name="VS.Redist.Common.NetCore.SharedFramework.x64.8.0" Version="8.0.0-rtm.23472.12">
+    <Dependency Name="VS.Redist.Common.NetCore.SharedFramework.x64.8.0" Version="8.0.0-rtm.23475.7">
       <Uri>https://github.com/dotnet/runtime</Uri>
-      <Sha>e95228dbcf7a69f87b00da969b0cabf2e62ab207</Sha>
+      <Sha>a3d5300baee03169bf737cfc4e9b1f7dbece4d05</Sha>
     </Dependency>
     <Dependency Name="System.CommandLine" Version="2.0.0-beta4.23407.1">
       <Uri>https://github.com/dotnet/command-line-api</Uri>
