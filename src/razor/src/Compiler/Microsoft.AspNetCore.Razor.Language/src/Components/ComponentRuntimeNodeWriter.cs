@@ -232,13 +232,7 @@ internal class ComponentRuntimeNodeWriter : ComponentNodeWriter
             context.RenderNode(capture);
         }
 
-        // Render body of the tag inside the scope
-        foreach (var child in node.Body)
-        {
-            context.RenderNode(child);
-        }
-
-        // AddNamedEvent must be called last.
+        // AddNamedEvent must be called after all attributes (but before child content).
         if (hasFormName)
         {
             // _builder.AddNamedEvent("onsubmit", __formName);
@@ -250,6 +244,12 @@ internal class ComponentRuntimeNodeWriter : ComponentNodeWriter
             context.CodeWriter.Write(");");
             context.CodeWriter.WriteLine();
             _scopeStack.IncrementFormName();
+        }
+
+        // Render body of the tag inside the scope
+        foreach (var child in node.Body)
+        {
+            context.RenderNode(child);
         }
 
         context.CodeWriter
