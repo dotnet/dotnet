@@ -313,11 +313,33 @@ internal class RazorSemanticTokensInfoService : IRazorSemanticTokensInfoService
         CancellationToken cancellationToken)
     {
         var parameter = new ProvideSemanticTokensRangesParams(textDocumentIdentifier, documentVersion, csharpRanges, correlationId);
+        ProvideSemanticTokensResponse? csharpResponse;
+        if (_languageServerFeatureOptions.UsePreciseSemanticTokenRanges)
+        {
+            csharpResponse = await GetCsharpResponseAsync(parameter, CustomMessageNames.RazorProvidePreciseRangeSemanticTokensEndpoint, cancellationToken).ConfigureAwait(false);
 
-        var csharpResponse = await _languageServer.SendRequestAsync<ProvideSemanticTokensRangesParams, ProvideSemanticTokensResponse>(
-            CustomMessageNames.RazorProvideSemanticTokensRangeEndpoint,
-            parameter,
-            cancellationToken).ConfigureAwait(false);
+            // Likely the server doesn't support the new endpoint, fallback to the original one
+            if (csharpResponse?.Tokens is null && csharpRanges.Length > 1)
+            {
+                var minimalRange = new Range
+                {
+                    Start = csharpRanges[0].Start,
+                    End = csharpRanges[^1].End
+                };
+
+                var newParams = new ProvideSemanticTokensRangesParams(
+                    parameter.TextDocument,
+                    parameter.RequiredHostDocumentVersion,
+                    new[] { minimalRange },
+                    parameter.CorrelationId);
+
+                csharpResponse = await GetCsharpResponseAsync(newParams, CustomMessageNames.RazorProvideSemanticTokensRangeEndpoint, cancellationToken).ConfigureAwait(false);
+            }
+        }
+        else
+        {
+            csharpResponse = await GetCsharpResponseAsync(parameter, CustomMessageNames.RazorProvideSemanticTokensRangeEndpoint, cancellationToken).ConfigureAwait(false);
+        }
 
         if (csharpResponse is null)
         {
@@ -346,80 +368,7 @@ internal class RazorSemanticTokensInfoService : IRazorSemanticTokensInfoService
             return null;
         }
 
-        return StitchSemanticTokenResponsesTogether(csharpResponse.Tokens);
-    }
-
-    // Internal for testing
-    internal static int[] StitchSemanticTokenResponsesTogether(int[][]? responseData)
-    {
-        // Each inner array in `responseData` represents a single C# document that is broken down into a list of tokens.
-        // This method stitches these lists of tokens together into a single, coherent list of semantic tokens.
-        // The resulting array is a flattened version of the input array, and is in the precise format expected by the Microsoft Language Server Protocol.
-        if (responseData is null || responseData.Length == 0)
-        {
-            return Array.Empty<int>();
-        }
-
-        if (responseData.Length == 1)
-        {
-            return responseData[0];
-        }
-
-        var count = responseData.Sum(r => r.Length);
-        var data = new int[count];
-        var dataIndex = 0;
-        var lastTokenLine = 0;
-
-        for (var i = 0; i < responseData.Length; i++)
-        {
-            var curData = responseData[i];
-
-            if (curData.Length == 0)
-            {
-                continue;
-            }
-
-            Array.Copy(curData, 0, data, dataIndex, curData.Length);
-            if (i != 0)
-            {
-                // The first two items in result.Data will potentially need it's line/col offset modified
-                var lineDelta = data[dataIndex] - lastTokenLine;
-                Debug.Assert(lineDelta >= 0);
-
-                // Update the first line copied over from curData
-                data[dataIndex] = lineDelta;
-
-                // Update the first column copied over from curData if on the same line as the previous token
-                if (lineDelta == 0)
-                {
-                    var lastTokenCol = 0;
-
-                    // Walk back accumulating column deltas until we find a start column (indicated by it's line offset being non-zero)
-                    for (var j = dataIndex - RazorSemanticTokensInfoService.TokenSize; j >= 0; j -= RazorSemanticTokensInfoService.TokenSize)
-                    {
-                        lastTokenCol += data[j + 1];
-                        if (data[j] != 0)
-                        {
-                            break;
-                        }
-                    }
-
-                    Debug.Assert(lastTokenCol >= 0);
-                    data[dataIndex + 1] -= lastTokenCol;
-                    Debug.Assert(data[dataIndex + 1] >= 0);
-                }
-            }
-
-            lastTokenLine = 0;
-            for (var j = 0; j < curData.Length; j += RazorSemanticTokensInfoService.TokenSize)
-            {
-                lastTokenLine += curData[j];
-            }
-
-            dataIndex += curData.Length;
-        }
-
-        return data;
+        return csharpResponse.Tokens ?? Array.Empty<int>();
     }
 
     // Internal for testing only
@@ -453,6 +402,14 @@ internal class RazorSemanticTokensInfoService : IRazorSemanticTokensInfoService
         // Ensure the C# ranges are sorted
         Array.Sort(ranges, static (r1, r2) => r1.CompareTo(r2));
         return true;
+    }
+
+    private async Task<ProvideSemanticTokensResponse?> GetCsharpResponseAsync(ProvideSemanticTokensRangesParams parameter, string lspMethodName, CancellationToken cancellationToken)
+    {
+        return await _languageServer.SendRequestAsync<ProvideSemanticTokensRangesParams, ProvideSemanticTokensResponse>(
+            lspMethodName,
+            parameter,
+            cancellationToken).ConfigureAwait(false);
     }
 
     private static SemanticRange CSharpDataToSemanticRange(
