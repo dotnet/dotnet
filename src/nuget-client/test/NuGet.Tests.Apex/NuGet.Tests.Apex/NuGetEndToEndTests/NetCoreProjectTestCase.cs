@@ -17,7 +17,7 @@ namespace NuGet.Tests.Apex
         }
 
         // basic create for .net core template
-        [NuGetWpfTheory(Skip = "https://github.com/NuGet/Home/issues/11308")]
+        [NuGetWpfTheory]
         [MemberData(nameof(GetNetCoreTemplates))]
         public void CreateNetCoreProject_RestoresNewProject(ProjectTemplate projectTemplate)
         {
@@ -31,7 +31,7 @@ namespace NuGet.Tests.Apex
         }
 
         // basic create for .net core template
-        [NuGetWpfTheory(Skip = "https://github.com/NuGet/Home/issues/9410")]
+        [NuGetWpfTheory]
         [MemberData(nameof(GetNetCoreTemplates))]
         public void CreateNetCoreProject_AddProjectReference(ProjectTemplate projectTemplate)
         {
@@ -121,7 +121,7 @@ namespace NuGet.Tests.Apex
             }
         }
 
-        [NuGetWpfTheory(Skip = "https://github.com/NuGet/Home/issues/11308")]
+        [NuGetWpfTheory(Skip = "https://github.com/NuGet/Home/issues/12898")]
         [MemberData(nameof(GetNetCoreTemplates))]
         public async Task WithSourceMappingEnabled_InstallAndUpdatePackageFromPMUIFromExpectedSource_Succeeds(ProjectTemplate projectTemplate)
         {
