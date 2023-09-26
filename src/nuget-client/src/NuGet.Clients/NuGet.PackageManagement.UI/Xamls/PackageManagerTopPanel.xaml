@@ -191,6 +191,7 @@
           <ColumnDefinition Width="*" MaxWidth="320" MinWidth="118"/>
           <ColumnDefinition Width="auto" />
           <ColumnDefinition Width="auto" />
+          <ColumnDefinition Width="auto" />
         </Grid.ColumnDefinitions>
         <!-- container of the search control -->
         <Border
@@ -231,9 +232,23 @@
           Checked="_checkboxPrerelease_Checked"
           Unchecked="_checkboxPrerelease_Unchecked"
           IsChecked="True" />
+
+        <!-- show vulnerabilities checkbox -->
+        <CheckBox
+          Grid.Column="3"
+          x:Name="_checkboxVulnerabilities"
+          AutomationProperties.AutomationId="CheckBox_Vulnerabilities"
+          Margin="3,0"
+          VerticalAlignment="Center"
+          Foreground="{DynamicResource {x:Static nuget:Brushes.UIText}}"
+          VerticalContentAlignment="Center"
+          Checked="_checkboxVulnerabilities_Checked"
+          Unchecked="_checkboxVulnerabilities_Unchecked"
+          Visibility="Visible"
+          IsChecked="False">
+          <TextBlock Text="{x:Static nuget:Resources.Checkbox_Show_Vulnerable_Only}" />
+        </CheckBox>
       </Grid>
-
-
       <Grid
         Grid.Column="2"
         VerticalAlignment="Center"
