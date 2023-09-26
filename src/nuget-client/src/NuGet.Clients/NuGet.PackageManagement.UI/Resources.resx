@@ -1032,4 +1032,10 @@ Please see https://aka.ms/troubleshoot_nuget_cache for more help.</value>
   <data name="Text_PackageMappingsAutoCreate" xml:space="preserve">
     <value>A package source mapping will be created.</value>
   </data>
+  <data name="Checkbox_Show_Vulnerable_Only" xml:space="preserve">
+    <value>Show only vulnerable</value>
+  </data>
+  <data name="Vulnerabilities_Loading" xml:space="preserve">
+    <value>Loading vulnerable packages...</value>
+  </data>
 </root>

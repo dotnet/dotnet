@@ -217,6 +217,7 @@ namespace NuGet.PackageManagement.UI
 
         public INuGetExperimentationService NuGetExperimentationService { get; private set; }
 
+        public bool IsVulnerableFilteringApplied => _topPanel?.CheckBoxVulnerabilities?.IsChecked == true;
 
         private void OnProjectUpdated(object sender, IProjectContextInfo project)
         {
@@ -1306,6 +1307,23 @@ namespace NuGet.PackageManagement.UI
                 await RunAndEmitRefreshAsync(async () => await SearchPackagesAndRefreshUpdateCountAsync(useCacheForUpdates: false),
                     RefreshOperationSource.CheckboxPrereleaseChanged, timeSpan, sw);
             }).PostOnFailure(nameof(PackageManagerControl), nameof(CheckboxPrerelease_CheckChanged));
+        }
+
+        private void CheckboxVulnerabilties_CheckChanged(object sender, EventArgs e)
+        {
+            if (!_initialized)
+            {
+                return;
+            }
+
+            if (IsVulnerableFilteringApplied)
+            {
+                _packageList.AddVulnerabilitiesFiltering();
+            }
+            else
+            {
+                _packageList.RemoveVulnerabilitiesFiltering();
+            }
         }
 
         private async Task RunAndEmitRefreshAsync(Func<Task> runner, RefreshOperationSource source, TimeSpan lastRefresh, Stopwatch sw, bool isUIFiltering = false)
