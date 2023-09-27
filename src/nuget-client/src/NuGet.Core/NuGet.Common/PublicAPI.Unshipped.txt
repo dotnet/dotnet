@@ -1,1 +1,10 @@
 #nullable enable
+const NuGet.Common.NuGetEventSource.Keywords.Common = (System.Diagnostics.Tracing.EventKeywords)1 -> System.Diagnostics.Tracing.EventKeywords
+const NuGet.Common.NuGetEventSource.Keywords.Configuration = (System.Diagnostics.Tracing.EventKeywords)2 -> System.Diagnostics.Tracing.EventKeywords
+const NuGet.Common.NuGetEventSource.Keywords.Logging = (System.Diagnostics.Tracing.EventKeywords)4 -> System.Diagnostics.Tracing.EventKeywords
+const NuGet.Common.NuGetEventSource.Keywords.Performance = (System.Diagnostics.Tracing.EventKeywords)8 -> System.Diagnostics.Tracing.EventKeywords
+const NuGet.Common.NuGetEventSource.Keywords.SdkResolver = (System.Diagnostics.Tracing.EventKeywords)16 -> System.Diagnostics.Tracing.EventKeywords
+NuGet.Common.NuGetEventSource
+NuGet.Common.NuGetEventSource.Keywords
+static NuGet.Common.NuGetEventSource.Instance.get -> System.Diagnostics.Tracing.EventSource!
+static NuGet.Common.NuGetEventSource.IsEnabled.get -> bool

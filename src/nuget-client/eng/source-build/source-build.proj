@@ -23,6 +23,7 @@
     <ItemGroup>
       <_CommonProperties Include="_NETCORE_ENGINEERING_TELEMETRY=AfterSourceBuild" />
       <_CommonProperties Include="ArcadeBuildFromSource=true"/>
+      <_CommonProperties Include="CloneSubmodulesToInnerSourceBuildRepo=false"/>
     </ItemGroup>
 
     <MSbuild Projects="$(ArcadeDir)/Build.proj"

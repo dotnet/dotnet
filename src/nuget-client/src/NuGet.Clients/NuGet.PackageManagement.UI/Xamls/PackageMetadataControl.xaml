@@ -7,6 +7,7 @@
   xmlns:nuget="clr-namespace:NuGet.PackageManagement.UI"
   xmlns:imaging="clr-namespace:Microsoft.VisualStudio.Imaging;assembly=Microsoft.VisualStudio.Imaging"
   xmlns:catalog="clr-namespace:Microsoft.VisualStudio.Imaging;assembly=Microsoft.VisualStudio.ImageCatalog"
+  xmlns:glob="clr-namespace:System.Globalization;assembly=mscorlib"
   Background="{DynamicResource {x:Static nuget:Brushes.DetailPaneBackground}}"
   Foreground="{DynamicResource {x:Static nuget:Brushes.UIText}}"
   mc:Ignorable="d"
@@ -17,7 +18,6 @@
       <ResourceDictionary.MergedDictionaries>
         <nuget:SharedResources />
       </ResourceDictionary.MergedDictionaries>
-      <nuget:DateTimeConverter x:Key="DateFormatConverter" />
       <nuget:AccessibleConverter x:Key="AccNameWorkaround" />
       <DataTemplate DataType="{x:Type nuget:LicenseText}">
         <TextBlock>
@@ -262,7 +262,7 @@
         Name="datePublished"
         Style="{DynamicResource SelectableTextBlockStyle}" 
         Visibility="{Binding Path=Published,Converter={StaticResource NullToVisibilityConverter}}"
-        Text="{Binding Path=Published,Converter={StaticResource DateFormatConverter}}"
+        Text="{Binding Path=Published,ConverterCulture={x:Static glob:CultureInfo.CurrentCulture},StringFormat={}{0:D} ({0:d})}"
         AutomationProperties.LabeledBy="{Binding ElementName=_datePublishedLabel}"
         Margin="8,8,0,0"
         TextWrapping="Wrap"
