@@ -2,5 +2,6 @@
   "methodDisplay": "classAndMethod",
   "longRunningTestSeconds": 300,
   "diagnosticMessages": true,
-  "preEnumerateTheories": false
+  "preEnumerateTheories": false,
+  "shadowCopy": false
 }

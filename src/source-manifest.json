@@ -43,10 +43,10 @@
       "commitSha": "41db2322780b16e4ddadcebca41dc86c7806ed9a"
     },
     {
-      "packageVersion": "8.0.447106",
+      "packageVersion": "8.0.447601",
       "path": "format",
       "remoteUri": "https://github.com/dotnet/format",
-      "commitSha": "1d6407d1f743e64c6eef2dbff1b07a81dc6c239e"
+      "commitSha": "c6c3c61ee64679d41f8e69b9a8f7d4c877f5a5af"
     },
     {
       "packageVersion": "8.0.100-beta.23475.2",
@@ -58,25 +58,25 @@
       "packageVersion": "8.0.100",
       "path": "installer",
       "remoteUri": "https://github.com/dotnet/installer",
-      "commitSha": "ee741d10326587c7888e58fa15c2c004a3818a19"
+      "commitSha": "5987ac298a775cffecf1ce5718c2d2d16547c473"
     },
     {
-      "packageVersion": "17.8.0-preview-23472-04",
+      "packageVersion": "17.8.1-preview-23476-07",
       "path": "msbuild",
       "remoteUri": "https://github.com/dotnet/msbuild",
-      "commitSha": "6cdef424154c976f04802b101e6be6292f8a8897"
+      "commitSha": "585e09762f07aa6ec291cb75cf7e98bdded8e373"
     },
     {
-      "packageVersion": "6.8.0-rc.120",
+      "packageVersion": "6.8.0-rc.121",
       "path": "nuget-client",
       "remoteUri": "https://github.com/nuget/nuget.client",
-      "commitSha": "fed7892af6c079015431389d7cf7a7f630e22bbd"
+      "commitSha": "eb04000f97ade4add28a9e7447baaadee22ee863"
     },
     {
-      "packageVersion": "7.0.0-preview.23475.6",
+      "packageVersion": "7.0.0-preview.23476.1",
       "path": "razor",
       "remoteUri": "https://github.com/dotnet/razor",
-      "commitSha": "f994b959a0e062c32f0f836dc66539dfb7f91d73"
+      "commitSha": "098adbd749333545ee11dfb7798526bddc736451"
     },
     {
       "packageVersion": "4.8.0-3.23476.3",
@@ -97,10 +97,10 @@
       "commitSha": "a3d5300baee03169bf737cfc4e9b1f7dbece4d05"
     },
     {
-      "packageVersion": "8.0.100-rtm.23476.30",
+      "packageVersion": "8.0.100-rtm.23476.40",
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "cc53925cb2d170612d86b8f9a19985139a501f64"
+      "commitSha": "15cd05130e153fe63edefb4abb10745d6c970428"
     },
     {
       "packageVersion": "8.0.0-alpha.1.23475.1",
