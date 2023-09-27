@@ -5,6 +5,7 @@ pr:
     - main
     - release/*
     - internal/release/*
+    - */internal/release/*
 
 parameters:
 - name: vmrBranch
