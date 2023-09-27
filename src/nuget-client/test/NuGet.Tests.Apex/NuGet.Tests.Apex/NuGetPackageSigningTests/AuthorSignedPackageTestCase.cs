@@ -45,7 +45,7 @@ namespace NuGet.Tests.Apex
             }
         }
 
-        [CIOnlyNuGetWpfTheory(Skip = "https://github.com/NuGet/Home/issues/9476")]
+        [CIOnlyNuGetWpfTheory]
         [MemberData(nameof(GetPackagesConfigTemplates))]
         public async Task UninstallFromPMCForPC_SucceedAsync(ProjectTemplate projectTemplate)
         {
@@ -67,7 +67,7 @@ namespace NuGet.Tests.Apex
             }
         }
 
-        [CIOnlyNuGetWpfTheory(Skip = "https://github.com/NuGet/Home/issues/11308")]
+        [CIOnlyNuGetWpfTheory]
         [MemberData(nameof(GetPackagesConfigTemplates))]
         public async Task UpdateUnsignedToSignedVersionFromPMCForPC_SucceedAsync(ProjectTemplate projectTemplate)
         {
@@ -91,7 +91,7 @@ namespace NuGet.Tests.Apex
             }
         }
 
-        [CIOnlyNuGetWpfTheory(Skip = "https://github.com/NuGet/Home/issues/11308")]
+        [CIOnlyNuGetWpfTheory]
         [MemberData(nameof(GetPackagesConfigTemplates))]
         public async Task DowngradeSignedToUnsignedVersionFromPMCForPC_SucceedAsync(ProjectTemplate projectTemplate)
         {

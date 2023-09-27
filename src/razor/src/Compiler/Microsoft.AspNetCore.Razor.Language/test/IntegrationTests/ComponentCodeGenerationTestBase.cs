@@ -10676,6 +10676,23 @@ Time: @DateTime.Now
         CompileToAssembly(generated);
     }
 
+    [Fact, WorkItem("https://github.com/dotnet/razor/issues/9323")]
+    public void FormName_ChildContent()
+    {
+        // Act
+        var generated = CompileToCSharp("""
+            @using Microsoft.AspNetCore.Components.Web
+            <form @formname="myform" class="nice">
+                <p>@DateTime.Now</p>
+            </form>
+            """);
+
+        // Assert
+        AssertDocumentNodeMatchesBaseline(generated.CodeDocument);
+        AssertCSharpDocumentMatchesBaseline(generated.CodeDocument);
+        CompileToAssembly(generated);
+    }
+
     [Fact, WorkItem("https://github.com/dotnet/razor/issues/9077")]
     public void FormName_NoAddNamedEventMethod()
     {
