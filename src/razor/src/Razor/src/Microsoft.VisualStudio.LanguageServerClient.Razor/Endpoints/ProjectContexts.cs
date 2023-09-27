@@ -40,7 +40,7 @@ internal partial class RazorCustomMessageTarget
                 {
                     Id = project.Key.Id,
                     Kind = VSProjectKind.CSharp,
-                    Label = snapshot.HostProject.DisplayName is { } displayName
+                    Label = snapshot.HostProject.DisplayName is { Length: > 0 } displayName
                         ? $"{projectFileName} ({displayName})"
                         : projectFileName
                 });

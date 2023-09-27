@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Concurrent;
+using System.Diagnostics.Tracing;
 using System.IO;
 using NuGet.Common;
 
@@ -74,10 +75,30 @@ namespace NuGet.Configuration
                     // Fire the FileRead event so unit tests can detect when a file was actually read versus cached
                     FileRead?.Invoke(this, fileInfo.FullName);
 
+                    if (NuGetEventSource.IsEnabled) TraceEvents.FileRead(fileInfo.FullName, isMachineWide, isReadOnly);
+
                     return settingsFile;
                 }));
 
             return settingsLazy.Value;
+        }
+
+        private static class TraceEvents
+        {
+            private const string EventNameFileRead = "SettingsLoadingContext/FileRead";
+
+            public static void FileRead(string filePath, bool isMachineWide, bool isReadOnly)
+            {
+                var eventOptions = new EventSourceOptions
+                {
+                    Keywords = NuGetEventSource.Keywords.Configuration,
+                };
+
+                NuGetEventSource.Instance.Write(EventNameFileRead, eventOptions, new FileReadData(filePath, isMachineWide, isReadOnly));
+            }
+
+            [EventData]
+            private record struct FileReadData(string FullPath, bool IsMachineWide, bool IsReadOnly);
         }
     }
 }

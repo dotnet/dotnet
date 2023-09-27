@@ -550,16 +550,7 @@ internal static class ComponentDiagnosticFactory
         return diagnostic;
     }
 
-    public static readonly RazorDiagnosticDescriptor FormName_MissingOnSubmit =
-        new RazorDiagnosticDescriptor(
-        $"{DiagnosticPrefix}10021",
-        () => "Attribute '@formname' can only be used when '@onsubmit' event handler is also present.",
-        RazorDiagnosticSeverity.Warning);
-
-    public static RazorDiagnostic CreateFormName_MissingOnSubmit(SourceSpan? source)
-    {
-        return RazorDiagnostic.Create(FormName_MissingOnSubmit, source ?? SourceSpan.Undefined);
-    }
+    // Removed warning RZ10021: Attribute '@formname' can only be used when '@onsubmit' event handler is also present.
 
     public static readonly RazorDiagnosticDescriptor FormName_NotAForm =
         new RazorDiagnosticDescriptor(

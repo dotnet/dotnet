@@ -10,7 +10,7 @@
     default: ''
   - name: queueSpeedometerValidation
     type: string
-    default: 'false'
+    default: 'true'
 
   - name: buildUserName
     type: string
@@ -20,7 +20,7 @@
     type: string
   - name: componentPassword
     type: string
-  
+
   - name: publishDataURI
     type: string
   - name: publishDataAccessToken

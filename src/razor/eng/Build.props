@@ -6,6 +6,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <!-- Note: It is important BuildAnalyzers.sln builds first and does not allow building in parallel.
+         Because projects in Razor.sln (or Razor.Slim.slnf) have a project reference to Razor.Diagnostics.Analyzers
+         that is treated as an analyzer, there can be file locking issues if Razor.Diagnostics.Analyzers isn't
+         built before Razor.sln. Setting "BuildInParallel" to "false" ensures that this solution will be fully
+         built first. -->
+    <ProjectToBuild Include="$(RepoRoot)BuildAnalyzers.sln" BuildInParallel="false" />
+
     <ProjectToBuild Condition="'$(OS)'=='WINDOWS_NT' and '$(SdkTaskProjects)'==''" Include="$(MSBuildThisFileDirectory)..\Razor.sln" />
 
     <!-- Exclude VSIX projects on non-Windows -->

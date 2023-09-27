@@ -143,7 +143,7 @@ public sealed class RazorSourceGeneratorComponentTests : RazorSourceGeneratorTes
         await VerifyRazorPageMatchesBaselineAsync(compilation, "Views_Home_Index");
     }
 
-    [Theory(Skip = "https://github.com/dotnet/razor/issues/8940"), CombinatorialData]
+    [Theory, CombinatorialData]
     public async Task AddComponentParameter(
         [CombinatorialValues("7.0", "8.0", "Latest")] string langVersion)
     {
