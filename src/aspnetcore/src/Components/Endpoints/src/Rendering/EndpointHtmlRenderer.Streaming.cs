@@ -19,9 +19,11 @@ internal partial class EndpointHtmlRenderer
     private TextWriter? _streamingUpdatesWriter;
     private HashSet<int>? _visitedComponentIdsInCurrentStreamingBatch;
     private string? _ssrFramingCommentMarkup;
+    private bool _isHandlingErrors;
 
-    public void InitializeStreamingRenderingFraming(HttpContext httpContext)
+    public void InitializeStreamingRenderingFraming(HttpContext httpContext, bool isErrorHandler)
     {
+        _isHandlingErrors = isErrorHandler;
         if (IsProgressivelyEnhancedNavigation(httpContext.Request))
         {
             var id = Guid.NewGuid().ToString();
@@ -118,10 +120,22 @@ internal partial class EndpointHtmlRenderer
             }
 
             // Now process the list, skipping any we've already visited in an earlier iteration
+            var isEnhancedNavigation = IsProgressivelyEnhancedNavigation(_httpContext.Request);
             for (var i = 0; i < componentIdsInDepthOrder.Length; i++)
             {
                 var componentId = componentIdsInDepthOrder[i].ComponentId;
                 if (_visitedComponentIdsInCurrentStreamingBatch.Contains(componentId))
+                {
+                    continue;
+                }
+
+                // Of the components that updated, we want to emit the roots of all the streaming subtrees, and not
+                // any non-streaming ancestors. There's no point emitting non-streaming ancestor content since there
+                // are no markers in the document to receive it. Also we don't want to call WriteComponentHtml for
+                // nonstreaming ancestors, as that would make us skip over their descendants who may in fact be the
+                // roots of streaming subtrees.
+                var componentState = (EndpointComponentState)GetComponentState(componentId);
+                if (!componentState.StreamRendering)
                 {
                     continue;
                 }
@@ -132,7 +146,7 @@ internal partial class EndpointHtmlRenderer
                 // as it is being written out.
                 writer.Write($"<template blazor-component-id=\"");
                 writer.Write(componentId);
-                writer.Write("\">");
+                writer.Write(isEnhancedNavigation ? "\" enhanced-nav=\"true\">" : "\">");
 
                 // We don't need boundary markers at the top-level since the info is on the <template> anyway.
                 WriteComponentHtml(componentId, writer, allowBoundaryMarkers: false);
