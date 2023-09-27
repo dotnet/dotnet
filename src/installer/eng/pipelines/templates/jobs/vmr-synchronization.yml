@@ -31,7 +31,7 @@ jobs:
       - group: DotNetBot-GitHub-No-Scopes
       - name: vmrPublicUrl
         value: https://github.com/dotnet/dotnet
-    - ${{ if and( eq(variables['System.TeamProject'], 'internal'), or(startsWith(parameters.vmrBranch, 'frameshift/internal/release/'), startsWith(parameters.vmrBranch, 'internal/release/'))) }}:
+    - ${{ if and( eq(variables['System.TeamProject'], 'internal'), startswith(variables['Build.SourceBranch'], 'refs/heads/internal/release/')) }}:
       - group: DotNetBot-AzDO-PAT
       - name: vmrInternalUrl
         value: https://dnceng@dev.azure.com/dnceng/internal/_git/dotnet-dotnet
@@ -72,7 +72,7 @@ jobs:
         workingDirectory: $(Agent.BuildDirectory)/installer
   
     # Push internal/release branches to the internal VMR
-    - ${{ if or(startsWith(parameters.vmrBranch, 'frameshift/internal/release/'), startsWith(parameters.vmrBranch, 'internal/release/')) }}:
+    - ${{ if startsWith(parameters.vmrBranch, 'internal/release/') }}:
       - script: >
           ./.dotnet/dotnet darc vmr push
           --vmr '$(vmrPath)'
