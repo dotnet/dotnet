@@ -4,7 +4,7 @@
     <body>
       <trans-unit id="AspNetCoreReleaseName">
         <source>ASP.NET Core Runtime</source>
-        <target state="translated">ASP.NET Core ランタイム</target>
+        <target state="new">ASP.NET Core Runtime</target>
         <note />
       </trans-unit>
       <trans-unit id="BuildMetadataCannotBeEmpty">
@@ -14,27 +14,27 @@
       </trans-unit>
       <trans-unit id="FileNotFound">
         <source>Could not find the specified file: {0}</source>
-        <target state="translated">指定されたファイルが見つかりませんでした: {0}</target>
+        <target state="new">Could not find the specified file: {0}</target>
         <note />
       </trans-unit>
       <trans-unit id="HashMismatch">
         <source>The expected hash ({0}) and actual hash ({1}) for {2} do not match.</source>
-        <target state="translated">{2} の必要なハッシュ ({0}) と実際のハッシュ ({1}) が一致しません。</target>
+        <target state="new">The expected hash ({0}) and actual hash ({1}) for {2} do not match.</target>
         <note />
       </trans-unit>
       <trans-unit id="InvalidBuildMetadata">
         <source>The build metadata value is invalid: {0}</source>
-        <target state="translated">ビルド メタデータの値が無効です: {0}</target>
+        <target state="new">The build metadata value is invalid: {0}</target>
         <note />
       </trans-unit>
       <trans-unit id="InvalidMajorVersion">
         <source>Invalid or missing major version.</source>
-        <target state="translated">メジャー バージョンが無効か、見つかりません。</target>
+        <target state="new">Invalid or missing major version.</target>
         <note />
       </trans-unit>
       <trans-unit id="InvalidMinorVersion">
         <source>Invalid or missing minor version.</source>
-        <target state="translated">マイナー バージョンが無効か、存在しません。</target>
+        <target state="new">Invalid or missing minor version.</target>
         <note />
       </trans-unit>
       <trans-unit id="InvalidNumericIdentifier">
@@ -44,12 +44,12 @@
       </trans-unit>
       <trans-unit id="InvalidPatch">
         <source>Invalid or missing patch version.</source>
-        <target state="translated">修正プログラムのバージョンが無効か、見つかりません。</target>
+        <target state="new">Invalid or missing patch version.</target>
         <note />
       </trans-unit>
       <trans-unit id="InvalidPrerelease">
         <source>The prerelease value is invalid: {0}</source>
-        <target state="translated">プレリリースの値が無効です: {0}</target>
+        <target state="new">The prerelease value is invalid: {0}</target>
         <note />
       </trans-unit>
       <trans-unit id="InvalidReleaseVersion">
@@ -69,17 +69,17 @@
       </trans-unit>
       <trans-unit id="RuntimeReleaseName">
         <source>.NET Core Runtime</source>
-        <target state="translated">.NET Core ランタイム</target>
+        <target state="new">.NET Core Runtime</target>
         <note />
       </trans-unit>
       <trans-unit id="SdkReleaseName">
         <source>SDK</source>
-        <target state="translated">SDK</target>
+        <target state="new">SDK</target>
         <note />
       </trans-unit>
       <trans-unit id="ValueCannotBeEmpty">
         <source>Value cannot be empty.</source>
-        <target state="translated">値を空にすることはできません。</target>
+        <target state="new">Value cannot be empty.</target>
         <note />
       </trans-unit>
       <trans-unit id="VersionPartLessThanZero">
@@ -89,7 +89,7 @@
       </trans-unit>
       <trans-unit id="WindowsDesktopReleaseName">
         <source>Desktop Runtime</source>
-        <target state="translated">デスクトップ ランタイム</target>
+        <target state="new">Desktop Runtime</target>
         <note />
       </trans-unit>
     </body>

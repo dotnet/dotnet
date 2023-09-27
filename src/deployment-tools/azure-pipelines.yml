@@ -102,9 +102,11 @@ stages:
       publishInstallersAndChecksums: true
       # Enable SDL validation, passing through values from the 'deployment-tools-sdl-validation' group.
       SDLValidationParameters:
-        enable: false
+        enable: true
         params: >-
           -SourceToolsList @("policheck","credscan")
+          -ArtifactToolsList @("binskim")
+          -BinskimAdditionalRunConfigParams @("IgnorePdbLoadError < True","Recurse < True","SymbolsPath < SRV*https://msdl.microsoft.com/download/symbols")
           -TsaInstanceURL "$(TsaInstanceURL)"
           -TsaProjectName "$(TsaProjectName)"
           -TsaNotificationEmail "$(TsaNotificationEmail)"
