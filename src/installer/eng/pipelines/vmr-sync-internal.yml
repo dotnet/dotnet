@@ -5,7 +5,7 @@ trigger:
   branches:
     include:
     - internal/release/*
-    - */internal/release/*
+    - "*/internal/release/*"
 
 resources:
   repositories:
