@@ -8,9 +8,16 @@ namespace Test
     using global::System.Linq;
     using global::System.Threading.Tasks;
     using global::Microsoft.AspNetCore.Components;
-    public partial class TestComponent<
 #nullable restore
 #line 1 "x:\dir\subdir\Test\TestComponent.cshtml"
+using Microsoft.AspNetCore.Components.Web;
+
+#line default
+#line hidden
+#nullable disable
+    public partial class TestComponent<
+#nullable restore
+#line 2 "x:\dir\subdir\Test\TestComponent.cshtml"
 T
 
 #line default
@@ -31,9 +38,17 @@ T
         #pragma warning disable 1998
         protected override void BuildRenderTree(global::Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder)
         {
-            var __typeInference_CreateTestComponent_0 = global::__Blazor.Test.TestComponent.TypeInference.CreateTestComponent_0(__builder, -1, -1, "", -1, "", -1, "", -1, 
+            var __typeInference_CreateTestComponent_0 = global::__Blazor.Test.TestComponent.TypeInference.CreateTestComponent_0(__builder, -1, -1, "", -1, global::Microsoft.AspNetCore.Components.EventCallback.Factory.Create<global::System.EventArgs>(this, 
 #nullable restore
-#line 2 "x:\dir\subdir\Test\TestComponent.cshtml"
+#line 3 "x:\dir\subdir\Test\TestComponent.cshtml"
+                                        () => { }
+
+#line default
+#line hidden
+#nullable disable
+            ), -1, "", -1, 
+#nullable restore
+#line 3 "x:\dir\subdir\Test\TestComponent.cshtml"
                                                                                              1
 
 #line default
@@ -43,7 +58,7 @@ T
             #pragma warning disable BL0005
             __typeInference_CreateTestComponent_0.
 #nullable restore
-#line 2 "x:\dir\subdir\Test\TestComponent.cshtml"
+#line 3 "x:\dir\subdir\Test\TestComponent.cshtml"
                                                                                   Parameter
 
 #line default
@@ -52,15 +67,23 @@ T
              = default;
             #pragma warning restore BL0005
 #nullable restore
-#line 2 "x:\dir\subdir\Test\TestComponent.cshtml"
+#line 3 "x:\dir\subdir\Test\TestComponent.cshtml"
 __o = typeof(global::Test.TestComponent<>);
 
 #line default
 #line hidden
 #nullable disable
-            var __typeInference_CreateTestComponent_1 = global::__Blazor.Test.TestComponent.TypeInference.CreateTestComponent_1(__builder, -1, -1, "", -1, "", -1, 
+            var __typeInference_CreateTestComponent_1 = global::__Blazor.Test.TestComponent.TypeInference.CreateTestComponent_1(__builder, -1, -1, "", -1, global::Microsoft.AspNetCore.Components.EventCallback.Factory.Create<global::System.EventArgs>(this, 
 #nullable restore
-#line 3 "x:\dir\subdir\Test\TestComponent.cshtml"
+#line 4 "x:\dir\subdir\Test\TestComponent.cshtml"
+                                        () => { }
+
+#line default
+#line hidden
+#nullable disable
+            ), -1, 
+#nullable restore
+#line 4 "x:\dir\subdir\Test\TestComponent.cshtml"
                                                                 "named-form-handler"
 
 #line default
@@ -68,7 +91,7 @@ __o = typeof(global::Test.TestComponent<>);
 #nullable disable
             , -1, 
 #nullable restore
-#line 3 "x:\dir\subdir\Test\TestComponent.cshtml"
+#line 4 "x:\dir\subdir\Test\TestComponent.cshtml"
                                                                                                   2
 
 #line default
@@ -78,7 +101,7 @@ __o = typeof(global::Test.TestComponent<>);
             #pragma warning disable BL0005
             __typeInference_CreateTestComponent_1.
 #nullable restore
-#line 3 "x:\dir\subdir\Test\TestComponent.cshtml"
+#line 4 "x:\dir\subdir\Test\TestComponent.cshtml"
                                                                                        Parameter
 
 #line default
@@ -87,7 +110,7 @@ __o = typeof(global::Test.TestComponent<>);
              = default;
             #pragma warning restore BL0005
 #nullable restore
-#line 3 "x:\dir\subdir\Test\TestComponent.cshtml"
+#line 4 "x:\dir\subdir\Test\TestComponent.cshtml"
 __o = typeof(global::Test.TestComponent<>);
 
 #line default
@@ -96,7 +119,7 @@ __o = typeof(global::Test.TestComponent<>);
         }
         #pragma warning restore 1998
 #nullable restore
-#line 4 "x:\dir\subdir\Test\TestComponent.cshtml"
+#line 5 "x:\dir\subdir\Test\TestComponent.cshtml"
        
     [Parameter] public T Parameter { get; set; }
 
@@ -114,7 +137,7 @@ namespace __Blazor.Test.TestComponent
         {
         __builder.OpenComponent<global::Test.TestComponent<T>>(seq);
         __builder.AddAttribute(__seq0, "method", (object)__arg0);
-        __builder.AddAttribute(__seq1, "@onsubmit", (object)__arg1);
+        __builder.AddAttribute(__seq1, "onsubmit", (object)__arg1);
         __builder.AddAttribute(__seq2, "@formname", (object)__arg2);
         __builder.AddAttribute(__seq3, "Parameter", (object)__arg3);
         __builder.CloseComponent();
@@ -124,7 +147,7 @@ namespace __Blazor.Test.TestComponent
         {
         __builder.OpenComponent<global::Test.TestComponent<T>>(seq);
         __builder.AddAttribute(__seq0, "method", (object)__arg0);
-        __builder.AddAttribute(__seq1, "@onsubmit", (object)__arg1);
+        __builder.AddAttribute(__seq1, "onsubmit", (object)__arg1);
         __builder.AddAttribute(__seq2, "@formname", (object)__arg2);
         __builder.AddAttribute(__seq3, "Parameter", (object)__arg3);
         __builder.CloseComponent();

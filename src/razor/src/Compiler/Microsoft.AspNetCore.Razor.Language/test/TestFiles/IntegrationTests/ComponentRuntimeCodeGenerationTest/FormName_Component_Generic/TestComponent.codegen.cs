@@ -8,9 +8,16 @@ namespace Test
     using global::System.Linq;
     using global::System.Threading.Tasks;
     using global::Microsoft.AspNetCore.Components;
-    public partial class TestComponent<
 #nullable restore
 #line 1 "x:\dir\subdir\Test\TestComponent.cshtml"
+using Microsoft.AspNetCore.Components.Web;
+
+#line default
+#line hidden
+#nullable disable
+    public partial class TestComponent<
+#nullable restore
+#line 2 "x:\dir\subdir\Test\TestComponent.cshtml"
 T
 
 #line default
@@ -21,9 +28,17 @@ T
         #pragma warning disable 1998
         protected override void BuildRenderTree(global::Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder)
         {
-            global::__Blazor.Test.TestComponent.TypeInference.CreateTestComponent_0(__builder, 0, 1, "post", 2, "() => { }", 3, "named-form-handler", 4, 
+            global::__Blazor.Test.TestComponent.TypeInference.CreateTestComponent_0(__builder, 0, 1, "post", 2, global::Microsoft.AspNetCore.Components.EventCallback.Factory.Create<global::System.EventArgs>(this, 
 #nullable restore
-#line 2 "x:\dir\subdir\Test\TestComponent.cshtml"
+#line 3 "x:\dir\subdir\Test\TestComponent.cshtml"
+                                        () => { }
+
+#line default
+#line hidden
+#nullable disable
+            ), 3, "named-form-handler", 4, 
+#nullable restore
+#line 3 "x:\dir\subdir\Test\TestComponent.cshtml"
                                                                                              1
 
 #line default
@@ -31,9 +46,17 @@ T
 #nullable disable
             );
             __builder.AddMarkupContent(5, "\r\n");
-            global::__Blazor.Test.TestComponent.TypeInference.CreateTestComponent_1(__builder, 6, 7, "post", 8, "() => { }", 9, 
+            global::__Blazor.Test.TestComponent.TypeInference.CreateTestComponent_1(__builder, 6, 7, "post", 8, global::Microsoft.AspNetCore.Components.EventCallback.Factory.Create<global::System.EventArgs>(this, 
 #nullable restore
-#line 3 "x:\dir\subdir\Test\TestComponent.cshtml"
+#line 4 "x:\dir\subdir\Test\TestComponent.cshtml"
+                                        () => { }
+
+#line default
+#line hidden
+#nullable disable
+            ), 9, 
+#nullable restore
+#line 4 "x:\dir\subdir\Test\TestComponent.cshtml"
                                                                 "named-form-handler"
 
 #line default
@@ -41,7 +64,7 @@ T
 #nullable disable
             , 10, 
 #nullable restore
-#line 3 "x:\dir\subdir\Test\TestComponent.cshtml"
+#line 4 "x:\dir\subdir\Test\TestComponent.cshtml"
                                                                                                   2
 
 #line default
@@ -51,7 +74,7 @@ T
         }
         #pragma warning restore 1998
 #nullable restore
-#line 4 "x:\dir\subdir\Test\TestComponent.cshtml"
+#line 5 "x:\dir\subdir\Test\TestComponent.cshtml"
        
     [Parameter] public T Parameter { get; set; }
 
@@ -69,7 +92,7 @@ namespace __Blazor.Test.TestComponent
         {
         __builder.OpenComponent<global::Test.TestComponent<T>>(seq);
         __builder.AddComponentParameter(__seq0, "method", __arg0);
-        __builder.AddComponentParameter(__seq1, "@onsubmit", __arg1);
+        __builder.AddComponentParameter(__seq1, "onsubmit", __arg1);
         __builder.AddComponentParameter(__seq2, "@formname", __arg2);
         __builder.AddComponentParameter(__seq3, "Parameter", __arg3);
         __builder.CloseComponent();
@@ -78,7 +101,7 @@ namespace __Blazor.Test.TestComponent
         {
         __builder.OpenComponent<global::Test.TestComponent<T>>(seq);
         __builder.AddComponentParameter(__seq0, "method", __arg0);
-        __builder.AddComponentParameter(__seq1, "@onsubmit", __arg1);
+        __builder.AddComponentParameter(__seq1, "onsubmit", __arg1);
         __builder.AddComponentParameter(__seq2, "@formname", __arg2);
         __builder.AddComponentParameter(__seq3, "Parameter", __arg3);
         __builder.CloseComponent();

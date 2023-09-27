@@ -9,7 +9,7 @@ using Microsoft.Extensions.ObjectPool;
 
 namespace Microsoft.AspNetCore.Razor.PooledObjects;
 
-internal static partial class PooledObjectExtensions
+internal static partial class Extensions
 {
     public static PooledObject<T> GetPooledObject<T>(this ObjectPool<T> pool)
         where T : class

@@ -29,4 +29,34 @@ internal static class EnumerableExtensions
             return results.DrainToImmutable();
         }
     }
+
+    public static bool TryGetCount<T>(this IEnumerable<T> sequence, out int count)
+    {
+#if NET6_0_OR_GREATER
+        return Linq.Enumerable.TryGetNonEnumeratedCount(sequence, out count);
+#else
+        return TryGetCount<T>((IEnumerable)sequence, out count);
+#endif
+    }
+
+    public static bool TryGetCount<T>(this IEnumerable sequence, out int count)
+    {
+        switch (sequence)
+        {
+            case ICollection collection:
+                count = collection.Count;
+                return true;
+
+            case ICollection<T> collection:
+                count = collection.Count;
+                return true;
+
+            case IReadOnlyCollection<T> collection:
+                count = collection.Count;
+                return true;
+        }
+
+        count = 0;
+        return false;
+    }
 }
