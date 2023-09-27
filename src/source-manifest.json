@@ -103,10 +103,10 @@
       "commitSha": "fd120c5b9ebf88506f63a095bd1cbe34cc1406ff"
     },
     {
-      "packageVersion": "8.0.0-alpha.1.23468.1",
+      "packageVersion": "8.0.0-alpha.1.23471.2",
       "path": "source-build-externals",
       "remoteUri": "https://github.com/dotnet/source-build-externals",
-      "commitSha": "e9d6489787a5ea5400a31dfa34aa6ad6b590de9b"
+      "commitSha": "6dbf3aaa0fc9664df86462f5c70b99800934fccd"
     },
     {
       "packageVersion": "8.0.0-alpha.1.23463.1",
@@ -174,6 +174,11 @@
       "commitSha": "f15db7b7c6f5affbea268632ef8333d2687c8031"
     },
     {
+      "path": "source-build-externals/src/abstractions-xunit",
+      "remoteUri": "https://github.com/xunit/abstractions.xunit",
+      "commitSha": "b75d54d73b141709f805c2001b16f3dd4d71539d"
+    },
+    {
       "path": "source-build-externals/src/application-insights",
       "remoteUri": "https://github.com/Microsoft/ApplicationInsights-dotnet",
       "commitSha": "5e2e7ddda961ec0e16a75b1ae0a37f6a13c777f5"
@@ -201,7 +206,7 @@
     {
       "path": "source-build-externals/src/MSBuildLocator",
       "remoteUri": "https://github.com/microsoft/MSBuildLocator",
-      "commitSha": "450799210a4856fc099889684bfb131844f766ff"
+      "commitSha": "e0281df33274ac3c3e22acc9b07dcb4b31d57dc0"
     },
     {
       "path": "source-build-externals/src/newtonsoft-json",

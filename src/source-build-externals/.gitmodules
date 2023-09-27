@@ -22,3 +22,6 @@
 [submodule "xunit"]
 	path = src/xunit
 	url = https://github.com/xunit/xunit
+[submodule "abstractions-xunit"]
+	path = src/abstractions-xunit
+	url = https://github.com/xunit/abstractions.xunit
