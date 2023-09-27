@@ -144,6 +144,12 @@ Usually, this means the [dotnet/dotnet repository](https://github.com/dotnet/dot
 In practice, this means that when calling the main build script, you need to provide additional arguments when building outside of a context of a git repository.  
 Alternatively, you can also provide a manifest file where this information can be read from. This file (`release.json`) can be found attached with the [dotnet/dotnet release](https://github.com/dotnet/dotnet/releases).
 
+### Synchronizing code into the VMR
+
+Sometimes you want to make a change in a repository and test that change in the VMR. You could of course make the change in the VMR directly (locally, as the VMR is read-only for now) but in case it's already available in your repository, you can synchronize it into the VMR (again locally).
+
+To do this, you can start a [dotnet/dotnet](https://github.com/dotnet/dotnet) Codespace. You will see instructions right when the Codespace starts. Alternatively, you can clone the repository locally and use the `[eng/vmr-sync.sh](../../eng/vmr-sync.sh)` script to do that. Please refer to the documentation in the script for more details.
+
 ## List of components
 
 To enable full offline source-building of the VMR, we have no other choice than to synchronize all the necessary code into the VMR. This also includes any code referenced via git submodules. More details on why and how this is done can be found here:
@@ -176,7 +182,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/fsharp`  
 *[dotnet/fsharp@10f956e](https://github.com/dotnet/fsharp/commit/10f956e631a1efc0f7f5e49c626c494cd32b1f50)*
 - `src/installer`  
-*[dotnet/installer@da40dcb](https://github.com/dotnet/installer/commit/da40dcba0fe957fb803a0259b08271b6bb76f5fe)*
+*[dotnet/installer@9cfe1c1](https://github.com/dotnet/installer/commit/9cfe1c1fb5eb2fde09bc8ebd4e3e8c0b773fc19e)*
 - `src/msbuild`  
 *[dotnet/msbuild@585e097](https://github.com/dotnet/msbuild/commit/585e09762f07aa6ec291cb75cf7e98bdded8e373)*
 - `src/nuget-client`  
