@@ -64,7 +64,7 @@ namespace NuGet.ContentModel.Infrastructure
             }
         }
 
-        public ContentItem Match(string path, IReadOnlyDictionary<string, ContentPropertyDefinition> propertyDefinitions)
+        internal ContentItem Match(string path, IReadOnlyDictionary<string, ContentPropertyDefinition> propertyDefinitions)
         {
             ContentItem item = null;
             var startIndex = 0;

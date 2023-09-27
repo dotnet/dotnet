@@ -64,7 +64,6 @@ NuGet.ContentModel.ContentPropertyDefinition.FileExtensionAllowSubFolders.get ->
 ~NuGet.ContentModel.ContentPropertyDefinition.Name.get -> string
 ~NuGet.ContentModel.ContentPropertyDefinition.Parser.get -> System.Func<string, NuGet.ContentModel.PatternTable, object>
 NuGet.ContentModel.Infrastructure.PatternExpression
-~NuGet.ContentModel.Infrastructure.PatternExpression.Match(string path, System.Collections.Generic.IReadOnlyDictionary<string, NuGet.ContentModel.ContentPropertyDefinition> propertyDefinitions) -> NuGet.ContentModel.ContentItem
 ~NuGet.ContentModel.Infrastructure.PatternExpression.PatternExpression(NuGet.ContentModel.PatternDefinition pattern) -> void
 NuGet.ContentModel.PatternDefinition
 ~NuGet.ContentModel.PatternDefinition.Defaults.get -> System.Collections.Generic.IReadOnlyDictionary<string, object>
