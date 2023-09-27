@@ -138,6 +138,10 @@ namespace NuGet.ProjectModel
         [Obsolete]
         public PackOptions PackOptions { get; set; }
 
+        /// <summary>
+        /// List of dependencies that apply to all frameworks.
+        /// <see cref="ProjectStyle.PackageReference"/> based projects must not use this list and instead use the one in the <see cref="TargetFrameworks"/> property which is a list of the <see cref="TargetFrameworkInformation"/> type.
+        /// </summary>
         public IList<LibraryDependency> Dependencies { get; set; }
 
         public IList<TargetFrameworkInformation> TargetFrameworks { get; private set; }

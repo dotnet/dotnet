@@ -197,6 +197,7 @@ stages:
   dependsOn: Initialize
   jobs:
   - job: Build_Source_Build
+    displayName: "Source Build"
     condition: "and(succeeded(), ne(variables['RunSourceBuild'], 'false'))"
     timeoutInMinutes: 120
     variables:

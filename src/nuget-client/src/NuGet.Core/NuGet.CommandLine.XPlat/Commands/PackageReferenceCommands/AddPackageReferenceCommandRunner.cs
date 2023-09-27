@@ -165,8 +165,7 @@ namespace NuGet.CommandLine.XPlat
             }
             else
             {
-                // If the user has not specified a framework, then just add it to all frameworks
-                PackageSpecOperations.AddOrUpdateDependency(updatedPackageSpec, packageDependency, updatedPackageSpec.TargetFrameworks.Select(e => e.FrameworkName));
+                PackageSpecOperations.AddOrUpdateDependency(updatedPackageSpec, packageDependency);
             }
 
             var updatedDgSpec = dgSpec.WithReplacedSpec(updatedPackageSpec).WithoutRestores();
