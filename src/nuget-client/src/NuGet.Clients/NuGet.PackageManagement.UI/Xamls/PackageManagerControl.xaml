@@ -67,6 +67,7 @@
       SettingsButtonClicked="SettingsButtonClicked"
       FilterChanged="Filter_SelectionChanged"
       PrereleaseCheckChanged="CheckboxPrerelease_CheckChanged"
+      VulnerabilitiesCheckChanged="CheckboxVulnerabilties_CheckChanged"
       SourceRepoListSelectionChanged="SourceRepoList_SelectionChanged" />
 
     <Border
