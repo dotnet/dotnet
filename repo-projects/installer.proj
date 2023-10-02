@@ -45,6 +45,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ExtraPackageVersionPropsPackageInfo
+      Include="MonoWorkloadManifestVersion"
+      Version="%24(MicrosoftNETCoreAppRefPackageVersion)" />
+  </ItemGroup>
+
+  <ItemGroup>
     <RepositoryReference Include="arcade" />
     <RepositoryReference Include="aspnetcore" />
     <RepositoryReference Include="emsdk" />

@@ -23,6 +23,15 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ExtraPackageVersionPropsPackageInfo
+      Include="MicrosoftExtensionsLoggingPackageVersion"
+      Version="%24(MicrosoftExtensionsLoggingConsoleVersion)" />
+    <ExtraPackageVersionPropsPackageInfo
+      Include="MicrosoftExtensionsLoggingAbstractionsPackageVersion"
+      Version="%24(MicrosoftExtensionsLoggingConsoleVersion)" />
+  </ItemGroup>
+
+  <ItemGroup>
     <RepositoryReference Include="arcade" />
     <RepositoryReference Include="xliff-tasks" />
     <RepositoryReference Include="runtime" />
