@@ -43,10 +43,11 @@ internal class DocumentSymbolEndpoint : IRazorRequestHandler<DocumentSymbolParam
             return;
         }
 
-        serverCapabilities.DocumentSymbolProvider = new DocumentSymbolOptions()
-        {
-            WorkDoneProgress = false
-        };
+        // Disabled for 17.8
+        //serverCapabilities.DocumentSymbolProvider = new DocumentSymbolOptions()
+        //{
+        //    WorkDoneProgress = false
+        //};
     }
 
     public TextDocumentIdentifier GetTextDocumentIdentifier(DocumentSymbolParams request)
