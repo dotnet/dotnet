@@ -123,6 +123,9 @@
   <data name="Cannot_allocate_a_buffer_of_size_0" xml:space="preserve">
     <value>Cannot allocate a buffer of size {0}.</value>
   </data>
+  <data name="Destination_is_too_short" xml:space="preserve">
+    <value>Destination is too short.</value>
+  </data>
   <data name="Non_negative_number_required" xml:space="preserve">
     <value>Non-negative number required.</value>
   </data>

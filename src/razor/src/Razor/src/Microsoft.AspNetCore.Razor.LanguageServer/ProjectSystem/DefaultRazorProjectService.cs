@@ -105,7 +105,7 @@ internal class DefaultRazorProjectService : RazorProjectService
             }
 
             var targetFilePath = textDocumentPath;
-            var projectDirectory = FilePathNormalizer.GetDirectory(projectSnapshot.FilePath);
+            var projectDirectory = FilePathNormalizer.GetNormalizedDirectoryName(projectSnapshot.FilePath);
             if (targetFilePath.StartsWith(projectDirectory, FilePathComparison.Instance))
             {
                 // Make relative
@@ -324,7 +324,7 @@ internal class DefaultRazorProjectService : RazorProjectService
 
         var project = (ProjectSnapshot)_projectSnapshotManagerAccessor.Instance.GetLoadedProject(projectKey);
         var currentHostProject = project.HostProject;
-        var projectDirectory = FilePathNormalizer.GetDirectory(project.FilePath);
+        var projectDirectory = FilePathNormalizer.GetNormalizedDirectoryName(project.FilePath);
         var documentMap = documents.ToDictionary(document => EnsureFullPath(document.FilePath, projectDirectory), FilePathComparer.Instance);
         var miscellaneousProject = (ProjectSnapshot)_snapshotResolver.GetMiscellaneousProject();
 

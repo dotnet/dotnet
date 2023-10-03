@@ -12,6 +12,11 @@
         <target state="translated">サイズ {0} のバッファーを割り当てることができません。</target>
         <note />
       </trans-unit>
+      <trans-unit id="Destination_is_too_short">
+        <source>Destination is too short.</source>
+        <target state="new">Destination is too short.</target>
+        <note />
+      </trans-unit>
       <trans-unit id="Non_negative_number_required">
         <source>Non-negative number required.</source>
         <target state="translated">負でない数値が必要です。</target>

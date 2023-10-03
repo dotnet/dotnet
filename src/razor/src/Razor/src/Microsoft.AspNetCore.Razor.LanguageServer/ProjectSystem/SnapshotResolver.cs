@@ -50,7 +50,7 @@ internal class SnapshotResolver : ISnapshotResolver
                 continue;
             }
 
-            var projectDirectory = FilePathNormalizer.GetDirectory(projectSnapshot.FilePath);
+            var projectDirectory = FilePathNormalizer.GetNormalizedDirectoryName(projectSnapshot.FilePath);
             if (normalizedDocumentPath.StartsWith(projectDirectory, FilePathComparison.Instance))
             {
                 yield return projectSnapshot;

@@ -15,9 +15,9 @@ internal struct PooledObject<T> : IDisposable
     private T? _object;
 
     // Because of how this API is intended to be used, we don't want the consumption code to have
-    // to deal with Object being a nullable reference type. Intead, the guarantee is that this is
+    // to deal with Object being a nullable reference type. Instead, the guarantee is that this is
     // non-null until this is disposed.
-    public T Object => _object!;
+    public readonly T Object => _object!;
 
     public PooledObject(ObjectPool<T> pool)
         : this()

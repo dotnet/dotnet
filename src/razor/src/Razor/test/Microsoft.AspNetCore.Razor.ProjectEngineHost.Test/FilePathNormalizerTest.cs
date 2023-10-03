@@ -97,7 +97,7 @@ public class FilePathNormalizerTest(ITestOutputHelper testOutput) : TestBase(tes
         var filePath = "C:/path/to/document.cshtml";
 
         // Act
-        var normalized = FilePathNormalizer.GetDirectory(filePath);
+        var normalized = FilePathNormalizer.GetNormalizedDirectoryName(filePath);
 
         // Assert
         Assert.Equal("C:/path/to/", normalized);
@@ -110,7 +110,7 @@ public class FilePathNormalizerTest(ITestOutputHelper testOutput) : TestBase(tes
         var filePath = "C:/document.cshtml";
 
         // Act
-        var normalized = FilePathNormalizer.GetDirectory(filePath);
+        var normalized = FilePathNormalizer.GetNormalizedDirectoryName(filePath);
 
         // Assert
         Assert.Equal("C:/", normalized);
