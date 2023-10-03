@@ -85,22 +85,22 @@
       <Uri>https://github.com/dotnet/aspnetcore</Uri>
       <Sha>6b9887091f010b26fe1b3639fb80b71065a0bff7</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.Common.ItemTemplates" Version="8.0.100-rtm.23503.1">
+    <Dependency Name="Microsoft.DotNet.Common.ItemTemplates" Version="8.0.100-rtm.23503.4">
       <Uri>https://github.com/dotnet/sdk</Uri>
-      <Sha>f120df4a70c717c160e93bfc93e011e0607d6541</Sha>
+      <Sha>22969374eed5b2467de56e127f65abfb3627e275</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.TemplateEngine.Cli" Version="8.0.100-rtm.23503.1">
+    <Dependency Name="Microsoft.TemplateEngine.Cli" Version="8.0.100-rtm.23503.4">
       <Uri>https://github.com/dotnet/sdk</Uri>
-      <Sha>f120df4a70c717c160e93bfc93e011e0607d6541</Sha>
+      <Sha>22969374eed5b2467de56e127f65abfb3627e275</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.NET.Sdk" Version="8.0.100-rtm.23503.1">
+    <Dependency Name="Microsoft.NET.Sdk" Version="8.0.100-rtm.23503.4">
       <Uri>https://github.com/dotnet/sdk</Uri>
-      <Sha>f120df4a70c717c160e93bfc93e011e0607d6541</Sha>
+      <Sha>22969374eed5b2467de56e127f65abfb3627e275</Sha>
       <SourceBuild RepoName="sdk" ManagedOnly="true" />
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.MSBuildSdkResolver" Version="8.0.100-rtm.23503.1">
+    <Dependency Name="Microsoft.DotNet.MSBuildSdkResolver" Version="8.0.100-rtm.23503.4">
       <Uri>https://github.com/dotnet/sdk</Uri>
-      <Sha>f120df4a70c717c160e93bfc93e011e0607d6541</Sha>
+      <Sha>22969374eed5b2467de56e127f65abfb3627e275</Sha>
     </Dependency>
     <Dependency Name="Microsoft.DotNet.Test.ProjectTemplates.2.1" Version="1.0.2-beta4.22406.1">
       <Uri>https://github.com/dotnet/test-templates</Uri>
