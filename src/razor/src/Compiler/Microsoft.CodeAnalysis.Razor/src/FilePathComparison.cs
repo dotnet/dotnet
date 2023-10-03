@@ -1,8 +1,6 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-#nullable disable
-
 using System;
 using System.Runtime.InteropServices;
 
@@ -16,16 +14,9 @@ internal static class FilePathComparison
     {
         get
         {
-            if (_instance == null && RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
-            {
-                _instance = StringComparison.Ordinal;
-            }
-            else if (_instance == null)
-            {
-                _instance = StringComparison.OrdinalIgnoreCase;
-            }
-
-            return _instance.Value;
+            return _instance ??= RuntimeInformation.IsOSPlatform(OSPlatform.Linux)
+                ? StringComparison.Ordinal
+                : StringComparison.OrdinalIgnoreCase;
         }
     }
 }

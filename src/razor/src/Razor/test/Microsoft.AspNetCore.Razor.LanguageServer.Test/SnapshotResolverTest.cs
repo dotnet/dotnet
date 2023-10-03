@@ -246,7 +246,7 @@ public class SnapshotResolverTest : LanguageServerTestBase
         }
         else
         {
-            var projectDirectory = FilePathNormalizer.GetDirectory(filePath);
+            var projectDirectory = FilePathNormalizer.GetNormalizedDirectoryName(filePath);
             var projectSnapshot = TestProjectSnapshot.Create(Path.Join(projectDirectory, "proj.csproj"));
 
             snapshotManager.ProjectAdded(projectSnapshot.HostProject);

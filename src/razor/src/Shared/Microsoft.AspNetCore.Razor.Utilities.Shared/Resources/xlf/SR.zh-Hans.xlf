@@ -12,6 +12,11 @@
         <target state="translated">无法分配大小为 {0} 的缓冲区。</target>
         <note />
       </trans-unit>
+      <trans-unit id="Destination_is_too_short">
+        <source>Destination is too short.</source>
+        <target state="new">Destination is too short.</target>
+        <note />
+      </trans-unit>
       <trans-unit id="Non_negative_number_required">
         <source>Non-negative number required.</source>
         <target state="translated">需要提供非负数。</target>

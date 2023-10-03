@@ -33,5 +33,7 @@ internal static class PooledArrayBuilderExtensions
     /// <param name="builder">A read-only reference to a pooled array builder which is part of a <c>using</c> statement.</param>
     /// <returns>A mutable reference to the pooled array builder.</returns>
     public static ref PooledArrayBuilder<T> AsRef<T>(this in PooledArrayBuilder<T> builder)
+#pragma warning disable RS0042
         => ref Unsafe.AsRef(in builder);
+#pragma warning restore RS0042
 }
