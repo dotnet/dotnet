@@ -47,6 +47,7 @@ public class Startup
             });
         });
 
+        services.AddAuthentication(NegotiateDefaults.AuthenticationScheme).AddNegotiate();
         services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>
                 {
@@ -60,7 +61,6 @@ public class Startup
                             IssuerSigningKey = SecurityKey
                         };
                 });
-        services.AddAuthentication(NegotiateDefaults.AuthenticationScheme).AddNegotiate();
 
         // Since tests run in parallel, it's possible multiple servers will startup,
         // we use an ephemeral key provider and repository to avoid filesystem contention issues
@@ -93,7 +93,7 @@ public class Startup
 
         app.UseEndpoints(endpoints =>
         {
-            endpoints.MapHub<TestHub>("/default", o => o.AllowAcks = true);
+            endpoints.MapHub<TestHub>("/default", o => o.AllowStatefulReconnects = true);
             endpoints.MapHub<DynamicTestHub>("/dynamic");
             endpoints.MapHub<TestHubT>("/hubT");
             endpoints.MapHub<HubWithAuthorization>("/authorizedhub");
@@ -114,9 +114,9 @@ public class Startup
                 options.MinimumProtocolVersion = -1;
             });
 
-            endpoints.MapGet("/generateJwtToken", context =>
+            endpoints.MapGet("/generateJwtToken/{name?}", (HttpContext context, string name) =>
             {
-                return context.Response.WriteAsync(GenerateJwtToken());
+                return context.Response.WriteAsync(GenerateJwtToken(name ?? "testuser"));
             });
 
             endpoints.Map("/redirect/{*anything}", context =>
@@ -130,9 +130,9 @@ public class Startup
         });
     }
 
-    private string GenerateJwtToken()
+    private string GenerateJwtToken(string name = "testuser")
     {
-        var claims = new[] { new Claim(ClaimTypes.NameIdentifier, "testuser") };
+        var claims = new[] { new Claim(ClaimTypes.NameIdentifier, name) };
         var credentials = new SigningCredentials(SecurityKey, SecurityAlgorithms.HmacSha256);
         var token = new JwtSecurityToken("SignalRTestServer", "SignalRTests", claims, expires: DateTime.Now.AddSeconds(5), signingCredentials: credentials);
         return JwtTokenHandler.WriteToken(token);
