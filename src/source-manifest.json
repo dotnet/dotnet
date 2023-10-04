@@ -13,10 +13,10 @@
       "commitSha": "f37eb785c92218e668cf98e8c50139c1395492ad"
     },
     {
-      "packageVersion": "0.11.4-alpha.23476.1",
+      "packageVersion": "0.11.4-alpha.23502.1",
       "path": "cecil",
       "remoteUri": "https://github.com/dotnet/cecil",
-      "commitSha": "13d6536e2dc92404da76d61d248badc040eb0de0"
+      "commitSha": "64a8874f3c485657e732ca56a5f24e2095740103"
     },
     {
       "packageVersion": "0.1.430701",
@@ -58,7 +58,7 @@
       "packageVersion": "8.0.100",
       "path": "installer",
       "remoteUri": "https://github.com/dotnet/installer",
-      "commitSha": "f0970dcf4fe2475ecc8c9fd8b979d48cec765490"
+      "commitSha": "44e6cb59e07abca55927395e806a7a528342c2c6"
     },
     {
       "packageVersion": "17.8.1-preview-23476-07",
@@ -79,10 +79,10 @@
       "commitSha": "d9b92eee1ccf6a446d7c3a40515faf1c5f46c6a2"
     },
     {
-      "packageVersion": "4.8.0-3.23501.1",
+      "packageVersion": "4.8.0-3.23503.7",
       "path": "roslyn",
       "remoteUri": "https://github.com/dotnet/roslyn",
-      "commitSha": "0d735148bbb4cb511be547fbc1db63a2c81a821d"
+      "commitSha": "61728203004a6c9f57df5cd0b0bf4e35e865f10b"
     },
     {
       "packageVersion": "3.11.0-beta1.23472.1",
@@ -91,16 +91,16 @@
       "commitSha": "4a7701fd72094614897b33e4cb1d9640c221d862"
     },
     {
-      "packageVersion": "8.0.0-rtm.23502.11",
+      "packageVersion": "8.0.0-rtm.23503.15",
       "path": "runtime",
       "remoteUri": "https://github.com/dotnet/runtime",
-      "commitSha": "ef6283ac0a14c78d9e9fef4841545099bd7ad12b"
+      "commitSha": "a84f8ffbf5d597b8a91e893a1f413466de017a68"
     },
     {
-      "packageVersion": "8.0.100-rtm.23503.8",
+      "packageVersion": "8.0.100-rtm.23504.11",
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "bfcdc76b77c6fcf05f426210c569f2b56796dd9b"
+      "commitSha": "d7cbd4f0f1e502155f9f4efa8ea66347b6241161"
     },
     {
       "packageVersion": "8.0.0-alpha.1.23502.1",
@@ -115,10 +115,10 @@
       "commitSha": "7b55da982fc6e71c1776c4de89111aee0eecb45a"
     },
     {
-      "packageVersion": "8.0.0-beta.23476.1",
+      "packageVersion": "8.0.0-beta.23503.2",
       "path": "sourcelink",
       "remoteUri": "https://github.com/dotnet/sourcelink",
-      "commitSha": "d569e365ab18f2f6c95fbb0f0405f4aea7add10f"
+      "commitSha": "bd296362cb0b717a4fd0146a9790eadcd8e587a8"
     },
     {
       "packageVersion": "2.1.0-beta.23253.1",
