@@ -7,6 +7,7 @@ using Microsoft.CodeAnalysis.CSharp.UseCollectionExpression;
 using Microsoft.CodeAnalysis.Editor.UnitTests.CodeActions;
 using Microsoft.CodeAnalysis.Test.Utilities;
 using Microsoft.CodeAnalysis.Testing;
+using Roslyn.Test.Utilities;
 using Xunit;
 
 namespace Microsoft.CodeAnalysis.CSharp.Analyzers.UnitTests.UseCollectionExpression;
@@ -115,6 +116,55 @@ public class UseCollectionExpressionForCreateTests
                 class C
                 {
                     MyCollection<int> i = [];
+                }
+                """ + s_collectionBuilderApi + s_basicCollectionApi,
+            LanguageVersion = LanguageVersion.CSharp12,
+            ReferenceAssemblies = ReferenceAssemblies.Net.Net70,
+        }.RunAsync();
+    }
+
+    [Fact]
+    public async Task TestCast()
+    {
+        await new VerifyCS.Test
+        {
+            TestCode = """
+                class C
+                {
+                    void M()
+                    {
+                        var i = (MyCollection<int>)[|MyCollection.[|Create|]<int>(|]);
+                    }
+                }
+                """ + s_collectionBuilderApi + s_basicCollectionApi,
+            FixedCode = """
+                class C
+                {
+                    void M()
+                    {
+                        var i = (MyCollection<int>)[];
+                    }
+                }
+                """ + s_collectionBuilderApi + s_basicCollectionApi,
+            LanguageVersion = LanguageVersion.CSharp12,
+            ReferenceAssemblies = ReferenceAssemblies.Net.Net70,
+        }.RunAsync();
+    }
+
+    [Fact]
+    public async Task TestIdentifierCast()
+    {
+        await new VerifyCS.Test
+        {
+            TestCode = """
+                using X = MyCollection<int>;
+
+                class C
+                {
+                    void M()
+                    {
+                        var i = (X)MyCollection.Create<int>();
+                    }
                 }
                 """ + s_collectionBuilderApi + s_basicCollectionApi,
             LanguageVersion = LanguageVersion.CSharp12,
@@ -811,6 +861,201 @@ public class UseCollectionExpressionForCreateTests
                 """ + s_collectionBuilderApi + s_basicCollectionApi,
             LanguageVersion = LanguageVersion.CSharp12,
             ReferenceAssemblies = ReferenceAssemblies.Net.Net70,
+        }.RunAsync();
+    }
+
+    [Fact, WorkItem("https://github.com/dotnet/roslyn/issues/69507")]
+    public async Task NotForImmutableArrayNet70()
+    {
+        await new VerifyCS.Test
+        {
+            TestCode = """
+                using System;
+                using System.Collections.Immutable;
+
+                class C
+                {
+                    void M()
+                    {
+                        ImmutableArray<int> v = ImmutableArray.Create(1, 2, 3);
+                    }
+                }
+                """,
+            LanguageVersion = LanguageVersion.CSharp12,
+            ReferenceAssemblies = ReferenceAssemblies.Net.Net70,
+        }.RunAsync();
+    }
+
+    [Fact, WorkItem("https://github.com/dotnet/roslyn/issues/69507")]
+    public async Task ForImmutableArrayNet80()
+    {
+        await new VerifyCS.Test
+        {
+            TestCode = """
+                using System;
+                using System.Collections.Immutable;
+
+                class C
+                {
+                    void M()
+                    {
+                        ImmutableArray<int> v = [|ImmutableArray.[|Create|](|]1, 2, 3);
+                    }
+                }
+                """,
+            FixedCode = """
+                using System;
+                using System.Collections.Immutable;
+
+                class C
+                {
+                    void M()
+                    {
+                        ImmutableArray<int> v = [1, 2, 3];
+                    }
+                }
+                """,
+            LanguageVersion = LanguageVersion.CSharp12,
+            ReferenceAssemblies = ReferenceAssemblies.Net.Net80,
+        }.RunAsync();
+    }
+
+    [Fact, WorkItem("https://github.com/dotnet/roslyn/issues/69507"), WorkItem("https://github.com/dotnet/roslyn/issues/69521")]
+    public async Task NotForImmutableListNet70()
+    {
+        await new VerifyCS.Test
+        {
+            TestCode = """
+                using System;
+                using System.Collections.Immutable;
+
+                class C
+                {
+                    void M()
+                    {
+                        ImmutableList<int> v = ImmutableList.Create(1, 2, 3);
+                    }
+                }
+                """,
+            LanguageVersion = LanguageVersion.CSharp12,
+            ReferenceAssemblies = ReferenceAssemblies.Net.Net70,
+        }.RunAsync();
+    }
+
+    [Fact, WorkItem("https://github.com/dotnet/roslyn/issues/69507")]
+    public async Task ForImmutableListNet80()
+    {
+        await new VerifyCS.Test
+        {
+            TestCode = """
+                using System;
+                using System.Collections.Immutable;
+
+                class C
+                {
+                    void M()
+                    {
+                        ImmutableList<int> v = [|ImmutableList.[|Create|](|]1, 2, 3);
+                    }
+                }
+                """,
+            FixedCode = """
+                using System;
+                using System.Collections.Immutable;
+
+                class C
+                {
+                    void M()
+                    {
+                        ImmutableList<int> v = [1, 2, 3];
+                    }
+                }
+                """,
+            LanguageVersion = LanguageVersion.CSharp12,
+            ReferenceAssemblies = ReferenceAssemblies.Net.Net80,
+        }.RunAsync();
+    }
+
+    [Fact]
+    public async Task TestGlobalStatement1()
+    {
+        await new VerifyCS.Test
+        {
+            TestCode = """
+                MyCollection<int> i = [|MyCollection.[|Create|]<int>(|]);
+                """ + s_collectionBuilderApi + s_basicCollectionApi,
+            FixedCode = """
+                MyCollection<int> i = [];
+                """ + s_collectionBuilderApi + s_basicCollectionApi,
+            LanguageVersion = LanguageVersion.CSharp12,
+            ReferenceAssemblies = ReferenceAssemblies.Net.Net70,
+            TestState =
+            {
+                OutputKind = OutputKind.ConsoleApplication,
+            },
+        }.RunAsync();
+    }
+
+    [Fact]
+    public async Task TestGlobalStatement2()
+    {
+        await new VerifyCS.Test
+        {
+            TestCode = """
+                MyCollection<int> i = [|MyCollection.[|Create|]<int>(|]1 +
+                    2, 3 +
+                    4);
+                """ + s_collectionBuilderApi + s_basicCollectionApi,
+            FixedCode = """
+                MyCollection<int> i =
+                [
+                    1 +
+                        2,
+                    3 +
+                        4,
+                ];
+                """ + s_collectionBuilderApi + s_basicCollectionApi,
+            LanguageVersion = LanguageVersion.CSharp12,
+            ReferenceAssemblies = ReferenceAssemblies.Net.Net70,
+            TestState =
+            {
+                OutputKind = OutputKind.ConsoleApplication,
+            },
+        }.RunAsync();
+    }
+
+    [Fact]
+    public async Task TestNested1()
+    {
+        await new VerifyCS.Test
+        {
+            TestCode = """
+                using System;
+                using System.Collections.Immutable;
+
+                class C
+                {
+                    void M()
+                    {
+                        ImmutableArray<ImmutableArray<int>> v = [|ImmutableArray.[|Create|](|]ImmutableArray.Create(1, 2, 3));
+                    }
+                }
+                """,
+            FixedCode = """
+                using System;
+                using System.Collections.Immutable;
+
+                class C
+                {
+                    void M()
+                    {
+                        ImmutableArray<ImmutableArray<int>> v = [[1, 2, 3]];
+                    }
+                }
+                """,
+            LanguageVersion = LanguageVersion.CSharp12,
+            ReferenceAssemblies = ReferenceAssemblies.Net.Net80,
+            NumberOfFixAllIterations = 2,
         }.RunAsync();
     }
 }
