@@ -28,7 +28,7 @@ internal static class FilePathNormalizer
         ReadOnlySpan<char> normalizedSpan = arraySpan.Slice(start, length);
 
         // Add a trailing slash if the normalized span doesn't end in one.
-        if (normalizedSpan[^1] != '/')
+        if (normalizedSpan is not [.., '/'])
         {
             arraySpan[start + length] = '/';
             normalizedSpan = arraySpan.Slice(start, length + 1);
@@ -169,7 +169,7 @@ internal static class FilePathNormalizer
         destination[..charsWritten].Replace('\\', '/');
 
         if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows) &&
-            destination is ['/', not '/', ..])
+            destination is ['/', ..] and not ['/', '/', ..])
         {
             // We've been provided a path that probably looks something like /C:/path/to.
             // So, we adjust the result to skip the leading '/'.
