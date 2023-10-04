@@ -40,7 +40,7 @@ namespace Microsoft.NET.Build.Tasks
                     string versionOnPackageReference = packageReference.GetMetadata(MetadataKeys.Version);
                     if (string.IsNullOrEmpty(versionOnPackageReference))
                     {
-                        packageReference.SetMetadata(MetadataKeys.Version, 
+                        packageReference.SetMetadata(MetadataKeys.Version,
                             TargetLatestRuntimePatch ? implicitVersion.LatestVersion : implicitVersion.DefaultVersion);
 
                         packageReference.SetMetadata(MetadataKeys.IsImplicitlyDefined, "true");
@@ -66,7 +66,7 @@ namespace Microsoft.NET.Build.Tasks
             {
                 var implicitPackageReferenceVersion = new ImplicitPackageReferenceVersion(item);
 
-                if (implicitPackageReferenceVersion.TargetFrameworkVersion == this.TargetFrameworkVersion)
+                if (implicitPackageReferenceVersion.TargetFrameworkVersion == TargetFrameworkVersion)
                 {
                     result.Add(implicitPackageReferenceVersion.Name, implicitPackageReferenceVersion);
                 }

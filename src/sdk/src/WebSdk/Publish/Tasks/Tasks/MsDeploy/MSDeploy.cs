@@ -180,9 +180,9 @@ namespace Microsoft.NET.Sdk.Publish.Tasks.MsDeploy
         // *    public const string WebServerDirectory = "-webServerDir";
         //      public const string WebServerManifest = "-webServerManifest";
 
-        public string WebServerAppHostConfigDirectory { get; set;}
+        public string WebServerAppHostConfigDirectory { get; set; }
         public string WebServerDirectory { get; set; }
-        public string WebServerManifest { get; set;}
+        public string WebServerManifest { get; set; }
 
 
         private Framework.ITaskItem[] m_sourceITaskItem = null;
@@ -192,10 +192,10 @@ namespace Microsoft.NET.Sdk.Publish.Tasks.MsDeploy
         private Framework.ITaskItem[] m_declareParameterItems = null;
         private Framework.ITaskItem[] m_importDeclareParametersItems = null;
         private Framework.ITaskItem[] m_simpleSetParamterItems = null;
-        private Framework.ITaskItem[] m_importSetParametersItems = null; 
+        private Framework.ITaskItem[] m_importSetParametersItems = null;
         private Framework.ITaskItem[] m_setParamterItems = null;
-        
-        
+
+
         private bool m_previewOnly = false;
 
         public class Provider
@@ -229,7 +229,8 @@ namespace Microsoft.NET.Sdk.Publish.Tasks.MsDeploy
         /// </summary>
         public string ExePath
         {
-            get {
+            get
+            {
 #if NET472
                 if (string.IsNullOrEmpty(m_exePath))
                 {
@@ -288,44 +289,44 @@ namespace Microsoft.NET.Sdk.Publish.Tasks.MsDeploy
                     }
                 }
 #endif
-                return m_exePath; 
+                return m_exePath;
             }
             set { m_exePath = value; }
         }
 
         public string DisableRule
         {
-            get { return this.m_disableRule; }
-            set { this.m_disableRule = value; }
+            get { return m_disableRule; }
+            set { m_disableRule = value; }
         }
 
         [Framework.Required]
         public string Verb
         {
-            get { return this.m_verb; }
-            set { this.m_verb = value; }
+            get { return m_verb; }
+            set { m_verb = value; }
         }
 
         [Framework.Required]
         public Framework.ITaskItem[] Source
         {
-            get { return this.m_sourceITaskItem; }
-            set { this.m_sourceITaskItem = value; }
+            get { return m_sourceITaskItem; }
+            set { m_sourceITaskItem = value; }
         }
 
         public Framework.ITaskItem[] Destination
         {
-            get { return this.m_destITaskItem; }
-            set { this.m_destITaskItem = value; }
+            get { return m_destITaskItem; }
+            set { m_destITaskItem = value; }
         }
         public bool WhatIf
         {
-            get { return this.m_whatif; }
-            set { this.m_whatif = value; }
+            get { return m_whatif; }
+            set { m_whatif = value; }
         }
 
-        public bool OptimisticParameterDefaultValue { get; set;}
-        
+        public bool OptimisticParameterDefaultValue { get; set; }
+
         public bool UseChecksum
         {
             get { return m_useChecksum; }
@@ -334,144 +335,147 @@ namespace Microsoft.NET.Sdk.Publish.Tasks.MsDeploy
 
         public bool AllowUntrusted
         {
-            get { return this.m_allowUntrusted; }
-            set { this.m_allowUntrusted = value; }
+            get { return m_allowUntrusted; }
+            set { m_allowUntrusted = value; }
         }
 
         public bool Verbose
         {
-            get { return this.m_verbose; }
-            set { this.m_verbose = value; }
+            get { return m_verbose; }
+            set { m_verbose = value; }
         }
         public string FailureLevel
         {
-            get { return this.m_failureLevel; }
-            set { this.m_failureLevel = value; }
+            get { return m_failureLevel; }
+            set { m_failureLevel = value; }
         }
         public bool Xml
         {
-            get { return this.m_xml; }
-            set { this.m_xml = value; }
+            get { return m_xml; }
+            set { m_xml = value; }
         }
         public string XPath
         {
-            get { return this.m_xpath; }
-            set { this.m_xpath = value; }
+            get { return m_xpath; }
+            set { m_xpath = value; }
         }
         public string EnableRule
         {
-            get { return this.m_enableRule; }
-            set { this.m_enableRule = value; }
+            get { return m_enableRule; }
+            set { m_enableRule = value; }
         }
         public string Replace
         {
-            get { return this.m_replace; }
-            set { this.m_replace = value; }
+            get { return m_replace; }
+            set { m_replace = value; }
         }
         public string Skip
         {
-            get { return this.m_skip; }
-            set { this.m_skip = value; }
+            get { return m_skip; }
+            set { m_skip = value; }
         }
         public string DisableLink
         {
-            get { return this.m_disableLink; }
-            set { this.m_disableLink = value; }
+            get { return m_disableLink; }
+            set { m_disableLink = value; }
         }
 
         public string EnableLink
         {
-            get { return this.m_enableLink; }
-            set { this.m_enableLink = value; }
+            get { return m_enableLink; }
+            set { m_enableLink = value; }
         }
-        
+
         public bool EnableTransaction
         {
-            get { return this.m_enableTransaction; }
-            set { this.m_enableTransaction = value; }
+            get { return m_enableTransaction; }
+            set { m_enableTransaction = value; }
         }
         public int RetryAttempts
         {
-            get { return this.m_retryAttempts; }
-            set { this.m_retryAttempts = value; }
+            get { return m_retryAttempts; }
+            set { m_retryAttempts = value; }
         }
         public int RetryInterval
         {
-            get { return this.m_retryInterval; }
-            set { this.m_retryInterval = value; }
+            get { return m_retryInterval; }
+            set { m_retryInterval = value; }
         }
 
         public bool UseDoubleQuoteForValue
         {
-            get { return this.m_useDoubleQuoteForValue; }
-            set {
-                this.m_useDoubleQuoteForValue = value;
-                m_strValueQuote = (m_useDoubleQuoteForValue)? "\"": null;
+            get { return m_useDoubleQuoteForValue; }
+            set
+            {
+                m_useDoubleQuoteForValue = value;
+                m_strValueQuote = (m_useDoubleQuoteForValue) ? "\"" : null;
             }
         }
 
         public Framework.ITaskItem[] ReplaceRuleItems
         {
             get { return m_replaceRuleItemsITaskItem; }
-            set { this.m_replaceRuleItemsITaskItem = value; }
+            set { m_replaceRuleItemsITaskItem = value; }
         }
 
         public Framework.ITaskItem[] SkipRuleItems
         {
             get { return m_skipRuleItemsITaskItem; }
-            set { this.m_skipRuleItemsITaskItem = value; }
+            set { m_skipRuleItemsITaskItem = value; }
         }
 
         public string DisableSkipDirective
         {
             get { return m_disableSkipDirective; }
-            set { this.m_disableSkipDirective = value; }
+            set { m_disableSkipDirective = value; }
         }
 
         public string EnableSkipDirective
         {
             get { return m_enableSkipDirective; }
-            set { this.m_enableSkipDirective = value; }
+            set { m_enableSkipDirective = value; }
         }
 
         public Framework.ITaskItem[] DeclareParameterItems
         {
             get { return m_declareParameterItems; }
-            set { this.m_declareParameterItems = value; }
+            set { m_declareParameterItems = value; }
         }
         public Framework.ITaskItem[] ImportDeclareParametersItems
         {
             get { return m_importDeclareParametersItems; }
-            set { this.m_importDeclareParametersItems = value; }
+            set { m_importDeclareParametersItems = value; }
         }
 
 
         public Framework.ITaskItem[] ImportSetParametersItems
         {
             get { return m_importSetParametersItems; }
-            set { this.m_importSetParametersItems = value; }
+            set { m_importSetParametersItems = value; }
         }
 
         public Framework.ITaskItem[] SimpleSetParameterItems
         {
             get { return m_simpleSetParamterItems; }
-            set { this.m_simpleSetParamterItems = value; }
+            set { m_simpleSetParamterItems = value; }
         }
 
 
         public Framework.ITaskItem[] SetParameterItems
         {
             get { return m_setParamterItems; }
-            set { this.m_setParamterItems = value; }
+            set { m_setParamterItems = value; }
         }
-        
-        public Framework.ITaskItem[] AdditionalDestinationProviderOptions {get;set;}
+
+        public Framework.ITaskItem[] AdditionalDestinationProviderOptions { get; set; }
 
         string _userAgent;
-        public string UserAgent {
-            get{return _userAgent;}
-            set {
-                if(!string.IsNullOrEmpty(value))
+        public string UserAgent
+        {
+            get { return _userAgent; }
+            set
+            {
+                if (!string.IsNullOrEmpty(value))
                 {
                     _userAgent = MsDeploy.Utility.GetFullUserAgentString(value);
                 }
@@ -512,18 +516,18 @@ namespace Microsoft.NET.Sdk.Publish.Tasks.MsDeploy
         {
             get
             {
-                return this.m_previewOnly;
+                return m_previewOnly;
             }
             set
             {
-                this.m_previewOnly = value;
+                m_previewOnly = value;
             }
         }
 
         // controlling whether a task should be execute.
         protected override bool SkipTaskExecution()
         {
-            if (this.PreviewCommandLineOnly)
+            if (PreviewCommandLineOnly)
                 return true;
             else
                 return base.SkipTaskExecution();
@@ -545,7 +549,7 @@ namespace Microsoft.NET.Sdk.Publish.Tasks.MsDeploy
         public override bool Execute()
         {
             bool bSuccess = false;
-            if (this.PreviewCommandLineOnly)
+            if (PreviewCommandLineOnly)
             {
                 // useful information about what was wrong with the parameters.
                 if (!ValidateParameters())
@@ -557,8 +561,8 @@ namespace Microsoft.NET.Sdk.Publish.Tasks.MsDeploy
             }
 
             try
-            {               
-                Log.LogMessage( Framework.MessageImportance.Normal, Resources.MSDEPLOY_EXE_Start);
+            {
+                Log.LogMessage(Framework.MessageImportance.Normal, Resources.MSDEPLOY_EXE_Start);
                 bSuccess = base.Execute();
                 if (bSuccess)
                     Log.LogMessage(Framework.MessageImportance.Normal, Resources.MSDEPLOY_EXE_Succeeded);
@@ -575,14 +579,14 @@ namespace Microsoft.NET.Sdk.Publish.Tasks.MsDeploy
                 string type = string.Empty;
                 string path = string.Empty;
                 Framework.ITaskItem taskItem = null;
-                if (this.Destination != null && this.Destination.GetLength(0) == 1)
+                if (Destination != null && Destination.GetLength(0) == 1)
                 {
-                    taskItem = this.Destination[0];
+                    taskItem = Destination[0];
                 }
                 else
                 {
-                    if (this.Source != null)
-                        taskItem = this.Source[0];
+                    if (Source != null)
+                        taskItem = Source[0];
                 }
                 if (taskItem != null)
                 {
@@ -603,7 +607,7 @@ namespace Microsoft.NET.Sdk.Publish.Tasks.MsDeploy
                 && replaceRuleItems != null)// Dev10 bug 496639 foreach will throw the exception if the replaceRuleItem is null
             {
                 System.Collections.Generic.List<string> arguments = new System.Collections.Generic.List<string>(6);
-                    
+
                 foreach (Framework.ITaskItem item in replaceRuleItems)
                 {
                     arguments.Clear();
@@ -624,7 +628,7 @@ namespace Microsoft.NET.Sdk.Publish.Tasks.MsDeploy
                 {
                     arguments.Clear();
                     MsDeploy.Utility.BuildArgumentsBaseOnEnumTypeName(item, arguments, typeof(MsDeploy.SkipRuleMetadata), valueQuoteChar);
-                    commandLineBuilder.AppendSwitchUnquotedIfNotNull("-skip:", arguments.Count == 0? null : string.Join(",", arguments.ToArray()));
+                    commandLineBuilder.AppendSwitchUnquotedIfNotNull("-skip:", arguments.Count == 0 ? null : string.Join(",", arguments.ToArray()));
                 }
             }
         }
@@ -632,7 +636,7 @@ namespace Microsoft.NET.Sdk.Publish.Tasks.MsDeploy
 
         static public void AddDeclareParameterToCommandArgument(System.Collections.Generic.List<string> arguments,
                                                                 Framework.ITaskItem item,
-                                                                string valueQuote, 
+                                                                string valueQuote,
                                                                 System.Collections.Generic.Dictionary<string, string> lookupDictionary)
         {
             if (arguments != null && item != null && lookupDictionary != null)
@@ -707,13 +711,13 @@ namespace Microsoft.NET.Sdk.Publish.Tasks.MsDeploy
             AddImportParametersFilesOptions(commandLineBuilder, "-setParamFile:", items);
         }
 
-        static internal void AddImportParametersFilesOptions(Utilities.CommandLineBuilder commandLineBuilder, string parameterFlag,  Framework.ITaskItem[] items)
+        static internal void AddImportParametersFilesOptions(Utilities.CommandLineBuilder commandLineBuilder, string parameterFlag, Framework.ITaskItem[] items)
         {
             if (commandLineBuilder != null
                 && !string.IsNullOrEmpty(parameterFlag)
                 && items != null)// Dev10 bug 496639 foreach will throw the exception if the replaceRuleItem is null
             {
-                
+
                 foreach (Framework.ITaskItem item in items)
                 {
                     string fileName = item.ItemSpec;
@@ -768,7 +772,7 @@ namespace Microsoft.NET.Sdk.Publish.Tasks.MsDeploy
             {
                 System.Collections.Generic.List<string> arguments = new System.Collections.Generic.List<string>(6);
                 System.Collections.Generic.Dictionary<string, string> lookupDictionary = new System.Collections.Generic.Dictionary<string, string>(items.Count);
-                System.Collections.Generic.Dictionary<string, string> nameValueDictionary = new System.Collections.Generic.Dictionary<string, string>(items.Count,System.StringComparer.OrdinalIgnoreCase);
+                System.Collections.Generic.Dictionary<string, string> nameValueDictionary = new System.Collections.Generic.Dictionary<string, string>(items.Count, System.StringComparer.OrdinalIgnoreCase);
 
                 foreach (Framework.ITaskItem item in items)
                 {
@@ -835,8 +839,8 @@ namespace Microsoft.NET.Sdk.Publish.Tasks.MsDeploy
         }
 
 
-        
-        static public void AddDestinationProviderSettingToObject(Utilities.CommandLineBuilder commandLineBuilder, string dest, Framework.ITaskItem[] items, string valueQuoteChar, 
+
+        static public void AddDestinationProviderSettingToObject(Utilities.CommandLineBuilder commandLineBuilder, string dest, Framework.ITaskItem[] items, string valueQuoteChar,
                                                                 Framework.ITaskItem[] additionalProviderItems, MSDeploy msdeploy)
         {
             //commandLineBuilder.AppendSwitchUnquotedIfNotNull("-source:", m_source);
@@ -852,15 +856,15 @@ namespace Microsoft.NET.Sdk.Publish.Tasks.MsDeploy
                 string setData = (string.IsNullOrEmpty(path)) ? provider : string.Concat(provider, "=", valueData);
                 arguments.Add(setData);
 
-                 //Commonly supported provider settings:
-                 //    computerName=<name>     Name of remote computer or proxy-URL
-                 //    wmsvc=<name>            Name of remote computer or proxy-URL for the Web
-                 //                            Management Service (wmsvc)
-                 //    userName=<name>         User name to authenticate
-                 //    password=<password>     Password of user name
-                 //    encryptPassword=<pwd>   Password to use for encryption related operations
-                 //    includeAcls=<bool>      If true, include ACLs in the operation for the
-                 //                            specified path
+                //Commonly supported provider settings:
+                //    computerName=<name>     Name of remote computer or proxy-URL
+                //    wmsvc=<name>            Name of remote computer or proxy-URL for the Web
+                //                            Management Service (wmsvc)
+                //    userName=<name>         User name to authenticate
+                //    password=<password>     Password of user name
+                //    encryptPassword=<pwd>   Password to use for encryption related operations
+                //    includeAcls=<bool>      If true, include ACLs in the operation for the
+                //                            specified path
 
                 foreach (string name in taskItem.MetadataNames)
                 {
@@ -876,26 +880,26 @@ namespace Microsoft.NET.Sdk.Publish.Tasks.MsDeploy
                     }
                     else
                     {
-                       MsDeploy.Utility.IISExpressMetadata  expressMetadata;
-                       if (System.Enum.TryParse<MsDeploy.Utility.IISExpressMetadata>(name, out expressMetadata))
-                       {
-                           string value = taskItem.GetMetadata(name);
-                           if (!string.IsNullOrEmpty(value))
-                           {
-                               switch (expressMetadata)
-                               {
-                                   case Utility.IISExpressMetadata.WebServerAppHostConfigDirectory:
-                                       msdeploy.WebServerAppHostConfigDirectory = value;
-                                       break;
-                                   case Utility.IISExpressMetadata.WebServerDirectory:
-                                       msdeploy.WebServerDirectory = value;
-                                       break;
-                                   case Utility.IISExpressMetadata.WebServerManifest:
-                                       msdeploy.WebServerManifest = value;
-                                       break;
-                               }
-                           }
-                       }
+                        MsDeploy.Utility.IISExpressMetadata expressMetadata;
+                        if (System.Enum.TryParse<MsDeploy.Utility.IISExpressMetadata>(name, out expressMetadata))
+                        {
+                            string value = taskItem.GetMetadata(name);
+                            if (!string.IsNullOrEmpty(value))
+                            {
+                                switch (expressMetadata)
+                                {
+                                    case Utility.IISExpressMetadata.WebServerAppHostConfigDirectory:
+                                        msdeploy.WebServerAppHostConfigDirectory = value;
+                                        break;
+                                    case Utility.IISExpressMetadata.WebServerDirectory:
+                                        msdeploy.WebServerDirectory = value;
+                                        break;
+                                    case Utility.IISExpressMetadata.WebServerManifest:
+                                        msdeploy.WebServerManifest = value;
+                                        break;
+                                }
+                            }
+                        }
 
                     }
                 }
@@ -906,11 +910,11 @@ namespace Microsoft.NET.Sdk.Publish.Tasks.MsDeploy
             {
                 foreach (Framework.ITaskItem item in additionalProviderItems)
                 {
-                    if(!string.IsNullOrEmpty(item.ItemSpec))
+                    if (!string.IsNullOrEmpty(item.ItemSpec))
                     {
                         string settingName = item.GetMetadata("Name");
                         string settingValue = item.GetMetadata("Value");
-                        if(!string.IsNullOrEmpty(settingName) && !string.IsNullOrEmpty(settingValue))
+                        if (!string.IsNullOrEmpty(settingName) && !string.IsNullOrEmpty(settingValue))
                         {
                             string providerString = string.Concat(item.ItemSpec, ".", settingName, "=", settingValue);
                             arguments.Add(providerString);
@@ -984,12 +988,12 @@ namespace Microsoft.NET.Sdk.Publish.Tasks.MsDeploy
         /// Generates command line arguments for msdeploy.exe
         /// </summary>
         protected override string GenerateCommandLineCommands()
-        {           
+        {
             Utilities.CommandLineBuilder commandLine = new Utilities.CommandLineBuilder();
-            IncorporateSettingsFromHostObject(ref m_skipRuleItemsITaskItem, this.Destination, HostObject as System.Collections.Generic.IEnumerable<Framework.ITaskItem>);
-            AddDestinationProviderSettingToObject(commandLine, "-source:", this.Source, m_strValueQuote, null, this );
-            AddDestinationProviderSettingToObject(commandLine, "-dest:", this.Destination, m_strValueQuote, AdditionalDestinationProviderOptions, this);
-            
+            IncorporateSettingsFromHostObject(ref m_skipRuleItemsITaskItem, Destination, HostObject as System.Collections.Generic.IEnumerable<Framework.ITaskItem>);
+            AddDestinationProviderSettingToObject(commandLine, "-source:", Source, m_strValueQuote, null, this);
+            AddDestinationProviderSettingToObject(commandLine, "-dest:", Destination, m_strValueQuote, AdditionalDestinationProviderOptions, this);
+
             commandLine.AppendSwitchUnquotedIfNotNull("-verb:", m_verb);
             commandLine.AppendSwitchUnquotedIfNotNull("-failureLevel:", m_failureLevel);
             commandLine.AppendSwitchUnquotedIfNotNull("-xpath:", m_xpath);
@@ -1006,13 +1010,13 @@ namespace Microsoft.NET.Sdk.Publish.Tasks.MsDeploy
             // this allow multiple replace rule to happen, we should consider do the same thing for skip:
             AddReplaceRulesToOptions(commandLine, m_replaceRuleItemsITaskItem, m_strValueQuote);
             AddSkipDirectiveToBaseOptions(commandLine, m_skipRuleItemsITaskItem, m_strValueQuote);
-            AddImportDeclareParametersFilesOptions(commandLine, m_importDeclareParametersItems); 
+            AddImportDeclareParametersFilesOptions(commandLine, m_importDeclareParametersItems);
             AddDeclareParametersOptions(commandLine, m_declareParameterItems, m_strValueQuote, OptimisticParameterDefaultValue);
 
             AddImportSetParametersFilesOptions(commandLine, m_importSetParametersItems);
             AddSimpleSetParametersToObject(commandLine, m_simpleSetParamterItems, m_strValueQuote, OptimisticParameterDefaultValue);
             AddSetParametersToObject(commandLine, m_setParamterItems, m_strValueQuote, OptimisticParameterDefaultValue);
-            
+
             if (m_xml) commandLine.AppendSwitch("-xml");
             if (m_whatif) commandLine.AppendSwitch("-whatif");
             if (m_verbose) commandLine.AppendSwitch("-verbose");
@@ -1022,8 +1026,8 @@ namespace Microsoft.NET.Sdk.Publish.Tasks.MsDeploy
             if (m_enableTransaction) commandLine.AppendSwitch("-enableTransaction");
             if (m_retryAttempts > 0) commandLine.AppendSwitchUnquotedIfNotNull("-retryAttempts=", m_retryAttempts.ToString(CultureInfo.InvariantCulture));
             if (m_retryInterval > 0) commandLine.AppendSwitchUnquotedIfNotNull("-retryInterval=", m_retryInterval.ToString(CultureInfo.InvariantCulture));
-            
-            if(!string.IsNullOrEmpty(UserAgent))
+
+            if (!string.IsNullOrEmpty(UserAgent))
             {
                 commandLine.AppendSwitchUnquotedIfNotNull("-userAgent=", string.Concat("\"", UserAgent, "\""));
             }
@@ -1037,10 +1041,10 @@ namespace Microsoft.NET.Sdk.Publish.Tasks.MsDeploy
             // bug in msdeploy.exe currently only take the file name
             commandLine.AppendSwitchIfNotNull("-webServerManifest:", System.IO.Path.GetFileName(WebServerManifest));
 
-            m_lastCommandLine =  commandLine.ToString();
+            m_lastCommandLine = commandLine.ToString();
 
             // show arguments in the output 
-            Log.LogMessage(Framework.MessageImportance.Low, string.Concat("\"", GenerateFullPathToTool(), "\" ",  m_lastCommandLine));
+            Log.LogMessage(Framework.MessageImportance.Low, string.Concat("\"", GenerateFullPathToTool(), "\" ", m_lastCommandLine));
             return m_lastCommandLine;
         }
 
@@ -1060,10 +1064,11 @@ namespace Microsoft.NET.Sdk.Publish.Tasks.MsDeploy
         {
             string result = IO.Path.Combine(ExePath, ToolName);
 
-            if (string.Compare(ExePath, "%MSDeployPath%", System.StringComparison.OrdinalIgnoreCase) == 0) {
+            if (string.Compare(ExePath, "%MSDeployPath%", System.StringComparison.OrdinalIgnoreCase) == 0)
+            {
                 // if it comes in as %msdeploypath% don't use Path.Combine because it will add a \ which is 
                 // not necessary since reg key for MSDeployPath already contains it
-                result = string.Format("{0}{1}",ExePath,ToolName);
+                result = string.Format("{0}{1}", ExePath, ToolName);
             }
 
             return result;
@@ -1075,32 +1080,32 @@ namespace Microsoft.NET.Sdk.Publish.Tasks.MsDeploy
         /// <returns>true if arguments are corrent enough to continue processing, false otherwise</returns>
         protected override bool ValidateParameters()
         {
-            if (this.Source != null && this.Source.GetLength(0) > 1)
+            if (Source != null && Source.GetLength(0) > 1)
             {
                 Log.LogError(string.Format(System.Globalization.CultureInfo.CurrentCulture, Resources.MSDEPLOY_InvalidSourceCount, Source.GetLength(0)), null);
                 return false;
             }
-            
-            if (this.Destination != null &&  this.Destination.GetLength(0) > 1)
+
+            if (Destination != null && Destination.GetLength(0) > 1)
             {
                 Log.LogError(string.Format(System.Globalization.CultureInfo.CurrentCulture, Resources.MSDEPLOY_InvalidDestinationCount, Destination.GetLength(0)), null);
                 return false;
             }
-            else 
+            else
             {
                 string[] validVerbs = null;
                 bool fNullDestination = false;
-                if (this.Destination == null || this.Destination.GetLength(0) == 0)
+                if (Destination == null || Destination.GetLength(0) == 0)
                 {
-                    fNullDestination = true;    
-                    validVerbs = new string[] {  
+                    fNullDestination = true;
+                    validVerbs = new string[] {
                         "dump",
                         "getDependencies",
                         "getParameters",
                         "getSystemInfo",
                     };
                 }
-                if (this.Source == null || this.Source.GetLength(0) == 0)
+                if (Source == null || Source.GetLength(0) == 0)
                 {
                     validVerbs = new string[] {
                         "delete",
@@ -1118,13 +1123,13 @@ namespace Microsoft.NET.Sdk.Publish.Tasks.MsDeploy
                 {
                     foreach (string verb in validVerbs)
                     {
-                        if (string.Compare(this.Verb, verb, System.StringComparison.OrdinalIgnoreCase) == 0)
+                        if (string.Compare(Verb, verb, System.StringComparison.OrdinalIgnoreCase) == 0)
                         {
                             return true;
                         }
                     }
                 }
-                Log.LogError(string.Format(System.Globalization.CultureInfo.CurrentCulture, Resources.MSDEPLOY_InvalidVerbForTheInput, this.Verb, this.Source[0].ItemSpec, (fNullDestination) ? null : this.Destination[0].ItemSpec), null);
+                Log.LogError(string.Format(System.Globalization.CultureInfo.CurrentCulture, Resources.MSDEPLOY_InvalidVerbForTheInput, Verb, Source[0].ItemSpec, (fNullDestination) ? null : Destination[0].ItemSpec), null);
                 return false;
             }
         }
