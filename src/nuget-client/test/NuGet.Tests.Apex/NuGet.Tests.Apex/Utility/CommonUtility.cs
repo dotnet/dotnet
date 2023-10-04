@@ -501,5 +501,17 @@ namespace NuGet.Tests.Apex
                 AssertPackageReferenceExists(visualStudio, project, packageName, packageVersion, logger);
             }
         }
+
+        public static void AssertUninstalledPackageByProjectType(VisualStudioHost visualStudio, ProjectTemplate projectTemplate, ProjectTestExtension project, string packageName, ILogger logger)
+        {
+            if (projectTemplate.Equals(ProjectTemplate.ClassLibrary))
+            {
+                CommonUtility.AssertPackageNotInPackagesConfig(visualStudio, project, packageName, logger);
+            }
+            else
+            {
+                CommonUtility.AssertPackageReferenceDoesNotExist(visualStudio, project, packageName, logger);
+            }
+        }
     }
 }

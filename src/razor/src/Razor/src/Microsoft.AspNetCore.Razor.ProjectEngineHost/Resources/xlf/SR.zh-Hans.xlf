@@ -32,9 +32,19 @@
         <target state="translated">预期为 JSON 令牌“{0}”，但实际为“{1}”。</target>
         <note />
       </trans-unit>
-      <trans-unit id="Unsupported_project_razor_json_version_encountered">
-        <source>Unsupported project.razor.json version encounted.</source>
-        <target state="translated">遇到不支持的 project.razor.json 版本。</target>
+      <trans-unit id="Unsupported_argument_kind">
+        <source>Unsupported argument kind: '{0}'.</source>
+        <target state="translated">不支持的参数类型: "{0}"。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Unsupported_argument_type">
+        <source>Unsupported argument type: '{0}'.</source>
+        <target state="translated">不支持的参数类型: "{0}"。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Unsupported_razor_project_info_version_encountered">
+        <source>Unsupported razor project info version encounted.</source>
+        <target state="translated">razor 项目信息版本计数不受支持。</target>
         <note />
       </trans-unit>
     </body>

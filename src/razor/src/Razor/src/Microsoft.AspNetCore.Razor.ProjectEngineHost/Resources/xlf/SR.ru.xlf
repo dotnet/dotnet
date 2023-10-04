@@ -32,9 +32,19 @@
         <target state="translated">Ожидался токен JSON "{0}", но он имел значение "{1}".</target>
         <note />
       </trans-unit>
-      <trans-unit id="Unsupported_project_razor_json_version_encountered">
-        <source>Unsupported project.razor.json version encounted.</source>
-        <target state="translated">Обнаружена неподдерживаемая версия project.razor.json.</target>
+      <trans-unit id="Unsupported_argument_kind">
+        <source>Unsupported argument kind: '{0}'.</source>
+        <target state="translated">Неподдерживаемый вид аргумента: "{0}".</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Unsupported_argument_type">
+        <source>Unsupported argument type: '{0}'.</source>
+        <target state="translated">Неподдерживаемый тип аргумента: "{0}".</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Unsupported_razor_project_info_version_encountered">
+        <source>Unsupported razor project info version encounted.</source>
+        <target state="translated">Неподдерживаемая версия сведений о проекте Razor</target>
         <note />
       </trans-unit>
     </body>

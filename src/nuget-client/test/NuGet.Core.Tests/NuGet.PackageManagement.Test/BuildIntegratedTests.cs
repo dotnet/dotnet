@@ -33,7 +33,7 @@ namespace NuGet.Test
     public class BuildIntegratedTests
     {
         [Fact]
-        public void BuildIntegrated_VerifyGetAddedIsOnlyPackages()
+        public void GetAddedPackages_LockFileTargetLibraryProject_OnlyAddsPackage()
         {
             // Arrange
             var lockFile = new LockFile();
@@ -67,9 +67,8 @@ namespace NuGet.Test
             Assert.Equal("a", added.Single().Id);
         }
 
-        // Verify that parent projects are restored when a child project is updated
         [Fact]
-        public async Task TestPacManBuildIntegratedInstallPackageTransitive()
+        public async Task ChildProjectUpdated_ParentProjectsRestored()
         {
             // Arrange
             var packageIdentity = new PackageIdentity("NuGet.Versioning", NuGetVersion.Parse("1.0.7"));
@@ -209,7 +208,7 @@ namespace NuGet.Test
 
         // Verify that parent projects are restored when a child project is updated
         [Fact]
-        public async Task TestPacManBuildIntegratedInstallPackageTransitive_VerifyCacheInvalidated()
+        public async Task InstallPackageTransitive_VerifyCacheInvalidated()
         {
             // Arrange
             var packageIdentity = new PackageIdentity("NuGet.Versioning", NuGetVersion.Parse("3.3.0"));
@@ -357,7 +356,7 @@ namespace NuGet.Test
         }
 
         [Fact]
-        public async Task TestPacManBuildIntegratedInstallPackageWithReadMeFile()
+        public async Task InstallPackageWithReadMeFile()
         {
             // Arrange
             var packageIdentity = new PackageIdentity("elmah", new NuGetVersion("1.2.2"));
@@ -404,7 +403,7 @@ namespace NuGet.Test
         }
 
         [Fact]
-        public async Task TestPacManBuildIntegratedInstallPackage()
+        public async Task InstallPackage()
         {
             // Arrange
             var packageIdentity = new PackageIdentity("nuget.versioning", NuGetVersion.Parse("1.0.7"));
@@ -462,7 +461,7 @@ namespace NuGet.Test
         }
 
         [Fact]
-        public async Task TestPacManBuildIntegratedInstallAndRollbackPackage()
+        public async Task InstallAndRollbackPackage()
         {
             // Arrange
             var packageIdentity = new PackageIdentity("nuget.core", NuGetVersion.Parse("91.0.0"));
@@ -527,7 +526,7 @@ namespace NuGet.Test
         }
 
         [Fact]
-        public async Task TestPacManBuildIntegratedInstallAndRollbackPackageVerifyAdditionalMessages()
+        public async Task InstallAndRollbackPackageVerifyAdditionalMessages()
         {
             // Arrange
             var packageIdentity = new PackageIdentity("nuget.core", NuGetVersion.Parse("91.0.0"));
@@ -590,7 +589,7 @@ namespace NuGet.Test
         }
 
         [Fact]
-        public async Task TestPacManBuildIntegratedUpdateAndRollbackPackage()
+        public async Task UpdateAndRollbackPackage()
         {
             // Arrange
             var packageIdentity = new PackageIdentity("nuget.core", NuGetVersion.Parse("91.0.0"));
@@ -667,7 +666,7 @@ namespace NuGet.Test
         }
 
         [Fact]
-        public async Task TestPacManBuildIntegratedInstallMultiplePackage()
+        public async Task InstallMultiplePackage()
         {
             // Arrange
             var packageIdentity = new PackageIdentity("nuget.versioning", NuGetVersion.Parse("1.0.7"));
@@ -720,7 +719,7 @@ namespace NuGet.Test
         }
 
         [Fact]
-        public async Task TestPacManBuildIntegratedInstallUpdatedPackage()
+        public async Task InstallUpdatedPackage()
         {
             // Arrange
             var versioning107 = new PackageIdentity("nuget.versioning", NuGetVersion.Parse("1.0.7"));
@@ -769,7 +768,7 @@ namespace NuGet.Test
         }
 
         [Fact]
-        public async Task TestPacManBuildIntegratedUpdatePackageToHighest()
+        public async Task UpdatePackageToHighest()
         {
             // Arrange
             var nugetVersioningId = "Nuget.Versioning";
@@ -833,7 +832,7 @@ namespace NuGet.Test
         }
 
         [Fact]
-        public async Task TestPacManBuildIntegratedUpdateMultipleAndRollback()
+        public async Task UpdateMultipleAndRollback()
         {
             // Arrange
             // This package is not compatible with netcore50 and will cause the rollback.
@@ -918,7 +917,7 @@ namespace NuGet.Test
         }
 
         [Fact]
-        public async Task TestPacManBuildIntegratedUpdatePackageAll()
+        public async Task UpdatePackageAll()
         {
             // Arrange
             var nugetVersioningId = "NuGet.Versioning";
@@ -1015,7 +1014,7 @@ namespace NuGet.Test
         }
 
         [Fact]
-        public async Task TestPacManBuildIntegratedUpdatePackageAllNoop()
+        public async Task UpdatePackageAllNoop()
         {
             // Arrange
             var oldJson = new PackageIdentity("NuGet.Versioning", NuGetVersion.Parse("3.5.0"));
@@ -1114,7 +1113,7 @@ namespace NuGet.Test
         }
 
         [Fact]
-        public async Task TestPacManBuildIntegratedUpdatePackageToExactVersion()
+        public async Task UpdatePackageToExactVersion()
         {
             // Arrange
             var versioning105 = new PackageIdentity("nuget.versioning", NuGetVersion.Parse("1.0.5"));
@@ -1178,7 +1177,7 @@ namespace NuGet.Test
         }
 
         [Fact]
-        public async Task TestPacManBuildIntegratedUpdatePackageToExactVersionMulti()
+        public async Task UpdatePackageToExactVersionMulti()
         {
             // Arrange
             var versioning105 = new PackageIdentity("nuget.versioning", NuGetVersion.Parse("1.0.5"));
@@ -1290,7 +1289,7 @@ namespace NuGet.Test
         }
 
         [Fact]
-        public async Task TestPacManBuildIntegratedUpdatePackageDowngrade()
+        public async Task UpdatePackageDowngrade()
         {
             // Arrange
             var versioning105 = new PackageIdentity("nuget.versioning", NuGetVersion.Parse("1.0.5"));
@@ -1353,7 +1352,7 @@ namespace NuGet.Test
         }
 
         [Fact]
-        public async Task TestPacManBuildIntegratedUninstallPackageThatDoesNotExist()
+        public async Task UninstallPackageThatDoesNotExist()
         {
             // Arrange
             var packageIdentity = new PackageIdentity("newtonsoft.json", NuGetVersion.Parse("6.0.8"));
@@ -1400,7 +1399,7 @@ namespace NuGet.Test
         }
 
         [Fact]
-        public async Task TestPacManBuildIntegratedUninstallPackageNoRollback()
+        public async Task UninstallPackageNoRollback()
         {
             // uninstall json.net from a project where a parent depends on it
             // this should result in the item being removed from project.json, but still existing in the lock file
@@ -1455,7 +1454,7 @@ namespace NuGet.Test
         }
 
         [Fact]
-        public async Task TestPacManBuildIntegratedUninstallPackage()
+        public async Task UninstallPackage()
         {
             // uninstall json.net from a project where a parent depends on it
             // this should result in the item being removed from project.json, but still existing in the lock file
@@ -1517,7 +1516,7 @@ namespace NuGet.Test
         }
 
         [Fact]
-        public async Task TestPacManBuildIntegratedUninstallPackageVerifyRemovalFromLockFile()
+        public async Task UninstallPackageVerifyRemovalFromLockFile()
         {
             // Arrange
             var packageIdentityA = new PackageIdentity("newtonsoft.json", NuGetVersion.Parse("6.0.8"));
@@ -1588,7 +1587,7 @@ namespace NuGet.Test
         }
 
         [Fact]
-        public async Task TestPacManBuildIntegratedInstallPackageWithInitPS1()
+        public async Task InstallPackageWithInitPS1()
         {
             // Arrange
             var packageIdentity = new PackageIdentity("nuget.core", NuGetVersion.Parse("2.8.3"));
@@ -1628,7 +1627,7 @@ namespace NuGet.Test
         }
 
         [Fact]
-        public async Task TestPacManBuildIntegratedUninstallPackageDoesNotCallInitPs1()
+        public async Task UninstallPackageDoesNotCallInitPs1()
         {
             // Arrange
             var packageIdentity = new PackageIdentity("nuget.core", NuGetVersion.Parse("2.8.3"));
@@ -1668,7 +1667,7 @@ namespace NuGet.Test
         }
 
         [Fact]
-        public async Task TestPacManBuildIntegratedUpdatePackageCallsInitPs1OnNewPackages()
+        public async Task UpdatePackageCallsInitPs1OnNewPackages()
         {
             // Arrange
             var packageIdentity = new PackageIdentity("nuget.core", NuGetVersion.Parse("2.8.3"));
@@ -1711,7 +1710,7 @@ namespace NuGet.Test
         }
 
         [Fact]
-        public async Task TestPacMan_BuildIntegrated_PreviewUpdatesAsync_NoUpdatesAvailable()
+        public async Task PreviewUpdatesAsync_NoUpdatesAvailable()
         {
             using (var packageSource = TestDirectory.Create())
             {
@@ -1775,7 +1774,7 @@ namespace NuGet.Test
         }
 
         [Fact]
-        public async Task TestPacMan_BuildIntegrated_PreviewUpdatesAsync_WithStrictVersionRange()
+        public async Task PreviewUpdatesAsync_WithStrictVersionRange()
         {
             // Set up Package Source
             var packages = new List<SourcePackageDependencyInfo>

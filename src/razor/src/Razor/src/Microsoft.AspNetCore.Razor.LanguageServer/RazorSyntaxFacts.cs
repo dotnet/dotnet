@@ -19,7 +19,7 @@ internal static class RazorSyntaxFacts
         attributeNameAbsoluteIndex = 0;
 
         var tree = codeDocument.GetSyntaxTree();
-        var owner = tree.GetOwner(absoluteIndex);
+        var owner = tree.Root.FindInnermostNode(absoluteIndex);
 
         var attributeName = owner?.Parent switch
         {
@@ -72,7 +72,7 @@ internal static class RazorSyntaxFacts
     public static bool TryGetFullAttributeNameSpan(RazorCodeDocument codeDocument, int absoluteIndex, out TextSpan attributeNameSpan)
     {
         var tree = codeDocument.GetSyntaxTree();
-        var owner = tree.GetOwner(absoluteIndex);
+        var owner = tree.Root.FindInnermostNode(absoluteIndex);
 
         attributeNameSpan = GetFullAttributeNameSpan(owner?.Parent);
 

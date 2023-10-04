@@ -60,10 +60,11 @@ internal static class AddUsingsCodeActionProviderHelper
         var usings = syntaxRoot.DescendantNodes(n => n is BaseNamespaceDeclarationSyntax or CompilationUnitSyntax)
             // Filter to using directives
             .OfType<UsingDirectiveSyntax>()
-            // Select everything after the initial "using " part of the statement. This is slightly lazy, for sure, but has
+            // Select everything after the initial "using " part of the statement, and excluding the ending semi-colon. The
+            // semi-colon is valid in Razor, but users find it surprising. This is slightly lazy, for sure, but has
             // the advantage of us not caring about changes to C# syntax, we just grab whatever Roslyn wanted to put in, so
             // we should still work in C# v26
-            .Select(u => u.ToString()["using ".Length..]);
+            .Select(u => u.ToString()["using ".Length..^1]);
 
         return usings;
     }

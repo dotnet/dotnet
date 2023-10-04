@@ -4,12 +4,10 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor;
-using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.AspNetCore.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Workspaces.ProjectSystem;
@@ -37,14 +35,17 @@ internal class DefaultProjectSnapshotManager : ProjectSnapshotManagerBase
 
     // We have a queue for changes because if one change results in another change aka, add -> open we want to make sure the "add" finishes running first before "open" is notified.
     private readonly Queue<ProjectChangeEventArgs> _notificationWork = new();
+    private readonly ProjectSnapshotManagerDispatcher _dispatcher;
 
     public DefaultProjectSnapshotManager(
         IErrorReporter errorReporter,
         IEnumerable<IProjectSnapshotChangeTrigger> triggers,
-        Workspace workspace)
+        Workspace workspace,
+        ProjectSnapshotManagerDispatcher dispatcher)
     {
-        Workspace = workspace ?? throw new ArgumentNullException(nameof(workspace));
         ErrorReporter = errorReporter ?? throw new ArgumentNullException(nameof(errorReporter));
+        Workspace = workspace ?? throw new ArgumentNullException(nameof(workspace));
+        _dispatcher = dispatcher ?? throw new ArgumentException(nameof(dispatcher));
 
         using (_rwLocker.EnterReadLock())
         {
@@ -424,6 +425,24 @@ internal class DefaultProjectSnapshotManager : ProjectSnapshotManagerBase
     // virtual so it can be overridden in tests
     protected virtual void NotifyListeners(ProjectChangeEventArgs e)
     {
+        // For now, consumers of the Changed event often assume the threaded
+        // behavior and can error. Once that is fixed we can remove this.
+        // https://github.com/dotnet/razor/issues/9162
+        if (_dispatcher.IsDispatcherThread)
+        {
+            NotifyListenersCore(e);
+        }
+        else
+        {
+            _ = _dispatcher.RunOnDispatcherThreadAsync(() =>
+            {
+                NotifyListenersCore(e);
+            }, CancellationToken.None);
+        }
+    }
+
+    private void NotifyListenersCore(ProjectChangeEventArgs e)
+    {
         _notificationWork.Enqueue(e);
 
         if (_notificationWork.Count == 1)
@@ -443,157 +462,6 @@ internal class DefaultProjectSnapshotManager : ProjectSnapshotManagerBase
                 _notificationWork.Dequeue();
             }
             while (_notificationWork.Count > 0);
-        }
-    }
-
-    internal override void UpdateProject(
-        ProjectKey projectKey,
-        RazorConfiguration configuration,
-        ProjectWorkspaceState projectWorkspaceState,
-        string? rootNamespace,
-        Func<IProjectSnapshot, ImmutableArray<IUpdateProjectAction>> calculate)
-    {
-        if (projectWorkspaceState is null)
-        {
-            throw new ArgumentNullException(nameof(projectWorkspaceState));
-        }
-
-        using var _ = ListPool<ProjectChangeEventArgs>.GetPooledObject(out var changesToNotify);
-
-        // Get an upgradeableLock, which will keep a read lock while we compute the changes
-        // and then get a write lock to actually apply them. Only one upgradeable lock
-        // can be held at any given time. Write lock must be retrieved on the same
-        // thread that the lock was acquired
-        using (var upgradeableLock = _rwLocker.EnterUpgradeAbleReadLock())
-        {
-            UpdateProject_NoLock(projectKey, configuration, projectWorkspaceState, rootNamespace, calculate, changesToNotify, upgradeableLock);
-        }
-
-        // Notify outside of the lock, since notifications may trigger mutations from listeners
-        foreach (var notification in changesToNotify)
-        {
-            NotifyListeners(notification);
-        }
-    }
-
-    private void UpdateProject_NoLock(
-        ProjectKey projectKey,
-        RazorConfiguration configuration,
-        ProjectWorkspaceState projectWorkspaceState,
-        string? rootNamespace,
-        Func<IProjectSnapshot, ImmutableArray<IUpdateProjectAction>> calculate,
-        List<ProjectChangeEventArgs> changesToNotify,
-        in ReadWriterLocker.UpgradeableReadLock upgradeableLock)
-    {
-        var project = GetLoadedProject(projectKey);
-        if (project is not ProjectSnapshot projectSnapshot)
-        {
-            return;
-        }
-
-        var originalHostProject = projectSnapshot.HostProject;
-        var changes = calculate(project);
-
-        var originalEntry = _projects_needsLock[projectKey];
-        Dictionary<ProjectKey, Entry> updatedProjectsMap = new(changes.Length);
-
-        // Resolve all the changes and add notifications as needed
-        foreach (var change in changes)
-        {
-            switch (change)
-            {
-                case AddDocumentAction addAction:
-                    {
-                        var entry = GetCurrentEntry(project);
-                        TryAddNotificationAndUpdate(entry, entry.State.WithAddedHostDocument(addAction.NewDocument, CreateTextAndVersionFunc(addAction.TextLoader)), ProjectChangeKind.DocumentAdded, addAction.NewDocument.FilePath);
-                    }
-
-                    break;
-
-                case RemoveDocumentAction removeAction:
-                    {
-                        var entry = GetCurrentEntry(project);
-                        TryAddNotificationAndUpdate(entry, entry.State.WithRemovedHostDocument(removeAction.OriginalDocument), ProjectChangeKind.DocumentRemoved, removeAction.OriginalDocument.FilePath);
-                    }
-
-                    break;
-
-                case UpdateDocumentAction updateAction:
-                    {
-                        var entry = GetCurrentEntry(project);
-                        TryAddNotificationAndUpdate(entry, entry.State.WithRemovedHostDocument(updateAction.OriginalDocument), ProjectChangeKind.DocumentRemoved, updateAction.OriginalDocument.FilePath);
-
-                        entry = GetCurrentEntry(project);
-                        TryAddNotificationAndUpdate(entry, entry.State.WithAddedHostDocument(updateAction.NewDocument, CreateTextAndVersionFunc(updateAction.TextLoader)), ProjectChangeKind.DocumentAdded, updateAction.NewDocument.FilePath);
-                    }
-
-                    break;
-
-                case MoveDocumentAction moveAction:
-                    var (from, to) = (moveAction.OriginalProject, moveAction.DestinationProject);
-                    Debug.Assert(from == project || to == project);
-                    Debug.Assert(from != to);
-
-                    var fromEntry = GetCurrentEntry(from);
-                    var toEntry = GetCurrentEntry(to);
-
-                    TryAddNotificationAndUpdate(fromEntry, fromEntry.State.WithRemovedHostDocument(moveAction.Document), ProjectChangeKind.DocumentRemoved, moveAction.Document.FilePath);
-                    TryAddNotificationAndUpdate(toEntry, toEntry.State.WithAddedHostDocument(moveAction.Document, CreateTextAndVersionFunc(moveAction.TextLoader)), ProjectChangeKind.DocumentAdded, moveAction.Document.FilePath);
-                    break;
-
-                default:
-                    throw new InvalidOperationException($"Unexpected action type {change.GetType()}");
-            }
-        }
-
-        if (!projectWorkspaceState.Equals(ProjectWorkspaceState.Default))
-        {
-            var entryBeforeWorkspaceState = GetCurrentEntry(project);
-            var stateWithProjectWorkspaceState = entryBeforeWorkspaceState.State.WithProjectWorkspaceState(projectWorkspaceState);
-            TryAddNotificationAndUpdate(entryBeforeWorkspaceState, stateWithProjectWorkspaceState, ProjectChangeKind.ProjectChanged, documentFilePath: null);
-        }
-
-        if (originalHostProject.RootNamespace != rootNamespace || configuration != originalHostProject.Configuration)
-        {
-            var currentEntry = GetCurrentEntry(project);
-            var currentHostProject = currentEntry.State.HostProject;
-            var newHostProject = new HostProject(currentHostProject.FilePath, currentHostProject.IntermediateOutputPath, configuration, rootNamespace);
-            var newEntry = new Entry(currentEntry.State.WithHostProject(newHostProject));
-            updatedProjectsMap[project.Key] = newEntry;
-            changesToNotify.Add(new ProjectChangeEventArgs(currentEntry.GetSnapshot(), newEntry.GetSnapshot(), ProjectChangeKind.ProjectChanged));
-        }
-
-        // Update current state first so we can get rid of the write lock and downgrade
-        // back to a read lock when notifying changes
-        using (upgradeableLock.EnterWriteLock())
-        {
-            foreach (var (path, entry) in updatedProjectsMap)
-            {
-                _projects_needsLock[path] = entry;
-            }
-        }
-
-        void TryAddNotificationAndUpdate(Entry currentEntry, ProjectState newState, ProjectChangeKind changeKind, string? documentFilePath)
-        {
-            if (newState.Equals(currentEntry.State))
-            {
-                return;
-            }
-
-            var newEntry = new Entry(newState);
-            updatedProjectsMap[currentEntry.State.HostProject.Key] = newEntry;
-            changesToNotify.Add(new ProjectChangeEventArgs(currentEntry.GetSnapshot(), newEntry.GetSnapshot(), documentFilePath, changeKind, IsSolutionClosing));
-        }
-
-        Entry GetCurrentEntry(IProjectSnapshot project)
-        {
-            if (!updatedProjectsMap.TryGetValue(project.Key, out var entry))
-            {
-                entry = _projects_needsLock[project.Key];
-                updatedProjectsMap[project.Key] = entry;
-            }
-
-            return entry;
         }
     }
 

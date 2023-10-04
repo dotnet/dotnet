@@ -11,7 +11,6 @@ using Microsoft.AspNetCore.Razor.LanguageServer.Extensions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.Workspaces.Extensions;
 using Microsoft.CodeAnalysis.Text;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
@@ -98,7 +97,7 @@ internal class CSharpFormatter
     private static async Task<TextEdit[]> GetFormattingEditsAsync(FormattingContext context, Range projectedRange, CancellationToken cancellationToken)
     {
         var csharpSourceText = context.CodeDocument.GetCSharpSourceText();
-        var spanToFormat = projectedRange.AsTextSpan(csharpSourceText);
+        var spanToFormat = projectedRange.ToTextSpan(csharpSourceText);
         var root = await context.CSharpWorkspaceDocument.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
         Assumes.NotNull(root);
 
@@ -107,7 +106,7 @@ internal class CSharpFormatter
         // Formatting options will already be set in the workspace.
         var changes = CodeAnalysis.Formatting.Formatter.GetFormattedTextChanges(root, spanToFormat, workspace, cancellationToken: cancellationToken);
 
-        var edits = changes.Select(c => c.AsTextEdit(csharpSourceText)).ToArray();
+        var edits = changes.Select(c => c.ToTextEdit(csharpSourceText)).ToArray();
         return edits;
     }
 
@@ -255,13 +254,16 @@ internal class CSharpFormatter
 
                 if (initializer.IsKind(CodeAnalysis.CSharp.SyntaxKind.ArrayInitializerExpression))
                 {
-                    // For array initializers we have don't want to ignore the open and close braces
+                    // For array initializers we don't want to ignore the open and close braces
                     // as the formatter does move them relative to the variable declaration they
                     // are part of, but doesn't otherwise touch them.
                     // This isn't true if they are part of other collection or object initializers, but
                     // fortunately we can ignore that because of the recursive nature of this method,
                     // I just wanted to mention it so you understood how annoying this is :)
-                    if (token == initializer.OpenBraceToken || token == initializer.CloseBraceToken)
+                    // This also isn't true for the close brace token of an _implicit_ array creation
+                    // expression, because Roslyn was designed to hurt me.
+                    if (token == initializer.OpenBraceToken ||
+                        (token == initializer.CloseBraceToken && initializer.Parent is not ImplicitArrayCreationExpressionSyntax))
                     {
                         return false;
                     }
@@ -282,7 +284,7 @@ internal class CSharpFormatter
 
         static bool SpansMultipleLines(SyntaxNode node, SourceText text)
         {
-            var range = node.Span.AsRange(text);
+            var range = node.Span.ToRange(text);
             return range.Start.Line != range.End.Line;
         }
     }

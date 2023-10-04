@@ -51,11 +51,14 @@ internal partial class FeatureFlag : IFeatureFlag
     public const string DISABLE_MULTI_TFM_RUN = VSTEST_ + nameof(DISABLE_MULTI_TFM_RUN);
 
     // Disables setting a higher value for SetMinThreads. Setting SetMinThreads value to higher allows testhost to connect back faster
-    // even though we are blocking additional threads becuase we don't have to wait for ThreadPool to start more threads.
+    // even though we are blocking additional threads because we don't have to wait for ThreadPool to start more threads.
     public const string DISABLE_THREADPOOL_SIZE_INCREASE = VSTEST_ + nameof(DISABLE_THREADPOOL_SIZE_INCREASE);
 
     // Disable the SerialTestRunDecorator
     public const string DISABLE_SERIALTESTRUN_DECORATOR = VSTEST_ + nameof(DISABLE_SERIALTESTRUN_DECORATOR);
+
+    // Disable setting UTF8 encoding in console.
+    public const string DISABLE_UTF8_CONSOLE_ENCODING = VSTEST_ + nameof(DISABLE_UTF8_CONSOLE_ENCODING);
 
     [Obsolete("Only use this in tests.")]
     internal static void Reset()

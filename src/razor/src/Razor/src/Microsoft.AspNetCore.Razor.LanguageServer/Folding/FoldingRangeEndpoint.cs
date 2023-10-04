@@ -88,7 +88,7 @@ internal sealed class FoldingRangeEndpoint : IRazorRequestHandler<FoldingRangePa
         return foldingRanges;
     }
 
-    private async Task<IEnumerable<FoldingRange>?> HandleCoreAsync(RazorFoldingRangeRequestParam requestParams, DocumentContext documentContext, CancellationToken cancellationToken)
+    private async Task<List<FoldingRange>?> HandleCoreAsync(RazorFoldingRangeRequestParam requestParams, DocumentContext documentContext, CancellationToken cancellationToken)
     {
         var foldingResponse = await _languageServer.SendRequestAsync<RazorFoldingRangeRequestParam, RazorFoldingRangeResponse?>(
             CustomMessageNames.RazorFoldingRangeEndpoint,
@@ -132,7 +132,7 @@ internal sealed class FoldingRangeEndpoint : IRazorRequestHandler<FoldingRangePa
         return finalRanges;
     }
 
-    private static IEnumerable<FoldingRange> FinalizeFoldingRanges(List<FoldingRange> mappedRanges, RazorCodeDocument codeDocument)
+    private List<FoldingRange> FinalizeFoldingRanges(List<FoldingRange> mappedRanges, RazorCodeDocument codeDocument)
     {
         // Don't allow ranges to be reported if they aren't spanning at least one line
         var validRanges = mappedRanges.Where(r => r.StartLine < r.EndLine);
@@ -144,14 +144,14 @@ internal sealed class FoldingRangeEndpoint : IRazorRequestHandler<FoldingRangePa
             .Select(ranges => ranges.OrderByDescending(r => r.EndLine).First());
 
         // Fix the starting range so the "..." is shown at the end
-        return reducedRanges.Select(r => FixFoldingRangeStart(r, codeDocument));
+        return reducedRanges.Select(r => FixFoldingRangeStart(r, codeDocument)).ToList();
     }
 
     /// <summary>
     /// Fixes the start of a range so that the offset of the first line is the last character on that line. This makes
     /// it so collapsing will still show the text instead of just "..."
     /// </summary>
-    private static FoldingRange FixFoldingRangeStart(FoldingRange range, RazorCodeDocument codeDocument)
+    private FoldingRange FixFoldingRangeStart(FoldingRange range, RazorCodeDocument codeDocument)
     {
         Debug.Assert(range.StartLine < range.EndLine);
 
@@ -165,6 +165,15 @@ internal sealed class FoldingRangeEndpoint : IRazorRequestHandler<FoldingRangePa
 
         var sourceText = codeDocument.GetSourceText();
         var startLine = range.StartLine;
+
+        if (startLine >= sourceText.Lines.Count)
+        {
+            // Sometimes VS Code seems to send us wildly out-of-range folding ranges for Html, so log a warning,
+            // but prevent a toast from appearing from an exception.
+            _logger.LogWarning("Got a folding range of ({StartLine}-{EndLine}) but Razor document {filePath} only has {count} lines.", range.StartLine, range.EndLine, codeDocument.Source.FilePath, sourceText.Lines.Count);
+            return range;
+        }
+
         var lineSpan = sourceText.Lines[startLine].Span;
 
         // Search from the end of the line to the beginning for the first non whitespace character. We want that

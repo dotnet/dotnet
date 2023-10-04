@@ -136,10 +136,11 @@ namespace NuGet.PackageManagement.UI.Options
                         graphics.DrawString(currentItem.Name, e.Font, foreBrush, nameBounds, drawFormat);
 
                         var packageSource = new PackageSource(currentItem.Source, currentItem.Name);
-                        var isSourceHttp = packageSource.IsHttp && !packageSource.IsHttps;
+                        packageSource.AllowInsecureConnections = currentItem.AllowInsecureConnections;
+                        var shouldShowHttpWarningIcon = packageSource.IsHttp && !packageSource.IsHttps && !packageSource.AllowInsecureConnections;
                         Rectangle warningBounds = default;
 
-                        if (isSourceHttp)
+                        if (shouldShowHttpWarningIcon)
                         {
                             var warningIcon = GetWarningIcon();
 
@@ -152,7 +153,7 @@ namespace NuGet.PackageManagement.UI.Options
                         }
 
                         var sourceBounds = new Rectangle(
-                            isSourceHttp ? warningBounds.Right : nameBounds.Left,
+                            shouldShowHttpWarningIcon ? warningBounds.Right : nameBounds.Left,
                             nameBounds.Bottom,
                             textWidth,
                             e.Bounds.Bottom - nameBounds.Bottom);

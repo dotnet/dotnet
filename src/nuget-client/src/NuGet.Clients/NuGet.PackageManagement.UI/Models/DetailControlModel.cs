@@ -49,6 +49,8 @@ namespace NuGet.PackageManagement.UI
 
         private Dictionary<NuGetVersion, DetailedPackageMetadata> _metadataDict = new Dictionary<NuGetVersion, DetailedPackageMetadata>();
 
+        private INuGetUI _uiController;
+
         protected DetailControlModel(
             IServiceBroker serviceBroker,
             IEnumerable<IProjectContextInfo> projects,
@@ -56,6 +58,7 @@ namespace NuGet.PackageManagement.UI
         {
             _nugetProjects = projects;
             ServiceBroker = serviceBroker;
+            _uiController = uiController;
 
             _options = new OptionsViewModel();
             PackageSourceMappingViewModel = PackageSourceMappingActionViewModel.Create(uiController);
@@ -825,7 +828,22 @@ namespace NuGet.PackageManagement.UI
 
         public PackageSourceMappingActionViewModel PackageSourceMappingViewModel { get; }
 
-        public bool CanInstallWithPackageSourceMapping => !PackageSourceMappingViewModel.IsPackageSourceMappingEnabled || PackageSourceMappingViewModel.IsPackageMapped;
+        public bool CanInstallWithPackageSourceMapping
+        {
+            get
+            {
+                // Don't allow install if package source mapping is enabled, with the selected package unmapped, and the 'All' package source selected.
+                if (PackageSourceMappingViewModel.IsPackageSourceMappingEnabled
+                    && !PackageSourceMappingViewModel.IsPackageMapped
+                    && PackageSourceMappingViewModel.ProjectsSupportAutomaticSourceMapping
+                    && !PackageSourceMappingViewModel.CanAutomaticallyCreateSourceMapping)
+                {
+                    return false;
+                }
+
+                return true;
+            }
+        }
 
         public IEnumerable<IProjectContextInfo> NuGetProjects => _nugetProjects;
 

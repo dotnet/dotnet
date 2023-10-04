@@ -295,6 +295,15 @@ namespace NuGet.PackageManagement {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Error occurred while getting package vulnerability data: {0}.
+        /// </summary>
+        internal static string Error_VulnerabilityDataFetch {
+            get {
+                return ResourceManager.GetString("Error_VulnerabilityDataFetch", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to An error occurred while reading file &apos;{0}&apos;: {1}.
         /// </summary>
         internal static string ErrorLoadingPackagesConfig {
@@ -916,11 +925,20 @@ namespace NuGet.PackageManagement {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to You are running the &apos;{0}&apos; operation with an &apos;http&apos; source, &apos;{1}&apos;. Support for &apos;http&apos; sources will be removed in a future version..
+        ///   Looks up a localized string similar to You are running the &apos;{0}&apos; operation with an &apos;HTTP&apos; source, &apos;{1}&apos;. Non-HTTPS access will be removed in a future version. Consider migrating to an &apos;HTTPS&apos; source..
         /// </summary>
         internal static string Warning_HttpServerUsage {
             get {
                 return ResourceManager.GetString("Warning_HttpServerUsage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Package &apos;{0}&apos; {1} has a known {2} severity vulnerability, {3}.
+        /// </summary>
+        internal static string Warning_PackageWithKnownVulnerability {
+            get {
+                return ResourceManager.GetString("Warning_PackageWithKnownVulnerability", resourceCulture);
             }
         }
         

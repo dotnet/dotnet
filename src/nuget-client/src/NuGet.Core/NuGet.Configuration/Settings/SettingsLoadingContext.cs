@@ -44,7 +44,7 @@ namespace NuGet.Configuration
         /// <param name="isReadOnly">An optional value indicating whether or not the settings file is read-only.</param>
         /// <returns></returns>
         /// <exception cref="ObjectDisposedException">When the current object has been disposed.</exception>
-        /// <exception cref="ArgumentNullException">When <paramref name="filePath" /> is <c>null</c>.</exception>
+        /// <exception cref="ArgumentNullException">When <paramref name="filePath" /> is <see langword="null" />.</exception>
         internal SettingsFile GetOrCreateSettingsFile(string filePath, bool isMachineWide = false, bool isReadOnly = false)
         {
             if (_isDisposed)

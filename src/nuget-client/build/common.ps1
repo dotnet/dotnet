@@ -104,9 +104,6 @@ Function Invoke-BuildStep {
             }
             $completed = $true
         }
-        catch {
-            Error-Log $_
-        }
         finally {
             $sw.Stop()
             Reset-Colors
@@ -120,7 +117,7 @@ Function Invoke-BuildStep {
                 Trace-Log "[STOPPED +$(Format-ElapsedTime $sw.Elapsed)] $BuildStep"
             }
             else {
-                Error-Log "[FAILED +$(Format-ElapsedTime $sw.Elapsed)] $BuildStep"
+                Trace-Log "[FAILED +$(Format-ElapsedTime $sw.Elapsed)] $BuildStep"
             }
         }
     }
@@ -164,7 +161,7 @@ Function Install-DotnetCLI {
 
         New-Item -ItemType Directory -Force -Path $CLIRoot | Out-Null
 
-        Invoke-WebRequest 'https://dot.net/v1/dotnet-install.ps1' -OutFile $DotNetInstall
+        Download-FileWithRetry 'https://dot.net/v1/dotnet-install.ps1' -OutFile $DotNetInstall
     }
 
     if (-not ([string]::IsNullOrEmpty($env:DOTNET_SDK_VERSIONS))) {
@@ -282,6 +279,32 @@ Function Test-BuildEnvironment {
     }
 }
 
+Function Install-ProcDump {
+    [CmdletBinding()]
+    param()
+    if ($Env:OS -eq "Windows_NT")
+    {
+        Trace-Log "Downloading ProcDump..."
+        
+        $ProcDumpZip = Join-Path $env:TEMP 'ProcDump.zip'
+        $TestDir = Join-Path $NuGetClientRoot '.test'
+        $ProcDumpDir = Join-Path $TestDir 'ProcDump'
+
+        Download-FileWithRetry 'https://download.sysinternals.com/files/Procdump.zip' -OutFile $ProcDumpZip
+        if (Test-Path $ProcDumpDir) {
+            Remove-Item $ProcDumpDir -Recurse -Force | Out-Null
+        }
+        New-Item $ProcDumpDir -ItemType Directory -Force | Out-Null
+        Expand-Archive $ProcDumpZip -DestinationPath $ProcDumpDir
+
+        if ($env:CI -eq "true") {
+            Write-Host "##vso[task.setvariable variable=PROCDUMP_PATH;isOutput=false;issecret=false;]$ProcDumpDir"
+        } else {
+            $env:PROCDUMP_PATH=$ProcDumpDir
+        }
+    }
+}
+
 Function Clear-PackageCache {
     [CmdletBinding()]
     param()
@@ -305,5 +328,43 @@ Function Clear-Nupkgs {
     if (Test-Path $Nupkgs) {
         Trace-Log 'Cleaning nupkgs folder'
         Remove-Item $Nupkgs\*.nupkg -Force
+    }
+}
+
+Function Download-FileWithRetry {
+    param
+    (
+        [Parameter(Mandatory = $true)]
+        [string] $Uri,
+        [Parameter(Mandatory = $true)]
+        [string] $OutFile,
+        [Parameter(Mandatory = $false)]
+        [int] $Retries = 5
+    )
+
+    while($true)
+    {
+        try
+        {
+            Trace-Log "Downloading '$Uri' to '$OutFile'"
+            Invoke-WebRequest $Uri -OutFile $OutFile
+            break
+        }
+        catch
+        {
+            $exceptionMessage = $_.Exception.Message
+            Warning-Log "Failed to download '$Uri': $exceptionMessage"
+            if ($Retries -gt 0) {
+                $Retries--
+                Trace-Log "Waiting 10 seconds before retrying. Retries left: $Retries"
+                Start-Sleep -Seconds 10
+ 
+            }
+            else
+            {
+                $exception = $_.Exception
+                throw $exception
+            }
+        }
     }
 }

@@ -549,4 +549,47 @@ internal static class ComponentDiagnosticFactory
             attribute);
         return diagnostic;
     }
+
+    // Removed warning RZ10021: Attribute '@formname' can only be used when '@onsubmit' event handler is also present.
+
+    public static readonly RazorDiagnosticDescriptor FormName_NotAForm =
+        new RazorDiagnosticDescriptor(
+        $"{DiagnosticPrefix}10022",
+        () => "Attribute '@formname' can only be applied to 'form' elements.",
+        RazorDiagnosticSeverity.Warning);
+
+    public static RazorDiagnostic CreateFormName_NotAForm(SourceSpan? source)
+    {
+        return RazorDiagnostic.Create(FormName_NotAForm, source ?? SourceSpan.Undefined);
+    }
+
+    public static readonly RazorDiagnosticDescriptor Attribute_ValidOnlyOnComponent =
+        new RazorDiagnosticDescriptor(
+        $"{DiagnosticPrefix}10023",
+        () => "Attribute '{0}' is only valid when used on a component.",
+        RazorDiagnosticSeverity.Error);
+
+    public static RazorDiagnostic CreateAttribute_ValidOnlyOnComponent(SourceSpan? source, string attribute)
+    {
+        var diagnostic = RazorDiagnostic.Create(
+            Attribute_ValidOnlyOnComponent,
+            source ?? SourceSpan.Undefined,
+            attribute);
+        return diagnostic;
+    }
+
+    public static readonly RazorDiagnosticDescriptor RenderModeAttribute_ComponentDeclaredRenderMode =
+        new RazorDiagnosticDescriptor(
+        $"{DiagnosticPrefix}10024",
+        () => "Cannot override render mode for component '{0}' as it explicitly declares one.",
+        RazorDiagnosticSeverity.Error);
+
+    public static RazorDiagnostic CreateRenderModeAttribute_ComponentDeclaredRenderMode(SourceSpan? source, string component)
+    {
+        var diagnostic = RazorDiagnostic.Create(
+            RenderModeAttribute_ComponentDeclaredRenderMode,
+            source ?? SourceSpan.Undefined,
+            component);
+        return diagnostic;
+    }
 }

@@ -44,7 +44,7 @@ namespace NuGet.Protocol.Plugins
         /// <param name="method">The message method.</param>
         /// <param name="payload">An optional message payload.</param>
         /// <exception cref="ArgumentException">Thrown if <paramref name="requestId" />
-        /// is either <c>null</c> or an empty string.</exception>
+        /// is either <see langword="null" /> or an empty string.</exception>
         /// <exception cref="ArgumentException">Thrown if <paramref name="type" />
         /// is an undefined <see cref="MessageType" /> value.</exception>
         /// <exception cref="ArgumentException">Thrown if <paramref name="method" />

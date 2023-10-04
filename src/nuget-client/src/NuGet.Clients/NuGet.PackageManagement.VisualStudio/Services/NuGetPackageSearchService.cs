@@ -383,33 +383,6 @@ namespace NuGet.PackageManagement.VisualStudio
             return packageReferences.SelectMany(e => e).ToList();
         }
 
-        private async ValueTask<IInstalledAndTransitivePackages> GetInstalledAndTransitivePackagesAsync(IReadOnlyCollection<IProjectContextInfo> projectContextInfos, bool includeTransitiveOrigins, CancellationToken cancellationToken)
-        {
-            IEnumerable<Task<IInstalledAndTransitivePackages>> tasks = projectContextInfos
-                .Select(project => project.GetInstalledAndTransitivePackagesAsync(_serviceBroker, includeTransitiveOrigins, cancellationToken).AsTask());
-            IInstalledAndTransitivePackages[] installedAndTransitivePackagesArray = await Task.WhenAll(tasks);
-            if (installedAndTransitivePackagesArray.Length == 1)
-            {
-                return installedAndTransitivePackagesArray[0];
-            }
-            else if (installedAndTransitivePackagesArray.Length > 1)
-            {
-                List<IPackageReferenceContextInfo> installedPackages = new List<IPackageReferenceContextInfo>();
-                List<ITransitivePackageReferenceContextInfo> transitivePackages = new List<ITransitivePackageReferenceContextInfo>();
-                foreach (var installedAndTransitivePackages in installedAndTransitivePackagesArray)
-                {
-                    installedPackages.AddRange(installedAndTransitivePackages.InstalledPackages);
-                    transitivePackages.AddRange(installedAndTransitivePackages.TransitivePackages);
-                }
-                InstalledAndTransitivePackages collectAllPackagesHere = new InstalledAndTransitivePackages(installedPackages, transitivePackages);
-                return collectAllPackagesHere;
-            }
-            else
-            {
-                return new InstalledAndTransitivePackages(new List<IPackageReferenceContextInfo>(), new List<ITransitivePackageReferenceContextInfo>());
-            }
-        }
-
         /// <summary>
         /// Combines package folders from PackageReferenceProject with global package folders
         /// </summary>
@@ -467,7 +440,7 @@ namespace NuGet.PackageManagement.VisualStudio
             if (itemFilter == ItemFilter.All)
             {
                 // Browse Tab, Project or Solution View: no need of transitive origins data.
-                IInstalledAndTransitivePackages browseTabPackages = await GetInstalledAndTransitivePackagesAsync(projectContextInfos, includeTransitiveOrigins: false, cancellationToken);
+                IInstalledAndTransitivePackages browseTabPackages = await PackageCollection.GetInstalledAndTransitivePackagesAsync(_serviceBroker, projectContextInfos, includeTransitiveOrigins: false, cancellationToken);
                 PackageCollection installedPackageCollection = PackageCollection.FromPackageReferences(browseTabPackages.InstalledPackages);
                 PackageCollection transitivePackageCollection = PackageCollection.FromPackageReferences(browseTabPackages.TransitivePackages);
 
@@ -504,7 +477,7 @@ namespace NuGet.PackageManagement.VisualStudio
                 else // is Project
                 {
                     // Installed Tab, Project View, Experiment On: needs installed, transitive packages and transitive origins data
-                    IInstalledAndTransitivePackages installedTabWithTransitiveOrigins = await GetInstalledAndTransitivePackagesAsync(projectContextInfos, includeTransitiveOrigins: true, cancellationToken);
+                    IInstalledAndTransitivePackages installedTabWithTransitiveOrigins = await PackageCollection.GetInstalledAndTransitivePackagesAsync(_serviceBroker, projectContextInfos, includeTransitiveOrigins: true, cancellationToken);
                     PackageCollection installedPackageCollection = PackageCollection.FromPackageReferences(installedTabWithTransitiveOrigins.InstalledPackages);
                     PackageCollection transitivePackageCollection = PackageCollection.FromPackageReferences(installedTabWithTransitiveOrigins.TransitivePackages);
 

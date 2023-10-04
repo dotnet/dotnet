@@ -4,10 +4,11 @@
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Razor.Editor;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace Microsoft.VisualStudio.Razor.IntegrationTests;
 
-public class OnAutoInsertTests : AbstractRazorEditorTest
+public class OnAutoInsertTests(ITestOutputHelper testOutputHelper) : AbstractRazorEditorTest(testOutputHelper)
 {
     [IdeFact]
     public async Task CSharp_DocumentationComments()

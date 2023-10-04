@@ -3,6 +3,7 @@
 
 #nullable disable
 
+using System;
 using System.Linq;
 using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
@@ -12,10 +13,18 @@ namespace Microsoft.CodeAnalysis.Remote.Razor;
 
 public partial class OOPTagHelperResolverTest
 {
+    private static readonly Lazy<ProjectSnapshotManagerDispatcher> s_projectSnapshotManagerDispatcher = new(() =>
+    {
+        var dispatcher = new Mock<ProjectSnapshotManagerDispatcher>(MockBehavior.Strict);
+        dispatcher.SetupGet(d => d.IsDispatcherThread).Returns(true);
+        return dispatcher.Object;
+    });
+
     private class TestProjectSnapshotManager(Workspace workspace) : DefaultProjectSnapshotManager(
         Mock.Of<IErrorReporter>(MockBehavior.Strict),
         Enumerable.Empty<IProjectSnapshotChangeTrigger>(),
-        workspace)
+        workspace,
+        s_projectSnapshotManagerDispatcher.Value)
     {
     }
 }

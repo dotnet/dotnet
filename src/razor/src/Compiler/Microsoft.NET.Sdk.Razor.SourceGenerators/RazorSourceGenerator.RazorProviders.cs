@@ -14,32 +14,17 @@ namespace Microsoft.NET.Sdk.Razor.SourceGenerators
 {
     public partial class RazorSourceGenerator
     {
-        /// <summary>
-        /// Gets a flag that determines if the source generator should no-op.
-        /// <para>
-        /// This flag exists to support scenarios in VS where design-time and EnC builds need
-        /// to run without invoking the source generator to avoid duplicate types being produced.
-        /// The property is set by the SDK via an editor config.
-        /// </para>
-        /// </summary>
-        private static bool GetSuppressionStatus(AnalyzerConfigOptionsProvider optionsProvider, CancellationToken _)
+        private (RazorSourceGenerationOptions?, Diagnostic?) ComputeRazorSourceGeneratorOptions(((AnalyzerConfigOptionsProvider, ParseOptions), bool) pair, CancellationToken ct)
         {
-            return optionsProvider.GlobalOptions.TryGetValue("build_property.SuppressRazorSourceGenerator", out var suppressRazorSourceGenerator)
-                && suppressRazorSourceGenerator == "true";
-        }
-
-        private static bool GetHostOutputsEnabledStatus(AnalyzerConfigOptionsProvider optionsProvider, CancellationToken _)
-        {
-            return optionsProvider.GlobalOptions.TryGetValue("build_property.EnableRazorHostOutputs", out var enableRazorHostOutputs)
-                && enableRazorHostOutputs == "true";
-        }
-
-        private (RazorSourceGenerationOptions?, Diagnostic?) ComputeRazorSourceGeneratorOptions((AnalyzerConfigOptionsProvider, ParseOptions) pair, CancellationToken ct)
-        {
-            Log.ComputeRazorSourceGeneratorOptions();
-
-            var (options, parseOptions) = pair;
+            var ((options, parseOptions), isSuppressed) = pair;
             var globalOptions = options.GlobalOptions;
+            
+            if (isSuppressed)
+            {
+                return default;
+            }
+
+            Log.ComputeRazorSourceGeneratorOptions();
 
             globalOptions.TryGetValue("build_property.RazorConfiguration", out var configurationName);
             globalOptions.TryGetValue("build_property.RootNamespace", out var rootNamespace);

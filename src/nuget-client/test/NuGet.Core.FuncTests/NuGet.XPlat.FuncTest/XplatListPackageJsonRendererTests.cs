@@ -68,7 +68,7 @@ namespace NuGet.XPlat.FuncTest
                                             requestedVersion : "2.0.0",
                                             resolvedVersion : "2.0.0")
                                     },
-                                    // Below transitive packages shouldn't be in json output because this report doesn't have --include-transive option.
+                                    // Below transitive packages shouldn't be in json output because this report doesn't have --include-transitive option.
                                     TransitivePackages = new List<ListReportPackage>()
                                     {
                                         new ListReportPackage(
@@ -695,7 +695,7 @@ namespace NuGet.XPlat.FuncTest
                                             requestedVersion : "2.0.0",
                                             resolvedVersion : "2.0.0")
                                     },
-                                    // Below transitive packages should be in json output because this report has --include-transive option.
+                                    // Below transitive packages should be in json output because this report has --include-transitive option.
                                     TransitivePackages = new List<ListReportPackage>()
                                     {
                                         new ListReportPackage(

@@ -32,9 +32,19 @@
         <target state="translated">Previsto token JSON '{0}', ma era '{1}'.</target>
         <note />
       </trans-unit>
-      <trans-unit id="Unsupported_project_razor_json_version_encountered">
-        <source>Unsupported project.razor.json version encounted.</source>
-        <target state="translated">Incontrata versione project.razor.json non supportata.</target>
+      <trans-unit id="Unsupported_argument_kind">
+        <source>Unsupported argument kind: '{0}'.</source>
+        <target state="translated">Genere di argomento non supportato: '{0}'.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Unsupported_argument_type">
+        <source>Unsupported argument type: '{0}'.</source>
+        <target state="translated">Tipo di argomento non supportato: '{0}'.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Unsupported_razor_project_info_version_encountered">
+        <source>Unsupported razor project info version encounted.</source>
+        <target state="translated">Incontrata versione delle informazioni sul progetto Razor non supportata.</target>
         <note />
       </trans-unit>
     </body>

@@ -4,6 +4,7 @@
 using System.Globalization;
 using System.Reflection;
 using System.Security.Claims;
+using System.Web;
 using Components.TestServer.RazorComponents;
 using Components.TestServer.RazorComponents.Pages.Forms;
 using Components.TestServer.Services;
@@ -29,8 +30,8 @@ public class RazorComponentEndpointsStartup<TRootComponent>
             options.MaxFormMappingRecursionDepth = 5;
             options.MaxFormMappingCollectionSize = 100;
         })
-            .AddWebAssemblyComponents()
-            .AddServerComponents();
+            .AddInteractiveWebAssemblyComponents()
+            .AddInteractiveServerComponents();
         services.AddHttpContextAccessor();
         services.AddSingleton<AsyncOperationService>();
         services.AddCascadingAuthenticationState();
@@ -58,11 +59,8 @@ public class RazorComponentEndpointsStartup<TRootComponent>
             {
                 endpoints.MapRazorComponents<TRootComponent>()
                     .AddAdditionalAssemblies(Assembly.Load("Components.WasmMinimal"))
-                    .AddServerRenderMode()
-                    .AddWebAssemblyRenderMode(new WebAssemblyComponentsEndpointOptions
-                    {
-                        PathPrefix = "/WasmMinimal"
-                    });
+                    .AddInteractiveServerRenderMode()
+                    .AddInteractiveWebAssemblyRenderMode(options => options.PathPrefix = "/WasmMinimal");
 
                 NotEnabledStreamingRenderingComponent.MapEndpoints(endpoints);
                 StreamingRenderingForm.MapEndpoints(endpoints);
@@ -123,5 +121,40 @@ public class RazorComponentEndpointsStartup<TRootComponent>
             response.ContentType = "text/html";
             await response.WriteAsync("<h1>404</h1><p>Sorry, there's nothing here! This is a custom server-generated 404 message.</p>");
         });
+
+        // Used when testing that enhanced nav includes "Accept: text/html"
+        endpoints.Map("/nav/list-headers", async (HttpRequest request, HttpResponse response) =>
+        {
+            // We have to accept enanced nav explicitly since the test is checking what headers are sent for enhanced nav requests
+            // Otherwise, the client will retry as a non-enhanced-nav request and the UI won't show the enhanced nav headers
+            response.Headers.Add("blazor-enhanced-nav", "allow");
+
+            response.ContentType = "text/html";
+            await response.WriteAsync("<ul id='all-headers'>");
+            foreach (var header in request.Headers)
+            {
+                await response.WriteAsync($"<li>{HttpUtility.HtmlEncode(header.Key)}: {HttpUtility.HtmlEncode(header.Value)}</li>");
+            }
+            await response.WriteAsync("</ul>");
+        });
+
+        // Used in the redirection to non-Blazor endpoints tests
+        endpoints.MapGet("redirect/nonblazor/get", PerformRedirection);
+        endpoints.MapPost("redirect/nonblazor/post", PerformRedirection);
+
+        // Used when testing enhanced navigation to non-Blazor endpoints
+        endpoints.Map("/nav/non-blazor-html-response", async (HttpResponse response) =>
+        {
+            response.ContentType = "text/html";
+            await response.WriteAsync("<html><body><h1>This is a non-Blazor endpoint</h1><p>That's all</p></body></html>");
+        });
+
+        static Task PerformRedirection(HttpRequest request, HttpResponse response)
+        {
+            response.Redirect(request.Query["external"] == "true"
+                ? "https://microsoft.com"
+                : $"{request.PathBase}/nav/scroll-to-hash#some-content");
+            return Task.CompletedTask;
+        }
     }
 }

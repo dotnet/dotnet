@@ -358,7 +358,7 @@ namespace NuGet.Packaging.FuncTest
             }
         }
 
-        [PlatformFact(Platform.Windows, Platform.Linux, Skip = "https://github.com/NuGet/Home/issues/12186")] // https://github.com/NuGet/Home/issues/11178
+        [PlatformFact(Platform.Windows, Platform.Linux)]
         public async Task GetTrustResultAsync_WithUnavailableRevocationInformationInAcceptMode_DoesNotWarnAsync()
         {
             // Arrange
@@ -374,7 +374,7 @@ namespace NuGet.Packaging.FuncTest
             Assert.Empty(matchingIssues);
         }
 
-        [PlatformFact(Platform.Windows, Platform.Linux, Skip = "https://github.com/NuGet/Home/issues/12186")] // https://github.com/NuGet/Home/issues/11178
+        [PlatformFact(Platform.Windows, Platform.Linux)]
         public async Task GetTrustResultAsync_WithUnavailableRevocationInformationInRequireMode_WarnsAsync()
         {
             // Arrange
@@ -400,7 +400,7 @@ namespace NuGet.Packaging.FuncTest
             SigningTestUtility.AssertRevocationStatusUnknown(matchingIssues, LogLevel.Warning, NuGetLogCode.NU3018);
         }
 
-        [PlatformFact(Platform.Windows, Platform.Linux, Skip = "https://github.com/NuGet/Home/issues/12186")] // https://github.com/NuGet/Home/issues/11178
+        [PlatformFact(Platform.Windows, Platform.Linux)]
         public async Task GetTrustResultAsync_WithUnavailableRevocationInformationInVerify_WarnsAsync()
         {
             // Act & Assert
@@ -423,7 +423,7 @@ namespace NuGet.Packaging.FuncTest
             SigningTestUtility.AssertRevocationStatusUnknown(matchingIssues, LogLevel.Warning, NuGetLogCode.NU3018);
         }
 
-        [PlatformFact(Platform.Windows, Platform.Linux, Skip = "https://github.com/NuGet/Home/issues/12186")] // https://github.com/NuGet/Home/issues/11178
+        [PlatformFact(Platform.Windows, Platform.Linux)]
         public async Task GetTrustResultAsync_WithUnavailableRevocationInformationAndAllowIllegal_WarnsAsync()
         {
             // Arrange
@@ -451,7 +451,7 @@ namespace NuGet.Packaging.FuncTest
             Assert.Empty(matchingIssues);
         }
 
-        [PlatformFact(Platform.Windows, Platform.Linux, Skip = "https://github.com/NuGet/Home/issues/12186")] // https://github.com/NuGet/Home/issues/11178
+        [PlatformFact(Platform.Windows, Platform.Linux)]
         public async Task GetTrustResultAsync_WithUnavailableRevocationInformationAndAllowUnknownRevocation_WithOnlineRevocationMode_WarnsAsync()
         {
             // Arrange
@@ -489,7 +489,7 @@ namespace NuGet.Packaging.FuncTest
             SigningTestUtility.AssertRevocationStatusUnknown(matchingIssues, LogLevel.Warning, NuGetLogCode.NU3018);
         }
 
-        [PlatformFact(Platform.Windows, Platform.Linux, Skip = "https://github.com/NuGet/Home/issues/12186")] // https://github.com/NuGet/Home/issues/11178
+        [PlatformFact(Platform.Windows, Platform.Linux)]
         public async Task GetTrustResultAsync_WithUnavailableRevocationInformationAndAllowUnknownRevocation_WithOfflineRevocationMode_WarnsAsync()
         {
             // Arrange
@@ -522,7 +522,7 @@ namespace NuGet.Packaging.FuncTest
             SigningTestUtility.AssertRevocationStatusUnknown(matchingIssues, LogLevel.Information, NuGetLogCode.Undefined);
         }
 
-        [CIOnlyFact(Skip = "https://github.com/NuGet/Home/issues/12186")]
+        [CIOnlyFact]
         public async Task GetTrustResultAsync_WithTrustedButExpiredPrimaryAndTimestampCertificates_WithUnavailableRevocationInformationAndAllowUnknownRevocation_WarnsAsync()
         {
             List<SignatureLog> matchingIssues = await VerifyUnavailableRevocationInfoAsync(

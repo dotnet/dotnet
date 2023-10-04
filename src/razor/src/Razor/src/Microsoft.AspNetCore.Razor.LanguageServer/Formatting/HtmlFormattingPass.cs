@@ -7,7 +7,6 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
-using Microsoft.AspNetCore.Razor.Language.Legacy;
 using Microsoft.AspNetCore.Razor.Language.Syntax;
 using Microsoft.AspNetCore.Razor.LanguageServer.Extensions;
 using Microsoft.AspNetCore.Razor.LanguageServer.Protocol;
@@ -77,7 +76,7 @@ internal class HtmlFormattingPass : FormattingPassBase
 
         if (htmlEdits.Length > 0)
         {
-            var changes = htmlEdits.Select(e => e.AsTextChange(originalText));
+            var changes = htmlEdits.Select(e => e.ToTextChange(originalText));
             changedText = originalText.WithChanges(changes);
             // Create a new formatting context for the changed razor document.
             changedContext = await context.WithTextAsync(changedText).ConfigureAwait(false);
@@ -99,7 +98,7 @@ internal class HtmlFormattingPass : FormattingPassBase
         }
 
         var finalChanges = changedText.GetTextChanges(originalText);
-        var finalEdits = finalChanges.Select(f => f.AsTextEdit(originalText)).ToArray();
+        var finalEdits = finalChanges.Select(f => f.ToTextEdit(originalText)).ToArray();
 
         return new FormattingResult(finalEdits);
     }
@@ -224,8 +223,7 @@ internal class HtmlFormattingPass : FormattingPassBase
     private static bool IsPartOfHtmlTag(FormattingContext context, int position)
     {
         var syntaxTree = context.CodeDocument.GetSyntaxTree();
-        var change = new SourceChange(position, 0, string.Empty);
-        var owner = syntaxTree.Root.LocateOwner(change);
+        var owner = syntaxTree.Root.FindInnermostNode(position, includeWhitespace: true);
         if (owner is null)
         {
             // Can't determine owner of this position.

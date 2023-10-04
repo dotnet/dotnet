@@ -11,7 +11,7 @@ import { SharedMemoryRenderBatch } from './Rendering/RenderBatch/SharedMemoryRen
 import { PlatformApi, Pointer } from './Platform/Platform';
 import { WebAssemblyStartOptions } from './Platform/WebAssemblyStartOptions';
 import { addDispatchEventMiddleware } from './Rendering/WebRendererInteropMethods';
-import { WebAssemblyComponentDescriptor, discoverPersistedState } from './Services/ComponentDescriptorDiscovery';
+import { WebAssemblyComponentDescriptor, discoverWebAssemblyPersistedState } from './Services/ComponentDescriptorDiscovery';
 import { receiveDotNetDataStream } from './StreamingInterop';
 import { WebAssemblyComponentAttacher } from './Platform/WebAssemblyComponentAttacher';
 import { MonoConfig } from 'dotnet';
@@ -19,12 +19,33 @@ import { RootComponentManager } from './Services/RootComponentManager';
 
 let options: Partial<WebAssemblyStartOptions> | undefined;
 let platformLoadPromise: Promise<void> | undefined;
-let hasStarted = false;
+let loadedWebAssemblyPlatform = false;
+let started = false;
+let firstUpdate = true;
+let waitForRootComponents = false;
 
 let resolveBootConfigPromise: (value: MonoConfig) => void;
 const bootConfigPromise = new Promise<MonoConfig>(resolve => {
   resolveBootConfigPromise = resolve;
 });
+
+let resolveInitialUpdatePromise: (value: string) => void;
+const initialUpdatePromise = new Promise<string>(resolve => {
+  resolveInitialUpdatePromise = resolve;
+});
+
+export function resolveInitialUpdate(value: string): void {
+  resolveInitialUpdatePromise(value);
+  firstUpdate = false;
+}
+
+export function isFirstUpdate() {
+  return firstUpdate;
+}
+
+export function setWaitForRootComponents(): void {
+  waitForRootComponents = true;
+}
 
 export function setWebAssemblyOptions(webAssemblyOptions?: Partial<WebAssemblyStartOptions>) {
   if (options) {
@@ -35,11 +56,11 @@ export function setWebAssemblyOptions(webAssemblyOptions?: Partial<WebAssemblySt
 }
 
 export async function startWebAssembly(components: RootComponentManager<WebAssemblyComponentDescriptor>): Promise<void> {
-  if (hasStarted) {
+  if (started) {
     throw new Error('Blazor WebAssembly has already started.');
   }
 
-  hasStarted = true;
+  started = true;
 
   if (inAuthRedirectIframe()) {
     // eslint-disable-next-line @typescript-eslint/no-empty-function
@@ -54,7 +75,7 @@ export async function startWebAssembly(components: RootComponentManager<WebAssem
     // focus, in turn triggering a 'change' event. It may also be possible to listen to other DOM mutation events
     // that are themselves triggered by the application of a renderbatch.
     const renderer = getRendererer(browserRendererId);
-    if (renderer.eventDelegator.getHandler(eventHandlerId)) {
+    if (renderer?.eventDelegator.getHandler(eventHandlerId)) {
       monoPlatform.invokeWhenHeapUnlocked(continuation);
     }
   });
@@ -120,7 +141,12 @@ export async function startWebAssembly(components: RootComponentManager<WebAssem
     getParameterValues: (id) => componentAttacher.getParameterValues(id) || '',
   };
 
-  Blazor._internal.getPersistedState = () => discoverPersistedState(document) || '';
+  Blazor._internal.getPersistedState = () => discoverWebAssemblyPersistedState(document) || '';
+
+  Blazor._internal.getInitialComponentsUpdate = () => initialUpdatePromise;
+
+  Blazor._internal.updateRootComponents = (operations: string) =>
+    Blazor._internal.dotNetExports?.UpdateRootComponentsCore(operations);
 
   Blazor._internal.attachRootComponentToElement = (selector, componentId, rendererId: any) => {
     const element = componentAttacher.resolveRegisteredElement(selector, componentId);
@@ -146,13 +172,36 @@ export async function startWebAssembly(components: RootComponentManager<WebAssem
   api.invokeLibraryInitializers('afterStarted', [Blazor]);
 }
 
+export function hasStartedWebAssembly(): boolean {
+  return started;
+}
+
 export function waitForBootConfigLoaded(): Promise<MonoConfig> {
   return bootConfigPromise;
 }
 
 export function loadWebAssemblyPlatformIfNotStarted(): Promise<void> {
-  platformLoadPromise ??= monoPlatform.load(options ?? {}, resolveBootConfigPromise);
+  platformLoadPromise ??= (async () => {
+    const finalOptions = options ?? {};
+    const existingConfig = options?.configureRuntime;
+    finalOptions.configureRuntime = (config) => {
+      existingConfig?.(config);
+      if (waitForRootComponents) {
+        config.withEnvironmentVariable('__BLAZOR_WEBASSEMBLY_WAIT_FOR_ROOT_COMPONENTS', 'true');
+      }
+    };
+    await monoPlatform.load(finalOptions, resolveBootConfigPromise);
+    loadedWebAssemblyPlatform = true;
+  })();
   return platformLoadPromise;
+}
+
+export function hasStartedLoadingWebAssemblyPlatform(): boolean {
+  return platformLoadPromise !== undefined;
+}
+
+export function hasLoadedWebAssemblyPlatform(): boolean {
+  return loadedWebAssemblyPlatform;
 }
 
 // obsolete, legacy, don't use for new code!
@@ -192,6 +241,18 @@ function invokeJSFromDotNet(callInfo: Pointer, arg0: any, arg1: any, arg2: any):
         throw new Error(`Invalid JS call result type '${resultType}'.`);
     }
   }
+}
+
+export function updateWebAssemblyRootComponents(operations: string): void {
+  if (!started) {
+    throw new Error('Blazor WebAssembly has not started.');
+  }
+
+  if (!Blazor._internal.updateRootComponents) {
+    throw new Error('Blazor WebAssembly has not initialized.');
+  }
+
+  Blazor._internal.updateRootComponents(operations);
 }
 
 function invokeJSJson(identifier: string, targetInstanceId: number, resultType: number, argsJson: string, asyncHandle: number): string | null {

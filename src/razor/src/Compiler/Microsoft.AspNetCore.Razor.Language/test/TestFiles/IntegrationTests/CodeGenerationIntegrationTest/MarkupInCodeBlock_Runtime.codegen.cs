@@ -21,7 +21,7 @@ namespace Microsoft.AspNetCore.Razor.Language.IntegrationTests.TestFiles
 #nullable disable
             WriteLiteral("        <p>Hello from C#, #");
 #nullable restore
-#line (3,30)-(3,42) 6 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/MarkupInCodeBlock.cshtml"
+#line (3,29)-(3,41) 6 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/MarkupInCodeBlock.cshtml"
 Write(i.ToString());
 
 #line default

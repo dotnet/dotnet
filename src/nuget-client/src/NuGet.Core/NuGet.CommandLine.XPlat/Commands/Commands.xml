@@ -11,6 +11,7 @@
       <SingleValueOption Name="password" Shortcut="p" Help="SourcesCommandPasswordDescription"/>
       <SwitchOption Name="store-Password-In-Clear-Text" Help="SourcesCommandStorePasswordInClearTextDescription"/>
       <SingleValueOption Name="valid-Authentication-Types" Help="SourcesCommandValidAuthenticationTypesDescription" />
+      <SingleValueOption Name="protocol-Version" Help="SourcesCommandProtocolVersionDescription"/>
       <SingleValueOption Name="configfile" Help="Option_ConfigFile" />
       <Example Title="Add `nuget.org` as a source:" Command="dotnet nuget add source https://api.nuget.org/v3/index.json -n nuget.org" />
       <Example Title="Add `c:\packages` as a local source:" Command="dotnet nuget add source c:\packages" />
@@ -91,6 +92,7 @@
       <SingleValueOption Name="password" Shortcut="p" Help="SourcesCommandPasswordDescription"/>
       <SwitchOption Name="store-Password-In-Clear-Text" Help="SourcesCommandStorePasswordInClearTextDescription"/>
       <SingleValueOption Name="valid-Authentication-Types" Help="SourcesCommandValidAuthenticationTypesDescription" />
+      <SingleValueOption Name="protocol-Version" Help="SourcesCommandProtocolVersionDescription"/>
       <SingleValueOption Name="configfile" Help="Option_ConfigFile" />
       <Example Title="Update a source with name of `mySource`:" Command="dotnet nuget update source mySource --source c:\packages" />
       <SeeAlso Title="Package source sections in NuGet.config files" Url="/nuget/reference/nuget-config-file#package-source-sections" />

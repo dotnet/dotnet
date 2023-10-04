@@ -68,12 +68,9 @@ internal static class CodeWriterExtensions
                 {
                     break;
                 }
-                else if (@char == '\t')
-                {
-                    spaceCount += writer.TabSize;
-                }
                 else
                 {
+                    // Note that a tab is also replaced with a single space so character indices match.
                     spaceCount++;
                 }
             }
@@ -156,11 +153,11 @@ internal static class CodeWriterExtensions
 
     public static CodeWriter WriteEnhancedLineNumberDirective(this CodeWriter writer, SourceSpan span, int characterOffset)
     {
-        // All values here need to be offset by 1 since #line uses a 1-indexed numbering system.
+        // Line numbers here need to be offset by 1 since #line uses a 1-indexed numbering system.
         var lineNumberAsString = (span.LineIndex + 1).ToString(CultureInfo.InvariantCulture);
-        var characterStartAsString = (span.CharacterIndex + 1).ToString(CultureInfo.InvariantCulture);
+        var characterStartAsString = span.CharacterIndex.ToString(CultureInfo.InvariantCulture);
         var lineEndAsString = (span.LineIndex + 1 + span.LineCount).ToString(CultureInfo.InvariantCulture);
-        var characterEndAsString = (span.EndCharacterIndex + 1).ToString(CultureInfo.InvariantCulture);
+        var characterEndAsString = span.EndCharacterIndex.ToString(CultureInfo.InvariantCulture);
         var characterOffsetAsString = characterOffset.ToString(CultureInfo.InvariantCulture);
         return writer.Write("#line (")
             .Write(lineNumberAsString)

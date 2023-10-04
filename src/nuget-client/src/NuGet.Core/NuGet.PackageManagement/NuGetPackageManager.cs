@@ -1126,7 +1126,7 @@ namespace NuGet.PackageManagement
                 foreach (SourceRepository enabledSource in allSources)
                 {
                     PackageSource source = enabledSource.PackageSource;
-                    if (source.IsHttp && !source.IsHttps)
+                    if (source.IsHttp && !source.IsHttps && !source.AllowInsecureConnections)
                     {
                         nuGetProjectContext.Log(MessageLevel.Warning, Strings.Warning_HttpServerUsage, "update", source.Source);
                     }
@@ -1678,6 +1678,13 @@ namespace NuGet.PackageManagement
 
             if (buildIntegratedProjectsToUpdate.Count != 0)
             {
+                // Only automatically create Source Mappings when there's exclusively BuildIntegratedProjects.
+                if (otherTargetProjectsToUpdate.Count > 0)
+                {
+                    newMappingID = null;
+                    newMappingSource = null;
+                }
+
                 // Run build integrated project preview for all projects at the same time
                 var resolvedActions = await PreviewBuildIntegratedProjectsActionsAsync(
                     buildIntegratedProjectsToUpdate,
@@ -1809,7 +1816,7 @@ namespace NuGet.PackageManagement
             foreach (SourceRepository enabledSource in effectiveSources)
             {
                 PackageSource source = enabledSource.PackageSource;
-                if (source.IsHttp && !source.IsHttps)
+                if (source.IsHttp && !source.IsHttps && !source.AllowInsecureConnections)
                 {
                     nuGetProjectContext.Log(MessageLevel.Warning, Strings.Warning_HttpServerUsage, "install", source.Source);
                 }

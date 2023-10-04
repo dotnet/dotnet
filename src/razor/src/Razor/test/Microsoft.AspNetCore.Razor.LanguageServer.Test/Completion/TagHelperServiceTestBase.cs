@@ -29,9 +29,9 @@ public abstract class TagHelperServiceTestBase : LanguageServerTestBase
     protected const string RazorFile = "test.razor";
 
     protected ImmutableArray<TagHelperDescriptor> DefaultTagHelpers { get; }
-    protected RazorTagHelperCompletionService RazorTagHelperCompletionService { get; }
+    private protected RazorTagHelperCompletionService RazorTagHelperCompletionService { get; }
     internal HtmlFactsService HtmlFactsService { get; }
-    protected TagHelperFactsService TagHelperFactsService { get; }
+    private protected ITagHelperFactsService TagHelperFactsService { get; }
 
     public TagHelperServiceTestBase(ITestOutputHelper testOutput)
         : base(testOutput)
@@ -205,7 +205,7 @@ public abstract class TagHelperServiceTestBase : LanguageServerTestBase
             htmlTagMutator.Build());
 
         HtmlFactsService = new DefaultHtmlFactsService();
-        TagHelperFactsService = new DefaultTagHelperFactsService();
+        TagHelperFactsService = new TagHelperFactsService();
         RazorTagHelperCompletionService = new DefaultRazorTagHelperCompletionService(TagHelperFactsService);
     }
 

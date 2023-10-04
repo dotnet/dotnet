@@ -566,6 +566,8 @@ NuGet.Protocol.IThrottle.Release() -> void
 NuGet.Protocol.IV2FeedParser
 ~NuGet.Protocol.IV2FeedParser.GetPackagesPageAsync(string searchTerm, NuGet.Protocol.Core.Types.SearchFilter filters, int skip, int take, NuGet.Common.ILogger log, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<NuGet.Protocol.V2FeedPage>
 ~NuGet.Protocol.IV2FeedParser.GetSearchPageAsync(string searchTerm, NuGet.Protocol.Core.Types.SearchFilter filters, int skip, int take, NuGet.Common.ILogger log, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<NuGet.Protocol.V2FeedPage>
+NuGet.Protocol.IVulnerabilityInfoResource
+NuGet.Protocol.IVulnerabilityInfoResource.GetVulnerabilityInfoAsync(NuGet.Protocol.Core.Types.SourceCacheContext! cacheContext, NuGet.Common.ILogger! logger, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<NuGet.Protocol.Model.GetVulnerabilityInfoResult!>!
 NuGet.Protocol.InvalidCacheProtocolException
 ~NuGet.Protocol.InvalidCacheProtocolException.InvalidCacheProtocolException(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context) -> void
 ~NuGet.Protocol.InvalidCacheProtocolException.InvalidCacheProtocolException(string message) -> void
@@ -678,6 +680,20 @@ NuGet.Protocol.MetadataResourceV3
 ~NuGet.Protocol.MetadataResourceV3.MetadataResourceV3(NuGet.Protocol.RegistrationResourceV3 regResource) -> void
 NuGet.Protocol.MetadataResourceV3Provider
 NuGet.Protocol.MetadataResourceV3Provider.MetadataResourceV3Provider() -> void
+NuGet.Protocol.Model.GetVulnerabilityInfoResult
+NuGet.Protocol.Model.GetVulnerabilityInfoResult.Exceptions.get -> System.AggregateException?
+NuGet.Protocol.Model.GetVulnerabilityInfoResult.GetVulnerabilityInfoResult(System.Collections.Generic.IReadOnlyList<System.Collections.Generic.IReadOnlyDictionary<string!, System.Collections.Generic.IReadOnlyList<NuGet.Protocol.Model.PackageVulnerabilityInfo!>!>!>? knownVulnerabilities, System.AggregateException? exceptions) -> void
+NuGet.Protocol.Model.GetVulnerabilityInfoResult.KnownVulnerabilities.get -> System.Collections.Generic.IReadOnlyList<System.Collections.Generic.IReadOnlyDictionary<string!, System.Collections.Generic.IReadOnlyList<NuGet.Protocol.Model.PackageVulnerabilityInfo!>!>!>?
+NuGet.Protocol.Model.PackageVulnerabilityInfo
+NuGet.Protocol.Model.PackageVulnerabilityInfo.Equals(NuGet.Protocol.Model.PackageVulnerabilityInfo? other) -> bool
+NuGet.Protocol.Model.PackageVulnerabilityInfo.Url.get -> System.Uri!
+NuGet.Protocol.Model.PackageVulnerabilityInfo.Versions.get -> NuGet.Versioning.VersionRange!
+NuGet.Protocol.Model.V3VulnerabilityIndexEntry
+NuGet.Protocol.Model.V3VulnerabilityIndexEntry.Comment.get -> string?
+NuGet.Protocol.Model.V3VulnerabilityIndexEntry.Name.get -> string!
+NuGet.Protocol.Model.V3VulnerabilityIndexEntry.Updated.get -> string!
+NuGet.Protocol.Model.V3VulnerabilityIndexEntry.Url.get -> System.Uri!
+NuGet.Protocol.Model.V3VulnerabilityIndexEntry.V3VulnerabilityIndexEntry(string! name, System.Uri! url, string! updated, string? comment) -> void
 NuGet.Protocol.NuGetVersionConverter
 NuGet.Protocol.NuGetVersionConverter.NuGetVersionConverter() -> void
 NuGet.Protocol.NullThrottle
@@ -1312,6 +1328,8 @@ NuGet.Protocol.Plugins.UnixAndMonoPlatformsEmbeddedSignatureVerifier.UnixAndMono
 NuGet.Protocol.Plugins.WindowsEmbeddedSignatureVerifier
 NuGet.Protocol.Plugins.WindowsEmbeddedSignatureVerifier.WindowsEmbeddedSignatureVerifier() -> void
 NuGet.Protocol.ProtocolConstants
+NuGet.Protocol.Providers.VulnerabilityInfoResourceV3Provider
+NuGet.Protocol.Providers.VulnerabilityInfoResourceV3Provider.VulnerabilityInfoResourceV3Provider() -> void
 NuGet.Protocol.ProxyAuthenticationHandler
 ~NuGet.Protocol.ProxyAuthenticationHandler.ProxyAuthenticationHandler(System.Net.Http.HttpClientHandler clientHandler, NuGet.Configuration.ICredentialService credentialService, NuGet.Configuration.IProxyCredentialCache credentialCache) -> void
 NuGet.Protocol.RawSearchResourceV3
@@ -1367,6 +1385,10 @@ NuGet.Protocol.RepositorySignatureResource.AllRepositorySigned.get -> bool
 NuGet.Protocol.RepositorySignatureResource.UpdateRepositorySignatureInfo() -> void
 NuGet.Protocol.RepositorySignatureResourceProvider
 NuGet.Protocol.RepositorySignatureResourceProvider.RepositorySignatureResourceProvider() -> void
+NuGet.Protocol.Resources.VulnerabilityInfoResourceV3
+NuGet.Protocol.Resources.VulnerabilityInfoResourceV3.GetVulnerabilityDataAsync(NuGet.Protocol.Model.V3VulnerabilityIndexEntry! vulnerabilityPage, NuGet.Protocol.Core.Types.SourceCacheContext! cacheContext, NuGet.Common.ILogger! logger, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<System.Collections.Generic.IReadOnlyDictionary<string!, System.Collections.Generic.IReadOnlyList<NuGet.Protocol.Model.PackageVulnerabilityInfo!>!>!>!
+NuGet.Protocol.Resources.VulnerabilityInfoResourceV3.GetVulnerabilityFilesAsync(NuGet.Protocol.Core.Types.SourceCacheContext! cacheContext, NuGet.Common.ILogger! log, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<System.Collections.Generic.IReadOnlyList<NuGet.Protocol.Model.V3VulnerabilityIndexEntry!>!>!
+NuGet.Protocol.Resources.VulnerabilityInfoResourceV3.GetVulnerabilityInfoAsync(NuGet.Protocol.Core.Types.SourceCacheContext! cacheContext, NuGet.Common.ILogger! logger, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<NuGet.Protocol.Model.GetVulnerabilityInfoResult!>!
 NuGet.Protocol.SafeBoolConverter
 NuGet.Protocol.SafeBoolConverter.SafeBoolConverter() -> void
 NuGet.Protocol.SafeUriConverter
@@ -1726,6 +1748,8 @@ override NuGet.Protocol.MetadataFieldConverter.CanWrite.get -> bool
 ~override NuGet.Protocol.MetadataResourceV3.GetLatestVersions(System.Collections.Generic.IEnumerable<string> packageIds, bool includePrerelease, bool includeUnlisted, NuGet.Protocol.Core.Types.SourceCacheContext sourceCacheContext, NuGet.Common.ILogger log, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<System.Collections.Generic.KeyValuePair<string, NuGet.Versioning.NuGetVersion>>>
 ~override NuGet.Protocol.MetadataResourceV3.GetVersions(string packageId, bool includePrerelease, bool includeUnlisted, NuGet.Protocol.Core.Types.SourceCacheContext sourceCacheContext, NuGet.Common.ILogger log, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<NuGet.Versioning.NuGetVersion>>
 ~override NuGet.Protocol.MetadataResourceV3Provider.TryCreate(NuGet.Protocol.Core.Types.SourceRepository source, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<System.Tuple<bool, NuGet.Protocol.Core.Types.INuGetResource>>
+override NuGet.Protocol.Model.PackageVulnerabilityInfo.Equals(object? obj) -> bool
+override NuGet.Protocol.Model.PackageVulnerabilityInfo.GetHashCode() -> int
 ~override NuGet.Protocol.NuGetVersionConverter.CanConvert(System.Type objectType) -> bool
 ~override NuGet.Protocol.NuGetVersionConverter.ReadJson(Newtonsoft.Json.JsonReader reader, System.Type objectType, object existingValue, Newtonsoft.Json.JsonSerializer serializer) -> object
 ~override NuGet.Protocol.NuGetVersionConverter.WriteJson(Newtonsoft.Json.JsonWriter writer, object value, Newtonsoft.Json.JsonSerializer serializer) -> void
@@ -1808,6 +1832,7 @@ override NuGet.Protocol.Plugins.StandardOutputReceiver.Close() -> void
 override NuGet.Protocol.Plugins.StandardOutputReceiver.Connect() -> void
 ~override NuGet.Protocol.Plugins.UnixAndMonoPlatformsEmbeddedSignatureVerifier.IsValid(string filePath) -> bool
 ~override NuGet.Protocol.Plugins.WindowsEmbeddedSignatureVerifier.IsValid(string filePath) -> bool
+override NuGet.Protocol.Providers.VulnerabilityInfoResourceV3Provider.TryCreate(NuGet.Protocol.Core.Types.SourceRepository! source, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<System.Tuple<bool, NuGet.Protocol.Core.Types.INuGetResource?>!>!
 ~override NuGet.Protocol.ProxyAuthenticationHandler.SendAsync(System.Net.Http.HttpRequestMessage request, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<System.Net.Http.HttpResponseMessage>
 ~override NuGet.Protocol.RawSearchResourceV3Provider.TryCreate(NuGet.Protocol.Core.Types.SourceRepository source, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<System.Tuple<bool, NuGet.Protocol.Core.Types.INuGetResource>>
 ~override NuGet.Protocol.RegistrationResourceV3Provider.TryCreate(NuGet.Protocol.Core.Types.SourceRepository source, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<System.Tuple<bool, NuGet.Protocol.Core.Types.INuGetResource>>
@@ -2036,7 +2061,9 @@ static readonly NuGet.Protocol.ProxyAuthenticationHandler.MaxAuthRetries -> int
 ~static readonly NuGet.Protocol.ServiceTypes.Version200 -> string
 ~static readonly NuGet.Protocol.ServiceTypes.Version300 -> string
 ~static readonly NuGet.Protocol.ServiceTypes.Version300beta -> string
+~static readonly NuGet.Protocol.ServiceTypes.Version300rc -> string
 ~static readonly NuGet.Protocol.ServiceTypes.Version340 -> string
+~static readonly NuGet.Protocol.ServiceTypes.Version360 -> string
 ~static readonly NuGet.Protocol.ServiceTypes.Version470 -> string
 ~static readonly NuGet.Protocol.ServiceTypes.Version490 -> string
 ~static readonly NuGet.Protocol.ServiceTypes.Version500 -> string

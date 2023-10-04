@@ -14,20 +14,16 @@ Namespace Microsoft.CodeAnalysis.VisualBasic.UseCollectionInitializer
             MemberAccessExpressionSyntax,
             InvocationExpressionSyntax,
             ExpressionStatementSyntax,
-            ForEachStatementSyntax,
-            IfStatementSyntax,
+            LocalDeclarationStatementSyntax,
             VariableDeclaratorSyntax,
             VisualBasicCollectionInitializerAnalyzer)
 
-        Protected Overrides Sub GetPartsOfForeachStatement(statement As ForEachStatementSyntax, ByRef identifier As SyntaxToken, ByRef expression As ExpressionSyntax, ByRef statements As IEnumerable(Of StatementSyntax))
-            ' Only called for collection expressions, which VB does not support
-            Throw ExceptionUtilities.Unreachable()
-        End Sub
+        Protected Overrides ReadOnly Property SyntaxHelper As IUpdateExpressionSyntaxHelper(Of ExpressionSyntax, StatementSyntax) =
+            VisualBasicUpdateExpressionSyntaxHelper.Instance
 
-        Protected Overrides Sub GetPartsOfIfStatement(statement As IfStatementSyntax, ByRef condition As ExpressionSyntax, ByRef whenTrueStatements As IEnumerable(Of StatementSyntax), ByRef whenFalseStatements As IEnumerable(Of StatementSyntax))
-            ' Only called for collection expressions, which VB does not support
-            Throw ExceptionUtilities.Unreachable()
-        End Sub
+        Protected Overrides Function IsInitializerOfLocalDeclarationStatement(localDeclarationStatement As LocalDeclarationStatementSyntax, rootExpression As ObjectCreationExpressionSyntax, ByRef variableDeclarator As VariableDeclaratorSyntax) As Boolean
+            Return VisualBasicObjectCreationHelpers.IsInitializerOfLocalDeclarationStatement(localDeclarationStatement, rootExpression, variableDeclarator)
+        End Function
 
         Protected Overrides Function IsComplexElementInitializer(expression As SyntaxNode) As Boolean
             ' Only called for collection expressions, which VB does not support

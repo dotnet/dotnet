@@ -37,7 +37,7 @@ namespace NuGet.ProjectManagement
         /// Initializes a new <see cref="FolderNuGetProject" /> class.
         /// </summary>
         /// <param name="root">The folder project root path.</param>
-        /// <exception cref="ArgumentNullException">Thrown if <paramref name="root" /> is <c>null</c>.</exception>
+        /// <exception cref="ArgumentNullException">Thrown if <paramref name="root" /> is <see langword="null" />.</exception>
         public FolderNuGetProject(string root)
             : this(root, new PackagePathResolver(root))
         {
@@ -48,9 +48,9 @@ namespace NuGet.ProjectManagement
         /// </summary>
         /// <param name="root">The folder project root path.</param>
         /// <param name="packagePathResolver">A package path resolver.</param>
-        /// <exception cref="ArgumentNullException">Thrown if <paramref name="root" /> is <c>null</c>.</exception>
+        /// <exception cref="ArgumentNullException">Thrown if <paramref name="root" /> is <see langword="null" />.</exception>
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="packagePathResolver" />
-        /// is <c>null</c>.</exception>
+        /// is <see langword="null" />.</exception>
         public FolderNuGetProject(string root, PackagePathResolver packagePathResolver)
             : this(root, packagePathResolver, NuGetFramework.AnyFramework)
         {
@@ -62,9 +62,9 @@ namespace NuGet.ProjectManagement
         /// <param name="root">The folder project root path.</param>
         /// <param name="packagePathResolver">A package path resolver.</param>
         /// <param name="targetFramework">Project target framework.</param>
-        /// <exception cref="ArgumentNullException">Thrown if <paramref name="root" /> is <c>null</c>.</exception>
-        /// <exception cref="ArgumentNullException">Thrown if <paramref name="packagePathResolver" /> is <c>null</c>.</exception>
-        /// <exception cref="ArgumentNullException">Thrown if <paramref name="targetFramework" /> is <c>null</c>.</exception>
+        /// <exception cref="ArgumentNullException">Thrown if <paramref name="root" /> is <see langword="null" />.</exception>
+        /// <exception cref="ArgumentNullException">Thrown if <paramref name="packagePathResolver" /> is <see langword="null" />.</exception>
+        /// <exception cref="ArgumentNullException">Thrown if <paramref name="targetFramework" /> is <see langword="null" />.</exception>
         public FolderNuGetProject(string root, PackagePathResolver packagePathResolver, NuGetFramework targetFramework)
         {
             if (targetFramework == null)
@@ -103,11 +103,11 @@ namespace NuGet.ProjectManagement
         /// The task result (<see cref="Task{TResult}.Result" />) returns a <see cref="bool" />
         /// indication successfulness of the operation.</returns>
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="packageIdentity" />
-        /// is <c>null</c>.</exception>
+        /// is <see langword="null" />.</exception>
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="downloadResourceResult" />
-        /// is <c>null</c>.</exception>
+        /// is <see langword="null" />.</exception>
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="nuGetProjectContext" />
-        /// is <c>null</c>.</exception>
+        /// is <see langword="null" />.</exception>
         /// <exception cref="ArgumentException">Thrown if the package stream for
         /// <paramref name="downloadResourceResult" /> is not seekable.</exception>
         public override Task<bool> InstallPackageAsync(
@@ -250,7 +250,7 @@ namespace NuGet.ProjectManagement
         /// <param name="packageIdentity">A package identity.</param>
         /// <returns>A flag indicating whether or not the package is installed.</returns>
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="packageIdentity" />
-        /// is <c>null</c>.</exception>
+        /// is <see langword="null" />.</exception>
         public bool PackageExists(PackageIdentity packageIdentity)
         {
             if (packageIdentity == null)
@@ -268,7 +268,7 @@ namespace NuGet.ProjectManagement
         /// <param name="packageSaveMode">A package save mode.</param>
         /// <returns>A flag indicating whether or not the package is installed.</returns>
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="packageIdentity" />
-        /// is <c>null</c>.</exception>
+        /// is <see langword="null" />.</exception>
         public bool PackageExists(PackageIdentity packageIdentity, PackageSaveMode packageSaveMode)
         {
             if (packageIdentity == null)
@@ -329,7 +329,7 @@ namespace NuGet.ProjectManagement
         /// <param name="packageIdentity">A package identity.</param>
         /// <returns>A flag indicating whether or not the package is installed.</returns>
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="packageIdentity" />
-        /// is <c>null</c>.</exception>
+        /// is <see langword="null" />.</exception>
         public bool ManifestExists(PackageIdentity packageIdentity)
         {
             if (packageIdentity == null)
@@ -356,7 +356,7 @@ namespace NuGet.ProjectManagement
         /// <param name="packageIdentity">A package identity.</param>
         /// <returns>A flag indicating whether or not the package is installed.</returns>
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="packageIdentity" />
-        /// is <c>null</c>.</exception>
+        /// is <see langword="null" />.</exception>
         public bool PackageAndManifestExists(PackageIdentity packageIdentity)
         {
             if (packageIdentity == null)
@@ -377,9 +377,9 @@ namespace NuGet.ProjectManagement
         /// The task result (<see cref="Task{TResult}.Result" />) returns a <see cref="bool" />
         /// indication successfulness of the operation.</returns>
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="packageIdentity" />
-        /// is <c>null</c>.</exception>
+        /// is <see langword="null" />.</exception>
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="nuGetProjectContext" />
-        /// is <c>null</c>.</exception>
+        /// is <see langword="null" />.</exception>
         /// <exception cref="OperationCanceledException">Thrown if <paramref name="token" />
         /// is cancelled.</exception>
         public async Task<bool> CopySatelliteFilesAsync(
@@ -412,12 +412,12 @@ namespace NuGet.ProjectManagement
         }
 
         /// <summary>
-        /// Gets the package .nupkg file path if it exists; otherwise, <c>null</c>.
+        /// Gets the package .nupkg file path if it exists; otherwise, <see langword="null" />.
         /// </summary>
         /// <param name="packageIdentity">A package identity.</param>
-        /// <returns>The package .nupkg file path if it exists; otherwise, <c>null</c>.</returns>
+        /// <returns>The package .nupkg file path if it exists; otherwise, <see langword="null" />.</returns>
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="packageIdentity" />
-        /// is <c>null</c>.</exception>
+        /// is <see langword="null" />.</exception>
         public string GetInstalledPackageFilePath(PackageIdentity packageIdentity)
         {
             if (packageIdentity == null)
@@ -468,12 +468,12 @@ namespace NuGet.ProjectManagement
         }
 
         /// <summary>
-        /// Gets the package .nuspec file path if it exists; otherwise, <c>null</c>.
+        /// Gets the package .nuspec file path if it exists; otherwise, <see langword="null" />.
         /// </summary>
         /// <param name="packageIdentity">A package identity.</param>
-        /// <returns>The package .nuspec file path if it exists; otherwise, <c>null</c>.</returns>
+        /// <returns>The package .nuspec file path if it exists; otherwise, <see langword="null" />.</returns>
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="packageIdentity" />
-        /// is <c>null</c>.</exception>
+        /// is <see langword="null" />.</exception>
         public string GetInstalledManifestFilePath(PackageIdentity packageIdentity)
         {
             if (packageIdentity == null)
@@ -498,12 +498,12 @@ namespace NuGet.ProjectManagement
         }
 
         /// <summary>
-        /// Gets the package download marker file path if it exists; otherwise, <c>null</c>.
+        /// Gets the package download marker file path if it exists; otherwise, <see langword="null" />.
         /// </summary>
         /// <param name="packageIdentity">A package identity.</param>
-        /// <returns>The package download marker file path if it exists; otherwise, <c>null</c>.</returns>
+        /// <returns>The package download marker file path if it exists; otherwise, <see langword="null" />.</returns>
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="packageIdentity" />
-        /// is <c>null</c>.</exception>
+        /// is <see langword="null" />.</exception>
         public string GetPackageDownloadMarkerFilePath(PackageIdentity packageIdentity)
         {
             if (packageIdentity == null)
@@ -526,12 +526,12 @@ namespace NuGet.ProjectManagement
         }
 
         /// <summary>
-        /// Gets the package directory path if the package exists; otherwise, <c>null</c>.
+        /// Gets the package directory path if the package exists; otherwise, <see langword="null" />.
         /// </summary>
         /// <param name="packageIdentity">A package identity.</param>
-        /// <returns>The package directory path if the package exists; otherwise, <c>null</c>.</returns>
+        /// <returns>The package directory path if the package exists; otherwise, <see langword="null" />.</returns>
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="packageIdentity" />
-        /// is <c>null</c>.</exception>
+        /// is <see langword="null" />.</exception>
         public string GetInstalledPath(PackageIdentity packageIdentity)
         {
             if (packageIdentity == null)
@@ -560,9 +560,9 @@ namespace NuGet.ProjectManagement
         /// The task result (<see cref="Task{TResult}.Result" />) returns a <see cref="bool" />
         /// indication successfulness of the operation.</returns>
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="packageIdentity" />
-        /// is <c>null</c>.</exception>
+        /// is <see langword="null" />.</exception>
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="nuGetProjectContext" />
-        /// is <c>null</c>.</exception>
+        /// is <see langword="null" />.</exception>
         public async Task<bool> DeletePackage(PackageIdentity packageIdentity,
             INuGetProjectContext nuGetProjectContext,
             CancellationToken token)

@@ -916,6 +916,15 @@ namespace NuGet.PackageManagement.UI {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Creating source mappings to &apos;{0}&apos;:.
+        /// </summary>
+        public static string Label_CreatingSourceMappings {
+            get {
+                return ResourceManager.GetString("Label_CreatingSourceMappings", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Date published:.
         /// </summary>
         public static string Label_DatePublished {
@@ -1227,6 +1236,15 @@ namespace NuGet.PackageManagement.UI {
         public static string Label_Repository {
             get {
                 return ResourceManager.GetString("Label_Repository", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Solution.
+        /// </summary>
+        public static string Label_Solution {
+            get {
+                return ResourceManager.GetString("Label_Solution", resourceCulture);
             }
         }
         
@@ -1994,6 +2012,15 @@ namespace NuGet.PackageManagement.UI {
         public static string Text_PackageFormatApply {
             get {
                 return ResourceManager.GetString("Text_PackageFormatApply", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to A package source mapping will be created..
+        /// </summary>
+        public static string Text_PackageMappingsAutoCreate {
+            get {
+                return ResourceManager.GetString("Text_PackageMappingsAutoCreate", resourceCulture);
             }
         }
         

@@ -15,4 +15,6 @@ internal class UpdateBufferRequest
     public string? HostDocumentFilePath { get; init; }
 
     public required IReadOnlyList<TextChange> Changes { get; init; }
+
+    public bool PreviousWasEmpty { get; set; }
 }

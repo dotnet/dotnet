@@ -11,7 +11,8 @@ using Microsoft.AspNetCore.Razor.Language.Legacy;
 using Microsoft.AspNetCore.Razor.LanguageServer.Protocol;
 using Microsoft.AspNetCore.Razor.LanguageServer.Test.Common;
 using Microsoft.AspNetCore.Razor.Test.Common;
-using Microsoft.VisualStudio.LanguageServer.Protocol;
+using Microsoft.CodeAnalysis.Razor.Workspaces;
+using Microsoft.CodeAnalysis.Text;
 using Xunit;
 using Xunit.Abstractions;
 using static Microsoft.AspNetCore.Razor.Language.CommonMetadata;
@@ -20,25 +21,24 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer;
 
 public class RazorDocumentMappingServiceTest : TestBase
 {
+    private readonly FilePathService _filePathService;
+
     public RazorDocumentMappingServiceTest(ITestOutputHelper testOutput)
         : base(testOutput)
     {
+        _filePathService = new FilePathService(TestLanguageServerFeatureOptions.Instance);
     }
 
     [Fact]
-    public void TryMapFromProjectedDocumentRange_Strict_StartOnlyMaps_ReturnsFalse()
+    public void TryMapToHostDocumentRange_Strict_StartOnlyMaps_ReturnsFalse()
     {
         // Arrange
-        var service = new RazorDocumentMappingService(TestLanguageServerFeatureOptions.Instance, new TestDocumentContextFactory(), LoggerFactory);
+        var service = new RazorDocumentMappingService(_filePathService, new TestDocumentContextFactory(), LoggerFactory);
         var codeDoc = CreateCodeDocumentWithCSharpProjection(
             "<p>@DateTime.Now</p>",
             "__o = DateTime.Now;",
             new[] { new SourceMapping(new SourceSpan(4, 12), new SourceSpan(6, 12)) });
-        var projectedRange = new Range()
-        {
-            Start = new Position(0, 10),
-            End = new Position(0, 19),
-        };
+        var projectedRange = new LinePositionSpan(new LinePosition(0, 10), new LinePosition(0, 19));
 
         // Act
         var result = service.TryMapToHostDocumentRange(
@@ -53,19 +53,15 @@ public class RazorDocumentMappingServiceTest : TestBase
     }
 
     [Fact]
-    public void TryMapFromProjectedDocumentRange_Strict_EndOnlyMaps_ReturnsFalse()
+    public void TryMapToHostDocumentRange_Strict_EndOnlyMaps_ReturnsFalse()
     {
         // Arrange
-        var service = new RazorDocumentMappingService(TestLanguageServerFeatureOptions.Instance, new TestDocumentContextFactory(), LoggerFactory);
+        var service = new RazorDocumentMappingService(_filePathService, new TestDocumentContextFactory(), LoggerFactory);
         var codeDoc = CreateCodeDocumentWithCSharpProjection(
             "<p>@DateTime.Now</p>",
             "__o = DateTime.Now;",
             new[] { new SourceMapping(new SourceSpan(4, 12), new SourceSpan(6, 12)) });
-        var projectedRange = new Range()
-        {
-            Start = new Position(0, 0),
-            End = new Position(0, 12),
-        };
+        var projectedRange = new LinePositionSpan(new LinePosition(0, 0), new LinePosition(0, 12));
 
         // Act
         var result = service.TryMapToHostDocumentRange(
@@ -80,24 +76,16 @@ public class RazorDocumentMappingServiceTest : TestBase
     }
 
     [Fact]
-    public void TryMapFromProjectedDocumentRange_Strict_StartAndEndMap_ReturnsTrue()
+    public void TryMapToHostDocumentRange_Strict_StartAndEndMap_ReturnsTrue()
     {
         // Arrange
-        var service = new RazorDocumentMappingService(TestLanguageServerFeatureOptions.Instance, new TestDocumentContextFactory(), LoggerFactory);
+        var service = new RazorDocumentMappingService(_filePathService, new TestDocumentContextFactory(), LoggerFactory);
         var codeDoc = CreateCodeDocumentWithCSharpProjection(
             "<p>@DateTime.Now</p>",
             "__o = DateTime.Now;",
             new[] { new SourceMapping(new SourceSpan(4, 12), new SourceSpan(6, 12)) });
-        var projectedRange = new Range()
-        {
-            Start = new Position(0, 6),
-            End = new Position(0, 18),
-        };
-        var expectedOriginalRange = new Range()
-        {
-            Start = new Position(0, 4),
-            End = new Position(0, 16)
-        };
+        var projectedRange = new LinePositionSpan(new LinePosition(0, 6), new LinePosition(0, 18));
+        var expectedOriginalRange = new LinePositionSpan(new LinePosition(0, 4), new LinePosition(0, 16));
 
         // Act
         var result = service.TryMapToHostDocumentRange(
@@ -112,24 +100,16 @@ public class RazorDocumentMappingServiceTest : TestBase
     }
 
     [Fact]
-    public void TryMapFromProjectedDocumentRange_Inclusive_DirectlyMaps_ReturnsTrue()
+    public void TryMapToHostDocumentRange_Inclusive_DirectlyMaps_ReturnsTrue()
     {
         // Arrange
-        var service = new RazorDocumentMappingService(TestLanguageServerFeatureOptions.Instance, new TestDocumentContextFactory(), LoggerFactory);
+        var service = new RazorDocumentMappingService(_filePathService, new TestDocumentContextFactory(), LoggerFactory);
         var codeDoc = CreateCodeDocumentWithCSharpProjection(
             "<p>@DateTime.Now</p>",
             "__o = DateTime.Now;",
             new[] { new SourceMapping(new SourceSpan(4, 12), new SourceSpan(6, 12)) });
-        var projectedRange = new Range()
-        {
-            Start = new Position(0, 6),
-            End = new Position(0, 18),
-        };
-        var expectedOriginalRange = new Range()
-        {
-            Start = new Position(0, 4),
-            End = new Position(0, 16)
-        };
+        var projectedRange = new LinePositionSpan(new LinePosition(0, 6), new LinePosition(0, 18));
+        var expectedOriginalRange = new LinePositionSpan(new LinePosition(0, 4), new LinePosition(0, 16));
 
         // Act
         var result = service.TryMapToHostDocumentRange(
@@ -144,24 +124,16 @@ public class RazorDocumentMappingServiceTest : TestBase
     }
 
     [Fact]
-    public void TryMapFromProjectedDocumentRange_Inclusive_StartSinglyIntersects_ReturnsTrue()
+    public void TryMapToHostDocumentRange_Inclusive_StartSinglyIntersects_ReturnsTrue()
     {
         // Arrange
-        var service = new RazorDocumentMappingService(TestLanguageServerFeatureOptions.Instance, new TestDocumentContextFactory(), LoggerFactory);
+        var service = new RazorDocumentMappingService(_filePathService, new TestDocumentContextFactory(), LoggerFactory);
         var codeDoc = CreateCodeDocumentWithCSharpProjection(
             "<p>@DateTime.Now</p>",
             "__o = DateTime.Now;",
             new[] { new SourceMapping(new SourceSpan(4, 12), new SourceSpan(6, 12)) });
-        var projectedRange = new Range()
-        {
-            Start = new Position(0, 10),
-            End = new Position(0, 19),
-        };
-        var expectedOriginalRange = new Range()
-        {
-            Start = new Position(0, 4),
-            End = new Position(0, 16)
-        };
+        var projectedRange = new LinePositionSpan(new LinePosition(0, 10), new LinePosition(0, 19));
+        var expectedOriginalRange = new LinePositionSpan(new LinePosition(0, 4), new LinePosition(0, 16));
 
         // Act
         var result = service.TryMapToHostDocumentRange(
@@ -176,24 +148,16 @@ public class RazorDocumentMappingServiceTest : TestBase
     }
 
     [Fact]
-    public void TryMapFromProjectedDocumentRange_Inclusive_EndSinglyIntersects_ReturnsTrue()
+    public void TryMapToHostDocumentRange_Inclusive_EndSinglyIntersects_ReturnsTrue()
     {
         // Arrange
-        var service = new RazorDocumentMappingService(TestLanguageServerFeatureOptions.Instance, new TestDocumentContextFactory(), LoggerFactory);
+        var service = new RazorDocumentMappingService(_filePathService, new TestDocumentContextFactory(), LoggerFactory);
         var codeDoc = CreateCodeDocumentWithCSharpProjection(
             "<p>@DateTime.Now</p>",
             "__o = DateTime.Now;",
             new[] { new SourceMapping(new SourceSpan(4, 12), new SourceSpan(6, 12)) });
-        var projectedRange = new Range()
-        {
-            Start = new Position(0, 0),
-            End = new Position(0, 10),
-        };
-        var expectedOriginalRange = new Range()
-        {
-            Start = new Position(0, 4),
-            End = new Position(0, 16)
-        };
+        var projectedRange = new LinePositionSpan(new LinePosition(0, 0), new LinePosition(0, 10));
+        var expectedOriginalRange = new LinePositionSpan(new LinePosition(0, 4), new LinePosition(0, 16));
 
         // Act
         var result = service.TryMapToHostDocumentRange(
@@ -208,10 +172,10 @@ public class RazorDocumentMappingServiceTest : TestBase
     }
 
     [Fact]
-    public void TryMapFromProjectedDocumentRange_Inclusive_StartDoublyIntersects_ReturnsFalse()
+    public void TryMapToHostDocumentRange_Inclusive_StartDoublyIntersects_ReturnsFalse()
     {
         // Arrange
-        var service = new RazorDocumentMappingService(TestLanguageServerFeatureOptions.Instance, new TestDocumentContextFactory(), LoggerFactory);
+        var service = new RazorDocumentMappingService(_filePathService, new TestDocumentContextFactory(), LoggerFactory);
         var codeDoc = CreateCodeDocumentWithCSharpProjection(
             "<p>@DateTime.Now</p>",
             "__o = DateTime.Now;",
@@ -220,11 +184,7 @@ public class RazorDocumentMappingServiceTest : TestBase
                 new SourceMapping(new SourceSpan(4, 8), new SourceSpan(6, 8)), // DateTime
                 new SourceMapping(new SourceSpan(12, 4), new SourceSpan(14, 4)) // .Now
             });
-        var projectedRange = new Range()
-        {
-            Start = new Position(0, 14),
-            End = new Position(0, 19),
-        };
+        var projectedRange = new LinePositionSpan(new LinePosition(0, 14), new LinePosition(0, 19));
 
         // Act
         var result = service.TryMapToHostDocumentRange(
@@ -239,10 +199,10 @@ public class RazorDocumentMappingServiceTest : TestBase
     }
 
     [Fact]
-    public void TryMapFromProjectedDocumentRange_Inclusive_EndDoublyIntersects_ReturnsFalse()
+    public void TryMapToHostDocumentRange_Inclusive_EndDoublyIntersects_ReturnsFalse()
     {
         // Arrange
-        var service = new RazorDocumentMappingService(TestLanguageServerFeatureOptions.Instance, new TestDocumentContextFactory(), LoggerFactory);
+        var service = new RazorDocumentMappingService(_filePathService, new TestDocumentContextFactory(), LoggerFactory);
         var codeDoc = CreateCodeDocumentWithCSharpProjection(
             "<p>@DateTime.Now</p>",
             "__o = DateTime.Now;",
@@ -251,11 +211,7 @@ public class RazorDocumentMappingServiceTest : TestBase
                 new SourceMapping(new SourceSpan(4, 8), new SourceSpan(6, 8)), // DateTime
                 new SourceMapping(new SourceSpan(12, 4), new SourceSpan(14, 4)) // .Now
             });
-        var projectedRange = new Range()
-        {
-            Start = new Position(0, 0),
-            End = new Position(0, 14),
-        };
+        var projectedRange = new LinePositionSpan(new LinePosition(0, 0), new LinePosition(0, 14));
 
         // Act
         var result = service.TryMapToHostDocumentRange(
@@ -270,24 +226,16 @@ public class RazorDocumentMappingServiceTest : TestBase
     }
 
     [Fact]
-    public void TryMapFromProjectedDocumentRange_Inclusive_OverlapsSingleMapping_ReturnsTrue()
+    public void TryMapToHostDocumentRange_Inclusive_OverlapsSingleMapping_ReturnsTrue()
     {
         // Arrange
-        var service = new RazorDocumentMappingService(TestLanguageServerFeatureOptions.Instance, new TestDocumentContextFactory(), LoggerFactory);
+        var service = new RazorDocumentMappingService(_filePathService, new TestDocumentContextFactory(), LoggerFactory);
         var codeDoc = CreateCodeDocumentWithCSharpProjection(
             "<p>@DateTime.Now</p>",
             "__o = DateTime.Now;",
             new[] { new SourceMapping(new SourceSpan(4, 12), new SourceSpan(6, 12)) });
-        var projectedRange = new Range()
-        {
-            Start = new Position(0, 0),
-            End = new Position(0, 19),
-        };
-        var expectedOriginalRange = new Range()
-        {
-            Start = new Position(0, 4),
-            End = new Position(0, 16)
-        };
+        var projectedRange = new LinePositionSpan(new LinePosition(0, 0), new LinePosition(0, 19));
+        var expectedOriginalRange = new LinePositionSpan(new LinePosition(0, 4), new LinePosition(0, 16));
 
         // Act
         var result = service.TryMapToHostDocumentRange(
@@ -302,10 +250,10 @@ public class RazorDocumentMappingServiceTest : TestBase
     }
 
     [Fact]
-    public void TryMapFromProjectedDocumentRange_Inclusive_OverlapsTwoMappings_ReturnsFalse()
+    public void TryMapToHostDocumentRange_Inclusive_OverlapsTwoMappings_ReturnsFalse()
     {
         // Arrange
-        var service = new RazorDocumentMappingService(TestLanguageServerFeatureOptions.Instance, new TestDocumentContextFactory(), LoggerFactory);
+        var service = new RazorDocumentMappingService(_filePathService, new TestDocumentContextFactory(), LoggerFactory);
         var codeDoc = CreateCodeDocumentWithCSharpProjection(
             "<p>@DateTime.Now</p>",
             "__o = DateTime.Now;",
@@ -314,11 +262,7 @@ public class RazorDocumentMappingServiceTest : TestBase
                 new SourceMapping(new SourceSpan(4, 8), new SourceSpan(6, 8)), // DateTime
                 new SourceMapping(new SourceSpan(12, 4), new SourceSpan(14, 4)) // .Now
             });
-        var projectedRange = new Range()
-        {
-            Start = new Position(0, 0),
-            End = new Position(0, 19),
-        };
+        var projectedRange = new LinePositionSpan(new LinePosition(0, 0), new LinePosition(0, 19));
 
         // Act
         var result = service.TryMapToHostDocumentRange(
@@ -333,24 +277,16 @@ public class RazorDocumentMappingServiceTest : TestBase
     }
 
     [Fact]
-    public void TryMapFromProjectedDocumentRange_Inferred_DirectlyMaps_ReturnsTrue()
+    public void TryMapToHostDocumentRange_Inferred_DirectlyMaps_ReturnsTrue()
     {
         // Arrange
-        var service = new RazorDocumentMappingService(TestLanguageServerFeatureOptions.Instance, new TestDocumentContextFactory(), LoggerFactory);
+        var service = new RazorDocumentMappingService(_filePathService, new TestDocumentContextFactory(), LoggerFactory);
         var codeDoc = CreateCodeDocumentWithCSharpProjection(
             "<p>@DateTime.Now</p>",
             "__o = DateTime.Now;",
             new[] { new SourceMapping(new SourceSpan(4, 12), new SourceSpan(6, 12)) });
-        var projectedRange = new Range()
-        {
-            Start = new Position(0, 6),
-            End = new Position(0, 18),
-        };
-        var expectedOriginalRange = new Range()
-        {
-            Start = new Position(0, 4),
-            End = new Position(0, 16)
-        };
+        var projectedRange = new LinePositionSpan(new LinePosition(0, 6), new LinePosition(0, 18));
+        var expectedOriginalRange = new LinePositionSpan(new LinePosition(0, 4), new LinePosition(0, 16));
 
         // Act
         var result = service.TryMapToHostDocumentRange(
@@ -365,19 +301,15 @@ public class RazorDocumentMappingServiceTest : TestBase
     }
 
     [Fact]
-    public void TryMapFromProjectedDocumentRange_Inferred_BeginningOfDocAndProjection_ReturnsFalse()
+    public void TryMapToHostDocumentRange_Inferred_BeginningOfDocAndProjection_ReturnsFalse()
     {
         // Arrange
-        var service = new RazorDocumentMappingService(TestLanguageServerFeatureOptions.Instance, new TestDocumentContextFactory(), LoggerFactory);
+        var service = new RazorDocumentMappingService(_filePathService, new TestDocumentContextFactory(), LoggerFactory);
         var codeDoc = CreateCodeDocumentWithCSharpProjection(
             "@<unclosed></unclosed><p>@DateTime.Now</p>",
             "(__builder) => { };__o = DateTime.Now;",
             new[] { new SourceMapping(new SourceSpan(26, 12), new SourceSpan(25, 12)) });
-        var projectedRange = new Range()
-        {
-            Start = new Position(0, 0),
-            End = new Position(0, 19),
-        };
+        var projectedRange = new LinePositionSpan(new LinePosition(0, 0), new LinePosition(0, 19));
 
         // Act
         var result = service.TryMapToHostDocumentRange(
@@ -388,14 +320,14 @@ public class RazorDocumentMappingServiceTest : TestBase
 
         // Assert
         Assert.False(result);
-        Assert.Null(originalRange);
+        Assert.Equal(default, originalRange);
     }
 
     [Fact]
-    public void TryMapFromProjectedDocumentRange_Inferred_InbetweenProjections_ReturnsTrue()
+    public void TryMapToHostDocumentRange_Inferred_InbetweenProjections_ReturnsTrue()
     {
         // Arrange
-        var service = new RazorDocumentMappingService(TestLanguageServerFeatureOptions.Instance, new TestDocumentContextFactory(), LoggerFactory);
+        var service = new RazorDocumentMappingService(_filePathService, new TestDocumentContextFactory(), LoggerFactory);
         var codeDoc = CreateCodeDocumentWithCSharpProjection(
             "@{ var abc = @<unclosed></unclosed> }",
             " var abc =  (__builder) => { } ",
@@ -403,16 +335,8 @@ public class RazorDocumentMappingServiceTest : TestBase
                 new SourceMapping(new SourceSpan(2, 11), new SourceSpan(0, 11)),
                 new SourceMapping(new SourceSpan(35, 1), new SourceSpan(30, 1)),
             });
-        var projectedRange = new Range()
-        {
-            Start = new Position(0, 12),
-            End = new Position(0, 29),
-        };
-        var expectedOriginalRange = new Range()
-        {
-            Start = new Position(0, 13),
-            End = new Position(0, 35)
-        };
+        var projectedRange = new LinePositionSpan(new LinePosition(0, 12), new LinePosition(0, 29));
+        var expectedOriginalRange = new LinePositionSpan(new LinePosition(0, 13), new LinePosition(0, 35));
 
         // Act
         var result = service.TryMapToHostDocumentRange(
@@ -427,24 +351,16 @@ public class RazorDocumentMappingServiceTest : TestBase
     }
 
     [Fact]
-    public void TryMapFromProjectedDocumentRange_Inferred_InbetweenProjectionAndEndOfDoc_ReturnsTrue()
+    public void TryMapToHostDocumentRange_Inferred_InbetweenProjectionAndEndOfDoc_ReturnsTrue()
     {
         // Arrange
-        var service = new RazorDocumentMappingService(TestLanguageServerFeatureOptions.Instance, new TestDocumentContextFactory(), LoggerFactory);
+        var service = new RazorDocumentMappingService(_filePathService, new TestDocumentContextFactory(), LoggerFactory);
         var codeDoc = CreateCodeDocumentWithCSharpProjection(
             "@{ var abc = @<unclosed></unclosed>",
             " var abc =  (__builder) => { }",
             new[] { new SourceMapping(new SourceSpan(2, 11), new SourceSpan(0, 11)), });
-        var projectedRange = new Range()
-        {
-            Start = new Position(0, 12),
-            End = new Position(0, 29),
-        };
-        var expectedOriginalRange = new Range()
-        {
-            Start = new Position(0, 13),
-            End = new Position(0, 35)
-        };
+        var projectedRange = new LinePositionSpan(new LinePosition(0, 12), new LinePosition(0, 29));
+        var expectedOriginalRange = new LinePositionSpan(new LinePosition(0, 13), new LinePosition(0, 35));
 
         // Act
         var result = service.TryMapToHostDocumentRange(
@@ -459,10 +375,32 @@ public class RazorDocumentMappingServiceTest : TestBase
     }
 
     [Fact]
-    public void TryMapToProjectedDocumentPosition_NotMatchingAnyMapping()
+    public void TryMapToHostDocumentRange_Inferred_OutsideDoc_ReturnsFalse()
     {
         // Arrange
-        var service = new RazorDocumentMappingService(TestLanguageServerFeatureOptions.Instance, new TestDocumentContextFactory(), LoggerFactory);
+        var service = new RazorDocumentMappingService(_filePathService, new TestDocumentContextFactory(), LoggerFactory);
+        var codeDoc = CreateCodeDocumentWithCSharpProjection(
+            "@{ var abc = @<unclosed></unclosed>",
+            " var abc =  (__builder) => { }",
+            new[] { new SourceMapping(new SourceSpan(2, 11), new SourceSpan(0, 11)), });
+        var projectedRange = new LinePositionSpan(new LinePosition(2, 12), new LinePosition(2, 29));
+
+        // Act
+        var result = service.TryMapToHostDocumentRange(
+            codeDoc.GetCSharpDocument(),
+            projectedRange,
+            MappingBehavior.Inferred,
+            out var originalRange);
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void TryMapToGeneratedDocumentPosition_NotMatchingAnyMapping()
+    {
+        // Arrange
+        var service = new RazorDocumentMappingService(_filePathService, new TestDocumentContextFactory(), LoggerFactory);
         var codeDoc = CreateCodeDocumentWithCSharpProjection(
             "test razor source",
             "test C# source",
@@ -482,10 +420,10 @@ public class RazorDocumentMappingServiceTest : TestBase
     }
 
     [Fact]
-    public void TryMapToProjectedDocumentPosition_CSharp_OnLeadingEdge()
+    public void TryMapToGeneratedDocumentPosition_CSharp_OnLeadingEdge()
     {
         // Arrange
-        var service = new RazorDocumentMappingService(TestLanguageServerFeatureOptions.Instance, new TestDocumentContextFactory(), LoggerFactory);
+        var service = new RazorDocumentMappingService(_filePathService, new TestDocumentContextFactory(), LoggerFactory);
         var codeDoc = CreateCodeDocumentWithCSharpProjection(
             "Line 1\nLine 2 @{ var abc;\nvar def; }",
             "\n// Prefix\n var abc;\nvar def; \n// Suffix",
@@ -507,15 +445,15 @@ public class RazorDocumentMappingServiceTest : TestBase
         }
         else
         {
-            Assert.False(true, $"{service.TryMapToGeneratedDocumentPosition} should have returned true");
+            Assert.False(true, $"{nameof(service.TryMapToGeneratedDocumentPosition)} should have returned true");
         }
     }
 
     [Fact]
-    public void TryMapToProjectedDocumentPosition_CSharp_InMiddle()
+    public void TryMapToGeneratedDocumentPosition_CSharp_InMiddle()
     {
         // Arrange
-        var service = new RazorDocumentMappingService(TestLanguageServerFeatureOptions.Instance, new TestDocumentContextFactory(), LoggerFactory);
+        var service = new RazorDocumentMappingService(_filePathService, new TestDocumentContextFactory(), LoggerFactory);
         var codeDoc = CreateCodeDocumentWithCSharpProjection(
             "Line 1\nLine 2 @{ var abc;\nvar def; }",
             "\n// Prefix\n var abc;\nvar def; \n// Suffix",
@@ -537,15 +475,15 @@ public class RazorDocumentMappingServiceTest : TestBase
         }
         else
         {
-            Assert.False(true, "TryMapToProjectedDocumentPosition should have been true");
+            Assert.False(true, "TryMapToGeneratedDocumentPosition should have been true");
         }
     }
 
     [Fact]
-    public void TryMapToProjectedDocumentPosition_CSharp_OnTrailingEdge()
+    public void TryMapToGeneratedDocumentPosition_CSharp_OnTrailingEdge()
     {
         // Arrange
-        var service = new RazorDocumentMappingService(TestLanguageServerFeatureOptions.Instance, new TestDocumentContextFactory(), LoggerFactory);
+        var service = new RazorDocumentMappingService(_filePathService, new TestDocumentContextFactory(), LoggerFactory);
         var codeDoc = CreateCodeDocumentWithCSharpProjection(
             "Line 1\nLine 2 @{ var abc;\nvar def; }",
             "\n// Prefix\n var abc;\nvar def; \n// Suffix",
@@ -567,15 +505,15 @@ public class RazorDocumentMappingServiceTest : TestBase
         }
         else
         {
-            Assert.True(false, "TryMapToProjectedDocumentPosition should have returned true");
+            Assert.True(false, "TryMapToGeneratedDocumentPosition should have returned true");
         }
     }
 
     [Fact]
-    public void TryMapFromProjectedDocumentPosition_NotMatchingAnyMapping()
+    public void TryMapToHostDocumentPosition_NotMatchingAnyMapping()
     {
         // Arrange
-        var service = new RazorDocumentMappingService(TestLanguageServerFeatureOptions.Instance, new TestDocumentContextFactory(), LoggerFactory);
+        var service = new RazorDocumentMappingService(_filePathService, new TestDocumentContextFactory(), LoggerFactory);
         var codeDoc = CreateCodeDocumentWithCSharpProjection(
             razorSource: "test razor source",
             projectedCSharpSource: "projectedCSharpSource: test C# source",
@@ -595,10 +533,10 @@ public class RazorDocumentMappingServiceTest : TestBase
     }
 
     [Fact]
-    public void TryMapFromProjectedDocumentPosition_CSharp_OnLeadingEdge()
+    public void TryMapToHostDocumentPosition_CSharp_OnLeadingEdge()
     {
         // Arrange
-        var service = new RazorDocumentMappingService(TestLanguageServerFeatureOptions.Instance, new TestDocumentContextFactory(), LoggerFactory);
+        var service = new RazorDocumentMappingService(_filePathService, new TestDocumentContextFactory(), LoggerFactory);
         var codeDoc = CreateCodeDocumentWithCSharpProjection(
             razorSource: "Line 1\nLine 2 @{ var abc;\nvar def; }",
             projectedCSharpSource: "\n// Prefix\n var abc;\nvar def; \n// Suffix",
@@ -625,10 +563,10 @@ public class RazorDocumentMappingServiceTest : TestBase
     }
 
     [Fact]
-    public void TryMapFromProjectedDocumentPosition_CSharp_InMiddle()
+    public void TryMapToHostDocumentPosition_CSharp_InMiddle()
     {
         // Arrange
-        var service = new RazorDocumentMappingService(TestLanguageServerFeatureOptions.Instance, new TestDocumentContextFactory(), LoggerFactory);
+        var service = new RazorDocumentMappingService(_filePathService, new TestDocumentContextFactory(), LoggerFactory);
         var codeDoc = CreateCodeDocumentWithCSharpProjection(
             razorSource: "Line 1\nLine 2 @{ var abc;\nvar def; }",
             projectedCSharpSource: "\n// Prefix\n var abc;\nvar def; \n// Suffix",
@@ -655,10 +593,10 @@ public class RazorDocumentMappingServiceTest : TestBase
     }
 
     [Fact]
-    public void TryMapFromProjectedDocumentPosition_CSharp_OnTrailingEdge()
+    public void TryMapToHostDocumentPosition_CSharp_OnTrailingEdge()
     {
         // Arrange
-        var service = new RazorDocumentMappingService(TestLanguageServerFeatureOptions.Instance, new TestDocumentContextFactory(), LoggerFactory);
+        var service = new RazorDocumentMappingService(_filePathService, new TestDocumentContextFactory(), LoggerFactory);
         var codeDoc = CreateCodeDocumentWithCSharpProjection(
             razorSource: "Line 1\nLine 2 @{ var abc;\nvar def; }",
             projectedCSharpSource: "\n// Prefix\n var abc;\nvar def; \n// Suffix",
@@ -685,10 +623,10 @@ public class RazorDocumentMappingServiceTest : TestBase
     }
 
     [Fact]
-    public void TryMapToProjectedDocumentRange_CSharp()
+    public void TryMapToGeneratedDocumentRange_CSharp()
     {
         // Arrange
-        var service = new RazorDocumentMappingService(TestLanguageServerFeatureOptions.Instance, new TestDocumentContextFactory(), LoggerFactory);
+        var service = new RazorDocumentMappingService(_filePathService, new TestDocumentContextFactory(), LoggerFactory);
         var codeDoc = CreateCodeDocumentWithCSharpProjection(
             razorSource: "Line 1\nLine 2 @{ var abc;\nvar def; }",
             projectedCSharpSource: "\n// Prefix\n var abc;\nvar def; \n// Suffix",
@@ -696,7 +634,7 @@ public class RazorDocumentMappingServiceTest : TestBase
                 new SourceMapping(new SourceSpan(0, 1), new SourceSpan(0, 1)),
                 new SourceMapping(new SourceSpan(16, 19), new SourceSpan(11, 19))
             });
-        var range = new Range { Start = new Position(1, 10), End = new Position(1, 13) };
+        var range = new LinePositionSpan(new LinePosition(1, 10), new LinePosition(1, 13));
 
         // Act & Assert
         if (service.TryMapToGeneratedDocumentRange(
@@ -716,17 +654,17 @@ public class RazorDocumentMappingServiceTest : TestBase
     }
 
     [Fact]
-    public void TryMapToProjectedDocumentRange_CSharp_MissingSourceMappings()
+    public void TryMapToGeneratedDocumentRange_CSharp_MissingSourceMappings()
     {
         // Arrange
-        var service = new RazorDocumentMappingService(TestLanguageServerFeatureOptions.Instance, new TestDocumentContextFactory(), LoggerFactory);
+        var service = new RazorDocumentMappingService(_filePathService, new TestDocumentContextFactory(), LoggerFactory);
         var codeDoc = CreateCodeDocumentWithCSharpProjection(
             razorSource: "Line 1\nLine 2 @{ var abc;\nvar def; }",
             projectedCSharpSource: "\n// Prefix\n var abc;\nvar def; \n// Suffix",
             new[] {
                 new SourceMapping(new SourceSpan(0, 1), new SourceSpan(0, 1)),
             });
-        var range = new Range { Start = new Position(1, 10), End = new Position(1, 13) };
+        var range = new LinePositionSpan(new LinePosition(1, 10), new LinePosition(1, 13));
 
         // Act
         var result = service.TryMapToGeneratedDocumentRange(
@@ -740,10 +678,10 @@ public class RazorDocumentMappingServiceTest : TestBase
     }
 
     [Fact]
-    public void TryMapToProjectedDocumentRange_CSharp_End_LessThan_Start()
+    public void TryMapToGeneratedDocumentRange_CSharp_End_LessThan_Start()
     {
         // Arrange
-        var service = new RazorDocumentMappingService(TestLanguageServerFeatureOptions.Instance, new TestDocumentContextFactory(), LoggerFactory);
+        var service = new RazorDocumentMappingService(_filePathService, new TestDocumentContextFactory(), LoggerFactory);
         var codeDoc = CreateCodeDocumentWithCSharpProjection(
             razorSource: "Line 1\nLine 2 @{ var abc;\nvar def; }",
             projectedCSharpSource: "\n// Prefix\n var abc;\nvar def; \n// Suffix",
@@ -752,7 +690,7 @@ public class RazorDocumentMappingServiceTest : TestBase
                 new SourceMapping(new SourceSpan(16, 3), new SourceSpan(11, 3)),
                 new SourceMapping(new SourceSpan(19, 10), new SourceSpan(5, 10))
             });
-        var range = new Range { Start = new Position(1, 10), End = new Position(1, 13) };
+        var range = new LinePositionSpan(new LinePosition(1, 10), new LinePosition(1, 13));
 
         // Act
         var result = service.TryMapToGeneratedDocumentRange(

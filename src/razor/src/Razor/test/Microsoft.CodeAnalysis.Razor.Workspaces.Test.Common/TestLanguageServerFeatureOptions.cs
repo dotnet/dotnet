@@ -9,13 +9,17 @@ internal class TestLanguageServerFeatureOptions : LanguageServerFeatureOptions
 {
     public static readonly LanguageServerFeatureOptions Instance = new TestLanguageServerFeatureOptions();
 
-    private TestLanguageServerFeatureOptions()
+    private bool _includeProjectKeyInGeneratedFilePath;
+
+    public TestLanguageServerFeatureOptions(
+        bool includeProjectKeyInGeneratedFilePath = false)
     {
+        _includeProjectKeyInGeneratedFilePath = includeProjectKeyInGeneratedFilePath;
     }
 
     public override bool SupportsFileManipulation => false;
 
-    public override string ProjectConfigurationFileName => "project.razor.json";
+    public override string ProjectConfigurationFileName => "project.razor.bin";
 
     public override string CSharpVirtualDocumentSuffix => ".ide.g.cs";
 
@@ -25,13 +29,15 @@ internal class TestLanguageServerFeatureOptions : LanguageServerFeatureOptions
 
     public override bool SingleServerSupport => false;
 
-    public override bool SupportsDelegatedCodeActions => false;
-
-    public override bool SupportsDelegatedDiagnostics => true;
+    public override bool DelegateToCSharpOnDiagnosticPublish => true;
 
     public override bool ReturnCodeActionAndRenamePathsWithPrefixedSlash => false;
 
     public override bool ShowAllCSharpCodeActions => false;
 
+    public override bool UsePreciseSemanticTokenRanges => true;
+
     public override bool UpdateBuffersForClosedDocuments => false;
+
+    public override bool IncludeProjectKeyInGeneratedFilePath => _includeProjectKeyInGeneratedFilePath;
 }

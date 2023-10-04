@@ -3,16 +3,16 @@
 
 namespace Microsoft.NET.Sdk.Publish.Tasks.Tasks.MsDeploy
 {
+    using System.Diagnostics;
+    using System.IO;
     using Microsoft.Build.Utilities;
+    using Microsoft.NET.Sdk.Publish.Tasks.MsDeploy;
+    using Microsoft.NET.Sdk.Publish.Tasks.Properties;
+    using Microsoft.NET.Sdk.Publish.Tasks.Xdt;
+    using Microsoft.Web.XmlTransform;
     using Framework = Build.Framework;
     using Utilities = Build.Utilities;
     using Xml = System.Xml;
-    using System.Diagnostics;
-    using Microsoft.NET.Sdk.Publish.Tasks.MsDeploy;
-    using Microsoft.Web.XmlTransform;
-    using Microsoft.NET.Sdk.Publish.Tasks.Xdt;
-    using System.IO;
-    using Microsoft.NET.Sdk.Publish.Tasks.Properties;
 
     public class ImportParameterFile : Task
     {
@@ -29,7 +29,7 @@ namespace Microsoft.NET.Sdk.Publish.Tasks.Tasks.MsDeploy
         [Framework.Output]
         public Framework.ITaskItem[] Result
         {
-            get { return this.m_parametersList.ToArray(); }
+            get { return m_parametersList.ToArray(); }
         }
 
 

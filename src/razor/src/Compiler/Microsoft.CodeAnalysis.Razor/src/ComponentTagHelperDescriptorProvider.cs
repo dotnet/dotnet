@@ -162,6 +162,11 @@ internal class ComponentTagHelperDescriptorProvider : RazorEngineFeatureBase, IT
             }
         }
 
+        if (HasRenderModeDirective(type))
+        {
+            metadata.Add(MakeTrue(ComponentMetadata.Component.HasRenderModeDirectiveKey));
+        }
+
         var xml = type.GetDocumentationCommentXml();
         if (!string.IsNullOrEmpty(xml))
         {
@@ -691,6 +696,25 @@ internal class ComponentTagHelperDescriptorProvider : RazorEngineFeatureBase, IT
         {
             return property.Type.TypeKind == TypeKind.Delegate;
         }
+    }
+
+    private static bool HasRenderModeDirective(INamedTypeSymbol type)
+    {
+        var attributes = type.GetAttributes();
+        foreach (var attribute in attributes)
+        {
+            var attributeClass = attribute.AttributeClass;
+            while (attributeClass is not null)
+            {
+                if (attributeClass.HasFullName(ComponentsApi.RenderModeAttribute.FullTypeName))
+                {
+                    return true;
+                }
+
+                attributeClass = attributeClass.BaseType;
+            }
+        }
+        return false;
     }
 
     private enum PropertyKind

@@ -29,34 +29,30 @@ namespace NuGet.Test
             _output = output;
         }
 
-        private async Task<IEnumerable<NuGetProjectAction>> PacManCleanInstall(SourceRepositoryProvider sourceRepositoryProvider, PackageIdentity target)
+        private async Task<IEnumerable<NuGetProjectAction>> GetPreviewInstallPackageAsync(SourceRepositoryProvider sourceRepositoryProvider, PackageIdentity target)
         {
-            // Arrange
-            using (var testSolutionManager = new TestSolutionManager())
-            using (var randomPackagesConfigFolderPath = TestDirectory.Create())
-            {
-                var testSettings = NullSettings.Instance;
-                var token = CancellationToken.None;
-                var deleteOnRestartManger = new TestDeleteOnRestartManager();
-                var nuGetPackageManager = new NuGetPackageManager(
-                    sourceRepositoryProvider,
-                    testSettings,
-                    testSolutionManager,
-                    deleteOnRestartManger);
-                var packagesFolderPath = PackagesFolderPathUtility.GetPackagesFolderPath(testSolutionManager, testSettings);
+            using var testSolutionManager = new TestSolutionManager();
+            using var randomPackagesConfigFolderPath = TestDirectory.Create();
+            var testSettings = NullSettings.Instance;
+            var token = CancellationToken.None;
+            var deleteOnRestartManger = new TestDeleteOnRestartManager();
+            var nuGetPackageManager = new NuGetPackageManager(
+                sourceRepositoryProvider,
+                testSettings,
+                testSolutionManager,
+                deleteOnRestartManger);
+            var packagesFolderPath = PackagesFolderPathUtility.GetPackagesFolderPath(testSolutionManager, testSettings);
 
-                var randomPackagesConfigPath = Path.Combine(randomPackagesConfigFolderPath, "packages.config");
+            var randomPackagesConfigPath = Path.Combine(randomPackagesConfigFolderPath, "packages.config");
 
-                var projectTargetFramework = NuGetFramework.Parse("net45");
-                var msBuildNuGetProjectSystem = new TestMSBuildNuGetProjectSystem(projectTargetFramework, new TestNuGetProjectContext());
-                var msBuildNuGetProject = new MSBuildNuGetProject(msBuildNuGetProjectSystem, packagesFolderPath, randomPackagesConfigFolderPath);
+            var projectTargetFramework = NuGetFramework.Parse("net45");
+            var msBuildNuGetProjectSystem = new TestMSBuildNuGetProjectSystem(projectTargetFramework, new TestNuGetProjectContext());
+            var msBuildNuGetProject = new MSBuildNuGetProject(msBuildNuGetProjectSystem, packagesFolderPath, randomPackagesConfigFolderPath);
 
-                // Act
-                var nugetProjectActions = await nuGetPackageManager.PreviewInstallPackageAsync(msBuildNuGetProject, target,
-                    new ResolutionContext(), new TestNuGetProjectContext(), sourceRepositoryProvider.GetRepositories().First(), null, token);
+            var nugetProjectActions = await nuGetPackageManager.PreviewInstallPackageAsync(msBuildNuGetProject, target,
+                new ResolutionContext(), new TestNuGetProjectContext(), sourceRepositoryProvider.GetRepositories().First(), null, token);
 
-                return nugetProjectActions;
-            }
+            return nugetProjectActions;
         }
 
         private bool Compare(IEnumerable<NuGetProjectAction> x, IEnumerable<NuGetProjectAction> y)
@@ -81,14 +77,14 @@ namespace NuGet.Test
         }
 
         [Fact]
-        public async Task TestPacManCleanInstall()
+        public async Task GetPreviewInstallPackageAsync_NuGetProjectActionForV2AndV3_AreEqual()
         {
             var target = new PackageIdentity("Umbraco", NuGetVersion.Parse("5.1.0.175"));
 
             _output.WriteLine("target: {0}", target);
 
-            var actionsV2 = await PacManCleanInstall(TestSourceRepositoryUtility.CreateV2OnlySourceRepositoryProvider(), target);
-            var actionsV3 = await PacManCleanInstall(TestSourceRepositoryUtility.CreateV3OnlySourceRepositoryProvider(), target);
+            var actionsV2 = await GetPreviewInstallPackageAsync(TestSourceRepositoryUtility.CreateV2OnlySourceRepositoryProvider(), target);
+            var actionsV3 = await GetPreviewInstallPackageAsync(TestSourceRepositoryUtility.CreateV3OnlySourceRepositoryProvider(), target);
 
             Assert.True(Compare(actionsV2, actionsV3));
         }

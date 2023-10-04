@@ -5,14 +5,17 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using Microsoft.AspNetCore.Razor.Language.Syntax;
 using RazorSyntaxList = Microsoft.AspNetCore.Razor.Language.Syntax.SyntaxList<Microsoft.AspNetCore.Razor.Language.Syntax.SyntaxNode>;
 using RazorSyntaxNode = Microsoft.AspNetCore.Razor.Language.Syntax.SyntaxNode;
 
 namespace Microsoft.CodeAnalysis.Razor.Completion;
 
-internal abstract class DirectiveAttributeCompletionItemProviderBase : RazorCompletionItemProvider
+internal abstract class DirectiveAttributeCompletionItemProviderBase : IRazorCompletionItemProvider
 {
+    public abstract ImmutableArray<RazorCompletionItem> GetCompletionItems(RazorCompletionContext context);
+
     // Internal for testing
     internal static bool TryGetAttributeInfo(
         RazorSyntaxNode attributeLeafOwner,

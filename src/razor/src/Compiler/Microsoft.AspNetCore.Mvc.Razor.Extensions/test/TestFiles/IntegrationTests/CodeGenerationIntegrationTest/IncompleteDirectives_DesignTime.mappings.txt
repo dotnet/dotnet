@@ -18,3 +18,18 @@ Source Location: (203:14,11 [0] TestFiles/IntegrationTests/CodeGenerationIntegra
 Generated Location: (1918:54,0 [0] )
 ||
 
+Source Location: (119:6,6 [0] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/IncompleteDirectives.cshtml)
+||
+Generated Location: (2416:71,6 [0] )
+||
+
+Source Location: (139:9,7 [0] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/IncompleteDirectives.cshtml)
+||
+Generated Location: (2591:78,7 [0] )
+||
+
+Source Location: (190:13,10 [0] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/IncompleteDirectives.cshtml)
+||
+Generated Location: (2769:85,10 [0] )
+||
+

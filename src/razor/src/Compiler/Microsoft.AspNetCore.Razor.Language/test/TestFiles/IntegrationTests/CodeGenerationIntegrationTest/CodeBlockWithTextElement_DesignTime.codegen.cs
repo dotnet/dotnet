@@ -33,14 +33,14 @@ namespace Microsoft.AspNetCore.Razor.Language.IntegrationTests.TestFiles
 #nullable disable
 #nullable restore
 #line 3 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/CodeBlockWithTextElement.cshtml"
-                                __o = a+b;
+                       __o = a+b;
 
 #line default
 #line hidden
 #nullable disable
 #nullable restore
 #line 3 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/CodeBlockWithTextElement.cshtml"
-                                                 
+                                        
 
 #line default
 #line hidden

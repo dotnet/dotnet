@@ -46,7 +46,7 @@ internal class DesignTimeHelperResponseRewriter : DelegatedCompletionResponseRew
         }
 
         var syntaxTree = await hostDocumentContext.GetSyntaxTreeAsync(cancellationToken).ConfigureAwait(false);
-        var owner = syntaxTree.GetOwner(hostDocumentIndex);
+        var owner = syntaxTree.Root.FindInnermostNode(hostDocumentIndex);
         if (owner is null)
         {
             Debug.Fail("Owner should never be null.");

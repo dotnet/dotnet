@@ -3,10 +3,9 @@
 
 #nullable disable
 
-using System.Collections;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Language.Components;
@@ -17,7 +16,6 @@ using Microsoft.CodeAnalysis.Razor.Tooltip;
 using Microsoft.Extensions.Options;
 using Microsoft.VisualStudio.Editor.Razor;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
-using Moq;
 using Newtonsoft.Json;
 using Xunit;
 using Xunit.Abstractions;
@@ -27,7 +25,7 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer.Completion;
 
 public class RazorCompletionListProvierTest : LanguageServerTestBase
 {
-    private readonly RazorCompletionFactsService _completionFactsService;
+    private readonly IRazorCompletionFactsService _completionFactsService;
     private readonly CompletionListCache _completionListCache;
     private readonly VSInternalClientCapabilities _clientCapabilities;
     private readonly VSInternalCompletionContext _defaultCompletionContext;
@@ -35,7 +33,7 @@ public class RazorCompletionListProvierTest : LanguageServerTestBase
     public RazorCompletionListProvierTest(ITestOutputHelper testOutput)
         : base(testOutput)
     {     
-        _completionFactsService = new DefaultRazorCompletionFactsService(GetCompletionProviders());
+        _completionFactsService = new RazorCompletionFactsService(GetCompletionProviders());
         _completionListCache = new CompletionListCache();
         _clientCapabilities = new VSInternalClientCapabilities()
         {
@@ -59,15 +57,15 @@ public class RazorCompletionListProvierTest : LanguageServerTestBase
         _defaultCompletionContext = new VSInternalCompletionContext();
     }
 
-    private static IEnumerable<RazorCompletionItemProvider> GetCompletionProviders(IOptionsMonitor<RazorLSPOptions> optionsMonitor = null)
+    private static IEnumerable<IRazorCompletionItemProvider> GetCompletionProviders(IOptionsMonitor<RazorLSPOptions> optionsMonitor = null)
     {
         // Working around strong naming restriction.
-        var tagHelperFactsService = new DefaultTagHelperFactsService();
+        var tagHelperFactsService = new TagHelperFactsService();
         var tagHelperCompletionService = new LanguageServerTagHelperCompletionService(tagHelperFactsService);
 
         optionsMonitor ??= TestRazorLSPOptionsMonitor.Create();
 
-        var completionProviders = new RazorCompletionItemProvider[]
+        var completionProviders = new IRazorCompletionItemProvider[]
         {
             new DirectiveCompletionItemProvider(),
             new DirectiveAttributeCompletionItemProvider(tagHelperFactsService),
@@ -289,9 +287,8 @@ public class RazorCompletionListProvierTest : LanguageServerTestBase
     {
         // Arrange
         var completionItem = new RazorCompletionItem("format", "format", RazorCompletionItemKind.TagHelperAttribute);
-        var attributeCompletionDescription = new AggregateBoundAttributeDescription(new[] {
-            new BoundAttributeDescriptionInfo("System.Boolean", "Stuff", "format", "SomeDocs")
-        });
+        var attributeCompletionDescription = new AggregateBoundAttributeDescription(ImmutableArray.Create(
+            new BoundAttributeDescriptionInfo("System.Boolean", "Stuff", "format", "SomeDocs")));
         completionItem.SetAttributeCompletionDescription(attributeCompletionDescription);
 
         // Act
@@ -314,7 +311,7 @@ public class RazorCompletionListProvierTest : LanguageServerTestBase
     {
         // Arrange
         var completionItem = new RazorCompletionItem("format", "format=\"$0\"", RazorCompletionItemKind.TagHelperAttribute, isSnippet: true);
-        var attributeCompletionDescription = new AggregateBoundAttributeDescription(new BoundAttributeDescriptionInfo[] { });
+        var attributeCompletionDescription = AggregateBoundAttributeDescription.Empty;
         completionItem.SetAttributeCompletionDescription(attributeCompletionDescription);
 
         // Act
@@ -582,7 +579,7 @@ public class RazorCompletionListProvierTest : LanguageServerTestBase
         var optionsMonitor = TestRazorLSPOptionsMonitor.Create();
         await optionsMonitor.UpdateAsync(optionsMonitor.CurrentValue with { AutoInsertAttributeQuotes = false }, DisposalToken);
 
-        var completionFactsService = new DefaultRazorCompletionFactsService(GetCompletionProviders(optionsMonitor));
+        var completionFactsService = new RazorCompletionFactsService(GetCompletionProviders(optionsMonitor));
         var provider = new RazorCompletionListProvider(completionFactsService, _completionListCache, LoggerFactory);
 
         // Act

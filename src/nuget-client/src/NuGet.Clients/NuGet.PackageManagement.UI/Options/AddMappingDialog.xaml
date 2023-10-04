@@ -75,11 +75,12 @@
         </Setter>
       </Style>
     </Grid.Resources>
-    <TextBlock Grid.Row="0" Text="{x:Static nuget:Resources.VSOptions_Label_PackagePattern}" Margin="12,12,12,9"/>
+    <TextBlock x:Name="_labelPackagePattern" Grid.Row="0" Text="{x:Static nuget:Resources.VSOptions_Label_PackagePattern}" Margin="12,12,12,9"/>
     <vsui:WatermarkedTextBox Grid.Row="1"
                                  BorderBrush="{DynamicResource {x:Static vsui:CommonControlsColors.ButtonBorderBrushKey}}"
                                  BorderThickness="1"
-                                 AutomationProperties.Name="{x:Static nuget:Resources.VSOptions_Watermark_AddPackageNamespace}"
+                                 AutomationProperties.Name="{Binding Text, ElementName=_labelPackagePattern}"
+                                 AutomationProperties.HelpText="{x:Static nuget:Resources.VSOptions_Watermark_AddPackageNamespace}"
                                  x:Name="_packageID"
                                  MaxLength="100"
                                  Margin="12,0,12,0"

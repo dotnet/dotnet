@@ -1,12 +1,14 @@
 #!/usr/bin/env bash
 
 CLI_DIR="$(pwd)/cli"
-
+DOTNET_INSTALL_SCRIPT_URL=https://dot.net/v1/dotnet-install.sh
+DOTNET_INSTALL_SCRIPT_DESTINATION=$CLI_DIR/dotnet-install.sh
 # Download the CLI install script to cli
-echo "Installing .NET SDKs..."
 mkdir -p $CLI_DIR
-curl -o $CLI_DIR/dotnet-install.sh -L https://dot.net/v1/dotnet-install.sh --silent
-if (( $? )); then
+echo "Downloading '$DOTNET_INSTALL_SCRIPT_URL' to '$DOTNET_INSTALL_SCRIPT_DESTINATION'"
+HTTPCODE=$(curl -o $DOTNET_INSTALL_SCRIPT_DESTINATION -L $DOTNET_INSTALL_SCRIPT_URL -w "%{http_code}" --retry 5 --retry-connrefused --no-progress-meter)
+
+if [ "$HTTPCODE" != "200" ]; then
     echo "Could not download 'dotnet-install.sh' script. Please check your network and try again!"
     return 1
 fi
@@ -20,6 +22,7 @@ if [ "$DOTNET_SDK_VERSIONS" != "" ]; then
     IFS=';' read -ra array <<< "$DOTNET_SDK_VERSIONS"
     for CliArgs in "${array[@]}";
     do
+        echo "Installing .NET SDKs..."
         echo "'cli/dotnet-install.sh -InstallDir $CLI_DIR -NoPath $CliArgs'"
         
         cli/dotnet-install.sh -InstallDir $CLI_DIR -NoPath $CliArgs

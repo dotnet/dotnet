@@ -1360,7 +1360,7 @@ internal class CSharpCodeParser : TokenizerBackedParser<CSharpTokenizer>
                             RazorDiagnosticFactory.CreateParsing_DirectiveTokensMustBeSeparatedByWhitespace(
                                 new SourceSpan(CurrentStart, CurrentToken.Content.Length), descriptor.Directive));
 
-                        builder.Add(BuildDirective());
+                        builder.Add(BuildDirective(SyntaxKind.Whitespace));
                         return;
                     }
 
@@ -1378,7 +1378,8 @@ internal class CSharpCodeParser : TokenizerBackedParser<CSharpTokenizer>
                             tokenDescriptor.Kind == DirectiveTokenKind.Type ||
                             tokenDescriptor.Kind == DirectiveTokenKind.Attribute ||
                             tokenDescriptor.Kind == DirectiveTokenKind.GenericTypeConstraint ||
-                            tokenDescriptor.Kind == DirectiveTokenKind.Boolean)
+                            tokenDescriptor.Kind == DirectiveTokenKind.Boolean ||
+                            tokenDescriptor.Kind == DirectiveTokenKind.IdentifierOrExpression)
                         {
                             directiveBuilder.Add(OutputTokensAsStatementLiteral());
 
@@ -1409,7 +1410,7 @@ internal class CSharpCodeParser : TokenizerBackedParser<CSharpTokenizer>
                                 new SourceSpan(CurrentStart, contentLength: 1),
                                 descriptor.Directive,
                                 tokenDescriptor.Kind.ToString().ToLowerInvariant()));
-                        builder.Add(BuildDirective());
+                        builder.Add(BuildDirective(SyntaxKind.Identifier));
                         return;
                     }
 
@@ -1422,7 +1423,7 @@ internal class CSharpCodeParser : TokenizerBackedParser<CSharpTokenizer>
                                     RazorDiagnosticFactory.CreateParsing_DirectiveExpectsTypeName(
                                         new SourceSpan(CurrentStart, CurrentToken.Content.Length), descriptor.Directive));
 
-                                builder.Add(BuildDirective());
+                                builder.Add(BuildDirective(SyntaxKind.Identifier));
                                 return;
                             }
                             break;
@@ -1434,7 +1435,7 @@ internal class CSharpCodeParser : TokenizerBackedParser<CSharpTokenizer>
                                     RazorDiagnosticFactory.CreateParsing_DirectiveExpectsNamespace(
                                         new SourceSpan(CurrentStart, identifierLength), descriptor.Directive));
 
-                                builder.Add(BuildDirective());
+                                builder.Add(BuildDirective(SyntaxKind.Identifier));
                                 return;
                             }
                             break;
@@ -1450,7 +1451,7 @@ internal class CSharpCodeParser : TokenizerBackedParser<CSharpTokenizer>
                                 Context.ErrorSink.OnError(
                                     RazorDiagnosticFactory.CreateParsing_DirectiveExpectsIdentifier(
                                         new SourceSpan(CurrentStart, CurrentToken.Content.Length), descriptor.Directive));
-                                builder.Add(BuildDirective());
+                                builder.Add(BuildDirective(SyntaxKind.Identifier));
                                 return;
                             }
                             break;
@@ -1465,7 +1466,7 @@ internal class CSharpCodeParser : TokenizerBackedParser<CSharpTokenizer>
                                 Context.ErrorSink.OnError(
                                     RazorDiagnosticFactory.CreateParsing_DirectiveExpectsQuotedStringLiteral(
                                         new SourceSpan(CurrentStart, CurrentToken.Content.Length), descriptor.Directive));
-                                builder.Add(BuildDirective());
+                                builder.Add(BuildDirective(SyntaxKind.StringLiteral));
                                 return;
                             }
                             break;
@@ -1480,7 +1481,7 @@ internal class CSharpCodeParser : TokenizerBackedParser<CSharpTokenizer>
                                 Context.ErrorSink.OnError(
                                     RazorDiagnosticFactory.CreateParsing_DirectiveExpectsBooleanLiteral(
                                         new SourceSpan(CurrentStart, CurrentToken.Content.Length), descriptor.Directive));
-                                builder.Add(BuildDirective());
+                                builder.Add(BuildDirective(SyntaxKind.CSharpExpressionLiteral));
                                 return;
                             }
                             break;
@@ -1498,7 +1499,7 @@ internal class CSharpCodeParser : TokenizerBackedParser<CSharpTokenizer>
                                 Context.ErrorSink.OnError(
                                     RazorDiagnosticFactory.CreateParsing_DirectiveExpectsCSharpAttribute(
                                         new SourceSpan(CurrentStart, CurrentToken.Content.Length), descriptor.Directive));
-                                builder.Add(BuildDirective());
+                                builder.Add(BuildDirective(SyntaxKind.LeftBracket));
                                 return;
                             }
 
@@ -1519,7 +1520,7 @@ internal class CSharpCodeParser : TokenizerBackedParser<CSharpTokenizer>
                                     Context.ErrorSink.OnError(
                                         RazorDiagnosticFactory.CreateParsing_GenericTypeParameterIdentifierMismatch(
                                             new SourceSpan(CurrentStart, CurrentToken.Content.Length), descriptor.Directive, CurrentToken.Content, lastSeenMemberIdentifier));
-                                    builder.Add(BuildDirective());
+                                    builder.Add(BuildDirective(SyntaxKind.Identifier));
                                     return;
                                 }
                                 else
@@ -1552,7 +1553,28 @@ internal class CSharpCodeParser : TokenizerBackedParser<CSharpTokenizer>
                                         CurrentToken.Content,
                                         CSharpLanguageCharacteristics.GetKeyword(CSharpKeyword.Where)));
 
-                                builder.Add(BuildDirective());
+                                builder.Add(BuildDirective(SyntaxKind.Keyword));
+                                return;
+                            }
+
+                            break;
+
+                        case DirectiveTokenKind.IdentifierOrExpression:
+                            if (At(SyntaxKind.Transition) && NextIs(SyntaxKind.LeftParenthesis))
+                            {
+                                AcceptAndMoveNext();
+                                directiveBuilder.Add(OutputAsMetaCode(Output()));
+
+                                var expression = ParseExplicitExpressionBody();
+                                directiveBuilder.Add(expression);
+                            }
+                            else if (!TryParseQualifiedIdentifier(out identifierLength))
+                            {
+                                Context.ErrorSink.OnError(
+                                    RazorDiagnosticFactory.CreateParsing_DirectiveExpectsIdentifierOrExpression(
+                                        new SourceSpan(CurrentStart, identifierLength), descriptor.Directive));
+
+                                builder.Add(BuildDirective(SyntaxKind.Identifier));
                                 return;
                             }
 
@@ -1660,11 +1682,16 @@ internal class CSharpCodeParser : TokenizerBackedParser<CSharpTokenizer>
                 Context.ErrorSink = savedErrorSink;
             }
 
-            builder.Add(BuildDirective());
+            builder.Add(BuildDirective(SyntaxKind.Identifier));
 
-            RazorDirectiveSyntax BuildDirective()
+            RazorDirectiveSyntax BuildDirective(SyntaxKind expectedTokenKindIfMissing)
             {
-                directiveBuilder.Add(OutputTokensAsStatementLiteral());
+                var node = OutputTokensAsStatementLiteral();
+                if (node == null && directiveBuilder.Count == 0)
+                {
+                    node = SyntaxFactory.CSharpStatementLiteral(new SyntaxList<SyntaxToken>(SyntaxFactory.MissingToken(expectedTokenKindIfMissing)), chunkGenerator);
+                }
+                directiveBuilder.Add(node);
                 var directiveCodeBlock = SyntaxFactory.CSharpCodeBlock(directiveBuilder.ToList());
 
                 var directiveBody = SyntaxFactory.RazorDirectiveBody(keywordBlock, directiveCodeBlock);

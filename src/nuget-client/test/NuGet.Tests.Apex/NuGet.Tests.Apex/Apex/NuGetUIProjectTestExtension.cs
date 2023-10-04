@@ -50,6 +50,19 @@ namespace NuGet.Tests.Apex
             vulnerablePackageResult.Should().BeFalse();
         }
 
+        public void AssertInstalledPackageDeprecated()
+        {
+            var DeprecatedPackageResult = _uiproject.VerifyDeprecatedPackageOnTopOfInstalledTab();
+            DeprecatedPackageResult.Should().BeTrue();
+        }
+
+        public void AssertInstalledPackageNotDeprecated()
+        {
+            var DeprecatedPackageResult = _uiproject.VerifyDeprecatedPackageOnTopOfInstalledTab();
+            DeprecatedPackageResult.Should().BeFalse();
+        }
+
+
         public bool InstallPackageFromUI(string packageId, string version)
         {
             Stopwatch sw = Stopwatch.StartNew();
@@ -100,6 +113,11 @@ namespace NuGet.Tests.Apex
         public void SetPackageSourceOptionToAll()
         {
             _uiproject.SetPackageSourceOptionToAll();
+        }
+
+        public void SetPackageSourceOptionToSource(string sourceName)
+        {
+            _uiproject.SetPackageSourceOptionToSource(sourceName);
         }
     }
 }

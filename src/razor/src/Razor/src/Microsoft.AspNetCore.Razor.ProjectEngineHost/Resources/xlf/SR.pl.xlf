@@ -32,9 +32,19 @@
         <target state="translated">Oczekiwano tokenu JSON „{0}”, ale to był „{1}”.</target>
         <note />
       </trans-unit>
-      <trans-unit id="Unsupported_project_razor_json_version_encountered">
-        <source>Unsupported project.razor.json version encounted.</source>
-        <target state="translated">Napotkano nieobsługiwaną wersję pliku project.razor.json.</target>
+      <trans-unit id="Unsupported_argument_kind">
+        <source>Unsupported argument kind: '{0}'.</source>
+        <target state="translated">Nieobsługiwany rodzaj argumentu: „{0}”.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Unsupported_argument_type">
+        <source>Unsupported argument type: '{0}'.</source>
+        <target state="translated">Nieobsługiwany typ argumentu: „{0}”.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Unsupported_razor_project_info_version_encountered">
+        <source>Unsupported razor project info version encounted.</source>
+        <target state="translated">Napotkano nieobsługiwaną wersję informacji o projekcie Razor.</target>
         <note />
       </trans-unit>
     </body>

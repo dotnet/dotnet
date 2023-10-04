@@ -29,18 +29,22 @@ namespace Microsoft.VisualStudio.Razor.IntegrationTests;
 [IdeSettings(MinVersion = VisualStudioVersion.VS2022, RootSuffix = "RoslynDev", MaxAttempts = 2)]
 public abstract class AbstractIntegrationTest : AbstractIdeIntegrationTest
 {
-    protected const string ProjectName = "TestProj";
-    protected const string SolutionName = "TestSolution";
-
-    private readonly static TimeSpan s_shortHangMitigatingTimeout = new(hours: 0, minutes: 1, seconds: 0);
-    private readonly CancellationTokenSource _shortHangMitigatingCancellationTokenSource = new(s_shortHangMitigatingTimeout);
+    private ThrowingTraceListener? _traceListener;
 
     protected CancellationToken ControlledHangMitigatingCancellationToken => HangMitigatingCancellationToken;
 
     public override async Task InitializeAsync()
     {
-        ThrowingTraceListener.AddToListeners();
+        _traceListener = ThrowingTraceListener.AddToListeners();
 
         await base.InitializeAsync();
+    }
+
+    public override void Dispose()
+    {
+        var fails = _traceListener?.Fails ?? Array.Empty<string>();
+        Assert.False(fails.Length > 0, $"Expected 0 Debug.Fail calls. Actual:{Environment.NewLine}{string.Join(Environment.NewLine, fails)}");
+
+        base.Dispose();
     }
 }

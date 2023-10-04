@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Razor.Language.Syntax;
 using Microsoft.AspNetCore.Razor.LanguageServer.Extensions;
 using Microsoft.AspNetCore.Razor.LanguageServer.Protocol;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.Razor.Workspaces.Extensions;
 using Microsoft.Extensions.Logging;
 using Diagnostic = Microsoft.VisualStudio.LanguageServer.Protocol.Diagnostic;
 using DiagnosticSeverity = Microsoft.VisualStudio.LanguageServer.Protocol.DiagnosticSeverity;
@@ -120,7 +121,7 @@ internal class RazorTranslateDiagnosticsService
 
         var filteredDiagnostics = unmappedDiagnostics
             .Where(d =>
-                !InCSharpLiteral(d, sourceText, syntaxTree, logger) &&
+                !InCSharpLiteral(d, sourceText, syntaxTree) &&
                 !InAttributeContainingCSharp(d, sourceText, syntaxTree, processedAttributes, logger) &&
                 !AppliesToTagHelperTagName(d, sourceText, syntaxTree, logger) &&
                 !ShouldFilterHtmlDiagnosticBasedOnErrorCode(d, sourceText, syntaxTree, logger))
@@ -162,23 +163,34 @@ internal class RazorTranslateDiagnosticsService
     private static bool InCSharpLiteral(
         Diagnostic d,
         SourceText sourceText,
-        RazorSyntaxTree syntaxTree,
-        ILogger logger)
+        RazorSyntaxTree syntaxTree)
     {
         if (d.Range is null)
         {
             return false;
         }
 
-        var owner = syntaxTree.GetOwner(sourceText, d.Range.End, logger);
-        if (owner is null)
+        
+        var owner = syntaxTree.Root.FindNode(d.Range.ToRazorTextSpan(sourceText), getInnermostNodeForTie: true);
+        if (IsCsharpKind(owner))
         {
-            return false;
+            return true;
         }
 
-        var isCSharp = owner.Kind is SyntaxKind.CSharpExpressionLiteral or SyntaxKind.CSharpStatementLiteral or SyntaxKind.CSharpEphemeralTextLiteral;
+        if (owner is CSharpImplicitExpressionSyntax implicitExpressionSyntax &&
+            implicitExpressionSyntax.Body is CSharpImplicitExpressionBodySyntax bodySyntax &&
+            bodySyntax.CSharpCode is CSharpCodeBlockSyntax codeBlock)
+        {
+            return codeBlock.Children.Count == 1
+                && IsCsharpKind(codeBlock.Children[0]);
+        }
 
-        return isCSharp;
+        return false;
+
+        static bool IsCsharpKind([NotNullWhen(true)] SyntaxNode? node)
+            => node?.Kind is SyntaxKind.CSharpExpressionLiteral
+                or SyntaxKind.CSharpStatementLiteral
+                or SyntaxKind.CSharpEphemeralTextLiteral;
     }
 
     private static bool AppliesToTagHelperTagName(
@@ -201,7 +213,7 @@ internal class RazorTranslateDiagnosticsService
             return false;
         }
 
-        var owner = syntaxTree.GetOwner(sourceText, diagnostic.Range.End, logger);
+        var owner = syntaxTree.FindInnermostNode(sourceText, diagnostic.Range.End, logger);
 
         var startOrEndTag = owner?.FirstAncestorOrSelf<RazorSyntaxNode>(n => n is MarkupTagHelperStartTagSyntax || n is MarkupTagHelperEndTagSyntax);
         if (startOrEndTag is null)
@@ -246,7 +258,7 @@ internal class RazorTranslateDiagnosticsService
         static bool IsCSharpInStyleBlock(Diagnostic diagnostic, SourceText sourceText, RazorSyntaxTree syntaxTree, ILogger logger)
         {
             // C# in a style block causes diagnostics because the HTML background document replaces C# with "~"
-            var owner = syntaxTree.GetOwner(sourceText, diagnostic.Range.Start, logger);
+            var owner = syntaxTree.FindInnermostNode(sourceText, diagnostic.Range.Start, logger);
             if (owner is null)
             {
                 return false;
@@ -262,7 +274,7 @@ internal class RazorTranslateDiagnosticsService
         // but we don't currently have a system to accomplish that
         static bool IsAnyFilteredTooFewElementsError(Diagnostic diagnostic, SourceText sourceText, RazorSyntaxTree syntaxTree, ILogger logger)
         {
-            var owner = syntaxTree.GetOwner(sourceText, diagnostic.Range.Start, logger);
+            var owner = syntaxTree.FindInnermostNode(sourceText, diagnostic.Range.Start, logger);
             if (owner is null)
             {
                 return false;
@@ -291,7 +303,7 @@ internal class RazorTranslateDiagnosticsService
         // but we don't currently have a system to accomplish that
         static bool IsHtmlWithBangAndMatchingTags(Diagnostic diagnostic, SourceText sourceText, RazorSyntaxTree syntaxTree, ILogger logger)
         {
-            var owner = syntaxTree.GetOwner(sourceText, diagnostic.Range.Start, logger);
+            var owner = syntaxTree.FindInnermostNode(sourceText, diagnostic.Range.Start, logger);
             if (owner is null)
             {
                 return false;
@@ -319,7 +331,7 @@ internal class RazorTranslateDiagnosticsService
 
         static bool IsInvalidNestingWarningWithinComponent(Diagnostic diagnostic, SourceText sourceText, RazorSyntaxTree syntaxTree, ILogger logger)
         {
-            var owner = syntaxTree.GetOwner(sourceText, diagnostic.Range.Start, logger);
+            var owner = syntaxTree.FindInnermostNode(sourceText, diagnostic.Range.Start, logger);
             if (owner is null)
             {
                 return false;
@@ -334,7 +346,7 @@ internal class RazorTranslateDiagnosticsService
         // but we don't currently have a system to accomplish that
         static bool IsInvalidNestingFromBody(Diagnostic diagnostic, SourceText sourceText, RazorSyntaxTree syntaxTree, ILogger logger)
         {
-            var owner = syntaxTree.GetOwner(sourceText, diagnostic.Range.Start, logger);
+            var owner = syntaxTree.FindInnermostNode(sourceText, diagnostic.Range.Start, logger);
             if (owner is null)
             {
                 return false;
@@ -371,7 +383,7 @@ internal class RazorTranslateDiagnosticsService
             return false;
         }
 
-        var owner = syntaxTree.GetOwner(sourceText, diagnostic.Range.End, logger);
+        var owner = syntaxTree.FindInnermostNode(sourceText, diagnostic.Range.End, logger);
         if (owner is null)
         {
             return false;
@@ -497,7 +509,8 @@ internal class RazorTranslateDiagnosticsService
         // semi-intelligent way.
 
         var syntaxTree = codeDocument.GetSyntaxTree();
-        var owner = syntaxTree.GetOwner(sourceText, diagnosticRange, logger: _logger);
+        var span = diagnosticRange.ToRazorTextSpan(codeDocument.GetSourceText());
+        var owner = syntaxTree.Root.FindNode(span, getInnermostNodeForTie: true);
 
         switch (owner?.Kind)
         {

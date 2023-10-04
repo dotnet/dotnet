@@ -1,4 +1,4 @@
-﻿# Razor integration test pipeline for validating against branch builds of VS.
+# Razor integration test pipeline for validating against branch builds of VS.
 
 trigger: none # Manual trigger for now
 pr: none
@@ -29,9 +29,9 @@ variables:
   value: $(Build.SourcesDirectory)\artifacts\log\$(_configuration)
 - name: __VSNeverShowWhatsNew
   value: 1
-- name: RAZOR_RUN_ALL_TESTS
-  value: 'true'
 - name: LogLevel
+  value: 'Verbose'
+- name: RAZOR_TRACE
   value: 'Verbose'
 
 stages:

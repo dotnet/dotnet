@@ -89,7 +89,7 @@ public class DefaultHtmlCodeActionProviderTest : LanguageServerTestBase
                     TextDocument = new OptionalVersionedTextDocumentIdentifier { Uri= new Uri(documentPath), Version = 1 },
                     Edits = new TextEdit[]
                     {
-                        new TextEdit { NewText = "Goo ~~~~~~~~~~~~~~~ Bar", Range = span.AsRange(context.SourceText) }
+                        new TextEdit { NewText = "Goo ~~~~~~~~~~~~~~~ Bar", Range = span.ToRange(context.SourceText) }
                     }
                 }
             }

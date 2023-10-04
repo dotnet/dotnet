@@ -35,13 +35,13 @@ namespace NuGet.PackageManagement
         /// The task result (<see cref="Task{TResult}.Result" />) returns a <see cref="DownloadResourceResult" />
         /// instance.</returns>
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="sources" />
-        /// is either <c>null</c> or empty.</exception>
+        /// is either <see langword="null" /> or empty.</exception>
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="packageIdentity" />
-        /// is either <c>null</c> or empty.</exception>
+        /// is either <see langword="null" /> or empty.</exception>
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="downloadContext" />
-        /// is either <c>null</c> or empty.</exception>
+        /// is either <see langword="null" /> or empty.</exception>
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="logger" />
-        /// is either <c>null</c> or empty.</exception>
+        /// is either <see langword="null" /> or empty.</exception>
         /// <exception cref="OperationCanceledException">Thrown if <paramref name="token" />
         /// is cancelled.</exception>
         public static async Task<DownloadResourceResult> GetDownloadResourceResultAsync(
@@ -246,13 +246,13 @@ namespace NuGet.PackageManagement
         /// The task result (<see cref="Task{TResult}.Result" />) returns a <see cref="DownloadResourceResult" />
         /// instance.</returns>
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="sourceRepository" />
-        /// is either <c>null</c> or empty.</exception>
+        /// is either <see langword="null" /> or empty.</exception>
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="packageIdentity" />
-        /// is either <c>null</c> or empty.</exception>
+        /// is either <see langword="null" /> or empty.</exception>
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="downloadContext" />
-        /// is either <c>null</c> or empty.</exception>
+        /// is either <see langword="null" /> or empty.</exception>
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="logger" />
-        /// is either <c>null</c> or empty.</exception>
+        /// is either <see langword="null" /> or empty.</exception>
         /// <exception cref="OperationCanceledException">Thrown if <paramref name="token" />
         /// is cancelled.</exception>
         public static async Task<DownloadResourceResult> GetDownloadResourceResultAsync(

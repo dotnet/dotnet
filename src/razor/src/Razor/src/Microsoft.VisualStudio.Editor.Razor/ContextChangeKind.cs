@@ -3,7 +3,7 @@
 
 namespace Microsoft.VisualStudio.Editor.Razor;
 
-public enum ContextChangeKind
+internal enum ContextChangeKind
 {
     ProjectChanged,
     EditorSettingsChanged,

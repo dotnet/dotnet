@@ -77,7 +77,7 @@ namespace __Blazor.Test.TestComponent
         public static global::Test.MyComponent<T> CreateMyComponent_0<T>(global::Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder, int seq, int __seq0, T __arg0, int __seq1, System.Action<global::Test.MyComponent<T>> __arg1)
         {
         __builder.OpenComponent<global::Test.MyComponent<T>>(seq);
-        __builder.AddComponentParameter(__seq0, "MyParameter", __arg0);
+        __builder.AddAttribute(__seq0, "MyParameter", (object)__arg0);
         __builder.AddComponentReferenceCapture(__seq1, (__value) => { __arg1((global::Test.MyComponent<T>)__value); });
         __builder.CloseComponent();
         return default;

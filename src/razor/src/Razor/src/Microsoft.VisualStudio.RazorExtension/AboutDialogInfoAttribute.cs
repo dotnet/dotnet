@@ -8,7 +8,7 @@ using Microsoft.VisualStudio.Shell;
 
 namespace Microsoft.VisualStudio.RazorExtension;
 
-public class AboutDialogInfoAttribute : RegistrationAttribute
+internal sealed class AboutDialogInfoAttribute : RegistrationAttribute
 {
     private readonly string _detailsId;
     private readonly string _name;

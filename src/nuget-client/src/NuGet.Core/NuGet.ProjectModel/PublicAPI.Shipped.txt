@@ -25,6 +25,7 @@ NuGet.ProjectModel.AssetsLogMessage.StartLineNumber.set -> void
 NuGet.ProjectModel.AssetsLogMessage.WarningLevel.get -> NuGet.Common.WarningLevel
 NuGet.ProjectModel.AssetsLogMessage.WarningLevel.set -> void
 NuGet.ProjectModel.BuildAction
+NuGet.ProjectModel.BuildAction.BuildAction() -> void
 NuGet.ProjectModel.BuildAction.Equals(NuGet.ProjectModel.BuildAction other) -> bool
 NuGet.ProjectModel.BuildAction.IsKnown.get -> bool
 ~NuGet.ProjectModel.BuildAction.Value.get -> string
@@ -469,6 +470,8 @@ NuGet.ProjectModel.ProjectRestoreMetadata.ProjectStyle.set -> void
 ~NuGet.ProjectModel.ProjectRestoreMetadata.ProjectUniqueName.set -> void
 ~NuGet.ProjectModel.ProjectRestoreMetadata.ProjectWideWarningProperties.get -> NuGet.ProjectModel.WarningProperties
 ~NuGet.ProjectModel.ProjectRestoreMetadata.ProjectWideWarningProperties.set -> void
+~NuGet.ProjectModel.ProjectRestoreMetadata.RestoreAuditProperties.get -> NuGet.ProjectModel.RestoreAuditProperties
+~NuGet.ProjectModel.ProjectRestoreMetadata.RestoreAuditProperties.set -> void
 ~NuGet.ProjectModel.ProjectRestoreMetadata.RestoreLockProperties.get -> NuGet.ProjectModel.RestoreLockProperties
 ~NuGet.ProjectModel.ProjectRestoreMetadata.RestoreLockProperties.set -> void
 NuGet.ProjectModel.ProjectRestoreMetadata.SkipContentFileWrite.get -> bool
@@ -525,6 +528,15 @@ NuGet.ProjectModel.ProjectStyle.PackagesConfig = 5 -> NuGet.ProjectModel.Project
 NuGet.ProjectModel.ProjectStyle.ProjectJson = 1 -> NuGet.ProjectModel.ProjectStyle
 NuGet.ProjectModel.ProjectStyle.Standalone = 4 -> NuGet.ProjectModel.ProjectStyle
 NuGet.ProjectModel.ProjectStyle.Unknown = 0 -> NuGet.ProjectModel.ProjectStyle
+NuGet.ProjectModel.RestoreAuditProperties
+NuGet.ProjectModel.RestoreAuditProperties.AuditLevel.get -> string?
+NuGet.ProjectModel.RestoreAuditProperties.AuditLevel.set -> void
+NuGet.ProjectModel.RestoreAuditProperties.AuditMode.get -> string?
+NuGet.ProjectModel.RestoreAuditProperties.AuditMode.set -> void
+NuGet.ProjectModel.RestoreAuditProperties.EnableAudit.get -> string?
+NuGet.ProjectModel.RestoreAuditProperties.EnableAudit.set -> void
+NuGet.ProjectModel.RestoreAuditProperties.Equals(NuGet.ProjectModel.RestoreAuditProperties? other) -> bool
+NuGet.ProjectModel.RestoreAuditProperties.RestoreAuditProperties() -> void
 NuGet.ProjectModel.RestoreLockProperties
 ~NuGet.ProjectModel.RestoreLockProperties.Clone() -> NuGet.ProjectModel.RestoreLockProperties
 ~NuGet.ProjectModel.RestoreLockProperties.Equals(NuGet.ProjectModel.RestoreLockProperties other) -> bool
@@ -627,6 +639,8 @@ override NuGet.ProjectModel.ProjectRestoreReference.GetHashCode() -> int
 ~override NuGet.ProjectModel.ProjectRestoreReference.ToString() -> string
 ~override NuGet.ProjectModel.ProjectRestoreSettings.Equals(object obj) -> bool
 override NuGet.ProjectModel.ProjectRestoreSettings.GetHashCode() -> int
+override NuGet.ProjectModel.RestoreAuditProperties.Equals(object? obj) -> bool
+override NuGet.ProjectModel.RestoreAuditProperties.GetHashCode() -> int
 ~override NuGet.ProjectModel.RestoreLockProperties.Equals(object obj) -> bool
 override NuGet.ProjectModel.RestoreLockProperties.GetHashCode() -> int
 ~override NuGet.ProjectModel.TargetFrameworkInformation.Equals(object obj) -> bool
@@ -690,6 +704,8 @@ static NuGet.ProjectModel.BuildAction.operator ==(NuGet.ProjectModel.BuildAction
 ~static NuGet.ProjectModel.PackagesLockFileUtilities.IsLockFileValid(NuGet.ProjectModel.DependencyGraphSpec dgSpec, NuGet.ProjectModel.PackagesLockFile nuGetLockFile) -> NuGet.ProjectModel.LockFileValidationResult
 ~static NuGet.ProjectModel.PackagesLockFileUtilities.IsNuGetLockFileEnabled(NuGet.ProjectModel.PackageSpec project) -> bool
 ~static NuGet.ProjectModel.ProjectLockFile.LockFileDependencyComparerWithoutContentHash.Default.get -> NuGet.ProjectModel.ProjectLockFile.LockFileDependencyComparerWithoutContentHash
+static NuGet.ProjectModel.RestoreAuditProperties.operator !=(NuGet.ProjectModel.RestoreAuditProperties? x, NuGet.ProjectModel.RestoreAuditProperties? y) -> bool
+static NuGet.ProjectModel.RestoreAuditProperties.operator ==(NuGet.ProjectModel.RestoreAuditProperties? x, NuGet.ProjectModel.RestoreAuditProperties? y) -> bool
 ~static NuGet.ProjectModel.WarningProperties.GetWarningProperties(string treatWarningsAsErrors, System.Collections.Generic.IEnumerable<NuGet.Common.NuGetLogCode> warningsAsErrors, System.Collections.Generic.IEnumerable<NuGet.Common.NuGetLogCode> noWarn) -> NuGet.ProjectModel.WarningProperties
 ~static NuGet.ProjectModel.WarningProperties.GetWarningProperties(string treatWarningsAsErrors, System.Collections.Generic.IEnumerable<NuGet.Common.NuGetLogCode> warningsAsErrors, System.Collections.Generic.IEnumerable<NuGet.Common.NuGetLogCode> noWarn, System.Collections.Generic.IEnumerable<NuGet.Common.NuGetLogCode> warningsNotAsErrors) -> NuGet.ProjectModel.WarningProperties
 ~static NuGet.ProjectModel.WarningProperties.GetWarningProperties(string treatWarningsAsErrors, string warningsAsErrors, string noWarn) -> NuGet.ProjectModel.WarningProperties

@@ -23,8 +23,7 @@ internal partial class RazorCustomMessageTarget
 
         await _joinableTaskFactory.SwitchToMainThreadAsync(cancellationToken);
 
-        var (synchronized, htmlDocument) = await _documentSynchronizer.TrySynchronizeVirtualDocumentAsync<HtmlVirtualDocumentSnapshot>(
-            _documentManager,
+        var (synchronized, htmlDocument) = await TrySynchronizeVirtualDocumentAsync<HtmlVirtualDocumentSnapshot>(
             request.HostDocumentVersion,
             request.TextDocument,
             cancellationToken);
@@ -66,8 +65,7 @@ internal partial class RazorCustomMessageTarget
         var hostDocument = request.TextDocument;
 
         var languageServerName = RazorLSPConstants.HtmlLanguageServerName;
-        var (synchronized, htmlDocument) = await _documentSynchronizer.TrySynchronizeVirtualDocumentAsync<HtmlVirtualDocumentSnapshot>(
-            _documentManager, request.HostDocumentVersion, hostDocument, cancellationToken);
+        var (synchronized, htmlDocument) = await TrySynchronizeVirtualDocumentAsync<HtmlVirtualDocumentSnapshot>(request.HostDocumentVersion, hostDocument, cancellationToken);
 
         if (!synchronized)
         {

@@ -69,7 +69,7 @@ namespace NuGet.Commands
             List<PackageSource> httpPackageSources = null;
             foreach (PackageSource packageSource in listArgs.ListEndpoints)
             {
-                if (packageSource.IsHttp && !packageSource.IsHttps)
+                if (packageSource.IsHttp && !packageSource.IsHttps && !packageSource.AllowInsecureConnections)
                 {
                     if (httpPackageSources == null)
                     {

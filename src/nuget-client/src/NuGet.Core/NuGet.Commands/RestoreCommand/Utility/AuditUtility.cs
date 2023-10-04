@@ -22,7 +22,7 @@ namespace NuGet.Commands.Restore.Utility
     internal class AuditUtility
     {
         private readonly EnabledValue _auditEnabled;
-        private readonly ProjectModel.RestoreAuditProperties _restoreAuditProperties;
+        private readonly ProjectModel.RestoreAuditProperties? _restoreAuditProperties;
         private readonly string _projectFullPath;
         private readonly IEnumerable<RestoreTargetGraph> _targetGraphs;
         private readonly IReadOnlyList<IVulnerabilityInformationProvider> _vulnerabilityInfoProviders;
@@ -49,7 +49,7 @@ namespace NuGet.Commands.Restore.Utility
 
         public AuditUtility(
             EnabledValue auditEnabled,
-            ProjectModel.RestoreAuditProperties restoreAuditProperties,
+            ProjectModel.RestoreAuditProperties? restoreAuditProperties,
             string projectFullPath,
             IEnumerable<RestoreTargetGraph> graphs,
             IReadOnlyList<IVulnerabilityInformationProvider> vulnerabilityInformationProviders,
@@ -78,15 +78,9 @@ namespace NuGet.Commands.Restore.Utility
                 ReplayErrors(allVulnerabilityData.Exceptions);
             }
 
+            // Performance: Early exit if there's no vulnerability data to check packages against.
             if (allVulnerabilityData is null || !AnyVulnerabilityDataFound(allVulnerabilityData.KnownVulnerabilities))
             {
-                if (_auditEnabled == EnabledValue.ExplicitOptIn)
-                {
-                    RestoreLogMessage restoreLogMessage = RestoreLogMessage.CreateWarning(NuGetLogCode.NU1905, Strings.Warning_NoVulnerabilityData);
-                    restoreLogMessage.ProjectPath = _projectFullPath;
-                    _logger.Log(restoreLogMessage);
-                }
-
                 return;
             }
 
@@ -97,11 +91,7 @@ namespace NuGet.Commands.Restore.Utility
 
             bool AnyVulnerabilityDataFound(IReadOnlyList<IReadOnlyDictionary<string, IReadOnlyList<PackageVulnerabilityInfo>>>? knownVulnerabilities)
             {
-                if (knownVulnerabilities is null)
-                {
-                    return false;
-                }
-                if (knownVulnerabilities.Count == 0)
+                if (knownVulnerabilities is null || knownVulnerabilities.Count == 0)
                 {
                     return false;
                 }
@@ -129,8 +119,7 @@ namespace NuGet.Commands.Restore.Utility
         private void CheckPackageVulnerabilities(IReadOnlyList<IReadOnlyDictionary<string, IReadOnlyList<PackageVulnerabilityInfo>>> knownVulnerabilities)
         {
             Stopwatch stopwatch = Stopwatch.StartNew();
-            Dictionary<PackageIdentity, PackageAuditInfo>? packagesWithKnownVulnerabilities =
-                FindPackagesWithKnownVulnerabilities(knownVulnerabilities);
+            Dictionary<PackageIdentity, PackageAuditInfo>? packagesWithKnownVulnerabilities = FindPackagesWithKnownVulnerabilities(knownVulnerabilities);
             stopwatch.Stop();
             CheckPackagesDurationSeconds = stopwatch.Elapsed.TotalSeconds;
 
@@ -143,12 +132,8 @@ namespace NuGet.Commands.Restore.Utility
             TransitivePackagesWithAdvisory = new(capacity: packagesWithKnownVulnerabilities.Count - directPackageCount);
 
             // no-op checks DGSpec hash, which means the order of everything must be deterministic.
-            // .NET Framework and .NET Standard don't have Deconstructor methods for KeyValuePair
-            foreach (var kvp1 in packagesWithKnownVulnerabilities.OrderBy(p => p.Key.Id))
+            foreach ((PackageIdentity package, PackageAuditInfo auditInfo) in packagesWithKnownVulnerabilities.OrderBy(p => p.Key.Id))
             {
-                PackageIdentity package = kvp1.Key;
-                PackageAuditInfo auditInfo = kvp1.Value;
-
                 if (auditInfo.IsDirect || AuditMode == NuGetAuditMode.All)
                 {
                     foreach (var kvp2 in auditInfo.GraphsPerVulnerability.OrderBy(v => v.Key.Url.OriginalString))
@@ -208,11 +193,9 @@ namespace NuGet.Commands.Restore.Utility
         private static List<PackageVulnerabilityInfo>? GetKnownVulnerabilities(
             string name,
             NuGetVersion version,
-            IReadOnlyList<IReadOnlyDictionary<string, IReadOnlyList<PackageVulnerabilityInfo>>>? knownVulnerabilities)
+            IReadOnlyList<IReadOnlyDictionary<string, IReadOnlyList<PackageVulnerabilityInfo>>> knownVulnerabilities)
         {
             HashSet<PackageVulnerabilityInfo>? vulnerabilities = null;
-
-            if (knownVulnerabilities == null) return null;
 
             foreach (var file in knownVulnerabilities)
             {
@@ -222,17 +205,14 @@ namespace NuGet.Commands.Restore.Utility
                     {
                         if (vulnInfo.Versions.Satisfies(version))
                         {
-                            if (vulnerabilities == null)
-                            {
-                                vulnerabilities = new();
-                            }
+                            vulnerabilities ??= new();
                             vulnerabilities.Add(vulnInfo);
                         }
                     }
                 }
             }
 
-            return vulnerabilities != null ? vulnerabilities.ToList() : null;
+            return vulnerabilities?.ToList();
         }
 
         private static (string severityLabel, NuGetLogCode code) GetSeverityLabelAndCode(PackageVulnerabilitySeverity severity)
@@ -278,10 +258,7 @@ namespace NuGet.Commands.Restore.Utility
                                 continue;
                             }
 
-                            if (result == null)
-                            {
-                                result = new();
-                            }
+                            result ??= new();
 
                             if (!result.TryGetValue(packageIdentity, out PackageAuditInfo? auditInfo))
                             {
@@ -366,7 +343,7 @@ namespace NuGet.Commands.Restore.Utility
 
         private PackageVulnerabilitySeverity ParseAuditLevel()
         {
-            string? auditLevel = _restoreAuditProperties.AuditLevel?.Trim();
+            string? auditLevel = _restoreAuditProperties?.AuditLevel?.Trim();
 
             if (auditLevel == null)
             {
@@ -399,9 +376,10 @@ namespace NuGet.Commands.Restore.Utility
 
         internal enum NuGetAuditMode { Unknown, Direct, All }
 
+        // Enum parsing and ToString are a magnitude of times slower than a naive implementation. 
         private NuGetAuditMode ParseAuditMode()
         {
-            string? auditMode = _restoreAuditProperties.AuditMode?.Trim();
+            string? auditMode = _restoreAuditProperties?.AuditMode?.Trim();
 
             if (auditMode == null)
             {
@@ -425,15 +403,16 @@ namespace NuGet.Commands.Restore.Utility
 
         internal enum EnabledValue
         {
-            Undefined,
+            Invalid,
             ImplicitOptIn,
             ExplicitOptIn,
             ExplicitOptOut
         }
 
-        public static EnabledValue ParseEnableValue(string value)
+        // Enum parsing and ToString are a magnitude of times slower than a naive implementation.
+        public static EnabledValue ParseEnableValue(string? value, string projectFullPath, ILogger logger)
         {
-            if (string.Equals(value, "default", StringComparison.OrdinalIgnoreCase))
+            if (string.IsNullOrEmpty(value) || string.Equals(value, "default", StringComparison.OrdinalIgnoreCase))
             {
                 return EnabledValue.ImplicitOptIn;
             }
@@ -447,14 +426,20 @@ namespace NuGet.Commands.Restore.Utility
             {
                 return EnabledValue.ExplicitOptOut;
             }
-            return EnabledValue.Undefined;
+
+            string messageText = string.Format(Strings.Error_InvalidNuGetAuditValue, value, "true, false");
+            RestoreLogMessage message = RestoreLogMessage.CreateError(NuGetLogCode.NU1014, messageText);
+            message.ProjectPath = projectFullPath;
+            logger.Log(message);
+            return EnabledValue.Invalid;
         }
 
+        // Enum parsing and ToString are a magnitude of times slower than a naive implementation.
         internal static string GetString(EnabledValue enableAudit)
         {
             return enableAudit switch
             {
-                EnabledValue.Undefined => nameof(EnabledValue.Undefined),
+                EnabledValue.Invalid => nameof(EnabledValue.Invalid),
                 EnabledValue.ExplicitOptIn => nameof(EnabledValue.ExplicitOptIn),
                 EnabledValue.ExplicitOptOut => nameof(EnabledValue.ExplicitOptOut),
                 EnabledValue.ImplicitOptIn => nameof(EnabledValue.ImplicitOptIn),
@@ -462,6 +447,7 @@ namespace NuGet.Commands.Restore.Utility
             };
         }
 
+        // Enum parsing and ToString are a magnitude of times slower than a naive implementation.
         internal static string GetString(NuGetAuditMode auditMode)
         {
             return auditMode switch

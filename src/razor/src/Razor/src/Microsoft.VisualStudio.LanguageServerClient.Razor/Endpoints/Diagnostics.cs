@@ -44,7 +44,7 @@ internal partial class RazorCustomMessageTarget
         {
             if (e is not OperationCanceledException)
             {
-                _outputWindowLogger?.LogError(e, "Exception thrown in PullDiagnostic delegation");
+                _logger?.LogError(e, "Exception thrown in PullDiagnostic delegation");
             }
             // Return null if any of the tasks getting diagnostics results in an error
             return null;
@@ -65,8 +65,7 @@ internal partial class RazorCustomMessageTarget
     private async Task<VSInternalDiagnosticReport[]?> GetVirtualDocumentPullDiagnosticsAsync<TVirtualDocumentSnapshot>(TextDocumentIdentifier hostDocument, int hostDocumentVersion, TextDocumentIdentifier identifierFromOriginalRequest, Guid correlationId, string delegatedLanguageServerName, CancellationToken cancellationToken)
         where TVirtualDocumentSnapshot : VirtualDocumentSnapshot
     {
-        var (synchronized, virtualDocument) = await _documentSynchronizer.TrySynchronizeVirtualDocumentAsync<TVirtualDocumentSnapshot>(
-            _documentManager,
+        var (synchronized, virtualDocument) = await TrySynchronizeVirtualDocumentAsync<TVirtualDocumentSnapshot>(
             hostDocumentVersion,
             hostDocument,
             cancellationToken).ConfigureAwait(false);

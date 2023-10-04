@@ -785,7 +785,7 @@ namespace Microsoft.AspNetCore.Components
         public TestProjectSnapshotManager(
             IEnumerable<IProjectSnapshotChangeTrigger> triggers,
             Workspace workspace)
-            : base(Mock.Of<IErrorReporter>(MockBehavior.Strict), triggers, workspace)
+            : base(Mock.Of<IErrorReporter>(MockBehavior.Strict), triggers, workspace, s_dispatcher)
         {
         }
     }

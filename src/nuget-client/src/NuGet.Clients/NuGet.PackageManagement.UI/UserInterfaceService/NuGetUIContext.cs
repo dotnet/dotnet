@@ -37,7 +37,7 @@ namespace NuGet.PackageManagement.UI
         // Non-private only to facilitate testing.
         internal NuGetUIContext(
             IServiceBroker serviceBroker,
-            IReconnectingNuGetSearchService nuGetSearchService,
+            INuGetSearchService nuGetSearchService,
             IVsSolutionManager solutionManager,
             NuGetSolutionManagerServiceWrapper solutionManagerService,
             NuGetPackageManager packageManager,
@@ -49,7 +49,7 @@ namespace NuGet.PackageManagement.UI
             ISettings settings)
         {
             ServiceBroker = serviceBroker;
-            ReconnectingSearchService = nuGetSearchService;
+            NuGetSearchService = nuGetSearchService;
             SolutionManager = solutionManager;
             _solutionManagerService = solutionManagerService;
             PackageManager = packageManager;
@@ -74,7 +74,7 @@ namespace NuGet.PackageManagement.UI
 
         public IServiceBroker ServiceBroker { get; }
 
-        public IReconnectingNuGetSearchService ReconnectingSearchService { get; }
+        public INuGetSearchService NuGetSearchService { get; }
 
         public IVsSolutionManager SolutionManager { get; }
 
@@ -117,7 +117,7 @@ namespace NuGet.PackageManagement.UI
             _solutionManagerService.Dispose();
             _sourceService.Dispose();
 
-            ReconnectingSearchService.Dispose();
+            NuGetSearchService.Dispose();
 
             GC.SuppressFinalize(this);
         }

@@ -19,16 +19,21 @@ public class ProjectConfigurationFileChangeEventArgsTest(ITestOutputHelper testO
     public void TryDeserialize_RemovedKind_ReturnsFalse()
     {
         // Arrange
-        var jsonFileDeserializer = new Mock<JsonFileDeserializer>(MockBehavior.Strict);
-        jsonFileDeserializer.Setup(deserializer => deserializer.Deserialize<ProjectRazorJson>(It.IsAny<string>()))
-            .Returns(new ProjectRazorJson(
-                "/path/to/obj/project.razor.json",
+        var deserializerMock = new Mock<IRazorProjectInfoDeserializer>(MockBehavior.Strict);
+        deserializerMock
+            .Setup(x => x.DeserializeFromFile(It.IsAny<string>()))
+            .Returns(new RazorProjectInfo(
+                "/path/to/obj/project.razor.bin",
                 "c:/path/to/project.csproj",
                 configuration: null,
                 rootNamespace: null,
                 projectWorkspaceState: null,
                 documents: ImmutableArray<DocumentSnapshotHandle>.Empty));
-        var args = new ProjectConfigurationFileChangeEventArgs("/path/to/obj/project.razor.json", RazorFileChangeKind.Removed, jsonFileDeserializer.Object);
+
+        var args = new ProjectConfigurationFileChangeEventArgs(
+            configurationFilePath: "/path/to/obj/project.razor.bin",
+            kind: RazorFileChangeKind.Removed,
+            projectInfoDeserializer: deserializerMock.Object);
 
         // Act
         var result = args.TryDeserialize(out var handle);
@@ -43,63 +48,77 @@ public class ProjectConfigurationFileChangeEventArgsTest(ITestOutputHelper testO
     public void TryDeserialize_DifferingSerializationPaths_ReturnsFalse()
     {
         // Arrange
-        var jsonFileDeserializer = new Mock<JsonFileDeserializer>(MockBehavior.Strict);
-        var projectRazorJson = new ProjectRazorJson(
-            "/path/to/ORIGINAL/obj/project.razor.json",
+        var deserializerMock = new Mock<IRazorProjectInfoDeserializer>(MockBehavior.Strict);
+        var projectInfo = new RazorProjectInfo(
+            "/path/to/ORIGINAL/obj/project.razor.bin",
             "c:/path/to/project.csproj",
             configuration: null,
             rootNamespace: null,
             projectWorkspaceState: null,
             documents: ImmutableArray<DocumentSnapshotHandle>.Empty);
-        jsonFileDeserializer.Setup(deserializer => deserializer.Deserialize<ProjectRazorJson>(It.IsAny<string>()))
-            .Returns(projectRazorJson);
-        var args = new ProjectConfigurationFileChangeEventArgs("/path/to/DIFFERENT/obj/project.razor.json", RazorFileChangeKind.Added, jsonFileDeserializer.Object);
+
+        deserializerMock
+            .Setup(x => x.DeserializeFromFile(It.IsAny<string>()))
+            .Returns(projectInfo);
+
+        var args = new ProjectConfigurationFileChangeEventArgs(
+            configurationFilePath: "/path/to/DIFFERENT/obj/project.razor.bin",
+            kind: RazorFileChangeKind.Added,
+            projectInfoDeserializer: deserializerMock.Object);
 
         // Act
-        var result = args.TryDeserialize(out var deserializedProjectRazorJson);
+        var result = args.TryDeserialize(out var deserializedProjectInfo);
 
         // Assert
         Assert.False(result);
-        Assert.Null(deserializedProjectRazorJson);
+        Assert.Null(deserializedProjectInfo);
     }
 
     [Fact]
     public void TryDeserialize_MemoizesResults()
     {
         // Arrange
-        var jsonFileDeserializer = new Mock<JsonFileDeserializer>(MockBehavior.Strict);
-        var projectRazorJson = new ProjectRazorJson(
-            "/path/to/obj/project.razor.json",
+        var deserializerMock = new Mock<IRazorProjectInfoDeserializer>(MockBehavior.Strict);
+        var projectInfo = new RazorProjectInfo(
+            "/path/to/obj/project.razor.bin",
             "c:/path/to/project.csproj",
             configuration: null,
             rootNamespace: null,
             projectWorkspaceState: null,
             documents: ImmutableArray<DocumentSnapshotHandle>.Empty);
-        jsonFileDeserializer.Setup(deserializer => deserializer.Deserialize<ProjectRazorJson>(It.IsAny<string>()))
-            .Returns(projectRazorJson);
-        var args = new ProjectConfigurationFileChangeEventArgs("/path/to/obj/project.razor.json", RazorFileChangeKind.Added, jsonFileDeserializer.Object);
+
+        deserializerMock
+            .Setup(x => x.DeserializeFromFile(It.IsAny<string>()))
+            .Returns(projectInfo);
+
+        var args = new ProjectConfigurationFileChangeEventArgs(
+            configurationFilePath: "/path/to/obj/project.razor.bin",
+            kind: RazorFileChangeKind.Added,
+            projectInfoDeserializer: deserializerMock.Object);
 
         // Act
-        var result1 = args.TryDeserialize(out var projectRazorJson1);
-        var result2 = args.TryDeserialize(out var projectRazorJson2);
+        var result1 = args.TryDeserialize(out var projectInfo1);
+        var result2 = args.TryDeserialize(out var projectInfo2);
 
         // Assert
         Assert.True(result1);
         Assert.True(result2);
-        Assert.Same(projectRazorJson, projectRazorJson1);
-        Assert.Same(projectRazorJson, projectRazorJson2);
+        Assert.Same(projectInfo, projectInfo1);
+        Assert.Same(projectInfo, projectInfo2);
     }
 
     [Fact]
     public void TryDeserialize_NullFileDeserialization_MemoizesResults_ReturnsFalse()
     {
         // Arrange
-        var jsonFileDeserializer = new Mock<JsonFileDeserializer>(MockBehavior.Strict);
+        var deserializerMock = new Mock<IRazorProjectInfoDeserializer>(MockBehavior.Strict);
         var callCount = 0;
-        jsonFileDeserializer.Setup(deserializer => deserializer.Deserialize<ProjectRazorJson>(It.IsAny<string>()))
+        deserializerMock
+            .Setup(x => x.DeserializeFromFile(It.IsAny<string>()))
             .Callback(() => callCount++)
-            .Returns<ProjectRazorJson>(null);
-        var args = new ProjectConfigurationFileChangeEventArgs("/path/to/obj/project.razor.json", RazorFileChangeKind.Changed, jsonFileDeserializer.Object);
+            .Returns<RazorProjectInfo>(null);
+
+        var args = new ProjectConfigurationFileChangeEventArgs("/path/to/obj/project.razor.bin", RazorFileChangeKind.Changed, deserializerMock.Object);
 
         // Act
         var result1 = args.TryDeserialize(out var handle1);

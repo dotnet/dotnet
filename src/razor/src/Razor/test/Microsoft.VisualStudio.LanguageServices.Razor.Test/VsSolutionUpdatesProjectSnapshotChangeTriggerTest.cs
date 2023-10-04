@@ -24,7 +24,7 @@ namespace Microsoft.VisualStudio.LanguageServices.Razor;
 
 public class VsSolutionUpdatesProjectSnapshotChangeTriggerTest : TestBase
 {
-    private static readonly ProjectSnapshotManagerDispatcher s_dispatcher = new TestProjectSnapshotManagerDispatcher();
+    private static readonly ProjectSnapshotManagerDispatcher s_dispatcher = new TestDispatcher();
 
     private readonly HostProject _someProject;
     private readonly HostProject _someOtherProject;
@@ -110,7 +110,7 @@ public class VsSolutionUpdatesProjectSnapshotChangeTriggerTest : TestBase
     public async Task SolutionClosing_CancelsActiveWork()
     {
         // Arrange
-        var projectManager = new TestProjectSnapshotManager(_workspace)
+        var projectManager = new TestProjectSnapshotManager(_workspace, s_dispatcher)
         {
             AllowNotifyListeners = true,
         };
@@ -150,7 +150,7 @@ public class VsSolutionUpdatesProjectSnapshotChangeTriggerTest : TestBase
     public async Task OnProjectBuiltAsync_KnownProject_EnqueuesProjectStateUpdate()
     {
         // Arrange
-        var projectManager = new TestProjectSnapshotManager(_workspace);
+        var projectManager = new TestProjectSnapshotManager(_workspace, s_dispatcher);
         var expectedProjectPath = _someProject.FilePath;
         var expectedProjectSnapshot = await s_dispatcher.RunOnDispatcherThreadAsync(() =>
         {
@@ -264,5 +264,12 @@ public class VsSolutionUpdatesProjectSnapshotChangeTriggerTest : TestBase
         {
             return null;
         }
+    }
+
+    private class TestDispatcher : ProjectSnapshotManagerDispatcher
+    {
+        public override bool IsDispatcherThread => true;
+
+        public override TaskScheduler DispatcherScheduler => TaskScheduler.Default;
     }
 }

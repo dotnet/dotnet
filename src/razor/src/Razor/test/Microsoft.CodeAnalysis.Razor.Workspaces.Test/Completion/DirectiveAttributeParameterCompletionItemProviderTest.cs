@@ -26,7 +26,7 @@ public class DirectiveAttributeParameterCompletionItemProviderTest : RazorIntegr
     public DirectiveAttributeParameterCompletionItemProviderTest(ITestOutputHelper testOutput)
         : base(testOutput)
     {
-        _provider = new DirectiveAttributeParameterCompletionItemProvider(new DefaultTagHelperFactsService());
+        _provider = new DirectiveAttributeParameterCompletionItemProvider(new TagHelperFactsService());
         _emptyAttributes = Enumerable.Empty<string>();
 
         // Most of these completions rely on stuff in the web namespace.
@@ -93,7 +93,7 @@ public class DirectiveAttributeParameterCompletionItemProviderTest : RazorIntegr
         var completions = _provider.GetCompletionItems(context);
 
         // Assert
-        Assert.Equal(6, completions.Count);
+        Assert.Equal(6, completions.Length);
         AssertContains(completions, "culture");
         AssertContains(completions, "event");
         AssertContains(completions, "format");

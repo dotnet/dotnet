@@ -19,7 +19,7 @@
   </PropertyGroup>
 
   <ItemGroup Label="NuGet">
-    <NuspecProperty Include="JsonNetVersion=$(JsonNetVersion)" />
+    <NuspecProperty Include="NewtonsoftJsonVersion=$(NewtonsoftJsonVersion)" />
     <NuspecProperty Include="SrcPackageFolder=$(SrcPackageFolder)" />
   </ItemGroup>
 

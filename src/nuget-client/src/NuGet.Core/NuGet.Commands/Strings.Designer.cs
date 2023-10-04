@@ -475,7 +475,7 @@ namespace NuGet.Commands {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Invalid NuGetAuditLevel value &apos;{0}&apos;. Expected values: {1}.
+        ///   Looks up a localized string similar to Invalid NuGetAuditLevel value &apos;{0}&apos;. Valid values: {1}.
         /// </summary>
         internal static string Error_InvalidNuGetAuditLevelValue {
             get {
@@ -484,11 +484,20 @@ namespace NuGet.Commands {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Invalid NuGetAuditMode value &apos;{0}&apos;. Expected values: {1}.
+        ///   Looks up a localized string similar to Invalid NuGetAuditMode value &apos;{0}&apos;. Valid values: {1}.
         /// </summary>
         internal static string Error_InvalidNuGetAuditModeValue {
             get {
                 return ResourceManager.GetString("Error_InvalidNuGetAuditModeValue", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Invalid NuGetAudit value &apos;{0}&apos;. Valid values: {1}.
+        /// </summary>
+        internal static string Error_InvalidNuGetAuditValue {
+            get {
+                return ResourceManager.GetString("Error_InvalidNuGetAuditValue", resourceCulture);
             }
         }
         
@@ -646,7 +655,16 @@ namespace NuGet.Commands {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to &apos;{0}&apos; is not an exact version like &apos;[1.0.0]&apos;. Only exact versions are allowed with PackageDownload..
+        ///   Looks up a localized string similar to Package &apos;{0}&apos; does not have an exact version like &apos;[1.0.0]&apos;. Only exact versions are allowed with PackageDownload..
+        /// </summary>
+        internal static string Error_PackageDownload_NoVersion {
+            get {
+                return ResourceManager.GetString("Error_PackageDownload_NoVersion", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Package &apos;{0} {1}&apos; does not have an exact version like &apos;[1.0.0]&apos;. Only exact versions are allowed with PackageDownload..
         /// </summary>
         internal static string Error_PackageDownload_OnlyExactVersionsAreAllowed {
             get {
@@ -1111,24 +1129,6 @@ namespace NuGet.Commands {
         internal static string Log_AssetsFileNotOnDisk {
             get {
                 return ResourceManager.GetString("Log_AssetsFileNotOnDisk", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Checking compatibility of packages on {0}..
-        /// </summary>
-        internal static string Log_CheckingCompatibility {
-            get {
-                return ResourceManager.GetString("Log_CheckingCompatibility", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Checking compatibility for {0} {1} with {2}..
-        /// </summary>
-        internal static string Log_CheckingPackageCompatibility {
-            get {
-                return ResourceManager.GetString("Log_CheckingPackageCompatibility", resourceCulture);
             }
         }
         
@@ -2128,6 +2128,15 @@ namespace NuGet.Commands {
         internal static string SourcesCommandUpdateSuccessful {
             get {
                 return ResourceManager.GetString("SourcesCommandUpdateSuccessful", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The protocol version specified is invalid. Valid protocol versions are from {0} to {1}..
+        /// </summary>
+        internal static string SourcesCommandValidProtocolVersion {
+            get {
+                return ResourceManager.GetString("SourcesCommandValidProtocolVersion", resourceCulture);
             }
         }
         

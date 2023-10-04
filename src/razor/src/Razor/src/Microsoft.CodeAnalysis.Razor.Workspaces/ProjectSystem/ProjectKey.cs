@@ -16,7 +16,7 @@ namespace Microsoft.CodeAnalysis.Razor.ProjectSystem;
 [DebuggerDisplay("id: {Id}")]
 internal readonly record struct ProjectKey : IEquatable<ProjectKey>
 {
-    // ProjectKey represents the path of the intermediate output path, which is where the project.razor.json file will
+    // ProjectKey represents the path of the intermediate output path, which is where the project.razor.bin file will
     // end up. All creation logic is here in one place to ensure this is consistent.
     public static ProjectKey From(HostProject hostProject) => new(hostProject.IntermediateOutputPath);
     public static ProjectKey From(IProjectSnapshot project) => new(project.IntermediateOutputPath);
@@ -25,6 +25,8 @@ internal readonly record struct ProjectKey : IEquatable<ProjectKey>
         var intermediateOutputPath = Path.GetDirectoryName(project.CompilationOutputInfo.AssemblyPath);
         return intermediateOutputPath is null ? null : new(intermediateOutputPath);
     }
+
+    internal static ProjectKey FromString(string projectKeyId) => new(projectKeyId);
 
     public string Id { get; }
 

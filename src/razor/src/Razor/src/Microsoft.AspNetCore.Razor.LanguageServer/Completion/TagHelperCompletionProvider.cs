@@ -3,11 +3,13 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Language.Syntax;
+using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.CodeAnalysis.Razor.Completion;
 using Microsoft.CodeAnalysis.Razor.Tooltip;
 using Microsoft.Extensions.Options;
@@ -15,7 +17,7 @@ using Microsoft.VisualStudio.Editor.Razor;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Completion;
 
-internal class TagHelperCompletionProvider : RazorCompletionItemProvider
+internal class TagHelperCompletionProvider : IRazorCompletionItemProvider
 {
     // Internal for testing
     internal static readonly IReadOnlyList<RazorCommitCharacter> MinimizedAttributeCommitCharacters = RazorCommitCharacter.FromArray(new[] { "=", " " });
@@ -26,13 +28,13 @@ internal class TagHelperCompletionProvider : RazorCompletionItemProvider
     private static readonly IReadOnlyList<RazorCommitCharacter> s_noCommitCharacters = Array.Empty<RazorCommitCharacter>();
     private readonly HtmlFactsService _htmlFactsService;
     private readonly TagHelperCompletionService _tagHelperCompletionService;
-    private readonly TagHelperFactsService _tagHelperFactsService;
+    private readonly ITagHelperFactsService _tagHelperFactsService;
     private readonly IOptionsMonitor<RazorLSPOptions> _optionsMonitor;
 
     public TagHelperCompletionProvider(
         TagHelperCompletionService tagHelperCompletionService,
         HtmlFactsService htmlFactsService,
-        TagHelperFactsService tagHelperFactsService,
+        ITagHelperFactsService tagHelperFactsService,
         IOptionsMonitor<RazorLSPOptions> optionsMonitor)
     {
         _tagHelperCompletionService = tagHelperCompletionService ?? throw new ArgumentException(nameof(tagHelperCompletionService));
@@ -41,7 +43,7 @@ internal class TagHelperCompletionProvider : RazorCompletionItemProvider
         _optionsMonitor = optionsMonitor ?? throw new ArgumentNullException(nameof(optionsMonitor));
     }
 
-    public override IReadOnlyList<RazorCompletionItem> GetCompletionItems(RazorCompletionContext context)
+    public ImmutableArray<RazorCompletionItem> GetCompletionItems(RazorCompletionContext context)
     {
         if (context is null)
         {
@@ -52,10 +54,20 @@ internal class TagHelperCompletionProvider : RazorCompletionItemProvider
         if (owner is null)
         {
             Debug.Fail("Owner should never be null.");
-            return Array.Empty<RazorCompletionItem>();
+            return ImmutableArray<RazorCompletionItem>.Empty;
         }
 
         var parent = owner.Parent;
+
+        // When overtyping a self closing tag completion happens on "<c$$ />" and the owner is a "misc attribute content"
+        // so we have to navigate back up to the start tag to provide completion. Need to be careful though as we don't
+        // want element completions for <c $$ /> even though the parent node is the same
+        if (parent is MarkupMiscAttributeContentSyntax { Parent: MarkupStartTagSyntax startTag } &&
+            context.AbsoluteIndex == startTag.Name.Span.End)
+        {
+            parent = startTag;
+        }
+
         if (_htmlFactsService.TryGetElementInfo(parent, out var containingTagNameToken, out var attributes) &&
             containingTagNameToken.Span.IntersectsWith(context.AbsoluteIndex))
         {
@@ -92,13 +104,13 @@ internal class TagHelperCompletionProvider : RazorCompletionItemProvider
                 //
                 // Will be interpreted as having an `@code` attribute name due to multi-line attributes being a thing. Ultimately this is mostly a
                 // heuristic that we have to apply in order to workaround limitations of the Razor compiler.
-                return Array.Empty<RazorCompletionItem>();
+                return ImmutableArray<RazorCompletionItem>.Empty;
             }
 
             var stringifiedAttributes = _tagHelperFactsService.StringifyAttributes(attributes);
-            var attributeCompletions = GetAttributeCompletions(parent, containingTagNameToken.Content, selectedAttributeName, stringifiedAttributes, context.TagHelperDocumentContext, context.Options);
-            return attributeCompletions;
 
+            return GetAttributeCompletions(parent, containingTagNameToken.Content, selectedAttributeName, stringifiedAttributes, context.TagHelperDocumentContext, context.Options);
+            
             static bool InOrAtEndOfAttribute(SyntaxNode attributeSyntax, int absoluteIndex)
             {
                 // When we are in the middle of writing an attribute it is treated as a minimilized one, e.g.:
@@ -113,19 +125,19 @@ internal class TagHelperCompletionProvider : RazorCompletionItemProvider
         }
 
         // Invalid location for TagHelper completions.
-        return Array.Empty<RazorCompletionItem>();
+        return ImmutableArray<RazorCompletionItem>.Empty;
     }
 
-    private IReadOnlyList<RazorCompletionItem> GetAttributeCompletions(
+    private ImmutableArray<RazorCompletionItem> GetAttributeCompletions(
         SyntaxNode containingAttribute,
         string containingTagName,
         string? selectedAttributeName,
-        IEnumerable<KeyValuePair<string, string>> attributes,
+        ImmutableArray<KeyValuePair<string, string>> attributes,
         TagHelperDocumentContext tagHelperDocumentContext,
         RazorCompletionOptions options)
     {
         var ancestors = containingAttribute.Parent.Ancestors();
-        var nonDirectiveAttributeTagHelpers = tagHelperDocumentContext.TagHelpers.Where(tagHelper => !tagHelper.BoundAttributes.Any(attribute => attribute.IsDirectiveAttribute()));
+        var nonDirectiveAttributeTagHelpers = tagHelperDocumentContext.TagHelpers.Where(tagHelper => !tagHelper.BoundAttributes.Any(static attribute => attribute.IsDirectiveAttribute()));
         var filteredContext = TagHelperDocumentContext.Create(tagHelperDocumentContext.Prefix, nonDirectiveAttributeTagHelpers);
         var (ancestorTagName, ancestorIsTagHelper) = _tagHelperFactsService.GetNearestAncestorTagInfo(ancestors);
         var attributeCompletionContext = new AttributeCompletionContext(
@@ -138,11 +150,12 @@ internal class TagHelperCompletionProvider : RazorCompletionItemProvider
             ancestorIsTagHelper,
             HtmlFactsService.IsHtmlTagName);
 
-        var completionItems = new List<RazorCompletionItem>();
+        using var completionItems = new PooledArrayBuilder<RazorCompletionItem>();
         var completionResult = _tagHelperCompletionService.GetAttributeCompletions(attributeCompletionContext);
-        foreach (var completion in completionResult.Completions)
+
+        foreach (var (displayText, boundAttributes) in completionResult.Completions)
         {
-            var filterText = completion.Key;
+            var filterText = displayText;
 
             // This is a little bit of a hack because the information returned by _razorTagHelperCompletionService.GetAttributeCompletions
             // does not have enough information for us to determine if a completion is an indexer completion or not. Therefore we have to
@@ -150,13 +163,13 @@ internal class TagHelperCompletionProvider : RazorCompletionItemProvider
             //   1. Determine if this specific completion is an indexer based completion
             //   2. Resolve an appropriate snippet if it is. This is more troublesome because we need to remove the ... suffix to accurately
             //      build a snippet that makes sense for the user to type.
-            var indexerCompletion = filterText.EndsWith("...", StringComparison.Ordinal);
-            if (indexerCompletion)
+            var isIndexer = filterText.EndsWith("...", StringComparison.Ordinal);
+            if (isIndexer)
             {
                 filterText = filterText[..^3];
             }
 
-            var attributeContext = ResolveAttributeContext(completion.Value, indexerCompletion, options.SnippetsSupported);
+            var attributeContext = ResolveAttributeContext(boundAttributes, isIndexer, options.SnippetsSupported);
             var attributeCommitCharacters = ResolveAttributeCommitCharacters(attributeContext);
             var isSnippet = false;
             var insertText = filterText;
@@ -177,42 +190,36 @@ internal class TagHelperCompletionProvider : RazorCompletionItemProvider
             // meaning they're probably expecting to provide all of the attributes necessary for that tag to operate. Meaning, HTML attribute completions are less important.
             // To make sure we prioritize our attribute completions above all other types of completions we set the priority to high so they're showed in the completion list
             // above all other completion items.
-            var sortText = HtmlFactsService.IsHtmlTagName(containingTagName) ? CompletionSortTextHelper.DefaultSortPriority : CompletionSortTextHelper.HighSortPriority;
+            var sortText = HtmlFactsService.IsHtmlTagName(containingTagName)
+                ? CompletionSortTextHelper.DefaultSortPriority
+                : CompletionSortTextHelper.HighSortPriority;
+
             var razorCompletionItem = new RazorCompletionItem(
-                displayText: completion.Key,
+                displayText: displayText,
                 insertText: insertText,
                 sortText: sortText,
                 kind: RazorCompletionItemKind.TagHelperAttribute,
                 commitCharacters: attributeCommitCharacters,
                 isSnippet: isSnippet);
 
-            var attributeDescriptions = completion.Value.Select(boundAttribute =>
-            {
-                var descriptionInfo = BoundAttributeDescriptionInfo.From(boundAttribute, indexerCompletion);
+            var attributeDescriptions = boundAttributes.SelectAsArray(boundAttribute => BoundAttributeDescriptionInfo.From(boundAttribute, isIndexer));
 
-                return descriptionInfo;
-            });
-            var attributeDescriptionInfo = new AggregateBoundAttributeDescription(attributeDescriptions.ToList());
+            var attributeDescriptionInfo = new AggregateBoundAttributeDescription(attributeDescriptions);
             razorCompletionItem.SetAttributeCompletionDescription(attributeDescriptionInfo);
 
             completionItems.Add(razorCompletionItem);
         }
 
-        return completionItems;
+        return completionItems.DrainToImmutable();
     }
 
     private bool TryResolveInsertText(string baseInsertText, AttributeContext context, [NotNullWhen(true)] out string? snippetText)
     {
         if (context == AttributeContext.FullSnippet)
         {
-            if (_optionsMonitor.CurrentValue.AutoInsertAttributeQuotes)
-            {
-                snippetText = $"{baseInsertText}=\"$0\"";
-            }
-            else
-            {
-                snippetText = $"{baseInsertText}=$0";
-            }
+            snippetText = _optionsMonitor.CurrentValue.AutoInsertAttributeQuotes
+                ? $"{baseInsertText}=\"$0\""
+                : $"{baseInsertText}=$0";
 
             return true;
         }
@@ -221,10 +228,10 @@ internal class TagHelperCompletionProvider : RazorCompletionItemProvider
         return false;
     }
 
-    private IReadOnlyList<RazorCompletionItem> GetElementCompletions(
+    private ImmutableArray<RazorCompletionItem> GetElementCompletions(
         SyntaxNode containingElement,
         string containingTagName,
-        IEnumerable<KeyValuePair<string, string>> attributes,
+        ImmutableArray<KeyValuePair<string, string>> attributes,
         RazorCompletionContext context)
     {
         var ancestors = containingElement.Ancestors();
@@ -238,24 +245,25 @@ internal class TagHelperCompletionProvider : RazorCompletionItemProvider
             ancestorIsTagHelper,
             HtmlFactsService.IsHtmlTagName);
 
-        var completionItems = new List<RazorCompletionItem>();
         var completionResult = _tagHelperCompletionService.GetElementCompletions(elementCompletionContext);
-        foreach (var completion in completionResult.Completions)
+        using var completionItems = new PooledArrayBuilder<RazorCompletionItem>();
+
+        foreach (var (displayText, tagHelpers) in completionResult.Completions)
         {
             var razorCompletionItem = new RazorCompletionItem(
-                displayText: completion.Key,
-                insertText: completion.Key,
+                displayText: displayText,
+                insertText: displayText,
                 kind: RazorCompletionItemKind.TagHelperElement,
                 commitCharacters: s_elementCommitCharacters);
 
-            var tagHelperDescriptions = completion.Value.Select(tagHelper => BoundElementDescriptionInfo.From(tagHelper));
-            var elementDescription = new AggregateBoundElementDescription(tagHelperDescriptions.ToList());
+            var tagHelperDescriptions = tagHelpers.SelectAsArray(BoundElementDescriptionInfo.From);
+            var elementDescription = new AggregateBoundElementDescription(tagHelperDescriptions);
             razorCompletionItem.SetTagHelperElementDescriptionInfo(elementDescription);
 
             completionItems.Add(razorCompletionItem);
         }
 
-        return completionItems;
+        return completionItems.DrainToImmutable();
     }
 
     private const string BooleanTypeString = "System.Boolean";
@@ -269,7 +277,7 @@ internal class TagHelperCompletionProvider : RazorCompletionItemProvider
         {
             return AttributeContext.Indexer;
         }
-        else if (boundAttributes.Any(b => b.TypeName == BooleanTypeString))
+        else if (boundAttributes.Any(static b => b.TypeName == BooleanTypeString))
         {
             // Have to use string type because IsBooleanProperty isn't set
             return AttributeContext.Minimized;

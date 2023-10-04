@@ -128,7 +128,7 @@ public class DocumentHighlightEndpointTest : LanguageServerTestBase
             MockBehavior.Strict);
 
         var languageServer = new DocumentHighlightServer(csharpServer, csharpDocumentUri);
-        var documentMappingService = new RazorDocumentMappingService(languageServerFeatureOptions, documentContextFactory, LoggerFactory);
+        var documentMappingService = new RazorDocumentMappingService(FilePathService, documentContextFactory, LoggerFactory);
 
         var endpoint = new DocumentHighlightEndpoint(
             languageServerFeatureOptions, documentMappingService, languageServer, LoggerFactory);
@@ -152,7 +152,7 @@ public class DocumentHighlightEndpointTest : LanguageServerTestBase
         // Assert
         var sourceText = codeDocument.GetSourceText();
         var expected = spans
-            .Select(s => s.AsRange(sourceText))
+            .Select(s => s.ToRange(sourceText))
             .OrderBy(s => s.Start.Line)
             .ThenBy(s => s.Start.Character)
             .ToArray();

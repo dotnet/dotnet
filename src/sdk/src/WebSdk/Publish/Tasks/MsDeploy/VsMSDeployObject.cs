@@ -106,7 +106,7 @@ namespace Microsoft.NET.Sdk.Publish.Tasks.MsDeploy
 
             if (vSMSDeployObject.RetryInterval >= 0)
                 baseOptions.RetryInterval = vSMSDeployObject.RetryInterval;
-            if (vSMSDeployObject.RetryAttempts >= 0 )
+            if (vSMSDeployObject.RetryAttempts >= 0)
                 baseOptions.RetryAttempts = vSMSDeployObject.RetryAttempts;
 
             if (!string.IsNullOrEmpty(vSMSDeployObject.UserAgent))
@@ -144,7 +144,7 @@ namespace Microsoft.NET.Sdk.Publish.Tasks.MsDeploy
             }
             else
                 return new System.Collections.Generic.List<string>(0);
-            
+
         }
 
         /// <summary>
@@ -184,7 +184,7 @@ namespace Microsoft.NET.Sdk.Publish.Tasks.MsDeploy
         /// <param name="enable"></param>
         public static void ChangeLinkExtensionEnableStatue(/*Deployment.DeploymentBaseOptions*/ dynamic baseOptions, System.Collections.Generic.List<string> linkExtensions, bool enable)
         {
-            if (linkExtensions!=null && linkExtensions.Count != 0)
+            if (linkExtensions != null && linkExtensions.Count != 0)
             {
                 foreach (string linkExtObj in linkExtensions)
                 {
@@ -257,7 +257,7 @@ namespace Microsoft.NET.Sdk.Publish.Tasks.MsDeploy
 
             // our code path should only take a well known provider
             Diagnostics.Debug.Assert(MsDeploy.Utility.IsDeploymentWellKnownProvider(m_provider));
-            
+
             // maybe we should show the "secure data to display"
             // for now just supress it.
             if (0 == string.Compare(m_provider, MSWebDeploymentAssembly.DynamicAssembly.GetEnumValue(MSDeploy.TypeName.DeploymentWellKnownProvider, MSDeploy.Provider.DBFullSql).ToString(), System.StringComparison.OrdinalIgnoreCase))
@@ -278,7 +278,7 @@ namespace Microsoft.NET.Sdk.Publish.Tasks.MsDeploy
                         else
                         {
                             // these are provider option
-                            this.SetProviderOption(m_provider, name, value);
+                            SetProviderOption(m_provider, name, value);
                         }
                     }
                 }
@@ -296,7 +296,7 @@ namespace Microsoft.NET.Sdk.Publish.Tasks.MsDeploy
 
                 }
             }
-            
+
         }
 
         public VSMSDeployObject(Build.Framework.ITaskItem taskItem, bool fNoDisplayRoot)
@@ -334,70 +334,70 @@ namespace Microsoft.NET.Sdk.Publish.Tasks.MsDeploy
         protected bool m_fNoDisplayRoot = false;
         protected int m_retryInterval = -1;
         protected int m_retryAttempts = -1;
-        
+
         Generic.IList<MsDeploy.ParameterInfo> m_iListParameter = new Generic.List<MsDeploy.ParameterInfo>();
         Generic.IList<MsDeploy.ProviderOption> m_iListProviderOption = new Generic.List<MsDeploy.ProviderOption>();
         Generic.IList<MsDeploy.ParameterInfoWithEntry> m_iListParameterWithEntry = new Generic.List<MsDeploy.ParameterInfoWithEntry>();
         Generic.IList<string> m_iListSetParametersFiles = new Generic.List<string>();
-        
+
         private System.Collections.Generic.Dictionary<string, string> m_NameValueDictionary = new System.Collections.Generic.Dictionary<string, string>(10, System.StringComparer.OrdinalIgnoreCase);
-        
+
         protected /*Deployment.DeploymentBaseOptions*/ dynamic m_deploymentBaseOptions = null;
 
         public override string ToString()
         {
             string root = m_fNoDisplayRoot ? "******" : m_root;
-            return string.Format(System.Globalization.CultureInfo.CurrentCulture,Resources.VSMSDEPLOY_ObjectIdentity, m_provider.ToString(), root);
+            return string.Format(System.Globalization.CultureInfo.CurrentCulture, Resources.VSMSDEPLOY_ObjectIdentity, m_provider.ToString(), root);
         }
-        
+
 
         // property used to call Deployment.DeploymentManager.CreateObject
         public virtual string Root
         {
-            get { return this.m_root; }
-            set { this.m_root = value; }
+            get { return m_root; }
+            set { m_root = value; }
         }
         public virtual string Provider
         {
-            get { return this.m_provider; }
-            set { this.m_provider = value; }
+            get { return m_provider; }
+            set { m_provider = value; }
         }
 
 
         // property use to create the LocationInfo
         public virtual bool IsLocal
         {
-            get { return string.IsNullOrEmpty(this.ComputerName) && string.IsNullOrEmpty(this.MSDeployServiceUrl); }
-            
+            get { return string.IsNullOrEmpty(ComputerName) && string.IsNullOrEmpty(MSDeployServiceUrl); }
+
         }
         public virtual bool UseSeparatedCredential
         {
-            get { return !string.IsNullOrEmpty(this.UserName); }
+            get { return !string.IsNullOrEmpty(UserName); }
         }
 
-        
+
         public virtual string DisableLinks
         {
-            get { return this.m_disableLinks; }
-            set { this.m_disableLinks = value; }
+            get { return m_disableLinks; }
+            set { m_disableLinks = value; }
         }
 
         public virtual string EnableLinks
         {
-            get { return this.m_enableLinks; }
-            set { this.m_enableLinks = value; }
+            get { return m_enableLinks; }
+            set { m_enableLinks = value; }
         }
 
 
 
-      //   <ComputerName></ComputerName>
-      //<Wmsvc></Wmsvc>   -------------------------// bugbug, not supported yet
-      //<UserName></UserName>
-      //<Password></Password>
-      //<EncryptPassword></EncryptPassword>
-      //<IncludeAcls></IncludeAcls>
-      //<authType></authType>
-      //<prefetchPayload></prefetchPayload>
+        //   <ComputerName></ComputerName>
+        //<Wmsvc></Wmsvc>   -------------------------// bugbug, not supported yet
+        //<UserName></UserName>
+        //<Password></Password>
+        //<EncryptPassword></EncryptPassword>
+        //<IncludeAcls></IncludeAcls>
+        //<authType></authType>
+        //<prefetchPayload></prefetchPayload>
 
 
         public virtual string ComputerName
@@ -420,14 +420,16 @@ namespace Microsoft.NET.Sdk.Publish.Tasks.MsDeploy
         // Note this support is still broken for vsmsdeploy
         public string MSDeployServiceUrl
         {
-            get {
+            get
+            {
                 string value = GetDictionaryValue("wmsvc");
                 Diagnostics.Debug.Assert(string.IsNullOrEmpty(value), "Not yet implement");
                 return value;
             }
-            set {
+            set
+            {
                 Diagnostics.Debug.Assert(false, "Not yet implement");
-                SetDictionaryValue("wmsvc", value); 
+                SetDictionaryValue("wmsvc", value);
             }
         }
 
@@ -486,22 +488,22 @@ namespace Microsoft.NET.Sdk.Publish.Tasks.MsDeploy
         }
 
 
-        
+
         public int RetryAttempts
         {
-            get { return this.m_retryAttempts; }
-            set { this.m_retryAttempts = value; }
+            get { return m_retryAttempts; }
+            set { m_retryAttempts = value; }
         }
 
         public int RetryInterval
         {
-            get { return this.m_retryInterval; }
-            set { this.m_retryInterval = value; }
+            get { return m_retryInterval; }
+            set { m_retryInterval = value; }
         }
 
-        public string UserAgent {get;set;}
+        public string UserAgent { get; set; }
 
-        
+
 
         public Generic.IList<MsDeploy.ParameterInfo> Parameters
         {
@@ -570,18 +572,18 @@ namespace Microsoft.NET.Sdk.Publish.Tasks.MsDeploy
             //$BUGBUG lmchen, there is only set to source provider?
             // set up the provider setting
             /*Deployment.DeploymentProviderOptions*/
-            dynamic srcProviderConfig = MSWebDeploymentAssembly.DynamicAssembly.CreateObject("Microsoft.Web.Deployment.DeploymentProviderOptions", new object[]{this.Provider.ToString()});
-            srcProviderConfig.Path = this.Root;
-            MsDeploy.Utility.AddProviderOptions(srcProviderConfig, this.ProviderOptions, _host);
+            dynamic srcProviderConfig = MSWebDeploymentAssembly.DynamicAssembly.CreateObject("Microsoft.Web.Deployment.DeploymentProviderOptions", new object[]{Provider.ToString()});
+            srcProviderConfig.Path = Root;
+            MsDeploy.Utility.AddProviderOptions(srcProviderConfig, ProviderOptions, _host);
 
-            using (/*Deployment.DeploymentObject*/ dynamic srcObj =  MSWebDeploymentAssembly.DynamicAssembly.CallStaticMethod("Microsoft.Web.Deployment.DeploymentManager", "CreateObject", new object[]{srcProviderConfig, this.BaseOptions}))
+            using (/*Deployment.DeploymentObject*/ dynamic srcObj =  MSWebDeploymentAssembly.DynamicAssembly.CallStaticMethod("Microsoft.Web.Deployment.DeploymentManager", "CreateObject", new object[]{srcProviderConfig, BaseOptions}))
             {
 
                 //$BUGBUG lmchen, there is only set to source provider?
                 // set up the parameter
-                MsDeploy.Utility.AddSetParametersFilesToObject(srcObj, this.SetParametersFiles, _host);
-                MsDeploy.Utility.AddSimpleSetParametersToObject(srcObj, this.Parameters, _host);
-                MsDeploy.Utility.AddSetParametersToObject(srcObj, this.EntryParameters, _host);
+                MsDeploy.Utility.AddSetParametersFilesToObject(srcObj, SetParametersFiles, _host);
+                MsDeploy.Utility.AddSimpleSetParametersToObject(srcObj, Parameters, _host);
+                MsDeploy.Utility.AddSetParametersToObject(srcObj, EntryParameters, _host);
                 
                 /*Deployment.DeploymentProviderOptions*/ dynamic destProviderConfig = MSWebDeploymentAssembly.DynamicAssembly.CreateObject("Microsoft.Web.Deployment.DeploymentProviderOptions", new object[]{destObject.Provider.ToString()});
                 destProviderConfig.Path = destObject.Root;

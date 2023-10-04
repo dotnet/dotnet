@@ -231,9 +231,7 @@ namespace Microsoft.CodeAnalysis.Emit
                 userStringStreamLengthAdded: metadataSizes.GetAlignedHeapSize(HeapIndex.UserString) + _previousGeneration.UserStringStreamLengthAdded,
                 // Guid stream accumulates on the GUID heap unlike other heaps, so the previous generations are already included.
                 guidStreamLengthAdded: metadataSizes.HeapSizes[(int)HeapIndex.Guid],
-                anonymousTypeMap: ((IPEDeltaAssemblyBuilder)module).GetAnonymousTypeMap(),
-                anonymousDelegates: ((IPEDeltaAssemblyBuilder)module).GetAnonymousDelegates(),
-                anonymousDelegatesWithIndexedNames: ((IPEDeltaAssemblyBuilder)module).GetAnonymousDelegatesWithIndexedNames(),
+                synthesizedTypes: ((IPEDeltaAssemblyBuilder)module).GetSynthesizedTypes(),
                 synthesizedMembers: synthesizedMembers,
                 deletedMembers: deletedMembers,
                 addedOrChangedMethods: AddRange(_previousGeneration.AddedOrChangedMethods, addedOrChangedMethodsByIndex),
@@ -1258,10 +1256,8 @@ namespace Microsoft.CodeAnalysis.Emit
                 TableIndex.ModuleRef,
                 TableIndex.TypeSpec,
                 TableIndex.ImplMap,
-                // FieldRva is not needed since we only emit fields with explicit mapping
-                // for <PrivateImplementationDetails> and that class is not used in ENC.
-                // If we need FieldRva in the future, we'll need a corresponding test.
-                // (See EditAndContinueTests.FieldRva that was deleted in this change.)
+                // FieldRva is not needed since we do not emit fields with explicit mapping during EnC.
+                // https://github.com/dotnet/roslyn/issues/69480
                 //TableIndex.FieldRva,
                 TableIndex.EncLog,
                 TableIndex.EncMap,

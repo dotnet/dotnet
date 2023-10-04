@@ -321,6 +321,10 @@ tryAgain:
                         MarkReachableFromTry(reachableBlocks, block);
                         break;
 
+                    case BlockType.Filter:
+                        MarkReachableFromFilter(reachableBlocks, block);
+                        break;
+
                     default:
                         MarkReachableFromBranch(reachableBlocks, block);
                         break;
@@ -461,6 +465,15 @@ tryAgain:
                 }
             }
 
+            MarkReachableFromBranch(reachableBlocks, block);
+        }
+
+        private static void MarkReachableFromFilter(ArrayBuilder<BasicBlock> reachableBlocks, BasicBlock block)
+        {
+            Debug.Assert(block.EnclosingHandler.LastFilterConditionBlock.BranchCode == ILOpCode.Endfilter);
+
+            // End filter block should be preserved and is considered always reachable
+            PushReachableBlockToProcess(reachableBlocks, block.EnclosingHandler.LastFilterConditionBlock);
             MarkReachableFromBranch(reachableBlocks, block);
         }
 
@@ -1082,16 +1095,6 @@ tryAgain:
         {
             Debug.Assert(_emitState.CurStack == 0);
         }
-
-        [Conditional("DEBUG")]
-        internal void AssertStackDepth(int stack)
-        {
-            Debug.Assert(_emitState.CurStack == stack);
-        }
-
-#if DEBUG
-        internal int GetStackDepth() => _emitState.CurStack;
-#endif
 
         // true if there may have been a label generated with no subsequent code
         internal bool IsJustPastLabel()

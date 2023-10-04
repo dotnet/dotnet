@@ -64,7 +64,7 @@ internal class DefaultWindowsRazorProjectHost : WindowsRazorProjectHostBase
 
     protected override ImmutableHashSet<string> GetRuleNames() => s_ruleNames;
 
-    protected override async Task HandleProjectChangeAsync(IProjectVersionedValue<IProjectSubscriptionUpdate> update)
+    protected override async Task HandleProjectChangeAsync(string sliceDimensions, IProjectVersionedValue<IProjectSubscriptionUpdate> update)
     {
         if (TryGetConfiguration(update.Value.CurrentState, out var configuration) &&
             TryGetIntermediateOutputPath(update.Value.CurrentState, out var intermediatePath))
@@ -83,7 +83,7 @@ internal class DefaultWindowsRazorProjectHost : WindowsRazorProjectHostBase
 
             await UpdateAsync(() =>
             {
-                var hostProject = new HostProject(CommonServices.UnconfiguredProject.FullPath, intermediatePath, configuration, rootNamespace);
+                var hostProject = new HostProject(CommonServices.UnconfiguredProject.FullPath, intermediatePath, configuration, rootNamespace, displayName: sliceDimensions);
 
                 if (_languageServerFeatureOptions is not null)
                 {

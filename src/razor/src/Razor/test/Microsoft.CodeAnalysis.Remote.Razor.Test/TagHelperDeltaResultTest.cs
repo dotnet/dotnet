@@ -2,11 +2,11 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using System.Collections.Immutable;
-using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Serialization;
 using Microsoft.CodeAnalysis.Remote.Razor.Test;
 using Xunit;
 using Xunit.Abstractions;
+using Checksum = Microsoft.AspNetCore.Razor.Utilities.Checksum;
 
 namespace Microsoft.CodeAnalysis.Remote.Razor;
 
@@ -16,51 +16,51 @@ public class TagHelperDeltaResultTest(ITestOutputHelper testOutput) : TagHelperD
     public void Apply_Noop()
     {
         // Arrange
-        var delta = new TagHelperDeltaResult(Delta: true, ResultId: 1337, ImmutableArray<TagHelperDescriptor>.Empty, ImmutableArray<TagHelperDescriptor>.Empty);
+        var delta = new TagHelperDeltaResult(IsDelta: true, ResultId: 1337, ImmutableArray<Checksum>.Empty, ImmutableArray<Checksum>.Empty);
 
         // Act
-        var tagHelpers = delta.Apply(Project1TagHelpers);
+        var checksums = delta.Apply(Project1TagHelperChecksums);
 
         // Assert
-        Assert.Equal(Project1TagHelpers, tagHelpers, TagHelperDescriptorComparer.Default);
+        Assert.Equal<Checksum>(Project1TagHelperChecksums, checksums);
     }
 
     [Fact]
     public void Apply_Added()
     {
         // Arrange
-        var delta = new TagHelperDeltaResult(Delta: true, ResultId: 1337, Project1TagHelpers, ImmutableArray<TagHelperDescriptor>.Empty);
+        var delta = new TagHelperDeltaResult(IsDelta: true, ResultId: 1337, Project1TagHelperChecksums, ImmutableArray<Checksum>.Empty);
 
         // Act
-        var tagHelpers = delta.Apply(Project2TagHelpers);
+        var checksums = delta.Apply(Project2TagHelperChecksums);
 
         // Assert
-        Assert.Equal(Project1AndProject2TagHelpers, tagHelpers, TagHelperDescriptorComparer.Default);
+        Assert.Equal<Checksum>(Project1AndProject2TagHelperChecksums, checksums);
     }
 
     [Fact]
     public void Apply_Removed()
     {
         // Arrange
-        var delta = new TagHelperDeltaResult(Delta: true, ResultId: 1337, ImmutableArray<TagHelperDescriptor>.Empty, Project1TagHelpers);
+        var delta = new TagHelperDeltaResult(IsDelta: true, ResultId: 1337, ImmutableArray<Checksum>.Empty, Project1TagHelperChecksums);
 
         // Act
-        var tagHelpers = delta.Apply(Project1AndProject2TagHelpers);
+        var checksums = delta.Apply(Project1AndProject2TagHelperChecksums);
 
         // Assert
-        Assert.Equal(Project2TagHelpers, tagHelpers, TagHelperDescriptorComparer.Default);
+        Assert.Equal<Checksum>(Project2TagHelperChecksums, checksums);
     }
 
     [Fact]
     public void Apply_AddAndRemoved()
     {
         // Arrange
-        var delta = new TagHelperDeltaResult(Delta: true, ResultId: 1337, Project1TagHelpers, Project2TagHelpers);
+        var delta = new TagHelperDeltaResult(IsDelta: true, ResultId: 1337, Project1TagHelperChecksums, Project2TagHelperChecksums);
 
         // Act
-        var tagHelpers = delta.Apply(Project2TagHelpers);
+        var checksums = delta.Apply(Project2TagHelperChecksums);
 
         // Assert
-        Assert.Equal(Project1TagHelpers, tagHelpers, TagHelperDescriptorComparer.Default);
+        Assert.Equal<Checksum>(Project1TagHelperChecksums, checksums);
     }
 }

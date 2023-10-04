@@ -2,12 +2,12 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using System.Threading.Tasks;
-using Microsoft.VisualStudio.Shell.Interop;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace Microsoft.VisualStudio.Razor.IntegrationTests;
 
-public class OnTypeFormattingTests : AbstractRazorEditorTest
+public class OnTypeFormattingTests(ITestOutputHelper testOutputHelper) : AbstractRazorEditorTest(testOutputHelper)
 {
     [IdeFact(Skip = "https://github.com/dotnet/razor/issues/8625")]
     public async Task TypeScript_Semicolon()

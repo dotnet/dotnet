@@ -32,9 +32,19 @@
         <target state="translated">必須是 JSON 權杖 '{0}'，但卻是 '{1}'。</target>
         <note />
       </trans-unit>
-      <trans-unit id="Unsupported_project_razor_json_version_encountered">
-        <source>Unsupported project.razor.json version encounted.</source>
-        <target state="translated">遇到不受支援的 project.razor.json 版本。</target>
+      <trans-unit id="Unsupported_argument_kind">
+        <source>Unsupported argument kind: '{0}'.</source>
+        <target state="translated">不支援的引數種類: '{0}'。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Unsupported_argument_type">
+        <source>Unsupported argument type: '{0}'.</source>
+        <target state="translated">不支援的引數類型: '{0}'。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Unsupported_razor_project_info_version_encountered">
+        <source>Unsupported razor project info version encounted.</source>
+        <target state="translated">不支援的 razor 專案資訊版本已列舉。</target>
         <note />
       </trans-unit>
     </body>

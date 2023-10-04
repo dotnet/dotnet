@@ -4,7 +4,6 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 using System.Threading;
 using Microsoft.AspNetCore.Razor.LanguageServer.Common;
 using Microsoft.AspNetCore.Razor.TextDifferencing;
@@ -19,7 +18,7 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer;
 internal class DefaultGeneratedDocumentPublisher : GeneratedDocumentPublisher
 {
     private readonly Dictionary<DocumentKey, PublishData> _publishedCSharpData;
-    private readonly Dictionary<DocumentKey, PublishData> _publishedHtmlData;
+    private readonly Dictionary<string, PublishData> _publishedHtmlData;
     private readonly ClientNotifierServiceBase _server;
     private readonly LanguageServerFeatureOptions _languageServerFeatureOptions;
     private readonly ILogger _logger;
@@ -57,7 +56,12 @@ internal class DefaultGeneratedDocumentPublisher : GeneratedDocumentPublisher
         _languageServerFeatureOptions = languageServerFeatureOptions;
         _logger = loggerFactory.CreateLogger<DefaultGeneratedDocumentPublisher>();
         _publishedCSharpData = new Dictionary<DocumentKey, PublishData>();
-        _publishedHtmlData = new Dictionary<DocumentKey, PublishData>();
+
+        // We don't generate individual Html documents per-project, so in order to ensure diffs are calculated correctly
+        // we don't use the project key for the key for this dictionary. This matches when we send edits to the client,
+        // as they are only tracking a single Html file for each Razor file path, thus edits need to be correct or we'll
+        // get out of sync.
+        _publishedHtmlData = new Dictionary<string, PublishData>(FilePathComparer.Instance);
     }
 
     public override void Initialize(ProjectSnapshotManagerBase projectManager)
@@ -85,9 +89,19 @@ internal class DefaultGeneratedDocumentPublisher : GeneratedDocumentPublisher
 
         _projectSnapshotManagerDispatcher.AssertDispatcherThread();
 
+        // If our generated documents don't have unique file paths, then using project key information is problematic for the client.
+        // For example, when a document moves from the Misc Project to a real project, we will update it here, and each version would
+        // have a different project key. On the receiving end however, there is only one file path, therefore one version of the contents,
+        // so we must ensure we only have a single document to compute diffs from, or things get out of sync.
+        if (!_languageServerFeatureOptions.IncludeProjectKeyInGeneratedFilePath)
+        {
+            projectKey = default;
+        }
+
         var key = new DocumentKey(projectKey, filePath);
         if (!_publishedCSharpData.TryGetValue(key, out var previouslyPublishedData))
         {
+            _logger.LogDebug("New publish data created for {project} and {filePath}", projectKey, filePath);
             previouslyPublishedData = PublishData.Default;
         }
 
@@ -122,17 +136,8 @@ internal class DefaultGeneratedDocumentPublisher : GeneratedDocumentPublisher
             ProjectKeyId = projectKey.Id,
             Changes = textChanges,
             HostDocumentVersion = hostDocumentVersion,
+            PreviousWasEmpty = previouslyPublishedData.SourceText.Length == 0
         };
-
-        // HACK: We know about a document being in multiple projects, but despite having ProjectKeyId in the request, currently the other end
-        // of this LSP message only knows about a single document file path. To prevent confusing them, we just send an update for the first project
-        // in the list.
-        if (_projectSnapshotManager is { } projectSnapshotManager &&
-            projectSnapshotManager.GetLoadedProject(projectKey) is { } projectSnapshot &&
-            projectSnapshotManager.GetAllProjectKeys(projectSnapshot.FilePath).First() != projectKey)
-        {
-            return;
-        }
 
         _ = _server.SendNotificationAsync(CustomMessageNames.RazorUpdateCSharpBufferEndpoint, request, CancellationToken.None);
     }
@@ -151,8 +156,7 @@ internal class DefaultGeneratedDocumentPublisher : GeneratedDocumentPublisher
 
         _projectSnapshotManagerDispatcher.AssertDispatcherThread();
 
-        var key = new DocumentKey(projectKey, filePath);
-        if (!_publishedHtmlData.TryGetValue(key, out var previouslyPublishedData))
+        if (!_publishedHtmlData.TryGetValue(filePath, out var previouslyPublishedData))
         {
             previouslyPublishedData = PublishData.Default;
         }
@@ -179,7 +183,7 @@ internal class DefaultGeneratedDocumentPublisher : GeneratedDocumentPublisher
                 textChanges.Count);
         }
 
-        _publishedHtmlData[key] = new PublishData(sourceText, hostDocumentVersion);
+        _publishedHtmlData[filePath] = new PublishData(sourceText, hostDocumentVersion);
 
         var request = new UpdateBufferRequest()
         {
@@ -187,6 +191,7 @@ internal class DefaultGeneratedDocumentPublisher : GeneratedDocumentPublisher
             ProjectKeyId = projectKey.Id,
             Changes = textChanges,
             HostDocumentVersion = hostDocumentVersion,
+            PreviousWasEmpty = previouslyPublishedData.SourceText.Length == 0
         };
 
         _ = _server.SendNotificationAsync(CustomMessageNames.RazorUpdateHtmlBufferEndpoint, request, CancellationToken.None);
@@ -210,7 +215,6 @@ internal class DefaultGeneratedDocumentPublisher : GeneratedDocumentPublisher
                 Assumes.NotNull(args.DocumentFilePath);
                 if (!_projectSnapshotManager.IsDocumentOpen(args.DocumentFilePath))
                 {
-                    var key = new DocumentKey(args.ProjectKey, args.DocumentFilePath);
                     // Document closed, evict published source text, unless the server doesn't want us to.
                     if (_languageServerFeatureOptions.UpdateBuffersForClosedDocuments)
                     {
@@ -219,6 +223,13 @@ internal class DefaultGeneratedDocumentPublisher : GeneratedDocumentPublisher
                         return;
                     }
 
+                    var projectKey = args.ProjectKey;
+                    if (!_languageServerFeatureOptions.IncludeProjectKeyInGeneratedFilePath)
+                    {
+                        projectKey = default;
+                    }
+
+                    var key = new DocumentKey(projectKey, args.DocumentFilePath);
                     if (_publishedCSharpData.ContainsKey(key))
                     {
                         var removed = _publishedCSharpData.Remove(key);
@@ -229,9 +240,9 @@ internal class DefaultGeneratedDocumentPublisher : GeneratedDocumentPublisher
                         }
                     }
 
-                    if (_publishedHtmlData.ContainsKey(key))
+                    if (_publishedHtmlData.ContainsKey(args.DocumentFilePath))
                     {
-                        var removed = _publishedHtmlData.Remove(key);
+                        var removed = _publishedHtmlData.Remove(args.DocumentFilePath);
                         if (!removed)
                         {
                             _logger.LogError("Published data should be protected by the project snapshot manager's thread and should never fail to remove.");

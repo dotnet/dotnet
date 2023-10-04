@@ -98,7 +98,7 @@ namespace NuGet.Test.Utility
         /// Walks up the specified directory looking for NuGet.sln.
         /// </summary>
         /// <param name="startingDirectory">The <see cref="DirectoryInfo" /> to use as a starting directory.</param>
-        /// <returns>A <see cref="DirectoryInfo" /> representing the root of the respository if one is found, otherwise <c>null</c>.</returns>
+        /// <returns>A <see cref="DirectoryInfo" /> representing the root of the respository if one is found, otherwise <see langword="null" />.</returns>
         private static DirectoryInfo GetRepositoryRootFromStartingDirectory(DirectoryInfo startingDirectory)
         {
             DirectoryInfo currentDir = startingDirectory;

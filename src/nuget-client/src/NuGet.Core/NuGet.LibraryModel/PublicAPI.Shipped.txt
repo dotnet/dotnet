@@ -127,6 +127,7 @@ NuGet.LibraryModel.LibraryRange.TypeConstraintAllowsAnyOf(NuGet.LibraryModel.Lib
 NuGet.LibraryModel.LibraryType
 NuGet.LibraryModel.LibraryType.Equals(NuGet.LibraryModel.LibraryType other) -> bool
 NuGet.LibraryModel.LibraryType.IsKnown.get -> bool
+NuGet.LibraryModel.LibraryType.LibraryType() -> void
 ~NuGet.LibraryModel.LibraryType.Value.get -> string
 ~override NuGet.LibraryModel.CentralPackageVersion.Equals(object obj) -> bool
 override NuGet.LibraryModel.CentralPackageVersion.GetHashCode() -> int
@@ -156,6 +157,7 @@ override NuGet.LibraryModel.LibraryType.GetHashCode() -> int
 ~static NuGet.LibraryModel.LibraryDependency.ApplyCentralVersionInformation(System.Collections.Generic.IList<NuGet.LibraryModel.LibraryDependency> packageReferences, System.Collections.Generic.IDictionary<string, NuGet.LibraryModel.CentralPackageVersion> centralPackageVersions) -> void
 ~static NuGet.LibraryModel.LibraryDependencyInfo.Create(NuGet.LibraryModel.LibraryIdentity library, NuGet.Frameworks.NuGetFramework framework, System.Collections.Generic.IEnumerable<NuGet.LibraryModel.LibraryDependency> dependencies) -> NuGet.LibraryModel.LibraryDependencyInfo
 ~static NuGet.LibraryModel.LibraryDependencyInfo.CreateUnresolved(NuGet.LibraryModel.LibraryIdentity library, NuGet.Frameworks.NuGetFramework framework) -> NuGet.LibraryModel.LibraryDependencyInfo
+~static NuGet.LibraryModel.LibraryDependencyTargetUtils.AsString(this NuGet.LibraryModel.LibraryDependencyTarget includeFlags) -> string
 ~static NuGet.LibraryModel.LibraryDependencyTargetUtils.GetFlagString(NuGet.LibraryModel.LibraryDependencyTarget flags) -> string
 ~static NuGet.LibraryModel.LibraryDependencyTargetUtils.Parse(string flag) -> NuGet.LibraryModel.LibraryDependencyTarget
 ~static NuGet.LibraryModel.LibraryExtensions.GetItem<T>(this NuGet.LibraryModel.Library library, string key) -> T
@@ -164,6 +166,7 @@ override NuGet.LibraryModel.LibraryType.GetHashCode() -> int
 ~static NuGet.LibraryModel.LibraryIdentity.implicit operator NuGet.LibraryModel.LibraryRange(NuGet.LibraryModel.LibraryIdentity library) -> NuGet.LibraryModel.LibraryRange
 ~static NuGet.LibraryModel.LibraryIdentity.operator !=(NuGet.LibraryModel.LibraryIdentity left, NuGet.LibraryModel.LibraryIdentity right) -> bool
 ~static NuGet.LibraryModel.LibraryIdentity.operator ==(NuGet.LibraryModel.LibraryIdentity left, NuGet.LibraryModel.LibraryIdentity right) -> bool
+~static NuGet.LibraryModel.LibraryIncludeFlagUtils.AsString(this NuGet.LibraryModel.LibraryIncludeFlags includeFlags) -> string
 ~static NuGet.LibraryModel.LibraryIncludeFlagUtils.GetFlagString(NuGet.LibraryModel.LibraryIncludeFlags flags) -> string
 ~static NuGet.LibraryModel.LibraryIncludeFlagUtils.GetFlags(System.Collections.Generic.IEnumerable<string> flags) -> NuGet.LibraryModel.LibraryIncludeFlags
 ~static NuGet.LibraryModel.LibraryIncludeFlagUtils.GetFlags(string flags, NuGet.LibraryModel.LibraryIncludeFlags defaultFlags) -> NuGet.LibraryModel.LibraryIncludeFlags

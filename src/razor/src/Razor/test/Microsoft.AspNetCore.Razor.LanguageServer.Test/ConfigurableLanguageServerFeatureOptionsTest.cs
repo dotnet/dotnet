@@ -2,11 +2,6 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Xunit;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer;
@@ -26,7 +21,6 @@ public class ConfigurableLanguageServerFeatureOptionsTest
         Assert.Equal(expected.HtmlVirtualDocumentSuffix, actual.HtmlVirtualDocumentSuffix);
         Assert.Equal(expected.SingleServerCompletionSupport, actual.SingleServerCompletionSupport);
         Assert.Equal(expected.SingleServerSupport, actual.SingleServerSupport);
-        Assert.Equal(expected.SupportsDelegatedCodeActions, actual.SupportsDelegatedCodeActions);
         Assert.Equal(expected.ReturnCodeActionAndRenamePathsWithPrefixedSlash, actual.ReturnCodeActionAndRenamePathsWithPrefixedSlash);
     }
 
@@ -35,19 +29,18 @@ public class ConfigurableLanguageServerFeatureOptionsTest
     {
         var expected = new DefaultLanguageServerFeatureOptions();
 
-        var projectRazorJsonFilename = "project.razor.test.only.file.json";
-        var args = new[] { "--projectConfigurationFilename", projectRazorJsonFilename };
+        var projectRazorBinFilename = "project.razor.test.only.file.bin";
+        var args = new[] { "--projectConfigurationFilename", projectRazorBinFilename };
 
         var actual = new ConfigurableLanguageServerFeatureOptions(args);
 
-        Assert.Equal(projectRazorJsonFilename, actual.ProjectConfigurationFileName);
+        Assert.Equal(projectRazorBinFilename, actual.ProjectConfigurationFileName);
 
         Assert.Equal(expected.SupportsFileManipulation, actual.SupportsFileManipulation);
         Assert.Equal(expected.CSharpVirtualDocumentSuffix, actual.CSharpVirtualDocumentSuffix);
         Assert.Equal(expected.HtmlVirtualDocumentSuffix, actual.HtmlVirtualDocumentSuffix);
         Assert.Equal(expected.SingleServerCompletionSupport, actual.SingleServerCompletionSupport);
         Assert.Equal(expected.SingleServerSupport, actual.SingleServerSupport);
-        Assert.Equal(expected.SupportsDelegatedCodeActions, actual.SupportsDelegatedCodeActions);
         Assert.Equal(expected.ReturnCodeActionAndRenamePathsWithPrefixedSlash, actual.ReturnCodeActionAndRenamePathsWithPrefixedSlash);
     }
 
@@ -56,19 +49,18 @@ public class ConfigurableLanguageServerFeatureOptionsTest
     {
         var expected = new DefaultLanguageServerFeatureOptions();
 
-        var projectRazorJsonFilename = "project.razor.test.only.file.json";
-        var args = new[] { "noise", "--projectConfigurationFilename", projectRazorJsonFilename, "ignore", "this" };
+        var projectRazorBinFilename = "project.razor.test.only.file.bin";
+        var args = new[] { "noise", "--projectConfigurationFilename", projectRazorBinFilename, "ignore", "this" };
 
         var actual = new ConfigurableLanguageServerFeatureOptions(args);
 
-        Assert.Equal(projectRazorJsonFilename, actual.ProjectConfigurationFileName);
+        Assert.Equal(projectRazorBinFilename, actual.ProjectConfigurationFileName);
 
         Assert.Equal(expected.SupportsFileManipulation, actual.SupportsFileManipulation);
         Assert.Equal(expected.CSharpVirtualDocumentSuffix, actual.CSharpVirtualDocumentSuffix);
         Assert.Equal(expected.HtmlVirtualDocumentSuffix, actual.HtmlVirtualDocumentSuffix);
         Assert.Equal(expected.SingleServerCompletionSupport, actual.SingleServerCompletionSupport);
         Assert.Equal(expected.SingleServerSupport, actual.SingleServerSupport);
-        Assert.Equal(expected.SupportsDelegatedCodeActions, actual.SupportsDelegatedCodeActions);
         Assert.Equal(expected.ReturnCodeActionAndRenamePathsWithPrefixedSlash, actual.ReturnCodeActionAndRenamePathsWithPrefixedSlash);
     }
 
@@ -90,7 +82,6 @@ public class ConfigurableLanguageServerFeatureOptionsTest
         Assert.Equal(expected.CSharpVirtualDocumentSuffix, actual.CSharpVirtualDocumentSuffix);
         Assert.Equal(expected.HtmlVirtualDocumentSuffix, actual.HtmlVirtualDocumentSuffix);
         Assert.Equal(expected.SingleServerCompletionSupport, actual.SingleServerCompletionSupport);
-        Assert.Equal(expected.SupportsDelegatedCodeActions, actual.SupportsDelegatedCodeActions);
         Assert.Equal(expected.ReturnCodeActionAndRenamePathsWithPrefixedSlash, actual.ReturnCodeActionAndRenamePathsWithPrefixedSlash);
     }
 
@@ -112,7 +103,6 @@ public class ConfigurableLanguageServerFeatureOptionsTest
         Assert.Equal(expected.CSharpVirtualDocumentSuffix, actual.CSharpVirtualDocumentSuffix);
         Assert.Equal(expected.HtmlVirtualDocumentSuffix, actual.HtmlVirtualDocumentSuffix);
         Assert.Equal(expected.SingleServerCompletionSupport, actual.SingleServerCompletionSupport);
-        Assert.Equal(expected.SupportsDelegatedCodeActions, actual.SupportsDelegatedCodeActions);
         Assert.Equal(expected.ReturnCodeActionAndRenamePathsWithPrefixedSlash, actual.ReturnCodeActionAndRenamePathsWithPrefixedSlash);
     }
 
@@ -134,7 +124,6 @@ public class ConfigurableLanguageServerFeatureOptionsTest
         Assert.Equal(expected.CSharpVirtualDocumentSuffix, actual.CSharpVirtualDocumentSuffix);
         Assert.Equal(expected.HtmlVirtualDocumentSuffix, actual.HtmlVirtualDocumentSuffix);
         Assert.Equal(expected.SingleServerCompletionSupport, actual.SingleServerCompletionSupport);
-        Assert.Equal(expected.SupportsDelegatedCodeActions, actual.SupportsDelegatedCodeActions);
         Assert.Equal(expected.ReturnCodeActionAndRenamePathsWithPrefixedSlash, actual.ReturnCodeActionAndRenamePathsWithPrefixedSlash);
     }
 
@@ -156,7 +145,6 @@ public class ConfigurableLanguageServerFeatureOptionsTest
         Assert.Equal(expected.HtmlVirtualDocumentSuffix, actual.HtmlVirtualDocumentSuffix);
         Assert.Equal(expected.SingleServerCompletionSupport, actual.SingleServerCompletionSupport);
         Assert.Equal(expected.SingleServerSupport, actual.SingleServerSupport);
-        Assert.Equal(expected.SupportsDelegatedCodeActions, actual.SupportsDelegatedCodeActions);
         Assert.Equal(expected.ReturnCodeActionAndRenamePathsWithPrefixedSlash, actual.ReturnCodeActionAndRenamePathsWithPrefixedSlash);
     }
 }

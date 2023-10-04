@@ -3,10 +3,11 @@
 
 using System.Threading.Tasks;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace Microsoft.VisualStudio.Razor.IntegrationTests;
 
-public class DiagnosticTests : AbstractRazorEditorTest
+public class DiagnosticTests(ITestOutputHelper testOutputHelper) : AbstractRazorEditorTest(testOutputHelper)
 {
     [ConditionalSkipIdeFact(Issue = "https://github.com/dotnet/razor/issues/8150")]
     public async Task Diagnostics_ShowErrors_Razor()

@@ -149,7 +149,7 @@ namespace Microsoft.Build.NuGetSdkResolver.Test
         }
 
         /// <summary>
-        /// Verifies that <see cref="NuGetSdkResolver.TryGetNuGetVersionForSdk(string, string, SdkResolverContext, out object)" /> returns <c>null</c> when an invalid version is specified in global.json.
+        /// Verifies that <see cref="NuGetSdkResolver.TryGetNuGetVersionForSdk(string, string, SdkResolverContext, out object)" /> returns <see langword="null" /> when an invalid version is specified in global.json.
         /// </summary>
         [Fact]
         public void TryGetNuGetVersionForSdk_WhenInvalidVersionInGlobalJson_ReturnsNull()
@@ -169,7 +169,7 @@ namespace Microsoft.Build.NuGetSdkResolver.Test
         }
 
         /// <summary>
-        /// Verifies that <see cref="NuGetSdkResolver.TryGetNuGetVersionForSdk(string, string, SdkResolverContext, out object)" /> returns <c>null</c> when an invalid version is specified in a project.
+        /// Verifies that <see cref="NuGetSdkResolver.TryGetNuGetVersionForSdk(string, string, SdkResolverContext, out object)" /> returns <see langword="null" /> when an invalid version is specified in a project.
         /// </summary>
         [Fact]
         public void TryGetNuGetVersionForSdk_WhenInvalidVersionSpecified_ReturnsNull()
@@ -199,7 +199,7 @@ namespace Microsoft.Build.NuGetSdkResolver.Test
         }
 
         /// <summary>
-        /// Verifies that <see cref="NuGetSdkResolver.TryGetNuGetVersionForSdk(string, string, SdkResolverContext, out object)" /> returns <c>null</c> when the project path is <c>null</c>.
+        /// Verifies that <see cref="NuGetSdkResolver.TryGetNuGetVersionForSdk(string, string, SdkResolverContext, out object)" /> returns <see langword="null" /> when the project path is <see langword="null" />.
         /// </summary>
         [Fact]
         public void TryGetNuGetVersionForSdk_WhenProjectPathIsNullAndVersionIsNull_ReturnsNull()
@@ -214,7 +214,7 @@ namespace Microsoft.Build.NuGetSdkResolver.Test
         }
 
         /// <summary>
-        /// Verifies that <see cref="NuGetSdkResolver.TryGetNuGetVersionForSdk(string, string, SdkResolverContext, out object)" /> returns <c>null</c> when the state of a previous call has no version specified.
+        /// Verifies that <see cref="NuGetSdkResolver.TryGetNuGetVersionForSdk(string, string, SdkResolverContext, out object)" /> returns <see langword="null" /> when the state of a previous call has no version specified.
         /// </summary>
         [Fact]
         public void TryGetNuGetVersionForSdk_WhenStateContainsNoVersion_ReturnsNull()

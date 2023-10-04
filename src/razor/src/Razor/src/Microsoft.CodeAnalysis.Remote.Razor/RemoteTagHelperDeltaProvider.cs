@@ -2,7 +2,6 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using System.Collections.Immutable;
-using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Serialization;
 using Microsoft.AspNetCore.Razor.Utilities;
 
@@ -17,17 +16,34 @@ internal class RemoteTagHelperDeltaProvider
     public TagHelperDeltaResult GetTagHelpersDelta(
         ProjectId projectId,
         int lastResultId,
-        ImmutableArray<TagHelperDescriptor> currentTagHelpers)
+        ImmutableArray<Checksum> currentChecksums)
     {
-        var cacheHit = _resultCache.TryGet(projectId, lastResultId, out var cachedTagHelpers);
+        var cacheHit = _resultCache.TryGet(projectId, lastResultId, out var cachedChecksums);
 
         if (!cacheHit)
         {
-            cachedTagHelpers = ImmutableArray<TagHelperDescriptor>.Empty;
+            cachedChecksums = ImmutableArray<Checksum>.Empty;
         }
 
-        var added = TagHelperDelta.Compute(cachedTagHelpers, currentTagHelpers);
-        var removed = TagHelperDelta.Compute(currentTagHelpers, cachedTagHelpers);
+        ImmutableArray<Checksum> added;
+        ImmutableArray<Checksum> removed;
+
+        if (cachedChecksums.Length < currentChecksums.Length)
+        {
+            added = Delta.Compute(cachedChecksums, currentChecksums);
+
+            // No need to call TagHelperDelta.Compute again if we know there aren't any removed
+            var anyRemoved = currentChecksums.Length - cachedChecksums.Length != added.Length;
+            removed = anyRemoved ? Delta.Compute(currentChecksums, cachedChecksums) : ImmutableArray<Checksum>.Empty;
+        }
+        else
+        {
+            removed = Delta.Compute(currentChecksums, cachedChecksums);
+
+            // No need to call TagHelperDelta.Compute again if we know there aren't any added
+            var anyAdded = cachedChecksums.Length - currentChecksums.Length != removed.Length;
+            added = anyAdded ? Delta.Compute(cachedChecksums, currentChecksums) : ImmutableArray<Checksum>.Empty;
+        }
 
         lock (_gate)
         {
@@ -36,7 +52,7 @@ internal class RemoteTagHelperDeltaProvider
             {
                 // The result actually changed, lets generate & cache a new result
                 resultId = ++_currentResultId;
-                _resultCache.Set(projectId, resultId, currentTagHelpers);
+                _resultCache.Set(projectId, resultId, currentChecksums);
             }
             else if (cacheHit)
             {
@@ -44,8 +60,7 @@ internal class RemoteTagHelperDeltaProvider
                 resultId = lastResultId;
             }
 
-            var result = new TagHelperDeltaResult(cacheHit, resultId, added, removed);
-            return result;
+            return new TagHelperDeltaResult(cacheHit, resultId, added, removed);
         }
     }
 }

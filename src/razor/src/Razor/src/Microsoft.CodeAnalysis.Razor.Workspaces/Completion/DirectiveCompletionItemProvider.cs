@@ -5,17 +5,19 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Composition;
 using System.Linq;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Language.Legacy;
 using Microsoft.AspNetCore.Razor.Language.Syntax;
+using Microsoft.AspNetCore.Razor.PooledObjects;
 
 namespace Microsoft.CodeAnalysis.Razor.Completion;
 
 [Shared]
-[Export(typeof(RazorCompletionItemProvider))]
-internal class DirectiveCompletionItemProvider : RazorCompletionItemProvider
+[Export(typeof(IRazorCompletionItemProvider))]
+internal class DirectiveCompletionItemProvider : IRazorCompletionItemProvider
 {
     internal static readonly IReadOnlyList<RazorCommitCharacter> SingleLineDirectiveCommitCharacters = RazorCommitCharacter.FromArray(new[] { " " });
     internal static readonly IReadOnlyList<RazorCommitCharacter> BlockDirectiveCommitCharacters = RazorCommitCharacter.FromArray(new[] { " ", "{" });
@@ -46,21 +48,22 @@ internal class DirectiveCompletionItemProvider : RazorCompletionItemProvider
         ["typeparam"] = ("typeparam ${1:T}$0", "typeparam T")
     };
 
-    public override IReadOnlyList<RazorCompletionItem> GetCompletionItems(RazorCompletionContext context)
+    public ImmutableArray<RazorCompletionItem> GetCompletionItems(RazorCompletionContext context)
     {
         if (context is null)
         {
             throw new ArgumentNullException(nameof(context));
         }
 
-        var completions = new List<RazorCompletionItem>();
+        using var completions = new PooledArrayBuilder<RazorCompletionItem>();
+
         if (ShouldProvideCompletions(context))
         {
             var directiveCompletions = GetDirectiveCompletionItems(context.SyntaxTree);
             completions.AddRange(directiveCompletions);
         }
 
-        return completions;
+        return completions.DrainToImmutable();
     }
 
     // Internal for testing
@@ -126,11 +129,13 @@ internal class DirectiveCompletionItemProvider : RazorCompletionItemProvider
     }
 
     // Internal for testing
-    internal static List<RazorCompletionItem> GetDirectiveCompletionItems(RazorSyntaxTree syntaxTree)
+    internal static ImmutableArray<RazorCompletionItem> GetDirectiveCompletionItems(RazorSyntaxTree syntaxTree)
     {
         var defaultDirectives = FileKinds.IsComponent(syntaxTree.Options.FileKind) ? Array.Empty<DirectiveDescriptor>() : s_defaultDirectives;
         var directives = syntaxTree.Options.Directives.Concat(defaultDirectives);
-        var completionItems = new List<RazorCompletionItem>();
+
+        using var completionItems = new PooledArrayBuilder<RazorCompletionItem>();
+
         foreach (var directive in directives)
         {
             var completionDisplayText = directive.DisplayName ?? directive.Directive;
@@ -164,7 +169,7 @@ internal class DirectiveCompletionItemProvider : RazorCompletionItemProvider
             }
         }
 
-        return completionItems;
+        return completionItems.DrainToImmutable();
     }
 
     private static IReadOnlyList<RazorCommitCharacter> GetDirectiveCommitCharacters(DirectiveKind directiveKind)

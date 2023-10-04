@@ -3,6 +3,8 @@
 
 using System;
 using System.Composition;
+using System.Threading;
+using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.Editor.Razor;
 using Microsoft.VisualStudio.Editor.Razor.Logging;
@@ -14,10 +16,17 @@ namespace Microsoft.VisualStudio.LanguageServices.Razor.Logging;
 
 [Shared]
 [Export(typeof(IOutputWindowLogger))]
-internal class OutputWindowLogger : IOutputWindowLogger
+internal class OutputWindowLogger : IOutputWindowLogger, IDisposable
 {
+#if DEBUG
+    private const LogLevel MinimumLogLevel = LogLevel.Debug;
+#else
     private const LogLevel MinimumLogLevel = LogLevel.Warning;
+#endif
+
     private readonly OutputPane _outputPane;
+
+    private ILogger? _testLogger;
 
     [ImportingConstructor]
     public OutputWindowLogger(JoinableTaskContext joinableTaskContext)
@@ -25,14 +34,17 @@ internal class OutputWindowLogger : IOutputWindowLogger
         _outputPane = new OutputPane(joinableTaskContext);
     }
 
-    [Obsolete("Exists only for Mock.")]
-#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
-    internal OutputWindowLogger()
-#pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
+    public IDisposable BeginScope<TState>(TState state) => Scope.Instance;
+
+    public void SetTestLogger(ILogger? testLogger)
     {
+        _testLogger = testLogger;
     }
 
-    public IDisposable BeginScope<TState>(TState state) => Scope.Instance;
+    public void Dispose()
+    {
+        _outputPane.Dispose();
+    }
 
     public bool IsEnabled(LogLevel logLevel)
     {
@@ -41,9 +53,11 @@ internal class OutputWindowLogger : IOutputWindowLogger
 
     public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception? exception, Func<TState, Exception?, string> formatter)
     {
+        _testLogger?.Log(logLevel, eventId, state, exception, formatter);
+
         if (IsEnabled(logLevel))
         {
-            _outputPane.WriteLine(formatter(state, exception));
+            _outputPane.WriteLine(DateTime.Now.ToString("h:mm:ss.fff ") + formatter(state, exception));
             if (exception is not null)
             {
                 _outputPane.WriteLine(exception.ToString());
@@ -51,27 +65,54 @@ internal class OutputWindowLogger : IOutputWindowLogger
         }
     }
 
-    private class OutputPane
+    private class OutputPane : IDisposable
     {
         private static readonly Guid s_outputPaneGuid = new("BBAFF416-4AF5-41F2-9F93-91F283E43C3B");
 
         private readonly JoinableTaskContext _threadingContext;
         private readonly IServiceProvider _serviceProvider;
+        private readonly AsyncQueue<string> _outputQueue;
+        private readonly CancellationTokenSource _disposalTokenSource;
         private IVsOutputWindowPane? _doNotAccessDirectlyOutputPane;
 
         public OutputPane(JoinableTaskContext threadingContext)
         {
             _threadingContext = threadingContext;
             _serviceProvider = ServiceProvider.GlobalProvider;
+
+            _outputQueue = new AsyncQueue<string>();
+            _disposalTokenSource = new CancellationTokenSource();
+
+            _ = StartListeningAsync();
+        }
+
+        private async Task StartListeningAsync()
+        {
+            // Ensure that we're never on the UI thread before we start listening, in case the async queue doesn't yield
+            // I suspect this is overkill :D
+            await TaskScheduler.Default.SwitchTo(alwaysYield: true);
+
+            while (!_disposalTokenSource.IsCancellationRequested)
+            {
+                await DequeueAsync(_disposalTokenSource.Token).ConfigureAwait(false);
+            }
         }
 
         public void WriteLine(string value)
         {
-            WriteLineInternal(value);
+            _outputQueue.TryEnqueue(value);
         }
 
-        private void WriteLineInternal(string value)
+        private async Task DequeueAsync(CancellationToken cancellationToken)
         {
+            var value = await _outputQueue.DequeueAsync(cancellationToken).ConfigureAwait(false);
+            if (value is null || cancellationToken.IsCancellationRequested)
+            {
+                return;
+            }
+
+            await _threadingContext.Factory.SwitchToMainThreadAsync(cancellationToken);
+
             var pane = GetPane();
             if (pane is null)
             {
@@ -91,25 +132,15 @@ internal class OutputWindowLogger : IOutputWindowLogger
 
         private IVsOutputWindowPane GetPane()
         {
+            _threadingContext.AssertUIThread();
+
             if (_doNotAccessDirectlyOutputPane is null)
             {
-                _threadingContext.Factory.Run(async () =>
-                {
-                    await _threadingContext.Factory.SwitchToMainThreadAsync();
 
-                    if (_doNotAccessDirectlyOutputPane != null)
-                    {
-                        // check whether other one already initialized output window.
-                        // the output API already handle double initialization, so this is just quick bail
-                        // rather than any functional issue
-                        return;
-                    }
+                var outputWindow = (IVsOutputWindow)_serviceProvider.GetService(typeof(SVsOutputWindow));
 
-                    var outputWindow = (IVsOutputWindow)_serviceProvider.GetService(typeof(SVsOutputWindow));
-
-                    // this should bring outout window to the front
-                    _doNotAccessDirectlyOutputPane = CreateOutputPane(outputWindow);
-                });
+                // this should bring output window to the front
+                _doNotAccessDirectlyOutputPane = CreateOutputPane(outputWindow);
             }
 
             return _doNotAccessDirectlyOutputPane!;
@@ -130,6 +161,12 @@ internal class OutputWindowLogger : IOutputWindowLogger
             }
 
             return null;
+        }
+
+        public void Dispose()
+        {
+            _outputQueue.Complete();
+            _disposalTokenSource.Cancel();
         }
     }
 

@@ -275,7 +275,7 @@ namespace NuGet.PackageManagement.UI.Test
             var testLogger = new TestNuGetUILogger(_output);
             var tcs = new TaskCompletionSource<int>();
             var list = new InfiniteScrollList();
-            var searchService = new Mock<IReconnectingNuGetSearchService>();
+            var searchService = new Mock<INuGetSearchService>();
 
             var currentStatus = LoadingStatus.Loading;
 

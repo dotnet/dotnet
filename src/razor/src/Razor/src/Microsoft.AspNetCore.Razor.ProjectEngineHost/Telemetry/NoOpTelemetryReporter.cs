@@ -6,11 +6,15 @@ using System.Collections.Immutable;
 
 namespace Microsoft.AspNetCore.Razor.Telemetry;
 
-public class NoOpTelemetryReporter : ITelemetryReporter
+internal class NoOpTelemetryReporter : ITelemetryReporter
 {
     public static readonly NoOpTelemetryReporter Instance = new();
 
     private NoOpTelemetryReporter()
+    {
+    }
+
+    public void InitializeSession(string telemetryLevel, string? sessionId, bool isDefaultSession)
     {
     }
 

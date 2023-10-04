@@ -25,7 +25,7 @@ public class CompletionListSerializationBenchmark
 
     public CompletionListSerializationBenchmark()
     {
-        var tagHelperFactsService = new DefaultTagHelperFactsService();
+        var tagHelperFactsService = new TagHelperFactsService();
         var completionService = new LanguageServerTagHelperCompletionService(tagHelperFactsService);
         var htmlFactsService = new DefaultHtmlFactsService();
         var optionsMonitor = new BenchmarkOptionsMonitor<RazorLSPOptions>(RazorLSPOptions.Default);

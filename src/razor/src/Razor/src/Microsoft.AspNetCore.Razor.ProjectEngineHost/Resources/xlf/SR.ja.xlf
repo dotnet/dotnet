@@ -32,9 +32,19 @@
         <target state="translated">JSON トークン '{0}' が必要ですが、'{1}' でした。</target>
         <note />
       </trans-unit>
-      <trans-unit id="Unsupported_project_razor_json_version_encountered">
-        <source>Unsupported project.razor.json version encounted.</source>
-        <target state="translated">サポートされていない project.razor.json バージョンが検出されました。</target>
+      <trans-unit id="Unsupported_argument_kind">
+        <source>Unsupported argument kind: '{0}'.</source>
+        <target state="translated">サポートされていない引数の種類: '{0}'。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Unsupported_argument_type">
+        <source>Unsupported argument type: '{0}'.</source>
+        <target state="translated">サポートされていない引数の型: '{0}'。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Unsupported_razor_project_info_version_encountered">
+        <source>Unsupported razor project info version encounted.</source>
+        <target state="translated">サポートされていない Razor プロジェクト情報バージョンを検出しました。</target>
         <note />
       </trans-unit>
     </body>

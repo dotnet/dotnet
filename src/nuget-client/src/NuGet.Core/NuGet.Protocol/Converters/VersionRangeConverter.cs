@@ -16,7 +16,7 @@ namespace NuGet.Protocol
         /// Gets a flag indicating whether or not a type is convertible.
         /// </summary>
         /// <param name="objectType">An object type to check.</param>
-        /// <returns><c>true</c> if <paramref name="objectType" /> is convertible; otherwise <c>false</c>.</returns>
+        /// <returns><see langword="true" /> if <paramref name="objectType" /> is convertible; otherwise <see langword="false" />.</returns>
         public override bool CanConvert(Type objectType) => objectType == typeof(VersionRange);
 
         /// <summary>

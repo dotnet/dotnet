@@ -9,21 +9,22 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer;
 
 internal class DefaultLanguageServerFeatureOptions : LanguageServerFeatureOptions
 {
+    public const string DefaultCSharpVirtualDocumentSuffix = ".ide.g.cs";
+    public const string DefaultHtmlVirtualDocumentSuffix = "__virtual.html";
+
     public override bool SupportsFileManipulation => true;
 
     public override string ProjectConfigurationFileName => LanguageServerConstants.DefaultProjectConfigurationFile;
 
-    public override string CSharpVirtualDocumentSuffix => ".ide.g.cs";
+    public override string CSharpVirtualDocumentSuffix => DefaultCSharpVirtualDocumentSuffix;
 
-    public override string HtmlVirtualDocumentSuffix => "__virtual.html";
+    public override string HtmlVirtualDocumentSuffix => DefaultHtmlVirtualDocumentSuffix;
 
     public override bool SingleServerCompletionSupport => false;
 
     public override bool SingleServerSupport => false;
 
-    public override bool SupportsDelegatedCodeActions => false;
-
-    public override bool SupportsDelegatedDiagnostics => false;
+    public override bool DelegateToCSharpOnDiagnosticPublish => false;
 
     public override bool UpdateBuffersForClosedDocuments => false;
 
@@ -33,4 +34,8 @@ internal class DefaultLanguageServerFeatureOptions : LanguageServerFeatureOption
         => RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
 
     public override bool ShowAllCSharpCodeActions => false;
+
+    public override bool IncludeProjectKeyInGeneratedFilePath => false;
+
+    public override bool UsePreciseSemanticTokenRanges => false;
 }

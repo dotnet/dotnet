@@ -1,0 +1,11 @@
+﻿Source Location: (183:3,7 [44] x:\dir\subdir\Test\TestComponent.cshtml)
+|
+    string x = "a";
+    string y = "b";
+|
+Generated Location: (2628:71,7 [44] )
+|
+    string x = "a";
+    string y = "b";
+|
+

@@ -39,7 +39,7 @@ namespace NuGet.Packaging.Signing
         /// </summary>
         /// <param name="signedAttributes">A <see cref="SignerInfo" /> signed attributes collection.</param>
         /// <remarks>Unknown OIDs are ignored.</remarks>
-        /// <exception cref="ArgumentNullException">Thrown if <paramref name="signedAttributes" /> is <c>null</c>.</exception>
+        /// <exception cref="ArgumentNullException">Thrown if <paramref name="signedAttributes" /> is <see langword="null" />.</exception>
         /// <exception cref="SignatureException">Thrown if one or more attributes are invalid.</exception>
         public static SignatureType GetSignatureType(CryptographicAttributeObjectCollection signedAttributes)
         {
@@ -109,7 +109,7 @@ namespace NuGet.Packaging.Signing
         /// <param name="signedAttributes">A <see cref="SignerInfo" /> signed attributes collection.</param>
         /// <returns>The V3 service index HTTPS URL.</returns>
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="signedAttributes" />
-        /// is <c>null</c>.</exception>
+        /// is <see langword="null" />.</exception>
         /// <exception cref="SignatureException">Thrown if either exactly one attribute is not present or if
         /// the attribute does not contain exactly one attribute value.</exception>
         public static Uri GetNuGetV3ServiceIndexUrl(CryptographicAttributeObjectCollection signedAttributes)
@@ -151,7 +151,7 @@ namespace NuGet.Packaging.Signing
         /// </summary>
         /// <param name="packageOwners">A read-only list of package owners.</param>
         /// <returns>An attribute object.</returns>
-        /// <exception cref="ArgumentException">Thrown if <paramref name="packageOwners" /> is either <c>null</c>
+        /// <exception cref="ArgumentException">Thrown if <paramref name="packageOwners" /> is either <see langword="null" />
         /// or empty or if any package owner name is invalid.</exception>
         public static CryptographicAttributeObject CreateNuGetPackageOwners(IReadOnlyList<string> packageOwners)
         {
@@ -177,8 +177,8 @@ namespace NuGet.Packaging.Signing
         /// Gets a read-only list of package owners from an optional nuget-package-owners attribute.
         /// </summary>
         /// <param name="signedAttributes">A <see cref="SignerInfo" /> signed attributes collection.</param>
-        /// <returns>A read-only list of package owners or <c>null</c>.</returns>
-        /// <exception cref="ArgumentNullException">Thrown if <paramref name="signedAttributes" /> is <c>null</c>.</exception>
+        /// <returns>A read-only list of package owners or <see langword="null" />.</returns>
+        /// <exception cref="ArgumentNullException">Thrown if <paramref name="signedAttributes" /> is <see langword="null" />.</exception>
         /// <exception cref="SignatureException">Thrown if the attribute does not contain exactly one
         /// attribute value.</exception>
         public static IReadOnlyList<string> GetNuGetPackageOwners(CryptographicAttributeObjectCollection signedAttributes)
@@ -337,9 +337,9 @@ namespace NuGet.Packaging.Signing
         /// </summary>
         /// <param name="attributes">A collection of attributes.</param>
         /// <param name="oid">The attribute OID to search for.</param>
-        /// <returns>Either a <see cref="CryptographicAttributeObject" /> or <c>null</c>, if no attribute was found.</returns>
-        /// <exception cref="ArgumentNullException">Thrown if <paramref name="attributes" /> is <c>null</c>.</exception>
-        /// <exception cref="ArgumentException">Thrown if <paramref name="oid" /> is either <c>null</c> or an empty string.</exception>
+        /// <returns>Either a <see cref="CryptographicAttributeObject" /> or <see langword="null" />, if no attribute was found.</returns>
+        /// <exception cref="ArgumentNullException">Thrown if <paramref name="attributes" /> is <see langword="null" />.</exception>
+        /// <exception cref="ArgumentException">Thrown if <paramref name="oid" /> is either <see langword="null" /> or an empty string.</exception>
         /// <exception cref="CryptographicException">Thrown if multiple attribute instances with the specified OID were found.</exception>
         public static CryptographicAttributeObject GetAttribute(this CryptographicAttributeObjectCollection attributes, string oid)
         {
@@ -374,9 +374,9 @@ namespace NuGet.Packaging.Signing
         /// </summary>
         /// <param name="attributes">A collection of attributes.</param>
         /// <param name="oid">The attribute OID to search for.</param>
-        /// <returns>Either a <see cref="CryptographicAttributeObject" /> or <c>null</c>, if no attribute was found.</returns>
-        /// <exception cref="ArgumentNullException">Thrown if <paramref name="attributes" /> is <c>null</c>.</exception>
-        /// <exception cref="ArgumentException">Thrown if <paramref name="oid" /> is either <c>null</c> or an empty string.</exception>
+        /// <returns>Either a <see cref="CryptographicAttributeObject" /> or <see langword="null" />, if no attribute was found.</returns>
+        /// <exception cref="ArgumentNullException">Thrown if <paramref name="attributes" /> is <see langword="null" />.</exception>
+        /// <exception cref="ArgumentException">Thrown if <paramref name="oid" /> is either <see langword="null" /> or an empty string.</exception>
         public static IEnumerable<CryptographicAttributeObject> GetAttributes(this CryptographicAttributeObjectCollection attributes, string oid)
         {
             if (attributes == null)

@@ -2,13 +2,28 @@
 
   <Target Name="_PublishLanguageServerRids" AfterTargets="Pack" Condition="'$(DotNetBuildFromSource)' != 'true'">
     <PropertyGroup>
+      <BuildAnalyzersSolutionPath>$(MSBuildThisFileDirectory)..\BuildAnalyzers.sln</BuildAnalyzersSolutionPath>
       <LanguageServerProject>$(MSBuildThisFileDirectory)..\src\Razor\src\rzls\rzls.csproj</LanguageServerProject>
+      <RazorSolutionPath>$(MSBuildThisFileDirectory)..\Razor.sln</RazorSolutionPath>
+    </PropertyGroup>
+
+    <MSBuild Projects="$(BuildAnalyzersSolutionPath)"
+             Targets="Restore" />
+    <MSBuild Projects="$(RazorSolutionPath)"
+             Targets="Restore" />
+    <MSBuild Projects="$(LanguageServerProject)"
+             Targets="PublishAllRids" />
+  </Target>
+
+  <Target Name="_PublishDevKitTelemetryRids" AfterTargets="Pack" Condition="'$(DotNetBuildFromSource)' != 'true'">
+    <PropertyGroup>
+      <DevKitTelemetryProject>$(MSBuildThisFileDirectory)..\src\Razor\src\Microsoft.VisualStudio.DevKit.Razor\Microsoft.VisualStudio.DevKit.Razor.csproj</DevKitTelemetryProject>
       <RazorSolutionPath>$(MSBuildThisFileDirectory)..\Razor.sln</RazorSolutionPath>
     </PropertyGroup>
 
     <MSBuild Projects="$(RazorSolutionPath)"
              Targets="Restore" />
-    <MSBuild Projects="$(LanguageServerProject)"
+    <MSBuild Projects="$(DevKitTelemetryProject)"
              Targets="PublishAllRids" />
   </Target>
 
